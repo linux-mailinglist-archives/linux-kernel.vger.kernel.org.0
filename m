@@ -2,94 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D674B3489
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 07:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3896FB349A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 08:08:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729396AbfIPFxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 01:53:53 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48860 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725270AbfIPFxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 01:53:53 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id CB8CDB3E637D25ED0F96;
-        Mon, 16 Sep 2019 13:53:48 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 16 Sep 2019
- 13:53:47 +0800
-Message-ID: <5D7F236B.3070409@huawei.com>
-Date:   Mon, 16 Sep 2019 13:53:47 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
-MIME-Version: 1.0
-To:     Kalle Valo <kvalo@codeaurora.org>
-CC:     <davem@davemloft.net>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] wlegacy: Remove unneeded variable and make function
- to be void
-References: <1568306492-42998-1-git-send-email-zhongjiang@huawei.com> <1568306492-42998-3-git-send-email-zhongjiang@huawei.com> <87h85hh0hb.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <87h85hh0hb.fsf@kamboji.qca.qualcomm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+        id S1729723AbfIPGIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 02:08:46 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:53098 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729398AbfIPGIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 02:08:45 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 384761A053A;
+        Mon, 16 Sep 2019 08:08:43 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 254F11A0532;
+        Mon, 16 Sep 2019 08:08:38 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A02CD402BF;
+        Mon, 16 Sep 2019 14:08:31 +0800 (SGT)
+From:   Hui Song <hui.song_1@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Song Hui <hui.song_1@nxp.com>
+Subject: [PATCH v5] gpio/mpc8xxx: change irq handler from chained to normal
+Date:   Mon, 16 Sep 2019 13:58:17 +0800
+Message-Id: <20190916055817.43425-1-hui.song_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/13 1:45, Kalle Valo wrote:
-> zhong jiang <zhongjiang@huawei.com> writes:
->
->> il4965_set_tkip_dynamic_key_info  do not need return value to
->> cope with different ases. And change functon return type to void.
->>
->> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
->> ---
->>  drivers/net/wireless/intel/iwlegacy/4965-mac.c | 8 ++------
->>  1 file changed, 2 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
->> index ffb705b..a7bbfe2 100644
->> --- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
->> +++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
->> @@ -3326,12 +3326,11 @@ struct il_mod_params il4965_mod_params = {
->>  	return il_send_add_sta(il, &sta_cmd, CMD_SYNC);
->>  }
->>  
->> -static int
->> +static void
->>  il4965_set_tkip_dynamic_key_info(struct il_priv *il,
->>  				 struct ieee80211_key_conf *keyconf, u8 sta_id)
->>  {
->>  	unsigned long flags;
->> -	int ret = 0;
->>  	__le16 key_flags = 0;
->>  
->>  	key_flags |= (STA_KEY_FLG_TKIP | STA_KEY_FLG_MAP_KEY_MSK);
->> @@ -3367,8 +3366,6 @@ struct il_mod_params il4965_mod_params = {
->>  	memcpy(il->stations[sta_id].sta.key.key, keyconf->key, 16);
->>  
->>  	spin_unlock_irqrestore(&il->sta_lock, flags);
->> -
->> -	return ret;
->>  }
->>  
->>  void
->> @@ -3483,8 +3480,7 @@ struct il_mod_params il4965_mod_params = {
->>  		    il4965_set_ccmp_dynamic_key_info(il, keyconf, sta_id);
->>  		break;
->>  	case WLAN_CIPHER_SUITE_TKIP:
->> -		ret =
->> -		    il4965_set_tkip_dynamic_key_info(il, keyconf, sta_id);
->> +		il4965_set_tkip_dynamic_key_info(il, keyconf, sta_id);
->>  		break;
->>  	case WLAN_CIPHER_SUITE_WEP40:
->>  	case WLAN_CIPHER_SUITE_WEP104:
-> To me this looks inconsistent with the rest of the cases in the switch
-> statement. And won't we then return the ret variable uninitalised?
-Yep,  I miss that.   please ignore the patch.  Thanks,
+From: Song Hui <hui.song_1@nxp.com>
 
-Sincerely,
-zhong jiang
+More than one gpio controllers can share one interrupt, change the
+driver to request shared irq.
+
+Signed-off-by: Laurentiu Tudor <Laurentiu.Tudor@nxp.com>
+Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
+Signed-off-by: Song Hui <hui.song_1@nxp.com>
+---
+Changes in v5:
+	- add traverse every bit function.
+Changes in v4:
+	- convert 'pr_err' to 'dev_err'.
+Changes in v3:
+	- update the patch description.
+Changes in v2:
+	- delete the compatible of ls1088a.
+ drivers/gpio/gpio-mpc8xxx.c | 30 +++++++++++++++++++-----------
+ 1 file changed, 19 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mpc8xxx.c b/drivers/gpio/gpio-mpc8xxx.c
+index 16a47de..3a06ca9 100644
+--- a/drivers/gpio/gpio-mpc8xxx.c
++++ b/drivers/gpio/gpio-mpc8xxx.c
+@@ -22,6 +22,7 @@
+ #include <linux/irq.h>
+ #include <linux/gpio/driver.h>
+ #include <linux/bitops.h>
++#include <linux/interrupt.h>
+ 
+ #define MPC8XXX_GPIO_PINS	32
+ 
+@@ -127,20 +128,20 @@ static int mpc8xxx_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+ 		return -ENXIO;
+ }
+ 
+-static void mpc8xxx_gpio_irq_cascade(struct irq_desc *desc)
++static irqreturn_t mpc8xxx_gpio_irq_cascade(int irq, void *data)
+ {
+-	struct mpc8xxx_gpio_chip *mpc8xxx_gc = irq_desc_get_handler_data(desc);
+-	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct mpc8xxx_gpio_chip *mpc8xxx_gc = (struct mpc8xxx_gpio_chip *)data;
+ 	struct gpio_chip *gc = &mpc8xxx_gc->gc;
+ 	unsigned int mask;
++	int i;
+ 
+ 	mask = gc->read_reg(mpc8xxx_gc->regs + GPIO_IER)
+ 		& gc->read_reg(mpc8xxx_gc->regs + GPIO_IMR);
+-	if (mask)
++	for_each_set_bit(i, &mask, 32)
+ 		generic_handle_irq(irq_linear_revmap(mpc8xxx_gc->irq,
+-						     32 - ffs(mask)));
+-	if (chip->irq_eoi)
+-		chip->irq_eoi(&desc->irq_data);
++						     31 - i));
++
++	return IRQ_HANDLED;
+ }
+ 
+ static void mpc8xxx_irq_unmask(struct irq_data *d)
+@@ -388,8 +389,8 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 
+ 	ret = gpiochip_add_data(gc, mpc8xxx_gc);
+ 	if (ret) {
+-		pr_err("%pOF: GPIO chip registration failed with status %d\n",
+-		       np, ret);
++		dev_err(&pdev->dev, "%pOF: GPIO chip registration failed with status %d\n",
++			np, ret);
+ 		goto err;
+ 	}
+ 
+@@ -409,8 +410,15 @@ static int mpc8xxx_probe(struct platform_device *pdev)
+ 	if (devtype->gpio_dir_in_init)
+ 		devtype->gpio_dir_in_init(gc);
+ 
+-	irq_set_chained_handler_and_data(mpc8xxx_gc->irqn,
+-					 mpc8xxx_gpio_irq_cascade, mpc8xxx_gc);
++	ret = request_irq(mpc8xxx_gc->irqn, mpc8xxx_gpio_irq_cascade,
++			  IRQF_NO_THREAD | IRQF_SHARED, "gpio-cascade",
++			  mpc8xxx_gc);
++	if (ret) {
++		dev_err(&pdev->dev, "%s: failed to request_irq(%d), ret = %d\n",
++			np->full_name, mpc8xxx_gc->irqn, ret);
++		goto err;
++	}
++
+ 	return 0;
+ err:
+ 	iounmap(mpc8xxx_gc->regs);
+-- 
+2.9.5
 
