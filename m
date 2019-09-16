@@ -2,78 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED23B426F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 22:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B85FB4210
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 22:43:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391724AbfIPUr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 16:47:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39084 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732405AbfIPUr4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 16:47:56 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r3so837246wrj.6;
-        Mon, 16 Sep 2019 13:47:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9mHQn9yr9ukPszYJrf03cNkjP7/MXLX6PUP4ZK8/EQw=;
-        b=AsNs4BJ22RLrJfUZLd5+zl7vDYpqTPyLlH7LNo55QbbAsSiba41+32EkMl1y4WHyNL
-         6jlotrJlCm5cfCqhqbz/idlPtwRQ6GS09BpA5e6om8X7KYyzNfx4mzUzOHkKvw1F6Osu
-         VVH1coUrLZ9fLkAXDqKqq5WR2z9wxyFAbj5jXBc7l0EZdWUeMebBxxqGlsmhYf2ykmtI
-         rTFdyJj4OJzD/bA7nZTScnpe43EcCO/LvOU9d5ryPX1GPj0Rsdx8l+WBntVXt1tN6r/H
-         nr82aT5ja7eW9CO1Mk01B14gqZ57MnojzU3SLJF4DrtwBavqz6nM+oBd9XUMjlZqzvLz
-         6hag==
-X-Gm-Message-State: APjAAAV8wXlW/AvnFTZ43mBJhF9ure9i8yogRmcd5gNDf8/eYjN2C8Xs
-        yhKZNK1JYlDBVrWPKtxOQ7A=
-X-Google-Smtp-Source: APXvYqx33KDcFK0Om4/tnCLMJ86ojpQA68+cViMbTRgcRz3yunFkKYXsiLmKSzvLZ+f1yeXDeqcFuA==
-X-Received: by 2002:adf:e7c2:: with SMTP id e2mr166037wrn.319.1568666874026;
-        Mon, 16 Sep 2019 13:47:54 -0700 (PDT)
-Received: from black.home (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.googlemail.com with ESMTPSA id x6sm231437wmf.38.2019.09.16.13.47.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 13:47:53 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Denis Efremov <efremov@linux.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Andrew Murray <andrew.murray@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v3 26/26] devres: use PCI_STD_NUM_BARS
-Date:   Mon, 16 Sep 2019 23:41:58 +0300
-Message-Id: <20190916204158.6889-27-efremov@linux.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190916204158.6889-1-efremov@linux.com>
-References: <20190916204158.6889-1-efremov@linux.com>
+        id S2391439AbfIPUnW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 16:43:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55128 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730610AbfIPUnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 16:43:21 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B88920644;
+        Mon, 16 Sep 2019 20:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568666601;
+        bh=xAmdIKxn1vlp7D2ukzr9l0i4qp4XEa+oNjtGZw6WZaw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vpm6TZBpHuTrr8ztMUu/YYPHUYmg7DHismsZGJAUlj5f3XxO1HV5E8pXSsh4prrdr
+         seUB/1cHIFxAu2CVN0s/IryssXDKtLynvuFJdWdy93t+Q2gWQ9bw4Jx6WIFXlxh2MT
+         tgtPh0YgHLcWtayEArECdhSdRFEmlLXc0ZmygRSg=
+Date:   Mon, 16 Sep 2019 21:43:16 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Sami Tolvanen <samitolvanen@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Kees Cook <keescook@chromium.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, will.deacon@arm.com,
+        mark.rutland@arm.com
+Subject: Re: [PATCH 3/4] x86: use the correct function type for sys_ni_syscall
+Message-ID: <20190916204315.vtvlddghswbwlfkg@willie-the-truck>
+References: <20190913210018.125266-1-samitolvanen@google.com>
+ <20190913210018.125266-4-samitolvanen@google.com>
+ <CALCETrWquNJJ6yXdHA_F3h71hVrFjnpwmdH2NmGZyFu-V6Lnfg@mail.gmail.com>
+ <CABCJKud9ikdsfy9-bugbqKb-C7VXEEPJ_P1bO5KpGqv62Wuc7Q@mail.gmail.com>
+ <9E76DD0A-7FB0-4BDB-A8B5-920265337ACB@amacapital.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9E76DD0A-7FB0-4BDB-A8B5-920265337ACB@amacapital.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use define PCI_STD_NUM_BARS instead of PCI_ROM_RESOURCE for the number of
-PCI BARs.
+On Fri, Sep 13, 2019 at 05:27:40PM -0700, Andy Lutomirski wrote:
+> > On Sep 13, 2019, at 4:26 PM, Sami Tolvanen <samitolvanen@google.com> wrote:
+> >> On Fri, Sep 13, 2019 at 3:45 PM Andy Lutomirski <luto@kernel.org> wrote:
+> >> Should this be SYSCALL_DEFINE0?
+> > 
+> > It can be, and that would also fix the issue. However, it does result
+> > in unnecessary error injection to be hooked up here, which is why
+> > arm64 preferred to avoid the macro when I fixed it there. S390 uses
+> > SYSCALL_DEFINE0 for this though and since sys_ni_syscall always
+> > returns -ENOSYS, it shouldn't be a huge problem. Thoughts?
+> > 
+> 
+> I don’t see why all syscalls except these  few should have error injection
+> hooked up.  It’s also IMO nicer from a maintenance perspective to have all
+> syscalls use the same macros.
+> 
+> Will, is there something I’m missing?
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- lib/devres.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There was a reasonable request from Mark (CC'd) not to allow error injection
+for unimplemented system calls, so that's why we took the approach that we
+did. There was also a vague plan to fix this for everybody [1] but evidently
+nobody found the time :(
 
-diff --git a/lib/devres.c b/lib/devres.c
-index 6a0e9bd6524a..ab75d73122b8 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -262,7 +262,7 @@ EXPORT_SYMBOL(devm_ioport_unmap);
- /*
-  * PCI iomap devres
-  */
--#define PCIM_IOMAP_MAX	PCI_ROM_RESOURCE
-+#define PCIM_IOMAP_MAX	PCI_STD_NUM_BARS
- 
- struct pcim_iomap_devres {
- 	void __iomem *table[PCIM_IOMAP_MAX];
--- 
-2.21.0
+Will
 
+[1] https://lore.kernel.org/lkml/20190524215821.GA37129@google.com/T/#m6519b2aad06d8c384de1f55256f08687c83d8796
