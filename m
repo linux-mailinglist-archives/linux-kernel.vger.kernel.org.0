@@ -2,106 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5344FB3CEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 16:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 269CCB3CE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 16:51:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388585AbfIPOxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 10:53:11 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34125 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbfIPOxL (ORCPT
+        id S1733294AbfIPOvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 10:51:53 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40060 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfIPOvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 10:53:11 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a11so29466313wrx.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 07:53:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BIxRZcPCxemm3w3c90iYG9SEIp3wWGWvFQcOwYAS7KI=;
-        b=gjY6ySzfqUiv73erAouVCG8ExSbabj3HV0tIGoWswYpz5Ksu+334Xzkl96/6Ut6qdQ
-         B4VtxrluXHNvE54lYsFHddGKGDOtZg/0JTMpgnyuk8Z4dEkQGgAMos1GRskpiQRAiB0f
-         PRRPfpc5yjej/b5NsCJd1ji7o6678tGO0bdn5+B8gvlv6Pfedx+wLGlZwjgk3g+3UIRE
-         jKYoFi9U2B0y3MSsgTJrqJOdW/BmEj4Y+d5uz7rQPlK9zwKjYWfOBcN8y9PPBJ++yLHe
-         MRrJ2fldtFr7c1BIVOEIhmciM4vWOtCCqymoRBqUaJL51sQZR+DEhKzVUeB8t+ZG4e+n
-         YrUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BIxRZcPCxemm3w3c90iYG9SEIp3wWGWvFQcOwYAS7KI=;
-        b=sKicQfgWx1tcoaX16cSBZQlNQefDFhExTZV8Bh3LXq2NRpkbPrw4GS6Q3QGYmMI2dH
-         zivdOZUCcAHBZYoxCRLkPb/1Is5UcXd3NGIrzdPhxU5FLV1QXDigUyvUcm2Q18dPiVzw
-         4nehq8RoWKU38FxbbGiIpdXyF1kf/xI5wurYKgN+FhokUXv8gVg9oMimDu65YEPlE2sg
-         XoTyDqqX4xHENuCCWo9J2O0idskhjjRBHqTIQqFxK9HqtRp6LyfJqL7+rLE+Uk6RjyMP
-         WTFagpMhelcNwZI0CFad7lKW4mzmHN2w6ZzIWKBBB9ruf+ZzFW1ArAs4GBlg+V+fO2Ce
-         umZw==
-X-Gm-Message-State: APjAAAWhqM8bHoibhSgqK2O/K4yiEUEyB0VcXQWuN25sUVKAnjiqjEPB
-        2y+MAlkturiYOzDfSl4LDgR5Lgna
-X-Google-Smtp-Source: APXvYqxNRU6rzmKIm5asYmfPhm1QaZnSQXAejuft7hw7TIBzZ+GWUKy4q92ALQ0MtEuqxJtZK8uXlQ==
-X-Received: by 2002:a5d:4491:: with SMTP id j17mr114245wrq.257.1568645587990;
-        Mon, 16 Sep 2019 07:53:07 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id t6sm104711wmf.8.2019.09.16.07.53.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 07:53:07 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 16:53:05 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/mm: Enable 5-level paging support by default
-Message-ID: <20190916145305.GA30629@gmail.com>
-References: <20190913095452.40592-1-kirill.shutemov@linux.intel.com>
- <8435951c-d88a-a5c6-5328-90c9f2521664@intel.com>
+        Mon, 16 Sep 2019 10:51:53 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8GEppEZ048227;
+        Mon, 16 Sep 2019 09:51:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568645511;
+        bh=N2fNUTJ5FqCAIRceZLmcocaOVqYYlTS4Sz3JSM1s1To=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=qSrkDPzFGX2ZFyVswTk+k9SZ/PSDqAl54dAgfESJvwvmlkgBH/2wbURA42Z9NUHDX
+         pH5RdyNEf6MVprFGcL9tLGMdirKakBpDWhPtQPqso16J+5pQAZmGBpHYq6Sl1e3PLm
+         g5OTDCnQtwUXUU5QzRwdABJaqV6u+Ru0b4nUYAOs=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8GEppft012452
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 16 Sep 2019 09:51:51 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 16
+ Sep 2019 09:51:50 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 16 Sep 2019 09:51:48 -0500
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with SMTP id x8GEpoBQ048306;
+        Mon, 16 Sep 2019 09:51:50 -0500
+Date:   Mon, 16 Sep 2019 09:53:56 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+CC:     Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-media <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch 05/13] media: am437x-vpfe: Streamlined vb2 buffer cleanup
+Message-ID: <20190916145356.wddnnl3kk2awmbf4@ti.com>
+References: <20190909162743.30114-1-bparrot@ti.com>
+ <20190909162743.30114-6-bparrot@ti.com>
+ <CA+V-a8ub2rjkp0WyUDV8EKnvqR=jCbCdxGzeeNas2APyiJdsYg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <8435951c-d88a-a5c6-5328-90c9f2521664@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CA+V-a8ub2rjkp0WyUDV8EKnvqR=jCbCdxGzeeNas2APyiJdsYg@mail.gmail.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Dave Hansen <dave.hansen@intel.com> wrote:
-
-> On 9/13/19 2:54 AM, Kirill A. Shutemov wrote:
-> > The next major release of distributions expected to have
-> > CONFIG_X86_5LEVEL=y.
+Lad, Prabhakar <prabhakar.csengg@gmail.com> wrote on Mon [2019-Sep-16 09:00:03 +0100]:
+> Hi Benoit,
 > 
-> It's probably worth noting that this exposes to two kinds of possible
-> performance issues:
+> Thank you for the patch.
 > 
-> First is the overhead of having the 5-level code on 4-level hardware.
-> We haven't seen any regressions there in quite a while.  Kirill talked
-> about this in the changelog.
+> On Mon, Sep 9, 2019 at 5:26 PM Benoit Parrot <bparrot@ti.com> wrote:
+> >
+> > Returning queued vb2 buffers back to user space is a common
+> > task best handled by a helper function.
+> >
+> > Signed-off-by: Benoit Parrot <bparrot@ti.com>
+> > ---
+> >  drivers/media/platform/am437x/am437x-vpfe.c | 54 ++++++++++-----------
+> >  1 file changed, 26 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+> > index 3a8ad9bdf283..52f7fc6e11dd 100644
+> > --- a/drivers/media/platform/am437x/am437x-vpfe.c
+> > +++ b/drivers/media/platform/am437x/am437x-vpfe.c
+> > @@ -1949,6 +1949,29 @@ static void vpfe_buffer_queue(struct vb2_buffer *vb)
+> >         spin_unlock_irqrestore(&vpfe->dma_queue_lock, flags);
+> >  }
+> >
+> > +static void vpfe_return_all_buffers(struct vpfe_device *vpfe,
+> > +                                   enum vb2_buffer_state state)
+> > +{
+> > +       struct vpfe_cap_buffer *buf, *node;
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&vpfe->dma_queue_lock, flags);
+> > +       list_for_each_entry_safe(buf, node, &vpfe->dma_queue, list) {
+> > +               vb2_buffer_done(&buf->vb.vb2_buf, state);
+> > +               list_del(&buf->list);
+> > +       }
+> > +
+> > +       if (vpfe->cur_frm)
+> > +               vb2_buffer_done(&vpfe->cur_frm->vb.vb2_buf, state);
+> > +
+> > +       if (vpfe->next_frm && vpfe->next_frm != vpfe->cur_frm)
+> > +               vb2_buffer_done(&vpfe->next_frm->vb.vb2_buf, state);
+> > +
+> > +       vpfe->cur_frm = NULL;
+> > +       vpfe->next_frm = NULL;
+> > +       spin_unlock_irqrestore(&vpfe->dma_queue_lock, flags);
+> > +}
+> > +
+> >  /*
+> >   * vpfe_start_streaming : Starts the DMA engine for streaming
+> >   * @vb: ptr to vb2_buffer
+> > @@ -1957,7 +1980,6 @@ static void vpfe_buffer_queue(struct vb2_buffer *vb)
+> >  static int vpfe_start_streaming(struct vb2_queue *vq, unsigned int count)
+> >  {
+> >         struct vpfe_device *vpfe = vb2_get_drv_priv(vq);
+> > -       struct vpfe_cap_buffer *buf, *tmp;
+> >         struct vpfe_subdev_info *sdinfo;
+> >         unsigned long flags;
+> >         unsigned long addr;
+> > @@ -2003,11 +2025,8 @@ static int vpfe_start_streaming(struct vb2_queue *vq, unsigned int count)
+> >         return 0;
+> >
+> >  err:
+> > -       list_for_each_entry_safe(buf, tmp, &vpfe->dma_queue, list) {
+> > -               list_del(&buf->list);
+> > -               vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_QUEUED);
+> > -       }
+> > -
+> > +       vpfe_return_all_buffers(vpfe, VB2_BUF_STATE_QUEUED);
+> > +       vpfe_pcr_enable(&vpfe->ccdc, 0);
 > 
-> Second is the overhead of having 5-level paging active on 5-level
-> hardware versus using 4-level paging on hardware *capable* of 5-level.
-> That is, of course, much harder to measure since 5-level hardware is not
-> publicly available.  But, we've tested this quite a bit and we're pretty
-> confident that it will not cause regressions, especially on systems
-> where apps don't opt in to the larger address space.
-> 
-> I do think endeavoring to have mainline's defaults match the most common
-> distro configs is a good idea, and now is as good of a time as any.
-> 
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> please create a seperate patch for the above change.
 
-Ok - in terms of timing it's obviously *way* too late for v5.4, so I've 
-queued it up for the v5.5 merge window in tip:x86/mm. This should give it 
-2-3 months of additional testing to shake out any weird interactions and 
-quirks.
+You mean a separate patch just for the vpfe_pcr_enable() call?
 
-Thanks,
+Benoit
 
-	Ingo
+> 
+> Cheers,
+> --Prabhakar Lad
+> 
+> >         return ret;
+> >  }
+> >
+> > @@ -2022,7 +2041,6 @@ static void vpfe_stop_streaming(struct vb2_queue *vq)
+> >  {
+> >         struct vpfe_device *vpfe = vb2_get_drv_priv(vq);
+> >         struct vpfe_subdev_info *sdinfo;
+> > -       unsigned long flags;
+> >         int ret;
+> >
+> >         vpfe_pcr_enable(&vpfe->ccdc, 0);
+> > @@ -2040,27 +2058,7 @@ static void vpfe_stop_streaming(struct vb2_queue *vq)
+> >                 vpfe_dbg(1, vpfe, "stream off failed in subdev\n");
+> >
+> >         /* release all active buffers */
+> > -       spin_lock_irqsave(&vpfe->dma_queue_lock, flags);
+> > -       if (vpfe->cur_frm == vpfe->next_frm) {
+> > -               vb2_buffer_done(&vpfe->cur_frm->vb.vb2_buf,
+> > -                               VB2_BUF_STATE_ERROR);
+> > -       } else {
+> > -               if (vpfe->cur_frm != NULL)
+> > -                       vb2_buffer_done(&vpfe->cur_frm->vb.vb2_buf,
+> > -                                       VB2_BUF_STATE_ERROR);
+> > -               if (vpfe->next_frm != NULL)
+> > -                       vb2_buffer_done(&vpfe->next_frm->vb.vb2_buf,
+> > -                                       VB2_BUF_STATE_ERROR);
+> > -       }
+> > -
+> > -       while (!list_empty(&vpfe->dma_queue)) {
+> > -               vpfe->next_frm = list_entry(vpfe->dma_queue.next,
+> > -                                               struct vpfe_cap_buffer, list);
+> > -               list_del(&vpfe->next_frm->list);
+> > -               vb2_buffer_done(&vpfe->next_frm->vb.vb2_buf,
+> > -                               VB2_BUF_STATE_ERROR);
+> > -       }
+> > -       spin_unlock_irqrestore(&vpfe->dma_queue_lock, flags);
+> > +       vpfe_return_all_buffers(vpfe, VB2_BUF_STATE_ERROR);
+> >  }
+> >
+> >  static int vpfe_g_pixelaspect(struct file *file, void *priv,
+> > --
+> > 2.17.1
+> >
