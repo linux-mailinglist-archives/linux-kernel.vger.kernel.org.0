@@ -2,226 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E60DB3B1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77586B3B20
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:17:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733051AbfIPNRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:17:02 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45997 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732956AbfIPNRB (ORCPT
+        id S1733084AbfIPNRJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:17:09 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35654 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732956AbfIPNRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:17:01 -0400
-Received: by mail-qt1-f193.google.com with SMTP id c21so4406189qtj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:17:00 -0700 (PDT)
+        Mon, 16 Sep 2019 09:17:07 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w6so27469333lfl.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:17:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=AfsCDT99MT8mtEXYRpUBfavmRU7fsMrXI5BMAHxEVzI=;
-        b=PvIG+jDBXVedgUPD3XcKjHXh5GDKqOp6YQ5ufoyVceXIoVGwopQ/YmWFL4OVJUNOw+
-         rg3JjZRxzKrimH/q3tVCDMKSdjV7ROqFcnQjv++HQZIGeb04XDwCnfTCIG5Imu9G5KV8
-         gLF4oc144DNkzKnQw/qZIYxWXGPKmWcCONm8fBjm7z+VxV6Od01gaoEALMr7xypDoMgs
-         wpuuuQE/8fFPWLwLag45b+0eFdLITFhpYc2ztug3j/N0eNOcGEYQbiWOAWl+RVmZ6vaU
-         OvNdfUtA3+I4Ob61xRGZrab2yZo4X5zqT3xf3vKvNRSHVhsC1r93oRlTtxCC9SSZvKyi
-         E0Mw==
+         :cc;
+        bh=WE01PYWdyxr4h6bZhIeuaYXDwfnO68aEYViDjXA5Z/w=;
+        b=Fo3C57H7kYgxpkxIGqG9Z33KQSPOoLI/a/kJBRMpKMzYg+JIHEcbAzDUieM675lUuN
+         fvT2C3YQFnxin6m3vTJl6mp7vc1f4ForS6QvNlJYSjMAB6lQV1N/6ofAIDBdA3as6qz1
+         9uTIPHryJv5STnfKsvNFreF2sAUR6LeugZ9Rb2vCTY1tslyWocN+dX9xWnTIEFGyeBtM
+         2enC9xMNPqtlEKOgJMEoxjqLdgtydotjMw/yaAk5J3pexIvTieuOKYE+1Wp3e5lstU+K
+         9aPChAjmsG59s6R3fkjboG1Q0wVSl0VRNx5XbpdnY/dLnhQIRj+buOsp5STZptZLxMVd
+         zFsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=AfsCDT99MT8mtEXYRpUBfavmRU7fsMrXI5BMAHxEVzI=;
-        b=qwrzL/DsrXA2g5hY/p0OfPzr0kk2OfJrfBQaXNoJuIh2uIHoOZTKt7MCH7c8Drr9do
-         HSvW9yR61COtJ+fiHZ/BrPJ2dYeDvfG9dB0JcP2F+ytce80L7plm206bJuZzALE4dCSb
-         7M/ovtuQG69VIU2qkYncujry/JmYLRdC/Mx0KEyhNR+F3TUlnTnK4X8myUdUqoq5Far6
-         iOwOe34WtMoAej+/ubNqIoSgu1FdDAtklBzSzqeJArxYIvc7hpCDGdHjw1jAnl3/o8eR
-         E3vx7UOl+F/DpWc+LclhR1hd+ZR56zm7Hv1LOc/g2Z5scvq7qrYxVBN0UIibyLHRdHVY
-         y2Kg==
-X-Gm-Message-State: APjAAAWM5kLb3iNP10ZKfpGwXDHI2QjLSDnK0IkeP8udLpb8+BRL4RI9
-        am32IEjo5cc6E97ry6d+b5xrnvhJDWwCJ1WtJhyI4w==
-X-Google-Smtp-Source: APXvYqx5f0B8c8vyFPb+oOLmnL41S+UwF4v1C7z9cTUD+w7lpIU7SP9FhUtOAvECDvDTB+VwcUKflfHRj/EyZJAuYrk=
-X-Received: by 2002:a0c:b359:: with SMTP id a25mr14290448qvf.242.1568639820337;
- Mon, 16 Sep 2019 06:17:00 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=WE01PYWdyxr4h6bZhIeuaYXDwfnO68aEYViDjXA5Z/w=;
+        b=TcMNd5FnxMHWwmk9f+94MNcK/FGdzePIRjkJTgSr3bqJpWewN2sqCFZzvUlgWFBtzy
+         gmlD/rX8zgQBtFXIiVWgGtO97BYMUBgjpyn6wp8IA+WZurNGot4+CQeL3P91kbZXkjaa
+         Mw00X5OJNGXpOJ70IX/aR3O58umAHCV2IuFiVRUVWshR7eg4B4Q6b3mx55hYB4VsnUvp
+         6rf0r0Jpdwc2PU9sBEqQ+e/A/aw2NlyEmce9RI3f1k3cG+P9QyupvNPMF9Qco6ZkI37e
+         fcfdI4rAge6lO8ysvusdmV5rnvfXz7ENzKOtDJqJ9hXrZim+rF1+gh4JzCjsmF8pIaiE
+         vIQg==
+X-Gm-Message-State: APjAAAXibWXn/8AB46Gf9BpjZufBvozL915RoYXvFR7ermwIL6H4cL7G
+        GdrzVbu6fbA49t4Bdgl+SB1cGAnpQxTvMOwEhBL4zg==
+X-Google-Smtp-Source: APXvYqwWsdK1cBGRz7DTrqNlMqHivjewvyhfcb6uk0n1wBa/xvfX9UCWrPkb+jAASYCu+V8qjPSivpTdxciXQ5GrP/M=
+X-Received: by 2002:ac2:5464:: with SMTP id e4mr1086374lfn.102.1568639825697;
+ Mon, 16 Sep 2019 06:17:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190909101254.24191-1-benjamin.gaignard@st.com>
-In-Reply-To: <20190909101254.24191-1-benjamin.gaignard@st.com>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Mon, 16 Sep 2019 15:16:49 +0200
-Message-ID: <CA+M3ks7XUt5co5HHBv1LPNB8CAPqDnrn4wr-oQeKOHnGj4Pyjg@mail.gmail.com>
-Subject: Re: [PATCH] drm: sti: fix W=1 warnings
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
+References: <20190916014535.GU4352@sirena.co.uk>
+In-Reply-To: <20190916014535.GU4352@sirena.co.uk>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Mon, 16 Sep 2019 15:16:54 +0200
+Message-ID: <CADYN=9JntrniMnmEMd9igVSovEQjLV9q006cCATLHWrtBhWWHQ@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the kselftest tree with the tpmdd tree
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Shuah Khan <shuah@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Petr Vorel <pvorel@suse.cz>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lun. 9 sept. 2019 =C3=A0 12:29, Benjamin Gaignard
-<benjamin.gaignard@st.com> a =C3=A9crit :
+On Mon, 16 Sep 2019 at 03:45, Mark Brown <broonie@kernel.org> wrote:
 >
-> Fix warnings when W=3D1.
-> No code changes, only clean up in sti internal structures and functions
-> descriptions.
->
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Hi all,
 
-For my own reference, applied on drm-misc-next
+Hi,
 
-> ---
->  drivers/gpu/drm/sti/sti_cursor.c |  2 +-
->  drivers/gpu/drm/sti/sti_dvo.c    |  2 +-
->  drivers/gpu/drm/sti/sti_gdp.c    |  2 +-
->  drivers/gpu/drm/sti/sti_hda.c    |  2 +-
->  drivers/gpu/drm/sti/sti_hdmi.c   |  4 ++--
->  drivers/gpu/drm/sti/sti_tvout.c  | 10 +++++-----
->  drivers/gpu/drm/sti/sti_vtg.c    |  2 +-
->  7 files changed, 12 insertions(+), 12 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/sti_c=
-ursor.c
-> index 0bf7c332cf0b..ea64c1dcaf63 100644
-> --- a/drivers/gpu/drm/sti/sti_cursor.c
-> +++ b/drivers/gpu/drm/sti/sti_cursor.c
-> @@ -47,7 +47,7 @@ struct dma_pixmap {
->         void *base;
->  };
+> Today's linux-next merge of the kselftest tree got a conflict in:
 >
-> -/**
-> +/*
->   * STI Cursor structure
->   *
->   * @sti_plane:    sti_plane structure
-> diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.=
-c
-> index 9e6d5d8b7030..c33d0aaee82b 100644
-> --- a/drivers/gpu/drm/sti/sti_dvo.c
-> +++ b/drivers/gpu/drm/sti/sti_dvo.c
-> @@ -65,7 +65,7 @@ static struct dvo_config rgb_24bit_de_cfg =3D {
->         .awg_fwgen_fct =3D sti_awg_generate_code_data_enable_mode,
->  };
+>   tools/testing/selftests/tpm2/Makefile
 >
-> -/**
-> +/*
->   * STI digital video output structure
->   *
->   * @dev: driver device
-> diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.=
-c
-> index 8e926cd6a1c8..11595c748844 100644
-> --- a/drivers/gpu/drm/sti/sti_gdp.c
-> +++ b/drivers/gpu/drm/sti/sti_gdp.c
-> @@ -103,7 +103,7 @@ struct sti_gdp_node_list {
->         dma_addr_t btm_field_paddr;
->  };
+> between commit:
 >
-> -/**
-> +/*
->   * STI GDP structure
->   *
->   * @sti_plane:          sti_plane structure
-> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.=
-c
-> index 94e404f13234..3512a94a0fca 100644
-> --- a/drivers/gpu/drm/sti/sti_hda.c
-> +++ b/drivers/gpu/drm/sti/sti_hda.c
-> @@ -230,7 +230,7 @@ static const struct sti_hda_video_config hda_supporte=
-d_modes[] =3D {
->          AWGi_720x480p_60, NN_720x480p_60, VID_ED}
->  };
+>   3fb2179b0f3553a ("selftests/tpm2: Add the missing TEST_FILES assignment")
 >
-> -/**
-> +/*
->   * STI hd analog structure
->   *
->   * @dev: driver device
-> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdm=
-i.c
-> index f03d617edc4c..87e34f7a6cfe 100644
-> --- a/drivers/gpu/drm/sti/sti_hdmi.c
-> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
-> @@ -333,7 +333,6 @@ static void hdmi_infoframe_reset(struct sti_hdmi *hdm=
-i,
->   * Helper to concatenate infoframe in 32 bits word
->   *
->   * @ptr: pointer on the hdmi internal structure
-> - * @data: infoframe to write
->   * @size: size to write
->   */
->  static inline unsigned int hdmi_infoframe_subpack(const u8 *ptr, size_t =
-size)
-> @@ -543,13 +542,14 @@ static int hdmi_vendor_infoframe_config(struct sti_=
-hdmi *hdmi)
->         return 0;
->  }
+> from the tpmdd tree and commit:
 >
-> +#define HDMI_TIMEOUT_SWRESET  100   /*milliseconds */
-> +
->  /**
->   * Software reset of the hdmi subsystem
->   *
->   * @hdmi: pointer on the hdmi internal structure
->   *
->   */
-> -#define HDMI_TIMEOUT_SWRESET  100   /*milliseconds */
->  static void hdmi_swreset(struct sti_hdmi *hdmi)
->  {
->         u32 val;
-> diff --git a/drivers/gpu/drm/sti/sti_tvout.c b/drivers/gpu/drm/sti/sti_tv=
-out.c
-> index e1b3c8cb7287..b1fc77b150da 100644
-> --- a/drivers/gpu/drm/sti/sti_tvout.c
-> +++ b/drivers/gpu/drm/sti/sti_tvout.c
-> @@ -157,9 +157,9 @@ static void tvout_write(struct sti_tvout *tvout, u32 =
-val, int offset)
->   *
->   * @tvout: tvout structure
->   * @reg: register to set
-> - * @cr_r:
-> - * @y_g:
-> - * @cb_b:
-> + * @cr_r: red chroma or red order
-> + * @y_g: y or green order
-> + * @cb_b: blue chroma or blue order
->   */
->  static void tvout_vip_set_color_order(struct sti_tvout *tvout, int reg,
->                                       u32 cr_r, u32 y_g, u32 cb_b)
-> @@ -214,7 +214,7 @@ static void tvout_vip_set_rnd(struct sti_tvout *tvout=
-, int reg, u32 rnd)
->   * @tvout: tvout structure
->   * @reg: register to set
->   * @main_path: main or auxiliary path
-> - * @sel_input: selected_input (main/aux + conv)
-> + * @video_out: selected_input (main/aux + conv)
->   */
->  static void tvout_vip_set_sel_input(struct sti_tvout *tvout,
->                                     int reg,
-> @@ -251,7 +251,7 @@ static void tvout_vip_set_sel_input(struct sti_tvout =
-*tvout,
->   *
->   * @tvout: tvout structure
->   * @reg: register to set
-> - * @in_vid_signed: used video input format
-> + * @in_vid_fmt: used video input format
->   */
->  static void tvout_vip_set_in_vid_fmt(struct sti_tvout *tvout,
->                 int reg, u32 in_vid_fmt)
-> diff --git a/drivers/gpu/drm/sti/sti_vtg.c b/drivers/gpu/drm/sti/sti_vtg.=
-c
-> index ef4009f11396..0b17ac8a3faa 100644
-> --- a/drivers/gpu/drm/sti/sti_vtg.c
-> +++ b/drivers/gpu/drm/sti/sti_vtg.c
-> @@ -121,7 +121,7 @@ struct sti_vtg_sync_params {
->         u32 vsync_off_bot;
->  };
+>   d04e26067d13f01 ("selftests: tpm2: install python files")
 >
-> -/**
-> +/*
->   * STI VTG structure
->   *
->   * @regs: register mapping
-> --
-> 2.15.0
+> from the kselftest tree.
+
+If I re-read the Documentation/dev-tools/kselftest.rst
+I think the patch from the kselftest tree should be dropped.
+
+I saw that I didn't send an email to the tpm maintainers or the tpm
+list when I sent the
+patch, I'm sorry.
+
+
+Cheers,
+Anders
+
 >
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc tools/testing/selftests/tpm2/Makefile
+> index bf401f725eef8,1a5db1eb8ed51..0000000000000
+> --- a/tools/testing/selftests/tpm2/Makefile
+> +++ b/tools/testing/selftests/tpm2/Makefile
+> @@@ -2,4 -2,4 +2,5 @@@
+>   include ../lib.mk
+>
+>   TEST_PROGS := test_smoke.sh test_space.sh
+>  +TEST_FILES := tpm2.py tpm2_tests.py
+> + TEST_PROGS_EXTENDED := tpm2.py tpm2_tests.py
