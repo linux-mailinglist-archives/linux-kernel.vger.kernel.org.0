@@ -2,77 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 392A6B35E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB29AB35EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbfIPHtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 03:49:36 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59276 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbfIPHtf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 03:49:35 -0400
-Received: from static-dcd-cqq-121001.business.bouyguestelecom.com ([212.194.121.1] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i9llO-0003jD-Ll; Mon, 16 Sep 2019 07:49:34 +0000
-Date:   Mon, 16 Sep 2019 09:49:34 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Eugene Syromiatnikov <esyr@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Adrian Reber <areber@redhat.com>
-Subject: Re: [PATCH v2 0/6] Update clone3 self-tests
-Message-ID: <20190916074933.j33qc2z3hynpj2gf@wittgenstein>
-References: <cover.1568138393.git.esyr@redhat.com>
+        id S1730740AbfIPHtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 03:49:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53934 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726648AbfIPHtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 03:49:49 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 580F6C010927
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 07:49:48 +0000 (UTC)
+Received: by mail-wm1-f69.google.com with SMTP id z205so251156wmb.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 00:49:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fGp111aH2l7qegNh84iFHk3Dq9HJMbiQInTpzhHxUjw=;
+        b=rPGK642b7gG1a6I2Tdwg0o61U3ejeMfm1Fe1iTMEgAnzNB4Jx5yzWcvOfvIZHf+66V
+         e1AB0vmWTRk+aP4YZaXXobMiIGNxjRdvIf8vaefwtNH/Zy/zN27Idn/FzAYGqRlC7aIC
+         /0644va+rxtPb10S0IE8QmMhdm1phD63hk7YsOIxiOeGIlMkN+LI3VjLuv9qrUh2kKp1
+         0X7NHInAwEsk3cLWLVzkSI64CzDQcBV337PS2DQ9JYK5y8yhVXTIabOgaooK/4U4Qo8D
+         fd3kTS5ey8WpP7GnsYfqm4WjzWlJ/cM7l4Jkvzmp+DA5uDbEfrZTkxdAUzasU1tl2YL9
+         ddKw==
+X-Gm-Message-State: APjAAAVpuWRgagfXnLAEg7zn+CemOV3rFWOqY87fRsXd8yPiG26iUbNB
+        eMRHnd7DFST5cex3YePqyX3R+9ErxOi8cQCvyUmBm4iR4Hc1NP3VhsFESc3Hta8WnONOwC3DU5i
+        xRWb3j+vKVjOiSVMk4vCgWE/Z
+X-Received: by 2002:a1c:4946:: with SMTP id w67mr12754708wma.131.1568620187037;
+        Mon, 16 Sep 2019 00:49:47 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqz4BrE1csH+OTX5L6dAVXGnYlSUv1/pV5xTBLWoRojR+i93OAxrK9YwYUjkNwhSm69x2hXH3A==
+X-Received: by 2002:a1c:4946:: with SMTP id w67mr12754689wma.131.1568620186697;
+        Mon, 16 Sep 2019 00:49:46 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id q25sm12852046wmq.27.2019.09.16.00.49.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2019 00:49:46 -0700 (PDT)
+Subject: Re: [PATCH v3 1/2] KVM: LAPIC: Tune lapic_timer_advance_ns smoothly
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Wanpeng Li <wanpeng.li@hotmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <1566980342-22045-1-git-send-email-wanpengli@tencent.com>
+ <a1c6c974-a6f2-aa71-aa2e-4c987447f419@redhat.com>
+ <TY2PR02MB4160421A8C88D96C8BCB971180B00@TY2PR02MB4160.apcprd02.prod.outlook.com>
+ <8054e73d-1e09-0f98-4beb-3caa501f2ac7@redhat.com>
+ <CANRm+Cy+5pompcDDS2C9YnxvE_-87i24gbBfc53Qa1tcWNck2Q@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <82ff90b6-f518-e2a8-c4f5-ef4b294af15e@redhat.com>
+Date:   Mon, 16 Sep 2019 09:49:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <CANRm+Cy+5pompcDDS2C9YnxvE_-87i24gbBfc53Qa1tcWNck2Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1568138393.git.esyr@redhat.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 07:01:30PM +0100, Eugene Syromiatnikov wrote:
-> Hello.
+On 16/09/19 06:02, Wanpeng Li wrote:
+> Hi Paolo,
 > 
-> This patch set updates clone3 selftest in several aspects:
->  - adding checks for exit_signal invalid values handling;
->  - adding clone3 to selftests targets;
->  - enabling clone3 tests on all architectures;
->  - minor cleanups of the clone3 test.
+> Something like below? It still fluctuate when running complex guest os
+> like linux. Removing timer_advance_adjust_done will hinder introduce
+> patch v3 2/2 since there is no adjust done flag in each round
+> evaluation.
+
+That's not important, since the adjustment would be continuous.
+
+How much fluctuation can you see?
+
+> I have two questions here, best-effort tune always as
+> below or periodically revaluate to get conservative value and get
+> best-effort value in each round evaluation as patch v3 2/2, which one
+> do you prefer? The former one can wast time to wait sometimes and the
+> later one can not get the best latency. In addition, can the adaptive
+> tune algorithm be using in all the scenarios contain
+> RT/over-subscribe?
+
+I prefer the former, like the patch below, mostly because of the extra
+complexity of the periodic reevaluation.
+
+Paolo
+
 > 
-> Applied on top of brauer/linux.git/for-next.
+> ---8<---
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index 685d17c..895735b 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -69,6 +69,7 @@
+>  #define LAPIC_TIMER_ADVANCE_ADJUST_INIT 1000
+>  /* step-by-step approximation to mitigate fluctuation */
+>  #define LAPIC_TIMER_ADVANCE_ADJUST_STEP 8
+> +#define LAPIC_TIMER_ADVANCE_FILTER 5000
+> 
+>  static inline int apic_test_vector(int vec, void *bitmap)
+>  {
+> @@ -1479,29 +1480,28 @@ static inline void
+> adjust_lapic_timer_advance(struct kvm_vcpu *vcpu,
+>                            s64 advance_expire_delta)
+>  {
+>      struct kvm_lapic *apic = vcpu->arch.apic;
+> -    u32 timer_advance_ns = apic->lapic_timer.timer_advance_ns;
+> -    u64 ns;
+> +    u32 timer_advance_ns = apic->lapic_timer.timer_advance_ns, ns;
+> +
+> +    if (abs(advance_expire_delta) > LAPIC_TIMER_ADVANCE_FILTER ||
+> +        abs(advance_expire_delta) < LAPIC_TIMER_ADVANCE_ADJUST_DONE) {
+> +        /* filter out random fluctuations */
+> +        return;
+> +    }
+> 
+>      /* too early */
+>      if (advance_expire_delta < 0) {
+>          ns = -advance_expire_delta * 1000000ULL;
+>          do_div(ns, vcpu->arch.virtual_tsc_khz);
+> -        timer_advance_ns -= min((u32)ns,
+> -            timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
+> +        timer_advance_ns -= ns/LAPIC_TIMER_ADVANCE_ADJUST_STEP;
+>      } else {
+>      /* too late */
+>          ns = advance_expire_delta * 1000000ULL;
+>          do_div(ns, vcpu->arch.virtual_tsc_khz);
+> -        timer_advance_ns += min((u32)ns,
+> -            timer_advance_ns / LAPIC_TIMER_ADVANCE_ADJUST_STEP);
+> +        timer_advance_ns += ns/LAPIC_TIMER_ADVANCE_ADJUST_STEP;
+>      }
+> 
+> -    if (abs(advance_expire_delta) < LAPIC_TIMER_ADVANCE_ADJUST_DONE)
+> -        apic->lapic_timer.timer_advance_adjust_done = true;
+> -    if (unlikely(timer_advance_ns > 5000)) {
+> +    if (unlikely(timer_advance_ns > 5000))
+>          timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
+> -        apic->lapic_timer.timer_advance_adjust_done = false;
+> -    }
+>      apic->lapic_timer.timer_advance_ns = timer_advance_ns;
+>  }
+> 
+> @@ -1521,7 +1521,7 @@ static void __kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
+>      if (guest_tsc < tsc_deadline)
+>          __wait_lapic_expire(vcpu, tsc_deadline - guest_tsc);
+> 
+> -    if (unlikely(!apic->lapic_timer.timer_advance_adjust_done))
+> +    if (lapic_timer_advance_ns == -1)
+>          adjust_lapic_timer_advance(vcpu,
+> apic->lapic_timer.advance_expire_delta);
+>  }
+> 
+> @@ -2298,10 +2298,8 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int
+> timer_advance_ns)
+>      apic->lapic_timer.timer.function = apic_timer_fn;
+>      if (timer_advance_ns == -1) {
+>          apic->lapic_timer.timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
+> -        apic->lapic_timer.timer_advance_adjust_done = false;
+>      } else {
+>          apic->lapic_timer.timer_advance_ns = timer_advance_ns;
+> -        apic->lapic_timer.timer_advance_adjust_done = true;
+>      }
+> 
+> 
+> diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
+> index 50053d2..2aad7e2 100644
+> --- a/arch/x86/kvm/lapic.h
+> +++ b/arch/x86/kvm/lapic.h
+> @@ -35,7 +35,6 @@ struct kvm_timer {
+>      s64 advance_expire_delta;
+>      atomic_t pending;            /* accumulated triggered timers */
+>      bool hv_timer_in_use;
+> -    bool timer_advance_adjust_done;
+>  };
+> 
+>  struct kvm_lapic {
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 93b0bd4..4f65ef1 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -141,7 +141,7 @@
+>   * advancement entirely.  Any other value is used as-is and disables adaptive
+>   * tuning, i.e. allows priveleged userspace to set an exact advancement time.
+>   */
+> -static int __read_mostly lapic_timer_advance_ns = -1;
+> +int __read_mostly lapic_timer_advance_ns = -1;
+>  module_param(lapic_timer_advance_ns, int, S_IRUGO | S_IWUSR);
+> 
+>  static bool __read_mostly vector_hashing = true;
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index 6594020..2c6ba86 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -301,6 +301,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+> unsigned long cr2,
+> 
+>  extern bool enable_vmware_backdoor;
+> 
+> +extern int lapic_timer_advance_ns;
+>  extern int pi_inject_timer;
+> 
+>  extern struct static_key kvm_no_apic_vcpu;
+> 
 
-So I like this series a lot! Testing is very important.
-And thanks for catching the clone3() exit_signal problem. This way we
-got to release a non-broken kernel. :)
-
-Some notes: I dropped the set_tid extension from the core process
-updates for 5.4 because we ended up in a discussion that made it clear
-we potentially need the ability to restore pids in multiple pid
-namespaces. This means we need some more discussion and the patchset is
-delayed for at least one release.
-Unfortunately, this also means the test that you have based yours upon
-does not exist anymore. However, the tests should not be blocked on
-this. I'd encourage you to talk to Adrian (who is Cced here anyway) and
-come up with a clone3() test suite I can merge. You can very likely do a
-Co-Developed-by so no-ones work gets dropped. :)
-
-Ideally I'd like to see:
-- verifying passing different struct sizes works correctly
-- verify that flag combinations work correctly
-- verify that struct members have correct values etc. pp.
-
-We definitely want the exit_signal test as a regression test so it
-doesn't bite us again!
-
-(Oh, please also add tool/test/selftests/clone3/ to the pidfd/core
- process MAINTAINERS entry.)
-
-Thanks!
-Christian
