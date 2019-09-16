@@ -2,79 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACE85B3EB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 18:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93FCAB3EC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 18:23:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfIPQRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 12:17:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38547 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726055AbfIPQRu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 12:17:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id h195so191417pfe.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 09:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sg+rKbrnTJbgR+NJ8QZZaCm04HUmVdI27xNUqxqbc1I=;
-        b=l21eG8ve4kGqoaP/uEZGS+srtJoVlzN8Aw0HF+n2pNPOXrRYFEPElZY2miEwEA9Hjd
-         qOtr4Mj5hslg2qnanka7RFbRLUwnvKM7RsykdxKan/SsQaHmFW8R8D4534utgMumdCg0
-         clnVrMGMNSQnKZBk+MAedYp13IKZhZhBUZ+9F+wLiihY6PS1m1uTKcKgw79kRmnfo1WS
-         RzgrZu7Vy/gpqlenhiTU1d9jpTqqGQIFnL9TCikoCIougst1B5/uT1cZZVHprTkwyYXT
-         av6KAyHt5Q/Gf98CN074DOlHxTlRBKUXR4HaVxmXlDQGDbU+lSPKgS73MgziTO/Btn+U
-         XSuQ==
+        id S1729541AbfIPQXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 12:23:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39114 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727454AbfIPQXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 12:23:03 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 988E7B2DC4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 16:23:02 +0000 (UTC)
+Received: by mail-wm1-f69.google.com with SMTP id t185so2320wmg.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 09:23:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sg+rKbrnTJbgR+NJ8QZZaCm04HUmVdI27xNUqxqbc1I=;
-        b=a2Ub1iDTs0uKN8RgkTcxHODKtBTjYHAiMM/9FzumLF37yiinomxX2WUcRw7Wq6eN6V
-         zU076yEwK6163fUM8vsvVF1rryGpoolqEf8FSPVF3x2xJ5c099wXfiQwLZ1vf0kt5z0O
-         MeF0LEc7we7utznekQob2xHOAMYt1sMDC0ey4kWTl6lXC3sYtKZ1VIzoY4Ds4d5kTWlf
-         p7XPxTHrKC4Z7NlKbcS62AKVEjsjsdtkI5v16v0rTIyFR27VRT7I+t5fXpfSB3yN2i8L
-         wBQXZ4/faLiUv3BNp4b9/kLBvm+cRenRffRGdb/q3Q+djKc0dAORhC/jENHWtGLlMTzq
-         jemA==
-X-Gm-Message-State: APjAAAXvjjisoDa6hZmtu1EkzFvEMFyNMdXk0Q2fUrEKkw9hFNh8N1fa
-        50fiQU19Vu4pvIgquYzkpw4XSQ==
-X-Google-Smtp-Source: APXvYqyHwegb6ytoRKzWCa3UbHRvPgC8rPKLgmGGxsEIjFPXHQjLiqKa158WRJvNEqeL+kix0Bz9Kg==
-X-Received: by 2002:a63:ed12:: with SMTP id d18mr5893619pgi.211.1568650669880;
-        Mon, 16 Sep 2019 09:17:49 -0700 (PDT)
-Received: from ?IPv6:2605:e000:100e:83a1:c484:c1a1:f495:ecae? ([2605:e000:100e:83a1:c484:c1a1:f495:ecae])
-        by smtp.gmail.com with ESMTPSA id ep10sm1099575pjb.2.2019.09.16.09.17.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Sep 2019 09:17:49 -0700 (PDT)
-Subject: Re: [PATCH 0/4] block, bfq: series of improvements and small fixes of
- the injection mechanism
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name
-References: <20190822152037.15413-1-paolo.valente@linaro.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <74a65657-a988-a1ce-04b1-93486c5fb08f@kernel.dk>
-Date:   Mon, 16 Sep 2019 10:17:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=FDgjsWSDn6xBrhx6U+9m9Eu+qyYKBG2MdOtlO9XcnZA=;
+        b=aR/jng09Vx+d6e2zO2KSeAtBHf37eG/4PQsuCxbdUeq1IfUBCjzZtAaDLc6+6n8hL9
+         YiXpanIxNcOPJUs5TKlxjyGb7bKyrNQQjb0FuzVZrQtxcWV0suL5cM8NvtV75RtN2Cqu
+         Q1yPSQaR12eVLJXWpMKaiKnoZTxhM4VeikAg5s2orwVlsb4u0Cj3KoHDCM+bG/hs0w/V
+         xrKtbAMIgQdfZ1jtM7A/ql31dnsjI4iBL8j1ZJ3pS5FzkENeDycta0tPdX5sQ9D4wirN
+         jSWKttetMKDl5GWMYzbaBEoVuCFxNesGGUCqZQL//C4zDgSxD68Ttfssw/arEM9lcEBj
+         EM/w==
+X-Gm-Message-State: APjAAAUBoChlowe/VUfFvJnYflFE7VDcvCAPzUx+Z8eOIyfOcd5axh4g
+        8LDnQJzRdyix7b1kTTJkVhPtRCT1ThSuxCqbeHIq7Jn/dsRrFhKfyiCARAXaMB54I3bj5NJVYbb
+        ldYIjsPhsbPsy/4vY9WSJDHcF
+X-Received: by 2002:a05:600c:295d:: with SMTP id n29mr42852wmd.36.1568650981047;
+        Mon, 16 Sep 2019 09:23:01 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxHalXeJGi+RCuzUK9rmpW00UqDDt5f6sreleDyRFkD/UPh7GhVb0E++elsWy8IafgPDqQgOA==
+X-Received: by 2002:a05:600c:295d:: with SMTP id n29mr42826wmd.36.1568650980794;
+        Mon, 16 Sep 2019 09:23:00 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id q10sm78370575wrd.39.2019.09.16.09.22.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 09:22:59 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jim Mattson <jmattson@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Roman Kagan <rkagan@virtuozzo.com>
+Subject: [PATCH 0/3] KVM: x86: hyper-v: make L2 Hyper-V 2019 on KVM guests see MD_CLEAR
+Date:   Mon, 16 Sep 2019 18:22:55 +0200
+Message-Id: <20190916162258.6528-1-vkuznets@redhat.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190822152037.15413-1-paolo.valente@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/22/19 9:20 AM, Paolo Valente wrote:
-> Hi Jens,
-> this patch series makes the injection mechanism better at preserving
-> control on I/O.
+[The series is KVM specific but the first patch of the series likely requires
+ someone else's ACK. hyperv-tlfs.h gets a small addition too.]
 
-Applied, thanks.
+It was discovered that L2 guests on Hyper-V 2019 on KVM don't see MD_CLEAR
+bit (and thus think they're MDS vulnerable) even when it is present on the
+host. Turns out, Hyper-V is filtering it out because it is not sure the
+topology L0 is exposing is trustworthy and generally it is not. In some
+specific cases (e.g. when SMT is unsupported or forcesully disabled) it is
+and we can tell this to userspace hoping that it'll pass this info to L1.
+See PATCH2 of the series for additional details.
+
+The series can be tested with QEMU-4.1+ and 'hv-passthrough' CPU flag.
+
+Vitaly Kuznetsov (3):
+  cpu/SMT: create and export cpu_smt_possible()
+  KVM: x86: hyper-v: set NoNonArchitecturalCoreSharing CPUID bit when
+    SMT is impossible
+  KVM: selftests: hyperv_cpuid: add check for
+    NoNonArchitecturalCoreSharing bit
+
+ arch/x86/include/asm/hyperv-tlfs.h            |  7 +++++
+ arch/x86/kvm/hyperv.c                         |  4 ++-
+ include/linux/cpu.h                           |  2 ++
+ kernel/cpu.c                                  | 11 ++++++--
+ .../selftests/kvm/x86_64/hyperv_cpuid.c       | 27 +++++++++++++++++++
+ 5 files changed, 48 insertions(+), 3 deletions(-)
 
 -- 
-Jens Axboe
+2.20.1
 
