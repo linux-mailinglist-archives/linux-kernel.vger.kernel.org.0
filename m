@@ -2,71 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EE46B3343
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 04:28:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E0CB3369
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 04:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbfIPC2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Sep 2019 22:28:37 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:60726 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729553AbfIPC2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Sep 2019 22:28:32 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 901FD1A050C;
-        Mon, 16 Sep 2019 04:28:31 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7C4F91A0920;
-        Mon, 16 Sep 2019 04:28:24 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9585B40307;
-        Mon, 16 Sep 2019 10:28:15 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     Zhiqiang.Hou@nxp.com, bhelgaas@google.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, leoyang.li@nxp.com,
-        kishon@ti.com, lorenzo.pieralisi@arm.com, Minghuan.Lian@nxp.com,
-        andrew.murray@arm.com, mingkai.hu@nxp.com,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCH 6/6] misc: pci_endpoint_test: Add the layerscape PCIe GEN4 EP device support
-Date:   Mon, 16 Sep 2019 10:17:42 +0800
-Message-Id: <20190916021742.22844-7-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190916021742.22844-1-xiaowei.bao@nxp.com>
-References: <20190916021742.22844-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728044AbfIPCa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Sep 2019 22:30:57 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:19167 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728049AbfIPCa5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Sep 2019 22:30:57 -0400
+X-UUID: 7c80d2b7c4eb44afa2af2701a38bad7b-20190916
+X-UUID: 7c80d2b7c4eb44afa2af2701a38bad7b-20190916
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1217469425; Mon, 16 Sep 2019 10:29:50 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 16 Sep
+ 2019 10:29:46 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
+ MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Mon, 16 Sep 2019 10:29:45 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC:     <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
+        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <ck.hu@mediatek.com>,
+        <stonea168@163.com>, Jitao Shi <jitao.shi@mediatek.com>
+Subject: [PATCH v5 0/8] add driver for boe,tv101wum-nl6, boe,tv101wum-n53, auo,kd101n80-45na and auo,b101uan08.3 panels
+Date:   Mon, 16 Sep 2019 10:29:33 +0800
+Message-ID: <20190916022941.15404-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-TM-SNTS-SMTP: 2383DF5C1B7A65AC387BB84E774E25DA2CBF0E84ADC564254AA45A1F6C629A0B2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the layerscape PCIE GEN4 EP device support in pci_endpoint_test driver.
+Changes since v4:
+ - add auo,b101uan08.3 panel for this driver.
+ - add boe,tv101wum-n53 panel for this driver.
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
----
- drivers/misc/pci_endpoint_test.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes since v3:
+ - remove check enable_gpio.
+ - fine tune the auo,kd101n80-45na panel's power on timing.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 6e208a0..8b145a7 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -65,6 +65,7 @@
- #define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
- 
- #define PCI_DEVICE_ID_TI_AM654			0xb00c
-+#define PCI_DEVICE_ID_LX2160A			0x8d80
- 
- #define is_am654_pci_dev(pdev)		\
- 		((pdev)->device == PCI_DEVICE_ID_TI_AM654)
-@@ -793,6 +794,7 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, PCI_DEVICE_ID_LX2160A) },
- 	{ PCI_DEVICE_DATA(SYNOPSYS, EDDA, NULL) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
- 	  .driver_data = (kernel_ulong_t)&am654_data
+Changes since v2:
+ - correct the panel size
+ - remove blank line in Kconfig
+ - move auo,kd101n80-45na panel driver in this series.
+
+Changes since v1:
+
+ - update typo nl6 -> n16.
+ - update new panel config and makefile are added in alphabetically order.
+ - add the panel mode and panel info in driver data.
+ - merge auo,kd101n80-45a and boe,tv101wum-nl6 in one driver
+
+Jitao Shi (8):
+  dt-bindings: display: panel: Add BOE tv101wum-n16 panel bindings
+  drm/panel: support for BOE tv101wum-nl6 wuxga dsi video mode panel
+  dt-bindings: display: panel: add auo kd101n80-45na panel bindings
+  drm/panel: support for auo,kd101n80-45na wuxga dsi video mode panel
+  dt-bindings: display: panel: add boe tv101wum-n53 panel documentation
+  drm/panel: support for boe,tv101wum-n53 wuxga dsi video mode panel
+  dt-bindings: display: panel: add AUO auo,b101uan08.3 panel
+    documentation
+  drm/panel: support for auo,b101uan08.3 wuxga dsi video mode panel
+
+ .../display/panel/auo,b101uan08.3.txt         |  34 +
+ .../display/panel/auo,kd101n80-45na.txt       |  34 +
+ .../display/panel/boe,tv101wum-n53.txt        |  34 +
+ .../display/panel/boe,tv101wum-nl6.txt        |  34 +
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    | 876 ++++++++++++++++++
+ 7 files changed, 1022 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/auo,b101uan08.3.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/auo,kd101n80-45na.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv101wum-n53.txt
+ create mode 100644 Documentation/devicetree/bindings/display/panel/boe,tv101wum-nl6.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
+
 -- 
-2.9.5
+2.21.0
 
