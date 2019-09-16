@@ -2,269 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F113B3528
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27DE5B353A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbfIPHKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 03:10:37 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:31532 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730442AbfIPHKg (ORCPT
+        id S1730623AbfIPHLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 03:11:23 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:16688 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726082AbfIPHLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 03:10:36 -0400
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8G77rTx016418;
-        Mon, 16 Sep 2019 03:10:35 -0400
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp2058.outbound.protection.outlook.com [104.47.42.58])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2v0w47jsqt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Sep 2019 03:10:35 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n/WqhpnIFsZ4NzI9kInAeB5SiaaXeJ/YsCvdWJbsiBdnVYtkaHXeESd5h9z8lrW9garb5O2+Fr9Y4L7zKbV3PzLSgIfGeZmzBuHns+s1sZR6fso9ulbZsVElBXQFYQBK/lfbGsGYo0K4aaybHKCo6EJ7kISMhRQjcSy/K+DUTtapbqhE1mYsPZ/ycOzSJcOqSuchzzRRUs2Xd9iZPbM92YSfi8dye5tUgQkZpbMoiU1YjUYCCd+zqsxj+Z8955fTcDY2oIwO9nCeH0dVw+cRyKkZYPK/1EAU1qmJHfmqrXWicVSQ6cl/bFjHR99+7caDKAKfLJ01rtieOKZDKI265Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xaM1SxqT2GWMH5PNNJdquphJwaB2Lq4IgSpM3l/5FJI=;
- b=jtfAtDxiFV/9IkoZUxCJLi8HHWB0+QdCw66+5k3yVWWO/0aZC4Nfal9C3j4kBv73zlYDkqHkLQoQbc4Ll9rqrjQHe+k3lK+/nct4IHevgUQOg3U6k0w26PtODTzwujgzYMf0mXcJheLH9O+b53cm/7b38ulkQJ8j3SjTdGFijn0yneckL3jowgm65f3puVSjjCaY5F53rM4ino2+JmYMAjoWmA0mPHe2pp0LNwly6Fro/ZaU/dZqDPMo0kAupxlkFYDVBdh1SLCk7iH3cwoX9cNYLbpILl2OHTn8JNFG9yo7/gpkziX79H3JeIZTAZeQgxGxP8/WGM7h8tsvlO1CcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xaM1SxqT2GWMH5PNNJdquphJwaB2Lq4IgSpM3l/5FJI=;
- b=IW5Kgtm+f9x3axQuikIbm9IraxLKFEZSz6/BNZO4DMKJRNieSxETX/7wI0Pmue4e3LgPADWTXg10UfHxaBAycpflYPZ3yD7IG9eesWiwu0TG6CFZVhMqbzVzskgLE5njkpRfIYo589aRdaNDbwp0gr98JJ9YqAtQHuAQphgHyF8=
-Received: from MWHPR03CA0029.namprd03.prod.outlook.com (2603:10b6:301:3b::18)
- by MN2PR03MB4733.namprd03.prod.outlook.com (2603:10b6:208:106::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.15; Mon, 16 Sep
- 2019 07:10:33 +0000
-Received: from BL2NAM02FT028.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::204) by MWHPR03CA0029.outlook.office365.com
- (2603:10b6:301:3b::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.15 via Frontend
- Transport; Mon, 16 Sep 2019 07:10:33 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- BL2NAM02FT028.mail.protection.outlook.com (10.152.77.165) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2263.17
- via Frontend Transport; Mon, 16 Sep 2019 07:10:33 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x8G7ASeQ016135
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Mon, 16 Sep 2019 00:10:28 -0700
-Received: from saturn.ad.analog.com (10.48.65.123) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 16 Sep 2019 03:10:32 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <linux-iio@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <jic23@kernel.org>, <broonie@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v3 3/3] spi: make `cs_change_delay` the first user of the `spi_delay` logic
-Date:   Mon, 16 Sep 2019 10:10:24 +0300
-Message-ID: <20190916071024.21447-4-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190916071024.21447-1-alexandru.ardelean@analog.com>
-References: <20190916071024.21447-1-alexandru.ardelean@analog.com>
+        Mon, 16 Sep 2019 03:11:22 -0400
+X-UUID: f1b8921be39243db81135c57cd8880b7-20190916
+X-UUID: f1b8921be39243db81135c57cd8880b7-20190916
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1352235378; Mon, 16 Sep 2019 15:11:14 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
+ (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 16 Sep
+ 2019 15:11:07 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 16 Sep 2019 15:11:06 +0800
+Message-ID: <1568617865.7317.74.camel@mhfsdcap03>
+Subject: Re: [Patch V9 3/8] phy: tegra: xusb: Add vbus override support on
+ Tegra210
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Nagarjuna Kristam <nkristam@nvidia.com>
+CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Date:   Mon, 16 Sep 2019 15:11:05 +0800
+In-Reply-To: <1568354873-24073-4-git-send-email-nkristam@nvidia.com>
+References: <1568354873-24073-1-git-send-email-nkristam@nvidia.com>
+         <1568354873-24073-4-git-send-email-nkristam@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(136003)(189003)(199004)(86362001)(426003)(26005)(246002)(186003)(48376002)(316002)(47776003)(2870700001)(305945005)(5660300002)(54906003)(110136005)(2906002)(106002)(51416003)(7696005)(36756003)(76176011)(50226002)(107886003)(4326008)(486006)(11346002)(126002)(44832011)(476003)(2616005)(7636002)(8936002)(6666004)(356004)(446003)(478600001)(1076003)(70206006)(14444005)(70586007)(50466002)(8676002)(2201001)(336012)(81973001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR03MB4733;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0020b6fc-e89e-4413-823d-08d73a74f71b
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(4709080)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:MN2PR03MB4733;
-X-MS-TrafficTypeDiagnostic: MN2PR03MB4733:
-X-Microsoft-Antispam-PRVS: <MN2PR03MB47330E7DB6F7EA919F34ECC5F98C0@MN2PR03MB4733.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 0162ACCC24
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: OujM9dNsT/stJcuALV6tHpdaN9Ax0tIQ9ypahZnzuPLnxb5rvlZXC0YEmf7dKeHvT+cj9I/s0Yq8jAatb83r16m7R6HYvfwN0R1CPiUTJTbH6YZ/9JSBo9QY8k1fP30GJStBkjaE7EFFqqQlcfIlx8rAAXdcuOv4ff6diu7d89ClnCy1h8VUZBAOlXQ+3JdnyK3UKCfdo8KKcOfq5V1qFf3coRfm6V2jDseqSsR9Gqx8L6nAlzYFPVnNdkkMzR17uZACR3IrkO/uM2obNd2/o9fHgxFI+U6QcH6S3xnGg3t2jyJpL9W0fnGOebNAONoiAOhfjl7aGKsNltE74GB8nxe9iDU2omoL3YhrkUPqNmbes0uKfls7oBPK6X2R3PVctq0kJs21Sb/VYdvFmqfit3nVADpobsipsQiGWdR9QNw=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2019 07:10:33.2186
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0020b6fc-e89e-4413-823d-08d73a74f71b
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR03MB4733
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-16_04:2019-09-11,2019-09-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 mlxscore=0 mlxlogscore=999
- malwarescore=0 bulkscore=0 priorityscore=1501 suspectscore=0 spamscore=0
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1909160077
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: DF578D0D8935BFB61BBE328B9FF34215B0B7C778C60519D9D891F49837686EC22000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the logic for `spi_delay` struct + `spi_delay_exec()` has been copied
-from the `cs_change_delay` logic, it's natural to make this delay, the
-first user.
+On Fri, 2019-09-13 at 11:37 +0530, Nagarjuna Kristam wrote:
+> Tegra XUSB device control driver needs to control vbus override
+> during its operations, add API for the support.
+> 
+> Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/phy/tegra/xusb-tegra210.c | 57 +++++++++++++++++++++++++++++++++++++++
+>  drivers/phy/tegra/xusb.c          | 22 +++++++++++++++
+>  drivers/phy/tegra/xusb.h          |  2 ++
+>  include/linux/phy/tegra/xusb.h    |  4 ++-
+>  4 files changed, 84 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
+> index 8c31f03..9e6f14b 100644
+> --- a/drivers/phy/tegra/xusb-tegra210.c
+> +++ b/drivers/phy/tegra/xusb-tegra210.c
+> @@ -65,6 +65,10 @@
+>  #define XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(x) (1 << (1 + (x)))
+>  #define XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(x) (1 << (8 + (x)))
+>  
+> +#define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL0(x) (0x080 + (x) * 0x40)
+> +#define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIP (1 << 18)
+> +#define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIN (1 << 22)
+> +
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL1(x) (0x084 + (x) * 0x40)
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_SHIFT 7
+>  #define XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL1_VREG_LEV_MASK 0x3
+> @@ -227,6 +231,12 @@
+>  #define XUSB_PADCTL_UPHY_USB3_PADX_ECTL6(x) (0xa74 + (x) * 0x40)
+>  #define XUSB_PADCTL_UPHY_USB3_PAD_ECTL6_RX_EQ_CTRL_H_VAL 0xfcf01368
+>  
+> +#define XUSB_PADCTL_USB2_VBUS_ID 0xc60
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON (1 << 14)
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT 18
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK 0xf
+> +#define XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING 8
+> +
+>  struct tegra210_xusb_fuse_calibration {
+>  	u32 hs_curr_level[4];
+>  	u32 hs_term_range_adj;
+> @@ -2016,6 +2026,51 @@ static const struct tegra_xusb_port_ops tegra210_usb3_port_ops = {
+>  	.map = tegra210_usb3_port_map,
+>  };
+>  
+> +static int tegra210_xusb_padctl_vbus_override(struct tegra_xusb_padctl *padctl,
+> +					      bool status)
+> +{
+> +	u32 value;
+> +
+> +	dev_dbg(padctl->dev, "%s vbus override\n", status ? "set" : "clear");
+> +
+> +	value = padctl_readl(padctl, XUSB_PADCTL_USB2_VBUS_ID);
+> +
+> +	if (status) {
+> +		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+> +		value &= ~(XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_MASK <<
+> +			   XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT);
+> +		value |= XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_FLOATING <<
+> +			 XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_SHIFT;
+> +	} else
+> +		value &= ~XUSB_PADCTL_USB2_VBUS_ID_OVERRIDE_VBUS_ON;
+Nit: use braces in else branch
 
-The `cs_change_delay` logic requires that the default remain 10 uS, in case
-it is unspecified/unconfigured. So, there is some special handling needed
-to do that.
+> +
+> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_VBUS_ID);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_utmi_port_reset(struct phy *phy)
+> +{
+> +	struct tegra_xusb_padctl *padctl;
+> +	struct tegra_xusb_lane *lane;
+> +	u32 value;
+> +
+> +	lane = phy_get_drvdata(phy);
+> +	padctl = lane->pad->padctl;
+> +
+> +	value = padctl_readl(padctl,
+> +		     XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPADX_CTL0(lane->index));
+> +
+> +	if ((value & XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIP) ||
+> +	    (value & XUSB_PADCTL_USB2_BATTERY_CHRG_OTGPAD_CTL0_ZIN)) {
+> +		tegra210_xusb_padctl_vbus_override(padctl, false);
+> +		tegra210_xusb_padctl_vbus_override(padctl, true);
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int
+>  tegra210_xusb_read_fuse_calibration(struct tegra210_xusb_fuse_calibration *fuse)
+>  {
+> @@ -2078,6 +2133,8 @@ static const struct tegra_xusb_padctl_ops tegra210_xusb_padctl_ops = {
+>  	.remove = tegra210_xusb_padctl_remove,
+>  	.usb3_set_lfps_detect = tegra210_usb3_set_lfps_detect,
+>  	.hsic_set_idle = tegra210_hsic_set_idle,
+> +	.vbus_override = tegra210_xusb_padctl_vbus_override,
+> +	.utmi_port_reset = tegra210_utmi_port_reset,
+>  };
+>  
+>  static const char * const tegra210_xusb_padctl_supply_names[] = {
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index b4b217e..bf4b008 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -1121,6 +1121,28 @@ int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
+>  }
+>  EXPORT_SYMBOL_GPL(tegra_xusb_padctl_usb3_set_lfps_detect);
+>  
+> +int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
+> +							bool val)
+> +{
+> +	if (padctl->soc->ops->vbus_override)
+> +		return padctl->soc->ops->vbus_override(padctl, val);
+> +
+> +	return -ENOTSUPP;
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_set_vbus_override);
+> +
+> +int tegra_phy_xusb_utmi_port_reset(struct phy *phy)
+> +{
+> +	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+> +	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
+> +
+> +	if (padctl->soc->ops->utmi_port_reset)
+> +		return padctl->soc->ops->utmi_port_reset(phy);
+> +
+> +	return -ENOTSUPP;
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_phy_xusb_utmi_port_reset);
+> +
+>  MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+>  MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+> index bd91832..da94fcc 100644
+> --- a/drivers/phy/tegra/xusb.h
+> +++ b/drivers/phy/tegra/xusb.h
+> @@ -373,6 +373,8 @@ struct tegra_xusb_padctl_ops {
+>  			     unsigned int index, bool idle);
+>  	int (*usb3_set_lfps_detect)(struct tegra_xusb_padctl *padctl,
+>  				    unsigned int index, bool enable);
+> +	int (*vbus_override)(struct tegra_xusb_padctl *padctl, bool set);
+> +	int (*utmi_port_reset)(struct phy *phy);
+>  };
+>  
+>  struct tegra_xusb_padctl_soc {
+> diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
+> index ee59562..1235865 100644
+> --- a/include/linux/phy/tegra/xusb.h
+> +++ b/include/linux/phy/tegra/xusb.h
+> @@ -18,5 +18,7 @@ int tegra_xusb_padctl_hsic_set_idle(struct tegra_xusb_padctl *padctl,
+>  				    unsigned int port, bool idle);
+>  int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *padctl,
+>  					   unsigned int port, bool enable);
+> -
+> +int tegra_xusb_padctl_set_vbus_override(struct tegra_xusb_padctl *padctl,
+> +					bool val);
+> +int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
+>  #endif /* PHY_TEGRA_XUSB_H */
 
-The ADIS library is one of the few users of the new `cs_change_delay`
-parameter for an spi_transfer.
-
-The introduction of the `spi_delay` struct, requires that the users of of
-`cs_change_delay` get an update. This change also updates the ADIS library.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/iio/imu/adis.c  | 24 ++++++++++++------------
- drivers/spi/spi.c       | 28 +++++++---------------------
- include/linux/spi/spi.h |  4 +---
- 3 files changed, 20 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-index 1631c255deab..2cd2cc2316c6 100644
---- a/drivers/iio/imu/adis.c
-+++ b/drivers/iio/imu/adis.c
-@@ -39,24 +39,24 @@ int adis_write_reg(struct adis *adis, unsigned int reg,
- 			.len = 2,
- 			.cs_change = 1,
- 			.delay_usecs = adis->data->write_delay,
--			.cs_change_delay = adis->data->cs_change_delay,
--			.cs_change_delay_unit = SPI_DELAY_UNIT_USECS,
-+			.cs_change_delay.value = adis->data->cs_change_delay,
-+			.cs_change_delay.unit = SPI_DELAY_UNIT_USECS,
- 		}, {
- 			.tx_buf = adis->tx + 2,
- 			.bits_per_word = 8,
- 			.len = 2,
- 			.cs_change = 1,
- 			.delay_usecs = adis->data->write_delay,
--			.cs_change_delay = adis->data->cs_change_delay,
--			.cs_change_delay_unit = SPI_DELAY_UNIT_USECS,
-+			.cs_change_delay.value = adis->data->cs_change_delay,
-+			.cs_change_delay.unit = SPI_DELAY_UNIT_USECS,
- 		}, {
- 			.tx_buf = adis->tx + 4,
- 			.bits_per_word = 8,
- 			.len = 2,
- 			.cs_change = 1,
- 			.delay_usecs = adis->data->write_delay,
--			.cs_change_delay = adis->data->cs_change_delay,
--			.cs_change_delay_unit = SPI_DELAY_UNIT_USECS,
-+			.cs_change_delay.value = adis->data->cs_change_delay,
-+			.cs_change_delay.unit = SPI_DELAY_UNIT_USECS,
- 		}, {
- 			.tx_buf = adis->tx + 6,
- 			.bits_per_word = 8,
-@@ -139,16 +139,16 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
- 			.len = 2,
- 			.cs_change = 1,
- 			.delay_usecs = adis->data->write_delay,
--			.cs_change_delay = adis->data->cs_change_delay,
--			.cs_change_delay_unit = SPI_DELAY_UNIT_USECS,
-+			.cs_change_delay.value = adis->data->cs_change_delay,
-+			.cs_change_delay.unit = SPI_DELAY_UNIT_USECS,
- 		}, {
- 			.tx_buf = adis->tx + 2,
- 			.bits_per_word = 8,
- 			.len = 2,
- 			.cs_change = 1,
- 			.delay_usecs = adis->data->read_delay,
--			.cs_change_delay = adis->data->cs_change_delay,
--			.cs_change_delay_unit = SPI_DELAY_UNIT_USECS,
-+			.cs_change_delay.value = adis->data->cs_change_delay,
-+			.cs_change_delay.unit = SPI_DELAY_UNIT_USECS,
- 		}, {
- 			.tx_buf = adis->tx + 4,
- 			.rx_buf = adis->rx,
-@@ -156,8 +156,8 @@ int adis_read_reg(struct adis *adis, unsigned int reg,
- 			.len = 2,
- 			.cs_change = 1,
- 			.delay_usecs = adis->data->read_delay,
--			.cs_change_delay = adis->data->cs_change_delay,
--			.cs_change_delay_unit = SPI_DELAY_UNIT_USECS,
-+			.cs_change_delay.value = adis->data->cs_change_delay,
-+			.cs_change_delay.unit = SPI_DELAY_UNIT_USECS,
- 		}, {
- 			.rx_buf = adis->rx + 2,
- 			.bits_per_word = 8,
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 1883de8ffa82..d0bf0ffca042 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1160,9 +1160,9 @@ EXPORT_SYMBOL_GPL(spi_delay_exec);
- static void _spi_transfer_cs_change_delay(struct spi_message *msg,
- 					  struct spi_transfer *xfer)
- {
--	u32 delay = xfer->cs_change_delay;
--	u32 unit = xfer->cs_change_delay_unit;
--	u32 hz;
-+	u32 delay = xfer->cs_change_delay.value;
-+	u32 unit = xfer->cs_change_delay.unit;
-+	int ret;
- 
- 	/* return early on "fast" mode - for everything but USECS */
- 	if (!delay) {
-@@ -1171,27 +1171,13 @@ static void _spi_transfer_cs_change_delay(struct spi_message *msg,
- 		return;
- 	}
- 
--	switch (unit) {
--	case SPI_DELAY_UNIT_USECS:
--		delay *= 1000;
--		break;
--	case SPI_DELAY_UNIT_NSECS: /* nothing to do here */
--		break;
--	case SPI_DELAY_UNIT_SCK:
--		/* if there is no effective speed know, then approximate
--		 * by underestimating with half the requested hz
--		 */
--		hz = xfer->effective_speed_hz ?: xfer->speed_hz / 2;
--		delay *= DIV_ROUND_UP(1000000000, hz);
--		break;
--	default:
-+	ret = spi_delay_exec(&xfer->cs_change_delay, xfer);
-+	if (ret) {
- 		dev_err_once(&msg->spi->dev,
- 			     "Use of unsupported delay unit %i, using default of 10us\n",
--			     xfer->cs_change_delay_unit);
--		delay = 10000;
-+			     unit);
-+		_spi_transfer_delay_ns(10000);
- 	}
--	/* now sleep for the requested amount of time */
--	_spi_transfer_delay_ns(delay);
- }
- 
- /*
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index c18cfa7cda35..9ded3f44d58e 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -754,7 +754,6 @@ extern void spi_res_release(struct spi_controller *ctlr,
-  * @cs_change: affects chipselect after this transfer completes
-  * @cs_change_delay: delay between cs deassert and assert when
-  *      @cs_change is set and @spi_transfer is not the last in @spi_message
-- * @cs_change_delay_unit: unit of cs_change_delay
-  * @delay_usecs: microseconds to delay after this transfer before
-  *	(optionally) changing the chipselect status, then starting
-  *	the next transfer or completing this @spi_message.
-@@ -847,8 +846,7 @@ struct spi_transfer {
- 	u8		bits_per_word;
- 	u8		word_delay_usecs;
- 	u16		delay_usecs;
--	u16		cs_change_delay;
--	u8		cs_change_delay_unit;
-+	struct spi_delay	cs_change_delay;
- 	u32		speed_hz;
- 	u16		word_delay;
- 
--- 
-2.20.1
 
