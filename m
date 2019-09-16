@@ -2,67 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DB85B35B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79174B35C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 09:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbfIPHft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 03:35:49 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44723 "EHLO mga06.intel.com"
+        id S1729417AbfIPHir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 03:38:47 -0400
+Received: from mga11.intel.com ([192.55.52.93]:36195 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfIPHfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 03:35:48 -0400
+        id S1728040AbfIPHir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 03:38:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 00:35:47 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 00:38:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,510,1559545200"; 
-   d="scan'208";a="211068979"
-Received: from sshkruni-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.38.138])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Sep 2019 00:35:42 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, stable@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: Fix tpm_send() length calculation
-Date:   Mon, 16 Sep 2019 10:35:35 +0300
-Message-Id: <20190916073535.25117-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+   d="scan'208";a="386120407"
+Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Sep 2019 00:38:45 -0700
+From:   "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+To:     broonie@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com,
+        "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Subject: [PATCH v1 0/2] spi: cadence-qspi: Add cadence-qspi support for Intel LGM SoC
+Date:   Mon, 16 Sep 2019 15:38:41 +0800
+Message-Id: <20190916073843.39618-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the size of the tpm_buf correctly. Now it is set to the header
-length by tpm_buf_init().
+patch 1: Add YAML for cadence-qspi devicetree cdocumentation.
+patch 2: cadence-qspi controller driver to support QSPI-NAND flash
+using existing spi-nand framework with legacy spi protocol.
 
-Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-Cc: stable@vger.kernel.org
-Fixes: 412eb585587a ("use tpm_buf in tpm_transmit_cmd() as the IO parameter")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-interface.c | 2 ++
- 1 file changed, 2 insertions(+)
+Ramuthevar Vadivel Murugan (2):
+  dt-bindings: spi: Add support for cadence-qspi IP Intel LGM SoC
+  spi: cadence-qspi: Add QSPI support for Intel LGM SoC
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index d9ace5480665..4aa7e7f91139 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -363,6 +363,8 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
- 		goto out;
- 
- 	memcpy(buf.data, cmd, buflen);
-+	buf.length = buflen;
-+
- 	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to a send a command");
- 	tpm_buf_destroy(&buf);
- out:
+ .../devicetree/bindings/spi/cadence,qspi-nand.yaml |  84 +++
+ drivers/spi/Kconfig                                |   9 +
+ drivers/spi/Makefile                               |   1 +
+ drivers/spi/spi-cadence-qspi-apb.c                 | 644 +++++++++++++++++++++
+ drivers/spi/spi-cadence-qspi-apb.h                 | 174 ++++++
+ drivers/spi/spi-cadence-qspi.c                     | 461 +++++++++++++++
+ drivers/spi/spi-cadence-qspi.h                     |  73 +++
+ 7 files changed, 1446 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/cadence,qspi-nand.yaml
+ create mode 100644 drivers/spi/spi-cadence-qspi-apb.c
+ create mode 100644 drivers/spi/spi-cadence-qspi-apb.h
+ create mode 100644 drivers/spi/spi-cadence-qspi.c
+ create mode 100644 drivers/spi/spi-cadence-qspi.h
+
 -- 
-2.20.1
+2.11.0
 
