@@ -2,234 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CCBB3A4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 14:26:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FE8CB3A59
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 14:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732681AbfIPMZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 08:25:59 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:44381 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732490AbfIPMZ7 (ORCPT
+        id S1732618AbfIPMax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 08:30:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39883 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726930AbfIPMax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 08:25:59 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190916122557euoutp02a0da0caa4cab3d5adde1f97acb4f0bad~E6tHPzngq2830128301euoutp02R
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 12:25:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190916122557euoutp02a0da0caa4cab3d5adde1f97acb4f0bad~E6tHPzngq2830128301euoutp02R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1568636757;
-        bh=pd4LFeq8Hf58x/uaWkVtzZwd7F67Yro/hz+c01DyRcI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=T2TOmDnahUthPHi9YcaYdbBQel9Sc0qqCn1FJ+pZu4rTZMqSyyO73UFBP8z+Wm//4
-         RIxz3xcgBppvptdP4JIfeM1nJFj0x/oPaRzUsAbsRKdUaJVN8OmYJNNbMHT3RF2mvf
-         My6mjNkBFXCIH56CGALBRLlVeWCVxYlssw7DSHdY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190916122555eucas1p1b403dcd9a69c421eec08dea14a4aabf7~E6tGKH_RG0799707997eucas1p1N;
-        Mon, 16 Sep 2019 12:25:55 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 35.93.04469.35F7F7D5; Mon, 16
-        Sep 2019 13:25:55 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190916122555eucas1p100b7f2c9c7c63a585a8b96aafb931c01~E6tFWzA1e0775607756eucas1p1P;
-        Mon, 16 Sep 2019 12:25:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190916122554eusmtrp29217d31fe51b7619dabfd1be6c2cf541~E6tFIeilQ1085610856eusmtrp2y;
-        Mon, 16 Sep 2019 12:25:54 +0000 (GMT)
-X-AuditID: cbfec7f2-569ff70000001175-c7-5d7f7f536494
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 47.D6.04166.25F7F7D5; Mon, 16
-        Sep 2019 13:25:54 +0100 (BST)
-Received: from [106.120.51.74] (unknown [106.120.51.74]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190916122553eusmtip281778247ca06eec9d1ec906ab34edca4~E6tETXae41817718177eusmtip2D;
-        Mon, 16 Sep 2019 12:25:53 +0000 (GMT)
-Subject: Re: [PATCH 05/11] drm/bridge: analogix-anx78xx: correct value of
- TX_P0
-To:     Brian Masney <masneyb@onstation.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org, agross@kernel.org,
-        narmstrong@baylibre.com, robdclark@gmail.com, sean@poorly.run,
-        airlied@linux.ie, daniel@ffwll.ch, mark.rutland@arm.com,
-        jonas@kwiboo.se, jernej.skrabec@siol.net, linus.walleij@linaro.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        freedreno@lists.freedesktop.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <d729f4cd-1d00-fc8b-1688-78c9f325eeac@samsung.com>
-Date:   Mon, 16 Sep 2019 14:25:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        Mon, 16 Sep 2019 08:30:53 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r3so8534418wrj.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 05:30:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=hMxXlh9zFLUfJBiAx98gGeK6kgAShuI4peDjRPtRM1c=;
+        b=S7dTE9jiJX5hhQk0YS+X0BdXK3IFumIOUDWn6l/Xqq9RbIBhgwFMsoB4zHJubcYobI
+         g6+Ky6PTegQkiih/AwSx+4+9yafgxdVG7ZxTLRqaDokJYGkt5oBqXIPaifMCDJaLw7pA
+         KgrYOZ6yOqjdXmbBpJRTQ5DIXZqd2x5U3IJ1pA3ZZ2NRaIEiXl49Lq6y0Gs/549kFniN
+         y+Z3IaOMpYSSksyr6CzyeHA3HBH6h+oTJ9Zyy5bvku40tug1PwQZ5tR6mKfWkmKzQ8I2
+         vT+lobI2X1p/jJg9T28iRT5LiNi5qcZ4MFSJDneV3eUzD+lKFFHl+r3BHxIuFz8EHntC
+         8RTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=hMxXlh9zFLUfJBiAx98gGeK6kgAShuI4peDjRPtRM1c=;
+        b=fs1tR8e2Kj1GjCMicB3NTuVRSWMz3RpihKIqvPq0cS/3OWHbNJialUJ/tIALOvNJ18
+         fj/+Y68URf2tFAaQKFXsxN8h7HahvJWaDyZUGpZyLQ14OJH/vgWa7arQD6FspcXBXyNH
+         yVyUZo39yP7xrBLvNRb3X3CSs/qorJw4qa9iTfA75N/z1l63u7FgGR48ekcL8AY8Nmpk
+         qESgZlC8qIh92arqCfTA/PNFyu/FSB2xv1MP3OxHZGRVd/T6FxHoOwrnJjcZgwHymYQ+
+         YLBNB+fv9pw0HeyJKSBP53qx7zd121g8trPJXyAkYYtXOaOEk84A/z+KE+U+eWbBv43D
+         sdeg==
+X-Gm-Message-State: APjAAAUEqkwsKvysxTrpQ/tLnUhkVzwHZSxIbskjcdxQvOKRqoqjBlFf
+        XU4CpKmikajkIrWiYlvUywg=
+X-Google-Smtp-Source: APXvYqymBDb/uadD6Beg/iwZ2ztPqhr9/dBWBnIvcTQeePH4BRMm3F4ADpEJS1PaEbG6OKZkkFFSDA==
+X-Received: by 2002:a5d:4ed0:: with SMTP id s16mr10345150wrv.248.1568637050256;
+        Mon, 16 Sep 2019 05:30:50 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id o12sm15032359wrm.23.2019.09.16.05.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 05:30:49 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 14:30:47 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>
+Subject: [GIT PULL] scheduler changes for v5.4
+Message-ID: <20190916123047.GA102572@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190916120228.GA3045@onstation.org>
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTut/tUWtxN04NJ0SAio9QM+kUPCvrjBv2hVNADq1vdluWW7Gbv
-        nJXWMrTZ2y0tS5nKophpOlJrSstso/Uws2QLpXf2tHea2y3yv++c833nOx8cllCfp2PYNP1m
-        0aAX0jV0OFl747t30kKjMTXhq3089nb/JHG+t1WB25p6STxQW0jgMy1eCt/ve0dj+2MXwqef
-        exB+8PUlgVvfPCDxwcIyBh/7ZVNgR3c7hQubPAy+5zxN4/KHPgU+bH1NYVfBcvy89BuBcxta
-        GNx1tAXNGcnbS+yIf9eRy/B1XWWIb/hyluTrLV0MbzUVUbyj6iDN3zTfVfBP2q/S/JUvAYr3
-        H3Ir+OoyI1/eEcG7nZ0Mfy3/KMl/coxO5paFz1wrpqdtEQ3xs1eFr6+22+iMCxO22Y4VM9mo
-        RpOHwljgpsKzwHEmiNVcBYJDPfPzUPgg/owg+1YpKRefENhO5FH/FFZHCZIHNgTvrWW0XLxF
-        sLf3R4gVwaXAbYuXDuJIToDuxjchBcHtJ6Hw3JGQIc1NgN/Vj0IkJTcbDjjNITHJjYOGtuIQ
-        HsktgY+BZkrmqKC1qGfwJpYN46aAf1+oTXBjYF+NlZBxNHT2nFEEvYALsFBQ+pQI8oGbB3mV
-        s+QEEfDKfZmRcSwM1Af5QWwEf0UOIWtNCGou1RPyYAY0u31UcA8xePNFZ7zcngvmNh8prx8B
-        HW9V8gkj4Ejtyb+uSjDtV8vsseD31PxdGA3ld/poM9JYhuSyDAljGRLG8t/3LCKrULSYKem0
-        opSoF7dOlgSdlKnXTl6zSedAg6/b1u/+WIf67q52IY5FmuHK7NysVDUlbJG261wIWEITqUze
-        bUxVK9cK23eIhk0rDZnpouRCo1hSE63cOSywXM1phc3iRlHMEA3/pgo2LCYbqdQ7vH3C0vxR
-        Rb0rLvdfq2pOemluqa9OOEVHNZK5A4v0ppR1CbaLCZEHYozD2p1RGZ6xSa7G1/7jYlblLt/E
-        F/eTdu+pTI7SLjF4xcSNOaYuV4pwc4G2WPLVfZje9AS/UJmy4hsW57R6ptWlXY+d8/hUf6cr
-        dn6P6lVcwYbfP3UaUlovJMYRBkn4A6FlcQK2AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0yMcRzH931+3XPN6XGV+8qGnTWyeXJX6Zvphg2PYcL8WGl5lmdF3V27
-        52p+TEVCWZT84yn9oNMkTXerrmjlpNyukiiJxLKh/BoqJj+qY+u/1/Z+vf74bB8aV9pJX3q/
-        wSyYDHyCmvIgXL9bXyzdlpoatcxSwqKOwZ8Eyu5wYsjV+JFAf2pycVTU3EGixyOfKFTxzAFQ
-        wZt2gLrH3uHI+b6bQJm5pTJ0YbwMQ9bBHhLlNrbL0KP6AgpZnjzE0Ln8YRI5zkaiNyXfcZTR
-        0CxD/XnNYJUPV1FYAbhPvRkyzt5fCriG0WKCq5P6ZVz+6YskZy3PpLj7OV0Y97znNsXVjr4k
-        uYEzrRhnK03lLL1eXGt9n4xrys4juK/WeeFMBLvSZEwyCwvijKI5TB2pQVpWE4pYbVAoqwkM
-        iVqhDVYH6FbuExL2JwumAN1eNs5WUUYl3vA/WHbhkiwNVKuzgJyGTBDMtxaCLOBBKxkLgJcz
-        h3D3oIK3ij78Yy843pNFuaVhAI9/LMMmBy9mK2yTOqhJ9mZ46Pp5dUrCmZMErKtsIN3FTRx2
-        j1QRkxbF+MNftqdThYLRwVP1OeQkE4wfbHBdmmIfZje8a5eA25kFnRdfT7Q0LWe0cCB9SsGZ
-        RXC8sAt383yYXp3/j1Ww73URlgOU0rRampZI0xJpWlIMiHLgLSSJ+li9qGFFXi8mGWLZGKPe
-        Cia+pqblh80Ouqq2OwBDA/UMRVpGSpSS5JPFQ3oHgDSu9laEH02NUir28YcOCyZjtCkpQRAd
-        IHjitlzc1yfGOPGDBnO0JlgTgkI1IYEhgcuRWqU4zdzZo2RiebMQLwiJgul/h9Fy3zTgufna
-        jrH2yuqIY9ROc+PcLRsMHtfPh9Oe8xds6o75su6UIX5XdvTcxctLZvr0dGqji2e/WP3AhS17
-        q+NH158bGWgfbdPJ4x+eOGLPs6UHduosCz3jmmrXql45zZ6Sk51DyTePkfdK04Kl4gMpfnXf
-        Oq9s5NdEbmj5XFU51KoKYzzUhBjHa5bgJpH/C4U8smxLAwAA
-X-CMS-MailID: 20190916122555eucas1p100b7f2c9c7c63a585a8b96aafb931c01
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190815004918epcas3p135042bc52c7e3c8b1aca7624d121af97
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190815004918epcas3p135042bc52c7e3c8b1aca7624d121af97
-References: <20190815004854.19860-1-masneyb@onstation.org>
-        <CGME20190815004918epcas3p135042bc52c7e3c8b1aca7624d121af97@epcas3p1.samsung.com>
-        <20190815004854.19860-6-masneyb@onstation.org>
-        <dc10dd84-72e2-553e-669b-271b77b4a21a@samsung.com>
-        <20190916103614.GA1644@onstation.org>
-        <20190916104907.GB4734@pendragon.ideasonboard.com>
-        <3ec4f0bc-f3c5-aebf-8213-bc4f80915902@collabora.com>
-        <20190916120228.GA3045@onstation.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.09.2019 14:02, Brian Masney wrote:
-> On Mon, Sep 16, 2019 at 01:32:58PM +0200, Enric Balletbo i Serra wrote:
->> Hi,
->>
->> On 16/9/19 12:49, Laurent Pinchart wrote:
->>> Hi Brian,
->>>
->>> On Mon, Sep 16, 2019 at 06:36:14AM -0400, Brian Masney wrote:
->>>> On Mon, Sep 16, 2019 at 12:02:09PM +0200, Andrzej Hajda wrote:
->>>>> On 15.08.2019 02:48, Brian Masney wrote:
->>>>>> When attempting to configure this driver on a Nexus 5 phone (msm8974),
->>>>>> setting up the dummy i2c bus for TX_P0 would fail due to an -EBUSY
->>>>>> error. The downstream MSM kernel sources [1] shows that the proper value
->>>>>> for TX_P0 is 0x78, not 0x70, so correct the value to allow device
->>>>>> probing to succeed.
->>>>>>
->>>>>> [1] https://github.com/AICP/kernel_lge_hammerhead/blob/n7.1/drivers/video/slimport/slimport_tx_reg.h
->>>>>>
->>>>>> Signed-off-by: Brian Masney <masneyb@onstation.org>
->>>>>> ---
->>>>>>  drivers/gpu/drm/bridge/analogix-anx78xx.h | 2 +-
->>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.h b/drivers/gpu/drm/bridge/analogix-anx78xx.h
->>>>>> index 25e063bcecbc..bc511fc605c9 100644
->>>>>> --- a/drivers/gpu/drm/bridge/analogix-anx78xx.h
->>>>>> +++ b/drivers/gpu/drm/bridge/analogix-anx78xx.h
->>>>>> @@ -6,7 +6,7 @@
->>>>>>  #ifndef __ANX78xx_H
->>>>>>  #define __ANX78xx_H
->>>>>>  
->>>>>> -#define TX_P0				0x70
->>>>>> +#define TX_P0				0x78
->>>>>
->>>>> This bothers me little. There are no upstream users, grepping android
->>>>> sources suggests that both values can be used [1][2]  (grep for "#define
->>>>> TX_P0"), moreover there is code suggesting both values can be valid [3].
->>>>>
->>>>> Could you verify datasheet which i2c slave addresses are valid for this
->>>>> chip, if both I guess this patch should be reworked.
->>>>>
->>>>>
->>>>> [1]:
->>>>> https://android.googlesource.com/kernel/msm/+/android-msm-flo-3.4-jb-mr2/drivers/misc/slimport_anx7808/slimport_tx_reg.h
->>>>>
->>>>> [2]:
->>>>> https://github.com/AndroidGX/SimpleGX-MM-6.0_H815_20d/blob/master/drivers/video/slimport/anx7812/slimport7812_tx_reg.h
->>>>>
->>>>> [3]:
->>>>> https://github.com/commaai/android_kernel_leeco_msm8996/blob/master/drivers/video/msm/mdss/dp/slimport_custom_declare.h#L73
->>>> This address is 0x78 on my Nexus 5. Given [3] above it looks like we
->>>> need to support both addresses. What do you think about moving these
->>>> addresses into device tree?
->>> Assuming that the device supports different addresses (I can't validate
->>> that as I don't have access to the datasheet), and different addresses
->>> need to be used on different systems, then the address to be used needs
->>> to be provided by the firmware (DT in this case). Two options are
->>> possible, either specifying the address explicitly in the device's DT
->>> node, or specifying free addresses (in the form of a white list or black
->>> list) and allocating an address from that pool. The latter has been
->>> discussed in a BoF at the Linux Plumbers Conference last week,
->>> https://linuxplumbersconf.org/event/4/contributions/542/.
->>>
->>>> The downstream and upstream kernel sources divide these addresses by two
->>>> to get the i2c address. Here's the code in upstream:
->>>>
->>>> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/bridge/analogix-anx78xx.c#L1353
->>>> https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/bridge/analogix-anx78xx.c#L41
->>>>
->>>> I'm not sure why the actual i2c address isn't used in this code.
->> The ANX7802/12/14/16 has a slave I2C bus that provides the interface to access
->> or control the chip from the AP. The I2C slave addresses used to control the
->> ANX7802/12/14/16 are 70h, 72h, 7Ah, 7Eh and 80h. Every address allows you to
->> access to different registers of the chip and AFAICS is not configurable.
->>
->> I don't think these addresses should be configured via DT but for the driver itself.
->>
->> My wild guess is that the ANX7808 has different addresses, but I don't have the
->> datasheet of this version.
-> I'm able to communicate with the 7808 on my Nexus 5 using the 0x78
-> address. Given that the addresses appear to be fixed per model, maybe it
-> makes sense to drop the address #defines and add the addresses to the
-> data pointer in the driver's of_match_table like so:
->
-> static const struct of_device_id anx78xx_match_table[] = {
->         { .compatible = "analogix,anx7808", .data = PTR_TO_7808_ADDRS },
->         { .compatible = "analogix,anx7812", .data = PTR_TO_781X_ADDRS },
->         { .compatible = "analogix,anx7814", .data = PTR_TO_781X_ADDRS },
->         { .compatible = "analogix,anx7818", .data = PTR_TO_781X_ADDRS },
->         { /* sentinel */ },
-> };
->
-> Brian
->
->
+Linus,
 
-I have spotted following comment on chromium's ML[1]:
+Please pull the latest sched-core-for-linus git tree from:
 
-> The locations are hard coded in the register spec.  Furthermore, each
-> one can be changed independently--for example the Android driver puts
-> 0x38 at 0x3c but leaves the rest alone.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-for-linus
 
-It is not entirely clear, but IMO it suggests these addresses are
-hardware configurable.
+   # HEAD: 563c4f85f9f0d63b712081d5b4522152cdcb8b6b Merge branch 'sched/rt' into sched/core, to pick up -rt changes
+
+The main changes in this cycle were:
+
+ - MAINTAINERS: Add Mark Rutland as perf submaintainer, Juri Lelli and 
+   Vincent Guittot as scheduler submaintainers. Add Dietmar Eggemann, 
+   Steven Rostedt, Ben Segall and Mel Gorman as scheduler reviewers.
+
+   As perf and the scheduler is getting bigger and more complex, document
+   the status quo of current responsibilities and interests, and spread
+   the review pain^H^H^H^H fun via an increase in the Cc: linecount 
+   generated by scripts/get_maintainer.pl. :-)
+
+ - Add another series of patches that brings the -rt (PREEMPT_RT) tree 
+   closer to mainline: split the monolithic CONFIG_PREEMPT dependencies 
+   into a new CONFIG_PREEMPTION category that will allow the eventual 
+   introduction of CONFIG_PREEMPT_RT. Still a few more hundred patches to 
+   go though.
+
+ - Extend the CPU cgroup controller with uclamp.min and uclamp.max to 
+   allow the finer shaping of CPU bandwidth usage.
+
+ - Micro-optimize energy-aware wake-ups from O(CPUS^2) to O(CPUS).
+
+ - Improve the behavior of high CPU count, high thread count applications 
+   running under cpu.cfs_quota_us constraints.
+
+ - Improve balancing with SCHED_IDLE (SCHED_BATCH) tasks present.
+
+ - Improve CPU isolation housekeeping CPU allocation NUMA locality.
+
+ - Fix deadline scheduler bandwidth calculations and logic when cpusets 
+   rebuilds the topology, or when it gets deadline-throttled while it's 
+   being offlined.
+
+ - Convert the cpuset_mutex to percpu_rwsem, to allow it to be used from 
+   setscheduler() system calls without creating global serialization. Add 
+   new synchronization between cpuset topology-changing events and the 
+   deadline acceptance tests in setscheduler(), which were broken before.
+
+ - Rework the active_mm state machine to be less confusing and more 
+   optimal.
+
+ - Rework (simplify) the pick_next_task() slowpath.
+
+ - Improve load-balancing on AMD EPYC systems.
+
+ - ... and misc cleanups, smaller fixes and improvements - please see the 
+   Git log for more details.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Dave Chiluk (1):
+      sched/fair: Fix low cpu usage with high throttling by removing expiration of cpu-local slices
+
+Juri Lelli (6):
+      sched/deadline: Fix bandwidth accounting at all levels after offline migration
+      cgroup/cpuset: Convert cpuset_mutex to percpu_rwsem
+      cgroup/cpuset: Change cpuset_rwsem and hotplug lock order
+      rcu/tree: Call setschedule() gp ktread to SCHED_FIFO outside of atomic region
+      sched/core: Prevent race condition between cpuset and __sched_setscheduler()
+      sched/core: Fix CPU controller for !RT_GROUP_SCHED
+
+Mathieu Poirier (3):
+      sched/topology: Add partition_sched_domains_locked()
+      sched/core: Streamle calls to task_rq_unlock()
+      cpusets: Rebuild root domain deadline accounting information
+
+Matt Fleming (2):
+      arch, ia64: Make NUMA select SMP
+      sched/topology: Improve load balancing on AMD EPYC systems
+
+Matthew Wilcox (Oracle) (1):
+      sched/core: Convert get_task_struct() to return the task
+
+Miles Chen (1):
+      sched/psi: Correct overly pessimistic size calculation
+
+Patrick Bellasi (6):
+      sched/uclamp: Extend CPU's cgroup controller
+      sched/uclamp: Propagate parent clamps
+      sched/uclamp: Propagate system defaults to the root group
+      sched/uclamp: Use TG's clamps to restrict TASK's clamps
+      sched/uclamp: Update CPU's refcount on TG's clamp changes
+      sched/uclamp: Always use 'enum uclamp_id' for clamp_id values
+
+Paul E. McKenney (1):
+      time/tick-broadcast: Fix tick_broadcast_offline() lockdep complaint
+
+Peter Zijlstra (11):
+      rcu/tree: Fix SCHED_FIFO params
+      sched: Clean up active_mm reference counting
+      stop_machine: Fix stop_cpus_in_progress ordering
+      sched: Fix kerneldoc comment for ia64_set_curr_task
+      sched/{rt,deadline}: Fix set_next_task vs pick_next_task
+      sched: Rework CPU hotplug task selection
+      sched: Add task_struct pointer to sched_class::set_curr_task
+      sched/fair: Expose newidle_balance()
+      sched: Allow put_prev_task() to drop rq->lock
+      sched: Rework pick_next_task() slow-path
+      sched, perf: MAINTAINERS update, add submaintainers and reviewers
+
+Phil Auld (1):
+      sched/fair: Use rq_lock/unlock in online_fair_sched_group
+
+Qais Yousef (1):
+      cpufreq: schedutil: fix equation in comment
+
+Qian Cai (1):
+      sched/core: Silence a warning in sched_init()
+
+Quentin Perret (1):
+      sched/fair: Speed-up energy-aware wake-ups
+
+Thomas Gleixner (8):
+      sched/preempt: Use CONFIG_PREEMPTION where appropriate
+      rcu: Use CONFIG_PREEMPTION
+      locking/spinlocks: Use CONFIG_PREEMPTION
+      tracing: Use CONFIG_PREEMPTION
+      kprobes: Use CONFIG_PREEMPTION
+      x86: Use CONFIG_PREEMPTION
+      x86/dumpstack: Indicate PREEMPT_RT in dumps
+      x86/kvm: Use CONFIG_PREEMPTION
+
+Valentin Schneider (3):
+      sched/fair: Move init_numa_balancing() below task_numa_work()
+      sched/fair: Move task_numa_work() init to init_numa_balancing()
+      sched/fair: Change task_numa_work() storage to static
+
+Vincent Guittot (1):
+      sched/fair: Fix imbalance due to CPU affinity
+
+Viresh Kumar (3):
+      sched/fair: Start tracking SCHED_IDLE tasks count in cfs_rq
+      sched/fair: Fall back to sched-idle CPU if idle CPU isn't found
+      sched/fair: Introduce fits_capacity()
+
+Wanpeng Li (1):
+      sched/isolation: Prefer housekeeping CPU in local node
+
+Yi Wang (1):
+      sched/stats: Fix unlikely() use of sched_info_on()
 
 
-[1]:
-https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/44601/2/drivers/auxdisplay/slimport.c#331
-
-
-Regards
-
-Andrzej
-
+ Documentation/admin-guide/cgroup-v2.rst |  34 ++
+ Documentation/scheduler/sched-bwc.rst   |  74 +++-
+ MAINTAINERS                             |   7 +
+ arch/Kconfig                            |   2 +-
+ arch/ia64/Kconfig                       |   1 +
+ arch/x86/entry/entry_32.S               |   6 +-
+ arch/x86/entry/entry_64.S               |   4 +-
+ arch/x86/entry/thunk_32.S               |   2 +-
+ arch/x86/entry/thunk_64.S               |   4 +-
+ arch/x86/include/asm/preempt.h          |   2 +-
+ arch/x86/kernel/cpu/amd.c               |   5 +
+ arch/x86/kernel/dumpstack.c             |   7 +-
+ arch/x86/kernel/kprobes/core.c          |   2 +-
+ arch/x86/kernel/kvm.c                   |   2 +-
+ include/asm-generic/preempt.h           |   4 +-
+ include/linux/cgroup.h                  |   1 +
+ include/linux/cpuset.h                  |  13 +-
+ include/linux/preempt.h                 |   6 +-
+ include/linux/rcupdate.h                |   2 +-
+ include/linux/rcutree.h                 |   2 +-
+ include/linux/sched.h                   |  11 +-
+ include/linux/sched/deadline.h          |   8 +
+ include/linux/sched/task.h              |   6 +-
+ include/linux/sched/topology.h          |  10 +
+ include/linux/spinlock.h                |   2 +-
+ include/linux/spinlock_api_smp.h        |   2 +-
+ include/linux/topology.h                |  14 +
+ include/linux/torture.h                 |   2 +-
+ init/Kconfig                            |  22 ++
+ init/init_task.c                        |   2 +-
+ init/main.c                             |   2 +-
+ kernel/cgroup/cgroup.c                  |   2 +-
+ kernel/cgroup/cpuset.c                  | 163 +++++++--
+ kernel/events/core.c                    |   9 +-
+ kernel/irq/manage.c                     |   3 +-
+ kernel/kprobes.c                        |   2 +-
+ kernel/locking/rtmutex.c                |   6 +-
+ kernel/rcu/Kconfig                      |   8 +-
+ kernel/rcu/tree.c                       |  12 +-
+ kernel/rcu/tree_stall.h                 |   6 +-
+ kernel/sched/core.c                     | 618 ++++++++++++++++++++++++++------
+ kernel/sched/cpufreq_schedutil.c        |   6 +-
+ kernel/sched/deadline.c                 | 134 ++++---
+ kernel/sched/fair.c                     | 409 ++++++++++-----------
+ kernel/sched/idle.c                     |  31 +-
+ kernel/sched/isolation.c                |  12 +-
+ kernel/sched/psi.c                      |   2 +-
+ kernel/sched/rt.c                       |  74 ++--
+ kernel/sched/sched.h                    |  63 ++--
+ kernel/sched/stats.h                    |   7 +-
+ kernel/sched/stop_task.c                |  22 +-
+ kernel/sched/topology.c                 |  53 ++-
+ kernel/stop_machine.c                   |   2 +
+ kernel/trace/Kconfig                    |   6 +-
+ kernel/trace/ftrace.c                   |   2 +-
+ kernel/trace/ring_buffer_benchmark.c    |   2 +-
+ kernel/trace/trace_events.c             |   4 +-
+ kernel/trace/trace_sched_wakeup.c       |   3 +-
+ mm/khugepaged.c                         |   2 +-
+ mm/page_alloc.c                         |   2 +-
+ 60 files changed, 1323 insertions(+), 603 deletions(-)
