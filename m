@@ -2,131 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447E9B3772
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F1F5B3774
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732128AbfIPJrE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 05:47:04 -0400
-Received: from mail.steuer-voss.de ([85.183.69.95]:60772 "EHLO
-        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728985AbfIPJrD (ORCPT
+        id S1732141AbfIPJrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 05:47:06 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34496 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728985AbfIPJrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 05:47:03 -0400
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: by mail.steuer-voss.de (Postfix, from userid 1000)
-        id E141B4D574; Mon, 16 Sep 2019 11:46:30 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.steuer-voss.de (Postfix) with ESMTP id DA40C4D564;
-        Mon, 16 Sep 2019 11:46:30 +0200 (CEST)
-Date:   Mon, 16 Sep 2019 11:46:30 +0200 (CEST)
-From:   Nikolaus Voss <nv@vosn.de>
-X-X-Sender: nv@fox.voss.local
-To:     "Moore, Robert" <robert.moore@intel.com>
-cc:     Ferry Toth <fntoth@gmail.com>,
-        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>
-Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
-In-Reply-To: <94F2FBAB4432B54E8AACC7DFDE6C92E3B967AEC9@ORSMSX110.amr.corp.intel.com>
-Message-ID: <alpine.DEB.2.20.1909161134070.2910@fox.voss.local>
-References: <20190906174605.GY2680@smile.fi.intel.com> <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de> <94F2FBAB4432B54E8AACC7DFDE6C92E3B9679CE8@ORSMSX110.amr.corp.intel.com> <alpine.DEB.2.20.1909130911180.20316@fox.voss.local>
- <94F2FBAB4432B54E8AACC7DFDE6C92E3B967ADF6@ORSMSX110.amr.corp.intel.com> <20190913151228.GT2680@smile.fi.intel.com> <7625fe37-1710-056d-fb9e-39c33fd962a1@gmail.com> <94F2FBAB4432B54E8AACC7DFDE6C92E3B967AEC9@ORSMSX110.amr.corp.intel.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Mon, 16 Sep 2019 05:47:05 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j1so29738207qth.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 02:47:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=3ZzWEq4wWvLRNgmXVqwJmtANFzK7y6dh5+ag0ri/1Kk=;
+        b=VSdv4ezmQDKW/W8yLEPhYT452HcUSAi5vqHwRHVAElF+Ca2w+c/IU9pWyqMqzPUgyS
+         /YdS4BI6d+E7hpyIiu7O3bTEz6I3iGyKJcdg9hIENonH3o77Esu4OIipCBxwN6vcCK6H
+         dTPWK1Pb4cAJ6/I1sMZMfV+ruQPgBXSsnxb5cn9gFGZBNDKKo/687DN8yMepTThIQYZX
+         oauiujtCYiY6t0UGQXdPoik0p1P+q74FLTIF6gv+GxtLgRvUd/6IdUk0HFrg/w0Clhm2
+         h0QN4li7ag7YEiQCTWUDRWlEMAOSgTiWNe1Zib5X+6NKJWko3GCBdx659d2WNeoYjM/3
+         NZkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=3ZzWEq4wWvLRNgmXVqwJmtANFzK7y6dh5+ag0ri/1Kk=;
+        b=Oittp+ieNxMPQxAbSG2F7Fb98qX/LU7niv5SJrip8YKrJsX2mO9pw32gCkmYFXJoH9
+         XtNe5BGbNABpm6npNprr5llhgQ4K/lbntS/mLZGWJOWcLyhpNOnKxvl28c9Aw/lXe5Yq
+         jzjp581VSC//DaeVl/1McX8kbUH05A1o2n5XjQbPMUD5pX0nO5Hd2KUC6Ah0mT8veymy
+         EE8/o7x14oYYT3og7LnmlbIcNZpYnQmb5bPeXKPRwjy754ZssXTt8GgsfGmzamUUZQWe
+         G9J81d/NHTpfUrNqo4n8uWlEiol+Z5ns1G0ZUTz/T9Wf6nBwfjy1aDVQK+Ko3AGEZB/m
+         89JA==
+X-Gm-Message-State: APjAAAX1OKZ8ZoJvffl2Cj2RvT+kzsg9ChMS5lNxzI4XyfdwuBXMavu8
+        1jhXalGxRD0NIsQfV1NYfkjWRax4vEsom+8Tg3o=
+X-Google-Smtp-Source: APXvYqzcANsDvXxRLsvOgUMZI074T7gRv2dDY0dCRYbueBb6mr60YeOS0PEMXL1yIWtN7aSxNzHGHaX9d6eYlLepoNw=
+X-Received: by 2002:ac8:78c:: with SMTP id l12mr16394601qth.132.1568627224548;
+ Mon, 16 Sep 2019 02:47:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Received: by 2002:aed:2538:0:0:0:0:0 with HTTP; Mon, 16 Sep 2019 02:47:04
+ -0700 (PDT)
+Reply-To: edithbrown0257@gmail.com
+From:   Edith Brown <tinaevan301@gmail.com>
+Date:   Mon, 16 Sep 2019 10:47:04 +0100
+Message-ID: <CAOH943+HFK+w-_52roXKJrPK0fnoOmVBBX7aR9cnQu+vt4snEg@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Sep 2019, Moore, Robert wrote:
->
->
-> -----Original Message-----
-> From: Ferry Toth [mailto:fntoth@gmail.com]
-> Sent: Friday, September 13, 2019 9:48 AM
-> To: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Moore, Robert <robert.moore@intel.com>
-> Cc: Nikolaus Voss <nv@vosn.de>; Schmauss, Erik <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; nikolaus.voss@loewensteinmedical.de; Jan Kiszka <jan.kiszka@siemens.com>
-> Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
->
-> Hello all,
->
-> Sorry to have sent our message with cancelled e-mail address. I have correct this now.
->
-> Op 13-09-19 om 17:12 schreef Shevchenko, Andriy:
->> On Fri, Sep 13, 2019 at 05:20:21PM +0300, Moore, Robert wrote:
->>> -----Original Message-----
->>> From: Nikolaus Voss [mailto:nv@vosn.de]
->>> Sent: Friday, September 13, 2019 12:44 AM
->>> To: Moore, Robert <robert.moore@intel.com>
->>> Cc: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, Erik
->>> <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len
->>> Brown <lenb@kernel.org>; Jacek Anaszewski
->>> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy
->>> <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org;
->>> linux-kernel@vger.kernel.org; Ferry Toth <ftoth@telfort.nl>;
->>> nikolaus.voss@loewensteinmedical.de
->>> Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table
->>> index
->>>
->>> Bob,
->>>
->>> On Thu, 12 Sep 2019, Moore, Robert wrote:
->>>> The ability to unload an ACPI table (especially AML tables such as
->>>> SSDTs) is in the process of being deprecated in ACPICA -- since it
->>>> is also deprecated in the current ACPI specification. This is being
->>>> done because of the difficulty of deleting the namespace entries for
->>>> the table.  FYI, Windows does not properly support this function either.
->>>
->>> ok, I see it can be a problem to unload an AML table with all it's
->>> consequences e.g. with respect to driver unregistering in setups with
->>> complex dependencies. It will only work properly under certain
->>> conditions
->>> - nevertheless acpi_tb_unload_table() is still exported in ACPICA and we should get this working as it worked before.
->>>
->>> AcpiTbUnloadTable is not exported, it is an internal interface only
->>> -- as recognized by the "AcpiTb".
->>
->> In Linux it became a part of ABI when the
->>
->> commit 772bf1e2878ecfca0d1f332071c83e021dd9cf01
->> Author: Jan Kiszka <jan.kiszka@siemens.com>
->> Date:   Fri Jun 9 20:36:31 2017 +0200
->>
->>      ACPI: configfs: Unload SSDT on configfs entry removal
->>
->> appeared in the kernel.
->
-> And the commit message explains quite well why it is an important feature:
->
-> "This allows to change SSDTs without rebooting the system.
-> It also allows to destroy devices again that a dynamically loaded SSDT created.
->
-> The biggest problem AFAIK is that under linux, many drivers cannot be unloaded. Also, there are many race conditions as the namespace entries "owned" by an SSDT being unloaded are deleted (out from underneath a driver).
->
-> This is widely similar to the DT overlay behavior."
->
->>> I'm not sure that I want to change the interface to AcpiLoadTable
->>> just for something that is being deprecated. Already, we throw an
->>> ACPI_EXCEPTION if the Unload operator is encountered in the AML byte
->>> stream. The same thing with AcpiUnloadParentTable - it is being deprecated.
->>>
->>>      ACPI_EXCEPTION ((AE_INFO, AE_NOT_IMPLEMENTED,
->>>          "AML Unload operator is not supported"));
-
-Bob, what is your suggestion to fix the regression then?
-
-We could revert acpi_configfs.c to use acpi_tb_install_and_load_table() 
-instead of acpi_load_table(), leaving loaded APCI objects uninitalized, 
-but at least, unloading will work again.
-
-Do we have any other options?
-
-Niko
+-- 
+Hello dear
+how are you doing?
+my name is Edith Brown
+i am a U.S military woman
+is my pleasure meeting you here
+best regards
