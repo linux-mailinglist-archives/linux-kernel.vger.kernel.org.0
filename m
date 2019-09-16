@@ -2,65 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA329B3FC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 19:55:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDAB3B3FCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 19:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388549AbfIPRzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 13:55:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39832 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388225AbfIPRzO (ORCPT
+        id S2388642AbfIPRzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 13:55:19 -0400
+Received: from depni-mx.sinp.msu.ru ([213.131.7.21]:25 "EHLO
+        depni-mx.sinp.msu.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729721AbfIPRzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 13:55:14 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so376749wrj.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 10:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=K/UkQ76H4Yb0u9Kc+6rxPH3RXPAqgIPPv6jR+GQOvDc=;
-        b=MUqLUmVrkODy5Uyw2EZKeIsSlr3Lojvur6zR5qoMe1tpKm6Y5j10xWCIdhk/XxT3uO
-         F1xV17SLPgcotZ1tG1olZ4paPjK0uwxEK7Np/4huq2zb4YJf4CfbJLS2l4P6DjVT2k5Q
-         P0WoUwzDaslqePfSXu/Jlqkff7y/COBsRrfjPYmNJIiYsqHFpDTFY73WASeTjHEi6H/I
-         pnKwo1mWaZWM8QVFE9FxWsIG+I4wniZGfZ3BhorSzQAyNDvw1PR27nVxDp8jNC8iBe/C
-         wJiQHFuTugkVUKIwKAKkLhG/ji5fy5LWiHXuFphFYhHBhfvfUDbhuS0M85La7lNsvf+g
-         sm2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=K/UkQ76H4Yb0u9Kc+6rxPH3RXPAqgIPPv6jR+GQOvDc=;
-        b=gZc13YA1lXtNbkigVIRzwQ6c0OeIRFOMwjkIoyk1MELYDdIalA/sO5/+PnMOtIZO0f
-         CIgqrSlvVxAHGA/RYwEMhFAxQiKmxuBWxTWG2jvzawgBekZeIhiwztk45y8ZIsLq6pd+
-         8xoGkp9nNu5z50mAE1I9AreCLLf/Vh58Bxixbeq/PtME4Qd5DYtz8KUmXllxjrxv0qGL
-         vF/4ysauYcDE08OQb3OyGNYGYWBbbrUHYoxT83Jjfmoyrwv6lK2H+IJrzySEGuUgqqGr
-         Ahc9/T3ejekTR3+VJSblBBJkZe4ASGbYsqI0QKI7WWL60FvmXUTjbMS0PysIz0FWNeN7
-         nMFA==
-X-Gm-Message-State: APjAAAUTxBy5ECn6sypHIketlepyKfijV+b6PjBCQp1lB5gbb2iKtTH7
-        /WyTEjVbB2xV0xrd4klnqtiC7MokGuJOTxsfzJ9mkA==
-X-Google-Smtp-Source: APXvYqwnTEMbbO2eVeXe2DcNAuptRmfXLcajPWC8tyKyxzmWEP3zE4b35Di0H+p9htFVOyyO7PMi/6/j5+1QLAuUGTc=
-X-Received: by 2002:adf:e945:: with SMTP id m5mr822070wrn.25.1568656512358;
- Mon, 16 Sep 2019 10:55:12 -0700 (PDT)
+        Mon, 16 Sep 2019 13:55:19 -0400
+Received: from spider (unknown [109.63.188.125])
+        by depni-mx.sinp.msu.ru (Postfix) with ESMTPSA id 218DA1BF402;
+        Mon, 16 Sep 2019 20:55:26 +0300 (MSK)
+From:   Serge Belyshev <belyshev@depni.sinp.msu.ru>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 5.3-rc8
+References: <CAHk-=wjuVT+2oj_U2V94MBVaJdWsbo1RWzy0qXQSMAUnSaQzxw@mail.gmail.com>
+        <20190915065142.GA29681@gardel-login>
+        <CAHk-=wiDNRPzuNE-eXs7QOpgPVLXsZOXEMQE9RmAWABiiZrSAQ@mail.gmail.com>
+        <20190916014050.GA7002@darwi-home-pc>
+        <20190916014833.cbetw4sqm3lq4x6m@shells.gnugeneration.com>
+        <20190916024904.GA22035@mit.edu> <20190916042952.GB23719@1wt.eu>
+        <CAHk-=wg4cONuiN32Tne28Cg2kEx6gsJCoOVroqgPFT7_Kg18Hg@mail.gmail.com>
+        <20190916061252.GA24002@1wt.eu>
+        <CAHk-=wjWSRzTjwN9F5gQcxtPkAgaRHJOOOTUjVakqP-Nzg9BXA@mail.gmail.com>
+        <20190916172117.GB15263@mit.edu>
+        <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+Date:   Mon, 16 Sep 2019 20:55:15 +0300
+In-Reply-To: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+        (Linus Torvalds's message of "Mon, 16 Sep 2019 10:44:31 -0700")
+Message-ID: <8736gwt9bw.fsf@depni.sinp.msu.ru>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:adf:ee06:0:0:0:0:0 with HTTP; Mon, 16 Sep 2019 10:55:11
- -0700 (PDT)
-From:   ben beneth <pinkbirds20191@gmail.com>
-Date:   Mon, 16 Sep 2019 10:55:11 -0700
-Message-ID: <CANpTnE7E3B=ZoSMafedP2TNrh7V8XW51b5uWp0ZCNBouU+K_6w@mail.gmail.com>
-Subject: Urgent Assistance please
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-My name is MR Ben,  I am very happy to be in contact with you.
+>  - add new GRND_SECURE and GRND_INSECURE flags that have the actual
+> useful behaviors that we currently pretty much lack
+>
+>  - consider the old 0-3 flag values legacy, deprecated, and unsafe
+> because they _will_ time out to fix the existing problem we have right
+> now because of their bad behavior.
 
-Please I want you to assist me to invest my inherited funds in your country.
+Just for the record because I did not see it mentioned in this thread,
+this patch by Andy Lutomirski, posted two weeks ago, adds GRND_INSECURE
+and makes GRND_RANDOM a no-op:
 
-Reply  for more details to this  myprivate Email ID:
-pinkbirds2019@gmail.com   if you are willing to assist me.
-
-Sincerely,
-MR Ben,
+https://lore.kernel.org/lkml/cover.1567126741.git.luto@kernel.org/
