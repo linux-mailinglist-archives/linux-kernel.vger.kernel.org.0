@@ -2,159 +2,331 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E682EB44A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 01:39:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59636B44AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 01:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbfIPXjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 19:39:09 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:40862 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbfIPXjJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 19:39:09 -0400
-Received: by mail-io1-f69.google.com with SMTP id l9so2689356ioj.7
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 16:39:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=iKc+zhdxH+3nqPb6vBtY+hBOW4mmEkW3AOEpTJNuYoo=;
-        b=HelZmqbE+HmH/x5R5FipqklfLB2KieOswY6j4Yzq47vAufE0LBVpILNQrWvU8lT13v
-         fPnUpg6O7XZVRAgJaYoTSublecp7k491PnrP7FQW/E0CCJdzoFfq63k43CjGqTCfo4ja
-         EdJblxTD9U9F6TFLyAuCAQStt6D/rJJaIYLx11yDTj0QcPmUU+9YZ/FGoTqS6W6dDWEG
-         JBCEEq6z0sjKlLeRJFfswAKjVR8M/KJgCd9/GBs0NvjfvnP72N2doEaBglC1vlB6uqdK
-         QHbmOtGgKqgcEycm2I1lFAypsf2ahN557wushbowx/1og7NVSNYnE4eOvyYXDAjYTG4e
-         jxxQ==
-X-Gm-Message-State: APjAAAXDOONQQdo+64dl0BLk0wHYTiSYyWJaufldmM0wfTNF/7VYr6ob
-        XYvPLNMXDmmu/vbqrU9n95QYJC9xx7nnz5bUWvG0txreAi3l
-X-Google-Smtp-Source: APXvYqxyRmV1cJ7RB0nr2RIYjAg5oky0Es0WzQT7R66QLfOWteLexRkpo4qSHaQHFZBp0Y0+LSzkW44fNJr9uwdiA5i9EnC4OfDQ
+        id S1727897AbfIPXnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 19:43:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726118AbfIPXnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 19:43:45 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8FA62067D;
+        Mon, 16 Sep 2019 23:43:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568677424;
+        bh=e/hngzbUvNpKnZYKP4ffRCFSsXZN3NH9FSM5eWqs71s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jDligZVzINbJ3j6ZRJjby810iN7lNdHb8kJUKmZ864i+NGyZ3GGqaqS9/X6tQ8NDr
+         JVSfuylOX0IyV8kv5icgnbCL503P3lr+R4l391/Yg8SYYgg1AJDalq4uUtLjg2GA/t
+         h+Bm/Dv1T41ig/hphX0tobLmtbfI7z6p1oWyp/OY=
+Subject: Re: [PATCH v4 1/9] hugetlb_cgroup: Add hugetlb_cgroup reservation
+ counter
+To:     Mina Almasry <almasrymina@google.com>, mike.kravetz@oracle.com
+Cc:     rientjes@google.com, shakeelb@google.com, gthelen@google.com,
+        akpm@linux-foundation.org, khalid.aziz@oracle.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
+        aneesh.kumar@linux.vnet.ibm.com, mkoutny@suse.com,
+        Hillf Danton <hdanton@sina.com>, shuah <shuah@kernel.org>
+References: <20190910233146.206080-1-almasrymina@google.com>
+ <20190910233146.206080-2-almasrymina@google.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <1a8cfaca-190e-ca21-f633-d48d94328735@kernel.org>
+Date:   Mon, 16 Sep 2019 17:43:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:1c02:: with SMTP id c2mr814086jac.118.1568677148227;
- Mon, 16 Sep 2019 16:39:08 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 16:39:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003006220592b41c5b@google.com>
-Subject: general protection fault in trace_probe_unlink
-From:   syzbot <syzbot+2f807f4d3a2a4e87f18f@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, mhiramat@kernel.org,
-        mingo@redhat.com, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190910233146.206080-2-almasrymina@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 9/10/19 5:31 PM, Mina Almasry wrote:
+> These counters will track hugetlb reservations rather than hugetlb
+> memory faulted in. This patch only adds the counter, following patches
+> add the charging and uncharging of the counter.
+> 
 
-syzbot found the following crash on:
+Why are we adding these counters? I see the reasons in the cover letter.
+Why not add the details on why this is needed here in this commitlog
 
-HEAD commit:    2015a28f Add linux-next specific files for 20190915
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f1dc65600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=110691c2286b679a
-dashboard link: https://syzkaller.appspot.com/bug?extid=2f807f4d3a2a4e87f18f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154e2ff1600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1255ba65600000
+Please add more information on why and rephrase the commit log.
 
-The bug was bisected to:
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> Acked-by: Hillf Danton <hdanton@sina.com>
+> ---
+>   include/linux/hugetlb.h |  16 +++++-
+>   mm/hugetlb_cgroup.c     | 111 ++++++++++++++++++++++++++++++----------
+>   2 files changed, 100 insertions(+), 27 deletions(-)
+> 
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index edfca42783192..128ff1aff1c93 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -320,6 +320,20 @@ unsigned long hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+> 
+>   #ifdef CONFIG_HUGETLB_PAGE
+> 
+> +enum {
+> +	HUGETLB_RES_USAGE,
+> +	HUGETLB_RES_RESERVATION_USAGE,
+> +	HUGETLB_RES_LIMIT,
+> +	HUGETLB_RES_RESERVATION_LIMIT,
+> +	HUGETLB_RES_MAX_USAGE,
+> +	HUGETLB_RES_RESERVATION_MAX_USAGE,
+> +	HUGETLB_RES_FAILCNT,
+> +	HUGETLB_RES_RESERVATION_FAILCNT,
+> +	HUGETLB_RES_NULL,
+> +	HUGETLB_RES_MAX,
+> +};
+> +
 
-commit ca89bc071d5e4e981dcc52e0ca90f4500d332e42
-Author: Masami Hiramatsu <mhiramat@kernel.org>
-Date:   Wed Jun 19 15:07:49 2019 +0000
+Please add information on what these track. As an example
+HUGETLB_RES_RESERVATION_LIMIT is so close to HUGETLB_RES_LIMIT
 
-     tracing/kprobe: Add multi-probe per event support
+What are we tracking and measuring?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17a0f2b5600000
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1460f2b5600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1060f2b5600000
+> +
+>   #define HSTATE_NAME_LEN 32
+>   /* Defines one hugetlb page size */
+>   struct hstate {
+> @@ -340,7 +354,7 @@ struct hstate {
+>   	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
+>   #ifdef CONFIG_CGROUP_HUGETLB
+>   	/* cgroup control files */
+> -	struct cftype cgroup_files[5];
+> +	struct cftype cgroup_files[HUGETLB_RES_MAX];
+>   #endif
+>   	char name[HSTATE_NAME_LEN];
+>   };
+> diff --git a/mm/hugetlb_cgroup.c b/mm/hugetlb_cgroup.c
+> index 68c2f2f3c05b7..51a72624bd1ff 100644
+> --- a/mm/hugetlb_cgroup.c
+> +++ b/mm/hugetlb_cgroup.c
+> @@ -25,6 +25,10 @@ struct hugetlb_cgroup {
+>   	 * the counter to account for hugepages from hugetlb.
+>   	 */
+>   	struct page_counter hugepage[HUGE_MAX_HSTATE];
+> +	/*
+> +	 * the counter to account for hugepage reservations from hugetlb.
+> +	 */
+> +	struct page_counter reserved_hugepage[HUGE_MAX_HSTATE];
+>   };
+> 
+>   #define MEMFILE_PRIVATE(x, val)	(((x) << 16) | (val))
+> @@ -33,6 +37,15 @@ struct hugetlb_cgroup {
+> 
+>   static struct hugetlb_cgroup *root_h_cgroup __read_mostly;
+> 
+> +static inline
+> +struct page_counter *hugetlb_cgroup_get_counter(struct hugetlb_cgroup *h_cg, int idx,
+> +				 bool reserved)
+> +{
+> +	if (reserved)
+> +		return  &h_cg->reserved_hugepage[idx];
+> +	return &h_cg->hugepage[idx];
+> +}
+> +
+>   static inline
+>   struct hugetlb_cgroup *hugetlb_cgroup_from_css(struct cgroup_subsys_state *s)
+>   {
+> @@ -254,30 +267,33 @@ void hugetlb_cgroup_uncharge_cgroup(int idx, unsigned long nr_pages,
+>   	return;
+>   }
+> 
+> -enum {
+> -	RES_USAGE,
+> -	RES_LIMIT,
+> -	RES_MAX_USAGE,
+> -	RES_FAILCNT,
+> -};
+> -
+>   static u64 hugetlb_cgroup_read_u64(struct cgroup_subsys_state *css,
+>   				   struct cftype *cft)
+>   {
+>   	struct page_counter *counter;
+> +	struct page_counter *reserved_counter;
+>   	struct hugetlb_cgroup *h_cg = hugetlb_cgroup_from_css(css);
+> 
+>   	counter = &h_cg->hugepage[MEMFILE_IDX(cft->private)];
+> +	reserved_counter = &h_cg->reserved_hugepage[MEMFILE_IDX(cft->private)];
+> 
+>   	switch (MEMFILE_ATTR(cft->private)) {
+> -	case RES_USAGE:
+> +	case HUGETLB_RES_USAGE:
+>   		return (u64)page_counter_read(counter) * PAGE_SIZE;
+> -	case RES_LIMIT:
+> +	case HUGETLB_RES_RESERVATION_USAGE:
+> +		return (u64)page_counter_read(reserved_counter) * PAGE_SIZE;
+> +	case HUGETLB_RES_LIMIT:
+>   		return (u64)counter->max * PAGE_SIZE;
+> -	case RES_MAX_USAGE:
+> +	case HUGETLB_RES_RESERVATION_LIMIT:
+> +		return (u64)reserved_counter->max * PAGE_SIZE;
+> +	case HUGETLB_RES_MAX_USAGE:
+>   		return (u64)counter->watermark * PAGE_SIZE;
+> -	case RES_FAILCNT:
+> +	case HUGETLB_RES_RESERVATION_MAX_USAGE:
+> +		return (u64)reserved_counter->watermark * PAGE_SIZE;
+> +	case HUGETLB_RES_FAILCNT:
+>   		return counter->failcnt;
+> +	case HUGETLB_RES_RESERVATION_FAILCNT:
+> +		return reserved_counter->failcnt;
+>   	default:
+>   		BUG();
+>   	}
+> @@ -291,6 +307,7 @@ static ssize_t hugetlb_cgroup_write(struct kernfs_open_file *of,
+>   	int ret, idx;
+>   	unsigned long nr_pages;
+>   	struct hugetlb_cgroup *h_cg = hugetlb_cgroup_from_css(of_css(of));
+> +	bool reserved = false;
+> 
+>   	if (hugetlb_cgroup_is_root(h_cg)) /* Can't set limit on root */
+>   		return -EINVAL;
+> @@ -304,9 +321,13 @@ static ssize_t hugetlb_cgroup_write(struct kernfs_open_file *of,
+>   	nr_pages = round_down(nr_pages, 1 << huge_page_order(&hstates[idx]));
+> 
+>   	switch (MEMFILE_ATTR(of_cft(of)->private)) {
+> -	case RES_LIMIT:
+> +	case HUGETLB_RES_RESERVATION_LIMIT:
+> +		reserved = true;
+> +		/* Fall through. */
+> +	case HUGETLB_RES_LIMIT:
+>   		mutex_lock(&hugetlb_limit_mutex);
+> -		ret = page_counter_set_max(&h_cg->hugepage[idx], nr_pages);
+> +		ret = page_counter_set_max(hugetlb_cgroup_get_counter(h_cg, idx, reserved),
+> +					   nr_pages);
+>   		mutex_unlock(&hugetlb_limit_mutex);
+>   		break;
+>   	default:
+> @@ -320,18 +341,26 @@ static ssize_t hugetlb_cgroup_reset(struct kernfs_open_file *of,
+>   				    char *buf, size_t nbytes, loff_t off)
+>   {
+>   	int ret = 0;
+> -	struct page_counter *counter;
+> +	struct page_counter *counter, *reserved_counter;
+>   	struct hugetlb_cgroup *h_cg = hugetlb_cgroup_from_css(of_css(of));
+> 
+>   	counter = &h_cg->hugepage[MEMFILE_IDX(of_cft(of)->private)];
+> +	reserved_counter = &h_cg->reserved_hugepage[
+> +		MEMFILE_IDX(of_cft(of)->private)];
+> 
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2f807f4d3a2a4e87f18f@syzkaller.appspotmail.com
-Fixes: ca89bc071d5e ("tracing/kprobe: Add multi-probe per event support")
+Please indent this. It is hard to read.
 
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-RBP: 00007ffc04171a30 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8633 Comm: syz-executor797 Not tainted 5.3.0-rc8-next-20190915  
-#0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__list_del_entry_valid+0x85/0xf5 lib/list_debug.c:51
-Code: 0f 84 e1 00 00 00 48 b8 22 01 00 00 00 00 ad de 49 39 c4 0f 84 e2 00  
-00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75  
-53 49 8b 14 24 4c 39 f2 0f 85 99 00 00 00 49 8d 7d
-RSP: 0018:ffff888090a7f9d8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff88809b6f90c0 RCX: ffffffff817c0ca9
-RDX: 0000000000000000 RSI: ffffffff817c0a73 RDI: ffff88809b6f90c8
-RBP: ffff888090a7f9f0 R08: ffff88809a04e600 R09: ffffed1015d26aed
-R10: ffffed1015d26aec R11: ffff8880ae935763 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff88809b6f90c0 R15: ffff88809b6f90d0
-FS:  0000555556f99880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cc090 CR3: 00000000962b2000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __list_del_entry include/linux/list.h:131 [inline]
-  list_del_init include/linux/list.h:190 [inline]
-  trace_probe_unlink+0x1f/0x200 kernel/trace/trace_probe.c:959
-  trace_probe_cleanup+0xd3/0x110 kernel/trace/trace_probe.c:973
-  trace_probe_init+0x3f2/0x510 kernel/trace/trace_probe.c:1011
-  alloc_trace_uprobe+0x5e/0x250 kernel/trace/trace_uprobe.c:353
-  create_local_trace_uprobe+0x109/0x4a0 kernel/trace/trace_uprobe.c:1508
-  perf_uprobe_init+0x131/0x210 kernel/trace/trace_event_perf.c:314
-  perf_uprobe_event_init+0x106/0x1a0 kernel/events/core.c:8898
-  perf_try_init_event+0x135/0x590 kernel/events/core.c:10184
-  perf_init_event kernel/events/core.c:10228 [inline]
-  perf_event_alloc.part.0+0x1b89/0x33d0 kernel/events/core.c:10505
-  perf_event_alloc kernel/events/core.c:10887 [inline]
-  __do_sys_perf_event_open+0xa2d/0x2d00 kernel/events/core.c:10989
-  __se_sys_perf_event_open kernel/events/core.c:10871 [inline]
-  __x64_sys_perf_event_open+0xbe/0x150 kernel/events/core.c:10871
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x441269
-Code: e8 5c ae 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc04171a18 EFLAGS: 00000246 ORIG_RAX: 000000000000012a
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000441269
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000180
-RBP: 00007ffc04171a30 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: ffffffffffffffff
-R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace ef71b9b0abb5d24f ]---
-RIP: 0010:__list_del_entry_valid+0x85/0xf5 lib/list_debug.c:51
-Code: 0f 84 e1 00 00 00 48 b8 22 01 00 00 00 00 ad de 49 39 c4 0f 84 e2 00  
-00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75  
-53 49 8b 14 24 4c 39 f2 0f 85 99 00 00 00 49 8d 7d
-RSP: 0018:ffff888090a7f9d8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff88809b6f90c0 RCX: ffffffff817c0ca9
-RDX: 0000000000000000 RSI: ffffffff817c0a73 RDI: ffff88809b6f90c8
-RBP: ffff888090a7f9f0 R08: ffff88809a04e600 R09: ffffed1015d26aed
-R10: ffffed1015d26aec R11: ffff8880ae935763 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff88809b6f90c0 R15: ffff88809b6f90d0
-FS:  0000555556f99880(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cc090 CR3: 00000000962b2000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>   	switch (MEMFILE_ATTR(of_cft(of)->private)) {
+> -	case RES_MAX_USAGE:
+> +	case HUGETLB_RES_MAX_USAGE:
+>   		page_counter_reset_watermark(counter);
+>   		break;
+> -	case RES_FAILCNT:
+> +	case HUGETLB_RES_RESERVATION_MAX_USAGE:
+> +		page_counter_reset_watermark(reserved_counter);
+> +		break;
+> +	case HUGETLB_RES_FAILCNT:
+>   		counter->failcnt = 0;
+>   		break;
+> +	case HUGETLB_RES_RESERVATION_FAILCNT:
+> +		reserved_counter->failcnt = 0;
+> +		break;
+>   	default:
+>   		ret = -EINVAL;
+>   		break;
+> @@ -357,37 +386,67 @@ static void __init __hugetlb_cgroup_file_init(int idx)
+>   	struct hstate *h = &hstates[idx];
+> 
+>   	/* format the size */
+> -	mem_fmt(buf, 32, huge_page_size(h));
+> +	mem_fmt(buf, sizeof(buf), huge_page_size(h));
+> 
+>   	/* Add the limit file */
+> -	cft = &h->cgroup_files[0];
+> +	cft = &h->cgroup_files[HUGETLB_RES_LIMIT];
+>   	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.limit_in_bytes", buf);
+> -	cft->private = MEMFILE_PRIVATE(idx, RES_LIMIT);
+> +	cft->private = MEMFILE_PRIVATE(idx, HUGETLB_RES_LIMIT);
+> +	cft->read_u64 = hugetlb_cgroup_read_u64;
+> +	cft->write = hugetlb_cgroup_write;
+> +
+> +	/* Add the reservation limit file */
+> +	cft = &h->cgroup_files[HUGETLB_RES_RESERVATION_LIMIT];
+> +	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.reservation_limit_in_bytes",
+> +		 buf);
+> +	cft->private = MEMFILE_PRIVATE(idx, HUGETLB_RES_RESERVATION_LIMIT);
+>   	cft->read_u64 = hugetlb_cgroup_read_u64;
+>   	cft->write = hugetlb_cgroup_write;
+> 
+>   	/* Add the usage file */
+> -	cft = &h->cgroup_files[1];
+> +	cft = &h->cgroup_files[HUGETLB_RES_USAGE];
+>   	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.usage_in_bytes", buf);
+> -	cft->private = MEMFILE_PRIVATE(idx, RES_USAGE);
+> +	cft->private = MEMFILE_PRIVATE(idx, HUGETLB_RES_USAGE);
+> +	cft->read_u64 = hugetlb_cgroup_read_u64;
+> +
+> +	/* Add the reservation usage file */
+> +	cft = &h->cgroup_files[HUGETLB_RES_RESERVATION_USAGE];
+> +	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.reservation_usage_in_bytes",
+> +			buf);
 
+Please line buf with cft->name for readability.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> +	cft->private = MEMFILE_PRIVATE(idx, HUGETLB_RES_RESERVATION_USAGE);
+>   	cft->read_u64 = hugetlb_cgroup_read_u64;
+> 
+>   	/* Add the MAX usage file */
+> -	cft = &h->cgroup_files[2];
+> +	cft = &h->cgroup_files[HUGETLB_RES_MAX_USAGE];
+>   	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.max_usage_in_bytes", buf);
+> -	cft->private = MEMFILE_PRIVATE(idx, RES_MAX_USAGE);
+> +	cft->private = MEMFILE_PRIVATE(idx, HUGETLB_RES_MAX_USAGE);
+> +	cft->write = hugetlb_cgroup_reset;
+> +	cft->read_u64 = hugetlb_cgroup_read_u64;
+> +
+> +	/* Add the MAX reservation usage file */
+> +	cft = &h->cgroup_files[HUGETLB_RES_RESERVATION_MAX_USAGE];
+> +	snprintf(cft->name, MAX_CFTYPE_NAME,
+> +			"%s.reservation_max_usage_in_bytes", buf);
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Same here.
+
+> +	cft->private = MEMFILE_PRIVATE(idx, HUGETLB_RES_RESERVATION_MAX_USAGE);
+>   	cft->write = hugetlb_cgroup_reset;
+>   	cft->read_u64 = hugetlb_cgroup_read_u64;
+> 
+>   	/* Add the failcntfile */
+> -	cft = &h->cgroup_files[3];
+> +	cft = &h->cgroup_files[HUGETLB_RES_FAILCNT];
+>   	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.failcnt", buf);
+> -	cft->private  = MEMFILE_PRIVATE(idx, RES_FAILCNT);
+> +	cft->private  = MEMFILE_PRIVATE(idx, HUGETLB_RES_FAILCNT);
+> +	cft->write = hugetlb_cgroup_reset;
+> +	cft->read_u64 = hugetlb_cgroup_read_u64;
+> +
+> +	/* Add the reservation failcntfile */
+> +	cft = &h->cgroup_files[HUGETLB_RES_RESERVATION_FAILCNT];
+> +	snprintf(cft->name, MAX_CFTYPE_NAME, "%s.reservation_failcnt", buf);
+> +	cft->private  = MEMFILE_PRIVATE(idx, HUGETLB_RES_RESERVATION_FAILCNT);
+>   	cft->write = hugetlb_cgroup_reset;
+>   	cft->read_u64 = hugetlb_cgroup_read_u64;
+> 
+>   	/* NULL terminate the last cft */
+> -	cft = &h->cgroup_files[4];
+> +	cft = &h->cgroup_files[HUGETLB_RES_NULL];
+>   	memset(cft, 0, sizeof(*cft));
+> 
+>   	WARN_ON(cgroup_add_legacy_cftypes(&hugetlb_cgrp_subsys,
+> --
+> 2.23.0.162.g0b9fbb3734-goog
+> 
+
+thanks,
+-- Shuah
