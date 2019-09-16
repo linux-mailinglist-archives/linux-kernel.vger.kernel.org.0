@@ -2,442 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9AD4B386E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:43:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D9F6B3872
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 12:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731504AbfIPKmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 06:42:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726055AbfIPKmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 06:42:24 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4109B214AF;
-        Mon, 16 Sep 2019 10:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568630542;
-        bh=qR68AfbNhkubfdZJAT5zu8UiUeGStVFZVZ3vznBDOaQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sioSquWoqur6owu8ONLZLpEqEocC/NrPUHHN2u5L14o2c++0HrF0Y4XCMFVBIURF7
-         3oBdaPLQzoss3mbT9Ay71kpHCMRFUmCGo0ac21QEf6aD4v9zJyj30/x3C67usiU+vM
-         Cyh0upDaw4S9+Uxc+LeABHniqQYlXKJ1GG1HquYA=
-Date:   Mon, 16 Sep 2019 12:42:20 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.9.193
-Message-ID: <20190916104220.GB1386724@kroah.com>
-References: <20190916104213.GA1386724@kroah.com>
+        id S1731587AbfIPKmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 06:42:40 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33738 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726055AbfIPKmj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 06:42:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JZBjiu6mXEF4xljF1dJvnzItrxLJQ/ptLLfiyKsUZDM=; b=mcTQ3/PmWWPgIhdxeGMFgAW+F
+        1fLJopUTSjAisftrUQn8kbLQVK2OpQSbkj3b1Vl0Xi1aQeTUQ5YogfHaYMV7gY19ZeLXOWCTL2fav
+        4q8glNwUzm/puuhRvzWb4RtjCxXnv6Tet9/LAt/vUoJzQHqeHTcUyJDrILuyyw0AEqYMo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i9oSn-0003vN-9s; Mon, 16 Sep 2019 10:42:33 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 2E02B2741A23; Mon, 16 Sep 2019 11:42:32 +0100 (BST)
+Date:   Mon, 16 Sep 2019 11:42:31 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the arm64 tree with the
+ compiler-attributes tree
+Message-ID: <20190916104231.GX4352@sirena.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Y48FV0AvvvAm5Iyr"
 Content-Disposition: inline
-In-Reply-To: <20190916104213.GA1386724@kroah.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Cookie: Man and wife make one fool.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index 946951930f62..48f79c6729ad 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 4
- PATCHLEVEL = 9
--SUBLEVEL = 192
-+SUBLEVEL = 193
- EXTRAVERSION =
- NAME = Roaring Lionus
- 
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 609f0e87ced7..47c6c0401b3a 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -476,13 +476,14 @@ void giveup_all(struct task_struct *tsk)
- 	if (!tsk->thread.regs)
- 		return;
- 
-+	check_if_tm_restore_required(tsk);
-+
- 	usermsr = tsk->thread.regs->msr;
- 
- 	if ((usermsr & msr_all_available) == 0)
- 		return;
- 
- 	msr_check_and_set(msr_all_available);
--	check_if_tm_restore_required(tsk);
- 
- #ifdef CONFIG_PPC_FPU
- 	if (usermsr & MSR_FP)
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 14071a57c926..f5d74e8db432 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -255,7 +255,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
-  * This requires of_device_id table.  In the same time this will not change the
-  * actual *device* matching so do not add .of_match_table.
-  */
--static const struct of_device_id s2mps11_dt_match[] = {
-+static const struct of_device_id s2mps11_dt_match[] __used = {
- 	{
- 		.compatible = "samsung,s2mps11-clk",
- 		.data = (void *)S2MPS11X,
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-index 77df50dd6d30..123d85de80d6 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -264,7 +264,7 @@ static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
- 
- 		if ((HIGH_WORD(ebx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			kfree(reply);
--
-+			reply = NULL;
- 			if ((HIGH_WORD(ebx) & MESSAGE_STATUS_CPT) != 0) {
- 				/* A checkpoint occurred. Retry. */
- 				continue;
-@@ -288,7 +288,7 @@ static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
- 
- 		if ((HIGH_WORD(ecx) & MESSAGE_STATUS_SUCCESS) == 0) {
- 			kfree(reply);
--
-+			reply = NULL;
- 			if ((HIGH_WORD(ecx) & MESSAGE_STATUS_CPT) != 0) {
- 				/* A checkpoint occurred. Retry. */
- 				continue;
-@@ -300,10 +300,8 @@ static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
- 		break;
- 	}
- 
--	if (retries == RETRIES) {
--		kfree(reply);
-+	if (!reply)
- 		return -EINVAL;
--	}
- 
- 	*msg_len = reply_len;
- 	*msg     = reply;
-diff --git a/drivers/vhost/test.c b/drivers/vhost/test.c
-index 3cc98c07dcd3..682fc58e1f75 100644
---- a/drivers/vhost/test.c
-+++ b/drivers/vhost/test.c
-@@ -23,6 +23,12 @@
-  * Using this limit prevents one virtqueue from starving others. */
- #define VHOST_TEST_WEIGHT 0x80000
- 
-+/* Max number of packets transferred before requeueing the job.
-+ * Using this limit prevents one virtqueue from starving others with
-+ * pkts.
-+ */
-+#define VHOST_TEST_PKT_WEIGHT 256
-+
- enum {
- 	VHOST_TEST_VQ = 0,
- 	VHOST_TEST_VQ_MAX = 1,
-@@ -81,10 +87,8 @@ static void handle_vq(struct vhost_test *n)
- 		}
- 		vhost_add_used_and_signal(&n->dev, vq, head, 0);
- 		total_len += len;
--		if (unlikely(total_len >= VHOST_TEST_WEIGHT)) {
--			vhost_poll_queue(&vq->poll);
-+		if (unlikely(vhost_exceeds_weight(vq, 0, total_len)))
- 			break;
--		}
- 	}
- 
- 	mutex_unlock(&vq->mutex);
-@@ -116,7 +120,8 @@ static int vhost_test_open(struct inode *inode, struct file *f)
- 	dev = &n->dev;
- 	vqs[VHOST_TEST_VQ] = &n->vqs[VHOST_TEST_VQ];
- 	n->vqs[VHOST_TEST_VQ].handle_kick = handle_vq_kick;
--	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX);
-+	vhost_dev_init(dev, vqs, VHOST_TEST_VQ_MAX,
-+		       VHOST_TEST_PKT_WEIGHT, VHOST_TEST_WEIGHT);
- 
- 	f->private_data = n;
- 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 8da95d4ac4b7..b14e62f11075 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1987,7 +1987,7 @@ static int get_indirect(struct vhost_virtqueue *vq,
- 		/* If this is an input descriptor, increment that count. */
- 		if (access == VHOST_ACCESS_WO) {
- 			*in_num += ret;
--			if (unlikely(log)) {
-+			if (unlikely(log && ret)) {
- 				log[*log_num].addr = vhost64_to_cpu(vq, desc.addr);
- 				log[*log_num].len = vhost32_to_cpu(vq, desc.len);
- 				++*log_num;
-@@ -2123,7 +2123,7 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
- 			/* If this is an input descriptor,
- 			 * increment that count. */
- 			*in_num += ret;
--			if (unlikely(log)) {
-+			if (unlikely(log && ret)) {
- 				log[*log_num].addr = vhost64_to_cpu(vq, desc.addr);
- 				log[*log_num].len = vhost32_to_cpu(vq, desc.len);
- 				++*log_num;
-diff --git a/include/net/ipv6_frag.h b/include/net/ipv6_frag.h
-index 28aa9b30aece..1f77fb4dc79d 100644
---- a/include/net/ipv6_frag.h
-+++ b/include/net/ipv6_frag.h
-@@ -94,7 +94,6 @@ ip6frag_expire_frag_queue(struct net *net, struct frag_queue *fq)
- 		goto out;
- 
- 	head->dev = dev;
--	skb_get(head);
- 	spin_unlock(&fq->q.lock);
- 
- 	icmpv6_send(head, ICMPV6_TIME_EXCEED, ICMPV6_EXC_FRAGTIME, 0);
-diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-index 835c30e491c8..9e2f260cbb51 100644
---- a/include/net/xfrm.h
-+++ b/include/net/xfrm.h
-@@ -1297,6 +1297,23 @@ static inline int xfrm_state_kern(const struct xfrm_state *x)
- 	return atomic_read(&x->tunnel_users);
- }
- 
-+static inline bool xfrm_id_proto_valid(u8 proto)
-+{
-+	switch (proto) {
-+	case IPPROTO_AH:
-+	case IPPROTO_ESP:
-+	case IPPROTO_COMP:
-+#if IS_ENABLED(CONFIG_IPV6)
-+	case IPPROTO_ROUTING:
-+	case IPPROTO_DSTOPTS:
-+#endif
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+/* IPSEC_PROTO_ANY only matches 3 IPsec protocols, 0 could match all. */
- static inline int xfrm_id_proto_match(u8 proto, u8 userproto)
- {
- 	return (!userproto || proto == userproto ||
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 924bb307c0fa..b314feaf91f4 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3882,6 +3882,8 @@ static void __account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
- 	if (likely(cfs_rq->runtime_remaining > 0))
- 		return;
- 
-+	if (cfs_rq->throttled)
-+		return;
- 	/*
- 	 * if we're unable to extend our runtime we resched so that the active
- 	 * hierarchy can be throttled
-@@ -4077,6 +4079,9 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b,
- 		if (!cfs_rq_throttled(cfs_rq))
- 			goto next;
- 
-+		/* By the above check, this should never be true */
-+		SCHED_WARN_ON(cfs_rq->runtime_remaining > 0);
-+
- 		runtime = -cfs_rq->runtime_remaining + 1;
- 		if (runtime > remaining)
- 			runtime = remaining;
-diff --git a/net/batman-adv/bat_iv_ogm.c b/net/batman-adv/bat_iv_ogm.c
-index 1ae8c59fcb2d..780700fcbe63 100644
---- a/net/batman-adv/bat_iv_ogm.c
-+++ b/net/batman-adv/bat_iv_ogm.c
-@@ -450,17 +450,23 @@ static u8 batadv_hop_penalty(u8 tq, const struct batadv_priv *bat_priv)
-  * batadv_iv_ogm_aggr_packet - checks if there is another OGM attached
-  * @buff_pos: current position in the skb
-  * @packet_len: total length of the skb
-- * @tvlv_len: tvlv length of the previously considered OGM
-+ * @ogm_packet: potential OGM in buffer
-  *
-  * Return: true if there is enough space for another OGM, false otherwise.
-  */
--static bool batadv_iv_ogm_aggr_packet(int buff_pos, int packet_len,
--				      __be16 tvlv_len)
-+static bool
-+batadv_iv_ogm_aggr_packet(int buff_pos, int packet_len,
-+			  const struct batadv_ogm_packet *ogm_packet)
- {
- 	int next_buff_pos = 0;
- 
--	next_buff_pos += buff_pos + BATADV_OGM_HLEN;
--	next_buff_pos += ntohs(tvlv_len);
-+	/* check if there is enough space for the header */
-+	next_buff_pos += buff_pos + sizeof(*ogm_packet);
-+	if (next_buff_pos > packet_len)
-+		return false;
-+
-+	/* check if there is enough space for the optional TVLV */
-+	next_buff_pos += ntohs(ogm_packet->tvlv_len);
- 
- 	return (next_buff_pos <= packet_len) &&
- 	       (next_buff_pos <= BATADV_MAX_AGGREGATION_BYTES);
-@@ -488,7 +494,7 @@ static void batadv_iv_ogm_send_to_if(struct batadv_forw_packet *forw_packet,
- 
- 	/* adjust all flags and log packets */
- 	while (batadv_iv_ogm_aggr_packet(buff_pos, forw_packet->packet_len,
--					 batadv_ogm_packet->tvlv_len)) {
-+					 batadv_ogm_packet)) {
- 		/* we might have aggregated direct link packets with an
- 		 * ordinary base packet
- 		 */
-@@ -1841,7 +1847,7 @@ static int batadv_iv_ogm_receive(struct sk_buff *skb,
- 
- 	/* unpack the aggregated packets and process them one by one */
- 	while (batadv_iv_ogm_aggr_packet(ogm_offset, skb_headlen(skb),
--					 ogm_packet->tvlv_len)) {
-+					 ogm_packet)) {
- 		batadv_iv_ogm_process(skb, ogm_offset, if_incoming);
- 
- 		ogm_offset += BATADV_OGM_HLEN;
-diff --git a/net/batman-adv/netlink.c b/net/batman-adv/netlink.c
-index 64cb6acbe0a6..d7ba4fd24e3d 100644
---- a/net/batman-adv/netlink.c
-+++ b/net/batman-adv/netlink.c
-@@ -114,7 +114,7 @@ batadv_netlink_get_ifindex(const struct nlmsghdr *nlh, int attrtype)
- {
- 	struct nlattr *attr = nlmsg_find_attr(nlh, GENL_HDRLEN, attrtype);
- 
--	return attr ? nla_get_u32(attr) : 0;
-+	return (attr && nla_len(attr) == sizeof(u32)) ? nla_get_u32(attr) : 0;
- }
- 
- /**
-diff --git a/net/key/af_key.c b/net/key/af_key.c
-index 36db179d848e..d2ec620319d7 100644
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -1969,8 +1969,10 @@ parse_ipsecrequest(struct xfrm_policy *xp, struct sadb_x_ipsecrequest *rq)
- 
- 	if (rq->sadb_x_ipsecrequest_mode == 0)
- 		return -EINVAL;
-+	if (!xfrm_id_proto_valid(rq->sadb_x_ipsecrequest_proto))
-+		return -EINVAL;
- 
--	t->id.proto = rq->sadb_x_ipsecrequest_proto; /* XXX check proto */
-+	t->id.proto = rq->sadb_x_ipsecrequest_proto;
- 	if ((mode = pfkey_mode_to_xfrm(rq->sadb_x_ipsecrequest_mode)) < 0)
- 		return -EINVAL;
- 	t->mode = mode;
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 884f2136b34b..3734ad56b456 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -2168,7 +2168,7 @@ void xfrm_state_fini(struct net *net)
- 	unsigned int sz;
- 
- 	flush_work(&net->xfrm.state_hash_work);
--	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
-+	xfrm_state_flush(net, 0, false);
- 	flush_work(&xfrm_state_gc_work);
- 
- 	WARN_ON(!list_empty(&net->xfrm.state_all));
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index f3e9d500fa5a..ff641b2e1577 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1452,20 +1452,8 @@ static int validate_tmpl(int nr, struct xfrm_user_tmpl *ut, u16 family)
- 			return -EINVAL;
- 		}
- 
--		switch (ut[i].id.proto) {
--		case IPPROTO_AH:
--		case IPPROTO_ESP:
--		case IPPROTO_COMP:
--#if IS_ENABLED(CONFIG_IPV6)
--		case IPPROTO_ROUTING:
--		case IPPROTO_DSTOPTS:
--#endif
--		case IPSEC_PROTO_ANY:
--			break;
--		default:
-+		if (!xfrm_id_proto_valid(ut[i].id.proto))
- 			return -EINVAL;
--		}
--
- 	}
- 
- 	return 0;
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index 381acfc4c59d..98cf6343afcd 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -77,7 +77,7 @@ parse_symbol() {
- 	fi
- 
- 	# Strip out the base of the path
--	code=${code//^$basepath/""}
-+	code=${code#$basepath/}
- 
- 	# In the case of inlines, move everything to same line
- 	code=${code//$'\n'/' '}
-diff --git a/sound/pci/hda/hda_auto_parser.c b/sound/pci/hda/hda_auto_parser.c
-index a03cf68d0bcd..12d87204e373 100644
---- a/sound/pci/hda/hda_auto_parser.c
-+++ b/sound/pci/hda/hda_auto_parser.c
-@@ -827,6 +827,8 @@ static void apply_fixup(struct hda_codec *codec, int id, int action, int depth)
- 	while (id >= 0) {
- 		const struct hda_fixup *fix = codec->fixup_list + id;
- 
-+		if (++depth > 10)
-+			break;
- 		if (fix->chained_before)
- 			apply_fixup(codec, fix->chain_id, action, depth + 1);
- 
-@@ -866,8 +868,6 @@ static void apply_fixup(struct hda_codec *codec, int id, int action, int depth)
- 		}
- 		if (!fix->chained || fix->chained_before)
- 			break;
--		if (++depth > 10)
--			break;
- 		id = fix->chain_id;
- 	}
- }
-diff --git a/sound/pci/hda/hda_generic.c b/sound/pci/hda/hda_generic.c
-index 98594cbe34c8..949c90a859fa 100644
---- a/sound/pci/hda/hda_generic.c
-+++ b/sound/pci/hda/hda_generic.c
-@@ -5807,7 +5807,8 @@ int snd_hda_gen_init(struct hda_codec *codec)
- 	if (spec->init_hook)
- 		spec->init_hook(codec);
- 
--	snd_hda_apply_verbs(codec);
-+	if (!spec->skip_verbs)
-+		snd_hda_apply_verbs(codec);
- 
- 	init_multi_out(codec);
- 	init_extra_out(codec);
-diff --git a/sound/pci/hda/hda_generic.h b/sound/pci/hda/hda_generic.h
-index 932b533feb48..6d1cb2fb447d 100644
---- a/sound/pci/hda/hda_generic.h
-+++ b/sound/pci/hda/hda_generic.h
-@@ -236,6 +236,7 @@ struct hda_gen_spec {
- 	unsigned int indep_hp_enabled:1; /* independent HP enabled */
- 	unsigned int have_aamix_ctl:1;
- 	unsigned int hp_mic_jack_modes:1;
-+	unsigned int skip_verbs:1; /* don't apply verbs at snd_hda_gen_init() */
- 
- 	/* additional mute flags (only effective with auto_mute_via_amp=1) */
- 	u64 mute_bits;
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 8e995fb27312..31322aeebcff 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -773,9 +773,11 @@ static int alc_init(struct hda_codec *codec)
- 	if (spec->init_hook)
- 		spec->init_hook(codec);
- 
-+	spec->gen.skip_verbs = 1; /* applied in below */
- 	snd_hda_gen_init(codec);
- 	alc_fix_pll(codec);
- 	alc_auto_init_amp(codec, spec->init_amp);
-+	snd_hda_apply_verbs(codec); /* apply verbs here after own init */
- 
- 	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
- 
+
+--Y48FV0AvvvAm5Iyr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the arm64 tree got a conflict in:
+
+  init/Kconfig
+
+between commit:
+
+  eb111869301e15b7373 ("compiler-types.h: add asm_inline definition")
+
+=66rom the compiler-attributes tree and commit:
+
+  2d122942484c20b ("Revert "init/Kconfig: Fix infinite Kconfig recursion on=
+ PPC"")
+
+=66rom the arm64 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc init/Kconfig
+index 257e428c90472,d96127ebc44e0..cebadd0cfa50e
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@@ -30,9 -30,9 +30,12 @@@ config CC_CAN_LIN
+  config CC_HAS_ASM_GOTO
+        def_bool $(success,$(srctree)/scripts/gcc-goto.sh $(CC))
+ =20
+ +config CC_HAS_ASM_INLINE
+ +      def_bool $(success,echo 'void foo(void) { asm inline (""); }' | $(C=
+C) -x c - -c -o /dev/null)
+ +
++ config TOOLS_SUPPORT_RELR
++       def_bool $(success,env "CC=3D$(CC)" "LD=3D$(LD)" "NM=3D$(NM)" "OBJC=
+OPY=3D$(OBJCOPY)" $(srctree)/scripts/tools-support-relr.sh)
++=20
+  config CC_HAS_WARN_MAYBE_UNINITIALIZED
+        def_bool $(cc-option,-Wmaybe-uninitialized)
+        help
+
+--Y48FV0AvvvAm5Iyr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1/ZxcACgkQJNaLcl1U
+h9BiNgf7BUPhO+mDw5BCZm9EeRGqX2N+OfJwDTJ1+fa6mVSR7olKtg1n4raFn7Ex
+hbwCpqh0IL7tS9mvQOqo64zCUmhXDrMsiGe8Zk9iODnAETVdhGYM7vMC1YMLi5et
+KeNG/by+pMv56RXllDX/kXNvVAJptCUCWZAclLeHLWyb7bG2xpZfZy+3PIJlsWxU
+SvwNMegCobH50m5MSrDiYsoWq80mC8pKBOEqTuP1utmKDhLJR+aFu3P3BnnAu5wE
+EJieQaQ4C0TuNTcTSHVDicFQxYcTbmt8CDZcetNz27Get/pO13RYVYpnsGAKJJ60
+PBvRcHuMpwZChVP7TwRpgBfDBnECTA==
+=sijn
+-----END PGP SIGNATURE-----
+
+--Y48FV0AvvvAm5Iyr--
