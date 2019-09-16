@@ -2,173 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46093B42A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D09FB42B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388887AbfIPVG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 17:06:59 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34419 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730662AbfIPVG6 (ORCPT
+        id S2389040AbfIPVLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 17:11:10 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56304 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388977AbfIPVLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 17:06:58 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b128so691107pfa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 14:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iS/KS7K2dpElo8VkeXq0MZCaa3SuE0K1o3j4psLcFA8=;
-        b=YdLjxYgRbkoi06bMhkQnbta7mRwdXc5iGkj16WLjvWHccLbl1IEoEQgQNK9cuSyldW
-         mnG6FyS+PTWXYUivgSnH4ar0Jz0Bnce/CsdKs9TZhWuClo9vkix9oeoonQEOa2uZcDCc
-         VwBR4oL1DF5bCfjUsZKsnNxhGxKXrY7zSIA14puGVdFeaO39XPeEtBC3r3MkEXp1dcHv
-         2ZyUHyoSYB1Z0yuR0gki0YDurp2BTja5VXeKRKLBTAHnqJrgbpYkAJnnt+kaFhh5rh0U
-         r9NF7VHvDToPuWN663YyucmZrI2bEzZAW+9yvVVYSiCbrFJjmCcxYnGDaBUB/bip6C+m
-         EiUw==
+        Mon, 16 Sep 2019 17:11:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1568668268;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7xTIXm4K2D6Qs2K7CtMCu5t3JJce0LvphVa9t+F5TPc=;
+        b=ioYG6T3ZxJcMUngzhCpZ3mGa/rpyGgIyIulzckN3aZvgsaOqKQOHhJYUGhD7wQgYwyA6pt
+        dQ9jRfILJEoRUccYNWBUjweAzkCsS7S1IfefcSQmMLd+r6EeasCxEdX/tx5t34M+KhXUfL
+        kxh+xlpSql7OKQh5zvCn2iQy7SHNRzo=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-175-IFiWI7iqM8qHe1ZcQjedlQ-1; Mon, 16 Sep 2019 17:04:56 -0400
+Received: by mail-qt1-f198.google.com with SMTP id z4so1769887qts.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 14:04:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iS/KS7K2dpElo8VkeXq0MZCaa3SuE0K1o3j4psLcFA8=;
-        b=JNb6IpmMc/kUL/tlTWq+cGhfiTrWhsqQIXVwtnnT38V79xoY8PWCJGUyHQGUXZykgk
-         iooEmzYRxdXebSWZ16/sGEVg/zMPI5ZFMLU2dK4XU6dW8aYAYBMH3hTwov1Nsl0lzb3l
-         XGsOabgoSPonwQn71ZUuni+Kzfjtj6PjxThnPP1wvSY6vtUJrIDKjUocop5O0YGZ+PUZ
-         LD4gd17HhZNUScdTYkNxkIAiathwyd41a1j67YfvImc1DdgPe7koSPxgLs19iLSt4pIG
-         Hjf9/D5qQd3XoYugWg4SN2U13xSaXG+EyRAa2+mWdKKLNWd/Tht3pIVc5ElWCGx/7hBk
-         minw==
-X-Gm-Message-State: APjAAAXRtU8iDNBGGkcrV8oz43PJWwD1RtUFu9yssZIAgZ7xiNJD/jqY
-        GFl+0gJFcFWFZ3SNjtiwI6Z5UhTJxhau3NeWpCP0xg==
-X-Google-Smtp-Source: APXvYqxZco9RmXoG2vVXf/2rxlM8ja+bWzzGh23VEs5YPWBvIGKwLERa7drgEvqHT1ZmjmG63H9hom+fnxJ5QfbcVic=
-X-Received: by 2002:a62:5fc1:: with SMTP id t184mr414733pfb.84.1568668017409;
- Mon, 16 Sep 2019 14:06:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=4ERiCmOZ8H3sPNSQthd2g+0oVPuH4YPtd+sm2yhsBE0=;
+        b=rD7qdDjLFmZPNSju8jQVDQHufZI+rSrI39OGQ9ssUQJzFLwwslp2FNnkPaCwqBzlEf
+         LgrH7gOdz6vK4OVKsrckoBkjOdre/FN5SxIdybBSWI2AfSA9zLAJgLrgyjakrHAOzQ1S
+         WNSv8/hFhq/8/xNTOAdigEM5t+Riz+vZ4qWf4IVdIJdwJMW2BXxCXVdXIK635BhJeRuR
+         zUuQRDnVhTkWOsCsemXAA/8fOWuDOQChp0Lmr7lm4Xo9gkNHeYxLB3jbJ7uPLZ+5XdWm
+         RwgeNtjn23cgD2w92N+D959UfzwzNBcS5Qzu5zeudzCDfnX3uoo7Sx8owf9I3zRqy8gt
+         9xVw==
+X-Gm-Message-State: APjAAAU0fodcbqTKa2s4DNHPMiIoKXxvu5vmESMHcQryR4DVxNc/M9VR
+        9xB44J1tMJ7TsIdZMHpTT3CjX23SncF73gVX9NX+koY/dMZziCIyFSFMDEoLVyk0IDRVWKYsmk/
+        nCM9UQ5N4hToXipWIWrOPyOzk
+X-Received: by 2002:a05:6214:1549:: with SMTP id t9mr177778qvw.68.1568667896457;
+        Mon, 16 Sep 2019 14:04:56 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqw7QP6IN4If6IqdEiE7mlgnayhIJAjkoYIwxiFRX5sPKLM4tlcXgm2XeZ5ZkcZWqN/t9OIXUQ==
+X-Received: by 2002:a05:6214:1549:: with SMTP id t9mr177751qvw.68.1568667896220;
+        Mon, 16 Sep 2019 14:04:56 -0700 (PDT)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id 60sm99677qta.77.2019.09.16.14.04.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 14:04:55 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 14:04:54 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Wrap the buffer from the caller to tpm_buf in
+ tpm_send()
+Message-ID: <20190916210454.mq3g2m6s5a2syaxp@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190916085008.22239-1-jarkko.sakkinen@linux.intel.com>
+ <20190916210331.l6enypnafk2cwako@cantor>
 MIME-Version: 1.0
-References: <20190915214748.GJ4352@sirena.co.uk>
-In-Reply-To: <20190915214748.GJ4352@sirena.co.uk>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 16 Sep 2019 14:06:46 -0700
-Message-ID: <CAKwvOdkZ9_qp9V=H6tjpLyscct+g-aPqn-dPj8R+CGF4Rt_-Rw@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the drm tree with the kbuild tree
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Roman Li <Roman.Li@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Jun Lei <Jun.Lei@amd.com>,
-        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Xinpeng Liu <danielliu861@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190916210331.l6enypnafk2cwako@cantor>
+User-Agent: NeoMutt/20180716
+X-MC-Unique: IFiWI7iqM8qHe1ZcQjedlQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 15, 2019 at 2:47 PM Mark Brown <broonie@kernel.org> wrote:
+On Mon Sep 16 19, Jerry Snitselaar wrote:
+>On Mon Sep 16 19, Jarkko Sakkinen wrote:
+>>tpm_send() does not give anymore the result back to the caller. This
+>>would require another memcpy(), which kind of tells that the whole
+>>approach is somewhat broken. Instead, as Mimi suggested, this commit
+>>just wraps the data to the tpm_buf, and thus the result will not go to
+>>the garbage.
+>>
+>>Obviously this assumes from the caller that it passes large enough
+>>buffer, which makes the whole API somewhat broken because it could be
+>>different size than @buflen but since trusted keys is the only module
+>>using this API right now I think that this fix is sufficient for the
+>>moment.
+>>
+>>In the near future the plan is to replace the parameters with a tpm_buf
+>>created by the caller.
+>>
+>>Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+>>Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+>>Cc: stable@vger.kernel.org
+>>Fixes: 412eb585587a ("use tpm_buf in tpm_transmit_cmd() as the IO paramet=
+er")
+>>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>>---
+>>drivers/char/tpm/tpm-interface.c | 8 ++------
+>>1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>>diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-inte=
+rface.c
+>>index d9ace5480665..2459d36dd8cc 100644
+>>--- a/drivers/char/tpm/tpm-interface.c
+>>+++ b/drivers/char/tpm/tpm-interface.c
+>>@@ -358,13 +358,9 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_=
+t buflen)
+>>=09if (!chip)
+>>=09=09return -ENODEV;
+>>
+>>-=09rc =3D tpm_buf_init(&buf, 0, 0);
+>>-=09if (rc)
+>>-=09=09goto out;
+>>-
+>>-=09memcpy(buf.data, cmd, buflen);
+>>+=09buf.data =3D cmd;
+>>=09rc =3D tpm_transmit_cmd(chip, &buf, 0, "attempting to a send a command=
+");
+>>-=09tpm_buf_destroy(&buf);
+>>+
+>>out:
+>>=09tpm_put_ops(chip);
+>>=09return rc;
+>>--=20
+>>2.20.1
+>>
 >
-> Hi all,
+>Nothing uses the out label any longer so it should be dropped as well, but=
+ other than that...
 >
-> Today's linux-next merge of the drm tree got a conflict in:
->
->   drivers/gpu/drm/amd/display/dc/dml/Makefile
->
-> between commit:
->
->   54b8ae66ae1a345 ("kbuild: change *FLAGS_<basetarget>.o to take the path relative to $(obj)")
->
-> from the kbuild tree and commits:
->
->   0f0727d971f6fdf ("drm/amd/display: readd -msse2 to prevent Clang from emitting libcalls to undefined SW FP routines")
+>Acked-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-^ this patch is now broken due to the SHA above it.
+sigh (wrong emacs macro hit), that should be:
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
-b/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
-index 2b399cfa72e6..ddb8d5649e79 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/Makefile
-@@ -19,7 +19,7 @@ endif
- CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o := -mhard-float -msse
-$(cc_stack_align)
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
- ifdef CONFIG_CC_IS_CLANG
--CFLAGS_dcn20_resource.o += -msse2
-+CFLAGS_$(AMDDALPATH)/dc/dcn20/dcn20_resource.o += -msse2
- endif
-
- AMD_DAL_DCN20 = $(addprefix $(AMDDALPATH)/dc/dcn20/,$(DCN20))
-
-
->   542816ff168d8a3 ("drm/amd/display: Add DCN2.1 changes to DML")
->   b04641a3f4c54b0 ("drm/amd/display: Add Renoir DML")
->   057fc695e934a77 ("drm/amd/display: support "dummy pstate"")
->
-> from the drm tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> diff --cc drivers/gpu/drm/amd/display/dc/dml/Makefile
-> index 83792e2c0f0e4,af2a864a6da05..0000000000000
-> --- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> @@@ -32,16 -32,29 +32,25 @@@ endi
->
->   dml_ccflags := -mhard-float -msse $(cc_stack_align)
->
-> + ifdef CONFIG_CC_IS_CLANG
-> + dml_ccflags += -msse2
-> + endif
-> +
->  -CFLAGS_display_mode_lib.o := $(dml_ccflags)
->  +CFLAGS_$(AMDDALPATH)/dc/dml/display_mode_lib.o := $(dml_ccflags)
->
->   ifdef CONFIG_DRM_AMD_DC_DCN2_0
->  -CFLAGS_display_mode_vba.o := $(dml_ccflags)
->  -CFLAGS_display_mode_vba_20.o := $(dml_ccflags)
->  -CFLAGS_display_rq_dlg_calc_20.o := $(dml_ccflags)
->  -CFLAGS_display_mode_vba_20v2.o := $(dml_ccflags)
->  -CFLAGS_display_rq_dlg_calc_20v2.o := $(dml_ccflags)
->  -endif
->  +CFLAGS_$(AMDDALPATH)/dc/dml/display_mode_vba.o := $(dml_ccflags)
->  +CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_mode_vba_20.o := $(dml_ccflags)
->  +CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_rq_dlg_calc_20.o := $(dml_ccflags)
-> ++CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_mode_vba_20v2.o := $(dml_ccflags)
-> ++CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_rq_dlg_calc_20v2.o := $(dml_ccflags)
-> + ifdef CONFIG_DRM_AMD_DC_DCN2_1
->  -CFLAGS_display_mode_vba_21.o := $(dml_ccflags)
->  -CFLAGS_display_rq_dlg_calc_21.o := $(dml_ccflags)
->  -endif
-
-^ this endif should not be removed.
-
-
->  -ifdef CONFIG_DRM_AMD_DCN3AG
->  -CFLAGS_display_mode_vba_3ag.o := $(dml_ccflags)
-> ++CFLAGS_$(AMDDALPATH)/dc/dml/dcn21/display_mode_vba_21.o := $(dml_ccflags)
-> ++CFLAGS_$(AMDDALPATH)/dc/dml/dcn21/display_rq_dlg_calc_21.o := $(dml_ccflags)
->   endif
->  -CFLAGS_dml1_display_rq_dlg_calc.o := $(dml_ccflags)
->  -CFLAGS_display_rq_dlg_helpers.o := $(dml_ccflags)
->  -CFLAGS_dml_common_defs.o := $(dml_ccflags)
->  +CFLAGS_$(AMDDALPATH)/dc/dml/dml1_display_rq_dlg_calc.o := $(dml_ccflags)
->  +CFLAGS_$(AMDDALPATH)/dc/dml/display_rq_dlg_helpers.o := $(dml_ccflags)
->  +CFLAGS_$(AMDDALPATH)/dc/dml/dml_common_defs.o := $(dml_ccflags)
->
->   DML = display_mode_lib.o display_rq_dlg_helpers.o dml1_display_rq_dlg_calc.o \
->         dml_common_defs.o
-
-
-
---
-Thanks,
-~Nick Desaulniers
