@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5603B42F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72E1FB42FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403990AbfIPVXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 17:23:52 -0400
+        id S2404086AbfIPVYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 17:24:19 -0400
 Received: from mga11.intel.com ([192.55.52.93]:27020 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727674AbfIPVXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 17:23:50 -0400
+        id S2403975AbfIPVXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 17:23:51 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 14:23:50 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 14:23:51 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,514,1559545200"; 
-   d="scan'208";a="201684028"
+   d="scan'208";a="201684034"
 Received: from dgitin-mobl.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.251.142.45])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Sep 2019 14:23:49 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 16 Sep 2019 14:23:50 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [RFC PATCH 3/9] soundwire: rename drv_to_sdw_slave_driver macro
-Date:   Mon, 16 Sep 2019 16:23:36 -0500
-Message-Id: <20190916212342.12578-4-pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 4/9] soundwire: bus_type: rename sdw_drv_ to sdw_slave_drv
+Date:   Mon, 16 Sep 2019 16:23:37 -0500
+Message-Id: <20190916212342.12578-5-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190916212342.12578-1-pierre-louis.bossart@linux.intel.com>
 References: <20190916212342.12578-1-pierre-louis.bossart@linux.intel.com>
@@ -43,76 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Align with previous renames and shorten macro
+Before we add master driver support, make sure there is no ambiguity
+and no occirrences of sdw_drv_ functions.
 
-No functionality change
+No functionality change.
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/bus_type.c       | 9 ++++-----
- include/linux/soundwire/sdw_type.h | 3 ++-
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/soundwire/bus_type.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
-index 071605ca01fa..ae56fdd434af 100644
+index ae56fdd434af..9407ebf30012 100644
 --- a/drivers/soundwire/bus_type.c
 +++ b/drivers/soundwire/bus_type.c
-@@ -34,7 +34,7 @@ sdw_get_device_id(struct sdw_slave *slave, struct sdw_driver *drv)
- static int sdw_bus_match(struct device *dev, struct device_driver *ddrv)
+@@ -67,7 +67,7 @@ struct bus_type sdw_bus_type = {
+ };
+ EXPORT_SYMBOL_GPL(sdw_bus_type);
+ 
+-static int sdw_drv_probe(struct device *dev)
++static int sdw_slave_drv_probe(struct device *dev)
  {
  	struct sdw_slave *slave = to_sdw_slave_device(dev);
--	struct sdw_driver *drv = drv_to_sdw_slave_driver(ddrv);
-+	struct sdw_driver *drv = to_sdw_slave_driver(ddrv);
- 
- 	return !!sdw_get_device_id(slave, drv);
+ 	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
+@@ -113,7 +113,7 @@ static int sdw_drv_probe(struct device *dev)
+ 	return 0;
  }
-@@ -70,7 +70,7 @@ EXPORT_SYMBOL_GPL(sdw_bus_type);
- static int sdw_drv_probe(struct device *dev)
- {
- 	struct sdw_slave *slave = to_sdw_slave_device(dev);
--	struct sdw_driver *drv = drv_to_sdw_slave_driver(dev->driver);
-+	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
- 	const struct sdw_device_id *id;
- 	int ret;
  
-@@ -116,8 +116,7 @@ static int sdw_drv_probe(struct device *dev)
- static int sdw_drv_remove(struct device *dev)
+-static int sdw_drv_remove(struct device *dev)
++static int sdw_slave_drv_remove(struct device *dev)
  {
  	struct sdw_slave *slave = to_sdw_slave_device(dev);
--	struct sdw_driver *drv = drv_to_sdw_slave_driver(dev->driver);
--
-+	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
- 	int ret = 0;
+ 	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
+@@ -127,7 +127,7 @@ static int sdw_drv_remove(struct device *dev)
+ 	return ret;
+ }
+ 
+-static void sdw_drv_shutdown(struct device *dev)
++static void sdw_slave_drv_shutdown(struct device *dev)
+ {
+ 	struct sdw_slave *slave = to_sdw_slave_device(dev);
+ 	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
+@@ -155,13 +155,13 @@ int __sdw_register_slave_driver(struct sdw_driver *drv,
+ 	}
+ 
+ 	drv->driver.owner = owner;
+-	drv->driver.probe = sdw_drv_probe;
++	drv->driver.probe = sdw_slave_drv_probe;
  
  	if (drv->remove)
-@@ -131,7 +130,7 @@ static int sdw_drv_remove(struct device *dev)
- static void sdw_drv_shutdown(struct device *dev)
- {
- 	struct sdw_slave *slave = to_sdw_slave_device(dev);
--	struct sdw_driver *drv = drv_to_sdw_slave_driver(dev->driver);
-+	struct sdw_driver *drv = to_sdw_slave_driver(dev->driver);
+-		drv->driver.remove = sdw_drv_remove;
++		drv->driver.remove = sdw_slave_drv_remove;
  
  	if (drv->shutdown)
- 		drv->shutdown(slave);
-diff --git a/include/linux/soundwire/sdw_type.h b/include/linux/soundwire/sdw_type.h
-index abaa21278152..7d4bc6a979bf 100644
---- a/include/linux/soundwire/sdw_type.h
-+++ b/include/linux/soundwire/sdw_type.h
-@@ -6,7 +6,7 @@
+-		drv->driver.shutdown = sdw_drv_shutdown;
++		drv->driver.shutdown = sdw_slave_drv_shutdown;
  
- extern struct bus_type sdw_bus_type;
- 
--#define drv_to_sdw_slave_driver(_drv) \
-+#define to_sdw_slave_driver(_drv) \
- 	container_of(_drv, struct sdw_driver, driver)
- 
- #define sdw_register_slave_driver(drv) \
-@@ -29,4 +29,5 @@ int sdw_slave_modalias(const struct sdw_slave *slave, char *buf, size_t size);
- #define module_sdw_driver(__sdw_slave_driver) \
- 	module_driver(__sdw_slave_driver, sdw_register_slave_driver, \
- 			sdw_unregister_slave_driver)
-+
- #endif /* __SOUNDWIRE_TYPES_H */
+ 	return driver_register(&drv->driver);
+ }
 -- 
 2.20.1
 
