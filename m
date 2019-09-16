@@ -2,111 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78512B4343
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 935EDB434D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbfIPVfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 17:35:52 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:52656 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728552AbfIPVfw (ORCPT
+        id S1727666AbfIPVim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 17:38:42 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36476 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfIPVim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 17:35:52 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 46XKKt6p0Kz1r7hh;
-        Mon, 16 Sep 2019 23:35:46 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 46XKKt4s1Pz1qsD2;
-        Mon, 16 Sep 2019 23:35:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id vL_Z3Yvzkzi9; Mon, 16 Sep 2019 23:35:45 +0200 (CEST)
-X-Auth-Info: 7Yzorz4cL64cpIXYMwEei+hYY6VSe697biienY//MW0u7gRp/4RLUg4/7I3tvenS
-Received: from igel.home (ppp-46-244-165-89.dynamic.mnet-online.de [46.244.165.89])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 16 Sep 2019 23:35:45 +0200 (CEST)
-Received: by igel.home (Postfix, from userid 1000)
-        id A03192C0173; Mon, 16 Sep 2019 23:35:44 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
-Subject: Re: [PATCH v3 bpf-next 01/14] samples: bpf: makefile: fix HDR_PROBE "echo"
-References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org>
-        <20190916105433.11404-2-ivan.khoronzhuk@linaro.org>
-        <CAEf4BzZVTjCybmDgM0VBzv_L-LHtF8LcDyyKSWJm0ZA4jtJKcw@mail.gmail.com>
-X-Yow:  I always wanted a NOSE JOB!!
-Date:   Mon, 16 Sep 2019 23:35:44 +0200
-In-Reply-To: <CAEf4BzZVTjCybmDgM0VBzv_L-LHtF8LcDyyKSWJm0ZA4jtJKcw@mail.gmail.com>
-        (Andrii Nakryiko's message of "Mon, 16 Sep 2019 13:13:23 -0700")
-Message-ID: <8736gvexfz.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 16 Sep 2019 17:38:42 -0400
+Received: by mail-pg1-f194.google.com with SMTP id m29so736993pgc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 14:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ussGV4sAsw+qdSXVhtVYUo/8kyRAo8F9PtEFDW04fvs=;
+        b=ehEiIeAU6vrWvGRFxnPUj6OUoZMY60XI9IEGjHP+firBnz43tx3q307LVbyQXN4dYb
+         c4ccBMhe0wnVpAGWQvIGQ/uGI1uwGq3XhwWkVshaWEAvc0smTR5tAjQDztxorEHwdTDL
+         /rfvDBtHRBh88OPPTJE+v4YpNhHCcCYc+1lPJ1152ykjhOH0+P6oHSW0q1LbA1oL1OWy
+         2rSsdWLn51Z4A2JyKuKStVZbFD5ZyKoyTkwxYOoQBEH54zcodvvu9fk/v321NTNLn1ha
+         e1jq3fOkv1If+qMp75PiaJ25551lrZNHmDnSvJjLwWMsnNNZt/AcZHJEkg/d8mvgKT0g
+         Y22w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=ussGV4sAsw+qdSXVhtVYUo/8kyRAo8F9PtEFDW04fvs=;
+        b=aBNeKge5A9ezinEmTyymXtOWv5jUclsBCAHLITBVVffZ/t/h4ZBFH5lfJzyzmaLwRo
+         5Bi86k2II7sYTlW1xoBM9taIkmRXNERRyVlgRCAK2j1NPV9MSV/Sb0H05i1YKChXXt9Z
+         gkZxYvZwVBT57U7jSEI6jltC3u+gvtZ/RF8CWBxuHRHAR0Fsr50tsI2d+KL8F14lkwBZ
+         DMhDnQULwWqNxORZkZewkpQdW+6FjVpeFalPsmJcD6RwCi8vqvj7Bq93oGC1uaKuT9oG
+         f3frsYVb2rtloCaD7ZVjZqVCs1t1RvRKTordH1GLjeSkGUubrBS3NVi6vJvRHSRsXW7x
+         yOrw==
+X-Gm-Message-State: APjAAAWaOyDOSUHHGKWO91qiIYFJV7xM1dSpLm4aPUJ2oFkYW9iuN9/p
+        n+hyi3V6/8yoys2KD5km9sOnlQ==
+X-Google-Smtp-Source: APXvYqyQF4otQXzAnqHHg9QWpeu/7pnzO7LWZJg0Kp6EIFIRsfSWANkypqS5FNNikxA657tbrU+NoA==
+X-Received: by 2002:a62:1b0c:: with SMTP id b12mr529676pfb.17.1568669920805;
+        Mon, 16 Sep 2019 14:38:40 -0700 (PDT)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id k31sm129129pjb.14.2019.09.16.14.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 14:38:39 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 14:38:39 -0700 (PDT)
+X-Google-Original-Date: Mon, 16 Sep 2019 14:38:36 PDT (-0700)
+Subject:     Re: [PATCH] serial/sifive: select SERIAL_EARLYCON
+In-Reply-To: <87ftkwdo85.fsf@igel.home>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Greg KH <gregkh@linuxfoundation.org>, jslaby@suse.com,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     schwab@suse.de
+Message-ID: <mhng-5091669f-461c-4e62-a71c-e16957801fad@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sep 16 2019, Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-
-> On Mon, Sep 16, 2019 at 3:59 AM Ivan Khoronzhuk
-> <ivan.khoronzhuk@linaro.org> wrote:
->>
->> echo should be replaced with echo -e to handle '\n' correctly, but
->> instead, replace it with printf as some systems can't handle echo -e.
->>
->> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->> ---
->>  samples/bpf/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
->> index 1d9be26b4edd..f50ca852c2a8 100644
->> --- a/samples/bpf/Makefile
->> +++ b/samples/bpf/Makefile
->> @@ -201,7 +201,7 @@ endif
->>
->>  # Don't evaluate probes and warnings if we need to run make recursively
->>  ifneq ($(src),)
->> -HDR_PROBE := $(shell echo "\#include <linux/types.h>\n struct list_head { int a; }; int main() { return 0; }" | \
->> +HDR_PROBE := $(shell printf "\#include <linux/types.h>\n struct list_head { int a; }; int main() { return 0; }" | \
+On Mon, 16 Sep 2019 12:40:10 PDT (-0700), schwab@suse.de wrote:
+> On Sep 16 2019, Palmer Dabbelt <palmer@sifive.com> wrote:
 >
-> printf change is fine, but I'm confused about \# at the beginning of
-> the string.
+>> On Sun, 15 Sep 2019 23:42:53 PDT (-0700), Christoph Hellwig wrote:
+>>> On Fri, Sep 13, 2019 at 01:40:27PM -0700, Palmer Dabbelt wrote:
+>>>> OpenEmbedded passes "earlycon=sbi", which I can find in the doumentation.
+>>>> I can't find anything about just "earlycon".  I've sent a patch adding sbi
+>>>> to the list of earlycon arguments.
+>>>
+>>> earlycon without arguments is documented, although just for ARM64.
+>>> I can send a patch to update it to properly cover all DT platforms
+>>> in addition.
+>>
+>> Thanks.  I've kind of lost track of the thread, but assuming that does the
+>> "automatically pick an earlycon" stuff then that's probably what we should
+>> be using in the distros.
+>
+> Except that it doesn't work.
 
-From the NEWS of make 4.3:
+Sorry, once again I've lost track of the thread.
 
-* WARNING: Backward-incompatibility!
-  Number signs (#) appearing inside a macro reference or function invocation
-  no longer introduce comments and should not be escaped with backslashes:
-  thus a call such as:
-    foo := $(shell echo '#')
-  is legal.  Previously the number sign needed to be escaped, for example:
-    foo := $(shell echo '\#')
-  Now this latter will resolve to "\#".  If you want to write makefiles
-  portable to both versions, assign the number sign to a variable:
-    H := \#
-    foo := $(shell echo '$H')
-  This was claimed to be fixed in 3.81, but wasn't, for some reason.
-  To detect this change search for 'nocomment' in the .FEATURES variable.
+The code looks generic.  The device tree in arch/riscv for the HiFive Unleashed 
+doesn't have a stdout-path set, which if I understand correctly is used by the 
+automatic earlycon stuff to pick a console.  I gave this a quick test on QEMU, 
+which finds a 16550 earlycon for me.  I use openembedded's qemuriscv64 target, 
+the following diff to make sure I'm getting an earlycon
 
-Andreas.
+diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
+index 5cd8c36c8fcc..61290714bbcb 100644
+--- a/drivers/tty/serial/8250/8250_early.c
++++ b/drivers/tty/serial/8250/8250_early.c
+@@ -106,6 +106,7 @@ static void early_serial8250_write(struct console *console,
+        struct earlycon_device *device = console->data;
+        struct uart_port *port = &device->port;
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
++       uart_console_write(port, "_e_", 3, serial_putc);
+        uart_console_write(port, s, count, serial_putc);
+ }
+
+and run this command line
+
+    /home/palmer/work/linux/openembedded-riscv64/build/tmp-glibc/work/x86_64-linux/qemu-helper-native/1.0-r1/recipe-sysroot-native/usr/bin/qemu-system-riscv64 -device virtio-net-device,netdev=net0,mac=52:54:00:12:35:02 -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::2323-:23,tftp=/home/palmer/work/linux/openembedded-riscv64/build/tmp-glibc/deploy/images/qemuriscv64 -drive id=disk0,file=/home/palmer/work/linux/openembedded-riscv64/build/tmp-glibc/deploy/images/qemuriscv64/core-image-full-cmdline-qemuriscv64-20190711162644.rootfs.ext4,if=none,format=raw -device virtio-blk-device,drive=disk0 -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-device,rng=rng0 -show-cursor -monitor null -device loader,file=/home/palmer/work/linux/linux/arch/riscv/boot/Image,addr=0x80200000  -nographic -machine virt  -m 512 -serial mon:stdio -serial null -kernel /home/palmer/work/linux/openembedded-riscv64/build/tmp-glibc/deploy/images/qemuriscv64/fw_jump.elf -append 'root=/dev/vda rw highres=off  console=ttyS0 mem=512M ip=dhcp earlycon '
+
+which gives me some early stuff and then some non-early stuff
+
+_e_[    0.407579] printk: console [ttyS0] disabled
+_e_[    0.409205] 10000000.uart: ttyS0 at MMIO 0x10000000 (irq = 10, base_baud = 230400) is a 16550A
+[    0.410720] printk: console [ttyS0] enabled
+_e_[    0.410720] printk: console [ttyS0] enabled
+[    0.411391] printk: bootconsole [ns16550a0] disabled
+_e_[    0.411391] printk: bootconsole [ns16550a0] disabled
+[    0.420664] [drm] radeon kernel modesetting enabled.
+[    0.428086] random: fast init done
+[    0.429331] random: crng init done
+[    0.440678] loop: module loaded
+[    0.447607] virtio_blk virtio1: [vda] 262830 512-byte logical blocks (135 MB/128 MiB)
+[    0.469483] libphy: Fixed MDIO Bus: probed
+
+If you don't have something like "/chosen/stdout-path = &uart0;" in your device 
+tree, then that's probably the issue.  Here's where it's set in Christoph's 
+k210:
+
+    http://git.infradead.org/users/hch/riscv.git/blob/f10e64873eafc68516b8884c06b9290b9887633b:/arch/riscv/boot/dts/kendryte/kd210.dts#l20
+
+but we don't set it for the HiFive Unleashed.  I'd call that a bug, something 
+like this
+
+diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
+index 93d68cbd64fe..6d0ec76d93fe 100644
+--- a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
++++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
+@@ -13,6 +13,7 @@
+        compatible = "sifive,hifive-unleashed-a00", "sifive,fu540-c000";
+ 
+        chosen {
++               stdout-path = &uart0;
+        };
+ 
+        cpus {
+
+should fix it.  LMK if I've misunderstood something.
