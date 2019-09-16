@@ -2,104 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6337CB3B8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39361B3B9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:43:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387649AbfIPNkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:40:46 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50874 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733272AbfIPNkq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:40:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=w3bobEKmdltUYp3wdYywVRw65l/zXxvDNG8WKRQOF04=; b=L3h6qJyEkF7Z4Q+eevCqRrGLj
-        +p1+xrRJoB0E/NxBqrZjB8JC8uvC05p9FzBOnoTdjIm/1MIMpCbLzBcuvAF7Z8c+W5DDEZAZN/7b0
-        YbHO5liyYQAGum8+A6zBMyXIyu3xGimJTa4xWJgZOmie8US5dM7wE/O/TqzZrKVVYJTdA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i9rF0-0004b0-56; Mon, 16 Sep 2019 13:40:30 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 91B992741A0D; Mon, 16 Sep 2019 14:40:29 +0100 (BST)
-Date:   Mon, 16 Sep 2019 14:40:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     David Howells <dhowells@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     linux-mtd@lists.infradead.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the vfs tree with the ubifs tree
-Message-ID: <20190916134029.GF4352@sirena.co.uk>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="rMHhSL690X5+a0Qo"
-Content-Disposition: inline
-X-Cookie: Man and wife make one fool.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2387722AbfIPNm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:42:57 -0400
+Received: from mga04.intel.com ([192.55.52.120]:53809 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733255AbfIPNm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 09:42:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 06:42:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,512,1559545200"; 
+   d="scan'208";a="387208977"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.84])
+  by fmsmga006.fm.intel.com with ESMTP; 16 Sep 2019 06:42:56 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V4 00/14] TopDown metrics support for Icelake
+Date:   Mon, 16 Sep 2019 06:41:14 -0700
+Message-Id: <20190916134128.18120-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Kan Liang <kan.liang@linux.intel.com>
 
---rMHhSL690X5+a0Qo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Icelake has support for measuring the level 1 TopDown metrics
+directly in hardware. This is implemented by an additional METRICS
+register, and a new Fixed Counter 3 that measures pipeline SLOTS.
 
-Hi all,
+For the Ice Lake implementation of performance metrics, software
+should start both PERF_METRICS and fixed counter 3 from zero.
+Additionally, for certain scenarios that involve counting metrics at
+high rates, software is recommended to periodically clear both in
+order to maintain accurate measurements.
 
-Today's linux-next merge of the vfs tree got a conflict in:
+IA32_PERF_GLOBAL_STATUS. OVF_PERF_METRICS[48]: If this bit is set,
+it indicates that some PERF_METRICS-related counter has overflowed and
+a PMI is triggered. It is recommended to clear PERF_METRICS as well as
+fixed counter 3 in such case. However, an overflow of fixed counter 3
+should normally happen first. If this bit is clear, no such overflow has
+occurred.
 
-  fs/ubifs/super.c
+New in Icelake
+- Do not require generic counters. This allows to collect TopDown always
+  in addition to other events.
+- Measuring TopDown per thread/process instead of only per core
 
-between commit:
+Limitation
+- To get accurate result and avoid reading the METRICS register multiple
+  times, the TopDown metrics events and SLOTS event have to be in the
+  same group.
+- METRICS and SLOTS registers have to be cleared after each read by SW.
+  That is to prevent the lose of precision.
+- Cannot do sampling read SLOTS and TopDown metric events
 
-  9163e0184bd7d5f ("ubifs: Fix memory leak bug in alloc_ubifs_info() error =
-path")
+Please refer SDM Vol3, 18.3.9.3 Performance Metrics for the details of
+TopDown metrics.
 
-=66rom the ubifs tree and commit:
+Changes since V3:
+- Separate fixed counter3 definition patch
+- Separate BTS index patch
+- Apply Peter's cleanup patch
+- Fix the name of perf capabilities for perf METRICS
+- Apply patch for mul_u64_u32_div() x86_64 implementation
+- Fix unconditionally allows collecting 4 extra events
+- Add patch to clean up NMI handler by naming global status bit
+- Add patch to reuse event_base_rdpmc for RDPMC userspace support
 
-  50d7aad57710e2b ("vfs: Convert ubifs to use the new mount API")
+Changes since V2:
+- Rebase on top of v5.3-rc1
 
-=66rom the vfs tree.
+Key changes since V1:
+- Remove variables for reg_idx and enabled_events[] array.
+  The reg_idx can be calculated by idx in runtime.
+  Using existing active_mask to replace enabled_events.
+- Choose value 47 for the fixed index of BTS.
+- Support OVF_PERF_METRICS overflow bit in PMI handler
+- Drops the caching mechanism and related variables
+  New mechanism is to update all active slots/metrics events for the
+  first slots/metrics events in a group. For each group reading, it
+  still only read the slots/perf_metrics MSR once
+- Disable PMU for read of topdown events to avoid the NMI issue
+- Move RDPMC support to a separate patch
+- Using event=0x00,umask=0x1X for topdown metrics events
+- Drop the patch which add REMOVE transaction
+  We can indicate x86_pmu_stop() by checking
+  (event && !test_bit(event->hw.idx, cpuc->active_mask)),
+  which is a good place to save the slots/metrics MSR value
 
-I fixed it up dropping the ubifs change and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+Andi Kleen (2):
+  perf, tools, stat: Support new per thread TopDown metrics
+  perf, tools: Add documentation for topdown metrics
 
-diff --cc fs/ubifs/super.c
-index 7d4547e5202de,a5fa725e7cf16..0000000000000
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
+Kan Liang (11):
+  perf/x86/intel: Introduce the fourth fixed counter
+  perf/x86/intel: Set correct mask for TOPDOWN.SLOTS
+  perf/x86/intel: Move BTS index to 47
+  perf/x86/intel: Basic support for metrics counters
+  perf/x86/intel: Fix the name of perf capabilities for perf METRICS
+  perf/x86/intel: Support hardware TopDown metrics
+  perf/x86/intel: Support per thread RDPMC TopDown metrics
+  perf/x86/intel: Export TopDown events for Icelake
+  perf/x86/intel: Disable sampling read slots and topdown
+  perf/x86/intel: Name global status bit in NMI handler
+  perf/x86: Use event_base_rdpmc for RDPMC userspace support
 
---rMHhSL690X5+a0Qo
-Content-Type: application/pgp-signature; name="signature.asc"
+Peter Zijlstra (Intel) (1):
+  x86/math64: Provide a sane mul_u64_u32_div() implementation for x86_64
 
------BEGIN PGP SIGNATURE-----
+ arch/x86/events/core.c                 |  80 ++++-
+ arch/x86/events/intel/core.c           | 421 +++++++++++++++++++++++--
+ arch/x86/events/perf_event.h           |  57 +++-
+ arch/x86/include/asm/div64.h           |  13 +
+ arch/x86/include/asm/msr-index.h       |   3 +
+ arch/x86/include/asm/perf_event.h      |  48 ++-
+ include/linux/perf_event.h             |   3 +
+ tools/perf/Documentation/perf-stat.txt |   9 +-
+ tools/perf/Documentation/topdown.txt   | 223 +++++++++++++
+ tools/perf/builtin-stat.c              |  24 ++
+ tools/perf/util/stat-shadow.c          |  89 ++++++
+ tools/perf/util/stat.c                 |   4 +
+ tools/perf/util/stat.h                 |   8 +
+ 13 files changed, 924 insertions(+), 58 deletions(-)
+ create mode 100644 tools/perf/Documentation/topdown.txt
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1/kMwACgkQJNaLcl1U
-h9DXgwf/QZnfXeiu+WYdJ0NjI/wa5d6J1ojcLsWvDBM/TIPEO8EMwBqvqgF03u0k
-SGg0TMTUDuQtR5s9dFlefWdbYWz1FPiOPED7mqkPXBUGUyGopHxM5Y5eRgoeVz64
-2jk0e87um3mPWW5X1+dhPBnjjlCeEp7R+t05VG440MI60hExp5NTKlQgDeM9TzaM
-Tz6FZlzMYJV2DJAEvBImpI9omlrfzyo2d6S4ZxGx45M/p1o5pfq25kl3R+1DYSYz
-Zn3xTdQoUi+YYyPwi4wYk/bt4Zu2rBArVr/nZrDDTZHDjHCkyinjyvGqaR3usr+h
-jn2/CH9wfVKTkZHsbyXRvK6XLZ+7oA==
-=RVjy
------END PGP SIGNATURE-----
+-- 
+2.17.1
 
---rMHhSL690X5+a0Qo--
