@@ -2,101 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B3B0B3712
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20CDBB3725
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731940AbfIPJZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 05:25:39 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17176 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbfIPJZi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 05:25:38 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d7f55130000>; Mon, 16 Sep 2019 02:25:39 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 16 Sep 2019 02:25:37 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 16 Sep 2019 02:25:37 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 16 Sep
- 2019 09:25:37 +0000
-Received: from [10.21.132.148] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 16 Sep
- 2019 09:25:35 +0000
-Subject: Re: [PATCH 5.2 00/37] 5.2.15-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190913130510.727515099@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <8ee066b8-ec21-ef87-dbb7-0c2328f93e6d@nvidia.com>
-Date:   Mon, 16 Sep 2019 10:25:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190913130510.727515099@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"
+        id S1731970AbfIPJ3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 05:29:31 -0400
+Received: from mail-eopbgr20113.outbound.protection.outlook.com ([40.107.2.113]:59552
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730020AbfIPJ3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 05:29:31 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QNqBa5+a/jtceRrkyKvkwDuLGXLuYKmGSi+Azp4vJDn78DK4Pr6at+2JEbjfoC3cftiJEZ4cr8wbdfpkKJTFtg6htguu2ug0BrtgUjwTaM8gw/XRa7kf7+0jyt/kdz8mFGsDg9jRPYwwNi30mKFRgmpac80/Qbvc+xDZTC9rgnDcnogOybA8/nnZgfgSqknxlbWlzrYYrKN5oXjrM26/ZkcWkHKJ49hL56njO2QgsKHvikL14J2hJo9QeokL4cNF5mwKei97fvWlyzOKwSu0PK2IUJhWw34oUE4NWbyv51Hm/b29GAzYgEhzsBiE6f1DNVO0Gyp0mzHbOwWek0v4hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bYb9NywJ0l4v2lplIUW/TeVRy/kB0HFQFrLJ6w8slxQ=;
+ b=AG6avP4seCILB4TjDzRTvScdt8zxcdTnH7h1bWxQYz1yLFWjXdx+Ndnc1aMIQRQAPNHaKFBy/lZthnIM1WB5eaA1sgLjyd0VwNOr8rz8UquhFbqjApKn0rsjREtYhXAE6I/TgmVw/giKgFdrM6ph3fszTanUAoyTAFoX0c54JkuUR510p+rq0uYAPvSVmU9iVOMSSzlbNGDd1gGXPxL1YHQ31gLM2/WMNC8fZC5CcQKGp51spn5Fmz0d4BcCRQFJldE5mnCZuoZnG5GqF5OLRKrO7LLMmY/dbfW4FJdVlzDRJqbx6KOuL9vgKvRgyFVbXimR1/rG41HjEkE0ixIwbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bYb9NywJ0l4v2lplIUW/TeVRy/kB0HFQFrLJ6w8slxQ=;
+ b=BDFW/DHxxe6YprSbzDC3lOcEuG8c+0U6Y0y9zt+k2lSW7oErfaSepi9A31lUV5pRT2wo0lGtltwWTdSzjqtjhPrFmYupK4ltiLth06G+vm8iV8GdKbaRrlu87DCbnsnFhz580C9nC0btHd39fEGBq89hHKGkUnGNLyTry7eyO1U=
+Received: from AM6PR0702MB3527.eurprd07.prod.outlook.com (52.133.24.149) by
+ AM6PR0702MB3799.eurprd07.prod.outlook.com (52.133.23.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.17; Mon, 16 Sep 2019 09:29:28 +0000
+Received: from AM6PR0702MB3527.eurprd07.prod.outlook.com
+ ([fe80::892c:2b90:e54f:ab56]) by AM6PR0702MB3527.eurprd07.prod.outlook.com
+ ([fe80::892c:2b90:e54f:ab56%3]) with mapi id 15.20.2263.023; Mon, 16 Sep 2019
+ 09:29:28 +0000
+From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+To:     Jean Delvare <jdelvare@suse.de>,
+        "Xu, Lingyan (NSB - CN/Hangzhou)" <lingyan.xu@nokia-sbell.com>
+CC:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>,
+        "Wiebe, Wladislav (Nokia - DE/Ulm)" <wladislav.wiebe@nokia.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] i801_smbus: clear SMBALERT status bit and disable
+ SMBALERT interrupt
+Thread-Topic: [PATCH] i801_smbus: clear SMBALERT status bit and disable
+ SMBALERT interrupt
+Thread-Index: AQHVYf2CtQ6bNeFFV0qdOS3acGbEtQ==
+Date:   Mon, 16 Sep 2019 09:29:27 +0000
+Message-ID: <d7dce94a-d857-dc1e-1917-d715940bc356@nokia.com>
+References: <1565577634-18264-1-git-send-email-lingyan.xu@nokia-sbell.com>
+ <20190828155822.7cb13a7b@endymion>
+ <a6cd1872effd46c7ba088f28402b32b8@nokia-sbell.com>
+ <20190905145716.137e155a@endymion>
+In-Reply-To: <20190905145716.137e155a@endymion>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1568625939; bh=hNQLxXppVWp46OeYURikZOP7aKylr3ksobdyzwJ7adk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=bk54uahqcPQacs7R5Rx06zgDLtS8GRQ9YPTIHQ10CQyF3LpaAG0G19ioO36n+h63i
-         bUsxKPABZWtF605RZ9ms8TmEbcEDEsyAE5ja5FDRmPICSaes/GTcTcy+TR51KvFoB+
-         FjYB27kZFdGgjoKO1x2ynOUeUBSKrpd94ntcHgzA40vIGdFRJTtaWgcV7+45H+oWAk
-         cTWeTE8GZOBTPCzJjRECfHnEOODtzvlir/QkRJG/i//LmjS3JmGIip03qZkdQo7A/p
-         vlyF2WEVPc2aSMRVnk/eKDX+8oVD16xgS1fRhjEIeypHCeVmRiT3IVT232Ms48D+bo
-         THH1xzIEiACxQ==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [131.228.32.167]
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
+x-clientproxiedby: HE1PR0402CA0006.eurprd04.prod.outlook.com
+ (2603:10a6:3:d0::16) To AM6PR0702MB3527.eurprd07.prod.outlook.com
+ (2603:10a6:209:11::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 317dbf5b-68e8-4fa9-af47-08d73a885edf
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM6PR0702MB3799;
+x-ms-traffictypediagnostic: AM6PR0702MB3799:
+x-ld-processed: 5d471751-9675-428d-917b-70f44f9630b0,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR0702MB379919EDCA55FB4CCFAA11BF888C0@AM6PR0702MB3799.eurprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0162ACCC24
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(366004)(376002)(39860400002)(136003)(346002)(199004)(189003)(58126008)(14444005)(2906002)(66446008)(64756008)(66556008)(66476007)(66946007)(8936002)(81166006)(8676002)(81156014)(6116002)(31686004)(256004)(486006)(3846002)(7736002)(305945005)(31696002)(86362001)(65806001)(65956001)(66066001)(53936002)(6512007)(6246003)(14454004)(6506007)(53546011)(25786009)(478600001)(386003)(6486002)(229853002)(36756003)(6436002)(76176011)(71190400001)(71200400001)(26005)(5660300002)(99286004)(102836004)(52116002)(4744005)(186003)(54906003)(446003)(2616005)(476003)(11346002)(110136005)(316002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0702MB3799;H:AM6PR0702MB3527.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7M8mwm7q3PSv0kT3l7ZQy/3+RUNLj9+e01z6t0CaWf3WMBhT7NYxY1bp/3TmSvVrdyfrKe14yBAyVRpLJ/YFoK+qyVg1IKJRVB80cpW8tmQQjS7UDCQIVnExM3YYH0uIk9DpFPrtNkZw69zqzrCEyx8ja7mLJOKjG/SA3lGgnEXsuLuFyacYQSHZft8YGs3qOjs1evKNlCAmdqAFh54Vr8XC3GbKIvSW0GuBTJi5MmXY3J2HFL2/Ota3NktkP1mRhA9jftHKRzKhKWvyxy9SOZdacW+bZJgaHJocbV9pnGc9rZmI/XH88+1ek1Cb1hVO9neOfTwyiSx64Mq1/+Et5LUb7rizIq0axh6Ratc2a5pnV+PqXI6xqok1JlskCOYn68cXkBfO8SRE8tAfws6njWiqyGnw0hiEZT3HbKEIFz8=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <21C9BBA62CE96C4F957140A2A0952C3E@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 317dbf5b-68e8-4fa9-af47-08d73a885edf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2019 09:29:27.9514
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3sVi3afV+8eKhA8Mx7P/ki86y5y2+60OY7u6BERebAQTnI3uyjPexcutFwqvkB0XjBmf7Xe9orudrDPNRnzwy5V8Gk3rWRXPJNhSR1pk2RQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0702MB3799
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 13/09/2019 14:07, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.15 release.
-> There are 37 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 15 Sep 2019 01:03:32 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.15-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-
-All tests passing for Tegra ...
-
-Test results for stable-v5.2:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.2.15-rc2-g4a69042627aa
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+SGkgSmVhbiwNCg0KT24gMDUvMDkvMjAxOSAxNDo1NywgSmVhbiBEZWx2YXJlIHdyb3RlOg0KPiBJ
+ZiB0aGlzIGlzIG9mIGFueSB2YWx1ZSB0byB5b3UsIEkgdHJpZWQgaW1wbGVtZW50aW5nIGl0IGlu
+IGkyYy1pODAxIGENCj4gZmV3IGRheXMgYWdvLiBJIGNhbid0IHJlYWxseSB0ZXN0IGl0IHRob3Vn
+aCBhcyBJIGRvbid0IGhhdmUgYW55IGRldmljZQ0KPiB3aGljaCB0cmlnZ2VycyBhbiBhbGVydCBv
+biBteSBzeXN0ZW0sIGJ1dCBJIGFtIHNoYXJpbmcgaXQgd2l0aCB5b3UgaWYNCj4geW91IHdhbnQg
+dG8gZ2l2ZSBpdCBhIHRyeS4gWW91IHdvdWxkIHN0aWxsIG5lZWQgdG8gd3JpdGUgdGhlIGNvZGUg
+aW4NCj4gdGhlIHNsYXZlIGRyaXZlci4NCg0KYW5kIEkgZm9yZ290IGFub3RoZXIgaXNzdWU6DQoN
+Cj4gQEAgLTE4OTcsOCArMTk1NiwxMCBAQCBzdGF0aWMgdm9pZCBpODAxX3JlbW92ZShzdHJ1Y3Qg
+cGNpX2RldiAqDQo+ICAJcG1fcnVudGltZV9mb3JiaWQoJmRldi0+ZGV2KTsNCj4gIAlwbV9ydW50
+aW1lX2dldF9ub3Jlc3VtZSgmZGV2LT5kZXYpOw0KPiAgDQo+IC0JaTgwMV9kaXNhYmxlX2hvc3Rf
+bm90aWZ5KHByaXYpOw0KPiArCWk4MDFfcmVzdG9yZV9zbHZjbWQocHJpdik7DQo+ICAJaTgwMV9k
+ZWxfbXV4KHByaXYpOw0KPiArCWlmIChwcml2LT5hcmEpDQo+ICsJCWkyY191bnJlZ2lzdGVyX2Rl
+dmljZShwcml2LT5hcmEpOw0KDQp0byBtZSBpdCBsb29rcyBsaWtlIGEgcmFjZSB3aXRoIElSUSBo
+YW5kbGVyIChJUlEgaXMgb25seSBkaXNhYmxlZCAqYWZ0ZXIqDQpyZW1vdmUoKSksIGl0IGNhbiBz
+dGlsbCBhdHRlbXB0IHRvIHVzZSBmcmVlZCBBUkEgZGV2aWNlIGFmdGVyIHRoaXMgbGluZS4gDQoN
+Cj4gIAlpMmNfZGVsX2FkYXB0ZXIoJnByaXYtPmFkYXB0ZXIpOw0KPiAgCWk4MDFfYWNwaV9yZW1v
+dmUocHJpdik7DQo+ICAJcGNpX3dyaXRlX2NvbmZpZ19ieXRlKGRldiwgU01CSFNUQ0ZHLCBwcml2
+LT5vcmlnaW5hbF9oc3RjZmcpOw0KDQotLSANCkJlc3QgcmVnYXJkcywNCkFsZXhhbmRlciBTdmVy
+ZGxpbi4NCg==
