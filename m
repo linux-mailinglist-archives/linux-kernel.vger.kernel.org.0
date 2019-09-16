@@ -2,121 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BE09B3FB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 19:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A84B3FBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 19:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732264AbfIPRrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 13:47:31 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:59719 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfIPRrb (ORCPT
+        id S2388214AbfIPRrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 13:47:41 -0400
+Received: from sonic306-2.consmr.mail.bf2.yahoo.com ([74.6.132.41]:39612 "EHLO
+        sonic306-2.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732275AbfIPRrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 13:47:31 -0400
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x8GHlOSP000933
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 02:47:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x8GHlOSP000933
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1568656045;
-        bh=snSC5CbpUuN1Cw3Ri9XlO0GR3QpMdN6LNC6tbl3IFpw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zlmpEt5sTfPYRKVA5/2rQkTcbsZtkXiTvMkIlsayE1VrEhTaMhEeG8laftJvYEfR1
-         3VNxQDEE8Z3FDKVGGqExRg8nMudu2nQAeutKtyU8QA1ZTI5AFebtE1Lft2BW1i5tY6
-         oWv40Jg2ztT15sZUv4yN+7Kz+ZxM4tpx3CWIGrSf7Ktva3EYlHeHutFdzHpHjloCXm
-         IoHT2/G/0Ly9eCrt5f4fIQhVNQnXCBHafQTK17cFb/fvJEvQHBWjWgNxszmBtKt15a
-         8WBtHiRHPjrxaLN+7BbZ3nrwTc3nsY5/W96QzrFjR+5ujrTpG5F8U4bVcISnD5dorL
-         syb0XIObdX5hw==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id w195so201076vsw.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 10:47:25 -0700 (PDT)
-X-Gm-Message-State: APjAAAVUJ+Ti7xbDFQDNEJQRH8Q/G0A/8psTgYME3XleiyXX+NpWPNFL
-        cXjegbok5c5oDMmMcY7TsDYJq90T7wCxnUt5BnI=
-X-Google-Smtp-Source: APXvYqw0crawiGP3RG9x21JW4rmaeJ/jyNDfUIdTYxkF1YqpKyOnmgLelaYfXtHPmP/3VofBZVarCj+rIB0skCe86ZI=
-X-Received: by 2002:a67:1e87:: with SMTP id e129mr578937vse.179.1568656044082;
- Mon, 16 Sep 2019 10:47:24 -0700 (PDT)
+        Mon, 16 Sep 2019 13:47:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1568656058; bh=FCjWGTqDRXQUUN8ivg02MDhbiDKrvltOcpc7W52q/3U=; h=Date:From:Reply-To:Subject:From:Subject; b=bT9o7e3of0HTEcDba68Zt7pkW1sa06+XMEvJGYmcdRuCuKZtI+miLIgeevi6gtlFt2xMCTLmOu4OE7hu7dKtyHnQzWLpKK9zhiILkGD7ir6jOl67tGvMZHx8i8LXENwlyyTbhif6cra6iU50km/ejD0RE9V0a+QVsZSmj4Gh/pRWXd4d29Taanwh6FTTZHjtrwhhrQR7t7NyX6Rojbh3UhSleghjdBmx9tDrAq1uUAGFS2sI8+yAAjKHmErbvIoLmOMVQGl2HfIdkSGbsWMPxiXIZqJGcPAEdLT73rEw2BcG/nvXRQMS673DNDS8Md7vX3Iw2cJrTBdi91oor0WBOA==
+X-YMail-OSG: H6dRXmUVM1kbHpPZMesHqg5RvCfoz2_sJ9cISOoHSo8OZkVS10W0z27WEAhc6c6
+ uMdRFEFCzmBJqkYzt_OZH3fElWSEA_JjSwiviPrTH317mVly5Ymhy677OzoINlWeWtMBRgm0HLOM
+ IhwIWEK2Gxk8hT0whMn7.CG8N.pFVRXeS0ptSgRzqXWk.1T031LTPVA_WAKBYHUm4dyoHRsedS74
+ I2iDs3SLsvW9EOXkZMN5OkJFYFH4zbQ3UWiD6xivreUFVp7x6hD4ojdxCtmUNl2oyS3BxTjTnQ_C
+ TuTuU9emwjE0CfQz9y8LuQ5lkz391dNDTOx73Kqx6wGH.uDgAph4hcM6lhxocXuQM5biVPZKMuAv
+ GkV769AKKGu3nhymiFnRFQGLIMXRFpSw8Zx3nYTVZS.X3xgYD86KOOKggz6cpRdBO5x8qML7PjPt
+ FfaIhoP481eC0NZDLNDThPptB47ifh1Hb58o8NR9srpFvvESCY6mt9B3oPZrBHi1D0Tv__aK7Lb_
+ lzMGySztHquwZLkC57PAZdzVW0opa9pLxxfPLfh5J51_pOBgw6QE_StTelz5FWc2vbFYbBPSkQoj
+ .IpzudPVwIy84O.qWdWsGU27MGM0iFJuYpC4iTWqu9EeNdBrm_Y_MofnEGbabHbLSnew0OVzUoZy
+ zDNRzoXdvHKt84WLsui2q1ZjWuLz3cZS9_K.2qKgPePLcIj9vyIk_wmB.wXftIBXMgSYnKqW3ZQr
+ ssfXS4GeMlmWo5S7MxfSN2XpU0EJKY9qXdl39XDPTB4l_D_No6zMIV2oXdho2q3rLIhMcIziq3ua
+ 3EKcc_fZxS3r0sC3MFOj35..Fz3u2nR31JQb9ph92ucSOvglUdvrlMYYSAuueRMHiqD.otMdBeNT
+ 5y5X3N6Cfb6GvGH03hZMjvGm1seQSiqi9CTmLVCezzuRCtYiov9a2OLpW5JX2XqRYlSjR_NkGxI4
+ jSvN7e522CqCE.0Nx5evUub1TUc8aSXASVEyXJaoFv_KIXNO_G_nRyI07cceADXzV1Yd3WknvGEw
+ TI0Y5XSivArlaeb65ywhxIUgdHbFAuhDfZqRojp4UXUY.3D3aeEDAkENL1CggneJ0sPn8KowiNC.
+ KoJ632.IODCOL8o04TCgXT5NzkLz7jY6l_3fgED0FJEBuN35YLU85QL84CTMnGbg5ypWKZzOIuDl
+ q4FrLk4.kn2jQ0AoJOpZjW_xhDtEhnVhghqHIx.5_r.CbOYxDQkQGWuLKH.0RQ4_XN7oeFaIVWdO
+ Bzo6NHKqpXxEMdCmyQr.vbWtqXnP9DcXMCA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Mon, 16 Sep 2019 17:47:38 +0000
+Date:   Mon, 16 Sep 2019 17:47:37 +0000 (UTC)
+From:   Ms Lisa Hugh <lisa.hugh101@gmail.com>
+Reply-To: ms.lisahugh000@gmail.com
+Message-ID: <1888366226.5438287.1568656057401@mail.yahoo.com>
+Subject: CONFIDENTIAL FROM MS LISA HUGH(BUSINESS)
 MIME-Version: 1.0
-References: <20190916044651.GA72121@LGEARND20B15>
-In-Reply-To: <20190916044651.GA72121@LGEARND20B15>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 17 Sep 2019 02:46:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARZMr5ZKGufi63GZrZ45k60faAiXr4mBB_mU9h_QifjxQ@mail.gmail.com>
-Message-ID: <CAK7LNARZMr5ZKGufi63GZrZ45k60faAiXr4mBB_mU9h_QifjxQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Fix compile error due to 'endif' missing
-To:     Austin Kim <austindh.kim@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Brown <broonie@kernel.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Roman.Li@amd.com, amd-gfx@lists.freedesktop.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(+CC Stephen Rothwell, Mark Brown)
-
-On Mon, Sep 16, 2019 at 1:46 PM Austin Kim <austindh.kim@gmail.com> wrote:
->
-> gcc throws compile error with below message:
-
-GNU Make throws ...
 
 
-This is probably a merge mistake in linux-next.
+Dear Friend,
 
-If so, this should be directly fixed in the linux-next.
+I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank,
 
-If it is not fixed in time,
-please inform Linus to *not* follow the linux-next.
+There is this fund that was keep in my custody years ago,please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment and the amount is (US$4.5M DOLLARS).
+
+I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me after success.
+
+Note/ 50% for you why 50% for me after success of the transfer to your bank account.
+
+Below information is what i need from you so will can be reaching each other .
+
+1)Full name ...
+2)Private telephone number...
+3)Age...
+4)Nationality...
+5)Occupation ...
 
 
 Thanks.
 
 
-
->
-> HDRINST usr/include/drm/i915_drm.h
-> drivers/gpu/drm/amd/amdgpu/../display/dc/dml/Makefile:70: *** missing 'endif'.  Stop.
-> scripts/Makefile.modbuiltin:55: recipe for target 'drivers/gpu/drm/amd/amdgpu' failed
-> make[3]: *** [drivers/gpu/drm/amd/amdgpu] Error 2
-> make[3]: *** Waiting for unfinished jobs....
->   HDRINST usr/include/drm/omap_drm.h
->   HDRINST usr/include/drm/tegra_drm.h
->   HDRINST usr/include/drm/drm_sarea.h
->   HDRINST usr/include/drm/panfrost_drm.h
->   HDRINST usr/include/drm/drm.h
-> scripts/Makefile.modbuiltin:55: recipe for target 'drivers/gpu/drm' failed
-> make[2]: *** [drivers/gpu/drm] Error 2
-> scripts/Makefile.modbuiltin:55: recipe for target 'drivers/gpu' failed
-> make[1]: *** [drivers/gpu] Error 2
-> make[1]: *** Waiting for unfinished jobs....
->
-> Add 'endif' to Makefile to stop compile error.
->
-> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/dml/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> index a2eb59e..5b2a65b 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> +++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
-> @@ -44,6 +44,7 @@ CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_mode_vba_20.o := $(dml_ccflags)
->  CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_rq_dlg_calc_20.o := $(dml_ccflags)
->  CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_mode_vba_20v2.o := $(dml_ccflags)
->  CFLAGS_$(AMDDALPATH)/dc/dml/dcn20/display_rq_dlg_calc_20v2.o := $(dml_ccflags)
-> +endif
->  ifdef CONFIG_DRM_AMD_DC_DCN2_1
->  CFLAGS_$(AMDDALPATH)/dc/dml/dcn21/display_mode_vba_21.o := $(dml_ccflags)
->  CFLAGS_$(AMDDALPATH)/dc/dml/dcn21/display_rq_dlg_calc_21.o := $(dml_ccflags)
-> --
-> 2.6.2
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+Ms Lisa Hugh
