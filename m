@@ -2,95 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C1D6B3D13
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 17:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF3AB3D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 17:06:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388881AbfIPPDm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 11:03:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50278 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387961AbfIPPDm (ORCPT
+        id S1730547AbfIPPGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 11:06:50 -0400
+Received: from baldur.buserror.net ([165.227.176.147]:34794 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbfIPPGu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 11:03:42 -0400
-Received: from mail-wm1-f72.google.com ([209.85.128.72])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <marcelo.cerri@canonical.com>)
-        id 1i9sXV-0003VF-Be
-        for linux-kernel@vger.kernel.org; Mon, 16 Sep 2019 15:03:41 +0000
-Received: by mail-wm1-f72.google.com with SMTP id r187so123922wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 08:03:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UpaiSLVZTJH//yVMd4hniWSWY+v8c4Nt+/1LTwDfd60=;
-        b=O1MzUgqJofrnIlY9xfpvtwMuPCQrJgl/AzNxnG4v6yGO/mB9eq87xLfMXW9HjGS9CR
-         S0hJB/f7SGUlLoCLZHqJXqK7PQBrKCwm/RspXr2Iw9lPDqqQ0cpKVCQqNAXNIpWjPMhf
-         KuuEpqsG6OuitIOxR06Bg0pq4Ls8CFphu90WiHgsneV55n7WNJfn+Wn3/LSm6ErIRdgn
-         JcqvUlFq/2VgLtYmDVhQkp7JeF5f52HoAdMBEO+58AQibu4yblqRoivrp/vkTePyXvEV
-         yer6Z9sIldsRDqIMd8ShrO4Pcl3fDeNLiR3iGJD/AKJmjAErNQE3D4MCm83CZAhSfspJ
-         +f5g==
-X-Gm-Message-State: APjAAAVce+B7Aiilt6XRFVgZTuBSZW2UZX4rQBOv0j26aW50BHOOvN4D
-        i7sWSI5r9ESwWg5TkPR+VWMGjroDEU+SxPzwy4Yx43B8H4K+Nk4PbKAabPKULcReHvpKs612yGd
-        Yl9FZzNniPHHNUyNfEjIfKoHGtMfDis1OLkh07eKN
-X-Received: by 2002:a5d:4b4e:: with SMTP id w14mr159041wrs.191.1568646220537;
-        Mon, 16 Sep 2019 08:03:40 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwQBkINemvJ4SG/cnXsg6i1JejX1kLd5HO272cp1ciclatRAjNPd1icxSBzVQh00CQOmLtm2A==
-X-Received: by 2002:a5d:4b4e:: with SMTP id w14mr159015wrs.191.1568646220250;
-        Mon, 16 Sep 2019 08:03:40 -0700 (PDT)
-Received: from localhost.localdomain (static-dcd-cqq-121001.business.bouyguestelecom.com. [212.194.121.1])
-        by smtp.gmail.com with ESMTPSA id w125sm121823wmg.32.2019.09.16.08.03.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 08:03:39 -0700 (PDT)
-From:   Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/net: replace AF_MAX with INT_MAX in socket.c
-Date:   Mon, 16 Sep 2019 12:03:37 -0300
-Message-Id: <20190916150337.18049-1-marcelo.cerri@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 16 Sep 2019 11:06:50 -0400
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1i9sYG-0008L7-6q; Mon, 16 Sep 2019 10:04:28 -0500
+Message-ID: <71490f3b94b851106eb48c8909239f401d0018d1.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        galak@kernel.crashing.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 16 Sep 2019 10:04:27 -0500
+In-Reply-To: <7f8f9747ef1ab2e1261cf83b03c1da321d47f7b7.1568616151.git.christophe.leroy@c-s.fr>
+References: <966e6d6a226f9786098d296239a6c65064e73a41.1568616151.git.christophe.leroy@c-s.fr>
+         <7f8f9747ef1ab2e1261cf83b03c1da321d47f7b7.1568616151.git.christophe.leroy@c-s.fr>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, galak@kernel.crashing.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
+        *      this recipient and sender
+Subject: Re: [PATCH v2 2/2] powerpc/83xx: map IMMR with a BAT.
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use INT_MAX instead of AF_MAX, since libc might have a smaller value
-of AF_MAX than the kernel, what causes the test to fail.
+On Mon, 2019-09-16 at 06:42 +0000, Christophe Leroy wrote:
+> @@ -145,6 +147,15 @@ void __init mpc83xx_setup_arch(void)
+>  	if (ppc_md.progress)
+>  		ppc_md.progress("mpc83xx_setup_arch()", 0);
+>  
+> +	if (!__map_without_bats) {
+> +		phys_addr_t immrbase = get_immrbase();
+> +		int immrsize = IS_ALIGNED(immrbase, SZ_2M) ? SZ_2M : SZ_1M;
+> +		unsigned long va = __fix_to_virt(FIX_IMMR_BASE);
 
-Signed-off-by: Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
----
- tools/testing/selftests/net/socket.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Why __fix_to_virt() and not fix_to_virt()?
 
-diff --git a/tools/testing/selftests/net/socket.c b/tools/testing/selftests/net/socket.c
-index afca1ead677f..10e75ba90124 100644
---- a/tools/testing/selftests/net/socket.c
-+++ b/tools/testing/selftests/net/socket.c
-@@ -6,6 +6,7 @@
- #include <sys/types.h>
- #include <sys/socket.h>
- #include <netinet/in.h>
-+#include <limits.h>
- 
- struct socket_testcase {
- 	int	domain;
-@@ -24,7 +25,10 @@ struct socket_testcase {
- };
- 
- static struct socket_testcase tests[] = {
--	{ AF_MAX,  0,           0,           -EAFNOSUPPORT,    0 },
-+	/* libc might have a smaller value of AF_MAX than the kernel
-+	 * actually supports, so use INT_MAX instead.
-+	 */
-+	{ INT_MAX, 0,           0,           -EAFNOSUPPORT,    0  },
- 	{ AF_INET, SOCK_STREAM, IPPROTO_TCP, 0,                1  },
- 	{ AF_INET, SOCK_DGRAM,  IPPROTO_TCP, -EPROTONOSUPPORT, 1  },
- 	{ AF_INET, SOCK_DGRAM,  IPPROTO_UDP, 0,                1  },
--- 
-2.20.1
+-Scott
+
 
