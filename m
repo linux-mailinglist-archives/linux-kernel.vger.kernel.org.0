@@ -2,49 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE043B433D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EBAB4335
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:35:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbfIPVff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 17:35:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42140 "EHLO mail.kernel.org"
+        id S1731886AbfIPVfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 17:35:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387415AbfIPVfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 17:35:12 -0400
-Subject: Re: [GIT PULL] SPI updates for v5.4
+        id S1725971AbfIPVfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 17:35:11 -0400
+Subject: Re: [GIT PULL] regmap updates for v5.4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1568669711;
-        bh=C/6PseyECzjiJ1b8hqViZjWGUKqI7ydDja4Ogyl6Vbw=;
+        bh=5uO4ZK+ssQUtg4QfbAuYx34TS0uHlZ66jVoKwVypizM=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=aP35W/PHQ6Tu628TrZs8H0ef9G5pqvl0Hh+OVEIQPfmCSCbroAaRF1JccAE00hGYT
-         Tvd1CnrjwZRslQImkrhAff+aWwo1OhSBmZ//TD+M8/lo8NxmpeR1HLB6DdLcTXXbH/
-         OsTsqd5xcZJY4I/EaZyhXMIH7lEqttrXFsJxljR8=
+        b=urfbB18f+VEqmEytI4Fd62GjPy8z7sn7U/mFUEaMizI5FHwAhAQEWP7js9YvbyxVN
+         BAGMwcWGMM4l+t0K8R5Hpl+M8Ezp3LbVZzvauuDtjl7F1wEKUlvaCM5dMIs2xsGAN5
+         +xLC5kDWZdgjlVpKC9IU5O3giF1NY6YeIrv9PV0I=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190915231811.GQ4352@sirena.co.uk>
-References: <20190915231811.GQ4352@sirena.co.uk>
+In-Reply-To: <20190915224314.GM4352@sirena.co.uk>
+References: <20190915224314.GM4352@sirena.co.uk>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190915231811.GQ4352@sirena.co.uk>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v5.4
-X-PR-Tracked-Commit-Id: b769c5ba8aedc395ed04abe6db84a556d28beec1
+X-PR-Tracked-Message-Id: <20190915224314.GM4352@sirena.co.uk>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git
+ tags/regmap-v5.4
+X-PR-Tracked-Commit-Id: 1bd4584626a9715634d2cb91ae2ed0364c070b01
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: aa62325dc38de2be8b1c27eb180ad3751b3f58ec
-Message-Id: <156866971191.13102.14352639353908386650.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 0372fd1a70c4bc0731486851abe2048993f94a8d
+Message-Id: <156866971131.13102.9119921106884277411.pr-tracker-bot@kernel.org>
 Date:   Mon, 16 Sep 2019 21:35:11 +0000
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Sep 2019 00:18:11 +0100:
+The pull request you sent on Sun, 15 Sep 2019 23:43:14 +0100:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v5.4
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v5.4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/aa62325dc38de2be8b1c27eb180ad3751b3f58ec
+https://git.kernel.org/torvalds/c/0372fd1a70c4bc0731486851abe2048993f94a8d
 
 Thank you!
 
