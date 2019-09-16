@@ -2,135 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCAE2B3BE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD1A9B3BDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388186AbfIPNz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:55:58 -0400
-Received: from esa3.mentor.iphmx.com ([68.232.137.180]:3796 "EHLO
-        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388106AbfIPNz6 (ORCPT
+        id S2388055AbfIPNyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:54:44 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:42782 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728005AbfIPNyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:55:58 -0400
-IronPort-SDR: 4I8apyNuXh3AqGh354En5LTjGW9EL/qvnrCao5fLDAmQO54hrnJGAdPSqNWkpBvW/EVK6f/8WE
- 6c8xCHsF9Koh2Alc3Yp7xOTSq2+1oxJa5DWgJkTbHqTqgt4/v6x8eHgp47GK2qPDCrpQ3dLu5i
- d6zdKewJkrj7zvhOn4z8z9OoDP2eH/FFP/cGeXsIg+A3E3xefE+fB/ke+Uqe+yfcYLrnrvjgCS
- CkrXquqgOQThZQAdE7nvJnpLZyARkYQFq3R5tkWRyk5kplwfKC6cqcOwbYUFzMF9KAN8BwV2c1
- uJE=
-X-IronPort-AV: E=Sophos;i="5.64,512,1559548800"; 
-   d="scan'208";a="41379300"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa3.mentor.iphmx.com with ESMTP; 16 Sep 2019 05:55:57 -0800
-IronPort-SDR: wlO2LzgkeJ8oH18yZpIOlZaWjERCDQACrOKK5QemycTs5lkqAzE8kVqHYFJNTrCJU1oXRt14ld
- 4s06f73GPZLzoIWmn1dik2bnAgUcUvZjXQsDRDw3oeDcr52fMBK4F+eZAhZBOsISK8a3I2PW+Z
- 6XuiZN5/yVGtdyNOx18sC2bcZmEGYEOrF369Zn6b7DSRJ3EL7Ob4t+1cY4EZcRPcwBhmzSPvaK
- maubildXZd5e2muyO6w5y4SoRfMPcynPJk2mSssn1vH8JCKq+pUzWAhIGSuqtfMx/PO97+Fifl
- h3U=
-Date:   Mon, 16 Sep 2019 09:55:54 -0400
-From:   "George G. Davis" <george_davis@mentor.com>
-To:     shuah <shuah@kernel.org>
-CC:     Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [PATCH 2/2] selftests: watchdog: Add command line option to show
- watchdog_info
-Message-ID: <20190916135553.GA19227@mam-gdavis-lt>
-References: <20190907085833.21167-1-erosca@de.adit-jv.com>
- <20190907085833.21167-2-erosca@de.adit-jv.com>
- <2b08fa83-185b-4eb7-1217-37ed31d810b5@kernel.org>
+        Mon, 16 Sep 2019 09:54:43 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8GDsb4N084722;
+        Mon, 16 Sep 2019 08:54:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568642077;
+        bh=l8yeJsF8FmT2WnVdhCOfEujrwIHFMa/BZ4gjgWzLKWk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=S1iVH2MgMmOKe6ECllqnFkshWA551SXE7hsEYqnVjkJyD62SzdGUT8p62g04H5+/d
+         uTNgpp7/9L2guOauipwSX6UYECEIP41nQkAHm5aO718nH6AduE1zpMeaIDdEMOARTL
+         hKwRYlLSxMiUGw9FvYKQlciIlvvT6/rM0/GM33pI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8GDsbhV072484;
+        Mon, 16 Sep 2019 08:54:37 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 16
+ Sep 2019 08:54:35 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 16 Sep 2019 08:54:35 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8GDsauO095861;
+        Mon, 16 Sep 2019 08:54:37 -0500
+Subject: Re: [PATCH v5 1/9] leds: multicolor: Add sysfs interface definition
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <robh+dt@kernel.org>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190911180115.21035-1-dmurphy@ti.com>
+ <20190911180115.21035-2-dmurphy@ti.com>
+ <e34f4182-71d1-d51d-fb07-f88f6b88b6a3@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <eb08cd1b-a3eb-18db-0dd2-5c34637df9d5@ti.com>
+Date:   Mon, 16 Sep 2019 08:56:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <2b08fa83-185b-4eb7-1217-37ed31d810b5@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+In-Reply-To: <e34f4182-71d1-d51d-fb07-f88f6b88b6a3@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hello
 
-On Mon, Sep 16, 2019 at 07:26:41AM -0600, shuah wrote:
-> On 9/7/19 2:58 AM, Eugeniu Rosca wrote:
-> >diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-> >index 6ed822dc2222..f45e510500c0 100644
-> >--- a/tools/testing/selftests/watchdog/watchdog-test.c
-> >+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-> >@@ -19,7 +19,7 @@
-> >  int fd;
-> >  const char v = 'V';
-> >-static const char sopts[] = "bdehp:t:Tn:NLf:";
-> >+static const char sopts[] = "bdehp:t:Tn:NLf:i";
-> >  static const struct option lopts[] = {
-> >  	{"bootstatus",          no_argument, NULL, 'b'},
-> >  	{"disable",             no_argument, NULL, 'd'},
-> >@@ -32,6 +32,7 @@ static const struct option lopts[] = {
-> >  	{"getpretimeout",       no_argument, NULL, 'N'},
-> >  	{"gettimeleft",		no_argument, NULL, 'L'},
-> >  	{"file",          required_argument, NULL, 'f'},
-> >+	{"info",		no_argument, NULL, 'i'},
-> >  	{NULL,                  no_argument, NULL, 0x0}
-> >  };
-> >@@ -72,6 +73,7 @@ static void usage(char *progname)
-> >  	printf("Usage: %s [options]\n", progname);
-> >  	printf(" -f, --file\t\tOpen watchdog device file\n");
-> >  	printf("\t\t\tDefault is /dev/watchdog\n");
-> >+	printf(" -i, --info\t\tShow watchdog_info\n");
-> >  	printf(" -b, --bootstatus\tGet last boot status (Watchdog/POR)\n");
-> >  	printf(" -d, --disable\t\tTurn off the watchdog timer\n");
-> >  	printf(" -e, --enable\t\tTurn on the watchdog timer\n");
-> >@@ -216,6 +218,18 @@ int main(int argc, char *argv[])
-> >  		case 'f':
-> >  			/* Handled above */
-> >  			break;
-> >+		case 'i':
-> >+			/*
-> >+			 * watchdog_info was obtained as part of file open
-> >+			 * validation. So we just show it here.
-> >+			 */
-> >+			oneshot = 1;
-> >+			printf("watchdog_info:\n");
-> >+			printf(" identity:\t\t%s\n", info.identity);
-> >+			printf(" firmware_version:\t%u\n",
-> >+			       info.firmware_version);
-> >+			printf(" options:\t\t%08x\n", info.options);
-> >+			break;
-> >  		default:
-> >  			usage(argv[0]);
-> >
-> 
-> I would like to see these combined.
+On 9/15/19 8:57 AM, Jacek Anaszewski wrote:
+> Hi Dan,
+>
+> On 9/11/19 8:01 PM, Dan Murphy wrote:
+>> Add a documentation of LED Multicolor LED class specific
+>> sysfs attributes.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>   .../ABI/testing/sysfs-class-led-multicolor    | 73 +++++++++++++++++++
+>>   1 file changed, 73 insertions(+)
+>>   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
+>> new file mode 100644
+>> index 000000000000..4ea54c2ad4c8
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+>> @@ -0,0 +1,73 @@
+>> +What:		/sys/class/leds/<led>/brightness
+>> +Date:		Sept 2019
+>> +KernelVersion:	5.5
+>> +Contact:	Dan Murphy <dmurphy@ti.com>
+>> +Description:	read/write
+>> +		The multicolor class will redirect the device drivers call back
+>> +		function for brightness control to the multicolor class
+>> +		brightness control function.
+>> +
+>> +		Writing to this file will update all LEDs within the group to a
+>> +		calculated percentage of what each color LED in the group is set
+>> +		to.  The percentage is calculated via the equation below:
+>> +
+>> +		led_brightness = requested_value * led_color_intensity/led_color_max_intensity
+>> +
+>> +		For additional details please refer to
+>> +		Documentation/leds/leds-class-multicolor.rst.
+>> +
+>> +		The value of the color is from 0 to
+>> +		/sys/class/leds/<led>/max_brightness.
+>> +
+>> +What:		/sys/class/leds/<led>/colors/color_mix
+>> +Date:		Sept 2019
+>> +KernelVersion:	5.5
+>> +Contact:	Dan Murphy <dmurphy@ti.com>
+>> +Description:	read/write
+>> +		The values written to this file should contain the intensity
+>> +		values of each multicolor LED within the colors directory. The
+>> +		index of given color is reported by the color_id file present in
+>> +		colors/<color> directory. The index determines the position in
+>> +		the sequence of	intensities on which the related intensity
+>> +		should be passed to this file.
+>> +
+>> +		For additional details please refer to
+>> +		Documentation/leds/leds-class-multicolor.rst.
+> As already mentioned in the reply to Pavel - let's avoid the
+> introduction of another sysfs file with multiple values.
 
-Ok.
+OK for clarification remove the color_mix and color_id files and keep 
+the intensity files?
 
-> Please don't add another argument.
+Dan
 
-I'm not clear on your request here. Do you want to drop the addition
-of optional --info|-i command line option and always display the
-watchdog_info?
-
-If yes, perhaps Eugeniu may mention what he has already mentioned to me earlier
-that "it's very useful to see the watchdog identity" but "some users might
-perceive the console output a bit busy if the Watchdog identity: <WDT name>
-message is always on" so perhaps it is "more user-friendly to still call the
-WDIOC_GETSUPPORT ioctl to sanitize the device file, but to only print the
-Watchdog identity: message when the user passes e.g. a new -i, --identity
-parameter".
-
-
-> Combine patch and 1&2.
-
-I'll do that but I'm not entirely clear on your "Please don't add another
-argument" request.
-
-> 
-> thanks,
-> -- Shuah
-
--- 
-Regards,
-George
