@@ -2,82 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A44B4201
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 22:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE01AB4213
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 22:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391423AbfIPUil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 16:38:41 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46562 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387499AbfIPUik (ORCPT
+        id S2391480AbfIPUnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 16:43:39 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37184 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730610AbfIPUni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 16:38:40 -0400
-Received: by mail-lj1-f194.google.com with SMTP id e17so1188958ljf.13
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 13:38:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=me/tNrvpc38oLBmNgQpuGD2wwLksgIc0n84g04Pq6UM=;
-        b=hFnsr4SQxJjjqereCuTP+xGrGqVFwwB7+2ShWDl5Qp8pLxb4+MV1NinHIOPm4UaO/I
-         66LHrIpJRtRLDqw3UxiqboGbOYFJm3hraDsxkxsG2zVzCjIxcW00JkhtL3B0fbXwayOw
-         0lnLYFaWHXA2YaW+8dkcHiVuHzVd/UG+TSCPY=
+        Mon, 16 Sep 2019 16:43:38 -0400
+Received: by mail-wr1-f66.google.com with SMTP id i1so843431wro.4;
+        Mon, 16 Sep 2019 13:43:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=me/tNrvpc38oLBmNgQpuGD2wwLksgIc0n84g04Pq6UM=;
-        b=tlwdpBl/JWxkEGCK869cS2M1i3rGT2b+RswYdFv1Idn4kw7GWIuVsgbgBBuVcaITWE
-         2RKQSJ1j1tFpYFIMO0atJ/aGOp9uLdOW+4YQxGHGG/z/1iqtTjnvlfwUNY7dIhDC17Q3
-         mdzh3KovoZua9KfhRy+V5EnXufyIqXcQ1/k4xOxzuQ2SfDJ9yoZ+c+XXUNvQxGUrHwMd
-         mDoRYfuKx6YqOaY8LEMGWjwO227EF1wGbByKH4cvgh6ZeBPrTtZ416Rn85uUe4NadnbA
-         3JJsqeZ/smM4AgIeNqn2s5fja4nsXcWQrQD5AALS4Rh0HLb+/kCSxDJk4OW13ytFmraR
-         A/GQ==
-X-Gm-Message-State: APjAAAUn3nC1ZoZVEukCMq4zwyZzy0HY9enpwGnQOAH0afow6E8++r50
-        ZRr6bqCBjpJJZUGrNm37WdkuujOawkA=
-X-Google-Smtp-Source: APXvYqyl6hcK9+45echxoQ21CSKODD1j3Y7j8UhreRzzk/+XKLDDOV4W5Did/ImU4ZufSw31bt0Dxw==
-X-Received: by 2002:a2e:5c09:: with SMTP id q9mr843599ljb.4.1568666317468;
-        Mon, 16 Sep 2019 13:38:37 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id w17sm9222708lfl.43.2019.09.16.13.38.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2019 13:38:36 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id y23so1252760ljn.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 13:38:36 -0700 (PDT)
-X-Received: by 2002:a2e:5b9a:: with SMTP id m26mr801701lje.90.1568666316121;
- Mon, 16 Sep 2019 13:38:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=oEvxZvssX49R5a8dabCLJlXPjptDKkJzN4UZVHUANFI=;
+        b=CHBypgUHaxf7cVBalNuSWPc2byC/r6Y5yDzGoGRIHv7tSnV3UT6tLe0c0xdiwKGbGo
+         QkZpKz7FzejCnmY/WKqaCMLv82YbL+QFy1BRo5hvBEl2yjburhHJV124V6vE4LfZXTon
+         ZS8CgNMchSN2QKEI2ocWoHeS/bIPwJw8ugXbrN/RXJw1d/Uvkub1i8zKF8lNwNx72cCt
+         S/iX+ztSWK5oXs+K26YFnHp3GYBAiCRuNIRidwWjQMaQK+3zCsIvdL8MQsGXL6EjOv3r
+         Om12OeMe8shwC9psKl215IB7Pa76t20tWn0CIhgCjQ919Y0Bb1RIRJ/Ndh/nuZbkuaK+
+         /5kg==
+X-Gm-Message-State: APjAAAUYsBlz4KfQzRwJCPjVgfBpMD9WyW4AfluFwTy0SRu6HpUJLpQb
+        IuWzzZv49zQ+fLj9uwzXLPk=
+X-Google-Smtp-Source: APXvYqyy42MRiZs7nxgMyo+9sMwrImohVM3ON2Adp8kT5iGWbgOjB+CDnQUW+D/FFxhanpK6U23gHQ==
+X-Received: by 2002:a05:6000:105:: with SMTP id o5mr203431wrx.51.1568666616192;
+        Mon, 16 Sep 2019 13:43:36 -0700 (PDT)
+Received: from black.home (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
+        by smtp.googlemail.com with ESMTPSA id x6sm231437wmf.38.2019.09.16.13.43.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 13:43:35 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Denis Efremov <efremov@linux.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Andrew Murray <andrew.murray@arm.com>,
+        linux-hyperv@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH v3 02/26] PCI: hv: Use PCI_STD_NUM_BARS
+Date:   Mon, 16 Sep 2019 23:41:34 +0300
+Message-Id: <20190916204158.6889-3-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190916204158.6889-1-efremov@linux.com>
+References: <20190916204158.6889-1-efremov@linux.com>
 MIME-Version: 1.0
-References: <1568237365.5783.39.camel@linux.ibm.com>
-In-Reply-To: <1568237365.5783.39.camel@linux.ibm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 16 Sep 2019 13:38:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whuzoK+sP+feizU520p7ChHqdX8pmwyCnnKTyUNJKngZA@mail.gmail.com>
-Message-ID: <CAHk-=whuzoK+sP+feizU520p7ChHqdX8pmwyCnnKTyUNJKngZA@mail.gmail.com>
-Subject: Re: [GIT PULL] integrity subsystem updates for v5.4
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 2:29 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> The major feature in this pull request is IMA support for measuring
-> and appraising appended file signatures.  In addition are a couple of
-> bug fixes and code cleanup to use struct_size().
+Replace the magic constant (6) with define PCI_STD_NUM_BARS representing
+the number of PCI BARs.
 
-How is the file signature any different from (and/or better than) the
-fs-verity support?
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ drivers/pci/controller/pci-hyperv.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-The fs-verity support got fairly extensively discussed, and is
-apparently going to actually be widely used by Android, and it an
-independent feature of any security model.
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index 40b625458afa..1665c23b649f 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -307,7 +307,7 @@ struct pci_bus_relations {
+ struct pci_q_res_req_response {
+ 	struct vmpacket_descriptor hdr;
+ 	s32 status;			/* negative values are failures */
+-	u32 probed_bar[6];
++	u32 probed_bar[PCI_STD_NUM_BARS];
+ } __packed;
+ 
+ struct pci_set_power {
+@@ -503,7 +503,7 @@ struct hv_pci_dev {
+ 	 * What would be observed if one wrote 0xFFFFFFFF to a BAR and then
+ 	 * read it back, for each of the BAR offsets within config space.
+ 	 */
+-	u32 probed_bar[6];
++	u32 probed_bar[PCI_STD_NUM_BARS];
+ };
+ 
+ struct hv_pci_compl {
+@@ -1327,7 +1327,7 @@ static void survey_child_resources(struct hv_pcibus_device *hbus)
+ 	 * so it's sufficient to just add them up without tracking alignment.
+ 	 */
+ 	list_for_each_entry(hpdev, &hbus->children, list_entry) {
+-		for (i = 0; i < 6; i++) {
++		for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+ 			if (hpdev->probed_bar[i] & PCI_BASE_ADDRESS_SPACE_IO)
+ 				dev_err(&hbus->hdev->device,
+ 					"There's an I/O BAR in this list!\n");
+@@ -1401,7 +1401,7 @@ static void prepopulate_bars(struct hv_pcibus_device *hbus)
+ 	/* Pick addresses for the BARs. */
+ 	do {
+ 		list_for_each_entry(hpdev, &hbus->children, list_entry) {
+-			for (i = 0; i < 6; i++) {
++			for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+ 				bar_val = hpdev->probed_bar[i];
+ 				if (bar_val == 0)
+ 					continue;
+@@ -1558,7 +1558,7 @@ static void q_resource_requirements(void *context, struct pci_response *resp,
+ 			"query resource requirements failed: %x\n",
+ 			resp->status);
+ 	} else {
+-		for (i = 0; i < 6; i++) {
++		for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+ 			completion->hpdev->probed_bar[i] =
+ 				q_res_req->probed_bar[i];
+ 		}
+-- 
+2.21.0
 
-What does the IMA version bring to the table?
-
-             Linus
