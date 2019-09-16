@@ -2,199 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22725B3B51
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D44CB3B6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733284AbfIPN3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:29:18 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:54074 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733245AbfIPN3P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:29:15 -0400
-Received: by mail-io1-f71.google.com with SMTP id l21so50685150iob.20
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:29:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=EkMMZHB3EbIkeShCeJ9qFKu38co2EiVjf80B4DMO6dU=;
-        b=EKOO18r9UTZwWPMmvoJCnL59jrDrgjRo2yD/UWlHqp0uQYAJniS3kbXTYjcZhMpS7y
-         04YDUixiwbNlP216NCtrIVwGtJ3jA2dMkMpdL1b327ZicTNdrBmqcZRMco7KF9swnb4O
-         BQkqV2LjtgXSDZX+m8aBTkhulXzt1O1kevfap+1gfvn8/tmLTpeyOBqHNk0PfF8uNXEM
-         IaPCCpfpW6Byrak1+GFJLwPrMPIZ7w0xvqXaEfifI70ePd+W8niJAPNjSYw3O9Y6iNwE
-         G8R+UdWAGgIZUWdvsper5+IWRZl3BUZzDOSIh1NyfsGZLN8SlM4ps/xKLaDPQRJKq4jk
-         UV5w==
-X-Gm-Message-State: APjAAAVNQXHrdMCpWNriPr6X6dCQS4sloXZk09plrINMyvT3TNGzQSgj
-        iUMNjNLYZD4OOle5q91Tet0vB6z14BSD1aH1jNDzD3GHU+zp
-X-Google-Smtp-Source: APXvYqw9xNlxuBH3SE2H+WjyP/xzJfwaCvWcbemzs9/Lwoe67YDmbIfyjfIh1bJThQo5+3RYu8Q+2aQRIF7iQq7+DVYQgj+GMKty
+        id S2387482AbfIPNad (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:30:33 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2273 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727899AbfIPNac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 09:30:32 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7836D3D1BAFEE3DA4D02;
+        Mon, 16 Sep 2019 21:30:27 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 16 Sep 2019 21:30:24 +0800
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+To:     <catalin.marinas@arm.com>, <will@kernel.org>, <mingo@redhat.com>,
+        <bp@alien8.de>, <rth@twiddle.net>, <ink@jurassic.park.msu.ru>,
+        <mattst88@gmail.com>, <benh@kernel.crashing.org>,
+        <paulus@samba.org>, <mpe@ellerman.id.au>,
+        <heiko.carstens@de.ibm.com>, <gor@linux.ibm.com>,
+        <borntraeger@de.ibm.com>, <ysato@users.sourceforge.jp>,
+        <dalias@libc.org>, <davem@davemloft.net>, <ralf@linux-mips.org>,
+        <paul.burton@mips.com>, <jhogan@kernel.org>,
+        <jiaxun.yang@flygoat.com>, <chenhc@lemote.com>
+CC:     <akpm@linux-foundation.org>, <rppt@linux.ibm.com>,
+        <anshuman.khandual@arm.com>, <tglx@linutronix.de>, <cai@lca.pw>,
+        <robin.murphy@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <hpa@zytor.com>, <x86@kernel.org>,
+        <dave.hansen@linux.intel.com>, <luto@kernel.org>,
+        <peterz@infradead.org>, <len.brown@intel.com>, <axboe@kernel.dk>,
+        <dledford@redhat.com>, <jeffrey.t.kirsher@intel.com>,
+        <linux-alpha@vger.kernel.org>, <naveen.n.rao@linux.vnet.ibm.com>,
+        <mwb@linux.vnet.ibm.com>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+        <sparclinux@vger.kernel.org>, <tbogendoerfer@suse.de>,
+        <linux-mips@vger.kernel.org>, <rafael@kernel.org>,
+        <mhocko@kernel.org>, <gregkh@linuxfoundation.org>
+Subject: [PATCH v5] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
+Date:   Mon, 16 Sep 2019 21:28:01 +0800
+Message-ID: <1568640481-133352-1-git-send-email-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:7113:: with SMTP id n19mr23675349jac.82.1568640552607;
- Mon, 16 Sep 2019 06:29:12 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 06:29:12 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000eb2d700592ab96a0@google.com>
-Subject: KASAN: use-after-free Write in usbvision_decompress_alloc
-From:   syzbot <syzbot+37e33be6d077b2c85b4a@syzkaller.appspotmail.com>
-To:     allison@lohutok.net, andreyknvl@google.com, bigeasy@linutronix.de,
-        gregkh@linuxfoundation.org, hverkuil@xs4all.nl, kjlu@umn.edu,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+When passing the return value of dev_to_node() to cpumask_of_node()
+without checking if the device's node id is NUMA_NO_NODE, there is
+global-out-of-bounds detected by KASAN.
 
-syzbot found the following crash on:
+From the discussion [1], NUMA_NO_NODE really means no node affinity,
+which also means all cpus should be usable. So the cpumask_of_node()
+should always return all cpus online when user passes the node id as
+NUMA_NO_NODE, just like similar semantic that page allocator handles
+NUMA_NO_NODE.
 
-HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=176af9fa600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
-dashboard link: https://syzkaller.appspot.com/bug?extid=37e33be6d077b2c85b4a
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+But we cannot really copy the page allocator logic. Simply because the
+page allocator doesn't enforce the near node affinity. It just picks it
+up as a preferred node but then it is free to fallback to any other numa
+node. This is not the case here and node_to_cpumask_map will only restrict
+to the particular node's cpus which would have really non deterministic
+behavior depending on where the code is executed. So in fact we really
+want to return cpu_online_mask for NUMA_NO_NODE.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Some arches were already NUMA_NO_NODE aware, but they return cpu_all_mask,
+which should be identical with cpu_online_mask when those arches do not
+support cpu hotplug, this patch also changes them to return cpu_online_mask
+in order to be consistent and use NUMA_NO_NODE instead of "-1".
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+37e33be6d077b2c85b4a@syzkaller.appspotmail.com
+Also there is a debugging version of node_to_cpumask_map() for x86 and
+arm64, which is only used when CONFIG_DEBUG_PER_CPU_MAPS is defined, this
+patch changes it to handle NUMA_NO_NODE as normal node_to_cpumask_map().
 
-==================================================================
-BUG: KASAN: use-after-free in usbvision_decompress_alloc+0x63/0x70  
-drivers/media/usb/usbvision/usbvision-core.c:376
-Write of size 8 at addr ffff8881d3989ca0 by task v4l_id/9731
-
-CPU: 0 PID: 9731 Comm: v4l_id Not tainted 5.3.0-rc7+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:618
-  usbvision_decompress_alloc+0x63/0x70  
-drivers/media/usb/usbvision/usbvision-core.c:376
-  usbvision_v4l2_open+0x2b7/0x2f0  
-drivers/media/usb/usbvision/usbvision-video.c:329
-  v4l2_open+0x20f/0x3d0 drivers/media/v4l2-core/v4l2-dev.c:423
-  chrdev_open+0x219/0x5c0 fs/char_dev.c:414
-  do_dentry_open+0x494/0x1120 fs/open.c:797
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x1430/0x3f50 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3c0/0x580 fs/open.c:1089
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7fd7a6293120
-Code: 48 8b 15 1b 4d 2b 00 f7 d8 64 89 02 83 c8 ff c3 90 90 90 90 90 90 90  
-90 90 90 83 3d d5 a4 2b 00 00 75 10 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 31 c3 48 83 ec 08 e8 5e 8c 01 00 48 89 04 24
-RSP: 002b:00007fff16a863b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fff16a86518 RCX: 00007fd7a6293120
-RDX: 00007fd7a6548138 RSI: 0000000000000000 RDI: 00007fff16a87f1b
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000400884
-R13: 00007fff16a86510 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 2755:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:493 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:466
-  kmalloc include/linux/slab.h:552 [inline]
-  kzalloc include/linux/slab.h:748 [inline]
-  usbvision_alloc drivers/media/usb/usbvision/usbvision-video.c:1310 [inline]
-  usbvision_probe.cold+0x586/0x1e57  
-drivers/media/usb/usbvision/usbvision-video.c:1464
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2165
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2165
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Freed by task 2755:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:455
-  slab_free_hook mm/slub.c:1423 [inline]
-  slab_free_freelist_hook mm/slub.c:1474 [inline]
-  slab_free mm/slub.c:3016 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3957
-  usbvision_release+0x181/0x1c0  
-drivers/media/usb/usbvision/usbvision-video.c:1359
-  usbvision_disconnect+0x16c/0x1d0  
-drivers/media/usb/usbvision/usbvision-video.c:1582
-  usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
-  __device_release_driver drivers/base/dd.c:1134 [inline]
-  device_release_driver_internal+0x42f/0x500 drivers/base/dd.c:1165
-  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
-  device_del+0x420/0xb10 drivers/base/core.c:2339
-  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
-  usb_disconnect+0x284/0x8d0 drivers/usb/core/hub.c:2199
-  hub_port_connect drivers/usb/core/hub.c:4949 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1454/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  process_scheduled_works kernel/workqueue.c:2331 [inline]
-  worker_thread+0x7ab/0xe20 kernel/workqueue.c:2417
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the object at ffff8881d3988000
-  which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 7328 bytes inside of
-  8192-byte region [ffff8881d3988000, ffff8881d398a000)
-The buggy address belongs to the page:
-page:ffffea00074e6200 refcount:1 mapcount:0 mapping:ffff8881da00c500  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 ffffea0007174200 0000000300000003 ffff8881da00c500
-raw: 0000000000000000 0000000080030003 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881d3989b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881d3989c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881d3989c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                ^
-  ffff8881d3989d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881d3989d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
+[1] https://lore.kernel.org/patchwork/patch/1125789/
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+V5: Drop unsigned "fix" change for x86/arm64, and change comment log
+    according to Michal's comment.
+V4: Have all these changes in a single patch.
+V3: Change to only handle NUMA_NO_NODE, and return cpu_online_mask
+    for NUMA_NO_NODE case, and change the commit log to better justify
+    the change.
+V2: make the node id checking change to other arches too.
+---
+ arch/alpha/include/asm/topology.h                | 2 +-
+ arch/arm64/include/asm/numa.h                    | 3 +++
+ arch/arm64/mm/numa.c                             | 3 +++
+ arch/mips/include/asm/mach-ip27/topology.h       | 4 ++--
+ arch/mips/include/asm/mach-loongson64/topology.h | 4 +++-
+ arch/powerpc/include/asm/topology.h              | 6 +++---
+ arch/s390/include/asm/topology.h                 | 3 +++
+ arch/sparc/include/asm/topology_64.h             | 6 +++---
+ arch/x86/include/asm/topology.h                  | 3 +++
+ arch/x86/mm/numa.c                               | 3 +++
+ 10 files changed, 27 insertions(+), 10 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/alpha/include/asm/topology.h b/arch/alpha/include/asm/topology.h
+index 5a77a40..836c9e2 100644
+--- a/arch/alpha/include/asm/topology.h
++++ b/arch/alpha/include/asm/topology.h
+@@ -31,7 +31,7 @@ static const struct cpumask *cpumask_of_node(int node)
+ 	int cpu;
+ 
+ 	if (node == NUMA_NO_NODE)
+-		return cpu_all_mask;
++		return cpu_online_mask;
+ 
+ 	cpumask_clear(&node_to_cpumask_map[node]);
+ 
+diff --git a/arch/arm64/include/asm/numa.h b/arch/arm64/include/asm/numa.h
+index 626ad01..c8a4b31 100644
+--- a/arch/arm64/include/asm/numa.h
++++ b/arch/arm64/include/asm/numa.h
+@@ -25,6 +25,9 @@ const struct cpumask *cpumask_of_node(int node);
+ /* Returns a pointer to the cpumask of CPUs on Node 'node'. */
+ static inline const struct cpumask *cpumask_of_node(int node)
+ {
++	if (node == NUMA_NO_NODE)
++		return cpu_online_mask;
++
+ 	return node_to_cpumask_map[node];
+ }
+ #endif
+diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+index 4f241cc..f57202d 100644
+--- a/arch/arm64/mm/numa.c
++++ b/arch/arm64/mm/numa.c
+@@ -46,6 +46,9 @@ EXPORT_SYMBOL(node_to_cpumask_map);
+  */
+ const struct cpumask *cpumask_of_node(int node)
+ {
++	if (node == NUMA_NO_NODE)
++		return cpu_online_mask;
++
+ 	if (WARN_ON(node >= nr_node_ids))
+ 		return cpu_none_mask;
+ 
+diff --git a/arch/mips/include/asm/mach-ip27/topology.h b/arch/mips/include/asm/mach-ip27/topology.h
+index 965f079..04505e6 100644
+--- a/arch/mips/include/asm/mach-ip27/topology.h
++++ b/arch/mips/include/asm/mach-ip27/topology.h
+@@ -15,8 +15,8 @@ struct cpuinfo_ip27 {
+ extern struct cpuinfo_ip27 sn_cpu_info[NR_CPUS];
+ 
+ #define cpu_to_node(cpu)	(sn_cpu_info[(cpu)].p_nodeid)
+-#define cpumask_of_node(node)	((node) == -1 ?				\
+-				 cpu_all_mask :				\
++#define cpumask_of_node(node)	((node) == NUMA_NO_NODE ?		\
++				 cpu_online_mask :			\
+ 				 &hub_data(node)->h_cpus)
+ struct pci_bus;
+ extern int pcibus_to_node(struct pci_bus *);
+diff --git a/arch/mips/include/asm/mach-loongson64/topology.h b/arch/mips/include/asm/mach-loongson64/topology.h
+index 7ff819a..e78daa6 100644
+--- a/arch/mips/include/asm/mach-loongson64/topology.h
++++ b/arch/mips/include/asm/mach-loongson64/topology.h
+@@ -5,7 +5,9 @@
+ #ifdef CONFIG_NUMA
+ 
+ #define cpu_to_node(cpu)	(cpu_logical_map(cpu) >> 2)
+-#define cpumask_of_node(node)	(&__node_data[(node)]->cpumask)
++#define cpumask_of_node(node)	((node) == NUMA_NO_NODE ?		\
++				 cpu_online_mask :			\
++				 &__node_data[(node)]->cpumask)
+ 
+ struct pci_bus;
+ extern int pcibus_to_node(struct pci_bus *);
+diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
+index 2f7e1ea..309f847 100644
+--- a/arch/powerpc/include/asm/topology.h
++++ b/arch/powerpc/include/asm/topology.h
+@@ -17,9 +17,9 @@ struct device_node;
+ 
+ #include <asm/mmzone.h>
+ 
+-#define cpumask_of_node(node) ((node) == -1 ?				\
+-			       cpu_all_mask :				\
+-			       node_to_cpumask_map[node])
++#define cpumask_of_node(node)	((node) == NUMA_NO_NODE ?		\
++				 cpu_online_mask :			\
++				 node_to_cpumask_map[node])
+ 
+ struct pci_bus;
+ #ifdef CONFIG_PCI
+diff --git a/arch/s390/include/asm/topology.h b/arch/s390/include/asm/topology.h
+index cca406f..1bd2e73 100644
+--- a/arch/s390/include/asm/topology.h
++++ b/arch/s390/include/asm/topology.h
+@@ -78,6 +78,9 @@ static inline int cpu_to_node(int cpu)
+ #define cpumask_of_node cpumask_of_node
+ static inline const struct cpumask *cpumask_of_node(int node)
+ {
++	if (node == NUMA_NO_NODE)
++		return cpu_online_mask;
++
+ 	return &node_to_cpumask_map[node];
+ }
+ 
+diff --git a/arch/sparc/include/asm/topology_64.h b/arch/sparc/include/asm/topology_64.h
+index 34c628a..8c29357 100644
+--- a/arch/sparc/include/asm/topology_64.h
++++ b/arch/sparc/include/asm/topology_64.h
+@@ -11,9 +11,9 @@ static inline int cpu_to_node(int cpu)
+ 	return numa_cpu_lookup_table[cpu];
+ }
+ 
+-#define cpumask_of_node(node) ((node) == -1 ?				\
+-			       cpu_all_mask :				\
+-			       &numa_cpumask_lookup_table[node])
++#define cpumask_of_node(node)	((node) == NUMA_NO_NODE ?		\
++				 cpu_online_mask :			\
++				 &numa_cpumask_lookup_table[node])
+ 
+ struct pci_bus;
+ #ifdef CONFIG_PCI
+diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+index 4b14d23..7fa82e1 100644
+--- a/arch/x86/include/asm/topology.h
++++ b/arch/x86/include/asm/topology.h
+@@ -69,6 +69,9 @@ extern const struct cpumask *cpumask_of_node(int node);
+ /* Returns a pointer to the cpumask of CPUs on Node 'node'. */
+ static inline const struct cpumask *cpumask_of_node(int node)
+ {
++	if (node == NUMA_NO_NODE)
++		return cpu_online_mask;
++
+ 	return node_to_cpumask_map[node];
+ }
+ #endif
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index e6dad60..84b28ef 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -861,6 +861,9 @@ void numa_remove_cpu(int cpu)
+  */
+ const struct cpumask *cpumask_of_node(int node)
+ {
++	if (node == NUMA_NO_NODE)
++		return cpu_online_mask;
++
+ 	if (node >= nr_node_ids) {
+ 		printk(KERN_WARNING
+ 			"cpumask_of_node(%d): node > nr_node_ids(%u)\n",
+-- 
+2.8.1
+
