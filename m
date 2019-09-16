@@ -2,111 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE75B3BAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3814B3BA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388009AbfIPNn3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:43:29 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55130 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387912AbfIPNnQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:43:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z423eE0xltB3vRPrKrPJm5Vb6e31D3Z/WMIdhED2ET0=; b=tvH+odcCIft2As/zfFGQE6S56
-        PH2NK9V+SzVy3MI3204Qje10JQhIAz8/XxDooZRLx63PmOrlm9tTf9JsvcBWzQ02Nq14Cd1mdP96d
-        RgqFstRj6EGLt+sB1pDTD2fvgN4T97KCNVhurDhKGQqX5/8Ga2EENE6VEzFdrbhTNMAX4=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i9rHa-0004c7-FY; Mon, 16 Sep 2019 13:43:10 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id F0EF92741A0D; Mon, 16 Sep 2019 14:43:09 +0100 (BST)
-Date:   Mon, 16 Sep 2019 14:43:09 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "baolin.wang@linaro.org" <baolin.wang@linaro.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "jic23@kernel.org" <jic23@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "orsonzhai@gmail.com" <orsonzhai@gmail.com>,
-        "zhang.lyra@gmail.com" <zhang.lyra@gmail.com>
-Subject: Re: [RFC PATCH 03/15] spi: make `cs_change_delay` the first user of
- the `spi_delay` logic
-Message-ID: <20190916134309.GH4352@sirena.co.uk>
-References: <20190913114550.956-1-alexandru.ardelean@analog.com>
- <20190913114550.956-4-alexandru.ardelean@analog.com>
- <20190916122505.GC4352@sirena.co.uk>
- <ae469c65828443524f9ff0409f1c7a81bf64cf6b.camel@analog.com>
- <20190916124707.GD4352@sirena.co.uk>
- <458cbb212fbd04c157c9861501f51c03ea958302.camel@analog.com>
+        id S2387988AbfIPNnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:43:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387955AbfIPNnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 09:43:18 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55C0B216C8;
+        Mon, 16 Sep 2019 13:43:16 +0000 (UTC)
+Date:   Mon, 16 Sep 2019 09:43:14 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        John Ogness <john.ogness@linutronix.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Prarit Bhargava <prarit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: printk meeting at LPC
+Message-ID: <20190916094314.6053f988@gandalf.local.home>
+In-Reply-To: <20190916104624.n3jh363z37ah2kxa@pathway.suse.cz>
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+        <20190904123531.GA2369@hirez.programming.kicks-ass.net>
+        <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
+        <20190905143118.GP2349@hirez.programming.kicks-ass.net>
+        <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
+        <20190905121101.60c78422@oasis.local.home>
+        <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
+        <87k1acz5rx.fsf@linutronix.de>
+        <cfc7b1fa-e629-19a6-154b-0dd4f5604aa7@I-love.SAKURA.ne.jp>
+        <20190916104624.n3jh363z37ah2kxa@pathway.suse.cz>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u0lqphHC8S+ob1K0"
-Content-Disposition: inline
-In-Reply-To: <458cbb212fbd04c157c9861501f51c03ea958302.camel@analog.com>
-X-Cookie: Man and wife make one fool.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 16 Sep 2019 12:46:24 +0200
+Petr Mladek <pmladek@suse.com> wrote:
 
---u0lqphHC8S+ob1K0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Mon 2019-09-16 13:30:17, Tetsuo Handa wrote:
+> > On 2019/09/13 22:26, John Ogness wrote:  
+> > > 6. A new may-sleep function pr_flush() will be made available to wait
+> > > for all previously printk'd messages to be output on all consoles before
+> > > proceeding. For example:
+> > > 
+> > >     pr_cont("Running test ABC... ");
+> > >     pr_flush();
+> > > 
+> > >     do_test();
+> > > 
+> > >     pr_cont("PASSED\n");
+> > >     pr_flush();  
+> > 
+> > Don't we need to allow printk() callers to know the sequence number which
+> > the printk() has queued? Something like
+> > 
+> >   u64 seq;
+> >   pr_info(...);
+> >   pr_info(...);
+> >   pr_info(...);
+> >   seq = pr_current_seq();
+> >   pr_wait_seq(seq);
+> > 
+> > in case concurrently executed printk() flooding keeps adding a lot of
+> > pending output?  
+> 
+> My expectation is that pr_flush() would wait only until the current
+> message appears on all consoles. It will not wait for messages that
+> would get added later.
 
-On Mon, Sep 16, 2019 at 01:04:42PM +0000, Ardelean, Alexandru wrote:
-> On Mon, 2019-09-16 at 13:47 +0100, Mark Brown wrote:
+Right, I believe we agreed that pr_flush() would take care of all this.
 
-> > That v3 seems to be a small subset of this series?
+> 
+> 
+> > By the way, do we need to keep printk() return bytes like printf() ?
+> > Maybe we can make printk() return "void", for almost nobody can do
+> > meaningful things with the return value.  
+> 
+> It is true that I have never seen anyone checking the return value.
+> On the other hand, it is a minor detail. And I would prefer to stay
+> compatible with the userland printf() as much as possible.
 
-> Ack.
-> V3 is the first 4 patches from this series.
-> Well, patches 3 & 4 are squashed.
+I understand your wanting to keep compatibility with printf(), but I
+would suggest that we only do so if it doesn't complicate any of the
+design. I'm actually leaning on recommending that we remove the return
+value, to prevent there becoming a dependency on it. I don't see any
+reason to have the "number of bytes processed" as the return value
+being useful within the kernel.
 
-> I am 100% convinced that the entire series is a good idea.
-> In the sense that a `struct spi_delay` may be a good idea, but at the same time, it may be un-needed.
+> 
+> 
+> > > 9. Support for printk dictionaries will be discontinued. I will look
+> > > into who is using this and why. If printk dictionaries are important for
+> > > you, speak up now!  
+> > 
+> > I think that dev_printk() is using "const char *dict, size_t dictlen," part
+> > via create_syslog_header(). Some userspace programs might depend on
+> > availability of such information.  
+> 
+> Yeah, but it seems to be the only dictionary writer. There were doubts
+> (during the meeting) whether anyone was actually using the information.
+> 
+> Hmm, it seems that journalctl is able to filer device specific
+> information, for example, I get:
+> 
+> $> journalctl _KERNEL_DEVICE=+usb:2-1  
+> -- Logs begin at Tue 2019-08-13 09:00:03 CEST, end at Mon 2019-09-16 12:32:58 CEST. --
+> Aug 13 09:00:04 linux-qszd kernel: usb 2-1: new high-speed USB device number 2 using ehci-pci
+> 
+> One question is if anyone is using this filtering. Simple grep is
+> enough. Another question is whether it really needs to get passed
+> this way.
+> 
 
-> All I wanted to do, was to add another delay somewhere, and got lost in the rework of current delays.
-> I thought about proposing just the first 4 patches [on their own], but I thought that showing the current series as-is
-> now, may be a good idea as well [to gather some feedback].
+If worse comes to worse, perhaps we let the console decide what to do
+with it. Where all consoles but the "kmsg" one ignores it?
 
-I think it makes more sense to review as a whole series rather than only
-a part of the conversion, it doesn't really help to only do part of it.
+Then journalctl should work as normal.
 
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
+Or will this break one of our other changes?
 
---u0lqphHC8S+ob1K0
-Content-Type: application/pgp-signature; name="signature.asc"
+-- Steve
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1/kW0ACgkQJNaLcl1U
-h9AhYQf/a5Mv8ax53FhE2w2Iee+bq5bvfdkZRudCki/iqJxBUwCNKGfc62eBUwGY
-qva3K4T6zi4pbX0dWNMojeJ5lQ7Viu2bnR20voTcVJhOmplIgWhH57tVxRU5bnRt
-9205UV5Uc2FNDE1P60lC6Msts6I+8Rzx/a20fZ8pyXlVwOW4n0xxEkiMxYgg5mpo
-BbGVM5rYkasqqmq8KjbIKWYl/XwcWDIKw8mlyAuLAq4Vh8KRGfu+kRUY3IqNzDIj
-puzpCj6MJZW/8pzNfi/z6Lelkhtvmn04gEu0pMN2C1u9ILeUxixwtqQPv64qTR7I
-ySxA++9//Vej3QKiuzfu/u+eDK6+WA==
-=nPuT
------END PGP SIGNATURE-----
-
---u0lqphHC8S+ob1K0--
