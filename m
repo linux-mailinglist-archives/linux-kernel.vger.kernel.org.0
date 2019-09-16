@@ -2,178 +2,381 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D54A9B3A35
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 14:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D2B0B3A3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 14:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732486AbfIPMYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 08:24:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:44130 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727783AbfIPMYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 08:24:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41D32337;
-        Mon, 16 Sep 2019 05:24:03 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC5173F575;
-        Mon, 16 Sep 2019 05:24:02 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 13:24:01 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        'Anvesh Salveru' <anvesh.s@samsung.com>
-Subject: Re: [PATCH v2] PCI: dwc: Add support to add GEN3 related
- equalization quirks
-Message-ID: <20190916122400.GO9720@e119886-lin.cambridge.arm.com>
-References: <CGME20190913104018epcas5p3d93265a6786dc2b7b8a7d3231bfe9c14@epcas5p3.samsung.com>
- <1568371190-14590-1-git-send-email-pankaj.dubey@samsung.com>
- <20190916101543.GM9720@e119886-lin.cambridge.arm.com>
- <00a401d56c7e$cf3abd30$6db03790$@samsung.com>
+        id S1732542AbfIPMY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 08:24:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34755 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732441AbfIPMY6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 08:24:58 -0400
+Received: by mail-wr1-f68.google.com with SMTP id a11so28896202wrx.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 05:24:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wg06uL3gx1dl4ZVZHLHs+Xy2x8ijtjzKux8cJbTkbdk=;
+        b=Kx5Rg/Fx2kbcebuZhrbp3XfapDpaYf4zY12vnmXF4GvKv+nEmscLTxOk7fn7Bu2mu9
+         7WJs/QYF5dAJZdc3pOrpCPfi+wrqRhVlRsVrhn2VmXKwbGZGZTwHLdBTC7N9vVkOLVBa
+         O6rsxoA0NUWgedJGzV6O6gXoXhRxnvTS6XQ4BtG8HLiF5C3y4nwJriM7ykMrDQ+/vIe5
+         /oGLrHxc+c2FykG5GogiuKZ5GYdmXlT9iA8Y+ESAprXbrKHc86iU7WXe0peW5U0ti/6X
+         nGmoax00nm+AUyN5zehuzk1VlvU8ui6QOmDG04+c986VC8JZcfwIazp4HUOJGIOsnuDO
+         5Ung==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wg06uL3gx1dl4ZVZHLHs+Xy2x8ijtjzKux8cJbTkbdk=;
+        b=IsZRpDInGydl/RZSVrgMG5sNPWMHGvdElB+zt05piaIpzYSe6Woah1VfR2jzN7CwdQ
+         X2P/3SDCaNBiT7K64pxi0t2PaBmo//vaKORkd/QI3AxIrkuHl+ZTPFpZOFUZBbfUTO4k
+         /Au2aMODk/qGuQBImHGxbrMuX7ld7XNqR2Nm6voD++Bzj0YebSKDLuhST5QWq90Twu65
+         iAnXHQC+RVYhOzQLRLzTMORNFI4kJ/lKLpZvUv+ShqxyXl/D5Ax/nBAKE+8atlV4B7bF
+         xVcD5/FP446W0KjBxJn/HyJ6WU4Cf4NTPHfNs67s82DlmBQWmUgcZJkCdpyjn2P7NgKs
+         /e7w==
+X-Gm-Message-State: APjAAAUG+J7TEwIPatiR+sjiovf9/Rj3+fek7rbml8aQ0BgvOTu589RU
+        nCNH+sXBjMvaGDcbfz9U3AtyEg==
+X-Google-Smtp-Source: APXvYqwyP5EB5o/q5ZeiTHgNudSdGnNq52VgsUmjzJlmjFRRqOY/p5zYVQpVdiPRDfrH8zTTEzQqQA==
+X-Received: by 2002:adf:ce89:: with SMTP id r9mr11214880wrn.335.1568636694808;
+        Mon, 16 Sep 2019 05:24:54 -0700 (PDT)
+Received: from localhost.localdomain (69.red-83-35-113.dynamicip.rima-tde.net. [83.35.113.69])
+        by smtp.gmail.com with ESMTPSA id b62sm24294738wmc.13.2019.09.16.05.24.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 16 Sep 2019 05:24:54 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, gregkh@linuxfoundation.org,
+        arnd@arndb.de, srinivas.kandagatla@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH v2 1/5] misc: fastrpc: add mmap/unmap support
+Date:   Mon, 16 Sep 2019 14:24:51 +0200
+Message-Id: <20190916122451.12546-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00a401d56c7e$cf3abd30$6db03790$@samsung.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 04:36:33PM +0530, Pankaj Dubey wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Andrew Murray <andrew.murray@arm.com>
-> > Sent: Monday, September 16, 2019 3:46 PM
-> > To: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > jingoohan1@gmail.com; gustavo.pimentel@synopsys.com;
-> > lorenzo.pieralisi@arm.com; bhelgaas@google.com; Anvesh Salveru
-> > <anvesh.s@samsung.com>
-> > Subject: Re: [PATCH v2] PCI: dwc: Add support to add GEN3 related
-> equalization
-> > quirks
-> > 
-> > On Fri, Sep 13, 2019 at 04:09:50PM +0530, Pankaj Dubey wrote:
-> > > From: Anvesh Salveru <anvesh.s@samsung.com>
-> > >
-> > > In some platforms, PCIe PHY may have issues which will prevent linkup
-> > > to happen in GEN3 or higher speed. In case equalization fails, link
-> > > will fallback to GEN1.
-> > >
-> > > DesignWare controller gives flexibility to disable GEN3 equalization
-> > > completely or only phase 2 and 3 of equalization.
-> > >
-> > > This patch enables the DesignWare driver to disable the PCIe GEN3
-> > > equalization by enabling one of the following quirks:
-> > >  - DWC_EQUALIZATION_DISABLE: To disable GEN3 equalization all phases
-> > >  - DWC_EQ_PHASE_2_3_DISABLE: To disable GEN3 equalization phase 2 & 3
-> > >
-> > > Platform drivers can set these quirks via "quirk" variable of "dw_pcie"
-> > > struct.
-> > >
-> > > Signed-off-by: Anvesh Salveru <anvesh.s@samsung.com>
-> > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > > ---
-> > > Patchset v1 can be found at:
-> > >  - 1/2: https://lkml.org/lkml/2019/9/10/443
-> > >  - 2/2: https://lkml.org/lkml/2019/9/10/444
-> > >
-> > > Changes w.r.t v1:
-> > >  - Squashed two patches from v1 into one as suggested by Gustavo
-> > >  - Addressed review comments from Andrew
-> > >
-> > >  drivers/pci/controller/dwc/pcie-designware.c | 12 ++++++++++++
-> > > drivers/pci/controller/dwc/pcie-designware.h |  9 +++++++++
-> > >  2 files changed, 21 insertions(+)
-> > >
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.c
-> > > b/drivers/pci/controller/dwc/pcie-designware.c
-> > > index 7d25102..97fb18d 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > > @@ -466,4 +466,16 @@ void dw_pcie_setup(struct dw_pcie *pci)
-> > >  		break;
-> > >  	}
-> > >  	dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, val);
-> > > +
-> > > +	if (pci->quirk & DWC_EQUALIZATION_DISABLE) {
-> > > +		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-> > > +		val |= PORT_LOGIC_GEN3_EQ_DISABLE;
-> > > +		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-> > > +	}
-> > > +
-> > > +	if (pci->quirk & DWC_EQ_PHASE_2_3_DISABLE) {
-> > > +		val = dw_pcie_readl_dbi(pci, PCIE_PORT_GEN3_RELATED);
-> > > +		val |= PORT_LOGIC_GEN3_EQ_PHASE_2_3_DISABLE;
-> > > +		dw_pcie_writel_dbi(pci, PCIE_PORT_GEN3_RELATED, val);
-> > > +	}
-> > >  }
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h
-> > > b/drivers/pci/controller/dwc/pcie-designware.h
-> > > index ffed084..e428b62 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > @@ -29,6 +29,10 @@
-> > >  #define LINK_WAIT_MAX_IATU_RETRIES	5
-> > >  #define LINK_WAIT_IATU			9
-> > >
-> > > +/* Parameters for GEN3 related quirks */
-> > > +#define DWC_EQUALIZATION_DISABLE	BIT(1)
-> > > +#define DWC_EQ_PHASE_2_3_DISABLE	BIT(2)
-> > > +
-> > >  /* Synopsys-specific PCIe configuration registers */
-> > >  #define PCIE_PORT_LINK_CONTROL		0x710
-> > >  #define PORT_LINK_MODE_MASK		GENMASK(21, 16)
-> > > @@ -60,6 +64,10 @@
-> > >  #define PCIE_MSI_INTR0_MASK		0x82C
-> > >  #define PCIE_MSI_INTR0_STATUS		0x830
-> > >
-> > > +#define PCIE_PORT_GEN3_RELATED		0x890
-> > 
-> > I hadn't noticed this in the previous version - what is the proper name
-> for this
-> > register? Does it end in _RELATED?
-> 
-> As per SNPS databook the name of the register is "GEN3_RELATED_OFF". It is
-> port logic register so, to keep similarity with other port logic registers
-> in this file we named it as "PCIE_PORT_GEN3_RELATED". 
+Support the allocation/deallocation of buffers mapped to the DSP.
 
-OK.
+When the memory mapped to the DSP at process creation is not enough,
+the fastrpc library can extend it at runtime. This avoids having to do
+large preallocations by default.
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
 
-Also is the SNPS databook publicly available? I'd be interested in reading
-it.
+ v2: fixes kbuild warning
+     cast from pointer to integer of different size
+     
+ drivers/misc/fastrpc.c      | 181 ++++++++++++++++++++++++++++++++++++
+ include/uapi/misc/fastrpc.h |  15 +++
+ 2 files changed, 196 insertions(+)
 
-Thanks,
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index 98603e235cf0..bacf6c20988d 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -35,6 +35,7 @@
+ #define INIT_FILELEN_MAX (64 * 1024 * 1024)
+ #define INIT_MEMLEN_MAX  (8 * 1024 * 1024)
+ #define FASTRPC_DEVICE_NAME	"fastrpc"
++#define ADSP_MMAP_ADD_PAGES 0x1000
+ 
+ /* Retrives number of input buffers from the scalars parameter */
+ #define REMOTE_SCALARS_INBUFS(sc)	(((sc) >> 16) & 0x0ff)
+@@ -67,6 +68,8 @@
+ /* Remote Method id table */
+ #define FASTRPC_RMID_INIT_ATTACH	0
+ #define FASTRPC_RMID_INIT_RELEASE	1
++#define FASTRPC_RMID_INIT_MMAP		4
++#define FASTRPC_RMID_INIT_MUNMAP	5
+ #define FASTRPC_RMID_INIT_CREATE	6
+ #define FASTRPC_RMID_INIT_CREATE_ATTR	7
+ #define FASTRPC_RMID_INIT_CREATE_STATIC	8
+@@ -90,6 +93,23 @@ struct fastrpc_remote_arg {
+ 	u64 len;
+ };
+ 
++struct fastrpc_mmap_rsp_msg {
++	u64 vaddr;
++};
++
++struct fastrpc_mmap_req_msg {
++	s32 pgid;
++	u32 flags;
++	u64 vaddr;
++	s32 num;
++};
++
++struct fastrpc_munmap_req_msg {
++	s32 pgid;
++	u64 vaddr;
++	u64 size;
++};
++
+ struct fastrpc_msg {
+ 	int pid;		/* process group id */
+ 	int tid;		/* thread id */
+@@ -124,6 +144,9 @@ struct fastrpc_buf {
+ 	/* Lock for dma buf attachments */
+ 	struct mutex lock;
+ 	struct list_head attachments;
++	/* mmap support */
++	struct list_head node; /* list of user requested mmaps */
++	uintptr_t raddr;
+ };
+ 
+ struct fastrpc_dma_buf_attachment {
+@@ -192,6 +215,7 @@ struct fastrpc_user {
+ 	struct list_head user;
+ 	struct list_head maps;
+ 	struct list_head pending;
++	struct list_head mmaps;
+ 
+ 	struct fastrpc_channel_ctx *cctx;
+ 	struct fastrpc_session_ctx *sctx;
+@@ -269,6 +293,7 @@ static int fastrpc_buf_alloc(struct fastrpc_user *fl, struct device *dev,
+ 		return -ENOMEM;
+ 
+ 	INIT_LIST_HEAD(&buf->attachments);
++	INIT_LIST_HEAD(&buf->node);
+ 	mutex_init(&buf->lock);
+ 
+ 	buf->fl = fl;
+@@ -276,6 +301,7 @@ static int fastrpc_buf_alloc(struct fastrpc_user *fl, struct device *dev,
+ 	buf->phys = 0;
+ 	buf->size = size;
+ 	buf->dev = dev;
++	buf->raddr = 0;
+ 
+ 	buf->virt = dma_alloc_coherent(dev, buf->size, (dma_addr_t *)&buf->phys,
+ 				       GFP_KERNEL);
+@@ -1098,6 +1124,7 @@ static int fastrpc_device_release(struct inode *inode, struct file *file)
+ 	struct fastrpc_channel_ctx *cctx = fl->cctx;
+ 	struct fastrpc_invoke_ctx *ctx, *n;
+ 	struct fastrpc_map *map, *m;
++	struct fastrpc_buf *buf, *b;
+ 	unsigned long flags;
+ 
+ 	fastrpc_release_current_dsp_process(fl);
+@@ -1119,6 +1146,11 @@ static int fastrpc_device_release(struct inode *inode, struct file *file)
+ 		fastrpc_map_put(map);
+ 	}
+ 
++	list_for_each_entry_safe(buf, b, &fl->mmaps, node) {
++		list_del(&buf->node);
++		fastrpc_buf_free(buf);
++	}
++
+ 	fastrpc_session_free(cctx, fl->sctx);
+ 
+ 	mutex_destroy(&fl->mutex);
+@@ -1143,6 +1175,7 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
+ 	mutex_init(&fl->mutex);
+ 	INIT_LIST_HEAD(&fl->pending);
+ 	INIT_LIST_HEAD(&fl->maps);
++	INIT_LIST_HEAD(&fl->mmaps);
+ 	INIT_LIST_HEAD(&fl->user);
+ 	fl->tgid = current->tgid;
+ 	fl->cctx = cctx;
+@@ -1270,6 +1303,148 @@ static int fastrpc_invoke(struct fastrpc_user *fl, char __user *argp)
+ 	return err;
+ }
+ 
++static int fastrpc_req_munmap_impl(struct fastrpc_user *fl,
++				   struct fastrpc_req_munmap *req)
++{
++	struct fastrpc_invoke_args args[1] = { [0] = { 0 } };
++	struct fastrpc_buf *buf, *b;
++	struct fastrpc_munmap_req_msg req_msg;
++	struct device *dev = fl->sctx->dev;
++	int err;
++	u32 sc;
++
++	spin_lock(&fl->lock);
++	list_for_each_entry_safe(buf, b, &fl->mmaps, node) {
++		if ((buf->raddr == req->vaddrout) && (buf->size == req->size))
++			break;
++		buf = NULL;
++	}
++	spin_unlock(&fl->lock);
++
++	if (!buf) {
++		dev_err(dev, "mmap not in list\n");
++		return -EINVAL;
++	}
++
++	req_msg.pgid = fl->tgid;
++	req_msg.size = buf->size;
++	req_msg.vaddr = buf->raddr;
++
++	args[0].ptr = (u64) (uintptr_t) &req_msg;
++	args[0].length = sizeof(req_msg);
++
++	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MUNMAP, 1, 0);
++	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
++				      &args[0]);
++	if (!err) {
++		dev_dbg(dev, "unmmap\tpt 0x%09lx OK\n", buf->raddr);
++		spin_lock(&fl->lock);
++		list_del(&buf->node);
++		spin_unlock(&fl->lock);
++		fastrpc_buf_free(buf);
++	} else {
++		dev_err(dev, "unmmap\tpt 0x%09lx ERROR\n", buf->raddr);
++	}
++
++	return err;
++}
++
++static int fastrpc_req_munmap(struct fastrpc_user *fl, char __user *argp)
++{
++	struct fastrpc_req_munmap req;
++
++	if (copy_from_user(&req, argp, sizeof(req)))
++		return -EFAULT;
++
++	return fastrpc_req_munmap_impl(fl, &req);
++}
++
++static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
++{
++	struct fastrpc_invoke_args args[3] = { [0 ... 2] = { 0 } };
++	struct fastrpc_buf *buf = NULL;
++	struct fastrpc_mmap_req_msg req_msg;
++	struct fastrpc_mmap_rsp_msg rsp_msg;
++	struct fastrpc_req_munmap req_unmap;
++	struct fastrpc_phy_page pages;
++	struct fastrpc_req_mmap req;
++	struct device *dev = fl->sctx->dev;
++	int err;
++	u32 sc;
++
++	if (copy_from_user(&req, argp, sizeof(req)))
++		return -EFAULT;
++
++	if (req.flags != ADSP_MMAP_ADD_PAGES) {
++		dev_err(dev, "flag not supported 0x%x\n", req.flags);
++		return -EINVAL;
++	}
++
++	if (req.vaddrin) {
++		dev_err(dev, "adding user allocated pages is not supported\n");
++		return -EINVAL;
++	}
++
++	err = fastrpc_buf_alloc(fl, fl->sctx->dev, req.size, &buf);
++	if (err) {
++		dev_err(dev, "failed to allocate buffer\n");
++		return err;
++	}
++
++	req_msg.pgid = fl->tgid;
++	req_msg.flags = req.flags;
++	req_msg.vaddr = req.vaddrin;
++	req_msg.num = sizeof(pages);
++
++	args[0].ptr = (u64) (uintptr_t) &req_msg;
++	args[0].length = sizeof(req_msg);
++
++	pages.addr = buf->phys;
++	pages.size = buf->size;
++
++	args[1].ptr = (u64) (uintptr_t) &pages;
++	args[1].length = sizeof(pages);
++
++	args[2].ptr = (u64) (uintptr_t) &rsp_msg;
++	args[2].length = sizeof(rsp_msg);
++
++	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_MMAP, 2, 1);
++	err = fastrpc_internal_invoke(fl, true, FASTRPC_INIT_HANDLE, sc,
++				      &args[0]);
++	if (err) {
++		dev_err(dev, "mmap error (len 0x%08llx)\n", buf->size);
++		goto err_invoke;
++	}
++
++	/* update the buffer to be able to deallocate the memory on the DSP */
++	buf->raddr = (uintptr_t) rsp_msg.vaddr;
++
++	/* let the client know the address to use */
++	req.vaddrout = rsp_msg.vaddr;
++
++	spin_lock(&fl->lock);
++	list_add_tail(&buf->node, &fl->mmaps);
++	spin_unlock(&fl->lock);
++
++	if (copy_to_user((void __user *)argp, &req, sizeof(req))) {
++		/* unmap the memory and release the buffer */
++		req_unmap.vaddrout = buf->raddr;
++		req_unmap.size = buf->size;
++		fastrpc_req_munmap_impl(fl, &req_unmap);
++		return -EFAULT;
++	}
++
++	dev_dbg(dev, "mmap\t\tpt 0x%09lx OK [len 0x%08llx]\n",
++		buf->raddr, buf->size);
++
++	return 0;
++
++err_invoke:
++	fastrpc_buf_free(buf);
++
++	return err;
++}
++
+ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
+ 				 unsigned long arg)
+ {
+@@ -1293,6 +1468,12 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
+ 	case FASTRPC_IOCTL_ALLOC_DMA_BUFF:
+ 		err = fastrpc_dmabuf_alloc(fl, argp);
+ 		break;
++	case FASTRPC_IOCTL_MMAP:
++		err = fastrpc_req_mmap(fl, argp);
++		break;
++	case FASTRPC_IOCTL_MUNMAP:
++		err = fastrpc_req_munmap(fl, argp);
++		break;
+ 	default:
+ 		err = -ENOTTY;
+ 		break;
+diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
+index fb792e882cef..07de2b7aac85 100644
+--- a/include/uapi/misc/fastrpc.h
++++ b/include/uapi/misc/fastrpc.h
+@@ -10,6 +10,8 @@
+ #define FASTRPC_IOCTL_INVOKE		_IOWR('R', 3, struct fastrpc_invoke)
+ #define FASTRPC_IOCTL_INIT_ATTACH	_IO('R', 4)
+ #define FASTRPC_IOCTL_INIT_CREATE	_IOWR('R', 5, struct fastrpc_init_create)
++#define FASTRPC_IOCTL_MMAP              _IOWR('R', 6, struct fastrpc_req_mmap)
++#define FASTRPC_IOCTL_MUNMAP            _IOWR('R', 7, struct fastrpc_req_munmap)
+ 
+ struct fastrpc_invoke_args {
+ 	__u64 ptr;
+@@ -38,4 +40,17 @@ struct fastrpc_alloc_dma_buf {
+ 	__u64 size;	/* size */
+ };
+ 
++struct fastrpc_req_mmap {
++	__s32 fd;
++	__u32 flags;	/* flags for dsp to map with */
++	__u64 vaddrin;	/* optional virtual address */
++	__u64 size;	/* size */
++	__u64 vaddrout;	/* dsp virtual address */
++};
++
++struct fastrpc_req_munmap {
++	__u64 vaddrout;	/* address to unmap */
++	__u64 size;	/* size */
++};
++
+ #endif /* __QCOM_FASTRPC_H__ */
+-- 
+2.23.0
 
-Andrew Murray
-
-> 
-> > 
-> > Thanks,
-> > 
-> > Andrew Murray
-> > 
-> > > +#define PORT_LOGIC_GEN3_EQ_PHASE_2_3_DISABLE	BIT(9)
-> > > +#define PORT_LOGIC_GEN3_EQ_DISABLE		BIT(16)
-> > > +
-> > >  #define PCIE_ATU_VIEWPORT		0x900
-> > >  #define PCIE_ATU_REGION_INBOUND		BIT(31)
-> > >  #define PCIE_ATU_REGION_OUTBOUND	0
-> > > @@ -244,6 +252,7 @@ struct dw_pcie {
-> > >  	struct dw_pcie_ep	ep;
-> > >  	const struct dw_pcie_ops *ops;
-> > >  	unsigned int		version;
-> > > +	unsigned int		quirk;
-> > >  };
-> > >
-> > >  #define to_dw_pcie_from_pp(port) container_of((port), struct dw_pcie,
-> > > pp)
-> > > --
-> > > 2.7.4
-> > >
-> 
