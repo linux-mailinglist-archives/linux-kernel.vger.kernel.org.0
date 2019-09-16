@@ -2,78 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76CB4B3BD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:50:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26DD6B3BCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:49:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388087AbfIPNtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:49:32 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39324 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733243AbfIPNtb (ORCPT
+        id S2388020AbfIPNt0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:49:26 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36744 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733128AbfIPNt0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:49:31 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i9rNT-0007Lt-H4; Mon, 16 Sep 2019 15:49:15 +0200
-Date:   Mon, 16 Sep 2019 15:49:09 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-cc:     "tony.luck@intel.com" <tony.luck@intel.com>,
-        "Borislav Petkov (bp@alien8.de)" <bp@alien8.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        Mon, 16 Sep 2019 09:49:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y19so38982486wrd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 06:49:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/NPsPj1awstwEtbeOu7moJJbL2ezBiFpC0Ki5LS8P+s=;
+        b=fflNlJ8lJ60ejk7+T13Q78OrBQh1gYWQCS1F1lOJyhIrSjMemFYFV/ePr4IHxww7wk
+         GhGHLlsvszDJUdF8tkGPxYeNV1nYtYterQLQRrX5GtXtj89lV/AN9tK9zEc7c60d9lk6
+         xFvUJUXfTr+2Nw37eN1If1tRc/YltPfobrS4jEk+DtUTOy/Eu33Lhinp1Ddk1IH72Lpl
+         L7TC3pUX81PSjp3Sunm+C4/uIW/6K/+GNGk772oY9lDwM5hM3+xlBIrTs6FJmeW0P5dy
+         q+//hbUpc+bZwI1N0P/Fn9cJ7uukjkHlRT28FQlNKIq+ZIPiw4DeE0t+6XPP6IuPNZw3
+         zP/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/NPsPj1awstwEtbeOu7moJJbL2ezBiFpC0Ki5LS8P+s=;
+        b=JCxzrE2G+UnnHLQ4M8X2OOfdoSAplsnvvoXmMvhAw9nGym9nAMX5FbW1uNcwHXvhu3
+         VE/h+WLa4tlVS0JvBkqxEhbkTfHNisxkFEikUBT/vhihXF2X1AZK0giU+d8eeElFtuTM
+         7aFaGIOZ6JRKVr3lXY37eDTENuXdHrHhmDYKRSChhdZenKEXdk1IRroQkhXCN8lsy6L6
+         23qRNuz8ZG3OT/ZA/yA7CDWQ+s/4GfHxfQNEHCupyC03zFGRsb/YOtcWO2m7BFb4h/Hd
+         nJZxjTqqWSRSNiKcVv/FIcT8e5knHp6Jv0snq65geudS1+66w9sLFQIPKnTeFEZOl0U1
+         gB4w==
+X-Gm-Message-State: APjAAAVqU8C57zPuCFWvUU+YgukcbXVpJfloECCHg6Aj37rooGB+MueW
+        TYrAP6Ssvx4/VEw2OeshaAQ=
+X-Google-Smtp-Source: APXvYqwYGuFHyOnyPqHGJsh88x9YZDphC9WMSwz9ljoOj11Il80UrjNM46ouviozaiWNYy7L1RgGAg==
+X-Received: by 2002:adf:e603:: with SMTP id p3mr28941971wrm.102.1568641764073;
+        Mon, 16 Sep 2019 06:49:24 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id g201sm15984235wmg.34.2019.09.16.06.49.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 06:49:21 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 15:49:20 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
-        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-        "qiuxu.zhuo@intel.com" <qiuxu.zhuo@intel.com>,
-        David Wang <DavidWang@zhaoxin.com>,
-        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
-        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>,
-        "Herry Yang(BJ-RD)" <HerryYang@zhaoxin.com>
-Subject: Re: [PATCH v3 0/4] x86/mce: Add supports for Zhaoxin MCA
-In-Reply-To: <a26cd9adb0b74b838c30ff9299de9932@zhaoxin.com>
-Message-ID: <alpine.DEB.2.21.1909161539510.1887@nanos.tec.linutronix.de>
-References: <a26cd9adb0b74b838c30ff9299de9932@zhaoxin.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 0/6] ARM, arm64: Remove arm_pm_restart()
+Message-ID: <20190916134920.GA18267@ulmo>
+References: <20170130110512.6943-1-thierry.reding@gmail.com>
+ <20190914152544.GA17499@roeck-us.net>
+ <CAK8P3a3G_9EeK-Xp7ZeA0EN7WNzrL7AxoQcNZ8z-oe5NsTYW6g@mail.gmail.com>
+ <056ccf5c-6c6c-090b-6ca1-ab666021db48@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bp/iNruPH9dso1Pn"
+Content-Disposition: inline
+In-Reply-To: <056ccf5c-6c6c-090b-6ca1-ab666021db48@roeck-us.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Sep 2019, Tony W Wang-oc wrote:
 
-> Zhaoxin newer CPUs support MCE, CMCI and LMCE that compatible with
-> Intel's "Machine-Check Architecture".
+--bp/iNruPH9dso1Pn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for providing a cover letter. Though threading does not work either
-with that simply because the 1-4/4 mails lack a
+On Mon, Sep 16, 2019 at 06:17:01AM -0700, Guenter Roeck wrote:
+> On 9/16/19 12:49 AM, Arnd Bergmann wrote:
+> > On Sat, Sep 14, 2019 at 5:26 PM Guenter Roeck <linux@roeck-us.net> wrot=
+e:
+> > > On Mon, Jan 30, 2017 at 12:05:06PM +0100, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > Hi everyone,
+> > > >=20
+> > > > This small series is preparatory work for a series that I'm working=
+ on
+> > > > which attempts to establish a formal framework for system restart a=
+nd
+> > > > power off.
+> > > >=20
+> > > > Guenter has done a lot of good work in this area, but it never got
+> > > > merged. I think this set is a valuable addition to the kernel becau=
+se
+> > > > it converts all odd providers to the established mechanism for rest=
+art.
+> > > >=20
+> > > > Since this is stretched across both 32-bit and 64-bit ARM, as well =
+as
+> > > > PSCI, and given the SoC/board level of functionality, I think it mi=
+ght
+> > > > make sense to take this through the ARM SoC tree in order to simpli=
+fy
+> > > > the interdependencies. But it should also be possible to take patch=
+es
+> > > > 1-4 via their respective trees this cycle and patches 5-6 through t=
+he
+> > > > ARM and arm64 trees for the next cycle, if that's preferred.
+> > > >=20
+> > >=20
+> > > We tried this twice now, and it seems to go nowhere. What does it take
+> > > to get it applied ?
+> >=20
+> > Can you send a pull request to soc@kernel.org after the merge window,
+> > with everyone else on Cc? If nobody objects, I'll merge it through
+> > the soc tree.
+> >=20
+>=20
+> Sure, I'll rebase and do that.
 
-   References: <Message-id-of-cover-letter>
+I've uploaded a rebased tree here:
 
-tag. They have some weird:
+	https://github.com/thierryreding/linux/tree/for-5.5/system-power-reset
 
-   Thread-Index: AdVsgZ9UPwR7QKdtRlW4qXXe20fCvg==
+The first 6 patches in that tree correspond to this series. There were a
+couple of conflicts I had to resolve and I haven't fully tested the
+series yet, but if you haven't done any of the rebasing, the above may
+be useful to you.
 
-tag, but that is different for every mail.
+Thierry
 
-   Thread-Index: AdVsghaYSu2N9NgNSwS4zHAPRb3wjg==
+--bp/iNruPH9dso1Pn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-'Thread-Index' is a MS Outlook specific header which is not supported by
-real MUAs.
+-----BEGIN PGP SIGNATURE-----
 
-Please make sure to fix that when you are going to send the next round of
-patches. Send them to yourself first and check the mail headers for a
-proper References: tag chain. If you want to know how that looks just have
-a look at the mail headers of any properly threaded patch series which you
-received from LKML.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1/kt0ACgkQ3SOs138+
+s6Gyww/+K/pGweyEoA46/dAVNxy5Vcu6G8+VGLroSopzGQ4AagO4eAZk4SvXqWTM
+A/Ig7+ORbGubvEVJWItR409xxLu6/eWNeZMgGaeeC7B3+X6dwG94uDPPP2JYVpKk
+pDZ1VZLdP7GO3vGnehlH0V+o53iJ00HAebTNpYI4aUKDxrECapbL3idAPBny/ext
+q1j+9nJxKkSw5SUQw3IF/PNBWJ7lF84r0wkwuZemObJDtdPllANlxmqS61uFXUVE
+hZYr3rDzEZ/l4usVRJmwa/QMw8pWpt+eRTGxWedz8wmBw6K9Dmzz3EmvtI7a28Xc
+fe1ARSsnh5d5tPN+uTy9GsjXzuX57hsXliWzkvcy10zWucGIvr7WtXyJdak8AuJ7
+WxmKplq8Xt0I1qO5zQxwxkYRY5snwu0P82VE4mNuWSPtnb9vSb95q10k1C5elRpA
+zOcSDHgiBmk8hOSX+DYP19kCzUduQHBDZhZyqbFGSkafGvw0/PQpBrYqy1nKu6rA
+kivAJtIRc9t8QyTcBQ9nHccsMPkoNIa6sseXVPaFiQTQshBDvPpJ6HMSdYcfbohC
+v9pGjGrjhMkXlK9Qur+R9NLDXkxoYWwA4D6BetGFo5OvD1uDXbUqyJBrDRf4xWmY
+MHK8npnj+TyQD86KVEm0e5Zc/QwvRWTokAfsZM2f4QTRTUCp/WA=
+=6fyR
+-----END PGP SIGNATURE-----
 
-Thanks,
-
-	tglx
-
-
+--bp/iNruPH9dso1Pn--
