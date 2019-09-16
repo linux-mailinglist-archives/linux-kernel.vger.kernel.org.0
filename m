@@ -2,117 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA64B41F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 22:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3086B41F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 22:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391473AbfIPUfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 16:35:34 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41826 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391449AbfIPUfd (ORCPT
+        id S2403822AbfIPUgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 16:36:35 -0400
+Received: from baldur.buserror.net ([165.227.176.147]:35306 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387499AbfIPUgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 16:35:33 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x4so1524936qtq.8;
-        Mon, 16 Sep 2019 13:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ihyLcr/IE8dYmQPkpIxkQFwoGx9mvcYHtpb7Os1ZV9I=;
-        b=NVDnnS7Qjr/iIlDteTT8VdQpogh5KuOmqGAR+uyUiMRjAcDLr+uF+NSzaRmuN0SzyG
-         DDYmyjgeGNHR6DQI/SXQxp6dBzMWV0moM0bbd/wIxEDP4cbEuylTVBW9dhtl1fLoJKir
-         e/Xm32DiqsKNhoV3N9E/FgaWo8OCSgqeY4HAkOGfibBs6G5GbKmwrxCw1AFEl94rn6N3
-         Rnc/imUTNVAdFVs2RrLRgIaC+NuEht3gb6z51oHKDMXoWcRh6mpOyFGgnPRPHd+iXIlr
-         Ke1WZ3hTXpcUkIXD1nU0spWaYs8W0axbgLtphCVsDArRicsBh2GpteOCq1ejiKhThHHP
-         8Oag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ihyLcr/IE8dYmQPkpIxkQFwoGx9mvcYHtpb7Os1ZV9I=;
-        b=E2wfzM9LrOJysvDoS5serqsOAemdO9kavdBfdcOh2YQLcp+Ai9byzJUbuFzdklc09K
-         EIdRpSuz0OhIJ5TafDEJKibWv/zRuSZNMCBpbTvdvuvhuPsfN3Gr2ZhoSt3jrstabaZV
-         XddBI+elWiDMVyycEd0A5SoJyG7ZQcBt5N3V8l9LY31FMn17f/iYCJcVOqVylSx4KVJ+
-         NFtCbj7yw4lE0Pub0HJAUeHthvbYBBbLez+iY4AcAfZ6qKpZadJE/riU1CW43VjbOrKr
-         TiLYNMu3j2+XyrrtzKQVBjP87EWQ7RvFygOYwTmeE3ZzkX5sVzx1Zo1OIlTLzXQZMXrN
-         ZUCA==
-X-Gm-Message-State: APjAAAXnHuNl3pAp/lsfHeOCdfqd/76zA224eZ4iF79PuZZajFLXns+H
-        tXO/J5aLwUh5qPMKCnIYoElrkPD5rfMq3Buqexo=
-X-Google-Smtp-Source: APXvYqy8aV+MnFrM7mg9z9Q3FKj5HhJM55bINhYiDMgDGGW0Vt197cpT56rOs3YEQQ8XH4TDqGsRq5JFKRqX+bh0Zv4=
-X-Received: by 2002:ac8:7401:: with SMTP id p1mr259871qtq.141.1568666132646;
- Mon, 16 Sep 2019 13:35:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org> <20190916105433.11404-5-ivan.khoronzhuk@linaro.org>
-In-Reply-To: <20190916105433.11404-5-ivan.khoronzhuk@linaro.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Mon, 16 Sep 2019 13:35:21 -0700
-Message-ID: <CAEf4BzYJ5Q4rBHGET5z6nPBhh=8qAK7uuCK=Qnsh14FDH-24gA@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 04/14] samples: bpf: use own EXTRA_CFLAGS for
- clang commands
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
+        Mon, 16 Sep 2019 16:36:35 -0400
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1i9xjV-0001Rl-Ai; Mon, 16 Sep 2019 15:36:25 -0500
+Message-ID: <a4aaf0a84ce0d48840d4c80af19bf4899667d330.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        galak@kernel.crashing.org
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 16 Sep 2019 15:36:23 -0500
+In-Reply-To: <269a00951328fb6fa1be2fa3cbc76c19745019b7.1568665466.git.christophe.leroy@c-s.fr>
+References: <a212bd36fbd6179e0929b6c727febc35132ac25c.1568665466.git.christophe.leroy@c-s.fr>
+         <269a00951328fb6fa1be2fa3cbc76c19745019b7.1568665466.git.christophe.leroy@c-s.fr>
+Organization: Red Hat
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, galak@kernel.crashing.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
+        *      this recipient and sender
+Subject: Re: [PATCH v3 2/2] powerpc/83xx: map IMMR with a BAT.
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 4:01 AM Ivan Khoronzhuk
-<ivan.khoronzhuk@linaro.org> wrote:
->
-> It can overlap with CFLAGS used for libraries built with gcc if
-> not now then in next patches. Correct it here for simplicity.
->
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+On Mon, 2019-09-16 at 20:25 +0000, Christophe Leroy wrote:
+> On mpc83xx with a QE, IMMR is 2Mbytes and aligned on 2Mbytes boundarie.
+> On mpc83xx without a QE, IMMR is 1Mbyte and 1Mbyte aligned.
+> 
+> Each driver will map a part of it to access the registers it needs.
+> Some drivers will map the same part of IMMR as other drivers.
+> 
+> In order to reduce TLB misses, map the full IMMR with a BAT. If it is
+> 2Mbytes aligned, map 2Mbytes. If there is no QE, the upper part will
+> remain unused, but it doesn't harm as it is mapped as guarded memory.
+> 
+> When the IMMR is not aligned on a 2Mbytes boundarie, only map 1Mbyte.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> 
 > ---
+> v2:
+> - use a fixmap area instead of playing with ioremap_bot
+> - always map 2M unless IMMRBAR is only 1M aligned
+> 
+> v3:
+> - replaced __fix_to_virt() by fix_to_virt()
+> ---
+>  arch/powerpc/include/asm/fixmap.h  |  8 ++++++++
+>  arch/powerpc/platforms/83xx/misc.c | 11 +++++++++++
+>  2 files changed, 19 insertions(+)
 
-With GCC BPF front-end recently added, we should probably generalize
-this to something like BPF_EXTRA_CFLAGS or something like that,
-eventually. But for now:
+Acked-by: Scott Wood <oss@buserror.net>
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
+-Scott
 
->  samples/bpf/Makefile | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-> index b59e77e2250e..8ecc5d0c2d5b 100644
-> --- a/samples/bpf/Makefile
-> +++ b/samples/bpf/Makefile
-> @@ -218,10 +218,10 @@ BTF_LLVM_PROBE := $(shell echo "int main() { return 0; }" | \
->                           /bin/rm -f ./llvm_btf_verify.o)
->
->  ifneq ($(BTF_LLVM_PROBE),)
-> -       EXTRA_CFLAGS += -g
-> +       CLANG_EXTRA_CFLAGS += -g
->  else
->  ifneq ($(and $(BTF_LLC_PROBE),$(BTF_PAHOLE_PROBE),$(BTF_OBJCOPY_PROBE)),)
-> -       EXTRA_CFLAGS += -g
-> +       CLANG_EXTRA_CFLAGS += -g
->         LLC_FLAGS += -mattr=dwarfris
->         DWARF2BTF = y
->  endif
-> @@ -280,8 +280,8 @@ $(obj)/hbm_edt_kern.o: $(src)/hbm.h $(src)/hbm_kern.h
->  # useless for BPF samples.
->  $(obj)/%.o: $(src)/%.c
->         @echo "  CLANG-bpf " $@
-> -       $(Q)$(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(EXTRA_CFLAGS) -I$(obj) \
-> -               -I$(srctree)/tools/testing/selftests/bpf/ \
-> +       $(Q)$(CLANG) $(NOSTDINC_FLAGS) $(LINUXINCLUDE) $(CLANG_EXTRA_CFLAGS) \
-> +               -I$(obj) -I$(srctree)/tools/testing/selftests/bpf/ \
->                 -D__KERNEL__ -D__BPF_TRACING__ -Wno-unused-value -Wno-pointer-sign \
->                 -D__TARGET_ARCH_$(SRCARCH) -Wno-compare-distinct-pointer-types \
->                 -Wno-gnu-variable-sized-type-not-at-end \
-> --
-> 2.17.1
->
+
