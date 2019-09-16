@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE371B4346
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6366B432D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 23:35:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730792AbfIPVgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 17:36:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41978 "EHLO mail.kernel.org"
+        id S1731606AbfIPVfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 17:35:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389463AbfIPVfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 17:35:08 -0400
-Subject: Re: [GIT PULL v1] core process updates for v5.4
+        id S1725971AbfIPVfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 17:35:09 -0400
+Subject: Re: [GIT PULL] EDAC pile for 5.4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568669707;
-        bh=uTThZTmk1EG2UhZH8Yh2qMi6q0TVlDWYdYtAA2VYj30=;
+        s=default; t=1568669708;
+        bh=Q8GTme3IiHedr7H42Wwk+kuVWATq+D/siW94eNG8dt4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=toQ0xVf6BZ+1xNwN/V1UC8acb3Zarb+M0DlXPiJGgibN8i6aYWF05fvWxXE78kY5l
-         kPq8nb4ML204PDj20k2+4bbqlXHU18Xoudwan1/pTPL5CPLpgEgTWiCezWt2jblzGo
-         Ys57obmDhOwcREoLvT5DTmkSEK9wdHNgOsTheyEU=
+        b=IIjlXLjP2ErJ79nKZsKfl2giW+yUZFHDoD1/DovmBk6/EnrWrJ+TLhJ7NddnrpEw2
+         RJhTjxNRMH/n45GMQ+uMps5aC8JOedZJu8k/rGCZg67ANhgP3MCaXiQhcpwCmJ7MfX
+         KZm6X72vX0kJNbmflZV++XT+mooroWzstTp71o/Q=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190910160051.3795-1-christian.brauner@ubuntu.com>
-References: <20190904133418.23573-1-christian.brauner@ubuntu.com>
- <20190910160051.3795-1-christian.brauner@ubuntu.com>
+In-Reply-To: <20190913074229.GA20745@zn.tnic>
+References: <20190913074229.GA20745@zn.tnic>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190910160051.3795-1-christian.brauner@ubuntu.com>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux
- tags/core-process-v5.4
-X-PR-Tracked-Commit-Id: 821cc7b0b205c0df64cce59aacc330af251fa8f7
+X-PR-Tracked-Message-Id: <20190913074229.GA20745@zn.tnic>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_for_5.4
+X-PR-Tracked-Commit-Id: 3e443eb353eda6f4b4796e07f2599683fa752f1d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c17112a5c413f20188da276c138484e7127cdc84
-Message-Id: <156866970747.13102.12480230809400556567.pr-tracker-bot@kernel.org>
-Date:   Mon, 16 Sep 2019 21:35:07 +0000
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+X-PR-Merge-Commit-Id: ff881842e12563f25d69a4e2e373f1ad392a7027
+Message-Id: <156866970872.13102.12851440763335110247.pr-tracker-bot@kernel.org>
+Date:   Mon, 16 Sep 2019 21:35:08 +0000
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 10 Sep 2019 18:00:51 +0200:
+The pull request you sent on Fri, 13 Sep 2019 09:42:29 +0200:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/core-process-v5.4
+> git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_for_5.4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c17112a5c413f20188da276c138484e7127cdc84
+https://git.kernel.org/torvalds/c/ff881842e12563f25d69a4e2e373f1ad392a7027
 
 Thank you!
 
