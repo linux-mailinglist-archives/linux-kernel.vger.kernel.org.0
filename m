@@ -2,97 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4923FB4142
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 21:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6029B4146
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 21:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388237AbfIPTnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 15:43:17 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45853 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbfIPTnQ (ORCPT
+        id S2388369AbfIPToP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 15:44:15 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:50158 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729144AbfIPToP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 15:43:16 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 4so553354pgm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 12:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:to:from:subject:user-agent:date;
-        bh=WLp+GPttGVxHZ4bc1E597l7UcWrj5/s8colAd/Zrf1E=;
-        b=HGBAC2LzEi2bY7Z5K1cpZPh8ExkzEXavrfUP/mkdESNHmIDONxGqHmbtiXYrdIS+dt
-         GZX7uhRA3ZPgYGD2tzXp2i/JLavp1eAt+gwRUkef0S2ToGnZEXw7ID0TeV0i1C6LiYdO
-         DUjHMhgwnt3lWZcw7w2FJs7Yl/+tGsBPcK6Nk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:date;
-        bh=WLp+GPttGVxHZ4bc1E597l7UcWrj5/s8colAd/Zrf1E=;
-        b=IjaJB0a39g9s/0Kv0hgGrGW05+I0lb60H5HOmRdVJx+AJPbu0kYfidyMNcwkQ/h2/Z
-         FXYTPoAL1n2XZ0K+nFDvvRqLOfk1UnS4mPItpbUZJLXsQKYNHjfde8LKC+yS+dv3XwPS
-         z5ePkukhe1/Ick/5PF8wWvVU9zrbQKs+I89AlPVRoXgqUoTJoTyZIgOH8PhYjGfDM0Qo
-         NVb7lwB5mTBb/nkMP6VaUbsU9q0paMoxvkH2gtiYoIrQLdRJ8/pJJ588JS8r4IiDZhXt
-         Rz0o7BoLfto0kAASf7JDqC3dHXGDbswly+0X/yHLqkgMCRRnUDMY6xV6CxWMhv/NUabq
-         nFGQ==
-X-Gm-Message-State: APjAAAW+PYjTu0F7Scd1H228QJ0omFn5CNWqrQSmtyOvw6HlzT8cdsZ1
-        kXWhTDrM8pkYbToqYBgb7F24vA==
-X-Google-Smtp-Source: APXvYqztr3q/MYD/JI7oKNOvIkdW3WzYP90VrrLrD5c3imzhZHsZTjDfElpIe6ZmcRnXlO+zX1iUZQ==
-X-Received: by 2002:a62:8c97:: with SMTP id m145mr9801pfd.241.1568662994612;
-        Mon, 16 Sep 2019 12:43:14 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id em21sm372496pjb.31.2019.09.16.12.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 12:43:13 -0700 (PDT)
-Message-ID: <5d7fe5d1.1c69fb81.eca3b.1121@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        Mon, 16 Sep 2019 15:44:15 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8GJhMiX032354;
+        Mon, 16 Sep 2019 12:43:27 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=h2RKu/2FuEdq1QLqJ64FKX4QYysMxQzhTDvWdDOkDaA=;
+ b=oxZKISV4n50v2CSPeBDerSXxypH0Yyv0hS5C9MSnqJWX1L9AA3ncS68lT6w2wpYyV6oq
+ BEkotOUX+d0goFRDKDQrQM8yPiXTgIli2XxxvLfwEMFWFClQFuggtQWz+CvWnt0J+/ZW
+ ZULIqngEe9KK2us30vtTc+bAQu76hGOPBkE= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2v1fwsp79x-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Mon, 16 Sep 2019 12:43:27 -0700
+Received: from ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) by
+ ash-exhub204.TheFacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 16 Sep 2019 12:43:18 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 16 Sep 2019 12:43:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VdTDR5Y0N26mp1RZjW3Xza4+EgT7g0PDEgoQm6Pc+LYL7bABQ27mO0O0ZNYGEezTXJh+/uR4A6Zw9AAX4U5wp1Mp4M0w94unQ9xRWoXgLFHoL806EJREl9j9ClIQY35c5xGZddn7F67Lrq/cC8kcpa4Ef6U7pBtejf+ESTGnV18Gjsf00vEHQs1x3nATTYIC/PF3n+D/pu5vUKCkb2Y5DsTAb3UT02jqfnLkX7KeNPjOD4a5u6AZI+HU1v8KpEZK0SLmXX+okvAfIOfCXMymzwV4xKzwTiLT5d1QEPvS6zbHT1jWcrdNY2R3Auks95oaui5IHk4jgTI1fM1mXxwrpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h2RKu/2FuEdq1QLqJ64FKX4QYysMxQzhTDvWdDOkDaA=;
+ b=CWHbsHviNv0xoxR98DM096a8iQFhh8nYuxLVbP3S/rKNTRVM7IjopWabo+WoXeLTqWT9qKNURwFOM+59QB9bVuRPxl+PA8PN3oDqGI4YDWnywEOnZlISSS5WNZSh8lmmbGh6oHOqd5PsR/u/bdPjBQJZ4o7MlsmMWB1f8R0ZH6DjTPb7gANXve1WTr97t2bU9xcr9LPByyzIb4VOvQv4ElmrZ6x1kC8b6OEV1Be8EAECvC1BkILTwiCha7DxKXyS0je14JTXb91KQM83NrLBSJO9WWhaXj7CVKF95kl7DMnMAhkPvfKSXH7elYy4fr4ubLOawEun1VG0TtVQzXcOnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h2RKu/2FuEdq1QLqJ64FKX4QYysMxQzhTDvWdDOkDaA=;
+ b=f/uNDJRJXWV2TagpTN7+lBBu7lwz1Qy0m+XjrdvsHxospbHKCXOag58w/1TMU0reIt5Px3AqADIMp2xgRqVTHWvZcasrfibKb8GLFXdQO1CKTo5TkFVNguM4iYUB7J7oo5KMZYxmqZmoNG70G++0fQ7ivkj8rX1qQCf8P0DDt6Q=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1421.namprd15.prod.outlook.com (10.173.235.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2263.24; Mon, 16 Sep 2019 19:43:17 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::a828:5750:379d:b9a1]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::a828:5750:379d:b9a1%8]) with mapi id 15.20.2263.023; Mon, 16 Sep 2019
+ 19:43:17 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+CC:     Kernel Team <Kernel-team@fb.com>, Jie Meng <jmeng@fb.com>,
+        Hechao Li <hechaol@fb.com>
+Subject: Re: [PATCH] perf: rework memory accounting in perf_mmap()
+Thread-Topic: [PATCH] perf: rework memory accounting in perf_mmap()
+Thread-Index: AQHVY2o7Cb55MgzW70CjSsVfOs8326cuxyMA
+Date:   Mon, 16 Sep 2019 19:43:16 +0000
+Message-ID: <D0AB9FA0-B99D-4BE4-82FF-E3098EFFB208@fb.com>
+References: <20190904214618.3795672-1-songliubraving@fb.com>
+In-Reply-To: <20190904214618.3795672-1-songliubraving@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:200::3:5e56]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6eb719bc-5bf6-4a2e-4e94-08d73ade1ed0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MWHPR15MB1421;
+x-ms-traffictypediagnostic: MWHPR15MB1421:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MWHPR15MB1421C66B1B70DDF9A7E622B5B38C0@MWHPR15MB1421.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1247;
+x-forefront-prvs: 0162ACCC24
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(396003)(39860400002)(136003)(346002)(199004)(189003)(25786009)(86362001)(99286004)(4744005)(6486002)(4326008)(7736002)(486006)(305945005)(71200400001)(66446008)(64756008)(66556008)(66476007)(316002)(8936002)(71190400001)(11346002)(33656002)(36756003)(6512007)(54906003)(110136005)(76116006)(66946007)(6436002)(46003)(50226002)(229853002)(53936002)(186003)(14454004)(478600001)(6116002)(476003)(2906002)(102836004)(2616005)(6506007)(53546011)(5660300002)(6246003)(76176011)(14444005)(81156014)(8676002)(81166006)(256004)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1421;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Ir2CIPX0Xa9b+Mly7mnTgj/mL44BQNGHi4yGOjkID+axp9mptwpozvB5W6I0bWoaWFg2O70XP+KlryWL7L4ScBsyOEXaQt+jy6SGqoNk5JdEV0W7RGUImGN41U32+p+q41LtIjPub3n46Ldm+N7Ba9Lt5mfEJ/bgUdJgRXnyI9VLBDm13Z8KiTmGgXVXXTnA+Ecbi4X3qVQPJhioebX9cYRzebbqJk7+XbS+VE2/Xdjq6z2QhoYnmkT05m0YQwUZn8udw1MHxwBaA9PWsTeoA+ohiUrBCchHHwzeBCU7m4Xekj7LXbUYnq3AuKOFtUgvQvqu927M6j+KhEUvfaIrfYmB2q0WOhu06wwTrHGRd1E5TTzrp6zPo8EQ1fBYiIO1yA8qpjZl9JMswLvcsIua4dl2PaA6za7BXK9MzZAVp4c=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <326FA650D8EC2140B22A2E41FB505653@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190912091019.5334-1-srinivas.kandagatla@linaro.org>
-References: <20190912091019.5334-1-srinivas.kandagatla@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        andy.gross@linaro.org, bjorn.andersson@linaro.org
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH] soc: qcom: socinfo: add missing soc_id sysfs entry
-User-Agent: alot/0.8.1
-Date:   Mon, 16 Sep 2019 12:43:11 -0700
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6eb719bc-5bf6-4a2e-4e94-08d73ade1ed0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2019 19:43:16.8534
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XmzIUG+WN5sH6A1qyE6uZz5bQuwGZxdneRtxQl6gVppi4ghRDz+zLDxUMAgPi+fmFNDS/gKxvf7N7NIA2PKJ6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1421
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-16_07:2019-09-11,2019-09-16 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 lowpriorityscore=0
+ priorityscore=1501 suspectscore=0 adultscore=0 clxscore=1015 mlxscore=0
+ bulkscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1909160192
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Srinivas Kandagatla (2019-09-12 02:10:19)
-> looks like SoC ID is not exported to sysfs for some reason.
-> This patch adds it!
+Hi Peter,
+
+> On Sep 4, 2019, at 2:46 PM, Song Liu <songliubraving@fb.com> wrote:
 >=20
-> This is mostly used by userspace libraries like SNPE.
-
-What is SNPE?
-
+> perf_mmap() always increases user->locked_vm. As a result, "extra" could
+> grow bigger than "user_extra", which doesn't make sense. Here is an
+> example case:
 >=20
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  drivers/soc/qcom/socinfo.c | 2 ++
->  1 file changed, 2 insertions(+)
-
-Hmm I wasn't aware this driver was merged.
-
+> Note: Assume "user_lock_limit" is very small.
+> | # of perf_mmap calls |vma->vm_mm->pinned_vm|user->locked_vm|
+> | 0                    | 0                   | 0             |
+> | 1                    | user_extra          | user_extra    |
+> | 2                    | 3 * user_extra      | 2 * user_extra|
+> | 3                    | 6 * user_extra      | 3 * user_extra|
+> | 4                    | 10 * user_extra     | 4 * user_extra|
 >=20
-> diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-> index 8dc86a74559b..876a3f6612a3 100644
-> --- a/drivers/soc/qcom/socinfo.c
-> +++ b/drivers/soc/qcom/socinfo.c
-> @@ -422,6 +422,8 @@ static int qcom_socinfo_probe(struct platform_device =
-*pdev)
->         qs->attr.family =3D "Snapdragon";
->         qs->attr.machine =3D socinfo_machine(&pdev->dev,
->                                            le32_to_cpu(info->id));
-> +       qs->attr.soc_id =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%u",
-> +                                        le32_to_cpu(info->id));
->         qs->attr.revision =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%u.=
-%u",
->                                            SOCINFO_MAJOR(le32_to_cpu(info=
-->ver)),
->                                            SOCINFO_MINOR(le32_to_cpu(info=
-->ver)));
+> Fix this by maintaining proper user_extra and extra.
+>=20
+> Reported-by: Hechao Li <hechaol@fb.com>
+> Cc: Jie Meng <jmeng@fb.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+
+Could you please share your feedbacks/comments on this one?
+
+Thanks,
+Song
