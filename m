@@ -2,181 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29698B3A88
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 14:43:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27CDCB3A8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 14:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732734AbfIPMnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 08:43:02 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40274 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbfIPMnB (ORCPT
+        id S1732732AbfIPMqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 08:46:45 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:24342 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727874AbfIPMqp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 08:43:01 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b24so1823279wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 05:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=67+FUeyx+CkTYJMuIWRL3nrU/B8l3e6Q1tQhkGctwSM=;
-        b=OjGxdoLq4A6RhcwfmWHeaRJ3cuAhlYdlImV0WpZ5Fr0WVq+ydfcB9THjLKtkPK1Dxc
-         C2WflSUCofusQ7xYvmm9g6a5N814WMR9/dDiG3ZjEl3C5zsZHX6MGQ7Rehcaa8/Jh2FZ
-         xgNGnnNFeIa2rk46pcKBy37kNpIo8gltqvOjSdr4+bPd18cYy6q7qor4/52zd9jQItTh
-         Vdx4KsPKowHQqF39VZTDIoXo6o64u0km+gv8Oam/UPdjHyfkJkp1yfkPJxhri+M3d/IU
-         /XjPDHajcBkH7oERz6ljddkh61h5+cPzdtyafISnJooH+IzGdlK8pF2+gKFyxPXgpTM+
-         kILg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=67+FUeyx+CkTYJMuIWRL3nrU/B8l3e6Q1tQhkGctwSM=;
-        b=P78QsgCowQ4RhYP23wsXhTdM5QNTW724d8c9K9WAG3d/TTd8d8g/LdhdGTiENE4N8d
-         9Q5RNTQULwvFn7/C1FbB5HFuOvSDJDut/3L9hluOc0+r5wcaxCMWxD8fIo+tCNgt5TMp
-         tGhnlMWJj8gHeuEOeD1P1rCoZE2bivou5rcBKZ5Qwa3Dz0tmQYdKnyfy61ORIceamKos
-         05E8Ftg//CZQTqDiGYK5l1/DwINBwn8jzpUhlEE2SsuaWrTSC6vpm+xaLQrTutjjk1UA
-         kTSNhVtUuarwZzv2xsX3hJqe67H+72+4Mtetu2NeW50OKQHMFCnWqJ/ZmjCuNScl5fHF
-         Loeg==
-X-Gm-Message-State: APjAAAX+de6RL1Us6gOMJJeBhRSyMkf1HzJ7WMp9267lf5ZRQWp9bBxl
-        PEni3zzW7Hoo5kkpqHVX4Fwj1ujS
-X-Google-Smtp-Source: APXvYqxB/RpfATJuINHHIfveaakRvr7BcwGbL51xXvz6ymZVVN27WfmXqOhnWXbS2koFwGVizxPeUw==
-X-Received: by 2002:a1c:3b06:: with SMTP id i6mr6531102wma.6.1568637779054;
-        Mon, 16 Sep 2019 05:42:59 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 189sm28721326wma.6.2019.09.16.05.42.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 05:42:58 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 14:42:56 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] x86/build change for v5.4
-Message-ID: <20190916124256.GA9811@gmail.com>
+        Mon, 16 Sep 2019 08:46:45 -0400
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8GChtwE021285;
+        Mon, 16 Sep 2019 05:45:22 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=UBsn1y3sfjEhQwbDdih3F8ZpJ1dHNPu/2WffjRky0T0=;
+ b=pf8QdSDkv6vV0CRc9cIvYbe03XeG+b84XFX6XSC8Uz0J8WAY1/Z2Cwf5aSXf7KTOu+MT
+ TP7ax8CL951KFup4cWfrl6KULKyU96G/47p3MTjDirIKWIhJ7qydLhp1W0wAlo79bKh8
+ wPO5Suefe8d6TyU+T2+0uB7CsL7aob2IDzvRA9KuoWC7EjiZ31nP7989S5fhwVqR+4NS
+ UiBzL2iS1gefZE7vrBv7GdgsEkKzeET+LTzRENog5ciElfxb3vgiSBHUzbgBIA2VhdEf
+ CZpKb/mxAqC0x9u4/gnNVvwgotxY36Zx8HLVsolnrlt4XGv4LsXRkHkaam4AejW4DSQ1 oQ== 
+Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2059.outbound.protection.outlook.com [104.47.48.59])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2v0usvq56y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Sep 2019 05:45:22 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BOp039HRSuO69yKpiZWDnyilLNzmFJINKz06OSpyplQnLZx5Sj8tXKbF5mfDhi/HwgOSqEnmPVkdTQGNSkSdrBv2BxxjzCUPdaZdIsV0gK7hReGtyDKHVlQOFoUGqRpQKBiogBRKUbX0FYPDpoozXlqCULYAj4tfo7Cn3kCb2wmfG7mwrv0ff6bHPrEhVqsXcEDZtiWbvlgfFQr0iUbDgxjR6h9Rse6s6ETak3ePCE91tAN9VQej9jyyycpC434CLboTCYBh9UpM6DGxdF6/nYrb9s8DCC9whSvWxKKk9zhqy+6ytCyEyIhNiqbpBdStK0nv7iguWLgYn7uwLz+YGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UBsn1y3sfjEhQwbDdih3F8ZpJ1dHNPu/2WffjRky0T0=;
+ b=g61WHB1ivmxxHp3j6hVsE7ownDmi3rNEgAcdmxKthWvUL15dss4/veeOLdz05zyqzUCmSzpco8ZdccSasHgUshxiiO0eeom8pcs713gGJ5xeJnxudqeV9kA90Z2fePff2Otr0L5MStU9JEu0emYEYgkwpUfCd2PAHD1rYPWeLAoQrd1PUKLNp4z9WhqKVctOvh7pEf4UQ0dL1HRG84Zowf/XIYm1XMuLoA4jc00igY7MJ9svWY+iqzQKafIfB7PsM1pywiF7tcansWK3YZ+0jOgSBjoA4rC0vugm6RFaCjqNxo5J+CpXhS4G4ZxkbCPDMiE2I0KduOuebBa7JB3n8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 64.207.220.243) smtp.rcpttodomain=kernel.org smtp.mailfrom=cadence.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UBsn1y3sfjEhQwbDdih3F8ZpJ1dHNPu/2WffjRky0T0=;
+ b=jnE+DAjlx3zoo1Z4ThzrV0L0PH5s47UsN7Td4Rbe0LsslisQSlaU2F8KgMdXvUyuSIluYOjgj/J7VcPptONg+CxYD0u5t/UlBhD6LLglGLVI7ZoDqj0DdNq3dPaMU9B45LXTTRxvUa8vH7MhUNH8D8XZtXrZHToxzWTLkTmdoJI=
+Received: from SN4PR0701CA0017.namprd07.prod.outlook.com
+ (2603:10b6:803:28::27) by BYAPR07MB6264.namprd07.prod.outlook.com
+ (2603:10b6:a03:120::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.21; Mon, 16 Sep
+ 2019 12:45:18 +0000
+Received: from DM3NAM05FT041.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::205) by SN4PR0701CA0017.outlook.office365.com
+ (2603:10b6:803:28::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.17 via Frontend
+ Transport; Mon, 16 Sep 2019 12:45:17 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 64.207.220.243 as permitted sender)
+Received: from wcmailrelayl01.cadence.com (64.207.220.243) by
+ DM3NAM05FT041.mail.protection.outlook.com (10.152.98.155) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.10 via Frontend Transport; Mon, 16 Sep 2019 12:45:16 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by wcmailrelayl01.cadence.com (8.14.7/8.14.4) with ESMTP id x8GCj0M1170065
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=OK);
+        Mon, 16 Sep 2019 05:45:03 -0700
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Mon, 16 Sep 2019 14:45:00 +0200
+Received: from lvlogina.cadence.com (10.165.176.102) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Mon, 16 Sep 2019 14:45:00 +0200
+Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x8GCixkC028492;
+        Mon, 16 Sep 2019 13:44:59 +0100
+Received: (from piotrs@localhost)
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x8GCippo028307;
+        Mon, 16 Sep 2019 13:44:51 +0100
+From:   Piotr Sroka <piotrs@cadence.com>
+CC:     Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Piotr Sroka <piotrs@cadence.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
+Subject: [v6 0/2] mtd: rawnand: Add Cadence NAND controller driver
+Date:   Mon, 16 Sep 2019 13:42:57 +0100
+Message-ID: <20190916124342.24114-1-piotrs@cadence.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:64.207.220.243;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(346002)(376002)(39860400002)(36092001)(199004)(189003)(2616005)(476003)(70206006)(50226002)(109986005)(7416002)(126002)(305945005)(48376002)(47776003)(356004)(486006)(86362001)(70586007)(186003)(1076003)(51416003)(26005)(36756003)(478600001)(5660300002)(87636003)(81156014)(81166006)(54906003)(8936002)(4326008)(16586007)(42186006)(1671002)(36906005)(316002)(53936002)(8676002)(2906002)(50466002)(426003)(336012)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB6264;H:wcmailrelayl01.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:ErrorRetry;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: b5075a33-5acc-40fe-3170-08d73aa3b98c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:BYAPR07MB6264;
+X-MS-TrafficTypeDiagnostic: BYAPR07MB6264:
+X-Microsoft-Antispam-PRVS: <BYAPR07MB6264F50567C20DFD454FED6BDD8C0@BYAPR07MB6264.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Forefront-PRVS: 0162ACCC24
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: nSLd7ePrB2s7z4c/wYT8vUTu8FMaXd/HRN+zJmR/pZ2jc1U7FUFxUfLjZ86QtcvB23u1Y373vEgBsjyH0dSPnGStK7CdK02bJu3g43jtHz7prZR+zHEN00FXeGXhinD9p5kU71CsV+dqeJK3oNXnaY30macjRdYTsYaHXx/hjU87V1iYQzt+45pDWXErrfaUVEsntCbe3AXVlzsKS9B/M17mm65evreSfMxzlpsV9ByMIr1Mlul3YY4/hWwQcnRymGbyf5JIDd3hPO4AIDtlgXRAa8a8SI9O7z7ym2DsmA52NIZ3L2+O/Eqmi4L646QyHPMqLNkApgVGR04YWNYTX6wLi0eu51DaZK/Bo7egpQ1/cjHwPapuvthuAa30p/mIp0vZq5YtB7yuCqUZVWaop6rmPUTjiV6gbS0p+osgcho=
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2019 12:45:16.1776
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5075a33-5acc-40fe-3170-08d73aa3b98c
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[64.207.220.243];Helo=[wcmailrelayl01.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB6264
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-16_06:2019-09-11,2019-09-16 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 malwarescore=0
+ priorityscore=1501 adultscore=0 impostorscore=0 suspectscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 phishscore=0 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1909160136
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Driver for Cadence HPNFC NAND flash controller.
 
-Please pull the latest x86-build-for-linus git tree from:
+HW DMA interface
+Page write and page read operations are executed in Command DMA mode.
+Commands are defined by DMA descriptors.
+In CDMA mode controller own DMA engine is used (Master DMA mode).
+Other operations defined by nand_op_instr are executed in "Generic" mode.
+In that mode data can be transferred only in by Slave DMA interface.
+Slave DMA interface can be connected directly to AXI or to an external
+DMA engine.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-build-for-linus
+HW ECC support
+Cadence NAND controller supports HW BCH correction.
+ ECC is transparent from SW point of view. It means that ECC codes
+are calculated and written to flash. In read operation ECC codes 
+are removed from user data and correction is made if necessary.
 
-   # HEAD: 701010532164eaacd415ec5683717da03f4b822d x86/build: Remove unneeded uapi asm-generic wrappers
+Controller data layout with ECC enabled:
+ -------------------------------------------------------------------------
+|Sec 1 | ECC | Sec 2 | ECC ...... | Sec n | OOB (32B) | ECC | unused data |
+ -------------------------------------------------------------------------
 
-A single change that removes unnecessary asm-generic wrappers.
+Last sector is extended by a out-bound data. Tha maximum size of
+"extra data" is 32 bytes. The oob data are protected by ECC. If we need to 
+read only oob data the whole last sector must be read. It is because 
+oob data are part of last sector. Reading oob function always reads 
+whole sector and writing oob function always writes whole last sector.
+Written data are interleaved with the ECC therefore part of the 
+last sector is located on oob area and the BBM is overwritten.
 
- Thanks,
+SKIP BYTES feature
+To protect BBM the "skip byte" HW feature is used. 
+Write page function copies BBM value from first byte of oob data to 
+BBM offset defined by manufacturer. Read page functions always takes 
+BBM from flash manufacturer offset. It causes that for not written 
+pages the proper value of BBM marker is used.
 
-	Ingo
+ECC size calculation
+Information about supported ECC steps and ECC strengths are read 
+from controller registers. ECC sector size and ECC strength can be
+configurable. Size of ECC depends on maximum supported sector size 
+it not depends on selected sector size. Therefore there is a separate
+function for calculating ECC size for each of possible 
+sector size/step size.
 
------------------->
-Masahiro Yamada (1):
-      x86/build: Remove unneeded uapi asm-generic wrappers
+Piotr Sroka (2):
+  Add new Cadence NAND driver to MTD subsystem
+  Add Cadence NAND controller driver
 
+ .../bindings/mtd/cadence-nand-controller.txt       |   53 +
+ MAINTAINERS                                        |    7 +
+ drivers/mtd/nand/raw/Kconfig                       |    7 +
+ drivers/mtd/nand/raw/Makefile                      |    1 +
+ drivers/mtd/nand/raw/cadence-nand-controller.c     | 3036 ++++++++++++++++++++
+ 5 files changed, 3104 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
+ create mode 100644 drivers/mtd/nand/raw/cadence-nand-controller.c
 
- arch/x86/include/uapi/asm/errno.h    | 1 -
- arch/x86/include/uapi/asm/fcntl.h    | 1 -
- arch/x86/include/uapi/asm/ioctl.h    | 1 -
- arch/x86/include/uapi/asm/ioctls.h   | 1 -
- arch/x86/include/uapi/asm/ipcbuf.h   | 1 -
- arch/x86/include/uapi/asm/param.h    | 1 -
- arch/x86/include/uapi/asm/resource.h | 1 -
- arch/x86/include/uapi/asm/termbits.h | 1 -
- arch/x86/include/uapi/asm/termios.h  | 1 -
- arch/x86/include/uapi/asm/types.h    | 7 -------
- 10 files changed, 16 deletions(-)
- delete mode 100644 arch/x86/include/uapi/asm/errno.h
- delete mode 100644 arch/x86/include/uapi/asm/fcntl.h
- delete mode 100644 arch/x86/include/uapi/asm/ioctl.h
- delete mode 100644 arch/x86/include/uapi/asm/ioctls.h
- delete mode 100644 arch/x86/include/uapi/asm/ipcbuf.h
- delete mode 100644 arch/x86/include/uapi/asm/param.h
- delete mode 100644 arch/x86/include/uapi/asm/resource.h
- delete mode 100644 arch/x86/include/uapi/asm/termbits.h
- delete mode 100644 arch/x86/include/uapi/asm/termios.h
- delete mode 100644 arch/x86/include/uapi/asm/types.h
+-- 
+2.15.0
 
-diff --git a/arch/x86/include/uapi/asm/errno.h b/arch/x86/include/uapi/asm/errno.h
-deleted file mode 100644
-index 4c82b503d92f..000000000000
---- a/arch/x86/include/uapi/asm/errno.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/errno.h>
-diff --git a/arch/x86/include/uapi/asm/fcntl.h b/arch/x86/include/uapi/asm/fcntl.h
-deleted file mode 100644
-index 46ab12db5739..000000000000
---- a/arch/x86/include/uapi/asm/fcntl.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/fcntl.h>
-diff --git a/arch/x86/include/uapi/asm/ioctl.h b/arch/x86/include/uapi/asm/ioctl.h
-deleted file mode 100644
-index b279fe06dfe5..000000000000
---- a/arch/x86/include/uapi/asm/ioctl.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/ioctl.h>
-diff --git a/arch/x86/include/uapi/asm/ioctls.h b/arch/x86/include/uapi/asm/ioctls.h
-deleted file mode 100644
-index ec34c760665e..000000000000
---- a/arch/x86/include/uapi/asm/ioctls.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/ioctls.h>
-diff --git a/arch/x86/include/uapi/asm/ipcbuf.h b/arch/x86/include/uapi/asm/ipcbuf.h
-deleted file mode 100644
-index 84c7e51cb6d0..000000000000
---- a/arch/x86/include/uapi/asm/ipcbuf.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/ipcbuf.h>
-diff --git a/arch/x86/include/uapi/asm/param.h b/arch/x86/include/uapi/asm/param.h
-deleted file mode 100644
-index 965d45427975..000000000000
---- a/arch/x86/include/uapi/asm/param.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/param.h>
-diff --git a/arch/x86/include/uapi/asm/resource.h b/arch/x86/include/uapi/asm/resource.h
-deleted file mode 100644
-index 04bc4db8921b..000000000000
---- a/arch/x86/include/uapi/asm/resource.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/resource.h>
-diff --git a/arch/x86/include/uapi/asm/termbits.h b/arch/x86/include/uapi/asm/termbits.h
-deleted file mode 100644
-index 3935b106de79..000000000000
---- a/arch/x86/include/uapi/asm/termbits.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/termbits.h>
-diff --git a/arch/x86/include/uapi/asm/termios.h b/arch/x86/include/uapi/asm/termios.h
-deleted file mode 100644
-index 280d78a9d966..000000000000
---- a/arch/x86/include/uapi/asm/termios.h
-+++ /dev/null
-@@ -1 +0,0 @@
--#include <asm-generic/termios.h>
-diff --git a/arch/x86/include/uapi/asm/types.h b/arch/x86/include/uapi/asm/types.h
-deleted file mode 100644
-index df55e1ddb0c9..000000000000
---- a/arch/x86/include/uapi/asm/types.h
-+++ /dev/null
-@@ -1,7 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _ASM_X86_TYPES_H
--#define _ASM_X86_TYPES_H
--
--#include <asm-generic/types.h>
--
--#endif /* _ASM_X86_TYPES_H */
