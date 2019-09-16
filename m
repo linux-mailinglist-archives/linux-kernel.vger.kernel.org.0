@@ -2,246 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7321FB3977
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 13:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 462A7B397A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 13:36:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731538AbfIPLfg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 07:35:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39450 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727479AbfIPLff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 07:35:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E888CAF11;
-        Mon, 16 Sep 2019 11:35:32 +0000 (UTC)
-Date:   Mon, 16 Sep 2019 13:35:32 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Lucian Adrian Grijincu <lucian@fb.com>
-Cc:     linux-mm@kvack.org, Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@fb.com>, Roman Gushchin <guro@fb.com>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH v3] mm: memory: fix /proc/meminfo reporting for
- MLOCK_ONFAULT
-Message-ID: <20190916113532.GE10231@dhcp22.suse.cz>
-References: <20190913211119.416168-1-lucian@fb.com>
+        id S1731687AbfIPLf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 07:35:56 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42511 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727479AbfIPLfz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 07:35:55 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q14so38456331wrm.9;
+        Mon, 16 Sep 2019 04:35:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Mv491UnCKS4JNd7z2SOkwV0dvUpBxBoTZTqacB4oBDQ=;
+        b=QlNxlAIQbvJb3OhnUhYCbkS2E2cmf2D/kPuUxGHT2UDqE/PX6Q+oUl305tVKtFn4Ht
+         zIK+pTyv1hzrnV2DLspJUU8QUSzIXviK30cKnUvMtXqkVcES+MtKtJaRYXSNqV9W1fGU
+         CegCxpAUaejap0b/1ehh1oZewOU1lyOYkZy5UhULLRSE+3LAyMCGBnX2Vx7QZ1r6+2Vk
+         Pc+1vW9DOpMnTthcU93e4Hg+6L5idXIbDwBuuGTSr6nH6f3AibmiRBBiEQH3yE5oEWQh
+         Zf40Kum8dKBkdOv4XNbMywvSDrrsCBYqeySGTwyXcQdtbPRWE2zkgjTtcV7kX7pfJJaP
+         NWzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=Mv491UnCKS4JNd7z2SOkwV0dvUpBxBoTZTqacB4oBDQ=;
+        b=SneGaGof9GNMahPws/mDELkkizRrBXevERSjf7p7U1qX1zDYG6JCKWmuBH+bphLgm3
+         O7OOwHdrJV9DsFZ+A1BHsb6mba2rMdfO5J7O34mS54M0/VQzIDe7U+QijyJB8Ls6hr+X
+         VjSFacuR5jjHACcUFImBYyDfLOzQxf53gkYFfsVMKk4CfUhVLLi0WFxICeVt47xSOdGT
+         Ql8tKR0gpLbkO1tZAVVKYdxawh9VPeW5EVOJueZnJj9b7hfBg8I5ajn8iTC8TD+MbZVx
+         BtjejpzuboZqDZgNgTPOS4gXeFL2zBn4f8s32BSk7AiHmuQO7+j7Kbm/VADCxVqSiU5q
+         wJjw==
+X-Gm-Message-State: APjAAAVSkyqD9yiC4Fuc+5d59+KtIgThxqvS5gEwihfj7DQl4R4pSBT2
+        Nes9Twyq0OqVdci/kW8fssYJir4d
+X-Google-Smtp-Source: APXvYqzFvF/jO3IjT5ZQsh3FJ2YQUpXu8iu759xLt+TfBC7t0w52DcNJOukvVWSAoosXgI55ZsTjIQ==
+X-Received: by 2002:a05:6000:162e:: with SMTP id v14mr1456582wrb.112.1568633752298;
+        Mon, 16 Sep 2019 04:35:52 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id y13sm74527067wrg.8.2019.09.16.04.35.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 04:35:51 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 13:35:49 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, linux-efi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: [GIT PULL] EFI changes for v5.4
+Message-ID: <20190916113549.GA76922@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190913211119.416168-1-lucian@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc Hugh]
+Linus,
 
-On Fri 13-09-19 14:11:19, Lucian Adrian Grijincu wrote:
-> As pages are faulted in MLOCK_ONFAULT correctly updates
-> /proc/self/smaps, but doesn't update /proc/meminfo's Mlocked field.
-> 
-> - Before this /proc/meminfo fields didn't change as pages were faulted in:
-> 
-> = Start =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> = Creating testfile =
-> 
-> = after mlock2(MLOCK_ONFAULT) =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> 7f8714000000-7f8754000000 rw-s 00000000 08:04 50857050   /root/testfile
-> Locked:                0 kB
-> 
-> = after reading half of the file =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> 7f8714000000-7f8754000000 rw-s 00000000 08:04 50857050   /root/testfile
-> Locked:           524288 kB
-> 
-> = after reading the entire the file =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> 7f8714000000-7f8754000000 rw-s 00000000 08:04 50857050   /root/testfile
-> Locked:          1048576 kB
-> 
-> = after munmap =
-> /proc/meminfo
-> Unevictable:       10128 kB
-> Mlocked:           10132 kB
-> /proc/self/smaps
-> 
-> - After: /proc/meminfo fields are properly updated as pages are touched:
-> 
-> = Start =
-> /proc/meminfo
-> Unevictable:          60 kB
-> Mlocked:              60 kB
-> = Creating testfile =
-> 
-> = after mlock2(MLOCK_ONFAULT) =
-> /proc/meminfo
-> Unevictable:          60 kB
-> Mlocked:              60 kB
-> /proc/self/smaps
-> 7f2b9c600000-7f2bdc600000 rw-s 00000000 08:04 63045798   /root/testfile
-> Locked:                0 kB
-> 
-> = after reading half of the file =
-> /proc/meminfo
-> Unevictable:      524220 kB
-> Mlocked:          524220 kB
-> /proc/self/smaps
-> 7f2b9c600000-7f2bdc600000 rw-s 00000000 08:04 63045798   /root/testfile
-> Locked:           524288 kB
-> 
-> = after reading the entire the file =
-> /proc/meminfo
-> Unevictable:     1048496 kB
-> Mlocked:         1048508 kB
-> /proc/self/smaps
-> 7f2b9c600000-7f2bdc600000 rw-s 00000000 08:04 63045798   /root/testfile
-> Locked:          1048576 kB
-> 
-> = after munmap =
-> /proc/meminfo
-> Unevictable:         176 kB
-> Mlocked:              60 kB
-> /proc/self/smaps
-> 
-> Repro code.
-> ---
-> 
-> int mlock2wrap(const void* addr, size_t len, int flags) {
->   return syscall(SYS_mlock2, addr, len, flags);
-> }
-> 
-> void smaps() {
->   char smapscmd[1000];
->   snprintf(
->       smapscmd,
->       sizeof(smapscmd) - 1,
->       "grep testfile -A 20 /proc/%d/smaps | grep -E '(testfile|Locked)'",
->       getpid());
->   printf("/proc/self/smaps\n");
->   fflush(stdout);
->   system(smapscmd);
-> }
-> 
-> void meminfo() {
->   const char* meminfocmd = "grep -E '(Mlocked|Unevictable)' /proc/meminfo";
->   printf("/proc/meminfo\n");
->   fflush(stdout);
->   system(meminfocmd);
-> }
-> 
->   {                                                 \
->     int rc = (call);                                \
->     if (rc != 0) {                                  \
->       printf("error %d %s\n", rc, strerror(errno)); \
->       exit(1);                                      \
->     }                                               \
->   }
-> int main(int argc, char* argv[]) {
->   printf("= Start =\n");
->   meminfo();
-> 
->   printf("= Creating testfile =\n");
->   size_t size = 1 << 30; // 1 GiB
->   int fd = open("testfile", O_CREAT | O_RDWR, 0666);
->   {
->     void* buf = malloc(size);
->     write(fd, buf, size);
->     free(buf);
->   }
->   int ret = 0;
->   void* addr = NULL;
->   addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-> 
->   if (argc > 1) {
->     PCHECK(mlock2wrap(addr, size, MLOCK_ONFAULT));
->     printf("= after mlock2(MLOCK_ONFAULT) =\n");
->     meminfo();
->     smaps();
-> 
->     for (size_t i = 0; i < size / 2; i += 4096) {
->       ret += ((char*)addr)[i];
->     }
->     printf("= after reading half of the file =\n");
->     meminfo();
->     smaps();
-> 
->     for (size_t i = 0; i < size; i += 4096) {
->       ret += ((char*)addr)[i];
->     }
->     printf("= after reading the entire the file =\n");
->     meminfo();
->     smaps();
-> 
->   } else {
->     PCHECK(mlock(addr, size));
->     printf("= after mlock =\n");
->     meminfo();
->     smaps();
->   }
-> 
->   PCHECK(munmap(addr, size));
->   printf("= after munmap =\n");
->   meminfo();
->   smaps();
-> 
->   return ret;
-> }
-> 
-> ---
-> 
-> Signed-off-by: Lucian Adrian Grijincu <lucian@fb.com>
-> Acked-by: Souptick Joarder <jrdr.linux@gmail.com>
+Please pull the latest efi-core-for-linus git tree from:
 
-Fixes: b0f205c2a308 ("mm: mlock: add mlock flags to enable VM_LOCKONFAULT usage")
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-core-for-linus
 
-I am not really sure a backport to stable is really needed because an
-imprecise accounting is not really critical. Pages should eventually
-get accounted under memory pressure when they are attempted to unmap
-IIRC.
+   # HEAD: d3dc0168e93233ba4d4ed9a2c506c9d2b8d8cd33 Merge tag 'efi-next' of git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi into efi/core
 
-Btw. the changelog could benefit from a more details on the issue and
-the fix description. The reproducer is really nice but it doesn't really
-explain the maze of the mlock accounting and why only the file backed
-memory has a problem.
+The changes in this cycle were:
 
-> ---
->  mm/memory.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index e0c232fe81d9..55da24f33bc4 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3311,6 +3311,8 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
->  	} else {
->  		inc_mm_counter_fast(vma->vm_mm, mm_counter_file(page));
->  		page_add_file_rmap(page, false);
-> +		if (vma->vm_flags & VM_LOCKED && !PageTransCompound(page))
-> +			mlock_vma_page(page);
->  	}
->  	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
+ - Refactoring of the EFI config table handling across architectures.
+ - Add support for the Dell EMC OEM config table.
+ - Include AER diagnostic output to CPER handling of fatal PCIe errors.
 
-I dunno. Handling it here in alloc_set_pte sounds a bit weird to me.
-Altough we already do mlock for CoW pages there, I thought this was more
-of an exception.
-Is there any real reason why this cannot be done in the standard #PF
-path? finish_fault for example?
--- 
-Michal Hocko
-SUSE Labs
+ Thanks,
+
+	Ingo
+
+------------------>
+Ard Biesheuvel (3):
+      efi: x86: move efi_is_table_address() into arch/x86
+      efi/x86: move UV_SYSTAB handling into arch/x86
+      efi: ia64: move SAL systab handling out of generic EFI code
+
+Narendra K (1):
+      efi: Export Runtime Configuration Interface table to sysfs
+
+Xiaofei Tan (1):
+      efi: cper: print AER info of PCIe fatal error
+
+
+ Documentation/ABI/testing/sysfs-firmware-efi |   8 ++
+ arch/ia64/include/asm/sal.h                  |   1 +
+ arch/ia64/include/asm/sn/sn_sal.h            |   2 +-
+ arch/ia64/kernel/efi.c                       |   3 +
+ arch/ia64/kernel/setup.c                     |   2 +-
+ arch/x86/include/asm/efi.h                   |   5 +
+ arch/x86/include/asm/uv/uv.h                 |   4 +-
+ arch/x86/mm/ioremap.c                        |   1 +
+ arch/x86/platform/efi/efi.c                  |  39 ++++++-
+ arch/x86/platform/uv/bios_uv.c               |  10 +-
+ drivers/firmware/efi/Kconfig                 |  13 +++
+ drivers/firmware/efi/Makefile                |   1 +
+ drivers/firmware/efi/cper.c                  |  15 +++
+ drivers/firmware/efi/efi.c                   |  39 +------
+ drivers/firmware/efi/rci2-table.c            | 147 +++++++++++++++++++++++++++
+ include/linux/efi.h                          |  14 +--
+ 16 files changed, 251 insertions(+), 53 deletions(-)
+ create mode 100644 drivers/firmware/efi/rci2-table.c
