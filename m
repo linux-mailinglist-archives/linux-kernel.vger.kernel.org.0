@@ -2,122 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0812FB4096
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 20:49:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7536B409F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 20:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390641AbfIPStc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 14:49:32 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:46233 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390524AbfIPStM (ORCPT
+        id S1729906AbfIPSv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 14:51:27 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45689 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbfIPSv1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 14:49:12 -0400
-Received: by mail-io1-f72.google.com with SMTP id t11so1118564ioc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 11:49:11 -0700 (PDT)
+        Mon, 16 Sep 2019 14:51:27 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h33so973487edh.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 11:51:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=StpI+7GHI7dstdMpa8iIkE0PxgVtqWtl+ZheF9Idr80=;
+        b=B1pKw2sddJJ4bhsIJsux+z5vMB2hRX/KbCwyVvzZDr2/UsrXSeM7AiWT6XFIP8K71L
+         fEnUdvXqBMptUaAdoe6TInD/ZCO+zrnuAUwNQuLy3PveeTjDuu37gCqbAobMu17WYhX5
+         a6JUZRZ7eelku1QNs4t6/hiBOKgbOLe0EtaRh5T3+sTwnddZRbRk9gRVmlalw0HwzdU8
+         A50m1zcOZqmXUumT8Ts8Cy1GuND2Ctjneyo6+nXiz4gdWGQZDOBTE/qS7T0wAvQGqp3y
+         GAbwRPC/p4du/qX96+xo0YF43V2VI4TcYFRISJrAWoYCSj8oIcIF4xFkVe/KCV2KecSx
+         KNjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=RkXqwUWWqXYWsyolkE4DiEvym9AqlDpeXVcvjbM0T6E=;
-        b=eB5hZSS9WsdMMCmtKRc6PKzD+9rDTK1RQ1l8U9069niqOBSZCZ25ylI1kRfCXknXqr
-         rJtyZLJHUR0MYez8c5cDeNF4uFCeU8997PltM0viq6FQHFaWHpBIuYjEzCvJ4hAxLb45
-         pNAWdIJ2om9DG/g8I39dVRxEC4HraX0+roct+OkllHQPhUrmeb/sDUYnMxdxurddPTer
-         XWopSq6dyx7VMWUlnZ/yI3exUV7cuSIgo8WjY2Zc+t1OfAPFPoXxIkFUyRbkotEEH3qb
-         XYvUltG7YEYrKat3lMa1KXHhsLqT60EZe1uVTPPwhRTISauhKx2EUyIqqGimE2dX36Am
-         7Q8g==
-X-Gm-Message-State: APjAAAXpxJkhX5dV67Nhxl637JscDI5sqNT9tLwZF/h0xD2LIP35W/WN
-        QvPd0K1SLEL8IjnifO0y69/Bxs8uLZpOYbQ/2GVCRLhz2dYo
-X-Google-Smtp-Source: APXvYqxxXCpmjr04+y3jhfncZOzWpQL4Rd6k+zewclwOpwBkr50eP18zWgNtJ6jKP8XvsrKB6dxhBv8Q1sBeZAuvY1k7PjgPnXkW
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=StpI+7GHI7dstdMpa8iIkE0PxgVtqWtl+ZheF9Idr80=;
+        b=Hfwcz+a2JXzvcHyrdg0c044zh74xW+pGtToRxDdEQ6ProJt7s9OQWokPwG4n8SG0+K
+         gXOoWNj0cJAslvafwfq89DU/o+8leZb6Te7LaRrbAH6Qs/qsDbTzr13T2E6hCvpnjbJl
+         C2ly0g5UHZxCSJI2gjBboIO49KD+UVgrnfFe1U53I0uqLroOAA0tOVPc+t8V2osC9eN3
+         jL8lmMm3e4oz8t4PM7xb3IndQmFdveC4ExSIcKy+WjORe1EPXNkZwlwgu1S4Ux7cLZ4v
+         mApzbWIMMt0x4t6zkJ/xpd8iyuyDHj0xq/wPJYYDpEhNVACLgbhySOlku8ntXxjsm0Vr
+         F5AQ==
+X-Gm-Message-State: APjAAAUIZvQfQdSphHKQ4CpPdHKG05lf665J1FvCkuMjx7Xu/RhLSoPo
+        BZ51fbQ+TE3VKxsnuQjs4nlRa41VNhN6bSzKeLo=
+X-Google-Smtp-Source: APXvYqyPib8DdT4Qd9jMPGqg8+xfC9XS1dODUGqGSuAkmRLRvmEj+papVwO4u6FBFsGQuMhvy37ccMeN/vExfdK17PI=
+X-Received: by 2002:a50:f0db:: with SMTP id a27mr764248edm.17.1568659885395;
+ Mon, 16 Sep 2019 11:51:25 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:210:: with SMTP id 16mr1534512ioc.104.1568659751579;
- Mon, 16 Sep 2019 11:49:11 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 11:49:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000044408c0592b00ff5@google.com>
-Subject: KASAN: global-out-of-bounds Read in __pm_runtime_resume
-From:   syzbot <syzbot+cd157359d82e8d98c17b@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        len.brown@intel.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, pavel@ucw.cz,
-        rjw@rjwysocki.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Reply-To: mohammadouattara53@gmail.com
+Received: by 2002:a17:906:34c2:0:0:0:0 with HTTP; Mon, 16 Sep 2019 11:51:25
+ -0700 (PDT)
+From:   Mohammad Ouattara <ouattaramohammad0@gmail.com>
+Date:   Mon, 16 Sep 2019 18:51:25 +0000
+X-Google-Sender-Auth: 8NR7l33uZHidcuUJg8dEXDmREjk
+Message-ID: <CAJZ0Py3jMk02so1Ens4D9swVdDKX66ze7Orj=Hd4qR_oj0EC=A@mail.gmail.com>
+Subject: I am expecting your urgent respond.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Dear Friend!!!
 
-syzbot found the following crash on:
+I know that this message will come to you as a surprise.
+I am the Auditing and Accounting section manager in (BOA BANK)
+Ouagadougou Burkina Faso. I Hope that you
+will not expose or betray
+this trust and confident that I am about to repose on you for the
+mutual benefit of our both families. I need your assistance in
+transferring the sum of ($12.5M) Ten million, five hundred thousand
+united dollars into your account within 7 to 10 banking days. Of one
+of my Bank clients who died at the collapsing of the world trade
+center at the United States on September 11th 2001.
 
-HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=10efb5fa600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
-dashboard link: https://syzkaller.appspot.com/bug?extid=cd157359d82e8d98c17b
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+If you are really interested in my proposal further details of the
+Transfer will be forwarded unto you as soon as I receive your
+willingness mail for a successful transfer.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+I am expecting your urgent respond.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+cd157359d82e8d98c17b@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: global-out-of-bounds in __pm_runtime_resume+0x162/0x180  
-drivers/base/power/runtime.c:1069
-Read of size 1 at addr ffffffff863d87b1 by task syz-executor.2/13622
-
-CPU: 0 PID: 13622 Comm: syz-executor.2 Not tainted 5.3.0-rc7+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:618
-  __pm_runtime_resume+0x162/0x180 drivers/base/power/runtime.c:1069
-  pm_runtime_get_sync include/linux/pm_runtime.h:226 [inline]
-  usb_autopm_get_interface+0x1b/0x50 drivers/usb/core/driver.c:1709
-  usbhid_power+0x7c/0xe0 drivers/hid/usbhid/hid-core.c:1234
-  hid_hw_power include/linux/hid.h:1038 [inline]
-  hidraw_open+0x20d/0x740 drivers/hid/hidraw.c:282
-  chrdev_open+0x219/0x5c0 fs/char_dev.c:414
-  do_dentry_open+0x494/0x1120 fs/open.c:797
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x1430/0x3f50 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3c0/0x580 fs/open.c:1089
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4137d1
-Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 19 00 00 c3 48  
-83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007faea59927a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 6666666666666667 RCX: 00000000004137d1
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007faea5992850
-RBP: 000000000075bf20 R08: 000000000000000f R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00007faea59936d4
-R13: 00000000004c8cbf R14: 00000000004dfc90 R15: 00000000ffffffff
-
-The buggy address belongs to the variable:
-  __param_str_xfer_debug+0x91/0x4a0
-
-Memory state around the buggy address:
-  ffffffff863d8680: fa fa fa fa 00 00 00 02 fa fa fa fa 00 00 00 00
-  ffffffff863d8700: fa fa fa fa 00 00 00 02 fa fa fa fa 00 07 fa fa
-> ffffffff863d8780: fa fa fa fa 00 00 fa fa fa fa fa fa 00 00 07 fa
-                                      ^
-  ffffffff863d8800: fa fa fa fa 00 00 00 00 00 00 fa fa fa fa fa fa
-  ffffffff863d8880: 00 07 fa fa fa fa fa fa 00 00 06 fa fa fa fa fa
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Mr mohammad ouattara.
