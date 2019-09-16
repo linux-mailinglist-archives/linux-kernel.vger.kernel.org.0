@@ -2,122 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10004B3F69
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 19:07:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B24B2B3F6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 19:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390271AbfIPRHk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 13:07:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57485 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390235AbfIPRHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 13:07:39 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2A2553084037;
-        Mon, 16 Sep 2019 17:07:39 +0000 (UTC)
-Received: from x1.home (ovpn-118-102.phx2.redhat.com [10.3.118.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 472AF600F8;
-        Mon, 16 Sep 2019 17:07:38 +0000 (UTC)
-Date:   Mon, 16 Sep 2019 11:07:37 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        James Harvey <jamespharvey20@gmail.com>
-Subject: Re: [PATCH 00/11] KVM: x86/mmu: Restore fast invalidate/zap flow
-Message-ID: <20190916110737.4abfc93d@x1.home>
-In-Reply-To: <20190913024612.28392-1-sean.j.christopherson@intel.com>
-References: <20190913024612.28392-1-sean.j.christopherson@intel.com>
-Organization: Red Hat
+        id S1732352AbfIPRI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 13:08:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47196 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbfIPRI7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 13:08:59 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GH4P1W001292;
+        Mon, 16 Sep 2019 17:08:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=+CZoGIQCmtw4Dmg5SfXe3o0NnRs6559XxydCd+jVXQ8=;
+ b=rMOFMhClnL2bIb+8Nz8OOxOVySEHQDVF7v5WrTP6O4DOPNid6vSs20yqRmykr5Gz5S6r
+ kEQ5I/e5q2a4124rN0SL0FLm7yDDepFxrRU5MeEjRmyTvMjBM3shn8py2/utRNjBM04Q
+ QeEE+SNMHy4EAv9/Di9znLR20SBcE56LvHiTeEyHCODmUGR8tEUUVaP0zsRWHlTbV+gu
+ Lz9yFjcsQfR1LsSgw1fOIqsIxFKcLEhKZLwHYZdhrW7OkRyqO27JQWpZB9oAS5pFCM04
+ X1akAgK9WEOHgAUqMW4IfDbFQBSvsi0g60nm6MJvt/dq09kWrKwqQzSp7DxhKqVSvqTa xg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2v0ruqgv7h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Sep 2019 17:08:54 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8GH4QLn087910;
+        Mon, 16 Sep 2019 17:08:54 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2v0nb51tta-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Sep 2019 17:08:54 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8GH8qL5007286;
+        Mon, 16 Sep 2019 17:08:53 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 16 Sep 2019 10:08:52 -0700
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [Ksummit-discuss] [PATCH v2 3/3] libnvdimm, MAINTAINERS: Maintainer Entry Profile
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <156821692280.2951081.18036584954940423225.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <156821693963.2951081.11214256396118531359.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <20190911184332.GL20699@kadam>
+        <9132e214-9b57-07dc-7ee2-f6bc52e960c5@kernel.dk>
+        <yq1y2yrdg6w.fsf@oracle.com> <20190916070101.GE18977@kadam>
+Date:   Mon, 16 Sep 2019 13:08:45 -0400
+In-Reply-To: <20190916070101.GE18977@kadam> (Dan Carpenter's message of "Mon,
+        16 Sep 2019 10:01:01 +0300")
+Message-ID: <yq1blvkb23m.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 16 Sep 2019 17:07:39 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9382 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909160169
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9382 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909160169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Sep 2019 19:46:01 -0700
-Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-> Restore the fast invalidate flow for zapping shadow pages and use it
-> whenever vCPUs can be active in the VM.  This fixes (in theory, not yet
-> confirmed) a regression reported by James Harvey where KVM can livelock
-> in kvm_mmu_zap_all() when it's invoked in response to a memslot update.
-> 
-> The fast invalidate flow was removed as it was deemed to be unnecessary
-> after its primary user, memslot flushing, was reworked to zap only the
-> memslot in question instead of all shadow pages.  Unfortunately, zapping
-> only the memslot being (re)moved during a memslot update introduced a
-> regression for VMs with assigned devices.  Because we could not discern
-> why zapping only the relevant memslot broke device assignment, or if the
-> regression extended beyond device assignment, we reverted to zapping all
-> shadow pages when a memslot is (re)moved.
-> 
-> The revert to "zap all" failed to account for subsequent changes that
-> have been made to kvm_mmu_zap_all() between then and now.  Specifically,
-> kvm_mmu_zap_all() now conditionally drops reschedules and drops mmu_lock
-> if a reschedule is needed or if the lock is contended.  Dropping the lock
-> allows other vCPUs to add shadow pages, and, with enough vCPUs, can cause
-> kvm_mmu_zap_all() to get stuck in an infinite loop as it can never zap all
-> pages before observing lock contention or the need to reschedule.
-> 
-> The reasoning behind having kvm_mmu_zap_all() conditionally reschedule was
-> that it would only be used when the VM is inaccesible, e.g. when its
-> mm_struct is dying or when the VM itself is being destroyed.  In that case,
-> playing nice with the rest of the kernel instead of hogging cycles to free
-> unused shadow pages made sense.
-> 
-> Since it's unlikely we'll root cause the device assignment regression any
-> time soon, and that simply removing the conditional rescheduling isn't
-> guaranteed to return us to a known good state, restore the fast invalidate
-> flow for zapping on memslot updates, including mmio generation wraparound.
-> Opportunisticaly tack on a bug fix and a couple enhancements.
-> 
-> Alex and James, it probably goes without saying... please test, especially
-> patch 01/11 as a standalone patch as that'll likely need to be applied to
-> stable branches, assuming it works.  Thanks!
+Dan,
 
-It looks like Paolo already included patch 01/11 in v5.3, I tested that
-and it behaves ok for the GPU assignment windows issue.  I applied the
-remaining 10 patches on v5.3 and tested those separately.  They also
-behave well for this test case.
+>> One pet peeve I have is that people are pretty bad at indicating the
+>> intended target tree. I often ask for it in private mail but the
+>> practice doesn't seem to stick. I spend a ton of time guessing whether a
+>> patch is a fix for a new feature in the x+1 queue or a fix for the
+>> current release. It is not always obvious.
+>
+> The Fixes tag doesn't help?
 
-Tested-by: Alex Williamson <alex.williamson@redhat.com>
+Always.
 
-Thanks,
-Alex 
+> Of course, you've never asked me or anyone on kernel-newbies that
+> question.  We don't normally know the answer either.  I do always try
+> to figure it out for networking, but it's kind of a pain in the butt
+> and I mess up surpisingly often for how much effort I put into getting
+> it right.
 
-> 
-> Sean Christopherson (11):
->   KVM: x86/mmu: Reintroduce fast invalidate/zap for flushing memslot
->   KVM: x86/mmu: Treat invalid shadow pages as obsolete
->   KVM: x86/mmu: Use fast invalidate mechanism to zap MMIO sptes
->   KVM: x86/mmu: Revert "Revert "KVM: MMU: show mmu_valid_gen in shadow
->     page related tracepoints""
->   KVM: x86/mmu: Revert "Revert "KVM: MMU: add tracepoint for
->     kvm_mmu_invalidate_all_pages""
->   KVM: x86/mmu: Revert "Revert "KVM: MMU: zap pages in batch""
->   KVM: x86/mmu: Revert "Revert "KVM: MMU: collapse TLB flushes when zap
->     all pages""
->   KVM: x86/mmu: Revert "Revert "KVM: MMU: reclaim the zapped-obsolete
->     page first""
->   KVM: x86/mmu: Revert "KVM: x86/mmu: Remove is_obsolete() call"
->   KVM: x86/mmu: Explicitly track only a single invalid mmu generation
->   KVM: x86/mmu: Skip invalid pages during zapping iff root_count is zero
-> 
->  arch/x86/include/asm/kvm_host.h |   4 +-
->  arch/x86/kvm/mmu.c              | 154 ++++++++++++++++++++++++++++----
->  arch/x86/kvm/mmutrace.h         |  42 +++++++--
->  arch/x86/kvm/x86.c              |   1 +
->  4 files changed, 173 insertions(+), 28 deletions(-)
-> 
+It's not a big issue for your patches. These are inevitably fixes and
+I'll pick an appropriate tree depending on where we are in the cycle,
+how likely one is to hit the issue, whether the driver is widely used,
+etc.
 
+Vendor driver submissions, however, are generally huge. Sometimes 50+
+patches per submission window. And during this window I often get on the
+order of 10 to 20 patches for the same driver in the fixes tree. It is
+not always easy to determine whether a bug fix series is for one tree or
+the other.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
