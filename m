@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2E90B3B9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16FB8B3BB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 15:44:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387750AbfIPNm7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 09:42:59 -0400
+        id S1733223AbfIPNnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 09:43:55 -0400
 Received: from mga04.intel.com ([192.55.52.120]:53809 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733255AbfIPNm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 09:42:58 -0400
+        id S2387736AbfIPNm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 09:42:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 06:42:58 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Sep 2019 06:42:59 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,512,1559545200"; 
-   d="scan'208";a="387208985"
+   d="scan'208";a="387208994"
 Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.84])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Sep 2019 06:42:57 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 16 Sep 2019 06:42:58 -0700
 From:   kan.liang@linux.intel.com
 To:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
         linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
         alexander.shishkin@linux.intel.com, ak@linux.intel.com,
         Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V4 01/14] perf/x86/intel: Introduce the fourth fixed counter
-Date:   Mon, 16 Sep 2019 06:41:15 -0700
-Message-Id: <20190916134128.18120-2-kan.liang@linux.intel.com>
+Subject: [PATCH V4 02/14] perf/x86/intel: Set correct mask for TOPDOWN.SLOTS
+Date:   Mon, 16 Sep 2019 06:41:16 -0700
+Message-Id: <20190916134128.18120-3-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190916134128.18120-1-kan.liang@linux.intel.com>
 References: <20190916134128.18120-1-kan.liang@linux.intel.com>
@@ -39,50 +39,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-The fourth fixed counter, TOPDOWN.SLOTS, is introduced in Ice Lake.
+TOPDOWN.SLOTS(0x0400) is not a generic event. It is only available on
+fixed counter3.
 
-Add MSR address and macros for the new fixed counter, which will be used
-in the following patch.
+Don't extend its mask to generic counters.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
 
-New patch for V4
+Changes since V3:
+- Separate fixed counter3 definition patch
 
- arch/x86/include/asm/perf_event.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/events/intel/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index ee26e9215f18..9f15a700d1db 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -146,12 +146,12 @@ struct x86_pmu_capability {
-  */
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 43c966d1208e..f0208ee554fc 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -5106,12 +5106,14 @@ __init int intel_pmu_init(void)
  
- /*
-- * All 3 fixed-mode PMCs are configured via this single MSR:
-+ * All 4 fixed-mode PMCs are configured via this single MSR:
-  */
- #define MSR_ARCH_PERFMON_FIXED_CTR_CTRL	0x38d
- 
- /*
-- * The counts are available in three separate MSRs:
-+ * The counts are available in four separate MSRs:
-  */
- 
- /* Instr_Retired.Any: */
-@@ -167,6 +167,11 @@ struct x86_pmu_capability {
- #define INTEL_PMC_IDX_FIXED_REF_CYCLES	(INTEL_PMC_IDX_FIXED + 2)
- #define INTEL_PMC_MSK_FIXED_REF_CYCLES	(1ULL << INTEL_PMC_IDX_FIXED_REF_CYCLES)
- 
-+/* TOPDOWN.SLOTS: */
-+#define MSR_ARCH_PERFMON_FIXED_CTR3	0x30c
-+#define INTEL_PMC_IDX_FIXED_SLOTS	(INTEL_PMC_IDX_FIXED + 3)
-+#define INTEL_PMC_MSK_FIXED_SLOTS	(1ULL << INTEL_PMC_IDX_FIXED_SLOTS)
-+
- /*
-  * We model BTS tracing as another fixed-mode PMC.
-  *
+ 	if (x86_pmu.event_constraints) {
+ 		/*
+-		 * event on fixed counter2 (REF_CYCLES) only works on this
++		 * event on fixed counter2 (REF_CYCLES) and
++		 * fixed counter3 (TOPDOWN.SLOTS) only work on this
+ 		 * counter, so do not extend mask to generic counters
+ 		 */
+ 		for_each_event_constraint(c, x86_pmu.event_constraints) {
+ 			if (c->cmask == FIXED_EVENT_FLAGS
+-			    && c->idxmsk64 != INTEL_PMC_MSK_FIXED_REF_CYCLES) {
++			    && c->idxmsk64 != INTEL_PMC_MSK_FIXED_REF_CYCLES
++			    && c->idxmsk64 != INTEL_PMC_MSK_FIXED_SLOTS) {
+ 				c->idxmsk64 |= (1ULL << x86_pmu.num_counters) - 1;
+ 			}
+ 			c->idxmsk64 &=
 -- 
 2.17.1
 
