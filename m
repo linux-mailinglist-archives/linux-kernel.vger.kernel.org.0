@@ -2,63 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F1F5B3774
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB866B3777
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Sep 2019 11:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732141AbfIPJrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 05:47:06 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34496 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728985AbfIPJrF (ORCPT
+        id S1732151AbfIPJr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 05:47:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51658 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728985AbfIPJr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 05:47:05 -0400
-Received: by mail-qt1-f193.google.com with SMTP id j1so29738207qth.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 02:47:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=3ZzWEq4wWvLRNgmXVqwJmtANFzK7y6dh5+ag0ri/1Kk=;
-        b=VSdv4ezmQDKW/W8yLEPhYT452HcUSAi5vqHwRHVAElF+Ca2w+c/IU9pWyqMqzPUgyS
-         /YdS4BI6d+E7hpyIiu7O3bTEz6I3iGyKJcdg9hIENonH3o77Esu4OIipCBxwN6vcCK6H
-         dTPWK1Pb4cAJ6/I1sMZMfV+ruQPgBXSsnxb5cn9gFGZBNDKKo/687DN8yMepTThIQYZX
-         oauiujtCYiY6t0UGQXdPoik0p1P+q74FLTIF6gv+GxtLgRvUd/6IdUk0HFrg/w0Clhm2
-         h0QN4li7ag7YEiQCTWUDRWlEMAOSgTiWNe1Zib5X+6NKJWko3GCBdx659d2WNeoYjM/3
-         NZkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=3ZzWEq4wWvLRNgmXVqwJmtANFzK7y6dh5+ag0ri/1Kk=;
-        b=Oittp+ieNxMPQxAbSG2F7Fb98qX/LU7niv5SJrip8YKrJsX2mO9pw32gCkmYFXJoH9
-         XtNe5BGbNABpm6npNprr5llhgQ4K/lbntS/mLZGWJOWcLyhpNOnKxvl28c9Aw/lXe5Yq
-         jzjp581VSC//DaeVl/1McX8kbUH05A1o2n5XjQbPMUD5pX0nO5Hd2KUC6Ah0mT8veymy
-         EE8/o7x14oYYT3og7LnmlbIcNZpYnQmb5bPeXKPRwjy754ZssXTt8GgsfGmzamUUZQWe
-         G9J81d/NHTpfUrNqo4n8uWlEiol+Z5ns1G0ZUTz/T9Wf6nBwfjy1aDVQK+Ko3AGEZB/m
-         89JA==
-X-Gm-Message-State: APjAAAX1OKZ8ZoJvffl2Cj2RvT+kzsg9ChMS5lNxzI4XyfdwuBXMavu8
-        1jhXalGxRD0NIsQfV1NYfkjWRax4vEsom+8Tg3o=
-X-Google-Smtp-Source: APXvYqzcANsDvXxRLsvOgUMZI074T7gRv2dDY0dCRYbueBb6mr60YeOS0PEMXL1yIWtN7aSxNzHGHaX9d6eYlLepoNw=
-X-Received: by 2002:ac8:78c:: with SMTP id l12mr16394601qth.132.1568627224548;
- Mon, 16 Sep 2019 02:47:04 -0700 (PDT)
+        Mon, 16 Sep 2019 05:47:56 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F2D426119D; Mon, 16 Sep 2019 09:47:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568627275;
+        bh=6xJTrm/4FdPry2IWK41+EWTv6nMQOj/ZbrFAur8PRO8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CtEMSLfNKODgmgTIl1avrEGsUYzcrRLv6nACa1ERMn2ztSBN8sjE/mTKGV9mMxs7w
+         sY19bJRlWOSI2OhP9lpq+r8Og9KAYADpNclaRc0ekumn5vf7WGNWV5PV/v+Ju62YRT
+         P5UzlTub6KET3geoMuj1K/D0l3baKckQGVq8gHJo=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C86496119D;
+        Mon, 16 Sep 2019 09:47:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568627273;
+        bh=6xJTrm/4FdPry2IWK41+EWTv6nMQOj/ZbrFAur8PRO8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=BnzkZ5xAtXRcLXXlbPbam90N4NbATKZatLt13fEJWeHAJ27LvZywd8tlw7vtz1HDL
+         G3i9K34lbP713XcWXBK1EHzJBCZQL9aSDVNxHYHRPhZSZM9Ml5WkREXUMfQezPXvo0
+         0PkOheXSl94mc55AkvD+b/yT6EC0nZ4m3PsXExxs=
 MIME-Version: 1.0
-Received: by 2002:aed:2538:0:0:0:0:0 with HTTP; Mon, 16 Sep 2019 02:47:04
- -0700 (PDT)
-Reply-To: edithbrown0257@gmail.com
-From:   Edith Brown <tinaevan301@gmail.com>
-Date:   Mon, 16 Sep 2019 10:47:04 +0100
-Message-ID: <CAOH943+HFK+w-_52roXKJrPK0fnoOmVBBX7aR9cnQu+vt4snEg@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 16 Sep 2019 15:17:52 +0530
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>, agross@kernel.org,
+        iommu@lists.linux-foundation.org, joro@8bytes.org,
+        robin.murphy@arm.com, will.deacon@arm.com,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] iommu: arm-smmu-impl: Add sdm845 implementation
+ hook
+In-Reply-To: <5d72761c.1c69fb81.bf5be.09b4@mx.google.com>
+References: <20190823063248.13295-1-vivek.gautam@codeaurora.org>
+ <20190823063248.13295-4-vivek.gautam@codeaurora.org>
+ <5d72761c.1c69fb81.bf5be.09b4@mx.google.com>
+Message-ID: <f61884eb2b71fe90a8b5dda6c33b1c9d@codeaurora.org>
+X-Sender: saiprakash.ranjan@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Stephen,
+
+On 2019-09-06 20:37, Stephen Boyd wrote:
+> Quoting Vivek Gautam (2019-08-22 23:32:48)
+>> diff --git a/drivers/iommu/arm-smmu-impl.c 
+>> b/drivers/iommu/arm-smmu-impl.c
+>> index 3f88cd078dd5..0aef87c41f9c 100644
+>> --- a/drivers/iommu/arm-smmu-impl.c
+>> +++ b/drivers/iommu/arm-smmu-impl.c
+>> @@ -102,7 +103,6 @@ static struct arm_smmu_device 
+>> *cavium_smmu_impl_init(struct arm_smmu_device *smm
+>>         return &cs->smmu;
+>>  }
+>> 
+>> -
+>>  #define ARM_MMU500_ACTLR_CPRE          (1 << 1)
+>> 
+>>  #define ARM_MMU500_ACR_CACHE_LOCK      (1 << 26)
+> 
+> Drop this hunk?
+> 
+>> @@ -147,6 +147,28 @@ static const struct arm_smmu_impl arm_mmu500_impl 
+>> = {
+>>         .reset = arm_mmu500_reset,
+>>  };
+>> 
+>> +static int qcom_sdm845_smmu500_reset(struct arm_smmu_device *smmu)
+>> +{
+>> +       int ret;
+>> +
+>> +       arm_mmu500_reset(smmu);
+>> +
+>> +       /*
+>> +        * To address performance degradation in non-real time 
+>> clients,
+>> +        * such as USB and UFS, turn off wait-for-safe on sdm845 based 
+>> boards,
+>> +        * such as MTP and db845, whose firmwares implement secure 
+>> monitor
+>> +        * call handlers to turn on/off the wait-for-safe logic.
+>> +        */
+>> +       ret = qcom_scm_qsmmu500_wait_safe_toggle(0);
+>> +       if (ret)
+>> +               dev_warn(smmu->dev, "Failed to turn off SAFE 
+>> logic\n");
+>> +
+>> +       return 0;
+> 
+> return ret? Or intentionally don't return an error for failure?
+> 
+>> +}
+>> +
+>> +const struct arm_smmu_impl qcom_sdm845_smmu500_impl = {
+> 
+> static?
+> 
+>> +       .reset = qcom_sdm845_smmu500_reset,
+>> +};
+>> 
+>>  struct arm_smmu_device *arm_smmu_impl_init(struct arm_smmu_device 
+>> *smmu)
+>>  {
+
+Have addressed all your comments in v5.
+
+Thanks,
+Sai
+
 -- 
-Hello dear
-how are you doing?
-my name is Edith Brown
-i am a U.S military woman
-is my pleasure meeting you here
-best regards
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
+member
+of Code Aurora Forum, hosted by The Linux Foundation
