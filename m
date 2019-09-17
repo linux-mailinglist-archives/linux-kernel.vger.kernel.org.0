@@ -2,110 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D50CFB53C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8194CB53D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730830AbfIQRPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 13:15:16 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41676 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfIQRPP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:15:15 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x15so2350708pgg.8;
-        Tue, 17 Sep 2019 10:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Tj2R7ApU+R18kZtfMMHwpOo/TfY0rKl5+SwEZrS2MK8=;
-        b=nL0fqthR3Yr0B1JZ28qUvy2WywfFQqdrbRxcoSiHsAsSUP59yEtv2B+06hnL6BY3jb
-         G51vqCLP7S25TQZqdVVxkDNIpbVKiTpaHDIx6JUIwcs47xQDaNi4t6Q/KSCLYppKM5fP
-         a5SGR1/GgIBno222ddzpdq8uuEdAOoVa0iRgemkV0saQG98r5yRk5SCTaVBMZkjqjAOB
-         +F34KioPgwvnLkk+WSvtBaeEKb5PdeQ+LODzyZwMbOW0iXDttfXb1aUigPNi4UHaeskm
-         9r37p++wEYENAuNGgfAXZ5z8kgPoNRxF0+7ntUIQZ/XzbiA8TsDGhtlM2HCSo7wn9ePp
-         0dpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Tj2R7ApU+R18kZtfMMHwpOo/TfY0rKl5+SwEZrS2MK8=;
-        b=GJGCKWnBACFDGg0+NEdQ+WV02VKbkO5seF5E6YJLXiFYsJw7HLFAItSZKpvLXqKpay
-         Z6CdKTiviSwNHwdvCkh6oAQXTkzkwZ9hLb/93VJR25mamwfswwJJXC02I1FRU8ds5uKP
-         Z7asz77xFly2dTCY1D7BfKBrDyCMImGzZEw2+0LPU2P1hGqODc5dHv4ROr4EUHge8a5S
-         6h9WSJflHWg+LTVshwhDV97Nu2hwWxLOAPfU1Jfev9iAk8OyGKChJAF2+prOvQk3W7J1
-         RCdo1UM7bMJJLpoGNagYXuFwp4I0XX1xdIZ9LpAVpfasPJUPOM8a8tTMnGmtBZrkETVi
-         m/fQ==
-X-Gm-Message-State: APjAAAXhqpxUJ99BppEWeOd3Iiqh9VKBBVI1fgrWjBqlFLI8fp7nmCsi
-        rQMQoWIUD2GznPo9HKN8zgs=
-X-Google-Smtp-Source: APXvYqy8fG0q6iCMJJos1z/WHR4mu7VgHhmjsqcNKJNwGISeMBnPFajiPIVWixEmUHT6SsN22jN88g==
-X-Received: by 2002:a17:90a:e017:: with SMTP id u23mr5731639pjy.55.1568740513471;
-        Tue, 17 Sep 2019 10:15:13 -0700 (PDT)
-Received: from SD ([106.222.12.103])
-        by smtp.gmail.com with ESMTPSA id a11sm3315255pfg.94.2019.09.17.10.15.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 10:15:12 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 22:44:55 +0530
-From:   Saiyam Doshi <saiyamdoshi.in@gmail.com>
-To:     agross@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, markus.elfring@web.de
-Subject: [PATCH v2 1/3] i2c: qup: remove explicit conversion to boolean
-Message-ID: <20190917171455.GA7922@SD>
+        id S1730860AbfIQRRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 13:17:10 -0400
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:47156 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727296AbfIQRRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 13:17:10 -0400
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id x8HHGfPw028025;
+        Tue, 17 Sep 2019 19:16:41 +0200
+Date:   Tue, 17 Sep 2019 19:16:41 +0200
+From:   Willy Tarreau <w@1wt.eu>
+To:     Matthew Garrett <mjg59@srcf.ucam.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Steigerwald <martin@lichtvoll.de>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 5.3-rc8
+Message-ID: <20190917171641.GC27999@1wt.eu>
+References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+ <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org>
+ <20190917052438.GA26923@1wt.eu>
+ <2508489.jOnZlRuxVn@merkaba>
+ <CAHk-=wiGg-G8JFJ=R7qf0B+UtqA_Weouk6v+McmfsLJLRq6AKA@mail.gmail.com>
+ <20190917163456.alzodstm3hd4yrni@srcf.ucam.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190917163456.alzodstm3hd4yrni@srcf.ucam.org>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Relational and logical operators evaluate to bool,
-explicit conversion is overly verbose and unneeded.
+On Tue, Sep 17, 2019 at 05:34:56PM +0100, Matthew Garrett wrote:
+> On Tue, Sep 17, 2019 at 09:27:44AM -0700, Linus Torvalds wrote:
+> 
+> > Does anybody believe that 128 bits of randomness is a good basis for a
+> > long-term secure key?
+> 
+> Yes, it's exactly what you'd expect for an AES 128 key, which is still 
+> considered to be secure.
 
-Generated by: scripts/coccinelle/misc/boolconv.cocci
+AES keys are for symmetrical encryption and thus as such are short-lived.
+We're back to what Linus was saying about the fact that our urandom is
+already very good for such use cases, it should just not be used to
+produce long-lived keys (i.e. asymmetrical).
 
-Signed-off-by: Saiyam Doshi <saiyamdoshi.in@gmail.com>
----
-Changes in v2:
-* Updated changelog
+However I'm worried regarding this precise patch about the fact that
+delays will add up. I think that once we've failed to wait for a first
+process, we've broken any hypothetical trust in terms of random quality
+so there's no point continuing to wait for future requests.
 
- drivers/i2c/busses/i2c-qup.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-qup.c b/drivers/i2c/busses/i2c-qup.c
-index e09cd0775ae9..5519c19bfd9c 100644
---- a/drivers/i2c/busses/i2c-qup.c
-+++ b/drivers/i2c/busses/i2c-qup.c
-@@ -961,10 +961,8 @@ static void qup_i2c_conf_v1(struct qup_i2c_dev *qup)
- 	u32 qup_config = I2C_MINI_CORE | I2C_N_VAL;
- 	u32 io_mode = QUP_REPACK_EN;
-
--	blk->is_tx_blk_mode =
--		blk->total_tx_len > qup->out_fifo_sz ? true : false;
--	blk->is_rx_blk_mode =
--		blk->total_rx_len > qup->in_fifo_sz ? true : false;
-+	blk->is_tx_blk_mode = blk->total_tx_len > qup->out_fifo_sz;
-+	blk->is_rx_blk_mode = blk->total_rx_len > qup->in_fifo_sz;
-
- 	if (blk->is_tx_blk_mode) {
- 		io_mode |= QUP_OUTPUT_BLK_MODE;
-@@ -1532,10 +1530,10 @@ qup_i2c_determine_mode_v2(struct qup_i2c_dev *qup,
- 	    (total_len > qup->out_fifo_sz || total_len > qup->in_fifo_sz)) {
- 		qup->use_dma = true;
- 	} else {
--		qup->blk.is_tx_blk_mode = max_tx_len > qup->out_fifo_sz -
--			QUP_MAX_TAGS_LEN ? true : false;
--		qup->blk.is_rx_blk_mode = max_rx_len > qup->in_fifo_sz -
--			READ_RX_TAGS_LEN ? true : false;
-+		qup->blk.is_tx_blk_mode =
-+			max_tx_len > qup->out_fifo_sz - QUP_MAX_TAGS_LEN;
-+		qup->blk.is_rx_blk_mode =
-+			max_rx_len > qup->in_fifo_sz - READ_RX_TAGS_LEN;
- 	}
-
- 	return 0;
---
-2.20.1
-
+Willy
