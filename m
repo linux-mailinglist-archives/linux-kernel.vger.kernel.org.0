@@ -2,70 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D7DB49C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DED8B49B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388398AbfIQIsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:48:09 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:47572 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732592AbfIQIsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:48:08 -0400
-Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.fritz.box)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iA8pL-0005ZY-5l; Tue, 17 Sep 2019 10:27:11 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-rockchip@lists.infradead.org,
-        christoph.muellner@theobroma-systems.com,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 13/13] arm64: dts: rockchip: enable usb2phy on px30-evb
-Date:   Tue, 17 Sep 2019 10:26:59 +0200
-Message-Id: <20190917082659.25549-13-heiko@sntech.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190917082659.25549-1-heiko@sntech.de>
-References: <20190917082659.25549-1-heiko@sntech.de>
+        id S1730200AbfIQIon convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Sep 2019 04:44:43 -0400
+Received: from luna.lichtvoll.de ([194.150.191.11]:47305 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726564AbfIQIon (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:44:43 -0400
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.lichtvoll.de (Postfix) with ESMTPSA id 5618877320;
+        Tue, 17 Sep 2019 10:44:40 +0200 (CEST)
+From:   Martin Steigerwald <martin@lichtvoll.de>
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 5.3-rc8
+Date:   Tue, 17 Sep 2019 10:44:40 +0200
+Message-ID: <16898130.scaMKaIPcm@merkaba>
+In-Reply-To: <20190917083516.GA27098@1wt.eu>
+References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com> <2508489.jOnZlRuxVn@merkaba> <20190917083516.GA27098@1wt.eu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: mail.lichtvoll.de;
+        auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the phy node ion the px30 evb board.
+Willy Tarreau - 17.09.19, 10:35:16 CEST:
+> On Tue, Sep 17, 2019 at 09:33:40AM +0200, Martin Steigerwald wrote:
+> > However this again would be burdening users with an issue they
+> > should
+> > not have to care about. Unless userspace developers care enough and
+> > manage to take time to fix the issue before updated kernels come to
+> > their systems. Cause again it would be users systems that would not
+> > be working. Just cause kernel and userspace developers did not
+> > agree and chose to fight with each other instead of talking *with*
+> > each other.
+> It has nothing to do with fighting at all, it has to do with offering
+> what applications *need* without breaking existing assumptions that
+> make most applications work. And more importantly it involves not
+[…]
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm64/boot/dts/rockchip/px30-evb.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Well I got the impression or interpretation that it would be about 
+fighting… if it is not, all the better!
 
-diff --git a/arch/arm64/boot/dts/rockchip/px30-evb.dts b/arch/arm64/boot/dts/rockchip/px30-evb.dts
-index 1185a314ba4a..936ed7d71ffc 100644
---- a/arch/arm64/boot/dts/rockchip/px30-evb.dts
-+++ b/arch/arm64/boot/dts/rockchip/px30-evb.dts
-@@ -485,6 +485,18 @@
- 	status = "okay";
- };
- 
-+&u2phy {
-+	status = "okay";
-+
-+	u2phy_host: host-port {
-+		status = "okay";
-+	};
-+
-+	u2phy_otg: otg-port {
-+		status = "okay";
-+	};
-+};
-+
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart1_xfer &uart1_cts>;
+> > At least with killing gdm Systemd may restart it if configured to do
+> > so. But if it doesn't, the user is again stuck with a non working
+> > system until restarting gdm themselves.
+> > 
+> > It may still make sense to make the API harder to use,
+> 
+> No. What is hard to use is often misused. It must be harder to misuse
+> it, which means it should be easier to correctly use it. The choice of
+> flag names and the emission of warnings definitely helps during the
+> development stage.
+
+Sorry, this was a typo of mine. I actually meant harder to abuse. 
+Anything else would not make sense in the context of what I have 
+written.
+
+Make it easier to use properly and harder to abuse.
+
+> > but it does not
+> > replace talking with userspace developers and it would need some
+> > time to allow for adapting userspace applications and services.
+> 
+> Which is how adding new flags can definitely help even if adoption
+> takes time. By the way in this discussion I am a userspace developer
+> and have been hit several times by libraries switching to getrandom()
+> that silently failed to respond in field. As a userspace developer, I
+> really want to see a solution to this problem. And I'm fine if the
+> kernel decides to kill haproxy for using getrandom() with the old
+> settings, at least users will notice, will complain to me and will
+> update.
+
+Good to see that you are also engaging as a userspace developer in the 
+discussion.
+
+Thanks,
 -- 
-2.20.1
+Martin
+
 
