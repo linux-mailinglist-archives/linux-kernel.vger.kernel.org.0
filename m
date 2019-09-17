@@ -2,93 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9000B44FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 02:53:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA1FB4500
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 03:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732831AbfIQAxp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 20:53:45 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37180 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728402AbfIQAxo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 20:53:44 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b10so725582plr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 17:53:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bb3WgUuPlwJWlYbzoUQVlukqZNU/xGNNtLsMKZAKSWI=;
-        b=JJiE+j6yomdxr6HSuUweYXgimT2ZE+elZD7yXoRYTuhZwLroQjRbf33BiGhl+/ecw1
-         Z9r/FP6bqd9jN8I9Hoz4Vl5u/19RTPOqvefNOGfqtSSxMUQu/8SS4r3RmlsaQDPfeJr3
-         eeNzl1kYYq0UrvUDshYHOC5YpIERwW8isPEgNbuDlaM7sIIAiZa7ca16WICZguqkcGl/
-         aCGcwWn2N++7fdU99NbfKxrTFr5E1tfFIjWIHLe3nrmgh3fIDbxEoE0AREy0Z1g3Z9l2
-         IPsMwpB95rnV9lJn6rjxAsdKIj9/lS3sW474ujoVQWbwvmWs2VnYpceyk3kFvGYKReCm
-         2gKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bb3WgUuPlwJWlYbzoUQVlukqZNU/xGNNtLsMKZAKSWI=;
-        b=L45EBhvDlG1m8JjL1ixyS0XWH00J8GzOQD9VFcXCswlUsjKjpyoqsCF3vdTGs0bnBh
-         iNIhWIPmpFZ0rFcDkMkjnhK9cMWOaHol+L/DokRLD+epmHZPI/ZDCg44k94DKHepX1ps
-         zy746jWNZ1IW8IUOcUCWSXB/x9bpGLRALS6Eotu9EwlO/NbOxqBTinYmv3CsOUc+fq9S
-         73piQrltQy/8PCBgAmfi7jWXIBiO5ENHzhEWNjFKiU3iNoe4SY2yfUEyLLk+w9j363jO
-         rVK8yCKFk+CV3ZytXaNtxIgEkigiH5p3I6UWmYKxRDduEW7SMWQJz2wK5nQUqo9NxLB7
-         EfwA==
-X-Gm-Message-State: APjAAAXMrXiZZv3U3xnit4CVrsXehPU3S73EHWaG0Uu4Qbxcu45+vSCK
-        IUj5UJp3mgz0kwzAebwXBRY=
-X-Google-Smtp-Source: APXvYqxWmGkNGIvP0iApQpIgZ+XbGCgnNGJDgqVmTf07dDFscLXble+QsYvpdfkGJt5n1L26rkvQWg==
-X-Received: by 2002:a17:902:166:: with SMTP id 93mr944351plb.195.1568681624214;
-        Mon, 16 Sep 2019 17:53:44 -0700 (PDT)
-Received: from localhost ([110.70.27.73])
-        by smtp.gmail.com with ESMTPSA id bx18sm336950pjb.26.2019.09.16.17.53.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 17:53:43 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 09:53:40 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Qian Cai <cai@lca.pw>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: page_alloc.shuffle=1 + CONFIG_PROVE_LOCKING=y = arm64 hang
-Message-ID: <20190917005340.GA9679@jagdpanzerIV>
-References: <1566509603.5576.10.camel@lca.pw>
- <1567717680.5576.104.camel@lca.pw>
- <1568128954.5576.129.camel@lca.pw>
- <20190911011008.GA4420@jagdpanzerIV>
- <1568289941.5576.140.camel@lca.pw>
- <20190916104239.124fc2e5@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916104239.124fc2e5@gandalf.local.home>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1733299AbfIQBAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 21:00:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733128AbfIQBAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 21:00:18 -0400
+Subject: Re: [GIT PULL] core/headers change for v5.4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568682017;
+        bh=Bgps2yMxmqydBp1CbD3+qBxQrNIlxi8PcB20B9QBo80=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=VfMpUmXBb/oRXR0MmTU8ciAxNEnQlCcXCZ3zuWbRxMcJY6fr4KB1pqfNTRMPpp2AB
+         +82tMZHPiGSbd+10NZ3+4myqBWSPBNGL+y8f8sIFzS7WTRYJja8ODaMTTAbMpgE6mu
+         zSLKff6m7fslZsaNawKoK5TTS8bgZGIGcEhcGX8g=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190916111101.GA55216@gmail.com>
+References: <20190916111101.GA55216@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190916111101.GA55216@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ core-headers-for-linus
+X-PR-Tracked-Commit-Id: e8e4eb0fbeda570b16464208aebf5caccfb6eb95
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a480222f4c7cdafad22540f44487f009e359dfb8
+Message-Id: <156868201771.3683.2079398764626033242.pr-tracker-bot@kernel.org>
+Date:   Tue, 17 Sep 2019 01:00:17 +0000
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/16/19 10:42), Steven Rostedt wrote:
-[..]
-> > 
-> > This will also fix the hang.
-> > 
-> > Sergey, do you plan to submit this Ted?
-> 
-> Perhaps for a quick fix (and a comment that says this needs to be fixed
-> properly).
+The pull request you sent on Mon, 16 Sep 2019 13:11:01 +0200:
 
-I guess it would make sense, since LTS and -stable kernels won't get new
-printk().
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-headers-for-linus
 
-	-ss
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a480222f4c7cdafad22540f44487f009e359dfb8
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
