@@ -2,90 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E075B47DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6571B47FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404419AbfIQHH6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 03:07:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53110 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729435AbfIQHH5 (ORCPT
+        id S2392537AbfIQHQk convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Sep 2019 03:16:40 -0400
+Received: from mail.11d03.mspz7.gob.ec ([190.214.23.250]:35858 "EHLO
+        mail.11d03.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730666AbfIQHQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 03:07:57 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 99E5361213; Tue, 17 Sep 2019 07:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568704076;
-        bh=XOsx7e6qcaR44pSsilXmTVukrNoyBsfw/6ykaEalazM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OzN/Gtk3ZoKHZTgZ9fVTPVQjYnhNvVjgGjtX1Fo0ynsHKaifuPJLn8kufAPGIE0TX
-         8vHOpxjusQHFbzSfpBdDlNp6dGOCjsI04vLPvnyM7fgUiCcA1rsBGDuIGHByQnZX0o
-         EjOAtEEhUC91xbaBQgVVk+ay5SWTN+ihK0L6OKHo=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id ADD53611FA;
-        Tue, 17 Sep 2019 07:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568704075;
-        bh=XOsx7e6qcaR44pSsilXmTVukrNoyBsfw/6ykaEalazM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hhmdmcsilLPeAHhlXWfXw65jWqnkKaLX+R2TlRiLkkxWwOrEo+SbpqwVS/ofH+jv3
-         RPotvR/PIO6/LsG3mOksGG7ZmemEn5lWPStuLLSxvfG6i9B6i4foEOoibLjqtRudhx
-         IeFtfpOeSqMDvo2rcHHCPc4yyKltEyj3GvhBly0U=
+        Tue, 17 Sep 2019 03:16:38 -0400
+X-Greylist: delayed 9118 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 03:16:37 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.11d03.mspz7.gob.ec (Postfix) with ESMTP id D96D040538138;
+        Mon, 16 Sep 2019 23:19:43 -0500 (-05)
+Received: from mail.11d03.mspz7.gob.ec ([127.0.0.1])
+        by localhost (mail.11d03.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id u_XUzgofTCCz; Mon, 16 Sep 2019 23:19:43 -0500 (-05)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.11d03.mspz7.gob.ec (Postfix) with ESMTP id 75AE840538146;
+        Mon, 16 Sep 2019 23:19:43 -0500 (-05)
+X-Virus-Scanned: amavisd-new at 11d03.mspz7.gob.ec
+Received: from mail.11d03.mspz7.gob.ec ([127.0.0.1])
+        by localhost (mail.11d03.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id vcfV7qCCLkLF; Mon, 16 Sep 2019 23:19:43 -0500 (-05)
+Received: from [10.33.79.142] (unknown [105.4.0.133])
+        by mail.11d03.mspz7.gob.ec (Postfix) with ESMTPSA id D54274052A834;
+        Mon, 16 Sep 2019 23:19:33 -0500 (-05)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 17 Sep 2019 12:37:55 +0530
-From:   gokulsri@codeaurora.org
-To:     Rob Herring <robh@kernel.org>
-Cc:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
-        david.brown@linaro.org, devicetree@vger.kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
-        sricharan@codeaurora.org, nprakash@codeaurora.org
-Subject: Re: [PATCH V2 10/12] dt-bindings: firmware: qcom: Add compatible for
- IPQ8074 SoC
-In-Reply-To: <5d7c0ecb.1c69fb81.74810.a358@mx.google.com>
-References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
- <1568375771-22933-11-git-send-email-gokulsri@codeaurora.org>
- <5d7c0ecb.1c69fb81.74810.a358@mx.google.com>
-Message-ID: <1472f76e742d576fa5d6c6cad7b40605@codeaurora.org>
-X-Sender: gokulsri@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
+To:     Recipients <vicenta.sinche@11d03.mspz7.gob.ec>
+From:   ''Tayeb souami'' <vicenta.sinche@11d03.mspz7.gob.ec>
+Date:   Tue, 17 Sep 2019 06:19:23 +0200
+Reply-To: Tayebsouam.spende@gmail.com
+Message-Id: <20190917041933.D54274052A834@mail.11d03.mspz7.gob.ec>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Lieber Freund,
 
-On 2019-09-14 03:18, Rob Herring wrote:
-> On Fri, 13 Sep 2019 17:26:09 +0530, Gokul Sriram Palanisamy wrote:
->> Add compatible for IPQ8074 support.
->> This does not need clocks for scm calls.
->> 
->> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/firmware/qcom,scm.txt | 1 +
->>  1 file changed, 1 insertion(+)
->> 
-> 
-> Please add Acked-by/Reviewed-by tags when posting new versions. 
-> However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
-> 
-> If a tag was not added on purpose, please state why and what changed.
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
 
-  Sorry, missed it. Will add it.
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
 
-Regards,
-  Gokul
+Das ist dein Spendencode: [TS530342018]
+
+Antworten Sie mit dem SPENDE-CODE an diese 
+
+E-Mail:Tayebsouam.spende@gmail.com
+
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+
+Grüße
+Herr Tayeb Souami
