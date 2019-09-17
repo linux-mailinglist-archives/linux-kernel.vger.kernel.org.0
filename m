@@ -2,87 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87880B4917
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:19:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD9DAB4924
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:19:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388802AbfIQITP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:19:15 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41759 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbfIQITP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:19:15 -0400
-Received: by mail-ot1-f65.google.com with SMTP id g13so2249463otp.8;
-        Tue, 17 Sep 2019 01:19:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u2J+JQRXAUMCmWNHYDvwwUgeEBMmyLbfnHjhrSTs8DY=;
-        b=P8fIwR8e/ln45RA/JSw9MPiezjsLL7qsIL4EsHsSxjwSik0BIizPvYHGsPRk6Nm9RG
-         X/2UZZh+lGxfVxN1WGPdE0lNAcISntnhktTJY1nWWWUtHBau8uO+GP625OnZU6nBNyZa
-         Om7m8+FH+Fx/23PjBlj7KPUkmI2v4uCR5Uk9NCD4LLrDcVU9nXY45ByngDgNN0gAncco
-         C8ODUJl28BgLJUg8BRtoVViiZhzdNB/XPhotTOgML6pORU+k5n0vd5KrIb7eWI7SMTt0
-         UhvMKfPY0RWzwbuffauxiVGnxQT1Xr4SA1IGSs1OAkidQ2yAGAolvpHngN2HnEG3oYNU
-         sdEA==
-X-Gm-Message-State: APjAAAXCBOpVIgg85QHAtxKT5ivYxH5bA/S4dE8Fk2MeZWx6PVJC1AlJ
-        K2hbet2vwQtk4MdWGok7iakBt/zLbBJfUE8gCPpkkw==
-X-Google-Smtp-Source: APXvYqzq2Yu5MnzUslhoUU254YRm1rz6c6w8pUTj86P5+gh+qLMOEWNJURu/rUMkdYyg2KOe+cTHO6eoPQb2Xat9ERs=
-X-Received: by 2002:a9d:5a06:: with SMTP id v6mr1760766oth.250.1568708354577;
- Tue, 17 Sep 2019 01:19:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190917075850.40039-1-biwen.li@nxp.com>
-In-Reply-To: <20190917075850.40039-1-biwen.li@nxp.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
+        id S2389124AbfIQIT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:19:29 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:46554 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388824AbfIQIT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:19:26 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iA8hn-0005Uf-4y; Tue, 17 Sep 2019 10:19:23 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        finley.xiao@rock-chips.com, zhangqing@rock-chips.com,
+        christoph.muellner@theobroma-systems.com,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 5/5] clk: rockchip: protect the pclk_usb_grf as critical
 Date:   Tue, 17 Sep 2019 10:19:03 +0200
-Message-ID: <CAMuHMdUWue6-51Za7vejk=QkhV80iBXdc1E+6aTmQsvpB5AP-A@mail.gmail.com>
-Subject: Re: [PATCH] devicetree: property-units: Add kohms unit
-To:     Biwen Li <biwen.li@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <20190917081903.25139-5-heiko@sntech.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190917081903.25139-1-heiko@sntech.de>
+References: <20190917081903.25139-1-heiko@sntech.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Biwen,
+Make this clock a real critical clock, so that writes to the usbphy grf
+always succeed.
 
-On Tue, Sep 17, 2019 at 10:09 AM Biwen Li <biwen.li@nxp.com> wrote:
-> The patch adds kohms unit
->
-> Signed-off-by: Biwen Li <biwen.li@nxp.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/rockchip/clk-px30.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/property-units.txt
-> +++ b/Documentation/devicetree/bindings/property-units.txt
-> @@ -27,6 +27,7 @@ Electricity
->  -microamp      : microampere
->  -microamp-hours : microampere hour
->  -ohms          : ohm
-> +-kohms         : kiloohm
->  -micro-ohms    : microohm
->  -microwatt-hours: microwatt hour
->  -microvolt     : microvolt
-
-What's your rationale for adding "kohms"?
-Do you need to specify resistance values that do not fit in 32-bit, and
-thus cannot be specified using "ohms"?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/rockchip/clk-px30.c b/drivers/clk/rockchip/clk-px30.c
+index 7a8bc416c947..6fb9c98b7d24 100644
+--- a/drivers/clk/rockchip/clk-px30.c
++++ b/drivers/clk/rockchip/clk-px30.c
+@@ -799,7 +799,7 @@ static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
+ 	GATE(0, "pclk_ddrphy", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 3, GFLAGS),
+ 	GATE(PCLK_MIPIDSIPHY, "pclk_mipidsiphy", "pclk_top_pre", 0, PX30_CLKGATE_CON(16), 4, GFLAGS),
+ 	GATE(PCLK_MIPICSIPHY, "pclk_mipicsiphy", "pclk_top_pre", 0, PX30_CLKGATE_CON(16), 5, GFLAGS),
+-	GATE(PCLK_USB_GRF, "pclk_usb_grf", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 6, GFLAGS),
++	GATE(PCLK_USB_GRF, "pclk_usb_grf", "pclk_top_pre", 0, PX30_CLKGATE_CON(16), 6, GFLAGS),
+ 	GATE(0, "pclk_cpu_hoost", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 7, GFLAGS),
+ 
+ 	/* PD_VI */
+@@ -995,6 +995,7 @@ static const char *const px30_cru_critical_clocks[] __initconst = {
+ 	"usb480m",
+ 	"clk_uart2",
+ 	"pclk_uart2",
++	"pclk_usb_grf",
+ };
+ 
+ static void __init px30_clk_init(struct device_node *np)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.20.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
