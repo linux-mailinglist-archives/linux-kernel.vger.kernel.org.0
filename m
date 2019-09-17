@@ -2,182 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB05B5049
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4A9B5051
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbfIQOXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:23:40 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45522 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbfIQOXk (ORCPT
+        id S1727892AbfIQO0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:26:34 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:25713 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfIQO0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:23:40 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 41so3155690oti.12;
-        Tue, 17 Sep 2019 07:23:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X9xy3wm83YouZRo1BB7hVE9u2ONh+tQ6r8bXgR1pEJk=;
-        b=gKH9iJf9xqQ5oW+X3Es9rQXVr32RejsamqbpWodwTw1YzFNsvZAc3imilPsbWRUIvn
-         QLzmwMdJhfhakczrS1wxJdGRPRY1L37FGfkfQXWDUWs59HxnfmzLGcje8NiNGKuevVyx
-         iWK2S10/2+A1VaLQYo82lf7Hfp0kbGidxcshr03kokyuJP1cEkvLOi/zKrqEofNVmRl7
-         iBg7e7nnDPuY++xFH9mlM5hglXLfiER1ifarzRM0TEAq7V6L567UhKi5yJAFhmIuHLNj
-         FDvF1F8TOQrkpfwin99x5L4PoWLF7G2rUvLiDpN+bGFXlSJbV2mFVYxqv0jH+mHzxhfr
-         JLCw==
-X-Gm-Message-State: APjAAAUPOsEKebZFzCjbMjjRtupN7Dq3x8/WiyjRmysKVpv9RJ8e9Zti
-        +rWdGtO5EFjDe7k6WLYO7+iNu+Y=
-X-Google-Smtp-Source: APXvYqyaAe3Lj7n1XQ6rADdcFVMnrIySwzJZK2S8u5m58lGkDCBzdMCtct7mjDV66iOGvEhR0T7ihg==
-X-Received: by 2002:a05:6830:1357:: with SMTP id r23mr2940766otq.91.1568730218619;
-        Tue, 17 Sep 2019 07:23:38 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b5sm757007otp.36.2019.09.17.07.23.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 07:23:38 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 09:23:37 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Cc:     kishon@ti.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        peter.harliman.liem@intel.com
-Subject: Re: [PATCH v5 1/2] dt-bindings: phy: intel-emmc-phy: Add YAML schema
- for LGM eMMC PHY
-Message-ID: <20190917142337.GA27151@bogus>
-References: <20190904055344.25512-1-vadivel.muruganx.ramuthevar@linux.intel.com>
-MIME-Version: 1.0
+        Tue, 17 Sep 2019 10:26:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568730389;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=8Hka5X/r+hzmoKvFtI6p5MPdNGRJa/0fGujvCNAxwys=;
+        b=EjnzOXYHs3M+uQk0XR6CqMf12OLdDlPWur/87/urZNp/L79XTkZT8uqBjvrosN/SDK
+        TAAc9fwlZh9wHwyNCRy5v8EbKAmD3bgIFGGJ3Dw/sYkvB2oXZq+OiIk6u56fpKlxagRc
+        WvLzhuFI/PqGA4l1+kxviWAxkMCKIi7CMk0OBbDmh38md4bXhUfJ132jmMHO8ALzih6f
+        iPtm+qNTugoa69Ht8AqqtdrL9n0SSmdsiZT/k9efP25e2gzmBx9d63u0d7gZDoitmCFX
+        6kTsBs/ER8rV5r2wOVEuXbhAj3DVyhdpPnqBAttTSkq/v7Kw5m267TgiElx0SwP14Onc
+        F9Lw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBp5hRw/qOxWRk4dCyjDPUnsm74p9Jk5n8FSUKszBBBGbD3SfhNo/8="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2001:16b8:266f:d200:a80b:f72:f57a:c422]
+        by smtp.strato.de (RZmta 44.27.0 AUTH)
+        with ESMTPSA id u036f9v8HEQGXMX
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 17 Sep 2019 16:26:16 +0200 (CEST)
+Subject: Re: [Letux-kernel] [PATCH 2/2] DTS: ARM: gta04: introduce legacy spi-cs-high to make display work again
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190904055344.25512-1-vadivel.muruganx.ramuthevar@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <CACRpkdZQgPVvB=78vOFsHe5n45Vwe4N6JJOcm1_vz5FbAw9CYA@mail.gmail.com>
+Date:   Tue, 17 Sep 2019 16:26:15 +0200
+Cc:     Discussions about the Letux Kernel <letux-kernel@openphoenux.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1624298A-C51B-418A-96C3-EA09367A010D@goldelico.com>
+References: <cover.1562597164.git.hns@goldelico.com> <8ae7cf816b22ef9cecee0d789fcf9e8a06495c39.1562597164.git.hns@goldelico.com> <20190724194259.GA25847@bogus> <2EA06398-E45B-481B-9A26-4DD2E043BF9C@goldelico.com> <CAL_JsqLe_Y9Z6MRt7ojgSVKAb9n95S8j=eGidSVNz2T83j-zPQ@mail.gmail.com> <CACRpkdY0AVnkRa8sV_Z54qfX9SYufvaYYhU0k2+LitXo0sLx2w@mail.gmail.com> <20190831084852.5e726cfa@aktux> <ED6A6797-D1F9-473B-ABFF-B6951A924BC1@goldelico.com> <CACRpkdZQgPVvB=78vOFsHe5n45Vwe4N6JJOcm1_vz5FbAw9CYA@mail.gmail.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 01:53:43PM +0800, Ramuthevar,Vadivel MuruganX wrote:
-> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> 
-> Add a YAML schema to use the host controller driver with the
-> eMMC PHY on Intel's Lightning Mountain SoC.
-> 
-> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> ---
-> changes in v5:
->   - earlier Review-by tag given by Rob
->   - rework done with syscon parent node.
-> 
-> changes in v4:
->   - As per Rob's review: validate 5.2 and 5.3
->   - drop unrelated items.
-> 
-> changes in v3:
->   - resolve 'make dt_binding_check' warnings
-> 
-> changes in v2:
->   As per Rob Herring review comments, the following updates
->  - change GPL-2.0 -> (GPL-2.0-only OR BSD-2-Clause)
->  - filename is the compatible string plus .yaml
->  - LGM: Lightning Mountain
->  - update maintainer
->  - add intel,syscon under property list
->  - keep one example instead of two
-> ---
->  .../bindings/phy/intel,lgm-emmc-phy.yaml           | 69 ++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> new file mode 100644
-> index 000000000000..8f6ac8b3da42
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/intel,lgm-emmc-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Intel Lightning Mountain(LGM) eMMC PHY Device Tree Bindings
-> +
-> +maintainers:
-> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> +
-> +description: Bindings for eMMC PHY on Intel's Lightning Mountain SoC, syscon
-> +  node is used to reference the base address of eMMC phy registers.
-> +
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: intel,lgm-syscon
+Hi Lunus,
 
-This, plus...
+> Am 17.09.2019 um 00:52 schrieb Linus Walleij =
+<linus.walleij@linaro.org>:
+>=20
+> On Mon, Sep 16, 2019 at 12:59 PM H. Nikolaus Schaller =
+<hns@goldelico.com> wrote:
+>=20
+>> ping.
+>>=20
+>> Device omap3-gta04 is neither working with v5.3 nor linux-next quite =
+a while and we need a solution.
+>=20
+> Can't we just apply the last part of the patch in this thread:
+>=20
+> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi
+> b/arch/arm/boot/dts/omap3-gta04.dtsi
+> index 9a9a29fe88ec..47bab8e1040e 100644
+> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
+> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+> @@ -124,6 +124,7 @@
+>                        spi-max-frequency =3D <100000>;
+>                        spi-cpol;
+>                        spi-cpha;
+> +                       spi-cs-high;
+>=20
+>                        backlight=3D <&backlight>;
+>                        label =3D "lcd";
+>=20
+>=20
+> Surely this fixes the problem?
 
-> +
-> +    reg:
-> +      maxItems: 1
-> +
-> +  required:
-> +    - compatible
-> +    - reg
-> +
-> +properties:
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  compatible:
-> +    contains:
-> +      const: intel,lgm-emmc-phy
+yes, it is a workaround, but appears to violate some policies.
+E.g. the spi-cs-high; is undocumented but DT bindings maintainer
+seems to be against documenting it as I had proposed in my
+other patch.
 
-...this should not pass validation as they contradict each other.
+Rather he seems to have proposed a white-list in the driver code.
+So that the legacy mode is only becoming active for those systems
+which really need the legacy mode instead of everyone.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    maxItems: 1
-> +
-> +required:
-> +  - "#phy-cells"
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +examples:
-> +  - |
-> +    sysconf: chiptop@e0200000 {
-> +      compatible = "intel,lgm-syscon";
-> +      reg = <0xe0200000 0x100>;
+Then, we do not need this patch for GTA04.
 
-I'm still waiting for a complete description of what all is in this 
-block.
+So its up to you to decide which way to go. We are happy with
+any one that makes mainline work again asap...
 
-> +
-> +      emmc-phy: emmc-phy {
-> +        compatible = "intel,lgm-emmc-phy";
-> +        reg = <0x00a8 0x4>,
-> +              <0x00ac 0x4>,
-> +              <0x00b0 0x4>,
-> +              <0x00b4 0x4>;
+BR and thanks,
+Nikolaus
 
-Looks contiguous and can be a single entry:
-
-<0xa8 0x10>
-
-> +        clocks = <&emmc>;
-> +        clock-names = "emmcclk";
-> +        #phy-cells = <0>;
-> +      };
-> +    };
-> +...
-> -- 
-> 2.11.0
-> 
