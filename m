@@ -2,69 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D8C4B49AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1E6AB49C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389170AbfIQIjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:39:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49120 "EHLO mx1.redhat.com"
+        id S1730922AbfIQIrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:47:46 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:47524 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730188AbfIQIjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:39:04 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 28DCDC058CA4;
-        Tue, 17 Sep 2019 08:39:04 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6259A60BF7;
-        Tue, 17 Sep 2019 08:39:03 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 4B5D816E05; Tue, 17 Sep 2019 10:39:02 +0200 (CEST)
-Date:   Tue, 17 Sep 2019 10:39:02 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH 8/8] drm/vram: drop DRM_VRAM_MM_FILE_OPERATIONS
-Message-ID: <20190917083902.fn32iznnjm3zhudl@sirius.home.kraxel.org>
-References: <20190913122908.784-1-kraxel@redhat.com>
- <20190913122908.784-9-kraxel@redhat.com>
- <e9712055-c6db-5515-0c11-4d7add138856@suse.de>
+        id S1729610AbfIQIrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:47:46 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iA8pK-0005ZY-GI; Tue, 17 Sep 2019 10:27:10 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-rockchip@lists.infradead.org,
+        christoph.muellner@theobroma-systems.com,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 11/13] dt-bindings: document PX30 usb2phy General Register Files
+Date:   Tue, 17 Sep 2019 10:26:57 +0200
+Message-Id: <20190917082659.25549-11-heiko@sntech.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190917082659.25549-1-heiko@sntech.de>
+References: <20190917082659.25549-1-heiko@sntech.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9712055-c6db-5515-0c11-4d7add138856@suse.de>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 17 Sep 2019 08:39:04 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >  include/drm/drm_vram_mm_helper.h              | 82 +++++++++++++++++++
+One of the separate General Register Files contains the registers for
+controlling the usb2phy, so add the necessary binding compatible for it.
 
-> > diff --git a/include/drm/drm_vram_mm_helper.h b/include/drm/drm_vram_mm_helper.h
-> > new file mode 100644
-> 
-> Please rebase onto the latest drm-tip. This entire file has been removed
-> in a recent patch.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ Documentation/devicetree/bindings/soc/rockchip/grf.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-I did rebase already, then re-added the file by mistake.  Didn't pay
-enough attention while solving the conflict.  Fixed now.
-
-cheers,
-  Gerd
+diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.txt b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+index 46e27cd69f18..d7debec26ba4 100644
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+@@ -30,6 +30,7 @@ Required Properties:
+ - compatible: SGRF should be one of the following
+    - "rockchip,rk3288-sgrf", "syscon": for rk3288
+ - compatible: USB2PHYGRF should be one of the followings
++   - "rockchip,px30-usb2phy-grf", "syscon": for px30
+    - "rockchip,rk3328-usb2phy-grf", "syscon": for rk3328
+ - compatible: USBGRF should be one of the following
+    - "rockchip,rv1108-usbgrf", "syscon": for rv1108
+-- 
+2.20.1
 
