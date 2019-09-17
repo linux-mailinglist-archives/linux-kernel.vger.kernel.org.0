@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D658AB51B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:41:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2638B51B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729739AbfIQPka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 11:40:30 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37457 "EHLO
+        id S1729714AbfIQPk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 11:40:28 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47103 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729678AbfIQPk2 (ORCPT
+        with ESMTP id S1726038AbfIQPk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Sep 2019 11:40:28 -0400
 Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iAFaZ-0003Za-HU; Tue, 17 Sep 2019 17:40:23 +0200
+        id 1iAFaZ-0003Zb-HU; Tue, 17 Sep 2019 17:40:23 +0200
 Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
         (envelope-from <mfe@pengutronix.de>)
-        id 1iAFaY-0003ye-G0; Tue, 17 Sep 2019 17:40:22 +0200
+        id 1iAFaY-0003yg-GN; Tue, 17 Sep 2019 17:40:22 +0200
 From:   Marco Felsch <m.felsch@pengutronix.de>
 To:     zhang.chunyan@linaro.org, dianders@chromium.org,
         lgirdwood@gmail.com, broonie@kernel.org,
         ckeepax@opensource.cirrus.com
 Cc:     linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 2/3] regulator: of: fix suspend-min/max-voltage parsing
-Date:   Tue, 17 Sep 2019 17:40:20 +0200
-Message-Id: <20190917154021.14693-3-m.felsch@pengutronix.de>
+Subject: [PATCH 3/3] regulator: core: make regulator_register() EPROBE_DEFER aware
+Date:   Tue, 17 Sep 2019 17:40:21 +0200
+Message-Id: <20190917154021.14693-4-m.felsch@pengutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190917154021.14693-1-m.felsch@pengutronix.de>
 References: <20190917154021.14693-1-m.felsch@pengutronix.de>
@@ -42,40 +42,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the regulator-suspend-min/max-microvolt must be within the
-root regulator node but the dt-bindings specifies it as subnode
-properties for the regulator-state-[mem/disk/standby] node. The only DT
-using this bindings currently is the at91-sama5d2_xplained.dts and this
-DT uses it correctly. I don't know if it isn't tested but it can't work
-without this fix.
+Sometimes it can happen that the regulator_of_get_init_data() can't
+retrieve the config due to a not probed device the regulator depends on.
+Fix that by checking the return value of of_parse_cb() and return
+EPROBE_DEFER in such cases.
 
-Fixes: f7efad10b5c4 ("regulator: add PM suspend and resume hooks")
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 ---
- drivers/regulator/of_regulator.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/regulator/core.c         | 13 +++++++++++++
+ drivers/regulator/of_regulator.c | 19 ++++++++++++++-----
+ 2 files changed, 27 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index f9444f509440..e8e145c2a5df 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5047,6 +5047,19 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 
+ 	init_data = regulator_of_get_init_data(dev, regulator_desc, config,
+ 					       &rdev->dev.of_node);
++
++	/*
++	 * Sometimes not all resources are probed already so we need to take
++	 * that into account. This happens most the time if the ena_gpiod comes
++	 * from a gpio extender or something else.
++	 */
++	if (PTR_ERR(init_data) == -EPROBE_DEFER) {
++		kfree(config);
++		kfree(rdev);
++		ret = -EPROBE_DEFER;
++		goto rinse;
++	}
++
+ 	/*
+ 	 * We need to keep track of any GPIO descriptor coming from the
+ 	 * device tree until we have handled it over to the core. If the
 diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 9112faa6a9a0..38dd06fbab38 100644
+index 38dd06fbab38..ef7198b76e50 100644
 --- a/drivers/regulator/of_regulator.c
 +++ b/drivers/regulator/of_regulator.c
-@@ -231,12 +231,12 @@ static int of_get_regulation_constraints(struct device *dev,
- 					"regulator-off-in-suspend"))
- 			suspend_state->enabled = DISABLE_IN_SUSPEND;
+@@ -445,11 +445,20 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 		goto error;
+ 	}
  
--		if (!of_property_read_u32(np, "regulator-suspend-min-microvolt",
--					  &pval))
-+		if (!of_property_read_u32(suspend_np,
-+				"regulator-suspend-min-microvolt", &pval))
- 			suspend_state->min_uV = pval;
+-	if (desc->of_parse_cb && desc->of_parse_cb(child, desc, config)) {
+-		dev_err(dev,
+-			"driver callback failed to parse DT for regulator %pOFn\n",
+-			child);
+-		goto error;
++	if (desc->of_parse_cb) {
++		int ret;
++
++		ret = desc->of_parse_cb(child, desc, config);
++		if (ret) {
++			if (ret == -EPROBE_DEFER) {
++				of_node_put(child);
++				return ERR_PTR(-EPROBE_DEFER);
++			}
++			dev_err(dev,
++				"driver callback failed to parse DT for regulator %pOFn\n",
++				child);
++			goto error;
++		}
+ 	}
  
--		if (!of_property_read_u32(np, "regulator-suspend-max-microvolt",
--					  &pval))
-+		if (!of_property_read_u32(suspend_np,
-+				"regulator-suspend-max-microvolt", &pval))
- 			suspend_state->max_uV = pval;
- 
- 		if (!of_property_read_u32(suspend_np,
+ 	*node = child;
 -- 
 2.20.1
 
