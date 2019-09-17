@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD968B5567
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 20:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6453AB5572
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 20:39:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfIQSgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 14:36:03 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38186 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfIQSgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 14:36:03 -0400
-Received: by mail-ot1-f68.google.com with SMTP id e11so2826371otl.5;
-        Tue, 17 Sep 2019 11:36:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=89MnuguQ9bvZxHwMu/z5v0jmYgMuK+bvkbMFTX2cRFk=;
-        b=Yp20852S1cn2UCaZ5C3XkUEYzKgRZOyto7t4kPfBmyw2k7+UgS5WN9V90j4pCxcrc7
-         Ap4fSyA4m8xzZOXimAX01lQXHbSkXQwuKmEGyE6vMCiHX7ZRFOfV0FStQ99KBOjIrEDw
-         FH4WW58iPffBhmBmKB1wM1QgDc/BaTO9KI0/5HeEKy/wULTmUIw5yDt60rmYTcMSgI/m
-         EM9WGJ5lubduzkREJeoayaBKwuei1tePqah5ty+gx73fMPta//VVzHS3CdvZyCpUgLUb
-         agVdSQrPsPmkX3zzdcja6E76z8peSbieKahIVAtM07wIalHuQBClcuKh5saWPLY10UhL
-         NzaA==
-X-Gm-Message-State: APjAAAXrjKr6pFu8yZ3miTDtoxw/DdbgI6sVHq8l/cbmfk2tbSyxm5lb
-        aPR6ypctYsCYetu0ZhdA4JxaLvA0emufy0QXao4=
-X-Google-Smtp-Source: APXvYqyn9SE7wRWHYVeLcbDaLC/fA8y5pA7lkSh6vNLDdZy2V2ds67R6P3uJv32ZyOi3p+RMtTl90k1tqw+mRyZxi4Q=
-X-Received: by 2002:a9d:5784:: with SMTP id q4mr191546oth.107.1568745362364;
- Tue, 17 Sep 2019 11:36:02 -0700 (PDT)
+        id S1727193AbfIQSjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 14:39:42 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:51318 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbfIQSjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 14:39:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=taIBPGYkIVMe8MiFytbX0T9rZMz92fCysG30eRO4viY=; b=QibepfwKOsVPkP14yx0txbt1gn
+        KhjMQJVLOUuv3pI9UGICUFKsyVRL3QmuUYKQcP+UEkpfd4wmtl/XFU5fajEskaTBC+ix8Wvi3QCOn
+        iKnteiC8KLNymp63/zWS6q1eIwyWQabPp8lFFoDw3NC53fAA3i71/ykme+IW8LTsyl6E=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iAINy-0002yN-5X; Tue, 17 Sep 2019 20:39:34 +0200
+Date:   Tue, 17 Sep 2019 20:39:34 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Baruch Siach <baruch@tkos.co.il>,
+        Fabio Estevam <festevam@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        tinywrkb <tinywrkb@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] ARM: dts: imx6dl: SolidRun: add phy node with 100Mb/s
+ max-speed
+Message-ID: <20190917183934.GJ20778@lunn.ch>
+References: <20190917133253.GA1210141@arch-dsk-01>
+ <20190917133942.GR25745@shell.armlinux.org.uk>
+ <20190917151707.GV25745@shell.armlinux.org.uk>
+ <20190917153027.GW25745@shell.armlinux.org.uk>
+ <20190917163427.GA1475935@arch-dsk-01>
+ <20190917170419.GX25745@shell.armlinux.org.uk>
+ <20190917171913.GY25745@shell.armlinux.org.uk>
+ <20190917172658.GB9591@lunn.ch>
+ <20190917173728.GZ25745@shell.armlinux.org.uk>
+ <20190917181905.GA25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
-References: <20190821124850.9592-1-yuehaibing@huawei.com>
-In-Reply-To: <20190821124850.9592-1-yuehaibing@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 17 Sep 2019 20:35:51 +0200
-Message-ID: <CAMuHMdXdd4oiHqTpFTYBTSeCB6A78_gSGmwPy5EgPRZXibOqZw@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: ethernet: ti: use devm_platform_ioremap_resource()
- to simplify code
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        ivan.khoronzhuk@linaro.org, Andrew Lunn <andrew@lunn.ch>,
-        =?UTF-8?Q?Petr_=C5=A0tetiar?= <ynezz@true.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
-        <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190917181905.GA25745@shell.armlinux.org.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi YueHaibing,
+> > Well, the _correct_ driver needs to be used for the PHY specific
+> > features to be properly controlled.  Using the generic driver
+> > in this situation will not be guaranteed to work.
 
-On Wed, Aug 21, 2019 at 2:51 PM YueHaibing <yuehaibing@huawei.com> wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/ti/cpsw.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-> index 32a8974..5401095 100644
-> --- a/drivers/net/ethernet/ti/cpsw.c
-> +++ b/drivers/net/ethernet/ti/cpsw.c
-> @@ -2764,7 +2764,7 @@ static int cpsw_probe(struct platform_device *pdev)
->         struct net_device               *ndev;
->         struct cpsw_priv                *priv;
->         void __iomem                    *ss_regs;
-> -       struct resource                 *res, *ss_res;
-> +       struct resource                 *ss_res;
->         struct gpio_descs               *mode;
->         const struct soc_device_attribute *soc;
->         struct cpsw_common              *cpsw;
-> @@ -2798,8 +2798,7 @@ static int cpsw_probe(struct platform_device *pdev)
+I fully agree about the PHY driver. I'm expect this device is
+violating c22 when it modifies the advertisement register itself. So
+all bets are off for the genphy.
 
-And just out-of-context, we also have:
+> Well, this hasn't worked, but not for the obvious reason.  Register 0x14
+> is documented as read/write.  Bits 15:6 are reserved, bit 5 is the
+> smart speed enable, 4:2 configures the attempts, bit 1 sets the link
+> stable condition, bit 0 is reserved.
+> 
+> Writing 0x80c results in the register reading back 0x82c.  Writing
+> 0x800 results in the same.  Writing 0 reads back 0x2c.  Writing 0xffff
+> seems to prevent packets being passed - and at that point I lost
+> control so I couldn't see what the result was.
+> 
+> There is nothing in the data sheet which suggests that there is any
+> gating of this register.  So it looks like we're stuck with smartspeed
+> enabled.
+> 
+> So, I think there's only two remaining ways forward - to revert commit
+> 5502b218e001 to restore the old behaviour, read back the advertisement
+> from the PHY along with the rest of the status, as I've previously
+> stated.  It means that phylib will modify phydev->advertising at
+> random points, just as it modifies phydev->lp_advertising, so locking
+> may become an issue.  The revert approach is probably best until we
+> have something working along those lines.
 
-        ss_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-        ss_regs = devm_ioremap_resource(dev, ss_res);
-        if (IS_ERR(ss_regs))
+We have a couple of other PHYs which support downshift. We should see
+if we can follow what they do. What is i think important is that
+read_status return the correct speed. So we probably cannot use
+genphy_read_status() as is. Maybe we should split genphy_read_status()
+into two, so the register reading bit can be done unconditionally by
+phy drivers for hardware which don't report link down when they
+should?
 
-which was not detected as being the same pattern?
-
-Interesting...
-
->                 return PTR_ERR(ss_regs);
->         cpsw->regs = ss_regs;
->
-> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -       cpsw->wr_regs = devm_ioremap_resource(dev, res);
-> +       cpsw->wr_regs = devm_platform_ioremap_resource(pdev, 1);
->         if (IS_ERR(cpsw->wr_regs))
->                 return PTR_ERR(cpsw->wr_regs);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+    Andrew
