@@ -2,86 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E369AB5316
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A536B5320
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:36:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbfIQQf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 12:35:26 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43003 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730516AbfIQQfY (ORCPT
+        id S1730569AbfIQQgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:36:07 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51610 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbfIQQgG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 12:35:24 -0400
-Received: by mail-io1-f67.google.com with SMTP id n197so9084314iod.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=294+1pNE1QvrA8K+k/rIQCwQYW84ev1PmbYotCH5RCQ=;
-        b=Tfh+5yMrHUYKeKA9+q9X6Xhm8+u0RWVyyxHdAX3aZLxwUsRnoeNaDspvl/Un73Bwcq
-         pnSPCVbxML9W+UK0zA6h+xDzQ1aNt9SoJrM1RHuV/WAJ4yhq/ZC1U64Bi2Fj2iYsBIs8
-         KCi2E5pJsZ7F3KklKGa85rzhKvCnRActTpNuo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=294+1pNE1QvrA8K+k/rIQCwQYW84ev1PmbYotCH5RCQ=;
-        b=Jm9r2H9s30MWVXjPGXwkebeaNYyQpZFmRwoHgSTqLLqgtVfm2ef8N6xyd3wcs0AkZY
-         t0PrlzN4VpeynI2eOiE8k1zwoJ9WSvgoyAO9O20OtsA3HsSmTwuoynnbKgIP58l5JiI2
-         YhP0hYidGZBDHQSRXpMBvdBUGbDb31SrVVx8yJD6p4+f46Ta756zqtouFTjAUouAoJhq
-         Ff1OIgqPGHl151x/VAf+MqsM+krub6TeJ5orWFUOxTOsMp081Zx0sR3p8omM6SH2QPUO
-         wCA8jQawz7fsjuma4vA9fi2Oz/9nx7N0zOiKVTT3SoThI7bddCDSxCiyWXmHj+p4zaca
-         i6pQ==
-X-Gm-Message-State: APjAAAWZ/CSBCD3csSTFmYmWT9smPNKREmnD8cvlMMR6Mo8791qEyhyE
-        QNXKZi84bQg78g3jYMYefkzabA==
-X-Google-Smtp-Source: APXvYqylcBKYmKIgGAXRltGvqqvimwBhgilW0kwtUz36uYE1R/OGf1EPI+4k/kLL9WPdRjdp2/iXxA==
-X-Received: by 2002:a02:ce2b:: with SMTP id v11mr2431784jar.134.1568738123063;
-        Tue, 17 Sep 2019 09:35:23 -0700 (PDT)
-Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id v3sm2593781ioh.51.2019.09.17.09.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 09:35:22 -0700 (PDT)
-From:   Shuah Khan <skhan@linuxfoundation.org>
-To:     mchehab@kernel.org, helen.koike@collabora.com,
-        skhan@linuxfoundation.org, andrealmeid@collabora.com,
-        dafna.hirschfeld@collabora.com, hverkuil-cisco@xs4all.nl,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        nicolas.ferre@microchip.com
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 5/5] MAINTAINERS: Add reviewer to vimc driver
-Date:   Tue, 17 Sep 2019 10:35:12 -0600
-Message-Id: <e0665a825bbef9027bcbc5a9d14c3ac8b902d3c3.1568689325.git.skhan@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1568689325.git.skhan@linuxfoundation.org>
-References: <cover.1568689325.git.skhan@linuxfoundation.org>
+        Tue, 17 Sep 2019 12:36:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GqRJ2GhiTNh8OtBngBM3P/jCzeuLxp057cr1YC1H4dQ=; b=uS+mNOPWA66TCc3Sdi47jrH+3
+        mpiiPL+sdOSO+bkMGO0J+UDueJaneeNZJyRKkHb7OyxKxBFOXUle3lPb3Iskzkzzd62nExmCS4HqM
+        bSzls4wrq57D7HXd6I2Og2biO4paFtUn6W8QLyYCZLL/d9k24JfewfNS1/lwy02M82T5HgCaasL5I
+        UVGrzbMOeidW0SyTYs8NcW1ySxM1ddC8eeEGT7Qh8rKZXAwpzPLJ7V7JAjUJbzbtJ6CtbVRV3Cl03
+        +eStJWdCArjl5NLZgww+/7iFEKtotH3oJJNXGLgQ58Y+ugr+DU9mHE4pusJDHSwn7vP9EbhBas7gb
+        h0xA1Vz1w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iAGSU-0002Sy-7A; Tue, 17 Sep 2019 16:36:06 +0000
+Date:   Tue, 17 Sep 2019 09:36:06 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] usercopy: Skip HIGHMEM page checking
+Message-ID: <20190917163606.GU29434@bombadil.infradead.org>
+References: <201909161431.E69B29A0@keescook>
+ <20190917003209.GS29434@bombadil.infradead.org>
+ <201909162003.FEEAC65@keescook>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201909162003.FEEAC65@keescook>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After practically re-writing the driver to collpase it into a monolith,
-I am adding myself as a reviewer for vimc driver.
+On Mon, Sep 16, 2019 at 08:05:00PM -0700, Kees Cook wrote:
+> On Mon, Sep 16, 2019 at 05:32:09PM -0700, Matthew Wilcox wrote:
+> > On Mon, Sep 16, 2019 at 02:32:56PM -0700, Kees Cook wrote:
+> > > When running on a system with >512MB RAM with a 32-bit kernel built with:
+> > > 
+> > > 	CONFIG_DEBUG_VIRTUAL=y
+> > > 	CONFIG_HIGHMEM=y
+> > > 	CONFIG_HARDENED_USERCOPY=y
+> > > 
+> > > all execve()s will fail due to argv copying into kmap()ed pages, and on
+> > > usercopy checking the calls ultimately of virt_to_page() will be looking
+> > > for "bad" kmap (highmem) pointers due to CONFIG_DEBUG_VIRTUAL=y:
+> > 
+> > I don't understand why you want to skip the check.  We must not cross a
+> > page boundary of a kmapped page.
+> 
+> That requires a new test which hasn't existed before. First I need to
+> fix the bug, and then we can add a new test and get that into -next,
+> etc.
 
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+I suppose that depends where your baseline is.  From the perspective
+of "before Kees added this feature", your point of view makes sense.
+From the perspective of "what's been shipping for the last six months",
+this is a case which has simply not happened before now (or we'd've seen
+a bug report).
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7c62b45201d7..4529d257f8db 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17041,6 +17041,7 @@ F:	include/media/videobuf2-*
- 
- VIMC VIRTUAL MEDIA CONTROLLER DRIVER
- M:	Helen Koike <helen.koike@collabora.com>
-+R:	Shuah Khan <skhan@linuxfoundation.org>
- L:	linux-media@vger.kernel.org
- T:	git git://linuxtv.org/media_tree.git
- W:	https://linuxtv.org
--- 
-2.20.1
+I don't think you need to change anything for check_page_span() to do
+the right thing.  The rodata/data/bss checks will all fall through.
+If the copy has the correct bounds, the 'wholly within one base page'
+check will pass and it'll return.  If the copy does span a page,
+the virt_to_head_page(end) call will return something bogus, then the
+PageReserved and CMA test will cause the usercopy_abort() test to fail.
 
+So I think your first patch is the right patch.
