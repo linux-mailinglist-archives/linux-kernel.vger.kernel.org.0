@@ -2,74 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72AECB5041
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:22:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5345AB5058
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:28:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbfIQOWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:22:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50946 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725922AbfIQOWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:22:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A8884B6D9;
-        Tue, 17 Sep 2019 14:22:23 +0000 (UTC)
-Message-ID: <1568730466.3329.4.camel@suse.cz>
-Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Quentin Perret <qperret@qperret.net>
-Cc:     srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, bp@suse.de,
-        lenb@kernel.org, rjw@rjwysocki.net, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mgorman@techsingularity.net, matt@codeblueprint.co.uk,
-        viresh.kumar@linaro.org, juri.lelli@redhat.com, pjt@google.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com
-Date:   Tue, 17 Sep 2019 16:27:46 +0200
-In-Reply-To: <20190914105708.GA12877@qperret.net>
-References: <20190909024216.5942-1-ggherdovich@suse.cz>
-         <20190909024216.5942-2-ggherdovich@suse.cz>
-         <20190914105708.GA12877@qperret.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727976AbfIQO2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:28:11 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39479 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfIQO2K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 10:28:10 -0400
+Received: by mail-ot1-f66.google.com with SMTP id s22so3223537otr.6;
+        Tue, 17 Sep 2019 07:28:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dq5KSLPgssnZJkXSQ/7XfJ9L3JyQqyDlXS5uQBl4Tyc=;
+        b=qADoi4KGGeekjNr8hgtMqgYOoGHzwHJMzF8P1jd9dsBt1oLQ7HOzkKpIEUuA87zrCW
+         N1VCK1XSwboXXHV02Rg02OeleieoFWqonHWWEOWjPQPCm8gYKvUm5UXhvjm3n2itd+23
+         3DmnTlOvPoNMakBBClXsAk4snphNRDJaRQyR6GXzRWV3c6pkM26iorxB7JB2t19Vx64D
+         2R1bf6kR2X/m8fGy2JSgfDNOkjVu4MX87L0LqLLCB4KvGLCfZ5pzia5MZ5mTSr9Y3pY2
+         2DLIhI3PLjanV8cnzaAiPzx5niP6kSHhAfJtdTsAO3xEswgrYfVz0mtzof7JJzD7KXLq
+         DZxg==
+X-Gm-Message-State: APjAAAX0TyZ/nLmePMje8wYp4uNilREpVw8CKZSRHaCBMhgjN23te30O
+        VlCkDPRwgZE8JU6sNoB13qlCKMY=
+X-Google-Smtp-Source: APXvYqyKeVBb7FDox3duyXtElvoxiAR3ydGskKPrIwTLgPjUgRPdZc4Aekd8EIPkn7mTC8YkHehpsQ==
+X-Received: by 2002:a9d:7b4d:: with SMTP id f13mr2740477oto.365.1568730489731;
+        Tue, 17 Sep 2019 07:28:09 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 94sm718166oty.44.2019.09.17.07.28.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 07:28:08 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 09:28:08 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Eugen.Hristev@microchip.com
+Cc:     wsa@the-dreams.de, peda@axentia.se, mark.rutland@arm.com,
+        Ludovic.Desroches@microchip.com, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, alexandre.belloni@bootlin.com,
+        Nicolas.Ferre@microchip.com
+Subject: Re: [PATCH v5 2/9] dt-bindings: i2c: add bindings for i2c analog and
+ digital filter
+Message-ID: <20190917142808.GA7900@bogus>
+References: <1568189911-31641-1-git-send-email-eugen.hristev@microchip.com>
+ <1568189911-31641-3-git-send-email-eugen.hristev@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568189911-31641-3-git-send-email-eugen.hristev@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Quentin,
-
-On Sat, 2019-09-14 at 12:57 +0200, Quentin Perret wrote:
-> Hi Giovanni
+On Wed, Sep 11, 2019 at 08:24:20AM +0000, Eugen.Hristev@microchip.com wrote:
+> From: Eugen Hristev <eugen.hristev@microchip.com>
 > 
-> On Monday 09 Sep 2019 at 04:42:15 (+0200), Giovanni Gherdovich wrote:
-> > +static inline long arch_scale_freq_capacity(int cpu)
-> > +{
-> > +	if (static_cpu_has(X86_FEATURE_APERFMPERF))
-> > +		return per_cpu(arch_cpu_freq, cpu);
+> Some i2c controllers have a built-in digital or analog filter.
+> This is specifically required depending on the hardware PCB/board.
+> Some controllers also allow specifying the maximum width of the
+> spikes that can be filtered for digital filter. The width length can be
+> specified in nanoseconds.
+> Analog filters can be configured to have a cutoff frequency (low-pass filter).
+> This frequency can be specified in Hz.
+> Added an optional property for such types of analog filters.
 > 
-> So, if this is conditional, perhaps you could also add this check in an
-> x86-specific implementation of arch_scale_freq_invariant() ? That would
-> guide sugov in the right path (see get_next_freq()) if APERF/MPERF are
-> unavailable.
-> 
-> > +	return 1024 /* SCHED_CAPACITY_SCALE */;
-> > +}
->
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c.txt | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 
-Good remark. If the cpu doesn't have APERF/MPERF, the choice here is that
-freq_curr is constantly equal to freq_max, and the scaling factor is 1 all the
-time.
-
-But I'm checking this static_cpu_has() every time I do a frequency update;
-arguably schedutil should be smarter and settle such a case once and for all
-at boot time.
-
-I'll check what's the cost of static_cpu_has() and if it's non-negligible I'll
-do what you suggest (x86-specific version of arch_scale_freq_invariant().
-
-
-Giovanni
+Reviewed-by: Rob Herring <robh@kernel.org>
