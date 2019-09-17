@@ -2,54 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28019B58AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 01:40:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC58B58AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 01:40:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbfIQXk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 19:40:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43566 "EHLO mail.kernel.org"
+        id S1728225AbfIQXkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 19:40:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbfIQXkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 19:40:21 -0400
-Subject: Re: [GIT PULL] asm-generic changes for v5.4
+        id S1727648AbfIQXkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 19:40:22 -0400
+Subject: Re: [git pull] m68knommu changes for v5.4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1568763621;
-        bh=l3BZJBzOjZ3s2WuZzMnDDAXWEhnQBH7p4cVjus3ZgQw=;
+        bh=QsD9Ft8k8/ZBv4qSv2VfLh7Yih4Wf1/7X2iQYJSWxCA=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=FdZ4zoqseeGdChypkw2Gy7fHFJs4sYuVjplSZ880lSamiWKweapizWXTivE0kQaHA
-         zl+wZ4e2HPr68iIO/4HiRh3Kuzlw6Fj2zi8OARqozZVu2eTfwjCHDuslPAiiA3N/ox
-         TEeIYNwfhByepMDg7HPs82Lpmd7DlIQgY/V84/Fw=
+        b=Xfo79sfAzbmAS4YmaGCnKV334KzFpUOWtUi4MO+l1pnQ7Rpj1uz/ku5HBheX3gAqy
+         HxpYdn9LMymqXVQ4WmyWVGAiuWOglOzWp0DrIFBIc/x9eCmaXdmaSto4yrgC+qOIQo
+         fcMPnZj8PM3EfRH4LoqFeeFAhbyU/vc0iGw3xqWQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAK8P3a0N9+-fmmg=oPVsKmoNb0vAYsASOneXUYBVAp8nyJEwdQ@mail.gmail.com>
-References: <CAK8P3a0N9+-fmmg=oPVsKmoNb0vAYsASOneXUYBVAp8nyJEwdQ@mail.gmail.com>
+In-Reply-To: <a6d7c0bc-a6df-62be-ed2b-944551def5af@linux-m68k.org>
+References: <a6d7c0bc-a6df-62be-ed2b-944551def5af@linux-m68k.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAK8P3a0N9+-fmmg=oPVsKmoNb0vAYsASOneXUYBVAp8nyJEwdQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git
- tags/asm-generic-5.4
-X-PR-Tracked-Commit-Id: 9b87647c665dbf93173ca2f43986902b59dfbbba
+X-PR-Tracked-Message-Id: <a6d7c0bc-a6df-62be-ed2b-944551def5af@linux-m68k.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git for-next
+X-PR-Tracked-Commit-Id: 372ea263b3d9cdeb70f8cffa025b2e0875e51b62
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b8456f945955e663853eecbbf1bd27e4390ce6d6
-Message-Id: <156876362100.26432.17037456256704307775.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 16da0961d3d5521f6541a422c5485ea4ddfe860b
+Message-Id: <156876362169.26432.9408900653411218770.pr-tracker-bot@kernel.org>
 Date:   Tue, 17 Sep 2019 23:40:21 +0000
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Denis Efremov <efremov@linux.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     torvalds@linux-foundation.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux/m68k <linux-m68k@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Sep 2019 21:15:04 +0200:
+The pull request you sent on Tue, 17 Sep 2019 13:38:17 +1000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-5.4
+> git://git.kernel.org/pub/scm/linux/kernel/git/gerg/m68knommu.git for-next
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b8456f945955e663853eecbbf1bd27e4390ce6d6
+https://git.kernel.org/torvalds/c/16da0961d3d5521f6541a422c5485ea4ddfe860b
 
 Thank you!
 
