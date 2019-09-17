@@ -2,124 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48201B48E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE934B48F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404699AbfIQILr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:11:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53500 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728802AbfIQILr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:11:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F180EB11B;
-        Tue, 17 Sep 2019 08:11:44 +0000 (UTC)
-Date:   Tue, 17 Sep 2019 10:11:44 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Paul Turner <pjt@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Prarit Bhargava <prarit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: printk meeting at LPC
-Message-ID: <20190917081144.g254hccous7haavu@pathway.suse.cz>
-References: <20190905143118.GP2349@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
- <20190905121101.60c78422@oasis.local.home>
- <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
- <87k1acz5rx.fsf@linutronix.de>
- <cfc7b1fa-e629-19a6-154b-0dd4f5604aa7@I-love.SAKURA.ne.jp>
- <20190916104624.n3jh363z37ah2kxa@pathway.suse.cz>
- <20190916094314.6053f988@gandalf.local.home>
- <20190916094314.6053f988@gandalf.local.home>
- <87r24giac9.fsf@linutronix.de>
+        id S2404742AbfIQINd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:13:33 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:46318 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728986AbfIQINc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:13:32 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iA8bz-0005RU-WA; Tue, 17 Sep 2019 10:13:24 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org, d.schultz@phytec.de,
+        linux-rockchip@lists.infradead.org,
+        christoph.muellner@theobroma-systems.com, tony.xie@rock-chips.com,
+        stable@vger.kernel.org, Elaine Zhang <zhangqing@rock-chips.com>,
+        Joseph Chen <chenjh@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 1/4] mfd: rk808: fix rk818 ID template
+Date:   Tue, 17 Sep 2019 10:12:53 +0200
+Message-Id: <20190917081256.24919-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r24giac9.fsf@linutronix.de>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-09-16 16:28:54, John Ogness wrote:
-> On 2019-09-16, Steven Rostedt <rostedt@goodmis.org> wrote:
-> >>>> 9. Support for printk dictionaries will be discontinued. I will
-> >>>> look into who is using this and why. If printk dictionaries are
-> >>>> important for you, speak up now!
-> >>> 
-> >>> I think that dev_printk() is using "const char *dict, size_t
-> >>> dictlen," part via create_syslog_header(). Some userspace programs
-> >>> might depend on availability of such information.
-> >> 
-> >> Yeah, but it seems to be the only dictionary writer. There were
-> >> doubts (during the meeting) whether anyone was actually using the
-> >> information.
-> >> 
-> >> Hmm, it seems that journalctl is able to filer device specific
-> >> information, for example, I get:
-> >> 
-> >> $> journalctl _KERNEL_DEVICE=+usb:2-1  
-> >> -- Logs begin at Tue 2019-08-13 09:00:03 CEST, end at Mon 2019-09-16 12:32:58 CEST. --
-> >> Aug 13 09:00:04 linux-qszd kernel: usb 2-1: new high-speed USB device number 2 using ehci-pci
-> >> 
-> >> One question is if anyone is using this filtering. Simple grep is
-> >> enough. Another question is whether it really needs to get passed
-> >> this way.
-> >> 
-> >
-> > If worse comes to worse, perhaps we let the console decide what to do
-> > with it. Where all consoles but the "kmsg" one ignores it?
+From: Daniel Schultz <d.schultz@phytec.de>
 
-/dev/kmsg is one interface passing dictionary. The other is
-netconsole. It is the only console with CON_EXTENDED flag set.
+The Rockchip PMIC driver can automatically detect connected component
+versions by reading the ID_MSB and ID_LSB registers. The probe function
+will always fail with RK818 PMICs because the ID_MSK is 0xFFF0 and the
+RK818 template ID is 0x8181.
 
-> > Then journalctl should work as normal.
-> >
-> > Or will this break one of our other changes?
+This patch changes this value to 0x8180.
 
-It just complicates the code because we need to store and read
-the information separately.
+Fixes: 9d6105e19f61 ("mfd: rk808: Fix up the chip id get failed")
+Cc: stable@vger.kernel.org
+Cc: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: Joseph Chen <chenjh@rock-chips.com>
+Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+[resend as it seems to have dropped on the floor]
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ include/linux/mfd/rk808.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+index 7cfd2b0504df..a59bf323f713 100644
+--- a/include/linux/mfd/rk808.h
++++ b/include/linux/mfd/rk808.h
+@@ -610,7 +610,7 @@ enum {
+ 	RK808_ID = 0x0000,
+ 	RK809_ID = 0x8090,
+ 	RK817_ID = 0x8170,
+-	RK818_ID = 0x8181,
++	RK818_ID = 0x8180,
+ };
+ 
+ struct rk808 {
+-- 
+2.20.1
 
-> The consoles will just iterate the ringbuffer. So if any console needs
-> dictionary information, that information needs to be stored in the
-> ringbuffer as well.
-> 
-> The dictionary text and message text could be stored as concatenated
-> strings. The descriptor would point separately to the beginning of
-> dictionary and message. So the data-buffer would still be a clean
-> collection of text. But AFAIK Linus didn't want to see that "extra" text
-> at all.
-
-I would double check with Linus that he would consider this as
-breaking userspace.
-
-IMHO, it is perfectly fine to add this support later in separate patch(set) if
-really necessary. I can't imagine that anyone would depend on this
-feature when bisecting kernel. We could discuss and handle this later.
-At least after the merge window.
-
-> If we want to keep dictionary text out of the data-buffer, we could have
-> a 2nd data-buffer dedicated for dictionary text. I expect it would not
-> really complicate things. Especially if the dictionary part was "best
-> effort" (i.e. if the dictionary text does not fit in the free part of
-> its data-buffer, it is dropped).
-
-Interesting idea. I like it if it does not complicate the code too much.
-
-Best Regards,
-Petr
