@@ -2,66 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A06C9B4B7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19AB9B4B87
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfIQKEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 06:04:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48272 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726482AbfIQKE3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 06:04:29 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 87BE910F2E8A;
-        Tue, 17 Sep 2019 10:04:29 +0000 (UTC)
-Received: from gondolin (dhcp-192-230.str.redhat.com [10.33.192.230])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E39B860BEC;
-        Tue, 17 Sep 2019 10:04:24 +0000 (UTC)
-Date:   Tue, 17 Sep 2019 12:04:22 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Parav Pandit <parav@mellanox.com>
-Cc:     alex.williamson@redhat.com, jiri@mellanox.com,
-        kwankhede@nvidia.com, davem@davemloft.net, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] mdev: Make mdev alias unique among all mdevs
-Message-ID: <20190917120422.4d71e406.cohuck@redhat.com>
-In-Reply-To: <20190902042436.23294-3-parav@mellanox.com>
-References: <20190826204119.54386-1-parav@mellanox.com>
-        <20190902042436.23294-1-parav@mellanox.com>
-        <20190902042436.23294-3-parav@mellanox.com>
-Organization: Red Hat GmbH
+        id S1726744AbfIQKHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 06:07:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41162 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfIQKHc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 06:07:32 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iAAOO-0001K5-MJ; Tue, 17 Sep 2019 12:07:28 +0200
+Date:   Tue, 17 Sep 2019 12:07:28 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH RT v3 5/5] rcutorture: Avoid problematic critical section
+ nesting on RT
+Message-ID: <20190917100728.wnhdvmbbzzxolef4@linutronix.de>
+References: <20190911165729.11178-1-swood@redhat.com>
+ <20190911165729.11178-6-swood@redhat.com>
+ <20190912221706.GC150506@google.com>
+ <500cabaa80f250b974409ee4a4fca59bf2e24564.camel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Tue, 17 Sep 2019 10:04:29 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <500cabaa80f250b974409ee4a4fca59bf2e24564.camel@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  1 Sep 2019 23:24:33 -0500
-Parav Pandit <parav@mellanox.com> wrote:
-
-> Mdev alias should be unique among all the mdevs, so that when such alias
-> is used by the mdev users to derive other objects, there is no
-> collision in a given system.
+On 2019-09-16 11:55:57 [-0500], Scott Wood wrote:
+> On Thu, 2019-09-12 at 18:17 -0400, Joel Fernandes wrote:
+> > On Wed, Sep 11, 2019 at 05:57:29PM +0100, Scott Wood wrote:
+> > > rcutorture was generating some nesting scenarios that are not
+> > > reasonable.  Constrain the state selection to avoid them.
+> > > 
+> > > Example #1:
+> > > 
+> > > 1. preempt_disable()
+> > > 2. local_bh_disable()
+> > > 3. preempt_enable()
+> > > 4. local_bh_enable()
+> > > 
+> > > On PREEMPT_RT, BH disabling takes a local lock only when called in
+> > > non-atomic context.  Thus, atomic context must be retained until after
+> > > BH
+> > > is re-enabled.  Likewise, if BH is initially disabled in non-atomic
+> > > context, it cannot be re-enabled in atomic context.
+> > > 
+> > > Example #2:
+> > > 
+> > > 1. rcu_read_lock()
+> > > 2. local_irq_disable()
+> > > 3. rcu_read_unlock()
+> > > 4. local_irq_enable()
+> > 
+> > If I understand correctly, these examples are not unrealistic in the real
+> > world unless RCU is used in the scheduler.
 > 
-> Signed-off-by: Parav Pandit <parav@mellanox.com>
-> 
-> ---
-> Changelog:
-> v2->v3:
->  - Changed strcmp() ==0 to !strcmp()
-> v1->v2:
->  - Moved alias NULL check at beginning
-> v0->v1:
->  - Fixed inclusiong of alias for NULL check
->  - Added ratelimited debug print for sha1 hash collision error
-> ---
->  drivers/vfio/mdev/mdev_core.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> I hope you mean "not realistic", at least when it comes to explicit
+> preempt/irq disabling rather than spinlock variants that don't disable
+> preempt/irqs on PREEMPT_RT.
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+We have:
+- local_irq_disable() (+save)
+- spin_lock()
+- local_bh_disable()
+- preempt_disable()
+
+On non-RT you can (but should not) use the counter part of the function
+in random order like:
+	local_bh_disable();
+	local_irq_disable();
+	local_bh_enable();
+	local_irq_enable();
+
+The non-RT will survive this. On RT the counterpart functions have to be
+used in reverse order:
+	local_bh_disable();
+	local_irq_disable();
+	local_irq_enable();
+	local_bh_enable();
+
+or the kernel will fall apart.
+
+Since you _can_ use it in random order Paul wants to test that the
+random use of those function does not break RCU in any way. Since they
+can not be used on RT in random order it has been agreed that we keep
+the test for !RT but disable it on RT.
+
+> -Scott
+
+Sebastian
