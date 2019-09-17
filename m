@@ -2,67 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D6ECB4B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F078DB4B66
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:58:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbfIQJyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:54:53 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57801 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725972AbfIQJyx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:54:53 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC9DC308213F;
-        Tue, 17 Sep 2019 09:54:52 +0000 (UTC)
-Received: from thinkpad.redhat.com (ovpn-116-217.ams2.redhat.com [10.36.116.217])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E2A965D6A9;
-        Tue, 17 Sep 2019 09:54:50 +0000 (UTC)
-From:   Laurent Vivier <lvivier@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Amit Shah <amit@kernel.org>, linux-crypto@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Laurent Vivier <lvivier@redhat.com>
-Subject: [PATCH] hw_random: don't wait on add_early_randomness()
-Date:   Tue, 17 Sep 2019 11:54:50 +0200
-Message-Id: <20190917095450.11625-1-lvivier@redhat.com>
+        id S1726243AbfIQJ6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:58:25 -0400
+Received: from mail-40132.protonmail.ch ([185.70.40.132]:47085 "EHLO
+        mail-40132.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfIQJ6X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:58:23 -0400
+Date:   Tue, 17 Sep 2019 09:58:13 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aurabindo.in;
+        s=protonmail; t=1568714301;
+        bh=ftJdTOKlBr/AG20OwG1MTUH8i2f7oG0aNtJYOC26Q5I=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=h7fwfvpvSgI4B6Q40CBaRg5cnJ0/Iz3EmB2KLqRa5RVwn3/TtbQTzhBzyGAQnNZEk
+         NvzxRMs6HVFIIwV5sDuXUPIaB4Ra+CzcDL/4rqAROsAUEleubQTba+ogOA93AeTyuK
+         SeZLT6owgA+nCuFWJwobVVA0qDDrI1ln6SMk7XRI=
+To:     Baolin Wang <baolin.wang@linaro.org>
+From:   Aurabindo Jayamohanan <mail@aurabindo.in>
+Cc:     Mark Brown <broonie@kernel.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Reply-To: Aurabindo Jayamohanan <mail@aurabindo.in>
+Subject: Re: [PATCH] spi: sifive: check return value for platform_get_resource()
+Message-ID: <7kLa83nF-ufh-AGA_LpBQ6M-ErUf-LEVXANxL2LmirJAh-snvVtJLTVFkBKFxaHvIH9Vi1E3iXDmxW6Ijktoo6k1S7pyFrwmVVLkhKr4Q_Q=@aurabindo.in>
+In-Reply-To: <CAMz4kuJczzjTPSohQ=kbZ0Pr7U_9-hzXk-jPgKk79PENOM1-dA@mail.gmail.com>
+References: <20190917085627.4562-1-mail@aurabindo.in>
+ <CAMz4kuJczzjTPSohQ=kbZ0Pr7U_9-hzXk-jPgKk79PENOM1-dA@mail.gmail.com>
+Feedback-ID: D1Wwva8zb0UdpJtanaReRLGO3iCsewpGmDn8ZDKmpao-Gnxd2qXPmwwrSQ99r5Q15lmK-D8x6vKzqhUKCgzweA==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 17 Sep 2019 09:54:53 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=3.8 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,URIBL_BLACK autolearn=no
+        autolearn_force=no version=3.4.2
+X-Spam-Level: ***
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add_early_randomness() is called by hwrng_register() when the
-hardware is added. If this hardware and its module are present
-at boot, and if there is no data available the boot hangs until
-data are available and can't be interrupted.
 
-To avoid that, call rng_get_data() in non-blocking mode (wait=0)
-from add_early_randomness().
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Tuesday, September 17, 2019 2:53 PM, Baolin Wang <baolin.wang@linaro.org=
+> wrote:
 
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
----
- drivers/char/hw_random/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Tue, 17 Sep 2019 at 17:12, Aurabindo Jayamohanan mail@aurabindo.in wro=
+te:
+>
+> > platform_get_resource() may return NULL. If it is so, return -ENXIO
+> >
+> > Signed-off-by: Aurabindo Jayamohanan mail@aurabindo.in
+> >
+> > -------------------------------------------------------
+> >
+> > drivers/spi/spi-sifive.c | 6 ++++++
+> > 1 file changed, 6 insertions(+)
+> > diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
+> > index 93ec2c6cdbfd..67485067a694 100644
+> > --- a/drivers/spi/spi-sifive.c
+> > +++ b/drivers/spi/spi-sifive.c
+> > @@ -308,6 +308,12 @@ static int sifive_spi_probe(struct platform_device=
+ *pdev)
+> > platform_set_drvdata(pdev, master);
+> >
+> >         res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >
+> >
+> > -         if (!res) {
+> >
+> >
+> > -                 dev_err(&pdev->dev, "no IOMEM resource found\\n");
+> >
+> >
+> > -                 ret =3D -ENXIO;
+> >
+> >
+> > -                 goto put_master;
+> >
+> >
+> > -         }
+> >
+> >
+>
+> Seems unnecessary, the devm_ioremap_resource() already validated if
+> the resource is available.
+>
 
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 9044d31ab1a1..8d53b8ef545c 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -67,7 +67,7 @@ static void add_early_randomness(struct hwrng *rng)
- 	size_t size = min_t(size_t, 16, rng_buffer_size());
- 
- 	mutex_lock(&reading_mutex);
--	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
-+	bytes_read = rng_get_data(rng, rng_buffer, size, 0);
- 	mutex_unlock(&reading_mutex);
- 	if (bytes_read > 0)
- 		add_device_randomness(rng_buffer, bytes_read);
--- 
-2.21.0
+Okay, thanks for the headsup
 
