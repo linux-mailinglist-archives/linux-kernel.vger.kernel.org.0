@@ -2,104 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20551B544C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:32:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0BE1B544E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:33:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731209AbfIQRbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 13:31:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41468 "EHLO mx1.redhat.com"
+        id S1731219AbfIQRct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 13:32:49 -0400
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:47204 "EHLO 1wt.eu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbfIQRbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:31:35 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 88C9E10C0932;
-        Tue, 17 Sep 2019 17:31:34 +0000 (UTC)
-Received: from x1.home (ovpn-118-102.phx2.redhat.com [10.3.118.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3ABBC60852;
-        Tue, 17 Sep 2019 17:31:26 +0000 (UTC)
-Date:   Tue, 17 Sep 2019 11:31:25 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, kwankhede@nvidia.com,
-        mst@redhat.com, zhenyuw@linux.intel.com, zhi.a.wang@intel.com,
-        jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, airlied@linux.ie, daniel@ffwll.ch,
-        cohuck@redhat.com, farman@linux.ibm.com, pasic@linux.ibm.com,
-        sebott@linux.ibm.com, oberpar@linux.ibm.com,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, akrowiak@linux.ibm.com,
-        pmorel@linux.ibm.com, freude@linux.ibm.com, tiwei.bie@intel.com,
-        virtualization@lists.linux-foundation.org,
-        maxime.coquelin@redhat.com, cunming.liang@intel.com,
-        zhihong.wang@intel.com, rob.miller@broadcom.com, idos@mellanox.com,
-        xiao.w.wang@intel.com, lingshan.zhu@intel.com,
-        Parav Pandit <parav@mellanox.com>
-Subject: Re: [RFC PATCH 0/2] Mdev: support mutiple kinds of devices
-Message-ID: <20190917113125.6b2970e5@x1.home>
-In-Reply-To: <20190912094012.29653-1-jasowang@redhat.com>
-References: <20190912094012.29653-1-jasowang@redhat.com>
-Organization: Red Hat
+        id S1726060AbfIQRct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 13:32:49 -0400
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id x8HHWPHL028048;
+        Tue, 17 Sep 2019 19:32:25 +0200
+Date:   Tue, 17 Sep 2019 19:32:25 +0200
+From:   Willy Tarreau <w@1wt.eu>
+To:     Lennart Poettering <mzxreary@0pointer.de>
+Cc:     "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 5.3-rc8
+Message-ID: <20190917173225.GE27999@1wt.eu>
+References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+ <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org>
+ <20190917052438.GA26923@1wt.eu>
+ <2508489.jOnZlRuxVn@merkaba>
+ <CAHk-=wiGg-G8JFJ=R7qf0B+UtqA_Weouk6v+McmfsLJLRq6AKA@mail.gmail.com>
+ <6ae36cda-5045-6873-9727-1d36bf45b84e@gmail.com>
+ <20190917173036.GC31798@gardel-login>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Tue, 17 Sep 2019 17:31:35 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190917173036.GC31798@gardel-login>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[cc +Parav]
-
-On Thu, 12 Sep 2019 17:40:10 +0800
-Jason Wang <jasowang@redhat.com> wrote:
-
-> Hi all:
+On Tue, Sep 17, 2019 at 07:30:36PM +0200, Lennart Poettering wrote:
+> On Di, 17.09.19 21:58, Alexander E. Patrakov (patrakov@gmail.com) wrote:
 > 
-> During the development of virtio-mdev[1]. I find that mdev needs to be
-> extended to support devices other than vfio mdev device. So this
-> series tries to extend the mdev to be able to differ from different
-> devices by:
+> > I am worried that the getrandom delays will be serialized, because processes
+> > sometimes run one after another. If there are enough chained/dependent
+> > processes that ask for randomness before it is ready, the end result is
+> > still a too-big delay, essentially a failed boot.
+> >
+> > In other words: your approach of adding delays only makes sense for heavily
+> > parallelized boot, which may not be the case, especially for embedded
+> > systems that don't like systemd.
 > 
-> - device id and matching for mdev bus
-> - device speicfic callbacks and move vfio callbacks there
-> 
-> Sent for early reivew, compile test only!
-> 
-> Thanks
-> 
-> [1] https://lkml.org/lkml/2019/9/10/135
+> As mentioned elsewhere: once the pool is initialized it's
+> initialized. This means any pending getrandom() on the whole system
+> will unblock at the same time, and from the on all getrandom()s will
+> be non-blocking.
 
-I expect Parav must have something similar in the works for their
-in-kernel networking mdev support.  Link to discussion so far:
+He means that all process will experience this delay until there's enough
+entropy.
 
-https://lore.kernel.org/kvm/20190912094012.29653-1-jasowang@redhat.com/T/#t
-
-Thanks,
-Alex
-
-
-> Jason Wang (2):
->   mdev: device id support
->   mdev: introduce device specific ops
-> 
->  drivers/gpu/drm/i915/gvt/kvmgt.c  | 16 ++++---
->  drivers/s390/cio/vfio_ccw_ops.c   | 16 ++++---
->  drivers/s390/crypto/vfio_ap_ops.c | 13 ++++--
->  drivers/vfio/mdev/mdev_core.c     | 14 +++++-
->  drivers/vfio/mdev/mdev_driver.c   | 14 ++++++
->  drivers/vfio/mdev/mdev_private.h  |  1 +
->  drivers/vfio/mdev/vfio_mdev.c     | 36 ++++++++++-----
->  include/linux/mdev.h              | 76 +++++++++++++++++++------------
->  include/linux/mod_devicetable.h   |  6 +++
->  samples/vfio-mdev/mbochs.c        | 18 +++++---
->  samples/vfio-mdev/mdpy.c          | 18 +++++---
->  samples/vfio-mdev/mtty.c          | 16 ++++---
->  12 files changed, 163 insertions(+), 81 deletions(-)
-> 
-
+Willy
