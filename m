@@ -2,78 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 471A7B52D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF93DB52DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfIQQVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 12:21:08 -0400
-Received: from mail-pg1-f172.google.com ([209.85.215.172]:41097 "EHLO
-        mail-pg1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfIQQVH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 12:21:07 -0400
-Received: by mail-pg1-f172.google.com with SMTP id x15so2278132pgg.8;
-        Tue, 17 Sep 2019 09:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=NCOl4aNg2JXCgak1io+lJcKczvWl3tjttSd25dm7D0A=;
-        b=oOlgfWqQ4IYViSiWiefP0ouH7rCalamb6bQFiuOqq2EoB//enTmMmqKRxDSExIiHBX
-         hcn1YAyBATeZwp9lphdEHPV8i7V4vaIUrpELr123xp/X+WH69MLb5e33mJ2vopa7RudS
-         6uaxotpV9J3nBtUouEt3thGlsIQVburEk8avlTJGq7vKgl21+TJbf0IkAVOsjh2nucWQ
-         zO7IHsTnSRzBIHwv/ab48p24oeeM6KFjfTxtwpJQ8AzkfcugeSOhOUkXTGfwXzhxbrd2
-         TJec+DwJFAHhRcgakT+kX+BgdBjH+5m/9Kt4opLdRJQEzJtjl7cS8FKJ6D6QvgYQS979
-         IjVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NCOl4aNg2JXCgak1io+lJcKczvWl3tjttSd25dm7D0A=;
-        b=uWD2+7Ui5EEiVaX5cWjqKdxS64GJwQkXVbkTuie5BKcrmN1kn0QSe3jdA2yPSv1pl3
-         DQtz3V+pH/z5IEGhYVvT1Q7I7NseMLuoNd3Aw2hwjItmK9nnepx4zKLvKfXxON+Bk4xH
-         RbeIZ/2rU7ZAdLvzz7E5VbtuMP1VOpIUBPwFs4zMI96YyQS6ZF8I/8iL7vjFth6zmbao
-         xnkTD3Ms9AUpeLYWwXZn13uxP4G/7+28bVFRUaHzw4J1tId3yc23VMGdML/OrY5LjBXv
-         X4KXA2VNfkVlmieOQgRcYcd2pSyEFGQ1UEg70I6Fd5v0nCCiy4f1cumkdVpFDpBlS7KZ
-         HV0g==
-X-Gm-Message-State: APjAAAWt6GrkfQZGn9MoQntDF9hun2CQthO3QGhenPvGC56/WN+hxVnC
-        1xTES5/ioVJtNH0esTKwPVc=
-X-Google-Smtp-Source: APXvYqz+Yigq2Mnhew0hEmbFGlslf4RIt+lyh8bqnqLC6d8CpbsVFRHiPV3am+SGiWapkUTwxKHLhg==
-X-Received: by 2002:a17:90a:7782:: with SMTP id v2mr5582891pjk.3.1568737266388;
-        Tue, 17 Sep 2019 09:21:06 -0700 (PDT)
-Received: from SD ([106.222.12.103])
-        by smtp.gmail.com with ESMTPSA id l7sm7975529pga.92.2019.09.17.09.21.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 09:21:05 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 21:50:46 +0530
-From:   Saiyam Doshi <saiyamdoshi.in@gmail.com>
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [1/3] i2c: qup: remove explicit conversion to boolean
-Message-ID: <20190917162046.GA5388@SD>
-References: <20190916185738.GA14035@SD>
- <b5f63a71-6f6f-eea5-2283-6b5df22b267a@web.de>
+        id S1727131AbfIQQWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:22:12 -0400
+Received: from wtarreau.pck.nerim.net ([62.212.114.60]:47109 "EHLO 1wt.eu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726741AbfIQQWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 12:22:12 -0400
+Received: (from willy@localhost)
+        by pcw.home.local (8.15.2/8.15.2/Submit) id x8HGLboc027929;
+        Tue, 17 Sep 2019 18:21:37 +0200
+Date:   Tue, 17 Sep 2019 18:21:37 +0200
+From:   Willy Tarreau <w@1wt.eu>
+To:     Lennart Poettering <mzxreary@0pointer.de>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 5.3-rc8
+Message-ID: <20190917162137.GA27921@1wt.eu>
+References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+ <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org>
+ <20190917052438.GA26923@1wt.eu>
+ <2508489.jOnZlRuxVn@merkaba>
+ <20190917121156.GC6762@mit.edu>
+ <20190917155743.GB31567@gardel-login>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b5f63a71-6f6f-eea5-2283-6b5df22b267a@web.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190917155743.GB31567@gardel-login>
+User-Agent: Mutt/1.6.1 (2016-04-27)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 05:07:29PM +0200, Markus Elfring wrote:
-> > Found using - Coccinelle (http://coccinelle.lip6.fr)
-> 
-> Can a tag like “Generated by: scripts/coccinelle/misc/boolconv.cocci”
-> be more helpful for this change description?
+On Tue, Sep 17, 2019 at 05:57:43PM +0200, Lennart Poettering wrote:
+> Note that calling getrandom(0) "too early" is not something people do
+> on purpose. It happens by accident, i.e. because we live in a world
+> where SSH or HTTPS or so is run in the initrd already, and in a world
+> where booting sometimes can be very very fast.
 
-Yes, will do.
+It's not an accident, it's a lack of understanding of the impacts
+from the people who package the systems. Generating an SSH key from
+an initramfs without thinking where the randomness used for this could
+come from is not accidental, it's a lack of experience that will be
+fixed once they start to collect such reports. And those who absolutely
+need their SSH daemon or HTTPS server for a recovery image in initramfs
+can very well feed fake entropy by dumping whatever they want into
+/dev/random to make it possible to build temporary keys for use within
+this single session. At least all supposedly incorrect use will be made
+*on purpose* and will still be possible to match what users need.
 
--Saiyam
+> So even if you write a
+> program and you think "this stuff should run late I'll just
+> getrandom(0)" it might not actually be that case IRL because people
+> deploy it a slightly bit differently than you initially thought in a
+> slightly differently equipped system with other runtime behaviour...
+
+I agree with this, it's precisely because I think we should not restrict
+userspace capabilities that I want the issue addressed in a way that lets
+users do what they need instead of relying on dangerous workarounds. Just
+googling for "mknod /dev/random c 1 9" returns tens, maybe hundreds of
+pages all explaining how to fix the problem of non-booting systems. It
+simply proves that the kernel is not the place to decide what users are
+allowed to do. Let's give them the tools to work correctly and be
+responsible for their choices. They just need to be hit by bad choices
+to get some feedback from the field other than a new list of well-known
+SSH keys.
+
+Willy
