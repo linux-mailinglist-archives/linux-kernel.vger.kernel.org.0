@@ -2,106 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6812CB508E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:38:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7079B5097
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbfIQOiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:38:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:26541 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728187AbfIQOiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:38:00 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8F7CB8980EF;
-        Tue, 17 Sep 2019 14:37:59 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.72])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4A7FF5DC18;
-        Tue, 17 Sep 2019 14:37:54 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 17 Sep 2019 16:37:59 +0200 (CEST)
-Date:   Tue, 17 Sep 2019 16:37:53 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     Jan Kratochvil <jan.kratochvil@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH? v2] powerpc: Hard wire PT_SOFTE value to 1 in gpr_get() too
-Message-ID: <20190917143753.GA12300@redhat.com>
-References: <20190917121256.GA8659@redhat.com>
+        id S1728513AbfIQOlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:41:07 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:36408 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbfIQOlG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 10:41:06 -0400
+Received: by mail-ua1-f65.google.com with SMTP id r25so1202601uam.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 07:41:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=8bqNulC6GIabCU3s6DjkZEWKYIhdoMeblELwTHX7mbc=;
+        b=djRNrBvahSULCoYQF4F76uMMbgrFEgkvzCln+M0wCvNucfQMPPINHYO4oFdfGI7ovm
+         MBmqlyVdZB6zx2PIpylfw1Xkh6uwn+a7Gph8vHNz1yxr5b0oJMbI35j+145y7c8U4Lc+
+         7zQ96AVanDE8AZ93yGMcSAE3tAj7r+vex3O5Gq3/x0JgbausTPFNkg/xbs7OxdSP7tA9
+         55PeKm4hU5ZvkHZK67puTSrNZ2dyc8tevNhkPO1pbjRc/FTk2/7kD/EiCRDJG5heEhkf
+         W7Ol1DL5X8OZPrKgATk8i5Cx6quyl+Hoq3zMGE6DQJJW2iuoqPPGOgJQ+W0DQO81TWAU
+         8MSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=8bqNulC6GIabCU3s6DjkZEWKYIhdoMeblELwTHX7mbc=;
+        b=JRqNrzCyRqPk2PkWBxSXP4k9VgsoGCT7crA++bSPXvJO12dAwkRY72DNTeTorcymBv
+         5UXito5gRKDqEUo7zeUHTxE2ZgJfrn/9jis2c3KfWU9PHYX/FixxS9YFF2b2Bs5cqKSR
+         3UYLB2wfIpbZzUr4HP9rZIIGlXXhPpxoPMNASFWhOanf65MkUZOmyLPWQEvmQmGZLGVz
+         i+s0GOu5UEGIkSfFkr85rKhBjF3mQQiqaSQPojyYYmgLFShC+fo/wMuQKGfyYzNisTAL
+         NPDMUUOllrbxKhjFl9DMPOmvKp7NlNYTzql0pike5dQNfIMF7RMBjKMZUR5NNlBNIVUN
+         plDA==
+X-Gm-Message-State: APjAAAX7Z4AocAMkPs7PWr+kBhhx9CncORQ4Q6V8Dv1NCT2HiqU0YoEs
+        435zZ3ms6EehDceiC6nI1Ci6E4zm3fAqC4FkCjk=
+X-Google-Smtp-Source: APXvYqxE0cSRsApeOpNH1OH/5Jiaw6CJhKDtf335azJQUPG3hNeFafsUbUDl+rXdYdbXlFgHc0/C570iDhj4yJrLaPA=
+X-Received: by 2002:ab0:42c5:: with SMTP id j63mr1723274uaj.5.1568731266049;
+ Tue, 17 Sep 2019 07:41:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917121256.GA8659@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Tue, 17 Sep 2019 14:37:59 +0000 (UTC)
+Received: by 2002:ab0:558b:0:0:0:0:0 with HTTP; Tue, 17 Sep 2019 07:41:05
+ -0700 (PDT)
+Reply-To: annabelle.edo@yandex.ua
+From:   "Mrs. Annabelle Edo." <vita320320@gmail.com>
+Date:   Tue, 17 Sep 2019 16:41:05 +0200
+Message-ID: <CAN0RYr2zG8Aph+UaGh5ibSHVAt2pbCmjXUs7+qJ4QSfpnWc+Ow@mail.gmail.com>
+Subject: How are you and your Family,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't have a ppc machine, this patch wasn't even compile tested,
-could you please review?
+Hello.
 
-The commit a8a4b03ab95f ("powerpc: Hard wire PT_SOFTE value to 1 in
-ptrace & signals") changed ptrace_get_reg(PT_SOFTE) to report 0x1,
-but PTRACE_GETREGS still copies pt_regs->softe as is.
+I sent you a message containing the details about your distance
+Relation, did you received it?
 
-This is not consistent and this breaks
-http://sourceware.org/systemtap/wiki/utrace/tests/user-regs-peekpoke
-
-Reported-by: Jan Kratochvil <jan.kratochvil@redhat.com>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- arch/powerpc/kernel/ptrace.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
-index 8c92feb..291acfb 100644
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -363,11 +363,36 @@ static int gpr_get(struct task_struct *target, const struct user_regset *regset,
- 	BUILD_BUG_ON(offsetof(struct pt_regs, orig_gpr3) !=
- 		     offsetof(struct pt_regs, msr) + sizeof(long));
- 
-+#ifdef CONFIG_PPC64
-+	if (!ret)
-+		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+					  &target->thread.regs->orig_gpr3,
-+					  offsetof(struct pt_regs, orig_gpr3),
-+					  offsetof(struct pt_regs, softe));
-+
-+	if (!ret) {
-+		unsigned long softe = 0x1;
-+		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf, &softe,
-+					  offsetof(struct pt_regs, softe),
-+					  offsetof(struct pt_regs, softe) +
-+					  sizeof(softe));
-+	}
-+
-+	BUILD_BUG_ON(offsetof(struct pt_regs, trap) !=
-+		     offsetof(struct pt_regs, softe) + sizeof(long));
-+
-+	if (!ret)
-+		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+					  &target->thread.regs->trap,
-+					  offsetof(struct pt_regs, trap),
-+					  sizeof(struct user_pt_regs));
-+#else
- 	if (!ret)
- 		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
- 					  &target->thread.regs->orig_gpr3,
- 					  offsetof(struct pt_regs, orig_gpr3),
- 					  sizeof(struct user_pt_regs));
-+#endif
- 	if (!ret)
- 		ret = user_regset_copyout_zero(&pos, &count, &kbuf, &ubuf,
- 					       sizeof(struct user_pt_regs), -1);
--- 
-2.5.0
-
-
+Kind Regards.
