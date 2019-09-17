@@ -2,144 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AA4DB52E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB863B52E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfIQQYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 12:24:04 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44155 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726881AbfIQQYE (ORCPT
+        id S1727790AbfIQQZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:25:15 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45055 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbfIQQZP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 12:24:04 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q11so3353828lfc.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:24:02 -0700 (PDT)
+        Tue, 17 Sep 2019 12:25:15 -0400
+Received: by mail-pl1-f196.google.com with SMTP id k24so917026pll.11;
+        Tue, 17 Sep 2019 09:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GxsyW6nLofhV8viqZYmUtikq7MzcUQ0DLONnisNNMgg=;
-        b=TqK580QEDxVQPMUfHjJ7kx8CJ6swQ66oeXEZhXBI33FU+q9pAhpktcTOSJh9FjQuYB
-         g/amoJaPGMr0tVs+0KonicAn6CEpIb0jSqvDt3HwUdn6xXa6sACcDsgEA68nfpRcpykU
-         M3sf6qYdD8L0B4HAx6NYPW9aAgS0IclpQKu/s=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=bgljOZg/sNzlCH3RJEuTYnEE1iTvY4pjYoRACNtJrFc=;
+        b=oJ5h3OBhaOR+w9LTwoV08mAgk9zZk060nVry0Q2M30E8rm+D3r/y4zRaUnzE4GPyMj
+         IvYP93wpuqDU5sCtqII+asMTopmOK5l/LcabbWLFZBeWi998ucf4S57rCRR8R+upxGs6
+         SgmlbXLZmR38Vs8sf1sv3pE9xj8m+FTROUEWhHF41hwMVwcYvgkgbmj0kb5dZn+2DUEK
+         LWwecHOKgMrglfEcYTLqF4KrchJoZ0jIVviM+8nLub5ej0RKNOWErmmgrjTjG5D3w4qM
+         hmnGNdp5chA3uOTDdir+9EuP425fanZ7nhdWBkqy5MS3j0bWQsKv2wOgP0aoy1r3OPKM
+         hx/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GxsyW6nLofhV8viqZYmUtikq7MzcUQ0DLONnisNNMgg=;
-        b=Lai9RfCHTnDmy4+vqTlHii9fFHT/Bo6Z6OOxYWH8F7FcIgMYngb0E3t7Ki6YuvOzvi
-         jfUGnbTftX2ffKeVJJTsc4WKeY/IJyGuwmRSELQp69ZJy4UPe+mXj0TMRGRFDKk3/Y6C
-         vuma1uPYLyWcvd4f8hoz3BlYbpvjesPJWMrPNdDyvVmb2BZeqls6QvO3rdm5MyAmGVV8
-         u2ZhQw0DrEFtBjb15iih7JkJ0encF55mXn/ccROuAn2lGd5gbxPS3jpHxJozXEoScVVv
-         kp433EBQPIawchZFzz4LX+Y6gQzh0Ic5A0cdVZ4VhXwN0v7FWb5k/Erm+/nqstfY9HCd
-         9UNA==
-X-Gm-Message-State: APjAAAUS0zgshq5EhwvUN2Cci7niPY01Rb4n42bnFP7wN4MFctVrvh5X
-        pobQnpXLnvoaPkfdZwE5H3J0bW4PqMU=
-X-Google-Smtp-Source: APXvYqy128C0o2rIn/0uhDO6OcvHSjHrqOsbyW4LJjShMtF1EusAjQ2JtW1ZpWi5AiBhqVZJP2WSmg==
-X-Received: by 2002:a05:6512:4dd:: with SMTP id w29mr2547375lfq.2.1568737441145;
-        Tue, 17 Sep 2019 09:24:01 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id w27sm512905ljd.55.2019.09.17.09.23.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2019 09:24:00 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id 7so4170827ljw.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:23:59 -0700 (PDT)
-X-Received: by 2002:a2e:2c02:: with SMTP id s2mr2491562ljs.156.1568737439299;
- Tue, 17 Sep 2019 09:23:59 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=bgljOZg/sNzlCH3RJEuTYnEE1iTvY4pjYoRACNtJrFc=;
+        b=U4786Z4SsdDfqPBT+HNbrghLeKFEwvvUnp9085GbzEI/TbeBnQFtV44KQYbxru0+Nz
+         LecpjB9hcwltQF6AgI214gAQLATQVEyryTWrrZlzsgLAIdULjggRDf911ObrN7FE4ZxF
+         GlEO9Jxc3NPWnp5iCkC57/hKHBb83ig0ik6EULVX7uPKq8bLbePjTzfHX2FZCpF90ZFW
+         5yRVnlmBqoXvdH69RxFyLFraQVU3H6ojgzudlwZaM3c6c6dJKWLkFO1BBVipbX9aZTLx
+         mJVoAZtB4sGs7c9JnHrTzUJ6ZqSiidYRB6+72IEvwrBfDwyxzz7aZJGNNo/ZZ2C/j3ui
+         mqAQ==
+X-Gm-Message-State: APjAAAUQWWVawqlZuTrLFip2uFXXb0s+5JKcNKwRczicqVnIJdv2mafu
+        jjLyvCwa0yvUZtyd/EheJjOk/jvYgbU=
+X-Google-Smtp-Source: APXvYqz8jakHTBRwb+1gp8rUMsqSo/5z7PiJPXJLaQyV38Bzag7BMrZO2lSw4oq/sN/MupqStLivrQ==
+X-Received: by 2002:a17:902:8c92:: with SMTP id t18mr4726014plo.147.1568737514466;
+        Tue, 17 Sep 2019 09:25:14 -0700 (PDT)
+Received: from SD ([106.222.12.103])
+        by smtp.gmail.com with ESMTPSA id r186sm4411622pfr.40.2019.09.17.09.25.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 09:25:13 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 21:55:08 +0530
+From:   Saiyam Doshi <saiyamdoshi.in@gmail.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/3] i2c: qup: Remove dev_err() log after
+ platform_get_irq*() failure
+Message-ID: <20190917162508.GB5388@SD>
+References: <20190916185857.GA14093@SD>
+ <f25a406d-9032-5db9-7136-6ff99c02f888@web.de>
 MIME-Version: 1.0
-References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
- <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org> <20190917052438.GA26923@1wt.eu>
- <2508489.jOnZlRuxVn@merkaba> <20190917121156.GC6762@mit.edu>
- <20190917123015.sirlkvy335crozmj@debian-stretch-darwi.lab.linutronix.de> <20190917160844.GC31567@gardel-login>
-In-Reply-To: <20190917160844.GC31567@gardel-login>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Sep 2019 09:23:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgsWTCZ=LPHi7BXzFCoWbyp3Ey-zZbaKzWixO91Ryr9=A@mail.gmail.com>
-Message-ID: <CAHk-=wgsWTCZ=LPHi7BXzFCoWbyp3Ey-zZbaKzWixO91Ryr9=A@mail.gmail.com>
-Subject: Re: Linux 5.3-rc8
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f25a406d-9032-5db9-7136-6ff99c02f888@web.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 9:08 AM Lennart Poettering <mzxreary@0pointer.de> wrote:
->
-> Here's what I'd propose:
+On Tue, Sep 17, 2019 at 05:28:47PM +0200, Markus Elfring wrote:
+> > The semantic patch that makes this report is available
+> > in scripts/coccinelle/api/platform_get_irq.cocci.
+> >
+> > Found using - http://coccinelle.lip6.fr/
+> 
+> Can a tag like “Generated by: scripts/coccinelle/api/platform_get_irq.cocci”
+> be more helpful than the other description variant?
+Okay, will update the changelog.
 
-So I think this is ok, but I have another proposal. Before I post that
-one, though, I just wanted to point out:
+> >  	if (qup->irq < 0) {
+> > -		dev_err(qup->dev, "No IRQ defined\n");
+> >  		return qup->irq;
+> >  	}
+> How do you think about to omit the curly brackets here after only a single
+> statement would be used in the if branch?
+Completely missed that! I will update and resend.
 
-> 1) Add GRND_INSECURE to get those users of getrandom() who do not need
->    high quality entropy off its use (systemd has uses for this, for
->    seeding hash tables for example), thus reducing the places where
->    things might block.
-
-I really think that trhe logic should be the other way around.
-
-The getrandom() users that don't need high quality entropy are the
-ones that don't really think about this, and so _they_ shouldn't be
-the ones that have to explicitly state anything. To those users,
-"random is random". By definition they don't much care, and quite
-possibly they don't even know what "entropy" really means in that
-context.
-
-The ones that *do* want high security randomness should be the ones
-that know that "random" means different things to different people,
-and that randomness is hard.
-
-So the onus should be on them to say that "yes, I'm one of those
-people willing to wait".
-
-That's why I'd like to see GRND_SECURE instead. That's kind of what
-GRND_RANDOM is right now, but it went overboard and it's not useful
-even to the people who do want secure random numners.
-
-Besides, the GRND_RANDOM naming doesn't really help the people who
-don't know anyway, so it's just bad in so many ways. We should
-probably just get rid of that flag entirely and make it imply
-GRND_SECURE without the overdone entropy accounting, but that's a
-separate issue.
-
-When we do add GRND_SECURE, we should also add the GRND_INSECURE just
-to allow people to mark their use, and to avoid the whole existing
-confusion about "0".
-
-> 2) Add a kernel log message if a getrandom(0) client hung for 15s or
->    more, explaining the situation briefly, but not otherwise changing
->    behaviour.
-
-The problem is that when you have some graphical boot, you'll not even
-see the kernel messages ;(
-
-I do agree that a message is a good idea regardless, but I don't think
-it necessarily solves the problems except for developers.
-
-> 3) Change systemd-random-seed.service to log to console in the same
->    case, blocking boot cleanly and discoverably.
-
-So I think systemd-random-seed might as well just use a new
-GRND_SECURE, and then not even have to worry about it.
-
-That said, I think I have a suggestion that everybody can live with -
-even if they might not be _happy_ about it. See next email.
-
-> I am not a fan of randomly killing userspace processes that just
-> happened to be the unlucky ones, to call this first... I see no
-> benefit in killing stuff over letting boot hang in a discoverable way.
-
-Absolutely agreed. The point was to not break things.
-
-              Linus
+-Saiyam
