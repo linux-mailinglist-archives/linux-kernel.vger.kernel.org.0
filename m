@@ -2,89 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 099AFB4A49
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0E4B4A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfIQJX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:23:27 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44177 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfIQJX0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:23:26 -0400
-Received: by mail-lf1-f68.google.com with SMTP id q11so2260319lfc.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 02:23:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GuVy/dTL0zVi8KB992cYfUvwyuZX5WJTHthmI6rNOT0=;
-        b=Bg7owd06h9hLmdCxdxpcsTn4LUAfPv+Fcad1/azM2mPLlkqQ4BA424Bz+zbIl7/0Hs
-         eKql7oCqUtjwx6PXZjoG/nwv5HrreuTAcvZ22zX5/ZSYJ3TM5Rinqf7M8W82SSWcvMWg
-         YSLh9gDvs6Mqwvm5x9/8dVcbnvYrMQ/KeSV3CfLkQVfLHExiI3Dhk7e7l6N5u2Lz2//t
-         7q9JTi9j2t3cIjkWN+E3eFFZgLeB1Z94tulowjh6MTjXFfEIUDCNsqWeDKB8Or4vFAv2
-         0dohKXmgO1WZpJVIDpYo839ISYtq/0s54FIlTR+binuYt/vRVT5HXVG0FRBUr7DAK/JI
-         IASA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GuVy/dTL0zVi8KB992cYfUvwyuZX5WJTHthmI6rNOT0=;
-        b=HEnHr4uRSG6t85z/X6FzXl1fHITewMiA8Jysefi64EQ17k4MLs/7y19O1fk3KORzl9
-         ViQ6FNR8IJYe8xsqdqTONYZ+bFFE9EVRDgGX5XViZWOe/2aH3oW6lPHlgKwzZeLAz0FS
-         GPm2qsk2huvI9Aq6K/B4ccmfdEh09avBt8ToYeCDZfVqUhVRO86TYDs+tjruvhaGn597
-         wS7NuKlBJVJFuBBhgOlPXjQDYMrEnUqFRW9ymOilTkwR1vFLCTyg5wZTRUPOWV5ADlIi
-         nwZyrkd/lfsK0UWYghg/5OzO8D54dc8o3jsOh0TORTS7jPwb/xvpnOlOD6b4bAEQcr/L
-         dUHg==
-X-Gm-Message-State: APjAAAXml1iwqT5ECATXGOV/4sxmUcS3tpoqLEWAooMnKCOIGj0PHybq
-        Qx8fiVM6KC4RaTZEn3orukTIPEHA8HPKuv4f48sdKA==
-X-Google-Smtp-Source: APXvYqyM4ltTpXf24i1Q7+nxADNrEfPqDVLlQFkkrDB0olL8Fa3A6yeao2uouudfGkdBTJevKJ2kRjPEu3NmeskBU6c=
-X-Received: by 2002:a19:3f47:: with SMTP id m68mr1524926lfa.108.1568712205010;
- Tue, 17 Sep 2019 02:23:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190917085627.4562-1-mail@aurabindo.in>
-In-Reply-To: <20190917085627.4562-1-mail@aurabindo.in>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 17 Sep 2019 17:23:13 +0800
-Message-ID: <CAMz4kuJczzjTPSohQ=kbZ0Pr7U_9-hzXk-jPgKk79PENOM1-dA@mail.gmail.com>
-Subject: Re: [PATCH] spi: sifive: check return value for platform_get_resource()
-To:     Aurabindo Jayamohanan <mail@aurabindo.in>
-Cc:     Mark Brown <broonie@kernel.org>, palmer@sifive.com,
-        paul.walmsley@sifive.com, linux-spi <linux-spi@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727190AbfIQJYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:24:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57089 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726207AbfIQJYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:24:07 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 750DA3083362;
+        Tue, 17 Sep 2019 09:24:06 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AB4811001B08;
+        Tue, 17 Sep 2019 09:24:05 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 0327F17535; Tue, 17 Sep 2019 11:24:05 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 01/11] drm: add mmap() to drm_gem_object_funcs
+Date:   Tue, 17 Sep 2019 11:23:54 +0200
+Message-Id: <20190917092404.9982-2-kraxel@redhat.com>
+In-Reply-To: <20190917092404.9982-1-kraxel@redhat.com>
+References: <20190917092404.9982-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 17 Sep 2019 09:24:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Sep 2019 at 17:12, Aurabindo Jayamohanan <mail@aurabindo.in> wrote:
->
-> platform_get_resource() may return NULL. If it is so, return -ENXIO
->
-> Signed-off-by: Aurabindo Jayamohanan <mail@aurabindo.in>
-> ---
->  drivers/spi/spi-sifive.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
-> index 93ec2c6cdbfd..67485067a694 100644
-> --- a/drivers/spi/spi-sifive.c
-> +++ b/drivers/spi/spi-sifive.c
-> @@ -308,6 +308,12 @@ static int sifive_spi_probe(struct platform_device *pdev)
->         platform_set_drvdata(pdev, master);
->
->         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res) {
-> +               dev_err(&pdev->dev, "no IOMEM resource found\n");
-> +               ret = -ENXIO;
-> +               goto put_master;
-> +       }
+drm_gem_object_funcs->vm_ops alone can't handle everything which needs
+to be done for mmap(), tweaking vm_flags for example.  So add a new
+mmap() callback to drm_gem_object_funcs where this code can go to.
 
-Seems unnecessary, the devm_ioremap_resource() already validated if
-the resource is available.
+Note that the vm_ops field is not used in case the mmap callback is
+present, it is expected that the callback sets vma->vm_ops instead.
 
+Also setting vm_flags and vm_page_prot is the job of the new callback.
+so drivers have more control over these flags.
+
+drm_gem_mmap_obj() will use the new callback for object specific mmap
+setup.  With this in place the need for driver-speific fops->mmap
+callbacks goes away, drm_gem_mmap can be hooked instead.
+
+drm_gem_prime_mmap() will use the new callback too to just mmap gem
+objects directly instead of jumping though loops to make
+drm_gem_object_lookup() and fops->mmap work.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/drm_gem.h       | 14 ++++++++++++++
+ drivers/gpu/drm/drm_gem.c   | 27 ++++++++++++++++++---------
+ drivers/gpu/drm/drm_prime.c |  9 +++++++++
+ 3 files changed, 41 insertions(+), 9 deletions(-)
+
+diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
+index 6aaba14f5972..e71f75a2ab57 100644
+--- a/include/drm/drm_gem.h
++++ b/include/drm/drm_gem.h
+@@ -150,6 +150,20 @@ struct drm_gem_object_funcs {
+ 	 */
+ 	void (*vunmap)(struct drm_gem_object *obj, void *vaddr);
+ 
++	/**
++	 * @mmap:
++	 *
++	 * Handle mmap() of the gem object, setup vma accordingly.
++	 *
++	 * This callback is optional.
++	 *
++	 * The callback is used by by both drm_gem_mmap_obj() and
++	 * drm_gem_prime_mmap().  When @mmap is present @vm_ops is not
++	 * used, the @mmap callback must set vma->vm_ops instead.
++	 *
++	 */
++	int (*mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
++
+ 	/**
+ 	 * @vm_ops:
+ 	 *
+diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
+index 6854f5867d51..56f42e0f2584 100644
+--- a/drivers/gpu/drm/drm_gem.c
++++ b/drivers/gpu/drm/drm_gem.c
+@@ -1099,22 +1099,31 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
+ 		     struct vm_area_struct *vma)
+ {
+ 	struct drm_device *dev = obj->dev;
++	int ret;
+ 
+ 	/* Check for valid size. */
+ 	if (obj_size < vma->vm_end - vma->vm_start)
+ 		return -EINVAL;
+ 
+-	if (obj->funcs && obj->funcs->vm_ops)
+-		vma->vm_ops = obj->funcs->vm_ops;
+-	else if (dev->driver->gem_vm_ops)
+-		vma->vm_ops = dev->driver->gem_vm_ops;
+-	else
+-		return -EINVAL;
++	if (obj->funcs && obj->funcs->mmap) {
++		ret = obj->funcs->mmap(obj, vma);
++		if (ret)
++			return ret;
++		WARN_ON(!(vma->vm_flags & VM_DONTEXPAND));
++	} else {
++		if (obj->funcs && obj->funcs->vm_ops)
++			vma->vm_ops = obj->funcs->vm_ops;
++		else if (dev->driver->gem_vm_ops)
++			vma->vm_ops = dev->driver->gem_vm_ops;
++		else
++			return -EINVAL;
++
++		vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
++		vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
++		vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
++	}
+ 
+-	vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
+ 	vma->vm_private_data = obj;
+-	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
+-	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
+ 
+ 	/* Take a ref for this mapping of the object, so that the fault
+ 	 * handler can dereference the mmap offset's pointer to the object.
+diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
+index 0a2316e0e812..0814211b0f3f 100644
+--- a/drivers/gpu/drm/drm_prime.c
++++ b/drivers/gpu/drm/drm_prime.c
+@@ -713,6 +713,15 @@ int drm_gem_prime_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
+ 	struct file *fil;
+ 	int ret;
+ 
++	if (obj->funcs && obj->funcs->mmap) {
++		ret = obj->funcs->mmap(obj, vma);
++		if (ret)
++			return ret;
++		vma->vm_private_data = obj;
++		drm_gem_object_get(obj);
++		return 0;
++	}
++
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	fil = kzalloc(sizeof(*fil), GFP_KERNEL);
+ 	if (!priv || !fil) {
 -- 
-Baolin Wang
-Best Regards
+2.18.1
+
