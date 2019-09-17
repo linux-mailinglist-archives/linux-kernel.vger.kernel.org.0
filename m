@@ -2,106 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32A7CB4A84
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:33:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2023CB4A8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:34:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbfIQJda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:33:30 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56396 "EHLO mx1.redhat.com"
+        id S1727683AbfIQJeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:34:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:53586 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727089AbfIQJda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:33:30 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AB7E4369AC
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:33:29 +0000 (UTC)
-Received: by mail-wm1-f69.google.com with SMTP id c188so622229wmd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 02:33:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=USt1kKGPYmtgyFTYD/y0A1jODqobnZ9DDJDhO5ylVlA=;
-        b=I3A9AhDScszE5WxFO5vnLGnDtngvc2lHM0AyeJup+RwhP6HRSsE+ybVMNzXaJjN3+K
-         0KsEapZ5+c+bPQfWIL3XKVzgP7PFkq800gOtG4muyYXysLsVQ7k/VBiwSaD8AfUuy530
-         1qD1tCxfBm2Ixqctf3I/lzzeB6foOkT1srQEEpT9/36tvg1tKhFzsrJqc0p3gEYmL8lB
-         8Y925210RXdr7zJEicsm6uCGMFKWYZ6lj3p63JuD0vS7olQR/jzLQLY6k82QmVAYU5cd
-         TMQaWc+f/Rf3I3nH5ZLsMP3JAYvZaGUWvWF0UdmeUYQCXiTOPaVAR+KtwoSYDbJV0iDv
-         RVFQ==
-X-Gm-Message-State: APjAAAVv0/7cmwJ454B8lvH2lVWf5BijYgMbKU9H82IALzZD+ZIqra8U
-        yoMgQTEabaUnLBXzUj1Fkl4C39eXDMNc2M+PAhxZpSJiDypMNqQxUn5UWjXAVJVLe7ydNmizCfS
-        myx53D3w6/Prb8jd838zAcL+7
-X-Received: by 2002:a05:600c:22da:: with SMTP id 26mr2538070wmg.177.1568712808286;
-        Tue, 17 Sep 2019 02:33:28 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxE0OwLxxEExBqqFmu5jEGpfsU1LN8pNgOQBJRy2TH+nRrjttR1HYteSzAvN5aajblv2RTsXQ==
-X-Received: by 2002:a05:600c:22da:: with SMTP id 26mr2538044wmg.177.1568712808057;
-        Tue, 17 Sep 2019 02:33:28 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g185sm4109888wme.10.2019.09.17.02.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 02:33:27 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-hyperv@vger.kernel.org,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Roman Kagan <rkagan@virtuozzo.com>
-Subject: Re: [PATCH 2/3] KVM: x86: hyper-v: set NoNonArchitecturalCoreSharing CPUID bit when SMT is impossible
-In-Reply-To: <CALMp9eRa0-HO+JWGDoAFO1zOtNjrutfT7d4pLxjsxn-XiAJwwQ@mail.gmail.com>
-References: <20190916162258.6528-1-vkuznets@redhat.com> <20190916162258.6528-3-vkuznets@redhat.com> <CALMp9eRa0-HO+JWGDoAFO1zOtNjrutfT7d4pLxjsxn-XiAJwwQ@mail.gmail.com>
-Date:   Tue, 17 Sep 2019 11:33:26 +0200
-Message-ID: <87ef0fb72x.fsf@vitty.brq.redhat.com>
+        id S1727637AbfIQJeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:34:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 143E028;
+        Tue, 17 Sep 2019 02:34:20 -0700 (PDT)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DEE83F59C;
+        Tue, 17 Sep 2019 02:34:18 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 10:34:12 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
+        tdas@codeaurora.org, swboyd@chromium.org, ilina@codeaurora.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 5/5] cpufreq: qcom-hw: Move driver initialisation earlier
+Message-ID: <20190917093412.GA24757@bogus>
+References: <cover.1568240476.git.amit.kucheria@linaro.org>
+ <b731b713d8738239c26361ece7f5cadea035b353.1568240476.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b731b713d8738239c26361ece7f5cadea035b353.1568240476.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jim Mattson <jmattson@google.com> writes:
-
-> On Mon, Sep 16, 2019 at 9:23 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->>
->> Hyper-V 2019 doesn't expose MD_CLEAR CPUID bit to guests when it cannot
->> guarantee that two virtual processors won't end up running on sibling SMT
->> threads without knowing about it. This is done as an optimization as in
->> this case there is nothing the guest can do to protect itself against MDS
->> and issuing additional flush requests is just pointless. On bare metal the
->> topology is known, however, when Hyper-V is running nested (e.g. on top of
->> KVM) it needs an additional piece of information: a confirmation that the
->> exposed topology (wrt vCPU placement on different SMT threads) is
->> trustworthy.
->>
->> NoNonArchitecturalCoreSharing (CPUID 0x40000004 EAX bit 18) is described in
->> TLFS as follows: "Indicates that a virtual processor will never share a
->> physical core with another virtual processor, except for virtual processors
->> that are reported as sibling SMT threads." From KVM we can give such
->> guarantee in two cases:
->> - SMT is unsupported or forcefully disabled (just 'disabled' doesn't work
->>  as it can become re-enabled during the lifetime of the guest).
->> - vCPUs are properly pinned so the scheduler won't put them on sibling
->> SMT threads (when they're not reported as such).
+On Thu, Sep 12, 2019 at 04:02:34AM +0530, Amit Kucheria wrote:
+> Allow qcom-hw driver to initialise right after the cpufreq and thermal
+> subsystems are initialised in core_initcall so we get earlier access to
+> thermal mitigation.
 >
-> That's a nice bit of information. Have you considered a mechanism for
-> communicating this information to kvm guests in a way that doesn't
-> require Hyper-V enlightenments?
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  drivers/cpufreq/qcom-cpufreq-hw.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> index 4b0b50403901..04676cc82ba6 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -327,7 +327,7 @@ static int __init qcom_cpufreq_hw_init(void)
+>  {
+>  	return platform_driver_register(&qcom_cpufreq_hw_driver);
+>  }
+> -device_initcall(qcom_cpufreq_hw_init);
+> +postcore_initcall(qcom_cpufreq_hw_init);
 
-(I haven't put much thought in this) but can we re-use MD_CLEAR CPUID
-bit for that? Like if the hypervisor can't guarantee usefulness
-(e.g. when two random vCPUs can be put on sibling SMT threads) of
-flushing, is there any reason to still make the guest think the feature
-is there?
+I am fine with core framework initcall pushed to earlier initcall levels
+if required, but for individual/platform specific drivers I am not so
+happy to see that.
 
--- 
-Vitaly
+This goes against the grand plan of single common kernel strategy by
+Android moving all drivers as modules. We might decide to make this
+a module. Also there are few cpufreq drivers that are modules. Will
+they have issues ? If not, why do we need this change at all. Needing
+thermal mitigation during boot this earlier is still too much of
+expectation, I would rather boot slowly than relying on this feature.
+
+--
+Regards,
+Sudeep
