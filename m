@@ -2,135 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1605B4912
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C52E5B4922
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387869AbfIQISV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:18:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40982 "EHLO mx1.redhat.com"
+        id S2388955AbfIQIT1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:19:27 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:46550 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729426AbfIQISU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:18:20 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7E395C057F23
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 08:18:19 +0000 (UTC)
-Received: by mail-wm1-f72.google.com with SMTP id f63so538422wma.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 01:18:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qRyrFKgOm48KkKg55Dl+vUukfxK99uW3Zie+F4GtPtQ=;
-        b=UbEM2tHXeliGNK//e9++66fCkX6j7fno/AxZ2guS3JFOjzrWmvQ1TQ+Uk56q7fhajq
-         6EQZX4Z61YBkelDc5cloLE2WftqeJj0mr4h8HmyHGl5iSCxSbp1Jff7+LRXhAWZ9CJgc
-         Or6y5WOrUsobSlyd+JFzMwtidKt+OTtoaOPTwT2ozyE+u6O+bCFfYnziCm977TsFvm3w
-         zqVlSOSfnSNxzRGaUKTzY5yiAsaPgmF9LAhGtdJ17IXs6MUpN5/vQnUvK8oFp84PBtb7
-         f3GwrUjAH9iP38RtBzBaEE+MKfLyqeW3ySHZzfAKd8STVN1m2RXWrk+gjQOB9bC+Dohr
-         VvvA==
-X-Gm-Message-State: APjAAAU+zKu/rMT0ai7MclkEHhDy1uyo8jiGO7w/Cpa/mdTTak+IEASA
-        MCAL/bYg3NkbQisyqtRQNqOR78gMC3U0sukeHmK+hAiL+DRvuL5qwoZqXuEa71SH+0hKz5Uj8yY
-        9wPN5HHa+dh1QAOV/PqeL/uM0
-X-Received: by 2002:adf:e548:: with SMTP id z8mr1879070wrm.324.1568708298092;
-        Tue, 17 Sep 2019 01:18:18 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwCfHMrixhy4NM9wsotuqqspSjFXXw/P/RLA2EqCwu+G5IRiXW42RqN3pEaaPcqbfI2jIW1UQ==
-X-Received: by 2002:adf:e548:: with SMTP id z8mr1879043wrm.324.1568708297784;
-        Tue, 17 Sep 2019 01:18:17 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c46c:2acb:d8d2:21d8? ([2001:b07:6468:f312:c46c:2acb:d8d2:21d8])
-        by smtp.gmail.com with ESMTPSA id y186sm2997074wmb.41.2019.09.17.01.18.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2019 01:18:17 -0700 (PDT)
-Subject: Re: [PATCH 1/3] KVM: Fix coalesced mmio ring buffer out-of-bounds
- access
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     P J P <ppandit@redhat.com>, Jim Mattson <jmattson@google.com>
-References: <1568708186-20260-1-git-send-email-wanpengli@tencent.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <f4549d5a-d948-f1d1-2a29-8c4621dae1b0@redhat.com>
-Date:   Tue, 17 Sep 2019 10:18:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388817AbfIQIT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:19:26 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iA8hl-0005Uf-PU; Tue, 17 Sep 2019 10:19:21 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        finley.xiao@rock-chips.com, zhangqing@rock-chips.com,
+        christoph.muellner@theobroma-systems.com,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 1/5] clk: rockchip: Add div50 clock-ids for sdmmc on px30 and nandc
+Date:   Tue, 17 Sep 2019 10:18:59 +0200
+Message-Id: <20190917081903.25139-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1568708186-20260-1-git-send-email-wanpengli@tencent.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I think we should consider the embargo for CVE-2019-14821 to be broken.
- Since your patch is better, I'll push that one instead as soon as I get
-confirmation.
+From: Finley Xiao <finley.xiao@rock-chips.com>
 
-Paolo
+EMMC and SDIO already have these clock-ids (still unused) only sdmmc is
+missing them, so fix that.
 
-On 17/09/19 10:16, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Reported by syzkaller:
-> 
-> 	#PF: supervisor write access in kernel mode
-> 	#PF: error_code(0x0002) - not-present page
-> 	PGD 403c01067 P4D 403c01067 PUD 0
-> 	Oops: 0002 [#1] SMP PTI
-> 	CPU: 1 PID: 12564 Comm: a.out Tainted: G           OE     5.3.0-rc4+ #4
-> 	RIP: 0010:coalesced_mmio_write+0xcc/0x130 [kvm]
-> 	Call Trace:
-> 	 __kvm_io_bus_write+0x91/0xe0 [kvm]
-> 	 kvm_io_bus_write+0x79/0xf0 [kvm]
-> 	 write_mmio+0xae/0x170 [kvm]
-> 	 emulator_read_write_onepage+0x252/0x430 [kvm]
-> 	 emulator_read_write+0xcd/0x180 [kvm]
-> 	 emulator_write_emulated+0x15/0x20 [kvm]
-> 	 segmented_write+0x59/0x80 [kvm]
-> 	 writeback+0x113/0x250 [kvm]
-> 	 x86_emulate_insn+0x78c/0xd80 [kvm]
-> 	 x86_emulate_instruction+0x386/0x7c0 [kvm]
-> 	 kvm_mmu_page_fault+0xf9/0x9e0 [kvm]
-> 	 handle_ept_violation+0x10a/0x220 [kvm_intel]
-> 	 vmx_handle_exit+0xbe/0x6b0 [kvm_intel]
-> 	 vcpu_enter_guest+0x4dc/0x18d0 [kvm]
-> 	 kvm_arch_vcpu_ioctl_run+0x407/0x660 [kvm]
-> 	 kvm_vcpu_ioctl+0x3ad/0x690 [kvm]
-> 	 do_vfs_ioctl+0xa2/0x690
-> 	 ksys_ioctl+0x6d/0x80
-> 	 __x64_sys_ioctl+0x1a/0x20
-> 	 do_syscall_64+0x74/0x720
-> 	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 	RIP: 0010:coalesced_mmio_write+0xcc/0x130 [kvm]
-> 
-> Both the coalesced_mmio ring buffer indexs ring->first and ring->last are 
-> bigger than KVM_COALESCED_MMIO_MAX from the testcase, array out-of-bounds 
-> access triggers by ring->coalesced_mmio[ring->last].phys_addr = addr; 
-> assignment. This patch fixes it by mod indexs by KVM_COALESCED_MMIO_MAX.
-> 
-> syzkaller source: https://syzkaller.appspot.com/x/repro.c?x=134b2826a00000
-> 
-> Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  virt/kvm/coalesced_mmio.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
-> index 5294abb..cff1ec9 100644
-> --- a/virt/kvm/coalesced_mmio.c
-> +++ b/virt/kvm/coalesced_mmio.c
-> @@ -73,6 +73,8 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
->  
->  	spin_lock(&dev->kvm->ring_lock);
->  
-> +	ring->first = ring->first % KVM_COALESCED_MMIO_MAX;
-> +	ring->last = ring->last % KVM_COALESCED_MMIO_MAX;
->  	if (!coalesced_mmio_has_room(dev)) {
->  		spin_unlock(&dev->kvm->ring_lock);
->  		return -EOPNOTSUPP;
-> 
+Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ include/dt-bindings/clock/px30-cru.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/dt-bindings/clock/px30-cru.h b/include/dt-bindings/clock/px30-cru.h
+index 00101479f7c4..5b1416fcde6f 100644
+--- a/include/dt-bindings/clock/px30-cru.h
++++ b/include/dt-bindings/clock/px30-cru.h
+@@ -85,6 +85,8 @@
+ #define SCLK_EMMC_DIV50		83
+ #define SCLK_DDRCLK		84
+ #define SCLK_UART1_SRC		85
++#define SCLK_SDMMC_DIV		86
++#define SCLK_SDMMC_DIV50	87
+ 
+ /* dclk gates */
+ #define DCLK_VOPB		150
+-- 
+2.20.1
 
