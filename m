@@ -2,104 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6705B511A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 197FBB5121
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbfIQPL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 11:11:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41400 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728802AbfIQPL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 11:11:27 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E52A9859FB
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 15:11:26 +0000 (UTC)
-Received: by mail-wr1-f70.google.com with SMTP id j3so1434625wrn.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 08:11:26 -0700 (PDT)
+        id S1729221AbfIQPM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 11:12:56 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52418 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbfIQPMz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 11:12:55 -0400
+Received: by mail-wm1-f65.google.com with SMTP id x2so3929424wmj.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 08:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=WJ6lflTdZgdwhLLHMAQLrUDOqDJ8VE2A6nu6iIqBmhQ=;
+        b=yh3RV8VC6TRXbPtRn+q7xsvgewnzq2SA7oJBBh229t3azLHIkZGCw8OUkUAzsEu9HY
+         lWvChiwb9wOEvxvAMDKXZSOhV7QRPe0iE9Xw3jXmrnpiyHkcdY9ITNMDeP0BKAfxJOnj
+         vdZleIH8MOQgBV0xQHm3fvRkZ0AHVpa75UxmvMDIwY5BNmkdB4xdL1gIMlbiddcoN+lY
+         n04YS8wfHGfZ3XYF7QeeL1Y8kZxTrJ0fNp4HEpAdgCxzHTQm2HFobplSfIFWXAMhUx9O
+         uL68sN42WTs4XZW0jj63D5fZBOx0tSP6FBoYwfIIHWumgOrOC8BS1JeiJ0/TIPSUVnDN
+         6QNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=UCW+cy1gbNKZ9koPx/jd8y10g+OI2SWde/uEhyQmkDs=;
-        b=JpeU6ZN7wa3tHL5i5kiXWdkt1qCeoSiq27yZzjcosVbY3CqGbbtwXQB86EWFNZRsrv
-         pPrs2i4WfZTjgCPmbpal7r7TdXX86Y1eAPdJ1hu3GnZZs/vcbbNUo5QY8rp/7QPLpcPa
-         CmqA0lcfsR1ktIGh0LK62U7CEO9BULj7pIarWSh9wh8Xe7qvJlEzVgfTW+Rp9qrF0cqu
-         ceBV6++hmsvC4Rc/2eVPxBcVF4NqIBLMwchpcpAiYuHW9KzdIUjB3FRbPhNnjAGRFGUi
-         xdEjzJGnmWIpqmzbAUFIrUSzjpuJRQa+UYWwOLN/GjEVdrX41Ys+NoCTf5aWKNw3jH0l
-         V/jw==
-X-Gm-Message-State: APjAAAXcK5EEl0af21rLRpYX/NGbvPYAPH96HAgKWb/lI18u5j2cCkkk
-        lZuzcXI39Vqn43Cxi9kDuuLEpOvrhx5mTAVNK4PVVFqG6Y8a1vc2EeqeHI9YCEFpmcDVAzWc9LQ
-        tAFeG/GHjYFPc+dOgK10jDsRP
-X-Received: by 2002:a1c:99d4:: with SMTP id b203mr3688896wme.148.1568733085632;
-        Tue, 17 Sep 2019 08:11:25 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwAs+pbI8E5ScMA+lIaanE//5Cw2DWJWcdVtcoEQjhifshIhHTCoaNtTepCoM2VYkqxtr6HPQ==
-X-Received: by 2002:a1c:99d4:: with SMTP id b203mr3688873wme.148.1568733085393;
-        Tue, 17 Sep 2019 08:11:25 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id c6sm3239891wrm.71.2019.09.17.08.11.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 08:11:24 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-hyperv@vger.kernel.org,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Roman Kagan <rkagan@virtuozzo.com>
-Subject: Re: [PATCH 1/3] cpu/SMT: create and export cpu_smt_possible()
-In-Reply-To: <CALMp9eQP7Dup+mMuAiShNtH754R_Wwuvf63hezygh3TGR=a9rg@mail.gmail.com>
-References: <20190916162258.6528-1-vkuznets@redhat.com> <20190916162258.6528-2-vkuznets@redhat.com> <CALMp9eQP7Dup+mMuAiShNtH754R_Wwuvf63hezygh3TGR=a9rg@mail.gmail.com>
-Date:   Tue, 17 Sep 2019 17:11:23 +0200
-Message-ID: <87blvjarfo.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=WJ6lflTdZgdwhLLHMAQLrUDOqDJ8VE2A6nu6iIqBmhQ=;
+        b=bkZvq/OLuba7IKppr7ipyjIKntpSVgwR9asIRp9lrNi+cknfag6k89NCRfhF0/LXqw
+         /Bd0gYXKFqTYrgPeKEHqsMQ3S/3DZQhKsnjjTfq++uVrVY6dvdq+mhy0aURqXBbM1AGy
+         VTjbEGtq83CT9EGNvGeINn8/VmPfeaLsZ23qmF63tRdWAR/buuvHNMyzxa8YfGl/cPqz
+         soGJWHCGl4wVUwMOXjWK6XP4RS2QGUszNu79YuYvJ4zVSKRZG8XBWittqCrIfdKyHsLR
+         HHAJb9ycsdVBMlLZNZ/R4T9B4C+/FOpMy30u5KSvyUv431nzl5m5w8UUj6uwt9AjD8ni
+         hE8Q==
+X-Gm-Message-State: APjAAAVn4rO51yhUhTXp6VeVJwr7sSy1932R9wij5I4sQXxyUZJt17g2
+        LJMKhefiC7/alhVx4oQclC+GxQo7z1A=
+X-Google-Smtp-Source: APXvYqxysSuhmROmUzRn7VHLt/lhJ+0YJOMkjvaH+7zKo4odk80eR0lVbV8lOnpQVNFonDKrvSGFfQ==
+X-Received: by 2002:a1c:3b06:: with SMTP id i6mr4093891wma.6.1568733172559;
+        Tue, 17 Sep 2019 08:12:52 -0700 (PDT)
+Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
+        by smtp.gmail.com with ESMTPSA id t14sm2011029wrs.6.2019.09.17.08.12.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2019 08:12:51 -0700 (PDT)
+Subject: Re: [PATCH v1] io_uring: reserve word at cqring tail+4 for the user
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20190917091358.3652-1-avi@scylladb.com>
+ <3e886e3a-458d-0fe4-68ff-5925835efb5e@kernel.dk>
+From:   Avi Kivity <avi@scylladb.com>
+Organization: ScyllaDB
+Message-ID: <9b4a780e-72af-125e-d104-4179a859d581@scylladb.com>
+Date:   Tue, 17 Sep 2019 18:12:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <3e886e3a-458d-0fe4-68ff-5925835efb5e@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jim Mattson <jmattson@google.com> writes:
 
-> On Mon, Sep 16, 2019 at 9:23 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+On 17/09/2019 17.54, Jens Axboe wrote:
+> On 9/17/19 3:13 AM, Avi Kivity wrote:
+>> In some applications, a thread waits for I/O events generated by
+>> the kernel, and also events generated by other threads in the same
+>> application. Typically events from other threads are passed using
+>> in-memory queues that are not known to the kernel. As long as the
+>> threads is active, it polls for both kernel completions and
+>> inter-thread completions; when it is idle, it tells the other threads
+>> to use an I/O event to wait it up (e.g. an eventfd or a pipe) and
+>> then enters the kernel, waiting for such an event or an ordinary
+>> I/O completion.
 >>
->> KVM needs to know if SMT is theoretically possible, this means it is
->> supported and not forcefully disabled ('nosmt=force'). Create and
->> export cpu_smt_possible() answering this question.
+>> When such a thread goes idle, it typically spins for a while to
+>> avoid the kernel entry/exit cost in case an event is forthcoming
+>> shortly. While it spins it polls both I/O completions and
+>> inter-thread queues.
+>>
+>> The x86 instruction pair UMONITOR/UMWAIT allows waiting for a cache
+>> line to be written to. This can be used with io_uring to wait for a
+>> wakeup without spinning (and wasting power and slowing down the other
+>> hyperthread). Other threads can also wake up the waiter by doing a
+>> safe write to the tail word (which triggers the wakeup), but safe
+>> writes are slow as they require an atomic instruction. To speed up
+>> those wakeups, reserve a word after the tail for user writes.
+>>
+>> A thread consuming an io_uring completion queue can then use the
+>> following sequences:
+>>
+>>     - while busy:
+>>       - pick up work from the completion queue and from other threads,
+>>         and process it
+>>
+>>     - while idle:
+>>       - use UMONITOR/UMWAIT to wait on completions and notifications
+>>         from other threads for a short period
+>>       - if no work is picked up, let other threads know you will need
+>>         a kernel wakeup, and use io_uring_enter to wait indefinitely
+> This is cool, I like it. A few comments:
 >
-> It seems to me that KVM really just wants to know if the scheduler can
-> be trusted to avoid violating the invariant expressed by the Hyper-V
-> enlightenment, NoNonArchitecturalCoreSharing. It is possible to do
-> that even when SMT is enabled, if the scheduler is core-aware.
-> Wouldn't it be better to implement a scheduler API that told you
-> exactly what you wanted to know, rather than trying to infer the
-> answer from various breadcrumbs?
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index cfb48bd088e1..4bd7905cee1d 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -77,12 +77,13 @@
+>>    
+>>    #define IORING_MAX_ENTRIES	4096
+>>    #define IORING_MAX_FIXED_FILES	1024
+>>    
+>>    struct io_uring {
+>> -	u32 head ____cacheline_aligned_in_smp;
+>> -	u32 tail ____cacheline_aligned_in_smp;
+>> +	u32 head ____cacheline_aligned;
+>> +	u32 tail ____cacheline_aligned;
+>> +	u32 reserved_for_user; // for cq ring and UMONITOR/UMWAIT (or similar) wakeups
+>>    };
+> Since we have that full cacheline, maybe name this one a bit more
+> appropriately as we can add others if we need it. Not a big deal.
 
-(I know not that much about scheduler so please bear with me)
 
-Having a trustworthy scheduler not placing unrelated (not exposed as
-sibling SMT threads to a guest or vCPUs from different guests) on
-sibling SMT threads when it's not limited with affinity is definitely a
-good thing. We, however, also need to know if vCPU pinning is planned
-for the guest: like when QEMU vCPU threads are created they're not
-pinned, however, libvirt pins them if needed before launching the
-guest. So 'NoNonArchitecturalCoreSharing' can also be set in two cases:
-- No vCPU pinning is planned but the scheduler is aware of the problem
-(I'm not sure it is nowadays)
-- The upper layer promises to do the right pinning.
+You mean, name it for its intended purpose of serving as a write target 
+for umonitor/umwait wakes?
 
-This patch series, however, doesn't go that deep, it only covers the
-simplest case: SMT is unavailable or forcefully disabled. I'll try to
-learn more about scheduler though.
 
--- 
-Vitaly
+Note that the user won't see the name, and that it's only accurate for 
+an io_uring that's used for completions.
+
+
+> But definitely use /* */ style comments :-)
+
+
+Sorry, in C++-land for a while. You're lucky I didn't turn the whole 
+thing into a virtual template something.
+
+
+>
+>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>> index 1e1652f25cc1..1a6a826a66f3 100644
+>> --- a/include/uapi/linux/io_uring.h
+>> +++ b/include/uapi/linux/io_uring.h
+>> @@ -103,10 +103,14 @@ struct io_sqring_offsets {
+>>     */
+>>    #define IORING_SQ_NEED_WAKEUP	(1U << 0) /* needs io_uring_enter wakeup */
+>>    
+>>    struct io_cqring_offsets {
+>>    	__u32 head;
+>> +	// tail is guaranteed to be aligned on a cache line, and to have the
+>> +	// following __u32 free for user use. This allows using e.g.
+>> +	// UMONITOR/UMWAIT to wait on both writes to head and writes from
+>> +	// other threads to the following word.
+>>    	__u32 tail;
+>>    	__u32 ring_mask;
+>>    	__u32 ring_entries;
+>>    	__u32 overflow;
+>>    	__u32 cqes;
+> Ditto on the comments here.
+
+
+Sure.
+
+
+> Would be ideal if we could pair this with an example for liburing, a basic
+> test case would be fine. Something that shows how to use it, and verifies
+> that it works.
+
+
+I'll have to look for a machine with waitpkg for that.
+
+
+> Also, this patch is against master, it should be against for-5.4/io_iuring as
+> it won't apply there right now.
+
+
+Sure, will rebase.
+
+
