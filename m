@@ -2,126 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B285B52D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA4DB52E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:24:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbfIQQVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 12:21:47 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36049 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfIQQVr (ORCPT
+        id S1727591AbfIQQYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:24:04 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44155 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbfIQQYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 12:21:47 -0400
-Received: by mail-qk1-f196.google.com with SMTP id s18so4659381qkj.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:21:47 -0700 (PDT)
+        Tue, 17 Sep 2019 12:24:04 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q11so3353828lfc.11
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:24:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7zcxfoeB93t2LFv4lA/iGGDzpuTwdsiMs4R0hCM94F0=;
-        b=IPKfWlnk6g+8xYh6QPDOV11rgt8hSjZYNydSSMeCC5lKQ3BAPdYcMVFhqlL6/hwZ0L
-         EpNpNap6RxUM7xANzt7U00kSQeknoPyQ0uViAZwm0bLghRCvcpjwrSukCB7LJP0jbqug
-         AEambkcgJO2Rxl/j3spzefDlO8/yGcnoM6b3xgAltN01rOEE6NQh4V3K1/Vx98YKkQOu
-         BrnCaimHtq85qpZJuiNfl/zuqz/jg+n6ZacxHKeAFoTQdf6eXO07ENRaIErUPzEcfZvG
-         6VqeXfW7mFmajNBrjUD4+IoP3kIZdGCGAI9/IPGQK/9dVx4ArRCNMufP0PkHULbLyK6g
-         Vglw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GxsyW6nLofhV8viqZYmUtikq7MzcUQ0DLONnisNNMgg=;
+        b=TqK580QEDxVQPMUfHjJ7kx8CJ6swQ66oeXEZhXBI33FU+q9pAhpktcTOSJh9FjQuYB
+         g/amoJaPGMr0tVs+0KonicAn6CEpIb0jSqvDt3HwUdn6xXa6sACcDsgEA68nfpRcpykU
+         M3sf6qYdD8L0B4HAx6NYPW9aAgS0IclpQKu/s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7zcxfoeB93t2LFv4lA/iGGDzpuTwdsiMs4R0hCM94F0=;
-        b=moKJBkK3KmBP9opG9ijdlpAmXkmdk9JpAMIlftDdIpS+OtgGeQkim6gnRxycpSqEAc
-         7aEv2hoOSG20rtu3ylNYuTRlqRWMB9O9Es/vU3cECNWDNSS5f92XkbTPS4jvRozyagJY
-         XoKEADkiDy82Mg5QAYpnbpV5mnGpK1vWlzN1OiYXVgk23lYM4ametTd3aM6FrWcM+KQO
-         7R02+kKSxzk7RSqli9iwWVhkKsZa5meNtsPdcXImpCHeGavBOv1atLQUGwtdtGQJmccH
-         /RNbCZTYZHfcJt3PyLzLAavPxa40klq2TULeNTM1AV6erL5hJooynGrJRUTZY2C8g57t
-         wArg==
-X-Gm-Message-State: APjAAAVHWhzGdR32+TQrKOhJmoSQ0zSbqxHr0HInEGEGJjk159HRN1Mh
-        fD+aVD5l/wRH7qr2ZymmSjxpIw==
-X-Google-Smtp-Source: APXvYqwb/MFu85JM4GcuDSGF0uOmP1Zyl45W9YDIPitIpFmqcKkM4HZhLZjsrcEi4qbiBF9otNjRKQ==
-X-Received: by 2002:a05:620a:1458:: with SMTP id i24mr4660603qkl.361.1568737306585;
-        Tue, 17 Sep 2019 09:21:46 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id b16sm1824587qtk.65.2019.09.17.09.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Sep 2019 09:21:45 -0700 (PDT)
-Message-ID: <1568737304.5576.162.camel@lca.pw>
-Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
- ZONE_DEVICE driver.
-From:   Qian Cai <cai@lca.pw>
-To:     Waiman Long <longman@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-Date:   Tue, 17 Sep 2019 12:21:44 -0400
-In-Reply-To: <59c946f8-843d-c017-f342-d007a5e14a85@redhat.com>
-References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
-         <b7732a55-4a10-2c1d-c2f5-ca38ee60964d@redhat.com>
-         <e762ee45-43e3-975a-ad19-065f07d1440f@vx.jp.nec.com>
-         <40a1ce2e-1384-b869-97d0-7195b5b47de0@redhat.com>
-         <6a99e003-e1ab-b9e8-7b25-bc5605ab0eb2@vx.jp.nec.com>
-         <e4e54258-e83b-cf0b-b66e-9874be6b5122@redhat.com>
-         <31fd3c86-5852-1863-93bd-8df9da9f95b4@vx.jp.nec.com>
-         <38e58d23-c20b-4e68-5f56-20bba2be2d6c@redhat.com>
-         <59c946f8-843d-c017-f342-d007a5e14a85@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GxsyW6nLofhV8viqZYmUtikq7MzcUQ0DLONnisNNMgg=;
+        b=Lai9RfCHTnDmy4+vqTlHii9fFHT/Bo6Z6OOxYWH8F7FcIgMYngb0E3t7Ki6YuvOzvi
+         jfUGnbTftX2ffKeVJJTsc4WKeY/IJyGuwmRSELQp69ZJy4UPe+mXj0TMRGRFDKk3/Y6C
+         vuma1uPYLyWcvd4f8hoz3BlYbpvjesPJWMrPNdDyvVmb2BZeqls6QvO3rdm5MyAmGVV8
+         u2ZhQw0DrEFtBjb15iih7JkJ0encF55mXn/ccROuAn2lGd5gbxPS3jpHxJozXEoScVVv
+         kp433EBQPIawchZFzz4LX+Y6gQzh0Ic5A0cdVZ4VhXwN0v7FWb5k/Erm+/nqstfY9HCd
+         9UNA==
+X-Gm-Message-State: APjAAAUS0zgshq5EhwvUN2Cci7niPY01Rb4n42bnFP7wN4MFctVrvh5X
+        pobQnpXLnvoaPkfdZwE5H3J0bW4PqMU=
+X-Google-Smtp-Source: APXvYqy128C0o2rIn/0uhDO6OcvHSjHrqOsbyW4LJjShMtF1EusAjQ2JtW1ZpWi5AiBhqVZJP2WSmg==
+X-Received: by 2002:a05:6512:4dd:: with SMTP id w29mr2547375lfq.2.1568737441145;
+        Tue, 17 Sep 2019 09:24:01 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id w27sm512905ljd.55.2019.09.17.09.23.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2019 09:24:00 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 7so4170827ljw.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:23:59 -0700 (PDT)
+X-Received: by 2002:a2e:2c02:: with SMTP id s2mr2491562ljs.156.1568737439299;
+ Tue, 17 Sep 2019 09:23:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+ <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org> <20190917052438.GA26923@1wt.eu>
+ <2508489.jOnZlRuxVn@merkaba> <20190917121156.GC6762@mit.edu>
+ <20190917123015.sirlkvy335crozmj@debian-stretch-darwi.lab.linutronix.de> <20190917160844.GC31567@gardel-login>
+In-Reply-To: <20190917160844.GC31567@gardel-login>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Sep 2019 09:23:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgsWTCZ=LPHi7BXzFCoWbyp3Ey-zZbaKzWixO91Ryr9=A@mail.gmail.com>
+Message-ID: <CAHk-=wgsWTCZ=LPHi7BXzFCoWbyp3Ey-zZbaKzWixO91Ryr9=A@mail.gmail.com>
+Subject: Re: Linux 5.3-rc8
+To:     Lennart Poettering <mzxreary@0pointer.de>
+Cc:     "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-17 at 11:49 -0400, Waiman Long wrote:
-> On 9/17/19 3:13 AM, David Hildenbrand wrote:
-> > On 17.09.19 04:34, Toshiki Fukasawa wrote:
-> > > On 2019/09/09 16:46, David Hildenbrand wrote:
-> > > > Let's take a step back here to understand the issues I am aware of. I
-> > > > think we should solve this for good now:
-> > > > 
-> > > > A PFN walker takes a look at a random PFN at a random point in time. It
-> > > > finds a PFN with SECTION_MARKED_PRESENT && !SECTION_IS_ONLINE. The
-> > > > options are:
-> > > > 
-> > > > 1. It is buddy memory (add_memory()) that has not been online yet. The
-> > > > memmap contains garbage. Don't access.
-> > > > 
-> > > > 2. It is ZONE_DEVICE memory with a valid memmap. Access it.
-> > > > 
-> > > > 3. It is ZONE_DEVICE memory with an invalid memmap, because the section
-> > > > is only partially present: E.g., device starts at offset 64MB within a
-> > > > section or the device ends at offset 64MB within a section. Don't access it.
-> > > 
-> > > I don't agree with case #3. In the case, struct page area is not allocated on
-> > > ZONE_DEVICE, but is allocated on system memory. So I think we can access the
-> > > struct pages. What do you mean "invalid memmap"?
-> > 
-> > No, that's not the case. There is no memory, especially not system
-> > memory. We only allow partially present sections (sub-section memory
-> > hotplug) for ZONE_DEVICE.
-> > 
-> > invalid memmap == memmap was not initialized == struct pages contains
-> > garbage. There is a memmap, but accessing it (e.g., pfn_to_nid()) will
-> > trigger a BUG.
-> > 
-> 
-> As long as the page structures exist, they should be initialized to some
-> known state. We could set PagePoison for those invalid memmap. It is the
+On Tue, Sep 17, 2019 at 9:08 AM Lennart Poettering <mzxreary@0pointer.de> wrote:
+>
+> Here's what I'd propose:
 
-Sounds like you want to run page_init_poison() by default.
+So I think this is ok, but I have another proposal. Before I post that
+one, though, I just wanted to point out:
 
+> 1) Add GRND_INSECURE to get those users of getrandom() who do not need
+>    high quality entropy off its use (systemd has uses for this, for
+>    seeding hash tables for example), thus reducing the places where
+>    things might block.
 
-> garbage that are in those page structures that can cause problem if a
-> struct page walker scan those pages and try to make sense of it.
+I really think that trhe logic should be the other way around.
 
+The getrandom() users that don't need high quality entropy are the
+ones that don't really think about this, and so _they_ shouldn't be
+the ones that have to explicitly state anything. To those users,
+"random is random". By definition they don't much care, and quite
+possibly they don't even know what "entropy" really means in that
+context.
+
+The ones that *do* want high security randomness should be the ones
+that know that "random" means different things to different people,
+and that randomness is hard.
+
+So the onus should be on them to say that "yes, I'm one of those
+people willing to wait".
+
+That's why I'd like to see GRND_SECURE instead. That's kind of what
+GRND_RANDOM is right now, but it went overboard and it's not useful
+even to the people who do want secure random numners.
+
+Besides, the GRND_RANDOM naming doesn't really help the people who
+don't know anyway, so it's just bad in so many ways. We should
+probably just get rid of that flag entirely and make it imply
+GRND_SECURE without the overdone entropy accounting, but that's a
+separate issue.
+
+When we do add GRND_SECURE, we should also add the GRND_INSECURE just
+to allow people to mark their use, and to avoid the whole existing
+confusion about "0".
+
+> 2) Add a kernel log message if a getrandom(0) client hung for 15s or
+>    more, explaining the situation briefly, but not otherwise changing
+>    behaviour.
+
+The problem is that when you have some graphical boot, you'll not even
+see the kernel messages ;(
+
+I do agree that a message is a good idea regardless, but I don't think
+it necessarily solves the problems except for developers.
+
+> 3) Change systemd-random-seed.service to log to console in the same
+>    case, blocking boot cleanly and discoverably.
+
+So I think systemd-random-seed might as well just use a new
+GRND_SECURE, and then not even have to worry about it.
+
+That said, I think I have a suggestion that everybody can live with -
+even if they might not be _happy_ about it. See next email.
+
+> I am not a fan of randomly killing userspace processes that just
+> happened to be the unlucky ones, to call this first... I see no
+> benefit in killing stuff over letting boot hang in a discoverable way.
+
+Absolutely agreed. The point was to not break things.
+
+              Linus
