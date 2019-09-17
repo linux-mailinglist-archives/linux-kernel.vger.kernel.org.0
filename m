@@ -2,191 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8854CB4DF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B6CBB4DEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbfIQMjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 08:39:22 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:34266 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726946AbfIQMjV (ORCPT
+        id S1727698AbfIQMiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 08:38:24 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34362 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbfIQMiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:39:21 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8HCUsGj028794;
-        Tue, 17 Sep 2019 14:38:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=QkRCYsDXVXhFgyT8aCcIU1yLANBURobzqeomhnBIHLE=;
- b=Ft6l6A+LX9udX9LGWjbwgFpHqZt7GblezpZjY42GBsw2xvwZG5DRQElZBGoPgm8WTkQW
- 8U2GNIZXHblsCHQsVlYRrrwz+V/39Ckst8fK+B3A5BryLfcm2doS2BNl0c3e/WzumTyP
- slb9JEj/1RzKZgHo8jWEEf6gikv9KbgnHWpu9Vv5wevzvWABxQrHXhVw22xKRZVoYdwV
- es8La7+RYl5ARoMaTusjibJ4/yfswYsJxDyBUuuE7sk3hqgKvlk2xxW4Qhhhzt+BvKWt
- 9/3pmYWeSeMlZRreA/tzLur7mv8Vw8HKks3VcoTSBVIYYw5zF7yuIC/XcEKlA4Tq7WCC qQ== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2v0np11k7a-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 17 Sep 2019 14:38:44 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1444D52;
-        Tue, 17 Sep 2019 12:38:36 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C166E2BCDD9;
-        Tue, 17 Sep 2019 14:38:35 +0200 (CEST)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 17 Sep
- 2019 14:38:35 +0200
-Received: from localhost (10.48.1.232) by Webmail-ga.st.com (10.75.90.48) with
- Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 17 Sep 2019 14:38:35 +0200
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <jic23@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
-        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
-        <pmeerw@pmeerw.net>, <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v2 2/2] iio: adc: stm32-adc: fix a race when using several adcs with dma and irq
-Date:   Tue, 17 Sep 2019 14:38:16 +0200
-Message-ID: <1568723896-19063-3-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568723896-19063-1-git-send-email-fabrice.gasnier@st.com>
-References: <1568723896-19063-1-git-send-email-fabrice.gasnier@st.com>
+        Tue, 17 Sep 2019 08:38:24 -0400
+Received: by mail-ed1-f65.google.com with SMTP id p10so1366912edq.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 05:38:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fH6+7o6syLPR5DJ6dWMuF/JhEQdUQSof99mG97G17Lc=;
+        b=DLXDmicD7OOygC/JbgTNNCd/yyvrqLEAeJjGJmlDK0oGZk9W/ggiZUTdchxnkcsXM8
+         Vv5Z7HaPznKekmQEIk0ZszDwjFUAmdymDVf1jnqytM0+vrXcrR2kkHveOg7WrLu/UA9R
+         Xj3xkM7N2F2t7yUZ1K5MhJ8JPKbpy/U1nkscY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=fH6+7o6syLPR5DJ6dWMuF/JhEQdUQSof99mG97G17Lc=;
+        b=tJmO2GRu2e4gZAuquFZPxMlfaTnk7eEuYuEDpNh+DL4ubM7KQ3KsO9c4lxCjRkD/Qh
+         LRdvgtDG5LMkrjKBR9NaiYDcWSzRvceakPQdUzu/oXyxrNUFkomV5CcR/hMpwHezb0yp
+         zknIMSu3o8xCxgsg0CtoCn3QywfDoy8UpiopYXJ+NwnGJvELZJqKyDSHYOK44I2nU6Gj
+         I8UVeBgXbUACX2Q6GGNND5Y4BPQxPLuFkH9K41Dlb9n6yVdvvTQpe0/LZO1gMe9gAEev
+         pkQBGXGyh05j1H2tr27V6LjmHJGAV5EoGlk1tLwAQPB6WKzchzjnhA2gGXt2zhMpPzni
+         YDjw==
+X-Gm-Message-State: APjAAAXj0cw1Bis5PEA16nAFtDL/YYqggxJ92woy90rWF77iDSKN9wBT
+        JN8zEoFdPKZpDU8kEON7U7mHlg==
+X-Google-Smtp-Source: APXvYqwBU1dsPChIDGRc3R9W2EEapfs3WzNcvzVlPYxnGXDgQG7xfszeXgYUPZzJ79foYSp0UpwCFw==
+X-Received: by 2002:a17:906:1941:: with SMTP id b1mr4432288eje.141.1568723900313;
+        Tue, 17 Sep 2019 05:38:20 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id c21sm409131edy.70.2019.09.17.05.38.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 05:38:19 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 14:38:17 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
+Cc:     Steven Price <steven.price@arm.com>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panfrost: Prevent race when handling page fault
+Message-ID: <20190917123817.GO3958@phenom.ffwll.local>
+Mail-Followup-To: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Steven Price <steven.price@arm.com>, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20190905121141.42820-1-steven.price@arm.com>
+ <20190913172454.GA5387@kevin>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.1.232]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-17_06:2019-09-17,2019-09-17 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190913172454.GA5387@kevin>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-End of conversion may be handled by using IRQ or DMA. There may be a
-race when two conversions complete at the same time on several ADCs.
-EOC can be read as 'set' for several ADCs, with:
-- an ADC configured to use IRQs. EOCIE bit is set. The handler is normally
-  called in this case.
-- an ADC configured to use DMA. EOCIE bit isn't set. EOC triggers the DMA
-  request instead. It's then automatically cleared by DMA read. But the
-  handler gets called due to status bit is temporarily set (IRQ triggered
-  by the other ADC).
-So both EOC status bit in CSR and EOCIE control bit must be checked
-before invoking the interrupt handler (e.g. call ISR only for
-IRQ-enabled ADCs).
+On Fri, Sep 13, 2019 at 01:24:54PM -0400, Alyssa Rosenzweig wrote:
+> I'm conflicted on this series.
+> 
+> On the one hand, userspace should obviously not be able to crash the
+> kernel. So the crash should be fixed in one way or another.
+> 
+> On the other hand, userspace really has to supply all the BOs it uses
+> for correctness. I realize the DDK doesn't do this but... it probably
+> should, umm...
+> 
+> Would it be possible to check for the NULL pointer in the kernel and
+> skip printing information that would require a dereference? (Without
+> having to play games with reference counts). Presumably that might fix
+> crashes in other corner cases.
 
-Fixes: 2763ea0585c9 ("iio: adc: stm32: add optional dma support")
+Yeah if this is the blob doing something funny I guess the right action
+would be to kill that context and ban it from doing more funny things. So
+not just trying to bail out without crashing.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
-Changes in v2:
-- Keep registers definitions as a whole block to ease readability (add
-  a precursor patch to move them to header file)
----
- drivers/iio/adc/stm32-adc-core.c | 43 +++++++++++++++++++++++++++++++++++++---
- drivers/iio/adc/stm32-adc-core.h |  1 +
- 2 files changed, 41 insertions(+), 3 deletions(-)
+Plus I guess the commit message should be a bit clearer in explaining
+what's actually going on here :-)
+-Daniel
+> 
+> On Thu, Sep 05, 2019 at 01:11:41PM +0100, Steven Price wrote:
+> > When handling a GPU page fault addr_to_drm_mm_node() is used to
+> > translate the GPU address to a buffer object. However it is possible for
+> > the buffer object to be freed after the function has returned resulting
+> > in a use-after-free of the BO.
+> > 
+> > Change addr_to_drm_mm_node to return the panfrost_gem_object with an
+> > extra reference on it, preventing the BO from being freed until after
+> > the page fault has been handled.
+> > 
+> > Signed-off-by: Steven Price <steven.price@arm.com>
+> > ---
+> > 
+> > I've managed to trigger this, generating the following stack trace.
+> > 
+> > Unable to handle kernel NULL pointer dereference at virtual address 00000090
+> > pgd = 33a6a181
+> > [00000090] *pgd=00000000
+> > Internal error: Oops: 5 [#1] SMP ARM
+> > Modules linked in:
+> > CPU: 0 PID: 81 Comm: irq/60-mmu Not tainted 5.3.0-rc1+ #4
+> > Hardware name: Rockchip (Device Tree)
+> > PC is at panfrost_mmu_map_fault_addr+0x140/0x3a0
+> > LR is at _raw_spin_unlock+0x20/0x3c
+> > pc : [<c0508944>]    lr : [<c07ced10>]    psr: 20030013
+> > sp : ec643e88  ip : ea70ce24  fp : ec5fe840
+> > r10: 00000001  r9 : 00000000  r8 : 000178c9
+> > r7 : 00000000  r6 : 178c9f00  r5 : ec5fe940  r4 : ea70ce08
+> > r3 : 00000000  r2 : 00000000  r1 : ec640e00  r0 : ec5fe940
+> > Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> > Control: 10c5387d  Table: 29f8406a  DAC: 00000051
+> > Process irq/60-mmu (pid: 81, stack limit = 0x4b907106)
+> > Stack: (0xec643e88 to 0xec644000)
+> > 3e80:                   ec640e00 c07cede0 c0c0b200 ec640e00 00000000 00000000
+> > 3ea0: 000178c9 00000000 c0c0b200 c07cede0 eef91040 ec5fe840 00000001 00000000
+> > 3ec0: 00010001 010003c3 000000c3 00000001 178c9f00 c0508c98 eef91050 00000000
+> > 3ee0: ec643f34 c07c9188 00000001 c0167854 00000000 ec643ef8 c0c08448 c07c933c
+> > 3f00: 00000000 ec643f04 fffefffe 3d182b17 ee193468 ee193400 ec5db3c0 ec5db3c0
+> > 3f20: c0183840 ec5db3e4 c0cb2874 c0183b08 00000001 c018385c ffffe000 ee193400
+> > 3f40: ec5db3c0 c0183b8c c0c08448 00000000 60000013 00000000 c01839b8 3d182b17
+> > 3f60: ffffe000 ec5d0500 ec5db380 ec642000 ec5db3c0 c0183a64 00000000 ed025cd8
+> > 3f80: ec5d0538 c0146cfc ec642000 ec5db380 c0146bc0 00000000 00000000 00000000
+> > 3fa0: 00000000 00000000 00000000 c01010b4 00000000 00000000 00000000 00000000
+> > 3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> > 3fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+> > [<c0508944>] (panfrost_mmu_map_fault_addr) from [<c0508c98>] (panfrost_mmu_irq_handler_thread+0xf4/0x248)
+> > [<c0508c98>] (panfrost_mmu_irq_handler_thread) from [<c018385c>] (irq_thread_fn+0x1c/0x58)
+> > [<c018385c>] (irq_thread_fn) from [<c0183b8c>] (irq_thread+0x128/0x240)
+> > [<c0183b8c>] (irq_thread) from [<c0146cfc>] (kthread+0x13c/0x154)
+> > [<c0146cfc>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+> > Exception stack(0xec643fb0 to 0xec643ff8)
+> > 3fa0:                                     00000000 00000000 00000000 00000000
+> > 3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> > 3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> > Code: 1affffec eaffffe8 e5143004 e59d2014 (e5933090)
+> > ---[ end trace 04eadc3009b8f507 ]---
+> > ---
+> >  drivers/gpu/drm/panfrost/panfrost_mmu.c | 38 ++++++++++++++++---------
+> >  1 file changed, 24 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> > index 842bdd7cf6be..115925e7460a 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> > @@ -392,9 +392,11 @@ void panfrost_mmu_pgtable_free(struct panfrost_file_priv *priv)
+> >  	free_io_pgtable_ops(mmu->pgtbl_ops);
+> >  }
+> >  
+> > -static struct drm_mm_node *addr_to_drm_mm_node(struct panfrost_device *pfdev, int as, u64 addr)
+> > +static struct panfrost_gem_object *
+> > +addr_to_drm_mm_node(struct panfrost_device *pfdev, int as, u64 addr)
+> >  {
+> > -	struct drm_mm_node *node = NULL;
+> > +	struct panfrost_gem_object *bo = NULL;
+> > +	struct drm_mm_node *node;
+> >  	u64 offset = addr >> PAGE_SHIFT;
+> >  	struct panfrost_mmu *mmu;
+> >  
+> > @@ -406,14 +408,17 @@ static struct drm_mm_node *addr_to_drm_mm_node(struct panfrost_device *pfdev, in
+> >  
+> >  		priv = container_of(mmu, struct panfrost_file_priv, mmu);
+> >  		drm_mm_for_each_node(node, &priv->mm) {
+> > -			if (offset >= node->start && offset < (node->start + node->size))
+> > +			if (offset >= node->start &&
+> > +			    offset < (node->start + node->size)) {
+> > +				bo = drm_mm_node_to_panfrost_bo(node);
+> > +				drm_gem_object_get(&bo->base.base);
+> >  				goto out;
+> > +			}
+> >  		}
+> >  	}
+> > -
+> >  out:
+> >  	spin_unlock(&pfdev->as_lock);
+> > -	return node;
+> > +	return bo;
+> >  }
+> >  
+> >  #define NUM_FAULT_PAGES (SZ_2M / PAGE_SIZE)
+> > @@ -421,29 +426,28 @@ static struct drm_mm_node *addr_to_drm_mm_node(struct panfrost_device *pfdev, in
+> >  int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
+> >  {
+> >  	int ret, i;
+> > -	struct drm_mm_node *node;
+> >  	struct panfrost_gem_object *bo;
+> >  	struct address_space *mapping;
+> >  	pgoff_t page_offset;
+> >  	struct sg_table *sgt;
+> >  	struct page **pages;
+> >  
+> > -	node = addr_to_drm_mm_node(pfdev, as, addr);
+> > -	if (!node)
+> > +	bo = addr_to_drm_mm_node(pfdev, as, addr);
+> > +	if (!bo)
+> >  		return -ENOENT;
+> >  
+> > -	bo = drm_mm_node_to_panfrost_bo(node);
+> >  	if (!bo->is_heap) {
+> >  		dev_WARN(pfdev->dev, "matching BO is not heap type (GPU VA = %llx)",
+> > -			 node->start << PAGE_SHIFT);
+> > -		return -EINVAL;
+> > +			 bo->node.start << PAGE_SHIFT);
+> > +		ret = -EINVAL;
+> > +		goto err_bo;
+> >  	}
+> >  	WARN_ON(bo->mmu->as != as);
+> >  
+> >  	/* Assume 2MB alignment and size multiple */
+> >  	addr &= ~((u64)SZ_2M - 1);
+> >  	page_offset = addr >> PAGE_SHIFT;
+> > -	page_offset -= node->start;
+> > +	page_offset -= bo->node.start;
+> >  
+> >  	mutex_lock(&bo->base.pages_lock);
+> >  
+> > @@ -452,7 +456,8 @@ int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
+> >  				     sizeof(struct sg_table), GFP_KERNEL | __GFP_ZERO);
+> >  		if (!bo->sgts) {
+> >  			mutex_unlock(&bo->base.pages_lock);
+> > -			return -ENOMEM;
+> > +			ret = -ENOMEM;
+> > +			goto err_bo;
+> >  		}
+> >  
+> >  		pages = kvmalloc_array(bo->base.base.size >> PAGE_SHIFT,
+> > @@ -461,7 +466,8 @@ int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
+> >  			kfree(bo->sgts);
+> >  			bo->sgts = NULL;
+> >  			mutex_unlock(&bo->base.pages_lock);
+> > -			return -ENOMEM;
+> > +			ret = -ENOMEM;
+> > +			goto err_bo;
+> >  		}
+> >  		bo->base.pages = pages;
+> >  		bo->base.pages_use_count = 1;
+> > @@ -499,12 +505,16 @@ int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as, u64 addr)
+> >  
+> >  	dev_dbg(pfdev->dev, "mapped page fault @ AS%d %llx", as, addr);
+> >  
+> > +	drm_gem_object_put_unlocked(&bo->base.base);
+> > +
+> >  	return 0;
+> >  
+> >  err_map:
+> >  	sg_free_table(sgt);
+> >  err_pages:
+> >  	drm_gem_shmem_put_pages(&bo->base);
+> > +err_bo:
+> > +	drm_gem_object_put_unlocked(&bo->base.base);
+> >  	return ret;
+> >  }
+> >  
+> > -- 
+> > 2.20.1
+> > 
 
-diff --git a/drivers/iio/adc/stm32-adc-core.c b/drivers/iio/adc/stm32-adc-core.c
-index 84ac326..93a096a 100644
---- a/drivers/iio/adc/stm32-adc-core.c
-+++ b/drivers/iio/adc/stm32-adc-core.c
-@@ -44,6 +44,8 @@
-  * @eoc1:	adc1 end of conversion flag in @csr
-  * @eoc2:	adc2 end of conversion flag in @csr
-  * @eoc3:	adc3 end of conversion flag in @csr
-+ * @ier:	interrupt enable register offset for each adc
-+ * @eocie_msk:	end of conversion interrupt enable mask in @ier
-  */
- struct stm32_adc_common_regs {
- 	u32 csr;
-@@ -51,6 +53,8 @@ struct stm32_adc_common_regs {
- 	u32 eoc1_msk;
- 	u32 eoc2_msk;
- 	u32 eoc3_msk;
-+	u32 ier;
-+	u32 eocie_msk;
- };
- 
- struct stm32_adc_priv;
-@@ -276,6 +280,8 @@ static const struct stm32_adc_common_regs stm32f4_adc_common_regs = {
- 	.eoc1_msk = STM32F4_EOC1,
- 	.eoc2_msk = STM32F4_EOC2,
- 	.eoc3_msk = STM32F4_EOC3,
-+	.ier = STM32F4_ADC_CR1,
-+	.eocie_msk = STM32F4_EOCIE,
- };
- 
- /* STM32H7 common registers definitions */
-@@ -284,8 +290,24 @@ static const struct stm32_adc_common_regs stm32h7_adc_common_regs = {
- 	.ccr = STM32H7_ADC_CCR,
- 	.eoc1_msk = STM32H7_EOC_MST,
- 	.eoc2_msk = STM32H7_EOC_SLV,
-+	.ier = STM32H7_ADC_IER,
-+	.eocie_msk = STM32H7_EOCIE,
- };
- 
-+static const unsigned int stm32_adc_offset[STM32_ADC_MAX_ADCS] = {
-+	0, STM32_ADC_OFFSET, STM32_ADC_OFFSET * 2,
-+};
-+
-+static unsigned int stm32_adc_eoc_enabled(struct stm32_adc_priv *priv,
-+					  unsigned int adc)
-+{
-+	u32 ier, offset = stm32_adc_offset[adc];
-+
-+	ier = readl_relaxed(priv->common.base + offset + priv->cfg->regs->ier);
-+
-+	return ier & priv->cfg->regs->eocie_msk;
-+}
-+
- /* ADC common interrupt for all instances */
- static void stm32_adc_irq_handler(struct irq_desc *desc)
- {
-@@ -296,13 +318,28 @@ static void stm32_adc_irq_handler(struct irq_desc *desc)
- 	chained_irq_enter(chip, desc);
- 	status = readl_relaxed(priv->common.base + priv->cfg->regs->csr);
- 
--	if (status & priv->cfg->regs->eoc1_msk)
-+	/*
-+	 * End of conversion may be handled by using IRQ or DMA. There may be a
-+	 * race here when two conversions complete at the same time on several
-+	 * ADCs. EOC may be read 'set' for several ADCs, with:
-+	 * - an ADC configured to use DMA (EOC triggers the DMA request, and
-+	 *   is then automatically cleared by DR read in hardware)
-+	 * - an ADC configured to use IRQs (EOCIE bit is set. The handler must
-+	 *   be called in this case)
-+	 * So both EOC status bit in CSR and EOCIE control bit must be checked
-+	 * before invoking the interrupt handler (e.g. call ISR only for
-+	 * IRQ-enabled ADCs).
-+	 */
-+	if (status & priv->cfg->regs->eoc1_msk &&
-+	    stm32_adc_eoc_enabled(priv, 0))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 0));
- 
--	if (status & priv->cfg->regs->eoc2_msk)
-+	if (status & priv->cfg->regs->eoc2_msk &&
-+	    stm32_adc_eoc_enabled(priv, 1))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 1));
- 
--	if (status & priv->cfg->regs->eoc3_msk)
-+	if (status & priv->cfg->regs->eoc3_msk &&
-+	    stm32_adc_eoc_enabled(priv, 2))
- 		generic_handle_irq(irq_find_mapping(priv->domain, 2));
- 
- 	chained_irq_exit(chip, desc);
-diff --git a/drivers/iio/adc/stm32-adc-core.h b/drivers/iio/adc/stm32-adc-core.h
-index 94aa2d2..2579d51 100644
---- a/drivers/iio/adc/stm32-adc-core.h
-+++ b/drivers/iio/adc/stm32-adc-core.h
-@@ -25,6 +25,7 @@
-  * --------------------------------------------------------
-  */
- #define STM32_ADC_MAX_ADCS		3
-+#define STM32_ADC_OFFSET		0x100
- #define STM32_ADCX_COMN_OFFSET		0x300
- 
- /* STM32F4 - Registers for each ADC instance */
+
+
 -- 
-2.7.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
