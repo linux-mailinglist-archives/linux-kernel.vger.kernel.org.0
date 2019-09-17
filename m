@@ -2,177 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA680B4A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:24:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9F5B4A71
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbfIQJY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:24:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37368 "EHLO mx1.redhat.com"
+        id S1727483AbfIQJ1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:27:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:6874 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727237AbfIQJYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:24:12 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 04028C057F20;
-        Tue, 17 Sep 2019 09:24:12 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B28D5D6C8;
-        Tue, 17 Sep 2019 09:24:10 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 944059CAC; Tue, 17 Sep 2019 11:24:06 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org (open list),
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU)
-Subject: [PATCH v2 11/11] drm/vram: drop DRM_VRAM_MM_FILE_OPERATIONS
-Date:   Tue, 17 Sep 2019 11:24:04 +0200
-Message-Id: <20190917092404.9982-12-kraxel@redhat.com>
-In-Reply-To: <20190917092404.9982-1-kraxel@redhat.com>
-References: <20190917092404.9982-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 17 Sep 2019 09:24:12 +0000 (UTC)
+        id S1727447AbfIQJ1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:27:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 02:27:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,515,1559545200"; 
+   d="scan'208";a="270483217"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga001.jf.intel.com with ESMTP; 17 Sep 2019 02:27:11 -0700
+Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 17 Sep 2019 02:27:11 -0700
+Received: from shsmsx154.ccr.corp.intel.com (10.239.6.54) by
+ fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 17 Sep 2019 02:27:10 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.92]) by
+ SHSMSX154.ccr.corp.intel.com ([169.254.7.195]) with mapi id 14.03.0439.000;
+ Tue, 17 Sep 2019 17:27:08 +0800
+From:   "Zhang, Tina" <tina.zhang@intel.com>
+To:     "kraxel@redhat.com" <kraxel@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Yuan, Hang" <hang.yuan@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>
+Subject: RE: [PATCH v5 0/6] Deliver vGPU display refresh event to userspace
+Thread-Topic: [PATCH v5 0/6] Deliver vGPU display refresh event to userspace
+Thread-Index: AQHVU9tUM+mrk1EK3UW2FOPyJRIR1KcZNxaggAMX1YCAE3M5kA==
+Date:   Tue, 17 Sep 2019 09:27:08 +0000
+Message-ID: <237F54289DF84E4997F34151298ABEBC87734BB6@SHSMSX101.ccr.corp.intel.com>
+References: <20190816023528.30210-1-tina.zhang@intel.com>
+ <237F54289DF84E4997F34151298ABEBC8771E7AE@SHSMSX101.ccr.corp.intel.com>
+ <20190905074857.n3akutnoarnfvg4y@sirius.home.kraxel.org>
+In-Reply-To: <20190905074857.n3akutnoarnfvg4y@sirius.home.kraxel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmNhNzQ0MTctZjBjNy00ZmI3LThiMzItYTg0MTBiNDJkN2U3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibmc3aVwvMmlTQnVoYkwwVzRseHlpd3pEUFZcLzh1VHlzcEk0ZlRPMEl3UCtQZ08xYlhQejQ0ejZ6WHdcL3lENWtWeCJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not needed any more because we don't have vram specific fops
-any more.  DEFINE_DRM_GEM_FOPS() can be used instead.
-
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- include/drm/drm_gem_vram_helper.h              | 18 ------------------
- drivers/gpu/drm/ast/ast_drv.c                  |  5 +----
- drivers/gpu/drm/bochs/bochs_drv.c              |  5 +----
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  5 +----
- drivers/gpu/drm/mgag200/mgag200_drv.c          |  5 +----
- drivers/gpu/drm/vboxvideo/vbox_drv.c           |  5 +----
- 6 files changed, 5 insertions(+), 38 deletions(-)
-
-diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
-index 9d5526650291..3503ff784803 100644
---- a/include/drm/drm_gem_vram_helper.h
-+++ b/include/drm/drm_gem_vram_helper.h
-@@ -180,22 +180,4 @@ struct drm_vram_mm *drm_vram_helper_alloc_mm(
- 	struct drm_device *dev, uint64_t vram_base, size_t vram_size);
- void drm_vram_helper_release_mm(struct drm_device *dev);
- 
--/**
-- * define DRM_VRAM_MM_FILE_OPERATIONS - default callback functions for \
--	&struct file_operations
-- *
-- * Drivers that use VRAM MM can use this macro to initialize
-- * &struct file_operations with default functions.
-- */
--#define DRM_VRAM_MM_FILE_OPERATIONS \
--	.llseek		= no_llseek, \
--	.read		= drm_read, \
--	.poll		= drm_poll, \
--	.unlocked_ioctl = drm_ioctl, \
--	.compat_ioctl	= drm_compat_ioctl, \
--	.mmap		= drm_gem_mmap, \
--	.open		= drm_open, \
--	.release	= drm_release \
--
--
- #endif
-diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
-index e0e8770462bc..1f17794b0890 100644
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -200,10 +200,7 @@ static struct pci_driver ast_pci_driver = {
- 	.driver.pm = &ast_pm_ops,
- };
- 
--static const struct file_operations ast_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(ast_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM,
-diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-index 3b9b0d9bbc14..10460878414e 100644
---- a/drivers/gpu/drm/bochs/bochs_drv.c
-+++ b/drivers/gpu/drm/bochs/bochs_drv.c
-@@ -58,10 +58,7 @@ static int bochs_load(struct drm_device *dev)
- 	return ret;
- }
- 
--static const struct file_operations bochs_fops = {
--	.owner		= THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(bochs_fops);
- 
- static struct drm_driver bochs_driver = {
- 	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index f5b35fdef6f3..b6fdac91e502 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -26,10 +26,7 @@
- #include "hibmc_drm_drv.h"
- #include "hibmc_drm_regs.h"
- 
--static const struct file_operations hibmc_fops = {
--	.owner		= THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(hibmc_fops);
- 
- static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
- {
-diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
-index 4f9df3b93598..397f8b0a9af8 100644
---- a/drivers/gpu/drm/mgag200/mgag200_drv.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
-@@ -58,10 +58,7 @@ static void mga_pci_remove(struct pci_dev *pdev)
- 	drm_put_dev(dev);
- }
- 
--static const struct file_operations mgag200_driver_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(mgag200_driver_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features = DRIVER_GEM | DRIVER_MODESET,
-diff --git a/drivers/gpu/drm/vboxvideo/vbox_drv.c b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-index 862db495d111..0c37032c8b65 100644
---- a/drivers/gpu/drm/vboxvideo/vbox_drv.c
-+++ b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-@@ -189,10 +189,7 @@ static struct pci_driver vbox_pci_driver = {
- #endif
- };
- 
--static const struct file_operations vbox_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(vbox_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features =
--- 
-2.18.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogaW50ZWwtZ3Z0LWRldiBb
+bWFpbHRvOmludGVsLWd2dC1kZXYtYm91bmNlc0BsaXN0cy5mcmVlZGVza3RvcC5vcmddIE9uDQo+
+IEJlaGFsZiBPZiBrcmF4ZWxAcmVkaGF0LmNvbQ0KPiBTZW50OiBUaHVyc2RheSwgU2VwdGVtYmVy
+IDUsIDIwMTkgMzo0OSBQTQ0KPiBUbzogWmhhbmcsIFRpbmEgPHRpbmEuemhhbmdAaW50ZWwuY29t
+Pg0KPiBDYzoga3ZtQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
+ZzsgWXVhbiwgSGFuZw0KPiA8aGFuZy55dWFuQGludGVsLmNvbT47IGFsZXgud2lsbGlhbXNvbkBy
+ZWRoYXQuY29tOyBMdiwgWmhpeXVhbg0KPiA8emhpeXVhbi5sdkBpbnRlbC5jb20+OyBpbnRlbC1n
+dnQtZGV2QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1IDAv
+Nl0gRGVsaXZlciB2R1BVIGRpc3BsYXkgcmVmcmVzaCBldmVudCB0byB1c2Vyc3BhY2UNCj4gDQo+
+ICAgSGksDQo+IA0KPiA+IE9wdGlvbiAyOiBRRU1VIHByb3ZpZGVzIHRoZSBlbXVsYXRlZCBkaXNw
+bGF5IHJlZnJlc2ggZXZlbnQgdG8gdGhlDQo+ID4gdmdwdXMgcHJvdmlkZWQgYnkgdmVuZG9yIGRy
+aXZlci4gRm9yIHZncHVzLCB0aGUgZGlzcGxheSByZWZyZXNoIGV2ZW50DQo+ID4gY2FuIGJlIGNv
+bnNpZGVyZWQgYXMgdGhlIHZibGFuayBldmVudCB3aGljaCBpcyBsZXZlcmFnZWQgYnkgZ3Vlc3QN
+Cj4gPiB3aW5kb3cgbWFuYWdlciB0byBkbyB0aGUgcGxhbmUgdXBkYXRlIG9yIG1vZGUtc2V0dGlu
+Zy4NCj4gDQo+ID4gUGVvcGxlIGFyZSBhc2tpbmcgaWYgb3B0aW9uIDIgY291bGQgYmUgYSBiZXR0
+ZXIgY2hvaWNlLg0KPiANCj4gQ2VydGFpbmx5IHdvcnRoIHRyeWluZywgbWF5YmUgaXQgZXZlbiBt
+YWtlcyBzZW5zZSB0byBpbXBsZW1lbnQgYm90aCBhbmQNCj4gbGV0IHFlbXUgcGljayBvbmUsIHBv
+c3NpYmx5IGV2ZW4gc3dpdGNoIHRoZW0gYXQgcnVudGltZS4NCj4gDQo+IHFlbXUgY2FuIGNoYW5n
+ZSB0aGUgcmVmcmVzaCByYXRlLiAgdm5jIGFuZCBzZGwgdXNlIHRoYXQgdG8gcmVkdWNlIHRoZQ0K
+PiByZWZyZXNoIHJhdGUgaW4gY2FzZSBub2JvZHkgaXMgbG9va2luZyAobm8gdm5jIGNsaWVudCBj
+b25uZWN0ZWQsIHNkbCB3aW5kb3cNCj4gbWluaW1pemVkKS4gIEl0IHN1cmVseSBtYWtlcyBzZW5z
+ZSB0byBtYWtlIHRoYXQgdmlzaWJsZSB0byB0aGUgZ3Vlc3Qgc28gaXQgY2FuDQo+IHRocm90dGxl
+IGRpc3BsYXkgdXBkYXRlcyB0b28uICBJJ20gbm90IHN1cmUgdmJsYW5rIGlzIHRoZSB3YXkgdG8g
+Z28gdGhvdWdoLA0KPiBndWVzdHMgbWlnaHQgcnVuIGludG8gdmJsYW5rIGlycSB0aW1lb3V0cyBp
+biBjYXNlIHRoZSByZWZyZXNoIHJhdGUgaXMgdmVyeQ0KPiBsb3cgLi4uDQoNCkluZGVlZCwgbG93
+IHZibGFuayByYXRlIGlzbid0IGV4cGVjdGVkIGJ5IGd1ZXN0IGdmeCBkcml2ZXIuIEl0IGNvbXBs
+YWlucyBhYm91dCB0aGUgdGltZW91dCBlcnJvciBhbGwgdGhlIHRpbWUsIHdoZW4gdGhlIHZibGFu
+ayBpcyBsb3cuIA0KDQpDdXJyZW50bHksIGd2dC1nIHByb3ZpZGVzIGZ1bGwgdmlydHVhbGl6ZWQg
+ZGlzcGxheSBtb2RlbCAoYS5rLmEuIG5vdCBwdikuIEFuZCB0aGUgb3B0aW9uIDIgaXMgbW9yZSBs
+aWtlIGEgcHYgc29sdXRpb24gZm9yIHBlcmZvcm1hbmNlIG9wdGltaXphdGlvbiwgd2hpY2ggaXMg
+b2YgY291cnNlIGEgdmVyeSBnb29kIHByb3Bvc2FsLiBTaW5jZSB0aGUgdHdvIG9wdGlvbnMgaGF2
+ZSBubyBkZXBlbmRlbmN5LCB0aGlzIHBhdGNoLXNldCBsaW1pdHMgaXRzIHNjb3BlIHRvIG9ubHkg
+aW5jbHVkZSBvcHRpb24gMS4gVGhhbmtzLg0KDQoNCkJSLA0KVGluYQ0KDQo+IA0KPiBjaGVlcnMs
+DQo+ICAgR2VyZA0KPiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18NCj4gaW50ZWwtZ3Z0LWRldiBtYWlsaW5nIGxpc3QNCj4gaW50ZWwtZ3Z0LWRldkBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcNCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9pbnRlbC1ndnQtZGV2DQo=
