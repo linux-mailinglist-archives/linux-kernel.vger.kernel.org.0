@@ -2,61 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3D3EB50DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B07B50BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:50:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728848AbfIQO57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:57:59 -0400
-Received: from 16.mo7.mail-out.ovh.net ([46.105.72.216]:34238 "EHLO
-        16.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728836AbfIQO56 (ORCPT
+        id S1728668AbfIQOuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:50:39 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42118 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbfIQOuj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:57:58 -0400
-X-Greylist: delayed 1074 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 10:57:57 EDT
-Received: from player772.ha.ovh.net (unknown [10.109.143.183])
-        by mo7.mail-out.ovh.net (Postfix) with ESMTP id A924D13320D
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 16:40:01 +0200 (CEST)
-Received: from qperret.net (115.ip-51-255-42.eu [51.255.42.115])
-        (Authenticated sender: qperret@qperret.net)
-        by player772.ha.ovh.net (Postfix) with ESMTPSA id 6B8229E4787E;
-        Tue, 17 Sep 2019 14:39:42 +0000 (UTC)
-Date:   Tue, 17 Sep 2019 16:39:37 +0200
-From:   Quentin Perret <qperret@qperret.net>
-To:     Giovanni Gherdovich <ggherdovich@suse.cz>
-Cc:     srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, bp@suse.de,
-        lenb@kernel.org, rjw@rjwysocki.net, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mgorman@techsingularity.net, matt@codeblueprint.co.uk,
-        viresh.kumar@linaro.org, juri.lelli@redhat.com, pjt@google.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com
-Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
-Message-ID: <20190917143937.GA334@qperret.net>
-References: <20190909024216.5942-1-ggherdovich@suse.cz>
- <20190909024216.5942-2-ggherdovich@suse.cz>
- <20190914105708.GA12877@qperret.net>
- <1568730466.3329.4.camel@suse.cz>
+        Tue, 17 Sep 2019 10:50:39 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iAEoN-0008Sa-Pj; Tue, 17 Sep 2019 16:50:35 +0200
+Date:   Tue, 17 Sep 2019 16:50:35 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH RT v3 5/5] rcutorture: Avoid problematic critical section
+ nesting on RT
+Message-ID: <20190917145035.l6egzthsdzp7aipe@linutronix.de>
+References: <20190911165729.11178-1-swood@redhat.com>
+ <20190911165729.11178-6-swood@redhat.com>
+ <20190912221706.GC150506@google.com>
+ <500cabaa80f250b974409ee4a4fca59bf2e24564.camel@redhat.com>
+ <20190917100728.wnhdvmbbzzxolef4@linutronix.de>
+ <26dbecfee2c02456ddfda3647df1bcd56d9cc520.camel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1568730466.3329.4.camel@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Ovh-Tracer-Id: 17312118445391502229
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrudeigdehvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+In-Reply-To: <26dbecfee2c02456ddfda3647df1bcd56d9cc520.camel@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 17 Sep 2019 at 16:27:46 (+0200), Giovanni Gherdovich wrote:
-> I'll check what's the cost of static_cpu_has() and if it's non-negligible I'll
-> do what you suggest (x86-specific version of arch_scale_freq_invariant().
+On 2019-09-17 09:36:22 [-0500], Scott Wood wrote:
+> > On non-RT you can (but should not) use the counter part of the function
+> > in random order like:
+> > 	local_bh_disable();
+> > 	local_irq_disable();
+> > 	local_bh_enable();
+> > 	local_irq_enable();
+> 
+> Actually even non-RT will assert if you do local_bh_enable() with IRQs
+> disabled -- but the other combinations do work, and are used some places via
+> spinlocks.  If they are used via direct calls to preempt_disable() or
+> local_irq_disable() (or via raw spinlocks), then that will not go away on RT
+> and we'll have a problem.
 
-In case this is indeed expensive to check, you could always add a static
-key, set at boot time, to optimize things a bit ... That might be worth
-it since this is called in latency-sensitive paths of the scheduler.
+lockdep_assert_irqs_enabled() is a nop with CONFIG_PROVE_LOCKING=N and
+RT breaks either way. 
 
-Thanks,
-Quentin
+> > Since you _can_ use it in random order Paul wants to test that the
+> > random use of those function does not break RCU in any way. Since they
+> > can not be used on RT in random order it has been agreed that we keep
+> > the test for !RT but disable it on RT.
+> 
+> For now, yes.  Long term it would be good to keep track of when
+> preemption/irqs would be disabled on RT, even when running a non-RT debug
+> kernel, and assert when bad things are done with it (assuming an RT-capable
+> arch).  Besides detecting these fairly unusual patterns, it could also
+> detect earlier the much more common problem of nesting a non-raw spinlock
+> inside a raw spinlock or other RT-atomic context.
+
+you will be surprised but we have patches for that. We need first get
+rid of other "false positives" before plugging this in.
+
+> -Scott
+
+Sebastian
