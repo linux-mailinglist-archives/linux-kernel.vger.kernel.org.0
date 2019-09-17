@@ -2,98 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A74BB51CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E761B51D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:54:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbfIQPtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 11:49:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46326 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727147AbfIQPtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 11:49:41 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 577B81895A51;
-        Tue, 17 Sep 2019 15:49:41 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EB101000343;
-        Tue, 17 Sep 2019 15:49:21 +0000 (UTC)
-Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
- ZONE_DEVICE driver.
-To:     David Hildenbrand <david@redhat.com>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
- <b7732a55-4a10-2c1d-c2f5-ca38ee60964d@redhat.com>
- <e762ee45-43e3-975a-ad19-065f07d1440f@vx.jp.nec.com>
- <40a1ce2e-1384-b869-97d0-7195b5b47de0@redhat.com>
- <6a99e003-e1ab-b9e8-7b25-bc5605ab0eb2@vx.jp.nec.com>
- <e4e54258-e83b-cf0b-b66e-9874be6b5122@redhat.com>
- <31fd3c86-5852-1863-93bd-8df9da9f95b4@vx.jp.nec.com>
- <38e58d23-c20b-4e68-5f56-20bba2be2d6c@redhat.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <59c946f8-843d-c017-f342-d007a5e14a85@redhat.com>
-Date:   Tue, 17 Sep 2019 11:49:20 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729833AbfIQPxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 11:53:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51442 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729780AbfIQPxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 11:53:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 18177AEBB;
+        Tue, 17 Sep 2019 15:38:31 +0000 (UTC)
+Date:   Tue, 17 Sep 2019 17:38:30 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: threads-max observe limits
+Message-ID: <20190917153830.GE1872@dhcp22.suse.cz>
+References: <20190917100350.GB1872@dhcp22.suse.cz>
+ <38349607-b09c-fa61-ccbb-20bee9f282a3@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <38e58d23-c20b-4e68-5f56-20bba2be2d6c@redhat.com>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Tue, 17 Sep 2019 15:49:41 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <38349607-b09c-fa61-ccbb-20bee9f282a3@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/17/19 3:13 AM, David Hildenbrand wrote:
-> On 17.09.19 04:34, Toshiki Fukasawa wrote:
->> On 2019/09/09 16:46, David Hildenbrand wrote:
->>> Let's take a step back here to understand the issues I am aware of. I
->>> think we should solve this for good now:
->>>
->>> A PFN walker takes a look at a random PFN at a random point in time. It
->>> finds a PFN with SECTION_MARKED_PRESENT && !SECTION_IS_ONLINE. The
->>> options are:
->>>
->>> 1. It is buddy memory (add_memory()) that has not been online yet. The
->>> memmap contains garbage. Don't access.
->>>
->>> 2. It is ZONE_DEVICE memory with a valid memmap. Access it.
->>>
->>> 3. It is ZONE_DEVICE memory with an invalid memmap, because the section
->>> is only partially present: E.g., device starts at offset 64MB within a
->>> section or the device ends at offset 64MB within a section. Don't access it.
->> I don't agree with case #3. In the case, struct page area is not allocated on
->> ZONE_DEVICE, but is allocated on system memory. So I think we can access the
->> struct pages. What do you mean "invalid memmap"?
-> No, that's not the case. There is no memory, especially not system
-> memory. We only allow partially present sections (sub-section memory
-> hotplug) for ZONE_DEVICE.
->
-> invalid memmap == memmap was not initialized == struct pages contains
-> garbage. There is a memmap, but accessing it (e.g., pfn_to_nid()) will
-> trigger a BUG.
->
-As long as the page structures exist, they should be initialized to some
-known state. We could set PagePoison for those invalid memmap. It is the
-garbage that are in those page structures that can cause problem if a
-struct page walker scan those pages and try to make sense of it.
+On Tue 17-09-19 17:28:02, Heinrich Schuchardt wrote:
+> 
+> On 9/17/19 12:03 PM, Michal Hocko wrote:
+> > Hi,
+> > I have just stumbled over 16db3d3f1170 ("kernel/sysctl.c: threads-max
+> > observe limits") and I am really wondering what is the motivation behind
+> > the patch. We've had a customer noticing the threads_max autoscaling
+> > differences btween 3.12 and 4.4 kernels and wanted to override the auto
+> > tuning from the userspace, just to find out that this is not possible.
+> 
+> set_max_threads() sets the upper limit (max_threads_suggested) for
+> threads such that at a maximum 1/8th of the total memory can be occupied
+> by the thread's administrative data (of size THREADS_SIZE). On my 32 GiB
+> system this results in 254313 threads.
 
-Cheers,
-Longman
+This is quite arbitrary, isn't it? What would happen if the limit was
+twice as large?
 
+> With patch 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
+> a user cannot set an arbitrarily high number for
+> /proc/sys/kernel/threads-max which could lead to a system stalling
+> because the thread headers occupy all the memory.
+
+This is still a decision of the admin to make.  You can consume the
+memory by other means and that is why we have measures in place. E.g.
+memcg accounting.
+
+> When developing the patch I remarked that on a system where memory is
+> installed dynamically it might be a good idea to recalculate this limit.
+> If you have a system that boots with let's say 8 GiB and than
+> dynamically installs a few TiB of RAM this might make sense. But such a
+> dynamic update of thread_max_suggested was left out for the sake of
+> simplicity.
+> 
+> Anyway if more than 100,000 threads are used on a system, I would wonder
+> if the software should not be changed to use thread-pools instead.
+
+You do not change the software to overcome artificial bounds based on
+guessing.
+
+So can we get back to the justification of the patch. What kind of
+real life problem does it solve and why is it ok to override an admin
+decision?
+If there is no strong justification then the patch should be reverted
+because from what I have heard it has been noticed and it has broken
+a certain deployment. I am not really clear about technical details yet
+but it seems that there are workloads that believe they need to touch
+this tuning and complain if that is not possible.
+-- 
+Michal Hocko
+SUSE Labs
