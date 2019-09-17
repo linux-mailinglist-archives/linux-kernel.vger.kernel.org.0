@@ -2,101 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5146AB4C1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5687BB4C1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:41:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfIQKlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726786AbfIQKlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 06:41:15 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38018 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbfIQKlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Sep 2019 06:41:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:54260 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726169AbfIQKlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 06:41:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE2D91000;
-        Tue, 17 Sep 2019 03:41:11 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A67C3F59C;
-        Tue, 17 Sep 2019 03:41:10 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 11:41:06 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Jon Derrick <jonathan.derrick@intel.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Keith Busch <keith.busch@intel.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] PCI: vmd: Fix shadow offsets to reflect spec changes
-Message-ID: <20190917104106.GB32602@e121166-lin.cambridge.arm.com>
-References: <20190916135435.5017-1-jonathan.derrick@intel.com>
- <20190916135435.5017-3-jonathan.derrick@intel.com>
+Received: by mail-ot1-f66.google.com with SMTP id e11so1432830otl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 03:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=7e1TdzFiatHjnWIzrqdUH+5ObA9z+SBV4y7paSr3H3Y=;
+        b=bA6J+GY80d7giGojsFQBL7tw/oKoGNQBKDsm8mQdkvrzkas6bVjaTYF2x/+JFx+Bzb
+         Qs9bv17F55pNLeuW9QMrRLDcVclhY8bu5ODxsEErXFoekgtu6UpnHeVS1dkVEnRsoacK
+         z0LUTfR/LiaVsvv9xa9swBSAySWI0QeQ7Fx4dvMkb7yH5DXjRdPLyPqbEYigZlLoQfdp
+         KLCwTBJIUkY7P/LiuBE26bvcIEvTHfIh0/D8oTvAfqihGZjH+MAeq61J2dTYNUblKsml
+         hz8K4r4TudFGtlZnJPCoT9NeRgN+BTgEFW8ea0CGOBgXvVCtQhtKfvIPQBpLmTHr5/6G
+         lrVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=7e1TdzFiatHjnWIzrqdUH+5ObA9z+SBV4y7paSr3H3Y=;
+        b=EiXlOEK1f3khMXGNec9GtiF1tgkarDS3A9UMdJWEGCZDycdVoFtpGUAuQ0pDgclHh7
+         DqWeHl7dchXSd2Mn37tV6QDU5zzKcChvY1gIN6sLDaUNfQ6n2kzRyorG1NFugT9TuXKU
+         e0xf+Q6QxD1qh58n4ber8kC5RnIEnbMZJGvTTtcQdY+IEfUPGh5v1WaQf4vfGfKwwy/L
+         N5OixpLNV8MDlaQO0G/hP6GhQdfKngBgotduhEN8UwPy/smBuwMrI9nSCMjvXK3E4/uZ
+         vMM8ah/GLoijMpzGXGPSOuMlMUfYFXuzdd81DJyckjdumsZ414PjvxpV9sUkp6XWXAQj
+         672g==
+X-Gm-Message-State: APjAAAXckhReaMPElxX2LBVlb7cve/NMaYhQUgu7E05UjW8FF0UxburD
+        o7SHVTgqfSA23jolwj9eTON7xX4YZ0lKTR2Ht9I=
+X-Google-Smtp-Source: APXvYqxCggBW+a4o/xeQ4hmZaie3a315cmXOH6Mf5dLyIxiEXXRCu8nMBR/IGbbYnSPHyVfj1Ml3Xq5n/dvYjQvHyfg=
+X-Received: by 2002:a9d:734b:: with SMTP id l11mr337976otk.33.1568716870952;
+ Tue, 17 Sep 2019 03:41:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916135435.5017-3-jonathan.derrick@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:ac9:13ae:0:0:0:0:0 with HTTP; Tue, 17 Sep 2019 03:41:10
+ -0700 (PDT)
+Reply-To: eddywilliam0003@gmail.com
+From:   eddy william <moordavis0003@gmail.com>
+Date:   Tue, 17 Sep 2019 12:41:10 +0200
+Message-ID: <CAH26tOE20wPkVQ-41iKn-jc=ZuOX+y3Q2OJij-MC=k1Nf=nHLQ@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 07:54:35AM -0600, Jon Derrick wrote:
-> The shadow offset scratchpad was moved to 0x2000-0x2010. Update the
-> location to get the correct shadow offset.
+Hallo
 
-Hi Jon,
+Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($14,2 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
-what does "was moved" mean ? Would this code still work on previous HW ?
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: eddywilliam0003gmail.com
 
-We must make sure that the address move is managed seamlessly by the
-kernel.
+Vielen Dank im Voraus,
+Mr.Eddy William
 
-For the time being I have to drop this fix and it is extremely
-tight to get it in v5.4, I can't send stable changes that we may
-have to revert.
 
-Thanks,
-Lorenzo
 
-> Cc: stable@vger.kernel.org # v5.2+
-> Fixes: 6788958e ("PCI: vmd: Assign membar addresses from shadow registers")
-> Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-> ---
->  drivers/pci/controller/vmd.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-> index 2e4da3f51d6b..a35d3f3996d7 100644
-> --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -31,6 +31,9 @@
->  #define PCI_REG_VMLOCK		0x70
->  #define MB2_SHADOW_EN(vmlock)	(vmlock & 0x2)
->  
-> +#define MB2_SHADOW_OFFSET	0x2000
-> +#define MB2_SHADOW_SIZE		16
-> +
->  enum vmd_features {
->  	/*
->  	 * Device may contain registers which hint the physical location of the
-> @@ -578,7 +581,7 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
->  		u32 vmlock;
->  		int ret;
->  
-> -		membar2_offset = 0x2018;
-> +		membar2_offset = MB2_SHADOW_OFFSET + MB2_SHADOW_SIZE;
->  		ret = pci_read_config_dword(vmd->dev, PCI_REG_VMLOCK, &vmlock);
->  		if (ret || vmlock == ~0)
->  			return -ENODEV;
-> @@ -590,9 +593,9 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
->  			if (!membar2)
->  				return -ENOMEM;
->  			offset[0] = vmd->dev->resource[VMD_MEMBAR1].start -
-> -						readq(membar2 + 0x2008);
-> +					readq(membar2 + MB2_SHADOW_OFFSET);
->  			offset[1] = vmd->dev->resource[VMD_MEMBAR2].start -
-> -						readq(membar2 + 0x2010);
-> +					readq(membar2 + MB2_SHADOW_OFFSET + 8);
->  			pci_iounmap(vmd->dev, membar2);
->  		}
->  	}
-> -- 
-> 2.20.1
-> 
+
+Hello
+
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($14.2 Million)
+dollars my client left in the bank before his death.
+
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:eddywilliam0003gmail.=
+com
+
+Many thanks in advance,
+Mr.Eddy William
