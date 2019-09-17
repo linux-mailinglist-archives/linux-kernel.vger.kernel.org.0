@@ -2,80 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4822BB5019
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 006CEB5020
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbfIQONY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:13:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52182 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbfIQONY (ORCPT
+        id S1727534AbfIQOOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:14:33 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:35334 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfIQOOc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:13:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B2985614C3; Tue, 17 Sep 2019 14:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568729603;
-        bh=nygaNAFH+ev6zR6raMph5QsZh51rzlyXoTBYZ7ezi0s=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=TyxHS84J0LVs6uKu2x/96A1NBbOHucFy9z1MEbZVgEtufLEH+/klGZcqu3cEEmlKL
-         prXwZzdp/5AOPuhodA1Z3BfWWiQZGf03pTNlk9E5s/TgRJNNA8D5vhhXfMN40yav4Z
-         RkshsVCgMLPTk2onBf4LylmvuL1ljq2lvyfGbHOQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2B967611BF;
-        Tue, 17 Sep 2019 14:13:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568729601;
-        bh=nygaNAFH+ev6zR6raMph5QsZh51rzlyXoTBYZ7ezi0s=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=U1nFWR9dKL+uNg7wiQvjjSsNeTauoJmAjipVIVyLb80hSh1/BUoqprh9EWldEZH2x
-         WUu8uz67T0ldqKkNz805djBC5JidEa5jktVdIOvCioWIUpoIKJjK8dUGExQZcAwMC+
-         Y+tLHbqzsAiBC4/bBBNpgNi8Eqmm+5dNfJQF+Dog=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B967611BF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Tue, 17 Sep 2019 10:14:32 -0400
+Received: by mail-qk1-f194.google.com with SMTP id w2so4175318qkf.2;
+        Tue, 17 Sep 2019 07:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=QSCiIQtdw+qUPAvKfQqwKrA3+KoQs7hg9t8yi5+zFjw=;
+        b=ASWI4Q3CUvxYI/rpGXBkKaupvndARiKMb2R6QxzoUfYSQ52zTWv5Kqc1HImsQlGhyr
+         rzUv/1n9GOuddeHOwooJCt45nGT+m2ObQVLpWEY1QQrESWU18K8WX5NH8Byh5KOY06Xn
+         IvCl4nFGCmTBAD3OykmorAC8wGoMjmqB1zbF1+/A2UInP8OXWZaOWQEqDqVGEwgLK968
+         xoiH9g48DX4PeSg+z0t/+nEgWAqpPOi44rckBXowCYcNFraln0B4Szb3/TlPqiPWkKU5
+         zm2pZIcyahWEKkqtzi+aGVdRUoX2Sxbv+g6MxCi+B7OXiVZsNltJLU5K5USxau8u7Sk6
+         CdHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:in-reply-to
+         :message-id:references:user-agent:mime-version;
+        bh=QSCiIQtdw+qUPAvKfQqwKrA3+KoQs7hg9t8yi5+zFjw=;
+        b=ixTi0T+h3nsNMKa5kCVlJbZlf24md8krb91hhcHm4VuHwGynhsni1Le8AD3cFpaDZ3
+         8NgTHR2+xvMaRIjxsh2IZSLFXBtGKGh3otTWWBY5Lnzh6wjZsKI/eteXwHzzFVVYWIN/
+         sOcJm+CnmZZc52pXm5otVE2AhdKbX/7q8xTKR2/+pQY+V5M57e2ClqRjlUCcpydJCegz
+         x0eUx5jBj9rCokdWXCwiI9amgbR5q2foptjA/d2s+gQen58VCePSq1rjqVT36HCUGgiO
+         Hcsl4cC4Zu6PbWnn+fbGYcWwEhj1mZQX9NJKx1NlQTQfnYTJ54xfcBSGbHaHWtAE7eQL
+         AYpA==
+X-Gm-Message-State: APjAAAX0b/1lSTpafY2CKLqLnOotjcQIIGiwyhKaYyX68v24J26F9HVl
+        3YQBrSCRRLdCVA+NFqb53Gow58mHkJfIPA==
+X-Google-Smtp-Source: APXvYqyxTuQp3XVsYoB4NNFKSASJ6kU6iUeBF/q+3WtENKOKTZpWfvLfImN4GXB8VBFRkCttpRhVtw==
+X-Received: by 2002:a37:7ac1:: with SMTP id v184mr4069319qkc.129.1568729670950;
+        Tue, 17 Sep 2019 07:14:30 -0700 (PDT)
+Received: from planxty (rdwyon0600w-lp130-03-64-231-46-127.dsl.bell.ca. [64.231.46.127])
+        by smtp.gmail.com with ESMTPSA id z200sm1353932qkb.5.2019.09.17.07.14.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 07:14:30 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 16:14:29 +0200 (CEST)
+From:   John Kacur <jkacur@redhat.com>
+X-X-Sender: jkacur@planxty
+To:     Sultan Alsawaf <sultan@kerneltoast.com>
+cc:     linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
+        sebastian@breakpoint.cc, tglx@linutronix.de, rostedt@goodmis.org
+Subject: Re: [PATCH] rt-tests: backfire: Don't include asm/uaccess.h
+ directly
+In-Reply-To: <20190917071546.GA27627@sultan-box>
+Message-ID: <alpine.LFD.2.21.1909171613150.3853@planxty>
+References: <20190903191321.6762-1-sultan@kerneltoast.com> <alpine.LFD.2.21.1909162356500.10273@planxty> <20190917071546.GA27627@sultan-box>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath10k: fix spelling mistake "eanble" -> "enable"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190913074339.27280-1-colin.king@canonical.com>
-References: <20190913074339.27280-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190917141322.B2985614C3@smtp.codeaurora.org>
-Date:   Tue, 17 Sep 2019 14:13:22 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
 
-> There is a spelling mistake in a ath10k_warn warning message. Fix it.
+
+On Tue, 17 Sep 2019, Sultan Alsawaf wrote:
+
+> On Mon, Sep 16, 2019 at 11:57:32PM +0200, John Kacur wrote:
+> > Signed-off-by: John Kacur <jkacur@redhat.com>
+> > But please in the future
+> > 1. Don't cc lkml on this
+> > 2. Include the maintainers in your patch
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> Hi,
+> 
+> Thanks for the sign-off. I was following the instructions listed here:
+> https://wiki.linuxfoundation.org/realtime/communication/send_rt_patches
 
-Patch applied to ath-next branch of ath.git, thanks.
+Those are the instructions for rt kernel code.
+rt-tests is a users space program to test the performance of the rt 
+kernel.
 
-09764659003d ath10k: fix spelling mistake "eanble" -> "enable"
+Always just check if there is a MAINTAINERS file (there is)
+when you clone the git repo.
 
--- 
-https://patchwork.kernel.org/patch/11144035/
+Thanks
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+John
 
+> 
+> I couldn't find any documentation of how to send patches for rt-tests. Is there
+> a different set of patch submission instructions on a wiki somewhere I missed?
+> 
+> Thanks,
+> Sultan
+> 
