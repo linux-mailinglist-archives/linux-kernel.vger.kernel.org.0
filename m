@@ -2,93 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32630B47AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5634CB47BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404354AbfIQGux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 02:50:53 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38653 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728003AbfIQGux (ORCPT
+        id S2404381AbfIQGyN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Sep 2019 02:54:13 -0400
+Received: from ZXSHCAS2.zhaoxin.com ([203.148.12.82]:17740 "EHLO
+        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2404356AbfIQGyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 02:50:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x10so1467549pgi.5;
-        Mon, 16 Sep 2019 23:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=A09ebAA08AUXlIM7rfJAlfeNFb0/R3dzB4utBep7g5k=;
-        b=NFR60qqidHaph1jwlnhZRW3ByDD9bHtGwZnAvitu0gchqdLaQ8TJRpdntardshvLP/
-         HXCsWoPL1e53p9YJnxS3UUcfnZrd3Ns9Lf/dSdJzhWBQ8W2lCXDoOGuCwmNGtPfFRzU1
-         3dlWUxKDAL7faO5GMgwsxngt5VoYp/+9HzEVvag9C0HtrTUdOhtV7M253apWJEpnG/Eu
-         qdtoxDC/u/SycTF8h7KlrOStdgpGfxVLb7lrFutIVK2S1ByJJ9XtCZn+juDgdUmrmkfX
-         kzxs8Rco/90ISXEQ1mqrTGOgMe5IaOdiDMRRNOjD5AjQmf3N4MVUVDGzK6vTKGyzUPMj
-         NNFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=A09ebAA08AUXlIM7rfJAlfeNFb0/R3dzB4utBep7g5k=;
-        b=n5MrHH1M/EI9riGHgmm8dygwEp3gbN6MKJvreAuIIwdgEMusfO1vJ2tuyNjXkzIXHZ
-         qK00unwqFZ4GgNmETHma5zC7JaJoRnXEfnKx16hHb2tzfCL8ARXjUz0djhyFETJI2ijD
-         NlEe/ax1VAyt4Hr+XO83PyDOdLZ57Z8IapHDP3SO59ivoD1Rd0zcRBdXM9AFosPEArUg
-         SUHvBlzgY4vxQVj6OkRkXXQYQCiStXaec2Tb/archdcr4Ej0V3mXB+GlL0kGZDtcU5Kb
-         +Xw34M/SsGbqgtdvC7Xc5w67cn6Ur82TZ3OpaS50xczAUo/RbnwI6RjK/KQi7Kiz13/p
-         cNiw==
-X-Gm-Message-State: APjAAAVd4UVKyVN7/g7rXzSAR3PBvahSbj2aHrR1+KqtrAggeVsxgbBa
-        elSQrqg9V1blw8+0arP23Ic=
-X-Google-Smtp-Source: APXvYqzwM1TmdOu8NcHkAeG+Pl6QsEYbNbIdHu1NSxPw+dSxhz1ml+UvP48URsmAGWL44BJIuj1eyg==
-X-Received: by 2002:a62:8c10:: with SMTP id m16mr2487881pfd.58.1568703050638;
-        Mon, 16 Sep 2019 23:50:50 -0700 (PDT)
-Received: from LGEARND20B15 ([27.122.242.75])
-        by smtp.gmail.com with ESMTPSA id f62sm1500038pfg.74.2019.09.16.23.50.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Sep 2019 23:50:50 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 15:50:44 +0900
-From:   Austin Kim <austindh.kim@gmail.com>
-To:     pkshih@realtek.com, kvalo@codeaurora.org, davem@davemloft.net
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, austindh.kim@gmail.com
-Subject: [PATCH] rtlwifi: rtl8723ae: Remove unused 'rtstatus' variable
-Message-ID: <20190917065044.GA173797@LGEARND20B15>
+        Tue, 17 Sep 2019 02:54:11 -0400
+Received: from zxbjmbx3.zhaoxin.com (10.29.252.165) by ZXSHCAS2.zhaoxin.com
+ (10.28.252.162) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Tue, 17 Sep
+ 2019 14:54:06 +0800
+Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by zxbjmbx3.zhaoxin.com
+ (10.29.252.165) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Tue, 17 Sep
+ 2019 14:54:05 +0800
+Received: from zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d]) by
+ zxbjmbx1.zhaoxin.com ([fe80::b41a:737:a784:b70d%16]) with mapi id
+ 15.01.1261.035; Tue, 17 Sep 2019 14:54:05 +0800
+From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+To:     "Luck, Tony" <tony.luck@intel.com>
+CC:     "Borislav Petkov (bp@alien8.de)" <bp@alien8.de>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+        "qiuxu.zhuo@intel.com" <qiuxu.zhuo@intel.com>,
+        David Wang <DavidWang@zhaoxin.com>,
+        "Cooper Yan(BJ-RD)" <CooperYan@zhaoxin.com>,
+        "Qiyuan Wang(BJ-RD)" <QiyuanWang@zhaoxin.com>,
+        "Herry Yang(BJ-RD)" <HerryYang@zhaoxin.com>
+Subject: Re: [PATCH v3 4/4] x86/mce: Add Zhaoxin LMCE support
+Thread-Topic: [PATCH v3 4/4] x86/mce: Add Zhaoxin LMCE support
+Thread-Index: AdVtHDOle8Db4pQYQzu7i2JkrbUxgA==
+Date:   Tue, 17 Sep 2019 06:54:05 +0000
+Message-ID: <1da27840413348febf301ef39305de12@zhaoxin.com>
+Accept-Language: en-US, zh-CN
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.32.64.75]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'rtstatus' local variable is not used,
-so remove it for clean-up.
+On Mon, Sep 16, 2019, Luck, Tony wrote:
+>On Mon, Sep 16, 2019 at 11:37:18AM +0000, Tony W Wang-oc wrote:
+>> Zhaoxin newer CPUs support LMCE that compatible with Intel's
+>> "Machine-Check Architecture", so add support for Zhaoxin LMCE
+>> in mce/core.c.
+>>
+>> Signed-off-by: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+>> ---
+>>  arch/x86/kernel/cpu/mce/core.c | 35
+>+++++++++++++++++++++++++++++++++--
+>>  1 file changed, 33 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+>> index 65c5a1f..acdd76b 100644
+>> --- a/arch/x86/kernel/cpu/mce/core.c
+>> +++ b/arch/x86/kernel/cpu/mce/core.c
+>> @@ -1132,6 +1132,27 @@ static bool __mc_check_crashing_cpu(int cpu)
+>>  		u64 mcgstatus;
+>>
+>>  		mcgstatus = mce_rdmsrl(MSR_IA32_MCG_STATUS);
+>> +
+>> +		if (boot_cpu_data.x86_vendor == X86_VENDOR_ZHAOXIN) {
+>> +			if (mcgstatus & MCG_STATUS_LMCES)
+>> +				return false;
+>> +
+>> +			if (!(mcgstatus & MCG_STATUS_LMCES)) {
+>
+>Don't really need this test ... you already did "return false" if
+>the LMCES bit was set ... so this test is redundant (and you can avoid
+>indenting the next dozen lines.
 
-Signed-off-by: Austin Kim <austindh.kim@gmail.com>
----
- drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c | 3 ---
- 1 file changed, 3 deletions(-)
+Got it, Thank you.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
-index 54a3aec..22441dd 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723ae/phy.c
-@@ -485,15 +485,12 @@ bool rtl8723e_phy_config_rf_with_headerfile(struct ieee80211_hw *hw,
- 					    enum radio_path rfpath)
- {
- 	int i;
--	bool rtstatus = true;
- 	u32 *radioa_array_table;
- 	u16 radioa_arraylen;
- 
- 	radioa_arraylen = RTL8723ERADIOA_1TARRAYLENGTH;
- 	radioa_array_table = RTL8723E_RADIOA_1TARRAY;
- 
--	rtstatus = true;
--
- 	switch (rfpath) {
- 	case RF90_PATH_A:
- 		for (i = 0; i < radioa_arraylen; i = i + 2) {
--- 
-2.6.2
+But have a question about below codes:
+	if (mcgstatus & MCG_STATUS_RIPV) {
+		mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
+		return true;
+	}
+These seems require all #MC exception errors set MCG_STATUS_RIPV = 1
+in order to skip synchronize which "return true;" actually does for this.
 
+As Intel SDM show, "Recoverable-not-continuable SRAR Type" errors may
+set MCG_STATUS_RIPV = 0, PCC = 0. When these #MC errors broadcast
+to offline CPU, may cause kernel panic with synchronize timeout (offline
+CPU can't skip synchronize in this case).
+
+Could "return true;" outside the if-case?
+	if (mcgstatus & MCG_STATUS_RIPV) {
+		mce_wrmsrl(MSR_IA32_MCG_STATUS, 0);
+	} 
+	return true; 
+
+Sincerely
+TonyWWang-oc
