@@ -2,104 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC9B6B4596
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 04:43:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FEC9B4599
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 04:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392001AbfIQCnZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 22:43:25 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34242 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391292AbfIQCnY (ORCPT
+        id S2392023AbfIQCno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 22:43:44 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43627 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729141AbfIQCno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 22:43:24 -0400
-Received: by mail-pf1-f193.google.com with SMTP id b128so1230452pfa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 19:43:23 -0700 (PDT)
+        Mon, 16 Sep 2019 22:43:44 -0400
+Received: by mail-io1-f66.google.com with SMTP id v2so3884644iob.10;
+        Mon, 16 Sep 2019 19:43:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=aQrXVTNYPD93A+dr3PQzbCJpCjMJXTuJQlMV8r8hKjE=;
-        b=jMhRGNsPq4gN9mlEaZ/AEVKbtiBbP49Nk000CTIHRAT7Qw5Sm5KXl30UtOnKNEXgJG
-         BBcf0/EzePXZhMAXA1Ed+Hu3czD1Ka2KVhgyxemKS+eS5LZobAJ4B50wLjVdUSE8YD2L
-         puiSTTu61AVk3VP0aa7iYu1y1ask/Hk4D577HbXvPrxwqtz/ggUfUxHMnx56eZlbifHi
-         n3SLjkQco+K4dPH01qWh3ysbYuyTdJeI/9PwYRJwxPeSs+LnLSGR+qfHqzVXm86KQ7Mc
-         3SbrrAQoBk+vCulD8t3H4OO+kGMpKJOJRPWi9tpwOTB56Lp1/SaPjcaAtLoBuSDZ8/X2
-         4AWw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8i6y9BcswUwxDG8PRuSI4um6ADi5O8L1cEP8Y4YnQbM=;
+        b=CuA6rqyv0kHYgLtz1aSpPSoR7yFN4Eza0QUI6d1In3kgKq15yj+7RO4K6Ow4DyWyg/
+         945CDD8FjbZlskpwVxaj2g2KdG0DhzsPCvbnwVe605mcLMVt9KOS1ok/xoRE6LO0CvKR
+         shqWF25DsggrCMKpzFOUjWQyW51QMa8n6uAebwgZ6ta4HtPryiXJ4bMEepplWhr99COe
+         jNw70hW2Is30/OUAEuOPub7AYYNtpYHMRGTMyWFt9wRKAIN5SDelH0grgitCTMkkKg4+
+         i23wAAc0W60MS8j3HzuPqL8Wy45ZeFschcc++5hls0dgX8JGmlISGyCoaCr8Py/J0aRs
+         l5QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=aQrXVTNYPD93A+dr3PQzbCJpCjMJXTuJQlMV8r8hKjE=;
-        b=O3I9EeTZE1kflXhs8SjGleUr539j4vG49DwjkPWC2bYnru8VMA1FQO2uuUS3qeREtk
-         8xbxxTwhn5FqoexMIP+kc+exRyuI7UvxgMtcw5BKUhSiw27IG+qE+Z73VPmqckg4dBTM
-         Y0njqxEPWRqTfG0ZmkOOodweNMZ2KpZkqno5hf0hQ5CLYHyoofuXsd7n/M3mfLwq/Xqu
-         ynEYnd805NqgYTYB/EICtckDf8Sa4JqmbE0rr+FgJKgQyLKiK/+nHVDbe1HA+GQPgeMg
-         7QFONE+csQ/Gsku6I080of/bq3M3GMKYDEsuOVXa7s15vW2tYuW8iw3QAVRR6SEX5jkv
-         +V6w==
-X-Gm-Message-State: APjAAAXqNu7El+bpwLC8vmTtDIoMMzDtR8+2/fjDxWuLOze63MNse9MK
-        G+CzcYHM19U4qv05y3/iMH1j7ZESIpg=
-X-Google-Smtp-Source: APXvYqzJsHSwaJsn5L+NBbiv4QM7roesrFufWYU2XCHXrcTHzejh6DulwYsZREZeSRQpa4cfz+9Jdw==
-X-Received: by 2002:a17:90a:e290:: with SMTP id d16mr2606067pjz.86.1568688203384;
-        Mon, 16 Sep 2019 19:43:23 -0700 (PDT)
-Received: from cakuba.netronome.com ([2601:646:8e00:e18::2])
-        by smtp.gmail.com with ESMTPSA id x72sm450247pfc.89.2019.09.16.19.43.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 19:43:23 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 19:43:19 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     <davem@davemloft.net>, <anna.schumaker@netapp.com>,
-        <trond.myklebust@hammerspace.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] ixgbe: Use kzfree() rather than its implementation.
-Message-ID: <20190916194319.712d81cc@cakuba.netronome.com>
-In-Reply-To: <1567564752-6430-2-git-send-email-zhongjiang@huawei.com>
-References: <1567564752-6430-1-git-send-email-zhongjiang@huawei.com>
-        <1567564752-6430-2-git-send-email-zhongjiang@huawei.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8i6y9BcswUwxDG8PRuSI4um6ADi5O8L1cEP8Y4YnQbM=;
+        b=Zn7HhcTo1/+/OTFO5n4IeywfzmgUzv+DTFKKoqUyBLRoxKrisJ2nZYGp+b8QaG8gG/
+         Cy+mLa1BFAzVdNnpfHe5XuX0FWdTZHcnBNLNfP9KA+GnF2rz6lJimLZhA2xEgR9AVs+J
+         nzVwAdqH+B9F+NXKyyW2tY/KmClqMBjEdeKEpWKbHoDDEqyeqsP3Z7nUeCAUse8Osw+u
+         vKgRW5vKP0BKuOHioVfLTcVsAk7QtwAitizn9tzi6lBjtRpnLgNEh+m6yZZAGiL6t5Pm
+         plAGjnQjCoW3akRGkg5avXB9EXCThc34OkZlYH7LkZIwxKfPpZF/h+wV0yPYQGguwHc3
+         1CFw==
+X-Gm-Message-State: APjAAAVg2ZkrcqQfIVuPTSjKZ9azjhvvPyzTXAoRz1mOyDVUVoWaONJJ
+        2GDZj6O23Kl82kuxtBgGpYjSyBW/U8mzcZCWOdY=
+X-Google-Smtp-Source: APXvYqzeJ+TNQWUjrodNrq8QcCsOV7BTjocJNcMZELwoxBqqTm0m2jUCi4tBN4jl2viWNfUXSX12dO5NB6pU9tUsgg0=
+X-Received: by 2002:a5d:9b02:: with SMTP id y2mr1207664ion.146.1568688223539;
+ Mon, 16 Sep 2019 19:43:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190915211818.GH4352@sirena.co.uk> <CA+E=qVfm78f+2a2s=8Q7tL-fP7xCEj0v=_JXD_XbaR-2dfXmCA@mail.gmail.com>
+In-Reply-To: <CA+E=qVfm78f+2a2s=8Q7tL-fP7xCEj0v=_JXD_XbaR-2dfXmCA@mail.gmail.com>
+From:   Qiang Yu <yuq825@gmail.com>
+Date:   Tue, 17 Sep 2019 10:43:32 +0800
+Message-ID: <CAKGbVbvXD1XatAbC=yMO4X3usQSXMqHXCXhycU8afiKez_CHmA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the drm tree with the drm-misc-fixes tree
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Sep 2019 10:39:10 +0800, zhong jiang wrote:
-> Use kzfree() instead of memset() + kfree().
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> index 31629fc..113f608 100644
-> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-> @@ -960,11 +960,9 @@ int ixgbe_ipsec_vf_add_sa(struct ixgbe_adapter *adapter, u32 *msgbuf, u32 vf)
->  	return 0;
->  
->  err_aead:
-> -	memset(xs->aead, 0, sizeof(*xs->aead));
-> -	kfree(xs->aead);
-> +	kzfree(xs->aead);
->  err_xs:
-> -	memset(xs, 0, sizeof(*xs));
-> -	kfree(xs);
-> +	kzfree(xs);
->  err_out:
->  	msgbuf[1] = err;
->  	return err;
-> @@ -1049,8 +1047,7 @@ int ixgbe_ipsec_vf_del_sa(struct ixgbe_adapter *adapter, u32 *msgbuf, u32 vf)
->  	ixgbe_ipsec_del_sa(xs);
->  
->  	/* remove the xs that was made-up in the add request */
-> -	memset(xs, 0, sizeof(*xs));
-> -	kfree(xs);
-> +	kzfree(xs);
->  
->  	return 0;
->  }
+On Mon, Sep 16, 2019 at 1:30 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+>
+> On Sun, Sep 15, 2019 at 2:18 PM Mark Brown <broonie@kernel.org> wrote:
+> >
+> > Hi all,
+>
+> Hi Mark,
+>
+> > Today's linux-next merge of the drm tree got a conflict in:
+> >
+> >   drivers/gpu/drm/lima/lima_gem.c
+> >
+> > between commit:
+> >
+> >   21670bd78a25001cf8e ("drm/lima: fix lima_gem_wait() return value")
+> >
+> > from the drm-misc-fixes tree and commit:
+> >
+> >   52791eeec1d9f4a7e7f ("dma-buf: rename reservation_object to dma_resv")
+> >
+> > from the drm tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+>
+> Fix looks correct to me. Sorry for not testing my patch with
+> linux-next, I'll make sure it at least compiles next time.
 
-All the crypto cases should really be converted to memzero_explicit().
+This is merge conflict, not compile fail, because linux-next and drm-misc-fixes
+are based on different code base, so drm-misc-fixes do not contain latest drm
+commits.
+
+This conflict solve change is also OK for me.
+
+Thanks,
+Qiang
+
+>
+> > diff --cc drivers/gpu/drm/lima/lima_gem.c
+> > index b609dc030d6ca,ff3d9acc24fcf..0000000000000
+> > --- a/drivers/gpu/drm/lima/lima_gem.c
+> > +++ b/drivers/gpu/drm/lima/lima_gem.c
+> > @@@ -341,8 -341,8 +341,8 @@@ int lima_gem_wait(struct drm_file *file
+> >
+> >         timeout = drm_timeout_abs_to_jiffies(timeout_ns);
+> >
+> > -       ret = drm_gem_reservation_object_wait(file, handle, write, timeout);
+> > +       ret = drm_gem_dma_resv_wait(file, handle, write, timeout);
+> >  -      if (ret == 0)
+> >  +      if (ret == -ETIME)
+> >                 ret = timeout ? -ETIMEDOUT : -EBUSY;
+> >
+> >         return ret;
