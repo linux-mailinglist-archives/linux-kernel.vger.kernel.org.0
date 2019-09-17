@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9005B48F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC3BB48EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:13:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404708AbfIQIN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:13:29 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:46280 "EHLO gloria.sntech.de"
+        id S2404730AbfIQINa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:13:30 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:46292 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727809AbfIQIN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728986AbfIQIN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Sep 2019 04:13:28 -0400
 Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.fritz.box)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1iA8c0-0005RU-95; Tue, 17 Sep 2019 10:13:24 +0200
+        id 1iA8c0-0005RU-Hh; Tue, 17 Sep 2019 10:13:24 +0200
 From:   Heiko Stuebner <heiko@sntech.de>
 To:     lee.jones@linaro.org
 Cc:     linux-kernel@vger.kernel.org, d.schultz@phytec.de,
         linux-rockchip@lists.infradead.org,
         christoph.muellner@theobroma-systems.com, tony.xie@rock-chips.com,
         Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 2/4] mfd: rk808: fix rk817 powerkey integration
-Date:   Tue, 17 Sep 2019 10:12:54 +0200
-Message-Id: <20190917081256.24919-2-heiko@sntech.de>
+Subject: [PATCH 3/4] mfd: rk808: set rk817 interrupt polarity to low
+Date:   Tue, 17 Sep 2019 10:12:55 +0200
+Message-Id: <20190917081256.24919-3-heiko@sntech.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190917081256.24919-1-heiko@sntech.de>
 References: <20190917081256.24919-1-heiko@sntech.de>
@@ -35,48 +35,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pwrkey integration seems to stem from the vendor kernel, as the
-compatible is wrong and also the order of key-irqs is swapped.
+All other rk8xx operate with the polarity on low and even the old
+submitted devicetree snippet for the px30-evb declared the irq as low.
+So bring the rk817 preset in line with this, as there is really no
+reason for it to be the only with with a high polarity.
 
-So fix these issues to make the pwrkey on rk817 actually work.
+The rk809/rk817 hasn't been added to any devicetrees so far, so this
+won't break anything.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/mfd/rk808.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ drivers/mfd/rk808.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-index 050478cabc95..966841744ee6 100644
+index 966841744ee6..c0e5e921766d 100644
 --- a/drivers/mfd/rk808.c
 +++ b/drivers/mfd/rk808.c
-@@ -121,16 +121,8 @@ static struct resource rk817_rtc_resources[] = {
- };
+@@ -207,7 +207,7 @@ static const struct rk808_reg_data rk808_pre_init_reg[] = {
  
- static struct resource rk805_key_resources[] = {
--	{
--		.start  = RK805_IRQ_PWRON_FALL,
--		.end    = RK805_IRQ_PWRON_FALL,
--		.flags  = IORESOURCE_IRQ,
--	},
--	{
--		.start  = RK805_IRQ_PWRON_RISE,
--		.end    = RK805_IRQ_PWRON_RISE,
--		.flags  = IORESOURCE_IRQ,
--	}
-+	DEFINE_RES_IRQ(RK805_IRQ_PWRON_RISE),
-+	DEFINE_RES_IRQ(RK805_IRQ_PWRON_FALL),
+ static const struct rk808_reg_data rk817_pre_init_reg[] = {
+ 	{RK817_RTC_CTRL_REG, RTC_STOP, RTC_STOP},
+-	{RK817_GPIO_INT_CFG, RK817_INT_POL_MSK, RK817_INT_POL_H},
++	{RK817_GPIO_INT_CFG, RK817_INT_POL_MSK, RK817_INT_POL_L},
+ 	{RK817_SYS_CFG(1), RK817_HOTDIE_TEMP_MSK | RK817_TSD_TEMP_MSK,
+ 					   RK817_HOTDIE_105 | RK817_TSD_140},
  };
- 
- static struct resource rk817_pwrkey_resources[] = {
-@@ -167,7 +159,7 @@ static const struct mfd_cell rk817s[] = {
- 	{ .name = "rk808-clkout",},
- 	{ .name = "rk808-regulator",},
- 	{
--		.name = "rk8xx-pwrkey",
-+		.name = "rk805-pwrkey",
- 		.num_resources = ARRAY_SIZE(rk817_pwrkey_resources),
- 		.resources = &rk817_pwrkey_resources[0],
- 	},
 -- 
 2.20.1
 
