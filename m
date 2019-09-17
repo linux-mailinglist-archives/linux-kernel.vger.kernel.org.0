@@ -2,94 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4228CB4AB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE73CB4ACA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbfIQJhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:37:00 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35179 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfIQJg7 (ORCPT
+        id S1728373AbfIQJix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:38:53 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:59351 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726250AbfIQJiw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:36:59 -0400
-Received: by mail-pg1-f195.google.com with SMTP id a24so1716684pgj.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 02:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=7e1TdzFiatHjnWIzrqdUH+5ObA9z+SBV4y7paSr3H3Y=;
-        b=oUGPIasdZs/KZ7zrsd9vYhYzyGjmfQurPq6VSSPIoVkT9+3FJiE4VqMJS/c9k6h7ca
-         rEvtK9JAQT6s0D8lrP6M8Opfv//2n1hQIFR3QZ6uK0iisitsZY2HdEM8hEEDF+aQPhnY
-         WJJPTDrKUzTbtgEEsxNLOBZctyr8sYIRJsSzragi3z2xrHI5gMhDAlpHjP7x9Z1Yz2eb
-         xoSb8droTf4cAPyiJ2gnTnlqSBpBJDDzVRVDAQNARDRFcFwR3BLSAcLwS/U2LYaBMcRI
-         BJEyY0qDEnUerCxLH465tTfyiGl3j97/xbslKUR340CQYi5K/O6crw27tCmeOGrSD2v3
-         ICpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=7e1TdzFiatHjnWIzrqdUH+5ObA9z+SBV4y7paSr3H3Y=;
-        b=AWKdCoS+GxKY0Lq1v2ffyg5r0TQ6fjBPUAfIm5za5oZzBI7oY8lQDNQXL/xE2f9EyN
-         TLPoWKW/O6MQETdfCUtfYq2ZiKCFRTQPJIHT3w2MdfsXOHDps9RMXybh8NNEAorZAI+e
-         3/YHME2Ph5MNEj4asYM/OvwGPnr6/KVjLS8Y/OhBrvzGR0shWLSt8ACElg88mEQTXhNa
-         ZP18F/odDpRTKr5yj9jDVi6HqjtwvTML6fmYh9O3f5T5oGFdPAG+FFxZacP1BYlPa6t5
-         o3WrTpT28wsdftgh0ztIxdzN4p680AULM1Dlkq3wu6vg0S6YzERSwbYH0MpNllQZDBHI
-         evcA==
-X-Gm-Message-State: APjAAAXWE9AFaqLNvCwswnKr/I835boS2YDkI4wVZw5CkkBJDxoqc1wO
-        MseqfMG9QaQgyQChq9/8O4NK/+fn94aLYHbDIKM=
-X-Google-Smtp-Source: APXvYqwa5lx/LAFcm1tzpMaklunIEnbSekVCv3ca5RSe6f9DehVCo99cBjosnoGmk7MEn6c4lC4RxZ6YyYytsjEKbF0=
-X-Received: by 2002:a62:86cf:: with SMTP id x198mr3237344pfd.234.1568713019389;
- Tue, 17 Sep 2019 02:36:59 -0700 (PDT)
+        Tue, 17 Sep 2019 05:38:52 -0400
+IronPort-SDR: aSRxolACfm3VuJWVLSNYsRHYqp6PgPBA3gWRRUXtGy8xEc+qPLU2AKFxC5LyQG68+h60C6WMYO
+ 39T5PRdQNCuzBfaEB32Tt3bIWsXAqNL2Bv0NXxIJEmifV3ru3hi34kj1Te6ViUsZI0DwQn9Alv
+ bG+m8ap1AHiM/VRYyxKFfzbjs7F/ZvuPRkwJLK0IhlP5WLddiraiLY0qRJ3JksSaojq/ACKNKL
+ wKAuYuvuUobnpx15qxKgUGMT6hEcgcs0bM1ZonfwOCrEoPVx6hbafEPcSv4ITMMu68UzAbFtGN
+ JEw=
+X-IronPort-AV: E=Sophos;i="5.64,515,1559548800"; 
+   d="scan'208";a="43223063"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa1.mentor.iphmx.com with ESMTP; 17 Sep 2019 01:38:50 -0800
+IronPort-SDR: nhOAf4W6trN3hckbU1s1OdvyB4LlMTntwmC1h2i5OTcrr5TmMlSTLY3S7nd8Hehcz3gdegFwb7
+ Chzk9mHZMJq8FhTDcgd/MryDLdFjXu8WQMZwOfltps3z4Q32jeHSkkXNwAdlUPalRSPC3WIP1E
+ WBeHnGbTAigiElPkbxEw2VSY2jFOiadgXZsMAI5AIenr/rU4i0UDbaT/98xyFHbLBzImfNPNyZ
+ pmREYPYuFoKDmN9ZUQq4JW1GhI3DvNA0zv6wqbeUpWxfngFHaldn6IQKrrfka/S941zDMbAwfK
+ 0jM=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
+        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
+        <rydberg@bitmath.org>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <jiada_wang@mentor.com>
+Subject: [PATCH v3 15/49] Input: atmel_mxt_ts - report failures in suspend/resume
+Date:   Tue, 17 Sep 2019 18:37:32 +0900
+Message-ID: <20190917093806.18538-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Received: by 2002:a17:90a:3766:0:0:0:0 with HTTP; Tue, 17 Sep 2019 02:36:58
- -0700 (PDT)
-Reply-To: eddywilliam0003@gmail.com
-From:   eddy william <barrimurphy1965@gmail.com>
-Date:   Tue, 17 Sep 2019 11:36:58 +0200
-Message-ID: <CAGZA+7pY0mseO3r_wNjzH-FDJAiwj312gzx-49s1GX0mP3ni5A@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: svr-orw-mbx-08.mgc.mentorg.com (147.34.90.208) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+From: Nick Dyer <nick.dyer@itdev.co.uk>
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($14,2 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+(cherry picked from ndyer/linux/for-upstream commit 93a57575403de4dd07cd64807d3c2ed7f2cca262)
+[gdavis: Resolve forward port conflicts due to applying upstream
+	 commit 96a938aa214e ("Input: atmel_mxt_ts - remove platform
+	 data support").]
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+[jiada: Fix compilation warning]
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 51 ++++++++++++++++++------
+ 1 file changed, 39 insertions(+), 12 deletions(-)
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0003gmail.com
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 25ac42967bc7..4615e1591af4 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3425,10 +3425,12 @@ static void mxt_reset_slots(struct mxt_data *data)
+ 	mxt_input_sync(data);
+ }
+ 
+-static void mxt_start(struct mxt_data *data)
++static int mxt_start(struct mxt_data *data)
+ {
++	int ret = 0;
++
+ 	if (!data->suspended || data->in_bootloader)
+-		return;
++		return 0;
+ 
+ 	switch (data->suspend_mode) {
+ 	case MXT_SUSPEND_T9_CTRL:
+@@ -3453,28 +3455,42 @@ static void mxt_start(struct mxt_data *data)
+ 		 */
+ 		mxt_process_messages_until_invalid(data);
+ 
+-		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_RUN);
++		ret = mxt_set_t7_power_cfg(data, MXT_POWER_CFG_RUN);
++		if (ret)
++			return ret;
+ 
+ 		/* Recalibrate since chip has been in deep sleep */
+-		mxt_t6_command(data, MXT_COMMAND_CALIBRATE, 1, false);
++		ret = mxt_t6_command(data, MXT_COMMAND_CALIBRATE, 1, false);
++		if (ret)
++			return ret;
++
++		ret = mxt_acquire_irq(data);
++		if (ret)
++			return ret;
+ 
+-		mxt_acquire_irq(data);
+ 		break;
+ 	}
+ 
+ 	data->suspended = false;
++
++	return 0;
+ }
+ 
+-static void mxt_stop(struct mxt_data *data)
++static int mxt_stop(struct mxt_data *data)
+ {
++	int ret;
++
+ 	if (data->suspended || data->in_bootloader)
+-		return;
++		return 0;
+ 
+ 	switch (data->suspend_mode) {
+ 	case MXT_SUSPEND_T9_CTRL:
+ 		/* Touch disable */
+-		mxt_write_object(data,
++		ret = mxt_write_object(data,
+ 				MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0);
++		if (ret)
++			return ret;
++
+ 		break;
+ 
+ 	case MXT_SUSPEND_REGULATOR:
+@@ -3487,29 +3503,40 @@ static void mxt_stop(struct mxt_data *data)
+ 	default:
+ 		disable_irq(data->irq);
+ 
+-		mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
++		ret = mxt_set_t7_power_cfg(data, MXT_POWER_CFG_DEEPSLEEP);
++		if (ret)
++			return ret;
+ 
+ 		mxt_reset_slots(data);
+ 		break;
+ 	}
+ 
+ 	data->suspended = true;
++	return 0;
+ }
+ 
+ static int mxt_input_open(struct input_dev *dev)
+ {
+ 	struct mxt_data *data = input_get_drvdata(dev);
++	int ret;
+ 
+-	mxt_start(data);
++	ret = mxt_start(data);
+ 
+-	return 0;
++	if (ret)
++		dev_err(&data->client->dev, "%s failed rc=%d\n", __func__, ret);
++
++	return ret;
+ }
+ 
+ static void mxt_input_close(struct input_dev *dev)
+ {
+ 	struct mxt_data *data = input_get_drvdata(dev);
++	int ret;
+ 
+-	mxt_stop(data);
++	ret = mxt_stop(data);
++
++	if (ret)
++		dev_err(&data->client->dev, "%s failed rc=%d\n", __func__, ret);
+ }
+ 
+ static int mxt_parse_device_properties(struct mxt_data *data)
+-- 
+2.19.2
 
-Vielen Dank im Voraus,
-Mr.Eddy William
-
-
-
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0003gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William
