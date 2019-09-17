@@ -2,94 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5687BB4C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEA55B4C2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:45:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfIQKlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 06:41:15 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38018 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfIQKlN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 06:41:13 -0400
-Received: by mail-ot1-f66.google.com with SMTP id e11so1432830otl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 03:41:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=7e1TdzFiatHjnWIzrqdUH+5ObA9z+SBV4y7paSr3H3Y=;
-        b=bA6J+GY80d7giGojsFQBL7tw/oKoGNQBKDsm8mQdkvrzkas6bVjaTYF2x/+JFx+Bzb
-         Qs9bv17F55pNLeuW9QMrRLDcVclhY8bu5ODxsEErXFoekgtu6UpnHeVS1dkVEnRsoacK
-         z0LUTfR/LiaVsvv9xa9swBSAySWI0QeQ7Fx4dvMkb7yH5DXjRdPLyPqbEYigZlLoQfdp
-         KLCwTBJIUkY7P/LiuBE26bvcIEvTHfIh0/D8oTvAfqihGZjH+MAeq61J2dTYNUblKsml
-         hz8K4r4TudFGtlZnJPCoT9NeRgN+BTgEFW8ea0CGOBgXvVCtQhtKfvIPQBpLmTHr5/6G
-         lrVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=7e1TdzFiatHjnWIzrqdUH+5ObA9z+SBV4y7paSr3H3Y=;
-        b=EiXlOEK1f3khMXGNec9GtiF1tgkarDS3A9UMdJWEGCZDycdVoFtpGUAuQ0pDgclHh7
-         DqWeHl7dchXSd2Mn37tV6QDU5zzKcChvY1gIN6sLDaUNfQ6n2kzRyorG1NFugT9TuXKU
-         e0xf+Q6QxD1qh58n4ber8kC5RnIEnbMZJGvTTtcQdY+IEfUPGh5v1WaQf4vfGfKwwy/L
-         N5OixpLNV8MDlaQO0G/hP6GhQdfKngBgotduhEN8UwPy/smBuwMrI9nSCMjvXK3E4/uZ
-         vMM8ah/GLoijMpzGXGPSOuMlMUfYFXuzdd81DJyckjdumsZ414PjvxpV9sUkp6XWXAQj
-         672g==
-X-Gm-Message-State: APjAAAXckhReaMPElxX2LBVlb7cve/NMaYhQUgu7E05UjW8FF0UxburD
-        o7SHVTgqfSA23jolwj9eTON7xX4YZ0lKTR2Ht9I=
-X-Google-Smtp-Source: APXvYqxCggBW+a4o/xeQ4hmZaie3a315cmXOH6Mf5dLyIxiEXXRCu8nMBR/IGbbYnSPHyVfj1Ml3Xq5n/dvYjQvHyfg=
-X-Received: by 2002:a9d:734b:: with SMTP id l11mr337976otk.33.1568716870952;
- Tue, 17 Sep 2019 03:41:10 -0700 (PDT)
+        id S1726820AbfIQKpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 06:45:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726181AbfIQKpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 06:45:24 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9309521852;
+        Tue, 17 Sep 2019 10:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568717124;
+        bh=lRD33XVMU31YDKixMT8vCEatLaoLNEVQy4Wzf/bj7LU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AFxODCLVmBmUj01R26irYPN8YQuPyH1UaOrRml1WD7+1jCwimkkB1M6KsQFFUYhqi
+         PRr2K9zMWyVz9E9koZIbr5XJPWVkIzDVPatCfKxXuyECrCN/Y2DUxWQvq1N6KBI1Zv
+         /nWXbB5STf9OLjKm5R+/bGAn9MIO+UHk1+LmoYG8=
+Date:   Tue, 17 Sep 2019 11:45:19 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Xogium <contact@xogium.me>
+Cc:     linux-arm-kernel@lists.infradead.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, gregkh@linuxfoundation.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk
+Subject: Re: [breakage] panic() does not halt arm64 systems under certain
+ conditions
+Message-ID: <20190917104518.ovg6ivadyst7h76o@willie-the-truck>
+References: <BX1W47JXPMR8.58IYW53H6M5N@dragonstone>
 MIME-Version: 1.0
-Received: by 2002:ac9:13ae:0:0:0:0:0 with HTTP; Tue, 17 Sep 2019 03:41:10
- -0700 (PDT)
-Reply-To: eddywilliam0003@gmail.com
-From:   eddy william <moordavis0003@gmail.com>
-Date:   Tue, 17 Sep 2019 12:41:10 +0200
-Message-ID: <CAH26tOE20wPkVQ-41iKn-jc=ZuOX+y3Q2OJij-MC=k1Nf=nHLQ@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BX1W47JXPMR8.58IYW53H6M5N@dragonstone>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+Hi,
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($14,2 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+[Expanding CC list; original message is here:
+ https://lore.kernel.org/linux-arm-kernel/BX1W47JXPMR8.58IYW53H6M5N@dragonstone/]
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0003gmail.com
+On Mon, Sep 16, 2019 at 09:35:36PM -0400, Xogium wrote:
+> On arm64 in some situations userspace will continue running even after a
+> panic. This means any userspace watchdog daemon will continue pinging,
+> that service managers will keep running and displaying messages in certain
+> cases, and that it is possible to enter via ssh in the now unstable system
+> and to do almost anything except reboot/power off and etc. If
+> CONFIG_PREEMPT=n is set in the kernel's configuration, the issue is fixed.
+> I have reproduced the very same behavior with linux 4.19, 5.2 and 5.3. On
+> x86/x86_64 the issue does not seem to be present at all.
 
-Vielen Dank im Voraus,
-Mr.Eddy William
+I've managed to reproduce this under both 32-bit and 64-bit ARM kernels.
+The issue is that the infinite loop at the end of panic() can run with
+preemption enabled (particularly when invoking by echoing 'c' to
+/proc/sysrq-trigger), so we end up rescheduling user tasks. On x86, this
+doesn't happen because smp_send_stop() disables the local APIC in
+native_stop_other_cpus() and so interrupts are effectively masked while
+spinning.
 
+A straightforward fix is to disable preemption explicitly on the panic()
+path (diff below), but I've expanded the cc list to see both what others
+think, but also in case smp_send_stop() is supposed to have the side-effect
+of disabling interrupt delivery for the local CPU.
 
+Will
 
+--->8
 
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($14.2 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0003gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 057540b6eee9..02d0de31c42d 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -179,6 +179,7 @@ void panic(const char *fmt, ...)
+	 * after setting panic_cpu) from invoking panic() again.
+	 */
+	local_irq_disable();
++	preempt_disable_notrace();
+ 
+	/*
+	 * It's possible to come here directly from a panic-assertion and
