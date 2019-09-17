@@ -2,257 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A9B0B4B36
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9E8B4B64
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:58:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbfIQJpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:45:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60894 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729625AbfIQJpq (ORCPT
+        id S1726106AbfIQJ6U convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Sep 2019 05:58:20 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:46802 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfIQJ6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:45:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B7286615AB; Tue, 17 Sep 2019 09:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568713545;
-        bh=Orb3PsuPmToHxEf3Z2Mv2zoBA+xbwsZcyHWCdb1sq50=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YFqre3mZ9gcM1fFlwYHZMRWB2w8JywPRlBp6ffAhQ66Q4thCOeHv7ok7/ZsqPJYlz
-         xoNSyxiNff4cS8mLszwpa+FxzhFDMuubP6002eZySlJwSi1BC7ActtzA+PqYnCTY45
-         3S6w60bZr8mWRjDyFfSs6+qstEpYIZd8NHpP0ibw=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from blr-ubuntu-311.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4167E615AB;
-        Tue, 17 Sep 2019 09:45:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568713540;
-        bh=Orb3PsuPmToHxEf3Z2Mv2zoBA+xbwsZcyHWCdb1sq50=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AoAQevHs/wu7mYUXI+S4Wotjra7yGvC5es4ET/Nd7Jg3q8SMcOhGkz3K1GUysZyz5
-         +3laSs80M4W8KRr35mDp7G74sLK4xA1/ZlCWuOj4vt2OUfxP50B86LBm+qEXJe1p37
-         z6mmrqDbUwajSERwvB/jhzRHHnZYTmdWyhU5qSXo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4167E615AB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        bjorn.andersson@linaro.org, Andy Gross <agross@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCHv6 3/3] iommu: arm-smmu-impl: Add sdm845 implementation hook
-Date:   Tue, 17 Sep 2019 15:15:04 +0530
-Message-Id: <1513424ecec891d19c1aa3c599ec67db7964b6b2.1568712606.git.saiprakash.ranjan@codeaurora.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <cover.1568712606.git.saiprakash.ranjan@codeaurora.org>
-References: <cover.1568712606.git.saiprakash.ranjan@codeaurora.org>
+        Tue, 17 Sep 2019 05:58:19 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x8H9vshM011512
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Sep 2019 18:57:54 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x8H9vsdV024649;
+        Tue, 17 Sep 2019 18:57:54 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x8H9uoda001377;
+        Tue, 17 Sep 2019 18:57:54 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-1171633; Tue, 17 Sep 2019 18:32:44 +0900
+Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
+ BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0439.000; Tue,
+ 17 Sep 2019 18:32:44 +0900
+From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+To:     David Hildenbrand <david@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
+CC:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "longman@redhat.com" <longman@redhat.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mst@redhat.com" <mst@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>
+Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
+ ZONE_DEVICE driver.
+Thread-Topic: [RFC PATCH v2] mm: initialize struct pages reserved by
+ ZONE_DEVICE driver.
+Thread-Index: AQHVZIp2xk1cU6nEkk+ez7kL5reVFKcdvuyAgAAVnwCAAAk8gIAEZuMAgAAgogCADDvdgIAATZsAgAAnMAA=
+Date:   Tue, 17 Sep 2019 09:32:43 +0000
+Message-ID: <3d27953a-88b8-5a7c-de3c-041f8b4436f6@vx.jp.nec.com>
+References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
+ <b7732a55-4a10-2c1d-c2f5-ca38ee60964d@redhat.com>
+ <e762ee45-43e3-975a-ad19-065f07d1440f@vx.jp.nec.com>
+ <40a1ce2e-1384-b869-97d0-7195b5b47de0@redhat.com>
+ <6a99e003-e1ab-b9e8-7b25-bc5605ab0eb2@vx.jp.nec.com>
+ <e4e54258-e83b-cf0b-b66e-9874be6b5122@redhat.com>
+ <31fd3c86-5852-1863-93bd-8df9da9f95b4@vx.jp.nec.com>
+ <38e58d23-c20b-4e68-5f56-20bba2be2d6c@redhat.com>
+In-Reply-To: <38e58d23-c20b-4e68-5f56-20bba2be2d6c@redhat.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.135]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <AD3069ADF1FE3147AE36DB50024CF9EB@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
+On 2019/09/17 16:13, David Hildenbrand wrote:
+> On 17.09.19 04:34, Toshiki Fukasawa wrote:
+>> On 2019/09/09 16:46, David Hildenbrand wrote:
+>>> Let's take a step back here to understand the issues I am aware of. I
+>>> think we should solve this for good now:
+>>>
+>>> A PFN walker takes a look at a random PFN at a random point in time. It
+>>> finds a PFN with SECTION_MARKED_PRESENT && !SECTION_IS_ONLINE. The
+>>> options are:
+>>>
+>>> 1. It is buddy memory (add_memory()) that has not been online yet. The
+>>> memmap contains garbage. Don't access.
+>>>
+>>> 2. It is ZONE_DEVICE memory with a valid memmap. Access it.
+>>>
+>>> 3. It is ZONE_DEVICE memory with an invalid memmap, because the section
+>>> is only partially present: E.g., device starts at offset 64MB within a
+>>> section or the device ends at offset 64MB within a section. Don't access it.
+>>
+>> I don't agree with case #3. In the case, struct page area is not allocated on
+>> ZONE_DEVICE, but is allocated on system memory. So I think we can access the
+>> struct pages. What do you mean "invalid memmap"?
+> No, that's not the case. There is no memory, especially not system
+> memory. We only allow partially present sections (sub-section memory
+> hotplug) for ZONE_DEVICE.
 
-Add reset hook for sdm845 based platforms to turn off
-the wait-for-safe sequence.
+Let me clear my thoughts. If I read correctly, the struct pages for sections
+(including partially present sections) on ZONE_DEVICE are allocated by
+vmemmap_populate(). And all the struct pages except (altmap->base_pfn) to
+(altmap->base_pfn + altmap->reserve) are initialized by memmap_init_zone()
+and memmap_init_zone_device().
 
-Understanding how wait-for-safe logic affects USB and UFS performance
-on MTP845 and DB845 boards:
+Do struct pages for partially present sections go through a different process?
 
-Qcom's implementation of arm,mmu-500 adds a WAIT-FOR-SAFE logic
-to address under-performance issues in real-time clients, such as
-Display, and Camera.
-On receiving an invalidation requests, the SMMU forwards SAFE request
-to these clients and waits for SAFE ack signal from real-time clients.
-The SAFE signal from such clients is used to qualify the start of
-invalidation.
-This logic is controlled by chicken bits, one for each - MDP (display),
-IFE0, and IFE1 (camera), that can be accessed only from secure software
-on sdm845.
-
-This configuration, however, degrades the performance of non-real time
-clients, such as USB, and UFS etc. This happens because, with wait-for-safe
-logic enabled the hardware tries to throttle non-real time clients while
-waiting for SAFE ack signals from real-time clients.
-
-On mtp845 and db845 devices, with wait-for-safe logic enabled by the
-bootloaders we see degraded performance of USB and UFS when kernel
-enables the smmu stage-1 translations for these clients.
-Turn off this wait-for-safe logic from the kernel gets us back the perf
-of USB and UFS devices until we re-visit this when we start seeing perf
-issues on display/camera on upstream supported SDM845 platforms.
-The bootloaders on these boards implement secure monitor callbacks to
-handle a specific command - QCOM_SCM_SVC_SMMU_PROGRAM with which the
-logic can be toggled.
-
-There are other boards such as cheza whose bootloaders don't enable this
-logic. Such boards don't implement callbacks to handle the specific SCM
-call so disabling this logic for such boards will be a no-op.
-
-This change is inspired by the downstream change from Patrick Daly
-to address performance issues with display and camera by handling
-this wait-for-safe within separte io-pagetable ops to do TLB
-maintenance. So a big thanks to him for the change and for all the
-offline discussions.
-
-Without this change the UFS reads are pretty slow:
-$ time dd if=/dev/sda of=/dev/zero bs=1048576 count=10 conv=sync
-10+0 records in
-10+0 records out
-10485760 bytes (10.0MB) copied, 22.394903 seconds, 457.2KB/s
-real    0m 22.39s
-user    0m 0.00s
-sys     0m 0.01s
-
-With this change they are back to rock!
-$ time dd if=/dev/sda of=/dev/zero bs=1048576 count=300 conv=sync
-300+0 records in
-300+0 records out
-314572800 bytes (300.0MB) copied, 1.030541 seconds, 291.1MB/s
-real    0m 1.03s
-user    0m 0.00s
-sys     0m 0.54s
-
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
----
- drivers/iommu/Makefile        |  2 +-
- drivers/iommu/arm-smmu-impl.c |  6 +++--
- drivers/iommu/arm-smmu-qcom.c | 51 +++++++++++++++++++++++++++++++++++
- drivers/iommu/arm-smmu.h      |  3 +++
- 4 files changed, 59 insertions(+), 3 deletions(-)
- create mode 100644 drivers/iommu/arm-smmu-qcom.c
-
-diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-index a2729aadd300..2816e49a8c46 100644
---- a/drivers/iommu/Makefile
-+++ b/drivers/iommu/Makefile
-@@ -13,7 +13,7 @@ obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
- obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o
- obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += amd_iommu_debugfs.o
- obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
--obj-$(CONFIG_ARM_SMMU) += arm-smmu.o arm-smmu-impl.o
-+obj-$(CONFIG_ARM_SMMU) += arm-smmu.o arm-smmu-impl.o arm-smmu-qcom.o
- obj-$(CONFIG_ARM_SMMU_V3) += arm-smmu-v3.o
- obj-$(CONFIG_DMAR_TABLE) += dmar.o
- obj-$(CONFIG_INTEL_IOMMU) += intel-iommu.o intel-pasid.o
-diff --git a/drivers/iommu/arm-smmu-impl.c b/drivers/iommu/arm-smmu-impl.c
-index 3f88cd078dd5..d62da270f430 100644
---- a/drivers/iommu/arm-smmu-impl.c
-+++ b/drivers/iommu/arm-smmu-impl.c
-@@ -9,7 +9,6 @@
- 
- #include "arm-smmu.h"
- 
--
- static int arm_smmu_gr0_ns(int offset)
- {
- 	switch(offset) {
-@@ -109,7 +108,7 @@ static struct arm_smmu_device *cavium_smmu_impl_init(struct arm_smmu_device *smm
- #define ARM_MMU500_ACR_S2CRB_TLBEN	(1 << 10)
- #define ARM_MMU500_ACR_SMTNMB_TLBEN	(1 << 8)
- 
--static int arm_mmu500_reset(struct arm_smmu_device *smmu)
-+int arm_mmu500_reset(struct arm_smmu_device *smmu)
- {
- 	u32 reg, major;
- 	int i;
-@@ -170,5 +169,8 @@ struct arm_smmu_device *arm_smmu_impl_init(struct arm_smmu_device *smmu)
- 				  "calxeda,smmu-secure-config-access"))
- 		smmu->impl = &calxeda_impl;
- 
-+	if (of_device_is_compatible(smmu->dev->of_node, "qcom,sdm845-smmu-500"))
-+		return qcom_smmu_impl_init(smmu);
-+
- 	return smmu;
- }
-diff --git a/drivers/iommu/arm-smmu-qcom.c b/drivers/iommu/arm-smmu-qcom.c
-new file mode 100644
-index 000000000000..24c071c1d8b0
---- /dev/null
-+++ b/drivers/iommu/arm-smmu-qcom.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/qcom_scm.h>
-+
-+#include "arm-smmu.h"
-+
-+struct qcom_smmu {
-+	struct arm_smmu_device smmu;
-+};
-+
-+static int qcom_sdm845_smmu500_reset(struct arm_smmu_device *smmu)
-+{
-+	int ret;
-+
-+	arm_mmu500_reset(smmu);
-+
-+	/*
-+	 * To address performance degradation in non-real time clients,
-+	 * such as USB and UFS, turn off wait-for-safe on sdm845 based boards,
-+	 * such as MTP and db845, whose firmwares implement secure monitor
-+	 * call handlers to turn on/off the wait-for-safe logic.
-+	 */
-+	ret = qcom_scm_qsmmu500_wait_safe_toggle(0);
-+	if (ret)
-+		dev_warn(smmu->dev, "Failed to turn off SAFE logic\n");
-+
-+	return ret;
-+}
-+
-+static const struct arm_smmu_impl qcom_smmu_impl = {
-+	.reset = qcom_sdm845_smmu500_reset,
-+};
-+
-+struct arm_smmu_device *qcom_smmu_impl_init(struct arm_smmu_device *smmu)
-+{
-+	struct qcom_smmu *qsmmu;
-+
-+	qsmmu = devm_kzalloc(smmu->dev, sizeof(*qsmmu), GFP_KERNEL);
-+	if (!qsmmu)
-+		return ERR_PTR(-ENOMEM);
-+
-+	qsmmu->smmu = *smmu;
-+
-+	qsmmu->smmu.impl = &qcom_smmu_impl;
-+	devm_kfree(smmu->dev, smmu);
-+
-+	return &qsmmu->smmu;
-+}
-diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
-index ac9eac966cf5..4bc9e853c95d 100644
---- a/drivers/iommu/arm-smmu.h
-+++ b/drivers/iommu/arm-smmu.h
-@@ -391,5 +391,8 @@ static inline void arm_smmu_writeq(struct arm_smmu_device *smmu, int page,
- 	arm_smmu_writeq((s), ARM_SMMU_CB((s), (n)), (o), (v))
- 
- struct arm_smmu_device *arm_smmu_impl_init(struct arm_smmu_device *smmu);
-+struct arm_smmu_device *qcom_smmu_impl_init(struct arm_smmu_device *smmu);
-+
-+int arm_mmu500_reset(struct arm_smmu_device *smmu);
- 
- #endif /* _ARM_SMMU_H */
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Thanks,
+Toshiki Fukasawa
+> 
+> invalid memmap == memmap was not initialized == struct pages contains
+> garbage. There is a memmap, but accessing it (e.g., pfn_to_nid()) will
+> trigger a BUG.
+> 
