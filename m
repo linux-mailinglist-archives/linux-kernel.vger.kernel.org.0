@@ -2,73 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5191BB5501
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 20:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F052B5509
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 20:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728662AbfIQSMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 14:12:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728495AbfIQSMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 14:12:43 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46A4421670;
-        Tue, 17 Sep 2019 18:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568743962;
-        bh=SJCn4cJq7Wgo0gWUlVrukjk4zj7o7R/x/W9PXvxAsdQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Mx4Iq4xJTDPnGb8X5KOx/lQBPW/vgIn2k3VolXNtdqV8ft3CKioXFN0fD0P86JMCG
-         fs5XuYfKuQ3et9ZvJ01aGBz9b3xsYBZz/M9TKHTzyuSG9P+9QgwpV+lUsHTSumHfp6
-         Xym92imRa7rXm1PD28Vj/JG2S6SIHnlDkcio1b6I=
-Date:   Tue, 17 Sep 2019 20:12:40 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Yi Wang <wang.yi59@zte.com.cn>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
-Subject: Re: [PATCH] kvm: x86: Use DEFINE_DEBUGFS_ATTRIBUTE for debugfs files
-Message-ID: <20190917181240.GA1572563@kroah.com>
-References: <1563780839-14739-1-git-send-email-wang.yi59@zte.com.cn>
- <31eec57f-2bc8-0ea0-e5fb-6b21ce902aae@redhat.com>
+        id S1728818AbfIQSNl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 14:13:41 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36232 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728764AbfIQSNl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 14:13:41 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v24so4566872ljj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 11:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X8qAugY0cWb/Nh5PiOGvYcjpfPizYQ3b0rrAHVS81LI=;
+        b=C9s5lYXXnHH4d+z/+qNm0BLqoth+3NHKNzuo1ZEI/HAzdKsJ9mbYCKk1HyB2MXQWc4
+         g7DESB29IDpwLwXUyLD2QMRJW0dTAGzD36P5AoUFEoBKpasOJi1gUIzqaIujz90uWdov
+         G6KhlJOJryZ9dQ3M2tUWgN7mJypOZpW/64GDk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X8qAugY0cWb/Nh5PiOGvYcjpfPizYQ3b0rrAHVS81LI=;
+        b=Y6jy6NtYFuJSQ2PgnZTWG30PPgJcnKYhNy2M+RE3ZQ9sIAy+9gR2mkLs3vTGvwxF8f
+         uqn6/oDJVFwl8+SBUI8Gj1LR95GFuKe3T+aSfehxDuKfFFWc+9Qy8H70tBmO5k7H7bp5
+         sTidQ0xc5ykwOshd0mxjRAjBQ6vLYm3nLRHtXXyBpwMDnY07hw3KKZ/e4nttLkfhr4wx
+         W45VAPpZ2NyBW02wSLv/Yey8oVxnuVWhEEdEYKGsthKGJXw5Tan93zP2Cq66pka5iick
+         GrMfo+Tjy1xIS5ilwSm/T4CsJ2XSwWyYdAPQft/4dWs1eJKag1pAraxmhGyMk2/ukPqA
+         1W8Q==
+X-Gm-Message-State: APjAAAUx6ufZYIyCqjLnXNQVOxGP+hcxFIXN1XMwy8kUt1qk6xOcsyY4
+        vWTWSUHejYhiAYEg9fN9jXQfuiFwGa4=
+X-Google-Smtp-Source: APXvYqyKSfao28YAltPfyl7eNTvbgk/V2sIJKKiEnLGVj4IDBE+SNI8u2GQkyhGFLmSPTOTD8Qi9ag==
+X-Received: by 2002:a2e:974c:: with SMTP id f12mr2638505ljj.15.1568744017275;
+        Tue, 17 Sep 2019 11:13:37 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id n3sm564411lfl.62.2019.09.17.11.13.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2019 11:13:36 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 72so3643945lfh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 11:13:36 -0700 (PDT)
+X-Received: by 2002:ac2:5c11:: with SMTP id r17mr2838284lfp.61.1568744015985;
+ Tue, 17 Sep 2019 11:13:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31eec57f-2bc8-0ea0-e5fb-6b21ce902aae@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <156864062018.3407.16580572772546914005.tglx@nanos.tec.linutronix.de>
+ <156864062019.3407.14798418565580024723.tglx@nanos.tec.linutronix.de>
+In-Reply-To: <156864062019.3407.14798418565580024723.tglx@nanos.tec.linutronix.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Sep 2019 11:13:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjQJaNbQe3fmFU19_wawkx-WT9Sv=h5mWCA9=LL34g_3Q@mail.gmail.com>
+Message-ID: <CAHk-=wjQJaNbQe3fmFU19_wawkx-WT9Sv=h5mWCA9=LL34g_3Q@mail.gmail.com>
+Subject: Re: [GIT pull] x86/pti for 5.4-rc1
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Song Liu <songliubraving@fb.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 07:18:33PM +0200, Paolo Bonzini wrote:
-> On 22/07/19 09:33, Yi Wang wrote:
-> > We got these coccinelle warning:
-> > ./arch/x86/kvm/debugfs.c:23:0-23: WARNING: vcpu_timer_advance_ns_fops
-> > should be defined with DEFINE_DEBUGFS_ATTRIBUTE
-> > ./arch/x86/kvm/debugfs.c:32:0-23: WARNING: vcpu_tsc_offset_fops should
-> > be defined with DEFINE_DEBUGFS_ATTRIBUTE
-> > ./arch/x86/kvm/debugfs.c:41:0-23: WARNING: vcpu_tsc_scaling_fops should
-> > be defined with DEFINE_DEBUGFS_ATTRIBUTE
-> > ./arch/x86/kvm/debugfs.c:49:0-23: WARNING: vcpu_tsc_scaling_frac_fops
-> > should be defined with DEFINE_DEBUGFS_ATTRIBUTE
-> > 
-> > Use DEFINE_DEBUGFS_ATTRIBUTE() rather than DEFINE_SIMPLE_ATTRIBUTE()
-> > to fix this.
-> > 
-> > Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-> 
-> It sucks though that you have to use a function with "unsafe" in the name.
+On Mon, Sep 16, 2019 at 6:38 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+>   - Handle unaligned addresses gracefully in pti_clone_pagetable(). Not an
+>     issue with current callers, but a correctness problem. Adds a warning
+>     so any caller which hands in an unaligned address gets pointed out
+>     clearly.
 
-I agree, why make this change?
+Hmm. I actually thing this one is incomplete.
 
-> Greg, is the patch doing the right thing?
+Yes, it does it correctly now for the "those addresses are missing" cases.
 
-I can't tell.  What coccinelle script generated this patch?
+But if somebody passes in an unaligned address, it still does the
+wrong thing for the
 
-thanks,
+                if (pmd_large(*pmd) || level == PTI_CLONE_PMD) {
 
-greg k-h
+case. No?
+
+I've pulled this, since the change is not _wrong_, but it does look
+incomplete to me. Am I missing something?
+
+Also, it would have been lovely to have some background on how this
+was even noticed. The link in the commit message goes to the
+development thread, but that one doesn't have the original report from
+Song either.
+
+                Linus
