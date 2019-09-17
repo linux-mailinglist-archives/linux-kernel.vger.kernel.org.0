@@ -2,104 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97331B4D92
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03EC9B4D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbfIQMND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 08:13:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54918 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725270AbfIQMNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:13:02 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 459AF10CC1EB;
-        Tue, 17 Sep 2019 12:13:02 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.72])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1A4455C1D8;
-        Tue, 17 Sep 2019 12:12:57 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 17 Sep 2019 14:13:02 +0200 (CEST)
-Date:   Tue, 17 Sep 2019 14:12:56 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     Jan Kratochvil <jan.kratochvil@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH?] powerpc: Hard wire PT_SOFTE value to 1 in gpr_get() too
-Message-ID: <20190917121256.GA8659@redhat.com>
+        id S1727758AbfIQMPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 08:15:03 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46699 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725270AbfIQMPC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 08:15:02 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q5so2041096pfg.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 05:15:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mmnYpZA3iC+BrJljyl/v54ahbIxfU/8bU9G1qNx5CK8=;
+        b=emONvmBI3xBscuMfk9SV5vH9yD19sCNYwM98+d4Pf5o+1UHPBLdPPx7Fl0lp9S9Rw8
+         9i5WnvRqyOctEtbe3ZgDgnGoQ4aMeMjl068g15qAaXV8Wx7UIpEofycyESs23/iP17si
+         hmxGce71yE8p0VDmBR4tT3fRZz6urkda3ogHRt69Z7oekT5u04Y0wOP2/lEQkzbxSybq
+         nfEZsR96vK0cqvkE1dezz1ShYd6kbG+XuA2UrJ3VN8HSYSoZcsCT719F+yeXCH7WMFlE
+         86Fslf1XiClHLpPWiynJz2T70ClaY86jPiTlmNNedivsJSfsuKlks5UcXpVpgnlXcZUD
+         4rCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mmnYpZA3iC+BrJljyl/v54ahbIxfU/8bU9G1qNx5CK8=;
+        b=XFpNWpw/XSt2JeKlNQt6P41h9HWkUms1BOQKA+AYzqtdyEFlVddBKlhi7NPGm2bfKT
+         PbPhgIQ0DoWhzoCaTbD2KVpTe9uHplIbOhpEJiBVw7KSMwznvzCZUHh4R9Uama8uxkNl
+         cUaeDkqmPwY9ydShTz2oT0jIEXl4RQa1hVkYX3lHK0twVX51tI0dncspwiV1xvftDZT6
+         0tkpc6iCGkYiXVlqVvRFzFyG0oiq896zvngZ5IFt1AjWW8kWBUUe1EBrUf4GxyIZUMkw
+         19Qug4CQUabKm3WY5mnxgrh08e4krF6uSyhz118BvH6E/HnuDXlCFq01DBz7YRroXNKm
+         72tA==
+X-Gm-Message-State: APjAAAUNPHbd18jryOkTNYNOOB5aLJLU1mhmYaL7xA6/zoOtp3LYUAJS
+        q+E3bIGZajJQGE/2uOun1yMy0ZAt0/h2iAdJ4cyXtg==
+X-Google-Smtp-Source: APXvYqxU5dmfEBc538s2o8X7Fn6bVPsZE+YcnKXR0FmuLOhuPzosOeFhzvLiVNn/nqwy998ZSQAzYNz3B/N9wNxiBgw=
+X-Received: by 2002:a63:c442:: with SMTP id m2mr3003491pgg.286.1568722501250;
+ Tue, 17 Sep 2019 05:15:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Tue, 17 Sep 2019 12:13:02 +0000 (UTC)
+References: <00000000000044408c0592b00ff5@google.com>
+In-Reply-To: <00000000000044408c0592b00ff5@google.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 17 Sep 2019 14:14:50 +0200
+Message-ID: <CAAeHK+yssfbaP2UH3EnkRKsYf25j6XnR21kkFjjK61gSB3drJg@mail.gmail.com>
+Subject: Re: KASAN: global-out-of-bounds Read in __pm_runtime_resume
+To:     syzbot <syzbot+cd157359d82e8d98c17b@syzkaller.appspotmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        len.brown@intel.com, LKML <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
+        pavel@ucw.cz, rjw@rjwysocki.net,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't have a ppc machine, this patch wasn't even compile tested,
-could you please review?
+On Mon, Sep 16, 2019 at 8:49 PM syzbot
+<syzbot+cd157359d82e8d98c17b@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10efb5fa600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=cd157359d82e8d98c17b
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+cd157359d82e8d98c17b@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: global-out-of-bounds in __pm_runtime_resume+0x162/0x180
+> drivers/base/power/runtime.c:1069
+> Read of size 1 at addr ffffffff863d87b1 by task syz-executor.2/13622
+>
+> CPU: 0 PID: 13622 Comm: syz-executor.2 Not tainted 5.3.0-rc7+ #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0xca/0x13e lib/dump_stack.c:113
+>   print_address_description+0x6a/0x32c mm/kasan/report.c:351
+>   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+>   kasan_report+0xe/0x12 mm/kasan/common.c:618
+>   __pm_runtime_resume+0x162/0x180 drivers/base/power/runtime.c:1069
+>   pm_runtime_get_sync include/linux/pm_runtime.h:226 [inline]
+>   usb_autopm_get_interface+0x1b/0x50 drivers/usb/core/driver.c:1709
+>   usbhid_power+0x7c/0xe0 drivers/hid/usbhid/hid-core.c:1234
+>   hid_hw_power include/linux/hid.h:1038 [inline]
+>   hidraw_open+0x20d/0x740 drivers/hid/hidraw.c:282
+>   chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+>   do_dentry_open+0x494/0x1120 fs/open.c:797
+>   do_last fs/namei.c:3416 [inline]
+>   path_openat+0x1430/0x3f50 fs/namei.c:3533
+>   do_filp_open+0x1a1/0x280 fs/namei.c:3563
+>   do_sys_open+0x3c0/0x580 fs/open.c:1089
+>   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4137d1
+> Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 19 00 00 c3 48
+> 83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48
+> 89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> RSP: 002b:00007faea59927a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+> RAX: ffffffffffffffda RBX: 6666666666666667 RCX: 00000000004137d1
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007faea5992850
+> RBP: 000000000075bf20 R08: 000000000000000f R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000293 R12: 00007faea59936d4
+> R13: 00000000004c8cbf R14: 00000000004dfc90 R15: 00000000ffffffff
+>
+> The buggy address belongs to the variable:
+>   __param_str_xfer_debug+0x91/0x4a0
+>
+> Memory state around the buggy address:
+>   ffffffff863d8680: fa fa fa fa 00 00 00 02 fa fa fa fa 00 00 00 00
+>   ffffffff863d8700: fa fa fa fa 00 00 00 02 fa fa fa fa 00 07 fa fa
+> > ffffffff863d8780: fa fa fa fa 00 00 fa fa fa fa fa fa 00 00 07 fa
+>                                       ^
+>   ffffffff863d8800: fa fa fa fa 00 00 00 00 00 00 fa fa fa fa fa fa
+>   ffffffff863d8880: 00 07 fa fa fa fa fa fa 00 00 06 fa fa fa fa fa
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-The commit a8a4b03ab95f ("powerpc: Hard wire PT_SOFTE value to 1 in
-ptrace & signals") changed ptrace_get_reg(PT_SOFTE) to report 0x1,
-but PTRACE_GETREGS still copies pt_regs->softe as is.
-
-This is not consistent and this breaks
-http://sourceware.org/systemtap/wiki/utrace/tests/user-regs-peekpoke
-
-Reported-by: Jan Kratochvil <jan.kratochvil@redhat.com>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- arch/powerpc/kernel/ptrace.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
-index 8c92feb..9e9342c 100644
---- a/arch/powerpc/kernel/ptrace.c
-+++ b/arch/powerpc/kernel/ptrace.c
-@@ -363,11 +363,36 @@ static int gpr_get(struct task_struct *target, const struct user_regset *regset,
- 	BUILD_BUG_ON(offsetof(struct pt_regs, orig_gpr3) !=
- 		     offsetof(struct pt_regs, msr) + sizeof(long));
- 
-+#ifdef CONFIG_PPC64
-+	if (!ret)
-+		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+					  &target->thread.regs->orig_gpr3,
-+					  offsetof(struct pt_regs, orig_gpr3),
-+					  offsetof(struct pt_regs, softe));
-+
-+	if (!ret) {
-+		unsigned long softe = 0x1;
-+		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf, &msr,
-+					  offsetof(struct pt_regs, softe),
-+					  offsetof(struct pt_regs, softe) +
-+					  sizeof(softe));
-+	}
-+
-+	BUILD_BUG_ON(offsetof(struct pt_regs, trap) !=
-+		     offsetof(struct pt_regs, softe) + sizeof(long));
-+
-+	if (!ret)
-+		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-+					  &target->thread.regs->trap,
-+					  offsetof(struct pt_regs, trap),
-+					  sizeof(struct user_pt_regs));
-+#else
- 	if (!ret)
- 		ret = user_regset_copyout(&pos, &count, &kbuf, &ubuf,
- 					  &target->thread.regs->orig_gpr3,
- 					  offsetof(struct pt_regs, orig_gpr3),
- 					  sizeof(struct user_pt_regs));
-+#endif
- 	if (!ret)
- 		ret = user_regset_copyout_zero(&pos, &count, &kbuf, &ubuf,
- 					       sizeof(struct user_pt_regs), -1);
--- 
-2.5.0
-
-
+#syz dup: general protection fault in __pm_runtime_resume
