@@ -2,75 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0B18B4A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3073B4A36
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfIQJSQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:18:16 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38819 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbfIQJSQ (ORCPT
+        id S1727034AbfIQJS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:18:58 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35285 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfIQJS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:18:16 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l11so2298769wrx.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 02:18:14 -0700 (PDT)
+        Tue, 17 Sep 2019 05:18:57 -0400
+Received: by mail-qk1-f193.google.com with SMTP id w2so3202226qkf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 02:18:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ZmyRTH11FKZjg3p5bM7cG4+5udISP5256aWYiASckV4=;
-        b=dHJuIjqRrMgYB6fmsR6dYurmuJBGEplDO2KM8mJBxvGK3M53S8DAFRSK5dQwECdgo0
-         Gg2XAY0BNCAkaT/SxqegMe6rlZNrz9i6rFpfy2td6EfNmHUON7rzQkU/XovsjYJ90y+t
-         K33DN9idOuOz2XnClLuxfxO38v7z8Im6sfNbjjKsVwPAwR1fnS5LVeIko7SxjXHIq7To
-         4RWuwxLjux3xOfSZedVplKgwccufxiplMB1/w6XOwgDZtXsKOxNtYDoOn4L7uAF/gH38
-         uXjC4ywXmgWtO77ZW45qC+KW/pWaepiGGlKxyoPYKN8gmJFbmPUmaBNo/nuwn2WUNtKr
-         Ccug==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qk1/kEMCc7hdtCl5vveWWjPTyqEJHdmDX9cEtBBSrMo=;
+        b=oNed/+kkOpBqzgWZvc8m2HoCUsR870bim/7U6M6ciIxMGGmQnC551uF2G+T6HjZMHn
+         +tnBXLKaFDx//RH0OvknlYwyJjua5GUILPW76AwekbFW4gPNNHQWqlAH4s5xrNqkwCoB
+         Wey4KwVBY8lZ0wjk/+/+9RyqneCmbw0VT5aIgRFL0GxyzK0CT8F88x3UA3dPNxET1fu/
+         OSZ7kE5axDPfK8IoDCxOgCJNiFdLhCO3p2wFfyEzUsfMeqmW1FsD2p9l9ZGWs/5739Nw
+         OeoXkpjTP/5rN2yaGgIRa81J7wB6isbp9Y8NRB3FNE8afvWkC7TCs+fnOzWO8YMOXpU5
+         cn+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ZmyRTH11FKZjg3p5bM7cG4+5udISP5256aWYiASckV4=;
-        b=tyCt2g5wedsKCRKcXs8spVsf4G4X6srX5/JIRy2IEptZabxkSkzcr0HCmUt6T9azCR
-         BUNp8f+qVyEsy4og9SruAtVozw6gTCGBR9vGCaXLjhiyfnSHOqlryiBfvaI5cTHa7qtk
-         IOwoLhuLboUz85DulSoipYdnNceESiGrZCbRNhVtdTLnQ1eU8YqSXbTC9Pumm4lWUR6q
-         Z1Kn3DTreSmZzURx/8Vnk4eJLGcdjirkLXHmc3BVU+oXVAx9l5irD8AmT900i8EN1L0J
-         dpdAGKfLXAOzd6/pn55rsPsmu/Vox4mKlgfO/LhANqOimpxzgjCH6mzERl6rzEUo5uGl
-         t6VA==
-X-Gm-Message-State: APjAAAX01fEWvZXWmps0bcs9l43jHdc2B7j3bjlemeKRW6NFLXk+LlOb
-        /DA1YUWHcJSAUtlRlJcCkLEZJw==
-X-Google-Smtp-Source: APXvYqzMcsMkF+IzOhVUpVJstLoCK/jTQlsQSur1FiOv4mcOYSPoHSHQehqpCbl+eHk03Y8y2kTFOA==
-X-Received: by 2002:a5d:5111:: with SMTP id s17mr2177174wrt.59.1568711894210;
-        Tue, 17 Sep 2019 02:18:14 -0700 (PDT)
-Received: from localhost ([195.200.173.126])
-        by smtp.gmail.com with ESMTPSA id 26sm1849272wmf.20.2019.09.17.02.18.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 02:18:13 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 02:18:12 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Aurabindo Jayamohanan <mail@aurabindo.in>
-cc:     broonie@kernel.org, palmer@sifive.com, linux-spi@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: sifive: check return value for
- platform_get_resource()
-In-Reply-To: <20190917085627.4562-1-mail@aurabindo.in>
-Message-ID: <alpine.DEB.2.21.9999.1909170216200.4260@viisi.sifive.com>
-References: <20190917085627.4562-1-mail@aurabindo.in>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qk1/kEMCc7hdtCl5vveWWjPTyqEJHdmDX9cEtBBSrMo=;
+        b=cQRKinxmYj+eNxixqmThXcUxIrQ0gazv30EanGZOVPiAAPrFvZYBYbf78pm0VN2AgM
+         Y7oK/Si0/YoKWgTkFD4JsYKWSpb/ePb581lz0NwrsbPECRJMdm1IcmIxUJ2o3ZZbHri8
+         Xa4dmvO7t86/QsyTaEIjpzbAk6WWkLDxl5yurhCD5XwXkugjcJgRQ2J6tQe1wHGo2fLr
+         jM1TpfSF9rxpPK9LxlNWqM0pcfmvxGfMHfonNAZBhIdW00IloY9E9r5vwrUmzq3jV+ea
+         qdywvbnS/ZhDSsJ4tlv1E2x7E0w4B44tdjSFXaDcNHyg5IQI2A0fnmloj9ae4B4O49H1
+         q8Cw==
+X-Gm-Message-State: APjAAAWJ1+FeZVyUSKH/SykoO+diMx2g1Rp4M85R1rgeXCeF65Y3ied+
+        b/ydhupQMwlZrZmAfMTzsrgFlcffJ5oFHX+eEgIZ9g==
+X-Google-Smtp-Source: APXvYqwsTYtRd0bAtTCshwktiNew7SgVScj0W0wJ6hvvFn22AcBW3g9dZ5tlXLrT4/NrL+dTsEI2JmRuYRQSgRLij8o=
+X-Received: by 2002:a37:6d2:: with SMTP id 201mr2596626qkg.106.1568711936825;
+ Tue, 17 Sep 2019 02:18:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <cover.1568240476.git.amit.kucheria@linaro.org>
+ <97b6f861e6e6a2ac7b50efb7211f3c8e7fe872b0.1568240476.git.amit.kucheria@linaro.org>
+ <6920d231-73cf-d83d-2cc7-f29e5f73192c@linaro.org>
+In-Reply-To: <6920d231-73cf-d83d-2cc7-f29e5f73192c@linaro.org>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 17 Sep 2019 14:48:45 +0530
+Message-ID: <CAP245DVOX_x0e-CAzzG2cdpBeMdk=J7Tbgx4hpLXEavQwjRRAg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] thermal: Initialize thermal subsystem earlier
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Sep 2019, Aurabindo Jayamohanan wrote:
+On Tue, Sep 17, 2019 at 1:30 AM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 12/09/2019 00:32, Amit Kucheria wrote:
+> > From: Lina Iyer <ilina@codeaurora.org>
+> >
+> > Now that the thermal framework is built-in, in order to facilitate
+> > thermal mitigation as early as possible in the boot cycle, move the
+> > thermal framework initialization to core_initcall.
+> >
+> > However, netlink initialization happens only as part of subsys_initcall.
+> > At this time in the boot process, the userspace is not available yet. So
+> > initialize the netlink events later in fs_initcall.
+>
+> Why not kill directly the netlink part, no one is using it in the kernel?
 
-> platform_get_resource() may return NULL. If it is so, return -ENXIO
-> 
-> Signed-off-by: Aurabindo Jayamohanan <mail@aurabindo.in>
+That's a good point. I wasn't sure if anybody was using it, but I can
+remove it completely since no driver seems to be using the
+thermal_generate_netlink_event() api.
 
-Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
+Regards,
+Amit
 
-
-- Paul
+$ git grep thermal_generate_netlink_event
+Documentation/thermal/sysfs-api.rst:just need to call
+thermal_generate_netlink_event() with two arguments viz
+drivers/thermal/thermal_core.c:int
+thermal_generate_netlink_event(struct thermal_zone_device *tz,
+drivers/thermal/thermal_core.c:EXPORT_SYMBOL_GPL(thermal_generate_netlink_event);
+include/linux/thermal.h:extern int
+thermal_generate_netlink_event(struct thermal_zone_device *tz,
+include/linux/thermal.h:static inline int
+thermal_generate_netlink_event(struct thermal_zone_device *tz,
