@@ -2,165 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85669B49D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E21AB49ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:53:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389203AbfIQIuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:50:19 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40845 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728698AbfIQIuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:50:15 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b24so2080538wmj.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 01:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/VonGSSqqMDxfF4QwP1WKI+1bEgxLGoOBgLkXqBtfQA=;
-        b=ilkHUpp/PYb0KHuZDcHzX1Ounlux5/YOswWqF8JQI4guW6HyXLoFNHBxUeNmgS4wgj
-         K9dFh8cZLWZ/BdmJbF43N1GQBPg6kjKVLrRXRYjgVYTnMrRDG220nh4uH/Ae07miHenH
-         41eiYv/vkY2/0nZDXcre85bHwnoMGFfGzSUqgb4/Zr6YXyN+4KRF5kOyRV10MSKNKVVE
-         isggylYG8cxJ7Bqb3NED3KeUBFmz3uLAa7onauWOba53gvEICMBj/MDYo+Y8qIHRHc1O
-         PMMWfgl1quOU1X7L9GHDhmzpPIchZUCWJ1X84ePdTR8qDIu1hS7xXVb+9iSwfCNp03eK
-         vohA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/VonGSSqqMDxfF4QwP1WKI+1bEgxLGoOBgLkXqBtfQA=;
-        b=AhhB7iNiPwQd135JTaMDSCNtPMjpLUJdBogulC73cE+PfXUkc8a75LhL0PEO5KCwpq
-         K/GB/CGfprpsyvrttiDfbEj5n7bK+PwHHeFgYzhAr3Ebv4RiM3RiFJZyYOCDgqrF347F
-         zqJz8gYyGG+R0yw78ns/x/nVv0gjgYrcmn3MVgME08pxarEQ6cMIxDIFV/s80AjsGAo3
-         bPMeG0mtbGuiOgMEmFedoOtfUL2co1Kbm3rkQH40+BCLdQzRi85KbUEhgvJ1d+yp8nao
-         UsdyU626g9XLmqV8IkaHNqVhUwCatnsxOK+5ntR5kb+jsgp5OI1zJMCrY5N7BVkzAvDP
-         ePvA==
-X-Gm-Message-State: APjAAAWG2Ao+xFTlXqzm6Qd7BUgolEZLTtxXXyOsSHiiJNRCkHE2ZCI7
-        dX/oqZvUpLwCVdVwmHLtePv5TzF11sek5A==
-X-Google-Smtp-Source: APXvYqxmUuN4vsQBrM1hohQXVK4AD/ImfVSsKnQMjN5EZZTIlBaWxTXWVN88fT67M4dyPna59whj+g==
-X-Received: by 2002:a7b:c949:: with SMTP id i9mr2307693wml.136.1568710212091;
-        Tue, 17 Sep 2019 01:50:12 -0700 (PDT)
-Received: from localhost (p4FC6BBBF.dip0.t-ipconnect.de. [79.198.187.191])
-        by smtp.gmail.com with ESMTPSA id x6sm2904730wmf.35.2019.09.17.01.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 01:50:11 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 10:50:04 +0200
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH RFC 01/14] mm: memcg: subpage charging API
-Message-ID: <20190917085004.GA1486@cmpxchg.org>
-References: <20190905214553.1643060-1-guro@fb.com>
- <20190905214553.1643060-2-guro@fb.com>
- <20190916125611.GB29985@cmpxchg.org>
- <20190917022713.GB8073@castle.DHCP.thefacebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917022713.GB8073@castle.DHCP.thefacebook.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1725987AbfIQIw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:52:56 -0400
+Received: from mga18.intel.com ([134.134.136.126]:37165 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfIQIw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:52:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Sep 2019 01:52:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,515,1559545200"; 
+   d="scan'208";a="193695456"
+Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Sep 2019 01:52:25 -0700
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, sean.j.christopherson@intel.com
+Cc:     mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
+        yu.c.zhang@intel.com, alazar@bitdefender.com,
+        Yang Weijiang <weijiang.yang@intel.com>
+Subject: [PATCH v5 0/9] Enable Sub-page Write Protection Support
+Date:   Tue, 17 Sep 2019 16:52:55 +0800
+Message-Id: <20190917085304.16987-1-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 02:27:19AM +0000, Roman Gushchin wrote:
-> On Mon, Sep 16, 2019 at 02:56:11PM +0200, Johannes Weiner wrote:
-> > On Thu, Sep 05, 2019 at 02:45:45PM -0700, Roman Gushchin wrote:
-> > > Introduce an API to charge subpage objects to the memory cgroup.
-> > > The API will be used by the new slab memory controller. Later it
-> > > can also be used to implement percpu memory accounting.
-> > > In both cases, a single page can be shared between multiple cgroups
-> > > (and in percpu case a single allocation is split over multiple pages),
-> > > so it's not possible to use page-based accounting.
-> > > 
-> > > The implementation is based on percpu stocks. Memory cgroups are still
-> > > charged in pages, and the residue is stored in perpcu stock, or on the
-> > > memcg itself, when it's necessary to flush the stock.
-> > 
-> > Did you just implement a slab allocator for page_counter to track
-> > memory consumed by the slab allocator?
-> 
-> :)
-> 
-> > 
-> > > @@ -2500,8 +2577,9 @@ void mem_cgroup_handle_over_high(void)
-> > >  }
-> > >  
-> > >  static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
-> > > -		      unsigned int nr_pages)
-> > > +		      unsigned int amount, bool subpage)
-> > >  {
-> > > +	unsigned int nr_pages = subpage ? ((amount >> PAGE_SHIFT) + 1) : amount;
-> > >  	unsigned int batch = max(MEMCG_CHARGE_BATCH, nr_pages);
-> > >  	int nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
-> > >  	struct mem_cgroup *mem_over_limit;
-> > > @@ -2514,7 +2592,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
-> > >  	if (mem_cgroup_is_root(memcg))
-> > >  		return 0;
-> > >  retry:
-> > > -	if (consume_stock(memcg, nr_pages))
-> > > +	if (subpage && consume_subpage_stock(memcg, amount))
-> > > +		return 0;
-> > > +	else if (!subpage && consume_stock(memcg, nr_pages))
-> > >  		return 0;
-> > 
-> > The layering here isn't clean. We have an existing per-cpu cache to
-> > batch-charge the page counter. Why does the new subpage allocator not
-> > sit on *top* of this, instead of wedged in between?
-> > 
-> > I think what it should be is a try_charge_bytes() that simply gets one
-> > page from try_charge() and then does its byte tracking, regardless of
-> > how try_charge() chooses to implement its own page tracking.
-> > 
-> > That would avoid the awkward @amount + @subpage multiplexing, as well
-> > as annotating all existing callsites of try_charge() with a
-> > non-descript "false" parameter.
-> > 
-> > You can still reuse the stock data structures, use the lower bits of
-> > stock->nr_bytes for a different cgroup etc., but the charge API should
-> > really be separate.
-> 
-> Hm, I kinda like the idea, however there is a complication: for the subpage
-> accounting the css reference management is done in a different way, so that
-> all existing code should avoid changing the css refcounter. So I'd need
-> to pass a boolean argument anyway.
+EPT-Based Sub-Page write Protection(SPP)is a HW capability which allows
+Virtual Machine Monitor(VMM) to specify write-permission for guest
+physical memory at a sub-page(128 byte) granularity. When this
+capability is enabled, the CPU enforces write-access check for sub-pages
+within a 4KB page.
 
-Can you elaborate on the refcounting scheme? I don't quite understand
-how there would be complications with that.
+The feature is targeted to provide fine-grained memory protection for
+usages such as device virtualization, memory check-point and VM
+introspection etc.
 
-Generally, references are held for each page that is allocated in the
-page_counter. try_charge() allocates a batch of css references,
-returns one and keeps the rest in stock.
+SPP is active when the "sub-page write protection" (bit 23) is 1 in
+Secondary VM-Execution Controls. The feature is backed with a Sub-Page
+Permission Table(SPPT), SPPT is referenced via a 64-bit control field
+called Sub-Page Permission Table Pointer (SPPTP) which contains a
+4K-aligned physical address.
 
-So couldn't the following work?
+To enable SPP for certain physical page, the gfn should be first mapped
+to a 4KB entry, then set bit 61 of the corresponding EPT leaf entry. 
+While HW walks EPT, if bit 61 is set, it traverses SPPT with the guset
+physical address to find out the sub-page permissions at the leaf entry.
+If the corresponding bit is set, write to sub-page is permitted,
+otherwise, SPP induced EPT violation is generated.
 
-When somebody allocates a subpage, the css reference returned by
-try_charge() is shared by the allocated subpage object and the
-remainder that is kept via stock->subpage_cache and stock->nr_bytes
-(or memcg->nr_stocked_bytes when the percpu cache is reset).
+This patch serial passed SPP function test and selftest on Ice-Lake platform.
 
-When the subpage objects are freed, you'll eventually have a full page
-again in stock->nr_bytes, at which point you page_counter_uncharge()
-paired with css_put(_many) as per usual.
+Please refer to the SPP introduction document in this patch set and
+Intel SDM for details:
 
-A remainder left in old->nr_stocked_bytes would continue to hold on to
-one css reference. (I don't quite understand who is protecting this
-remainder in your current version, actually. A bug?)
+Intel SDM:
+https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
 
-Instead of doing your own batched page_counter uncharging in
-refill_subpage_stock() -> drain_subpage_stock(), you should be able to
-call refill_stock() when stock->nr_bytes adds up to a whole page again.
+SPP selftest patch:
+https://lkml.org/lkml/2019/6/18/1197
 
-Again, IMO this would be much cleaner architecture if there was a
-try_charge_bytes() byte allocator that would sit on top of a cleanly
-abstracted try_charge() page allocator, just like the slab allocator
-is sitting on top of the page allocator - instead of breaking through
-the abstraction layer of the underlying page allocator.
+Previous patch:
+https://lkml.org/lkml/2019/8/14/97
+
+Patch 1: Introduction to SPP.
+Patch 2: Add SPP related flags and control bits.
+Patch 3: Functions for SPPT setup.
+Patch 4: Add SPP access bitmaps for memslots.
+Patch 5: Introduce SPP {init,set,get} functions
+Patch 6: Implement User space access IOCTLs.
+Patch 7: Set up SPP paging table at vm-entry/exit.
+Patch 8: Enable lazy mode SPPT setup.
+Patch 9: Handle SPP protected pages when VM memory changes
+
+
+Change logs:
+
+V5 -> V4:
+  1. Enable SPP support for Hugepage(1GB/2MB) to extend application.
+  2. Make SPP miss vm-exit handler as the unified place to set up SPPT.
+  3. If SPP protected pages are access-tracked or dirty-page-tracked,
+     store SPP flag in reserved address bit, restore it in
+     fast_page_fault() handler.
+  4. Move SPP specific functions to vmx/spp.c and vmx/spp.h
+  5. Rebased code to kernel v5.3
+  6. Other change suggested by KVM community.
+  
+V3 -> V4:
+  1. Modified documentation to make it consistent with patches.
+  2. Allocated SPPT root page in init_spp() instead of vmx_set_cr3() to
+     avoid SPPT miss error.
+  3. Added back co-developers and sign-offs.
+
+V2 -> V3:                                                                
+  1. Rebased patches to kernel 5.1 release                                
+  2. Deferred SPPT setup to EPT fault handler if the page is not
+     available while set_subpage() is being called.
+  3. Added init IOCTL to reduce extra cost if SPP is not used.
+  4. Refactored patch structure, cleaned up cross referenced functions.
+  5. Added code to deal with memory swapping/migration/shrinker cases.
+
+V2 -> V1:
+  1. Rebased to 4.20-rc1
+  2. Move VMCS change to a separated patch.
+  3. Code refine and Bug fix 
+
+
+Yang Weijiang (9):
+  Documentation: Introduce EPT based Subpage Protection
+  vmx: spp: Add control flags for Sub-Page Protection(SPP)
+  mmu: spp: Add SPP Table setup functions
+  mmu: spp: Add functions to create/destroy SPP bitmap block
+  mmu: spp: Introduce SPP {init,set,get} functions
+  x86: spp: Introduce user-space SPP IOCTLs
+  vmx: spp: Set up SPP paging table at vm-entry/exit
+  mmu: spp: Enable Lazy mode SPP protection
+  mmu: spp: Handle SPP protected pages when VM memory changes
+
+ Documentation/virtual/kvm/spp_kvm.txt | 178 +++++++
+ arch/x86/include/asm/cpufeatures.h    |   1 +
+ arch/x86/include/asm/kvm_host.h       |  10 +-
+ arch/x86/include/asm/vmx.h            |  10 +
+ arch/x86/include/uapi/asm/vmx.h       |   2 +
+ arch/x86/kernel/cpu/intel.c           |   4 +
+ arch/x86/kvm/mmu.c                    |  78 ++-
+ arch/x86/kvm/mmu.h                    |   2 +
+ arch/x86/kvm/vmx/capabilities.h       |   5 +
+ arch/x86/kvm/vmx/spp.c                | 651 ++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/spp.h                |  27 ++
+ arch/x86/kvm/vmx/vmx.c                |  99 ++++
+ arch/x86/kvm/x86.c                    |  51 ++
+ include/uapi/linux/kvm.h              |  17 +
+ 14 files changed, 1133 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/virtual/kvm/spp_kvm.txt
+ create mode 100644 arch/x86/kvm/vmx/spp.c
+ create mode 100644 arch/x86/kvm/vmx/spp.h
+
+-- 
+2.17.2
+
