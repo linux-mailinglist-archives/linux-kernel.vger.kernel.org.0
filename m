@@ -2,250 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7E7DB4DAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91E19B4D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfIQMTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 08:19:11 -0400
-Received: from aliyun-cloud.icoremail.net ([47.90.88.95]:60566 "HELO
-        aliyun-sdnproxy-1.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with SMTP id S1725270AbfIQMTL (ORCPT
+        id S1727478AbfIQMLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 08:11:37 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44167 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725270AbfIQMLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:19:11 -0400
-X-Greylist: delayed 720 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 08:18:13 EDT
-Received: from bogon.wangsu.com (unknown [218.85.123.226])
-        by app2 (Coremail) with SMTP id 4zNnewCnreVjyoBdoWhyAA--.30568S2;
-        Tue, 17 Sep 2019 19:58:31 +0800 (CST)
-From:   Lin Feng <linf@wangsu.com>
-To:     corbet@lwn.net, mcgrof@kernel.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     keescook@chromium.org, mchehab+samsung@kernel.org,
-        mgorman@techsingularity.net, vbabka@suse.cz, mhocko@suse.com,
-        ktkhai@virtuozzo.com, hannes@cmpxchg.org, linf@wangsu.com
-Subject: [PATCH] [RFC] vmscan.c: add a sysctl entry for controlling memory reclaim IO congestion_wait length
-Date:   Tue, 17 Sep 2019 19:58:24 +0800
-Message-Id: <20190917115824.16990-1-linf@wangsu.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 17 Sep 2019 08:11:37 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q21so2036676pfn.11
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 05:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z8TjCL1+7c4nptumYKjTLyXcnc06lqVokGDWWx4FuTc=;
+        b=kxGcdkyfa9pJ6i00CWCbKfQ+iUoRTz9yl2uzAzw2yhMV+s8lRavPbgX7Ssx0+f3sXl
+         tm0F1BXW5y/SV3l0LDC5X7w2ZNhlluNHsozFq/BZ2TKeFlRosFZoxOFQlUB1qvrvvGid
+         B9+JQ7ZnIXq96VvWWJ6wW4yhq67XKVC6qMKMUM+Ca2QEGGrJfaSVk8DB31WJ80XS0Nqu
+         5c8zm6A8a4vx+ujZ3pqjBzEHFvqqS5j4C6yaS/wOwwzPkxZTTqS7N2Ps0UGfeThE1Q1k
+         BDseFhm6LwHBId7sdgQbyyX6eI3g4vGdQ2NXS+sFBCK+IW6dhhLdbZirP4k6mcyCkTZP
+         TdCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z8TjCL1+7c4nptumYKjTLyXcnc06lqVokGDWWx4FuTc=;
+        b=tZzOTCI5tVe4b/G5VB39H9voTpnqp1bu8KgVlxRh1NaLOfPJh5a2PpelirpOHmbvVB
+         VQbTJPmEN37XnjNtGCkFpVD+S3toZFkMXRUrSpPYQtUc6V3j7ncGXWvTMgi2GtstuC/u
+         dTv09HkHn45NBa1hXMsNlBOA1JHi1TmDCkf4HU2swijFOFhg/Y2AlXCGy4Fgif/rQ4Wf
+         ITmSs6IOBw0iS8YrYShOzZNv5iFBqgNYYA6ub+iPWhJx0D6B8ySzbzedJV+XytClzoTF
+         JlCka9kU4gan8hYG8jNjkxiJ/W3jjDeZNA7eYqPaTU6/mmd0pYvDCKTgQegHLUQ4cU5E
+         pdVg==
+X-Gm-Message-State: APjAAAXV3x6cPUJMzNK8wOMi7hNOoJ34FBsyccR+DB0/Ocqg/GLtjIfA
+        A7HS1zdpG9cwOZ3gJktT3wFlAO704eCISCdsqGru5A==
+X-Google-Smtp-Source: APXvYqxBtAxhijTOtmMwDsA8B+ivm542BhmhQIhD1aAFYaQEW5BEm7Hki9NcxBslwR+glp3lXh06vc7o3lJbavBAtwQ=
+X-Received: by 2002:a62:1cd2:: with SMTP id c201mr3906410pfc.51.1568722296210;
+ Tue, 17 Sep 2019 05:11:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: 4zNnewCnreVjyoBdoWhyAA--.30568S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtFyDXw45Cr48JF4Dtr4Utwb_yoWfCFy3pF
-        yDZr1Sva4UJFWfJFZxA3WUJFn5J3s7CFyDtw4UGr1FvryUXFykKwn5CF1UZa48ur1UG398
-        tF4qqws5Gr18JF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU9m1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l8cAvFVAK
-        0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4
-        x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2
-        z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4
-        xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r1j6r4UMcIj6x8ErcxFaVAv
-        8VW8GwAv7VCY1x0262k0Y48FwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48Icx
-        kI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY
-        02Avz4vE14v_Gw4l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8GwCFx2IqxV
-        CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
-        6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
-        WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
-        6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
-        0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JjOrchUUUUU=
-X-CM-SenderInfo: holqwq5zdqw23xof0z/
+References: <000000000000b1f1050592ab96ee@google.com> <Pine.LNX.4.44L0.1909161236580.1489-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1909161236580.1489-100000@iolanthe.rowland.org>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 17 Sep 2019 14:11:25 +0200
+Message-ID: <CAAeHK+zOtyFvbQRuaAf7EAsqm=cQP2NY8uSEczL_BEbw-xZvwg@mail.gmail.com>
+Subject: Re: possible deadlock in open_rio (2)
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     syzbot <syzbot+19cf612d23f66bc19f22@syzkaller.appspotmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Cesar Miquel <miquel@df.uba.ar>,
+        rio500-users@lists.sourceforge.net,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This sysctl is named as mm_reclaim_congestion_wait_jiffies, default to
-HZ/10 as unchanged to old codes.
+On Mon, Sep 16, 2019 at 6:40 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Mon, 16 Sep 2019, syzbot wrote:
+>
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=11512cd1600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=19cf612d23f66bc19f22
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f92c6e600000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b9b85e600000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+19cf612d23f66bc19f22@syzkaller.appspotmail.com
+> >
+> > ======================================================
+> > WARNING: possible circular locking dependency detected
+> > 5.3.0-rc7+ #0 Not tainted
+> > ------------------------------------------------------
+> > syz-executor071/1724 is trying to acquire lock:
+> > 00000000f749c934 (rio500_mutex){+.+.}, at: open_rio+0x16/0xe0
+> > drivers/usb/misc/rio500.c:65
+> >
+> > but task is already holding lock:
+> > 000000009c24ba51 (minor_rwsem){++++}, at: usb_open+0x23/0x270
+> > drivers/usb/core/file.c:39
+> >
+> > which lock already depends on the new lock.
+> >
+> >
+> > the existing dependency chain (in reverse order) is:
+> >
+> > -> #1 (minor_rwsem){++++}:
+> >         down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+> >         usb_register_dev drivers/usb/core/file.c:187 [inline]
+> >         usb_register_dev+0x131/0x670 drivers/usb/core/file.c:156
+> >         probe_rio.cold+0x53/0x237 drivers/usb/misc/rio500.c:474
+> >         usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+> >         really_probe+0x281/0x6d0 drivers/base/dd.c:548
+> >         driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
+> >         __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+> >         bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
+> >         __device_attach+0x217/0x360 drivers/base/dd.c:894
+> >         bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+> >         device_add+0xae6/0x16f0 drivers/base/core.c:2165
+> >         usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+> >         generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+> >         usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+> >         really_probe+0x281/0x6d0 drivers/base/dd.c:548
+> >         driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
+> >         __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
+> >         bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
+> >         __device_attach+0x217/0x360 drivers/base/dd.c:894
+> >         bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+> >         device_add+0xae6/0x16f0 drivers/base/core.c:2165
+> >         usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+> >         hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+> >         hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+> >         port_event drivers/usb/core/hub.c:5359 [inline]
+> >         hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+> >         process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+> >         worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+> >         kthread+0x318/0x420 kernel/kthread.c:255
+> >         ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> >
+> > -> #0 (rio500_mutex){+.+.}:
+> >         check_prev_add kernel/locking/lockdep.c:2405 [inline]
+> >         check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+> >         validate_chain kernel/locking/lockdep.c:2897 [inline]
+> >         __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+> >         lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+> >         __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+> >         __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+> >         open_rio+0x16/0xe0 drivers/usb/misc/rio500.c:65
+> >         usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+> >         chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+> >         do_dentry_open+0x494/0x1120 fs/open.c:797
+> >         do_last fs/namei.c:3416 [inline]
+> >         path_openat+0x1430/0x3f50 fs/namei.c:3533
+> >         do_filp_open+0x1a1/0x280 fs/namei.c:3563
+> >         do_sys_open+0x3c0/0x580 fs/open.c:1089
+> >         do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+> >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > other info that might help us debug this:
+> >
+> >   Possible unsafe locking scenario:
+> >
+> >         CPU0                    CPU1
+> >         ----                    ----
+> >    lock(minor_rwsem);
+> >                                 lock(rio500_mutex);
+> >                                 lock(minor_rwsem);
+> >    lock(rio500_mutex);
+> >
+> >   *** DEADLOCK ***
+> >
+> > 1 lock held by syz-executor071/1724:
+> >   #0: 000000009c24ba51 (minor_rwsem){++++}, at: usb_open+0x23/0x270
+> > drivers/usb/core/file.c:39
+> >
+> > stack backtrace:
+> > CPU: 0 PID: 1724 Comm: syz-executor071 Not tainted 5.3.0-rc7+ #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0xca/0x13e lib/dump_stack.c:113
+> >   check_noncircular+0x345/0x3e0 kernel/locking/lockdep.c:1741
+> >   check_prev_add kernel/locking/lockdep.c:2405 [inline]
+> >   check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+> >   validate_chain kernel/locking/lockdep.c:2897 [inline]
+> >   __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+> >   lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+> >   __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+> >   __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+> >   open_rio+0x16/0xe0 drivers/usb/misc/rio500.c:65
+> >   usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+> >   chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+> >   do_dentry_open+0x494/0x1120 fs/open.c:797
+> >   do_last fs/namei.c:3416 [inline]
+> >   path_openat+0x1430/0x3f50 fs/namei.c:3533
+> >   do_filp_open+0x1a1/0x280 fs/namei.c:3563
+> >   do_sys_open+0x3c0/0x580 fs/open.c:1089
+> >   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x401130
+> > Code: 01 f0 ff ff 0f 83 00 0b 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f
+> > 44 00 00 83 3d 5d 0c 2d 00 00 75 14 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 d4 0a 00 00 c3 48 83 ec 08 e8 3a 00 00 00
+> > RSP: 002b:00007ffca0216788 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+> > RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000401130
+> > RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00007ffca02167a0
+> > RBP: 00000000006cb018 R08: 0000000000000000 R09: 000000000000000f
+> > R10: 0000000000000064 R11: 0000000000000246 R12: 0000000000402090
+> > R13: 0000000000402120 R14: 0000000000000000 R15: 00
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
+>
+> This is undoubted the same as the previous bug report.  It should be
+> fixed by commit 9472aff16ca0 in Greg KH's usb-next branch, but the
+> fix is not yet in Linus's tree.
+>
+> #syz dup: possible deadlock in open_rio
 
-It is in jiffies unit and can be set in range between [1, 100], so
-refers to CONFIG_HZ before tuning.
+Yeah, this one is confusing. If we look at the dashboard [1] we see
+that the fixing commit for the original bug is "Revert "USB: rio500:
+simplify locking"", which is in the usb-testing tree (btw, I've
+switched syzbot from usb-next to usb-testing, as it looked more
+relevant). So syzbot saw the Reported-by tag on that commit, and
+decided that the fix is applied, so if another bug with the same
+manifestation happens, it must be a different bug and should be
+reported. Syzbot has no way to know that commit 9472aff16ca0 (with the
+same Reported-by tag as "Revert "USB: rio500: simplify locking") is
+the proper fix for this issue.
 
-In direct and background(kswapd) pages reclaim paths both may fall into
-calling msleep(100) or congestion_wait(HZ/10) or wait_iff_congested(HZ/10)
-while under IO pressure, and the sleep length is hard-coded and the later
-two will introduce 100ms iowait length per time.
+Since you've marked this bug as a dup of a fixed bug with the fix
+applied to syzbot's tree, syzbot reported another one named "possible
+deadlock in open_rio (3)". I'm going to manually mark that one as
+fixed by commit 9472aff16ca0.
 
-So if pages reclaim is relatively active in some circumstances such as high
-order pages reappings, it's possible to see a lot of iowait introduced by
-congestion_wait(HZ/10) and wait_iff_congested(HZ/10).
-
-The 100ms sleep length is proper if the backing drivers are slow like
-traditionnal rotation disks. While if the backing drivers are high-end
-storages such as high iops ssds or even faster drivers, the high iowait
-inroduced by pages reclaim is really misleading, because the storage IO
-utils seen by iostat is quite low, in this case the congestion_wait time
-modified to 1ms is likely enough for high-end ssds.
-
-Another benifit is that it's potentially shorter the direct reclaim blocked
-time when kernel falls into sync reclaim path, which may improve user
-applications response time.
-
-All ssds box is a trend, so introduce this sysctl entry for making a way
-to relieving the concerns of system administrators.
-
-Tested:
-1. Before this patch:
-
-top - 10:10:40 up 8 days, 16:22,  4 users,  load average: 2.21, 2.15, 2.10
-Tasks: 718 total,   5 running, 712 sleeping,   0 stopped,   1 zombie
-Cpu0  :  0.3%us,  3.4%sy,  0.0%ni, 95.3%id,  1.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu1  :  1.4%us,  1.7%sy,  0.0%ni, 95.2%id,  0.0%wa,  0.0%hi,  1.7%si,  0.0%st
-Cpu2  :  4.7%us,  3.3%sy,  0.0%ni, 91.0%id,  0.0%wa,  0.0%hi,  1.0%si,  0.0%st
-Cpu3  :  7.0%us,  3.7%sy,  0.0%ni, 87.7%id,  1.0%wa,  0.0%hi,  0.7%si,  0.0%st
-Cpu4  :  1.0%us,  2.0%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.7%si,  0.0%st
-Cpu5  :  1.0%us,  2.0%sy,  0.0%ni,  1.7%id, 95.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu6  :  1.0%us,  1.3%sy,  0.0%ni, 97.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu7  :  1.3%us,  1.0%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu8  :  4.3%us,  1.3%sy,  0.0%ni, 94.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu9  :  0.7%us,  0.7%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu10 :  0.7%us,  1.0%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu11 :  1.0%us,  1.0%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu12 :  3.0%us,  1.0%sy,  0.0%ni, 95.3%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu13 :  0.3%us,  1.3%sy,  0.0%ni, 88.6%id,  9.4%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu14 :  3.3%us,  2.3%sy,  0.0%ni, 93.7%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu15 :  6.4%us,  3.0%sy,  0.0%ni, 90.2%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu16 :  2.7%us,  1.7%sy,  0.0%ni, 95.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu17 :  1.0%us,  1.7%sy,  0.0%ni, 97.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu18 :  1.3%us,  1.0%sy,  0.0%ni, 97.0%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu19 :  4.3%us,  1.7%sy,  0.0%ni, 86.0%id,  7.7%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu20 :  0.7%us,  1.3%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu21 :  0.3%us,  1.7%sy,  0.0%ni, 50.2%id, 47.5%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu22 :  0.7%us,  0.7%sy,  0.0%ni, 98.7%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu23 :  0.7%us,  0.7%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-
-2. After this patch and set mm_reclaim_congestion_wait_jiffies to 1:
-
-top - 10:12:19 up 8 days, 16:24,  4 users,  load average: 1.32, 1.93, 2.03
-Tasks: 724 total,   2 running, 721 sleeping,   0 stopped,   1 zombie
-Cpu0  :  4.4%us,  3.0%sy,  0.0%ni, 90.3%id,  1.3%wa,  0.0%hi,  1.0%si,  0.0%st
-Cpu1  :  2.1%us,  1.4%sy,  0.0%ni, 93.5%id,  0.7%wa,  0.0%hi,  2.4%si,  0.0%st
-Cpu2  :  2.7%us,  1.0%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu3  :  1.0%us,  1.0%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu4  :  0.7%us,  1.0%sy,  0.0%ni, 97.7%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu5  :  1.0%us,  0.7%sy,  0.0%ni, 97.7%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu6  :  1.7%us,  1.0%sy,  0.0%ni, 97.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu7  :  2.0%us,  0.7%sy,  0.0%ni, 94.3%id,  2.7%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu8  :  2.0%us,  0.7%sy,  0.0%ni, 97.0%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu9  :  0.7%us,  1.0%sy,  0.0%ni, 97.7%id,  0.7%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu10 :  0.3%us,  0.3%sy,  0.0%ni, 99.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu11 :  0.7%us,  0.3%sy,  0.0%ni, 99.0%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu12 :  0.7%us,  1.0%sy,  0.0%ni, 98.0%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu13 :  0.0%us,  0.3%sy,  0.0%ni, 99.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu14 :  1.7%us,  0.7%sy,  0.0%ni, 97.3%id,  0.3%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu15 :  4.3%us,  1.0%sy,  0.0%ni, 94.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu16 :  1.7%us,  1.3%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.7%si,  0.0%st
-Cpu17 :  2.0%us,  1.3%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu18 :  0.3%us,  0.3%sy,  0.0%ni, 99.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu19 :  1.0%us,  1.0%sy,  0.0%ni, 97.6%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu20 :  1.3%us,  0.7%sy,  0.0%ni, 97.0%id,  0.7%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu21 :  0.7%us,  0.7%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
-Cpu22 :  1.0%us,  1.0%sy,  0.0%ni, 98.0%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-Cpu23 :  0.7%us,  0.3%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.7%si,  0.0%st
-
-Signed-off-by: Lin Feng <linf@wangsu.com>
----
- Documentation/admin-guide/sysctl/vm.rst | 17 +++++++++++++++++
- kernel/sysctl.c                         | 10 ++++++++++
- mm/vmscan.c                             | 12 +++++++++---
- 3 files changed, 36 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-index 64aeee1009ca..e4dd83731ecf 100644
---- a/Documentation/admin-guide/sysctl/vm.rst
-+++ b/Documentation/admin-guide/sysctl/vm.rst
-@@ -837,6 +837,23 @@ than the high water mark in a zone.
- The default value is 60.
- 
- 
-+mm_reclaim_congestion_wait_jiffies
-+==========
-+
-+This control is used to define how long kernel will wait/sleep while
-+system memory is under pressure and memroy reclaim is relatively active.
-+Lower values will decrease the kernel wait/sleep time.
-+
-+It's suggested to lower this value on high-end box that system is under memory
-+pressure but with low storage IO utils and high CPU iowait, which could also
-+potentially decrease user application response time in this case.
-+
-+Keep this control as it were if your box are not above case.
-+
-+The default value is HZ/10, which is of equal value to 100ms independ of how
-+many HZ is defined.
-+
-+
- unprivileged_userfaultfd
- ========================
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 078950d9605b..064a3da04789 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -114,6 +114,7 @@ extern int pid_max;
- extern int pid_max_min, pid_max_max;
- extern int percpu_pagelist_fraction;
- extern int latencytop_enabled;
-+extern int mm_reclaim_congestion_wait_jiffies;
- extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
- #ifndef CONFIG_MMU
- extern int sysctl_nr_trim_pages;
-@@ -1413,6 +1414,15 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= &one_hundred,
- 	},
-+	{
-+		.procname	= "mm_reclaim_congestion_wait_jiffies",
-+		.data		= &mm_reclaim_congestion_wait_jiffies,
-+		.maxlen		= sizeof(mm_reclaim_congestion_wait_jiffies),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &SYSCTL_ONE,
-+		.extra2		= &one_hundred,
-+	},
- #ifdef CONFIG_HUGETLB_PAGE
- 	{
- 		.procname	= "nr_hugepages",
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a6c5d0b28321..8c19afdcff95 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -165,6 +165,12 @@ struct scan_control {
-  * From 0 .. 100.  Higher means more swappy.
-  */
- int vm_swappiness = 60;
-+
-+/*
-+ * From 0 .. 100.  Lower means shorter memory reclaim IO congestion wait time.
-+ */
-+int mm_reclaim_congestion_wait_jiffies = HZ / 10;
-+
- /*
-  * The total number of pages which are beyond the high watermark within all
-  * zones.
-@@ -1966,7 +1972,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
- 			return 0;
- 
- 		/* wait a bit for the reclaimer. */
--		msleep(100);
-+		msleep(jiffies_to_msecs(mm_reclaim_congestion_wait_jiffies));
- 		stalled = true;
- 
- 		/* We are about to die and free our memory. Return now. */
-@@ -2788,7 +2794,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 			 * faster than they are written so also forcibly stall.
- 			 */
- 			if (sc->nr.immediate)
--				congestion_wait(BLK_RW_ASYNC, HZ/10);
-+				congestion_wait(BLK_RW_ASYNC, mm_reclaim_congestion_wait_jiffies);
- 		}
- 
- 		/*
-@@ -2807,7 +2813,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 		 */
- 		if (!sc->hibernation_mode && !current_is_kswapd() &&
- 		   current_may_throttle() && pgdat_memcg_congested(pgdat, root))
--			wait_iff_congested(BLK_RW_ASYNC, HZ/10);
-+			wait_iff_congested(BLK_RW_ASYNC, mm_reclaim_congestion_wait_jiffies);
- 
- 	} while (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
- 					 sc->nr_scanned - nr_scanned, sc));
--- 
-2.20.1
-
+https://syzkaller.appspot.com/bug?id=5b6785f7f0febf30e2133fa6e6dab81683ffa1b5
