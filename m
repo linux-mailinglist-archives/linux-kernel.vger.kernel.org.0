@@ -2,62 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7079B5097
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1429B509B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbfIQOlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:41:07 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:36408 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728187AbfIQOlG (ORCPT
+        id S1728018AbfIQOnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:43:02 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42093 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725922AbfIQOnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:41:06 -0400
-Received: by mail-ua1-f65.google.com with SMTP id r25so1202601uam.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 07:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=8bqNulC6GIabCU3s6DjkZEWKYIhdoMeblELwTHX7mbc=;
-        b=djRNrBvahSULCoYQF4F76uMMbgrFEgkvzCln+M0wCvNucfQMPPINHYO4oFdfGI7ovm
-         MBmqlyVdZB6zx2PIpylfw1Xkh6uwn+a7Gph8vHNz1yxr5b0oJMbI35j+145y7c8U4Lc+
-         7zQ96AVanDE8AZ93yGMcSAE3tAj7r+vex3O5Gq3/x0JgbausTPFNkg/xbs7OxdSP7tA9
-         55PeKm4hU5ZvkHZK67puTSrNZ2dyc8tevNhkPO1pbjRc/FTk2/7kD/EiCRDJG5heEhkf
-         W7Ol1DL5X8OZPrKgATk8i5Cx6quyl+Hoq3zMGE6DQJJW2iuoqPPGOgJQ+W0DQO81TWAU
-         8MSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=8bqNulC6GIabCU3s6DjkZEWKYIhdoMeblELwTHX7mbc=;
-        b=JRqNrzCyRqPk2PkWBxSXP4k9VgsoGCT7crA++bSPXvJO12dAwkRY72DNTeTorcymBv
-         5UXito5gRKDqEUo7zeUHTxE2ZgJfrn/9jis2c3KfWU9PHYX/FixxS9YFF2b2Bs5cqKSR
-         3UYLB2wfIpbZzUr4HP9rZIIGlXXhPpxoPMNASFWhOanf65MkUZOmyLPWQEvmQmGZLGVz
-         i+s0GOu5UEGIkSfFkr85rKhBjF3mQQiqaSQPojyYYmgLFShC+fo/wMuQKGfyYzNisTAL
-         NPDMUUOllrbxKhjFl9DMPOmvKp7NlNYTzql0pike5dQNfIMF7RMBjKMZUR5NNlBNIVUN
-         plDA==
-X-Gm-Message-State: APjAAAX7Z4AocAMkPs7PWr+kBhhx9CncORQ4Q6V8Dv1NCT2HiqU0YoEs
-        435zZ3ms6EehDceiC6nI1Ci6E4zm3fAqC4FkCjk=
-X-Google-Smtp-Source: APXvYqxE0cSRsApeOpNH1OH/5Jiaw6CJhKDtf335azJQUPG3hNeFafsUbUDl+rXdYdbXlFgHc0/C570iDhj4yJrLaPA=
-X-Received: by 2002:ab0:42c5:: with SMTP id j63mr1723274uaj.5.1568731266049;
- Tue, 17 Sep 2019 07:41:06 -0700 (PDT)
+        Tue, 17 Sep 2019 10:43:01 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iAEgu-0008Eh-MC; Tue, 17 Sep 2019 16:42:52 +0200
+Date:   Tue, 17 Sep 2019 16:42:52 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Scott Wood <swood@redhat.com>
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH RT v3 1/5] rcu: Acquire RCU lock when disabling BHs
+Message-ID: <20190917144252.v34ina4z2ydchoit@linutronix.de>
+References: <20190911165729.11178-1-swood@redhat.com>
+ <20190911165729.11178-2-swood@redhat.com>
+ <20190917074456.yj7t3wdwuhn3zcng@linutronix.de>
+ <63b430ca2f067e61bef1c387fad782ab4a2c1ed3.camel@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:558b:0:0:0:0:0 with HTTP; Tue, 17 Sep 2019 07:41:05
- -0700 (PDT)
-Reply-To: annabelle.edo@yandex.ua
-From:   "Mrs. Annabelle Edo." <vita320320@gmail.com>
-Date:   Tue, 17 Sep 2019 16:41:05 +0200
-Message-ID: <CAN0RYr2zG8Aph+UaGh5ibSHVAt2pbCmjXUs7+qJ4QSfpnWc+Ow@mail.gmail.com>
-Subject: How are you and your Family,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <63b430ca2f067e61bef1c387fad782ab4a2c1ed3.camel@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
+On 2019-09-17 09:06:28 [-0500], Scott Wood wrote:
+> Sorry, I missed that you were asking about rcu_read_lock_bh() as well.  I
+> did remove the change to rcu_read_lock_bh_held().
 
-I sent you a message containing the details about your distance
-Relation, did you received it?
+Sorry for not being clear here.
 
-Kind Regards.
+> With this patch, local_bh_disable() calls rcu_read_lock() on RT which
+> handles this debug stuff.  Doing it twice shouldn't be explicitly harmful,
+> but it's redundant, and debug kernels are slow enough as is.
+
+rcu_read_lock() does:
+|         __rcu_read_lock();
+|         __acquire(RCU);
+|         rcu_lock_acquire(&rcu_lock_map);
+|         RCU_LOCKDEP_WARN(!rcu_is_watching(),
+|                          "rcu_read_lock() used illegally while idle");
+
+__acquire() is removed removed by cpp.
+That RCU_LOCKDEP_WARN is doing the same thing as above and redundant.
+Am I right to assume that you consider
+	rcu_lock_acquire(&rcu_bh_lock_map);
+
+redundant because the only user of that is also checking for
+rcu_lock_map?
+
+> -Scott
+
+Sebastian
