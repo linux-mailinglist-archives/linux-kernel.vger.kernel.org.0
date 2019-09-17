@@ -2,100 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F012FB4AD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B43F9B4ADA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:40:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728546AbfIQJj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:39:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41107 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbfIQJjZ (ORCPT
+        id S1728611AbfIQJjo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:39:44 -0400
+Received: from esa3.mentor.iphmx.com ([68.232.137.180]:20501 "EHLO
+        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbfIQJjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:39:25 -0400
-Received: from [5.158.153.52] (helo=linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <kurt.kanzenbach@linutronix.de>)
-        id 1iA9x9-0000M8-FJ; Tue, 17 Sep 2019 11:39:19 +0200
-Date:   Tue, 17 Sep 2019 11:39:19 +0200
-From:   Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Andy Tang <andy.tang@nxp.com>,
-        Alexander Stein <alexander.stein@systec-electronic.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] irqchip: add support for Layerscape external
- interrupt lines
-Message-ID: <20190917093918.GA8901@linutronix.de>
-References: <20180125150230.7234-1-rasmus.villemoes@prevas.dk>
- <20180223210901.23480-1-rasmus.villemoes@prevas.dk>
- <20180223210901.23480-2-rasmus.villemoes@prevas.dk>
- <alpine.DEB.2.21.1803011308440.1396@nanos.tec.linutronix.de>
- <4684c3ce-b56a-334d-f556-6e8524d8126c@prevas.dk>
+        Tue, 17 Sep 2019 05:39:43 -0400
+IronPort-SDR: daOkxq2KT7eN9SBZHbi1GGcU+V3+fdW3svHMmwRk1SS2rvjcD8m/n63eEm6ztKqlLYXFlzcEmH
+ glzefCkWdR7x3OtA15KKlRGM32KopNU7yOnS6MzswxR1WRTxIx0ObrBFC7Slw5fgBitQXlrMqo
+ u6vYPMY6muThnuzCmLYOZ2AZZGqcX0mXboHqhWG7/JcjO/jDb2g190CMYdGD8Z1iv6CSCZ4Ifg
+ jJzihmIVQ+AayLunnrY8eO5lnFhZJxxMF8LfeI7zgpevEkrWN+9liVqH2r9YjD8RpEdvmdvz1x
+ NwI=
+X-IronPort-AV: E=Sophos;i="5.64,515,1559548800"; 
+   d="scan'208";a="41416508"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa3.mentor.iphmx.com with ESMTP; 17 Sep 2019 01:39:43 -0800
+IronPort-SDR: sQpZMFVbuTGk0xlmVSatapakYQarttkTxzQnBYHuekTeUnG2rjwn90eVrGZue88wHnGt2MkGBj
+ rGiypYZPyNhNaDgTbsc09HYWsDKNcYGZSYYsbvX510TYXgD434RXmoYh5yWIuWByye6Qeol9UT
+ hOOnt/PHxTXuGa1adCHxu7D/UGaPPaRBMERMjSxouKCbwlI/EEodq+LWXLBUS6eZLBzuD+Zlm+
+ +W+4C1SIX1IMr2r1DtN1EZigA96BN29RUJBJMZUZOgHlVPyDZJTZriln3Jj4/FHTOD8hKeZKhe
+ 0EE=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
+        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
+        <rydberg@bitmath.org>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <jiada_wang@mentor.com>
+Subject: [PATCH v3 21/49] Input: atmel_mxt_ts - refactor code to enter bootloader into separate func
+Date:   Tue, 17 Sep 2019 18:38:47 +0900
+Message-ID: <20190917093915.18645-2-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190917093915.18645-1-jiada_wang@mentor.com>
+References: <20190917093915.18645-1-jiada_wang@mentor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
-Content-Disposition: inline
-In-Reply-To: <4684c3ce-b56a-334d-f556-6e8524d8126c@prevas.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Nick Dyer <nick.dyer@itdev.co.uk>
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
+(cherry picked from ndyer/linux/for-upstream commit bedd706a32522b946467e15f4f4f24de86a1b4d7)
+[gdavis: Resolve forward port conflicts due to applying upstream
+	 commit 96a938aa214e ("Input: atmel_mxt_ts - remove platform
+	 data support").]
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+[jiada: Squash change from ndyer/linux/for-upstream commit d691d3ee6c6de84b38464a42
+3207b3e23cb9dc3a
+	- Input: atmel_mxt_ts - check firmware format before entering bootloader]
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 43 +++++++++++++++---------
+ 1 file changed, 27 insertions(+), 16 deletions(-)
 
-Hi,
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 711ce39f38ca..ca56122550eb 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3257,23 +3257,10 @@ static int mxt_check_firmware_format(struct device *dev,
+ 	return -EINVAL;
+ }
+ 
+-static int mxt_load_fw(struct device *dev)
++static int mxt_enter_bootloader(struct mxt_data *data)
+ {
+-	struct mxt_data *data = dev_get_drvdata(dev);
+-	struct mxt_flash f = { 0, };
+ 	int ret;
+ 
+-	ret = request_firmware(&f.fw, data->fw_name, dev);
+-	if (ret) {
+-		dev_err(dev, "Unable to open firmware %s\n", data->fw_name);
+-		return ret;
+-	}
+-
+-	/* Check for incorrect enc file */
+-	ret = mxt_check_firmware_format(dev, f.fw);
+-	if (ret)
+-		goto release_firmware;
+-
+ 	if (data->suspended) {
+ 		if (data->suspend_mode == MXT_SUSPEND_REGULATOR)
+ 			mxt_regulator_enable(data);
+@@ -3291,14 +3278,14 @@ static int mxt_load_fw(struct device *dev)
+ 		ret = mxt_t6_command(data, MXT_COMMAND_RESET,
+ 				     MXT_BOOT_VALUE, false);
+ 		if (ret)
+-			goto release_firmware;
++			return ret;
+ 
+ 		msleep(MXT_RESET_TIME);
+ 
+ 		/* Do not need to scan since we know family ID */
+ 		ret = mxt_lookup_bootloader_address(data, 0);
+ 		if (ret)
+-			goto release_firmware;
++			return ret;
+ 
+ 		mxt_sysfs_remove(data);
+ 		mxt_free_input_device(data);
+@@ -3309,6 +3296,30 @@ static int mxt_load_fw(struct device *dev)
+ 
+ 	reinit_completion(&data->bl_completion);
+ 
++	return 0;
++}
++
++static int mxt_load_fw(struct device *dev)
++{
++	struct mxt_data *data = dev_get_drvdata(dev);
++	struct mxt_flash f = { 0, };
++	int ret;
++
++	ret = request_firmware(&f.fw, data->fw_name, dev);
++	if (ret) {
++		dev_err(dev, "Unable to open firmware %s\n", data->fw_name);
++		return ret;
++	}
++
++	/* Check for incorrect enc file */
++	ret = mxt_check_firmware_format(dev, f.fw);
++	if (ret)
++		goto release_firmware;
++
++	ret = mxt_enter_bootloader(data);
++	if (ret)
++		goto release_firmware;
++
+ 	ret = mxt_check_bootloader(data, MXT_WAITING_BOOTLOAD_CMD, false);
+ 	if (ret) {
+ 		/* Bootloader may still be unlocked from previous attempt */
+-- 
+2.19.2
 
-On Fri, May 04, 2018 at 09:44:25AM +0200, Rasmus Villemoes wrote:
-> >> +static int
-> >> +ls_extirq_set_type(struct irq_data *data, unsigned int type)
-> >> +{
-> >> +	irq_hw_number_t hwirq = data->hwirq;
-> >> +	struct extirq_chip_data *chip_data = data->chip_data;
-> >> +	u32 value, mask;
-> >
-> > Please order local variables in reverse fir tree fashion whenever
-> > possible. That's way simpler to read:
-> >
-> > 	struct extirq_chip_data *chip_data = data->chip_data;
-> > 	irq_hw_number_t hwirq = data->hwirq;
-> > 	u32 value, mask;
->
-> Fixed, thanks.
-
-Did you send a sixth version of this patch set? It seems like the code
-hasn't been merged, yet. I also need support for the external interrupt
-lines on a different Layerscape.
-
-Thanks,
-Kurt
-
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEooWgvezyxHPhdEojeSpbgcuY8KYFAl2AqcYACgkQeSpbgcuY
-8KbC2hAAoCZDi2xaYd2gH9b02qjCYtAn1mJu+ibwMc+1BYoHks2kUX/F3iB/ev/Z
-X2dsFpF5fQaE1vBnKpSn8P8qCv+eQzfwWqJlt/RIqE2hFBK+1NChQk/oRIycC6Pj
-xyi38aHLrisB9W7LM+rXsBdlxb0Dzz4L+5TJaGS92gXoNwVpJlwPiBe/kirtWCKc
-cISaUjbjcY0fBVZwQ62QBiIWnXoXENFomtwzxzhesPkCNurbU67NfDEEF1mh56Oy
-x0IawGVtnOxMYEewZa/ybGAAtICC2n/58CyOFi6pDB65QTjxwYypzO3nwV8Wfaps
-XdhBM+mN7PAhBB4TVzEgiqUFJU/Lqh+9Cc6c/rZHynlxYiSCXwHOex4CIWd1UYcG
-JCJFO6KFTWviPzU3eai9DROwpuIgy12Eo+C3X6II8I/jQxWkj54TTNR/LQ0ghcYl
-06cOQlm86BAfqrY+6iTC3kSZ6EWCEys/kRplajDPeNHDaKuGoREFyNcmpa70hCfz
-KNzOTqOfJd3lsrOIx8kbXOZ01h/4+BRcHKEhIME/LRz8o7UBAnavxy29BTEPKHXz
-qyoAoIljxwUwTsk74mLvUZzoXNEQ95NpC7Z/bq+WAEgh8vdgMDKHsUn42Sa4hMnq
-czD9MAPGcsP5TzpVoWmSZY4ZrG3FiPeqJvbpEzrU67Ltdeq+9t4=
-=rHJv
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
