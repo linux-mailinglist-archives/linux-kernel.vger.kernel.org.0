@@ -2,55 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 647AFB58A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 01:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46726B58B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 01:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfIQXka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 19:40:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43708 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728709AbfIQXk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 19:40:26 -0400
-Subject: Re: [PULL 0/4] xtensa updates for v5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568763625;
-        bh=0dQ3Mxckole0QFeSqkKZX4qoGTtor3aebYbLFiLtiIs=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=i9JBhpFlirC69+tL+FdIvdEdKlOc7a7ozmKBP4nfGWnFd1MgCJTjjrPqhySNwvByW
-         uTRyIri6kKrs50I7DBnJYzDSdvK0jt9YFbP6vQsyK9wxcS36+P9TgG5aCc4lx8F9JI
-         cI1/k4K70bwyBNOIu8tYvQrdvzLsjebHegkoHJ/g=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190917185905.2761-1-jcmvbkbc@gmail.com>
-References: <20190917185905.2761-1-jcmvbkbc@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190917185905.2761-1-jcmvbkbc@gmail.com>
-X-PR-Tracked-Remote: git://github.com/jcmvbkbc/linux-xtensa.git
- tags/xtensa-20190917
-X-PR-Tracked-Commit-Id: 982792f45894878b9ec13df81e6e02209b34cb11
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6dec8c15e5faa2a3c02d2e1d1b03b926b545ec0a
-Message-Id: <156876362567.26432.6236780901231216387.pr-tracker-bot@kernel.org>
-Date:   Tue, 17 Sep 2019 23:40:25 +0000
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>
+        id S1729026AbfIQXmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 19:42:19 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42452 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbfIQXmS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 19:42:18 -0400
+Received: by mail-qt1-f196.google.com with SMTP id g16so6619198qto.9;
+        Tue, 17 Sep 2019 16:42:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BegyS4bOdhV/4W363nuBMo/MR31JnI7T3ixbji8LT0k=;
+        b=vMk1upZOsmLe++G9kBDDj9CahrV2tNdF/nBj/Sm8wZzpdEurdvhYJ5J9ixKghaKpoe
+         Cabrh+OuWLIlOL8RKUBb5jFHtQb1xdQFeP0HSY5tUS40GSQMc/d4paYdK+u6g/Yr3bsN
+         6joSSp0Y0CGRaUTCcNJvsHVSlzZqO0cPTY86eZbFHDEOvnqp+RjGcdWDcelGje3coVJ8
+         I7Z/w7Yely9GyEovAfl0SQ6k8tjJd/NdJcl9i59BmGBOpTmRjOYlePwLpac2ocUn0GQ4
+         px4HlmsNfTsrEh9cgAI0XrjTx8lSfmL8E2I9wAxcrBLDGTu2tQwc2dvhwx/ojX/ZO+Mu
+         /5TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BegyS4bOdhV/4W363nuBMo/MR31JnI7T3ixbji8LT0k=;
+        b=YnsgEJ5js/tuoWKJQmoaFbKybu1/VeGCVjBTI7U2e7ncZWWQrM4e1KRG3fjYeP5JaP
+         QuaZRSY6XRu2LR32JFYUgcMs2AgNPnYwyS73EsqpZczPi/C7gSzZWzAXHMCu4ABxON8Y
+         9H7uBVDjG5qHeeS+UUiLkQcp/VcCUBSyyVyesdioDBzvr7pA4bk+HGm3/aRZMZMq4kJm
+         hdTt1/v9mdl9+R+g2Iznicu5uycPMXar/30l2aCxpilYHq8o86czHSwM0SCrMPZ0YGUE
+         xl5G3YFI5/A48HbB/scHwzDJLrkMziXqXPqpGWv4hF27US6I0e/ADRauP8p0KIKA5uRP
+         WqFA==
+X-Gm-Message-State: APjAAAUH4o5dhBY3JcsVWhQJhQxIG2vj2d5HLWRncaJO+DotT5Bt2FcJ
+        C6SatMKd55tZ0I0SoLpBGO8NZ1ypw6P3XrBSYV4=
+X-Google-Smtp-Source: APXvYqyqTOB5IEnz+7Pn65a64zh20YjJFL47Y3+R+LAoPucpHJlNyWRxfkqLGYegHWdmGs0Tu4e8upaaXuzL1yVMXa0=
+X-Received: by 2002:a0c:88f0:: with SMTP id 45mr1124543qvo.78.1568763737848;
+ Tue, 17 Sep 2019 16:42:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org> <20190916105433.11404-10-ivan.khoronzhuk@linaro.org>
+In-Reply-To: <20190916105433.11404-10-ivan.khoronzhuk@linaro.org>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Tue, 17 Sep 2019 16:42:07 -0700
+Message-ID: <CAEf4BzbuPnxAs0A=w60q0jTCy5pb2R-h0uEuT2tmvjsaj4DH4A@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 09/14] samples: bpf: makefile: use own flags
+ but not host when cross compile
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Yonghong Song <yhs@fb.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        john fastabend <john.fastabend@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        clang-built-linux@googlegroups.com,
+        sergei.shtylyov@cogentembedded.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 17 Sep 2019 11:59:05 -0700:
+On Mon, Sep 16, 2019 at 3:59 AM Ivan Khoronzhuk
+<ivan.khoronzhuk@linaro.org> wrote:
+>
+> While compile natively, the hosts cflags and ldflags are equal to ones
+> used from HOSTCFLAGS and HOSTLDFLAGS. When cross compiling it should
+> have own, used for target arch. While verification, for arm, arm64 and
+> x86_64 the following flags were used alsways:
+>
+> -Wall
+> -O2
+> -fomit-frame-pointer
+> -Wmissing-prototypes
+> -Wstrict-prototypes
+>
+> So, add them as they were verified and used before adding
+> Makefile.target, but anyway limit it only for cross compile options as
+> for host can be some configurations when another options can be used,
+> So, for host arch samples left all as is, it allows to avoid potential
+> option mistmatches for existent environments.
+>
+> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> ---
+>  samples/bpf/Makefile | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+> index 1579cc16a1c2..b5c87a8b8b51 100644
+> --- a/samples/bpf/Makefile
+> +++ b/samples/bpf/Makefile
+> @@ -178,8 +178,17 @@ CLANG_EXTRA_CFLAGS := $(ARM_ARCH_SELECTOR)
+>  TPROGS_CFLAGS += $(ARM_ARCH_SELECTOR)
+>  endif
+>
+> +ifdef CROSS_COMPILE
+> +TPROGS_CFLAGS += -Wall
+> +TPROGS_CFLAGS += -O2
 
-> git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20190917
+Specifying one arg per line seems like overkill, put them in one line?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6dec8c15e5faa2a3c02d2e1d1b03b926b545ec0a
+> +TPROGS_CFLAGS += -fomit-frame-pointer
 
-Thank you!
+Why this one?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+> +TPROGS_CFLAGS += -Wmissing-prototypes
+> +TPROGS_CFLAGS += -Wstrict-prototypes
+
+Are these in some way special that we want them in cross-compile mode only?
+
+All of those flags seem useful regardless of cross-compilation or not,
+shouldn't they be common? I'm a bit lost about the intent here...
+
+> +else
+>  TPROGS_LDLIBS := $(KBUILD_HOSTLDLIBS)
+>  TPROGS_CFLAGS += $(KBUILD_HOSTCFLAGS) $(HOST_EXTRACFLAGS)
+> +endif
+> +
+>  TPROGS_CFLAGS += -I$(objtree)/usr/include
+>  TPROGS_CFLAGS += -I$(srctree)/tools/lib/bpf/
+>  TPROGS_CFLAGS += -I$(srctree)/tools/testing/selftests/bpf/
+> --
+> 2.17.1
+>
