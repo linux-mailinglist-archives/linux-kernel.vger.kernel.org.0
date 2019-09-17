@@ -2,61 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6571B47FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 163D4B47E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:12:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392537AbfIQHQk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Sep 2019 03:16:40 -0400
-Received: from mail.11d03.mspz7.gob.ec ([190.214.23.250]:35858 "EHLO
-        mail.11d03.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730666AbfIQHQi (ORCPT
+        id S2404423AbfIQHM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 03:12:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44521 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391409AbfIQHM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 03:16:38 -0400
-X-Greylist: delayed 9118 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 03:16:37 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail.11d03.mspz7.gob.ec (Postfix) with ESMTP id D96D040538138;
-        Mon, 16 Sep 2019 23:19:43 -0500 (-05)
-Received: from mail.11d03.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.11d03.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id u_XUzgofTCCz; Mon, 16 Sep 2019 23:19:43 -0500 (-05)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.11d03.mspz7.gob.ec (Postfix) with ESMTP id 75AE840538146;
-        Mon, 16 Sep 2019 23:19:43 -0500 (-05)
-X-Virus-Scanned: amavisd-new at 11d03.mspz7.gob.ec
-Received: from mail.11d03.mspz7.gob.ec ([127.0.0.1])
-        by localhost (mail.11d03.mspz7.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id vcfV7qCCLkLF; Mon, 16 Sep 2019 23:19:43 -0500 (-05)
-Received: from [10.33.79.142] (unknown [105.4.0.133])
-        by mail.11d03.mspz7.gob.ec (Postfix) with ESMTPSA id D54274052A834;
-        Mon, 16 Sep 2019 23:19:33 -0500 (-05)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 17 Sep 2019 03:12:27 -0400
+Received: from mail-wm1-f71.google.com ([209.85.128.71])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <marcelo.cerri@canonical.com>)
+        id 1iA7ez-0008Hp-M4
+        for linux-kernel@vger.kernel.org; Tue, 17 Sep 2019 07:12:25 +0000
+Received: by mail-wm1-f71.google.com with SMTP id d10so471206wmb.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 00:12:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3mJ7H9Vd/KYYHK2hKEza3o32eBLR4dUC6S3+MRraUY0=;
+        b=BEaWSSMxD7rlmTgrBHkGiHSafUri3s7KNXXHmlGb5aRDIwWRSc5u32nX3FNH5lTb4V
+         G99eSuq6BRU5DMfH+PT0h3C4eF7n4yTty/Oxc717OXn/FxAKpzwlszZ9kufE7pOLvyTg
+         2b0DzyOeMfLcIK+F1rPxXU9dqLCWy6KFUpazJ+kPeROdqSbLS5/LBRM2j+QzICs2oTFZ
+         qH4r15AwH2PAanev6JxXnkdqiJiaygeJHgDeYHYuEUa82fl5dwGUeIhv1GCBFY0UgWkm
+         DdOpX2nIy2rVV5g0UYlX9yueKsG4v9GRJDBF9HlQqdE3k7ntdJE9C2+XuV4bvRChev5h
+         eG/Q==
+X-Gm-Message-State: APjAAAWHtHiLjz3nZ6CpFvjWLBe2qVGg7TwaSEw/CxkOROqj6iaPpBEu
+        TsFMFkBhIllXeU4vBedTMZcJn+BzEf8feZt0PPQWbvy9l8KY/87WiSWmCoqV9phn5lGxDrMVRbS
+        8QWBlPOTRVTmLzWsMUkWHib8CdviBcyU066od56yb
+X-Received: by 2002:a05:6000:110f:: with SMTP id z15mr1536459wrw.328.1568704345356;
+        Tue, 17 Sep 2019 00:12:25 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzNNylg8z2QXdHZ6GX64UAW0YItRdOYiMPBiABGeWFNQO1sX9E5y78KYLlTPB8RardpZerdyQ==
+X-Received: by 2002:a05:6000:110f:: with SMTP id z15mr1536441wrw.328.1568704345031;
+        Tue, 17 Sep 2019 00:12:25 -0700 (PDT)
+Received: from gallifrey (static-dcd-cqq-121001.business.bouyguestelecom.com. [212.194.121.1])
+        by smtp.gmail.com with ESMTPSA id l13sm1267363wmj.25.2019.09.17.00.12.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 00:12:23 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 04:12:22 -0300
+From:   Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
+To:     shuah <shuah@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/net: replace AF_MAX with INT_MAX in socket.c
+Message-ID: <20190917071222.6nfzmcxt4kxzgpki@gallifrey>
+References: <20190916150337.18049-1-marcelo.cerri@canonical.com>
+ <212adcf8-566e-e06d-529f-f0ac18bd6a35@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Wohlt=C3=A4tigkeitsspende_von_2=2E000=2E000_Millionen_Euro?=
-To:     Recipients <vicenta.sinche@11d03.mspz7.gob.ec>
-From:   ''Tayeb souami'' <vicenta.sinche@11d03.mspz7.gob.ec>
-Date:   Tue, 17 Sep 2019 06:19:23 +0200
-Reply-To: Tayebsouam.spende@gmail.com
-Message-Id: <20190917041933.D54274052A834@mail.11d03.mspz7.gob.ec>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sjt5zxil7puotrgx"
+Content-Disposition: inline
+In-Reply-To: <212adcf8-566e-e06d-529f-f0ac18bd6a35@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lieber Freund,
 
-Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
+--sjt5zxil7puotrgx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+So the problem arises because the headers we have in userspace might
+be older and not match what we have in the kernel. In that case, the
+actual value of AF_MAX in the userspace headers might be a valid
+protocol family in the new kernel.
 
-Das ist dein Spendencode: [TS530342018]
+That happens relatively often for us because we support different
+kernel versions at the same time in a given Ubuntu series.
 
-Antworten Sie mit dem SPENDE-CODE an diese 
+An alternative is to use the headers we have in the kernel tree, but I
+believe that might cause other issues.
 
-E-Mail:Tayebsouam.spende@gmail.com
+On Mon, Sep 16, 2019 at 10:09:13AM -0600, shuah wrote:
+> On 9/16/19 9:03 AM, Marcelo Henrique Cerri wrote:
+> > Use INT_MAX instead of AF_MAX, since libc might have a smaller value
+> > of AF_MAX than the kernel, what causes the test to fail.
+> >=20
+> > Signed-off-by: Marcelo Henrique Cerri <marcelo.cerri@canonical.com>
+> > ---
+> >   tools/testing/selftests/net/socket.c | 6 +++++-
+> >   1 file changed, 5 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/tools/testing/selftests/net/socket.c b/tools/testing/selft=
+ests/net/socket.c
+> > index afca1ead677f..10e75ba90124 100644
+> > --- a/tools/testing/selftests/net/socket.c
+> > +++ b/tools/testing/selftests/net/socket.c
+> > @@ -6,6 +6,7 @@
+> >   #include <sys/types.h>
+> >   #include <sys/socket.h>
+> >   #include <netinet/in.h>
+> > +#include <limits.h>
+> >   struct socket_testcase {
+> >   	int	domain;
+> > @@ -24,7 +25,10 @@ struct socket_testcase {
+> >   };
+> >   static struct socket_testcase tests[] =3D {
+> > -	{ AF_MAX,  0,           0,           -EAFNOSUPPORT,    0 },
+> > +	/* libc might have a smaller value of AF_MAX than the kernel
+> > +	 * actually supports, so use INT_MAX instead.
+> > +	 */
+> > +	{ INT_MAX, 0,           0,           -EAFNOSUPPORT,    0  },
+> >   	{ AF_INET, SOCK_STREAM, IPPROTO_TCP, 0,                1  },
+> >   	{ AF_INET, SOCK_DGRAM,  IPPROTO_TCP, -EPROTONOSUPPORT, 1  },
+> >   	{ AF_INET, SOCK_DGRAM,  IPPROTO_UDP, 0,                1  },
+> >=20
+>=20
+> What failure are you seeing? It sounds arbitrary to use INT_MAX
+> instead of AF_MAX. I think it is important to understand the
+> failure first.
+>=20
+> Please note that AF_MAX is widely used in the kernel.
+>=20
+> thanks,
+> -- Shuah
 
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+--=20
+Regards,
+Marcelo
 
-Grüße
-Herr Tayeb Souami
+
+--sjt5zxil7puotrgx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEDWI6S4SUeUOX/xHQzxpLxzTV7UcFAl2Ah1YACgkQzxpLxzTV
+7Ufo+gf8DIFj52cwhgSs/1wvN9sW40b15Wsaj2kzqF0UVueUb5nzGg5z8CYnW1wX
+z+GLzbXJrts8i4PLO1UTcgPPTUXb3CJOyT5jZRehx1fN0fmMHr3DLmHhbRtz+m4G
+IIHrcJxCk5vrH9LmXMFSUK42C7olzihTBDATk9sQ0drHvf7LV0cpRtqlY0i4tEwm
+KnMVdTfjQLjCYcaAmvXr5X5EcdY9C1JsFnTjlrHbGSEiSp3Wrvxlal2FdMHRFXfe
+sbYKKu2CCfob6EIFMyX6v6+DGdghrhNcx65DYgzPCXWX4TmPANGDqiPrEl/1sQow
+nwCqqWSH0dNbaJyyAGtmfgZOLPGzyw==
+=ikQl
+-----END PGP SIGNATURE-----
+
+--sjt5zxil7puotrgx--
