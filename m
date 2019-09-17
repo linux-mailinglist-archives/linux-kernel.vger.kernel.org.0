@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC228B4503
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 03:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36ADFB4504
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 03:00:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388355AbfIQBAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 21:00:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60532 "EHLO mail.kernel.org"
+        id S2388442AbfIQBAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 21:00:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387967AbfIQBAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 21:00:20 -0400
-Subject: Re: [GIT PULL] core/stacktrace change for v5.4
+        id S2388338AbfIQBAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 21:00:22 -0400
+Subject: Re: [GIT PULL] EFI changes for v5.4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568682020;
-        bh=j62/CfMqyqeZqNW/JYVDT5rYGaHqp/6knWDp8kuQWaU=;
+        s=default; t=1568682021;
+        bh=xh7OMPh/XeA91mjrPGOfWB+Ju+MvKdz9jJIN7Zmaviw=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=x2viFstwxhijlVV0WH4ZKcjYHI3ch1OuaiNVSfg888vdpYCtOTYwSVpFPSKQ81U8Q
-         8wxG9GxEMRIxVvLpVeUF2Tp3CypNEhQ8p64oe5eZC9btZqT6JTCTugmmQzWWEEAXtL
-         jgdGWqEvjNTJdHK4Ztsc36ziY5ASzOIcacVFzIEQ=
+        b=e8XQbaYPNhI7P7p6W5fwo/0mRBnrxn2xL515q3gLq+4IMx7B+3jtqFV/aTQwJzxuT
+         UuoTODEPSep5L+0YYKT6JP7GMzxYkxBbfEanLh8lrzJpe+/zg2OfDjjZgkdDLgPO8w
+         J2ZX7hd2FwNmLjZcdTrCvT8g1OZ6MGqGB6D7tavE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190916112806.GA40858@gmail.com>
-References: <20190916112806.GA40858@gmail.com>
+In-Reply-To: <20190916113549.GA76922@gmail.com>
+References: <20190916113549.GA76922@gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190916112806.GA40858@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- core-stacktrace-for-linus
-X-PR-Tracked-Commit-Id: ee050dc83bc326ad5ef8ee93bca344819371e7a5
+X-PR-Tracked-Message-Id: <20190916113549.GA76922@gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-core-for-linus
+X-PR-Tracked-Commit-Id: d3dc0168e93233ba4d4ed9a2c506c9d2b8d8cd33
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 98c82b4b8be60b05bc96aa4ab664ca0b0e39001f
-Message-Id: <156868202037.3683.9114755219417351448.pr-tracker-bot@kernel.org>
-Date:   Tue, 17 Sep 2019 01:00:20 +0000
+X-PR-Merge-Commit-Id: cc9b499a1f71696054a2771aae504c53eecff31d
+Message-Id: <156868202161.3683.5524767636770902438.pr-tracker-bot@kernel.org>
+Date:   Tue, 17 Sep 2019 01:00:21 +0000
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
+        linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morse <james.morse@arm.com>, linux-efi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Sep 2019 13:28:06 +0200:
+The pull request you sent on Mon, 16 Sep 2019 13:35:49 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-stacktrace-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-core-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/98c82b4b8be60b05bc96aa4ab664ca0b0e39001f
+https://git.kernel.org/torvalds/c/cc9b499a1f71696054a2771aae504c53eecff31d
 
 Thank you!
 
