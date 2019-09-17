@@ -2,105 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E430B56BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 22:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16444B56BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 22:15:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbfIQUNx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 16:13:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38924 "EHLO mail.kernel.org"
+        id S1727772AbfIQUPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 16:15:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726025AbfIQUNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 16:13:53 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22D15218AC;
-        Tue, 17 Sep 2019 20:13:52 +0000 (UTC)
+        id S1726025AbfIQUPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 16:15:17 -0400
+Subject: Re: [GIT pull] timers/urgent for 5.4-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568751232;
-        bh=QD2jrpkdpFVtu6RbulHBwnzGJdhalt5ZYR1fRIHqmBo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GQtzUvF/iUq9O0VBCtpM49FGGmvbDpy3HT3fUXArHiSEwfMIGYiak60u1i5YtvBIN
-         Wnr4Rmhq5/6Pb4Osl6WBs+vKBrBUgcWf52PNPYHL+q4wYSCxju85jOZ9iZUACGClz5
-         HyNR+/GdRUD+tri5AkVDcpTfa8cScwFEh7gpVTMY=
-Received: by mail-qt1-f177.google.com with SMTP id c21so5994535qtj.12;
-        Tue, 17 Sep 2019 13:13:52 -0700 (PDT)
-X-Gm-Message-State: APjAAAWxHPMpbqVcNZd+vcCrHZdhs2M+/BHTQlZSuYpoIho6GwlYsEny
-        tTjKegTRCclqvL+X38VxBRncgGmYbWmI9A48iA==
-X-Google-Smtp-Source: APXvYqwCu+ccCReyAWvySFIlMkLhOSLkP4JIuAvJCOo/l7X0GB8Y4G5qVJE3jnEww9nOwYBA9RPLuGQNrR2JTMtRiiU=
-X-Received: by 2002:ac8:100d:: with SMTP id z13mr700774qti.224.1568751231298;
- Tue, 17 Sep 2019 13:13:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190910062103.39641-1-philippe.schenker@toradex.com> <20190910062103.39641-4-philippe.schenker@toradex.com>
-In-Reply-To: <20190910062103.39641-4-philippe.schenker@toradex.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 17 Sep 2019 15:13:39 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLyawEariYuaHJ+Lyt1DhJe9fdAE88ANrhHAokWJhUOdw@mail.gmail.com>
-Message-ID: <CAL_JsqLyawEariYuaHJ+Lyt1DhJe9fdAE88ANrhHAokWJhUOdw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] dt-bindings: regulator: add regulator-fixed-clock binding
-To:     Philippe Schenker <philippe.schenker@toradex.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Stefan Agner <stefan.agner@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Luka Pivk <luka.pivk@toradex.com>
-Content-Type: text/plain; charset="UTF-8"
+        s=default; t=1568751317;
+        bh=maR3imO56er/bQiue8LKfdIegqeTtGTkJ9VsZPZIjP0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=EGDep1+FCtXdNsg5LVDqkG674IE5Vc5HiCzslyPtH2gCofeQKwxxMk8zYRwFRefBd
+         qHAyxiUAde048uM9OiMgwRi8d/G4OACHhkVnzVdh7/XK0I2BqhBw91kUf6QQSWuBcH
+         lfI8B20cTYgiil7DdTWMDOAxbc1t8gg1DqEn+7tM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <156864062018.3407.10822767012822306757.tglx@nanos.tec.linutronix.de>
+References: <156864062018.3407.16580572772546914005.tglx@nanos.tec.linutronix.de>
+ <156864062018.3407.10822767012822306757.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <156864062018.3407.10822767012822306757.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ timers-urgent-for-linus
+X-PR-Tracked-Commit-Id: f18ddc13af981ce3c7b7f26925f099e7c6929aba
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 16208cd6c36ac558c2c09042feb2b61e1e58f78a
+Message-Id: <156875131716.8483.9319184235002731121.pr-tracker-bot@kernel.org>
+Date:   Tue, 17 Sep 2019 20:15:17 +0000
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 1:21 AM Philippe Schenker
-<philippe.schenker@toradex.com> wrote:
->
-> This adds the documentation to the compatible regulator-fixed-clock.
-> This binding is a special binding of regulator-fixed and adds the
-> ability to add a clock to regulator-fixed, so the regulator can be
-> enabled and disabled with that clock. If the special compatible
-> regulator-fixed-clock is used it is mandatory to supply a clock.
->
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
->
-> ---
->
-> Changes in v2:
-> - Change select: to if:
-> - Change items: to enum:
-> - Defined how many clocks should be given
->
->  .../bindings/regulator/fixed-regulator.yaml   | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-> index a650b457085d..a78150c47aa2 100644
-> --- a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-> @@ -19,9 +19,19 @@ description:
->  allOf:
->    - $ref: "regulator.yaml#"
->
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: regulator-fixed-clock
-> +  required:
-> +    - clocks
-> +
->  properties:
->    compatible:
-> -    const: regulator-fixed
-> +    enum:
-> +      - const: regulator-fixed
-> +      - const: regulator-fixed-clock
+The pull request you sent on Mon, 16 Sep 2019 13:30:20 -0000:
 
-'make dt_binding_check' is failing. You need to drop 'const: '. Please
-send a patch to fix this.
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
 
-Rob
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/16208cd6c36ac558c2c09042feb2b61e1e58f78a
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
