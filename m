@@ -2,56 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AB60B45A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 04:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A500B45B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 04:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403962AbfIQCzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 22:55:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47934 "EHLO mail.kernel.org"
+        id S2389732AbfIQC5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 22:57:22 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:36850 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392100AbfIQCzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 22:55:25 -0400
-Subject: Re: [GIT PULL] x86/vmware changes for v5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568688925;
-        bh=zIHjbU8JyejMEEyhqiPGX/jh+bMlGnqY0z5fMMIXGT4=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=vQ7AyZXUzAP31laMbAu0/H2Ap0LAqsRGJbHejh00n4vsnlOjz7tVkloU72hBsGBDU
-         YFx2PFfWyBXZ3X8fIj9+HRvwvrZaMKLpm7LKavQ/2OXy6lN0a+DM1ZHCbGv7WEI4wU
-         2fmHPooKcW0gvyPpOvXpsFZKSDRvZm7dzmByIa1I=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190916133646.GA112398@gmail.com>
-References: <20190916133646.GA112398@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190916133646.GA112398@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- x86-vmware-for-linus
-X-PR-Tracked-Commit-Id: f7b15c74cffd760ec9959078982d8268a38456c4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7ac63f6ba5db5e2e81e4674551d6f9ec58e70618
-Message-Id: <156868892545.5285.15004771936769873286.pr-tracker-bot@kernel.org>
-Date:   Tue, 17 Sep 2019 02:55:25 +0000
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
+        id S1729066AbfIQC5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 22:57:22 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C0C6D1A0AFF;
+        Tue, 17 Sep 2019 04:57:19 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 583CA1A0622;
+        Tue, 17 Sep 2019 04:56:58 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 75CDE402C4;
+        Tue, 17 Sep 2019 10:56:44 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        dmitry.torokhov@gmail.com, aisheng.dong@nxp.com,
+        ulf.hansson@linaro.org, fugang.duan@nxp.com, peng.fan@nxp.com,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com, olof@lixom.net,
+        mripard@kernel.org, arnd@arndb.de, jagan@amarulasolutions.com,
+        dinguyen@kernel.org, bjorn.andersson@linaro.org,
+        marcin.juszkiewicz@linaro.org, andriy.shevchenko@linux.intel.com,
+        yuehaibing@huawei.com, cw00.choi@samsung.com,
+        enric.balletbo@collabora.com, m.felsch@pengutronix.de,
+        ping.bai@nxp.com, ronald@innovation.ch, stefan@agner.ch,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V5 1/5] dt-bindings: fsl: scu: add scu key binding
+Date:   Tue, 17 Sep 2019 10:55:35 +0800
+Message-Id: <1568688939-13649-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Sep 2019 15:36:46 +0200:
+NXP i.MX8QXP is an ARMv8 SoC with a Cortex-M4 core inside as
+system controller, the system controller is in charge of system
+power, clock and scu key event etc. management, Linux kernel has
+to communicate with system controller via MU (message unit) IPC
+to get scu key event, add binding doc for i.MX system controller
+key driver.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-vmware-for-linus
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+No changes.
+---
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt          | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7ac63f6ba5db5e2e81e4674551d6f9ec58e70618
-
-Thank you!
-
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index c149fad..5eab7d0 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -157,6 +157,15 @@ Required properties:
+ Optional properties:
+ - timeout-sec: contains the watchdog timeout in seconds.
+ 
++SCU key bindings based on SCU Message Protocol
++------------------------------------------------------------
++
++Required properties:
++- compatible: should be:
++              "fsl,imx8qxp-sc-key"
++              followed by "fsl,imx-sc-key";
++- linux,keycodes: See Documentation/devicetree/bindings/input/keys.txt
++
+ Example (imx8qxp):
+ -------------
+ aliases {
+@@ -220,6 +229,11 @@ firmware {
+ 			compatible = "fsl,imx8qxp-sc-rtc";
+ 		};
+ 
++		scu_key: scu-key {
++			compatible = "fsl,imx8qxp-sc-key", "fsl,imx-sc-key";
++			linux,keycode = <KEY_POWER>;
++		};
++
+ 		watchdog {
+ 			compatible = "fsl,imx8qxp-sc-wdt", "fsl,imx-sc-wdt";
+ 			timeout-sec = <60>;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.7.4
+
