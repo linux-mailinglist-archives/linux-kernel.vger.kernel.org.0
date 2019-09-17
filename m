@@ -2,81 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A536B5320
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78473B5329
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730569AbfIQQgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 12:36:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51610 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbfIQQgG (ORCPT
+        id S1730584AbfIQQgj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:36:39 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34697 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727697AbfIQQgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 12:36:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GqRJ2GhiTNh8OtBngBM3P/jCzeuLxp057cr1YC1H4dQ=; b=uS+mNOPWA66TCc3Sdi47jrH+3
-        mpiiPL+sdOSO+bkMGO0J+UDueJaneeNZJyRKkHb7OyxKxBFOXUle3lPb3Iskzkzzd62nExmCS4HqM
-        bSzls4wrq57D7HXd6I2Og2biO4paFtUn6W8QLyYCZLL/d9k24JfewfNS1/lwy02M82T5HgCaasL5I
-        UVGrzbMOeidW0SyTYs8NcW1ySxM1ddC8eeEGT7Qh8rKZXAwpzPLJ7V7JAjUJbzbtJ6CtbVRV3Cl03
-        +eStJWdCArjl5NLZgww+/7iFEKtotH3oJJNXGLgQ58Y+ugr+DU9mHE4pusJDHSwn7vP9EbhBas7gb
-        h0xA1Vz1w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iAGSU-0002Sy-7A; Tue, 17 Sep 2019 16:36:06 +0000
-Date:   Tue, 17 Sep 2019 09:36:06 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] usercopy: Skip HIGHMEM page checking
-Message-ID: <20190917163606.GU29434@bombadil.infradead.org>
-References: <201909161431.E69B29A0@keescook>
- <20190917003209.GS29434@bombadil.infradead.org>
- <201909162003.FEEAC65@keescook>
+        Tue, 17 Sep 2019 12:36:39 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n9so2320576pgc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:36:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6oL27CCsiCgWC+s9QdRYX453QCLZxLS2++aHbtnJhwo=;
+        b=YA0FtVOqhPZ+x3BfaIoVZIEZexqC9TyNKApW9YBx6UryG5ITeV5G/PcVyovxlcN+mC
+         os44E6Ij+VtAx8kdLvm5CDW3dSDIYirj+oo2lcs2vH01UDW4bGLLNb9WTGyjObDvjKoj
+         fBuR+TQerwfgIFxcGZl8M9n99ztxdoJWyHTr3aKJskQWgCTjdqc3CzWAMMCPIWWV27uk
+         r6QlYUhCtyjRpnvTXR0DG8uzBazHmw40E5sw5yAMAHs41eotxnNZMhM36rvMkaTMxCjz
+         4Q5hfisagPglftlQNRwob/iecOFYUAkervhL5SGw2H57K6310ejYzOFpMM61c3xeiltY
+         gc0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6oL27CCsiCgWC+s9QdRYX453QCLZxLS2++aHbtnJhwo=;
+        b=NB2/JDmrQaNUZd0ud4E0Y8ena1+/+Eu6DUixq9dKLnHWpbXfZMdNpWCR2qFcbKh1S4
+         +2vJXtJApuwY/+l+iSZBS7PLueendTGgkGX8M8CDu3nuuHXjQsYGGbw7qfGfWogjADc5
+         MzpIZhSlvHQePOFiXFtjNcWWS78cSdEYtp9khi2zjGBs8p/OZXemOlTR6tGcpjvACMx8
+         bc2vAh55senll/XH4sLqBDZEFZWPrQLM5wqVTg1Leuf4tJim+PRKA0V27Whbp/COCfim
+         n7DFmp8rwN/2mtxC8V2rizdfmdCctOF4KoJyC4GMBls/sesFnKqrQC/tAoQg8oT7WhYA
+         s8XQ==
+X-Gm-Message-State: APjAAAVdIojfUxD3GbXQJAFsDG0aXVeIvO8BZtXeRI/yyXEIvYTqa3TN
+        8kP41cAhtaESlNS6lXimX4/8
+X-Google-Smtp-Source: APXvYqylABHbwwGnTpG+yB/f0dYMRAjI9T2OAHarx7EJA+9sLbutDPD4P64xC24J0U/cyFBf2nmCMw==
+X-Received: by 2002:a17:90a:fa0c:: with SMTP id cm12mr5692720pjb.137.1568738197253;
+        Tue, 17 Sep 2019 09:36:37 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:111:7ed:2c13:36f7:e70f:4a47])
+        by smtp.gmail.com with ESMTPSA id w6sm8080461pfw.84.2019.09.17.09.36.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Sep 2019 09:36:36 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 22:06:28 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     afaerber@suse.de, robh+dt@kernel.org, ulf.hansson@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] clk: actions: Fix factor clk struct member access
+Message-ID: <20190917163628.GA2615@Mani-XPS-13-9360>
+References: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
+ <20190916154546.24982-2-manivannan.sadhasivam@linaro.org>
+ <20190917163419.4C4DD20665@mail.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201909162003.FEEAC65@keescook>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190917163419.4C4DD20665@mail.kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 08:05:00PM -0700, Kees Cook wrote:
-> On Mon, Sep 16, 2019 at 05:32:09PM -0700, Matthew Wilcox wrote:
-> > On Mon, Sep 16, 2019 at 02:32:56PM -0700, Kees Cook wrote:
-> > > When running on a system with >512MB RAM with a 32-bit kernel built with:
-> > > 
-> > > 	CONFIG_DEBUG_VIRTUAL=y
-> > > 	CONFIG_HIGHMEM=y
-> > > 	CONFIG_HARDENED_USERCOPY=y
-> > > 
-> > > all execve()s will fail due to argv copying into kmap()ed pages, and on
-> > > usercopy checking the calls ultimately of virt_to_page() will be looking
-> > > for "bad" kmap (highmem) pointers due to CONFIG_DEBUG_VIRTUAL=y:
+On Tue, Sep 17, 2019 at 09:34:18AM -0700, Stephen Boyd wrote:
+> Quoting Manivannan Sadhasivam (2019-09-16 08:45:40)
+> > Since the helper "owl_factor_helper_round_rate" is shared between factor
+> > and composite clocks, using the factor clk specific helper function
+> > like "hw_to_owl_factor" to access its members will create issues when
+> > called from composite clk specific code. Hence, pass the "factor_hw"
+> > struct pointer directly instead of fetching it using factor clk specific
+> > helpers.
 > > 
-> > I don't understand why you want to skip the check.  We must not cross a
-> > page boundary of a kmapped page.
+> > This issue has been observed when a composite clock like "sd0_clk" tried
+> > to call "owl_factor_helper_round_rate" resulting in pointer dereferencing
+> > error.
+> > 
+> > While we are at it, let's rename the "clk_val_best" function to
+> > "owl_clk_val_best" since this is an owl SoCs specific helper.
+> > 
+> > Fixes: 4bb78fc9744a ("clk: actions: Add factor clock support")
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
 > 
-> That requires a new test which hasn't existed before. First I need to
-> fix the bug, and then we can add a new test and get that into -next,
-> etc.
+> I can apply this to clk-next?
 
-I suppose that depends where your baseline is.  From the perspective
-of "before Kees added this feature", your point of view makes sense.
-From the perspective of "what's been shipping for the last six months",
-this is a case which has simply not happened before now (or we'd've seen
-a bug report).
+Yes, please :-) Rest can go through Ulf's tree.
 
-I don't think you need to change anything for check_page_span() to do
-the right thing.  The rodata/data/bss checks will all fall through.
-If the copy has the correct bounds, the 'wholly within one base page'
-check will pass and it'll return.  If the copy does span a page,
-the virt_to_head_page(end) call will return something bogus, then the
-PageReserved and CMA test will cause the usercopy_abort() test to fail.
+Thanks,
+Mani
 
-So I think your first patch is the right patch.
+> 
