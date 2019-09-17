@@ -2,204 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E994BB4A9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A7CB4A84
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfIQJfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:35:00 -0400
-Received: from esa4.mentor.iphmx.com ([68.232.137.252]:21876 "EHLO
-        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727843AbfIQJe5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:34:57 -0400
-IronPort-SDR: 8ZNFfkmDIPXLmeKSohIEQbmIbpSSALB95R4qhK1M8p6VIS0fr0v9lsWBd6xW+hlCUJHxgm6cqc
- otVxeXnKINKDpOw+LPDrvzpr+8AMbKJvhzsVwhaTSwILUPVOVBjfaGy348kMmmd9D8BCIAEr+X
- zU2IkqXdvk6xoBLEjdTvaczoDvSJqZtH0n+Za8uOAvUhTE7SzLFpks/rrBSFJOAnrwMRwu/LpD
- a2Gec8fkKm4xLca5IczKDRmxLYdGUzofwXY+nVw9BaO/Mc2X56q3fP8s+ezmCm0/nJXcv+v1Sq
- E5s=
-X-IronPort-AV: E=Sophos;i="5.64,515,1559548800"; 
-   d="scan'208";a="41422954"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa4.mentor.iphmx.com with ESMTP; 17 Sep 2019 01:34:56 -0800
-IronPort-SDR: faGpSfMIK0ze1+xK+LdclQEaiYdN6Yho6BYy8PQEO9L82KF1yPjCVMqsJYqtKerkkFYpgjBnwW
- iF8AlsTy86oubDFS/+chKn/dorcQsjgi0AvthP4ylAZaZVlHri5Tf6dyq5mp0+p0sOfBSeCxTv
- HeVautLqaAKOwU5/pMCNd3+35BlotSxQGGwsO0N+lZXzH9L34/8nti9aE8wu54ICA8noukaqSc
- ulWQ13SbVrt/fqEva2J4BFGFCY8S+vOoqoSa3IpmTSlrkUeTxHvE5Vy030xWnWSE3drChmRfWc
- 2vE=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
-        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
-        <rydberg@bitmath.org>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 04/49] Input: atmel_mxt_ts - only read messages in mxt_acquire_irq() when necessary
-Date:   Tue, 17 Sep 2019 18:32:35 +0900
-Message-ID: <20190917093320.18134-5-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190917093320.18134-1-jiada_wang@mentor.com>
-References: <20190917093320.18134-1-jiada_wang@mentor.com>
+        id S1727591AbfIQJda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:33:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56396 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727089AbfIQJda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:33:30 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AB7E4369AC
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:33:29 +0000 (UTC)
+Received: by mail-wm1-f69.google.com with SMTP id c188so622229wmd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 02:33:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=USt1kKGPYmtgyFTYD/y0A1jODqobnZ9DDJDhO5ylVlA=;
+        b=I3A9AhDScszE5WxFO5vnLGnDtngvc2lHM0AyeJup+RwhP6HRSsE+ybVMNzXaJjN3+K
+         0KsEapZ5+c+bPQfWIL3XKVzgP7PFkq800gOtG4muyYXysLsVQ7k/VBiwSaD8AfUuy530
+         1qD1tCxfBm2Ixqctf3I/lzzeB6foOkT1srQEEpT9/36tvg1tKhFzsrJqc0p3gEYmL8lB
+         8Y925210RXdr7zJEicsm6uCGMFKWYZ6lj3p63JuD0vS7olQR/jzLQLY6k82QmVAYU5cd
+         TMQaWc+f/Rf3I3nH5ZLsMP3JAYvZaGUWvWF0UdmeUYQCXiTOPaVAR+KtwoSYDbJV0iDv
+         RVFQ==
+X-Gm-Message-State: APjAAAVv0/7cmwJ454B8lvH2lVWf5BijYgMbKU9H82IALzZD+ZIqra8U
+        yoMgQTEabaUnLBXzUj1Fkl4C39eXDMNc2M+PAhxZpSJiDypMNqQxUn5UWjXAVJVLe7ydNmizCfS
+        myx53D3w6/Prb8jd838zAcL+7
+X-Received: by 2002:a05:600c:22da:: with SMTP id 26mr2538070wmg.177.1568712808286;
+        Tue, 17 Sep 2019 02:33:28 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxE0OwLxxEExBqqFmu5jEGpfsU1LN8pNgOQBJRy2TH+nRrjttR1HYteSzAvN5aajblv2RTsXQ==
+X-Received: by 2002:a05:600c:22da:: with SMTP id 26mr2538044wmg.177.1568712808057;
+        Tue, 17 Sep 2019 02:33:28 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id g185sm4109888wme.10.2019.09.17.02.33.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 02:33:27 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-hyperv@vger.kernel.org,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Roman Kagan <rkagan@virtuozzo.com>
+Subject: Re: [PATCH 2/3] KVM: x86: hyper-v: set NoNonArchitecturalCoreSharing CPUID bit when SMT is impossible
+In-Reply-To: <CALMp9eRa0-HO+JWGDoAFO1zOtNjrutfT7d4pLxjsxn-XiAJwwQ@mail.gmail.com>
+References: <20190916162258.6528-1-vkuznets@redhat.com> <20190916162258.6528-3-vkuznets@redhat.com> <CALMp9eRa0-HO+JWGDoAFO1zOtNjrutfT7d4pLxjsxn-XiAJwwQ@mail.gmail.com>
+Date:   Tue, 17 Sep 2019 11:33:26 +0200
+Message-ID: <87ef0fb72x.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Dyer <nick.dyer@itdev.co.uk>
+Jim Mattson <jmattson@google.com> writes:
 
-The workaround of reading all messages until an invalid is received is a
-way of forcing the CHG line high, which means that when using
-edge-triggered interrupts the interrupt can be acquired.
+> On Mon, Sep 16, 2019 at 9:23 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>>
+>> Hyper-V 2019 doesn't expose MD_CLEAR CPUID bit to guests when it cannot
+>> guarantee that two virtual processors won't end up running on sibling SMT
+>> threads without knowing about it. This is done as an optimization as in
+>> this case there is nothing the guest can do to protect itself against MDS
+>> and issuing additional flush requests is just pointless. On bare metal the
+>> topology is known, however, when Hyper-V is running nested (e.g. on top of
+>> KVM) it needs an additional piece of information: a confirmation that the
+>> exposed topology (wrt vCPU placement on different SMT threads) is
+>> trustworthy.
+>>
+>> NoNonArchitecturalCoreSharing (CPUID 0x40000004 EAX bit 18) is described in
+>> TLFS as follows: "Indicates that a virtual processor will never share a
+>> physical core with another virtual processor, except for virtual processors
+>> that are reported as sibling SMT threads." From KVM we can give such
+>> guarantee in two cases:
+>> - SMT is unsupported or forcefully disabled (just 'disabled' doesn't work
+>>  as it can become re-enabled during the lifetime of the guest).
+>> - vCPUs are properly pinned so the scheduler won't put them on sibling
+>> SMT threads (when they're not reported as such).
+>
+> That's a nice bit of information. Have you considered a mechanism for
+> communicating this information to kvm guests in a way that doesn't
+> require Hyper-V enlightenments?
+>
 
-With level-triggered interrupts the workaround is unnecessary.
+(I haven't put much thought in this) but can we re-use MD_CLEAR CPUID
+bit for that? Like if the hypervisor can't guarantee usefulness
+(e.g. when two random vCPUs can be put on sibling SMT threads) of
+flushing, is there any reason to still make the guest think the feature
+is there?
 
-Also, most recent maXTouch chips have a feature called RETRIGEN which, when
-enabled, reasserts the interrupt line every cycle if there are messages
-waiting. This also makes the workaround unnecessary.
-
-Note: the RETRIGEN feature is only in some firmware versions/chips, it's
-not valid simply to enable the bit.
-
-Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
-Acked-by: Benson Leung <bleung@chromium.org>
-Acked-by: Yufeng Shen <miletus@chromium.org>
-(cherry picked from ndyer/linux/for-upstream commit 1ae4e8281e491b22442cd5acdfca1862555f8ecb)
-[gdavis: Fix conflicts due to v4.6-rc7 commit eb43335c4095 ("Input:
-	 atmel_mxt_ts - use mxt_acquire_irq in mxt_soft_reset").]
-Signed-off-by: George G. Davis <george_davis@mentor.com>
-[jiada: reset use_retrigen_workaround at beginning of mxt_check_retrigen()]
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 51 ++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 17263c260124..35cbe60094ab 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -20,6 +20,7 @@
- #include <linux/i2c.h>
- #include <linux/input/mt.h>
- #include <linux/interrupt.h>
-+#include <linux/irq.h>
- #include <linux/of.h>
- #include <linux/property.h>
- #include <linux/slab.h>
-@@ -129,6 +130,7 @@ struct t9_range {
- /* MXT_SPT_COMMSCONFIG_T18 */
- #define MXT_COMMS_CTRL		0
- #define MXT_COMMS_CMD		1
-+#define MXT_COMMS_RETRIGEN      BIT(6)
- 
- /* MXT_DEBUG_DIAGNOSTIC_T37 */
- #define MXT_DIAGNOSTIC_PAGEUP	0x01
-@@ -308,6 +310,7 @@ struct mxt_data {
- 	struct t7_config t7_cfg;
- 	struct mxt_dbg dbg;
- 	struct gpio_desc *reset_gpio;
-+	bool use_retrigen_workaround;
- 
- 	/* Cached parameters from object table */
- 	u16 T5_address;
-@@ -318,6 +321,7 @@ struct mxt_data {
- 	u16 T71_address;
- 	u8 T9_reportid_min;
- 	u8 T9_reportid_max;
-+	u16 T18_address;
- 	u8 T19_reportid;
- 	u16 T44_address;
- 	u8 T100_reportid_min;
-@@ -1190,9 +1194,11 @@ static int mxt_acquire_irq(struct mxt_data *data)
- 
- 	enable_irq(data->irq);
- 
--	error = mxt_process_messages_until_invalid(data);
--	if (error)
--		return error;
-+	if (data->use_retrigen_workaround) {
-+		error = mxt_process_messages_until_invalid(data);
-+		if (error)
-+			return error;
-+	}
- 
- 	return 0;
- }
-@@ -1282,6 +1288,33 @@ static u32 mxt_calculate_crc(u8 *base, off_t start_off, off_t end_off)
- 	return crc;
- }
- 
-+static int mxt_check_retrigen(struct mxt_data *data)
-+{
-+	struct i2c_client *client = data->client;
-+	int error;
-+	int val;
-+
-+	data->use_retrigen_workaround = false;
-+
-+	if (irq_get_trigger_type(data->irq) & IRQF_TRIGGER_LOW)
-+		return 0;
-+
-+	if (data->T18_address) {
-+		error = __mxt_read_reg(client,
-+				       data->T18_address + MXT_COMMS_CTRL,
-+				       1, &val);
-+		if (error)
-+			return error;
-+
-+		if (val & MXT_COMMS_RETRIGEN)
-+			return 0;
-+	}
-+
-+	dev_warn(&client->dev, "Enabling RETRIGEN workaround\n");
-+	data->use_retrigen_workaround = true;
-+	return 0;
-+}
-+
- static int mxt_prepare_cfg_mem(struct mxt_data *data, struct mxt_cfg *cfg)
- {
- 	struct device *dev = &data->client->dev;
-@@ -1561,6 +1594,10 @@ static int mxt_update_cfg(struct mxt_data *data, const struct firmware *fw)
- 
- 	mxt_update_crc(data, MXT_COMMAND_BACKUPNV, MXT_BACKUP_VALUE);
- 
-+	ret = mxt_check_retrigen(data);
-+	if (ret)
-+		goto release_mem;
-+
- 	ret = mxt_soft_reset(data);
- 	if (ret)
- 		goto release_mem;
-@@ -1604,6 +1641,7 @@ static void mxt_free_object_table(struct mxt_data *data)
- 	data->T71_address = 0;
- 	data->T9_reportid_min = 0;
- 	data->T9_reportid_max = 0;
-+	data->T18_address = 0;
- 	data->T19_reportid = 0;
- 	data->T44_address = 0;
- 	data->T100_reportid_min = 0;
-@@ -1678,6 +1716,9 @@ static int mxt_parse_object_table(struct mxt_data *data,
- 						object->num_report_ids - 1;
- 			data->num_touchids = object->num_report_ids;
- 			break;
-+		case MXT_SPT_COMMSCONFIG_T18:
-+			data->T18_address = object->start_address;
-+			break;
- 		case MXT_SPT_MESSAGECOUNT_T44:
- 			data->T44_address = object->start_address;
- 			break;
-@@ -2141,6 +2182,10 @@ static int mxt_initialize(struct mxt_data *data)
- 		msleep(MXT_FW_RESET_TIME);
- 	}
- 
-+	error = mxt_check_retrigen(data);
-+	if (error)
-+		return error;
-+
- 	error = mxt_acquire_irq(data);
- 	if (error)
- 		return error;
 -- 
-2.19.2
-
+Vitaly
