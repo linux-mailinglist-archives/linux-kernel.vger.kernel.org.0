@@ -2,202 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D52FB5006
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4FF7B5008
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:10:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbfIQOKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:10:21 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46761 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbfIQOKV (ORCPT
+        id S1727339AbfIQOKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:10:47 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48691 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbfIQOKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:10:21 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f21so1007otl.13
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 07:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8UALXrAF8WnpelFZ4otiIrYrkhsux0g2WXlYWe7ggk4=;
-        b=Ja14gtvZdjyDosPDl0vXmCPksiwz1GkRkxKFdo1NirVHi8UWI0mDgDRvkDLsenfFYL
-         +pnMVu50T4c8WNurYKwB/9e+Bjmhkmy8YbJZrQLVWEbW+yyBtil/BiqQpNxEuwu0YZ1+
-         ERQEnpbQxfMDEIGiOUPOerXZHqBx5Y/ZuInS2+FcpajqfH5LLO9ILuhhL26gHyEwtowX
-         9EurAe6mGc1fEFmYM0rV7lF3PYqIlf9MhweitSIiLGaKGA8lMhA9oaKPRNVAkf7ldEXC
-         wLvpsy+//OHx26RcuDMtfLDnDfoIJM+7F6hh4Oz5uhQhUo+xWi5zkMF0AXWL8ks7ojem
-         Arwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8UALXrAF8WnpelFZ4otiIrYrkhsux0g2WXlYWe7ggk4=;
-        b=T7wLCWhpbp+vWuzrh1cfvXppKQpUrLbbgIKkLJWssalYrFoeAfx3KInZ/O04/qmT2v
-         HXR8qpcBSDSS8iD1EzOIOmiwyNPYfYyiIUigrfKmeX/dfEHcTsoIMQ4va0IDnikivUBS
-         UhBwAIQWNHLgRqWfDQbFeQFK5Bga0b69L8CSd6zlBlPinuvFyyWXxG41nptScZKHh8sA
-         WD8I2GS82E8d5EifLBmJGJY1MmGDMwOR59CMBerUTCpchxJ1BXBsN6KaS27iC1DE7DnB
-         UZzT3yVR2RYkTYLV6XvTocyp7SHRuVf7r0RV8DSyd58EnZPjQn8iWa29Rg8J0j7G0WP/
-         JNhg==
-X-Gm-Message-State: APjAAAXsawm81QExf1LXttYdqVXrXHA5foy+m+p0ufg+gVrmMswoA0Zw
-        bRUPg40rLYomn3P7g2p8fSrB1TJRhle+xwJXGzU=
-X-Google-Smtp-Source: APXvYqyds89hV8IjAloUM/+5NGhwLVhpl1GVga/SeSIVPZz/XiqQ1nIlWXDsPIydRM6CO03+PXzKbTapTxLc+pTjTls=
-X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr2068860otr.173.1568729418876;
- Tue, 17 Sep 2019 07:10:18 -0700 (PDT)
+        Tue, 17 Sep 2019 10:10:46 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iAEBg-0002Eq-J3; Tue, 17 Sep 2019 16:10:36 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iAEBe-000378-Ri; Tue, 17 Sep 2019 16:10:34 +0200
+Date:   Tue, 17 Sep 2019 16:10:34 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Regression in fd5f7cde1b85 ("printk: Never set console_may_schedule
+ in console_trylock()")
+Message-ID: <20190917141034.gvjg7bgylqbbxyv7@pengutronix.de>
 MIME-Version: 1.0
-References: <20190915170809.10702-1-lpf.vector@gmail.com> <20190915170809.10702-6-lpf.vector@gmail.com>
- <alpine.DEB.2.21.1909151425490.211705@chino.kir.corp.google.com>
-In-Reply-To: <alpine.DEB.2.21.1909151425490.211705@chino.kir.corp.google.com>
-From:   Pengfei Li <lpf.vector@gmail.com>
-Date:   Tue, 17 Sep 2019 22:10:07 +0800
-Message-ID: <CAD7_sbEVsPEJUGpvd=M13=gW316=T71cXbE9jGJG61TZRD7ZtQ@mail.gmail.com>
-Subject: Re: [RESEND v4 5/7] mm, slab_common: Make kmalloc_caches[] start at
- size KMALLOC_MIN_SIZE
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christopher Lameter <cl@linux.com>, penberg@kernel.org,
-        iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Roman Gushchin <guro@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 5:38 AM David Rientjes <rientjes@google.com> wrote:
->
-> On Mon, 16 Sep 2019, Pengfei Li wrote:
->
-> > Currently, kmalloc_cache[] is not sorted by size, kmalloc_cache[0]
-> > is kmalloc-96, kmalloc_cache[1] is kmalloc-192 (when ARCH_DMA_MINALIGN
-> > is not defined).
-> >
-> > As suggested by Vlastimil Babka,
-> >
-> > "Since you're doing these cleanups, have you considered reordering
-> > kmalloc_info, size_index, kmalloc_index() etc so that sizes 96 and 192
-> > are ordered naturally between 64, 128 and 256? That should remove
-> > various special casing such as in create_kmalloc_caches(). I can't
-> > guarantee it will be possible without breaking e.g. constant folding
-> > optimizations etc., but seems to me it should be feasible. (There are
-> > definitely more places to change than those I listed.)"
-> >
-> > So this patch reordered kmalloc_info[], kmalloc_caches[], and modified
-> > kmalloc_index() and kmalloc_slab() accordingly.
-> >
-> > As a result, there is no subtle judgment about size in
-> > create_kmalloc_caches(). And initialize kmalloc_cache[] from 0 instead
-> > of KMALLOC_SHIFT_LOW.
-> >
-> > I used ./scripts/bloat-o-meter to measure the impact of this patch on
-> > performance. The results show that it brings some benefits.
-> >
-> > Considering the size change of kmalloc_info[], the size of the code is
-> > actually about 641 bytes less.
-> >
->
-> bloat-o-meter is reporting a net benefit of -241 bytes for this, so not
-> sure about relevancy of the difference for only kmalloc_info.
->
+Hello,
 
-Thanks for your comments.
+Today it saw sysrq on an UART driven by drivers/tty/serial/imx.c report
+a lockdep issue. Bisecting pointed to 
 
-The size of kmalloc_info has been increased from 432 to 832 (it was
-renamed to all_kmalloc_info ). So when the change in kmalloc_info size
-is not included, it actually reduces 641 bytes.
+	fd5f7cde1b85 ("printk: Never set console_may_schedule in console_trylock()")
 
-> This, to me, looks like increased complexity for the statically allocated
-> arrays vs the runtime complexity when initializing the caches themselves.
+When I type <break>t I get:
 
-For runtime kmalloc requests, the implementation of kmalloc_slab() is
-no different than before.
-For constant kmalloc requests, the smaller size of .text means better
-(the compiler does constant optimization).
-Therefore, I don't think this patch adds complexity.
+[   87.940104] sysrq: SysRq : This sysrq operation is disabled.
+[   87.948752] 
+[   87.948772] ======================================================
+[   87.948787] WARNING: possible circular locking dependency detected
+[   87.948798] 4.14.0-12954-gfd5f7cde1b85 #26 Not tainted
+[   87.948813] ------------------------------------------------------
+[   87.948822] swapper/0 is trying to acquire lock:
+[   87.948829]  (console_owner){-...}, at: [<c015e438>] console_unlock+0x110/0x598
+[   87.948861] 
+[   87.948869] but task is already holding lock:
+[   87.948874]  (&port_lock_key){-.-.}, at: [<c048d5b0>] imx_rxint+0x2c/0x290
+[   87.948902] 
+[   87.948911] which lock already depends on the new lock.
+[   87.948917] 
+[   87.948923] 
+[   87.948932] the existing dependency chain (in reverse order) is:
+[   87.948938] 
+[   87.948943] -> #1 (&port_lock_key){-.-.}:
+[   87.948975]        _raw_spin_lock_irqsave+0x5c/0x70
+[   87.948983]        imx_console_write+0x138/0x15c
+[   87.948991]        console_unlock+0x204/0x598
+[   87.949000]        register_console+0x21c/0x3e8
+[   87.949008]        uart_add_one_port+0x3e4/0x4dc
+[   87.949019]        platform_drv_probe+0x3c/0x78
+[   87.949027]        driver_probe_device+0x25c/0x47c
+[   87.949035]        __driver_attach+0xec/0x114
+[   87.949044]        bus_for_each_dev+0x80/0xb0
+[   87.949054]        bus_add_driver+0x1d4/0x264
+[   87.949062]        driver_register+0x80/0xfc
+[   87.949069]        imx_serial_init+0x28/0x48
+[   87.949078]        do_one_initcall+0x44/0x18c
+[   87.949087]        kernel_init_freeable+0x11c/0x1cc
+[   87.949095]        kernel_init+0x10/0x114
+[   87.949103]        ret_from_fork+0x14/0x30
+[   87.949108] 
+[   87.949113] -> #0 (console_owner){-...}:
+[   87.949145]        lock_acquire+0x100/0x23c
+[   87.949154]        console_unlock+0x1a4/0x598
+[   87.949162]        vprintk_emit+0x1a4/0x45c
+[   87.949171]        vprintk_default+0x28/0x30
+[   87.949180]        printk+0x28/0x38
+[   87.949189]        __handle_sysrq+0x1c4/0x244
+[   87.949196]        imx_rxint+0x258/0x290
+[   87.949206]        imx_int+0x170/0x178
+[   87.949216]        __handle_irq_event_percpu+0x78/0x418
+[   87.949225]        handle_irq_event_percpu+0x24/0x6c
+[   87.949233]        handle_irq_event+0x40/0x64
+[   87.949242]        handle_level_irq+0xb4/0x138
+[   87.949252]        generic_handle_irq+0x28/0x3c
+[   87.949261]        __handle_domain_irq+0x50/0xb0
+[   87.949269]        avic_handle_irq+0x3c/0x5c
+[   87.949277]        __irq_svc+0x6c/0xa4
+[   87.949287]        arch_cpu_idle+0x30/0x40
+[   87.949297]        arch_cpu_idle+0x30/0x40
+[   87.949305]        do_idle+0xa0/0x104
+[   87.949313]        cpu_startup_entry+0x14/0x18
+[   87.949323]        start_kernel+0x30c/0x368
+[   87.949328] 
+[   87.949337] other info that might help us debug this:
+[   87.949342] 
+[   87.949351]  Possible unsafe locking scenario:
+[   87.949356] 
+[   87.949364]        CPU0                    CPU1
+[   87.949372]        ----                    ----
+[   87.949378]   lock(&port_lock_key);
+[   87.949398]                                lock(console_owner);
+[   87.949423]                                lock(&port_lock_key);
+[   87.949441]   lock(console_owner);
+[   87.949459] 
+[   87.949466]  *** DEADLOCK ***
+[   87.949471] 
+[   87.949478] 3 locks held by swapper/0:
+[   87.949484]  #0:  (&port_lock_key){-.-.}, at: [<c048d5b0>] imx_rxint+0x2c/0x290
+[   87.949515]  #1:  (rcu_read_lock){....}, at: [<c0486ea8>] __handle_sysrq+0x0/0x244
+[   87.949549]  #2:  (console_lock){+.+.}, at: [<c015ea58>] vprintk_emit+0x198/0x45c
+[   87.949581] 
+[   87.949588] stack backtrace:
+[   87.949600] CPU: 0 PID: 0 Comm: swapper Not tainted 4.14.0-12954-gfd5f7cde1b85 #26
+[   87.949611] Hardware name: Freescale i.MX25 (Device Tree Support)
+[   87.949623] [<c0108f70>] (unwind_backtrace) from [<c010680c>] (show_stack+0x18/0x1c)
+[   87.949635] [<c010680c>] (show_stack) from [<c01526ec>] (print_circular_bug+0x284/0x3c0)
+[   87.949647] [<c01526ec>] (print_circular_bug) from [<c0153714>] (check_prev_add+0x4ac/0x7cc)
+[   87.949660] [<c0153714>] (check_prev_add) from [<c015561c>] (__lock_acquire+0x9e8/0x13bc)
+[   87.949671] [<c015561c>] (__lock_acquire) from [<c0156a28>] (lock_acquire+0x100/0x23c)
+[   87.949683] [<c0156a28>] (lock_acquire) from [<c015e4cc>] (console_unlock+0x1a4/0x598)
+[   87.949696] [<c015e4cc>] (console_unlock) from [<c015ea64>] (vprintk_emit+0x1a4/0x45c)
+[   87.949707] [<c015ea64>] (vprintk_emit) from [<c015eec8>] (vprintk_default+0x28/0x30)
+[   87.949719] [<c015eec8>] (vprintk_default) from [<c015fa80>] (printk+0x28/0x38)
+[   87.949730] [<c015fa80>] (printk) from [<c048706c>] (__handle_sysrq+0x1c4/0x244)
+[   87.949742] [<c048706c>] (__handle_sysrq) from [<c048d7dc>] (imx_rxint+0x258/0x290)
+[   87.949753] [<c048d7dc>] (imx_rxint) from [<c048edd0>] (imx_int+0x170/0x178)
+[   87.949765] [<c048edd0>] (imx_int) from [<c0160ce4>] (__handle_irq_event_percpu+0x78/0x418)
+[   87.949781] [<c0160ce4>] (__handle_irq_event_percpu) from [<c01610a8>] (handle_irq_event_percpu+0x24/0x6c)
+[   87.949794] [<c01610a8>] (handle_irq_event_percpu) from [<c0161130>] (handle_irq_event+0x40/0x64)
+[   87.949808] [<c0161130>] (handle_irq_event) from [<c01642b4>] (handle_level_irq+0xb4/0x138)
+[   87.949821] [<c01642b4>] (handle_level_irq) from [<c01602dc>] (generic_handle_irq+0x28/0x3c)
+[   87.949833] [<c01602dc>] (generic_handle_irq) from [<c01608e4>] (__handle_domain_irq+0x50/0xb0)
+[   87.949846] [<c01608e4>] (__handle_domain_irq) from [<c0101494>] (avic_handle_irq+0x3c/0x5c)
+[   87.949857] [<c0101494>] (avic_handle_irq) from [<c01075ec>] (__irq_svc+0x6c/0xa4)
+[   87.949866] Exception stack(0xc0c01f48 to 0xc0c01f90)
+[   87.949879] 1f40:                   00000001 00000001 00000000 20000013 ffffe000 c0c078c8
+[   87.949891] 1f60: c0c835aa c094ac0c c7eeca40 c0b3a920 00053177 00000000 00000000 c0c01f98
+[   87.949900] 1f80: c01548b4 c01033bc 20000013 ffffffff
+[   87.949911] [<c01075ec>] (__irq_svc) from [<c01033bc>] (arch_cpu_idle+0x30/0x40)
+[   87.949922] [<c01033bc>] (arch_cpu_idle) from [<c014f09c>] (do_idle+0xa0/0x104)
+[   87.949934] [<c014f09c>] (do_idle) from [<c014f448>] (cpu_startup_entry+0x14/0x18)
+[   87.949946] [<c014f448>] (cpu_startup_entry) from [<c0b00c78>] (start_kernel+0x30c/0x368)
 
-> Not sure that this is an improvement given that you still need to do
-> things like
->
-> +#if KMALLOC_SIZE_96_EXIST == 1
-> +       if (size > 64 && size <= 96) return (7 - KMALLOC_IDX_ADJ_0);
-> +#endif
-> +
-> +#if KMALLOC_SIZE_192_EXIST == 1
-> +       if (size > 128 && size <= 192) return (8 - KMALLOC_IDX_ADJ_1);
-> +#endif
+I didn't even try to understand that change, so for now you just get the
+lockdep splat :-)
 
-kmalloc_index() is difficult to handle for me.
+Best regards
+Uwe
 
-At first, I made the judgment in the order of size in kmalloc_index(),
-
-----
-/* Order 96, 192 */
-static __always_inline unsigned int kmalloc_index(size_t size)
-{
-...
-if (size <=                8) return ( 3 - KMALLOC_IDX_ADJ_0);
-if (size <=               16) return ( 4 - KMALLOC_IDX_ADJ_0);
-if (size <=               32) return ( 5 - KMALLOC_IDX_ADJ_0);
-if (size <=               64) return ( 6 - KMALLOC_IDX_ADJ_0);
-#if KMALLOC_SIZE_96_EXIST == 1
-if (size <=               96) return ( 7 - KMALLOC_IDX_ADJ_0);
-#endif
-if (size <=              128) return ( 7 - KMALLOC_IDX_ADJ_1);
-#if KMALLOC_SIZE_192_EXIST == 1
-if (size <=              192) return ( 8 - KMALLOC_IDX_ADJ_1);
-#endif
-if (size <=              256) return ( 8 - KMALLOC_IDX_ADJ_2);
-...
-}
-
-but bloat-o-meter shows that I did a bad job.
-----
-$ ./scripts/bloat-o-meter vmlinux-base vmlinux-patch_1-5-order_96_192
-add/remove: 3/7 grow/shrink: 129/167 up/down: 3691/-2530 (1161)
-Function                                     old     new   delta
-all_kmalloc_info                               -     832    +832
-jhash                                        744    1119    +375
-__regmap_init                               3252    3411    +159
-drm_mode_atomic_ioctl                       2373    2479    +106
-apply_wqattrs_prepare                        449     531     +82
-process_preds                               1772    1851     +79
-amd_uncore_cpu_up_prepare                    251     327     +76
-property_entries_dup.part                    789     861     +72
-pnp_register_port_resource                    98     167     +69
-pnp_register_mem_resource                     98     167     +69
-pnp_register_irq_resource                    146     206     +60
-pnp_register_dma_resource                     61     121     +60
-pcpu_get_vm_areas                           3086    3139     +53
-sr_probe                                    1360    1409     +49
-fl_create                                    675     724     +49
-ext4_expand_extra_isize_ea                  2218    2265     +47
-fib6_info_alloc                               60     105     +45
-init_worker_pool                             247     291     +44
-ctnetlink_alloc_filter.part                    -      43     +43
-alloc_workqueue                             1229    1270     +41
-...
-Total: Before=14789209, After=14790370, chg +0.01%
-
-It increased by 1161 bytes.
-
-I tried to modify it many times until the special judgment of 96, 192
-was placed at the beginning of the function, and the bloat-o-meter
-showed a reduction of 241 bytes.
-
-$ ./scripts/bloat-o-meter vmlinux-base vmlinux-patch_1-5
-add/remove: 1/2 grow/shrink: 6/64 up/down: 872/-1113 (-241)
-Total: Before=14789209, After=14788968, chg -0.00%
-
-Therefore, the implementation of kmalloc_index() in the patch is
-intentional.
-
-In addition, the above data was generated from my laptop. But with the
-same code and kernel configuration, it shows different test results on
-my PC (probably due to different versions of GCC).
-
-$ ./scripts/bloat-o-meter vmlinux-base vmlinux-patch_1-5
-add/remove: 1/2 grow/shrink: 6/70 up/down: 856/-1062 (-206)
-
-$ ./scripts/bloat-o-meter vmlinux-base vmlinux-patch_1-5-order_96_192
-add/remove: 1/2 grow/shrink: 12/71 up/down: 989/-1165 (-176)
-
-Sorting 96 and 192 by size in a timely manner makes the result worse,
-but at least the sum is still negative.
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
