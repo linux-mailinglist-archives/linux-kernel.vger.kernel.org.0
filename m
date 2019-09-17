@@ -2,135 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA29B5102
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:07:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D307B5106
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbfIQPHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 11:07:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42242 "EHLO mx1.redhat.com"
+        id S1729069AbfIQPHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 11:07:46 -0400
+Received: from mout.web.de ([212.227.15.3]:59779 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728922AbfIQPHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 11:07:23 -0400
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1735681F10
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 15:07:22 +0000 (UTC)
-Received: by mail-wm1-f72.google.com with SMTP id n11so1370499wmc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 08:07:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M2ROnRjQ6XpEbY6C1uWSxsB5sbZASsuQ60ehBi16Vdg=;
-        b=mv4kpuFS9SQf0NzE1F9GXZ0ftTgJMf6mXsGFb5CIdrbNQwE/QFFvFJrGWGVS/2lFTl
-         HK1AH7/OGBeYsbVFnp3z0S7z+Nq1l+pXFYCnj48MVNGwf8VEC6pqeVE6Q7NSAFxATuJl
-         A+/p1ks8ZaERKS+mmi08xA4w6LFbatpmXnHf3p8qTQRmUqbr9lSEtXwrvNVJZmKQgYs8
-         dqxAQ16YEYRrJueLSexXrhAYCnb5C32M4WF6l6wuXnfB+uyacM0c0U8TjEaUB+jfdW1G
-         B6gA/k90JfOLCG2TNNwfz9ChyD6vk9+1DMhxeTBilqrZ0DAL6e7TO5dAYbjXD07Nbvl2
-         rcAw==
-X-Gm-Message-State: APjAAAVfKzSMvOVA1aYOXOY0PZsWvYMjz8slUUMozxzc0oIj4SUucTzD
-        8m2KJ6vFrOiBNMl6D02JLBoEZ9sg8Sf9AumWQUBnj3qy50vOLNrCzQ5unCU3aMOGYZ6vl4/W/Qd
-        R+y9dK98JMNAM3vnfqJ+4xECz
-X-Received: by 2002:a1c:4945:: with SMTP id w66mr3879988wma.40.1568732840419;
-        Tue, 17 Sep 2019 08:07:20 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzfBL68muJMrD+6aSC2mEoAARgymHATsfuDq2EeQrj/3TNTzPyXY2MqroywfTD46hCjM2QDFA==
-X-Received: by 2002:a1c:4945:: with SMTP id w66mr3879960wma.40.1568732840153;
-        Tue, 17 Sep 2019 08:07:20 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c46c:2acb:d8d2:21d8? ([2001:b07:6468:f312:c46c:2acb:d8d2:21d8])
-        by smtp.gmail.com with ESMTPSA id h17sm4388192wme.6.2019.09.17.08.07.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2019 08:07:19 -0700 (PDT)
-Subject: Re: [PATCH v2 03/14] KVM: x86: Refactor kvm_vcpu_do_singlestep() to
- remove out param
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Liran Alon <liran.alon@oracle.com>
-References: <20190827214040.18710-1-sean.j.christopherson@intel.com>
- <20190827214040.18710-4-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <4a49e819-08bf-7824-f6e1-2f37f2b1a4a4@redhat.com>
-Date:   Tue, 17 Sep 2019 17:07:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729011AbfIQPHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 11:07:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1568732860;
+        bh=9nkGNOo/KpXHV2YblbVOWFzKHiHBVa4lZQAp4v0VDUs=;
+        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
+        b=BmRuGOPfTtnJtOqH4ZBOJRS38/86q5SDI4E6yADduvDfON0hM8v0IJDdAPkVgWlVY
+         UfKVIQBpDaallqwuNk++EP26XlgYeu1LTIQ6XdsguCUPD9Kcxi5yKobcN0BeRNRUOL
+         kJ5UkLaz7NEgcQMbFIqHlgAi4qaObHMCS7/frmq8=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.93.51]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0LiCXL-1hosTn0iOp-00nQX8; Tue, 17
+ Sep 2019 17:07:40 +0200
+To:     Saiyam Doshi <saiyamdoshi.in@gmail.com>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20190916185738.GA14035@SD>
+Subject: Re: [1/3] i2c: qup: remove explicit conversion to boolean
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <b5f63a71-6f6f-eea5-2283-6b5df22b267a@web.de>
+Date:   Tue, 17 Sep 2019 17:07:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <20190827214040.18710-4-sean.j.christopherson@intel.com>
+In-Reply-To: <20190916185738.GA14035@SD>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Iiu9r1Bx3VzZaKzVwy0Ru2zadSTLvVnru3gv+4JduUCjetA7ysE
+ +WpxizUi0Kp3e2HpGQ0OEE9DwFDNO4FAJszSNUdpJf7HAL01C/o856cSpHe37W16GX864Dt
+ UIZSEsDMGe1k1zk0uwu3qBsTygxI2VmdPn3akXTdDHJz1G+9p1GpwM9a1of2x6DkorsK/5+
+ 1k2H1DRVUzjJq3Aw7UsVA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:W28F4qYcXQ0=:wmsexZirT2sH1Ixo3VejM/
+ dhikDHgq04/nNDoxQJJFjwuaDOyf8zNSz4UBl4h538OC75c1PImlw/xmaIxL+XM5AwGKrfFZG
+ pxTpSpYBx2wdg2WId2gPySUP1WCnYG2So5II9sK8XKlQPsOr9cdRpyKvcjDeU+Fe+K+8avkf4
+ w8X7FjAwfIiiyCp8UVXc+R4i5a5nAUiSOKdL99m6lamj3md3UUd5m3U8D5u5fpyrk2at4B6pE
+ 0/yOLMG98nVwnnQuRcjrhLCRX+Wrhtpbs10MbuC42qk0zBLpddB3cx6HYu8PrZWIk2OM2xoCT
+ sUF7CVOIHMwSbCvfMRV5gntpbwzg2fS5B7DnTtWIN9eunYdRBPdFWmdYInJSRStb465CbvFhR
+ 3SaNjFK2bfWfZBFZpqdK9sZ7n0ObIbNU31yH+zpxopjoN18bkYGkJnbQY6PuXijWxTsnqKid/
+ Aad6Nk4lHCkjIHpe1ogQ9anroGnsu2VsLBINrd+CKQZl8uiH6Xro51akMaSZ8KsVGSPidf4vh
+ e+2ExWTvVxLkCMrm275QuiwRX8cmJv/WMyXg4Dxzwdwi8Mu6T/jIhLHsdIQ7g8RrTQzNXjqK7
+ 9cmGXM2yszv6HwnbvzBKOyKW2hjjcVujuIOZpJxPggIcc4PlSWdFBob9ujXBytF6zSKKQ6ogn
+ FI5l8BEuPdicXSvGrcY0S4hXU6yIR8yeWL7dDB6njxE8pNFcwWMGfwK/9D0RFvdYmOfTQ4+O7
+ hsuWIBkiOSRaqypBV+tFgDkDs8lKub7368suJrCQ1ree2TXoCxsmIbe3fZdHDBHcb7kBSpz2w
+ RfaHXC/6cIIT7ABsdIvWSdE2Xeb03HIFWFKgy6i3z2uC7x6WbVXokhqMbFGg5nsASPkA+ni5Y
+ wyHil0a71V3OCaBk62QU/ZFj6YkXSPVqUaFYCWQzlltfUYuQtCdfCRxd8/RecGXGXR3r+XuRu
+ Ubs2swdpSyCynr9+6ElYMOD6Jewhkk0tJkujsY+RbcVrNImENHLh4b2J1er54RxM9/ZW0m7/2
+ AmRj03mwUHCFMFARcxtMFmcc4C2eB6eDuphLiayvydfurM/BcEKlgKb+ReopL+2dGKvgk3IQi
+ q8g3Tn5VwU/2qG6oxwEgMaUUXzBE6Mg4AWdzwpUEB6PZqoQBHaQ3zTyuPo3Cwpb0KhUVuCweP
+ RTVFE3YtWh2jK6m8ZO7Hml3gsXzGUX946CuLFe2T1h/AO0Eo33e0amG6jj9kaq3yf5wJv2QeF
+ 6IOgdSkSQEisJumF4uTvq9M7GxuoJKpBz3P4+jTrnXaOCaOf19zmZF7rq0bA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/19 23:40, Sean Christopherson wrote:
-> Return the single-step emulation result directly instead of via an out
-> param.  Presumably at some point in the past kvm_vcpu_do_singlestep()
-> could be called with *r==EMULATE_USER_EXIT, but that is no longer the
-> case, i.e. all callers are happy to overwrite their own return variable.
+> Found using - Coccinelle (http://coccinelle.lip6.fr)
 
-It was actually done for consistency with kvm_vcpu_check_breakpoint.
-It's okay to change it.
+Can a tag like =E2=80=9CGenerated by: scripts/coccinelle/misc/boolconv.coc=
+ci=E2=80=9D
+be more helpful for this change description?
 
-Paolo
-
-> Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Reviewed-by: Liran Alon <liran.alon@oracle.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  arch/x86/kvm/x86.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index c6de5bc4fa5e..fe847f8eb947 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -6377,7 +6377,7 @@ static int kvm_vcpu_check_hw_bp(unsigned long addr, u32 type, u32 dr7,
->  	return dr6;
->  }
->  
-> -static void kvm_vcpu_do_singlestep(struct kvm_vcpu *vcpu, int *r)
-> +static int kvm_vcpu_do_singlestep(struct kvm_vcpu *vcpu)
->  {
->  	struct kvm_run *kvm_run = vcpu->run;
->  
-> @@ -6386,10 +6386,10 @@ static void kvm_vcpu_do_singlestep(struct kvm_vcpu *vcpu, int *r)
->  		kvm_run->debug.arch.pc = vcpu->arch.singlestep_rip;
->  		kvm_run->debug.arch.exception = DB_VECTOR;
->  		kvm_run->exit_reason = KVM_EXIT_DEBUG;
-> -		*r = EMULATE_USER_EXIT;
-> -	} else {
-> -		kvm_queue_exception_p(vcpu, DB_VECTOR, DR6_BS);
-> +		return EMULATE_USER_EXIT;
->  	}
-> +	kvm_queue_exception_p(vcpu, DB_VECTOR, DR6_BS);
-> +	return EMULATE_DONE;
->  }
->  
->  int kvm_skip_emulated_instruction(struct kvm_vcpu *vcpu)
-> @@ -6410,7 +6410,7 @@ int kvm_skip_emulated_instruction(struct kvm_vcpu *vcpu)
->  	 * that sets the TF flag".
->  	 */
->  	if (unlikely(rflags & X86_EFLAGS_TF))
-> -		kvm_vcpu_do_singlestep(vcpu, &r);
-> +		r = kvm_vcpu_do_singlestep(vcpu);
->  	return r == EMULATE_DONE;
->  }
->  EXPORT_SYMBOL_GPL(kvm_skip_emulated_instruction);
-> @@ -6613,7 +6613,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
->  		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
->  		kvm_rip_write(vcpu, ctxt->eip);
->  		if (r == EMULATE_DONE && ctxt->tf)
-> -			kvm_vcpu_do_singlestep(vcpu, &r);
-> +			r = kvm_vcpu_do_singlestep(vcpu);
->  		if (!ctxt->have_exception ||
->  		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
->  			__kvm_set_rflags(vcpu, ctxt->eflags);
-> 
-
+Regards,
+Markus
