@@ -2,106 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15910B488C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8E6DB4891
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:52:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404541AbfIQHwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 03:52:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36584 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727479AbfIQHwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 03:52:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8B8BAB048;
-        Tue, 17 Sep 2019 07:52:18 +0000 (UTC)
-Date:   Tue, 17 Sep 2019 09:52:16 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        AndreaParri <parri.andrea@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Paul Turner <pjt@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LinusTorvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        PraritBhargava <prarit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: printk meeting at LPC
-Message-ID: <20190917075216.agzoy6cnol5eio6y@pathway.suse.cz>
-References: <20190904123531.GA2369@hirez.programming.kicks-ass.net>
- <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
- <20190905143118.GP2349@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
- <20190905121101.60c78422@oasis.local.home>
- <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
- <87k1acz5rx.fsf@linutronix.de>
- <cfc7b1fa-e629-19a6-154b-0dd4f5604aa7@I-love.SAKURA.ne.jp>
- <20190916104624.n3jh363z37ah2kxa@pathway.suse.cz>
- <20190916094314.6053f988@gandalf.local.home>
+        id S2404566AbfIQHws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 03:52:48 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35578 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404523AbfIQHwr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 03:52:47 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v8so2030282wrt.2;
+        Tue, 17 Sep 2019 00:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=cdNFOd7zQsAnR9pP9FzvoRQoGQj1w1WjpRlr+NKG8I4=;
+        b=EuOgRWTJsovgapyFUlWA/qL2ETB+kVNHua2oqHt+kwovPDpqoZPLoSGi1kLlGUaCE2
+         ZqQ/g5P3xAI5NX10qznFTxcpx6WcDtjhvIUMJsTRqs26bYzHns+oqOfBs0yC9lTn8shc
+         //xX51tqbtgbTs5rKQxcbiwLhkZBK3pJ/Ub4rgbrgqqiKKN7Ciea9yPajjZI/joJyMdG
+         itGgOAvRSiWodyuOhGXwA6YMVXcarSdTQ2jPB+v02eIfY3NmmNvBJ5UjAMdtgpG4i1cb
+         gCBC3GhBIdkwpDyYkkJ+5NFEKW3B1vO3VAm4/WjX0OVogPmHP2sSFah7+L268qUqS/zW
+         Q2sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=cdNFOd7zQsAnR9pP9FzvoRQoGQj1w1WjpRlr+NKG8I4=;
+        b=lLB4TFplVfXtU2K/eYuGIKzkhaDPQpIEXn2dNB+MbJmxK10hOO4Rn1C4MHQHxfw5tV
+         76Qo0ilhRE+MBFtEem+71+XWUC46at5Rw04J1h3rreIDS9qQcsddHdL77R2vqu945AGm
+         ijulK1a/PS+QwpzxlrZIBfNDoy6ZnA/8BGhpzgdM52QV8mhoP/1F7q/mPpe0ReEXtgeE
+         RKfeyEX01lLIBYw1JyaS0bEZRA1CxW7fwQazqR9rwMNU8U2zcPwKG92QFThqxW0j9Xd7
+         Ya8hGDyQk5XY+9GnGnqd9CEQmEz0p2NTqspdInd6oK341Avx/1Lz3a7gXcrzMgo3PN0s
+         FHyg==
+X-Gm-Message-State: APjAAAVyuj3h3V1lwvH6quzZZ6QKyEA4TG0jvtbyPk1db7kXw/gbuik2
+        RF6iO/lpkYjViI/gxUU57jU=
+X-Google-Smtp-Source: APXvYqzCzgbD3N2hdYM+1wfknOYmMqdKA4ov+/2gSkX376GahrsHfZuHHwZbYv/LoGUz4G9alDNbJA==
+X-Received: by 2002:adf:ee50:: with SMTP id w16mr1905223wro.93.1568706765280;
+        Tue, 17 Sep 2019 00:52:45 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id n2sm1349204wmc.1.2019.09.17.00.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 00:52:44 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 09:52:42 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Sep 16 (kernel/sched/core.c)
+Message-ID: <20190917075242.GB49590@gmail.com>
+References: <20190916223850.GQ4352@sirena.co.uk>
+ <1898d3c9-1997-17ce-a022-a5e28c8dc115@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190916094314.6053f988@gandalf.local.home>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1898d3c9-1997-17ce-a022-a5e28c8dc115@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-09-16 09:43:14, Steven Rostedt wrote:
-> On Mon, 16 Sep 2019 12:46:24 +0200
-> Petr Mladek <pmladek@suse.com> wrote:
-> > > By the way, do we need to keep printk() return bytes like printf() ?
-> > > Maybe we can make printk() return "void", for almost nobody can do
-> > > meaningful things with the return value.  
+
+* Randy Dunlap <rdunlap@infradead.org> wrote:
+
+> On 9/16/19 3:38 PM, Mark Brown wrote:
+> > Hi all,
 > > 
-> > It is true that I have never seen anyone checking the return value.
-> > On the other hand, it is a minor detail. And I would prefer to stay
-> > compatible with the userland printf() as much as possible.
+> > Changes since 20190915:
+> > 
 > 
-> I understand your wanting to keep compatibility with printf(), but I
-> would suggest that we only do so if it doesn't complicate any of the
-> design. I'm actually leaning on recommending that we remove the return
-> value, to prevent there becoming a dependency on it. I don't see any
-> reason to have the "number of bytes processed" as the return value
-> being useful within the kernel.
+> on x86_64:
+> 
+> when CONFIG_CGROUPS is not set:
+> 
+>   CC      kernel/sched/core.o
+> ../kernel/sched/core.c: In function ‘uclamp_update_active_tasks’:
+> ../kernel/sched/core.c:1081:23: error: storage size of ‘it’ isn’t known
+>   struct css_task_iter it;
+>                        ^~
+>   CC      kernel/printk/printk_safe.o
+> ../kernel/sched/core.c:1084:2: error: implicit declaration of function ‘css_task_iter_start’; did you mean ‘__sg_page_iter_start’? [-Werror=implicit-function-declaration]
+>   css_task_iter_start(css, 0, &it);
+>   ^~~~~~~~~~~~~~~~~~~
+>   __sg_page_iter_start
+> ../kernel/sched/core.c:1085:14: error: implicit declaration of function ‘css_task_iter_next’; did you mean ‘__sg_page_iter_next’? [-Werror=implicit-function-declaration]
+>   while ((p = css_task_iter_next(&it))) {
+>               ^~~~~~~~~~~~~~~~~~
+>               __sg_page_iter_next
+> ../kernel/sched/core.c:1091:2: error: implicit declaration of function ‘css_task_iter_end’; did you mean ‘get_task_cred’? [-Werror=implicit-function-declaration]
+>   css_task_iter_end(&it);
+>   ^~~~~~~~~~~~~~~~~
+>   get_task_cred
+> ../kernel/sched/core.c:1081:23: warning: unused variable ‘it’ [-Wunused-variable]
+>   struct css_task_iter it;
+>                        ^~
+> 
 
-Heh, I did some grepping and the return value is actually used on
-three locations:
+I cannot reproduce this build failue: I took Linus's latest which has all 
+the -next scheduler commits included (ad062195731b), and an x86-64 "make 
+defconfig" and a disabling of CONFIG_CGROUPS still resuls in a kernel 
+that builds fine.
 
-$> git grep "= printk("
-drivers/scsi/aic7xxx/aic79xx_core.c:	printed = printk("%s[0x%x]", name, value);
-drivers/scsi/aic7xxx/aic79xx_core.c:		printed += printk(" ");
-drivers/scsi/aic7xxx/aic79xx_core.c:			printed += printk("%s%s",
-drivers/scsi/aic7xxx/aic79xx_core.c:		printed += printk(") ");
-drivers/scsi/aic7xxx/aic79xx_core.c:		printed += printk(" ");
-drivers/scsi/aic7xxx/aic79xx_core.c:		cur_col = printk("\n%3d FIFO_USE[0x%x] ", SCB_GET_TAG(scb),
-drivers/scsi/aic7xxx/aic79xx_core.c:		cur_col += printk("SHADDR = 0x%x%x, SHCNT = 0x%x ",
-drivers/scsi/aic7xxx/aic79xx_core.c:		cur_col += printk("HADDR = 0x%x%x, HCNT = 0x%x ",
-drivers/scsi/aic7xxx/aic7xxx_core.c:	printed  = printk("%s[0x%x]", name, value);
-drivers/scsi/aic7xxx/aic7xxx_core.c:		printed += printk(" ");
-drivers/scsi/aic7xxx/aic7xxx_core.c:			printed += printk("%s%s",
-drivers/scsi/aic7xxx/aic7xxx_core.c:		printed += printk(") ");
-drivers/scsi/aic7xxx/aic7xxx_core.c:		printed += printk(" ");
-drivers/scsi/aic7xxx/aic7xxx_core.c:		cur_col  = printk("\n%3d ", i);
-drivers/scsi/aic7xxx/aic7xxx_core.c:		cur_col  = printk("\n%3d ", scb->hscb->tag);
-drivers/scsi/libsas/sas_ata.c:	r = printk("%s" SAS_FMT "ata%u: %s: %pV",
-kernel/locking/lockdep.c:			len += printk("%*s   %s", depth, "", usage_str[bit]);
-kernel/locking/lockdep.c:			len += printk(KERN_CONT " at:\n");
+Thanks,
 
-It is probably not a big deal. For example, lockdep uses the value
-just for formatting (extra spaces) when printing backtrace.
-
-I agree that it does not make sense to return the value if it
-complicates the code too much. Well, we will need to count
-the string length also from another reason (reservation).
-
-Best Regards,
-Petr
+	Ingo
