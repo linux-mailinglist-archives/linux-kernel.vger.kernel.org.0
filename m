@@ -2,205 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B88B4AC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:38:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD739B4AD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbfIQJid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:38:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41286 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726902AbfIQJic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:38:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 28068B6F4;
-        Tue, 17 Sep 2019 09:38:30 +0000 (UTC)
-Subject: Re: [PATCH 4/8] drm/ttm: factor out ttm_bo_mmap_vma_setup
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, Huang Rui <ray.huang@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>
-References: <20190913122908.784-1-kraxel@redhat.com>
- <20190913122908.784-5-kraxel@redhat.com>
- <88d5a253-ef9e-c998-6353-5ba8680129f2@suse.de>
- <20190917083425.kwwqyn463gn3mghf@sirius.home.kraxel.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
- IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
- AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
- 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
- hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
- YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
- 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
- tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
- R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
- E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
- kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
- 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
- 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
- A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
- NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
- VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
- iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
- VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
- iNx9uqqx
-Message-ID: <8b8ce387-1b3c-0a9c-3aaf-6294b3b81018@suse.de>
-Date:   Tue, 17 Sep 2019 11:38:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728579AbfIQJjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:39:41 -0400
+Received: from esa3.mentor.iphmx.com ([68.232.137.180]:20501 "EHLO
+        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbfIQJjl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:39:41 -0400
+IronPort-SDR: Lni6NxtCmo3XUgNWu0s7s3K8WMUWbll/0+qxCpv22BuidX5/O7W+cLHyNAw7FK9wpF9SCAgKQv
+ ohZSZJZFojtjC/0/ZlnZhOeDI76LCuD2loRtUVXoc6sKqs94g3odCd2F44JezBFdHt2LGAMqOc
+ tfkRGA2880XsjodZmOIiqnle8CWdx4p6w7Pou4DLAa3FIItOoKM9SMRfBy5Qt0AFVSHNBQwEU2
+ NovLhmM69xjXhA3vZtpuY/TwvejCU7ALah24CX6ap4Y8wtwdPSEMS3E0Y+Ej8yxztxiZTB4pLP
+ AFM=
+X-IronPort-AV: E=Sophos;i="5.64,515,1559548800"; 
+   d="scan'208";a="41416503"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa3.mentor.iphmx.com with ESMTP; 17 Sep 2019 01:39:39 -0800
+IronPort-SDR: O6DOm3rwB3wfepOQeSrCnDEl28Fri9eLU6sWzk+Bp3L9ppkxy7mlcYQlUREBct0y+3jw5IcJxz
+ PYWu4mckamso+7CoScdNsUYvWtK/yg67hTIAbJo0plvGmWhZ7MDzv6M5CWMdQdiccV7YlFZfCe
+ +51TIyu/DcCl4d4CR59kUE1MYxkBpmtyBEbRbLml3qnalTM1WbG6sg8UIgtDE2y0SZRJlGmwu/
+ utupXLYWhBqm2/cxHnKzZW03vBDPDUmTBnY4E91poDAfU0b1UVk1vNtkQ+NrbX2sb1VvlWH0Sf
+ GPE=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
+        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
+        <rydberg@bitmath.org>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <jiada_wang@mentor.com>
+Subject: [PATCH v3 20/49] Input: atmel_mxt_ts - refactor firmware flash to extract context into struct
+Date:   Tue, 17 Sep 2019 18:38:46 +0900
+Message-ID: <20190917093915.18645-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <20190917083425.kwwqyn463gn3mghf@sirius.home.kraxel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="xcBYZojvDfoFex0FuyRwVGgUIB7FAb0EG"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---xcBYZojvDfoFex0FuyRwVGgUIB7FAb0EG
-Content-Type: multipart/mixed; boundary="z8LzN3XfT59kzP8u0OVSCtdI40idw3XEd";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>,
- open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
- Huang Rui <ray.huang@amd.com>, Christian Koenig <christian.koenig@amd.com>
-Message-ID: <8b8ce387-1b3c-0a9c-3aaf-6294b3b81018@suse.de>
-Subject: Re: [PATCH 4/8] drm/ttm: factor out ttm_bo_mmap_vma_setup
-References: <20190913122908.784-1-kraxel@redhat.com>
- <20190913122908.784-5-kraxel@redhat.com>
- <88d5a253-ef9e-c998-6353-5ba8680129f2@suse.de>
- <20190917083425.kwwqyn463gn3mghf@sirius.home.kraxel.org>
-In-Reply-To: <20190917083425.kwwqyn463gn3mghf@sirius.home.kraxel.org>
+From: Nick Dyer <nick.dyer@itdev.co.uk>
 
---z8LzN3XfT59kzP8u0OVSCtdI40idw3XEd
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
+(cherry picked from ndyer/linux/for-upstream commit 1bbe20ff3dcd6612e7942c495929eae5c138ece2)
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 59 +++++++++++++++---------
+ 1 file changed, 36 insertions(+), 23 deletions(-)
 
-Hi Gerd
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 69e34294688c..711ce39f38ca 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -291,6 +291,22 @@ struct mxt_cfg {
+ 	struct mxt_info info;
+ };
+ 
++/* Firmware frame structure */
++struct mxt_fw_frame {
++	__be16 size;
++	u8 data[];
++};
++
++/* Firmware update context */
++struct mxt_flash {
++	const struct firmware *fw;
++	struct mxt_fw_frame *frame;
++	loff_t pos;
++	size_t frame_size;
++	unsigned int count;
++	unsigned int retry;
++};
++
+ /* Each client has this additional data */
+ struct mxt_data {
+ 	struct i2c_client *client;
+@@ -3244,21 +3260,17 @@ static int mxt_check_firmware_format(struct device *dev,
+ static int mxt_load_fw(struct device *dev)
+ {
+ 	struct mxt_data *data = dev_get_drvdata(dev);
+-	const struct firmware *fw = NULL;
+-	unsigned int frame_size;
+-	unsigned int pos = 0;
+-	unsigned int retry = 0;
+-	unsigned int frame = 0;
++	struct mxt_flash f = { 0, };
+ 	int ret;
+ 
+-	ret = request_firmware(&fw, data->fw_name, dev);
++	ret = request_firmware(&f.fw, data->fw_name, dev);
+ 	if (ret) {
+ 		dev_err(dev, "Unable to open firmware %s\n", data->fw_name);
+ 		return ret;
+ 	}
+ 
+ 	/* Check for incorrect enc file */
+-	ret = mxt_check_firmware_format(dev, fw);
++	ret = mxt_check_firmware_format(dev, f.fw);
+ 	if (ret)
+ 		goto release_firmware;
+ 
+@@ -3312,41 +3324,42 @@ static int mxt_load_fw(struct device *dev)
+ 			goto disable_irq;
+ 	}
+ 
+-	while (pos < fw->size) {
++	while (f.pos < f.fw->size) {
++		f.frame = (struct mxt_fw_frame *)(f.fw->data + f.pos);
++
+ 		ret = mxt_check_bootloader(data, MXT_WAITING_FRAME_DATA, true);
+ 		if (ret)
+ 			goto disable_irq;
+ 
+-		frame_size = ((*(fw->data + pos) << 8) | *(fw->data + pos + 1));
+-
+ 		/* Take account of CRC bytes */
+-		frame_size += 2;
++		f.frame_size = __be16_to_cpu(f.frame->size) + 2U;
+ 
+ 		/* Write one frame to device */
+-		ret = mxt_bootloader_write(data, fw->data + pos, frame_size);
++		ret = mxt_bootloader_write(data, f.fw->data + f.pos,
++					   f.frame_size);
+ 		if (ret)
+ 			goto disable_irq;
+ 
+ 		ret = mxt_check_bootloader(data, MXT_FRAME_CRC_PASS, true);
+ 		if (ret) {
+-			retry++;
++			f.retry++;
+ 
+ 			/* Back off by 20ms per retry */
+-			msleep(retry * 20);
++			msleep(f.retry * 20);
+ 
+-			if (retry > 20) {
++			if (f.retry > 20) {
+ 				dev_err(dev, "Retry count exceeded\n");
+ 				goto disable_irq;
+ 			}
+ 		} else {
+-			retry = 0;
+-			pos += frame_size;
+-			frame++;
++			f.retry = 0;
++			f.pos += f.frame_size;
++			f.count++;
+ 		}
+ 
+-		if (frame % 50 == 0)
+-			dev_dbg(dev, "Sent %d frames, %d/%zd bytes\n",
+-				frame, pos, fw->size);
++		if (f.count % 50 == 0)
++			dev_dbg(dev, "Sent %u frames, %lld/%zu bytes\n",
++				f.count, f.pos, f.fw->size);
+ 	}
+ 
+ 	/* Wait for flash. */
+@@ -3355,7 +3368,7 @@ static int mxt_load_fw(struct device *dev)
+ 	if (ret)
+ 		goto disable_irq;
+ 
+-	dev_dbg(dev, "Sent %d frames, %d bytes\n", frame, pos);
++	dev_dbg(dev, "Sent %u frames, %lld bytes\n", f.count, f.pos);
+ 
+ 	/*
+ 	 * Wait for device to reset. Some bootloader versions do not assert
+@@ -3369,7 +3382,7 @@ static int mxt_load_fw(struct device *dev)
+ disable_irq:
+ 	disable_irq(data->irq);
+ release_firmware:
+-	release_firmware(fw);
++	release_firmware(f.fw);
+ 	return ret;
+ }
+ 
+-- 
+2.19.2
 
-Am 17.09.19 um 10:34 schrieb Gerd Hoffmann:
-> On Fri, Sep 13, 2019 at 03:05:34PM +0200, Thomas Zimmermann wrote:
->=20
->>> +void ttm_bo_mmap_vma_setup(struct ttm_buffer_object *bo, struct vm_a=
-rea_struct *vma)
->>> +{
->>> +	vma->vm_ops =3D &ttm_bo_vm_ops;
->>> +
->>> +	/*
->>> +	 * Note: We're transferring the bo reference to
->>> +	 * vma->vm_private_data here.
->>> +	 */
->>> +
->>> +	vma->vm_private_data =3D bo;
->>> +
->>> +	/*
->>> +	 * We'd like to use VM_PFNMAP on shared mappings, where
->>> +	 * (vma->vm_flags & VM_SHARED) !=3D 0, for performance reasons,
->>> +	 * but for some reason VM_PFNMAP + x86 PAT + write-combine is very
->>> +	 * bad for performance. Until that has been sorted out, use
->>> +	 * VM_MIXEDMAP on all mappings. See freedesktop.org bug #75719
->>> +	 */
->>> +	vma->vm_flags |=3D VM_MIXEDMAP;
->>> +	vma->vm_flags |=3D VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
->>> +}
->>> +EXPORT_SYMBOL(ttm_bo_mmap_vma_setup);
->>
->> To me, this function looks like an internal helper that should rather
->> remain internal.
->=20
-> Well, I'm moving that to a helper exactly to avoid drm gem ttm helpers
-> messing with ttm internals.  To not them initialize vm_flags for
-> example, and to avoid exporting ttm_bo_vm_ops.  Also to make sure ttm b=
-o
-> vma's are initialized the same way no matter which code path was taken
-> to mmap the object.
-
-It may not be worth blocking on this, so
-
-  Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-
-But I still think it's not a good interface because it exposes internal
-details.
-
-Please consider another idea: how about splitting off the ttm_bo_get()
-and vma-flags setup of ttm_fbdev_mmap() into a separate function, like th=
-is:
-
-void ttm_bo_mmap_refed(vma, bo)
-{
-	ttm_bo_get(bo)
-	ttm_bo_mmap_vma_setup(vma);
-}
-EXPORT_SYMBOL(ttm_bo_mmap_refed)
-
-int ttm_fbdev_mmap(vma, bo)
-{
-        if (vma->vm_pgoff !=3D 0)
-                return -EACCES;
-	ttm_bo_mmap_refed(vma, bo);
-	return 0;
-}
-
-That would allow to keep _vma_setup() an internal function.
-
-ttm_fbdev_mmap() sounds like it is only for fbdev and the only user is
-amdgpu. Can it be moved out of ttm entirely?
-
-Best regards
-Thomas
-
->> As mentioned in my reply to patch 5, maybe re-using
->> ttm_fbdev_mmap() could help.
->=20
-> No, the check in that function prevents that from working.
->=20
-> cheers,
->   Gerd
->=20
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->=20
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG N=C3=BCrnberg)
-
-
---z8LzN3XfT59kzP8u0OVSCtdI40idw3XEd--
-
---xcBYZojvDfoFex0FuyRwVGgUIB7FAb0EG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl2AqZEACgkQaA3BHVML
-eiPJ0ggAnM+WlLYkjAcYW6bwUEv+i+YP7J0X/Ffdu3OiWGM4+Mbh71BejKrlbmfG
-mKrWR2TBAu/UZTctmqwKNwP/yjmc7d/pjfcGUpKw17aDCwwT6ZYr2PEjgi1yOyym
-wpYfG/yldlsvbutl8PfNZFlmS5QLyaeJeG/q4l9x7Fe83loNIa62zSW8RhU2Ar0U
-sNgG+/gU7UL2VPxfhWiIDznB9NL+oCZD/Ec4PWU/jXj5/mQT/dfHYAU3RtreDHcB
-PzRG4T8fvVHnoYcjuhE2vUVgKPlEc6w8a6G6syRpeydwAr/T3sJgE9SzyIswbTqG
-rugdli0jsXAQhqQ4s+xuVxDuxpIl0w==
-=jKnm
------END PGP SIGNATURE-----
-
---xcBYZojvDfoFex0FuyRwVGgUIB7FAb0EG--
