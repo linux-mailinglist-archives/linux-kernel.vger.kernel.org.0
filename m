@@ -2,93 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E2BB4EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 15:01:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7450B4EAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 15:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfIQNBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 09:01:00 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:44471 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbfIQNBA (ORCPT
+        id S1728296AbfIQNBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 09:01:48 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:35304 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbfIQNBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 09:01:00 -0400
-Received: by mail-qt1-f196.google.com with SMTP id u40so4209715qth.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 06:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=wB/yUVsEzHmjEqDrCN9BJsxtLoalzHkJD0nWY9LtcbA=;
-        b=I1QY13u5DCoSEpWMdwipP2BfhnUP54oguZgW6q2KhXUO6YkJh6vy/swFUoIUYgG4o9
-         H+DBMeEyKC+ZDrwIhiA/kWNsyGu7+QNK8+Nbb80l+6kCdHLPMIqQKqhAtAuHV3JpJgbq
-         YNVnD2dlUZI8xSofghRE9/nlewjkSxj3JbccdFo3QS1CYLZmSWXn0FhlADYzaQqJYjwk
-         VWJhncjdiQTTBFDPacyZqIMbS3SF9p+c3VGgI8+J04CNGVs0z+jO6ZVa7fORW5QvQyY+
-         IZCp/zNN3AzcpjstYfVdwUPA2AjLc5/gezWjCgLxqWgfdPUzACU3XADaPtplLf5ElvrO
-         lxIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wB/yUVsEzHmjEqDrCN9BJsxtLoalzHkJD0nWY9LtcbA=;
-        b=dQubVwwCF2bUfxEqTWfeMgib7cG34c3PDGDxrf053KaUhKBR4MNFf8dZwIzPNju0FE
-         0qZHrqtyw8Uira7MmCaymylqbtOgIuFM88jDlX8WsJzVxRWyKOmTWwFFDgAr2V1NNxft
-         WdoK3QCbRUCFtXzBatzK9tEmbwEWvGB1UCUQfd6PehPQi6/87wPhOuvzCacS/6axtoCb
-         4Xawytl9phz8/G0Q0JNqcPbWM2tVG5aYnp+Xq/p/vd0JpsHBt3xVRCdoQU3Vyh/mD43D
-         ioTHeu6H7s4UG7bHPi3yiKlY2CFZNVMgjxewBKwV6FDv5YGvyznZGylvIpry/zz//Ldt
-         1tfw==
-X-Gm-Message-State: APjAAAXUIMZZAfLcSJJeDz8akBn+Tqka3/KLb4+jf6xTU+K75aBmlP70
-        kGCmyNDIu+yuRc3MtoPYC4iQrqpH9ik=
-X-Google-Smtp-Source: APXvYqxAci1+zEx6rBgZfCxzusb3uOXudrjs/u2TX7wBccuj3ghucqQWalJZ8MKnNU78cHSuY3Xe9w==
-X-Received: by 2002:a0c:fca8:: with SMTP id h8mr2898054qvq.187.1568725259403;
-        Tue, 17 Sep 2019 06:00:59 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id l3sm1370442qtc.33.2019.09.17.06.00.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Sep 2019 06:00:58 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     hch@lst.de
-Cc:     m.szyprowski@samsung.com, robin.murphy@arm.com,
-        vladimir.murzin@arm.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] dma/coherent: remove unused dma_get_device_base()
-Date:   Tue, 17 Sep 2019 09:00:42 -0400
-Message-Id: <1568725242-2433-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 17 Sep 2019 09:01:46 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id BB5AE3F528;
+        Tue, 17 Sep 2019 15:01:39 +0200 (CEST)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=MuzcZnQa;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 0qXzDPOTNKk2; Tue, 17 Sep 2019 15:01:38 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id CAA363F5D8;
+        Tue, 17 Sep 2019 15:01:35 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 495603601AA;
+        Tue, 17 Sep 2019 15:01:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1568725295; bh=RLvxQ7WAvOuonm/EyAFj5Gl1MzZMICjdAxHIdlgS4O8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MuzcZnQaT3xXFf3jdvOwqMsW1YTUXEVAMfK7JKUSIwJFMUFs8JiRw748t5Bnpmfeh
+         rxxiKJjQ9QZrL1atIYP1pqy/bgR0+b2zJT280zTff31lVdz81WmqQWchNAsmvwldbq
+         tDbot+6+ogD5+5X+/Zg4U88wRdWFteVgLnj8ZjUY=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
+        x86@kernel.org,
+        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [PATCH v3 0/2] Fix SEV user-space mapping of unencrypted coherent memory
+Date:   Tue, 17 Sep 2019 15:01:13 +0200
+Message-Id: <20190917130115.51748-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_get_device_base() was first introduced in the commit c41f9ea998f3
-("drivers: dma-coherent: Account dma_pfn_offset when used with device
-tree"). Later, it was removed by the commit 43fc509c3efb ("dma-coherent:
-introduce interface for default DMA pool")
+This patchset fixes dma_mmap_coherent() mapping of unencrypted memory in
+otherwise encrypted environments, where it would incorrectly map that memory as
+encrypted.
 
-Found by the -Wunused-function compilation warning.
+With SEV and sometimes with SME encryption, The dma api coherent memory is
+typically unencrypted, meaning the linear kernel map has the encryption
+bit cleared. However, default page protection returned from vm_get_page_prot()
+has the encryption bit set. So to compute the correct page protection we need
+to clear the encryption bit.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- kernel/dma/coherent.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Also, in order for the encryption bit setting to survive across do_mmap() and
+mprotect_fixup(), We need to make pgprot_modify() aware of it and not touch it.
+Therefore make sme_me_mask part of _PAGE_CHG_MASK and make sure
+pgprot_modify() preserves also cleared bits that are part of _PAGE_CHG_MASK,
+not just set bits. The use of pgprot_modify() is currently quite limited and
+easy to audit.
 
-diff --git a/kernel/dma/coherent.c b/kernel/dma/coherent.c
-index 29fd6590dc1e..909b38e1c29b 100644
---- a/kernel/dma/coherent.c
-+++ b/kernel/dma/coherent.c
-@@ -28,15 +28,6 @@ static inline struct dma_coherent_mem *dev_get_coherent_memory(struct device *de
- 	return NULL;
- }
- 
--static inline dma_addr_t dma_get_device_base(struct device *dev,
--					     struct dma_coherent_mem * mem)
--{
--	if (mem->use_dev_dma_pfn_offset)
--		return (mem->pfn_base - dev->dma_pfn_offset) << PAGE_SHIFT;
--	else
--		return mem->device_base;
--}
--
- static int dma_init_coherent_memory(phys_addr_t phys_addr,
- 		dma_addr_t device_addr, size_t size,
- 		struct dma_coherent_mem **mem)
--- 
-1.8.3.1
+(Note that the encryption status is not logically encoded in the pfn but in
+the page protection even if an address line in the physical address is used).
 
+The patchset has seen some sanity testing by exporting dma_pgprot() and
+using it in the vmwgfx mmap handler with SEV enabled.
+
+As far as I can tell there are no current users of dma_mmap_coherent() with
+SEV or SME encryption which means that there is no need to CC stable.
+
+Changes since:
+RFC:
+- Make sme_me_mask port of _PAGE_CHG_MASK rather than using it by its own in
+  pgprot_modify().
+v2:
+- Clarify which use-cases this patchset actually fixes.
+v3:
+- Use _PAGE_ENC instead of sme_me_mask in the definition of _PAGE_CHG_MASK
+
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
