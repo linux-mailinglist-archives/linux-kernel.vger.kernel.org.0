@@ -2,66 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD01DB4D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 13:40:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1956B4D15
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 13:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfIQLkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 07:40:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34846 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbfIQLkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 07:40:46 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 62364369AC;
-        Tue, 17 Sep 2019 11:40:46 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 037C76012E;
-        Tue, 17 Sep 2019 11:40:45 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 7883E16E05; Tue, 17 Sep 2019 13:40:41 +0200 (CEST)
-Date:   Tue, 17 Sep 2019 13:40:41 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "Huang, Ray" <Ray.Huang@amd.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 07/11] drm/ttm: drop VM_DONTDUMP
-Message-ID: <20190917114041.6oaukfnsai5rmf54@sirius.home.kraxel.org>
-References: <20190917092404.9982-1-kraxel@redhat.com>
- <20190917092404.9982-8-kraxel@redhat.com>
- <c29222f7-2737-2416-62c9-eafd4d608ded@amd.com>
+        id S1727175AbfIQLlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 07:41:01 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:40726 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfIQLlB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 07:41:01 -0400
+Received: by mail-io1-f71.google.com with SMTP id r20so741446ioh.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 04:41:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=TQhhyZzw4ZIrhNwvPs/n5pRvZA2rc0RlRwXQQDytjlk=;
+        b=KIERLloY8GJwAs9p8C0mb8CoGo2UFDT9cTRvMk4H6gG+HI8nnvspS0ANV0VdDDJB+q
+         0FoP2owIPwHRZsWoKKAmOFkp8rfWr/sNVeaKwFWvdDzNeVGf92cmCl9/2dSxuNe9VSRG
+         NNRgNzdpY93UGEFOwtEses6BBQXpQdtB/uishKpCSxTQu9bA+AJGa2hVh/l3AGQREe7c
+         M9KwNb+YrIYpWvKHCwub+gVqlL4BPYHzZwY4/GvBbWLWUyIF8koV9Lku+UXeQlJ9DV0/
+         Gar7VQu/ADpjT3tMa9Pp9+dS1Mgytv/a1efgYNI5QoFlzMQyg7BK1WA2yRiycbhlffr0
+         ClCA==
+X-Gm-Message-State: APjAAAW5sSYz3lFpyIgruSHArHbwUTCVLMwvXwVVktIKnx5ZaTdoOKSD
+        2fd+osyS+kgwdm2wS0J51FN3NOxmaHNdaTh5G6kyhuh8mOly
+X-Google-Smtp-Source: APXvYqwbenYfz+8HvwnLFDOKoiAoxlPm+66Jbx8olwWU83VYq6sGheysqWYQO0WVHRMdPe+OjJsMSZuHPvPXxStFJVjfulg2ZCMU
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c29222f7-2737-2416-62c9-eafd4d608ded@amd.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 17 Sep 2019 11:40:46 +0000 (UTC)
+X-Received: by 2002:a6b:b792:: with SMTP id h140mr2782768iof.225.1568720460772;
+ Tue, 17 Sep 2019 04:41:00 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 04:41:00 -0700
+In-Reply-To: <1568719373.23075.4.camel@suse.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d100350592be31e7@google.com>
+Subject: Re: divide error in usbnet_update_max_qlen
+From:   syzbot <syzbot+6102c120be558c885f04@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, oneukum@suse.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 11:22:35AM +0000, Koenig, Christian wrote:
-> Am 17.09.19 um 11:24 schrieb Gerd Hoffmann:
-> > Not obvious why this is needed.  According to Deniel Vetter this is most
-> > likely a historic artefact dating back to the days where drm drivers
-> > exposed hardware registers as mmap'able gem objects, to avoid dumping
-> > touching those registers.
-> 
-> Clearly a NAK.
-> 
-> We still have that and really don't want to try dumping any CPU 
-> inaccessible VRAM content even if it is mapped into the address space 
-> somewhere.
+Hello,
 
-Thanks for the clarification, I'll drop the patch.
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-cheers,
-  Gerd
+Reported-and-tested-by:  
+syzbot+6102c120be558c885f04@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
+dashboard link: https://syzkaller.appspot.com/bug?extid=6102c120be558c885f04
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=148689be600000
+
+Note: testing is done by a robot and is best-effort only.
