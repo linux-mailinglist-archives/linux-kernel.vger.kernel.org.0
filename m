@@ -2,189 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 967E0B4F7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 15:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E845B4F7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 15:40:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728706AbfIQNkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 09:40:00 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:41488 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728095AbfIQNkA (ORCPT
+        id S1728872AbfIQNkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 09:40:12 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36257 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbfIQNkL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 09:40:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ELl1NsfX5Fc5G0TSWnTjkQIkDmrHqxQp19xYdCPSi/Q=; b=tzWGR7STXwrLQfe2EyTw0l/2j
-        XblxtpPO8359nqUIHTJl9Ns/wjUzdk6PDEBHt++J82SS7VbwwMxj0sl753i2QwCKTumYfOgP4gbE8
-        blPn1xyB8h4MrHxPeiuV8cHn60aR/mkZ0WSPe/H7KtFJcr+Pb2ghJvj40PXjadkw3htfIzpGFdGaQ
-        lBppuwEq6ADgADOoNFt/SoDgqhJR14eixo4otjcLC3Snsls1jFNIxmpMHIk5/q70Q1QVGcvAZbw9O
-        onlOebpntKn2sUip2UURck/WpCBYyZV1J9Y40bQW4MpMdjxrHr9QkjYVOWBBeaYOpaX9xM4qKhqUL
-        VBjHS8Z6w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44786)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iADhu-00028T-Ba; Tue, 17 Sep 2019 14:39:50 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iADhn-0001Ks-4N; Tue, 17 Sep 2019 14:39:43 +0100
-Date:   Tue, 17 Sep 2019 14:39:43 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     tinywrkb <tinywrkb@gmail.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, Baruch Siach <baruch@tkos.co.il>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: imx6dl: SolidRun: add phy node with 100Mb/s
- max-speed
-Message-ID: <20190917133942.GR25745@shell.armlinux.org.uk>
-References: <20190910155507.491230-1-tinywrkb@gmail.com>
- <20190910185033.GD9761@lunn.ch>
- <87muf6oyvr.fsf@tarshish>
- <20190915135652.GC3427@lunn.ch>
- <20190917124101.GA1200564@arch-dsk-01>
- <20190917125434.GH20778@lunn.ch>
- <20190917133253.GA1210141@arch-dsk-01>
+        Tue, 17 Sep 2019 09:40:11 -0400
+Received: by mail-qk1-f196.google.com with SMTP id s18so4033945qkj.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 06:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=gEp7v+IEAeUw4ENumd+jAyajjwsnDTsNl8LGsvDG8aQ=;
+        b=CKdareAbPW9bc8X0O+sslRutcue85fbStFriyrHbP3s0fau0dg56HR1NL46RWkbngV
+         bPPJ6zQs0MomuKiXq8BNF8pjR7DpvVFRo9gOS8IUtfIe8ztWUsd42li4ltLbV1v6fYjw
+         V350KybUpuofUM0oJkcxP0GHpcls78Ed9DmmASJgpyeCMl9HCZb9wtVeJUxnDxcwqz0R
+         HObkcSyEPiEpPMfFAZYhC6zvstgKAFCeRkOFqFUDwhc4l4zynnr9qGuIROeGlSAIsrtf
+         7l2+khBk2BL2jNvRZ4B7NXVHm2L3rYUCTWJ/QdaGPtw6dU9miT4Ohm9AXL8zAD/OUgUd
+         1TlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=gEp7v+IEAeUw4ENumd+jAyajjwsnDTsNl8LGsvDG8aQ=;
+        b=IeSVNT6uF4jKNvpPyj/bI8SlJRaYykqHaZfj15YpFZzpVvYtiTLXHPFtTSq9QFFDLw
+         ZFq5WREuxFGZgp78YTC3upacy4WaQQDy/b1+BFrbeV9ZS0URrfSBf8mlqjbZkqXk4YpU
+         TKPOzzDsMXThbWbgTE4guDuHppHrrSf9jxPDHJW+AmlN7K/hmouR6vnFoPPld4ZHb7Az
+         cx2VkpgwHzvcJcEuPVOjKa2Ik0YroShI6xkQ2zS84zHYu8on5r17QrB6x1xQOBDBCLIl
+         aUnpDosLoCy70FSGhlhyxfjfbBayhTA38sjx9Csln9MibUPzr6LRwzOMdQULQhd3+Ej0
+         Y+MQ==
+X-Gm-Message-State: APjAAAU9st6jFwW9PnT0fB0qz8n9tmicpschQR0BBeR4BRKobSFmD8L0
+        IArl6Q+5jLZvBHz74YOCESQ6emCGMOwKsMTnOYlmiYcK
+X-Google-Smtp-Source: APXvYqzH83bV69DjxvPpqR88qUPcNAXnoxg3rSOL0GKSs19CJm4Bk+DE6apuwnzKC/GrompeagMjsTnIcbN3M3YHnRU=
+X-Received: by 2002:a37:8547:: with SMTP id h68mr3690991qkd.219.1568727609207;
+ Tue, 17 Sep 2019 06:40:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917133253.GA1210141@arch-dsk-01>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190909101254.24191-1-benjamin.gaignard@st.com>
+ <CA+M3ks7XUt5co5HHBv1LPNB8CAPqDnrn4wr-oQeKOHnGj4Pyjg@mail.gmail.com> <20190917124635.GP3958@phenom.ffwll.local>
+In-Reply-To: <20190917124635.GP3958@phenom.ffwll.local>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Tue, 17 Sep 2019 15:39:58 +0200
+Message-ID: <CA+M3ks4y5jLM_NsSUfPO1KR5r8=xB23=nd43jwjLhixBYV0pbg@mail.gmail.com>
+Subject: Re: [PATCH] drm: sti: fix W=1 warnings
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Dave Airlie <airlied@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>,
+        Maxime Ripard <mripard@kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        David Airlie <airlied@linux.ie>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 04:32:53PM +0300, tinywrkb wrote:
-> On Tue, Sep 17, 2019 at 02:54:34PM +0200, Andrew Lunn wrote:
-> > On Tue, Sep 17, 2019 at 03:41:01PM +0300, tinywrkb wrote:
-> > > On Sun, Sep 15, 2019 at 03:56:52PM +0200, Andrew Lunn wrote:
-> > > > > Tinywrkb confirmed to me in private communication that revert of
-> > > > > 5502b218e001 fixes Ethernet for him on effected system.
-> > > > > 
-> > > > > He also referred me to an old Cubox-i spec that lists 10/100 Ethernet
-> > > > > only for i.MX6 Solo/DualLite variants of Cubox-i. It turns out that
-> > > > > there was a plan to use a different 10/100 PHY for Solo/DualLite
-> > > > > SOMs. This plan never materialized. All SolidRun i.MX6 SOMs use the same
-> > > > > AR8035 PHY that supports 1Gb.
-> > > > > 
-> > > > > Commit 5502b218e001 might be triggering a hardware issue on the affected
-> > > > > Cubox-i. I could not reproduce the issue here with Cubox-i and a Dual
-> > > > > SOM variant running v5.3-rc8. I have no Solo/DualLite variant handy at
-> > > > > the moment.
-> > > > 
-> > > > Could somebody with an affected device show us the output of ethtool
-> > > > with and without 5502b218e001. Does one show 1G has been negotiated,
-> > > > and the other 100Mbps? If this is true, how does it get 100Mbps
-> > > > without that patch? We are missing a piece of the puzzle.
-> > > > 
-> > > > 	Andrew
-> > > 
-> > > linux-test-5.1rc1-a2703de70942-without_bad_commit
-> > > 
-> > > Settings for eth0:
-> > > 	Supported ports: [ TP MII ]
-> > > 	Supported link modes:   10baseT/Half 10baseT/Full
-> > > 	                        100baseT/Half 100baseT/Full
-> > > 	                        1000baseT/Full
-> > 
-> > So this means the local device says it can do 1000Mbps.
-> > 
-> > 
-> > > 	Supported pause frame use: Symmetric
-> > > 	Supports auto-negotiation: Yes
-> > > 	Supported FEC modes: Not reported
-> > > 	Advertised link modes:  10baseT/Half 10baseT/Full
-> > > 	                        100baseT/Half 100baseT/Full
-> > > 	                        1000baseT/Full
-> > 
-> > The link peer can also do 1000Mbps.
-> > 
-> > 
-> > > 	Advertised pause frame use: Symmetric
-> > > 	Advertised auto-negotiation: Yes
-> > > 	Advertised FEC modes: Not reported
-> > > 	Link partner advertised link modes:  10baseT/Half 10baseT/Full
-> > > 	                                     100baseT/Half 100baseT/Full
-> > > 	                                     1000baseT/Full
-> > > 	Link partner advertised pause frame use: Symmetric
-> > > 	Link partner advertised auto-negotiation: Yes
-> > > 	Link partner advertised FEC modes: Not reported
-> > > 	Speed: 100Mb/s
-> > 
-> > Yet they have decided to do 100Mbps. 
-> > 
-> > We need to understand Why? The generic PHY driver would not do this on
-> > its own. So i'm thinking something has poked a PHY register with some
-> > value, and this patch is causing it to be over written.
-> > 
-> > Please can you use mii-tool -v -v to dump the PHY registers in each
-> > case.
-> > 
-> > Thanks
-> > 	Andrew
-> 
-> Here's the output of # mii-tool -v -v eth0 
-> 
-> * linux-test-5.1rc1-a2703de70942-without_bad_commit
-> 
-> Using SIOCGMIIPHY=0x8947
-> eth0: negotiated 100baseTx-FD flow-control, link ok
->   registers for MII PHY 0:
->     3100 796d 004d d072 15e1 c5e1 000f 0000
->     0000 0000 0800 0000 0000 0000 0000 a000
->     0000 0000 0000 f420 082c 0000 04e8 0000
->     3200 3000 0000 063d 0000 0000 0000 0000
->   product info: vendor 00:13:74, model 7 rev 2
->   basic mode:   autonegotiation enabled
->   basic status: autonegotiation complete, link ok
->   capabilities: 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
->   advertising:  100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD flow-control
->   link partner: 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD flow-control
+Le mar. 17 sept. 2019 =C3=A0 14:46, Daniel Vetter <daniel@ffwll.ch> a =C3=
+=A9crit :
+>
+> On Mon, Sep 16, 2019 at 03:16:49PM +0200, Benjamin Gaignard wrote:
+> > Le lun. 9 sept. 2019 =C3=A0 12:29, Benjamin Gaignard
+> > <benjamin.gaignard@st.com> a =C3=A9crit :
+> > >
+> > > Fix warnings when W=3D1.
+> > > No code changes, only clean up in sti internal structures and functio=
+ns
+> > > descriptions.
+> > >
+> > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> >
+> > For my own reference, applied on drm-misc-next
+>
+> Dude seriously no:
+>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Reviewed-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+> Link: https://patchwork.freedesktop.org/patch/msgid/20190909101254.24191-=
+1-benjamin.gaignard@st.com
+>
+> Self-review ain't ok in drm-misc, you need someone to
+> ack/double-check/have a look. And given that you had to fabricate your
+> self-review yourself somehow (the tools really don't do that for you) thi=
+s
+> doesn't look like an accident.
+>
+> Adding other maintainers.
+> -Daniel
+>
 
-This is *not* advertising 1000baseT modes (register 9).
+All my apologies, I have taken a shortcut for this STI patch...
+I will ask to Philippe or Yannick to formally review STI related
+patches on mailing and not only on internal one.
 
-> 
-> 
-> * linux-test-5.1rc1-5502b218e001-with_bad_commit
-> 
-> Using SIOCGMIIPHY=0x8947
-> eth0: negotiated 100baseTx-FD flow-control, link ok
->   registers for MII PHY 0:
->     3100 796d 004d d072 15e1 c5e1 000d 0000
->     0000 0000 0800 0000 0000 0000 0000 a000
->     0000 0000 0000 0000 082c 0000 04e8 0000
->     3200 3000 0000 063d 0000 0000 0000 0000
->   product info: vendor 00:13:74, model 7 rev 2
->   basic mode:   autonegotiation enabled
->   basic status: autonegotiation complete, link ok
->   capabilities: 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD
->   advertising:  100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD flow-control
->   link partner: 1000baseT-FD 100baseTx-FD 100baseTx-HD 10baseT-FD 10baseT-HD flow-control
+Benjamin
 
-Neither is this.
-
-However, the kernel and phylib _thinks_ that it is.  My guess is
-something has rewritten the PHY registers from userspace, rather
-than using ethtool to change the advertisment.  The MAC is still
-trying to operate at 1000Mbps (since that is what phylib resolved)
-yet the link might be actually operating at 100Mbps - but for that
-to happen, we should've seen the link go down and up again.
-
-Odd.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+> >
+> > > ---
+> > >  drivers/gpu/drm/sti/sti_cursor.c |  2 +-
+> > >  drivers/gpu/drm/sti/sti_dvo.c    |  2 +-
+> > >  drivers/gpu/drm/sti/sti_gdp.c    |  2 +-
+> > >  drivers/gpu/drm/sti/sti_hda.c    |  2 +-
+> > >  drivers/gpu/drm/sti/sti_hdmi.c   |  4 ++--
+> > >  drivers/gpu/drm/sti/sti_tvout.c  | 10 +++++-----
+> > >  drivers/gpu/drm/sti/sti_vtg.c    |  2 +-
+> > >  7 files changed, 12 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/s=
+ti_cursor.c
+> > > index 0bf7c332cf0b..ea64c1dcaf63 100644
+> > > --- a/drivers/gpu/drm/sti/sti_cursor.c
+> > > +++ b/drivers/gpu/drm/sti/sti_cursor.c
+> > > @@ -47,7 +47,7 @@ struct dma_pixmap {
+> > >         void *base;
+> > >  };
+> > >
+> > > -/**
+> > > +/*
+> > >   * STI Cursor structure
+> > >   *
+> > >   * @sti_plane:    sti_plane structure
+> > > diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_=
+dvo.c
+> > > index 9e6d5d8b7030..c33d0aaee82b 100644
+> > > --- a/drivers/gpu/drm/sti/sti_dvo.c
+> > > +++ b/drivers/gpu/drm/sti/sti_dvo.c
+> > > @@ -65,7 +65,7 @@ static struct dvo_config rgb_24bit_de_cfg =3D {
+> > >         .awg_fwgen_fct =3D sti_awg_generate_code_data_enable_mode,
+> > >  };
+> > >
+> > > -/**
+> > > +/*
+> > >   * STI digital video output structure
+> > >   *
+> > >   * @dev: driver device
+> > > diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_=
+gdp.c
+> > > index 8e926cd6a1c8..11595c748844 100644
+> > > --- a/drivers/gpu/drm/sti/sti_gdp.c
+> > > +++ b/drivers/gpu/drm/sti/sti_gdp.c
+> > > @@ -103,7 +103,7 @@ struct sti_gdp_node_list {
+> > >         dma_addr_t btm_field_paddr;
+> > >  };
+> > >
+> > > -/**
+> > > +/*
+> > >   * STI GDP structure
+> > >   *
+> > >   * @sti_plane:          sti_plane structure
+> > > diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_=
+hda.c
+> > > index 94e404f13234..3512a94a0fca 100644
+> > > --- a/drivers/gpu/drm/sti/sti_hda.c
+> > > +++ b/drivers/gpu/drm/sti/sti_hda.c
+> > > @@ -230,7 +230,7 @@ static const struct sti_hda_video_config hda_supp=
+orted_modes[] =3D {
+> > >          AWGi_720x480p_60, NN_720x480p_60, VID_ED}
+> > >  };
+> > >
+> > > -/**
+> > > +/*
+> > >   * STI hd analog structure
+> > >   *
+> > >   * @dev: driver device
+> > > diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti=
+_hdmi.c
+> > > index f03d617edc4c..87e34f7a6cfe 100644
+> > > --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> > > +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> > > @@ -333,7 +333,6 @@ static void hdmi_infoframe_reset(struct sti_hdmi =
+*hdmi,
+> > >   * Helper to concatenate infoframe in 32 bits word
+> > >   *
+> > >   * @ptr: pointer on the hdmi internal structure
+> > > - * @data: infoframe to write
+> > >   * @size: size to write
+> > >   */
+> > >  static inline unsigned int hdmi_infoframe_subpack(const u8 *ptr, siz=
+e_t size)
+> > > @@ -543,13 +542,14 @@ static int hdmi_vendor_infoframe_config(struct =
+sti_hdmi *hdmi)
+> > >         return 0;
+> > >  }
+> > >
+> > > +#define HDMI_TIMEOUT_SWRESET  100   /*milliseconds */
+> > > +
+> > >  /**
+> > >   * Software reset of the hdmi subsystem
+> > >   *
+> > >   * @hdmi: pointer on the hdmi internal structure
+> > >   *
+> > >   */
+> > > -#define HDMI_TIMEOUT_SWRESET  100   /*milliseconds */
+> > >  static void hdmi_swreset(struct sti_hdmi *hdmi)
+> > >  {
+> > >         u32 val;
+> > > diff --git a/drivers/gpu/drm/sti/sti_tvout.c b/drivers/gpu/drm/sti/st=
+i_tvout.c
+> > > index e1b3c8cb7287..b1fc77b150da 100644
+> > > --- a/drivers/gpu/drm/sti/sti_tvout.c
+> > > +++ b/drivers/gpu/drm/sti/sti_tvout.c
+> > > @@ -157,9 +157,9 @@ static void tvout_write(struct sti_tvout *tvout, =
+u32 val, int offset)
+> > >   *
+> > >   * @tvout: tvout structure
+> > >   * @reg: register to set
+> > > - * @cr_r:
+> > > - * @y_g:
+> > > - * @cb_b:
+> > > + * @cr_r: red chroma or red order
+> > > + * @y_g: y or green order
+> > > + * @cb_b: blue chroma or blue order
+> > >   */
+> > >  static void tvout_vip_set_color_order(struct sti_tvout *tvout, int r=
+eg,
+> > >                                       u32 cr_r, u32 y_g, u32 cb_b)
+> > > @@ -214,7 +214,7 @@ static void tvout_vip_set_rnd(struct sti_tvout *t=
+vout, int reg, u32 rnd)
+> > >   * @tvout: tvout structure
+> > >   * @reg: register to set
+> > >   * @main_path: main or auxiliary path
+> > > - * @sel_input: selected_input (main/aux + conv)
+> > > + * @video_out: selected_input (main/aux + conv)
+> > >   */
+> > >  static void tvout_vip_set_sel_input(struct sti_tvout *tvout,
+> > >                                     int reg,
+> > > @@ -251,7 +251,7 @@ static void tvout_vip_set_sel_input(struct sti_tv=
+out *tvout,
+> > >   *
+> > >   * @tvout: tvout structure
+> > >   * @reg: register to set
+> > > - * @in_vid_signed: used video input format
+> > > + * @in_vid_fmt: used video input format
+> > >   */
+> > >  static void tvout_vip_set_in_vid_fmt(struct sti_tvout *tvout,
+> > >                 int reg, u32 in_vid_fmt)
+> > > diff --git a/drivers/gpu/drm/sti/sti_vtg.c b/drivers/gpu/drm/sti/sti_=
+vtg.c
+> > > index ef4009f11396..0b17ac8a3faa 100644
+> > > --- a/drivers/gpu/drm/sti/sti_vtg.c
+> > > +++ b/drivers/gpu/drm/sti/sti_vtg.c
+> > > @@ -121,7 +121,7 @@ struct sti_vtg_sync_params {
+> > >         u32 vsync_off_bot;
+> > >  };
+> > >
+> > > -/**
+> > > +/*
+> > >   * STI VTG structure
+> > >   *
+> > >   * @regs: register mapping
+> > > --
+> > > 2.15.0
+> > >
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> http://blog.ffwll.ch
