@@ -2,226 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB6BB4558
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 03:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C034DB454F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 03:44:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391879AbfIQBrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 21:47:47 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60506 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728211AbfIQBrr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 21:47:47 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8H1lDbh184360
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 21:47:45 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v0u13q4k0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 21:47:45 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Tue, 17 Sep 2019 02:47:43 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 17 Sep 2019 02:47:39 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8H1lc2x47055088
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Sep 2019 01:47:38 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 17FD3A405D;
-        Tue, 17 Sep 2019 01:47:38 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72747A4040;
-        Tue, 17 Sep 2019 01:47:37 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 17 Sep 2019 01:47:37 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 24C7EA019A;
-        Tue, 17 Sep 2019 11:47:36 +1000 (AEST)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     alastair@d-silva.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Barrat <fbarrat@linux.ibm.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] ocxl: Provide additional metadata to userspace
-Date:   Tue, 17 Sep 2019 11:43:01 +1000
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190917014307.30485-1-alastair@au1.ibm.com>
-References: <20190917014307.30485-1-alastair@au1.ibm.com>
+        id S2391786AbfIQBoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 21:44:14 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51224 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728211AbfIQBoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 21:44:13 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8A896A131DE1E2C342DD;
+        Tue, 17 Sep 2019 09:44:11 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 17 Sep
+ 2019 09:44:07 +0800
+Subject: Re: [PATCH] quota: fix wrong condition in is_quota_modification()
+To:     Jan Kara <jack@suse.cz>
+CC:     Jan Kara <jack@suse.com>, <chao@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190911093650.35329-1-yuchao0@huawei.com>
+ <20190912100610.GA14773@quack2.suse.cz>
+ <ce4fe030-7ad4-134d-e0c4-77dc2c618b15@huawei.com>
+ <20190916082306.GB2485@quack2.suse.cz>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <744449b0-fd6b-fb10-5f6e-d3d35730cc6c@huawei.com>
+Date:   Tue, 17 Sep 2019 09:44:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091701-0020-0000-0000-0000036DE340
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091701-0021-0000-0000-000021C384CF
-Message-Id: <20190917014307.30485-6-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-16_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=559 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909170019
+In-Reply-To: <20190916082306.GB2485@quack2.suse.cz>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+On 2019/9/16 16:23, Jan Kara wrote:
+> On Mon 16-09-19 10:53:08, Chao Yu wrote:
+>> On 2019/9/12 18:06, Jan Kara wrote:
+>>> On Wed 11-09-19 17:36:50, Chao Yu wrote:
+>>>> diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
+>>>> index dc905a4ff8d7..bd30acad3a7f 100644
+>>>> --- a/include/linux/quotaops.h
+>>>> +++ b/include/linux/quotaops.h
+>>>> @@ -22,7 +22,7 @@ static inline struct quota_info *sb_dqopt(struct super_block *sb)
+>>>>  /* i_mutex must being held */
+>>>>  static inline bool is_quota_modification(struct inode *inode, struct iattr *ia)
+>>>>  {
+>>>> -	return (ia->ia_valid & ATTR_SIZE && ia->ia_size != inode->i_size) ||
+>>>> +	return (ia->ia_valid & ATTR_SIZE && ia->ia_size <= inode->i_size) ||
+>>>>  		(ia->ia_valid & ATTR_UID && !uid_eq(ia->ia_uid, inode->i_uid)) ||
+>>>>  		(ia->ia_valid & ATTR_GID && !gid_eq(ia->ia_gid, inode->i_gid));
+>>>>  }
+>>>
+>>> OK, but your change makes i_size extension not to be quota modification
+>>
+>> I just try to adapt below rules covered with generic/092, which restrict
+>> to not trim preallocate blocks beyond i_size, in that case, filesystem
+>> won't change i_blocks.
+>>
+>> 1) truncate(i_size) will trim all blocks past i_size.
+>> 2) truncate(x) where x > i_size will not trim all blocks past i_size.
+> 
+> Ah, OK.
+> 
+>> However, I'm okay with your change, because there could be filesystems won't
+>> follow above rule.
+> 
+> Yes, I'm concerned that some filesystem may change i_blocks in some corner
+> case when growing inode size (e.g. when it decides to convert inode from
+> inline format to a normal block based format or something like that). So I
+> don't think the optimization is really worth the chance for breakage.
 
-This patch exposes the OpenCAPI device serial number to
-userspace.
+Agreed, :)
 
-It also includes placeholders for the LPC & special purpose
-memory information (which will be populated in a subsequent patch)
-to avoid creating excessive versions of the IOCTL.
+Thanks,
 
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- drivers/misc/ocxl/config.c | 46 ++++++++++++++++++++++++++++++++++++++
- drivers/misc/ocxl/file.c   |  3 ++-
- include/misc/ocxl.h        |  1 +
- include/uapi/misc/ocxl.h   |  9 +++++++-
- 4 files changed, 57 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/misc/ocxl/config.c b/drivers/misc/ocxl/config.c
-index fb0c3b6f8312..a9203c309365 100644
---- a/drivers/misc/ocxl/config.c
-+++ b/drivers/misc/ocxl/config.c
-@@ -71,6 +71,51 @@ static int find_dvsec_afu_ctrl(struct pci_dev *dev, u8 afu_idx)
- 	return 0;
- }
- 
-+/**
-+ * Find a related PCI device (function 0)
-+ * @device: PCI device to match
-+ *
-+ * Returns a pointer to the related device, or null if not found
-+ */
-+static struct pci_dev *get_function_0(struct pci_dev *dev)
-+{
-+	unsigned int devfn = PCI_DEVFN(PCI_SLOT(dev->devfn), 0); // Look for function 0
-+
-+	return pci_get_domain_bus_and_slot(pci_domain_nr(dev->bus),
-+					dev->bus->number, devfn);
-+}
-+
-+static void read_serial(struct pci_dev *dev, struct ocxl_fn_config *fn)
-+{
-+	u32 low, high;
-+	int pos;
-+
-+	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DSN);
-+	if (pos) {
-+		pci_read_config_dword(dev, pos + 0x04, &low);
-+		pci_read_config_dword(dev, pos + 0x08, &high);
-+
-+		fn->serial = low | ((u64)high) << 32;
-+
-+		return;
-+	}
-+
-+	if (PCI_FUNC(dev->devfn) != 0) {
-+		struct pci_dev *related = get_function_0(dev);
-+
-+		if (!related) {
-+			fn->serial = 0;
-+			return;
-+		}
-+
-+		read_serial(related, fn);
-+		pci_dev_put(related);
-+		return;
-+	}
-+
-+	fn->serial = 0;
-+}
-+
- static void read_pasid(struct pci_dev *dev, struct ocxl_fn_config *fn)
- {
- 	u16 val;
-@@ -208,6 +253,7 @@ int ocxl_config_read_function(struct pci_dev *dev, struct ocxl_fn_config *fn)
- 	int rc;
- 
- 	read_pasid(dev, fn);
-+	read_serial(dev, fn);
- 
- 	rc = read_dvsec_tl(dev, fn);
- 	if (rc) {
-diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
-index 2870c25da166..08f6f594a11d 100644
---- a/drivers/misc/ocxl/file.c
-+++ b/drivers/misc/ocxl/file.c
-@@ -98,13 +98,14 @@ static long afu_ioctl_get_metadata(struct ocxl_context *ctx,
- 
- 	memset(&arg, 0, sizeof(arg));
- 
--	arg.version = 0;
-+	arg.version = 1;
- 
- 	arg.afu_version_major = ctx->afu->config.version_major;
- 	arg.afu_version_minor = ctx->afu->config.version_minor;
- 	arg.pasid = ctx->pasid;
- 	arg.pp_mmio_size = ctx->afu->config.pp_mmio_stride;
- 	arg.global_mmio_size = ctx->afu->config.global_mmio_size;
-+	arg.serial = ctx->afu->fn->config.serial;
- 
- 	if (copy_to_user(uarg, &arg, sizeof(arg)))
- 		return -EFAULT;
-diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
-index a1897737908d..da75db149e6c 100644
---- a/include/misc/ocxl.h
-+++ b/include/misc/ocxl.h
-@@ -46,6 +46,7 @@ struct ocxl_fn_config {
- 	int dvsec_afu_info_pos; /* offset of the AFU information DVSEC */
- 	s8 max_pasid_log;
- 	s8 max_afu_index;
-+	u64 serial;
- };
- 
- enum ocxl_endian {
-diff --git a/include/uapi/misc/ocxl.h b/include/uapi/misc/ocxl.h
-index 6d29a60a896a..d4c6bf10580c 100644
---- a/include/uapi/misc/ocxl.h
-+++ b/include/uapi/misc/ocxl.h
-@@ -45,7 +45,14 @@ struct ocxl_ioctl_metadata {
- 
- 	/* End version 0 fields */
- 
--	__u64 reserved[13]; /* Total of 16*u64 */
-+	// Version 1 fields
-+	__u64 lpc_mem_size;
-+	__u64 special_purpose_mem_size;
-+	__u64 serial;		// Device serial number
-+
-+	// End version 1 fields
-+
-+	__u64 reserved[10]; // Total of 16*u64
- };
- 
- struct ocxl_ioctl_p9_wait {
--- 
-2.21.0
-
+> 
+> 								Honza
+> 
