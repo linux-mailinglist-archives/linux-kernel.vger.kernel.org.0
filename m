@@ -2,107 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 081D3B5631
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 21:34:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F58EB563F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 21:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfIQTeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 15:34:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53791 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726583AbfIQTeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 15:34:13 -0400
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B57828666C
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 19:34:12 +0000 (UTC)
-Received: by mail-wr1-f70.google.com with SMTP id q10so1643249wro.22
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 12:34:12 -0700 (PDT)
+        id S1727699AbfIQTgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 15:36:10 -0400
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:37901 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727337AbfIQTgK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 15:36:10 -0400
+Received: by mail-pl1-f202.google.com with SMTP id x5so2732180pln.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 12:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=2NRtuvKbt7hoCUKdcO2DQz0SKjqBn1iBiRT69g1zRIM=;
+        b=lz74ltziFu7N9FdWM2Wk+leFwy2lbrUMLopHSlydWLgsiEG7PXi/086swTVSMcdu5F
+         r1nmdQsBiezhx7jBZb+kdnZp8YDjEAGrkuT+/hvcAp4MSxy7SWFBXkGGTQT9O0Ii7+Sc
+         4ThlfTDBVQQ0JJvS/kiOG3AJzgeQw78nnQaYieDZ7ReIyQ8+SkCI4VzHcDWJu7jTLK/5
+         wkAmi2Qexp0DuMjJROd05a/tqULAtaLuOelQmiYHx/vbYFg6DszOY4lrSNW2G/T3JLri
+         Z8izXlv+5yWGFc0/9APv/DPwvXPXZbBv9IczXa6UGUhkApS6XEY+2LrYBPoFyFcexGvJ
+         kmFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oyRZ9yRbWvPLYJ7xJ/RWX6c9dvFuQeGVTO5kSpbtosY=;
-        b=reNOtJvh1KMpBYr3Zi5pLcZ8Y6Vuy/YjSWQ0joJUsUsLyWX8X6TJf6aG6i2MZLflhq
-         Z2EgaaTlg0T99KVPeLNzggFkzVHK4CDyxRTHHxcdNKe5JUfyaXE6FdXzx1jqDaeB5vJ7
-         tqpXb/yt9BjRY7qNtItxD5KnWYKZjWehN3RB6b2xzluLoWPJ63cULOvi7j2W05NwASls
-         tWKPMRT/kwSsHWNuaRaCjPUmx8RiR3EMVnudBQVUv+wNhuTFBjY7If7ELmcgfFznifH2
-         2Iu//R4+wS4SJ2fbTJcJ9sIAlvYj3lh6Tu72QyEQkFvj09dsXhk7ZsQk7bpMixbcx8fa
-         ARmA==
-X-Gm-Message-State: APjAAAUQucGu2Y5MmkN5XcICRrO23R9V5qBHPkUa1Srn3yJTr4SUebws
-        rgDiLPV/7r69p/49qRVMSU5zDpo6Es5cxO3SiqG4is1Y9KSuyV32We3hN8D18WT901BGvxnfF3P
-        oXW0utzvo68UwpAJHbST0xxsh
-X-Received: by 2002:a1c:f30d:: with SMTP id q13mr4415673wmq.60.1568748851292;
-        Tue, 17 Sep 2019 12:34:11 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx3xHb0JukXUbTTMqcE+trhGmnmjzDMa5Z3XBlqh10WpRucLlMRP54wV5iwJ6ivbZUAj4q45A==
-X-Received: by 2002:a1c:f30d:: with SMTP id q13mr4415656wmq.60.1568748850969;
-        Tue, 17 Sep 2019 12:34:10 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c111:7acd:8e1e:ee6f? ([2001:b07:6468:f312:c111:7acd:8e1e:ee6f])
-        by smtp.gmail.com with ESMTPSA id a18sm6896472wrh.25.2019.09.17.12.34.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2019 12:34:10 -0700 (PDT)
-Subject: Re: [PATCH] kvm: x86: Use DEFINE_DEBUGFS_ATTRIBUTE for debugfs files
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Yi Wang <wang.yi59@zte.com.cn>, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn
-References: <1563780839-14739-1-git-send-email-wang.yi59@zte.com.cn>
- <31eec57f-2bc8-0ea0-e5fb-6b21ce902aae@redhat.com>
- <20190917181240.GA1572563@kroah.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <533b250a-56c4-34c9-c294-15ee19ed4e65@redhat.com>
-Date:   Tue, 17 Sep 2019 21:34:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190917181240.GA1572563@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=2NRtuvKbt7hoCUKdcO2DQz0SKjqBn1iBiRT69g1zRIM=;
+        b=NLdz97uc8ICv2kw6SAD7q09mszJgWNzyaHuyd7rgx0Q2f5RMNRLDcn4BY9dWNSc/Vc
+         s3CJ6SKiKkutatiTsOLA8bNDGA4+NXg/T8fZUVzAiRkEyvG5KLopeGn20OxDf1ogdMNX
+         5ZpyBT5P3YLjEgLAAQGlHxjkNf5FMzW56uDVWq+tvwCWXG6rWk9WCmYjWv1yagYChLtm
+         bQg8HdVgfZfsYKjzbuzu86dQtsDwUwzjcgAhJX+JcJGkgKsJNBvAVG7/LpapbeK0MG0d
+         S4NMbQg8h2lmXInOfC+J1Hu0uA2tBpxnhNdnrs+5nB5cN8NyWbH1jhIof80X84dx4Ngm
+         DrGw==
+X-Gm-Message-State: APjAAAXIFB9oA2JqMQrLCdbSfK4M0dQUfeLoqmZ01B5rtMj9sFmwZ2Gj
+        rm1biFoAJvwB92c2Q+owE1SY0z+pEMg=
+X-Google-Smtp-Source: APXvYqwiWxhxuJwyT4PvGNQH+mApcPQsn3EAU6pp2NpiIIv9fUdf+EdNR0rdJjGoFbPDAc3b1T/Z8kMSwOk=
+X-Received: by 2002:a65:6901:: with SMTP id s1mr472083pgq.338.1568748967798;
+ Tue, 17 Sep 2019 12:36:07 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 12:35:33 -0700
+In-Reply-To: <CACGdZY+iviCmTc1fQriWSBbxhywGiFj1+f6RJ1AXpE6i=O_i-w@mail.gmail.com>
+Message-Id: <20190917193533.34984-1-khazhy@google.com>
+Mime-Version: 1.0
+References: <CACGdZY+iviCmTc1fQriWSBbxhywGiFj1+f6RJ1AXpE6i=O_i-w@mail.gmail.com>
+X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
+Subject: [PATCH v4] fuse: kmemcg account fs data
+From:   Khazhismel Kumykov <khazhy@google.com>
+To:     miklos@szeredi.hu
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shakeelb@google.com, Khazhismel Kumykov <khazhy@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/09/19 20:12, Greg Kroah-Hartman wrote:
-> On Tue, Sep 17, 2019 at 07:18:33PM +0200, Paolo Bonzini wrote:
->> On 22/07/19 09:33, Yi Wang wrote:
->>> We got these coccinelle warning:
->>> ./arch/x86/kvm/debugfs.c:23:0-23: WARNING: vcpu_timer_advance_ns_fops
->>> should be defined with DEFINE_DEBUGFS_ATTRIBUTE
->>> ./arch/x86/kvm/debugfs.c:32:0-23: WARNING: vcpu_tsc_offset_fops should
->>> be defined with DEFINE_DEBUGFS_ATTRIBUTE
->>> ./arch/x86/kvm/debugfs.c:41:0-23: WARNING: vcpu_tsc_scaling_fops should
->>> be defined with DEFINE_DEBUGFS_ATTRIBUTE
->>> ./arch/x86/kvm/debugfs.c:49:0-23: WARNING: vcpu_tsc_scaling_frac_fops
->>> should be defined with DEFINE_DEBUGFS_ATTRIBUTE
->>>
->>> Use DEFINE_DEBUGFS_ATTRIBUTE() rather than DEFINE_SIMPLE_ATTRIBUTE()
->>> to fix this.
->>>
->>> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
->>
->> It sucks though that you have to use a function with "unsafe" in the name.
-> 
-> I agree, why make this change?
-> 
->> Greg, is the patch doing the right thing?
-> 
-> I can't tell.  What coccinelle script generated this patch?
+account per-file, dentry, and inode data
 
-Seems to be scripts/coccinelle/api/debugfs/debugfs_simple_attr.cocci.
+blockdev/superblock and temporary per-request data was left alone, as
+this usually isn't accounted
 
-//# Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-//# imposes some significant overhead as compared to
-//# DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+---
+ fs/fuse/dir.c   | 3 ++-
+ fs/fuse/file.c  | 5 +++--
+ fs/fuse/inode.c | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-Paolo
-
-> thanks,
-> 
-> greg k-h
-> 
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 58557d4817e9..d572c900bb0f 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -279,7 +279,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+ #if BITS_PER_LONG < 64
+ static int fuse_dentry_init(struct dentry *dentry)
+ {
+-	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry), GFP_KERNEL);
++	dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry),
++				   GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
+ 
+ 	return dentry->d_fsdata ? 0 : -ENOMEM;
+ }
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 8c7578b95d2c..0f0225686aee 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -63,12 +63,13 @@ struct fuse_file *fuse_file_alloc(struct fuse_conn *fc)
+ {
+ 	struct fuse_file *ff;
+ 
+-	ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL);
++	ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL_ACCOUNT);
+ 	if (unlikely(!ff))
+ 		return NULL;
+ 
+ 	ff->fc = fc;
+-	ff->release_args = kzalloc(sizeof(*ff->release_args), GFP_KERNEL);
++	ff->release_args = kzalloc(sizeof(*ff->release_args),
++				   GFP_KERNEL_ACCOUNT);
+ 	if (!ff->release_args) {
+ 		kfree(ff);
+ 		return NULL;
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 3d598a5bb5b5..e040e2a2b621 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -66,7 +66,7 @@ static struct file_system_type fuseblk_fs_type;
+ 
+ struct fuse_forget_link *fuse_alloc_forget(void)
+ {
+-	return kzalloc(sizeof(struct fuse_forget_link), GFP_KERNEL);
++	return kzalloc(sizeof(struct fuse_forget_link), GFP_KERNEL_ACCOUNT);
+ }
+ 
+ static struct inode *fuse_alloc_inode(struct super_block *sb)
+-- 
+2.23.0.237.gc6a4ce50a0-goog
 
