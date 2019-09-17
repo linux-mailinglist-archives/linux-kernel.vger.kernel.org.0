@@ -2,157 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B46DAB554E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 20:30:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE97B5557
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 20:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbfIQSaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 14:30:15 -0400
-Received: from mail.efficios.com ([167.114.142.138]:37512 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729277AbfIQSaM (ORCPT
+        id S1727368AbfIQSbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 14:31:31 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:39308 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726505AbfIQSbb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 14:30:12 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6E67B1D4E13;
-        Tue, 17 Sep 2019 14:30:11 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id cC-ngBrkweCl; Tue, 17 Sep 2019 14:30:11 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0AE0B1D4E0F;
-        Tue, 17 Sep 2019 14:30:11 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0AE0B1D4E0F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1568745011;
-        bh=bsQbUCGG+66P6uaoaenq7Ys0bJ2R9XxktPLL9tZTcj4=;
-        h=From:To:Date:Message-Id;
-        b=kOocle93YMUW6RJIUFX50Gb33i9DsLfrZo0YA2TKHKcmS2wpAn0NzVmvMa5mMVCTQ
-         5CxU5jGnn8XQjRYqCqPebd7UdVvxLrbF0SonvnePRwi7E9IAaMwECq0pF8ZpONqOhh
-         /48LVnj8LeG8gaNOBicOdf9Gg/RFcHnTDPtwRG110e3vF+YwEsDS7RwFuUarrIGplY
-         MaihncqTqKSPWsjCsks/57+wrGntUZsYXQT2BH4FgMeU5tCYpGrEHAJ0Ku7mNkK7KL
-         bHIZ/8D+punyNkHbc83c0cMNmntY3biax/YDAzAU1zF7BJIl/vwPqXgskKWXxK6IwB
-         DF1mv0scILPMQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 3720i6ynFqVc; Tue, 17 Sep 2019 14:30:10 -0400 (EDT)
-Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id 80ED11D4DE6;
-        Tue, 17 Sep 2019 14:30:10 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
-        linux-api@vger.kernel.org, stable@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        "Tommi T . Rantala" <tommi.t.rantala@nokia.com>,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: [PATCH for 5.4 3/3] rseq/selftests: Fix: Namespace gettid() for compatibility with glibc 2.30
-Date:   Tue, 17 Sep 2019 14:29:59 -0400
-Message-Id: <20190917182959.16333-4-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190917182959.16333-1-mathieu.desnoyers@efficios.com>
-References: <20190917182959.16333-1-mathieu.desnoyers@efficios.com>
+        Tue, 17 Sep 2019 14:31:31 -0400
+Received: (qmail 7234 invoked by uid 2102); 17 Sep 2019 14:31:30 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 17 Sep 2019 14:31:30 -0400
+Date:   Tue, 17 Sep 2019 14:31:30 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+7fa38a608b1075dfd634@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
+        <kai.heng.feng@canonical.com>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <mans@mansr.com>, <oneukum@suse.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: general protection fault in usb_set_interface
+In-Reply-To: <000000000000e08e490592c3b2c4@google.com>
+Message-ID: <Pine.LNX.4.44L0.1909171428160.1590-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-glibc 2.30 introduces gettid() in public headers, which clashes with
-the internal static definition within rseq selftests.
+On Tue, 17 Sep 2019, syzbot wrote:
 
-Rename gettid() to rseq_gettid() to eliminate this symbol name clash.
+> Hello,
+> 
+> syzbot tried to test the proposed patch but build/boot failed:
 
-Reported-by: Tommi T. Rantala <tommi.t.rantala@nokia.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Tommi T. Rantala <tommi.t.rantala@nokia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Paul Turner <pjt@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: <stable@vger.kernel.org>	# v4.18+
----
- tools/testing/selftests/rseq/param_test.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+Oops.  Typo.
 
-diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
-index eec2663261f2..e8a657a5f48a 100644
---- a/tools/testing/selftests/rseq/param_test.c
-+++ b/tools/testing/selftests/rseq/param_test.c
-@@ -15,7 +15,7 @@
- #include <errno.h>
- #include <stddef.h>
+#syz test: https://github.com/google/kasan.git f0df5c1b
+
+ drivers/media/usb/usbvision/usbvision-video.c |   27 ++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
+
+Index: usb-devel/drivers/media/usb/usbvision/usbvision-video.c
+===================================================================
+--- usb-devel.orig/drivers/media/usb/usbvision/usbvision-video.c
++++ usb-devel/drivers/media/usb/usbvision/usbvision-video.c
+@@ -314,6 +314,10 @@ static int usbvision_v4l2_open(struct fi
+ 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
+ 		return -ERESTARTSYS;
  
--static inline pid_t gettid(void)
-+static inline pid_t rseq_gettid(void)
++	if (usbvision->remove_pending) {
++		err_code = -ENODEV;
++		goto unlock;
++	}
+ 	if (usbvision->user) {
+ 		err_code = -EBUSY;
+ 	} else {
+@@ -377,6 +381,7 @@ unlock:
+ static int usbvision_v4l2_close(struct file *file)
  {
- 	return syscall(__NR_gettid);
- }
-@@ -373,11 +373,12 @@ void *test_percpu_spinlock_thread(void *arg)
- 		rseq_percpu_unlock(&data->lock, cpu);
- #ifndef BENCHMARK
- 		if (i != 0 && !(i % (reps / 10)))
--			printf_verbose("tid %d: count %lld\n", (int) gettid(), i);
-+			printf_verbose("tid %d: count %lld\n",
-+				       (int) rseq_gettid(), i);
- #endif
- 	}
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && thread_data->reg &&
- 	    rseq_unregister_current_thread())
- 		abort();
-@@ -454,11 +455,12 @@ void *test_percpu_inc_thread(void *arg)
- 		} while (rseq_unlikely(ret));
- #ifndef BENCHMARK
- 		if (i != 0 && !(i % (reps / 10)))
--			printf_verbose("tid %d: count %lld\n", (int) gettid(), i);
-+			printf_verbose("tid %d: count %lld\n",
-+				       (int) rseq_gettid(), i);
- #endif
- 	}
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && thread_data->reg &&
- 	    rseq_unregister_current_thread())
- 		abort();
-@@ -605,7 +607,7 @@ void *test_percpu_list_thread(void *arg)
- 	}
+ 	struct usb_usbvision *usbvision = video_drvdata(file);
++	int r;
  
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && rseq_unregister_current_thread())
- 		abort();
+ 	PDEBUG(DBG_IO, "close");
  
-@@ -796,7 +798,7 @@ void *test_percpu_buffer_thread(void *arg)
- 	}
+@@ -391,9 +396,10 @@ static int usbvision_v4l2_close(struct f
+ 	usbvision_scratch_free(usbvision);
  
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && rseq_unregister_current_thread())
- 		abort();
+ 	usbvision->user--;
++	r = usbvision->remove_pending;
+ 	mutex_unlock(&usbvision->v4l2_lock);
  
-@@ -1011,7 +1013,7 @@ void *test_percpu_memcpy_buffer_thread(void *arg)
- 	}
+-	if (usbvision->remove_pending) {
++	if (r) {
+ 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
+ 		usbvision_release(usbvision);
+ 		return 0;
+@@ -453,6 +459,9 @@ static int vidioc_querycap(struct file *
+ {
+ 	struct usb_usbvision *usbvision = video_drvdata(file);
  
- 	printf_verbose("tid %d: number of rseq abort: %d, signals delivered: %u\n",
--		       (int) gettid(), nr_abort, signals_delivered);
-+		       (int) rseq_gettid(), nr_abort, signals_delivered);
- 	if (!opt_disable_rseq && rseq_unregister_current_thread())
- 		abort();
++	if (!usbvision->dev)
++		return -ENODEV;
++
+ 	strscpy(vc->driver, "USBVision", sizeof(vc->driver));
+ 	strscpy(vc->card,
+ 		usbvision_device_data[usbvision->dev_model].model_string,
+@@ -1073,6 +1082,11 @@ static int usbvision_radio_open(struct f
  
--- 
-2.17.1
+ 	if (mutex_lock_interruptible(&usbvision->v4l2_lock))
+ 		return -ERESTARTSYS;
++
++	if (usbvision->remove_pending) {
++		err_code = -ENODEV;
++		goto out;
++	}
+ 	err_code = v4l2_fh_open(file);
+ 	if (err_code)
+ 		goto out;
+@@ -1105,21 +1119,24 @@ out:
+ static int usbvision_radio_close(struct file *file)
+ {
+ 	struct usb_usbvision *usbvision = video_drvdata(file);
++	int r;
+ 
+ 	PDEBUG(DBG_IO, "");
+ 
+ 	mutex_lock(&usbvision->v4l2_lock);
+ 	/* Set packet size to 0 */
+ 	usbvision->iface_alt = 0;
+-	usb_set_interface(usbvision->dev, usbvision->iface,
++	if (usbvision->dev)
++		usb_set_interface(usbvision->dev, usbvision->iface,
+ 				    usbvision->iface_alt);
+ 
+ 	usbvision_audio_off(usbvision);
+ 	usbvision->radio = 0;
+ 	usbvision->user--;
++	r = usbvision->remove_pending;
+ 	mutex_unlock(&usbvision->v4l2_lock);
+ 
+-	if (usbvision->remove_pending) {
++	if (r) {
+ 		printk(KERN_INFO "%s: Final disconnect\n", __func__);
+ 		v4l2_fh_release(file);
+ 		usbvision_release(usbvision);
+@@ -1551,6 +1568,7 @@ err_usb:
+ static void usbvision_disconnect(struct usb_interface *intf)
+ {
+ 	struct usb_usbvision *usbvision = to_usbvision(usb_get_intfdata(intf));
++	int u;
+ 
+ 	PDEBUG(DBG_PROBE, "");
+ 
+@@ -1567,13 +1585,14 @@ static void usbvision_disconnect(struct
+ 	v4l2_device_disconnect(&usbvision->v4l2_dev);
+ 	usbvision_i2c_unregister(usbvision);
+ 	usbvision->remove_pending = 1;	/* Now all ISO data will be ignored */
++	u = usbvision->user;
+ 
+ 	usb_put_dev(usbvision->dev);
+ 	usbvision->dev = NULL;	/* USB device is no more */
+ 
+ 	mutex_unlock(&usbvision->v4l2_lock);
+ 
+-	if (usbvision->user) {
++	if (u) {
+ 		printk(KERN_INFO "%s: In use, disconnect pending\n",
+ 		       __func__);
+ 		wake_up_interruptible(&usbvision->wait_frame);
+
 
