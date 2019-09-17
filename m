@@ -2,124 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3200B454C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 03:42:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22E18B4552
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 03:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391738AbfIQBmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Sep 2019 21:42:36 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2226 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728211AbfIQBmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Sep 2019 21:42:35 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2CBF6CCC4611D44823A1;
-        Tue, 17 Sep 2019 09:42:34 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 17 Sep
- 2019 09:42:33 +0800
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: do not select same victim right
- again
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190909012532.20454-1-jaegeuk@kernel.org>
- <69933b7f-48cc-47f9-ba6f-b5ca8f733cba@huawei.com>
- <20190909080654.GD21625@jaegeuk-macbookpro.roam.corp.google.com>
- <97237da2-897a-8420-94de-812e94aa751f@huawei.com>
- <20190909120443.GA31108@jaegeuk-macbookpro.roam.corp.google.com>
- <27725e65-53fe-5731-0201-9959b8ef6b49@huawei.com>
- <20190916153736.GA2493@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <ab9561c9-db27-2967-e6fc-accd9bc58747@huawei.com>
-Date:   Tue, 17 Sep 2019 09:42:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2391818AbfIQBrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Sep 2019 21:47:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56096 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728211AbfIQBrR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Sep 2019 21:47:17 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8H1lEvv112461
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 21:47:15 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v2myy9t1b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 21:47:15 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Tue, 17 Sep 2019 02:47:12 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 17 Sep 2019 02:47:08 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8H1l7jC45416846
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Sep 2019 01:47:07 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 49434A4051;
+        Tue, 17 Sep 2019 01:47:07 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E880CA4057;
+        Tue, 17 Sep 2019 01:47:06 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Sep 2019 01:47:06 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id B61F7A019A;
+        Tue, 17 Sep 2019 11:47:04 +1000 (AEST)
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     alastair@d-silva.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Allison Randal <allison@lohutok.net>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] ocxl: Allow external drivers to access LPC memory
+Date:   Tue, 17 Sep 2019 11:42:56 +1000
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190916153736.GA2493@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19091701-0016-0000-0000-000002ACE441
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19091701-0017-0000-0000-0000330D84F8
+Message-Id: <20190917014307.30485-1-alastair@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-16_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=477 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909170019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/16 23:37, Jaegeuk Kim wrote:
-> On 09/16, Chao Yu wrote:
->> On 2019/9/9 20:04, Jaegeuk Kim wrote:
->>> On 09/09, Chao Yu wrote:
->>>> On 2019/9/9 16:06, Jaegeuk Kim wrote:
->>>>> On 09/09, Chao Yu wrote:
->>>>>> On 2019/9/9 9:25, Jaegeuk Kim wrote:
->>>>>>> GC must avoid select the same victim again.
->>>>>>
->>>>>> Blocks in previous victim will occupy addition free segment, I doubt after this
->>>>>> change, FGGC may encounter out-of-free space issue more frequently.
->>>>>
->>>>> Hmm, actually this change seems wrong by sec_usage_check().
->>>>> We may be able to avoid this only in the suspicious loop?
->>>>>
->>>>> ---
->>>>>  fs/f2fs/gc.c | 2 +-
->>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>> index e88f98ddf396..5877bd729689 100644
->>>>> --- a/fs/f2fs/gc.c
->>>>> +++ b/fs/f2fs/gc.c
->>>>> @@ -1326,7 +1326,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->>>>>  		round++;
->>>>>  	}
->>>>>  
->>>>> -	if (gc_type == FG_GC)
->>>>> +	if (gc_type == FG_GC && seg_freed)
->>>>
->>>> That's original solution Sahitya provided to avoid infinite loop of GC, but I
->>>> suggest to find the root cause first, then we added .invalid_segmap for that
->>>> purpose.
->>>
->>> I've checked the Sahitya's patch. So, it seems the problem can happen due to
->>> is_alive or atomic_file.
->>
->> For some conditions, this doesn't help, for example, two sections contain the
->> same fewest valid blocks, it will cause to loop selecting them if it fails to
->> migrate blocks.
->>
->> How about keeping it as it is to find potential bug.
-> 
-> I think it'd be fine to merge this. Could you check the above scenario in more
-> detail?
+From: Alastair D'Silva <alastair@d-silva.org>
 
-I haven't saw this in real scenario yet.
+This series provides the prerequisite infrastructure to allow
+external drivers to map & access OpenCAPI LPC memory.
 
-What I mean is if there is a bug (maybe in is_alive()) failing us to GC on one
-section, when that bug happens in two candidates, there could be the same
-condition that GC will run into loop (select A, fail to migrate; select B, fail
-to migrate, select A...).
+Alastair D'Silva (5):
+  powerpc: Add OPAL calls for LPC memory alloc/release
+  powerpc: Map & release OpenCAPI LPC memory
+  ocxl: Tally up the LPC memory on a link & allow it to be mapped
+  ocxl: Add functions to map/unmap LPC memory
+  ocxl: Provide additional metadata to userspace
 
-But I guess the benefit of this change is, if FGGC fails to migrate block due to
-i_gc_rwsem race, selecting another section and later retrying previous one may
-avoid lock race, right?
+ arch/powerpc/include/asm/opal-api.h        |  4 +-
+ arch/powerpc/include/asm/opal.h            |  3 ++
+ arch/powerpc/include/asm/pnv-ocxl.h        |  2 +
+ arch/powerpc/platforms/powernv/ocxl.c      | 42 +++++++++++++++
+ arch/powerpc/platforms/powernv/opal-call.c |  2 +
+ drivers/misc/ocxl/config.c                 | 50 ++++++++++++++++++
+ drivers/misc/ocxl/core.c                   | 59 +++++++++++++++++++++
+ drivers/misc/ocxl/file.c                   |  3 +-
+ drivers/misc/ocxl/link.c                   | 61 ++++++++++++++++++++++
+ drivers/misc/ocxl/ocxl_internal.h          | 48 +++++++++++++++++
+ include/misc/ocxl.h                        | 19 +++++++
+ include/uapi/misc/ocxl.h                   |  9 +++-
+ 12 files changed, 299 insertions(+), 3 deletions(-)
 
-Thanks,
+-- 
+2.21.0
 
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>>  		sbi->cur_victim_sec = NULL_SEGNO;
->>>>>  
->>>>>  	if (sync)
->>>>>
->>> .
->>>
-> .
-> 
