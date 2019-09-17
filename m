@@ -2,121 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE0FB54C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:59:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19737B54B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:58:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731506AbfIQR6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 13:58:38 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37623 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfIQR6h (ORCPT
+        id S1731404AbfIQR5l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 13:57:41 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:33722 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbfIQR5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:58:37 -0400
-Received: by mail-oi1-f194.google.com with SMTP id i16so3683757oie.4;
-        Tue, 17 Sep 2019 10:58:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7dX3IYhgH+re5ug66qG47rfti7dbGb0gT2E31r+ps6E=;
-        b=f8oG1j4rhHbS/tTZSFl2YvWItOWxK08+3xULzjQsHnQTPdGVQgWOwJr+qWTW4DCwpO
-         7HVvvg5oUwnjbY1WmEbaLZXmys8HNcnbxjqlB+5PPc1Zuhw7OzquV+vdljC7D38d6AaK
-         mJOjcEU6f2GxaHhBNcgj1Zao7PziAEIpUB7INlGQC7yLfMib2f9HYRIXXFJPIRUmizHo
-         qMvO/PvCFw414K1mMKntUhKtULzvXf2HMMeakt/VFYyFCqFmgEoNuUNNiq7mEfSqhd3Y
-         S79wJ2womXYl2w/PP4ky8wfJrxLrciB0ANC66Xjae270Pte4bCfz3B4cCjOesnbpHFVi
-         TjLg==
-X-Gm-Message-State: APjAAAWpjLLZr9W3sUzcjyIJl0x8pRDj6e1yicZddHyG8+fW6Bpx3gDk
-        lZ6kG4iP1HWunDkyt4mMMw==
-X-Google-Smtp-Source: APXvYqz6w6TOJ/O28uXBl30U4/ItHlYTLyX3bChwJpVDFlJIQYgFMGxvKNq5LJV/Lja3JMrrIhJ3sw==
-X-Received: by 2002:aca:52cd:: with SMTP id g196mr4827415oib.163.1568743116659;
-        Tue, 17 Sep 2019 10:58:36 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g4sm850712otj.42.2019.09.17.10.58.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 10:58:35 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 12:58:35 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com
-Subject: Re: [PATCH v4 2/9] dt-bindings: display, renesas,du: Document cmms
- property
-Message-ID: <20190917175835.GA6900@bogus>
-References: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
- <20190906135436.10622-3-jacopo+renesas@jmondi.org>
- <2bcbb30c-db36-38a1-dcff-4f4269c11ad6@ideasonboard.com>
+        Tue, 17 Sep 2019 13:57:39 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8HHvYbk113127;
+        Tue, 17 Sep 2019 12:57:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568743054;
+        bh=6Z2cBqLsJ0iVJLVLuc89fOae+4wo06v0RLtO0VcnawI=;
+        h=From:To:CC:Subject:Date;
+        b=GS1CC/tzJMOmOQwapiZKKmPeJRCZmV9pmBdtb6CjZaaBdDcw+qCFp1Mx6vIwMFcCG
+         IHYcb6v2ZVbz2CB6modbSt/lZrMYLI92BBcztXdylNcspxiBGlwISoMxaQ7u19T6xg
+         fdbNyOXfIcMt1IAzJZs/H8ayUDYcnmtqOCrdiqvg=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8HHvYBt116911
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Sep 2019 12:57:34 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 17
+ Sep 2019 12:57:33 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 17 Sep 2019 12:57:30 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8HHvX2K109328;
+        Tue, 17 Sep 2019 12:57:33 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v6 1/9] leds: multicolor: Add sysfs interface definition
+Date:   Tue, 17 Sep 2019 12:59:29 -0500
+Message-ID: <20190917175937.13872-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2bcbb30c-db36-38a1-dcff-4f4269c11ad6@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2019 at 05:06:33PM +0100, Kieran Bingham wrote:
-> Hi Jacopo,
-> 
-> On 06/09/2019 14:54, Jacopo Mondi wrote:
-> > Document the newly added 'cmms' property which accepts a list of phandle
-> > and channel index pairs that point to the CMM units available for each
-> > Display Unit output video channel.
-> > 
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> >  Documentation/devicetree/bindings/display/renesas,du.txt | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-> > index c97dfacad281..1773b0a2f54f 100644
-> > --- a/Documentation/devicetree/bindings/display/renesas,du.txt
-> > +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-> > @@ -45,6 +45,10 @@ Required Properties:
-> >      instance that serves the DU channel, and the channel index identifies the
-> >      LIF instance in that VSP.
-> > 
-> > +  - renesas,cmms: A list of phandles to the CMM instances present in the SoC,
-> > +    one for each available DU channel. The property shall not be specified for
-> > +    SoCs that do not provide any CMM (such as V3M and V3H).
-> > +
-> >  Required nodes:
-> > 
-> >  The connections to the DU output video ports are modeled using the OF graph
-> > @@ -91,6 +95,7 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
-> >  			 <&cpg CPG_MOD 721>;
-> >  		clock-names = "du.0", "du.1", "du.2", "du.3";
-> >  		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
-> > +		renesas,cmms = <&cmm0 &cmm1 &cmm2 &cmm3>;
-> 
-> Should these be comma separated in the same fashion as the vsps are
-> separated?
+Add a documentation of LED Multicolor LED class specific
+sysfs attributes.
 
-Yes. Doesn't matter from a dtb standpoint, but the schema are going to 
-be stricter here. Bracket each unit.
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
 
-With that,
+v6 - Removed color_mix and color_id files
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+ .../ABI/testing/sysfs-class-led-multicolor    | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
 
-> 
-> I don't really mind either way though ...
-> 
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> 
-> > 
-> >  		ports {
-> >  			#address-cells = <1>;
-> > --
-> > 2.23.0
-> > 
-> 
+diff --git a/Documentation/ABI/testing/sysfs-class-led-multicolor b/Documentation/ABI/testing/sysfs-class-led-multicolor
+new file mode 100644
+index 000000000000..b8f459f97919
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-led-multicolor
+@@ -0,0 +1,43 @@
++What:		/sys/class/leds/<led>/brightness
++Date:		Sept 2019
++KernelVersion:	5.5
++Contact:	Dan Murphy <dmurphy@ti.com>
++Description:	read/write
++		Writing to this file will update all LEDs within the group to a
++		calculated percentage of what each color LED intensity is set
++		to. The percentage is calculated via the equation below:
++
++		led_brightness = requested_value * led_color_intensity/led_color_max_intensity
++
++		For additional details please refer to
++		Documentation/leds/leds-class-multicolor.rst.
++
++		The value of the color is from 0 to
++		/sys/class/leds/<led>/max_brightness.
++
++What:		/sys/class/leds/<led>/colors/<led_color>/intensity
++Date:		Sept 2019
++KernelVersion:	5.5
++Contact:	Dan Murphy <dmurphy@ti.com>
++Description:	read/write
++		The led_color directory is dynamically created based on the
++		colors defined by the registrar of the class.
++		The value for the led_color is defined in the
++		include/dt-bindings/leds/common.h. There is one directory per
++		color presented.  The intensity file is created under each
++		led_color directory and controls the individual LED color
++		setting.
++
++		The value of the color is from 0 to
++		/sys/class/leds/<led>/colors/<led_color>/max_intensity.
++
++What:		/sys/class/leds/<led>/colors/<led_color>/max_intensity
++Date:		Sept 2019
++KernelVersion:	5.5
++Contact:	Dan Murphy <dmurphy@ti.com>
++Description:	read only
++		Maximum intensity level for the LED color, default is
++		255 (LED_FULL).
++
++		If the LED does not support different intensity levels, this
++		should be 1.
+-- 
+2.22.0.214.g8dca754b1e
+
