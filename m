@@ -2,142 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AB05B4BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61FA2B4BF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 12:28:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfIQK12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 06:27:28 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44314 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfIQK12 (ORCPT
+        id S1727992AbfIQK2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 06:28:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41214 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfIQK2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 06:27:28 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w6so2335168oie.11;
-        Tue, 17 Sep 2019 03:27:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Jw020uvO5W1dQB83HITZVbJ4+r2ZGjWj7Xyy0Bpkz/A=;
-        b=pWZdQumj+lQlUIBL5TQRsUiyyQpOByhRs4rxcfAijA18wPGiXvWDe2JKAg1FRpRWs3
-         JNM13bGpRc/PVk5SvU1/p2C8rm9OMSeOMOxh474S//52FfFB0Qa5vzKj6RguCqSWipFm
-         /2WX6ghVOkZVwzZ23Knm8pIi+81NpYpjDwciV4MB0ZyxZ902ZOQhlaHSG1F6OmehmR4y
-         c57cJxI4TdjcHoiNuUbD+/NcvMyobe+/nNBiM+aOdl/2fBMmTVYYHhUkXVgjK4Ul8Bbr
-         zTSCrA31ZaH36dvN9rK3ospDwZzSfGxTZWoycIHO6USwP5zoHweKpPNAqAI5soV3ki8J
-         e10A==
-X-Gm-Message-State: APjAAAVeYt6q/Ae3Tt1r4KhwEkkbqwT1CHTD51snsiIKLOo8+pmdjW62
-        ty0E/WQTGB90gMQujMI6ag+wUq5TtKavmPzEwoX9ZEtx
-X-Google-Smtp-Source: APXvYqwazB3v6V1RsjC4YgX0kgioA/H9C3tRozSeoJq3Agt6TGjJtqCyKk1J+MAOyvJmC4bNzH/00mI+LIRfkSZw7Nw=
-X-Received: by 2002:aca:ab84:: with SMTP id u126mr2824699oie.115.1568716047201;
- Tue, 17 Sep 2019 03:27:27 -0700 (PDT)
+        Tue, 17 Sep 2019 06:28:43 -0400
+Received: from [5.158.153.52] (helo=linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <kurt.kanzenbach@linutronix.de>)
+        id 1iAAit-0001sO-Mh; Tue, 17 Sep 2019 12:28:39 +0200
+Date:   Tue, 17 Sep 2019 12:28:39 +0200
+From:   Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+To:     Sultan Alsawaf <sultan@kerneltoast.com>
+Cc:     John Kacur <jkacur@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org, sebastian@breakpoint.cc,
+        tglx@linutronix.de, rostedt@goodmis.org
+Subject: Re: [PATCH] rt-tests: backfire: Don't include asm/uaccess.h directly
+Message-ID: <20190917102839.GC7439@linutronix.de>
+References: <20190903191321.6762-1-sultan@kerneltoast.com>
+ <alpine.LFD.2.21.1909162356500.10273@planxty>
+ <20190917071546.GA27627@sultan-box>
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 17 Sep 2019 12:27:16 +0200
-Message-ID: <CAJZ5v0iJupxXBYRDeV4_V14je-uZYRf7d_CZ7WRUw7++n_575Q@mail.gmail.com>
-Subject: [GIT PULL] Device properties framework updates for v5.4-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux USB <linux-usb@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2/5bycvrmDh4d1IB"
+Content-Disposition: inline
+In-Reply-To: <20190917071546.GA27627@sultan-box>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Please pull from the tag
+--2/5bycvrmDh4d1IB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- devprop-5.4-rc1
+Hi,
 
-with top-most commit 016049a816774edc9c3cd81afa7724d7ab001585
+On Tue, Sep 17, 2019 at 09:15:46AM +0200, Sultan Alsawaf wrote:
+> On Mon, Sep 16, 2019 at 11:57:32PM +0200, John Kacur wrote:
+> > Signed-off-by: John Kacur <jkacur@redhat.com>
+> > But please in the future
+> > 1. Don't cc lkml on this
+> > 2. Include the maintainers in your patch
+>
+> Hi,
+>
+> Thanks for the sign-off. I was following the instructions listed here:
+> https://wiki.linuxfoundation.org/realtime/communication/send_rt_patches
 
- software node: Initialize the return value in software_node_find_by_name()
+I guess, that's for rt kernel patches.
 
-on top of commit a55aa89aab90fae7c815b0551b07be37db359d76
+>
+> I couldn't find any documentation of how to send patches for
+> rt-tests. Is there a different set of patch submission instructions on
+> a wiki somewhere I missed?
 
- Linux 5.3-rc6
+For rt-tests see the top level MAINTAINERS file on how to send patches.
 
-to receive device properties framework updates for 5.4-rc1.
+>
+> Thanks,
+> Sultan
 
-These include software node support improvements (Heikki Krogerus)
-and two assorted cleanups (Andy Shevchenko, Geert Uytterhoeven).
+Thanks,
+Kurt
 
-There was a conflict between this and the USB tree in linux-next
-which was resolved by Stephen by applying the appended diff.
+--2/5bycvrmDh4d1IB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks!
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEooWgvezyxHPhdEojeSpbgcuY8KYFAl2AtVYACgkQeSpbgcuY
+8KbjgRAAqIGAUDYtUX57F1jbDojgEUgq1z5DDSLezvupLgkRKia+vBqIzmjkKOYp
+bPtsSwx/RfjF4XRhxZ/x9oD5Ven+Ph0zEhfpsZSGZ7W6+/tWTHqz6yBFzg5glOgr
+xJRmAgPmeDmFGgaTCgLg0G5iEfBkYmHXVtN2h1ql36lvf1Ugk97jagUL0xKEo3CX
+m5DawfgMFDhvw8jbI2qUmhzWsdkKlgVxn3CF+nlNfnefejOtpTWivLCXhPBLNToO
++PCej6YOx+8iLKWFfBQiA4/PYUPxefT+tjRnLgIFA3+HyM0ZFZuRReyOVYTSQE8a
+eBRSyfsz3aC6Y1TmAxFQGM9D+Zn/7sfIdnxuRXGwPXdCQ/Rh8Y//iSY3Nz4RmD8t
+UdICtELEket5bvzj7LerCjvqLjbFe0InWG7IjPXFYX6U1EfHhVOZU5C6zO3x9XrY
+R2h1dhnmkjoKquiOUQ09uOVWIUxOEmq+rMLCH+GYFIBWLMby4idnpb7ajXOCOW/I
+EIROSO+YN+GMWFX5XvDIJno0ppewWrtUuK+/gre1HZRBm7JcEGa85QMTvslhQw4E
+14B2Co3eFb1hzrjSSBt4Iovcjz2fxTnAkRrKTPYmP8s+oy0L85dA7PhnDLnwy1wS
+9PXfStGegz3NR14rOsT5KRt/5AXUz//tWm24Jj0UCm5izWfgDio=
+=BQxl
+-----END PGP SIGNATURE-----
 
----------------
-
-Andy Shevchenko (1):
-      device property: Remove duplicate test for NULL
-
-Geert Uytterhoeven (1):
-      ACPI / property: Fix acpi_graph_get_remote_endpoint() name in kerneldoc
-
-Heikki Krogerus (5):
-      software node: Add software_node_find_by_name()
-      usb: roles: intel_xhci: Supplying software node for the role mux
-      platform/x86: intel_cht_int33fe: Use new API to gain access to
-the role switch
-      software node: Initialize the return value in software_node_to_swnode()
-      software node: Initialize the return value in software_node_find_by_name()
-
----------------
-
- drivers/acpi/property.c                        |  2 +-
- drivers/base/swnode.c                          | 39 +++++++++++++++++-
- drivers/platform/x86/intel_cht_int33fe.c       | 57 +++++---------------------
- drivers/usb/roles/intel-xhci-usb-role-switch.c | 27 ++++++++----
- include/linux/fwnode.h                         |  9 ++--
- include/linux/property.h                       |  4 ++
- 6 files changed, 78 insertions(+), 60 deletions(-)
-
----------------
-
-diff --cc drivers/usb/roles/intel-xhci-usb-role-switch.c
-index 7325a84dd1c8,88d041601c51..000000000000
---- a/drivers/usb/roles/intel-xhci-usb-role-switch.c
-+++ b/drivers/usb/roles/intel-xhci-usb-role-switch.c
-@@@ -37,12 -44,9 +44,13 @@@
-  struct intel_xhci_usb_data {
-      struct usb_role_switch *role_sw;
-      void __iomem *base;
-+     bool enable_sw_switch;
-  };
-
- +static const struct software_node intel_xhci_usb_node = {
- +    "intel-xhci-usb-sw",
- +};
- +
-  static int intel_xhci_usb_set_role(struct device *dev, enum usb_role role)
-  {
-      struct intel_xhci_usb_data *data = dev_get_drvdata(dev);
-@@@ -147,20 -167,12 +167,22 @@@ static int intel_xhci_usb_probe(struct
-
-      platform_set_drvdata(pdev, data);
-
-+     data->enable_sw_switch = !device_property_read_bool(dev,
-+                         "sw_switch_disable");
- +    ret = software_node_register(&intel_xhci_usb_node);
- +    if (ret)
- +        return ret;
- +
- +    sw_desc.set = intel_xhci_usb_set_role,
- +    sw_desc.get = intel_xhci_usb_get_role,
- +    sw_desc.allow_userspace_control = true,
- +    sw_desc.fwnode = software_node_fwnode(&intel_xhci_usb_node);
-
-      data->role_sw = usb_role_switch_register(dev, &sw_desc);
- -    if (IS_ERR(data->role_sw))
- +    if (IS_ERR(data->role_sw)) {
- +        fwnode_handle_put(sw_desc.fwnode);
-          return PTR_ERR(data->role_sw);
- +    }
-
-      pm_runtime_set_active(dev);
-      pm_runtime_enable(dev);
+--2/5bycvrmDh4d1IB--
