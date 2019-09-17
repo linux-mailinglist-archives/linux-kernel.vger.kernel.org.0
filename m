@@ -2,98 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C0F0B5858
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 01:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C7B3B5864
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 01:08:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfIQXCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 19:02:55 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:38556 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728168AbfIQXCz (ORCPT
+        id S1728530AbfIQXI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 19:08:28 -0400
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:45848 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728168AbfIQXI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 19:02:55 -0400
-Received: by mail-io1-f66.google.com with SMTP id k5so11669370iol.5;
-        Tue, 17 Sep 2019 16:02:54 -0700 (PDT)
+        Tue, 17 Sep 2019 19:08:28 -0400
+Received: by mail-lj1-f175.google.com with SMTP id q64so5215547ljb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 16:08:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=l3/R7eWJiNDCkUoIkkfFHiAvynxvR2Al0jggoujYqP8=;
-        b=UqTPJVkMyjUH+pxJRXVO4wQN3AsWoP4RfA9zTsQF/p9MDmC59Ufcd6O1gCAb7ct6x2
-         0iX+KOvDChxG8vRXizGwP4BTgUKsjkdecSKyKDhujWoqJNzcXxiAc5NR3gHNexqLHhbZ
-         0i/3125w+y8RUTgDRGggPgVYaRzs/d4wjTcRAqwPxZy0kr/DTMGkQQnHS6O2Iu4IcdKy
-         QpNcr1SaNAPTJWTdv9Or6Nl/3IxFFWAPbQfVqytEOLuKYoXW0GpROAs2OW52IkPCU2wd
-         RBEhftc9hf4hfNmTuzBDaa+I6o+S3aVHyj37402st2JOEdJ6TkG3InAwc7nJ0PjbMF6i
-         pRkg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g82v5y3G7TVA0v7mCcq1n+V2khyOarEDdhGna/0Sk4U=;
+        b=L8a2jFr0MK1lqzSmP1nmNC7UtLKaANtJmwm0MjDWS+KVH79086JwtyDZuUGM4T781m
+         HoilUbcI4/1ZiN5cXpxjaOrqMFRdDS8Noew9fdkB+wySfbVXegDF6l39qyRDe+3dK4J6
+         jyq4YIHfLp9NTKMvV2dsp9msHtHGUv7HkFwqI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=l3/R7eWJiNDCkUoIkkfFHiAvynxvR2Al0jggoujYqP8=;
-        b=GrQK0SH0ciIYTvE9ipPuY7CSXELP0jUQLiRBoFH2isALUrsBxVzVuS5d2emRfQUY0k
-         /U9WWdQgLr079OjPcSktPlIyTC8EZ7/R1J5FrQcRx2MwNacK3zGwnHxHEv5e/hq7mGJi
-         PJGvpVFjbcCoK5JHXjt/OVQJs8YTVVpX8FhnpPk0JVPZZfnAeHB3x5GoOHuR3yyxhokg
-         mn0cUHUS0OoyylEP7YR05W2vLMlFZu6WrYOOnrh//aQ6DJFJ8yN8du1FmTSUhACngpYW
-         Wi+tI1jsZY0kWLnWDRwfIbvmkFiyk+91uLnvWk2etpN/irA5JG9bHyUaVMlMBOtPHY9e
-         aX1A==
-X-Gm-Message-State: APjAAAXgskF6HIg0fRTEzFqLhXWqgMh92E9VhjrN1g5DKBOMauq/NYrP
-        9eTJ8hS3uzifdqoVnEFEJMI=
-X-Google-Smtp-Source: APXvYqw+tu8JRqDVUBuD3e5WVpPKtugEIg2I+YqmmazkQMiBywQzLuGL8TvkfzYSxxfEYa2ncgGECw==
-X-Received: by 2002:a6b:3c0a:: with SMTP id k10mr1688594iob.282.1568761374099;
-        Tue, 17 Sep 2019 16:02:54 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id l19sm2570684iok.14.2019.09.17.16.02.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 16:02:53 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Irenge Jules Bashizi <jbi.octave@gmail.com>,
-        Ioannis Valasakis <code@wizofe.uk>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Colin Ian King <colin.king@canonical.com>,
-        Michelle Darcy <mdarcy137@gmail.com>,
-        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: staging: davinci: fix for memory leak
-Date:   Tue, 17 Sep 2019 18:02:38 -0500
-Message-Id: <20190917230242.27630-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g82v5y3G7TVA0v7mCcq1n+V2khyOarEDdhGna/0Sk4U=;
+        b=R6idTXim11fFj5uOn+JDCuErdjuVGzPyMRF6cklaIjXPsa/nDHjM7hRj8NIue/3Edr
+         WQai3GCyQd9CZXK9q2jyoMP9n+kQCVSdxGx+E62KTnW9lWYRjOcHwWtZhKms/CeEZQ2N
+         n12TzRBZ3OnegZR365eAhcaDEcZpxdD5/JCtqWzlGXOWx8eHnjMCo3Fs5hMD2ZQYDviD
+         LQuNY7Q52aIbCy3Arts/y39ON/oKqeh2dmwW+k1yQ1c/GvRXHR2ugRHPM6WgEQRcc54+
+         hnDT22/GF8Hux0yJt6SLMCBWCIvJkblTAfHp7eK+aX642jK91VfGEm8UrbmdRF7XRbI8
+         UldQ==
+X-Gm-Message-State: APjAAAVllQH2uOkpa269S5ZpKTG1IxjkCdtttEeXxSCErY/km3x5C6Ii
+        Pv1gPHnG9ca7slKdFPIG9Lp3JuCoFkI=
+X-Google-Smtp-Source: APXvYqwxk9IkgU9p3+UKvTNqgZWsGUGqwZogeBh4haZNRLJk66DHfkdPrJZIba4hxLVc3H3mUgYxkg==
+X-Received: by 2002:a2e:89c9:: with SMTP id c9mr394054ljk.183.1568761705733;
+        Tue, 17 Sep 2019 16:08:25 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id c4sm669733lfm.4.2019.09.17.16.08.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2019 16:08:24 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id r134so4131092lff.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 16:08:24 -0700 (PDT)
+X-Received: by 2002:a19:f204:: with SMTP id q4mr366572lfh.29.1568761704101;
+ Tue, 17 Sep 2019 16:08:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+ <2658007.Cequ2ms4lF@merkaba> <20190917205234.GA1765@darwi-home-pc>
+ <1722575.Y5XjozQscI@merkaba> <20190917215200.wtjim3t6zgt7gdmw@srcf.ucam.org>
+In-Reply-To: <20190917215200.wtjim3t6zgt7gdmw@srcf.ucam.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Sep 2019 16:08:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgO81JZJSvmyeUwW7YOk=14YyOnu0TFDygo=jy3D_r6UQ@mail.gmail.com>
+Message-ID: <CAHk-=wgO81JZJSvmyeUwW7YOk=14YyOnu0TFDygo=jy3D_r6UQ@mail.gmail.com>
+Subject: Re: Linux 5.3-rc8
+To:     Matthew Garrett <mjg59@srcf.ucam.org>
+Cc:     Martin Steigerwald <martin@lichtvoll.de>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In ipipe_g_config the allocated memory for params needs to be released
-if either module_if->get or copy_to_user fails.
+On Tue, Sep 17, 2019 at 2:52 PM Matthew Garrett <mjg59@srcf.ucam.org> wrote:
+>
+> getrandom() will never "consume entropy" in a way that will block any
+> users of getrandom().
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Yes, this is true for any common and sane use.
 
-diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-index 52397ad0e3e2..3023691b53c0 100644
---- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-+++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
-@@ -1316,10 +1316,13 @@ static int ipipe_g_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
- 
- 		if (to && from && size) {
- 			rval = module_if->get(ipipe, from);
--			if (rval)
-+			if (rval) {
-+				kfree(params);
- 				goto error;
-+			}
- 			if (copy_to_user((void __user *)to, from, size)) {
- 				rval = -EFAULT;
-+				kfree(params);
- 				break;
- 			}
- 		}
--- 
-2.17.1
+And by that I just mean that we do have GRND_RANDOM, which currently
+does exactly that entropy consumption.
 
+But it only consumes it for other GRND_RANDOM users - of which there
+are approximately zero, because nobody wants that rats nest.
+
+                Linus
