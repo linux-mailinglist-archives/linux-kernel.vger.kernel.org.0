@@ -2,313 +2,262 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACDD8B4F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 15:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 059D1B4F14
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 15:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfIQNXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 09:23:10 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35186 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbfIQNXK (ORCPT
+        id S1728151AbfIQNYm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 09:24:42 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46239 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727875AbfIQNYl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 09:23:10 -0400
-Received: by mail-ed1-f67.google.com with SMTP id v8so3333840eds.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 06:23:08 -0700 (PDT)
+        Tue, 17 Sep 2019 09:24:41 -0400
+Received: by mail-ot1-f67.google.com with SMTP id g19so2972349otg.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 06:24:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1SWRftNvzxWOKqVnmLJOgwarluQctTJe9TpYjYM6L1A=;
-        b=ZPEVLQWhUlTBW0nB55ahotiqBPB+FgyfBilgSwzVG85vW/xu+mkehr2ZEpPQwEVxi9
-         M5rzP3sPHQj1DOAEPj32rPebczosoVfAsUgUePocjzLYtjxztpenohIJXQVkKj9pvLys
-         PzOcIQjCrAFIasBqbv0OFUHgEzFBSyIOS5Wa0=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OsdTAgCF26FzGhTn9OIgSahAZGDk0D+ef/kwXj+ZNdU=;
+        b=mjorYCcgCqtRNpoNVDUFLTsinc5a4Vx0M18+lFbhTNuOfpzFkGWqWFPPtp4xpB5/l+
+         jm49DKIc/rmUEsRYyiQfx1HXnk5B/ZIGbugeS5YRTwEodkOi81Y30DlntEjUsbf0W5gU
+         HkrxmpX7ki5EDiexfSMIaroCmeoIONxPagkjE87FA7h7rd99yYzZ752XwYx1sbgJZj5u
+         Mjx9gBSjx57tzLMS9djRGK7c+FbYNFEdkudiAZ6574xRJ3XeF7FYFrGENR9S/4GCbgrq
+         grXuVyPQPInkgNG7NjsDdGI/dS8KYavdWXwekHV3xkvEBO8nM0TmNfMcG3aO3Ozn/VM7
+         vE8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=1SWRftNvzxWOKqVnmLJOgwarluQctTJe9TpYjYM6L1A=;
-        b=ZuSeQ2uMVE6HUkdKdZ2eFw9DIp9mesTFk8e0HCVRVAk2T5Ms/CC5xd7A6tgQSrNwwg
-         6DKkLPm6YfK/gVYzAHD4KZF/2064cd49f0hvSLMx/v+FhfxB1Q/fnIAJVhWDVQR+qVxb
-         QnO6ewcleIwYmYbyuDqKMHNgAcKZGKbuEGwmq6qtqL8om9dSoazIfkprgs9T/7gr/nN6
-         qOZaJPSzr+Z2yT4RqpRrbK9Q7TKdqzhVw0ZmhiZpVv7hVhfqFOZskpUtaKyekmVER5pi
-         W+UJZsNqcLNqWeCVi0VVCUeHWwNsvEZlKirRWRUew0a9IC2JX3QVllS3NLeTuVQ0ofyq
-         mS2Q==
-X-Gm-Message-State: APjAAAUh0A4vkJUE183h2muvpCOFMtGKR8tixtq36hF4HP3//uF3jEeX
-        PudH5mEIloWWCmsvtsmr/qiFOQ==
-X-Google-Smtp-Source: APXvYqzeXgZKLYose3Ug8/PgepGFRWs0DLYGdo48jxuYITXu325okDnpdIkY2tTOdj7awDsOSqPKGA==
-X-Received: by 2002:a17:906:2542:: with SMTP id j2mr4877303ejb.278.1568726587875;
-        Tue, 17 Sep 2019 06:23:07 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id h3sm278607ejp.77.2019.09.17.06.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 06:23:07 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 15:23:05 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, stevensd@chromium.org,
-        marcheu@chromium.org, zachr@chromium.org, keiichiw@chromium.org,
-        posciak@chromium.org
-Subject: Re: [RFC PATCH] drm/virtio: Export resource handles via DMA-buf API
-Message-ID: <20190917132305.GV3958@phenom.ffwll.local>
-Mail-Followup-To: Tomasz Figa <tfiga@chromium.org>,
-        David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, stevensd@chromium.org,
-        marcheu@chromium.org, zachr@chromium.org, keiichiw@chromium.org,
-        posciak@chromium.org
-References: <20190912094121.228435-1-tfiga@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OsdTAgCF26FzGhTn9OIgSahAZGDk0D+ef/kwXj+ZNdU=;
+        b=VWlpfw9MhcbSHqXIyZPk3NLas/2XBkVLAcOKDE7cMEVhKGkMjHyEHQsFXWrPl6T2ip
+         rGBQkQQUV/Hx1KLIWUy4buGZRGdiTLewlzN9+Ue6aQF2DMRIW+b4T8kT9MawI/KDo7Vj
+         Eb27NGi24q/ikuUHRQ9yjviPPHlQgAmd4+l9FMhnfYfxDytDyLGA1LpDYpieXJVfe3jI
+         LRuNnOvRSNGpAuJ7RszLVxI5c1JtLZezpH7SOZH9jJX/xqpm2Ae3cgDiVcye1qoPNJPz
+         m4EZZmVN4W46CVZpN+bFweG8PVnCnLRer/Gj2ox4kbnzHrZ7fQQ0Ytc9BlNte54nl5rb
+         DeQA==
+X-Gm-Message-State: APjAAAUCEZTdVkMLXHZ128NpMK442XnDwEzPnTLmhg5Irus2wKYAmKMJ
+        6S3eizeojMdAH62O9qhvf0O4Pao9MyD8AXWoldk=
+X-Google-Smtp-Source: APXvYqzl78E9UBc7RKfHFvoRETKcham24EDV7g6CmsnN0sRuPdMdRd1oA/VK8ViDWYzx5XE3sgAR9qaGVmSEGYFF0DI=
+X-Received: by 2002:a9d:6218:: with SMTP id g24mr2527384otj.326.1568726678873;
+ Tue, 17 Sep 2019 06:24:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190912094121.228435-1-tfiga@chromium.org>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1568650294-8579-1-git-send-email-cai@lca.pw> <alpine.DEB.2.21.1909161128480.105847@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.1909161128480.105847@chino.kir.corp.google.com>
+From:   Pengfei Li <lpf.vector@gmail.com>
+Date:   Tue, 17 Sep 2019 21:24:27 +0800
+Message-ID: <CAD7_sbEDd+CVvMR3AGx7xvvpBHcAK8z=MBSopmXHpBepBBwPAQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm/slub: remove left-over debugging code
+To:     David Rientjes <rientjes@google.com>
+Cc:     Qian Cai <cai@lca.pw>, Christopher Lameter <cl@linux.com>,
+        penberg@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 06:41:21PM +0900, Tomasz Figa wrote:
-> This patch is an early RFC to judge the direction we are following in
-> our virtualization efforts in Chrome OS. The purpose is to start a
-> discussion on how to handle buffer sharing between multiple virtio
-> devices.
-> 
-> On a side note, we are also working on a virtio video decoder interface
-> and implementation, with a V4L2 driver for Linux. Those will be posted
-> for review in the near future as well.
-> 
-> Any feedback will be appreciated! Thanks in advance.
-> 
-> ===
-> 
-> With the range of use cases for virtualization expanding, there is going
-> to be more virtio devices added to the ecosystem. Devices such as video
-> decoders, encoders, cameras, etc. typically work together with the
-> display and GPU in a pipeline manner, which can only be implemented
-> efficiently by sharing the buffers between producers and consumers.
-> 
-> Existing buffer management framework in Linux, such as the videobuf2
-> framework in V4L2, implements all the DMA-buf handling inside generic
-> code and do not expose any low level information about the buffers to
-> the drivers.
-> 
-> To seamlessly enable buffer sharing with drivers using such frameworks,
-> make the virtio-gpu driver expose the resource handle as the DMA address
-> of the buffer returned from the DMA-buf mapping operation. Arguably, the
-> resource handle is a kind of DMA address already, as it is the buffer
-> identifier that the device needs to access the backing memory, which is
-> exactly the same role a DMA address provides for native devices.
-> 
-> A virtio driver that does memory management fully on its own would have
-> code similar to following. The code is identical to what a regular
-> driver for real hardware would do to import a DMA-buf.
-> 
-> static int virtio_foo_get_resource_handle(struct virtio_foo *foo,
-> 					  struct dma_buf *dma_buf, u32 *id)
-> {
-> 	struct dma_buf_attachment *attach;
-> 	struct sg_table *sgt;
-> 	int ret = 0;
-> 
-> 	attach = dma_buf_attach(dma_buf, foo->dev);
-> 	if (IS_ERR(attach))
-> 		return PTR_ERR(attach);
-> 
-> 	sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
-> 	if (IS_ERR(sgt)) {
-> 		ret = PTR_ERR(sgt);
-> 		goto err_detach;
-> 	}
-> 
-> 	if (sgt->nents != 1) {
-> 		ret = -EINVAL;
-> 		goto err_unmap;
-> 	}
-> 
-> 	*id = sg_dma_address(sgt->sgl);
+On Tue, Sep 17, 2019 at 2:32 AM David Rientjes <rientjes@google.com> wrote:
+>
+> On Mon, 16 Sep 2019, Qian Cai wrote:
+>
+> > SLUB_RESILIENCY_TEST and SLUB_DEBUG_CMPXCHG look like some left-over
+> > debugging code during the internal development that probably nobody uses
+> > it anymore. Remove them to make the world greener.
+>
+> Adding Pengfei Li who has been working on a patchset for modified handling
+> of kmalloc cache initialization and touches the resiliency test.
+>
 
-I agree with Gerd, this looks pretty horrible to me.
+Thanks for looping me in.
 
-The usual way we've done these kind of special dma-bufs is:
+My opinion is the same as David Rientjes.
+The resiliency test should not be removed but should be improved.
 
-- They all get allocated at the same place, through some library or
-  whatever.
-
-- You add a dma_buf_is_virtio(dma_buf) function, or maybe something that
-  also upcasts or returns NULL, which checks for dma_buf->ops.
-
-- Once you've upcasted at runtime by checking for ->ops, you can add
-  whatever fancy interfaces you want. Including a real&proper interface to
-  get at whatever underlying id you need to for real buffer sharing
-  between virtio devices.
-
-In a way virtio buffer/memory ids are a kind of private bus, entirely
-distinct from the dma_addr_t bus. So can't really stuff them under this
-same thing like we e.g. do with pci peer2peer.
--Daniel
-
-> 
-> err_unmap:
-> 	dma_buf_unmap_attachment(attach, sgt, DMA_BIDIRECTIONAL);
-> err_detach:
-> 	dma_buf_detach(dma_buf, attach);
-> 
-> 	return ret;
-> }
-> 
-> On the other hand, a virtio driver that uses an existing kernel
-> framework to manage buffers would not need to explicitly handle anything
-> at all, as the framework part responsible for importing DMA-bufs would
-> already do the work. For example, a V4L2 driver using the videobuf2
-> framework would just call thee vb2_dma_contig_plane_dma_addr() function
-> to get what the above open-coded function would return.
-> 
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_drv.c   |  2 +
->  drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ++
->  drivers/gpu/drm/virtio/virtgpu_prime.c | 81 ++++++++++++++++++++++++++
->  3 files changed, 87 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> index 0fc32fa0b3c0..ac095f813134 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-> @@ -210,6 +210,8 @@ static struct drm_driver driver = {
->  #endif
->  	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
->  	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
-> +	.gem_prime_export = virtgpu_gem_prime_export,
-> +	.gem_prime_import = virtgpu_gem_prime_import,
->  	.gem_prime_get_sg_table = virtgpu_gem_prime_get_sg_table,
->  	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
->  	.gem_prime_vmap = virtgpu_gem_prime_vmap,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> index e28829661724..687cfce91885 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-> @@ -367,6 +367,10 @@ void virtio_gpu_object_free_sg_table(struct virtio_gpu_object *bo);
->  int virtio_gpu_object_wait(struct virtio_gpu_object *bo, bool no_wait);
->  
->  /* virtgpu_prime.c */
-> +struct dma_buf *virtgpu_gem_prime_export(struct drm_gem_object *obj,
-> +					 int flags);
-> +struct drm_gem_object *virtgpu_gem_prime_import(struct drm_device *dev,
-> +						struct dma_buf *buf);
->  struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj);
->  struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
->  	struct drm_device *dev, struct dma_buf_attachment *attach,
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
-> index dc642a884b88..562eb1a2ed5b 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_prime.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
-> @@ -22,6 +22,9 @@
->   * Authors: Andreas Pokorny
->   */
->  
-> +#include <linux/dma-buf.h>
-> +#include <linux/dma-direction.h>
-> +
->  #include <drm/drm_prime.h>
->  
->  #include "virtgpu_drv.h"
-> @@ -30,6 +33,84 @@
->   * device that might share buffers with virtgpu
->   */
->  
-> +static struct sg_table *
-> +virtgpu_gem_map_dma_buf(struct dma_buf_attachment *attach,
-> +			enum dma_data_direction dir)
-> +{
-> +	struct drm_gem_object *obj = attach->dmabuf->priv;
-> +	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
-> +	struct sg_table *sgt;
-> +	int ret;
-> +
-> +	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
-> +	if (!sgt)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	ret = sg_alloc_table(sgt, 1, GFP_KERNEL);
-> +	if (ret) {
-> +		kfree(sgt);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	sg_dma_address(sgt->sgl) = bo->hw_res_handle;
-> +	sg_dma_len(sgt->sgl) = obj->size;
-> +	sgt->nents = 1;
-> +
-> +	return sgt;
-> +}
-> +
-> +static void virtgpu_gem_unmap_dma_buf(struct dma_buf_attachment *attach,
-> +				      struct sg_table *sgt,
-> +				      enum dma_data_direction dir)
-> +{
-> +	sg_free_table(sgt);
-> +	kfree(sgt);
-> +}
-> +
-> +static const struct dma_buf_ops virtgpu_dmabuf_ops =  {
-> +	.cache_sgt_mapping = true,
-> +	.attach = drm_gem_map_attach,
-> +	.detach = drm_gem_map_detach,
-> +	.map_dma_buf = virtgpu_gem_map_dma_buf,
-> +	.unmap_dma_buf = virtgpu_gem_unmap_dma_buf,
-> +	.release = drm_gem_dmabuf_release,
-> +	.mmap = drm_gem_dmabuf_mmap,
-> +	.vmap = drm_gem_dmabuf_vmap,
-> +	.vunmap = drm_gem_dmabuf_vunmap,
-> +};
-> +
-> +struct dma_buf *virtgpu_gem_prime_export(struct drm_gem_object *obj,
-> +					 int flags)
-> +{
-> +	struct dma_buf *buf;
-> +
-> +	buf = drm_gem_prime_export(obj, flags);
-> +	if (!IS_ERR(buf))
-> +		buf->ops = &virtgpu_dmabuf_ops;
-> +
-> +	return buf;
-> +}
-> +
-> +struct drm_gem_object *virtgpu_gem_prime_import(struct drm_device *dev,
-> +						struct dma_buf *buf)
-> +{
-> +	struct drm_gem_object *obj;
-> +
-> +	if (buf->ops == &virtgpu_dmabuf_ops) {
-> +		obj = buf->priv;
-> +		if (obj->dev == dev) {
-> +			/*
-> +			 * Importing dmabuf exported from our own gem increases
-> +			 * refcount on gem itself instead of f_count of dmabuf.
-> +			 */
-> +			drm_gem_object_get(obj);
-> +			return obj;
-> +		}
-> +	}
-> +
-> +	return drm_gem_prime_import(dev, buf);
-> +}
-> +
->  struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
->  {
->  	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
-> -- 
-> 2.23.0.237.gc6a4ce50a0-goog
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> I still find the resiliency test to be helpful/instructional for handling
+> unexpected conditions in these caches, so I'd suggest against removing it:
+> the only downside is that it's additional source code.  But it's helpful
+> source code for reference.
+>
+> The cmpxchg failures could likely be more generalized beyond SLUB since
+> there will be other dependencies in the kernel than just this allocator.
+>
+> (I assume you didn't send a Signed-off-by line because this is an RFC.)
+>
+> > ---
+> >  mm/slub.c | 110 --------------------------------------------------------------
+> >  1 file changed, 110 deletions(-)
+> >
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index 8834563cdb4b..f97155ba097d 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -150,12 +150,6 @@ static inline bool kmem_cache_has_cpu_partial(struct kmem_cache *s)
+> >   * - Variable sizing of the per node arrays
+> >   */
+> >
+> > -/* Enable to test recovery from slab corruption on boot */
+> > -#undef SLUB_RESILIENCY_TEST
+> > -
+> > -/* Enable to log cmpxchg failures */
+> > -#undef SLUB_DEBUG_CMPXCHG
+> > -
+> >  /*
+> >   * Mininum number of partial slabs. These will be left on the partial
+> >   * lists even if they are empty. kmem_cache_shrink may reclaim them.
+> > @@ -392,10 +386,6 @@ static inline bool __cmpxchg_double_slab(struct kmem_cache *s, struct page *page
+> >       cpu_relax();
+> >       stat(s, CMPXCHG_DOUBLE_FAIL);
+> >
+> > -#ifdef SLUB_DEBUG_CMPXCHG
+> > -     pr_info("%s %s: cmpxchg double redo ", n, s->name);
+> > -#endif
+> > -
+> >       return false;
+> >  }
+> >
+> > @@ -433,10 +423,6 @@ static inline bool cmpxchg_double_slab(struct kmem_cache *s, struct page *page,
+> >       cpu_relax();
+> >       stat(s, CMPXCHG_DOUBLE_FAIL);
+> >
+> > -#ifdef SLUB_DEBUG_CMPXCHG
+> > -     pr_info("%s %s: cmpxchg double redo ", n, s->name);
+> > -#endif
+> > -
+> >       return false;
+> >  }
+> >
+> > @@ -2004,45 +1990,11 @@ static inline unsigned long next_tid(unsigned long tid)
+> >       return tid + TID_STEP;
+> >  }
+> >
+> > -static inline unsigned int tid_to_cpu(unsigned long tid)
+> > -{
+> > -     return tid % TID_STEP;
+> > -}
+> > -
+> > -static inline unsigned long tid_to_event(unsigned long tid)
+> > -{
+> > -     return tid / TID_STEP;
+> > -}
+> > -
+> >  static inline unsigned int init_tid(int cpu)
+> >  {
+> >       return cpu;
+> >  }
+> >
+> > -static inline void note_cmpxchg_failure(const char *n,
+> > -             const struct kmem_cache *s, unsigned long tid)
+> > -{
+> > -#ifdef SLUB_DEBUG_CMPXCHG
+> > -     unsigned long actual_tid = __this_cpu_read(s->cpu_slab->tid);
+> > -
+> > -     pr_info("%s %s: cmpxchg redo ", n, s->name);
+> > -
+> > -#ifdef CONFIG_PREEMPT
+> > -     if (tid_to_cpu(tid) != tid_to_cpu(actual_tid))
+> > -             pr_warn("due to cpu change %d -> %d\n",
+> > -                     tid_to_cpu(tid), tid_to_cpu(actual_tid));
+> > -     else
+> > -#endif
+> > -     if (tid_to_event(tid) != tid_to_event(actual_tid))
+> > -             pr_warn("due to cpu running other code. Event %ld->%ld\n",
+> > -                     tid_to_event(tid), tid_to_event(actual_tid));
+> > -     else
+> > -             pr_warn("for unknown reason: actual=%lx was=%lx target=%lx\n",
+> > -                     actual_tid, tid, next_tid(tid));
+> > -#endif
+> > -     stat(s, CMPXCHG_DOUBLE_CPU_FAIL);
+> > -}
+> > -
+> >  static void init_kmem_cache_cpus(struct kmem_cache *s)
+> >  {
+> >       int cpu;
+> > @@ -2751,7 +2703,6 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
+> >                               object, tid,
+> >                               next_object, next_tid(tid)))) {
+> >
+> > -                     note_cmpxchg_failure("slab_alloc", s, tid);
+> >                       goto redo;
+> >               }
+> >               prefetch_freepointer(s, next_object);
+> > @@ -4694,66 +4645,6 @@ static int list_locations(struct kmem_cache *s, char *buf,
+> >  }
+> >  #endif       /* CONFIG_SLUB_DEBUG */
+> >
+> > -#ifdef SLUB_RESILIENCY_TEST
+> > -static void __init resiliency_test(void)
+> > -{
+> > -     u8 *p;
+> > -     int type = KMALLOC_NORMAL;
+> > -
+> > -     BUILD_BUG_ON(KMALLOC_MIN_SIZE > 16 || KMALLOC_SHIFT_HIGH < 10);
+> > -
+> > -     pr_err("SLUB resiliency testing\n");
+> > -     pr_err("-----------------------\n");
+> > -     pr_err("A. Corruption after allocation\n");
+> > -
+> > -     p = kzalloc(16, GFP_KERNEL);
+> > -     p[16] = 0x12;
+> > -     pr_err("\n1. kmalloc-16: Clobber Redzone/next pointer 0x12->0x%p\n\n",
+> > -            p + 16);
+> > -
+> > -     validate_slab_cache(kmalloc_caches[type][4]);
+> > -
+> > -     /* Hmmm... The next two are dangerous */
+> > -     p = kzalloc(32, GFP_KERNEL);
+> > -     p[32 + sizeof(void *)] = 0x34;
+> > -     pr_err("\n2. kmalloc-32: Clobber next pointer/next slab 0x34 -> -0x%p\n",
+> > -            p);
+> > -     pr_err("If allocated object is overwritten then not detectable\n\n");
+> > -
+> > -     validate_slab_cache(kmalloc_caches[type][5]);
+> > -     p = kzalloc(64, GFP_KERNEL);
+> > -     p += 64 + (get_cycles() & 0xff) * sizeof(void *);
+> > -     *p = 0x56;
+> > -     pr_err("\n3. kmalloc-64: corrupting random byte 0x56->0x%p\n",
+> > -            p);
+> > -     pr_err("If allocated object is overwritten then not detectable\n\n");
+> > -     validate_slab_cache(kmalloc_caches[type][6]);
+> > -
+> > -     pr_err("\nB. Corruption after free\n");
+> > -     p = kzalloc(128, GFP_KERNEL);
+> > -     kfree(p);
+> > -     *p = 0x78;
+> > -     pr_err("1. kmalloc-128: Clobber first word 0x78->0x%p\n\n", p);
+> > -     validate_slab_cache(kmalloc_caches[type][7]);
+> > -
+> > -     p = kzalloc(256, GFP_KERNEL);
+> > -     kfree(p);
+> > -     p[50] = 0x9a;
+> > -     pr_err("\n2. kmalloc-256: Clobber 50th byte 0x9a->0x%p\n\n", p);
+> > -     validate_slab_cache(kmalloc_caches[type][8]);
+> > -
+> > -     p = kzalloc(512, GFP_KERNEL);
+> > -     kfree(p);
+> > -     p[512] = 0xab;
+> > -     pr_err("\n3. kmalloc-512: Clobber redzone 0xab->0x%p\n\n", p);
+> > -     validate_slab_cache(kmalloc_caches[type][9]);
+> > -}
+> > -#else
+> > -#ifdef CONFIG_SYSFS
+> > -static void resiliency_test(void) {};
+> > -#endif
+> > -#endif       /* SLUB_RESILIENCY_TEST */
+> > -
+> >  #ifdef CONFIG_SYSFS
+> >  enum slab_stat_type {
+> >       SL_ALL,                 /* All slabs */
+> > @@ -5875,7 +5766,6 @@ static int __init slab_sysfs_init(void)
+> >       }
+> >
+> >       mutex_unlock(&slab_mutex);
+> > -     resiliency_test();
+> >       return 0;
+> >  }
+> >
+> > --
+> > 1.8.3.1
+> >
+> >
