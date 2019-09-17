@@ -2,56 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B502B4747
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2793B475F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404116AbfIQGS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 02:18:28 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48856 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730533AbfIQGS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 02:18:28 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5E241D42291E0B16F045;
-        Tue, 17 Sep 2019 14:18:25 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 17 Sep
- 2019 14:18:23 +0800
-Subject: Re: [PATCH] f2fs: add a condition to detect overflow in
- f2fs_ioc_gc_range()
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>
-References: <1568695763-29343-1-git-send-email-stummala@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <1ad336ce-a28a-9841-6438-2b0f851c0a6f@huawei.com>
-Date:   Tue, 17 Sep 2019 14:18:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2404193AbfIQGWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 02:22:36 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:11520 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403814AbfIQGWg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 02:22:36 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 02:22:35 EDT
+Received: from localhost.localdomain (10.28.8.19) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Tue, 17 Sep 2019
+ 14:08:26 +0800
+From:   Qianggui Song <qianggui.song@amlogic.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>
+CC:     Qianggui Song <qianggui.song@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Carlo Caione <carlo@caione.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 0/3] pinctrl: meson-a1: add pinctrl driver
+Date:   Tue, 17 Sep 2019 14:07:19 +0800
+Message-ID: <1568700442-18540-1-git-send-email-qianggui.song@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <1568695763-29343-1-git-send-email-stummala@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.19]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/17 12:49, Sahitya Tummala wrote:
-> end = range.start + range.len;
-> 
-> If the range.start/range.len is a very large value, then end can overflow
-> in this operation. It results into a crash in get_valid_blocks() when
-> accessing the invalid range.start segno.
-> 
-> This issue is reported in ioctl fuzz testing.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+This patchset adds Pin controller driver support for Meson-A1 Soc
+which shares the same register layout of pinmux with previous
+Meson-G12A, however there is difference for gpio and pin config
+registers in A1.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+This patchset is based on A1 DTBv4[1].
 
-Thanks,
+[1] https://lore.kernel.org/linux-amlogic/1568276370-54181-1-git-send-email-jianxin.pan@amlogic.com
+
+Qianggui Song (3):
+  pinctrl: add compatible for Amlogic Meson A1 pin controller
+  pinctrl: meson-a1: add pinctrl driver for Meson A1 Soc
+  arm64: dts: meson: a1: add pinctrl controller support
+
+ .../devicetree/bindings/pinctrl/meson,pinctrl.txt  |   1 +
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |  18 +
+ drivers/pinctrl/meson/Kconfig                      |   6 +
+ drivers/pinctrl/meson/Makefile                     |   1 +
+ drivers/pinctrl/meson/pinctrl-meson-a1.c           | 942 +++++++++++++++++++++
+ drivers/pinctrl/meson/pinctrl-meson.c              |   8 +-
+ drivers/pinctrl/meson/pinctrl-meson.h              |   9 +
+ include/dt-bindings/gpio/meson-a1-gpio.h           |  73 ++
+ 8 files changed, 1056 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/pinctrl/meson/pinctrl-meson-a1.c
+ create mode 100644 include/dt-bindings/gpio/meson-a1-gpio.h
+
+-- 
+1.9.1
+
