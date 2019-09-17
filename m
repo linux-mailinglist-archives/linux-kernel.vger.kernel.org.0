@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B6A0B5313
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:36:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A212B5315
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730502AbfIQQfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 12:35:22 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42984 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730485AbfIQQfV (ORCPT
+        id S1730519AbfIQQfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:35:24 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33680 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730497AbfIQQfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 12:35:21 -0400
-Received: by mail-io1-f67.google.com with SMTP id n197so9083837iod.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:35:20 -0700 (PDT)
+        Tue, 17 Sep 2019 12:35:22 -0400
+Received: by mail-io1-f66.google.com with SMTP id m11so9221651ioo.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 09:35:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uRbhVfvRjBgPiFZTzfKxL4tHG34+Dl9OtCfa42+v2MQ=;
-        b=e8B5/nHmz3KnXtQhBp9saALcYvmJsEcmtKtFnWEtfNrFq9Wf+6wI1rmvMO3LNxLLeg
-         XEqvDNLsv+fUDlD8rpYaCy3UCRNdS+ZcIa7Kpm86qmZtjMwyZaQmWEnQE6WcPYnKpzwD
-         uYbCDLibRtl83AvkgJmcjuL5Sk2ePDUXTKdww=
+        bh=VVJL//iLgewkEoRfC7CxEoEman5r0AHZTTZchJ8JH74=;
+        b=OubrW9S48K1g7uFLUI7/zdWhbZmzku0sG+Nhd8AwOW7CSGHvs/Z9b6+gZyg+sqsdF6
+         Q6zJZMOJSHVeqyT1TsznCMpK2XWpajqZAMVVDOy9cIXTDMv6oIlo2VUQwB6GgUkyhNxG
+         fw1N9WrsgavfRe6U5Loa41EJOuzhUnE7RemXg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uRbhVfvRjBgPiFZTzfKxL4tHG34+Dl9OtCfa42+v2MQ=;
-        b=M4HC90a8K2mgTP/e5RvdVO4rnWDGXTQC5dH9AOe2/lS8EX/uqdEjU6KLTWQido7zEE
-         0fur0fTolzrAfYwOLGPuk9yEkymrhQLI/6rmTkgy/Sm90IjO6lfbkUiQ0lOg8FmcAhmF
-         rXy/qNr+J6XWstT2SUijf2XXEiuAl5RMiNAN0I9GMQdPy0FgsMksDQC+XCyonObGcVIF
-         GFJAVxWrncHQCj2PSaFjtjeT0ofx8cxV62JA2eorh3yKZVTY0Na+Hd29Ls9cJDLmimp+
-         T2q0D4JIdZqX/M6va31rKXXc88YltGla4UVu3ixKSP0AVI73+dWJxVp2ZPHG+USp3iT/
-         NO0Q==
-X-Gm-Message-State: APjAAAXD2Ii7NmkSE6bBr8h4a04sUnQjw1vdcJlJ/chkBGSqXJLeJUGW
-        P1l0JbwW30JDqgJcwGRPVBpaTg==
-X-Google-Smtp-Source: APXvYqznJo6RDb3Wnpbt0iL/OLIWgoFfXqTiSdC31cUaKrUW3hlXn7a6d8viQTm+eDFyKzKYv7kw7w==
-X-Received: by 2002:a5d:89da:: with SMTP id a26mr1704786iot.61.1568738120464;
-        Tue, 17 Sep 2019 09:35:20 -0700 (PDT)
+        bh=VVJL//iLgewkEoRfC7CxEoEman5r0AHZTTZchJ8JH74=;
+        b=IQ5U0RUYXEUJw+xgjysPnCOw9pc+7ekAdwQqdv/nEi4V3m42s4akdToPYYy95q8YEM
+         HxMGRAxMjCFqU8fwG+JgfuPBm1RgovxbVQUhx+M+F+C06v35/D6gkMRcvv4H0k23orrI
+         0uJOuhZUxI+OKXa//ZD2hHaguypQ1FP+aqori5fAkTlWjXxnjO7wOtw1jxnbhS1p5/RZ
+         6klEEHlA/PzXFTQ1bDSrrRlYEQrg/NF6FhaQKYli1AxN1cIaFXJXeWg1RZn9LzQPHgid
+         nJO5m5hsjoTbLtbtfxeR7T2bb2nb0CTA9yZWWya8s06NppRm1psmid4ykKrlhwvO797S
+         FD1g==
+X-Gm-Message-State: APjAAAXv1rQK6xT8S0vi3I/p1nMmmPXfH8xifzhNok/SZaIdlc3FAQQ8
+        UzjWazF0TfC8N8BBr+PkYmsV4A==
+X-Google-Smtp-Source: APXvYqxfbzWoJgWSpGE8if7ltPy0aR4ZcyEh3dO0n7WdjWUwwfzIKTeQ9T1Ymv3OWkH26HL19qL+wg==
+X-Received: by 2002:a05:6638:3a5:: with SMTP id z5mr2781140jap.95.1568738121535;
+        Tue, 17 Sep 2019 09:35:21 -0700 (PDT)
 Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id v3sm2593781ioh.51.2019.09.17.09.35.19
+        by smtp.gmail.com with ESMTPSA id v3sm2593781ioh.51.2019.09.17.09.35.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 09:35:20 -0700 (PDT)
+        Tue, 17 Sep 2019 09:35:21 -0700 (PDT)
 From:   Shuah Khan <skhan@linuxfoundation.org>
 To:     mchehab@kernel.org, helen.koike@collabora.com,
         skhan@linuxfoundation.org, andrealmeid@collabora.com,
         dafna.hirschfeld@collabora.com, hverkuil-cisco@xs4all.nl
 Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/5] vimc: move duplicated IS_SRC and IS_SINK to common header
-Date:   Tue, 17 Sep 2019 10:35:10 -0600
-Message-Id: <776b23b8fa963df3eea3c4920c78b052ef4567a1.1568689325.git.skhan@linuxfoundation.org>
+Subject: [PATCH v5 4/5] doc: media: vimc: Update module parameter usage information
+Date:   Tue, 17 Sep 2019 10:35:11 -0600
+Message-Id: <f21e40f304507dffe2de240fdaeb881305c270ca.1568689325.git.skhan@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1568689325.git.skhan@linuxfoundation.org>
 References: <cover.1568689325.git.skhan@linuxfoundation.org>
@@ -60,121 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move duplicated IS_SRC and IS_SINK dfines to common header. Rename
-them to VIMC_IS_SRC and VIM_IS_SINK.
+vimc driver is now a monolithic driver. Update the module parameter
+usage information to reflect that.
 
 Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 ---
- drivers/media/platform/vimc/vimc-common.h  |  4 ++++
- drivers/media/platform/vimc/vimc-debayer.c | 11 ++++-------
- drivers/media/platform/vimc/vimc-scaler.c  |  8 +++-----
- 3 files changed, 11 insertions(+), 12 deletions(-)
+ Documentation/media/v4l-drivers/vimc.rst | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/vimc/vimc-common.h b/drivers/media/platform/vimc/vimc-common.h
-index d7aaf31175bc..698db7c07645 100644
---- a/drivers/media/platform/vimc/vimc-common.h
-+++ b/drivers/media/platform/vimc/vimc-common.h
-@@ -27,6 +27,10 @@
+diff --git a/Documentation/media/v4l-drivers/vimc.rst b/Documentation/media/v4l-drivers/vimc.rst
+index 406417680db5..a582af0509ee 100644
+--- a/Documentation/media/v4l-drivers/vimc.rst
++++ b/Documentation/media/v4l-drivers/vimc.rst
+@@ -76,22 +76,22 @@ vimc-capture:
+ 	* 1 Pad sink
+ 	* 1 Pad source
  
- #define VIMC_FRAME_INDEX(lin, col, width, bpp) ((lin * width + col) * bpp)
- 
-+/* Source and sink pad checks */
-+#define VIMC_IS_SRC(pad)	(pad)
-+#define VIMC_IS_SINK(pad)	(!(pad))
+-Module options
 +
- /**
-  * struct vimc_colorimetry_clamp - Adjust colorimetry parameters
-  *
-diff --git a/drivers/media/platform/vimc/vimc-debayer.c b/drivers/media/platform/vimc/vimc-debayer.c
-index 4125159e8f31..feac47d79449 100644
---- a/drivers/media/platform/vimc/vimc-debayer.c
-+++ b/drivers/media/platform/vimc/vimc-debayer.c
-@@ -20,9 +20,6 @@ MODULE_PARM_DESC(deb_mean_win_size, " the window size to calculate the mean.\n"
- 	"stays in the center of the window, otherwise the next odd number "
- 	"is considered");
++        Module options
+ ---------------
  
--#define IS_SINK(pad) (!pad)
--#define IS_SRC(pad)  (pad)
--
- enum vimc_deb_rgb_colors {
- 	VIMC_DEB_RED = 0,
- 	VIMC_DEB_GREEN = 1,
-@@ -155,7 +152,7 @@ static int vimc_deb_enum_mbus_code(struct v4l2_subdev *sd,
- 				   struct v4l2_subdev_mbus_code_enum *code)
- {
- 	/* We only support one format for source pads */
--	if (IS_SRC(code->pad)) {
-+	if (VIMC_IS_SRC(code->pad)) {
- 		struct vimc_deb_device *vdeb = v4l2_get_subdevdata(sd);
+-Vimc has a few module parameters to configure the driver. You should pass
+-those arguments to each subdevice, not to the vimc module. For example::
++Vimc has a few module parameters to configure the driver.
  
- 		if (code->index)
-@@ -181,7 +178,7 @@ static int vimc_deb_enum_frame_size(struct v4l2_subdev *sd,
- 	if (fse->index)
- 		return -EINVAL;
+-        vimc_subdevice.param=value
++        param=value
  
--	if (IS_SINK(fse->pad)) {
-+	if (VIMC_IS_SINK(fse->pad)) {
- 		const struct vimc_deb_pix_map *vpix =
- 			vimc_deb_pix_map_by_code(fse->code);
+-* ``vimc_scaler.sca_mult=<unsigned int>``
++* ``sca_mult=<unsigned int>``
  
-@@ -211,7 +208,7 @@ static int vimc_deb_get_fmt(struct v4l2_subdev *sd,
- 		      vdeb->sink_fmt;
+         Image size multiplier factor to be used to multiply both width and
+         height, so the image size will be ``sca_mult^2`` bigger than the
+         original one. Currently, only supports scaling up (the default value
+         is 3).
  
- 	/* Set the right code for the source pad */
--	if (IS_SRC(fmt->pad))
-+	if (VIMC_IS_SRC(fmt->pad))
- 		fmt->format.code = vdeb->src_code;
+-* ``vimc_debayer.deb_mean_win_size=<unsigned int>``
++* ``deb_mean_win_size=<unsigned int>``
  
- 	return 0;
-@@ -258,7 +255,7 @@ static int vimc_deb_set_fmt(struct v4l2_subdev *sd,
- 	 * Do not change the format of the source pad,
- 	 * it is propagated from the sink
- 	 */
--	if (IS_SRC(fmt->pad)) {
-+	if (VIMC_IS_SRC(fmt->pad)) {
- 		fmt->format = *sink_fmt;
- 		/* TODO: Add support for other formats */
- 		fmt->format.code = vdeb->src_code;
-diff --git a/drivers/media/platform/vimc/vimc-scaler.c b/drivers/media/platform/vimc/vimc-scaler.c
-index 1a593d81ea7c..a6a3cc5be872 100644
---- a/drivers/media/platform/vimc/vimc-scaler.c
-+++ b/drivers/media/platform/vimc/vimc-scaler.c
-@@ -16,8 +16,6 @@ static unsigned int sca_mult = 3;
- module_param(sca_mult, uint, 0000);
- MODULE_PARM_DESC(sca_mult, " the image size multiplier");
- 
--#define IS_SINK(pad)	(!pad)
--#define IS_SRC(pad)	(pad)
- #define MAX_ZOOM	8
- 
- struct vimc_sca_device {
-@@ -93,7 +91,7 @@ static int vimc_sca_enum_frame_size(struct v4l2_subdev *sd,
- 	fse->min_width = VIMC_FRAME_MIN_WIDTH;
- 	fse->min_height = VIMC_FRAME_MIN_HEIGHT;
- 
--	if (IS_SINK(fse->pad)) {
-+	if (VIMC_IS_SINK(fse->pad)) {
- 		fse->max_width = VIMC_FRAME_MAX_WIDTH;
- 		fse->max_height = VIMC_FRAME_MAX_HEIGHT;
- 	} else {
-@@ -116,7 +114,7 @@ static int vimc_sca_get_fmt(struct v4l2_subdev *sd,
- 			 vsca->sink_fmt;
- 
- 	/* Scale the frame size for the source pad */
--	if (IS_SRC(format->pad)) {
-+	if (VIMC_IS_SRC(format->pad)) {
- 		format->format.width = vsca->sink_fmt.width * sca_mult;
- 		format->format.height = vsca->sink_fmt.height * sca_mult;
- 	}
-@@ -165,7 +163,7 @@ static int vimc_sca_set_fmt(struct v4l2_subdev *sd,
- 	 * Do not change the format of the source pad,
- 	 * it is propagated from the sink
- 	 */
--	if (IS_SRC(fmt->pad)) {
-+	if (VIMC_IS_SRC(fmt->pad)) {
- 		fmt->format = *sink_fmt;
- 		fmt->format.width = sink_fmt->width * sca_mult;
- 		fmt->format.height = sink_fmt->height * sca_mult;
+         Window size to calculate the mean. Note: the window size needs to be an
+         odd number, as the main pixel stays in the center of the window,
 -- 
 2.20.1
 
