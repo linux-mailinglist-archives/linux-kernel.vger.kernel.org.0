@@ -2,139 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD981B4754
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B98AB4759
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404150AbfIQGUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 02:20:21 -0400
-Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:57815
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2403789AbfIQGUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 02:20:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QFlKk6zPYrRXhd6BBsWPXpSkgn1S0Yp3OKVaRjmJbCS/T+ka86Abr3hcN/uYRSq7yLsVPC6kRbeCjK3dlo9pXQcD73mqnVraKN/Bo62dqEKDBFL2DrwgCiz5mxMsJsEDEvRmFbcla1bKOInGD4aZPCrc9FXA7z/eec2s4sIBNiuB53erWQmSPVPHiBTf+V3/p7Q7XtzfGq8nPWWG92uiwbY/kyO/AdMaeZqBDBI+aWrd3VbPLAubNYieeSd99EhTRinFmmntkNSpDvWLt+8IdngRiecqdSgspiaggaohRP0TMNRBwXXbPPneSfI8rXDAVXQd7HLZxH3/v26S/dA1Dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xORgEn138aClpnkqf63ja5Qc6KTgERbYVZWyXxe/xcc=;
- b=Tqkb3MVEMtr47yGubd4rvStaegThN/3Gj95aHogZcJfIgDJxyuBEVRtcKbYLM4iw7wAbvDPSi/kZKrPiRx2Yz/xl3Ft53EbhhvHsDXBN3x2LL0UMv7xH7sWRSLFbvBc1roAzIQ9SAkdkhQZcPq9lMboITGKfDmm3qOfz2E274jTFmgYU7BaPQVgUakyZVyDBWik3DLWMiIpMW9wTxiruKHEa1jxg4/5mHS2Cnexb+z6JTOxUS6YhVvWj43v3LFKOus0KqIGXlWpToktvRw2sTRWchyQt+8znHSVKVrN4Xw4powyttnkvqJSmNQ2i6fMGMpLyGdu3JQnN9KDFgccgOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xORgEn138aClpnkqf63ja5Qc6KTgERbYVZWyXxe/xcc=;
- b=XcwM0eu06/g1gTRWfrlDU3AR+lQXE87Q2fR0Wo00pUAEubNtYApnTQHIhbx1l7eWTr1vq6ECHNxVQOWy+YFrMSQ2a3F/FQaf00u+EC7JdP1n5fAyN6uoZV20D7qVcQK08os8qbcOIy244ciIoLATwAD/RZPkHkS3QJFrbC5qaNs=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6370.eurprd04.prod.outlook.com (20.179.252.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.26; Tue, 17 Sep 2019 06:20:15 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8%6]) with mapi id 15.20.2263.023; Tue, 17 Sep 2019
- 06:20:15 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: RE: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
-Thread-Topic: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
-Thread-Index: AQHVZsAvxNHrETdja06leIJqZC3kHacvcZcw
-Date:   Tue, 17 Sep 2019 06:20:15 +0000
-Message-ID: <AM0PR04MB4481A31DD68C3C3409E95339888F0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1568043491-20680-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1568043491-20680-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 63dcc41c-1861-4a0a-95bd-08d73b371abe
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM0PR04MB6370;
-x-ms-traffictypediagnostic: AM0PR04MB6370:|AM0PR04MB6370:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB6370362DA2EBCD2AB9E1D188888F0@AM0PR04MB6370.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01630974C0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(346002)(376002)(39860400002)(396003)(199004)(189003)(26005)(52536014)(44832011)(54906003)(6436002)(110136005)(305945005)(2201001)(74316002)(66446008)(33656002)(66476007)(66556008)(55016002)(76116006)(229853002)(66946007)(6246003)(2906002)(7736002)(486006)(71200400001)(71190400001)(66066001)(2501003)(478600001)(25786009)(186003)(14454004)(102836004)(64756008)(316002)(9686003)(6506007)(5660300002)(446003)(476003)(99286004)(11346002)(6116002)(256004)(86362001)(81156014)(76176011)(81166006)(8676002)(3846002)(8936002)(7696005)(4326008)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6370;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YJ+ZAHlQpDlZXTD1/T/vguVQO9yzjXXxb3pGPNaX8FPQI96MxtWv81lU6S6TLY9f6wnTZGHsT4vpQn4uwka0VjaHA+zIrJ6/vUjF9vc5Q703OFE/RLb5S732ek2KN0A/gWoKTlfI+KFm/tHGG29ofDFHu6xycwMi2lagWl0dR9RviXDPtf47eZf/UIRsOOyRcFLs275tyI2fWSBTtRsL2Yc4UZiDPifpA1UluIjpyv5CimoOCxl5Lpmh/GqdcntJtyvOho6mYSIuBd44ryZ3/JJuYjgpJrKRRrGbHg8Ff8lJM0La0/TKoW1bAm6En60FABOZsBK6h+KPD9wC8a5TG48nL3+IL45fY2LYBRHhcpxxmXCnpBAMzG+v6yW+aLhtq5c5wy3HFta0kFY4hTCDBc7Wh/MOqCmMz4riP9zGDug=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63dcc41c-1861-4a0a-95bd-08d73b371abe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2019 06:20:15.3132
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Sa9KdMtqb46GsAqgFZhroEcPenh9Cxu9h0ZXFa7Hsfcp+8AgPygEC6wmr2OTikqjdeW1e60d6MoAaa3AL36qYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6370
+        id S2404169AbfIQGVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 02:21:52 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38185 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733169AbfIQGVw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 02:21:52 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x10so1427401pgi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 23:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TEwv74xGLonyUSKE60jjZa5xk8QOk2YknSg9pzIDLUg=;
+        b=hqtP5Y5Yq0jTC+rzc24KLymUET1TvjR5Y0h0InG8LyO11aFL6tcFT4iNkH7I8UE0cG
+         BkL+UFsADnhEeTHQVVAFR/CIbBedh/b99DDqdbtI95cPJFVOg52P+hHJ5fttXtZMAV47
+         Bg2l9DukDANYWyHYtsQ+dhUxhshOXh8Ovl9FufVg6Xwzh/Q/mI9wNqhwApTqY2yTvuUm
+         pV1Lnm0ODH7TzRPdyw7wz8WEvymt0Y/5SnZR7ZNHZ64hkwUux3oVuUDYtLLfeHq4akZ2
+         1vko4JDd//qfnAiZNtrQ12E2waVNv7BvHpJNqf6m1yVqOiufEw+fkvPJaaBHIo6pH17M
+         oa2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TEwv74xGLonyUSKE60jjZa5xk8QOk2YknSg9pzIDLUg=;
+        b=Ar7R/IBJrkNL2Q4BDI4piHyiFxYV2XH1XKtW45ssE+PHglwcVzOpZKANSK7hzhohLW
+         rPmuQt3ae8UO1MibRSnjVXCbrByFkOl5w4NA131WGYz/UQGGWg3mIxp4ZT5lPkQ8Mzzi
+         +sPLlwA/hn2X2B2sxx5rVopSXNYzuReX3QF3MKxpidLEQTiF5Q1QCksjK3jEySfOMMWx
+         xCldUR7KnjfrMKPcoiReqWuKufAqtmwSmqC/6lWwBG0FmGLsFJjLf4nNYLjyTFr0kMyb
+         SU824jKixCeiZ1UH/yusJwKcTAyvtUkXEmBACM+KwClNT16arbvenIAtsL5qs+lY8uvT
+         tp/A==
+X-Gm-Message-State: APjAAAVKL7GW8S38SyVQRHpycSsfcM3AZcfDjymLqBB2hIEYH7gwPAVc
+        0H0HfRiyuvooj30ldlwzjbaDog==
+X-Google-Smtp-Source: APXvYqwNofpu/24HvPIr7zem7L9ISS92QBaKN3qeRCbMyGyJm5Y2QMYLHzoNduJ2Ml4wyt2+Tr/SoQ==
+X-Received: by 2002:a65:6802:: with SMTP id l2mr1831103pgt.33.1568701311473;
+        Mon, 16 Sep 2019 23:21:51 -0700 (PDT)
+Received: from localhost.localdomain (111-241-124-228.dynamic-ip.hinet.net. [111.241.124.228])
+        by smtp.gmail.com with ESMTPSA id 127sm931089pgi.46.2019.09.16.23.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 23:21:49 -0700 (PDT)
+From:   Green Wan <green.wan@sifive.com>
+Cc:     linux-hackers@sifive.com, Green Wan <green.wan@sifive.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3]  dmaengine: sf-pdma: Add platform dma driver
+Date:   Tue, 17 Sep 2019 14:20:46 +0800
+Message-Id: <20190917062119.693-1-green.wan@sifive.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen, Shawn,
+Add PDMA driver support for SiFive HiFive Unleashed RevA00 board. Mainly follows
+DMAengine controller doc[1] to implement and take other DMA drivers as reference.
+Such as
 
-> Subject: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
+  - drivers/dma/fsl-edma.c
+  - drivers/dma/dw-edma/
+  - drivers/dma/pxa-dma.c
 
-Sorry to ping early. Is there a chance to land this patchset in 5.3 release=
-?
+Using DMA test client[2] to test. Detailed datasheet is doc[3]. Driver supports:
 
-Thanks,
-Peng.
+ - 4 physical DMA channels, share same DONE and error interrupt handler. 
+ - Support MEM_TO_MEM
+ - Tested by DMA test client
+ - patches include DT Bindgins document and dts for fu450-c000 SoC. Separate dts
+   patch for easier review and apply to different branch or SoC platform.
+ - retry 1 time if DMA error occurs.
 
->=20
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> V3:
->  Add cover-letter
->=20
-> V2:
->  Added patch [2,3,4]/4 and avoid glitch when prepare
->=20
-> There is two bypass bit in the pll, BYPASS and EXT_BYPASS.
-> There is also a restriction that to avoid glitch, need set BYPASS bit whe=
-n
-> RESETB changed from 0 to 1, otherwise there will be glitch.
->=20
-> However the BYPASS bit is also used as mux bit in imx8mm/imx8mn clk drive=
-r.
->=20
-> This means two paths touch the same bit which is wrong. So switch to use
-> EXT_BYPASS bit as the mux.
->=20
-> Peng Fan (4):
->   clk: imx: pll14xx: avoid glitch when set rate
->   clk: imx: clk-pll14xx: unbypass PLL by default
->   clk: imx: imx8mm: fix pll mux bit
->   clk: imx: imx8mn: fix pll mux bit
->=20
->  drivers/clk/imx/clk-imx8mm.c  | 32 ++++++++++----------------------
-> drivers/clk/imx/clk-imx8mn.c  | 32 ++++++++++----------------------
-> drivers/clk/imx/clk-pll14xx.c | 27 ++++++++++++++++++++++++++-
->  3 files changed, 46 insertions(+), 45 deletions(-)
->=20
-> --
-> 2.16.4
+[Reference Doc]
+ [1] ./Documentation/driver-api/dmaengine/provider.rst
+ [2] ./Documentation/driver-api/dmaengine/dmatest.rst
+ [3] https://static.dev.sifive.com/FU540-C000-v1.0.pdf 
+
+[Simple steps to test of DMA Test client]
+ $ echo 1 > /sys/module/dmatest/parameters/iterations
+ $ echo dma0chan0 > /sys/module/dmatest/parameters/channel
+ $ echo dma0chan1 > /sys/module/dmatest/parameters/channel
+ $ echo dma0chan2 > /sys/module/dmatest/parameters/channel
+ $ echo dma0chan3 > /sys/module/dmatest/parameters/channel
+ $ echo 1 > /sys/module/dmatest/parameters/run
+
+Green Wan (3):
+  dt-bindings: dmaengine: sf-pdma: add bindins for SiFive PDMA
+  riscv: dts: add support for PDMA device of HiFive Unleashed Rev A00
+  dmaengine: sf-pdma: add platform DMA support for HiFive Unleashed A00
+
+ .../bindings/dma/sifive,fu540-c000-pdma.yaml  |  63 ++
+ MAINTAINERS                                   |   6 +
+ arch/riscv/boot/dts/sifive/fu540-c000.dtsi    |   7 +
+ drivers/dma/Kconfig                           |   2 +
+ drivers/dma/Makefile                          |   1 +
+ drivers/dma/sf-pdma/Kconfig                   |   6 +
+ drivers/dma/sf-pdma/Makefile                  |   1 +
+ drivers/dma/sf-pdma/sf-pdma.c                 | 609 ++++++++++++++++++
+ drivers/dma/sf-pdma/sf-pdma.h                 | 124 ++++
+ 9 files changed, 819 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+ create mode 100644 drivers/dma/sf-pdma/Kconfig
+ create mode 100644 drivers/dma/sf-pdma/Makefile
+ create mode 100644 drivers/dma/sf-pdma/sf-pdma.c
+ create mode 100644 drivers/dma/sf-pdma/sf-pdma.h
+
+-- 
+2.17.1
 
