@@ -2,80 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9F66B5223
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 17:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD916B523E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfIQP5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 11:57:47 -0400
-Received: from gardel.0pointer.net ([85.214.157.71]:40574 "EHLO
-        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfIQP5q (ORCPT
+        id S1727670AbfIQQAk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:00:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42604 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbfIQQAj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 11:57:46 -0400
-Received: from gardel-login.0pointer.net (gardel.0pointer.net [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-        by gardel.0pointer.net (Postfix) with ESMTP id 4BBA1E80FFC;
-        Tue, 17 Sep 2019 17:57:44 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id EB22F160ADC; Tue, 17 Sep 2019 17:57:43 +0200 (CEST)
-Date:   Tue, 17 Sep 2019 17:57:43 +0200
-From:   Lennart Poettering <mzxreary@0pointer.de>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Willy Tarreau <w@1wt.eu>, Matthew Garrett <mjg59@srcf.ucam.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 5.3-rc8
-Message-ID: <20190917155743.GB31567@gardel-login>
-References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
- <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org>
- <20190917052438.GA26923@1wt.eu>
- <2508489.jOnZlRuxVn@merkaba>
- <20190917121156.GC6762@mit.edu>
+        Tue, 17 Sep 2019 12:00:39 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iAFu2-0002Qp-Ir; Tue, 17 Sep 2019 18:00:30 +0200
+Date:   Tue, 17 Sep 2019 18:00:30 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH RT 7/8] sched: migrate_enable: Use select_fallback_rq()
+Message-ID: <20190917160030.i24gvyye2bpdykfy@linutronix.de>
+References: <20190727055638.20443-1-swood@redhat.com>
+ <20190727055638.20443-8-swood@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190917121156.GC6762@mit.edu>
+In-Reply-To: <20190727055638.20443-8-swood@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Di, 17.09.19 08:11, Theodore Y. Ts'o (tytso@mit.edu) wrote:
+On 2019-07-27 00:56:37 [-0500], Scott Wood wrote:
+> migrate_enable() currently open-codes a variant of select_fallback_rq().
+> However, it does not have the "No more Mr. Nice Guy" fallback and thus
+> it will pass an invalid CPU to the migration thread if cpus_mask only
+> contains a CPU that is !active.
+> 
+> Signed-off-by: Scott Wood <swood@redhat.com>
+> ---
+> This scenario will be more likely after the next patch, since
+> the migrate_disable_update check goes away.  However, it could happen
+> anyway if cpus_mask was updated to a CPU other than the one we were
+> pinned to, and that CPU subsequently became inactive.
 
-> On Tue, Sep 17, 2019 at 09:33:40AM +0200, Martin Steigerwald wrote:
-> > Willy Tarreau - 17.09.19, 07:24:38 CEST:
-> > > On Mon, Sep 16, 2019 at 06:46:07PM -0700, Matthew Garrett wrote:
-> > > > >Well, the patch actually made getrandom() return en error too, but
-> > > > >you seem more interested in the hypotheticals than in arguing
-> > > > >actualities.>
-> > > > If you want to be safe, terminate the process.
-> > >
-> > > This is an interesting approach. At least it will cause bug reports in
-> > > application using getrandom() in an unreliable way and they will
-> > > check for other options. Because one of the issues with systems that
-> > > do not finish to boot is that usually the user doesn't know what
-> > > process is hanging.
-> >
->
-> I would be happy with a change which changes getrandom(0) to send a
-> kill -9 to the process if it is called too early, with a new flag,
-> getrandom(GRND_BLOCK) which blocks until entropy is available.  That
-> leaves it up to the application developer to decide what behavior they
-> want.
+I'm unclear about the problem / side effect this has (before and after
+the change). It is possible (before and after that change) that a CPU is
+selected which is invalid / goes offline after the "preempt_enable()"
+statement and before stop_one_cpu() does its job, correct?
 
-Note that calling getrandom(0) "too early" is not something people do
-on purpose. It happens by accident, i.e. because we live in a world
-where SSH or HTTPS or so is run in the initrd already, and in a world
-where booting sometimes can be very very fast. So even if you write a
-program and you think "this stuff should run late I'll just
-getrandom(0)" it might not actually be that case IRL because people
-deploy it a slightly bit differently than you initially thought in a
-slightly differently equipped system with other runtime behaviour...
+> ---
+>  kernel/sched/core.c | 25 ++++++++++---------------
+>  1 file changed, 10 insertions(+), 15 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index eb27a9bf70d7..3a2d8251a30c 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -7368,6 +7368,7 @@ void migrate_enable(void)
+>  	if (p->migrate_disable_update) {
+>  		struct rq *rq;
+>  		struct rq_flags rf;
+> +		int cpu = task_cpu(p);
+>  
+>  		rq = task_rq_lock(p, &rf);
+>  		update_rq_clock(rq);
+> @@ -7377,21 +7378,15 @@ void migrate_enable(void)
+>  
+>  		p->migrate_disable_update = 0;
+>  
+> -		WARN_ON(smp_processor_id() != task_cpu(p));
+> -		if (!cpumask_test_cpu(task_cpu(p), &p->cpus_mask)) {
+> -			const struct cpumask *cpu_valid_mask = cpu_active_mask;
+> -			struct migration_arg arg;
+> -			unsigned int dest_cpu;
+> -
+> -			if (p->flags & PF_KTHREAD) {
+> -				/*
+> -				 * Kernel threads are allowed on online && !active CPUs
+> -				 */
+> -				cpu_valid_mask = cpu_online_mask;
+> -			}
+> -			dest_cpu = cpumask_any_and(cpu_valid_mask, &p->cpus_mask);
+> -			arg.task = p;
+> -			arg.dest_cpu = dest_cpu;
+> +		WARN_ON(smp_processor_id() != cpu);
+> +		if (!cpumask_test_cpu(cpu, &p->cpus_mask)) {
+> +			struct migration_arg arg = { p };
+> +			struct rq_flags rf;
+> +
+> +			rq = task_rq_lock(p, &rf);
+> +			update_rq_clock(rq);
+> +			arg.dest_cpu = select_fallback_rq(cpu, p);
+> +			task_rq_unlock(rq, p, &rf);
+>  
+>  			unpin_current_cpu();
+>  			preempt_lazy_enable();
 
-Lennart
+Sebastian
