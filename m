@@ -2,109 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95BCBB5394
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD3CB5399
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730720AbfIQREh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 13:04:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38654 "EHLO mx1.redhat.com"
+        id S1730733AbfIQRFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 13:05:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36718 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730669AbfIQREh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:04:37 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728245AbfIQRFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 13:05:22 -0400
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 79063369D3;
-        Tue, 17 Sep 2019 17:04:36 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C2F560126;
-        Tue, 17 Sep 2019 17:04:29 +0000 (UTC)
-Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
- ZONE_DEVICE driver.
-To:     Qian Cai <cai@lca.pw>, David Hildenbrand <david@redhat.com>,
-        Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
- <b7732a55-4a10-2c1d-c2f5-ca38ee60964d@redhat.com>
- <e762ee45-43e3-975a-ad19-065f07d1440f@vx.jp.nec.com>
- <40a1ce2e-1384-b869-97d0-7195b5b47de0@redhat.com>
- <6a99e003-e1ab-b9e8-7b25-bc5605ab0eb2@vx.jp.nec.com>
- <e4e54258-e83b-cf0b-b66e-9874be6b5122@redhat.com>
- <31fd3c86-5852-1863-93bd-8df9da9f95b4@vx.jp.nec.com>
- <38e58d23-c20b-4e68-5f56-20bba2be2d6c@redhat.com>
- <59c946f8-843d-c017-f342-d007a5e14a85@redhat.com>
- <1568737304.5576.162.camel@lca.pw>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <bd6ea535-b228-8de0-1454-e512ccbfb4fa@redhat.com>
-Date:   Tue, 17 Sep 2019 13:04:28 -0400
+        by mx1.redhat.com (Postfix) with ESMTPS id 6A4866412B
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 17:05:21 +0000 (UTC)
+Received: by mail-wr1-f70.google.com with SMTP id z1so1531749wrw.21
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 10:05:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=t6xejXDOMQ6KuyMfFm1U1GgbUuSpZUSZNER6+lLzGmc=;
+        b=RcKo5ftzJkIugOn5f0in0Ntaav3PQhDVzH16U1tmu5Wl44o9g5N90iSWayluMH81wE
+         m7sfBwvaloDRyQIMU1oAIm2mK/lz1KBbZZ0wEvpJSOrXdq9EuFO3gCWD4emenB/+rk4e
+         eKQbF4D5gEp8auITvdBR1AZulu6tBimNfnieZwFUWTUcWV+y2HyLm7fVNGNn3sTZmrH6
+         E++mhoWafwgB15U9kKYQUCwjSNVb8+CaMqSzWz78zB07vzH1N7XKuEDwSA1MA39FwU2u
+         oif6UAYMd/le24n3+mf0f6x1cQshAj66IDK8gPrR0YAuLtV0Rww3jEgNI5wxzApQktKQ
+         UwXA==
+X-Gm-Message-State: APjAAAVy6G5OodWYbeV3KzK9wdP8d7K/hqLh1swFxxGmeDVpEmtSIfE7
+        8sUeWQAj9VZpWDbsBJ7y/6ouLFIr2PbR76uDqHdp6pxOzgDtE52JdYnSPQ4Bp1SuSuLPZ24XkVg
+        sHuGQDndLWHXIhArImJMLzb5q
+X-Received: by 2002:a5d:4d8c:: with SMTP id b12mr3653223wru.198.1568739920066;
+        Tue, 17 Sep 2019 10:05:20 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxJ0DbeEHzBFaKEv6qVKXKe/VqIgn8HZlgAzW1WduAOnlbb2RWLukrZ6EHzIuJagKt0d7rRtA==
+X-Received: by 2002:a5d:4d8c:: with SMTP id b12mr3653188wru.198.1568739919677;
+        Tue, 17 Sep 2019 10:05:19 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:c46c:2acb:d8d2:21d8? ([2001:b07:6468:f312:c46c:2acb:d8d2:21d8])
+        by smtp.gmail.com with ESMTPSA id c6sm4140610wrb.60.2019.09.17.10.05.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2019 10:05:19 -0700 (PDT)
+Subject: Re: [PATCH v8 0/3] KVM: x86: Enable user wait instructions
+To:     Tao Xu <tao3.xu@intel.com>, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, corbet@lwn.net,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jingqi.liu@intel.com
+References: <20190716065551.27264-1-tao3.xu@intel.com>
+ <d01e6b8b-279c-84da-1f08-7b01baf9fdbf@intel.com>
+ <ad687740-1525-f9c2-b441-63613b7dd93e@redhat.com>
+ <ca969df2-a42a-3e7c-f49c-6b59d097b3de@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <a4bbc34c-9a0a-1bfb-2d56-c71a8d9a52c9@redhat.com>
+Date:   Tue, 17 Sep 2019 19:05:17 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1568737304.5576.162.camel@lca.pw>
+In-Reply-To: <ca969df2-a42a-3e7c-f49c-6b59d097b3de@intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 17 Sep 2019 17:04:36 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/17/19 12:21 PM, Qian Cai wrote:
-> On Tue, 2019-09-17 at 11:49 -0400, Waiman Long wrote:
->> On 9/17/19 3:13 AM, David Hildenbrand wrote:
->>> On 17.09.19 04:34, Toshiki Fukasawa wrote:
->>>> On 2019/09/09 16:46, David Hildenbrand wrote:
->>>>> Let's take a step back here to understand the issues I am aware of. I
->>>>> think we should solve this for good now:
->>>>>
->>>>> A PFN walker takes a look at a random PFN at a random point in time. It
->>>>> finds a PFN with SECTION_MARKED_PRESENT && !SECTION_IS_ONLINE. The
->>>>> options are:
->>>>>
->>>>> 1. It is buddy memory (add_memory()) that has not been online yet. The
->>>>> memmap contains garbage. Don't access.
->>>>>
->>>>> 2. It is ZONE_DEVICE memory with a valid memmap. Access it.
->>>>>
->>>>> 3. It is ZONE_DEVICE memory with an invalid memmap, because the section
->>>>> is only partially present: E.g., device starts at offset 64MB within a
->>>>> section or the device ends at offset 64MB within a section. Don't access it.
->>>> I don't agree with case #3. In the case, struct page area is not allocated on
->>>> ZONE_DEVICE, but is allocated on system memory. So I think we can access the
->>>> struct pages. What do you mean "invalid memmap"?
->>> No, that's not the case. There is no memory, especially not system
->>> memory. We only allow partially present sections (sub-section memory
->>> hotplug) for ZONE_DEVICE.
+On 16/09/19 03:28, Tao Xu wrote:
+> On 7/20/2019 1:18 AM, Paolo Bonzini wrote:
+>> On 19/07/19 08:31, Tao Xu wrote:
+>>> Ping for comments :)
+>>
+>> Hi, I'll look at it for 5.4, right after the merge window.
+>>
+>> Paolo
+>>
+> Hi paolo,
+> 
+> Linux 5.3 has released, could you review these patches. Thank you very
+> much!
+> 
+> Tao
+>>> On 7/16/2019 2:55 PM, Tao Xu wrote:
+>>>> UMONITOR, UMWAIT and TPAUSE are a set of user wait instructions.
+>>>>
+>>>> UMONITOR arms address monitoring hardware using an address. A store
+>>>> to an address within the specified address range triggers the
+>>>> monitoring hardware to wake up the processor waiting in umwait.
+>>>>
+>>>> UMWAIT instructs the processor to enter an implementation-dependent
+>>>> optimized state while monitoring a range of addresses. The optimized
+>>>> state may be either a light-weight power/performance optimized state
+>>>> (c0.1 state) or an improved power/performance optimized state
+>>>> (c0.2 state).
+>>>>
+>>>> TPAUSE instructs the processor to enter an implementation-dependent
+>>>> optimized state c0.1 or c0.2 state and wake up when time-stamp counter
+>>>> reaches specified timeout.
+>>>>
+>>>> Availability of the user wait instructions is indicated by the presence
+>>>> of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
+>>>>
+>>>> The patches enable the umonitor, umwait and tpause features in KVM.
+>>>> Because umwait and tpause can put a (psysical) CPU into a power saving
+>>>> state, by default we dont't expose it to kvm and enable it only when
+>>>> guest CPUID has it. If the instruction causes a delay, the amount
+>>>> of time delayed is called here the physical delay. The physical
+>>>> delay is
+>>>> first computed by determining the virtual delay (the time to delay
+>>>> relative to the VM’s timestamp counter).
+>>>>
+>>>> The release document ref below link:
+>>>> Intel 64 and IA-32 Architectures Software Developer's Manual,
+>>>> https://software.intel.com/sites/default/files/\
+>>>> managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
+>>>>
+>>>> Changelog:
+>>>> v8:
+>>>>      Add vmx_waitpkg_supported() helper (Sean)
+>>>>      Add an accessor to expose umwait_control_cached (Sean)
+>>>>      Set msr_ia32_umwait_control in vcpu_vmx u32 and raise #GP when
+>>>>      [63:32] is set when rdmsr. (Sean)
+>>>>      Introduce a common exit helper handle_unexpected_vmexit (Sean)
+>>>> v7:
+>>>>      Add nested support for user wait instructions (Paolo)
+>>>>      Use the test on vmx->secondary_exec_control to replace
+>>>>      guest_cpuid_has (Paolo)
+>>>> v6:
+>>>>      add check msr_info->host_initiated in get/set msr(Xiaoyao)
+>>>>      restore the atomic_switch_umwait_control_msr()(Xiaoyao)
+>>>>
+>>>> Tao Xu (3):
+>>>>     KVM: x86: Add support for user wait instructions
+>>>>     KVM: vmx: Emulate MSR IA32_UMWAIT_CONTROL
+>>>>     KVM: vmx: Introduce handle_unexpected_vmexit and handle WAITPKG
+>>>> vmexit
+>>>>
+>>>>    arch/x86/include/asm/vmx.h      |  1 +
+>>>>    arch/x86/include/uapi/asm/vmx.h |  6 ++-
+>>>>    arch/x86/kernel/cpu/umwait.c    |  6 +++
+>>>>    arch/x86/kvm/cpuid.c            |  2 +-
+>>>>    arch/x86/kvm/vmx/capabilities.h |  6 +++
+>>>>    arch/x86/kvm/vmx/nested.c       |  5 ++
+>>>>    arch/x86/kvm/vmx/vmx.c          | 83
+>>>> ++++++++++++++++++++++++++-------
+>>>>    arch/x86/kvm/vmx/vmx.h          |  9 ++++
+>>>>    arch/x86/kvm/x86.c              |  1 +
+>>>>    9 files changed, 101 insertions(+), 18 deletions(-)
+>>>>
 >>>
->>> invalid memmap == memmap was not initialized == struct pages contains
->>> garbage. There is a memmap, but accessing it (e.g., pfn_to_nid()) will
->>> trigger a BUG.
->>>
->> As long as the page structures exist, they should be initialized to some
->> known state. We could set PagePoison for those invalid memmap. It is the
-> Sounds like you want to run page_init_poison() by default.
+>>
+> 
 
-Yes for those pages that are not initialized otherwise. I don't want to
-run page_init_poison() for the whole ZONE_DEVICE memory range as it can
-take a while if we are talking about TBs of persistent memory. Also most
-of the pages will be reinitialized anyway in the init process. So it is
-mostly a wasted effort. However, for those reserved pages that are not
-being exported to the memory management layer, having them initialized
-to a known state will cause less problem down the road.
+Queued, thanks.
 
-Cheers,
-Longman
-
+Paolo
