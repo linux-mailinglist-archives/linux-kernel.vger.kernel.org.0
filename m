@@ -2,285 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0537B4A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10743B4A92
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 11:34:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbfIQJdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 05:33:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727644AbfIQJdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:33:40 -0400
-Received: from localhost (unknown [122.167.81.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2070120862;
-        Tue, 17 Sep 2019 09:33:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568712819;
-        bh=JRId7hSefq1FkbBfit2jTyVG+T17WzZuUZkLZOYgGZc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LY7/wk/3Xn63wgREdRR2+vzA5owG4NDcZKIj1EiesxLrw60vdM9sOzk7/w/NoGcFK
-         y3aBifWugON1DYBKUQycz5TpZ4m+q6oj2k71w3IPsLVE7yXnHquF2zcHK2dJLHYgZs
-         ao0kJZqRJlfI/rI3wgQukMgq3pfgei6h9aV0BjVQ=
-Date:   Tue, 17 Sep 2019 15:02:29 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] dmaengine updates for v5.4-rc1
-Message-ID: <20190917093229.GL4392@vkoul-mobl>
+        id S1727737AbfIQJen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 05:34:43 -0400
+Received: from esa4.mentor.iphmx.com ([68.232.137.252]:21876 "EHLO
+        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfIQJen (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 05:34:43 -0400
+IronPort-SDR: DtgOVSqAigBGt832f0GcyZyfMr4FmvTtxD5Odu99zRRUiDn5q0EAYHlk30q1mZrzIyPZI+GHsb
+ yBleXDSg4sMy83+d3T9CfVmGm5aa4VRZeuCOvXBFrvK3mtlkMclwoNh+HEMFTV8TYOpo1zYDTO
+ mDnj0ZQZu/rfAEjfowSfnwbIx0r3dySJkKLetNv7dXESgb+q05Rn771GhdzfSic3VkOIU6lb2Z
+ DxPlqTmGj6H+tkoYVh/fYBtFyDDSrFTE6Pb0ui9e7TokUx7qWO03BIvHCADjZOPl9uIOgfBSkN
+ PSI=
+X-IronPort-AV: E=Sophos;i="5.64,515,1559548800"; 
+   d="scan'208";a="41422941"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa4.mentor.iphmx.com with ESMTP; 17 Sep 2019 01:34:42 -0800
+IronPort-SDR: z0upFlOXOgB/MEtNlpq/mnyZ4WNosYHM7V74pUSFKE0lqd2Q2y+A8FPQiE/P8O80ECHAnIxCuR
+ Z2LwooZiXKEfrPc4BUsZUBxy98MmH4SZGZ/eoKKofz/aaf+HCbhBT8rlhe+mz4LbZAIcMxEZVQ
+ PiFsyBUfFMl+t+4IL55fyLmscIo0wubcBusnZPU3GLQi4gouK+hiSt7laCe56SaCPhjxZj+HEw
+ lL1sg5KSKEUfk/JZDdFFzU2wNdab7xRsXS4GOvw/+0+NkrWFkhnkPCaEByeeJDL2hqicoonBOc
+ Thg=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>,
+        <jikos@kernel.org>, <benjamin.tissoires@redhat.com>,
+        <rydberg@bitmath.org>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 00/49] atmel_mxt_ts misc
+Date:   Tue, 17 Sep 2019 18:32:31 +0900
+Message-ID: <20190917093320.18134-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pvezYHf7grwyp3Bc"
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch-set forward ports Nick Dyer's work in ndyer/linux github repository
+as long as some other features and fixes
 
---pvezYHf7grwyp3Bc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Balasubramani Vivekanandan (2):
+  Input: atmel_mxt_ts: Limit the max bytes transferred in an i2c
+    transaction
+  Input: atmel_mxt_ts: use gpiod_set_value_cansleep for reset pin
 
-Hey Linus,
+Dean Jenkins (1):
+  Input: atmel_mxt_ts: return error from
+    mxt_process_messages_until_invalid()
 
-Please pull to receive following changes for v5.4-rc1.
+Deepak Das (6):
+  Input: Atmel: improve error handling in mxt_start()
+  Input: Atmel: improve error handling in mxt_initialize()
+  Input: Atmel: improve error handling in mxt_update_cfg()
+  Input: Atmel: Improve error handling in mxt_initialize_input_device()
+  Input: Atmel: handle ReportID "0x00" while processing T5 messages
+  Input: Atmel: use T44 object to process T5 messages
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+George G. Davis (1):
+  input: atmel_mxt_ts: export GPIO reset line via sysfs
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+Jiada Wang (4):
+  Input: switch to use return value of input_mt_report_slot_state
+  Input: introduce input_mt_report_slot_inactive
+  Input: atmel_mxt_ts - eliminate data->raw_info_block
+  Input: atmel_mxt_ts - Fix compilation warning
 
-are available in the Git repository at:
+Karl Tsou (1):
+  Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msgs
 
-  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-5.4-rc1
+Kautuk Consul (2):
+  Input: atmel_mxt_ts - Change call-points of mxt_free_* functions
+  Input: atmel_mxt_ts - rely on calculated_crc rather than file
+    config_crc
 
-for you to fetch changes up to c5c6faaee6e0c374c7dfaf053aa23750f5a68e20:
+Naveen Chakka (2):
+  input: touchscreen: atmel_mxt_ts: Added sysfs entry for touchscreen
+    status
+  input: atmel_mxt_ts: added sysfs interface to update atmel T38 data
 
-  dmaengine: ti: edma: Use bitmap_set() instead of open coded edma_set_bits=
-() (2019-09-04 15:19:19 +0530)
+Nick Dyer (26):
+  Input: atmel_mxt_ts - rework sysfs init/remove
+  Input: atmel_mxt_ts - only read messages in mxt_acquire_irq() when
+    necessary
+  Input: atmel_mxt_ts - split large i2c transfers into blocks
+  Input: atmel_mxt_ts - output status from T48 Noise Supression
+  Input: atmel_mxt_ts - output status from T42 Touch Suppression
+  Input: atmel_mxt_ts - implement T9 vector/orientation support
+  Input: atmel_mxt_ts - implement T15 Key Array support
+  Input: atmel_mxt_ts - handle reports from T47 Stylus object
+  Input: atmel_mxt_ts - implement support for T107 active stylus
+  Input: atmel_mxt_ts - release touch state during suspend
+  Input: atmel_mxt_ts - add regulator control support
+  Input: atmel_mxt_ts - report failures in suspend/resume
+  Input: atmel_mxt_ts - allow specification of firmware file name
+  Input: atmel_mxt_ts - handle cfg filename via pdata/sysfs
+  Input: atmel_mxt_ts - allow input name to be specified in platform
+    data
+  Input: atmel_mxt_ts - refactor firmware flash to extract context into
+    struct
+  Input: atmel_mxt_ts - refactor code to enter bootloader into separate
+    func
+  Input: atmel_mxt_ts - combine bootloader version query with probe
+  Input: atmel_mxt_ts - improve bootloader state machine handling
+  Input: atmel_mxt_ts - rename bl_completion to chg_completion
+  Input: atmel_mxt_ts - make bootloader interrupt driven
+  Input: atmel_mxt_ts - delay enabling IRQ when not using regulators
+  Input: atmel_mxt_ts - implement I2C retries
+  Input: atmel_mxt_ts - orientation is not present in hover
+  Input: atmel_mxt_ts - implement debug output for messages
+  Input: atmel_mxt_ts - implement improved debug message interface
 
-----------------------------------------------------------------
-dmaengine updates for v5.4-rc1
+Nikhil Ravindran (1):
+  Input: atmel_mxt_ts: Add support for run self-test routine.
 
- - Move Dmaengine DT bindings to YAML and convert Allwinner to schema.
- - FSL dma device_synchronize implementation
- - DW split acpi and of helpers and updates to driver and support for Elkha=
-rt
-   Lake
- - Move filter fn as private for omap-dma and edma drivers and improvements
-   to these drivers
- - Mark expected switch fall-through in couple of drivers
- - Renames of shdma and nbpfaxi binding document
- - Minor updates to bunch of drivers
+Sanjeev Chugh (1):
+  Input: atmel_mxt_ts: Implement synchronization during various
+    operation
 
-----------------------------------------------------------------
-Andrey Smirnov (1):
-      dmaengine: fsl-edma: implement .device_synchronize callback
+karl tsou (1):
+  Input: atmel_mxt_ts - add config checksum attribute to sysfs
 
-Andy Shevchenko (12):
-      dmaengine: stm32-dmamux: Switch to use device_property_count_u32()
-      dmaengine: stm32-mdma: Switch to use device_property_count_u32()
-      dmaengine: acpi: Set up DMA mask based on CSRT
-      dmaengine: acpi: Add kernel doc parameter descriptions
-      dmaengine: dw: Export struct dw_dma_chip_pdata for wider use
-      dmaengine: dw: platform: Use struct dw_dma_chip_pdata
-      dmaengine: dw: platform: Enable iDMA 32-bit on Intel Elkhart Lake
-      dmaengine: dw: platform: Use devm_platform_ioremap_resource()
-      dmaengine: dw: platform: Switch to acpi_dma_controller_register()
-      dmaengine: dw: platform: Move handle check to dw_dma_acpi_controller_=
-register()
-      dmaengine: dw: platform: Split ACPI helpers to separate module
-      dmaengine: dw: platform: Split OF helpers to separate module
+keerthikumarp (1):
+  input: atmel_mxt_ts: Add Missing Delay for reset handling of Atmel
+    touch panel controller in detachable displays.
 
-Arnd Bergmann (3):
-      dmaengine: omap-dma: make omap_dma_filter_fn private
-      dmaengine: edma: make edma_filter_fn private
-      dmaengine: ti: unexport filter functions
-
-Denis Efremov (1):
-      MAINTAINERS: dmaengine: dw axi dmac: Fix typo in a path
-
-Dmitry Osipenko (1):
-      dmaengine: tegra-apb: Support per-burst residue granularity
-
-Fuqian Huang (3):
-      dmaengine: imx-sdma: Remove call to memset after dma_alloc_coherent
-      dmaengine: qcom_hidma: Remove call to memset after dmam_alloc_coherent
-      dmaengine: pl330: use the same attributes when freeing pl330->mcode_c=
-pu
-
-Gustavo A. R. Silva (4):
-      dmaengine: imx-dma: Mark expected switch fall-through
-      dmaengine: fsldma: Mark expected switch fall-through
-      dmanegine: ioat/dca: Use struct_size() helper
-      dmaengine: stm32-dma: Use struct_size() helper
-
-Jarkko Nikula (1):
-      dmaengine: dw: Update Intel Elkhart Lake Service Engine acronym
-
-Jonathan Hunter (1):
-      dmaengine: tegra210-adma: Don't program FIFO threshold
-
-Mao Wenan (2):
-      dmaengine: make mux_configure32 static
-      dmaengine: change alignment of mux_configure32 and fsl_edma_chan_mux
-
-Maxime Ripard (3):
-      dt-bindings: dmaengine: Add YAML schemas for the generic DMA bindings
-      dt-bindings: dmaengine: Convert Allwinner A10 DMA to a schema
-      dt-bindings: dmaengine: Convert Allwinner A31 and A64 DMA to a schema
-
-Nathan Huckleberry (1):
-      dmaengine: mv_xor_v2: Fix -Wshift-negative-value
-
-Nishka Dasgupta (1):
-      dmaengine: qcom: hidma_mgmt: Add of_node_put() before goto
-
-Paul Cercueil (1):
-      dmaengine: dma-jz4780: Break descriptor chains on JZ4740
-
-Peter Ujfalusi (12):
-      dmaengine: ti: omap-dma: Readability cleanup in omap_dma_tx_status()
-      dmaengine: ti: omap-dma: Improved memcpy polling support
-      dmaengine: ti: edma: Clean up the 2x32bit array register accesses
-      dmaengine: ti: edma: Correct the residue calculation (fix for memcpy)
-      dmaengine: ti: edma: Support for polled (memcpy) completion
-      dmaengine: ti: edma: Remove 'Assignment in if condition'
-      dmaengine: ti: omap-dma: Remove 'Assignment in if condition'
-      dmaengine: ti: omap-dma: Remove variable override in omap_dma_tx_stat=
-us()
-      dmaengine: dmatest: Add support for completion polling
-      dmaengine: ti: edma: Do not reset reserved paRAM slots
-      dmaengine: ti: edma: Only reset region0 access registers
-      dmaengine: ti: edma: Use bitmap_set() instead of open coded edma_set_=
-bits()
-
-Randy Dunlap (1):
-      dmaengine: iop-adma.c: fix printk format warning
-
-Robin Gong (1):
-      dmaengine: fsl-edma: add i.mx7ulp edma2 version support
-
-Simon Horman (2):
-      dt-bindings: dmaengine: shdma: Rename bindings documentation file
-      dt-bindings: dmaengine: nbpfaxi: Rename bindings documentation file
-
-Stefan Wahren (1):
-      dmaengine: bcm2835: Print error in case setting DMA mask fails
-
-Stephen Boyd (1):
-      dmaengine: Remove dev_err() usage after platform_get_irq()
-
-Yoshihiro Shimoda (1):
-      dt-bindings: dmaengine: dma-common: Fix the dma-channel-mask property
-
-YueHaibing (1):
-      dmaengine: iop-adma: remove set but not used variable 'slots_per_op'
-
- .../bindings/dma/allwinner,sun4i-a10-dma.yaml      |  55 +++++
- .../bindings/dma/allwinner,sun50i-a64-dma.yaml     |  88 ++++++++
- .../bindings/dma/allwinner,sun6i-a31-dma.yaml      |  62 ++++++
- .../devicetree/bindings/dma/dma-common.yaml        |  45 ++++
- .../devicetree/bindings/dma/dma-controller.yaml    |  35 ++++
- .../devicetree/bindings/dma/dma-router.yaml        |  50 +++++
- Documentation/devicetree/bindings/dma/dma.txt      | 114 +----------
- .../dma/{nbpfaxi.txt =3D> renesas,nbpfaxi.txt}       |   0
- .../bindings/dma/{shdma.txt =3D> renesas,shdma.txt}  |   0
- .../devicetree/bindings/dma/sun4i-dma.txt          |  45 ----
- .../devicetree/bindings/dma/sun6i-dma.txt          |  81 --------
- MAINTAINERS                                        |   2 +-
- drivers/dma/acpi-dma.c                             |  12 +-
- drivers/dma/bcm2835-dma.c                          |   4 +-
- drivers/dma/dma-jz4780.c                           |  19 +-
- drivers/dma/dmatest.c                              |  35 +++-
- drivers/dma/dw/Makefile                            |   4 +-
- drivers/dma/dw/acpi.c                              |  53 +++++
- drivers/dma/dw/internal.h                          |  51 +++++
- drivers/dma/dw/of.c                                | 131 ++++++++++++
- drivers/dma/dw/pci.c                               |  62 ++----
- drivers/dma/dw/platform.c                          | 221 +++++------------=
 ---
- drivers/dma/fsl-edma-common.c                      |  20 +-
- drivers/dma/fsl-edma-common.h                      |   4 +
- drivers/dma/fsl-edma.c                             |  81 +++++++-
- drivers/dma/fsl-qdma.c                             |   9 +-
- drivers/dma/fsldma.c                               |   1 +
- drivers/dma/imx-dma.c                              |   1 +
- drivers/dma/imx-sdma.c                             |   4 -
- drivers/dma/ioat/dca.c                             |   3 +-
- drivers/dma/iop-adma.c                             |   6 +-
- drivers/dma/mediatek/mtk-uart-apdma.c              |   4 +-
- drivers/dma/mv_xor_v2.c                            |  11 +-
- drivers/dma/pl330.c                                |   9 +-
- drivers/dma/qcom/hidma_ll.c                        |   2 -
- drivers/dma/qcom/hidma_mgmt.c                      |   9 +-
- drivers/dma/s3c24xx-dma.c                          |   5 +-
- drivers/dma/sh/rcar-dmac.c                         |   4 +-
- drivers/dma/sh/usb-dmac.c                          |   4 +-
- drivers/dma/st_fdma.c                              |   4 +-
- drivers/dma/stm32-dma.c                            |  18 +-
- drivers/dma/stm32-dmamux.c                         |   3 +-
- drivers/dma/stm32-mdma.c                           |   7 +-
- drivers/dma/sun4i-dma.c                            |   4 +-
- drivers/dma/sun6i-dma.c                            |   4 +-
- drivers/dma/tegra20-apb-dma.c                      |  75 ++++++-
- drivers/dma/tegra210-adma.c                        |  12 +-
- drivers/dma/ti/edma.c                              | 228 +++++++++++++----=
-----
- drivers/dma/ti/omap-dma.c                          |  62 +++---
- drivers/dma/uniphier-mdmac.c                       |   5 +-
- drivers/dma/xgene-dma.c                            |   8 +-
- include/linux/edma.h                               |  29 ---
- include/linux/omap-dma.h                           |   2 -
- include/linux/omap-dmaengine.h                     |  18 --
- 54 files changed, 1083 insertions(+), 742 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/allwinner,sun4i-a=
-10-dma.yaml
- create mode 100644 Documentation/devicetree/bindings/dma/allwinner,sun50i-=
-a64-dma.yaml
- create mode 100644 Documentation/devicetree/bindings/dma/allwinner,sun6i-a=
-31-dma.yaml
- create mode 100644 Documentation/devicetree/bindings/dma/dma-common.yaml
- create mode 100644 Documentation/devicetree/bindings/dma/dma-controller.ya=
-ml
- create mode 100644 Documentation/devicetree/bindings/dma/dma-router.yaml
- rename Documentation/devicetree/bindings/dma/{nbpfaxi.txt =3D> renesas,nbp=
-faxi.txt} (100%)
- rename Documentation/devicetree/bindings/dma/{shdma.txt =3D> renesas,shdma=
-=2Etxt} (100%)
- delete mode 100644 Documentation/devicetree/bindings/dma/sun4i-dma.txt
- delete mode 100644 Documentation/devicetree/bindings/dma/sun6i-dma.txt
- create mode 100644 drivers/dma/dw/acpi.c
- create mode 100644 drivers/dma/dw/of.c
- delete mode 100644 include/linux/edma.h
- delete mode 100644 include/linux/omap-dmaengine.h
+v3:
+Following commits have been updated compared to v2 patchset
+Input: atmel_mxt_ts - implement debug output for messages
+- added inline comment
+Input: atmel_mxt_ts - add debug for T92 gesture and T93 touch seq msg
+- changed dev_info() to dev_dbg()
 
-Thanks
---=20
-~Vinod
+v2:
+Following commit in v1 patchset has been split into two commits
+Input: introduce input_mt_report_slot_inactive
 
---pvezYHf7grwyp3Bc
-Content-Type: application/pgp-signature; name="signature.asc"
+Following commits have been updated compared to v1 patchset
+Input: atmel_mxt_ts - split large i2c transfers into blocks
+Input: atmel_mxt_ts - output status from T42 Touch Suppression
 
------BEGIN PGP SIGNATURE-----
+Following commits in v1 patchset have been squashed
+Input: touchscreen: Atmel: Add device tree support for T15 key array objects
+Input: atmel_mxt_ts - check data->input_dev is not null in mxt_input_sync()
+Input: atmel_mxt_ts - check firmware format before entering bootloader
+Input: atmel_mxt_ts: update stale use_retrigen_workaround flag
+input: atmel_mxt_ts: move bootloader probe from mxt_initialize()
+input: Atmel: limit the max bytes transferred while reading T5 messages
+Input: atmel_mxt_ts: Use msecs_to_jiffies() instead of HZ
+Input: atmel_mxt_ts: Use complete when in_bootloader true
+Input: atmel_mxt_ts: Prevent crash due to freeing of input device
+input: atmel_mxt_ts: Add NULL check for sysfs attribute debug_msg_attr
 
-iQIcBAEBAgAGBQJdgKgtAAoJEHwUBw8lI4NHqV8QAKz9VCY/EFLV7lrRl1azKkLc
-X7NBzMbsXTC0OmNE2OGUVYUMho8MBSKsJqdXWR/kxXXuU8y1v3ibcxK7kgUVS8es
-bru+D1el7AdUGAX3H8l7zO9j6TrqemV2fOj23zULGomrpM8aWZBgRM3thsbOykNf
-AzatoKNfLHVnlYFfgtYmZDUo/GVyE8AkRIWznZpAVueAuCnXSfa9tIZIHeYJMFsE
-jnjYdRdcSUE45WnmxMLK1KEjrYjnyzIx/NpgJIgCbsiyLu6BfZaqSPPvcWPlMin2
-HC9uR1Sm6gv7uOP68OlveBMIAhG8a2kUmEiQV4hjPScDanIhuY0ZZIHfLtZqLyfz
-FTPrAwey0HIql3p+Dwyhca5AgNYvdtpmBUaCzRHe9JYYy1eHiA5p2ILpQRHsDEAS
-vxLk1Q21ZmV75cGbctY8hoJ1NMxsi2JXV57U8vuxHILaJgr82bChU+/qpXaerPYj
-VfLC7NJyg4oJudTF1WIiSIGX+HkbQPwqxQOt6qP9hF0ic6S5KVx0HxHO299IIBXt
-QK0gFMPp6A/HsB3NDhnE3jOPD121egyYmFd3FNaL+2VGmlxeZj1N2aSGrrq462l2
-EDMPdwkm62qe+79Wg2GWVtrtVEAMIeEhVBGSPonG0OthllkMMA3mftB3I+Upesza
-M6i9cvACIcEFUnQQ+tGF
-=4mv6
------END PGP SIGNATURE-----
+Following commits in v1 patchset have been dropped:
+Input: atmel_mxt_ts - configure and use gpios as real gpios
+Input: touchscreen: Atmel: Enable IRQ_DISABLE_UNLAZY flag for interrupt
+Input: atmel_mxt_ts - add memory access interface via sysfs
+Input: atmel_mxt_ts: Remove sysfs attributes during driver detach
+Input: atmel_mxt_ts: Avoid race condition in freeing of input device
 
---pvezYHf7grwyp3Bc--
+
+v1: initial version
+---
+ .../bindings/input/atmel,maxtouch.txt         |   14 +
+ MAINTAINERS                                   |    1 +
+ drivers/hid/hid-alps.c                        |    3 +-
+ drivers/hid/hid-asus.c                        |    3 +-
+ drivers/hid/hid-elan.c                        |    3 +-
+ drivers/hid/hid-logitech-hidpp.c              |    5 +-
+ drivers/hid/hid-magicmouse.c                  |    3 +-
+ drivers/hid/hid-multitouch.c                  |    9 +-
+ drivers/hid/hid-sony.c                        |    8 +-
+ drivers/hid/wacom_wac.c                       |   15 +-
+ drivers/input/input-mt.c                      |    2 +-
+ drivers/input/misc/xen-kbdfront.c             |    2 +-
+ drivers/input/mouse/elan_i2c_core.c           |    2 +-
+ drivers/input/mouse/elantech.c                |    5 +-
+ drivers/input/mouse/focaltech.c               |    3 +-
+ drivers/input/mouse/sentelic.c                |    3 +-
+ drivers/input/mouse/synaptics.c               |    3 +-
+ drivers/input/rmi4/rmi_2d_sensor.c            |    6 +-
+ drivers/input/touchscreen/atmel_mxt_ts.c      | 2266 ++++++++++++++---
+ drivers/input/touchscreen/chipone_icn8505.c   |    4 +-
+ drivers/input/touchscreen/cyttsp4_core.c      |    5 +-
+ drivers/input/touchscreen/cyttsp_core.c       |    2 +-
+ drivers/input/touchscreen/egalax_ts.c         |    3 +-
+ drivers/input/touchscreen/hideep.c            |    7 +-
+ drivers/input/touchscreen/ili210x.c           |    3 +-
+ drivers/input/touchscreen/melfas_mip4.c       |    4 +-
+ drivers/input/touchscreen/mms114.c            |    6 +-
+ drivers/input/touchscreen/penmount.c          |    5 +-
+ drivers/input/touchscreen/raspberrypi-ts.c    |    2 +-
+ drivers/input/touchscreen/raydium_i2c_ts.c    |    4 +-
+ drivers/input/touchscreen/sis_i2c.c           |    5 +-
+ drivers/input/touchscreen/stmfts.c            |    2 +-
+ drivers/input/touchscreen/surface3_spi.c      |    4 +-
+ drivers/input/touchscreen/wacom_w8001.c       |    3 +-
+ drivers/input/touchscreen/zforce_ts.c         |    6 +-
+ include/dt-bindings/input/atmel_mxt_ts.h      |   22 +
+ include/linux/input/mt.h                      |    5 +
+ 37 files changed, 2026 insertions(+), 422 deletions(-)
+ create mode 100644 include/dt-bindings/input/atmel_mxt_ts.h
+
+-- 
+2.19.2
+
