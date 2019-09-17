@@ -2,81 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10BBFB4910
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75EB8B4913
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:18:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731958AbfIQISO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:18:14 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44169 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730143AbfIQISN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:18:13 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i18so1571888pgl.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 01:18:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ccksZ0DIr5YuOlmKQ56MKQuO6sfHn4/cYWLl1y6ZJss=;
-        b=Os/OjkFdbkxbCMGYZNy/HnlfvRLdNhVDvO3OQ3Tjqp9ysoWyo0oM4s2SSDCAzouHsz
-         gkjFk4cddTJ2rUMcXLsrmoS14Xcns241t9TBp2xl4Ltya+LciRWtEQ58XqrCB+viuEx7
-         Xghm6/lG8f6ZFz2ZU4/8yigRh6Xo6AZmD5tcBL7R/PVjNIiv+hOwCPRttq4vURDrB2U9
-         vVogGNoMgz30xlAJB7P7ThuBYG3OVdHfPB9AqNgQHkt62TSyfWxjkstqzWvMH0v+KetM
-         TDXnzs7rLDW60zjQDKVvTA0qCV9uV+ENswqS425WgupE4mmBCfMyiGcnJRNzzZkvqwea
-         1Xaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ccksZ0DIr5YuOlmKQ56MKQuO6sfHn4/cYWLl1y6ZJss=;
-        b=LS5YwVI7kVwTU6sNQKym6bYUDVsEQzSyF6G+Vw64wWaEDqsDB2U2tRwVM4w+s8xrmg
-         Km+NJq2KwXSiySUKxN/egKPJS9y/ot29pJH0jngmrusIu6tJzLUdH3ATehraj+k3vSC7
-         tU7kvCGISuxM0VzmDpjJGVU/M99YAe+zzQZrVbRfIdfWsPyo7hFg+MYBEd5Y3R/a1fiv
-         xkMpytdYKIyf6TOKsaHcWjM33Nr9yxi294likz48pXDF1QmBTW7XEFSr89buCq8Pays6
-         n16Y7Ojlwhy3dg0Nu7sJmdMn6cBlcOjYgCBdPILV3vnrvjciY2DgbEN83185w4RrtjqA
-         +ZSw==
-X-Gm-Message-State: APjAAAUQOpuGy8RcsxM7V4qWh+GpALc7+R7b/UGoeTEzup3y7oofAEe9
-        INj0V2EMeP8KSIkpKxGPivXcQw==
-X-Google-Smtp-Source: APXvYqwpy0WS+QkLpZKa7+H9dnq/Maul15NnA8yNy5WichOtA6IyRwXpsp5wW9igskBRzYgp3hRJ5g==
-X-Received: by 2002:a62:1955:: with SMTP id 82mr2836635pfz.256.1568708292663;
-        Tue, 17 Sep 2019 01:18:12 -0700 (PDT)
-Received: from localhost ([122.172.73.172])
-        by smtp.gmail.com with ESMTPSA id v44sm4392124pgn.17.2019.09.17.01.18.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Sep 2019 01:18:12 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 09:18:05 +0100
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
-        tdas@codeaurora.org, swboyd@chromium.org, ilina@codeaurora.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 3/5] cpufreq: Initialize cpufreq-dt driver earlier
-Message-ID: <20190917081805.kmhu6zcdo6akbqe3@vireshk-mac-ubuntu>
-References: <cover.1568240476.git.amit.kucheria@linaro.org>
- <23d3ed7edc8b859da8e7640f77cf3028ad5804f3.1568240476.git.amit.kucheria@linaro.org>
+        id S2388765AbfIQISX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:18:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732088AbfIQISU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:18:20 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D2391315C00D;
+        Tue, 17 Sep 2019 08:18:19 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C14D5D9DC;
+        Tue, 17 Sep 2019 08:18:19 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 9D29217444; Tue, 17 Sep 2019 10:18:18 +0200 (CEST)
+Date:   Tue, 17 Sep 2019 10:18:18 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Eric Anholt <eric@anholt.net>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        "open list:DRM DRIVER FOR QEMU'S CIRRUS DEVICE" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/8] drm/shmem: drop DEFINE_DRM_GEM_SHMEM_FOPS
+Message-ID: <20190917081818.4lumcpn4wf6jcuyt@sirius.home.kraxel.org>
+References: <20190913122908.784-1-kraxel@redhat.com>
+ <20190913122908.784-4-kraxel@redhat.com>
+ <CAL_JsqJajCtM=vRgSDX2DQ6iJzDgMHicXgXgGqF7Bc-KdTUUQA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23d3ed7edc8b859da8e7640f77cf3028ad5804f3.1568240476.git.amit.kucheria@linaro.org>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAL_JsqJajCtM=vRgSDX2DQ6iJzDgMHicXgXgGqF7Bc-KdTUUQA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 17 Sep 2019 08:18:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-09-19, 04:02, Amit Kucheria wrote:
-> This allows HW drivers that depend on cpufreq-dt to initialise earlier.
+On Mon, Sep 16, 2019 at 05:07:14PM -0500, Rob Herring wrote:
+> On Fri, Sep 13, 2019 at 7:29 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Version? Pretty sure this is not v1.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Yep, was posted as part of a longer series before.
 
--- 
-viresh
+Splitted the long series into multiple smaller ones by cherry-picking
+patches into new branches, which re-started the numbering.
+
+Sorry for the confusion,
+  Gerd
+
