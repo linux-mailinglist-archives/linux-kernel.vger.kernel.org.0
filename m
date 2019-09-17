@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC5CB4FE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0741DB4FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 16:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfIQOGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 10:06:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60634 "EHLO mx1.redhat.com"
+        id S1726795AbfIQOGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 10:06:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43596 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726234AbfIQOGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 10:06:39 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1726234AbfIQOGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 10:06:40 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2631300CB2C;
-        Tue, 17 Sep 2019 14:06:38 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 68568308212F;
+        Tue, 17 Sep 2019 14:06:40 +0000 (UTC)
 Received: from ovpn-117-172.phx2.redhat.com (ovpn-117-172.phx2.redhat.com [10.3.117.172])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 46B175D9D5;
-        Tue, 17 Sep 2019 14:06:29 +0000 (UTC)
-Message-ID: <63b430ca2f067e61bef1c387fad782ab4a2c1ed3.camel@redhat.com>
-Subject: Re: [PATCH RT v3 1/5] rcu: Acquire RCU lock when disabling BHs
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 711A760852;
+        Tue, 17 Sep 2019 14:06:39 +0000 (UTC)
+Message-ID: <779eddcc937941e65659a11b1867c6623a2c8890.camel@redhat.com>
+Subject: Re: [PATCH RT v3 3/5] sched: migrate_dis/enable: Use rt_invol_sleep
 From:   Scott Wood <swood@redhat.com>
 To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -31,52 +31,46 @@ Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Juri Lelli <juri.lelli@redhat.com>,
         Clark Williams <williams@redhat.com>
-Date:   Tue, 17 Sep 2019 09:06:28 -0500
-In-Reply-To: <20190917074456.yj7t3wdwuhn3zcng@linutronix.de>
+Date:   Tue, 17 Sep 2019 09:06:34 -0500
+In-Reply-To: <20190917075943.qsaakyent4dxjkq4@linutronix.de>
 References: <20190911165729.11178-1-swood@redhat.com>
-         <20190911165729.11178-2-swood@redhat.com>
-         <20190917074456.yj7t3wdwuhn3zcng@linutronix.de>
+         <20190911165729.11178-4-swood@redhat.com>
+         <20190917075943.qsaakyent4dxjkq4@linutronix.de>
 Organization: Red Hat
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 17 Sep 2019 14:06:39 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 17 Sep 2019 14:06:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-17 at 09:44 +0200, Sebastian Andrzej Siewior wrote:
-> On 2019-09-11 17:57:25 [+0100], Scott Wood wrote:
-> > 
-> > @@ -615,10 +645,7 @@ static inline void rcu_read_unlock(void)
-> >  static inline void rcu_read_lock_bh(void)
-> >  {
-> >  	local_bh_disable();
-> > -	__acquire(RCU_BH);
-> > -	rcu_lock_acquire(&rcu_bh_lock_map);
-> > -	RCU_LOCKDEP_WARN(!rcu_is_watching(),
-> > -			 "rcu_read_lock_bh() used illegally while idle");
-> > +	rcu_bh_lock_acquire();
-> >  }
+On Tue, 2019-09-17 at 09:59 +0200, Sebastian Andrzej Siewior wrote:
+> On 2019-09-11 17:57:27 [+0100], Scott Wood wrote:
+> > diff --git a/kernel/cpu.c b/kernel/cpu.c
+> > index 885a195dfbe0..32c6175b63b6 100644
+> > --- a/kernel/cpu.c
+> > +++ b/kernel/cpu.c
+> > @@ -308,7 +308,9 @@ void pin_current_cpu(void)
+> >  	preempt_lazy_enable();
+> >  	preempt_enable();
 > >  
-> >  /*
+> > +	rt_invol_sleep_inc();
+> >  	__read_rt_lock(cpuhp_pin);
+> > +	rt_invol_sleep_dec();
+> >  
+> >  	preempt_disable();
+> >  	preempt_lazy_disable();
 > 
-> I asked previously why do you need to change rcu_read_lock_bh() and you
-> replied that you don't remember:
->    
-> https://lore.kernel.org/linux-rt-users/b948ec6cccda31925ed8dc123bd0f55423fff3d4.camel@redhat.com/
-> 
-> Did this change?
+> I understand the other one. But now looking at it, both end up in
+> rt_spin_lock_slowlock_locked() which would be the proper place to do
+> that annotation. Okay.
 
-Sorry, I missed that you were asking about rcu_read_lock_bh() as well.  I
-did remove the change to rcu_read_lock_bh_held().
-
-With this patch, local_bh_disable() calls rcu_read_lock() on RT which
-handles this debug stuff.  Doing it twice shouldn't be explicitly harmful,
-but it's redundant, and debug kernels are slow enough as is.
+FWIW, if my lazy migrate patchset is accepted, then there will be no users
+of __read_rt_lock() outside rwlock-rt.c and it'll be moot.
 
 -Scott
 
