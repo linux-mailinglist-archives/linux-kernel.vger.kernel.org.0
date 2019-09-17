@@ -2,206 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1BEFB47B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EED0B47BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 08:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404372AbfIQGyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 02:54:08 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:46588 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728003AbfIQGyI (ORCPT
+        id S2404392AbfIQGyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 02:54:25 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37315 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404348AbfIQGyY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 02:54:08 -0400
-Received: by mail-io1-f72.google.com with SMTP id t11so4292064ioc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Sep 2019 23:54:07 -0700 (PDT)
+        Tue, 17 Sep 2019 02:54:24 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r4so2265907edy.4;
+        Mon, 16 Sep 2019 23:54:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VGlXazl6lAUsA74p+9UDJGuHwr/2WJzknMCYuhIFpJc=;
-        b=Kz+C1G3Br5Eyu8TTATCP9Q6ZFu++UaXyw9fA6wsKzU2tirNNNi6/jrH9MItY4zZ+HG
-         j12l3J82N9vnNtQcbza0lVIm9Mp09Blh6dwZT0aJan9JuboOEx4oJrR2fbCuS15etKqC
-         m0+kJwf38cPrUY+vpp55IMKiPSb7JAeBV9kIIp7eqc8HEEbRrFajp0VenojBbe7VrorB
-         rzTTO0XzO24zSOO8yrZt8KEhH4RY6N34APH6dXyZMbF/mNKoBapdYc1JxS6vOVJOVLWL
-         4o7ScFngaaPf6KlktBDhZ4C9Hrd78B312ZUBoaxSO50dE+VGwTDVdhPpY1iFBFbQ6QyB
-         RGIg==
-X-Gm-Message-State: APjAAAU0vb58gp7hZEtPymOADRWfgCT4BG3eSD96dBUSWEmEMqdTgJjO
-        x/UnVuWKdDVFHO22kyAxKrJYHKZeYg/bJ8au4eLAZAuvk6MY
-X-Google-Smtp-Source: APXvYqz4qDU2fXVsRAeclAT1Y1glYY4qn1fPxGcWPi89FjZNEiEpZhFQR1XtEAv/yCLkU65ExCVsen8zAie/Fxs3t7AwHMSVZE7O
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QcIjvbufynPeD91Mg15EYJOqVZcGPs0ArRORK/sU2Is=;
+        b=NORm7alJ/NNFYNkVsZw+y+4XhYlOEOShxHvxTJPWgXXUiVyAarBOcAenGtwDXaH2jz
+         GdPRxL67K1a5KlTt+a+FCsg7PpXh52KAOTl8xIYKpO58/HRF37EIZberLr+yXRCuaC/z
+         HId8brympq/JQFH3C00bulq67OzY3zHaLSeFAr0l+yA5QG6bSAE2vmNSYoHSvLLPOsW7
+         1E7jv8IcgNPppX9utxWYtBsWWkYw5388UAe/Hotui9vKINlKh+miLNHaYR5jdl43kGRV
+         6v1eLEWlLIxoq212lzEc9thUQ9BTQI1dQpgtmvtdyznHC/gA1w/3IfSK0yutA8vM1wYo
+         USoQ==
+X-Gm-Message-State: APjAAAXrAa8Ytc+2TYmyAuCuQSIDwXAwl1ulbJ/E5yirWXLeeoPBU4Ci
+        5TgVByFJ4epPunPgrB2kWeA5B+MEKTQ=
+X-Google-Smtp-Source: APXvYqzLUqfE8YUain5USpHp+Ppmc+vkqA5g9akw1Ro5kQZY2J0pWwc15KMdNJBtIktYxdN+ZbdIQw==
+X-Received: by 2002:a17:906:4c4c:: with SMTP id d12mr3351491ejw.174.1568703261676;
+        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
+        by smtp.gmail.com with ESMTPSA id ba28sm261139edb.4.2019.09.16.23.54.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id i16so1833406wmd.3;
+        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
+X-Received: by 2002:a1c:a54a:: with SMTP id o71mr2230059wme.51.1568703260882;
+ Mon, 16 Sep 2019 23:54:20 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9616:: with SMTP id a22mr1578110ioq.46.1568703246978;
- Mon, 16 Sep 2019 23:54:06 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 23:54:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cb58a00592ba2f6f@google.com>
-Subject: INFO: task hung in ovs_dp_cmd_new
-From:   syzbot <syzbot+a9d62dbe662772066f3c@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, dev@openvswitch.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        pshelar@ovn.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190914135100.327412-1-jernej.skrabec@siol.net>
+In-Reply-To: <20190914135100.327412-1-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 17 Sep 2019 14:54:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
+Message-ID: <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: h6: Use sigma-delta
+ modulation for audio PLL
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sat, Sep 14, 2019 at 9:51 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+>
+> Audio devices needs exact clock rates in order to correctly reproduce
+> the sound. Until now, only integer factors were used to configure H6
+> audio PLL which resulted in inexact rates. Fix that by adding support
+> for fractional factors using sigma-delta modulation look-up table. It
+> contains values for two most commonly used audio base frequencies.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> index d89353a3cdec..ed6338d74474 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> @@ -203,12 +203,21 @@ static struct ccu_nkmp pll_hsic_clk = {
+>   * hardcode it to match with the clock names.
+>   */
+>  #define SUN50I_H6_PLL_AUDIO_REG                0x078
+> +
+> +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
+> +       { .rate = 541900800, .pattern = 0xc001288d, .m = 1, .n = 22 },
+> +       { .rate = 589824000, .pattern = 0xc00126e9, .m = 1, .n = 24 },
+> +};
+> +
+>  static struct ccu_nm pll_audio_base_clk = {
+>         .enable         = BIT(31),
+>         .lock           = BIT(28),
+>         .n              = _SUNXI_CCU_MULT_MIN(8, 8, 12),
+>         .m              = _SUNXI_CCU_DIV(1, 1), /* input divider */
+> +       .sdm            = _SUNXI_CCU_SDM(pll_audio_sdm_table,
+> +                                        BIT(24), 0x178, BIT(31)),
+>         .common         = {
+> +               .features       = CCU_FEATURE_SIGMA_DELTA_MOD,
+>                 .reg            = 0x078,
+>                 .hw.init        = CLK_HW_INIT("pll-audio-base", "osc24M",
+>                                               &ccu_nm_ops,
+> @@ -753,12 +762,12 @@ static const struct clk_hw *clk_parent_pll_audio[] = {
+>  };
+>
+>  /*
+> - * The divider of pll-audio is fixed to 8 now, as pll-audio-4x has a
+> - * fixed post-divider 2.
+> + * The divider of pll-audio is fixed to 24 for now, so 24576000 and 22579200
+> + * rates can be set exactly in conjunction with sigma-delta modulation.
+>   */
+>  static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
+>                             clk_parent_pll_audio,
+> -                           8, 1, CLK_SET_RATE_PARENT);
+> +                           24, 1, CLK_SET_RATE_PARENT);
+>  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
+>                             clk_parent_pll_audio,
+>                             4, 1, CLK_SET_RATE_PARENT);
 
-syzbot found the following crash on:
+You need to fix the factors for the other two outputs as well, since all
+three are derived from pll-audio-base.
 
-HEAD commit:    2339cd6c bpf: fix precision tracking of stack slots
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=14707b01600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b89bb446a3faaba4
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9d62dbe662772066f3c
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+ChenYu
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a9d62dbe662772066f3c@syzkaller.appspotmail.com
-
-INFO: task syz-executor.0:3410 blocked for more than 143 seconds.
-       Not tainted 5.3.0-rc7+ #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.0  D26056  3410  18433 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:3254 [inline]
-  __schedule+0x755/0x1580 kernel/sched/core.c:3880
-  schedule+0xd9/0x260 kernel/sched/core.c:3947
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4006
-  __mutex_lock_common kernel/locking/mutex.c:1007 [inline]
-  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1077
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1092
-  ovs_lock net/openvswitch/datapath.c:105 [inline]
-  ovs_dp_cmd_new+0x579/0xea0 net/openvswitch/datapath.c:1613
-  genl_family_rcv_msg+0x74b/0xf90 net/netlink/genetlink.c:629
-  genl_rcv_msg+0xca/0x170 net/netlink/genetlink.c:654
-  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
-  genl_rcv+0x29/0x40 net/netlink/genetlink.c:665
-  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-  netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
-  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:637 [inline]
-  sock_sendmsg+0xd7/0x130 net/socket.c:657
-  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
-  __do_sys_sendmsg net/socket.c:2365 [inline]
-  __se_sys_sendmsg net/socket.c:2363 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4598e9
-Code: Bad RIP value.
-RSP: 002b:00007fa2501cdc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004598e9
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000004
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa2501ce6d4
-R13: 00000000004c7777 R14: 00000000004dcfd8 R15: 00000000ffffffff
-INFO: task syz-executor.0:3414 blocked for more than 143 seconds.
-       Not tainted 5.3.0-rc7+ #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.0  D26136  3414  18433 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:3254 [inline]
-  __schedule+0x755/0x1580 kernel/sched/core.c:3880
-  schedule+0xd9/0x260 kernel/sched/core.c:3947
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4006
-  __mutex_lock_common kernel/locking/mutex.c:1007 [inline]
-  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1077
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1092
-  ovs_lock net/openvswitch/datapath.c:105 [inline]
-  ovs_dp_cmd_new+0x579/0xea0 net/openvswitch/datapath.c:1613
-  genl_family_rcv_msg+0x74b/0xf90 net/netlink/genetlink.c:629
-  genl_rcv_msg+0xca/0x170 net/netlink/genetlink.c:654
-  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
-  genl_rcv+0x29/0x40 net/netlink/genetlink.c:665
-  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-  netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
-  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:637 [inline]
-  sock_sendmsg+0xd7/0x130 net/socket.c:657
-  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
-  __do_sys_sendmsg net/socket.c:2365 [inline]
-  __se_sys_sendmsg net/socket.c:2363 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4598e9
-Code: Bad RIP value.
-RSP: 002b:00007fa2501acc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004598e9
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000006
-RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa2501ad6d4
-R13: 00000000004c7777 R14: 00000000004dcfd8 R15: 00000000ffffffff
-INFO: task syz-executor.0:3416 blocked for more than 144 seconds.
-       Not tainted 5.3.0-rc7+ #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.0  D25968  3416  18433 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:3254 [inline]
-  __schedule+0x755/0x1580 kernel/sched/core.c:3880
-  schedule+0xd9/0x260 kernel/sched/core.c:3947
-  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:4006
-  __mutex_lock_common kernel/locking/mutex.c:1007 [inline]
-  __mutex_lock+0x7b0/0x13c0 kernel/locking/mutex.c:1077
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1092
-  ovs_lock net/openvswitch/datapath.c:105 [inline]
-  ovs_dp_cmd_new+0x579/0xea0 net/openvswitch/datapath.c:1613
-  genl_family_rcv_msg+0x74b/0xf90 net/netlink/genetlink.c:629
-  genl_rcv_msg+0xca/0x170 net/netlink/genetlink.c:654
-  netlink_rcv_skb+0x177/0x450 net/netlink/af_netlink.c:2477
-  genl_rcv+0x29/0x40 net/netlink/genetlink.c:665
-  netlink_unicast_kernel net/netlink/af_netlink.c:1302 [inline]
-  netlink_unicast+0x531/0x710 net/netlink/af_netlink.c:1328
-  netlink_sendmsg+0x8a5/0xd60 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:637 [inline]
-  sock_sendmsg+0xd7/0x130 net/socket.c:657
-  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2356
-  __do_sys_sendmsg net/socket.c:2365 [inline]
-  __se_sys_sendmsg net/socket.c:2363 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2363
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4598e9
-Code: 24 18 0f b6 05 2f d1 3b 01 3c 01 76 0a 48 8b 6c 24 18 48 83 c4 20 c3  
-75 07 e8 63 08 fd ff 0f 0b c6 05 11 d1 3b 01 01 48 b8 00 <00> 00 00 00 00  
-f0 7f 48 89 04 24 e8 a7 dd fa ff f2 0f 10 44 24 08
-RSP: 002b:00007fa25018bc78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004598e9
-RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000007
-RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa25018c6d4
-R13: 00000000004c7777 R14: 00000000004dcfd8 R15: 00000000ffffffff
-INFO: lockdep is turned off.
-NMI backtrace for cpu 1
-CPU: 1 PID: 1057 Comm: khungtaskd Not tainted 5.3.0-rc7+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:205 [inline]
-  watchdog+0x9d0/0xef0 kernel/hung_task.c:289
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0xe/0x10  
-arch/x86/include/asm/irqflags.h:60
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> @@ -1215,12 +1224,12 @@ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
+>         }
+>
+>         /*
+> -        * Force the post-divider of pll-audio to 8 and the output divider
+> -        * of it to 1, to make the clock name represents the real frequency.
+> +        * Force the post-divider of pll-audio to 12 and the output divider
+> +        * of it to 2, so 24576000 and 22579200 rates can be set exactly.
+>          */
+>         val = readl(reg + SUN50I_H6_PLL_AUDIO_REG);
+>         val &= ~(GENMASK(21, 16) | BIT(0));
+> -       writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
+> +       writel(val | (11 << 16) | BIT(0), reg + SUN50I_H6_PLL_AUDIO_REG);
+>
+>         /*
+>          * First clock parent (osc32K) is unusable for CEC. But since there
+> --
+> 2.23.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20190914135100.327412-1-jernej.skrabec%40siol.net.
