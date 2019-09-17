@@ -2,225 +2,250 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23BB7B4D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7E7DB4DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:19:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbfIQMIy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 08:08:54 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36490 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbfIQMIx (ORCPT
+        id S1727968AbfIQMTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 08:19:11 -0400
+Received: from aliyun-cloud.icoremail.net ([47.90.88.95]:60566 "HELO
+        aliyun-sdnproxy-1.icoremail.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with SMTP id S1725270AbfIQMTL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:08:53 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f2so3109514edw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 05:08:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZeQ/1nXTTrle8KmSh5j6zE8zudmgS+wCxY0/be2bjcg=;
-        b=MWDcXo4T7JxMWIkBCc8lU+Ny/cxvG9pyCUHx1cl+8D+TIWgDxdmdynGoWQOtHnYTHS
-         xWI+FZrl7UixBxU1PizQee/JkI6OHyRWf64Zl4maQ+OD6Z+uknbMnjL1rr4FHUE71Dgb
-         D/5pCKiq+d9KzcyiHwFelYySGlA/UEVWBy8jElpgwoQv8Tna6ArQ8uciVzEhHhhqMRUg
-         HQ42+P74bhTLOIoBrC8/HZI1jzHfTNiEzktjuH4UtdLSyFyQ9DfZjo0POvAm9/fwld54
-         Cfpo5k2cX8LRl4cuXPb+T4i5vSeoPb/0goLuMLXAD7mCYR5z9bZAU90tuWrh0UEw9aL2
-         2tHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZeQ/1nXTTrle8KmSh5j6zE8zudmgS+wCxY0/be2bjcg=;
-        b=pocqnlwJgmDm/6S/8z1reFV7Sus0Jk6QYRFHBD4F6gVaWluJK6XFlyEm//xBeh2GuS
-         QW6756WpdhoK37r/rU5iSXMuCmZsfelBPsqq+018Y9v3Et3oJNi5nyqxcXCLtLYdZvqv
-         89y1bKGHpu+VXkYYrFcRuU0Uk75CS6Ib4yMDcAi4GotEa8wWOg4Xz+e856lW9lkY+per
-         85mNn4nTh8bF9uUJo8Nbt+4RM27UGW6IB4llxtga7G70jzACz8xrmL/gfZKj9WDn/JUS
-         QY+xwKG5b0dctZPR1QpDemkMG8w5YaRPaoMWZqpiQ2rDSy3Dwy8gnjd8d5d/a/FEQgTf
-         OK3g==
-X-Gm-Message-State: APjAAAUGECc5nmKlnqG6ooWahT1XxuVcg/AsURRWAzF3qua777SUIxvY
-        zFBluWpkfdTILeya5slj1GYSiQ==
-X-Google-Smtp-Source: APXvYqzmu0Kl2boVfXe9EcmtKusJSgFe0nuy9Lo88Wd9TFkOaWGoi9DYOpTYSJCBlM1xc61DdHEsbA==
-X-Received: by 2002:a17:906:60d0:: with SMTP id f16mr4362508ejk.267.1568722131705;
-        Tue, 17 Sep 2019 05:08:51 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id f21sm181972edt.52.2019.09.17.05.08.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Sep 2019 05:08:50 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 326F9101C0B; Tue, 17 Sep 2019 15:08:53 +0300 (+03)
-Date:   Tue, 17 Sep 2019 15:08:53 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+03ee87124ee05af991bd@syzkaller.appspotmail.com>,
-        hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in shmem_fault (2)
-Message-ID: <20190917120852.x6x3aypwvh573kfa@box>
-References: <20190831045826.748-1-hdanton@sina.com>
- <20190902135254.GC2431@bombadil.infradead.org>
- <20190902142029.fyq3dwn72pqqlzul@box>
- <20190909135521.GD29434@bombadil.infradead.org>
- <20190909150412.ut6fbshii4sohwag@box>
+        Tue, 17 Sep 2019 08:19:11 -0400
+X-Greylist: delayed 720 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 08:18:13 EDT
+Received: from bogon.wangsu.com (unknown [218.85.123.226])
+        by app2 (Coremail) with SMTP id 4zNnewCnreVjyoBdoWhyAA--.30568S2;
+        Tue, 17 Sep 2019 19:58:31 +0800 (CST)
+From:   Lin Feng <linf@wangsu.com>
+To:     corbet@lwn.net, mcgrof@kernel.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     keescook@chromium.org, mchehab+samsung@kernel.org,
+        mgorman@techsingularity.net, vbabka@suse.cz, mhocko@suse.com,
+        ktkhai@virtuozzo.com, hannes@cmpxchg.org, linf@wangsu.com
+Subject: [PATCH] [RFC] vmscan.c: add a sysctl entry for controlling memory reclaim IO congestion_wait length
+Date:   Tue, 17 Sep 2019 19:58:24 +0800
+Message-Id: <20190917115824.16990-1-linf@wangsu.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909150412.ut6fbshii4sohwag@box>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: 4zNnewCnreVjyoBdoWhyAA--.30568S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtFyDXw45Cr48JF4Dtr4Utwb_yoWfCFy3pF
+        yDZr1Sva4UJFWfJFZxA3WUJFn5J3s7CFyDtw4UGr1FvryUXFykKwn5CF1UZa48ur1UG398
+        tF4qqws5Gr18JF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUU9m1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l8cAvFVAK
+        0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4
+        x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2
+        z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4
+        xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v26r1j6r4UMcIj6x8ErcxFaVAv
+        8VW8GwAv7VCY1x0262k0Y48FwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48Icx
+        kI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY
+        02Avz4vE14v_Gw4l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8GwCFx2IqxV
+        CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
+        6r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
+        WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
+        6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
+        0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JjOrchUUUUU=
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 06:04:12PM +0300, Kirill A. Shutemov wrote:
-> On Mon, Sep 09, 2019 at 06:55:21AM -0700, Matthew Wilcox wrote:
-> > On Mon, Sep 02, 2019 at 05:20:30PM +0300, Kirill A. Shutemov wrote:
-> > > On Mon, Sep 02, 2019 at 06:52:54AM -0700, Matthew Wilcox wrote:
-> > > > On Sat, Aug 31, 2019 at 12:58:26PM +0800, Hillf Danton wrote:
-> > > > > On Fri, 30 Aug 2019 12:40:06 -0700
-> > > > > > syzbot found the following crash on:
-> > > > > > 
-> > > > > > HEAD commit:    a55aa89a Linux 5.3-rc6
-> > > > > > git tree:       upstream
-> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=12f4beb6600000
-> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=2a6a2b9826fdadf9
-> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=03ee87124ee05af991bd
-> > > > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > > > > 
-> > > > > > ==================================================================
-> > > > > > BUG: KASAN: use-after-free in perf_trace_lock_acquire+0x401/0x530  
-> > > > > > include/trace/events/lock.h:13
-> > > > > > Read of size 8 at addr ffff8880a5cf2c50 by task syz-executor.0/26173
-> > > > > 
-> > > > > --- a/mm/shmem.c
-> > > > > +++ b/mm/shmem.c
-> > > > > @@ -2021,6 +2021,12 @@ static vm_fault_t shmem_fault(struct vm_
-> > > > >  			shmem_falloc_waitq = shmem_falloc->waitq;
-> > > > >  			prepare_to_wait(shmem_falloc_waitq, &shmem_fault_wait,
-> > > > >  					TASK_UNINTERRUPTIBLE);
-> > > > > +			/*
-> > > > > +			 * it is not trivial to see what will take place after
-> > > > > +			 * releasing i_lock and taking a nap, so hold inode to
-> > > > > +			 * be on the safe side.
-> > > > 
-> > > > I think the comment could be improved.  How about:
-> > > > 
-> > > > 			 * The file could be unmapped by another thread after
-> > > > 			 * releasing i_lock, and the inode then freed.  Hold
-> > > > 			 * a reference to the inode to prevent this.
-> > > 
-> > > It only can happen if mmap_sem was released, so it's better to put
-> > > __iget() to the branch above next to up_read(). I've got confused at first
-> > > how it is possible from ->fault().
-> > > 
-> > > This way iput() below should only be called for ret == VM_FAULT_RETRY.
-> > 
-> > Looking at the rather similar construct in filemap.c, should we solve
-> > it the same way, where we inc the refcount on the struct file instead
-> > of the inode before releasing the mmap_sem?
-> 
-> Are you talking about maybe_unlock_mmap_for_io()? Yeah, worth moving it to
-> mm/internal.h and reuse.
-> 
-> Care to prepare the patch? :P
+This sysctl is named as mm_reclaim_congestion_wait_jiffies, default to
+HZ/10 as unchanged to old codes.
 
-Something like this? Untested.
+It is in jiffies unit and can be set in range between [1, 100], so
+refers to CONFIG_HZ before tuning.
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d0cf700bf201..a542f72f57cc 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2349,26 +2349,6 @@ EXPORT_SYMBOL(generic_file_read_iter);
+In direct and background(kswapd) pages reclaim paths both may fall into
+calling msleep(100) or congestion_wait(HZ/10) or wait_iff_congested(HZ/10)
+while under IO pressure, and the sleep length is hard-coded and the later
+two will introduce 100ms iowait length per time.
+
+So if pages reclaim is relatively active in some circumstances such as high
+order pages reappings, it's possible to see a lot of iowait introduced by
+congestion_wait(HZ/10) and wait_iff_congested(HZ/10).
+
+The 100ms sleep length is proper if the backing drivers are slow like
+traditionnal rotation disks. While if the backing drivers are high-end
+storages such as high iops ssds or even faster drivers, the high iowait
+inroduced by pages reclaim is really misleading, because the storage IO
+utils seen by iostat is quite low, in this case the congestion_wait time
+modified to 1ms is likely enough for high-end ssds.
+
+Another benifit is that it's potentially shorter the direct reclaim blocked
+time when kernel falls into sync reclaim path, which may improve user
+applications response time.
+
+All ssds box is a trend, so introduce this sysctl entry for making a way
+to relieving the concerns of system administrators.
+
+Tested:
+1. Before this patch:
+
+top - 10:10:40 up 8 days, 16:22,  4 users,  load average: 2.21, 2.15, 2.10
+Tasks: 718 total,   5 running, 712 sleeping,   0 stopped,   1 zombie
+Cpu0  :  0.3%us,  3.4%sy,  0.0%ni, 95.3%id,  1.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu1  :  1.4%us,  1.7%sy,  0.0%ni, 95.2%id,  0.0%wa,  0.0%hi,  1.7%si,  0.0%st
+Cpu2  :  4.7%us,  3.3%sy,  0.0%ni, 91.0%id,  0.0%wa,  0.0%hi,  1.0%si,  0.0%st
+Cpu3  :  7.0%us,  3.7%sy,  0.0%ni, 87.7%id,  1.0%wa,  0.0%hi,  0.7%si,  0.0%st
+Cpu4  :  1.0%us,  2.0%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.7%si,  0.0%st
+Cpu5  :  1.0%us,  2.0%sy,  0.0%ni,  1.7%id, 95.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu6  :  1.0%us,  1.3%sy,  0.0%ni, 97.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu7  :  1.3%us,  1.0%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu8  :  4.3%us,  1.3%sy,  0.0%ni, 94.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu9  :  0.7%us,  0.7%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu10 :  0.7%us,  1.0%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu11 :  1.0%us,  1.0%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu12 :  3.0%us,  1.0%sy,  0.0%ni, 95.3%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu13 :  0.3%us,  1.3%sy,  0.0%ni, 88.6%id,  9.4%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu14 :  3.3%us,  2.3%sy,  0.0%ni, 93.7%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu15 :  6.4%us,  3.0%sy,  0.0%ni, 90.2%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu16 :  2.7%us,  1.7%sy,  0.0%ni, 95.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu17 :  1.0%us,  1.7%sy,  0.0%ni, 97.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu18 :  1.3%us,  1.0%sy,  0.0%ni, 97.0%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu19 :  4.3%us,  1.7%sy,  0.0%ni, 86.0%id,  7.7%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu20 :  0.7%us,  1.3%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu21 :  0.3%us,  1.7%sy,  0.0%ni, 50.2%id, 47.5%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu22 :  0.7%us,  0.7%sy,  0.0%ni, 98.7%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu23 :  0.7%us,  0.7%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+
+2. After this patch and set mm_reclaim_congestion_wait_jiffies to 1:
+
+top - 10:12:19 up 8 days, 16:24,  4 users,  load average: 1.32, 1.93, 2.03
+Tasks: 724 total,   2 running, 721 sleeping,   0 stopped,   1 zombie
+Cpu0  :  4.4%us,  3.0%sy,  0.0%ni, 90.3%id,  1.3%wa,  0.0%hi,  1.0%si,  0.0%st
+Cpu1  :  2.1%us,  1.4%sy,  0.0%ni, 93.5%id,  0.7%wa,  0.0%hi,  2.4%si,  0.0%st
+Cpu2  :  2.7%us,  1.0%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu3  :  1.0%us,  1.0%sy,  0.0%ni, 97.7%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu4  :  0.7%us,  1.0%sy,  0.0%ni, 97.7%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu5  :  1.0%us,  0.7%sy,  0.0%ni, 97.7%id,  0.3%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu6  :  1.7%us,  1.0%sy,  0.0%ni, 97.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu7  :  2.0%us,  0.7%sy,  0.0%ni, 94.3%id,  2.7%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu8  :  2.0%us,  0.7%sy,  0.0%ni, 97.0%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu9  :  0.7%us,  1.0%sy,  0.0%ni, 97.7%id,  0.7%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu10 :  0.3%us,  0.3%sy,  0.0%ni, 99.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu11 :  0.7%us,  0.3%sy,  0.0%ni, 99.0%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu12 :  0.7%us,  1.0%sy,  0.0%ni, 98.0%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu13 :  0.0%us,  0.3%sy,  0.0%ni, 99.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu14 :  1.7%us,  0.7%sy,  0.0%ni, 97.3%id,  0.3%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu15 :  4.3%us,  1.0%sy,  0.0%ni, 94.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu16 :  1.7%us,  1.3%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.7%si,  0.0%st
+Cpu17 :  2.0%us,  1.3%sy,  0.0%ni, 96.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu18 :  0.3%us,  0.3%sy,  0.0%ni, 99.3%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu19 :  1.0%us,  1.0%sy,  0.0%ni, 97.6%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu20 :  1.3%us,  0.7%sy,  0.0%ni, 97.0%id,  0.7%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu21 :  0.7%us,  0.7%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.3%si,  0.0%st
+Cpu22 :  1.0%us,  1.0%sy,  0.0%ni, 98.0%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Cpu23 :  0.7%us,  0.3%sy,  0.0%ni, 98.3%id,  0.0%wa,  0.0%hi,  0.7%si,  0.0%st
+
+Signed-off-by: Lin Feng <linf@wangsu.com>
+---
+ Documentation/admin-guide/sysctl/vm.rst | 17 +++++++++++++++++
+ kernel/sysctl.c                         | 10 ++++++++++
+ mm/vmscan.c                             | 12 +++++++++---
+ 3 files changed, 36 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 64aeee1009ca..e4dd83731ecf 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -837,6 +837,23 @@ than the high water mark in a zone.
+ The default value is 60.
  
- #ifdef CONFIG_MMU
- #define MMAP_LOTSAMISS  (100)
--static struct file *maybe_unlock_mmap_for_io(struct vm_fault *vmf,
--					     struct file *fpin)
--{
--	int flags = vmf->flags;
--
--	if (fpin)
--		return fpin;
--
--	/*
--	 * FAULT_FLAG_RETRY_NOWAIT means we don't want to wait on page locks or
--	 * anything, so we only pin the file and drop the mmap_sem if only
--	 * FAULT_FLAG_ALLOW_RETRY is set.
--	 */
--	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) ==
--	    FAULT_FLAG_ALLOW_RETRY) {
--		fpin = get_file(vmf->vma->vm_file);
--		up_read(&vmf->vma->vm_mm->mmap_sem);
--	}
--	return fpin;
--}
  
++mm_reclaim_congestion_wait_jiffies
++==========
++
++This control is used to define how long kernel will wait/sleep while
++system memory is under pressure and memroy reclaim is relatively active.
++Lower values will decrease the kernel wait/sleep time.
++
++It's suggested to lower this value on high-end box that system is under memory
++pressure but with low storage IO utils and high CPU iowait, which could also
++potentially decrease user application response time in this case.
++
++Keep this control as it were if your box are not above case.
++
++The default value is HZ/10, which is of equal value to 100ms independ of how
++many HZ is defined.
++
++
+ unprivileged_userfaultfd
+ ========================
+ 
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 078950d9605b..064a3da04789 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -114,6 +114,7 @@ extern int pid_max;
+ extern int pid_max_min, pid_max_max;
+ extern int percpu_pagelist_fraction;
+ extern int latencytop_enabled;
++extern int mm_reclaim_congestion_wait_jiffies;
+ extern unsigned int sysctl_nr_open_min, sysctl_nr_open_max;
+ #ifndef CONFIG_MMU
+ extern int sysctl_nr_trim_pages;
+@@ -1413,6 +1414,15 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= &one_hundred,
+ 	},
++	{
++		.procname	= "mm_reclaim_congestion_wait_jiffies",
++		.data		= &mm_reclaim_congestion_wait_jiffies,
++		.maxlen		= sizeof(mm_reclaim_congestion_wait_jiffies),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &SYSCTL_ONE,
++		.extra2		= &one_hundred,
++	},
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	{
+ 		.procname	= "nr_hugepages",
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index a6c5d0b28321..8c19afdcff95 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -165,6 +165,12 @@ struct scan_control {
+  * From 0 .. 100.  Higher means more swappy.
+  */
+ int vm_swappiness = 60;
++
++/*
++ * From 0 .. 100.  Lower means shorter memory reclaim IO congestion wait time.
++ */
++int mm_reclaim_congestion_wait_jiffies = HZ / 10;
++
  /*
-  * lock_page_maybe_drop_mmap - lock the page, possibly dropping the mmap_sem
-diff --git a/mm/internal.h b/mm/internal.h
-index e32390802fd3..75ffa646de82 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -362,6 +362,27 @@ vma_address(struct page *page, struct vm_area_struct *vma)
- 	return max(start, vma->vm_start);
- }
+  * The total number of pages which are beyond the high watermark within all
+  * zones.
+@@ -1966,7 +1972,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+ 			return 0;
  
-+static inline struct file *maybe_unlock_mmap_for_io(struct vm_fault *vmf,
-+					     struct file *fpin)
-+{
-+	int flags = vmf->flags;
-+
-+	if (fpin)
-+		return fpin;
-+
-+	/*
-+	 * FAULT_FLAG_RETRY_NOWAIT means we don't want to wait on page locks or
-+	 * anything, so we only pin the file and drop the mmap_sem if only
-+	 * FAULT_FLAG_ALLOW_RETRY is set.
-+	 */
-+	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) ==
-+	    FAULT_FLAG_ALLOW_RETRY) {
-+		fpin = get_file(vmf->vma->vm_file);
-+		up_read(&vmf->vma->vm_mm->mmap_sem);
-+	}
-+	return fpin;
-+}
-+
- #else /* !CONFIG_MMU */
- static inline void clear_page_mlock(struct page *page) { }
- static inline void mlock_vma_page(struct page *page) { }
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 2bed4761f279..551fa49eb7f6 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2007,16 +2007,14 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
- 		    shmem_falloc->waitq &&
- 		    vmf->pgoff >= shmem_falloc->start &&
- 		    vmf->pgoff < shmem_falloc->next) {
-+			struct file *fpin = NULL;
- 			wait_queue_head_t *shmem_falloc_waitq;
- 			DEFINE_WAIT_FUNC(shmem_fault_wait, synchronous_wake_function);
+ 		/* wait a bit for the reclaimer. */
+-		msleep(100);
++		msleep(jiffies_to_msecs(mm_reclaim_congestion_wait_jiffies));
+ 		stalled = true;
  
- 			ret = VM_FAULT_NOPAGE;
--			if ((vmf->flags & FAULT_FLAG_ALLOW_RETRY) &&
--			   !(vmf->flags & FAULT_FLAG_RETRY_NOWAIT)) {
--				/* It's polite to up mmap_sem if we can */
--				up_read(&vma->vm_mm->mmap_sem);
-+			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-+			if (fpin)
- 				ret = VM_FAULT_RETRY;
--			}
- 
- 			shmem_falloc_waitq = shmem_falloc->waitq;
- 			prepare_to_wait(shmem_falloc_waitq, &shmem_fault_wait,
-@@ -2034,6 +2032,9 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
- 			spin_lock(&inode->i_lock);
- 			finish_wait(shmem_falloc_waitq, &shmem_fault_wait);
- 			spin_unlock(&inode->i_lock);
-+
-+			if (fpin)
-+				fput(fpin);
- 			return ret;
+ 		/* We are about to die and free our memory. Return now. */
+@@ -2788,7 +2794,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 			 * faster than they are written so also forcibly stall.
+ 			 */
+ 			if (sc->nr.immediate)
+-				congestion_wait(BLK_RW_ASYNC, HZ/10);
++				congestion_wait(BLK_RW_ASYNC, mm_reclaim_congestion_wait_jiffies);
  		}
- 		spin_unlock(&inode->i_lock);
+ 
+ 		/*
+@@ -2807,7 +2813,7 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
+ 		 */
+ 		if (!sc->hibernation_mode && !current_is_kswapd() &&
+ 		   current_may_throttle() && pgdat_memcg_congested(pgdat, root))
+-			wait_iff_congested(BLK_RW_ASYNC, HZ/10);
++			wait_iff_congested(BLK_RW_ASYNC, mm_reclaim_congestion_wait_jiffies);
+ 
+ 	} while (should_continue_reclaim(pgdat, sc->nr_reclaimed - nr_reclaimed,
+ 					 sc->nr_scanned - nr_scanned, sc));
 -- 
- Kirill A. Shutemov
+2.20.1
+
