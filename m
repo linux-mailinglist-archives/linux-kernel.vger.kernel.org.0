@@ -2,77 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73FEAB5429
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:28:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E3FB542E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:28:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731112AbfIQR1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 13:27:06 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:51152 "EHLO vps0.lunn.ch"
+        id S1731135AbfIQR1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 13:27:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731044AbfIQR1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:27:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=sCrIBZVGo0peO+Uzee7kafLql6ON3IEIAQABS5oBoAs=; b=Jvo1RKwAS4WxLU0OxF6+jp0Nmd
-        kIgssYdP4/7tmzx8r2ZRX7WFIc6FL6QciEsZOTg092mtujdJFcUQpTnXipWzsI+8QUZtF2y+GXTwa
-        FenjWvKcKIVV41P6esSy4jxOWoeu8gUao2IuRmpQYAC5ghJzuFs0Ohd+TO/vNXkDdFSU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1iAHFi-0002bt-H4; Tue, 17 Sep 2019 19:26:58 +0200
-Date:   Tue, 17 Sep 2019 19:26:58 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     tinywrkb <tinywrkb@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: imx6dl: SolidRun: add phy node with 100Mb/s
- max-speed
-Message-ID: <20190917172658.GB9591@lunn.ch>
-References: <20190915135652.GC3427@lunn.ch>
- <20190917124101.GA1200564@arch-dsk-01>
- <20190917125434.GH20778@lunn.ch>
- <20190917133253.GA1210141@arch-dsk-01>
- <20190917133942.GR25745@shell.armlinux.org.uk>
- <20190917151707.GV25745@shell.armlinux.org.uk>
- <20190917153027.GW25745@shell.armlinux.org.uk>
- <20190917163427.GA1475935@arch-dsk-01>
- <20190917170419.GX25745@shell.armlinux.org.uk>
- <20190917171913.GY25745@shell.armlinux.org.uk>
+        id S1727944AbfIQR1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 13:27:51 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B20472171F;
+        Tue, 17 Sep 2019 17:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568741270;
+        bh=pWYWNjrafaEka3By8melCVwnYdQavo9zhE9xnRSmIVk=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=G2Jj+/t30a67gfE+Kg/xxIZ2Aq4hyC/HJlnECTbsVXHqdcHC4Ay0hqkmAGy/jleRr
+         jpB8fTxdORg5ggqS+QdpyiEkDZPKBg/qZlme0PyC+m7yxdiFClYNCCnVMBoGuFhz5u
+         dUz/CYFGC99a4ErBP92E6xXWZ7Z3EPBbUA3HG0Hs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917171913.GY25745@shell.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190820030536.1181-1-yamada.masahiro@socionext.com>
+References: <20190820030536.1181-1-yamada.masahiro@socionext.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-clk@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: add include guard to clk-conf.h
+User-Agent: alot/0.8.1
+Date:   Tue, 17 Sep 2019 10:27:49 -0700
+Message-Id: <20190917172750.B20472171F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
-> index b3893347804d..85cf4a4a5e81 100644
-> --- a/drivers/net/phy/at803x.c
-> +++ b/drivers/net/phy/at803x.c
+Quoting Masahiro Yamada (2019-08-19 20:05:36)
+> Add a header include guard just in case.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Hi Russell
+Applied to clk-next
 
-This won't work. In the kernel logs, you see 
-
-kernel: Generic PHY 2188000.ethernet-1:00: attached PHY driver [Generic PHY]
-
-The generic PHY driver is being used, not the at803x driver.
-
-But i do like your idea, it does fit the problem description.
-
-    Andrew
