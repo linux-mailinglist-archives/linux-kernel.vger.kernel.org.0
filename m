@@ -2,90 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F04A7B56FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 22:30:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B10C2B5702
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 22:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbfIQUao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 16:30:44 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43568 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfIQUao (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 16:30:44 -0400
-Received: by mail-qk1-f196.google.com with SMTP id h126so5459150qke.10
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 13:30:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=FapF/w8V6L5P4RP46nAQFrAdDN4jwAlxC54JDkAvfWE=;
-        b=b2heVtMaAE//iiVUcKsZr0w7awdslPkqyQbYNyjGPHEL5W+LgsLzJdHgLusSCvcjFf
-         YvSE5Y384otm0G5eZOgbTalFDAnlo01PRpnbLoB2ayOgzzTvNYCOnP4IGWEDYDbQ4qVD
-         dLFolbhNPH4v6x1Pps+vdpjxTD8MKBvF9f5WuyV4U/4gF4NrkK8t59Lk1P6YK3FtQTW5
-         hkfqNyCR2qrlhcy5XdsCerD3vDypFmfHqqZDSITyUW3Bpfw6Pwbmq7Wfcg/fHMOiKMxO
-         PypYyKoxR5XSuCydNmltfumpdY8vQfvEYwhwI+VzGz4AnmdtC70mTm1ttcp//WcrmOwp
-         Cytw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FapF/w8V6L5P4RP46nAQFrAdDN4jwAlxC54JDkAvfWE=;
-        b=H2BVl81DZ+X6WTFpuKdzFBkj10EPes0dwqBz3sHbAmETDgjwSaOpbPRPYyGpJQMe6D
-         xYmw3hhCEb/VbuXdKS7U2x0BE6ycNxHlXKOWVcrgAYvGtmNEHr8e4JIouZ++xeeOFUK/
-         gSWpjjA7SuOsTu38bUs3am5kEoXaePaaSNyTj36CL+4JhKcP3XKoGjY0KjQuPUuqozNT
-         GjfbXpPbEpV4i8NCgMMIMbD0CM/cvmIfiXqRQb1uXamf+sM5hiWAQPnHkNnaykbc/pRZ
-         YW6MM0MllaZ98my08ZdTZCX56ZrIJhHA12xjhrvZQHBzOVBgaN9u55+VCR8u4pyhRVBF
-         K6pg==
-X-Gm-Message-State: APjAAAX8piPZLSwzhowggub8NS2v7ULvonlNv/jghMNaI69wwD03t7pJ
-        0tCrn8CM9ft868o13v6A1mYKsL8Tx3w=
-X-Google-Smtp-Source: APXvYqxAmisQfB6dzZqw466gLLRXufi21otNJ/5du7EZOaLPbhdALpCQOrklxXZW9Tlgu7tiOQD7Gg==
-X-Received: by 2002:a37:9d93:: with SMTP id g141mr427405qke.188.1568752243366;
-        Tue, 17 Sep 2019 13:30:43 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id 139sm1822874qkf.14.2019.09.17.13.30.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Sep 2019 13:30:42 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     rientjes@google.com, cl@linux.com, penberg@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] mm/slub: fix -Wunused-function compiler warnings
-Date:   Tue, 17 Sep 2019 16:30:32 -0400
-Message-Id: <1568752232-5094-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        id S1728516AbfIQUds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 16:33:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726583AbfIQUdr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 16:33:47 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04BE32054F;
+        Tue, 17 Sep 2019 20:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568752427;
+        bh=OCmjyJeaqRLek0C4FKcAxnbTQ4/wO6fYl5ArFt32PpI=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=MSmLNetlce/Df7YgxgYUktpoBZJ1RKBUfvCLfNmM3GpOMWde2dL5OqPJK066flD8V
+         /TwYo+q9WPUIdymQvuNaP37AoI20J08j4lli+TQpWRt5iRSHAbIb1GuHBHEt31QynS
+         h6CjDWHSyuALB1Wql/R+AtNRWUzaQMU2S9z+0xak=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190913024029.2640-1-bjorn.andersson@linaro.org>
+References: <20190913024029.2640-1-bjorn.andersson@linaro.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: Make clk_bulk_get_all() return a valid "id"
+User-Agent: alot/0.8.1
+Date:   Tue, 17 Sep 2019 13:33:46 -0700
+Message-Id: <20190917203347.04BE32054F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tid_to_cpu() and tid_to_event() are only used in note_cmpxchg_failure()
-when SLUB_DEBUG_CMPXCHG=y, so when SLUB_DEBUG_CMPXCHG=n by default,
-Clang will complain that those unused functions.
+Quoting Bjorn Andersson (2019-09-12 19:40:29)
+> The adreno driver expects the "id" field of the returned clk_bulk_data
+> to be filled in with strings from the clock-names property.
+>=20
+> But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
+> receives a list of bogus pointers instead.
+>=20
+> Zero-initialize the "id" field and attempt to populate with strings from
+> the clock-names property to resolve both these issues.
+>=20
+> Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clock=
+s")
+> Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
+> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+> Cc: Jordan Crouse <jcrouse@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/slub.c | 2 ++
- 1 file changed, 2 insertions(+)
+Applied to clk-next
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 8834563cdb4b..49739f005b4f 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2004,6 +2004,7 @@ static inline unsigned long next_tid(unsigned long tid)
- 	return tid + TID_STEP;
- }
- 
-+#ifdef SLUB_DEBUG_CMPXCHG
- static inline unsigned int tid_to_cpu(unsigned long tid)
- {
- 	return tid % TID_STEP;
-@@ -2013,6 +2014,7 @@ static inline unsigned long tid_to_event(unsigned long tid)
- {
- 	return tid / TID_STEP;
- }
-+#endif
- 
- static inline unsigned int init_tid(int cpu)
- {
--- 
-1.8.3.1
+And now I see that this whole thing needs to be inlined to the one call
+site and should use the struct device instead of calling of_clk_get()...
+I'll have to fix it later.
 
