@@ -2,372 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E03AB54B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 19:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62ADEB54CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 20:00:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731447AbfIQR5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 13:57:47 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:33740 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731415AbfIQR5p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:57:45 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8HHvfPq113155;
-        Tue, 17 Sep 2019 12:57:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568743061;
-        bh=tKMENJkv66y95dNEv5nFu+QAsvXvJqrCB1tQeqo3JAc=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=jfOIjf9kSQRaagRyLBrVoNxMqNmaAq7R0fE1e6DN+/Rjgx1FVnzKHjzJkPCoBrlwh
-         YT+eKvVl2lAryt3YRImONr4l6whxcPF2locWBztYBI//PNuMpO7KKKQBKeGBa0lyGa
-         YdXY58FhEC+BD5bCXUEG8H/AfcjoLWMLLHP6b4DM=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8HHvfHi105755
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Sep 2019 12:57:41 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 17
- Sep 2019 12:57:38 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 17 Sep 2019 12:57:38 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8HHveCF103925;
-        Tue, 17 Sep 2019 12:57:40 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v6 9/9] leds: Update the lp55xx to use the multi color framework
-Date:   Tue, 17 Sep 2019 12:59:37 -0500
-Message-ID: <20190917175937.13872-9-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20190917175937.13872-1-dmurphy@ti.com>
-References: <20190917175937.13872-1-dmurphy@ti.com>
+        id S1727824AbfIQR74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 13:59:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726118AbfIQR74 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 13:59:56 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 955BB20678;
+        Tue, 17 Sep 2019 17:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568743195;
+        bh=hcrS5sWx7CpJDrlf9K3i36bzcfPumr+4M831UKbPHLE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bFP+NyjSQAsNpicI1ptV1P/vs72FENrY36GYDEUn4aCZnZuekPLMsVkPM5KM7HNzq
+         h51bLuQlx6vgTs4lo4bJiaLBBrsM1YElK4CYbmgWcSyFMCtx+ax0fHOjbHSv7S96na
+         1ZnvvGM5k6i7ZtN/IVat9CQ3rMtol5MyEPyHrETw=
+Date:   Tue, 17 Sep 2019 18:59:50 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iommu: dma: Use of_iommu_get_resv_regions()
+Message-ID: <20190917175950.wrwiqnh5bp62uy3c@willie-the-truck>
+References: <20190829111407.17191-1-thierry.reding@gmail.com>
+ <20190829111407.17191-3-thierry.reding@gmail.com>
+ <1caeaaa0-c5aa-b630-6d42-055b26764f40@arm.com>
+ <20190902145245.GC1445@ulmo>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190902145245.GC1445@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the lp5523 to use the multi color framework.
+On Mon, Sep 02, 2019 at 04:52:45PM +0200, Thierry Reding wrote:
+> On Mon, Sep 02, 2019 at 03:22:35PM +0100, Robin Murphy wrote:
+> > On 29/08/2019 12:14, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > For device tree nodes, use the standard of_iommu_get_resv_regions()
+> > > implementation to obtain the reserved memory regions associated with a
+> > > device.
+> > 
+> > This covers the window between iommu_probe_device() setting up a default
+> > domain and the device's driver finally probing and taking control, but
+> > iommu_probe_device() represents the point that the IOMMU driver first knows
+> > about this device - there's still a window from whenever the IOMMU driver
+> > itself probed up to here where the "unidentified" traffic may have already
+> > been disrupted. Some IOMMU drivers have no option but to make the necessary
+> > configuration during their own probe routine, at which point a struct device
+> > for the display/etc. endpoint may not even exist yet.
+> 
+> Yeah, I think I'm actually running into this issue with the ARM SMMU
+> driver. The above works fine with the Tegra SMMU driver, though, because
+> it doesn't touch the SMMU configuration until a device is attached to a
+> domain.
+> 
+> For anything earlier than iommu_probe_device(), I don't see a way of
+> doing this generically. I've been working on a prototype to make these
+> reserved memory regions early on for ARM SMMU but I've been failing so
+> far. I think it would possibly work if we just switched the default for
+> stream IDs to be "bypass" if they have any devices that have reserved
+> memory regions, but again, this isn't quite working (yet).
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+I think we should avoid the use of "bypass" outside of the IOMMU probe()
+routine if at all possible, since it leaves the thing wide open if we don't
+subsequently probe the master.
 
-v6 - Updated call to calculate LED intensity, removed extra module binary
+Why can't we initialise a page-table early for StreamIDs with these
+reserved regions, and then join that up later on if we see a device with
+one of those StreamIDs attaching to a DMA domain? I suppose the nasty
+case would be attaching to a domain that already has other masters
+attached to it. Can we forbid that somehow for these devices? Otherwise,
+I think we'd have to transiently switch to bypass whilst switching page
+table.
 
- drivers/leds/leds-lp5523.c                |  13 +++
- drivers/leds/leds-lp55xx-common.c         | 131 ++++++++++++++++++----
- drivers/leds/leds-lp55xx-common.h         |   9 ++
- include/linux/platform_data/leds-lp55xx.h |   6 +
- 4 files changed, 137 insertions(+), 22 deletions(-)
+What problems did you run into trying to implement this?
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index d0b931a136b9..8b2cdb98fed6 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -791,6 +791,18 @@ static ssize_t store_master_fader_leds(struct device *dev,
- 	return ret;
- }
- 
-+static int lp5523_led_intensity(struct lp55xx_led *led, int chan_num)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	int ret;
-+
-+	mutex_lock(&chip->lock);
-+	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + chan_num,
-+		     led->brightness);
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
- static int lp5523_led_brightness(struct lp55xx_led *led)
- {
- 	struct lp55xx_chip *chip = led->chip;
-@@ -857,6 +869,7 @@ static struct lp55xx_device_config lp5523_cfg = {
- 	.max_channel  = LP5523_MAX_LEDS,
- 	.post_init_device   = lp5523_post_init_device,
- 	.brightness_fn      = lp5523_led_brightness,
-+	.color_intensity_fn = lp5523_led_intensity,
- 	.set_led_current    = lp5523_set_led_current,
- 	.firmware_cb        = lp5523_firmware_loaded,
- 	.run_engine         = lp5523_run_engine,
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 44ced02b49f9..a5efe2407832 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -136,9 +136,26 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
- {
- 	struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
- 	struct lp55xx_device_config *cfg = led->chip->cfg;
-+	int adj_value[LED_COLOR_ID_MAX];
-+	int ret;
-+	int i;
-+
-+	if (led->mc_cdev.num_leds > 1) {
-+		led_mc_calc_brightness(&led->mc_cdev,
-+				       brightness, adj_value);
-+		for (i = 0; i < led->mc_cdev.num_leds; i++) {
-+			led->brightness = adj_value[i];
-+			ret = cfg->color_intensity_fn(led,
-+						      led->grouped_channels[i]);
-+			if (ret)
-+				break;
-+		}
-+	} else {
-+		led->brightness = (u8)brightness;
-+		ret = cfg->brightness_fn(led);
-+	}
- 
--	led->brightness = (u8)brightness;
--	return cfg->brightness_fn(led);
-+	return ret;
- }
- 
- static int lp55xx_init_led(struct lp55xx_led *led,
-@@ -147,9 +164,9 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 	struct lp55xx_platform_data *pdata = chip->pdata;
- 	struct lp55xx_device_config *cfg = chip->cfg;
- 	struct device *dev = &chip->cl->dev;
-+	int max_channel = cfg->max_channel;
- 	char name[32];
- 	int ret;
--	int max_channel = cfg->max_channel;
- 
- 	if (chan >= max_channel) {
- 		dev_err(dev, "invalid channel: %d / %d\n", chan, max_channel);
-@@ -159,10 +176,35 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 	if (pdata->led_config[chan].led_current == 0)
- 		return 0;
- 
-+	if (pdata->led_config[chan].name) {
-+		led->cdev.name = pdata->led_config[chan].name;
-+	} else {
-+		snprintf(name, sizeof(name), "%s:channel%d",
-+			pdata->label ? : chip->cl->name, chan);
-+		led->cdev.name = name;
-+	}
-+
-+	if (pdata->led_config[chan].num_colors > 1) {
-+		led->mc_cdev.led_cdev = &led->cdev;
-+		led->cdev.brightness_set_blocking = lp55xx_set_brightness;
-+		led->cdev.groups = lp55xx_led_groups;
-+		led->mc_cdev.num_leds = pdata->led_config[chan].num_colors;
-+		led->mc_cdev.available_colors = pdata->led_config[chan].available_colors;
-+		memcpy(led->channel_color,
-+		       pdata->led_config[chan].channel_color,
-+		       sizeof(led->channel_color));
-+		memcpy(led->grouped_channels,
-+		       pdata->led_config[chan].grouped_channels,
-+		       sizeof(led->grouped_channels));
-+	} else {
-+
-+		led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
-+		led->cdev.brightness_set_blocking = lp55xx_set_brightness;
-+	}	led->cdev.groups = lp55xx_led_groups;
-+
- 	led->led_current = pdata->led_config[chan].led_current;
- 	led->max_current = pdata->led_config[chan].max_current;
- 	led->chan_nr = pdata->led_config[chan].chan_nr;
--	led->cdev.default_trigger = pdata->led_config[chan].default_trigger;
- 
- 	if (led->chan_nr >= max_channel) {
- 		dev_err(dev, "Use channel numbers between 0 and %d\n",
-@@ -170,18 +212,11 @@ static int lp55xx_init_led(struct lp55xx_led *led,
- 		return -EINVAL;
- 	}
- 
--	led->cdev.brightness_set_blocking = lp55xx_set_brightness;
--	led->cdev.groups = lp55xx_led_groups;
-+	if (pdata->led_config[chan].num_colors > 1)
-+		ret = led_classdev_multicolor_register(dev, &led->mc_cdev);
-+	else
-+		ret = led_classdev_register(dev, &led->cdev);
- 
--	if (pdata->led_config[chan].name) {
--		led->cdev.name = pdata->led_config[chan].name;
--	} else {
--		snprintf(name, sizeof(name), "%s:channel%d",
--			pdata->label ? : chip->cl->name, chan);
--		led->cdev.name = name;
--	}
--
--	ret = led_classdev_register(dev, &led->cdev);
- 	if (ret) {
- 		dev_err(dev, "led register err: %d\n", ret);
- 		return ret;
-@@ -466,7 +501,6 @@ int lp55xx_register_leds(struct lp55xx_led *led, struct lp55xx_chip *chip)
- 		dev_err(&chip->cl->dev, "empty brightness configuration\n");
- 		return -EINVAL;
- 	}
--
- 	for (i = 0; i < num_channels; i++) {
- 
- 		/* do not initialize channels that are not connected */
-@@ -538,6 +572,38 @@ void lp55xx_unregister_sysfs(struct lp55xx_chip *chip)
- }
- EXPORT_SYMBOL_GPL(lp55xx_unregister_sysfs);
- 
-+static int lp5xx_parse_channel_child(struct device_node *np,
-+				     struct lp55xx_led_config *cfg,
-+				     int chan_num)
-+{
-+	struct device_node *child;
-+	int num_colors = 0;
-+	u32 color_id;
-+	u32 led_number;
-+	int ret;
-+
-+	cfg[chan_num].default_trigger =
-+			of_get_property(np, "linux,default-trigger", NULL);
-+
-+	for_each_child_of_node(np, child) {
-+		of_property_read_string(child, "chan-name",
-+					&cfg[chan_num].name);
-+		of_property_read_u8(child, "led-cur",
-+				    &cfg[chan_num].led_current);
-+		of_property_read_u8(child, "max-cur",
-+				    &cfg[chan_num].max_current);
-+		of_property_read_u32(child, "color", &color_id);
-+		cfg[chan_num].channel_color[num_colors] = color_id;
-+		set_bit(color_id, &cfg[chan_num].available_colors);
-+		ret = of_property_read_u32(child, "reg", &led_number);
-+		cfg[chan_num].grouped_channels[num_colors] = led_number;
-+		num_colors++;
-+	}
-+	cfg[chan_num].num_colors = num_colors;
-+
-+	return 0;
-+}
-+
- struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 						      struct device_node *np)
- {
-@@ -545,7 +611,10 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	struct lp55xx_platform_data *pdata;
- 	struct lp55xx_led_config *cfg;
- 	int num_channels;
-+	int channel_color;
-+	u32 led_number;
- 	int i = 0;
-+	int ret;
- 
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -565,13 +634,31 @@ struct lp55xx_platform_data *lp55xx_of_populate_pdata(struct device *dev,
- 	pdata->num_channels = num_channels;
- 
- 	for_each_child_of_node(np, child) {
--		cfg[i].chan_nr = i;
-+		ret = of_property_read_u32(child, "color", &channel_color);
-+		if (ret) {
-+			dev_err(dev,"Missing color property setting white\n");
-+			channel_color = LED_COLOR_ID_WHITE;
-+		}
- 
--		of_property_read_string(child, "chan-name", &cfg[i].name);
--		of_property_read_u8(child, "led-cur", &cfg[i].led_current);
--		of_property_read_u8(child, "max-cur", &cfg[i].max_current);
--		cfg[i].default_trigger =
--			of_get_property(child, "linux,default-trigger", NULL);
-+		if (channel_color == LED_COLOR_ID_MULTI)
-+			lp5xx_parse_channel_child(child, cfg, i);
-+		else {
-+			of_property_read_string(child, "chan-name",
-+						&cfg[i].name);
-+			of_property_read_u8(child, "led-cur",
-+					    &cfg[i].led_current);
-+			of_property_read_u8(child, "max-cur",
-+					    &cfg[i].max_current);
-+			cfg[i].default_trigger =
-+				of_get_property(child, "linux,default-trigger",
-+						NULL);
-+			of_property_read_u32(child, "reg", &led_number);
-+
-+			if (led_number < 0 || led_number > 6)
-+				return ERR_PTR(EINVAL);
-+
-+			cfg[i].chan_nr = led_number;
-+		}
- 
- 		i++;
- 	}
-diff --git a/drivers/leds/leds-lp55xx-common.h b/drivers/leds/leds-lp55xx-common.h
-index 783ed5103ce5..d9c114259dcb 100644
---- a/drivers/leds/leds-lp55xx-common.h
-+++ b/drivers/leds/leds-lp55xx-common.h
-@@ -12,6 +12,8 @@
- #ifndef _LEDS_LP55XX_COMMON_H
- #define _LEDS_LP55XX_COMMON_H
- 
-+#include <linux/led-class-multicolor.h>
-+
- enum lp55xx_engine_index {
- 	LP55XX_ENGINE_INVALID,
- 	LP55XX_ENGINE_1,
-@@ -109,6 +111,9 @@ struct lp55xx_device_config {
- 	/* access brightness register */
- 	int (*brightness_fn)(struct lp55xx_led *led);
- 
-+	/* access specific brightness register */
-+	int (*color_intensity_fn)(struct lp55xx_led *led, int chan_num);
-+
- 	/* current setting function */
- 	void (*set_led_current) (struct lp55xx_led *led, u8 led_current);
- 
-@@ -159,6 +164,7 @@ struct lp55xx_chip {
-  * struct lp55xx_led
-  * @chan_nr         : Channel number
-  * @cdev            : LED class device
-+ * @mc_cdev	    : Multi color class device
-  * @led_current     : Current setting at each led channel
-  * @max_current     : Maximun current at each led channel
-  * @brightness      : Brightness value
-@@ -167,9 +173,12 @@ struct lp55xx_chip {
- struct lp55xx_led {
- 	int chan_nr;
- 	struct led_classdev cdev;
-+	struct led_classdev_mc mc_cdev;
- 	u8 led_current;
- 	u8 max_current;
- 	u8 brightness;
-+	int channel_color[LED_COLOR_ID_MAX];
-+	int grouped_channels[LED_COLOR_ID_MAX];
- 	struct lp55xx_chip *chip;
- };
- 
-diff --git a/include/linux/platform_data/leds-lp55xx.h b/include/linux/platform_data/leds-lp55xx.h
-index 96a787100fda..0ac29f537ab6 100644
---- a/include/linux/platform_data/leds-lp55xx.h
-+++ b/include/linux/platform_data/leds-lp55xx.h
-@@ -12,6 +12,8 @@
- #ifndef _LEDS_LP55XX_H
- #define _LEDS_LP55XX_H
- 
-+#include <linux/led-class-multicolor.h>
-+
- /* Clock configuration */
- #define LP55XX_CLOCK_AUTO	0
- #define LP55XX_CLOCK_INT	1
-@@ -23,6 +25,10 @@ struct lp55xx_led_config {
- 	u8 chan_nr;
- 	u8 led_current; /* mA x10, 0 if led is not connected */
- 	u8 max_current;
-+	int num_colors;
-+	unsigned long available_colors;
-+	u32 channel_color[LED_COLOR_ID_MAX];
-+	int grouped_channels[LED_COLOR_ID_MAX];
- };
- 
- struct lp55xx_predef_pattern {
--- 
-2.22.0.214.g8dca754b1e
-
+Will
