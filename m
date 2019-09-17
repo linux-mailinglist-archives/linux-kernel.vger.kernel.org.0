@@ -2,56 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C0C2B488B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C26E8B488F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 09:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404530AbfIQHwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 03:52:13 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:40848 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbfIQHwM (ORCPT
+        id S2404555AbfIQHw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 03:52:26 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37165 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404543AbfIQHwY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 03:52:12 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1iA8HR-0005om-LX; Tue, 17 Sep 2019 09:52:09 +0200
-Date:   Tue, 17 Sep 2019 09:52:09 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Scott Wood <swood@redhat.com>
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Clark Williams <williams@redhat.com>
-Subject: Re: [PATCH RT v3 2/5] sched: Rename sleeping_lock to rt_invol_sleep
-Message-ID: <20190917075209.2utxzkleydg27fnm@linutronix.de>
-References: <20190911165729.11178-1-swood@redhat.com>
- <20190911165729.11178-3-swood@redhat.com>
+        Tue, 17 Sep 2019 03:52:24 -0400
+Received: by mail-io1-f65.google.com with SMTP id b19so5386357iob.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 00:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jic4rHTv3yMtwdOu17+6UfT3+SUC7jTwi6ljBW+pvYE=;
+        b=IV3dtqvSDIRWDXPjXcX06Ffl/7ljGdcE8DIosKk5L/JRHh8kzXH24Rye+VdBQibPHO
+         xg1S+GArM7qvm+Fr283w2sx1nmfwITJFPnv5lIMEc69DZgNWxtaa4tA2zilqhBEkHKXc
+         zp0zekRQXdYTzXqNFgWZSH8mQTgV7Bq1ZMFKg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jic4rHTv3yMtwdOu17+6UfT3+SUC7jTwi6ljBW+pvYE=;
+        b=teOuUaZFiWe/+7TMo6QUnuEuQD+4w7yBxpuQJ10x1fk98TlktptgKMbLjb9TmpQRG3
+         +iUCRH6XMxShjM6TUDqXsV9Ele95/uP1mVO1VnEDN3kGnw9CoZbD9Xv50eo+aafdG66N
+         0SnxW+6wAHRRwsMi3Ex01OjjjnGLaz+Lsr/wYYA02jDzwE9MKAFtUhrRiNPsUY32OX/a
+         GTkZHmXHJ5SqcFZWLYm7GVfRI7knxG3RXPsWGUDB4PHQPwpwmLRsmsLHHfj4ifhwQgbj
+         mJGu84eeInoSd1X0Xiq2bFwv2znZBy4Pm08iw3p/mo1wvyvsx8IW9tkY9FKW5+tkuPWW
+         RQNA==
+X-Gm-Message-State: APjAAAWxNuvlUZ3hcbNZ9e4fJYqKEsmgN6KDp6l33sA7N7aW+jR8wcTq
+        dMGu5h1SwFNRW0ogsG93FzDYmUxiOA6wSsKdZLIwLA==
+X-Google-Smtp-Source: APXvYqwq9xhPNKB8OWh2wP8Z5AXGp8coGFe7f76p7eudxsi0rAEIGsWCQE314CRVRHw/1VuCFwiZB1UffSV7/kgP1/0=
+X-Received: by 2002:a6b:bec6:: with SMTP id o189mr2094109iof.62.1568706743655;
+ Tue, 17 Sep 2019 00:52:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190911165729.11178-3-swood@redhat.com>
-User-Agent: NeoMutt/20180716
+References: <20190916235642.167583-1-khazhy@google.com> <20190916235642.167583-2-khazhy@google.com>
+In-Reply-To: <20190916235642.167583-2-khazhy@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 17 Sep 2019 09:52:12 +0200
+Message-ID: <CAJfpegtevJHaOpeaGCTmj6WMjOt-RsfMs+oJBgNTLTOJt9Je_g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] fuse: kmemcg account fs data
+To:     Khazhismel Kumykov <khazhy@google.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shakeel B <shakeelb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-09-11 17:57:26 [+0100], Scott Wood wrote:
-> It's already used for one situation other than acquiring a lock, and the
-> next patch will add another, so change the name to avoid confusion.
+On Tue, Sep 17, 2019 at 1:56 AM Khazhismel Kumykov <khazhy@google.com> wrote:
+>
+> account per-file, dentry, and inode data
+>
+> blockdev/superblock and temporary per-request data was left alone, as
+> this usually isn't accounted
+>
+> Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+> Reviewed-by: Shakeel Butt <shakeelb@google.com>
+> ---
+>  fs/fuse/dir.c   | 3 ++-
+>  fs/fuse/file.c  | 5 +++--
+>  fs/fuse/inode.c | 3 ++-
+>  3 files changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 58557d4817e9..d572c900bb0f 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -279,7 +279,8 @@ static int fuse_dentry_revalidate(struct dentry *entry, unsigned int flags)
+>  #if BITS_PER_LONG < 64
+>  static int fuse_dentry_init(struct dentry *dentry)
+>  {
+> -       dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry), GFP_KERNEL);
+> +       dentry->d_fsdata = kzalloc(sizeof(union fuse_dentry),
+> +                                  GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
+>
+>         return dentry->d_fsdata ? 0 : -ENOMEM;
+>  }
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index a2ea347c4d2c..862aff3665b5 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -63,12 +63,13 @@ struct fuse_file *fuse_file_alloc(struct fuse_conn *fc)
+>  {
+>         struct fuse_file *ff;
+>
+> -       ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL);
+> +       ff = kzalloc(sizeof(struct fuse_file), GFP_KERNEL_ACCOUNT);
+>         if (unlikely(!ff))
+>                 return NULL;
+>
+>         ff->fc = fc;
+> -       ff->release_args = kzalloc(sizeof(*ff->release_args), GFP_KERNEL);
+> +       ff->release_args = kzalloc(sizeof(*ff->release_args),
+> +                                  GFP_KERNEL_ACCOUNT);
+>         if (!ff->release_args) {
+>                 kfree(ff);
+>                 return NULL;
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 3d598a5bb5b5..6cb445bed89d 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -66,7 +66,8 @@ static struct file_system_type fuseblk_fs_type;
+>
+>  struct fuse_forget_link *fuse_alloc_forget(void)
+>  {
+> -       return kzalloc(sizeof(struct fuse_forget_link), GFP_KERNEL);
+> +       return kzalloc(sizeof(struct fuse_forget_link),
+> +                      GFP_KERNEL_ACCOUNT | __GFP_RECLAIMABLE);
 
-I know it has been suggested but please don't rename it, keep it as is.
-The _only_ reason why you are having it is to avoid a RCU related
-warning.
-PeterZ asked if we could maybe utilize a task-state bit for this
-annotation instead. So I will look into this and change the mechanism
-that is used to something different if it is preferred over this one and
-you don't have to worry about it. Please use what is here at the moment.
+What does __GFP_RECLAIMBALE signify in slab allocs?
 
-> Signed-off-by: Scott Wood <swood@redhat.com>
+You understand that the forget_link is not reclaimable in the sense,
+that it requires action (reading requests from the fuse device) from
+the userspace filesystem daemon?
 
-Sebastian
+Thanks,
+Miklos
