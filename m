@@ -2,173 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F50B4DE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:34:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EBA2B4DF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 14:39:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfIQMd6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 08:33:58 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36788 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727179AbfIQMd5 (ORCPT
+        id S1727968AbfIQMjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 08:39:21 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:20734 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727112AbfIQMjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:33:57 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f2so3179895edw.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 05:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ilmBg9I2YMwvibWDRJZaEkCfUM/sW+D4XZUuUcRsYfc=;
-        b=BOTF2/Bb/eotbRCnoavsJAQrVi+ZwxxTD2EQ7kS5NbDJ3bSwZGLUGMVTgtaAc8xAvF
-         DuiPbfc29C/IgyvFaUBEDXtenoVdllLvQ4rG+MQS60fbRGQnFhsfgvSsCE/jW4HJ3wjF
-         +mask6n0m6qYrh2hBXRyMCyTTeHExsm+RtneY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ilmBg9I2YMwvibWDRJZaEkCfUM/sW+D4XZUuUcRsYfc=;
-        b=KvsPcKBKK9Yup8l8govpX8u4T9c1vsxdRLWmIGweG0ji0Ekdh4DWn6gJjP0jm+QogY
-         GOEHrdrRrJBL7klZzEl85fC/oz+9cGv2jGXml0rW1z0tN1Z1Z+etnnm5OWjBn7Gyh5gA
-         iiWzZB8oafn3YIPP3w/+2ZdilhlRj5/6qiUVg5zqhByUojGMSt4M//W11Q8hpLsoArWX
-         L9f7NVyvzBabo2rGGIoLpYv/Yys83YIAr+7uhX2DjRfqgRWdo02IYNN9MJmxe8eg+SXs
-         Tdmw1E4nwqwRLZ/1UszHwfrxayTxZ7aV9vWWXNh/FS8lI2utA4Gukfxzg8o+xcz/b3qx
-         p0/Q==
-X-Gm-Message-State: APjAAAWCRpxgtNt1k2gcmuFzmTw1oCDIY77SA86kGQsfxqfhxkpgk9Pv
-        hGbGWzy8IVhPs9+B8WIPccnYmg==
-X-Google-Smtp-Source: APXvYqx/IQig1FDTnjkgmHtkO1JFOjy029wlCPWaimLNWKzgUT5F7ZMNT3ZZvoo9UOVGaxA0RmMzwg==
-X-Received: by 2002:a50:eac3:: with SMTP id u3mr4501795edp.9.1568723634340;
-        Tue, 17 Sep 2019 05:33:54 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id z20sm411832edb.3.2019.09.17.05.33.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 05:33:53 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 14:33:51 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/7] drm: add drm_print_bits
-Message-ID: <20190917123351.GN3958@phenom.ffwll.local>
-Mail-Followup-To: Thomas Zimmermann <tzimmermann@suse.de>,
-        Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190904054740.20817-1-kraxel@redhat.com>
- <20190904054740.20817-2-kraxel@redhat.com>
- <66258358-b27e-4eb1-44a4-c90aa342293c@suse.de>
+        Tue, 17 Sep 2019 08:39:21 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8HCVred000451;
+        Tue, 17 Sep 2019 14:38:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=cOyzcoGBpVBGscxdizJshAfCpisInpaxvUv0kh4n7UA=;
+ b=hs8Q69x5uVUWDQzS2+p3YDWMe3MHcsv37AZeQ3/0xoguP34cw7Za/Do82lGa69wlPong
+ X8Spmagds8nN6KBS31/XpP1tvHJK6x+gGpB3fOtQw20MFfwiJloVOZrxG5ykp4NoOfS8
+ /le8tsuXyZhJXCptBSWxeYMui10Wgpufzu9EtEdqlXDLFrxGt9Gyi0GrgqVisvDIxsOS
+ jtm71AHG6V1jp3snHSjYWxyg19leJI/8yKsbnPNBIifPWYmNdwYMOfQGdbMQA9gQmAs4
+ RoD5bv5Rqg0HESvBG5rafAEhSb35U+wgxG6Y4Y0VkB5xcIUNb+hAiEmVpbrGITiJ+smP lA== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2v0nb9hpgw-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 17 Sep 2019 14:38:42 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5491C23;
+        Tue, 17 Sep 2019 12:38:34 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A1C7C2BDA7E;
+        Tue, 17 Sep 2019 14:38:33 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 17 Sep
+ 2019 14:38:33 +0200
+Received: from localhost (10.48.1.232) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 17 Sep 2019 14:38:33 +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <jic23@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v2 0/2] iio: stm32-adc: fix a race with dma and irq
+Date:   Tue, 17 Sep 2019 14:38:14 +0200
+Message-ID: <1568723896-19063-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <66258358-b27e-4eb1-44a4-c90aa342293c@suse.de>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.48.1.232]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-17_06:2019-09-17,2019-09-17 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 02:46:47PM +0200, Thomas Zimmermann wrote:
-> 
-> 
-> Am 04.09.19 um 07:47 schrieb Gerd Hoffmann:
-> > New helper to print named bits of some value (think flags fields).
-> > 
-> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> > ---
-> >  include/drm/drm_print.h     |  3 +++
-> >  drivers/gpu/drm/drm_print.c | 33 +++++++++++++++++++++++++++++++++
-> >  2 files changed, 36 insertions(+)
-> > 
-> > diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-> > index 112165d3195d..12d4916254b4 100644
-> > --- a/include/drm/drm_print.h
-> > +++ b/include/drm/drm_print.h
-> > @@ -89,6 +89,9 @@ __printf(2, 3)
-> >  void drm_printf(struct drm_printer *p, const char *f, ...);
-> >  void drm_puts(struct drm_printer *p, const char *str);
-> >  void drm_print_regset32(struct drm_printer *p, struct debugfs_regset32 *regset);
-> > +void drm_print_bits(struct drm_printer *p,
-> > +		    unsigned long value, const char *bits[],
-> > +		    unsigned int from, unsigned int to);
-> >  
-> >  __printf(2, 0)
-> >  /**
-> > diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
-> > index ad302d71eeee..dfa27367ebb8 100644
-> > --- a/drivers/gpu/drm/drm_print.c
-> > +++ b/drivers/gpu/drm/drm_print.c
-> > @@ -185,6 +185,39 @@ void drm_printf(struct drm_printer *p, const char *f, ...)
-> >  }
-> >  EXPORT_SYMBOL(drm_printf);
-> >  
-> > +/**
-> > + * drm_print_bits - print bits to a &drm_printer stream
-> > + *
-> > + * Print bits (in flag fields for example) in human readable form.
-> > + * The first name in the @bits array is for the bit indexed by @from.
-> > + *
-> > + * @p: the &drm_printer
-> > + * @value: field value.
-> > + * @bits: Array with bit names.
-> > + * @from: start of bit range to print (inclusive).
-> > + * @to: end of bit range to print (exclusive).
+This series fixes a race condition observed when using several ADCs with DMA
+and irq.
+There's a precusor patch to the fix. It keeps registers definitions as a whole
+block, to ease readability and allow simple (readl) access path to EOC bits in
+stm32-adc-core driver.
 
-Just an aside: At least in drm we generally but the parameter docs above
-the free-flow text.
--Daniel
-> > + */
-> > +void drm_print_bits(struct drm_printer *p,
-> > +		    unsigned long value, const char *bits[],
-> > +		    unsigned int from, unsigned int to)
-> > +{
-> > +	bool first = true;
-> > +	unsigned int i;
-> > +
-> > +	for (i = from; i < to; i++) {
-> > +		if (!(value & (1 << i)))
-> > +			continue;
-> > +		if (WARN_ON_ONCE(!bits[i-from]))
-> > +			continue;
-> > +		drm_printf(p, "%s%s", first ? "" : ",",
-> > +			   bits[i-from]);
-> > +		first = false;
-> > +	}
-> > +	if (first)
-> > +		drm_printf(p, "(none)");
-> > +}
-> > +EXPORT_SYMBOL(drm_print_bits);
-> > +
-> >  void drm_dev_printk(const struct device *dev, const char *level,
-> >  		    const char *format, ...)
-> >  {
-> > 
-> 
-> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-> 
-> -- 
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-> GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-> HRB 21284 (AG Nürnberg)
-> 
+---
+Changes in v2:
+- Add a precursor patch to follow Jonathan's comment on readability
 
+Fabrice Gasnier (2):
+  iio: adc: stm32-adc: move registers definitions
+  iio: adc: stm32-adc: fix a race when using several adcs with dma and
+    irq
 
-
-
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
+ drivers/iio/adc/stm32-adc-core.c |  70 +++++++++++---------
+ drivers/iio/adc/stm32-adc-core.h | 137 +++++++++++++++++++++++++++++++++++++++
+ drivers/iio/adc/stm32-adc.c      | 109 -------------------------------
+ 3 files changed, 177 insertions(+), 139 deletions(-)
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.4
+
