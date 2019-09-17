@@ -2,137 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E179B4936
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:23:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8095B4943
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 10:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730066AbfIQIXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 04:23:02 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40789 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728123AbfIQIXB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 04:23:01 -0400
-Received: by mail-ot1-f66.google.com with SMTP id y39so2264856ota.7;
-        Tue, 17 Sep 2019 01:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pAhRX1Y8hlT53IJmsS9eKDWXvMfY7PiqTbL9YMzPsQY=;
-        b=DDWYxX6hEtoMmfBPsku/8mPtsbFfVqOuH6B5K6Rf5504uIFWUvA4nKyX7p9UOK5QL9
-         x00eSKjYfX43V6lfKBKhbU6aD4TiaoRI8Bf195GYRbRSYcqm1AAyTMa5Wc/qzWj/GevV
-         D28/qLQapOc2Bs9o/O7CMpq5wkgSVuklj54vaUnWaer7QFf+EAIxYyhJYizmV1dTIsRx
-         FI8pmaCUWrzXu5/4stOiThInpHgBqPjL3Tc64msxMkJ6PjLhP75UZJHMxivCJJpLJUNL
-         CbPZId75PgVF6hRNBAr3XiwFyiu6p++OiFjWFIXl2hri56vGBMQVfz4ALicIdbSvkvOB
-         rn9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pAhRX1Y8hlT53IJmsS9eKDWXvMfY7PiqTbL9YMzPsQY=;
-        b=U6mkni8gqVFHfKlIoZWtMJ1iHwJEXH1jXrn4noJCUyAJ/ofoVXn9sdoxr7716udtpy
-         0WK7daAhF/cCxH4oZReKIUAR+tIhfUELTCdwXdUcRh4Jm+lFM+EeH8r2nK6qIh+awyl8
-         r9hQx3gqG3aswc2oKfW+R4ejhUUW6VafVhfwA+nc8p48ZhmK5LO9+LxabcnqcgTUDjYz
-         SLdc4Ls3Khiazclsb8keRJQIpMygF78gYEI9nyQpg8bO7TYZCJsLIMFLzydnIIe64nkD
-         2QKHq6Eh7UO1f+UOI2l7tZt+fBa/KXJ7F+bFjjY+sQisqoo5agSL8UH56dkS/tmNE21w
-         Wi+Q==
-X-Gm-Message-State: APjAAAXxEZG2oFiMt9umDZsIFYrR0n34kB6e759gYRE9P0EZCd/zaSbe
-        IdqESy/w/m/vJqKW0znmcOOROgXCy6RQ03vmhVY=
-X-Google-Smtp-Source: APXvYqzVVj6XLIRKAQFw0YAZbGXg8avRlJ7jD1nt0GvxOdj6vD309EupfSe3MyuCDlpLhg5U72LmlbjcnSDQAz+lgp4=
-X-Received: by 2002:a9d:aa8:: with SMTP id 37mr1771178otq.56.1568708580413;
- Tue, 17 Sep 2019 01:23:00 -0700 (PDT)
+        id S1730562AbfIQI0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 04:26:13 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:46674 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728115AbfIQI0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 04:26:13 -0400
+Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iA8oN-0005YL-2E; Tue, 17 Sep 2019 10:26:11 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     kishon@ti.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-rockchip@lists.infradead.org,
+        christoph.muellner@theobroma-systems.com,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH] phy: phy-rockchip-inno-usb2: add phy description for px30
+Date:   Tue, 17 Sep 2019 10:25:32 +0200
+Message-Id: <20190917082532.25479-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1568617969-6934-1-git-send-email-wanpengli@tencent.com> <20190916191218.GM18871@linux.intel.com>
-In-Reply-To: <20190916191218.GM18871@linux.intel.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Tue, 17 Sep 2019 16:22:48 +0800
-Message-ID: <CANRm+CwhFAU6PaVYF=uBhHfQpQT0N7iJ+QvKyojOHzcsVjsfzQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: X86: Fix warning in handle_desc
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "# v3 . 10+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Sep 2019 at 03:12, Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Mon, Sep 16, 2019 at 03:12:49PM +0800, Wanpeng Li wrote:
-> > From: Wanpeng Li <wanpengli@tencent.com>
-> >
-> > Reported by syzkaller:
-> >
-> >       WARNING: CPU: 0 PID: 6544 at /home/kernel/data/kvm/arch/x86/kvm//vmx/vmx.c:4689 handle_desc+0x37/0x40 [kvm_intel]
-> >       CPU: 0 PID: 6544 Comm: a.out Tainted: G           OE     5.3.0-rc4+ #4
-> >       RIP: 0010:handle_desc+0x37/0x40 [kvm_intel]
-> >       Call Trace:
-> >        vmx_handle_exit+0xbe/0x6b0 [kvm_intel]
-> >        vcpu_enter_guest+0x4dc/0x18d0 [kvm]
-> >        kvm_arch_vcpu_ioctl_run+0x407/0x660 [kvm]
-> >        kvm_vcpu_ioctl+0x3ad/0x690 [kvm]
-> >        do_vfs_ioctl+0xa2/0x690
-> >        ksys_ioctl+0x6d/0x80
-> >        __x64_sys_ioctl+0x1a/0x20
-> >        do_syscall_64+0x74/0x720
-> >        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > When CR4.UMIP is set, guest should have UMIP cpuid flag. Current
-> > kvm set_sregs function doesn't have such check when userspace inputs
-> > sregs values. SECONDARY_EXEC_DESC is enabled on writes to CR4.UMIP in
-> > vmx_set_cr4 though guest doesn't have UMIP cpuid flag. The testcast
-> > triggers handle_desc warning when executing ltr instruction since guest
-> > architectural CR4 doesn't set UMIP. This patch fixes it by adding check
-> > for guest UMIP cpuid flag when get sreg inputs from userspace.
-> >
-> > Reported-by: syzbot+0f1819555fbdce992df9@syzkaller.appspotmail.com
-> > Fixes: 0367f205a3b7 ("KVM: vmx: add support for emulating UMIP")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > ---
-> > Note: syzbot report link https://lkml.org/lkml/2019/9/11/799
-> >
-> >  arch/x86/kvm/x86.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index f7cfd8e..83288ba 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -8645,6 +8645,10 @@ static int kvm_valid_sregs(struct kvm_vcpu *vcpu, struct kvm_sregs *sregs)
-> >                       (sregs->cr4 & X86_CR4_OSXSAVE))
-> >               return  -EINVAL;
-> >
-> > +     if (!guest_cpuid_has(vcpu, X86_FEATURE_UMIP) &&
-> > +                     (sregs->cr4 & X86_CR4_UMIP))
->
-> Assuming vmx_set_cr4() fails because nested_cr4_valid() fails, isn't this
-> a generic problem with nested VMX that just happens to be visible because
-> of the WARN_ON() in handle_desc()?
->
-> In general, KVM lets userspace set broken combinations of CPUID vs. CRx so
-> that it doesn't dictate ordering, e.g. __set_sregs() intentionally calls
-> kvm_x86_ops->set_cr4() instead of kvm_set_cr4(), which has all the CPUID
-> checks.
->
-> The existing OSXSAVE check in kvm_valid_sregs() is more about ensuring
-> host support (see commit 6d1068b3a985, "KVM: x86: invalid opcode oops on
-> SET_SREGS with OSXSAVE bit set (CVE-2012-4461)").
->
-> Given that both vmx_set_cr4() and svm_set_cr4() can return failure and
-> cause __set_sregs() to silently fail, what about adding a new x86 ops to
-> pre-check cr4, e.g. vm_x86_ops->is_valid_cr4(), and then WARN if set_cr4()
-> fails during __set_sregs()?
+The px30 soc from Rockchip shares the same register description as
+the rk3328, so can re-use its definitions.
 
-I'm a little lazy, just extract CPUID and CR4 combination checking and
-add it to __set_sregs() in new version.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt | 1 +
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c                    | 1 +
+ 2 files changed, 2 insertions(+)
 
-    Wanpeng
+diff --git a/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt b/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
+index 00639baae74a..541f5298827c 100644
+--- a/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
++++ b/Documentation/devicetree/bindings/phy/phy-rockchip-inno-usb2.txt
+@@ -2,6 +2,7 @@ ROCKCHIP USB2.0 PHY WITH INNO IP BLOCK
+ 
+ Required properties (phy (parent) node):
+  - compatible : should be one of the listed compatibles:
++	* "rockchip,px30-usb2phy"
+ 	* "rockchip,rk3228-usb2phy"
+ 	* "rockchip,rk3328-usb2phy"
+ 	* "rockchip,rk3366-usb2phy"
+diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+index eae865ff312c..680cc0c8825c 100644
+--- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
++++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+@@ -1423,6 +1423,7 @@ static const struct rockchip_usb2phy_cfg rv1108_phy_cfgs[] = {
+ };
+ 
+ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
++	{ .compatible = "rockchip,px30-usb2phy", .data = &rk3328_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3228-usb2phy", .data = &rk3228_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3328-usb2phy", .data = &rk3328_phy_cfgs },
+ 	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
+-- 
+2.20.1
+
