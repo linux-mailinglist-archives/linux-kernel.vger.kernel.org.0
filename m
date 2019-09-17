@@ -2,94 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FFE2B5301
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC842B52F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Sep 2019 18:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730376AbfIQQdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 12:33:53 -0400
-Received: from mx01.bbu.dsd.mx.bitdefender.com ([91.199.104.161]:46504 "EHLO
-        mx01.bbu.dsd.mx.bitdefender.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730330AbfIQQdx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 12:33:53 -0400
-X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Sep 2019 12:33:52 EDT
-Received: from smtp.bitdefender.com (smtp01.buh.bitdefender.com [10.17.80.75])
-        by mx01.bbu.dsd.mx.bitdefender.com (Postfix) with ESMTPS id B7930307489B;
-        Tue, 17 Sep 2019 19:23:48 +0300 (EEST)
-Received: from localhost (unknown [195.210.4.22])
-        by smtp.bitdefender.com (Postfix) with ESMTPSA id 9F14130BC822;
-        Tue, 17 Sep 2019 19:23:48 +0300 (EEST)
-From:   Adalbert =?iso-8859-2?b?TGF643I=?= <alazar@bitdefender.com>
-Subject: Re: [PATCH v5 0/9] Enable Sub-page Write Protection Support
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, sean.j.christopherson@intel.com,
-        mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com
-In-Reply-To: <20190917125904.GB22162@char.us.oracle.com>
-References: <20190917085304.16987-1-weijiang.yang@intel.com>
-        <20190917125904.GB22162@char.us.oracle.com>
-Date:   Tue, 17 Sep 2019 19:24:15 +0300
-Message-ID: <15687374550.b5d3c.30742@host>
-User-agent: void
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1730342AbfIQQcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 12:32:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:19362 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727788AbfIQQcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Sep 2019 12:32:13 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E264169097;
+        Tue, 17 Sep 2019 16:32:12 +0000 (UTC)
+Received: from ovpn-117-172.phx2.redhat.com (ovpn-117-172.phx2.redhat.com [10.3.117.172])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E797960923;
+        Tue, 17 Sep 2019 16:32:11 +0000 (UTC)
+Message-ID: <b6b87f7acde58fcf0c172622eb9acef43a113ec4.camel@redhat.com>
+Subject: Re: [PATCH RT v3 5/5] rcutorture: Avoid problematic critical
+ section nesting on RT
+From:   Scott Wood <swood@redhat.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>
+Date:   Tue, 17 Sep 2019 11:32:11 -0500
+In-Reply-To: <20190917145035.l6egzthsdzp7aipe@linutronix.de>
+References: <20190911165729.11178-1-swood@redhat.com>
+         <20190911165729.11178-6-swood@redhat.com>
+         <20190912221706.GC150506@google.com>
+         <500cabaa80f250b974409ee4a4fca59bf2e24564.camel@redhat.com>
+         <20190917100728.wnhdvmbbzzxolef4@linutronix.de>
+         <26dbecfee2c02456ddfda3647df1bcd56d9cc520.camel@redhat.com>
+         <20190917145035.l6egzthsdzp7aipe@linutronix.de>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 17 Sep 2019 16:32:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Sep 2019 08:59:04 -0400, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com> wrote:
-> On Tue, Sep 17, 2019 at 04:52:55PM +0800, Yang Weijiang wrote:
-> > EPT-Based Sub-Page write Protection(SPP)is a HW capability which allows
-> > Virtual Machine Monitor(VMM) to specify write-permission for guest
-> > physical memory at a sub-page(128 byte) granularity. When this
-> > capability is enabled, the CPU enforces write-access check for sub-pages
-> > within a 4KB page.
+On Tue, 2019-09-17 at 16:50 +0200, Sebastian Andrzej Siewior wrote:
+> On 2019-09-17 09:36:22 [-0500], Scott Wood wrote:
+> > > On non-RT you can (but should not) use the counter part of the
+> > > function
+> > > in random order like:
+> > > 	local_bh_disable();
+> > > 	local_irq_disable();
+> > > 	local_bh_enable();
+> > > 	local_irq_enable();
 > > 
-> > The feature is targeted to provide fine-grained memory protection for
-> > usages such as device virtualization, memory check-point and VM
-> > introspection etc.
-> > 
-> > SPP is active when the "sub-page write protection" (bit 23) is 1 in
-> > Secondary VM-Execution Controls. The feature is backed with a Sub-Page
-> > Permission Table(SPPT), SPPT is referenced via a 64-bit control field
-> > called Sub-Page Permission Table Pointer (SPPTP) which contains a
-> > 4K-aligned physical address.
-> > 
-> > To enable SPP for certain physical page, the gfn should be first mapped
-> > to a 4KB entry, then set bit 61 of the corresponding EPT leaf entry. 
-> > While HW walks EPT, if bit 61 is set, it traverses SPPT with the guset
-> > physical address to find out the sub-page permissions at the leaf entry.
-> > If the corresponding bit is set, write to sub-page is permitted,
-> > otherwise, SPP induced EPT violation is generated.
-> > 
-> > This patch serial passed SPP function test and selftest on Ice-Lake platform.
-> > 
-> > Please refer to the SPP introduction document in this patch set and
-> > Intel SDM for details:
-> > 
-> > Intel SDM:
-> > https://software.intel.com/sites/default/files/managed/39/c5/325462-sdm-vol-1-2abcd-3abcd.pdf
-> > 
-> > SPP selftest patch:
-> > https://lkml.org/lkml/2019/6/18/1197
-> > 
-> > Previous patch:
-> > https://lkml.org/lkml/2019/8/14/97
+> > Actually even non-RT will assert if you do local_bh_enable() with IRQs
+> > disabled -- but the other combinations do work, and are used some places
+> > via
+> > spinlocks.  If they are used via direct calls to preempt_disable() or
+> > local_irq_disable() (or via raw spinlocks), then that will not go away
+> > on RT
+> > and we'll have a problem.
 > 
-> I saw the patches as part of the introspection patch-set.
-> Are you all working together on this?
+> lockdep_assert_irqs_enabled() is a nop with CONFIG_PROVE_LOCKING=N and
+> RT breaks either way. 
 
-Weijiang helped us to start using the SPP feature with the introspection
-API and tested the integration when we didn't had the hardware
-available. I've included the SPP patches in the introspection patch
-series in order to "show the full picture".
+Right, I meant a non-RT kernel with debug checks enabled.
 
-> Would it be possible for some of the bitdefender folks who depend on this
-> to provide Tested-by adn could they also take the time to review this patch-set?
+> > > Since you _can_ use it in random order Paul wants to test that the
+> > > random use of those function does not break RCU in any way. Since they
+> > > can not be used on RT in random order it has been agreed that we keep
+> > > the test for !RT but disable it on RT.
+> > 
+> > For now, yes.  Long term it would be good to keep track of when
+> > preemption/irqs would be disabled on RT, even when running a non-RT
+> > debug
+> > kernel, and assert when bad things are done with it (assuming an RT-
+> > capable
+> > arch).  Besides detecting these fairly unusual patterns, it could also
+> > detect earlier the much more common problem of nesting a non-raw
+> > spinlock
+> > inside a raw spinlock or other RT-atomic context.
+> 
+> you will be surprised but we have patches for that. We need first get
+> rid of other "false positives" before plugging this in.
 
-Sure. Once we rebase the introspection patches on 5.3, we'll replace
-the previous version this new one in our tree and test it.
+Nice!  Are the "false positives" real issues from components that are
+currently blacklisted on RT, or something different?
+
+-Scott
+
+
