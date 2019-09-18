@@ -2,121 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA614B65FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C37B65D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:23:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbfIROXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 10:23:37 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41190 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730594AbfIROXg (ORCPT
+        id S1729602AbfIROXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 10:23:06 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33938 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbfIROXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 10:23:36 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q7so53138pfh.8;
-        Wed, 18 Sep 2019 07:23:35 -0700 (PDT)
+        Wed, 18 Sep 2019 10:23:06 -0400
+Received: by mail-io1-f67.google.com with SMTP id q1so16638767ion.1;
+        Wed, 18 Sep 2019 07:23:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=X0YlaBg0eWRFmg01LcYcEakBboU2udItKz/WvLmsstE=;
-        b=AQUtfExt8PphIK/V+c+mEJ3tgaUEISxw78DBCeSXeyLH9gYToCX1fyDRsFiqifcLuN
-         c5domyKtQbNk8UW32C/o8pZxeVKctq+eYM2nl/a+mrfcyhODXnb1TWcvL3vFe3MDygUK
-         358nsEwOyj4l+QNqq6/0BFrGmo5RY6rTAIZqbnkTVAqAnMc+ybt1H0p7QnhLAYo0iSGa
-         W/AAiFLjZJoyfi3SME//ZCANuAHVX9bV2/CFWUIAQL4r8biRaX9RplWV0+THsCypl3Gp
-         G+ZgOwie51YPSdJZmnm4/9gLYzpCIxn8HXzoM2hzP3BYjAceYcayoq/G0oXGgCoTG/i3
-         u3EA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8hOkftNxCx/aWELaDJaTVsr1hHwRKS/6DkQyi3nkXNo=;
+        b=tiaefsAejMqIgoXecf2HVZ6uIEzJD89WgVfxPiUxd2wHa6nLzUze9o9GVpjummntml
+         7WwLZ0MXTA59q4jDtNtRrYrkAdCLRVZ7nfYDR58y4svtOoPHkCSLbXxcbMkyCtErkmIM
+         9gCBiErpQ8rA/lOYi6jn6wu0tl86UdRkk8Fjaxyw97vvX2IbE/bIqTs+43mniCCVwgd+
+         QDgVKIeAchxQSDqjl8U6m2m7i4mRywfVhQtu6dcanIX09OKAWLNWNlIdwhJ1n/DJ9fmM
+         MlLOjQwo40B4150GKMdJgMsYej5F+af/4uNUWja8Nd9FAsf9r+cuTOBrXeABpjfrgzue
+         LKqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=X0YlaBg0eWRFmg01LcYcEakBboU2udItKz/WvLmsstE=;
-        b=dS0VCQmttJ0uhvcCDU2xIrMT4XxM7x8ymI0HivUVIywEh/ocoJusZYWlAtIHChIi/P
-         rKnGzxsZYzJ5PzLgEVWN+ZRY3SZC2Om53lorO5KJsXj0GWuwBHSHytK94ntZrM52kZcW
-         dk+gJ9iWBfls1HNoMI/NdqKHnTyE2qjtKFmUSWRE73oXvyJIW+FQj/j8aXr+/fX+JkQ9
-         F1e8NLFUvOXtjy099Vj0e+02WjqhMM/LuGbfaNyuOHsh74etZaX2YowPvrE7QnqYdgct
-         A6ZbY+BlI+M7jmrjg0YnHHAtF67dV29rfCgbs0/c7TrNNCn1Svd8asZAkfgF2XzrFrkc
-         EWrQ==
-X-Gm-Message-State: APjAAAVS7Ts1oksG9FgpUsZ9DOVyvjzjjDCZQzNQ81moVbBlwF8FDmeh
-        9qAHeOZq56bEmvbIG+91LaE=
-X-Google-Smtp-Source: APXvYqwraF/YHqWdOvbISaW0toiHH71DUpkNZY1Cp7PbrQONBy+X5ThJP7vWM980IKlnropOI/g2qw==
-X-Received: by 2002:a17:90a:c8a:: with SMTP id v10mr3943216pja.6.1568816615452;
-        Wed, 18 Sep 2019 07:23:35 -0700 (PDT)
-Received: from localhost.localdomain ([2001:268:c145:8e3a:1c91:3b66:30:c335])
-        by smtp.gmail.com with ESMTPSA id d5sm10996675pfa.180.2019.09.18.07.23.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 07:23:34 -0700 (PDT)
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     jic23@jic23.retrosnub.co.uk
-Cc:     linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        patrick.havelange@essensium.com, fabrice.gasnier@st.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, benjamin.gaignard@linaro.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH v3 2/2] docs: driver-api: generic-counter: Update Count and Signal data types
-Date:   Wed, 18 Sep 2019 23:22:46 +0900
-Message-Id: <e7517c4062cfa186f90dc9e16765bd0745068c0b.1568816248.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1568816248.git.vilhelm.gray@gmail.com>
-References: <cover.1568816248.git.vilhelm.gray@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8hOkftNxCx/aWELaDJaTVsr1hHwRKS/6DkQyi3nkXNo=;
+        b=GMCLneJzFp1hfcWNHqqTBDymWpfJdq7O9FQ/RbBNJSt69Q/ZFhLVDs56SxwWNJQdtQ
+         g2HE9FB81/ONwdOtuvC/tK6DZ+v7lzW4UY0kGleTFQ5KjXlreSj1/w45nVb5rDJQlJsq
+         hB7b0SpzD40g14wkz0oh0DxSeVohk6AMZbhCwrTLzRipWpDqagjnzbizfLbSp9DSno5o
+         cnZ5OMHF8ckUZUoV4TWMRguHvbsRcMOelDL9A02xXv0Vi8qW1uF3PEoOTBeWLY3acUiA
+         EXSeZt+K9D2Vt+9TB2eeD/nBbUlSsMhRJCT/aNdFYgE3qFxwIdv2flhWJTY73RcplbfK
+         HWfQ==
+X-Gm-Message-State: APjAAAW3J9l3xcNJAbfe1sL2wqOQeu27K64IH27RUszcfMFq9JRWlhbg
+        RL99qPHdYiI037v9SCiOtUw5RcABgeGd2/+hV1V74sxq
+X-Google-Smtp-Source: APXvYqxiBAlP+n9Q7FILgic2xGszsDwFKNDSkihvLtOowMxpoCcjP8dfA+h9rXTnJorshM46ixQcptHHt7Al/USCw3Y=
+X-Received: by 2002:a5d:8a0f:: with SMTP id w15mr5572006iod.239.1568816585433;
+ Wed, 18 Sep 2019 07:23:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1568626884-5189-1-git-send-email-peng.fan@nxp.com>
+ <1568626884-5189-3-git-send-email-peng.fan@nxp.com> <20190917183856.2342beed@donnerap.cambridge.arm.com>
+ <AM0PR04MB44813D62FF7E6762BB17460E888E0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+ <20190918110037.4edefb2f@donnerap.cambridge.arm.com> <CABb+yY2G8s9gV8Pu+f__8-bubjCJsVQrQikbVMZXmpTwSMBxiQ@mail.gmail.com>
+ <20190918145832.0bb72e16@donnerap.cambridge.arm.com>
+In-Reply-To: <20190918145832.0bb72e16@donnerap.cambridge.arm.com>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Wed, 18 Sep 2019 09:22:54 -0500
+Message-ID: <CABb+yY3irsE0U-bex4G60Lwpewea6=pE1vSzi72Z+5DafmC8Xg@mail.gmail.com>
+Subject: Re: [PATCH V6 2/2] mailbox: introduce ARM SMC based mailbox
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Count data is now always represented as an unsigned integer, while
-Signal data is either SIGNAL_LOW or SIGNAL_HIGH.
+On Wed, Sep 18, 2019 at 8:58 AM Andre Przywara <andre.przywara@arm.com> wrote:
+>
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- Documentation/driver-api/generic-counter.rst | 22 +++++++-------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+> > > Also there is mbox_chan_txdone() with which a controller driver can signal TX completion explicitly.
+> > >
+> > No. Controller can use that only if it has specified txdone_irq, which
+> > is not the case here.
+>
+> I see. So does the framework handle the case where both txdone_poll and txdone_irq are false?
+>
+Of course. If there is no IRQ or POLL mechanism for controller to
+detect tx-done, the only way left is for client driver to know by some
+'ack' response (if any). The client should call mbox_client_txdone()
 
-diff --git a/Documentation/driver-api/generic-counter.rst b/Documentation/driver-api/generic-counter.rst
-index 8382f01a53e3..161652fc1025 100644
---- a/Documentation/driver-api/generic-counter.rst
-+++ b/Documentation/driver-api/generic-counter.rst
-@@ -39,10 +39,7 @@ There are three core components to a counter:
- COUNT
- -----
- A Count represents the count data for a set of Signals. The Generic
--Counter interface provides the following available count data types:
--
--* COUNT_POSITION:
--  Unsigned integer value representing position.
-+Counter interface represents the count data as an unsigned integer.
- 
- A Count has a count function mode which represents the update behavior
- for the count data. The Generic Counter interface provides the following
-@@ -93,19 +90,16 @@ SIGNAL
- A Signal represents a counter input data; this is the input data that is
- evaluated by the counter to determine the count data; e.g. a quadrature
- signal output line of a rotary encoder. Not all counter devices provide
--user access to the Signal data.
--
--The Generic Counter interface provides the following available signal
--data types for when the Signal data is available for user access:
-+user access to the Signal data, so exposure is optional for drivers.
- 
--* SIGNAL_LEVEL:
--  Signal line state level. The following states are possible:
-+When the Signal data is available for user access, the Generic Counter
-+interface provides the following available signal values:
- 
--  - SIGNAL_LEVEL_LOW:
--    Signal line is in a low state.
-+* SIGNAL_LOW:
-+  Signal line is in a low state.
- 
--  - SIGNAL_LEVEL_HIGH:
--    Signal line is in a high state.
-+* SIGNAL_HIGH:
-+  Signal line is in a high state.
- 
- A Signal may be associated with one or more Counts.
- 
--- 
-2.23.0
-
+Thanks
