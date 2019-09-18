@@ -2,105 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ABE9B6464
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A27B6472
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbfIRNau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 09:30:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbfIRNau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 09:30:50 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EDB420856;
-        Wed, 18 Sep 2019 13:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568813449;
-        bh=RbC4fN4+WoQJjBQGTdi17JBf/Ifl1VTx05MBsOOyhtM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HMU51kJ2hcS415mcVYxqXJCb3ohmmTf0wzhM8CN3+/4v/NSDHTsAOLEaOwN/+5MSM
-         wJxD3jlSeGhDsjlhp4AvyxSnO/rdHwxmr/MhjBQFfwpH+aT+Dr12+hwhjj3/t56QHQ
-         YGR4sLeV25BoxLU77UgArb8CNxjJAn+yAeuBYBuQ=
-Date:   Wed, 18 Sep 2019 15:30:47 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     kvm@vger.kernel.org, kernellwp@gmail.com,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        "# 5 . 2 . y" <stable@kernel.org>
-Subject: Re: [PATCH] kvm: Ensure writes to the coalesced MMIO ring are within
- bounds
-Message-ID: <20190918133047.GC1908968@kroah.com>
-References: <20190918131545.6405-1-will@kernel.org>
+        id S1730467AbfIRNc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 09:32:27 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:52535 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbfIRNc1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 09:32:27 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x8IDVjS5021368
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Wed, 18 Sep 2019 06:31:47 -0700 (PDT)
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.468.0; Wed, 18 Sep 2019 06:31:44 -0700
+From:   <zhe.he@windriver.com>
+To:     <pmladek@suse.com>, <sergey.senozhatsky@gmail.com>,
+        <rostedt@goodmis.org>, <linux-kernel@vger.kernel.org>,
+        <zhe.he@windriver.com>
+Subject: [PATCH] printk: Fix unnecessary returning broken pipe error from devkmsg_read
+Date:   Wed, 18 Sep 2019 21:31:43 +0800
+Message-ID: <1568813503-420025-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918131545.6405-1-will@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 02:15:45PM +0100, Will Deacon wrote:
-> When records are written to the coalesced MMIO ring in response to a
-> vCPU MMIO exit, the 'ring->last' field is used to index the ring buffer
-> page. Although we hold the 'kvm->ring_lock' at this point, the ring
-> structure is mapped directly into the host userspace and can therefore
-> be modified to point at arbitrary pages within the kernel.
-> 
-> Since this shouldn't happen in normal operation, simply bound the index
-> by KVM_COALESCED_MMIO_MAX to contain the accesses within the ring buffer
-> page.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: <stable@kernel.org> # 5.2.y
-> Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
-> Reported-by: Bill Creasey <bcreasey@google.com>
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
-> 
-> I think there are some other fixes kicking around for this, but they
-> still rely on 'ring->last' being stable, which isn't necessarily the
-> case. I'll send the -stable backport for kernels prior to 5.2 once this
-> hits mainline.
-> 
->  virt/kvm/coalesced_mmio.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
-> index 5294abb3f178..09b3e4421550 100644
-> --- a/virt/kvm/coalesced_mmio.c
-> +++ b/virt/kvm/coalesced_mmio.c
-> @@ -67,6 +67,7 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
->  {
->  	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
->  	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
-> +	u32 last;
->  
->  	if (!coalesced_mmio_in_range(dev, addr, len))
->  		return -EOPNOTSUPP;
-> @@ -79,13 +80,13 @@ static int coalesced_mmio_write(struct kvm_vcpu *vcpu,
->  	}
->  
->  	/* copy data in first free entry of the ring */
-> -
-> -	ring->coalesced_mmio[ring->last].phys_addr = addr;
-> -	ring->coalesced_mmio[ring->last].len = len;
-> -	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
-> -	ring->coalesced_mmio[ring->last].pio = dev->zone.pio;
-> +	last = ring->last % KVM_COALESCED_MMIO_MAX;
-> +	ring->coalesced_mmio[last].phys_addr = addr;
-> +	ring->coalesced_mmio[last].len = len;
-> +	memcpy(ring->coalesced_mmio[last].data, val, len);
-> +	ring->coalesced_mmio[last].pio = dev->zone.pio;
->  	smp_wmb();
-> -	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
-> +	ring->last = (last + 1) % KVM_COALESCED_MMIO_MAX;
->  	spin_unlock(&dev->kvm->ring_lock);
->  	return 0;
->  }
+From: He Zhe <zhe.he@windriver.com>
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When users read the buffer from start, there is no need to return -EPIPE
+since the possible overflows will not affect the output.
+
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+---
+ kernel/printk/printk.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1888f6a..4a6a129 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -886,7 +886,9 @@ static ssize_t devkmsg_read(struct file *file, char __user *buf,
+ 		logbuf_lock_irq();
+ 	}
+ 
+-	if (user->seq < log_first_seq) {
++	if (user->seq == 0) {
++		user->seq = log_first_seq;
++	} else if (user->seq < log_first_seq) {
+ 		/* our last seen message is gone, return error and reset */
+ 		user->idx = log_first_idx;
+ 		user->seq = log_first_seq;
+-- 
+2.7.4
+
