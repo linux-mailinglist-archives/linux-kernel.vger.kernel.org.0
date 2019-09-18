@@ -2,50 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 388B8B6E8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9257BB6E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:58:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731923AbfIRU4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 16:56:21 -0400
-Received: from verein.lst.de ([213.95.11.211]:36006 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729181AbfIRU4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 16:56:21 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D21C668B05; Wed, 18 Sep 2019 22:56:16 +0200 (CEST)
-Date:   Wed, 18 Sep 2019 22:56:16 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Larry Finger <Larry.Finger@lwfinger.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] x86/mm: Remove set_pages_x() and set_pages_nx()
-Message-ID: <20190918205616.GA23251@lst.de>
-References: <20190918164121.30006-1-Larry.Finger@lwfinger.net> <20190918164518.GA19222@lst.de> <b4fa6ab6-ab30-fc05-0f9f-93c41e7e8c79@lwfinger.net> <CAHk-=wji2fMDpSwvR4U8FkKBx8=eZtg3CmWtH7hACzeHbBei8A@mail.gmail.com> <bd5684ee-afaf-a9ba-6c32-15d2aa94733c@lwfinger.net>
+        id S2387685AbfIRU6i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 16:58:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33120 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729181AbfIRU6h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 16:58:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FCsffJv0OTIjbuwlwaHBy55NBTv30OBNaAD67wgQEWc=; b=DBUOge4e3EwOeL7JVDCagrfyX
+        LTy7CyyqmT8rWeuVUN+IK8p+8OSyvPGLmrX503nMSwV2xN0GQoK5zBFxzlBmuv470QOA+iSPR8KAV
+        A+vON3OpMX2i0zT05t18ILBdZRW23GINFyQsDRoAehe2hlZAebBA91glXMOwH2ikxCU5bFVep98of
+        LAVx7fIp4hVlIBQhW6y6P87or6NjIKnQVZ9puQun/IMexJC0hrOmzodWkZ2ViNw8tD76a9SyMgOMw
+        fHGzqKLjqjFDRiWufK1ENnknPXW0/nsNBLt4KgHZE5lBpBvzQmPBhqxXEP/4PBBj/uUEX7ZoSE6SU
+        EON5oK1Ww==;
+Received: from [2601:1c0:6280:3f0::9a1f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iAh20-0001Of-OG; Wed, 18 Sep 2019 20:58:32 +0000
+To:     LKML <linux-kernel@vger.kernel.org>, linux-ntb@googlegroups.com
+Cc:     Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] NTB: fix IDT Kconfig typos/spellos
+Message-ID: <55f2fb85-9d4d-f78d-e6dd-70b09d7667e4@infradead.org>
+Date:   Wed, 18 Sep 2019 13:58:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd5684ee-afaf-a9ba-6c32-15d2aa94733c@lwfinger.net>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 01:17:13PM -0500, Larry Finger wrote:
-> The external module is vboxdrv, which is part of VirtualBox. The setting of 
-> pages to be executable appears to have been added in kernel 2.4.20.
->
-> I am now testing with the former calls to set_pages_x() and set_pages_nx() 
-> disabled. Thus far, VMs seem to be running OK. I will contact Oracle to 
-> discuss the matter with them and see if there is some special case that 
-> requires this facility. If there is one, then they will need to discuss it 
-> with you and Christoph.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Well, in this case the API is called /dev/kvm.  There is really
-absolutely no reason for anyone badly reinventing the low-level
-VT and SVM code when they can just use the kernel kvm support, which
-already has at least half a dozen users.
+Fix typos in drivers/ntb/hw/idt/Kconfig.
+Use consistent spelling and capitalization.
+
+Fixes: bf2a952d31d2 ("NTB: Add IDT 89HPESxNTx PCIe-switches support")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jon Mason <jdmason@kudzu.us>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Allen Hubbe <allenbh@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>
+Cc: linux-ntb@googlegroups.com
+---
+ drivers/ntb/hw/idt/Kconfig |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- lnx-53.orig/drivers/ntb/hw/idt/Kconfig
++++ lnx-53/drivers/ntb/hw/idt/Kconfig
+@@ -4,11 +4,11 @@ config NTB_IDT
+ 	depends on PCI
+ 	select HWMON
+ 	help
+-	 This driver supports NTB of cappable IDT PCIe-switches.
++	 This driver supports NTB of capable IDT PCIe-switches.
+ 
+ 	 Some of the pre-initializations must be made before IDT PCIe-switch
+-	 exposes it NT-functions correctly. It should be done by either proper
+-	 initialisation of EEPROM connected to master smbus of the switch or
++	 exposes its NT-functions correctly. It should be done by either proper
++	 initialization of EEPROM connected to master SMbus of the switch or
+ 	 by BIOS using slave-SMBus interface changing corresponding registers
+ 	 value. Evidently it must be done before PCI bus enumeration is
+ 	 finished in Linux kernel.
+
+
