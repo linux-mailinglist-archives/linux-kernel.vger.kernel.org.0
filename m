@@ -2,85 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF5B5B6B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 20:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C04AB6B2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 20:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388904AbfIRSxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 14:53:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387624AbfIRSxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 14:53:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8ADB21BE5;
-        Wed, 18 Sep 2019 18:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568832780;
-        bh=XnWKNr8fD5TWt/S5fVeOFVQXajauDkjPGe0OfujFr1w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GIxs9qR8hxJUxzi6UiyuSzkgHXc032YMT6nCtH4b+VUeIejNKHqsNBkjWto7TOPWK
-         VNOx94pB2c1KsjZyXrOOXZZ9xl16CZFp2azipMV1kG5bTk9wQs6rGbKuzPe6Jh/R63
-         u/GnmOnm6nFFonBbZQmhPLWcnPiFZYmuufSQgHbg=
-Date:   Wed, 18 Sep 2019 20:52:57 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Message-ID: <20190918185257.GC1933777@kroah.com>
-References: <20190918170952.GT2596@sirena.co.uk>
+        id S2387698AbfIRSzp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 14:55:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45865 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387625AbfIRSzp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 14:55:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r5so469333wrm.12;
+        Wed, 18 Sep 2019 11:55:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+GKwkrH213eo66mk9kIsB2wGkIvBZ/XCWq93MBpuNTs=;
+        b=OueEn21izs4FiNfS+njmYyDmJU5X6G3uG0wOBWYZvBNGf0ER54EvxnKr9Q0ccGPvd2
+         LnE6T6yvOTsyxkFQAtxNbacr1pL8sZfRrAotWH16C0qmiW+N8lbfw0BCNYf747es2cvj
+         KCAcqvmMvsVFT3Ij1zUjWcCeWa9bMruHC9wxwqulgpvN0Hy+CSeV2Wnm3oV6eZEDTxNA
+         nyc2aEhk0mAz5MJivpdZU4v7p14Wq5zd6cN6SYRTK+ruvBOfI8JB34S3LdwMUl5UjIg/
+         l3/8ggPMqLUhifeXimbiR+Zl5nSsgjxLRlLnXvoYGNtrclJ+x+SQ29CGT03HL4bnbL2I
+         VkLQ==
+X-Gm-Message-State: APjAAAXAjp4QkG6PzcD9gN8FmTIJsvtJ6R7v+AFhCQisLG8nz9FSVZt2
+        IG5IyUq8/KILuE1p9E+q9Y4=
+X-Google-Smtp-Source: APXvYqyxmqfMFEOtiakgqmvEF0djH94lr2Acxh5XHOyom1gmyhLzMdMxPMnU2DIaunXBDTHsoYaB3Q==
+X-Received: by 2002:a5d:6242:: with SMTP id m2mr3953159wrv.261.1568832942283;
+        Wed, 18 Sep 2019 11:55:42 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id d10sm3312020wma.42.2019.09.18.11.55.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Sep 2019 11:55:40 -0700 (PDT)
+Date:   Wed, 18 Sep 2019 20:55:37 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
+        kgene@kernel.org, mark.rutland@arm.com, robh+dt@kernel.org,
+        cw00.choi@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com, willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH v2 1/3] memory: Exynos5422: minor fixes in DMC
+Message-ID: <20190918185537.GA8463@kozik-lap>
+References: <20190916100704.26692-1-l.luba@partner.samsung.com>
+ <CGME20190916100717eucas1p1b8d24c74c4d0bb385aa3455cf98c76bd@eucas1p1.samsung.com>
+ <20190916100704.26692-2-l.luba@partner.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190918170952.GT2596@sirena.co.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190916100704.26692-2-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 06:09:52PM +0100, Mark Brown wrote:
-> Hi all,
+On Mon, Sep 16, 2019 at 12:07:02PM +0200, Lukasz Luba wrote:
+> Small fixes for issues captured by static analyzes:
+> used kfree() insead of devm_kfree() and missing 'static' in the private
+> function.
+> Checks which show the issues:
+> - drivers/memory/samsung/exynos5422-dmc.c:272 exynos5_init_freq_table()
+> warn: passing devm_ allocated variable to kfree. 'dmc->opp'
+> - drivers/memory/samsung/exynos5422-dmc.c:736:1: warning: symbol
+> 'exynos5_dmc_align_init_freq' was not declared.
 > 
-> After merging the driver-core tree, today's linux-next build
-> for arm64 allmodconfig failed like this:
-> 
-> /home/broonie/next/next/drivers/i2c/i2c-core-acpi.c: In function 'i2c_acpi_find_adapter_by_handle':
-> /home/broonie/next/next/drivers/i2c/i2c-core-acpi.c:352:10: error: 'i2c_acpi_find_match_adapter' undeclared (first use in this function); did you mean 'i2c_acpi_find_bus_speed'?
->           i2c_acpi_find_match_adapter);
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->           i2c_acpi_find_bus_speed
-> /home/broonie/next/next/drivers/i2c/i2c-core-acpi.c:352:10: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> Caused by commit
-> 
->   644bf600889554210 ("i2c: Revert incorrect conversion to use generic helper")
-> 
-> In yesterday's -next that function existed but it appears to have been
-> removed in Linus' tree as part of the merge:
-> 
->   4feaab05dc1eda3 ("Merge tag 'leds-for-5.4-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds")
-> 
-> by the commit
-> 
->   00500147cbd3fc5 ("drivers: Introduce device lookup variants by ACPI_COMPANION device")
-> 
-> (ie, the commit that the failing commit was trying to revert.)  I
-> suspect this is confusion caused by things going into Linus' tree in
-> different orders.  I've fixed this up by re-adding the function.
+> Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  drivers/memory/samsung/exynos5422-dmc.c | 4 ++--
 
-Wait, I thought Linus said this fixup was now resolved.  What went
-wrong?
+Thanks, applied.
 
-Linus, should I submit a fix for this?
+Best regards,
+Krzysztof
 
-thanks,
-
-greg k-h
