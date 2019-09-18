@@ -2,101 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66776B6522
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86CE0B6528
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfIRNx2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 09:53:28 -0400
-Received: from gardel.0pointer.net ([85.214.157.71]:41690 "EHLO
-        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfIRNx1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 09:53:27 -0400
-Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
-        by gardel.0pointer.net (Postfix) with ESMTP id D981EE80FFC;
-        Wed, 18 Sep 2019 15:53:25 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-        id 8C524160ADC; Wed, 18 Sep 2019 15:53:25 +0200 (CEST)
-Date:   Wed, 18 Sep 2019 15:53:25 +0200
-From:   Lennart Poettering <mzxreary@0pointer.de>
-To:     Martin Steigerwald <martin@lichtvoll.de>
-Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 5.3-rc8
-Message-ID: <20190918135325.GC32346@gardel-login>
-References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
- <1722575.Y5XjozQscI@merkaba>
- <20190917215200.wtjim3t6zgt7gdmw@srcf.ucam.org>
- <3783292.MWR84v24fu@merkaba>
+        id S1730547AbfIRNyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 09:54:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726257AbfIRNyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 09:54:35 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FED82054F;
+        Wed, 18 Sep 2019 13:54:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568814874;
+        bh=Qe6au5z5hXayAw27Vw361lE68Lf4o3n8SyGPFRWhuqY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Pea49RvmmhwH16hgVmgZwak5t+0ies5xaMi3pedsbgp7HZbMBz7Q1jWie00LZZe+8
+         s+vndJSssq4mISj6VztcRNyrotY60vWvMVmdVJmEwYJrX5sB4Ot4qcFCptgXdGfirT
+         tkkhJ9cqGG6ybwdkbXS3u9YuHdjGpv1BJJ5dM0EQ=
+Date:   Wed, 18 Sep 2019 15:54:31 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+Subject: Re: [alsa-devel] [RFC PATCH 8/9] soundwire: intel: remove platform
+ devices and provide new interface
+Message-ID: <20190918135431.GA1919350@kroah.com>
+References: <20190916212342.12578-1-pierre-louis.bossart@linux.intel.com>
+ <20190916212342.12578-9-pierre-louis.bossart@linux.intel.com>
+ <20190917055512.GE2058532@kroah.com>
+ <ab06c0c9-6224-a7b8-51c2-01226f763b98@linux.intel.com>
+ <20190918120629.GD1901208@kroah.com>
+ <c8f21078-1462-5463-ef12-957ebd9ba085@linux.intel.com>
+ <20190918135302.GA1919118@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3783292.MWR84v24fu@merkaba>
+In-Reply-To: <20190918135302.GA1919118@kroah.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mi, 18.09.19 00:10, Martin Steigerwald (martin@lichtvoll.de) wrote:
+On Wed, Sep 18, 2019 at 03:53:02PM +0200, Greg KH wrote:
+> On Wed, Sep 18, 2019 at 08:48:33AM -0500, Pierre-Louis Bossart wrote:
+> > On 9/18/19 7:06 AM, Greg KH wrote:
+> > > On Tue, Sep 17, 2019 at 09:29:52AM -0500, Pierre-Louis Bossart wrote:
+> > > > On 9/17/19 12:55 AM, Greg KH wrote:
+> > > > > On Mon, Sep 16, 2019 at 04:23:41PM -0500, Pierre-Louis Bossart wrote:
+> > > > > > +/**
+> > > > > > + * sdw_intel_probe() - SoundWire Intel probe routine
+> > > > > > + * @parent_handle: ACPI parent handle
+> > > > > > + * @res: resource data
+> > > > > > + *
+> > > > > > + * This creates SoundWire Master and Slave devices below the controller.
+> > > > > > + * All the information necessary is stored in the context, and the res
+> > > > > > + * argument pointer can be freed after this step.
+> > > > > > + */
+> > > > > > +struct sdw_intel_ctx
+> > > > > > +*sdw_intel_probe(struct sdw_intel_res *res)
+> > > > > > +{
+> > > > > > +	return sdw_intel_probe_controller(res);
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL(sdw_intel_probe);
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * sdw_intel_startup() - SoundWire Intel startup
+> > > > > > + * @ctx: SoundWire context allocated in the probe
+> > > > > > + *
+> > > > > > + */
+> > > > > > +int sdw_intel_startup(struct sdw_intel_ctx *ctx)
+> > > > > > +{
+> > > > > > +	return sdw_intel_startup_controller(ctx);
+> > > > > > +}
+> > > > > > +EXPORT_SYMBOL(sdw_intel_startup);
+> > > > > 
+> > > > > Why are you exporting these functions if no one calls them?
+> > > > 
+> > > > They are used in the next series, see '[RFC PATCH 04/12] ASoC: SOF: Intel:
+> > > > add SoundWire configuration interface'
+> > > 
+> > > That wasn't obvious :)
+> > > 
+> > > Also, why not EXPORT_SYMBOL_GPL()?  :)
+> > 
+> > Since the beginning of this SoundWire work, the intent what that the code
+> > could be reused in non-GPL open-source circles, hence the dual license and
+> > EXPORT_SYMBOL.
+> 
+> Hah, you _have_ talked to your lawyers about this, right?
+> 
+> You have a chance to do something like this for header files, for .c
+> files, good luck.  That's going to be a hard road to go down.  Many have
+> tried in the past, all but 1 have failed.
 
-> > getrandom() will never "consume entropy" in a way that will block any
-> > users of getrandom(). If you don't have enough collected entropy to
-> > seed the rng, getrandom() will block. If you do, getrandom() will
-> > generate as many numbers as you ask it to, even if no more entropy is
-> > ever collected by the system. So it doesn't matter how many clients
-> > you have calling getrandom() in the boot process - either there'll be
-> > enough entropy available to satisfy all of them, or there'll be too
-> > little to satisfy any of them.
->
-> Right, but then Systemd would not use getrandom() for initial hashmap/
-> UUID stuff since it
+Also note, the last I checked, the _default_ license for Linux kernel
+code from Intel was GPLv2.  If you got an exception for this, please
+work with your legal council on how to do this "properly" as that was
+part of getting that exception, right?
 
-Actually things are more complex. In systemd there are four classes of
-random values we need:
+If you didn't get the exception, um, you have some people to go talk to,
+and how come I am the one asking you about this?  :(
 
-1. High "cryptographic" quality. There are very few needs for this in
-   systemd, as we do very little in this area. It's basically only
-   used for generating salt values for hashed passwords, in the
-   systemd-firstboot component, which can be used to set the root
-   pw. systemd uses synchronous getrandom() for this. It does not use
-   RDRAND for this.
+thanks,
 
-2. High "non-cryptographic" quality. This is used for example for
-   generating type 4 uuids, i.e uuids that are supposed to be globally
-   unique, but aren't key material. We use RDRAND for this if
-   available, falling back to synchronous getrandom(). Type 3 UUIDs
-   are frequently needed by systemd, as we assign a uuid to each
-   service invocation implicitly, so that people can match logging
-   data and such to a specific instance and runtime of a service.
-
-3. Medium quality. This is used for seeding hash tables. These may be
-   crap initially, but should not be guessable in the long
-   run. /dev/urandom would be perfect for this, but the mentioned log
-   message sucks, hence we use RDRAND for this if available, and fall
-   back to /dev/urandom if that isn't available, accepting the log
-   message.
-
-4. Crap quality. There are only a few uses of this, where rand_r() is
-   is OK.
-
-Of these four case, the first two might block boot. Because the first
-case is not common you won't see blocking that often though for
-them. The second case is very common, but since we use RDRAND you
-won't see it on any recent Intel machines.
-
-Or to say this all differently: the hash table seeding and the uuid
-case are two distinct cases in systemd, and I am sure they should be.
-
-Lennart
-
---
-Lennart Poettering, Berlin
+greg k-h
