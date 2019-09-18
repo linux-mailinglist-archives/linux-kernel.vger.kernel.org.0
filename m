@@ -2,93 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA89AB64AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B24DEB64B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731568AbfIRNe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 09:34:57 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38606 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731480AbfIRNey (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 09:34:54 -0400
-Received: by mail-io1-f68.google.com with SMTP id k5so16184785iol.5;
-        Wed, 18 Sep 2019 06:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z7DBqMKpu8EzrBgPlSX/swxD/iXqKeDnzas5M8XpMNM=;
-        b=X57m6I5uEdcM7IOv9cwHXfJKmMwICvxVrcmsxGyL0hsBKBo0S2UGhLBiSKA1mPSEmH
-         ImSJbIaUnaB9C/PnaGsrREbbmVhcXFwdkvzopGcD3rO1DdFWggbMPkIM4PBQJnPuFAuY
-         Yd9LdvxrerRCpSak8mQO61eVY1Go42pccz1qBbUry2lV3YS7U3I5K9ejahYOBpLUj4+Y
-         NnOqXuVov0Tkc8BFiTFPQYu0mpTKQ7mrH7DLd7iM6bnPA8oApaJZBCyfwhkZStXuO8x0
-         q18zKHQ80Ffoh1t3nGrhiO99Jy9xU8lt/9dWTnNNgG9C9KCLvhA/FMtnP+ggDg4Ycm27
-         cwHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z7DBqMKpu8EzrBgPlSX/swxD/iXqKeDnzas5M8XpMNM=;
-        b=R4c4Hijp1g1ApSWEGF4bgv7RC5ZBStweXw1sO/QKWKfWy9h/A6D9aKWsCaCaEFiYPL
-         LNgUDKBiJfjaALFmf4BvJWzwjpcgShLA+5Qq8CA7RGxy2u3/SgKFq8lok3k6YFtccmJN
-         kntzbP3V5ZaP8zGn+hf2ej7rTZ+2HC2CyIhXU88uYg2grGp4Gatca8Ww2ytgLspzPH2O
-         4/EaoCIVhmINKM+lRYrEFBKjSYIgLSVGOtPxzDykddB9UlVfbE4VBRW6A8VwEoQAmDRs
-         pDXE2iRto3lEmA/DCx5R6bVScMUT8ooCdaeEM8ViaOpD17Ne/3yBxT7q/FtJyPXq2nnH
-         RpoA==
-X-Gm-Message-State: APjAAAWKw/JvVU4lYvTvsAjniLWcknBJXdAQ1Gm96v04g9ZQ2ZijTng4
-        xDJQPNBcP8QhfV4cWX3LlGZFFVr6tBLB6XyW5Uc=
-X-Google-Smtp-Source: APXvYqyPfI9/m7GnP1eANreUWIaOOQA0gr9DlEx7bsFmpyWiTYmXn7+hz85mRymp7juNdZnEMSA1GLfP1jKOSjVOKi4=
-X-Received: by 2002:a5e:960a:: with SMTP id a10mr5401041ioq.87.1568813692672;
- Wed, 18 Sep 2019 06:34:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <1568626884-5189-1-git-send-email-peng.fan@nxp.com>
- <1568626884-5189-2-git-send-email-peng.fan@nxp.com> <20190917183115.3e40180f@donnerap.cambridge.arm.com>
- <CABb+yY2CP1i9fZMoPua=-mLCUpYrcO28xF5UXDeRD2XTYe7mEg@mail.gmail.com> <AM0PR04MB44811AE46803D10FD8A5B8B0888E0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB44811AE46803D10FD8A5B8B0888E0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Wed, 18 Sep 2019 08:34:41 -0500
-Message-ID: <CABb+yY09pPqM-47zNFVGMNM9wrDF9iiVuqKTXrEd4-PdOxBPrQ@mail.gmail.com>
-Subject: Re: [PATCH V6 1/2] dt-bindings: mailbox: add binding doc for the ARM
- SMC/HVC mailbox
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        id S1730859AbfIRNfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 09:35:46 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2421 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726562AbfIRNfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 09:35:45 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 543DB72AE6EC9CD72CCF;
+        Wed, 18 Sep 2019 21:35:41 +0800 (CST)
+Received: from dggeme704-chm.china.huawei.com (10.1.199.100) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 18 Sep 2019 21:35:41 +0800
+Received: from dggeme753-chm.china.huawei.com (10.3.19.99) by
+ dggeme704-chm.china.huawei.com (10.1.199.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1713.5; Wed, 18 Sep 2019 21:35:40 +0800
+Received: from dggeme753-chm.china.huawei.com ([10.7.64.70]) by
+ dggeme753-chm.china.huawei.com ([10.7.64.70]) with mapi id 15.01.1713.004;
+ Wed, 18 Sep 2019 21:35:40 +0800
+From:   "zhangsha (A)" <zhangsha.zhang@huawei.com>
+To:     "jay.vosburgh@canonical.com" <jay.vosburgh@canonical.com>,
+        "vfalico@gmail.com" <vfalico@gmail.com>,
+        "andy@greyhouse.net" <andy@greyhouse.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        yuehaibing <yuehaibing@huawei.com>,
+        hunongda <hunongda@huawei.com>,
+        "Chenzhendong (alex)" <alex.chen@huawei.com>
+Subject: RE: [PATCH v3] bonding: force enable lacp port after link state
+ recovery for 802.3ad
+Thread-Topic: [PATCH v3] bonding: force enable lacp port after link state
+ recovery for 802.3ad
+Thread-Index: AQHVbiHhj1lgrT2osES7x4pU2JseVqcxaH3A
+Date:   Wed, 18 Sep 2019 13:35:40 +0000
+Message-ID: <e333c8d2f3624a898a378eb1073f5f29@huawei.com>
+References: <20190918130620.8556-1-zhangsha.zhang@huawei.com>
+In-Reply-To: <20190918130620.8556-1-zhangsha.zhang@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.177.220.209]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 3:53 AM Peng Fan <peng.fan@nxp.com> wrote:
-
-> > >
-> > > > +
-> > > > +  "#mbox-cells":
-> > > > +    const: 1
-> > >
-> > > Why is this "1"? What is this number used for? It used to be the channel ID,
-> > but since you are describing a single channel controller only, this should be 0
-> > now.
-> > >
-> > Yes. I overlooked it and actually queued the patch for pull request.
->
-> In Documentation/devicetree/bindings/mailbox/mailbox.txt
-> #mbox-cells: Must be at least 1.
->
-> So I use 1 here, 0 not work. Because of_mbox_index_xlate expect at least 1 here.
-> So I need modify Documentation/devicetree/bindings/mailbox/mailbox.txt
-> and add xlate for smc mailbox?
->
-No, you just can not use the generic xlate() provided by the api.
-Please implement your own xlate() that requires no argument.
-
-Cheers!
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogemhhbmdzaGEgKEEpDQo+
+IFNlbnQ6IDIwMTnE6jnUwjE4yNUgMjE6MDYNCj4gVG86IGpheS52b3NidXJnaEBjYW5vbmljYWwu
+Y29tOyB2ZmFsaWNvQGdtYWlsLmNvbTsgYW5keUBncmV5aG91c2UubmV0Ow0KPiBkYXZlbUBkYXZl
+bWxvZnQubmV0OyBuZXRkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnOw0KPiB5dWVoYWliaW5nIDx5dWVoYWliaW5nQGh1YXdlaS5jb20+OyBodW5vbmdkYSA8
+aHVub25nZGFAaHVhd2VpLmNvbT47DQo+IENoZW56aGVuZG9uZyAoYWxleCkgPGFsZXguY2hlbkBo
+dWF3ZWkuY29tPjsgemhhbmdzaGEgKEEpDQo+IDx6aGFuZ3NoYS56aGFuZ0BodWF3ZWkuY29tPg0K
+PiBTdWJqZWN0OiBbUEFUQ0ggdjNdIGJvbmRpbmc6IGZvcmNlIGVuYWJsZSBsYWNwIHBvcnQgYWZ0
+ZXIgbGluayBzdGF0ZSByZWNvdmVyeSBmb3INCj4gODAyLjNhZA0KPiANCj4gRnJvbTogU2hhIFpo
+YW5nIDx6aGFuZ3NoYS56aGFuZ0BodWF3ZWkuY29tPg0KPiANCj4gQWZ0ZXIgdGhlIGNvbW1pdCAz
+MzQwMzEyMTlhODQgKCJib25kaW5nLzgwMi4zYWQ6IGZpeCBzbGF2ZSBsaW5rIGluaXRpYWxpemF0
+aW9uDQo+IHRyYW5zaXRpb24gc3RhdGVzIikgbWVyZ2VkLCB0aGUgc2xhdmUncyBsaW5rIHN0YXR1
+cyB3aWxsIGJlIGNoYW5nZWQgdG8NCj4gQk9ORF9MSU5LX0ZBSUwgZnJvbSBCT05EX0xJTktfRE9X
+TiBpbiB0aGUgZm9sbG93aW5nIHNjZW5hcmlvOg0KPiAtIERyaXZlciByZXBvcnRzIGxvc3Mgb2Yg
+Y2FycmllciBhbmQNCj4gICBib25kaW5nIGRyaXZlciByZWNlaXZlcyBORVRERVZfRE9XTiBub3Rp
+Zmllcg0KPiAtIHNsYXZlJ3MgZHVwbGV4IGFuZCBzcGVlZCBpcyB6ZXJvZCBhbmQNCj4gICBpdHMg
+cG9ydC0+aXNfZW5hYmxlZCBpcyBjbGVhcmQgdG8gJ2ZhbHNlJzsNCj4gLSBEcml2ZXIgcmVwb3J0
+cyBsaW5rIHJlY292ZXJ5IGFuZA0KPiAgIGJvbmRpbmcgZHJpdmVyIHJlY2VpdmVzIE5FVERFVl9V
+UCBub3RpZmllcjsNCj4gLSBJZiBzcGVlZC9kdXBsZXggZ2V0dGluZyBmYWlsZWQgaGVyZSwgdGhl
+IGxpbmsgc3RhdHVzDQo+ICAgd2lsbCBiZSBjaGFuZ2VkIHRvIEJPTkRfTElOS19GQUlMOw0KPiAt
+IFRoZSBNSUkgbW9ub3RvciBsYXRlciByZWNvdmVyIHRoZSBzbGF2ZSdzIHNwZWVkL2R1cGxleA0K
+PiAgIGFuZCBzZXQgbGluayBzdGF0dXMgdG8gQk9ORF9MSU5LX1VQLCBidXQgcmVtYWlucw0KPiAg
+IHRoZSAncG9ydC0+aXNfZW5hYmxlZCcgdG8gJ2ZhbHNlJy4NCj4gDQo+IEluIHRoaXMgc2NlbmFy
+aW8sIHRoZSBsYWNwIHBvcnQgd2lsbCBub3QgYmUgZW5hYmxlZCBldmVuIGl0cyBzcGVlZCBhbmQg
+ZHVwbGV4IGFyZQ0KPiB2YWxpZC4gVGhlIGJvbmQgd2lsbCBub3Qgc2VuZCBMQUNQRFUncywgYW5k
+IGl0cyBzdGF0ZSBpcyAnQURfU1RBVEVfREVGQVVMVEVEJw0KPiBmb3JldmVyLiBUaGUgc2ltcGxl
+c3QgZml4IEkgdGhpbmsgaXMgdG8gY2FsbCBib25kXzNhZF9oYW5kbGVfbGlua19jaGFuZ2UoKSBp
+bg0KPiBib25kX21paW1vbl9jb21taXQsIHRoaXMgZnVuY3Rpb24gY2FuIGVuYWJsZSBsYWNwIGFm
+dGVyIHBvcnQgc2xhdmUgc3BlZWQNCj4gY2hlY2suDQo+IEFzIGVuYWJsZWQsIHRoZSBsYWNwIHBv
+cnQgY2FuIHJ1biBpdHMgc3RhdGUgbWFjaGluZSBub3JtYWxseSBhZnRlciBsaW5rIHJlY292ZXJ5
+Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogU2hhIFpoYW5nIDx6aGFuZ3NoYS56aGFuZ0BodWF3ZWku
+Y29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2JvbmRpbmcvYm9uZF9tYWluLmMgfCAzICsrLQ0K
+PiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2JvbmRpbmcvYm9uZF9tYWluLmMNCj4gYi9kcml2ZXJz
+L25ldC9ib25kaW5nL2JvbmRfbWFpbi5jIGluZGV4IDkzMWQ5ZDkuLjc2MzI0YTUgMTAwNjQ0DQo+
+IC0tLSBhL2RyaXZlcnMvbmV0L2JvbmRpbmcvYm9uZF9tYWluLmMNCj4gKysrIGIvZHJpdmVycy9u
+ZXQvYm9uZGluZy9ib25kX21haW4uYw0KPiBAQCAtMjIwNiw3ICsyMjA2LDggQEAgc3RhdGljIHZv
+aWQgYm9uZF9taWltb25fY29tbWl0KHN0cnVjdCBib25kaW5nDQo+ICpib25kKQ0KPiAgCQkJICov
+DQo+ICAJCQlpZiAoQk9ORF9NT0RFKGJvbmQpID09IEJPTkRfTU9ERV84MDIzQUQgJiYNCj4gIAkJ
+CSAgICBzbGF2ZS0+bGluayA9PSBCT05EX0xJTktfVVApDQo+IC0NCj4gCWJvbmRfM2FkX2FkYXB0
+ZXJfc3BlZWRfZHVwbGV4X2NoYW5nZWQoc2xhdmUpOw0KPiArCQkJCWJvbmRfM2FkX2hhbmRsZV9s
+aW5rX2NoYW5nZShzbGF2ZSwNCj4gKwkJCQkJCQkgICAgQk9ORF9MSU5LX1VQKTsNCj4gIAkJCWNv
+bnRpbnVlOw0KPiANCj4gIAkJY2FzZSBCT05EX0xJTktfVVA6DQoNCkhpLCBEYXZpZCwNCkkgaGF2
+ZSByZXBsaWVkIHlvdXIgZW1haWwgZm9yIGEgd2hpbGUsICBJIGd1ZXNzIHlvdSBtYXkgbWlzcyBt
+eSBlbWFpbCwgc28gSSByZXNlbmQgaXQuDQpUaGUgZm9sbG93aW5nIGxpbmsgYWRkcmVzcyBpcyB0
+aGUgbGFzdCBlbWFpbCwgcGxlYXNlIHJldmlldyB0aGUgbmV3IG9uZSBhZ2FpbiwgdGhhbmsgeW91
+Lg0KaHR0cHM6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC8xMTUxOTE1Lw0KDQpMYXN0IHRp
+bWUsIHlvdSBkb3VidGVkIHRoaXMgaXMgYSBkcml2ZXIgc3BlY2lmaWMgcHJvYmxlbSwNCkkgcHJl
+ZmVyIHRvIGJlbGlldmUgaXQncyBub3QgYmVjYXVzZSBJIGZpbmQgdGhlIGNvbW1pdCA0ZDJjMGNk
+YSwNCml0cyBsb2cgc2F5cyAiIFNvbWUgTklDIGRyaXZlcnMgZG9uJ3QgaGF2ZSBjb3JyZWN0IHNw
+ZWVkL2R1cGxleCANCnNldHRpbmdzIGF0IHRoZSB0aW1lIHRoZXkgc2VuZCBORVRERVZfVVAgbm90
+aWZpY2F0aW9uIC4uLiIuDQoNCkFueXdheSwgSSB0aGluayB0aGUgbGFjcCBzdGF0dXMgc2hvdWxk
+IGJlIGZpeGVkIGNvcnJlY3RseSwNCnNpbmNlIGxpbmstbW9uaXRvcmluZyAobWlpbW9uKSBzZXQg
+U1BFRUQvRFVQTEVYIHJpZ2h0IGhlcmUuDQoNCj4gLS0NCj4gMS44LjMuMQ0KDQoNCg==
