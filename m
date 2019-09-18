@@ -2,634 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC15B6D76
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3562B6D71
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730808AbfIRUW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 16:22:57 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:56375 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbfIRUW5 (ORCPT
+        id S1730513AbfIRUWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 16:22:15 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:42168 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728555AbfIRUWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 16:22:57 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MyNoa-1i0iEL1lwS-00ykMw; Wed, 18 Sep 2019 22:22:45 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH] net: remove netx ethernet driver
-Date:   Wed, 18 Sep 2019 22:21:24 +0200
-Message-Id: <20190918202243.2880006-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Wed, 18 Sep 2019 16:22:15 -0400
+Received: by mail-ua1-f68.google.com with SMTP id r19so306257uap.9;
+        Wed, 18 Sep 2019 13:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lmhPAPvtiDqgJteyBaaRaA2HGyODpvnBTqjiHuYvfW8=;
+        b=sfvASRerbcXbub55XOZDQa1Q6Pr15lLFNTI9N+KlluVI9AP7tro68HSKNCMWhGx5Js
+         TvO7LdhJ5wIshdJ5o78Y2Pu/t7lIJlZLkBSLykowc/XPvCKnIO9gNLOvRJ+VMk1XoTaq
+         gKE1JKCcDgwx3+i6oQva81SPRosIY1TJ/HS3mH59GFYcixNcq7jzcUdh0WbgY/wjRTvr
+         4ovllQQb9hO+6l0bS7tjwYhMIZM6vtnkFEmKxjO4eKS6CL3x1HmSbuKRHd+I1xfPE092
+         Q6pXD4tVJsf9j/Ifvia/iR253v0+OBvdM1/4Xndlrif7ZzmiQb894g4HLFM6A0y6+Ovk
+         yF+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lmhPAPvtiDqgJteyBaaRaA2HGyODpvnBTqjiHuYvfW8=;
+        b=ePGuSq1dBHvsYelOF7GSxaby5+udgf9pOskRiytvJyCtDS6LvbwDW9N/1AhQl1PM21
+         qDUDe2ARuSOkuT3PvYPiyoKUXGeNWBGwKVfWFPK3wEY+3n0var/T+PrSdciPHpFEq2AS
+         2Sj3h+VjoGHNdOduGr64zbzlTR9MffxsqUW2EZOMYptajeU5svlPnWIVCjI1ronLwCC7
+         FbLvP7iZ6vHuk5+AhyJIuBWqjOfkJkat8bTolWSNOXYda2pkcyAp3IklGaIoa0+HQ+0R
+         8GmBW1u1oNpPnrHXlOau/5VpbfWjI1rKJhT+YwnT9ddIwzuBSWc1RfTmzRuLAoBT1n4z
+         78NQ==
+X-Gm-Message-State: APjAAAVNtTM7Bb9ptM+xL8znoUPvJvgvbgstvSnhbXAQPu0urAuGBcsK
+        Rwc5y3N4sjgKiTea/7yRyqapKBcm1OitSbkvJfQ=
+X-Google-Smtp-Source: APXvYqy3pJnGFFiPZpSaVj6NyQ+uACbzioEkEoMSk5DLMmTqob6g6Zbdj69w8/4DOKa3t7RcjcDL3Y04gLE7+XWUqwg=
+X-Received: by 2002:ab0:7816:: with SMTP id x22mr3609892uaq.97.1568838133906;
+ Wed, 18 Sep 2019 13:22:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:9AS0PkkpNo/V/B/mqR6PEeY3EkNKpxzHXiACFKgrVbhiXn/Dd1D
- xcnggy+F6wXzdjMsFt9oUPZu4r0rI+cTqwmO1eQJ0Tfd/dU/V5qgn0LoBQaF/BWN/9VnlLT
- rtLjsGJT5RNdMvGb1co1WDRjW29te7AjMouU5Aj+CHby+SDkKaunm5YueCJA9HoziCHH+jq
- 3/Mt8J3IA/aJYlJuuoJpQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:IfYN+PjnVYA=:8IPQN9EngerTh2cY9pI03E
- R/Ohebc4+W+on4kdN+yl61V0UHAoq/ajfKAWdXI75oH9XLGyWjnNyrgL4qLuWt/QCNljyTJl1
- MxES5Ac7PkMnuXO4+fhiOIP2nbtFAH5GodR/hWhdNSEsRE2oA+p45+xd4xxspsLcBfllE/y6C
- wUy3g7paeqONTPQ8cpbbbmMORe6kx8tHTsAszvPAdCJ1eeMbf3j4JDny9uo1ODw0ZR6/qokKq
- xjMGSsvxAEvfkC5yYqW1/U8WOw5ZsPU4XV9Urfx0uVmdPEnr4C/hi7x9fZ17vqh2FtUqY1/e7
- 4KEt5naljdozclzVmGCW4yok01TvIjCdmpyhZuwdzRZVbiAAogrOGcMqxyeomglpiWTjY4QhW
- lDfm8X1f3LnEe/CmEBmgLPsZLfO3J6r15nMChA7F2JQbPVWJUJQ8dHgnWDlZR/R9fy0rz8Oxy
- MKYa9LHwa9emYNPab1tunX35OlYSNoSFzXB230BHu6yYVMddx9xOtnyHjTbFwYtX4gjH0hFSA
- P7R97EIC/kAAmO0/cByNFvNTo7D+7Y7o8ZVflPWchwpHxscdI4u+HtNzjZM/6bWgjuOqGy4s3
- CYc31ftaXPbSFZ5oAeyzpCIKMZMk/sLDsmCx9xKDudqM7pYvE5SfzV2T6bP2foAurQKPJ9Pkt
- ZTSjEI8ObeFKaWWC0x2pbc86PI40b/uBfDy7eB4Z5uQXMGOxJ4BFUxxisJgI1fFD+29qw1uyj
- CxvKZrrMH3DvbKZd1yvEstp7IGylWIWiDxSGYiw9v7soYIcPRNHfRoZsy/6GFxfb+xmY8E/ZR
- 3i224zMOjinAL344HA6j4oS4t1dzUkOvXFeeRGi4+QLNGuB0KAL1nxx0YxSSHryJcmWooelCt
- aKkWNW6/w4jVVQMG9gbg==
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190918195920.25210-1-qkrwngud825@gmail.com> <20190918201318.GB2025570@kroah.com>
+In-Reply-To: <20190918201318.GB2025570@kroah.com>
+From:   Ju Hyung Park <qkrwngud825@gmail.com>
+Date:   Thu, 19 Sep 2019 05:22:03 +0900
+Message-ID: <CAD14+f0YeAPxmLbxB5gpJbNyjE1YiDyicBXeodwKN4Wvm_qJwA@mail.gmail.com>
+Subject: Re: [PATCH] staging: exfat: rebase to sdFAT v2.2.0
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Namjae Jeon <namjae.jeon@samsung.com>, sj1557.seo@samsung.com
+Cc:     alexander.levin@microsoft.com,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        sergey.senozhatsky@gmail.com,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org, linkinjeon@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ARM netx platform got removed in 5.3, so this driver
-is now useless.
+Hi Greg,
 
-Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-This fell through the cracks somewhere, I meant to send it as a separate
-patch for net-next in v5.4, but only sent it as part of a series that
-I mostly merged through the soc tree.
+On Thu, Sep 19, 2019 at 5:12 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> That's a lot of rewriting :(
+>
+> How about at least keeping the file names the same to make it easier to
+> see what happened here?
+>
+> Then send a follow-on patch that just does the rename?
 
-Thanks Uwe for the reminder!
----
- drivers/net/ethernet/Kconfig           |  11 -
- drivers/net/ethernet/Makefile          |   1 -
- drivers/net/ethernet/netx-eth.c        | 497 -------------------------
- include/linux/platform_data/eth-netx.h |  13 -
- 4 files changed, 522 deletions(-)
- delete mode 100644 drivers/net/ethernet/netx-eth.c
- delete mode 100644 include/linux/platform_data/eth-netx.h
+That's still not quite useful tbh, lemme bring the diff stat I wrote
+in previous email just in case you missed it:
+<Full diff stat>
+ Kconfig      |   79 +-
+ Makefile     |   46 +-
+ api.c        |  423 ----
+ api.h        |  310 ---
+ blkdev.c     |  409 +---
+ cache.c      | 1142 ++++-----
+ config.h     |   49 -
+ core.c       | 5583 ++++++++++++++++++++++++--------------------
+ core.h       |  196 --
+ core_exfat.c | 1553 ------------
+ exfat.h      | 1309 +++++++----
+ exfat_fs.h   |  417 ----
+ extent.c     |  351 ---
+ fatent.c     |  182 --
+ misc.c       |  401 ----
+ nls.c        |  490 ++--
+ super.c      | 5103 +++++++++++++++++++++-------------------
+ upcase.c     |  740 ++++++
+ upcase.h     |  407 ----
+ version.h    |   29 -
+ xattr.c      |  136 --
+ 21 files changed, 8186 insertions(+), 11169 deletions(-)
 
-diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-index 1e2de9d062bf..e8e9c166185d 100644
---- a/drivers/net/ethernet/Kconfig
-+++ b/drivers/net/ethernet/Kconfig
-@@ -140,17 +140,6 @@ source "drivers/net/ethernet/neterion/Kconfig"
- source "drivers/net/ethernet/netronome/Kconfig"
- source "drivers/net/ethernet/ni/Kconfig"
- source "drivers/net/ethernet/8390/Kconfig"
--
--config NET_NETX
--	tristate "NetX Ethernet support"
--	select MII
--	depends on ARCH_NETX
--	---help---
--	  This is support for the Hilscher netX builtin Ethernet ports
--
--	  To compile this driver as a module, choose M here. The module
--	  will be called netx-eth.
--
- source "drivers/net/ethernet/nvidia/Kconfig"
- source "drivers/net/ethernet/nxp/Kconfig"
- source "drivers/net/ethernet/oki-semi/Kconfig"
-diff --git a/drivers/net/ethernet/Makefile b/drivers/net/ethernet/Makefile
-index 77f9838a76c9..05abebc17804 100644
---- a/drivers/net/ethernet/Makefile
-+++ b/drivers/net/ethernet/Makefile
-@@ -64,7 +64,6 @@ obj-$(CONFIG_NET_VENDOR_NATSEMI) += natsemi/
- obj-$(CONFIG_NET_VENDOR_NETERION) += neterion/
- obj-$(CONFIG_NET_VENDOR_NETRONOME) += netronome/
- obj-$(CONFIG_NET_VENDOR_NI) += ni/
--obj-$(CONFIG_NET_NETX) += netx-eth.o
- obj-$(CONFIG_NET_VENDOR_NVIDIA) += nvidia/
- obj-$(CONFIG_LPC_ENET) += nxp/
- obj-$(CONFIG_NET_VENDOR_OKI) += oki-semi/
-diff --git a/drivers/net/ethernet/netx-eth.c b/drivers/net/ethernet/netx-eth.c
-deleted file mode 100644
-index cf6e7eb1b1e1..000000000000
---- a/drivers/net/ethernet/netx-eth.c
-+++ /dev/null
-@@ -1,497 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * drivers/net/ethernet/netx-eth.c
-- *
-- * Copyright (c) 2005 Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
-- */
--
--#include <linux/init.h>
--#include <linux/interrupt.h>
--#include <linux/module.h>
--#include <linux/kernel.h>
--#include <linux/delay.h>
--
--#include <linux/netdevice.h>
--#include <linux/platform_device.h>
--#include <linux/etherdevice.h>
--#include <linux/skbuff.h>
--#include <linux/mii.h>
--
--#include <asm/io.h>
--#include <mach/hardware.h>
--#include <mach/netx-regs.h>
--#include <mach/pfifo.h>
--#include <mach/xc.h>
--#include <linux/platform_data/eth-netx.h>
--
--/* XC Fifo Offsets */
--#define EMPTY_PTR_FIFO(xcno)    (0 + ((xcno) << 3))	/* Index of the empty pointer FIFO */
--#define IND_FIFO_PORT_HI(xcno)  (1 + ((xcno) << 3))	/* Index of the FIFO where received */
--							/* Data packages are indicated by XC */
--#define IND_FIFO_PORT_LO(xcno)  (2 + ((xcno) << 3))	/* Index of the FIFO where received */
--							/* Data packages are indicated by XC */
--#define REQ_FIFO_PORT_HI(xcno)  (3 + ((xcno) << 3))	/* Index of the FIFO where Data packages */
--							/* have to be indicated by ARM which */
--							/* shall be sent */
--#define REQ_FIFO_PORT_LO(xcno)  (4 + ((xcno) << 3))	/* Index of the FIFO where Data packages */
--							/* have to be indicated by ARM which shall */
--							/* be sent */
--#define CON_FIFO_PORT_HI(xcno)  (5 + ((xcno) << 3))	/* Index of the FIFO where sent Data packages */
--							/* are confirmed */
--#define CON_FIFO_PORT_LO(xcno)  (6 + ((xcno) << 3))	/* Index of the FIFO where sent Data */
--							/* packages are confirmed */
--#define PFIFO_MASK(xcno)        (0x7f << (xcno*8))
--
--#define FIFO_PTR_FRAMELEN_SHIFT 0
--#define FIFO_PTR_FRAMELEN_MASK  (0x7ff << 0)
--#define FIFO_PTR_FRAMELEN(len)  (((len) << 0) & FIFO_PTR_FRAMELEN_MASK)
--#define FIFO_PTR_TIMETRIG       (1<<11)
--#define FIFO_PTR_MULTI_REQ
--#define FIFO_PTR_ORIGIN         (1<<14)
--#define FIFO_PTR_VLAN           (1<<15)
--#define FIFO_PTR_FRAMENO_SHIFT  16
--#define FIFO_PTR_FRAMENO_MASK   (0x3f << 16)
--#define FIFO_PTR_FRAMENO(no)    (((no) << 16) & FIFO_PTR_FRAMENO_MASK)
--#define FIFO_PTR_SEGMENT_SHIFT  22
--#define FIFO_PTR_SEGMENT_MASK   (0xf << 22)
--#define FIFO_PTR_SEGMENT(seg)   (((seg) & 0xf) << 22)
--#define FIFO_PTR_ERROR_SHIFT    28
--#define FIFO_PTR_ERROR_MASK     (0xf << 28)
--
--#define ISR_LINK_STATUS_CHANGE (1<<4)
--#define ISR_IND_LO             (1<<3)
--#define ISR_CON_LO             (1<<2)
--#define ISR_IND_HI             (1<<1)
--#define ISR_CON_HI             (1<<0)
--
--#define ETH_MAC_LOCAL_CONFIG 0x1560
--#define ETH_MAC_4321         0x1564
--#define ETH_MAC_65           0x1568
--
--#define MAC_TRAFFIC_CLASS_ARRANGEMENT_SHIFT 16
--#define MAC_TRAFFIC_CLASS_ARRANGEMENT_MASK (0xf<<MAC_TRAFFIC_CLASS_ARRANGEMENT_SHIFT)
--#define MAC_TRAFFIC_CLASS_ARRANGEMENT(x) (((x)<<MAC_TRAFFIC_CLASS_ARRANGEMENT_SHIFT) & MAC_TRAFFIC_CLASS_ARRANGEMENT_MASK)
--#define LOCAL_CONFIG_LINK_STATUS_IRQ_EN (1<<24)
--#define LOCAL_CONFIG_CON_LO_IRQ_EN (1<<23)
--#define LOCAL_CONFIG_CON_HI_IRQ_EN (1<<22)
--#define LOCAL_CONFIG_IND_LO_IRQ_EN (1<<21)
--#define LOCAL_CONFIG_IND_HI_IRQ_EN (1<<20)
--
--#define CARDNAME "netx-eth"
--
--/* LSB must be zero */
--#define INTERNAL_PHY_ADR 0x1c
--
--struct netx_eth_priv {
--	void                    __iomem *sram_base, *xpec_base, *xmac_base;
--	int                     id;
--	struct mii_if_info      mii;
--	u32                     msg_enable;
--	struct xc               *xc;
--	spinlock_t              lock;
--};
--
--static void netx_eth_set_multicast_list(struct net_device *ndev)
--{
--	/* implement me */
--}
--
--static int
--netx_eth_hard_start_xmit(struct sk_buff *skb, struct net_device *ndev)
--{
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--	unsigned char *buf = skb->data;
--	unsigned int len = skb->len;
--
--	spin_lock_irq(&priv->lock);
--	memcpy_toio(priv->sram_base + 1560, (void *)buf, len);
--	if (len < 60) {
--		memset_io(priv->sram_base + 1560 + len, 0, 60 - len);
--		len = 60;
--	}
--
--	pfifo_push(REQ_FIFO_PORT_LO(priv->id),
--	           FIFO_PTR_SEGMENT(priv->id) |
--	           FIFO_PTR_FRAMENO(1) |
--	           FIFO_PTR_FRAMELEN(len));
--
--	ndev->stats.tx_packets++;
--	ndev->stats.tx_bytes += skb->len;
--
--	netif_stop_queue(ndev);
--	spin_unlock_irq(&priv->lock);
--	dev_kfree_skb(skb);
--
--	return NETDEV_TX_OK;
--}
--
--static void netx_eth_receive(struct net_device *ndev)
--{
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--	unsigned int val, frameno, seg, len;
--	unsigned char *data;
--	struct sk_buff *skb;
--
--	val = pfifo_pop(IND_FIFO_PORT_LO(priv->id));
--
--	frameno = (val & FIFO_PTR_FRAMENO_MASK) >> FIFO_PTR_FRAMENO_SHIFT;
--	seg = (val & FIFO_PTR_SEGMENT_MASK) >> FIFO_PTR_SEGMENT_SHIFT;
--	len = (val & FIFO_PTR_FRAMELEN_MASK) >> FIFO_PTR_FRAMELEN_SHIFT;
--
--	skb = netdev_alloc_skb(ndev, len);
--	if (unlikely(skb == NULL)) {
--		ndev->stats.rx_dropped++;
--		return;
--	}
--
--	data = skb_put(skb, len);
--
--	memcpy_fromio(data, priv->sram_base + frameno * 1560, len);
--
--	pfifo_push(EMPTY_PTR_FIFO(priv->id),
--		FIFO_PTR_SEGMENT(seg) | FIFO_PTR_FRAMENO(frameno));
--
--	skb->protocol = eth_type_trans(skb, ndev);
--	netif_rx(skb);
--	ndev->stats.rx_packets++;
--	ndev->stats.rx_bytes += len;
--}
--
--static irqreturn_t
--netx_eth_interrupt(int irq, void *dev_id)
--{
--	struct net_device *ndev = dev_id;
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--	int status;
--	unsigned long flags;
--
--	spin_lock_irqsave(&priv->lock, flags);
--
--	status = readl(NETX_PFIFO_XPEC_ISR(priv->id));
--	while (status) {
--		int fill_level;
--		writel(status, NETX_PFIFO_XPEC_ISR(priv->id));
--
--		if ((status & ISR_CON_HI) || (status & ISR_IND_HI))
--			printk("%s: unexpected status: 0x%08x\n",
--			    __func__, status);
--
--		fill_level =
--		    readl(NETX_PFIFO_FILL_LEVEL(IND_FIFO_PORT_LO(priv->id)));
--		while (fill_level--)
--			netx_eth_receive(ndev);
--
--		if (status & ISR_CON_LO)
--			netif_wake_queue(ndev);
--
--		if (status & ISR_LINK_STATUS_CHANGE)
--			mii_check_media(&priv->mii, netif_msg_link(priv), 1);
--
--		status = readl(NETX_PFIFO_XPEC_ISR(priv->id));
--	}
--	spin_unlock_irqrestore(&priv->lock, flags);
--	return IRQ_HANDLED;
--}
--
--static int netx_eth_open(struct net_device *ndev)
--{
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--
--	if (request_irq
--	    (ndev->irq, netx_eth_interrupt, IRQF_SHARED, ndev->name, ndev))
--		return -EAGAIN;
--
--	writel(ndev->dev_addr[0] |
--	       ndev->dev_addr[1]<<8 |
--	       ndev->dev_addr[2]<<16 |
--	       ndev->dev_addr[3]<<24,
--	       priv->xpec_base + NETX_XPEC_RAM_START_OFS + ETH_MAC_4321);
--	writel(ndev->dev_addr[4] |
--	       ndev->dev_addr[5]<<8,
--	       priv->xpec_base + NETX_XPEC_RAM_START_OFS + ETH_MAC_65);
--
--	writel(LOCAL_CONFIG_LINK_STATUS_IRQ_EN |
--		LOCAL_CONFIG_CON_LO_IRQ_EN |
--		LOCAL_CONFIG_CON_HI_IRQ_EN |
--		LOCAL_CONFIG_IND_LO_IRQ_EN |
--		LOCAL_CONFIG_IND_HI_IRQ_EN,
--		priv->xpec_base + NETX_XPEC_RAM_START_OFS +
--		ETH_MAC_LOCAL_CONFIG);
--
--	mii_check_media(&priv->mii, netif_msg_link(priv), 1);
--	netif_start_queue(ndev);
--
--	return 0;
--}
--
--static int netx_eth_close(struct net_device *ndev)
--{
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--
--	netif_stop_queue(ndev);
--
--	writel(0,
--	    priv->xpec_base + NETX_XPEC_RAM_START_OFS + ETH_MAC_LOCAL_CONFIG);
--
--	free_irq(ndev->irq, ndev);
--
--	return 0;
--}
--
--static void netx_eth_timeout(struct net_device *ndev)
--{
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--	int i;
--
--	printk(KERN_ERR "%s: transmit timed out, resetting\n", ndev->name);
--
--	spin_lock_irq(&priv->lock);
--
--	xc_reset(priv->xc);
--	xc_start(priv->xc);
--
--	for (i=2; i<=18; i++)
--		pfifo_push(EMPTY_PTR_FIFO(priv->id),
--			FIFO_PTR_FRAMENO(i) | FIFO_PTR_SEGMENT(priv->id));
--
--	spin_unlock_irq(&priv->lock);
--
--	netif_wake_queue(ndev);
--}
--
--static int
--netx_eth_phy_read(struct net_device *ndev, int phy_id, int reg)
--{
--	unsigned int val;
--
--	val = MIIMU_SNRDY | MIIMU_PREAMBLE | MIIMU_PHYADDR(phy_id) |
--	      MIIMU_REGADDR(reg) | MIIMU_PHY_NRES;
--
--	writel(val, NETX_MIIMU);
--	while (readl(NETX_MIIMU) & MIIMU_SNRDY);
--
--	return readl(NETX_MIIMU) >> 16;
--
--}
--
--static void
--netx_eth_phy_write(struct net_device *ndev, int phy_id, int reg, int value)
--{
--	unsigned int val;
--
--	val = MIIMU_SNRDY | MIIMU_PREAMBLE | MIIMU_PHYADDR(phy_id) |
--	      MIIMU_REGADDR(reg) | MIIMU_PHY_NRES | MIIMU_OPMODE_WRITE |
--	      MIIMU_DATA(value);
--
--	writel(val, NETX_MIIMU);
--	while (readl(NETX_MIIMU) & MIIMU_SNRDY);
--}
--
--static const struct net_device_ops netx_eth_netdev_ops = {
--	.ndo_open		= netx_eth_open,
--	.ndo_stop		= netx_eth_close,
--	.ndo_start_xmit		= netx_eth_hard_start_xmit,
--	.ndo_tx_timeout		= netx_eth_timeout,
--	.ndo_set_rx_mode	= netx_eth_set_multicast_list,
--	.ndo_validate_addr	= eth_validate_addr,
--	.ndo_set_mac_address	= eth_mac_addr,
--};
--
--static int netx_eth_enable(struct net_device *ndev)
--{
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--	unsigned int mac4321, mac65;
--	int running, i, ret;
--	bool inv_mac_addr = false;
--
--	ndev->netdev_ops = &netx_eth_netdev_ops;
--	ndev->watchdog_timeo = msecs_to_jiffies(5000);
--
--	priv->msg_enable       = NETIF_MSG_LINK;
--	priv->mii.phy_id_mask  = 0x1f;
--	priv->mii.reg_num_mask = 0x1f;
--	priv->mii.force_media  = 0;
--	priv->mii.full_duplex  = 0;
--	priv->mii.dev	     = ndev;
--	priv->mii.mdio_read    = netx_eth_phy_read;
--	priv->mii.mdio_write   = netx_eth_phy_write;
--	priv->mii.phy_id = INTERNAL_PHY_ADR + priv->id;
--
--	running = xc_running(priv->xc);
--	xc_stop(priv->xc);
--
--	/* if the xc engine is already running, assume the bootloader has
--	 * loaded the firmware for us
--	 */
--	if (running) {
--		/* get Node Address from hardware */
--		mac4321 = readl(priv->xpec_base +
--			NETX_XPEC_RAM_START_OFS + ETH_MAC_4321);
--		mac65 = readl(priv->xpec_base +
--			NETX_XPEC_RAM_START_OFS + ETH_MAC_65);
--
--		ndev->dev_addr[0] = mac4321 & 0xff;
--		ndev->dev_addr[1] = (mac4321 >> 8) & 0xff;
--		ndev->dev_addr[2] = (mac4321 >> 16) & 0xff;
--		ndev->dev_addr[3] = (mac4321 >> 24) & 0xff;
--		ndev->dev_addr[4] = mac65 & 0xff;
--		ndev->dev_addr[5] = (mac65 >> 8) & 0xff;
--	} else {
--		if (xc_request_firmware(priv->xc)) {
--			printk(CARDNAME ": requesting firmware failed\n");
--			return -ENODEV;
--		}
--	}
--
--	xc_reset(priv->xc);
--	xc_start(priv->xc);
--
--	if (!is_valid_ether_addr(ndev->dev_addr))
--		inv_mac_addr = true;
--
--	for (i=2; i<=18; i++)
--		pfifo_push(EMPTY_PTR_FIFO(priv->id),
--			FIFO_PTR_FRAMENO(i) | FIFO_PTR_SEGMENT(priv->id));
--
--	ret = register_netdev(ndev);
--	if (inv_mac_addr)
--		printk("%s: Invalid ethernet MAC address. Please set using ip\n",
--		       ndev->name);
--
--	return ret;
--}
--
--static int netx_eth_drv_probe(struct platform_device *pdev)
--{
--	struct netx_eth_priv *priv;
--	struct net_device *ndev;
--	struct netxeth_platform_data *pdata;
--	int ret;
--
--	ndev = alloc_etherdev(sizeof (struct netx_eth_priv));
--	if (!ndev) {
--		ret = -ENOMEM;
--		goto exit;
--	}
--	SET_NETDEV_DEV(ndev, &pdev->dev);
--
--	platform_set_drvdata(pdev, ndev);
--
--	priv = netdev_priv(ndev);
--
--	pdata = dev_get_platdata(&pdev->dev);
--	priv->xc = request_xc(pdata->xcno, &pdev->dev);
--	if (!priv->xc) {
--		dev_err(&pdev->dev, "unable to request xc engine\n");
--		ret = -ENODEV;
--		goto exit_free_netdev;
--	}
--
--	ndev->irq = priv->xc->irq;
--	priv->id = pdev->id;
--	priv->xpec_base = priv->xc->xpec_base;
--	priv->xmac_base = priv->xc->xmac_base;
--	priv->sram_base = priv->xc->sram_base;
--
--	spin_lock_init(&priv->lock);
--
--	ret = pfifo_request(PFIFO_MASK(priv->id));
--	if (ret) {
--		printk("unable to request PFIFO\n");
--		goto exit_free_xc;
--	}
--
--	ret = netx_eth_enable(ndev);
--	if (ret)
--		goto exit_free_pfifo;
--
--	return 0;
--exit_free_pfifo:
--	pfifo_free(PFIFO_MASK(priv->id));
--exit_free_xc:
--	free_xc(priv->xc);
--exit_free_netdev:
--	free_netdev(ndev);
--exit:
--	return ret;
--}
--
--static int netx_eth_drv_remove(struct platform_device *pdev)
--{
--	struct net_device *ndev = platform_get_drvdata(pdev);
--	struct netx_eth_priv *priv = netdev_priv(ndev);
--
--	unregister_netdev(ndev);
--	xc_stop(priv->xc);
--	free_xc(priv->xc);
--	free_netdev(ndev);
--	pfifo_free(PFIFO_MASK(priv->id));
--
--	return 0;
--}
--
--static int netx_eth_drv_suspend(struct platform_device *pdev, pm_message_t state)
--{
--	dev_err(&pdev->dev, "suspend not implemented\n");
--	return 0;
--}
--
--static int netx_eth_drv_resume(struct platform_device *pdev)
--{
--	dev_err(&pdev->dev, "resume not implemented\n");
--	return 0;
--}
--
--static struct platform_driver netx_eth_driver = {
--	.probe		= netx_eth_drv_probe,
--	.remove		= netx_eth_drv_remove,
--	.suspend	= netx_eth_drv_suspend,
--	.resume		= netx_eth_drv_resume,
--	.driver		= {
--		.name	= CARDNAME,
--	},
--};
--
--static int __init netx_eth_init(void)
--{
--	unsigned int phy_control, val;
--
--	printk("NetX Ethernet driver\n");
--
--	phy_control = PHY_CONTROL_PHY_ADDRESS(INTERNAL_PHY_ADR>>1) |
--		      PHY_CONTROL_PHY1_MODE(PHY_MODE_ALL) |
--		      PHY_CONTROL_PHY1_AUTOMDIX |
--		      PHY_CONTROL_PHY1_EN |
--		      PHY_CONTROL_PHY0_MODE(PHY_MODE_ALL) |
--		      PHY_CONTROL_PHY0_AUTOMDIX |
--		      PHY_CONTROL_PHY0_EN |
--		      PHY_CONTROL_CLK_XLATIN;
--
--	val = readl(NETX_SYSTEM_IOC_ACCESS_KEY);
--	writel(val, NETX_SYSTEM_IOC_ACCESS_KEY);
--
--	writel(phy_control | PHY_CONTROL_RESET, NETX_SYSTEM_PHY_CONTROL);
--	udelay(100);
--
--	val = readl(NETX_SYSTEM_IOC_ACCESS_KEY);
--	writel(val, NETX_SYSTEM_IOC_ACCESS_KEY);
--
--	writel(phy_control, NETX_SYSTEM_PHY_CONTROL);
--
--	return platform_driver_register(&netx_eth_driver);
--}
--
--static void __exit netx_eth_cleanup(void)
--{
--	platform_driver_unregister(&netx_eth_driver);
--}
--
--module_init(netx_eth_init);
--module_exit(netx_eth_cleanup);
--
--MODULE_AUTHOR("Sascha Hauer, Pengutronix");
--MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:" CARDNAME);
--MODULE_FIRMWARE("xc0.bin");
--MODULE_FIRMWARE("xc1.bin");
--MODULE_FIRMWARE("xc2.bin");
-diff --git a/include/linux/platform_data/eth-netx.h b/include/linux/platform_data/eth-netx.h
-deleted file mode 100644
-index a3a6322668d8..000000000000
---- a/include/linux/platform_data/eth-netx.h
-+++ /dev/null
-@@ -1,13 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (c) 2005 Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
-- */
--
--#ifndef __ETH_NETX_H
--#define __ETH_NETX_H
--
--struct netxeth_platform_data {
--	unsigned int xcno;	/* number of xmac/xpec engine this eth uses */
--};
--
--#endif
--- 
-2.20.0
+<diff-filter=M>
+ Kconfig  |   79 +-
+ Makefile |   46 +-
+ blkdev.c |  409 +---
+ cache.c  | 1142 +++++-----
+ core.c   | 5583 ++++++++++++++++++++++++++----------------------
+ exfat.h  | 1309 ++++++++----
+ nls.c    |  490 ++---
+ super.c  | 5103 ++++++++++++++++++++++---------------------
+ 8 files changed, 7446 insertions(+), 6715 deletions(-)
 
+These diff stats were taken by removing "exfat_" prefix from the
+current staging drivers.
+
+But if that's still what you want, I'll do it.
+btw, removing "exfat_" prefix from the current one makes more sense imo.
+
+If we add "exfat_" prefix to the new one, we get weird file names like
+"exfat_core_exfat.c".
+
+> And by taking something like this, are you agreeing that Samsung will
+> help out with the development of this code to clean it up and get it
+> into "real" mergable shape?
+
+Well, I think you got me confused with Namjae.
+(Yeah Korean names are confusing I know :) )
+
+Namjae (or anyone else from Samsung) should answer that, not me.
+
+I just prepared a patch as we were getting nowhere like you mentioned :)
+
+> Also, I can't take this patch for this simple reason alone:
+> Don't delete SPDX lines :)
+
+Sorry.
+I'll add that back for v2.
+
+On Thu, Sep 19, 2019 at 5:13 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Sep 19, 2019 at 04:59:20AM +0900, Park Ju Hyung wrote:
+> > --- a/drivers/staging/exfat/exfat.h
+> > +++ b/drivers/staging/exfat/exfat.h
+> > @@ -1,4 +1,4 @@
+> > -/* SPDX-License-Identifier: GPL-2.0 */
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+>
+> You just changed the license of this file.  Are you SURE about that?
+
+The sdFAT code release explicitly states "either version 2 of the
+License, or (at your option) any later version", so I thought that
+makes sense:
+https://github.com/arter97/exfat-linux/commit/d5393c4cbe0e5b50231aacd33d9b5b0ddf46a005
+
+Please correct me if I'm wrong.
+
+Thanks.
