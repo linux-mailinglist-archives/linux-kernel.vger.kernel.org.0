@@ -2,144 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA8E4B6106
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ABABB6117
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:09:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbfIRKD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 06:03:58 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:42179 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725298AbfIRKD5 (ORCPT
+        id S1729378AbfIRKJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 06:09:53 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33760 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfIRKJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 06:03:57 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id A3AE6FF811;
-        Wed, 18 Sep 2019 10:03:54 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH v2] ASoC: atmel_ssc_dai: Remove wrong spinlock usage
-Date:   Wed, 18 Sep 2019 12:03:44 +0200
-Message-Id: <20190918100344.23629-1-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.23.0
+        Wed, 18 Sep 2019 06:09:53 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8IA91qw071434;
+        Wed, 18 Sep 2019 10:09:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=rYcBK7hatZdKCsYqkvz3edbzREwu8CmSdT12sO28VM8=;
+ b=IAAvkT9k9gncB1kSfB9glKjwd7zbO4DrV6e56Qi7Qk5Kp4AT74+j9mrhJPhZsmnaLTBD
+ frZZmx8MA0su9vC7uufn9JXR8iBtVu2XIjYbB4dYrSTO81DZMzgZyZ33LcZa6C7sFYOI
+ cuhtSIU6lJTmc2djgpiWn81TFDp8zoXPcK/i6+Vg0h03KlrZFHiWOC8pHk/orh8PloUp
+ weXPvvXLDVmajGe9ULjXvMlr399Mm7EOn9W9Z3oadbDVVd+ecbvMcuiDeu4mBfAL5e6W
+ veoxjuqV0ke7Lj288tIM8zkLQSwG3KKQuZ9FS3zBAUnWK/sEqKfmkGuDCBXzK7q8K/9L GQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2v385dtsur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 10:09:39 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8IA9QvV006927;
+        Wed, 18 Sep 2019 10:09:39 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2v37mmhwms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 10:09:38 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8IA8FDa020420;
+        Wed, 18 Sep 2019 10:08:16 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Sep 2019 03:08:14 -0700
+Date:   Wed, 18 Sep 2019 13:08:03 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ju Hyung Park <qkrwngud825@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linkinjeon@gmail.com,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, alexander.levin@microsoft.com,
+        sergey.senozhatsky@gmail.com, linux-fsdevel@vger.kernel.org,
+        sj1557.seo@samsung.com
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to
+Message-ID: <20190918100803.GD2959@kadam>
+References: <20190917054726.GA2058532@kroah.com>
+ <CGME20190917060433epcas2p4b12d7581d0ac5477d8f26ec74e634f0a@epcas2p4.samsung.com>
+ <CAD14+f1adJPRTvk8awgPJwCoHXSngqoKcAze1xbHVVvrhSMGrQ@mail.gmail.com>
+ <004401d56dc9$b00fd7a0$102f86e0$@samsung.com>
+ <20190918061605.GA1832786@kroah.com>
+ <20190918063304.GA8354@jagdpanzerIV>
+ <20190918082658.GA1861850@kroah.com>
+ <CAD14+f24gujg3S41ARYn3CvfCq9_v+M2kot=RR3u7sNsBGte0Q@mail.gmail.com>
+ <20190918092405.GC2959@kadam>
+ <CAD14+f1yQWoZH4onJwbt1kezxyoHW147HA-1p+U0dVo3r=mqBw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD14+f1yQWoZH4onJwbt1kezxyoHW147HA-1p+U0dVo3r=mqBw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909180101
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909180101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A potential bug was reported in the email "[BUG] atmel_ssc_dai: a
-possible sleep-in-atomic bug in atmel_ssc_shutdown"[1]
+On Wed, Sep 18, 2019 at 06:53:49PM +0900, Ju Hyung Park wrote:
+> Hi Dan,
+> 
+> On Wed, Sep 18, 2019 at 6:27 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > Put it in drivers/staging/sdfat/.
+> 
+> It'll conflict with the current exfat staging drivers.
 
-Indeed in the function atmel_ssc_shutdown() free_irq() was called in a
-critical section protected by spinlock.
+Use Kconfig.
 
-However this spinlock is only used in atmel_ssc_shutdown() and
-atmel_ssc_startup() functions. After further analysis, it occurred that
-the call to these function are already protected by mutex used on the
-calling functions.
+> And moreover, I don't think it makes sense to use sdfat naming in mainline.
 
-Then we can remove the spinlock which will fix this bug as a side
-effect. Thanks to this patch the following message disappears:
+The directory doesn't need to be permanent.
 
-"BUG: sleeping function called from invalid context at
-kernel/locking/mutex.c:909"
-
-[1]: https://www.spinics.net/lists/alsa-devel/msg71286.html
-
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
-
-Changelog:
-
-v1 -> v2:
-
-   - Removed the spinlock from the atmel_ssc_info struct
-   - Added the Reviewed-by flag form Alex
-
- sound/soc/atmel/atmel_ssc_dai.c | 12 ++----------
- sound/soc/atmel/atmel_ssc_dai.h |  1 -
- 2 files changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index 6f89483ac88c..786b48ae4905 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -116,19 +116,16 @@ static struct atmel_pcm_dma_params ssc_dma_params[NUM_SSC_DEVICES][2] = {
- static struct atmel_ssc_info ssc_info[NUM_SSC_DEVICES] = {
- 	{
- 	.name		= "ssc0",
--	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[0].lock),
- 	.dir_mask	= SSC_DIR_MASK_UNUSED,
- 	.initialized	= 0,
- 	},
- 	{
- 	.name		= "ssc1",
--	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[1].lock),
- 	.dir_mask	= SSC_DIR_MASK_UNUSED,
- 	.initialized	= 0,
- 	},
- 	{
- 	.name		= "ssc2",
--	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[2].lock),
- 	.dir_mask	= SSC_DIR_MASK_UNUSED,
- 	.initialized	= 0,
- 	},
-@@ -317,13 +314,10 @@ static int atmel_ssc_startup(struct snd_pcm_substream *substream,
- 
- 	snd_soc_dai_set_dma_data(dai, substream, dma_params);
- 
--	spin_lock_irq(&ssc_p->lock);
--	if (ssc_p->dir_mask & dir_mask) {
--		spin_unlock_irq(&ssc_p->lock);
-+	if (ssc_p->dir_mask & dir_mask)
- 		return -EBUSY;
--	}
-+
- 	ssc_p->dir_mask |= dir_mask;
--	spin_unlock_irq(&ssc_p->lock);
- 
- 	return 0;
- }
-@@ -355,7 +349,6 @@ static void atmel_ssc_shutdown(struct snd_pcm_substream *substream,
- 
- 	dir_mask = 1 << dir;
- 
--	spin_lock_irq(&ssc_p->lock);
- 	ssc_p->dir_mask &= ~dir_mask;
- 	if (!ssc_p->dir_mask) {
- 		if (ssc_p->initialized) {
-@@ -369,7 +362,6 @@ static void atmel_ssc_shutdown(struct snd_pcm_substream *substream,
- 		ssc_p->cmr_div = ssc_p->tcmr_period = ssc_p->rcmr_period = 0;
- 		ssc_p->forced_divider = 0;
- 	}
--	spin_unlock_irq(&ssc_p->lock);
- 
- 	/* Shutdown the SSC clock. */
- 	pr_debug("atmel_ssc_dai: Stopping clock\n");
-diff --git a/sound/soc/atmel/atmel_ssc_dai.h b/sound/soc/atmel/atmel_ssc_dai.h
-index ae764cb541c7..3470b966e449 100644
---- a/sound/soc/atmel/atmel_ssc_dai.h
-+++ b/sound/soc/atmel/atmel_ssc_dai.h
-@@ -93,7 +93,6 @@ struct atmel_ssc_state {
- struct atmel_ssc_info {
- 	char *name;
- 	struct ssc_device *ssc;
--	spinlock_t lock;	/* lock for dir_mask */
- 	unsigned short dir_mask;	/* 0=unused, 1=playback, 2=capture */
- 	unsigned short initialized;	/* true if SSC has been initialized */
- 	unsigned short daifmt;
--- 
-2.23.0
+regards,
+dan carpenter
 
