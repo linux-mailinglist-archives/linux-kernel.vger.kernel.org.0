@@ -2,166 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFD17B6440
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3F8BB643E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731075AbfIRNTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 09:19:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:41696 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbfIRNTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 09:19:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34E841576;
-        Wed, 18 Sep 2019 06:19:46 -0700 (PDT)
-Received: from localhost.localdomain (entos-thunderx2-02.shanghai.arm.com [10.169.40.54])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DA9F83F575;
-        Wed, 18 Sep 2019 06:19:40 -0700 (PDT)
-From:   Jia He <justin.he@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Suzuki Poulose <Suzuki.Poulose@arm.com>
-Cc:     Punit Agrawal <punitagrawal@gmail.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>,
-        Alex Van Brunt <avanbrunt@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>, hejianet@gmail.com,
-        Kaly Xin <Kaly.Xin@arm.com>, Jia He <justin.he@arm.com>
-Subject: [PATCH v4 3/3] mm: fix double page fault on arm64 if PTE_AF is cleared
-Date:   Wed, 18 Sep 2019 21:19:14 +0800
-Message-Id: <20190918131914.38081-4-justin.he@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190918131914.38081-1-justin.he@arm.com>
-References: <20190918131914.38081-1-justin.he@arm.com>
+        id S1730238AbfIRNTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 09:19:37 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37247 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728468AbfIRNTg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 09:19:36 -0400
+Received: by mail-wr1-f67.google.com with SMTP id i1so6900179wro.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 06:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=8yWSaq1SPkhAnGKUElxNjUPCl80FK7UQ5LA6iTbaJZo=;
+        b=VJ3XXKhY5Aw2z+D4yk/YHnjv1QX4QXrcPX5ZYFOW3nKaK5h3r5Ve95yzGQFnxSiEhA
+         xR09LirpYG7hNKi7xVD5XHbDQM0NLh1r+Ej33ncGU0Q6vCsywkbKQAneSMjqMn64DU+3
+         T+y0+r+Q5EPLArptumYr90CfWPqwWxTdHGVY56RsTNVr/eVSvdUCDW+JiW8LBZNk3L79
+         UU0+ak/HU9r+O5r/o+vharVGWAZvglZXr0yg+2hNN/h4rKvuTVIy3yrfIE2Z8eT3r36i
+         XwY/HDom/W0q1aesJjGtvR8vLgDbb5TqQxONcx9k+SbtOAKc9il03VA2gk9wef/dWSPM
+         GSmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=8yWSaq1SPkhAnGKUElxNjUPCl80FK7UQ5LA6iTbaJZo=;
+        b=fSZkJMOC5S+PbfR/4DyUM2nHVg3+C2nIE4vku1OF5q0wpCQ5C5IzGMPgpBuwcICKNR
+         G4dIozHpdrI/ijMEJL7y39N7dzTPWAzeXnfPBa+AbXaScXJj6qr8MhYEegV2zh/tYyrO
+         UXQlsz6mS/jQIPInByFTK/XyHwb+93bTxP2MZRx7sJrztT8zezeOE2H/5v9DkQmv18Tp
+         cA0laYoohhjD2GwzHC1roZ2dQjkRa/uagQ9V+UFXc6ZomGMVwyP2G4HWmjNF5dUNk44i
+         Ngh+x3DsHGNiRdx8HMkjR58PPqo1yh+BJUb6Kpuo1hIjP7tCE6xttigfPlbF634qt2Ca
+         mJ4A==
+X-Gm-Message-State: APjAAAW0G92fk43M4+dEgr12XCbPbG+qBdU/Njw9L/Udt94hTbR2HOr0
+        c14lKcKUZ8q9EldqSGbfbI85fg==
+X-Google-Smtp-Source: APXvYqzJjheHXn4H9Pi/aVsdA/2XvIBwrDIHXOMM/+4tXFXAPcqqhMQelVjfgXCH5omPtGuWxmHKRw==
+X-Received: by 2002:adf:a350:: with SMTP id d16mr2970112wrb.326.1568812772484;
+        Wed, 18 Sep 2019 06:19:32 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id y72sm3124512wmc.26.2019.09.18.06.19.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Sep 2019 06:19:31 -0700 (PDT)
+Message-ID: <5d822ee3.1c69fb81.464de.db03@mx.google.com>
+Date:   Wed, 18 Sep 2019 06:19:31 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: v4.14.144-46-g187d767985cf
+X-Kernelci-Tree: stable-rc
+X-Kernelci-Report-Type: boot
+X-Kernelci-Branch: linux-4.14.y
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/45] 4.14.145-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we tested pmdk unit test [1] vmmalloc_fork TEST1 in arm64 guest, there
-will be a double page fault in __copy_from_user_inatomic of cow_user_page.
+stable-rc/linux-4.14.y boot: 131 boots: 0 failed, 121 passed with 10 offlin=
+e (v4.14.144-46-g187d767985cf)
 
-Below call trace is from arm64 do_page_fault for debugging purpose
-[  110.016195] Call trace:
-[  110.016826]  do_page_fault+0x5a4/0x690
-[  110.017812]  do_mem_abort+0x50/0xb0
-[  110.018726]  el1_da+0x20/0xc4
-[  110.019492]  __arch_copy_from_user+0x180/0x280
-[  110.020646]  do_wp_page+0xb0/0x860
-[  110.021517]  __handle_mm_fault+0x994/0x1338
-[  110.022606]  handle_mm_fault+0xe8/0x180
-[  110.023584]  do_page_fault+0x240/0x690
-[  110.024535]  do_mem_abort+0x50/0xb0
-[  110.025423]  el0_da+0x20/0x24
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.144-46-g187d767985cf/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.144-46-g187d767985cf/
 
-The pte info before __copy_from_user_inatomic is (PTE_AF is cleared):
-[ffff9b007000] pgd=000000023d4f8003, pud=000000023da9b003, pmd=000000023d4b3003, pte=360000298607bd3
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.144-46-g187d767985cf
+Git Commit: 187d767985cf878208592ce3ca667e5021abf2f6
+Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+Tested: 66 unique boards, 23 SoC families, 13 builds out of 201
 
-As told by Catalin: "On arm64 without hardware Access Flag, copying from
-user will fail because the pte is old and cannot be marked young. So we
-always end up with zeroed page after fork() + CoW for pfn mappings. we
-don't always have a hardware-managed access flag on arm64."
+Offline Platforms:
 
-This patch fix it by calling pte_mkyoung. Also, the parameter is
-changed because vmf should be passed to cow_user_page()
+arm64:
 
-[1] https://github.com/pmem/pmdk/tree/master/src/test/vmmalloc_fork
+    defconfig:
+        gcc-8
+            apq8016-sbc: 1 offline lab
 
-Reported-by: Yibo Cai <Yibo.Cai@arm.com>
-Signed-off-by: Jia He <justin.he@arm.com>
+arm:
+
+    multi_v7_defconfig:
+        gcc-8
+            exynos5800-peach-pi: 1 offline lab
+            qcom-apq8064-cm-qs600: 1 offline lab
+            qcom-apq8064-ifc6410: 1 offline lab
+            sun5i-r8-chip: 1 offline lab
+
+    davinci_all_defconfig:
+        gcc-8
+            dm365evm,legacy: 1 offline lab
+
+    qcom_defconfig:
+        gcc-8
+            qcom-apq8064-cm-qs600: 1 offline lab
+            qcom-apq8064-ifc6410: 1 offline lab
+
+    sunxi_defconfig:
+        gcc-8
+            sun5i-r8-chip: 1 offline lab
+            sun7i-a20-bananapi: 1 offline lab
+
 ---
- mm/memory.c | 35 ++++++++++++++++++++++++++++++-----
- 1 file changed, 30 insertions(+), 5 deletions(-)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index e2bb51b6242e..d2c130a5883b 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -118,6 +118,13 @@ int randomize_va_space __read_mostly =
- 					2;
- #endif
- 
-+#ifndef arch_faults_on_old_pte
-+static inline bool arch_faults_on_old_pte(void)
-+{
-+	return false;
-+}
-+#endif
-+
- static int __init disable_randmaps(char *s)
- {
- 	randomize_va_space = 0;
-@@ -2140,8 +2147,12 @@ static inline int pte_unmap_same(struct mm_struct *mm, pmd_t *pmd,
- 	return same;
- }
- 
--static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
-+static inline void cow_user_page(struct page *dst, struct page *src,
-+				 struct vm_fault *vmf)
- {
-+	struct vm_area_struct *vma = vmf->vma;
-+	unsigned long addr = vmf->address;
-+
- 	debug_dma_assert_idle(src);
- 
- 	/*
-@@ -2152,20 +2163,34 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
- 	 */
- 	if (unlikely(!src)) {
- 		void *kaddr = kmap_atomic(dst);
--		void __user *uaddr = (void __user *)(va & PAGE_MASK);
-+		void __user *uaddr = (void __user *)(addr & PAGE_MASK);
-+		pte_t entry;
- 
- 		/*
- 		 * This really shouldn't fail, because the page is there
- 		 * in the page tables. But it might just be unreadable,
- 		 * in which case we just give up and fill the result with
--		 * zeroes.
-+		 * zeroes. On architectures with software "accessed" bits,
-+		 * we would take a double page fault here, so mark it
-+		 * accessed here.
- 		 */
-+		if (arch_faults_on_old_pte() && !pte_young(vmf->orig_pte)) {
-+			spin_lock(vmf->ptl);
-+			if (likely(pte_same(*vmf->pte, vmf->orig_pte))) {
-+				entry = pte_mkyoung(vmf->orig_pte);
-+				if (ptep_set_access_flags(vma, addr,
-+							  vmf->pte, entry, 0))
-+					update_mmu_cache(vma, addr, vmf->pte);
-+			}
-+			spin_unlock(vmf->ptl);
-+		}
-+
- 		if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
- 			clear_page(kaddr);
- 		kunmap_atomic(kaddr);
- 		flush_dcache_page(dst);
- 	} else
--		copy_user_highpage(dst, src, va, vma);
-+		copy_user_highpage(dst, src, addr, vma);
- }
- 
- static gfp_t __get_fault_gfp_mask(struct vm_area_struct *vma)
-@@ -2318,7 +2343,7 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf)
- 				vmf->address);
- 		if (!new_page)
- 			goto oom;
--		cow_user_page(new_page, old_page, vmf->address, vma);
-+		cow_user_page(new_page, old_page, vmf);
- 	}
- 
- 	if (mem_cgroup_try_charge_delay(new_page, mm, GFP_KERNEL, &memcg, false))
--- 
-2.17.1
-
+For more info write to <info@kernelci.org>
