@@ -2,352 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D08FAB626D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 13:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5677AB6272
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 13:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730358AbfIRLra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 07:47:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726369AbfIRLra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 07:47:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06E6621907;
-        Wed, 18 Sep 2019 11:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568807248;
-        bh=u6DAPYj0JFbZDGfxE9+LAW8Ov5Z9gzUbcEpRTSixCnY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=OPX7BV3HDwwOdCTfSFOlk1fqlrEHAxNg4CG2tNMN63cOpXlwMoXosEQqHGrurIPD0
-         0hhydn0RYgLD4z4wxzub0fV7zXhu8wCfRA60OzUKqEbWwRCsJ5SCdPIfgMo8V650XM
-         ReNDJp6Unx4L4FNGj0B/+MnCW/lXKN3Dgos61u2c=
-Date:   Wed, 18 Sep 2019 13:47:26 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jiri Slaby <jslaby@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY/Serial patches for 5.4-rc1
-Message-ID: <20190918114726.GA1899411@kroah.com>
+        id S1730444AbfIRLsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 07:48:13 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46931 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729071AbfIRLsN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 07:48:13 -0400
+Received: by mail-io1-f65.google.com with SMTP id d17so15285194ios.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 04:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ofTkjvEUSpXrIs73m3lky1N1Didfq1+b+91cMsW/1Rg=;
+        b=W6+8ReYiHHVeVlnbV+ueh6udXHFSCEib8D8eNPDlyCH6VFXoehOcoJRBKqKNvR4FEM
+         9g8Yy6hdIuR0aAWNZlOKYx7kixD+24v0SCc4385+eO76oCXYWiCs2JC13YTOVoFPb+2U
+         gWfU78r/G4aJO0p15MkApXrNA4dRMyazMU6Hs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ofTkjvEUSpXrIs73m3lky1N1Didfq1+b+91cMsW/1Rg=;
+        b=VZlobGEzmGtNwjWqZKlOMx9orz6FxGE8zwQksrYZKDJGKSz0k7T/LLZMxq/0UNqltm
+         yNuB/hjlaFBXTJeWkC7iiJXqtvsVc2WuLRD8nTcoT7dB/HW4PKfM1yxQnHz0XuwSmZ3L
+         P9PAfV+lPt/bpAdJgPG9ehvmZbsoFBwdLYlsoSB7eOaJAGy/c2QnHtjF3q1E23ciMnze
+         3PR1g5DJikjGLt1uUvCg3l76CP0seyoCq81Q/+tDACLN5L4kzw+6SUiNixYc1xI0VW1P
+         BEvjj0w6X1mi/SSoNJxZOQYF+ezhtdOwUYuYzCeOvUVylm+8soon7gJK+Xxu19oxhGyx
+         MQ7w==
+X-Gm-Message-State: APjAAAU3mrlFBkJFPuGLv7RVatjAKteBJwMw981EAeOh/KV2v21MafRd
+        rn+bR2ix/MtTff+3m0dbtAE/d1GiE1UQw7trik7hDQ==
+X-Google-Smtp-Source: APXvYqyw0kfhKySzuyEVmqkEH5tD5giZFYYFb8X7Ox56+XVKPgy+ZTNU1io4zY5oiSdqUq3HrOYM3DiCRNEvay8WMq0=
+X-Received: by 2002:a5d:91c8:: with SMTP id k8mr1484342ior.232.1568807292316;
+ Wed, 18 Sep 2019 04:48:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190916004640.b453167d3556c4093af4cf7d@gmail.com>
+In-Reply-To: <20190916004640.b453167d3556c4093af4cf7d@gmail.com>
+From:   Dan Streetman <ddstreet@ieee.org>
+Date:   Wed, 18 Sep 2019 07:47:36 -0400
+Message-ID: <CALZtONDROMJoyxgRSG2+xNVs2B0q+vQQOGG09fH0QCSzgRi5CA@mail.gmail.com>
+Subject: Re: [PATCH/RFC] zswap: do not map same object twice
+To:     Vitaly Wool <vitalywool@gmail.com>
+Cc:     Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Seth Jennings <sjenning@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit d45331b00ddb179e291766617259261c112db872:
+On Sun, Sep 15, 2019 at 5:46 PM Vitaly Wool <vitalywool@gmail.com> wrote:
+>
+> zswap_writeback_entry() maps a handle to read swpentry first, and
+> then in the most common case it would map the same handle again.
+> This is ok when zbud is the backend since its mapping callback is
+> plain and simple, but it slows things down for z3fold.
+>
+> Since there's hardly a point in unmapping a handle _that_ fast as
+> zswap_writeback_entry() does when it reads swpentry, the
+> suggestion is to keep the handle mapped till the end.
 
-  Linux 5.3-rc4 (2019-08-11 13:26:41 -0700)
+LGTM
 
-are available in the Git repository at:
+>
+> Signed-off-by: Vitaly Wool <vitalywool@gmail.com>
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.4-rc1
+Reviewed-by: Dan Streetman <ddstreet@ieee.org>
 
-for you to fetch changes up to 1dce2df3ee06e4f10fd9b8919a0f2e90e0ac3188:
-
-  serial: tegra: Add PIO mode support (2019-09-05 10:00:05 +0200)
-
-----------------------------------------------------------------
-TTY/Serial driver changes for 5.4-rc1
-
-Even in this age, people are still making new serial port silicon,
-why...
-
-Anyway, here's the TTY and Serial driver update for 5.4-rc1.  Lots of
-changes in here for a number of embedded serial port devices that are
-being worked on because people really like to see those console logs...
-
-Other than that, nothing major here, no core tty changes that anyone
-should care about.
-
-All of these have been in linux-next for a while with no reported
-issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Aaron Sierra (1):
-      serial: 8250_exar: Absorb remaining 8250_port INT0 support
-
-Ahung Cheng (2):
-      serial: tegra: protect IER against LCR.DLAB
-      serial: tegra: avoid reg access when clk disabled
-
-Andreas Abel (1):
-      serial: tegra: add internal loopback functionality
-
-Andrey Smirnov (21):
-      tty: serial: fsl_lpuart: Flush HW FIFOs in .flush_buffer
-      tty: serial: fsl_lpuart: Simplify RX/TX IRQ handlers
-      tty: serial: fsl_lpuart: Fix bogus indentation
-      tty: serial: fsl_lpuart: Drop unnecessary uart_write_wakeup()
-      tty: serial: fsl_lpuart: Fix issue in software flow control
-      tty: serial: fls_lpuart: Split shared TX IRQ handler into two
-      tty: serial: fsl_lpuart: Drop no-op bit opearation
-      tty: serial: fsl_lpuart: Drop unnecessary extra parenthesis
-      tty: serial: fsl_lpuart: Clear CSTOPB unconditionally
-      tty: serial: fsl_lpuart: Use appropriate lpuart32_* I/O funcs
-      tty: serial: fsl_lpuart: Introduce lpuart_wait_bit_set()
-      tty: serial: fsl_lpuart: Use cpu_relax() instead of barrier()
-      tty: serial: fsl_lpuart: Introduce lpuart_stopped_or_empty()
-      tty: serial: fsl_lpuart: Drop unnecessary lpuart*_stop_tx()
-      tty: serial: fsl_lpuart: Introduce lpuart_dma_shutdown()
-      tty: serial: fsl_lpuart: Introduce lpuart_tx_dma_startup()
-      tty: serial: fsl_lpuart: Introduce lpuart_rx_dma_startup()
-      tty: serial: fsl_lpuart: Introduce lpuart32_configure()
-      tty: serial: fsl_lpuart: Introduce lpuart*_setup_watermark_enable()
-      tty: serial: fsl_lpuart: Don't enable TIE in .startup() or .resume()
-      tty: serial: fsl_lpuart: Ignore TX/RX interrupts if DMA is enabled
-
-Andy Shevchenko (17):
-      serial: 8250_exar: Use struct_size() helper
-      serial: 8250_pnp: Move to struct dev_pm_ops
-      serial: 8250_exar: No need to autoconfigure Exar ports
-      serial: 8250_exar: Extract PM routine from 8250_port
-      serial: 8250_exar: Move custom divisor support out from 8250_port
-      serial: 8250_exar: Consolidate callback assignments in default_setup()
-      serial: 8250_exar: Replace msleep(1) with usleep_range()
-      serial: 8250_dw: Use a unified new dev variable in remove
-      serial: 8250_dw: use pointer to uart local variable
-      serial: 8250_dw: split Synopsys DesignWare 8250 common functions
-      serial: 8250_dw: switch to use 8250_dwlib library
-      serial: 8250_lpss: switch to use 8250_dwlib library
-      serial: 8250_lpss: add fractional divisor support
-      serial: 8250_lpss: register DMA IRQ and pool with instance ID
-      serial: 8250_lpss: Get rid of custom LPSS_DEVICE() macro
-      serial: 8250_lpss: Enable HS UART on Elkhart Lake
-      serial: mctrl_gpio: Use gpiod flags directly
-
-Arnd Bergmann (1):
-      serial: remove ks8695 driver
-
-Baolin Wang (1):
-      serial: sprd: Add loopback function support
-
-Christoph Vogtländer (2):
-      serial: max310x: Properly set flags in AutoCTS mode
-      serial: max310x: turn off transmitter before activating AutoCTS or auto transmitter flow control
-
-Chuhong Yuan (2):
-      serial: 8250: Use dev_get_drvdata where possible
-      tty: nozomi: Use dev_get_drvdata
-
-Chunyan Zhang (4):
-      serial: sprd: check the right port and membase
-      serial: sprd: add console_initcall in sprd's uart driver
-      serial: sprd: keep console alive even if missing the 'enable' clock
-      serial: sprd: correct the wrong sequence of arguments
-
-Colin Ian King (2):
-      tty/isicom: remove redundant assignment to variable word_count
-      tty/serial: atmel: remove redundant assignment to ret
-
-Erwan Le Ray (4):
-      dt-bindings: serial: stm32: add wakeup option
-      serial: stm32: select pinctrl state in each suspend/resume function
-      serial: stm32: add pm_runtime support
-      serial: stm32: Use __maybe_unused instead of #if CONFIG_PM_SLEEP
-
-Frieder Schrempf (3):
-      serial: mctrl_gpio: Avoid probe failures in case of missing gpiolib
-      serial: sh-sci: Don't check for mctrl_gpio_init() returning -ENOSYS
-      serial: 8250: Don't check for mctrl_gpio_init() returning -ENOSYS
-
-Fugang Duan (5):
-      tty: serial: fsl_lpuart: remove the dev.coherent_dma_mask zero setting
-      tty: serial: fsl_lpuart: add earlycon for imx8qxp platform
-      tty: serial: fsl_lpuart: use kzalloc() instead of kmalloc()
-      tty: serial: fsl_lpuart: remove sg_set_buf() for sport->rx_sgl
-      tty: serial: fsl_lpuart: correct the FIFO depth size
-
-Fuqian Huang (1):
-      tty: serial: Remove call to memset after pci_alloc_consistent
-
-Geert Uytterhoeven (3):
-      serial: sh-sci: Use DEVICE_ATTR_RW() for rx_fifo_trigger
-      serial: sh-sci: Don't check for mctrl_gpio_to_gpiod() returning error
-      serial: mxs-auart: Don't check for mctrl_gpio_to_gpiod() returning error
-
-Greg Kroah-Hartman (1):
-      serial: sh-sci: use driver core functions, not sysfs ones.
-
-Jan Kundrát (1):
-      tty: max310x: fix off-by-one buffer access when storing overrun
-
-Je Yen Tam (1):
-      serial/8250: Add support for NI-Serial PXI/PXIe+485 devices
-
-Ji-Ze Hong (Peter Hong) (1):
-      serial: 8250_pci: Add F81504A series Support
-
-Joe Perches (1):
-      tty: hvcs: Fix odd use of strlcpy
-
-Kai-Heng Feng (3):
-      serial: 8250_pci: Add support for Sunix serial boards
-      parport: parport_serial: Add support for Sunix Multi I/O boards
-      serial: 8250_pci: Merge 8250_moxa to 8250_pci
-
-Krishna Yarlagadda (9):
-      serial: tegra: report error to upper tty layer
-      dt-binding: serial: tegra: add new chips
-      serial: tegra: check for FIFO mode enabled status
-      serial: tegra: set maximum num of uart ports to 8
-      serial: tegra: add support to use 8 bytes trigger
-      serial: tegra: DT for Adjusted baud rates
-      serial: tegra: add support to adjust baud rate
-      serial: tegra: report clk rate errors
-      serial: tegra: Add PIO mode support
-
-Mao Wenan (1):
-      tty: serial: add dependence for CONFIG_SERIAL_FSL_LINFLEXUART
-
-Martin Hundebøll (5):
-      tty: n_gsm: remove obsolete mknod doc example
-      tty: n_gsm: update doc example to use header for N_GSM0710 define
-      tty: n_gsm: add helpers to convert mux-num to/from tty-base
-      tty: n_gsm: add ioctl to map serial device to mux'ed tty
-      tty: n_gsm: avoid recursive locking with async port hangup
-
-Navid Emamdoost (1):
-      8250_lpss: check null return when calling pci_ioremap_bar
-
-Pragnesh Patel (1):
-      dt-bindings: serial: Convert riscv,sifive-serial to json-schema
-
-Rahul Tanwar (4):
-      serial: lantiq: Add SMP support
-      serial: lantiq: Use proper DT compatible string
-      serial: lantiq: Make IRQ & ISR assignment dynamic
-      serial: lantiq: Add support for Lightning Mountain SoC
-
-Ralf Ramsauer (1):
-      serial: 8250_pci: Implement MSI(-X) support
-
-Razvan Stefanescu (1):
-      tty/serial: atmel: reschedule TX after RX was started
-
-Richard Genoud (1):
-      tty/serial: atmel: remove unneeded atmel_get_lines_status function
-
-Robert Middleton (1):
-      serial: 8250_exar: Clear buffer before shutdown
-
-Sergey Organov (8):
-      serial: imx: set_termios(): do not enable autoRTS if RTS is unset
-      serial: imx: set_mctrl(): correctly restore autoRTS state
-      serial: imx: get rid of imx_uart_rts_auto()
-      serial: imx: get rid of unbounded busy-waiting loop
-      serial: imx: do not stop Rx/Tx on termios change
-      serial: imx: do not disable individual irqs during termios change
-      serial: imx: fix data breakage on termios change
-      serial: imx: use Tx ready rather than Tx empty irq
-
-Shardar Shariff Md (2):
-      serial: tegra: add support to ignore read
-      serial: tegra: flush the RX fifo on frame error
-
-Stefan Agner (2):
-      tty: serial: fsl_lpuart: fix framing error handling when using DMA
-      tty: serial: fsl_lpuart: flush receive FIFO after overruns
-
-Stefan-gabriel Mirea (2):
-      tty: serial: Add linflexuart driver for S32V234
-      serial: fsl_linflexuart: Update compatible string
-
-Stephen Boyd (1):
-      tty: Remove dev_err() usage after platform_get_irq()
-
-Stephen Rothwell (1):
-      xilinx_uartps.c: suppress "may be used uninitialised" warning
-
-Stoica Cosmin-Stefan (1):
-      dt-bindings: serial: Document Freescale LINFlexD UART
-
-Tony Lindgren (1):
-      serial: 8250_omap: Fix idling for unloaded serdev drivers
-
-Vivek Gautam (1):
-      tty: serial: qcom_geni_serial: Update the oversampling rate
-
-Wei Yongjun (1):
-      tty: serial: linflexuart: Use DEFINE_SPINLOCK() for spinlock
-
-YueHaibing (1):
-      tty: serial: qcom_geni_serial: use devm_platform_ioremap_resource() to simplify code
-
-kbuild test robot (1):
-      tty: serial: fix platform_no_drv_owner.cocci warnings
-
- Documentation/admin-guide/kernel-parameters.txt    |   6 +
- .../bindings/serial/fsl,s32-linflexuart.txt        |  22 +
- .../bindings/serial/nvidia,tegra20-hsuart.txt      |  39 +-
- .../devicetree/bindings/serial/sifive-serial.txt   |  33 -
- .../devicetree/bindings/serial/sifive-serial.yaml  |  62 ++
- .../devicetree/bindings/serial/st,stm32-usart.txt  |   5 +
- Documentation/driver-api/serial/n_gsm.rst          |  19 +-
- drivers/parport/parport_serial.c                   |  44 +-
- drivers/tty/hvc/hvcs.c                             |   4 +-
- drivers/tty/isicom.c                               |   1 -
- drivers/tty/n_gsm.c                                |  25 +-
- drivers/tty/nozomi.c                               |   4 +-
- drivers/tty/serial/8250/8250_bcm2835aux.c          |   4 +-
- drivers/tty/serial/8250/8250_core.c                |   6 +-
- drivers/tty/serial/8250/8250_dw.c                  | 173 +---
- drivers/tty/serial/8250/8250_dwlib.c               | 126 +++
- drivers/tty/serial/8250/8250_dwlib.h               |  19 +
- drivers/tty/serial/8250/8250_exar.c                | 114 ++-
- drivers/tty/serial/8250/8250_lpc18xx.c             |   4 +-
- drivers/tty/serial/8250/8250_lpss.c                |  76 +-
- drivers/tty/serial/8250/8250_moxa.c                | 155 ----
- drivers/tty/serial/8250/8250_omap.c                |  11 +-
- drivers/tty/serial/8250/8250_pci.c                 | 651 +++++++++++++-
- drivers/tty/serial/8250/8250_pnp.c                 |  20 +-
- drivers/tty/serial/8250/8250_port.c                |  93 +-
- drivers/tty/serial/8250/8250_uniphier.c            |   4 +-
- drivers/tty/serial/8250/Kconfig                    |  15 +-
- drivers/tty/serial/8250/Makefile                   |   2 +-
- drivers/tty/serial/Kconfig                         |  33 +-
- drivers/tty/serial/Makefile                        |   2 +-
- drivers/tty/serial/amba-pl011.c                    |   5 +-
- drivers/tty/serial/atmel_serial.c                  |  51 +-
- drivers/tty/serial/fsl_linflexuart.c               | 937 +++++++++++++++++++++
- drivers/tty/serial/fsl_lpuart.c                    | 518 ++++++------
- drivers/tty/serial/icom.c                          |   2 -
- drivers/tty/serial/imx.c                           |  88 +-
- drivers/tty/serial/lantiq.c                        | 261 ++++--
- drivers/tty/serial/lpc32xx_hs.c                    |   5 +-
- drivers/tty/serial/max310x.c                       |  32 +-
- drivers/tty/serial/mvebu-uart.c                    |  12 +-
- drivers/tty/serial/mxs-auart.c                     |   6 +-
- drivers/tty/serial/owl-uart.c                      |   4 +-
- drivers/tty/serial/qcom_geni_serial.c              |  23 +-
- drivers/tty/serial/rda-uart.c                      |   4 +-
- drivers/tty/serial/sccnxp.c                        |   1 -
- drivers/tty/serial/serial-tegra.c                  | 407 +++++++--
- drivers/tty/serial/serial_ks8695.c                 | 698 ---------------
- drivers/tty/serial/serial_mctrl_gpio.c             |  36 +-
- drivers/tty/serial/serial_mctrl_gpio.h             |   6 +-
- drivers/tty/serial/sh-sci.c                        |  50 +-
- drivers/tty/serial/sifive.c                        |   4 +-
- drivers/tty/serial/sprd_serial.c                   |  58 +-
- drivers/tty/serial/stm32-usart.c                   |  72 +-
- drivers/tty/serial/xilinx_uartps.c                 |   2 +-
- include/uapi/linux/gsmmux.h                        |   2 +
- include/uapi/linux/serial_core.h                   |   9 +-
- 56 files changed, 3207 insertions(+), 1858 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/serial/fsl,s32-linflexuart.txt
- delete mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
- create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.yaml
- create mode 100644 drivers/tty/serial/8250/8250_dwlib.c
- create mode 100644 drivers/tty/serial/8250/8250_dwlib.h
- delete mode 100644 drivers/tty/serial/8250/8250_moxa.c
- create mode 100644 drivers/tty/serial/fsl_linflexuart.c
- delete mode 100644 drivers/tty/serial/serial_ks8695.c
+> ---
+>  mm/zswap.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 0e22744a76cb..b35464bc7315 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -856,7 +856,6 @@ static int zswap_writeback_entry(struct zpool *pool, unsigned long handle)
+>         /* extract swpentry from data */
+>         zhdr = zpool_map_handle(pool, handle, ZPOOL_MM_RO);
+>         swpentry = zhdr->swpentry; /* here */
+> -       zpool_unmap_handle(pool, handle);
+>         tree = zswap_trees[swp_type(swpentry)];
+>         offset = swp_offset(swpentry);
+>
+> @@ -866,6 +865,7 @@ static int zswap_writeback_entry(struct zpool *pool, unsigned long handle)
+>         if (!entry) {
+>                 /* entry was invalidated */
+>                 spin_unlock(&tree->lock);
+> +               zpool_unmap_handle(pool, handle);
+>                 return 0;
+>         }
+>         spin_unlock(&tree->lock);
+> @@ -886,15 +886,13 @@ static int zswap_writeback_entry(struct zpool *pool, unsigned long handle)
+>         case ZSWAP_SWAPCACHE_NEW: /* page is locked */
+>                 /* decompress */
+>                 dlen = PAGE_SIZE;
+> -               src = (u8 *)zpool_map_handle(entry->pool->zpool, entry->handle,
+> -                               ZPOOL_MM_RO) + sizeof(struct zswap_header);
+> +               src = (u8 *)zhdr + sizeof(struct zswap_header);
+>                 dst = kmap_atomic(page);
+>                 tfm = *get_cpu_ptr(entry->pool->tfm);
+>                 ret = crypto_comp_decompress(tfm, src, entry->length,
+>                                              dst, &dlen);
+>                 put_cpu_ptr(entry->pool->tfm);
+>                 kunmap_atomic(dst);
+> -               zpool_unmap_handle(entry->pool->zpool, entry->handle);
+>                 BUG_ON(ret);
+>                 BUG_ON(dlen != PAGE_SIZE);
+>
+> @@ -940,6 +938,7 @@ static int zswap_writeback_entry(struct zpool *pool, unsigned long handle)
+>         spin_unlock(&tree->lock);
+>
+>  end:
+> +       zpool_unmap_handle(pool, handle);
+>         return ret;
+>  }
+>
+> --
+> 2.17.1
