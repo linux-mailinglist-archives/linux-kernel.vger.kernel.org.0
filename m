@@ -2,35 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B3FB5CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:28:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67554B5CBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:29:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730461AbfIRG1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:27:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
+        id S1730020AbfIRG2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:28:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729595AbfIRG1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:27:05 -0400
+        id S1730456AbfIRG1I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:27:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A182D218AF;
-        Wed, 18 Sep 2019 06:27:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2946221906;
+        Wed, 18 Sep 2019 06:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568788025;
-        bh=YVgQAE+ShXp0iEK2UypFwnD3fjYWg9f059yM5kZSxRo=;
+        s=default; t=1568788027;
+        bh=DO155T9TYv+TyBqzz+WkFhf+n8NXB7p7oq7eXTJ/cEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QSH7BelfBidkIbQbeJozkMyMWOcSuQKjHY+08VIlG74vE85izMuJXbCeM65+KgGzF
-         8JCzCp9/Qt7LBfsSa4M8u8aL9iC+imdyxM5ZCKmddP9vWbXYpwftcdGF8YiNeL11pO
-         GhLwhyHRq61vguNt8hX81kggJsD3zR18ZcSuMhT8=
+        b=UZKasugyQVK9E+bI/8oMBzpv1DQfoWMLAR143whR8p8HKTCGshBDVj/UJ8EYXq+XG
+         UJX+6ugWAoZ13RkS4lmHgIhCdHQhe80gxQRmcqaxuTHkLcp9Cl4HpXhXGRCrEhBNWy
+         6d2dUkkFIdX1FpWUN1EpA4Z+gfj2cIwxPWY0zqBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>
-Subject: [PATCH 5.2 71/85] drm/mediatek: mtk_drm_drv.c: Add of_node_put() before goto
-Date:   Wed, 18 Sep 2019 08:19:29 +0200
-Message-Id: <20190918061237.653050886@linuxfoundation.org>
+        stable@vger.kernel.org, Henry Burns <henryburns@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Vitaly Wool <vitalywool@gmail.com>,
+        Vitaly Vul <vitaly.vul@sony.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Snild Dolkow <snild@sony.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.2 72/85] mm/z3fold.c: remove z3fold_migration trylock
+Date:   Wed, 18 Sep 2019 08:19:30 +0200
+Message-Id: <20190918061237.682280260@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
 References: <20190918061234.107708857@linuxfoundation.org>
@@ -43,44 +50,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nishka Dasgupta <nishkadg.linux@gmail.com>
+From: Henry Burns <henryburns@google.com>
 
-commit 165d42c012be69900f0e2f8545626cb9e7d4a832 upstream.
+commit be03074c9af25d06cf8e9ebddfcd284c0bf7f947 upstream.
 
-Each iteration of for_each_child_of_node puts the previous
-node, but in the case of a goto from the middle of the loop, there is
-no put, thus causing a memory leak. Hence add an of_node_put before the
-goto in two places.
-Issue found with Coccinelle.
+z3fold_page_migrate() will never succeed because it attempts to acquire
+a lock that has already been taken by migrate.c in __unmap_and_move().
 
-Fixes: 119f5173628a (drm/mediatek: Add DRM Driver for Mediatek SoC MT8173)
+  __unmap_and_move() migrate.c
+    trylock_page(oldpage)
+    move_to_new_page(oldpage_newpage)
+      a_ops->migrate_page(oldpage, newpage)
+        z3fold_page_migrate(oldpage, newpage)
+          trylock_page(oldpage)
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Link: http://lkml.kernel.org/r/20190710213238.91835-1-henryburns@google.com
+Fixes: 1f862989b04a ("mm/z3fold.c: support page migration")
+Signed-off-by: Henry Burns <henryburns@google.com>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Cc: Vitaly Wool <vitalywool@gmail.com>
+Cc: Vitaly Vul <vitaly.vul@sony.com>
+Cc: Jonathan Adams <jwadams@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Snild Dolkow <snild@sony.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ mm/z3fold.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -567,12 +567,15 @@ static int mtk_drm_probe(struct platform
- 			comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
- 			if (!comp) {
- 				ret = -ENOMEM;
-+				of_node_put(node);
- 				goto err_node;
- 			}
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -1439,16 +1439,11 @@ static int z3fold_page_migrate(struct ad
+ 	zhdr = page_address(page);
+ 	pool = zhdr_to_pool(zhdr);
  
- 			ret = mtk_ddp_comp_init(dev, node, comp, comp_id, NULL);
--			if (ret)
-+			if (ret) {
-+				of_node_put(node);
- 				goto err_node;
-+			}
+-	if (!trylock_page(page))
+-		return -EAGAIN;
+-
+ 	if (!z3fold_page_trylock(zhdr)) {
+-		unlock_page(page);
+ 		return -EAGAIN;
+ 	}
+ 	if (zhdr->mapped_count != 0) {
+ 		z3fold_page_unlock(zhdr);
+-		unlock_page(page);
+ 		return -EBUSY;
+ 	}
+ 	if (work_pending(&zhdr->work)) {
+@@ -1494,7 +1489,6 @@ static int z3fold_page_migrate(struct ad
+ 	spin_unlock(&pool->lock);
  
- 			private->ddp_comp[comp_id] = comp;
- 		}
+ 	page_mapcount_reset(page);
+-	unlock_page(page);
+ 	put_page(page);
+ 	return 0;
+ }
 
 
