@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E02BCB5C7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A448B5C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbfIRG0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:26:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48354 "EHLO mail.kernel.org"
+        id S1728064AbfIRGXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:23:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729091AbfIRG0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:26:47 -0400
+        id S1727780AbfIRGXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E780D21929;
-        Wed, 18 Sep 2019 06:26:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BB6E21925;
+        Wed, 18 Sep 2019 06:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568788006;
-        bh=BBrli+y3f8EF3fr4Z8ZFQrePScdKL2Ig7+3G/ewg78g=;
+        s=default; t=1568787802;
+        bh=Pp3nDBeY+qGfyEIy4vUl2zcr6NCJzZ1+TtephsJC88o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fe9yNGgNR/Qe330sJE0qODVNYi4kkughjAwjPpUael6JYI5blxmp+skowjvIDiL4a
-         qGEdD1CAz52Rt2M+FGJ6xjrLRcl0SX4uD5ORbclDZ6ViGCzuq5PXyDbxc9CqPDHWE3
-         Qbeyaj0F2OHmwA607YHoUJE5GsWtnS+BEpQdf/KA=
+        b=A59puAEGe7AnZRjB6wk9eS2qy8QAl5Df+3hIEYVxpDQZHCkSWq7HWIAMh99yvVZvq
+         6YZ0W5HwmoCHTS+UgHKHZKQq6gEkd6xGqeuzv9/ns7QlFGk1DNbTi+FD1CuJwhLhQb
+         To1CbLBWAfzg2iT6Z3rXVeaid+y5RKUElr5m8blI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.2 65/85] crypto: talitos - check data blocksize in ablkcipher.
+        stable@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>,
+        Nishanth Menon <nm@ti.com>,
+        Alejandro Hernandez <ajhernandez@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Subject: [PATCH 4.19 40/50] firmware: ti_sci: Always request response from firmware
 Date:   Wed, 18 Sep 2019 08:19:23 +0200
-Message-Id: <20190918061237.473569019@linuxfoundation.org>
+Message-Id: <20190918061227.800697762@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Andrew F. Davis <afd@ti.com>
 
-commit ee483d32ee1a1a7f7d7e918fbc350c790a5af64a upstream.
+commit 66f030eac257a572fbedab3d9646d87d647351fd upstream.
 
-When data size is not a multiple of the alg's block size,
-the SEC generates an error interrupt and dumps the registers.
-And for NULL size, the SEC does just nothing and the interrupt
-is awaited forever.
+TI-SCI firmware will only respond to messages when the
+TI_SCI_FLAG_REQ_ACK_ON_PROCESSED flag is set. Most messages already do
+this, set this for the ones that do not.
 
-This patch ensures the data size is correct before submitting
-the request to the SEC engine.
+This will be enforced in future firmware that better match the TI-SCI
+specifications, this patch will not break users of existing firmware.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: aa276781a64a ("firmware: Add basic support for TI System Control Interface (TI-SCI) protocol")
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Acked-by: Nishanth Menon <nm@ti.com>
+Tested-by: Alejandro Hernandez <ajhernandez@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Santosh Shilimkar <santosh.shilimkar@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/firmware/ti_sci.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1725,6 +1725,14 @@ static int ablkcipher_encrypt(struct abl
- 	struct crypto_ablkcipher *cipher = crypto_ablkcipher_reqtfm(areq);
- 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
- 	struct talitos_edesc *edesc;
-+	unsigned int blocksize =
-+			crypto_tfm_alg_blocksize(crypto_ablkcipher_tfm(cipher));
-+
-+	if (!areq->nbytes)
-+		return 0;
-+
-+	if (areq->nbytes % blocksize)
-+		return -EINVAL;
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -463,9 +463,9 @@ static int ti_sci_cmd_get_revision(struc
+ 	struct ti_sci_xfer *xfer;
+ 	int ret;
  
- 	/* allocate extended descriptor */
- 	edesc = ablkcipher_edesc_alloc(areq, true);
-@@ -1742,6 +1750,14 @@ static int ablkcipher_decrypt(struct abl
- 	struct crypto_ablkcipher *cipher = crypto_ablkcipher_reqtfm(areq);
- 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
- 	struct talitos_edesc *edesc;
-+	unsigned int blocksize =
-+			crypto_tfm_alg_blocksize(crypto_ablkcipher_tfm(cipher));
-+
-+	if (!areq->nbytes)
-+		return 0;
-+
-+	if (areq->nbytes % blocksize)
-+		return -EINVAL;
+-	/* No need to setup flags since it is expected to respond */
+ 	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_VERSION,
+-				   0x0, sizeof(struct ti_sci_msg_hdr),
++				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
++				   sizeof(struct ti_sci_msg_hdr),
+ 				   sizeof(*rev_info));
+ 	if (IS_ERR(xfer)) {
+ 		ret = PTR_ERR(xfer);
+@@ -593,9 +593,9 @@ static int ti_sci_get_device_state(const
+ 	info = handle_to_ti_sci_info(handle);
+ 	dev = info->dev;
  
- 	/* allocate extended descriptor */
- 	edesc = ablkcipher_edesc_alloc(areq, false);
+-	/* Response is expected, so need of any flags */
+ 	xfer = ti_sci_get_one_xfer(info, TI_SCI_MSG_GET_DEVICE_STATE,
+-				   0, sizeof(*req), sizeof(*resp));
++				   TI_SCI_FLAG_REQ_ACK_ON_PROCESSED,
++				   sizeof(*req), sizeof(*resp));
+ 	if (IS_ERR(xfer)) {
+ 		ret = PTR_ERR(xfer);
+ 		dev_err(dev, "Message alloc failed(%d)\n", ret);
 
 
