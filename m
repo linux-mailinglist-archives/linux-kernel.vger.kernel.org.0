@@ -2,172 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D8EB68A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A3EB68B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:10:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732064AbfIRRGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 13:06:50 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:46346 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726908AbfIRRGt (ORCPT
+        id S1731320AbfIRRJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 13:09:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43762 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727243AbfIRRJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:06:49 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IH6iPq120554;
-        Wed, 18 Sep 2019 12:06:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568826404;
-        bh=uJVcOB+ch38YNMZP4f1rNkBv5jy24fM/dgvduX4wNqs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=lrjHapFy0Xjxm7F/eUB9mlxvptcXK8XzN2gbibV2r9SuxErIIHyA0mS3XYaHggLws
-         7CFXvQ0uxxjco0xex8PJ2NJbzxVpbLNorlzm3BrEhRW/hvDGt83GgUU6MYpYgTy+NC
-         ycxXTwO7YdgRBDBPeEzd1Hqh5GSqGDdvf9/24OEo=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IH6iSt029052
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Sep 2019 12:06:44 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
- Sep 2019 12:06:44 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 18 Sep 2019 12:06:41 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IH6iBw084821;
-        Wed, 18 Sep 2019 12:06:44 -0500
-Subject: Re: [PATCH v6 6/9] leds: multicolor: Introduce a multicolor class
- definition
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        Greg KH <gregkh@linuxfoundation.org>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190917175937.13872-1-dmurphy@ti.com>
- <20190917175937.13872-6-dmurphy@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <f5cf1fa4-c891-744c-6fa9-4b166b64f463@ti.com>
-Date:   Wed, 18 Sep 2019 12:09:12 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 18 Sep 2019 13:09:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=H2TiSbCkuglf2I9jOUFe26893CVHAZYtLkhZApl8OdA=; b=pTEQ57emX3/HDj8yosPbbcfJy
+        DvKwdE/lJDmvM8seGg04Ejj5N3atlZjzti9xhkXAQgtO2h4lRmfF6mVsFa8jIjrPnmmoyHuV/H/ub
+        Nq2BpXqQxgCiT48mNofGVkHgBLExjRLSoI4+eKtYN/+sWYD8Zw64+DWjjKfPw9qCEg1xQ=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iAdSj-0006P6-Jy; Wed, 18 Sep 2019 17:09:53 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id E41692742927; Wed, 18 Sep 2019 18:09:52 +0100 (BST)
+Date:   Wed, 18 Sep 2019 18:09:52 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Greg KH <greg@kroah.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-i2c@vger.kernel.org,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: build failure after merge of the driver-core tree
+Message-ID: <20190918170952.GT2596@sirena.co.uk>
 MIME-Version: 1.0
-In-Reply-To: <20190917175937.13872-6-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="++alDQ2ROsODg1x+"
+Content-Disposition: inline
+X-Cookie: The devil finds work for idle glands.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg
 
-<snip>
+--++alDQ2ROsODg1x+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +static int led_multicolor_init_color(struct led_classdev_mc_data *data,
-> +				     struct led_classdev_mc *mcled_cdev,
-> +				     int color_id, int color_index)
-> +{
-> +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
-> +	struct led_mc_color_entry *mc_priv;
-> +	int ret;
-> +
-> +	mc_priv = devm_kzalloc(led_cdev->dev, sizeof(*mc_priv), GFP_KERNEL);
-> +	if (!mc_priv)
-> +		return -ENOMEM;
-> +
-> +	mc_priv->led_color_id = color_id;
-> +	mc_priv->mcled_cdev = mcled_cdev;
-> +
-> +	led_color_group.name = led_colors[color_id];
-> +	ret = sysfs_create_group(data->color_kobj, &led_color_group);
-> +	if (ret)
-> +		return ret;
-> +
-> +	sysfs_attr_init(&mc_priv->intensity_attr.attr);
-> +	mc_priv->intensity_attr.attr.name = "intensity";
-> +	mc_priv->intensity_attr.attr.mode = 666;
-> +	mc_priv->intensity_attr.store = intensity_store;
-> +	mc_priv->intensity_attr.show = intensity_show;
-> +	ret = sysfs_add_file_to_group(data->color_kobj,
-> +				      &mc_priv->intensity_attr.attr,
-> +				      led_color_group.name);
-> +	if (ret)
-> +		return ret;
-> +
-> +	sysfs_attr_init(&mc_priv->max_intensity_attr.attr);
-> +	mc_priv->max_intensity_attr.attr.name = "max_intensity";
-> +	mc_priv->max_intensity_attr.attr.mode = 444;
-> +	mc_priv->max_intensity_attr.show = max_intensity_show;
-> +	ret = sysfs_add_file_to_group(data->color_kobj,
-> +				      &mc_priv->max_intensity_attr.attr,
-> +				      led_color_group.name);
-> +	if (ret)
-> +		goto err_out;
-> +
-> +	mc_priv->max_intensity = LED_FULL;
-> +	list_add_tail(&mc_priv->list, &data->color_list);
-> +
-> +err_out:
-> +	return ret;
-> +}
-> +
-> +static int led_multicolor_init_color_dir(struct led_classdev_mc_data *data,
-> +					 struct led_classdev_mc *mcled_cdev)
-> +{
-> +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
-> +	u32 color_id;
-> +	int ret;
-> +	int i, j = 0;
-> +
-> +	data->color_kobj = kobject_create_and_add("colors",
-> +						  &led_cdev->dev->kobj);
+Hi all,
 
-We need some guidance here on how to properly create sub directories 
-more then 1 level deep.
+After merging the driver-core tree, today's linux-next build
+for arm64 allmodconfig failed like this:
 
-In short under the LED class device parent directory we want to create a 
-directory called "colors".
+/home/broonie/next/next/drivers/i2c/i2c-core-acpi.c: In function 'i2c_acpi_find_adapter_by_handle':
+/home/broonie/next/next/drivers/i2c/i2c-core-acpi.c:352:10: error: 'i2c_acpi_find_match_adapter' undeclared (first use in this function); did you mean 'i2c_acpi_find_bus_speed'?
+          i2c_acpi_find_match_adapter);
+          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+          i2c_acpi_find_bus_speed
+/home/broonie/next/next/drivers/i2c/i2c-core-acpi.c:352:10: note: each undeclared identifier is reported only once for each function it appears in
 
-Under that directory we want to create a directory corresponding to the 
-monochrome LED color.
-Under that directory we have the files to for intensity and 
-max_intensity for the monochrome LED.
+Caused by commit
 
-We can use the LED class kobject to create the colors directory using 
-the sysfs calls but the issue comes when creating the LED color 
-directory.  We don't have a kobj for colors to associate those 
-directories to.  The only API we see to use the kobject_create_and_add 
-which then gives us the colors directory kobj.
+  644bf600889554210 ("i2c: Revert incorrect conversion to use generic helper")
 
-So the directory structure would look like this which is explained in 
-this patch https://lore.kernel.org/patchwork/patch/1128444/
+In yesterday's -next that function existed but it appears to have been
+removed in Linus' tree as part of the merge:
 
-Directory Layout Example
-========================
-root:/sys/class/leds/rgb:grouped_leds# ls -lR colors/
-colors/:
-drwxr-xr-x    2 root     root             0 Jun 28 20:21 blue
-rwxr-xr-x    2 root     root             0 Jun 28 20:21 green
-drwxr-xr-x    2 root     root             0 Jun 28 20:21 red
+  4feaab05dc1eda3 ("Merge tag 'leds-for-5.4-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds")
 
-colors/blue:
--rw-------    1 root     root          4096 Jun 28 20:21 intensity
--r--------    1 root     root          4096 Jun 28 20:27 max_intensity
-+colors/green:
--rw-------    1 root     root          4096 Jun 28 20:22 intensity
--r--------    1 root     root          4096 Jun 28 20:27 max_intensity
+by the commit
 
-colors/red:
--rw-------    1 root     root          4096 Jun 28 20:21 intensity
--r--------    1 root     root          4096 Jun 28 20:27 max_intensity
+  00500147cbd3fc5 ("drivers: Introduce device lookup variants by ACPI_COMPANION device")
 
-I have reviewed your example code and read your blogs and papers on the 
-subject but nothing really talks about sub-sub directories.
+(ie, the commit that the failing commit was trying to revert.)  I
+suspect this is confusion caused by things going into Linus' tree in
+different orders.  I've fixed this up by re-adding the function.
 
-Now if this is a no-no in the kernel that is fine we can adjust but 
-Jacek wanted to get your opinon/guidance on this topic.
+--++alDQ2ROsODg1x+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Dan
+-----BEGIN PGP SIGNATURE-----
 
-<snip>
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2CZN8ACgkQJNaLcl1U
+h9CK5wf+LSPVgpYCM6eyOPVq2Ck7uZKNd6iI6NX4ELVYJ0TUIsXqhASEQAhKxBqx
+aLnwiJOciQQT3G+N81Gv5BbAP3ip4coXMHIp+rL4HN89L6nRzh8s2sUSfxfoG62Y
+VAO/TxeyqCujNstzf/TcmkL6ahDoh6nByPoD9hfXlja5feNGUhkPoARpINCRk6bC
+tTtFRExjCemrIzMucLbaawpnb0RWUPUSVJaLN0YKhbHflzzrBYLTVorbfkG9hjOF
+KYg35WZIJmOEqThrybghmAJ8/e2WkuFFxNpPH4XfQMXS08WJ5Nt0SWrRDdkDBrCQ
+/KAGhmjhotCLL/TUTPfJ5erbmYLf3A==
+=V/kw
+-----END PGP SIGNATURE-----
+
+--++alDQ2ROsODg1x+--
