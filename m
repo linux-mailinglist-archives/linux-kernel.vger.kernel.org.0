@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2675B5C5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A2CBB5C9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730169AbfIRGZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46640 "EHLO mail.kernel.org"
+        id S1728775AbfIRG14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:27:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730152AbfIRGZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:36 -0400
+        id S1729777AbfIRG1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:27:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E004521925;
-        Wed, 18 Sep 2019 06:25:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C6D721924;
+        Wed, 18 Sep 2019 06:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787935;
-        bh=U9DpG53GL6w9YrFfEY8N076J1h21axkip3hX3GgBUDA=;
+        s=default; t=1568788069;
+        bh=CapMQcwz8Xsl+NfwobmOyBqf7rfL3JT1Ov3A4rA6++E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TbrMWmBv1Vkw1YdQ80SNx5A92qAp/XNi6QALGm3o+wfEfQvWRFN88egPFDPG8kjIU
-         EHMeUtyAkQhqOLjAXXbiX1gGPGN6l+VzXXfUT2PW9usCPI7iO91VP/laCcJO6ZoKGz
-         xPb14jzgvOqP8NQvmgmwgEEV6eesJlwhqSAuHMDg=
+        b=X5QvFyFBDWOhTxtIFcdPuiUI3Qd1TJ2fsg7jH49Ir3UqYBO19E364GYL+Oa5zoBhn
+         ueCyzehsRvM1sf2Yjbxg6fb3Fa2iaGBgKwNe0wCamtjVfMxuzG/+8hiX2nJNPzwFMm
+         NH40EfiX7c3iI6P8R+SHClLuhzaS6zkQTbyDEP0g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Maximets <i.maximets@samsung.com>,
-        William Tu <u9012063@gmail.com>,
-        Eelco Chaudron <echaudro@redhat.com>,
+        stable@vger.kernel.org,
+        Gregg Leventhal <gleventhal@janestreet.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: [PATCH 5.2 37/85] ixgbe: fix double clean of Tx descriptors with xdp
-Date:   Wed, 18 Sep 2019 08:18:55 +0200
-Message-Id: <20190918061235.318662150@linuxfoundation.org>
+Subject: [PATCH 5.2 38/85] ixgbe: Prevent u8 wrapping of ITR value to something less than 10us
+Date:   Wed, 18 Sep 2019 08:18:56 +0200
+Message-Id: <20190918061235.347046644@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
 References: <20190918061234.107708857@linuxfoundation.org>
@@ -45,98 +46,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Maximets <i.maximets@samsung.com>
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-commit bf280c0387ebbf8eebad1036fca8f7b85ebfde32 upstream.
+commit 377228accbbb8b9738f615d791aa803f41c067e0 upstream.
 
-Tx code doesn't clear the descriptors' status after cleaning.
-So, if the budget is larger than number of used elems in a ring, some
-descriptors will be accounted twice and xsk_umem_complete_tx will move
-prod_tail far beyond the prod_head breaking the completion queue ring.
-
-Fix that by limiting the number of descriptors to clean by the number
-of used descriptors in the Tx ring.
-
-'ixgbe_clean_xdp_tx_irq()' function refactored to look more like
-'ixgbe_xsk_clean_tx_ring()' since we're allowed to directly use
-'next_to_clean' and 'next_to_use' indexes.
+There were a couple cases where the ITR value generated via the adaptive
+ITR scheme could exceed 126. This resulted in the value becoming either 0
+or something less than 10. Switching back and forth between a value less
+than 10 and a value greater than 10 can cause issues as certain hardware
+features such as RSC to not function well when the ITR value has dropped
+that low.
 
 CC: stable@vger.kernel.org
-Fixes: 8221c5eba8c1 ("ixgbe: add AF_XDP zero-copy Tx support")
-Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
-Tested-by: William Tu <u9012063@gmail.com>
-Tested-by: Eelco Chaudron <echaudro@redhat.com>
+Fixes: b4ded8327fea ("ixgbe: Update adaptive ITR algorithm")
+Reported-by: Gregg Leventhal <gleventhal@janestreet.com>
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c |   29 ++++++++++-----------------
- 1 file changed, 11 insertions(+), 18 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-@@ -679,19 +679,17 @@ static void ixgbe_clean_xdp_tx_buffer(st
- bool ixgbe_clean_xdp_tx_irq(struct ixgbe_q_vector *q_vector,
- 			    struct ixgbe_ring *tx_ring, int napi_budget)
- {
-+	u16 ntc = tx_ring->next_to_clean, ntu = tx_ring->next_to_use;
- 	unsigned int total_packets = 0, total_bytes = 0;
--	u32 i = tx_ring->next_to_clean, xsk_frames = 0;
--	unsigned int budget = q_vector->tx.work_limit;
- 	struct xdp_umem *umem = tx_ring->xsk_umem;
- 	union ixgbe_adv_tx_desc *tx_desc;
- 	struct ixgbe_tx_buffer *tx_bi;
--	bool xmit_done;
-+	u32 xsk_frames = 0;
- 
--	tx_bi = &tx_ring->tx_buffer_info[i];
--	tx_desc = IXGBE_TX_DESC(tx_ring, i);
--	i -= tx_ring->count;
-+	tx_bi = &tx_ring->tx_buffer_info[ntc];
-+	tx_desc = IXGBE_TX_DESC(tx_ring, ntc);
- 
--	do {
-+	while (ntc != ntu) {
- 		if (!(tx_desc->wb.status & cpu_to_le32(IXGBE_TXD_STAT_DD)))
- 			break;
- 
-@@ -708,22 +706,18 @@ bool ixgbe_clean_xdp_tx_irq(struct ixgbe
- 
- 		tx_bi++;
- 		tx_desc++;
--		i++;
--		if (unlikely(!i)) {
--			i -= tx_ring->count;
-+		ntc++;
-+		if (unlikely(ntc == tx_ring->count)) {
-+			ntc = 0;
- 			tx_bi = tx_ring->tx_buffer_info;
- 			tx_desc = IXGBE_TX_DESC(tx_ring, 0);
- 		}
- 
- 		/* issue prefetch for next Tx descriptor */
- 		prefetch(tx_desc);
-+	}
- 
--		/* update budget accounting */
--		budget--;
--	} while (likely(budget));
--
--	i += tx_ring->count;
--	tx_ring->next_to_clean = i;
-+	tx_ring->next_to_clean = ntc;
- 
- 	u64_stats_update_begin(&tx_ring->syncp);
- 	tx_ring->stats.bytes += total_bytes;
-@@ -735,8 +729,7 @@ bool ixgbe_clean_xdp_tx_irq(struct ixgbe
- 	if (xsk_frames)
- 		xsk_umem_complete_tx(umem, xsk_frames);
- 
--	xmit_done = ixgbe_xmit_zc(tx_ring, q_vector->tx.work_limit);
--	return budget > 0 && xmit_done;
-+	return ixgbe_xmit_zc(tx_ring, q_vector->tx.work_limit);
- }
- 
- int ixgbe_xsk_async_xmit(struct net_device *dev, u32 qid)
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -2622,7 +2622,7 @@ adjust_by_size:
+ 		/* 16K ints/sec to 9.2K ints/sec */
+ 		avg_wire_size *= 15;
+ 		avg_wire_size += 11452;
+-	} else if (avg_wire_size <= 1980) {
++	} else if (avg_wire_size < 1968) {
+ 		/* 9.2K ints/sec to 8K ints/sec */
+ 		avg_wire_size *= 5;
+ 		avg_wire_size += 22420;
+@@ -2655,6 +2655,8 @@ adjust_by_size:
+ 	case IXGBE_LINK_SPEED_2_5GB_FULL:
+ 	case IXGBE_LINK_SPEED_1GB_FULL:
+ 	case IXGBE_LINK_SPEED_10_FULL:
++		if (avg_wire_size > 8064)
++			avg_wire_size = 8064;
+ 		itr += DIV_ROUND_UP(avg_wire_size,
+ 				    IXGBE_ITR_ADAPTIVE_MIN_INC * 64) *
+ 		       IXGBE_ITR_ADAPTIVE_MIN_INC;
 
 
