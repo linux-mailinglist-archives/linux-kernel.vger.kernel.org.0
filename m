@@ -2,78 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B84CB6CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86706B6CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbfIRTpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 15:45:44 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36262 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbfIRTpo (ORCPT
+        id S1731747AbfIRTse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 15:48:34 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35529 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731729AbfIRTse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:45:44 -0400
-Received: by mail-oi1-f194.google.com with SMTP id k20so695183oih.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:45:43 -0700 (PDT)
+        Wed, 18 Sep 2019 15:48:34 -0400
+Received: by mail-lf1-f65.google.com with SMTP id w6so570323lfl.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:48:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gFRuQuV9XjCqqduSCnKp7lM1BpDzx2ulePxOFHhxylY=;
-        b=vV8oMvOLZnR1Wz2UcWF5lk/DQOyFhdBBIgYV3sjsEq6s/bSlOfU21/Jc9BsD0xtuqQ
-         U5R/RflBDY3JWtRhe4C3seGlY1sGIBFYT82y3oXXWSu0goL+yus2MucrrO8whMtfHoqP
-         J1i3dkGqBZau5j3fbxnW7x9URktaqvP9XA0bv24JgXlGONsK+bgu2vtnRRVP8sd6ouRa
-         WLhKZi4uo/PxDytqa95O0gf8W975W7nHZeDLuM/4OvqkAhxxIsy1/ORInMPizexzzIE4
-         Kwx+GYqBYFvMNZrVtrfID+iN+ejO/wqIXxkxQ7Z5orwBC/Xx/JZrHyjKO0rv8ueIyi29
-         apRQ==
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=87I7OyrAEWr8LcHWXw5LfJIzhP8FcO+SD6cRsu1i5VQ=;
+        b=ac/0DW+HVC6MSHwfEyKUXx2PugRcbp7qremKaZAKgGPU7zwiXfpgHCkkkQX31010Am
+         BsT2bj/WVEQW2ZAakyhJy9sw4rm7dOjYdsHv1auN64MlGkQ9IKzWPnwHgG8xnv74f6OH
+         vJbybtOjScnlhgBgCiQ5U8Q9XBthmyEzFwqYHDisLQ1UiO95wRan5LwwYoKW61WtTQ8w
+         YSAiqFfzDkHKkQWj/iPaSwtWMkjPOoQhS1QLTdr+LLnYVixFLV7xgotH7QuPCoEwwBHy
+         EyIT01aZqjp+unJv5Dgp045CMpiKh5iBHDmoUPaQ+ylLBeExfaZF9WZoKHkeHTrxAPAv
+         IzhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gFRuQuV9XjCqqduSCnKp7lM1BpDzx2ulePxOFHhxylY=;
-        b=eSQxnNubfpJRDgVWy/T0zN3bNG38sOsTbe31sYfsvEzzhVrCyBuUHMchVsqVDkd8Bk
-         8WBizlE+TXiUl1Kq8xdNEM7hNJhWTDnUdhSivdgHbr7jKIm/NVufEu4WGJabDmMhiDkQ
-         XgCjWsM3XLYrwzUKJyK37aCO/aLWZDbVQo6mtOMDQ1cAU9oKHlYB0Yp7SXQXTbrCQKb7
-         1991njYDVHiXfJWKecvRB5FCU7bAzh4Oh1YNHvjQFBBVwVGh0267V1suvXSmDo+MvYv/
-         QAD1SQXjxPZwrQ8BmjmA6mVYRpcSXZBtdHsQzlbAvOuKeGQ3WN80D71fxtCZ9kvUNw6f
-         M/aQ==
-X-Gm-Message-State: APjAAAVmH8ryXyWdRZwoU1UuDweuSWfY7OfxT69OQXmduBr7ZDxNZ1c/
-        GwlsP/ARCT6WqAHBoYWLJDL8E+Q9QFGnHZokbIyQMQ==
-X-Google-Smtp-Source: APXvYqxWS0XYUX1CSpnY3gTX28OO3/FQnJB5A3pp7NjvWrHVFfXoTCc7kD/+pUTCbd/ehw2A6/9H1eO/dtXJVnFDswM=
-X-Received: by 2002:aca:3bc2:: with SMTP id i185mr3637318oia.77.1568835943095;
- Wed, 18 Sep 2019 12:45:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=87I7OyrAEWr8LcHWXw5LfJIzhP8FcO+SD6cRsu1i5VQ=;
+        b=e0Xd2KKQnqzTkaturcB74ZNKl9IoQpA4AxvIVHxMjH0tUOfh5Pa4hO99ktWpzEFKBr
+         4nfXn279YC4TuQTA4KqjfK9aKQQUIjiBl35etyvMwMYK2mGVCrWteYmX5qAFxA3UvEUA
+         42BgCuLTomk8oKjSuEnREAnJyFxy0mZA5Kfsg+hOw17slx8dR1Mim32arTflN4O0ZkX0
+         40JTESBP7ZA18oyuDoGyY63TUaNLBjV0m5rC60QL1Xie/K+sfhLrcJvoO8g994qoiiiU
+         RKEVooA3MDGDU6CUx2Hx/3xKrikHf/h1mfmtNq8CQ1xdoRBxtsXYkl1RncjoODeoILZt
+         +ibQ==
+X-Gm-Message-State: APjAAAXf/806sm1HdbbqxDE0TFlu1AOLLwjiVWTp+V3+ljcNQNxy4um1
+        K/JVha30AiCSk/1zsdsuqLWWFzF2g8+BzGUYC7s=
+X-Google-Smtp-Source: APXvYqxkoCUV6PixTduHjTHmsvoOl5j2SGN6mG/XwDwhz8aQQ5KMT6B7g981gJwts9zBfNPZOkzLlk3vpNjHpMFUB8g=
+X-Received: by 2002:ac2:568c:: with SMTP id 12mr2917906lfr.133.1568836112385;
+ Wed, 18 Sep 2019 12:48:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <7bab24ff-ded7-9f76-ba25-efd07cdd30dd@amd.com> <20190918190529.17298-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20190918190529.17298-1-navid.emamdoost@gmail.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Wed, 18 Sep 2019 15:45:32 -0400
-Message-ID: <CAGngYiUJYUGN9CA1smKvy3GF=HWEXtaSdCZHEK64A_63edqF6A@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/amdgpu: fix multiple memory leaks
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     Christian.Koenig@amd.com, emamd001@umn.edu, smccaman@umn.edu,
-        kjlu@umn.edu, Alex Deucher <alexander.deucher@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Rex Zhu <Rex.Zhu@amd.com>,
-        Sam Ravnborg <sam@ravnborg.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a19:e21d:0:0:0:0:0 with HTTP; Wed, 18 Sep 2019 12:48:32
+ -0700 (PDT)
+Reply-To: mariamorwa100@gmail.com
+From:   MRS MARIAM ORWA <mariamorwa03@gmail.com>
+Date:   Wed, 18 Sep 2019 20:48:32 +0100
+Message-ID: <CAC2So2rug+FqxGOUcw-Ch4Ywke_BNoJA4z1mvgVb5O-WCrNvWw@mail.gmail.com>
+Subject: VERY IMPORTANT /TREAT AND REPLY URGENT
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 3:09 PM Navid Emamdoost
-<navid.emamdoost@gmail.com> wrote:
->
->         i2s_pdata = kcalloc(3, sizeof(struct i2s_platform_data), GFP_KERNEL);
->         if (i2s_pdata == NULL) {
-> -               kfree(adev->acp.acp_res);
-> -               kfree(adev->acp.acp_cell);
-> -               return -ENOMEM;
-> +               ret = -ENOMEM;
-> +               goto out3;
->         }
+Hello My Dear Friend,
 
-I don't see a corresponding kfree() for i2s_pdata in acp_hw_fini().
-Could this be a memory leak?
+With due respect to your person and much sincerity of purpose, It=E2=80=99s=
+ my
+pleasure to write you today, I am Mrs  Mariam Orwa, I work in a bank.
+and I get your contact from internet search I hope that you will not
+expose or betray this trust and confident that am about to repose in
+you for the benefit of our both families.
+
+Am in need of your help as a foreigner to transfer fourteen Million Usd
+($14000000.00, Million U.S.dollar) into your bank account,The fund is for
+late Sir Ratnavale Victor,dual citizen of Switzerland and Britain whom
+died in a Plane crash many years back living nobody as the next of kin
+to the fund. Risk is completely 100% free for this transaction.
+
+Please I will like you to keep this proposal as a top secret or delete
+it from your mail box, if you are not interested. Also note that you
+will have 40% of the above mentioned sum, if you agree to transact
+this business with me.
+
+while 60% will be for me. I will give you full details of this transaction
+immediately you notify me your interest by sending your data information to
+me.Also know that immediately this fund is transfered to your account,
+I will resign from my work and come over to your country  for the sharing
+of the money and for you to help me and direct me on what is profitable tha=
+t
+i can invest my own share of the money on it in your country.
+
+Your Full Name,........
+
+YouCountry.............
+
+YouAge.................
+
+Phone Number............
+
+Waiting for your urgen
