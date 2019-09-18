@@ -2,38 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E3C4B5BEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66E99B5C3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfIRGVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:21:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40152 "EHLO mail.kernel.org"
+        id S1729816AbfIRGYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:24:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728883AbfIRGVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:00 -0400
+        id S1729800AbfIRGYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:24:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 231002053B;
-        Wed, 18 Sep 2019 06:20:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D972321928;
+        Wed, 18 Sep 2019 06:24:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787659;
-        bh=P92K7UGrqkcY/2Blsi5spREbdi6x27ourdQ4qkux7Is=;
+        s=default; t=1568787853;
+        bh=kWBcST6419nHX84+TZFFq6BagVu7AxrrGNueaZTJ+kM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SlCZ5dS1f99yT2xnFx12gh2DTo+cqWqcPNMOb4GGoZMaAijW5txmvXh2FJJwyKSQK
-         k2sUVgdCtiXPLz3l1Hg6rLKdsG58AzG5bYYArVoxlOv0sRTJbvv3LxUPEKZWt4NdE5
-         7Zusg5Hhny9pZCv1ssPeYRJ3/EuJYC84PEzDdry0=
+        b=Jcs8oGyvI54CeE0gx+jVdnd5AxVzHwviNB/L3Igu0F6AKLVnoI84d1oLdWFfUFet2
+         3UgLcDuNXyA3w1PVQZz7aFJdrjHIf0LLkeEoS2R3HRw14TGSzKAO2OVgYeAGoNB+nT
+         BkJQEt6yRff3PqVnnDW+vQi8K4AEguaXRCmyGyGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaolei Li <xiaolei.li@mediatek.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.14 30/45] mtd: rawnand: mtk: Fix wrongly assigned OOB buffer pointer issue
+        stable@vger.kernel.org,
+        Vaibhav Rustagi <vaibhavrustagi@google.com>,
+        Andreas Smas <andreas@lonelycoder.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        clang-built-linux@googlegroups.com, dimitri.sivanich@hpe.com,
+        mike.travis@hpe.com, russ.anderson@hpe.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.19 25/50] x86/purgatory: Change compiler flags from -mcmodel=kernel to -mcmodel=large to fix kexec relocation errors
 Date:   Wed, 18 Sep 2019 08:19:08 +0200
-Message-Id: <20190918061226.514138610@linuxfoundation.org>
+Message-Id: <20190918061225.707967704@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,84 +54,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaolei Li <xiaolei.li@mediatek.com>
+From: Steve Wahl <steve.wahl@hpe.com>
 
-commit 336d4b138be2dad372b67a2388e42805c48aaa38 upstream.
+commit e16c2983fba0fa6763e43ad10916be35e3d8dc05 upstream.
 
-One main goal of the function mtk_nfc_update_ecc_stats is to check
-whether sectors are all empty. If they are empty, set these sectors's
-data buffer and OOB buffer as 0xff.
+The last change to this Makefile caused relocation errors when loading
+a kdump kernel.  Restore -mcmodel=large (not -mcmodel=kernel),
+-ffreestanding, and -fno-zero-initialized-bsss, without reverting to
+the former practice of resetting KBUILD_CFLAGS.
 
-But now, the sector OOB buffer pointer is wrongly assigned. We always
-do memset from sector 0.
+Purgatory.ro is a standalone binary that is not linked against the
+rest of the kernel.  Its image is copied into an array that is linked
+to the kernel, and from there kexec relocates it wherever it desires.
 
-To fix this issue, pass start sector number to make OOB buffer pointer
-be properly assigned.
+With the previous change to compiler flags, the error "kexec: Overflow
+in relocation type 11 value 0x11fffd000" was encountered when trying
+to load the crash kernel.  This is from kexec code trying to relocate
+the purgatory.ro object.
 
-Fixes: 1d6b1e464950 ("mtd: mediatek: driver for MTK Smart Device")
-Signed-off-by: Xiaolei Li <xiaolei.li@mediatek.com>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+>From the error message, relocation type 11 is R_X86_64_32S.  The
+x86_64 ABI says:
+
+  "The R_X86_64_32 and R_X86_64_32S relocations truncate the
+   computed value to 32-bits.  The linker must verify that the
+   generated value for the R_X86_64_32 (R_X86_64_32S) relocation
+   zero-extends (sign-extends) to the original 64-bit value."
+
+This type of relocation doesn't work when kexec chooses to place the
+purgatory binary in memory that is not reachable with 32 bit
+addresses.
+
+The compiler flag -mcmodel=kernel allows those type of relocations to
+be emitted, so revert to using -mcmodel=large as was done before.
+
+Also restore the -ffreestanding and -fno-zero-initialized-bss flags
+because they are appropriate for a stand alone piece of object code
+which doesn't explicitly zero the bss, and one other report has said
+undefined symbols are encountered without -ffreestanding.
+
+These identical compiler flag changes need to happen for every object
+that becomes part of the purgatory.ro object, so gather them together
+first into PURGATORY_CFLAGS_REMOVE and PURGATORY_CFLAGS, and then
+apply them to each of the objects that have C source.  Do not apply
+any of these flags to kexec-purgatory.o, which is not part of the
+standalone object but part of the kernel proper.
+
+Tested-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+Tested-by: Andreas Smas <andreas@lonelycoder.com>
+Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: None
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: clang-built-linux@googlegroups.com
+Cc: dimitri.sivanich@hpe.com
+Cc: mike.travis@hpe.com
+Cc: russ.anderson@hpe.com
+Fixes: b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS")
+Link: https://lkml.kernel.org/r/20190905202346.GA26595@swahl-linux
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andreas Smas <andreas@lonelycoder.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/mtk_nand.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ arch/x86/purgatory/Makefile |   35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
---- a/drivers/mtd/nand/mtk_nand.c
-+++ b/drivers/mtd/nand/mtk_nand.c
-@@ -846,19 +846,21 @@ static int mtk_nfc_write_oob_std(struct
- 	return ret & NAND_STATUS_FAIL ? -EIO : 0;
- }
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -18,37 +18,40 @@ targets += purgatory.ro
+ KASAN_SANITIZE	:= n
+ KCOV_INSTRUMENT := n
  
--static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 sectors)
-+static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 start,
-+				    u32 sectors)
- {
- 	struct nand_chip *chip = mtd_to_nand(mtd);
- 	struct mtk_nfc *nfc = nand_get_controller_data(chip);
- 	struct mtk_nfc_nand_chip *mtk_nand = to_mtk_nand(chip);
- 	struct mtk_ecc_stats stats;
-+	u32 reg_size = mtk_nand->fdm.reg_size;
- 	int rc, i;
++# These are adjustments to the compiler flags used for objects that
++# make up the standalone purgatory.ro
++
++PURGATORY_CFLAGS_REMOVE := -mcmodel=kernel
++PURGATORY_CFLAGS := -mcmodel=large -ffreestanding -fno-zero-initialized-in-bss
++
+ # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
+ # in turn leaves some undefined symbols like __fentry__ in purgatory and not
+ # sure how to relocate those.
+ ifdef CONFIG_FUNCTION_TRACER
+-CFLAGS_REMOVE_sha256.o		+= $(CC_FLAGS_FTRACE)
+-CFLAGS_REMOVE_purgatory.o	+= $(CC_FLAGS_FTRACE)
+-CFLAGS_REMOVE_string.o		+= $(CC_FLAGS_FTRACE)
+-CFLAGS_REMOVE_kexec-purgatory.o	+= $(CC_FLAGS_FTRACE)
++PURGATORY_CFLAGS_REMOVE		+= $(CC_FLAGS_FTRACE)
+ endif
  
- 	rc = nfi_readl(nfc, NFI_STA) & STA_EMP_PAGE;
- 	if (rc) {
- 		memset(buf, 0xff, sectors * chip->ecc.size);
- 		for (i = 0; i < sectors; i++)
--			memset(oob_ptr(chip, i), 0xff, mtk_nand->fdm.reg_size);
-+			memset(oob_ptr(chip, start + i), 0xff, reg_size);
- 		return 0;
- 	}
+ ifdef CONFIG_STACKPROTECTOR
+-CFLAGS_REMOVE_sha256.o		+= -fstack-protector
+-CFLAGS_REMOVE_purgatory.o	+= -fstack-protector
+-CFLAGS_REMOVE_string.o		+= -fstack-protector
+-CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector
++PURGATORY_CFLAGS_REMOVE		+= -fstack-protector
+ endif
  
-@@ -878,7 +880,7 @@ static int mtk_nfc_read_subpage(struct m
- 	u32 spare = mtk_nand->spare_per_sector;
- 	u32 column, sectors, start, end, reg;
- 	dma_addr_t addr;
--	int bitflips;
-+	int bitflips = 0;
- 	size_t len;
- 	u8 *buf;
- 	int rc;
-@@ -946,14 +948,11 @@ static int mtk_nfc_read_subpage(struct m
- 	if (rc < 0) {
- 		dev_err(nfc->dev, "subpage done timeout\n");
- 		bitflips = -EIO;
--	} else {
--		bitflips = 0;
--		if (!raw) {
--			rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
--			bitflips = rc < 0 ? -ETIMEDOUT :
--				mtk_nfc_update_ecc_stats(mtd, buf, sectors);
--			mtk_nfc_read_fdm(chip, start, sectors);
--		}
-+	} else if (!raw) {
-+		rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
-+		bitflips = rc < 0 ? -ETIMEDOUT :
-+			mtk_nfc_update_ecc_stats(mtd, buf, start, sectors);
-+		mtk_nfc_read_fdm(chip, start, sectors);
- 	}
+ ifdef CONFIG_STACKPROTECTOR_STRONG
+-CFLAGS_REMOVE_sha256.o		+= -fstack-protector-strong
+-CFLAGS_REMOVE_purgatory.o	+= -fstack-protector-strong
+-CFLAGS_REMOVE_string.o		+= -fstack-protector-strong
+-CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector-strong
++PURGATORY_CFLAGS_REMOVE		+= -fstack-protector-strong
+ endif
  
- 	dma_unmap_single(nfc->dev, addr, len, DMA_FROM_DEVICE);
+ ifdef CONFIG_RETPOLINE
+-CFLAGS_REMOVE_sha256.o		+= $(RETPOLINE_CFLAGS)
+-CFLAGS_REMOVE_purgatory.o	+= $(RETPOLINE_CFLAGS)
+-CFLAGS_REMOVE_string.o		+= $(RETPOLINE_CFLAGS)
+-CFLAGS_REMOVE_kexec-purgatory.o	+= $(RETPOLINE_CFLAGS)
++PURGATORY_CFLAGS_REMOVE		+= $(RETPOLINE_CFLAGS)
+ endif
+ 
++CFLAGS_REMOVE_purgatory.o	+= $(PURGATORY_CFLAGS_REMOVE)
++CFLAGS_purgatory.o		+= $(PURGATORY_CFLAGS)
++
++CFLAGS_REMOVE_sha256.o		+= $(PURGATORY_CFLAGS_REMOVE)
++CFLAGS_sha256.o			+= $(PURGATORY_CFLAGS)
++
++CFLAGS_REMOVE_string.o		+= $(PURGATORY_CFLAGS_REMOVE)
++CFLAGS_string.o			+= $(PURGATORY_CFLAGS)
++
+ $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
+ 		$(call if_changed,ld)
+ 
 
 
