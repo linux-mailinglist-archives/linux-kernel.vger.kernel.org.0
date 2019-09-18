@@ -2,73 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E632DB634C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E11B6351
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:35:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731121AbfIRMdp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:33:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37612 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725902AbfIRMdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:33:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0E333AD4E;
-        Wed, 18 Sep 2019 12:33:43 +0000 (UTC)
-Date:   Wed, 18 Sep 2019 14:33:42 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Lin Feng <linf@wangsu.com>, corbet@lwn.net, mcgrof@kernel.org,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, keescook@chromium.org,
-        mchehab+samsung@kernel.org, mgorman@techsingularity.net,
-        vbabka@suse.cz, ktkhai@virtuozzo.com, hannes@cmpxchg.org
-Subject: Re: [PATCH] [RFC] vmscan.c: add a sysctl entry for controlling
- memory reclaim IO congestion_wait length
-Message-ID: <20190918123342.GF12770@dhcp22.suse.cz>
-References: <20190917115824.16990-1-linf@wangsu.com>
- <20190917120646.GT29434@bombadil.infradead.org>
+        id S1731150AbfIRMfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:35:03 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:44648 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbfIRMfD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 08:35:03 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id C1C8B25AF19;
+        Wed, 18 Sep 2019 22:35:00 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id EBCA9942C13; Wed, 18 Sep 2019 14:34:57 +0200 (CEST)
+Date:   Wed, 18 Sep 2019 14:34:57 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Lars Poeschel <poeschel@lemonage.de>
+Cc:     Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jilayne Lovejoy <opensource@jilayne.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:NFC SUBSYSTEM" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v7 1/7] nfc: pn533: i2c: "pn532" as dt compatible string
+Message-ID: <20190918123457.wg6mtygr6cboqsp6@verge.net.au>
+References: <20190910093129.1844-1-poeschel@lemonage.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190917120646.GT29434@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190910093129.1844-1-poeschel@lemonage.de>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-09-19 05:06:46, Matthew Wilcox wrote:
-> On Tue, Sep 17, 2019 at 07:58:24PM +0800, Lin Feng wrote:
-[...]
-> > +mm_reclaim_congestion_wait_jiffies
-> > +==========
-> > +
-> > +This control is used to define how long kernel will wait/sleep while
-> > +system memory is under pressure and memroy reclaim is relatively active.
-> > +Lower values will decrease the kernel wait/sleep time.
-> > +
-> > +It's suggested to lower this value on high-end box that system is under memory
-> > +pressure but with low storage IO utils and high CPU iowait, which could also
-> > +potentially decrease user application response time in this case.
-> > +
-> > +Keep this control as it were if your box are not above case.
-> > +
-> > +The default value is HZ/10, which is of equal value to 100ms independ of how
-> > +many HZ is defined.
-> 
-> Adding a new tunable is not the right solution.  The right way is
-> to make Linux auto-tune itself to avoid the problem.
+On Tue, Sep 10, 2019 at 11:31:21AM +0200, Lars Poeschel wrote:
+> It is favourable to have one unified compatible string for devices that
+> have multiple interfaces. So this adds simply "pn532" as the devicetree
+> binding compatible string and makes a note that the old ones are
+> deprecated.
 
-I absolutely agree here. From you changelog it is also not clear what is
-the underlying problem. Both congestion_wait and wait_iff_congested
-should wake up early if the congestion is handled. Is this not the case?
-Why? Are you sure a shorter timeout is not just going to cause problems
-elsewhere. These sleeps are used to throttle the reclaim. I do agree
-there is no great deal of design behind them so they are more of "let's
-hope it works" kinda thing but making their timeout configurable just
-doesn't solve this at all. You are effectively exporting a very subtle
-implementation detail into the userspace.
--- 
-Michal Hocko
-SUSE Labs
+Do you also need to update
+Documentation/devicetree/bindings/net/nfc/pn533-i2c.txt
+to both document the new compat string and deprecate the old ones?
+
+> Cc: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+> ---
+> Changes in v6:
+> - Rebased the patch series on v5.3-rc5
+> 
+> Changes in v3:
+> - This patch is new in v3
+> 
+>  drivers/nfc/pn533/i2c.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/nfc/pn533/i2c.c b/drivers/nfc/pn533/i2c.c
+> index 1832cd921ea7..1abd40398a5a 100644
+> --- a/drivers/nfc/pn533/i2c.c
+> +++ b/drivers/nfc/pn533/i2c.c
+> @@ -245,6 +245,11 @@ static int pn533_i2c_remove(struct i2c_client *client)
+>  }
+>  
+>  static const struct of_device_id of_pn533_i2c_match[] = {
+> +	{ .compatible = "nxp,pn532", },
+> +	/*
+> +	 * NOTE: The use of the compatibles with the trailing "...-i2c" is
+> +	 * deprecated and will be removed.
+> +	 */
+>  	{ .compatible = "nxp,pn533-i2c", },
+>  	{ .compatible = "nxp,pn532-i2c", },
+>  	{},
+> -- 
+> 2.23.0
+> 
