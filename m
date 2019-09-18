@@ -2,291 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BCFEB5B36
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 07:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 615A1B5B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 07:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbfIRFvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 01:51:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59050 "EHLO mx1.redhat.com"
+        id S1728748AbfIRFwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 01:52:00 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:38335 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727632AbfIRFvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 01:51:35 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728732AbfIRFv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 01:51:58 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 08FEA30821AE;
-        Wed, 18 Sep 2019 05:51:35 +0000 (UTC)
-Received: from [10.72.12.111] (ovpn-12-111.pek2.redhat.com [10.72.12.111])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A7285D6A5;
-        Wed, 18 Sep 2019 05:51:23 +0000 (UTC)
-Subject: Re: [RFC v4 0/3] vhost: introduce mdev based hardware backend
-To:     Tiwei Bie <tiwei.bie@intel.com>
-Cc:     mst@redhat.com, alex.williamson@redhat.com,
-        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com,
-        lingshan.zhu@intel.com
-References: <20190917010204.30376-1-tiwei.bie@intel.com>
- <993841ed-942e-c90b-8016-8e7dc76bf13a@redhat.com>
- <20190917105801.GA24855@___>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <fa6957f3-19ad-f351-8c43-65bc8342b82e@redhat.com>
-Date:   Wed, 18 Sep 2019 13:51:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46Y8Ht6yBgz9sPK;
+        Wed, 18 Sep 2019 15:51:54 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1568785916;
+        bh=QAFbzdw2vnSZDQUXwV7YNxQAM2aphYQykkvqG9wUYLM=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=NaC6eGGnbleVGw4GycFoqaW3sdLe0yR9FbdH2m9+8pE8xu8c4Ikt1FU0Uq6UxsqHH
+         tMmVJJCxbjmojxHCOEttD8WhBBBKHRB0+RmB+N0HEeSS8Sdjd6m1jpzk3123nVxpJ5
+         iBH/r5PVb5wzDf+CIVccbU+YsGRePUix7o9Ne+k/91e5AT03J8GEw7cKqhZ/0XLZin
+         5uwy1C+hgCFUOhloXyyD0q+Kq36GoETfIprzA3Uc4NkdY8QF2J7pJlpXcLgx5tR8Jl
+         8Kl7XDlcAL68uS1knOKAahi6dvOGK/kZFdjzk9jsinUjJsH7Dq7Sn8XLJM5ZflU7ay
+         7sso523PH8EsA==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/8] powerpc/32: Add VDSO version of getcpu
+In-Reply-To: <27d699092118ee8d21741c08a6ff7e4c65effdf2.1566491310.git.christophe.leroy@c-s.fr>
+References: <cover.1566491310.git.christophe.leroy@c-s.fr> <27d699092118ee8d21741c08a6ff7e4c65effdf2.1566491310.git.christophe.leroy@c-s.fr>
+Date:   Wed, 18 Sep 2019 15:51:54 +1000
+Message-ID: <87h85aw3r9.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190917105801.GA24855@___>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 18 Sep 2019 05:51:35 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Christophe,
 
-On 2019/9/17 下午6:58, Tiwei Bie wrote:
-> On Tue, Sep 17, 2019 at 11:32:03AM +0800, Jason Wang wrote:
->> On 2019/9/17 上午9:02, Tiwei Bie wrote:
->>> This RFC is to demonstrate below ideas,
->>>
->>> a) Build vhost-mdev on top of the same abstraction defined in
->>>      the virtio-mdev series [1];
->>>
->>> b) Introduce /dev/vhost-mdev to do vhost ioctls and support
->>>      setting mdev device as backend;
->>>
->>> Now the userspace API looks like this:
->>>
->>> - Userspace generates a compatible mdev device;
->>>
->>> - Userspace opens this mdev device with VFIO API (including
->>>     doing IOMMU programming for this mdev device with VFIO's
->>>     container/group based interface);
->>>
->>> - Userspace opens /dev/vhost-mdev and gets vhost fd;
->>>
->>> - Userspace uses vhost ioctls to setup vhost (userspace should
->>>     do VHOST_MDEV_SET_BACKEND ioctl with VFIO group fd and device
->>>     fd first before doing other vhost ioctls);
->>>
->>> Only compile test has been done for this series for now.
->>
->> Have a hard thought on the architecture:
-> Thanks a lot! Do appreciate it!
+Sorry I'm late replying to this.
+
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> Commit 18ad51dd342a ("powerpc: Add VDSO version of getcpu") added
+> getcpu() for PPC64 only, by making use of a user readable general
+> purpose SPR.
 >
->> 1) Create a vhost char device and pass vfio mdev device fd to it as a
->> backend and translate vhost-mdev ioctl to virtio mdev transport (e.g
->> read/write). DMA was done through the VFIO DMA mapping on the container that
->> is attached.
-> Yeah, that's what we are doing in this series.
+> PPC32 doesn't have any such SPR, a full system call can still be
+> avoided by implementing a fast system call which reads the CPU id
+> in the task struct and returns immediately without going back in
+> virtual mode.
 >
->> We have two more choices:
->>
->> 2) Use vfio-mdev but do not create vhost-mdev device, instead, just
->> implement vhost ioctl on vfio_device_ops, and translate them into
->> virtio-mdev transport or just pass ioctl to parent.
-> Yeah. Instead of introducing /dev/vhost-mdev char device, do
-> vhost ioctls on VFIO device fd directly. That's what we did
-> in RFC v3.
+> Before the patch, vdsotest reported:
+> getcpu: syscall: 1572 nsec/call
+> getcpu:    libc: 1787 nsec/call
+> getcpu:    vdso: not tested
 >
->> 3) Don't use vfio-mdev, create a new vhost-mdev driver, during probe still
->> try to add dev to vfio group and talk to parent with device specific ops
-> If my understanding is correct, this means we need to introduce
-> a new VFIO device driver to replace the existing vfio-mdev driver
-> in our case. Below is a quick draft just to show my understanding:
+> Now, vdsotest reports:
+> getcpu: syscall: 1582 nsec/call
+> getcpu:    libc: 667 nsec/call
+> getcpu:    vdso: 368 nsec/call
 >
-> #include <linux/init.h>
-> #include <linux/module.h>
-> #include <linux/device.h>
-> #include <linux/kernel.h>
-> #include <linux/slab.h>
-> #include <linux/vfio.h>
-> #include <linux/mdev.h>
+> For non SMP, just return CPU id 0 from the VDSO directly.
 >
-> #include "mdev_private.h"
+> PPC32 doesn't support CONFIG_NUMA so NUMA node is always 0.
 >
-> /* XXX: we need a proper way to include below vhost header. */
-> #include "../../vhost/vhost.h"
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 >
-> static int vfio_vhost_mdev_open(void *device_data)
-> {
-> 	if (!try_module_get(THIS_MODULE))
-> 		return -ENODEV;
+> ---
+> v2: fixed build error in getcpu.S
+> ---
+>  arch/powerpc/include/asm/vdso.h         |  2 ++
+>  arch/powerpc/kernel/head_32.h           | 13 +++++++++++++
+>  arch/powerpc/kernel/head_booke.h        | 11 +++++++++++
+>  arch/powerpc/kernel/vdso32/Makefile     |  4 +---
+>  arch/powerpc/kernel/vdso32/getcpu.S     |  7 +++++++
+>  arch/powerpc/kernel/vdso32/vdso32.lds.S |  2 --
+>  6 files changed, 34 insertions(+), 5 deletions(-)
 >
-> 	/* ... */
-> 	vhost_dev_init(...);
->
-> 	return 0;
-> }
->
-> static void vfio_vhost_mdev_release(void *device_data)
-> {
-> 	/* ... */
-> 	module_put(THIS_MODULE);
-> }
->
-> static long vfio_vhost_mdev_unlocked_ioctl(void *device_data,
-> 					   unsigned int cmd, unsigned long arg)
-> {
-> 	struct mdev_device *mdev = device_data;
-> 	struct mdev_parent *parent = mdev->parent;
->
-> 	/*
-> 	 * Use vhost ioctls.
-> 	 *
-> 	 * We will have a different parent_ops design.
-> 	 * And potentially, we can share the same parent_ops
-> 	 * with virtio_mdev.
-> 	 */
-> 	switch (cmd) {
-> 	case VHOST_GET_FEATURES:
-> 		parent->ops->get_features(mdev, ...);
-> 		break;
-> 	/* ... */
-> 	}
->
-> 	return 0;
-> }
->
-> static ssize_t vfio_vhost_mdev_read(void *device_data, char __user *buf,
-> 				    size_t count, loff_t *ppos)
-> {
-> 	/* ... */
-> 	return 0;
-> }
->
-> static ssize_t vfio_vhost_mdev_write(void *device_data, const char __user *buf,
-> 				     size_t count, loff_t *ppos)
-> {
-> 	/* ... */
-> 	return 0;
-> }
->
-> static int vfio_vhost_mdev_mmap(void *device_data, struct vm_area_struct *vma)
-> {
-> 	/* ... */
-> 	return 0;
-> }
->
-> static const struct vfio_device_ops vfio_vhost_mdev_dev_ops = {
-> 	.name		= "vfio-vhost-mdev",
-> 	.open		= vfio_vhost_mdev_open,
-> 	.release	= vfio_vhost_mdev_release,
-> 	.ioctl		= vfio_vhost_mdev_unlocked_ioctl,
-> 	.read		= vfio_vhost_mdev_read,
-> 	.write		= vfio_vhost_mdev_write,
-> 	.mmap		= vfio_vhost_mdev_mmap,
-> };
->
-> static int vfio_vhost_mdev_probe(struct device *dev)
-> {
-> 	struct mdev_device *mdev = to_mdev_device(dev);
->
-> 	/* ... */
-> 	return vfio_add_group_dev(dev, &vfio_vhost_mdev_dev_ops, mdev);
-> }
->
-> static void vfio_vhost_mdev_remove(struct device *dev)
-> {
-> 	/* ... */
-> 	vfio_del_group_dev(dev);
-> }
->
-> static struct mdev_driver vfio_vhost_mdev_driver = {
-> 	.name	= "vfio_vhost_mdev",
-> 	.probe	= vfio_vhost_mdev_probe,
-> 	.remove	= vfio_vhost_mdev_remove,
-> };
->
-> static int __init vfio_vhost_mdev_init(void)
-> {
-> 	return mdev_register_driver(&vfio_vhost_mdev_driver, THIS_MODULE);
-> }
-> module_init(vfio_vhost_mdev_init)
->
-> static void __exit vfio_vhost_mdev_exit(void)
-> {
-> 	mdev_unregister_driver(&vfio_vhost_mdev_driver);
-> }
-> module_exit(vfio_vhost_mdev_exit)
+> diff --git a/arch/powerpc/include/asm/vdso.h b/arch/powerpc/include/asm/vdso.h
+> index b5e1f8f8a05c..adb54782df5f 100644
+> --- a/arch/powerpc/include/asm/vdso.h
+> +++ b/arch/powerpc/include/asm/vdso.h
+> @@ -16,6 +16,8 @@
+>  /* Define if 64 bits VDSO has procedure descriptors */
+>  #undef VDS64_HAS_DESCRIPTORS
+>  
+> +#define NR_MAGIC_FAST_VDSO_SYSCALL	0x789a
+
+We are still in the middle of the years long process of removing the
+"magic" syscall on 64-bit:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/powerpc/kernel/exceptions-64s.S?commit=4d856f72c10ecb060868ed10ff1b1453943fc6c8#n1578
+ 
+
+Can we not add another one on 32-bit?
+
+Is it really such a fast path that it's worth putting a wart in the
+syscall entry like that?
+
+Is there some other method? On s390 they have a per-cpu VDSO page, that
+would be a nice option. How we do that would be specific to a particular
+MMU, and maybe not even possible with some MMUs. So maybe that's not
+feasible.
+
+If you do want to add a fastpath syscall then please just add it as a
+regular syscall number, that way it's at least a bit less of a wart.
+It's still not visible via tracing/ptrace etc. which is a pain but at
+least the number is not "magical" too.
+
+cheers
 
 
-Yes, something like this basically.
-
-
->> So I have some questions:
->>
->> 1) Compared to method 2, what's the advantage of creating a new vhost char
->> device? I guess it's for keep the API compatibility?
-> One benefit is that we can avoid doing vhost ioctls on
-> VFIO device fd.
-
-
-Yes, but any benefit from doing this?
-
-
->
->> 2) For method 2, is there any easy way for user/admin to distinguish e.g
->> ordinary vfio-mdev for vhost from ordinary vfio-mdev?
-> I think device-api could be a choice.
-
-
-Ok.
-
-
->
->> I saw you introduce
->> ops matching helper but it's not friendly to management.
-> The ops matching helper is just to check whether a given
-> vfio-device is based on a mdev device.
->
->> 3) A drawback of 1) and 2) is that it must follow vfio_device_ops that
->> assumes the parameter comes from userspace, it prevents support kernel
->> virtio drivers.
->>
->> 4) So comes the idea of method 3, since it register a new vhost-mdev driver,
->> we can use device specific ops instead of VFIO ones, then we can have a
->> common API between vDPA parent and vhost-mdev/virtio-mdev drivers.
-> As the above draft shows, this requires introducing a new
-> VFIO device driver. I think Alex's opinion matters here.
-
-
-Yes, it is.
-
-Thanks
-
-
-> Thanks,
-> Tiwei
->
->> What's your thoughts?
->>
->> Thanks
->>
->>
->>> RFCv3: https://patchwork.kernel.org/patch/11117785/
->>>
->>> [1] https://lkml.org/lkml/2019/9/10/135
->>>
->>> Tiwei Bie (3):
->>>     vfio: support getting vfio device from device fd
->>>     vfio: support checking vfio driver by device ops
->>>     vhost: introduce mdev based hardware backend
->>>
->>>    drivers/vfio/mdev/vfio_mdev.c    |   3 +-
->>>    drivers/vfio/vfio.c              |  32 +++
->>>    drivers/vhost/Kconfig            |   9 +
->>>    drivers/vhost/Makefile           |   3 +
->>>    drivers/vhost/mdev.c             | 462 +++++++++++++++++++++++++++++++
->>>    drivers/vhost/vhost.c            |  39 ++-
->>>    drivers/vhost/vhost.h            |   6 +
->>>    include/linux/vfio.h             |  11 +
->>>    include/uapi/linux/vhost.h       |  10 +
->>>    include/uapi/linux/vhost_types.h |   5 +
->>>    10 files changed, 573 insertions(+), 7 deletions(-)
->>>    create mode 100644 drivers/vhost/mdev.c
->>>
+>  /* Offsets relative to thread->vdso_base */
+> diff --git a/arch/powerpc/kernel/head_32.h b/arch/powerpc/kernel/head_32.h
+> index 4a692553651f..a2e38b59785a 100644
+> --- a/arch/powerpc/kernel/head_32.h
+> +++ b/arch/powerpc/kernel/head_32.h
+> @@ -3,6 +3,8 @@
+>  #define __HEAD_32_H__
+>  
+>  #include <asm/ptrace.h>	/* for STACK_FRAME_REGS_MARKER */
+> +#include <asm/vdso.h>
+> +#include <asm/asm-offsets.h>
+>  
+>  /*
+>   * MSR_KERNEL is > 0x8000 on 4xx/Book-E since it include MSR_CE.
+> @@ -74,7 +76,13 @@
+>  .endm
+>  
+>  .macro SYSCALL_ENTRY trapno
+> +#ifdef CONFIG_SMP
+> +	cmplwi	cr0, r0, NR_MAGIC_FAST_VDSO_SYSCALL
+> +#endif
+>  	mfspr	r12,SPRN_SPRG_THREAD
+> +#ifdef CONFIG_SMP
+> +	beq-	1f
+> +#endif
+>  	mfcr	r10
+>  	lwz	r11,TASK_STACK-THREAD(r12)
+>  	mflr	r9
+> @@ -152,6 +160,11 @@
+>  	mtspr	SPRN_SRR0,r11
+>  	SYNC
+>  	RFI				/* jump to handler, enable MMU */
+> +#ifdef CONFIG_SMP
+> +1:
+> +	lwz	r5, TASK_CPU - THREAD(r12)
+> +	RFI
+> +#endif
+>  .endm
+>  
+>  /*
+> diff --git a/arch/powerpc/kernel/head_booke.h b/arch/powerpc/kernel/head_booke.h
+> index 2ae635df9026..c534e87cac84 100644
+> --- a/arch/powerpc/kernel/head_booke.h
+> +++ b/arch/powerpc/kernel/head_booke.h
+> @@ -3,6 +3,8 @@
+>  #define __HEAD_BOOKE_H__
+>  
+>  #include <asm/ptrace.h>	/* for STACK_FRAME_REGS_MARKER */
+> +#include <asm/vdso.h>
+> +#include <asm/asm-offsets.h>
+>  #include <asm/kvm_asm.h>
+>  #include <asm/kvm_booke_hv_asm.h>
+>  
+> @@ -104,6 +106,10 @@ FTR_SECTION_ELSE
+>  #ifdef CONFIG_KVM_BOOKE_HV
+>  ALT_FTR_SECTION_END_IFSET(CPU_FTR_EMB_HV)
+>  #endif
+> +#ifdef CONFIG_SMP
+> +	cmplwi	cr0, r0, NR_MAGIC_FAST_VDSO_SYSCALL
+> +	beq-	1f
+> +#endif
+>  	BOOKE_CLEAR_BTB(r11)
+>  	lwz	r11, TASK_STACK - THREAD(r10)
+>  	rlwinm	r12,r12,0,4,2	/* Clear SO bit in CR */
+> @@ -176,6 +182,11 @@ ALT_FTR_SECTION_END_IFSET(CPU_FTR_EMB_HV)
+>  	mtspr	SPRN_SRR0,r11
+>  	SYNC
+>  	RFI				/* jump to handler, enable MMU */
+> +#ifdef CONFIG_SMP
+> +1:
+> +	lwz	r5, TASK_CPU - THREAD(r10)
+> +	RFI
+> +#endif
+>  .endm
+>  
+>  /* To handle the additional exception priority levels on 40x and Book-E
+> diff --git a/arch/powerpc/kernel/vdso32/Makefile b/arch/powerpc/kernel/vdso32/Makefile
+> index 06f54d947057..e147bbdc12cd 100644
+> --- a/arch/powerpc/kernel/vdso32/Makefile
+> +++ b/arch/powerpc/kernel/vdso32/Makefile
+> @@ -2,9 +2,7 @@
+>  
+>  # List of files in the vdso, has to be asm only for now
+>  
+> -obj-vdso32-$(CONFIG_PPC64) = getcpu.o
+> -obj-vdso32 = sigtramp.o gettimeofday.o datapage.o cacheflush.o note.o \
+> -		$(obj-vdso32-y)
+> +obj-vdso32 = sigtramp.o gettimeofday.o datapage.o cacheflush.o note.o getcpu.o
+>  
+>  # Build rules
+>  
+> diff --git a/arch/powerpc/kernel/vdso32/getcpu.S b/arch/powerpc/kernel/vdso32/getcpu.S
+> index 63e914539e1a..bde226ad904d 100644
+> --- a/arch/powerpc/kernel/vdso32/getcpu.S
+> +++ b/arch/powerpc/kernel/vdso32/getcpu.S
+> @@ -17,7 +17,14 @@
+>   */
+>  V_FUNCTION_BEGIN(__kernel_getcpu)
+>    .cfi_startproc
+> +#if defined(CONFIG_PPC64)
+>  	mfspr	r5,SPRN_SPRG_VDSO_READ
+> +#elif defined(CONFIG_SMP)
+> +	li	r0, NR_MAGIC_FAST_VDSO_SYSCALL
+> +	sc	/* returns cpuid in r5, clobbers cr0 and r10-r13 */
+> +#else
+> +	li	r5, 0
+> +#endif
+>  	cmpwi	cr0,r3,0
+>  	cmpwi	cr1,r4,0
+>  	clrlwi  r6,r5,16
+> diff --git a/arch/powerpc/kernel/vdso32/vdso32.lds.S b/arch/powerpc/kernel/vdso32/vdso32.lds.S
+> index 099a6db14e67..663880671e20 100644
+> --- a/arch/powerpc/kernel/vdso32/vdso32.lds.S
+> +++ b/arch/powerpc/kernel/vdso32/vdso32.lds.S
+> @@ -152,9 +152,7 @@ VERSION
+>  		__kernel_sync_dicache_p5;
+>  		__kernel_sigtramp32;
+>  		__kernel_sigtramp_rt32;
+> -#ifdef CONFIG_PPC64
+>  		__kernel_getcpu;
+> -#endif
+>  		__kernel_time;
+>  
+>  	local: *;
+> -- 
+> 2.13.3
