@@ -2,93 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5E16B68AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6D8EB68A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731052AbfIRRI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 13:08:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49386 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727243AbfIRRI6 (ORCPT
+        id S1732064AbfIRRGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 13:06:50 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46346 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbfIRRGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:08:58 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8IH22vn038322;
-        Wed, 18 Sep 2019 13:08:47 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v3rdbrpk4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Sep 2019 13:08:47 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8IH3QWk042500;
-        Wed, 18 Sep 2019 13:08:47 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v3rdbrpja-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Sep 2019 13:08:47 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8IGxX68002888;
-        Wed, 18 Sep 2019 17:08:46 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma04wdc.us.ibm.com with ESMTP id 2v37jw6xmv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Sep 2019 17:08:45 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8IH8i9a60293628
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 17:08:44 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4DF3E136067;
-        Wed, 18 Sep 2019 17:08:44 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3436B136059;
-        Wed, 18 Sep 2019 17:08:44 +0000 (GMT)
-Received: from localhost (unknown [9.41.179.186])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 18 Sep 2019 17:08:44 +0000 (GMT)
-From:   Nathan Lynch <nathanl@linux.ibm.com>
-To:     Gautham R Shenoy <ego@linux.vnet.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
-        Kamalesh Babulal <kamaleshb@in.ibm.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>
-Subject: Re: [PATCH 0/2] pseries/hotplug: Change the default behaviour of cede_offline
-In-Reply-To: <20190918123039.GA12534@in.ibm.com>
-References: <1568284541-15169-1-git-send-email-ego@linux.vnet.ibm.com> <87impxr0am.fsf@linux.ibm.com> <20190915074217.GA943@in.ibm.com> <87a7b2rfj0.fsf@linux.ibm.com> <20190918123039.GA12534@in.ibm.com>
-Date:   Wed, 18 Sep 2019 12:08:43 -0500
-Message-ID: <874l19r0pw.fsf@linux.ibm.com>
+        Wed, 18 Sep 2019 13:06:49 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IH6iPq120554;
+        Wed, 18 Sep 2019 12:06:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568826404;
+        bh=uJVcOB+ch38YNMZP4f1rNkBv5jy24fM/dgvduX4wNqs=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=lrjHapFy0Xjxm7F/eUB9mlxvptcXK8XzN2gbibV2r9SuxErIIHyA0mS3XYaHggLws
+         7CFXvQ0uxxjco0xex8PJ2NJbzxVpbLNorlzm3BrEhRW/hvDGt83GgUU6MYpYgTy+NC
+         ycxXTwO7YdgRBDBPeEzd1Hqh5GSqGDdvf9/24OEo=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IH6iSt029052
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Sep 2019 12:06:44 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
+ Sep 2019 12:06:44 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 18 Sep 2019 12:06:41 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IH6iBw084821;
+        Wed, 18 Sep 2019 12:06:44 -0500
+Subject: Re: [PATCH v6 6/9] leds: multicolor: Introduce a multicolor class
+ definition
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190917175937.13872-1-dmurphy@ti.com>
+ <20190917175937.13872-6-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <f5cf1fa4-c891-744c-6fa9-4b166b64f463@ti.com>
+Date:   Wed, 18 Sep 2019 12:09:12 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-18_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=998 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909180158
+In-Reply-To: <20190917175937.13872-6-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gautham R Shenoy <ego@linux.vnet.ibm.com> writes:
-> The accounting problem in tools such as lparstat with
-> "cede_offline=on" is affecting customers who are using these tools for
-> capacity-planning. That problem needs a fix in the short-term, for
-> which Patch 1 changes the default behaviour of cede_offline from "on"
-> to "off". Since this patch would break the existing userspace tools
-> that use the CPU-Offline infrastructure to fold CPUs for saving power,
-> the sysfs interface allowing a runtime change of cede_offline_enabled
-> was provided to enable these userspace tools to cope with minimal
-> change.
+Greg
 
-So we would be putting users in the position of choosing between folding
-and correct accounting. :-(
+<snip>
 
-Actually how does changing the offline mechanism to stop-self break the
-folding utility?
+> +static int led_multicolor_init_color(struct led_classdev_mc_data *data,
+> +				     struct led_classdev_mc *mcled_cdev,
+> +				     int color_id, int color_index)
+> +{
+> +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
+> +	struct led_mc_color_entry *mc_priv;
+> +	int ret;
+> +
+> +	mc_priv = devm_kzalloc(led_cdev->dev, sizeof(*mc_priv), GFP_KERNEL);
+> +	if (!mc_priv)
+> +		return -ENOMEM;
+> +
+> +	mc_priv->led_color_id = color_id;
+> +	mc_priv->mcled_cdev = mcled_cdev;
+> +
+> +	led_color_group.name = led_colors[color_id];
+> +	ret = sysfs_create_group(data->color_kobj, &led_color_group);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sysfs_attr_init(&mc_priv->intensity_attr.attr);
+> +	mc_priv->intensity_attr.attr.name = "intensity";
+> +	mc_priv->intensity_attr.attr.mode = 666;
+> +	mc_priv->intensity_attr.store = intensity_store;
+> +	mc_priv->intensity_attr.show = intensity_show;
+> +	ret = sysfs_add_file_to_group(data->color_kobj,
+> +				      &mc_priv->intensity_attr.attr,
+> +				      led_color_group.name);
+> +	if (ret)
+> +		return ret;
+> +
+> +	sysfs_attr_init(&mc_priv->max_intensity_attr.attr);
+> +	mc_priv->max_intensity_attr.attr.name = "max_intensity";
+> +	mc_priv->max_intensity_attr.attr.mode = 444;
+> +	mc_priv->max_intensity_attr.show = max_intensity_show;
+> +	ret = sysfs_add_file_to_group(data->color_kobj,
+> +				      &mc_priv->max_intensity_attr.attr,
+> +				      led_color_group.name);
+> +	if (ret)
+> +		goto err_out;
+> +
+> +	mc_priv->max_intensity = LED_FULL;
+> +	list_add_tail(&mc_priv->list, &data->color_list);
+> +
+> +err_out:
+> +	return ret;
+> +}
+> +
+> +static int led_multicolor_init_color_dir(struct led_classdev_mc_data *data,
+> +					 struct led_classdev_mc *mcled_cdev)
+> +{
+> +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
+> +	u32 color_id;
+> +	int ret;
+> +	int i, j = 0;
+> +
+> +	data->color_kobj = kobject_create_and_add("colors",
+> +						  &led_cdev->dev->kobj);
+
+We need some guidance here on how to properly create sub directories 
+more then 1 level deep.
+
+In short under the LED class device parent directory we want to create a 
+directory called "colors".
+
+Under that directory we want to create a directory corresponding to the 
+monochrome LED color.
+Under that directory we have the files to for intensity and 
+max_intensity for the monochrome LED.
+
+We can use the LED class kobject to create the colors directory using 
+the sysfs calls but the issue comes when creating the LED color 
+directory.  We don't have a kobj for colors to associate those 
+directories to.  The only API we see to use the kobject_create_and_add 
+which then gives us the colors directory kobj.
+
+So the directory structure would look like this which is explained in 
+this patch https://lore.kernel.org/patchwork/patch/1128444/
+
+Directory Layout Example
+========================
+root:/sys/class/leds/rgb:grouped_leds# ls -lR colors/
+colors/:
+drwxr-xr-x    2 root     root             0 Jun 28 20:21 blue
+rwxr-xr-x    2 root     root             0 Jun 28 20:21 green
+drwxr-xr-x    2 root     root             0 Jun 28 20:21 red
+
+colors/blue:
+-rw-------    1 root     root          4096 Jun 28 20:21 intensity
+-r--------    1 root     root          4096 Jun 28 20:27 max_intensity
++colors/green:
+-rw-------    1 root     root          4096 Jun 28 20:22 intensity
+-r--------    1 root     root          4096 Jun 28 20:27 max_intensity
+
+colors/red:
+-rw-------    1 root     root          4096 Jun 28 20:21 intensity
+-r--------    1 root     root          4096 Jun 28 20:27 max_intensity
+
+I have reviewed your example code and read your blogs and papers on the 
+subject but nothing really talks about sub-sub directories.
+
+Now if this is a no-no in the kernel that is fine we can adjust but 
+Jacek wanted to get your opinon/guidance on this topic.
+
+Dan
+
+<snip>
