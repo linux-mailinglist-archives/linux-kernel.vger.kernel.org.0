@@ -2,145 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7006FB6684
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:57:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ECCEB6692
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731467AbfIRO5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 10:57:24 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:42543 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731382AbfIRO5Y (ORCPT
+        id S1731515AbfIRO5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 10:57:51 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59140 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731432AbfIRO5u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 10:57:24 -0400
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: kamel.bouhara@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id B47DC200018;
-        Wed, 18 Sep 2019 14:57:20 +0000 (UTC)
-From:   Kamel Bouhara <kamel.bouhara@bootlin.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Kamel Bouhara <kamel.bouhara@bootlin.com>
-Subject: [PATCH v2] pwm: atmel: Remove platform_device_id and use only dt bindings
-Date:   Wed, 18 Sep 2019 16:57:16 +0200
-Message-Id: <20190918145716.32022-1-kamel.bouhara@bootlin.com>
-X-Mailer: git-send-email 2.23.0
+        Wed, 18 Sep 2019 10:57:50 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IEvf7G030885;
+        Wed, 18 Sep 2019 09:57:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568818661;
+        bh=YZMQQ9rDqkdsxQjmsPw71m3JOMBZg+cqKmNu/NVV8jw=;
+        h=From:To:CC:Subject:Date;
+        b=HHQRgiBrlOd3HrxDcN/lDislCD07wT5VqZdN5uW3bCMkC7y/DGgGAeQKs5KbRxTH4
+         8dUlqPQlM3/FJLEeiInZkk1XXo6RNaLODKtX7xOTPEJEz93pBGtPGHwAIjdxyohVg/
+         6PmNHCKxui18FvXyCrXeihhwaxslA6fzDbdxciJc=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IEvfLS003149
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Sep 2019 09:57:41 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
+ Sep 2019 09:57:37 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 18 Sep 2019 09:57:37 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IEvdlH012783;
+        Wed, 18 Sep 2019 09:57:40 -0500
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>
+CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <tomi.valkeinen@ti.com>, <jjhiblot@ti.com>
+Subject: [PATCH v7 0/5] Add a generic driver for LED-based backlight
+Date:   Wed, 18 Sep 2019 16:57:25 +0200
+Message-ID: <20190918145730.22805-1-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 26202873bb51 ("avr32: remove support for AVR32
-architecture") there is no more user of platform_device_id and we
-should only use dt bindings
+This series aims to add a led-backlight driver, similar to pwm-backlight,
+but using a LED class device underneath.
 
-Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
----
-Changelog:
- v1->v2
- 
- - Remove whole function atmel_pwm_get_driver_data and call
- of_device_get_match_data from atmel_pwm_probe
+A few years ago (2015), Tomi Valkeinen posted a series implementing a
+backlight driver on top of a LED device:
+https://patchwork.kernel.org/patch/7293991/
+https://patchwork.kernel.org/patch/7294001/
+https://patchwork.kernel.org/patch/7293981/
 
- drivers/pwm/Kconfig     |  2 +-
- drivers/pwm/pwm-atmel.c | 35 +++--------------------------------
- 2 files changed, 4 insertions(+), 33 deletions(-)
+The discussion stopped because Tomi lacked the time to work on it.
 
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index a7e57516959e..b51fb1a33aa2 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -44,7 +44,7 @@ config PWM_AB8500
- 
- config PWM_ATMEL
- 	tristate "Atmel PWM support"
--	depends on ARCH_AT91
-+	depends on ARCH_AT91 && OF
- 	help
- 	  Generic PWM framework driver for Atmel SoC.
- 
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index e5e1eaf372fa..f7cf0a86a37c 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -318,19 +318,6 @@ static const struct atmel_pwm_data mchp_sam9x60_pwm_data = {
- 	},
- };
- 
--static const struct platform_device_id atmel_pwm_devtypes[] = {
--	{
--		.name = "at91sam9rl-pwm",
--		.driver_data = (kernel_ulong_t)&atmel_sam9rl_pwm_data,
--	}, {
--		.name = "sama5d3-pwm",
--		.driver_data = (kernel_ulong_t)&atmel_sama5_pwm_data,
--	}, {
--		/* sentinel */
--	},
--};
--MODULE_DEVICE_TABLE(platform, atmel_pwm_devtypes);
--
- static const struct of_device_id atmel_pwm_dt_ids[] = {
- 	{
- 		.compatible = "atmel,at91sam9rl-pwm",
-@@ -350,19 +337,6 @@ static const struct of_device_id atmel_pwm_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, atmel_pwm_dt_ids);
- 
--static inline const struct atmel_pwm_data *
--atmel_pwm_get_driver_data(struct platform_device *pdev)
--{
--	const struct platform_device_id *id;
--
--	if (pdev->dev.of_node)
--		return of_device_get_match_data(&pdev->dev);
--
--	id = platform_get_device_id(pdev);
--
--	return (struct atmel_pwm_data *)id->driver_data;
--}
--
- static int atmel_pwm_probe(struct platform_device *pdev)
- {
- 	const struct atmel_pwm_data *data;
-@@ -370,7 +344,7 @@ static int atmel_pwm_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int ret;
- 
--	data = atmel_pwm_get_driver_data(pdev);
-+	data = of_device_get_match_data(&pdev->dev);
- 	if (!data)
- 		return -ENODEV;
- 
-@@ -396,10 +370,8 @@ static int atmel_pwm_probe(struct platform_device *pdev)
- 	atmel_pwm->chip.dev = &pdev->dev;
- 	atmel_pwm->chip.ops = &atmel_pwm_ops;
- 
--	if (pdev->dev.of_node) {
--		atmel_pwm->chip.of_xlate = of_pwm_xlate_with_flags;
--		atmel_pwm->chip.of_pwm_n_cells = 3;
--	}
-+	atmel_pwm->chip.of_xlate = of_pwm_xlate_with_flags;
-+	atmel_pwm->chip.of_pwm_n_cells = 3;
- 
- 	atmel_pwm->chip.base = -1;
- 	atmel_pwm->chip.npwm = 4;
-@@ -437,7 +409,6 @@ static struct platform_driver atmel_pwm_driver = {
- 		.name = "atmel-pwm",
- 		.of_match_table = of_match_ptr(atmel_pwm_dt_ids),
- 	},
--	.id_table = atmel_pwm_devtypes,
- 	.probe = atmel_pwm_probe,
- 	.remove = atmel_pwm_remove,
- };
+changes in v7:
+- rebased on top of linux-leds/for-next
+- populate the of_node member of the LED device if fwnode is a of_node
+  (this is a new patch and the first of the series).
+- devm_led_get() works only when the device tree is used. Add a few checks
+  for that.  
+
+changes in v6:
+- trim the list of included headers
+- remove useless definition of BKL_FULL_BRIGHTNESS
+
+changes in v5:
+- removed LED brightness scaling
+- disable sysfs the interface of the LEDs when used by the backlight device
+
+changes in v4:
+- fix dev_err() messages and commit logs following the advices of Pavel
+- cosmetic changes (indents, getting rid of  "? 1 : 0" in
+  led_match_led_node())
+
+changes in v3:
+- dt binding: don't limit the brightness range to 0-255. Use the range of
+  the underlying LEDs. as a side-effect, all LEDs must now have the same
+  range
+- driver: Adapt to dt binding update.
+- driver: rework probe() for clarity and remove the remaining goto.
+
+changes in v2:
+- handle more than one LED.
+- don't make the backlight device a child of the LED controller.
+- make brightness-levels and default-brightness-level optional
+- removed the option to use a GPIO enable.
+- removed the option to use a regulator. It should be handled by the LED
+  core
+- don't make any change to the LED core (not needed anymore)
+
+Jean-Jacques Hiblot (3):
+  leds: populate the device's of_node when possible
+  leds: Add managed API to get a LED from a device driver
+  dt-bindings: backlight: Add led-backlight binding
+
+Tomi Valkeinen (2):
+  leds: Add of_led_get() and led_put()
+  backlight: add led-backlight driver
+
+ .../bindings/leds/backlight/led-backlight.txt |  28 ++
+ drivers/leds/led-class.c                      | 106 ++++++-
+ drivers/video/backlight/Kconfig               |   7 +
+ drivers/video/backlight/Makefile              |   1 +
+ drivers/video/backlight/led_bl.c              | 260 ++++++++++++++++++
+ include/linux/leds.h                          |   6 +
+ 6 files changed, 407 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/led-backlight.txt
+ create mode 100644 drivers/video/backlight/led_bl.c
+
 -- 
-2.23.0
+2.17.1
 
