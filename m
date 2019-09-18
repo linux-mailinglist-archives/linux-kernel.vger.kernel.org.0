@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E76BFB5C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E73B5C6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbfIRGXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:23:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43882 "EHLO mail.kernel.org"
+        id S1730057AbfIRG0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:26:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729670AbfIRGXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:36 -0400
+        id S1730060AbfIRG0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:26:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C311B21920;
-        Wed, 18 Sep 2019 06:23:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ED4420644;
+        Wed, 18 Sep 2019 06:26:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787816;
-        bh=P2jkNYRLfUzzTKbaT5lBb357nOuaUdw3XhA7ZngbgrQ=;
+        s=default; t=1568787972;
+        bh=EOYs7diMSh6dCmIDrI61xIdpH8YnS9qM0s6IaGFfKao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HqgMlhkfz9TEwlFqWhfrgldhCQebJAvr8sGtnVtTvJeQhxeHIM0jG0r58Y20w4Ygf
-         fr83Fwr0pLNXEjiUHE+tD/mEo8UVGEMvHf4tYgzhbQAcehSU9gzWQtfzom6I/xp/jT
-         +Qrc6CNyZuV+9xoR5dS5J5neU6uWBF+e9pYVmc0o=
+        b=zwoW93TyycDYqa/HwnOX+WNJdltzVYQtlCfJ23qwZ2uWUx7PBOamMA43LAXAPZbNu
+         hy0lO5tr+MUZxNutUTLBKjbThDkF2NGI2Q8T4Fm1t2vwIoEEkRS2j1UoKHL15uLv32
+         D54SmQyU4mgJnjqVB+jBGZv7DN6xkO2xKSt5MTho=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 4.19 27/50] drm/meson: Add support for XBGR8888 & ABGR8888 formats
-Date:   Wed, 18 Sep 2019 08:19:10 +0200
-Message-Id: <20190918061226.059082737@linuxfoundation.org>
+Subject: [PATCH 5.2 53/85] drm/meson: Add support for XBGR8888 & ABGR8888 formats
+Date:   Wed, 18 Sep 2019 08:19:11 +0200
+Message-Id: <20190918061235.793519854@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -61,7 +61,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/gpu/drm/meson/meson_plane.c
 +++ b/drivers/gpu/drm/meson/meson_plane.c
-@@ -120,6 +120,13 @@ static void meson_plane_atomic_update(st
+@@ -153,6 +153,13 @@ static void meson_plane_atomic_update(st
  		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_32 |
  					      OSD_COLOR_MATRIX_32_ARGB;
  		break;
@@ -75,7 +75,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	case DRM_FORMAT_ARGB8888:
  		/* For ARGB, use the pixel's alpha */
  		writel_bits_relaxed(OSD_REPLACE_EN, 0,
-@@ -127,6 +134,13 @@ static void meson_plane_atomic_update(st
+@@ -160,6 +167,13 @@ static void meson_plane_atomic_update(st
  		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_32 |
  					      OSD_COLOR_MATRIX_32_ARGB;
  		break;
@@ -89,7 +89,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	case DRM_FORMAT_RGB888:
  		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_24 |
  					      OSD_COLOR_MATRIX_24_RGB;
-@@ -196,7 +210,9 @@ static const struct drm_plane_funcs meso
+@@ -346,7 +360,9 @@ static const struct drm_plane_funcs meso
  
  static const uint32_t supported_drm_formats[] = {
  	DRM_FORMAT_ARGB8888,
