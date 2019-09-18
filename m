@@ -2,81 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 713DEB5D06
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 146C8B5D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730189AbfIRGbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:31:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44010 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726987AbfIRGXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:45 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7BB221925;
-        Wed, 18 Sep 2019 06:23:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787824;
-        bh=H9w7/0BvPXj3hhUYfRuW3ve7SbHYUQvWQsY+jCmbvoE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hu58DGnBNE0oDteT2MSG2VV/936YC3h4GcTRTY45Qn0IhNneTCktJl06uDnMjrf4b
-         +rPJwigr1gcIfUMBLuu2Z6msQT9xWLyJodgHZiVBlPc30YiUaRsqL1ZUgTJcBDG40f
-         PrMyOXABYiUT0/MVM6kFlQkdcGcb7VqPfTrDDFPk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.19 47/50] platform/x86: pmc_atom: Add CB4063 Beckhoff Automation board to critclk_systems DMI table
-Date:   Wed, 18 Sep 2019 08:19:30 +0200
-Message-Id: <20190918061228.374318923@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1730216AbfIRGbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:31:34 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44611 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729571AbfIRGXV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:21 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 21so5289352otj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 23:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wK9VKPT5PALGow0s1AD18j7lV+EvX5g7BMBWsTpeIng=;
+        b=xv6lI474DYSgaSu5RV4eJEBRp8AAJwvehRoTTpWaCo2J8ub7oPk4fmWmvkg1ZEyHq+
+         TtxFAJNA+CkO15cIf36iqqP9X57G/JNY3Jb2I187WuFFnZsD/6zxHIOCkgH6EgYA1jfH
+         YFSSbCekS/IoziCPiLuxaZHnZq5wzOhwRethzETOZxKFgUsGwW/D4ZLudka0rLN2bOSj
+         SAypaAGTp5bpQL5XY1Q813yX/HmVuGih8Q5wEvBX1r4lbpI+8QupHhP+fcbRFrASg2mL
+         7pMs60vrA8DXbpmTG++BM1jE99VkeCVDR9xwYrqoLW/I0P3yuAd+Xz5+qsRpoB02XtZC
+         WfkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wK9VKPT5PALGow0s1AD18j7lV+EvX5g7BMBWsTpeIng=;
+        b=IIzI+3mt9PuonFD4vAM9DXtoJeYW1/9+0Q/BRs/276PeJvwuHCCQILpxpILxvO+XqJ
+         LLHyWCFPCCBmSr2CcP0HcDD4MRw9/hJGt+IB/7KZBXo+gawpy9QUUlD/FE/5ovARopPV
+         7chvFcONDldQ4mkwj5Ly/q9ugAzt1mOP7w/CRgVerPr6BtrK3rHyJHkxflOkSIVmEV7W
+         ZquXwJAARedTxQ1lXTle5EyCeQZfx6jhsVAHOOvCHg1Hb4ZB/3ZHBHHi41A6+QL7rN1D
+         ePsWt9EU8S+svNuH8YvPUGq6LaDmDyLW56VlxW5ppqN3l2a/OSVq+AL5WC3p9nRgk/ea
+         Iabw==
+X-Gm-Message-State: APjAAAVv4DSOpa1/x1PfEj7qLmScaY3+DyGVpvEueowfmo78aYbGb90h
+        p0cl9hfCIKEWwAs7N4rgIGApZiY4m6X/hoko9DlNgA==
+X-Google-Smtp-Source: APXvYqyy689jL78FRCBaToum4k1f1kK7Ku7U2vf7SNBEYUwL9xj0w29sOcLAmo488CIy0XySfEE42rIulH1rHL8wJvo=
+X-Received: by 2002:a9d:24e4:: with SMTP id z91mr1722754ota.41.1568787800000;
+ Tue, 17 Sep 2019 23:23:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1568630064-14887-1-git-send-email-sumit.garg@linaro.org>
+ <1568630064-14887-5-git-send-email-sumit.garg@linaro.org> <20190917181415.GA8472@linux.intel.com>
+ <20190917181507.GB8472@linux.intel.com>
+In-Reply-To: <20190917181507.GB8472@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 18 Sep 2019 11:53:08 +0530
+Message-ID: <CAFA6WYMbUGQ6+-XvR9_qSc=oVe1QSTg4kB-+y6rBmQLq+B6skg@mail.gmail.com>
+Subject: Re: [Patch v6 4/4] KEYS: trusted: Move TPM2 trusted keys code
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     dhowells@redhat.com, peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        jgg@ziepe.ca, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        jejb@linux.ibm.com, Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+On Tue, 17 Sep 2019 at 23:45, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Tue, Sep 17, 2019 at 09:14:15PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Sep 16, 2019 at 04:04:24PM +0530, Sumit Garg wrote:
+> > > Move TPM2 trusted keys code to trusted keys subsystem. The reason
+> > > being it's better to consolidate all the trusted keys code to a single
+> > > location so that it can be maintained sanely.
+> > >
+> > > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> >
+> > This commit has couple of issues that I only noticed when looking into
+> > bug reported by Mimi.
+> >
+> > Right now tpm_send() is the exported function that is used by other
+> > subsystems. tpm_transmit_cmd() is an internal function. This commit adds
+> > two unrelated code paths to send TPM commands, which is unacceptable.
 
-commit 9452fbf5c6cf5f470e0748fe7a14a683e7765f7a upstream.
+Makes sense, will update.
 
-The CB4063 board uses pmc_plt_clk* clocks for ethernet controllers. This
-adds it to the critclk_systems DMI table so the clocks are marked as
-CLK_CRITICAL and not turned off.
+> >
+> > You should make tpm2 functionality to use tpm_send() instead and remove
+> > tpm_seal_trusted() and tpm_unseal_trusted() completely in this commit.
 
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Okay.
 
----
- drivers/platform/x86/pmc_atom.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+>
+> The consequence is that the result needs unfortunately re-review. Sorry
+> about that, just took this time to notice this glitch.
 
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -423,6 +423,14 @@ static const struct dmi_system_id critcl
- 	},
- 	{
- 		/* pmc_plt_clk* - are used for ethernet controllers */
-+		.ident = "Beckhoff CB4063",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
-+			DMI_MATCH(DMI_BOARD_NAME, "CB4063"),
-+		},
-+	},
-+	{
-+		/* pmc_plt_clk* - are used for ethernet controllers */
- 		.ident = "Beckhoff CB6263",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
+No worries :). I will send next version of patch-set.
 
+FYI, I will be travelling for Linaro Connect next week so you could
+expect some delays in my responses.
 
+-Sumit
+
+>
+> /Jarkko
