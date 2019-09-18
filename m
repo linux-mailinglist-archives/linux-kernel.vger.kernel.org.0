@@ -2,108 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B02B6018
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44DD0B6011
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728932AbfIRJ1T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 05:27:19 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52220 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfIRJ1T (ORCPT
+        id S1727734AbfIRJYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 05:24:24 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34500 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfIRJYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 05:27:19 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8I98uK0036001;
-        Wed, 18 Sep 2019 09:27:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=5W1fcvEd99/AIOIxEczHb9EgxxrI9ZKCVn9mLpgE1DY=;
- b=lMkuL9E22/fDHGZGYGdq4UeC5SmsvGJPm1jemC461wOrRlCJRuuu/+/JcgNExra+s8Mf
- Z/tF3XlJX6OyYs2M7n7ZaUo2Z5fZgUgou5AYx75K0JBluBD3nmV1ot/5EEKrIUJV6esR
- dD/0NnDsuB6Duc2+tQrLR79ZpIcpuENYTvDGuvJfYFVWswA5ALy/O9+jdGXfFzRo2raa
- 4tv4hudsFVUcsQd47Wwf0ZX90JmZXCOtKpR/pWEp8zA2e/CqqoT0piBKKTps2IMbCvRA
- wjd4xIIL6HUeWEKOxR3ffNdvNazYCzbbkwvM2MM9y6mi9ZLva+mZ8s9zuW1GvvLMWWw1 fA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2v385dtj58-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 09:27:09 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8I994QC176154;
-        Wed, 18 Sep 2019 09:25:08 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2v37mm8fts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 09:25:08 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8I9P56v026455;
-        Wed, 18 Sep 2019 09:25:05 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 18 Sep 2019 02:25:04 -0700
-Date:   Wed, 18 Sep 2019 12:24:06 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Ju Hyung Park <qkrwngud825@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
-        linkinjeon@gmail.com, Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-kernel@vger.kernel.org, alexander.levin@microsoft.com,
-        sergey.senozhatsky@gmail.com, linux-fsdevel@vger.kernel.org,
-        sj1557.seo@samsung.com
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to
-Message-ID: <20190918092405.GC2959@kadam>
-References: <8998.1568693976@turing-police>
- <20190917053134.27926-1-qkrwngud825@gmail.com>
- <20190917054726.GA2058532@kroah.com>
- <CGME20190917060433epcas2p4b12d7581d0ac5477d8f26ec74e634f0a@epcas2p4.samsung.com>
- <CAD14+f1adJPRTvk8awgPJwCoHXSngqoKcAze1xbHVVvrhSMGrQ@mail.gmail.com>
- <004401d56dc9$b00fd7a0$102f86e0$@samsung.com>
- <20190918061605.GA1832786@kroah.com>
- <20190918063304.GA8354@jagdpanzerIV>
- <20190918082658.GA1861850@kroah.com>
- <CAD14+f24gujg3S41ARYn3CvfCq9_v+M2kot=RR3u7sNsBGte0Q@mail.gmail.com>
+        Wed, 18 Sep 2019 05:24:23 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b128so4007308pfa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 02:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gxoSuJQ6tFLYp4g2neEbM8yU2CStuYNj11hMjYPafM0=;
+        b=Fk/TzG+zR7aMVIWtTy+Yxf3cDDmJPfGy2lwVIWxXmfAmZzAlaACNEJbKJkPHu2ia2E
+         YXjLa9LF9NBR2KfrMTDAoPx3l7enK+r001ZMoNtsxj1kPshqgLP0pLTeQ91lqKaiWCOu
+         V/f2DW71FndaBt7uaP1SE0hsTLfZW+fEcvwj8mfYS6QqtidCeGNT5KvLVtkYTPKr4Qs/
+         ffcOfOcI8t8FEOiuOA6DrqjMNMkLVJCn08H9tZymDF3iN3mVcWFUCL8c9UxfacKhBkiv
+         GMv+kOMZ01UA2RSI/0DzJJtz25hxRKvTdbmOJORLhNCqUBnjcVqihD//gNsgoVXi5GAq
+         axEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gxoSuJQ6tFLYp4g2neEbM8yU2CStuYNj11hMjYPafM0=;
+        b=ohIwmweklXk+lXD/Ih8VPcX1lO07wUNUCR/bLWQWKFl5AIPEEHyoDTxgFDAswYFDaz
+         3faaL49nK408yzNYSb89elAdPuLJH21c4a8xMwUl2XON0e3A0nXtSfdCx7bVF3nB5hiQ
+         MlmWTUgkz+L9eFjF2/wPDh7Zp4Kqh12Q5xx40WhHboX8PUubAI8muk5QFnlU/VSyw9Vl
+         neHz6ct6n7CKBR05yLFsYI+gWCP+onfRk7euahT25B+ERk8/joUQIHhKTcJeUDaEgrrI
+         C9uDYLikAhZzCCZSB9QMuxUSt7RaSxfBOyJzC8KowG3XMkxdTzVXIhRgpfss1Yd/tT9I
+         DtXw==
+X-Gm-Message-State: APjAAAW6XQUkdo1bVADpFeiITxNRgB5afbWxhSinHJNDHeoGugM+sfms
+        BCQKdehadYHHjHnegppe9An/PQ==
+X-Google-Smtp-Source: APXvYqz7Ynw9js8OL9E7HFrRlFKBtt+IpGnyik3APBXO5zcuV+d4IhN19kTq6wgZbJpIvoCMlNjK6Q==
+X-Received: by 2002:aa7:8d81:: with SMTP id i1mr2935659pfr.191.1568798661686;
+        Wed, 18 Sep 2019 02:24:21 -0700 (PDT)
+Received: from localhost ([122.172.73.172])
+        by smtp.gmail.com with ESMTPSA id t8sm3523628pjq.30.2019.09.18.02.24.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Sep 2019 02:24:20 -0700 (PDT)
+Date:   Wed, 18 Sep 2019 14:54:18 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Adam Ford <aford173@gmail.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>,
+        =?iso-8859-1?Q?Andr=E9?= Roth <neolynx@gmail.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Nishanth Menon <nm@ti.com>, Adam Ford <adam.ford@logicpd.com>
+Subject: Re: [RFC] ARM: dts: omap36xx: Enable thermal throttling
+Message-ID: <20190918092418.que4c5jpcn2dcavx@vireshk-mac-ubuntu>
+References: <20190912183037.18449-1-aford173@gmail.com>
+ <51bb8890-bfd7-c241-1ce5-151df3a90513@linaro.org>
+ <CAHCN7xKjwkJHysSkNymF=sw6KuS=FqbapuRFZODuj6E_hmRG1A@mail.gmail.com>
+ <2ef812a4-2f2d-b2e2-9fa4-080775e24bc8@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD14+f24gujg3S41ARYn3CvfCq9_v+M2kot=RR3u7sNsBGte0Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909180094
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909180094
+In-Reply-To: <2ef812a4-2f2d-b2e2-9fa4-080775e24bc8@linaro.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 06:01:09PM +0900, Ju Hyung Park wrote:
-> On Wed, Sep 18, 2019 at 5:33 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > He did?  I do not see a patch anywhere, what is the message-id of it?
+On 13-09-19, 00:33, Daniel Lezcano wrote:
 > 
-> I'm just repeating myself at this point, but again, I'm more than
-> willing to work on a patch.
-> I just want to make it clear on how should I.
+> Hi Adam,
+> 
+> On 12/09/2019 23:19, Adam Ford wrote:
+> > On Thu, Sep 12, 2019 at 4:12 PM Daniel Lezcano
+> > <daniel.lezcano@linaro.org> wrote:
+> >>
+> >> On 12/09/2019 20:30, Adam Ford wrote:
+> >>> The thermal sensor in the omap3 family isn't accurate, but it's
+> >>> better than nothing.  The various OPP's enabled for the omap3630
+> >>> support up to OPP1G, however the datasheet for the DM3730 states
+> >>> that OPP130 and OPP1G are not available above TJ of 90C.
+> >>>
+> >>> This patch configures the thermal throttling to limit the
+> >>> operating points of the omap3630 to Only OPP50 and OPP100 if
+> >>> the thermal sensor reads a value above 90C.
+> 
+> Oh, that's a very interesting use case.
+> 
+> AFAICT the thermal framework is not designed to deal with this
+> situation. I agree this setup may work (even if I'm not convinced about
+> the stability of the whole).
+> 
+> May be Viresh can help for the cpufreq side?
 
-Put it in drivers/staging/sdfat/.
+Sorry but I am not able to understand what's not supported by thermal framework
+here and what can I do to help :)
 
-But really we want someone from Samsung to say that they will treat
-the staging version as upstream.  It doesn't work when people apply
-fixes to their version and a year later back port the fixes into
-staging.  The staging tree is going to have tons and tons of white space
-fixes so backports are a pain.  All development needs to be upstream
-first where the staging driver is upstream.  Otherwise we should just
-wait for Samsung to get it read to be merged in fs/ and not through the
-staging tree.
-
-regards,
-dan carpenter
-
-
+-- 
+viresh
