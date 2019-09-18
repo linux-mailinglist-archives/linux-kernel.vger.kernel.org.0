@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D8B5B5C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8069B5C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbfIRGZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46350 "EHLO mail.kernel.org"
+        id S1726779AbfIRGXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:23:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730104AbfIRGZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:25 -0400
+        id S1726656AbfIRGW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:22:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9476821920;
-        Wed, 18 Sep 2019 06:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47D8721920;
+        Wed, 18 Sep 2019 06:22:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787925;
-        bh=3CyFhuas6gP5M1JgVHpC1okIUboCfMCDtxVBycq2dsk=;
+        s=default; t=1568787778;
+        bh=lNSzM/zmTZ5Sd3pxrsWBE+lpg0SWXyFFpchBtkjunjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=APo6lb/hjNP7pAN83pfA860it47bDKPL9hw4KlJt92WDcEewupmHtGMbMFy0S+Mum
-         jihLOJFfrYStBQBjdrz2Aey/Y7mTf/IxOGdluLNt597g/LsQCZ38EIpk3JOOifLEEQ
-         7ABK4vZlL4Umu7VQK9XhOmI9oJOkgzjb5nof+vMw=
+        b=k+2hmPxxMASyfDDwyIwCefStHA3oLxQssX4Vx/SKu1N958oPryOmxCz1n4TsGXvIV
+         dBzDl/ThdPZWX814lhGY+p03OCVGNHcvqnj9lmBpJ/BXTAPuti0qzG3bLzFqNCRTK3
+         g099QHpv56BXQmB8yZc6WrnS4P89gwyl0yY4QwRA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Geoffrey Bennett <gmux22@gmail.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH 5.2 33/85] drm/i915: Limit MST to <= 8bpc once again
+        stable@vger.kernel.org, Stefan Chulski <stefanc@marvell.com>,
+        Shaul Ben-Mayor <shaulb@marvell.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 08/50] net: phylink: Fix flow control resolution
 Date:   Wed, 18 Sep 2019 08:18:51 +0200
-Message-Id: <20190918061235.198832090@linuxfoundation.org>
+Message-Id: <20190918061223.817031776@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Stefan Chulski <stefanc@marvell.com>
 
-commit bb1a71f9c4672fbfcf2158fd57d0c5c0cdae5612 upstream.
+[ Upstream commit 63b2ed4e10b2e6c913e1d8cdd728e7fba4115a3d ]
 
-My attempt at allowing MST to use the higher color depths has
-regressed some configurations. Apparently people have setups
-where all MST streams will fit into the DP link with 8bpc but
-won't fit with higher color depths.
+Regarding to IEEE 802.3-2015 standard section 2
+28B.3 Priority resolution - Table 28-3 - Pause resolution
 
-What we really should be doing is reducing the bpc for all the
-streams on the same link until they start to fit. But that requires
-a bit more work, so in the meantime let's revert back closer to
-the old behavior and limit MST to at most 8bpc.
+In case of Local device Pause=1 AsymDir=0, Link partner
+Pause=1 AsymDir=1, Local device resolution should be enable PAUSE
+transmit, disable PAUSE receive.
+And in case of Local device Pause=1 AsymDir=1, Link partner
+Pause=1 AsymDir=0, Local device resolution should be enable PAUSE
+receive, disable PAUSE transmit.
 
-Cc: stable@vger.kernel.org
-Cc: Lyude Paul <lyude@redhat.com>
-Tested-by: Geoffrey Bennett <gmux22@gmail.com>
-Fixes: f1477219869c ("drm/i915: Remove the 8bpc shackles from DP MST")
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111505
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190828102059.2512-1-ville.syrjala@linux.intel.com
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-(cherry picked from commit 75427b2a2bffc083d51dec389c235722a9c69b05)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Fixes: 9525ae83959b ("phylink: add phylink infrastructure")
+Signed-off-by: Stefan Chulski <stefanc@marvell.com>
+Reported-by: Shaul Ben-Mayor <shaulb@marvell.com>
+Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/intel_dp_mst.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/net/phy/phylink.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -125,7 +125,15 @@ static int intel_dp_mst_compute_config(s
- 	limits.max_lane_count = intel_dp_max_lane_count(intel_dp);
- 
- 	limits.min_bpp = intel_dp_min_bpp(pipe_config);
--	limits.max_bpp = pipe_config->pipe_bpp;
-+	/*
-+	 * FIXME: If all the streams can't fit into the link with
-+	 * their current pipe_bpp we should reduce pipe_bpp across
-+	 * the board until things start to fit. Until then we
-+	 * limit to <= 8bpc since that's what was hardcoded for all
-+	 * MST streams previously. This hack should be removed once
-+	 * we have the proper retry logic in place.
-+	 */
-+	limits.max_bpp = min(pipe_config->pipe_bpp, 24);
- 
- 	intel_dp_adjust_compliance_config(intel_dp, pipe_config, &limits);
- 
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -380,8 +380,8 @@ static void phylink_get_fixed_state(stru
+  *  Local device  Link partner
+  *  Pause AsymDir Pause AsymDir Result
+  *    1     X       1     X     TX+RX
+- *    0     1       1     1     RX
+- *    1     1       0     1     TX
++ *    0     1       1     1     TX
++ *    1     1       0     1     RX
+  */
+ static void phylink_resolve_flow(struct phylink *pl,
+ 				 struct phylink_link_state *state)
+@@ -402,7 +402,7 @@ static void phylink_resolve_flow(struct
+ 			new_pause = MLO_PAUSE_TX | MLO_PAUSE_RX;
+ 		else if (pause & MLO_PAUSE_ASYM)
+ 			new_pause = state->pause & MLO_PAUSE_SYM ?
+-				 MLO_PAUSE_RX : MLO_PAUSE_TX;
++				 MLO_PAUSE_TX : MLO_PAUSE_RX;
+ 	} else {
+ 		new_pause = pl->link_config.pause & MLO_PAUSE_TXRX_MASK;
+ 	}
 
 
