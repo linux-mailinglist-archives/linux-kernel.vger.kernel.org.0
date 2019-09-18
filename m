@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03470B5BF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C74BB5C6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbfIRGVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:21:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40440 "EHLO mail.kernel.org"
+        id S1730274AbfIRG0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:26:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728962AbfIRGVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:10 -0400
+        id S1728534AbfIRG0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:26:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF3532053B;
-        Wed, 18 Sep 2019 06:21:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A17920644;
+        Wed, 18 Sep 2019 06:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787670;
-        bh=dds7yyew+Q7DthIfAXV2F78bppU+YezfeIJzAnwPfVE=;
+        s=default; t=1568787974;
+        bh=rwEA9Q0a06XgOshyqVw2qobUN8dbpfreOZ0k15eEyTY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C+PC/b1EucC0AB7Dk2qPV6r+dYf4m1Tsth4oe0toNd6XkWFz6LzmST3/MY5crXnXB
-         6S3HblqVjVchufFm2FecWKzqiizVAOhCKwM3qKx5j6GmwUu+Mw6g71+lbMk1GsnxdA
-         2Xa5QNaLCyEgJasY7Ek3ma892J0wBaL5pyfdSVrU=
+        b=AkgMlKEgBGr1frH1l5NJpA5TAvObNMr8gS2aBtDdeLjjyygdTv7dJf23opfQxOAfQ
+         Xqn/esteLShH1mrIDANIV4I3xwO91s2MriwV/WgkmMdq3xgj2Pj+Pi+JIj3LZ1rZmX
+         vDsoOq11Jk+o74FIgRES4z13dvlA5D3pYhiH7XHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 34/45] crypto: talitos - check AES key size
+        stable@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 5.2 54/85] clk: Fix debugfs clk_possible_parents for clks without parent string names
 Date:   Wed, 18 Sep 2019 08:19:12 +0200
-Message-Id: <20190918061227.067514278@linuxfoundation.org>
+Message-Id: <20190918061235.821904087@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,59 +42,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Chen-Yu Tsai <wens@csie.org>
 
-commit 1ba34e71e9e56ac29a52e0d42b6290f3dc5bfd90 upstream.
+commit 2d156b78ce8febf15cd58a025d7d9d7b7577126a upstream.
 
-Although the HW accepts any size and silently truncates
-it to the correct length, the extra tests expects EINVAL
-to be returned when the key size is not valid.
+Following the commit fc0c209c147f ("clk: Allow parents to be specified
+without string names"), the parent name string is not always populated.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Instead, fetch the parents clk_core struct using the appropriate helper,
+and read its name directly. If that fails, go through the possible
+sources of parent names. The order in which they are used is different
+from how parents are looked up, with the global name having precedence
+over local fw_name and indices. This makes more sense as a) the
+parent_maps structure does not differentiate between legacy global names
+and fallback global names, and b) global names likely provide more
+information than local fw_names.
+
+Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/clk/clk.c |   44 +++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 41 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1528,6 +1528,18 @@ static int ablkcipher_setkey(struct cryp
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3023,12 +3023,50 @@ DEFINE_SHOW_ATTRIBUTE(clk_flags);
+ static int possible_parents_show(struct seq_file *s, void *data)
+ {
+ 	struct clk_core *core = s->private;
++	struct clk_core *parent;
+ 	int i;
+ 
+-	for (i = 0; i < core->num_parents - 1; i++)
+-		seq_printf(s, "%s ", core->parents[i].name);
++	/*
++	 * Go through the following options to fetch a parent's name.
++	 *
++	 * 1. Fetch the registered parent clock and use its name
++	 * 2. Use the global (fallback) name if specified
++	 * 3. Use the local fw_name if provided
++	 * 4. Fetch parent clock's clock-output-name if DT index was set
++	 *
++	 * This may still fail in some cases, such as when the parent is
++	 * specified directly via a struct clk_hw pointer, but it isn't
++	 * registered (yet).
++	 */
++	for (i = 0; i < core->num_parents - 1; i++) {
++		parent = clk_core_get_parent_by_index(core, i);
++		if (parent)
++			seq_printf(s, "%s ", parent->name);
++		else if (core->parents[i].name)
++			seq_printf(s, "%s ", core->parents[i].name);
++		else if (core->parents[i].fw_name)
++			seq_printf(s, "<%s>(fw) ", core->parents[i].fw_name);
++		else if (core->parents[i].index >= 0)
++			seq_printf(s, "%s ",
++				   of_clk_get_parent_name(core->of_node,
++							  core->parents[i].index));
++		else
++			seq_puts(s, "(missing) ");
++	}
+ 
+-	seq_printf(s, "%s\n", core->parents[i].name);
++	parent = clk_core_get_parent_by_index(core, i);
++	if (parent)
++		seq_printf(s, "%s", parent->name);
++	else if (core->parents[i].name)
++		seq_printf(s, "%s", core->parents[i].name);
++	else if (core->parents[i].fw_name)
++		seq_printf(s, "<%s>(fw)", core->parents[i].fw_name);
++	else if (core->parents[i].index >= 0)
++		seq_printf(s, "%s",
++			   of_clk_get_parent_name(core->of_node,
++						  core->parents[i].index));
++	else
++		seq_puts(s, "(missing)");
+ 
  	return 0;
  }
- 
-+static int ablkcipher_aes_setkey(struct crypto_ablkcipher *cipher,
-+				  const u8 *key, unsigned int keylen)
-+{
-+	if (keylen == AES_KEYSIZE_128 || keylen == AES_KEYSIZE_192 ||
-+	    keylen == AES_KEYSIZE_256)
-+		return ablkcipher_setkey(cipher, key, keylen);
-+
-+	crypto_ablkcipher_set_flags(cipher, CRYPTO_TFM_RES_BAD_KEY_LEN);
-+
-+	return -EINVAL;
-+}
-+
- static void common_nonsnoop_unmap(struct device *dev,
- 				  struct talitos_edesc *edesc,
- 				  struct ablkcipher_request *areq)
-@@ -2621,6 +2633,7 @@ static struct talitos_alg_template drive
- 				.min_keysize = AES_MIN_KEY_SIZE,
- 				.max_keysize = AES_MAX_KEY_SIZE,
- 				.ivsize = AES_BLOCK_SIZE,
-+				.setkey = ablkcipher_aes_setkey,
- 			}
- 		},
- 		.desc_hdr_template = DESC_HDR_TYPE_COMMON_NONSNOOP_NO_AFEU |
-@@ -2638,6 +2651,7 @@ static struct talitos_alg_template drive
- 				.min_keysize = AES_MIN_KEY_SIZE,
- 				.max_keysize = AES_MAX_KEY_SIZE,
- 				.ivsize = AES_BLOCK_SIZE,
-+				.setkey = ablkcipher_aes_setkey,
- 			}
- 		},
- 		.desc_hdr_template = DESC_HDR_TYPE_AESU_CTR_NONSNOOP |
 
 
