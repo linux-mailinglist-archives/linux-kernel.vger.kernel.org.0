@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AABFB5C74
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB01EB5C05
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbfIRG01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:26:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47790 "EHLO mail.kernel.org"
+        id S1729304AbfIRGWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:22:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728779AbfIRG0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:26:23 -0400
+        id S1728043AbfIRGV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:21:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 236F3218AF;
-        Wed, 18 Sep 2019 06:26:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E4FF21906;
+        Wed, 18 Sep 2019 06:21:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787982;
-        bh=2Rhxi2ltz1jn8ido4NNuE6OMfLR8wk+kLgKNquYOYH0=;
+        s=default; t=1568787718;
+        bh=p+3m82tliaje6PacOgqeA/tyzrSNM4L/3dsVSIpEtfI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZAKuEauRprcy26jykmIRlSbm4QW910voQiE724STMuGyHdwjrIBZwiJRpyiTCmfh8
-         H+A/GIn1yxKrMaV0hhuihwTVbyC8RUVqHC+H1s0mrZYYDWL2eWkx4coF9GxMLz8CO1
-         kQ52BsT+a/W+MQynVt137pkrgH8RgU4JTTZfuegg=
+        b=zYWf6mj2MAvu7+rrx4XOgLabcGHLZcZOx2g85xQpy1czanABS4U0gJjZp7rL3KGQy
+         E0xv78MbE7zTiS06o0Bmit/R4xTloWOV0bM1iMNLymmfWfv/f9d5z3BdZsNfbjlJcG
+         vq1YzKmORCTtxaH21KqMCneVdq93uphaoRvhV2KE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH 5.2 57/85] mt76: mt7615: Use after free in mt7615_mcu_set_bcn()
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 37/45] crypto: talitos - fix ECB algs ivsize
 Date:   Wed, 18 Sep 2019 08:19:15 +0200
-Message-Id: <20190918061235.909909051@linuxfoundation.org>
+Message-Id: <20190918061227.361127776@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +43,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 9db1aec0c2d72a3b7b115ba56e8dbb5b46855333 upstream.
+commit d84cc9c9524ec5973a337533e6d8ccd3e5f05f2b upstream.
 
-We dereference "skb" when we assign:
+ECB's ivsize must be 0.
 
-	req.pkt_len = cpu_to_le16(MT_TXD_SIZE + skb->len);
-                                                ^^^^^^^^
-So this patch just moves the dev_kfree_skb() down a bit to avoid the
-use after free.
-
-Fixes: 04b8e65922f6 ("mt76: add mac80211 driver for MT7615 PCIe-based chipsets")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 5e75ae1b3cef ("crypto: talitos - add new crypto modes")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/mediatek/mt76/mt7615/mcu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/talitos.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt7615/mcu.c
-@@ -1270,7 +1270,6 @@ int mt7615_mcu_set_bcn(struct mt7615_dev
- 	mt7615_mac_write_txwi(dev, (__le32 *)(req.pkt), skb, wcid, NULL,
- 			      0, NULL);
- 	memcpy(req.pkt + MT_TXD_SIZE, skb->data, skb->len);
--	dev_kfree_skb(skb);
- 
- 	req.omac_idx = mvif->omac_idx;
- 	req.enable = en;
-@@ -1281,6 +1280,7 @@ int mt7615_mcu_set_bcn(struct mt7615_dev
- 	req.pkt_len = cpu_to_le16(MT_TXD_SIZE + skb->len);
- 	req.tim_ie_pos = cpu_to_le16(MT_TXD_SIZE + tim_off);
- 
-+	dev_kfree_skb(skb);
- 	skb = mt7615_mcu_msg_alloc(&req, sizeof(req));
- 
- 	return mt7615_mcu_msg_send(dev, skb, MCU_EXT_CMD_BCN_OFFLOAD,
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -2666,7 +2666,6 @@ static struct talitos_alg_template drive
+ 			.cra_ablkcipher = {
+ 				.min_keysize = AES_MIN_KEY_SIZE,
+ 				.max_keysize = AES_MAX_KEY_SIZE,
+-				.ivsize = AES_BLOCK_SIZE,
+ 				.setkey = ablkcipher_aes_setkey,
+ 			}
+ 		},
 
 
