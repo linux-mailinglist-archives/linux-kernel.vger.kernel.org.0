@@ -2,134 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2688B6332
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1206B62FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730915AbfIRM1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:27:40 -0400
-Received: from mail-sz.amlogic.com ([211.162.65.117]:56694 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728539AbfIRM1h (ORCPT
+        id S1730914AbfIRMWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:22:44 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:59834 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728915AbfIRMWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:27:37 -0400
-X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Sep 2019 08:27:32 EDT
-Received: from droid12-sz.software.amlogic (10.28.8.22) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Wed, 18 Sep 2019
- 20:13:27 +0800
-From:   Xingyu Chen <xingyu.chen@amlogic.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Kevin Hilman <khilman@baylibre.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
+        Wed, 18 Sep 2019 08:22:44 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8IBxCbN020861;
+        Wed, 18 Sep 2019 14:22:33 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=RebjsdANV2RzBT+nKVyZPCTFFvdkml0nlo0oKVk0ci8=;
+ b=oipJ2ouUjUahB3dmJ4OqaGkvNR6lRCvhtpKxSkkUoeCN5vsRw1HNa1L1WuBo/QBdIVqS
+ HMlU74EipnCxVFIksMwBCCxnMxWQ7RrY1gyIzU0Yri1MuCcC/3OH5KSbp8Wd1+FpSf57
+ ovlemkzcYOBffmOiVS0nijuG1kUiYaS9GteEst8NbasI0Mg8Xwlz3A/D6NILOrRvx8Cc
+ MXEYu7rziBf4sQTs4U2nvwoA5HR4JK0v5ZIF91rzbIwNgvVZqrFZzQtS76er1epe96Fx
+ BLWutbYImcqD6p4SF8nihNqCvuvF3vvMkVxPB447o3D/fDWOoI4YO7tz210/6LSqHbEw 3w== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2v37kh456y-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 18 Sep 2019 14:22:33 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9C42B4C;
+        Wed, 18 Sep 2019 12:22:29 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D8E3E2C5B2F;
+        Wed, 18 Sep 2019 14:22:28 +0200 (CEST)
+Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 18 Sep
+ 2019 14:22:28 +0200
+Received: from localhost (10.48.1.232) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 18 Sep 2019 14:22:28 +0200
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <vilhelm.gray@gmail.com>
+CC:     <jic23@kernel.org>, <alexandre.torgue@st.com>,
+        <fabrice.gasnier@st.com>, <linux-iio@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] reset: add support for the Meson-A1 SoC Reset Controller
-Date:   Wed, 18 Sep 2019 20:12:29 +0800
-Message-ID: <1568808749-1196-1-git-send-email-xingyu.chen@amlogic.com>
+Subject: [PATCH] counter: stm32-timer-cnt: fix a kernel-doc warning
+Date:   Wed, 18 Sep 2019 14:22:03 +0200
+Message-ID: <1568809323-26079-1-git-send-email-fabrice.gasnier@st.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.28.8.22]
+X-Originating-IP: [10.48.1.232]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-18_07:2019-09-17,2019-09-18 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The number of RESET registers and offset of RESET_LEVEL register for
-Meson-A1 are different from previous SoCs, In order to describe these
-differences, we introduce the struct meson_reset_param.
+Fix the following warning when documentation is built:
+drivers/counter/stm32-timer-cnt.c:37: warning: cannot understand function
+prototype: 'enum stm32_count_function'
 
-Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 ---
- drivers/reset/reset-meson.c | 35 ++++++++++++++++++++++++++++-------
- 1 file changed, 28 insertions(+), 7 deletions(-)
+ drivers/counter/stm32-timer-cnt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-index 5242e06..d9541c1 100644
---- a/drivers/reset/reset-meson.c
-+++ b/drivers/reset/reset-meson.c
-@@ -64,12 +64,16 @@
- #include <linux/types.h>
- #include <linux/of_device.h>
- 
--#define REG_COUNT	8
- #define BITS_PER_REG	32
--#define LEVEL_OFFSET	0x7c
-+
-+struct meson_reset_param {
-+	int reg_count;
-+	int level_offset;
-+};
- 
- struct meson_reset {
- 	void __iomem *reg_base;
-+	const struct meson_reset_param *param;
- 	struct reset_controller_dev rcdev;
- 	spinlock_t lock;
- };
-@@ -95,10 +99,12 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
- 		container_of(rcdev, struct meson_reset, rcdev);
- 	unsigned int bank = id / BITS_PER_REG;
- 	unsigned int offset = id % BITS_PER_REG;
--	void __iomem *reg_addr = data->reg_base + LEVEL_OFFSET + (bank << 2);
-+	void __iomem *reg_addr;
- 	unsigned long flags;
- 	u32 reg;
- 
-+	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
-+
- 	spin_lock_irqsave(&data->lock, flags);
- 
- 	reg = readl(reg_addr);
-@@ -130,10 +136,21 @@ static const struct reset_control_ops meson_reset_ops = {
- 	.deassert	= meson_reset_deassert,
+diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
+index 644ba18..e425dd1 100644
+--- a/drivers/counter/stm32-timer-cnt.c
++++ b/drivers/counter/stm32-timer-cnt.c
+@@ -28,7 +28,7 @@ struct stm32_timer_cnt {
  };
  
-+static const struct meson_reset_param meson8b_param = {
-+	.reg_count	= 8,
-+	.level_offset	= 0x7c,
-+};
-+
-+static const struct meson_reset_param meson_a1_param = {
-+	.reg_count	= 3,
-+	.level_offset	= 0x40,
-+};
-+
- static const struct of_device_id meson_reset_dt_ids[] = {
--	 { .compatible = "amlogic,meson8b-reset" },
--	 { .compatible = "amlogic,meson-gxbb-reset" },
--	 { .compatible = "amlogic,meson-axg-reset" },
-+	 { .compatible = "amlogic,meson8b-reset",    .data = &meson8b_param},
-+	 { .compatible = "amlogic,meson-gxbb-reset", .data = &meson8b_param},
-+	 { .compatible = "amlogic,meson-axg-reset",  .data = &meson8b_param},
-+	 { .compatible = "amlogic,meson-a1-reset",   .data = &meson_a1_param},
- 	 { /* sentinel */ },
- };
- 
-@@ -151,12 +168,16 @@ static int meson_reset_probe(struct platform_device *pdev)
- 	if (IS_ERR(data->reg_base))
- 		return PTR_ERR(data->reg_base);
- 
-+	data->param = of_device_get_match_data(&pdev->dev);
-+	if (!data->param)
-+		return -ENODEV;
-+
- 	platform_set_drvdata(pdev, data);
- 
- 	spin_lock_init(&data->lock);
- 
- 	data->rcdev.owner = THIS_MODULE;
--	data->rcdev.nr_resets = REG_COUNT * BITS_PER_REG;
-+	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
- 	data->rcdev.ops = &meson_reset_ops;
- 	data->rcdev.of_node = pdev->dev.of_node;
- 
+ /**
+- * stm32_count_function - enumerates stm32 timer counter encoder modes
++ * enum stm32_count_function - enumerates stm32 timer counter encoder modes
+  * @STM32_COUNT_SLAVE_MODE_DISABLED: counts on internal clock when CEN=1
+  * @STM32_COUNT_ENCODER_MODE_1: counts TI1FP1 edges, depending on TI2FP2 level
+  * @STM32_COUNT_ENCODER_MODE_2: counts TI2FP2 edges, depending on TI1FP1 level
 -- 
 2.7.4
 
