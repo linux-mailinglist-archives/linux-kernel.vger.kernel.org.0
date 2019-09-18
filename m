@@ -2,126 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C96E9B5ACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 07:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E65E2B5AD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 07:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfIRFUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 01:20:48 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:36732 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726444AbfIRFUs (ORCPT
+        id S1727549AbfIRFV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 01:21:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46348 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725842AbfIRFV1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 01:20:48 -0400
-Received: by mail-qt1-f196.google.com with SMTP id o12so7458957qtf.3;
-        Tue, 17 Sep 2019 22:20:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b0tfdb5P9pk3INZ0jESPpPCfhjoXmj1Um+iTci+rVkE=;
-        b=V80UfxZjBcDfIXajIUQ7i8Zezif4y2s7wulSTqX+DeD2RFQNK4r6iXFEPGKv2sWG+d
-         m4Z9ZnLo1Sx7MrC5HwWn2A7rBtGzMlTlpe2+nCipjvPyRnKDXKArTZK/s+VMZSkNevbK
-         kb398rQVGj7rBVexy7RMQxD5ek1biD2OxhuX0xubh+W0s5zaxXFwlTPeUlh/SQSzPt2x
-         cG40OQg68RdDu/8JYD0wAxLKffg5OdusX/Juwg5e8ZwIWz4mDMy4KHvOCvau7y5fB3cs
-         8UjYInnqg1JgKXox6zdv7f2oEDMQmohuvPbTwIK8vjCP9ktcnAPACr4mhdFaGtJNOwAV
-         NtrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b0tfdb5P9pk3INZ0jESPpPCfhjoXmj1Um+iTci+rVkE=;
-        b=HeOJ23yOMnnkeOvVX5Ho4U+eAeBA8024eJqS7E/ZKKUszSsUULz82+5l7XT2MMo4TR
-         KCpMXCkufA1Cw/AMtAAkB0/AzSjF0UAbFtXHXMIi382kpi59vBldqdIkFp4thyA5MVbH
-         iOUCPx0NPuqTtYeEoeOaVoTg7A1jVbvS0xGE8ToDDj1wAt3R3hVwc4m7NlDFTD6ArrEu
-         ikoPB5u2YPG/wrJgr51RU9g3PMmCFFxlyFShot+sz8uumrbouMQlEC6j1Yw03rCPMN9R
-         HxGWOO5b2L+eNRGKi/dQ+IPiZDfahqA4LfKiIR5vO+4tlYsw9ctbr3s0t9ODE2oqrzhA
-         3ysQ==
-X-Gm-Message-State: APjAAAUFZd0lC5jSVRovS7Xk7a6EwNBJ8rpDe3UIQZ++cQCx3Eg4GgsI
-        20muMASjXIyT2tamLg1aSFFwwg1QLWwt4SGLrWxlxhpn
-X-Google-Smtp-Source: APXvYqyiGCU4Ricj1Y4vswBQ9IX10oS11lMrz7mDmwnUs5mDtv1rTuXbOW1ujctbRNSAAs5VawEcVHrXEA4uWbcJukI=
-X-Received: by 2002:ac8:7401:: with SMTP id p1mr2351489qtq.141.1568784047221;
- Tue, 17 Sep 2019 22:20:47 -0700 (PDT)
+        Wed, 18 Sep 2019 01:21:27 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8I5HWmI124837
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 01:21:26 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v39ppg1c0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 01:21:26 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Wed, 18 Sep 2019 06:21:23 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Sep 2019 06:21:18 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8I5LHqN45219864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 05:21:17 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D50AD52050;
+        Wed, 18 Sep 2019 05:21:16 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 8D4A35204F;
+        Wed, 18 Sep 2019 05:21:16 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 3E70EA01E6;
+        Wed, 18 Sep 2019 15:21:15 +1000 (AEST)
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     alastair@d-silva.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/5] powerpc: convert cache asm to C
+Date:   Wed, 18 Sep 2019 15:20:54 +1000
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org> <20190916105433.11404-13-ivan.khoronzhuk@linaro.org>
-In-Reply-To: <20190916105433.11404-13-ivan.khoronzhuk@linaro.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 17 Sep 2019 22:20:36 -0700
-Message-ID: <CAEf4Bzbwdy7qokjHAM7smgiAE=NS2kxc99X2qytaaoWbbYhNjA@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 12/14] samples: bpf: makefile: provide
- C/CXX/LD flags to libbpf
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19091805-0020-0000-0000-0000036E6A74
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19091805-0021-0000-0000-000021C41172
+Message-Id: <20190918052106.14113-1-alastair@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909180056
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 3:58 AM Ivan Khoronzhuk
-<ivan.khoronzhuk@linaro.org> wrote:
->
-> In order to build libs using C/CXX/LD flags of target arch,
-> provide them to libbpf make.
->
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> ---
->  samples/bpf/Makefile | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
->
-> diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-> index 18ec22e7b444..133123d4c7d7 100644
-> --- a/samples/bpf/Makefile
-> +++ b/samples/bpf/Makefile
-> @@ -182,8 +182,6 @@ ifdef CROSS_COMPILE
->  TPROGS_CFLAGS += -Wall
->  TPROGS_CFLAGS += -O2
->  TPROGS_CFLAGS += -fomit-frame-pointer
-> -TPROGS_CFLAGS += -Wmissing-prototypes
-> -TPROGS_CFLAGS += -Wstrict-prototypes
->  else
->  TPROGS_LDLIBS := $(KBUILD_HOSTLDLIBS)
->  TPROGS_CFLAGS += $(KBUILD_HOSTCFLAGS) $(HOST_EXTRACFLAGS)
-> @@ -196,6 +194,14 @@ TPROGS_CFLAGS += -I$(srctree)/tools/lib/
->  TPROGS_CFLAGS += -I$(srctree)/tools/include
->  TPROGS_CFLAGS += -I$(srctree)/tools/perf
->
-> +EXTRA_CXXFLAGS := $(TPROGS_CFLAGS)
-> +
-> +# options not valid for C++
-> +ifdef CROSS_COMPILE
-> +$(TPROGS_CFLAGS) += -Wmissing-prototypes
-> +$(TPROGS_CFLAGS) += -Wstrict-prototypes
-> +endif
-> +
+From: Alastair D'Silva <alastair@d-silva.org>
 
-ugh, let's really get rid of dependency on C++ compiler, as suggested
-for previous patch.
+This series addresses a few issues discovered in how we flush caches:
+1. Flushes were truncated at 4GB, so larger flushes were incorrect.
+2. Flushing the dcache in arch_add_memory was unnecessary
 
+This series also converts much of the cache assembler to C, with the
+aim of making it easier to maintain.
 
->  TPROGCFLAGS_bpf_load.o += -Wno-unused-variable
->
->  TPROGS_LDLIBS                  += $(LIBBPF) -lelf
-> @@ -257,7 +263,9 @@ clean:
->
->  $(LIBBPF): FORCE
->  # Fix up variables inherited from Kbuild that tools/ build system won't like
-> -       $(MAKE) -C $(dir $@) RM='rm -rf' LDFLAGS= srctree=$(BPF_SAMPLES_PATH)/../../ O=
-> +       $(MAKE) -C $(dir $@) RM='rm -rf' EXTRA_CFLAGS="$(TPROGS_CFLAGS)" \
-> +               EXTRA_CXXFLAGS="$(EXTRA_CXXFLAGS)" LDFLAGS=$(TPROGS_LDFLAGS) \
-> +               srctree=$(BPF_SAMPLES_PATH)/../../ O=
->
->  $(obj)/syscall_nrs.h:  $(obj)/syscall_nrs.s FORCE
->         $(call filechk,offsets,__SYSCALL_NRS_H__)
-> --
-> 2.17.1
->
+Alastair D'Silva (6):
+  powerpc: Allow flush_icache_range to work across ranges >4GB
+  powerpc: define helpers to get L1 icache sizes
+  powerpc: Convert flush_icache_range & friends to C
+  powerpc: Chunk calls to flush_dcache_range in arch_*_memory
+  powerpc: Remove 'extern' from func prototypes in cache headers
+  powerpc: Don't flush caches when adding memory
+
+Changelog:
+ V3:
+     - factor out chunking loop
+     - Replace __asm__ __volatile__ with asm volatile
+     - Replace flush_coherent_icache_or_return macro with
+       flush_coherent_icache function
+     - factor our invalidate_icache_range
+     - Replace code duplicating clean_dcache_range() in
+       __flush_dcache_icache() with a call to clean_dcache_range()
+     - Remove redundant #ifdef CONFIG_44x
+     - Fix preprocessor logic:
+         #if !defined(CONFIG_PPC_8xx) & !defined(CONFIG_PPC64)
+     - Added loop(1|2) to earlyclobbers in flush_dcache_icache_phys
+     - Drop "Remove extern" patch
+     - Replace 32 bit shifts in 64 bit VDSO with 64 bit ones
+ V2:
+     - Replace C implementation of flush_dcache_icache_phys() with
+       inline assembler authored by Christophe Leroy
+     - Add memory clobbers for iccci implementation
+     - Give __flush_dcache_icache a real implementation, it can't
+       just be a wrapper around flush_icache_range()
+     - Remove PPC64_CACHES from misc_64.S
+     - Replace code duplicating clean_dcache_range() in
+       flush_icache_range() with a call to clean_dcache_range()
+     - Replace #ifdef CONFIG_44x with IS_ENABLED(...) in
+       flush_icache_cange()
+     - Use 1GB chunks instead of 16GB in arch_*_memory
+
+Alastair D'Silva (5):
+  powerpc: Allow flush_icache_range to work across ranges >4GB
+  powerpc: define helpers to get L1 icache sizes
+  powerpc: Convert flush_icache_range & friends to C
+  powerpc: Chunk calls to flush_dcache_range in arch_*_memory
+  powerpc: Don't flush caches when adding memory
+
+ arch/powerpc/include/asm/cache.h        |  55 +++++---
+ arch/powerpc/include/asm/cacheflush.h   |  36 +++--
+ arch/powerpc/kernel/misc_32.S           | 117 ----------------
+ arch/powerpc/kernel/misc_64.S           | 102 --------------
+ arch/powerpc/kernel/vdso64/cacheflush.S |   4 +-
+ arch/powerpc/mm/mem.c                   | 176 +++++++++++++++++++++++-
+ 6 files changed, 228 insertions(+), 262 deletions(-)
+
+-- 
+2.21.0
+
