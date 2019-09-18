@@ -2,145 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D176DB6648
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:41:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E93B664F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731330AbfIROlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 10:41:01 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37398 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbfIROlB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 10:41:01 -0400
-Received: by mail-ed1-f68.google.com with SMTP id r4so231913edy.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 07:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=WbdKZkVaqIeYXFAePQEUm0K6Q0pnIntJd0Ufr5WX588=;
-        b=fflVkpkGmtKJ99haJdbinaGgTE5566RU3Ym0c0y8xZgW/dkasHGT/Jm18khXW6sWj2
-         JH7Lt2KLvkYOCBD02BJ7KKYBAK24/dZ90xwa9siV5DIpJKjgRDHtFezwPqi1WYOMesPT
-         2c0IGzpi7BnmF+lFnm8npt+rD4ybvXsivPyksghyz07fYAWfeQyKWjrt3prFugMo+zb/
-         F/Y61NpZ75Ji3+fCoK/L13w9dgTZRQgPIOEUOPjdxNmzxVvbZXsFPkucoY51nFizv044
-         OK/99jaffqyHYTJmvF0gLWAJL0AMX7OTosCnFpiDtp4WfbUtvs4C/tuYjUOJBDIpycyY
-         ZW9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=WbdKZkVaqIeYXFAePQEUm0K6Q0pnIntJd0Ufr5WX588=;
-        b=Q9Itz4FPOaEceqXHXNWpZBd7ZxqHAVuewpzNolpqX2BuPy4D+sWeeXM7h8c1y/pZ3h
-         CBCMXgIL0SwzZyEraakShqlrmcjxVY0cR7ELsU3i4Y4FxuOvDIXF8iGQbGcYjlBDOQjr
-         Hkqt2Ipg4/tJFfUZMhYYyClsm3kppcbBU8l5epoWw55LC+Eyf4UDRhL9YB9TKnWcRTqp
-         qR9Yh124cQYCF3ZfKHwDsHwPo0JR2v3LR6fhm/kCocU0+YqHIJ5jrY0RdAjARxToWtB1
-         Tfj6iX+FidgQkuFTGFmzl0CyVg5NF8RIbjuVBBfff3zRCL7JfSET5N6uPyUfmJ6qT3bb
-         tICQ==
-X-Gm-Message-State: APjAAAWibEaTQxrhQynlzFf/sNTaHQI74iBS53u0y9TO0cNt/eugOZYL
-        elEacOkJLNHFGVY/lwqUgqqYtA==
-X-Google-Smtp-Source: APXvYqxgmeVfhtDEtiJtgOKdVinAYjDvcBpPFWpBlvemIoPiWexeB0TF1pS1tIUsLeUKYzTg9rflAg==
-X-Received: by 2002:a50:fd10:: with SMTP id i16mr8082111eds.239.1568817659723;
-        Wed, 18 Sep 2019 07:40:59 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id j1sm681317ejc.13.2019.09.18.07.40.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Sep 2019 07:40:59 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 55925101B27; Wed, 18 Sep 2019 17:41:02 +0300 (+03)
-Date:   Wed, 18 Sep 2019 17:41:02 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>
-Subject: Re: [PATCH 1/7] mm: Add write-protect and clean utilities for
- address space ranges
-Message-ID: <20190918144102.jkukmhifmweagmwt@box>
-References: <20190918125914.38497-1-thomas_os@shipmail.org>
- <20190918125914.38497-2-thomas_os@shipmail.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190918125914.38497-2-thomas_os@shipmail.org>
-User-Agent: NeoMutt/20180716
+        id S1731396AbfIROle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 10:41:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46290 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730029AbfIROle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 10:41:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 98543B76A;
+        Wed, 18 Sep 2019 14:41:30 +0000 (UTC)
+Message-ID: <1568817684.23075.10.camel@suse.com>
+Subject: Re: [PATCH 0/2] Reset realtek bluetooth devices during user suspend
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+        linux-bluetooth@vger.kernel.org, linux-usb@vger.kernel.org
+Cc:     dianders@chromium.org, Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Hui Peng <benquike@gmail.com>, linux-pm@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Len Brown <len.brown@intel.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mans Rullgard <mans@mansr.com>, Pavel Machek <pavel@ucw.cz>,
+        YueHaibing <yuehaibing@huawei.com>
+Date:   Wed, 18 Sep 2019 16:41:24 +0200
+In-Reply-To: <20190917212702.35747-1-abhishekpandit@chromium.org>
+References: <20190917212702.35747-1-abhishekpandit@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 02:59:08PM +0200, Thomas Hellström (VMware) wrote:
-> From: Thomas Hellstrom <thellstrom@vmware.com>
-> 
-> Add two utilities to a) write-protect and b) clean all ptes pointing into
-> a range of an address space.
-> The utilities are intended to aid in tracking dirty pages (either
-> driver-allocated system memory or pci device memory).
-> The write-protect utility should be used in conjunction with
-> page_mkwrite() and pfn_mkwrite() to trigger write page-faults on page
-> accesses. Typically one would want to use this on sparse accesses into
-> large memory regions. The clean utility should be used to utilize
-> hardware dirtying functionality and avoid the overhead of page-faults,
-> typically on large accesses into small memory regions.
-> 
-> The added file "as_dirty_helpers.c" is initially listed as maintained by
-> VMware under our DRM driver. If somebody would like it elsewhere,
-> that's of course no problem.
+Am Dienstag, den 17.09.2019, 14:27 -0700 schrieb Abhishek Pandit-
+Subedi:
+> On a Realtek USB bluetooth device, I wanted a simple and consistent way
+> to put the device in reset during suspend (2 reasons: to save power and
 
-After quick glance, it looks a lot as rmap code duplication. Why not
-extend rmap_walk() interface instead to cover range of pages?
+The device really uses less power if you reset it before suspendening
+it?
 
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Souptick Joarder <jrdr.linux@gmail.com>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> 
-> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-> Reviewed-by: Ralph Campbell <rcampbell@nvidia.com> #v1
-> ---
->  MAINTAINERS           |   1 +
->  include/linux/mm.h    |  13 +-
->  mm/Kconfig            |   3 +
->  mm/Makefile           |   1 +
->  mm/as_dirty_helpers.c | 392 ++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 409 insertions(+), 1 deletion(-)
->  create mode 100644 mm/as_dirty_helpers.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c2d975da561f..b596c7cf4a85 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5287,6 +5287,7 @@ T:	git git://people.freedesktop.org/~thomash/linux
->  S:	Supported
->  F:	drivers/gpu/drm/vmwgfx/
->  F:	include/uapi/drm/vmwgfx_drm.h
-> +F:	mm/as_dirty_helpers.c
+> disable BT as a wakeup source). Resetting it in the suspend callback
 
-Emm.. No. Core MM functinality cannot belong to random driver.
+Then do not enable it. Something is strange.
 
--- 
- Kirill A. Shutemov
+> causes a detach and the resume callback is not called. Hence the changes
+> in this series to do the reset in suspend_noirq.
+> 
+> I looked into using PERSIST and reset on resume but those seem mainly
+> for misbehaving devices that reset themselves.
+
+No, not really. It is also for device that need to be reset if you use
+the RESET_RESUME quirk. But that is on resume().
+You could introduce a new flag. But the _noirq method is kind of
+a hack, as USB really cannot operate without interrupts.
+
+	Regards
+		Oliver
+
