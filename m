@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABF29B5C80
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 790D8B5C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbfIRG1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:27:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48608 "EHLO mail.kernel.org"
+        id S1729679AbfIRGXh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:23:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729091AbfIRG05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:26:57 -0400
+        id S1728146AbfIRGXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96249218AF;
-        Wed, 18 Sep 2019 06:26:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C6ED218AF;
+        Wed, 18 Sep 2019 06:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568788017;
-        bh=Nt/kPG6oe+0JPPcyadZkQEyzrD/qvGFGAb41Yao9ZbM=;
+        s=default; t=1568787813;
+        bh=L0NefyNw+fmLtrMwBX9dMweJMjwLec/5MmMyXvZSIBI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RMmAP0F5pTDKHaB7n3q0kcztp5gaUE4WxvkXoZLGDx5vLOCD8F6W7Eqp7OMmtzrTZ
-         c/xNRgeXdda7rQXR9A6u4OvnP0H6Fg1lUMaOxX58ZSRNSEWwl2o/5aga2LFL2TaVMG
-         LmxBcMGBcHPCG9mTP8w0EjFGi6xtIc0Gpv3r/xek=
+        b=ydqJAI5vF4FxWm0WCnO/dFRqydPNaRKWjHEOylfeKTTteMTKxGwhVusGd1R11E/xq
+         GXK66+0h9kcd3FJck31NPJN8aAY8QrP2yy7N4eke0jzwmPgLZYafFlaziXZTzwNkPS
+         dAgU6L2eTXVabgVVdVHzy97vA84HVj+BsjSA92hg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 5.2 68/85] crypto: talitos - HMAC SNOOP NO AFEU mode requires SW icv checking.
-Date:   Wed, 18 Sep 2019 08:19:26 +0200
-Message-Id: <20190918061237.567054088@linuxfoundation.org>
+        stable@vger.kernel.org, Olivier Moysan <olivier.moysan@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 44/50] iio: adc: stm32-dfsdm: fix data type
+Date:   Wed, 18 Sep 2019 08:19:27 +0200
+Message-Id: <20190918061228.175134274@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,32 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Olivier Moysan <olivier.moysan@st.com>
 
-commit 4bbfb839259a9c96a0be872e16f7471b7136aee5 upstream.
+commit c6013bf50e2a2a94ab3d012e191096432aa50c6f upstream.
 
-In that mode, hardware ICV verification is not supported.
+Fix the data type as DFSDM raw output is complements 2,
+24bits left aligned in a 32-bit register.
+This change does not affect AUDIO path
+- Set data as signed for IIO (as for AUDIO)
+- Set 8 bit right shift for IIO.
+The 8 LSBs bits of data contains channel info and are masked.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 7405c8d7ff97 ("crypto: talitos - templates for AEAD using HMAC_SNOOP_NO_AFEU")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+Fixes: e2e6771c6462 ("IIO: ADC: add STM32 DFSDM sigma delta ADC support")
+Acked-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/iio/adc/stm32-dfsdm-adc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1515,7 +1515,8 @@ static int aead_decrypt(struct aead_requ
- 	if (IS_ERR(edesc))
- 		return PTR_ERR(edesc);
+--- a/drivers/iio/adc/stm32-dfsdm-adc.c
++++ b/drivers/iio/adc/stm32-dfsdm-adc.c
+@@ -981,11 +981,11 @@ static int stm32_dfsdm_adc_chan_init_one
+ 	ch->info_mask_shared_by_all = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
  
--	if ((priv->features & TALITOS_FTR_HW_AUTH_CHECK) &&
-+	if ((edesc->desc.hdr & DESC_HDR_TYPE_IPSEC_ESP) &&
-+	    (priv->features & TALITOS_FTR_HW_AUTH_CHECK) &&
- 	    ((!edesc->src_nents && !edesc->dst_nents) ||
- 	     priv->features & TALITOS_FTR_SRC_LINK_TBL_LEN_INCLUDES_EXTENT)) {
+ 	if (adc->dev_data->type == DFSDM_AUDIO) {
+-		ch->scan_type.sign = 's';
+ 		ch->ext_info = dfsdm_adc_audio_ext_info;
+ 	} else {
+-		ch->scan_type.sign = 'u';
++		ch->scan_type.shift = 8;
+ 	}
++	ch->scan_type.sign = 's';
+ 	ch->scan_type.realbits = 24;
+ 	ch->scan_type.storagebits = 32;
  
 
 
