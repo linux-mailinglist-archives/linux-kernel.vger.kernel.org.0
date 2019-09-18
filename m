@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A1B0B5CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:30:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4856B5D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:32:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730025AbfIRGZP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46088 "EHLO mail.kernel.org"
+        id S1730389AbfIRGb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:31:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730076AbfIRGZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:12 -0400
+        id S1726415AbfIRGWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:22:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 414E121928;
-        Wed, 18 Sep 2019 06:25:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EFF7218AE;
+        Wed, 18 Sep 2019 06:22:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787911;
-        bh=Ijnvi18yIb3tKJGAmf6kgahLWvjc+PpNXmwU2/JVY60=;
+        s=default; t=1568787773;
+        bh=XiuiRCDKUzJagGSX8GVvQrHCcld29/Eke8+NlEPwfP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DG9TvzeNhwoifb6/sUSCkBNGgatH8AmZOnNDaV1tgFB5HjgoyBEER7e5WfqUH0aSC
-         khsKOiuP8kgryytTF9oej5ey59TauegfTO/a2VM/YUR6915/ltov7+4pABpiQsMKXT
-         zIGG67zg06Gu1VNQDC86IBP+/pZWPnH9cFgiTB+k=
+        b=nbYJ+e8FJ+pC44mJJjxh+gdlRp9Z3Ic3B0hjGe5INRlTLUhR1FlYXd4XbVriyq7QW
+         xW2L4ZNZyONDnTHdb7n311v4h8zBMVCvTNm0oys1IhEhAUa04dwcXbTAqBPKXXw9RD
+         v5Lp9SsdfMH87ZDpwgnFpLHM8FCz6gjJaPwtIaVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.2 29/85] Revert "mmc: sdhci: Remove unneeded quirk2 flag of O2 SD host controller"
-Date:   Wed, 18 Sep 2019 08:18:47 +0200
-Message-Id: <20190918061235.078125892@linuxfoundation.org>
+        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
+        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 06/50] net: Fix null de-reference of device refcount
+Date:   Wed, 18 Sep 2019 08:18:49 +0200
+Message-Id: <20190918061223.708235949@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Drake <drake@endlessm.com>
+From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
 
-commit 49baa01c8b99ef92958e18fb58ebeb5dfdcde8af upstream.
+[ Upstream commit 10cc514f451a0f239aa34f91bc9dc954a9397840 ]
 
-This reverts commit 414126f9e5abf1973c661d24229543a9458fa8ce.
+In event of failure during register_netdevice, free_netdev is
+invoked immediately. free_netdev assumes that all the netdevice
+refcounts have been dropped prior to it being called and as a
+result frees and clears out the refcount pointer.
 
-This commit broke eMMC storage access on a new consumer MiniPC based on
-AMD SoC, which has eMMC connected to:
+However, this is not necessarily true as some of the operations
+in the NETDEV_UNREGISTER notifier handlers queue RCU callbacks for
+invocation after a grace period. The IPv4 callback in_dev_rcu_put
+tries to access the refcount after free_netdev is called which
+leads to a null de-reference-
 
-02:00.0 SD Host controller: O2 Micro, Inc. Device 8620 (rev 01) (prog-if 01)
-	Subsystem: O2 Micro, Inc. Device 0002
+44837.761523:   <6> Unable to handle kernel paging request at
+                    virtual address 0000004a88287000
+44837.761651:   <2> pc : in_dev_finish_destroy+0x4c/0xc8
+44837.761654:   <2> lr : in_dev_finish_destroy+0x2c/0xc8
+44837.762393:   <2> Call trace:
+44837.762398:   <2>  in_dev_finish_destroy+0x4c/0xc8
+44837.762404:   <2>  in_dev_rcu_put+0x24/0x30
+44837.762412:   <2>  rcu_nocb_kthread+0x43c/0x468
+44837.762418:   <2>  kthread+0x118/0x128
+44837.762424:   <2>  ret_from_fork+0x10/0x1c
 
-During probe, several errors are seen including:
+Fix this by waiting for the completion of the call_rcu() in
+case of register_netdevice errors.
 
-  mmc1: Got data interrupt 0x02000000 even though no data operation was in progress.
-  mmc1: Timeout waiting for hardware interrupt.
-  mmc1: error -110 whilst initialising MMC card
-
-Reverting this commit allows the eMMC storage to be detected & usable
-again.
-
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Fixes: 414126f9e5ab ("mmc: sdhci: Remove unneeded quirk2 flag of O2 SD host
-controller")
-Cc: stable@vger.kernel.org # v5.1+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 93ee31f14f6f ("[NET]: Fix free_netdev on register_netdev failure.")
+Cc: Sean Tranchetti <stranche@codeaurora.org>
+Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/core/dev.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -432,7 +432,6 @@ int sdhci_pci_o2_probe_slot(struct sdhci
- 					mmc_hostname(host->mmc));
- 				host->flags &= ~SDHCI_SIGNALING_330;
- 				host->flags |= SDHCI_SIGNALING_180;
--				host->quirks2 |= SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD;
- 				host->mmc->caps2 |= MMC_CAP2_NO_SD;
- 				host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
- 				pci_write_config_dword(chip->pdev,
-@@ -682,6 +681,7 @@ static const struct sdhci_ops sdhci_pci_
- const struct sdhci_pci_fixes sdhci_o2 = {
- 	.probe = sdhci_pci_o2_probe,
- 	.quirks = SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
-+	.quirks2 = SDHCI_QUIRK2_CLEAR_TRANSFERMODE_REG_BEFORE_CMD,
- 	.probe_slot = sdhci_pci_o2_probe_slot,
- #ifdef CONFIG_PM_SLEEP
- 	.resume = sdhci_pci_o2_resume,
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -8562,6 +8562,8 @@ int register_netdevice(struct net_device
+ 	ret = notifier_to_errno(ret);
+ 	if (ret) {
+ 		rollback_registered(dev);
++		rcu_barrier();
++
+ 		dev->reg_state = NETREG_UNREGISTERED;
+ 	}
+ 	/*
 
 
