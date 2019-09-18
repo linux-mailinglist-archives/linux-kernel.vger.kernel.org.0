@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 649BFB5C66
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC27B5C69
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbfIRG0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:26:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47298 "EHLO mail.kernel.org"
+        id S1730260AbfIRG0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:26:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727809AbfIRG0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:26:05 -0400
+        id S1730243AbfIRG0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:26:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A86B821924;
-        Wed, 18 Sep 2019 06:26:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C1E7218AF;
+        Wed, 18 Sep 2019 06:26:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787964;
-        bh=RNCX+fJlMdn0iDOz7lBTlhcRBNaEyS2dXlsok6AN1B4=;
+        s=default; t=1568787966;
+        bh=pr6Kep4VyWjboAQB5tBFUKdvb1ggzp2wNkWBcOBWZyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oRdEzQNhla/FX59hOODpH5fox/LZPR8w7/FSga2jHJ/Fs7Csc1xRm5qzIjzso343r
-         zFdilvB4hdGBGEunceTXA1qjicV/0e14RCc2HNbPhPz71euFy/YBYEq3yZSSbo0C68
-         PBTJSYVGq1go339C/X8JxaYWmQauCoCfuxxoKYAo=
+        b=IkJEXWCiFX8UUxqb2sQUtejixzG+umb/5ohAnZl5NEXBIAVe/BqBiT5ABkqF3GXIr
+         oUGe7Dd2sIBJC/PFu57WQ5njf/u+6Ve2+jNV6DzgoEV2NLgUztLXUJjV1h2Ab3QjhI
+         vlg99LK2Hklpu5TOMRRvYYVUnvH8aTOTHIikMOys=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miroslav Benes <mbenes@suse.cz>,
-        YueHaibing <yuehaibing@huawei.com>, Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH 5.2 50/85] kernel/module: Fix mem leak in module_add_modinfo_attrs
-Date:   Wed, 18 Sep 2019 08:19:08 +0200
-Message-Id: <20190918061235.708547112@linuxfoundation.org>
+        stable@vger.kernel.org, Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        Borislav Petkov <bp@suse.de>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Dave Young <dyoung@redhat.com>
+Subject: [PATCH 5.2 51/85] x86/boot: Use efi_setup_data for searching RSDP on kexec-ed kernels
+Date:   Wed, 18 Sep 2019 08:19:09 +0200
+Message-Id: <20190918061235.736976524@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
 References: <20190918061234.107708857@linuxfoundation.org>
@@ -43,98 +46,224 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Junichi Nomura <j-nomura@ce.jp.nec.com>
 
-commit bc6f2a757d525e001268c3658bd88822e768f8db upstream.
+commit 0a23ebc66a46786769dd68bfdaa3102345819b9c upstream.
 
-In module_add_modinfo_attrs if sysfs_create_file
-fails, we forget to free allocated modinfo_attrs
-and roll back the sysfs files.
+Commit
 
-Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+  3a63f70bf4c3a ("x86/boot: Early parse RSDP and save it in boot_params")
+
+broke kexec boot on EFI systems. efi_get_rsdp_addr() in the early
+parsing code tries to search RSDP from the EFI tables but that will
+crash because the table address is virtual when the kernel was booted by
+kexec (set_virtual_address_map() has run in the first kernel and cannot
+be run again in the second kernel).
+
+In the case of kexec, the physical address of EFI tables is provided via
+efi_setup_data in boot_params, which is set up by kexec(1).
+
+Factor out the table parsing code and use different pointers depending
+on whether the kernel is booted by kexec or not.
+
+ [ bp: Massage. ]
+
+Fixes: 3a63f70bf4c3a ("x86/boot: Early parse RSDP and save it in boot_params")
+Signed-off-by: Jun'ichi Nomura <j-nomura@ce.jp.nec.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Tested-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Cc: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc: Dave Young <dyoung@redhat.com>
+Link: https://lkml.kernel.org/r/20190408231011.GA5402@jeru.linux.bs1.fc.nec.co.jp
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/module.c |   22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ arch/x86/boot/compressed/acpi.c |  143 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 107 insertions(+), 36 deletions(-)
 
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1697,6 +1697,8 @@ static int add_usage_links(struct module
- 	return ret;
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -44,17 +44,109 @@ static acpi_physical_address get_acpi_rs
+ 	return addr;
  }
  
-+static void module_remove_modinfo_attrs(struct module *mod, int end);
-+
- static int module_add_modinfo_attrs(struct module *mod)
+-/* Search EFI system tables for RSDP. */
+-static acpi_physical_address efi_get_rsdp_addr(void)
++/*
++ * Search EFI system tables for RSDP.  If both ACPI_20_TABLE_GUID and
++ * ACPI_TABLE_GUID are found, take the former, which has more features.
++ */
++static acpi_physical_address
++__efi_get_rsdp_addr(unsigned long config_tables, unsigned int nr_tables,
++		    bool efi_64)
  {
- 	struct module_attribute *attr;
-@@ -1711,24 +1713,34 @@ static int module_add_modinfo_attrs(stru
- 		return -ENOMEM;
+ 	acpi_physical_address rsdp_addr = 0;
  
- 	temp_attr = mod->modinfo_attrs;
--	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
-+	for (i = 0; (attr = modinfo_attrs[i]); i++) {
- 		if (!attr->test || attr->test(mod)) {
- 			memcpy(temp_attr, attr, sizeof(*temp_attr));
- 			sysfs_attr_init(&temp_attr->attr);
- 			error = sysfs_create_file(&mod->mkobj.kobj,
- 					&temp_attr->attr);
-+			if (error)
-+				goto error_out;
- 			++temp_attr;
- 		}
+ #ifdef CONFIG_EFI
+-	unsigned long systab, systab_tables, config_tables;
++	int i;
++
++	/* Get EFI tables from systab. */
++	for (i = 0; i < nr_tables; i++) {
++		acpi_physical_address table;
++		efi_guid_t guid;
++
++		if (efi_64) {
++			efi_config_table_64_t *tbl = (efi_config_table_64_t *)config_tables + i;
++
++			guid  = tbl->guid;
++			table = tbl->table;
++
++			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
++				debug_putstr("Error getting RSDP address: EFI config table located above 4GB.\n");
++				return 0;
++			}
++		} else {
++			efi_config_table_32_t *tbl = (efi_config_table_32_t *)config_tables + i;
++
++			guid  = tbl->guid;
++			table = tbl->table;
++		}
++
++		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
++			rsdp_addr = table;
++		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
++			return table;
++	}
++#endif
++	return rsdp_addr;
++}
++
++/* EFI/kexec support is 64-bit only. */
++#ifdef CONFIG_X86_64
++static struct efi_setup_data *get_kexec_setup_data_addr(void)
++{
++	struct setup_data *data;
++	u64 pa_data;
++
++	pa_data = boot_params->hdr.setup_data;
++	while (pa_data) {
++		data = (struct setup_data *)pa_data;
++		if (data->type == SETUP_EFI)
++			return (struct efi_setup_data *)(pa_data + sizeof(struct setup_data));
++
++		pa_data = data->next;
++	}
++	return NULL;
++}
++
++static acpi_physical_address kexec_get_rsdp_addr(void)
++{
++	efi_system_table_64_t *systab;
++	struct efi_setup_data *esd;
++	struct efi_info *ei;
++	char *sig;
++
++	esd = (struct efi_setup_data *)get_kexec_setup_data_addr();
++	if (!esd)
++		return 0;
++
++	if (!esd->tables) {
++		debug_putstr("Wrong kexec SETUP_EFI data.\n");
++		return 0;
++	}
++
++	ei = &boot_params->efi_info;
++	sig = (char *)&ei->efi_loader_signature;
++	if (strncmp(sig, EFI64_LOADER_SIGNATURE, 4)) {
++		debug_putstr("Wrong kexec EFI loader signature.\n");
++		return 0;
++	}
++
++	/* Get systab from boot params. */
++	systab = (efi_system_table_64_t *) (ei->efi_systab | ((__u64)ei->efi_systab_hi << 32));
++	if (!systab)
++		error("EFI system table not found in kexec boot_params.");
++
++	return __efi_get_rsdp_addr((unsigned long)esd->tables, systab->nr_tables, true);
++}
++#else
++static acpi_physical_address kexec_get_rsdp_addr(void) { return 0; }
++#endif /* CONFIG_X86_64 */
++
++static acpi_physical_address efi_get_rsdp_addr(void)
++{
++#ifdef CONFIG_EFI
++	unsigned long systab, config_tables;
+ 	unsigned int nr_tables;
+ 	struct efi_info *ei;
+ 	bool efi_64;
+-	int size, i;
+ 	char *sig;
+ 
+ 	ei = &boot_params->efi_info;
+@@ -88,49 +180,20 @@ static acpi_physical_address efi_get_rsd
+ 
+ 		config_tables	= stbl->tables;
+ 		nr_tables	= stbl->nr_tables;
+-		size		= sizeof(efi_config_table_64_t);
+ 	} else {
+ 		efi_system_table_32_t *stbl = (efi_system_table_32_t *)systab;
+ 
+ 		config_tables	= stbl->tables;
+ 		nr_tables	= stbl->nr_tables;
+-		size		= sizeof(efi_config_table_32_t);
  	}
-+
+ 
+ 	if (!config_tables)
+ 		error("EFI config tables not found.");
+ 
+-	/* Get EFI tables from systab. */
+-	for (i = 0; i < nr_tables; i++) {
+-		acpi_physical_address table;
+-		efi_guid_t guid;
+-
+-		config_tables += size;
+-
+-		if (efi_64) {
+-			efi_config_table_64_t *tbl = (efi_config_table_64_t *)config_tables;
+-
+-			guid  = tbl->guid;
+-			table = tbl->table;
+-
+-			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
+-				debug_putstr("Error getting RSDP address: EFI config table located above 4GB.\n");
+-				return 0;
+-			}
+-		} else {
+-			efi_config_table_32_t *tbl = (efi_config_table_32_t *)config_tables;
+-
+-			guid  = tbl->guid;
+-			table = tbl->table;
+-		}
+-
+-		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
+-			rsdp_addr = table;
+-		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
+-			return table;
+-	}
++	return __efi_get_rsdp_addr(config_tables, nr_tables, efi_64);
++#else
 +	return 0;
+ #endif
+-	return rsdp_addr;
+ }
+ 
+ static u8 compute_checksum(u8 *buffer, u32 length)
+@@ -220,6 +283,14 @@ acpi_physical_address get_rsdp_addr(void
+ 	if (!pa)
+ 		pa = boot_params->acpi_rsdp_addr;
+ 
++	/*
++	 * Try to get EFI data from setup_data. This can happen when we're a
++	 * kexec'ed kernel and kexec(1) has passed all the required EFI info to
++	 * us.
++	 */
++	if (!pa)
++		pa = kexec_get_rsdp_addr();
 +
-+error_out:
-+	if (i > 0)
-+		module_remove_modinfo_attrs(mod, --i);
- 	return error;
- }
+ 	if (!pa)
+ 		pa = efi_get_rsdp_addr();
  
--static void module_remove_modinfo_attrs(struct module *mod)
-+static void module_remove_modinfo_attrs(struct module *mod, int end)
- {
- 	struct module_attribute *attr;
- 	int i;
- 
- 	for (i = 0; (attr = &mod->modinfo_attrs[i]); i++) {
-+		if (end >= 0 && i > end)
-+			break;
- 		/* pick a field to test for end of list */
- 		if (!attr->attr.name)
- 			break;
-@@ -1816,7 +1828,7 @@ static int mod_sysfs_setup(struct module
- 	return 0;
- 
- out_unreg_modinfo_attrs:
--	module_remove_modinfo_attrs(mod);
-+	module_remove_modinfo_attrs(mod, -1);
- out_unreg_param:
- 	module_param_sysfs_remove(mod);
- out_unreg_holders:
-@@ -1852,7 +1864,7 @@ static void mod_sysfs_fini(struct module
- {
- }
- 
--static void module_remove_modinfo_attrs(struct module *mod)
-+static void module_remove_modinfo_attrs(struct module *mod, int end)
- {
- }
- 
-@@ -1868,7 +1880,7 @@ static void init_param_lock(struct modul
- static void mod_sysfs_teardown(struct module *mod)
- {
- 	del_usage_links(mod);
--	module_remove_modinfo_attrs(mod);
-+	module_remove_modinfo_attrs(mod, -1);
- 	module_param_sysfs_remove(mod);
- 	kobject_put(mod->mkobj.drivers_dir);
- 	kobject_put(mod->holders_dir);
 
 
