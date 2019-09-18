@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4856B5D25
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11FF5B5D5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730389AbfIRGb5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:31:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42972 "EHLO mail.kernel.org"
+        id S1729069AbfIRGds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:33:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfIRGWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:22:54 -0400
+        id S1727536AbfIRGUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:20:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EFF7218AE;
-        Wed, 18 Sep 2019 06:22:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FD1F218AE;
+        Wed, 18 Sep 2019 06:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787773;
-        bh=XiuiRCDKUzJagGSX8GVvQrHCcld29/Eke8+NlEPwfP8=;
+        s=default; t=1568787606;
+        bh=+dI+rVf+1+sdiK1BAdoxjotm3JYBHjEnkmGqtzDyUPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nbYJ+e8FJ+pC44mJJjxh+gdlRp9Z3Ic3B0hjGe5INRlTLUhR1FlYXd4XbVriyq7QW
-         xW2L4ZNZyONDnTHdb7n311v4h8zBMVCvTNm0oys1IhEhAUa04dwcXbTAqBPKXXw9RD
-         v5Lp9SsdfMH87ZDpwgnFpLHM8FCz6gjJaPwtIaVY=
+        b=XADt5HcJXv1cqfrssUWBrBe5vmiKwbi50xfAhGfDuD3yozvnv1ZnWdpt2tMjQ+dKa
+         kWyUaENPIVN9Km8+DoRObNVjTydP23s885WAe5RnFDdXKTlcTo+CY6cWzzgvIRibmZ
+         e5slKG15Ywgd/4HpegSV74Q0qj6N+w5Dh81nwlmg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Tranchetti <stranche@codeaurora.org>,
-        Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>,
+        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 06/50] net: Fix null de-reference of device refcount
-Date:   Wed, 18 Sep 2019 08:18:49 +0200
-Message-Id: <20190918061223.708235949@linuxfoundation.org>
+Subject: [PATCH 4.14 12/45] tipc: add NULL pointer check before calling kfree_rcu
+Date:   Wed, 18 Sep 2019 08:18:50 +0200
+Message-Id: <20190918061224.137451852@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 10cc514f451a0f239aa34f91bc9dc954a9397840 ]
+[ Upstream commit 42dec1dbe38239cf91cc1f4df7830c66276ced37 ]
 
-In event of failure during register_netdevice, free_netdev is
-invoked immediately. free_netdev assumes that all the netdevice
-refcounts have been dropped prior to it being called and as a
-result frees and clears out the refcount pointer.
+Unlike kfree(p), kfree_rcu(p, rcu) won't do NULL pointer check. When
+tipc_nametbl_remove_publ returns NULL, the panic below happens:
 
-However, this is not necessarily true as some of the operations
-in the NETDEV_UNREGISTER notifier handlers queue RCU callbacks for
-invocation after a grace period. The IPv4 callback in_dev_rcu_put
-tries to access the refcount after free_netdev is called which
-leads to a null de-reference-
+   BUG: unable to handle kernel NULL pointer dereference at 0000000000000068
+   RIP: 0010:__call_rcu+0x1d/0x290
+   Call Trace:
+    <IRQ>
+    tipc_publ_notify+0xa9/0x170 [tipc]
+    tipc_node_write_unlock+0x8d/0x100 [tipc]
+    tipc_node_link_down+0xae/0x1d0 [tipc]
+    tipc_node_check_dest+0x3ea/0x8f0 [tipc]
+    ? tipc_disc_rcv+0x2c7/0x430 [tipc]
+    tipc_disc_rcv+0x2c7/0x430 [tipc]
+    ? tipc_rcv+0x6bb/0xf20 [tipc]
+    tipc_rcv+0x6bb/0xf20 [tipc]
+    ? ip_route_input_slow+0x9cf/0xb10
+    tipc_udp_recv+0x195/0x1e0 [tipc]
+    ? tipc_udp_is_known_peer+0x80/0x80 [tipc]
+    udp_queue_rcv_skb+0x180/0x460
+    udp_unicast_rcv_skb.isra.56+0x75/0x90
+    __udp4_lib_rcv+0x4ce/0xb90
+    ip_local_deliver_finish+0x11c/0x210
+    ip_local_deliver+0x6b/0xe0
+    ? ip_rcv_finish+0xa9/0x410
+    ip_rcv+0x273/0x362
 
-44837.761523:   <6> Unable to handle kernel paging request at
-                    virtual address 0000004a88287000
-44837.761651:   <2> pc : in_dev_finish_destroy+0x4c/0xc8
-44837.761654:   <2> lr : in_dev_finish_destroy+0x2c/0xc8
-44837.762393:   <2> Call trace:
-44837.762398:   <2>  in_dev_finish_destroy+0x4c/0xc8
-44837.762404:   <2>  in_dev_rcu_put+0x24/0x30
-44837.762412:   <2>  rcu_nocb_kthread+0x43c/0x468
-44837.762418:   <2>  kthread+0x118/0x128
-44837.762424:   <2>  ret_from_fork+0x10/0x1c
-
-Fix this by waiting for the completion of the call_rcu() in
-case of register_netdevice errors.
-
-Fixes: 93ee31f14f6f ("[NET]: Fix free_netdev on register_netdev failure.")
-Cc: Sean Tranchetti <stranche@codeaurora.org>
-Signed-off-by: Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+Fixes: 97ede29e80ee ("tipc: convert name table read-write lock to RCU")
+Reported-by: Li Shuang <shuali@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/tipc/name_distr.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -8562,6 +8562,8 @@ int register_netdevice(struct net_device
- 	ret = notifier_to_errno(ret);
- 	if (ret) {
- 		rollback_registered(dev);
-+		rcu_barrier();
-+
- 		dev->reg_state = NETREG_UNREGISTERED;
+--- a/net/tipc/name_distr.c
++++ b/net/tipc/name_distr.c
+@@ -224,7 +224,8 @@ static void tipc_publ_purge(struct net *
+ 		       publ->key);
  	}
- 	/*
+ 
+-	kfree_rcu(p, rcu);
++	if (p)
++		kfree_rcu(p, rcu);
+ }
+ 
+ /**
 
 
