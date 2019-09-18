@@ -2,254 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57A3EB6C94
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A77EAB6CA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731310AbfIRTas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 15:30:48 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45858 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbfIRTas (ORCPT
+        id S1731466AbfIRTbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 15:31:46 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:40722 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbfIRTbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:30:48 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y72so624063pfb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:30:46 -0700 (PDT)
+        Wed, 18 Sep 2019 15:31:45 -0400
+Received: by mail-lf1-f43.google.com with SMTP id d17so514302lfa.7
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HLzPRK3GAXNM5xLTblOxGV9Q6DGatzHoWsFQNs/caP0=;
-        b=oiSbz40siiKmYPogUFoLfuMN4h1aZgbTxVs57nkOvlUW3DUYQirAdI/q3rrV7RiBlf
-         6rZoqxQ/5q5Szu+tiLtwBhFU+M4Z2In5WsdsOgYNr8ia9WblIefGNEOMY0umzxsQxK2k
-         BdT5DoB7fa/dgNb8GYWnPGhgDcw0F5yVjsTkqR72FR/WNPNLNsdNA+MOLJYEbrdtjfjz
-         KnCEeNTc0DJFWcbzEznLFv7js367/SySemn/nDo/Xwzyh174yd93ef0nXc20jm6pogYl
-         Wsnv8uh8woKpA8sWqB2KmWOPq78n2cicXfjOuuAesbfa/fMCKiWgZ1IIkRIEtMYgcF3z
-         k1hQ==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qvhEddV5arJ7kaE02ns4J/avAB+kinH7CQEi/JKElsk=;
+        b=hyt7b1C+ejKMUOkm3wdH5sM3HZ0Yx3jENhtBKmZzMXUDrLLnMX0hYCGd4/JdZv8YEE
+         TyVAlXluZqwjYt7TpfNih3FI/oO6rDGTrPOj8NLmh/zNBX46U2iKHHALvbYoY65a8plv
+         eQvWR+ESaaepqApPmlM6BFf/L6h5y1J1D9bNs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HLzPRK3GAXNM5xLTblOxGV9Q6DGatzHoWsFQNs/caP0=;
-        b=OrMuKT0v+MXjYqIgr8m/w9STzCDlPGtFgGWhfbddBQ2beywr+1kp8hBxTvyZ7z3z8Y
-         AHFGT3Zu8R630vKJtMzBBZxZVQfYvW8WTySX2n4Qn3zCiou6oT3aS1wDC3MUwntfuE2G
-         H4CsGg6yqHaNlEtlNDyDTMgTYDS0iSmK1tivK8HVWb13KtuFlz2Fns7rR0cljBdkC5A5
-         I27CK7kueAkDu8h3cWJ+cygunWxZaUSO/7Cv97SlgoKx8R04RPnbjnAQsXgILzqXzi1s
-         ep5K+GGHSVIODyKB3xuhG2eiNLDzV6aTpCtrrbq5mCv6UJIFELCL3M83YCntx5QjBDnj
-         zd8A==
-X-Gm-Message-State: APjAAAX2fCmbobEGEe947Nxy9jekgwd/IC3rp3r06EWg2MKcBsvIfWIH
-        tFFDBKGEdn3u5j6mdcFhE0HWzQ==
-X-Google-Smtp-Source: APXvYqw4Zn7xmwjEJVqTKdp3MaG8FdSq6t+0JVX5q/nTofC9TRVTEvsIAb7bIdvSCZvV7+mt8DqxJA==
-X-Received: by 2002:a62:aa0f:: with SMTP id e15mr5846419pff.160.1568835046043;
-        Wed, 18 Sep 2019 12:30:46 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id k5sm6029441pgo.45.2019.09.18.12.30.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Sep 2019 12:30:45 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 13:30:43 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 1/3] cpuidle: play_idle: Make play_idle more flexible
-Message-ID: <20190918193043.GA24433@xps15>
-References: <20190909145015.26317-1-daniel.lezcano@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qvhEddV5arJ7kaE02ns4J/avAB+kinH7CQEi/JKElsk=;
+        b=qSPYKuOaDJh1lVUf1B38jRxe2uDaT1szCQIhYBncJkkKcDIMztIO8PpYKAP1LpUgFh
+         ejQgxu/rVmop2NHPJHfijfelrBgIaLXk8QqXLvjlRw+MiEHzWdXbwRQhz3J5gTkBs8aC
+         hT6Ck8F/Q1LLUBeFfEyha/i0WjKUW3YeCKOCI8NSv2OzXCqEEaYMYMOrmdmTPrQTC4GE
+         icamaaA2FM0yYVlIBxUBSpfMyXPOAzNfHGwSBwSX7BNILBiwvdfkvVfG9sAQWvwCqDpR
+         R3ZjnVlNmRnZH3wumRQOQP+cn38+4hNy5s81jPzpyGSNpgQQM3USYCsFadAzRkILpmzk
+         bWIA==
+X-Gm-Message-State: APjAAAUHFRAl3XNafD4wsA04HqXHbnQYh0NLDAAHLsgINMfcc8Vi776r
+        XaaJBdAf3bxqZ9oo6EAJFSFwAUAufiM=
+X-Google-Smtp-Source: APXvYqzdNpaZ8v0WRQCphsVkxLbNgEGSbAPekjsuyQj2Wo3Dk6afL/5+0JbXsvxT0OsooYXu81Mk5w==
+X-Received: by 2002:a19:c80b:: with SMTP id y11mr3118475lff.184.1568835102344;
+        Wed, 18 Sep 2019 12:31:42 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id q124sm1188161ljb.28.2019.09.18.12.31.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2019 12:31:41 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id d5so1075655lja.10
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:31:41 -0700 (PDT)
+X-Received: by 2002:a2e:1208:: with SMTP id t8mr1170191lje.84.1568835100782;
+ Wed, 18 Sep 2019 12:31:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909145015.26317-1-daniel.lezcano@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
+ <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org> <20190917052438.GA26923@1wt.eu>
+ <2508489.jOnZlRuxVn@merkaba> <20190917121156.GC6762@mit.edu>
+ <20190917123015.sirlkvy335crozmj@debian-stretch-darwi.lab.linutronix.de>
+ <20190917160844.GC31567@gardel-login> <CAHk-=wgsWTCZ=LPHi7BXzFCoWbyp3Ey-zZbaKzWixO91Ryr9=A@mail.gmail.com>
+ <20190917174219.GD31798@gardel-login> <CAHk-=wjABG3+daJFr4w3a+OWuraVcZpi=SMUg=pnZ+7+O0E2FA@mail.gmail.com>
+ <CAHk-=wgOCv2eOT2M8Vw9GD_yOpsTwF364-hkeADyEu9erHgMGw@mail.gmail.com> <89aeae9d-0bca-2a59-5ce2-1e18f6479936@rasmusvillemoes.dk>
+In-Reply-To: <89aeae9d-0bca-2a59-5ce2-1e18f6479936@rasmusvillemoes.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 18 Sep 2019 12:31:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whORuqf+e=G5vfjXZfzj0wv4zzyPoojfi4SkgLjuvHy0g@mail.gmail.com>
+Message-ID: <CAHk-=whORuqf+e=G5vfjXZfzj0wv4zzyPoojfi4SkgLjuvHy0g@mail.gmail.com>
+Subject: Re: Linux 5.3-rc8
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Lennart Poettering <mzxreary@0pointer.de>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Vito Caputo <vcaputo@pengaru.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
+        William Jon McCann <mccann@jhu.edu>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 04:50:13PM +0200, Daniel Lezcano wrote:
-> The play_idle function has two users, the intel powerclamp and the
-> idle_injection.
-> 
-> The idle injection cooling device uses the function via the
-> idle_injection powercap's APIs. Unfortunately, play_idle is currently
-> limited by the idle state depth: by default the deepest idle state is
-> selected. On the ARM[64] platforms, most of the time it is the cluster
-> idle state, the exit latency and the residency can be very high. That
-> reduces the scope of the idle injection usage because the impact on
-> the performances can be very significant.
-> 
-> If the idle injection cycles can be done with a shallow state like a
-> retention state, the cooling effect would eventually give similar
-> results than the cpufreq cooling device.
-> 
-> In order to prepare the function to receive an idle state parameter,
-> let's replace the 'use_deepest_state' boolean field with 'use_state'
-> and use this value to enter the specific idle state.
-> 
-> The current code keeps the default behavior which is go to the deepest
-> idle state.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/cpuidle/cpuidle.c | 21 +++++++++++----------
->  include/linux/cpuidle.h   | 14 +++++++-------
->  kernel/sched/idle.c       | 10 +++++-----
->  3 files changed, 23 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/cpuidle.c b/drivers/cpuidle/cpuidle.c
-> index 0895b988fa92..f8b54f277589 100644
-> --- a/drivers/cpuidle/cpuidle.c
-> +++ b/drivers/cpuidle/cpuidle.c
-> @@ -99,31 +99,31 @@ static int find_deepest_state(struct cpuidle_driver *drv,
->  }
->  
->  /**
-> - * cpuidle_use_deepest_state - Set/clear governor override flag.
-> - * @enable: New value of the flag.
-> + * cpuidle_use_state - Force the cpuidle framework to enter an idle state.
-> + * @state: An integer for an idle state
->   *
-> - * Set/unset the current CPU to use the deepest idle state (override governors
-> - * going forward if set).
-> + * Specify an idle state the cpuidle framework must step in and bypass
-> + * the idle state selection process.
->   */
-> -void cpuidle_use_deepest_state(bool enable)
-> +void cpuidle_use_state(int state)
->  {
->  	struct cpuidle_device *dev;
->  
->  	preempt_disable();
->  	dev = cpuidle_get_device();
->  	if (dev)
-> -		dev->use_deepest_state = enable;
-> +		dev->use_state = state;
->  	preempt_enable();
->  }
->  
->  /**
->   * cpuidle_find_deepest_state - Find the deepest available idle state.
-> - * @drv: cpuidle driver for the given CPU.
-> - * @dev: cpuidle device for the given CPU.
->   */
-> -int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> -			       struct cpuidle_device *dev)
-> +int cpuidle_find_deepest_state(void)
->  {
-> +	struct cpuidle_device *dev = cpuidle_get_device();
-> +	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
-> +
->  	return find_deepest_state(drv, dev, UINT_MAX, 0, false);
->  }
->  
-> @@ -554,6 +554,7 @@ static void __cpuidle_unregister_device(struct cpuidle_device *dev)
->  static void __cpuidle_device_init(struct cpuidle_device *dev)
->  {
->  	memset(dev->states_usage, 0, sizeof(dev->states_usage));
-> +	dev->use_state = CPUIDLE_STATE_NOUSE;
->  	dev->last_residency = 0;
->  	dev->next_hrtimer = 0;
->  }
-> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
-> index 1a9f54eb3aa1..a1839122e219 100644
-> --- a/include/linux/cpuidle.h
-> +++ b/include/linux/cpuidle.h
-> @@ -15,6 +15,7 @@
->  #include <linux/list.h>
->  #include <linux/hrtimer.h>
->  
-> +#define CPUIDLE_STATE_NOUSE	-1
->  #define CPUIDLE_STATE_MAX	10
->  #define CPUIDLE_NAME_LEN	16
->  #define CPUIDLE_DESC_LEN	32
-> @@ -80,11 +81,12 @@ struct cpuidle_driver_kobj;
->  struct cpuidle_device {
->  	unsigned int		registered:1;
->  	unsigned int		enabled:1;
-> -	unsigned int		use_deepest_state:1;
->  	unsigned int		poll_time_limit:1;
->  	unsigned int		cpu;
-> +
+On Wed, Sep 18, 2019 at 2:33 AM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> And unrelated to the non-use of the RTC (which I agree seems weird), but
+> because there's no better place in this thread: How "random" is the
+> contents of RAM after boot?
 
-Spurious newline
+It varies all over the place.
 
->  	ktime_t			next_hrtimer;
->  
-> +	int			use_state;
->  	int			last_state_idx;
->  	int			last_residency;
->  	u64			poll_limit_ns;
-> @@ -200,19 +202,17 @@ static inline struct cpuidle_device *cpuidle_get_device(void) {return NULL; }
->  #endif
->  
->  #ifdef CONFIG_CPU_IDLE
-> -extern int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> -				      struct cpuidle_device *dev);
-> +extern int cpuidle_find_deepest_state(void);
->  extern int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
->  				struct cpuidle_device *dev);
-> -extern void cpuidle_use_deepest_state(bool enable);
-> +extern void cpuidle_use_state(int state);
->  #else
-> -static inline int cpuidle_find_deepest_state(struct cpuidle_driver *drv,
-> -					     struct cpuidle_device *dev)
-> +static inline int cpuidle_find_deepest_state(void)
->  {return -ENODEV; }
->  static inline int cpuidle_enter_s2idle(struct cpuidle_driver *drv,
->  				       struct cpuidle_device *dev)
->  {return -ENODEV; }
-> -static inline void cpuidle_use_deepest_state(bool enable)
-> +static inline void cpuidle_use_state(int state)
->  {
->  }
->  #endif
-> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-> index b98283fc6914..17da9cb309e1 100644
-> --- a/kernel/sched/idle.c
-> +++ b/kernel/sched/idle.c
-> @@ -165,7 +165,8 @@ static void cpuidle_idle_call(void)
->  	 * until a proper wakeup interrupt happens.
->  	 */
->  
-> -	if (idle_should_enter_s2idle() || dev->use_deepest_state) {
-> +	if (idle_should_enter_s2idle() ||
-> +	    dev->use_state != CPUIDLE_STATE_NOUSE) {
->  		if (idle_should_enter_s2idle()) {
->  			rcu_idle_enter();
->  
-> @@ -181,8 +182,7 @@ static void cpuidle_idle_call(void)
->  		tick_nohz_idle_stop_tick();
->  		rcu_idle_enter();
->  
-> -		next_state = cpuidle_find_deepest_state(drv, dev);
-> -		call_cpuidle(drv, dev, next_state);
-> +		call_cpuidle(drv, dev, dev->use_state);
->  	} else {
->  		bool stop_tick = true;
->  
-> @@ -328,7 +328,7 @@ void play_idle(unsigned long duration_us)
->  	rcu_sleep_check();
->  	preempt_disable();
->  	current->flags |= PF_IDLE;
-> -	cpuidle_use_deepest_state(true);
-> +	cpuidle_use_state(cpuidle_find_deepest_state());
->  
->  	it.done = 0;
->  	hrtimer_init_on_stack(&it.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> @@ -339,7 +339,7 @@ void play_idle(unsigned long duration_us)
->  	while (!READ_ONCE(it.done))
->  		do_idle();
->  
-> -	cpuidle_use_deepest_state(false);
-> +	cpuidle_use_state(CPUIDLE_STATE_NOUSE);
->  	current->flags &= ~PF_IDLE;
->  
->  	preempt_fold_need_resched();
+Some machines will most definitely clear it at each boot.
 
-With the above:
+Others will clear it on cold boots but not warm boots.
 
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Yet other environments never clear it at all, or leave it with odd patterns.
 
-> -- 
-> 2.17.1
-> 
+So it _could_ be useful as added input to the initial random state,
+but it equally well might be totally pointless. It's really hard to
+even guess.
+
+There would be nothing wrong by trying to do add_device_randomness()
+from some unused-at-boot memory area, but it's unclear what memory
+area you should even attempt to use. Certainly not beginning of RAM or
+end of RAM, which are both special and more likely to have been used
+by the boot sequence even if it is then marked as unused in the memory
+maps.
+
+And if you do it, it's not clear it will add any noise at all. It
+_might_. But it might equally well not.
+
+             Linus
