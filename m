@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF756B5CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B05D4B5D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:32:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730158AbfIRGZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46598 "EHLO mail.kernel.org"
+        id S1729357AbfIRGWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:22:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbfIRGZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:33 -0400
+        id S1728576AbfIRGWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:22:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40F4A21920;
-        Wed, 18 Sep 2019 06:25:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CB1A218AE;
+        Wed, 18 Sep 2019 06:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787932;
-        bh=VuHNiLvCe8DWb60mOj+Qp0dPZ5HLt47rLlkOTRkmYR8=;
+        s=default; t=1568787731;
+        bh=XknEf/+gadoD7U3dWFn2XWM+Y/8d9aXtru5ha2+scOA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aYdGR7MV0PA9RVTbljLKzcxgtoh+/bifvRA/NHoRq+bsgLFWU6uJgE0WUU2bWgh4+
-         G6Hw9DJwBbpsGZsschom4t5NdFv0jASrNhMjrgaeovFT6waws70MipKxZmd5A290at
-         r6QrcBkVAD0qTDQNPrb1/Fx9e8GcOHU8EzoGqwEw=
+        b=WAXodWAVShJS4CeKlVrx1MquoEFPhPIey8PZJ0HbYXY1UsSR5jm9Tkb7HxG1HNO8G
+         F/WQYkTzuV1MluT5vpKLLr6tF3VSAuDsE4NlbL4tZozoy98U92Fh1d3oSqOvAeghWc
+         h/lxiAaLa9ZZgVTeBlnv1xGWxM1+2GLKcRd4H9rg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Turner <mattst88@gmail.com>,
-        Anatoly Pugachev <matorola@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 5.2 36/85] ipc: fix sparc64 ipc() wrapper
-Date:   Wed, 18 Sep 2019 08:18:54 +0200
-Message-Id: <20190918061235.288080697@linuxfoundation.org>
+        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 13/50] tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
+Date:   Wed, 18 Sep 2019 08:18:56 +0200
+Message-Id: <20190918061224.461181062@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,188 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Neal Cardwell <ncardwell@google.com>
 
-commit fb377eb80c80339b580831a3c0fcce34a4c9d1ad upstream.
+[ Upstream commit af38d07ed391b21f7405fa1f936ca9686787d6d2 ]
 
-Matt bisected a sparc64 specific issue with semctl, shmctl and msgctl
-to a commit from my y2038 series in linux-5.1, as I missed the custom
-sys_ipc() wrapper that sparc64 uses in place of the generic version that
-I patched.
+Fix tcp_ecn_withdraw_cwr() to clear the correct bit:
+TCP_ECN_QUEUE_CWR.
 
-The problem is that the sys_{sem,shm,msg}ctl() functions in the kernel
-now do not allow being called with the IPC_64 flag any more, resulting
-in a -EINVAL error when they don't recognize the command.
+Rationale: basically, TCP_ECN_DEMAND_CWR is a bit that is purely about
+the behavior of data receivers, and deciding whether to reflect
+incoming IP ECN CE marks as outgoing TCP th->ece marks. The
+TCP_ECN_QUEUE_CWR bit is purely about the behavior of data senders,
+and deciding whether to send CWR. The tcp_ecn_withdraw_cwr() function
+is only called from tcp_undo_cwnd_reduction() by data senders during
+an undo, so it should zero the sender-side state,
+TCP_ECN_QUEUE_CWR. It does not make sense to stop the reflection of
+incoming CE bits on incoming data packets just because outgoing
+packets were spuriously retransmitted.
 
-Instead, the correct way to do this now is to call the internal
-ksys_old_{sem,shm,msg}ctl() functions to select the API version.
+The bug has been reproduced with packetdrill to manifest in a scenario
+with RFC3168 ECN, with an incoming data packet with CE bit set and
+carrying a TCP timestamp value that causes cwnd undo. Before this fix,
+the IP CE bit was ignored and not reflected in the TCP ECE header bit,
+and sender sent a TCP CWR ('W') bit on the next outgoing data packet,
+even though the cwnd reduction had been undone.  After this fix, the
+sender properly reflects the CE bit and does not set the W bit.
 
-As we generally move towards these functions anyway, change all of
-sparc_ipc() to consistently use those in place of the sys_*() versions,
-and move the required ksys_*() declarations into linux/syscalls.h
+Note: the bug actually predates 2005 git history; this Fixes footer is
+chosen to be the oldest SHA1 I have tested (from Sep 2007) for which
+the patch applies cleanly (since before this commit the code was in a
+.h file).
 
-The IS_ENABLED(CONFIG_SYSVIPC) check is required to avoid link
-errors when ipc is disabled.
-
-Reported-by: Matt Turner <mattst88@gmail.com>
-Fixes: 275f22148e87 ("ipc: rename old-style shmctl/semctl/msgctl syscalls")
-Cc: stable@vger.kernel.org
-Tested-by: Matt Turner <mattst88@gmail.com>
-Tested-by: Anatoly Pugachev <matorola@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: bdf1ee5d3bd3 ("[TCP]: Move code from tcp_ecn.h to tcp*.c and tcp.h & remove it")
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/sparc/kernel/sys_sparc_64.c |   33 ++++++++++++++++++---------------
- include/linux/syscalls.h         |   19 +++++++++++++++++++
- ipc/util.h                       |   25 ++-----------------------
- 3 files changed, 39 insertions(+), 38 deletions(-)
+ net/ipv4/tcp_input.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/sparc/kernel/sys_sparc_64.c
-+++ b/arch/sparc/kernel/sys_sparc_64.c
-@@ -336,25 +336,28 @@ SYSCALL_DEFINE6(sparc_ipc, unsigned int,
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -260,7 +260,7 @@ static void tcp_ecn_accept_cwr(struct so
+ 
+ static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
  {
- 	long err;
- 
-+	if (!IS_ENABLED(CONFIG_SYSVIPC))
-+		return -ENOSYS;
-+
- 	/* No need for backward compatibility. We can start fresh... */
- 	if (call <= SEMTIMEDOP) {
- 		switch (call) {
- 		case SEMOP:
--			err = sys_semtimedop(first, ptr,
--					     (unsigned int)second, NULL);
-+			err = ksys_semtimedop(first, ptr,
-+					      (unsigned int)second, NULL);
- 			goto out;
- 		case SEMTIMEDOP:
--			err = sys_semtimedop(first, ptr, (unsigned int)second,
-+			err = ksys_semtimedop(first, ptr, (unsigned int)second,
- 				(const struct __kernel_timespec __user *)
--					     (unsigned long) fifth);
-+					      (unsigned long) fifth);
- 			goto out;
- 		case SEMGET:
--			err = sys_semget(first, (int)second, (int)third);
-+			err = ksys_semget(first, (int)second, (int)third);
- 			goto out;
- 		case SEMCTL: {
--			err = sys_semctl(first, second,
--					 (int)third | IPC_64,
--					 (unsigned long) ptr);
-+			err = ksys_old_semctl(first, second,
-+					      (int)third | IPC_64,
-+					      (unsigned long) ptr);
- 			goto out;
- 		}
- 		default:
-@@ -365,18 +368,18 @@ SYSCALL_DEFINE6(sparc_ipc, unsigned int,
- 	if (call <= MSGCTL) {
- 		switch (call) {
- 		case MSGSND:
--			err = sys_msgsnd(first, ptr, (size_t)second,
-+			err = ksys_msgsnd(first, ptr, (size_t)second,
- 					 (int)third);
- 			goto out;
- 		case MSGRCV:
--			err = sys_msgrcv(first, ptr, (size_t)second, fifth,
-+			err = ksys_msgrcv(first, ptr, (size_t)second, fifth,
- 					 (int)third);
- 			goto out;
- 		case MSGGET:
--			err = sys_msgget((key_t)first, (int)second);
-+			err = ksys_msgget((key_t)first, (int)second);
- 			goto out;
- 		case MSGCTL:
--			err = sys_msgctl(first, (int)second | IPC_64, ptr);
-+			err = ksys_old_msgctl(first, (int)second | IPC_64, ptr);
- 			goto out;
- 		default:
- 			err = -ENOSYS;
-@@ -396,13 +399,13 @@ SYSCALL_DEFINE6(sparc_ipc, unsigned int,
- 			goto out;
- 		}
- 		case SHMDT:
--			err = sys_shmdt(ptr);
-+			err = ksys_shmdt(ptr);
- 			goto out;
- 		case SHMGET:
--			err = sys_shmget(first, (size_t)second, (int)third);
-+			err = ksys_shmget(first, (size_t)second, (int)third);
- 			goto out;
- 		case SHMCTL:
--			err = sys_shmctl(first, (int)second | IPC_64, ptr);
-+			err = ksys_old_shmctl(first, (int)second | IPC_64, ptr);
- 			goto out;
- 		default:
- 			err = -ENOSYS;
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1397,4 +1397,23 @@ static inline unsigned int ksys_personal
- 	return old;
+-	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
++	tp->ecn_flags &= ~TCP_ECN_QUEUE_CWR;
  }
  
-+/* for __ARCH_WANT_SYS_IPC */
-+long ksys_semtimedop(int semid, struct sembuf __user *tsops,
-+		     unsigned int nsops,
-+		     const struct __kernel_timespec __user *timeout);
-+long ksys_semget(key_t key, int nsems, int semflg);
-+long ksys_old_semctl(int semid, int semnum, int cmd, unsigned long arg);
-+long ksys_msgget(key_t key, int msgflg);
-+long ksys_old_msgctl(int msqid, int cmd, struct msqid_ds __user *buf);
-+long ksys_msgrcv(int msqid, struct msgbuf __user *msgp, size_t msgsz,
-+		 long msgtyp, int msgflg);
-+long ksys_msgsnd(int msqid, struct msgbuf __user *msgp, size_t msgsz,
-+		 int msgflg);
-+long ksys_shmget(key_t key, size_t size, int shmflg);
-+long ksys_shmdt(char __user *shmaddr);
-+long ksys_old_shmctl(int shmid, int cmd, struct shmid_ds __user *buf);
-+long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
-+			    unsigned int nsops,
-+			    const struct old_timespec32 __user *timeout);
-+
- #endif
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -276,29 +276,7 @@ static inline int compat_ipc_parse_versi
- 	*cmd &= ~IPC_64;
- 	return version;
- }
--#endif
--
--/* for __ARCH_WANT_SYS_IPC */
--long ksys_semtimedop(int semid, struct sembuf __user *tsops,
--		     unsigned int nsops,
--		     const struct __kernel_timespec __user *timeout);
--long ksys_semget(key_t key, int nsems, int semflg);
--long ksys_old_semctl(int semid, int semnum, int cmd, unsigned long arg);
--long ksys_msgget(key_t key, int msgflg);
--long ksys_old_msgctl(int msqid, int cmd, struct msqid_ds __user *buf);
--long ksys_msgrcv(int msqid, struct msgbuf __user *msgp, size_t msgsz,
--		 long msgtyp, int msgflg);
--long ksys_msgsnd(int msqid, struct msgbuf __user *msgp, size_t msgsz,
--		 int msgflg);
--long ksys_shmget(key_t key, size_t size, int shmflg);
--long ksys_shmdt(char __user *shmaddr);
--long ksys_old_shmctl(int shmid, int cmd, struct shmid_ds __user *buf);
- 
--/* for CONFIG_ARCH_WANT_OLD_COMPAT_IPC */
--long compat_ksys_semtimedop(int semid, struct sembuf __user *tsems,
--			    unsigned int nsops,
--			    const struct old_timespec32 __user *timeout);
--#ifdef CONFIG_COMPAT
- long compat_ksys_old_semctl(int semid, int semnum, int cmd, int arg);
- long compat_ksys_old_msgctl(int msqid, int cmd, void __user *uptr);
- long compat_ksys_msgrcv(int msqid, compat_uptr_t msgp, compat_ssize_t msgsz,
-@@ -306,6 +284,7 @@ long compat_ksys_msgrcv(int msqid, compa
- long compat_ksys_msgsnd(int msqid, compat_uptr_t msgp,
- 		       compat_ssize_t msgsz, int msgflg);
- long compat_ksys_old_shmctl(int shmid, int cmd, void __user *uptr);
--#endif /* CONFIG_COMPAT */
-+
-+#endif
- 
- #endif
+ static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
 
 
