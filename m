@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D378B5BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A59BB5C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbfIRGVT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:21:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40578 "EHLO mail.kernel.org"
+        id S1729769AbfIRGYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:24:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729030AbfIRGVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:16 -0400
+        id S1727496AbfIRGYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:24:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 184AA21927;
-        Wed, 18 Sep 2019 06:21:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B08821928;
+        Wed, 18 Sep 2019 06:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787675;
-        bh=PlwrvsatXtzITkWbZGl9RAV0pa378UmdtOmot4gk1mM=;
+        s=default; t=1568787842;
+        bh=pAUTJC5wqLfsT9L0OAx6PZQXQLHUTTEDnyAZBYt62T8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F636wQXmh+OqwEEHf+afj0iqXb7os9q1tiloS3pSLvG1+PgacVwbRby5VGF3LGM2K
-         LybubnQdZs/X8szA831v5fSR4hbIW0RpUixi/OUra36gYQ4bPTn7rONeul9OGg4Lea
-         hXbFBI5RdydlnF16D69qiUUN0ewkPWrszeo8/T3Q=
+        b=finSDRgsTVX9vnT50TfxHJEJAenf8U1Heu963rvLAGCyyV0NQRqzW8E42bMMmvpkC
+         9TfVhE+VrIIIVEDI3HvxOVzYQoobBbW2MmCPgTRM3RzvN6AsRqAxWXgHb+TJ3a+qIc
+         AwUDxNOYsmgCU5jm7cEpv/9M1PZmKQx8pHAd0SYY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 36/45] crypto: talitos - check data blocksize in ablkcipher.
+        stable@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.19 31/50] gpio: fix line flag validation in lineevent_create
 Date:   Wed, 18 Sep 2019 08:19:14 +0200
-Message-Id: <20190918061227.295699631@linuxfoundation.org>
+Message-Id: <20190918061226.681398811@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Kent Gibson <warthog618@gmail.com>
 
-commit ee483d32ee1a1a7f7d7e918fbc350c790a5af64a upstream.
+commit 5ca2f54b597c816df54ff1b28eb99cf7262b955d upstream.
 
-When data size is not a multiple of the alg's block size,
-the SEC generates an error interrupt and dumps the registers.
-And for NULL size, the SEC does just nothing and the interrupt
-is awaited forever.
+lineevent_create should not allow any of GPIOHANDLE_REQUEST_OUTPUT,
+GPIOHANDLE_REQUEST_OPEN_DRAIN or GPIOHANDLE_REQUEST_OPEN_SOURCE to be set.
 
-This patch ensures the data size is correct before submitting
-the request to the SEC engine.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/gpio/gpiolib.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -1668,6 +1668,14 @@ static int ablkcipher_encrypt(struct abl
- 	struct crypto_ablkcipher *cipher = crypto_ablkcipher_reqtfm(areq);
- 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
- 	struct talitos_edesc *edesc;
-+	unsigned int blocksize =
-+			crypto_tfm_alg_blocksize(crypto_ablkcipher_tfm(cipher));
-+
-+	if (!areq->nbytes)
-+		return 0;
-+
-+	if (areq->nbytes % blocksize)
-+		return -EINVAL;
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -924,7 +924,9 @@ static int lineevent_create(struct gpio_
+ 	}
  
- 	/* allocate extended descriptor */
- 	edesc = ablkcipher_edesc_alloc(areq, true);
-@@ -1685,6 +1693,14 @@ static int ablkcipher_decrypt(struct abl
- 	struct crypto_ablkcipher *cipher = crypto_ablkcipher_reqtfm(areq);
- 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
- 	struct talitos_edesc *edesc;
-+	unsigned int blocksize =
-+			crypto_tfm_alg_blocksize(crypto_ablkcipher_tfm(cipher));
-+
-+	if (!areq->nbytes)
-+		return 0;
-+
-+	if (areq->nbytes % blocksize)
-+		return -EINVAL;
+ 	/* This is just wrong: we don't look for events on output lines */
+-	if (lflags & GPIOHANDLE_REQUEST_OUTPUT) {
++	if ((lflags & GPIOHANDLE_REQUEST_OUTPUT) ||
++	    (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN) ||
++	    (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)) {
+ 		ret = -EINVAL;
+ 		goto out_free_label;
+ 	}
+@@ -938,10 +940,6 @@ static int lineevent_create(struct gpio_
  
- 	/* allocate extended descriptor */
- 	edesc = ablkcipher_edesc_alloc(areq, false);
+ 	if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
+ 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+-	if (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN)
+-		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
+-	if (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)
+-		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
+ 
+ 	ret = gpiod_direction_input(desc);
+ 	if (ret)
 
 
