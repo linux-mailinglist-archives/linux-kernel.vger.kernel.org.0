@@ -2,250 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC9EB6128
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30877B6134
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:14:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729581AbfIRKMX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 06:12:23 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45960 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728649AbfIRKMX (ORCPT
+        id S1729402AbfIRKOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 06:14:41 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56428 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfIRKOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 06:12:23 -0400
-Received: by mail-lf1-f66.google.com with SMTP id r134so5210450lff.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 03:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JzNHZht1bd6w8WtrKX6lmZo1NhKQxsQQoKxRAfLfPag=;
-        b=cFV6lZrPn1Mcf4EtX5AxtvIqIB1Qk4sGu9JQlMv9h7FqQpBqv/aXUI+14JI21629HA
-         lkOuieXLAl/nkeBUyxDgGxcI1rwy2EvvU59BVBmKIN+cpFE1Uw+42ItVzXATDn/Vdtxd
-         iQuMqn9GMssOl1d4JRTjpsiS5u/Pwfs1rnpSsCoigwBi89ovKKwmAPhnULg1PPfp3Clv
-         xWvFgOiCbBH+oAe2OiwCm9MwC2HYhsRxBcbHl6pnb5uTBr8etIffKratODyx5yz4NHp3
-         ikvmSAsrEy8FN2AzOhNVNxuQm1CtCiRqloW8AZFIMLAJAm2xuZroldu5PFrMj+TiTzvJ
-         sWYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=JzNHZht1bd6w8WtrKX6lmZo1NhKQxsQQoKxRAfLfPag=;
-        b=S7/cn8220bk7TRApa84ZsQwOZeEZm7fDb9JQrbtSm1XX6te7aSaYebIH8rrGJD8svO
-         w8QURDITxni/i/ec+uyb0CH5/1H2yhQ2SZnbSv4yBCIpGjTZOXXYYvb7+z8p+DTezPRT
-         76Qz6jGIcdAK1NqgUPhIkEWVeQVtQYgjhwQKCZfum4eD92eofSUsJcDtMLGiKpPy/3cT
-         gY5bN6PyOb2qMq5h/Q6OYu5l06GC8rSrVxsL1+WtcntRQh58DHC8Pynba7VmBbGgkxFY
-         DSkMTAvA00JFYYw0gs+QjmtoHrHqOJmQrECjcufduH9AoszRIiY25YNLGowEAqL/rDGJ
-         IawQ==
-X-Gm-Message-State: APjAAAVoVSfhs8gyd+lxmrKoJD/09lKt6B68xosDMsOXw0U0F7/FLF4k
-        3Ya4pLTb3WpxqIWpzEwULmuROg==
-X-Google-Smtp-Source: APXvYqwwcnWx7o1Se4k8YtBfuMRVpPQNz/bjMByXwDKLlJMYEddmufdN8gJLgcO37T1JynR5hVhoOw==
-X-Received: by 2002:ac2:4308:: with SMTP id l8mr1641108lfh.25.1568801540147;
-        Wed, 18 Sep 2019 03:12:20 -0700 (PDT)
-Received: from khorivan (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id 77sm951751ljf.85.2019.09.18.03.12.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Sep 2019 03:12:19 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 13:12:17 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
-Subject: Re: [PATCH v3 bpf-next 07/14] samples: bpf: add makefile.target for
- separate CC target build
-Message-ID: <20190918101216.GA2908@khorivan>
-Mail-Followup-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
-References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org>
- <20190916105433.11404-8-ivan.khoronzhuk@linaro.org>
- <CAEf4Bzaidog3n0YP6F5dL2rCrHtKCOBXS0as7usymk8Twdro4w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAEf4Bzaidog3n0YP6F5dL2rCrHtKCOBXS0as7usymk8Twdro4w@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 18 Sep 2019 06:14:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=MmPKWC3O3aiRgwRF5r7v7A55zsox5DrsRAlIJYxJWAk=; b=m5oW4CwKnkKz
+        tX23Gfp9x5hWXypvrmERpnA+CebyHgdhR38+UGZvySrfNaR9F+etuEEh/n4umosppkLEpir7Dy5WR
+        Igm3qucH2KtD8rjsvaIiUl+dmpARX5i0lCiWmlTxXkc/POCzNl3ULUSTE0EhVclEvciJTFA803YJA
+        Yv6cs=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iAWyo-0004e5-Qe; Wed, 18 Sep 2019 10:14:34 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id E2D832742927; Wed, 18 Sep 2019 11:14:33 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        alsa-devel@alsa-project.org,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Applied "ASoC: atmel_ssc_dai: Remove wrong spinlock usage" to the asoc tree
+In-Reply-To: <20190918100344.23629-1-gregory.clement@bootlin.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190918101433.E2D832742927@ypsilon.sirena.org.uk>
+Date:   Wed, 18 Sep 2019 11:14:33 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 04:19:40PM -0700, Andrii Nakryiko wrote:
->On Mon, Sep 16, 2019 at 3:58 AM Ivan Khoronzhuk
-><ivan.khoronzhuk@linaro.org> wrote:
->>
->> The makefile.target is added only and will be used in
->
->typo: Makefile
->
->> sample/bpf/Makefile later in order to switch cross-compiling on CC
->
->on -> to
->
->> from HOSTCC environment.
->>
->> The HOSTCC is supposed to build binaries and tools running on the host
->> afterwards, in order to simplify build or so, like "fixdep" or else.
->> In case of cross compiling "fixdep" is executed on host when the rest
->> samples should run on target arch. In order to build binaries for
->> target arch with CC and tools running on host with HOSTCC, lets add
->> Makefile.target for simplicity, having definition and routines similar
->> to ones, used in script/Makefile.host. This allows later add
->> cross-compilation to samples/bpf with minimum changes.
->>
->> The tprog stands for target programs built with CC.
->
->Why tprog? Could we just use prog: hostprog vs prog.
-Prev. version was with prog, but Yonghong Song found it ambiguous.
-As prog can be bpf also. So, decision was made to follow logic:
-* target prog - non bpf progs
-* bpf prog = bpf prog, that can be later smth similar, providing build options
-  for each bpf object separately.
+The patch
 
-Details here:
-https://lkml.org/lkml/2019/9/13/1037
+   ASoC: atmel_ssc_dai: Remove wrong spinlock usage
 
->
->>
->> Makefile.target contains only stuff needed for samples/bpf, potentially
->> can be reused later and now needed only for unblocking tricky
->> samples/bpf cross compilation.
->>
->> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->> ---
->>  samples/bpf/Makefile.target | 75 +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 75 insertions(+)
->>  create mode 100644 samples/bpf/Makefile.target
->>
->> diff --git a/samples/bpf/Makefile.target b/samples/bpf/Makefile.target
->> new file mode 100644
->> index 000000000000..fb6de63f7d2f
->> --- /dev/null
->> +++ b/samples/bpf/Makefile.target
->> @@ -0,0 +1,75 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +# ==========================================================================
->> +# Building binaries on the host system
->> +# Binaries are not used during the compilation of the kernel, and intendent
->
->typo: intended
->
->> +# to be build for target board, target board can be host ofc. Added to build
->
->What's ofc, is it "of course"?
-yes, ofc )
+has been applied to the asoc tree at
 
->
->> +# binaries to run not on host system.
->> +#
->> +# Sample syntax (see Documentation/kbuild/makefiles.rst for reference)
->> +# tprogs-y := xsk_example
->> +# Will compile xdpsock_example.c and create an executable named xsk_example
->
->You mix references to xsk_example and xdpsock_example, which is very
->confusing. I'm guessing you meant to use xdpsock_example consistently.
-Oh, yes. Thanks.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
->
->> +#
->> +# tprogs-y    := xdpsock
->> +# xdpsock-objs := xdpsock_1.o xdpsock_2.o
->> +# Will compile xdpsock_1.c and xdpsock_2.c, and then link the executable
->> +# xdpsock, based on xdpsock_1.o and xdpsock_2.o
->> +#
->> +# Inherited from scripts/Makefile.host
->
->"Inspired by" or "Derived from" would be probably more appropriate term :)
-I will replace with "Derived from", looks better.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
->
->> +#
->> +__tprogs := $(sort $(tprogs-y))
->> +
->> +# C code
->> +# Executables compiled from a single .c file
->> +tprog-csingle  := $(foreach m,$(__tprogs), \
->> +                       $(if $($(m)-objs),,$(m)))
->> +
->> +# C executables linked based on several .o files
->> +tprog-cmulti   := $(foreach m,$(__tprogs),\
->> +                       $(if $($(m)-objs),$(m)))
->> +
->> +# Object (.o) files compiled from .c files
->> +tprog-cobjs    := $(sort $(foreach m,$(__tprogs),$($(m)-objs)))
->> +
->> +tprog-csingle  := $(addprefix $(obj)/,$(tprog-csingle))
->> +tprog-cmulti   := $(addprefix $(obj)/,$(tprog-cmulti))
->> +tprog-cobjs    := $(addprefix $(obj)/,$(tprog-cobjs))
->> +
->> +#####
->> +# Handle options to gcc. Support building with separate output directory
->> +
->> +_tprogc_flags   = $(TPROGS_CFLAGS) \
->> +                 $(TPROGCFLAGS_$(basetarget).o)
->> +
->> +# $(objtree)/$(obj) for including generated headers from checkin source files
->> +ifeq ($(KBUILD_EXTMOD),)
->> +ifdef building_out_of_srctree
->> +_tprogc_flags   += -I $(objtree)/$(obj)
->> +endif
->> +endif
->> +
->> +tprogc_flags    = -Wp,-MD,$(depfile) $(_tprogc_flags)
->> +
->> +# Create executable from a single .c file
->> +# tprog-csingle -> Executable
->> +quiet_cmd_tprog-csingle        = CC  $@
->> +      cmd_tprog-csingle        = $(CC) $(tprogc_flags) $(TPROGS_LDFLAGS) -o $@ $< \
->> +               $(TPROGS_LDLIBS) $(TPROGLDLIBS_$(@F))
->> +$(tprog-csingle): $(obj)/%: $(src)/%.c FORCE
->> +       $(call if_changed_dep,tprog-csingle)
->> +
->> +# Link an executable based on list of .o files, all plain c
->> +# tprog-cmulti -> executable
->> +quiet_cmd_tprog-cmulti = LD  $@
->> +      cmd_tprog-cmulti = $(CC) $(tprogc_flags) $(TPROGS_LDFLAGS) -o $@ \
->> +                         $(addprefix $(obj)/,$($(@F)-objs)) \
->> +                         $(TPROGS_LDLIBS) $(TPROGLDLIBS_$(@F))
->> +$(tprog-cmulti): $(tprog-cobjs) FORCE
->> +       $(call if_changed,tprog-cmulti)
->> +$(call multi_depend, $(tprog-cmulti), , -objs)
->> +
->> +# Create .o file from a single .c file
->> +# tprog-cobjs -> .o
->> +quiet_cmd_tprog-cobjs  = CC  $@
->> +      cmd_tprog-cobjs  = $(CC) $(tprogc_flags) -c -o $@ $<
->> +$(tprog-cobjs): $(obj)/%.o: $(src)/%.c FORCE
->> +       $(call if_changed_dep,tprog-cobjs)
->> --
->> 2.17.1
->>
->
->tprogs is quite confusing, but overall looks good to me.
-I tend to leave it as tprogs, unless it's going to be progs and agreed with
-Yonghong.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-It follows logic:
-- tprogs for bins
-- bpfprogs or bojs or bprogs (could be) for bpf obj
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 0dce49efc70536a8c3b4bb5354a71b727ba31b80 Mon Sep 17 00:00:00 2001
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Wed, 18 Sep 2019 12:03:44 +0200
+Subject: [PATCH] ASoC: atmel_ssc_dai: Remove wrong spinlock usage
+
+A potential bug was reported in the email "[BUG] atmel_ssc_dai: a
+possible sleep-in-atomic bug in atmel_ssc_shutdown"[1]
+
+Indeed in the function atmel_ssc_shutdown() free_irq() was called in a
+critical section protected by spinlock.
+
+However this spinlock is only used in atmel_ssc_shutdown() and
+atmel_ssc_startup() functions. After further analysis, it occurred that
+the call to these function are already protected by mutex used on the
+calling functions.
+
+Then we can remove the spinlock which will fix this bug as a side
+effect. Thanks to this patch the following message disappears:
+
+"BUG: sleeping function called from invalid context at
+kernel/locking/mutex.c:909"
+
+[1]: https://www.spinics.net/lists/alsa-devel/msg71286.html
+
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Link: https://lore.kernel.org/r/20190918100344.23629-1-gregory.clement@bootlin.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/atmel/atmel_ssc_dai.c | 12 ++----------
+ sound/soc/atmel/atmel_ssc_dai.h |  1 -
+ 2 files changed, 2 insertions(+), 11 deletions(-)
+
+diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+index 48e9eef34c0f..ca603397651c 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.c
++++ b/sound/soc/atmel/atmel_ssc_dai.c
+@@ -116,19 +116,16 @@ static struct atmel_pcm_dma_params ssc_dma_params[NUM_SSC_DEVICES][2] = {
+ static struct atmel_ssc_info ssc_info[NUM_SSC_DEVICES] = {
+ 	{
+ 	.name		= "ssc0",
+-	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[0].lock),
+ 	.dir_mask	= SSC_DIR_MASK_UNUSED,
+ 	.initialized	= 0,
+ 	},
+ 	{
+ 	.name		= "ssc1",
+-	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[1].lock),
+ 	.dir_mask	= SSC_DIR_MASK_UNUSED,
+ 	.initialized	= 0,
+ 	},
+ 	{
+ 	.name		= "ssc2",
+-	.lock		= __SPIN_LOCK_UNLOCKED(ssc_info[2].lock),
+ 	.dir_mask	= SSC_DIR_MASK_UNUSED,
+ 	.initialized	= 0,
+ 	},
+@@ -317,13 +314,10 @@ static int atmel_ssc_startup(struct snd_pcm_substream *substream,
+ 
+ 	snd_soc_dai_set_dma_data(dai, substream, dma_params);
+ 
+-	spin_lock_irq(&ssc_p->lock);
+-	if (ssc_p->dir_mask & dir_mask) {
+-		spin_unlock_irq(&ssc_p->lock);
++	if (ssc_p->dir_mask & dir_mask)
+ 		return -EBUSY;
+-	}
++
+ 	ssc_p->dir_mask |= dir_mask;
+-	spin_unlock_irq(&ssc_p->lock);
+ 
+ 	return 0;
+ }
+@@ -355,7 +349,6 @@ static void atmel_ssc_shutdown(struct snd_pcm_substream *substream,
+ 
+ 	dir_mask = 1 << dir;
+ 
+-	spin_lock_irq(&ssc_p->lock);
+ 	ssc_p->dir_mask &= ~dir_mask;
+ 	if (!ssc_p->dir_mask) {
+ 		if (ssc_p->initialized) {
+@@ -369,7 +362,6 @@ static void atmel_ssc_shutdown(struct snd_pcm_substream *substream,
+ 		ssc_p->cmr_div = ssc_p->tcmr_period = ssc_p->rcmr_period = 0;
+ 		ssc_p->forced_divider = 0;
+ 	}
+-	spin_unlock_irq(&ssc_p->lock);
+ 
+ 	/* Shutdown the SSC clock. */
+ 	pr_debug("atmel_ssc_dai: Stopping clock\n");
+diff --git a/sound/soc/atmel/atmel_ssc_dai.h b/sound/soc/atmel/atmel_ssc_dai.h
+index ae764cb541c7..3470b966e449 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.h
++++ b/sound/soc/atmel/atmel_ssc_dai.h
+@@ -93,7 +93,6 @@ struct atmel_ssc_state {
+ struct atmel_ssc_info {
+ 	char *name;
+ 	struct ssc_device *ssc;
+-	spinlock_t lock;	/* lock for dir_mask */
+ 	unsigned short dir_mask;	/* 0=unused, 1=playback, 2=capture */
+ 	unsigned short initialized;	/* true if SSC has been initialized */
+ 	unsigned short daifmt;
 -- 
-Regards,
-Ivan Khoronzhuk
+2.20.1
+
