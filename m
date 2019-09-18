@@ -2,100 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5897EB5BC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78090B5BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfIRGQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:16:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37746 "EHLO mail.kernel.org"
+        id S1727437AbfIRGUA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:20:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727055AbfIRGQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:16:45 -0400
+        id S1725842AbfIRGT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:19:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7426720678;
-        Wed, 18 Sep 2019 06:16:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D2D420678;
+        Wed, 18 Sep 2019 06:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787405;
-        bh=Yrmf/8Q3o0dao3sNh0zfCYToe0BxGZHFhPymplQQt+s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1qpbCEyJTkKm/RO046p3/FT3nK06iQwI4utc74tQk7NLDvxMdvZLnClPyyo8QzMJK
-         AUUgSre9MPD4niFi+Nck1MUT/iMXtYgUWVK3Z/+CMcu1jos6ppVbsiYZqevZf4PKj+
-         0/zmLhDf6kqERoF8UgLORf8BZU3wBDk1N97AKiFQ=
-Date:   Wed, 18 Sep 2019 08:16:42 +0200
+        s=default; t=1568787598;
+        bh=9b64Q7luG20J3yoGxGL9zwCpfms6M+EEzPZ+Il1iNUs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=C1xgm8UL4OJEtshiI581l0QfXE/J+GZjl2UA/RG19PqSLDDXchHcbhfFIvuWcyQN+
+         ntxrcbrJT/6rL7DK8QtJAsMc61IOkaObYMj+zRSAVLmdfCC12DbIo6adEBcES3iMbk
+         WisJwC0UlmuvJ7o8K7Q5mCMNVVxPwUwGp2acrLts=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gregory Nowak <greg@gregn.net>
-Cc:     devel@driverdev.osuosl.org,
-        Simon Dickson <simonhdickson@gmail.com>,
-        "Speakup is a screen review system for Linux." 
-        <speakup@linux-speakup.org>, linux-kernel@vger.kernel.org,
-        John Covici <covici@ccs.covici.com>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        okash.khawaja@gmail.com
-Subject: Re: [HELP REQUESTED from the community] Was: Staging status of
- speakup
-Message-ID: <20190918061642.GB1832786@kroah.com>
-References: <CAOtcWM0Jzo+wew-uiOmde+eZXEWZ310L8wXscWjJv5OXqXJe6Q@mail.gmail.com>
- <20190909025429.GA4144@gregn.net>
- <CAOtcWM0P=w-iBZzwekVrSpp7t2WO9RA5WP956zgDrNKvzA+4ZA@mail.gmail.com>
- <20190915134300.GA552892@kroah.com>
- <CAOtcWM2MD-Z1tg7gdgzrXiv7y62JrV7eHnTgXpv-LFW7zRApjg@mail.gmail.com>
- <20190916134727.4gi6rvz4sm6znrqc@function>
- <20190916141100.GA1595107@kroah.com>
- <20190916223848.GA8679@gregn.net>
- <20190917080118.GC2075173@kroah.com>
- <20190918010351.GA10455@gregn.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 01/45] bridge/mdb: remove wrong use of NLM_F_MULTI
+Date:   Wed, 18 Sep 2019 08:18:39 +0200
+Message-Id: <20190918061223.039718513@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918010351.GA10455@gregn.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 06:03:53PM -0700, Gregory Nowak wrote:
-> On Tue, Sep 17, 2019 at 10:01:18AM +0200, Greg Kroah-Hartman wrote:
-> > On Mon, Sep 16, 2019 at 03:38:48PM -0700, Gregory Nowak wrote:
-> > > On Mon, Sep 16, 2019 at 04:11:00PM +0200, Greg Kroah-Hartman wrote:
-> > > > On Mon, Sep 16, 2019 at 03:47:28PM +0200, Samuel Thibault wrote:
-> > > > > Okash Khawaja, le dim. 15 sept. 2019 19:41:30 +0100, a ecrit:
-> > > > > > I have attached the descriptions.
-> > > > > 
-> > > > > Attachment is missing :)
-> > > > 
-> > > > I saw it :)
-> > > > 
-> > > > Anyway, please put the Description: lines without a blank after that,
-> > > > with the description text starting on that same line.
-> > > > 
-> > > > thanks!
-> > > > 
-> > > > greg k-h
-> > > 
-> > > It's attached. Hope the indentation is OK.
-> > 
-> > Alignment is a bit off, you forgot a tab after "Description:"
-> > 
-> > And you have some trailing whitespace in the document :(
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> I put in the tabs after "Description:" and did the best I could to fix
-> the alignment, and to find and get rid of the white space. If the
-> alignment is still off, or if there is still white space I missed,
-> could someone else please correct that? Thanks.
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-Extra line between each attribute (before the "What:" line) would be
-nice.
+[ Upstream commit 94a72b3f024fc7e9ab640897a1e38583a470659d ]
 
-Also fixing the TODO items :)
+NLM_F_MULTI must be used only when a NLMSG_DONE message is sent at the end.
+In fact, NLMSG_DONE is sent only at the end of a dump.
 
-thanks,
+Libraries like libnl will wait forever for NLMSG_DONE.
 
-greg k-h
+Fixes: 949f1e39a617 ("bridge: mdb: notify on router port add and del")
+CC: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/bridge/br_mdb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/bridge/br_mdb.c
++++ b/net/bridge/br_mdb.c
+@@ -373,7 +373,7 @@ static int nlmsg_populate_rtr_fill(struc
+ 	struct nlmsghdr *nlh;
+ 	struct nlattr *nest;
+ 
+-	nlh = nlmsg_put(skb, pid, seq, type, sizeof(*bpm), NLM_F_MULTI);
++	nlh = nlmsg_put(skb, pid, seq, type, sizeof(*bpm), 0);
+ 	if (!nlh)
+ 		return -EMSGSIZE;
+ 
+
+
