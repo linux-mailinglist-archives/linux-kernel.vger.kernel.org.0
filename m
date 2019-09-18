@@ -2,135 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB26B6299
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:00:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6303AB629F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:01:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbfIRMAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:00:02 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39554 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727165AbfIRMAC (ORCPT
+        id S1729370AbfIRMBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:01:13 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36892 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728813AbfIRMBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:00:02 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v17so2256478wml.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 05:00:01 -0700 (PDT)
+        Wed, 18 Sep 2019 08:01:13 -0400
+Received: by mail-pg1-f193.google.com with SMTP id c17so3953560pgg.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 05:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=ADDEHritjAAyr1Uf8VLuPhIliMxd6VsivOVJPdhBhS8=;
-        b=tDTrFG9OO0SQ/j4VPPw82dJXvs/LchdfBItGZfh+YI65BJkwxeV5YeeQzZ69Hj0fqM
-         oGBWGO75/1RCTKLJ5QISvrPTZR/Ukl1M13hfBaLptFu089jOyG1dTijDHJtg0krv/9CD
-         zl/TQrSoHZpCqaIRxREzZfIMzngi3O4gsuOxtTs4iJtODcaky2erBKiJ2ysuC1ApwALh
-         yck/Gagf6Iw+VmHxRpwLSLvOqaTh26/5tModzOBX6RBhuT8eo6PKhjyTycR5uw6zaL/F
-         SniRRkdpdUJIn3K/y2zaWdZN0FLEweV7OuhfXTAj9jXGbVW6/AZv+C+qz0B7pSuWyU8Y
-         lVEw==
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=WkQ76CITam9F7JiZEHEwL0RX83IOrZqz3Y++2Xoowf4=;
+        b=eCbt59BqCWohhKOx9Y+Z8ftqpShDtgftW5+zz/dI+Ju0QCOAJrpXZrFORiiEptuIvK
+         vhaDaD8/3pYuo+FrATD9qYuWzYLvQ0VZhqNfBX0TOh5x+ZjETAmFftVs2GzCGx0ENEIT
+         cWJDlROlkMGsN+Ve2tEMn4TINILoLkNIr3ASNBPBbmqflF1dtZsIdyXJ2gFnresOc0Gv
+         ZdLO/i7iTr6bC9IZ2eoT2XzBhLm/dwEPnG/8XzWtWbrDlho2sNidw7Xm0l5lEBbJQwi0
+         tHitqC51imBnyvE+ZVAsrmvobrsRHw/s2SaB7sDs5bI66RgQkw8ZiHo4PUYTWBAzuAq6
+         NJ8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=ADDEHritjAAyr1Uf8VLuPhIliMxd6VsivOVJPdhBhS8=;
-        b=QVVsGLShtzVs8ZYgRCYWReohygwBcRNue6DwHwZCF0KJeAJaysyOQmgzgaGwhLzJbH
-         67fUdXUpdBXb91WNAERlSjbBZMpMf6CiUv2hAkjLGpqhY1kMCr51fQRFEqOmb4yRd9ow
-         Nb6N3TCWzOz8P+AthwTCGP4K253iZdKHYLYXMmeiJsXAT5StX8ckvTRAA3Cs9BS6l/OQ
-         +Mj4GNP+y1und8yr1zS2pfiJLr7oQMn1r4ALQE1tQkBaK/7h2R4SGl3Zc+as9csdpHSh
-         FbTaGBt32eTU2w4lRy8yBT9IqJi8PXrt2eMTapI/uY7zOKVVLGiSIhRJk+Wwdn5jlhnK
-         nzbA==
-X-Gm-Message-State: APjAAAU6tJx3qVvmmRtfFACT7Pt0NxA1B43Kc1fhdCAjdQk1UCUQz3lg
-        TP2i95jg0vRP6g7SI9byEhR9WA==
-X-Google-Smtp-Source: APXvYqyOf9bAl2LHcY6EVznBmlNQTlzJOxTHOTgqToVP1jNH0xrcB5vTOsxeGodHednmXUrv+jtx8g==
-X-Received: by 2002:a7b:c758:: with SMTP id w24mr2314538wmk.148.1568808000676;
-        Wed, 18 Sep 2019 05:00:00 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id z189sm2945227wmc.25.2019.09.18.04.59.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Sep 2019 04:59:59 -0700 (PDT)
-Message-ID: <5d821c3f.1c69fb81.2b5f2.cc58@mx.google.com>
-Date:   Wed, 18 Sep 2019 04:59:59 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v5.2.15-86-g2f63f02ef506
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: linux-5.2.y
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
-Subject: Re: [PATCH 5.2 00/85] 5.2.16-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WkQ76CITam9F7JiZEHEwL0RX83IOrZqz3Y++2Xoowf4=;
+        b=CGSzs75dDeuPR/SCbem8e8nJf5iCJSbghbkwjVTc4aqhBLuEVyqDdxgMp/pz5MvKJ5
+         aXhel53i+IvT0lFJ6he41/Imu19S5MTrbvdyysKMyci1nQQs597U0LRIvPHCJCmKQ8vy
+         WEGxlgjJNcUouihmgWaaef6cpd6Rhr3nPKfnVXmaXJfHLTjwg56OvsvnlhaSF2zES0JV
+         1oyfjUWH9b62pZ7rxm1BTc2VelqN3CeHG3BKWbPG/6rryYieiAkOQmoCw6wXh/hruUaz
+         meqj0wqpnWQmHYvXLiMOe6gsTFx88Jb2WRxmIdQ3zEZFOxT0UrGGFBir5mG2pd4fsRAO
+         ha/w==
+X-Gm-Message-State: APjAAAUfu0HCjxNJAy/H2qP33Q6H8gtO56Qe0w0snSt+UKdhguC9usT7
+        vlhsDpMfLsEc/+tW5K9ACVfl8g==
+X-Google-Smtp-Source: APXvYqybyNmzYSLFX4gGeI++WncUy4zJYIdFMkUqy0VPaTasXIn9sKMgm6+FthWofH2FZyQmGqRg8w==
+X-Received: by 2002:a63:5626:: with SMTP id k38mr3667623pgb.134.1568808072722;
+        Wed, 18 Sep 2019 05:01:12 -0700 (PDT)
+Received: from pragneshp.open-silicon.com ([114.143.65.226])
+        by smtp.gmail.com with ESMTPSA id z13sm6882241pfq.121.2019.09.18.05.01.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 18 Sep 2019 05:01:12 -0700 (PDT)
+From:   Pragnesh Patel <pragnesh.patel@sifive.com>
+To:     mripard@kernel.org
+Cc:     Pragnesh Patel <pragnesh.patel@sifive.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Subject: [PATCH] media: dt-bindings: Fix building error for dt_binding_check
+Date:   Wed, 18 Sep 2019 17:31:00 +0530
+Message-Id: <1568808060-17516-1-git-send-email-pragnesh.patel@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-5.2.y boot: 145 boots: 1 failed, 135 passed with 8 offline,=
- 1 conflict (v5.2.15-86-g2f63f02ef506)
+$id doesn't match the actual filename, so update the $id
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--5.2.y/kernel/v5.2.15-86-g2f63f02ef506/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-5.2.y=
-/kernel/v5.2.15-86-g2f63f02ef506/
-
-Tree: stable-rc
-Branch: linux-5.2.y
-Git Describe: v5.2.15-86-g2f63f02ef506
-Git Commit: 2f63f02ef5061324ba168b1cb01c89fd89a0c593
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 82 unique boards, 28 SoC families, 17 builds out of 209
-
-Boot Failure Detected:
-
-arm64:
-    defconfig:
-        gcc-8:
-            rk3399-firefly: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            dm365evm,legacy: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-    omap2plus_defconfig:
-        omap4-panda:
-            lab-baylibre: FAIL (gcc-8)
-            lab-baylibre-seattle: PASS (gcc-8)
-            lab-collabora: PASS (gcc-8)
-
+Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
 ---
-For more info write to <info@kernelci.org>
+ Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
+index 27f38ee..5dd1cf49 100644
+--- a/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
++++ b/Documentation/devicetree/bindings/media/allwinner,sun4i-a10-csi.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/arm/allwinner,sun4i-a10-csi.yaml#
++$id: http://devicetree.org/schemas/media/allwinner,sun4i-a10-csi.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: Allwinner A10 CMOS Sensor Interface (CSI) Device Tree Bindings
+-- 
+2.7.4
+
