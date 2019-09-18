@@ -2,140 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A89DB6731
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 17:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60ABB673B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 17:35:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387505AbfIRPfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 11:35:18 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33032 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730523AbfIRPfS (ORCPT
+        id S1731683AbfIRPfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 11:35:34 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:57862 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731049AbfIRPfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 11:35:18 -0400
-Received: by mail-yw1-f68.google.com with SMTP id j128so112220ywf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 08:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WXRR5zyqVQASQ4N9vA9Ov0ItwFdEJLRSuq1ARX/xesM=;
-        b=dNLB2bp3hfKDZc3abQIP7Oj8s66zGdtSp4haltezOEd6bKHKjGfSMozAqh6lGbdzjr
-         Ij1QeFFZcQRSypfUAksMR/Lw23q0Q055c2yADGVxFSBn7g3+840ox0TbRwukGFMqe8GU
-         jLSX6NFkEzBstjyRVOvShg73Ts1xvP9nGSrwSzgp81g8YRJ5+gdnWqTRS5AEZukRyB2a
-         Tr342gQGPH2Gb6+Mz0CxM7drrTwr3haV5dqeSkF0U30vLD2nPCGVlhBbJdxNCBx+6R4d
-         h0bEKIsWN0WErgB+hX61fDRGmDPfOfNAzKbBgKsSX6CQE3a4pc/R22V54rnEIApO3bAS
-         dCwQ==
+        Wed, 18 Sep 2019 11:35:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1568820933;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Jl3xf+SlbbmgNVj3rIhprzvu6KTO4+fHOB8Vm/+azHE=;
+        b=D42nakkj0tv+gCmACBmzDtIFSZ0gedpwg2e5eKbKlVCei3pFZp1QNmJwl2AitCOOX9rRTk
+        zCc5+h3XY/fcgznEHbmXRWnyuQhGwVYRezQ75o3slqMAWsgYSrrQNLqvoVoxheqghRSO0T
+        kV1DnoWZdukzgkcF3LFUb0PQ2zjkbVQ=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-7-EkRq5__COqK0WQEf5pVX2g-1; Wed, 18 Sep 2019 11:35:31 -0400
+Received: by mail-qt1-f198.google.com with SMTP id z4so494462qts.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 08:35:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WXRR5zyqVQASQ4N9vA9Ov0ItwFdEJLRSuq1ARX/xesM=;
-        b=bAHZhT+uN8Pgqf7T5XDOpa3lm2k6tkxN8HN+tpR18DfUhV8IyuaoFQmUxiOGLRt3Oy
-         GqlmMgC3zmE4f4jIZ/kf6GG0o9xWxdKwROWnOQggbCL0+cfSHtg/nqcUVRxnT3yCItZj
-         JUdpLpGlZ0Ylr2JaggaDTCtN7mmsRfS7o5FAF3VrQLtCqGgDURuI0IyQk4WfL7kbUTqv
-         klU04isJyHDjKuqsunx2oMHq8U3gabAvKowhK4JCUIJdvIDaGyulTcYv6+xEEUXr/IwG
-         QJ0t/KATSBENB3MX1+brDoUntnVPOA+5mEQQapepA3yDOTMMt3qWjwJ6lgfLna3MLxiI
-         Gq8w==
-X-Gm-Message-State: APjAAAWdAnqU6FPYxtOL/1FVtIimkwCEoTDkJJuImSFcRuKPSJWQUiXa
-        qGHnGnYysPT8aJJukRQnCrLAZg==
-X-Google-Smtp-Source: APXvYqz1D2kt/w72OnVw3WwBQ3uRSgZrxojXH1V2r/86e2KhMJ6L8LT/IJavDbljbLIdEBUfDjqCbQ==
-X-Received: by 2002:a81:a347:: with SMTP id a68mr3744553ywh.427.1568820917136;
-        Wed, 18 Sep 2019 08:35:17 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id i62sm1299104ywi.102.2019.09.18.08.35.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 08:35:16 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 11:35:15 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com, stonea168@163.com,
-        cawa.cheng@mediatek.com, linux-mediatek@lists.infradead.org,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com
-Subject: Re: [PATCH v6 2/8] drm/panel: support for BOE tv101wum-nl6 wuxga dsi
- video mode panel
-Message-ID: <20190918153515.GS218215@art_vandelay>
-References: <20190918122422.17339-1-jitao.shi@mediatek.com>
- <20190918122422.17339-3-jitao.shi@mediatek.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+5euqK1Uayja2/4T0pIwBXXljs7m3c7t7lzxpmy9RYE=;
+        b=d/E3OWGPvgKAtfeVSGMqh22rOo+SVX85/gdg/ILXiz+kQAqY92ksMcasBlOUlLwian
+         Uds+oILxKFIWpf0xxNQdIDAEaVKyuQUFvZ0NWW8/wvKHRAG61zuVbw8eh/t1nkf2v9ZH
+         MTxN8WhsaPOagEBWsjLeg0zm3rvNdNjG1XaAXAXXgsMuXWHcwj/OUrm8+0YbLloowQDl
+         r2JBCafXZhxukvCydDhvEbMtocx9mc80tQVmdI03KuOYrCglufzWHhC+VPcg3h56zOkI
+         zFtHEy/Zzfoy/D8HMMgAP9vy3YP/Mkda3JSkP3apb9cCCKilW03WR82XX414yLSSclGB
+         X8bg==
+X-Gm-Message-State: APjAAAUQbpnGRcfHinCB+YHnvWb4xmpZwTugSdxu2O7GaHpc2GHRY/VJ
+        P6XVZpGF5Qror+Yip8d+lHrHv3rbc4+kcDAn3rs/eXErjJzLP3vYhj4kgGRxnwOOnURJ5VfBNP0
+        I4kucHIgNEqpg7r+vD6DD5yQDEPbkyvhuG4I9dl5W
+X-Received: by 2002:ac8:4251:: with SMTP id r17mr4751030qtm.260.1568820930807;
+        Wed, 18 Sep 2019 08:35:30 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyMAkC4LzPBLYmzrgRhTnQzsI/ZM7Fw1Sk0DnmqW0xRDSNMXxOjuj8sChl5/Ge6r4tOqKvUzYmuesragQTuOrU=
+X-Received: by 2002:ac8:4251:: with SMTP id r17mr4751014qtm.260.1568820930584;
+ Wed, 18 Sep 2019 08:35:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918122422.17339-3-jitao.shi@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190812152022.27963-1-stillcompiling@gmail.com>
+ <20190812152022.27963-4-stillcompiling@gmail.com> <CAMB+bfK9Oge1T96aJkuvpoAdUSsm+YxY1W70b62gUMMBKfD8vg@mail.gmail.com>
+In-Reply-To: <CAMB+bfK9Oge1T96aJkuvpoAdUSsm+YxY1W70b62gUMMBKfD8vg@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Wed, 18 Sep 2019 17:35:19 +0200
+Message-ID: <CAO-hwJLVS0G+TtShbBQ6j9_aCAKjb_AsvoN2HkR+zKpd98MKRw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] HID: core: fix dmesg flooding if report field
+ larger than 32bit
+To:     Joshua Clayton <stillcompiling@gmail.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>
+X-MC-Unique: EkRq5__COqK0WQEf5pVX2g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 08:24:16PM +0800, Jitao Shi wrote:
-> Add driver for BOE tv101wum-nl6 panel is a 10.1" 1200x1920 panel.
-> 
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> ---
->  drivers/gpu/drm/panel/Kconfig                 |   9 +
->  drivers/gpu/drm/panel/Makefile                |   1 +
->  .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    | 709 ++++++++++++++++++
->  3 files changed, 719 insertions(+)
->  create mode 100644 drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-> 
-/snip
+On Thu, Aug 29, 2019 at 1:26 AM Joshua Clayton <stillcompiling@gmail.com> w=
+rote:
+>
+> ping?
+> I'd love to see this get in.
+> with distro kernel I have effectively no dmesg due to this issue
 
-> diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-> new file mode 100644
-> index 000000000000..e27529b80d78
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
+Apologies for the delay.
 
-/snip
+I really thought we should find a better way of fixing this, until I
+got a laptop affected by it. This series is a must have.
 
-> +static int boe_panel_init(struct boe_panel *boe)
-> +{
-> +	struct mipi_dsi_device *dsi = boe->dsi;
-> +	struct drm_panel *panel = &boe->base;
-> +	int err, i;
-> +
-> +	if (boe->desc->init_cmds) {
-> +		const struct panel_init_cmd *init_cmds = boe->desc->init_cmds;
-> +
-> +		for (i = 0; init_cmds[i].len != 0; i++) {
-> +			const struct panel_init_cmd *cmd = &init_cmds[i];
-> +
-> +			switch (cmd->type) {
-> +			case DELAY_CMD:
-> +				msleep(cmd->data[0]);
-> +				err = 0;
-> +				break;
-> +
-> +			case INIT_DCS_CMD:
-> +				err = mipi_dsi_dcs_write(dsi, cmd->data[0],
-> +							 cmd->len <= 1 ? NULL :
-> +							 &cmd->data[1],
-> +							 cmd->len - 1);
-> +				break;
-> +			}
-> +
-> +			if (err < 0) {
+Applied to for-5.4/core
 
-err possibly used uninitialized here.
+Cheers,
+Benjamin
 
-> +				dev_err(panel->dev,
-> +					"failed to write command %u\n", i);
-> +				return err;
-> +			}
-> +		}
-> +	}
-> +	return 0;
-> +}
-/snip
+>
+> On Mon, Aug 12, 2019 at 9:20 AM <stillcompiling@gmail.com> wrote:
+> >
+> > From: Joshua Clayton <stillcompiling@gmail.com>
+> >
+> > Only warn once of oversize hid report value field
+> >
+> > On HP spectre x360 convertible the message:
+> > hid-sensor-hub 001F:8087:0AC2.0002: hid_field_extract() called with n (=
+192) > 32! (kworker/1:2)
+> > is continually printed many times per second, crowding out all else.
+> > Protect dmesg by printing the warning only one time.
+> >
+> > The size of the hid report field data structure should probably be incr=
+eased.
+> > The data structure is treated as a u32 in Linux, but an unlimited numbe=
+r
+> > of bits in the USB hid spec, so there is some rearchitecture needed now=
+ that
+> > devices are sending more than 32 bits.
+> >
+> > Signed-off-by: Joshua Clayton <stillcompiling@gmail.com>
+> >
+> > diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> > index 210b81a56e1a..3eaee2c37931 100644
+> > --- a/drivers/hid/hid-core.c
+> > +++ b/drivers/hid/hid-core.c
+> > @@ -1311,8 +1311,8 @@ u32 hid_field_extract(const struct hid_device *hi=
+d, u8 *report,
+> >                         unsigned offset, unsigned n)
+> >  {
+> >         if (n > 32) {
+> > -               hid_warn(hid, "hid_field_extract() called with n (%d) >=
+ 32! (%s)\n",
+> > -                        n, current->comm);
+> > +               hid_warn_once(hid, "%s() called with n (%d) > 32! (%s)\=
+n",
+> > +                             __func__, n, current->comm);
+> >                 n =3D 32;
+> >         }
+> >
+> > --
+> > 2.21.0
+> >
 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
