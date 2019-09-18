@@ -2,186 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6CA0B6CBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90608B6CB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731592AbfIRTiQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 15:38:16 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33974 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731564AbfIRTiQ (ORCPT
+        id S1731516AbfIRThv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 15:37:51 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33418 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbfIRThv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:38:16 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r22so556076lfm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:38:14 -0700 (PDT)
+        Wed, 18 Sep 2019 15:37:51 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n190so460775pgn.0;
+        Wed, 18 Sep 2019 12:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kYdtJ7oCFnyBm2ZB4A+7C5h6gT7MMWnprnThe/izcYI=;
-        b=FJYQZJbLlwnYy90gnbw5gVV6ZxnBb7ZVOPYNbwk/X+uv7Q2AcvUbaxXr5/I3hc68iC
-         o1mnY1UhXLgFzBZgYShNRfik8r1itqOopd6dCzEH/iFUnarQHiflR2MAQp1g87ruIzZa
-         GzycbwAQfEs/XaWi9qqDvP4CUHCYoSy9wDLwc=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DR+J5C79lLzRKGlKuT2X9cpCjeYLt6AyFeSZmrtSIys=;
+        b=KY9CRwjk5uXww8C2OvO/Cwbf2mT5w7l3OCtIbTM0kTG5Kbi880mpchPLV6kKUqI/P+
+         pCkMV2SnxVfyV5qOOIaEdIpgKU35yDGEJ46mCuHssgpuBMK7dCKJZ9ip3BNQ2l3np7F3
+         7e/6Unih8OfmrFVvDfZJBQps/jba7jEqBp4JlOf8BekTBwDACmQk3wuvmghDEo+j3yqa
+         lqF/I8LscY/6aZjch+XNp7JW9Kk/sKP51PXFFzjfNn1itUFjRe910eu+G8FcZI0+/kxd
+         wP3PKSVQlqlQ0AiuJtSm1spR5U1vbmrK7WpWX0YqaM5LGJeBuF40GSWwOB7kl6YKMIus
+         ipAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kYdtJ7oCFnyBm2ZB4A+7C5h6gT7MMWnprnThe/izcYI=;
-        b=McrcwDyPdMRKWtROe3sH0Oyf/S4W0e2iDrC5tBVOFJyvGBMY4vWlVfxuksdq+BIG2W
-         axUitm1JTTClEMXoboPOQb/NN7dty/9MBzsE2vKcUmzKQjgjYaC3UxJFjVl0MYl7+qF3
-         9QYv/dfDrOAwyQybL1f4bcdh/uTAOQkbyGoSb3r/bI4GR+rmjcH3J2fgzs6R/DY4LHCy
-         mUzKyK/kp2ZbKPBU+RvSn/SG6tmBc4zCTNQwoCBVoErTZgRa3AS7CS4wqeg/mYQdtp8W
-         ZaJDKOuoIO24kO91Xrs6MJ17c8Ee24hvHqi88OptBtWKc5EwayQKIPczLZ9TFKxe3Y+9
-         I6gw==
-X-Gm-Message-State: APjAAAWsTNJY7otVQ6vIctpL8G1uSTM6c6iDLxGQgcV+sVM5gWQFBywX
-        MGjAIcTvqTZVG3frMloWEcLZpq3MIpk=
-X-Google-Smtp-Source: APXvYqygfzloI1VoScPM3bimBrsuQEsLQ+H07Mpap9W2ieAIg+9orRTcTfyWvYTN1ECpKQR5Cle09w==
-X-Received: by 2002:ac2:44d2:: with SMTP id d18mr3058069lfm.67.1568835492945;
-        Wed, 18 Sep 2019 12:38:12 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id a14sm1153634lfg.74.2019.09.18.12.38.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2019 12:38:11 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id d5so1093579lja.10
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:38:11 -0700 (PDT)
-X-Received: by 2002:a2e:9bcc:: with SMTP id w12mr3122310ljj.181.1568835490845;
- Wed, 18 Sep 2019 12:38:10 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DR+J5C79lLzRKGlKuT2X9cpCjeYLt6AyFeSZmrtSIys=;
+        b=UgiXV01UpMNo4TqZK5cS5iDOpVD1ThZL/OZZ96XzhdCGObNnHwLV6ySwHJOiQ+OJ/1
+         wtagT5dVomhHSijD0o1YgLckaARs1dALw4kbIe7Yu3UsbFudTARNHpJtjY1w6L/Q2XKC
+         97ioHBVG6QQE/BoOaLWkKeLf7pzZsJgSC7rdQaLdDv9zJ2A5JK6/kAsXLLCzo0+cXILu
+         M40vTpyV2zda4xuU9/oFAzFsLgYAuDxpDKQtaetlBtvCF546EX8ZpQIZ/qxM6IVC87ll
+         XzvBIuPAZ9kA0vufdNLt8SgBFhge1sW9NfDBNRXbvx5NROw4+BxK8Xdn5BuoaFkJ3x15
+         qILg==
+X-Gm-Message-State: APjAAAVLQMxq7e/Z7B9BtFCNL3oJWJzJIiSbcdeTdhUyPVuKemLOTaAQ
+        sK+is0ptFYT1LT/Fk6lvMW8r8PE2
+X-Google-Smtp-Source: APXvYqzcxu4tGyAZZuLc3tFbpNtrS0UhtGLWCi6w4HEk9Sy7P9JuL+jImzfvpp5uSocqkPND5UZ2cA==
+X-Received: by 2002:a65:64ce:: with SMTP id t14mr5455011pgv.137.1568835470414;
+        Wed, 18 Sep 2019 12:37:50 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 193sm8979708pfc.59.2019.09.18.12.37.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Sep 2019 12:37:49 -0700 (PDT)
+Date:   Wed, 18 Sep 2019 12:37:49 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 00/50] 4.19.74-stable review
+Message-ID: <20190918193749.GB30544@roeck-us.net>
+References: <20190918061223.116178343@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20190910160903.65694-1-swboyd@chromium.org> <20190910160903.65694-4-swboyd@chromium.org>
-In-Reply-To: <20190910160903.65694-4-swboyd@chromium.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 18 Sep 2019 12:37:34 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6YdNszcJV67CwcY2gOgPHrJ1+SnKMLr63f2bix2aZXXA@mail.gmail.com>
-Message-ID: <CAE=gft6YdNszcJV67CwcY2gOgPHrJ1+SnKMLr63f2bix2aZXXA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] memremap: Add support for read-only memory mappings
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 9:09 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Sometimes we have memories that are supposed to be read-only, but when
-> we map these regions the best we can do is map them as write-back with
-> MEMREMAP_WB. Introduce a read-only memory mapping (MEMREMAP_RO) that
-> allows us to map reserved memory regions as read-only. This way, we're
-> less likely to see these special memory regions become corrupted by
-> stray writes to them.
->
-> Cc: Evan Green <evgreen@chromium.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  include/linux/io.h |  1 +
->  kernel/iomem.c     | 20 +++++++++++++++++---
->  2 files changed, 18 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/io.h b/include/linux/io.h
-> index accac822336a..15a63efcd153 100644
-> --- a/include/linux/io.h
-> +++ b/include/linux/io.h
-> @@ -148,6 +148,7 @@ enum {
->         MEMREMAP_WC = 1 << 2,
->         MEMREMAP_ENC = 1 << 3,
->         MEMREMAP_DEC = 1 << 4,
-> +       MEMREMAP_RO = 1 << 5,
->  };
->
->  void *memremap(resource_size_t offset, size_t size, unsigned long flags);
-> diff --git a/kernel/iomem.c b/kernel/iomem.c
-> index 62c92e43aa0d..6d76b7398714 100644
-> --- a/kernel/iomem.c
-> +++ b/kernel/iomem.c
-> @@ -19,6 +19,13 @@ static void *arch_memremap_wb(resource_size_t offset, unsigned long size)
->  }
->  #endif
->
-> +#ifndef arch_memremap_ro
-> +static void *arch_memremap_ro(resource_size_t offset, unsigned long size)
-> +{
-> +       return NULL;
-> +}
-> +#endif
-> +
->  #ifndef arch_memremap_can_ram_remap
->  static bool arch_memremap_can_ram_remap(resource_size_t offset, size_t size,
->                                         unsigned long flags)
-> @@ -45,7 +52,7 @@ static void *try_ram_remap(resource_size_t offset, size_t size,
->   * @offset: iomem resource start address
->   * @size: size of remap
->   * @flags: any of MEMREMAP_WB, MEMREMAP_WT, MEMREMAP_WC,
-> - *               MEMREMAP_ENC, MEMREMAP_DEC
-> + *               MEMREMAP_ENC, MEMREMAP_DEC, MEMREMAP_RO
->   *
->   * memremap() is "ioremap" for cases where it is known that the resource
->   * being mapped does not have i/o side effects and the __iomem
-> @@ -53,6 +60,9 @@ static void *try_ram_remap(resource_size_t offset, size_t size,
->   * mapping types will be attempted in the order listed below until one of
->   * them succeeds.
->   *
-> + * MEMREMAP_RO - establish a mapping whereby writes are ignored/rejected.
-> + * Attempts to map System RAM with this mapping type will fail.
+On Wed, Sep 18, 2019 at 08:18:43AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.74 release.
+> There are 50 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri 20 Sep 2019 06:09:47 AM UTC.
+> Anything received after that time might be too late.
+> 
 
-Why should attempts to map RAM with this flag fail? MEMREMAP_WB will
-allow RAM and quietly give you back the direct mapping, so it seems
-like at least some values in this function allow RAM.
+For v4.19.73-51-g7290521ed4bd:
 
-Oh, I see a comment below about "Enforce that this mapping is not
-aliasing System RAM". I guess this is worried about cache coloring?
-But is that a problem with RO mappings? I guess the RO mappings could
-get partially stale, so if the memory were being updated out from
-under you, you might see some updates but not others. Was that the
-rationale?
+Build results:
+	total: 156 pass: 156 fail: 0
+Qemu test results:
+	total: 390 pass: 390 fail: 0
 
-> + *
->   * MEMREMAP_WB - matches the default mapping for System RAM on
->   * the architecture.  This is usually a read-allocate write-back cache.
->   * Moreover, if MEMREMAP_WB is specified and the requested remap region is RAM
-> @@ -84,7 +94,10 @@ void *memremap(resource_size_t offset, size_t size, unsigned long flags)
->         }
->
->         /* Try all mapping types requested until one returns non-NULL */
-> -       if (flags & MEMREMAP_WB) {
-> +       if ((flags & MEMREMAP_RO) && is_ram != REGION_INTERSECTS)
-> +               addr = arch_memremap_ro(offset, size);
-> +
-> +       if (!addr && (flags & MEMREMAP_WB)) {
->                 /*
->                  * MEMREMAP_WB is special in that it can be satisfied
->                  * from the direct map.  Some archs depend on the
-> @@ -103,7 +116,8 @@ void *memremap(resource_size_t offset, size_t size, unsigned long flags)
->          * address mapping.  Enforce that this mapping is not aliasing
->          * System RAM.
->          */
-> -       if (!addr && is_ram == REGION_INTERSECTS && flags != MEMREMAP_WB) {
-> +       if (!addr && is_ram == REGION_INTERSECTS &&
-> +           (flags != MEMREMAP_WB || flags != MEMREMAP_RO)) {
-
-Isn't this condition always true? Did you mean flags != MEM_REMAP_WB
-&& flags != MEMREMAP_RO?
-
->                 WARN_ONCE(1, "memremap attempted on ram %pa size: %#lx\n",
->                                 &offset, (unsigned long) size);
->                 return NULL;
-> --
-> Sent by a computer through tubes
->
+Guenter
