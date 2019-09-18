@@ -2,49 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E99B5C3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 649BFB5C66
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbfIRGYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:24:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44654 "EHLO mail.kernel.org"
+        id S1730246AbfIRG0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:26:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729800AbfIRGYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:24:14 -0400
+        id S1727809AbfIRG0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:26:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D972321928;
-        Wed, 18 Sep 2019 06:24:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A86B821924;
+        Wed, 18 Sep 2019 06:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787853;
-        bh=kWBcST6419nHX84+TZFFq6BagVu7AxrrGNueaZTJ+kM=;
+        s=default; t=1568787964;
+        bh=RNCX+fJlMdn0iDOz7lBTlhcRBNaEyS2dXlsok6AN1B4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jcs8oGyvI54CeE0gx+jVdnd5AxVzHwviNB/L3Igu0F6AKLVnoI84d1oLdWFfUFet2
-         3UgLcDuNXyA3w1PVQZz7aFJdrjHIf0LLkeEoS2R3HRw14TGSzKAO2OVgYeAGoNB+nT
-         BkJQEt6yRff3PqVnnDW+vQi8K4AEguaXRCmyGyGA=
+        b=oRdEzQNhla/FX59hOODpH5fox/LZPR8w7/FSga2jHJ/Fs7Csc1xRm5qzIjzso343r
+         zFdilvB4hdGBGEunceTXA1qjicV/0e14RCc2HNbPhPz71euFy/YBYEq3yZSSbo0C68
+         PBTJSYVGq1go339C/X8JxaYWmQauCoCfuxxoKYAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vaibhav Rustagi <vaibhavrustagi@google.com>,
-        Andreas Smas <andreas@lonelycoder.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        clang-built-linux@googlegroups.com, dimitri.sivanich@hpe.com,
-        mike.travis@hpe.com, russ.anderson@hpe.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 25/50] x86/purgatory: Change compiler flags from -mcmodel=kernel to -mcmodel=large to fix kexec relocation errors
+        stable@vger.kernel.org, Miroslav Benes <mbenes@suse.cz>,
+        YueHaibing <yuehaibing@huawei.com>, Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH 5.2 50/85] kernel/module: Fix mem leak in module_add_modinfo_attrs
 Date:   Wed, 18 Sep 2019 08:19:08 +0200
-Message-Id: <20190918061225.707967704@linuxfoundation.org>
+Message-Id: <20190918061235.708547112@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,133 +43,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Wahl <steve.wahl@hpe.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit e16c2983fba0fa6763e43ad10916be35e3d8dc05 upstream.
+commit bc6f2a757d525e001268c3658bd88822e768f8db upstream.
 
-The last change to this Makefile caused relocation errors when loading
-a kdump kernel.  Restore -mcmodel=large (not -mcmodel=kernel),
--ffreestanding, and -fno-zero-initialized-bsss, without reverting to
-the former practice of resetting KBUILD_CFLAGS.
+In module_add_modinfo_attrs if sysfs_create_file
+fails, we forget to free allocated modinfo_attrs
+and roll back the sysfs files.
 
-Purgatory.ro is a standalone binary that is not linked against the
-rest of the kernel.  Its image is copied into an array that is linked
-to the kernel, and from there kexec relocates it wherever it desires.
-
-With the previous change to compiler flags, the error "kexec: Overflow
-in relocation type 11 value 0x11fffd000" was encountered when trying
-to load the crash kernel.  This is from kexec code trying to relocate
-the purgatory.ro object.
-
->From the error message, relocation type 11 is R_X86_64_32S.  The
-x86_64 ABI says:
-
-  "The R_X86_64_32 and R_X86_64_32S relocations truncate the
-   computed value to 32-bits.  The linker must verify that the
-   generated value for the R_X86_64_32 (R_X86_64_32S) relocation
-   zero-extends (sign-extends) to the original 64-bit value."
-
-This type of relocation doesn't work when kexec chooses to place the
-purgatory binary in memory that is not reachable with 32 bit
-addresses.
-
-The compiler flag -mcmodel=kernel allows those type of relocations to
-be emitted, so revert to using -mcmodel=large as was done before.
-
-Also restore the -ffreestanding and -fno-zero-initialized-bss flags
-because they are appropriate for a stand alone piece of object code
-which doesn't explicitly zero the bss, and one other report has said
-undefined symbols are encountered without -ffreestanding.
-
-These identical compiler flag changes need to happen for every object
-that becomes part of the purgatory.ro object, so gather them together
-first into PURGATORY_CFLAGS_REMOVE and PURGATORY_CFLAGS, and then
-apply them to each of the objects that have C source.  Do not apply
-any of these flags to kexec-purgatory.o, which is not part of the
-standalone object but part of the kernel proper.
-
-Tested-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
-Tested-by: Andreas Smas <andreas@lonelycoder.com>
-Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: None
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: clang-built-linux@googlegroups.com
-Cc: dimitri.sivanich@hpe.com
-Cc: mike.travis@hpe.com
-Cc: russ.anderson@hpe.com
-Fixes: b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS")
-Link: https://lkml.kernel.org/r/20190905202346.GA26595@swahl-linux
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andreas Smas <andreas@lonelycoder.com>
+Fixes: 03e88ae1b13d ("[PATCH] fix module sysfs files reference counting")
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/purgatory/Makefile |   35 +++++++++++++++++++----------------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+ kernel/module.c |   22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -18,37 +18,40 @@ targets += purgatory.ro
- KASAN_SANITIZE	:= n
- KCOV_INSTRUMENT := n
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1697,6 +1697,8 @@ static int add_usage_links(struct module
+ 	return ret;
+ }
  
-+# These are adjustments to the compiler flags used for objects that
-+# make up the standalone purgatory.ro
++static void module_remove_modinfo_attrs(struct module *mod, int end);
 +
-+PURGATORY_CFLAGS_REMOVE := -mcmodel=kernel
-+PURGATORY_CFLAGS := -mcmodel=large -ffreestanding -fno-zero-initialized-in-bss
+ static int module_add_modinfo_attrs(struct module *mod)
+ {
+ 	struct module_attribute *attr;
+@@ -1711,24 +1713,34 @@ static int module_add_modinfo_attrs(stru
+ 		return -ENOMEM;
+ 
+ 	temp_attr = mod->modinfo_attrs;
+-	for (i = 0; (attr = modinfo_attrs[i]) && !error; i++) {
++	for (i = 0; (attr = modinfo_attrs[i]); i++) {
+ 		if (!attr->test || attr->test(mod)) {
+ 			memcpy(temp_attr, attr, sizeof(*temp_attr));
+ 			sysfs_attr_init(&temp_attr->attr);
+ 			error = sysfs_create_file(&mod->mkobj.kobj,
+ 					&temp_attr->attr);
++			if (error)
++				goto error_out;
+ 			++temp_attr;
+ 		}
+ 	}
 +
- # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
- # in turn leaves some undefined symbols like __fentry__ in purgatory and not
- # sure how to relocate those.
- ifdef CONFIG_FUNCTION_TRACER
--CFLAGS_REMOVE_sha256.o		+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_purgatory.o	+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_string.o		+= $(CC_FLAGS_FTRACE)
--CFLAGS_REMOVE_kexec-purgatory.o	+= $(CC_FLAGS_FTRACE)
-+PURGATORY_CFLAGS_REMOVE		+= $(CC_FLAGS_FTRACE)
- endif
- 
- ifdef CONFIG_STACKPROTECTOR
--CFLAGS_REMOVE_sha256.o		+= -fstack-protector
--CFLAGS_REMOVE_purgatory.o	+= -fstack-protector
--CFLAGS_REMOVE_string.o		+= -fstack-protector
--CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector
-+PURGATORY_CFLAGS_REMOVE		+= -fstack-protector
- endif
- 
- ifdef CONFIG_STACKPROTECTOR_STRONG
--CFLAGS_REMOVE_sha256.o		+= -fstack-protector-strong
--CFLAGS_REMOVE_purgatory.o	+= -fstack-protector-strong
--CFLAGS_REMOVE_string.o		+= -fstack-protector-strong
--CFLAGS_REMOVE_kexec-purgatory.o	+= -fstack-protector-strong
-+PURGATORY_CFLAGS_REMOVE		+= -fstack-protector-strong
- endif
- 
- ifdef CONFIG_RETPOLINE
--CFLAGS_REMOVE_sha256.o		+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_purgatory.o	+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_string.o		+= $(RETPOLINE_CFLAGS)
--CFLAGS_REMOVE_kexec-purgatory.o	+= $(RETPOLINE_CFLAGS)
-+PURGATORY_CFLAGS_REMOVE		+= $(RETPOLINE_CFLAGS)
- endif
- 
-+CFLAGS_REMOVE_purgatory.o	+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_purgatory.o		+= $(PURGATORY_CFLAGS)
++	return 0;
 +
-+CFLAGS_REMOVE_sha256.o		+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_sha256.o			+= $(PURGATORY_CFLAGS)
-+
-+CFLAGS_REMOVE_string.o		+= $(PURGATORY_CFLAGS_REMOVE)
-+CFLAGS_string.o			+= $(PURGATORY_CFLAGS)
-+
- $(obj)/purgatory.ro: $(PURGATORY_OBJS) FORCE
- 		$(call if_changed,ld)
++error_out:
++	if (i > 0)
++		module_remove_modinfo_attrs(mod, --i);
+ 	return error;
+ }
  
+-static void module_remove_modinfo_attrs(struct module *mod)
++static void module_remove_modinfo_attrs(struct module *mod, int end)
+ {
+ 	struct module_attribute *attr;
+ 	int i;
+ 
+ 	for (i = 0; (attr = &mod->modinfo_attrs[i]); i++) {
++		if (end >= 0 && i > end)
++			break;
+ 		/* pick a field to test for end of list */
+ 		if (!attr->attr.name)
+ 			break;
+@@ -1816,7 +1828,7 @@ static int mod_sysfs_setup(struct module
+ 	return 0;
+ 
+ out_unreg_modinfo_attrs:
+-	module_remove_modinfo_attrs(mod);
++	module_remove_modinfo_attrs(mod, -1);
+ out_unreg_param:
+ 	module_param_sysfs_remove(mod);
+ out_unreg_holders:
+@@ -1852,7 +1864,7 @@ static void mod_sysfs_fini(struct module
+ {
+ }
+ 
+-static void module_remove_modinfo_attrs(struct module *mod)
++static void module_remove_modinfo_attrs(struct module *mod, int end)
+ {
+ }
+ 
+@@ -1868,7 +1880,7 @@ static void init_param_lock(struct modul
+ static void mod_sysfs_teardown(struct module *mod)
+ {
+ 	del_usage_links(mod);
+-	module_remove_modinfo_attrs(mod);
++	module_remove_modinfo_attrs(mod, -1);
+ 	module_param_sysfs_remove(mod);
+ 	kobject_put(mod->mkobj.drivers_dir);
+ 	kobject_put(mod->holders_dir);
 
 
