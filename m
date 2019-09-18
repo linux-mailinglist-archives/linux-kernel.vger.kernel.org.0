@@ -2,111 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F4ECB6D24
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D500CB6D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:00:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389255AbfIRUAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 16:00:03 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38871 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389243AbfIRUAC (ORCPT
+        id S2389370AbfIRUAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 16:00:43 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:48685 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389356AbfIRUAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 16:00:02 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j31so1281245qta.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 13:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TgQ/PSk6s69IhIN3kvOl/nhDuvC2PFBPkZWWeBSDsGs=;
-        b=Xl1Qun6EPEyvqTdKGERpDMNRYpTRFOq7YiV8XD0S2EmdmsptfOtLQd53pPMRs40OsP
-         Zfy9SjE2m8yQ9aWYolH6euB+a9FwQpsK7Y2+IMqatO6MEdnrnCphSqpamfRBRAwMa/nW
-         8vU3taJ1EUfiqL3F/p7jpVoT241bFVBCtNH22U5s8Ej7yj7vaQABp30uutX/vzYonf9A
-         9lietmj1MbgOxYk5/tAT+6ERo8V7SOxyrePvTp4zvn3KLSn+JgvNajPuc5CGITRKlQjg
-         yF174PcmWCm0KjNteIID1GoKRcbgW+VoVImpMVdVv2Pcx4CtCLT6ViBXF8Y8z5y6CXU/
-         5IKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TgQ/PSk6s69IhIN3kvOl/nhDuvC2PFBPkZWWeBSDsGs=;
-        b=EAe+99SKIA0LuT7C197Wpm35QK+T/HggXhQYRF1CHgrG5Ka2//UiAhHbQXijEGO/Nj
-         /eBCk76yJ4PEBjI7nuFLzFXmEJmmzpV3m0gJlM5HSCDO3tPjlyd7uqtcVZOozuVXjUR2
-         sQhnY2rLE4CJV+doyGAhPS6ZVkKDxkaAYZlwyUnnsWUG5cPhdDLiGPHUiTb+wG9yGyyW
-         I17KSbna5hSF2fxtdMvsk264D8lC70WTZMPIX3Nk3flJUQlqiq/CvsoQoGdS3rfGxnWV
-         6C1YsEhkcPIO8/qMk7Y2XgBI/z0L2mQ33H/kIX9VlmxJ0KEJApe8WjW2bd87U+dv5k7F
-         b3dw==
-X-Gm-Message-State: APjAAAXeB+BFsH2fJwxqv+spjHlgop7htpaQ5xcas2orC9vyjnxqBf7M
-        dh0yN2m1cN/KUp2VbGg2gUYnHw==
-X-Google-Smtp-Source: APXvYqx7ylgOdwTwai485piXcLjFj5zgpjU/OumbjBfWNGW3uR90d7CFqs4O9RiBxseGmXqWFaFurw==
-X-Received: by 2002:ac8:16e2:: with SMTP id y31mr5909119qtk.370.1568836800501;
-        Wed, 18 Sep 2019 13:00:00 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id q207sm3616779qke.98.2019.09.18.12.59.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Sep 2019 12:59:59 -0700 (PDT)
-Message-ID: <1568836797.5576.182.camel@lca.pw>
-Subject: Re: [PATCH] mm/slub: fix a deadlock in shuffle_freelist()
-From:   Qian Cai <cai@lca.pw>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     peterz@infradead.org, mingo@redhat.com, akpm@linux-foundation.org,
-        tglx@linutronix.de, thgarnie@google.com, tytso@mit.edu,
-        cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        will@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        keescook@chromium.org
-Date:   Wed, 18 Sep 2019 15:59:57 -0400
-In-Reply-To: <20190917071634.c7i3i6jg676ejiw5@linutronix.de>
-References: <1568392064-3052-1-git-send-email-cai@lca.pw>
-         <20190916090336.2mugbds4rrwxh6uz@linutronix.de>
-         <1568642487.5576.152.camel@lca.pw>
-         <20190916195115.g4hj3j3wstofpsdr@linutronix.de>
-         <1568669494.5576.157.camel@lca.pw>
-         <20190917071634.c7i3i6jg676ejiw5@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+        Wed, 18 Sep 2019 16:00:42 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MBmI6-1iMncA0xDQ-00CBd2; Wed, 18 Sep 2019 22:00:30 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Liu, Chuansheng" <chuansheng.liu@intel.com>,
+        Tejun Heo <tj@kernel.org>, Steve Winslow <swinslow@gmail.com>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ahci: stop exporting ahci_em_messages
+Date:   Wed, 18 Sep 2019 22:00:14 +0200
+Message-Id: <20190918200028.2247535-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:bpP25I+L2snij/kUqvLgw3zHSK9dhWbjzC82+IB6twYDHAFGQcr
+ 5mHV298wUutxqh5H8Q2yMZUqYznPqCkvmIqG6u5Kh672WygjToVZh0s6f8lm3imYrJzwLbT
+ P1/e2gR8o6motJ+cDDMjVWt4l7XtghqMV+sEid255iuWxRJHeDJKQ6sQhTtiNsMohDFr4qy
+ y4y5tq7fCFsPx2oaNdaNA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xAQ/KbzZe6w=:2FqdJaohZIwFU+qEOP2oOw
+ F5ILF5tw/IuNk88r4Ibh28YVfTi6JlZG9n3Qa4SN6HfN2yIQEQRezbyrqyQ5XUn4BRQe2im66
+ Vq+EOV9sCRYptdYn79nalJ8SKBPsXOuDt9V7Emf9LIjLAHbSsQP3WmecXwgx7o23rMFeki+RJ
+ nmRvu2lFs1wwSpJdcZgQIuLZDQBSCBQ12dYBV9kXTBqTDxlw+64e7UOAK6YbMOff0iXuk/mji
+ tDhRAKidxjGUl+gAudMlmOAoh0aVO5Q54b2b0Q4SSIfr3XjdvOOiaZKIk4UIhEKrl3H2Hlica
+ GaAvi6u2D1eOhfk1ItmZsEVHOCw7EMu/H0y1zmhFTbPpH8Ds5xvqlntLIKmcCoc8Cud9NrvL2
+ RqDgRzHiU+/+J652oY+z2Dc5W72sgXsnXOcS1coPV2Dss0CGIptBUMkvF2aN0Evd8k5z0yNHB
+ F7EkvrmQ81ZC3wldoCURDUHWzUZFLhhz5SVaRuWumzkfRxDnwubL6HRR3FvPwdj5dLybKbJaX
+ fYAlXbdppNaraVctdtQ7qxauidoYCoOrTGwdC9iKci9XAS+ykYEgUXcqNl0OKewyk11c9STWe
+ bxiFzOAAATemrNkb9DPnD2FvCqa3BbX0sdJXbYptdXz9tH7UuOQLmUBCSfaf4C8SD2AD1/EfJ
+ 99ZeZff6grEz/CbFGq4k+AWsnYD+NYeVyIE9doZJChQbOlxFa/tSMP1vT/IwIB6seRNLaMaxb
+ mqkrWDDrEDmGnqbBw/ShhMEpqJwfWaI7PIXWh3ttujdL20KhpG7tn87NrjPJvqXTZ4sgwB76K
+ 2PgQKpfWuDMNtDrNM2oWtVO1Nv83NlICCRic8GdFF5dlMQtiCVHZOjubW3QEOw8D2XTx3L5kx
+ JeBhQHDS9NdMWsN7fr0w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-17 at 09:16 +0200, Sebastian Andrzej Siewior wrote:
-> On 2019-09-16 17:31:34 [-0400], Qian Cai wrote:
-> …
-> > get_random_u64() is also busted.
-> 
-> …
-> > [  753.486588]  Possible unsafe locking scenario:
-> > 
-> > [  753.493890]        CPU0                    CPU1
-> > [  753.499108]        ----                    ----
-> > [  753.504324]   lock(batched_entropy_u64.lock);
-> > [  753.509372]                                lock(&(&zone->lock)->rlock);
-> > [  753.516675]                                lock(batched_entropy_u64.lock);
-> > [  753.524238]   lock(random_write_wait.lock);
-> > [  753.529113] 
-> >                 *** DEADLOCK ***
-> 
-> This is the same scenario as the previous one in regard to the
-> batched_entropy_….lock.
+The symbol is now static and not used elswhere, which
+leads to a warning message:
 
-The commit 383776fa7527 ("locking/lockdep: Handle statically initialized percpu
-locks properly") which increased the chance of false positives for percpu locks
-significantly especially for large systems like in those examples since it makes
-all of them the same class. Once there happens a false positive, lockdep will
-become useless.
+WARNING: "ahci_em_messages" [vmlinux] is a static EXPORT_SYMBOL_GPL
 
-In reality, each percpu lock is a different lock as we have seen in those
-examples where each CPU only take a local one. The only thing that should worry
-about is the path that another CPU could take a non-local percpu lock. For
-example, invalidate_batched_entropy() which is a for_each_possible_cpu() call.
-Is there any other place that another CPU could take a non-local percpu lock but
-not a for_each_possible_cpu() or similar iterator?
+Fixes: ed08d40cdec4 ("ahci: Changing two module params with static and __read_mostly")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/ata/libahci.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Even before the above commit, if the system is running long enough, it could
-still catch a deadlock from those percpu lock iterators since it will register
-each percpu lock usage in lockdep
+diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+index e4c45d3cca79..bff369d9a1a7 100644
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -175,7 +175,6 @@ struct ata_port_operations ahci_pmp_retry_srst_ops = {
+ EXPORT_SYMBOL_GPL(ahci_pmp_retry_srst_ops);
+ 
+ static bool ahci_em_messages __read_mostly = true;
+-EXPORT_SYMBOL_GPL(ahci_em_messages);
+ module_param(ahci_em_messages, bool, 0444);
+ /* add other LED protocol types when they become supported */
+ MODULE_PARM_DESC(ahci_em_messages,
+-- 
+2.20.0
 
-Overall, it sounds to me the side-effects of commit 383776fa7527 outweight the
-benefits, and should be reverted. Do I miss anything?
