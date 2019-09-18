@@ -2,254 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33FC4B6091
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57905B609F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:45:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbfIRJoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 05:44:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:38316 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbfIRJoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 05:44:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBF02337;
-        Wed, 18 Sep 2019 02:44:01 -0700 (PDT)
-Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 621BB3F59C;
-        Wed, 18 Sep 2019 02:44:00 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 10:43:47 +0100
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     Peng Fan <peng.fan@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V6 1/2] dt-bindings: mailbox: add binding doc for the
- ARM SMC/HVC mailbox
-Message-ID: <20190918104347.285bd7ad@donnerap.cambridge.arm.com>
-In-Reply-To: <CABb+yY2CP1i9fZMoPua=-mLCUpYrcO28xF5UXDeRD2XTYe7mEg@mail.gmail.com>
-References: <1568626884-5189-1-git-send-email-peng.fan@nxp.com>
-        <1568626884-5189-2-git-send-email-peng.fan@nxp.com>
-        <20190917183115.3e40180f@donnerap.cambridge.arm.com>
-        <CABb+yY2CP1i9fZMoPua=-mLCUpYrcO28xF5UXDeRD2XTYe7mEg@mail.gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+        id S1729356AbfIRJpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 05:45:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56624 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727503AbfIRJpA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 05:45:00 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1D77160767; Wed, 18 Sep 2019 09:44:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568799898;
+        bh=01k7VsRuEiArmVgviOohpsSpMMj+aFioBTpHuknqkqU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JQtrMNKmKlLkn02HSAU17ss9SOrAQIFDlsHI79hKwVIzPZJSjTBVJWqk8Q908C6NR
+         UikarPP2aTWhlbxuGGjaWuGZyeKt4E4vofKp+IOLV+stNIE3R3N7oUDchKbhX5RYjR
+         Up23E+4myxQ89LFjlDEFe1N0+uiEdIwU/m1Y+U+Y=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AFA56611FA;
+        Wed, 18 Sep 2019 09:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568799896;
+        bh=01k7VsRuEiArmVgviOohpsSpMMj+aFioBTpHuknqkqU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AHLJuNLfqBcq8XZzyXcm7iB5e2+Fp+j2s8ADqfecBfhp5WK6snHjtADqFCj+ua1wc
+         jhm/v2XRwSWgqAdyxtDMw47HK0+NsXfAHouGpACmIHYDix85YZxg/nKRhYIa3syUEC
+         a/wzN3Qkqy4Oa8FWwWGEaAMb+jkFswhS6vzTJu20=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFA56611FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v2 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190819163748.18318-1-tdas@codeaurora.org>
+ <20190819163748.18318-4-tdas@codeaurora.org>
+ <20190821180200.1F7EF2082F@mail.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <6a5b6bf6-a99a-e4aa-b9ac-fcc0fceab5bd@codeaurora.org>
+Date:   Wed, 18 Sep 2019 15:14:50 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190821180200.1F7EF2082F@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Sep 2019 00:27:00 -0500
-Jassi Brar <jassisinghbrar@gmail.com> wrote:
+Hi Stephen,
 
-Hi,
+Thanks for your review.
 
-> On Tue, Sep 17, 2019 at 12:31 PM Andre Przywara <andre.przywara@arm.com> wrote:
-> >
-> > On Mon, 16 Sep 2019 09:44:37 +0000
-> > Peng Fan <peng.fan@nxp.com> wrote:
-> >
-> > Hi,
-> >  
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > The ARM SMC/HVC mailbox binding describes a firmware interface to trigger
-> > > actions in software layers running in the EL2 or EL3 exception levels.
-> > > The term "ARM" here relates to the SMC instruction as part of the ARM
-> > > instruction set, not as a standard endorsed by ARM Ltd.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  .../devicetree/bindings/mailbox/arm-smc.yaml       | 96 ++++++++++++++++++++++
-> > >  1 file changed, 96 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/mailbox/arm-smc.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/mailbox/arm-smc.yaml b/Documentation/devicetree/bindings/mailbox/arm-smc.yaml
-> > > new file mode 100644
-> > > index 000000000000..bf01bec035fc
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mailbox/arm-smc.yaml
-> > > @@ -0,0 +1,96 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/mailbox/arm-smc.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: ARM SMC Mailbox Interface
-> > > +
-> > > +maintainers:
-> > > +  - Peng Fan <peng.fan@nxp.com>
-> > > +
-> > > +description: |
-> > > +  This mailbox uses the ARM smc (secure monitor call) and hvc (hypervisor  
-> >
-> > I think "or" instead of "and" is less confusing.
-> >  
-> > > +  call) instruction to trigger a mailbox-connected activity in firmware,
-> > > +  executing on the very same core as the caller. The value of r0/w0/x0
-> > > +  the firmware returns after the smc call is delivered as a received
-> > > +  message to the mailbox framework, so synchronous communication can be
-> > > +  established. The exact meaning of the action the mailbox triggers as
-> > > +  well as the return value is defined by their users and is not subject
-> > > +  to this binding.
-> > > +
-> > > +  One use case of this mailbox is the SCMI interface, which uses shared  
-> >
-> >      One example use case of this mailbox ...
-> > (to make it more obvious that it's not restricted to this)
-> >  
-> > > +  memory to transfer commands and parameters, and a mailbox to trigger a
-> > > +  function call. This allows SoCs without a separate management processor
-> > > +  (or when such a processor is not available or used) to use this
-> > > +  standardized interface anyway.
-> > > +
-> > > +  This binding describes no hardware, but establishes a firmware interface.
-> > > +  Upon receiving an SMC using one of the described SMC function identifiers,  
-> >
-> >                              ... the described SMC function identifier,
-> >  
-> > > +  the firmware is expected to trigger some mailbox connected functionality.
-> > > +  The communication follows the ARM SMC calling convention.
-> > > +  Firmware expects an SMC function identifier in r0 or w0. The supported
-> > > +  identifiers are passed from consumers,  
-> >
-> >      identifier
-> >
-> > "passed from consumers": How? Where?
-> > But I want to repeat: We should not allow this.
-> > This is a binding for a mailbox controller driver, not a generic firmware backdoor.
-> >  
-> Exactly. The mailbox controller here is the  SMC/HVC instruction,
-
-No, the mailbox controller is an *SMCCC compliant* smc/hvc call, targeting a very specific function ID. SMC calls are used for PSCI already, for instance, and you don't want to mess with that. Also some platforms define a vendor specific smc interface, again using a well constructed function ID complying to SMCCC.
-So we definitely need to stay within SMCCC for this kind of generic interface, *and* to let firmware specify the function ID via the DT, to not clash with any other function ID.
-
-> which needs 9 arguments to work. The fact that the fist argument is
-> always going to be same on a platform is just the way we use this
-> instruction.
+On 8/21/2019 11:31 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-08-19 09:37:48)
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index e1ff83cc361e..ebd4902afd9f 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -322,5 +331,4 @@ config KRAITCC
+>>          help
+>>            Support for the Krait CPU clocks on Qualcomm devices.
+>>            Say Y if you want to support CPU frequency scaling.
+>> -
+>>   endif
 > 
-> > We should be as strict as possible to avoid any security issues.
-> >  
-> Any example of such a security issue?
+> Please remove this hunk
+> 
 
-Someone finds a way to trick some mailbox client to send a crafted message to the mailbox.
+Would remove this.
 
-Do you have any example of a use case where the mailbox client needs to provide the function ID?
+>> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+>> new file mode 100644
+>> index 000000000000..8718b675d609
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/gcc-sc7180.c
+> [...]
+>> +       },
+>> +};
+>> +
+>> +/* Camera Subsystem requires always ON. */
+> 
+> Yes, but why? This comment is useful unless it explains why.
+> 
 
-> > The firmware certainly knows the function ID it implements. The firmware controls the DT. So it is straight-forward to put the ID into the DT. The firmware could even do this at boot time, dynamically, before passing on the DT to the non-secure world (bootloader or kernel).
-> >
-> > What would be the use case of this functionality?
-> >  
-> At least for flexibility and consistency.
+Next patch would take care.
 
-I appreciate the flexibility idea, but when creating an interface, especially a generic one to any kind of firmware, you should be as strict as possible, to avoid clashes in the future.
- 
-> > > or listed in the the arm,func-ids  
-> >
-> >                        arm,func-id
-> >  
-> > > +  properties as described below. The firmware can return one value in  
-> >
-> >      property
-> >  
-> > > +  the first SMC result register, it is expected to be an error value,
-> > > +  which shall be propagated to the mailbox client.
-> > > +
-> > > +  Any core which supports the SMC or HVC instruction can be used, as long
-> > > +  as a firmware component running in EL3 or EL2 is handling these calls.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    oneOf:
-> > > +      - description:
-> > > +          For implementations using ARM SMC instruction.
-> > > +        const: arm,smc-mbox
-> > > +
-> > > +      - description:
-> > > +          For implementations using ARM HVC instruction.
-> > > +        const: arm,hvc-mbox  
-> >
-> > I am not particularly happy with this, but well ...
-> >  
-> > > +
-> > > +  "#mbox-cells":
-> > > +    const: 1  
-> >
-> > Why is this "1"? What is this number used for? It used to be the channel ID, but since you are describing a single channel controller only, this should be 0 now.
-> >  
-> Yes. I overlooked it and actually queued the patch for pull request.
-> But I think the bindings should not carry a 'fix' patch later. Also I
-> realise this revision of binding hasn't been reviewed by Rob. Maybe I
-> should drop the patch for now.
+>> +static struct clk_branch gcc_camera_ahb_clk = {
+>> +       .halt_reg = 0xb008,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .hwcg_reg = 0xb008,
+>> +       .hwcg_bit = 1,
+>> +       .clkr = {
+>> +               .enable_reg = 0xb008,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_camera_ahb_clk",
+>> +                       .flags = CLK_IS_CRITICAL,
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch gcc_camera_hf_axi_clk = {
+>> +       .halt_reg = 0xb020,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0xb020,
+>> +               .enable_mask = BIT(0),
 
-Yes, please do. I would like to make sure that the binding is correct, as it serves as a specification for people implementing both firmware services and other drivers (like *BSD).
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-> > > +
-> > > +  arm,func-id:
-> > > +    description: |
-> > > +      An 32-bit value specifying the function ID used by the mailbox.  
-> >
-> >          A single 32-bit value ...
-> >  
-> > > +      The function ID follow the ARM SMC calling convention standard [1].  
-> >
-> >                          follows
-> >  
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - "#mbox-cells"
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    sram@93f000 {
-> > > +      compatible = "mmio-sram";
-> > > +      reg = <0x0 0x93f000 0x0 0x1000>;
-> > > +      #address-cells = <1>;
-> > > +      #size-cells = <1>;
-> > > +      ranges = <0x0 0x93f000 0x1000>;
-> > > +
-> > > +      cpu_scp_lpri: scp-shmem@0 {
-> > > +        compatible = "arm,scmi-shmem";
-> > > +        reg = <0x0 0x200>;
-> > > +      };
-> > > +    };
-> > > +
-> > > +    smc_tx_mbox: tx_mbox {
-> > > +      #mbox-cells = <1>;  
-> >
-> > As mentioned above, should be 0.
-> >  
-> > > +      compatible = "arm,smc-mbox";
-> > > +      /* optional */  
-> >
-> > First: having "optional" in a specific example is not helpful, just confusing.
-> > Second: It is actually *not* optional in this case, as there is no other way of propagating the function ID. The SCMI driver as the mailbox client has certainly no clue about this.
-> > I think I said this previously: Relying on the mailbox client to pass the function ID sounds broken, as this is a property of the mailbox controller driver. The mailbox client does not care about this mailbox communication detail, it just wants to trigger the mailbox.
-> >  
-> Again, the mailbox controller here is the SMC/HVC _instruction_, which
-> doesn't care what value the first argument carry.
-
-That is not true. Just check Peng's example implementation he mentioned in the cover letter:
-#define FSL_SIP_SCMI_1			0xc20000fe
-#define FSL_SIP_SCMI_2			0xc20000ff
-....
-	case FSL_SIP_SCMI_1:
-	case FSL_SIP_SCMI_2:
-		SMC_RET1(handle, scmi_handler(smc_fid, x1, x2, x3));
-
-Definitely the function ID is crucial here.
-
-Cheers,
-Andre.
+--
