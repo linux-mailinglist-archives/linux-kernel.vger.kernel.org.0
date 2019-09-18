@@ -2,108 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02923B68E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:19:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C50B68EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:19:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732159AbfIRRTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 13:19:33 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39138 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732142AbfIRRT2 (ORCPT
+        id S1732192AbfIRRTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 13:19:39 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:38065 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732172AbfIRRTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:19:28 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u17so219361pgi.6
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 10:19:28 -0700 (PDT)
+        Wed, 18 Sep 2019 13:19:37 -0400
+Received: by mail-qk1-f193.google.com with SMTP id u186so251415qkc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 10:19:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=o8jBbFMTRVOLRjVfPalAAvaLLhvjkkI5HoxGIVyvU8o=;
-        b=S31B2pEsbk+z279WHVu2T3GrmYwNDVVVEi/rj5HIvyV6nVgECY/7RfHJ/xSGEt3k8s
-         xShPMHY9cudQDZP2dH2wQvi5BLCnKKfojyVvVTmE40etR2gvyyljlHoYoi6uumzoghtX
-         w9Z9vYHDU4Nr8o77x/MECD8F0zYjEGM0wGFN0W6SV4mPq4kePFnte+jMuBjO+V9Mk2y0
-         PAcA8IRjRYXTcc9rvtEv5ImAlwMDeEupI6jzInysqLqlG72aANz/bomMqQVVysMA8gZM
-         P5q4KvZmbHFyFK1W4gXjZrIhbNXctmumsmzN1F3DphKi2qR0jlIHMwLf4SO12NlkfTlY
-         7LCA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TZ6zNmTN5K3wsuw0UnWMZDNmXyrZg+XulUxUtSzlTDQ=;
+        b=ARUEYQc20VKVq0DC9iR4ZW+0ILmmp38aDfsgHOE6Je7RahPrHGv+1PsoTjZaYCGYHx
+         HuK5+jLbDz/QruHJpkhdLZ2xPx123034b3vz53chKCSsjZKah3Cgo3DJDPz0dRmryALo
+         7webVgnyiqJ1mCH0v1wKqCqToqpzY+EixxruU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=o8jBbFMTRVOLRjVfPalAAvaLLhvjkkI5HoxGIVyvU8o=;
-        b=EVpkrskpxYwMaXm+C9HFz4nkfGJYg+Mb3qYNnEPxVDYtNJN3b0iIf9sJNkHzCKqhER
-         fQSiok5uV/+MNj9IquOexTlxPZkLqfnUfvZB/uPCfVktTT1dXpw8L0hrfWIg8qOTb2iF
-         1rvZGuhepjCpueRd6xSv2VYNdzB3hzMiOtSP8wFdpW5IA8npflLPy2CFachbHBc5S8Hd
-         lrp3HCzjZooaRgKjZXLZLElRA0UNDCPW4sSToljMkj4DeurZMavtkLVZUBYQNxRdoBPK
-         R+4yEiUsPIyDFXeI5jiKdXE+fdqMplDwolFiFvr68aCj/VM4QMnjP46K8IW9MgeLEzeh
-         VRJA==
-X-Gm-Message-State: APjAAAWnrAwO66A/3e8NdzaNogHjOFEjVQlToPQXcrT5W46MEeUpAj9j
-        KtlnKALVH/MWumpG9UiQfdhgWw==
-X-Google-Smtp-Source: APXvYqz2NwfyeZRXxm7dgiBTjnJCh8SRsdzqxi1i88kaJsXr+YupiSXjV/8iuycHgXoZ1FvOMMG8Fw==
-X-Received: by 2002:a63:34cb:: with SMTP id b194mr4926065pga.446.1568827167913;
-        Wed, 18 Sep 2019 10:19:27 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y4sm2614981pjn.19.2019.09.18.10.19.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Sep 2019 10:19:27 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH 6/6] rpmsg: glink: Free pending deferred work on remove
-Date:   Wed, 18 Sep 2019 10:19:16 -0700
-Message-Id: <20190918171916.4039-7-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190918171916.4039-1-bjorn.andersson@linaro.org>
-References: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TZ6zNmTN5K3wsuw0UnWMZDNmXyrZg+XulUxUtSzlTDQ=;
+        b=HWI3Mg3WZl1+SW5DEKgUBNgNgb4O/lD86CjaNFpbnL8hykXtBYkWp58Qnz5ZrefTjd
+         SXCmCbVxZXkmSSoNUIiFfhyB1iTCbvDrCXqahGPqH8k6PIdM839cI2oi/Wrc9XEIPPTT
+         sBB2PO49GEYhPO8aMZMUtXIToQoH8OeIDz6i5Ua2PHtrcY6Q9Kk34atCBfKl+edIIl8L
+         CAuFU3A+QoMzb7ICqIpUiLMTyR9kq54fUhEQYhXraNoiSe6wFNrATs6ORCSI283wOLMw
+         NtkM8Pnucln/y6i29Rutx7xr3kW2zRWwi8eS4jmCJGKINSDwEXiykQuLvb6gfcJ+JBUX
+         2OKA==
+X-Gm-Message-State: APjAAAUfCPmsLl6hI/6u5+bF3qoxcIGSSal6a/l5v50LNhbgisF5Nu0M
+        2MBkk24RhG9yxBSU/KUh0u1RPgtGZxsdPUqg+uMIXQ==
+X-Google-Smtp-Source: APXvYqySXTHIUcstv5cPNi86ktBT04PmHseptOwBc0q27Fdkd1xYMUXPo9eFDDE5gpLKq/LzteJUa6hnXEf8sBpw5jw=
+X-Received: by 2002:ae9:e817:: with SMTP id a23mr4977536qkg.294.1568827174941;
+ Wed, 18 Sep 2019 10:19:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190917212702.35747-1-abhishekpandit@chromium.org> <Pine.LNX.4.44L0.1909181017300.1507-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1909181017300.1507-100000@iolanthe.rowland.org>
+From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Date:   Wed, 18 Sep 2019 10:19:24 -0700
+Message-ID: <CANFp7mX=THOVk-4TgSSscgtm598txqesDZYKE2sFtEVNHjN+-g@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Reset realtek bluetooth devices during user suspend
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     linux-bluetooth@vger.kernel.org, linux-usb@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Hui Peng <benquike@gmail.com>, linux-pm@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Len Brown <len.brown@intel.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mans Rullgard <mans@mansr.com>, Pavel Machek <pavel@ucw.cz>,
+        YueHaibing <yuehaibing@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By just cancelling the deferred rx worker during GLINK instance teardown
-any pending deferred commands are leaked, so free them.
+Sorry, last reply went out with HTML. Re-sending in plain text.
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/rpmsg/qcom_glink_native.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+On Wed, Sep 18, 2019 at 7:23 AM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Tue, 17 Sep 2019, Abhishek Pandit-Subedi wrote:
+>
+> > On a Realtek USB bluetooth device, I wanted a simple and consistent way
+> > to put the device in reset during suspend (2 reasons: to save power and
+> > disable BT as a wakeup source). Resetting it in the suspend callback
+> > causes a detach and the resume callback is not called. Hence the changes
+> > in this series to do the reset in suspend_noirq.
+>
+> What about people who _want_ BT to be a wakeup source?
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 0d7518a6ebf0..5920432e697a 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1562,6 +1562,18 @@ static void qcom_glink_work(struct work_struct *work)
- 	}
- }
- 
-+static void qcom_glink_cancel_rx_work(struct qcom_glink *glink)
-+{
-+	struct glink_defer_cmd *dcmd;
-+	struct glink_defer_cmd *tmp;
-+
-+	/* cancel any pending deferred rx_work */
-+	cancel_work_sync(&glink->rx_work);
-+
-+	list_for_each_entry_safe(dcmd, tmp, &glink->rx_queue, node)
-+		kfree(dcmd);
-+}
-+
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 					   unsigned long features,
- 					   struct qcom_glink_pipe *rx,
-@@ -1640,7 +1652,7 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
- 	unsigned long flags;
- 
- 	disable_irq(glink->irq);
--	cancel_work_sync(&glink->rx_work);
-+	qcom_glink_cancel_rx_work(glink);
- 
- 	ret = device_for_each_child(glink->dev, NULL, qcom_glink_remove_device);
- 	if (ret)
--- 
-2.18.0
+When BT is enabled as a wakeup source, there is no reset.
 
+> Why does putting the device in reset save power?  That is, a suspended
+> device is very strictly limited in the amount of current it's allowed
+> to draw from the USB bus; why should it draw significantly less when it
+> is reset?
+
+I don't know that it's significantly less (only that it's OFF). My
+greater motivation is to make sure the bluetooth chip isn't
+accumulating events while the host is turned off. Sorry, I should have
+made that more clear in the cover letter.
+
+When the host is off, it continues to accumulate events for the host
+to process (packets from connected devices, LE advertisements, etc).
+At some point, the firmware buffers fill up and no more events can be
+stored. When the host is resumed later on, the firmware is in a bad
+state and doesn't respond. I had originally just reset in ->resume but
+then connected wireless devices wouldn't disconnect from the BT either
+and I had trouble getting them to reconnect.
+
+>
+> > I looked into using PERSIST and reset on resume but those seem mainly
+> > for misbehaving devices that reset themselves.
+>
+> They are, but that doesn't mean you can't use them for other things
+> too.
+>
+> > This patch series has been tested with Realtek BT hardware as well as
+> > Intel BT (test procedure = disable as wake source, user suspend and
+> > observe a detach + reattach on resume).
+>
+> This series really seems like overkill for a single kind of device.
+>
+> Is there any way to turn off the device's BT radio during suspend (if
+> wakeup is disabled) and then turn it back on during resume?  Wouldn't
+> that accomplish what you want just as well?
+
+Probably (but I couldn't find a way to do that). I want to prevent
+bluetooth from waking up the host and to reliably be in a good state
+when the host resumes. The reset logic I implemented causes the hci
+device to disappear and reappear, which userspace seems to handle
+gracefully.
+
+> Alan Stern
+>
