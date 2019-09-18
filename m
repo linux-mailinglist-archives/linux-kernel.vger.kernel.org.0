@@ -2,260 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D1A8B6FA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 01:23:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE57BB6FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 01:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387583AbfIRXWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 19:22:37 -0400
-Received: from mga18.intel.com ([134.134.136.126]:10563 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387407AbfIRXWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 19:22:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2019 16:22:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,522,1559545200"; 
-   d="scan'208";a="199210228"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 18 Sep 2019 16:22:35 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH 4/4] iommu: Introduce guest PASID bind function
-Date:   Wed, 18 Sep 2019 16:26:34 -0700
-Message-Id: <1568849194-47874-5-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568849194-47874-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1568849194-47874-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1730305AbfIRXkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 19:40:31 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37914 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728274AbfIRXkb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 19:40:31 -0400
+Received: by mail-ot1-f67.google.com with SMTP id e11so1460127otl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 16:40:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PDQmKC/gOMi6sqZQA7S/aMJ9nwprCWZMCL6cDdDtiwo=;
+        b=g8sIiTEUBjwC+jypUemhJSEmv702F9Wm/OQ2yvgmSceH+YZ9TxygCePbNrYI9DjIMI
+         QSVrOoN8zmC6+1UX8tJ6WVHh4sA9vGCkaI7q7ebzxUnvEk/XNQxfZ9O9fiZ1mAAArD/F
+         SNacoKkcB2wWT6XFmeZ6gPp7SkarL28rhJGFA8pVIZbbHN1xwRW1q/Y0WFEYWtTXLdD8
+         xhUMR4yM79Gaiq79K8LkdUGo465NZ6oTNyiAQUBcqjo1C7zHU/fSvIV7MSqKuAHd4p1u
+         Mzm5LHoHcYXkOiVGlntTvZzvSL9EKYpe3ec7uy1T493+iO8CiJlMJTa4zC/87w+4VKaf
+         YQvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PDQmKC/gOMi6sqZQA7S/aMJ9nwprCWZMCL6cDdDtiwo=;
+        b=iuH8yTM25vXP90tp1uKbzQTk44gYofQI7QpJTZOelVtmcifFkxo60XMUdSiL3r/Wl4
+         Jyz4IgNMnHwuKB6Jc/BLXXC9ZjMZKy4TSlw5SJ+MjuXTe4Q2aOiANbyCad/6nj1issFL
+         YxwEzsVT5uhykDXi5aHewWpsM4bpBuUlx5dtwiXnTyD96FhoOI6OJ+mRvwdxTqUBoTTZ
+         VRPgOPtDf8SCkG8ngtq1l8nRtfAcm2SXm5sUXwYqwotgurl6/v+V2eodbdAJ59ml0kCo
+         aYkiXvr5pPRY6ZgbOHZMlVu8ir4GZXb2t0UMSc/i06HLTS7X29AWkeA+9ugD2zCt+aQQ
+         ZfTw==
+X-Gm-Message-State: APjAAAXG7IVCjMjX2ZaknAk2yHC5PGz/RvAJYrSztut2W33piy+uGd5A
+        Uhj8BrT9vAHmh3ogyv22uaRHSNkMfo49GrGMjFqaDA==
+X-Google-Smtp-Source: APXvYqy/eeyRCXrtqIXQiK+EIL6EIZYEXp405qr/gxBJydI6Go09Ucme6OvwkC4jXQNVr3w/eolqtR0naKQMNido3N8=
+X-Received: by 2002:a9d:5ccc:: with SMTP id r12mr4419959oti.71.1568850030063;
+ Wed, 18 Sep 2019 16:40:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190918042148.77553-1-natechancellor@gmail.com>
+In-Reply-To: <20190918042148.77553-1-natechancellor@gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 18 Sep 2019 16:40:18 -0700
+Message-ID: <CAPcyv4g-aCrn7pq967rFJ+K_ENifNkZ_azLg6S03V8TGuFdOhg@mail.gmail.com>
+Subject: Re: [PATCH] libnvdimm/nfit_test: Fix acpi_handle redefinition
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guest shared virtual address (SVA) may require host to shadow guest
-PASID tables. Guest PASID can also be allocated from the host via
-enlightened interfaces. In this case, guest needs to bind the guest
-mm, i.e. cr3 in guest physical address to the actual PASID table in
-the host IOMMU. Nesting will be turned on such that guest virtual
-address can go through a two level translation:
-- 1st level translates GVA to GPA
-- 2nd level translates GPA to HPA
-This patch introduces APIs to bind guest PASID data to the assigned
-device entry in the physical IOMMU. See the diagram below for usage
-explaination.
+On Tue, Sep 17, 2019 at 9:23 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> After commit 62974fc389b3 ("libnvdimm: Enable unit test infrastructure
+> compile checks"), clang warns:
+>
+> In file included from
+> ../drivers/nvdimm/../../tools/testing/nvdimm/test/iomap.c:15:
+> ../drivers/nvdimm/../../tools/testing/nvdimm/test/nfit_test.h:206:15:
+> warning: redefinition of typedef 'acpi_handle' is a C11 feature
+> [-Wtypedef-redefinition]
+> typedef void *acpi_handle;
+>               ^
+> ../include/acpi/actypes.h:424:15: note: previous definition is here
+> typedef void *acpi_handle;      /* Actually a ptr to a NS Node */
+>               ^
+> 1 warning generated.
+>
+> The include chain:
+>
+> iomap.c ->
+>     linux/acpi.h ->
+>         acpi/acpi.h ->
+>             acpi/actypes.h
+>     nfit_test.h
+>
+> Avoid this by including linux/acpi.h in nfit_test.h, which allows us to
+> remove both the typedef and the forward declaration of acpi_object.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/660
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>
+> I know that every maintainer has their own thing with the number of
+> includes in each header file; this issue can be solved in a various
+> number of ways, I went with the smallest diff stat. Please solve it in a
+> different way if you see fit :)
+>
 
-    .-------------.  .---------------------------.
-    |   vIOMMU    |  | Guest process mm, FL only |
-    |             |  '---------------------------'
-    .----------------/
-    | PASID Entry |--- PASID cache flush -
-    '-------------'                       |
-    |             |                       V
-    |             |                      GP
-    '-------------'
-Guest
-------| Shadow |----------------------- GP->HP* ---------
-      v        v                          |
-Host                                      v
-    .-------------.  .----------------------.
-    |   pIOMMU    |  | Bind FL for GVA-GPA  |
-    |             |  '----------------------'
-    .----------------/  |
-    | PASID Entry |     V (Nested xlate)
-    '----------------\.---------------------.
-    |             |   |Set SL to GPA-HPA    |
-    |             |   '---------------------'
-    '-------------'
-
-Where:
- - FL = First level/stage one page tables
- - SL = Second level/stage two page tables
- - GP = Guest PASID
- - HP = Host PASID
-* Conversion needed if non-identity GP-HP mapping option is chosen.
-
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
----
- drivers/iommu/iommu.c      | 20 ++++++++++++++++
- include/linux/iommu.h      | 22 +++++++++++++++++
- include/uapi/linux/iommu.h | 59 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 101 insertions(+)
-
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index e27dec2d39b8..5523c035abb9 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1620,6 +1620,26 @@ int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
- }
- EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
- 
-+int iommu_sva_bind_gpasid(struct iommu_domain *domain,
-+			   struct device *dev, struct iommu_gpasid_bind_data *data)
-+{
-+	if (unlikely(!domain->ops->sva_bind_gpasid))
-+		return -ENODEV;
-+
-+	return domain->ops->sva_bind_gpasid(domain, dev, data);
-+}
-+EXPORT_SYMBOL_GPL(iommu_sva_bind_gpasid);
-+
-+int iommu_sva_unbind_gpasid(struct iommu_domain *domain, struct device *dev,
-+			     ioasid_t pasid)
-+{
-+	if (unlikely(!domain->ops->sva_unbind_gpasid))
-+		return -ENODEV;
-+
-+	return domain->ops->sva_unbind_gpasid(dev, pasid);
-+}
-+EXPORT_SYMBOL_GPL(iommu_sva_unbind_gpasid);
-+
- static void __iommu_detach_device(struct iommu_domain *domain,
- 				  struct device *dev)
- {
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index cf8b504966b0..0440312db86a 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -13,6 +13,7 @@
- #include <linux/errno.h>
- #include <linux/err.h>
- #include <linux/of.h>
-+#include <linux/ioasid.h>
- #include <uapi/linux/iommu.h>
- 
- #define IOMMU_READ	(1 << 0)
-@@ -230,6 +231,8 @@ struct iommu_sva_ops {
-  * @page_response: handle page request response
-  * @cache_invalidate: invalidate translation caches
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-+ * @sva_bind_gpasid: bind guest pasid and mm
-+ * @sva_unbind_gpasid: unbind guest pasid and mm
-  */
- struct iommu_ops {
- 	bool (*capable)(enum iommu_cap);
-@@ -294,6 +297,10 @@ struct iommu_ops {
- 			     struct iommu_page_response *msg);
- 	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
- 				struct iommu_cache_invalidate_info *inv_info);
-+	int (*sva_bind_gpasid)(struct iommu_domain *domain,
-+			struct device *dev, struct iommu_gpasid_bind_data *data);
-+
-+	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
- 
- 	unsigned long pgsize_bitmap;
- };
-@@ -401,6 +408,10 @@ extern void iommu_detach_device(struct iommu_domain *domain,
- extern int iommu_cache_invalidate(struct iommu_domain *domain,
- 				  struct device *dev,
- 				  struct iommu_cache_invalidate_info *inv_info);
-+extern int iommu_sva_bind_gpasid(struct iommu_domain *domain,
-+		struct device *dev, struct iommu_gpasid_bind_data *data);
-+extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
-+				struct device *dev, ioasid_t pasid);
- extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
- extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
- extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
-@@ -950,6 +961,17 @@ iommu_cache_invalidate(struct iommu_domain *domain,
- {
- 	return -ENODEV;
- }
-+static inline int iommu_sva_bind_gpasid(struct iommu_domain *domain,
-+				struct device *dev, struct iommu_gpasid_bind_data *data)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
-+					   struct device *dev, int pasid)
-+{
-+	return -ENODEV;
-+}
- 
- #endif /* CONFIG_IOMMU_API */
- 
-diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-index f3e96214df8e..4ad3496e5c43 100644
---- a/include/uapi/linux/iommu.h
-+++ b/include/uapi/linux/iommu.h
-@@ -262,4 +262,63 @@ struct iommu_cache_invalidate_info {
- 	};
- };
- 
-+/**
-+ * struct iommu_gpasid_bind_data_vtd - Intel VT-d specific data on device and guest
-+ * SVA binding.
-+ *
-+ * @flags:	VT-d PASID table entry attributes
-+ * @pat:	Page attribute table data to compute effective memory type
-+ * @emt:	Extended memory type
-+ *
-+ * Only guest vIOMMU selectable and effective options are passed down to
-+ * the host IOMMU.
-+ */
-+struct iommu_gpasid_bind_data_vtd {
-+#define IOMMU_SVA_VTD_GPASID_SRE	(1 << 0) /* supervisor request */
-+#define IOMMU_SVA_VTD_GPASID_EAFE	(1 << 1) /* extended access enable */
-+#define IOMMU_SVA_VTD_GPASID_PCD	(1 << 2) /* page-level cache disable */
-+#define IOMMU_SVA_VTD_GPASID_PWT	(1 << 3) /* page-level write through */
-+#define IOMMU_SVA_VTD_GPASID_EMTE	(1 << 4) /* extended mem type enable */
-+#define IOMMU_SVA_VTD_GPASID_CD		(1 << 5) /* PASID-level cache disable */
-+	__u64 flags;
-+	__u32 pat;
-+	__u32 emt;
-+};
-+
-+/**
-+ * struct iommu_gpasid_bind_data - Information about device and guest PASID binding
-+ * @version:	Version of this data structure
-+ * @format:	PASID table entry format
-+ * @flags:	Additional information on guest bind request
-+ * @gpgd:	Guest page directory base of the guest mm to bind
-+ * @hpasid:	Process address space ID used for the guest mm in host IOMMU
-+ * @gpasid:	Process address space ID used for the guest mm in guest IOMMU
-+ * @addr_width:	Guest virtual address width
-+ * @padding:	Reserved for future use (should be zero)
-+ * @vtd:	Intel VT-d specific data
-+ *
-+ * Guest to host PASID mapping can be an identity or non-identity, where guest
-+ * has its own PASID space. For non-identify mapping, guest to host PASID lookup
-+ * is needed when VM programs guest PASID into an assigned device. VMM may
-+ * trap such PASID programming then request host IOMMU driver to convert guest
-+ * PASID to host PASID based on this bind data.
-+ */
-+struct iommu_gpasid_bind_data {
-+#define IOMMU_GPASID_BIND_VERSION_1	1
-+	__u32 version;
-+#define IOMMU_PASID_FORMAT_INTEL_VTD	1
-+	__u32 format;
-+#define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid */
-+	__u64 flags;
-+	__u64 gpgd;
-+	__u64 hpasid;
-+	__u64 gpasid;
-+	__u32 addr_width;
-+	__u8  padding[12];
-+	/* Vendor specific data */
-+	union {
-+		struct iommu_gpasid_bind_data_vtd vtd;
-+	};
-+};
-+
- #endif /* _UAPI_IOMMU_H */
--- 
-2.7.4
-
+Looks good to me. I'll pick this up for a post v5.4-rc1 push.
