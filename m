@@ -2,185 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02EBFB6F00
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 23:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81637B6F08
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 23:45:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbfIRVnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 17:43:33 -0400
-Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:59252 "EHLO
-        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388063AbfIRVnd (ORCPT
+        id S2388130AbfIRVpM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 17:45:12 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46788 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388087AbfIRVpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 17:43:33 -0400
-Received: from pps.filterd (m0170396.ppops.net [127.0.0.1])
-        by mx0b-00154904.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8ILeStD002110;
-        Wed, 18 Sep 2019 17:43:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=APeqSupOa17yJyshJEarRmRxQctnz7EtTNwsuT5TFO4=;
- b=DxycVrDL556xL+ixdMIls8i5GnjMbZWlvruCYGrYqAOzGDYjLV34CVHTaAHkJ9reEjCa
- H7W/rcec3EwpDLQLeg2yDaJV8d9XudXqxDvCfzgRRiYyD7gr6ao6NSLN63qAFO8dfqvh
- JjH9nOGbk0kdWKGfLuVxd8WEhRjl6aEb26Z8ZfdBRLce7X6HwlZGWZy3hsXhBhrK/r7W
- 8yPkMWhxVqGJvq7qnDPZ3hSfhDzCiqta1VLJMao/Ac/Db1pwmXaPDTpFn3FWtFp0lReK
- j1hCX2ShK2QHJ1xqz7615yKo5iJX0Z/khQjznj3Spa6qnkxne0nx6ouWuy1hQ6Ymd1VV GQ== 
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-        by mx0b-00154904.pphosted.com with ESMTP id 2v3vdy82wx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Sep 2019 17:43:32 -0400
-Received: from pps.filterd (m0142693.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8ILcOTA029662;
-        Wed, 18 Sep 2019 17:43:31 -0400
-Received: from ausxipps301.us.dell.com (ausxipps301.us.dell.com [143.166.148.223])
-        by mx0a-00154901.pphosted.com with ESMTP id 2v3vdgg8ha-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 17:43:31 -0400
-X-LoopCount0: from 10.166.132.54
-X-PREM-Routing: D-Outbound
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="398570735"
-From:   <Mario.Limonciello@dell.com>
-To:     <rjw@rjwysocki.net>
-CC:     <kbusch@kernel.org>, <axboe@fb.com>, <hch@lst.de>,
-        <sagi@grimberg.me>, <linux-nvme@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Ryan.Hong@Dell.com>,
-        <Crag.Wang@dell.com>, <sjg@google.com>, <Jared.Dominguez@dell.com>,
-        <linux-pci@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: RE: [PATCH] nvme-pci: Save PCI state before putting drive into
- deepest state
-Thread-Topic: [PATCH] nvme-pci: Save PCI state before putting drive into
- deepest state
-Thread-Index: AQHVaPqcVa1BaYWKPkaPLLLTJYPQjqcyUq2A//+vI2A=
-Date:   Wed, 18 Sep 2019 21:43:28 +0000
-Message-ID: <346fd9ced98e40229d0cc0871ad5ed32@AUSX13MPC105.AMER.DELL.COM>
-References: <1568245353-13787-1-git-send-email-mario.limonciello@dell.com>
- <4858057.cjDlXVALXj@kreacher>
-In-Reply-To: <4858057.cjDlXVALXj@kreacher>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-09-18T21:43:26.4017972Z;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
- aiplabel=External Public
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 18 Sep 2019 17:45:11 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k25so875180oiw.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 14:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W7dgmGEb7jiXcDVOoTR3Y60qv1W+YIvlHIEXooqB17k=;
+        b=Nfn4vYYmqahbw5bImjcKKNhaG/umEZbk35DywdJMi8vFUMvoVbQL06VrdNGdNwpJAM
+         q0TyWW1phTEmA+8WxooalcEWilGfeV+b9QN/Vpnw2mR3wcVegp0T2KS7FqygdQ9Sjc8+
+         MIY/jDimM/1cJvKeEfud3N1KUM+igqZtQJBUg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W7dgmGEb7jiXcDVOoTR3Y60qv1W+YIvlHIEXooqB17k=;
+        b=p7z0PsvnQoIdB3sbEV0Ta2nSQJ7kQGDXVKLXL+vseU4nKCdI3ZZcN8dkxwD2qjhYjN
+         4Vm/eivWgjXZZKPrrlaQTd9nyk/h6I49xyJbglaizbT4zREGjlY2y2eWYoPrxmAqJ4yP
+         kROEfC4ctRWjHZAavl+YnF9RSR+wAyQ+0a8h+HBGPie38vs9SNaV7aQXLLqArPUUTy5i
+         fHOFkjWgPBG4LEKnl0dq8Cldko2ugpdeD2a+f30tBR79oHPaWcU/sxBZfCuG1kvzKpee
+         RX0qt5pWwgmwwkBchDMEf38Exd2npqMbDWzIVbJnaPDl1GWgcUm4lexx6gHuZDhwYdrz
+         Gd7Q==
+X-Gm-Message-State: APjAAAXpw4N22cydcG78ozeW7/AgmebaO2pXhMKazbdQp9irRmk4bnsu
+        RpXTRuwCjEduekYWq/A9x6WPgCB480g=
+X-Google-Smtp-Source: APXvYqxnYcUT168L/hLkmc4rg+BR772gC3kdEcprHb2jlFRmKL19iMFwZzZScsGSIpAfCJWW1ErRGw==
+X-Received: by 2002:aca:b902:: with SMTP id j2mr18474oif.169.1568843110117;
+        Wed, 18 Sep 2019 14:45:10 -0700 (PDT)
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
+        by smtp.gmail.com with ESMTPSA id t207sm2210887oif.11.2019.09.18.14.45.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2019 14:45:09 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id k20so971087oih.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 14:45:08 -0700 (PDT)
+X-Received: by 2002:aca:da87:: with SMTP id r129mr19681oig.177.1568843108323;
+ Wed, 18 Sep 2019 14:45:08 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-18_10:2019-09-18,2019-09-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1011 impostorscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 phishscore=0 malwarescore=0
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1909180184
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 clxscore=1011
- suspectscore=0 mlxlogscore=999 malwarescore=0 phishscore=0
- priorityscore=1501 mlxscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1909180184
+References: <20190918204316.237342-1-campello@chromium.org>
+In-Reply-To: <20190918204316.237342-1-campello@chromium.org>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Wed, 18 Sep 2019 15:44:57 -0600
+X-Gmail-Original-Message-ID: <CAHX4x85JkU706D8mmMJ1Ahu2=8oSvU1o_sz3VeVHDD1BZ_fKMQ@mail.gmail.com>
+Message-ID: <CAHX4x85JkU706D8mmMJ1Ahu2=8oSvU1o_sz3VeVHDD1BZ_fKMQ@mail.gmail.com>
+Subject: Re: [PATCH v4] platform/chrome: wilco_ec: Add debugfs test_event file
+To:     Daniel Campello <campello@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Duncan Laurie <dlaurie@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Rafael J. Wysocki <rjw@rjwysocki.net>
-> Sent: Wednesday, September 18, 2019 4:31 PM
-> To: Limonciello, Mario
-> Cc: Keith Busch; Jens Axboe; Christoph Hellwig; Sagi Grimberg; linux-
-> nvme@lists.infradead.org; LKML; Hong, Ryan; Wang, Crag; sjg@google.com;
-> Dominguez, Jared; Linux PCI; Linux PM
-> Subject: Re: [PATCH] nvme-pci: Save PCI state before putting drive into d=
-eepest
-> state
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> On Thursday, September 12, 2019 1:42:33 AM CEST Mario Limonciello wrote:
-> > The action of saving the PCI state will cause numerous PCI configuratio=
-n
-> > space reads which depending upon the vendor implementation may cause
-> > the drive to exit the deepest NVMe state.
-> >
-> > In these cases ASPM will typically resolve the PCIe link state and APST
-> > may resolve the NVMe power state.  However it has also been observed
-> > that this register access after quiesced will cause PC10 failure
-> > on some device combinations.
-> >
-> > To resolve this, move the PCI state saving to before SetFeatures has be=
-en
-> > called.  This has been proven to resolve the issue across a 5000 sample
-> > test on previously failing disk/system combinations.
->=20
-> This sounds reasonable to me, but it would be nice to CC that to linux-pm
-> and/or linux-pci too.
->=20
-> > Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> > ---
-> >  drivers/nvme/host/pci.c | 13 +++++++------
-> >  1 file changed, 7 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> > index 732d5b6..9b3fed4 100644
-> > --- a/drivers/nvme/host/pci.c
-> > +++ b/drivers/nvme/host/pci.c
-> > @@ -2894,6 +2894,13 @@ static int nvme_suspend(struct device *dev)
-> >  	if (ret < 0)
-> >  		goto unfreeze;
-> >
-> > +	/*
-> > +	 * A saved state prevents pci pm from generically controlling the
-> > +	 * device's power. If we're using protocol specific settings, we don'=
-t
-> > +	 * want pci interfering.
-> > +	 */
-> > +	pci_save_state(pdev);
-> > +
-> >  	ret =3D nvme_set_power_state(ctrl, ctrl->npss);
-> >  	if (ret < 0)
-> >  		goto unfreeze;
-> > @@ -2908,12 +2915,6 @@ static int nvme_suspend(struct device *dev)
->=20
-> This is the case in which the PCI layer is expected to put the device int=
-o
-> D3, so you need
->=20
-> pdev->state_saved =3D 0;
->=20
-> at this point, because you have saved the config space already.
->=20
-> >  		ret =3D 0;
-> >  		goto unfreeze;
->=20
-> And here you don't need to jump to "unfreeze" any more.
->=20
-> >  	}
-> > -	/*
-> > -	 * A saved state prevents pci pm from generically controlling the
-> > -	 * device's power. If we're using protocol specific settings, we don'=
-t
-> > -	 * want pci interfering.
-> > -	 */
-> > -	pci_save_state(pdev);
-> >  unfreeze:
-> >  	nvme_unfreeze(ctrl);
-> >  	return ret;
-> >
->=20
->=20
->=20
+Assuming that the Kbuild bot doesn't get mad about the format string
+now, LGTM. Thanks Daniel!
 
-Thanks, I actually followed up with something along that line in a v2 sent =
-out
-today.  My apology you weren't in CC, but here is a weblink to it.
-http://lists.infradead.org/pipermail/linux-nvme/2019-September/027251.html
+Reviewed-by: Nick Crews <ncrews@chromium.org>
 
+On Wed, Sep 18, 2019 at 2:43 PM Daniel Campello <campello@chromium.org> wrote:
+>
+> This change introduces a new debugfs file 'test_event' that when written
+> to causes the EC to generate a test event.
+>
+> Signed-off-by: Daniel Campello <campello@chromium.org>
+> ---
+> Changes for v2:
+>   - Cleaned up and added comments.
+>   - Renamed and updated function signature from write_to_mailbox to
+>     send_ec_cmd.
+> Changes for v3:
+>   - Switched NULL format string to empty format string
+>   - Renamed val parameter on send_ec_cmd to out_val
+> Changes for v4:
+>   - Provided a format string to avoid -Wformat-zero-length warning
+>
+>  drivers/platform/chrome/wilco_ec/debugfs.c | 46 +++++++++++++++++-----
+>  1 file changed, 36 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/wilco_ec/debugfs.c b/drivers/platform/chrome/wilco_ec/debugfs.c
+> index 8d65a1e2f1a3..ba86c38421ff 100644
+> --- a/drivers/platform/chrome/wilco_ec/debugfs.c
+> +++ b/drivers/platform/chrome/wilco_ec/debugfs.c
+> @@ -160,29 +160,29 @@ static const struct file_operations fops_raw = {
+>
+>  #define CMD_KB_CHROME          0x88
+>  #define SUB_CMD_H1_GPIO                0x0A
+> +#define SUB_CMD_TEST_EVENT     0x0B
+>
+> -struct h1_gpio_status_request {
+> +struct ec_request {
+>         u8 cmd;         /* Always CMD_KB_CHROME */
+>         u8 reserved;
+> -       u8 sub_cmd;     /* Always SUB_CMD_H1_GPIO */
+> +       u8 sub_cmd;
+>  } __packed;
+>
+> -struct hi_gpio_status_response {
+> +struct ec_response {
+>         u8 status;      /* 0 if allowed */
+> -       u8 val;         /* BIT(0)=ENTRY_TO_FACT_MODE, BIT(1)=SPI_CHROME_SEL */
+> +       u8 val;
+>  } __packed;
+>
+> -static int h1_gpio_get(void *arg, u64 *val)
+> +static int send_ec_cmd(struct wilco_ec_device *ec, u8 sub_cmd, u8 *out_val)
+>  {
+> -       struct wilco_ec_device *ec = arg;
+> -       struct h1_gpio_status_request rq;
+> -       struct hi_gpio_status_response rs;
+> +       struct ec_request rq;
+> +       struct ec_response rs;
+>         struct wilco_ec_message msg;
+>         int ret;
+>
+>         memset(&rq, 0, sizeof(rq));
+>         rq.cmd = CMD_KB_CHROME;
+> -       rq.sub_cmd = SUB_CMD_H1_GPIO;
+> +       rq.sub_cmd = sub_cmd;
+>
+>         memset(&msg, 0, sizeof(msg));
+>         msg.type = WILCO_EC_MSG_LEGACY;
+> @@ -196,13 +196,37 @@ static int h1_gpio_get(void *arg, u64 *val)
+>         if (rs.status)
+>                 return -EIO;
+>
+> -       *val = rs.val;
+> +       *out_val = rs.val;
+>
+>         return 0;
+>  }
+> +/**
+> + * h1_gpio_get() - Gets h1 gpio status.
+> + * @arg: The wilco EC device.
+> + * @val: BIT(0)=ENTRY_TO_FACT_MODE, BIT(1)=SPI_CHROME_SEL
+> + */
+> +static int h1_gpio_get(void *arg, u64 *val)
+> +{
+> +       return send_ec_cmd(arg, SUB_CMD_H1_GPIO, (u8 *)val);
+> +}
+>
+>  DEFINE_DEBUGFS_ATTRIBUTE(fops_h1_gpio, h1_gpio_get, NULL, "0x%02llx\n");
+>
+> +/**
+> + * test_event_set() - Sends command to EC to cause an EC test event.
+> + * @arg: The wilco EC device.
+> + * @val: unused.
+> + */
+> +static int test_event_set(void *arg, u64 val)
+> +{
+> +       u8 ret;
+> +
+> +       return send_ec_cmd(arg, SUB_CMD_TEST_EVENT, &ret);
+> +}
+> +
+> +/* Format is unused since it is only required for get method which is NULL */
+> +DEFINE_DEBUGFS_ATTRIBUTE(fops_test_event, NULL, test_event_set, "%llu\n");
+> +
+>  /**
+>   * wilco_ec_debugfs_probe() - Create the debugfs node
+>   * @pdev: The platform device, probably created in core.c
+> @@ -226,6 +250,8 @@ static int wilco_ec_debugfs_probe(struct platform_device *pdev)
+>         debugfs_create_file("raw", 0644, debug_info->dir, NULL, &fops_raw);
+>         debugfs_create_file("h1_gpio", 0444, debug_info->dir, ec,
+>                             &fops_h1_gpio);
+> +       debugfs_create_file("test_event", 0200, debug_info->dir, ec,
+> +                           &fops_test_event);
+>
+>         return 0;
+>  }
+> --
+> 2.23.0.237.gc6a4ce50a0-goog
+>
