@@ -2,118 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457DAB67C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 18:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97253B67EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 18:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731894AbfIRQJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 12:09:55 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35078 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730385AbfIRQJz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 12:09:55 -0400
-Received: by mail-io1-f68.google.com with SMTP id q10so557593iop.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 09:09:55 -0700 (PDT)
+        id S2387587AbfIRQT4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 12:19:56 -0400
+Received: from mtax.cdmx.gob.mx ([187.141.35.197]:15485 "EHLO mtaw.cdmx.gob.mx"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728749AbfIRQT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 12:19:56 -0400
+X-NAI-Header: Modified by McAfee Email Gateway (4500)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BvDGB+V/nASMvCed6TT+EuLlfHR1McV76EsCinnwHUM=;
-        b=mMq37Kxp6hZGxxEC+mrqEpd1jfQB1ImzvHtC/zMAstwJSIbX3JTRi+bT22WKwoTVxd
-         KFg63MlhFSGijX0KcBtWq7KvYTJLqlxqkHnIlUkfuIU1TNy9LGvijm6SiN/GP7n67f2A
-         tzX/BYacuvkTywgrzIPM+MWHqLtxxN7LzCRGDjjtSjIISpxg5OdCCswju0QRub64Z/LY
-         O9VSIbn24x0c9ajNW0VoiVjfveHwqVPUU37K5A68IC8jNHa9W3L6naZcIcE5Mjl5J61C
-         GAlZDWiGkgiaWhRDL4XEqjnysdXHPlGJc5gSNHocB5wD+m051xHNehw7azQ/6MvwA/KB
-         wU0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BvDGB+V/nASMvCed6TT+EuLlfHR1McV76EsCinnwHUM=;
-        b=fGhNksvnIqO33T70ZH/6gKm8bLdpFk7UStPOe3LjnU+wio6HvSQ1qEp45YPlEUbb2D
-         lRnlMWD+yA++soA052Ll8mKJydMkCfb+G7uz57oUZQvgp6IG0P4jxR334EANhR6s/+Bl
-         mFZC/rWRHIH4tIFYlVgppBGUaIf8W1Qe4bX03JROGNPvKU/NFTQBQetvaU5lrAH5ZTyC
-         qlJtno1hWneXETxeIU8qhxYRmgw75KxhUmuqKKBthAhaJaEzrsTIjKB/l9SyfPJLD1y8
-         EAvqzYtCRcM5S/3u/EV9yydZuxTjkLcfGuztfLOOLgUuzA5L2qT1+4xBTUzvtOSojjQB
-         O+kQ==
-X-Gm-Message-State: APjAAAU9IKAttVt42btE0qwbv/PKgznXXv0edKtz4XWHnKJqTBRCUrOY
-        xwZFoks2Zjmq1h+WD9S4xZ8=
-X-Google-Smtp-Source: APXvYqynC081DIdUE2EUfE3EbXiFoYcTxuO3RtA0A+9tw6YudCla7BwKQcLYgARe+NwO3SzQR4X5sg==
-X-Received: by 2002:a05:6638:294:: with SMTP id c20mr5705640jaq.77.1568822994587;
-        Wed, 18 Sep 2019 09:09:54 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id j8sm4315160iog.9.2019.09.18.09.09.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 09:09:53 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Rex Zhu <Rex.Zhu@amd.com>,
-        Sam Ravnborg <sam@ravnborg.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: fix multiple memory leaks
-Date:   Wed, 18 Sep 2019 11:09:41 -0500
-Message-Id: <20190918160943.14105-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        d=cdmx.gob.mx; s=72359050-3965-11E6-920A-0192F7A2F08E;
+        t=1568822950; h=X-Virus-Scanned:Content-Type:
+         MIME-Version:Content-Transfer-Encoding:Content-Description:
+         Subject:To:From:Date:Reply-To:Message-Id:X-AnalysisOut:
+         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
+         X-AnalysisOut:X-AnalysisOut:X-AnalysisOut:
+         X-SAAS-TrackingID:X-NAIMIME-Disclaimer:X-NAIMIME-Modified:
+         X-NAI-Spam-Flag:X-NAI-Spam-Threshold:X-NAI-Spam-Score:
+         X-NAI-Spam-Rules:X-NAI-Spam-Version; bh=K
+        jij0GhOpdKSaBiEpb4h9F2ukULK7Zgku7ZRRhmMNN
+        U=; b=LzP6q+F5Ta+L2Da1PQh3t1Zu3OOJQaI2ik0HYLfPyKDr
+        YxtmF+6siWBvPJ4h/H1+bwBRqnByVc8N3eryDR+hCFf3io/c2c
+        mCitFi8aYnb1iVz/G+2kV0/a4zMYoxviyVL1JpM8zdC0829TGI
+        QkARJ+58yoYVWtL9C+3EeJuzpPc=
+Received: from correo.seciti.cdmx.gob.mx (gdf-correo.cdmx.gob.mx [10.250.102.17]) by mtaw.cdmx.gob.mx with smtp
+         id 0318_ff2c_73bd041f_5ecc_43ee_9c81_d147dd44990f;
+        Wed, 18 Sep 2019 11:09:09 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by gdf-correo.df.gob.mx (Postfix) with ESMTP id 3338E318A;
+        Wed, 18 Sep 2019 11:09:06 -0500 (CDT)
+Received: from correo.seciti.cdmx.gob.mx ([127.0.0.1])
+        by localhost (gdf-correo.df.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id kSShxI0xkYU4; Wed, 18 Sep 2019 11:09:05 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+        by gdf-correo.df.gob.mx (Postfix) with ESMTP id 52C8E13A8;
+        Wed, 18 Sep 2019 11:09:05 -0500 (CDT)
+X-Virus-Scanned: amavisd-new at gdf-correo.df.gob.mx
+Received: from correo.seciti.cdmx.gob.mx ([127.0.0.1])
+        by localhost (gdf-correo.df.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id yIC8pU9QaIWw; Wed, 18 Sep 2019 11:09:05 -0500 (CDT)
+Received: from [41.148.42.229] (8ta-148-42-229.telkomadsl.co.za [41.148.42.229])
+        by gdf-correo.df.gob.mx (Postfix) with ESMTPSA id 881F7189B;
+        Wed, 18 Sep 2019 11:08:42 -0500 (CDT)
+Content-Type: text/plain;
+  charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Description: Mail message body
+Subject: Spende von 5 Millionen Euro
+To:     Recipients <mramirezg@mexicocity.gob.mx>
+From:   "Shane Missler" <mramirezg@mexicocity.gob.mx>
+Date:   Wed, 18 Sep 2019 18:08:29 +0200
+Reply-To: shanemissler3@gmail.com
+Message-Id: <20190918160842.881F7189B@gdf-correo.df.gob.mx>
+X-AnalysisOut: [v=2.2 cv=PLl/wbiC c=1 sm=1 tr=0 p=ELT1L0JgSr8A:10 p=09-KjH]
+X-AnalysisOut: [S_CW8A:10 p=bEr4i4eggGkA:10 p=emDABjehN2fqPHqc8RbT:22 p=Ly]
+X-AnalysisOut: [qu6MUUigPyaOuRX7ce:22 a=KsSCQl7LcZej77FuluUcQw==:117 a=oLf]
+X-AnalysisOut: [NtqljNgXPa7RrmTwnGA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:]
+X-AnalysisOut: [10 a=J70Eh1EUuV4A:10 a=pGLkceISAAAA:8 a=wN7rT8hNlMSaUXRpxS]
+X-AnalysisOut: [gA:9 a=K7tsimcRO30Sg2YH:21 a=QOCYt1FwmxBrUrRv:21 a=QEXdDO2]
+X-AnalysisOut: [ut3YA:10]
+X-SAAS-TrackingID: 6a6528d5.0.82462511.00-2364.138596917.s12p02m004.mxlogic.net
+X-NAIMIME-Disclaimer: 1
+X-NAIMIME-Modified: 1
+X-NAI-Spam-Flag: NO
+X-NAI-Spam-Threshold: 3
+X-NAI-Spam-Score: -5000
+X-NAI-Spam-Rules: 1 Rules triggered
+        WHITELISTED=-5000
+X-NAI-Spam-Version: 2.3.0.9418 : core <6637> : inlines <7142> : streams
+ <1833127> : uri <2906034>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In acp_hw_init there are some allocations that needs to be released in
-case of failure:
-
-1- adev->acp.acp_genpd should be released if any allocation attemp for
-adev->acp.acp_cell, adev->acp.acp_res or i2s_pdata fails.
-2- all of those allocations should be released if pm_genpd_add_device
-fails.
-
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
-index eba42c752bca..dd3fa85b11c5 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
-@@ -231,17 +231,21 @@ static int acp_hw_init(void *handle)
- 	adev->acp.acp_cell = kcalloc(ACP_DEVS, sizeof(struct mfd_cell),
- 							GFP_KERNEL);
- 
--	if (adev->acp.acp_cell == NULL)
-+	if (adev->acp.acp_cell == NULL) {
-+		kfree(adev->acp.acp_genpd);
- 		return -ENOMEM;
-+	}
- 
- 	adev->acp.acp_res = kcalloc(5, sizeof(struct resource), GFP_KERNEL);
- 	if (adev->acp.acp_res == NULL) {
-+		kfree(adev->acp.acp_genpd);
- 		kfree(adev->acp.acp_cell);
- 		return -ENOMEM;
- 	}
- 
- 	i2s_pdata = kcalloc(3, sizeof(struct i2s_platform_data), GFP_KERNEL);
- 	if (i2s_pdata == NULL) {
-+		kfree(adev->acp.acp_genpd);
- 		kfree(adev->acp.acp_res);
- 		kfree(adev->acp.acp_cell);
- 		return -ENOMEM;
-@@ -348,6 +352,10 @@ static int acp_hw_init(void *handle)
- 		r = pm_genpd_add_device(&adev->acp.acp_genpd->gpd, dev);
- 		if (r) {
- 			dev_err(dev, "Failed to add dev to genpd\n");
-+			kfree(adev->acp.acp_genpd);
-+			kfree(adev->acp.acp_res);
-+			kfree(adev->acp.acp_cell);
-+			kfree(i2s_pdata);
- 			return r;
- 		}
- 	}
--- 
-2.17.1
-
+RGllcyBpc3QgZWluZSBwZXJzw7ZubGljaGUgTWFpbCwgZGllIGljaCBhbiBTaWUgYWRyZXNzaWVy
+ZS4gSWNoIGJpbiBTSEFORSBNSVNTTEVSIGF1cyBGbG9yaWRhLCBVU0EuIFdpZSBTaWUgYmVyZWl0
+cyB3aXNzZW4sIGhhYmUgaWNoIGVpbmVuIExvdHRvLUphY2twb3QgaW4gSMO2aGUgdm9uIDQ1MSBN
+aW8uIFVTRCAoMzMwIE1pby4gR0JQKSBnZXdvbm5lbiB1bmQgZGFzIEdlbGQgaGF0IG1laW4gTGVi
+ZW4gdW5kIG1laW4gRmFtaWxpZW5sZWJlbiB2ZXLDpG5kZXJ0LCBhYmVyIGVzIHdpcmQgbWVpbiBI
+ZXJ6IG5pY2h0IHZlcsOkbmRlcm4sIHdpZSBpY2ggYW4gZGVtIFRhZyBzYWd0ZSwgYW4gZGVtIGlj
+aCBtZWluIEdlbGQgaGFiZSwgZGFzIGljaCB2ZXJ3ZW5kZW4gd2VyZGUgRGllc2VzIEdlbGQgZsO8
+ciBkaWUgSGlsZmUgZGVyIE1lbnNjaGhlaXQuIEljaCBoYWJlIGJlc2NobG9zc2VuLCBJaG5lbiB1
+bmQgSWhyZXIgR2VtZWluZGUgZWluZW4gQmV0cmFnIHZvbiA1IE1pbGxpb25lbiBFdXJvIHp1IHNw
+ZW5kZW4sIHVtIGRpZXNlIFNwZW5kZSBhbnp1Zm9yZGVybi4gRS1NYWlsOiAoc2hhbmVtaXNzbGVy
+MEBnbWFpbC5jb20pCgoKQ2VjaSBlc3QgdW4gY291cnJpZXIgcGVyc29ubmVsIHF1ZSBqZSB2b3Vz
+IGFkcmVzc2UuIEplIHN1aXMgU0hBTkUgTUlTU0xFUiwgZGUgRmxvcmlkZSwgw4l0YXRzLVVuaXMu
+IENvbW1lIHZvdXMgbGUgc2F2ZXogZMOpasOgLCBqJ2FpIGdhZ27DqSA0NTEgbWlsbGlvbnMgZGUg
+ZG9sbGFycyAoTG90dG8gSmFja3BvdCkgZXQgbCdhcmdlbnQgYSBjaGFuZ8OpIG1hIHZpZSBldCBj
+ZWxsZSBkZSBtYSBmYW1pbGxlLCBtYWlzIGNlbGEgbmUgY2hhbmdlcmEgcGFzIG1vbiBjxZN1ciwg
+Y29tbWUgamUgbCdhaSBkaXQgbGUgam91ciBvw7kgaidhaSBtb24gYXJnZW50LCBqJ3V0aWxpc2Vy
+YWkgY2V0IGFyZ2VudCBwb3VyIGwnYWlkZSBkZSBsJ2h1bWFuaXTDqS5KJ2FpIGTDqWNpZMOpIGRl
+IHZvdXMgZG9ubmVyIGxhIHNvbW1lIGRlIDUgbWlsbGlvbnMgZCdldXJvcyDDoCB2b3VzIGV0IMOg
+IHZvdHJlIGNvbW11bmF1dMOpLCBwb3VyIHLDqWNsYW1lciBjZSBkb24sIGVtYWlsLSAoc2hhbmVt
+aXNzbGVyMEBnbWFpbC5jb20pCgoKCgouLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4KCgpMYSBpbmZvcm1hY2lvbiBjb250ZW5pZGEgZW4gZXN0ZSBjb3JyZW8sIGFzaSBj
+b21vIGxhIGNvbnRlbmlkYSBlbiBsb3MgZG9jdW1lbnRvcyBhbmV4b3MsIHB1ZWRlIGNvbnRlbmVy
+IGRhdG9zIHBlcnNvbmFsZXMsIHBvciBsbyBxdWUgc3UgZGlmdXNpb24gZXMgcmVzcG9uc2FiaWxp
+ZGFkIGRlIHF1aWVuIGxvcyB0cmFuc21pdGUgeSBxdWllbiBsb3MgcmVjaWJlLCBlbiB0w6lybWlu
+b3MgZGUgbG8gZGlzcHVlc3RvIHBvciBsYXMgZnJhY2Npb25lcyBJSSB5IFZJSSBkZWwgYXJ0aWN1
+bG8gNCwgdWx0aW1vIHBhcnJhZm8gZGVsIGFydGljdWxvIDgsIGFydGljdWxvIDM2IHBhcnJhZm8g
+SUksIDM4IGZyYWNjaW9uIEkgeSBkZW1hcyBhcGxpY2FibGVzIGRlIGxhIExleSBkZSBUcmFuc3Bh
+cmVuY2lhIHkgQWNjZXNvIGEgbGEgSW5mb3JtYWNpb24gUHVibGljYSBkZWwgRGlzdHJpdG8gRmVk
+ZXJhbC4NCkxvcyBEYXRvcyBQZXJzb25hbGVzIHNlIGVuY3VlbnRyYW4gcHJvdGVnaWRvcyBwb3Ig
+bGEgTGV5IGRlIFByb3RlY2Npb24gZGUgRGF0b3MgUGVyc29uYWxlcyBkZWwgRGlzdHJpdG8gRmVk
+ZXJhbCwgcG9yIGxvIHF1ZSBzdSBkaWZ1c2lvbiBzZSBlbmN1ZW50cmEgdHV0ZWxhZGEgZW4gc3Vz
+IGFydGljdWxvcyAyLCA1LCAxNiwgMjEsIDQxIHkgZGVtYXMgcmVsYXRpdm9zIHkgYXBsaWNhYmxl
+cywgZGViaWVuZG8gc3VqZXRhcnNlIGVuIHN1IGNhc28sIGEgbGFzIGRpc3Bvc2ljaW9uZXMgcmVs
+YXRpdmFzIGEgbGEgY3JlYWNpb24sIG1vZGlmaWNhY2lvbiBvIHN1cHJlc2lvbiBkZSBkYXRvcyBw
+ZXJzb25hbGVzIHByZXZpc3Rvcy4gQXNpbWlzbW8sIGRlYmVyYSBlc3RhcnNlIGEgbG8gc2XDsWFs
+YWRvIGVuIGxvcyBudW1lcmFsZXMgMSAsIDMsIDEyLCAxOCwgMTksIDIwLCAyMSwgMjMsIDI0LCAy
+OSwgMzUgeSBkZW1hcyBhcGxpY2FibGVzIGRlIGxvcyBMaW5lYW1pZW50b3MgcGFyYSBsYSBQcm90
+ZWNjaW9uIGRlIERhdG9zIFBlcnNvbmFsZXMgZW4gZWwgRGlzdHJpdG8gRmVkZXJhbC4NCkVuIGVs
+IHVzbyBkZSBsYXMgdGVjbm9sb2dpYXMgZGUgbGEgaW5mb3JtYWNpb24geSBjb211bmljYWNpb25l
+cyBkZWwgR29iaWVybm8gZGVsIERpc3RyaXRvIEZlZGVyYWwsIGRlYmVyYSBvYnNlcnZhcnNlIHB1
+bnR1YWxtZW50ZSBsbyBkaXNwdWVzdG8gcG9yIGxhIExleSBHb2JpZXJubyBFbGVjdHJvbmljbyBk
+ZWwgRGlzdHJpdG8gRmVkZXJhbCwgbGEgbGV5IHBhcmEgaGFjZXIgZGUgbGEgQ2l1ZGFkIGRlIE1l
+eGljbyB1bmEgQ2l1ZGFkIE1hcyBBYmllcnRhLCBlbCBhcGFydGFkbyAxMCBkZSBsYSBDaXJjdWxh
+ciBVbm8gdmlnZW50ZSB5IGxhcyBOb3JtYXMgR2VuZXJhbGVzIHF1ZSBkZWJlcmFuIG9ic2VydmFy
+c2UgZW4gbWF0ZXJpYSBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpb24gZW4gbGEgQWRtaW5p
+c3RyYWNpb24gUHVibGljYSBkZWwgRGlzdHJpdG8gRmVkZXJhbC4K
