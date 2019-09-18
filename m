@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0612B5C32
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6B3FB5CAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:28:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbfIRGXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:23:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43976 "EHLO mail.kernel.org"
+        id S1730461AbfIRG1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:27:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729696AbfIRGXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:42 -0400
+        id S1729595AbfIRG1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:27:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25DDB218AF;
-        Wed, 18 Sep 2019 06:23:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A182D218AF;
+        Wed, 18 Sep 2019 06:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787821;
-        bh=NCc38KdKeBnKyP2Odg4PeFPlwltuIx2bv95xeUk0ld0=;
+        s=default; t=1568788025;
+        bh=YVgQAE+ShXp0iEK2UypFwnD3fjYWg9f059yM5kZSxRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OkPXsJrJ3/HT0wBImwN3gVgo0XalafnPAKfF/bMGBLNsqbVsSugdnZjq7VN7RjUvm
-         nJ4/ThAanieNbMOPVacSUKUb5vvwZkK3gla99ZQE85jfHUeKz2WSNCRwpN5QgHiFna
-         zsHHLHwpQ4uSyW/lbL3oCc3mURWPgfZ51mQW2mSY=
+        b=QSH7BelfBidkIbQbeJozkMyMWOcSuQKjHY+08VIlG74vE85izMuJXbCeM65+KgGzF
+         8JCzCp9/Qt7LBfsSa4M8u8aL9iC+imdyxM5ZCKmddP9vWbXYpwftcdGF8YiNeL11pO
+         GhLwhyHRq61vguNt8hX81kggJsD3zR18ZcSuMhT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>,
-        Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH 4.19 46/50] modules: fix compile error if dont have strict module rwx
+        stable@vger.kernel.org, Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        CK Hu <ck.hu@mediatek.com>
+Subject: [PATCH 5.2 71/85] drm/mediatek: mtk_drm_drv.c: Add of_node_put() before goto
 Date:   Wed, 18 Sep 2019 08:19:29 +0200
-Message-Id: <20190918061228.274028936@linuxfoundation.org>
+Message-Id: <20190918061237.653050886@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,71 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yang Yingliang <yangyingliang@huawei.com>
+From: Nishka Dasgupta <nishkadg.linux@gmail.com>
 
-commit 93651f80dcb616b8c9115cdafc8e57a781af22d0 upstream.
+commit 165d42c012be69900f0e2f8545626cb9e7d4a832 upstream.
 
-If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is not defined,
-we need stub for module_enable_nx() and module_enable_x().
+Each iteration of for_each_child_of_node puts the previous
+node, but in the case of a goto from the middle of the loop, there is
+no put, thus causing a memory leak. Hence add an of_node_put before the
+goto in two places.
+Issue found with Coccinelle.
 
-If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is defined, but
-CONFIG_STRICT_MODULE_RWX is disabled, we need stub for
-module_enable_nx.
+Fixes: 119f5173628a (drm/mediatek: Add DRM Driver for Mediatek SoC MT8173)
 
-Move frob_text() outside of the CONFIG_STRICT_MODULE_RWX,
-because it is needed anyway.
-
-Fixes: 2eef1399a866 ("modules: fix BUG when load module with rodata=n")
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Signed-off-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/module.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1884,7 +1884,7 @@ static void mod_sysfs_teardown(struct mo
- 	mod_sysfs_fini(mod);
- }
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -567,12 +567,15 @@ static int mtk_drm_probe(struct platform
+ 			comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
+ 			if (!comp) {
+ 				ret = -ENOMEM;
++				of_node_put(node);
+ 				goto err_node;
+ 			}
  
--#ifdef CONFIG_STRICT_MODULE_RWX
-+#ifdef CONFIG_ARCH_HAS_STRICT_MODULE_RWX
- /*
-  * LKM RO/NX protection: protect module's text/ro-data
-  * from modification and any data from execution.
-@@ -1907,6 +1907,7 @@ static void frob_text(const struct modul
- 		   layout->text_size >> PAGE_SHIFT);
- }
+ 			ret = mtk_ddp_comp_init(dev, node, comp, comp_id, NULL);
+-			if (ret)
++			if (ret) {
++				of_node_put(node);
+ 				goto err_node;
++			}
  
-+#ifdef CONFIG_STRICT_MODULE_RWX
- static void frob_rodata(const struct module_layout *layout,
- 			int (*set_memory)(unsigned long start, int num_pages))
- {
-@@ -2039,17 +2040,21 @@ static void disable_ro_nx(const struct m
- 	frob_writable_data(layout, set_memory_x);
- }
- 
--#else
-+#else /* !CONFIG_STRICT_MODULE_RWX */
- static void disable_ro_nx(const struct module_layout *layout) { }
- static void module_enable_nx(const struct module *mod) { }
- static void module_disable_nx(const struct module *mod) { }
--#endif
-+#endif /*  CONFIG_STRICT_MODULE_RWX */
- 
- static void module_enable_x(const struct module *mod)
- {
- 	frob_text(&mod->core_layout, set_memory_x);
- 	frob_text(&mod->init_layout, set_memory_x);
- }
-+#else /* !CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
-+static void module_enable_nx(const struct module *mod) { }
-+static void module_enable_x(const struct module *mod) { }
-+#endif /* CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
- 
- #ifdef CONFIG_LIVEPATCH
- /*
+ 			private->ddp_comp[comp_id] = comp;
+ 		}
 
 
