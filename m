@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BCDEB5C84
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0612B5C32
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbfIRG1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:27:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48728 "EHLO mail.kernel.org"
+        id S1729707AbfIRGXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:23:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730440AbfIRG1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:27:02 -0400
+        id S1729696AbfIRGXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBABB21906;
-        Wed, 18 Sep 2019 06:27:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25DDB218AF;
+        Wed, 18 Sep 2019 06:23:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568788022;
-        bh=nyESctKceLsbDVg6I6pgiTVoXe/TTiMVf7zjOgfy6Ps=;
+        s=default; t=1568787821;
+        bh=NCc38KdKeBnKyP2Odg4PeFPlwltuIx2bv95xeUk0ld0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGorqigC/JPYJjEFMmbK2Qm4BD7upCmvQPs4kiwplJifhbvTShpSVNrnQv22b7XeN
-         ffh4z9Ak+wTKkx4ORxhmhobRm3lHt87EmAn+76aAj8U5PTx6Z73tRxI9wSso806+UK
-         vb/vzWwQB3mxNFm9qk7TvY2gGXDRY4z9/HgWIfo0=
+        b=OkPXsJrJ3/HT0wBImwN3gVgo0XalafnPAKfF/bMGBLNsqbVsSugdnZjq7VN7RjUvm
+         nJ4/ThAanieNbMOPVacSUKUb5vvwZkK3gla99ZQE85jfHUeKz2WSNCRwpN5QgHiFna
+         zsHHLHwpQ4uSyW/lbL3oCc3mURWPgfZ51mQW2mSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 5.2 70/85] drm: panel-orientation-quirks: Add extra quirk table entry for GPD MicroPC
-Date:   Wed, 18 Sep 2019 08:19:28 +0200
-Message-Id: <20190918061237.623948876@linuxfoundation.org>
+        stable@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>,
+        Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH 4.19 46/50] modules: fix compile error if dont have strict module rwx
+Date:   Wed, 18 Sep 2019 08:19:29 +0200
+Message-Id: <20190918061228.274028936@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +43,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-commit dae1ccee012ea7514af8e4a88429844157aca7dc upstream.
+commit 93651f80dcb616b8c9115cdafc8e57a781af22d0 upstream.
 
-Newer GPD MicroPC BIOS versions have proper DMI strings, add an extra quirk
-table entry for these new strings. This is good news, as this means that we
-no longer have to update the BIOS dates list with every BIOS update.
+If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is not defined,
+we need stub for module_enable_nx() and module_enable_x().
 
-Fixes: 652b8b086538("drm: panel-orientation-quirks: Add quirk for GPD MicroPC")
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190624154014.8557-2-hdegoede@redhat.com
+If CONFIG_ARCH_HAS_STRICT_MODULE_RWX is defined, but
+CONFIG_STRICT_MODULE_RWX is disabled, we need stub for
+module_enable_nx.
+
+Move frob_text() outside of the CONFIG_STRICT_MODULE_RWX,
+because it is needed anyway.
+
+Fixes: 2eef1399a866 ("modules: fix BUG when load module with rodata=n")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_panel_orientation_quirks.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ kernel/module.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-@@ -90,6 +90,12 @@ static const struct drm_dmi_panel_orient
- 	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
- };
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1884,7 +1884,7 @@ static void mod_sysfs_teardown(struct mo
+ 	mod_sysfs_fini(mod);
+ }
  
-+static const struct drm_dmi_panel_orientation_data lcd720x1280_rightside_up = {
-+	.width = 720,
-+	.height = 1280,
-+	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
-+};
-+
- static const struct drm_dmi_panel_orientation_data lcd800x1280_rightside_up = {
- 	.width = 800,
- 	.height = 1280,
-@@ -123,6 +129,12 @@ static const struct dmi_system_id orient
- 		  DMI_EXACT_MATCH(DMI_BOARD_NAME, "Default string"),
- 		},
- 		.driver_data = (void *)&gpd_micropc,
-+	}, {	/* GPD MicroPC (later BIOS versions with proper DMI strings) */
-+		.matches = {
-+		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "GPD"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "MicroPC"),
-+		},
-+		.driver_data = (void *)&lcd720x1280_rightside_up,
- 	}, {	/*
- 		 * GPD Pocket, note that the the DMI data is less generic then
- 		 * it seems, devices with a board-vendor of "AMI Corporation"
+-#ifdef CONFIG_STRICT_MODULE_RWX
++#ifdef CONFIG_ARCH_HAS_STRICT_MODULE_RWX
+ /*
+  * LKM RO/NX protection: protect module's text/ro-data
+  * from modification and any data from execution.
+@@ -1907,6 +1907,7 @@ static void frob_text(const struct modul
+ 		   layout->text_size >> PAGE_SHIFT);
+ }
+ 
++#ifdef CONFIG_STRICT_MODULE_RWX
+ static void frob_rodata(const struct module_layout *layout,
+ 			int (*set_memory)(unsigned long start, int num_pages))
+ {
+@@ -2039,17 +2040,21 @@ static void disable_ro_nx(const struct m
+ 	frob_writable_data(layout, set_memory_x);
+ }
+ 
+-#else
++#else /* !CONFIG_STRICT_MODULE_RWX */
+ static void disable_ro_nx(const struct module_layout *layout) { }
+ static void module_enable_nx(const struct module *mod) { }
+ static void module_disable_nx(const struct module *mod) { }
+-#endif
++#endif /*  CONFIG_STRICT_MODULE_RWX */
+ 
+ static void module_enable_x(const struct module *mod)
+ {
+ 	frob_text(&mod->core_layout, set_memory_x);
+ 	frob_text(&mod->init_layout, set_memory_x);
+ }
++#else /* !CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
++static void module_enable_nx(const struct module *mod) { }
++static void module_enable_x(const struct module *mod) { }
++#endif /* CONFIG_ARCH_HAS_STRICT_MODULE_RWX */
+ 
+ #ifdef CONFIG_LIVEPATCH
+ /*
 
 
