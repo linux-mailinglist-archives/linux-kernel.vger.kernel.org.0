@@ -2,116 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 506EDB6D0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0852B6D03
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388806AbfIRT4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 15:56:18 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:37647 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731994AbfIRT4Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:56:16 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M8Syu-1iF5tw2IvA-004RAk; Wed, 18 Sep 2019 21:56:08 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Shannon Nelson <snelson@pensando.io>,
-        Pensando Drivers <drivers@pensando.io>,
+        id S2388810AbfIRTz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 15:55:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54938 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388042AbfIRTz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 15:55:26 -0400
+Subject: Re: [GIT PULL] Crypto Update for 5.4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568836525;
+        bh=Ppcqo0njTaWbTEH0HpXAidzscUG6hpIgS9kt5O0WjcU=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=qAyOyLm/1BbxMH+icEtz75s60WiDrhHYj7UrJXmgLQ5c0sSgz9/bong4YA4ApQAWy
+         9LS+EYLomqC7LcmO3N7+SvkTy5mDjjegiAESMfdUP8ZUMAbARikQAKW7ODX6iGGS/s
+         9hDrCKjxhjEBhfJALpiQqecI3alODQXnJ9q+opiw=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190916084901.GA20338@gondor.apana.org.au>
+References: <20190916084901.GA20338@gondor.apana.org.au>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190916084901.GA20338@gondor.apana.org.au>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+X-PR-Tracked-Commit-Id: 9575d1a5c0780ea26ff8dd29c94a32be32ce3c85
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 8b53c76533aa4356602aea98f98a2f3b4051464c
+Message-Id: <156883652591.14539.7281930528516114167.pr-tracker-bot@kernel.org>
+Date:   Wed, 18 Sep 2019 19:55:25 +0000
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         "David S. Miller" <davem@davemloft.net>,
-        Jason Baron <jbaron@akamai.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dynamic_debug: provide dynamic_hex_dump stub
-Date:   Wed, 18 Sep 2019 21:55:11 +0200
-Message-Id: <20190918195607.2080036-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ovq3juYvSxkhml2oJ/RZRmqQHrA4XE75uWc3u0KJ+V4KdWJOs6t
- i39PGmoo9NADZL/6Ekow8/e6SKCYQ1+jJJ2IO44y+GJgjYZZsdgFTYxJVuFWSKQv19igyDB
- ZRAZT2QKqwwTo5Ex3zkMdJByff/UrhSAeTFNeZmnOXoLgsqfcH/Bd7sE26aAYVYnIIOpLZF
- bs+dkOdwvqu0h7qATQJKg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:jI2VMkCpF2U=:mAaUB4R8b+R4MeHwr9Ea99
- rJarNNaXKaH5L1aYOP+Zg/VFfUX5Hs+WYfsV6UApY+yKOxLR+uGs1arXHaRNHpz2o3j+DKk+i
- mgdv5/8KJOI5bp8iMvTTztmp4PieylIqTS5mgaG1XNNe59qYjSznaEQeOS0U8xGD9ou19q60c
- AlS6oqQXlhn9cXBiMuCy6PeiEQ4wIE4/I3/9RrziVpemcO8s6Ghe1+HmzcsAxQRy0UZYcD4Dn
- zaege8LbFSxoCE/eRi00eR5OFbERDpAx+z2/m68qluhQbBJIRESHBrH7ho5+pUZd4QBEqQl5l
- sMw97DaiVAh5zwDXEebys/8R/fjPqH/5TV/ksxtwAT2F4GED0/qOKGdBcXR3hqjq65n4WgFvO
- usK5ig18eKv7l6As9QX7hFG0+sZi6o5CqCLbbG8sFczYd+3O+pjc1XbGi83kC1Gj1KPTrfiX+
- Zc/BR7uE5khKV7bDu7xX8JXr0VSuyKN+tVj7llDBGgKJLFtJczR8ghgMia1LohHQuv9dbgIZ+
- Os0ufhGE83ukTvJGRKXjKVUAUEzxv9sRz/XJnPP6S8N7xE3J32tFppI6nx1ickJ2ppKC66t/U
- cGwKNhAS0s4XwIFgyfbSWV9Q/05BoKoFK0sHj+P972LCn845gxOvyT1k2SCHsdj2d5lAUfXo5
- KPMbsKrmsMeW6cM4Od2EFH1mG/kc4QFt1SOcs4R+xTnlKNRl/cMWi8sb8cDdtkNHuL1UV50wo
- o7SOhLuacXyM/O+MuVdQcXGu/QFaUo6GPtQ7ZvhUcnJgTXdi9k5sdmFnT5dHd29bBcq+X/2YJ
- 2rxBDKTZ2v/7JKpadl5GUsunYte6sAQEYlR66KVATrAQjxM0bUo1fuzC/BTMYhziQQ8kEXwzR
- U4CPNZl0BC3GFJsDba7w==
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ionic driver started using dymamic_hex_dump(), but
-that is not always defined:
+The pull request you sent on Mon, 16 Sep 2019 18:49:01 +1000:
 
-drivers/net/ethernet/pensando/ionic/ionic_main.c:229:2: error: implicit declaration of function 'dynamic_hex_dump' [-Werror,-Wimplicit-function-declaration]
+> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
 
-Add a dummy implementation to use when CONFIG_DYNAMIC_DEBUG
-is disabled, printing nothing.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/8b53c76533aa4356602aea98f98a2f3b4051464c
 
-Fixes: 938962d55229 ("ionic: Add adminq action")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/pensando/ionic/ionic_lif.c  | 2 ++
- drivers/net/ethernet/pensando/ionic/ionic_main.c | 2 ++
- include/linux/dynamic_debug.h                    | 6 ++++++
- 3 files changed, 10 insertions(+)
+Thank you!
 
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_lif.c b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
-index db7c82742828..a255d24c8e40 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_lif.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_lif.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright(c) 2017 - 2019 Pensando Systems, Inc */
- 
-+#include <linux/printk.h>
-+#include <linux/dynamic_debug.h>
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
- #include <linux/rtnetlink.h>
-diff --git a/drivers/net/ethernet/pensando/ionic/ionic_main.c b/drivers/net/ethernet/pensando/ionic/ionic_main.c
-index 15e432386b35..aab311413412 100644
---- a/drivers/net/ethernet/pensando/ionic/ionic_main.c
-+++ b/drivers/net/ethernet/pensando/ionic/ionic_main.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright(c) 2017 - 2019 Pensando Systems, Inc */
- 
-+#include <linux/printk.h>
-+#include <linux/dynamic_debug.h>
- #include <linux/module.h>
- #include <linux/netdevice.h>
- #include <linux/utsname.h>
-diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index 6c809440f319..4cf02ecd67de 100644
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@ -204,6 +204,12 @@ static inline int ddebug_dyndbg_module_param_cb(char *param, char *val,
- 	do { if (0) printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__); } while (0)
- #define dynamic_dev_dbg(dev, fmt, ...)					\
- 	do { if (0) dev_printk(KERN_DEBUG, dev, fmt, ##__VA_ARGS__); } while (0)
-+#define dynamic_hex_dump(prefix_str, prefix_type, rowsize,		\
-+			 groupsize, buf, len, ascii)			\
-+	do { if (0)							\
-+		print_hex_dump(KERN_DEBUG, prefix_str, prefix_type,	\
-+				rowsize, groupsize, buf, len, ascii);	\
-+	} while (0)
- #endif
- 
- #endif
 -- 
-2.20.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
