@@ -2,103 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80BFB5BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D98F5B5BC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:20:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfIRGUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:20:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38674 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbfIRGUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:20:06 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A15F218AF;
-        Wed, 18 Sep 2019 06:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787603;
-        bh=4XeXMAQl36BSINDqn9rleIQYysRKYqrRW9jUf+jNRkc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o1FeHRwA2M/fMy7MpFAaq3h9SfKVT+fkuRfI3TSCUtUuJyLczcIQ6oBqa3AhrdL59
-         YlazbZIbB6PtanlfevzhFjHyhlqPcOVIfqdj+PwOSwjNFISXX2gF3fZmRgX/WLYW1H
-         nl02d417DykQODfJsrNrpLDmteOSDZYq08Qsqf0E=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 11/45] tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
-Date:   Wed, 18 Sep 2019 08:18:49 +0200
-Message-Id: <20190918061223.978293205@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727150AbfIRGTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:19:43 -0400
+Received: from ZXSHCAS2.zhaoxin.com ([203.148.12.82]:39983 "EHLO
+        ZXSHCAS2.zhaoxin.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725842AbfIRGTm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:19:42 -0400
+Received: from zxbjmbx2.zhaoxin.com (10.29.252.164) by ZXSHCAS2.zhaoxin.com
+ (10.28.252.162) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 18 Sep
+ 2019 14:19:38 +0800
+Received: from tony-HX002EA.zhaoxin.com (10.32.64.46) by zxbjmbx2.zhaoxin.com
+ (10.29.252.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Wed, 18 Sep
+ 2019 14:19:36 +0800
+From:   Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
+To:     <tony.luck@intel.com>, <bp@alien8.de>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <hpa@zytor.com>, <x86@kernel.org>,
+        <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yazen.ghannam@amd.com>, <vishal.l.verma@intel.com>,
+        <qiuxu.zhuo@intel.com>
+CC:     <DavidWang@zhaoxin.com>, <CooperYan@zhaoxin.com>,
+        <QiyuanWang@zhaoxin.com>, <HerryYang@zhaoxin.com>
+Subject: [PATCH v4 0/4] x86/mce: Add supports for Zhaoxin MCA
+Date:   Wed, 18 Sep 2019 14:19:29 +0800
+Message-ID: <1568787573-1297-1-git-send-email-TonyWWang-oc@zhaoxin.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.32.64.46]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx2.zhaoxin.com (10.29.252.164)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neal Cardwell <ncardwell@google.com>
+Zhaoxin newer CPUs support MCE, CMCI and LMCE that compatible with
+Intel's "Machine-Check Architecture".
 
-[ Upstream commit af38d07ed391b21f7405fa1f936ca9686787d6d2 ]
+To enable the supports of Linux kernel to Zhaoxin's MCA, add
+specific patches for Zhaoxin's MCE, CMCI and LMCE. patches about
+Zhaoxin's CMCI, LMCE use 3 functions in mce/intel.c, so make these
+functions non-static.
 
-Fix tcp_ecn_withdraw_cwr() to clear the correct bit:
-TCP_ECN_QUEUE_CWR.
+Some Zhaoxin's CPUs have MCA bank 8, that only has one error called SVAD
+(System View Address Decoder) which be controlled by IA32_MC8.CTL.0.
+If enabled, the prefetch on these CPUs will cause SVAD machine check
+exception when virtual machine startup and cause system panic. Add a
+quirk for these Zhaoxin CPUs MCA bank 8.
 
-Rationale: basically, TCP_ECN_DEMAND_CWR is a bit that is purely about
-the behavior of data receivers, and deciding whether to reflect
-incoming IP ECN CE marks as outgoing TCP th->ece marks. The
-TCP_ECN_QUEUE_CWR bit is purely about the behavior of data senders,
-and deciding whether to send CWR. The tcp_ecn_withdraw_cwr() function
-is only called from tcp_undo_cwnd_reduction() by data senders during
-an undo, so it should zero the sender-side state,
-TCP_ECN_QUEUE_CWR. It does not make sense to stop the reflection of
-incoming CE bits on incoming data packets just because outgoing
-packets were spuriously retransmitted.
+v3->v4:
+ - remove redundant if-case test (patch 4/4)
 
-The bug has been reproduced with packetdrill to manifest in a scenario
-with RFC3168 ECN, with an incoming data packet with CE bit set and
-carrying a TCP timestamp value that causes cwnd undo. Before this fix,
-the IP CE bit was ignored and not reflected in the TCP ECE header bit,
-and sender sent a TCP CWR ('W') bit on the next outgoing data packet,
-even though the cwnd reduction had been undone.  After this fix, the
-sender properly reflects the CE bit and does not set the W bit.
+v2->v3:
+ - Make ifelse-case to switch-case (patch 1/4)
+ - Simplify Zhaoxin CPU FMS checking (patch 1/4, 3/4)
+ - Revert 1 unused function intel_ppin_init() (patch 2/4)
+ - Rework mce_zhaoxin_feature_init() as static (patch 3/4)
+ - Rework comment about Zhaoxin MCA SVAD and CMCI (patch 3/4)
+ - Rework mce_zhaoxin_feature_clear() as static (patch 4/4)
+ - Add comment and change coding style (patch 4/4)
 
-Note: the bug actually predates 2005 git history; this Fixes footer is
-chosen to be the oldest SHA1 I have tested (from Sep 2007) for which
-the patch applies cleanly (since before this commit the code was in a
-.h file).
+v1->v2:
+ - Fix redefinition of "mce_zhaoxin_feature_init" (patch 3/4)
+ - Fix redefinition of "mce_zhaoxin_feature_clear" (patch 4/4)
 
-Fixes: bdf1ee5d3bd3 ("[TCP]: Move code from tcp_ecn.h to tcp*.c and tcp.h & remove it")
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_input.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tony W Wang-oc (4):
+  x86/mce: Add Zhaoxin MCE support
+  x86/mce: Make 3 functions non-static
+  x86/mce: Add Zhaoxin CMCI support
+  x86/mce: Add Zhaoxin LMCE support
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -247,7 +247,7 @@ static void tcp_ecn_accept_cwr(struct tc
- 
- static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
- {
--	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
-+	tp->ecn_flags &= ~TCP_ECN_QUEUE_CWR;
- }
- 
- static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
+ arch/x86/kernel/cpu/mce/core.c     | 83 ++++++++++++++++++++++++++++++++------
+ arch/x86/kernel/cpu/mce/intel.c    | 11 +++--
+ arch/x86/kernel/cpu/mce/internal.h |  6 +++
+ 3 files changed, 84 insertions(+), 16 deletions(-)
 
+-- 
+2.7.4
 
