@@ -2,95 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BA0CB6D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D74C5B6D29
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389201AbfIRT7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 15:59:43 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:34911 "EHLO
+        id S2389405AbfIRUAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 16:00:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:40441 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389179AbfIRT7m (ORCPT
+        with ESMTP id S2389392AbfIRUAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:59:42 -0400
+        Wed, 18 Sep 2019 16:00:53 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mn2eH-1hl04i4Alz-00k3oy; Wed, 18 Sep 2019 21:59:24 +0200
+ (mreue009 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MuluN-1hsjpK0RUJ-00rtNj; Wed, 18 Sep 2019 22:00:01 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Alex Lu <alex_lu@realsil.com.cn>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rajat Jain <rajatja@google.com>,
-        Raghuram Hegde <raghuram.hegde@intel.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btusb: avoid unused function warning
-Date:   Wed, 18 Sep 2019 21:59:02 +0200
-Message-Id: <20190918195918.2190556-1-arnd@arndb.de>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Michal Koutny <mkoutny@suse.com>, Tejun Heo <tj@kernel.org>,
+        Alessio Balsini <balsini@android.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todd Kjos <tkjos@google.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/uclamp: fix building without cgroup
+Date:   Wed, 18 Sep 2019 21:59:43 +0200
+Message-Id: <20190918195957.2220297-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:V9UkgJWPr+oQDUKlZDpC/V5IuPfRkDiGAUbYndfxVz2FSuR/60M
- AOmNix9PbnZdckGDpVOk+MA6SjDiLwv8rFSfPx/KjN2lgpK+fVbCTi1l/5C1PtSPO/rj15F
- YrEtNgJxsOgW6GHrcId568mc2JglzR/EhDgBEha1+uYg95WjEDJ4r0N6JeU6tODxJg6Ay/m
- 16LCKM+tJjGlw6ux1TO5Q==
+X-Provags-ID: V03:K1:W6UnziFG3kMCKWVGK+UTFHQlxIRQdKUTIDJ084gJZNTBsNtL7DS
+ dIuyXGOXC7wMu+LXWQVKCmOS7f1ED5X/+W23rhvFmZ93oFgE6dfpAMXgOvH0XsmyNoLI3HH
+ 9EnW60Z64dOFjUQLl3GMhcwW0ZEpXdMLhyawy9laQr3otaNuyucqgiaS9ZYKYwm+7BwmvNo
+ lml5Whhi/b4JIrqCPw5YQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:XGM5hiqQ4oQ=:McT85o77EouwbgvZ4DbKlb
- BArsKptu4Hav7SUMtrGjZpi/3qIAze3LYNXi+sT/JDUdnlZ86uqRt+XtGjRbFFMfpdS2VLOUa
- ofqiQIQJvjvxnO+dF5gLNLpYxq8/A2u+nKltCRfIhloFoOjcp62jxE5bVGNXrKlLvMi/74jti
- mhFqr7wIpsGyQwatY73Igd3XbmmwdeKJq8gNItFJ50Kdi6UgBrcb5hrHVbTp5IdEy85qgrBLO
- bxjNqWAIzAK1OUX00GKRuOoR4oioe/49y13aR6d6Wq3ueJ0ANAMUE4IvQnTwo+kNDc9FTkWoc
- i8T4xze7NeWt2ASNHBshd8I6q2JhJrmCYcscBpinjm8L772MhDSLtZt4J4beOFTEpqo2NO3I4
- FffGroBAmN89M+d8a3jJB6DF6vHvtdcabs2Khl3am8l55WW28UX5R8vFhSzeZ//SLW/hhI9Rp
- 3Su+1IVK2dMVoAv8Q19S/djclNQwUaeZpZmNx29oSYXzvhwVsMzyY9EEHk7dDQG1dzPiEqBzZ
- TqGDjP3CNocq1SLwukaaiBP/Ks2kWKWQ5Z6tvcnRJ5a2uqw86ilCXzOL/4qktXoUeTany053S
- eSqFD44NCGz1rcyXprL+87qTGUSx60raizAX8F5AUeDMtTK0GOeFVnaepL7YZr57yAhQzoUh3
- fZMObq1ZtF3HiV9wJHCFXjjXf7xyUjQM0McnH0dn9w0yP274ayn1cwv6DBBtJ4/yCZ3TdX6Fn
- Af+g/0fAlLqtBUKMVTmzWTNr05dGNXc6nNkGJCq5VZS+H386kdS+/Sax1IOfl6DRltDBUjUk4
- ilULa3rqOfk4iwkzhiAsxolZBubiDnghG9nHvfbtJrOZFOwAFtogIo6oWa3+wAxJ0vnGTYNCx
- oFRE/tYwe7nEYMegqNhg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:22tuQPy5xkA=:KvoQAZKEoK6LxT2oHtVPVc
+ ArlCWm49saLo3vvbFy7b0J/kg085fN00/Q5QUfI4TbRZLDl9lqlbLkNpzC3LCb4XYlJkztfp3
+ 305Us38WHV3xkRh+yGqfA7e8TVT8ScVOJzcREwt6w9u6yeaVnFm4mDK4FPjfyGRnsXU/BJ243
+ gmIVYQz58PEGIvC9bQSRXsfCtvywqV4A4CwKT4QvaVXNUYlhDNEGDF23Kx55LgmDBT216Bfq1
+ 1F3CRAvCyjJZZIt4UoiqnFZNneg9ggAxzDWKK6113tdZ3S7DgTXyC5n5Yi8XNFg/T0uWyFbOF
+ F7LWk14nNQQui/iCHz+GCJVb5cZjWh1ij4q0YRRu3m9rYZn64rVBRPMc36xOdQ5gT2hfghBJu
+ IYxghUa6ZygtVyiX0nY+sNaFzLZgVJDBMzbQLFUZxskz+RTkAte2lrO473Hq1yEH6llyQ6W8y
+ j3E6bhndiCjh0+n8RmJZNmUwrUZeZrSBJ9I8DE0MPFgeTYt9qrygw5IrwGBTSf/tEzPRyJ60L
+ 2czBoeaycs2DRHw1QxCCfzXrcebpF800dASrtfU26Z+ZPxGjZ6b5wmoA93s9MxJBTjMMzee1n
+ thAkmXgZ9MU8BFV+AOD2x5mmrIa/XGBnwQjGjFHabl5ZvZCxS24qvEfVPdQo6XU4y8ZNRwTQ3
+ d7Vy2j1mW58k7kc16CGtjPEnPhaz5ot1w5g/uQ5o+JN0ha8YlquTQRDVMMWPyLMeeXyafCMJN
+ DQUYlSZQrcg17vzB4iRCZvJbc5qfZhGOBNGZi7I34TabvtMXZYp3gdVRaEERdDEEELsvQCZ0J
+ 8cX1th/rNi+sy1R9n0wHu9GRRmND6m5FOYLy0pZCOoip57cwiXS6aLgPUNYdZbWDXXQFuBt+9
+ OsArzbrOdKCUMDbdYOLw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The btusb_rtl_cmd_timeout() function is used inside of an
-ifdef, leading to a warning when this part is hidden
-from the compiler:
+The css_task_iter interfaces are defined conditionally and
+cause build failures when used in other configurations:
 
-drivers/bluetooth/btusb.c:530:13: error: unused function 'btusb_rtl_cmd_timeout' [-Werror,-Wunused-function]
+kernel/sched/core.c:1081:23: error: variable has incomplete type 'struct css_task_iter'
+kernel/sched/core.c:1084:2: error: implicit declaration of function 'css_task_iter_start' [-Werror,-Wimplicit-function-declaration]
+kernel/sched/core.c:1085:14: error: implicit declaration of function 'css_task_iter_next' [-Werror,-Wimplicit-function-declaration]
+kernel/sched/core.c:1091:2: error: implicit declaration of function 'css_task_iter_end' [-Werror,-Wimplicit-function-declaration]
 
-Use an IS_ENABLED() check instead so the compiler can see
-the code and then discard it silently.
+As this code is unused anyway in that configuration, just put
+it into the same #ifdef. This also avoids possible warnings
+about unused inline functions.
 
-Fixes: d7ef0d1e3968 ("Bluetooth: btusb: Use cmd_timeout to reset Realtek device")
+Fixes: babbe170e053 ("sched/uclamp: Update CPU's refcount on TG's clamp changes")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/bluetooth/btusb.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index a9c35ebb30f8..23e606aaaea4 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3807,8 +3807,8 @@ static int btusb_probe(struct usb_interface *intf,
- 		btusb_check_needs_reset_resume(intf);
- 	}
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f9a1346a5fa9..f25e3949a5ba 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1043,6 +1043,7 @@ static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+ 		uclamp_rq_dec_id(rq, p, clamp_id);
+ }
  
--#ifdef CONFIG_BT_HCIBTUSB_RTL
--	if (id->driver_info & BTUSB_REALTEK) {
-+	if (IS_ENABLED(CONFIG_BT_HCIBTUSB_RTL) &&
-+	    (id->driver_info & BTUSB_REALTEK)) {
- 		hdev->setup = btrtl_setup_realtek;
- 		hdev->shutdown = btrtl_shutdown_realtek;
- 		hdev->cmd_timeout = btusb_rtl_cmd_timeout;
-@@ -3819,7 +3819,6 @@ static int btusb_probe(struct usb_interface *intf,
- 		 */
- 		set_bit(BTUSB_WAKEUP_DISABLE, &data->flags);
- 	}
--#endif
++#ifdef CONFIG_UCLAMP_TASK_GROUP
+ static inline void
+ uclamp_update_active(struct task_struct *p, enum uclamp_id clamp_id)
+ {
+@@ -1091,7 +1092,6 @@ uclamp_update_active_tasks(struct cgroup_subsys_state *css,
+ 	css_task_iter_end(&it);
+ }
  
- 	if (id->driver_info & BTUSB_AMP) {
- 		/* AMP controllers do not support SCO packets */
+-#ifdef CONFIG_UCLAMP_TASK_GROUP
+ static void cpu_util_update_eff(struct cgroup_subsys_state *css);
+ static void uclamp_update_root_tg(void)
+ {
 -- 
 2.20.0
 
