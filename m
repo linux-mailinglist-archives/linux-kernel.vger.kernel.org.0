@@ -2,161 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA60B6CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4697B6CB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:37:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730662AbfIRTf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 15:35:58 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40069 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbfIRTf6 (ORCPT
+        id S1731477AbfIRThK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 15:37:10 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36207 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727588AbfIRThK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:35:58 -0400
-Received: by mail-pg1-f194.google.com with SMTP id w10so431992pgj.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 12:35:57 -0700 (PDT)
+        Wed, 18 Sep 2019 15:37:10 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f19so449079plr.3;
+        Wed, 18 Sep 2019 12:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Y0n4YOu1xaM555d4aI7Bta2bxtCQAQm73v5aumDVDEg=;
-        b=y1qkZm00Pe7tOuIgzsBIDTlc6Eu43jhxRfNJdbYoSiu6prUUQ6uQOrsY4TpquWsVUJ
-         fXGKVYSQAEQr3pxTXRiWFEso11ByxFu/2b1hTkLInAdIEYvjtgLVwisz72Fw7sDIPQyf
-         IteQxIQwnQGti48UHojn2Uq5aFqQFTeAfA7MzMLKyCSnOzuUAUaVCZEMGkzWwhgiXSqn
-         LG3jxEIFuxJG4rioaT3FYYejRumLH1rknGI/6iYNpi3SYRW67GPY3CsOKaIyb0jFekeN
-         pExifeOyNW1mOoAHC0Aw941iqFr3UHqGysnNEuBSZ63RlnEJ68pxjYjTnvEXD+M7DuyF
-         A6fg==
+        bh=HtjQH7P5Wg51kHjhBLZuMipuSIo+nXboHVegkyyMDOg=;
+        b=CNB8ys1d7e0ApFxfA7o+tX+Xy8ECCusNwgVGXUkCxnLDXQELIYRBWNJYJejgYoy4L+
+         7q9ugHMqL9u9CU8nbGiuAKBkAKaxGsmfqvPvp/3lYNhlZwOFXHPf2HP7gXFKVkoqdpiE
+         uZn/6rx1/+sSOInuegGguqdMMn0wqa9j7iA8zclzEeodnu1ZFnxAqEOxZQyNtz7Llzew
+         da638ccoATmhOPmqyFt/o5xAsL8qcIysGuLd4/XRez/rpGPpf69d5EbzfLIEQEF6LQKb
+         nXNmika11XJoQZFyXmsxdnL/zOZMrL1cYvlHYLqyjBUynAFdFj69yKrTktKxPq4ZedFN
+         EKhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y0n4YOu1xaM555d4aI7Bta2bxtCQAQm73v5aumDVDEg=;
-        b=Zk5983WDH/expOp83v7Ku53teiFIYIvNG8eOH8+xBs7baMtI8iiij9b1IPylI+D4d+
-         7lFWI2lxcxvNZF7VSndZD4NgIiDOE7rUnyxklWccN0mPpT0/Kot0n8g5pkBKWrTWR8pB
-         RrWPSnh7Pbsc0SfV3OGDMwvMhvnehDfHZr5oFbMzhjbOykNyUiiIG3yqLoCCvsdbEDLj
-         pKjC3sVR3dznV7qDFW8pJHoNBbQ8VaJkhP/t3Iv87iBBnO+lEs0GzvzkTdsiePhojCWZ
-         ohyCiONEdgB3FtGpjvskqyrZaoeVOhcF3W0uor78U7sWdeKHl/HXKVjpvjsGs5tPqGql
-         UfIg==
-X-Gm-Message-State: APjAAAWR9DmUh0DSBm+1tHyPPdle/9iBJPL86PRtYlyMvTr+W3YcEWDD
-        yZ+tZchAY17T5/NQdXoem9vZb9rGikQ=
-X-Google-Smtp-Source: APXvYqxommAUTPNUFYJSt/UvqD6qFStIBjthOrZfrVk617EcPX50zEBDezE/w2xVRnVO59k4C7gm8g==
-X-Received: by 2002:a63:1608:: with SMTP id w8mr5526196pgl.223.1568835356949;
-        Wed, 18 Sep 2019 12:35:56 -0700 (PDT)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id p189sm8810331pfp.163.2019.09.18.12.35.56
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HtjQH7P5Wg51kHjhBLZuMipuSIo+nXboHVegkyyMDOg=;
+        b=NKB99I3QotrZYvA0Lf63GB+/kaQinfQ5HqI/gdpFQpl8O9PM4iEcWjiwX9DY4cwSwi
+         i0YHV1qgN32GUg52ewU0mhNx7nGIG5lRo8kWSQsLwSEdZOqsAwcqqttnzy5PwNNzsUJ0
+         j9DgAye/nDW0brDN8Z9WEYuFHq0FV/ZwdDdTzWzGS8JDxUPQXSP0dUrw2i//J5gZwGEN
+         KRWbmnqyA5Qi7XmPS13wsMkl/YRbtYmtIzRd6E/O9TBEKVRgApX7bIf6CiRrsWRTsFiu
+         D4t9AgT832x4mUSs0LkhBOVu7YMVMDIHKVuNVGMrbgV6v41+9CyinIBcENe8lPaMcTbI
+         OuJw==
+X-Gm-Message-State: APjAAAWD9oKcDxsGngDRpnt1hzBCLBnCx2DVQiO6h+cwBatWlsBoHU4d
+        IffX/l4FX1aWh9liaUCppWI=
+X-Google-Smtp-Source: APXvYqw3qg3Rn0UNkDw399FpTEF9DMWKLeihiUUX/C8eMdxsVGqWJ2y3O2qICU6fWP1s4tPSORo4ng==
+X-Received: by 2002:a17:902:7617:: with SMTP id k23mr5725807pll.314.1568835429508;
+        Wed, 18 Sep 2019 12:37:09 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id c62sm10733577pfa.92.2019.09.18.12.37.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Sep 2019 12:35:56 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 13:35:54 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rafael@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 3/3] powercap/drivers/idle_inject: Specify the idle state
- to inject
-Message-ID: <20190918193554.GC24433@xps15>
-References: <20190909145015.26317-1-daniel.lezcano@linaro.org>
- <20190909145015.26317-3-daniel.lezcano@linaro.org>
+        Wed, 18 Sep 2019 12:37:08 -0700 (PDT)
+Date:   Wed, 18 Sep 2019 12:37:07 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 00/45] 4.14.145-stable review
+Message-ID: <20190918193707.GA30544@roeck-us.net>
+References: <20190918061222.854132812@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190909145015.26317-3-daniel.lezcano@linaro.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 04:50:15PM +0200, Daniel Lezcano wrote:
-> Currently the idle injection framework only allows to inject the
-> deepest idle state available on the system.
+On Wed, Sep 18, 2019 at 08:18:38AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.145 release.
+> There are 45 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Give the opportunity to specify which idle state we want to inject by
-> adding a new function helper to set the state and use it when calling
-> play_idle().
+> Responses should be made by Fri 20 Sep 2019 06:09:47 AM UTC.
+> Anything received after that time might be too late.
 > 
-> There is no functional changes, the cpuidle state is the deepest one.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/powercap/idle_inject.c | 15 ++++++++++++++-
->  include/linux/idle_inject.h    |  3 +++
->  2 files changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
-> index 9b18667b9f26..a612c425d74c 100644
-> --- a/drivers/powercap/idle_inject.c
-> +++ b/drivers/powercap/idle_inject.c
-> @@ -38,6 +38,7 @@
->  #define pr_fmt(fmt) "ii_dev: " fmt
->  
->  #include <linux/cpu.h>
-> +#include <linux/cpuidle.h>
->  #include <linux/hrtimer.h>
->  #include <linux/kthread.h>
->  #include <linux/sched.h>
-> @@ -65,6 +66,7 @@ struct idle_inject_thread {
->   */
->  struct idle_inject_device {
->  	struct hrtimer timer;
-> +	int state;
->  	unsigned int idle_duration_us;
->  	unsigned int run_duration_us;
->  	unsigned long int cpumask[0];
-> @@ -139,7 +141,7 @@ static void idle_inject_fn(unsigned int cpu)
->  	iit->should_run = 0;
->  
->  	play_idle(READ_ONCE(ii_dev->idle_duration_us),
-> -		  cpuidle_find_deepest_state());
-> +		  READ_ONCE(ii_dev->state));
->  }
->  
->  /**
-> @@ -170,6 +172,16 @@ void idle_inject_get_duration(struct idle_inject_device *ii_dev,
->  	*idle_duration_us = READ_ONCE(ii_dev->idle_duration_us);
->  }
->  
-> +/**
-> + * idle_inject_set_state - set the idle state to inject
-> + * @state: an integer for the idle state to inject
-> + */
-> +void idle_inject_set_state(struct idle_inject_device *ii_dev, int state)
-> +{
-> +	if (state >= CPUIDLE_STATE_NOUSE && state < CPUIDLE_STATE_MAX)
-> +		WRITE_ONCE(ii_dev->state, state);
-> +}
-> +
->  /**
->   * idle_inject_start - start idle injections
->   * @ii_dev: idle injection control device structure
-> @@ -298,6 +310,7 @@ struct idle_inject_device *idle_inject_register(struct cpumask *cpumask)
->  	cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
->  	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
->  	ii_dev->timer.function = idle_inject_timer_fn;
-> +	ii_dev->state = cpuidle_find_deepest_state();
->  
->  	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
->  
-> diff --git a/include/linux/idle_inject.h b/include/linux/idle_inject.h
-> index a445cd1a36c5..e2b26b9ccd34 100644
-> --- a/include/linux/idle_inject.h
-> +++ b/include/linux/idle_inject.h
-> @@ -26,4 +26,7 @@ void idle_inject_set_duration(struct idle_inject_device *ii_dev,
->  void idle_inject_get_duration(struct idle_inject_device *ii_dev,
->  				 unsigned int *run_duration_us,
->  				 unsigned int *idle_duration_us);
-> +
-> +void idle_inject_set_state(struct idle_inject_device *ii_dev, int state);
-> +
 
-The above function is not used in this patch and as such should be introduce as
-part of future work.  Otherwise I agree that this patch does not carry any
-functional changes.
+Build results:
+	total: 172 pass: 172 fail: 0
+Qemu test results:
+	total: 372 pass: 372 fail: 0
 
-Without function idle_inject_set_state():
-
-Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org> 
-
->  #endif /* __IDLE_INJECT_H__ */
-> -- 
-> 2.17.1
-> 
+Guenter
