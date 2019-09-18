@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0417CB5CC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 884B2B5BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbfIRG31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:29:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47440 "EHLO mail.kernel.org"
+        id S1728951AbfIRGVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:21:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727555AbfIRG0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:26:10 -0400
+        id S1728930AbfIRGVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:21:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E16AA21928;
-        Wed, 18 Sep 2019 06:26:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 726D220678;
+        Wed, 18 Sep 2019 06:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787969;
-        bh=SHhpYwH5Sq8HCNZh5enSnSTYSMlnjKMibXCmc7r3qbE=;
+        s=default; t=1568787664;
+        bh=COj6+7yNvGeh2H5OUUJGPmHTRZ6z2tYtHadnmi6OB7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lytXMnY2IcG8cBptbnngXDFcfHnD/K7xhQgdDXt4iOVxRoEgJv093AwvceTe3C/OK
-         1CfrgOH2WND80ElGFBau97LDj7kVOPmcAl3hTsZzONPwwkr40Bhw/ujh9sX/00zATz
-         1A+UQHfnwDXiIwC6jhitT0RRxv+VorQes0achfh4=
+        b=j6OOoNQz7DXOJRpiWyWrnMgwvhYnAnPTJG5/3zJjqKfiHp2ZYMiVIbXN3JNf2n7XO
+         RM6G/AKrFiQmAhiCGd0KBOCXz2Hbrt5iJAudHzunfNtTnDmWAo/ls7k7lIDmvGIQS2
+         glwtn6UsIS5G4ue8Jl1EtNFHQDEuieg5FbwraFKY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH 5.2 52/85] x86/ima: check EFI SetupMode too
+        stable@vger.kernel.org, Hyunchul Lee <hyc.lee@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.14 32/45] ubifs: Correctly use tnc_next() in search_dh_cookie()
 Date:   Wed, 18 Sep 2019 08:19:10 +0200
-Message-Id: <20190918061235.765422956@linuxfoundation.org>
+Message-Id: <20190918061226.735342219@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.ibm.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 980ef4d22a95a3cd84a9b8ffaa7b81b391d173c6 upstream.
+commit bacfa94b08027b9f66ede7044972e3b066766b3e upstream.
 
-Checking "SecureBoot" mode is not sufficient, also check "SetupMode".
+Commit c877154d307f fixed an uninitialized variable and optimized
+the function to not call tnc_next() in the first iteration of the
+loop. While this seemed perfectly legit and wise, it turned out to
+be illegal.
+If the lookup function does not find an exact match it will rewind
+the cursor by 1.
+The rewinded cursor will not match the name hash we are looking for
+and this results in a spurious -ENOENT.
+So we need to move to the next entry in case of an non-exact match,
+but not if the match was exact.
 
-Fixes: 399574c64eaf ("x86/ima: retry detecting secure boot mode")
-Reported-by: Matthew Garrett <mjg59@google.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+While we are here, update the documentation to avoid further confusion.
+
+Cc: Hyunchul Lee <hyc.lee@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: c877154d307f ("ubifs: Fix uninitialized variable in search_dh_cookie()")
+Fixes: 781f675e2d7e ("ubifs: Fix unlink code wrt. double hash lookups")
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/ima_arch.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/ubifs/tnc.c |   16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -11,10 +11,11 @@ extern struct boot_params boot_params;
- static enum efi_secureboot_mode get_sb_mode(void)
+--- a/fs/ubifs/tnc.c
++++ b/fs/ubifs/tnc.c
+@@ -1164,8 +1164,8 @@ static struct ubifs_znode *dirty_cow_bot
+  *   o exact match, i.e. the found zero-level znode contains key @key, then %1
+  *     is returned and slot number of the matched branch is stored in @n;
+  *   o not exact match, which means that zero-level znode does not contain
+- *     @key, then %0 is returned and slot number of the closest branch is stored
+- *     in @n;
++ *     @key, then %0 is returned and slot number of the closest branch or %-1
++ *     is stored in @n; In this case calling tnc_next() is mandatory.
+  *   o @key is so small that it is even less than the lowest key of the
+  *     leftmost zero-level node, then %0 is returned and %0 is stored in @n.
+  *
+@@ -1882,13 +1882,19 @@ int ubifs_tnc_lookup_nm(struct ubifs_inf
+ 
+ static int search_dh_cookie(struct ubifs_info *c, const union ubifs_key *key,
+ 			    struct ubifs_dent_node *dent, uint32_t cookie,
+-			    struct ubifs_znode **zn, int *n)
++			    struct ubifs_znode **zn, int *n, int exact)
  {
- 	efi_char16_t efi_SecureBoot_name[] = L"SecureBoot";
-+	efi_char16_t efi_SetupMode_name[] = L"SecureBoot";
- 	efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
- 	efi_status_t status;
- 	unsigned long size;
--	u8 secboot;
-+	u8 secboot, setupmode;
+ 	int err;
+ 	struct ubifs_znode *znode = *zn;
+ 	struct ubifs_zbranch *zbr;
+ 	union ubifs_key *dkey;
  
- 	size = sizeof(secboot);
- 
-@@ -36,7 +37,14 @@ static enum efi_secureboot_mode get_sb_m
- 		return efi_secureboot_mode_unknown;
- 	}
- 
--	if (secboot == 0) {
-+	size = sizeof(setupmode);
-+	status = efi.get_variable(efi_SetupMode_name, &efi_variable_guid,
-+				  NULL, &size, &setupmode);
++	if (!exact) {
++		err = tnc_next(c, &znode, n);
++		if (err)
++			return err;
++	}
 +
-+	if (status != EFI_SUCCESS)	/* ignore unknown SetupMode */
-+		setupmode = 0;
-+
-+	if (secboot == 0 || setupmode == 1) {
- 		pr_info("ima: secureboot mode disabled\n");
- 		return efi_secureboot_mode_disabled;
+ 	for (;;) {
+ 		zbr = &znode->zbranch[*n];
+ 		dkey = &zbr->key;
+@@ -1930,7 +1936,7 @@ static int do_lookup_dh(struct ubifs_inf
+ 	if (unlikely(err < 0))
+ 		goto out_unlock;
+ 
+-	err = search_dh_cookie(c, key, dent, cookie, &znode, &n);
++	err = search_dh_cookie(c, key, dent, cookie, &znode, &n, err);
+ 
+ out_unlock:
+ 	mutex_unlock(&c->tnc_mutex);
+@@ -2716,7 +2722,7 @@ int ubifs_tnc_remove_dh(struct ubifs_inf
+ 		if (unlikely(err < 0))
+ 			goto out_free;
+ 
+-		err = search_dh_cookie(c, key, dent, cookie, &znode, &n);
++		err = search_dh_cookie(c, key, dent, cookie, &znode, &n, err);
+ 		if (err)
+ 			goto out_free;
  	}
 
 
