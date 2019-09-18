@@ -2,134 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B7F7B62F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:17:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A55B62D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:11:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730890AbfIRMQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:16:56 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42792 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729277AbfIRMQ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:16:56 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8ICGHlD023163;
-        Wed, 18 Sep 2019 14:16:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=STMicroelectronics;
- bh=8ZrDgpdMzmVLj7n/V3GIOKe3N2fmdar22nZB+6Ict7A=;
- b=mgB12bKFeCYXRhIpeAtPbS9Zfwm43cBJZp0bNavNip6flNtwPIumKcFTh6OLAOVMAsAx
- COfjJjXm6iBTbFUQDOSFEhrsJWTccbg7j65Rs6jn0RZOEquxh6qKKY5YiIftRd5a0gb7
- el1zYHht8VrLnzV1fwVfrOP/EYjtE3kQi4txyEHgLhhi29+2bT6P07GSoPr+5vjwvH0u
- FXT7au5v8AAI0ejYQKs/os6aqsz28tmPt6byktnAs4azLc24Q67B8lQuF6iiIIp59ACK
- sKHe2uIr+JDjma+shOJC10MjBnLzjQ3WKhLp7LQVMs3EiZu1q6DqyIq7OZP9X+NBmScn zg== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2v37kmc2ps-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 18 Sep 2019 14:16:46 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8DAFA24;
-        Wed, 18 Sep 2019 12:16:40 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 154F22C4735;
-        Wed, 18 Sep 2019 14:16:40 +0200 (CEST)
-Received: from SAFEX1HUBCAS22.st.com (10.75.90.92) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 18 Sep
- 2019 14:16:40 +0200
-Received: from [10.48.1.232] (10.48.1.232) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 18 Sep 2019 14:16:39
- +0200
-Subject: Re: [PATCH v2 7/7] counter: stm32-timer-cnt: Update count_read and
- count_write callbacks
-To:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        <jic23@jic23.retrosnub.co.uk>
-CC:     <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <patrick.havelange@essensium.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <cover.1568792697.git.vilhelm.gray@gmail.com>
- <327fe01b7ce4feb0fc3d854393691664a6a36b40.1568792697.git.vilhelm.gray@gmail.com>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <a5891ee5-162e-6a72-261d-e736f5088020@st.com>
-Date:   Wed, 18 Sep 2019 14:16:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730845AbfIRMLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:11:22 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2294 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727637AbfIRMLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 08:11:22 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B1F1F36D3DD6EFEAC91F;
+        Wed, 18 Sep 2019 20:11:16 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 18 Sep 2019 20:11:07 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <johannes.berg@intel.com>, <emmanuel.grumbach@intel.com>,
+        <luciano.coelho@intel.com>, <linuxwifi@intel.com>,
+        <kvalo@codeaurora.org>, <davem@davemloft.net>
+CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH net] iwlwifi: add dependency of THERMAL with IWLMVM
+Date:   Wed, 18 Sep 2019 20:28:15 +0800
+Message-ID: <20190918122815.155657-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <327fe01b7ce4feb0fc3d854393691664a6a36b40.1568792697.git.vilhelm.gray@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.48.1.232]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-18_07:2019-09-17,2019-09-18 signatures=0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/18/19 9:52 AM, William Breathitt Gray wrote:
-> The count_read and count_write callbacks pass unsigned long now.
-> 
-> Cc: Fabrice Gasnier <fabrice.gasnier@st.com>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+If CONFIG_IWLMVM=y, CONFIG_THERMAL=n, below error can be found:
+drivers/net/wireless/intel/iwlwifi/mvm/fw.o: In function `iwl_mvm_up':
+fw.c:(.text+0x2c26): undefined reference to `iwl_mvm_send_temp_report_ths_cmd'
+make: *** [vmlinux] Error 1
 
-Hi William,
+After commit 242d9c8b9a93 ("iwlwifi: mvm: use FW thermal
+monitoring regardless of CONFIG_THERMAL"), iwl_mvm_up()
+calls iwl_mvm_send_temp_report_ths_cmd(), but this function
+is under CONFIG_THERMAL, which is depended on CONFIG_THERMAL.
 
-I tested your series for STM32 timer and LPtimer drivers. Maybe you can
-squash as suggested by Benjamin ?
-With that, you can add my acked-by for the two STM32 drivers.
+Fixes: 242d9c8b9a93 ("iwlwifi: mvm: use FW thermal monitoring regardless of CONFIG_THERMAL")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/wireless/intel/iwlwifi/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
-Fabrice
+diff --git a/drivers/net/wireless/intel/iwlwifi/Kconfig b/drivers/net/wireless/intel/iwlwifi/Kconfig
+index 7dbc0d3..801aa0f 100644
+--- a/drivers/net/wireless/intel/iwlwifi/Kconfig
++++ b/drivers/net/wireless/intel/iwlwifi/Kconfig
+@@ -65,6 +65,7 @@ config IWLMVM
+ 	tristate "Intel Wireless WiFi MVM Firmware support"
+ 	select WANT_DEV_COREDUMP
+ 	depends on MAC80211
++	depends on THERMAL
+ 	help
+ 	  This is the driver that supports the MVM firmware. The list
+ 	  of the devices that use this firmware is available here:
+-- 
+2.7.4
 
-> ---
->  drivers/counter/stm32-timer-cnt.c | 17 +++++------------
->  1 file changed, 5 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/counter/stm32-timer-cnt.c b/drivers/counter/stm32-timer-cnt.c
-> index 644ba18a72ad..839083543323 100644
-> --- a/drivers/counter/stm32-timer-cnt.c
-> +++ b/drivers/counter/stm32-timer-cnt.c
-> @@ -48,34 +48,27 @@ static enum counter_count_function stm32_count_functions[] = {
->  };
->  
->  static int stm32_count_read(struct counter_device *counter,
-> -			    struct counter_count *count,
-> -			    struct counter_count_read_value *val)
-> +			    struct counter_count *count, unsigned long *val)
->  {
->  	struct stm32_timer_cnt *const priv = counter->priv;
->  	u32 cnt;
->  
->  	regmap_read(priv->regmap, TIM_CNT, &cnt);
-> -	counter_count_read_value_set(val, COUNTER_COUNT_POSITION, &cnt);
-> +	*val = cnt;
->  
->  	return 0;
->  }
->  
->  static int stm32_count_write(struct counter_device *counter,
->  			     struct counter_count *count,
-> -			     struct counter_count_write_value *val)
-> +			     const unsigned long val)
->  {
->  	struct stm32_timer_cnt *const priv = counter->priv;
-> -	u32 cnt;
-> -	int err;
-> -
-> -	err = counter_count_write_value_get(&cnt, COUNTER_COUNT_POSITION, val);
-> -	if (err)
-> -		return err;
->  
-> -	if (cnt > priv->ceiling)
-> +	if (val > priv->ceiling)
->  		return -EINVAL;
->  
-> -	return regmap_write(priv->regmap, TIM_CNT, cnt);
-> +	return regmap_write(priv->regmap, TIM_CNT, val);
->  }
->  
->  static int stm32_count_function_get(struct counter_device *counter,
-> 
