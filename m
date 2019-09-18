@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14723B5BE5
+	by mail.lfdr.de (Postfix) with ESMTP id 86D72B5BE6
 	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbfIRGUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:20:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39590 "EHLO mail.kernel.org"
+        id S1728788AbfIRGUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:20:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728598AbfIRGUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:20:38 -0400
+        id S1728700AbfIRGUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:20:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3EEF218AE;
-        Wed, 18 Sep 2019 06:20:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 756CF218AF;
+        Wed, 18 Sep 2019 06:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787638;
-        bh=Eq8nOojIoQBEV2ltmRd9T9w8XNsdLrk8lVfJrb1qrtM=;
+        s=default; t=1568787641;
+        bh=gZ8a0o55VbNtlcpNUMcUSQywJuCz9aqnY0tE686ZAJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KD6ZaZQbWVWXO19Uhx9siPzUDaNTPW7w8wfqMYwzLmS9fYE/Rv7AtdIxuZxgMAo/v
-         QRWXctXm30o5BPjxppz4iMEp8xgsiaNbA1kETL2qNb/FFfGj+57Bs4xCKkcQd0dTys
-         Pr26xy+W+Owdxy8oD5xWs6SK3QjZlM0Q668RehCY=
+        b=PmO7R2B9W57+jcCU1mrkkc2cxoFMg1js/FB/FkO3PuZ6SfBUWi0Jl7z7aR5EcHlI9
+         JsE2dm9+dPepUfZ0RWjSTrkG9vSHJ5wk1Wlwn/L4hJZv/3eKGOapt2c4ym8KacrzWP
+         4HtXTwzSTOro1L5pZORtwefb+IfQOIjhB5KKmdv0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fuqian Huang <huangfq.daxian@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 23/45] KVM: x86: work around leak of uninitialized stack contents
-Date:   Wed, 18 Sep 2019 08:19:01 +0200
-Message-Id: <20190918061225.380926803@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 24/45] KVM: nVMX: handle page fault in vmread
+Date:   Wed, 18 Sep 2019 08:19:02 +0200
+Message-Id: <20190918061225.491402324@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
 References: <20190918061222.854132812@linuxfoundation.org>
@@ -43,44 +42,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fuqian Huang <huangfq.daxian@gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 541ab2aeb28251bf7135c7961f3a6080eebcc705 upstream.
+commit f7eea636c3d505fe6f1d1066234f1aaf7171b681 upstream.
 
-Emulation of VMPTRST can incorrectly inject a page fault
-when passed an operand that points to an MMIO address.
-The page fault will use uninitialized kernel stack memory
-as the CR2 and error code.
+The implementation of vmread to memory is still incomplete, as it
+lacks the ability to do vmread to I/O memory just like vmptrst.
 
-The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
-exit to userspace; however, it is not an easy fix, so for now just ensure
-that the error code and CR2 are zero.
-
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
 Cc: stable@vger.kernel.org
-[add comment]
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/kvm/vmx.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4721,6 +4721,13 @@ int kvm_write_guest_virt_system(struct k
- 	/* kvm_write_guest_virt_system can pull in tons of pages. */
- 	vcpu->arch.l1tf_flush_l1d = true;
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -7996,6 +7996,7 @@ static int handle_vmread(struct kvm_vcpu
+ 	unsigned long exit_qualification = vmcs_readl(EXIT_QUALIFICATION);
+ 	u32 vmx_instruction_info = vmcs_read32(VMX_INSTRUCTION_INFO);
+ 	gva_t gva = 0;
++	struct x86_exception e;
  
-+	/*
-+	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
-+	 * is returned, but our callers are not ready for that and they blindly
-+	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
-+	 * uninitialized kernel stack memory into cr2 and error code.
-+	 */
-+	memset(exception, 0, sizeof(*exception));
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
- 					   PFERR_WRITE_MASK, exception);
- }
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+@@ -8023,8 +8024,10 @@ static int handle_vmread(struct kvm_vcpu
+ 				vmx_instruction_info, true, &gva))
+ 			return 1;
+ 		/* _system ok, nested_vmx_check_permission has verified cpl=0 */
+-		kvm_write_guest_virt_system(vcpu, gva, &field_value,
+-					    (is_long_mode(vcpu) ? 8 : 4), NULL);
++		if (kvm_write_guest_virt_system(vcpu, gva, &field_value,
++						(is_long_mode(vcpu) ? 8 : 4),
++						NULL))
++			kvm_inject_page_fault(vcpu, &e);
+ 	}
+ 
+ 	nested_vmx_succeed(vcpu);
 
 
