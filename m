@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB01EB5C05
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDA8B5C75
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbfIRGWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:22:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41744 "EHLO mail.kernel.org"
+        id S1727690AbfIRG0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:26:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728043AbfIRGV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:58 -0400
+        id S1727337AbfIRG02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:26:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E4FF21906;
-        Wed, 18 Sep 2019 06:21:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F79D218AF;
+        Wed, 18 Sep 2019 06:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787718;
-        bh=p+3m82tliaje6PacOgqeA/tyzrSNM4L/3dsVSIpEtfI=;
+        s=default; t=1568787987;
+        bh=mqrNHnKR9H8wgI/Eov6wPy08jIg4/CyN6kxoTRpegyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zYWf6mj2MAvu7+rrx4XOgLabcGHLZcZOx2g85xQpy1czanABS4U0gJjZp7rL3KGQy
-         E0xv78MbE7zTiS06o0Bmit/R4xTloWOV0bM1iMNLymmfWfv/f9d5z3BdZsNfbjlJcG
-         vq1YzKmORCTtxaH21KqMCneVdq93uphaoRvhV2KE=
+        b=eHc9kam2ERuGkZhj+RcXYfJAWsYbJox4zqezpdNC2wHFk67ccqlh+NfyW620hJJDB
+         wW9AhVL69E+1QSlONfeAok9JDSZqAGc1kptW4o83cSUpSnb9QmhZM2tXy204uUMcAa
+         OSm9wgz4GJCf3EMtLd+fEfieMdUirgTMuI5bSMK0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 37/45] crypto: talitos - fix ECB algs ivsize
-Date:   Wed, 18 Sep 2019 08:19:15 +0200
-Message-Id: <20190918061227.361127776@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 5.2 58/85] clk: rockchip: Dont yell about bad mmc phases when getting
+Date:   Wed, 18 Sep 2019 08:19:16 +0200
+Message-Id: <20190918061235.943581380@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,30 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Douglas Anderson <dianders@chromium.org>
 
-commit d84cc9c9524ec5973a337533e6d8ccd3e5f05f2b upstream.
+commit 6943b839721ad4a31ad2bacf6e71b21f2dfe3134 upstream.
 
-ECB's ivsize must be 0.
+At boot time, my rk3288-veyron devices yell with 8 lines that look
+like this:
+  [    0.000000] rockchip_mmc_get_phase: invalid clk rate
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 5e75ae1b3cef ("crypto: talitos - add new crypto modes")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This is because the clock framework at clk_register() time tries to
+get the phase but we don't have a parent yet.
+
+While the errors appear to be harmless they are still ugly and, in
+general, we don't want yells like this in the log unless they are
+important.
+
+There's no real reason to be yelling here.  We can still return
+-EINVAL to indicate that the phase makes no sense without a parent.
+If someone really tries to do tuning and the clock is reported as 0
+then we'll see the yells in rockchip_mmc_set_phase().
+
+Fixes: 4bf59902b500 ("clk: rockchip: Prevent calculating mmc phase if clock rate is zero")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/rockchip/clk-mmc-phase.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -2666,7 +2666,6 @@ static struct talitos_alg_template drive
- 			.cra_ablkcipher = {
- 				.min_keysize = AES_MIN_KEY_SIZE,
- 				.max_keysize = AES_MAX_KEY_SIZE,
--				.ivsize = AES_BLOCK_SIZE,
- 				.setkey = ablkcipher_aes_setkey,
- 			}
- 		},
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -52,10 +52,8 @@ static int rockchip_mmc_get_phase(struct
+ 	u32 delay_num = 0;
+ 
+ 	/* See the comment for rockchip_mmc_set_phase below */
+-	if (!rate) {
+-		pr_err("%s: invalid clk rate\n", __func__);
++	if (!rate)
+ 		return -EINVAL;
+-	}
+ 
+ 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 
 
 
