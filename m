@@ -2,205 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B54CAB6917
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:30:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17D26B6921
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:32:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbfIRRaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 13:30:03 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36007 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729077AbfIRRaD (ORCPT
+        id S1731363AbfIRRcB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Sep 2019 13:32:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727056AbfIRRcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:30:03 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f19so286134plr.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 10:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GUxs3ppBWjO6MvWeEa5OPViHs5o2PNpYpDSgemqtMKU=;
-        b=MBFaKfnAunKPJzeuvir2VqnMxhnWK27CCeerc22oy+A19xqjzPiI7wD6vVQ6qYhOwK
-         kG5j6/le65zDAy6TKhXfvNwzVPleX2r+h3VC3w0Sdqs5smyn/1nloTqrLwVFivS3+Jw8
-         +tJdsaW2QjuFQxKripj59KUr7CgEEfadLTX6U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GUxs3ppBWjO6MvWeEa5OPViHs5o2PNpYpDSgemqtMKU=;
-        b=AMdarGuROMz1J/RqmoT1d+JPhd3ZvdrAjw/FFsSyVSuVuTtblbZd4ZGc3+y5WTzV2N
-         1RO/ym9uI9OjdRDjzcLAQxP5I3IQoOktaVd3HaxAST9yMTF1oSk1TL/Vyeh/C2Agp/wT
-         WRtEWIQPsJC85fxnU3Z1RAn4UPfaNx0vk2cGyUf7+JygJhpEpC0xkLirzbNZ0uQO65M8
-         xgeGmJFvzBywIlY+kj0Xqppyd7n/YnikV7F6IVA3sXXBHOlBUO/ZIGyJQtmC8bvANoBg
-         snLT2Lji8oa2HcUoc4suusYl+OkUOc6kjITQpxB8PIfUiCzpaQIa4MQcqFdI+yx7ed87
-         NWGg==
-X-Gm-Message-State: APjAAAWNmO+68tyC9Ei7+8YlyiKYZRy9tsiVUVkRDNNmFVZr5g4cVzT8
-        FUHrzAcz7GxulNNnrqkSHHnWhKhpEro=
-X-Google-Smtp-Source: APXvYqz2fE+Or3qClARFl8tcu+gzAJlmtllJFa2j2ZTrTLIYt/MmOrrS7xSYwcMKS2c2wevFxCkkMg==
-X-Received: by 2002:a17:902:758a:: with SMTP id j10mr5397703pll.233.1568827802416;
-        Wed, 18 Sep 2019 10:30:02 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a29sm9816765pfr.152.2019.09.18.10.30.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 10:30:01 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 10:30:00 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     luto@amacapital.net, jannh@google.com, wad@chromium.org,
-        shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.ws>,
-        Tyler Hicks <tyhicks@canonical.com>
-Subject: Re: [PATCH 1/4] seccomp: add SECCOMP_RET_USER_NOTIF_ALLOW
-Message-ID: <201909181018.E3CEC9A81@keescook>
-References: <20190918084833.9369-1-christian.brauner@ubuntu.com>
- <20190918084833.9369-2-christian.brauner@ubuntu.com>
+        Wed, 18 Sep 2019 13:32:00 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8IHM13G138918
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 13:31:59 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v3r2e21w7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 13:31:59 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
+        Wed, 18 Sep 2019 18:31:57 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Sep 2019 18:31:55 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8IHVsBP8192024
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Sep 2019 17:31:54 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C1F2AE058;
+        Wed, 18 Sep 2019 17:31:54 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AAF8BAE045;
+        Wed, 18 Sep 2019 17:31:53 +0000 (GMT)
+Received: from localhost (unknown [9.85.70.166])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Sep 2019 17:31:53 +0000 (GMT)
+Date:   Wed, 18 Sep 2019 21:54:09 +0530
+From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: [PATCH 0/2] pseries/hotplug: Change the default behaviour of
+ cede_offline
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Kamalesh Babulal <kamaleshb@in.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
+References: <1568284541-15169-1-git-send-email-ego@linux.vnet.ibm.com>
+        <87r24ew5i0.fsf@mpe.ellerman.id.au>
+        <1568788924.kxcnnog4r7.naveen@linux.ibm.com>
+        <877e65x2lk.fsf@mpe.ellerman.id.au>
+In-Reply-To: <877e65x2lk.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918084833.9369-2-christian.brauner@ubuntu.com>
+User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+X-TM-AS-GCONF: 00
+x-cbid: 19091817-0016-0000-0000-000002ADAAD4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19091817-0017-0000-0000-0000330E564A
+Message-Id: <1568822623.nyl7ya1i16.naveen@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-18_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909180159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 10:48:30AM +0200, Christian Brauner wrote:
-> This allows the seccomp notifier to continue a syscall. A positive
-> discussion about this feature was triggered by a post to the
-> ksummit-discuss mailing list (cf. [3]) and took place during KSummit
-> (cf. [1]) and again at the containers/checkpoint-restore
-> micro-conference at Linux Plumbers.
+Michael Ellerman wrote:
+> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> writes:
+>> Michael Ellerman wrote:
+>>> "Gautham R. Shenoy" <ego@linux.vnet.ibm.com> writes:
+>>>> From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+>>>>
+>>>> Currently on Pseries Linux Guests, the offlined CPU can be put to one
+>>>> of the following two states:
+>>>>    - Long term processor cede (also called extended cede)
+>>>>    - Returned to the Hypervisor via RTAS "stop-self" call.
+>>>>
+>>>> This is controlled by the kernel boot parameter "cede_offline=on/off".
+>>>>
+>>>> By default the offlined CPUs enter extended cede.
+>>> 
+>>> Since commit 3aa565f53c39 ("powerpc/pseries: Add hooks to put the CPU into an appropriate offline state") (Nov 2009)
+>>> 
+>>> Which you wrote :)
+>>> 
+>>> Why was that wrong?
+>>> 
+>>>> The PHYP hypervisor considers CPUs in extended cede to be "active"
+>>>> since the CPUs are still under the control fo the Linux Guests. Hence, when we change the
+>>>> SMT modes by offlining the secondary CPUs, the PURR and the RWMR SPRs
+>>>> will continue to count the values for offlined CPUs in extended cede
+>>>> as if they are online.
+>>>>
+>>>> One of the expectations with PURR is that the for an interval of time,
+>>>> the sum of the PURR increments across the online CPUs of a core should
+>>>> equal the number of timebase ticks for that interval.
+>>>>
+>>>> This is currently not the case.
+>>> 
+>>> But why does that matter? It's just some accounting stuff, does it
+>>> actually break something meaningful?
+>>
+>> Yes, this broke lparstat at the very least (though its quite unfortunate 
+>> we took so long to notice).
 > 
-> Recently we landed seccomp support for SECCOMP_RET_USER_NOTIF (cf. [4])
-> which enables a process (watchee) to retrieve an fd for its seccomp
-> filter. This fd can then be handed to another (usually more privileged)
-> process (watcher). The watcher will then be able to receive seccomp
-> messages about the syscalls having been performed by the watchee.
+> By "so long" you mean 10 years?
 > 
-> This feature is heavily used in some userspace workloads. For example,
-> it is currently used to intercept mknod() syscalls in user namespaces
-> aka in containers.
-> The mknod() syscall can be easily filtered based on dev_t. This allows
-> us to only intercept a very specific subset of mknod() syscalls.
-> Furthermore, mknod() is not possible in user namespaces toto coelo and
-> so intercepting and denying syscalls that are not in the whitelist on
-> accident is not a big deal. The watchee won't notice a difference.
+> Also I've never heard of lparstat, but I assume it's one of these tools
+> that's meant to behave like the AIX equivalent?
+
+Yes, and yes. lparstat is part of powerpc-utils.
+
 > 
-> In contrast to mknod(), a lot of other syscall we intercept (e.g.
-> setxattr()) cannot be easily filtered like mknod() because they have
-> pointer arguments. Additionally, some of them might actually succeed in
-> user namespaces (e.g. setxattr() for all "user.*" xattrs). Since we
-> currently cannot tell seccomp to continue from a user notifier we are
-> stuck with performing all of the syscalls in lieu of the container. This
-> is a huge security liability since it is extremely difficult to
-> correctly assume all of the necessary privileges of the calling task
-> such that the syscall can be successfully emulated without escaping
-> other additional security restrictions (think missing CAP_MKNOD for
-> mknod(), or MS_NODEV on a filesystem etc.). This can be solved by
-> telling seccomp to resume the syscall.
+> If it's been "broken" for 10 years and no one noticed, I'd argue the
+> current behaviour is now "correct" and fixing it would actually be a
+> breakage :)
+
+:)
+More on this below...
+
 > 
-> One thing that came up in the discussion was the problem that another
-> thread could change the memory after userspace has decided to let the
-> syscall continue which is a well known TOCTOU with seccomp which is
-> present in other ways already.
-> The discussion showed that this feature is already very useful for any
-> syscall without pointer arguments. For any accidentally intercepted
-> non-pointer syscall it is safe to continue.
-> For syscalls with pointer arguments there is a race but for any cautious
-> userspace and the main usec cases the race doesn't matter. The notifier
-> is intended to be used in a scenario where a more privileged watcher
-> supervises the syscalls of lesser privileged watchee to allow it to get
-> around kernel-enforced limitations by performing the syscall for it
-> whenever deemed save by the watcher. Hence, if a user tricks the watcher
-> into allowing a syscall they will either get a deny based on
-> kernel-enforced restrictions later or they will have changed the
-> arguments in such a way that they manage to perform a syscall with
-> arguments that they would've been allowed to do anyway.
-> In general, it is good to point out again, that the notifier fd was not
-> intended to allow userspace to implement a security policy but rather to
-> work around kernel security mechanisms in cases where the watcher knows
-> that a given action is safe to perform.
+>> With SMT disabled, and under load:
+>>   $ sudo lparstat 1 10
+>>
+>>   System Configuration
+>>   type=Shared mode=Uncapped smt=Off lcpu=2 mem=7759616 kB cpus=6 ent=1.00 
+>>
+>>   %user  %sys %wait    %idle    physc %entc lbusy  vcsw phint
+>>   ----- ----- -----    -----    ----- ----- ----- ----- -----
+>>   100.00  0.00  0.00     0.00     1.10 110.00 100.00 128784460     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128784860     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128785260     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128785662     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128786062     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128786462     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128786862     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128787262     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128787664     0
+>>   100.00  0.00  0.00     0.00     1.07 107.00 100.00 128788064     0
 > 
-> /* References */
-> [1]: https://linuxplumbersconf.org/event/4/contributions/560
-> [2]: https://linuxplumbersconf.org/event/4/contributions/477
-> [3]: https://lore.kernel.org/r/20190719093538.dhyopljyr5ns33qx@brauner.io
-> [4]: commit 6a21cc50f0c7 ("seccomp: add a return code to trap to userspace")
+> What about that is wrong?
+
+The 'physc' column represents cpu usage in units of physical cores.  
+With 2 virtual cores ('lcpu=2') in uncapped, shared processor mode, we 
+expect this to be closer to 2 when fully loaded (and spare capacity 
+elsewhere in the system).
+
 > 
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Will Drewry <wad@chromium.org>
-> Cc: Tycho Andersen <tycho@tycho.ws>
-> CC: Tyler Hicks <tyhicks@canonical.com>
-> Cc: Jann Horn <jannh@google.com>
-> ---
->  include/uapi/linux/seccomp.h |  2 ++
->  kernel/seccomp.c             | 24 ++++++++++++++++++++----
->  2 files changed, 22 insertions(+), 4 deletions(-)
+>> With cede_offline=off:
+>>   $ sudo lparstat 1 10
+>>
+>>   System Configuration
+>>   type=Shared mode=Uncapped smt=Off lcpu=2 mem=7759616 kB cpus=6 ent=1.00 
+>>
+>>   %user  %sys %wait    %idle    physc %entc lbusy  vcsw phint
+>>   ----- ----- -----    -----    ----- ----- ----- ----- -----
+>>   100.00  0.00  0.00     0.00     1.94 194.00 100.00 128961588     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128961988     0
+>>   100.00  0.00  0.00     0.00      inf   inf 100.00 128962392     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128962792     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128963192     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128963592     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128963992     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128964392     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128964792     0
+>>   100.00  0.00  0.00     0.00     1.91 191.00 100.00 128965194     0
+>>
+>> [The 'inf' values there show a different bug]
+>>
+>> Also, since we expose [S]PURR through sysfs, any tools that make use of 
+>> that directly are also affected due to this.
 > 
-> diff --git a/include/uapi/linux/seccomp.h b/include/uapi/linux/seccomp.h
-> index 90734aa5aa36..2c23b9aa6383 100644
-> --- a/include/uapi/linux/seccomp.h
-> +++ b/include/uapi/linux/seccomp.h
-> @@ -76,6 +76,8 @@ struct seccomp_notif {
->  	struct seccomp_data data;
->  };
->  
-> +#define SECCOMP_RET_USER_NOTIF_ALLOW 0x00000001
+> But again if we've had the current behaviour for 10 years then arguably
+> that's now the correct behaviour.
 
-nit: I'd like to avoid confusion here about what "family" these flags
-belong to. "SECCOMP_RET_..." is used for the cBPF filter return action
-value, so let's instead call this:
+That's a fair point, and probably again points to this area getting less 
+tested. One of the main reasons for this being caught now though, is 
+that there are workloads being tested under lower SMT levels now. So, I 
+suspect no one has been relying on this behavior and we can consider 
+this to be a bug.
 
-#define SECCOMP_USER_NOTIF_CONTINUE	BIT(0)
 
-I'm thinking of "continue" as slightly different from "allow", in the
-sense that I'd like to hint that this doesn't mean arguments could have
-been reliably "filtered" via user notification.
+Thanks,
+Naveen
 
-And at the same time, please add a giant comment about this in the
-header that details the purpose ("check if I should do something on
-behalf of the process") and not "is this safe to allow?", due to the
-argument parsing ToCToU.
-
-> -static void seccomp_do_user_notification(int this_syscall,
-> +static bool seccomp_do_user_notification(int this_syscall,
-
-I'd prefer this stay an "int", just to keep it similar to the other
-functions that are checked in __seccomp_filter().
-
-> +	/* perform syscall */
-
-nit: expand this commit to something like "Userspace requests we
-continue and perform syscall".
-
-> +	if (flags & SECCOMP_RET_USER_NOTIF_ALLOW)
-> +		return false;
-
-return 0;
-
-> +
->  	syscall_set_return_value(current, task_pt_regs(current),
->  				 err, ret);
-> +	return true;
-
-return -1;
-
-(This makes it look more like a "skip on failure")
-
-> +	if (resp.flags & ~SECCOMP_RET_USER_NOTIF_ALLOW)
-> +		return -EINVAL;
-> +
-> +	if ((resp.flags & SECCOMP_RET_USER_NOTIF_ALLOW) &&
-> +	    (resp.error || resp.val))
->  		return -EINVAL;
-
-Ah yeah, good idea.
-
-Beyond these nits, yes, looks good and should help the usability of this
-feature. Thanks for getting it written and tested!
-
--- 
-Kees Cook
