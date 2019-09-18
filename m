@@ -2,327 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24459B6802
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 18:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C80BB6822
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 18:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731887AbfIRQ0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 12:26:13 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:45353 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbfIRQ0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 12:26:12 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46YQMh22Z3z9v1BX;
-        Wed, 18 Sep 2019 18:26:08 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=pyjpbDaw; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 9Y0Ay24P9bpW; Wed, 18 Sep 2019 18:26:08 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46YQMh0fTtz9v1BW;
-        Wed, 18 Sep 2019 18:26:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1568823968; bh=UgJ2Vcem+ArVILPonqQdgD2fYngRPmGDyA7SB2VX37Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pyjpbDawotebglj/v7nzS+SZ56zwKmvl8UJSMakTVDe9dCV/6GjdddMgM+KIG8OC1
-         kUNBRNCHr1KKmqumixwnPv1WdKVo4bZRwpWAfR0t7CPiiV7bBbJcoAYH63FALSqftC
-         hwtslTTRJYeOY7/1Aq03nzD37Ir1v6MuTgWj7N0c=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8FA068B93C;
-        Wed, 18 Sep 2019 18:26:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id WQXgO4akDWdq; Wed, 18 Sep 2019 18:26:09 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F41388B937;
-        Wed, 18 Sep 2019 18:26:03 +0200 (CEST)
-Subject: Re: [PATCH V2 2/2] mm/pgtable/debug: Add test validating architecture
- page table helpers
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Matthew Wilcox <willy@infradead.org>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-snps-arc@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1568268173-31302-1-git-send-email-anshuman.khandual@arm.com>
- <1568268173-31302-3-git-send-email-anshuman.khandual@arm.com>
- <ab0ca38b-1e4f-b636-f8b4-007a15903984@c-s.fr>
- <502c497a-9bf1-7d2e-95f2-cfebcd9cf1d9@arm.com>
- <95ed9d92-dd43-4c45-2e52-738aed7f2fb5@c-s.fr>
- <f872e6f4-a5cb-069d-2034-78961930cb9f@arm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <64504101-d9dd-f273-02f9-e9a8b178eecc@c-s.fr>
-Date:   Wed, 18 Sep 2019 18:26:03 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2387618AbfIRQ25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 12:28:57 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46753 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387520AbfIRQ2z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 12:28:55 -0400
+Received: by mail-wr1-f68.google.com with SMTP id o18so43845wrv.13;
+        Wed, 18 Sep 2019 09:28:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+0ntiwXvSESB7iaOoEKUuKoBv5qu2y9dPZxgAsEks4E=;
+        b=j6O8OoORqIJ+c0lJiu2c0OGPlmDy8cgQxd+S7wBYq/FYyzcR6HqvTzfPGNAAmF0LzZ
+         xJQlouhwYeHYD04CjRw/xergiWhEqN5sCG7UsEMr2/voKxYCmw9lyK7z4lytRKhbR4DV
+         PemaPb9jBUkuK4/mtg/oB/F8Bqc2mX43MHnLsSzRbkUDeokIVGpgSVIMyx8hdU9MX7P1
+         lCRUjZmozXQZ0SLXlHSJRoGFind96cnphL2WyyFIxEunuaT/SgtjBOGcNF7mjgW8pFoQ
+         bU4X0T03b9hTDi9z9se2KZ6m67rxguHeNSm4o92Far5TP/mKg3VDC4SB5JA70aJlfl10
+         6pmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+0ntiwXvSESB7iaOoEKUuKoBv5qu2y9dPZxgAsEks4E=;
+        b=kBDbE+rT9GL15soSBwcIMcnZS7Ro7ZrDpO98Q7oK/w7uPDcGoAdmE8jz39tXVSG7aA
+         3Q+d7o00lZKAav3mqwHDN21ZIQIFXSAqX2hCYUQpojRrbkMkvFp8gMHIAU8KI+YQoHoZ
+         nNlIft2xJlfBZm6OV9Z4JjYcmqMFGEkcZ93mBGJd3ICOy1GComrwy5FAcbVpDdAJj+FW
+         7phNtyibiA0wLD8sqoEjyteRsLtvwUtiBg1UK+hvky890g7vAusTio9T3g5Bv8yMeckI
+         nW2SOGr2y9wldJvp13T3F2376If8+KbbtB26eQZqAgtKirE0yFOp5N3pKhXe4C3eId+j
+         E1gA==
+X-Gm-Message-State: APjAAAXn6WRFuzFyG5mExgzFWupJFgwSW6uvC74c6p8yefzdmd0FCjaM
+        7R2nhwP9+iQZtiLOAd8Pw2A=
+X-Google-Smtp-Source: APXvYqxbwdaVzV2zUxqpvvbAC/gTxl28+HYZmjcG5MkZXAtHbqI8L3SfMIAUypBWLrwxDsvMzfKAoQ==
+X-Received: by 2002:a5d:49c3:: with SMTP id t3mr3940934wrs.151.1568824132964;
+        Wed, 18 Sep 2019 09:28:52 -0700 (PDT)
+Received: from bfk-3-vm8-e4.cs.niisi.ras.ru (t109.niisi.ras.ru. [193.232.173.109])
+        by smtp.gmail.com with ESMTPSA id q19sm11468214wra.89.2019.09.18.09.28.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2019 09:28:52 -0700 (PDT)
+From:   Peter Mamonov <pmamonov@gmail.com>
+To:     andrew@lunn.ch
+Cc:     Peter Mamonov <pmamonov@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net v3] net/phy: fix DP83865 10 Mbps HDX loopback disable function
+Date:   Wed, 18 Sep 2019 19:27:55 +0300
+Message-Id: <20190918162755.24024-1-pmamonov@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <f872e6f4-a5cb-069d-2034-78961930cb9f@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+According to the DP83865 datasheet "the 10 Mbps HDX loopback can be
+disabled in the expanded memory register 0x1C0.1". The driver erroneously
+used bit 0 instead of bit 1.
 
+Fixes: 4621bf129856 ("phy: Add file missed in previous commit.")
+Signed-off-by: Peter Mamonov <pmamonov@gmail.com>
+---
+Changes since v2:
+- None
 
-Le 18/09/2019 à 07:04, Anshuman Khandual a écrit :
-> 
-> 
-> On 09/13/2019 03:31 PM, Christophe Leroy wrote:
->>
->>
->> Le 13/09/2019 à 11:02, Anshuman Khandual a écrit :
->>>
->>>>> +#if !defined(__PAGETABLE_PMD_FOLDED) && !defined(__ARCH_HAS_4LEVEL_HACK)
->>>>
->>>> #ifdefs have to be avoided as much as possible, see below
->>>
->>> Yeah but it has been bit difficult to avoid all these $ifdef because of the
->>> availability (or lack of it) for all these pgtable helpers in various config
->>> combinations on all platforms.
->>
->> As far as I can see these pgtable helpers should exist everywhere at least via asm-generic/ files.
-> 
-> But they might not actually do the right thing.
-> 
->>
->> Can you spot a particular config which fails ?
-> 
-> Lets consider the following example (after removing the $ifdefs around it)
-> which though builds successfully but fails to pass the intended test. This
-> is with arm64 config 4K pages sizes with 39 bits VA space which ends up
-> with a 3 level page table arrangement.
-> 
-> static void __init p4d_clear_tests(p4d_t *p4dp)
-> {
->          p4d_t p4d = READ_ONCE(*p4dp);
+Changes since v1:
+- use BIT() macro
+- fix debug message as well
 
-My suggestion was not to completely drop the #ifdef but to do like you 
-did in pgd_clear_tests() for instance, ie to add the following test on 
-top of the function:
+ drivers/net/phy/national.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-	if (mm_pud_folded(mm) || is_defined(__ARCH_HAS_5LEVEL_HACK))
-		return;
+diff --git a/drivers/net/phy/national.c b/drivers/net/phy/national.c
+index a221dd552c3c..a5bf0874c7d8 100644
+--- a/drivers/net/phy/national.c
++++ b/drivers/net/phy/national.c
+@@ -105,14 +105,17 @@ static void ns_giga_speed_fallback(struct phy_device *phydev, int mode)
+ 
+ static void ns_10_base_t_hdx_loopack(struct phy_device *phydev, int disable)
+ {
++	u16 lb_dis = BIT(1);
++
+ 	if (disable)
+-		ns_exp_write(phydev, 0x1c0, ns_exp_read(phydev, 0x1c0) | 1);
++		ns_exp_write(phydev, 0x1c0,
++			     ns_exp_read(phydev, 0x1c0) | lb_dis);
+ 	else
+ 		ns_exp_write(phydev, 0x1c0,
+-			     ns_exp_read(phydev, 0x1c0) & 0xfffe);
++			     ns_exp_read(phydev, 0x1c0) & ~lb_dis);
+ 
+ 	pr_debug("10BASE-T HDX loopback %s\n",
+-		 (ns_exp_read(phydev, 0x1c0) & 0x0001) ? "off" : "on");
++		 (ns_exp_read(phydev, 0x1c0) & lb_dis) ? "off" : "on");
+ }
+ 
+ static int ns_config_init(struct phy_device *phydev)
+-- 
+2.23.0
 
-> 
->          p4d = __p4d(p4d_val(p4d) | RANDOM_ORVALUE);
->          WRITE_ONCE(*p4dp, p4d);
->          p4d_clear(p4dp);
->          p4d = READ_ONCE(*p4dp);
->          WARN_ON(!p4d_none(p4d));
-> }
-> 
-> The following test hits an error at WARN_ON(!p4d_none(p4d))
-> 
-> [   16.757333] ------------[ cut here ]------------
-> [   16.758019] WARNING: CPU: 11 PID: 1 at mm/arch_pgtable_test.c:187 arch_pgtable_tests_init+0x24c/0x474
-> [   16.759455] Modules linked in:
-> [   16.759952] CPU: 11 PID: 1 Comm: swapper/0 Not tainted 5.3.0-next-20190916-00005-g61c218153bb8-dirty #222
-> [   16.761449] Hardware name: linux,dummy-virt (DT)
-> [   16.762185] pstate: 00400005 (nzcv daif +PAN -UAO)
-> [   16.762964] pc : arch_pgtable_tests_init+0x24c/0x474
-> [   16.763750] lr : arch_pgtable_tests_init+0x174/0x474
-> [   16.764534] sp : ffffffc011d7bd50
-> [   16.765065] x29: ffffffc011d7bd50 x28: ffffffff1756bac0
-> [   16.765908] x27: ffffff85ddaf3000 x26: 00000000000002e8
-> [   16.766767] x25: ffffffc0111ce000 x24: ffffff85ddaf32e8
-> [   16.767606] x23: ffffff85ddaef278 x22: 00000045cc844000
-> [   16.768445] x21: 000000065daef003 x20: ffffffff17540000
-> [   16.769283] x19: ffffff85ddb60000 x18: 0000000000000014
-> [   16.770122] x17: 00000000980426bb x16: 00000000698594c6
-> [   16.770976] x15: 0000000066e25a88 x14: 0000000000000000
-> [   16.771813] x13: ffffffff17540000 x12: 000000000000000a
-> [   16.772651] x11: ffffff85fcfd0a40 x10: 0000000000000001
-> [   16.773488] x9 : 0000000000000008 x8 : ffffffc01143ab26
-> [   16.774336] x7 : 0000000000000000 x6 : 0000000000000000
-> [   16.775180] x5 : 0000000000000000 x4 : 0000000000000000
-> [   16.776018] x3 : ffffffff1756bbe8 x2 : 000000065daeb003
-> [   16.776856] x1 : 000000000065daeb x0 : fffffffffffff000
-> [   16.777693] Call trace:
-> [   16.778092]  arch_pgtable_tests_init+0x24c/0x474
-> [   16.778843]  do_one_initcall+0x74/0x1b0
-> [   16.779458]  kernel_init_freeable+0x1cc/0x290
-> [   16.780151]  kernel_init+0x10/0x100
-> [   16.780710]  ret_from_fork+0x10/0x18
-> [   16.781282] ---[ end trace 042e6c40c0a3b038 ]---
-> 
-> On arm64 (4K page size|39 bits VA|3 level page table)
-> 
-> #elif CONFIG_PGTABLE_LEVELS == 3	/* Applicable here */
-> #define __ARCH_USE_5LEVEL_HACK
-> #include <asm-generic/pgtable-nopud.h>
-> 
-> Which pulls in
-> 
-> #include <asm-generic/pgtable-nop4d-hack.h>
-> 
-> which pulls in
-> 
-> #include <asm-generic/5level-fixup.h>
-> 
-> which defines
-> 
-> static inline int p4d_none(p4d_t p4d)
-> {
->          return 0;
-> }
-> 
-> which will invariably trigger WARN_ON(!p4d_none(p4d)).
-> 
-> Similarly for next test p4d_populate_tests() which will always be
-> successful because p4d_bad() invariably returns negative.
-> 
-> static inline int p4d_bad(p4d_t p4d)
-> {
->          return 0;
-> }
-> 
-> static void __init p4d_populate_tests(struct mm_struct *mm, p4d_t *p4dp,
->                                        pud_t *pudp)
-> {
->          p4d_t p4d;
-> 
->          /*
->           * This entry points to next level page table page.
->           * Hence this must not qualify as p4d_bad().
->           */
->          pud_clear(pudp);
->          p4d_clear(p4dp);
->          p4d_populate(mm, p4dp, pudp);
->          p4d = READ_ONCE(*p4dp);
->          WARN_ON(p4d_bad(p4d));
-> }
-> 
-> We should not run these tests for the above config because they are
-> not applicable and will invariably produce same result.
-> 
->>
->>>
->>>>
->>
->> [...]
->>
->>>>> +#if !defined(__PAGETABLE_PUD_FOLDED) && !defined(__ARCH_HAS_5LEVEL_HACK)
->>>>
->>>> The same can be done here.
->>>
->>> IIRC not only the page table helpers but there are data types (pxx_t) which
->>> were not present on various configs and these wrappers help prevent build
->>> failures. Any ways will try and see if this can be improved further. But
->>> meanwhile if you have some suggestions, please do let me know.
->>
->> pgt_t and pmd_t are everywhere I guess.
->> then pud_t and p4d_t have fallbacks in asm-generic files.
-> 
-> Lets take another example where it fails to compile. On arm64 with 16K
-> page size, 48 bits VA, 4 level page table arrangement in the following
-> test, pgd_populate() does not have the required signature.
-> 
-> static void pgd_populate_tests(struct mm_struct *mm, pgd_t *pgdp, p4d_t *p4dp)
-> {
->          pgd_t pgd;
-> 
->          if (mm_p4d_folded(mm))
->                  return;
-> 
->         /*
->           * This entry points to next level page table page.
->           * Hence this must not qualify as pgd_bad().
->           */
->          p4d_clear(p4dp);
->          pgd_clear(pgdp);
->          pgd_populate(mm, pgdp, p4dp);
->          pgd = READ_ONCE(*pgdp);
->          WARN_ON(pgd_bad(pgd));
-> }
-> 
-> mm/arch_pgtable_test.c: In function ‘pgd_populate_tests’:
-> mm/arch_pgtable_test.c:254:25: error: passing argument 3 of ‘pgd_populate’ from incompatible pointer type [-Werror=incompatible-pointer-types]
->    pgd_populate(mm, pgdp, p4dp);
->                           ^~~~
-> In file included from mm/arch_pgtable_test.c:27:0:
-> ./arch/arm64/include/asm/pgalloc.h:81:20: note: expected ‘pud_t * {aka struct <anonymous> *}’ but argument is of type ‘pgd_t * {aka struct <anonymous> *}’
->   static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgdp, pud_t *pudp)
-> 
-> The build failure is because p4d_t * maps to pgd_t * but the applicable
-> (it does not fallback on generic ones) pgd_populate() expects a pud_t *.
-> 
-> Except for archs which have 5 level page able, pgd_populate() always accepts
-> lower level page table pointers as the last argument as they dont have that
-> many levels.
-> 
-> arch/x86/include/asm/pgalloc.h:static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgd, p4d_t *p4d)
-> arch/s390/include/asm/pgalloc.h:static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgd, p4d_t *p4d)
-> 
-> But others
-> 
-> arch/arm64/include/asm/pgalloc.h:static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgdp, pud_t *pudp)
-> arch/m68k/include/asm/motorola_pgalloc.h:static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmd)
-> arch/mips/include/asm/pgalloc.h:static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgd, pud_t *pud)
-> arch/powerpc/include/asm/book3s/64/pgalloc.h:static inline void pgd_populate(struct mm_struct *mm, pgd_t *pgd, pud_t *pud)
-> 
-> I remember going through all these combinations before arriving at the
-> current state of #ifdef exclusions. Probably, to solved this all platforms
-> have to define pxx_populate() helpers assuming they support 5 level page
-> table.
-> 
->>
->> So it shouldn't be an issue. Maybe if a couple of arches miss them, the best would be to fix the arches, since that's the purpose of your testsuite isn't it ?
-> 
-> The run time failures as explained previously is because of the folding which
-> needs to be protected as they are not even applicable. The compile time
-> failures are because pxx_populate() signatures are platform specific depending
-> on how many page table levels they really support.
-> 
-
-So IIUC, the compiletime problem is around __ARCH_HAS_5LEVEL_HACK. For 
-all #if !defined(__PAGETABLE_PXX_FOLDED), something equivalent to the 
-following should make the trick.
-
-	if (mm_pxx_folded())
-		return;
-
-
-For the __ARCH_HAS_5LEVEL_HACK stuff, I think we should be able to 
-regroup all impacted functions inside a single #ifdef 
-__ARCH_HAS_5LEVEL_HACK
-
-Christophe
