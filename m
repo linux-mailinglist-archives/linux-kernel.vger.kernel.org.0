@@ -2,88 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A711B612C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70751B6122
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:12:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbfIRKM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 06:12:29 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55460 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729523AbfIRKM2 (ORCPT
+        id S1729489AbfIRKMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 06:12:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44519 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728672AbfIRKMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 06:12:28 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8IA8rhU032550;
-        Wed, 18 Sep 2019 10:12:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=LEpQP4ubqGDOxrZ07fkmo0XB1uZY3ye+ycbFOa2WTFQ=;
- b=ZNYguXFAW4X5rVPmlbsLOv5q4z5EnXNDoWgWzQ8VGl0aWuAYHurgtyZfffwHJENcm/tU
- E1vOPmnZhGiiDvLstgKDgdjTC4YhhFpv8RiLySqEvvCujMijFxTlMhoe66R4skEEFXfQ
- OuvjFkWTsVIPCJ4tsZAGGrzSdwdIFFWPxMxTN5/TEnyZCz7vkB0khbYJZ9/25jZR3VnV
- Y3Xy2qJU3Vx4KQx2WlXZRKGQ9zZP2PiPx577pQBfFMgotBDAwfAxE09L3u8n4vqCEhQ8
- WKIK7d4JH8kBo74LWgSeobgQ96J58juvJ1h6KaMtI6wWPvy6QXbMFkzW+FVCzqNr402R GA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2v385e2sh4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 10:12:22 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8IA93XP090840;
-        Wed, 18 Sep 2019 10:10:21 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2v37m9ab71-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 10:10:21 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8IAAK9U002026;
-        Wed, 18 Sep 2019 10:10:20 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 18 Sep 2019 03:10:19 -0700
-Date:   Wed, 18 Sep 2019 13:10:11 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Aliasgar Surti <aliasgar.surti500@gmail.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drivers:staging:rtl8723bs: Removed unneeded variables
-Message-ID: <20190918101011.GE2959@kadam>
-References: <1568798749-9855-1-git-send-email-aliasgar.surti500@gmail.com>
+        Wed, 18 Sep 2019 06:12:01 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iAWwG-0002Zr-Ek; Wed, 18 Sep 2019 10:11:56 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Robin van der Gracht <robin@protonic.nl>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] can: fix resource leak of skb on error return paths
+Date:   Wed, 18 Sep 2019 11:11:56 +0100
+Message-Id: <20190918101156.24370-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1568798749-9855-1-git-send-email-aliasgar.surti500@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=684
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909180101
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9383 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=781 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909180101
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 02:55:49PM +0530, Aliasgar Surti wrote:
-> From: Aliasgar Surti <aliasgar.surti500@gmail.com>
-> 
-> coccicheck reported warning for unneeded variable used.
-> 
-> This patch removes the unneeded variables.
-> 
-> Signed-off-by: Aliasgar Surti <aliasgar.surti500@gmail.com>
-> ---
-> v2: removed unneeded functions and replaced them with NULL in function array.
+From: Colin Ian King <colin.king@canonical.com>
 
+Currently the error return paths do not free skb and this results
+in a memory leak. Fix this by freeing them before the return.
 
-Thanks!
+Addresses-Coverity: ("Resource leak")
+Fixes: 9d71dd0c7009 ("can: add support of SAE J1939 protocol")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/can/j1939/socket.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/net/can/j1939/socket.c b/net/can/j1939/socket.c
+index 37c1040bcb9c..5c6eabcb5df1 100644
+--- a/net/can/j1939/socket.c
++++ b/net/can/j1939/socket.c
+@@ -909,8 +909,10 @@ void j1939_sk_errqueue(struct j1939_session *session,
+ 	memset(serr, 0, sizeof(*serr));
+ 	switch (type) {
+ 	case J1939_ERRQUEUE_ACK:
+-		if (!(sk->sk_tsflags & SOF_TIMESTAMPING_TX_ACK))
++		if (!(sk->sk_tsflags & SOF_TIMESTAMPING_TX_ACK)) {
++			kfree_skb(skb);
+ 			return;
++		}
+ 
+ 		serr->ee.ee_errno = ENOMSG;
+ 		serr->ee.ee_origin = SO_EE_ORIGIN_TIMESTAMPING;
+@@ -918,8 +920,10 @@ void j1939_sk_errqueue(struct j1939_session *session,
+ 		state = "ACK";
+ 		break;
+ 	case J1939_ERRQUEUE_SCHED:
+-		if (!(sk->sk_tsflags & SOF_TIMESTAMPING_TX_SCHED))
++		if (!(sk->sk_tsflags & SOF_TIMESTAMPING_TX_SCHED)) {
++			kfree_skb(skb);
+ 			return;
++		}
+ 
+ 		serr->ee.ee_errno = ENOMSG;
+ 		serr->ee.ee_origin = SO_EE_ORIGIN_TIMESTAMPING;
+-- 
+2.20.1
 
