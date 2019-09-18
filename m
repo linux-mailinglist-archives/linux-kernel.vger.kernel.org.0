@@ -2,93 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE645B618A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42DACB6188
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbfIRKiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 06:38:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39855 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbfIRKiy (ORCPT
+        id S1729748AbfIRKib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 06:38:31 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44637 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbfIRKib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 06:38:54 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v17so1962059wml.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 03:38:53 -0700 (PDT)
+        Wed, 18 Sep 2019 06:38:31 -0400
+Received: by mail-io1-f65.google.com with SMTP id j4so14874754iog.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 03:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yYuOfi6SRpI0pisf6okbAWwjxdq6TT7Dd4t8NehGj3k=;
-        b=P8PJaeWyFpty1cB9YHCqKvCTTWMWK0nWXQ+nzYkZdFv0c9YfzcSZGX6CJ7KYmTtUDF
-         liF3SCWikSVOf4EiWOrUEY463Tt7EGH6/SWNIa1yChhgvRNOzBFZUNH8kLE4ZgMKnx/+
-         TCaNRDfKDUQqVO0caACcS9V6xUwNMLj1ApPIn7zHdMP0MMkj4cVKWzGZt7Xj6FITUuml
-         LzK8n7fOHGaEAwU6mncYnFuMt7EIDEL2iI3Xiq4oG2pmV/ycr5l5pVTku0ItoDzb7Fyd
-         9pK9d/3a0E/jBIy3sYbXF90d/coyoH3lDfZFCL+qsF3RFHhv6UsAuWHwUhnvHNw4erMq
-         rnaA==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
+        b=sYmpxKsgWLn+4SmMFn6oPgwqGFSsjioO5J9FnGTp4La/3jxAbfTrMez2Qg1AAMfcW/
+         K4vDXcvklrNGfmBv8Jrg+EG8AfBvcMoY5WxG4gJTfXsvJ7x8AAeYuHXJ473QSMakj1sJ
+         pbTNT2+NkRqUPLbxt0KQybC84Gqm/JOqcI9ci4Ah1Ss12oFF/1WQzBVrsEq+mj3BGQ5z
+         V77ksOWZHS61l1RIjieCWcVTUooOSi1Qpz9EoL7UvZBZspB3ptILLzBECpi/oRwqcSAk
+         y/WIOToxh+ZW33iBfP93IbNnAXI/OFMvvoeSIJrlHKnGfqozSsDIUTbXDqD0ihkbm1lC
+         P4ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yYuOfi6SRpI0pisf6okbAWwjxdq6TT7Dd4t8NehGj3k=;
-        b=J0I5MKkpQdkN1j3SJrQ6kxiReqFAwRxxUk6MfLhC//QZdWHiTqCP8nN9ptvU9C822V
-         SLpsvYhx7kgJvIEojaPZOsQfOn5WVTSK+JLTOEVQ3o3qlz5VjJQrCceZB7SME1trhmL+
-         WufVeeqHxb61zqJwZUBlwezqTdO4a88pEfRocao2WCsugcpzKPp5n4iMvoYTpeBaZugP
-         b7BMU2PgezihWDl5VaxC9WjKHDTKOq/4ChkpN17qeUJye81pceq7pBeLwTXAHmh3Sg0/
-         tJSlj9Gl5zGIPSG2FAIjI5xOisl2le6cgzTgJ11yLMqJHEV5pO2/C/x27CDDSWaBUFul
-         gawA==
-X-Gm-Message-State: APjAAAWPu9ztbupAtDtmuSBHfrAUHrHR77CW8w1Z2Gvaq8ZfflrhvByU
-        wVeGy78QjpQJSXNeLPb4S+uXyWFhskisbw==
-X-Google-Smtp-Source: APXvYqyiY17RMt+LzMSEzkyulXEt5507TcTU9m37clIy3bS1NeFO+C7SqXCv51y3xJGJDfG+KnoKfQ==
-X-Received: by 2002:a1c:c189:: with SMTP id r131mr2301208wmf.153.1568803132510;
-        Wed, 18 Sep 2019 03:38:52 -0700 (PDT)
-Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
-        by smtp.gmail.com with ESMTPSA id a13sm12721867wrf.73.2019.09.18.03.38.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 03:38:52 -0700 (PDT)
-From:   Alessio Balsini <balsini@android.com>
-To:     linux-block@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Alessio Balsini <balsini@android.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] block: Fix implicit unsigned to signed conversion
-Date:   Wed, 18 Sep 2019 11:38:28 +0100
-Message-Id: <20190918103828.257631-1-balsini@android.com>
-X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=FmGHNpejQ29nIiQ+vBc6/ce+Q7SqcsDKzIUla6egsaM=;
+        b=gnjfNzlJqvss51at6YOxzSh5xh62udEvTVsNT5i1qUuFvtznjQt2gN/HpvK+kn2MP7
+         w+U6KmDfw31RWxT7kWDY2BPyBJo5ldWO3MNPfH6lonKZWublY8lgSL9SQgbDOF+pk+Wy
+         7jgcDrL7FTMv7e3GITO1QXhYfHVfEL6sx7DcnohxiXR8irYPMWxCoc1yvY3jLWNV6huF
+         3UAQCE9X+cJyhETsvoANUoH/IEBZE6+ni8MDD9bJwwpPBHJ9h/gplBijf3f/3wFbfi4m
+         CRMeuotxIJbEazfSYryLm4GIenlsy2QDFcokeRHVo2bSootO35BNv+EOars7jmSA7PoT
+         YUCg==
+X-Gm-Message-State: APjAAAXM/mW+49Z83ReWMU614ABqsszOoXMaOfBxu1bz198YVupFaJ1S
+        gpDTUszjsNAKdrQQRkjw1bLj3XbhCXJHwTILqu0=
+X-Google-Smtp-Source: APXvYqyma2M1yftzYKc92yVepDBICfDQb3GPzfSBYgKUu7/NDro8z31JxiXaVEFsCdiEqsrLuah6UPRvNl2YvWGlbfU=
+X-Received: by 2002:a05:6638:928:: with SMTP id 8mr3989260jak.124.1568803110525;
+ Wed, 18 Sep 2019 03:38:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:9403:0:0:0:0:0 with HTTP; Wed, 18 Sep 2019 03:38:30
+ -0700 (PDT)
+From:   Amidal Serge <sergeamidal01@gmail.com>
+Date:   Wed, 18 Sep 2019 11:38:30 +0100
+Message-ID: <CA+aY+6r3J6mCDu6xKMASYw9RtMs3aO5y1+7QA5aZUO2iXCUHhw@mail.gmail.com>
+Subject: Bonjour
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An unsigned integer variable may be assigned negative values, and is
-returned by the function with an implicit conversion to signed.  Besides
-the implicit conversion at return time for which the variable
-representation is fine and there is no variable manipulation that may
-lead to bugs in the current code base, this is a conceptual error.
-
-Fix by changing the variable type from unsigned to signed.
-
-Signed-off-by: Alessio Balsini <balsini@android.com>
-Cc: Jens Axboe <axboe@kernel.dk>
----
- block/blk-settings.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 6bd1e3b082d8..c76c25c45869 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -496,7 +496,8 @@ EXPORT_SYMBOL(blk_queue_stack_limits);
- int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
- 		     sector_t start)
- {
--	unsigned int top, bottom, alignment, ret = 0;
-+	unsigned int top, bottom, alignment;
-+	int ret = 0;
- 
- 	t->max_sectors = min_not_zero(t->max_sectors, b->max_sectors);
- 	t->max_hw_sectors = min_not_zero(t->max_hw_sectors, b->max_hw_sectors);
--- 
-2.23.0.237.gc6a4ce50a0-goog
-
+Hello
+ I need your urgent assistance in the transfer of an abandoned funds
+on your account within 10-14 days if you are interested, respond to me
+with your information for more details. your name and surname:-. your
+country:-. your phone number. :- .
+ Please respond to this email address (sergeamidal@gmail.com)
+ Best regards Amidal
