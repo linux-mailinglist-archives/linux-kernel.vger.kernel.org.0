@@ -2,112 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B32AB6323
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ECA7B6321
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:25:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731076AbfIRMZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:25:21 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:63943 "EHLO
+        id S1731059AbfIRMZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:25:09 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:30361 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731049AbfIRMZV (ORCPT
+        with ESMTP id S1727000AbfIRMZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:25:21 -0400
-X-UUID: 9d3bc28d9f83484a904cdbd2a09b560c-20190918
-X-UUID: 9d3bc28d9f83484a904cdbd2a09b560c-20190918
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        Wed, 18 Sep 2019 08:25:08 -0400
+X-UUID: f339eefe4923486fba72f75c7d7da6b4-20190918
+X-UUID: f339eefe4923486fba72f75c7d7da6b4-20190918
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <jitao.shi@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 765747428; Wed, 18 Sep 2019 20:24:51 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
- (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 18 Sep
- 2019 20:24:49 +0800
+        with ESMTP id 38987971; Wed, 18 Sep 2019 20:24:57 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 18 Sep
+ 2019 20:24:53 +0800
 Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
  MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Wed, 18 Sep 2019 20:24:49 +0800
+ 15.0.1395.4 via Frontend Transport; Wed, 18 Sep 2019 20:24:53 +0800
 From:   Jitao Shi <jitao.shi@mediatek.com>
 To:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
         <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
 CC:     <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
         <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
         <bibby.hsieh@mediatek.com>, <linux-mediatek@lists.infradead.org>,
         <ck.hu@mediatek.com>, <stonea168@163.com>,
         Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v6 6/8] drm/panel: support for boe,tv101wum-n53 wuxga dsi video mode panel
-Date:   Wed, 18 Sep 2019 20:24:20 +0800
-Message-ID: <20190918122422.17339-7-jitao.shi@mediatek.com>
+Subject: [PATCH v6 7/8] dt-bindings: display: panel: add AUO auo,b101uan08.3 panel documentation
+Date:   Wed, 18 Sep 2019 20:24:21 +0800
+Message-ID: <20190918122422.17339-8-jitao.shi@mediatek.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190918122422.17339-1-jitao.shi@mediatek.com>
 References: <20190918122422.17339-1-jitao.shi@mediatek.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-TM-SNTS-SMTP: 68ABDFB39E602B01DE4F249EF7E717C1950CB5F0A3727FEBEB945C81461B806A2000:8
+X-TM-AS-Product-Ver: SMEX-12.5.0.1684-8.5.1010-24918.004
+X-TM-AS-Result: No-3.344400-8.000000-10
+X-TMASE-MatchedRID: LDQTIb3AkScn3vOf0l6OFgPZZctd3P4By733NwuklsIHQvT9S3vHUDgK
+        6rBjXxyiwmiM4j3WsDwWIvAeOZ6lZBhzK7qAlTSLCLQsumV/5S9V3dLaYUoCPSS30GKAkBxWie3
+        MY7Xv0phqry+54H7wDufAOkxShVgK5TDi4+38dPYgCPGiZqtI8Gp5nbEBTsLkrNaeJrYvUQiKWS
+        pN2IMPKUPNs5J6pUBWmkLIyx+kbq+tsBhZwL3bDR23b+lJHvPAhdipnqZWlN6LT3esmGQfwEtTy
+        K8ZTWCGZI1BYYTjZ96AMuqetGVetr9k4V4N5ceA3QfwsVk0UbsIoUKaF27lxTdnwF1xCHJtKYQO
+        AmHjZDgD1LLVoxzeii+xQL3D9tGhAbtmaE6a4AM6sdVOraIqJAq56lBJ3DH63iB0sOu1KWw/OkL
+        s4PpignWznloeB3HaPQzwIbfiR5AMD9LTK+5Nny0c7FwZxihenqg/VrSZEiM=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--3.344400-8.000000
+X-TMASE-Version: SMEX-12.5.0.1684-8.5.1010-24918.004
+X-TM-SNTS-SMTP: DFD9AD0DC79652028ABED49A663A5FD45074D0DC07093303310F4DADCA87326C2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Boe,tv101wum-n53's connector is same as boe,tv101wum-nl6.
-The most codes can be reuse.
-So boe,tv101wum-n53 and boe,tv101wum-nl6 use one driver file.
-Add the different parts in driver data.
+Add dcumentation for auo,b101uan08.3, which is mipi dsi video panel
+and resolution is 1200x1920.
 
 Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
 ---
- .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ .../display/panel/auo,b101uan08.3.yaml        | 67 +++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/auo,b101uan08.3.yaml
 
-diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-index f80974778360..c757035ac09c 100644
---- a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-+++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-@@ -621,6 +621,34 @@ static const struct panel_desc auo_kd101n80_45na_desc = {
- 	.discharge_on_disable = true,
- };
- 
-+static const struct drm_display_mode boe_tv101wum_n53_default_mode = {
-+	.clock = 159833,
-+	.hdisplay = 1200,
-+	.hsync_start = 1200 + 114,
-+	.hsync_end = 1200 + 114 + 10,
-+	.htotal = 1200 + 114 + 10 + 40,
-+	.vdisplay = 1920,
-+	.vsync_start = 1920 + 19,
-+	.vsync_end = 1920 + 19 + 4,
-+	.vtotal = 1920 + 19 + 4 + 10,
-+	.vrefresh = 60,
-+	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-+};
+diff --git a/Documentation/devicetree/bindings/display/panel/auo,b101uan08.3.yaml b/Documentation/devicetree/bindings/display/panel/auo,b101uan08.3.yaml
+new file mode 100644
+index 000000000000..96125d7d1fe7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/auo,b101uan08.3.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/panel/auo,b101uan08.3.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+static const struct panel_desc boe_tv101wum_n53_desc = {
-+	.modes = &boe_tv101wum_n53_default_mode,
-+	.bpc = 8,
-+	.size = {
-+		.width_mm = 135,
-+		.height_mm = 216,
-+	},
-+	.lanes = 4,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		      MIPI_DSI_MODE_LPM,
-+	.init_cmds = boe_init_cmd,
-+};
++title: AUO B101UAN08.3 DSI Display Panel
 +
- static int boe_panel_get_modes(struct drm_panel *panel)
- {
- 	struct boe_panel *boe = to_boe_panel(panel);
-@@ -747,6 +775,9 @@ static const struct of_device_id boe_of_match[] = {
- 	{ .compatible = "auo,kd101n80-45na",
- 	  .data = &auo_kd101n80_45na_desc
- 	},
-+	{ .compatible = "boe,tv101wum-n53",
-+	  .data = &boe_tv101wum_n53_desc
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, boe_of_match);
++maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
++  - Sam Ravnborg <sam@ravnborg.org>
++  - Rob Herring <robh+dt@kernel.org>
++ 
++properties:
++  compatible:
++        const: auo,b101uan08.3
++
++  reg:
++    description: the virtual channel number of a DSI peripheral
++
++  enable-gpios:
++    description: a GPIO spec for the enable pin
++
++  pp1800-supply:
++    description: core voltage supply
++
++  avdd-supply:
++    description: phandle of the regulator that provides positive voltage
++
++  avee-supply:
++    description: phandle of the regulator that provides negative voltage
++
++  backlight:
++    description: phandle of the backlight device attached to the panel
++
++required:
++ - compatible
++ - reg
++ - enable-gpios
++ - pp1800-supply
++ - avdd-supply
++ - avee-supply
++ - backlight
++
++additionalProperties: false
++
++examples:
++  - |
++    &dsi {
++        panel@0 {
++            compatible = "auo,b101uan08.3";
++            reg = <0>;
++            enable-gpios = <&pio 45 0>;
++            avdd-supply = <&ppvarn_lcd>;
++            avee-supply = <&ppvarp_lcd>;
++            pp1800-supply = <&pp1800_lcd>;
++            backlight = <&backlight_lcd0>;
++            status = "okay";
++            port {
++                panel_in: endpoint {
++                    remote-endpoint = <&dsi_out>;
++                };
++            };
++        };
++    };
++
++...
+\ No newline at end of file
 -- 
 2.21.0
 
