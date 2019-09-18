@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4411DB5CE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD42B5D02
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbfIRGZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
+        id S1730251AbfIRGas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:30:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729428AbfIRGZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:44 -0400
+        id S1728510AbfIRGYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:24:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7B0721920;
-        Wed, 18 Sep 2019 06:25:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 413BD21920;
+        Wed, 18 Sep 2019 06:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787943;
-        bh=PdeyC84fRCyowusQdrGmvsk2ZMVF2PGxVuHZNfjeMaI=;
+        s=default; t=1568787858;
+        bh=QX/ODPROnjlsW3TmwXUDdR+0VJvtH9gWlChsXjJEceg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bxcp2PnYyHp0AoXJIS6fu1ISi3cDDxLa3CrnOgYa+5ebfrf9b2DReblOP+ckdBd1T
-         UhItfnBwNI3NETXe2ZvkCfIQ7BklngRHZk3ZgLWfXM7M5ukpwSuSuKEnCeu3E+9NpI
-         wBHn0pgqPCWbY1zi22H5OAsdNy0jk7LSM0DeclyI=
+        b=asga7kpF6+EzMTm/etNTLuRky8/wegQbz1qb2UnSGTeikJIGTDdXlBa5govZnvcy6
+         EIi/57elGMOdvPyY1JX+6TJmWxVujfyFmCcJBqJcD6uBwtYt21EwHo2pVHe3l9et1x
+         HfrDWfMxqDz1oPk8Wy/ibrWyaPHeRgMM+Frle7gI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shannon Nelson <snelson@pensando.io>,
-        Jonathan Tooker <jonathan@reliablehosting.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        John Fastabend <john.fastabend@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 06/85] ixgbevf: Fix secpath usage for IPsec Tx offload
-Date:   Wed, 18 Sep 2019 08:18:24 +0200
-Message-Id: <20190918061234.332540855@linuxfoundation.org>
+Subject: [PATCH 5.2 10/85] net: sched: fix reordering issues
+Date:   Wed, 18 Sep 2019 08:18:28 +0200
+Message-Id: <20190918061234.460383725@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
 References: <20190918061234.107708857@linuxfoundation.org>
@@ -45,48 +44,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 8f6617badcc96a582678ea36ea96490c5ff26eb4 ]
+[ Upstream commit b88dd52c62bb5c5d58f0963287f41fd084352c57 ]
 
-Port the same fix for ixgbe to ixgbevf.
+Whenever MQ is not used on a multiqueue device, we experience
+serious reordering problems. Bisection found the cited
+commit.
 
-The ixgbevf driver currently does IPsec Tx offloading
-based on an existing secpath. However, the secpath
-can also come from the Rx side, in this case it is
-misinterpreted for Tx offload and the packets are
-dropped with a "bad sa_idx" error. Fix this by using
-the xfrm_offload() function to test for Tx offload.
+The issue can be described this way :
 
-CC: Shannon Nelson <snelson@pensando.io>
-Fixes: 7f68d4306701 ("ixgbevf: enable VF IPsec offload operations")
-Reported-by: Jonathan Tooker <jonathan@reliablehosting.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Acked-by: Shannon Nelson <snelson@pensando.io>
+- A single qdisc hierarchy is shared by all transmit queues.
+  (eg : tc qdisc replace dev eth0 root fq_codel)
+
+- When/if try_bulk_dequeue_skb_slow() dequeues a packet targetting
+  a different transmit queue than the one used to build a packet train,
+  we stop building the current list and save the 'bad' skb (P1) in a
+  special queue. (bad_txq)
+
+- When dequeue_skb() calls qdisc_dequeue_skb_bad_txq() and finds this
+  skb (P1), it checks if the associated transmit queues is still in frozen
+  state. If the queue is still blocked (by BQL or NIC tx ring full),
+  we leave the skb in bad_txq and return NULL.
+
+- dequeue_skb() calls q->dequeue() to get another packet (P2)
+
+  The other packet can target the problematic queue (that we found
+  in frozen state for the bad_txq packet), but another cpu just ran
+  TX completion and made room in the txq that is now ready to accept
+  new packets.
+
+- Packet P2 is sent while P1 is still held in bad_txq, P1 might be sent
+  at next round. In practice P2 is the lead of a big packet train
+  (P2,P3,P4 ...) filling the BQL budget and delaying P1 by many packets :/
+
+To solve this problem, we have to block the dequeue process as long
+as the first packet in bad_txq can not be sent. Reordering issues
+disappear and no side effects have been seen.
+
+Fixes: a53851e2c321 ("net: sched: explicit locking in gso_cpu fallback")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Acked-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/sched/sch_generic.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -30,6 +30,7 @@
- #include <linux/bpf.h>
- #include <linux/bpf_trace.h>
- #include <linux/atomic.h>
-+#include <net/xfrm.h>
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -46,6 +46,8 @@ EXPORT_SYMBOL(default_qdisc_ops);
+  * - updates to tree and tree walking are only done under the rtnl mutex.
+  */
  
- #include "ixgbevf.h"
++#define SKB_XOFF_MAGIC ((struct sk_buff *)1UL)
++
+ static inline struct sk_buff *__skb_dequeue_bad_txq(struct Qdisc *q)
+ {
+ 	const struct netdev_queue *txq = q->dev_queue;
+@@ -71,7 +73,7 @@ static inline struct sk_buff *__skb_dequ
+ 				q->q.qlen--;
+ 			}
+ 		} else {
+-			skb = NULL;
++			skb = SKB_XOFF_MAGIC;
+ 		}
+ 	}
  
-@@ -4158,7 +4159,7 @@ static int ixgbevf_xmit_frame_ring(struc
- 	first->protocol = vlan_get_protocol(skb);
+@@ -253,8 +255,11 @@ validate:
+ 		return skb;
  
- #ifdef CONFIG_IXGBEVF_IPSEC
--	if (secpath_exists(skb) && !ixgbevf_ipsec_tx(tx_ring, first, &ipsec_tx))
-+	if (xfrm_offload(skb) && !ixgbevf_ipsec_tx(tx_ring, first, &ipsec_tx))
- 		goto out_drop;
- #endif
- 	tso = ixgbevf_tso(tx_ring, first, &hdr_len, &ipsec_tx);
+ 	skb = qdisc_dequeue_skb_bad_txq(q);
+-	if (unlikely(skb))
++	if (unlikely(skb)) {
++		if (skb == SKB_XOFF_MAGIC)
++			return NULL;
+ 		goto bulk;
++	}
+ 	skb = q->dequeue(q);
+ 	if (skb) {
+ bulk:
 
 
