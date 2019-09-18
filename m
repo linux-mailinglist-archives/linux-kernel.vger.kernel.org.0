@@ -2,184 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA591B6D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C89CCB6D08
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 21:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388973AbfIRT4e convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Sep 2019 15:56:34 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:34184 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388954AbfIRT4d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 15:56:33 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iAg3t-0002w3-EA; Wed, 18 Sep 2019 13:56:25 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iAg3r-0004Pl-25; Wed, 18 Sep 2019 13:56:25 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        zhangjs <zachary@baishancloud.com>, linux-ext4@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-References: <CAHk-=wgs65hez6ctK7J2k46BdQzvKU5avExPOTTJsZu6iqA-ow@mail.gmail.com>
-        <C4F7DC65-50B9-4D70-8E9B-0A6FF5C1070A@srcf.ucam.org>
-        <20190917052438.GA26923@1wt.eu> <2508489.jOnZlRuxVn@merkaba>
-        <20190917121156.GC6762@mit.edu>
-        <20190917123015.sirlkvy335crozmj@debian-stretch-darwi.lab.linutronix.de>
-        <20190917160844.GC31567@gardel-login>
-        <CAHk-=wgsWTCZ=LPHi7BXzFCoWbyp3Ey-zZbaKzWixO91Ryr9=A@mail.gmail.com>
-        <20190917174219.GD31798@gardel-login>
-Date:   Wed, 18 Sep 2019 14:56:00 -0500
-In-Reply-To: <20190917174219.GD31798@gardel-login> (Lennart Poettering's
-        message of "Tue, 17 Sep 2019 19:42:19 +0200")
-Message-ID: <87zhj15qgf.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1731990AbfIRT4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 15:56:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731973AbfIRT4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 15:56:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DC00222D0;
+        Wed, 18 Sep 2019 19:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568836572;
+        bh=4eU6w+0ThXpMTuRvqqyQ15DzuRIOjSwyvXAY1ONPr98=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wmNtcKSjeKP6ZbuPYRGX306NgCz5nagpS0NBjWJQXOwIOCXy7M4B2dJSRU+9d0Qv5
+         WRq8vxmBTG7BW3dK31f+mVsxdi7PQyjw6T8tpfS2OXCgcnlU3vcTOc7/QNU16oboHf
+         ERDWbCzyKMQc5zU9Ar1ITlaQZK1kktdORBVIx9Hc=
+Date:   Wed, 18 Sep 2019 21:56:10 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, pavel@ucw.cz,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 6/9] leds: multicolor: Introduce a multicolor class
+ definition
+Message-ID: <20190918195610.GC2020317@kroah.com>
+References: <20190917175937.13872-1-dmurphy@ti.com>
+ <20190917175937.13872-6-dmurphy@ti.com>
+ <f5cf1fa4-c891-744c-6fa9-4b166b64f463@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1iAg3r-0004Pl-25;;;mid=<87zhj15qgf.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+wHfph00kxbMVDYzFA0Q6fsNypo8aTwNk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Lennart Poettering <mzxreary@0pointer.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1921 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.9 (0.2%), b_tie_ro: 2.0 (0.1%), parse: 1.16
-        (0.1%), extract_message_metadata: 16 (0.8%), get_uri_detail_list: 3.7
-        (0.2%), tests_pri_-1000: 12 (0.6%), tests_pri_-950: 1.07 (0.1%),
-        tests_pri_-900: 0.87 (0.0%), tests_pri_-90: 29 (1.5%), check_bayes: 27
-        (1.4%), b_tokenize: 8 (0.4%), b_tok_get_all: 10 (0.5%), b_comp_prob:
-        2.9 (0.1%), b_tok_touch_all: 3.5 (0.2%), b_finish: 0.59 (0.0%),
-        tests_pri_0: 1417 (73.8%), check_dkim_signature: 0.43 (0.0%),
-        check_dkim_adsp: 2.5 (0.1%), poll_dns_idle: 427 (22.3%), tests_pri_10:
-        2.5 (0.1%), tests_pri_500: 435 (22.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: Linux 5.3-rc8
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f5cf1fa4-c891-744c-6fa9-4b166b64f463@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lennart Poettering <mzxreary@0pointer.de> writes:
+On Wed, Sep 18, 2019 at 12:09:12PM -0500, Dan Murphy wrote:
+> Greg
+> 
+> <snip>
+> 
+> > +static int led_multicolor_init_color(struct led_classdev_mc_data *data,
+> > +				     struct led_classdev_mc *mcled_cdev,
+> > +				     int color_id, int color_index)
+> > +{
+> > +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
+> > +	struct led_mc_color_entry *mc_priv;
+> > +	int ret;
+> > +
+> > +	mc_priv = devm_kzalloc(led_cdev->dev, sizeof(*mc_priv), GFP_KERNEL);
+> > +	if (!mc_priv)
+> > +		return -ENOMEM;
+> > +
+> > +	mc_priv->led_color_id = color_id;
+> > +	mc_priv->mcled_cdev = mcled_cdev;
+> > +
+> > +	led_color_group.name = led_colors[color_id];
+> > +	ret = sysfs_create_group(data->color_kobj, &led_color_group);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	sysfs_attr_init(&mc_priv->intensity_attr.attr);
+> > +	mc_priv->intensity_attr.attr.name = "intensity";
+> > +	mc_priv->intensity_attr.attr.mode = 666;
+> > +	mc_priv->intensity_attr.store = intensity_store;
+> > +	mc_priv->intensity_attr.show = intensity_show;
+> > +	ret = sysfs_add_file_to_group(data->color_kobj,
+> > +				      &mc_priv->intensity_attr.attr,
+> > +				      led_color_group.name);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	sysfs_attr_init(&mc_priv->max_intensity_attr.attr);
+> > +	mc_priv->max_intensity_attr.attr.name = "max_intensity";
+> > +	mc_priv->max_intensity_attr.attr.mode = 444;
+> > +	mc_priv->max_intensity_attr.show = max_intensity_show;
+> > +	ret = sysfs_add_file_to_group(data->color_kobj,
+> > +				      &mc_priv->max_intensity_attr.attr,
+> > +				      led_color_group.name);
+> > +	if (ret)
+> > +		goto err_out;
+> > +
+> > +	mc_priv->max_intensity = LED_FULL;
+> > +	list_add_tail(&mc_priv->list, &data->color_list);
+> > +
+> > +err_out:
+> > +	return ret;
+> > +}
+> > +
+> > +static int led_multicolor_init_color_dir(struct led_classdev_mc_data *data,
+> > +					 struct led_classdev_mc *mcled_cdev)
+> > +{
+> > +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
+> > +	u32 color_id;
+> > +	int ret;
+> > +	int i, j = 0;
+> > +
+> > +	data->color_kobj = kobject_create_and_add("colors",
+> > +						  &led_cdev->dev->kobj);
+> 
+> We need some guidance here on how to properly create sub directories more
+> then 1 level deep.
 
-> On Di, 17.09.19 09:23, Linus Torvalds (torvalds@linux-foundation.org) wrote:
->
->> On Tue, Sep 17, 2019 at 9:08 AM Lennart Poettering <mzxreary@0pointer.de> wrote:
->> >
->> > Here's what I'd propose:
->>
->> So I think this is ok, but I have another proposal. Before I post that
->> one, though, I just wanted to point out:
->>
->> > 1) Add GRND_INSECURE to get those users of getrandom() who do not need
->> >    high quality entropy off its use (systemd has uses for this, for
->> >    seeding hash tables for example), thus reducing the places where
->> >    things might block.
->>
->> I really think that trhe logic should be the other way around.
->>
->> The getrandom() users that don't need high quality entropy are the
->> ones that don't really think about this, and so _they_ shouldn't be
->> the ones that have to explicitly state anything. To those users,
->> "random is random". By definition they don't much care, and quite
->> possibly they don't even know what "entropy" really means in that
->> context.
->
-> So I think people nowadays prefer getrandom() over /dev/urandom
-> primarily because of the noisy logging the kernel does when you use
-> the latter on a non-initialized pool. If that'd be dropped then I am
-> pretty sure that the porting from /dev/urandom to getrandom() you see
-> in various projects (such as gdm/x11) would probably not take place.
->
-> In fact, speaking for systemd: the noisy logging in the kernel is the
-> primary (actually: only) reason that we prefer using RDRAND (if
-> available) over /dev/urandom if we need "medium quality" random
-> numbers, for example to seed hash tables and such. If the log message
-> wasn't there we wouldn't be tempted to bother with RDRAND and would
-> just use /dev/urandom like we used to for that.
->
->> > 2) Add a kernel log message if a getrandom(0) client hung for 15s or
->> >    more, explaining the situation briefly, but not otherwise changing
->> >    behaviour.
->>
->> The problem is that when you have some graphical boot, you'll not even
->> see the kernel messages ;(
->
-> Well, but as mentioned, there's infrastructure for this, that's why I
-> suggested changing systemd-random-seed.service.
->
-> We can make boot hang in "sane", discoverable way.
->
-> The reason why I think this should also be logged by the kernel since
-> people use netconsole and pstore and whatnot and they should see this
-> there. If systemd with its infrastructure brings this to screen via
-> plymouth then this wouldn't help people who debug much more low-level.
->
-> (I mean, there have been requests to add a logic to systemd that
-> refuses booting â€” or delays it â€” if the system has a battery and it is
-> nearly empty. I am pretty sure adding a cleanm discoverable concept of
-> "uh, i can't boot for a good reason which is this" wouldn't be the
-> worst of ideas)
+Short answer, don't.
 
-As I understand it the deep problem is that sometimes we have not
-observed enough random activity early in boot.
+Long answer, use a 'struct device' but ONLY IF YOU KNOW WHAT YOU ARE
+DOING!
 
-The cheap solution appears to be copying a random seed from a previous
-boot, and I think that will take care of many many cases, and has
-already been implemented.  Which reduces this to a system first
-boot issue.
+Follow the short answer please.
 
-So for first system boot can we take some special actions to make
-it possible to see randomness sooner.  An unconditional filesystem check
-of the filesystem perhaps.  Something that will initiate disk activity
-or other hardware activity that will generate interrupts and allow
-us to capture randomness.
+> In short under the LED class device parent directory we want to create a
+> directory called "colors".
 
-For many systems we could even have the installer capture some random
-data as a final stage of the installation, and use that to seed
-randomness on the first boot.
+Ok, that's simple.
 
-Somewhere in installing the random seed we need to be careful about
-people just copying disk images from one system to another, and a
-replicated seed probably can not be considered very random.
+> Under that directory we want to create a directory corresponding to the
+> monochrome LED color.
 
-My sense is that by copying a random seed from one boot to the next
-and by initiating system activity to hurry along the process of
-having enough randomness we can have systems where we can almost
-always have good random numbers available.
+Why?
 
-And if we almost always have good random numbers available we won't
-have to worry about people getting this wrong.
+> Under that directory we have the files to for intensity and max_intensity
+> for the monochrome LED.
 
-Am I wrong or can we just solve random number availablity is practically
-all cases?
+Why not just have colors/monochrome_intensity and
+colors/monochrome_max_intensity as your files in the colors/ directory?
 
-Eric
+> We can use the LED class kobject to create the colors directory using the
+> sysfs calls but the issue comes when creating the LED color directory.
+
+Yes.
+
+> We don't have a kobj for colors to associate those directories to. 
+
+And you shouldn't :)
+
+> The only API we see to use the kobject_create_and_add which then gives
+> us the colors directory kobj.
+
+Don't do that, you will break userspace code hard if you do that.
+
+NEVER put a raw kobject after a 'struct device' in the sysfs tree if you
+expect normal userspace libraries to be able to understand what is going
+on.  That's why this is "hard", you are not supposed to be doing it.
+
+> So the directory structure would look like this which is explained in this
+> patch https://lore.kernel.org/patchwork/patch/1128444/
+> 
+> Directory Layout Example
+> ========================
+> root:/sys/class/leds/rgb:grouped_leds# ls -lR colors/
+> colors/:
+> drwxr-xr-x    2 root     root             0 Jun 28 20:21 blue
+> rwxr-xr-x    2 root     root             0 Jun 28 20:21 green
+> drwxr-xr-x    2 root     root             0 Jun 28 20:21 red
+> 
+> colors/blue:
+> -rw-------    1 root     root          4096 Jun 28 20:21 intensity
+> -r--------    1 root     root          4096 Jun 28 20:27 max_intensity
+> +colors/green:
+> -rw-------    1 root     root          4096 Jun 28 20:22 intensity
+> -r--------    1 root     root          4096 Jun 28 20:27 max_intensity
+> 
+> colors/red:
+> -rw-------    1 root     root          4096 Jun 28 20:21 intensity
+> -r--------    1 root     root          4096 Jun 28 20:27 max_intensity
+
+
+No, just add blue, green, red to the prefix of those files and all
+should be fine.  Don't try to get fancy and use subdirs, that way lies
+madness.
+
+> I have reviewed your example code and read your blogs and papers on the
+> subject but nothing really talks about sub-sub directories.
+
+Because you shouldn't do it, I didn't think I had to describe everything
+you should not do :)
+
+> Now if this is a no-no in the kernel that is fine we can adjust but Jacek
+> wanted to get your opinon/guidance on this topic.
+
+Yes, don't do it.
+
+did I say it enough times?  :)
+
+thanks,
+
+greg k-h
