@@ -2,149 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13094B5F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 10:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFFB3B5F4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 10:33:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730396AbfIRIaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 04:30:18 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23540 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725866AbfIRIaS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 04:30:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1568795417;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
-        bh=LJ9x17++JlMAzSbihcUye9RvbBXaphj4wbKaTaSMCiA=;
-        b=ZNbX8ZwgNWRaZZevy0ByiOpwyhpEj4j6tb/YcktGj3HBSry5Dt5BoWZiinZfsreow3ORvA
-        YTBMchys13EJE5b8yfiKzTc7dblgyEwhDLQVBU5IhxXr8/BPagYymLLVn1pJ1Wnn2y2shW
-        GaD7rCqUp0MFSujXnqFqWd5gzG1pPrs=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-279-FWMHzLstPYOy0SENdJFufg-1; Wed, 18 Sep 2019 04:29:10 -0400
-Received: by mail-wr1-f70.google.com with SMTP id h6so2087804wrh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 01:29:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IrWbIprHqWMlOEd3b8M/gmFgeShWjRa194btm7DSbPI=;
-        b=sp2i85YiI9zXXRfwEeXOObDCOzVBbTMIWvWeFhFID0Wi/NEulJrLBKI96Gl2a5DsJL
-         I52lmzdQ59bxsscIV/uD2tsso0MuRr5CIsVqOd717rwgGlAxqyqMwUrsMhbxWNQ9fc0G
-         4hV6Ermhw2+lyuRRihX2Y2e8vCHFxvq10a4KjzmsIL/Dhk8WK8FQSiLBAB9ZYWVFo8rn
-         WTLCDhVv/NssNCfv9VAx92PvTIKbaVC0mImFyWkKp5aX0BtFmwwqm3Xhb0Zr4r0ChR4B
-         BZAVcnKlNroipM0mONNmT0uy7ZcHHHA5hMA4oAWQxrYEBLBhDEXwLDRlOZEqYFUvrTGv
-         EotQ==
-X-Gm-Message-State: APjAAAX0v6/KBGJR//eZJU2NRCZC2V4OdzI1i+4CwQceOw/MDG1cz99E
-        H1K5gVW9dnJ0Wdc1XyfS50T10SHMS2KPqmYYCQ9UscjMN6o0r4mObvwqnZm2H4ovImSBLHGSZTv
-        YvVKDiaC3tOmMSbUXgZMDlRVD
-X-Received: by 2002:a5d:5381:: with SMTP id d1mr1854475wrv.315.1568795347875;
-        Wed, 18 Sep 2019 01:29:07 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyonIjdT3rqMK/eFGzZQnLolYQxc5RAG8w8enPADilIGLfzNNbF2gDa1S1gTXGi5dhHblr98w==
-X-Received: by 2002:a5d:5381:: with SMTP id d1mr1854455wrv.315.1568795347599;
-        Wed, 18 Sep 2019 01:29:07 -0700 (PDT)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id u22sm8125812wru.72.2019.09.18.01.29.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2019 01:29:07 -0700 (PDT)
-Subject: Re: [RFC PATCH v3 3/6] timekeeping: Expose API allowing retrival of
- current clocksource and counter value
-To:     Jianyong Wu <jianyong.wu@arm.com>, netdev@vger.kernel.org,
-        yangbo.lu@nxp.com, john.stultz@linaro.org, tglx@linutronix.de,
-        sean.j.christopherson@intel.com, maz@kernel.org,
-        richardcochran@gmail.com, Mark.Rutland@arm.com,
-        Will.Deacon@arm.com, suzuki.poulose@arm.com
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Steve.Capper@arm.com, Kaly.Xin@arm.com, justin.he@arm.com,
-        nd@arm.com, linux-arm-kernel@lists.infradead.org
-References: <20190918080716.64242-1-jianyong.wu@arm.com>
- <20190918080716.64242-4-jianyong.wu@arm.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <aecdffc5-7d15-6183-f8ea-ed557631cf75@redhat.com>
-Date:   Wed, 18 Sep 2019 10:29:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730475AbfIRIda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 04:33:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730405AbfIRId2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 04:33:28 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4629521929;
+        Wed, 18 Sep 2019 08:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568795607;
+        bh=CLc3y6pr//+2xmg7YLTQLHeHBn+e19hZRGVpbW8meNU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=znIfBdHgsym3F5/xNH+YfGG7tXY66oPckgoDte+XpQs2ah4hkok6s4N3bvzfjHGoV
+         F53Kp/GN3dTsljFP7m4tLJ2XeZB1M7yc0HFScEqB9gd69OTNrqzqL3zGsodQMu6moL
+         QB0ShhFstqLOaCLErX2wtgxDiiJ4xU1ryCgXYRl4=
+Date:   Wed, 18 Sep 2019 10:32:53 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mao Wenan <maowenan@huawei.com>
+Cc:     chien.yen@oracle.com, davem@davemloft.net, stable@vger.kernel.org,
+        rds-devel@oss.oracle.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH stable 4.4 net] net: rds: Fix NULL ptr use in
+ rds_tcp_kill_sock
+Message-ID: <20190918083253.GA1862222@kroah.com>
+References: <20190918083733.50266-1-maowenan@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190918080716.64242-4-jianyong.wu@arm.com>
-Content-Language: en-US
-X-MC-Unique: FWMHzLstPYOy0SENdJFufg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918083733.50266-1-maowenan@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/09/19 10:07, Jianyong Wu wrote:
-> From Marc Zyngier <maz@kernel.org>
-> A number of PTP drivers (such as ptp-kvm) are assuming what the
-> current clock source is, which could lead to interesting effects on
-> systems where the clocksource can change depending on external events.
->=20
-> For this purpose, add a new API that retrives both the current
-> monotonic clock as well as its counter value.
->=20
-> From Jianyong Wu: export this API then modules can use it.
-
-See review of patch 4.  ktime_get_snapshot is even better for your
-needs, if I'm not mistaken.
-
-Paolo
-
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> Signed-off-by: Jianyong Wu <jianyong.wu@arm.com>
+On Wed, Sep 18, 2019 at 04:37:33PM +0800, Mao Wenan wrote:
+> After the commit c4e97b06cfdc ("net: rds: force to destroy
+> connection if t_sock is NULL in rds_tcp_kill_sock()."),
+> it introduced null-ptr-deref in rds_tcp_kill_sock as below:
+> 
+> BUG: KASAN: null-ptr-deref on address 0000000000000020
+> Read of size 8 by task kworker/u16:10/910
+> CPU: 3 PID: 910 Comm: kworker/u16:10 Not tainted 4.4.178+ #3
+> Hardware name: linux,dummy-virt (DT)
+> Workqueue: netns cleanup_net
+> Call trace:
+> [<ffffff90080abb50>] dump_backtrace+0x0/0x618
+> [<ffffff90080ac1a0>] show_stack+0x38/0x60
+> [<ffffff9008c42b78>] dump_stack+0x1a8/0x230
+> [<ffffff90085d469c>] kasan_report_error+0xc8c/0xfc0
+> [<ffffff90085d54a4>] kasan_report+0x94/0xd8
+> [<ffffff90085d1b28>] __asan_load8+0x88/0x150
+> [<ffffff9009c9cc2c>] rds_tcp_dev_event+0x734/0xb48
+> [<ffffff90081eacb0>] raw_notifier_call_chain+0x150/0x1e8
+> [<ffffff900973fec0>] call_netdevice_notifiers_info+0x90/0x110
+> [<ffffff9009764874>] netdev_run_todo+0x2f4/0xb08
+> [<ffffff9009796d34>] rtnl_unlock+0x2c/0x48
+> [<ffffff9009756484>] default_device_exit_batch+0x444/0x528
+> [<ffffff9009720498>] ops_exit_list+0x1c0/0x240
+> [<ffffff9009724a80>] cleanup_net+0x738/0xbf8
+> [<ffffff90081ca6cc>] process_one_work+0x96c/0x13e0
+> [<ffffff90081cf370>] worker_thread+0x7e0/0x1910
+> [<ffffff90081e7174>] kthread+0x304/0x390
+> [<ffffff9008094280>] ret_from_fork+0x10/0x50
+> 
+> If the first loop add the tc->t_sock = NULL to the tmp_list,
+> 1). list_for_each_entry_safe(tc, _tc, &rds_tcp_conn_list, t_tcp_node)
+> 
+> then the second loop is to find connections to destroy, tc->t_sock
+> might equal NULL, and tc->t_sock->sk happens null-ptr-deref.
+> 2). list_for_each_entry_safe(tc, _tc, &tmp_list, t_tcp_node)
+> 
+> Fixes: c4e97b06cfdc ("net: rds: force to destroy connection if t_sock is NULL in rds_tcp_kill_sock().")
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
 > ---
->  include/linux/timekeeping.h |  3 +++
->  kernel/time/timekeeping.c   | 13 +++++++++++++
->  2 files changed, 16 insertions(+)
->=20
-> diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-> index a8ab0f143ac4..a5389adaa8bc 100644
-> --- a/include/linux/timekeeping.h
-> +++ b/include/linux/timekeeping.h
-> @@ -247,6 +247,9 @@ extern int get_device_system_crosststamp(
->  =09=09=09struct system_time_snapshot *history,
->  =09=09=09struct system_device_crosststamp *xtstamp);
-> =20
-> +/* Obtain current monotonic clock and its counter value  */
-> +extern void get_current_counterval(struct system_counterval_t *sc);
-> +
->  /*
->   * Simultaneously snapshot realtime and monotonic raw clocks
->   */
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 44b726bab4bd..07a0969625b1 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -1098,6 +1098,19 @@ static bool cycle_between(u64 before, u64 test, u6=
-4 after)
->  =09return false;
->  }
-> =20
-> +/**
-> + * get_current_counterval - Snapshot the current clocksource and counter=
- value
-> + * @sc:=09Pointer to a struct containing the current clocksource and its=
- value
-> + */
-> +void get_current_counterval(struct system_counterval_t *sc)
-> +{
-> +=09struct timekeeper *tk =3D &tk_core.timekeeper;
-> +
-> +=09sc->cs =3D READ_ONCE(tk->tkr_mono.clock);
-> +=09sc->cycles =3D sc->cs->read(sc->cs);
-> +}
-> +EXPORT_SYMBOL_GPL(get_current_counterval);
-> +
->  /**
->   * get_device_system_crosststamp - Synchronously capture system/device t=
-imestamp
->   * @get_time_fn:=09Callback to get simultaneous device time and
->=20
+>  net/rds/tcp.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 
+Why is this not needed upstream as well?
+
+4.9.y?  4.14.y?  anything else?
+
+thanks,
+
+greg k-h
