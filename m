@@ -2,135 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A583B6571
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05A8AB6577
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 16:05:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbfIROEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 10:04:22 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51902 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbfIROEV (ORCPT
+        id S1731135AbfIROFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 10:05:45 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:37235 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbfIROFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 10:04:21 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IE4HF5015793;
-        Wed, 18 Sep 2019 09:04:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568815457;
-        bh=3IqZ7QQNPGbKB+VrbDJkv8iQGk6g6o0mAIi0I5dEBbc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=o2zvlyrj8s+xGfs2P4CEja5v4bbRkLuWiiBniwz+39fwrA8q/Kc8VilDxiQE+ROdc
-         r9k8kQeLz8LY6BJD8kYdqiyTdp0GwX4cjz1k20L6fmfUPTjWRaeCBwTltRLWc7lPW2
-         sUgRr/g8BDiSZsYyZyePm+M9taE91dRRkqkYpq5E=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IE4H51063528
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Sep 2019 09:04:17 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
- Sep 2019 09:04:13 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 18 Sep 2019 09:04:13 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IE4ENA056662;
-        Wed, 18 Sep 2019 09:04:14 -0500
-Subject: Re: [PATCH v2 1/3] dt-bindings: dmaengine: dma-common: Change
- dma-channel-mask to uint32-array
-To:     Rob Herring <robh@kernel.org>
-CC:     <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dan.j.williams@intel.com>,
-        <devicetree@vger.kernel.org>
-References: <20190910114559.22810-1-peter.ujfalusi@ti.com>
- <20190910114559.22810-2-peter.ujfalusi@ti.com> <20190918132835.GA4527@bogus>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <d76ffc38-8e68-656a-325b-37de9b01e015@ti.com>
-Date:   Wed, 18 Sep 2019 17:04:50 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 18 Sep 2019 10:05:44 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: kamel.bouhara@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 60991240003;
+        Wed, 18 Sep 2019 14:05:41 +0000 (UTC)
+From:   Kamel Bouhara <kamel.bouhara@bootlin.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Kamel Bouhara <kamel.bouhara@bootlin.com>
+Subject: [PATCH] pwm: atmel: Remove platform_device_id and use only dt bindings
+Date:   Wed, 18 Sep 2019 16:05:34 +0200
+Message-Id: <20190918140534.23365-1-kamel.bouhara@bootlin.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20190918132835.GA4527@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since commit 26202873bb51 ("avr32: remove support for AVR32
+architecture") there is no more user of platform_device_id and we
+should only use dt bindings
 
+Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+---
+ drivers/pwm/Kconfig     |  2 +-
+ drivers/pwm/pwm-atmel.c | 29 +++--------------------------
+ 2 files changed, 4 insertions(+), 27 deletions(-)
 
-On 18/09/2019 16.28, Rob Herring wrote:
-> On Tue, Sep 10, 2019 at 02:45:57PM +0300, Peter Ujfalusi wrote:
->> Make the dma-channel-mask to be usable for controllers with more than 32
->> channels.
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
->> ---
->>  Documentation/devicetree/bindings/dma/dma-common.yaml | 10 +++++++++-
->>  1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/dma-common.yaml b/Documentation/devicetree/bindings/dma/dma-common.yaml
->> index ed0a49a6f020..41460946be64 100644
->> --- a/Documentation/devicetree/bindings/dma/dma-common.yaml
->> +++ b/Documentation/devicetree/bindings/dma/dma-common.yaml
->> @@ -25,11 +25,19 @@ properties:
->>        Used to provide DMA controller specific information.
->>  
->>    dma-channel-mask:
->> -    $ref: /schemas/types.yaml#definitions/uint32
->>      description:
->>        Bitmask of available DMA channels in ascending order that are
->>        not reserved by firmware and are available to the
->>        kernel. i.e. first channel corresponds to LSB.
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
->> +        items:
->> +          minItems = 1
-> 
-> '='? Just making up the syntax?
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index a7e57516959e..b51fb1a33aa2 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -44,7 +44,7 @@ config PWM_AB8500
+ 
+ config PWM_ATMEL
+ 	tristate "Atmel PWM support"
+-	depends on ARCH_AT91
++	depends on ARCH_AT91 && OF
+ 	help
+ 	  Generic PWM framework driver for Atmel SoC.
+ 
+diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
+index e5e1eaf372fa..a3d93d634462 100644
+--- a/drivers/pwm/pwm-atmel.c
++++ b/drivers/pwm/pwm-atmel.c
+@@ -318,19 +318,6 @@ static const struct atmel_pwm_data mchp_sam9x60_pwm_data = {
+ 	},
+ };
+ 
+-static const struct platform_device_id atmel_pwm_devtypes[] = {
+-	{
+-		.name = "at91sam9rl-pwm",
+-		.driver_data = (kernel_ulong_t)&atmel_sam9rl_pwm_data,
+-	}, {
+-		.name = "sama5d3-pwm",
+-		.driver_data = (kernel_ulong_t)&atmel_sama5_pwm_data,
+-	}, {
+-		/* sentinel */
+-	},
+-};
+-MODULE_DEVICE_TABLE(platform, atmel_pwm_devtypes);
+-
+ static const struct of_device_id atmel_pwm_dt_ids[] = {
+ 	{
+ 		.compatible = "atmel,at91sam9rl-pwm",
+@@ -353,14 +340,7 @@ MODULE_DEVICE_TABLE(of, atmel_pwm_dt_ids);
+ static inline const struct atmel_pwm_data *
+ atmel_pwm_get_driver_data(struct platform_device *pdev)
+ {
+-	const struct platform_device_id *id;
+-
+-	if (pdev->dev.of_node)
+-		return of_device_get_match_data(&pdev->dev);
+-
+-	id = platform_get_device_id(pdev);
+-
+-	return (struct atmel_pwm_data *)id->driver_data;
++	return of_device_get_match_data(&pdev->dev);
+ }
+ 
+ static int atmel_pwm_probe(struct platform_device *pdev)
+@@ -396,10 +376,8 @@ static int atmel_pwm_probe(struct platform_device *pdev)
+ 	atmel_pwm->chip.dev = &pdev->dev;
+ 	atmel_pwm->chip.ops = &atmel_pwm_ops;
+ 
+-	if (pdev->dev.of_node) {
+-		atmel_pwm->chip.of_xlate = of_pwm_xlate_with_flags;
+-		atmel_pwm->chip.of_pwm_n_cells = 3;
+-	}
++	atmel_pwm->chip.of_xlate = of_pwm_xlate_with_flags;
++	atmel_pwm->chip.of_pwm_n_cells = 3;
+ 
+ 	atmel_pwm->chip.base = -1;
+ 	atmel_pwm->chip.npwm = 4;
+@@ -437,7 +415,6 @@ static struct platform_driver atmel_pwm_driver = {
+ 		.name = "atmel-pwm",
+ 		.of_match_table = of_match_ptr(atmel_pwm_dt_ids),
+ 	},
+-	.id_table = atmel_pwm_devtypes,
+ 	.probe = atmel_pwm_probe,
+ 	.remove = atmel_pwm_remove,
+ };
+-- 
+2.23.0
 
-Opps, sorry.
-
-> 
->> +          maxItems = 255 # Should be enough
->> +          - description: Mask of channels 0-31
->> +          - description: Mask of channels 32-63
-> 
-> You are mixing a schema and list here...
-
-Should I extend the description with something like this:
-"The first item in the array is for channels 0-31, the second is for
-channels 32-63, etc."
-
-To make sure that it is used in a correct and consistent manner.
-
->> +          ...
-> 
-> That's end of doc marker in YAML...
-
-I believe I need some reading to do for YAML..
-
-> 
->> +          - description: Mask of chnanels X-(X+31)
-> 
-> Obviously, this was not validated with 'make dt_binding_check'.
-make dt_bindings_check
-make: *** No rule to make target 'dt_bindings_check'.  Stop.
-
-> What you  want is:
-> 
->     allOf:
->       - $ref: /schemas/types.yaml#/definitions/uint32-array
->       - minItems: 1
->         maxItems: 255 # Should be enough
-
-OK and thanks for the comments.
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
