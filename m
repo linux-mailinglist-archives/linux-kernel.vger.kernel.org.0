@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45459B5BEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDE9FB5C1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfIRGUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:20:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39934 "EHLO mail.kernel.org"
+        id S1729466AbfIRGWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:22:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728837AbfIRGUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:20:52 -0400
+        id S1729459AbfIRGWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:22:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C57721924;
-        Wed, 18 Sep 2019 06:20:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B94FD21920;
+        Wed, 18 Sep 2019 06:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787651;
-        bh=yQ9h4yLVSfDxLQCWQd9WmA0cFx043a9Mbo/vQWky9s4=;
+        s=default; t=1568787760;
+        bh=wAx23GSFUcnVrM32JI4TGHRW8JL6phpNBAgxKz3VXyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f7YBDrzHn/XwdlzYew6Vy186ZAl2giD+seu/AlHBDvBik/FwuKG94IgbVXuGEpVhv
-         f16GwILB/GOFLgwVQH9W4Aq9XqF+Pk6exKwKzm5OvRcGWLsCrTFsACwx0wa/7dFL87
-         ckkyOm8J6uaJrJJMTBQlL0eFWIO5jh4CHStq0xxs=
+        b=JKD9q5TtQDfkPWi0fF9vGCVfsCruOY6x/y+YLUBC4pGqOkgtL8AEspTbkKWtTb6rt
+         GNsS7ncJkQBzWfLH1RCOFXDp5vzmPbDXHMapJ/zzi9J+mzS/Q9ToT90P7ibSGGdVqo
+         YDEjVY09RMVNMsIqxPLJdXned46+HFi3PNqv0dAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: [PATCH 4.14 28/45] drm/meson: Add support for XBGR8888 & ABGR8888 formats
+        stable@vger.kernel.org, Fuqian Huang <huangfq.daxian@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 23/50] KVM: x86: work around leak of uninitialized stack contents
 Date:   Wed, 18 Sep 2019 08:19:06 +0200
-Message-Id: <20190918061226.060082443@linuxfoundation.org>
+Message-Id: <20190918061225.490523369@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,61 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Fuqian Huang <huangfq.daxian@gmail.com>
 
-commit 5ffff4415f9eeae834960226770963e2947e17eb upstream.
+commit 541ab2aeb28251bf7135c7961f3a6080eebcc705 upstream.
 
-Add missing XBGR8888 & ABGR8888 formats variants from the primary plane.
+Emulation of VMPTRST can incorrectly inject a page fault
+when passed an operand that points to an MMIO address.
+The page fault will use uninitialized kernel stack memory
+as the CR2 and error code.
 
-Fixes: bbbe775ec5b5 ("drm: Add support for Amlogic Meson Graphic Controller")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190429075238.7884-1-narmstrong@baylibre.com
+The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
+exit to userspace; however, it is not an easy fix, so for now just ensure
+that the error code and CR2 are zero.
+
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+Cc: stable@vger.kernel.org
+[add comment]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/meson/meson_plane.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/x86/kvm/x86.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/gpu/drm/meson/meson_plane.c
-+++ b/drivers/gpu/drm/meson/meson_plane.c
-@@ -124,6 +124,13 @@ static void meson_plane_atomic_update(st
- 		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_32 |
- 					      OSD_COLOR_MATRIX_32_ARGB;
- 		break;
-+	case DRM_FORMAT_XBGR8888:
-+		/* For XRGB, replace the pixel's alpha by 0xFF */
-+		writel_bits_relaxed(OSD_REPLACE_EN, OSD_REPLACE_EN,
-+				    priv->io_base + _REG(VIU_OSD1_CTRL_STAT2));
-+		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_32 |
-+					      OSD_COLOR_MATRIX_32_ABGR;
-+		break;
- 	case DRM_FORMAT_ARGB8888:
- 		/* For ARGB, use the pixel's alpha */
- 		writel_bits_relaxed(OSD_REPLACE_EN, 0,
-@@ -131,6 +138,13 @@ static void meson_plane_atomic_update(st
- 		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_32 |
- 					      OSD_COLOR_MATRIX_32_ARGB;
- 		break;
-+	case DRM_FORMAT_ABGR8888:
-+		/* For ARGB, use the pixel's alpha */
-+		writel_bits_relaxed(OSD_REPLACE_EN, 0,
-+				    priv->io_base + _REG(VIU_OSD1_CTRL_STAT2));
-+		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_32 |
-+					      OSD_COLOR_MATRIX_32_ABGR;
-+		break;
- 	case DRM_FORMAT_RGB888:
- 		priv->viu.osd1_blk0_cfg[0] |= OSD_BLK_MODE_24 |
- 					      OSD_COLOR_MATRIX_24_RGB;
-@@ -200,7 +214,9 @@ static const struct drm_plane_funcs meso
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5016,6 +5016,13 @@ int kvm_write_guest_virt_system(struct k
+ 	/* kvm_write_guest_virt_system can pull in tons of pages. */
+ 	vcpu->arch.l1tf_flush_l1d = true;
  
- static const uint32_t supported_drm_formats[] = {
- 	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_ABGR8888,
- 	DRM_FORMAT_XRGB8888,
-+	DRM_FORMAT_XBGR8888,
- 	DRM_FORMAT_RGB888,
- 	DRM_FORMAT_RGB565,
- };
++	/*
++	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
++	 * is returned, but our callers are not ready for that and they blindly
++	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
++	 * uninitialized kernel stack memory into cr2 and error code.
++	 */
++	memset(exception, 0, sizeof(*exception));
+ 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
+ 					   PFERR_WRITE_MASK, exception);
+ }
 
 
