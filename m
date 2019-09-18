@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 823A1B5C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 287F0B5C06
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729994AbfIRGZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45756 "EHLO mail.kernel.org"
+        id S1729314AbfIRGWD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:22:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729969AbfIRGZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:02 -0400
+        id S1729306AbfIRGWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:22:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7BD521928;
-        Wed, 18 Sep 2019 06:25:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DDB8218AF;
+        Wed, 18 Sep 2019 06:21:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787901;
-        bh=7KlmHso4sOglABOnIDkOem+DzQc816ftuqxxIAYaDbg=;
+        s=default; t=1568787720;
+        bh=qKc9hFuApt77yOaD7f+h92ICXvsOaXgo5AkSeczts0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r4+hV3Ejtt34siQvgLvV42KoH1FRTpOdhIf1qvrrNEVxTDvgOuE4+LQ4fQJHaCEzf
-         3qWkqH3koCSGl5GB370qOV+RAKI3NYXAh1zxNvRfdaLmEerDaIaA8t5vqQqPuVxIjk
-         ZiSfz1DuJVZLmzknltSVWVnZyHyxMz9yU1WVs2dE=
+        b=U4GF8ZMsiO0rQsbEZI4smpoSHZM7zV/5K5P91EGMFM7QqZKs+nKAOkOFyp5Zuvkyw
+         Ajwfinhz9RQL3V20nzD6uN6v8f3RgWtsrYC3ZEUsZfyeR0Z9KhV1LLqt80zbQEOMR/
+         09cW6fZ1ZZ94QXwGdYe1+iVuq3XwgAz+Nv7NLbZI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 5.2 25/85] gpio: fix line flag validation in lineevent_create
-Date:   Wed, 18 Sep 2019 08:18:43 +0200
-Message-Id: <20190918061234.952756789@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 01/50] bridge/mdb: remove wrong use of NLM_F_MULTI
+Date:   Wed, 18 Sep 2019 08:18:44 +0200
+Message-Id: <20190918061223.328227452@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,46 +47,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kent Gibson <warthog618@gmail.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-commit 5ca2f54b597c816df54ff1b28eb99cf7262b955d upstream.
+[ Upstream commit 94a72b3f024fc7e9ab640897a1e38583a470659d ]
 
-lineevent_create should not allow any of GPIOHANDLE_REQUEST_OUTPUT,
-GPIOHANDLE_REQUEST_OPEN_DRAIN or GPIOHANDLE_REQUEST_OPEN_SOURCE to be set.
+NLM_F_MULTI must be used only when a NLMSG_DONE message is sent at the end.
+In fact, NLMSG_DONE is sent only at the end of a dump.
 
-Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Libraries like libnl will wait forever for NLMSG_DONE.
+
+Fixes: 949f1e39a617 ("bridge: mdb: notify on router port add and del")
+CC: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpio/gpiolib.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ net/bridge/br_mdb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -934,7 +934,9 @@ static int lineevent_create(struct gpio_
- 	}
+--- a/net/bridge/br_mdb.c
++++ b/net/bridge/br_mdb.c
+@@ -419,7 +419,7 @@ static int nlmsg_populate_rtr_fill(struc
+ 	struct nlmsghdr *nlh;
+ 	struct nlattr *nest;
  
- 	/* This is just wrong: we don't look for events on output lines */
--	if (lflags & GPIOHANDLE_REQUEST_OUTPUT) {
-+	if ((lflags & GPIOHANDLE_REQUEST_OUTPUT) ||
-+	    (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN) ||
-+	    (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)) {
- 		ret = -EINVAL;
- 		goto out_free_label;
- 	}
-@@ -948,10 +950,6 @@ static int lineevent_create(struct gpio_
+-	nlh = nlmsg_put(skb, pid, seq, type, sizeof(*bpm), NLM_F_MULTI);
++	nlh = nlmsg_put(skb, pid, seq, type, sizeof(*bpm), 0);
+ 	if (!nlh)
+ 		return -EMSGSIZE;
  
- 	if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
--	if (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN)
--		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
--	if (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)
--		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
- 
- 	ret = gpiod_direction_input(desc);
- 	if (ret)
 
 
