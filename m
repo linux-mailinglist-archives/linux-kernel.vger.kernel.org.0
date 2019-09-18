@@ -2,177 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDAAB6500
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E05B651E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:52:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbfIRNtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 09:49:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52340 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726659AbfIRNtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 09:49:47 -0400
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com [209.85.161.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF0C321920;
-        Wed, 18 Sep 2019 13:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568814585;
-        bh=Vsir7F3Rw0yN2oG3BxCXE+fvnqJZovYT8xzQgG4Purk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=MN6zvA84e1GAQzDF8Oc7KorTjwkfX8QhfTlV/yE89YGnvwWTCGc+sZiyx/Cd1wOXW
-         88i5Lif6ocTrKz0x4e/qziBndrZ8KfvrmDcYiFeunXLidgzYYY9Y4XgAJgMbrfpLnd
-         RywIv4FoZQGnLOZZNn62evPeLTXYCZsAF/6EsZP8=
-Received: by mail-yw1-f47.google.com with SMTP id s6so2490039ywe.5;
-        Wed, 18 Sep 2019 06:49:45 -0700 (PDT)
-X-Gm-Message-State: APjAAAXdAeFYJAy1K/CCI8GZjLjEwtZugQD2I2bo0vymfyDUPEoQNUNE
-        ZojVbJtR2VFDJgzXsQPYDOSwd9aG97LZbD0IGA==
-X-Google-Smtp-Source: APXvYqyX5J7M/JnrOKuHqti9BK5SCSbzkKBYf8CDlkD0T4RESNs7Vm4Lj+l5V24NuFFkS5g5wceeMPsbDURipVXo9vI=
-X-Received: by 2002:a0d:ddc9:: with SMTP id g192mr3041978ywe.281.1568814584947;
- Wed, 18 Sep 2019 06:49:44 -0700 (PDT)
+        id S1729488AbfIRNwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 09:52:20 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:34254 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfIRNwU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 09:52:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1568814738; x=1600350738;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=Q4ygvF7O7WhX2bwysg/F08BYHAFbQtKl5wcdvGKLvMM=;
+  b=pyrjSeCcYQUhBn0eQVHyNGUzohfuKgfUS13WFXgggY47Jr2S9BVfSGUx
+   suSkKS5QaMYLteSR97QVg0rLpvr7Ell9drH9SqFETxdGfqQep7jKoecOM
+   PCjBVrfgATC7yHg2jDhEh7Pujbpooe32RBPWe9Yl89oCL/3HLntxuIuGS
+   8=;
+X-IronPort-AV: E=Sophos;i="5.64,520,1559520000"; 
+   d="scan'208";a="833921746"
+Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2a-1c1b5cdd.us-west-2.amazon.com) ([10.47.22.34])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 18 Sep 2019 13:44:24 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2a-1c1b5cdd.us-west-2.amazon.com (Postfix) with ESMTPS id 8F247A213A;
+        Wed, 18 Sep 2019 13:44:23 +0000 (UTC)
+Received: from EX13D01EUB002.ant.amazon.com (10.43.166.113) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 18 Sep 2019 13:44:23 +0000
+Received: from [10.125.238.52] (10.43.161.217) by EX13D01EUB002.ant.amazon.com
+ (10.43.166.113) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Wed, 18 Sep
+ 2019 13:44:16 +0000
+Subject: Re: [PATCH v2 1/3] dt-bindings: soc: al-pos: Amazon's Annapurna Labs
+ POS
+To:     Rob Herring <robh@kernel.org>
+CC:     <marc.zyngier@arm.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <mark.rutland@arm.com>,
+        <nicolas.ferre@microchip.com>, <mchehab+samsung@kernel.org>,
+        <shawn.lin@rock-chips.com>, <gregkh@linuxfoundation.org>,
+        <dwmw@amazon.co.uk>, <benh@kernel.crashing.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1568142310-17622-1-git-send-email-talel@amazon.com>
+ <1568142310-17622-2-git-send-email-talel@amazon.com>
+ <20190918133248.GA16653@bogus>
+From:   "Shenhar, Talel" <talel@amazon.com>
+Message-ID: <6965161b-a51c-9e16-f6b8-6f33b40708ee@amazon.com>
+Date:   Wed, 18 Sep 2019 16:44:11 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-References: <CGME20190917120517eucas1p1188d244fac2d10d7990363ff25ffb70d@eucas1p1.samsung.com>
- <20190917111413.22711-1-m.falkowski@samsung.com> <20190917120452.28135-1-m.falkowski@samsung.com>
- <CAL_JsqJmjUR63i_hKUuZwDu42rebwABHu62bQoxTRRJu5yObEA@mail.gmail.com> <40f56f61-a1db-a1a2-262e-1f4c771481e1@samsung.com>
-In-Reply-To: <40f56f61-a1db-a1a2-262e-1f4c771481e1@samsung.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 18 Sep 2019 08:49:33 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
-Message-ID: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: sound: Convert Samsung I2S controller
- to dt-schema
-To:     Maciej Falkowski <m.falkowski@samsung.com>
-Cc:     Linux-ALSA <alsa-devel@alsa-project.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sangbeom Kim <sbkim73@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190918133248.GA16653@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.43.161.217]
+X-ClientProxiedBy: EX13D02UWC002.ant.amazon.com (10.43.162.6) To
+ EX13D01EUB002.ant.amazon.com (10.43.166.113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 5:08 AM Maciej Falkowski
-<m.falkowski@samsung.com> wrote:
->
->
-> On 9/17/19 3:05 PM, Rob Herring wrote:
->
-> > On Tue, Sep 17, 2019 at 7:05 AM Maciej Falkowski
-> > <m.falkowski@samsung.com> wrote:
-> >> Convert Samsung I2S controller to newer dt-schema format.
-> >>
-> >> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> ---
-> >> v2:
-> >> - Added missing Signed-off-by certificate
-> >> ---
-> >>   .../devicetree/bindings/sound/samsung-i2s.txt |  84 -------------
-> >>   .../bindings/sound/samsung-i2s.yaml           | 119 ++++++++++++++++++
-> >>   2 files changed, 119 insertions(+), 84 deletions(-)
-> >>   delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> >>   create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-> >> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-> >> new file mode 100644
-> >> index 000000000000..59dc76035cb4
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-> >> @@ -0,0 +1,119 @@
-> >> +# SPDX-License-Identifier: GPL-2.0
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/sound/samsung-i2s.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Samsung SoC I2S controller
-> >> +
-> >> +maintainers:
-> >> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> >> +  - Sangbeom Kim <sbkim73@samsung.com>
-> >> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    description: |
-> >> +      samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
-> >> +
-> >> +      samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
-> >> +      secondary fifo, s/w reset control and internal mux for root clk src.
-> >> +
-> >> +      samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
-> >> +      playback, stereo channel capture, secondary fifo using internal
-> >> +      or external dma, s/w reset control, internal mux for root clk src
-> >> +      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
-> >> +      is to allow transfer of multiple channel audio data on single data line.
-> >> +
-> >> +      samsung,exynos7-i2s: with all the available features of exynos5 i2s.
-> >> +
-> >> +      exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
-> >> +      with only external dma and more no.of root clk sampling frequencies.
-> >> +
-> >> +      samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
-> >> +      stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
-> >> +      slightly modified bit offsets.
-> >> +    enum:
-> >> +      - "samsung,s3c6410-i2s"
-> >> +      - "samsung,s5pv210-i2s"
-> >> +      - "samsung,exynos5420-i2s"
-> >> +      - "samsung,exynos7-i2s"
-> >> +      - "samsung,exynos7-i2s1"
-> > No need for quotes here.
-> >
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  dmas:
-> >> +    description: list of DMA controller phandle and DMA request line ordered pairs.
-> > How many?
->
-> Hi Rob,
->
-> I have one problem with determining size of dmas.
->
-> It seems that there are only two options for dmas: tx, rx or tx, rx, tx-sec.
->
-> It looks like minItems should be two and maxItems should be three.
->
-> However, some of bindings have different definition of dmas.
->
-> When there is:
->
->          dmas = <&pdma0 10
->                  &pdma0 9
->                  &pdma0 8>;
->
-> the number of Items for dmas is one,
->
-> when there is:
->
->          dmas = <&pdma0 10>,
->                       <&pdma0 9>,
->                       <&pdma0 8>;
->
-> the number of Items is three.
->
-> Both of these are equal from perspective of dtc,
->
-> however from schema point of view, they have different size.
->
->
-> What is a proper solution to this kind of problem?
+Tnx Rob for the review.
 
-The solution is writing things in the latter form. I have a script to
-convert a bunch of these. I need to coordinate doing that at the end
-of a merge window.
+Shall be part of v3.
 
-Rob
+Waiting for responses from Arnd and James and will publish v3.
+
+On 9/18/2019 4:35 PM, Rob Herring wrote:
+> On Tue, Sep 10, 2019 at 10:05:08PM +0300, Talel Shenhar wrote:
+>> Document Amazon's Annapurna Labs POS SoC binding.
+>>
+>> Signed-off-by: Talel Shenhar <talel@amazon.com>
+>> ---
+>>   .../devicetree/bindings/soc/amazon/amazon,al-pos.txt   | 18 ++++++++++++++++++
+>>   1 file changed, 18 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/soc/amazon/amazon,al-pos.txt
+> Please convert to DT schema.
+>
+>> diff --git a/Documentation/devicetree/bindings/soc/amazon/amazon,al-pos.txt b/Documentation/devicetree/bindings/soc/amazon/amazon,al-pos.txt
+>> new file mode 100644
+>> index 00000000..035cc571
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/amazon/amazon,al-pos.txt
+>> @@ -0,0 +1,18 @@
+>> +Amazon's Annapurna Labs POS
+>> +
+>> +POS node is defined to describe the Point Of Serialization (POS) logger
+>> +unit.
+>> +
+>> +Required properties:
+>> +- compatible:	Shall be "amazon,al-pos".
+>> +- reg:		POS logger resources.
+>> +- interrupts:	should contain the interrupt for pos error event.
+>> +
+>> +Example:
+>> +
+>> +al_pos {
+> Needs a unit-address.
+>
+>> +	compatible = "amazon,al-pos";
+>> +	reg = <0x0 0xf0070084 0x0 0x00000008>;
+>> +	interrupt-parent = <&amazon_system_fabric>;
+>> +	interrupts = <24 IRQ_TYPE_LEVEL_HIGH>;
+>> +};
+>> -- 
+>> 2.7.4
+>>
