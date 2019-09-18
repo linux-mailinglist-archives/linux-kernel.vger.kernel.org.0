@@ -2,114 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 229F8B5AD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 07:22:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00D3AB5ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 07:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbfIRFWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 01:22:01 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39062 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727606AbfIRFV7 (ORCPT
+        id S1727514AbfIRFVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 01:21:08 -0400
+Received: from mailoutvs58.siol.net ([185.57.226.249]:39601 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726444AbfIRFVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 01:21:59 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8I5LsQj101926
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 01:21:58 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v3b35wud5-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 01:21:58 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Wed, 18 Sep 2019 06:21:55 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 18 Sep 2019 06:21:51 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8I5LOQJ39256538
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 05:21:24 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E90DAE053;
-        Wed, 18 Sep 2019 05:21:50 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDE3BAE04D;
-        Wed, 18 Sep 2019 05:21:49 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 18 Sep 2019 05:21:49 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 80C7BA01E6;
-        Wed, 18 Sep 2019 15:21:48 +1000 (AEST)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     alastair@d-silva.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] powerpc: Don't flush caches when adding memory
-Date:   Wed, 18 Sep 2019 15:20:59 +1000
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190918052106.14113-1-alastair@au1.ibm.com>
-References: <20190918052106.14113-1-alastair@au1.ibm.com>
+        Wed, 18 Sep 2019 01:21:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 05404521C39;
+        Wed, 18 Sep 2019 07:21:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 67akXHG-VlNw; Wed, 18 Sep 2019 07:21:02 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 6C995521C5B;
+        Wed, 18 Sep 2019 07:21:02 +0200 (CEST)
+Received: from jernej-laptop.localnet (cpe-86-58-59-25.static.triera.net [86.58.59.25])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id CB081521C73;
+        Wed, 18 Sep 2019 07:21:01 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: h6: Use sigma-delta modulation for audio PLL
+Date:   Wed, 18 Sep 2019 07:21:00 +0200
+Message-ID: <8129141.yvSaxnLE4m@jernej-laptop>
+In-Reply-To: <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
+References: <20190914135100.327412-1-jernej.skrabec@siol.net> <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091805-4275-0000-0000-00000367E292
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091805-4276-0000-0000-0000387A49F4
-Message-Id: <20190918052106.14113-6-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-18_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=626 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909180057
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+Dne torek, 17. september 2019 ob 08:54:08 CEST je Chen-Yu Tsai napisal(a):
+> On Sat, Sep 14, 2019 at 9:51 PM Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Audio devices needs exact clock rates in order to correctly reproduce
+> > the sound. Until now, only integer factors were used to configure H6
+> > audio PLL which resulted in inexact rates. Fix that by adding support
+> > for fractional factors using sigma-delta modulation look-up table. It
+> > contains values for two most commonly used audio base frequencies.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 21 +++++++++++++++------
+> >  1 file changed, 15 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c index d89353a3cdec..ed6338d74474
+> > 100644
+> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > @@ -203,12 +203,21 @@ static struct ccu_nkmp pll_hsic_clk = {
+> > 
+> >   * hardcode it to match with the clock names.
+> >   */
+> >  
+> >  #define SUN50I_H6_PLL_AUDIO_REG                0x078
+> > 
+> > +
+> > +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
+> > +       { .rate = 541900800, .pattern = 0xc001288d, .m = 1, .n = 22 },
+> > +       { .rate = 589824000, .pattern = 0xc00126e9, .m = 1, .n = 24 },
+> > +};
+> > +
+> > 
+> >  static struct ccu_nm pll_audio_base_clk = {
+> >  
+> >         .enable         = BIT(31),
+> >         .lock           = BIT(28),
+> >         .n              = _SUNXI_CCU_MULT_MIN(8, 8, 12),
+> >         .m              = _SUNXI_CCU_DIV(1, 1), /* input divider */
+> > 
+> > +       .sdm            = _SUNXI_CCU_SDM(pll_audio_sdm_table,
+> > +                                        BIT(24), 0x178, BIT(31)),
+> > 
+> >         .common         = {
+> > 
+> > +               .features       = CCU_FEATURE_SIGMA_DELTA_MOD,
+> > 
+> >                 .reg            = 0x078,
+> >                 .hw.init        = CLK_HW_INIT("pll-audio-base", "osc24M",
+> >                 
+> >                                               &ccu_nm_ops,
+> > 
+> > @@ -753,12 +762,12 @@ static const struct clk_hw *clk_parent_pll_audio[] =
+> > {> 
+> >  };
+> >  
+> >  /*
+> > 
+> > - * The divider of pll-audio is fixed to 8 now, as pll-audio-4x has a
+> > - * fixed post-divider 2.
+> > + * The divider of pll-audio is fixed to 24 for now, so 24576000 and
+> > 22579200 + * rates can be set exactly in conjunction with sigma-delta
+> > modulation.> 
+> >   */
+> >  
+> >  static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
+> >  
+> >                             clk_parent_pll_audio,
+> > 
+> > -                           8, 1, CLK_SET_RATE_PARENT);
+> > +                           24, 1, CLK_SET_RATE_PARENT);
+> > 
+> >  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
+> >  
+> >                             clk_parent_pll_audio,
+> >                             4, 1, CLK_SET_RATE_PARENT);
+> 
+> You need to fix the factors for the other two outputs as well, since all
+> three are derived from pll-audio-base.
 
-This operation takes a significant amount of time when hotplugging
-large amounts of memory (~50 seconds with 890GB of persistent memory).
+Fix how? pll-audio-2x and pll-audio-4x clocks have fixed divider in regards to 
+pll-audio-base, while pll-audio has not. Unless you mean changing their name?
 
-This was orignally in commit fb5924fddf9e
-("powerpc/mm: Flush cache on memory hot(un)plug") to support memtrace,
-but the flush on add is not needed as it is flushed on remove.
+Best regards,
+Jernej
 
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- arch/powerpc/mm/mem.c | 2 --
- 1 file changed, 2 deletions(-)
+> 
+> ChenYu
+> 
+> > @@ -1215,12 +1224,12 @@ static int sun50i_h6_ccu_probe(struct
+> > platform_device *pdev)> 
+> >         }
+> >         
+> >         /*
+> > 
+> > -        * Force the post-divider of pll-audio to 8 and the output divider
+> > -        * of it to 1, to make the clock name represents the real
+> > frequency. +        * Force the post-divider of pll-audio to 12 and the
+> > output divider +        * of it to 2, so 24576000 and 22579200 rates can
+> > be set exactly.> 
+> >          */
+> >         
+> >         val = readl(reg + SUN50I_H6_PLL_AUDIO_REG);
+> >         val &= ~(GENMASK(21, 16) | BIT(0));
+> > 
+> > -       writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
+> > +       writel(val | (11 << 16) | BIT(0), reg + SUN50I_H6_PLL_AUDIO_REG);
+> > 
+> >         /*
+> >         
+> >          * First clock parent (osc32K) is unusable for CEC. But since
+> >          there
+> > 
+> > --
+> > 2.23.0
+> > 
+> > --
+> > You received this message because you are subscribed to the Google Groups
+> > "linux-sunxi" group. To unsubscribe from this group and stop receiving
+> > emails from it, send an email to
+> > linux-sunxi+unsubscribe@googlegroups.com. To view this discussion on the
+> > web, visit
+> > https://groups.google.com/d/msgid/linux-sunxi/20190914135100.327412-1-jer
+> > nej.skrabec%40siol.net.
 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 4f892da59a6a..dd1aa80e854a 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -142,8 +142,6 @@ int __ref arch_add_memory(int nid, u64 start, u64 size,
- 		return -EFAULT;
- 	}
- 
--	flush_dcache_range_chunked(start, start + size, FLUSH_CHUNK_SIZE);
--
- 	return __add_pages(nid, start_pfn, nr_pages, restrictions);
- }
- 
--- 
-2.21.0
+
+
 
