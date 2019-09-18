@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DA78B5CD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1D98B5D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:33:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730086AbfIRGZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45972 "EHLO mail.kernel.org"
+        id S1728256AbfIRGcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:32:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730059AbfIRGZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:09 -0400
+        id S1729147AbfIRGVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:21:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A00F5218AF;
-        Wed, 18 Sep 2019 06:25:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D85C021920;
+        Wed, 18 Sep 2019 06:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787909;
-        bh=nerxgIB4K0RwEScMkf7xs5pEABsAo/UmUQ5hGfz4X2E=;
+        s=default; t=1568787691;
+        bh=UBO9qQ7Q9bX3p1ZHy4EzyB90nXNRwkoo3UeXBDoltT0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kc0/f0v4mphxWXr/HoqQEW18rdZLVXf5HAiJ08UpsBZa61Zt3N+9eEslkBDqLFoKg
-         4Ov8As+XLAdYqM+Rt/0BlD6za+6VfD48sezlAbqpwaJUNR8ZS9BgtuE3yD8/16LLTH
-         oKaQ86dJYxiAnqhEK1CpiyVzm+ntAVK6R1s+9ayo=
+        b=iidGJFi/UjkrDvRAjH0zxZXiAGtAJSd9nAGwi8bg1hcpB+DxxZqHsjNCW0Cf6oT+0
+         KIXcbLnS5KGhHow8E0P3cTEYhyPwF8PiTnAuYkGc7mM5eRqHlQ6A7wswWIW/7XR/zk
+         SFMSkiH3LV0gcbem65Q+mXcYgtajKjc6tnCKHbhY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.2 28/85] Revert "mmc: bcm2835: Terminate timeout work synchronously"
-Date:   Wed, 18 Sep 2019 08:18:46 +0200
-Message-Id: <20190918061235.046409098@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 09/45] sctp: Fix the link time qualifier of sctp_ctrlsock_exit()
+Date:   Wed, 18 Sep 2019 08:18:47 +0200
+Message-Id: <20190918061223.787736455@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <wahrenst@gmx.net>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit aea64b583601aa5e0d6ea51a0420e46e43710bd4 upstream.
+[ Upstream commit b456d72412ca8797234449c25815e82f4e1426c0 ]
 
-The commit 37fefadee8bb ("mmc: bcm2835: Terminate timeout work
-synchronously") causes lockups in case of hardware timeouts due the
-timeout work also calling cancel_delayed_work_sync() on its own.
-So revert it.
+The '.exit' functions from 'pernet_operations' structure should be marked
+as __net_exit, not __net_init.
 
-Fixes: 37fefadee8bb ("mmc: bcm2835: Terminate timeout work synchronously")
-Cc: stable@vger.kernel.org
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 8e2d61e0aed2 ("sctp: fix race on protocol/netns initialization")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/mmc/host/bcm2835.c |    2 +-
+ net/sctp/protocol.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -597,7 +597,7 @@ static void bcm2835_finish_request(struc
- 	struct dma_chan *terminate_chan = NULL;
- 	struct mmc_request *mrq;
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1344,7 +1344,7 @@ static int __net_init sctp_ctrlsock_init
+ 	return status;
+ }
  
--	cancel_delayed_work_sync(&host->timeout_work);
-+	cancel_delayed_work(&host->timeout_work);
- 
- 	mrq = host->mrq;
- 
+-static void __net_init sctp_ctrlsock_exit(struct net *net)
++static void __net_exit sctp_ctrlsock_exit(struct net *net)
+ {
+ 	/* Free the control endpoint.  */
+ 	inet_ctl_sock_destroy(net->sctp.ctl_sock);
 
 
