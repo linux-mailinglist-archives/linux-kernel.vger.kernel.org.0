@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65DA0B5C62
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46D87B5C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbfIRGZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:25:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46984 "EHLO mail.kernel.org"
+        id S1729858AbfIRGY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:24:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727136AbfIRGZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:25:51 -0400
+        id S1729815AbfIRGYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:24:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91528218AF;
-        Wed, 18 Sep 2019 06:25:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70FE621920;
+        Wed, 18 Sep 2019 06:24:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787951;
-        bh=f2+vWx04TmRB6i4I5GjHQcWzo2NxdnBDv3aSTfyoxNc=;
+        s=default; t=1568787864;
+        bh=wJP2z8ZNzh52sElzbBzgoA1Y7Rx+wSlB3tahrTFUtBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xQrvpqBOfAWuuDWowL6CzehY3rY46AlvGI5IT4mVoD1JgON6hyj2GQHFrZq+SVYmp
-         /749oHANnnkTWiHBYGBzf5/zWUJfnU8BzaUnbkozQ5nYfG6on6RaDYpDRxgrO4f0Zv
-         GK4EQbwVG9ZSFOI8Ce8KIhBrZWNgYXhUO0dO4Hwg=
+        b=vS6au2mO10h8Wkd9hUnqD2Z1nlC3321SEYS+mWd34bgRJcn3Yqwt3xX+aHGBETidL
+         n5rZ6J3zoMg06AVJId462b+vtXYh4+OXJTYLnuYZoYOAOwFjSGgz0x4Ou8XIg3j2h+
+         CUwoJ1cK9Q32LEsWnOh9wLTQxiV+GNTvAkQoyeGI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Chulski <stefanc@marvell.com>,
-        Shaul Ben-Mayor <shaulb@marvell.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 09/85] net: phylink: Fix flow control resolution
-Date:   Wed, 18 Sep 2019 08:18:27 +0200
-Message-Id: <20190918061234.426760172@linuxfoundation.org>
+Subject: [PATCH 5.2 12/85] sctp: Fix the link time qualifier of sctp_ctrlsock_exit()
+Date:   Wed, 18 Sep 2019 08:18:30 +0200
+Message-Id: <20190918061234.528141127@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
 References: <20190918061234.107708857@linuxfoundation.org>
@@ -45,51 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Chulski <stefanc@marvell.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 63b2ed4e10b2e6c913e1d8cdd728e7fba4115a3d ]
+[ Upstream commit b456d72412ca8797234449c25815e82f4e1426c0 ]
 
-Regarding to IEEE 802.3-2015 standard section 2
-28B.3 Priority resolution - Table 28-3 - Pause resolution
+The '.exit' functions from 'pernet_operations' structure should be marked
+as __net_exit, not __net_init.
 
-In case of Local device Pause=1 AsymDir=0, Link partner
-Pause=1 AsymDir=1, Local device resolution should be enable PAUSE
-transmit, disable PAUSE receive.
-And in case of Local device Pause=1 AsymDir=1, Link partner
-Pause=1 AsymDir=0, Local device resolution should be enable PAUSE
-receive, disable PAUSE transmit.
-
-Fixes: 9525ae83959b ("phylink: add phylink infrastructure")
-Signed-off-by: Stefan Chulski <stefanc@marvell.com>
-Reported-by: Shaul Ben-Mayor <shaulb@marvell.com>
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 8e2d61e0aed2 ("sctp: fix race on protocol/netns initialization")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phylink.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/sctp/protocol.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -356,8 +356,8 @@ static void phylink_get_fixed_state(stru
-  *  Local device  Link partner
-  *  Pause AsymDir Pause AsymDir Result
-  *    1     X       1     X     TX+RX
-- *    0     1       1     1     RX
-- *    1     1       0     1     TX
-+ *    0     1       1     1     TX
-+ *    1     1       0     1     RX
-  */
- static void phylink_resolve_flow(struct phylink *pl,
- 				 struct phylink_link_state *state)
-@@ -378,7 +378,7 @@ static void phylink_resolve_flow(struct
- 			new_pause = MLO_PAUSE_TX | MLO_PAUSE_RX;
- 		else if (pause & MLO_PAUSE_ASYM)
- 			new_pause = state->pause & MLO_PAUSE_SYM ?
--				 MLO_PAUSE_RX : MLO_PAUSE_TX;
-+				 MLO_PAUSE_TX : MLO_PAUSE_RX;
- 	} else {
- 		new_pause = pl->link_config.pause & MLO_PAUSE_TXRX_MASK;
- 	}
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -1336,7 +1336,7 @@ static int __net_init sctp_ctrlsock_init
+ 	return status;
+ }
+ 
+-static void __net_init sctp_ctrlsock_exit(struct net *net)
++static void __net_exit sctp_ctrlsock_exit(struct net *net)
+ {
+ 	/* Free the control endpoint.  */
+ 	inet_ctl_sock_destroy(net->sctp.ctl_sock);
 
 
