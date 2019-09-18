@@ -2,107 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C89AB5DDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:17:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69445B5DDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:18:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbfIRHRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 03:17:14 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41068 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbfIRHRO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 03:17:14 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q7so3758253pfh.8
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 00:17:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=f5rx1DuXZfGgKinG2MFWUdyT0o9wzkIrbhzDAvs2r9s=;
-        b=cFYeROA04xpWpcArEgAVMKRQHegH+4glKQBS9W8PzJjUNtZwR8ExhUuC6y7lzX6y2o
-         fevCdpgV+tTeJYYZyFYk/d1j1Copbyq06fqc+nDAFYXsRS4Xsgprl3vEfCE/euXCDsnR
-         IbtDi3tjQuAlA6RYBo6u4uZ37tu0pGwpUIPb8LhN9FgAdVXXsRhZS628ZxeqLsuQ3Hl2
-         9ZUJKIJA3OzmsqDKO76Fi5GXhm0MoLE0ybNJdwNkeNOVLubCEsvzW9J+fVsfiR3ddR9u
-         gXvyP+l0Y2GwWvqJIuBGRNNwINmc3j5EwVC0jFyElXJ14s+NmPerubEayFS4iebkNlgg
-         SiEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f5rx1DuXZfGgKinG2MFWUdyT0o9wzkIrbhzDAvs2r9s=;
-        b=kq11AW0vzC8Vl08hgrH/SiJxcX7aCX0gnWPItIdD0YEd0chjh/ax+CJjnQcZsqhCtW
-         viGQz2MPRV+mbL7wPmjfvCh8Hxbck2GmPxPvVhEv3QHagOKS7Zkv7qqM3ODbXJ3kktB7
-         eIPknsaSBUFeImRE4prchY/wudbWwMDwK1u0InWZocDq+xqBWjQE9roKSkjxjhofmp/j
-         BJmayS656G7fHNeXmKq9rc57lL2xQsygLnhOsR/l+8yMfmPRb3uvERMfdy2c6O6/e9Lu
-         TsmLpCxFcRxxGA8zBMZiEP0epxqqevkYgM35FWZxsZmZaNmpCGQOhaostfTFoiGAQmMr
-         F63g==
-X-Gm-Message-State: APjAAAWqHs6UhVny9TdNFQqy/vrtzHLuv47axgJxDalu7o2tkqbNQPFp
-        mtqXCOmSweXttzV2q7IJ/TSrRVIv41LBloScl2s=
-X-Google-Smtp-Source: APXvYqzWOyHi+F/N6aCOnYVhBlCm5YF1Y6pS7QzSnBSLqrb5zc8fpOL9EfMeEgJrayXPmiERdcjW/zZxtROkxliAblw=
-X-Received: by 2002:aa7:811a:: with SMTP id b26mr2668049pfi.151.1568791033505;
- Wed, 18 Sep 2019 00:17:13 -0700 (PDT)
+        id S1728486AbfIRHSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 03:18:25 -0400
+Received: from mx1.cock.li ([185.10.68.5]:54117 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726077AbfIRHSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 03:18:24 -0400
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on cock.li
+X-Spam-Level: 
+X-Spam-Status: No, score=0.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NO_RECEIVED,NO_RELAYS shortcircuit=_SCTYPE_
+        autolearn=disabled version=3.4.2
 MIME-Version: 1.0
-References: <20190916211536.29646-1-jekhor@gmail.com> <20190916211536.29646-2-jekhor@gmail.com>
- <20190917111322.GD2680@smile.fi.intel.com> <20190917132547.GA4226@jeknote.loshitsa1.net>
-In-Reply-To: <20190917132547.GA4226@jeknote.loshitsa1.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 18 Sep 2019 10:17:01 +0300
-Message-ID: <CAHp75VeRBW4W0vEr+KZzdJWMf5ANQP_LEAXXK8SPC8BC+97Yyg@mail.gmail.com>
-Subject: Re: [PATCH v2] extcon-intel-cht-wc: Don't reset USB data connection
- at probe
-To:     Yauhen Kharuzhy <jekhor@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1568791101; bh=jQ6BPQQtLCvIveIWCDJZB1auaV4iY75zRl3ywPF9Vz4=;
+        h=Date:From:To:Subject:From;
+        b=CKclyGoBo59dpOiV4eD4iWTH3Dqjn6JwDNLm6Zur/w13CYfy5hKgIXQBf8Or9e88O
+         BD6/pTr9gxdzp2cYfUBQrF1z1p3jLvFe8k7p2xS+ZAsDsyG/v/RUFCc7FhLjqxocQR
+         nvv+8732HedQ0YVMI1VMSmluhVp5J6eNxhigFbgugRhKjoV8RY6+1Pvpki3ZG1enBn
+         aZfLrKnnXKEUiL30oVDEYElmWis7VvP85aQFWKujoFq+F2ClTwPIK59dJBdCSKaD5v
+         py57SD8ZLMW0NiWHmZLz3el7tcEmEubZrOdMUhW/Ilbg17FXsxN/WDSmOymq2ih/pQ
+         jR/HSiD9oXXJA==
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 18 Sep 2019 07:18:21 +0000
+From:   gameonlinux@redchan.it
+To:     rms@gnu.org, linux-kernel@vger.kernel.org
+Subject: SFConservancy attacks RMS. - SFConservancy: GO TO HELL
+Message-ID: <116744a32ae4963b8552946534c21864@redchan.it>
+X-Sender: gameonlinux@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 2:04 AM Yauhen Kharuzhy <jekhor@gmail.com> wrote:
->
-> On Tue, Sep 17, 2019 at 02:13:22PM +0300, Andy Shevchenko wrote:
-> > On Tue, Sep 17, 2019 at 12:15:36AM +0300, Yauhen Kharuzhy wrote:
-> > > Intel Cherry Trail Whiskey Cove extcon driver connect USB data lines to
-> > > PMIC at driver probing for further charger detection. This causes reset of
-> > > USB data sessions and removing all devices from bus. If system was
-> > > booted from Live CD or USB dongle, this makes system unusable.
-> > >
-> > > Check if USB ID pin is floating and re-route data lines in this case
-> > > only, don't touch otherwise.
-> >
-> > > +   ret = regmap_read(ext->regmap, CHT_WC_PWRSRC_STS, &pwrsrc_sts);
-> > > +   if (ret) {
-> > > +           dev_err(ext->dev, "Error reading pwrsrc status: %d\n", ret);
-> > > +           goto disable_sw_control;
-> > > +   }
-> > > +
-> > > +   id = cht_wc_extcon_get_id(ext, pwrsrc_sts);
-> >
-> > We have second implementation of this. Would it make sense to split to some
-> > helper?
->
-> Do you mean the combination of regmap_read(...CHT_WC_PWRSRC_STS,
-> &pwrsrc_sts) with cht_wc_extcon_get_id()?
+> Software Freedom Conservancy
+‏>Verified account @conservancy
+> 
+> The fight for diversity, equality and inclusion is the fight for 
+> software freedom. Our movement will only be successful
+> if it includes everyone. RMS does not speak for these values.
+> twitter.com/conservancy/status/1173603417769545734
 
-Yes.
+Dear SFConservancy. You might not understand the lawyer-speak, being 
+headed for the longest time by a mere techie (ie: one who thinks arrays 
+are a "necessary language tool"), but Free licenses are Revocable from 
+free-takers.
 
-> In the cht_wc_extcon_pwrsrc_event() function the pwrsrc_sts is checked
-> for other bits also, so separation of PWRSRC_STS read and id calculation
-> to one routine will cause non-clear function calls like as
-> get_powersrc_and_check_id(..., &powersrc_sts, &id) which is not looks
-> better than current code duplication.
+Keep attacking the men who created the software and the men will 
+eventually move to revoke your gratis licenses of their copyrighted 
+works and burn the legal framework of Free Software to the ground (a 
+framework that relies mostly on ignorance of the vagaries of copyright 
+and licensing law).
 
-I see. Thanks for answer.
+Look, Free Software world, I told you a decade ago NOT to invite random 
+women and non-techies into your world: you will gain nothing and they 
+will set themselves up as gate keepers to your community.
 
-> Or we need to spend some time for
-> refactoring and testing of cht_wc_extcon_pwrsrc_event() code.
+They have done so. They just kicked out RMS from his own foundation. Who 
+knows what "GPLv4" will contain now.
+(Not that it matters: you can still revoke free licenses from 
+free-takers regardless of what "terms" were "agreed upon" (no 
+consideration on the part of the taker means no contractual rights to 
+hold the distributee to))
+RMS said absolutely nothing wrong: just things White Women and their 
+golem-like white "men" find offensive.
 
-Perhaps, In any case I'm not objecting of the current approach.
+(YHWH allows child brides, including in cases of rape (taphas): Devarim 
+chapter 22, verse 28 (Hebrew Masoretic Text: Na'ar (child), Greek 
+Septuagint: Padia (child, root word for paedophile), Latin Vulgate: 
+Puella)
 
--- 
-With Best Regards,
-Andy Shevchenko
+It's time to move Free Software and OpenSource out of America. America 
+is the global enemy of all men anyway: why deal with the savages that 
+slaughter countless innocents in the near-east because "they marry young 
+girls, BETTER A MILLSTONE!" etc? Why associate yourself with such evil 
+torturers and murderers that are the Proud American (White) Man (and his 
+female Masters)?
+
+
+
+> Regarding threats to "CoC" you. - You do have recourse - license 
+> rescission
+lkml.org/lkml/2019/5/9/434
+> For easy to read by lay-people discussions on this topic:
+lkml.org/lkml/2019/5/4/334
+lkml.org/lkml/2019/5/3/698
+lkml.org/lkml/2018/9/20/444
+
+
+> For legal articles and treatises that agree: no consideration from GPL 
+> free-taker, no contract, revocable by the copyright holder:
+scholarship.law.duke.edu/faculty_scholarship/1857/
+www.amazon.com/Open-Source-Licensing-Software-Intellectual/dp/0131487876
+papers.ssrn.com/sol3/papers.cfm?abstract_id=243237
