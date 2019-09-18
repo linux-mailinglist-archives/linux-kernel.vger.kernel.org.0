@@ -2,162 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA9CEB5E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F95B5E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbfIRHcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 03:32:06 -0400
-Received: from twhmllg3.macronix.com ([122.147.135.201]:18814 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfIRHcG (ORCPT
+        id S1727646AbfIRHmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 03:42:42 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45116 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbfIRHmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 03:32:06 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG3.macronix.com with ESMTP id x8I7VoOf060926;
-        Wed, 18 Sep 2019 15:31:52 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     miquel.raynal@bootlin.com, richard@nod.at, marek.vasut@gmail.com,
-        dwmw2@infradead.org, bbrezillon@kernel.org,
-        computersforpeace@gmail.com, vigneshr@ti.com
-Cc:     marcel.ziswiler@toradex.com, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, frieder.schrempf@kontron.de,
-        gregkh@linuxfoundation.org, linux-mtd@lists.infradead.org,
-        masonccyang@mxic.com.tw, tglx@linutronix.de
-Subject: [PATCH RFC 3/3] mtd: rawnand: Add support Macronix power down mode
-Date:   Wed, 18 Sep 2019 15:56:26 +0800
-Message-Id: <1568793387-25199-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1568793387-25199-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1568793387-25199-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG3.macronix.com x8I7VoOf060926
+        Wed, 18 Sep 2019 03:42:42 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1iAUbk-00008R-D2; Wed, 18 Sep 2019 09:42:36 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Paul Turner <pjt@google.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Prarit Bhargava <prarit@redhat.com>
+Subject: Re: printk meeting at LPC
+References: <20190904123531.GA2369@hirez.programming.kicks-ass.net>
+        <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
+        <20190905143118.GP2349@hirez.programming.kicks-ass.net>
+        <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
+        <20190905121101.60c78422@oasis.local.home>
+        <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
+        <87k1acz5rx.fsf@linutronix.de> <20190918012546.GA12090@jagdpanzerIV>
+        <20190917220849.17a1226a@oasis.local.home>
+        <20190918023654.GB15380@jagdpanzerIV>
+        <20190918051933.GA220683@jagdpanzerIV>
+Date:   Wed, 18 Sep 2019 09:42:34 +0200
+In-Reply-To: <20190918051933.GA220683@jagdpanzerIV> (Sergey Senozhatsky's
+        message of "Wed, 18 Sep 2019 14:19:33 +0900")
+Message-ID: <87h85anj85.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Macronix AD series support using power down command to
-enter a minimum power consumption state.
+On 2019-09-18, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>> For instance, tty/sysrq must be able to switch printk emergency
+>> on/off.
+>
+> How did we come up to that _sync() printk() emergency mode (when we
+> make sure that there is no active printing kthread)? We had a number
+> of cases (complaints) of lost kernel messages. There are scenarios in
+> which we cannot offload to async preemptible printing kthread, because
+> current control path is, for instance, going to reboot the kernel. In
+> sync printk() mode we have some sort (!) of guarantees that when we do
+>
+> 		pr_emerg("Restarting system\n");
+> 		kmsg_dump(KMSG_DUMP_RESTART);
+> 		machine_restart(cmd);
+>
+> pr_emerg("Restarting system\n") is going to flush logbuf before the
+> system will machine_restart().
 
-MTD default _suspend/_resume function replacement by
-manufacturer postponed initialization.
+Yes, this was why I asked Daniel how the bsod stuff will be
+implemented. We don't want a bsod just because we are
+restarting. Perhaps write_atomic() should also have a "reason" argument
+like kmsg_dump does. I will keep in touch with Daniel to make sure we
+are sync on this.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- drivers/mtd/nand/raw/nand_macronix.c | 78 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 77 insertions(+), 1 deletion(-)
+> It's going to be a bit harder when we have per-console kthread.
 
-diff --git a/drivers/mtd/nand/raw/nand_macronix.c b/drivers/mtd/nand/raw/nand_macronix.c
-index 991c636..99a7b2e 100644
---- a/drivers/mtd/nand/raw/nand_macronix.c
-+++ b/drivers/mtd/nand/raw/nand_macronix.c
-@@ -15,6 +15,8 @@
- #define MXIC_BLOCK_PROTECTION_ALL_LOCK 0x38
- #define MXIC_BLOCK_PROTECTION_ALL_UNLOCK 0x0
- 
-+#define NAND_CMD_POWER_DOWN 0xB9
-+
- struct nand_onfi_vendor_macronix {
- 	u8 reserved;
- 	u8 reliability_func;
-@@ -78,6 +80,12 @@ static void macronix_nand_onfi_init(struct nand_chip *chip)
- 		"MX30UF4G28AC",
- };
- 
-+static const char * const nand_power_down[] = {
-+		"MX30LF1G28AD",
-+		"MX30LF2G28AD",
-+		"MX30LF4G28AD",
-+};
-+
- static void macronix_nand_fix_broken_get_timings(struct nand_chip *chip)
- {
- 	unsigned int i;
-@@ -144,8 +152,64 @@ static int mxic_nand_unlock(struct mtd_info *mtd, loff_t ofs, uint64_t len)
- 	return ret;
- }
- 
-+int nand_power_down_op(struct nand_chip *chip)
-+{
-+	int ret;
-+
-+	if (nand_has_exec_op(chip)) {
-+		struct nand_op_instr instrs[] = {
-+			NAND_OP_CMD(NAND_CMD_POWER_DOWN, 0),
-+		};
-+
-+		struct nand_operation op = NAND_OPERATION(chip->cur_cs, instrs);
-+
-+		ret = nand_exec_op(chip, &op);
-+		if (ret)
-+			return ret;
-+
-+	} else {
-+		chip->legacy.cmdfunc(chip, NAND_CMD_POWER_DOWN, -1, -1);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mxic_nand_suspend(struct mtd_info *mtd)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
-+	mutex_lock(&chip->lock);
-+
-+	nand_select_target(chip, 0);
-+	nand_power_down_op(chip);
-+	nand_deselect_target(chip);
-+
-+	chip->suspend = 1;
-+	mutex_unlock(&chip->lock);
-+
-+	return 0;
-+}
-+
-+static void mxic_nand_resume(struct mtd_info *mtd)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
-+	mutex_lock(&chip->lock);
-+	// toggle #CS pin to resume NAND device
-+	nand_select_target(chip, 0);
-+	ndelay(20);
-+	nand_deselect_target(chip);
-+
-+	if (chip->suspend)
-+		chip->suspended = 0;
-+	else
-+		pr_err("%s call for a chip which is not in suspended state\n",
-+		       __func__);
-+	mutex_unlock(&chip->lock);
-+}
-+
- /*
-- * Macronix AC series support using SET/GET_FEATURES to change
-+ * Macronix AC and AD series support using SET/GET_FEATURES to change
-  * Block Protection and Unprotection.
-  *
-  * MTD call-back function replacement by manufacturer postponed
-@@ -163,6 +227,18 @@ static void macronix_nand_post_init(struct nand_chip *chip)
- 		}
- 	}
- 
-+	for (i = 0; i < ARRAY_SIZE(nand_power_down); i++) {
-+		if (!strcmp(nand_power_down[i], chip->parameters.model)) {
-+			blockprotected = 1;
-+			break;
-+		}
-+	}
-+
-+	if (i < ARRAY_SIZE(nand_power_down)) {
-+		mtd->_suspend = mxic_nand_suspend;
-+		mtd->_resume = mxic_nand_resume;
-+	}
-+
- 	if (blockprotected && chip->parameters.supports_set_get_features) {
- 		bitmap_set(chip->parameters.set_feature_list,
- 			   ONFI_FEATURE_ADDR_MXIC_PROTECTION, 1);
--- 
-1.9.1
+Each console has its own iterator. This iterators will need to advance,
+regardless if the message was printed via write() or write_atomic().
 
+John Ogness
