@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B887CB5C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F816B5C86
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729726AbfIRGXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:23:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
+        id S1730495AbfIRG1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:27:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729706AbfIRGXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:50 -0400
+        id S1730480AbfIRG1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:27:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8AAA218AF;
-        Wed, 18 Sep 2019 06:23:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8640521924;
+        Wed, 18 Sep 2019 06:27:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787829;
-        bh=f3pz0wBcdIZTPNDTsokruoT4VSOl8JlnLUNWPpj3bv4=;
+        s=default; t=1568788033;
+        bh=qdtwGZDPXIN3FGN4rtkThrJOq5eRZP0MNAE0Hs7iF2k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CZWewUhQsV92SGuQm8xVxytAwnHxhUeZGYW3dT0ORB6lcMEIEi9e+LIFQv5NJWtPB
-         k30lcXsjT7+eky+98GoWkozl+M3Do+xCK96Eii+34wCyDxfjN1/7wBpgNi7mu5++cP
-         6Al1XQzqDqidfDbpxJRZngfPuEWHB8liIEgZwhVU=
+        b=nGSyH5A89UKhSlssWVpZtucwYVfGHQ8DfLWl1b2iDKlxxGrQTiRFhKoVrWPFapNd5
+         Q/bvcmDIXglvVQieb7Zs9UKVdUA+VaeXFFviBG3HHByEfgIaFf4rIBO+8u7mmNdqaQ
+         ISlY/F575xoi7T8CYgQXzvk6auVh+rm6ku/pFMbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.19 49/50] nvmem: Use the same permissions for eeprom as for nvmem
+        stable@vger.kernel.org, Bastien Nocera <hadess@hadess.net>,
+        Christian Kellner <ckellner@redhat.com>,
+        Sukumar Ghorai <sukumar.ghorai@intel.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 5.2 74/85] Revert "Bluetooth: btusb: driver to enable the usb-wakeup feature"
 Date:   Wed, 18 Sep 2019 08:19:32 +0200
-Message-Id: <20190918061228.737809169@linuxfoundation.org>
+Message-Id: <20190918061237.740906398@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +46,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Mario Limonciello <mario.limonciello@dell.com>
 
-commit e70d8b287301eb6d7c7761c6171c56af62110ea3 upstream.
+commit 1ffdb51f28e8ec6be0a2b812c1765b5cf5c44a8f upstream.
 
-The compatibility "eeprom" attribute is currently root-only no
-matter what the configuration says. The "nvmem" attribute does
-respect the setting of the root_only configuration bit, so do the
-same for "eeprom".
+This reverts commit a0085f2510e8976614ad8f766b209448b385492f.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: b6c217ab9be6 ("nvmem: Add backwards compatibility support for older EEPROM drivers.")
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20190728184255.563332e6@endymion
+This commit has caused regressions in notebooks that support suspend
+to idle such as the XPS 9360, XPS 9370 and XPS 9380.
+
+These notebooks will wakeup from suspend to idle from an unsolicited
+advertising packet from an unpaired BLE device.
+
+In a bug report it was sugggested that this is caused by a generic
+lack of LE privacy support.  Revert this commit until that behavior
+can be avoided by the kernel.
+
+Fixes: a0085f2510e8 ("Bluetooth: btusb: driver to enable the usb-wakeup feature")
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=200039
+Link: https://marc.info/?l=linux-bluetooth&m=156441081612627&w=2
+Link: https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/750073/
+CC: Bastien Nocera <hadess@hadess.net>
+CC: Christian Kellner <ckellner@redhat.com>
+CC: Sukumar Ghorai <sukumar.ghorai@intel.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvmem/core.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/bluetooth/btusb.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -415,10 +415,17 @@ static int nvmem_setup_compat(struct nvm
- 	if (!config->base_dev)
- 		return -EINVAL;
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -1162,10 +1162,6 @@ static int btusb_open(struct hci_dev *hd
+ 	}
  
--	if (nvmem->read_only)
--		nvmem->eeprom = bin_attr_ro_root_nvmem;
--	else
--		nvmem->eeprom = bin_attr_rw_root_nvmem;
-+	if (nvmem->read_only) {
-+		if (config->root_only)
-+			nvmem->eeprom = bin_attr_ro_root_nvmem;
-+		else
-+			nvmem->eeprom = bin_attr_ro_nvmem;
-+	} else {
-+		if (config->root_only)
-+			nvmem->eeprom = bin_attr_rw_root_nvmem;
-+		else
-+			nvmem->eeprom = bin_attr_rw_nvmem;
-+	}
- 	nvmem->eeprom.attr.name = "eeprom";
- 	nvmem->eeprom.size = nvmem->size;
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	data->intf->needs_remote_wakeup = 1;
+-	/* device specific wakeup source enabled and required for USB
+-	 * remote wakeup while host is suspended
+-	 */
+-	device_wakeup_enable(&data->udev->dev);
+ 
+ 	if (test_and_set_bit(BTUSB_INTR_RUNNING, &data->flags))
+ 		goto done;
+@@ -1229,7 +1225,6 @@ static int btusb_close(struct hci_dev *h
+ 		goto failed;
+ 
+ 	data->intf->needs_remote_wakeup = 0;
+-	device_wakeup_disable(&data->udev->dev);
+ 	usb_autopm_put_interface(data->intf);
+ 
+ failed:
 
 
