@@ -2,93 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D997B5D4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A595B5D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbfIRGdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:33:13 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41421 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfIRGdK (ORCPT
+        id S1729187AbfIRGeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:34:07 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45035 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726835AbfIRGeH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:33:10 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x15so3387790pgg.8;
-        Tue, 17 Sep 2019 23:33:09 -0700 (PDT)
+        Wed, 18 Sep 2019 02:34:07 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q21so3667747pfn.11
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 23:34:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=4NRHniZPjEfTKvj18POaDeXjVS6m4zvsqMwOtmFk3z0=;
-        b=r3C+u3/BB++MIH+IsmGmDFs2M0PdO8Pau3WSslLy1WJtLJ3S7piwCY3PHTNxaBHfF0
-         4ms7Nh5DunKVrPLSEg5PphOgFpwy7xXtIAwixb738v0lzn0t2u/6COg2bvxa8azBVXWs
-         QYIkYpT1OVRIZOvfysvnbaCeri03UJY8KotnUrAAfySUN86jCxk243As4uNuVzbR60eo
-         x+GFT1forrnz6r38ro+RZtuK6NXLnNos8WcySSUJV+yJSub2Cmv6+VJSg7KG0yeMnj7V
-         JJb/We+Px/j7j8JPH+3lqnYZtxz6QdupO4RzerpyBEpznnp39WLjQv6Wu/4mOBnitfD1
-         NK0g==
+        bh=7hTH+QZ0Rg1J8IDO+1UiOPyFh3Jvo6QqRltmoWe2MW4=;
+        b=X0g3AnbCKw+4TwyXRilD5SoauIs7wFaCMcwJKFXFr+zMxnDhMe2h8FvUT7Uilb0cyQ
+         rOHGkNZRi46MCx5F3tyS4fy75friu9ruEtFpKh0Z2S6tWdUkZx4uLAeBKh4xjqoxzzut
+         G81E4cQU5C8fHwDxi0SovdBNlntxF3QSRCx+VA6snwPzZXgabK/h0b2LIylAYFPIKd47
+         JWy1+Eyc3nQWc3YU6i5tTx4u3XuZVT0CYgFy7OpgYJpZi0MtU3J1bN49gsY96lzLHLk9
+         z5THRSdFErwm8GSn5Xt6MaUpUggMzlOHC/DVjWGjGE6c61eUSrIhwQ5edcmv5qO4QayY
+         wi/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4NRHniZPjEfTKvj18POaDeXjVS6m4zvsqMwOtmFk3z0=;
-        b=SiuDvAF85sspmxrrghQiMYPBPrQHXBgC33uThlFcQ5cCXvhh238328laMrBO8gqqW3
-         tcSk9kiBqcFnDzv9+TTF1+6Z79wfvqfYCFC4Wr16Fmvn3P4SPPTiwLSOffAQT0+ah6Yo
-         cD+AMe7GW86dCnpt84VKkWrynTwainF/BST01OypujXkrElSp7nXqI1lyYN63QNPBhbL
-         QE/2zR9wV/FAGebRwkchwy3/x82u3vvPVV4kMGbgF3tAobzQdHlb8VlXoxp2YMuePfS3
-         xnpBhar9qZeAcHYDpcxLihcnFveVoIvfkroB3+pjbF0E3e89+BrKgIwlcC9Cxp/1xHjD
-         4YZg==
-X-Gm-Message-State: APjAAAWiJ9FEYkXSLVYbhMRLDfqBiNQN51bmk929r/tftN93ZBqjCq1Q
-        meUo+oKEf603yK8P97+17cA=
-X-Google-Smtp-Source: APXvYqxbYV70nhx6LQt0f1LP4Q/8C+7DUVaCoQwC8bHmHjNOPx3Cn+Y7wUTauxXkxk/8TXzoWnjcVQ==
-X-Received: by 2002:aa7:93b7:: with SMTP id x23mr2433584pff.250.1568788389488;
-        Tue, 17 Sep 2019 23:33:09 -0700 (PDT)
-Received: from localhost ([175.223.34.14])
-        by smtp.gmail.com with ESMTPSA id r185sm6685309pfr.68.2019.09.17.23.33.07
+        bh=7hTH+QZ0Rg1J8IDO+1UiOPyFh3Jvo6QqRltmoWe2MW4=;
+        b=I8y9mPzYw1elcOQRxHb6tA83X2hjN71jOAfjIeDenAnQyU0f2paP2u0nAozpRHndwL
+         Y6UfyWbkV83m09X28GI9dujAILKQirfPXX/7N3WG/EZPSg/hmFh6QfBrBKmf7nel8Va4
+         e107cL9GdKlZHE8Wc12ZLEioPkbdJ1yRsQQcQnq1IfdJUPL4QypcdkQtEFEZ41uzZJ67
+         K1yvceHYBDRqNqlFW917aoWih0wB25vLOkRaAcJqSTHrO1DKurcBKsnmAAsfRN+PMRCo
+         3zlD9xJxxisXqlWnrUhRjxoIuPLiBvpQFG5VRpyiWsPOueGZmtyqnKP6aimOidmtSOud
+         LzPw==
+X-Gm-Message-State: APjAAAVzx5QwWiaq9g9aBq4sxSS4IbUIPplx+E2uTEpyvO+x22HkTb+h
+        H+T6XLQ52KRzN1ZttAd1I0DmjmVT75A=
+X-Google-Smtp-Source: APXvYqzAcu1KGj9IOpAdn6O/jLmmzMqwMmQyCiZJCCQ7WyfF5e2xkCOUO7dFfLtz2I7kRQrfl391pA==
+X-Received: by 2002:aa7:8dcf:: with SMTP id j15mr2449689pfr.5.1568788446445;
+        Tue, 17 Sep 2019 23:34:06 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y28sm7614921pfq.48.2019.09.17.23.34.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 23:33:08 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 15:33:04 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     'Greg KH' <gregkh@linuxfoundation.org>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        'Ju Hyung Park' <qkrwngud825@gmail.com>,
-        'Valdis Kletnieks' <valdis.kletnieks@vt.edu>,
-        devel@driverdev.osuosl.org, linkinjeon@gmail.com,
-        linux-kernel@vger.kernel.org, alexander.levin@microsoft.com,
-        sergey.senozhatsky@gmail.com, linux-fsdevel@vger.kernel.org,
-        sj1557.seo@samsung.com
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to
-Message-ID: <20190918063304.GA8354@jagdpanzerIV>
-References: <8998.1568693976@turing-police>
- <20190917053134.27926-1-qkrwngud825@gmail.com>
- <20190917054726.GA2058532@kroah.com>
- <CGME20190917060433epcas2p4b12d7581d0ac5477d8f26ec74e634f0a@epcas2p4.samsung.com>
- <CAD14+f1adJPRTvk8awgPJwCoHXSngqoKcAze1xbHVVvrhSMGrQ@mail.gmail.com>
- <004401d56dc9$b00fd7a0$102f86e0$@samsung.com>
- <20190918061605.GA1832786@kroah.com>
+        Tue, 17 Sep 2019 23:34:05 -0700 (PDT)
+Date:   Tue, 17 Sep 2019 23:34:03 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     gregkh@linuxfoundation.org, arnd@arndb.de,
+        srinivas.kandagatla@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/5] misc: fastrpc: fix memory leak from miscdev->name
+Message-ID: <20190918063403.GD1636@tuxbook-pro>
+References: <20190913152532.24484-1-jorge.ramirez-ortiz@linaro.org>
+ <20190913152532.24484-3-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190918061605.GA1832786@kroah.com>
+In-Reply-To: <20190913152532.24484-3-jorge.ramirez-ortiz@linaro.org>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/18/19 08:16), 'Greg KH' wrote:
-[..]
-> > Note, that Samsung is still improving sdfat driver. For instance,
-> > what will be realeased soon is sdfat v2.3.0, which will include support
-> > for "UtcOffset" of "File Directory Entry", in order to satisfy
-> > exFAT specification 7.4.
->
-[..]
-> If Samsung wishes to use their sdfat codebase as the "seed" to work from
-> for this, please submit a patch adding the latest version to the kernel
-> tree and we can compare and work from there.
+On Fri 13 Sep 08:25 PDT 2019, Jorge Ramirez-Ortiz wrote:
 
-Isn't it what Ju Hyung did? He took sdfat codebase (the most recent
-among publicly available) as the seed, cleaned it up a bit and submitted
-as a patch. Well, technically, Valdis did the same, it's just he forked
-a slightly more outdated (and not anymore used by Samsung) codebase.
+> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> 
+> Fix a memory leak in miscdev->name by using devm_variant
+> 
+> Orignally reported by kmemleak:
+>     [<ffffff80088b74d8>] kmemleak_alloc+0x50/0x84
+>     [<ffffff80081e015c>] __kmalloc_track_caller+0xe8/0x168
+>     [<ffffff8008371ab0>] kvasprintf+0x78/0x100
+>     [<ffffff8008371c6c>] kasprintf+0x50/0x74
+>     [<ffffff8008507f2c>] fastrpc_rpmsg_probe+0xd8/0x20c
+>     [<ffffff80086b63b4>] rpmsg_dev_probe+0xa8/0x148
+>     [<ffffff80084de50c>] really_probe+0x208/0x248
+>     [<ffffff80084de2dc>] driver_probe_device+0x98/0xc0
+>     [<ffffff80084dec6c>] __device_attach_driver+0x9c/0xac
+>     [<ffffff80084dca8c>] bus_for_each_drv+0x60/0x8c
+>     [<ffffff80084de64c>] __device_attach+0x8c/0x100
+>     [<ffffff80084de6e0>] device_initial_probe+0x20/0x28
+>     [<ffffff80084dcbd0>] bus_probe_device+0x34/0x7c
+>     [<ffffff80084da32c>] device_add+0x420/0x498
+>     [<ffffff80084da680>] device_register+0x24/0x2c
+> 
 
-	-ss
+Cc: stable@vger.kernel.org
+Fixes: f6f9279f2bf0 ("misc: fastrpc: Add Qualcomm fastrpc basic driver model")
+
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+You should append your S-o-b here, as you forwarded the patch.
+
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/misc/fastrpc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index 8903388993d3..bc03500bfe60 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -1599,8 +1599,8 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>  	}
+>  
+>  	data->miscdev.minor = MISC_DYNAMIC_MINOR;
+> -	data->miscdev.name = kasprintf(GFP_KERNEL, "fastrpc-%s",
+> -				domains[domain_id]);
+> +	data->miscdev.name = devm_kasprintf(rdev, GFP_KERNEL, "fastrpc-%s",
+> +					    domains[domain_id]);
+>  	data->miscdev.fops = &fastrpc_fops;
+>  	err = misc_register(&data->miscdev);
+>  	if (err)
+> -- 
+> 2.23.0
+> 
