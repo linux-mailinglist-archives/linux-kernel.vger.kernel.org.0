@@ -2,143 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A796B5F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 10:26:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63BEDB5F1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 10:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbfIRIZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 04:25:55 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39415 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730256AbfIRIZx (ORCPT
+        id S1730288AbfIRIZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 04:25:44 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49618 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726131AbfIRIZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 04:25:53 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i1so3876370pfa.6
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 01:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=58QuMxmjHlqsWVtyFBQnvBpwo6+B1q1GdfYt1s4m2qE=;
-        b=QTaH6GH5UguvXVEDbNSlyuomPAH87bYVOWqCH6McKhsGTYK/xYVHQgKnh5a5Tw0WNQ
-         e1ZPFnuD/Y0yn4S2mKnoxDRgTiB9Z50mHQ31aQMtM2MYHFdO9az/vg2dsYmvd6pDZ634
-         kY66oETu+TYVAH5TtMe6QmFRkiCAUAqTvr8BY=
+        Wed, 18 Sep 2019 04:25:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1568795141;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp;
+        bh=sCvYaicCVH8OrDZlwsa8ICj82oK2Vn0GFjH/m8a0EOU=;
+        b=MOzjZd6gVZGoeY1WWVJIKKivJSxdWUFjYfmmLqFQ14rgDQPNlrF6KFqFIiS1bIHesotMCr
+        gG+PGQatrc99YHb9Wqg3PVq9Z0HEFvcat2C6T+nD3xhxTFQ1SWR4lXgHfgccQF73XjHfh/
+        B02GEbuRbMohxpZc5uO77G6QkrzVygw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-108-vKroey6jNyqzEOugVbCelA-1; Wed, 18 Sep 2019 04:25:40 -0400
+Received: by mail-wm1-f71.google.com with SMTP id g82so544774wmg.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 01:25:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=58QuMxmjHlqsWVtyFBQnvBpwo6+B1q1GdfYt1s4m2qE=;
-        b=KQzx65f+nGEhJVxJUvTpfSw2/CeQ1A9SUifZqJJmLNjgak3ukgAJkMsO5PUIRRioKe
-         cMr9H1TIlRfGxA+3Fj9inKvZKHohQJfsqTiYQAAypSLE/6Q+QTXDAWY+JRgkQzmfQHHb
-         RWnr9F1KCCexzFkebicCA/K1YeYWmAUzikSKEX2wa84lwODoGgR94vXoMqzQ2GCvMTVm
-         1CzE1c4kejT4XwSrWFBsNomLyFUnj7uA1pofc3ivOAe5OhfikgdzIfGODNYXfFLcxB6X
-         tXu3vwMCC6iPQScAuvITi2mxaevUaQwftpNpukX3A5zOMofxrd60y3q1tSWF5/1n+pSQ
-         DKbA==
-X-Gm-Message-State: APjAAAU54qTIHF8OFUSM/546oAxhZ2YoWfrOFosYkOMcisyiAGVkl+Az
-        bYxxMeLj7lw1hom0+N1ZjTr1zGwAlsw=
-X-Google-Smtp-Source: APXvYqxHmdR5xUtBiMVc0Mnxrw8HNJTIpU4I57BZIUZlNw5Ee/93dqanNwaTMuLFn6EQAArQLOrQxQ==
-X-Received: by 2002:a63:1a5a:: with SMTP id a26mr2870744pgm.178.1568795151570;
-        Wed, 18 Sep 2019 01:25:51 -0700 (PDT)
-Received: from localhost ([2401:fa00:1:10:79b4:bd83:e4a5:a720])
-        by smtp.gmail.com with ESMTPSA id v44sm13357519pgn.17.2019.09.18.01.25.47
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+0NSTxt+2cOn/cB86g2+fMxuM9WiNm6PL9JuEvNIK5M=;
+        b=q54aa+E08NYZ8+2XUlMp6ATBrFg1HfmSnOw7oZlf35tw3Fk5IcCHyWSr/F9vQBpT02
+         /vjepgLNDtJmjcuU88rJyOgiBvy5Krqy27DB4xIH4jFlEcM3UG09K6qH3tFl9qW7ViX/
+         4v5Qsdty7Aqv3JY0MoIDIt0VBYMtL3XNXFfFS/VPxdzFzO3u7m/aajnLMzSzpiWSW8e8
+         +ILr3t/iO0uk9tUgRo8EGvlVoRVkWa8oBCtNN4wXFnhiy0dxXTxvu14j4dIF7h7W/RyI
+         LFNTE1ZnBOpbCs/XdYeGCkQgORuPLVTNqzrlCuQ9MyZpE3OBJ06RSMQXyYIQolTrgA4Z
+         7AlA==
+X-Gm-Message-State: APjAAAXaiyoSLORMUdpdOy6GDD50WbxLGd+KOO2InEjjVWbgHNHmseTK
+        9v6nA+1ZWWUvsXF39GL0ftPM6K+ZJBcNSU9dRuyc+IXnkktjJDLNOkuEEpgi2fNzV08wdtZxdPW
+        oSu90yZEcG3C0IHg4FU8vqXYO
+X-Received: by 2002:a5d:4983:: with SMTP id r3mr1910632wrq.194.1568795139045;
+        Wed, 18 Sep 2019 01:25:39 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwY+BNDBy8hbD47ydvWQhqPwEt4J5QJf1IHJz82EGJ9j3igRSbtePP9u1jlLlqfQ3k5XE2prw==
+X-Received: by 2002:a5d:4983:: with SMTP id r3mr1910612wrq.194.1568795138815;
+        Wed, 18 Sep 2019 01:25:38 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id s12sm8726472wra.82.2019.09.18.01.25.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2019 01:25:50 -0700 (PDT)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH v6 4/4] ASoC: rockchip_max98090: Add HDMI jack support
-Date:   Wed, 18 Sep 2019 16:25:00 +0800
-Message-Id: <20190918082500.209281-5-cychiang@chromium.org>
-X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
-In-Reply-To: <20190918082500.209281-1-cychiang@chromium.org>
-References: <20190918082500.209281-1-cychiang@chromium.org>
+        Wed, 18 Sep 2019 01:25:38 -0700 (PDT)
+Subject: Re: [RFC PATCH v3 4/6] psci: Add hvc call service for ptp_kvm.
+To:     Jianyong Wu <jianyong.wu@arm.com>, netdev@vger.kernel.org,
+        yangbo.lu@nxp.com, john.stultz@linaro.org, tglx@linutronix.de,
+        sean.j.christopherson@intel.com, maz@kernel.org,
+        richardcochran@gmail.com, Mark.Rutland@arm.com,
+        Will.Deacon@arm.com, suzuki.poulose@arm.com
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Steve.Capper@arm.com, Kaly.Xin@arm.com, justin.he@arm.com,
+        nd@arm.com, linux-arm-kernel@lists.infradead.org
+References: <20190918080716.64242-1-jianyong.wu@arm.com>
+ <20190918080716.64242-5-jianyong.wu@arm.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <83ed7fac-277f-a31e-af37-8ec134f39d26@redhat.com>
+Date:   Wed, 18 Sep 2019 10:25:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190918080716.64242-5-jianyong.wu@arm.com>
+Content-Language: en-US
+X-MC-Unique: vKroey6jNyqzEOugVbCelA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In machine driver, create a jack and let hdmi-codec report jack status.
+On 18/09/19 10:07, Jianyong Wu wrote:
+> +=09case ARM_SMCCC_VENDOR_HYP_KVM_PTP_FUNC_ID:
+> +=09=09getnstimeofday(ts);
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- sound/soc/rockchip/Kconfig             |  3 ++-
- sound/soc/rockchip/rockchip_max98090.c | 20 ++++++++++++++++++++
- 2 files changed, 22 insertions(+), 1 deletion(-)
+This is not Y2038-safe.  Please use ktime_get_real_ts64 instead, and
+split the 64-bit seconds value between val[0] and val[1].
 
-diff --git a/sound/soc/rockchip/Kconfig b/sound/soc/rockchip/Kconfig
-index b43657e6e655..d610b553ea3b 100644
---- a/sound/soc/rockchip/Kconfig
-+++ b/sound/soc/rockchip/Kconfig
-@@ -40,9 +40,10 @@ config SND_SOC_ROCKCHIP_MAX98090
- 	select SND_SOC_ROCKCHIP_I2S
- 	select SND_SOC_MAX98090
- 	select SND_SOC_TS3A227E
-+	select SND_SOC_HDMI_CODEC
- 	help
- 	  Say Y or M here if you want to add support for SoC audio on Rockchip
--	  boards using the MAX98090 codec, such as Veyron.
-+	  boards using the MAX98090 codec and HDMI codec, such as Veyron.
- 
- config SND_SOC_ROCKCHIP_RT5645
- 	tristate "ASoC support for Rockchip boards using a RT5645/RT5650 codec"
-diff --git a/sound/soc/rockchip/rockchip_max98090.c b/sound/soc/rockchip/rockchip_max98090.c
-index c82948e383da..c81c4acda917 100644
---- a/sound/soc/rockchip/rockchip_max98090.c
-+++ b/sound/soc/rockchip/rockchip_max98090.c
-@@ -134,6 +134,25 @@ enum {
- 	DAILINK_HDMI,
- };
- 
-+static struct snd_soc_jack rk_hdmi_jack;
-+
-+static int rk_hdmi_init(struct snd_soc_pcm_runtime *runtime)
-+{
-+	struct snd_soc_card *card = runtime->card;
-+	struct snd_soc_component *component = runtime->codec_dai->component;
-+	int ret;
-+
-+	/* enable jack detection */
-+	ret = snd_soc_card_jack_new(card, "HDMI Jack", SND_JACK_LINEOUT,
-+				    &rk_hdmi_jack, NULL, 0);
-+	if (ret) {
-+		dev_err(card->dev, "Can't new HDMI Jack %d\n", ret);
-+		return ret;
-+	}
-+
-+	return hdmi_codec_set_jack_detect(component, &rk_hdmi_jack);
-+}
-+
- /* max98090 and HDMI codec dai_link */
- static struct snd_soc_dai_link rk_dailinks[] = {
- 	[DAILINK_MAX98090] = {
-@@ -151,6 +170,7 @@ static struct snd_soc_dai_link rk_dailinks[] = {
- 		.ops = &rk_aif1_ops,
- 		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
- 			SND_SOC_DAIFMT_CBS_CFS,
-+		.init = rk_hdmi_init,
- 		SND_SOC_DAILINK_REG(hdmi),
- 	}
- };
--- 
-2.23.0.237.gc6a4ce50a0-goog
+However, it seems to me that the new function is not needed and you can
+just use ktime_get_snapshot.  You'll get the time in
+systime_snapshot->real and the cycles value in systime_snapshot->cycles.
+
+> +=09=09get_current_counterval(&sc);
+> +=09=09val[0] =3D ts->tv_sec;
+> +=09=09val[1] =3D ts->tv_nsec;
+> +=09=09val[2] =3D sc.cycles;
+> +=09=09val[3] =3D 0;
+> +=09=09break;
+
+This should return a guest-cycles value.  If the cycles values always
+the same between the host and the guest on ARM, then okay.  If not, you
+have to apply whatever offset exists.
+
+Thanks,
+
+Paolo
 
