@@ -2,92 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372FFB5FCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A60C3B5FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfIRJFv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 05:05:51 -0400
-Received: from foss.arm.com ([217.140.110.172]:37806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbfIRJFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 05:05:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75E90337;
-        Wed, 18 Sep 2019 02:05:50 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E06CF3F59C;
-        Wed, 18 Sep 2019 02:05:49 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 10:05:48 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, netdev@vger.kernel.org,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v3 13/26] e1000: Use PCI_STD_NUM_BARS
-Message-ID: <20190918090547.GZ9720@e119886-lin.cambridge.arm.com>
-References: <20190916204158.6889-1-efremov@linux.com>
- <20190916204158.6889-14-efremov@linux.com>
+        id S1730325AbfIRJHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 05:07:38 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51763 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfIRJHh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 05:07:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 7so1641139wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 02:07:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6G/whdxwOVG2qxmcsy9XC+pDIIKNhBXnDvwIF4K/VBs=;
+        b=kfWr8gWBYBcBGgcxeOud4gsGHHoCDZ+e2gVUoUqlrkYqpWgQKaJ78hHgXC3ilzVr0O
+         +8pkEG8kqn4PpvoHDlJhIdgZOtD96xrMJPf5rxoAvthocW4621d3D9Qh5trYnLS5SZ1C
+         BN08nY19kls8ugqtZhrEwO8LpHQ8mUyG2tZWI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6G/whdxwOVG2qxmcsy9XC+pDIIKNhBXnDvwIF4K/VBs=;
+        b=Mmcvl+dX6GGciDEQG0d1+JFBFdMsJScybcFYSOOB+6hW0ke3DMCI+SovGLIfHgBmYw
+         Vj+cg2h1ge9IT8bk6buHojkL7ExOafYtkqZj7OqQFxv59ZDCMjekau540UBKyDc1G7Pn
+         ipTI1X7jWN9ynIQszD18KuxNJozL+cZwG+efpGBtI20mrk2rBExZaz+RzHuOhF0FGCzi
+         3oK1WwQwXyG05luh/nIDmVQBHMHwN5AZ0tucVULLkk5wEl8kCnGk4ZolzzL3Yc2hCsyU
+         QqUhYY2yhYtL8t+m34JWWjwAaw8zQNrIaqJOVfado9QGVtGufG+0ZR8VKR7P1P7ukSEZ
+         mnyQ==
+X-Gm-Message-State: APjAAAU24qbgmtvyjl3rnqjBtk7FzQ9WCfsnFW2hQFJTzqZTwJSPbrsj
+        a2H/qPnlA0H21BNck8tTINE9sg==
+X-Google-Smtp-Source: APXvYqxcHp0ur5Smn0yHXP17FwVKc+WjZmFyaf7NbEJ/4W74qLgNfNcp6RlqK0gpGfLkmsfzOB/N8g==
+X-Received: by 2002:a7b:c1cc:: with SMTP id a12mr1816647wmj.73.1568797655318;
+        Wed, 18 Sep 2019 02:07:35 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id q124sm2478546wma.5.2019.09.18.02.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2019 02:07:34 -0700 (PDT)
+Date:   Wed, 18 Sep 2019 11:07:31 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     NeilBrown <neilb@suse.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Andreas =?utf-8?Q?Gr=C3=BCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Patrick Plagwitz <Patrick_Plagwitz@web.de>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Lange <lange@informatik.uni-koeln.de>
+Subject: Re: [PATCH] overlayfs: ignore empty NFSv4 ACLs in ext4 upperdir
+Message-ID: <20190918090731.GB19549@miu.piliscsaba.redhat.com>
+References: <266c571f-e4e2-7c61-5ee2-8ece0c2d06e9@web.de>
+ <CAHpGcMKmtppfn7PVrGKEEtVphuLV=YQ2GDYKOqje4ZANhzSgDw@mail.gmail.com>
+ <CAHpGcMKjscfhmrAhwGes0ag2xTkbpFvCO6eiLL_rHz87XE-ZmA@mail.gmail.com>
+ <CAJfpegvRFGOc31gVuYzanzWJ=mYSgRgtAaPhYNxZwHin3Wc0Gw@mail.gmail.com>
+ <CAHc6FU4JQ28BFZE9_8A06gtkMvvKDzFmw9=ceNPYvnMXEimDMw@mail.gmail.com>
+ <20161206185806.GC31197@fieldses.org>
+ <87bm0l4nra.fsf@notabene.neil.brown.name>
+ <20190503153531.GJ12608@fieldses.org>
+ <87woj3157p.fsf@notabene.neil.brown.name>
+ <20190510200941.GB5349@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190916204158.6889-14-efremov@linux.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20190510200941.GB5349@fieldses.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 11:41:45PM +0300, Denis Efremov wrote:
-> To iterate through all possible BARs, loop conditions refactored to the
-> *number* of BARs "i < PCI_STD_NUM_BARS", instead of the index of the last
-> valid BAR "i <= BAR_5". This is more idiomatic C style and allows to avoid
-> the fencepost error.
+On Fri, May 10, 2019 at 04:09:41PM -0400, J. Bruce Fields wrote:
+> On Tue, May 07, 2019 at 10:24:58AM +1000, NeilBrown wrote:
+> > Interesting perspective .... though doesn't NFSv4 explicitly allow
+> > client-side ACL enforcement in the case of delegations?
 > 
-> Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-> ---
->  drivers/net/ethernet/intel/e1000/e1000.h      | 1 -
->  drivers/net/ethernet/intel/e1000/e1000_main.c | 2 +-
->  2 files changed, 1 insertion(+), 2 deletions(-)
+> Not really.  What you're probably thinking of is the single ACE that the
+> server can return on granting a delegation, that tells the client it can
+> skip the ACCESS check for users matching that ACE.  It's unclear how
+> useful that is.  It's currently unused by the Linux client and server.
 > 
-> diff --git a/drivers/net/ethernet/intel/e1000/e1000.h b/drivers/net/ethernet/intel/e1000/e1000.h
-> index c40729b2c184..7fad2f24dcad 100644
-> --- a/drivers/net/ethernet/intel/e1000/e1000.h
-> +++ b/drivers/net/ethernet/intel/e1000/e1000.h
-> @@ -45,7 +45,6 @@
->  
->  #define BAR_0		0
->  #define BAR_1		1
-> -#define BAR_5		5
+> > Not sure how relevant that is....
+> > 
+> > It seems to me we have two options:
+> >  1/ declare the NFSv4 doesn't work as a lower layer for overlayfs and
+> >     recommend people use NFSv3, or
+> >  2/ Modify overlayfs to work with NFSv4 by ignoring nfsv4 ACLs either
+> >  2a/ always - and ignore all other acls and probably all system. xattrs,
+> >  or
+> >  2b/ based on a mount option that might be
+> >       2bi/ general "noacl" or might be
+> >       2bii/ explicit "noxattr=system.nfs4acl"
+> >  
+> > I think that continuing to discuss the miniature of the options isn't
+> > going to help.  No solution is perfect - we just need to clearly
+> > document the implications of whatever we come up with.
+> > 
+> > I lean towards 2a, but I be happy with with any '2' and '1' won't kill
+> > me.
+> 
+> I guess I'd also lean towards 2a.
+> 
+> I don't think it applies to posix acls, as overlayfs is capable of
+> copying those up and evaluating them on its own.
 
-No issue with this patch. However I noticed that at least 5 of the network
-drivers have these same definitions, which are identical to the pci_barno enum
-of include/linux/pci-epf.h. There are mostly used with pci_ioremap_bar and
-pci_resource_** macros. I wonder if this is an indicator that these defintions
-should live in the core.
+POSIX acls are evaluated and copied up.
+
+I guess same goes for "security.*" attributes, that are evaluated on MAC checks.
+
+I think it would be safe to ignore failure to copy up anything else.  That seems
+a bit saner than just blacklisting nfs4_acl...
+
+Something like the following untested patch.
 
 Thanks,
+Miklos
 
-Andrew Murray
+---
+ fs/overlayfs/copy_up.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
->  
->  #define INTEL_E1000_ETHERNET_DEVICE(device_id) {\
->  	PCI_DEVICE(PCI_VENDOR_ID_INTEL, device_id)}
-> diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-> index f703fa58458e..db4fd82036af 100644
-> --- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-> +++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-> @@ -977,7 +977,7 @@ static int e1000_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->  		goto err_ioremap;
->  
->  	if (adapter->need_ioport) {
-> -		for (i = BAR_1; i <= BAR_5; i++) {
-> +		for (i = BAR_1; i < PCI_STD_NUM_BARS; i++) {
->  			if (pci_resource_len(pdev, i) == 0)
->  				continue;
->  			if (pci_resource_flags(pdev, i) & IORESOURCE_IO) {
-> -- 
-> 2.21.0
-> 
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -36,6 +36,13 @@ static int ovl_ccup_get(char *buf, const
+ module_param_call(check_copy_up, ovl_ccup_set, ovl_ccup_get, NULL, 0644);
+ MODULE_PARM_DESC(check_copy_up, "Obsolete; does nothing");
+ 
++static bool ovl_must_copy_xattr(const char *name)
++{
++	return !strcmp(name, XATTR_POSIX_ACL_ACCESS) ||
++	       !strcmp(name, XATTR_POSIX_ACL_DEFAULT) ||
++	       !strncmp(name, XATTR_SECURITY_PREFIX, XATTR_SECURITY_PREFIX_LEN);
++}
++
+ int ovl_copy_xattr(struct dentry *old, struct dentry *new)
+ {
+ 	ssize_t list_size, size, value_size = 0;
+@@ -107,8 +114,13 @@ int ovl_copy_xattr(struct dentry *old, s
+ 			continue; /* Discard */
+ 		}
+ 		error = vfs_setxattr(new, name, value, size, 0);
+-		if (error)
+-			break;
++		if (error) {
++			if (ovl_must_copy_xattr(name))
++				break;
++
++			/* Ignore failure to copy unknown xattrs */
++			error = 0;
++		}
+ 	}
+ 	kfree(value);
+ out:
