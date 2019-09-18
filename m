@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52270B5C27
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35DECB5BD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:21:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729552AbfIRGXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:23:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43180 "EHLO mail.kernel.org"
+        id S1727820AbfIRGUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:20:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729512AbfIRGXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:02 -0400
+        id S1727661AbfIRGUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:20:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1C23218AE;
-        Wed, 18 Sep 2019 06:23:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC20421925;
+        Wed, 18 Sep 2019 06:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787781;
-        bh=6LK2q22mv14Eqf+SpO2SWwRPMXXn1eXc6maI1npATho=;
+        s=default; t=1568787614;
+        bh=WSXgFjWxeDIiTJ5O/+eF0M0IKcZfG/xLhuGR8D0Jay8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mheZtMCIOzVbW0O6JYQ2Hr06AUFUoL3I/k88NQ3/nX7QWFVRGdPDmpRjyrnQMReNu
-         tSj6xRasYp4F7VIJ4S0Q7iPpWlQZyhsu/6aWPDKsoDqKasoLQvnfJv1BRqBsqcpxO2
-         tov1h1pKn/ost+241D1OrLjEi2oMRMGEF+03Ql7A=
+        b=EvSWecvJ8OgACMbYqJKkcvCcs1km+acy8QqOOYMu/xw48Q1IzLjRNAtK8fMH+KnEy
+         OEQ8qKdcKThj4WaqWe004Mej9yLHmauLISXigLDpYHGrsztyvKoyjn3mrHOhu0zRlp
+         7Gs9qQhdVVp1LmSpfhUf5K9zjCP6g0T8mn236WVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 09/50] net: sched: fix reordering issues
-Date:   Wed, 18 Sep 2019 08:18:52 +0200
-Message-Id: <20190918061223.855532778@linuxfoundation.org>
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 15/45] btrfs: correctly validate compression type
+Date:   Wed, 18 Sep 2019 08:18:53 +0200
+Message-Id: <20190918061224.441745861@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,86 +44,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
-[ Upstream commit b88dd52c62bb5c5d58f0963287f41fd084352c57 ]
+commit aa53e3bfac7205fb3a8815ac1c937fd6ed01b41e upstream.
 
-Whenever MQ is not used on a multiqueue device, we experience
-serious reordering problems. Bisection found the cited
-commit.
+Nikolay reported the following KASAN splat when running btrfs/048:
 
-The issue can be described this way :
+[ 1843.470920] ==================================================================
+[ 1843.471971] BUG: KASAN: slab-out-of-bounds in strncmp+0x66/0xb0
+[ 1843.472775] Read of size 1 at addr ffff888111e369e2 by task btrfs/3979
 
-- A single qdisc hierarchy is shared by all transmit queues.
-  (eg : tc qdisc replace dev eth0 root fq_codel)
+[ 1843.473904] CPU: 3 PID: 3979 Comm: btrfs Not tainted 5.2.0-rc3-default #536
+[ 1843.475009] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[ 1843.476322] Call Trace:
+[ 1843.476674]  dump_stack+0x7c/0xbb
+[ 1843.477132]  ? strncmp+0x66/0xb0
+[ 1843.477587]  print_address_description+0x114/0x320
+[ 1843.478256]  ? strncmp+0x66/0xb0
+[ 1843.478740]  ? strncmp+0x66/0xb0
+[ 1843.479185]  __kasan_report+0x14e/0x192
+[ 1843.479759]  ? strncmp+0x66/0xb0
+[ 1843.480209]  kasan_report+0xe/0x20
+[ 1843.480679]  strncmp+0x66/0xb0
+[ 1843.481105]  prop_compression_validate+0x24/0x70
+[ 1843.481798]  btrfs_xattr_handler_set_prop+0x65/0x160
+[ 1843.482509]  __vfs_setxattr+0x71/0x90
+[ 1843.483012]  __vfs_setxattr_noperm+0x84/0x130
+[ 1843.483606]  vfs_setxattr+0xac/0xb0
+[ 1843.484085]  setxattr+0x18c/0x230
+[ 1843.484546]  ? vfs_setxattr+0xb0/0xb0
+[ 1843.485048]  ? __mod_node_page_state+0x1f/0xa0
+[ 1843.485672]  ? _raw_spin_unlock+0x24/0x40
+[ 1843.486233]  ? __handle_mm_fault+0x988/0x1290
+[ 1843.486823]  ? lock_acquire+0xb4/0x1e0
+[ 1843.487330]  ? lock_acquire+0xb4/0x1e0
+[ 1843.487842]  ? mnt_want_write_file+0x3c/0x80
+[ 1843.488442]  ? debug_lockdep_rcu_enabled+0x22/0x40
+[ 1843.489089]  ? rcu_sync_lockdep_assert+0xe/0x70
+[ 1843.489707]  ? __sb_start_write+0x158/0x200
+[ 1843.490278]  ? mnt_want_write_file+0x3c/0x80
+[ 1843.490855]  ? __mnt_want_write+0x98/0xe0
+[ 1843.491397]  __x64_sys_fsetxattr+0xba/0xe0
+[ 1843.492201]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[ 1843.493201]  do_syscall_64+0x6c/0x230
+[ 1843.493988]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 1843.495041] RIP: 0033:0x7fa7a8a7707a
+[ 1843.495819] Code: 48 8b 0d 21 de 2b 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 be 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d ee dd 2b 00 f7 d8 64 89 01 48
+[ 1843.499203] RSP: 002b:00007ffcb73bca38 EFLAGS: 00000202 ORIG_RAX: 00000000000000be
+[ 1843.500210] RAX: ffffffffffffffda RBX: 00007ffcb73bda9d RCX: 00007fa7a8a7707a
+[ 1843.501170] RDX: 00007ffcb73bda9d RSI: 00000000006dc050 RDI: 0000000000000003
+[ 1843.502152] RBP: 00000000006dc050 R08: 0000000000000000 R09: 0000000000000000
+[ 1843.503109] R10: 0000000000000002 R11: 0000000000000202 R12: 00007ffcb73bda91
+[ 1843.504055] R13: 0000000000000003 R14: 00007ffcb73bda82 R15: ffffffffffffffff
 
-- When/if try_bulk_dequeue_skb_slow() dequeues a packet targetting
-  a different transmit queue than the one used to build a packet train,
-  we stop building the current list and save the 'bad' skb (P1) in a
-  special queue. (bad_txq)
+[ 1843.505268] Allocated by task 3979:
+[ 1843.505771]  save_stack+0x19/0x80
+[ 1843.506211]  __kasan_kmalloc.constprop.5+0xa0/0xd0
+[ 1843.506836]  setxattr+0xeb/0x230
+[ 1843.507264]  __x64_sys_fsetxattr+0xba/0xe0
+[ 1843.507886]  do_syscall_64+0x6c/0x230
+[ 1843.508429]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-- When dequeue_skb() calls qdisc_dequeue_skb_bad_txq() and finds this
-  skb (P1), it checks if the associated transmit queues is still in frozen
-  state. If the queue is still blocked (by BQL or NIC tx ring full),
-  we leave the skb in bad_txq and return NULL.
+[ 1843.509558] Freed by task 0:
+[ 1843.510188] (stack is not available)
 
-- dequeue_skb() calls q->dequeue() to get another packet (P2)
+[ 1843.511309] The buggy address belongs to the object at ffff888111e369e0
+                which belongs to the cache kmalloc-8 of size 8
+[ 1843.514095] The buggy address is located 2 bytes inside of
+                8-byte region [ffff888111e369e0, ffff888111e369e8)
+[ 1843.516524] The buggy address belongs to the page:
+[ 1843.517561] page:ffff88813f478d80 refcount:1 mapcount:0 mapping:ffff88811940c300 index:0xffff888111e373b8 compound_mapcount: 0
+[ 1843.519993] flags: 0x4404000010200(slab|head)
+[ 1843.520951] raw: 0004404000010200 ffff88813f48b008 ffff888119403d50 ffff88811940c300
+[ 1843.522616] raw: ffff888111e373b8 000000000016000f 00000001ffffffff 0000000000000000
+[ 1843.524281] page dumped because: kasan: bad access detected
 
-  The other packet can target the problematic queue (that we found
-  in frozen state for the bad_txq packet), but another cpu just ran
-  TX completion and made room in the txq that is now ready to accept
-  new packets.
+[ 1843.525936] Memory state around the buggy address:
+[ 1843.526975]  ffff888111e36880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[ 1843.528479]  ffff888111e36900: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[ 1843.530138] >ffff888111e36980: fc fc fc fc fc fc fc fc fc fc fc fc 02 fc fc fc
+[ 1843.531877]                                                        ^
+[ 1843.533287]  ffff888111e36a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[ 1843.534874]  ffff888111e36a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[ 1843.536468] ==================================================================
 
-- Packet P2 is sent while P1 is still held in bad_txq, P1 might be sent
-  at next round. In practice P2 is the lead of a big packet train
-  (P2,P3,P4 ...) filling the BQL budget and delaying P1 by many packets :/
+This is caused by supplying a too short compression value ('lz') in the
+test-case and comparing it to 'lzo' with strncmp() and a length of 3.
+strncmp() read past the 'lz' when looking for the 'o' and thus caused an
+out-of-bounds read.
 
-To solve this problem, we have to block the dequeue process as long
-as the first packet in bad_txq can not be sent. Reordering issues
-disappear and no side effects have been seen.
+Introduce a new check 'btrfs_compress_is_valid_type()' which not only
+checks the user-supplied value against known compression types, but also
+employs checks for too short values.
 
-Fixes: a53851e2c321 ("net: sched: explicit locking in gso_cpu fallback")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Acked-by: John Fastabend <john.fastabend@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+
+Reported-by: Nikolay Borisov <nborisov@suse.com>
+Fixes: 272e5326c783 ("btrfs: prop: fix vanished compression property after failed set")
+CC: stable@vger.kernel.org # 5.1+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_generic.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fs/btrfs/compression.c |   16 ++++++++++++++++
+ fs/btrfs/compression.h |    1 +
+ fs/btrfs/props.c       |    6 +-----
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -49,6 +49,8 @@ EXPORT_SYMBOL(default_qdisc_ops);
-  * - updates to tree and tree walking are only done under the rtnl mutex.
-  */
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -58,6 +58,22 @@ const char* btrfs_compress_type2str(enum
+ 	return NULL;
+ }
  
-+#define SKB_XOFF_MAGIC ((struct sk_buff *)1UL)
++bool btrfs_compress_is_valid_type(const char *str, size_t len)
++{
++	int i;
 +
- static inline struct sk_buff *__skb_dequeue_bad_txq(struct Qdisc *q)
- {
- 	const struct netdev_queue *txq = q->dev_queue;
-@@ -74,7 +76,7 @@ static inline struct sk_buff *__skb_dequ
- 				q->q.qlen--;
- 			}
- 		} else {
--			skb = NULL;
-+			skb = SKB_XOFF_MAGIC;
- 		}
- 	}
- 
-@@ -272,8 +274,11 @@ validate:
- 		return skb;
- 
- 	skb = qdisc_dequeue_skb_bad_txq(q);
--	if (unlikely(skb))
-+	if (unlikely(skb)) {
-+		if (skb == SKB_XOFF_MAGIC)
-+			return NULL;
- 		goto bulk;
++	for (i = 1; i < ARRAY_SIZE(btrfs_compress_types); i++) {
++		size_t comp_len = strlen(btrfs_compress_types[i]);
++
++		if (len < comp_len)
++			continue;
++
++		if (!strncmp(btrfs_compress_types[i], str, comp_len))
++			return true;
 +	}
- 	skb = q->dequeue(q);
- 	if (skb) {
- bulk:
++	return false;
++}
++
+ static int btrfs_decompress_bio(struct compressed_bio *cb);
+ 
+ static inline int compressed_bio_size(struct btrfs_fs_info *fs_info,
+--- a/fs/btrfs/compression.h
++++ b/fs/btrfs/compression.h
+@@ -131,6 +131,7 @@ extern const struct btrfs_compress_op bt
+ extern const struct btrfs_compress_op btrfs_zstd_compress;
+ 
+ const char* btrfs_compress_type2str(enum btrfs_compression_type type);
++bool btrfs_compress_is_valid_type(const char *str, size_t len);
+ 
+ int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end);
+ 
+--- a/fs/btrfs/props.c
++++ b/fs/btrfs/props.c
+@@ -386,11 +386,7 @@ int btrfs_subvol_inherit_props(struct bt
+ 
+ static int prop_compression_validate(const char *value, size_t len)
+ {
+-	if (!strncmp("lzo", value, 3))
+-		return 0;
+-	else if (!strncmp("zlib", value, 4))
+-		return 0;
+-	else if (!strncmp("zstd", value, 4))
++	if (btrfs_compress_is_valid_type(value, len))
+ 		return 0;
+ 
+ 	return -EINVAL;
 
 
