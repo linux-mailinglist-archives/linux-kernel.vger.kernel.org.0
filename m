@@ -2,136 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46CC5B5EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 10:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39B42B5ECF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 10:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730040AbfIRITR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 04:19:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64768 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727337AbfIRITQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 04:19:16 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8I8Hbu7184748
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 04:19:15 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2v3gj7rxa7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 04:19:14 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sourabhjain@linux.ibm.com>;
-        Wed, 18 Sep 2019 09:19:13 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 18 Sep 2019 09:19:11 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8I8JApK36241542
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Sep 2019 08:19:10 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0ECF24C059;
-        Wed, 18 Sep 2019 08:19:10 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B0AF64C04E;
-        Wed, 18 Sep 2019 08:19:08 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.124.35.138])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 18 Sep 2019 08:19:08 +0000 (GMT)
-Subject: Re: [PATCH v3] powerpc/fadump: sysfs for fadump memory reservation
-To:     Hari Bathini <hbathini@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-doc@vger.kernel.org, mahesh@linux.vnet.ibm.com,
-        corbet@lwn.net, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, linuxppc-dev@lists.ozlabs.org
-References: <20190810175905.7761-1-sourabhjain@linux.ibm.com>
- <53311fa4-2cce-1eb6-1aae-0c835e06eb24@linux.ibm.com>
- <cf4fdb60-438c-bc4e-d759-1fbb27364c50@linux.ibm.com>
- <f53e4cfe-57cb-d8a6-385a-fa6243940573@linux.ibm.com>
- <f8e9cbdd-1926-081d-c8e6-f9d55408fe51@linux.ibm.com>
- <87sgpn2t2w.fsf@concordia.ellerman.id.au>
- <b3540b13-20f9-6995-831e-b7f88121fd1f@linux.ibm.com>
-From:   Sourabh Jain <sourabhjain@linux.ibm.com>
-Date:   Wed, 18 Sep 2019 13:49:08 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1729866AbfIRINa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 04:13:30 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59074 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725904AbfIRINa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 04:13:30 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 67232FF8DCCAFA0289D1;
+        Wed, 18 Sep 2019 16:13:28 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 18 Sep 2019 16:13:20 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Gao Xiang <gaoxiang25@huawei.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] erofs: fix return value check in erofs_read_superblock()
+Date:   Wed, 18 Sep 2019 08:30:33 +0000
+Message-ID: <20190918083033.47780-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <b3540b13-20f9-6995-831e-b7f88121fd1f@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091808-0008-0000-0000-00000317D5C5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091808-0009-0000-0000-00004A365650
-Message-Id: <c9ce4153-c634-b336-6bf0-6b43b93f11b4@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-18_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909180086
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In case of error, the function read_mapping_page() returns
+ERR_PTR() not NULL. The NULL test in the return value check
+should be replaced with IS_ERR().
+
+Fixes: fe7c2423570d ("erofs: use read_mapping_page instead of sb_bread")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ fs/erofs/super.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index caf9a95173b0..0e369494f2f2 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -105,9 +105,9 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	int ret;
+ 
+ 	page = read_mapping_page(sb->s_bdev->bd_inode->i_mapping, 0, NULL);
+-	if (!page) {
++	if (IS_ERR(page)) {
+ 		erofs_err(sb, "cannot read erofs superblock");
+-		return -EIO;
++		return PTR_ERR(page);
+ 	}
+ 
+ 	sbi = EROFS_SB(sb);
 
 
-On 8/27/19 11:32 AM, Hari Bathini wrote:
-> 
-> 
-> On 27/08/19 8:49 AM, Michael Ellerman wrote:
->> Hari Bathini <hbathini@linux.ibm.com> writes:
->>> On 26/08/19 4:14 PM, Sourabh Jain wrote:
->>>> On 8/26/19 3:46 PM, Sourabh Jain wrote:
->>>>> On 8/26/19 3:29 PM, Hari Bathini wrote:
->>>>>> On 10/08/19 11:29 PM, Sourabh Jain wrote:
->>>>>>> Add a sys interface to allow querying the memory reserved by
->>>>>>> fadump for saving the crash dump.
->>>>>>>
->>>>>>> Add an ABI doc entry for new sysfs interface.
->>>>>>>    - /sys/kernel/fadump_mem_reserved
->>>>>>>
->>>>>>> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
->>>>>>> ---
->>>>>>> Changelog:
->>>>>>> v1 -> v2:
->>>>>>>   - Added ABI doc for new sysfs interface.
->>>>>>>
->>>>>>> v2 -> v3:
->>>>>>>   - Updated the ABI documentation.
->>>>>>> ---
->>>>>>>
->>>>>>>  Documentation/ABI/testing/sysfs-kernel-fadump    |  6 ++++++
->>>>>>
->>>>>> Shouldn't this be Documentation/ABI/testing/sysfs-kernel-fadump_mem_reserved?
->>>>
->>>> How about documenting fadump_mem_reserved and other sysfs attributes suggested
->>>> by you in a single file Documentation/ABI/testing/sysfs-kernel-fadump?
->>>
->>> I wouldn't mind that but please do check if it is breaking a convention..
->>
->> AIUI a file named like that would hold the documentation for the files
->> inside a directory called /sys/kernel/fadump.
->>
->> And in fact that's probably where these files should live, rather than
->> just dropped directly into /sys/kernel.
-> Michael, could that be corrected now by introducing new sysfs files for FADump in
-> /sys/kernel/fadump/.
-> 
-> Also, duplicating current /sys/kernel/fadump_* files as /sys/kernel/fadump/* files
-> & eventually dropping /sys/kernel/fadump_* files sometime later..
-
-
-Sent a patch series that adds fadump_mem_reserved sysfs file along with reorganizing
-the existing fadump sysfs files.
-
-Patch series available here:
-https://lists.ozlabs.org/pipermail/linuxppc-dev/2019-September/197100.html
-
-- Sourabh Jain
 
