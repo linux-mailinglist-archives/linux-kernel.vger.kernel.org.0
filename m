@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDA8B5C75
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90013B5BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfIRG0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:26:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47898 "EHLO mail.kernel.org"
+        id S1725869AbfIRGVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:21:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727337AbfIRG02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:26:28 -0400
+        id S1727357AbfIRGVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:21:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F79D218AF;
-        Wed, 18 Sep 2019 06:26:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3502320678;
+        Wed, 18 Sep 2019 06:21:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787987;
-        bh=mqrNHnKR9H8wgI/Eov6wPy08jIg4/CyN6kxoTRpegyU=;
+        s=default; t=1568787696;
+        bh=8ZsyCqdCQYULk/KZ2gU6zijVGHecZMDT7Cgm36fRpKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHc9kam2ERuGkZhj+RcXYfJAWsYbJox4zqezpdNC2wHFk67ccqlh+NfyW620hJJDB
-         wW9AhVL69E+1QSlONfeAok9JDSZqAGc1kptW4o83cSUpSnb9QmhZM2tXy204uUMcAa
-         OSm9wgz4GJCf3EMtLd+fEfieMdUirgTMuI5bSMK0=
+        b=zidtfSSZZPxaKKQdgtCM2zsyiUQ4B6JY2KF4m5Mk+zC8IIoOmBK6jv418d0vpPuaU
+         VTb0LI935Kb76+FNnI5VYocfbvyznd5xMO3MaIEkadTfTYqLqEQbMeV6AVkac6Tj2v
+         VOYe4hVEdys+3r2necB3mRoXfWWXuPiUpMiJNT3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 5.2 58/85] clk: rockchip: Dont yell about bad mmc phases when getting
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 38/45] crypto: talitos - Do not modify req->cryptlen on decryption.
 Date:   Wed, 18 Sep 2019 08:19:16 +0200
-Message-Id: <20190918061235.943581380@linuxfoundation.org>
+Message-Id: <20190918061227.478661559@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +43,162 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 6943b839721ad4a31ad2bacf6e71b21f2dfe3134 upstream.
+commit 7ede4c36cf7c6516986ee9d75b197c8bf73ea96f upstream.
 
-At boot time, my rk3288-veyron devices yell with 8 lines that look
-like this:
-  [    0.000000] rockchip_mmc_get_phase: invalid clk rate
+For decrypt, req->cryptlen includes the size of the authentication
+part while all functions of the driver expect cryptlen to be
+the size of the encrypted data.
 
-This is because the clock framework at clk_register() time tries to
-get the phase but we don't have a parent yet.
+As it is not expected to change req->cryptlen, this patch
+implements local calculation of cryptlen.
 
-While the errors appear to be harmless they are still ugly and, in
-general, we don't want yells like this in the log unless they are
-important.
-
-There's no real reason to be yelling here.  We can still return
--EINVAL to indicate that the phase makes no sense without a parent.
-If someone really tries to do tuning and the clock is reported as 0
-then we'll see the yells in rockchip_mmc_set_phase().
-
-Fixes: 4bf59902b500 ("clk: rockchip: Prevent calculating mmc phase if clock rate is zero")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 9c4a79653b35 ("crypto: talitos - Freescale integrated security engine (SEC) driver")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/rockchip/clk-mmc-phase.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/crypto/talitos.c |   31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -52,10 +52,8 @@ static int rockchip_mmc_get_phase(struct
- 	u32 delay_num = 0;
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -943,11 +943,13 @@ static void talitos_sg_unmap(struct devi
  
- 	/* See the comment for rockchip_mmc_set_phase below */
--	if (!rate) {
--		pr_err("%s: invalid clk rate\n", __func__);
-+	if (!rate)
- 		return -EINVAL;
--	}
+ static void ipsec_esp_unmap(struct device *dev,
+ 			    struct talitos_edesc *edesc,
+-			    struct aead_request *areq)
++			    struct aead_request *areq, bool encrypt)
+ {
+ 	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
+ 	struct talitos_ctx *ctx = crypto_aead_ctx(aead);
+ 	unsigned int ivsize = crypto_aead_ivsize(aead);
++	unsigned int authsize = crypto_aead_authsize(aead);
++	unsigned int cryptlen = areq->cryptlen - (encrypt ? 0 : authsize);
  
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 	if (edesc->desc.hdr & DESC_HDR_TYPE_IPSEC_ESP)
+ 		unmap_single_talitos_ptr(dev, &edesc->desc.ptr[6],
+@@ -956,7 +958,7 @@ static void ipsec_esp_unmap(struct devic
+ 	unmap_single_talitos_ptr(dev, &edesc->desc.ptr[2], DMA_TO_DEVICE);
+ 	unmap_single_talitos_ptr(dev, &edesc->desc.ptr[0], DMA_TO_DEVICE);
  
+-	talitos_sg_unmap(dev, edesc, areq->src, areq->dst, areq->cryptlen,
++	talitos_sg_unmap(dev, edesc, areq->src, areq->dst, cryptlen,
+ 			 areq->assoclen);
+ 
+ 	if (edesc->dma_len)
+@@ -967,7 +969,7 @@ static void ipsec_esp_unmap(struct devic
+ 		unsigned int dst_nents = edesc->dst_nents ? : 1;
+ 
+ 		sg_pcopy_to_buffer(areq->dst, dst_nents, ctx->iv, ivsize,
+-				   areq->assoclen + areq->cryptlen - ivsize);
++				   areq->assoclen + cryptlen - ivsize);
+ 	}
+ }
+ 
+@@ -988,7 +990,7 @@ static void ipsec_esp_encrypt_done(struc
+ 
+ 	edesc = container_of(desc, struct talitos_edesc, desc);
+ 
+-	ipsec_esp_unmap(dev, edesc, areq);
++	ipsec_esp_unmap(dev, edesc, areq, true);
+ 
+ 	/* copy the generated ICV to dst */
+ 	if (edesc->icv_ool) {
+@@ -1020,7 +1022,7 @@ static void ipsec_esp_decrypt_swauth_don
+ 
+ 	edesc = container_of(desc, struct talitos_edesc, desc);
+ 
+-	ipsec_esp_unmap(dev, edesc, req);
++	ipsec_esp_unmap(dev, edesc, req, false);
+ 
+ 	if (!err) {
+ 		char icvdata[SHA512_DIGEST_SIZE];
+@@ -1066,7 +1068,7 @@ static void ipsec_esp_decrypt_hwauth_don
+ 
+ 	edesc = container_of(desc, struct talitos_edesc, desc);
+ 
+-	ipsec_esp_unmap(dev, edesc, req);
++	ipsec_esp_unmap(dev, edesc, req, false);
+ 
+ 	/* check ICV auth status */
+ 	if (!err && ((desc->hdr_lo & DESC_HDR_LO_ICCR1_MASK) !=
+@@ -1173,6 +1175,7 @@ static int talitos_sg_map(struct device
+  * fill in and submit ipsec_esp descriptor
+  */
+ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
++		     bool encrypt,
+ 		     void (*callback)(struct device *dev,
+ 				      struct talitos_desc *desc,
+ 				      void *context, int error))
+@@ -1182,7 +1185,7 @@ static int ipsec_esp(struct talitos_edes
+ 	struct talitos_ctx *ctx = crypto_aead_ctx(aead);
+ 	struct device *dev = ctx->dev;
+ 	struct talitos_desc *desc = &edesc->desc;
+-	unsigned int cryptlen = areq->cryptlen;
++	unsigned int cryptlen = areq->cryptlen - (encrypt ? 0 : authsize);
+ 	unsigned int ivsize = crypto_aead_ivsize(aead);
+ 	int tbl_off = 0;
+ 	int sg_count, ret;
+@@ -1324,7 +1327,7 @@ static int ipsec_esp(struct talitos_edes
+ 
+ 	ret = talitos_submit(dev, ctx->ch, desc, callback, areq);
+ 	if (ret != -EINPROGRESS) {
+-		ipsec_esp_unmap(dev, edesc, areq);
++		ipsec_esp_unmap(dev, edesc, areq, encrypt);
+ 		kfree(edesc);
+ 	}
+ 	return ret;
+@@ -1433,9 +1436,10 @@ static struct talitos_edesc *aead_edesc_
+ 	unsigned int authsize = crypto_aead_authsize(authenc);
+ 	struct talitos_ctx *ctx = crypto_aead_ctx(authenc);
+ 	unsigned int ivsize = crypto_aead_ivsize(authenc);
++	unsigned int cryptlen = areq->cryptlen - (encrypt ? 0 : authsize);
+ 
+ 	return talitos_edesc_alloc(ctx->dev, areq->src, areq->dst,
+-				   iv, areq->assoclen, areq->cryptlen,
++				   iv, areq->assoclen, cryptlen,
+ 				   authsize, ivsize, icv_stashing,
+ 				   areq->base.flags, encrypt);
+ }
+@@ -1454,7 +1458,7 @@ static int aead_encrypt(struct aead_requ
+ 	/* set encrypt */
+ 	edesc->desc.hdr = ctx->desc_hdr_template | DESC_HDR_MODE0_ENCRYPT;
+ 
+-	return ipsec_esp(edesc, req, ipsec_esp_encrypt_done);
++	return ipsec_esp(edesc, req, true, ipsec_esp_encrypt_done);
+ }
+ 
+ static int aead_decrypt(struct aead_request *req)
+@@ -1466,8 +1470,6 @@ static int aead_decrypt(struct aead_requ
+ 	struct talitos_edesc *edesc;
+ 	void *icvdata;
+ 
+-	req->cryptlen -= authsize;
+-
+ 	/* allocate extended descriptor */
+ 	edesc = aead_edesc_alloc(req, req->iv, 1, false);
+ 	if (IS_ERR(edesc))
+@@ -1485,7 +1487,8 @@ static int aead_decrypt(struct aead_requ
+ 		/* reset integrity check result bits */
+ 		edesc->desc.hdr_lo = 0;
+ 
+-		return ipsec_esp(edesc, req, ipsec_esp_decrypt_hwauth_done);
++		return ipsec_esp(edesc, req, false,
++				 ipsec_esp_decrypt_hwauth_done);
+ 	}
+ 
+ 	/* Have to check the ICV with software */
+@@ -1501,7 +1504,7 @@ static int aead_decrypt(struct aead_requ
+ 	sg_pcopy_to_buffer(req->src, edesc->src_nents ? : 1, icvdata, authsize,
+ 			   req->assoclen + req->cryptlen - authsize);
+ 
+-	return ipsec_esp(edesc, req, ipsec_esp_decrypt_swauth_done);
++	return ipsec_esp(edesc, req, false, ipsec_esp_decrypt_swauth_done);
+ }
+ 
+ static int ablkcipher_setkey(struct crypto_ablkcipher *cipher,
 
 
