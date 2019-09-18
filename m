@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E6FB5D38
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45985B5D0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:31:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfIRGVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:21:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41368 "EHLO mail.kernel.org"
+        id S1727771AbfIRGX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:23:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728061AbfIRGVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:45 -0400
+        id S1729512AbfIRGXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D4D521D56;
-        Wed, 18 Sep 2019 06:21:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DE6321927;
+        Wed, 18 Sep 2019 06:23:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787704;
-        bh=YI6gIsrLXa5biKkEtXE4kviKkjkvPlGBKxKYfmv7/i0=;
+        s=default; t=1568787794;
+        bh=5Vtueu3XOmcdJMAZnPT9Mk4QioY6y6yKN0jhiCOdqF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bVEOKMO37bgIHcnL7dzhh20Wje7fR1NErU5Ywp1TLyVNTkA+Dbc1GQqSv/w0R9zPy
-         w8QZqkc3gLGpAx/DW1GwjOHaKMrw4uCV5jOUw0e53Ciub8D+ACm8a6eZ9dNGWH7zZy
-         GvQh/5fyC8JfRIwVOZra7ZJxZr59t3PZfWCGuTDI=
+        b=RHWAv9MbjyGxtQLKWpaY1rrGsHRYW3J9+wDUnEZqGUfwljOwa+H+AezvFmtgy3beJ
+         RqMqDWtnNdU5CWa3q/OfGuEh0NXEUQjVsW3W8BPxJUetaJ+xxv4UcGQeAUYxUmJ9oV
+         5xbU/BP+TnkM1SOXJsTWab0eC1R/7lFW8pq64IFo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>
-Subject: [PATCH 4.14 41/45] drm/mediatek: mtk_drm_drv.c: Add of_node_put() before goto
-Date:   Wed, 18 Sep 2019 08:19:19 +0200
-Message-Id: <20190918061227.834898065@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 37/50] crypto: talitos - fix ECB algs ivsize
+Date:   Wed, 18 Sep 2019 08:19:20 +0200
+Message-Id: <20190918061227.439481127@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +43,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nishka Dasgupta <nishkadg.linux@gmail.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 165d42c012be69900f0e2f8545626cb9e7d4a832 upstream.
+commit d84cc9c9524ec5973a337533e6d8ccd3e5f05f2b upstream.
 
-Each iteration of for_each_child_of_node puts the previous
-node, but in the case of a goto from the middle of the loop, there is
-no put, thus causing a memory leak. Hence add an of_node_put before the
-goto in two places.
-Issue found with Coccinelle.
+ECB's ivsize must be 0.
 
-Fixes: 119f5173628a (drm/mediatek: Add DRM Driver for Mediatek SoC MT8173)
-
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 5e75ae1b3cef ("crypto: talitos - add new crypto modes")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/crypto/talitos.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -504,12 +504,15 @@ static int mtk_drm_probe(struct platform
- 			comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
- 			if (!comp) {
- 				ret = -ENOMEM;
-+				of_node_put(node);
- 				goto err_node;
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -2750,7 +2750,6 @@ static struct talitos_alg_template drive
+ 			.cra_ablkcipher = {
+ 				.min_keysize = AES_MIN_KEY_SIZE,
+ 				.max_keysize = AES_MAX_KEY_SIZE,
+-				.ivsize = AES_BLOCK_SIZE,
+ 				.setkey = ablkcipher_aes_setkey,
  			}
- 
- 			ret = mtk_ddp_comp_init(dev, node, comp, comp_id, NULL);
--			if (ret)
-+			if (ret) {
-+				of_node_put(node);
- 				goto err_node;
-+			}
- 
- 			private->ddp_comp[comp_id] = comp;
- 		}
+ 		},
 
 
