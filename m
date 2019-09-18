@@ -2,128 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C50B68EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4578B68F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732192AbfIRRTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 13:19:39 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38065 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732172AbfIRRTh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:19:37 -0400
-Received: by mail-qk1-f193.google.com with SMTP id u186so251415qkc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 10:19:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TZ6zNmTN5K3wsuw0UnWMZDNmXyrZg+XulUxUtSzlTDQ=;
-        b=ARUEYQc20VKVq0DC9iR4ZW+0ILmmp38aDfsgHOE6Je7RahPrHGv+1PsoTjZaYCGYHx
-         HuK5+jLbDz/QruHJpkhdLZ2xPx123034b3vz53chKCSsjZKah3Cgo3DJDPz0dRmryALo
-         7webVgnyiqJ1mCH0v1wKqCqToqpzY+EixxruU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TZ6zNmTN5K3wsuw0UnWMZDNmXyrZg+XulUxUtSzlTDQ=;
-        b=HWI3Mg3WZl1+SW5DEKgUBNgNgb4O/lD86CjaNFpbnL8hykXtBYkWp58Qnz5ZrefTjd
-         SXCmCbVxZXkmSSoNUIiFfhyB1iTCbvDrCXqahGPqH8k6PIdM839cI2oi/Wrc9XEIPPTT
-         sBB2PO49GEYhPO8aMZMUtXIToQoH8OeIDz6i5Ua2PHtrcY6Q9Kk34atCBfKl+edIIl8L
-         CAuFU3A+QoMzb7ICqIpUiLMTyR9kq54fUhEQYhXraNoiSe6wFNrATs6ORCSI283wOLMw
-         NtkM8Pnucln/y6i29Rutx7xr3kW2zRWwi8eS4jmCJGKINSDwEXiykQuLvb6gfcJ+JBUX
-         2OKA==
-X-Gm-Message-State: APjAAAUfCPmsLl6hI/6u5+bF3qoxcIGSSal6a/l5v50LNhbgisF5Nu0M
-        2MBkk24RhG9yxBSU/KUh0u1RPgtGZxsdPUqg+uMIXQ==
-X-Google-Smtp-Source: APXvYqySXTHIUcstv5cPNi86ktBT04PmHseptOwBc0q27Fdkd1xYMUXPo9eFDDE5gpLKq/LzteJUa6hnXEf8sBpw5jw=
-X-Received: by 2002:ae9:e817:: with SMTP id a23mr4977536qkg.294.1568827174941;
- Wed, 18 Sep 2019 10:19:34 -0700 (PDT)
+        id S1732223AbfIRRVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 13:21:13 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:53338 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730652AbfIRRVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 13:21:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=t0p8DMx4a+O9FwZ99pZSsg0M4i1kOMfQyAHGuGysuvs=; b=0REIy+73DQKdb5SHSz2yDLhuVw
+        5J0nLX/QrbGrFaKRqZNZLTHzVz2DaA327h/O/7XluV3JSlMpQmBk+yXyU2iVz8R54nX5Ii63jWLO7
+        bNeKS+TKzrxfn346dwev3r19m2PjTH524Nz7u/3hZSYc7/4QCSEgtm7ACNySDGoxStB8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1iAdda-0000mP-3q; Wed, 18 Sep 2019 19:21:06 +0200
+Date:   Wed, 18 Sep 2019 19:21:06 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Vladimir Oltean <olteanv@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: sja1105: prevent leaking memory
+Message-ID: <20190918172106.GN9591@lunn.ch>
+References: <20190918171020.5745-1-navid.emamdoost@gmail.com>
 MIME-Version: 1.0
-References: <20190917212702.35747-1-abhishekpandit@chromium.org> <Pine.LNX.4.44L0.1909181017300.1507-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1909181017300.1507-100000@iolanthe.rowland.org>
-From:   Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date:   Wed, 18 Sep 2019 10:19:24 -0700
-Message-ID: <CANFp7mX=THOVk-4TgSSscgtm598txqesDZYKE2sFtEVNHjN+-g@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Reset realtek bluetooth devices during user suspend
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     linux-bluetooth@vger.kernel.org, linux-usb@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Hui Peng <benquike@gmail.com>, linux-pm@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Len Brown <len.brown@intel.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mans Rullgard <mans@mansr.com>, Pavel Machek <pavel@ucw.cz>,
-        YueHaibing <yuehaibing@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918171020.5745-1-navid.emamdoost@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, last reply went out with HTML. Re-sending in plain text.
+On Wed, Sep 18, 2019 at 12:10:19PM -0500, Navid Emamdoost wrote:
+> In sja1105_static_config_upload, in two cases memory is leaked: when
+> static_config_buf_prepare_for_upload fails and when sja1105_inhibit_tx
+> fails. In both cases config_buf should be released.
+> 
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-On Wed, Sep 18, 2019 at 7:23 AM Alan Stern <stern@rowland.harvard.edu> wrote:
->
-> On Tue, 17 Sep 2019, Abhishek Pandit-Subedi wrote:
->
-> > On a Realtek USB bluetooth device, I wanted a simple and consistent way
-> > to put the device in reset during suspend (2 reasons: to save power and
-> > disable BT as a wakeup source). Resetting it in the suspend callback
-> > causes a detach and the resume callback is not called. Hence the changes
-> > in this series to do the reset in suspend_noirq.
->
-> What about people who _want_ BT to be a wakeup source?
+Hi Navid
 
-When BT is enabled as a wakeup source, there is no reset.
+Please could you provide a Fixes: tag for where this memory leak was
+introduced.
 
-> Why does putting the device in reset save power?  That is, a suspended
-> device is very strictly limited in the amount of current it's allowed
-> to draw from the USB bus; why should it draw significantly less when it
-> is reset?
+> ---
+>  drivers/net/dsa/sja1105/sja1105_spi.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
+> index 84dc603138cf..80e86c714efb 100644
+> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
+> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
+> @@ -408,8 +408,9 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
+>  
+>  	rc = static_config_buf_prepare_for_upload(priv, config_buf, buf_len);
+>  	if (rc < 0) {
+> -		dev_err(dev, "Invalid config, cannot upload\n");
+> -		return -EINVAL;
+> +		dev_err(dev, "Invalid config, cannot upload\n");
 
-I don't know that it's significantly less (only that it's OFF). My
-greater motivation is to make sure the bluetooth chip isn't
-accumulating events while the host is turned off. Sorry, I should have
-made that more clear in the cover letter.
+What changed in this dev_err() call?
 
-When the host is off, it continues to accumulate events for the host
-to process (packets from connected devices, LE advertisements, etc).
-At some point, the firmware buffers fill up and no more events can be
-stored. When the host is resumed later on, the firmware is in a bad
-state and doesn't respond. I had originally just reset in ->resume but
-then connected wireless devices wouldn't disconnect from the BT either
-and I had trouble getting them to reconnect.
-
->
-> > I looked into using PERSIST and reset on resume but those seem mainly
-> > for misbehaving devices that reset themselves.
->
-> They are, but that doesn't mean you can't use them for other things
-> too.
->
-> > This patch series has been tested with Realtek BT hardware as well as
-> > Intel BT (test procedure = disable as wake source, user suspend and
-> > observe a detach + reattach on resume).
->
-> This series really seems like overkill for a single kind of device.
->
-> Is there any way to turn off the device's BT radio during suspend (if
-> wakeup is disabled) and then turn it back on during resume?  Wouldn't
-> that accomplish what you want just as well?
-
-Probably (but I couldn't find a way to do that). I want to prevent
-bluetooth from waking up the host and to reliably be in a good state
-when the host resumes. The reset logic I implemented causes the hci
-device to disappear and reappear, which userspace seems to handle
-gracefully.
-
-> Alan Stern
->
+Thanks
+	Andrew
