@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C7CFB6A5E
+	by mail.lfdr.de (Postfix) with ESMTP id C3EE9B6A5F
 	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 20:20:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388014AbfIRSUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 14:20:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42878 "EHLO mail.kernel.org"
+        id S2388033AbfIRSUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 14:20:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387996AbfIRSUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 14:20:23 -0400
-Subject: Re: [GIT PULL] First batch of KVM changes for Linux 5.4
+        id S2388010AbfIRSUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 14:20:24 -0400
+Subject: Re: [GIT PULL] USB patches for 5.4-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568830822;
-        bh=GPFBgQdt1CTSJAX0HqHciIyC/bRmaqeH2vsdKoGaZ2Y=;
+        s=default; t=1568830823;
+        bh=jG5mJJ5nzSJDfltv449Kp1WjCxbR2JKx4z0mKg5kw2U=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=uGbr+B0eix/EF4vpFgqQXln74YPUhr1FPWeaRy/5gWY2aricX8WA0+wQg0w7hL5Xh
-         4A0BadC2U5XwyiFWb5qLWxfR5XVIzrx/l50j2aa5yBTc4+jgqcPsfCmoaDpxkD23am
-         rRx+HmGDiSAArh7Ch8YwsW9tZdaGKIWrq0ycjrWc=
+        b=Sp4AbsZME4u3OKE+UuoFsv7cob7UR6BlgBWNEOhirf4SwIa6p3pnDfYxktF00WSKR
+         2vvc3V05mqBbsb+8nO6nYZyLaw9kLtCaJqyGNimy/1RDQ3G90ZO1is9wQf1Ye0vSYV
+         R4sL2gTZqLHSJAzsNdLJ8XFxHbSlSeWSz/YK2SMg=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1568652881-21933-1-git-send-email-pbonzini@redhat.com>
-References: <1568652881-21933-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <20190918114705.GA1899329@kroah.com>
+References: <20190918114705.GA1899329@kroah.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1568652881-21933-1-git-send-email-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git
- tags/for-linus
-X-PR-Tracked-Commit-Id: fb3925d06c285e1acb248addc5d80b33ea771b0f
+X-PR-Tracked-Message-Id: <20190918114705.GA1899329@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.4-rc1
+X-PR-Tracked-Commit-Id: fb9617edf6c0e1b86a6595cd92dd3f84595221d9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fe38bd6862074c0a2b9be7f31f043aaa70b2af5f
-Message-Id: <156883082293.23903.6518209741876972182.pr-tracker-bot@kernel.org>
-Date:   Wed, 18 Sep 2019 18:20:22 +0000
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, kvm@vger.kernel.org
+X-PR-Merge-Commit-Id: c6b48dad92aedaa9bdc013ee495cb5b1bbdf1f11
+Message-Id: <156883082372.23903.16474540613402621360.pr-tracker-bot@kernel.org>
+Date:   Wed, 18 Sep 2019 18:20:23 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Sep 2019 18:54:41 +0200:
+The pull request you sent on Wed, 18 Sep 2019 13:47:05 +0200:
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.4-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fe38bd6862074c0a2b9be7f31f043aaa70b2af5f
+https://git.kernel.org/torvalds/c/c6b48dad92aedaa9bdc013ee495cb5b1bbdf1f11
 
 Thank you!
 
