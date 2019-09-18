@@ -2,92 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 291FFB6027
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FA35B6038
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 11:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730432AbfIRJ3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 05:29:30 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35967 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729256AbfIRJ3a (ORCPT
+        id S1730843AbfIRJaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 05:30:23 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:22701 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729307AbfIRJaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 05:29:30 -0400
-Received: by mail-pg1-f193.google.com with SMTP id m29so3693675pgc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 02:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XGfSZf6zpqugWLz9E/ECTaAWk5AflbcZNfQrHqcfJiI=;
-        b=tMIKcF3VViDMpKj4XKmRBULjrjqaQ3bDWghhbjeJPdxAI1tGEJH+Dd1yUsdxorGzCU
-         vX1pls9dszPLX9gZQtzLNbplTyPa9bkOieccxfMinLHCoQwgzD71ejncb9sDa3oZ/cOg
-         yS2/hctP+HmUBJZvrUFp0MWC7o6Kb8PwlsW55EiUB++a0T4VExjmE6VRDWTlFa+L0pz0
-         OHYUXbMiWJMAUC8zKjTMZIpRA7rkoKzf1jKCf3K9VIb+sqK9BzQses2ZbQatt0gUt2Zh
-         rDGwvgQiyId1Lzm0DtBjV3JiXPSpb2Ymjn903sOwMOiOwPL3pp4hgwNNuSqtyazFLr9q
-         pS4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XGfSZf6zpqugWLz9E/ECTaAWk5AflbcZNfQrHqcfJiI=;
-        b=PU/jkV0eaqyfA0yzy/rWIw2zxFfKnuG7FE3amQBYIwzcHEDuT8aN+lauemqom/5U7Q
-         IsLIlpXexzcBmDtwDJpPOcdQIA29rjqQL/tfcg63DTSFH5lNzjqXAEnkH3cXZuVkXaqw
-         2ZRRWZ9Wbzahg7oD4wTD+r3X6Hl/6HU9abnrFBsyVTQtGPoctgEFpUMZvsLhC4QxksCC
-         m4ND5E5TXIFLy/Q9C4zVnV4lkHSqJ0NwbxVP0RUh+bEc6XdVZRqGugIOdrUDreIY6JG9
-         g5Xw3Cwn2a+z7uX6nVwMORreF+ICju0h3uPmozODkVOOhEvRxatGS7yFHYZb1Hcj/Fct
-         Ou9g==
-X-Gm-Message-State: APjAAAVZ2dfdwlLgsyzI6Y3ovZg+as1M/WYVnjw/7vsqGUN/Meg1+yLa
-        ZsJF0RARBfkjcV/k0RFM8mRhGw==
-X-Google-Smtp-Source: APXvYqyYA7P3uo4EMeZ0CyHqcdj3f3idzeWXRKKFvYXjT1q3TSTfQLukJan+2vTt2Z1VXThtAF4SmQ==
-X-Received: by 2002:aa7:955d:: with SMTP id w29mr3107878pfq.60.1568798967721;
-        Wed, 18 Sep 2019 02:29:27 -0700 (PDT)
-Received: from localhost ([122.172.73.172])
-        by smtp.gmail.com with ESMTPSA id c11sm10674911pfj.114.2019.09.18.02.29.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Sep 2019 02:29:26 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 14:59:25 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
-        tdas@codeaurora.org, swboyd@chromium.org, ilina@codeaurora.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 5/5] cpufreq: qcom-hw: Move driver initialisation earlier
-Message-ID: <20190918092925.5hrvbcdorm2qw2j4@vireshk-mac-ubuntu>
-References: <cover.1568240476.git.amit.kucheria@linaro.org>
- <b731b713d8738239c26361ece7f5cadea035b353.1568240476.git.amit.kucheria@linaro.org>
- <20190917093412.GA24757@bogus>
- <20190918090938.b2fj5uk3h6t56t2p@vireshk-mac-ubuntu>
- <20190918091747.GA18121@bogus>
+        Wed, 18 Sep 2019 05:30:23 -0400
+X-UUID: 5aa6facc5e6d4726b80e5626ba1411ac-20190918
+X-UUID: 5aa6facc5e6d4726b80e5626ba1411ac-20190918
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 977501904; Wed, 18 Sep 2019 17:30:17 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 18 Sep 2019 17:30:12 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 18 Sep 2019 17:30:12 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: [PATCH v8 02/11] pwm: mediatek: droping the check for of_device_get_match_data
+Date:   Wed, 18 Sep 2019 17:28:50 +0800
+Message-ID: <1568798939-16038-3-git-send-email-sam.shih@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1568798939-16038-1-git-send-email-sam.shih@mediatek.com>
+References: <1568798939-16038-1-git-send-email-sam.shih@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918091747.GA18121@bogus>
-User-Agent: NeoMutt/20170609 (1.8.3)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-09-19, 10:17, Sudeep Holla wrote:
-> Ah no, I am not referring to building as module. As you mention, that may
-> work just fine. I was referring to timing dependency during boot. The idea
-> is minimize the number of such initcall dependency. They should all work
-> fine even as modules and should have least dependency on initcall sequence.
+This patch drop the check for of_device_get_match_data.
+Due to the only way call driver probe is compatible match.
+The .data pointer which point to the SoC specify data is
+directly set by driver, and it should not be NULL in our case.
+We can safety remove the check for of_device_get_match_data.
 
-Yeah, so things work fine for them right now but that can be improved by
-changing the sequence of boot here. And that's what Amit is trying to do here.
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+Used:
+https://patchwork.kernel.org/patch/11096905/
+Changes since v6:
+Add an Acked-by tag
 
-Even if android builds this as a module later, things will continue to work but
-that may not be the best performance/boot-time wise.
+Changes since v4:
+Follow reviewer's comments:
+Move the changes of droping the check for of_device_get_match_data
+returning non-NULL to this patch
 
-When I had a discussion about this with Amit earlier, I asked him to send
-patches even if he doesn't have any performance numbers for it as this is a
-platform driver and I find it okay for them to decide the boot sequence that
-they think is the best :)
+---
+ drivers/pwm/pwm-mediatek.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index e214f4f57107..ebd62629e3fe 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -226,7 +226,6 @@ static const struct pwm_ops mtk_pwm_ops = {
+ 
+ static int mtk_pwm_probe(struct platform_device *pdev)
+ {
+-	const struct mtk_pwm_platform_data *data;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct mtk_pwm_chip *pc;
+ 	struct resource *res;
+@@ -237,10 +236,7 @@ static int mtk_pwm_probe(struct platform_device *pdev)
+ 	if (!pc)
+ 		return -ENOMEM;
+ 
+-	data = of_device_get_match_data(&pdev->dev);
+-	if (data == NULL)
+-		return -EINVAL;
+-	pc->soc = data;
++	pc->soc = of_device_get_match_data(&pdev->dev);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	pc->regs = devm_ioremap_resource(&pdev->dev, res);
 -- 
-viresh
+2.17.1
+
