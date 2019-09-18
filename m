@@ -2,239 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F090B5E0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:30:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 277D0B5E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfIRHap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 03:30:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59218 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbfIRHao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 03:30:44 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 924D9C049D62;
-        Wed, 18 Sep 2019 07:30:43 +0000 (UTC)
-Received: from [10.36.116.238] (ovpn-116-238.ams2.redhat.com [10.36.116.238])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 437355D9CA;
-        Wed, 18 Sep 2019 07:30:34 +0000 (UTC)
-Subject: Re: [RFC PATCH v2] mm: initialize struct pages reserved by
- ZONE_DEVICE driver.
-From:   David Hildenbrand <david@redhat.com>
-To:     Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "adobriyan@gmail.com" <adobriyan@gmail.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "longman@redhat.com" <longman@redhat.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mst@redhat.com" <mst@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Junichi Nomura <j-nomura@ce.jp.nec.com>
-References: <20190906081027.15477-1-t-fukasawa@vx.jp.nec.com>
- <b7732a55-4a10-2c1d-c2f5-ca38ee60964d@redhat.com>
- <e762ee45-43e3-975a-ad19-065f07d1440f@vx.jp.nec.com>
- <40a1ce2e-1384-b869-97d0-7195b5b47de0@redhat.com>
- <6a99e003-e1ab-b9e8-7b25-bc5605ab0eb2@vx.jp.nec.com>
- <e4e54258-e83b-cf0b-b66e-9874be6b5122@redhat.com>
+        id S1726917AbfIRHfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 03:35:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41736 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725944AbfIRHfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 03:35:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 106DCB6B2;
+        Wed, 18 Sep 2019 07:35:36 +0000 (UTC)
+Subject: Re: [PATCH] z3fold: fix memory leak in kmem cache
+To:     Vitaly Wool <vitalywool@gmail.com>, Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Dan Streetman <ddstreet@ieee.org>, markus.linnala@gmail.com
+References: <20190917185352.44cf285d3ebd9e64548de5de@gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
 Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <aa44e53c-b712-f7a9-9238-88cc643a452d@redhat.com>
-Date:   Wed, 18 Sep 2019 09:30:34 +0200
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d6214fbd-e757-43a9-ab12-4b61fde434db@suse.cz>
+Date:   Wed, 18 Sep 2019 09:31:40 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <e4e54258-e83b-cf0b-b66e-9874be6b5122@redhat.com>
-Content-Type: text/plain; charset=iso-2022-jp
+In-Reply-To: <20190917185352.44cf285d3ebd9e64548de5de@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 18 Sep 2019 07:30:43 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.09.19 09:46, David Hildenbrand wrote:
-> On 09.09.19 07:48, Toshiki Fukasawa wrote:
->> On 2019/09/06 19:35, David Hildenbrand wrote:
->>> On 06.09.19 12:02, Toshiki Fukasawa wrote:
->>>> Thank you for your feedback.
->>>>
->>>> On 2019/09/06 17:45, David Hildenbrand wrote:
->>>>> On 06.09.19 10:09, Toshiki Fukasawa wrote:
->>>>>> A kernel panic is observed during reading
->>>>>> /proc/kpage{cgroup,count,flags} for first few pfns allocated by
->>>>>> pmem namespace:
->>>>>>
->>>>>> BUG: unable to handle page fault for address: fffffffffffffffe
->>>>>> [  114.495280] #PF: supervisor read access in kernel mode
->>>>>> [  114.495738] #PF: error_code(0x0000) - not-present page
->>>>>> [  114.496203] PGD 17120e067 P4D 17120e067 PUD 171210067 PMD 0
->>>>>> [  114.496713] Oops: 0000 [#1] SMP PTI
->>>>>> [  114.497037] CPU: 9 PID: 1202 Comm: page-types Not tainted 5.3.0-rc1
->>>>>> [  114.497621] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
->>>>>> [  114.498706] RIP: 0010:stable_page_flags+0x27/0x3f0
->>>>>> [  114.499142] Code: 82 66 90 66 66 66 66 90 48 85 ff 0f 84 d1 03 00 00 41 54 55 48 89 fd 53 48 8b 57 08 48 8b 1f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 02 0f 84 57 03 00 00 45 31 e4 48 8b 55 08 48 89 ef
->>>>>> [  114.500788] RSP: 0018:ffffa5e601a0fe60 EFLAGS: 00010202
->>>>>> [  114.501373] RAX: fffffffffffffffe RBX: ffffffffffffffff RCX: 0000000000000000
->>>>>> [  114.502009] RDX: 0000000000000001 RSI: 00007ffca13a7310 RDI: ffffd07489000000
->>>>>> [  114.502637] RBP: ffffd07489000000 R08: 0000000000000001 R09: 0000000000000000
->>>>>> [  114.503270] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000240000
->>>>>> [  114.503896] R13: 0000000000080000 R14: 00007ffca13a7310 R15: ffffa5e601a0ff08
->>>>>> [  114.504530] FS:  00007f0266c7f540(0000) GS:ffff962dbbac0000(0000) knlGS:0000000000000000
->>>>>> [  114.505245] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>> [  114.505754] CR2: fffffffffffffffe CR3: 000000023a204000 CR4: 00000000000006e0
->>>>>> [  114.506401] Call Trace:
->>>>>> [  114.506660]  kpageflags_read+0xb1/0x130
->>>>>> [  114.507051]  proc_reg_read+0x39/0x60
->>>>>> [  114.507387]  vfs_read+0x8a/0x140
->>>>>> [  114.507686]  ksys_pread64+0x61/0xa0
->>>>>> [  114.508021]  do_syscall_64+0x5f/0x1a0
->>>>>> [  114.508372]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>>>> [  114.508844] RIP: 0033:0x7f0266ba426b
->>>>>>
->>>>>> The first few pages of ZONE_DEVICE expressed as the range
->>>>>> (altmap->base_pfn) to (altmap->base_pfn + altmap->reserve) are
->>>>>> skipped by struct page initialization. Some pfn walkers like
->>>>>> /proc/kpage{cgroup, count, flags} can't handle these uninitialized
->>>>>> struct pages, which causes the error.
->>>>>>
->>>>>> In previous discussion, Dan seemed to have concern that the struct
->>>>>> page area of some pages indicated by vmem_altmap->reserve may not
->>>>>> be allocated. (See https://lore.kernel.org/lkml/CAPcyv4i5FjTOnPbXNcTzvt+e6RQYow0JRQwSFuxaa62LSuvzHQ@mail.gmail.com/)
->>>>>> However, arch_add_memory() called by devm_memremap_pages() allocates
->>>>>> struct page area for pages containing addresses in the range
->>>>>> (res.start) to (res.start + resource_size(res)), which include the
->>>>>> pages indicated by vmem_altmap->reserve. If I read correctly, it is
->>>>>> allocated as requested at least on x86_64. Also, memmap_init_zone()
->>>>>> initializes struct pages in the same range.
->>>>>> So I think the struct pages should be initialized.>
->>>>>
->>>>> For !ZONE_DEVICE memory, the memmap is valid with SECTION_IS_ONLINE -
->>>>> for the whole section. For ZONE_DEVICE memory we have no such
->>>>> indication. In any section that is !SECTION_IS_ONLINE and
->>>>> SECTION_MARKED_PRESENT, we could have any subsections initialized. >
->>>>> The only indication I am aware of is pfn_zone_device_reserved() - which
->>>>> seems to check exactly what you are trying to skip here.
->>>>>
->>>>> Can't you somehow use pfn_zone_device_reserved() ? Or if you considered
->>>>> that already, why did you decide against it?
->>>>
->>>> No, in current approach this function is no longer needed.
->>>> The reason why we change the approach is that all pfn walkers
->>>> have to be aware of the uninitialized struct pages.
->>>
->>> We should use the same strategy for all pfn walkers then (effectively
->>> get rid of pfn_zone_device_reserved() if that's what we want).
->>
->> True, but this patch replaces "/proc/kpageflags: do not use uninitialized
->> struct pages". If we initialize the uninitialized struct pages, no pfn walker
->> will need to be aware of them.
+On 9/17/19 5:53 PM, Vitaly Wool wrote:
+> Currently there is a leak in init_z3fold_page() -- it allocates
+> handles from kmem cache even for headless pages, but then they are
+> never used and never freed, so eventually kmem cache may get
+> exhausted. This patch provides a fix for that.
 > 
-> So the function should go.
-> 
->>
->>>
->>>>
->>>> As for SECTION_IS_ONLINE, I'm not sure now.
->>>> I will look into it next week.
->>>
->>> SECTION_IS_ONLINE does currently not apply to ZONE_DEVICE and due to
->>> sub-section support for ZONE_DEVICE, it cannot easily be reused.
->>>
->> It seems that SECTION_IS_ONLINE and SECTION_MARKED_PRESENT can be used to
->> distinguish uninitialized struct pages if we can apply them to ZONE_DEVICE,
->> but that is no longer necessary with this approach.
-> 
-> Let's take a step back here to understand the issues I am aware of. I
-> think we should solve this for good now:
-> 
-> A PFN walker takes a look at a random PFN at a random point in time. It
-> finds a PFN with SECTION_MARKED_PRESENT && !SECTION_IS_ONLINE. The
-> options are:
-> 
-> 1. It is buddy memory (add_memory()) that has not been online yet. The
-> memmap contains garbage. Don't access.
-> 
-> 2. It is ZONE_DEVICE memory with a valid memmap. Access it.
-> 
-> 3. It is ZONE_DEVICE memory with an invalid memmap, because the section
-> is only partially present: E.g., device starts at offset 64MB within a
-> section or the device ends at offset 64MB within a section. Don't access it.
+> Reported-by: Markus Linnala <markus.linnala@gmail.com>
+> Signed-off-by: Vitaly Wool <vitalywool@gmail.com>
 
-As Toshika correctly objected, this case might in fact not be
-relevant/possible. While pfn_present() does not take care of subsections
-(maybe we should fix that), pfn_valid() will take care of subsections -
-at least the !CONFIG_HAVE_ARCH_PFN_VALID implementation.
+Can a Fixes: commit be pinpointed, and CC stable added?
 
-So as long as we check pfn_valid(), we won't be accessing parts of the
-memmap we are not supposed to access.
-
-That leaves us with #1, #4, and #5 vs. #2.
-
+> ---
+>  mm/z3fold.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
 > 
-> 4. It is ZONE_DEVICE memory with an invalid memmap, because the memmap
-> was not initialized yet. memmap_init_zone_device() did not yet succeed
-> after dropping the mem_hotplug lock in mm/memremap.c. Don't access it.
-> 
-> 5. It is reserved ZONE_DEVICE memory ("pages mapped, but reserved for
-> driver") with an invalid memmap. Don't access it.
-> 
-> I can see that your patch tries to make #5 vanish by initializing the
-> memmap, fair enough. #3 and #4 can't be detected. The PFN walker could
-> still stumble over uninitialized memmaps.
+> diff --git a/mm/z3fold.c b/mm/z3fold.c
+> index 6397725b5ec6..7dffef2599c3 100644
+> --- a/mm/z3fold.c
+> +++ b/mm/z3fold.c
+> @@ -301,14 +301,11 @@ static void z3fold_unregister_migration(struct z3fold_pool *pool)
+>   }
+>  
+>  /* Initializes the z3fold header of a newly allocated z3fold page */
+> -static struct z3fold_header *init_z3fold_page(struct page *page,
+> +static struct z3fold_header *init_z3fold_page(struct page *page, bool headless,
+>  					struct z3fold_pool *pool, gfp_t gfp)
+>  {
+>  	struct z3fold_header *zhdr = page_address(page);
+> -	struct z3fold_buddy_slots *slots = alloc_slots(pool, gfp);
+> -
+> -	if (!slots)
+> -		return NULL;
+> +	struct z3fold_buddy_slots *slots;
+>  
+>  	INIT_LIST_HEAD(&page->lru);
+>  	clear_bit(PAGE_HEADLESS, &page->private);
+> @@ -316,6 +313,12 @@ static struct z3fold_header *init_z3fold_page(struct page *page,
+>  	clear_bit(NEEDS_COMPACTING, &page->private);
+>  	clear_bit(PAGE_STALE, &page->private);
+>  	clear_bit(PAGE_CLAIMED, &page->private);
+> +	if (headless)
+> +		return zhdr;
+> +
+> +	slots = alloc_slots(pool, gfp);
+> +	if (!slots)
+> +		return NULL;
+>  
+>  	spin_lock_init(&zhdr->page_lock);
+>  	kref_init(&zhdr->refcount);
+> @@ -962,7 +965,7 @@ static int z3fold_alloc(struct z3fold_pool *pool, size_t size, gfp_t gfp,
+>  	if (!page)
+>  		return -ENOMEM;
+>  
+> -	zhdr = init_z3fold_page(page, pool, gfp);
+> +	zhdr = init_z3fold_page(page, bud == HEADLESS, pool, gfp);
+>  	if (!zhdr) {
+>  		__free_page(page);
+>  		return -ENOMEM;
 > 
 
--- 
-
-Thanks,
-
-David / dhildenb
