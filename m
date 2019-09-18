@@ -2,131 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F284B618C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE645B618A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 12:39:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729933AbfIRKjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 06:39:19 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34579 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728784AbfIRKjS (ORCPT
+        id S1729829AbfIRKiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 06:38:54 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39855 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbfIRKiy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 06:39:18 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n9so3823783pgc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 03:39:18 -0700 (PDT)
+        Wed, 18 Sep 2019 06:38:54 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v17so1962059wml.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 03:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:subject:date:message-id:mime-version
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=PJMTj/Fq70plK6xajf5o6p+A1XUkzJJscq2WFg4Ok1g=;
-        b=DOnXq/J274NOWRNt1DTh/uPChnrXdFihmCSYcMmvTR3F5sIF+5JU3PBEyH0UObAUCY
-         rHI4PA/azQA+0lFnPqx5pZUjyVOmGPdE4qNRPR6A9nGVKXaytQMXT2bbpywkcpc8WZUW
-         N5nlrUbLa8eVJtUGyQb5cSCEPadblD/PbsW6O7ajoALlDrFBavFGNXcZZ2oeyumOpRSe
-         2UNzbRSwRXbi9ccsqKI931OZJf6ZtqmZO+gNVI3Gal1pk5RoUjLcuo8lYiZwvhrOVejK
-         Vw4M6SN6zBG34yV4l/r/p2APdt1mdGc7KZWQ07as1lPEiTYGQudUQDys3byry8JjSuwJ
-         I+YQ==
+        bh=yYuOfi6SRpI0pisf6okbAWwjxdq6TT7Dd4t8NehGj3k=;
+        b=P8PJaeWyFpty1cB9YHCqKvCTTWMWK0nWXQ+nzYkZdFv0c9YfzcSZGX6CJ7KYmTtUDF
+         liF3SCWikSVOf4EiWOrUEY463Tt7EGH6/SWNIa1yChhgvRNOzBFZUNH8kLE4ZgMKnx/+
+         TCaNRDfKDUQqVO0caACcS9V6xUwNMLj1ApPIn7zHdMP0MMkj4cVKWzGZt7Xj6FITUuml
+         LzK8n7fOHGaEAwU6mncYnFuMt7EIDEL2iI3Xiq4oG2pmV/ycr5l5pVTku0ItoDzb7Fyd
+         9pK9d/3a0E/jBIy3sYbXF90d/coyoH3lDfZFCL+qsF3RFHhv6UsAuWHwUhnvHNw4erMq
+         rnaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=PJMTj/Fq70plK6xajf5o6p+A1XUkzJJscq2WFg4Ok1g=;
-        b=K3/APfsChth+fJ1qoiEXWyQkihTHfD6+Qwv5cLrMOHZmsiC96vXmyLHC7aBNUkrmD8
-         bChrZuq2A9w13iu+a+GMFZZjS5xOA+RpmoChILRpx3wc04bOwcPTfuOFqEPSKDQ1/ayW
-         W3kCr9SwxKsPf3bbo7QxnDma4jmr9fZxAR+6i3w8piZjpUPjc2v+qkpW/c9SfJFoG0IM
-         0xs7b4leMGnwL0wHNE8SL3to4mIopwrySC+MWNTk2axkR+bGvUagPdDa6qSOHTF7XWZe
-         xVmq95A78coSdD6sNUXEBqHO+IenjYO8qbDzBBF1ZthwNbS3XrFVsQnxXQ+xcue++6j2
-         6E6w==
-X-Gm-Message-State: APjAAAU2rDSWi/jSns+3Tb5mxh5sD4pYCktSYkqehyITDhtlCn3F4kbU
-        70kleqTSjSeAU33/fy1ZFyl4KA==
-X-Google-Smtp-Source: APXvYqwT7yE8ZvtiPNDu0qZs9cEmt2AKc8FFBPrLCdbKTMHPu+9h5U5gAJn9fIaC/1yIDkmIDWiqtQ==
-X-Received: by 2002:a17:90a:a6e:: with SMTP id o101mr3072132pjo.71.1568803157898;
-        Wed, 18 Sep 2019 03:39:17 -0700 (PDT)
-Received: from localhost.localdomain (220-132-236-182.HINET-IP.hinet.net. [220.132.236.182])
-        by smtp.gmail.com with ESMTPSA id 31sm5751587pgr.55.2019.09.18.03.39.15
+        bh=yYuOfi6SRpI0pisf6okbAWwjxdq6TT7Dd4t8NehGj3k=;
+        b=J0I5MKkpQdkN1j3SJrQ6kxiReqFAwRxxUk6MfLhC//QZdWHiTqCP8nN9ptvU9C822V
+         SLpsvYhx7kgJvIEojaPZOsQfOn5WVTSK+JLTOEVQ3o3qlz5VjJQrCceZB7SME1trhmL+
+         WufVeeqHxb61zqJwZUBlwezqTdO4a88pEfRocao2WCsugcpzKPp5n4iMvoYTpeBaZugP
+         b7BMU2PgezihWDl5VaxC9WjKHDTKOq/4ChkpN17qeUJye81pceq7pBeLwTXAHmh3Sg0/
+         tJSlj9Gl5zGIPSG2FAIjI5xOisl2le6cgzTgJ11yLMqJHEV5pO2/C/x27CDDSWaBUFul
+         gawA==
+X-Gm-Message-State: APjAAAWPu9ztbupAtDtmuSBHfrAUHrHR77CW8w1Z2Gvaq8ZfflrhvByU
+        wVeGy78QjpQJSXNeLPb4S+uXyWFhskisbw==
+X-Google-Smtp-Source: APXvYqyiY17RMt+LzMSEzkyulXEt5507TcTU9m37clIy3bS1NeFO+C7SqXCv51y3xJGJDfG+KnoKfQ==
+X-Received: by 2002:a1c:c189:: with SMTP id r131mr2301208wmf.153.1568803132510;
+        Wed, 18 Sep 2019 03:38:52 -0700 (PDT)
+Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
+        by smtp.gmail.com with ESMTPSA id a13sm12721867wrf.73.2019.09.18.03.38.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 03:39:17 -0700 (PDT)
-From:   greentime.hu@sifive.com
-To:     greentime.hu@sifive.com, green.hu@gmail.com,
-        paul.walmsley@sifive.com, linux-hackers@sifive.com,
-        palmer@sifive.com, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] RISC-V: Fix building error when CONFIG_SPARSEMEM_MANUAL=y
-Date:   Wed, 18 Sep 2019 18:38:24 +0800
-Message-Id: <20190918103825.8694-1-greentime.hu@sifive.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 18 Sep 2019 03:38:52 -0700 (PDT)
+From:   Alessio Balsini <balsini@android.com>
+To:     linux-block@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Alessio Balsini <balsini@android.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] block: Fix implicit unsigned to signed conversion
+Date:   Wed, 18 Sep 2019 11:38:28 +0100
+Message-Id: <20190918103828.257631-1-balsini@android.com>
+X-Mailer: git-send-email 2.23.0.237.gc6a4ce50a0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greentime Hu <greentime.hu@sifive.com>
+An unsigned integer variable may be assigned negative values, and is
+returned by the function with an implicit conversion to signed.  Besides
+the implicit conversion at return time for which the variable
+representation is fine and there is no variable manipulation that may
+lead to bugs in the current code base, this is a conceptual error.
 
-To adjust the place of VMALLOC_* and FIXADDR_* defined location to let VMEMMAP_*
-get it.
+Fix by changing the variable type from unsigned to signed.
 
-  CC      init/main.o
-In file included from ./include/linux/mm.h:99,
-                 from ./include/linux/ring_buffer.h:5,
-                 from ./include/linux/trace_events.h:6,
-                 from ./include/trace/syscall.h:7,
-                 from ./include/linux/syscalls.h:85,
-                 from init/main.c:21:
-./arch/riscv/include/asm/pgtable.h: In function ‘pmd_page’:
-./arch/riscv/include/asm/pgtable.h:95:24: error: ‘VMALLOC_START’ undeclared (first use in this function); did you mean ‘VMEMMAP_START’?
- #define VMEMMAP_START (VMALLOC_START - VMEMMAP_SIZE)
-                        ^~~~~~~~~~~~~
-
-Fixes: d95f1a542c3d ("RISC-V: Implement sparsemem")
-Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
+Signed-off-by: Alessio Balsini <balsini@android.com>
+Cc: Jens Axboe <axboe@kernel.dk>
 ---
- arch/riscv/include/asm/pgtable.h | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ block/blk-settings.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 80905b27ee98..4f4162d90586 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -83,6 +83,18 @@ extern pgd_t swapper_pg_dir[];
- #define __S110	PAGE_SHARED_EXEC
- #define __S111	PAGE_SHARED_EXEC
+diff --git a/block/blk-settings.c b/block/blk-settings.c
+index 6bd1e3b082d8..c76c25c45869 100644
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -496,7 +496,8 @@ EXPORT_SYMBOL(blk_queue_stack_limits);
+ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+ 		     sector_t start)
+ {
+-	unsigned int top, bottom, alignment, ret = 0;
++	unsigned int top, bottom, alignment;
++	int ret = 0;
  
-+#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
-+#define VMALLOC_END      (PAGE_OFFSET - 1)
-+#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
-+
-+#define FIXADDR_TOP      VMALLOC_START
-+#ifdef CONFIG_64BIT
-+#define FIXADDR_SIZE     PMD_SIZE
-+#else
-+#define FIXADDR_SIZE     PGDIR_SIZE
-+#endif
-+#define FIXADDR_START    (FIXADDR_TOP - FIXADDR_SIZE)
-+
- /*
-  * Roughly size the vmemmap space to be large enough to fit enough
-  * struct pages to map half the virtual address space. Then
-@@ -429,18 +441,6 @@ static inline void pgtable_cache_init(void)
- 	/* No page table caches to initialize */
- }
- 
--#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
--#define VMALLOC_END      (PAGE_OFFSET - 1)
--#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
--
--#define FIXADDR_TOP      VMALLOC_START
--#ifdef CONFIG_64BIT
--#define FIXADDR_SIZE     PMD_SIZE
--#else
--#define FIXADDR_SIZE     PGDIR_SIZE
--#endif
--#define FIXADDR_START    (FIXADDR_TOP - FIXADDR_SIZE)
--
- /*
-  * Task size is 0x4000000000 for RV64 or 0x9fc00000 for RV32.
-  * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
+ 	t->max_sectors = min_not_zero(t->max_sectors, b->max_sectors);
+ 	t->max_hw_sectors = min_not_zero(t->max_hw_sectors, b->max_hw_sectors);
 -- 
-2.17.1
+2.23.0.237.gc6a4ce50a0-goog
 
