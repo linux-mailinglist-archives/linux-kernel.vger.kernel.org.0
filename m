@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DCB8B5CEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE42CB5CEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbfIRGae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:30:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45028 "EHLO mail.kernel.org"
+        id S1726990AbfIRGa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:30:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728763AbfIRGYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:24:30 -0400
+        id S1729883AbfIRGYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:24:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9CEA218AF;
-        Wed, 18 Sep 2019 06:24:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C271021920;
+        Wed, 18 Sep 2019 06:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787869;
-        bh=wN84EXygS75F4cZ+gLTyyU/BKie991M2OnFOKEEZc+4=;
+        s=default; t=1568787877;
+        bh=BIqPyxDhQFWcJ1fCOfLaBJ1+/q0tWDGLpDzbeYHGRMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SF5tD3JgYeGDetwVxrmtVreh9iVgpXuTwAJjOFgLeEvmeoItp5ldq7HOVJ4LjEEAm
-         bFUHlIc4UojP8RD91BDgSJtEu32NcTCnCA52858vtbKSMW6mjruF285jbWduRSf3qT
-         nz1I2/C3a3IaAWS9HDrpUpN/ja3vQK1dk9SyKMRQ=
+        b=BPswLC3UBUWUmRnxGF7ry8ihLmOLj6NgmGuaJ0bvNgxWdOppGsPie/Le1LyUg7cV8
+         1YYdpwPA3u92m6ce14AViXVUWb9wcfIBwFaBNjtZHOM7e3vH6+tqbRNxtHtmtS0Bot
+         9BFU4TsbZcsyEgsH6W7IVIvfuj62Yr+AbmFY/ULA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Eric Dumazet <edumazet@google.com>,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 14/85] tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
-Date:   Wed, 18 Sep 2019 08:18:32 +0200
-Message-Id: <20190918061234.593793994@linuxfoundation.org>
+Subject: [PATCH 5.2 17/85] net-ipv6: fix excessive RTF_ADDRCONF flag on ::1/128 local route (and others)
+Date:   Wed, 18 Sep 2019 08:18:35 +0200
+Message-Id: <20190918061234.695483315@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
 References: <20190918061234.107708857@linuxfoundation.org>
@@ -46,59 +45,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neal Cardwell <ncardwell@google.com>
+From: "Maciej Żenczykowski" <maze@google.com>
 
-[ Upstream commit af38d07ed391b21f7405fa1f936ca9686787d6d2 ]
+[ Upstream commit d55a2e374a94fa34a3048c6a2be535266e506d97 ]
 
-Fix tcp_ecn_withdraw_cwr() to clear the correct bit:
-TCP_ECN_QUEUE_CWR.
+There is a subtle change in behaviour introduced by:
+  commit c7a1ce397adacaf5d4bb2eab0a738b5f80dc3e43
+  'ipv6: Change addrconf_f6i_alloc to use ip6_route_info_create'
 
-Rationale: basically, TCP_ECN_DEMAND_CWR is a bit that is purely about
-the behavior of data receivers, and deciding whether to reflect
-incoming IP ECN CE marks as outgoing TCP th->ece marks. The
-TCP_ECN_QUEUE_CWR bit is purely about the behavior of data senders,
-and deciding whether to send CWR. The tcp_ecn_withdraw_cwr() function
-is only called from tcp_undo_cwnd_reduction() by data senders during
-an undo, so it should zero the sender-side state,
-TCP_ECN_QUEUE_CWR. It does not make sense to stop the reflection of
-incoming CE bits on incoming data packets just because outgoing
-packets were spuriously retransmitted.
+Before that patch /proc/net/ipv6_route includes:
+00000000000000000000000000000001 80 00000000000000000000000000000000 00 00000000000000000000000000000000 00000000 00000003 00000000 80200001 lo
 
-The bug has been reproduced with packetdrill to manifest in a scenario
-with RFC3168 ECN, with an incoming data packet with CE bit set and
-carrying a TCP timestamp value that causes cwnd undo. Before this fix,
-the IP CE bit was ignored and not reflected in the TCP ECE header bit,
-and sender sent a TCP CWR ('W') bit on the next outgoing data packet,
-even though the cwnd reduction had been undone.  After this fix, the
-sender properly reflects the CE bit and does not set the W bit.
+Afterwards /proc/net/ipv6_route includes:
+00000000000000000000000000000001 80 00000000000000000000000000000000 00 00000000000000000000000000000000 00000000 00000002 00000000 80240001 lo
 
-Note: the bug actually predates 2005 git history; this Fixes footer is
-chosen to be the oldest SHA1 I have tested (from Sep 2007) for which
-the patch applies cleanly (since before this commit the code was in a
-.h file).
+ie. the above commit causes the ::1/128 local (automatic) route to be flagged with RTF_ADDRCONF (0x040000).
 
-Fixes: bdf1ee5d3bd3 ("[TCP]: Move code from tcp_ecn.h to tcp*.c and tcp.h & remove it")
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+AFAICT, this is incorrect since these routes are *not* coming from RA's.
+
+As such, this patch restores the old behaviour.
+
+Fixes: c7a1ce397ada ("ipv6: Change addrconf_f6i_alloc to use ip6_route_info_create")
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Lorenzo Colitti <lorenzo@google.com>
+Signed-off-by: Maciej Żenczykowski <maze@google.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_input.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/route.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -266,7 +266,7 @@ static void tcp_ecn_accept_cwr(struct so
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -3841,13 +3841,14 @@ struct fib6_info *addrconf_f6i_alloc(str
+ 	struct fib6_config cfg = {
+ 		.fc_table = l3mdev_fib_table(idev->dev) ? : RT6_TABLE_LOCAL,
+ 		.fc_ifindex = idev->dev->ifindex,
+-		.fc_flags = RTF_UP | RTF_ADDRCONF | RTF_NONEXTHOP,
++		.fc_flags = RTF_UP | RTF_NONEXTHOP,
+ 		.fc_dst = *addr,
+ 		.fc_dst_len = 128,
+ 		.fc_protocol = RTPROT_KERNEL,
+ 		.fc_nlinfo.nl_net = net,
+ 		.fc_ignore_dev_down = true,
+ 	};
++	struct fib6_info *f6i;
  
- static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
- {
--	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
-+	tp->ecn_flags &= ~TCP_ECN_QUEUE_CWR;
+ 	if (anycast) {
+ 		cfg.fc_type = RTN_ANYCAST;
+@@ -3857,7 +3858,10 @@ struct fib6_info *addrconf_f6i_alloc(str
+ 		cfg.fc_flags |= RTF_LOCAL;
+ 	}
+ 
+-	return ip6_route_info_create(&cfg, gfp_flags, NULL);
++	f6i = ip6_route_info_create(&cfg, gfp_flags, NULL);
++	if (f6i)
++		f6i->dst_nocount = true;
++	return f6i;
  }
  
- static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
+ /* remove deleted ip from prefsrc entries */
 
 
