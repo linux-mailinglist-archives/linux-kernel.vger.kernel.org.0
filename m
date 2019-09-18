@@ -2,81 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3DCEB5A45
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 06:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70381B5A4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 06:23:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbfIREUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 00:20:49 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:39262 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfIREUt (ORCPT
+        id S1726646AbfIREXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 00:23:09 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39436 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfIREXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 00:20:49 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n7so7288593qtb.6;
-        Tue, 17 Sep 2019 21:20:48 -0700 (PDT)
+        Wed, 18 Sep 2019 00:23:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so5298686wrj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 21:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YPRk8Ltt/rxBY02wM0hyQQPeWRaW6k6EkP3BDo16FyQ=;
-        b=KFDuX1PXpLWWIazN6/ioyRAch+g6ExS7Mi1eJP7n+2GTjzyKZJXpHxHiZvbfIw5rqQ
-         1FuUiZCchmNjby9OGOw9M3whMMclD2EoqWoAscDh8fcY6oXHkMwHSaBA452+zG+nCQRb
-         G6AwVzYIjyPCVzOxujsBeTapvy5uDNXW7Lud5SzA4ddU9eeMSDN4qeEZoNnXQlZV0m7U
-         jogRvj7v8RswnXcdHb7ERgxyXWUhmPBLRenKC5npsfPo96KaL+haPApMgJT7l+Vddd3I
-         AQGJTK0dDHJ3fUhZk6wGvs+f1jb2kzvIaf1p/d4RnXBoHoktFgw6ujELhd8kXi4oaWmk
-         72QA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rIq1JW2tJfg0PLRUSRfWmLD8aLaxDS+5OXqW5mJJ9Ks=;
+        b=fRTMoTPj0TY3IwpoEkLUTYo895YGKUjTwvCKWHbiP8HcHOZ2h2ukSQou4QFkChl9lQ
+         gtpSK/+spGlce6w9CW6cLFbWC6alnYhM4bAwzF/dwFSEEaFZSJpO7acxUVnEhjYNmFej
+         IjQhel4fxJU78vDmVkabsvbgh4SyqZRYQ7QXHdi/OYrVsN6k3odmuxkZXaYPaFQi1D0X
+         6bEz+C725Dk/h5smiBjDCFNxQyfxebQj5jYeQXRWt2MSrLDoLevqn+MgzbwgVbO2/6p2
+         7VqlNknsWZr3jGKSjEXDNJ+iH9S6EmVOiXi3wgeiz/SWpkk33ip8WCt3LLP2URK2FLN5
+         AXiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YPRk8Ltt/rxBY02wM0hyQQPeWRaW6k6EkP3BDo16FyQ=;
-        b=a7hRzDSLhoEvp8mNupDJpYs782IimjQDhqTK60+fti7dCwxpNjlGtX+fJirFCGNl4X
-         m1prQXjUO/MSlsH3gaN4qLHaua7XhBWtBlt3HRmNCiD1NCscYfpdjZLt/86h9ZQUKhdf
-         m1eB/DTfSWs5OpDsta1qhpZXorTMDrWUj6YDOReiXoJ/oaRXxjtDZty5REY70JOASCtu
-         JPKHLA+fX41NDMvRXx2DwtpWYM7zZNOE05/8pVEfaM9/9hNtn+B4pd1Hu9EdSNosgT+L
-         tqRv/SQ1WvwzH8m+ug9ExRNiKS5I7r6NpfgyWKupqXyeWrUlLevFZz3Q1TCfNzPIEjMQ
-         Z6qw==
-X-Gm-Message-State: APjAAAUvtGu2eXEhR7Kr3Ti/x/JIHX+6DtBvISZl9IjHqHMP1aRGK+Tk
-        MV/zxXa9a0qo+gDl/2ANA5g/J6Ar+2zxkmLfW8E=
-X-Google-Smtp-Source: APXvYqxiiKvseCHPfAVRHjwSoUfPxvktprCcCOjau/D3GUt52yYMNjL2XT2qePP6phobolINXgPdQ61WvVbmtjBFu+A=
-X-Received: by 2002:ac8:c01:: with SMTP id k1mr2214859qti.59.1568780446767;
- Tue, 17 Sep 2019 21:20:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rIq1JW2tJfg0PLRUSRfWmLD8aLaxDS+5OXqW5mJJ9Ks=;
+        b=kN1Ayg9qRL2D2ZhBxe3zP0NhGT2NsKjsCL0WjzJQbsduh+FzJuaEBCArSBZp4qbf4R
+         Vf4AvarJRw8SoNXsFM9RkpTUXFdPNRncn3RgdkWIyj0HPCLQz7GP87uCY7C6tVeJonEB
+         TcNPRTMSMfZOsxW1RqcpzCcmdxKRgBzvRBnAsI/SakoT7EF3wVXJ2VDaovxv2txeGxV8
+         44rsTWkShqFQ3DmL9xd+Qa5xHrWS0JlXaMHdB6CRs+k9bdRBv2YSXCZFPy+ilvcNudR5
+         9+sZWCfonmCwyrSs0K2PqKTRTOOA/G9f7lLCjVrREFEimVTddVbYLPjztY+KSvzXL2ei
+         vIyw==
+X-Gm-Message-State: APjAAAUN+TG0u1zwNJ0j5pFdyU/KBD/P95GqFwqPpqK9blAIfU2g7dih
+        FAFkFLa1JERdcRCioMnZK1nFm1kc87xDYw==
+X-Google-Smtp-Source: APXvYqxmmEkIqD0/D/VTb3sYHmywgdZ2V8y+kabvMCfN2nD9OEBNHZNyZSUL+o0wBNWiQzizYbi7RA==
+X-Received: by 2002:adf:f502:: with SMTP id q2mr1179861wro.186.1568780586216;
+        Tue, 17 Sep 2019 21:23:06 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id b184sm1025464wmg.47.2019.09.17.21.23.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Sep 2019 21:23:05 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>, linux-nvdimm@lists.01.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] libnvdimm/nfit_test: Fix acpi_handle redefinition
+Date:   Tue, 17 Sep 2019 21:21:49 -0700
+Message-Id: <20190918042148.77553-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org> <20190916105433.11404-11-ivan.khoronzhuk@linaro.org>
-In-Reply-To: <20190916105433.11404-11-ivan.khoronzhuk@linaro.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Tue, 17 Sep 2019 21:20:35 -0700
-Message-ID: <CAEf4BzYzorwyZdmy=2vwuvmACOJoCY5c0EGzDA3n48FXZs1FYQ@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 10/14] samples: bpf: makefile: use target CC
- environment for HDR_PROBE
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 3:59 AM Ivan Khoronzhuk
-<ivan.khoronzhuk@linaro.org> wrote:
->
-> No need in hacking HOSTCC to be cross-compiler any more, so drop
-> this trick and use target CC for HDR_PROBE.
->
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> ---
+After commit 62974fc389b3 ("libnvdimm: Enable unit test infrastructure
+compile checks"), clang warns:
 
-Acked-by: Andrii Nakryiko <andriin@fb.com>
+In file included from
+../drivers/nvdimm/../../tools/testing/nvdimm/test/iomap.c:15:
+../drivers/nvdimm/../../tools/testing/nvdimm/test/nfit_test.h:206:15:
+warning: redefinition of typedef 'acpi_handle' is a C11 feature
+[-Wtypedef-redefinition]
+typedef void *acpi_handle;
+              ^
+../include/acpi/actypes.h:424:15: note: previous definition is here
+typedef void *acpi_handle;      /* Actually a ptr to a NS Node */
+              ^
+1 warning generated.
 
+The include chain:
 
-[...]
+iomap.c ->
+    linux/acpi.h ->
+        acpi/acpi.h ->
+            acpi/actypes.h
+    nfit_test.h
+
+Avoid this by including linux/acpi.h in nfit_test.h, which allows us to
+remove both the typedef and the forward declaration of acpi_object.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/660
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+
+I know that every maintainer has their own thing with the number of
+includes in each header file; this issue can be solved in a various
+number of ways, I went with the smallest diff stat. Please solve it in a
+different way if you see fit :)
+
+ tools/testing/nvdimm/test/nfit_test.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/tools/testing/nvdimm/test/nfit_test.h b/tools/testing/nvdimm/test/nfit_test.h
+index 448d686da8b1..0bf5640f1f07 100644
+--- a/tools/testing/nvdimm/test/nfit_test.h
++++ b/tools/testing/nvdimm/test/nfit_test.h
+@@ -4,6 +4,7 @@
+  */
+ #ifndef __NFIT_TEST_H__
+ #define __NFIT_TEST_H__
++#include <linux/acpi.h>
+ #include <linux/list.h>
+ #include <linux/uuid.h>
+ #include <linux/ioport.h>
+@@ -202,9 +203,6 @@ struct nd_intel_lss {
+ 	__u32 status;
+ } __packed;
+ 
+-union acpi_object;
+-typedef void *acpi_handle;
+-
+ typedef struct nfit_test_resource *(*nfit_test_lookup_fn)(resource_size_t);
+ typedef union acpi_object *(*nfit_test_evaluate_dsm_fn)(acpi_handle handle,
+ 		 const guid_t *guid, u64 rev, u64 func,
+-- 
+2.23.0
+
