@@ -2,135 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3524B6D26
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:00:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B817EB6D2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 22:01:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389321AbfIRUA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 16:00:26 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38388 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387622AbfIRUAZ (ORCPT
+        id S2389427AbfIRUBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 16:01:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:51893 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388697AbfIRUA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 16:00:25 -0400
-Received: by mail-wr1-f65.google.com with SMTP id l11so689350wrx.5;
-        Wed, 18 Sep 2019 13:00:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TOU4ZuWvUzuxQNBU0z7noCr4TSQPsaqCOjm5rWDSQ8g=;
-        b=uPvJw2mL4p5ugyLfGDeQxqJzC+rQSmiHWuVTRqGVDz9OzjdMEwE3yyXeg/F2wLAkn+
-         4M3Ne7uijtBzWQFLDo7qY/cH4xRG5WEJFWERlnoa8Pym3uCs0rqkkAvOhL44sQQPb6xJ
-         zaiFXCeo9GNGOQdYksFtiwRfczEP8mxrcyYSNc/7BKK1YuTxe1HGl6FSaVxDUG5gOtbS
-         wbfHfeQPutIeuCfvqvXIox2ycWgV1a6OeM4gDT/tI5JIjq1v83c34vIQf6Vkfy87avhk
-         p5RP0J3YFRKxAl6lirtU4mspl7ZuBo9xb7ig+aGEpUV15JnU5TszYKSWt2rRMbzzoymS
-         /Siw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TOU4ZuWvUzuxQNBU0z7noCr4TSQPsaqCOjm5rWDSQ8g=;
-        b=b8OMIF3g9mJVaZUVM0+zOUBmgPnUxxnXe9OKjq2Mk56/YYT1Ecc9cnURQDUYByQpIY
-         8rmL1RRNa2c3WwgXFvZ/gTL9n0vahqQ6oJ/ZcX/Y9HOojvoFC0rUvG/WT+S7rCM0c/jJ
-         JTpHFOQu3WUxqHMocIXhETyaca2pdeR010Y51uSTpQtaxSd8zNdsJb2mZ1Xi2k+3UtMM
-         aFD6tqx7yiB/LjCjTVjCXtaO6zCMsB2bIr2H6hK12AiqKRjPZejJhJYGVhT2ManvsQYo
-         rtX4a/HD50fFcdzI2Ez3Sfc+k9XBn618ONDXYoKC6yR7/zPmV4l6cb14MloTWycLndBT
-         d7Gg==
-X-Gm-Message-State: APjAAAVI29JVqvFX68oYE8RtTnCRLdgKXEdpaNO3IKSczp/DMbEZanbl
-        rcbpHKbckkDNMkctjY11YunPoTKX
-X-Google-Smtp-Source: APXvYqwSInRuFWaitMmA9bfwrjFHcX/wSggG+aJ9Nj2YP6nJKGsFOpLNmYYNOIwMWskIMs4pdby+fg==
-X-Received: by 2002:a5d:4ac8:: with SMTP id y8mr4525515wrs.98.1568836822579;
-        Wed, 18 Sep 2019 13:00:22 -0700 (PDT)
-Received: from [192.168.1.2] ([86.124.196.40])
-        by smtp.gmail.com with ESMTPSA id d193sm5352237wmd.0.2019.09.18.13.00.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Sep 2019 13:00:21 -0700 (PDT)
-Subject: Re: [PATCH v2] net: dsa: sja1105: prevent leaking memory
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>, andrew@lunn.ch
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20190918172106.GN9591@lunn.ch>
- <20190918180439.12441-1-navid.emamdoost@gmail.com>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Message-ID: <8d6f6c54-1758-7d98-c9b5-5c16b171c885@gmail.com>
-Date:   Wed, 18 Sep 2019 23:00:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 18 Sep 2019 16:00:59 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1N4NHS-1i2OLD1Ppm-011TTy; Wed, 18 Sep 2019 22:00:53 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Dexuan Cui <decui@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hv: vmbus: mark PM functions as __maybe_unused
+Date:   Wed, 18 Sep 2019 22:00:42 +0200
+Message-Id: <20190918200052.2261769-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190918180439.12441-1-navid.emamdoost@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:0Q0q64LtlR0+ruBCAru32aom+kL/oEc0mD+WK5wwvwLiINIQ/Hb
+ 4yD2T0bPSqtcvBxfkjR8Tb3sdvfzteqK1QKv9AIB/OcYn3mrizomStRga9sX0kh7iY8h3gK
+ KZml/eNUssHKlDxbXOE/3cnUnYiuzyXou3N+npMdg8EQ5saKWpHXoD6Yu68f8T90ZrIxlvI
+ +IoDD48TO7nhcpLP/VBAw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gWTUSYGfCaI=:m8zc4EEontUFE1Dblk5uBL
+ +domcl714lVeJRd1bkyRNumeoiifdx/ly5LlbN+G+QyNr8udkEXX8ioKB1Kv5PzEJQEb9XOWi
+ yq1Y5QOiASc6KCC1D7aPPBsXdBHWcQWn03K7/dFnBCc+LnaSTcLephYCA/pXAkrddY42tx7Ih
+ XiiX7QcaIvEj2j1cYHkfy2i93C9zEkfXQIcIpJar8/GAxY3MpwPWj2sd1HrI3Y3hXeSdfO1/O
+ 9khatrk3MI7usOcQksCF04FJ6EzOq/mjvll7p9CKI+rBtEcAoPamcLxLkjJoDBqyEipgZljgL
+ uv3PgWa6KDk870g4nQPNM8I3cxq0+Lb/yz88wZnR2ub37lG2p7mo5yBkw/Cxd3Biv9LIOr8Da
+ 8+1HIJNfF14Ozh+QszzVpfw8dJ/NCaCMG4GRz0Vps1jDVpbkKGZz7b7K/7xJq6jHRZbBGZdh/
+ w666CLz0vWrbY4k8v5Mu5uTRCS7NnodrewVL4REMtvXoeA2mkFQ89Zsj1E8aClwbWN+ZwhQFL
+ rs8jBKlZ0TKRJm39ziFNVYR6ggUmjQdBNSHJm8WzHfcG/Z1z4KQp95JdWoKISYU4usdo5Xhwj
+ 9u5nhDPEoUypazgaSBkHZVbRBy0ByTqWwYb9hw9UkGh3chc/qAqG2XWhXRGQqmTlXBqknq3W+
+ FPnRwjk0+7ulmoG7/blgRfQF5LwfcO0/aIiNtQChDEvcuOi9AwmNV9Z6YeuCdieP6r1WZT0o0
+ LVUDGPYtQIOd6Y7t8VQWZ0RVChEjLLbpEdERI8/byFffcnoswEm9M6PbiXiIcn72e6cW1sJEA
+ 9bZIC2nSa/dQbjVtQXLJjb2e+w25UGG6Zd6jiK5oI0NuvVizF2vrddfujaiZimLnvLoYsV3Jk
+ thj/Oku432vgLNCWrltg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Navid,
+When CONFIG_PM is disabled, we get a couple of harmless warnings:
 
-Thanks for the patch.
+drivers/hv/vmbus_drv.c:918:12: error: unused function 'vmbus_suspend' [-Werror,-Wunused-function]
+drivers/hv/vmbus_drv.c:937:12: error: unused function 'vmbus_resume' [-Werror,-Wunused-function]
+drivers/hv/vmbus_drv.c:2128:12: error: unused function 'vmbus_bus_suspend' [-Werror,-Wunused-function]
+drivers/hv/vmbus_drv.c:2208:12: error: unused function 'vmbus_bus_resume' [-Werror,-Wunused-function]
 
-On 9/18/19 9:04 PM, Navid Emamdoost wrote:
-> In sja1105_static_config_upload, in two cases memory is leaked: when
-> static_config_buf_prepare_for_upload fails and when sja1105_inhibit_tx
-> fails. In both cases config_buf should be released.
-> 
-> Fixes: 8aa9ebccae876 (avoid leaking config_buf)
-> Fixes: 1a4c69406cc1c (avoid leaking config_buf)
-> 
+Mark these functions __maybe_unused to let gcc drop them silently.
 
-You're not supposed to add a short description of the patch here, but 
-rather the commit message of the patch you're fixing.
-Add this to your ~/.gitconfig:
+Fixes: f53335e3289f ("Drivers: hv: vmbus: Suspend/resume the vmbus itself for hibernation")
+Fixes: 271b2224d42f ("Drivers: hv: vmbus: Implement suspend/resume for VSC drivers for hibernation")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/hv/vmbus_drv.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-[pretty]
-	fixes = Fixes: %h (\"%s\")
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 391f0b225c9a..2542eb1f872b 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -915,7 +915,7 @@ static void vmbus_shutdown(struct device *child_device)
+ /*
+  * vmbus_suspend - Suspend a vmbus device
+  */
+-static int vmbus_suspend(struct device *child_device)
++static int __maybe_unused vmbus_suspend(struct device *child_device)
+ {
+ 	struct hv_driver *drv;
+ 	struct hv_device *dev = device_to_hv_device(child_device);
+@@ -934,7 +934,7 @@ static int vmbus_suspend(struct device *child_device)
+ /*
+  * vmbus_resume - Resume a vmbus device
+  */
+-static int vmbus_resume(struct device *child_device)
++static int __maybe_unused vmbus_resume(struct device *child_device)
+ {
+ 	struct hv_driver *drv;
+ 	struct hv_device *dev = device_to_hv_device(child_device);
+@@ -2125,7 +2125,7 @@ static int vmbus_acpi_add(struct acpi_device *device)
+ 	return ret_val;
+ }
+ 
+-static int vmbus_bus_suspend(struct device *dev)
++static int __maybe_unused vmbus_bus_suspend(struct device *dev)
+ {
+ 	struct vmbus_channel *channel, *sc;
+ 	unsigned long flags;
+@@ -2205,7 +2205,7 @@ static int vmbus_bus_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int vmbus_bus_resume(struct device *dev)
++static int __maybe_unused vmbus_bus_resume(struct device *dev)
+ {
+ 	struct vmbus_channel_msginfo *msginfo;
+ 	size_t msgsize;
+-- 
+2.20.0
 
-And then run:
-git show --pretty=fixes 8aa9ebccae87621d997707e4f25e53fddd7e30e4
-
-Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105 5-port 
-L2 switch")
-
-git show --pretty=fixes 1a4c69406cc1c3c42bb7391c8eb544e93fe9b320
-
-Fixes: 1a4c69406cc1 ("net: dsa: sja1105: Prevent PHY jabbering during 
-switch reset")
-
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> ---
->   drivers/net/dsa/sja1105/sja1105_spi.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/dsa/sja1105/sja1105_spi.c b/drivers/net/dsa/sja1105/sja1105_spi.c
-> index 84dc603138cf..58dd37ecde17 100644
-> --- a/drivers/net/dsa/sja1105/sja1105_spi.c
-> +++ b/drivers/net/dsa/sja1105/sja1105_spi.c
-> @@ -409,7 +409,8 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
->   	rc = static_config_buf_prepare_for_upload(priv, config_buf, buf_len);
->   	if (rc < 0) {
->   		dev_err(dev, "Invalid config, cannot upload\n");
-> -		return -EINVAL;
-> +		rc = -EINVAL;
-> +		goto out;
->   	}
->   	/* Prevent PHY jabbering during switch reset by inhibiting
->   	 * Tx on all ports and waiting for current packet to drain.
-> @@ -418,7 +419,8 @@ int sja1105_static_config_upload(struct sja1105_private *priv)
->   	rc = sja1105_inhibit_tx(priv, port_bitmap, true);
->   	if (rc < 0) {
->   		dev_err(dev, "Failed to inhibit Tx on ports\n");
-> -		return -ENXIO;
-> +		rc = -ENXIO;
-> +		goto out;
->   	}
->   	/* Wait for an eventual egress packet to finish transmission
->   	 * (reach IFG). It is guaranteed that a second one will not
-> 
-
-Regards,
--Vladimir
