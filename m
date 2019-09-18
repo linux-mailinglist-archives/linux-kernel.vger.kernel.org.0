@@ -2,70 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0A55B62D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1FD7B632E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:27:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730845AbfIRMLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:11:22 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2294 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727637AbfIRMLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:11:22 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B1F1F36D3DD6EFEAC91F;
-        Wed, 18 Sep 2019 20:11:16 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 18 Sep 2019 20:11:07 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <johannes.berg@intel.com>, <emmanuel.grumbach@intel.com>,
-        <luciano.coelho@intel.com>, <linuxwifi@intel.com>,
-        <kvalo@codeaurora.org>, <davem@davemloft.net>
-CC:     <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH net] iwlwifi: add dependency of THERMAL with IWLMVM
-Date:   Wed, 18 Sep 2019 20:28:15 +0800
-Message-ID: <20190918122815.155657-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727851AbfIRM1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:27:33 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:56694 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbfIRM1d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 08:27:33 -0400
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Sep 2019 08:27:32 EDT
+Received: from droid12-sz.software.amlogic (10.28.8.22) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Wed, 18 Sep 2019
+ 20:13:25 +0800
+From:   Xingyu Chen <xingyu.chen@amlogic.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Kevin Hilman <khilman@baylibre.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH 0/3] reset: meson: add Meson-A1 SoC support
+Date:   Wed, 18 Sep 2019 20:12:24 +0800
+Message-ID: <1568808746-1153-1-git-send-email-xingyu.chen@amlogic.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.22]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_IWLMVM=y, CONFIG_THERMAL=n, below error can be found:
-drivers/net/wireless/intel/iwlwifi/mvm/fw.o: In function `iwl_mvm_up':
-fw.c:(.text+0x2c26): undefined reference to `iwl_mvm_send_temp_report_ths_cmd'
-make: *** [vmlinux] Error 1
+This patchset adds support for Meson-A1 SoC Reset Controller. A new struct
+meson_reset_param is introduced to describe the register differences between
+Meson-A1 and previous SoCs
 
-After commit 242d9c8b9a93 ("iwlwifi: mvm: use FW thermal
-monitoring regardless of CONFIG_THERMAL"), iwl_mvm_up()
-calls iwl_mvm_send_temp_report_ths_cmd(), but this function
-is under CONFIG_THERMAL, which is depended on CONFIG_THERMAL.
+This patchset is based on A1 DTBv4[1].
+[1] https://lore.kernel.org/linux-amlogic/1568276370-54181-1-git-send-email-jianxin.pan@amlogic.com
 
-Fixes: 242d9c8b9a93 ("iwlwifi: mvm: use FW thermal monitoring regardless of CONFIG_THERMAL")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/net/wireless/intel/iwlwifi/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Xingyu Chen (3):
+  arm64: dts: meson: add reset controller for Meson-A1 SoC
+  dt-bindings: reset: add bindings for the Meson-A1 SoC Reset Controller
+  reset: add support for the Meson-A1 SoC Reset Controller
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/Kconfig b/drivers/net/wireless/intel/iwlwifi/Kconfig
-index 7dbc0d3..801aa0f 100644
---- a/drivers/net/wireless/intel/iwlwifi/Kconfig
-+++ b/drivers/net/wireless/intel/iwlwifi/Kconfig
-@@ -65,6 +65,7 @@ config IWLMVM
- 	tristate "Intel Wireless WiFi MVM Firmware support"
- 	select WANT_DEV_COREDUMP
- 	depends on MAC80211
-+	depends on THERMAL
- 	help
- 	  This is the driver that supports the MVM firmware. The list
- 	  of the devices that use this firmware is available here:
+ .../bindings/reset/amlogic,meson-reset.txt         |  4 +-
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi          |  6 +++
+ drivers/reset/reset-meson.c                        | 35 ++++++++++---
+ include/dt-bindings/reset/amlogic,meson-a1-reset.h | 59 ++++++++++++++++++++++
+ 4 files changed, 95 insertions(+), 9 deletions(-)
+ create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-reset.h
+
 -- 
 2.7.4
 
