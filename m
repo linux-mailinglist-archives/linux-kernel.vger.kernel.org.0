@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E076BB5D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C4AB5D14
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728206AbfIRGX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:23:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43466 "EHLO mail.kernel.org"
+        id S1730295AbfIRGbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:31:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbfIRGXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:19 -0400
+        id S1729569AbfIRGXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2DD921920;
-        Wed, 18 Sep 2019 06:23:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 961A621924;
+        Wed, 18 Sep 2019 06:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787797;
-        bh=ZdYc8NP5NgisUIDS2D5P5ulRyD0th+EyUNziYR37hq0=;
+        s=default; t=1568787800;
+        bh=AbcZKFH4I95JP2aJSzd0CiOxs91bEROQGpBuAi0B2rw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UcnQjKQ1Ywd4eHUz4VZthEBp3dsPg+NzBTKJjvVPn45GJBV+qadrd8fmsLD8h23oV
-         2bc2ZjlxaQVcJX1vEobteEMNd43fuw1YQFDO2k9jxlT8NuLzgtDsGKNhFXuqli6ywf
-         Zejl8WvrZvJ4QwO1LvkcdYQYow3oWy+Zob3N/NfU=
+        b=l0ytuv1sESRNKp/Or+OXOexkksrWVXx3X3xsobZIB6Hi4T+f7m5XM/Fr3P0A1bCsA
+         88VQNchIPP3AxwqMoUuK65vB225JZPvzm0EDB8cUyFmns7qIC/y+GrWzk+XZWvExRX
+         kiPI/vAefHk4lGUz+o4vY1+xJuGa4cfg4fWpkTfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 38/50] crypto: talitos - Do not modify req->cryptlen on decryption.
-Date:   Wed, 18 Sep 2019 08:19:21 +0200
-Message-Id: <20190918061227.568465182@linuxfoundation.org>
+Subject: [PATCH 4.19 39/50] crypto: talitos - HMAC SNOOP NO AFEU mode requires SW icv checking.
+Date:   Wed, 18 Sep 2019 08:19:22 +0200
+Message-Id: <20190918061227.715396366@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
 References: <20190918061223.116178343@linuxfoundation.org>
@@ -45,160 +45,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 7ede4c36cf7c6516986ee9d75b197c8bf73ea96f upstream.
+commit 4bbfb839259a9c96a0be872e16f7471b7136aee5 upstream.
 
-For decrypt, req->cryptlen includes the size of the authentication
-part while all functions of the driver expect cryptlen to be
-the size of the encrypted data.
-
-As it is not expected to change req->cryptlen, this patch
-implements local calculation of cryptlen.
+In that mode, hardware ICV verification is not supported.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 9c4a79653b35 ("crypto: talitos - Freescale integrated security engine (SEC) driver")
+Fixes: 7405c8d7ff97 ("crypto: talitos - templates for AEAD using HMAC_SNOOP_NO_AFEU")
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |   31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ drivers/crypto/talitos.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 --- a/drivers/crypto/talitos.c
 +++ b/drivers/crypto/talitos.c
-@@ -959,11 +959,13 @@ static void talitos_sg_unmap(struct devi
- 
- static void ipsec_esp_unmap(struct device *dev,
- 			    struct talitos_edesc *edesc,
--			    struct aead_request *areq)
-+			    struct aead_request *areq, bool encrypt)
- {
- 	struct crypto_aead *aead = crypto_aead_reqtfm(areq);
- 	struct talitos_ctx *ctx = crypto_aead_ctx(aead);
- 	unsigned int ivsize = crypto_aead_ivsize(aead);
-+	unsigned int authsize = crypto_aead_authsize(aead);
-+	unsigned int cryptlen = areq->cryptlen - (encrypt ? 0 : authsize);
- 	bool is_ipsec_esp = edesc->desc.hdr & DESC_HDR_TYPE_IPSEC_ESP;
- 	struct talitos_ptr *civ_ptr = &edesc->desc.ptr[is_ipsec_esp ? 2 : 3];
- 
-@@ -972,7 +974,7 @@ static void ipsec_esp_unmap(struct devic
- 					 DMA_FROM_DEVICE);
- 	unmap_single_talitos_ptr(dev, civ_ptr, DMA_TO_DEVICE);
- 
--	talitos_sg_unmap(dev, edesc, areq->src, areq->dst, areq->cryptlen,
-+	talitos_sg_unmap(dev, edesc, areq->src, areq->dst, cryptlen,
- 			 areq->assoclen);
- 
- 	if (edesc->dma_len)
-@@ -983,7 +985,7 @@ static void ipsec_esp_unmap(struct devic
- 		unsigned int dst_nents = edesc->dst_nents ? : 1;
- 
- 		sg_pcopy_to_buffer(areq->dst, dst_nents, ctx->iv, ivsize,
--				   areq->assoclen + areq->cryptlen - ivsize);
-+				   areq->assoclen + cryptlen - ivsize);
- 	}
- }
- 
-@@ -1005,7 +1007,7 @@ static void ipsec_esp_encrypt_done(struc
- 
- 	edesc = container_of(desc, struct talitos_edesc, desc);
- 
--	ipsec_esp_unmap(dev, edesc, areq);
-+	ipsec_esp_unmap(dev, edesc, areq, true);
- 
- 	/* copy the generated ICV to dst */
- 	if (edesc->icv_ool) {
-@@ -1039,7 +1041,7 @@ static void ipsec_esp_decrypt_swauth_don
- 
- 	edesc = container_of(desc, struct talitos_edesc, desc);
- 
--	ipsec_esp_unmap(dev, edesc, req);
-+	ipsec_esp_unmap(dev, edesc, req, false);
- 
- 	if (!err) {
- 		char icvdata[SHA512_DIGEST_SIZE];
-@@ -1085,7 +1087,7 @@ static void ipsec_esp_decrypt_hwauth_don
- 
- 	edesc = container_of(desc, struct talitos_edesc, desc);
- 
--	ipsec_esp_unmap(dev, edesc, req);
-+	ipsec_esp_unmap(dev, edesc, req, false);
- 
- 	/* check ICV auth status */
- 	if (!err && ((desc->hdr_lo & DESC_HDR_LO_ICCR1_MASK) !=
-@@ -1188,6 +1190,7 @@ static int talitos_sg_map(struct device
-  * fill in and submit ipsec_esp descriptor
-  */
- static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
-+		     bool encrypt,
- 		     void (*callback)(struct device *dev,
- 				      struct talitos_desc *desc,
- 				      void *context, int error))
-@@ -1197,7 +1200,7 @@ static int ipsec_esp(struct talitos_edes
- 	struct talitos_ctx *ctx = crypto_aead_ctx(aead);
- 	struct device *dev = ctx->dev;
- 	struct talitos_desc *desc = &edesc->desc;
--	unsigned int cryptlen = areq->cryptlen;
-+	unsigned int cryptlen = areq->cryptlen - (encrypt ? 0 : authsize);
- 	unsigned int ivsize = crypto_aead_ivsize(aead);
- 	int tbl_off = 0;
- 	int sg_count, ret;
-@@ -1324,7 +1327,7 @@ static int ipsec_esp(struct talitos_edes
- 
- 	ret = talitos_submit(dev, ctx->ch, desc, callback, areq);
- 	if (ret != -EINPROGRESS) {
--		ipsec_esp_unmap(dev, edesc, areq);
-+		ipsec_esp_unmap(dev, edesc, areq, encrypt);
- 		kfree(edesc);
- 	}
- 	return ret;
-@@ -1438,9 +1441,10 @@ static struct talitos_edesc *aead_edesc_
- 	unsigned int authsize = crypto_aead_authsize(authenc);
- 	struct talitos_ctx *ctx = crypto_aead_ctx(authenc);
- 	unsigned int ivsize = crypto_aead_ivsize(authenc);
-+	unsigned int cryptlen = areq->cryptlen - (encrypt ? 0 : authsize);
- 
- 	return talitos_edesc_alloc(ctx->dev, areq->src, areq->dst,
--				   iv, areq->assoclen, areq->cryptlen,
-+				   iv, areq->assoclen, cryptlen,
- 				   authsize, ivsize, icv_stashing,
- 				   areq->base.flags, encrypt);
- }
-@@ -1459,7 +1463,7 @@ static int aead_encrypt(struct aead_requ
- 	/* set encrypt */
- 	edesc->desc.hdr = ctx->desc_hdr_template | DESC_HDR_MODE0_ENCRYPT;
- 
--	return ipsec_esp(edesc, req, ipsec_esp_encrypt_done);
-+	return ipsec_esp(edesc, req, true, ipsec_esp_encrypt_done);
- }
- 
- static int aead_decrypt(struct aead_request *req)
-@@ -1471,8 +1475,6 @@ static int aead_decrypt(struct aead_requ
- 	struct talitos_edesc *edesc;
- 	void *icvdata;
- 
--	req->cryptlen -= authsize;
--
- 	/* allocate extended descriptor */
- 	edesc = aead_edesc_alloc(req, req->iv, 1, false);
+@@ -1480,7 +1480,8 @@ static int aead_decrypt(struct aead_requ
  	if (IS_ERR(edesc))
-@@ -1489,7 +1491,8 @@ static int aead_decrypt(struct aead_requ
+ 		return PTR_ERR(edesc);
  
- 		/* reset integrity check result bits */
+-	if ((priv->features & TALITOS_FTR_HW_AUTH_CHECK) &&
++	if ((edesc->desc.hdr & DESC_HDR_TYPE_IPSEC_ESP) &&
++	    (priv->features & TALITOS_FTR_HW_AUTH_CHECK) &&
+ 	    ((!edesc->src_nents && !edesc->dst_nents) ||
+ 	     priv->features & TALITOS_FTR_SRC_LINK_TBL_LEN_INCLUDES_EXTENT)) {
  
--		return ipsec_esp(edesc, req, ipsec_esp_decrypt_hwauth_done);
-+		return ipsec_esp(edesc, req, false,
-+				 ipsec_esp_decrypt_hwauth_done);
- 	}
- 
- 	/* Have to check the ICV with software */
-@@ -1505,7 +1508,7 @@ static int aead_decrypt(struct aead_requ
- 	sg_pcopy_to_buffer(req->src, edesc->src_nents ? : 1, icvdata, authsize,
- 			   req->assoclen + req->cryptlen - authsize);
- 
--	return ipsec_esp(edesc, req, ipsec_esp_decrypt_swauth_done);
-+	return ipsec_esp(edesc, req, false, ipsec_esp_decrypt_swauth_done);
- }
- 
- static int ablkcipher_setkey(struct crypto_ablkcipher *cipher,
 
 
