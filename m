@@ -2,149 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 559EFB68CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA24B68F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:19:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732087AbfIRRQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 13:16:31 -0400
-Received: from mga06.intel.com ([134.134.136.31]:25810 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731177AbfIRRQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:16:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2019 10:16:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,521,1559545200"; 
-   d="scan'208";a="386963137"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by fmsmga005.fm.intel.com with ESMTP; 18 Sep 2019 10:16:29 -0700
-To:     Parth Shah <parth@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        subhra mazumdar <subhra.mazumdar@oracle.com>,
-        Valentin Schneider <valentin.schneider@arm.com>
-Cc:     mingo@redhat.com, morten.rasmussen@arm.com,
-        dietmar.eggemann@arm.com, pjt@google.com,
-        vincent.guittot@linaro.org, quentin.perret@arm.com,
-        dhaval.giani@oracle.com, daniel.lezcano@linaro.org, tj@kernel.org,
-        rafael.j.wysocki@intel.com, qais.yousef@arm.com
-References: <3e5c3f36-b806-5bcc-e666-14dc759a2d7b@linux.ibm.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
- l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
-Subject: Re: Usecases for the per-task latency-nice attribute
-Message-ID: <426c0513-4354-e085-5a5d-8073ab035030@linux.intel.com>
-Date:   Wed, 18 Sep 2019 10:16:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <3e5c3f36-b806-5bcc-e666-14dc759a2d7b@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1732214AbfIRRTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 13:19:52 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45312 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731759AbfIRRTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 13:19:22 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y72so387995pfb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 10:19:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=bRO4CCi6O02IiQvOc11mCJZTaWPh+1gIDXkPeGZg2yU=;
+        b=bn4andAXlapruN28brXgH2AM8ReanDolwH7WcQgBc8GyiIvksNsmBbbHU+5j5QkmkQ
+         dNQdBRugV0VibxQmM9NcBdxXs6X/DbEnHxcN9Nx09qVwwwO/LxHop3kOqVHYd99IcQzB
+         bQMgViSIuf4qNELiCIajF6lozazm2IeSQdwwJYHNXX5Mztwm9UY+f1XEONWam8nPuq8K
+         eefbviSYxfXdXkEAjmgOtgbPBKlZWbWRGwyE62QPJhzOZojvHnDqOUB+c6XtFB0fwaiM
+         1XqOChqRHMdJfgk3iQAI9T33ur0YmWvt3TXXSyzWkf/x5iXX0ETXfj/dms0i2Oj0KxUD
+         c4Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bRO4CCi6O02IiQvOc11mCJZTaWPh+1gIDXkPeGZg2yU=;
+        b=AcSSgajZ1ub2CsZZP+txUL5YmJSbrOoLvaQfR+37NRXnaFtdRK9Y5DTsO1ILwdcoO9
+         Z7G7VKdJ1ZNMTwiJ6wLJ1MOYdxaeiennyhXPMQaosgeTrxi8EcQ5qYvaj7aZ6VixEnP6
+         mp7RPRg2JYYLStBBM7JfY77s38H7CeT0TC2ELOb+lpMICV4JOMTcOiqWfEmgVsu7HLmc
+         gEzG2vxGT4Ff5PvLzyzwN5FaCuAx8bEWrx/EnLLitRSzCd7CgeALSd/0y78gC/XLPcBW
+         0vq6vutFNSLzYBBjSRx49V5tp8HojLe8kTpgGBe55NysU5WCtX9/WYh6vWgZA8BFun5K
+         b2Og==
+X-Gm-Message-State: APjAAAVpbtd24yQHxmZ5nFoBlwWHsbtFHtBe9l0Yu4/7Gml3ukIHoezk
+        ugNWO5zTzZ6pUa9GFe8gzHZ4ma0yqMw=
+X-Google-Smtp-Source: APXvYqyPk20iR8I62eO+samk866W6GDYk7anz2Mi1dRwIdNGKY38wrQ6lsz0CSIlroam2w1NoQuQQw==
+X-Received: by 2002:a63:791:: with SMTP id 139mr4554810pgh.199.1568827159819;
+        Wed, 18 Sep 2019 10:19:19 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y4sm2614981pjn.19.2019.09.18.10.19.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Sep 2019 10:19:19 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] rpmsg: glink stability fixes
+Date:   Wed, 18 Sep 2019 10:19:10 -0700
+Message-Id: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/18/19 5:41 AM, Parth Shah wrote:
-> Hello everyone,
-> 
-> As per the discussion in LPC2019, new per-task property like latency-nice
-> can be useful in certain scenarios. The scheduler can take proper decision
-> by knowing latency requirement of a task from the end-user itself.
-> 
-> There has already been an effort from Subhra for introducing Task
-> latency-nice [1] values and have seen several possibilities where this type of
-> interface can be used.
-> 
-> From the best of my understanding of the discussion on the mail thread and
-> in the LPC2019, it seems that there are two dilemmas;
+Fixes for issues found in GLINK during reboot testing of a remoteproc.
 
-Thanks for starting the discussion.
+Arun Kumar Neelakantam (2):
+  rpmsg: glink: Fix reuse intents memory leak issue
+  rpmsg: glink: Fix use after free in open_ack TIMEOUT case
 
+Bjorn Andersson (2):
+  rpmsg: glink: Don't send pending rx_done during remove
+  rpmsg: glink: Free pending deferred work on remove
 
-> 
-> -------------------
-> **Usecases**
-> -------------------
-> 
-> $> TurboSched
-> ====================
-> TurboSched [2] tries to minimize the number of active cores in a socket by
-> packing an un-important and low-utilization (named jitter) task on an
-> already active core and thus refrains from waking up of a new core if
-> possible. This requires tagging of tasks from the userspace hinting which
-> tasks are un-important and thus waking-up a new core to minimize the
-> latency is un-necessary for such tasks.
-> As per the discussion on the posted RFC, it will be appropriate to use the
-> task latency property where a task with the highest latency-nice value can
-> be packed.
-> But for this specific use-cases, having just a binary value to know which
-> task is latency-sensitive and which not is sufficient enough, but having a
-> range is also a good way to go where above some threshold the task can be
-> packed.
-> 
-> 
+Chris Lew (2):
+  rpmsg: glink: Put an extra reference during cleanup
+  rpmsg: glink: Fix rpmsg_register_device err handling
 
-$> Separating AVX512 tasks and latency sensitive tasks on separate cores
--------------------------------------------------------------------------
-Another usecase we are considering is to segregate those workload that will pull down
-core cpu frequency (e.g. AVX512) from workload that are latency sensitive.
-There are certain tasks that need to provide a fast response time (latency sensitive)
-and they are best scheduled on cpu that has a lighter load and not have other
-tasks running on the sibling cpu that could pull down the cpu core frequency.
+ drivers/rpmsg/qcom_glink_native.c | 50 ++++++++++++++++++++++++++-----
+ 1 file changed, 42 insertions(+), 8 deletions(-)
 
-Some users are running machine learning batch tasks with AVX512, and have observed
-that these tasks affect the tasks needing a fast response.  They have to
-rely on manual CPU affinity to separate these tasks.  With appropriate
-latency hint on task, the scheduler can be taught to separate them.
-
-Tim
-
-
+-- 
+2.18.0
 
