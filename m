@@ -2,68 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 086D1B620E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 13:09:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 216BBB6217
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 13:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729429AbfIRLJI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 07:09:08 -0400
-Received: from mga05.intel.com ([192.55.52.43]:49769 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbfIRLJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 07:09:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Sep 2019 04:09:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,520,1559545200"; 
-   d="scan'208";a="177684967"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
-  by orsmga007.jf.intel.com with ESMTP; 18 Sep 2019 04:09:06 -0700
-Subject: Re: [PATCH V9 5/5] mmc: host: sdhci-pci: Add Genesys Logic GL975x
- support
-To:     "Michael K. Johnson" <johnsonm@danlj.org>, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "ben.chuang@genesyslogic.com.tw Ben Chuang" <benchuanggli@gmail.com>
-References: <cover.1568184581.git.benchuanggli@gmail.com>
- <2d08c47490a349d7ee5682749f68604adc62f19f.1568184581.git.benchuanggli@gmail.com>
- <20190918104734.GA3320@people.danlj.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <781dc676-4903-5ab2-84d1-b5357c11dccd@intel.com>
-Date:   Wed, 18 Sep 2019 14:07:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190918104734.GA3320@people.danlj.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1729923AbfIRLKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 07:10:01 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41983 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727456AbfIRLKB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 07:10:01 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q7so4199029pfh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 04:10:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TIBonrAou/kqYBGJ3D/jipopO+euPWjTtxCKgGWeHV4=;
+        b=nDUBvcRNoOHsnq/ANJ7DlJa95TZhwrU9I/02wwIaxgLKbyXRG4SlfJFWJ/mjhv1zZE
+         F0fnFmn4Yh/fhCYdDKT9XsHtPqttwIZDKfXRUZFcCtQKOie+yCKHdPHPblvL8AgUYOjb
+         TBmG6nLD1nyykmFcficCKja40OqTpsxenET3AJS2x2S1+6SR3M9v/TpKDNiKF6nfYhAQ
+         7lNzvt4Jj6jXzDndcArdYASBwXVQl7ATPvE+3eH7NyB765cP+0tUkT4/BzC0jSmD72va
+         TxL8rVFWScalSq3PX8BIcxAFBkBV640HuYdY7+sdff5WmSLk7odwR0X9lWNoNHaXOKXF
+         q47g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TIBonrAou/kqYBGJ3D/jipopO+euPWjTtxCKgGWeHV4=;
+        b=DQiQb6OjEIdC0tNNor5UrSW4NqpeWi5T9M1VwF/WLyxWVOHjrQwdoZI1wveEUFSoQP
+         ziqL1x+kuxNB/mDH0cWijG5JSHR3I0WXrHMRJNW47GrKUPsT8yLCLVg+efydHI5xukF8
+         okZuEDXwdqorDIHH9LIDYTopRqVK3yFFnQsxz1UyvE5kBEyobPzhe1zwla4lgS6uDMQ0
+         i6diJ/cxFOlfBB+/kzdvUHicgloERBP9N8OY4sXsIafOQ+aKawnaNkM+mKY/U0L6wrhJ
+         gF2l0w8Mo3OSg3sFf0xBfi390GbYZtlFJxKOkBB8VSPL+h/tsoJTH+qKebR0SCqRtG1S
+         GprA==
+X-Gm-Message-State: APjAAAX02dwESZWOlqA5cBsL4AAyZxilzdCA1way/4qpedTS7qZgQee0
+        gH4EJxP9yxeWbrQuk3nLwHZRFA==
+X-Google-Smtp-Source: APXvYqyqxL5VeS9eLWRFaS7Glza3we5w7+0Qxt6B/uLgCy5YxfhDZUXsl4qiWi8BATH8D6ztv33biQ==
+X-Received: by 2002:a65:648b:: with SMTP id e11mr3257766pgv.2.1568804999960;
+        Wed, 18 Sep 2019 04:09:59 -0700 (PDT)
+Received: from pragneshp.open-silicon.com ([114.143.65.226])
+        by smtp.gmail.com with ESMTPSA id x125sm7256738pfb.93.2019.09.18.04.09.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 18 Sep 2019 04:09:59 -0700 (PDT)
+From:   Pragnesh Patel <pragnesh.patel@sifive.com>
+To:     palmer@sifive.com, paul.walmsley@sifive.com
+Cc:     Pragnesh Patel <pragnesh.patel@sifive.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] spi: dt-bindings: Convert spi-sifive binding to json-schema
+Date:   Wed, 18 Sep 2019 16:38:39 +0530
+Message-Id: <1568804927-13565-1-git-send-email-pragnesh.patel@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/09/19 1:47 PM, Michael K. Johnson wrote:
-> I see that the first four patches made it into Linus's kernel
-> yesterday. Is there any chance of this final patch that actually
-> enables the hardware making it into another pull request still
-> intended for 5.4?  Waiting on additional acked-by on Ben's work
-> addressing all the review comments?
-> 
-> Thanks.
-> 
-> On Wed, Sep 11, 2019 at 03:23:44PM +0800, Ben Chuang wrote:
->> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
->>
->> Add support for the GL9750 and GL9755 chipsets.
->>
->> Enable v4 mode and wait 5ms after set 1.8V signal enable for GL9750/
->> GL9755. Fix the value of SDHCI_MAX_CURRENT register and use the vendor
->> tuning flow for GL9750.
-> 
+Convert the spi-sifive binding to DT schema format.
 
-It is OK by me:
+Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
+---
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Changes in v2:
+- Remove address-cells and size-cells property
+- Added valid values for sifive,fifo-depth and sifive,max-bits-per-word
+  property
+
+ .../devicetree/bindings/spi/spi-sifive.txt         | 37 ----------
+ .../devicetree/bindings/spi/spi-sifive.yaml        | 86 ++++++++++++++++++++++
+ 2 files changed, 86 insertions(+), 37 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-sifive.yaml
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.txt b/Documentation/devicetree/bindings/spi/spi-sifive.txt
+deleted file mode 100644
+index 3f5c6e4..0000000
+--- a/Documentation/devicetree/bindings/spi/spi-sifive.txt
++++ /dev/null
+@@ -1,37 +0,0 @@
+-SiFive SPI controller Device Tree Bindings
+-------------------------------------------
+-
+-Required properties:
+-- compatible		: Should be "sifive,<chip>-spi" and "sifive,spi<version>".
+-			  Supported compatible strings are:
+-			  "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
+-			  onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
+-			  SPI v0 IP block with no chip integration tweaks.
+-			  Please refer to sifive-blocks-ip-versioning.txt for details
+-- reg			: Physical base address and size of SPI registers map
+-			  A second (optional) range can indicate memory mapped flash
+-- interrupts		: Must contain one entry
+-- interrupt-parent	: Must be core interrupt controller
+-- clocks		: Must reference the frequency given to the controller
+-- #address-cells	: Must be '1', indicating which CS to use
+-- #size-cells		: Must be '0'
+-
+-Optional properties:
+-- sifive,fifo-depth		: Depth of hardware queues; defaults to 8
+-- sifive,max-bits-per-word	: Maximum bits per word; defaults to 8
+-
+-SPI RTL that corresponds to the IP block version numbers can be found here:
+-https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/spi
+-
+-Example:
+-	spi: spi@10040000 {
+-		compatible = "sifive,fu540-c000-spi", "sifive,spi0";
+-		reg = <0x0 0x10040000 0x0 0x1000 0x0 0x20000000 0x0 0x10000000>;
+-		interrupt-parent = <&plic>;
+-		interrupts = <51>;
+-		clocks = <&tlclk>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		sifive,fifo-depth = <8>;
+-		sifive,max-bits-per-word = <8>;
+-	};
+diff --git a/Documentation/devicetree/bindings/spi/spi-sifive.yaml b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
+new file mode 100644
+index 0000000..140e435
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/spi-sifive.yaml
+@@ -0,0 +1,86 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/spi-sifive.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SiFive SPI controller
++
++maintainers:
++  - Pragnesh Patel <pragnesh.patel@sifive.com>
++  - Paul Walmsley  <paul.walmsley@sifive.com>
++  - Palmer Dabbelt <palmer@sifive.com>
++
++allOf:
++  - $ref: "spi-controller.yaml#"
++
++properties:
++  compatible:
++    items:
++      - const: sifive,fu540-c000-spi
++      - const: sifive,spi0
++
++    description:
++      Should be "sifive,<chip>-spi" and "sifive,spi<version>".
++      Supported compatible strings are -
++      "sifive,fu540-c000-spi" for the SiFive SPI v0 as integrated
++      onto the SiFive FU540 chip, and "sifive,spi0" for the SiFive
++      SPI v0 IP block with no chip integration tweaks.
++      Please refer to sifive-blocks-ip-versioning.txt for details
++
++      SPI RTL that corresponds to the IP block version numbers can be found here -
++      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/spi
++
++  reg:
++    maxItems: 1
++
++    description:
++      Physical base address and size of SPI registers map
++      A second (optional) range can indicate memory mapped flash
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++    description:
++      Must reference the frequency given to the controller
++
++  sifive,fifo-depth:
++    description:
++      Depth of hardware queues; defaults to 8
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - enum: [ 8 ]
++      - default: 8
++
++  sifive,max-bits-per-word:
++    description:
++      Maximum bits per word; defaults to 8
++    allOf:
++      - $ref: "/schemas/types.yaml#/definitions/uint32"
++      - enum: [ 0, 1, 2, 3, 4, 5, 6, 7, 8 ]
++      - default: 8
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++examples:
++  - |
++    spi: spi@10040000 {
++      compatible = "sifive,fu540-c000-spi", "sifive,spi0";
++      reg = <0x0 0x10040000 0x0 0x1000 0x0 0x20000000 0x0 0x10000000>;
++      interrupt-parent = <&plic>;
++      interrupts = <51>;
++      clocks = <&tlclk>;
++      #address-cells = <1>;
++      #size-cells = <0>;
++      sifive,fifo-depth = <8>;
++      sifive,max-bits-per-word = <8>;
++    };
++
++...
+-- 
+2.7.4
+
