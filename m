@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B49FB5C37
+	by mail.lfdr.de (Postfix) with ESMTP id 89CCAB5C38
 	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbfIRGX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44260 "EHLO mail.kernel.org"
+        id S1729747AbfIRGYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729732AbfIRGXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:23:55 -0400
+        id S1727421AbfIRGX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54FB721929;
-        Wed, 18 Sep 2019 06:23:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0211321929;
+        Wed, 18 Sep 2019 06:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787834;
-        bh=acqf8iWr/flWMhoJlMX9Rq4SnUZG25hjg5RNHePwK0M=;
+        s=default; t=1568787837;
+        bh=mA0vg0jba1T63CeD1iqKyFizmayMalP7+5b33Fz/414=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UC8sJ8bJvHlHHR32gRnpXyWtX+sU4uaUVDZn3t55TrWxpHgb1mX7AoMsGKZxBcLnE
-         g2HK5SeYvmeRlDU/WAeqmEfARsd+R7XPgw/FsI3nGUcfP+IITHwiM0BZtxJF7sabas
-         Diuc49wT5VP6TG0few1Hil+IahxyyauwtaGuhRlc=
+        b=WJnuDQjguVZT0NyChNSEdHC4jqM0wp8m+A3yyxcqF+rhriPl8tX1o0CteJrlg9h1l
+         CPYNn7a2C7NUzrU2aE98g11Mxagb3anGZgJT8vQfF0Pty1t3QzXvDyTignEJEVJCD8
+         Kfym84vDQrbuCxTdBW5YYOCZ1KUaUyDAQp/Bgr60=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.19 28/50] clk: rockchip: Dont yell about bad mmc phases when getting
-Date:   Wed, 18 Sep 2019 08:19:11 +0200
-Message-Id: <20190918061226.403676340@linuxfoundation.org>
+        stable@vger.kernel.org, Xiaolei Li <xiaolei.li@mediatek.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.19 29/50] mtd: rawnand: mtk: Fix wrongly assigned OOB buffer pointer issue
+Date:   Wed, 18 Sep 2019 08:19:12 +0200
+Message-Id: <20190918061226.576830266@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
 References: <20190918061223.116178343@linuxfoundation.org>
@@ -43,48 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Xiaolei Li <xiaolei.li@mediatek.com>
 
-commit 6943b839721ad4a31ad2bacf6e71b21f2dfe3134 upstream.
+commit 336d4b138be2dad372b67a2388e42805c48aaa38 upstream.
 
-At boot time, my rk3288-veyron devices yell with 8 lines that look
-like this:
-  [    0.000000] rockchip_mmc_get_phase: invalid clk rate
+One main goal of the function mtk_nfc_update_ecc_stats is to check
+whether sectors are all empty. If they are empty, set these sectors's
+data buffer and OOB buffer as 0xff.
 
-This is because the clock framework at clk_register() time tries to
-get the phase but we don't have a parent yet.
+But now, the sector OOB buffer pointer is wrongly assigned. We always
+do memset from sector 0.
 
-While the errors appear to be harmless they are still ugly and, in
-general, we don't want yells like this in the log unless they are
-important.
+To fix this issue, pass start sector number to make OOB buffer pointer
+be properly assigned.
 
-There's no real reason to be yelling here.  We can still return
--EINVAL to indicate that the phase makes no sense without a parent.
-If someone really tries to do tuning and the clock is reported as 0
-then we'll see the yells in rockchip_mmc_set_phase().
-
-Fixes: 4bf59902b500 ("clk: rockchip: Prevent calculating mmc phase if clock rate is zero")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: 1d6b1e464950 ("mtd: mediatek: driver for MTK Smart Device")
+Signed-off-by: Xiaolei Li <xiaolei.li@mediatek.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/rockchip/clk-mmc-phase.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mtd/nand/raw/mtk_nand.c |   21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -61,10 +61,8 @@ static int rockchip_mmc_get_phase(struct
- 	u32 delay_num = 0;
+--- a/drivers/mtd/nand/raw/mtk_nand.c
++++ b/drivers/mtd/nand/raw/mtk_nand.c
+@@ -863,19 +863,21 @@ static int mtk_nfc_write_oob_std(struct
+ 	return mtk_nfc_write_page_raw(mtd, chip, NULL, 1, page);
+ }
  
- 	/* See the comment for rockchip_mmc_set_phase below */
--	if (!rate) {
--		pr_err("%s: invalid clk rate\n", __func__);
-+	if (!rate)
- 		return -EINVAL;
--	}
+-static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 sectors)
++static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 start,
++				    u32 sectors)
+ {
+ 	struct nand_chip *chip = mtd_to_nand(mtd);
+ 	struct mtk_nfc *nfc = nand_get_controller_data(chip);
+ 	struct mtk_nfc_nand_chip *mtk_nand = to_mtk_nand(chip);
+ 	struct mtk_ecc_stats stats;
++	u32 reg_size = mtk_nand->fdm.reg_size;
+ 	int rc, i;
  
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 	rc = nfi_readl(nfc, NFI_STA) & STA_EMP_PAGE;
+ 	if (rc) {
+ 		memset(buf, 0xff, sectors * chip->ecc.size);
+ 		for (i = 0; i < sectors; i++)
+-			memset(oob_ptr(chip, i), 0xff, mtk_nand->fdm.reg_size);
++			memset(oob_ptr(chip, start + i), 0xff, reg_size);
+ 		return 0;
+ 	}
  
+@@ -895,7 +897,7 @@ static int mtk_nfc_read_subpage(struct m
+ 	u32 spare = mtk_nand->spare_per_sector;
+ 	u32 column, sectors, start, end, reg;
+ 	dma_addr_t addr;
+-	int bitflips;
++	int bitflips = 0;
+ 	size_t len;
+ 	u8 *buf;
+ 	int rc;
+@@ -962,14 +964,11 @@ static int mtk_nfc_read_subpage(struct m
+ 	if (rc < 0) {
+ 		dev_err(nfc->dev, "subpage done timeout\n");
+ 		bitflips = -EIO;
+-	} else {
+-		bitflips = 0;
+-		if (!raw) {
+-			rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
+-			bitflips = rc < 0 ? -ETIMEDOUT :
+-				mtk_nfc_update_ecc_stats(mtd, buf, sectors);
+-			mtk_nfc_read_fdm(chip, start, sectors);
+-		}
++	} else if (!raw) {
++		rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
++		bitflips = rc < 0 ? -ETIMEDOUT :
++			mtk_nfc_update_ecc_stats(mtd, buf, start, sectors);
++		mtk_nfc_read_fdm(chip, start, sectors);
+ 	}
+ 
+ 	dma_unmap_single(nfc->dev, addr, len, DMA_FROM_DEVICE);
 
 
