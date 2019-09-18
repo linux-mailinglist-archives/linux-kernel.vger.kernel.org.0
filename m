@@ -2,141 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0C96B59B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 04:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2A1CB59C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 04:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfIRCg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Sep 2019 22:36:59 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45273 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfIRCg7 (ORCPT
+        id S1727541AbfIRCjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Sep 2019 22:39:18 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:17967 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727354AbfIRCjS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Sep 2019 22:36:59 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 4so3066413pgm.12
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2019 19:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8wpxxTUuGVsmgpbrkwQXSwnsj5db54LEf/di0DULFjk=;
-        b=ZNr5fPgNdzS2J5NPV+kZEQC//guguQKQWma09goV6KF6vw4ujTy8073g/95XHe9Tn3
-         xXb1hL8xhE2To2tJiN+GryhRq2jfs8Kv0+crhnIgNAT7nk5sWvypSgAuItdPTEY5skuc
-         S9328xDog+2IWzO+1rkLqsRfvn3P9rglGId9hW3ym8vp9uvVG0D/+E1D7ZmQZHtcTWSC
-         fDCcqSCDZTPXBLafEgjoFeIpWPaTLnsvhPEE1gU5UuPtTWS66ccZ4QJm10gzk+VZomUM
-         QKFZZrP7IZymuwu/72T31zIXPJ6d6mZ23fTg2NvDK+Yr2lNeIEJDapnw2dN1sCW8RBdu
-         SPgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8wpxxTUuGVsmgpbrkwQXSwnsj5db54LEf/di0DULFjk=;
-        b=Bl78vCfgeYKbTjpmfIC4zTKmDGvTzVH0PyD7nnJpE8UFYe0uMbLCJbC6d0PaSIL04c
-         PJM5lqyJ3kEyKuBV/AtVPEWKAQKw2u/Nou1EoSFdC+tIBZUnz+BMZdWlDa5I7hDzeaQ6
-         /5Lkpr/b/HcDdUY4eGjxamWF9/xGXIOIqJ6zpXtjGJ9hE8rHp3iPqHzm81+pUuq9Idu8
-         eO+utLmHFAlz7/2RjKsIhTeM9wQLkJ5SuCGqWEyqkq045xM6kEWVK7hEddvAsGUrJSFK
-         EehHuxoRqAKJ68G/R9nzA+CwxEBByO3LG44nVJ4ZjAPop87eAF5WJWlZrjRytBjIPOav
-         MzxQ==
-X-Gm-Message-State: APjAAAVnwOD3jpo0RMVwU2eC804OFWFUpAtVGuCDFwSdfQgY7tvvK/me
-        ZXfAktV1+7HGM9cKKLKnjiE=
-X-Google-Smtp-Source: APXvYqywr4IpH4ZAVXbIkbRu4Xaau9yiGf1J8MNrnWB6W4W3NbOInOZ850iu8om7wPMrvsoNFZvKhw==
-X-Received: by 2002:a62:83cb:: with SMTP id h194mr1676102pfe.66.1568774218716;
-        Tue, 17 Sep 2019 19:36:58 -0700 (PDT)
-Received: from localhost ([175.223.34.14])
-        by smtp.gmail.com with ESMTPSA id a29sm6437181pfr.152.2019.09.17.19.36.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 19:36:57 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 11:36:54 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Paul Turner <pjt@google.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Prarit Bhargava <prarit@redhat.com>
-Subject: Re: printk meeting at LPC
-Message-ID: <20190918023654.GB15380@jagdpanzerIV>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190904123531.GA2369@hirez.programming.kicks-ass.net>
- <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
- <20190905143118.GP2349@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
- <20190905121101.60c78422@oasis.local.home>
- <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
- <87k1acz5rx.fsf@linutronix.de>
- <20190918012546.GA12090@jagdpanzerIV>
- <20190917220849.17a1226a@oasis.local.home>
+        Tue, 17 Sep 2019 22:39:18 -0400
+X-UUID: a4a7e7bae23c481daa2475ff900a1fab-20190918
+X-UUID: a4a7e7bae23c481daa2475ff900a1fab-20190918
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1347887542; Wed, 18 Sep 2019 10:39:11 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 18 Sep 2019 10:39:06 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 18 Sep 2019 10:39:06 +0800
+From:   Light Hsieh <light.hsieh@mediatek.com>
+To:     <linus.walleij@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
+        Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v5 1/5] pinctrl: mediatek: Check gpio pin number and use binary  search in mtk_hw_pin_field_lookup()
+Date:   Wed, 18 Sep 2019 10:39:04 +0800
+Message-ID: <1568774348-24363-1-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917220849.17a1226a@oasis.local.home>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 5B4894C816F6683EC50A23CED134C29014FA31E617B040CF8A35F4D76A778BE52000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (09/17/19 22:08), Steven Rostedt wrote:
-> > On (09/13/19 15:26), John Ogness wrote:
-> > > 2. A kernel thread will be created for each registered console, each
-> > > responsible for being the sole printers to their respective
-> > > consoles. With this, console printing is _fully_ decoupled from printk()
-> > > callers.  
-> > 
-> > sysrq over serial?
-> > 
-> > What we currently have is hacky, but, as usual, is a "best effort":
-> > 
-> > 	>> serial driver IRQ  
-> > 
-> > 	serial_handle_irq()		[console driver]
-> > 	 uart_handle_sysrq_char()
-> > 	  handle_sysrq()
-> > 	   printk()
-> > 	    call_console_drivers()
-> > 	     serial_write()		[re-enter console driver]
-> > 
-> > offloading this to kthread may be unreliable.
-> 
-> But we also talked about an "emergency flush" which will not wait for
-> the kthreads to finish and just output everything it can find in the
-> printk buffers (expecting that the consoles have an "emergency"
-> handler. We can add a sysrq to do an emergency flush.
+1. Check if gpio pin number is in valid range to prevent from get invalid
+   pointer 'desc' in the following code:
+	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
 
-I'm sorry, I wasn't there, so I'm surely is missing on some details.
+2. Use binary search in mtk_hw_pin_field_lookup()
+   Modify mtk_hw_pin_field_lookup() to use binary search for accelerating
+   search.
 
-I agree that when consoles have ->atomic_write then it surely makes sense
-to switch to emergency mode. I like the emergency state approach, but I'm
-not sure how it can be completely invisible to the rest of the system.
-Quoting John:
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 24 +++++++++++++++++++-----
+ drivers/pinctrl/mediatek/pinctrl-paris.c         | 19 +++++++++++++++++++
+ 2 files changed, 38 insertions(+), 5 deletions(-)
 
-    : Unlike oops_in_progress, this state will not be visible to
-    : anything outside of the printk infrastructure.
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 20e1c89..4687f63 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -68,7 +68,7 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw,
+ {
+ 	const struct mtk_pin_field_calc *c, *e;
+ 	const struct mtk_pin_reg_calc *rc;
+-	u32 bits;
++	u32 bits, start = 0, end, found = 0, check;
+ 
+ 	if (hw->soc->reg_cal && hw->soc->reg_cal[field].range) {
+ 		rc = &hw->soc->reg_cal[field];
+@@ -79,21 +79,32 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw,
+ 		return -ENOTSUPP;
+ 	}
+ 
++	end = rc->nranges - 1;
+ 	c = rc->range;
+ 	e = c + rc->nranges;
+ 
+-	while (c < e) {
+-		if (desc->number >= c->s_pin && desc->number <= c->e_pin)
++	while (start <= end) {
++		check = (start + end) >> 1;
++		if (desc->number >= rc->range[check].s_pin
++		 && desc->number <= rc->range[check].e_pin) {
++			found = 1;
+ 			break;
+-		c++;
++		} else if (start == end)
++			break;
++		else if (desc->number < rc->range[check].s_pin)
++			end = check - 1;
++		else
++			start = check + 1;
+ 	}
+ 
+-	if (c >= e) {
++	if (!found) {
+ 		dev_dbg(hw->dev, "Not support field %d for pin = %d (%s)\n",
+ 			field, desc->number, desc->name);
+ 		return -ENOTSUPP;
+ 	}
+ 
++	c = rc->range + check;
++
+ 	if (c->i_base > hw->nbase - 1) {
+ 		dev_err(hw->dev,
+ 			"Invalid base for field %d for pin = %d (%s)\n",
+@@ -182,6 +193,9 @@ int mtk_hw_set_value(struct mtk_pinctrl *hw, const struct mtk_pin_desc *desc,
+ 	if (err)
+ 		return err;
+ 
++	if (value < 0 || value > pf.mask)
++		return -EINVAL;
++
+ 	if (!pf.next)
+ 		mtk_rmw(hw, pf.index, pf.offset, pf.mask << pf.bitpos,
+ 			(value & pf.mask) << pf.bitpos);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 923264d..28b4951 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -693,6 +693,9 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
+ 	const struct mtk_pin_desc *desc;
+ 	int value, err;
+ 
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
+ 
+ 	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &value);
+@@ -708,6 +711,9 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned int gpio)
+ 	const struct mtk_pin_desc *desc;
+ 	int value, err;
+ 
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
+ 
+ 	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DI, &value);
+@@ -722,6 +728,9 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
+ 	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
+ 	const struct mtk_pin_desc *desc;
+ 
++	if (gpio > hw->soc->npins)
++		return;
++
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
+ 
+ 	mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DO, !!value);
+@@ -729,12 +738,22 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
+ 
+ static int mtk_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
+ {
++	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
++
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	return pinctrl_gpio_direction_input(chip->base + gpio);
+ }
+ 
+ static int mtk_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
+ 				     int value)
+ {
++	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
++
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	mtk_gpio_set(chip, gpio, value);
+ 
+ 	return pinctrl_gpio_direction_output(chip->base + gpio);
+-- 
+1.8.1.1.dirty
 
-For instance, tty/sysrq must be able to switch printk emergency on/off.
-That already means that printk emergency knob should be visible to the
-rest of the kernel. A long time ago, we had printk_emergency_begin_sync()
-and printk_emergency_end_sync(), which would define reentrable
-printk_emergency blocks [1]:
-
-	printk_emergency_begin_sync();
-	handle_sysrq();
-	printk_emergency_end_sync();
-
-We also figured out that some PM (hibernation/suspend/etc.) stages (very
-early and/or very late ones) [2] also should have printk in emergency mode,
-plus some other parts of the kernel [3].
-
-[1] https://lore.kernel.org/lkml/20170815025625.1977-4-sergey.senozhatsky@gmail.com/
-[2] https://lore.kernel.org/lkml/20170815025625.1977-7-sergey.senozhatsky@gmail.com/
-[3] https://lore.kernel.org/lkml/20170815025625.1977-8-sergey.senozhatsky@gmail.com/
-
-	-ss
