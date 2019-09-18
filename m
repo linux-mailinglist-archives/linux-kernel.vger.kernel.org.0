@@ -2,44 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 983EDB5C07
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34674B5C5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728480AbfIRGWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:22:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41868 "EHLO mail.kernel.org"
+        id S1730150AbfIRGZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:25:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728446AbfIRGWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:22:03 -0400
+        id S1727374AbfIRGZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:25:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A929A21924;
-        Wed, 18 Sep 2019 06:22:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9836E21924;
+        Wed, 18 Sep 2019 06:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787723;
-        bh=i427g0CEtQZCKEb4ywZ/dXHo8XdFkz7u9FVi6bsR9Xo=;
+        s=default; t=1568787930;
+        bh=wauRTjmGo+4c67cB3j2p7Ym9wqqe6uvtDzztz9dU+UE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pyg3NvCYS5M8zNHIIUr2omoSn4/4OurTgX4ksUcGL8ADZgHup85TNu6wG70nEViKr
-         BbmYqTZq2F8N0bsq5jsounfJVnJ4Q9tGEAqHhdnT/rmrmb4Zwsw5b9jrQxbDy8C91d
-         Gi5IxdC8UuAKcGL/pANxpylgt01vYr4gLoOEhWO8=
+        b=ifcxeVZnhR7JWelXAyZzUTqgjHH+zPH2Fhbum2O7Gqc9vTQ+G/SaGZRmy9uNH8cKe
+         FHPfwhNk+qq+VH7JSQ8L162+6IijnwanJl4s1f9lk2v1AAtfAzfplQwZ6g8rEsxoxC
+         I2u1ApMt/pRBoQ1adsHNnpyU4nYqGT9+X61oGSBU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+bc6297c11f19ee807dc2@syzkaller.appspotmail.com,
-        syzbot+041483004a7f45f1f20a@syzkaller.appspotmail.com,
-        syzbot+55be5f513bed37fc4367@syzkaller.appspotmail.com,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>, Terry Lam <vtlam@google.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 10/50] sch_hhf: ensure quantum and hhf_non_hh_weight are non-zero
+        stable@vger.kernel.org, Vincent Chen <deanbo422@gmail.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Stafford Horne <shorne@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Ley Foon Tan <lftan@altera.com>,
+        Richard Kuo <rkuo@codeaurora.org>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
+        Guo Ren <guoren@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 5.2 35/85] ipc: fix semtimedop for generic 32-bit architectures
 Date:   Wed, 18 Sep 2019 08:18:53 +0200
-Message-Id: <20190918061223.977323020@linuxfoundation.org>
+Message-Id: <20190918061235.256229463@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,40 +53,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit d4d6ec6dac07f263f06d847d6f732d6855522845 ]
+commit 78e05972c5e6c8e9ca4c00ccc6985409da69f904 upstream.
 
-In case of TCA_HHF_NON_HH_WEIGHT or TCA_HHF_QUANTUM is zero,
-it would make no progress inside the loop in hhf_dequeue() thus
-kernel would get stuck.
+As Vincent noticed, the y2038 conversion of semtimedop in linux-5.1
+broke when commit 00bf25d693e7 ("y2038: use time32 syscall names on
+32-bit") changed all system calls on all architectures that take
+a 32-bit time_t to point to the _time32 implementation, but left out
+semtimedop in the asm-generic header.
 
-Fix this by checking this corner case in hhf_change().
+This affects all 32-bit architectures using asm-generic/unistd.h:
+h8300, unicore32, openrisc, nios2, hexagon, c6x, arc, nds32 and csky.
 
-Fixes: 10239edf86f1 ("net-qdisc-hhf: Heavy-Hitter Filter (HHF) qdisc")
-Reported-by: syzbot+bc6297c11f19ee807dc2@syzkaller.appspotmail.com
-Reported-by: syzbot+041483004a7f45f1f20a@syzkaller.appspotmail.com
-Reported-by: syzbot+55be5f513bed37fc4367@syzkaller.appspotmail.com
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Cc: Terry Lam <vtlam@google.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The notable exception is riscv32, which has dropped support for the
+time32 system calls entirely.
+
+Reported-by: Vincent Chen <deanbo422@gmail.com>
+Cc: stable@vger.kernel.org
+Cc: Vincent Chen <deanbo422@gmail.com>
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Guan Xuetao <gxt@pku.edu.cn>
+Cc: Stafford Horne <shorne@gmail.com>
+Cc: Jonas Bonn <jonas@southpole.se>
+Cc: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Cc: Ley Foon Tan <lftan@altera.com>
+Cc: Richard Kuo <rkuo@codeaurora.org>
+Cc: Mark Salter <msalter@redhat.com>
+Cc: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
+Cc: Guo Ren <guoren@kernel.org>
+Fixes: 00bf25d693e7 ("y2038: use time32 syscall names on 32-bit")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/sched/sch_hhf.c |    2 +-
+ include/uapi/asm-generic/unistd.h |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sched/sch_hhf.c
-+++ b/net/sched/sch_hhf.c
-@@ -529,7 +529,7 @@ static int hhf_change(struct Qdisc *sch,
- 		new_hhf_non_hh_weight = nla_get_u32(tb[TCA_HHF_NON_HH_WEIGHT]);
- 
- 	non_hh_quantum = (u64)new_quantum * new_hhf_non_hh_weight;
--	if (non_hh_quantum > INT_MAX)
-+	if (non_hh_quantum == 0 || non_hh_quantum > INT_MAX)
- 		return -EINVAL;
- 
- 	sch_tree_lock(sch);
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -569,7 +569,7 @@ __SYSCALL(__NR_semget, sys_semget)
+ __SC_COMP(__NR_semctl, sys_semctl, compat_sys_semctl)
+ #if defined(__ARCH_WANT_TIME32_SYSCALLS) || __BITS_PER_LONG != 32
+ #define __NR_semtimedop 192
+-__SC_COMP(__NR_semtimedop, sys_semtimedop, sys_semtimedop_time32)
++__SC_3264(__NR_semtimedop, sys_semtimedop_time32, sys_semtimedop)
+ #endif
+ #define __NR_semop 193
+ __SYSCALL(__NR_semop, sys_semop)
 
 
