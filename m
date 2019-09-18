@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9888FB5C77
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C022CB5C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbfIRG0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:26:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48094 "EHLO mail.kernel.org"
+        id S1729588AbfIRGXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:23:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730332AbfIRG0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:26:36 -0400
+        id S1727542AbfIRGXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5246321929;
-        Wed, 18 Sep 2019 06:26:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94AA221920;
+        Wed, 18 Sep 2019 06:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787995;
-        bh=FdXQ5GCxGzSD3aWt3Raz/h1pzonloyJFe+fcXM42WoI=;
+        s=default; t=1568787792;
+        bh=Fq2fkoFSAcVTjHQtKzIz3yYAqH2AFm1WloMqH9Y8xp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pGlBMaMYlrWw5Z7lkcGXokMrJ25J8yFsvW/b4acZXwDdbR8vJaSsIME9lvFUrYX8u
-         zPdq44WraUhoNSxuDuZ8fJ85w70yifXLAyHXTJlCH3Tw5IWUvpyBGoO//VW3X/x6Mc
-         Po/DOw5rALKpnQghw11M9PiCyxcZXAETY/hGdzw0=
+        b=KqbJ+Q5lci8w58asNexeYfXjsNxKrJV5eJnFzvakqLamwAKjPM7isqm10t0dJYXGb
+         wFS1pH9bjJHNOKBRdGwKBiUQk2nrCHLAAWgXxYOLMm0YcnvWO9gTkvgW3FT0E1ZdT0
+         3zRfeat4anC/zokaYV9rxtGlVHAwB6DAosgCbok8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hyunchul Lee <hyc.lee@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Richard Weinberger <richard@nod.at>
-Subject: [PATCH 5.2 61/85] ubifs: Correctly use tnc_next() in search_dh_cookie()
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 36/50] crypto: talitos - check data blocksize in ablkcipher.
 Date:   Wed, 18 Sep 2019 08:19:19 +0200
-Message-Id: <20190918061236.997345935@linuxfoundation.org>
+Message-Id: <20190918061227.285930559@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
-References: <20190918061234.107708857@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Weinberger <richard@nod.at>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit bacfa94b08027b9f66ede7044972e3b066766b3e upstream.
+commit ee483d32ee1a1a7f7d7e918fbc350c790a5af64a upstream.
 
-Commit c877154d307f fixed an uninitialized variable and optimized
-the function to not call tnc_next() in the first iteration of the
-loop. While this seemed perfectly legit and wise, it turned out to
-be illegal.
-If the lookup function does not find an exact match it will rewind
-the cursor by 1.
-The rewinded cursor will not match the name hash we are looking for
-and this results in a spurious -ENOENT.
-So we need to move to the next entry in case of an non-exact match,
-but not if the match was exact.
+When data size is not a multiple of the alg's block size,
+the SEC generates an error interrupt and dumps the registers.
+And for NULL size, the SEC does just nothing and the interrupt
+is awaited forever.
 
-While we are here, update the documentation to avoid further confusion.
+This patch ensures the data size is correct before submitting
+the request to the SEC engine.
 
-Cc: Hyunchul Lee <hyc.lee@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Fixes: c877154d307f ("ubifs: Fix uninitialized variable in search_dh_cookie()")
-Fixes: 781f675e2d7e ("ubifs: Fix unlink code wrt. double hash lookups")
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ubifs/tnc.c |   16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ drivers/crypto/talitos.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/fs/ubifs/tnc.c
-+++ b/fs/ubifs/tnc.c
-@@ -1158,8 +1158,8 @@ static struct ubifs_znode *dirty_cow_bot
-  *   o exact match, i.e. the found zero-level znode contains key @key, then %1
-  *     is returned and slot number of the matched branch is stored in @n;
-  *   o not exact match, which means that zero-level znode does not contain
-- *     @key, then %0 is returned and slot number of the closest branch is stored
-- *     in @n;
-+ *     @key, then %0 is returned and slot number of the closest branch or %-1
-+ *     is stored in @n; In this case calling tnc_next() is mandatory.
-  *   o @key is so small that it is even less than the lowest key of the
-  *     leftmost zero-level node, then %0 is returned and %0 is stored in @n.
-  *
-@@ -1882,13 +1882,19 @@ int ubifs_tnc_lookup_nm(struct ubifs_inf
- 
- static int search_dh_cookie(struct ubifs_info *c, const union ubifs_key *key,
- 			    struct ubifs_dent_node *dent, uint32_t cookie,
--			    struct ubifs_znode **zn, int *n)
-+			    struct ubifs_znode **zn, int *n, int exact)
- {
- 	int err;
- 	struct ubifs_znode *znode = *zn;
- 	struct ubifs_zbranch *zbr;
- 	union ubifs_key *dkey;
- 
-+	if (!exact) {
-+		err = tnc_next(c, &znode, n);
-+		if (err)
-+			return err;
-+	}
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1672,6 +1672,14 @@ static int ablkcipher_encrypt(struct abl
+ 	struct crypto_ablkcipher *cipher = crypto_ablkcipher_reqtfm(areq);
+ 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
+ 	struct talitos_edesc *edesc;
++	unsigned int blocksize =
++			crypto_tfm_alg_blocksize(crypto_ablkcipher_tfm(cipher));
 +
- 	for (;;) {
- 		zbr = &znode->zbranch[*n];
- 		dkey = &zbr->key;
-@@ -1930,7 +1936,7 @@ static int do_lookup_dh(struct ubifs_inf
- 	if (unlikely(err < 0))
- 		goto out_unlock;
++	if (!areq->nbytes)
++		return 0;
++
++	if (areq->nbytes % blocksize)
++		return -EINVAL;
  
--	err = search_dh_cookie(c, key, dent, cookie, &znode, &n);
-+	err = search_dh_cookie(c, key, dent, cookie, &znode, &n, err);
+ 	/* allocate extended descriptor */
+ 	edesc = ablkcipher_edesc_alloc(areq, true);
+@@ -1689,6 +1697,14 @@ static int ablkcipher_decrypt(struct abl
+ 	struct crypto_ablkcipher *cipher = crypto_ablkcipher_reqtfm(areq);
+ 	struct talitos_ctx *ctx = crypto_ablkcipher_ctx(cipher);
+ 	struct talitos_edesc *edesc;
++	unsigned int blocksize =
++			crypto_tfm_alg_blocksize(crypto_ablkcipher_tfm(cipher));
++
++	if (!areq->nbytes)
++		return 0;
++
++	if (areq->nbytes % blocksize)
++		return -EINVAL;
  
- out_unlock:
- 	mutex_unlock(&c->tnc_mutex);
-@@ -2723,7 +2729,7 @@ int ubifs_tnc_remove_dh(struct ubifs_inf
- 		if (unlikely(err < 0))
- 			goto out_free;
- 
--		err = search_dh_cookie(c, key, dent, cookie, &znode, &n);
-+		err = search_dh_cookie(c, key, dent, cookie, &znode, &n, err);
- 		if (err)
- 			goto out_free;
- 	}
+ 	/* allocate extended descriptor */
+ 	edesc = ablkcipher_edesc_alloc(areq, false);
 
 
