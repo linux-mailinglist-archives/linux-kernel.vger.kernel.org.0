@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEA54B5C03
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC37B5C78
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbfIRGVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:21:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41504 "EHLO mail.kernel.org"
+        id S1730382AbfIRG0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:26:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbfIRGVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:50 -0400
+        id S1730366AbfIRG0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:26:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 729B921920;
-        Wed, 18 Sep 2019 06:21:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86270218AF;
+        Wed, 18 Sep 2019 06:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787710;
-        bh=Y5r2DYc2U6q8ELMTom+yXiIfvMUSdI+vlfrsGLeT+0Y=;
+        s=default; t=1568788001;
+        bh=adh0tBGTETTtxIVgnM5bATCU0nC6iXhziEM0s53ubv0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gWmKl8ebepApTYWPM9TY6xtO9I6P11jCZEfZQ/owAWJtBdQStPJ/q6G8rA8kYRjVH
-         Nv9klTbyl0SoaHbZpWZmlTnmrNJRa5422IMwHZoWhCYD36q506wLLZ8ux4/xmwCaCX
-         m1hrRVjgN6fwiDeqd7lLdpIjA/cIDmRPS796s3MQ=
+        b=h4tr29AjAyVCr3MdjVE4P+3ws0rgWR3VH7JXSF7VtGnAmz4vSIoxsybSaIdQbtON1
+         extVnt2TUoA9lMNJSeBcPjXKlqRTds5Eu1E1BRd6JOPoa1+qmpiyIp5U3XC8wJGDCz
+         lfbTheWdEBeAjys3UCp6n6ClefBrPMkNlTI+fQ7c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.14 43/45] platform/x86: pmc_atom: Add CB4063 Beckhoff Automation board to critclk_systems DMI table
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 5.2 63/85] crypto: talitos - check AES key size
 Date:   Wed, 18 Sep 2019 08:19:21 +0200
-Message-Id: <20190918061227.970393408@linuxfoundation.org>
+Message-Id: <20190918061237.359983950@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061234.107708857@linuxfoundation.org>
+References: <20190918061234.107708857@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 9452fbf5c6cf5f470e0748fe7a14a683e7765f7a upstream.
+commit 1ba34e71e9e56ac29a52e0d42b6290f3dc5bfd90 upstream.
 
-The CB4063 board uses pmc_plt_clk* clocks for ethernet controllers. This
-adds it to the critclk_systems DMI table so the clocks are marked as
-CLK_CRITICAL and not turned off.
+Although the HW accepts any size and silently truncates
+it to the correct length, the extra tests expects EINVAL
+to be returned when the key size is not valid.
 
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/platform/x86/pmc_atom.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/crypto/talitos.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -453,6 +453,14 @@ static const struct dmi_system_id critcl
- 	},
- 	{
- 		/* pmc_plt_clk* - are used for ethernet controllers */
-+		.ident = "Beckhoff CB4063",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
-+			DMI_MATCH(DMI_BOARD_NAME, "CB4063"),
-+		},
-+	},
-+	{
-+		/* pmc_plt_clk* - are used for ethernet controllers */
- 		.ident = "Beckhoff CB6263",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "Beckhoff Automation"),
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1591,6 +1591,18 @@ static int ablkcipher_des3_setkey(struct
+ 	return ablkcipher_setkey(cipher, key, keylen);
+ }
+ 
++static int ablkcipher_aes_setkey(struct crypto_ablkcipher *cipher,
++				  const u8 *key, unsigned int keylen)
++{
++	if (keylen == AES_KEYSIZE_128 || keylen == AES_KEYSIZE_192 ||
++	    keylen == AES_KEYSIZE_256)
++		return ablkcipher_setkey(cipher, key, keylen);
++
++	crypto_ablkcipher_set_flags(cipher, CRYPTO_TFM_RES_BAD_KEY_LEN);
++
++	return -EINVAL;
++}
++
+ static void common_nonsnoop_unmap(struct device *dev,
+ 				  struct talitos_edesc *edesc,
+ 				  struct ablkcipher_request *areq)
+@@ -2752,6 +2764,7 @@ static struct talitos_alg_template drive
+ 				.min_keysize = AES_MIN_KEY_SIZE,
+ 				.max_keysize = AES_MAX_KEY_SIZE,
+ 				.ivsize = AES_BLOCK_SIZE,
++				.setkey = ablkcipher_aes_setkey,
+ 			}
+ 		},
+ 		.desc_hdr_template = DESC_HDR_TYPE_COMMON_NONSNOOP_NO_AFEU |
+@@ -2768,6 +2781,7 @@ static struct talitos_alg_template drive
+ 				.min_keysize = AES_MIN_KEY_SIZE,
+ 				.max_keysize = AES_MAX_KEY_SIZE,
+ 				.ivsize = AES_BLOCK_SIZE,
++				.setkey = ablkcipher_aes_setkey,
+ 			}
+ 		},
+ 		.desc_hdr_template = DESC_HDR_TYPE_COMMON_NONSNOOP_NO_AFEU |
+@@ -2785,6 +2799,7 @@ static struct talitos_alg_template drive
+ 				.min_keysize = AES_MIN_KEY_SIZE,
+ 				.max_keysize = AES_MAX_KEY_SIZE,
+ 				.ivsize = AES_BLOCK_SIZE,
++				.setkey = ablkcipher_aes_setkey,
+ 			}
+ 		},
+ 		.desc_hdr_template = DESC_HDR_TYPE_AESU_CTR_NONSNOOP |
 
 
