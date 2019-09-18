@@ -2,87 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98CFDB6AC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 20:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E068AB6AD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 20:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731229AbfIRSpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 14:45:42 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56918 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfIRSpl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 14:45:41 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8IIjbhR088798;
-        Wed, 18 Sep 2019 13:45:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568832337;
-        bh=EXt8+T246I96qjzHn0OTx9qPWlbzfdV0acnWhBtUscQ=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=yFSPDOfcm+jvM/UgrFAIv5irGShkWaFB74jqABIJA/y+zlACz8L2cn3DvCEqrhP5h
-         u+BWsA4US9PXuIuAs4y6G223WlX6XMdcGXMaO0Fe1sB94sgLW8XozqWaJ3Nr+p52ST
-         ejw/jIcP7kFpxHUMsqiy3vOJBDLIz/E3nXuKeINM=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8IIjbrl028043
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Sep 2019 13:45:37 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 18
- Sep 2019 13:45:33 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 18 Sep 2019 13:45:37 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8IIjap6107852;
-        Wed, 18 Sep 2019 13:45:36 -0500
-Subject: Re: [PATCH 5/5] leds: lm3692x: Use flags from LM3692X_BRT_CTRL
-To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, <linux-leds@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <cover.1568772964.git.agx@sigxcpu.org>
- <d1347a31ab9f86c3d13ab8016606999d5c0497cd.1568772964.git.agx@sigxcpu.org>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <905f43fb-b75c-d0f2-8669-275e18241735@ti.com>
-Date:   Wed, 18 Sep 2019 13:48:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2387666AbfIRSuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 14:50:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42038 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387634AbfIRSuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 14:50:05 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F38D480F6D;
+        Wed, 18 Sep 2019 18:50:04 +0000 (UTC)
+Received: from x1.home (ovpn-118-102.phx2.redhat.com [10.3.118.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A0D8319C5B;
+        Wed, 18 Sep 2019 18:49:59 +0000 (UTC)
+Date:   Wed, 18 Sep 2019 12:49:59 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     kwankhede@nvidia.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Gerd Hoffmann <kraxel@redhat.com>
+Subject: Re: [PATCH] sample: vfio mdev display - Fix a missing error code in
+ an error handling path
+Message-ID: <20190918124959.2741993f@x1.home>
+In-Reply-To: <20190916202240.30189-1-christophe.jaillet@wanadoo.fr>
+References: <20190916202240.30189-1-christophe.jaillet@wanadoo.fr>
+Organization: Red Hat
 MIME-Version: 1.0
-In-Reply-To: <d1347a31ab9f86c3d13ab8016606999d5c0497cd.1568772964.git.agx@sigxcpu.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 18 Sep 2019 18:50:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guido
+On Mon, 16 Sep 2019 22:22:40 +0200
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-On 9/17/19 9:19 PM, Guido Günther wrote:
-> Use LM3692X_RAMP_EN instead of LM3692X_PWM_HYSTER_4LSB
-> since the later is a flag for the PWM register. The
-> actual register value remains unchanged.
->
-> Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
+> 'ret' is known to be 0 at this point. So explicitly set it to -ENOMEM if
+> 'framebuffer_alloc()' fails.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   drivers/leds/leds-lm3692x.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-> index d673f706385e..ecac586ca89c 100644
-> --- a/drivers/leds/leds-lm3692x.c
-> +++ b/drivers/leds/leds-lm3692x.c
-> @@ -269,7 +269,7 @@ static int lm3692x_init(struct lm3692x_led *led)
->   		goto out;
->   
->   	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL,
-> -			LM3692X_BL_ADJ_POL | LM3692X_PWM_HYSTER_4LSB);
-> +			LM3692X_BL_ADJ_POL | LM3692X_RAMP_EN);
->   	if (ret)
->   		goto out;
->   
+>  samples/vfio-mdev/mdpy-fb.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+> index 2719bb259653..6fe0187f47a2 100644
+> --- a/samples/vfio-mdev/mdpy-fb.c
+> +++ b/samples/vfio-mdev/mdpy-fb.c
+> @@ -131,8 +131,10 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
+>  		 width, height);
+>  
+>  	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
+> -	if (!info)
+> +	if (!info) {
+> +		ret = -ENOMEM;
+>  		goto err_release_regions;
+> +	}
+>  	pci_set_drvdata(pdev, info);
+>  	par = info->par;
+>  
+
+I think you're only scratching the surface here, this looks more
+complete to me:
+
+diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
+index 2719bb259653..a760e130bd0d 100644
+--- a/samples/vfio-mdev/mdpy-fb.c
++++ b/samples/vfio-mdev/mdpy-fb.c
+@@ -117,22 +117,27 @@ static int mdpy_fb_probe(struct pci_dev *pdev,
+ 	if (format != DRM_FORMAT_XRGB8888) {
+ 		pci_err(pdev, "format mismatch (0x%x != 0x%x)\n",
+ 			format, DRM_FORMAT_XRGB8888);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_release_regions;
+ 	}
+ 	if (width < 100	 || width > 10000) {
+ 		pci_err(pdev, "width (%d) out of range\n", width);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_release_regions;
+ 	}
+ 	if (height < 100 || height > 10000) {
+ 		pci_err(pdev, "height (%d) out of range\n", height);
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto err_release_regions;
+ 	}
+ 	pci_info(pdev, "mdpy found: %dx%d framebuffer\n",
+ 		 width, height);
+ 
+ 	info = framebuffer_alloc(sizeof(struct mdpy_fb_par), &pdev->dev);
+-	if (!info)
++	if (!info) {
++		ret = -ENOMEM;
+ 		goto err_release_regions;
++	}
+ 	pci_set_drvdata(pdev, info);
+ 	par = info->par;
+ 
