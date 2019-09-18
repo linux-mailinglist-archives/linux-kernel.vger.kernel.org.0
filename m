@@ -2,120 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F8BB643E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE0DB6449
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 15:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730238AbfIRNTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 09:19:37 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37247 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728468AbfIRNTg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 09:19:36 -0400
-Received: by mail-wr1-f67.google.com with SMTP id i1so6900179wro.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 06:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=8yWSaq1SPkhAnGKUElxNjUPCl80FK7UQ5LA6iTbaJZo=;
-        b=VJ3XXKhY5Aw2z+D4yk/YHnjv1QX4QXrcPX5ZYFOW3nKaK5h3r5Ve95yzGQFnxSiEhA
-         xR09LirpYG7hNKi7xVD5XHbDQM0NLh1r+Ej33ncGU0Q6vCsywkbKQAneSMjqMn64DU+3
-         T+y0+r+Q5EPLArptumYr90CfWPqwWxTdHGVY56RsTNVr/eVSvdUCDW+JiW8LBZNk3L79
-         UU0+ak/HU9r+O5r/o+vharVGWAZvglZXr0yg+2hNN/h4rKvuTVIy3yrfIE2Z8eT3r36i
-         XwY/HDom/W0q1aesJjGtvR8vLgDbb5TqQxONcx9k+SbtOAKc9il03VA2gk9wef/dWSPM
-         GSmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=8yWSaq1SPkhAnGKUElxNjUPCl80FK7UQ5LA6iTbaJZo=;
-        b=fSZkJMOC5S+PbfR/4DyUM2nHVg3+C2nIE4vku1OF5q0wpCQ5C5IzGMPgpBuwcICKNR
-         G4dIozHpdrI/ijMEJL7y39N7dzTPWAzeXnfPBa+AbXaScXJj6qr8MhYEegV2zh/tYyrO
-         UXQlsz6mS/jQIPInByFTK/XyHwb+93bTxP2MZRx7sJrztT8zezeOE2H/5v9DkQmv18Tp
-         cA0laYoohhjD2GwzHC1roZ2dQjkRa/uagQ9V+UFXc6ZomGMVwyP2G4HWmjNF5dUNk44i
-         Ngh+x3DsHGNiRdx8HMkjR58PPqo1yh+BJUb6Kpuo1hIjP7tCE6xttigfPlbF634qt2Ca
-         mJ4A==
-X-Gm-Message-State: APjAAAW0G92fk43M4+dEgr12XCbPbG+qBdU/Njw9L/Udt94hTbR2HOr0
-        c14lKcKUZ8q9EldqSGbfbI85fg==
-X-Google-Smtp-Source: APXvYqzJjheHXn4H9Pi/aVsdA/2XvIBwrDIHXOMM/+4tXFXAPcqqhMQelVjfgXCH5omPtGuWxmHKRw==
-X-Received: by 2002:adf:a350:: with SMTP id d16mr2970112wrb.326.1568812772484;
-        Wed, 18 Sep 2019 06:19:32 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id y72sm3124512wmc.26.2019.09.18.06.19.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Sep 2019 06:19:31 -0700 (PDT)
-Message-ID: <5d822ee3.1c69fb81.464de.db03@mx.google.com>
-Date:   Wed, 18 Sep 2019 06:19:31 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1727355AbfIRNWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 09:22:46 -0400
+Received: from verein.lst.de ([213.95.11.211]:33283 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726545AbfIRNWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 09:22:46 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id CC48268B05; Wed, 18 Sep 2019 15:22:42 +0200 (CEST)
+Date:   Wed, 18 Sep 2019 15:22:42 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Cc:     David Rientjes <rientjes@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Peter Gonda <pgonda@google.com>,
+        Jianxiong Gao <jxgao@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: [bug] __blk_mq_run_hw_queue suspicious rcu usage
+Message-ID: <20190918132242.GA16133@lst.de>
+References: <alpine.DEB.2.21.1909041434580.160038@chino.kir.corp.google.com> <20190905060627.GA1753@lst.de> <alpine.DEB.2.21.1909051534050.245316@chino.kir.corp.google.com> <alpine.DEB.2.21.1909161641320.9200@chino.kir.corp.google.com> <alpine.DEB.2.21.1909171121300.151243@chino.kir.corp.google.com> <1d74607e-37f7-56ca-aba3-5a3bd7a68561@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.14.144-46-g187d767985cf
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: linux-4.14.y
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 00/45] 4.14.145-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d74607e-37f7-56ca-aba3-5a3bd7a68561@amd.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.14.y boot: 131 boots: 0 failed, 121 passed with 10 offlin=
-e (v4.14.144-46-g187d767985cf)
+On Tue, Sep 17, 2019 at 06:41:02PM +0000, Lendacky, Thomas wrote:
+> > diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> > --- a/drivers/nvme/host/pci.c
+> > +++ b/drivers/nvme/host/pci.c
+> > @@ -1613,7 +1613,8 @@ static int nvme_alloc_admin_tags(struct nvme_dev *dev)
+> >  		dev->admin_tagset.timeout = ADMIN_TIMEOUT;
+> >  		dev->admin_tagset.numa_node = dev_to_node(dev->dev);
+> >  		dev->admin_tagset.cmd_size = sizeof(struct nvme_iod);
+> > -		dev->admin_tagset.flags = BLK_MQ_F_NO_SCHED;
+> > +		dev->admin_tagset.flags = BLK_MQ_F_NO_SCHED |
+> > +					  BLK_MQ_F_BLOCKING;
+> 
+> I think you want to only set the BLK_MQ_F_BLOCKING if the DMA is required
+> to be unencrypted. Unfortunately, force_dma_unencrypted() can't be called
+> from a module. Is there a DMA API that could be called to get that info?
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.144-46-g187d767985cf/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.144-46-g187d767985cf/
-
-Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.144-46-g187d767985cf
-Git Commit: 187d767985cf878208592ce3ca667e5021abf2f6
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 66 unique boards, 23 SoC families, 13 builds out of 201
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8
-            exynos5800-peach-pi: 1 offline lab
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-    davinci_all_defconfig:
-        gcc-8
-            dm365evm,legacy: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+The DMA API must support non-blocking calls, and various drivers rely
+on that.  So we need to provide that even for the SEV case.  If the
+actual blocking can't be made to work we'll need to wire up the DMA
+pool in kernel/dma/remap.c for it (and probably move it to separate
+file).
