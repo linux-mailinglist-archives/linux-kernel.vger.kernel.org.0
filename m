@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05D4B5D2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1C01B5D52
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbfIRGWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:22:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42064 "EHLO mail.kernel.org"
+        id S1728766AbfIRGUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:20:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728576AbfIRGWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:22:11 -0400
+        id S1728502AbfIRGUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:20:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CB1A218AE;
-        Wed, 18 Sep 2019 06:22:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37AE921927;
+        Wed, 18 Sep 2019 06:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787731;
-        bh=XknEf/+gadoD7U3dWFn2XWM+Y/8d9aXtru5ha2+scOA=;
+        s=default; t=1568787635;
+        bh=xItjJk21um48QSG8Cuzllh+TXH0xwu64qQfvRLOtT4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WAXodWAVShJS4CeKlVrx1MquoEFPhPIey8PZJ0HbYXY1UsSR5jm9Tkb7HxG1HNO8G
-         F/WQYkTzuV1MluT5vpKLLr6tF3VSAuDsE4NlbL4tZozoy98U92Fh1d3oSqOvAeghWc
-         h/lxiAaLa9ZZgVTeBlnv1xGWxM1+2GLKcRd4H9rg=
+        b=tb3nDnVIMBYKctZhhz2bby7Xn/je9N2lBhdvOF8HuWHGt4Y8E/uOZGvr1VYTpe5PS
+         ZmCCaABOCRd2Op37slk0LecptrUU61qh4KVwqlqeDQEULYKZkdj6zq9NhEkLExWb1+
+         d6eTz48ZUdHb003z0j2ypMz/Mk84ilQumP4vxCv0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 13/50] tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
-Date:   Wed, 18 Sep 2019 08:18:56 +0200
-Message-Id: <20190918061224.461181062@linuxfoundation.org>
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Thomas Huth <thuth@redhat.com>
+Subject: [PATCH 4.14 22/45] KVM: s390: Do not leak kernel stack data in the KVM_S390_INTERRUPT ioctl
+Date:   Wed, 18 Sep 2019 08:19:00 +0200
+Message-Id: <20190918061225.314367870@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
-References: <20190918061223.116178343@linuxfoundation.org>
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+References: <20190918061222.854132812@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,59 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neal Cardwell <ncardwell@google.com>
+From: Thomas Huth <thuth@redhat.com>
 
-[ Upstream commit af38d07ed391b21f7405fa1f936ca9686787d6d2 ]
+commit 53936b5bf35e140ae27e4bbf0447a61063f400da upstream.
 
-Fix tcp_ecn_withdraw_cwr() to clear the correct bit:
-TCP_ECN_QUEUE_CWR.
+When the userspace program runs the KVM_S390_INTERRUPT ioctl to inject
+an interrupt, we convert them from the legacy struct kvm_s390_interrupt
+to the new struct kvm_s390_irq via the s390int_to_s390irq() function.
+However, this function does not take care of all types of interrupts
+that we can inject into the guest later (see do_inject_vcpu()). Since we
+do not clear out the s390irq values before calling s390int_to_s390irq(),
+there is a chance that we copy random data from the kernel stack which
+could be leaked to the userspace later.
 
-Rationale: basically, TCP_ECN_DEMAND_CWR is a bit that is purely about
-the behavior of data receivers, and deciding whether to reflect
-incoming IP ECN CE marks as outgoing TCP th->ece marks. The
-TCP_ECN_QUEUE_CWR bit is purely about the behavior of data senders,
-and deciding whether to send CWR. The tcp_ecn_withdraw_cwr() function
-is only called from tcp_undo_cwnd_reduction() by data senders during
-an undo, so it should zero the sender-side state,
-TCP_ECN_QUEUE_CWR. It does not make sense to stop the reflection of
-incoming CE bits on incoming data packets just because outgoing
-packets were spuriously retransmitted.
+Specifically, the problem exists with the KVM_S390_INT_PFAULT_INIT
+interrupt: s390int_to_s390irq() does not handle it, and the function
+__inject_pfault_init() later copies irq->u.ext which contains the
+random kernel stack data. This data can then be leaked either to
+the guest memory in __deliver_pfault_init(), or the userspace might
+retrieve it directly with the KVM_S390_GET_IRQ_STATE ioctl.
 
-The bug has been reproduced with packetdrill to manifest in a scenario
-with RFC3168 ECN, with an incoming data packet with CE bit set and
-carrying a TCP timestamp value that causes cwnd undo. Before this fix,
-the IP CE bit was ignored and not reflected in the TCP ECE header bit,
-and sender sent a TCP CWR ('W') bit on the next outgoing data packet,
-even though the cwnd reduction had been undone.  After this fix, the
-sender properly reflects the CE bit and does not set the W bit.
+Fix it by handling that interrupt type in s390int_to_s390irq(), too,
+and by making sure that the s390irq struct is properly pre-initialized.
+And while we're at it, make sure that s390int_to_s390irq() now
+directly returns -EINVAL for unknown interrupt types, so that we
+immediately get a proper error code in case we add more interrupt
+types to do_inject_vcpu() without updating s390int_to_s390irq()
+sometime in the future.
 
-Note: the bug actually predates 2005 git history; this Fixes footer is
-chosen to be the oldest SHA1 I have tested (from Sep 2007) for which
-the patch applies cleanly (since before this commit the code was in a
-.h file).
-
-Fixes: bdf1ee5d3bd3 ("[TCP]: Move code from tcp_ecn.h to tcp*.c and tcp.h & remove it")
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+Link: https://lore.kernel.org/kvm/20190912115438.25761-1-thuth@redhat.com
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_input.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -260,7 +260,7 @@ static void tcp_ecn_accept_cwr(struct so
- 
- static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
- {
--	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
-+	tp->ecn_flags &= ~TCP_ECN_QUEUE_CWR;
+---
+ arch/s390/kvm/interrupt.c |   10 ++++++++++
+ arch/s390/kvm/kvm-s390.c  |    2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -1701,6 +1701,16 @@ int s390int_to_s390irq(struct kvm_s390_i
+ 	case KVM_S390_MCHK:
+ 		irq->u.mchk.mcic = s390int->parm64;
+ 		break;
++	case KVM_S390_INT_PFAULT_INIT:
++		irq->u.ext.ext_params = s390int->parm;
++		irq->u.ext.ext_params2 = s390int->parm64;
++		break;
++	case KVM_S390_RESTART:
++	case KVM_S390_INT_CLOCK_COMP:
++	case KVM_S390_INT_CPU_TIMER:
++		break;
++	default:
++		return -EINVAL;
+ 	}
+ 	return 0;
  }
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -3730,7 +3730,7 @@ long kvm_arch_vcpu_ioctl(struct file *fi
+ 	}
+ 	case KVM_S390_INTERRUPT: {
+ 		struct kvm_s390_interrupt s390int;
+-		struct kvm_s390_irq s390irq;
++		struct kvm_s390_irq s390irq = {};
  
- static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
+ 		r = -EFAULT;
+ 		if (copy_from_user(&s390int, argp, sizeof(s390int)))
 
 
