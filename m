@@ -2,80 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA24B68F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 292E6B68DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 19:19:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732214AbfIRRTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 13:19:52 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45312 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731759AbfIRRTW (ORCPT
+        id S1732097AbfIRRTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 13:19:22 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44239 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731734AbfIRRTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Sep 2019 13:19:22 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y72so387995pfb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 10:19:20 -0700 (PDT)
+Received: by mail-pf1-f194.google.com with SMTP id q21so391604pfn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 10:19:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=bRO4CCi6O02IiQvOc11mCJZTaWPh+1gIDXkPeGZg2yU=;
-        b=bn4andAXlapruN28brXgH2AM8ReanDolwH7WcQgBc8GyiIvksNsmBbbHU+5j5QkmkQ
-         dNQdBRugV0VibxQmM9NcBdxXs6X/DbEnHxcN9Nx09qVwwwO/LxHop3kOqVHYd99IcQzB
-         bQMgViSIuf4qNELiCIajF6lozazm2IeSQdwwJYHNXX5Mztwm9UY+f1XEONWam8nPuq8K
-         eefbviSYxfXdXkEAjmgOtgbPBKlZWbWRGwyE62QPJhzOZojvHnDqOUB+c6XtFB0fwaiM
-         1XqOChqRHMdJfgk3iQAI9T33ur0YmWvt3TXXSyzWkf/x5iXX0ETXfj/dms0i2Oj0KxUD
-         c4Kg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=KEWAXnlLjNC2nv8CVNynnjfMbw9zNY+Gb9tPaivirx0=;
+        b=DrV6yqHPlQC+6968RW8zY7OfYQOEud2XhRgMxa0V/FestL0ujwS6mS1ef4P3er4CFx
+         YhWMA+vNLvjFQ9iRqdji403DJ31sUwHdAgCrOSEwodwZ4HEtgNUhTGAS9pYSYV8TsKK0
+         jX0niNN4fqvKG5a5c7wA5iv3Rq7IZrPBSkH7hHwIDgTMEZwsx73F0rBhsKqD2l9BGt4u
+         FkEKnZs3m6FFnr/MH8qGU1wYzvI7h3XeonN6pg0R7tlNWSm6AndB+HnUKy2bw6F9aVcH
+         qUKstThFhTPriRymtDqCK5s7H8ajExcPNAf7kUcTRQEW/LOdA7Q/T0i7oD3tOd1TPXC1
+         wDeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bRO4CCi6O02IiQvOc11mCJZTaWPh+1gIDXkPeGZg2yU=;
-        b=AcSSgajZ1ub2CsZZP+txUL5YmJSbrOoLvaQfR+37NRXnaFtdRK9Y5DTsO1ILwdcoO9
-         Z7G7VKdJ1ZNMTwiJ6wLJ1MOYdxaeiennyhXPMQaosgeTrxi8EcQ5qYvaj7aZ6VixEnP6
-         mp7RPRg2JYYLStBBM7JfY77s38H7CeT0TC2ELOb+lpMICV4JOMTcOiqWfEmgVsu7HLmc
-         gEzG2vxGT4Ff5PvLzyzwN5FaCuAx8bEWrx/EnLLitRSzCd7CgeALSd/0y78gC/XLPcBW
-         0vq6vutFNSLzYBBjSRx49V5tp8HojLe8kTpgGBe55NysU5WCtX9/WYh6vWgZA8BFun5K
-         b2Og==
-X-Gm-Message-State: APjAAAVpbtd24yQHxmZ5nFoBlwWHsbtFHtBe9l0Yu4/7Gml3ukIHoezk
-        ugNWO5zTzZ6pUa9GFe8gzHZ4ma0yqMw=
-X-Google-Smtp-Source: APXvYqyPk20iR8I62eO+samk866W6GDYk7anz2Mi1dRwIdNGKY38wrQ6lsz0CSIlroam2w1NoQuQQw==
-X-Received: by 2002:a63:791:: with SMTP id 139mr4554810pgh.199.1568827159819;
-        Wed, 18 Sep 2019 10:19:19 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=KEWAXnlLjNC2nv8CVNynnjfMbw9zNY+Gb9tPaivirx0=;
+        b=IJh72GVPzs1S/cos0xZwU5ww3HGAYIpy0PaNHKCjEecw/vmTSj2zzYbFxZl+R1YSTA
+         htQCZ4QRrwl+7qBKzvsMEbafQhCJXnZ2bl4UK1V3ycZJXr5TUO+H/HRlzLq/sMNaOGyK
+         rpf5J37Fntz0iAkc12Wxe5STPbOT/Hy/l8bmIyeTLmneaylCvSVvNEk9xpDVUeNZRto/
+         XmxdvEjXNlOTSPPfu7gSLyS5XyMQM0p9mT2oKE0mAo37+PJw0ahdo/8s5Xjmm4PU4hLP
+         NyYXfB94sf2esd6HIobIwkTVXCnOlnep5IlZ1/Cv8H5jLUeSH9QdIFO8ZZpNmXFkV2iw
+         IHUA==
+X-Gm-Message-State: APjAAAWjIqkS6z4ciWjjgU7txZ9MP+2k2Um+suEvVN9Azocychh4Iy59
+        h9WqsxmtWR7rR2uTUatdPU+45w==
+X-Google-Smtp-Source: APXvYqxp62gr99DDSE2MOj4Y2Ok56M4hOgsVDIdyiHw6ue4GqTbJWWYQL6fzuTiARGdgTA9+Pndcjg==
+X-Received: by 2002:a62:2b4d:: with SMTP id r74mr5507565pfr.30.1568827161136;
+        Wed, 18 Sep 2019 10:19:21 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y4sm2614981pjn.19.2019.09.18.10.19.18
+        by smtp.gmail.com with ESMTPSA id y4sm2614981pjn.19.2019.09.18.10.19.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Sep 2019 10:19:19 -0700 (PDT)
+        Wed, 18 Sep 2019 10:19:20 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] rpmsg: glink stability fixes
-Date:   Wed, 18 Sep 2019 10:19:10 -0700
-Message-Id: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH 1/6] rpmsg: glink: Fix reuse intents memory leak issue
+Date:   Wed, 18 Sep 2019 10:19:11 -0700
+Message-Id: <20190918171916.4039-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20190918171916.4039-1-bjorn.andersson@linaro.org>
+References: <20190918171916.4039-1-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes for issues found in GLINK during reboot testing of a remoteproc.
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 
-Arun Kumar Neelakantam (2):
-  rpmsg: glink: Fix reuse intents memory leak issue
-  rpmsg: glink: Fix use after free in open_ack TIMEOUT case
+Memory allocated for re-usable intents are not freed during channel
+cleanup which causes memory leak in system.
 
-Bjorn Andersson (2):
-  rpmsg: glink: Don't send pending rx_done during remove
-  rpmsg: glink: Free pending deferred work on remove
+Check and free all re-usable memory to avoid memory leak.
 
-Chris Lew (2):
-  rpmsg: glink: Put an extra reference during cleanup
-  rpmsg: glink: Fix rpmsg_register_device err handling
+Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
+Cc: stable@vger.kernel.org
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/qcom_glink_native.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
- drivers/rpmsg/qcom_glink_native.c | 50 ++++++++++++++++++++++++++-----
- 1 file changed, 42 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 621f1afd4d6b..9355ce26fd98 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -241,10 +241,19 @@ static void qcom_glink_channel_release(struct kref *ref)
+ {
+ 	struct glink_channel *channel = container_of(ref, struct glink_channel,
+ 						     refcount);
++	struct glink_core_rx_intent *tmp;
+ 	unsigned long flags;
++	int iid;
+ 
+ 	spin_lock_irqsave(&channel->intent_lock, flags);
++	idr_for_each_entry(&channel->liids, tmp, iid) {
++		kfree(tmp->data);
++		kfree(tmp);
++	}
+ 	idr_destroy(&channel->liids);
++
++	idr_for_each_entry(&channel->riids, tmp, iid)
++		kfree(tmp);
+ 	idr_destroy(&channel->riids);
+ 	spin_unlock_irqrestore(&channel->intent_lock, flags);
+ 
 -- 
 2.18.0
 
