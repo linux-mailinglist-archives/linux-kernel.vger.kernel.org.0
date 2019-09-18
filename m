@@ -2,166 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22BFDB6322
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A47B6326
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:25:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731069AbfIRMZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:25:13 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:44690 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731050AbfIRMZL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:25:11 -0400
-X-UUID: 5d506527059b4938b7abe9284860ec8d-20190918
-X-UUID: 5d506527059b4938b7abe9284860ec8d-20190918
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 273560856; Wed, 18 Sep 2019 20:25:00 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 18 Sep
- 2019 20:24:58 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
- MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Wed, 18 Sep 2019 20:24:57 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC:     <srv_heupstream@mediatek.com>, <yingjoe.chen@mediatek.com>,
-        <eddie.huang@mediatek.com>, <cawa.cheng@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <linux-mediatek@lists.infradead.org>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>,
-        Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v6 8/8] drm/panel: support for auo,b101uan08.3 wuxga dsi video mode panel
-Date:   Wed, 18 Sep 2019 20:24:22 +0800
-Message-ID: <20190918122422.17339-9-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190918122422.17339-1-jitao.shi@mediatek.com>
-References: <20190918122422.17339-1-jitao.shi@mediatek.com>
+        id S1731091AbfIRMZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726987AbfIRMZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 08:25:26 -0400
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D293A21929;
+        Wed, 18 Sep 2019 12:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568809524;
+        bh=SxzYIfH5rjzK9wl9N5FzlwSoGYp9dCn7lmb1V3FIxy4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HsARNV7wv+/hb1F5VTpCBxAdSCoV4G9AS4Q2I/2QSEKi6Wu0FLFfuLtIN38Z58ID8
+         WnQkBYoLyZR/4XX24wB41fpa0knllyMxXiwhBnPMml89p4K1Sh6cLFGxI9YZkJNFUk
+         25Ol0lYYJz4al1Jb0yNGOKMx4Rl74YHDX4CLk7vQ=
+Received: by mail-ot1-f43.google.com with SMTP id 41so6077232oti.12;
+        Wed, 18 Sep 2019 05:25:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAV+y4ibVvtjMyHelpDsVjxdyUYGE8KahuZCOHBtTHWteXu/nnqK
+        wz3Gd5gteeDqIPgo40CCPpW5nHagPzAO4Eie5oU=
+X-Google-Smtp-Source: APXvYqy6hHaWJFNdVYTig4iJmjwL6JG/W+OXmovvhUxmIEhESB9QpIKlBVojQmMW1PINOfm310FkqYRWtGzcN9ishjc=
+X-Received: by 2002:a9d:378a:: with SMTP id x10mr2672823otb.222.1568809524165;
+ Wed, 18 Sep 2019 05:25:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-TM-SNTS-SMTP: A67C985C1FF44D0111F5A59032692447F8F6A4E3737DFEF203C8B2CC96AE76BA2000:8
-X-MTK:  N
+References: <20190907144442.16788-1-krzk@kernel.org> <5d7ba95e.1c69fb81.bba41.66c2@mx.google.com>
+In-Reply-To: <5d7ba95e.1c69fb81.bba41.66c2@mx.google.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 18 Sep 2019 14:25:12 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeCH-hp40gnC4W5Fn8Z0OWqF74H4r1RQOJTCnu72wmrZQ@mail.gmail.com>
+Message-ID: <CAJKOXPeCH-hp40gnC4W5Fn8Z0OWqF74H4r1RQOJTCnu72wmrZQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: memory-controllers: Convert Samsung Exynos
+ SROM bindings to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Auo,auo,b101uan08.3's connector is same as boe,tv101wum-nl6.
-The most codes can be reuse.
-So auo,b101uan08.3 and boe,tv101wum-nl6 use one driver file.
-Add the different parts in driver data.
+On Fri, 13 Sep 2019 at 16:36, Rob Herring <robh@kernel.org> wrote:
+>
+> On Sat, Sep 07, 2019 at 04:44:42PM +0200, Krzysztof Kozlowski wrote:
+> > Convert Samsung Exynos SROM controller bindings to DT schema format
+> > using json-schema.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > ---
+> >  .../memory-controllers/exynos-srom.txt        |  79 ----------
+> >  .../memory-controllers/exynos-srom.yaml       | 136 ++++++++++++++++++
+> >  2 files changed, 136 insertions(+), 79 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+> >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+>
+>
+> > diff --git a/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> > new file mode 100644
+> > index 000000000000..9573bcfd68bf
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> > @@ -0,0 +1,136 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/memory-controllers/exynos-srom.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos SoC SROM Controller driver
+> > +
+> > +maintainers:
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +
+> > +description: |+
+> > +  The SROM controller can be used to attach external peripherals. In this case
+> > +  extra properties, describing the bus behind it, should be specified.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: samsung,exynos4210-srom
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  "#address-cells":
+> > +    const: 2
+> > +
+> > +  "#size-cells":
+> > +    const: 1
+> > +
+> > +  ranges:
+> > +    description: |
+> > +      Reflects the memory layout with four integer values per bank. Format:
+> > +      <bank-number> 0 <parent address of bank> <size>
+> > +
+> > +patternProperties:
+> > +  "^.*@[0-9]+,[0-9]+$":
+>
+> How many chip selects? Can be a single digit?
 
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
----
- .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    | 78 +++++++++++++++++++
- 1 file changed, 78 insertions(+)
+Currently up to four banks, so I can limit the pattern.
 
-diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-index c757035ac09c..40dcb61ef423 100644
---- a/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-+++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-@@ -382,6 +382,53 @@ static const struct panel_init_cmd auo_kd101n80_45na_init_cmd[] = {
- 	{},
- };
- 
-+static const struct panel_init_cmd auo_b101uan08_3_init_cmd[] = {
-+	_INIT_DELAY_CMD(24),
-+	_INIT_DCS_CMD(0xB0, 0x01),
-+	_INIT_DCS_CMD(0xC0, 0x48),
-+	_INIT_DCS_CMD(0xC1, 0x48),
-+	_INIT_DCS_CMD(0xC2, 0x47),
-+	_INIT_DCS_CMD(0xC3, 0x47),
-+	_INIT_DCS_CMD(0xC4, 0x46),
-+	_INIT_DCS_CMD(0xC5, 0x46),
-+	_INIT_DCS_CMD(0xC6, 0x45),
-+	_INIT_DCS_CMD(0xC7, 0x45),
-+	_INIT_DCS_CMD(0xC8, 0x64),
-+	_INIT_DCS_CMD(0xC9, 0x64),
-+	_INIT_DCS_CMD(0xCA, 0x4F),
-+	_INIT_DCS_CMD(0xCB, 0x4F),
-+	_INIT_DCS_CMD(0xCC, 0x40),
-+	_INIT_DCS_CMD(0xCD, 0x40),
-+	_INIT_DCS_CMD(0xCE, 0x66),
-+	_INIT_DCS_CMD(0xCF, 0x66),
-+	_INIT_DCS_CMD(0xD0, 0x4F),
-+	_INIT_DCS_CMD(0xD1, 0x4F),
-+	_INIT_DCS_CMD(0xD2, 0x41),
-+	_INIT_DCS_CMD(0xD3, 0x41),
-+	_INIT_DCS_CMD(0xD4, 0x48),
-+	_INIT_DCS_CMD(0xD5, 0x48),
-+	_INIT_DCS_CMD(0xD6, 0x47),
-+	_INIT_DCS_CMD(0xD7, 0x47),
-+	_INIT_DCS_CMD(0xD8, 0x46),
-+	_INIT_DCS_CMD(0xD9, 0x46),
-+	_INIT_DCS_CMD(0xDA, 0x45),
-+	_INIT_DCS_CMD(0xDB, 0x45),
-+	_INIT_DCS_CMD(0xDC, 0x64),
-+	_INIT_DCS_CMD(0xDD, 0x64),
-+	_INIT_DCS_CMD(0xDE, 0x4F),
-+	_INIT_DCS_CMD(0xDF, 0x4F),
-+	_INIT_DCS_CMD(0xE0, 0x40),
-+	_INIT_DCS_CMD(0xE1, 0x40),
-+	_INIT_DCS_CMD(0xE2, 0x66),
-+	_INIT_DCS_CMD(0xE3, 0x66),
-+	_INIT_DCS_CMD(0xE4, 0x4F),
-+	_INIT_DCS_CMD(0xE5, 0x4F),
-+	_INIT_DCS_CMD(0xE6, 0x41),
-+	_INIT_DCS_CMD(0xE7, 0x41),
-+	_INIT_DELAY_CMD(150),
-+	{},
-+};
-+
- static inline struct boe_panel *to_boe_panel(struct drm_panel *panel)
- {
- 	return container_of(panel, struct boe_panel, base);
-@@ -649,6 +696,34 @@ static const struct panel_desc boe_tv101wum_n53_desc = {
- 	.init_cmds = boe_init_cmd,
- };
- 
-+static const struct drm_display_mode auo_b101uan08_3_default_mode = {
-+	.clock = 159667,
-+	.hdisplay = 1200,
-+	.hsync_start = 1200 + 60,
-+	.hsync_end = 1200 + 60 + 4,
-+	.htotal = 1200 + 60 + 4 + 80,
-+	.vdisplay = 1920,
-+	.vsync_start = 1920 + 34,
-+	.vsync_end = 1920 + 34 + 2,
-+	.vtotal = 1920 + 34 + 2 + 24,
-+	.vrefresh = 60,
-+	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-+};
-+
-+static const struct panel_desc auo_b101uan08_3_desc = {
-+	.modes = &auo_b101uan08_3_default_mode,
-+	.bpc = 8,
-+	.size = {
-+		.width_mm = 135,
-+		.height_mm = 216,
-+	},
-+	.lanes = 4,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		      MIPI_DSI_MODE_LPM,
-+	.init_cmds = auo_b101uan08_3_init_cmd,
-+};
-+
- static int boe_panel_get_modes(struct drm_panel *panel)
- {
- 	struct boe_panel *boe = to_boe_panel(panel);
-@@ -778,6 +853,9 @@ static const struct of_device_id boe_of_match[] = {
- 	{ .compatible = "boe,tv101wum-n53",
- 	  .data = &boe_tv101wum_n53_desc
- 	},
-+	{ .compatible = "auo,b101uan08.3",
-+	  .data = &auo_b101uan08_3_desc
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, boe_of_match);
--- 
-2.21.0
+>
+> Also, these should be hex values.
 
+Sure.
+
+>
+> > +    type: object
+> > +    description:
+> > +      The actual device nodes should be added as subnodes to the SROMc node.
+> > +      These subnodes, in addition to regular device specification, should
+> > +      contain the following properties, describing configuration
+> > +      of the relevant SROM bank.
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description:
+> > +          Bank number, base address (relative to start of the bank) and size
+> > +          of the memory mapped for the device. Note that base address will be
+> > +          typically 0 as this is the start of the bank.
+> > +        maxItems: 1
+> > +
+> > +      reg-io-width:
+> > +        allOf:
+> > +          - $ref: /schemas/types.yaml#/definitions/uint32
+> > +          - enum: [1, 2]
+> > +        description:
+> > +          Data width in bytes (1 or 2). If omitted, default of 1 is used.
+> > +
+> > +      samsung,srom-page-mode:
+> > +        description:
+> > +          If page mode is set, 4 data page mode will be configured,
+> > +          else normal (1 data) page mode will be set.
+> > +        type: boolean
+> > +
+> > +      samsung,srom-timing:
+> > +        allOf:
+> > +          - $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +          - items:
+> > +              minItems: 6
+> > +              maxItems: 6
+> > +        description: |
+> > +          Array of 6 integers, specifying bank timings in the following order:
+> > +          Tacp, Tcah, Tcoh, Tacc, Tcos, Tacs.
+> > +          Each value is specified in cycles and has the following meaning
+> > +          and valid range:
+> > +          Tacp: Page mode access cycle at Page mode (0 - 15)
+> > +          Tcah: Address holding time after CSn (0 - 15)
+> > +          Tcoh: Chip selection hold on OEn (0 - 15)
+> > +          Tacc: Access cycle (0 - 31, the actual time is N + 1)
+> > +          Tcos: Chip selection set-up before OEn (0 - 15)
+> > +          Tacs: Address set-up before CSn (0 - 15)
+> > +
+> > +    required:
+> > +      - reg
+> > +      - samsung,srom-timing
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +allOf:
+> > +  - if:
+> > +      anyOf:
+> > +        - required: [ "#address-cells" ]
+> > +        - required: [ ranges ]
+> > +        - required: [ "#size-cells" ]
+> > +    then:
+> > +      required:
+> > +        - "#address-cells"
+> > +        - ranges
+> > +        - "#size-cells"
+>
+> I don't think this is necessary as the core schema should take care of
+> it. This can also be expressed using 'dependencies'.
+
+I'll skip it then.
+
+Best regards,
+Krzysztof
