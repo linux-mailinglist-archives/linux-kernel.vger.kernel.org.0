@@ -2,111 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00106B5E17
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35A40B5E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 09:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729173AbfIRHcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 03:32:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:36324 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726714AbfIRHcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 03:32:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A357528;
-        Wed, 18 Sep 2019 00:32:18 -0700 (PDT)
-Received: from [10.162.40.136] (p8cg001049571a15.blr.arm.com [10.162.40.136])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77E5C3F59C;
-        Wed, 18 Sep 2019 00:34:39 -0700 (PDT)
-Subject: Re: [PATCH] mm/pgtable/debug: Fix test validating architecture page
- table helpers
-To:     Christophe Leroy <christophe.leroy@c-s.fr>, linux-mm@kvack.org
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-ia64@vger.kernel.org,
-        linux-sh@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        James Hogan <jhogan@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
+        id S1729273AbfIRHdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 03:33:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45063 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbfIRHdN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 03:33:13 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1iAUSU-0008LA-Tw; Wed, 18 Sep 2019 09:33:03 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-s390@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        x86@kernel.org, Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Steven Price <Steven.Price@arm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        linux-snps-arc@lists.infradead.org,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        linux-arm-kernel@lists.infradead.org,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        linux-kernel@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        "David S. Miller" <davem@davemloft.net>
-References: <1892b37d1fd9a4ed39e76c4b999b6556077201c0.1568355752.git.christophe.leroy@c-s.fr>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <cb338e2e-23b1-b8af-811c-57feb6f4e7b4@arm.com>
-Date:   Wed, 18 Sep 2019 13:02:22 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        LKML <linux-kernel@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Paul Turner <pjt@google.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Prarit Bhargava <prarit@redhat.com>
+Subject: Re: printk meeting at LPC
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+        <20190904123531.GA2369@hirez.programming.kicks-ass.net>
+        <20190905130513.4fru6yvjx73pjx7p@pathway.suse.cz>
+        <20190905143118.GP2349@hirez.programming.kicks-ass.net>
+        <alpine.DEB.2.21.1909051736410.1902@nanos.tec.linutronix.de>
+        <20190905121101.60c78422@oasis.local.home>
+        <alpine.DEB.2.21.1909091507540.1791@nanos.tec.linutronix.de>
+        <87k1acz5rx.fsf@linutronix.de> <20190918012546.GA12090@jagdpanzerIV>
+        <20190917220849.17a1226a@oasis.local.home>
+        <20190918023654.GB15380@jagdpanzerIV>
+Date:   Wed, 18 Sep 2019 09:33:01 +0200
+In-Reply-To: <20190918023654.GB15380@jagdpanzerIV> (Sergey Senozhatsky's
+        message of "Wed, 18 Sep 2019 11:36:54 +0900")
+Message-ID: <87lfumnjo2.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <1892b37d1fd9a4ed39e76c4b999b6556077201c0.1568355752.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-09-18, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+>>>> 2. A kernel thread will be created for each registered console,
+>>>> each responsible for being the sole printers to their respective
+>>>> consoles. With this, console printing is _fully_ decoupled from
+>>>> printk() callers.
+>>> 
+>>> sysrq over serial?
+>>> 
+>>> offloading this to kthread may be unreliable.
+>> 
+>> But we also talked about an "emergency flush" which will not wait for
+>> the kthreads to finish and just output everything it can find in the
+>> printk buffers (expecting that the consoles have an "emergency"
+>> handler. We can add a sysrq to do an emergency flush.
 
+The problem with only a flush here is that the sysrq output may not fit
+in the ringbuffer (ftrace, for example). It probably makes more sense to
+have a switch to enter/exit "synchronous state", where all atomic
+consoles are flushed upon enter and all future printk's are synchronous
+on atomic consoles until exit.
 
-On 09/13/2019 11:53 AM, Christophe Leroy wrote:
-> Fix build failure on powerpc.
-> 
-> Fix preemption imbalance.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  mm/arch_pgtable_test.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/arch_pgtable_test.c b/mm/arch_pgtable_test.c
-> index 8b4a92756ad8..f2b3c9ec35fa 100644
-> --- a/mm/arch_pgtable_test.c
-> +++ b/mm/arch_pgtable_test.c
-> @@ -24,6 +24,7 @@
->  #include <linux/swap.h>
->  #include <linux/swapops.h>
->  #include <linux/sched/mm.h>
-> +#include <linux/highmem.h>
->  #include <asm/pgalloc.h>
->  #include <asm/pgtable.h>
->  
-> @@ -400,6 +401,8 @@ static int __init arch_pgtable_tests_init(void)
->  	p4d_clear_tests(p4dp);
->  	pgd_clear_tests(mm, pgdp);
->  
-> +	pte_unmap(ptep);
-> +
->  	pmd_populate_tests(mm, pmdp, saved_ptep);
->  	pud_populate_tests(mm, pudp, saved_pmdp);
->  	p4d_populate_tests(mm, p4dp, saved_pudp);
-> 
+I expect sysrq to be the only valid use of "synchronous state" other
+than oops/panic. Although I suppose PeterZ would like a boot argument to
+always run the consoles in this state.
 
-Hello Christophe,
+> I agree that when consoles have ->atomic_write then it surely makes
+> sense to switch to emergency mode. I like the emergency state
+> approach, but I'm not sure how it can be completely invisible to the
+> rest of the system.  Quoting John:
+>
+>     : Unlike oops_in_progress, this state will not be visible to
+>     : anything outside of the printk infrastructure.
+>
+> For instance, tty/sysrq must be able to switch printk emergency
+> on/off.
 
-I am planning to fold this fix into the current patch and retain your
-Signed-off-by. Are you okay with it ?
+The switch/flush _will_ be visible. But not the state. So, for example,
+it won't be possible for some random driver to determine if we are in an
+emergency state. (Well, I don't know if oops_in_progress will really
+disappear. But at least the printk/console stuff will no longer rely on
+it.)
 
-- Anshuman
+> We also figured out that some PM (hibernation/suspend/etc.) stages
+> (very early and/or very late ones) [2] also should have printk in
+> emergency mode, plus some other parts of the kernel [3].
+>
+> [1] https://lore.kernel.org/lkml/20170815025625.1977-4-sergey.senozhatsky@gmail.com/
+> [2] https://lore.kernel.org/lkml/20170815025625.1977-7-sergey.senozhatsky@gmail.com/
+> [3] https://lore.kernel.org/lkml/20170815025625.1977-8-sergey.senozhatsky@gmail.com/
+
+Thanks for bringing up that RFC thread again. I haven't looked at it in
+over a year. I will go through it again to see if there is anything I've
+overlooked. Particularly the suspend stuff.
+
+John Ogness
