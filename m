@@ -2,162 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD12B6204
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 13:05:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 164C8B620A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 13:06:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfIRLFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 07:05:25 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:47058 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728103AbfIRLFZ (ORCPT
+        id S1729720AbfIRLF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 07:05:58 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35404 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729634AbfIRLF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 07:05:25 -0400
-Received: by mail-lj1-f193.google.com with SMTP id e17so6705900ljf.13
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 04:05:22 -0700 (PDT)
+        Wed, 18 Sep 2019 07:05:57 -0400
+Received: by mail-pg1-f193.google.com with SMTP id a24so3863986pgj.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 04:05:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JNIOOCl1FIlLK8OEQrCWm+4MRTLInoFaM8HwgPYRrSI=;
-        b=x9PsKe2lWSxm5YFoGrE7b1TTrtwP4ymR5aHH9sHEKViQA3aCR2IMzJ2aBGzYvIdJ17
-         OtiILmKAN0rwR0GwJFAJy5PwRZwXAemG0uob3Zz1kWZLO8HzXikGDYheeGh9XwMxZS/d
-         1zxWeZ4SDo0Y2AqIc/XMLu1xhSXcxP0qU0RdRalMXVHAiRHTuoqsaB4EXKrhfagz9qyc
-         6yeAvnu4eEoRjkGR1NbBOc+2f31Lbpk3CrBYvLHmDs9uFCPkcSXTh/ZzzcNQ3BXng9gA
-         GaCTr+J1gFHg2F27Zy0MkLOEU7YoJ3XFLbNPSeyu15FWT50wATdLXZbv7LCG/gCEx7Dv
-         AAaw==
+        d=globallogic.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=30kQKIRjGxbZH2nrKPWjM2nH2PE3zFDpBAbVHM44zes=;
+        b=I4c5ggCxKN2zNntPxQ1I5QqVgDzZVa6XYoqPMTttSpuZBN0gfixeIStuTRzRZ6WY3X
+         HfrPeeV1m9D33/ag0Z0LnvCdpfZyE6LJZ6wyjSTM2ZDIvm5I4RAWp65JG82Pip5qSctc
+         OvhmV3Vad1ufLfnCOQ60M8Th5bwDxuUfm2I3FhWNW39zqFIYu3+HklpG+HBD2MRa93Fq
+         oYbkGAvV6Tqb9xt4uQS59a1Vy5MAbVtZp0hJLl6mkz2Fe9qVcyfbYqt0n0tRnqQc+tjY
+         gwAfhkvtxRkfp2Sntw+teo7GrHp0+Xxg2BJCiYdrEtzIhQfCIGnVpGWU7dKH0zPH2eDR
+         W6Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=JNIOOCl1FIlLK8OEQrCWm+4MRTLInoFaM8HwgPYRrSI=;
-        b=lsLYNB6qd51rceNG5jGW/IYahBQonNmmjh0U0B1BHLdX9M6JwvmQWcxYYmBPHaLd+x
-         s2N4REGXNL4ugO83RWWOHLyq5hroCYUKdzjF+TVGQXJvmtBJFsbyKH9wX8moSVzDUPJI
-         zKqWwJhxGRzSD4JFPGk5AOlIP3X7j868oAwl+kW+gR/Jxi7eDHIUr9CBmBw3RINw4a+Q
-         +CbSP6kci5hgB/ezgzXg3SSunf4usT9cz0j+TbpKTmiTfzV001vK2phR+5P1aHLNRcgU
-         w5/57083nZtw7SzjB6H9b62cY19twmRzIAvaCh/jnwR64RNdl/pLHAMAR6fYxatx5Oz0
-         tGvQ==
-X-Gm-Message-State: APjAAAVZTxBVSZm+vH63sYDRnYWNzDHxckaFUgmOjDvABgSYXi0TakAB
-        AiQx2qG9+gNidN9KVro4XgT6QA==
-X-Google-Smtp-Source: APXvYqwhzGaNYWRfqqbacjV8ivacocjE8Zel8keZadSmB9WJFdU54IEBfsuyRvZlrIEaM1mB7lZcrg==
-X-Received: by 2002:a2e:9ac4:: with SMTP id p4mr1793545ljj.206.1568804721863;
-        Wed, 18 Sep 2019 04:05:21 -0700 (PDT)
-Received: from khorivan (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id s7sm959288ljs.16.2019.09.18.04.05.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Sep 2019 04:05:20 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 14:05:18 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
-Subject: Re: [PATCH v3 bpf-next 11/14] libbpf: makefile: add C/CXX/LDFLAGS to
- libbpf.so and test_libpf targets
-Message-ID: <20190918110517.GD2908@khorivan>
-Mail-Followup-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yhs@fb.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        john fastabend <john.fastabend@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        clang-built-linux@googlegroups.com,
-        sergei.shtylyov@cogentembedded.com
-References: <20190916105433.11404-1-ivan.khoronzhuk@linaro.org>
- <20190916105433.11404-12-ivan.khoronzhuk@linaro.org>
- <CAEf4BzZXNN_dhs=jUjtfCqtuV1bk9H=q5b07kVDQQsysjhF4cQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzZXNN_dhs=jUjtfCqtuV1bk9H=q5b07kVDQQsysjhF4cQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=30kQKIRjGxbZH2nrKPWjM2nH2PE3zFDpBAbVHM44zes=;
+        b=XAHOyBFMpRQSWsT9khxI0iy7nL/jddgWDwdxB8nzwADRJtgAzelmGKo33mrykqLone
+         fdpPAVs77nzG4wDXlnI8DlIPm9mbcCBCyTBg0th3+W2fkFT91YysDLKvPQWm7VhqYONo
+         beDvPpySAXnjPFCBUhLYDttMU7OMcGpS2vi3QMQ03QJ52Xtjlwe52SK27sOtHD5O1Abs
+         1xScddCxpvcLYleG6qNbQJK4nRHVTSg2KUvChHl2+kQ+INoX25une5ukbOtk09Wvy8G2
+         Akj3IsqoqBGHbZZr8Epl9RZTeaEx5PYPs+tnjYaEAgIc9iD2safsRPmNuTiz0rgAlUbo
+         QLXg==
+X-Gm-Message-State: APjAAAUtMkWWKAUIuB7ZugzLulETPF2HJbS+5Eytb3F0Vz6MOA33VhON
+        tEjmQtgN6YL2gm9GYc7x1H5H5dqwrm0=
+X-Google-Smtp-Source: APXvYqxvwEq7GgqxXcrrTzkO4wvLdmjk+3DH/4Ln4BikZpyOFogYSQ9s3A7KhZsmgUq+kV1vCwAyQg==
+X-Received: by 2002:a63:9a11:: with SMTP id o17mr3335385pge.434.1568804756380;
+        Wed, 18 Sep 2019 04:05:56 -0700 (PDT)
+Received: from virtualhost-PowerEdge-R810.synapse.com ([195.238.92.107])
+        by smtp.gmail.com with ESMTPSA id 8sm6695461pjt.14.2019.09.18.04.05.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2019 04:05:55 -0700 (PDT)
+From:   roman.stratiienko@globallogic.com
+To:     linux-kernel@vger.kernel.org, mripard@kernel.org,
+        dri-devel@lists.freedesktop.org
+Cc:     Roman Stratiienko <roman.stratiienko@globallogic.com>
+Subject: [PATCH] drm/sun4i: Add missing pixel formats to the vi layer
+Date:   Wed, 18 Sep 2019 14:05:41 +0300
+Message-Id: <20190918110541.38124-1-roman.stratiienko@globallogic.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 10:19:22PM -0700, Andrii Nakryiko wrote:
->On Mon, Sep 16, 2019 at 4:00 AM Ivan Khoronzhuk
-><ivan.khoronzhuk@linaro.org> wrote:
->>
->> In case of LDFLAGS and EXTRA_CC/CXX flags there is no way to pass them
->> correctly to build command, for instance when --sysroot is used or
->> external libraries are used, like -lelf, wich can be absent in
->> toolchain. This can be used for samples/bpf cross-compiling allowing
->> to get elf lib from sysroot.
->>
->> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->> ---
->>  tools/lib/bpf/Makefile | 11 ++++++++---
->>  1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
->> index c6f94cffe06e..bccfa556ef4e 100644
->> --- a/tools/lib/bpf/Makefile
->> +++ b/tools/lib/bpf/Makefile
->> @@ -94,6 +94,10 @@ else
->>    CFLAGS := -g -Wall
->>  endif
->>
->> +ifdef EXTRA_CXXFLAGS
->> +  CXXFLAGS := $(EXTRA_CXXFLAGS)
->> +endif
->> +
->>  ifeq ($(feature-libelf-mmap), 1)
->>    override CFLAGS += -DHAVE_LIBELF_MMAP_SUPPORT
->>  endif
->> @@ -176,8 +180,9 @@ $(BPF_IN): force elfdep bpfdep
->>  $(OUTPUT)libbpf.so: $(OUTPUT)libbpf.so.$(LIBBPF_VERSION)
->>
->>  $(OUTPUT)libbpf.so.$(LIBBPF_VERSION): $(BPF_IN)
->> -       $(QUIET_LINK)$(CC) --shared -Wl,-soname,libbpf.so.$(LIBBPF_MAJOR_VERSION) \
->> -                                   -Wl,--version-script=$(VERSION_SCRIPT) $^ -lelf -o $@
->> +       $(QUIET_LINK)$(CC) $(LDFLAGS) \
->> +               --shared -Wl,-soname,libbpf.so.$(LIBBPF_MAJOR_VERSION) \
->> +               -Wl,--version-script=$(VERSION_SCRIPT) $^ -lelf -o $@
->>         @ln -sf $(@F) $(OUTPUT)libbpf.so
->>         @ln -sf $(@F) $(OUTPUT)libbpf.so.$(LIBBPF_MAJOR_VERSION)
->>
->> @@ -185,7 +190,7 @@ $(OUTPUT)libbpf.a: $(BPF_IN)
->>         $(QUIET_LINK)$(RM) $@; $(AR) rcs $@ $^
->>
->>  $(OUTPUT)test_libbpf: test_libbpf.cpp $(OUTPUT)libbpf.a
->> -       $(QUIET_LINK)$(CXX) $(INCLUDES) $^ -lelf -o $@
->> +       $(QUIET_LINK)$(CXX) $(CXXFLAGS) $(LDFLAGS) $(INCLUDES) $^ -lelf -o $@
->
->Instead of doing ifdef EXTRA_CXXFLAGS bit above, you can just include
->both $(CXXFLAGS) and $(EXTRA_CXXFLAGS), which will do the right thing
->(and is actually recommended my make documentation way to do this).
-It's good practice to follow existent style, I've done similar way as for
-CFLAGS + EXTRACFLAGS here, didn't want to verify it can impact on
-smth else. And my goal is not to correct everything but embed my
-functionality, series tool large w/o it.
+From: Roman Stratiienko <roman.stratiienko@globallogic.com>
 
->
->But actually, there is no need to use C++ compiler here,
->test_libbpf.cpp can just be plain C. Do you mind renaming it to .c and
->using C compiler instead?
-Seems like, will try in next v.
+According to Allwinner DE2.0 Specification REV 1.0, vi layer supports the
+following pixel formats:  ABGR_8888, ARGB_8888, BGRA_8888, RGBA_8888
 
->
->>
->>  $(OUTPUT)libbpf.pc:
->>         $(QUIET_GEN)sed -e "s|@PREFIX@|$(prefix)|" \
->> --
->> 2.17.1
->>
+Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
+---
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+index bd0e6a52d1d8..07c27e6a4b77 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+@@ -404,17 +404,21 @@ static const struct drm_plane_funcs sun8i_vi_layer_funcs = {
+ static const u32 sun8i_vi_layer_formats[] = {
+ 	DRM_FORMAT_ABGR1555,
+ 	DRM_FORMAT_ABGR4444,
++	DRM_FORMAT_ABGR8888,
+ 	DRM_FORMAT_ARGB1555,
+ 	DRM_FORMAT_ARGB4444,
++	DRM_FORMAT_ARGB8888,
+ 	DRM_FORMAT_BGR565,
+ 	DRM_FORMAT_BGR888,
+ 	DRM_FORMAT_BGRA5551,
+ 	DRM_FORMAT_BGRA4444,
++	DRM_FORMAT_BGRA8888,
+ 	DRM_FORMAT_BGRX8888,
+ 	DRM_FORMAT_RGB565,
+ 	DRM_FORMAT_RGB888,
+ 	DRM_FORMAT_RGBA4444,
+ 	DRM_FORMAT_RGBA5551,
++	DRM_FORMAT_RGBA8888,
+ 	DRM_FORMAT_RGBX8888,
+ 	DRM_FORMAT_XBGR8888,
+ 	DRM_FORMAT_XRGB8888,
 -- 
-Regards,
-Ivan Khoronzhuk
+2.17.1
+
