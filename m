@@ -2,44 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A26DAB5BFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF4AAB5C1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:24:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbfIRGVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:21:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40934 "EHLO mail.kernel.org"
+        id S1729504AbfIRGW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:22:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728963AbfIRGV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:29 -0400
+        id S1726244AbfIRGWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:22:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25882218AE;
-        Wed, 18 Sep 2019 06:21:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE5F721920;
+        Wed, 18 Sep 2019 06:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787688;
-        bh=jq8ybVu1n57Y65C+FrIyYI1E1FO2RqjaBIU3tXRCdb0=;
+        s=default; t=1568787768;
+        bh=TDQtsNsNqnnTlw/BrxgM+zecyV9TXa5Q7nNcLGbRio8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P+OP2iEicRhdzdHl0d5ELBdbV/GrJHvRfLddeYqSRnDmIqMJEaliRIiw70dJldyye
-         GgePUJBG9vW/1xFIGoAngnOL9iYZbD/u8tyYdNVtSnodolZpQEiTQ/Pn3qIBilB4Sp
-         J2ZFyQxBnIT7zVUO8it2ANM9UgWiYcPqDL1kzaPQ=
+        b=PDihc5W9RIUPylIu/qmwq5YIMh4oDMNB3O/B1TatywIQOsKjHy3L1XoojKOjCt+X+
+         BANwb1gRw98NiVFrjakQPNDqMRpuwNdxUMDTtC1QBbvVFoaltKRZu+nEYQWZgDLxTx
+         E+MC13LyKnUvSzECrCBvGrwedkwIQ9UvJxMTClPA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+bc6297c11f19ee807dc2@syzkaller.appspotmail.com,
-        syzbot+041483004a7f45f1f20a@syzkaller.appspotmail.com,
-        syzbot+55be5f513bed37fc4367@syzkaller.appspotmail.com,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>, Terry Lam <vtlam@google.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 08/45] sch_hhf: ensure quantum and hhf_non_hh_weight are non-zero
-Date:   Wed, 18 Sep 2019 08:18:46 +0200
-Message-Id: <20190918061223.591928754@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+0849c524d9c634f5ae66@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 04/50] isdn/capi: check message length in capi_write()
+Date:   Wed, 18 Sep 2019 08:18:47 +0200
+Message-Id: <20190918061223.551510202@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,40 +44,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit d4d6ec6dac07f263f06d847d6f732d6855522845 ]
+[ Upstream commit fe163e534e5eecdfd7b5920b0dfd24c458ee85d6 ]
 
-In case of TCA_HHF_NON_HH_WEIGHT or TCA_HHF_QUANTUM is zero,
-it would make no progress inside the loop in hhf_dequeue() thus
-kernel would get stuck.
+syzbot reported:
 
-Fix this by checking this corner case in hhf_change().
+    BUG: KMSAN: uninit-value in capi_write+0x791/0xa90 drivers/isdn/capi/capi.c:700
+    CPU: 0 PID: 10025 Comm: syz-executor379 Not tainted 4.20.0-rc7+ #2
+    Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+    Call Trace:
+      __dump_stack lib/dump_stack.c:77 [inline]
+      dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+      kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+      __msan_warning+0x82/0xf0 mm/kmsan/kmsan_instr.c:313
+      capi_write+0x791/0xa90 drivers/isdn/capi/capi.c:700
+      do_loop_readv_writev fs/read_write.c:703 [inline]
+      do_iter_write+0x83e/0xd80 fs/read_write.c:961
+      vfs_writev fs/read_write.c:1004 [inline]
+      do_writev+0x397/0x840 fs/read_write.c:1039
+      __do_sys_writev fs/read_write.c:1112 [inline]
+      __se_sys_writev+0x9b/0xb0 fs/read_write.c:1109
+      __x64_sys_writev+0x4a/0x70 fs/read_write.c:1109
+      do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+      entry_SYSCALL_64_after_hwframe+0x63/0xe7
+    [...]
 
-Fixes: 10239edf86f1 ("net-qdisc-hhf: Heavy-Hitter Filter (HHF) qdisc")
-Reported-by: syzbot+bc6297c11f19ee807dc2@syzkaller.appspotmail.com
-Reported-by: syzbot+041483004a7f45f1f20a@syzkaller.appspotmail.com
-Reported-by: syzbot+55be5f513bed37fc4367@syzkaller.appspotmail.com
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Cc: Terry Lam <vtlam@google.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+The problem is that capi_write() is reading past the end of the message.
+Fix it by checking the message's length in the needed places.
+
+Reported-and-tested-by: syzbot+0849c524d9c634f5ae66@syzkaller.appspotmail.com
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/sch_hhf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/isdn/capi/capi.c          |   10 +++++++++-
+ include/uapi/linux/isdn/capicmd.h |    1 +
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
---- a/net/sched/sch_hhf.c
-+++ b/net/sched/sch_hhf.c
-@@ -528,7 +528,7 @@ static int hhf_change(struct Qdisc *sch,
- 		new_hhf_non_hh_weight = nla_get_u32(tb[TCA_HHF_NON_HH_WEIGHT]);
+--- a/drivers/isdn/capi/capi.c
++++ b/drivers/isdn/capi/capi.c
+@@ -688,6 +688,9 @@ capi_write(struct file *file, const char
+ 	if (!cdev->ap.applid)
+ 		return -ENODEV;
  
- 	non_hh_quantum = (u64)new_quantum * new_hhf_non_hh_weight;
--	if (non_hh_quantum > INT_MAX)
-+	if (non_hh_quantum == 0 || non_hh_quantum > INT_MAX)
- 		return -EINVAL;
++	if (count < CAPIMSG_BASELEN)
++		return -EINVAL;
++
+ 	skb = alloc_skb(count, GFP_USER);
+ 	if (!skb)
+ 		return -ENOMEM;
+@@ -698,7 +701,8 @@ capi_write(struct file *file, const char
+ 	}
+ 	mlen = CAPIMSG_LEN(skb->data);
+ 	if (CAPIMSG_CMD(skb->data) == CAPI_DATA_B3_REQ) {
+-		if ((size_t)(mlen + CAPIMSG_DATALEN(skb->data)) != count) {
++		if (count < CAPI_DATA_B3_REQ_LEN ||
++		    (size_t)(mlen + CAPIMSG_DATALEN(skb->data)) != count) {
+ 			kfree_skb(skb);
+ 			return -EINVAL;
+ 		}
+@@ -711,6 +715,10 @@ capi_write(struct file *file, const char
+ 	CAPIMSG_SETAPPID(skb->data, cdev->ap.applid);
  
- 	sch_tree_lock(sch);
+ 	if (CAPIMSG_CMD(skb->data) == CAPI_DISCONNECT_B3_RESP) {
++		if (count < CAPI_DISCONNECT_B3_RESP_LEN) {
++			kfree_skb(skb);
++			return -EINVAL;
++		}
+ 		mutex_lock(&cdev->lock);
+ 		capincci_free(cdev, CAPIMSG_NCCI(skb->data));
+ 		mutex_unlock(&cdev->lock);
+--- a/include/uapi/linux/isdn/capicmd.h
++++ b/include/uapi/linux/isdn/capicmd.h
+@@ -16,6 +16,7 @@
+ #define CAPI_MSG_BASELEN		8
+ #define CAPI_DATA_B3_REQ_LEN		(CAPI_MSG_BASELEN+4+4+2+2+2)
+ #define CAPI_DATA_B3_RESP_LEN		(CAPI_MSG_BASELEN+4+2)
++#define CAPI_DISCONNECT_B3_RESP_LEN	(CAPI_MSG_BASELEN+4)
+ 
+ /*----- CAPI commands -----*/
+ #define CAPI_ALERT		    0x01
 
 
