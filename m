@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0CEB5D36
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CC2DB5D0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 08:31:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbfIRGV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 02:21:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41666 "EHLO mail.kernel.org"
+        id S1730196AbfIRGb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 02:31:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729280AbfIRGV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 02:21:56 -0400
+        id S1729601AbfIRGX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:23:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC56F20678;
-        Wed, 18 Sep 2019 06:21:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 023EF21927;
+        Wed, 18 Sep 2019 06:23:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568787715;
-        bh=IFAcKpFhA/tAv2fT6qxi0+oyft8L8HtBSHgwmPsKuKE=;
+        s=default; t=1568787805;
+        bh=MPecN1z7vc91+2Cgwuyp6cqCPNut/TxFlHXhIbxhVzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LGKAd2cNWygkanSDpQza8DagQNOgNyBNkCvJ8MrBfq0yOOmMQQoH5PW+iCCBSUSlN
-         G89fhAs6bWSCnFSTXHcTeZ6GSd9kjr+wduzq6zeAUp2sT73pSim73H8AbSprEE9bz2
-         rmuzxyd34YBVrQjCMnlLaOQYjaJQ226j8hGHWu+0=
+        b=etN2fxQhSRnJZ3rxMy/vPRaXLPwfsQuTeMOA48k3OZ+1Be5FsQEjgeukdILloUoYg
+         qkR42TX2WexFXeqEYyWtS6nwyXX6bvDdj8QdUheiDdR2QKTZ/SPhr+H9u3huSTTrBO
+         4XufUJKnsCc1UVqF6k4WkvXUmIg0DoPiPwrDnDpA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 45/45] x86/build: Add -Wnoaddress-of-packed-member to REALMODE_CFLAGS, to silence GCC9 build warning
-Date:   Wed, 18 Sep 2019 08:19:23 +0200
-Message-Id: <20190918061228.209146410@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 4.19 41/50] drm: panel-orientation-quirks: Add extra quirk table entry for GPD MicroPC
+Date:   Wed, 18 Sep 2019 08:19:24 +0200
+Message-Id: <20190918061227.841458313@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
-References: <20190918061222.854132812@linuxfoundation.org>
+In-Reply-To: <20190918061223.116178343@linuxfoundation.org>
+References: <20190918061223.116178343@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,49 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 42e0e95474fc6076b5cd68cab8fa0340a1797a72 upstream.
+commit dae1ccee012ea7514af8e4a88429844157aca7dc upstream.
 
-One of the very few warnings I have in the current build comes from
-arch/x86/boot/edd.c, where I get the following with a gcc9 build:
+Newer GPD MicroPC BIOS versions have proper DMI strings, add an extra quirk
+table entry for these new strings. This is good news, as this means that we
+no longer have to update the BIOS dates list with every BIOS update.
 
-   arch/x86/boot/edd.c: In function ‘query_edd’:
-   arch/x86/boot/edd.c:148:11: warning: taking address of packed member of ‘struct boot_params’ may result in an unaligned pointer value [-Waddress-of-packed-member]
-     148 |  mbrptr = boot_params.edd_mbr_sig_buffer;
-         |           ^~~~~~~~~~~
-
-This warning triggers because we throw away all the CFLAGS and then make
-a new set for REALMODE_CFLAGS, so the -Wno-address-of-packed-member we
-added in the following commit is not present:
-
-  6f303d60534c ("gcc-9: silence 'address-of-packed-member' warning")
-
-The simplest solution for now is to adjust the warning for this version
-of CFLAGS as well, but it would definitely make sense to examine whether
-REALMODE_CFLAGS could be derived from CFLAGS, so that it picks up changes
-in the compiler flags environment automatically.
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Borislav Petkov <bp@alien8.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 652b8b086538("drm: panel-orientation-quirks: Add quirk for GPD MicroPC")
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190624154014.8557-2-hdegoede@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/drm_panel_orientation_quirks.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -39,6 +39,7 @@ REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os
+--- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
++++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+@@ -82,6 +82,12 @@ static const struct drm_dmi_panel_orient
+ 	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
+ };
  
- REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -ffreestanding)
- REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -fno-stack-protector)
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -Wno-address-of-packed-member)
- REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), $(cc_stack_align4))
- export REALMODE_CFLAGS
- 
++static const struct drm_dmi_panel_orientation_data lcd720x1280_rightside_up = {
++	.width = 720,
++	.height = 1280,
++	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
++};
++
+ static const struct drm_dmi_panel_orientation_data lcd800x1280_rightside_up = {
+ 	.width = 800,
+ 	.height = 1280,
+@@ -109,6 +115,12 @@ static const struct dmi_system_id orient
+ 		  DMI_EXACT_MATCH(DMI_BOARD_NAME, "Default string"),
+ 		},
+ 		.driver_data = (void *)&gpd_micropc,
++	}, {	/* GPD MicroPC (later BIOS versions with proper DMI strings) */
++		.matches = {
++		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "GPD"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "MicroPC"),
++		},
++		.driver_data = (void *)&lcd720x1280_rightside_up,
+ 	}, {	/*
+ 		 * GPD Pocket, note that the the DMI data is less generic then
+ 		 * it seems, devices with a board-vendor of "AMI Corporation"
 
 
