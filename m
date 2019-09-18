@@ -2,130 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63977B62D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B07DB62D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2019 14:10:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbfIRMK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 08:10:28 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41830 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbfIRMK1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 08:10:27 -0400
-Received: by mail-lf1-f68.google.com with SMTP id r2so5491706lfn.8
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 05:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lgsq7iFzYE3p4qDNyeZTJM4NoqtMyN3PGzAwf47vS5Y=;
-        b=kll2SosYbc0+jOOjTIjs3nGzOgS353meTeCupvJ6SglAWgtWsbbUA5eVSM2H1IVJ17
-         MGYEJWeLcMfWEnV+V9ZocM6AJwn0t3zCoS/TZH8ko4Sbkg7JtH+VxD2v4Dn+mktaxos0
-         b78OYABpy7cExoY2lS6pVPRwDlTsVY2HmwGL9vkNSIXHaD+smxNe9UzrVJpftUwI72uv
-         HnP5GT5NIMy7k2Swa1O0iIKObK61d1fBV60pHKZ/bxwRGdZe97x5yDOnx21vkjB0M5HD
-         oYFEk4tlIIizwbfqM1dXcgSF8mrDF/uaJMRffm5TlIa1af5YPbqQ4GYBy/JEcb2rCjQM
-         B5/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lgsq7iFzYE3p4qDNyeZTJM4NoqtMyN3PGzAwf47vS5Y=;
-        b=eaLglMMrf10vtuCn8nQ91kkjYQMj22yaabR5npl3EhxcqYZ5e/FkQuzwUR9okMMzvn
-         SmkbEzi94alGgJr5JsGl/MssojvZam9GtAAvjz4w3rwWJShRoh2uvyTQOKIznXXJg7Xu
-         E242tFpqCGljetWTYjhB/hwr7r9qjX1+gI2wh5QOVtMzZN+jqyDGpwR8B3JJbAY2j+Mt
-         gzChZhTm9DuxKAHqIT/SKkPz42D3Mzx5OZPgGcd+t2AFVgXJzjD7y58yfiRGgSOpKiX+
-         RQPGU+K/JRRH+cNJ8NR8lyMqKQxs/YlNcGH+5T2oFQGJprd48gmmUJ7oJ/ynVwHHerUZ
-         KjxA==
-X-Gm-Message-State: APjAAAWyOUMMBqVOWJBtV+9XOi3Zge7yMh/gJ2ILQ5567TnsY2QUxm6I
-        1f112dJFqRR6o4ThqqpB0CZyAUF5Hpvkcy7+3gHEMQ==
-X-Google-Smtp-Source: APXvYqzCo4K57KXCvQEu7a2DuEENyDip3qHR7LfJn3E3cAkgXs50OhSYkam339Ci1qXPsZbmTEmm0tZkZ+VHelQdRjk=
-X-Received: by 2002:a19:3f47:: with SMTP id m68mr1934908lfa.108.1568808625711;
- Wed, 18 Sep 2019 05:10:25 -0700 (PDT)
+        id S1730812AbfIRMKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 08:10:41 -0400
+Received: from mout.web.de ([212.227.15.3]:54007 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730734AbfIRMKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 08:10:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1568808622;
+        bh=gV92216Xq6eVj771htUYtf8kVuhstFgMMf1Gv//Wpj4=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=hxlLMrJHyUAz0bKMPalEywe8SFhZovSvFxLFi6fyB4UrBaPF375B4G+7aM9WydlMA
+         94Cu2h2PzNgk3zYZH+gaKZ5u0eA3O41ISkBnDoorFQ8DmerQntRrCcXm2R025vNB6b
+         Z4g/mtsgdnUmQ8Q9+ZLPXuZzC7e3G8wjhTixne/U=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.2.101]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MP047-1iFlJy3dln-006LrO; Wed, 18
+ Sep 2019 14:10:22 +0200
+To:     kernel-janitors@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peng Hao <peng.hao2@zte.com.cn>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] misc/pvpanic: Use devm_platform_ioremap_resource() in
+ pvpanic_mmio_probe()
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Himanshu Jha <himanshujha199640@gmail.com>
+Message-ID: <e0ce24fe-ff3c-cbbb-4a56-4e529ebbe8d0@web.de>
+Date:   Wed, 18 Sep 2019 14:10:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-References: <a634860d9194cc235298d6d8bbd2282bf6f853c4.1568793195.git.liuhhome@gmail.com>
-In-Reply-To: <a634860d9194cc235298d6d8bbd2282bf6f853c4.1568793195.git.liuhhome@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 18 Sep 2019 20:10:14 +0800
-Message-ID: <CAMz4kuLrAWDaZj2Am452BX+aVO0yCQB_cCiNUx4FAamoX6KWtA@mail.gmail.com>
-Subject: Re: [PATCH] serial: sprd: Add polling IO support
-To:     Lanqing Liu <liuhhome@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>,
-        lanqing.liu@unisoc.com, linux-serial@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fhMEE37LPi7vtrhRc3vQ75ZpXtYgxoq8wPkGHnadzwYMH86hXAj
+ /P7z5+VQZEpbDckcYyJ/5Ub4wqkXVLPnRJ4PxOP0+A20skJm4ap9cIWv2V7i4YXzTRxDiGB
+ 0BVmOlesqYnRspayuIqiQ42uLVRKhCY3g0mV15RcdrvpvbyuztnDO/QUs5cGlLVnw1oXItA
+ NA7rA1XqXetVTtQBobdbg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/31WlIHjdcs=:R11A8UQQBNkdWJlvA7WqrG
+ cIXReSJTo0w/Df79VY+kbPLSQO9Kl1+FRAirlpf3Q/aXeMSiI7KONi4Qn/pRppY9vH77Nq/B6
+ TaaaWIki2HGqcsorXRDixorvjfC94U6YOXJXKow7gLKJ93B4+gb6chPjB/hcewdr4IuwDuTgQ
+ 1hXtcJUCSenDqBs53dx/luN1xxshjzapT/G52+xEFN2CS3gUKBNCEmacD212GIh0MQR6N6gJi
+ c9YjiK+Fvk5EDouu3ZNPblSUwzTaV5vAOQXME12rNOm2K8f20D+PsZ0AIWiJtdvcKfLgdKhiu
+ XLQPZD0vNEqTccTj4ABgSA/8VtphAcIaO7WOobRqzM7msnDXPidYOmWKTYd/c1j6Tjf0oMK5a
+ 2vsDb/hX8cowDvEK7Dy+8aTYJTrMUYJGjPpQ2hKrRdoLOXJ/MHW//8tkSjX44SfD2WhKAwG4y
+ GzlR9hb4yfSPZjkko+rXwKWGVxWarPdmeOfxyqVvGBxhDezSQ7DmduVwWUOTMHGAGSkfQMnXb
+ 5A2qt0PnTVZ1Kl25bXNzcjH7j9ofUULjIBIdI50OIfGuz5NbtI8bWqQ7jVsLeiJNorUGnFNbY
+ 6eL0S0g81GGn4u98DDa9O5Of+3pwkHakh7yXJ/AaVdQulEan3zqeGtVfWkExfRXaNpqHRo64G
+ GTBbf1u0GmYJ+6MOxXoYMp4OgB4KW5tC3kAY1HCmPaCnwtdXZbCUZDUaqrrd2lmF+UTdBp5tU
+ PAoRAmHKB4TJPQK0FFVxJHFxmMtraNWtYvsAvUxvwPP6Uon2+AqbJbHT7HsudTC7apzww/4GF
+ BI73QGAJhPpTbBR/NNP3wOPtnpGYLRLUAX8HAnaGw71XxtfV4mqOaEexP3XxEDVTXO7PeY7aA
+ SiOgwFHbHp0TNOaGgko3icWZCfhpCfT0oRSxHkPQ3f4K4biv9kZz7fXlsUCjICeXlmMk4K+Ln
+ A2wQ/q76DFK+QSIxRFTtM6XipipVnwaT7XHjzVq+Smb9Cdwn0pa61yvFPnlXUqOmVJOhoKA+X
+ XNUsxXDeTsStx9tmbVbgToRulyd7At1GiaGEBbjYry2zBd6GulJ6wQ9pdkBYVPsyT5PMwELaH
+ qxDs7+DX0HqUGOU0iyOerqFag+JNPzfULCvHbPQvTBVsNkHsu0WT/fFBxhMmQoolhML9xbFvA
+ 5on8csGzUXXbmuy0WUA08Or+5uJd5Tl/7vqYDisZLczjxxFbuPge213JPVHz3lxEOXfIU/wnx
+ Jl0X5rI9WAXv1JIOf0YFZLfkEvlVRYgQT7uZsEGP3U39LRdJDjJi7Fenan08=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lanqing,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2019 14:00:13 +0200
 
-On Wed, 18 Sep 2019 at 16:16, Lanqing Liu <liuhhome@gmail.com> wrote:
->
-> In order to access the UART without the interrupts, the kernel uses
-> the basic polling methods for IO with the device. With these methods
-> implemented, it is now possible to enable kgdb during early boot over serial.
->
-> Signed-off-by: Lanqing Liu <liuhhome@gmail.com>
-> ---
->  drivers/tty/serial/sprd_serial.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-> index 73d71a4..579ab41 100644
-> --- a/drivers/tty/serial/sprd_serial.c
-> +++ b/drivers/tty/serial/sprd_serial.c
-> @@ -911,6 +911,24 @@ static void sprd_pm(struct uart_port *port, unsigned int state,
->         }
->  }
->
-> +#ifdef CONFIG_CONSOLE_POLL
-> +static int sprd_poll_get_char(struct uart_port *port)
-> +{
-> +       while (!(serial_in(port, SPRD_STS1) & SPRD_RX_FIFO_CNT_MASK))
-> +               cpu_relax();
-> +
-> +       return serial_in(port, SPRD_RXD);
-> +}
-> +
-> +static void sprd_poll_put_char(struct uart_port *port, unsigned char ch)
-> +{
-> +       while (serial_in(port, SPRD_STS1) & SPRD_TX_FIFO_CNT_MASK)
-> +               cpu_relax();
-> +
-> +       serial_out(port, SPRD_TXD, ch);
-> +}
-> +#endif
+Simplify this function implementation by using a known wrapper function.
 
-When I tested your patch, I found only one case can work if the port
-used by KGDB is same with the port selected as console, which means
-this port will be powered on all the time. We had implemented the
-power management for the UART ports, so I think you should enable the
-clock for the port used by KGDB in poll_init(), then other ports can
-be used by KGDB.
+This issue was detected by using the Coccinelle software.
 
-> +
->  static const struct uart_ops serial_sprd_ops = {
->         .tx_empty = sprd_tx_empty,
->         .get_mctrl = sprd_get_mctrl,
-> @@ -928,6 +946,10 @@ static void sprd_pm(struct uart_port *port, unsigned int state,
->         .config_port = sprd_config_port,
->         .verify_port = sprd_verify_port,
->         .pm = sprd_pm,
-> +#ifdef CONFIG_CONSOLE_POLL
-> +       .poll_get_char  = sprd_poll_get_char,
-> +       .poll_put_char  = sprd_poll_put_char,
-> +#endif
->  };
->
->  #ifdef CONFIG_SERIAL_SPRD_CONSOLE
-> --
-> 1.9.1
->
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/misc/pvpanic.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
+diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
+index 95ff7c5a1dfb..74bcdd171558 100644
+=2D-- a/drivers/misc/pvpanic.c
++++ b/drivers/misc/pvpanic.c
+@@ -137,13 +137,7 @@ static void pvpanic_unregister_acpi_driver(void) {}
 
--- 
-Baolin Wang
-Best Regards
+ static int pvpanic_mmio_probe(struct platform_device *pdev)
+ {
+-	struct resource *mem;
+-
+-	mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem)
+-		return -EINVAL;
+-
+-	base =3D devm_ioremap_resource(&pdev->dev, mem);
++	base =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+
+=2D-
+2.23.0
+
