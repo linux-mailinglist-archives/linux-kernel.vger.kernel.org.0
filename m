@@ -2,41 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A582DB8660
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59AD8B85A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407314AbfISW2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:28:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60944 "EHLO mail.kernel.org"
+        id S2394165AbfISWXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:23:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406619AbfISWTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:19:06 -0400
+        id S2390570AbfISWXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:23:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 068B621BE5;
-        Thu, 19 Sep 2019 22:19:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33BA121A4C;
+        Thu, 19 Sep 2019 22:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931545;
-        bh=pnUsMLbsmExaJMsZKCYpdrEFQVqfDxcORJDW2EbhTcM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VVMjhJOWA7ozzk6ItS3B4TMYqVhVw3HdWkEAih9Of5ZxJEleKa1byTMgviF//XsDt
-         hL3q7Q0rLaxxNmeU1xKWZQse05LvamUpr7INNnJbGGwpj7tJdhyoZJ7JN/Hb8/Pmcv
-         WyDzuYtD8hNwGpff1FonX4HMUuy1xuHahkw+YqEI=
+        s=default; t=1568931783;
+        bh=ZsDuTcMct41A+7fbKm5qjBg0f573NxTjYZaPwDFMzwY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MGqypEP8Zy1dg2DqO7C47pIg/sTGN6Y9SiIVe2x/STCDkqz6hRGtTpcDGwnJ7A/RC
+         iG+QmtHlaUUcMgdUHOaEAgmTUCiK3N2k018m2F8AdnbfQXPcz8PLles2WYA2wbvRQV
+         qwAkKABWuDhhpLZ7DpSyak5pqVIdQhrZ1Hh5FyiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Muchun Song <smuchun@gmail.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Prateek Sood <prsood@codeaurora.org>
-Subject: [PATCH 4.9 25/74] driver core: Fix use-after-free and double free on glue directory
-Date:   Fri, 20 Sep 2019 00:03:38 +0200
-Message-Id: <20190919214807.268647700@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 00/56] 4.4.194-stable review
+Date:   Fri, 20 Sep 2019 00:03:41 +0200
+Message-Id: <20190919214742.483643642@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
-User-Agent: quilt/0.66
 MIME-Version: 1.0
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.194-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.4.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.4.194-rc1
+X-KernelTest-Deadline: 2019-09-21T21:48+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,171 +51,269 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Muchun Song <smuchun@gmail.com>
+This is the start of the stable review cycle for the 4.4.194 release.
+There are 56 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-commit ac43432cb1f5c2950408534987e57c2071e24d8f upstream.
+Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
+Anything received after that time might be too late.
 
-There is a race condition between removing glue directory and adding a new
-device under the glue dir. It can be reproduced in following test:
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.194-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
+and the diffstat can be found below.
 
-CPU1:                                         CPU2:
+thanks,
 
-device_add()
-  get_device_parent()
-    class_dir_create_and_add()
-      kobject_add_internal()
-        create_dir()    // create glue_dir
+greg k-h
 
-                                              device_add()
-                                                get_device_parent()
-                                                  kobject_get() // get glue_dir
+-------------
+Pseudo-Shortlog of commits:
 
-device_del()
-  cleanup_glue_dir()
-    kobject_del(glue_dir)
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.4.194-rc1
 
-                                                kobject_add()
-                                                  kobject_add_internal()
-                                                    create_dir() // in glue_dir
-                                                      sysfs_create_dir_ns()
-                                                        kernfs_create_dir_ns(sd)
+Vineet Gupta <Vineet.Gupta1@synopsys.com>
+    ARC: export "abort" for modules
 
-      sysfs_remove_dir() // glue_dir->sd=NULL
-      sysfs_put()        // free glue_dir->sd
+Sean Young <sean@mess.org>
+    media: technisat-usb2: break out of loop at end of buffer
 
-                                                          // sd is freed
-                                                          kernfs_new_node(sd)
-                                                            kernfs_get(glue_dir)
-                                                            kernfs_add_one()
-                                                            kernfs_put()
+Jann Horn <jannh@google.com>
+    floppy: fix usercopy direction
 
-Before CPU1 remove last child device under glue dir, if CPU2 add a new
-device under glue dir, the glue_dir kobject reference count will be
-increase to 2 via kobject_get() in get_device_parent(). And CPU2 has
-been called kernfs_create_dir_ns(), but not call kernfs_new_node().
-Meanwhile, CPU1 call sysfs_remove_dir() and sysfs_put(). This result in
-glue_dir->sd is freed and it's reference count will be 0. Then CPU2 call
-kernfs_get(glue_dir) will trigger a warning in kernfs_get() and increase
-it's reference count to 1. Because glue_dir->sd is freed by CPU1, the next
-call kernfs_add_one() by CPU2 will fail(This is also use-after-free)
-and call kernfs_put() to decrease reference count. Because the reference
-count is decremented to 0, it will also call kmem_cache_free() to free
-the glue_dir->sd again. This will result in double free.
+Hillf Danton <hdanton@sina.com>
+    keys: Fix missing null pointer check in request_key_auth_describe()
 
-In order to avoid this happening, we also should make sure that kernfs_node
-for glue_dir is released in CPU1 only when refcount for glue_dir kobj is
-1 to fix this race.
+Wenwen Wang <wenwen@cs.uga.edu>
+    dmaengine: ti: omap-dma: Add cleanup in omap_dma_probe()
 
-The following calltrace is captured in kernel 4.14 with the following patch
-applied:
+Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    net: seeq: Fix the function used to release some memory in an error handling path
 
-commit 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
+Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+    tools/power turbostat: fix buffer overrun
 
---------------------------------------------------------------------------
-[    3.633703] WARNING: CPU: 4 PID: 513 at .../fs/kernfs/dir.c:494
-                Here is WARN_ON(!atomic_read(&kn->count) in kernfs_get().
-....
-[    3.633986] Call trace:
-[    3.633991]  kernfs_create_dir_ns+0xa8/0xb0
-[    3.633994]  sysfs_create_dir_ns+0x54/0xe8
-[    3.634001]  kobject_add_internal+0x22c/0x3f0
-[    3.634005]  kobject_add+0xe4/0x118
-[    3.634011]  device_add+0x200/0x870
-[    3.634017]  _request_firmware+0x958/0xc38
-[    3.634020]  request_firmware_into_buf+0x4c/0x70
-....
-[    3.634064] kernel BUG at .../mm/slub.c:294!
-                Here is BUG_ON(object == fp) in set_freepointer().
-....
-[    3.634346] Call trace:
-[    3.634351]  kmem_cache_free+0x504/0x6b8
-[    3.634355]  kernfs_put+0x14c/0x1d8
-[    3.634359]  kernfs_create_dir_ns+0x88/0xb0
-[    3.634362]  sysfs_create_dir_ns+0x54/0xe8
-[    3.634366]  kobject_add_internal+0x22c/0x3f0
-[    3.634370]  kobject_add+0xe4/0x118
-[    3.634374]  device_add+0x200/0x870
-[    3.634378]  _request_firmware+0x958/0xc38
-[    3.634381]  request_firmware_into_buf+0x4c/0x70
---------------------------------------------------------------------------
+Takashi Iwai <tiwai@suse.de>
+    sky2: Disable MSI on yet another ASUS boards (P6Xxxx)
 
-Fixes: 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
-Signed-off-by: Muchun Song <smuchun@gmail.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-Link: https://lore.kernel.org/r/20190727032122.24639-1-smuchun@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Dan Carpenter <dan.carpenter@oracle.com>
+    cifs: Use kzfree() to zero out the password
 
----
- drivers/base/core.c |   53 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 52 insertions(+), 1 deletion(-)
+Ronnie Sahlberg <lsahlber@redhat.com>
+    cifs: set domainName when a domain-key is used in multiuser
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -857,12 +857,63 @@ static inline struct kobject *get_glue_d
-  */
- static void cleanup_glue_dir(struct device *dev, struct kobject *glue_dir)
- {
-+	unsigned int ref;
-+
- 	/* see if we live in a "glue" directory */
- 	if (!live_in_glue_dir(glue_dir, dev))
- 		return;
- 
- 	mutex_lock(&gdp_mutex);
--	if (!kobject_has_children(glue_dir))
-+	/**
-+	 * There is a race condition between removing glue directory
-+	 * and adding a new device under the glue directory.
-+	 *
-+	 * CPU1:                                         CPU2:
-+	 *
-+	 * device_add()
-+	 *   get_device_parent()
-+	 *     class_dir_create_and_add()
-+	 *       kobject_add_internal()
-+	 *         create_dir()    // create glue_dir
-+	 *
-+	 *                                               device_add()
-+	 *                                                 get_device_parent()
-+	 *                                                   kobject_get() // get glue_dir
-+	 *
-+	 * device_del()
-+	 *   cleanup_glue_dir()
-+	 *     kobject_del(glue_dir)
-+	 *
-+	 *                                               kobject_add()
-+	 *                                                 kobject_add_internal()
-+	 *                                                   create_dir() // in glue_dir
-+	 *                                                     sysfs_create_dir_ns()
-+	 *                                                       kernfs_create_dir_ns(sd)
-+	 *
-+	 *       sysfs_remove_dir() // glue_dir->sd=NULL
-+	 *       sysfs_put()        // free glue_dir->sd
-+	 *
-+	 *                                                         // sd is freed
-+	 *                                                         kernfs_new_node(sd)
-+	 *                                                           kernfs_get(glue_dir)
-+	 *                                                           kernfs_add_one()
-+	 *                                                           kernfs_put()
-+	 *
-+	 * Before CPU1 remove last child device under glue dir, if CPU2 add
-+	 * a new device under glue dir, the glue_dir kobject reference count
-+	 * will be increase to 2 in kobject_get(k). And CPU2 has been called
-+	 * kernfs_create_dir_ns(). Meanwhile, CPU1 call sysfs_remove_dir()
-+	 * and sysfs_put(). This result in glue_dir->sd is freed.
-+	 *
-+	 * Then the CPU2 will see a stale "empty" but still potentially used
-+	 * glue dir around in kernfs_new_node().
-+	 *
-+	 * In order to avoid this happening, we also should make sure that
-+	 * kernfs_node for glue_dir is released in CPU1 only when refcount
-+	 * for glue_dir kobj is 1.
-+	 */
-+	ref = atomic_read(&glue_dir->kref.refcount);
-+	if (!kobject_has_children(glue_dir) && !--ref)
- 		kobject_del(glue_dir);
- 	kobject_put(glue_dir);
- 	mutex_unlock(&gdp_mutex);
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv2: Fix write regression
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv2: Fix eof handling
+
+Thomas Jarosch <thomas.jarosch@intra2net.com>
+    netfilter: nf_conntrack_ftp: Fix debug output
+
+Thomas Gleixner <tglx@linutronix.de>
+    x86/apic: Fix arch_dynirq_lower_bound() bug for DT enabled machines
+
+Prashant Malani <pmalani@chromium.org>
+    r8152: Set memory to all 0xFFs on failed reg reads
+
+Doug Berger <opendmb@gmail.com>
+    ARM: 8874/1: mm: only adjust sections of valid mm structures
+
+Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    Kconfig: Fix the reference to the IDT77105 Phy driver in the description of ATM_NICSTAR_USE_IDT77105
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFS: Fix initialisation of I/O result struct in nfs_pgio_rpcsetup
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv4: Fix return values for nfs4_file_open()
+
+Ilya Leoshkevich <iii@linux.ibm.com>
+    s390/bpf: use 32-bit index for tail calls
+
+Tony Lindgren <tony@atomide.com>
+    ARM: OMAP2+: Fix omap4 errata warning on other SoCs
+
+Ilya Leoshkevich <iii@linux.ibm.com>
+    s390/bpf: fix lcgr instruction encoding
+
+Wen Huang <huangwenabc@gmail.com>
+    mwifiex: Fix three heap overflow at parsing element in cfg80211_ap_settings
+
+Razvan Stefanescu <razvan.stefanescu@microchip.com>
+    tty/serial: atmel: reschedule TX after RX was started
+
+Chunyan Zhang <chunyan.zhang@unisoc.com>
+    serial: sprd: correct the wrong sequence of arguments
+
+Matt Delco <delco@chromium.org>
+    KVM: coalesced_mmio: add bounds checking
+
+Dongli Zhang <dongli.zhang@oracle.com>
+    xen-netfront: do not assume sk_buff_head list is empty in error handling
+
+Corey Minyard <cminyard@mvista.com>
+    x86/boot: Add missing bootparam that breaks boot on some platforms
+
+Sean Young <sean@mess.org>
+    media: tm6000: double free if usb disconnect while streaming
+
+Alan Stern <stern@rowland.harvard.edu>
+    USB: usbcore: Fix slab-out-of-bounds bug during device reset
+
+Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+    ARC: configs: Remove CONFIG_INITRAMFS_SOURCE from defconfigs
+
+Paul Burton <paul.burton@mips.com>
+    MIPS: netlogic: xlr: Remove erroneous check in nlm_fmn_send()
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    x86/build: Add -Wnoaddress-of-packed-member to REALMODE_CFLAGS, to silence GCC9 build warning
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    crypto: talitos - check data blocksize in ablkcipher.
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    crypto: talitos - check AES key size
+
+Muchun Song <smuchun@gmail.com>
+    driver core: Fix use-after-free and double free on glue directory
+
+Douglas Anderson <dianders@chromium.org>
+    clk: rockchip: Don't yell about bad mmc phases when getting
+
+Paul Burton <paul.burton@mips.com>
+    MIPS: VDSO: Use same -m%-float cflag as the kernel proper
+
+Paul Burton <paul.burton@mips.com>
+    MIPS: VDSO: Prevent use of smp_processor_id()
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: nVMX: handle page fault in vmread
+
+Fuqian Huang <huangfq.daxian@gmail.com>
+    KVM: x86: work around leak of uninitialized stack contents
+
+Thomas Huth <thuth@redhat.com>
+    KVM: s390: Do not leak kernel stack data in the KVM_S390_INTERRUPT ioctl
+
+Yunfeng Ye <yeyunfeng@huawei.com>
+    genirq: Prevent NULL pointer dereference in resend_irqs()
+
+Filipe Manana <fdmanana@suse.com>
+    Btrfs: fix assertion failure during fsync and use of stale transaction
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur"
+
+Yang Yingliang <yangyingliang@huawei.com>
+    tun: fix use-after-free when register netdev failed
+
+Xin Long <lucien.xin@gmail.com>
+    tipc: add NULL pointer check before calling kfree_rcu
+
+Neal Cardwell <ncardwell@google.com>
+    tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: use transport pf_retrans in sctp_do_8_2_transport_strike
+
+Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    sctp: Fix the link time qualifier of 'sctp_ctrlsock_exit()'
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    sch_hhf: ensure quantum and hhf_non_hh_weight are non-zero
+
+Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+    net: Fix null de-reference of device refcount
+
+Eric Biggers <ebiggers@google.com>
+    isdn/capi: check message length in capi_write()
+
+Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+    ipv6: Fix the link time qualifier of 'ping_v6_proc_exit_net()'
+
+Bjørn Mork <bjorn@mork.no>
+    cdc_ether: fix rndis support for Mediatek based smartphones
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    bridge/mdb: remove wrong use of NLM_F_MULTI
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                   |  4 +--
+ arch/arc/configs/axs101_defconfig          |  1 -
+ arch/arc/configs/axs103_defconfig          |  1 -
+ arch/arc/configs/axs103_smp_defconfig      |  1 -
+ arch/arc/configs/nsim_700_defconfig        |  1 -
+ arch/arc/configs/nsim_hs_defconfig         |  1 -
+ arch/arc/configs/nsim_hs_smp_defconfig     |  1 -
+ arch/arc/configs/nsimosci_defconfig        |  1 -
+ arch/arc/configs/nsimosci_hs_defconfig     |  1 -
+ arch/arc/configs/nsimosci_hs_smp_defconfig |  1 -
+ arch/arc/kernel/traps.c                    |  1 +
+ arch/arm/mach-omap2/omap4-common.c         |  3 ++
+ arch/arm/mm/init.c                         |  3 +-
+ arch/mips/Kconfig                          |  3 --
+ arch/mips/include/asm/netlogic/xlr/fmn.h   |  2 --
+ arch/mips/include/asm/smp.h                | 12 ++++++-
+ arch/mips/sibyte/common/Makefile           |  1 -
+ arch/mips/sibyte/common/dma.c              | 14 --------
+ arch/mips/vdso/Makefile                    |  4 ++-
+ arch/s390/kvm/interrupt.c                  | 10 ++++++
+ arch/s390/kvm/kvm-s390.c                   |  2 +-
+ arch/s390/net/bpf_jit_comp.c               | 12 ++++---
+ arch/x86/Makefile                          |  1 +
+ arch/x86/include/asm/bootparam_utils.h     |  1 +
+ arch/x86/kernel/apic/io_apic.c             |  8 ++++-
+ arch/x86/kvm/vmx.c                         |  7 ++--
+ arch/x86/kvm/x86.c                         |  7 ++++
+ drivers/atm/Kconfig                        |  2 +-
+ drivers/base/core.c                        | 53 +++++++++++++++++++++++++++++-
+ drivers/block/floppy.c                     |  4 +--
+ drivers/clk/rockchip/clk-mmc-phase.c       |  4 +--
+ drivers/crypto/talitos.c                   | 29 ++++++++++++++++
+ drivers/dma/omap-dma.c                     |  4 ++-
+ drivers/isdn/capi/capi.c                   | 10 +++++-
+ drivers/media/usb/dvb-usb/technisat-usb2.c | 21 ++++++------
+ drivers/media/usb/tm6000/tm6000-dvb.c      |  3 ++
+ drivers/net/ethernet/marvell/sky2.c        |  7 ++++
+ drivers/net/ethernet/seeq/sgiseeq.c        |  7 ++--
+ drivers/net/tun.c                          | 16 ++++++---
+ drivers/net/usb/cdc_ether.c                | 13 ++++++--
+ drivers/net/usb/r8152.c                    |  5 ++-
+ drivers/net/wireless/mwifiex/ie.c          |  3 ++
+ drivers/net/wireless/mwifiex/uap_cmd.c     |  9 ++++-
+ drivers/net/xen-netfront.c                 |  2 +-
+ drivers/tty/serial/atmel_serial.c          |  1 -
+ drivers/tty/serial/sprd_serial.c           |  2 +-
+ drivers/usb/core/config.c                  | 12 ++++---
+ fs/btrfs/tree-log.c                        |  6 ++--
+ fs/cifs/connect.c                          | 22 +++++++++++++
+ fs/nfs/nfs4file.c                          | 12 +++----
+ fs/nfs/pagelist.c                          |  2 +-
+ fs/nfs/proc.c                              |  7 ++--
+ include/uapi/linux/isdn/capicmd.h          |  1 +
+ kernel/irq/resend.c                        |  2 ++
+ net/bridge/br_mdb.c                        |  2 +-
+ net/core/dev.c                             |  2 ++
+ net/ipv4/tcp_input.c                       |  2 +-
+ net/ipv6/ping.c                            |  2 +-
+ net/netfilter/nf_conntrack_ftp.c           |  2 +-
+ net/sched/sch_hhf.c                        |  2 +-
+ net/sctp/protocol.c                        |  2 +-
+ net/sctp/sm_sideeffect.c                   |  2 +-
+ net/tipc/name_distr.c                      |  3 +-
+ security/keys/request_key_auth.c           |  6 ++++
+ tools/power/x86/turbostat/turbostat.c      |  2 +-
+ virt/kvm/coalesced_mmio.c                  | 17 ++++++----
+ 66 files changed, 296 insertions(+), 111 deletions(-)
 
 
