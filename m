@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44D0B868F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C8DEB86C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:31:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406325AbfISWQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:16:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56838 "EHLO mail.kernel.org"
+        id S2392106AbfISWOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392217AbfISWQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:16:25 -0400
+        id S1732690AbfISWOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:14:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A5AD21924;
-        Thu, 19 Sep 2019 22:16:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A90AC21907;
+        Thu, 19 Sep 2019 22:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931384;
-        bh=p2hz8CsxOtKjMFjWYf+OeJ8x6dbXGx3AXbvfK4f5nHM=;
+        s=default; t=1568931244;
+        bh=DfOg6QLdAfp3DMZeD0O4pe0XXbH4LfNoN5nUvnEji4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k8tDYJX6W6+dKj+WoT3VF100SgsOYgycyQcU68nQfVEqL9EIarXecrHbEtHX1Xomo
-         PCqsa9lcEExi4LikOOEJxhT2xIACefyj9y2nqWusuh6aTYaLXq3Gj6txpDGsPTjqVV
-         d7Dhd+Wpgt9xQFVxFS/4kDE9KvCGf3nL8iEMaGws=
+        b=B/BWyih7ftImghd5o9P7kQzZ8WW0x2ZdhJATNnSjcBq2PwB3jam0Y9O66IFmHFlNl
+         xfC6sjXDn2GDVGuxJd884L72XzwVqc3+DF8bPHBoAZEPC3UvQo2Vp7pr8YDqhoHqg3
+         8JWdjwcZXBQJ7aEgdfUzsUi3yEF/bAh1N//otCug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
+        stable@vger.kernel.org, Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.ibm.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 26/59] qed: Add cleanup in qed_slowpath_start()
+Subject: [PATCH 4.19 56/79] ibmvnic: Do not process reset during or after device removal
 Date:   Fri, 20 Sep 2019 00:03:41 +0200
-Message-Id: <20190919214804.893534652@linuxfoundation.org>
+Message-Id: <20190919214812.341879223@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-[ Upstream commit de0e4fd2f07ce3bbdb69dfb8d9426b7227451b69 ]
+[ Upstream commit 36f1031c51a2538e5558fb44c6d6b88f98d3c0f2 ]
 
-If qed_mcp_send_drv_version() fails, no cleanup is executed, leading to
-memory leaks. To fix this issue, introduce the label 'err4' to perform the
-cleanup work before returning the error.
+Currently, the ibmvnic driver will not schedule device resets
+if the device is being removed, but does not check the device
+state before the reset is actually processed. This leads to a race
+where a reset is scheduled with a valid device state but is
+processed after the driver has been removed, resulting in an oops.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Sudarsana Reddy Kalluru <skalluru@marvell.com>
+Fix this by checking the device state before processing a queued
+reset event.
+
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/ibm/ibmvnic.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
-index ecc2d42965260..557332f1f886c 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -1081,7 +1081,7 @@ static int qed_slowpath_start(struct qed_dev *cdev,
- 					      &drv_version);
- 		if (rc) {
- 			DP_NOTICE(cdev, "Failed sending drv version command\n");
--			return rc;
-+			goto err4;
- 		}
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 255de7d68cd33..5a57be66a4872 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1998,6 +1998,10 @@ static void __ibmvnic_reset(struct work_struct *work)
+ 
+ 	rwi = get_next_rwi(adapter);
+ 	while (rwi) {
++		if (adapter->state == VNIC_REMOVING ||
++		    adapter->state == VNIC_REMOVED)
++			goto out;
++
+ 		if (adapter->force_reset_recovery) {
+ 			adapter->force_reset_recovery = false;
+ 			rc = do_hard_reset(adapter, rwi, reset_state);
+@@ -2022,7 +2026,7 @@ static void __ibmvnic_reset(struct work_struct *work)
+ 		netdev_dbg(adapter->netdev, "Reset failed\n");
+ 		free_all_rwi(adapter);
  	}
- 
-@@ -1089,6 +1089,8 @@ static int qed_slowpath_start(struct qed_dev *cdev,
- 
- 	return 0;
- 
-+err4:
-+	qed_ll2_dealloc_if(cdev);
- err3:
- 	qed_hw_stop(cdev);
- err2:
+-
++out:
+ 	adapter->resetting = false;
+ 	if (we_lock_rtnl)
+ 		rtnl_unlock();
 -- 
 2.20.1
 
