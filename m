@@ -2,189 +2,332 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED61B7C61
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CEF8B7C2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390666AbfISOYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:24:40 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53381 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390464AbfISOXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:23:24 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190919142322euoutp02ed9829c2ec4de9993efdb76260c31a25~F3Pf9lr9J1700217002euoutp02c
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 14:23:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190919142322euoutp02ed9829c2ec4de9993efdb76260c31a25~F3Pf9lr9J1700217002euoutp02c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1568903002;
-        bh=yCJyZaAISj2X2sPtGhkorDCVQ2B6gi5BHvQF0QJ1smU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=EeKYrf/GwEKA9IiQuVxqXdB4nZiKN0lQ9DtSZQm//KXsSr3kkHfTNjZC/FB9VmDXm
-         GirPgx7m4IjeAE+gXVWnKxmpWvkrtSY8KRhXaMFJrMsrciUJDLJtlfIlJIrC8SiKyC
-         PflnOzmst25DTDmyGX/vQ4UrpEh/I8UNsKyPMa1Q=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190919142322eucas1p265abed8b4159482c9ee0b03baeaafd4b~F3PfKNRD53082530825eucas1p2c;
-        Thu, 19 Sep 2019 14:23:22 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6B.59.04374.95F838D5; Thu, 19
-        Sep 2019 15:23:21 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec~F3PeY7cSX0293102931eucas1p1K;
-        Thu, 19 Sep 2019 14:23:21 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190919142320eusmtrp2d172b9e3a280dbdf5169de5adbc67d41~F3PeKxg7n3074530745eusmtrp2Z;
-        Thu, 19 Sep 2019 14:23:20 +0000 (GMT)
-X-AuditID: cbfec7f5-4f7ff70000001116-ec-5d838f59baf4
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2C.0F.04166.85F838D5; Thu, 19
-        Sep 2019 15:23:20 +0100 (BST)
-Received: from AMDC3555.digital.local (unknown [106.120.51.67]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190919142320eusmtip122eb1934da667f679df296a20dfbdd57~F3PdbuISJ3161631616eusmtip1a;
-        Thu, 19 Sep 2019 14:23:20 +0000 (GMT)
-From:   =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
-To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
-        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        georgi.djakov@linaro.org, leonard.crestez@nxp.com,
-        m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
-Subject: [RFC PATCH v2 00/11] Simple QoS for exynos-bus driver using
- interconnect
+        id S2403781AbfISOXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:23:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47510 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403764AbfISOX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:23:29 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D309E31752BB;
+        Thu, 19 Sep 2019 14:23:27 +0000 (UTC)
+Received: from t460s.redhat.com (unknown [10.36.118.9])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 20B3060872;
+        Thu, 19 Sep 2019 14:23:21 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, virtualization@lists.linux-foundation.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Juergen Gross <jgross@suse.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        Alexander Potapenko <glider@google.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Yu Zhao <yuzhao@google.com>, Minchan Kim <minchan@kernel.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: [PATCH RFC v3 6/9] mm: Allow to offline PageOffline() pages with a reference count of 0
 Date:   Thu, 19 Sep 2019 16:22:25 +0200
-Message-Id: <20190919142236.4071-1-a.swigon@samsung.com>
-X-Mailer: git-send-email 2.17.1
+Message-Id: <20190919142228.5483-7-david@redhat.com>
+In-Reply-To: <20190919142228.5483-1-david@redhat.com>
+References: <20190919142228.5483-1-david@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjuO2fn7LicHJflm4rFoiBBa934oDCliBP9iYJATWrlQcVrO5pd
-        ELXltSzRvGtekCaK2NYyN8q8DJcVDdNUKpthFlleQi2isnTHyn/P+zzf8zzvCx9DKvopDyYy
-        NoHXxKqjlbRM0tL93eYbdF0bulX3zRfbb6YjrC9ppvDg7AcKV1meUbh/borGxQ8MNM6350mw
-        zXZbiuuHv1DYMDpA4T5zBY1nci0Il9jaCNxkGZbiV2n1NC4p+EgHsJyhIZvmXg/cpzn7FSvB
-        3alL4fSTrQR3zdiAuBmD92FpsGxPGB8deZbXbPE/KYsYf3yVijd6n5u2NkpTUdHaHOTEALsD
-        TOn3JTlIxijYegRD7xtIcZhFYJzPQeIwg8CUOS35a3lzeZYSBR0C3fwc8c+SMzrheEWzgZBf
-        OCJdFNxYC4KC6ilHC8lWEJCVrVsYGGYVexT66nYuGiTsRsiqfyddxHIWw+Cbz1Kxbh003m4n
-        Rd4VekrfOQrIBV57t9yxLLAvpWC1dVOLmcDuh3kzFr2rYNxqXMrxgt+mKkLEAoyZ7JToTUVg
-        uGUhRWE3dFl7HTkkuxmazVtEOhCaPpmX4l1gaMJVXMEF8luKSZGWQ1aGQoRKMJe6iEaAS40D
-        S9kcjNX9cmAFGwr33qaReWh92bK7ypbdVfZ/hWpENiB3PlGICeeF7bF8kp+gjhESY8P9TsfF
-        GNDCX3syb51rRW0/T3UilkFKZ/n6JG2oglKfFc7HdCJgSKWbvGLnpVCFPEx9/gKviTuhSYzm
-        hU7kyUiU7vKLK0ZCFGy4OoGP4vl4XvNXJRgnj1RUrIqKL3w63rXrXHB0UGb+Gr22tiZXVT0R
-        oJW7K55vczo02eH5qGnHcZ/+FOJCSPM+tSr50ytZMddY67X6BxV3YmVKYhF7wKvGOLpB1b69
-        clPZwe95W/dW1zz82jGV2h14pkdfnuFPDDsfqXQNOhXce2ysNvlihBX3VH28MbT/RaZdKREi
-        1CofUiOo/wD6xdsIZwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7oR/c2xBj1vzC3uz2tltNg4Yz2r
-        xfUvz1kt5h85x2px5et7NovpezexWUy6P4HF4vz5DewWK+5+ZLXY9Pgaq8XlXXPYLD73HmG0
-        mHF+H5PF2iN32S1uN65gs5gx+SWbg4DHplWdbB53ru1h87jffZzJY/OSeo+N73YwefRtWcXo
-        8XmTXAB7lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5d
-        gl7Gq1M9rAVb5Co+HF/N3sA4TbKLkZNDQsBE4l7LF1YQW0hgKaNE6/YgiLiExMf1N1ghbGGJ
-        P9e62LoYuYBqPjFK/GztYAFJsAk4Skya+oAdJCEicIpRYuvyc2wgCWaBFUwS/XOEQWxhgUCJ
-        C2eWgMVZBFQlOlY8YQexeQUsJK7fe8MOsUFeYvWGA8wQcUGJkzOfAC3gAJqjLrF+nhDESHmJ
-        5q2zmScw8s9CUjULoWoWkqoFjMyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAqNv27Gfm3cw
-        XtoYfIhRgINRiYdXobw5Vog1say4MvcQowQHs5II7xzTplgh3pTEyqrUovz4otKc1OJDjKZA
-        L0xklhJNzgcmhrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYwR
-        jcVpFQ5NkfZBh/QKLFf7JLhv9WK6u8Y9benkmJj59UIL33z9vPi9cvGdRitv4R13bfQ+rXfa
-        a7p3qcC1I/P0uSK8Ez9e6g0Rbgx8oC4+Z/ae2p37MrXZjy24tqVnz63XS0vW+dheu1GtNz9J
-        YcojNV6Bhc8jHXYbTSxK37FwsnGw658Vqw8osRRnJBpqMRcVJwIACdB0JNQCAAA=
-X-CMS-MailID: 20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec
-References: <CGME20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec@eucas1p1.samsung.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 19 Sep 2019 14:23:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following patchset adds interconnect[1][2] framework support to the
-exynos-bus devfreq driver. Extending the devfreq driver with interconnect
-capabilities started as a response to the issue referenced in [3]. The
-patches can be subdivided into four logical groups:
+virtio-mem wants to allow to offline memory blocks of which some parts
+were unplugged, especially, to later offline and remove completely
+unplugged memory blocks. The important part is that PageOffline() has
+to remain set until the section is offline, so these pages will never
+get accessed (e.g., when dumping). The pages should not be handed
+back to the buddy (which would require clearing PageOffline() and
+result in issues if offlining fails and the pages are suddenly in the
+buddy).
 
-(a) Refactoring the existing devfreq driver in order to improve readability
-and accommodate for adding new code (patches 01--04/11).
+Let's use "PageOffline() + reference count = 0" as a sign to
+memory offlining code that these pages can simply be skipped when
+offlining, similar to free or HWPoison pages.
 
-(b) Tweaking the interconnect framework to support the exynos-bus use case
-(patches 05--07/11). Exporting of_icc_get_from_provider() allows us to
-avoid hardcoding every single graph edge in the DT or driver source, and
-relaxing the requirement contained in that function removes the need to
-provide dummy node IDs in the DT. Adjusting the logic in
-apply_constraints() (drivers/interconnect/core.c) accounts for the fact
-that every bus is a separate entity and therefore a separate interconnect
-provider, albeit constituting a part of a larger hierarchy.
+Pass flags to test_pages_isolated(), similar as already done for
+has_unmovable_pages(). Use a new flag to indicate the
+requirement of memory offlining to skip over these special pages.
 
-(c) Implementing interconnect providers in the exynos-bus devfreq driver
-and adding required DT properties for one selected platform, namely
-Exynos4412 (patches 08--09/11). Due to the fact that this aims to be a
-generic driver for various Exynos SoCs, node IDs are generated dynamically
-rather than hardcoded. This has been determined to be a simpler approach,
-but depends on changes described in (b).
+In has_unmovable_pages(), make sure the pages won't be detected as
+movable. This is not strictly necessary, however makes e.g.,
+alloc_contig_range() stop early, trying to isolate such page blocks -
+compared to failing later when testing if all pages were isolated.
 
-(d) Implementing a sample interconnect consumer for exynos-mixer targeted
-at the issue referenced in [3], again with DT info only for Exynos4412
-(patches 10--11/11).
+Also, make sure that when a reference to a PageOffline() page is
+dropped, that the page will not be returned to the buddy.
 
-Integration of devfreq and interconnect functionalities is achieved by
-using dev_pm_qos_*() API[5]. All new code works equally well when
-CONFIG_INTERCONNECT is 'n' (as in exynos_defconfig) in which case all
-interconnect API functions are no-ops.
+memory devices (like virtio-mem) that want to make use of this
+functionality have to make sure to synchronize against memory offlining,
+using the memory hotplug notifier.
 
-This patchset depends on [5].
+Alternative: Allow to offline with a reference count of 1
+and use some other sign in the struct page that offlining is permitted.
 
---- Changes since v1 [6]:
-* Rebase on [4] (coupled regulators).
-* Rebase on [5] (dev_pm_qos for devfreq).
-* Use dev_pm_qos_*() API[5] instead of overriding frequency in
-  exynos_bus_target().
-* Use IDR for node ID allocation.
-* Avoid goto in functions extracted in patches 01 & 02 (cf. patch 04).
-* Reverse order of multiplication and division in
-  mixer_set_memory_bandwidth() (patch 11) to avoid integer overflow.
-
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
+Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Pingfan Liu <kernelfans@gmail.com>
+Cc: Qian Cai <cai@lca.pw>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Wei Yang <richardw.yang@linux.intel.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Yu Zhao <yuzhao@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
-Artur Świgoń
-Samsung R&D Institute Poland
-Samsung Electronics
+ include/linux/page-flags.h     |  4 ++++
+ include/linux/page-isolation.h |  4 +++-
+ mm/memory_hotplug.c            |  9 ++++++---
+ mm/page_alloc.c                | 22 +++++++++++++++++++++-
+ mm/page_isolation.c            | 18 +++++++++++++-----
+ mm/swap.c                      |  9 +++++++++
+ 6 files changed, 56 insertions(+), 10 deletions(-)
 
----
-References:
-[1] Documentation/interconnect/interconnect.rst
-[2] Documentation/devicetree/bindings/interconnect/interconnect.txt
-[3] https://patchwork.kernel.org/patch/10861757/ (original issue)
-[4] https://patchwork.kernel.org/cover/11083663/ (coupled regulators; merged)
-[5] https://patchwork.kernel.org/cover/11149497/ (dev_pm_qos for devfreq)
-[6] https://patchwork.kernel.org/cover/11054417/ (v1 of this RFC)
-
-Artur Świgoń (10):
-  devfreq: exynos-bus: Extract exynos_bus_profile_init()
-  devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
-  devfreq: exynos-bus: Change goto-based logic to if-else logic
-  devfreq: exynos-bus: Clean up code
-  interconnect: Export of_icc_get_from_provider()
-  interconnect: Relax requirement in of_icc_get_from_provider()
-  interconnect: Relax condition in apply_constraints()
-  arm: dts: exynos: Add parents and #interconnect-cells to Exynos4412
-  devfreq: exynos-bus: Add interconnect functionality to exynos-bus
-  arm: dts: exynos: Add interconnects to Exynos4412 mixer
-
-Marek Szyprowski (1):
-  drm: exynos: mixer: Add interconnect support
-
- .../boot/dts/exynos4412-odroid-common.dtsi    |   1 +
- arch/arm/boot/dts/exynos4412.dtsi             |  10 +
- drivers/devfreq/exynos-bus.c                  | 319 +++++++++++++-----
- drivers/gpu/drm/exynos/exynos_mixer.c         |  71 +++-
- drivers/interconnect/core.c                   |  12 +-
- include/linux/interconnect-provider.h         |   6 +
- 6 files changed, 327 insertions(+), 92 deletions(-)
-
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index f91cb8898ff0..7e563eab6b4b 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -745,6 +745,10 @@ PAGE_TYPE_OPS(Buddy, buddy)
+  * not onlined when onlining the section).
+  * The content of these pages is effectively stale. Such pages should not
+  * be touched (read/write/dump/save) except by their owner.
++ *
++ * PageOffline() pages that have a reference count of 0 will be treated
++ * like free pages when offlining pages, allowing the containing memory
++ * block to get offlined.
+  */
+ PAGE_TYPE_OPS(Offline, offline)
+ 
+diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
+index 1099c2fee20f..024e02b60346 100644
+--- a/include/linux/page-isolation.h
++++ b/include/linux/page-isolation.h
+@@ -32,6 +32,8 @@ static inline bool is_migrate_isolate(int migratetype)
+ 
+ #define SKIP_HWPOISON	0x1
+ #define REPORT_FAILURE	0x2
++/* Skip PageOffline() pages with a reference count of 0. */
++#define SKIP_OFFLINE	0x4
+ 
+ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+ 			 int migratetype, int flags);
+@@ -58,7 +60,7 @@ undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
+  * Test all pages in [start_pfn, end_pfn) are isolated or not.
+  */
+ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
+-			bool skip_hwpoisoned_pages);
++			int flags);
+ 
+ struct page *alloc_migrate_target(struct page *page, unsigned long private);
+ 
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index f08eb429b8f3..d23ff7c5c96b 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1127,7 +1127,8 @@ static bool is_pageblock_removable_nolock(unsigned long pfn)
+ 	if (!zone_spans_pfn(zone, pfn))
+ 		return false;
+ 
+-	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, SKIP_HWPOISON);
++	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE,
++				    SKIP_HWPOISON | SKIP_OFFLINE);
+ }
+ 
+ /* Checks if this range of memory is likely to be hot-removable. */
+@@ -1344,7 +1345,8 @@ static int
+ check_pages_isolated_cb(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *data)
+ {
+-	return test_pages_isolated(start_pfn, start_pfn + nr_pages, true);
++	return test_pages_isolated(start_pfn, start_pfn + nr_pages,
++				   SKIP_HWPOISON | SKIP_OFFLINE);
+ }
+ 
+ static int __init cmdline_parse_movable_node(char *p)
+@@ -1455,7 +1457,8 @@ static int __ref __offline_pages(unsigned long start_pfn,
+ 	/* set above range as isolated */
+ 	ret = start_isolate_page_range(start_pfn, end_pfn,
+ 				       MIGRATE_MOVABLE,
+-				       SKIP_HWPOISON | REPORT_FAILURE);
++				       SKIP_HWPOISON | REPORT_FAILURE |
++				       SKIP_OFFLINE);
+ 	if (ret < 0) {
+ 		reason = "failure to isolate range";
+ 		goto failed_removal;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d5d7944954b3..fef74720d8b4 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -8221,6 +8221,15 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+ 		if (!page_ref_count(page)) {
+ 			if (PageBuddy(page))
+ 				iter += (1 << page_order(page)) - 1;
++			/*
++			* Memory devices allow to offline a page if it is
++			* marked PG_offline and has a reference count of 0.
++			* However, the pages are not movable as it would be
++			* required e.g., for alloc_contig_range().
++			*/
++			if (PageOffline(page) && !(flags & SKIP_OFFLINE))
++				if (++found > count)
++					goto unmovable;
+ 			continue;
+ 		}
+ 
+@@ -8444,7 +8453,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
+ 	}
+ 
+ 	/* Make sure the range is really isolated. */
+-	if (test_pages_isolated(outer_start, end, false)) {
++	if (test_pages_isolated(outer_start, end, 0)) {
+ 		pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
+ 			__func__, outer_start, end);
+ 		ret = -EBUSY;
+@@ -8563,6 +8572,17 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+ 			offlined_pages++;
+ 			continue;
+ 		}
++		/*
++		 * Memory devices allow to offline a page if it is marked
++		 * PG_offline and has a reference count of 0.
++		 */
++		if (PageOffline(page) && !page_count(page)) {
++			BUG_ON(PageBuddy(page));
++			pfn++;
++			SetPageReserved(page);
++			offlined_pages++;
++			continue;
++		}
+ 
+ 		BUG_ON(page_count(page));
+ 		BUG_ON(!PageBuddy(page));
+diff --git a/mm/page_isolation.c b/mm/page_isolation.c
+index 89c19c0feadb..0a75019d7e7c 100644
+--- a/mm/page_isolation.c
++++ b/mm/page_isolation.c
+@@ -171,6 +171,8 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
+  *			SKIP_HWPOISON - ignore hwpoison pages
+  *			REPORT_FAILURE - report details about the failure to
+  *			isolate the range
++ *			SKIP_OFFLINE - ignore PageOffline() pages with a
++ *			reference count of 0
+  *
+  * Making page-allocation-type to be MIGRATE_ISOLATE means free pages in
+  * the range will never be allocated. Any free pages and pages freed in the
+@@ -257,7 +259,7 @@ void undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
+  */
+ static unsigned long
+ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
+-				  bool skip_hwpoisoned_pages)
++				  int flags)
+ {
+ 	struct page *page;
+ 
+@@ -274,9 +276,16 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
+ 			 * simple way to verify that as VM_BUG_ON(), though.
+ 			 */
+ 			pfn += 1 << page_order(page);
+-		else if (skip_hwpoisoned_pages && PageHWPoison(page))
++		else if ((flags & SKIP_HWPOISON) && PageHWPoison(page))
+ 			/* A HWPoisoned page cannot be also PageBuddy */
+ 			pfn++;
++		else if ((flags & SKIP_OFFLINE) && PageOffline(page) &&
++			 !page_count(page))
++			/*
++			 * Memory devices allow to offline a page if it is
++			 * marked PG_offline and has a reference count of 0.
++			 */
++			pfn++;
+ 		else
+ 			break;
+ 	}
+@@ -286,7 +295,7 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
+ 
+ /* Caller should ensure that requested range is in a single zone */
+ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
+-			bool skip_hwpoisoned_pages)
++			int isol_flags)
+ {
+ 	unsigned long pfn, flags;
+ 	struct page *page;
+@@ -308,8 +317,7 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
+ 	/* Check all pages are free or marked as ISOLATED */
+ 	zone = page_zone(page);
+ 	spin_lock_irqsave(&zone->lock, flags);
+-	pfn = __test_page_isolated_in_pageblock(start_pfn, end_pfn,
+-						skip_hwpoisoned_pages);
++	pfn = __test_page_isolated_in_pageblock(start_pfn, end_pfn, isol_flags);
+ 	spin_unlock_irqrestore(&zone->lock, flags);
+ 
+ 	trace_test_pages_isolated(start_pfn, end_pfn, pfn);
+diff --git a/mm/swap.c b/mm/swap.c
+index 38c3fa4308e2..f98987656ecc 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -107,6 +107,15 @@ void __put_page(struct page *page)
+ 		 * not return it to page allocator.
+ 		 */
+ 		return;
++	} else if (PageOffline(page)) {
++		/*
++		 * Memory devices allow to offline a page if it is
++		 * marked PG_offline and has a reference count of 0. So if
++		 * somebody puts a reference of such a page and the
++		 * reference count drops to 0, don't return the page to the
++		 * buddy.
++		 */
++		return;
+ 	}
+ 
+ 	if (unlikely(PageCompound(page)))
 -- 
-2.17.1
+2.21.0
 
