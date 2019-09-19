@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D876B8675
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 229F1B85FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406518AbfISWRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58922 "EHLO mail.kernel.org"
+        id S2406892AbfISWWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:22:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406488AbfISWRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:41 -0400
+        id S2406847AbfISWWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:22:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CE4320678;
-        Thu, 19 Sep 2019 22:17:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61AAD20678;
+        Thu, 19 Sep 2019 22:22:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931460;
-        bh=euDTmi3o+maZTn2OyWRJ//BCsc8MPWXUgCcZXYSqCJc=;
+        s=default; t=1568931756;
+        bh=LU5dOEn+N8hZ4WvGQ6KZFsD9bXp/utkpa2zCwdJtBCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PR0oHqXoUFt94KBPPN5JYiI3Q3H3l9f6lGCT9m6h+RiPqb7VS/P3Wp7qm/6Jo6tIr
-         19LITOm8G+X/6QPmw4/O4kNKC6o+jE5T6ZnqI4+PfFldQ21Mg2QFJlHIBN15bQT8wP
-         ZOsJ2Xw3E1f2sZ8Q/ZLG4TRzgy5FpbDKKEYqVa4g=
+        b=Xcnk/QMJhRfRi+sr4Ur4Mi+oYAo2nedo+9yv8tC4rMdg+srKe0gwmoUYGPOcHBCoL
+         a8Ied6jlUx5xVU2HNwsVkREJtZzBhWYgvDjkvughOAdOVXGxrneWcATcECTVtyctp0
+         OvO/VLX4Vq27n4ZlQ3QZxMTq5RJlvcoKWCH9vsgM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [PATCH 4.14 54/59] PCI: kirin: Fix section mismatch warning
+        stable@vger.kernel.org, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.4 28/56] media: tm6000: double free if usb disconnect while streaming
 Date:   Fri, 20 Sep 2019 00:04:09 +0200
-Message-Id: <20190919214808.159977294@linuxfoundation.org>
+Message-Id: <20190919214755.955913118@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,46 +43,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Sean Young <sean@mess.org>
 
-commit 6870b673509779195cab300aedc844b352d9cfbc upstream.
+commit 699bf94114151aae4dceb2d9dbf1a6312839dcae upstream.
 
-The PCI kirin driver compilation produces the following section mismatch
-warning:
+The usb_bulk_urb will kfree'd on disconnect, so ensure the pointer is set
+to NULL after each free.
 
-WARNING: vmlinux.o(.text+0x4758cc): Section mismatch in reference from
-the function kirin_pcie_probe() to the function
-.init.text:kirin_add_pcie_port()
-The function kirin_pcie_probe() references
-the function __init kirin_add_pcie_port().
-This is often because kirin_pcie_probe lacks a __init
-annotation or the annotation of kirin_add_pcie_port is wrong.
+stop stream
+urb killing
+urb buffer free
+tm6000: got start feed request tm6000_start_feed
+tm6000: got start stream request tm6000_start_stream
+tm6000: pipe reset
+tm6000: got start feed request tm6000_start_feed
+tm6000: got start feed request tm6000_start_feed
+tm6000: got start feed request tm6000_start_feed
+tm6000: got start feed request tm6000_start_feed
+tm6000: IR URB failure: status: -71, length 0
+xhci_hcd 0000:00:14.0: ERROR unknown event type 37
+xhci_hcd 0000:00:14.0: ERROR unknown event type 37
+tm6000:  error tm6000_urb_received
+usb 1-2: USB disconnect, device number 5
+tm6000: disconnecting tm6000 #0
+==================================================================
+BUG: KASAN: use-after-free in dvb_fini+0x75/0x140 [tm6000_dvb]
+Read of size 8 at addr ffff888241044060 by task kworker/2:0/22
 
-Remove '__init' from kirin_add_pcie_port() to fix it.
+CPU: 2 PID: 22 Comm: kworker/2:0 Tainted: G        W         5.3.0-rc4+ #1
+Hardware name: LENOVO 20KHCTO1WW/20KHCTO1WW, BIOS N23ET65W (1.40 ) 07/02/2019
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ dump_stack+0x9a/0xf0
+ print_address_description.cold+0xae/0x34f
+ __kasan_report.cold+0x75/0x93
+ ? tm6000_fillbuf+0x390/0x3c0 [tm6000_alsa]
+ ? dvb_fini+0x75/0x140 [tm6000_dvb]
+ kasan_report+0xe/0x12
+ dvb_fini+0x75/0x140 [tm6000_dvb]
+ tm6000_close_extension+0x51/0x80 [tm6000]
+ tm6000_usb_disconnect.cold+0xd4/0x105 [tm6000]
+ usb_unbind_interface+0xe4/0x390
+ device_release_driver_internal+0x121/0x250
+ bus_remove_device+0x197/0x260
+ device_del+0x268/0x550
+ ? __device_links_no_driver+0xd0/0xd0
+ ? usb_remove_ep_devs+0x30/0x3b
+ usb_disable_device+0x122/0x400
+ usb_disconnect+0x153/0x430
+ hub_event+0x800/0x1e40
+ ? trace_hardirqs_on_thunk+0x1a/0x20
+ ? hub_port_debounce+0x1f0/0x1f0
+ ? retint_kernel+0x10/0x10
+ ? lock_is_held_type+0xf1/0x130
+ ? hub_port_debounce+0x1f0/0x1f0
+ ? process_one_work+0x4ae/0xa00
+ process_one_work+0x4ba/0xa00
+ ? pwq_dec_nr_in_flight+0x160/0x160
+ ? do_raw_spin_lock+0x10a/0x1d0
+ worker_thread+0x7a/0x5c0
+ ? process_one_work+0xa00/0xa00
+ kthread+0x1d5/0x200
+ ? kthread_create_worker_on_cpu+0xd0/0xd0
+ ret_from_fork+0x3a/0x50
 
-Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
-Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Allocated by task 2682:
+ save_stack+0x1b/0x80
+ __kasan_kmalloc.constprop.0+0xc2/0xd0
+ usb_alloc_urb+0x28/0x60
+ tm6000_start_feed+0x10a/0x300 [tm6000_dvb]
+ dmx_ts_feed_start_filtering+0x86/0x120 [dvb_core]
+ dvb_dmxdev_start_feed+0x121/0x180 [dvb_core]
+ dvb_dmxdev_filter_start+0xcb/0x540 [dvb_core]
+ dvb_demux_do_ioctl+0x7ed/0x890 [dvb_core]
+ dvb_usercopy+0x97/0x1f0 [dvb_core]
+ dvb_demux_ioctl+0x11/0x20 [dvb_core]
+ do_vfs_ioctl+0x5d8/0x9d0
+ ksys_ioctl+0x5e/0x90
+ __x64_sys_ioctl+0x3d/0x50
+ do_syscall_64+0x74/0xe0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 22:
+ save_stack+0x1b/0x80
+ __kasan_slab_free+0x12c/0x170
+ kfree+0xfd/0x3a0
+ xhci_giveback_urb_in_irq+0xfe/0x230
+ xhci_td_cleanup+0x276/0x340
+ xhci_irq+0x1129/0x3720
+ __handle_irq_event_percpu+0x6e/0x420
+ handle_irq_event_percpu+0x6f/0x100
+ handle_irq_event+0x55/0x84
+ handle_edge_irq+0x108/0x3b0
+ handle_irq+0x2e/0x40
+ do_IRQ+0x83/0x1a0
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/dwc/pcie-kirin.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/tm6000/tm6000-dvb.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pci/dwc/pcie-kirin.c
-+++ b/drivers/pci/dwc/pcie-kirin.c
-@@ -449,8 +449,8 @@ static const struct dw_pcie_host_ops kir
- 	.host_init = kirin_pcie_host_init,
- };
+--- a/drivers/media/usb/tm6000/tm6000-dvb.c
++++ b/drivers/media/usb/tm6000/tm6000-dvb.c
+@@ -111,6 +111,7 @@ static void tm6000_urb_received(struct u
+ 			printk(KERN_ERR "tm6000:  error %s\n", __func__);
+ 			kfree(urb->transfer_buffer);
+ 			usb_free_urb(urb);
++			dev->dvb->bulk_urb = NULL;
+ 		}
+ 	}
+ }
+@@ -143,6 +144,7 @@ static int tm6000_start_stream(struct tm
+ 	dvb->bulk_urb->transfer_buffer = kzalloc(size, GFP_KERNEL);
+ 	if (dvb->bulk_urb->transfer_buffer == NULL) {
+ 		usb_free_urb(dvb->bulk_urb);
++		dvb->bulk_urb = NULL;
+ 		printk(KERN_ERR "tm6000: couldn't allocate transfer buffer!\n");
+ 		return -ENOMEM;
+ 	}
+@@ -170,6 +172,7 @@ static int tm6000_start_stream(struct tm
  
--static int __init kirin_add_pcie_port(struct dw_pcie *pci,
--				      struct platform_device *pdev)
-+static int kirin_add_pcie_port(struct dw_pcie *pci,
-+			       struct platform_device *pdev)
- {
- 	pci->pp.ops = &kirin_pcie_host_ops;
+ 		kfree(dvb->bulk_urb->transfer_buffer);
+ 		usb_free_urb(dvb->bulk_urb);
++		dvb->bulk_urb = NULL;
+ 		return ret;
+ 	}
  
 
 
