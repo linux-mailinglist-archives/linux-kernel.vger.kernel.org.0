@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 443D6B857C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FA45B85A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394058AbfISWVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:21:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36180 "EHLO mail.kernel.org"
+        id S2406982AbfISWX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:23:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404844AbfISWVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:21:37 -0400
+        id S2406972AbfISWX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:23:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D835E20678;
-        Thu, 19 Sep 2019 22:21:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A85C2196E;
+        Thu, 19 Sep 2019 22:23:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931697;
-        bh=MJwYI1KVbjryZ/U0QHBipNr+8bajKoJ+EZOTakjitT8=;
+        s=default; t=1568931807;
+        bh=EGeevMO/gUf+Nnn2/iDfa/HkxbyhqMByHJ3zeC0NUl0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NWv3xZJAptqbZkZ6/WWrzOWJ5FAxEMEE8ikTqZlC1GUlAkTSxZnJ4NbE6Z4L09O9h
-         cPBNUNSOEDkYzRVv6NytR+NsIT/8DOb5OTjXVW0xd+fP3KJMKNWBOIBtGlqlq+Hmbr
-         gwhBXluNgYKk+dJeOX+XD9NQGnwhMfvWLEZxxI4U=
+        b=V0/oQV75DPDTQJT90JUl7M25Xva0/yIG8kjCbxsJBdn/9TFSKtLPE0vH6EAssZxJZ
+         5wvGg1he1csDYf6e0Z0ntFADvLH6wdoKqtiDW/xp80s6z34f/nSNIvnhnpboaDtUct
+         7PgwR0JmibCyQW6egp9jhbtXtUgsrRkXmGf7NB2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>
-Subject: [PATCH 4.9 74/74] ARC: export "abort" for modules
-Date:   Fri, 20 Sep 2019 00:04:27 +0200
-Message-Id: <20190919214811.564310227@linuxfoundation.org>
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 47/56] cifs: set domainName when a domain-key is used in multiuser
+Date:   Fri, 20 Sep 2019 00:04:28 +0200
+Message-Id: <20190919214801.645282245@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-This is a custom patch (no mainline equivalent) for stable backport only
-to address 0-Day kernel test infra ARC 4.x.y builds errors.
+[ Upstream commit f2aee329a68f5a907bcff11a109dfe17c0b41aeb ]
 
-The reason for this custom patch as that it is a single patch, touches
-only ARC, vs. atleast two 7c2c11b208be09c1, dc8635b78cd8669 which touch
-atleast 3 other arches (one long removed) and could potentially have a
-fallout.
+RHBZ: 1710429
 
-Reported-by: kbuild test robot <lkp@intel.com>
-CC: stable@vger.kernel.org	# 4.4, 4.9
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+When we use a domain-key to authenticate using multiuser we must also set
+the domainnmame for the new volume as it will be used and passed to the server
+in the NTLMSSP Domain-name.
 
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/kernel/traps.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/connect.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/arch/arc/kernel/traps.c
-+++ b/arch/arc/kernel/traps.c
-@@ -163,3 +163,4 @@ void abort(void)
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 9cb72fd40eff3..90e0c51ac0450 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -2466,6 +2466,7 @@ static int
+ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
  {
- 	__asm__ __volatile__("trap_s  5\n");
- }
-+EXPORT_SYMBOL(abort);
+ 	int rc = 0;
++	int is_domain = 0;
+ 	const char *delim, *payload;
+ 	char *desc;
+ 	ssize_t len;
+@@ -2513,6 +2514,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ 			rc = PTR_ERR(key);
+ 			goto out_err;
+ 		}
++		is_domain = 1;
+ 	}
+ 
+ 	down_read(&key->sem);
+@@ -2570,6 +2572,26 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ 		goto out_key_put;
+ 	}
+ 
++	/*
++	 * If we have a domain key then we must set the domainName in the
++	 * for the request.
++	 */
++	if (is_domain && ses->domainName) {
++		vol->domainname = kstrndup(ses->domainName,
++					   strlen(ses->domainName),
++					   GFP_KERNEL);
++		if (!vol->domainname) {
++			cifs_dbg(FYI, "Unable to allocate %zd bytes for "
++				 "domain\n", len);
++			rc = -ENOMEM;
++			kfree(vol->username);
++			vol->username = NULL;
++			kfree(vol->password);
++			vol->password = NULL;
++			goto out_key_put;
++		}
++	}
++
+ out_key_put:
+ 	up_read(&key->sem);
+ 	key_put(key);
+-- 
+2.20.1
+
 
 
