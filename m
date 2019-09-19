@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF553B83F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7686B83F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405261AbfISWGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:06:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44126 "EHLO mail.kernel.org"
+        id S2390694AbfISWGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:06:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405243AbfISWGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:06:39 -0400
+        id S2405269AbfISWGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:06:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 753EA218AF;
-        Thu, 19 Sep 2019 22:06:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89E5E21920;
+        Thu, 19 Sep 2019 22:06:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930798;
-        bh=ZfHd1jtfZQk+oHwecwNGPskZirVCtdQFTXO5g3EUvdY=;
+        s=default; t=1568930806;
+        bh=U4CHxSGHitHApCNjAH7iKIqHWmPLONJnYaP/Hq8Qqhc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2lDol9xz4CsSbxIojOrZn9CHHpMOwbxb8qYtHWr4rscBIJ7hQgLFijCWeFxpFvuOl
-         UQUBrNVmcqBPBGzNSz7Fkb3YpzIApIBpOeoAf3X+AGDKjpyi9JvdHot3rZEfSCvUpD
-         9GRAa/oR3EoI+6ZoOB3PbtkT2u3Dc/hEWxeFmms8=
+        b=kVSsixw5obFjMcBuEbwq0N7Esh6fIBgU9+/H+EdR4qsMkT0sU/BRlQ9Ig4mjXRjPQ
+         qFKmZmK9jJU5/ZyPW+VWtGf1dSOM1iTAf/gGr70rjnxqK13qftc/wjC0LON+ghgz0I
+         eazpQmLolwaa5wxX4lkl31+9k8fa6HFoNuSKP05w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Craig Gallek <kraig@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 018/124] udp: correct reuseport selection with connected sockets
-Date:   Fri, 20 Sep 2019 00:01:46 +0200
-Message-Id: <20190919214819.769727806@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Delco <delco@chromium.org>,
+        Jim Mattson <jmattson@google.com>,
+        syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.2 021/124] KVM: coalesced_mmio: add bounds checking
+Date:   Fri, 20 Sep 2019 00:01:49 +0200
+Message-Id: <20190919214819.854076035@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -45,176 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Willem de Bruijn <willemb@google.com>
+From: Matt Delco <delco@chromium.org>
 
-[ Upstream commit acdcecc61285faed359f1a3568c32089cc3a8329 ]
+commit b60fe990c6b07ef6d4df67bc0530c7c90a62623a upstream.
 
-UDP reuseport groups can hold a mix unconnected and connected sockets.
-Ensure that connections only receive all traffic to their 4-tuple.
+The first/last indexes are typically shared with a user app.
+The app can change the 'last' index that the kernel uses
+to store the next result.  This change sanity checks the index
+before using it for writing to a potentially arbitrary address.
 
-Fast reuseport returns on the first reuseport match on the assumption
-that all matches are equal. Only if connections are present, return to
-the previous behavior of scoring all sockets.
+This fixes CVE-2019-14821.
 
-Record if connections are present and if so (1) treat such connected
-sockets as an independent match from the group, (2) only return
-2-tuple matches from reuseport and (3) do not return on the first
-2-tuple reuseport match to allow for a higher scoring match later.
-
-New field has_conns is set without locks. No other fields in the
-bitmap are modified at runtime and the field is only ever set
-unconditionally, so an RMW cannot miss a change.
-
-Fixes: e32ea7e74727 ("soreuseport: fast reuseport UDP socket selection")
-Link: http://lkml.kernel.org/r/CA+FuTSfRP09aJNYRt04SS6qj22ViiOEWaWmLAwX0psk8-PGNxw@mail.gmail.com
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Craig Gallek <kraig@google.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
+Signed-off-by: Matt Delco <delco@chromium.org>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
+[Use READ_ONCE. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/sock_reuseport.h |   21 ++++++++++++++++++++-
- net/core/sock_reuseport.c    |   15 +++++++++++++--
- net/ipv4/datagram.c          |    2 ++
- net/ipv4/udp.c               |    5 +++--
- net/ipv6/datagram.c          |    2 ++
- net/ipv6/udp.c               |    5 +++--
- 6 files changed, 43 insertions(+), 7 deletions(-)
 
---- a/include/net/sock_reuseport.h
-+++ b/include/net/sock_reuseport.h
-@@ -21,7 +21,8 @@ struct sock_reuseport {
- 	unsigned int		synq_overflow_ts;
- 	/* ID stays the same even after the size of socks[] grows. */
- 	unsigned int		reuseport_id;
--	bool			bind_inany;
-+	unsigned int		bind_inany:1;
-+	unsigned int		has_conns:1;
- 	struct bpf_prog __rcu	*prog;		/* optional BPF sock selector */
- 	struct sock		*socks[0];	/* array of sock pointers */
- };
-@@ -35,6 +36,24 @@ extern struct sock *reuseport_select_soc
- 					  struct sk_buff *skb,
- 					  int hdr_len);
- extern int reuseport_attach_prog(struct sock *sk, struct bpf_prog *prog);
-+
-+static inline bool reuseport_has_conns(struct sock *sk, bool set)
-+{
-+	struct sock_reuseport *reuse;
-+	bool ret = false;
-+
-+	rcu_read_lock();
-+	reuse = rcu_dereference(sk->sk_reuseport_cb);
-+	if (reuse) {
-+		if (set)
-+			reuse->has_conns = 1;
-+		ret = reuse->has_conns;
-+	}
-+	rcu_read_unlock();
-+
-+	return ret;
-+}
-+
- int reuseport_get_id(struct sock_reuseport *reuse);
+---
+ virt/kvm/coalesced_mmio.c |   19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -40,7 +40,7 @@ static int coalesced_mmio_in_range(struc
+ 	return 1;
+ }
  
- #endif  /* _SOCK_REUSEPORT_H */
---- a/net/core/sock_reuseport.c
-+++ b/net/core/sock_reuseport.c
-@@ -295,8 +295,19 @@ struct sock *reuseport_select_sock(struc
- 
- select_by_hash:
- 		/* no bpf or invalid bpf result: fall back to hash usage */
--		if (!sk2)
--			sk2 = reuse->socks[reciprocal_scale(hash, socks)];
-+		if (!sk2) {
-+			int i, j;
-+
-+			i = j = reciprocal_scale(hash, socks);
-+			while (reuse->socks[i]->sk_state == TCP_ESTABLISHED) {
-+				i++;
-+				if (i >= reuse->num_socks)
-+					i = 0;
-+				if (i == j)
-+					goto out;
-+			}
-+			sk2 = reuse->socks[i];
-+		}
- 	}
- 
- out:
---- a/net/ipv4/datagram.c
-+++ b/net/ipv4/datagram.c
-@@ -15,6 +15,7 @@
- #include <net/sock.h>
- #include <net/route.h>
- #include <net/tcp_states.h>
-+#include <net/sock_reuseport.h>
- 
- int __ip4_datagram_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
+-static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
++static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
  {
-@@ -69,6 +70,7 @@ int __ip4_datagram_connect(struct sock *
- 	}
- 	inet->inet_daddr = fl4->daddr;
- 	inet->inet_dport = usin->sin_port;
-+	reuseport_has_conns(sk, true);
- 	sk->sk_state = TCP_ESTABLISHED;
- 	sk_set_txhash(sk);
- 	inet->inet_id = jiffies;
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -434,12 +434,13 @@ static struct sock *udp4_lib_lookup2(str
- 		score = compute_score(sk, net, saddr, sport,
- 				      daddr, hnum, dif, sdif, exact_dif);
- 		if (score > badness) {
--			if (sk->sk_reuseport) {
-+			if (sk->sk_reuseport &&
-+			    sk->sk_state != TCP_ESTABLISHED) {
- 				hash = udp_ehashfn(net, daddr, hnum,
- 						   saddr, sport);
- 				result = reuseport_select_sock(sk, hash, skb,
- 							sizeof(struct udphdr));
--				if (result)
-+				if (result && !reuseport_has_conns(sk, false))
- 					return result;
- 			}
- 			badness = score;
---- a/net/ipv6/datagram.c
-+++ b/net/ipv6/datagram.c
-@@ -27,6 +27,7 @@
- #include <net/ip6_route.h>
- #include <net/tcp_states.h>
- #include <net/dsfield.h>
-+#include <net/sock_reuseport.h>
+ 	struct kvm_coalesced_mmio_ring *ring;
+ 	unsigned avail;
+@@ -52,7 +52,7 @@ static int coalesced_mmio_has_room(struc
+ 	 * there is always one unused entry in the buffer
+ 	 */
+ 	ring = dev->kvm->coalesced_mmio_ring;
+-	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
++	avail = (ring->first - last - 1) % KVM_COALESCED_MMIO_MAX;
+ 	if (avail == 0) {
+ 		/* full */
+ 		return 0;
+@@ -67,25 +67,28 @@ static int coalesced_mmio_write(struct k
+ {
+ 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+ 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
++	__u32 insert;
  
- #include <linux/errqueue.h>
- #include <linux/uaccess.h>
-@@ -254,6 +255,7 @@ ipv4_connected:
- 		goto out;
+ 	if (!coalesced_mmio_in_range(dev, addr, len))
+ 		return -EOPNOTSUPP;
+ 
+ 	spin_lock(&dev->kvm->ring_lock);
+ 
+-	if (!coalesced_mmio_has_room(dev)) {
++	insert = READ_ONCE(ring->last);
++	if (!coalesced_mmio_has_room(dev, insert) ||
++	    insert >= KVM_COALESCED_MMIO_MAX) {
+ 		spin_unlock(&dev->kvm->ring_lock);
+ 		return -EOPNOTSUPP;
  	}
  
-+	reuseport_has_conns(sk, true);
- 	sk->sk_state = TCP_ESTABLISHED;
- 	sk_set_txhash(sk);
- out:
---- a/net/ipv6/udp.c
-+++ b/net/ipv6/udp.c
-@@ -168,13 +168,14 @@ static struct sock *udp6_lib_lookup2(str
- 		score = compute_score(sk, net, saddr, sport,
- 				      daddr, hnum, dif, sdif, exact_dif);
- 		if (score > badness) {
--			if (sk->sk_reuseport) {
-+			if (sk->sk_reuseport &&
-+			    sk->sk_state != TCP_ESTABLISHED) {
- 				hash = udp6_ehashfn(net, daddr, hnum,
- 						    saddr, sport);
+ 	/* copy data in first free entry of the ring */
  
- 				result = reuseport_select_sock(sk, hash, skb,
- 							sizeof(struct udphdr));
--				if (result)
-+				if (result && !reuseport_has_conns(sk, false))
- 					return result;
- 			}
- 			result = sk;
+-	ring->coalesced_mmio[ring->last].phys_addr = addr;
+-	ring->coalesced_mmio[ring->last].len = len;
+-	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
+-	ring->coalesced_mmio[ring->last].pio = dev->zone.pio;
++	ring->coalesced_mmio[insert].phys_addr = addr;
++	ring->coalesced_mmio[insert].len = len;
++	memcpy(ring->coalesced_mmio[insert].data, val, len);
++	ring->coalesced_mmio[insert].pio = dev->zone.pio;
+ 	smp_wmb();
+-	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
++	ring->last = (insert + 1) % KVM_COALESCED_MMIO_MAX;
+ 	spin_unlock(&dev->kvm->ring_lock);
+ 	return 0;
+ }
 
 
