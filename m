@@ -2,85 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE56EB7659
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 11:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28C0FB7669
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 11:36:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388782AbfISJdQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 05:33:16 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36066 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387767AbfISJdQ (ORCPT
+        id S2388842AbfISJgg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 05:36:36 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38315 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388661AbfISJgc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 05:33:16 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8J9OI66018021;
-        Thu, 19 Sep 2019 09:33:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=ntE+c9cESazn72DuT4SsObOcii7mo2s3N68Qv9djNSw=;
- b=V54QvGT+VYQNpveqIkWSOpQzqmOSxvNze/4+IsHujmBXR1puO+PnSm+OFjQLE+64pIBH
- 3qP39ipm4Kho7S6ZHmcBOjA8mzJ+e3KCkXQ1xyroKesqkUFXtwtiWMMsOIpv86zuPKSt
- /ze9oN6AhzieZKCrHeXwDd2A5aOEtpP/OYD+iYsC7Na17P/cc5tCkYOz9C4yJLLexgu6
- toq91MbiBoWIcZrvHvkL2caEYqXHl7xWz0Tt+3QG/+GOz6Nuyp6zY8AoedabO5Kx+DTe
- 60nDzRa04VjJqpqmoHOnG6p5qq0WNRsd3SlJSJ8+VrZNsf8cIdLz5mlEWo7zE3NFewin lA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2v3vb4tny5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Sep 2019 09:33:01 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8J9SsYw169589;
-        Thu, 19 Sep 2019 09:33:01 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2v3vbfrjxy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Sep 2019 09:33:01 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8J9Wx3D018214;
-        Thu, 19 Sep 2019 09:32:59 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Sep 2019 02:32:59 -0700
-Date:   Thu, 19 Sep 2019 12:32:46 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
-        krzk@kernel.org, kgene@kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v3 1/2] memory: samsung: exynos5422-dmc: Fix kfree() of
- devm-allocated memory and missing static
-Message-ID: <20190919093246.GF20699@kadam>
-References: <20190919092641.4407-1-l.luba@partner.samsung.com>
- <CGME20190919092652eucas1p12dbf9ba9d60a0c89cb7de05ab61893be@eucas1p1.samsung.com>
- <20190919092641.4407-2-l.luba@partner.samsung.com>
+        Thu, 19 Sep 2019 05:36:32 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 3so3132521wmi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 02:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iI+tkS4PiIp8BCmRgY+UMG+pL+AXGxEv73nrxIiQz5s=;
+        b=Eek7UVSEU0ern91R93g8cvieSXZ4myQs3jTIKt8uNgy3UmF7EY3N6zv6hRWuUA3Aqh
+         pcaLBQay01dui0oEJH2ylcIuEgiM+gdX0FbSy/6S0n3Bam7ZVmYIHEO82hdL6XAU3EWQ
+         moqgrtOEjl41mEsoLXecZ5SSNTBW3e8zElGSSrUEZ4+NACiWB1+1O0jdSRlbSzsflLde
+         SuDMzvOn1adnsaPbBO7sjVdchYm2qlmusAeVbEaDIG6oLbotWY8kECrmD5SqvaO+d0q2
+         0ajv2GyUCwPVD/iD1LyB9H0isyNQOUiwMYeTX+Wqh/BM6qFTr4kpHdNHLr6wTbyl5RNI
+         xDkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iI+tkS4PiIp8BCmRgY+UMG+pL+AXGxEv73nrxIiQz5s=;
+        b=i8uma+TE/E3rVTu01aVzKhNiZ5+fAPlcZuQJAKm/tdXxKpXxdzR+b8fX15cha1Q5Jq
+         EkwAmrIeVzHWhKUZF18e32n/pguGcIProZBZ+hK/Y5uQD2kHJ3661t3PEUTl+gpCHi6A
+         Tsf5K46B0gmzdzExQYqkGe21W4n1I0ZvpvxWM7sw19LoC/SUeRw/8jaycZPKaCfI9oTM
+         vLWUJXMqQmuUk6o0jyq8UXGRhCPC78SH+ZJn71NH2CPx6gQmw28xM1BJVBgRZZ+jOMyd
+         0pP4plAXapEnF3I1JODSlH30SJJba0ioBQTJpeZPTWF+ln0VQQ8F3CJplGR/ld1bSrq0
+         AqOw==
+X-Gm-Message-State: APjAAAUukyNX13cj/p9dZZJjFqkPUsQOsPVvIffCkarzM82zLAMPdVuz
+        qkYKb5Be8rVlwdoBzu2YNoqixA==
+X-Google-Smtp-Source: APXvYqznJatZccIrCzOBZuDhpnxTn29NEmTv3f2C4wKt2Z2k+sDqXbS3pe8+3Gdr0QAGBoRbyrmgrA==
+X-Received: by 2002:a05:600c:2153:: with SMTP id v19mr2053035wml.146.1568885789291;
+        Thu, 19 Sep 2019 02:36:29 -0700 (PDT)
+Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id q19sm16701186wra.89.2019.09.19.02.36.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2019 02:36:28 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: meson: g12a: fixes for DVFS
+Date:   Thu, 19 Sep 2019 11:36:24 +0200
+Message-Id: <20190919093627.21245-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190919092641.4407-2-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909190090
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909190090
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks!  Looks good.
+This is the first serie of fixes for DVFS support on G12a:
+- Patch 1 fixes a rebase issue where a CLK_SET_RATE_NO_REPARENT
+  appeared on the wrong clock and a SET_RATE_PARENT went missing
+- Patch 2 helps CCF use the right clock tree for the sub 1GHz clock range
+- Patch 3 fixes an issue when we enter suspend with a non-SYS_PLL CPU clock,
+  leading to a SYS_PLL never enabled again
 
-regards,
-dan carpenter
+Neil Armstrong (3):
+  clk: meson: g12a: fix cpu clock rate setting
+  clk: meson: g12a: set CLK_MUX_ROUND_CLOSEST on the cpu clock muxes
+  clk: meson: clk-pll: always enable a critical PLL when setting the
+    rate
+
+ drivers/clk/meson/clk-pll.c |  2 +-
+ drivers/clk/meson/g12a.c    | 13 +++++++++++--
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+-- 
+2.22.0
 
