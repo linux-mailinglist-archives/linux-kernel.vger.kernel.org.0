@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37930B86F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D06B86AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405153AbfISWL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:11:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50052 "EHLO mail.kernel.org"
+        id S2406081AbfISWPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393572AbfISWLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:11:23 -0400
+        id S2393851AbfISWPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1660218AF;
-        Thu, 19 Sep 2019 22:11:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F51921928;
+        Thu, 19 Sep 2019 22:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931082;
-        bh=8NBCg4bn+YAcGGwPshiT26t1NXX+A+bvQ5yC6Q+ZwUo=;
+        s=default; t=1568931309;
+        bh=K93ZfifvKFmK/rsmxc+R5+nB6ROmf3mlE/wOO2Vb1Ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sPcKa5Ghg/0/5qPeXLrXKXLjyBuWM0gw8lusmhb31t7uuPVTEBUmtH0u0shaCap7y
-         DaFnL0jmtxHNgaZ0uiQn2iiSWugHcw1yLicRqrl3Onq/hpnV8oKI8kUWFVfKUiGyrk
-         KdcCWoUHS4HlxK2zZ4CMmcTf0uKu2idi5QMQUkno=
+        b=EBm+AfMLGl7cw4Mb8h5eYh2VN3Q1FRK2dMoFFDX7pwzZIbGMY4TeHtoWSCXSf0FlY
+         SrDhv2Bs+3LU2QoLX4Ap2HPaSIZi1uySI3v00No8N8hQTSSlpncwFxYcBIqv22DHao
+         wGDx/Wkxc3OYHkJCX4NoDTJaqTf9mVH5u0Hp/v1U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.2 122/124] floppy: fix usercopy direction
-Date:   Fri, 20 Sep 2019 00:03:30 +0200
-Message-Id: <20190919214823.616660752@linuxfoundation.org>
+        stable@vger.kernel.org, Todd Seidelmann <tseidelmann@linode.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 47/79] netfilter: xt_physdev: Fix spurious error message in physdev_mt_check
+Date:   Fri, 20 Sep 2019 00:03:32 +0200
+Message-Id: <20190919214811.720966781@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Todd Seidelmann <tseidelmann@linode.com>
 
-commit 52f6f9d74f31078964ca1574f7bb612da7877ac8 upstream.
+[ Upstream commit 3cf2f450fff304be9cf4868bf0df17f253bc5b1c ]
 
-As sparse points out, these two copy_from_user() should actually be
-copy_to_user().
+Simplify the check in physdev_mt_check() to emit an error message
+only when passed an invalid chain (ie, NF_INET_LOCAL_OUT).
+This avoids cluttering up the log with errors against valid rules.
 
-Fixes: 229b53c9bf4e ("take floppy compat ioctls to sodding floppy.c")
-Cc: stable@vger.kernel.org
-Acked-by: Alexander Popov <alex.popov@linux.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+For large/heavily modified rulesets, current behavior can quickly
+overwhelm the ring buffer, because this function gets called on
+every change, regardless of the rule that was changed.
 
+Signed-off-by: Todd Seidelmann <tseidelmann@linode.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/floppy.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/netfilter/xt_physdev.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3780,7 +3780,7 @@ static int compat_getdrvprm(int drive,
- 	v.native_format = UDP->native_format;
- 	mutex_unlock(&floppy_mutex);
+diff --git a/net/netfilter/xt_physdev.c b/net/netfilter/xt_physdev.c
+index 05f00fb20b047..cd15ea79e3e2a 100644
+--- a/net/netfilter/xt_physdev.c
++++ b/net/netfilter/xt_physdev.c
+@@ -104,11 +104,9 @@ static int physdev_mt_check(const struct xt_mtchk_param *par)
+ 	if (info->bitmask & (XT_PHYSDEV_OP_OUT | XT_PHYSDEV_OP_ISOUT) &&
+ 	    (!(info->bitmask & XT_PHYSDEV_OP_BRIDGED) ||
+ 	     info->invert & XT_PHYSDEV_OP_BRIDGED) &&
+-	    par->hook_mask & ((1 << NF_INET_LOCAL_OUT) |
+-	    (1 << NF_INET_FORWARD) | (1 << NF_INET_POST_ROUTING))) {
++	    par->hook_mask & (1 << NF_INET_LOCAL_OUT)) {
+ 		pr_info_ratelimited("--physdev-out and --physdev-is-out only supported in the FORWARD and POSTROUTING chains with bridged traffic\n");
+-		if (par->hook_mask & (1 << NF_INET_LOCAL_OUT))
+-			return -EINVAL;
++		return -EINVAL;
+ 	}
  
--	if (copy_from_user(arg, &v, sizeof(struct compat_floppy_drive_params)))
-+	if (copy_to_user(arg, &v, sizeof(struct compat_floppy_drive_params)))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -3816,7 +3816,7 @@ static int compat_getdrvstat(int drive,
- 	v.bufblocks = UDRS->bufblocks;
- 	mutex_unlock(&floppy_mutex);
- 
--	if (copy_from_user(arg, &v, sizeof(struct compat_floppy_drive_struct)))
-+	if (copy_to_user(arg, &v, sizeof(struct compat_floppy_drive_struct)))
- 		return -EFAULT;
- 	return 0;
- Eintr:
+ 	if (!brnf_probed) {
+-- 
+2.20.1
+
 
 
