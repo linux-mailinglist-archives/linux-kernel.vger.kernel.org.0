@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 488B7B873C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB487B8733
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:35:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406682AbfISWfP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:35:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46522 "EHLO mail.kernel.org"
+        id S2405335AbfISWJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:09:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393431AbfISWIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:08:34 -0400
+        id S2393472AbfISWIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:08:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E515218AF;
-        Thu, 19 Sep 2019 22:08:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10C3C21927;
+        Thu, 19 Sep 2019 22:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930914;
-        bh=pk8YjyyRwMJOPfCa/yxcD7L3OlLFFCTVp2VRhcwJ2fw=;
+        s=default; t=1568930931;
+        bh=+N6QR9bu5djDY6gZV3nER+oMcxR9bCcZAE69E84oqV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V7BG65Ee34QzFMMyMEBtquwHHGjGRZdR+NT6rdnZpkYyEap4WEJC4TO7XzVxo/xLW
-         s7WgMn80Q2Ynq6Hp72R+acqTeLnXvdZ0PWm+dOTZ1ZxkIwZofYf/qWS1pxbmBqVkaG
-         04KAixctwXssjRe4ewtnwYkdW+DzP46iTyQRaU9c=
+        b=Qe2wjnTXPWXhGHdD9aSDZcodWMeEDcfVoL6xFLj8lu+yi2Wr384641Am+2M31mtgx
+         K+n8Mjj+sJxOO54BHLJhyODb9Tyd0eIG3Z4R7qizhguiuXQYWEgN/UxbJgtcFcDJso
+         9J874IxrZ3bNhXDIXizbHYmMLl4kXnNGwJUAOxoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laszlo Ersek <lersek@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
+        stable@vger.kernel.org, Prashant Malani <pmalani@chromium.org>,
+        Hayes Wang <hayeswang@realtek.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 060/124] drm/virtio: use virtio_max_dma_size
-Date:   Fri, 20 Sep 2019 00:02:28 +0200
-Message-Id: <20190919214821.181161783@linuxfoundation.org>
+Subject: [PATCH 5.2 065/124] r8152: Set memory to all 0xFFs on failed reg reads
+Date:   Fri, 20 Sep 2019 00:02:33 +0200
+Message-Id: <20190919214821.364007359@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -44,51 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerd Hoffmann <kraxel@redhat.com>
+From: Prashant Malani <pmalani@chromium.org>
 
-[ Upstream commit 9b2a0a1ef66f96bf34921a3865581eca32ff05ec ]
+[ Upstream commit f53a7ad189594a112167efaf17ea8d0242b5ac00 ]
 
-We must make sure our scatterlist segments are not too big, otherwise
-we might see swiotlb failures (happens with sev, also reproducable with
-swiotlb=force).
+get_registers() blindly copies the memory written to by the
+usb_control_msg() call even if the underlying urb failed.
 
-Suggested-by: Laszlo Ersek <lersek@redhat.com>
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Laszlo Ersek <lersek@redhat.com>
-Link: http://patchwork.freedesktop.org/patch/msgid/20190821111210.27165-1-kraxel@redhat.com
+This could lead to junk register values being read by the driver, since
+some indirect callers of get_registers() ignore the return values. One
+example is:
+  ocp_read_dword() ignores the return value of generic_ocp_read(), which
+  calls get_registers().
+
+So, emulate PCI "Master Abort" behavior by setting the buffer to all
+0xFFs when usb_control_msg() fails.
+
+This patch is copied from the r8152 driver (v2.12.0) published by
+Realtek (www.realtek.com).
+
+Signed-off-by: Prashant Malani <pmalani@chromium.org>
+Acked-by: Hayes Wang <hayeswang@realtek.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/virtio/virtgpu_object.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/net/usb/r8152.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-index b2da31310d24c..09b526518f5a6 100644
---- a/drivers/gpu/drm/virtio/virtgpu_object.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-@@ -204,6 +204,7 @@ int virtio_gpu_object_get_sg_table(struct virtio_gpu_device *qdev,
- 		.interruptible = false,
- 		.no_wait_gpu = false
- 	};
-+	size_t max_segment;
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index 1a7b7bd412f9d..f2553dff5b178 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -787,8 +787,11 @@ int get_registers(struct r8152 *tp, u16 value, u16 index, u16 size, void *data)
+ 	ret = usb_control_msg(tp->udev, usb_rcvctrlpipe(tp->udev, 0),
+ 			      RTL8152_REQ_GET_REGS, RTL8152_REQT_READ,
+ 			      value, index, tmp, size, 500);
++	if (ret < 0)
++		memset(data, 0xff, size);
++	else
++		memcpy(data, tmp, size);
  
- 	/* wtf swapping */
- 	if (bo->pages)
-@@ -215,8 +216,13 @@ int virtio_gpu_object_get_sg_table(struct virtio_gpu_device *qdev,
- 	if (!bo->pages)
- 		goto out;
+-	memcpy(data, tmp, size);
+ 	kfree(tmp);
  
--	ret = sg_alloc_table_from_pages(bo->pages, pages, nr_pages, 0,
--					nr_pages << PAGE_SHIFT, GFP_KERNEL);
-+	max_segment = virtio_max_dma_size(qdev->vdev);
-+	max_segment &= PAGE_MASK;
-+	if (max_segment > SCATTERLIST_MAX_SEGMENT)
-+		max_segment = SCATTERLIST_MAX_SEGMENT;
-+	ret = __sg_alloc_table_from_pages(bo->pages, pages, nr_pages, 0,
-+					  nr_pages << PAGE_SHIFT,
-+					  max_segment, GFP_KERNEL);
- 	if (ret)
- 		goto out;
- 	return 0;
+ 	return ret;
 -- 
 2.20.1
 
