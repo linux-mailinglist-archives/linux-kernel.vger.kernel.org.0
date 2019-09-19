@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 265C6B801C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 19:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20A06B8023
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 19:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404273AbfISRij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 13:38:39 -0400
-Received: from mail.efficios.com ([167.114.142.138]:33778 "EHLO
+        id S2404404AbfISRiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 13:38:52 -0400
+Received: from mail.efficios.com ([167.114.142.138]:33808 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404007AbfISRif (ORCPT
+        with ESMTP id S2404041AbfISRif (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Sep 2019 13:38:35 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 30CD63318CA;
+        by mail.efficios.com (Postfix) with ESMTP id A99453318DC;
         Thu, 19 Sep 2019 13:38:34 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id c9qwR2L27jPs; Thu, 19 Sep 2019 13:38:33 -0400 (EDT)
+        with ESMTP id vxAVBfIg62Gm; Thu, 19 Sep 2019 13:38:34 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id CB3FC3318C3;
-        Thu, 19 Sep 2019 13:38:33 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com CB3FC3318C3
+        by mail.efficios.com (Postfix) with ESMTP id 427EA3318D5;
+        Thu, 19 Sep 2019 13:38:34 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 427EA3318D5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1568914713;
-        bh=Y+foybCeNbY5nGOuie70SNczfUyOhWGU3VGcIe+vLvk=;
+        s=default; t=1568914714;
+        bh=72Das0OPV9KlLsKcm7XxjdznJXHbh2C41hlTCYLQ4U4=;
         h=From:To:Date:Message-Id;
-        b=ts/CR1lkpviQ4sXmC8h0iLzZsvtJEsIGHWZllOqGUTjgs1CTA4aLhmEwWc1POC+tw
-         Kbd+JWVB9DDO8QbY2Li+S5Ang0g3oGdvL+zMaxi6I49j2BtcxsmcyL5CRRfZthyFLn
-         wh9qIgPJ27A5KquBPuvyHjWJHE6v5JewCY5YKWz9AGUaB2pYvLXn0hkc0DYZI/QgHH
-         Hcaa5zpbhaTFJlqPjBMuW8CTAGEtQZJiNJ2DO33hnPI53BG76MBzQ2Cwxmg72Xzgna
-         BC9tEkNVDGT15kj7qLnTRovTmwH2swTPcYfZAfAXc3KA+mJrJiHvhQUztFFiJlxUnU
-         Pme5diEaARyPA==
+        b=Wxm7fGN+28QkUTtldNV/lmnXeYsbE8HTm8B6Piv1RUSB8UggV1DY6Yct1bWdLz+4e
+         Aa+R73vxJnIF7arhF9FDq3BrU9ED9RZbKnyIavLEQbv/fokndUHP6D4KSPZG7MocnZ
+         6h/Fiu5zgS6WBymuroM9SYjEmL/iAwP4His9VE81Y5C3AXaZOgGuCC1Fx3LvvJRqP9
+         PhajqSp7uq69BGBDdHoSU30w5w1DIV9YU2/8bD2hZBjzjDNsp5Me0NcfDSN0/AO9Rg
+         54GvSBgc3qtwcRHnRbVG7JhjUzL1105sKpvrA/G14m93H6lFJyN+gdtqAIVNC0Gznj
+         USgchkPWWaZww==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id YUIHJmI0aXzJ; Thu, 19 Sep 2019 13:38:33 -0400 (EDT)
+        with ESMTP id AgMXqXRzIKNY; Thu, 19 Sep 2019 13:38:34 -0400 (EDT)
 Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id BEFD933188E;
-        Thu, 19 Sep 2019 13:38:31 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 0FDD2331896;
+        Thu, 19 Sep 2019 13:38:32 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
@@ -52,9 +52,9 @@ Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
         Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 5.4 6/7] sched/membarrier: Skip IPIs when mm->mm_users == 1
-Date:   Thu, 19 Sep 2019 13:37:04 -0400
-Message-Id: <20190919173705.2181-7-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 5.4 7/7] sched/membarrier: Return -ENOMEM to userspace on memory allocation failure
+Date:   Thu, 19 Sep 2019 13:37:05 -0400
+Message-Id: <20190919173705.2181-8-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190919173705.2181-1-mathieu.desnoyers@efficios.com>
 References: <20190919173705.2181-1-mathieu.desnoyers@efficios.com>
@@ -63,9 +63,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If there is only a single mm_user for the mm, the private expedited
-membarrier command can skip the IPIs, because only a single thread
-is using the mm.
+Remove the IPI fallback code from membarrier to deal with very
+infrequent cpumask memory allocation failure. Use GFP_KERNEL rather
+than GFP_NOWAIT, and relax the blocking guarantees for the expedited
+membarrier system call commands, allowing it to block if waiting for
+memory to be made available.
+
+In addition, now -ENOMEM can be returned to user-space if the cpumask
+memory allocation fails.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
@@ -81,47 +86,120 @@ Cc: Mike Galbraith <efault@gmx.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/membarrier.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ kernel/sched/membarrier.c | 61 ++++++++++++---------------------------
+ 1 file changed, 19 insertions(+), 42 deletions(-)
 
 diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
-index fce06a2e1d89..8afbdf92be0a 100644
+index 8afbdf92be0a..1420c656e8f0 100644
 --- a/kernel/sched/membarrier.c
 +++ b/kernel/sched/membarrier.c
-@@ -145,20 +145,21 @@ static int membarrier_private_expedited(int flags)
+@@ -66,7 +66,6 @@ void membarrier_exec_mmap(struct mm_struct *mm)
+ static int membarrier_global_expedited(void)
+ {
  	int cpu;
- 	bool fallback = false;
+-	bool fallback = false;
  	cpumask_var_t tmpmask;
-+	struct mm_struct *mm = current->mm;
  
- 	if (flags & MEMBARRIER_FLAG_SYNC_CORE) {
- 		if (!IS_ENABLED(CONFIG_ARCH_HAS_MEMBARRIER_SYNC_CORE))
- 			return -EINVAL;
--		if (!(atomic_read(&current->mm->membarrier_state) &
-+		if (!(atomic_read(&mm->membarrier_state) &
- 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE_READY))
- 			return -EPERM;
- 	} else {
--		if (!(atomic_read(&current->mm->membarrier_state) &
-+		if (!(atomic_read(&mm->membarrier_state) &
- 		      MEMBARRIER_STATE_PRIVATE_EXPEDITED_READY))
- 			return -EPERM;
+ 	if (num_online_cpus() == 1)
+@@ -78,15 +77,8 @@ static int membarrier_global_expedited(void)
+ 	 */
+ 	smp_mb();	/* system call entry is not a mb. */
+ 
+-	/*
+-	 * Expedited membarrier commands guarantee that they won't
+-	 * block, hence the GFP_NOWAIT allocation flag and fallback
+-	 * implementation.
+-	 */
+-	if (!zalloc_cpumask_var(&tmpmask, GFP_NOWAIT)) {
+-		/* Fallback for OOM. */
+-		fallback = true;
+-	}
++	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
++		return -ENOMEM;
+ 
+ 	cpus_read_lock();
+ 	rcu_read_lock();
+@@ -117,18 +109,15 @@ static int membarrier_global_expedited(void)
+ 		if (p->flags & PF_KTHREAD)
+ 			continue;
+ 
+-		if (!fallback)
+-			__cpumask_set_cpu(cpu, tmpmask);
+-		else
+-			smp_call_function_single(cpu, ipi_mb, NULL, 1);
++		__cpumask_set_cpu(cpu, tmpmask);
  	}
- 
--	if (num_online_cpus() == 1)
-+	if (atomic_read(&mm->mm_users) == 1 || num_online_cpus() == 1)
- 		return 0;
+ 	rcu_read_unlock();
+-	if (!fallback) {
+-		preempt_disable();
+-		smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+-		preempt_enable();
+-		free_cpumask_var(tmpmask);
+-	}
++
++	preempt_disable();
++	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
++	preempt_enable();
++
++	free_cpumask_var(tmpmask);
+ 	cpus_read_unlock();
  
  	/*
-@@ -193,7 +194,7 @@ static int membarrier_private_expedited(int flags)
+@@ -143,7 +132,6 @@ static int membarrier_global_expedited(void)
+ static int membarrier_private_expedited(int flags)
+ {
+ 	int cpu;
+-	bool fallback = false;
+ 	cpumask_var_t tmpmask;
+ 	struct mm_struct *mm = current->mm;
+ 
+@@ -168,15 +156,8 @@ static int membarrier_private_expedited(int flags)
+ 	 */
+ 	smp_mb();	/* system call entry is not a mb. */
+ 
+-	/*
+-	 * Expedited membarrier commands guarantee that they won't
+-	 * block, hence the GFP_NOWAIT allocation flag and fallback
+-	 * implementation.
+-	 */
+-	if (!zalloc_cpumask_var(&tmpmask, GFP_NOWAIT)) {
+-		/* Fallback for OOM. */
+-		fallback = true;
+-	}
++	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
++		return -ENOMEM;
+ 
+ 	cpus_read_lock();
+ 	rcu_read_lock();
+@@ -194,20 +175,16 @@ static int membarrier_private_expedited(int flags)
  		if (cpu == raw_smp_processor_id())
  			continue;
  		p = task_rcu_dereference(&cpu_rq(cpu)->curr);
--		if (p && p->mm == current->mm) {
-+		if (p && p->mm == mm) {
- 			if (!fallback)
- 				__cpumask_set_cpu(cpu, tmpmask);
- 			else
+-		if (p && p->mm == mm) {
+-			if (!fallback)
+-				__cpumask_set_cpu(cpu, tmpmask);
+-			else
+-				smp_call_function_single(cpu, ipi_mb, NULL, 1);
+-		}
++		if (p && p->mm == mm)
++			__cpumask_set_cpu(cpu, tmpmask);
+ 	}
+ 	rcu_read_unlock();
+-	if (!fallback) {
+-		preempt_disable();
+-		smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+-		preempt_enable();
+-		free_cpumask_var(tmpmask);
+-	}
++
++	preempt_disable();
++	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
++	preempt_enable();
++
++	free_cpumask_var(tmpmask);
+ 	cpus_read_unlock();
+ 
+ 	/*
 -- 
 2.17.1
 
