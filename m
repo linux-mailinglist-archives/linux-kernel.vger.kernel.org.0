@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15CDEB8610
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:26:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D452B8646
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:28:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406811AbfISWWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:22:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37192 "EHLO mail.kernel.org"
+        id S2407282AbfISW2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:28:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406778AbfISWWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:22:16 -0400
+        id S2393974AbfISWUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3FEB20678;
-        Thu, 19 Sep 2019 22:22:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E9F021924;
+        Thu, 19 Sep 2019 22:20:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931735;
-        bh=acqf8iWr/flWMhoJlMX9Rq4SnUZG25hjg5RNHePwK0M=;
+        s=default; t=1568931608;
+        bh=9bpHPLsDOpYikVS9tUwi031DN+m6WQ/rT07qfg7aNoE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S4bOcv0BUuGKoKsYVvhKFajpSVsLtMRxt67u2oi71oA+aH8e85fJrM3eN7XK59MFg
-         QCrRtnb2SIFJ62C5rXty6MrBrMHSH9ZImyMpHdO0V1cn2LaxjYUOGa6ah4alnrgKD/
-         nsHKFtiH88Dtqfhh0YxG5BytyGj4X6WG7jV8nr7g=
+        b=JhxxtlGYuMqptdjIBcaJgKjrvtVR6RcHGZb9PaxmMiPq9sVPft5uA9dY/klj6WdlT
+         80BAiL+HXVoylJMHNrUySV4FEL2ChkhS2+da9XNmio8OTO+LyEvwLT3HbQ70/z8/89
+         R2htj+vOb/IZ5BTfAdXROE71jRkydjBttJre63+Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.4 20/56] clk: rockchip: Dont yell about bad mmc phases when getting
-Date:   Fri, 20 Sep 2019 00:04:01 +0200
-Message-Id: <20190919214754.225657690@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 49/74] NFS: Fix initialisation of I/O result struct in nfs_pgio_rpcsetup
+Date:   Fri, 20 Sep 2019 00:04:02 +0200
+Message-Id: <20190919214809.516240428@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 6943b839721ad4a31ad2bacf6e71b21f2dfe3134 upstream.
+[ Upstream commit 17d8c5d145000070c581f2a8aa01edc7998582ab ]
 
-At boot time, my rk3288-veyron devices yell with 8 lines that look
-like this:
-  [    0.000000] rockchip_mmc_get_phase: invalid clk rate
+Initialise the result count to 0 rather than initialising it to the
+argument count. The reason is that we want to ensure we record the
+I/O stats correctly in the case where an error is returned (for
+instance in the layoutstats).
 
-This is because the clock framework at clk_register() time tries to
-get the phase but we don't have a parent yet.
-
-While the errors appear to be harmless they are still ugly and, in
-general, we don't want yells like this in the log unless they are
-important.
-
-There's no real reason to be yelling here.  We can still return
--EINVAL to indicate that the phase makes no sense without a parent.
-If someone really tries to do tuning and the clock is reported as 0
-then we'll see the yells in rockchip_mmc_set_phase().
-
-Fixes: 4bf59902b500 ("clk: rockchip: Prevent calculating mmc phase if clock rate is zero")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-mmc-phase.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/nfs/pagelist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -61,10 +61,8 @@ static int rockchip_mmc_get_phase(struct
- 	u32 delay_num = 0;
+diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
+index fad4d5188aafa..b6e25126a0b0f 100644
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -562,7 +562,7 @@ static void nfs_pgio_rpcsetup(struct nfs_pgio_header *hdr,
+ 	}
  
- 	/* See the comment for rockchip_mmc_set_phase below */
--	if (!rate) {
--		pr_err("%s: invalid clk rate\n", __func__);
-+	if (!rate)
- 		return -EINVAL;
--	}
- 
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
- 
+ 	hdr->res.fattr   = &hdr->fattr;
+-	hdr->res.count   = count;
++	hdr->res.count   = 0;
+ 	hdr->res.eof     = 0;
+ 	hdr->res.verf    = &hdr->verf;
+ 	nfs_fattr_init(&hdr->fattr);
+-- 
+2.20.1
+
 
 
