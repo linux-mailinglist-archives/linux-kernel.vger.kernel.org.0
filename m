@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8366BB854B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F69FB84CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392898AbfISWTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:19:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33202 "EHLO mail.kernel.org"
+        id S2392254AbfISWOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392787AbfISWTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:19:31 -0400
+        id S2392238AbfISWOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:14:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D730A20678;
-        Thu, 19 Sep 2019 22:19:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A298721924;
+        Thu, 19 Sep 2019 22:14:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931570;
-        bh=W034x0wSS5mmCtPD4124rROzfcSw96M90lN4pTGITfM=;
+        s=default; t=1568931260;
+        bh=fyQekP0mArh+zpjTNqJQ4onGKRm1HDxeaza/MX5kIQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nFeMTOVf6gTjuhAcNtp5Cyc8IPDAvWTwigxr9TNX3EYSjZTYjfO0mh+TFUya6mJGQ
-         RJ+VvyAMIIlZi8yBkTHWjMlUoKUZJOLzheTqudGkTH83GPfD4XGmVDrcJRZNujW6u2
-         BcGcAL28qxH938ePc3K07ZoowneSu4YAC8P9pSL4=
+        b=bknqK1fig21sK9/Z1GhjKLONQz1wZ/NfwIogqDJ50tplLq3gZIfOzomprQ6ftaHTg
+         FgiycOpikj9OMB1UDgYoDCErXbgpl/8LxhP+fgilk63x1tvv9WPolQnlUlS6j8+3sO
+         aYXpcTGbunzAFvQEw7Shts/mBLcvnH4sgdw4ombI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.9 33/74] nvmem: Use the same permissions for eeprom as for nvmem
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 61/79] amd-xgbe: Fix error path in xgbe_mod_init()
 Date:   Fri, 20 Sep 2019 00:03:46 +0200
-Message-Id: <20190919214808.197323512@linuxfoundation.org>
+Message-Id: <20190919214812.996287097@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,51 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean Delvare <jdelvare@suse.de>
+From: YueHaibing <yuehaibing@huawei.com>
 
-commit e70d8b287301eb6d7c7761c6171c56af62110ea3 upstream.
+[ Upstream commit b6b4dc4c1fa7f1c99398e7dc85758049645e9588 ]
 
-The compatibility "eeprom" attribute is currently root-only no
-matter what the configuration says. The "nvmem" attribute does
-respect the setting of the root_only configuration bit, so do the
-same for "eeprom".
+In xgbe_mod_init(), we should do cleanup if some error occurs
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: b6c217ab9be6 ("nvmem: Add backwards compatibility support for older EEPROM drivers.")
-Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20190728184255.563332e6@endymion
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: efbaa828330a ("amd-xgbe: Add support to handle device renaming")
+Fixes: 47f164deab22 ("amd-xgbe: Add PCI device support")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvmem/core.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/amd/xgbe/xgbe-main.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -401,10 +401,17 @@ static int nvmem_setup_compat(struct nvm
- 	if (!config->base_dev)
- 		return -EINVAL;
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-main.c b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
+index b41f23679a087..7ce9c69e9c44f 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-main.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
+@@ -469,13 +469,19 @@ static int __init xgbe_mod_init(void)
  
--	if (nvmem->read_only)
--		nvmem->eeprom = bin_attr_ro_root_nvmem;
--	else
--		nvmem->eeprom = bin_attr_rw_root_nvmem;
-+	if (nvmem->read_only) {
-+		if (config->root_only)
-+			nvmem->eeprom = bin_attr_ro_root_nvmem;
-+		else
-+			nvmem->eeprom = bin_attr_ro_nvmem;
-+	} else {
-+		if (config->root_only)
-+			nvmem->eeprom = bin_attr_rw_root_nvmem;
-+		else
-+			nvmem->eeprom = bin_attr_rw_nvmem;
-+	}
- 	nvmem->eeprom.attr.name = "eeprom";
- 	nvmem->eeprom.size = nvmem->size;
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ 	ret = xgbe_platform_init();
+ 	if (ret)
+-		return ret;
++		goto err_platform_init;
+ 
+ 	ret = xgbe_pci_init();
+ 	if (ret)
+-		return ret;
++		goto err_pci_init;
+ 
+ 	return 0;
++
++err_pci_init:
++	xgbe_platform_exit();
++err_platform_init:
++	unregister_netdevice_notifier(&xgbe_netdev_notifier);
++	return ret;
+ }
+ 
+ static void __exit xgbe_mod_exit(void)
+-- 
+2.20.1
+
 
 
