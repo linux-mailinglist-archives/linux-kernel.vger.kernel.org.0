@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D5E1B86EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66619B86A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406032AbfISWND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:13:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52032 "EHLO mail.kernel.org"
+        id S2406182AbfISWPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406008AbfISWM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:12:59 -0400
+        id S2406152AbfISWPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB6B4218AF;
-        Thu, 19 Sep 2019 22:12:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CF5F21907;
+        Thu, 19 Sep 2019 22:15:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931179;
-        bh=mrHPstL9iqpCEs00xslJimRfbU5IgiEpQekd6zBwPBc=;
+        s=default; t=1568931334;
+        bh=69sBRoNT7nFijGlVbMH7vzVAV5DSTj7/uo3LODtHMRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gMBwpIMJrOdEEA3FoqRAye8ezwuKlxdcgKBffwR43Tr3HPr451FJhC81bOp2NVxux
-         jOtetM8WXWZlbe0nFHulD2KWORgS+7OLzS2dot6S13nD5RrepOFoVMLCJtIIOV5lFy
-         B8BGHGAGvWlgYlNsUhZ41OnN563ADmGAfCUt16lY=
+        b=Mn6SZqEqacp4Xub930xBgQqXKZ3AxvRL4kS0SNZ/J0Sj08+Ny1DCSArjE/c0yirun
+         kyTA+8u7ijH8QBYhrGezkkMG9VWZo9YQTn2V9Juomf3WRr2CId826/tR1Fjk0Z+6Ca
+         DIo37FMV5PGzEWRHsS/wAIcHtKlkOuD6BVWah0Rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 30/79] selftests/bpf: fix "bind{4, 6} deny specific IP & port" on s390
-Date:   Fri, 20 Sep 2019 00:03:15 +0200
-Message-Id: <20190919214810.467024983@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Aaron Armstrong Skomra <aaron.skomra@wacom.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.14 01/59] HID: wacom: generic: read HID_DG_CONTACTMAX from any feature report
+Date:   Fri, 20 Sep 2019 00:03:16 +0200
+Message-Id: <20190919214756.170216569@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,61 +46,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Leoshkevich <iii@linux.ibm.com>
+From: Aaron Armstrong Skomra <skomra@gmail.com>
 
-[ Upstream commit 27df5c7068bf23cab282dc64b1c9894429b3b8a0 ]
+commit 184eccd40389df29abefab88092c4ff33191fd0c upstream.
 
-"bind4 allow specific IP & port" and "bind6 deny specific IP & port"
-fail on s390 because of endianness issue: the 4 IP address bytes are
-loaded as a word and compared with a constant, but the value of this
-constant should be different on big- and little- endian machines, which
-is not the case right now.
+In the generic code path, HID_DG_CONTACTMAX was previously
+only read from the second byte of report 0x23.
 
-Use __bpf_constant_ntohl to generate proper value based on machine
-endianness.
+Another report (0x82) has the HID_DG_CONTACTMAX in the
+higher nibble of the third byte. We should support reading the
+value of HID_DG_CONTACTMAX no matter what report we are reading
+or which position that value is in.
 
-Fixes: 1d436885b23b ("selftests/bpf: Selftest for sys_bind post-hooks.")
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+To do this we submit the feature report as a event report
+using hid_report_raw_event(). Our modified finger event path
+records the value of HID_DG_CONTACTMAX when it sees that usage.
+
+Fixes: 8ffffd5212846 ("HID: wacom: fix timeout on probe for some wacoms")
+Signed-off-by: Aaron Armstrong Skomra <aaron.skomra@wacom.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/testing/selftests/bpf/test_sock.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/hid/wacom_sys.c |   10 ++++++----
+ drivers/hid/wacom_wac.c |    4 ++++
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/test_sock.c b/tools/testing/selftests/bpf/test_sock.c
-index b8ebe2f580741..e9567122070a3 100644
---- a/tools/testing/selftests/bpf/test_sock.c
-+++ b/tools/testing/selftests/bpf/test_sock.c
-@@ -13,6 +13,7 @@
- #include <bpf/bpf.h>
+--- a/drivers/hid/wacom_sys.c
++++ b/drivers/hid/wacom_sys.c
+@@ -125,14 +125,16 @@ static void wacom_feature_mapping(struct
+ 		/* leave touch_max as is if predefined */
+ 		if (!features->touch_max) {
+ 			/* read manually */
+-			data = kzalloc(2, GFP_KERNEL);
++			n = hid_report_len(field->report);
++			data = hid_alloc_report_buf(field->report, GFP_KERNEL);
+ 			if (!data)
+ 				break;
+ 			data[0] = field->report->id;
+ 			ret = wacom_get_report(hdev, HID_FEATURE_REPORT,
+-						data, 2, WAC_CMD_RETRIES);
+-			if (ret == 2) {
+-				features->touch_max = data[1];
++					       data, n, WAC_CMD_RETRIES);
++			if (ret == n) {
++				ret = hid_report_raw_event(hdev,
++					HID_FEATURE_REPORT, data, n, 0);
+ 			} else {
+ 				features->touch_max = 16;
+ 				hid_warn(hdev, "wacom_feature_mapping: "
+--- a/drivers/hid/wacom_wac.c
++++ b/drivers/hid/wacom_wac.c
+@@ -2428,6 +2428,7 @@ static void wacom_wac_finger_event(struc
+ 	struct wacom *wacom = hid_get_drvdata(hdev);
+ 	struct wacom_wac *wacom_wac = &wacom->wacom_wac;
+ 	unsigned equivalent_usage = wacom_equivalent_usage(usage->hid);
++	struct wacom_features *features = &wacom->wacom_wac.features;
  
- #include "cgroup_helpers.h"
-+#include "bpf_endian.h"
- #include "bpf_rlimit.h"
- #include "bpf_util.h"
+ 	switch (equivalent_usage) {
+ 	case HID_GD_X:
+@@ -2448,6 +2449,9 @@ static void wacom_wac_finger_event(struc
+ 	case HID_DG_TIPSWITCH:
+ 		wacom_wac->hid_data.tipswitch = value;
+ 		break;
++	case HID_DG_CONTACTMAX:
++		features->touch_max = value;
++		return;
+ 	}
  
-@@ -231,7 +232,8 @@ static struct sock_test tests[] = {
- 			/* if (ip == expected && port == expected) */
- 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
- 				    offsetof(struct bpf_sock, src_ip6[3])),
--			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x01000000, 4),
-+			BPF_JMP_IMM(BPF_JNE, BPF_REG_7,
-+				    __bpf_constant_ntohl(0x00000001), 4),
- 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
- 				    offsetof(struct bpf_sock, src_port)),
- 			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x2001, 2),
-@@ -260,7 +262,8 @@ static struct sock_test tests[] = {
- 			/* if (ip == expected && port == expected) */
- 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
- 				    offsetof(struct bpf_sock, src_ip4)),
--			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x0100007F, 4),
-+			BPF_JMP_IMM(BPF_JNE, BPF_REG_7,
-+				    __bpf_constant_ntohl(0x7F000001), 4),
- 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
- 				    offsetof(struct bpf_sock, src_port)),
- 			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x1002, 2),
--- 
-2.20.1
-
+ 
 
 
