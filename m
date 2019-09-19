@@ -2,122 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F04E8B7D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:38:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D967B7D14
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732641AbfISOi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:38:26 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43712 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732626AbfISOi0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:38:26 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8JEbetv115088;
-        Thu, 19 Sep 2019 09:37:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568903860;
-        bh=MF3qsuF4n+o3m2uSbnHwtbN88u+xehQfFPTradyvPmM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=oop+2cl0Z5hydQEOc7aJzKOUC8+y7z7JdhpUZQ48FCxXjOkcMZ1L5BFe22g4abjTm
-         aGkkCdJjvzrRTBkmVIECVwkY1WTc1zljyPyknqsjQzIVpNZ3t864me2KvRHSmox9Uz
-         lMXRFJyZDKSGM4Eh+6J7GPgsT5E2l92r0G3JPUxA=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8JEbd4H073219
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Sep 2019 09:37:40 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 19
- Sep 2019 09:37:36 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 19 Sep 2019 09:37:39 -0500
-Received: from [10.250.132.15] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8JEbYUO049208;
-        Thu, 19 Sep 2019 09:37:35 -0500
-Subject: Re: [PATCH 00/23] mtd: spi-nor: Quad Enable and (un)lock methods
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>
-CC:     <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <joel@jms.id.au>, <andrew@aj.id.au>, <matthias.bgg@gmail.com>,
-        <vz@mleia.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-References: <20190917155426.7432-1-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <920a9946-af0d-1190-d59c-0b4acee71931@ti.com>
-Date:   Thu, 19 Sep 2019 20:07:34 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732692AbfISOlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:41:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732606AbfISOla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:41:30 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CEF62067B;
+        Thu, 19 Sep 2019 14:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568904089;
+        bh=TJHkQTtaGQHKS5CUibyY3os9gYsyoVt2bCM2nr2IE3I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YK7tcTHra9Le/h5CmSNa6LtWZSL5o4cwJ5rVAf2P+1X+wlsuAy/k+IOGQEI6mrRXo
+         NX6UgrRnJtjB5Tjxdh20rmvLJCYDLM1AjucKjmmdkioeymP65FUmeYdUixedjjrzog
+         rf26ghS7hGTSkoavOfnR5yDqRvo+1cLM2ntxQSpI=
+Date:   Thu, 19 Sep 2019 16:41:26 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>
+Cc:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        David Le Goff <David.Legoff@silabs.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: [PATCH v3 00/20] Add support for Silicon Labs WiFi chip WF200
+ and further
+Message-ID: <20190919144126.GA3997726@kroah.com>
+References: <20190919142527.31797-1-Jerome.Pouiller@silabs.com>
 MIME-Version: 1.0
-In-Reply-To: <20190917155426.7432-1-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190919142527.31797-1-Jerome.Pouiller@silabs.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 17-Sep-19 9:24 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+On Thu, Sep 19, 2019 at 02:25:36PM +0000, Jerome Pouiller wrote:
+> From: Jérôme Pouiller <jerome.pouiller@silabs.com>
 > 
-[...]
-> Tudor Ambarus (23):
->   mtd: spi-nor: hisi-sfc: Drop nor->erase NULL assignment
->   mtd: spi-nor: Introduce 'struct spi_nor_controller_ops'
->   mtd: spi-nor: cadence-quadspi: Fix cqspi_command_read() definition
->   mtd: spi-nor: Rename nor->params to nor->flash
->   mtd: spi-nor: Rework read_sr()
->   mtd: spi-nor: Rework read_fsr()
->   mtd: spi-nor: Rework read_cr()
->   mtd: spi-nor: Rework write_enable/disable()
->   mtd: spi-nor: Fix retlen handling in sst_write()
->   mtd: spi-nor: Rework write_sr()
->   mtd: spi-nor: Rework spi_nor_read/write_sr2()
->   mtd: spi-nor: Report error in spi_nor_xread_sr()
->   mtd: spi-nor: Void return type for spi_nor_clear_sr/fsr()
->   mtd: spi-nor: Drop duplicated new line
->   mtd: spi-nor: Drop spansion_quad_enable()
->   mtd: spi-nor: Fix errno on quad_enable methods
->   mtd: spi-nor: Fix clearing of QE bit on lock()/unlock()
->   mtd: spi-nor: Rework macronix_quad_enable()
->   mtd: spi-nor: Rework spansion(_no)_read_cr_quad_enable()
->   mtd: spi-nor: Update sr2_bit7_quad_enable()
->   mtd: spi-nor: Rework the disabling of block write protection
->   mtd: spi-nor: Add Global Block Unlock support
->   mtd: spi-nor: Unlock global block protection on sst26vf064b
-
-With whole series applied, I see:
-
-drivers/mtd/spi-nor/spi-nor.c:520: warning: Function parameter or member 'cr' not described in 'spi_nor_read_cr'
-drivers/mtd/spi-nor/spi-nor.c:520: warning: Excess function parameter 'fsr' description in 'spi_nor_read_cr'
-drivers/mtd/spi-nor/spi-nor.c:742: warning: Function parameter or member 'len' not described in 'spi_nor_write_sr'
-drivers/mtd/spi-nor/spi-nor.c:889: warning: Function parameter or member 'status_new' not described in 'spi_nor_write_sr1_and_check'
-drivers/mtd/spi-nor/spi-nor.c:889: warning: Function parameter or member 'mask' not described in 'spi_nor_write_sr1_and_check'
-drivers/mtd/spi-nor/spi-nor.c:923: warning: Function parameter or member 'status_new' not described in 'spi_nor_write_16bit_sr_and_check'
-drivers/mtd/spi-nor/spi-nor.c:923: warning: Function parameter or member 'mask' not described in 'spi_nor_write_16bit_sr_and_check'
-drivers/mtd/spi-nor/spi-nor.c:997: warning: Function parameter or member 'status_new' not described in 'spi_nor_write_sr_and_check'
-drivers/mtd/spi-nor/spi-nor.c:997: warning: Function parameter or member 'mask' not described in 'spi_nor_write_sr_and_check'
-
-Could you please fix up docs next time around?
-
-Regards
-Vignesh
+> Hello all,
 > 
->  drivers/mtd/spi-nor/aspeed-smc.c      |   23 +-
->  drivers/mtd/spi-nor/cadence-quadspi.c |   54 +-
->  drivers/mtd/spi-nor/hisi-sfc.c        |   23 +-
->  drivers/mtd/spi-nor/intel-spi.c       |   24 +-
->  drivers/mtd/spi-nor/mtk-quadspi.c     |   25 +-
->  drivers/mtd/spi-nor/nxp-spifi.c       |   23 +-
->  drivers/mtd/spi-nor/spi-nor.c         | 1697 ++++++++++++++++++---------------
->  include/linux/mtd/spi-nor.h           |   75 +-
->  8 files changed, 1050 insertions(+), 894 deletions(-)
+> This series add support for Silicon Labs WiFi chip WF200 and further:
 > 
+>    https://www.silabs.com/documents/public/data-sheets/wf200-datasheet.pdf
+> 
+> This driver is an export from:
+> 
+>    https://github.com/SiliconLabs/wfx-linux-driver/
+>    
+> I squashed all commits from github (it definitely does not make sense to
+> import history). Then I split it in comprehensible (at least try to be)
+> commits. I hope it will help readers to understand driver architecture.
+> IMHO, firsts commits are clean enough to be reviewed. Things get more
+> difficult when I introduce mac8011 API. I tried to extract important
+> parts like Rx/Tx process but, big and complex patches seem unavoidable
+> in this part.
+> 
+> Architecture itself is described in commit messages.
+> 
+> The series below is aligned on version 2.3.1 on github. If compare this
+> series with github, you will find traditional differences between
+> external and a in-tree driver: Documentation, build infrastructure,
+> compatibility with older kernel revisions, etc... In add, I dropped all
+> code in CONFIG_WFX_SECURE_LINK. Indeed, "Secure Link" feature depends
+> on mbedtls and I don't think to pull mbedtls in kernel is an option
+> (see "TODO" file in first commit).
+> 
+> v3:
+>   - Fill commit log of patches 18, 19 and 20
+> 
+> v2:
+>   - Add TODO file (and dropped todo list from cover letter)
+>   - Drop code relative to compatibility with older kernels
+
+dude, slow down.  wait for others to look at this.
+
+there's nothing I can do until after 5.4-rc1 is out, so there is no rush
+at all...
+
+thanks,
+
+greg k-h
