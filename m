@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 547FDB83E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E78BB83E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405049AbfISWFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:05:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42854 "EHLO mail.kernel.org"
+        id S2405060AbfISWFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:05:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405007AbfISWFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:05:39 -0400
+        id S2405017AbfISWFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:05:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3D0921920;
-        Thu, 19 Sep 2019 22:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BED5218AF;
+        Thu, 19 Sep 2019 22:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930738;
-        bh=+BPb9aFqpMEOx8qFpFHPVr0Dux9gRUGsNun4XS+W0Ds=;
+        s=default; t=1568930740;
+        bh=dlmc9ydi+R3F2noOv0d6WqylLM7f+rTyJ1JHOwZrmOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x8QXFP4d/+VpN4jG7kgDc6YNxGl+dA9qkwQpBgG9Sl00LpmVYyVAGJSpVBANgg6N3
-         KZxKOu5q3mdjcunOKnSojPymHXAgCyjlNC1as/FCxHTjQS5aeITECXkCLSVXt8y/0U
-         3K0lMvFzc6n4b33i1xQLwMB9LVVwaFNcYDtkg+2M=
+        b=qyKCGtnQtSGkGEBkSbGuDt+CbQBZx3QS5bGAKZ7g45ENkFi9GWivL6OOe79ne+mFD
+         TF4anOEz6EMek8QVSKcfFmiD8FtRjSG36QgiWxZhexNeiDlv8Ix30IgiQ8PwkxrLiZ
+         oRXrC/1P8Vs/r4EOpyyEyfmeK5Q7d+tWlVjewBEw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        Colin Walters <walters@verbum.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 5.3 18/21] ovl: fix regression caused by overlapping layers detection
-Date:   Fri, 20 Sep 2019 00:03:19 +0200
-Message-Id: <20190919214711.175921151@linuxfoundation.org>
+        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 5.3 19/21] phy: qcom-qmp: Correct ready status, again
+Date:   Fri, 20 Sep 2019 00:03:20 +0200
+Message-Id: <20190919214713.133603641@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
 References: <20190919214657.842130855@linuxfoundation.org>
@@ -44,226 +47,183 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit 0be0bfd2de9dfdd2098a9c5b14bdd8f739c9165d upstream.
+commit 14ced7e3a1ae9bed7051df3718c8c7b583854a5c upstream.
 
-Once upon a time, commit 2cac0c00a6cd ("ovl: get exclusive ownership on
-upper/work dirs") in v4.13 added some sanity checks on overlayfs layers.
-This change caused a docker regression. The root cause was mount leaks
-by docker, which as far as I know, still exist.
+Despite extensive testing of commit 885bd765963b ("phy: qcom-qmp: Correct
+READY_STATUS poll break condition") I failed to conclude that the
+PHYSTATUS bit of the PCS_STATUS register used in PCIe and USB3 falls as
+the PHY gets ready. Similar to the prior bug with UFS the code will
+generally get past the check before the transition and thereby
+"succeed".
 
-To mitigate the regression, commit 85fdee1eef1a ("ovl: fix regression
-caused by exclusive upper/work dir protection") in v4.14 turned the
-mount errors into warnings for the default index=off configuration.
+Correct the name of the register used PCIe and USB3 PHYs, replace
+mask_pcs_ready with a constant expression depending on the type of the
+PHY and check for the appropriate ready state.
 
-Recently, commit 146d62e5a586 ("ovl: detect overlapping layers") in
-v5.2, re-introduced exclusive upper/work dir checks regardless of
-index=off configuration.
-
-This changes the status quo and mount leak related bug reports have
-started to re-surface. Restore the status quo to fix the regressions.
-To clarify, index=off does NOT relax overlapping layers check for this
-ovelayfs mount. index=off only relaxes exclusive upper/work dir checks
-with another overlayfs mount.
-
-To cover the part of overlapping layers detection that used the
-exclusive upper/work dir checks to detect overlap with self upper/work
-dir, add a trap also on the work base dir.
-
-Link: https://github.com/moby/moby/issues/34672
-Link: https://lore.kernel.org/linux-fsdevel/20171006121405.GA32700@veci.piliscsaba.szeredi.hu/
-Link: https://github.com/containers/libpod/issues/3540
-Fixes: 146d62e5a586 ("ovl: detect overlapping layers")
-Cc: <stable@vger.kernel.org> # v4.19+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Tested-by: Colin Walters <walters@verbum.org>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Cc: stable@vger.kernel.org
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Evan Green <evgreen@chromium.org>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>
+Reported-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Fixes: 885bd765963b ("phy: qcom-qmp: Correct READY_STATUS poll break condition")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/filesystems/overlayfs.txt |    2 
- fs/overlayfs/ovl_entry.h                |    1 
- fs/overlayfs/super.c                    |   73 ++++++++++++++++++++------------
- 3 files changed, 49 insertions(+), 27 deletions(-)
+ drivers/phy/qualcomm/phy-qcom-qmp.c |   33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
---- a/Documentation/filesystems/overlayfs.txt
-+++ b/Documentation/filesystems/overlayfs.txt
-@@ -302,7 +302,7 @@ beneath or above the path of another ove
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -35,7 +35,7 @@
+ #define PLL_READY_GATE_EN			BIT(3)
+ /* QPHY_PCS_STATUS bit */
+ #define PHYSTATUS				BIT(6)
+-/* QPHY_COM_PCS_READY_STATUS bit */
++/* QPHY_PCS_READY_STATUS & QPHY_COM_PCS_READY_STATUS bit */
+ #define PCS_READY				BIT(0)
  
- Using an upper layer path and/or a workdir path that are already used by
- another overlay mount is not allowed and may fail with EBUSY.  Using
--partially overlapping paths is not allowed but will not fail with EBUSY.
-+partially overlapping paths is not allowed and may fail with EBUSY.
- If files are accessed from two overlayfs mounts which share or overlap the
- upper layer and/or workdir path the behavior of the overlay is undefined,
- though it will not result in a crash or deadlock.
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -66,6 +66,7 @@ struct ovl_fs {
- 	bool workdir_locked;
- 	/* Traps in ovl inode cache */
- 	struct inode *upperdir_trap;
-+	struct inode *workbasedir_trap;
- 	struct inode *workdir_trap;
- 	struct inode *indexdir_trap;
- 	/* Inode numbers in all layers do not use the high xino_bits */
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -212,6 +212,7 @@ static void ovl_free_fs(struct ovl_fs *o
- {
- 	unsigned i;
+ /* QPHY_V3_DP_COM_RESET_OVRD_CTRL register bits */
+@@ -115,6 +115,7 @@ enum qphy_reg_layout {
+ 	QPHY_SW_RESET,
+ 	QPHY_START_CTRL,
+ 	QPHY_PCS_READY_STATUS,
++	QPHY_PCS_STATUS,
+ 	QPHY_PCS_AUTONOMOUS_MODE_CTRL,
+ 	QPHY_PCS_LFPS_RXTERM_IRQ_CLEAR,
+ 	QPHY_PCS_LFPS_RXTERM_IRQ_STATUS,
+@@ -133,7 +134,7 @@ static const unsigned int pciephy_regs_l
+ 	[QPHY_FLL_MAN_CODE]		= 0xd4,
+ 	[QPHY_SW_RESET]			= 0x00,
+ 	[QPHY_START_CTRL]		= 0x08,
+-	[QPHY_PCS_READY_STATUS]		= 0x174,
++	[QPHY_PCS_STATUS]		= 0x174,
+ };
  
-+	iput(ofs->workbasedir_trap);
- 	iput(ofs->indexdir_trap);
- 	iput(ofs->workdir_trap);
- 	iput(ofs->upperdir_trap);
-@@ -1003,6 +1004,25 @@ static int ovl_setup_trap(struct super_b
- 	return 0;
- }
+ static const unsigned int usb3phy_regs_layout[] = {
+@@ -144,7 +145,7 @@ static const unsigned int usb3phy_regs_l
+ 	[QPHY_FLL_MAN_CODE]		= 0xd0,
+ 	[QPHY_SW_RESET]			= 0x00,
+ 	[QPHY_START_CTRL]		= 0x08,
+-	[QPHY_PCS_READY_STATUS]		= 0x17c,
++	[QPHY_PCS_STATUS]		= 0x17c,
+ 	[QPHY_PCS_AUTONOMOUS_MODE_CTRL]	= 0x0d4,
+ 	[QPHY_PCS_LFPS_RXTERM_IRQ_CLEAR]  = 0x0d8,
+ 	[QPHY_PCS_LFPS_RXTERM_IRQ_STATUS] = 0x178,
+@@ -153,7 +154,7 @@ static const unsigned int usb3phy_regs_l
+ static const unsigned int qmp_v3_usb3phy_regs_layout[] = {
+ 	[QPHY_SW_RESET]			= 0x00,
+ 	[QPHY_START_CTRL]		= 0x08,
+-	[QPHY_PCS_READY_STATUS]		= 0x174,
++	[QPHY_PCS_STATUS]		= 0x174,
+ 	[QPHY_PCS_AUTONOMOUS_MODE_CTRL]	= 0x0d8,
+ 	[QPHY_PCS_LFPS_RXTERM_IRQ_CLEAR]  = 0x0dc,
+ 	[QPHY_PCS_LFPS_RXTERM_IRQ_STATUS] = 0x170,
+@@ -911,7 +912,6 @@ struct qmp_phy_cfg {
  
-+/*
-+ * Determine how we treat concurrent use of upperdir/workdir based on the
-+ * index feature. This is papering over mount leaks of container runtimes,
-+ * for example, an old overlay mount is leaked and now its upperdir is
-+ * attempted to be used as a lower layer in a new overlay mount.
-+ */
-+static int ovl_report_in_use(struct ovl_fs *ofs, const char *name)
-+{
-+	if (ofs->config.index) {
-+		pr_err("overlayfs: %s is in-use as upperdir/workdir of another mount, mount with '-o index=off' to override exclusive upperdir protection.\n",
-+		       name);
-+		return -EBUSY;
+ 	unsigned int start_ctrl;
+ 	unsigned int pwrdn_ctrl;
+-	unsigned int mask_pcs_ready;
+ 	unsigned int mask_com_pcs_ready;
+ 
+ 	/* true, if PHY has a separate PHY_COM control block */
+@@ -1074,7 +1074,6 @@ static const struct qmp_phy_cfg msm8996_
+ 
+ 	.start_ctrl		= PCS_START | PLL_READY_GATE_EN,
+ 	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+-	.mask_pcs_ready		= PHYSTATUS,
+ 	.mask_com_pcs_ready	= PCS_READY,
+ 
+ 	.has_phy_com_ctrl	= true,
+@@ -1106,7 +1105,6 @@ static const struct qmp_phy_cfg msm8996_
+ 
+ 	.start_ctrl		= SERDES_START | PCS_START,
+ 	.pwrdn_ctrl		= SW_PWRDN,
+-	.mask_pcs_ready		= PHYSTATUS,
+ };
+ 
+ /* list of resets */
+@@ -1136,7 +1134,6 @@ static const struct qmp_phy_cfg ipq8074_
+ 
+ 	.start_ctrl		= SERDES_START | PCS_START,
+ 	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+-	.mask_pcs_ready		= PHYSTATUS,
+ 
+ 	.has_phy_com_ctrl	= false,
+ 	.has_lane_rst		= false,
+@@ -1167,7 +1164,6 @@ static const struct qmp_phy_cfg qmp_v3_u
+ 
+ 	.start_ctrl		= SERDES_START | PCS_START,
+ 	.pwrdn_ctrl		= SW_PWRDN,
+-	.mask_pcs_ready		= PHYSTATUS,
+ 
+ 	.has_pwrdn_delay	= true,
+ 	.pwrdn_delay_min	= POWER_DOWN_DELAY_US_MIN,
+@@ -1199,7 +1195,6 @@ static const struct qmp_phy_cfg qmp_v3_u
+ 
+ 	.start_ctrl		= SERDES_START | PCS_START,
+ 	.pwrdn_ctrl		= SW_PWRDN,
+-	.mask_pcs_ready		= PHYSTATUS,
+ 
+ 	.has_pwrdn_delay	= true,
+ 	.pwrdn_delay_min	= POWER_DOWN_DELAY_US_MIN,
+@@ -1226,7 +1221,6 @@ static const struct qmp_phy_cfg sdm845_u
+ 
+ 	.start_ctrl		= SERDES_START,
+ 	.pwrdn_ctrl		= SW_PWRDN,
+-	.mask_pcs_ready		= PCS_READY,
+ 
+ 	.is_dual_lane_phy	= true,
+ 	.no_pcs_sw_reset	= true,
+@@ -1254,7 +1248,6 @@ static const struct qmp_phy_cfg msm8998_
+ 
+ 	.start_ctrl             = SERDES_START | PCS_START,
+ 	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+-	.mask_pcs_ready		= PHYSTATUS,
+ };
+ 
+ static const struct qmp_phy_cfg msm8998_usb3phy_cfg = {
+@@ -1279,7 +1272,6 @@ static const struct qmp_phy_cfg msm8998_
+ 
+ 	.start_ctrl             = SERDES_START | PCS_START,
+ 	.pwrdn_ctrl             = SW_PWRDN,
+-	.mask_pcs_ready         = PHYSTATUS,
+ 
+ 	.is_dual_lane_phy       = true,
+ };
+@@ -1457,7 +1449,7 @@ static int qcom_qmp_phy_enable(struct ph
+ 	void __iomem *pcs = qphy->pcs;
+ 	void __iomem *dp_com = qmp->dp_com;
+ 	void __iomem *status;
+-	unsigned int mask, val;
++	unsigned int mask, val, ready;
+ 	int ret;
+ 
+ 	dev_vdbg(qmp->dev, "Initializing QMP phy\n");
+@@ -1545,10 +1537,17 @@ static int qcom_qmp_phy_enable(struct ph
+ 	/* start SerDes and Phy-Coding-Sublayer */
+ 	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
+ 
+-	status = pcs + cfg->regs[QPHY_PCS_READY_STATUS];
+-	mask = cfg->mask_pcs_ready;
++	if (cfg->type == PHY_TYPE_UFS) {
++		status = pcs + cfg->regs[QPHY_PCS_READY_STATUS];
++		mask = PCS_READY;
++		ready = PCS_READY;
 +	} else {
-+		pr_warn("overlayfs: %s is in-use as upperdir/workdir of another mount, accessing files from both mounts will result in undefined behavior.\n",
-+			name);
-+		return 0;
++		status = pcs + cfg->regs[QPHY_PCS_STATUS];
++		mask = PHYSTATUS;
++		ready = 0;
 +	}
-+}
-+
- static int ovl_get_upper(struct super_block *sb, struct ovl_fs *ofs,
- 			 struct path *upperpath)
- {
-@@ -1040,14 +1060,12 @@ static int ovl_get_upper(struct super_bl
- 	upper_mnt->mnt_flags &= ~(MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME);
- 	ofs->upper_mnt = upper_mnt;
  
--	err = -EBUSY;
- 	if (ovl_inuse_trylock(ofs->upper_mnt->mnt_root)) {
- 		ofs->upperdir_locked = true;
--	} else if (ofs->config.index) {
--		pr_err("overlayfs: upperdir is in-use by another mount, mount with '-o index=off' to override exclusive upperdir protection.\n");
--		goto out;
- 	} else {
--		pr_warn("overlayfs: upperdir is in-use by another mount, accessing files from both mounts will result in undefined behavior.\n");
-+		err = ovl_report_in_use(ofs, "upperdir");
-+		if (err)
-+			goto out;
- 	}
- 
- 	err = 0;
-@@ -1157,16 +1175,19 @@ static int ovl_get_workdir(struct super_
- 
- 	ofs->workbasedir = dget(workpath.dentry);
- 
--	err = -EBUSY;
- 	if (ovl_inuse_trylock(ofs->workbasedir)) {
- 		ofs->workdir_locked = true;
--	} else if (ofs->config.index) {
--		pr_err("overlayfs: workdir is in-use by another mount, mount with '-o index=off' to override exclusive workdir protection.\n");
--		goto out;
- 	} else {
--		pr_warn("overlayfs: workdir is in-use by another mount, accessing files from both mounts will result in undefined behavior.\n");
-+		err = ovl_report_in_use(ofs, "workdir");
-+		if (err)
-+			goto out;
- 	}
- 
-+	err = ovl_setup_trap(sb, ofs->workbasedir, &ofs->workbasedir_trap,
-+			     "workdir");
-+	if (err)
-+		goto out;
-+
- 	err = ovl_make_workdir(sb, ofs, &workpath);
- 
- out:
-@@ -1313,16 +1334,16 @@ static int ovl_get_lower_layers(struct s
- 		if (err < 0)
- 			goto out;
- 
--		err = -EBUSY;
--		if (ovl_is_inuse(stack[i].dentry)) {
--			pr_err("overlayfs: lowerdir is in-use as upperdir/workdir\n");
--			goto out;
--		}
--
- 		err = ovl_setup_trap(sb, stack[i].dentry, &trap, "lowerdir");
- 		if (err)
- 			goto out;
- 
-+		if (ovl_is_inuse(stack[i].dentry)) {
-+			err = ovl_report_in_use(ofs, "lowerdir");
-+			if (err)
-+				goto out;
-+		}
-+
- 		mnt = clone_private_mount(&stack[i]);
- 		err = PTR_ERR(mnt);
- 		if (IS_ERR(mnt)) {
-@@ -1469,8 +1490,8 @@ out_err:
-  * - another layer of this overlayfs instance
-  * - upper/work dir of any overlayfs instance
-  */
--static int ovl_check_layer(struct super_block *sb, struct dentry *dentry,
--			   const char *name)
-+static int ovl_check_layer(struct super_block *sb, struct ovl_fs *ofs,
-+			   struct dentry *dentry, const char *name)
- {
- 	struct dentry *next = dentry, *parent;
- 	int err = 0;
-@@ -1482,13 +1503,11 @@ static int ovl_check_layer(struct super_
- 
- 	/* Walk back ancestors to root (inclusive) looking for traps */
- 	while (!err && parent != next) {
--		if (ovl_is_inuse(parent)) {
--			err = -EBUSY;
--			pr_err("overlayfs: %s path overlapping in-use upperdir/workdir\n",
--			       name);
--		} else if (ovl_lookup_trap_inode(sb, parent)) {
-+		if (ovl_lookup_trap_inode(sb, parent)) {
- 			err = -ELOOP;
- 			pr_err("overlayfs: overlapping %s path\n", name);
-+		} else if (ovl_is_inuse(parent)) {
-+			err = ovl_report_in_use(ofs, name);
- 		}
- 		next = parent;
- 		parent = dget_parent(next);
-@@ -1509,7 +1528,8 @@ static int ovl_check_overlapping_layers(
- 	int i, err;
- 
- 	if (ofs->upper_mnt) {
--		err = ovl_check_layer(sb, ofs->upper_mnt->mnt_root, "upperdir");
-+		err = ovl_check_layer(sb, ofs, ofs->upper_mnt->mnt_root,
-+				      "upperdir");
- 		if (err)
- 			return err;
- 
-@@ -1520,13 +1540,14 @@ static int ovl_check_overlapping_layers(
- 		 * workbasedir.  In that case, we already have their traps in
- 		 * inode cache and we will catch that case on lookup.
- 		 */
--		err = ovl_check_layer(sb, ofs->workbasedir, "workdir");
-+		err = ovl_check_layer(sb, ofs, ofs->workbasedir, "workdir");
- 		if (err)
- 			return err;
- 	}
- 
- 	for (i = 0; i < ofs->numlower; i++) {
--		err = ovl_check_layer(sb, ofs->lower_layers[i].mnt->mnt_root,
-+		err = ovl_check_layer(sb, ofs,
-+				      ofs->lower_layers[i].mnt->mnt_root,
- 				      "lowerdir");
- 		if (err)
- 			return err;
+-	ret = readl_poll_timeout(status, val, val & mask, 10,
++	ret = readl_poll_timeout(status, val, (val & mask) == ready, 10,
+ 				 PHY_INIT_COMPLETE_TIMEOUT);
+ 	if (ret) {
+ 		dev_err(qmp->dev, "phy initialization timed-out\n");
 
 
