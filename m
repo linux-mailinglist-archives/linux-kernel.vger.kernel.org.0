@@ -2,202 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 614CFB7F9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 19:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC57EB7FA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 19:06:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391418AbfISRFy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Sep 2019 13:05:54 -0400
-Received: from mga01.intel.com ([192.55.52.88]:2739 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391361AbfISRFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 13:05:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2019 10:05:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,524,1559545200"; 
-   d="scan'208";a="188147351"
-Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Sep 2019 10:05:52 -0700
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.139]) by
- ORSMSX109.amr.corp.intel.com ([169.254.11.122]) with mapi id 14.03.0439.000;
- Thu, 19 Sep 2019 10:05:52 -0700
-From:   "Moore, Robert" <robert.moore@intel.com>
-To:     Nikolaus Voss <nv@vosn.de>
-CC:     Ferry Toth <fntoth@gmail.com>,
-        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "Jacek Anaszewski" <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, "Dan Murphy" <dmurphy@ti.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>
-Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
-Thread-Topic: [PATCH] ACPICA: make acpi_load_table() return table index
-Thread-Index: AQHVaUE6M44QnoJV0UqVXW85SrAmnKcoFnTQgAGaZwD///c2gIAAhhUAgAAa0gD//5ht0IAEqKwAgAL5tVCAAHqlgIABR7TA
-Date:   Thu, 19 Sep 2019 17:05:51 +0000
-Message-ID: <94F2FBAB4432B54E8AACC7DFDE6C92E3B9686438@ORSMSX110.amr.corp.intel.com>
-References: <20190906174605.GY2680@smile.fi.intel.com>
- <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
- <94F2FBAB4432B54E8AACC7DFDE6C92E3B9679CE8@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1909130911180.20316@fox.voss.local>
- <94F2FBAB4432B54E8AACC7DFDE6C92E3B967ADF6@ORSMSX110.amr.corp.intel.com>
- <20190913151228.GT2680@smile.fi.intel.com>
- <7625fe37-1710-056d-fb9e-39c33fd962a1@gmail.com>
- <94F2FBAB4432B54E8AACC7DFDE6C92E3B967AEC9@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1909161134070.2910@fox.voss.local>
- <94F2FBAB4432B54E8AACC7DFDE6C92E3B968327D@ORSMSX110.amr.corp.intel.com>
- <alpine.DEB.2.20.1909181624550.3925@fox.voss.local>
-In-Reply-To: <alpine.DEB.2.20.1909181624550.3925@fox.voss.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGQ3YmIzMDYtZmU0OS00Y2EwLWFhMjItMTJkNTNiNjJiNzk0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaHZodWNkMzRLTktEWDZBenVVOVRqUUdzTDVoRGpoKzJxU0QyVFwvVVZha05lOVNSajF5SnZlekF2M2lHNUpBQ1UifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S2391614AbfISRGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 13:06:14 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34286 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391432AbfISRGM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 13:06:12 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b128so2735826pfa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 10:06:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vfr/ak8PqAW3a7/adXohYxQN4EYY6B1BFF1JySzS168=;
+        b=MJJjNVx5uL2HXYrQioINGIINJXrL+8NHmytYrd5C3UwHDWLgWE03FZMknALR7lCzHd
+         cVI4agqMVF5gouZA6bF+foFe75VuKkdq9/n5pWIwJT1aP6NFsI8QdhEMwDvCF7IqdoyD
+         f65lX8lTnv1HdiTXGLoPHQVB/Dt42gsdD4+Tuog368YFq3r3NQmZJOMlxaBDKaSqolBu
+         6UCN7IUxVCUcaxDr0IbU5L511/jB9zuv1IUt0jf1K+/0EfjXmG1wrM07Hdr9X0Mni97h
+         Rf1WpExTtW89vWzvCGrdPiHc8R+9DunVEifQMKWNqY//gf9w1fsUfuUmLmFKmaPXuVsY
+         N3+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vfr/ak8PqAW3a7/adXohYxQN4EYY6B1BFF1JySzS168=;
+        b=pni0kCQrh7qHijbK/K8raxYA5AwPcMCXV847NEZrkb/2bxG2dvkPxjpf9Cd5FtOuT7
+         EkGhXkac26xjVx1bnYwu1wEr9Mqnd0kkt/j5pK66WQtXgQZDMHcnQttzqMUKIOryqd92
+         QVJROsoYluz2Wv+BkuuYvyhV7Cnx0IqM+JyefjCNfpTxEHlwYawTis3tH4zaM5LzXYZ1
+         39UpIW0c4PTlSQjouH4kKuNdiFb6wFi5EyrbyAHV8Zln6M+TOBP1ZsnmNa3H/Z/nC4Ld
+         1m1e0EUdq97cq3S3R6OASMlG0fWJ+QcwQfoN2igeZlm2Q2oscQWPKmVVK0CD6r+Sdyzr
+         qZDA==
+X-Gm-Message-State: APjAAAVI0FZI3xCBNY0tEfy/sfhdshEvkm9ZbeVKUdmajT0QamWWKHN8
+        Fe+fU7YZY36fN6qvb+Z0ts+EDIGnOl80vhIWRVKv6g==
+X-Google-Smtp-Source: APXvYqwF+yEDDmq8bzyXKUa8CBKAnT1PB+m3Gugv1nZP8AoxwOhoLKvil38EsnOPFTFQHI/1545FCjvI+5Emi0e+4U0=
+X-Received: by 2002:a63:d20f:: with SMTP id a15mr5142567pgg.130.1568912770407;
+ Thu, 19 Sep 2019 10:06:10 -0700 (PDT)
 MIME-Version: 1.0
+References: <000000000000cd1def0592ab9697@google.com> <Pine.LNX.4.44L0.1909171423360.1590-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1909171423360.1590-100000@iolanthe.rowland.org>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 19 Sep 2019 19:05:59 +0200
+Message-ID: <CAAeHK+wh0bQKRXU_7fOC5XZKUUL1QW8DskCBJKQACwqZd=tZyw@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Write in ga_probe
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     syzbot <syzbot+403741a091bf41d4ae79@syzkaller.appspotmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
------Original Message-----
-From: Nikolaus Voss [mailto:nv@vosn.de] 
-Sent: Wednesday, September 18, 2019 7:32 AM
-To: Moore, Robert <robert.moore@intel.com>
-Cc: Ferry Toth <fntoth@gmail.com>; Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, Erik <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org; Jan Kiszka <jan.kiszka@siemens.com>
-Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
-
-On Wed, 18 Sep 2019, Moore, Robert wrote:
+On Tue, Sep 17, 2019 at 8:24 PM Alan Stern <stern@rowland.harvard.edu> wrote:
 >
+> On Mon, 16 Sep 2019, syzbot wrote:
 >
-> -----Original Message-----
-> From: Nikolaus Voss [mailto:nv@vosn.de]
-> Sent: Monday, September 16, 2019 2:47 AM
-> To: Moore, Robert <robert.moore@intel.com>
-> Cc: Ferry Toth <fntoth@gmail.com>; Shevchenko, Andriy 
-> <andriy.shevchenko@intel.com>; Schmauss, Erik 
-> <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len 
-> Brown <lenb@kernel.org>; Jacek Anaszewski 
-> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy 
-> <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org; 
-> linux-kernel@vger.kernel.org; Jan Kiszka <jan.kiszka@siemens.com>
-> Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=14045831600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=403741a091bf41d4ae79
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c1e62d600000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166a3a95600000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+403741a091bf41d4ae79@syzkaller.appspotmail.com
+> >
+> > usb 1-1: config 0 interface 0 altsetting 0 has 1 endpoint descriptor,
+> > different from the interface descriptor's value: 9
+> > usb 1-1: New USB device found, idVendor=0e8f, idProduct=0012, bcdDevice=
+> > 0.00
+> > usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> > usb 1-1: config 0 descriptor??
+> > greenasia 0003:0E8F:0012.0001: unknown main item tag 0x0
+> > greenasia 0003:0E8F:0012.0001: hidraw0: USB HID v0.00 Device [HID
+> > 0e8f:0012] on usb-dummy_hcd.0-1/input0
+> > ==================================================================
+> > BUG: KASAN: slab-out-of-bounds in set_bit
+> > include/asm-generic/bitops-instrumented.h:28 [inline]
+> > BUG: KASAN: slab-out-of-bounds in gaff_init drivers/hid/hid-gaff.c:97
+> > [inline]
+> > BUG: KASAN: slab-out-of-bounds in ga_probe+0x1fd/0x6f0
+> > drivers/hid/hid-gaff.c:146
+> > Write of size 8 at addr ffff8881d9acafc0 by task kworker/1:1/78
+> >
+> > CPU: 1 PID: 78 Comm: kworker/1:1 Not tainted 5.3.0-rc7+ #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Workqueue: usb_hub_wq hub_event
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0xca/0x13e lib/dump_stack.c:113
+> >   print_address_description+0x6a/0x32c mm/kasan/report.c:351
+> >   __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+> >   kasan_report+0xe/0x12 mm/kasan/common.c:618
+> >   check_memory_region_inline mm/kasan/generic.c:185 [inline]
+> >   check_memory_region+0x128/0x190 mm/kasan/generic.c:192
+> >   set_bit include/asm-generic/bitops-instrumented.h:28 [inline]
+> >   gaff_init drivers/hid/hid-gaff.c:97 [inline]
+> >   ga_probe+0x1fd/0x6f0 drivers/hid/hid-gaff.c:146
+> >   hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
+> >   really_probe+0x281/0x6d0 drivers/base/dd.c:548
+> >   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
+> >   __device_attach_driver+0x
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
 >
-> On Fri, 13 Sep 2019, Moore, Robert wrote:
->>
->>
->> -----Original Message-----
->> From: Ferry Toth [mailto:fntoth@gmail.com]
->> Sent: Friday, September 13, 2019 9:48 AM
->> To: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Moore, Robert 
->> <robert.moore@intel.com>
->> Cc: Nikolaus Voss <nv@vosn.de>; Schmauss, Erik 
->> <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Len 
->> Brown <lenb@kernel.org>; Jacek Anaszewski 
->> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan Murphy 
->> <dmurphy@ti.com>; linux-acpi@vger.kernel.org; devel@acpica.org; 
->> linux-kernel@vger.kernel.org; nikolaus.voss@loewensteinmedical.de; 
->> Jan Kiszka <jan.kiszka@siemens.com>
->> Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table 
->> index
->>
->> Hello all,
->>
->> Sorry to have sent our message with cancelled e-mail address. I have correct this now.
->>
->> Op 13-09-19 om 17:12 schreef Shevchenko, Andriy:
->>> On Fri, Sep 13, 2019 at 05:20:21PM +0300, Moore, Robert wrote:
->>>> -----Original Message-----
->>>> From: Nikolaus Voss [mailto:nv@vosn.de]
->>>> Sent: Friday, September 13, 2019 12:44 AM
->>>> To: Moore, Robert <robert.moore@intel.com>
->>>> Cc: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, 
->>>> Erik <erik.schmauss@intel.com>; Rafael J. Wysocki 
->>>> <rjw@rjwysocki.net>; Len Brown <lenb@kernel.org>; Jacek Anaszewski 
->>>> <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan 
->>>> Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org; 
->>>> devel@acpica.org; linux-kernel@vger.kernel.org; Ferry Toth 
->>>> <ftoth@telfort.nl>; nikolaus.voss@loewensteinmedical.de
->>>> Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table 
->>>> index
->>>>
->>>> Bob,
->>>>
->>>> On Thu, 12 Sep 2019, Moore, Robert wrote:
->>>>> The ability to unload an ACPI table (especially AML tables such as
->>>>> SSDTs) is in the process of being deprecated in ACPICA -- since it 
->>>>> is also deprecated in the current ACPI specification. This is 
->>>>> being done because of the difficulty of deleting the namespace 
->>>>> entries for the table.  FYI, Windows does not properly support this function either.
->>>>
->>>> ok, I see it can be a problem to unload an AML table with all it's 
->>>> consequences e.g. with respect to driver unregistering in setups 
->>>> with complex dependencies. It will only work properly under certain 
->>>> conditions
->>>> - nevertheless acpi_tb_unload_table() is still exported in ACPICA and we should get this working as it worked before.
->>>>
->>>> AcpiTbUnloadTable is not exported, it is an internal interface only
->>>> -- as recognized by the "AcpiTb".
->>>
->>> In Linux it became a part of ABI when the
->>>
->>> commit 772bf1e2878ecfca0d1f332071c83e021dd9cf01
->>> Author: Jan Kiszka <jan.kiszka@siemens.com>
->>> Date:   Fri Jun 9 20:36:31 2017 +0200
->>>
->>>      ACPI: configfs: Unload SSDT on configfs entry removal
->>>
->>> appeared in the kernel.
->>
->> And the commit message explains quite well why it is an important feature:
->>
->> "This allows to change SSDTs without rebooting the system.
->> It also allows to destroy devices again that a dynamically loaded SSDT created.
->>
->> The biggest problem AFAIK is that under linux, many drivers cannot be unloaded. Also, there are many race conditions as the namespace entries "owned" by an SSDT being unloaded are deleted (out from underneath a driver).
->>
->> This is widely similar to the DT overlay behavior."
->>
->>>> I'm not sure that I want to change the interface to AcpiLoadTable 
->>>> just for something that is being deprecated. Already, we throw an 
->>>> ACPI_EXCEPTION if the Unload operator is encountered in the AML 
->>>> byte stream. The same thing with AcpiUnloadParentTable - it is being deprecated.
->>>>
->>>>      ACPI_EXCEPTION ((AE_INFO, AE_NOT_IMPLEMENTED,
->>>>          "AML Unload operator is not supported"));
->
-> Bob, what is your suggestion to fix the regression then?
->
-> We could revert acpi_configfs.c to use 
-> acpi_tb_install_and_load_table() instead of acpi_load_table(), leaving 
-> loaded APCI objects uninitalized, but at least, unloading will work again.
->
-> I guess my next question is: why do you want to unload a table in the 
-> first place?
+> The driver assumes that the device contains an input.
 
-Because it worked before and there are people who rely on it. If it's deprecated there should be a user notification and a reasonable end-of-life timeline to give these users a chance to develop an alternative solution.
+BTW, these two reports look fairly similar:
 
-So, I still don't understand why this no longer works. We did not make any purposeful changes in this area - AFAIK.
-Bob
-
-Niko
+https://syzkaller.appspot.com/bug?extid=94e2b9e9c7d1dd332345
+https://syzkaller.appspot.com/bug?extid=1e86e2ccce227cca899b
 
 >
+> Alan Stern
 >
-> Do we have any other options?
+> https://github.com/google/kasan.git f0df5c1b
 >
-> Niko
+>  drivers/hid/hid-gaff.c |   12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> Index: usb-devel/drivers/hid/hid-gaff.c
+> ===================================================================
+> --- usb-devel.orig/drivers/hid/hid-gaff.c
+> +++ usb-devel/drivers/hid/hid-gaff.c
+> @@ -64,14 +64,20 @@ static int gaff_init(struct hid_device *
+>  {
+>         struct gaff_device *gaff;
+>         struct hid_report *report;
+> -       struct hid_input *hidinput = list_entry(hid->inputs.next,
+> -                                               struct hid_input, list);
+> +       struct hid_input *hidinput;
+>         struct list_head *report_list =
+>                         &hid->report_enum[HID_OUTPUT_REPORT].report_list;
+>         struct list_head *report_ptr = report_list;
+> -       struct input_dev *dev = hidinput->input;
+> +       struct input_dev *dev;
+>         int error;
+>
+> +       if (list_empty(&hid->inputs)) {
+> +               hid_err(hid, "no inputs found\n");
+> +               return -ENODEV;
+> +       }
+> +       hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+> +       dev = hidinput->input;
+> +
+>         if (list_empty(report_list)) {
+>                 hid_err(hid, "no output reports found\n");
+>                 return -ENODEV;
 >
