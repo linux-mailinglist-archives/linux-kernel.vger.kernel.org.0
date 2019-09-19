@@ -2,177 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35262B770B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:02:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5164FB770F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389267AbfISKCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:02:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50282 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389178AbfISKCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 06:02:30 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B95B33084032;
-        Thu, 19 Sep 2019 10:02:29 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F62C5D9CC;
-        Thu, 19 Sep 2019 10:02:29 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 4A4159CAC; Thu, 19 Sep 2019 12:02:25 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Xinliang Liu <z.liuxinliang@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
-        Chen Feng <puck.chen@hisilicon.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org (open list),
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU)
-Subject: [PATCH v3 11/11] drm/vram: drop DRM_VRAM_MM_FILE_OPERATIONS
-Date:   Thu, 19 Sep 2019 12:02:23 +0200
-Message-Id: <20190919100223.13309-12-kraxel@redhat.com>
-In-Reply-To: <20190919100223.13309-1-kraxel@redhat.com>
-References: <20190919100223.13309-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 19 Sep 2019 10:02:30 +0000 (UTC)
+        id S2389276AbfISKDF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 06:03:05 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:42146 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388905AbfISKDD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 06:03:03 -0400
+Received: by mail-yw1-f68.google.com with SMTP id i207so1007871ywc.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 03:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LbfIr6OQXLdhxdBKJUGehYuATbbMYOVoX4Zq+xNFWpY=;
+        b=vaIt1v1ngk2wUVJXcbIHoIHXLmL/TBHF0n04p8ml3Py/MA8g4KOQUuvYwT3L9s9lLi
+         c9v3H+DCeAX4bH8w3y84lLDGBPr2tjgxd4n7PXQeYGJBGs2e/d9aeX1iCXoCeKVvSnEU
+         opDhtHqI72jUR3nG0aCOgdYskGwyuPoqGWbUvQCJ4Cyt6bjzjYgSf6zi36QDsUfVkOUc
+         ZjoQhb5/TqJsZfKGFPlX6WEXMPWejaQbqucBQsLipMfyl702ZXRD4bv3s7v/dh0LHXOd
+         aaOnM5Vp0EB5wWTC/X7MgBmi3M+cfNVbZ8KDCF8QxdZHFW3zqusodkQ1qDSueoZJnZpJ
+         cxwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LbfIr6OQXLdhxdBKJUGehYuATbbMYOVoX4Zq+xNFWpY=;
+        b=l4HDfsItlKstJiSlU3YoWNFFyI0YOAAAXsP5nA0v35Knwqf0v8q1wJMSnODmwyn58f
+         KMXCUiczpTcg2MRuEpN5f5KZuxM3zXTPkJe/XAeVgO+7tqFn641z9SH89RO8AMzfYeI4
+         ekIUjMbTFxBrXn3in4UaPEcrwKh5is/Wwp5CfzoaPtnEpsT5oibST1VzrKZW6HZplK9K
+         ThisX77tEGFIT6sD6eeUTTE/GN+gdKjgzt9rACNxr1M0QQoQU8SSmoPxDc7KUUDO+w6O
+         6UQgmoqjynRtmz8DNCjRpNvUKr5MHpnqnTdM/9yCyfAvIhOwzRtPwJY90503oPWyWupY
+         zxnQ==
+X-Gm-Message-State: APjAAAXmLoFJJGkSGrxeevgCHp2Rbaerum98fv5iZYdDYrtkEZaI9qjg
+        S/TRQBm8aOwDh2vSoeFgZymmS+dOHGVsTNIIl3g=
+X-Google-Smtp-Source: APXvYqwm40n8QgsVc8kcRdeZ+GCKm2aFLW8M50nQbNWhjhpZ3gOFAMo8UIPXBM9A5RhIkOhVGakOs4Su+Xkizx3vc6g=
+X-Received: by 2002:a81:310f:: with SMTP id x15mr7045781ywx.257.1568887382238;
+ Thu, 19 Sep 2019 03:03:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <1567687553-22334-1-git-send-email-bmeng.cn@gmail.com> <20190910061431.GB10968@infradead.org>
+In-Reply-To: <20190910061431.GB10968@infradead.org>
+From:   Bin Meng <bmeng.cn@gmail.com>
+Date:   Thu, 19 Sep 2019 18:02:51 +0800
+Message-ID: <CAEUhbmVD8bfmELA30nLa-P5Y5CL4+z-R+bR5H=fKanuBrTNvwA@mail.gmail.com>
+Subject: Re: [PATCH v2] riscv: dts: sifive: Drop "clock-frequency" property of
+ cpu nodes
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not needed any more because we don't have vram specific fops
-any more.  DEFINE_DRM_GEM_FOPS() can be used instead.
+Hi,
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
----
- include/drm/drm_gem_vram_helper.h              | 18 ------------------
- drivers/gpu/drm/ast/ast_drv.c                  |  5 +----
- drivers/gpu/drm/bochs/bochs_drv.c              |  5 +----
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c    |  5 +----
- drivers/gpu/drm/mgag200/mgag200_drv.c          |  5 +----
- drivers/gpu/drm/vboxvideo/vbox_drv.c           |  5 +----
- 6 files changed, 5 insertions(+), 38 deletions(-)
+On Tue, Sep 10, 2019 at 2:14 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Thu, Sep 05, 2019 at 05:45:53AM -0700, Bin Meng wrote:
+> > The "clock-frequency" property of cpu nodes isn't required. Drop it.
+> >
+> > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+>
+> Looks good:
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-diff --git a/include/drm/drm_gem_vram_helper.h b/include/drm/drm_gem_vram_helper.h
-index 05a762c87305..84b31373ddf5 100644
---- a/include/drm/drm_gem_vram_helper.h
-+++ b/include/drm/drm_gem_vram_helper.h
-@@ -183,22 +183,4 @@ struct drm_vram_mm *drm_vram_helper_alloc_mm(
- 	struct drm_device *dev, uint64_t vram_base, size_t vram_size);
- void drm_vram_helper_release_mm(struct drm_device *dev);
- 
--/**
-- * define DRM_VRAM_MM_FILE_OPERATIONS - default callback functions for \
--	&struct file_operations
-- *
-- * Drivers that use VRAM MM can use this macro to initialize
-- * &struct file_operations with default functions.
-- */
--#define DRM_VRAM_MM_FILE_OPERATIONS \
--	.llseek		= no_llseek, \
--	.read		= drm_read, \
--	.poll		= drm_poll, \
--	.unlocked_ioctl = drm_ioctl, \
--	.compat_ioctl	= drm_compat_ioctl, \
--	.mmap		= drm_gem_mmap, \
--	.open		= drm_open, \
--	.release	= drm_release \
--
--
- #endif
-diff --git a/drivers/gpu/drm/ast/ast_drv.c b/drivers/gpu/drm/ast/ast_drv.c
-index e0e8770462bc..1f17794b0890 100644
---- a/drivers/gpu/drm/ast/ast_drv.c
-+++ b/drivers/gpu/drm/ast/ast_drv.c
-@@ -200,10 +200,7 @@ static struct pci_driver ast_pci_driver = {
- 	.driver.pm = &ast_pm_ops,
- };
- 
--static const struct file_operations ast_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(ast_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM,
-diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
-index 3b9b0d9bbc14..10460878414e 100644
---- a/drivers/gpu/drm/bochs/bochs_drv.c
-+++ b/drivers/gpu/drm/bochs/bochs_drv.c
-@@ -58,10 +58,7 @@ static int bochs_load(struct drm_device *dev)
- 	return ret;
- }
- 
--static const struct file_operations bochs_fops = {
--	.owner		= THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(bochs_fops);
- 
- static struct drm_driver bochs_driver = {
- 	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index f5b35fdef6f3..b6fdac91e502 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -26,10 +26,7 @@
- #include "hibmc_drm_drv.h"
- #include "hibmc_drm_regs.h"
- 
--static const struct file_operations hibmc_fops = {
--	.owner		= THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(hibmc_fops);
- 
- static irqreturn_t hibmc_drm_interrupt(int irq, void *arg)
- {
-diff --git a/drivers/gpu/drm/mgag200/mgag200_drv.c b/drivers/gpu/drm/mgag200/mgag200_drv.c
-index 4f9df3b93598..397f8b0a9af8 100644
---- a/drivers/gpu/drm/mgag200/mgag200_drv.c
-+++ b/drivers/gpu/drm/mgag200/mgag200_drv.c
-@@ -58,10 +58,7 @@ static void mga_pci_remove(struct pci_dev *pdev)
- 	drm_put_dev(dev);
- }
- 
--static const struct file_operations mgag200_driver_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(mgag200_driver_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features = DRIVER_GEM | DRIVER_MODESET,
-diff --git a/drivers/gpu/drm/vboxvideo/vbox_drv.c b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-index 862db495d111..0c37032c8b65 100644
---- a/drivers/gpu/drm/vboxvideo/vbox_drv.c
-+++ b/drivers/gpu/drm/vboxvideo/vbox_drv.c
-@@ -189,10 +189,7 @@ static struct pci_driver vbox_pci_driver = {
- #endif
- };
- 
--static const struct file_operations vbox_fops = {
--	.owner = THIS_MODULE,
--	DRM_VRAM_MM_FILE_OPERATIONS
--};
-+DEFINE_DRM_GEM_FOPS(vbox_fops);
- 
- static struct drm_driver driver = {
- 	.driver_features =
--- 
-2.18.1
+What's the status of this patch? thanks!
 
+Regards,
+Bin
