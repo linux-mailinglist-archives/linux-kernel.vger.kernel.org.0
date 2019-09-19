@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D0E2B8347
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9B0EB8340
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392621AbfISV0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 17:26:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56784 "EHLO mail.kernel.org"
+        id S2390642AbfISVZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 17:25:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389506AbfISVZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390275AbfISVZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Sep 2019 17:25:43 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6796021907;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FCC72196F;
         Thu, 19 Sep 2019 21:25:42 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iB3vp-0008Sm-LP; Thu, 19 Sep 2019 17:25:41 -0400
-Message-Id: <20190919212541.553160178@goodmis.org>
+        id 1iB3vp-0008TG-QI; Thu, 19 Sep 2019 17:25:41 -0400
+Message-Id: <20190919212541.697034573@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Thu, 19 Sep 2019 17:23:36 -0400
+Date:   Thu, 19 Sep 2019 17:23:37 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: [PATCH 1/6] tools/lib/traceevent: Man pages for libtraceevent event print related
- API
+        "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
+Subject: [PATCH 2/6] tools/lib/traceevent: Man pages fix, rename tep_ref_get() to
+ tep_get_ref()
 References: <20190919212335.400961206@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -39,155 +39,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+From: "Tzvetomir Stoyanov (VMware)" <tz.stoyanov@gmail.com>
 
-Added new man page, describing tep_print_event() libtraceevent API.
+The tep_ref_get() was renamed to tep_get_ref(), to be more consistent with
+the other tep_ref_* APIs. However, in the man pages the API is still with
+the old name. The documentation is fixed to reflect the actual name of the API.
 
-Link: http://lore.kernel.org/linux-trace-devel/20190801075012.22098-1-tz.stoyanov@gmail.com
+Link: http://lore.kernel.org/linux-trace-devel/20190808113636.13299-2-tz.stoyanov@gmail.com
 
-Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Signed-off-by: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- .../libtraceevent-event_print.txt             | 130 ++++++++++++++++++
- 1 file changed, 130 insertions(+)
- create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-event_print.txt
+ .../lib/traceevent/Documentation/libtraceevent-handle.txt | 8 ++++----
+ tools/lib/traceevent/Documentation/libtraceevent.txt      | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/tools/lib/traceevent/Documentation/libtraceevent-event_print.txt b/tools/lib/traceevent/Documentation/libtraceevent-event_print.txt
-new file mode 100644
-index 000000000000..2c6a61811118
---- /dev/null
-+++ b/tools/lib/traceevent/Documentation/libtraceevent-event_print.txt
-@@ -0,0 +1,130 @@
-+libtraceevent(3)
-+================
-+
-+NAME
-+----
-+tep_print_event - Writes event information into a trace sequence.
-+
-+SYNOPSIS
-+--------
-+[verse]
-+--
-+*#include <event-parse.h>*
-+*#include <trace-seq.h>*
-+
-+void *tep_print_event*(struct tep_handle pass:[*]_tep_, struct trace_seqpass:[*]_s_, struct tep_record pass:[*]_record_, const char pass:[*]_fmt_, _..._)
-+--
-+
-+DESCRIPTION
-+-----------
-+
-+The _tep_print_event()_ function parses the event information of the given
-+_record_ and writes it into the trace sequence _s_, according to the format
-+string _fmt_. The desired information is specified after the format string.
-+The _fmt_ is printf-like format string, following arguments are supported:
-+[verse]
-+--
-+	TEP_PRINT_PID, "%d"  - PID of the event.
-+	TEP_PRINT_CPU, "%d"  - Event CPU.
-+	TEP_PRINT_COMM, "%s" - Event command string.
-+	TEP_PRINT_NAME, "%s" - Event name.
-+	TEP_PRINT_LATENCY, "%s" - Latency of the event. It prints 4 or more
-+			fields - interrupt state, scheduling state,
-+			current context, and preemption count.
-+			Field 1 is the interrupt enabled state:
-+				d : Interrupts are disabled
-+				. : Interrupts are enabled
-+				X : The architecture does not support this
-+				    information
-+			Field 2 is the "need resched" state.
-+				N : The task is set to call the scheduler when
-+				    possible, as another higher priority task
-+				    may need to be scheduled in.
-+				. : The task is not set to call the scheduler.
-+			Field 3 is the context state.
-+				. : Normal context
-+				s : Soft interrupt context
-+				h : Hard interrupt context
-+				H : Hard interrupt context which triggered
-+				    during soft interrupt context.
-+				z : NMI context
-+				Z : NMI context which triggered during hard
-+				    interrupt context
-+			Field 4 is the preemption count.
-+				. : The preempt count is zero.
-+			On preemptible kernels (where the task can be scheduled
-+			out in arbitrary locations while in kernel context), the
-+			preempt count, when non zero, will prevent the kernel
-+			from scheduling out the current task. The preempt count
-+			number is displayed when it is not zero.
-+			Depending on the kernel, it may show other fields
-+			(lock depth, or migration disabled, which are unique to
-+			specialized kernels).
-+	TEP_PRINT_TIME, %d - event time stamp. A divisor and precision can be
-+			specified as part of this format string:
-+			"%precision.divisord". Example:
-+			"%3.1000d" - divide the time by 1000 and print the first
-+			3 digits before the dot. Thus, the time stamp
-+			"123456000" will be printed as "123.456"
-+	TEP_PRINT_INFO, "%s" - event information.
-+	TEP_PRINT_INFO_RAW, "%s" - event information, in raw format.
-+
-+--
-+EXAMPLE
-+-------
-+[source,c]
-+--
-+#include <event-parse.h>
-+#include <trace-seq.h>
-+...
-+struct trace_seq seq;
-+trace_seq_init(&seq);
-+struct tep_handle *tep = tep_alloc();
-+...
-+void print_my_event(struct tep_record *record)
-+{
-+	trace_seq_reset(&seq);
-+	tep_print_event(tep, s, record, "%16s-%-5d [%03d] %s %6.1000d %s %s",
-+			TEP_PRINT_COMM, TEP_PRINT_PID, TEP_PRINT_CPU,
-+			TEP_PRINT_LATENCY, TEP_PRINT_TIME, TEP_PRINT_NAME,
-+			TEP_PRINT_INFO);
-+}
-+...
-+--
-+
-+FILES
-+-----
-+[verse]
-+--
-+*event-parse.h*
-+	Header file to include in order to have access to the library APIs.
-+*trace-seq.h*
-+	Header file to include in order to have access to trace sequences related APIs.
-+	Trace sequences are used to allow a function to call several other functions
-+	to create a string of data to use.
-+*-ltraceevent*
-+	Linker switch to add when building a program that uses the library.
-+--
-+
-+SEE ALSO
-+--------
-+_libtraceevent(3)_, _trace-cmd(1)_
-+
-+AUTHOR
-+------
-+[verse]
-+--
-+*Steven Rostedt* <rostedt@goodmis.org>, author of *libtraceevent*.
-+*Tzvetomir Stoyanov* <tz.stoyanov@gmail.com>, author of this man page.
-+--
-+REPORTING BUGS
-+--------------
-+Report bugs to  <linux-trace-devel@vger.kernel.org>
-+
-+LICENSE
-+-------
-+libtraceevent is Free Software licensed under the GNU LGPL 2.1
-+
-+RESOURCES
-+---------
-+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-handle.txt b/tools/lib/traceevent/Documentation/libtraceevent-handle.txt
+index 8d568316847d..45b20172e262 100644
+--- a/tools/lib/traceevent/Documentation/libtraceevent-handle.txt
++++ b/tools/lib/traceevent/Documentation/libtraceevent-handle.txt
+@@ -3,7 +3,7 @@ libtraceevent(3)
+ 
+ NAME
+ ----
+-tep_alloc, tep_free,tep_ref, tep_unref,tep_ref_get - Create, destroy, manage
++tep_alloc, tep_free,tep_ref, tep_unref,tep_get_ref - Create, destroy, manage
+ references of trace event parser context.
+ 
+ SYNOPSIS
+@@ -16,7 +16,7 @@ struct tep_handle pass:[*]*tep_alloc*(void);
+ void *tep_free*(struct tep_handle pass:[*]_tep_);
+ void *tep_ref*(struct tep_handle pass:[*]_tep_);
+ void *tep_unref*(struct tep_handle pass:[*]_tep_);
+-int *tep_ref_get*(struct tep_handle pass:[*]_tep_);
++int *tep_get_ref*(struct tep_handle pass:[*]_tep_);
+ --
+ 
+ DESCRIPTION
+@@ -57,9 +57,9 @@ EXAMPLE
+ ...
+ struct tep_handle *tep = tep_alloc();
+ ...
+-int ref = tep_ref_get(tep);
++int ref = tep_get_ref(tep);
+ tep_ref(tep);
+-if ( (ref+1) != tep_ref_get(tep)) {
++if ( (ref+1) != tep_get_ref(tep)) {
+ 	/* Something wrong happened, the counter is not incremented by 1 */
+ }
+ tep_unref(tep);
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent.txt b/tools/lib/traceevent/Documentation/libtraceevent.txt
+index fbd977b47de1..00519503c8de 100644
+--- a/tools/lib/traceevent/Documentation/libtraceevent.txt
++++ b/tools/lib/traceevent/Documentation/libtraceevent.txt
+@@ -16,7 +16,7 @@ Management of tep handler data structure and access of its members:
+ 	void *tep_free*(struct tep_handle pass:[*]_tep_);
+ 	void *tep_ref*(struct tep_handle pass:[*]_tep_);
+ 	void *tep_unref*(struct tep_handle pass:[*]_tep_);
+-	int *tep_ref_get*(struct tep_handle pass:[*]_tep_);
++	int *tep_get_ref*(struct tep_handle pass:[*]_tep_);
+ 	void *tep_set_flag*(struct tep_handle pass:[*]_tep_, enum tep_flag _flag_);
+ 	void *tep_clear_flag*(struct tep_handle pass:[*]_tep_, enum tep_flag _flag_);
+ 	bool *tep_test_flag*(struct tep_handle pass:[*]_tep_, enum tep_flag _flags_);
 -- 
 2.20.1
 
