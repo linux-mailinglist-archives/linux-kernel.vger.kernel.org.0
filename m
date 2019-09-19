@@ -2,135 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5B0CB7775
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9D2BB777F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:33:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbfISKa1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:30:27 -0400
-Received: from mail4.protonmail.ch ([185.70.40.27]:44985 "EHLO
-        mail4.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbfISKa0 (ORCPT
+        id S1732058AbfISKdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 06:33:37 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37428 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728519AbfISKdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 06:30:26 -0400
-Date:   Thu, 19 Sep 2019 10:30:15 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hardenedlinux.org;
-        s=protonmail; t=1568889022;
-        bh=hiwcVYVyjA8rIAfDxqCw5jAP15PD6IpvcY7gJcQeLRw=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=h9MeoilmyiThRpXXIznQvZEu05WaaRsTkYkmbaIdTzRfg6CPLp0LSSTgss8sfSrBa
-         5JWkj7nP9SSQ/glRfXBu05XhnIf2bXK0RZSLFwPw6FlAHdKEOzuroZqhsZ6RzeQGnB
-         Scy381WsKNTdZ18VxQT57InOO0JU2PdCrt5wOq3M=
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-From:   Xiang Wang <merle@hardenedlinux.org>
-Cc:     "palmer@sifive.com" <palmer@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "citypw@hardenedlinux.org" <citypw@hardenedlinux.org>
-Reply-To: Xiang Wang <merle@hardenedlinux.org>
-Subject: Re: [PATCH] arch/riscv: disable too many harts before pick main boot hart
-Message-ID: <oZnw_aigjzhp0LNTjqSVEPWA6nBsFhV4z0KJXsCw9oPg3pGRju1n3kzDin_GH06vl8Jn5MU5keS2LE1FLrPfR3V66b9hkoqKQJ7CZ_tMqUk=@hardenedlinux.org>
-In-Reply-To: <alpine.DEB.2.21.9999.1909190324250.10826@viisi.sifive.com>
-References: <AMJe39pHTcb4gsI-_Dv-wmR8_x9EbCCN9LKI47j34_8vBKRqzFxPrjmZvBtwV5OU_HcOiRkKUG66xVaNQ8VAXw7Ws0CCK74gpA8pKaYN5wM=@hardenedlinux.org>
- <alpine.DEB.2.21.9999.1909190324250.10826@viisi.sifive.com>
-Feedback-ID: BRRa7Rf7LqOlikZR00e5gSr_IsihWq0drDTak4NnawY-ONQTW87vpTHz90bkJTl_rn8r4L6gc-nP1pm37CQtxw==:Ext:ProtonMail
+        Thu, 19 Sep 2019 06:33:37 -0400
+Received: by mail-lf1-f67.google.com with SMTP id w67so1983185lff.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 03:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fo7cMzw36a28m/r8Obxok4ZgaWlax9TMyQySR8fq2vo=;
+        b=MEhGOqAMGWMHHchatTX9wNtJQnKTRcZaXQqnzw+IrGnmtSz2Y4HjblXYYKLy8Howpv
+         xkJLR7asVj8OFYdHRzG39xTw1nkFxPOkbwDis7zrga12uLEHcWkrIfnOr4FYZ+Mwh72P
+         7uzJVGCDKTxJhmMb8Lb5YsVlhKvlrJCz6AoFs1eegPzwtUcaw3hUnhG15lnwijQWZLWW
+         7dE/NSwDfW0yieAyR80tr4IBa92YXsda8BLA08fzlEYT9T6d2oZYApeYF52WHHedMVuD
+         XoKJ9k9MV+tInTCaC6/zus/C2JQX71j/1wkEWr6cJgfwLAg9zoVFPlTB15GhDgTIbbQN
+         8WiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fo7cMzw36a28m/r8Obxok4ZgaWlax9TMyQySR8fq2vo=;
+        b=GJPvoGUuygqDbQ4+PHyOds6yGtMrF4nsG1nwUaF2REa3bp980v4mwIeZ6Q40QbcjRB
+         rx8rDit7ClL5iDQ/KNnCkSiNm4wGGtqnDdkw8q0UyI2NYGMPeZL1Sox4vOS/lBGJjx4i
+         ddkprgdNSMJ/K+HjKzPArNmYbrdFh/plnRK6jge4DtU75fzi9N64uL9o46MA+NQiXVVV
+         2wlyxZlPdObsUPNTE8GC8CRX7Ifli9Oa98qvgAfb5y+XXJwz2eeUTxiytw7gkOvKydNY
+         LnlxP8wZuVLtSSfRwjT2TC8rrikNWA2LBLB7BfX/cEWNz8tzKc/fJdNtIBCo9ghJL1/k
+         TNZg==
+X-Gm-Message-State: APjAAAXaJX+eW/HrOH0E0nM7UP34kmhCWw5RYLAmOiHuryUG9PdhiDmQ
+        vMyflqHsnYiHpzBtNQF0EHoWR7nfYePUR+S7YzE=
+X-Google-Smtp-Source: APXvYqw+AnkepIIO8D0IoEIWU57tO3l2Zw5feO8lefnd4aiB/eZJqHOJH6XA9JNFBpT4QPlfg5B+pBZNXOyNP2okf/I=
+X-Received: by 2002:a19:c709:: with SMTP id x9mr4782140lff.20.1568889214837;
+ Thu, 19 Sep 2019 03:33:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.2 required=7.0 tests=ALL_TRUSTED,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF autolearn=ham
-        autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.protonmail.ch
+References: <20190911144943.21554-1-philipp.puschmann@emlix.com> <20190919102319.23368-1-philipp.puschmann@emlix.com>
+In-Reply-To: <20190919102319.23368-1-philipp.puschmann@emlix.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 19 Sep 2019 07:33:33 -0300
+Message-ID: <CAOMZO5Cp9qHSEOx3VnUC9SSbKyZrS2T0a_mTx7ubzs45Weud6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Fix UART DMA freezes for i.MX SOCs
+To:     Philipp Puschmann <philipp.puschmann@emlix.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Robin Gong <yibin.gong@nxp.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>, dmaengine@vger.kernel.or,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Philipp,
 
+On Thu, Sep 19, 2019 at 7:23 AM Philipp Puschmann
+<philipp.puschmann@emlix.com> wrote:
 
+> Philipp Puschmann (3):
+>   dmaengine: imx-sdma: fix buffer ownership
+>   dmaengine: imx-sdma: fix dma freezes
 
+These two fixes deserve a Fixes tag so that they could be backported
+to the stable tree.
 
-
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On 2019=E5=B9=B49=E6=9C=8819=E6=97=A5ThursdayPM6=E7=82=B925=E5=88=86, Paul =
-Walmsley <paul.walmsley@sifive.com> wrote:
-
-> On Fri, 6 Sep 2019, Xiang Wang wrote:
->
-> > From 12300865d1103618c9d4c375f7d7fbe601b6618c Mon Sep 17 00:00:00 2001
-> > From: Xiang Wang merle@hardenedlinux.org
-> > Date: Fri, 6 Sep 2019 11:56:09 +0800
-> > Subject: [PATCH] arch/riscv: disable too many harts before pick main bo=
-ot hart
-> > These harts with id greater than or equal to CONFIG_NR_CPUS need to be =
-disabled.
-> > But pick the main Hart can choose any one. So, before pick the main har=
-t, you
-> > need to disable the hart with id greater than or equal to CONFIG_NR_CPU=
-S.
-> > Signed-off-by: Xiang Wang merle@hardenedlinux.org
->
-> Thanks, here's what I'm planning to queue for v5.4-rc1. Please let me
-> know ASAP if you want to change the patch description.
->
-> -   Paul
-
-Not need to change
-
->
->     From: Xiang Wang merle@hardenedlinux.org
->
->
-> Date: Fri, 6 Sep 2019 11:56:09 +0800
-> Subject: [PATCH] arch/riscv: disable excess harts before picking main boo=
-t hart
->
-> Harts with id greater than or equal to CONFIG_NR_CPUS need to be
-> disabled. But the kernel can pick any hart as the main hart. So,
-> before picking the main hart, the kernel must disable harts with ids
-> greater than or equal to CONFIG_NR_CPUS.
->
-> Signed-off-by: Xiang Wang merle@hardenedlinux.org
-> Reviewed-by: Palmer Dabbelt palmer@sifive.com
-> [paul.walmsley@sifive.com: updated to apply; cleaned up patch
-> description]
-> Signed-off-by: Paul Walmsley paul.walmsley@sifive.com
->
-> arch/riscv/kernel/head.S | 8 +++++---
-> 1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-> index 15a9189f91ad..72f89b7590dd 100644
-> --- a/arch/riscv/kernel/head.S
-> +++ b/arch/riscv/kernel/head.S
-> @@ -63,6 +63,11 @@ _start_kernel:
-> li t0, SR_FS
-> csrc CSR_SSTATUS, t0
->
-> +#ifdef CONFIG_SMP
->
-> -   li t0, CONFIG_NR_CPUS
-> -   bgeu a0, t0, .Lsecondary_park
->     +#endif
->
-> -   /* Pick one hart to run the main boot sequence */
->     la a3, hart_lottery
->     li a2, 1
->     @@ -154,9 +159,6 @@ relocate:
->
->     .Lsecondary_start:
->     #ifdef CONFIG_SMP
->
->
-> -   li a1, CONFIG_NR_CPUS
-> -   bgeu a0, a1, .Lsecondary_park
-> -   /* Set trap vector to spin forever to help debug */
->     la a3, .Lsecondary_park
->     csrw CSR_STVEC, a3
->     --
->     2.23.0
->
-
-
+Thanks
