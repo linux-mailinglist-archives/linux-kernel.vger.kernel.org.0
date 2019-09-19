@@ -2,131 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEEEB7F71
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 18:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA3C2B7F76
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 18:55:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390940AbfISQzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 12:55:32 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33323 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388051AbfISQzb (ORCPT
+        id S2391206AbfISQze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 12:55:34 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42948 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388051AbfISQzd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 12:55:31 -0400
-Received: by mail-wr1-f68.google.com with SMTP id b9so3906766wrs.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 09:55:30 -0700 (PDT)
+        Thu, 19 Sep 2019 12:55:33 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q12so2682022pff.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 09:55:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=/VYKm9GDpxmSLCVpmb+6PCW3URtN2apXdt8g30UTbWM=;
-        b=dR8R5X4kLBsL1chds7occMh3NdtzRYbU5f9KnShTRRdmnoXwDhJLtUjDeb50TvP8z0
-         t54CZHIScUPQ5q1vNPXtK674ccyCF+I64y0gom95uOQDKvWt+XhB1fXvy/tAjitoWZde
-         Le1Hw+oznmLEcF8s4DT+iRgpQ3fMVwl9p18Z6nqnC7e1e4Et1SDx+Wwd7KsA2Nak5S85
-         eSv6W5ZcfDnyT0Lc4ZFtjPNHbUquXXmRQo+dee8FOk0EhL6fpR0yQ5RCUIogw6Yzy+1G
-         dZ0u1rFtzxyvQWfX/7tjFqTVU2m0/PDn2lBazjwk6TCmwe8ulb0Eyuvoy9Z0BS8jJsj8
-         u3mw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=vKHGVC2TBv+sLI5Edyli1ZnZuQJKo2XmgdaDIhIwBKQ=;
+        b=Q6ZXGNHId7DBF16qRzWjOVrjjWMIk9gF2BlQ3nAW2OPUcTUkCsnk6/NyiCDdTnkbuQ
+         MVylF1TZ86CAYhVM34nj3IVmzadWHImCp8eXVyaId7+4LfT61yxP+g6jb+kP20WEATgS
+         oznxdzTHAqD9/Lokv9dqcPOfn4HLHjcWB3CW4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=/VYKm9GDpxmSLCVpmb+6PCW3URtN2apXdt8g30UTbWM=;
-        b=sGtDzetyrnBtPfcbMGtjrZeXKWlLjt9NCBhaSJzD+DoRtpgf+SxOsAytLK1ps0OvV4
-         1nsF/FgZcsC6J9FBjh6u1MUehKgEjj2nZ9P5iZK/EteQNUeQf7KzKwkXyRj5ur4cLOic
-         Fp2hmRBamukvqkhDNEvx85APYXN34/qyp97UosUUBppdDvHNQyUQUTRB7EP7916PTayD
-         TAJ5qGLqaN/6pKdJz4fRch3wnlXJawwECqIhozoilF/XRi82zhK04GeszilaTjYRk/Sw
-         ackpLYnR5nWCXjAABt/BPZV2OxE858cD0/fMsT64FNLik8PUAPna75WxbTkWVt3mbhsA
-         x4cg==
-X-Gm-Message-State: APjAAAVS7B8OE8QY776Qo+gWxu/u8gTbQ+LTNHZGA5mAhxTrJjuJPtRe
-        mgKaY7NGSvnemCIwdykrn7CGZES2DcjMWxO9bXk=
-X-Google-Smtp-Source: APXvYqxLHF3YIGiWPcDi5mcaHFzX1R0KDTOUPFNNNJpovkyW7vazcYndsAH4BsuBLgTs9rqL9anDtMYMqE7FreER4bM=
-X-Received: by 2002:adf:9c81:: with SMTP id d1mr8236812wre.123.1568912129853;
- Thu, 19 Sep 2019 09:55:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=vKHGVC2TBv+sLI5Edyli1ZnZuQJKo2XmgdaDIhIwBKQ=;
+        b=sVnmShh4vuqVmFavP7f/+5HH+ILrEoE2KSxLEeTq2fRJ2yYCBAClxsxCPtHnrdI0P4
+         p/Xi5wJ9OW/F6KA4/nkRi6UpanhlNCzs3CfsdJTmCTKEGRzN/oVzLNeuF31GRFDp7g5i
+         bucmBe8snVPm1A+6BIVae98AFIiKjBtD4GtvITCIFYQIv+4QRG/sAcFF4TsYCda8BZa+
+         WvY8c8sz2DN4nzrcBMOlDCl4M9Ni2CoRWyC5CJ2e5D/rvsCuTvcL9z4pshINoObuBnrB
+         PprSmNAZRCcyeMcQUCCqzRlNUzEpERadpTsH6OO1mpJQ4iUy5YYVCheKnF34sURu/8vu
+         vldg==
+X-Gm-Message-State: APjAAAVp5e5XZpnnx/Uri+zrex4/41zEQ3BsvLdQVG/GBEyEUfHUdQEI
+        XgNznsBWYSOgT6+UJWwVURfS0fk3RPg=
+X-Google-Smtp-Source: APXvYqw6zEHZKGyziOXSgqUJbbCCYyEPYuCqQ3kwb1DJ6hxrcEF9h2MB7qPcwFj2W56qe0ZKdQnWWg==
+X-Received: by 2002:a17:90a:7347:: with SMTP id j7mr4863606pjs.88.1568912132371;
+        Thu, 19 Sep 2019 09:55:32 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id d5sm4872630pjw.31.2019.09.19.09.55.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2019 09:55:31 -0700 (PDT)
+Date:   Thu, 19 Sep 2019 09:55:30 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Tyler Hicks <tyhicks@canonical.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        luto@amacapital.net, jannh@google.com, wad@chromium.org,
+        shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Tycho Andersen <tycho@tycho.ws>, stable@vger.kernel.org
+Subject: Re: [PATCH 2/4] seccomp: add two missing ptrace ifdefines
+Message-ID: <201909190918.443D6BC7@keescook>
+References: <20190918084833.9369-1-christian.brauner@ubuntu.com>
+ <20190918084833.9369-3-christian.brauner@ubuntu.com>
+ <20190918091512.GA5088@elm>
+ <201909181031.1EE73B4@keescook>
+ <20190919104251.GA16834@altlinux.org>
 MIME-Version: 1.0
-Received: by 2002:a1c:a645:0:0:0:0:0 with HTTP; Thu, 19 Sep 2019 09:55:29
- -0700 (PDT)
-Reply-To: nelsonyakubu1@yandex.com
-From:   nelson yakubu <ynynynyn01@gmail.com>
-Date:   Thu, 19 Sep 2019 16:55:29 +0000
-Message-ID: <CADbwvdT=iaKH2QkyM1+wanPabYddbARTkc8W6+-NOrbmoVtG2A@mail.gmail.com>
-Subject: whether this is your correct email address or not
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919104251.GA16834@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On Thu, Sep 19, 2019 at 01:42:51PM +0300, Dmitry V. Levin wrote:
+> On Wed, Sep 18, 2019 at 10:33:09AM -0700, Kees Cook wrote:
+> > This is actually fixed in -next already (and, yes, with the Fixes line
+> > Tyler has mentioned):
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/commit/?h=next&id=69b2d3c5924273a0ae968d3818210fc57a1b9d07
+> 
+> Excuse me, does it mean that you expect each selftest to be self-hosted?
+> I was (and still is) under impression that selftests should be built
+> with headers installed from the tree. Is it the case, or is it not?
 
-My Name is Mr Yakubu Nelson, I have been searching for your
-contact since you left our country some years ago .I do not know
-whether this is your correct email address or not because I only used
-your name initials to search for your contact in the internet .In case
-you are not the person I am supposed to contact,
+As you know (but to give others some context) there is a long-standing
+bug in the selftest build environment that causes these problems (it
+isn't including the uAPI headers) which you'd proposed to be fixed
+recently[1]. Did that ever get sent as a "real" patch? I don't see it
+in Shuah's tree; can you send it to Shuah?
 
-please see this as a confidential message and do not reveal it to
-another person but if you are not the intended receiver, do let me
-know whether you can be of assistance regarding my proposal below
-because it is top secret.
+But even with that fixed, since the seccomp selftest has a history of
+being built stand-alone, I've continued to take these kinds of fixes.
 
-I am still working with the central bank as the legal advicer where we met
-during your
-official visit to my country.I am about to retire from active Bank
-service to start a new life but I am sceptical to reveal this
-particular secret to a stranger .You must assure me that everything will
-be handled confidentially because we are not going to suffer again in
-ourlife.any more
+-Kees
 
-It has been 10 years now that most of the greedy Politicians
-used our bank to Launder money overseas through the help of their
-Political advisers. Most of the funds which they transferred out of
-the shores of Africa was old and oil money that was supposed to have
-been used to develop the continent. Their Political advisers always
-inflated the amounts before transfer to foreign accounts so I also
-used the opportunity to divert part of the funds hence I am aware that
-there is no official trace of how much was transferred as all the
-accounts used for such transfers were being closed after transfer,I
-acted as the bank Officer to most of the politicians and when I
-discovered that they were using me to succeed in their greedy act,
+[1] https://lore.kernel.org/lkml/20190805094719.GA1693@altlinux.org/
 
-I also cleaned some of their banking records from the Bank files and
-no one cared to ask me because the money was too much for them to
-control. They laundered over $2bn during the process .As I am sending
-this message to you, I was able to divert more than Fifty Million
-Dollars ($50m) to an escrow account belonging to no one in the bank.
-The bank is anxious now to know who is the beneficiary to the funds
-because they have made a lot of profits with the funds.
-
-It is more than Eight years now and most of the politicians are no
-longer using our bank to transfer funds overseas. The $50M has been
-lying waste but I don't want to retire from the bank without
-transferring the funds to a foreign account to enable me share the
-proceeds with the receiver. The money will be shared 60% for me and
-40% for you.
-
-There is no one coming to ask you about the funds because I secured
-everything.I only want you to ass is me by providing a viable bank
-account where the funds can be transferred. You are not to face any
-difficulties or legal implications as I am going to handle the
-transfer personally. If you are capable of receiving the funds, do let
-me know immediately to enable me give you detailed information on what
-to do.
-
-For me, I have not stolen the money from everyone because the other people
-that took the whole money did not face any problems. This is my chance
-also to grab my own but you must keep the details of the funds secret
-to avoid leakages as no one in the bank knows about the funds.
-
-Please supply me the following:
-
-Your current contact address and Telephone Numbers. Whether you will
-be able to come down again to my country to meet me before the
-commencement of the transfer
-I shall intimate you on what to do when I get your confirmation and
-acceptance. If you are capable of being my trusted associate, do
-
-declare your consent to me.PLS REPLY HERE) yakubunelson@yandex.com
-
-Yours Faithfully,
-
-
-Mr Yakubu Nelson
+-- 
+Kees Cook
