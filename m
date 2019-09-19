@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A976B8541
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC209B84C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406633AbfISWTI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:19:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60812 "EHLO mail.kernel.org"
+        id S2392070AbfISWNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:13:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404569AbfISWTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:19:01 -0400
+        id S1732567AbfISWNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:13:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A119220678;
-        Thu, 19 Sep 2019 22:18:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D33192196F;
+        Thu, 19 Sep 2019 22:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931540;
-        bh=8Oga840qT7mNdbKHWlniyreRrb6tdK+loARl/EV5NNI=;
+        s=default; t=1568931233;
+        bh=BGuyzmox+sYq/XPQbOvPmCqn5Y4KACHteLBcyR9H7kA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nu2VvaY7wn7DhgOS8bhimpzGTR4bNZHLjDdOshZo5nUtxl/PpqzzwmllhlJt5HIqy
-         QS7FNpOzzvkvod7UXSOlIf5ZNkN0++2cwBaENF5r73MJPwUIgaNpGY0wZ5O/1D/32A
-         cVLl6NwpC0EgYlxMCXcE/6P9dreNmLuDw0+9R6JA=
+        b=aB/h6qADLgKiiYEEl2KZoonl4eeGVsvpOZl1FrS9aaE0L1DtsMrAw/mMCumm+m1rS
+         VBCm9pmkBHLHhK7B/EUPh9H0z73wky+OooAhyX15twAycrKOQuFKnJ8F3+68E5V41C
+         g/SgbTCleo7cFxzhmYL5KzrVRfAt63IlsortSADM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.9 23/74] clk: rockchip: Dont yell about bad mmc phases when getting
-Date:   Fri, 20 Sep 2019 00:03:36 +0200
-Message-Id: <20190919214807.033474114@linuxfoundation.org>
+        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 52/79] cifs: set domainName when a domain-key is used in multiuser
+Date:   Fri, 20 Sep 2019 00:03:37 +0200
+Message-Id: <20190919214812.082014578@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,48 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-commit 6943b839721ad4a31ad2bacf6e71b21f2dfe3134 upstream.
+[ Upstream commit f2aee329a68f5a907bcff11a109dfe17c0b41aeb ]
 
-At boot time, my rk3288-veyron devices yell with 8 lines that look
-like this:
-  [    0.000000] rockchip_mmc_get_phase: invalid clk rate
+RHBZ: 1710429
 
-This is because the clock framework at clk_register() time tries to
-get the phase but we don't have a parent yet.
+When we use a domain-key to authenticate using multiuser we must also set
+the domainnmame for the new volume as it will be used and passed to the server
+in the NTLMSSP Domain-name.
 
-While the errors appear to be harmless they are still ugly and, in
-general, we don't want yells like this in the log unless they are
-important.
-
-There's no real reason to be yelling here.  We can still return
--EINVAL to indicate that the phase makes no sense without a parent.
-If someone really tries to do tuning and the clock is reported as 0
-then we'll see the yells in rockchip_mmc_set_phase().
-
-Fixes: 4bf59902b500 ("clk: rockchip: Prevent calculating mmc phase if clock rate is zero")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-mmc-phase.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/cifs/connect.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -59,10 +59,8 @@ static int rockchip_mmc_get_phase(struct
- 	u32 delay_num = 0;
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 208430bb66fc6..75727518b272a 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -2756,6 +2756,7 @@ static int
+ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ {
+ 	int rc = 0;
++	int is_domain = 0;
+ 	const char *delim, *payload;
+ 	char *desc;
+ 	ssize_t len;
+@@ -2803,6 +2804,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ 			rc = PTR_ERR(key);
+ 			goto out_err;
+ 		}
++		is_domain = 1;
+ 	}
  
- 	/* See the comment for rockchip_mmc_set_phase below */
--	if (!rate) {
--		pr_err("%s: invalid clk rate\n", __func__);
-+	if (!rate)
- 		return -EINVAL;
--	}
+ 	down_read(&key->sem);
+@@ -2860,6 +2862,26 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ 		goto out_key_put;
+ 	}
  
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
- 
++	/*
++	 * If we have a domain key then we must set the domainName in the
++	 * for the request.
++	 */
++	if (is_domain && ses->domainName) {
++		vol->domainname = kstrndup(ses->domainName,
++					   strlen(ses->domainName),
++					   GFP_KERNEL);
++		if (!vol->domainname) {
++			cifs_dbg(FYI, "Unable to allocate %zd bytes for "
++				 "domain\n", len);
++			rc = -ENOMEM;
++			kfree(vol->username);
++			vol->username = NULL;
++			kfree(vol->password);
++			vol->password = NULL;
++			goto out_key_put;
++		}
++	}
++
+ out_key_put:
+ 	up_read(&key->sem);
+ 	key_put(key);
+-- 
+2.20.1
+
 
 
