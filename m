@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D85DDB846A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DDF3B846B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:10:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405730AbfISWKl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:10:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49028 "EHLO mail.kernel.org"
+        id S2405740AbfISWKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:10:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405712AbfISWKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:10:37 -0400
+        id S2405721AbfISWKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:10:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E900321907;
-        Thu, 19 Sep 2019 22:10:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004E52196E;
+        Thu, 19 Sep 2019 22:10:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931036;
-        bh=csKgyx9cIvcyBdEkZTLKA3ImSwmlRCwcW6veHW3zcEA=;
+        s=default; t=1568931039;
+        bh=kIUj63N086jo5gW8T5PEHX5HflmQK9Y16vh87LQ3F2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cH/w5/XnR3vGgCCsjL7i4eY1pzxWn4vyIgKTAW+vd+VMvQNIe+eSovXGwa0UxdGLE
-         1xAjk+CpB4YC/6umHyXtQLvviq+IW02dZNYIQ7MJqPjh7gFlzli4+qf6PA8HMOuRCg
-         4rCRZXgofVhhDFv9PlpoD5LP7to7rEhGY3akF1ic=
+        b=aVJBGBtB+6IrInGqYuu2Qy+X2Ze0AqFqRRc16UXnB32wwRpm4DHDr7HXWq0qfCtSr
+         45ulk/JwNkaxwb1gNtFlLn9REQRWJobOZ/i6IPNol06KxkTSYphZ+b92WsdXOOqeej
+         Y2Ok5PI7XhXt1CeVIhM5+AH+CCjRhQD38gb546+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 072/124] netfilter: nf_conntrack_ftp: Fix debug output
-Date:   Fri, 20 Sep 2019 00:02:40 +0200
-Message-Id: <20190919214821.620903152@linuxfoundation.org>
+Subject: [PATCH 5.2 073/124] NFSv2: Fix eof handling
+Date:   Fri, 20 Sep 2019 00:02:41 +0200
+Message-Id: <20190919214821.655959119@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -45,45 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Jarosch <thomas.jarosch@intra2net.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit 3a069024d371125227de3ac8fa74223fcf473520 ]
+[ Upstream commit 71affe9be45a5c60b9772e1b2701710712637274 ]
 
-The find_pattern() debug output was printing the 'skip' character.
-This can be a NULL-byte and messes up further pr_debug() output.
+If we received a reply from the server with a zero length read and
+no error, then that implies we are at eof.
 
-Output without the fix:
-kernel: nf_conntrack_ftp: Pattern matches!
-kernel: nf_conntrack_ftp: Skipped up to `<7>nf_conntrack_ftp: find_pattern `PORT': dlen = 8
-kernel: nf_conntrack_ftp: find_pattern `EPRT': dlen = 8
-
-Output with the fix:
-kernel: nf_conntrack_ftp: Pattern matches!
-kernel: nf_conntrack_ftp: Skipped up to 0x0 delimiter!
-kernel: nf_conntrack_ftp: Match succeeded!
-kernel: nf_conntrack_ftp: conntrack_ftp: match `172,17,0,100,200,207' (20 bytes at 4150681645)
-kernel: nf_conntrack_ftp: find_pattern `PORT': dlen = 8
-
-Signed-off-by: Thomas Jarosch <thomas.jarosch@intra2net.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_ftp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/proc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nf_conntrack_ftp.c b/net/netfilter/nf_conntrack_ftp.c
-index 8c6c11bab5b67..b5df6c4c159cd 100644
---- a/net/netfilter/nf_conntrack_ftp.c
-+++ b/net/netfilter/nf_conntrack_ftp.c
-@@ -322,7 +322,7 @@ static int find_pattern(const char *data, size_t dlen,
- 		i++;
+diff --git a/fs/nfs/proc.c b/fs/nfs/proc.c
+index 5552fa8b6e128..ec79d2214a78c 100644
+--- a/fs/nfs/proc.c
++++ b/fs/nfs/proc.c
+@@ -594,7 +594,8 @@ static int nfs_read_done(struct rpc_task *task, struct nfs_pgio_header *hdr)
+ 		/* Emulate the eof flag, which isn't normally needed in NFSv2
+ 		 * as it is guaranteed to always return the file attributes
+ 		 */
+-		if (hdr->args.offset + hdr->res.count >= hdr->res.fattr->size)
++		if ((hdr->res.count == 0 && hdr->args.count > 0) ||
++		    hdr->args.offset + hdr->res.count >= hdr->res.fattr->size)
+ 			hdr->res.eof = 1;
  	}
- 
--	pr_debug("Skipped up to `%c'!\n", skip);
-+	pr_debug("Skipped up to 0x%hhx delimiter!\n", skip);
- 
- 	*numoff = i;
- 	*numlen = getnum(data + i, dlen - i, cmd, term, numoff);
+ 	return 0;
 -- 
 2.20.1
 
