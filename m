@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9E1B844B
+	by mail.lfdr.de (Postfix) with ESMTP id 89A8BB844C
 	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405466AbfISWJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:09:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47786 "EHLO mail.kernel.org"
+        id S2405489AbfISWJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:09:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405437AbfISWJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:09:32 -0400
+        id S2405473AbfISWJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:09:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 972D621907;
-        Thu, 19 Sep 2019 22:09:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE45421928;
+        Thu, 19 Sep 2019 22:09:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930972;
-        bh=2vjN1mTgWrVfPYXSq4C3quBd4Ijtnf7GY7w2gVNMFUw=;
+        s=default; t=1568930980;
+        bh=RvzhxzUs3oaoGtjI+qyUhG9SuYuCbVBTNsG965Kl+pk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cULZrZgm80e8dykXA/U6jC+zm/i0QknXbhd+rPfah7qC3Wl8kQGzgrPIJGds38aFt
-         IWHSe7YV6FzzgBjfY7bi1LwJO0IyZ4Vbt9heWeLGEcM0praVKh7r2gJbpN4Vl/+Z2W
-         7eEQ2g8PmnbmGYpgNF8slvrZfSgyViO8+x0IzifA=
+        b=bTNRNKp65I68xHopAGZKvVgRdrljB/QmxpQUeKn1rD89xmAmIWf6cB3B42OgbTWng
+         byoZizUC7c5patYzMQQfWQkgO5267wM4nUxTlD/S19Dymqzkm3cI/zhL3W4FBKzJaq
+         ZF7gHzTecfTMeGjeThcLmRrampGkUOxL707Ta2xU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org, Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 082/124] usb: host: xhci-tegra: Set DMA mask correctly
-Date:   Fri, 20 Sep 2019 00:02:50 +0200
-Message-Id: <20190919214822.000675695@linuxfoundation.org>
+Subject: [PATCH 5.2 085/124] ibmvnic: Do not process reset during or after device removal
+Date:   Fri, 20 Sep 2019 00:02:53 +0200
+Message-Id: <20190919214822.119965729@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -44,55 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nagarjuna Kristam <nkristam@nvidia.com>
+From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-[ Upstream commit 993cc8753453fccfe060a535bbe21fcf1001b626 ]
+[ Upstream commit 36f1031c51a2538e5558fb44c6d6b88f98d3c0f2 ]
 
-The Falcon microcontroller that runs the XUSB firmware and which is
-responsible for exposing the XHCI interface can address only 40 bits of
-memory. Typically that's not a problem because Tegra devices don't have
-enough system memory to exceed those 40 bits.
+Currently, the ibmvnic driver will not schedule device resets
+if the device is being removed, but does not check the device
+state before the reset is actually processed. This leads to a race
+where a reset is scheduled with a valid device state but is
+processed after the driver has been removed, resulting in an oops.
 
-However, if the ARM SMMU is enable on Tegra186 and later, the addresses
-passed to the XUSB controller can be anywhere in the 48-bit IOV address
-space of the ARM SMMU. Since the DMA/IOMMU API starts allocating from
-the top of the IOVA space, the Falcon microcontroller is not able to
-load the firmware successfully.
+Fix this by checking the device state before processing a queued
+reset event.
 
-Fix this by setting the DMA mask to 40 bits, which will force the DMA
-API to map the buffer for the firmware to an IOVA that is addressable by
-the Falcon.
-
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/1566989697-13049-1-git-send-email-nkristam@nvidia.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-tegra.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/ethernet/ibm/ibmvnic.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 294158113d62c..77142f9bf26ae 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1217,6 +1217,16 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index cebd20f3128d4..fa4bb940665c2 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1983,6 +1983,10 @@ static void __ibmvnic_reset(struct work_struct *work)
  
- 	tegra_xusb_config(tegra, regs);
- 
-+	/*
-+	 * The XUSB Falcon microcontroller can only address 40 bits, so set
-+	 * the DMA mask accordingly.
-+	 */
-+	err = dma_set_mask_and_coherent(tegra->dev, DMA_BIT_MASK(40));
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
-+		goto put_rpm;
-+	}
+ 	rwi = get_next_rwi(adapter);
+ 	while (rwi) {
++		if (adapter->state == VNIC_REMOVING ||
++		    adapter->state == VNIC_REMOVED)
++			goto out;
 +
- 	err = tegra_xusb_load_firmware(tegra);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
+ 		if (adapter->force_reset_recovery) {
+ 			adapter->force_reset_recovery = false;
+ 			rc = do_hard_reset(adapter, rwi, reset_state);
+@@ -2007,7 +2011,7 @@ static void __ibmvnic_reset(struct work_struct *work)
+ 		netdev_dbg(adapter->netdev, "Reset failed\n");
+ 		free_all_rwi(adapter);
+ 	}
+-
++out:
+ 	adapter->resetting = false;
+ 	if (we_lock_rtnl)
+ 		rtnl_unlock();
 -- 
 2.20.1
 
