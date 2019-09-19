@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65BCEB852E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B57EB850C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393935AbfISWSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:18:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59914 "EHLO mail.kernel.org"
+        id S2406424AbfISWRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:17:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406571AbfISWSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:18:24 -0400
+        id S2406399AbfISWQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:16:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 868D721907;
-        Thu, 19 Sep 2019 22:18:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21B9D21907;
+        Thu, 19 Sep 2019 22:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931504;
-        bh=+dI+rVf+1+sdiK1BAdoxjotm3JYBHjEnkmGqtzDyUPA=;
+        s=default; t=1568931417;
+        bh=ouKyXAVyj6EMO2IS6VD8fdjtqEOD8VGdbxLgDFJDtEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KQlaZDHwnVIpv8Lx0m722rH10T0V3onFylBDNFSRcsm0Hj/WwFBMz4Vo5laoPnDaY
-         kK7/UdJ7FoEyxnquCTACjJuYVN1kUZlKjyopdIRbT9HEUhvMCZEu86M8LAMZAG+2xn
-         VjF9EmVxFDINIuuTZY7wMb9J15GL1q4USDJtB+P8=
+        b=SOZLAXI/4kQ/6YkzUkcXJ9XWj6E2dUVNiEMWsc619/hwajYfKBroJwZRiE7Z5lkB2
+         TAeLmTwmTh5MjDr6k+BUomm84N7l/f1xrsM8DFl5i0/zdrWYYavKPnmXkfP9sLzWVt
+         GoB+Rku1gqe8Vbsy1MWQIDpEpHDJIc7vDKb2DNjI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 11/74] tipc: add NULL pointer check before calling kfree_rcu
+        stable@vger.kernel.org, Matt Delco <delco@chromium.org>,
+        Jim Mattson <jmattson@google.com>,
+        syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 09/59] KVM: coalesced_mmio: add bounds checking
 Date:   Fri, 20 Sep 2019 00:03:24 +0200
-Message-Id: <20190919214805.117395564@linuxfoundation.org>
+Message-Id: <20190919214758.026112574@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Matt Delco <delco@chromium.org>
 
-[ Upstream commit 42dec1dbe38239cf91cc1f4df7830c66276ced37 ]
+commit b60fe990c6b07ef6d4df67bc0530c7c90a62623a upstream.
 
-Unlike kfree(p), kfree_rcu(p, rcu) won't do NULL pointer check. When
-tipc_nametbl_remove_publ returns NULL, the panic below happens:
+The first/last indexes are typically shared with a user app.
+The app can change the 'last' index that the kernel uses
+to store the next result.  This change sanity checks the index
+before using it for writing to a potentially arbitrary address.
 
-   BUG: unable to handle kernel NULL pointer dereference at 0000000000000068
-   RIP: 0010:__call_rcu+0x1d/0x290
-   Call Trace:
-    <IRQ>
-    tipc_publ_notify+0xa9/0x170 [tipc]
-    tipc_node_write_unlock+0x8d/0x100 [tipc]
-    tipc_node_link_down+0xae/0x1d0 [tipc]
-    tipc_node_check_dest+0x3ea/0x8f0 [tipc]
-    ? tipc_disc_rcv+0x2c7/0x430 [tipc]
-    tipc_disc_rcv+0x2c7/0x430 [tipc]
-    ? tipc_rcv+0x6bb/0xf20 [tipc]
-    tipc_rcv+0x6bb/0xf20 [tipc]
-    ? ip_route_input_slow+0x9cf/0xb10
-    tipc_udp_recv+0x195/0x1e0 [tipc]
-    ? tipc_udp_is_known_peer+0x80/0x80 [tipc]
-    udp_queue_rcv_skb+0x180/0x460
-    udp_unicast_rcv_skb.isra.56+0x75/0x90
-    __udp4_lib_rcv+0x4ce/0xb90
-    ip_local_deliver_finish+0x11c/0x210
-    ip_local_deliver+0x6b/0xe0
-    ? ip_rcv_finish+0xa9/0x410
-    ip_rcv+0x273/0x362
+This fixes CVE-2019-14821.
 
-Fixes: 97ede29e80ee ("tipc: convert name table read-write lock to RCU")
-Reported-by: Li Shuang <shuali@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
+Signed-off-by: Matt Delco <delco@chromium.org>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
+[Use READ_ONCE. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/tipc/name_distr.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/tipc/name_distr.c
-+++ b/net/tipc/name_distr.c
-@@ -224,7 +224,8 @@ static void tipc_publ_purge(struct net *
- 		       publ->key);
- 	}
- 
--	kfree_rcu(p, rcu);
-+	if (p)
-+		kfree_rcu(p, rcu);
+---
+ virt/kvm/coalesced_mmio.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -40,7 +40,7 @@ static int coalesced_mmio_in_range(struc
+ 	return 1;
  }
  
- /**
+-static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
++static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
+ {
+ 	struct kvm_coalesced_mmio_ring *ring;
+ 	unsigned avail;
+@@ -52,7 +52,7 @@ static int coalesced_mmio_has_room(struc
+ 	 * there is always one unused entry in the buffer
+ 	 */
+ 	ring = dev->kvm->coalesced_mmio_ring;
+-	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
++	avail = (ring->first - last - 1) % KVM_COALESCED_MMIO_MAX;
+ 	if (avail == 0) {
+ 		/* full */
+ 		return 0;
+@@ -67,24 +67,27 @@ static int coalesced_mmio_write(struct k
+ {
+ 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+ 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
++	__u32 insert;
+ 
+ 	if (!coalesced_mmio_in_range(dev, addr, len))
+ 		return -EOPNOTSUPP;
+ 
+ 	spin_lock(&dev->kvm->ring_lock);
+ 
+-	if (!coalesced_mmio_has_room(dev)) {
++	insert = READ_ONCE(ring->last);
++	if (!coalesced_mmio_has_room(dev, insert) ||
++	    insert >= KVM_COALESCED_MMIO_MAX) {
+ 		spin_unlock(&dev->kvm->ring_lock);
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+ 	/* copy data in first free entry of the ring */
+ 
+-	ring->coalesced_mmio[ring->last].phys_addr = addr;
+-	ring->coalesced_mmio[ring->last].len = len;
+-	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
++	ring->coalesced_mmio[insert].phys_addr = addr;
++	ring->coalesced_mmio[insert].len = len;
++	memcpy(ring->coalesced_mmio[insert].data, val, len);
+ 	smp_wmb();
+-	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
++	ring->last = (insert + 1) % KVM_COALESCED_MMIO_MAX;
+ 	spin_unlock(&dev->kvm->ring_lock);
+ 	return 0;
+ }
 
 
