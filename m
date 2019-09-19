@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23643B8687
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09C6EB8689
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406453AbfISWRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58126 "EHLO mail.kernel.org"
+        id S1732711AbfISWRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:17:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406426AbfISWRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:06 -0400
+        id S2406443AbfISWRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:17:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76A6121907;
-        Thu, 19 Sep 2019 22:17:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDD8A21907;
+        Thu, 19 Sep 2019 22:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931426;
-        bh=PAUG5iixFXxTPmQ6sxSR0YC0MClEKtce7SpzYuzozrE=;
+        s=default; t=1568931431;
+        bh=Lj7bkb2BiDO38UOg4KwiSGvkPNkyrZAhGxld/8od+KE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pZI1DByGbp14iWN63d92vZ+hFdHVvGJPS+LMmsJT1edsn8Pbz177YT+f4aFa04ZTM
-         IAAhM98v9Pii/FaPrlEOJemRccd31iBPXGO+LLnMTUGWAt0JMo0utyrwl7BLM/shxl
-         alkOSCt0iEBzlSWY/+pBedczOBErklwVUX5Cndic=
+        b=BJh54lBxjUV30YXNaq2T67Rv/uiaRibk9/lSh7KImWoUq6GMV/YeJdlHiNwN3e8qH
+         IGTl+2PsRvVb4w8Ny/ceCG5u6zqoKwnVIGStJH+8RdeJVHTJ80Ouc7+npNuKWhRzsV
+         BF+wGGDXkm/FnD8VrEOBcn1WdAknry4h5h86WjuQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        "Zephaniah E. Loss-Cutler-Hull" <zephaniah@gmail.com>,
+        Len Brown <len.brown@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 42/59] amd-xgbe: Fix error path in xgbe_mod_init()
-Date:   Fri, 20 Sep 2019 00:03:57 +0200
-Message-Id: <20190919214807.076319117@linuxfoundation.org>
+Subject: [PATCH 4.14 44/59] tools/power x86_energy_perf_policy: Fix argument parsing
+Date:   Fri, 20 Sep 2019 00:03:59 +0200
+Message-Id: <20190919214807.211407928@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
 References: <20190919214755.852282682@linuxfoundation.org>
@@ -45,48 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Zephaniah E. Loss-Cutler-Hull <zephaniah@gmail.com>
 
-[ Upstream commit b6b4dc4c1fa7f1c99398e7dc85758049645e9588 ]
+[ Upstream commit 03531482402a2bc4ab93cf6dde46833775e035e9 ]
 
-In xgbe_mod_init(), we should do cleanup if some error occurs
+The -w argument in x86_energy_perf_policy currently triggers an
+unconditional segfault.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: efbaa828330a ("amd-xgbe: Add support to handle device renaming")
-Fixes: 47f164deab22 ("amd-xgbe: Add PCI device support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This is because the argument string reads: "+a:c:dD:E:e:f:m:M:rt:u:vw" and
+yet the argument handler expects an argument.
+
+When parse_optarg_string is called with a null argument, we then proceed to
+crash in strncmp, not horribly friendly.
+
+The man page describes -w as taking an argument, the long form
+(--hwp-window) is correctly marked as taking a required argument, and the
+code expects it.
+
+As such, this patch simply marks the short form (-w) as requiring an
+argument.
+
+Signed-off-by: Zephaniah E. Loss-Cutler-Hull <zephaniah@gmail.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amd/xgbe/xgbe-main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-main.c b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-index e31d9d1fb6a66..e4e632e025d31 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-@@ -487,13 +487,19 @@ static int __init xgbe_mod_init(void)
+diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
+index bbef8bcf44d6d..2aba622d1c5aa 100644
+--- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
++++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
+@@ -546,7 +546,7 @@ void cmdline(int argc, char **argv)
  
- 	ret = xgbe_platform_init();
- 	if (ret)
--		return ret;
-+		goto err_platform_init;
+ 	progname = argv[0];
  
- 	ret = xgbe_pci_init();
- 	if (ret)
--		return ret;
-+		goto err_pci_init;
- 
- 	return 0;
-+
-+err_pci_init:
-+	xgbe_platform_exit();
-+err_platform_init:
-+	unregister_netdevice_notifier(&xgbe_netdev_notifier);
-+	return ret;
- }
- 
- static void __exit xgbe_mod_exit(void)
+-	while ((opt = getopt_long_only(argc, argv, "+a:c:dD:E:e:f:m:M:rt:u:vw",
++	while ((opt = getopt_long_only(argc, argv, "+a:c:dD:E:e:f:m:M:rt:u:vw:",
+ 				long_options, &option_index)) != -1) {
+ 		switch (opt) {
+ 		case 'a':
 -- 
 2.20.1
 
