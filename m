@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C578B86B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BC2DB8707
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:33:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389691AbfISWOo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:14:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54280 "EHLO mail.kernel.org"
+        id S2407288AbfISWdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:33:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393780AbfISWOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:14:40 -0400
+        id S2393549AbfISWLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:11:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 232F121924;
-        Thu, 19 Sep 2019 22:14:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B74F7218AF;
+        Thu, 19 Sep 2019 22:11:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931279;
-        bh=6fqBZnqQpxCIse9H8W99MnTop6fF0NhNRxtQG6Zy2QA=;
+        s=default; t=1568931074;
+        bh=M8QDHlclBiqqcG4kczDfCX8BbuxFzi0ECb4PydXMguo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=erVwh+UYUdXyMDrXSt5/OSxu+l/+2TTX8d65c77V14MwSO/vm9Hq3Yy9nfGZ55P+F
-         c0BP2ou/GdQUOgPImYGsmvP7Vd6HEmm33+GbwzC9C0QQcpDeo4p5PvmUXNE+aJ79jD
-         7hweb7Qz2OR1CW/zm+Iycgy+wdU0H3HJsuutlmvs=
+        b=LHkd+9i1cDpkMZKg2D2AvyqxwLMUBaaERLTyE52WzUg6oN+4dG9JZZTzguIIyynxz
+         lMXt0YmOTXZk9EfQtSa5v7UvLZYj1wOJLovPy8iF8DCrvQd/ikC+dKDi+3kEXO/g1S
+         8zBS3Cz8NGKPPs03pWS1l5LXQiN4ac39EkLLZHvo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 41/79] qed: Add cleanup in qed_slowpath_start()
-Date:   Fri, 20 Sep 2019 00:03:26 +0200
-Message-Id: <20190919214811.329022256@linuxfoundation.org>
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 119/124] iommu/amd: Fix race in increase_address_space()
+Date:   Fri, 20 Sep 2019 00:03:27 +0200
+Message-Id: <20190919214823.506454697@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
+References: <20190919214819.198419517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +43,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Joerg Roedel <jroedel@suse.de>
 
-[ Upstream commit de0e4fd2f07ce3bbdb69dfb8d9426b7227451b69 ]
+[ Upstream commit 754265bcab78a9014f0f99cd35e0d610fcd7dfa7 ]
 
-If qed_mcp_send_drv_version() fails, no cleanup is executed, leading to
-memory leaks. To fix this issue, introduce the label 'err4' to perform the
-cleanup work before returning the error.
+After the conversion to lock-less dma-api call the
+increase_address_space() function can be called without any
+locking. Multiple CPUs could potentially race for increasing
+the address space, leading to invalid domain->mode settings
+and invalid page-tables. This has been happening in the wild
+under high IO load and memory pressure.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Sudarsana Reddy Kalluru <skalluru@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix the race by locking this operation. The function is
+called infrequently so that this does not introduce
+a performance regression in the dma-api path again.
+
+Reported-by: Qian Cai <cai@lca.pw>
+Fixes: 256e4621c21a ('iommu/amd: Make use of the generic IOVA allocator')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iommu/amd_iommu.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
-index cf3b0e3dc350c..637687b766ff0 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_main.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
-@@ -1150,7 +1150,7 @@ static int qed_slowpath_start(struct qed_dev *cdev,
- 					      &drv_version);
- 		if (rc) {
- 			DP_NOTICE(cdev, "Failed sending drv version command\n");
--			return rc;
-+			goto err4;
- 		}
- 	}
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index b265062edf6c8..3e687f18b203a 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -1425,18 +1425,21 @@ static void free_pagetable(struct protection_domain *domain)
+  * another level increases the size of the address space by 9 bits to a size up
+  * to 64 bits.
+  */
+-static bool increase_address_space(struct protection_domain *domain,
++static void increase_address_space(struct protection_domain *domain,
+ 				   gfp_t gfp)
+ {
++	unsigned long flags;
+ 	u64 *pte;
  
-@@ -1158,6 +1158,8 @@ static int qed_slowpath_start(struct qed_dev *cdev,
+-	if (domain->mode == PAGE_MODE_6_LEVEL)
++	spin_lock_irqsave(&domain->lock, flags);
++
++	if (WARN_ON_ONCE(domain->mode == PAGE_MODE_6_LEVEL))
+ 		/* address space already 64 bit large */
+-		return false;
++		goto out;
  
- 	return 0;
+ 	pte = (void *)get_zeroed_page(gfp);
+ 	if (!pte)
+-		return false;
++		goto out;
  
-+err4:
-+	qed_ll2_dealloc_if(cdev);
- err3:
- 	qed_hw_stop(cdev);
- err2:
+ 	*pte             = PM_LEVEL_PDE(domain->mode,
+ 					iommu_virt_to_phys(domain->pt_root));
+@@ -1444,7 +1447,10 @@ static bool increase_address_space(struct protection_domain *domain,
+ 	domain->mode    += 1;
+ 	domain->updated  = true;
+ 
+-	return true;
++out:
++	spin_unlock_irqrestore(&domain->lock, flags);
++
++	return;
+ }
+ 
+ static u64 *alloc_pte(struct protection_domain *domain,
 -- 
 2.20.1
 
