@@ -2,125 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4DC5B7E6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 17:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CEB0B7E7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 17:48:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391362AbfISPlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 11:41:49 -0400
-Received: from foss.arm.com ([217.140.110.172]:32884 "EHLO foss.arm.com"
+        id S2391405AbfISPsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 11:48:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:46951 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389646AbfISPlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 11:41:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B199628;
-        Thu, 19 Sep 2019 08:41:48 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E65BC3F575;
-        Thu, 19 Sep 2019 08:41:45 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 16:41:43 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Jia He <justin.he@arm.com>, Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Punit Agrawal <punitagrawal@gmail.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>,
-        Alex Van Brunt <avanbrunt@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>, hejianet@gmail.com,
-        Kaly Xin <Kaly.Xin@arm.com>
-Subject: Re: [PATCH v4 3/3] mm: fix double page fault on arm64 if PTE_AF is
- cleared
-Message-ID: <20190919154143.GA6472@arrakis.emea.arm.com>
-References: <20190918131914.38081-1-justin.he@arm.com>
- <20190918131914.38081-4-justin.he@arm.com>
- <20190918140027.ckj32xnryyyesc23@box>
- <20190918180029.GB20601@iMac.local>
- <20190919150007.k7scjplcya53j7r4@box>
+        id S2388700AbfISPsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 11:48:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2019 08:48:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,524,1559545200"; 
+   d="scan'208";a="362555450"
+Received: from dpdk-virtio-tbie-2.sh.intel.com (HELO ___) ([10.67.104.71])
+  by orsmga005.jf.intel.com with ESMTP; 19 Sep 2019 08:48:36 -0700
+Date:   Thu, 19 Sep 2019 23:45:52 +0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>, alex.williamson@redhat.com,
+        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        lingshan.zhu@intel.com
+Subject: Re: [RFC v4 0/3] vhost: introduce mdev based hardware backend
+Message-ID: <20190919154552.GA27657@___>
+References: <20190917010204.30376-1-tiwei.bie@intel.com>
+ <993841ed-942e-c90b-8016-8e7dc76bf13a@redhat.com>
+ <20190917105801.GA24855@___>
+ <fa6957f3-19ad-f351-8c43-65bc8342b82e@redhat.com>
+ <20190918102923-mutt-send-email-mst@kernel.org>
+ <d2efe7e4-cf13-437d-e2dc-e2779fac7d2f@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190919150007.k7scjplcya53j7r4@box>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d2efe7e4-cf13-437d-e2dc-e2779fac7d2f@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 06:00:07PM +0300, Kirill A. Shutemov wrote:
-> On Wed, Sep 18, 2019 at 07:00:30PM +0100, Catalin Marinas wrote:
-> > On Wed, Sep 18, 2019 at 05:00:27PM +0300, Kirill A. Shutemov wrote:
-> > > On Wed, Sep 18, 2019 at 09:19:14PM +0800, Jia He wrote:
-> > > > @@ -2152,20 +2163,34 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
-> > > >  	 */
-> > > >  	if (unlikely(!src)) {
-> > > >  		void *kaddr = kmap_atomic(dst);
-> > > > -		void __user *uaddr = (void __user *)(va & PAGE_MASK);
-> > > > +		void __user *uaddr = (void __user *)(addr & PAGE_MASK);
-> > > > +		pte_t entry;
-> > > >  
-> > > >  		/*
-> > > >  		 * This really shouldn't fail, because the page is there
-> > > >  		 * in the page tables. But it might just be unreadable,
-> > > >  		 * in which case we just give up and fill the result with
-> > > > -		 * zeroes.
-> > > > +		 * zeroes. On architectures with software "accessed" bits,
-> > > > +		 * we would take a double page fault here, so mark it
-> > > > +		 * accessed here.
-> > > >  		 */
-> > > > +		if (arch_faults_on_old_pte() && !pte_young(vmf->orig_pte)) {
-> > > > +			spin_lock(vmf->ptl);
-> > > > +			if (likely(pte_same(*vmf->pte, vmf->orig_pte))) {
-> > > > +				entry = pte_mkyoung(vmf->orig_pte);
-> > > > +				if (ptep_set_access_flags(vma, addr,
-> > > > +							  vmf->pte, entry, 0))
-> > > > +					update_mmu_cache(vma, addr, vmf->pte);
-> > > > +			}
-> > > 
-> > > I don't follow.
-> > > 
-> > > So if pte has changed under you, you don't set the accessed bit, but never
-> > > the less copy from the user.
-> > > 
-> > > What makes you think it will not trigger the same problem?
-> > > 
-> > > I think we need to make cow_user_page() fail in this case and caller --
-> > > wp_page_copy() -- return zero. If the fault was solved by other thread, we
-> > > are fine. If not userspace would re-fault on the same address and we will
-> > > handle the fault from the second attempt.
-> > 
-> > It would be nice to clarify the semantics of this function and do as
-> > you suggest but the current comment is slightly confusing:
-> > 
-> > 	/*
-> > 	 * If the source page was a PFN mapping, we don't have
-> > 	 * a "struct page" for it. We do a best-effort copy by
-> > 	 * just copying from the original user address. If that
-> > 	 * fails, we just zero-fill it. Live with it.
-> > 	 */
-> > 
-> > Would any user-space rely on getting a zero-filled page here instead of
-> > a recursive fault?
+On Thu, Sep 19, 2019 at 09:08:11PM +0800, Jason Wang wrote:
+> On 2019/9/18 下午10:32, Michael S. Tsirkin wrote:
+> > > > > So I have some questions:
+> > > > > 
+> > > > > 1) Compared to method 2, what's the advantage of creating a new vhost char
+> > > > > device? I guess it's for keep the API compatibility?
+> > > > One benefit is that we can avoid doing vhost ioctls on
+> > > > VFIO device fd.
+> > > Yes, but any benefit from doing this?
+> > It does seem a bit more modular, but it's certainly not a big deal.
 > 
-> I don't see the point in zero-filled page in this case. SIGBUS sounds like
-> more appropriate response, no?
+> Ok, if we go this way, it could be as simple as provide some callback to
+> vhost, then vhost can just forward the ioctl through parent_ops.
+> 
+> > 
+> > > > > 2) For method 2, is there any easy way for user/admin to distinguish e.g
+> > > > > ordinary vfio-mdev for vhost from ordinary vfio-mdev?
+> > > > I think device-api could be a choice.
+> > > Ok.
+> > > 
+> > > 
+> > > > > I saw you introduce
+> > > > > ops matching helper but it's not friendly to management.
+> > > > The ops matching helper is just to check whether a given
+> > > > vfio-device is based on a mdev device.
+> > > > 
+> > > > > 3) A drawback of 1) and 2) is that it must follow vfio_device_ops that
+> > > > > assumes the parameter comes from userspace, it prevents support kernel
+> > > > > virtio drivers.
+> > > > > 
+> > > > > 4) So comes the idea of method 3, since it register a new vhost-mdev driver,
+> > > > > we can use device specific ops instead of VFIO ones, then we can have a
+> > > > > common API between vDPA parent and vhost-mdev/virtio-mdev drivers.
+> > > > As the above draft shows, this requires introducing a new
+> > > > VFIO device driver. I think Alex's opinion matters here.
+> 
+> Just to clarify, a new type of mdev driver but provides dummy
+> vfio_device_ops for VFIO to make container DMA ioctl work.
 
-I think misunderstood your comment. So, if !pte_same(), we should let
-userspace re-fault. This wouldn't be a user ABI change and it is
-bounded, can't end up in an infinite re-fault loop.
+I see. Thanks! IIUC, you mean we can provide a very tiny
+VFIO device driver in drivers/vhost/mdev.c, e.g.:
 
-In case of a __copy_from_user_inatomic() error, SIGBUS would make more
-sense but it changes the current behaviour (zero-filling the page). This
-can be left for a separate patch, doesn't affect the arm64 case here.
+static int vfio_vhost_mdev_open(void *device_data)
+{
+	if (!try_module_get(THIS_MODULE))
+		return -ENODEV;
+	return 0;
+}
 
--- 
-Catalin
+static void vfio_vhost_mdev_release(void *device_data)
+{
+	module_put(THIS_MODULE);
+}
+
+static const struct vfio_device_ops vfio_vhost_mdev_dev_ops = {
+	.name		= "vfio-vhost-mdev",
+	.open		= vfio_vhost_mdev_open,
+	.release	= vfio_vhost_mdev_release,
+};
+
+static int vhost_mdev_probe(struct device *dev)
+{
+	struct mdev_device *mdev = to_mdev_device(dev);
+
+	... Check the mdev device_id proposed in ...
+	... https://lkml.org/lkml/2019/9/12/151 ...
+
+	return vfio_add_group_dev(dev, &vfio_vhost_mdev_dev_ops, mdev);
+}
+
+static void vhost_mdev_remove(struct device *dev)
+{
+	vfio_del_group_dev(dev);
+}
+
+static struct mdev_driver vhost_mdev_driver = {
+	.name	= "vhost_mdev",
+	.probe	= vhost_mdev_probe,
+	.remove	= vhost_mdev_remove,
+};
+
+So we can bind above mdev driver to the virtio-mdev compatible
+mdev devices when we want to use vhost-mdev.
+
+After binding above driver to the mdev device, we can setup IOMMU
+via VFIO and get VFIO device fd of this mdev device, and pass it
+to vhost fd (/dev/vhost-mdev) with a SET_BACKEND ioctl.
+
+Thanks,
+Tiwei
+
+> 
+> Thanks
+> 
+> 
+> > > Yes, it is.
+> > > 
+> > > Thanks
+> > > 
+> > > 
