@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50CE8B848A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B103B84FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:16:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405512AbfISWLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:11:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50446 "EHLO mail.kernel.org"
+        id S2406289AbfISWQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:16:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405869AbfISWLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:11:41 -0400
+        id S2406259AbfISWQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:16:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66A8621907;
-        Thu, 19 Sep 2019 22:11:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72CBE218AF;
+        Thu, 19 Sep 2019 22:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931100;
-        bh=vqObBkhoO609+NUAEDOL9UqgzQOvbGgAuUdWe8urEDw=;
+        s=default; t=1568931365;
+        bh=w0mXBtSUrIzsdWESWOJCWbodkrbx6BxZ6vrtYietXXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IH3a/+xMTZ6lFJpitKubp+h1FuEVJOM29BaK7iST1iyHemEeFTP+oG2kKew/n0N0B
-         ypy5LOx0c2jcOP8UxGafxcFalx08T/Qx4mQ6VoZ4zceUf+YVnAf6a95fBiM1AHN/hK
-         83rtKqMTYl5A17RkX3izCA0PEmyQv0PG3Aqm1Qr8=
+        b=s69kvgXa4MJVv7MsQROrpTF+LYgJNJMg+KmDWVJ9USm2GHauqsDWosuw2fCTUdpdZ
+         027i0QU/qZ4CR08/Lmjfv5qCqZ/BeN+nm5/3UEEUllGx+/O1Wzp9DcZ4KsW/9Wl4ED
+         rf/6W0PikEqxhuXv5yNGb/M+pSxQByHPrRMDXE9w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 109/124] arm64: dts: renesas: r8a77995: draak: Fix backlight regulator name
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 02/59] Input: elan_i2c - remove Lenovo Legion Y7000 PnpID
 Date:   Fri, 20 Sep 2019 00:03:17 +0200
-Message-Id: <20190919214823.154469383@linuxfoundation.org>
+Message-Id: <20190919214756.510013600@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,59 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-[ Upstream commit 45f5d5a9e34d3fe4140a9a3b5f7ebe86c252440a ]
+commit 0c043d70d04711fe6c380df9065fdc44192c49bf upstream.
 
-Currently there are two nodes named "regulator1" in the Draak DTS: a
-3.3V regulator for the eMMC and the LVDS decoder, and a 12V regulator
-for the backlight.  This causes the former to be overwritten by the
-latter.
+Looks like the Bios of the Lenovo Legion Y7000 is using ELAN061B
+when the actual device is supposed to be used with hid-multitouch.
 
-Fix this by renaming all regulators with numerical suffixes to use named
-suffixes, which are less likely to conflict.
+Remove it from the list of the supported device, hoping that
+no one will complain about the loss in functionality.
 
-Fixes: 4fbd4158fe8967e9 ("arm64: dts: renesas: r8a77995: draak: Add backlight")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=203467
+Fixes: 738c06d0e456 ("Input: elan_i2c - add hardware ID for multiple Lenovo laptops")
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/input/mouse/elan_i2c_core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-index a7dc11e36fd9d..071f66d8719e7 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-@@ -97,7 +97,7 @@
- 		reg = <0x0 0x48000000 0x0 0x18000000>;
- 	};
- 
--	reg_1p8v: regulator0 {
-+	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
- 		regulator-min-microvolt = <1800000>;
-@@ -106,7 +106,7 @@
- 		regulator-always-on;
- 	};
- 
--	reg_3p3v: regulator1 {
-+	reg_3p3v: regulator-3p3v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-3.3V";
- 		regulator-min-microvolt = <3300000>;
-@@ -115,7 +115,7 @@
- 		regulator-always-on;
- 	};
- 
--	reg_12p0v: regulator1 {
-+	reg_12p0v: regulator-12p0v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "D12.0V";
- 		regulator-min-microvolt = <12000000>;
--- 
-2.20.1
-
+--- a/drivers/input/mouse/elan_i2c_core.c
++++ b/drivers/input/mouse/elan_i2c_core.c
+@@ -1274,7 +1274,7 @@ static const struct acpi_device_id elan_
+ 	{ "ELAN0618", 0 },
+ 	{ "ELAN0619", 0 },
+ 	{ "ELAN061A", 0 },
+-	{ "ELAN061B", 0 },
++/*	{ "ELAN061B", 0 }, not working on the Lenovo Legion Y7000 */
+ 	{ "ELAN061C", 0 },
+ 	{ "ELAN061D", 0 },
+ 	{ "ELAN061E", 0 },
 
 
