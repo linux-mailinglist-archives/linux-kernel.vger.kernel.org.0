@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A36E9B8672
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C82AAB8557
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406470AbfISWRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
+        id S2393996AbfISWUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406460AbfISWRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:22 -0400
+        id S2393986AbfISWUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ECD620678;
-        Thu, 19 Sep 2019 22:17:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACBB5217D6;
+        Thu, 19 Sep 2019 22:20:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931442;
-        bh=dMmQ/8eCsAFOvBzLqKSRTPtQzG0tXkumYwZ1Un/PvgQ=;
+        s=default; t=1568931611;
+        bh=1uYRIa9dJFLkZU1QyZXcVGUl/P1dDHw2UzJHa6GuqiA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g0qhiJkjaU0MXXcDGkwYg8ykJcZ/fwktqKJ+3159J6aGawvsFbMWk8zLBzqaekmt/
-         1fuP4HaZvVd2gLIkhcNmIBa6xevRICvwT4rNQC8dlU381cFwqhXIZHM7Il7eR9Ran/
-         oPz5OaDO1fc+R0d2MdFmM6g8is8Xrwu8BPHEbTn0=
+        b=Du1aQhWoqFsvtwe/Rem77cWn8jF5LV//kYGQwv1nzNEP3HLcDbUIDo/RcTpdkOgKb
+         dYRfWrrZuPBMaGHKDq1N58GA1adTdcmcELdYYnvtpMAF4+D0o+41pFWem0ktjW/NF0
+         bSpYk5jxfNAWXPgYjcB89lyaU4u6z07Ls0PEIQAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 48/59] dmaengine: ti: omap-dma: Add cleanup in omap_dma_probe()
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 50/74] Kconfig: Fix the reference to the IDT77105 Phy driver in the description of ATM_NICSTAR_USE_IDT77105
 Date:   Fri, 20 Sep 2019 00:04:03 +0200
-Message-Id: <20190919214807.534286029@linuxfoundation.org>
+Message-Id: <20190919214809.659324425@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 962411b05a6d3342aa649e39cda1704c1fc042c6 ]
+[ Upstream commit cd9d4ff9b78fcd0fc4708900ba3e52e71e1a7690 ]
 
-If devm_request_irq() fails to disable all interrupts, no cleanup is
-performed before retuning the error. To fix this issue, invoke
-omap_dma_free() to do the cleanup.
+This should be IDT77105, not IDT77015.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/1565938570-7528-1-git-send-email-wenwen@cs.uga.edu
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/omap-dma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/atm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/omap-dma.c b/drivers/dma/omap-dma.c
-index 8c1665c8fe33a..14b560facf779 100644
---- a/drivers/dma/omap-dma.c
-+++ b/drivers/dma/omap-dma.c
-@@ -1534,8 +1534,10 @@ static int omap_dma_probe(struct platform_device *pdev)
+diff --git a/drivers/atm/Kconfig b/drivers/atm/Kconfig
+index 31c60101a69a4..7fa840170151b 100644
+--- a/drivers/atm/Kconfig
++++ b/drivers/atm/Kconfig
+@@ -199,7 +199,7 @@ config ATM_NICSTAR_USE_SUNI
+ 	  make the card work).
  
- 		rc = devm_request_irq(&pdev->dev, irq, omap_dma_irq,
- 				      IRQF_SHARED, "omap-dma-engine", od);
--		if (rc)
-+		if (rc) {
-+			omap_dma_free(od);
- 			return rc;
-+		}
- 	}
- 
- 	if (omap_dma_glbl_read(od, CAPS_0) & CAPS_0_SUPPORT_LL123)
+ config ATM_NICSTAR_USE_IDT77105
+-	bool "Use IDT77015 PHY driver (25Mbps)"
++	bool "Use IDT77105 PHY driver (25Mbps)"
+ 	depends on ATM_NICSTAR
+ 	help
+ 	  Support for the PHYsical layer chip in ForeRunner LE25 cards. In
 -- 
 2.20.1
 
