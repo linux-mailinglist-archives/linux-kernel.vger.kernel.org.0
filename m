@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E066EB8524
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55614B8525
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393864AbfISWSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:18:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59524 "EHLO mail.kernel.org"
+        id S2393875AbfISWSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:18:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406562AbfISWSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:18:05 -0400
+        id S2389941AbfISWSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:18:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEA9E21D7C;
-        Thu, 19 Sep 2019 22:18:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE04D20678;
+        Thu, 19 Sep 2019 22:18:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931485;
-        bh=mP0K/uEJqx8+BnvBniqIy2bLIgX7+uy59FBpsDE/IJo=;
+        s=default; t=1568931488;
+        bh=WoyyH/WhkP+nV+Xgh7izRnrD3GtpnV452JYFcLCroqE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YDvhAMxpAYYPAxLRKQkivAZ1BAEVH+tNGFYe5S6idw2qFKRrLKBQR5h2qWdxVWdmj
-         ykuy7/Rhx3ozZPHX1sajMi1U7M35tTSofAFJcbjAbHAVdWN2GxyTSH3YWbixbzXrFD
-         r+H7Cd76IAbMZIS6sbo/cmuoGhvOAaja2WbRr4B4=
+        b=x/Is3bBe/wCXfwN+QIPQPyyWZ2xHxZiC1RLOfpA2v8XBAIGGLCEUUyT2avZg7WKFw
+         tueguEZsFmiuJ4R1bkFkbUkTrjcyJ4uMD8aBDBG/Xmn0icZGzCZi0s5WSesH4f1q4N
+         56bbTwoU9BLN12CQZnoLvLI0b1fh1RtDqInu8/tM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, SteveM <swm@swm1.com>
-Subject: [PATCH 4.14 38/59] sky2: Disable MSI on yet another ASUS boards (P6Xxxx)
-Date:   Fri, 20 Sep 2019 00:03:53 +0200
-Message-Id: <20190919214806.539597792@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 39/59] i2c: designware: Synchronize IRQs when unregistering slave client
+Date:   Fri, 20 Sep 2019 00:03:54 +0200
+Message-Id: <20190919214806.776792993@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
 References: <20190919214755.852282682@linuxfoundation.org>
@@ -44,40 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-[ Upstream commit 189308d5823a089b56e2299cd96589507dac7319 ]
+[ Upstream commit c486dcd2f1bbdd524a1e0149734b79e4ae329650 ]
 
-A similar workaround for the suspend/resume problem is needed for yet
-another ASUS machines, P6X models.  Like the previous fix, the BIOS
-doesn't provide the standard DMI_SYS_* entry, so again DMI_BOARD_*
-entries are used instead.
+Make sure interrupt handler i2c_dw_irq_handler_slave() has finished
+before clearing the the dev->slave pointer in i2c_dw_unreg_slave().
 
-Reported-and-tested-by: SteveM <swm@swm1.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+There is possibility for a race if i2c_dw_irq_handler_slave() is running
+on another CPU while clearing the dev->slave pointer.
+
+Reported-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Reported-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/marvell/sky2.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/i2c/busses/i2c-designware-slave.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
-index 7b239af6cc040..5046efdad5390 100644
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -4954,6 +4954,13 @@ static const struct dmi_system_id msi_blacklist[] = {
- 			DMI_MATCH(DMI_BOARD_NAME, "P6T"),
- 		},
- 	},
-+	{
-+		.ident = "ASUS P6X",
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK Computer INC."),
-+			DMI_MATCH(DMI_BOARD_NAME, "P6X"),
-+		},
-+	},
- 	{}
- };
+diff --git a/drivers/i2c/busses/i2c-designware-slave.c b/drivers/i2c/busses/i2c-designware-slave.c
+index ea9578ab19a15..fccf936f4b9b5 100644
+--- a/drivers/i2c/busses/i2c-designware-slave.c
++++ b/drivers/i2c/busses/i2c-designware-slave.c
+@@ -206,6 +206,7 @@ static int i2c_dw_unreg_slave(struct i2c_client *slave)
+ 
+ 	dev->disable_int(dev);
+ 	dev->disable(dev);
++	synchronize_irq(dev->irq);
+ 	dev->slave = NULL;
+ 	pm_runtime_put(dev->dev);
  
 -- 
 2.20.1
