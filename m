@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28B18B843E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1B4B8418
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405384AbfISWJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:09:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47360 "EHLO mail.kernel.org"
+        id S2393297AbfISWHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:07:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405365AbfISWJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:09:13 -0400
+        id S2405313AbfISWHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:07:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8402121907;
-        Thu, 19 Sep 2019 22:09:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 376E821907;
+        Thu, 19 Sep 2019 22:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930953;
-        bh=jHeOX+JGSjeo8/ClvRymMzd+5AAANs5t135kcyVXqk8=;
+        s=default; t=1568930870;
+        bh=1mpdEmxlulUxMm5dMbUBfyxVH2N8bAtQhPgQoAI14Lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGcRxIpncc/9/fYrWZ5vbDwv2mEu8X/5hHsx4Wb+0+utDhQeNWGD7X51a64ECRMVk
-         bVONfkDpCZEfY64Js8p+FHWXuGjU4NgCj0fr7ltkYxClNFivwb9N0iE+zGNkq9pOqn
-         rcV6dG8X4E8wkCi+LQC6bALb6KHBBytaRPVUOzmg=
+        b=GLSbbhJGip5XGHETyaJSsbFHjb49IzkwomK6xsLo0ORJVGp3bEGYqoJmv7dWvva4r
+         6DaQbCrJolWMR+1Ss37Tp7rRAXQbbMkL72j4x72haT7ispRwkfUqyvW96e341mZL95
+         zIyLCX7duZm6/1fB4hPYuu+AfwtmdgAFQZ2VZb8Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 043/124] s390/bpf: use 32-bit index for tail calls
-Date:   Fri, 20 Sep 2019 00:02:11 +0200
-Message-Id: <20190919214820.572419274@linuxfoundation.org>
+Subject: [PATCH 5.2 045/124] tools: bpftool: close prog FD before exit on showing a single program
+Date:   Fri, 20 Sep 2019 00:02:13 +0200
+Message-Id: <20190919214820.643391357@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -47,60 +47,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Leoshkevich <iii@linux.ibm.com>
+From: Quentin Monnet <quentin.monnet@netronome.com>
 
-[ Upstream commit 91b4db5313a2c793aabc2143efb8ed0cf0fdd097 ]
+[ Upstream commit d34b044038bfb0e19caa8b019910efc465f41d5f ]
 
-"p runtime/jit: pass > 32bit index to tail_call" fails when
-bpf_jit_enable=1, because the tail call is not executed.
+When showing metadata about a single program by invoking
+"bpftool prog show PROG", the file descriptor referring to the program
+is not closed before returning from the function. Let's close it.
 
-This in turn is because the generated code assumes index is 64-bit,
-while it must be 32-bit, and as a result prog array bounds check fails,
-while it should pass. Even if bounds check would have passed, the code
-that follows uses 64-bit index to compute prog array offset.
-
-Fix by using clrj instead of clgrj for comparing index with array size,
-and also by using llgfr for truncating index to 32 bits before using it
-to compute prog array offset.
-
-Fixes: 6651ee070b31 ("s390/bpf: implement bpf_tail_call() helper")
-Reported-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Acked-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
+Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/net/bpf_jit_comp.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ tools/bpf/bpftool/prog.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
-index 9a711472cbdc0..fd9844f947f79 100644
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -1027,8 +1027,8 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
- 		/* llgf %w1,map.max_entries(%b2) */
- 		EMIT6_DISP_LH(0xe3000000, 0x0016, REG_W1, REG_0, BPF_REG_2,
- 			      offsetof(struct bpf_array, map.max_entries));
--		/* clgrj %b3,%w1,0xa,label0: if %b3 >= %w1 goto out */
--		EMIT6_PCREL_LABEL(0xec000000, 0x0065, BPF_REG_3,
-+		/* clrj %b3,%w1,0xa,label0: if (u32)%b3 >= (u32)%w1 goto out */
-+		EMIT6_PCREL_LABEL(0xec000000, 0x0077, BPF_REG_3,
- 				  REG_W1, 0, 0xa);
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index 7a4e21a315236..d41651afe5f64 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -362,7 +362,9 @@ static int do_show(int argc, char **argv)
+ 		if (fd < 0)
+ 			return -1;
  
- 		/*
-@@ -1054,8 +1054,10 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
- 		 *         goto out;
- 		 */
+-		return show_prog(fd);
++		err = show_prog(fd);
++		close(fd);
++		return err;
+ 	}
  
--		/* sllg %r1,%b3,3: %r1 = index * 8 */
--		EMIT6_DISP_LH(0xeb000000, 0x000d, REG_1, BPF_REG_3, REG_0, 3);
-+		/* llgfr %r1,%b3: %r1 = (u32) index */
-+		EMIT4(0xb9160000, REG_1, BPF_REG_3);
-+		/* sllg %r1,%r1,3: %r1 *= 8 */
-+		EMIT6_DISP_LH(0xeb000000, 0x000d, REG_1, REG_1, REG_0, 3);
- 		/* lg %r1,prog(%b2,%r1) */
- 		EMIT6_DISP_LH(0xe3000000, 0x0004, REG_1, BPF_REG_2,
- 			      REG_1, offsetof(struct bpf_array, ptrs));
+ 	if (argc)
 -- 
 2.20.1
 
