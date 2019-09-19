@@ -2,78 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C99C5B7710
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E11B7717
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:04:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389283AbfISKDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:03:23 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:41059 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388905AbfISKDW (ORCPT
+        id S2389295AbfISKDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 06:03:53 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36583 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388905AbfISKDw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 06:03:22 -0400
-Received: by mail-yw1-f66.google.com with SMTP id 129so1012695ywb.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 03:03:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zGmzlodVkbk9PuySdktLAlK2VmjoJpMiz8CiaztLcU4=;
-        b=nFGvNcgj0OHpxFJumDa2Ovs/fwImiZSydMwB0fQRs7Sj36jRVuZJIIuOO5ApAelTOA
-         41+k3YSD8KWYA0+DVMYrkmlQRtQahxf2XdExNPg9QM9grRok/u/IQoYo600PTY4wWx+w
-         8eq6uhF8zpANSTkrQSDA572dz+LQkyERbhqLuyLAwqV/o9AWj+GT+DggQxWWYUq0dzW8
-         NiDsJu2Apx9YRyJnT3xoWduKO1f7SqvRB3mwcqRl4fcVYevQMizOvGS9UutDE/KcJ+l2
-         30zf2EUg/wS6+NLvy6ErnWgqBTXHt9nYVujDa3qHC6Ro4Lak5s9hZdNJpMI66rRY2HsT
-         vq+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zGmzlodVkbk9PuySdktLAlK2VmjoJpMiz8CiaztLcU4=;
-        b=bH0Zru/FDljXNZlP/4WHitGUQa+2LjdBAQDl+69Pb2/1B4go+QyRC+/LUO0Sn8zF+J
-         zUSmNv/XpcPxSH7xuL0pvVfH10GmhKxNhUsen1YNjD0csFe38HqRrRNQrO1O7OaxZLa8
-         RD+6wuHndMAY69wxu9zvkP34ehsYAnuiF7hfZMCcfcBdk7eOxNvlPmgfG9dyDxS2lyfh
-         VCIU7/m8HOPfYS2Dx2CBUhPYv9NDz9tSyNaUyFvCTGpDsoskydNrjgrFjR0h6ANK/MQX
-         g85t1tEOOBp9hZioR45znddEtoYaRbwthXv+3vvjMIwmPUPxNAv49UuJemtuTLyRlG2p
-         lDVw==
-X-Gm-Message-State: APjAAAUeAyhvzlIG8n1ALPJlnmySsQNmwt8b1MUM0C5NRpHaYj1wXiH2
-        pM8pg4RPglDjFUxN9GUpBBGrMWqLuWfJNft717I=
-X-Google-Smtp-Source: APXvYqzlpdC3yeqplykvZUm//SAQW27RajjuVHyWzNxKhwFHeDyDXhAPtXBfeBzqnd8lPooPdr3YBu/vcWAYZyJ984I=
-X-Received: by 2002:a81:a401:: with SMTP id b1mr6807528ywh.280.1568887402177;
- Thu, 19 Sep 2019 03:03:22 -0700 (PDT)
+        Thu, 19 Sep 2019 06:03:52 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iAtHz-0002RH-7D; Thu, 19 Sep 2019 12:03:51 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iAtHy-0000Uu-A0; Thu, 19 Sep 2019 12:03:50 +0200
+Date:   Thu, 19 Sep 2019 12:03:50 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Kamel Bouhara <kamel.bouhara@bootlin.com>
+Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2] pwm: atmel: Remove platform_device_id and use only dt
+ bindings
+Message-ID: <20190919100350.alg4dbvnghfhfz5r@pengutronix.de>
+References: <20190918145716.32022-1-kamel.bouhara@bootlin.com>
 MIME-Version: 1.0
-References: <1567687574-22436-1-git-send-email-bmeng.cn@gmail.com> <20190910061449.GC10968@infradead.org>
-In-Reply-To: <20190910061449.GC10968@infradead.org>
-From:   Bin Meng <bmeng.cn@gmail.com>
-Date:   Thu, 19 Sep 2019 18:03:11 +0800
-Message-ID: <CAEUhbmU+DhdSO729hGExs4uE3iufOFC2LEWPCug9hqvu21aM_w@mail.gmail.com>
-Subject: Re: [PATCH] riscv: dts: sifive: Add ethernet0 to the aliases node
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-riscv <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190918145716.32022-1-kamel.bouhara@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Sep 18, 2019 at 04:57:16PM +0200, Kamel Bouhara wrote:
+> Since commit 26202873bb51 ("avr32: remove support for AVR32
+> architecture") there is no more user of platform_device_id and we
+> should only use dt bindings
+> 
+> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-On Tue, Sep 10, 2019 at 2:14 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Thu, Sep 05, 2019 at 05:46:14AM -0700, Bin Meng wrote:
-> > U-Boot expects this alias to be in place in order to fix up the mac
-> > address of the ethernet node.
-> >
-> > Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
->
-> Looks good:
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+Thanks
+Uwe
 
-What's the status of this patch? thanks!
-
-Regards,
-Bin
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
