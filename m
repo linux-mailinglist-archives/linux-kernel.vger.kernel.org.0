@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 435A6B8512
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F51B84E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392483AbfISWRY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58452 "EHLO mail.kernel.org"
+        id S2406145AbfISWPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392403AbfISWRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:20 -0400
+        id S2403915AbfISWP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4DB4217D6;
-        Thu, 19 Sep 2019 22:17:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 636A821907;
+        Thu, 19 Sep 2019 22:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931439;
-        bh=m9stGIrurleB7teL5+inn8FM52zyFO2QE5pbq3KecwI=;
+        s=default; t=1568931328;
+        bh=ont1s2hWDsj0rjL5UpbAstBll8ppiMiCPDPkdEjRjYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SwR34GI+UAt2Ab24uYc7NE3S4Wu3FXEBQLmWFfRXEI0eM3c919plx7RcDB8bDCEot
-         sL5hqCvQ/yOixk0/3apt5eccGUgKRVVD7Fb+J+Ph2QI4ywDj9y1L7VQB6Vb79amhAl
-         4BfCzoCZmAeZ5JXeEf2i4bRhEJTJAWLnmzkR6OWE=
+        b=2wdLUiEyiWXUoodjI9s+g3oRIDAHD0XhTP7zI+Ah4diTYKKI0fjC85+4kVlojZEot
+         E51M5iG6o6poVlMlQ8tpCrEU++p6hqBJO/DCDlJc9DWMV3OAN6y0WwDMr+uwWPoQRW
+         qt+m70sbzGSscyTCWfduMHSS2DDL4E08RZr486As=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 47/59] dmaengine: ti: dma-crossbar: Fix a memory leak bug
-Date:   Fri, 20 Sep 2019 00:04:02 +0200
-Message-Id: <20190919214807.484480233@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com,
+        Sean Young <sean@mess.org>, Kees Cook <keescook@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 79/79] media: technisat-usb2: break out of loop at end of buffer
+Date:   Fri, 20 Sep 2019 00:04:04 +0200
+Message-Id: <20190919214814.696898666@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Sean Young <sean@mess.org>
 
-[ Upstream commit 2c231c0c1dec42192aca0f87f2dc68b8f0cbc7d2 ]
+commit 0c4df39e504bf925ab666132ac3c98d6cbbe380b upstream.
 
-In ti_dra7_xbar_probe(), 'rsv_events' is allocated through kcalloc(). Then
-of_property_read_u32_array() is invoked to search for the property.
-However, if this process fails, 'rsv_events' is not deallocated, leading to
-a memory leak bug. To fix this issue, free 'rsv_events' before returning
-the error.
+Ensure we do not access the buffer beyond the end if no 0xff byte
+is encountered.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/1565938136-7249-1-git-send-email-wenwen@cs.uga.edu
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com
+Signed-off-by: Sean Young <sean@mess.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/dma/ti-dma-crossbar.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/usb/dvb-usb/technisat-usb2.c |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/dma/ti-dma-crossbar.c b/drivers/dma/ti-dma-crossbar.c
-index 9272b173c7465..6574cb5a12fee 100644
---- a/drivers/dma/ti-dma-crossbar.c
-+++ b/drivers/dma/ti-dma-crossbar.c
-@@ -395,8 +395,10 @@ static int ti_dra7_xbar_probe(struct platform_device *pdev)
+--- a/drivers/media/usb/dvb-usb/technisat-usb2.c
++++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
+@@ -607,10 +607,9 @@ static int technisat_usb2_frontend_attac
+ static int technisat_usb2_get_ir(struct dvb_usb_device *d)
+ {
+ 	struct technisat_usb2_state *state = d->priv;
+-	u8 *buf = state->buf;
+-	u8 *b;
+-	int ret;
+ 	struct ir_raw_event ev;
++	u8 *buf = state->buf;
++	int i, ret;
  
- 		ret = of_property_read_u32_array(node, pname, (u32 *)rsv_events,
- 						 nelm * 2);
--		if (ret)
-+		if (ret) {
-+			kfree(rsv_events);
- 			return ret;
-+		}
+ 	buf[0] = GET_IR_DATA_VENDOR_REQUEST;
+ 	buf[1] = 0x08;
+@@ -646,26 +645,25 @@ unlock:
+ 		return 0; /* no key pressed */
  
- 		for (i = 0; i < nelm; i++) {
- 			ti_dra7_xbar_reserve(rsv_events[i][0], rsv_events[i][1],
--- 
-2.20.1
-
+ 	/* decoding */
+-	b = buf+1;
+ 
+ #if 0
+ 	deb_rc("RC: %d ", ret);
+-	debug_dump(b, ret, deb_rc);
++	debug_dump(buf + 1, ret, deb_rc);
+ #endif
+ 
+ 	ev.pulse = 0;
+-	while (1) {
+-		ev.pulse = !ev.pulse;
+-		ev.duration = (*b * FIRMWARE_CLOCK_DIVISOR * FIRMWARE_CLOCK_TICK) / 1000;
+-		ir_raw_event_store(d->rc_dev, &ev);
+-
+-		b++;
+-		if (*b == 0xff) {
++	for (i = 1; i < ARRAY_SIZE(state->buf); i++) {
++		if (buf[i] == 0xff) {
+ 			ev.pulse = 0;
+ 			ev.duration = 888888*2;
+ 			ir_raw_event_store(d->rc_dev, &ev);
+ 			break;
+ 		}
++
++		ev.pulse = !ev.pulse;
++		ev.duration = (buf[i] * FIRMWARE_CLOCK_DIVISOR *
++			       FIRMWARE_CLOCK_TICK) / 1000;
++		ir_raw_event_store(d->rc_dev, &ev);
+ 	}
+ 
+ 	ir_raw_event_handle(d->rc_dev);
 
 
