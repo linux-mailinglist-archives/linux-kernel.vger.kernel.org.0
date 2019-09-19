@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4908B867B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15CDEB8610
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392422AbfISWRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58314 "EHLO mail.kernel.org"
+        id S2406811AbfISWWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:22:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406449AbfISWRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:14 -0400
+        id S2406778AbfISWWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:22:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91957217D6;
-        Thu, 19 Sep 2019 22:17:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3FEB20678;
+        Thu, 19 Sep 2019 22:22:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931434;
-        bh=Gnb060WgRtLXs6JnHukAVdDIzLPHCh1bvcZjwA+WdiE=;
+        s=default; t=1568931735;
+        bh=acqf8iWr/flWMhoJlMX9Rq4SnUZG25hjg5RNHePwK0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IPlai6I59iLR1539vZ+nsGNcz7z++7JwKDZQzEw/ffGCIQQm0dBYcBj1mXm0w1qPl
-         bleFob94g4y7sBnTNxWHGCttblgUb+qHoPUfU8dE9GNICr5EmsIwcaZf03aMrH4TvK
-         LPJNsz8hi0qoXgtYA7xfCOt8usBu/s6VmQmEEb1A=
+        b=S4bOcv0BUuGKoKsYVvhKFajpSVsLtMRxt67u2oi71oA+aH8e85fJrM3eN7XK59MFg
+         QCrRtnb2SIFJ62C5rXty6MrBrMHSH9ZImyMpHdO0V1cn2LaxjYUOGa6ah4alnrgKD/
+         nsHKFtiH88Dtqfhh0YxG5BytyGj4X6WG7jV8nr7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Len Brown <len.brown@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 45/59] tools/power turbostat: fix buffer overrun
-Date:   Fri, 20 Sep 2019 00:04:00 +0200
-Message-Id: <20190919214807.377475773@linuxfoundation.org>
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.4 20/56] clk: rockchip: Dont yell about bad mmc phases when getting
+Date:   Fri, 20 Sep 2019 00:04:01 +0200
+Message-Id: <20190919214754.225657690@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit eeb71c950bc6eee460f2070643ce137e067b234c ]
+commit 6943b839721ad4a31ad2bacf6e71b21f2dfe3134 upstream.
 
-turbostat could be terminated by general protection fault on some latest
-hardwares which (for example) support 9 levels of C-states and show 18
-"tADDED" lines. That bloats the total output and finally causes buffer
-overrun.  So let's extend the buffer to avoid this.
+At boot time, my rk3288-veyron devices yell with 8 lines that look
+like this:
+  [    0.000000] rockchip_mmc_get_phase: invalid clk rate
 
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This is because the clock framework at clk_register() time tries to
+get the phase but we don't have a parent yet.
+
+While the errors appear to be harmless they are still ugly and, in
+general, we don't want yells like this in the log unless they are
+important.
+
+There's no real reason to be yelling here.  We can still return
+-EINVAL to indicate that the phase makes no sense without a parent.
+If someone really tries to do tuning and the clock is reported as 0
+then we'll see the yells in rockchip_mmc_set_phase().
+
+Fixes: 4bf59902b500 ("clk: rockchip: Prevent calculating mmc phase if clock rate is zero")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/power/x86/turbostat/turbostat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/rockchip/clk-mmc-phase.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 3e5f8b3db2720..19e345cf8193e 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -4488,7 +4488,7 @@ int initialize_counters(int cpu_id)
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -61,10 +61,8 @@ static int rockchip_mmc_get_phase(struct
+ 	u32 delay_num = 0;
  
- void allocate_output_buffer()
- {
--	output_buffer = calloc(1, (1 + topo.num_cpus) * 1024);
-+	output_buffer = calloc(1, (1 + topo.num_cpus) * 2048);
- 	outp = output_buffer;
- 	if (outp == NULL)
- 		err(-1, "calloc output buffer");
--- 
-2.20.1
-
+ 	/* See the comment for rockchip_mmc_set_phase below */
+-	if (!rate) {
+-		pr_err("%s: invalid clk rate\n", __func__);
++	if (!rate)
+ 		return -EINVAL;
+-	}
+ 
+ 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 
 
 
