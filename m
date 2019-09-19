@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BD9EB869E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74977B86D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:32:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407342AbfISWaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:30:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56506 "EHLO mail.kernel.org"
+        id S2392141AbfISWN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:13:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406287AbfISWQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:16:13 -0400
+        id S1732518AbfISWN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:13:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E6C720678;
-        Thu, 19 Sep 2019 22:16:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CE3521928;
+        Thu, 19 Sep 2019 22:13:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931372;
-        bh=gJ+j8xvF3QHkqRQXLGe2LZiL1kQ2dtxg0eY4AnzEdXk=;
+        s=default; t=1568931236;
+        bh=NoWiiN+YR+siC2fuxXMqW2KZlDXfQK2sAy7N7qhgESU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2hrZfcpysb3fs014OoERLJ94gP1SiscdfX9rf4ZTxuofHZzQJ9Jq00wmZmYiY7vA7
-         YBj6R4k3XFUdigiXCjD5WvAtXV7GkZtMJ7KlPyf7xtSo1exbBoVlu5gAtyU/EiDtnQ
-         yjMl5FkGZN2j7K7vyINy2IiURfoGnilW285eh33c=
+        b=lCtj4dluXspUDRxvIQj+F3rr3PL+7G+WUz2xoi/mQjRST+FSPMPnNFdPTbOtl8Zd7
+         R5a/g4It7JKvy5UhcLuCfYUXSNCwX+AVe5Kcn7uC57oEHg14FOfOfuBT53L8VfBtU0
+         NYpxnPeP6bnx9oBVsmhvCqtIGF4F+gN+OyzqzMH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/59] NFSv4: Fix return values for nfs4_file_open()
-Date:   Fri, 20 Sep 2019 00:03:37 +0200
-Message-Id: <20190919214803.778716576@linuxfoundation.org>
+Subject: [PATCH 4.19 53/79] cifs: Use kzfree() to zero out the password
+Date:   Fri, 20 Sep 2019 00:03:38 +0200
+Message-Id: <20190919214812.145410684@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,49 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 90cf500e338ab3f3c0f126ba37e36fb6a9058441 ]
+[ Upstream commit 478228e57f81f6cb60798d54fc02a74ea7dd267e ]
 
-Currently, we are translating RPC level errors such as timeouts,
-as well as interrupts etc into EOPENSTALE, which forces a single
-replay of the open attempt. What we actually want to do is
-force the replay only in the cases where the returned error
-indicates that the file may have changed on the server.
+It's safer to zero out the password so that it can never be disclosed.
 
-So the fix is to spell out the exact set of errors where we want
-to return EOPENSTALE.
-
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Fixes: 0c219f5799c7 ("cifs: set domainName when a domain-key is used in multiuser")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4file.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/cifs/connect.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
-index 2b3e0f1ca572f..b8d316a338bc9 100644
---- a/fs/nfs/nfs4file.c
-+++ b/fs/nfs/nfs4file.c
-@@ -74,13 +74,13 @@ nfs4_file_open(struct inode *inode, struct file *filp)
- 	if (IS_ERR(inode)) {
- 		err = PTR_ERR(inode);
- 		switch (err) {
--		case -EPERM:
--		case -EACCES:
--		case -EDQUOT:
--		case -ENOSPC:
--		case -EROFS:
--			goto out_put_ctx;
- 		default:
-+			goto out_put_ctx;
-+		case -ENOENT:
-+		case -ESTALE:
-+		case -EISDIR:
-+		case -ENOTDIR:
-+		case -ELOOP:
- 			goto out_drop;
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 75727518b272a..c290e231f9188 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -2876,7 +2876,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ 			rc = -ENOMEM;
+ 			kfree(vol->username);
+ 			vol->username = NULL;
+-			kfree(vol->password);
++			kzfree(vol->password);
+ 			vol->password = NULL;
+ 			goto out_key_put;
  		}
- 	}
 -- 
 2.20.1
 
