@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0D59B7428
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 09:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F79EB7423
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 09:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388729AbfISHea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 03:34:30 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34680 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388640AbfISHeI (ORCPT
+        id S2388676AbfISHeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 03:34:13 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55679 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388657AbfISHeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 03:34:08 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y135so6509734wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 00:34:07 -0700 (PDT)
+        Thu, 19 Sep 2019 03:34:11 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a6so3048409wma.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 00:34:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9SzE/B4CCxEhq7OsUQcCE6/p2xSl6Tj+2wygHScnuHQ=;
-        b=hpdpNkOFGyBlI+JIZTTOrrKnLGNHOyR3/Uo/YEbDvJwWRpq+FfFJr36/DtYuQnCB4P
-         oV9ELP1JFK+ucFywfSXLCkqVr3qymX3epBYwjZl7k74iWcLhjX0A8g9Jw1z30lo9mYVO
-         AzNZprjiq4UlGFI9XBLMI3exJpQean5hs42gBpkmz8b1wYcvrzZKo4UVZdNOHdzZyPXE
-         RAV07EYoWylGVWJm6I1NZWIaHW4PhwlxNs+qlncWjpWvjt5lFRVo+ctXIbV29nYXkohU
-         Y5libxhM/0WpS4DQqG2wU4R2vLD2YrpI/1RCMJwGkg7yqk5HuDz5BKLCy75tXVoQGMmJ
-         1yBA==
+        bh=EBLUOB2EXDZsxDF6E6gn9L3xHCrHxfXfVGa48LIRlDY=;
+        b=kWLPydG7rKDJilBY5fR43MCB50iZ6fjHCaPSf8iG4jbYCpmgwNMIRGSn1rhTb8MJUV
+         HkGHdW4R/uzQo5p9Ru6uWh63KeB0DI3eYbrB+qbp0DBfKVUmzshM23iSPiG5hluIM6VS
+         z7ch/Puy6hYlu/tDbjFMhpEgQWLx6Drx3qST/mlredIsROxcFxe3wHZobKujOFiyUhtH
+         i9PZOZBLlq1dJyWrlcqAEOL5XTFH0uA56Qm69s0Na8/mxqBTVoFnCf3SJ3QjU2BS2gDd
+         n/iu9EDM4ZiB+pjlrQjk6QECQVjbM4dayHr90rriQQmXHw+KeZY8nwXf2rdstTD+viKQ
+         DCRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9SzE/B4CCxEhq7OsUQcCE6/p2xSl6Tj+2wygHScnuHQ=;
-        b=VWfqPYmpSZi1EI5qnmOQTApfum4vq6fbTh5Fo1mbZgppcD6e+0KagQgntzkk2cLo0u
-         /KK9pL9PJpJSqGY4v0qRHy667zoNLkhQby4LqjW4+bb9rlhX3Bk6xj1CG+ZNxw8BolW+
-         QPASRcQw6QFuAP2DtWyhnx6Sd9Xpdif4fwjiotgudLzKlt2NXlRgg3HNbMbJFixczBN9
-         hdjj7qKuPkStXLjyiY5OmNv5YXxWpxLVGzvhf0BDvt8DNf/1zMy97XrF1NL4y7hSWDfY
-         4sNwSjc6VwD6elHNz+M1hI8avi/Ku983NTN9wPJkx3oNkTYzSq8TF0dDwMJfFaO8dfKE
-         FrZw==
-X-Gm-Message-State: APjAAAWwaLrKgon+u+uCPBZ8ja5uSbrt7p5aHbiWw7wI6VbG+Qmhj3ye
-        unntrETAni/l+tfBg+XPjg2ExDYVVUM=
-X-Google-Smtp-Source: APXvYqxtwDBqVAaigCJSTD+3rCOpW3iRFaXENEcI8RILdm38maDws+6NW8u0AiH0vLdRcMtBu8yrGg==
-X-Received: by 2002:a1c:1981:: with SMTP id 123mr1492487wmz.88.1568878446575;
-        Thu, 19 Sep 2019 00:34:06 -0700 (PDT)
+        bh=EBLUOB2EXDZsxDF6E6gn9L3xHCrHxfXfVGa48LIRlDY=;
+        b=hWvsz3olBeC5HwJ5FmB45ceai2jEzLBJwNy/WNqcOzSbLGRSBnLV6aVHLMhvrlB4Ey
+         +ZDv7Bhpqq/eVmeK7lRQxpmD2nHlI84s4LSYhXaxVdHsNcdMWGmfP5d5FbKb5eWUVMt3
+         IzxxxhOjXOv5VhUuo1nrKfGG579Lka0PnjZkBdfbAfRKWa8vaJ366HyovVfpg1Snuq01
+         uAagrE2bRsQZecDQQ4suhgj7RAPDflxYomayfJlvhWB6OtRm/6nCwTTFUOm5Vh7w/Xdh
+         BpOLNLhqm9NjjrfwgzeNOqe5SnfkWpg5bdP+e41/jxZMcyTbw0fCh0tD/QblM9AiNDH4
+         ADuA==
+X-Gm-Message-State: APjAAAUTaaA29t0YTsJeqW/WF7X4AoQ79KmwEPNPJMvtgsiD+0irMdBt
+        hDOlS5jqXf+7tnMxK7yIXMdyV+5NV20=
+X-Google-Smtp-Source: APXvYqxqk93OeiObuSGILxhlMNDTRJSBIDESOmD3H0ogKBwKipl/bgHhHMgsAndu3vsQHMHY2Mnm7A==
+X-Received: by 2002:a7b:c84f:: with SMTP id c15mr1577723wml.52.1568878449259;
+        Thu, 19 Sep 2019 00:34:09 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:d555:8fca:a19c:222c])
-        by smtp.gmail.com with ESMTPSA id s12sm13300250wra.82.2019.09.19.00.34.05
+        by smtp.gmail.com with ESMTPSA id s12sm13300250wra.82.2019.09.19.00.34.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 19 Sep 2019 00:34:05 -0700 (PDT)
+        Thu, 19 Sep 2019 00:34:06 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org
@@ -51,9 +51,9 @@ Cc:     pauld@redhat.com, valentin.schneider@arm.com,
         srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
         dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
         hdanton@sina.com, Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v3 06/10] sched/fair: use load instead of runnable load in load_balance
-Date:   Thu, 19 Sep 2019 09:33:37 +0200
-Message-Id: <1568878421-12301-7-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v3 07/10] sched/fair: evenly spread tasks when not overloaded
+Date:   Thu, 19 Sep 2019 09:33:38 +0200
+Message-Id: <1568878421-12301-8-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
 References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
@@ -62,76 +62,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-runnable load has been introduced to take into account the case
-where blocked load biases the load balance decision which was selecting
-underutilized group with huge blocked load whereas other groups were
-overloaded.
-
-The load is now only used when groups are overloaded. In this case,
-it's worth being conservative and taking into account the sleeping
-tasks that might wakeup on the cpu.
+When there is only 1 cpu per group, using the idle cpus to evenly spread
+tasks doesn't make sense and nr_running is a better metrics.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- kernel/sched/fair.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ kernel/sched/fair.c | 40 ++++++++++++++++++++++++++++------------
+ 1 file changed, 28 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7e74836..15ec38c 100644
+index 15ec38c..a7c8ee6 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -5385,6 +5385,11 @@ static unsigned long cpu_runnable_load(struct rq *rq)
- 	return cfs_rq_runnable_load_avg(&rq->cfs);
- }
+@@ -8596,18 +8596,34 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+ 	    busiest->sum_nr_running > local->sum_nr_running + 1)
+ 		goto force_balance;
  
-+static unsigned long cpu_load(struct rq *rq)
-+{
-+	return cfs_rq_load_avg(&rq->cfs);
-+}
+-	if (busiest->group_type != group_overloaded &&
+-	     (env->idle == CPU_NOT_IDLE ||
+-	      local->idle_cpus <= (busiest->idle_cpus + 1)))
+-		/*
+-		 * If the busiest group is not overloaded
+-		 * and there is no imbalance between this and busiest group
+-		 * wrt idle CPUs, it is balanced. The imbalance
+-		 * becomes significant if the diff is greater than 1 otherwise
+-		 * we might end up to just move the imbalance on another
+-		 * group.
+-		 */
+-		goto out_balanced;
++	if (busiest->group_type != group_overloaded) {
++		if (env->idle == CPU_NOT_IDLE)
++			/*
++			 * If the busiest group is not overloaded (and as a
++			 * result the local one too) but this cpu is already
++			 * busy, let another idle cpu try to pull task.
++			 */
++			goto out_balanced;
 +
- static unsigned long capacity_of(int cpu)
- {
- 	return cpu_rq(cpu)->cpu_capacity;
-@@ -8070,7 +8075,7 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 		if ((env->flags & LBF_NOHZ_STATS) && update_nohz_stats(rq, false))
- 			env->flags |= LBF_NOHZ_AGAIN;
++		if (busiest->group_weight > 1 &&
++		    local->idle_cpus <= (busiest->idle_cpus + 1))
++			/*
++			 * If the busiest group is not overloaded
++			 * and there is no imbalance between this and busiest
++			 * group wrt idle CPUs, it is balanced. The imbalance
++			 * becomes significant if the diff is greater than 1
++			 * otherwise we might end up to just move the imbalance
++			 * on another group. Of course this applies only if
++			 * there is more than 1 CPU per group.
++			 */
++			goto out_balanced;
++
++		if (busiest->sum_h_nr_running == 1)
++			/*
++			 * busiest doesn't have any tasks waiting to run
++			 */
++			goto out_balanced;
++	}
  
--		sgs->group_load += cpu_runnable_load(rq);
-+		sgs->group_load += cpu_load(rq);
- 		sgs->group_util += cpu_util(i);
- 		sgs->sum_h_nr_running += rq->cfs.h_nr_running;
- 
-@@ -8512,7 +8517,7 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
- 	init_sd_lb_stats(&sds);
- 
- 	/*
--	 * Compute the various statistics relavent for load balancing at
-+	 * Compute the various statistics relevant for load balancing at
- 	 * this level.
- 	 */
- 	update_sd_lb_stats(env, &sds);
-@@ -8672,10 +8677,10 @@ static struct rq *find_busiest_queue(struct lb_env *env,
- 		switch (env->balance_type) {
- 		case migrate_load:
- 			/*
--			 * When comparing with load imbalance, use cpu_runnable_load()
-+			 * When comparing with load imbalance, use cpu_load()
- 			 * which is not scaled with the CPU capacity.
- 			 */
--			load = cpu_runnable_load(rq);
-+			load = cpu_load(rq);
- 
- 			if (nr_running == 1 && load > env->imbalance &&
- 			    !check_cpu_capacity(rq, env->sd))
-@@ -8683,7 +8688,7 @@ static struct rq *find_busiest_queue(struct lb_env *env,
- 
- 			/*
- 			 * For the load comparisons with the other CPU's, consider
--			 * the cpu_runnable_load() scaled with the CPU capacity, so
-+			 * the cpu_load() scaled with the CPU capacity, so
- 			 * that the load can be moved away from the CPU that is
- 			 * potentially running at a lower capacity.
- 			 *
+ force_balance:
+ 	/* Looks like there is an imbalance. Compute it */
 -- 
 2.7.4
 
