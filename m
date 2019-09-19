@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A479B8765
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:36:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38036B8762
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:36:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392673AbfISWgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:36:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
+        id S2393121AbfISWHB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:07:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404008AbfISWGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:06:44 -0400
+        id S2393100AbfISWG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:06:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEFB721907;
-        Thu, 19 Sep 2019 22:06:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 541A821920;
+        Thu, 19 Sep 2019 22:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930803;
-        bh=A96tY/4sS9HYUt1WTbvdvzg4QevFECvNRTBIpnu+yPA=;
+        s=default; t=1568930816;
+        bh=i59vVpsWme0l4E3I1ANgSvilDUw/eEg/54eOPwkejZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B7y2YE4aSgnVM5o4q5zkqVixKPpxHsEJIjxwq+r003UgHcqZ82MF8ljbhZNfaE/4t
-         8EORPLnHEcvYo2IdOfASscn+a/av9jdzihGSDjE9jrfcXhgwVX6nw+xGlaEmrqlMSx
-         fXbRC9npwvX+e7voLVyTGUAalXu0agu2edtnrsvs=
+        b=rsqHmEQ8sUxyvnZt0xROt9Zu5uggbtE0uuORQf8qDZFZN+DoQeXTnBRpSB6m6VEcb
+         PR+9SfgBB5fjNhTNbA3G1lJ2QQelbw7tYLRoaU9DsJknquzpnMcNyjyFTfroFJJXe3
+         rS/Bih3d5ngPCj2stvOOC4cLH8EPjX4LMgmgisQM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 020/124] net: dsa: Fix load order between DSA drivers and taggers
-Date:   Fri, 20 Sep 2019 00:01:48 +0200
-Message-Id: <20190919214819.826331215@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>
+Subject: [PATCH 5.2 024/124] tty/serial: atmel: reschedule TX after RX was started
+Date:   Fri, 20 Sep 2019 00:01:52 +0200
+Message-Id: <20190919214819.942328981@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -43,39 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Razvan Stefanescu <razvan.stefanescu@microchip.com>
 
-[ Upstream commit 23426a25e55a417dc104df08781b6eff95e65f3f ]
+commit d2ace81bf902a9f11d52e59e5d232d2255a0e353 upstream.
 
-The DSA core, DSA taggers and DSA drivers all make use of
-module_init(). Hence they get initialised at device_initcall() time.
-The ordering is non-deterministic. It can be a DSA driver is bound to
-a device before the needed tag driver has been initialised, resulting
-in the message:
+When half-duplex RS485 communication is used, after RX is started, TX
+tasklet still needs to be  scheduled tasklet. This avoids console freezing
+when more data is to be transmitted, if the serial communication is not
+closed.
 
-No tagger for this switch
-
-Rather than have this be fatal, return -EPROBE_DEFER so that it is
-tried again later once all the needed drivers have been loaded.
-
-Fixes: d3b8c04988ca ("dsa: Add boilerplate helper to register DSA tag driver modules")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 69646d7a3689 ("tty/serial: atmel: RS485 HD w/DMA: enable RX after TX is stopped")
+Signed-off-by: Razvan Stefanescu <razvan.stefanescu@microchip.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190813074025.16218-1-razvan.stefanescu@microchip.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dsa/dsa2.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/net/dsa/dsa2.c
-+++ b/net/dsa/dsa2.c
-@@ -577,6 +577,8 @@ static int dsa_port_parse_cpu(struct dsa
- 	tag_protocol = ds->ops->get_tag_protocol(ds, dp->index);
- 	tag_ops = dsa_tag_driver_get(tag_protocol);
- 	if (IS_ERR(tag_ops)) {
-+		if (PTR_ERR(tag_ops) == -ENOPROTOOPT)
-+			return -EPROBE_DEFER;
- 		dev_warn(ds->dev, "No tagger for this switch\n");
- 		return PTR_ERR(tag_ops);
- 	}
+---
+ drivers/tty/serial/atmel_serial.c |    1 -
+ 1 file changed, 1 deletion(-)
+
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1400,7 +1400,6 @@ atmel_handle_transmit(struct uart_port *
+ 
+ 			atmel_port->hd_start_rx = false;
+ 			atmel_start_rx(port);
+-			return;
+ 		}
+ 
+ 		atmel_tasklet_schedule(atmel_port, &atmel_port->tasklet_tx);
 
 
