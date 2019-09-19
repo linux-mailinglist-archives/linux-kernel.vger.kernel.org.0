@@ -2,230 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38FD2B7490
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:00:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2824DB7497
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388200AbfISIAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 04:00:12 -0400
-Received: from foss.arm.com ([217.140.110.172]:53186 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388127AbfISIAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 04:00:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52AE91000;
-        Thu, 19 Sep 2019 01:00:11 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD84C3F575;
-        Thu, 19 Sep 2019 01:00:10 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 09:00:09 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-s390@vger.kernel.org,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Subject: Re: [PATCH v3 06/26] s390/pci: Use PCI_STD_NUM_BARS
-Message-ID: <20190919080008.GG9720@e119886-lin.cambridge.arm.com>
-References: <20190916204158.6889-1-efremov@linux.com>
- <20190916204158.6889-7-efremov@linux.com>
- <20190918085805.GY9720@e119886-lin.cambridge.arm.com>
- <c4496d3d-14c1-ffe7-fa38-0caffe81db54@linux.com>
+        id S2388307AbfISIA2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 04:00:28 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37581 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388269AbfISIA1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 04:00:27 -0400
+Received: by mail-lf1-f66.google.com with SMTP id w67so1645407lff.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 01:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sgTCP96FLp9YNilI982cLmg/GDlavq1GIDyPQXwddlQ=;
+        b=vtP961Mw0ZWI1S1jwgv6+Tv4nDQePMs5hU9AAF7cJVbP8YOReOgmk/9Es/V2RH34Te
+         aJr8JEeKGbO/LnQsfKjN5RuLKyHMBx9jKEyPHNU3zqUG9TuuWsgG73+MIkRNmujow6qf
+         czU+N8CPRWBDQ8TNc3z47w8DqNMKHX0IUqQY7S+KwgChCwFmVk80THAm/517E1YN656l
+         yxdUvZoBR0Bip1ibjUlt4Gb7JH/6zTw2yjiOTk0dmprCBh81EoiZYZFFO0fdsMGwGWnz
+         HKmtiiQoleJM672OqvNfYnAuWgZU6wzTivj3Bx2KJDDUscQCrIaY6MZ42Bg1VZvPO5Ow
+         kvQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sgTCP96FLp9YNilI982cLmg/GDlavq1GIDyPQXwddlQ=;
+        b=N6TH0bCR1n5SHjAF4NLkHFsQyTI5YhsKEs3a+eOkH4BoK5//aHSQjWEvWLjtx9ht1B
+         LWZG4GFOc9q3oK2WwyKlTuxZUzrh62QnwMrGBFPDI/b3TRHFqupC5UwRjD0YKSLaP53k
+         2T2rnZsPlFAVLBSRiCqPdyzpVKvYk/Y+gvIyhWePDkt8ykYHnSieOGc5LdC27KwEluOi
+         T/wnWSMXxuC0etvUzMIvynR66LnypEEcc05n7vAGiRBkd19knDkn59okdytrl6hMNNSo
+         eibJXp3QNY7yo7yoqaomG4Ui2+N/G1OgHjW0R/3U/LKKXuKrKiv6OiELhuBmF6kN+1Ps
+         vmdg==
+X-Gm-Message-State: APjAAAVEET/qjXoP+UecOYHJGa8EpirQejTvKl76HZiI5sF1E/8UPkTr
+        w4F/wTLSoOOMMA4IsZI2wBbBx2jYnWnDDFRkW/PX3RHaAoo=
+X-Google-Smtp-Source: APXvYqyW2CpznJtbLWGcqjTVa+1aQcN7NzrdNN6eL6dX9xgtd54K2hxPHEv5YzEj7hlNN+zN/Ft2/uOR4h+5FV92TAc=
+X-Received: by 2002:ac2:5a07:: with SMTP id q7mr4058834lfn.177.1568880024796;
+ Thu, 19 Sep 2019 01:00:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4496d3d-14c1-ffe7-fa38-0caffe81db54@linux.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+References: <1568877622-28073-1-git-send-email-yt.chang@mediatek.com>
+In-Reply-To: <1568877622-28073-1-git-send-email-yt.chang@mediatek.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 19 Sep 2019 10:00:13 +0200
+Message-ID: <CAKfTPtBFQJKmr0tw6_mA5OLsDu=HE+f4nFgZLGd4vv8dvyiubg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] sched/eas: introduce system-wide overutil indicator
+To:     YT Chang <yt.chang@mediatek.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        wsd_upstream@mediatek.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 05:26:59PM +0300, Denis Efremov wrote:
-> On 9/18/19 11:58 AM, Andrew Murray wrote:
-> > On Mon, Sep 16, 2019 at 11:41:38PM +0300, Denis Efremov wrote:
-> >> Remove local definition PCI_BAR_COUNT for the number of PCI BARs and use
-> >> global one PCI_STD_NUM_BARS instead.
-> >>
-> >> Acked-by: Sebastian Ott <sebott@linux.ibm.com>
-> >> Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-> >> Signed-off-by: Denis Efremov <efremov@linux.com>
-> >> ---
-> >>  arch/s390/include/asm/pci.h     |  5 +----
-> >>  arch/s390/include/asm/pci_clp.h |  6 +++---
-> >>  arch/s390/pci/pci.c             | 16 ++++++++--------
-> >>  arch/s390/pci/pci_clp.c         |  6 +++---
-> >>  4 files changed, 15 insertions(+), 18 deletions(-)
-> >>
-> >> diff --git a/arch/s390/include/asm/pci.h b/arch/s390/include/asm/pci.h
-> >> index a2399eff84ca..3a06c264ea53 100644
-> >> --- a/arch/s390/include/asm/pci.h
-> >> +++ b/arch/s390/include/asm/pci.h
-> >> @@ -2,9 +2,6 @@
-> >>  #ifndef __ASM_S390_PCI_H
-> >>  #define __ASM_S390_PCI_H
-> >>  
-> >> -/* must be set before including pci_clp.h */
-> >> -#define PCI_BAR_COUNT	6
-> >> -
-> >>  #include <linux/pci.h>
-> >>  #include <linux/mutex.h>
-> >>  #include <linux/iommu.h>
-> >> @@ -138,7 +135,7 @@ struct zpci_dev {
-> >>  
-> >>  	char res_name[16];
-> >>  	bool mio_capable;
-> >> -	struct zpci_bar_struct bars[PCI_BAR_COUNT];
-> >> +	struct zpci_bar_struct bars[PCI_STD_NUM_BARS];
-> >>  
-> >>  	u64		start_dma;	/* Start of available DMA addresses */
-> >>  	u64		end_dma;	/* End of available DMA addresses */
-> >> diff --git a/arch/s390/include/asm/pci_clp.h b/arch/s390/include/asm/pci_clp.h
-> >> index 50359172cc48..bd2cb4ea7d93 100644
-> >> --- a/arch/s390/include/asm/pci_clp.h
-> >> +++ b/arch/s390/include/asm/pci_clp.h
-> >> @@ -77,7 +77,7 @@ struct mio_info {
-> >>  	struct {
-> >>  		u64 wb;
-> >>  		u64 wt;
-> >> -	} addr[PCI_BAR_COUNT];
-> >> +	} addr[PCI_STD_NUM_BARS];
-> >>  	u32 reserved[6];
-> >>  } __packed;
-> >>  
-> >> @@ -98,9 +98,9 @@ struct clp_rsp_query_pci {
-> >>  	u16 util_str_avail	:  1;	/* utility string available? */
-> >>  	u16 pfgid		:  8;	/* pci function group id */
-> >>  	u32 fid;			/* pci function id */
-> >> -	u8 bar_size[PCI_BAR_COUNT];
-> >> +	u8 bar_size[PCI_STD_NUM_BARS];
-> >>  	u16 pchid;
-> >> -	__le32 bar[PCI_BAR_COUNT];
-> >> +	__le32 bar[PCI_STD_NUM_BARS];
-> >>  	u8 pfip[CLP_PFIP_NR_SEGMENTS];	/* pci function internal path */
-> >>  	u32			: 16;
-> >>  	u8 fmb_len;
-> >> diff --git a/arch/s390/pci/pci.c b/arch/s390/pci/pci.c
-> >> index b0e3b9a0e488..aca372c8e34f 100644
-> >> --- a/arch/s390/pci/pci.c
-> >> +++ b/arch/s390/pci/pci.c
-> >> @@ -43,7 +43,7 @@ static DECLARE_BITMAP(zpci_domain, ZPCI_NR_DEVICES);
-> >>  static DEFINE_SPINLOCK(zpci_domain_lock);
-> >>  
-> >>  #define ZPCI_IOMAP_ENTRIES						\
-> >> -	min(((unsigned long) ZPCI_NR_DEVICES * PCI_BAR_COUNT / 2),	\
-> >> +	min(((unsigned long) ZPCI_NR_DEVICES * PCI_STD_NUM_BARS / 2),	\
-> >>  	    ZPCI_IOMAP_MAX_ENTRIES)
-> >>  
-> >>  static DEFINE_SPINLOCK(zpci_iomap_lock);
-> >> @@ -294,7 +294,7 @@ static void __iomem *pci_iomap_range_mio(struct pci_dev *pdev, int bar,
-> >>  void __iomem *pci_iomap_range(struct pci_dev *pdev, int bar,
-> >>  			      unsigned long offset, unsigned long max)
-> >>  {
-> >> -	if (!pci_resource_len(pdev, bar) || bar >= PCI_BAR_COUNT)
-> >> +	if (bar >= PCI_STD_NUM_BARS || !pci_resource_len(pdev, bar))
-> >>  		return NULL;
-> >>  
-> >>  	if (static_branch_likely(&have_mio))
-> >> @@ -324,7 +324,7 @@ static void __iomem *pci_iomap_wc_range_mio(struct pci_dev *pdev, int bar,
-> >>  void __iomem *pci_iomap_wc_range(struct pci_dev *pdev, int bar,
-> >>  				 unsigned long offset, unsigned long max)
-> >>  {
-> >> -	if (!pci_resource_len(pdev, bar) || bar >= PCI_BAR_COUNT)
-> >> +	if (bar >= PCI_STD_NUM_BARS || !pci_resource_len(pdev, bar))
-> >>  		return NULL;
-> > 
-> > This looks like a latent bug fix here. If 'bar' is out of range we return
-> > NULL instead accessing an invalid item of an array. Should this not be
-> > a separate patch and tagged as stable?
-> > 
-> 
-> This fix was suggested by Bjorn in v1 review:
-> https://lkml.org/lkml/2019/8/12/997
-> 
+On Thu, 19 Sep 2019 at 09:20, YT Chang <yt.chang@mediatek.com> wrote:
+>
+> When the system is overutilization, the load-balance crossing
 
-Ah yes, apologies - I'll re-read the previous threads next time.
+s/overutilization/overutilized/
 
-Thanks,
+> clusters will be triggered and scheduler will not use energy
+> aware scheduling to choose CPUs.
+>
+> The overutilization means the loading of  ANY CPUs
 
-Andrew Murray
+s/ANY/any/
 
-> 
-> > Thanks,
-> > 
-> > Andrew Murray
-> > 
-> >>  
-> >>  	if (static_branch_likely(&have_mio))
-> >> @@ -416,7 +416,7 @@ static void zpci_map_resources(struct pci_dev *pdev)
-> >>  	resource_size_t len;
-> >>  	int i;
-> >>  
-> >> -	for (i = 0; i < PCI_BAR_COUNT; i++) {
-> >> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> >>  		len = pci_resource_len(pdev, i);
-> >>  		if (!len)
-> >>  			continue;
-> >> @@ -451,7 +451,7 @@ static void zpci_unmap_resources(struct pci_dev *pdev)
-> >>  	if (zpci_use_mio(zdev))
-> >>  		return;
-> >>  
-> >> -	for (i = 0; i < PCI_BAR_COUNT; i++) {
-> >> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> >>  		len = pci_resource_len(pdev, i);
-> >>  		if (!len)
-> >>  			continue;
-> >> @@ -514,7 +514,7 @@ static int zpci_setup_bus_resources(struct zpci_dev *zdev,
-> >>  	snprintf(zdev->res_name, sizeof(zdev->res_name),
-> >>  		 "PCI Bus %04x:%02x", zdev->domain, ZPCI_BUS_NR);
-> >>  
-> >> -	for (i = 0; i < PCI_BAR_COUNT; i++) {
-> >> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> >>  		if (!zdev->bars[i].size)
-> >>  			continue;
-> >>  		entry = zpci_alloc_iomap(zdev);
-> >> @@ -551,7 +551,7 @@ static void zpci_cleanup_bus_resources(struct zpci_dev *zdev)
-> >>  {
-> >>  	int i;
-> >>  
-> >> -	for (i = 0; i < PCI_BAR_COUNT; i++) {
-> >> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> >>  		if (!zdev->bars[i].size || !zdev->bars[i].res)
-> >>  			continue;
-> >>  
-> >> @@ -573,7 +573,7 @@ int pcibios_add_device(struct pci_dev *pdev)
-> >>  	pdev->dev.dma_ops = &s390_pci_dma_ops;
-> >>  	zpci_map_resources(pdev);
-> >>  
-> >> -	for (i = 0; i < PCI_BAR_COUNT; i++) {
-> >> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> >>  		res = &pdev->resource[i];
-> >>  		if (res->parent || !res->flags)
-> >>  			continue;
-> >> diff --git a/arch/s390/pci/pci_clp.c b/arch/s390/pci/pci_clp.c
-> >> index 9bdff4defef1..8b729b5f2972 100644
-> >> --- a/arch/s390/pci/pci_clp.c
-> >> +++ b/arch/s390/pci/pci_clp.c
-> >> @@ -145,7 +145,7 @@ static int clp_store_query_pci_fn(struct zpci_dev *zdev,
-> >>  {
-> >>  	int i;
-> >>  
-> >> -	for (i = 0; i < PCI_BAR_COUNT; i++) {
-> >> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> >>  		zdev->bars[i].val = le32_to_cpu(response->bar[i]);
-> >>  		zdev->bars[i].size = response->bar_size[i];
-> >>  	}
-> >> @@ -164,8 +164,8 @@ static int clp_store_query_pci_fn(struct zpci_dev *zdev,
-> >>  		       sizeof(zdev->util_str));
-> >>  	}
-> >>  	zdev->mio_capable = response->mio_addr_avail;
-> >> -	for (i = 0; i < PCI_BAR_COUNT; i++) {
-> >> -		if (!(response->mio.valid & (1 << (PCI_BAR_COUNT - i - 1))))
-> >> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> >> +		if (!(response->mio.valid & (1 << (PCI_STD_NUM_BARS - i - 1))))
-> >>  			continue;
-> >>  
-> >>  		zdev->bars[i].mio_wb = (void __iomem *) response->mio.addr[i].wb;
-> >> -- 
-> >> 2.21.0
-> >>
-> 
+> exceeds threshold (80%).
+>
+> However, only 1 heavy task or while-1 program will run on highest
+> capacity CPUs and it still result to trigger overutilization. So
+> the system will not use Energy Aware scheduling.
+>
+> To avoid it, a system-wide over-utilization indicator to trigger
+> load-balance cross clusters.
+
+The current rd->overutilized is already system wide. I mean that as
+soon as one CPU is overutilized, the whole system is considered as
+overutilized whereas you would like a finer grain level of
+overutilization.
+I remember a patch that was proposing a per sched_domain
+overutilization detection. The load_balance at one sched_domain level
+was enabled only if the child level was not able to handle the
+overutilization and the energy aware scheduling was still used in the
+other sched_domain
+
+>
+> The policy is:
+>         The loading of "ALL CPUs in the highest capacity"
+>                                                 exceeds threshold(80%) or
+>         The loading of "Any CPUs not in the highest capacity"
+>                                                 exceed threshold(80%)
+
+Do you have UCs or figures that show a benefit with this change ?
+
+>
+> Signed-off-by: YT Chang <yt.chang@mediatek.com>
+> ---
+>  kernel/sched/fair.c | 76 +++++++++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 65 insertions(+), 11 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 036be95..f4c3d70 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5182,10 +5182,71 @@ static inline bool cpu_overutilized(int cpu)
+>  static inline void update_overutilized_status(struct rq *rq)
+>  {
+>         if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
+> -               WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
+> -               trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
+> +               if (capacity_orig_of(cpu_of(rq)) < rq->rd->max_cpu_capacity) {
+> +                       WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
+> +                       trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
+> +               }
+>         }
+>  }
+> +
+> +static
+> +void update_system_overutilized(struct sched_domain *sd, struct cpumask *cpus)
+> +{
+> +       unsigned long group_util;
+> +       bool intra_overutil = false;
+> +       unsigned long max_capacity;
+> +       struct sched_group *group = sd->groups;
+> +       struct root_domain *rd;
+> +       int this_cpu;
+> +       bool overutilized;
+> +       int i;
+> +
+> +       this_cpu = smp_processor_id();
+> +       rd = cpu_rq(this_cpu)->rd;
+> +       overutilized = READ_ONCE(rd->overutilized);
+> +       max_capacity = rd->max_cpu_capacity;
+> +
+> +       do {
+> +               group_util = 0;
+> +               for_each_cpu_and(i, sched_group_span(group), cpus) {
+> +                       group_util += cpu_util(i);
+> +                       if (cpu_overutilized(i)) {
+> +                               if (capacity_orig_of(i) < max_capacity) {
+> +                                       intra_overutil = true;
+> +                                       break;
+> +                               }
+> +                       }
+> +               }
+> +
+> +               /*
+> +                * A capacity base hint for over-utilization.
+> +                * Not to trigger system overutiled if heavy tasks
+> +                * in Big.cluster, so
+> +                * add the free room(20%) of Big.cluster is impacted which means
+> +                * system-wide over-utilization,
+> +                * that considers whole cluster not single cpu
+> +                */
+> +               if (group->group_weight > 1 && (group->sgc->capacity * 1024 <
+> +                                               group_util * capacity_margin)) {
+> +                       intra_overutil = true;
+> +                       break;
+> +               }
+> +
+> +               group = group->next;
+> +
+> +       } while (group != sd->groups && !intra_overutil);
+> +
+> +       if (overutilized != intra_overutil) {
+> +               if (intra_overutil == true) {
+> +                       WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
+> +                       trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
+> +               } else {
+> +                       WRITE_ONCE(rd->overutilized, 0);
+> +                       trace_sched_overutilized_tp(rd, 0);
+> +               }
+> +       }
+> +}
+> +
+>  #else
+>  static inline void update_overutilized_status(struct rq *rq) { }
+>  #endif
+> @@ -8242,15 +8303,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
+>
+>                 /* update overload indicator if we are at root domain */
+>                 WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
+> -
+> -               /* Update over-utilization (tipping point, U >= 0) indicator */
+> -               WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
+> -               trace_sched_overutilized_tp(rd, sg_status & SG_OVERUTILIZED);
+> -       } else if (sg_status & SG_OVERUTILIZED) {
+> -               struct root_domain *rd = env->dst_rq->rd;
+> -
+> -               WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
+> -               trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
+>         }
+>  }
+>
+> @@ -8476,6 +8528,8 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+>          */
+>         update_sd_lb_stats(env, &sds);
+>
+> +       update_system_overutilized(env->sd, env->cpus);
+
+This should be called only if (sched_energy_enabled())
+
+> +
+>         if (sched_energy_enabled()) {
+>                 struct root_domain *rd = env->dst_rq->rd;
+>
+> --
+> 1.9.1
+>
