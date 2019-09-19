@@ -2,284 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64DA2B82D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99610B82D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:43:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389510AbfISUlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 16:41:52 -0400
-Received: from mail-eopbgr690135.outbound.protection.outlook.com ([40.107.69.135]:1870
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        id S1732352AbfISUn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 16:43:26 -0400
+Received: from mail-eopbgr720048.outbound.protection.outlook.com ([40.107.72.48]:41760
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728984AbfISUlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 16:41:51 -0400
+        id S1730741AbfISUn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 16:43:26 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oHY1FR38TfAsm+eDr93Pc7gDaG39ODQ7gUTm8ftK1YmOt4PNXmTW2mPJYZVeZKGdb4USdDO0YT0nKUOu57Bn3GdvtWZ6gJm5wtfQDsGfflH3e6kjzO5P8iifG8Va2U7J3NV1PgtejUg+ShfOlzgMT+D5bFiClK9+pHLVJeQaIi9rI8tjaSBgv5d5SSe+5k/hljsSR6YAxtPAozZflP0lmz1C4nvuMcHwjogw0Qn1aQ+WTbVyNB+i7Ta3cPofP1C8halLLGSRM2PL08Buz6GdGEZdTuIDFYIb7rXgmyACcOlpDr37c1GtB8A7mBnuMaSdUJe03aETNP/KYEZK6gcKcA==
+ b=SDlA9s6HKqgzseU5RFulGy1vb2LGZZziLYGavTpmrO5da2j9K0mbUsScrtrWKk/nJP73p2th1yCGfl827vQ4U8fB+sNrw5his4FulDGwIdQ3KnfOLw5nJ1wdIHGPbJg4U5BjefEcdoxnO2B4EifkCM7OOQl2MtVppBQIyhvKt/w36dUAauaOs2XDXcTWNuTom+r1ckyOcCsAixxKGsP9pl6kYp/oqYS5oAeZrF8UXzneo9jWACqZ2vXevP8dOSAgdNAAgHCjzCbf1avDIpPT2ndtgZNIrdAjrfUhVpLmNdqRyfT+P+gBTknRo7236q13Ye6z9UWMRlIaIf29hkjwEg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xa/IBwGoxex2GWg2QMs7Xjh5M6MkBKkep5abjJ2NX0c=;
- b=myk7rNoqi2FuGyGYP+GJY3t4EKGczfVrDL0WtPQ01X0DVulG5KU0ergS6Wc0Xc7jRcgwUQhE5lOYseAjQMihiSmbChygKLtrWFLTRXzfqfhkBpUmSUhas/fOqgDF186ALZ7QDk03aqUd4EplBHi4EFHfU4RQyLKXIgdkbZMGE2yJ7Ewj3Z4ROKtxUzdYJfnFFdoRMYAabbeRS3XCSCx4jmg85C2SD/wsDkFohIt6UD43JK0hnfSRMOKAUqpID1MtJ+UQ79ICuktwBZPxWVnuaIUlXQRIANH2HefRi5uduWLKDQiPb2sk6Dm6MYwRRtP6MaeYH8dbW0b7lIN+euZcPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 160.33.194.230) smtp.rcpttodomain=chromium.org smtp.mailfrom=sony.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=sony.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Sony.onmicrosoft.com;
- s=selector2-Sony-onmicrosoft-com;
+ bh=KJaYkLhVsJ0xfRTGLCbSwNKTZek+Po3K8rU/3MP35rk=;
+ b=eMPb9XTV9+kQVvfP1Uj2Qll3vCDLivYgphI78ryBlB/qnUVr/Va0UYyHcKgUqIruU9Bq+Gff8mRI9J859+8YPABwvfiJBMLrO8sFtqzi0Kr7jaJL1wt8r9WyxNj9K2qpBLbBYD4CXfsJ81cQ3H0ivQ+KPfGFZzvoFn9+fSX4U//NPrcbwOE2ks+ZOOEdgvn0SKqpi/DOMMAtLjfG7Y+ur7azGVyXXGRvmdGvsaRDZRgbWSO4O3VW/goOT9Mu6qxvG6Dt54CUxgZYcbTmnS1CNSp+5jBiba2+b1hOifkjfmkeEA6IG14bEsdyWIxfnnD4M749HuzzDTf/KO6aRsQDcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
+ dmarc=permerror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xa/IBwGoxex2GWg2QMs7Xjh5M6MkBKkep5abjJ2NX0c=;
- b=t3gm23hVMXXN6VcehBqdB5FZ0iSQM5k4hxY05WKeFH9e6VI1L8O51MmQJ/8oCR3Ugm3p/r6XEUiCXIG0djUikJXO/2EDtAFvX3nRf+NapflU++0jMfHp1pBfmGkT8OVJUJBSrfDPwXZ/BnXhxfRo3S4SAxQKsW3tyQyM7uT26iw=
-Received: from MWHPR13CA0020.namprd13.prod.outlook.com (2603:10b6:300:16::30)
- by DM5PR13MB1179.namprd13.prod.outlook.com (2603:10b6:3:72::23) with
+ bh=KJaYkLhVsJ0xfRTGLCbSwNKTZek+Po3K8rU/3MP35rk=;
+ b=CkEOAe5K7O1y9HXhXVzI24w//7Z7hF/F24rsJ8hCZIPyLqKrpMfrLDLRGCDz4EKeBW8PSa9dLrcAglYJawB6iaXjwoUoak8GbI82L/xxzgEyLIWd4NDq4k2tV+eNL2hvsOd3JRFE5fNoxDdBI8tkJEaFsxLRUXJXH1TWyVT1zLA=
+Received: from DM5PR12CA0072.namprd12.prod.outlook.com (2603:10b6:3:103::34)
+ by BYAPR12MB3318.namprd12.prod.outlook.com (2603:10b6:a03:df::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.14; Thu, 19 Sep
- 2019 20:41:48 +0000
-Received: from SN1NAM02FT040.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::205) by MWHPR13CA0020.outlook.office365.com
- (2603:10b6:300:16::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.14 via Frontend
- Transport; Thu, 19 Sep 2019 20:41:48 +0000
-Authentication-Results: spf=pass (sender IP is 160.33.194.230)
- smtp.mailfrom=sony.com; chromium.org; dkim=none (message not signed)
- header.d=none;chromium.org; dmarc=pass action=none header.from=sony.com;
-Received-SPF: Pass (protection.outlook.com: domain of sony.com designates
- 160.33.194.230 as permitted sender) receiver=protection.outlook.com;
- client-ip=160.33.194.230; helo=usculsndmail03v.am.sony.com;
-Received: from usculsndmail03v.am.sony.com (160.33.194.230) by
- SN1NAM02FT040.mail.protection.outlook.com (10.152.72.195) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.17 via Frontend Transport; Thu, 19 Sep 2019 20:41:47 +0000
-Received: from usculsndmail12v.am.sony.com (usculsndmail12v.am.sony.com [146.215.230.103])
-        by usculsndmail03v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id x8JKfku8003963;
-        Thu, 19 Sep 2019 20:41:46 GMT
-Received: from USCULXHUB05V.am.sony.com (usculxhub05v.am.sony.com [146.215.231.43])
-        by usculsndmail12v.am.sony.com (Sentrion-MTA-4.3.2/Sentrion-MTA-4.3.2) with ESMTP id x8JKfkrO026077;
-        Thu, 19 Sep 2019 20:41:46 GMT
-Received: from USCULXMSG01.am.sony.com ([fe80::b09d:6cb6:665e:d1b5]) by
- USCULXHUB05V.am.sony.com ([146.215.231.43]) with mapi id 14.03.0439.000; Thu,
- 19 Sep 2019 16:41:45 -0400
-From:   <Tim.Bird@sony.com>
-To:     <keescook@chromium.org>, <shuah@kernel.org>
-CC:     <anders.roxell@linaro.org>, <alexandre.belloni@bootlin.com>,
-        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
-Subject: RE: [PATCH] selftests/kselftest/runner.sh: Add 45 second timeout
- per test
-Thread-Topic: [PATCH] selftests/kselftest/runner.sh: Add 45 second timeout
- per test
-Thread-Index: AQHVbxUXsNEjsnpJkUeVTYYfiT5hwaczb7LQ
-Date:   Thu, 19 Sep 2019 20:41:42 +0000
-Message-ID: <ECADFF3FD767C149AD96A924E7EA6EAF977BA636@USCULXMSG01.am.sony.com>
-References: <201909191102.97FA56072@keescook>
-In-Reply-To: <201909191102.97FA56072@keescook>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [146.215.228.6]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.26; Thu, 19 Sep
+ 2019 20:43:23 +0000
+Received: from CO1NAM03FT058.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::202) by DM5PR12CA0072.outlook.office365.com
+ (2603:10b6:3:103::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.18 via Frontend
+ Transport; Thu, 19 Sep 2019 20:43:23 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
+ header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
+ CO1NAM03FT058.mail.protection.outlook.com (10.152.81.107) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2284.20 via Frontend Transport; Thu, 19 Sep 2019 20:43:22 +0000
+Received: from totem.amd.com (10.180.168.240) by SATLEXCHOV01.amd.com
+ (10.181.40.71) with Microsoft SMTP Server (TLS) id 14.3.389.1; Thu, 19 Sep
+ 2019 15:43:20 -0500
+From:   Kim Phillips <kim.phillips@amd.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+CC:     <kim.phillips@amd.com>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Jiri Olsa" <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Borislav Petkov <bp@suse.de>, Martin Liska <mliska@suse.cz>,
+        Luke Mujica <lukemujica@google.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
+Subject: [PATCH 1/5] perf vendor events amd: add L3 cache events for Family 17h
+Date:   Thu, 19 Sep 2019 15:43:02 -0500
+Message-ID: <20190919204306.12598-1-kim.phillips@amd.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:160.33.194.230;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(39860400002)(346002)(51444003)(13464003)(199004)(189003)(106002)(229853002)(8746002)(26005)(70206006)(6306002)(76176011)(54906003)(7696005)(2906002)(2876002)(70586007)(23726003)(6116002)(3846002)(8936002)(6246003)(316002)(102836004)(46406003)(126002)(446003)(336012)(37786003)(86362001)(5660300002)(6666004)(55016002)(356004)(186003)(476003)(11346002)(426003)(110136005)(33656002)(246002)(14444005)(486006)(4326008)(66066001)(8676002)(97756001)(7736002)(55846006)(966005)(478600001)(50466002)(47776003)(305945005)(5001870100001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR13MB1179;H:usculsndmail03v.am.sony.com;FPR:;SPF:Pass;LANG:en;PTR:mail.sonyusa.com,mail03.sonyusa.com;A:1;MX:1;
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(39860400002)(376002)(428003)(189003)(199004)(50226002)(44832011)(7416002)(8676002)(81166006)(1076003)(6666004)(356004)(81156014)(7736002)(3846002)(305945005)(6116002)(53416004)(6916009)(36756003)(48376002)(2906002)(486006)(316002)(8936002)(2870700001)(54906003)(126002)(70206006)(70586007)(16526019)(4326008)(50466002)(14444005)(47776003)(186003)(51416003)(7696005)(26005)(6306002)(966005)(336012)(476003)(2616005)(86362001)(426003)(478600001)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3318;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: bd409794-57be-4668-3c91-08d73d41cac8
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(4709080)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR13MB1179;
-X-MS-TrafficTypeDiagnostic: DM5PR13MB1179:
-X-MS-Exchange-PUrlCount: 2
-X-Microsoft-Antispam-PRVS: <DM5PR13MB1179BAE654FA99BBF807E61EFD890@DM5PR13MB1179.namprd13.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Office365-Filtering-Correlation-Id: 07402e59-6a4b-4f9c-a69e-08d73d42035b
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR12MB3318;
+X-MS-TrafficTypeDiagnostic: BYAPR12MB3318:
+X-MS-Exchange-PUrlCount: 1
+X-Microsoft-Antispam-PRVS: <BYAPR12MB33186DAFEC62D49D5369E0EB87890@BYAPR12MB3318.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4941;
 X-Forefront-PRVS: 016572D96D
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: jeocI6OVlTh/ZhAkN/26p7OlTzSBojjIm3dMvZC9e2rlT+cpe1PdRTrnKWIJ/ZMONjs8kyWfZLfqFbtq1Ecw4DH7PLa8TB8cDsJ6XTSqDhSYU+5pZNG6TuRH8oUayQUeDjqL8vZy5u7YaiGp4WPx/M6ZmtC3Iw6RDY5avcbi0WRCdOdVzUO2lfXIOU7Z/xu9EsHMZdtDotglMayrAI0kFcJzveIUtJ2+h9PVX8d67hGI9Aw14l0M7PHAezMACOnX03hmw8RiWRaXe4mimo1/1fuVcCM83a+Aer21YPLjKEBBjNXqpCXWDOQ/8kKGPopf6llHsFXHNQAO42OS45DYL8NhvqzGXwUiWhf3WHrG5ogR0yP6ZLsLhJWL/jttrTC2wtJ0v6gjGfNoWK3Ej8oAMmavW8uQbiy6bMPWIPPogfw=
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2019 20:41:47.9602
+X-Microsoft-Antispam-Message-Info: ENFbkgyrfKPoBYoXm1AzfK3j9TzvjAlQxpXJ2MLJtv2aFY0WUhIpQeyCchiNQjFAjaGvMNbLXBoeC4ZOM6jxrkwslVJBg7s/ubgsoiIQBTgpiB1VGxCT8M6PU+kDIMRpFElyjqzUhpxoUF55j63c6uaTsrbRWrgNZ4H3krDYxrGlDiKUYY3QP1KtnUSBVHguVOqNXiACzyqu/5UmO+qi7wd4TXbKqTy01uRd24gre3eXl/3F1PI3r9E0/cWfETQ/HDJEq0KQ8qtojfMA1laRQjYUsTgBPyF+rBRbVF/uhqJe8fTs8jcTcsgVUk9rx0PYaF32x/1auhcFf+goc2uQT52d4uIRfeNjQe641Rv+xxxLq3yS6WF99uJL13GCoLwMc9B5+E0y+0siJ73JSODjTY5yni4NvxhMGkD63cvKMXs=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2019 20:43:22.7836
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd409794-57be-4668-3c91-08d73d41cac8
-X-MS-Exchange-CrossTenant-Id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=66c65d8a-9158-4521-a2d8-664963db48e4;Ip=[160.33.194.230];Helo=[usculsndmail03v.am.sony.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07402e59-6a4b-4f9c-a69e-08d73d42035b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR13MB1179
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3318
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Allow users to symbolically specify L3 events for Family 17h processors
+using the existing AMD Uncore driver.
 
+Source of events descriptions are from section 2.1.15.4.1
+"L3 Cache PMC Events" of the latest Family 17h PPR, available here:
 
-> -----Original Message-----
-> From: Kees Cook
->=20
-> Commit a745f7af3cbd ("selftests/harness: Add 30 second timeout per
-> test") solves the problem of kselftest_harness.h-using binary tests
-> possibly hanging forever. However, scripts and other binaries can still
-> hang forever. This adds a global timeout to each test script run.
->=20
-> To make this configurable (e.g. as needed in the "rtc" test case),
-> include a new per-test-directory "settings" file (similar to "config")
-> that can contain kselftest-specific settings. The first recognized field
-> is "timeout".
+https://www.amd.com/system/files/TechDocs/55570-B1_PUB.zip
 
-OK - this is quite interesting.  I have had on my to-do list an action
-item to propose the creation of a file (or a standard kerneldoc string)
-to hold CI-related meta-data (of which timeout is one example).
+Only BriefDescriptions added, since they show with and without
+the -v and --details flags.
 
-What other meta-data did you have in mind?
+Tested with:
 
-I would like (that Fuego, and probably other CI systems would like) to have
- access to data like test dependencies, descriptions, and results interpret=
-ation
-that would be beneficial for both CI systems (using them to control test in=
-vocations and scheduling), as
-well as users who are trying to interpret and handle the test results.
-So this concept is a very welcome addition to kselftest.
+ # perf stat -e l3_request_g1.caching_l3_cache_accesses,amd_l3/event=0x01,umask=0x80/,l3_comb_clstr_state.request_miss,amd_l3/event=0x06,umask=0x01/ perf bench mem memcpy -s 4mb -l 100 -f default
+...
+         7,006,831      l3_request_g1.caching_l3_cache_accesses
+         7,006,830      amd_l3/event=0x01,umask=0x80/
+           366,530      l3_comb_clstr_state.request_miss
+           366,568      amd_l3/event=0x06,umask=0x01/
 
-LTP is in the process of adopting a new system for expressing and handling =
-their test meta-data.
-See the discussion at:=20
-https://lists.yoctoproject.org/pipermail/automated-testing/2019-August/0004=
-71.html
-and the prototype implementation at:
-https://github.com/metan-ucw/ltp/tree/master/docparse
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Martin Liska <mliska@suse.cz>
+Cc: Luke Mujica <lukemujica@google.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org
+---
+ .../pmu-events/arch/x86/amdfam17h/cache.json  | 42 +++++++++++++++++++
+ tools/perf/pmu-events/jevents.c               |  1 +
+ 2 files changed, 43 insertions(+)
 
-I realize that that system is coupled pretty tightly to LTP, but conceptual=
-ly
-some of the same type of information would be valuable for kselftest tests.
-One example of a specific field that would be handy is 'need_root'.
+diff --git a/tools/perf/pmu-events/arch/x86/amdfam17h/cache.json b/tools/perf/pmu-events/arch/x86/amdfam17h/cache.json
+index fad4af9142cb..6221a840fcea 100644
+--- a/tools/perf/pmu-events/arch/x86/amdfam17h/cache.json
++++ b/tools/perf/pmu-events/arch/x86/amdfam17h/cache.json
+@@ -283,5 +283,47 @@
+     "BriefDescription": "Total cycles spent with one or more fill requests in flight from L2.",
+     "PublicDescription": "Total cycles spent with one or more fill requests in flight from L2.",
+     "UMask": "0x1"
++  },
++  {
++    "EventName": "l3_request_g1.caching_l3_cache_accesses",
++    "EventCode": "0x01",
++    "BriefDescription": "Caching: L3 cache accesses",
++    "UMask": "0x80",
++    "Unit": "L3PMC"
++  },
++  {
++    "EventName": "l3_lookup_state.all_l3_req_typs",
++    "EventCode": "0x04",
++    "BriefDescription": "All L3 Request Types",
++    "UMask": "0xff",
++    "Unit": "L3PMC"
++  },
++  {
++    "EventName": "l3_comb_clstr_state.other_l3_miss_typs",
++    "EventCode": "0x06",
++    "BriefDescription": "Other L3 Miss Request Types",
++    "UMask": "0xfe",
++    "Unit": "L3PMC"
++  },
++  {
++    "EventName": "l3_comb_clstr_state.request_miss",
++    "EventCode": "0x06",
++    "BriefDescription": "L3 cache misses",
++    "UMask": "0x01",
++    "Unit": "L3PMC"
++  },
++  {
++    "EventName": "xi_sys_fill_latency",
++    "EventCode": "0x90",
++    "BriefDescription": "L3 Cache Miss Latency. Total cycles for all transactions divided by 16. Ignores SliceMask and ThreadMask.",
++    "UMask": "0x00",
++    "Unit": "L3PMC"
++  },
++  {
++    "EventName": "xi_ccx_sdp_req1.all_l3_miss_req_typs",
++    "EventCode": "0x9a",
++    "BriefDescription": "All L3 Miss Request Types. Ignores SliceMask and ThreadMask.",
++    "UMask": "0x3f",
++    "Unit": "L3PMC"
+   }
+ ]
+diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
+index d413761621b0..9e37287da924 100644
+--- a/tools/perf/pmu-events/jevents.c
++++ b/tools/perf/pmu-events/jevents.c
+@@ -239,6 +239,7 @@ static struct map {
+ 	{ "hisi_sccl,ddrc", "hisi_sccl,ddrc" },
+ 	{ "hisi_sccl,hha", "hisi_sccl,hha" },
+ 	{ "hisi_sccl,l3c", "hisi_sccl,l3c" },
++	{ "L3PMC", "amd_l3" },
+ 	{}
+ };
+ 
+-- 
+2.23.0
 
-It would be nice to avoid proliferation of such meta-data schemas (that is
-field names), so maybe we can have a discussion about this before adopting
-something?
-
-Just FYI, I'm OK with the name 'timeout'.  I think that's pretty much unive=
-rsally
-used by all CI runners I'm aware of to indicate the test timeout value.  Bu=
-t
-before adopting other fields it would be good to start comparing notes
-and not invent a bunch of new field names for concepts that are already in
-other systems.
-
->=20
-> Additionally, this splits the reporting for timeouts into a specific
-> "TIMEOUT" not-ok (and adds exit code reporting in the remaining case).
->=20
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  tools/testing/selftests/kselftest/runner.sh | 36 +++++++++++++++++++--
->  tools/testing/selftests/rtc/settings        |  1 +
->  2 files changed, 34 insertions(+), 3 deletions(-)
->  create mode 100644 tools/testing/selftests/rtc/settings
->=20
-> diff --git a/tools/testing/selftests/kselftest/runner.sh
-> b/tools/testing/selftests/kselftest/runner.sh
-> index 00c9020bdda8..84de7bc74f2c 100644
-> --- a/tools/testing/selftests/kselftest/runner.sh
-> +++ b/tools/testing/selftests/kselftest/runner.sh
-> @@ -3,9 +3,14 @@
->  #
->  # Runs a set of tests in a given subdirectory.
->  export skip_rc=3D4
-> +export timeout_rc=3D124
-what are the units here?  I presume seconds?
-
->  export logfile=3D/dev/stdout
->  export per_test_logging=3D
->=20
-> +# Defaults for "settings" file fields:
-> +# "timeout" how many seconds to let each test run before failing.
-> +export kselftest_default_timeout=3D45
-> +
->  # There isn't a shell-agnostic way to find the path of a sourced file,
->  # so we must rely on BASE_DIR being set to find other tools.
->  if [ -z "$BASE_DIR" ]; then
-> @@ -24,6 +29,16 @@ tap_prefix()
->  	fi
->  }
->=20
-> +tap_timeout()
-> +{
-> +	# Make sure tests will time out if utility is available.
-> +	if [ -x /usr/bin/timeout ] ; then
-> +		/usr/bin/timeout "$kselftest_timeout" "$1"
-> +	else
-> +		"$1"
-> +	fi
-> +}
-> +
->  run_one()
->  {
->  	DIR=3D"$1"
-> @@ -32,6 +47,18 @@ run_one()
->=20
->  	BASENAME_TEST=3D$(basename $TEST)
->=20
-> +	# Reset any "settings"-file variables.
-> +	export kselftest_timeout=3D"$kselftest_default_timeout"
-> +	# Load per-test-directory kselftest "settings" file.
-> +	settings=3D"$BASE_DIR/$DIR/settings"
-> +	if [ -r "$settings" ] ; then
-> +		while read line ; do
-> +			field=3D$(echo "$line" | cut -d=3D -f1)
-> +			value=3D$(echo "$line" | cut -d=3D -f2-)
-> +			eval "kselftest_$field"=3D"$value"
-> +		done < "$settings"
-> +	fi
-> +
->  	TEST_HDR_MSG=3D"selftests: $DIR: $BASENAME_TEST"
->  	echo "# $TEST_HDR_MSG"
->  	if [ ! -x "$TEST" ]; then
-> @@ -44,14 +71,17 @@ run_one()
->  		echo "not ok $test_num $TEST_HDR_MSG"
->  	else
->  		cd `dirname $TEST` > /dev/null
-> -		(((((./$BASENAME_TEST 2>&1; echo $? >&3) |
-> +		((((( tap_timeout ./$BASENAME_TEST 2>&1; echo $? >&3) |
->  			tap_prefix >&4) 3>&1) |
->  			(read xs; exit $xs)) 4>>"$logfile" &&
->  		echo "ok $test_num $TEST_HDR_MSG") ||
-> -		(if [ $? -eq $skip_rc ]; then	\
-> +		(rc=3D$?;	\
-> +		if [ $rc -eq $skip_rc ]; then	\
->  			echo "not ok $test_num $TEST_HDR_MSG # SKIP"
-> +		elif [ $rc -eq $timeout_rc ]; then \
-> +			echo "not ok $test_num $TEST_HDR_MSG #
-> TIMEOUT"
-This is an extension to the TAP protocol (well, not strictly, since it is i=
-n a comment),
-but it should be documented.
-
-I took an action item at the CKI hackfest to rigorously document the
-details of how kselftest has extended (or augmented) TAP.  For example
-our indentation mechanism for sub-tests.  You and I talked about this
-a bit at Plumbers, but I'd like to follow up and add something
-to Documentation/dev-tools/kselftest.rst so users and CI systems
-can know how to appropriately parse and manage kselftest TAP output.
-
-I'll start a separate thread on that when I get to documenting it,
-but this would definitely be an addition to that documentation.
-
->  		else
-> -			echo "not ok $test_num $TEST_HDR_MSG"
-> +			echo "not ok $test_num $TEST_HDR_MSG #
-> exit=3D$rc"
-Is this also something new to kselftest's TAP output that should be documen=
-ted?
-
->  		fi)
->  		cd - >/dev/null
->  	fi
-> diff --git a/tools/testing/selftests/rtc/settings
-> b/tools/testing/selftests/rtc/settings
-> new file mode 100644
-> index 000000000000..ba4d85f74cd6
-> --- /dev/null
-> +++ b/tools/testing/selftests/rtc/settings
-> @@ -0,0 +1 @@
-> +timeout=3D90
-
-This is introducing a schema for meta-data naming, and a first field name.
-I have no problem with this one, but it might be worth comparing it with
-names expected by various kselftest-calling  CI systems.  I'll try to work
-on this shortly and report back any issues.
-
-Thanks for this.  I think this points us in an interesting new direction.
- -- Tim
