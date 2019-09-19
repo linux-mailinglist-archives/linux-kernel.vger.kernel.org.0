@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A979AB856D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:21:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B64AB8615
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406654AbfISWU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:20:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35068 "EHLO mail.kernel.org"
+        id S2394214AbfISW0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:26:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394032AbfISWUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:20:52 -0400
+        id S2393070AbfISWVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:21:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3335E20678;
-        Thu, 19 Sep 2019 22:20:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3005E21D7C;
+        Thu, 19 Sep 2019 22:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931651;
-        bh=JGn3IDncK4xvyXxYnk8ag5YaB4m59tQ8igsrSqqrYlY=;
+        s=default; t=1568931705;
+        bh=n42OO6feoB2TlHlu0xT/q7tx7pWAn08ren5fWL62ZvM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yiNXocELKOXe56TEfbvVRyAfbRYjFOKFkH5KHhbX7H7Z/x+qDv57+M/Re+dngElx3
-         +dMgE1u/pU5t3fzuntckpzuPRXit8L7tEkxiq8rTW2oKNKLE2IjqCUgYp4EHPmcKS7
-         1c+KyjfogRM2Gh2HYh5yk+vGEKZrRirTQ5LVmlb0=
+        b=ccbwiqcX9KsozYuTNSmD7YNDsfxeY3wM3JMZW0PVyX1B8wUc83Au93Uk21qIlmdpS
+         h6GRcFenQm99CAX5aw3BhWj/L4uGdmG+SrAC+wrTGkO4405V7boXl6fytnP5nUehLd
+         ldZ6pB75t5ISiVd7F4CxKgvUsgaTOngvUNeiFAo4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 37/74] powerpc/mm/radix: Use the right page size for vmemmap mapping
-Date:   Fri, 20 Sep 2019 00:03:50 +0200
-Message-Id: <20190919214808.577253698@linuxfoundation.org>
+        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 10/56] tipc: add NULL pointer check before calling kfree_rcu
+Date:   Fri, 20 Sep 2019 00:03:51 +0200
+Message-Id: <20190919214749.244237236@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,58 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 89a3496e0664577043666791ec07fb731d57c950 upstream.
+[ Upstream commit 42dec1dbe38239cf91cc1f4df7830c66276ced37 ]
 
-We use mmu_vmemmap_psize to find the page size for mapping the vmmemap area.
-With radix translation, we are suboptimally setting this value to PAGE_SIZE.
+Unlike kfree(p), kfree_rcu(p, rcu) won't do NULL pointer check. When
+tipc_nametbl_remove_publ returns NULL, the panic below happens:
 
-We do check for 2M page size support and update mmu_vmemap_psize to use
-hugepage size but we suboptimally reset the value to PAGE_SIZE in
-radix__early_init_mmu(). This resulted in always mapping vmemmap area with
-64K page size.
+   BUG: unable to handle kernel NULL pointer dereference at 0000000000000068
+   RIP: 0010:__call_rcu+0x1d/0x290
+   Call Trace:
+    <IRQ>
+    tipc_publ_notify+0xa9/0x170 [tipc]
+    tipc_node_write_unlock+0x8d/0x100 [tipc]
+    tipc_node_link_down+0xae/0x1d0 [tipc]
+    tipc_node_check_dest+0x3ea/0x8f0 [tipc]
+    ? tipc_disc_rcv+0x2c7/0x430 [tipc]
+    tipc_disc_rcv+0x2c7/0x430 [tipc]
+    ? tipc_rcv+0x6bb/0xf20 [tipc]
+    tipc_rcv+0x6bb/0xf20 [tipc]
+    ? ip_route_input_slow+0x9cf/0xb10
+    tipc_udp_recv+0x195/0x1e0 [tipc]
+    ? tipc_udp_is_known_peer+0x80/0x80 [tipc]
+    udp_queue_rcv_skb+0x180/0x460
+    udp_unicast_rcv_skb.isra.56+0x75/0x90
+    __udp4_lib_rcv+0x4ce/0xb90
+    ip_local_deliver_finish+0x11c/0x210
+    ip_local_deliver+0x6b/0xe0
+    ? ip_rcv_finish+0xa9/0x410
+    ip_rcv+0x273/0x362
 
-Fixes: 2bfd65e45e87 ("powerpc/mm/radix: Add radix callbacks for early init routines")
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 97ede29e80ee ("tipc: convert name table read-write lock to RCU")
+Reported-by: Li Shuang <shuali@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/mm/pgtable-radix.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ net/tipc/name_distr.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/mm/pgtable-radix.c
-+++ b/arch/powerpc/mm/pgtable-radix.c
-@@ -287,14 +287,6 @@ void __init radix__early_init_devtree(vo
- 	mmu_psize_defs[MMU_PAGE_64K].shift = 16;
- 	mmu_psize_defs[MMU_PAGE_64K].ap = 0x5;
- found:
--#ifdef CONFIG_SPARSEMEM_VMEMMAP
--	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
--		/*
--		 * map vmemmap using 2M if available
--		 */
--		mmu_vmemmap_psize = MMU_PAGE_2M;
--	}
--#endif /* CONFIG_SPARSEMEM_VMEMMAP */
- 	return;
+--- a/net/tipc/name_distr.c
++++ b/net/tipc/name_distr.c
+@@ -284,7 +284,8 @@ static void tipc_publ_purge(struct net *
+ 		       publ->key);
+ 	}
+ 
+-	kfree_rcu(p, rcu);
++	if (p)
++		kfree_rcu(p, rcu);
  }
  
-@@ -337,7 +329,13 @@ void __init radix__early_init_mmu(void)
- 
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- 	/* vmemmap mapping */
--	mmu_vmemmap_psize = mmu_virtual_psize;
-+	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
-+		/*
-+		 * map vmemmap using 2M if available
-+		 */
-+		mmu_vmemmap_psize = MMU_PAGE_2M;
-+	} else
-+		mmu_vmemmap_psize = mmu_virtual_psize;
- #endif
- 	/*
- 	 * initialize page table size
+ void tipc_publ_notify(struct net *net, struct list_head *nsub_list, u32 addr)
 
 
