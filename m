@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A17AAB8497
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D831B849A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:12:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405950AbfISWMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:12:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
+        id S2405984AbfISWMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:12:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405915AbfISWMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:12:07 -0400
+        id S2405944AbfISWMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:12:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ABF121924;
-        Thu, 19 Sep 2019 22:12:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0C1D21920;
+        Thu, 19 Sep 2019 22:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931127;
-        bh=ouKyXAVyj6EMO2IS6VD8fdjtqEOD8VGdbxLgDFJDtEY=;
+        s=default; t=1568931135;
+        bh=wyklw6h7uu0PQ35u5IY/6t8dIFe54hrKDbD3NZ7d8xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eenn43DhNO20kXvSGl13yA33TPV+RUhEzB+eB3QrD1IR18yEhnhWdwUxAXVwSAF4w
-         LbFZ/cp45UP4vkSFocpNmcPA40I19zH/nf2VPhnFajP9srutUAREzo1G8J0+yA4xh4
-         ar9SJhgVZ3zPnsophrG1Os3Pz6pXdmpuJi2mnUfw=
+        b=ulEqGzQsdQXzrGPBOL/dCzxRcRy4DYJrQs7LptGSJtyiwKowabn/9xUMq3ZgB176J
+         420JznClrJaLeyJF0ftQijjRDTkzawGFWhl5JLnv6Vin5KLDWlemqEGs2fRQAuTrZ3
+         Z5+q3htdFDC2n+tMU8X4jJMZspp2q01vcU6MHXB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Delco <delco@chromium.org>,
-        Jim Mattson <jmattson@google.com>,
-        syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 13/79] KVM: coalesced_mmio: add bounds checking
-Date:   Fri, 20 Sep 2019 00:02:58 +0200
-Message-Id: <20190919214808.978553296@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Razvan Stefanescu <razvan.stefanescu@microchip.com>
+Subject: [PATCH 4.19 16/79] tty/serial: atmel: reschedule TX after RX was started
+Date:   Fri, 20 Sep 2019 00:03:01 +0200
+Message-Id: <20190919214809.242105899@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
 References: <20190919214807.612593061@linuxfoundation.org>
@@ -45,82 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matt Delco <delco@chromium.org>
+From: Razvan Stefanescu <razvan.stefanescu@microchip.com>
 
-commit b60fe990c6b07ef6d4df67bc0530c7c90a62623a upstream.
+commit d2ace81bf902a9f11d52e59e5d232d2255a0e353 upstream.
 
-The first/last indexes are typically shared with a user app.
-The app can change the 'last' index that the kernel uses
-to store the next result.  This change sanity checks the index
-before using it for writing to a potentially arbitrary address.
+When half-duplex RS485 communication is used, after RX is started, TX
+tasklet still needs to be  scheduled tasklet. This avoids console freezing
+when more data is to be transmitted, if the serial communication is not
+closed.
 
-This fixes CVE-2019-14821.
-
-Cc: stable@vger.kernel.org
-Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
-Signed-off-by: Matt Delco <delco@chromium.org>
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
-[Use READ_ONCE. - Paolo]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 69646d7a3689 ("tty/serial: atmel: RS485 HD w/DMA: enable RX after TX is stopped")
+Signed-off-by: Razvan Stefanescu <razvan.stefanescu@microchip.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190813074025.16218-1-razvan.stefanescu@microchip.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/coalesced_mmio.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/tty/serial/atmel_serial.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/virt/kvm/coalesced_mmio.c
-+++ b/virt/kvm/coalesced_mmio.c
-@@ -40,7 +40,7 @@ static int coalesced_mmio_in_range(struc
- 	return 1;
- }
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1270,7 +1270,6 @@ atmel_handle_transmit(struct uart_port *
  
--static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
-+static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
- {
- 	struct kvm_coalesced_mmio_ring *ring;
- 	unsigned avail;
-@@ -52,7 +52,7 @@ static int coalesced_mmio_has_room(struc
- 	 * there is always one unused entry in the buffer
- 	 */
- 	ring = dev->kvm->coalesced_mmio_ring;
--	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
-+	avail = (ring->first - last - 1) % KVM_COALESCED_MMIO_MAX;
- 	if (avail == 0) {
- 		/* full */
- 		return 0;
-@@ -67,24 +67,27 @@ static int coalesced_mmio_write(struct k
- {
- 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
- 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
-+	__u32 insert;
+ 			atmel_port->hd_start_rx = false;
+ 			atmel_start_rx(port);
+-			return;
+ 		}
  
- 	if (!coalesced_mmio_in_range(dev, addr, len))
- 		return -EOPNOTSUPP;
- 
- 	spin_lock(&dev->kvm->ring_lock);
- 
--	if (!coalesced_mmio_has_room(dev)) {
-+	insert = READ_ONCE(ring->last);
-+	if (!coalesced_mmio_has_room(dev, insert) ||
-+	    insert >= KVM_COALESCED_MMIO_MAX) {
- 		spin_unlock(&dev->kvm->ring_lock);
- 		return -EOPNOTSUPP;
- 	}
- 
- 	/* copy data in first free entry of the ring */
- 
--	ring->coalesced_mmio[ring->last].phys_addr = addr;
--	ring->coalesced_mmio[ring->last].len = len;
--	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
-+	ring->coalesced_mmio[insert].phys_addr = addr;
-+	ring->coalesced_mmio[insert].len = len;
-+	memcpy(ring->coalesced_mmio[insert].data, val, len);
- 	smp_wmb();
--	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
-+	ring->last = (insert + 1) % KVM_COALESCED_MMIO_MAX;
- 	spin_unlock(&dev->kvm->ring_lock);
- 	return 0;
- }
+ 		atmel_tasklet_schedule(atmel_port, &atmel_port->tasklet_tx);
 
 
