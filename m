@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09C6EB8689
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7093FB86AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732711AbfISWRS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58242 "EHLO mail.kernel.org"
+        id S2406104AbfISWPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406443AbfISWRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:11 -0400
+        id S2406086AbfISWPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDD8A21907;
-        Thu, 19 Sep 2019 22:17:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E930121928;
+        Thu, 19 Sep 2019 22:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931431;
-        bh=Lj7bkb2BiDO38UOg4KwiSGvkPNkyrZAhGxld/8od+KE=;
+        s=default; t=1568931315;
+        bh=m/1Ui7lAw5nP6U+SoRc1jCytiCdOOcqC8BgRxhVGmxE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BJh54lBxjUV30YXNaq2T67Rv/uiaRibk9/lSh7KImWoUq6GMV/YeJdlHiNwN3e8qH
-         IGTl+2PsRvVb4w8Ny/ceCG5u6zqoKwnVIGStJH+8RdeJVHTJ80Ouc7+npNuKWhRzsV
-         BF+wGGDXkm/FnD8VrEOBcn1WdAknry4h5h86WjuQ=
+        b=HuaQQzL8WJP486rtmsbKcEQh2yRiV/Egd3+E6OYEsn7fyyVFvIKP4Ur3z1Jlw6wVK
+         uNhVJm041mm9mmcjMflQTnrlAovHHHGYZphW8IEobLze/BzV4k8kQocJj01Kv5U+3R
+         Ve/kOIyJGysUlMUstOk/Z9ckwuq4ICB8vPXFFbg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Zephaniah E. Loss-Cutler-Hull" <zephaniah@gmail.com>,
-        Len Brown <len.brown@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 44/59] tools/power x86_energy_perf_policy: Fix argument parsing
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.19 74/79] PCI: kirin: Fix section mismatch warning
 Date:   Fri, 20 Sep 2019 00:03:59 +0200
-Message-Id: <20190919214807.211407928@linuxfoundation.org>
+Message-Id: <20190919214814.234695061@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zephaniah E. Loss-Cutler-Hull <zephaniah@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 03531482402a2bc4ab93cf6dde46833775e035e9 ]
+commit 6870b673509779195cab300aedc844b352d9cfbc upstream.
 
-The -w argument in x86_energy_perf_policy currently triggers an
-unconditional segfault.
+The PCI kirin driver compilation produces the following section mismatch
+warning:
 
-This is because the argument string reads: "+a:c:dD:E:e:f:m:M:rt:u:vw" and
-yet the argument handler expects an argument.
+WARNING: vmlinux.o(.text+0x4758cc): Section mismatch in reference from
+the function kirin_pcie_probe() to the function
+.init.text:kirin_add_pcie_port()
+The function kirin_pcie_probe() references
+the function __init kirin_add_pcie_port().
+This is often because kirin_pcie_probe lacks a __init
+annotation or the annotation of kirin_add_pcie_port is wrong.
 
-When parse_optarg_string is called with a null argument, we then proceed to
-crash in strncmp, not horribly friendly.
+Remove '__init' from kirin_add_pcie_port() to fix it.
 
-The man page describes -w as taking an argument, the long form
-(--hwp-window) is correctly marked as taking a required argument, and the
-code expects it.
+Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+[lorenzo.pieralisi@arm.com: updated commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-As such, this patch simply marks the short form (-w) as requiring an
-argument.
-
-Signed-off-by: Zephaniah E. Loss-Cutler-Hull <zephaniah@gmail.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pcie-kirin.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-index bbef8bcf44d6d..2aba622d1c5aa 100644
---- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-+++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-@@ -546,7 +546,7 @@ void cmdline(int argc, char **argv)
+--- a/drivers/pci/controller/dwc/pcie-kirin.c
++++ b/drivers/pci/controller/dwc/pcie-kirin.c
+@@ -467,8 +467,8 @@ static int kirin_pcie_add_msi(struct dw_
+ 	return 0;
+ }
  
- 	progname = argv[0];
+-static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+-				      struct platform_device *pdev)
++static int kirin_add_pcie_port(struct dw_pcie *pci,
++			       struct platform_device *pdev)
+ {
+ 	int ret;
  
--	while ((opt = getopt_long_only(argc, argv, "+a:c:dD:E:e:f:m:M:rt:u:vw",
-+	while ((opt = getopt_long_only(argc, argv, "+a:c:dD:E:e:f:m:M:rt:u:vw:",
- 				long_options, &option_index)) != -1) {
- 		switch (opt) {
- 		case 'a':
--- 
-2.20.1
-
 
 
