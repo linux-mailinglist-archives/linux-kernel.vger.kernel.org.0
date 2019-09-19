@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F19FB8583
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 252EBB8577
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:21:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394110AbfISWV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:21:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36568 "EHLO mail.kernel.org"
+        id S2391513AbfISWV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:21:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394093AbfISWVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:21:52 -0400
+        id S2406728AbfISWVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:21:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9502E21929;
-        Thu, 19 Sep 2019 22:21:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 642B221920;
+        Thu, 19 Sep 2019 22:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931710;
-        bh=bRsAxFnPqRa/ULryThKuGPhEruKmIEKhenR1lgj5BM4=;
+        s=default; t=1568931683;
+        bh=BhAkphDj+0fgyrcKIHmH9JEYx3kwCeJH+ofYqdmz4b4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uVLxWenULCxvlcCo5GvKokJp7bwm/vtrjcghlzbXmADekdCMGMnhWEK+r5hv+oUIU
-         BDNYllNd/7aQY9IgsfkmBIH9YLr5QqoQJZUd1ZKDhb3gr7tyjC7+EteZn+ruMHEF9P
-         05TRkVJ4smQO9M9R4ZgDMKgKZ/hBetHtny6wZSr0=
+        b=vCTc5CVva0r6v89QOtXmbC0NJ8lSDxl8p5V15PeHoC42e11HFuf4ZrXjeh/Vht1EF
+         9Ws584Uji/r3iEm+wKqlfvd2ZExLeMC8QX7JxWUe1BellUfF5zsLfdImdA1BtOI3iL
+         NWu1vZTGab6MXqRnEBlgKUKiclvboNEA9RN24JT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 12/56] Revert "MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur"
+        stable@vger.kernel.org, Matt Delco <delco@chromium.org>,
+        Jim Mattson <jmattson@google.com>,
+        syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 40/74] KVM: coalesced_mmio: add bounds checking
 Date:   Fri, 20 Sep 2019 00:03:53 +0200
-Message-Id: <20190919214750.343452262@linuxfoundation.org>
+Message-Id: <20190919214808.781026606@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,92 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Matt Delco <delco@chromium.org>
 
-This reverts commit c890a458e27210d1a749a18941047a9e4209fa93 which is
-commit e4849aff1e169b86c561738daf8ff020e9de1011 upstream
+commit b60fe990c6b07ef6d4df67bc0530c7c90a62623a upstream.
 
-Guenter writes:
-	Upstream commit e4849aff1e16 ("MIPS: SiByte: Enable swiotlb for SWARM,
-	LittleSur and BigSur") results in build failures in v4.4.y and v4.14.y.
+The first/last indexes are typically shared with a user app.
+The app can change the 'last' index that the kernel uses
+to store the next result.  This change sanity checks the index
+before using it for writing to a potentially arbitrary address.
 
-	make bigsur_defconfig:
+This fixes CVE-2019-14821.
 
-	warning: (SIBYTE_SWARM && SIBYTE_SENTOSA && SIBYTE_BIGSUR && SWIOTLB_XEN && AMD_IOMMU) selects SWIOTLB which has unmet direct dependencies (CAVIUM_OCTEON_SOC || MACH_LOONGSON64 && CPU_LOONGSON3 || NLM_XLP_BOARD || NLM_XLR_BOARD)
-	warning: (SIBYTE_SWARM && SIBYTE_SENTOSA && SIBYTE_BIGSUR && SWIOTLB_XEN && AMD_IOMMU) selects SWIOTLB which has unmet direct dependencies (CAVIUM_OCTEON_SOC || MACH_LOONGSON64 && CPU_LOONGSON3 || NLM_XLP_BOARD || NLM_XLR_BOARD)
-
-	and the actual build:
-
-	lib/swiotlb.o: In function `swiotlb_tbl_map_single':
-	(.text+0x1c0): undefined reference to `iommu_is_span_boundary'
-	Makefile:1021: recipe for target 'vmlinux' failed
-
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Maciej W. Rozycki <macro@linux-mips.org>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
+Signed-off-by: Matt Delco <delco@chromium.org>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
+[Use READ_ONCE. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/mips/Kconfig                |    3 ---
- arch/mips/sibyte/common/Makefile |    1 -
- arch/mips/sibyte/common/dma.c    |   14 --------------
- 3 files changed, 18 deletions(-)
- delete mode 100644 arch/mips/sibyte/common/dma.c
 
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -761,7 +761,6 @@ config SIBYTE_SWARM
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
--	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+---
+ virt/kvm/coalesced_mmio.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -39,7 +39,7 @@ static int coalesced_mmio_in_range(struc
+ 	return 1;
+ }
  
- config SIBYTE_LITTLESUR
- 	bool "Sibyte BCM91250C2-LittleSur"
-@@ -784,7 +783,6 @@ config SIBYTE_SENTOSA
- 	select SYS_HAS_CPU_SB1
- 	select SYS_SUPPORTS_BIG_ENDIAN
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
--	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+-static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
++static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
+ {
+ 	struct kvm_coalesced_mmio_ring *ring;
+ 	unsigned avail;
+@@ -51,7 +51,7 @@ static int coalesced_mmio_has_room(struc
+ 	 * there is always one unused entry in the buffer
+ 	 */
+ 	ring = dev->kvm->coalesced_mmio_ring;
+-	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
++	avail = (ring->first - last - 1) % KVM_COALESCED_MMIO_MAX;
+ 	if (avail == 0) {
+ 		/* full */
+ 		return 0;
+@@ -66,24 +66,27 @@ static int coalesced_mmio_write(struct k
+ {
+ 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+ 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
++	__u32 insert;
  
- config SIBYTE_BIGSUR
- 	bool "Sibyte BCM91480B-BigSur"
-@@ -798,7 +796,6 @@ config SIBYTE_BIGSUR
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
--	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 	if (!coalesced_mmio_in_range(dev, addr, len))
+ 		return -EOPNOTSUPP;
  
- config SNI_RM
- 	bool "SNI RM200/300/400"
---- a/arch/mips/sibyte/common/Makefile
-+++ b/arch/mips/sibyte/common/Makefile
-@@ -1,5 +1,4 @@
- obj-y := cfe.o
--obj-$(CONFIG_SWIOTLB)			+= dma.o
- obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
- obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
- obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
---- a/arch/mips/sibyte/common/dma.c
-+++ /dev/null
-@@ -1,14 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0+
--/*
-- *	DMA support for Broadcom SiByte platforms.
-- *
-- *	Copyright (c) 2018  Maciej W. Rozycki
-- */
--
--#include <linux/swiotlb.h>
--#include <asm/bootinfo.h>
--
--void __init plat_swiotlb_setup(void)
--{
--	swiotlb_init(1);
--}
+ 	spin_lock(&dev->kvm->ring_lock);
+ 
+-	if (!coalesced_mmio_has_room(dev)) {
++	insert = READ_ONCE(ring->last);
++	if (!coalesced_mmio_has_room(dev, insert) ||
++	    insert >= KVM_COALESCED_MMIO_MAX) {
+ 		spin_unlock(&dev->kvm->ring_lock);
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+ 	/* copy data in first free entry of the ring */
+ 
+-	ring->coalesced_mmio[ring->last].phys_addr = addr;
+-	ring->coalesced_mmio[ring->last].len = len;
+-	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
++	ring->coalesced_mmio[insert].phys_addr = addr;
++	ring->coalesced_mmio[insert].len = len;
++	memcpy(ring->coalesced_mmio[insert].data, val, len);
+ 	smp_wmb();
+-	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
++	ring->last = (insert + 1) % KVM_COALESCED_MMIO_MAX;
+ 	spin_unlock(&dev->kvm->ring_lock);
+ 	return 0;
+ }
 
 
