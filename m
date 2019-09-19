@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F48B7BA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3333AB7B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:06:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389768AbfISOGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:06:44 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38021 "EHLO
+        id S2389512AbfISOGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:06:35 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35689 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389045AbfISOGd (ORCPT
+        with ESMTP id S2389439AbfISOGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:06:33 -0400
-Received: by mail-lj1-f195.google.com with SMTP id y23so3741619ljn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 07:06:32 -0700 (PDT)
+        Thu, 19 Sep 2019 10:06:34 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m7so3764228lji.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 07:06:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=k4SJ+eSfjSAP63ushly3GU0Efl4ebkKBMuWTSOkSqS8=;
-        b=W4FhrPJAR9Dqgs5qFA5Pl22WVgeXGbokdSlE6Xjl8ev+AwkvtlovQkmnKhocbnMFdS
-         81B7iYoNdsvMs2yQlsvxAdJGvvAKDR0FvjYPLiSIbpwUt9AMKu8kvddB2vIg68Gs3TZA
-         XspHxRzEPQhGFNCyXRy2eUNIWhGekZOWx5Sfw=
+        bh=Jg7JcvREMiiX5x2HEJEjAcDv3XByVb0RNmStAp9nahQ=;
+        b=MZKdSEpOEV+5iG16oW7TXFRd1eg5H9XeUG6b1t8t2jgOvEG6oGHacyhtyg3NPIEGY/
+         uKiTYPItaGHpX/90K1aP/bPkpA8b+8k/Rldl4zxvx2B9det3NTU55vbdyWW1nSSp9eg3
+         YRFw3EAaRrmgYhPjv9gwnV6JQyEwF2erlvjsw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=k4SJ+eSfjSAP63ushly3GU0Efl4ebkKBMuWTSOkSqS8=;
-        b=UHoorSYByjIita2OBCwiWOUg1/EV/pcp5K9SxLYz835jVIQkW1n6CdyjyuVjU3cArI
-         JFSihOr2QT/tVwXtH6L/9Sw8Wyx3fik7mHFYxwcU3gjntGDdzIMCxtyLwwhOrFuTA+UF
-         Kl64DVLVgJS0rQCnaAJU3fn0hKb11XJXEKh1Htf1p+IdcAWxgXo4pL0SErfsPl30+bmD
-         B7NZi8y8FQzd/W+7q2mZLOKhWqcLwMOVD0emttr1kOJn/XOGXDY6jrTW9iv20BCZH/Cp
-         9Hq+5PKlOqiVdSQjM8sO3+nkyCNuxAN9erWqGyZLVtK5R+uI0QqCtjZv+MY3ttk6wy7F
-         tCDQ==
-X-Gm-Message-State: APjAAAXG2faME0rdGWv5fkO01QP4WpvL4D6/xmfJf/iyQ9uS4PdVqwIf
-        OF/XswcdlkRQZ+ofQJKKA4l9Lg==
-X-Google-Smtp-Source: APXvYqzlHJRhLqL82K2xKbtjAXAMpinhzWwpvMBA7qVfJ7tNQ26aw9X0BviaTA3hpMKKf3q8cAewtQ==
-X-Received: by 2002:a2e:934f:: with SMTP id m15mr5586940ljh.101.1568901991526;
-        Thu, 19 Sep 2019 07:06:31 -0700 (PDT)
+        bh=Jg7JcvREMiiX5x2HEJEjAcDv3XByVb0RNmStAp9nahQ=;
+        b=eqh2iSv0BMSc3sFRvPAy5/374Dkw36+3gtrd7E/e8Sm/Iti3l3w+BHqPGqWIpzJEn0
+         v6cGUH3SIrEtwaRp7ain0kEvsRInI1GUGNg+T7XLF98m7B2o5mHaW/N4KKpsq/0JPLPL
+         n8mCFADnsqk4JupJnsWqzzIfn3k+JOQbaH692zXQ/N72jDfdgPw7rBTEKadfH0CDYqmZ
+         eM4pL8/avJ11gi1PGWMSm4vKwvJnWM0TXU4t7YvUSUKsPpfveSi+V666xTHWP4oaOYaL
+         uu74le+g7Fotz5tOwRQb33Pc9KDqdO91dnnyG45ND+yKG45KalqiqjbHtCFLiZSOxQk0
+         CoGw==
+X-Gm-Message-State: APjAAAWB+IREkLJMvLLd0gWd48VRqGiA3KjiIrwt8YdkmJtPMIb1cPMw
+        oA5s3h8RhmdMoJpRak4Tb8enLw==
+X-Google-Smtp-Source: APXvYqwT7aVA83Vb4qPr4tBmMd1vi6mmQP81J4Kl4kTliuCxLy+GI3jRKm2Szplr4kWj55N1eonI9A==
+X-Received: by 2002:a05:651c:c9:: with SMTP id 9mr107103ljr.29.1568901992739;
+        Thu, 19 Sep 2019 07:06:32 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id h3sm1687886ljf.12.2019.09.19.07.06.30
+        by smtp.gmail.com with ESMTPSA id h3sm1687886ljf.12.2019.09.19.07.06.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 07:06:31 -0700 (PDT)
+        Thu, 19 Sep 2019 07:06:32 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
@@ -51,9 +51,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] backlight: pwm_bl: drop use of int_pow()
-Date:   Thu, 19 Sep 2019 16:06:18 +0200
-Message-Id: <20190919140620.32407-3-linux@rasmusvillemoes.dk>
+Subject: [PATCH 4/5] backlight: pwm_bl: switch to power-of-2 base for fixed-point math
+Date:   Thu, 19 Sep 2019 16:06:19 +0200
+Message-Id: <20190919140620.32407-4-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
 References: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
@@ -64,34 +64,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The scheduler uses a (currently private) fixed_power_int() in its load
-average computation for computing powers of numbers 0 < x < 1
-expressed as fixed-point numbers, which is also what we want here. But
-that requires the scale to be a power-of-2.
-
-We could (and a following patch will) change to use a power-of-2 scale,
-but for a fixed small exponent of 3, there's no advantage in using
-repeated squaring.
+Using a power-of-2 instead of power-of-10 base makes the computations
+much cheaper. 2^16 is safe; retval never becomes more than 2^48 +
+2^16/2. On a 32 bit platform, the very expensive 64/32 division at the
+end of cie1931() instead becomes essentially free (a shift by 32 is
+just a register rename).
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/video/backlight/pwm_bl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/video/backlight/pwm_bl.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 9252d51f31b9..aee6839e024a 100644
+index aee6839e024a..102bc191310f 100644
 --- a/drivers/video/backlight/pwm_bl.c
 +++ b/drivers/video/backlight/pwm_bl.c
-@@ -179,7 +179,8 @@ static u64 cie1931(unsigned int lightness, unsigned int scale)
- 	if (lightness <= (8 * scale)) {
+@@ -148,7 +148,8 @@ static const struct backlight_ops pwm_backlight_ops = {
+ };
+ 
+ #ifdef CONFIG_OF
+-#define PWM_LUMINANCE_SCALE	10000 /* luminance scale */
++#define PWM_LUMINANCE_SHIFT	16
++#define PWM_LUMINANCE_SCALE	(1 << PWM_LUMINANCE_SHIFT) /* luminance scale */
+ 
+ /*
+  * CIE lightness to PWM conversion.
+@@ -165,23 +166,25 @@ static const struct backlight_ops pwm_backlight_ops = {
+  * The following function does the fixed point maths needed to implement the
+  * above formula.
+  */
+-static u64 cie1931(unsigned int lightness, unsigned int scale)
++static u64 cie1931(unsigned int lightness)
+ {
+ 	u64 retval;
+ 
+ 	/*
+ 	 * @lightness is given as a number between 0 and 1, expressed
+-	 * as a fixed-point number in scale @scale. Convert to a
+-	 * percentage, still expressed as a fixed-point number, so the
+-	 * above formulas can be applied.
++	 * as a fixed-point number in scale
++	 * PWM_LUMINANCE_SCALE. Convert to a percentage, still
++	 * expressed as a fixed-point number, so the above formulas
++	 * can be applied.
+ 	 */
+ 	lightness *= 100;
+-	if (lightness <= (8 * scale)) {
++	if (lightness <= (8 * PWM_LUMINANCE_SCALE)) {
  		retval = DIV_ROUND_CLOSEST(lightness * 10, 9033);
  	} else {
--		retval = int_pow((lightness + (16 * scale)) / 116, 3);
-+		retval = (lightness + (16 * scale)) / 116;
-+		retval *= retval * retval;
- 		retval = DIV_ROUND_CLOSEST_ULL(retval, (scale * scale));
+-		retval = (lightness + (16 * scale)) / 116;
++		retval = (lightness + (16 * PWM_LUMINANCE_SCALE)) / 116;
+ 		retval *= retval * retval;
+-		retval = DIV_ROUND_CLOSEST_ULL(retval, (scale * scale));
++		retval += PWM_LUMINANCE_SCALE/2;
++		retval >>= 2*PWM_LUMINANCE_SHIFT;
  	}
  
+ 	return retval;
+@@ -215,8 +218,7 @@ int pwm_backlight_brightness_default(struct device *dev,
+ 	/* Fill the table using the cie1931 algorithm */
+ 	for (i = 0; i < data->max_brightness; i++) {
+ 		retval = cie1931((i * PWM_LUMINANCE_SCALE) /
+-				 data->max_brightness, PWM_LUMINANCE_SCALE) *
+-				 period;
++				 data->max_brightness) * period;
+ 		retval = DIV_ROUND_CLOSEST_ULL(retval, PWM_LUMINANCE_SCALE);
+ 		if (retval > UINT_MAX)
+ 			return -EINVAL;
 -- 
 2.20.1
 
