@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A7F5B8533
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3CE6B84F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:16:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406576AbfISWSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:18:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60188 "EHLO mail.kernel.org"
+        id S2406215AbfISWPu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393943AbfISWSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:18:35 -0400
+        id S2406192AbfISWPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD5CA217D6;
-        Thu, 19 Sep 2019 22:18:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AFC721907;
+        Thu, 19 Sep 2019 22:15:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931515;
-        bh=c1ndb59zZ1NqEZrcv/TqARD5qfsyX2LH2PgcQYhFYYU=;
+        s=default; t=1568931345;
+        bh=hFYo/74gVn52eg42PNmX0qBZBecS71x9smF8rN55b5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mkoig8i89zXYf/fwAQ56grjJOxU4CVBsB94iCZoNqKY3S/xh8xt5ird8mHvMywVtv
-         WWM2kg1CS6hhRQRTmyA4M6JsZxRXe8wq7cdmXk3ZVqavRE0ooDub0hhLhamoJYeKjS
-         VIqLJ+52ltdqxaYNnbqt01b1fpzhP3Tv1ougqm64=
+        b=VTuHtbOKzeS/MkdDV3ck+Y0+iqc4uKshKrFMmkTNQpVJ4Ih68p7ODrAtNFrTpxVzg
+         dwe8kwaB65vwM5PRZpTSjDLpMKsLyRgjStxPHV42UZYMgiyAT+eGULqmV78lql8Ypu
+         2zcrOwEmKuUaFalima+tjMTSYPgTOPy4JOaDM7Tc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.9 15/74] gpio: fix line flag validation in lineevent_create
+        stable@vger.kernel.org, Wen Huang <huangwenabc@gmail.com>,
+        Ganapathi Bhat <gbhat@marvell.comg>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 13/59] mwifiex: Fix three heap overflow at parsing element in cfg80211_ap_settings
 Date:   Fri, 20 Sep 2019 00:03:28 +0200
-Message-Id: <20190919214805.805223002@linuxfoundation.org>
+Message-Id: <20190919214759.440150411@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kent Gibson <warthog618@gmail.com>
+From: Wen Huang <huangwenabc@gmail.com>
 
-commit 5ca2f54b597c816df54ff1b28eb99cf7262b955d upstream.
+commit 7caac62ed598a196d6ddf8d9c121e12e082cac3a upstream.
 
-lineevent_create should not allow any of GPIOHANDLE_REQUEST_OUTPUT,
-GPIOHANDLE_REQUEST_OPEN_DRAIN or GPIOHANDLE_REQUEST_OPEN_SOURCE to be set.
+mwifiex_update_vs_ie(),mwifiex_set_uap_rates() and
+mwifiex_set_wmm_params() call memcpy() without checking
+the destination size.Since the source is given from
+user-space, this may trigger a heap buffer overflow.
 
-Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Fix them by putting the length check before performing memcpy().
+
+This fix addresses CVE-2019-14814,CVE-2019-14815,CVE-2019-14816.
+
+Signed-off-by: Wen Huang <huangwenabc@gmail.com>
+Acked-by: Ganapathi Bhat <gbhat@marvell.comg>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpiolib.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/ie.c      |    3 +++
+ drivers/net/wireless/marvell/mwifiex/uap_cmd.c |    9 ++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -797,7 +797,9 @@ static int lineevent_create(struct gpio_
+--- a/drivers/net/wireless/marvell/mwifiex/ie.c
++++ b/drivers/net/wireless/marvell/mwifiex/ie.c
+@@ -241,6 +241,9 @@ static int mwifiex_update_vs_ie(const u8
+ 		}
+ 
+ 		vs_ie = (struct ieee_types_header *)vendor_ie;
++		if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >
++			IEEE_MAX_IE_SIZE)
++			return -EINVAL;
+ 		memcpy(ie->ie_buffer + le16_to_cpu(ie->ie_length),
+ 		       vs_ie, vs_ie->len + 2);
+ 		le16_unaligned_add_cpu(&ie->ie_length, vs_ie->len + 2);
+--- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
++++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
+@@ -265,6 +265,8 @@ mwifiex_set_uap_rates(struct mwifiex_uap
+ 
+ 	rate_ie = (void *)cfg80211_find_ie(WLAN_EID_SUPP_RATES, var_pos, len);
+ 	if (rate_ie) {
++		if (rate_ie->len > MWIFIEX_SUPPORTED_RATES)
++			return;
+ 		memcpy(bss_cfg->rates, rate_ie + 1, rate_ie->len);
+ 		rate_len = rate_ie->len;
  	}
+@@ -272,8 +274,11 @@ mwifiex_set_uap_rates(struct mwifiex_uap
+ 	rate_ie = (void *)cfg80211_find_ie(WLAN_EID_EXT_SUPP_RATES,
+ 					   params->beacon.tail,
+ 					   params->beacon.tail_len);
+-	if (rate_ie)
++	if (rate_ie) {
++		if (rate_ie->len > MWIFIEX_SUPPORTED_RATES - rate_len)
++			return;
+ 		memcpy(bss_cfg->rates + rate_len, rate_ie + 1, rate_ie->len);
++	}
  
- 	/* This is just wrong: we don't look for events on output lines */
--	if (lflags & GPIOHANDLE_REQUEST_OUTPUT) {
-+	if ((lflags & GPIOHANDLE_REQUEST_OUTPUT) ||
-+	    (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN) ||
-+	    (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)) {
- 		ret = -EINVAL;
- 		goto out_free_label;
- 	}
-@@ -811,10 +813,6 @@ static int lineevent_create(struct gpio_
- 
- 	if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
- 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
--	if (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN)
--		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
--	if (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)
--		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
- 
- 	ret = gpiod_direction_input(desc);
- 	if (ret)
+ 	return;
+ }
+@@ -391,6 +396,8 @@ mwifiex_set_wmm_params(struct mwifiex_pr
+ 					    params->beacon.tail_len);
+ 	if (vendor_ie) {
+ 		wmm_ie = vendor_ie;
++		if (*(wmm_ie + 1) > sizeof(struct mwifiex_types_wmm_info))
++			return;
+ 		memcpy(&bss_cfg->wmm_info, wmm_ie +
+ 		       sizeof(struct ieee_types_header), *(wmm_ie + 1));
+ 		priv->wmm_enabled = 1;
 
 
