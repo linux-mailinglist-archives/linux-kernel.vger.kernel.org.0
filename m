@@ -2,61 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F794B7762
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F0B0B7767
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387822AbfISK0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:26:09 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:39329 "EHLO ozlabs.org"
+        id S1731489AbfISK0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 06:26:49 -0400
+Received: from mx1.emlix.com ([188.40.240.192]:57624 "EHLO mx1.emlix.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389338AbfISK0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 06:26:05 -0400
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 46YtKk2RyPz9sPf; Thu, 19 Sep 2019 20:26:02 +1000 (AEST)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 1fdfa4c6af0cc1854b017f308af6bece94568bb6
-In-Reply-To: <20190912074037.13813-1-yamada.masahiro@socionext.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linuxppc-dev@lists.ozlabs.org
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Paul Mackerras <paulus@samba.org>
-Subject: Re: [PATCH] powerpc: improve prom_init_check rule
-Message-Id: <46YtKk2RyPz9sPf@ozlabs.org>
-Date:   Thu, 19 Sep 2019 20:26:02 +1000 (AEST)
+        id S2388156AbfISK0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 06:26:49 -0400
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id EF3CC603CA;
+        Thu, 19 Sep 2019 12:26:46 +0200 (CEST)
+From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, yibin.gong@nxp.com,
+        fugang.duan@nxp.com, l.stach@pengutronix.de, jslaby@suse.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Philipp Puschmann <philipp.puschmann@emlix.com>
+Subject: [PATCH v2] serial: imx: adapt rx buffer and dma periods
+Date:   Thu, 19 Sep 2019 12:26:28 +0200
+Message-Id: <20190919102628.23621-1-philipp.puschmann@emlix.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-12 at 07:40:37 UTC, Masahiro Yamada wrote:
-> This slightly improves the prom_init_check rule.
-> 
-> [1] Avoid needless check
-> 
-> Currently, prom_init_check.sh is invoked every time you run 'make'
-> even if you have changed nothing in prom_init.c. With this commit,
-> the script is re-run only when prom_init.o is recompiled.
-> 
-> [2] Beautify the build log
-> 
-> Currently, the O= build shows the absolute path to the script:
-> 
->   CALL    /abs/path/to/source/of/linux/arch/powerpc/kernel/prom_init_check.sh
-> 
-> With this commit, it is always a relative path to the timestamp file:
-> 
->   PROMCHK arch/powerpc/kernel/prom_init_check
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Using only 4 DMA periods for UART RX is very few if we have a high
+frequency of small transfers - like in our case using Bluetooth with
+many small packets via UART - causing many dma transfers but in each
+only filling a fraction of a single buffer. Such a case may lead to
+the situation that DMA RX transfer is triggered but no free buffer is
+available. While we have addressed the dma handling already with
+"dmaengine: imx-sdma: fix dma freezes" we still want to avoid
+UART RX FIFO overrun. So we decrease the size of the buffers and
+increase their number and the total buffer size.
 
-Applied to powerpc next, thanks.
+Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+---
 
-https://git.kernel.org/powerpc/c/1fdfa4c6af0cc1854b017f308af6bece94568bb6
+Changelog v2:
+ - split this patch from series "Fix UART DMA freezes for iMX6"
+ - add Reviewed-by tag
 
-cheers
+ drivers/tty/serial/imx.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 87c58f9f6390..51dc19833eab 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -1034,8 +1034,6 @@ static void imx_uart_timeout(struct timer_list *t)
+ 	}
+ }
+ 
+-#define RX_BUF_SIZE	(PAGE_SIZE)
+-
+ /*
+  * There are two kinds of RX DMA interrupts(such as in the MX6Q):
+  *   [1] the RX DMA buffer is full.
+@@ -1118,7 +1116,8 @@ static void imx_uart_dma_rx_callback(void *data)
+ }
+ 
+ /* RX DMA buffer periods */
+-#define RX_DMA_PERIODS 4
++#define RX_DMA_PERIODS	16
++#define RX_BUF_SIZE	(PAGE_SIZE / 4)
+ 
+ static int imx_uart_start_rx_dma(struct imx_port *sport)
+ {
+-- 
+2.23.0
+
