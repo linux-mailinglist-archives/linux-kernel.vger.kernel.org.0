@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC094B8517
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:17:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE82B84D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406494AbfISWRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58736 "EHLO mail.kernel.org"
+        id S2393755AbfISWOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406465AbfISWRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:34 -0400
+        id S2393760AbfISWO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:14:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 298B621920;
-        Thu, 19 Sep 2019 22:17:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38B83218AF;
+        Thu, 19 Sep 2019 22:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931452;
-        bh=74nf5UnRKvBiWWXFw3xnxICQuYxH0BWLfryXXrsDYPc=;
+        s=default; t=1568931268;
+        bh=cwgAFUwFMh2HCxi09ZDiFYIacY5CLnOxIn+IPjzlR80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wIWaTN6WubEgiSqpZCT2ADr2mk78+YpLI3hFTx0ZmcWCbN0SoGRnCZJsD86hQe2rf
-         HwYnfSaAQr7M6UlJoHfTMpeSSl/G2yCKd3yFXzSkuagbkdjSf7NfZQKaoAYf6L5is5
-         i2yBJnk+GKz/Jh48CVut/kwp5T3MjZhp3vp2JQE4=
+        b=09Jkt5BvjzOTFRsEreGFekjQxCOQiNYrU/Uq3wZv3u/uwYzhGp8/qaP2rVKY57AqW
+         zQfCN7EXZv//MBBYnQ8TZdLymWpZt9MGXf/ue/+1zfcU+9AeBOQi5+EjJWHWdxUSsa
+         E0h8dIcfg5n8JeU9MpnXrdVbaYWCfujOq+yS1vvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 34/59] kallsyms: Dont let kallsyms_lookup_size_offset() fail on retrieving the first symbol
+        stable@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Len Brown <len.brown@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 64/79] tools/power turbostat: fix buffer overrun
 Date:   Fri, 20 Sep 2019 00:03:49 +0200
-Message-Id: <20190919214806.003059718@linuxfoundation.org>
+Message-Id: <20190919214813.330867435@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,83 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <maz@kernel.org>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-[ Upstream commit 2a1a3fa0f29270583f0e6e3100d609e09697add1 ]
+[ Upstream commit eeb71c950bc6eee460f2070643ce137e067b234c ]
 
-An arm64 kernel configured with
+turbostat could be terminated by general protection fault on some latest
+hardwares which (for example) support 9 levels of C-states and show 18
+"tADDED" lines. That bloats the total output and finally causes buffer
+overrun.  So let's extend the buffer to avoid this.
 
-  CONFIG_KPROBES=y
-  CONFIG_KALLSYMS=y
-  # CONFIG_KALLSYMS_ALL is not set
-  CONFIG_KALLSYMS_BASE_RELATIVE=y
-
-reports the following kprobe failure:
-
-  [    0.032677] kprobes: failed to populate blacklist: -22
-  [    0.033376] Please take care of using kprobes.
-
-It appears that kprobe fails to retrieve the symbol at address
-0xffff000010081000, despite this symbol being in System.map:
-
-  ffff000010081000 T __exception_text_start
-
-This symbol is part of the first group of aliases in the
-kallsyms_offsets array (symbol names generated using ugly hacks in
-scripts/kallsyms.c):
-
-  kallsyms_offsets:
-          .long   0x1000 // do_undefinstr
-          .long   0x1000 // efi_header_end
-          .long   0x1000 // _stext
-          .long   0x1000 // __exception_text_start
-          .long   0x12b0 // do_cp15instr
-
-Looking at the implementation of get_symbol_pos(), it returns the
-lowest index for aliasing symbols. In this case, it return 0.
-
-But kallsyms_lookup_size_offset() considers 0 as a failure, which
-is obviously wrong (there is definitely a valid symbol living there).
-In turn, the kprobe blacklisting stops abruptly, hence the original
-error.
-
-A CONFIG_KALLSYMS_ALL kernel wouldn't fail as there is always
-some random symbols at the beginning of this array, which are never
-looked up via kallsyms_lookup_size_offset.
-
-Fix it by considering that get_symbol_pos() is always successful
-(which is consistent with the other uses of this function).
-
-Fixes: ffc5089196446 ("[PATCH] Create kallsyms_lookup_size_offset()")
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kallsyms.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/power/x86/turbostat/turbostat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index 127e7cfafa552..3e1b66366ac23 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -296,8 +296,10 @@ int kallsyms_lookup_size_offset(unsigned long addr, unsigned long *symbolsize,
- {
- 	char namebuf[KSYM_NAME_LEN];
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index fbb53c952b739..71cf7e77291ad 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -4953,7 +4953,7 @@ int initialize_counters(int cpu_id)
  
--	if (is_ksym_addr(addr))
--		return !!get_symbol_pos(addr, symbolsize, offset);
-+	if (is_ksym_addr(addr)) {
-+		get_symbol_pos(addr, symbolsize, offset);
-+		return 1;
-+	}
- 	return !!module_address_lookup(addr, symbolsize, offset, NULL, namebuf) ||
- 	       !!__bpf_address_lookup(addr, symbolsize, offset, namebuf);
- }
+ void allocate_output_buffer()
+ {
+-	output_buffer = calloc(1, (1 + topo.num_cpus) * 1024);
++	output_buffer = calloc(1, (1 + topo.num_cpus) * 2048);
+ 	outp = output_buffer;
+ 	if (outp == NULL)
+ 		err(-1, "calloc output buffer");
 -- 
 2.20.1
 
