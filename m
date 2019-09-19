@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3074B84DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D856B84EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392090AbfISWO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:14:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54604 "EHLO mail.kernel.org"
+        id S2406157AbfISWPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392385AbfISWOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:14:54 -0400
+        id S2403915AbfISWPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F12F321929;
-        Thu, 19 Sep 2019 22:14:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F6FC218AF;
+        Thu, 19 Sep 2019 22:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931293;
-        bh=Vq+Q+TyIywCf300bwo+nTFXCX0Vt2F+9ts4QLniHC3Y=;
+        s=default; t=1568931331;
+        bh=rbeWn0IPTd+TWEds9YFtOWj5EmQqVblA0ypZpXd4tiw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ixKyx9m6QsJT6W0LZtRjiDYjSnlIXx8khA8n1XQunK5+aEz7oL7SFcBCGjitD40UO
-         yfnrQ80A/wyIBNtBcAzbdG5vk9ZNZ8F4iZ6unjzfZ5P7C93PGL+8h9cDrbyhzDigSa
-         HTHfnGhIUBXyicK8GXeU0/LEp3ZDlI08/DCySwAM=
+        b=lLRRaMU+Gp4rhFKYMA95DqhM7MHyQ7w1tLfWO3nHWK7j9is7s7vulDuuKZDzyHGco
+         h5CVooPiDRN2YV/gapSPOdOYNxVtZhZz1V+AMMF5lrvtESTSJVnxI0E/ss/iHFeJg1
+         5EWXjloGw4b7ik7s6kkfTQ8UrAzyYGTvISPe51kU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stuart Hayes <stuart.w.hayes@gmail.com>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
         Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 72/79] iommu/amd: Flush old domains in kdump kernel
-Date:   Fri, 20 Sep 2019 00:03:57 +0200
-Message-Id: <20190919214814.038217977@linuxfoundation.org>
+Subject: [PATCH 4.19 73/79] iommu/amd: Fix race in increase_address_space()
+Date:   Fri, 20 Sep 2019 00:03:58 +0200
+Message-Id: <20190919214814.076342289@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
 References: <20190919214807.612593061@linuxfoundation.org>
@@ -43,82 +43,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
+From: Joerg Roedel <jroedel@suse.de>
 
-[ Upstream commit 36b7200f67dfe75b416b5281ed4ace9927b513bc ]
+[ Upstream commit 754265bcab78a9014f0f99cd35e0d610fcd7dfa7 ]
 
-When devices are attached to the amd_iommu in a kdump kernel, the old device
-table entries (DTEs), which were copied from the crashed kernel, will be
-overwritten with a new domain number.  When the new DTE is written, the IOMMU
-is told to flush the DTE from its internal cache--but it is not told to flush
-the translation cache entries for the old domain number.
+After the conversion to lock-less dma-api call the
+increase_address_space() function can be called without any
+locking. Multiple CPUs could potentially race for increasing
+the address space, leading to invalid domain->mode settings
+and invalid page-tables. This has been happening in the wild
+under high IO load and memory pressure.
 
-Without this patch, AMD systems using the tg3 network driver fail when kdump
-tries to save the vmcore to a network system, showing network timeouts and
-(sometimes) IOMMU errors in the kernel log.
+Fix the race by locking this operation. The function is
+called infrequently so that this does not introduce
+a performance regression in the dma-api path again.
 
-This patch will flush IOMMU translation cache entries for the old domain when
-a DTE gets overwritten with a new domain number.
-
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-Fixes: 3ac3e5ee5ed5 ('iommu/amd: Copy old trans table from old kernel')
+Reported-by: Qian Cai <cai@lca.pw>
+Fixes: 256e4621c21a ('iommu/amd: Make use of the generic IOVA allocator')
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/iommu/amd_iommu.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 8d9920ff41344..8b79e2b32d378 100644
+index 8b79e2b32d378..69c269dc4f1bf 100644
 --- a/drivers/iommu/amd_iommu.c
 +++ b/drivers/iommu/amd_iommu.c
-@@ -1153,6 +1153,17 @@ static void amd_iommu_flush_tlb_all(struct amd_iommu *iommu)
- 	iommu_completion_wait(iommu);
+@@ -1340,18 +1340,21 @@ static void domain_flush_devices(struct protection_domain *domain)
+  * another level increases the size of the address space by 9 bits to a size up
+  * to 64 bits.
+  */
+-static bool increase_address_space(struct protection_domain *domain,
++static void increase_address_space(struct protection_domain *domain,
+ 				   gfp_t gfp)
+ {
++	unsigned long flags;
+ 	u64 *pte;
+ 
+-	if (domain->mode == PAGE_MODE_6_LEVEL)
++	spin_lock_irqsave(&domain->lock, flags);
++
++	if (WARN_ON_ONCE(domain->mode == PAGE_MODE_6_LEVEL))
+ 		/* address space already 64 bit large */
+-		return false;
++		goto out;
+ 
+ 	pte = (void *)get_zeroed_page(gfp);
+ 	if (!pte)
+-		return false;
++		goto out;
+ 
+ 	*pte             = PM_LEVEL_PDE(domain->mode,
+ 					iommu_virt_to_phys(domain->pt_root));
+@@ -1359,7 +1362,10 @@ static bool increase_address_space(struct protection_domain *domain,
+ 	domain->mode    += 1;
+ 	domain->updated  = true;
+ 
+-	return true;
++out:
++	spin_unlock_irqrestore(&domain->lock, flags);
++
++	return;
  }
  
-+static void amd_iommu_flush_tlb_domid(struct amd_iommu *iommu, u32 dom_id)
-+{
-+	struct iommu_cmd cmd;
-+
-+	build_inv_iommu_pages(&cmd, 0, CMD_INV_IOMMU_ALL_PAGES_ADDRESS,
-+			      dom_id, 1);
-+	iommu_queue_command(iommu, &cmd);
-+
-+	iommu_completion_wait(iommu);
-+}
-+
- static void amd_iommu_flush_all(struct amd_iommu *iommu)
- {
- 	struct iommu_cmd cmd;
-@@ -1838,6 +1849,7 @@ static void set_dte_entry(u16 devid, struct protection_domain *domain,
- {
- 	u64 pte_root = 0;
- 	u64 flags = 0;
-+	u32 old_domid;
- 
- 	if (domain->mode != PAGE_MODE_NONE)
- 		pte_root = iommu_virt_to_phys(domain->pt_root);
-@@ -1887,8 +1899,20 @@ static void set_dte_entry(u16 devid, struct protection_domain *domain,
- 	flags &= ~DEV_DOMID_MASK;
- 	flags |= domain->id;
- 
-+	old_domid = amd_iommu_dev_table[devid].data[1] & DEV_DOMID_MASK;
- 	amd_iommu_dev_table[devid].data[1]  = flags;
- 	amd_iommu_dev_table[devid].data[0]  = pte_root;
-+
-+	/*
-+	 * A kdump kernel might be replacing a domain ID that was copied from
-+	 * the previous kernel--if so, it needs to flush the translation cache
-+	 * entries for the old domain ID that is being overwritten
-+	 */
-+	if (old_domid) {
-+		struct amd_iommu *iommu = amd_iommu_rlookup_table[devid];
-+
-+		amd_iommu_flush_tlb_domid(iommu, old_domid);
-+	}
- }
- 
- static void clear_dte_entry(u16 devid)
+ static u64 *alloc_pte(struct protection_domain *domain,
 -- 
 2.20.1
 
