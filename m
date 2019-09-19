@@ -2,68 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3A9B76A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 11:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDFAEB76B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 11:50:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389007AbfISJtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 05:49:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388872AbfISJtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 05:49:24 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2389021AbfISJun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 05:50:43 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:56388 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388872AbfISJum (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 05:50:42 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 1EFC93C0582;
+        Thu, 19 Sep 2019 11:50:41 +0200 (CEST)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id L6xpfrZ9tsfP; Thu, 19 Sep 2019 11:50:35 +0200 (CEST)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7466898104;
-        Thu, 19 Sep 2019 09:49:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-125-72.rdu2.redhat.com [10.10.125.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5535D5D9CC;
-        Thu, 19 Sep 2019 09:49:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <28368.1568875207@warthog.procyon.org.uk>
-References: <28368.1568875207@warthog.procyon.org.uk> <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com> <16147.1568632167@warthog.procyon.org.uk>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL afs: Development for 5.4
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id A0C123C057C;
+        Thu, 19 Sep 2019 11:50:23 +0200 (CEST)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Thu, 19 Sep
+ 2019 11:50:23 +0200
+Date:   Thu, 19 Sep 2019 11:50:20 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     shuah <shuah@kernel.org>
+CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] selftests: watchdog: Validate optional file
+ argument
+Message-ID: <20190919095020.GA15734@vmlxhi-102.adit-jv.com>
+References: <20190917184023.16701-1-erosca@de.adit-jv.com>
+ <20190918113348.GA23977@vmlxhi-102.adit-jv.com>
+ <41ad241a-1c9d-7e20-3cb1-84bf42ec6989@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16256.1568886562.1@warthog.procyon.org.uk>
-Date:   Thu, 19 Sep 2019 10:49:22 +0100
-Message-ID: <16257.1568886562@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Thu, 19 Sep 2019 09:49:24 +0000 (UTC)
-To:     unlisted-recipients:; (no To-header on input)
+Content-Disposition: inline
+In-Reply-To: <41ad241a-1c9d-7e20-3cb1-84bf42ec6989@kernel.org>
+User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells <dhowells@redhat.com> wrote:
+Hi Shuah,
 
-> > However, I was close to unpulling it again. It has a merge commit with
-> > this merge message:
-> > 
-> >     Merge remote-tracking branch 'net/master' into afs-next
-> > 
-> > and that simply is not acceptable.
+On Wed, Sep 18, 2019 at 03:05:33PM -0600, Shuah wrote:
+
+[..]
+
+> They both look good to me. I will apply these patches once the merge
+> window closes or when my first pull request to Linus clears.
 > 
-> Apologies - I meant to rebase that away.  There was a bug fix to rxrpc in
-> net/master that didn't get pulled into your tree until Saturday.
+> You will see a notification when I apply them to kselftest tree.
 
-Actually, waiting for all outstanding fixes to get merged and then rebasing
-might not be the right thing here.  The problem is that there are fixes in
-both trees: afs fixes go directly into yours whereas rxrpc fixes go via
-networking and I would prefer to base my patches on both of them for testing
-purposes.  What's the preferred method for dealing with that?  Base on a merge
-of the lastest of those fixes in each tree?
+Many thanks for your prompt feedback.
 
-David
+-- 
+Best Regards,
+Eugeniu
