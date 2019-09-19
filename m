@@ -2,47 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246EBB8529
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A38CEB8553
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:20:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393895AbfISWSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:18:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59680 "EHLO mail.kernel.org"
+        id S1732802AbfISWUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391977AbfISWSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:18:14 -0400
+        id S1732513AbfISWTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B87721924;
-        Thu, 19 Sep 2019 22:18:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30B6F217D6;
+        Thu, 19 Sep 2019 22:19:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931493;
-        bh=7lJqaK5sP32QNVz9dKxIQ1V9PU1uSFT/pKqmryKuYAw=;
+        s=default; t=1568931594;
+        bh=soc01mXklDNkUZ7gXsZ0FDUQFGQ4y6UxA6Moa5SC2cs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WCa970AP06HblvoYpgFMklleAVEO2sjXf4CxiCRIk8tjryG/Ba41i0Q2rolJsRXQg
-         rzOKGcVe2OHf/3fHcFFBz6bKsy+yw/R/1n9rr2WbCWvZQbeiorgbiDSsT9/vMAtZfV
-         EDEdt1wQy8/T8r7JY8HmAcH/PlgyEWtAUg+TD0JQ=
+        b=0NjKUoOVjqBLcHe9cWyU8Md9LSeYO5MCyD7TWqum8Qk0fMpjW/v3qIP8+hKTYpGim
+         uo0BWdCzxXVnE1QygEOPuKU365H2/ujpr2uDQVx0ydEWNjwGYnZPilpc1s2B6/92tj
+         bhF+V3VQncHWw8zGxbbxUuO1OiOKHnaK6UWqjDTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Arnaldo Carvalho de Melo" <acme@kernel.org>, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Borislav Petkov" <bp@alien8.de>,
-        Stephane Eranian <eranian@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Namhyung Kim" <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 41/59] perf/x86/amd/ibs: Fix sample bias for dispatched micro-ops
-Date:   Fri, 20 Sep 2019 00:03:56 +0200
-Message-Id: <20190919214806.987687439@linuxfoundation.org>
+        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 44/74] ARM: OMAP2+: Fix missing SYSC_HAS_RESET_STATUS for dra7 epwmss
+Date:   Fri, 20 Sep 2019 00:03:57 +0200
+Message-Id: <20190919214809.102314830@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,141 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit 0f4cd769c410e2285a4e9873a684d90423f03090 ]
+[ Upstream commit afd58b162e48076e3fe66d08a69eefbd6fe71643 ]
 
-When counting dispatched micro-ops with cnt_ctl=1, in order to prevent
-sample bias, IBS hardware preloads the least significant 7 bits of
-current count (IbsOpCurCnt) with random values, such that, after the
-interrupt is handled and counting resumes, the next sample taken
-will be slightly perturbed.
+TRM says PWMSS_SYSCONFIG bit for SOFTRESET changes to zero when
+reset is completed. Let's configure it as otherwise we get warnings
+on boot when we check the data against dts provided data. Eventually
+the legacy platform data will be just dropped, but let's fix the
+warning first.
 
-The current count bitfield is in the IBS execution control h/w register,
-alongside the maximum count field.
-
-Currently, the IBS driver writes that register with the maximum count,
-leaving zeroes to fill the current count field, thereby overwriting
-the random bits the hardware preloaded for itself.
-
-Fix the driver to actually retain and carry those random bits from the
-read of the IBS control register, through to its write, instead of
-overwriting the lower current count bits with zeroes.
-
-Tested with:
-
-perf record -c 100001 -e ibs_op/cnt_ctl=1/pp -a -C 0 taskset -c 0 <workload>
-
-'perf annotate' output before:
-
- 15.70  65:   addsd     %xmm0,%xmm1
- 17.30        add       $0x1,%rax
- 15.88        cmp       %rdx,%rax
-              je        82
- 17.32  72:   test      $0x1,%al
-              jne       7c
-  7.52        movapd    %xmm1,%xmm0
-  5.90        jmp       65
-  8.23  7c:   sqrtsd    %xmm1,%xmm0
- 12.15        jmp       65
-
-'perf annotate' output after:
-
- 16.63  65:   addsd     %xmm0,%xmm1
- 16.82        add       $0x1,%rax
- 16.81        cmp       %rdx,%rax
-              je        82
- 16.69  72:   test      $0x1,%al
-              jne       7c
-  8.30        movapd    %xmm1,%xmm0
-  8.13        jmp       65
-  8.24  7c:   sqrtsd    %xmm1,%xmm0
-  8.39        jmp       65
-
-Tested on Family 15h and 17h machines.
-
-Machines prior to family 10h Rev. C don't have the RDWROPCNT capability,
-and have the IbsOpCurCnt bitfield reserved, so this patch shouldn't
-affect their operation.
-
-It is unknown why commit db98c5faf8cb ("perf/x86: Implement 64-bit
-counter support for IBS") ignored the lower 4 bits of the IbsOpCurCnt
-field; the number of preloaded random bits has always been 7, AFAICT.
-
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: "Arnaldo Carvalho de Melo" <acme@kernel.org>
-Cc: <x86@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Borislav Petkov" <bp@alien8.de>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: "Namhyung Kim" <namhyung@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20190826195730.30614-1-kim.phillips@amd.com
+Reviewed-by: Suman Anna <s-anna@ti.com>
+Tested-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/ibs.c         | 13 ++++++++++---
- arch/x86/include/asm/perf_event.h | 12 ++++++++----
- 2 files changed, 18 insertions(+), 7 deletions(-)
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index 8c51844694e2f..7a86fbc07ddc1 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -672,10 +672,17 @@ fail:
- 
- 	throttle = perf_event_overflow(event, &data, &regs);
- out:
--	if (throttle)
-+	if (throttle) {
- 		perf_ibs_stop(event, 0);
--	else
--		perf_ibs_enable_event(perf_ibs, hwc, period >> 4);
-+	} else {
-+		period >>= 4;
-+
-+		if ((ibs_caps & IBS_CAPS_RDWROPCNT) &&
-+		    (*config & IBS_OP_CNT_CTL))
-+			period |= *config & IBS_OP_CUR_CNT_RAND;
-+
-+		perf_ibs_enable_event(perf_ibs, hwc, period);
-+	}
- 
- 	perf_event_update_userpage(event);
- 
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 78241b736f2a0..f6c4915a863e0 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -209,16 +209,20 @@ struct x86_pmu_capability {
- #define IBSCTL_LVT_OFFSET_VALID		(1ULL<<8)
- #define IBSCTL_LVT_OFFSET_MASK		0x0F
- 
--/* ibs fetch bits/masks */
-+/* IBS fetch bits/masks */
- #define IBS_FETCH_RAND_EN	(1ULL<<57)
- #define IBS_FETCH_VAL		(1ULL<<49)
- #define IBS_FETCH_ENABLE	(1ULL<<48)
- #define IBS_FETCH_CNT		0xFFFF0000ULL
- #define IBS_FETCH_MAX_CNT	0x0000FFFFULL
- 
--/* ibs op bits/masks */
--/* lower 4 bits of the current count are ignored: */
--#define IBS_OP_CUR_CNT		(0xFFFF0ULL<<32)
-+/*
-+ * IBS op bits/masks
-+ * The lower 7 bits of the current count are random bits
-+ * preloaded by hardware and ignored in software
-+ */
-+#define IBS_OP_CUR_CNT		(0xFFF80ULL<<32)
-+#define IBS_OP_CUR_CNT_RAND	(0x0007FULL<<32)
- #define IBS_OP_CNT_CTL		(1ULL<<19)
- #define IBS_OP_VAL		(1ULL<<18)
- #define IBS_OP_ENABLE		(1ULL<<17)
+diff --git a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+index 1ab7096af8e23..f850fc3a91e82 100644
+--- a/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
++++ b/arch/arm/mach-omap2/omap_hwmod_7xx_data.c
+@@ -387,7 +387,8 @@ static struct omap_hwmod dra7xx_dcan2_hwmod = {
+ static struct omap_hwmod_class_sysconfig dra7xx_epwmss_sysc = {
+ 	.rev_offs	= 0x0,
+ 	.sysc_offs	= 0x4,
+-	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET,
++	.sysc_flags	= SYSC_HAS_SIDLEMODE | SYSC_HAS_SOFTRESET |
++			  SYSC_HAS_RESET_STATUS,
+ 	.idlemodes	= (SIDLE_FORCE | SIDLE_NO | SIDLE_SMART),
+ 	.sysc_fields	= &omap_hwmod_sysc_type2,
+ };
 -- 
 2.20.1
 
