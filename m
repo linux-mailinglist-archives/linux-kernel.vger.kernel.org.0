@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B289DB840F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C98EB8410
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:07:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393261AbfISWHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:07:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45270 "EHLO mail.kernel.org"
+        id S2393274AbfISWHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:07:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393248AbfISWHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:07:35 -0400
+        id S2393260AbfISWHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:07:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1397A218AF;
-        Thu, 19 Sep 2019 22:07:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBB4E21907;
+        Thu, 19 Sep 2019 22:07:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930854;
-        bh=9gc/Zm1Jj1ppxAEBa09tR3HducYwUO/bNUYg07C8ndk=;
+        s=default; t=1568930857;
+        bh=T9iwYbpHIaYcR1ObrXmOlOde3mk1fmj61LLaKMZLwwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lUs0Rpw7acQzysr9UT33L1xcGnf1F2Cx675Mfh+CRMCxMZp0o2+aQ5kih+n/42fH3
-         Uxu4GtNIAUeFHiGdsNymxGApMasap+u+bQO8kYy0digiRlDPpex/K190HQoG7T16ja
-         Qlp/axpbTge3hDm98ZXXd1lvyUsrGQdryXinHsHA=
+        b=fBMwqFllH7Pss9TwY1FCZaAOWxTWfFfTd1yPNyHF8cBAGLTfjxdT9ZC5zufXO9NYs
+         y07ivpMV3+ndf7sdeCyvDvckRwWFWnWo//Ep/pECmbfCFEr3RG9Er06y+siZEhYu0c
+         MY56B0N0BUFdsylryo9lb2qZCzcXXD9r5Mmc5pGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.2 011/124] powerpc/mm/radix: Use the right page size for vmemmap mapping
-Date:   Fri, 20 Sep 2019 00:01:39 +0200
-Message-Id: <20190919214819.570071312@linuxfoundation.org>
+        stable@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 5.2 012/124] scripts/decode_stacktrace: match basepath using shell prefix operator, not regex
+Date:   Fri, 20 Sep 2019 00:01:40 +0200
+Message-Id: <20190919214819.599451200@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -44,58 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+From: Nicolas Boichat <drinkcat@chromium.org>
 
-commit 89a3496e0664577043666791ec07fb731d57c950 upstream.
+commit 31013836a71e07751a6827f9d2ad41ef502ddaff upstream.
 
-We use mmu_vmemmap_psize to find the page size for mapping the vmmemap area.
-With radix translation, we are suboptimally setting this value to PAGE_SIZE.
+The basepath may contain special characters, which would confuse the regex
+matcher.  ${var#prefix} does the right thing.
 
-We do check for 2M page size support and update mmu_vmemap_psize to use
-hugepage size but we suboptimally reset the value to PAGE_SIZE in
-radix__early_init_mmu(). This resulted in always mapping vmemmap area with
-64K page size.
-
-Fixes: 2bfd65e45e87 ("powerpc/mm/radix: Add radix callbacks for early init routines")
-Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: http://lkml.kernel.org/r/20190518055946.181563-1-drinkcat@chromium.org
+Fixes: 67a28de47faa8358 ("scripts/decode_stacktrace: only strip base path when a prefix of the path")
+Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/mm/book3s64/radix_pgtable.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ scripts/decode_stacktrace.sh |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/mm/book3s64/radix_pgtable.c
-+++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
-@@ -515,14 +515,6 @@ void __init radix__early_init_devtree(vo
- 	mmu_psize_defs[MMU_PAGE_64K].shift = 16;
- 	mmu_psize_defs[MMU_PAGE_64K].ap = 0x5;
- found:
--#ifdef CONFIG_SPARSEMEM_VMEMMAP
--	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
--		/*
--		 * map vmemmap using 2M if available
--		 */
--		mmu_vmemmap_psize = MMU_PAGE_2M;
--	}
--#endif /* CONFIG_SPARSEMEM_VMEMMAP */
- 	return;
- }
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -85,7 +85,7 @@ parse_symbol() {
+ 	fi
  
-@@ -587,7 +579,13 @@ void __init radix__early_init_mmu(void)
+ 	# Strip out the base of the path
+-	code=${code//^$basepath/""}
++	code=${code#$basepath/}
  
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- 	/* vmemmap mapping */
--	mmu_vmemmap_psize = mmu_virtual_psize;
-+	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
-+		/*
-+		 * map vmemmap using 2M if available
-+		 */
-+		mmu_vmemmap_psize = MMU_PAGE_2M;
-+	} else
-+		mmu_vmemmap_psize = mmu_virtual_psize;
- #endif
- 	/*
- 	 * initialize page table size
+ 	# In the case of inlines, move everything to same line
+ 	code=${code//$'\n'/' '}
 
 
