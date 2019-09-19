@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AC03B8712
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3095EB86EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405694AbfISWKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:10:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48874 "EHLO mail.kernel.org"
+        id S2406611AbfISWcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:32:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405672AbfISWK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:10:28 -0400
+        id S1725887AbfISWMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:12:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5872721907;
-        Thu, 19 Sep 2019 22:10:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA77121907;
+        Thu, 19 Sep 2019 22:12:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931027;
-        bh=DdbsRQrasbBJPd+uNCTuwjdggFssW12cvLMg0WbkFUU=;
+        s=default; t=1568931157;
+        bh=G/uRdqFkHn7/5EBZ7Enh1oxM91e/mho9qyCW+FhVgXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bXW6uRIf6Q+4DiBDmJcDO7Cz+c7zVeTWte0MLPcYQrBHfetEoNl9dbEjSIHSQoYDO
-         kfhwxksUwuPPj6SpzlJJFY4MYXZLpO1IUMmG1Vz97awsOUnd97OlfOmNXYnDiaxDzo
-         i9EuZyviKIcbuWZY3Ng5DMRD/q/4hsSLKUhlinLU=
+        b=fkUXE+yCuyEQwVQrOuiBrtyeihWHDymMT7WZ8q6+u/DdCmrbUZ5U22oFhHFqJunYP
+         s2Woz2sxDBeIE3KdKtVeiqFVF2JRvi37hM+1g9scIH2jjU0XQrqKS1QWEcZDIFvFP1
+         NpdbATLLHHH2LVK09ZdnFGCs2GSslQItMz5tCEk8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Len Brown <len.brown@intel.com>,
+        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 100/124] tools/power turbostat: Add Ice Lake NNPI support
+Subject: [PATCH 4.19 23/79] bus: ti-sysc: Fix using configured sysc mask value
 Date:   Fri, 20 Sep 2019 00:03:08 +0200
-Message-Id: <20190919214822.828810769@linuxfoundation.org>
+Message-Id: <20190919214810.050154383@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,32 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit d93ea567fc4eec2d3581015e23d2c555f8b393ba ]
+[ Upstream commit e212abd452a4af3174fcd469d46656f83e135a19 ]
 
-This enables turbostat utility on Ice Lake NNPI SoC.
+We have cases where there are no softreset bits like with am335x lcdc.
+In that case ti,sysc-mask = <0> needs to be handled properly.
 
-Link: https://lkml.org/lkml/2019/6/5/1034
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
+Tested-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/turbostat/turbostat.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/bus/ti-sysc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 56c3e041d4f93..0a80f3cc24e31 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -4586,6 +4586,7 @@ unsigned int intel_model_duplicates(unsigned int model)
- 		return INTEL_FAM6_SKYLAKE_MOBILE;
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+index e4fe954e63a9b..4ca006e2137f7 100644
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -1022,10 +1022,7 @@ static int sysc_init_sysc_mask(struct sysc *ddata)
+ 	if (error)
+ 		return 0;
  
- 	case INTEL_FAM6_ICELAKE_MOBILE:
-+	case INTEL_FAM6_ICELAKE_NNPI:
- 		return INTEL_FAM6_CANNONLAKE_MOBILE;
- 	}
- 	return model;
+-	if (val)
+-		ddata->cfg.sysc_val = val & ddata->cap->sysc_mask;
+-	else
+-		ddata->cfg.sysc_val = ddata->cap->sysc_mask;
++	ddata->cfg.sysc_val = val & ddata->cap->sysc_mask;
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
