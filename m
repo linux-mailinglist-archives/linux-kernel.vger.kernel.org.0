@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68794B84E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B18DB84F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406074AbfISWPH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:15:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54840 "EHLO mail.kernel.org"
+        id S2406220AbfISWPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391149AbfISWPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:15:02 -0400
+        id S2404416AbfISWPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2EFE218AF;
-        Thu, 19 Sep 2019 22:15:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D485321907;
+        Thu, 19 Sep 2019 22:15:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931301;
-        bh=DePtoH0g5oRyEKgg/e/21m31LEGE3uN55cqb/WCUfxQ=;
+        s=default; t=1568931348;
+        bh=9lb3SWxX/C1wWDSA+roIseZKqStn2Kk5e3tEe6Fhw1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AllzCYpDpfOYclJfumuDrnwNEKXxGgt5hNTFdr9rhPuGqpqC4lCdbf+jAmbaSdFti
-         biRhV0ZvfM+fVhfdbFZvFTb6Jui81wH3MgYZbR54Y+ckVP4kXza+MNUtV8Xy3hvtyx
-         OtWddjjS/B2ptxLgrunpJIwKJnhjlKR6mrV8tn5U=
+        b=ADRwd9C1vpXOa7k1UCKmDkxwmTlPRfXkBrFPgaecgtB/ZJSd55LIPhp/VSiQsl6dY
+         IMvk4dDnHHzSuMV9R6AOZgmlqpQLeoee1DySw8B0Gf9DTcBCKelgxB5ITQNGEHCYOR
+         TvFDhJHP4/AGAnSNa7PpX3t3Hfc/L0WrFZMVcfU8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 44/79] bpf: allow narrow loads of some sk_reuseport_md fields with offset > 0
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Masashi Honma <masashi.honma@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.14 14/59] nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
 Date:   Fri, 20 Sep 2019 00:03:29 +0200
-Message-Id: <20190919214811.535877836@linuxfoundation.org>
+Message-Id: <20190919214759.601512597@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Leoshkevich <iii@linux.ibm.com>
+From: Masashi Honma <masashi.honma@gmail.com>
 
-[ Upstream commit 2c238177bd7f4b14bdf7447cc1cd9bb791f147e6 ]
+commit 4b2c5a14cd8005a900075f7dfec87473c6ee66fb upstream.
 
-test_select_reuseport fails on s390 due to verifier rejecting
-test_select_reuseport_kern.o with the following message:
+commit 1222a1601488 ("nl80211: Fix possible Spectre-v1 for CQM
+RSSI thresholds") was incomplete and requires one more fix to
+prevent accessing to rssi_thresholds[n] because user can control
+rssi_thresholds[i] values to make i reach to n. For example,
+rssi_thresholds = {-400, -300, -200, -100} when last is -34.
 
-	; data_check.eth_protocol = reuse_md->eth_protocol;
-	18: (69) r1 = *(u16 *)(r6 +22)
-	invalid bpf_context access off=22 size=2
+Cc: stable@vger.kernel.org
+Fixes: 1222a1601488 ("nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
+Link: https://lore.kernel.org/r/20190908005653.17433-1-masashi.honma@gmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-This is because on big-endian machines casts from __u32 to __u16 are
-generated by referencing the respective variable as __u16 with an offset
-of 2 (as opposed to 0 on little-endian machines).
-
-The verifier already has all the infrastructure in place to allow such
-accesses, it's just that they are not explicitly enabled for
-eth_protocol field. Enable them for eth_protocol field by using
-bpf_ctx_range instead of offsetof.
-
-Ditto for ip_protocol, bind_inany and len, since they already allow
-narrowing, and the same problem can arise when working with them.
-
-Fixes: 2dbb9b9e6df6 ("bpf: Introduce BPF_PROG_TYPE_SK_REUSEPORT")
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/filter.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/wireless/nl80211.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/core/filter.c b/net/core/filter.c
-index c996380f29597..e6fa88506c00d 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -7234,13 +7234,13 @@ sk_reuseport_is_valid_access(int off, int size,
- 		return size == size_default;
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -9753,9 +9753,11 @@ static int cfg80211_cqm_rssi_update(stru
+ 	hyst = wdev->cqm_config->rssi_hyst;
+ 	n = wdev->cqm_config->n_rssi_thresholds;
  
- 	/* Fields that allow narrowing */
--	case offsetof(struct sk_reuseport_md, eth_protocol):
-+	case bpf_ctx_range(struct sk_reuseport_md, eth_protocol):
- 		if (size < FIELD_SIZEOF(struct sk_buff, protocol))
- 			return false;
- 		/* fall through */
--	case offsetof(struct sk_reuseport_md, ip_protocol):
--	case offsetof(struct sk_reuseport_md, bind_inany):
--	case offsetof(struct sk_reuseport_md, len):
-+	case bpf_ctx_range(struct sk_reuseport_md, ip_protocol):
-+	case bpf_ctx_range(struct sk_reuseport_md, bind_inany):
-+	case bpf_ctx_range(struct sk_reuseport_md, len):
- 		bpf_ctx_record_field_size(info, size_default);
- 		return bpf_ctx_narrow_access_ok(off, size, size_default);
+-	for (i = 0; i < n; i++)
++	for (i = 0; i < n; i++) {
++		i = array_index_nospec(i, n);
+ 		if (last < wdev->cqm_config->rssi_thresholds[i])
+ 			break;
++	}
  
--- 
-2.20.1
-
+ 	low_index = i - 1;
+ 	if (low_index >= 0) {
 
 
