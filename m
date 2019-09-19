@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31A38B8455
+	by mail.lfdr.de (Postfix) with ESMTP id A5CB9B8456
 	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405572AbfISWKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:10:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48274 "EHLO mail.kernel.org"
+        id S2405585AbfISWKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:10:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405493AbfISWJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:09:58 -0400
+        id S2405493AbfISWKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:10:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB1BE21920;
-        Thu, 19 Sep 2019 22:09:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9302621927;
+        Thu, 19 Sep 2019 22:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930997;
-        bh=YTk7WT15d0Y8PLniGSxM2yMCqXNLzL1Es1fkvcZq1Wk=;
+        s=default; t=1568931000;
+        bh=ogNCz7KeuQSuQwt1JQpiR7OKnj0Zgec1T27hcVBDLco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nrN24fLiKVSAY+Q0GsujzDHz9Ei9oUaUi5AM2VjfnsNfJYoGdbUz2iRm+WW95ZY2p
-         hqJshRvE940eannHSsgH4xmO9Bc8SBoCkU2pRHoGAMckklg12j480eFQlz2zFwU/Kc
-         ClojkjefNyVaGxr3FKT+79+5RlHS8EnWcD1ZnK4Q=
+        b=PlCDjuThSlLbEwJ/ZTAYIHV/VQbn2hbBRzgYdzSrC9xuuLnMOc7czDYOJiTqmaSBF
+         zXQlPtONjaZa7hA1rPHCUucY3uwiG4jZARenpQMb2JR9aewn7wL11B9JP04yGRqL53
+         DfQup3HablBAsS8tYJrZZ9D4rT6GJt0M4AtwkfDw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lori Hikichi <lori.hikichi@broadcom.com>,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>,
+        stable@vger.kernel.org, Alexandru M Stan <amstan@chromium.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Qii Wang <qii.wang@mediatek.com>,
         Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 090/124] i2c: iproc: Stop advertising support of SMBUS quick cmd
-Date:   Fri, 20 Sep 2019 00:02:58 +0200
-Message-Id: <20190919214822.313642904@linuxfoundation.org>
+Subject: [PATCH 5.2 091/124] i2c: mediatek: disable zero-length transfers for mt8183
+Date:   Fri, 20 Sep 2019 00:02:59 +0200
+Message-Id: <20190919214822.352597931@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -46,42 +46,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lori Hikichi <lori.hikichi@broadcom.com>
+From: Hsin-Yi Wang <hsinyi@chromium.org>
 
-[ Upstream commit b3d604d405166edfd4e1e6053409b85008f4f56d ]
+[ Upstream commit abf4923e97c3abbbd1e59f0e13c7c214c93c6aaa ]
 
-The driver does not support the SMBUS Quick command so remove the
-flag that indicates that level of support.
-By default the i2c_detect tool uses the quick command to try and
-detect devices at some bus addresses.  If the quick command is used
-then we will not detect the device, even though it is present.
+Quoting from mt8183 datasheet, the number of transfers to be
+transferred in one transaction should be set to bigger than 1,
+so we should forbid zero-length transfer and update functionality.
 
-Fixes: e6e5dd3566e0 (i2c: iproc: Add Broadcom iProc I2C Driver)
-Signed-off-by: Lori Hikichi <lori.hikichi@broadcom.com>
-Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reported-by: Alexandru M Stan <amstan@chromium.org>
+Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Reviewed-by: Qii Wang <qii.wang@mediatek.com>
+[wsa: shortened commit message a little]
 Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-bcm-iproc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-mt65xx.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-bcm-iproc.c b/drivers/i2c/busses/i2c-bcm-iproc.c
-index ad1681872e39d..b99322d83f483 100644
---- a/drivers/i2c/busses/i2c-bcm-iproc.c
-+++ b/drivers/i2c/busses/i2c-bcm-iproc.c
-@@ -801,7 +801,10 @@ static int bcm_iproc_i2c_xfer(struct i2c_adapter *adapter,
+diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
+index 252edb433fdfb..29eae1bf4f861 100644
+--- a/drivers/i2c/busses/i2c-mt65xx.c
++++ b/drivers/i2c/busses/i2c-mt65xx.c
+@@ -234,6 +234,10 @@ static const struct i2c_adapter_quirks mt7622_i2c_quirks = {
+ 	.max_num_msgs = 255,
+ };
  
- static uint32_t bcm_iproc_i2c_functionality(struct i2c_adapter *adap)
- {
--	u32 val = I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+	u32 val;
++static const struct i2c_adapter_quirks mt8183_i2c_quirks = {
++	.flags = I2C_AQ_NO_ZERO_LEN,
++};
 +
-+	/* We do not support the SMBUS Quick command */
-+	val = I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+ static const struct mtk_i2c_compatible mt2712_compat = {
+ 	.regs = mt_i2c_regs_v1,
+ 	.pmic_i2c = 0,
+@@ -298,6 +302,7 @@ static const struct mtk_i2c_compatible mt8173_compat = {
+ };
  
- 	if (adap->algo->reg_slave)
- 		val |= I2C_FUNC_SLAVE;
+ static const struct mtk_i2c_compatible mt8183_compat = {
++	.quirks = &mt8183_i2c_quirks,
+ 	.regs = mt_i2c_regs_v2,
+ 	.pmic_i2c = 0,
+ 	.dcm = 0,
+@@ -870,7 +875,11 @@ static irqreturn_t mtk_i2c_irq(int irqno, void *dev_id)
+ 
+ static u32 mtk_i2c_functionality(struct i2c_adapter *adap)
+ {
+-	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
++	if (adap->quirks->flags & I2C_AQ_NO_ZERO_LEN)
++		return I2C_FUNC_I2C |
++			(I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
++	else
++		return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
+ }
+ 
+ static const struct i2c_algorithm mtk_i2c_algorithm = {
 -- 
 2.20.1
 
