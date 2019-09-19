@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4F99B8422
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD8AB8427
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:08:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393378AbfISWIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:08:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46084 "EHLO mail.kernel.org"
+        id S2393403AbfISWIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:08:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393369AbfISWIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:08:12 -0400
+        id S2393384AbfISWIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:08:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7E06218AF;
-        Thu, 19 Sep 2019 22:08:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10AC121920;
+        Thu, 19 Sep 2019 22:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930892;
-        bh=4UVjTMRfyo4/iT3zFZt/WN2rfF3f6IP/Scn344Vv84M=;
+        s=default; t=1568930897;
+        bh=XFNuF7uzs1Qn5arkiQ4mGqElYb+I6FDtsCAORgQUYos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AkmMAbKb1GMnXXEtIcQVRdZAQyGSTRI2b/XwzZb1Uyu/iHl2oAU3NV5Jycd9g6kJd
-         1lFa1beferAsXNUhaNBz84uY4/hHi0DBo0CVxxoZGFkGBM5KJ8WWgTdDx3fF0V5edC
-         2z2Z8VNRZmZyPd0JUmiA0hJEGJO3U/+I4ByW8ha0=
+        b=mA/IP40YV4+SXWTkd4c83uZKFTNzmorDY7pdsWEAsFafQrvuozBOrWFCNMPQU8wuO
+         esTIEL/WaU0+P7CdyhLFGxKdtITSfUdkmdriDe8qQunLtTYUBu7vrUjYYv7FHKcDwj
+         BSehO1ZvVSI4OlW55iOnLGG5eqmNmceSCGDYeeas=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 053/124] NFS: On fatal writeback errors, we need to call nfs_inode_remove_request()
-Date:   Fri, 20 Sep 2019 00:02:21 +0200
-Message-Id: <20190919214820.932342115@linuxfoundation.org>
+Subject: [PATCH 5.2 054/124] Kconfig: Fix the reference to the IDT77105 Phy driver in the description of ATM_NICSTAR_USE_IDT77105
+Date:   Fri, 20 Sep 2019 00:02:22 +0200
+Message-Id: <20190919214820.967577050@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -44,42 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 06c9fdf3b9f1acc6e53753c99c54c39764cc979f ]
+[ Upstream commit cd9d4ff9b78fcd0fc4708900ba3e52e71e1a7690 ]
 
-If the writeback error is fatal, we need to remove the tracking structures
-(i.e. the nfs_page) from the inode.
+This should be IDT77105, not IDT77015.
 
-Fixes: 6fbda89b257f ("NFS: Replace custom error reporting mechanism...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/write.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/atm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index 059a7c38bc4fc..bf3a3f5e1884e 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -57,6 +57,7 @@ static const struct rpc_call_ops nfs_commit_ops;
- static const struct nfs_pgio_completion_ops nfs_async_write_completion_ops;
- static const struct nfs_commit_completion_ops nfs_commit_completion_ops;
- static const struct nfs_rw_ops nfs_rw_write_ops;
-+static void nfs_inode_remove_request(struct nfs_page *req);
- static void nfs_clear_request_commit(struct nfs_page *req);
- static void nfs_init_cinfo_from_inode(struct nfs_commit_info *cinfo,
- 				      struct inode *inode);
-@@ -591,7 +592,9 @@ release_request:
+diff --git a/drivers/atm/Kconfig b/drivers/atm/Kconfig
+index 2e2efa577437e..8c37294f1d1ee 100644
+--- a/drivers/atm/Kconfig
++++ b/drivers/atm/Kconfig
+@@ -200,7 +200,7 @@ config ATM_NICSTAR_USE_SUNI
+ 	  make the card work).
  
- static void nfs_write_error(struct nfs_page *req, int error)
- {
-+	nfs_set_pageerror(page_file_mapping(req->wb_page));
- 	nfs_mapping_set_error(req->wb_page, error);
-+	nfs_inode_remove_request(req);
- 	nfs_end_page_writeback(req);
- 	nfs_release_request(req);
- }
+ config ATM_NICSTAR_USE_IDT77105
+-	bool "Use IDT77015 PHY driver (25Mbps)"
++	bool "Use IDT77105 PHY driver (25Mbps)"
+ 	depends on ATM_NICSTAR
+ 	help
+ 	  Support for the PHYsical layer chip in ForeRunner LE25 cards. In
 -- 
 2.20.1
 
