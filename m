@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 580FBB84C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 305E4B8548
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392229AbfISWOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:14:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53610 "EHLO mail.kernel.org"
+        id S2392790AbfISWTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:19:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392166AbfISWOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:14:14 -0400
+        id S2389568AbfISWTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A38F7218AF;
-        Thu, 19 Sep 2019 22:14:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CCAF20678;
+        Thu, 19 Sep 2019 22:19:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931252;
-        bh=RBiB+nszUOZlllJwJQPDLHwFxoOujyJoImu0eDIhmHY=;
+        s=default; t=1568931564;
+        bh=ZkLdxNAd1JjyAr7Z/1lwo1NdnKy3RKQR5Pu43SOeOzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U28ZDNA+DN3laqVcT6nCUiOsQ+eU8Ne8yyQvGwLM+Iue8tIgnfW0IVtFbW+LXjBvB
-         1kBfxcJOe1lcv2x3jpkJEYe5/7yxTAORxgz0FlF/HJBBXbN+Zkx9TOkvl7cyoqvB1E
-         sAllOh9/xSjhuGAr329sAJUgoxNwWNjoJFNJ6Xd4=
+        b=2bXLxADlL5unoqOb0C3mVrwM/1sKxz/FnFU8/P9MmvO32XNnaBJZak3tntGwBaeRT
+         boaxPn8VqTMXg5iRU8N6qORLSCCH7WBV1QMIEVgGL2hecfiQa6kDR/v9l7ijMHB1j5
+         Od01ajioyDDX8n78Z/NOwevOIWRs2rrAaVnDeRWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 58/79] i2c: designware: Synchronize IRQs when unregistering slave client
-Date:   Fri, 20 Sep 2019 00:03:43 +0200
-Message-Id: <20190919214812.510175662@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 31/74] crypto: talitos - HMAC SNOOP NO AFEU mode requires SW icv checking.
+Date:   Fri, 20 Sep 2019 00:03:44 +0200
+Message-Id: <20190919214808.108690266@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,39 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit c486dcd2f1bbdd524a1e0149734b79e4ae329650 ]
+commit 4bbfb839259a9c96a0be872e16f7471b7136aee5 upstream.
 
-Make sure interrupt handler i2c_dw_irq_handler_slave() has finished
-before clearing the the dev->slave pointer in i2c_dw_unreg_slave().
+In that mode, hardware ICV verification is not supported.
 
-There is possibility for a race if i2c_dw_irq_handler_slave() is running
-on another CPU while clearing the dev->slave pointer.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Fixes: 7405c8d7ff97 ("crypto: talitos - templates for AEAD using HMAC_SNOOP_NO_AFEU")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
-Reported-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-designware-slave.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/talitos.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-designware-slave.c b/drivers/i2c/busses/i2c-designware-slave.c
-index e7f9305b2dd9f..f5f001738df5e 100644
---- a/drivers/i2c/busses/i2c-designware-slave.c
-+++ b/drivers/i2c/busses/i2c-designware-slave.c
-@@ -94,6 +94,7 @@ static int i2c_dw_unreg_slave(struct i2c_client *slave)
+--- a/drivers/crypto/talitos.c
++++ b/drivers/crypto/talitos.c
+@@ -1475,7 +1475,8 @@ static int aead_decrypt(struct aead_requ
+ 	if (IS_ERR(edesc))
+ 		return PTR_ERR(edesc);
  
- 	dev->disable_int(dev);
- 	dev->disable(dev);
-+	synchronize_irq(dev->irq);
- 	dev->slave = NULL;
- 	pm_runtime_put(dev->dev);
+-	if ((priv->features & TALITOS_FTR_HW_AUTH_CHECK) &&
++	if ((edesc->desc.hdr & DESC_HDR_TYPE_IPSEC_ESP) &&
++	    (priv->features & TALITOS_FTR_HW_AUTH_CHECK) &&
+ 	    ((!edesc->src_nents && !edesc->dst_nents) ||
+ 	     priv->features & TALITOS_FTR_SRC_LINK_TBL_LEN_INCLUDES_EXTENT)) {
  
--- 
-2.20.1
-
 
 
