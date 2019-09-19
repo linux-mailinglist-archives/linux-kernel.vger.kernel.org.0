@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B24B85D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57323B8567
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407163AbfISWYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:24:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40462 "EHLO mail.kernel.org"
+        id S2394036AbfISWUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407126AbfISWYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:24:20 -0400
+        id S1733248AbfISWUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E757321929;
-        Thu, 19 Sep 2019 22:24:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C47A20678;
+        Thu, 19 Sep 2019 22:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931858;
-        bh=BhAkphDj+0fgyrcKIHmH9JEYx3kwCeJH+ofYqdmz4b4=;
+        s=default; t=1568931640;
+        bh=tzPSHXoVYrM17REt73DsfUFl6A91aQSGj8oWbHWsNXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QojTKrL80Ux4WJRtxWgeJ+CV1DvacUBmENo2JmojmRkW35MBT4d8GobaFaImgKbFE
-         XMR6eEdOPrc2em62x0rJGF6oKe7fDHh5FyUmGiTbwVVCQdaLp4MPmczJ7WFj5Q2zar
-         319DJQ87unlnGM7VkG5ZG6et+oSy3UlInsSR64SA=
+        b=zZC7ADbK1fQxvRa/2bntUVAwuuXmxIzvCCws4WM7GNsmNbCvpNC4G8IE2vQSS8M86
+         hBFNekZZI3F9noZ2Lp4I00aOwqZNaOeKn9xfHtOPUsmh6v8rZs/I2m2gzlfbj9rfPO
+         tM7sJwDz259h12qVUP/VNw+/kHaT7dDapjSJ4+AA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matt Delco <delco@chromium.org>,
-        Jim Mattson <jmattson@google.com>,
-        syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 31/56] KVM: coalesced_mmio: add bounds checking
-Date:   Fri, 20 Sep 2019 00:04:12 +0200
-Message-Id: <20190919214757.048128688@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 60/74] cifs: Use kzfree() to zero out the password
+Date:   Fri, 20 Sep 2019 00:04:13 +0200
+Message-Id: <20190919214810.410180508@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,82 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matt Delco <delco@chromium.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit b60fe990c6b07ef6d4df67bc0530c7c90a62623a upstream.
+[ Upstream commit 478228e57f81f6cb60798d54fc02a74ea7dd267e ]
 
-The first/last indexes are typically shared with a user app.
-The app can change the 'last' index that the kernel uses
-to store the next result.  This change sanity checks the index
-before using it for writing to a potentially arbitrary address.
+It's safer to zero out the password so that it can never be disclosed.
 
-This fixes CVE-2019-14821.
-
-Cc: stable@vger.kernel.org
-Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
-Signed-off-by: Matt Delco <delco@chromium.org>
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
-[Use READ_ONCE. - Paolo]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 0c219f5799c7 ("cifs: set domainName when a domain-key is used in multiuser")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- virt/kvm/coalesced_mmio.c |   17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ fs/cifs/connect.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/virt/kvm/coalesced_mmio.c
-+++ b/virt/kvm/coalesced_mmio.c
-@@ -39,7 +39,7 @@ static int coalesced_mmio_in_range(struc
- 	return 1;
- }
- 
--static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
-+static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
- {
- 	struct kvm_coalesced_mmio_ring *ring;
- 	unsigned avail;
-@@ -51,7 +51,7 @@ static int coalesced_mmio_has_room(struc
- 	 * there is always one unused entry in the buffer
- 	 */
- 	ring = dev->kvm->coalesced_mmio_ring;
--	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
-+	avail = (ring->first - last - 1) % KVM_COALESCED_MMIO_MAX;
- 	if (avail == 0) {
- 		/* full */
- 		return 0;
-@@ -66,24 +66,27 @@ static int coalesced_mmio_write(struct k
- {
- 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
- 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
-+	__u32 insert;
- 
- 	if (!coalesced_mmio_in_range(dev, addr, len))
- 		return -EOPNOTSUPP;
- 
- 	spin_lock(&dev->kvm->ring_lock);
- 
--	if (!coalesced_mmio_has_room(dev)) {
-+	insert = READ_ONCE(ring->last);
-+	if (!coalesced_mmio_has_room(dev, insert) ||
-+	    insert >= KVM_COALESCED_MMIO_MAX) {
- 		spin_unlock(&dev->kvm->ring_lock);
- 		return -EOPNOTSUPP;
- 	}
- 
- 	/* copy data in first free entry of the ring */
- 
--	ring->coalesced_mmio[ring->last].phys_addr = addr;
--	ring->coalesced_mmio[ring->last].len = len;
--	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
-+	ring->coalesced_mmio[insert].phys_addr = addr;
-+	ring->coalesced_mmio[insert].len = len;
-+	memcpy(ring->coalesced_mmio[insert].data, val, len);
- 	smp_wmb();
--	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
-+	ring->last = (insert + 1) % KVM_COALESCED_MMIO_MAX;
- 	spin_unlock(&dev->kvm->ring_lock);
- 	return 0;
- }
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 2a199f4b663bf..e43ba6db2bdd6 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -2567,7 +2567,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+ 			rc = -ENOMEM;
+ 			kfree(vol->username);
+ 			vol->username = NULL;
+-			kfree(vol->password);
++			kzfree(vol->password);
+ 			vol->password = NULL;
+ 			goto out_key_put;
+ 		}
+-- 
+2.20.1
+
 
 
