@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C01B84F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 640A7B8538
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406257AbfISWQE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:16:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56030 "EHLO mail.kernel.org"
+        id S2406600AbfISWSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:18:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406225AbfISWP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:15:57 -0400
+        id S2392742AbfISWSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:18:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A8F1217D6;
-        Thu, 19 Sep 2019 22:15:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B7CE20678;
+        Thu, 19 Sep 2019 22:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931356;
-        bh=9msoC85KjAkTZ+3NyTfzwtqHQ+ihqnOm2jDZUcXZ8B4=;
+        s=default; t=1568931526;
+        bh=7eqdXKEGE7xuEXeGKsYGW/WkDVbhC8C5yXRQ3t8O99k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RU6k9RtDnYDp6hnwd/ZQXjTHN0yJgZgx8G9HsN6y8b0QC6BKSP3ukOQaAqn9jbsep
-         L/Bl3jFSletAnzvRIsbsgKXb5uJm59QS7gve5aUpq5ulVxh5amdaSkwTscALLtRX8u
-         uob3kmytgAgyUBehlhDJI6h3zDgYLiISgImleUXg=
+        b=We6wsOphxE2XYLpALXwC/XO9nup2RKEzUvg/alck7T/HpTQGU6WY0rulT97xB9lWk
+         JUb0ghh/9rbYlOeAj+AESEoCziofukHp+niDLTDqAP5key+kz8iVZvJvBQHVukMCuM
+         Eplb7QGejW29IvoXkWGdWXVbrktCzQvhiPasz8WA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 17/59] ARM: OMAP2+: Fix omap4 errata warning on other SoCs
+        stable@vger.kernel.org, Fuqian Huang <huangfq.daxian@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 19/74] KVM: x86: work around leak of uninitialized stack contents
 Date:   Fri, 20 Sep 2019 00:03:32 +0200
-Message-Id: <20190919214801.116031978@linuxfoundation.org>
+Message-Id: <20190919214806.472150879@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Fuqian Huang <huangfq.daxian@gmail.com>
 
-[ Upstream commit 45da5e09dd32fa98c32eaafe2513db6bd75e2f4f ]
+commit 541ab2aeb28251bf7135c7961f3a6080eebcc705 upstream.
 
-We have errata i688 workaround produce warnings on SoCs other than
-omap4 and omap5:
+Emulation of VMPTRST can incorrectly inject a page fault
+when passed an operand that points to an MMIO address.
+The page fault will use uninitialized kernel stack memory
+as the CR2 and error code.
 
-omap4_sram_init:Unable to allocate sram needed to handle errata I688
-omap4_sram_init:Unable to get sram pool needed to handle errata I688
+The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
+exit to userspace; however, it is not an easy fix, so for now just ensure
+that the error code and CR2 are zero.
 
-This is happening because there is no ti,omap4-mpu node, or no SRAM
-to configure for the other SoCs, so let's remove the warning based
-on the SoC revision checks.
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+Cc: stable@vger.kernel.org
+[add comment]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-As nobody has complained it seems that the other SoC variants do not
-need this workaround.
-
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap4-common.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/kvm/x86.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/omap4-common.c b/arch/arm/mach-omap2/omap4-common.c
-index cf65ab8bb0046..e5dcbda20129d 100644
---- a/arch/arm/mach-omap2/omap4-common.c
-+++ b/arch/arm/mach-omap2/omap4-common.c
-@@ -131,6 +131,9 @@ static int __init omap4_sram_init(void)
- 	struct device_node *np;
- 	struct gen_pool *sram_pool;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4620,6 +4620,13 @@ int kvm_write_guest_virt_system(struct k
+ 	/* kvm_write_guest_virt_system can pull in tons of pages. */
+ 	vcpu->arch.l1tf_flush_l1d = true;
  
-+	if (!soc_is_omap44xx() && !soc_is_omap54xx())
-+		return 0;
-+
- 	np = of_find_compatible_node(NULL, NULL, "ti,omap4-mpu");
- 	if (!np)
- 		pr_warn("%s:Unable to allocate sram needed to handle errata I688\n",
--- 
-2.20.1
-
++	/*
++	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
++	 * is returned, but our callers are not ready for that and they blindly
++	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
++	 * uninitialized kernel stack memory into cr2 and error code.
++	 */
++	memset(exception, 0, sizeof(*exception));
+ 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
+ 					   PFERR_WRITE_MASK, exception);
+ }
 
 
