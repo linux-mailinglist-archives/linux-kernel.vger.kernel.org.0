@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D21B7CC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD5D6B7CCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:29:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389520AbfISO2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:28:36 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40566 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388411AbfISO2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:28:34 -0400
-Received: by mail-ot1-f68.google.com with SMTP id y39so3244731ota.7
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 07:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QgW2uxCVtaKbF7TbtCGjgw8sygkrT37j0scFhp7VikQ=;
-        b=YV8wtytyUcDiMlRw0PwjWtAkaedjNlzX7apKcI4e5g1zDxCjzsX15aAafl5eVAgN5b
-         wsomzSUtSlT0+n8KSapRMDX8X+c9btPtAzwA/r8SZvUsoRGUWUBouf7re8WCXVgcrN7t
-         7/vBZKlwlI9aQxycGUBGmMaichRriBAciC0yae3aZviR5eIRnmJRUmZS7PkKROPjEXn9
-         ZD7mOzxESg2P8dgk0fcBnzxGXbUUhbvs0818cVrYkQl+1Mr3HFyPmlxMAsuDIs50w27t
-         G0mExnSsmmrPs7to+eF1TZhMScUo3K1tUx6maP+5isROBNP05Ne+wtVlOhWJVHp7/cD7
-         MGyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QgW2uxCVtaKbF7TbtCGjgw8sygkrT37j0scFhp7VikQ=;
-        b=QUNVcCcf6mesC+Sv/QdD9yPJbe+AlYrmfF9fAavoqwRrldZFsKGmuEmqTc1GELDELM
-         R4Xn7zGKuHQ5A367luz+VDn4g+x1y2DcJWyd60/yIJa96tStOiP7ODKXb/kL56bqNgYD
-         6pzFXnfXGQvUW3bQxbWcj9XBlmWQYy4zOo6hb8GqifUG0OzInh1TPxltzaURpS8vmGss
-         qjyAfcNfRSRhWeYkEITH4OFnym++AkWGMAtmZ4J945ckfVMzb2Pjstvgm2/ufU4ztytJ
-         QVIy6AQeC7gfQ1IQlK5BzDrQ8HBnnPZSau225/ZqaogZA4geq3T/gVVMHIdqDgvf66wo
-         Urzw==
-X-Gm-Message-State: APjAAAVRf2UshrTYEh8Z7qK3efGesfSJnMW6nORaAyzjU+5GmxhovjUL
-        D/B1dYAjPGnmCCvalaLjM+zf0Uu1ov9neWL4DLE=
-X-Google-Smtp-Source: APXvYqx7iOsTDyTC5MOoGe4i38azW0PdixKT3lxKfQTK2hHQYfSpvB84CcTf07+u7MbM/xsPCPUEfFKnSbF07BopLkc=
-X-Received: by 2002:a9d:562:: with SMTP id 89mr7354793otw.232.1568903313740;
- Thu, 19 Sep 2019 07:28:33 -0700 (PDT)
+        id S2389643AbfISO3r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:29:47 -0400
+Received: from mx1.emlix.com ([188.40.240.192]:58576 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730815AbfISO3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:29:47 -0400
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id 6289F5FD85;
+        Thu, 19 Sep 2019 16:29:45 +0200 (CEST)
+From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     yibin.gong@nxp.com, fugang.duan@nxp.com, l.stach@pengutronix.de,
+        dan.j.williams@intel.com, vkoul@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, dmaengine@vger.kernel.or,
+        linux-arm-kernel@lists.infradead.org,
+        Philipp Puschmann <philipp.puschmann@emlix.com>
+Subject: [PATCH v4 0/3] Fix UART DMA freezes for i.MX SOCs
+Date:   Thu, 19 Sep 2019 16:29:38 +0200
+Message-Id: <20190919142942.12469-1-philipp.puschmann@emlix.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <7bab24ff-ded7-9f76-ba25-efd07cdd30dd@amd.com> <20190918190529.17298-1-navid.emamdoost@gmail.com>
- <88fc639a-32ed-b6c6-f930-552083d5887d@amd.com>
-In-Reply-To: <88fc639a-32ed-b6c6-f930-552083d5887d@amd.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Thu, 19 Sep 2019 10:28:22 -0400
-Message-ID: <CAGngYiWHe1mw0+Ay6HO7kG5y8HMriUX3BO8VUcTvGayEK-4JOw@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/amdgpu: fix multiple memory leaks
-To:     "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "emamd001@umn.edu" <emamd001@umn.edu>,
-        "smccaman@umn.edu" <smccaman@umn.edu>,
-        "kjlu@umn.edu" <kjlu@umn.edu>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Rex Zhu <Rex.Zhu@amd.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian,
+For some years and since many kernel versions there are reports that
+RX UART DMA channel stops working at one point. So far the usual
+workaround was to disable RX DMA. This patches fix the underlying
+problem.
 
-On Thu, Sep 19, 2019 at 4:05 AM Koenig, Christian
-<Christian.Koenig@amd.com> wrote:
->
-> > +out4:
-> > +     kfree(i2s_pdata);
-> > +out3:
-> > +     kfree(adev->acp.acp_res);
-> > +out2:
-> > +     kfree(adev->acp.acp_cell);
-> > +out1:
-> > +     kfree(adev->acp.acp_genpd);
->
-> kfree on a NULL pointer is harmless, so a single error label should be
-> sufficient.
+When a running sdma script does not find any usable destination buffer
+to put its data into it just leads to stopping the channel being
+scheduled again. As solution we manually retrigger the sdma script for
+this channel and by this dissolve the freeze.
 
-That is true, but I notice that the adev structure comes from outside this
-driver:
+While this seems to work fine so far, it may come to buffer overruns
+when the channel - even temporary - is stopped. This case has to be
+addressed by device drivers by increasing the number of DMA periods.
 
-static int acp_hw_init(void *handle)
-{
-...
-struct amdgpu_device *adev = (struct amdgpu_device *)handle;
-...
-}
+This patch series was tested with the current kernel and backported to
+kernel 4.15 with a special use case using a WL1837MOD via UART and
+provoking the hanging of UART RX DMA within seconds after starting a
+test application. It resulted in well known
+  "Bluetooth: hci0: command 0x0408 tx timeout"
+errors and complete stop of UART data reception. Our Bluetooth traffic
+consists of many independent small packets, mostly only a few bytes,
+causing high usage of periods.
 
-As far as I can tell, the init() does not explicitly set these to NULL:
-adev->acp.acp_res
-adev->acp.acp_cell
-adev->acp.acp_genpd
+Changelog v4:
+ - fixed the fixes tags
+ 
+Changelog v3:
+ - fixes typo in dma_wmb
+ - add fixes tags
+ 
+Changelog v2:
+ - adapt title (this patches are not only for i.MX6)
+ - improve some comments and patch descriptions
+ - add a dma_wb() around BD_DONE flag
+ - add Reviewed-by tags
+ - split off  "serial: imx: adapt rx buffer and dma periods"
 
-I am assuming that core code sets these to NULL, before calling
-acp_hw_init(). But is that guaranteed or simply a happy accident?
-Ie. if they are NULL today, are they likely to remain NULL tomorrow?
+Philipp Puschmann (3):
+  dmaengine: imx-sdma: fix buffer ownership
+  dmaengine: imx-sdma: fix dma freezes
+  dmaengine: imx-sdma: drop redundant variable
 
-Because calling kfree() on a stale pointer would be, well
-not good. Especially not on an error path, which typically
-does not receive much testing, if any.
+ drivers/dma/imx-sdma.c | 32 ++++++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
 
-My apologies if I have misinterpreted this, I am not familiar with
-this code base.
+-- 
+2.23.0
 
-Sven
