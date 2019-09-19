@@ -2,46 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D342BB8560
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D876B8675
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732972AbfISWUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:20:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34490 "EHLO mail.kernel.org"
+        id S2406518AbfISWRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:17:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394032AbfISWU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:20:28 -0400
+        id S2406488AbfISWRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:17:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBD97217D6;
-        Thu, 19 Sep 2019 22:20:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CE4320678;
+        Thu, 19 Sep 2019 22:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931627;
-        bh=zMZ3NN5Ec3j2NtL7lZrB4gu39QodgcLY7Q9IEA1DIFo=;
+        s=default; t=1568931460;
+        bh=euDTmi3o+maZTn2OyWRJ//BCsc8MPWXUgCcZXYSqCJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=apl3mXN5zkhRAE5zp7w4A6Ebl+dB8BR6uPTRXsfKkxNprPFA4lKUBK4QRvdTQAJcl
-         FBl8KigGDRB01Is7EOHj0oE2xh7T1fQ6K9nPDhpxEjeBpH/PWOVwwMrHMaej2nAaEA
-         +NIk9ZtbFbIExCp379lQ7Jgj7S0/Yu3L3CVevPvo=
+        b=PR0oHqXoUFt94KBPPN5JYiI3Q3H3l9f6lGCT9m6h+RiPqb7VS/P3Wp7qm/6Jo6tIr
+         19LITOm8G+X/6QPmw4/O4kNKC6o+jE5T6ZnqI4+PfFldQ21Mg2QFJlHIBN15bQT8wP
+         ZOsJ2Xw3E1f2sZ8Q/ZLG4TRzgy5FpbDKKEYqVa4g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, alan@linux.intel.com,
-        bp@alien8.de, cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        rahul.tanwar@intel.com, rppt@linux.ibm.com, tony.luck@intel.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 55/74] x86/apic: Fix arch_dynirq_lower_bound() bug for DT enabled machines
-Date:   Fri, 20 Sep 2019 00:04:08 +0200
-Message-Id: <20190919214810.108283855@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: [PATCH 4.14 54/59] PCI: kirin: Fix section mismatch warning
+Date:   Fri, 20 Sep 2019 00:04:09 +0200
+Message-Id: <20190919214808.159977294@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,71 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 3e5bedc2c258341702ddffbd7688c5e6eb01eafa ]
+commit 6870b673509779195cab300aedc844b352d9cfbc upstream.
 
-Rahul Tanwar reported the following bug on DT systems:
+The PCI kirin driver compilation produces the following section mismatch
+warning:
 
-> 'ioapic_dynirq_base' contains the virtual IRQ base number. Presently, it is
-> updated to the end of hardware IRQ numbers but this is done only when IOAPIC
-> configuration type is IOAPIC_DOMAIN_LEGACY or IOAPIC_DOMAIN_STRICT. There is
-> a third type IOAPIC_DOMAIN_DYNAMIC which applies when IOAPIC configuration
-> comes from devicetree.
->
-> See dtb_add_ioapic() in arch/x86/kernel/devicetree.c
->
-> In case of IOAPIC_DOMAIN_DYNAMIC (DT/OF based system), 'ioapic_dynirq_base'
-> remains to zero initialized value. This means that for OF based systems,
-> virtual IRQ base will get set to zero.
+WARNING: vmlinux.o(.text+0x4758cc): Section mismatch in reference from
+the function kirin_pcie_probe() to the function
+.init.text:kirin_add_pcie_port()
+The function kirin_pcie_probe() references
+the function __init kirin_add_pcie_port().
+This is often because kirin_pcie_probe lacks a __init
+annotation or the annotation of kirin_add_pcie_port is wrong.
 
-Such systems will very likely not even boot.
+Remove '__init' from kirin_add_pcie_port() to fix it.
 
-For DT enabled machines ioapic_dynirq_base is irrelevant and not
-updated, so simply map the IRQ base 1:1 instead.
+Fixes: fc5165db245a ("PCI: kirin: Add HiSilicon Kirin SoC PCIe controller driver")
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+[lorenzo.pieralisi@arm.com: updated commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Tested-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Tested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: alan@linux.intel.com
-Cc: bp@alien8.de
-Cc: cheol.yong.kim@intel.com
-Cc: qi-ming.wu@intel.com
-Cc: rahul.tanwar@intel.com
-Cc: rppt@linux.ibm.com
-Cc: tony.luck@intel.com
-Link: http://lkml.kernel.org/r/20190821081330.1187-1-rahul.tanwar@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/io_apic.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/pci/dwc/pcie-kirin.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index d34629d70421f..09dd95cabfc28 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -2346,7 +2346,13 @@ unsigned int arch_dynirq_lower_bound(unsigned int from)
- 	 * dmar_alloc_hwirq() may be called before setup_IO_APIC(), so use
- 	 * gsi_top if ioapic_dynirq_base hasn't been initialized yet.
- 	 */
--	return ioapic_initialized ? ioapic_dynirq_base : gsi_top;
-+	if (!ioapic_initialized)
-+		return gsi_top;
-+	/*
-+	 * For DT enabled machines ioapic_dynirq_base is irrelevant and not
-+	 * updated. So simply return @from if ioapic_dynirq_base == 0.
-+	 */
-+	return ioapic_dynirq_base ? : from;
- }
+--- a/drivers/pci/dwc/pcie-kirin.c
++++ b/drivers/pci/dwc/pcie-kirin.c
+@@ -449,8 +449,8 @@ static const struct dw_pcie_host_ops kir
+ 	.host_init = kirin_pcie_host_init,
+ };
  
- #ifdef CONFIG_X86_32
--- 
-2.20.1
-
+-static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+-				      struct platform_device *pdev)
++static int kirin_add_pcie_port(struct dw_pcie *pci,
++			       struct platform_device *pdev)
+ {
+ 	pci->pp.ops = &kirin_pcie_host_ops;
+ 
 
 
