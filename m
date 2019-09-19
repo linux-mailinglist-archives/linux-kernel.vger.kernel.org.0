@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0375B8686
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE492B863C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:28:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406446AbfISWRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58164 "EHLO mail.kernel.org"
+        id S2404678AbfISWUG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406408AbfISWRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:09 -0400
+        id S2390487AbfISWT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CF88217D6;
-        Thu, 19 Sep 2019 22:17:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5BD921A49;
+        Thu, 19 Sep 2019 22:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931428;
-        bh=mxeu4uLj13ZdTwyKcHula4thozA5vnCkalosJXisIRE=;
+        s=default; t=1568931597;
+        bh=2ibOJCskqyyIBOusPY1iCMu2HpaNxbbIeVYJZPmsBhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JDuu2CUtcareSGdyNAb/qVIh/YfBXcbxKMKActcMKAIYlAd7+Xi1rKUBqXUXPCgKO
-         xSzy10Fkhnum1giA5al3v9XBGVFyZU9OADlDHJmBoMLJKXUB58W8FvFQSnotQZwE8H
-         ymsQRFO4r8NHY/oT/7OUR96GSYWgm5Vkq6OJJZZA=
+        b=KrIOCHMgqjcJf0AkPmF+2rPZ7VEi/2SxVm9u3tqzWS2CfAJUDvTO7TAYZPEiNg5a5
+         rbBN/14n6AItaCj12i91mRrgnX1CuWnH4D0Zf8Uriee173R0q4KnZDBvYR4lxSmqjx
+         Yi/SM5wgf9JnpMovO07U5yAtJgFxHqa/mcYsadBY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
-        Len Brown <len.brown@intel.com>,
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 43/59] tools/power x86_energy_perf_policy: Fix "uninitialized variable" warnings at -O2
+Subject: [PATCH 4.9 45/74] s390/bpf: fix lcgr instruction encoding
 Date:   Fri, 20 Sep 2019 00:03:58 +0200
-Message-Id: <20190919214807.144422966@linuxfoundation.org>
+Message-Id: <20190919214809.196831790@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,102 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit adb8049097a9ec4acd09fbd3aa8636199a78df8a ]
+[ Upstream commit bb2d267c448f4bc3a3389d97c56391cb779178ae ]
 
-x86_energy_perf_policy first uses __get_cpuid() to check the maximum
-CPUID level and exits if it is too low.  It then assumes that later
-calls will succeed (which I think is architecturally guaranteed).  It
-also assumes that CPUID works at all (which is not guaranteed on
-x86_32).
+"masking, test in bounds 3" fails on s390, because
+BPF_ALU64_IMM(BPF_NEG, BPF_REG_2, 0) ignores the top 32 bits of
+BPF_REG_2. The reason is that JIT emits lcgfr instead of lcgr.
+The associated comment indicates that the code was intended to
+emit lcgr in the first place, it's just that the wrong opcode
+was used.
 
-If optimisations are enabled, gcc warns about potentially
-uninitialized variables.  Fix this by adding an exit-on-error after
-every call to __get_cpuid() instead of just checking the maximum
-level.
+Fix by using the correct opcode.
 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Len Brown <len.brown@intel.com>
+Fixes: 054623105728 ("s390/bpf: Add s390x eBPF JIT compiler backend")
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Acked-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../x86_energy_perf_policy.c                  | 26 +++++++++++--------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ arch/s390/net/bpf_jit_comp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-index 65bbe627a425f..bbef8bcf44d6d 100644
---- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-+++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-@@ -1260,6 +1260,15 @@ void probe_dev_msr(void)
- 		if (system("/sbin/modprobe msr > /dev/null 2>&1"))
- 			err(-5, "no /dev/cpu/0/msr, Try \"# modprobe msr\" ");
- }
-+
-+static void get_cpuid_or_exit(unsigned int leaf,
-+			     unsigned int *eax, unsigned int *ebx,
-+			     unsigned int *ecx, unsigned int *edx)
-+{
-+	if (!__get_cpuid(leaf, eax, ebx, ecx, edx))
-+		errx(1, "Processor not supported\n");
-+}
-+
- /*
-  * early_cpuid()
-  * initialize turbo_is_enabled, has_hwp, has_epb
-@@ -1267,15 +1276,10 @@ void probe_dev_msr(void)
-  */
- void early_cpuid(void)
- {
--	unsigned int eax, ebx, ecx, edx, max_level;
-+	unsigned int eax, ebx, ecx, edx;
- 	unsigned int fms, family, model;
- 
--	__get_cpuid(0, &max_level, &ebx, &ecx, &edx);
--
--	if (max_level < 6)
--		errx(1, "Processor not supported\n");
--
--	__get_cpuid(1, &fms, &ebx, &ecx, &edx);
-+	get_cpuid_or_exit(1, &fms, &ebx, &ecx, &edx);
- 	family = (fms >> 8) & 0xf;
- 	model = (fms >> 4) & 0xf;
- 	if (family == 6 || family == 0xf)
-@@ -1289,7 +1293,7 @@ void early_cpuid(void)
- 		bdx_highest_ratio = msr & 0xFF;
- 	}
- 
--	__get_cpuid(0x6, &eax, &ebx, &ecx, &edx);
-+	get_cpuid_or_exit(0x6, &eax, &ebx, &ecx, &edx);
- 	turbo_is_enabled = (eax >> 1) & 1;
- 	has_hwp = (eax >> 7) & 1;
- 	has_epb = (ecx >> 3) & 1;
-@@ -1307,7 +1311,7 @@ void parse_cpuid(void)
- 
- 	eax = ebx = ecx = edx = 0;
- 
--	__get_cpuid(0, &max_level, &ebx, &ecx, &edx);
-+	get_cpuid_or_exit(0, &max_level, &ebx, &ecx, &edx);
- 
- 	if (ebx == 0x756e6547 && edx == 0x49656e69 && ecx == 0x6c65746e)
- 		genuine_intel = 1;
-@@ -1316,7 +1320,7 @@ void parse_cpuid(void)
- 		fprintf(stderr, "CPUID(0): %.4s%.4s%.4s ",
- 			(char *)&ebx, (char *)&edx, (char *)&ecx);
- 
--	__get_cpuid(1, &fms, &ebx, &ecx, &edx);
-+	get_cpuid_or_exit(1, &fms, &ebx, &ecx, &edx);
- 	family = (fms >> 8) & 0xf;
- 	model = (fms >> 4) & 0xf;
- 	stepping = fms & 0xf;
-@@ -1341,7 +1345,7 @@ void parse_cpuid(void)
- 		errx(1, "CPUID: no MSR");
- 
- 
--	__get_cpuid(0x6, &eax, &ebx, &ecx, &edx);
-+	get_cpuid_or_exit(0x6, &eax, &ebx, &ecx, &edx);
- 	/* turbo_is_enabled already set */
- 	/* has_hwp already set */
- 	has_hwp_notify = eax & (1 << 8);
+diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
+index 896344b6e0363..e4616090732a4 100644
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -881,7 +881,7 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
+ 		break;
+ 	case BPF_ALU64 | BPF_NEG: /* dst = -dst */
+ 		/* lcgr %dst,%dst */
+-		EMIT4(0xb9130000, dst_reg, dst_reg);
++		EMIT4(0xb9030000, dst_reg, dst_reg);
+ 		break;
+ 	/*
+ 	 * BPF_FROM_BE/LE
 -- 
 2.20.1
 
