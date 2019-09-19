@@ -2,106 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AADD0B78F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C68CDB78EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390188AbfISMLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 08:11:41 -0400
-Received: from mx60.baidu.com ([61.135.168.60]:48565 "EHLO
-        tc-sys-mailedm01.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390113AbfISMLk (ORCPT
+        id S2390086AbfISMLA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Sep 2019 08:11:00 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36454 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388551AbfISMK7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 08:11:40 -0400
-X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Sep 2019 08:11:38 EDT
-Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
-        by tc-sys-mailedm01.tc.baidu.com (Postfix) with ESMTP id CD37E204005B;
-        Thu, 19 Sep 2019 20:04:47 +0800 (CST)
-From:   Li RongQing <lirongqing@baidu.com>
-To:     john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, anna-maria@linutronix.de
-Subject: [PATCH] timer: read jiffies once when forwarding base clk
-Date:   Thu, 19 Sep 2019 20:04:47 +0800
-Message-Id: <1568894687-14499-1-git-send-email-lirongqing@baidu.com>
-X-Mailer: git-send-email 1.7.1
+        Thu, 19 Sep 2019 08:10:59 -0400
+Received: by mail-qk1-f195.google.com with SMTP id y189so3097767qkc.3;
+        Thu, 19 Sep 2019 05:10:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Rfjil+Gq/luy5INXzAP+YSY4vFtchBGrxw5c+694d1c=;
+        b=ceVXQyGNSLMr5yEULRJK+2srb0yNaT7KzQEhFO1XymeRmKLgB0+G7sghWVKF3CXI6a
+         OWSLh/3+sZkCwGZc6THoIpNJUAX8GKf1xvwIbClzNk78GkKpTsIdZ1U7N8WK4VDYC2ta
+         DB8XumBx+zY4plY+0JRXHYGRBiNq/bB3CpkMIZq0Xb5gZuaALqGeq843jltvL/6Cqbxj
+         AQin3b2FpvUhvILIuMooQNvCG6yznhAUt1+VAEO8z8y934w+gynnPF1qXOcfthQkH/KP
+         sHhJuhqTy0FN+qxN3XZVwKUYxhRFXGXHirAYbeGxR0L7iROrSJ90zYVkoKTjAhPLGIDp
+         Cc2w==
+X-Gm-Message-State: APjAAAWw+I4sPIe8Jhzp8oZ1PpQ3tR9JvhNRuf183lfxfSmRY+2zUmFl
+        Zxu5SZJnX0fQYjG6oys2kbhl66eu+gDwJ4AstK8=
+X-Google-Smtp-Source: APXvYqzEGMHFOqeRV6vBVoW42UtFIGlWnJ0ZoY4L2i95kgRTZeHSNklf6BqNgTS+9n5WCxLwwc4EU4ayKlB0xLq+U2M=
+X-Received: by 2002:ae9:c110:: with SMTP id z16mr2567279qki.352.1568895058438;
+ Thu, 19 Sep 2019 05:10:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <1568870297-108679-1-git-send-email-decui@microsoft.com>
+In-Reply-To: <1568870297-108679-1-git-send-email-decui@microsoft.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 19 Sep 2019 14:10:42 +0200
+Message-ID: <CAK8P3a0oi2MQwt-P8taBt+VS+RTaoeNBgjoYNE7_L2VoQUSaEA@mail.gmail.com>
+Subject: Re: [PATCH] Drivers: hv: vmbus: Fix harmless building warnings
+ without CONFIG_PM
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The below calltrace was reported, the cause is that timer is delayed
-bigger than 3 seconds
+On Thu, Sep 19, 2019 at 7:19 AM Dexuan Cui <decui@microsoft.com> wrote:
+>
+> If CONFIG_PM is not set, we can comment out these functions to avoid the
+> below warnings:
+>
+> drivers/hv/vmbus_drv.c:2208:12: warning: ‘vmbus_bus_resume’ defined but not used [-Wunused-function]
+> drivers/hv/vmbus_drv.c:2128:12: warning: ‘vmbus_bus_suspend’ defined but not used [-Wunused-function]
+> drivers/hv/vmbus_drv.c:937:12: warning: ‘vmbus_resume’ defined but not used [-Wunused-function]
+> drivers/hv/vmbus_drv.c:918:12: warning: ‘vmbus_suspend’ defined but not used [-Wunused-function]
+>
+> Fixes: 271b2224d42f ("Drivers: hv: vmbus: Implement suspend/resume for VSC drivers for hibernation")
+> Fixes: f53335e3289f ("Drivers: hv: vmbus: Suspend/resume the vmbus itself for hibernation")
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
 
-    Hardware name: New H3C Technologies Co.,Ltd. UniServer R4950 G3/RS41R4950, BIOS 2.00.06 V700R003
-    Workqueue: events_unbound sched_tick_remote
-    RIP: 0010:sched_tick_remote+0xee/0x100
-    ...
-    Call Trace:
-    process_one_work+0x18c/0x3a0
-    worker_thread+0x30/0x380
-    ? process_one_work+0x3a0/0x3a0
-    kthread+0x113/0x130
-    ? kthread_create_worker_on_cpu+0x70/0x70
-    ret_from_fork+0x22/0x40
-    ---[ end trace 41bd884127493e39 ]---
+I think this will still produce a warning if CONFIG_PM is set but
+CONFIG_PM_SLEEP is not, possibly in other configurations as
+well.
 
-then write a program to test timer latency, it can reproduce this issue
-
-   static void sched_l_tick(struct timer_list *t)
-   {
-       unsigned long delta = jiffies - set_time;
-
-       if (delta > 3*HZ)
-               printk("abnormal %ld %d\n", delta, raw_smp_processor_id());
-
-       set_time = jiffies+HZ;
-       mod_timer(t, jiffies + HZ);
-    }
-
-further investigation shows jiffies maybe change when advence this base clk,
-twice read of jiffies maybe lead to that base clk is bigger than truely next
-event, and fire timer is skipped, so read jiffies once,
-
-Signed-off-by: Li RongQing <lirongqing@baidu.com>
-Signed-off-by: Liang ZhiCheng <liangzhicheng@baidu.com>
----
- kernel/time/timer.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 343c7ba33b1c..e2dbd0223635 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -1593,24 +1593,27 @@ void timer_clear_idle(void)
- static int collect_expired_timers(struct timer_base *base,
- 				  struct hlist_head *heads)
- {
-+	unsigned long jnow;
-+
-+	jnow = READ_ONCE(jiffies);
- 	/*
- 	 * NOHZ optimization. After a long idle sleep we need to forward the
- 	 * base to current jiffies. Avoid a loop by searching the bitfield for
- 	 * the next expiring timer.
- 	 */
--	if ((long)(jiffies - base->clk) > 2) {
-+	if ((long)(jnow - base->clk) > 2) {
- 		unsigned long next = __next_timer_interrupt(base);
- 
- 		/*
- 		 * If the next timer is ahead of time forward to current
- 		 * jiffies, otherwise forward to the next expiry time:
- 		 */
--		if (time_after(next, jiffies)) {
-+		if (time_after(next, jnow)) {
- 			/*
- 			 * The call site will increment base->clk and then
- 			 * terminate the expiry loop immediately.
- 			 */
--			base->clk = jiffies;
-+			base->clk = jnow;
- 			return 0;
- 		}
- 		base->clk = next;
--- 
-2.16.2
-
+      Arnd
