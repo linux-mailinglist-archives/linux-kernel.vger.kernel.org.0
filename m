@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC8AB851C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C0D6B8520
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406540AbfISWRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59038 "EHLO mail.kernel.org"
+        id S2393854AbfISWR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:17:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406530AbfISWRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:47 -0400
+        id S2392216AbfISWRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:17:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64D0220678;
-        Thu, 19 Sep 2019 22:17:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3BC2217D6;
+        Thu, 19 Sep 2019 22:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931466;
-        bh=2UuI92GL893gmSHnh4MoZe4oMxJQYCPRC933HWuv3tA=;
+        s=default; t=1568931474;
+        bh=ont1s2hWDsj0rjL5UpbAstBll8ppiMiCPDPkdEjRjYY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1pag93inAXw6UVbf8TVyLr3hi4MqEL22+dGGNVLwYrwp4khXVhv57K7HGUA4riLLY
-         diNkgl8GnRLCw6uEMUb9zofPFWNbFP6gp9p5rTGH8kW+j9geUlLbkJfTxRGmTSm6gP
-         Q4wCnoV4RHfphoxwgnBrIbCfPqHettJaVr23nvEo=
+        b=n7mEgwxcAjtxPmfvr8x9eeRBus4EQF5eenivrORuFdDxUABgM7UZlP4C5P7ZzjoK+
+         DDLulOQh0PsWdzHaHLFbHg0m52kFPk5b5FCN4ppbN+fUCNwHPjaiwCvjD0/xguFy1z
+         os47iZ5INQxcwohnRYEcmwSItH6kJZhwYn3ZHlFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Ali Saidi <alisaidi@amazon.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Frank van der Linden <fllinden@amazon.com>
-Subject: [PATCH 4.14 56/59] binfmt_elf: move brk out of mmap when doing direct loader exec
-Date:   Fri, 20 Sep 2019 00:04:11 +0200
-Message-Id: <20190919214808.282907371@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com,
+        Sean Young <sean@mess.org>, Kees Cook <keescook@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 59/59] media: technisat-usb2: break out of loop at end of buffer
+Date:   Fri, 20 Sep 2019 00:04:14 +0200
+Message-Id: <20190919214808.531153444@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
 References: <20190919214755.852282682@linuxfoundation.org>
@@ -51,105 +45,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Sean Young <sean@mess.org>
 
-commit bbdc6076d2e5d07db44e74c11b01a3e27ab90b32 upstream.
+commit 0c4df39e504bf925ab666132ac3c98d6cbbe380b upstream.
 
-Commmit eab09532d400 ("binfmt_elf: use ELF_ET_DYN_BASE only for PIE"),
-made changes in the rare case when the ELF loader was directly invoked
-(e.g to set a non-inheritable LD_LIBRARY_PATH, testing new versions of
-the loader), by moving into the mmap region to avoid both ET_EXEC and
-PIE binaries.  This had the effect of also moving the brk region into
-mmap, which could lead to the stack and brk being arbitrarily close to
-each other.  An unlucky process wouldn't get its requested stack size
-and stack allocations could end up scribbling on the heap.
+Ensure we do not access the buffer beyond the end if no 0xff byte
+is encountered.
 
-This is illustrated here.  In the case of using the loader directly, brk
-(so helpfully identified as "[heap]") is allocated with the _loader_ not
-the binary.  For example, with ASLR entirely disabled, you can see this
-more clearly:
-
-$ /bin/cat /proc/self/maps
-555555554000-55555555c000 r-xp 00000000 ... /bin/cat
-55555575b000-55555575c000 r--p 00007000 ... /bin/cat
-55555575c000-55555575d000 rw-p 00008000 ... /bin/cat
-55555575d000-55555577e000 rw-p 00000000 ... [heap]
-...
-7ffff7ff7000-7ffff7ffa000 r--p 00000000 ... [vvar]
-7ffff7ffa000-7ffff7ffc000 r-xp 00000000 ... [vdso]
-7ffff7ffc000-7ffff7ffd000 r--p 00027000 ... /lib/x86_64-linux-gnu/ld-2.27.so
-7ffff7ffd000-7ffff7ffe000 rw-p 00028000 ... /lib/x86_64-linux-gnu/ld-2.27.so
-7ffff7ffe000-7ffff7fff000 rw-p 00000000 ...
-7ffffffde000-7ffffffff000 rw-p 00000000 ... [stack]
-
-$ /lib/x86_64-linux-gnu/ld-2.27.so /bin/cat /proc/self/maps
-...
-7ffff7bcc000-7ffff7bd4000 r-xp 00000000 ... /bin/cat
-7ffff7bd4000-7ffff7dd3000 ---p 00008000 ... /bin/cat
-7ffff7dd3000-7ffff7dd4000 r--p 00007000 ... /bin/cat
-7ffff7dd4000-7ffff7dd5000 rw-p 00008000 ... /bin/cat
-7ffff7dd5000-7ffff7dfc000 r-xp 00000000 ... /lib/x86_64-linux-gnu/ld-2.27.so
-7ffff7fb2000-7ffff7fd6000 rw-p 00000000 ...
-7ffff7ff7000-7ffff7ffa000 r--p 00000000 ... [vvar]
-7ffff7ffa000-7ffff7ffc000 r-xp 00000000 ... [vdso]
-7ffff7ffc000-7ffff7ffd000 r--p 00027000 ... /lib/x86_64-linux-gnu/ld-2.27.so
-7ffff7ffd000-7ffff7ffe000 rw-p 00028000 ... /lib/x86_64-linux-gnu/ld-2.27.so
-7ffff7ffe000-7ffff8020000 rw-p 00000000 ... [heap]
-7ffffffde000-7ffffffff000 rw-p 00000000 ... [stack]
-
-The solution is to move brk out of mmap and into ELF_ET_DYN_BASE since
-nothing is there in the direct loader case (and ET_EXEC is still far
-away at 0x400000).  Anything that ran before should still work (i.e.
-the ultimately-launched binary already had the brk very far from its
-text, so this should be no different from a COMPAT_BRK standpoint).  The
-only risk I see here is that if someone started to suddenly depend on
-the entire memory space lower than the mmap region being available when
-launching binaries via a direct loader execs which seems highly
-unlikely, I'd hope: this would mean a binary would _not_ work when
-exec()ed normally.
-
-(Note that this is only done under CONFIG_ARCH_HAS_ELF_RANDOMIZATION
-when randomization is turned on.)
-
-Link: http://lkml.kernel.org/r/20190422225727.GA21011@beast
-Link: https://lkml.kernel.org/r/CAGXu5jJ5sj3emOT2QPxQkNQk0qbU6zEfu9=Omfhx_p0nCKPSjA@mail.gmail.com
-Fixes: eab09532d400 ("binfmt_elf: use ELF_ET_DYN_BASE only for PIE")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reported-by: Ali Saidi <alisaidi@amazon.com>
-Cc: Ali Saidi <alisaidi@amazon.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jann Horn <jannh@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Frank van der Linden <fllinden@amazon.com>
+Reported-by: syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com
+Signed-off-by: Sean Young <sean@mess.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/binfmt_elf.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/media/usb/dvb-usb/technisat-usb2.c |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1116,6 +1116,17 @@ static int load_elf_binary(struct linux_
- 	current->mm->start_stack = bprm->p;
+--- a/drivers/media/usb/dvb-usb/technisat-usb2.c
++++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
+@@ -607,10 +607,9 @@ static int technisat_usb2_frontend_attac
+ static int technisat_usb2_get_ir(struct dvb_usb_device *d)
+ {
+ 	struct technisat_usb2_state *state = d->priv;
+-	u8 *buf = state->buf;
+-	u8 *b;
+-	int ret;
+ 	struct ir_raw_event ev;
++	u8 *buf = state->buf;
++	int i, ret;
  
- 	if ((current->flags & PF_RANDOMIZE) && (randomize_va_space > 1)) {
-+		/*
-+		 * For architectures with ELF randomization, when executing
-+		 * a loader directly (i.e. no interpreter listed in ELF
-+		 * headers), move the brk area out of the mmap region
-+		 * (since it grows up, and may collide early with the stack
-+		 * growing down), and into the unused ELF_ET_DYN_BASE region.
-+		 */
-+		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) && !interpreter)
-+			current->mm->brk = current->mm->start_brk =
-+				ELF_ET_DYN_BASE;
+ 	buf[0] = GET_IR_DATA_VENDOR_REQUEST;
+ 	buf[1] = 0x08;
+@@ -646,26 +645,25 @@ unlock:
+ 		return 0; /* no key pressed */
+ 
+ 	/* decoding */
+-	b = buf+1;
+ 
+ #if 0
+ 	deb_rc("RC: %d ", ret);
+-	debug_dump(b, ret, deb_rc);
++	debug_dump(buf + 1, ret, deb_rc);
+ #endif
+ 
+ 	ev.pulse = 0;
+-	while (1) {
+-		ev.pulse = !ev.pulse;
+-		ev.duration = (*b * FIRMWARE_CLOCK_DIVISOR * FIRMWARE_CLOCK_TICK) / 1000;
+-		ir_raw_event_store(d->rc_dev, &ev);
+-
+-		b++;
+-		if (*b == 0xff) {
++	for (i = 1; i < ARRAY_SIZE(state->buf); i++) {
++		if (buf[i] == 0xff) {
+ 			ev.pulse = 0;
+ 			ev.duration = 888888*2;
+ 			ir_raw_event_store(d->rc_dev, &ev);
+ 			break;
+ 		}
 +
- 		current->mm->brk = current->mm->start_brk =
- 			arch_randomize_brk(current->mm);
- #ifdef compat_brk_randomized
++		ev.pulse = !ev.pulse;
++		ev.duration = (buf[i] * FIRMWARE_CLOCK_DIVISOR *
++			       FIRMWARE_CLOCK_TICK) / 1000;
++		ir_raw_event_store(d->rc_dev, &ev);
+ 	}
+ 
+ 	ir_raw_event_handle(d->rc_dev);
 
 
