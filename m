@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1605B8488
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C686DB8547
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393620AbfISWLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:11:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50386 "EHLO mail.kernel.org"
+        id S2389183AbfISWTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:19:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405860AbfISWLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:11:38 -0400
+        id S2392452AbfISWTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6C15218AF;
-        Thu, 19 Sep 2019 22:11:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B584820678;
+        Thu, 19 Sep 2019 22:19:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931098;
-        bh=J+WLUY334ZG4D403lkSQBL5KZPw9kQ34nkZrR/am+/g=;
+        s=default; t=1568931559;
+        bh=eRqoDxPhzvVbfx3W3pJb3IwRfIRBOVWrUZjCX5SJ9ZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hk7smxUHX77n9jUB8li0RsH9lz2tNZ1C1xWMR8DzNAglYBfO+hVP6WPKxzc2yKot6
-         f6aPyHk6M5FPYNZ0U+FTHx1ZQ8zR7/+BIQ0+w8ElXOB5YsSZl2I63QPXaXxKTDUBI5
-         aIvdLPS4uC0PgYxS9n5MevlEXkKRSKYnrIm0RjBM=
+        b=B43Kgd1PQ0Pk17am7g9gr5SaWL+4zQZlkNPjFeC8ZuDKa0zE86Was6GhAtdwHq8UB
+         Sfy+ikWwSJMyTi7vTwCGf/XNKkVGN9+7nfhVPULafwvJZjXwJkdVH8mUNVzmuxJlxI
+         xWibVcRJnoVZNcmbuhhhGf7nqI0hNR9D7V/qlx9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 108/124] net: seeq: Fix the function used to release some memory in an error handling path
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 03/74] ipv6: Fix the link time qualifier of ping_v6_proc_exit_net()
 Date:   Fri, 20 Sep 2019 00:03:16 +0200
-Message-Id: <20190919214823.121158942@linuxfoundation.org>
+Message-Id: <20190919214801.207325640@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,53 +46,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit e1e54ec7fb55501c33b117c111cb0a045b8eded2 ]
+[ Upstream commit d23dbc479a8e813db4161a695d67da0e36557846 ]
 
-In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
-a call to 'get_zeroed_page()' has been turned into a call to
-'dma_alloc_coherent()'. Only the remove function has been updated to turn
-the corresponding 'free_page()' into 'dma_free_attrs()'.
-The error hndling path of the probe function has not been updated.
+The '.exit' functions from 'pernet_operations' structure should be marked
+as __net_exit, not __net_init.
 
-Fix it now.
-
-Rename the corresponding label to something more in line.
-
-Fixes: 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv")
+Fixes: d862e5461423 ("net: ipv6: Implement /proc/net/icmp6.")
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/seeq/sgiseeq.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/ipv6/ping.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/seeq/sgiseeq.c b/drivers/net/ethernet/seeq/sgiseeq.c
-index 7a5e6c5abb57b..276c7cae7ceeb 100644
---- a/drivers/net/ethernet/seeq/sgiseeq.c
-+++ b/drivers/net/ethernet/seeq/sgiseeq.c
-@@ -794,15 +794,16 @@ static int sgiseeq_probe(struct platform_device *pdev)
- 		printk(KERN_ERR "Sgiseeq: Cannot register net device, "
- 		       "aborting.\n");
- 		err = -ENODEV;
--		goto err_out_free_page;
-+		goto err_out_free_attrs;
- 	}
+--- a/net/ipv6/ping.c
++++ b/net/ipv6/ping.c
+@@ -239,7 +239,7 @@ static int __net_init ping_v6_proc_init_
+ 	return ping_proc_register(net, &ping_v6_seq_afinfo);
+ }
  
- 	printk(KERN_INFO "%s: %s %pM\n", dev->name, sgiseeqstr, dev->dev_addr);
- 
- 	return 0;
- 
--err_out_free_page:
--	free_page((unsigned long) sp->srings);
-+err_out_free_attrs:
-+	dma_free_attrs(&pdev->dev, sizeof(*sp->srings), sp->srings,
-+		       sp->srings_dma, DMA_ATTR_NON_CONSISTENT);
- err_out_free_dev:
- 	free_netdev(dev);
- 
--- 
-2.20.1
-
+-static void __net_init ping_v6_proc_exit_net(struct net *net)
++static void __net_exit ping_v6_proc_exit_net(struct net *net)
+ {
+ 	return ping_proc_unregister(net, &ping_v6_seq_afinfo);
+ }
 
 
