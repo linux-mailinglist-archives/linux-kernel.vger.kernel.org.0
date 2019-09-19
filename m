@@ -2,80 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DEEDB86A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B39B875C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406308AbfISWaz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:30:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55370 "EHLO mail.kernel.org"
+        id S2405191AbfISWGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:06:22 -0400
+Received: from mga12.intel.com ([192.55.52.136]:11226 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406126AbfISWP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:15:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB659218AF;
-        Thu, 19 Sep 2019 22:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931326;
-        bh=7MGaVN2wL64VImoAPcctyBsgIy7kwhtcTXeqnOhqXb4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LW9BVM7HUMFd6CwFwiALxgAcztryqeDxYe0mHBiiRJUX8L7dRSGDXCIoGdE0aGT3P
-         crhpqjmyz+ZVAC0GC6EHAHcv9s1erohjTl0Fv/thhRsFapmTm2KkutHdEvEv730y3e
-         nkKR3IAg061Swoumv9syvNQrPkWOQ4b4L5cu2Dc0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: [PATCH 4.19 78/79] arm64: kpti: Whitelist Cortex-A CPUs that dont implement the CSV3 field
-Date:   Fri, 20 Sep 2019 00:04:03 +0200
-Message-Id: <20190919214814.627750263@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2405162AbfISWGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:06:16 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Sep 2019 15:06:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,526,1559545200"; 
+   d="scan'208";a="189746329"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga003.jf.intel.com with ESMTP; 19 Sep 2019 15:06:15 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 351E23013C9; Thu, 19 Sep 2019 15:06:15 -0700 (PDT)
+Date:   Thu, 19 Sep 2019 15:06:15 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Kim Phillips <kim.phillips@amd.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Borislav Petkov <bp@suse.de>, Martin Liska <mliska@suse.cz>,
+        Luke Mujica <lukemujica@google.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 5/5] perf list: specify metrics are to be used with -M
+Message-ID: <20190919220615.GG8537@tassilo.jf.intel.com>
+References: <20190919204306.12598-1-kim.phillips@amd.com>
+ <20190919204306.12598-5-kim.phillips@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919204306.12598-5-kim.phillips@amd.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+> This misleads the uninitiated user to try:
+> 
+>   $ perf stat -e C2_Pkg_Residency
 
-commit 2a355ec25729053bb9a1a89b6c1d1cdd6c3b3fb1 upstream.
+Actually I guess we could just fix -e to support metrics too.
+Would probably not be that difficult.
 
-While the CSV3 field of the ID_AA64_PFR0 CPU ID register can be checked
-to see if a CPU is susceptible to Meltdown and therefore requires kpti
-to be enabled, existing CPUs do not implement this field.
-
-We therefore whitelist all unaffected Cortex-A CPUs that do not implement
-the CSV3 field.
-
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Cc: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/arm64/kernel/cpufeature.c |    6 ++++++
- 1 file changed, 6 insertions(+)
-
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -895,6 +895,12 @@ static bool unmap_kernel_at_el0(const st
- 	static const struct midr_range kpti_safe_list[] = {
- 		MIDR_ALL_VERSIONS(MIDR_CAVIUM_THUNDERX2),
- 		MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A35),
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A53),
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A55),
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A57),
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A72),
-+		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
- 		{ /* sentinel */ }
- 	};
- 	char const *str = "command line option";
-
-
+-Andi
