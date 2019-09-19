@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39D01B8671
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456EBB8558
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392610AbfISWR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58560 "EHLO mail.kernel.org"
+        id S2394007AbfISWUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392403AbfISWRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:25 -0400
+        id S2393033AbfISWUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13FB9217D6;
-        Thu, 19 Sep 2019 22:17:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92F44217D6;
+        Thu, 19 Sep 2019 22:20:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931444;
-        bh=Yl59bSCmjGQO8ga6KfcvRC+PKgjgMXblO8qVnUO1YgM=;
+        s=default; t=1568931614;
+        bh=7qzM2gbgcZH8LjA8YqY/rq6Rfs4xuVzEsRBat+ya2eU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CIUgrrmIKjBa24Ls/FmheSALLE7QUFmxgEq+YEN5mGp746l6j7Dgoxf417CZHxb1T
-         zT2/xRz9La4xM944I++MHvDoDJRlFkC9pVHti5MwEHn3aLBKT9yYmbfyj2W63Pjc73
-         kG5ksLvWOiRII9OrmXJ9xzszahQXwvJgihV97w1A=
+        b=sUX49VMkmM9ekxO1enBmptnfoM7PuiQjogqp07vJ2VKa5HzA7Hu0CidC0WwrpxsG/
+         f7jjaokMNQtUyGj9vEPbfIlFCBFBViY5AW0Plzg7r5TSwMs2AHgh8FG1he8URZLkNR
+         7uIuavnaiBHEY1nEOQjYZenrEP+EAOl9Kw5yx4JA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, broonie@kernel.org,
-        sfr@canb.auug.org.au, akpm@linux-foundation.org, mhocko@suse.cz,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Sudarsana Reddy Kalluru <skalluru@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 49/59] x86/uaccess: Dont leak the AC flags into __get_user() argument evaluation
+Subject: [PATCH 4.9 51/74] qed: Add cleanup in qed_slowpath_start()
 Date:   Fri, 20 Sep 2019 00:04:04 +0200
-Message-Id: <20190919214807.665886883@linuxfoundation.org>
+Message-Id: <20190919214809.805385008@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,55 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 9b8bd476e78e89c9ea26c3b435ad0201c3d7dbf5 ]
+[ Upstream commit de0e4fd2f07ce3bbdb69dfb8d9426b7227451b69 ]
 
-Identical to __put_user(); the __get_user() argument evalution will too
-leak UBSAN crud into the __uaccess_begin() / __uaccess_end() region.
-While uncommon this was observed to happen for:
+If qed_mcp_send_drv_version() fails, no cleanup is executed, leading to
+memory leaks. To fix this issue, introduce the label 'err4' to perform the
+cleanup work before returning the error.
 
-  drivers/xen/gntdev.c: if (__get_user(old_status, batch->status[i]))
-
-where UBSAN added array bound checking.
-
-This complements commit:
-
-  6ae865615fc4 ("x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation")
-
-Tested-by Sedat Dilek <sedat.dilek@gmail.com>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: broonie@kernel.org
-Cc: sfr@canb.auug.org.au
-Cc: akpm@linux-foundation.org
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: mhocko@suse.cz
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20190829082445.GM2369@hirez.programming.kicks-ass.net
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Acked-by: Sudarsana Reddy Kalluru <skalluru@marvell.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/uaccess.h | 4 +++-
+ drivers/net/ethernet/qlogic/qed/qed_main.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 4111edb3188e2..9718303410614 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -451,8 +451,10 @@ do {									\
- ({									\
- 	int __gu_err;							\
- 	__inttype(*(ptr)) __gu_val;					\
-+	__typeof__(ptr) __gu_ptr = (ptr);				\
-+	__typeof__(size) __gu_size = (size);				\
- 	__uaccess_begin_nospec();					\
--	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
-+	__get_user_size(__gu_val, __gu_ptr, __gu_size, __gu_err, -EFAULT);	\
- 	__uaccess_end();						\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
- 	__builtin_expect(__gu_err, 0);					\
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
+index a769196628d91..708117fc6f733 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -958,7 +958,7 @@ static int qed_slowpath_start(struct qed_dev *cdev,
+ 					      &drv_version);
+ 		if (rc) {
+ 			DP_NOTICE(cdev, "Failed sending drv version command\n");
+-			return rc;
++			goto err4;
+ 		}
+ 	}
+ 
+@@ -966,6 +966,8 @@ static int qed_slowpath_start(struct qed_dev *cdev,
+ 
+ 	return 0;
+ 
++err4:
++	qed_ll2_dealloc_if(cdev);
+ err3:
+ 	qed_hw_stop(cdev);
+ err2:
 -- 
 2.20.1
 
