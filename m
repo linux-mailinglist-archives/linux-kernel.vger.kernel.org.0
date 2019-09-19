@@ -2,297 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C34B7D99
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 17:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5DB2B7D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 17:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403952AbfISPJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 11:09:56 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50057 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732323AbfISPJw (ORCPT
+        id S2390898AbfISPF2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 11:05:28 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38582 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389179AbfISPF1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 11:09:52 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1iAy3y-0006nZ-HC; Thu, 19 Sep 2019 17:09:42 +0200
-Message-Id: <20190919150808.724554170@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Thu, 19 Sep 2019 17:03:17 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: [RFC patch 03/15] x86/entry: Use generic syscall entry function
-References: <20190919150314.054351477@linutronix.de>
+        Thu, 19 Sep 2019 11:05:27 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a23so3522101edv.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 08:05:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yic2bDSQvOGyK05i6zWexPg+z8iu2akZCAIBwfSlM4U=;
+        b=RxBIEWkzx/5W626K0TPy3NrQD+9xUc2EtjQq5wij6HuQ4p6J8/jo5dqn0wVA5Xnd18
+         m6jKndTL7m3KJWdcqYOd4bsX0jZ7Vpbu5CEpsnoYfC/es2QHVjlN1+TMtJpntIs21qlr
+         O11fuKKCW0K7V+2I6q9rIXJZFLDAbAN7KSxiBeGQmspKYs5LogftnMCA/QSS4D+5fbOf
+         AKHw+EUSbdFxbZeYccacevGazTtWWjnf3dPhGTeBsBgjYaCXheAf3LA/dFJlW8vnlUeK
+         e6jlulH6fQf0bErESyCyq7GoPE2/efqefs5t7xY6Sd2zGC8XeaCm1KufYPTcGcBnoC/D
+         QXdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yic2bDSQvOGyK05i6zWexPg+z8iu2akZCAIBwfSlM4U=;
+        b=ob7/g6DpiM14DcgNeXQexkFI0JfxIZUaMIN7YeAD4rh2YqrYDT1+Xvha2Vt27Ll17o
+         wO3ea2JWVedSBzzR1YzCF2a4nO+X5BR2oMe4kzbmA1ZUOo9DcvFe6ro8QJE09M3/p2aY
+         Z/SmFCdQHUkfFA5vWKTZ5ox5cgxOVPh7xpb9eyuWkohAMOczB4LURxY2kyCrVhbESZHd
+         amG1XzFy4Uo2hEBxXSJauFnNPcQdoWi6Xcz7LGgtDUJP3PGbNIiMQNA9wCTJPqhG/1mg
+         4AuyqjOhR9r+0l2rJL8JHsvUBc27tH4aVPTesc57GTkdGmmAMFez19dXfWohGNT5WzcX
+         LhGg==
+X-Gm-Message-State: APjAAAXBReB72B4HEx1ujEGsvGXkL4cviIur+gAYGUNiq/sKLM7PxFzp
+        L4Zbn645D/T8AHsqbrkzc0jaxA==
+X-Google-Smtp-Source: APXvYqxNqq5i16Ldy9K5kJrRzW5FWYXXym5RB8VVgZepY0ldECJaTECor9Qc5brFdyWW9WM/8SUoEA==
+X-Received: by 2002:a17:906:76c2:: with SMTP id q2mr14903775ejn.202.1568905524420;
+        Thu, 19 Sep 2019 08:05:24 -0700 (PDT)
+Received: from lophozonia ([85.195.192.192])
+        by smtp.gmail.com with ESMTPSA id e39sm1689919edb.69.2019.09.19.08.05.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2019 08:05:23 -0700 (PDT)
+Date:   Thu, 19 Sep 2019 17:05:21 +0200
+From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
+To:     Auger Eric <eric.auger@redhat.com>
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        jacob.jun.pan@linux.intel.com, joro@8bytes.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        robh+dt@kernel.org, robin.murphy@arm.com
+Subject: Re: [PATCH 5/8] iommu/arm-smmu-v3: Add second level of context
+ descriptor table
+Message-ID: <20190919150521.GD1013538@lophozonia>
+References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
+ <20190610184714.6786-6-jean-philippe.brucker@arm.com>
+ <3e69caf7-4e8a-4bce-7a89-51e21a0134b1@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e69caf7-4e8a-4bce-7a89-51e21a0134b1@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the syscall entry work handling with the generic version, Provide
-the necessary helper inlines to handle the real architecture specific
-parts, e.g. audit and seccomp invocations.
+On Mon, Jul 08, 2019 at 05:13:05PM +0200, Auger Eric wrote:
+> >  #define STRTAB_STE_0_S1FMT		GENMASK_ULL(5, 4)
+> >  #define STRTAB_STE_0_S1FMT_LINEAR	0
+> > +#define STRTAB_STE_0_S1FMT_4K_L2	1
+> As you only use 64kB L2, I guess you can remove the 4K define?
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/Kconfig                    |    1 
- arch/x86/entry/common.c             |  108 +++---------------------------------
- arch/x86/include/asm/entry-common.h |   59 +++++++++++++++++++
- arch/x86/include/asm/thread_info.h  |    5 -
- 4 files changed, 70 insertions(+), 103 deletions(-)
+I prefer defining all values, but I suppose I can get rid of it.
 
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -110,6 +110,7 @@ config X86
- 	select GENERIC_CPU_AUTOPROBE
- 	select GENERIC_CPU_VULNERABILITIES
- 	select GENERIC_EARLY_IOREMAP
-+	select GENERIC_ENTRY
- 	select GENERIC_FIND_FIRST_BIT
- 	select GENERIC_IOMAP
- 	select GENERIC_IRQ_EFFECTIVE_AFF_MASK	if SMP
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -10,13 +10,13 @@
- #include <linux/kernel.h>
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
-+#include <linux/entry-common.h>
- #include <linux/mm.h>
- #include <linux/smp.h>
- #include <linux/errno.h>
- #include <linux/ptrace.h>
- #include <linux/tracehook.h>
- #include <linux/audit.h>
--#include <linux/seccomp.h>
- #include <linux/signal.h>
- #include <linux/export.h>
- #include <linux/context_tracking.h>
-@@ -34,7 +34,6 @@
- #include <asm/fpu/api.h>
- #include <asm/nospec-branch.h>
- 
--#define CREATE_TRACE_POINTS
- #include <trace/events/syscalls.h>
- 
- #ifdef CONFIG_CONTEXT_TRACKING
-@@ -48,86 +47,6 @@
- static inline void enter_from_user_mode(void) {}
- #endif
- 
--static void do_audit_syscall_entry(struct pt_regs *regs, u32 arch)
--{
--#ifdef CONFIG_X86_64
--	if (arch == AUDIT_ARCH_X86_64) {
--		audit_syscall_entry(regs->orig_ax, regs->di,
--				    regs->si, regs->dx, regs->r10);
--	} else
--#endif
--	{
--		audit_syscall_entry(regs->orig_ax, regs->bx,
--				    regs->cx, regs->dx, regs->si);
--	}
--}
--
--/*
-- * Returns the syscall nr to run (which should match regs->orig_ax) or -1
-- * to skip the syscall.
-- */
--static long syscall_trace_enter(struct pt_regs *regs)
--{
--	u32 arch = in_ia32_syscall() ? AUDIT_ARCH_I386 : AUDIT_ARCH_X86_64;
--
--	struct thread_info *ti = current_thread_info();
--	unsigned long ret = 0;
--	u32 work;
--
--	if (IS_ENABLED(CONFIG_DEBUG_ENTRY))
--		BUG_ON(regs != task_pt_regs(current));
--
--	work = READ_ONCE(ti->flags);
--
--	if (work & (_TIF_SYSCALL_TRACE | _TIF_SYSCALL_EMU)) {
--		ret = tracehook_report_syscall_entry(regs);
--		if (ret || (work & _TIF_SYSCALL_EMU))
--			return -1L;
--	}
--
--#ifdef CONFIG_SECCOMP
--	/*
--	 * Do seccomp after ptrace, to catch any tracer changes.
--	 */
--	if (work & _TIF_SECCOMP) {
--		struct seccomp_data sd;
--
--		sd.arch = arch;
--		sd.nr = regs->orig_ax;
--		sd.instruction_pointer = regs->ip;
--#ifdef CONFIG_X86_64
--		if (arch == AUDIT_ARCH_X86_64) {
--			sd.args[0] = regs->di;
--			sd.args[1] = regs->si;
--			sd.args[2] = regs->dx;
--			sd.args[3] = regs->r10;
--			sd.args[4] = regs->r8;
--			sd.args[5] = regs->r9;
--		} else
--#endif
--		{
--			sd.args[0] = regs->bx;
--			sd.args[1] = regs->cx;
--			sd.args[2] = regs->dx;
--			sd.args[3] = regs->si;
--			sd.args[4] = regs->di;
--			sd.args[5] = regs->bp;
--		}
--
--		ret = __secure_computing(&sd);
--		if (ret == -1)
--			return ret;
--	}
--#endif
--
--	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
--		trace_sys_enter(regs, regs->orig_ax);
--
--	do_audit_syscall_entry(regs, arch);
--
--	return ret ?: regs->orig_ax;
--}
--
- #define EXIT_TO_USERMODE_LOOP_FLAGS				\
- 	(_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | _TIF_UPROBE |	\
- 	 _TIF_NEED_RESCHED | _TIF_USER_RETURN_NOTIFY | _TIF_PATCH_PENDING)
-@@ -277,13 +196,10 @@ static void syscall_slow_exit_work(struc
- #ifdef CONFIG_X86_64
- __visible void do_syscall_64(unsigned long nr, struct pt_regs *regs)
- {
--	struct thread_info *ti;
--
- 	enter_from_user_mode();
- 	local_irq_enable();
--	ti = current_thread_info();
--	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY)
--		nr = syscall_trace_enter(regs);
-+
-+	nr = syscall_enter_from_usermode(regs, nr);
- 
- 	if (likely(nr < NR_syscalls)) {
- 		nr = array_index_nospec(nr, NR_syscalls);
-@@ -310,22 +226,18 @@ static void syscall_slow_exit_work(struc
-  */
- static __always_inline void do_syscall_32_irqs_on(struct pt_regs *regs)
- {
--	struct thread_info *ti = current_thread_info();
- 	unsigned int nr = (unsigned int)regs->orig_ax;
- 
- #ifdef CONFIG_IA32_EMULATION
--	ti->status |= TS_COMPAT;
-+	current_thread_info()->status |= TS_COMPAT;
- #endif
- 
--	if (READ_ONCE(ti->flags) & _TIF_WORK_SYSCALL_ENTRY) {
--		/*
--		 * Subtlety here: if ptrace pokes something larger than
--		 * 2^32-1 into orig_ax, this truncates it.  This may or
--		 * may not be necessary, but it matches the old asm
--		 * behavior.
--		 */
--		nr = syscall_trace_enter(regs);
--	}
-+	/*
-+	 * Subtlety here: if ptrace pokes something larger than 2^32-1 into
-+	 * orig_ax, this truncates it.  This may or may not be necessary,
-+	 * but it matches the old asm behavior.
-+	 */
-+	nr = syscall_enter_from_usermode(regs, nr);
- 
- 	if (likely(nr < IA32_NR_syscalls)) {
- 		nr = array_index_nospec(nr, IA32_NR_syscalls);
---- /dev/null
-+++ b/arch/x86/include/asm/entry-common.h
-@@ -0,0 +1,59 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+#ifndef _ASM_X86_ENTRY_COMMON_H
-+#define _ASM_X86_ENTRY_COMMON_H
-+
-+#include <linux/seccomp.h>
-+#include <linux/audit.h>
-+
-+static inline long arch_syscall_enter_seccomp(struct pt_regs *regs)
-+{
-+#ifdef CONFIG_SECCOMP
-+	u32 arch = in_ia32_syscall() ? AUDIT_ARCH_I386 : AUDIT_ARCH_X86_64;
-+	struct seccomp_data sd;
-+
-+	sd.arch = arch;
-+	sd.nr = regs->orig_ax;
-+	sd.instruction_pointer = regs->ip;
-+
-+#ifdef CONFIG_X86_64
-+	if (arch == AUDIT_ARCH_X86_64) {
-+		sd.args[0] = regs->di;
-+		sd.args[1] = regs->si;
-+		sd.args[2] = regs->dx;
-+		sd.args[3] = regs->r10;
-+		sd.args[4] = regs->r8;
-+		sd.args[5] = regs->r9;
-+	} else
-+#endif
-+	{
-+		sd.args[0] = regs->bx;
-+		sd.args[1] = regs->cx;
-+		sd.args[2] = regs->dx;
-+		sd.args[3] = regs->si;
-+		sd.args[4] = regs->di;
-+		sd.args[5] = regs->bp;
-+	}
-+
-+	return __secure_computing(&sd);
-+#else
-+	return 0;
-+#endif
-+}
-+#define arch_syscall_enter_seccomp arch_syscall_enter_seccomp
-+
-+static inline void arch_syscall_enter_audit(struct pt_regs *regs)
-+{
-+#ifdef CONFIG_X86_64
-+	if (in_ia32_syscall()) {
-+		audit_syscall_entry(regs->orig_ax, regs->di,
-+				    regs->si, regs->dx, regs->r10);
-+	} else
-+#endif
-+	{
-+		audit_syscall_entry(regs->orig_ax, regs->bx,
-+				    regs->cx, regs->dx, regs->si);
-+	}
-+}
-+#define arch_syscall_enter_audit arch_syscall_enter_audit
-+
-+#endif
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -133,11 +133,6 @@ struct thread_info {
- #define _TIF_X32		(1 << TIF_X32)
- #define _TIF_FSCHECK		(1 << TIF_FSCHECK)
- 
--/* Work to do before invoking the actual syscall. */
--#define _TIF_WORK_SYSCALL_ENTRY	\
--	(_TIF_SYSCALL_TRACE | _TIF_SYSCALL_EMU | _TIF_SYSCALL_AUDIT |	\
--	 _TIF_SECCOMP | _TIF_SYSCALL_TRACEPOINT)
--
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW_BASE						\
- 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
+> > +	cfg->tables = devm_kzalloc(smmu->dev, sizeof(struct arm_smmu_cd_table) *
+> > +				   cfg->num_tables, GFP_KERNEL);
+> > +	if (!cfg->tables)
+> > +		return -ENOMEM;
+> goto err_free_l1
+> > +
+> > +	ret = arm_smmu_alloc_cd_leaf_table(smmu, &cfg->tables[0], num_leaf_entries);
+> don't you want to do that only in linear case. In 2-level mode, I
+> understand arm_smmu_get_cd_ptr() will do the job.
 
+OK, that might be better
 
+> 
+> > +	if (ret)
+> > +		goto err_free_l1;
+> > +
+> > +	if (cfg->l1ptr)
+> > +		arm_smmu_write_cd_l1_desc(cfg->l1ptr, &cfg->tables[0]);
+> that stuff could be removed as well?
+
+Yes
+
+> By the way I can see that
+> arm_smmu_get_cd_ptr() does a arm_smmu_sync_cd after. wouldn't it be
+> needed here as well?
+
+No context table is reachable from a STE at this point, so we don't have
+to invalidate anything.
+
+> > @@ -1815,7 +1935,7 @@ static void arm_smmu_domain_free(struct iommu_domain *domain)
+> >  	if (smmu_domain->stage == ARM_SMMU_DOMAIN_S1) {
+> >  		struct arm_smmu_s1_cfg *cfg = &smmu_domain->s1_cfg;
+> >  
+> > -		if (cfg->table.ptr) {
+> > +		if (cfg->tables) {
+> >  			arm_smmu_free_cd_tables(smmu_domain);
+> >  			arm_smmu_bitmap_free(smmu->asid_map, cfg->cd.asid);
+> I don't get why the arm_smmu_bitmap_free is dependent on cfg->tables.
+
+Simply because arm_smmu_bitmap_alloc() and arm_smmu_alloc_cd_tables()
+are both performed in arm_smmu_domain_finalise_s1(). A domain returned
+by arm_smmu_domain_alloc() is not fully initialized, it still needs to
+be finalized by arm_smmu_attach_dev(). So here we check whether the
+domain has been finalized or not. Zero being a valid ASID in this
+driver, we can't check whether cfg->cd.asid is valid, so we check
+cfg->tables instead.
+
+And I forgot to clear cfg->tables after failure of domain_finalise in
+this series, I'll need to fix it.
+
+Thanks,
+Jean
