@@ -2,332 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CEF8B7C2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3506BB7C60
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403781AbfISOXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:23:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47510 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403764AbfISOX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:23:29 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D309E31752BB;
-        Thu, 19 Sep 2019 14:23:27 +0000 (UTC)
-Received: from t460s.redhat.com (unknown [10.36.118.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 20B3060872;
-        Thu, 19 Sep 2019 14:23:21 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, virtualization@lists.linux-foundation.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Juergen Gross <jgross@suse.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        Alexander Potapenko <glider@google.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Yu Zhao <yuzhao@google.com>, Minchan Kim <minchan@kernel.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: [PATCH RFC v3 6/9] mm: Allow to offline PageOffline() pages with a reference count of 0
-Date:   Thu, 19 Sep 2019 16:22:25 +0200
-Message-Id: <20190919142228.5483-7-david@redhat.com>
-In-Reply-To: <20190919142228.5483-1-david@redhat.com>
-References: <20190919142228.5483-1-david@redhat.com>
+        id S2390579AbfISOYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:24:39 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46454 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390478AbfISOXY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:23:24 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190919142323euoutp01c84c6ea2b0febf37047f1af41ed34cd1~F3PguhgV92200122001euoutp01x
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 14:23:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190919142323euoutp01c84c6ea2b0febf37047f1af41ed34cd1~F3PguhgV92200122001euoutp01x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1568903003;
+        bh=AfthMmM6EgHw5o7aJ+tOGSYwkpSBVAIvY47THmRlg88=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uUfGFo9QIDKkubnSJ5/YQMuqyznHJ0n2dRX/MpysB1HAGdhN3OKccdnTnPzSW9fSZ
+         J5fPYC2ZcGw7ZI64nfB9qI8jSm3P2GAaP7jp36X9AS8qDPF7pTBcLclVExcA4JCo0N
+         e8IxiOhUBw/Jb4QzH73svIjcl6ty2FYF/QGKl2gE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190919142323eucas1p2137d5fd4ba615c27d374c78200548f67~F3PgKgjez2883328833eucas1p2u;
+        Thu, 19 Sep 2019 14:23:23 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id C2.0C.04469.A5F838D5; Thu, 19
+        Sep 2019 15:23:22 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d~F3PfLq4zH3081130811eucas1p2n;
+        Thu, 19 Sep 2019 14:23:22 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190919142321eusmtrp19477a6779bcf10be72c5ec00a5f107ab~F3Pe881yZ0555105551eusmtrp1K;
+        Thu, 19 Sep 2019 14:23:21 +0000 (GMT)
+X-AuditID: cbfec7f2-54fff70000001175-f8-5d838f5a4ad8
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 7C.55.04117.95F838D5; Thu, 19
+        Sep 2019 15:23:21 +0100 (BST)
+Received: from AMDC3555.digital.local (unknown [106.120.51.67]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190919142320eusmtip13d096101d63cf3d7c53334a2bda52896~F3PeLg9Oy3274232742eusmtip1o;
+        Thu, 19 Sep 2019 14:23:20 +0000 (GMT)
+From:   =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>,
+        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        georgi.djakov@linaro.org, leonard.crestez@nxp.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
+Subject: [RFC PATCH v2 01/11] devfreq: exynos-bus: Extract
+ exynos_bus_profile_init()
+Date:   Thu, 19 Sep 2019 16:22:26 +0200
+Message-Id: <20190919142236.4071-2-a.swigon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190919142236.4071-1-a.swigon@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 19 Sep 2019 14:23:28 +0000 (UTC)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjuO7cdV7PjFHqzMlv4o8gbZHxRSULUiUAUoh+G1CkPJs0LO9r1
+        R1MzvKSWVs5LKhVeE+fU0OWl1nJY5LJsKWmrLCKxrNQuUNLmMerf87zP5f1e+FhS/ZL2ZROS
+        UkVdkqDVMErqVt9Pe2BMYWZsyP3fgdjS167AzsoshFsMzTR+PvOexlXWARoPzU4xuKTbxOAi
+        5wUK2+1GBa4b+0Jj07iDxk/NFQyezrcibLD3ELjJOqbAL9LrGGwo/sBs9+JNDTkMP+roYnhn
+        no3gW2+c4Vs+dRD83U9dBF/Q1oD4aZNfFBuj3BonahOOibrg8IPKI/2frUzKo1UnMh7r9Cgf
+        cpEHC9xGuDL3hMhFSlbN1SG4NFFDy2QGwfD1MiSTaQQj7U3M30hvr3EhUoug+Gbpv0i/YWze
+        xXARUHT5lcIt+HBWl6t6inITkrtBQEG5nXS7vLl9MGgw0m5McQFQP3ptfq7iMLTrnbS8bzU0
+        Gu/Mzz24zTDTU0XJHi/oL307j0mXJ7O9nHQvAC6dhecVJS6BdZEdMNm4W+7xhglbm0LGK+Fh
+        8XlKxhK863TSclaPwFRjJWVhC9yzDdLuHpJbB83mYHkcAfVvvhByvScMf/SSn+AJRbdKSHms
+        guxzahlqwFzqKQcBMhodC908jNuq0QW0puy/W8r+u6Xs39pqRDagZWKalBgvSqFJ4vEgSUiU
+        0pLigw4nJ5qQ69c9nLN97UCzTw5ZEMcizRKV//HMWDUtHJNOJloQsKTGR1URlhGrVsUJJ0+J
+        uuQDujStKFnQCpbSLFOdXvRqv5qLF1LFo6KYIur+qgTr4atHV43Sxe87zel6bWQ/M5K/rng2
+        fqjxm+CXTBwOCCycSvP3Pvt6r35XF+lYqqVjo2tTl4TXjyjDzSds+h95+XHdCW2LN1DCwJ6s
+        fYzfoWcdYWF5m46G3c6OyjDltHoH11RmT26rddzf+yiqs3Dn9cgND6q/ra16aghZXjERbVjx
+        q8GhoaQjQuh6UicJfwCR5LDPcQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMIsWRmVeSWpSXmKPExsVy+t/xu7qR/c2xBvcn61kcOraV3eL+vFZG
+        i40z1rNaXP/ynNVi/pFzrBZXvr5ns5i+dxObxaT7E1gszp/fwG6x4u5HVotNj6+xWlzeNYfN
+        4nPvEUaLGef3MVmsPXKX3eJ24wo2ixmTX7I5CHpsWtXJ5nHn2h42j/vdx5k8Ni+p99j4bgeT
+        x8F3e5g8+rasYvT4vEkugCNKz6Yov7QkVSEjv7jEVina0MJIz9DSQs/IxFLP0Ng81srIVEnf
+        ziYlNSezLLVI3y5BL+PkhyNsBWdlK5ouFDUw9kp0MXJySAiYSOzfv4Gpi5GLQ0hgKaPE5AtX
+        2SESEhIf199ghbCFJf5c62IDsYUEPjFKvH0rC2KzCThKTJr6gB2kWUTgFKPE1uXn2EAcZoEN
+        TBLLn74E6xYWCJHoWvKYGcRmEVCVWHlnEZjNK2AhsbXhPtQGeYnVGw6AxTkFLCW+7JvPArHN
+        QmLu47mMEPWCEidnPgGKcwAtUJdYP08IJMwM1Nq8dTbzBEbBWUiqZiFUzUJStYCReRWjSGpp
+        cW56brGRXnFibnFpXrpecn7uJkZgBG879nPLDsaud8GHGAU4GJV4eBXKm2OFWBPLiitzDzFK
+        cDArifDOMW2KFeJNSaysSi3Kjy8qzUktPsRoCvTaRGYp0eR8YHLJK4k3NDU0t7A0NDc2Nzaz
+        UBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXAKDU1pS1X2W9/TrVQ08wHC3fc6pab5hYQuFj3
+        Wp1Z86sfj0Prn4SfWa+7/LFjjT2PSdnsdl7luSvf7Go+8zPDl+cB/8ff15+6vQqbMdHjVCHX
+        jcSkkpdTexarclbvzJ30S/GD8Y8qG7+0X9MXmj36rBfwjvWuy7aHiZ3cd/88al84ZUrc9rNH
+        xJRYijMSDbWYi4oTAbT4Bh32AgAA
+X-CMS-MailID: 20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d
+References: <20190919142236.4071-1-a.swigon@samsung.com>
+        <CGME20190919142322eucas1p24bc477ee6e1bcd65546c305d55af097d@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-virtio-mem wants to allow to offline memory blocks of which some parts
-were unplugged, especially, to later offline and remove completely
-unplugged memory blocks. The important part is that PageOffline() has
-to remain set until the section is offline, so these pages will never
-get accessed (e.g., when dumping). The pages should not be handed
-back to the buddy (which would require clearing PageOffline() and
-result in issues if offlining fails and the pages are suddenly in the
-buddy).
+From: Artur Świgoń <a.swigon@partner.samsung.com>
 
-Let's use "PageOffline() + reference count = 0" as a sign to
-memory offlining code that these pages can simply be skipped when
-offlining, similar to free or HWPoison pages.
+This patch adds a new static function, exynos_bus_profile_init(), extracted
+from exynos_bus_probe().
 
-Pass flags to test_pages_isolated(), similar as already done for
-has_unmovable_pages(). Use a new flag to indicate the
-requirement of memory offlining to skip over these special pages.
-
-In has_unmovable_pages(), make sure the pages won't be detected as
-movable. This is not strictly necessary, however makes e.g.,
-alloc_contig_range() stop early, trying to isolate such page blocks -
-compared to failing later when testing if all pages were isolated.
-
-Also, make sure that when a reference to a PageOffline() page is
-dropped, that the page will not be returned to the buddy.
-
-memory devices (like virtio-mem) that want to make use of this
-functionality have to make sure to synchronize against memory offlining,
-using the memory hotplug notifier.
-
-Alternative: Allow to offline with a reference count of 1
-and use some other sign in the struct page that offlining is permitted.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Pavel Tatashin <pavel.tatashin@microsoft.com>
-Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc: Anthony Yznaga <anthony.yznaga@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Pingfan Liu <kernelfans@gmail.com>
-Cc: Qian Cai <cai@lca.pw>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Wei Yang <richardw.yang@linux.intel.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Yu Zhao <yuzhao@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
 ---
- include/linux/page-flags.h     |  4 ++++
- include/linux/page-isolation.h |  4 +++-
- mm/memory_hotplug.c            |  9 ++++++---
- mm/page_alloc.c                | 22 +++++++++++++++++++++-
- mm/page_isolation.c            | 18 +++++++++++++-----
- mm/swap.c                      |  9 +++++++++
- 6 files changed, 56 insertions(+), 10 deletions(-)
+ drivers/devfreq/exynos-bus.c | 92 +++++++++++++++++++++---------------
+ 1 file changed, 53 insertions(+), 39 deletions(-)
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index f91cb8898ff0..7e563eab6b4b 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -745,6 +745,10 @@ PAGE_TYPE_OPS(Buddy, buddy)
-  * not onlined when onlining the section).
-  * The content of these pages is effectively stale. Such pages should not
-  * be touched (read/write/dump/save) except by their owner.
-+ *
-+ * PageOffline() pages that have a reference count of 0 will be treated
-+ * like free pages when offlining pages, allowing the containing memory
-+ * block to get offlined.
-  */
- PAGE_TYPE_OPS(Offline, offline)
- 
-diff --git a/include/linux/page-isolation.h b/include/linux/page-isolation.h
-index 1099c2fee20f..024e02b60346 100644
---- a/include/linux/page-isolation.h
-+++ b/include/linux/page-isolation.h
-@@ -32,6 +32,8 @@ static inline bool is_migrate_isolate(int migratetype)
- 
- #define SKIP_HWPOISON	0x1
- #define REPORT_FAILURE	0x2
-+/* Skip PageOffline() pages with a reference count of 0. */
-+#define SKIP_OFFLINE	0x4
- 
- bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 			 int migratetype, int flags);
-@@ -58,7 +60,7 @@ undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
-  * Test all pages in [start_pfn, end_pfn) are isolated or not.
-  */
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
--			bool skip_hwpoisoned_pages);
-+			int flags);
- 
- struct page *alloc_migrate_target(struct page *page, unsigned long private);
- 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index f08eb429b8f3..d23ff7c5c96b 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1127,7 +1127,8 @@ static bool is_pageblock_removable_nolock(unsigned long pfn)
- 	if (!zone_spans_pfn(zone, pfn))
- 		return false;
- 
--	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE, SKIP_HWPOISON);
-+	return !has_unmovable_pages(zone, page, 0, MIGRATE_MOVABLE,
-+				    SKIP_HWPOISON | SKIP_OFFLINE);
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 29f422469960..78f38b7fb596 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -287,12 +287,62 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 	return ret;
  }
  
- /* Checks if this range of memory is likely to be hot-removable. */
-@@ -1344,7 +1345,8 @@ static int
- check_pages_isolated_cb(unsigned long start_pfn, unsigned long nr_pages,
- 			void *data)
++static int exynos_bus_profile_init(struct exynos_bus *bus,
++				   struct devfreq_dev_profile *profile)
++{
++	struct device *dev = bus->dev;
++	struct devfreq_simple_ondemand_data *ondemand_data;
++	int ret;
++
++	/* Initialize the struct profile and governor data for parent device */
++	profile->polling_ms = 50;
++	profile->target = exynos_bus_target;
++	profile->get_dev_status = exynos_bus_get_dev_status;
++	profile->exit = exynos_bus_exit;
++
++	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
++	if (!ondemand_data) {
++		ret = -ENOMEM;
++		goto err;
++	}
++	ondemand_data->upthreshold = 40;
++	ondemand_data->downdifferential = 5;
++
++	/* Add devfreq device to monitor and handle the exynos bus */
++	bus->devfreq = devm_devfreq_add_device(dev, profile,
++						DEVFREQ_GOV_SIMPLE_ONDEMAND,
++						ondemand_data);
++	if (IS_ERR(bus->devfreq)) {
++		dev_err(dev, "failed to add devfreq device\n");
++		ret = PTR_ERR(bus->devfreq);
++		goto err;
++	}
++
++	/*
++	 * Enable devfreq-event to get raw data which is used to determine
++	 * current bus load.
++	 */
++	ret = exynos_bus_enable_edev(bus);
++	if (ret < 0) {
++		dev_err(dev, "failed to enable devfreq-event devices\n");
++		goto err;
++	}
++
++	ret = exynos_bus_set_event(bus);
++	if (ret < 0) {
++		dev_err(dev, "failed to set event to devfreq-event devices\n");
++		goto err;
++	}
++
++err:
++	return ret;
++}
++
+ static int exynos_bus_probe(struct platform_device *pdev)
  {
--	return test_pages_isolated(start_pfn, start_pfn + nr_pages, true);
-+	return test_pages_isolated(start_pfn, start_pfn + nr_pages,
-+				   SKIP_HWPOISON | SKIP_OFFLINE);
- }
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node, *node;
+ 	struct devfreq_dev_profile *profile;
+-	struct devfreq_simple_ondemand_data *ondemand_data;
+ 	struct devfreq_passive_data *passive_data;
+ 	struct devfreq *parent_devfreq;
+ 	struct exynos_bus *bus;
+@@ -334,45 +384,9 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 	if (passive)
+ 		goto passive;
  
- static int __init cmdline_parse_movable_node(char *p)
-@@ -1455,7 +1457,8 @@ static int __ref __offline_pages(unsigned long start_pfn,
- 	/* set above range as isolated */
- 	ret = start_isolate_page_range(start_pfn, end_pfn,
- 				       MIGRATE_MOVABLE,
--				       SKIP_HWPOISON | REPORT_FAILURE);
-+				       SKIP_HWPOISON | REPORT_FAILURE |
-+				       SKIP_OFFLINE);
- 	if (ret < 0) {
- 		reason = "failure to isolate range";
- 		goto failed_removal;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d5d7944954b3..fef74720d8b4 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -8221,6 +8221,15 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
- 		if (!page_ref_count(page)) {
- 			if (PageBuddy(page))
- 				iter += (1 << page_order(page)) - 1;
-+			/*
-+			* Memory devices allow to offline a page if it is
-+			* marked PG_offline and has a reference count of 0.
-+			* However, the pages are not movable as it would be
-+			* required e.g., for alloc_contig_range().
-+			*/
-+			if (PageOffline(page) && !(flags & SKIP_OFFLINE))
-+				if (++found > count)
-+					goto unmovable;
- 			continue;
- 		}
+-	/* Initialize the struct profile and governor data for parent device */
+-	profile->polling_ms = 50;
+-	profile->target = exynos_bus_target;
+-	profile->get_dev_status = exynos_bus_get_dev_status;
+-	profile->exit = exynos_bus_exit;
+-
+-	ondemand_data = devm_kzalloc(dev, sizeof(*ondemand_data), GFP_KERNEL);
+-	if (!ondemand_data) {
+-		ret = -ENOMEM;
++	ret = exynos_bus_profile_init(bus, profile);
++	if (ret < 0)
+ 		goto err;
+-	}
+-	ondemand_data->upthreshold = 40;
+-	ondemand_data->downdifferential = 5;
+-
+-	/* Add devfreq device to monitor and handle the exynos bus */
+-	bus->devfreq = devm_devfreq_add_device(dev, profile,
+-						DEVFREQ_GOV_SIMPLE_ONDEMAND,
+-						ondemand_data);
+-	if (IS_ERR(bus->devfreq)) {
+-		dev_err(dev, "failed to add devfreq device\n");
+-		ret = PTR_ERR(bus->devfreq);
+-		goto err;
+-	}
+-
+-	/*
+-	 * Enable devfreq-event to get raw data which is used to determine
+-	 * current bus load.
+-	 */
+-	ret = exynos_bus_enable_edev(bus);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to enable devfreq-event devices\n");
+-		goto err;
+-	}
+-
+-	ret = exynos_bus_set_event(bus);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set event to devfreq-event devices\n");
+-		goto err;
+-	}
  
-@@ -8444,7 +8453,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
- 	}
- 
- 	/* Make sure the range is really isolated. */
--	if (test_pages_isolated(outer_start, end, false)) {
-+	if (test_pages_isolated(outer_start, end, 0)) {
- 		pr_info_ratelimited("%s: [%lx, %lx) PFNs busy\n",
- 			__func__, outer_start, end);
- 		ret = -EBUSY;
-@@ -8563,6 +8572,17 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
- 			offlined_pages++;
- 			continue;
- 		}
-+		/*
-+		 * Memory devices allow to offline a page if it is marked
-+		 * PG_offline and has a reference count of 0.
-+		 */
-+		if (PageOffline(page) && !page_count(page)) {
-+			BUG_ON(PageBuddy(page));
-+			pfn++;
-+			SetPageReserved(page);
-+			offlined_pages++;
-+			continue;
-+		}
- 
- 		BUG_ON(page_count(page));
- 		BUG_ON(!PageBuddy(page));
-diff --git a/mm/page_isolation.c b/mm/page_isolation.c
-index 89c19c0feadb..0a75019d7e7c 100644
---- a/mm/page_isolation.c
-+++ b/mm/page_isolation.c
-@@ -171,6 +171,8 @@ __first_valid_page(unsigned long pfn, unsigned long nr_pages)
-  *			SKIP_HWPOISON - ignore hwpoison pages
-  *			REPORT_FAILURE - report details about the failure to
-  *			isolate the range
-+ *			SKIP_OFFLINE - ignore PageOffline() pages with a
-+ *			reference count of 0
-  *
-  * Making page-allocation-type to be MIGRATE_ISOLATE means free pages in
-  * the range will never be allocated. Any free pages and pages freed in the
-@@ -257,7 +259,7 @@ void undo_isolate_page_range(unsigned long start_pfn, unsigned long end_pfn,
-  */
- static unsigned long
- __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
--				  bool skip_hwpoisoned_pages)
-+				  int flags)
- {
- 	struct page *page;
- 
-@@ -274,9 +276,16 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
- 			 * simple way to verify that as VM_BUG_ON(), though.
- 			 */
- 			pfn += 1 << page_order(page);
--		else if (skip_hwpoisoned_pages && PageHWPoison(page))
-+		else if ((flags & SKIP_HWPOISON) && PageHWPoison(page))
- 			/* A HWPoisoned page cannot be also PageBuddy */
- 			pfn++;
-+		else if ((flags & SKIP_OFFLINE) && PageOffline(page) &&
-+			 !page_count(page))
-+			/*
-+			 * Memory devices allow to offline a page if it is
-+			 * marked PG_offline and has a reference count of 0.
-+			 */
-+			pfn++;
- 		else
- 			break;
- 	}
-@@ -286,7 +295,7 @@ __test_page_isolated_in_pageblock(unsigned long pfn, unsigned long end_pfn,
- 
- /* Caller should ensure that requested range is in a single zone */
- int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
--			bool skip_hwpoisoned_pages)
-+			int isol_flags)
- {
- 	unsigned long pfn, flags;
- 	struct page *page;
-@@ -308,8 +317,7 @@ int test_pages_isolated(unsigned long start_pfn, unsigned long end_pfn,
- 	/* Check all pages are free or marked as ISOLATED */
- 	zone = page_zone(page);
- 	spin_lock_irqsave(&zone->lock, flags);
--	pfn = __test_page_isolated_in_pageblock(start_pfn, end_pfn,
--						skip_hwpoisoned_pages);
-+	pfn = __test_page_isolated_in_pageblock(start_pfn, end_pfn, isol_flags);
- 	spin_unlock_irqrestore(&zone->lock, flags);
- 
- 	trace_test_pages_isolated(start_pfn, end_pfn, pfn);
-diff --git a/mm/swap.c b/mm/swap.c
-index 38c3fa4308e2..f98987656ecc 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -107,6 +107,15 @@ void __put_page(struct page *page)
- 		 * not return it to page allocator.
- 		 */
- 		return;
-+	} else if (PageOffline(page)) {
-+		/*
-+		 * Memory devices allow to offline a page if it is
-+		 * marked PG_offline and has a reference count of 0. So if
-+		 * somebody puts a reference of such a page and the
-+		 * reference count drops to 0, don't return the page to the
-+		 * buddy.
-+		 */
-+		return;
- 	}
- 
- 	if (unlikely(PageCompound(page)))
+ 	goto out;
+ passive:
 -- 
-2.21.0
+2.17.1
 
