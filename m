@@ -2,104 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 285DAB7336
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 08:36:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE38B7339
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 08:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388247AbfISGgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 02:36:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
+        id S2388272AbfISGgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 02:36:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbfISGgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 02:36:18 -0400
+        id S2388253AbfISGgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 02:36:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 840D0218AF;
-        Thu, 19 Sep 2019 06:36:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 724D421927;
+        Thu, 19 Sep 2019 06:36:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568874978;
-        bh=kLqycoBe8uV8E2knqmFJ1o58JmJlygAiwWJwYCZe3u4=;
+        s=default; t=1568875005;
+        bh=fNcpNjL3+ZaeqXWPPQOmDXQGgZuOBgJuqNOdnxawZFI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MBj1OhUSqRr3IZoLYSeHbj1Qf6DNpVP0GFMSepJmowWR/fpbYu+KDjGnM8GDDFTwT
-         C2wlqJBLS12ZilvPdqSYpw/TpurkUrYrG9oTs+V1gQ691DjUUdUPbQSBM+ZbNzA0NC
-         3jOV/vXTS9pdhd4wf6ILs7cuvS20g5fiiHPm20xw=
-Date:   Thu, 19 Sep 2019 08:36:15 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     akpm@linux-foundation.org, vvs@virtuozzo.com,
-        torvalds@linux-foundation.org, adobriyan@gmail.com,
-        anna.schumaker@netapp.com, arjan@linux.intel.com,
-        bfields@fieldses.org, chuck.lever@oracle.com, davem@davemloft.net,
-        jlayton@kernel.org, luto@kernel.org, mingo@kernel.org,
-        Nadia.Derbey@bull.net, paulmck@linux.vnet.ibm.com,
-        semen.protsenko@linaro.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, trond.myklebust@hammerspace.com,
-        viresh.kumar@linaro.org, stable@kernel.org,
-        dylix.dailei@huawei.com, yuehaibing@huawei.com,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] kernel/notifier.c: intercepting duplicate
- registrations to avoid infinite loops
-Message-ID: <20190919063615.GA2069346@kroah.com>
-References: <1568861888-34045-1-git-send-email-nixiaoming@huawei.com>
- <1568861888-34045-2-git-send-email-nixiaoming@huawei.com>
+        b=VLa2aPoiLrHjHMKDa3PmNqHrmoyiY4FaxoCarVovCO/eJj4nHRCPFEG8xDHASapAd
+         JCsOE0AxyjGjc5VDOkwFBRDks6xVeoZlFDxTEuhukLWOp3OKkkJWabX/7DTo+FyE66
+         SXh/hQdv6fopGU+teVcOwHleu9qzMv5hWdck4z5o=
+Date:   Thu, 19 Sep 2019 08:36:43 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     shuah <shuah@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.2 00/85] 5.2.16-stable review
+Message-ID: <20190919063643.GB2069346@kroah.com>
+References: <20190918061234.107708857@linuxfoundation.org>
+ <4ececdb6-6263-97d3-727a-39d89792634c@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1568861888-34045-2-git-send-email-nixiaoming@huawei.com>
+In-Reply-To: <4ececdb6-6263-97d3-727a-39d89792634c@kernel.org>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 10:58:06AM +0800, Xiaoming Ni wrote:
-> Registering the same notifier to a hook repeatedly can cause the hook
-> list to form a ring or lose other members of the list.
+On Wed, Sep 18, 2019 at 07:22:50PM -0600, shuah wrote:
+> On 9/18/19 12:18 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.2.16 release.
+> > There are 85 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Fri 20 Sep 2019 06:09:47 AM UTC.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.16-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
 > 
-> case1: An infinite loop in notifier_chain_register() can cause soft lockup
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test2);
-> 
-> case2: An infinite loop in notifier_chain_register() can cause soft lockup
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_call_chain(&test_notifier_list, 0, NULL);
-> 
-> case3: lose other hook test2
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
->         atomic_notifier_chain_register(&test_notifier_list, &test2);
->         atomic_notifier_chain_register(&test_notifier_list, &test1);
-> 
-> case4: Unregister returns 0, but the hook is still in the linked list,
->         and it is not really registered. If you call notifier_call_chain
->         after ko is unloaded, it will trigger oops.
-> 
-> If the system is configured with softlockup_panic and the same
-> hook is repeatedly registered on the panic_notifier_list, it
-> will cause a loop panic.
-> 
-> Add a check in notifier_chain_register(),
-> Intercepting duplicate registrations to avoid infinite loops
-> 
-> Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
-> Reviewed-by: Vasily Averin <vvs@virtuozzo.com>
-> ---
->  kernel/notifier.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> Compiled and booted on my test system. No dmesg regressions.
 
-<formletter>
-
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
-
-</formletter>
-
-Same thing goes for all of the patches in this series.
-
-thanks,
+Thanks for testing all of these and letting me know.
 
 greg k-h
