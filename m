@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A2BEB84D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 435C3B8522
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393801AbfISWOn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:14:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54242 "EHLO mail.kernel.org"
+        id S2389451AbfISWSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:18:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393787AbfISWOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:14:37 -0400
+        id S2389941AbfISWSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:18:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44B3A21920;
-        Thu, 19 Sep 2019 22:14:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AABD21907;
+        Thu, 19 Sep 2019 22:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931276;
-        bh=566Bz2o9qSdYSA2i4UQw+4bzvn1OWackuqqOtUWjLro=;
+        s=default; t=1568931482;
+        bh=ahnRj9CrAKKpZqt1LnrLdaVtCpkOtW2N/SPvWQjSWnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wf+7F/fomjdfPZ+9IB7wG/KwceUMeaB/qZO3JCJhxmk5u5NDdPbVRIWYssn8wOsh0
-         9j1KgVfUS1FnlR3dz2xPIqlbiKjJM2Z+5wM5jd+PWU78y99g8kywBaSEExOayo3DnC
-         VfzeWdOlz7yS5gDPCL8DN5Z6Vm7RmLW5DoMyzemg=
+        b=y2RRBdglqTG2ACPSGuKGjMA5f8Zhbx3q7l659UxCfWd2sHQWKoBtoRzjLcKLzP/n2
+         mxSw/14mRGvZYnoIIjHzwrxtUqVcp2HTYmazW/lV4MhZ3edzq/0ZYWF67CUj5m83kx
+         CUmmrCg+3eG00cwlcPZBkMLRk2zbFHIeim1wTt5M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 67/79] dmaengine: ti: dma-crossbar: Fix a memory leak bug
+        stable@vger.kernel.org, Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 37/59] ARM: 8901/1: add a criteria for pfn_valid of arm
 Date:   Fri, 20 Sep 2019 00:03:52 +0200
-Message-Id: <20190919214813.573405650@linuxfoundation.org>
+Message-Id: <20190919214806.450934150@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: zhaoyang <huangzhaoyang@gmail.com>
 
-[ Upstream commit 2c231c0c1dec42192aca0f87f2dc68b8f0cbc7d2 ]
+[ Upstream commit 5b3efa4f1479c91cb8361acef55f9c6662feba57 ]
 
-In ti_dra7_xbar_probe(), 'rsv_events' is allocated through kcalloc(). Then
-of_property_read_u32_array() is invoked to search for the property.
-However, if this process fails, 'rsv_events' is not deallocated, leading to
-a memory leak bug. To fix this issue, free 'rsv_events' before returning
-the error.
+pfn_valid can be wrong when parsing a invalid pfn whose phys address
+exceeds BITS_PER_LONG as the MSB will be trimed when shifted.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/1565938136-7249-1-git-send-email-wenwen@cs.uga.edu
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+The issue originally arise from bellowing call stack, which corresponding to
+an access of the /proc/kpageflags from userspace with a invalid pfn parameter
+and leads to kernel panic.
+
+[46886.723249] c7 [<c031ff98>] (stable_page_flags) from [<c03203f8>]
+[46886.723264] c7 [<c0320368>] (kpageflags_read) from [<c0312030>]
+[46886.723280] c7 [<c0311fb0>] (proc_reg_read) from [<c02a6e6c>]
+[46886.723290] c7 [<c02a6e24>] (__vfs_read) from [<c02a7018>]
+[46886.723301] c7 [<c02a6f74>] (vfs_read) from [<c02a778c>]
+[46886.723315] c7 [<c02a770c>] (SyS_pread64) from [<c0108620>]
+(ret_fast_syscall+0x0/0x28)
+
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/ti/dma-crossbar.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/mm/init.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/dma/ti/dma-crossbar.c b/drivers/dma/ti/dma-crossbar.c
-index 9272b173c7465..6574cb5a12fee 100644
---- a/drivers/dma/ti/dma-crossbar.c
-+++ b/drivers/dma/ti/dma-crossbar.c
-@@ -395,8 +395,10 @@ static int ti_dra7_xbar_probe(struct platform_device *pdev)
- 
- 		ret = of_property_read_u32_array(node, pname, (u32 *)rsv_events,
- 						 nelm * 2);
--		if (ret)
-+		if (ret) {
-+			kfree(rsv_events);
- 			return ret;
-+		}
- 
- 		for (i = 0; i < nelm; i++) {
- 			ti_dra7_xbar_reserve(rsv_events[i][0], rsv_events[i][1],
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 4fa12fcf1f5d8..27a40101dd3a7 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -195,6 +195,11 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+ int pfn_valid(unsigned long pfn)
+ {
++	phys_addr_t addr = __pfn_to_phys(pfn);
++
++	if (__phys_to_pfn(addr) != pfn)
++		return 0;
++
+ 	return memblock_is_map_memory(__pfn_to_phys(pfn));
+ }
+ EXPORT_SYMBOL(pfn_valid);
 -- 
 2.20.1
 
