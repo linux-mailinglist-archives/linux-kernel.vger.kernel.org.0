@@ -2,106 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03D3B79F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E882EB7A00
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 15:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389732AbfISM6Y convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Sep 2019 08:58:24 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:56931 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387712AbfISM6Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 08:58:24 -0400
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 36BFB240005;
-        Thu, 19 Sep 2019 12:58:19 +0000 (UTC)
-Date:   Thu, 19 Sep 2019 14:58:19 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Piotr Sroka <piotrs@cadence.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] - change calculating of position page containing BBM
-Message-ID: <20190919145819.66e74aef@xps13>
-In-Reply-To: <20190919124139.10856-1-piotrs@cadence.com>
-References: <20190919124139.10856-1-piotrs@cadence.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2390461AbfISNBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 09:01:49 -0400
+Received: from first.geanix.com ([116.203.34.67]:38038 "EHLO first.geanix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388846AbfISNBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 09:01:48 -0400
+Received: from [192.168.8.20] (unknown [85.184.140.241])
+        by first.geanix.com (Postfix) with ESMTPSA id 9D2CA681A9;
+        Thu, 19 Sep 2019 13:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=geanix.com; s=first;
+        t=1568898101; bh=OrlqwK2SAAOFsSpde8lIVUxGZTfhMzH/o/6acmAaHjI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=VMTVNpct4R2DY9WcONYPhvK8BXJr00zsIoaxhp+QQWifLueiubH76/o0AlhZWUuxo
+         tZme9uFVopJPka55N1+YWsyOZSKTsRmLuqgiCQjB+NrsAdiTdLc96XE35cTLcigvvd
+         B02Fd+zWCrsSEGRrHccJaNYaQXTevCxxpgRFp0dNTbzKdjytQXc7xDt2yoQ7bYl47V
+         /Z0ua95vYF47BdBcqAfugjrRcx4hxscWSkeQUwPfekmwF7UUIexKa5ym6DZlSOSDJF
+         k39+oPCcjz6Ixz/7/yPkcvSmaoS0lPtQ3ws52MXlC4r+yXGNG+lnyUSLSuZKxAOXNJ
+         3mEfLOjp8nPVA==
+Subject: Re: [PATCH] tty: n_gsm: avoid recursive locking with async port
+ hangup
+To:     Jiri Slaby <jslaby@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        linux-kernel@vger.kernel.org
+Cc:     Esben Haabendal <esben@geanix.com>,
+        =?UTF-8?Q?Sean_Nyekj=c3=a6r?= <sean@geanix.com>
+References: <20190822215601.9028-1-martin@geanix.com>
+ <4fd2d737-14a8-6fe6-16a1-c5e6d924f9e6@geanix.com>
+ <a1c42b28-6e00-7c1f-9e4b-cf089c17e050@suse.com>
+From:   =?UTF-8?Q?Martin_Hundeb=c3=b8ll?= <martin@geanix.com>
+Message-ID: <4e206e1c-4f6d-bdc1-a435-9f4e8bb004ee@geanix.com>
+Date:   Thu, 19 Sep 2019 15:01:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <a1c42b28-6e00-7c1f-9e4b-cf089c17e050@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US-large
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.1 required=4.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,URIBL_BLOCKED
+        autolearn=disabled version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on b8b5098bc1bc
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Piotr,
-
-Piotr Sroka <piotrs@cadence.com> wrote on Thu, 19 Sep 2019 13:41:35
-+0100:
-
-> Change calculating of position page containing BBM
+On 04/09/2019 10.18, Jiri Slaby wrote:
+> On 29. 08. 19, 21:42, Martin Hundebøll  wrote:
+>> On 22/08/2019 23.56, Martin Hundebøll wrote:
+>>> When tearing down the n_gsm ldisc while one or more of its child ports
+>>> are open, a lock dep warning occurs:
+>>>
+>>> [   56.254258] ======================================================
+>>> [   56.260447] WARNING: possible circular locking dependency detected
+>>> [   56.266641] 5.2.0-00118-g1fd58e20e5b0 #30 Not tainted
+>>> [   56.271701] ------------------------------------------------------
+>>> [   56.277890] cmux/271 is trying to acquire lock:
+>>> [   56.282436] 8215283a (&tty->legacy_mutex){+.+.}, at:
+>>> __tty_hangup.part.0+0x58/0x27c
+>>> [   56.290128]
+>>> [   56.290128] but task is already holding lock:
+>>> [   56.295970] e9e2b842 (&gsm->mutex){+.+.}, at:
+>>> gsm_cleanup_mux+0x9c/0x15c
+>>> [   56.302699]
+>>> [   56.302699] which lock already depends on the new lock.
+>>> [   56.302699]
+>>> [   56.310884]
+>>> [   56.310884] the existing dependency chain (in reverse order) is:
+>>> [   56.318372]
+>>> [   56.318372] -> #2 (&gsm->mutex){+.+.}:
+>>> [   56.323624]        mutex_lock_nested+0x1c/0x24
+>>> [   56.328079]        gsm_cleanup_mux+0x9c/0x15c
+>>> [   56.332448]        gsmld_ioctl+0x418/0x4e8
+>>> [   56.336554]        tty_ioctl+0x96c/0xcb0
+>>> [   56.340492]        do_vfs_ioctl+0x41c/0xa5c
+>>> [   56.344685]        ksys_ioctl+0x34/0x60
+>>> [   56.348535]        ret_fast_syscall+0x0/0x28
+>>> [   56.352815]        0xbe97cc04
+>>> [   56.355791]
+>>> [   56.355791] -> #1 (&tty->ldisc_sem){++++}:
+>>> [   56.361388]        tty_ldisc_lock+0x50/0x74
+>>> [   56.365581]        tty_init_dev+0x88/0x1c4
+>>> [   56.369687]        tty_open+0x1c8/0x430
+>>> [   56.373536]        chrdev_open+0xa8/0x19c
+>>> [   56.377560]        do_dentry_open+0x118/0x3c4
+>>> [   56.381928]        path_openat+0x2fc/0x1190
+>>> [   56.386123]        do_filp_open+0x68/0xd4
+>>> [   56.390146]        do_sys_open+0x164/0x220
+>>> [   56.394257]        kernel_init_freeable+0x328/0x3e4
+>>> [   56.399146]        kernel_init+0x8/0x110
+>>> [   56.403078]        ret_from_fork+0x14/0x20
+>>> [   56.407183]        0x0
+>>> [   56.409548]
+>>> [   56.409548] -> #0 (&tty->legacy_mutex){+.+.}:
+>>> [   56.415402]        __mutex_lock+0x64/0x90c
+>>> [   56.419508]        mutex_lock_nested+0x1c/0x24
+>>> [   56.423961]        __tty_hangup.part.0+0x58/0x27c
+>>> [   56.428676]        gsm_cleanup_mux+0xe8/0x15c
+>>> [   56.433043]        gsmld_close+0x48/0x90
+>>> [   56.436979]        tty_ldisc_kill+0x2c/0x6c
+>>> [   56.441173]        tty_ldisc_release+0x88/0x194
+>>> [   56.445715]        tty_release_struct+0x14/0x44
+>>> [   56.450254]        tty_release+0x36c/0x43c
+>>> [   56.454365]        __fput+0x94/0x1e8
+>>>
+>>> Avoid the warning by doing the port hangup asynchronously.
+>>
+>> Any comments?
 > 
-> If none of BBM flags is set then function nand_bbm_get_next_page 
-> reports EINVAL. It causes that BBM is not read at all during scanning
-> factory bad blocks. The result is that the BBT table is build without 
-> checking factory BBM at all. For Micron flash memories none of this 
-> flag is set if page size is different than 2048 bytes.
-
-"none of these flags are set"
-
+> I did not manage to reply before vacation, and after having "work =
+> NULL" in my head, I forgot, sorry.
 > 
-> This patch changes the nand_bbm_get_next_page function.
+> At the same time, I am a bit lost in the lockdep chain above. It mixes
+> close (#0), open (#1) and ioctl (#2), so how is this a "chain" in the
+> first place?
 
-"Address this regression by changing the
-nand_bbm_get_next_page_function."
+The close is from my cmux program, that configured the line discpline.
 
-> It will return 0 if none of BBM flag is set and page parameter is 0. 
+The open could be from my other process reading the virtual tty 
+(gsmtty1)? Or is it a lock taken during the opening of the physical tty?
 
-                      no BBM flag is set
+Can the ioctl call used to configure the line discipline take a lock 
+that is not released until the line discipline is changed back?
 
-> After that modification way of discovering factory bad blocks will work 
-> similar as in kernel version 5.1.
+> BTW, do you see an actual deadlock? And what tty driver do you use for
+> backend devices? I.e. what ttys do you set this ldisc to?
+
+After the first deadlock, I can use the UART, and configure GSM0710 
+multiplexing again, but the virtual tty's don't work:
+
+   root@iwg26:~# cat /dev/gsmtty1
+   cat: can't open '/dev/gsmtty1': Protocol driver not attached
+
+This is on an i.MX6 ULL using its imx uart driver 
+(drivers/tty/serial/imx.c).
+
+> See also the comment below.
 > 
-
-Fixes + stable tags would be great!
-
-> Signed-off-by: Piotr Sroka <piotrs@cadence.com>
-> ---
->  drivers/mtd/nand/raw/nand_base.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>>> Signed-off-by: Martin Hundebøll <martin@geanix.com>
+>>> ---
+>>>    drivers/tty/n_gsm.c | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
+>>> index d30525946892..36a3eb4ad4c5 100644
+>>> --- a/drivers/tty/n_gsm.c
+>>> +++ b/drivers/tty/n_gsm.c
+>>> @@ -1716,7 +1716,7 @@ static void gsm_dlci_release(struct gsm_dlci *dlci)
+>>>            gsm_destroy_network(dlci);
+>>>            mutex_unlock(&dlci->mutex);
+>>>    -        tty_vhangup(tty);
+>>> +        tty_hangup(tty);
+>>>              tty_port_tty_set(&dlci->port, NULL);
 > 
-> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-> index 5c2c30a7dffa..f64e3b6605c6 100644
-> --- a/drivers/mtd/nand/raw/nand_base.c
-> +++ b/drivers/mtd/nand/raw/nand_base.c
-> @@ -292,12 +292,16 @@ int nand_bbm_get_next_page(struct nand_chip *chip, int page)
->  	struct mtd_info *mtd = nand_to_mtd(chip);
->  	int last_page = ((mtd->erasesize - mtd->writesize) >>
->  			 chip->page_shift) & chip->pagemask;
-> +	unsigned int bbm_flags = NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE
-> +		| NAND_BBM_LASTPAGE;
->  
-> +	if (page == 0 && !(chip->options & bbm_flags))
-> +		return 0;
->  	if (page == 0 && chip->options & NAND_BBM_FIRSTPAGE)
->  		return 0;
-> -	else if (page <= 1 && chip->options & NAND_BBM_SECONDPAGE)
-> +	if (page <= 1 && chip->options & NAND_BBM_SECONDPAGE)
->  		return 1;
-> -	else if (page <= last_page && chip->options & NAND_BBM_LASTPAGE)
-> +	if (page <= last_page && chip->options & NAND_BBM_LASTPAGE)
->  		return last_page;
->  
->  	return -EINVAL;
+> I am afraid there is changed semantics now: the scheduled hangup will
+> likely happen when the tty in tty_port is set to NULL already, so some
+> operations done in tty->ops->hangup might be a nop now. For example the
+> commonly used tty_port_hangup won't set TTY_IO_ERROR on the tty and
+> won't lower DTR and RTS on the line either.
 
-Lookgs good otherwise.
+Is the hangup for the physical uart (ttymxc0), or the virtual ttys 
+(gsmtty1)? In the latter case there wouldn't be any control lines to reset.
 
 Thanks,
-Miquèl
+Martin
