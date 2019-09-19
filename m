@@ -2,100 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD441B7FBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 19:11:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C9AB7FCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 19:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391891AbfISRLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 13:11:48 -0400
-Received: from mail.netline.ch ([148.251.143.178]:43747 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389131AbfISRLr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 13:11:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id 3ADAB2AA0FB;
-        Thu, 19 Sep 2019 19:11:44 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id x1F0UOtU4EPY; Thu, 19 Sep 2019 19:11:42 +0200 (CEST)
-Received: from thor (116.245.63.188.dynamic.wline.res.cust.swisscom.ch [188.63.245.116])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id C1D592AA0C6;
-        Thu, 19 Sep 2019 19:11:42 +0200 (CEST)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.92.2)
-        (envelope-from <michel@daenzer.net>)
-        id 1iAzy2-00041o-Fl; Thu, 19 Sep 2019 19:11:42 +0200
-Subject: Re: [PATCH] drm/radeon: fix a potential NULL pointer dereference
-To:     Allen Pais <allen.pais@oracle.com>
-Cc:     dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org
-References: <1568824282-4081-1-git-send-email-allen.pais@oracle.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
- mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
- LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
- 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
- /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
- WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
- Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
- V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
- AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
- ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
- AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
- jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
- qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
- bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
- CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
- GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
- YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
- Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
-Message-ID: <5603dddb-8ae3-e145-69af-c6ccea68ca1b@daenzer.net>
-Date:   Thu, 19 Sep 2019 19:11:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2391932AbfISRN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 13:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389036AbfISRNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 13:13:55 -0400
+Received: from localhost (unknown [106.200.214.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7047214AF;
+        Thu, 19 Sep 2019 17:13:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568913234;
+        bh=OMKr/cmWPumpo9LCv+3v3aRUPCtQnLyLX5PRnZs/l1Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WleYMfFQAUT2Ob78sZcIRDgLfTKZG/AUrTqsaITJ2OYeCI9pCEVjSqgorDdF9M/6h
+         7f96JC2rTxefq/1FFGt4R/+3wQ00Y2nTIibvhZqc/ePhF+i2n26lrLq827RIErvhVz
+         oDQjUCLI3gL0nJ+niA0Uxoq29+ykYZ5eHovdGRdQ=
+Date:   Thu, 19 Sep 2019 22:42:46 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Alexander Gordeev <a.gordeev.box@gmail.com>,
+        Greg KH <greg@kroah.com>
+Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        Michael Chen <micchen@altera.com>, dmaengine@vger.kernel.org
+Subject: Re: [PATCH RFC 0/2] staging: Support Avalon-MM DMA Interface for PCIe
+Message-ID: <20190919171246.GS4392@vkoul-mobl>
+References: <cover.1568817357.git.a.gordeev.box@gmail.com>
+ <20190919113708.GA3153236@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <1568824282-4081-1-git-send-email-allen.pais@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919113708.GA3153236@kroah.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-09-18 6:31 p.m., Allen Pais wrote:
-> alloc_workqueue is not checked for errors and as a result,
-> a potential NULL dereference could occur.
-> 
-> Signed-off-by: Allen Pais <allen.pais@oracle.com>
-> ---
->  drivers/gpu/drm/radeon/radeon_display.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
-> index bd52f15..1a41764 100644
-> --- a/drivers/gpu/drm/radeon/radeon_display.c
-> +++ b/drivers/gpu/drm/radeon/radeon_display.c
-> @@ -683,6 +683,10 @@ static void radeon_crtc_init(struct drm_device *dev, int index)
->  	drm_mode_crtc_set_gamma_size(&radeon_crtc->base, 256);
->  	radeon_crtc->crtc_id = index;
->  	radeon_crtc->flip_queue = alloc_workqueue("radeon-crtc", WQ_HIGHPRI, 0);
-> +	if (unlikely(!radeon_crtc->flip_queue)) {
-> +		kfree(radeon_crtc);
-> +		return;
-> +	}
->  	rdev->mode_info.crtcs[index] = radeon_crtc;
->  
->  	if (rdev->family >= CHIP_BONAIRE) {
-> 
+On 19-09-19, 13:37, Greg KH wrote:
+> On Thu, Sep 19, 2019 at 11:59:11AM +0200, Alexander Gordeev wrote:
+> > The Avalon-MM DMA Interface for PCIe is a design found in hard IPs for
+> > Intel Arria, Cyclone or Stratix FPGAs. It transfers data between on-chip
+> > memory and system memory. This RFC is an attempt to provide a generic API:
+> > 
+> > 	typedef void (*avalon_dma_xfer_callback)(void *dma_async_param);
+> >  
+> > 	int avalon_dma_submit_xfer(
+> > 		struct avalon_dma *avalon_dma,
+> > 		enum dma_data_direction direction,
+> > 		dma_addr_t dev_addr, dma_addr_t host_addr,
+> > 		unsigned int size,
+> > 		avalon_dma_xfer_callback callback,
+> > 		void *callback_param);
+> >  
+> > 	int avalon_dma_submit_xfer_sg(struct avalon_dma *avalon_dma,
+> > 		enum dma_data_direction direction,
+> > 		dma_addr_t dev_addr,
+> > 		struct sg_table *sg_table,
+> > 		avalon_dma_xfer_callback callback,
+> > 		void *callback_param);
+> >  
+> > 	int avalon_dma_issue_pending(struct avalon_dma *avalon_dma);
 
-I'm afraid just silently leaving the CRTC uninitialized isn't a good way
-to handle this. The failure would need to be propagated, probably
-resulting in the driver aborting its initialization altogether.
+Why wrap the *existing* kernel APIs with you own!
 
+A quick glance at the code submitted tells me that it mimcks kernel
+APIs. But why you folks didnt use the kernel dmaengine APIs in not clear
+to me. So please convert it (should be relatively easy as you seem to
+have wrappers for dmaengine callbacks)
+
+> > 
+> > Patch 1 introduces "avalon-dma" driver that provides the above-mentioned
+> > generic interface.
+> > 
+> > Patch 2 adds "avalon-drv" driver using "avalon-dma" to transfer user-
+> > provided data. This driver was used to debug and stress "avalon-dma"
+> > and could be used as a code base for other implementations. Strictly
+> > speaking, it does not need to be part of the kernel tree.
+> > A companion tool using "avalon-drv" to DMA files (not part of this
+> > patchset) is located at git@github.com:a-gordeev/avalon-drv-tool.git
+
+Heh! We do have a dmatest driver which does this and much more! why not
+use that one instead of adding you own!
+
+> > The suggested interface is developed with the standard "dmaengine"
+> > in mind and could be reworked to suit it. I would appreciate, however
+> > gathering some feedback on the implemenation first - as the hardware-
+> > specific code would persist. It is also a call for testing - I only
+> > have access to a single Arria 10 device to try on.
+
+Why not use dmaengine in first place?
+
+> > This series is against v5.3 and could be found at
+> > git@github.com:a-gordeev/linux.git avalon-dma-engine
+> 
+> Why is this being submitted for drivers/staging/ and not the "real" part
+> of the kernel tree?
+> 
+> All staging code must have a TODO file listing what needs to be done in
+> order to get it out of staging, and be self-contained (i.e. no files
+> include/linux/)
+> 
+> Please fix that up when resending this series.
 
 -- 
-Earthling Michel Dänzer               |               https://redhat.com
-Libre software enthusiast             |             Mesa and X developer
+~Vinod
