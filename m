@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF5BB8669
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC291B85E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:25:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406550AbfISWSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:18:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59318 "EHLO mail.kernel.org"
+        id S2390979AbfISWXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:23:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393097AbfISWR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:57 -0400
+        id S2394140AbfISWXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:23:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ED832196E;
-        Thu, 19 Sep 2019 22:17:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 833B121924;
+        Thu, 19 Sep 2019 22:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931477;
-        bh=aw9Ccs93FdRhCdFHunJR7zrEHuMOFb3DevjX4PIvUr0=;
+        s=default; t=1568931781;
+        bh=M4XnMWuXxsOhiKJSxBS5CjqJ+fb6S51FmcyrajJ279c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iLC8LwKZD1XE8EWgMYiJCb8I8gitNQv/jbctcdN/LNjesOf9IKCW22RILgWH9crRe
-         YBcuTOrpEhLL0Y/41qdok1qjneVvDshF9pkX95N0EwyXbFqdZBveLu/AxfFygrWsR4
-         MkEl+kK/d7ddKtlfD1aaACIed0gpFHTMstpnY5Mw=
+        b=PKbGlgpXfqel2UtqQbn8tw/JottyKlVPBaNjoceuzv9TZdOKNl657qRtxmnF7W5SH
+         22bEvjytv83AUyP0Idv3olMlwZbHzA+K+6A9BREXNg3C0y5x0ypfETzXuz3nwi6phf
+         54ObyJ1yYf+EP6RGx624iGwzBtmzXPHGGZpaGnLA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 35/59] cifs: set domainName when a domain-key is used in multiuser
+        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 09/56] tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
 Date:   Fri, 20 Sep 2019 00:03:50 +0200
-Message-Id: <20190919214806.293833827@linuxfoundation.org>
+Message-Id: <20190919214748.450984159@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Neal Cardwell <ncardwell@google.com>
 
-[ Upstream commit f2aee329a68f5a907bcff11a109dfe17c0b41aeb ]
+[ Upstream commit af38d07ed391b21f7405fa1f936ca9686787d6d2 ]
 
-RHBZ: 1710429
+Fix tcp_ecn_withdraw_cwr() to clear the correct bit:
+TCP_ECN_QUEUE_CWR.
 
-When we use a domain-key to authenticate using multiuser we must also set
-the domainnmame for the new volume as it will be used and passed to the server
-in the NTLMSSP Domain-name.
+Rationale: basically, TCP_ECN_DEMAND_CWR is a bit that is purely about
+the behavior of data receivers, and deciding whether to reflect
+incoming IP ECN CE marks as outgoing TCP th->ece marks. The
+TCP_ECN_QUEUE_CWR bit is purely about the behavior of data senders,
+and deciding whether to send CWR. The tcp_ecn_withdraw_cwr() function
+is only called from tcp_undo_cwnd_reduction() by data senders during
+an undo, so it should zero the sender-side state,
+TCP_ECN_QUEUE_CWR. It does not make sense to stop the reflection of
+incoming CE bits on incoming data packets just because outgoing
+packets were spuriously retransmitted.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The bug has been reproduced with packetdrill to manifest in a scenario
+with RFC3168 ECN, with an incoming data packet with CE bit set and
+carrying a TCP timestamp value that causes cwnd undo. Before this fix,
+the IP CE bit was ignored and not reflected in the TCP ECE header bit,
+and sender sent a TCP CWR ('W') bit on the next outgoing data packet,
+even though the cwnd reduction had been undone.  After this fix, the
+sender properly reflects the CE bit and does not set the W bit.
+
+Note: the bug actually predates 2005 git history; this Fixes footer is
+chosen to be the oldest SHA1 I have tested (from Sep 2007) for which
+the patch applies cleanly (since before this commit the code was in a
+.h file).
+
+Fixes: bdf1ee5d3bd3 ("[TCP]: Move code from tcp_ecn.h to tcp*.c and tcp.h & remove it")
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/connect.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ net/ipv4/tcp_input.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 57c62ff4e8d6d..699e763ea671a 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -2542,6 +2542,7 @@ static int
- cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -225,7 +225,7 @@ static void tcp_ecn_accept_cwr(struct tc
+ 
+ static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
  {
- 	int rc = 0;
-+	int is_domain = 0;
- 	const char *delim, *payload;
- 	char *desc;
- 	ssize_t len;
-@@ -2589,6 +2590,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
- 			rc = PTR_ERR(key);
- 			goto out_err;
- 		}
-+		is_domain = 1;
- 	}
+-	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
++	tp->ecn_flags &= ~TCP_ECN_QUEUE_CWR;
+ }
  
- 	down_read(&key->sem);
-@@ -2646,6 +2648,26 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
- 		goto out_key_put;
- 	}
- 
-+	/*
-+	 * If we have a domain key then we must set the domainName in the
-+	 * for the request.
-+	 */
-+	if (is_domain && ses->domainName) {
-+		vol->domainname = kstrndup(ses->domainName,
-+					   strlen(ses->domainName),
-+					   GFP_KERNEL);
-+		if (!vol->domainname) {
-+			cifs_dbg(FYI, "Unable to allocate %zd bytes for "
-+				 "domain\n", len);
-+			rc = -ENOMEM;
-+			kfree(vol->username);
-+			vol->username = NULL;
-+			kfree(vol->password);
-+			vol->password = NULL;
-+			goto out_key_put;
-+		}
-+	}
-+
- out_key_put:
- 	up_read(&key->sem);
- 	key_put(key);
--- 
-2.20.1
-
+ static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
 
 
