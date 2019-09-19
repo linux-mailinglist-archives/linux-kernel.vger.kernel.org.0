@@ -2,268 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7F2CB7C1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ED61B7C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390457AbfISOXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:23:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43574 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390422AbfISOXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:23:22 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BFB7D1DCD;
-        Thu, 19 Sep 2019 14:23:21 +0000 (UTC)
-Received: from t460s.redhat.com (unknown [10.36.118.9])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4701D60872;
-        Thu, 19 Sep 2019 14:23:16 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, virtualization@lists.linux-foundation.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@kernel.org>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH RFC v3 5/9] virtio-mem: Paravirtualized memory hotunplug part 2
-Date:   Thu, 19 Sep 2019 16:22:24 +0200
-Message-Id: <20190919142228.5483-6-david@redhat.com>
-In-Reply-To: <20190919142228.5483-1-david@redhat.com>
-References: <20190919142228.5483-1-david@redhat.com>
+        id S2390666AbfISOYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:24:40 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53381 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390464AbfISOXY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:23:24 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190919142322euoutp02ed9829c2ec4de9993efdb76260c31a25~F3Pf9lr9J1700217002euoutp02c
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 14:23:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190919142322euoutp02ed9829c2ec4de9993efdb76260c31a25~F3Pf9lr9J1700217002euoutp02c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1568903002;
+        bh=yCJyZaAISj2X2sPtGhkorDCVQ2B6gi5BHvQF0QJ1smU=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=EeKYrf/GwEKA9IiQuVxqXdB4nZiKN0lQ9DtSZQm//KXsSr3kkHfTNjZC/FB9VmDXm
+         GirPgx7m4IjeAE+gXVWnKxmpWvkrtSY8KRhXaMFJrMsrciUJDLJtlfIlJIrC8SiKyC
+         PflnOzmst25DTDmyGX/vQ4UrpEh/I8UNsKyPMa1Q=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190919142322eucas1p265abed8b4159482c9ee0b03baeaafd4b~F3PfKNRD53082530825eucas1p2c;
+        Thu, 19 Sep 2019 14:23:22 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 6B.59.04374.95F838D5; Thu, 19
+        Sep 2019 15:23:21 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec~F3PeY7cSX0293102931eucas1p1K;
+        Thu, 19 Sep 2019 14:23:21 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190919142320eusmtrp2d172b9e3a280dbdf5169de5adbc67d41~F3PeKxg7n3074530745eusmtrp2Z;
+        Thu, 19 Sep 2019 14:23:20 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-ec-5d838f59baf4
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 2C.0F.04166.85F838D5; Thu, 19
+        Sep 2019 15:23:20 +0100 (BST)
+Received: from AMDC3555.digital.local (unknown [106.120.51.67]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190919142320eusmtip122eb1934da667f679df296a20dfbdd57~F3PdbuISJ3161631616eusmtip1a;
+        Thu, 19 Sep 2019 14:23:20 +0000 (GMT)
+From:   =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
+        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        inki.dae@samsung.com, sw0312.kim@samsung.com,
+        georgi.djakov@linaro.org, leonard.crestez@nxp.com,
+        m.szyprowski@samsung.com, b.zolnierkie@samsung.com, krzk@kernel.org
+Subject: [RFC PATCH v2 00/11] Simple QoS for exynos-bus driver using
+ interconnect
+Date:   Thu, 19 Sep 2019 16:22:25 +0200
+Message-Id: <20190919142236.4071-1-a.swigon@samsung.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Thu, 19 Sep 2019 14:23:21 +0000 (UTC)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjuO2fn7LicHJflm4rFoiBBa934oDCliBP9iYJATWrlQcVrO5pd
+        ELXltSzRvGtekCaK2NYyN8q8DJcVDdNUKpthFlleQi2isnTHyn/P+zzf8zzvCx9DKvopDyYy
+        NoHXxKqjlbRM0tL93eYbdF0bulX3zRfbb6YjrC9ppvDg7AcKV1meUbh/borGxQ8MNM6350mw
+        zXZbiuuHv1DYMDpA4T5zBY1nci0Il9jaCNxkGZbiV2n1NC4p+EgHsJyhIZvmXg/cpzn7FSvB
+        3alL4fSTrQR3zdiAuBmD92FpsGxPGB8deZbXbPE/KYsYf3yVijd6n5u2NkpTUdHaHOTEALsD
+        TOn3JTlIxijYegRD7xtIcZhFYJzPQeIwg8CUOS35a3lzeZYSBR0C3fwc8c+SMzrheEWzgZBf
+        OCJdFNxYC4KC6ilHC8lWEJCVrVsYGGYVexT66nYuGiTsRsiqfyddxHIWw+Cbz1Kxbh003m4n
+        Rd4VekrfOQrIBV57t9yxLLAvpWC1dVOLmcDuh3kzFr2rYNxqXMrxgt+mKkLEAoyZ7JToTUVg
+        uGUhRWE3dFl7HTkkuxmazVtEOhCaPpmX4l1gaMJVXMEF8luKSZGWQ1aGQoRKMJe6iEaAS40D
+        S9kcjNX9cmAFGwr33qaReWh92bK7ypbdVfZ/hWpENiB3PlGICeeF7bF8kp+gjhESY8P9TsfF
+        GNDCX3syb51rRW0/T3UilkFKZ/n6JG2oglKfFc7HdCJgSKWbvGLnpVCFPEx9/gKviTuhSYzm
+        hU7kyUiU7vKLK0ZCFGy4OoGP4vl4XvNXJRgnj1RUrIqKL3w63rXrXHB0UGb+Gr22tiZXVT0R
+        oJW7K55vczo02eH5qGnHcZ/+FOJCSPM+tSr50ytZMddY67X6BxV3YmVKYhF7wKvGOLpB1b69
+        clPZwe95W/dW1zz82jGV2h14pkdfnuFPDDsfqXQNOhXce2ysNvlihBX3VH28MbT/RaZdKREi
+        1CofUiOo/wD6xdsIZwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7oR/c2xBj1vzC3uz2tltNg4Yz2r
+        xfUvz1kt5h85x2px5et7NovpezexWUy6P4HF4vz5DewWK+5+ZLXY9Pgaq8XlXXPYLD73HmG0
+        mHF+H5PF2iN32S1uN65gs5gx+SWbg4DHplWdbB53ru1h87jffZzJY/OSeo+N73YwefRtWcXo
+        8XmTXAB7lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5d
+        gl7Gq1M9rAVb5Co+HF/N3sA4TbKLkZNDQsBE4l7LF1YQW0hgKaNE6/YgiLiExMf1N1ghbGGJ
+        P9e62LoYuYBqPjFK/GztYAFJsAk4Skya+oAdJCEicIpRYuvyc2wgCWaBFUwS/XOEQWxhgUCJ
+        C2eWgMVZBFQlOlY8YQexeQUsJK7fe8MOsUFeYvWGA8wQcUGJkzOfAC3gAJqjLrF+nhDESHmJ
+        5q2zmScw8s9CUjULoWoWkqoFjMyrGEVSS4tz03OLDfWKE3OLS/PS9ZLzczcxAqNv27Gfm3cw
+        XtoYfIhRgINRiYdXobw5Vog1say4MvcQowQHs5II7xzTplgh3pTEyqrUovz4otKc1OJDjKZA
+        L0xklhJNzgcmhrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYwR
+        jcVpFQ5NkfZBh/QKLFf7JLhv9WK6u8Y9benkmJj59UIL33z9vPi9cvGdRitv4R13bfQ+rXfa
+        a7p3qcC1I/P0uSK8Ez9e6g0Rbgx8oC4+Z/ae2p37MrXZjy24tqVnz63XS0vW+dheu1GtNz9J
+        YcojNV6Bhc8jHXYbTSxK37FwsnGw658Vqw8osRRnJBpqMRcVJwIACdB0JNQCAAA=
+X-CMS-MailID: 20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec
+References: <CGME20190919142321eucas1p164c2591ad402427cb71fd00c348a29ec@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can use alloc_contig_range() to try to unplug subblocks. Unplugged
-blocks will be marked PG_offline, however, don't have the PG_reserved
-flag set. This way, we can differentiate these allocated subblocks from
-subblocks that were never onlined and handle them properly in
-virtio_mem_fake_online(). free_contig_range() is used to hand back
-subblocks to Linux.
+The following patchset adds interconnect[1][2] framework support to the
+exynos-bus devfreq driver. Extending the devfreq driver with interconnect
+capabilities started as a response to the issue referenced in [3]. The
+patches can be subdivided into four logical groups:
 
-It is worth noting that there are no guarantess on how much memory can
-actually get unplugged again. All device memory might completely be
-fragmented with unmovable data, such that no subblock can get unplugged.
-We might want to improve the unplugging capability in the future.
+(a) Refactoring the existing devfreq driver in order to improve readability
+and accommodate for adding new code (patches 01--04/11).
 
-We are not touching the ZONE_MOVABLE. If memory is onlined to the
-ZONE_MOVABLE, it can only get unplugged after that memory was offlined
-manually by user space. In normal operation, virtio-mem memory is
-suggested to be onlined to ZONE_NORMAL. In the future, we will try to
-make unplug more likely to succeed.
+(b) Tweaking the interconnect framework to support the exynos-bus use case
+(patches 05--07/11). Exporting of_icc_get_from_provider() allows us to
+avoid hardcoding every single graph edge in the DT or driver source, and
+relaxing the requirement contained in that function removes the need to
+provide dummy node IDs in the DT. Adjusting the logic in
+apply_constraints() (drivers/interconnect/core.c) accounts for the fact
+that every bus is a separate entity and therefore a separate interconnect
+provider, albeit constituting a part of a larger hierarchy.
 
-Future work:
-- Offline + remove memory blocks once all subblocks were unplugged. This
-  might then free up unmovable data un other memory blocks.
-- Performance improvements:
--- Sense (lockless) if it make sense to try alloc_contig_range() at all
-   before directly trying to isolate and taking locks.
--- Try to unplug bigger chunks if possible first.
--- Identify free areas first, that don't have to be evacuated.
-- Make unplug more likely to succeed:
--- The "issue" is that in the ZONE_NORMAL, the buddy will randomly
-   allocate memory. Only pageblocks somewhat limit fragmentation,
-   however we would want to limit fragmentation on subblock granularity
-   and even memory block granularity. One idea is to have a new
-   ZONE_PREFER_MOVABLE. Memory blocks will then be onlined to ZONE_NORMAL
-   / ZONE_PREFER_MOVABLE in a certain ratio per node (e.g.,
-   1:4). This makes unplug of quite some memory likely to succeed in most
-   setups. ZONE_PREFER_MOVABLE is then a mixture of ZONE_NORMAL and
-   ZONE_MOVABlE. Especially, movable data can end up on that zone, but
-   only if really required - avoiding running out of memory on ZONE
-   imbalances. The zone fallback order would be
-   MOVABLE=>PREFER_MOVABLE=>HIGHMEM=>NORMAL=>PREFER_MOVABLE=>DMA32=>DMA
--- Allocate memmap from added memory. This way, less unmovable data can
-   end up on the memory blocks.
--- Call drop_slab() before trying to unplug. Eventually shrink other
-   caches.
-- Better retry handling in case memory is busy. We certainly don't want
-  to try for ever in a short interval to try to get some memory back.
-- OOM handling, e.g., via an OOM handler.
+(c) Implementing interconnect providers in the exynos-bus devfreq driver
+and adding required DT properties for one selected platform, namely
+Exynos4412 (patches 08--09/11). Due to the fact that this aims to be a
+generic driver for various Exynos SoCs, node IDs are generated dynamically
+rather than hardcoded. This has been determined to be a simpler approach,
+but depends on changes described in (b).
 
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Igor Mammedov <imammedo@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+(d) Implementing a sample interconnect consumer for exynos-mixer targeted
+at the issue referenced in [3], again with DT info only for Exynos4412
+(patches 10--11/11).
+
+Integration of devfreq and interconnect functionalities is achieved by
+using dev_pm_qos_*() API[5]. All new code works equally well when
+CONFIG_INTERCONNECT is 'n' (as in exynos_defconfig) in which case all
+interconnect API functions are no-ops.
+
+This patchset depends on [5].
+
+--- Changes since v1 [6]:
+* Rebase on [4] (coupled regulators).
+* Rebase on [5] (dev_pm_qos for devfreq).
+* Use dev_pm_qos_*() API[5] instead of overriding frequency in
+  exynos_bus_target().
+* Use IDR for node ID allocation.
+* Avoid goto in functions extracted in patches 01 & 02 (cf. patch 04).
+* Reverse order of multiplication and division in
+  mixer_set_memory_bandwidth() (patch 11) to avoid integer overflow.
+
 ---
- drivers/virtio/Kconfig      |   1 +
- drivers/virtio/virtio_mem.c | 106 +++++++++++++++++++++++++++++++++++-
- 2 files changed, 104 insertions(+), 3 deletions(-)
+Artur Świgoń
+Samsung R&D Institute Poland
+Samsung Electronics
 
-diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-index 294720d53057..75a760f32ec7 100644
---- a/drivers/virtio/Kconfig
-+++ b/drivers/virtio/Kconfig
-@@ -71,6 +71,7 @@ config VIRTIO_MEM
- 	depends on VIRTIO
- 	depends on MEMORY_HOTPLUG_SPARSE
- 	depends on MEMORY_HOTREMOVE
-+	select CONTIG_ALLOC
- 	help
- 	 This driver provides access to virtio-mem paravirtualized memory
- 	 devices, allowing to hotplug and hotunplug memory.
-diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
-index 6fb55d4b6f6c..91052a37d10d 100644
---- a/drivers/virtio/virtio_mem.c
-+++ b/drivers/virtio/virtio_mem.c
-@@ -689,7 +689,17 @@ static void virtio_mem_fake_online(unsigned long pfn, unsigned int nr_pages)
- 	for (i = 0; i < nr_pages; i += 1 << order) {
- 		struct page *page = pfn_to_page(pfn + i);
- 
--		generic_online_page(page, order);
-+		/*
-+		 * If the page is reserved, it was kept fake-offline when
-+		 * onlining the memory block. Otherwise, it was allocated
-+		 * using alloc_contig_range().
-+		 */
-+		if (PageReserved(page))
-+			generic_online_page(page, order);
-+		else {
-+			free_contig_range(pfn + i, 1 << order);
-+			totalram_pages_add(1 << order);
-+		}
- 	}
- }
- 
-@@ -1187,6 +1197,72 @@ static int virtio_mem_mb_unplug_any_sb_offline(struct virtio_mem *vm,
- 	return 0;
- }
- 
-+/*
-+ * Unplug the desired number of plugged subblocks of an online memory block.
-+ * Will skip subblock that are busy.
-+ *
-+ * Will modify the state of the memory block.
-+ *
-+ * Note: Can fail after some subblocks were successfully unplugged. Can
-+ *       return 0 even if subblocks were busy and could not get unplugged.
-+ */
-+static int virtio_mem_mb_unplug_any_sb_online(struct virtio_mem *vm,
-+					      unsigned long mb_id,
-+					      uint64_t *nb_sb)
-+{
-+	const unsigned long nr_pages = PFN_DOWN(vm->subblock_size);
-+	unsigned long start_pfn;
-+	int rc, sb_id;
-+
-+	/*
-+	 * TODO: To increase the performance we want to try bigger, consecutive
-+	 * subblocks first before falling back to single subblocks. Also,
-+	 * we should sense via something like is_mem_section_removable()
-+	 * first if it makes sense to go ahead any try to allocate.
-+	 */
-+	for (sb_id = 0; sb_id < vm->nb_sb_per_mb && *nb_sb; sb_id++) {
-+		/* Find the next candidate subblock */
-+		while (sb_id < vm->nb_sb_per_mb &&
-+		       !virtio_mem_mb_test_sb_plugged(vm, mb_id, sb_id, 1))
-+			sb_id++;
-+		if (sb_id >= vm->nb_sb_per_mb)
-+			break;
-+
-+		start_pfn = PFN_DOWN(virtio_mem_mb_id_to_phys(mb_id) +
-+				     sb_id * vm->subblock_size);
-+		rc = alloc_contig_range(start_pfn, start_pfn + nr_pages,
-+					MIGRATE_MOVABLE, GFP_KERNEL);
-+		if (rc == -ENOMEM)
-+			/* whoops, out of memory */
-+			return rc;
-+		if (rc)
-+			/* memory busy, we can't unplug this chunk */
-+			continue;
-+
-+		/* Mark it as fake-offline before unplugging it */
-+		virtio_mem_set_fake_offline(start_pfn, nr_pages);
-+		totalram_pages_add(-nr_pages);
-+
-+		/* Try to unplug the allocated memory */
-+		rc = virtio_mem_mb_unplug_sb(vm, mb_id, sb_id, 1);
-+		if (rc) {
-+			/* Return the memory to the buddy. */
-+			virtio_mem_fake_online(start_pfn, nr_pages);
-+			return rc;
-+		}
-+
-+		virtio_mem_mb_set_state(vm, mb_id,
-+					VIRTIO_MEM_MB_STATE_ONLINE_PARTIAL);
-+		*nb_sb -= 1;
-+	}
-+
-+	/*
-+	 * TODO: Once all subblocks of a memory block were unplugged, we want
-+	 * to offline the memory block and remove it.
-+	 */
-+	return 0;
-+}
-+
- /*
-  * Try to unplug the requested amount of memory.
-  */
-@@ -1225,8 +1301,31 @@ static int virtio_mem_unplug_request(struct virtio_mem *vm, uint64_t diff)
- 		cond_resched();
- 	}
- 
-+	/* Try to unplug subblocks of partially plugged online blocks. */
-+	virtio_mem_for_each_mb_state(vm, mb_id,
-+				     VIRTIO_MEM_MB_STATE_ONLINE_PARTIAL) {
-+		rc = virtio_mem_mb_unplug_any_sb_online(vm, mb_id,
-+							&nb_sb);
-+		if (rc || !nb_sb)
-+			goto out_unlock;
-+		mutex_unlock(&vm->hotplug_mutex);
-+		cond_resched();
-+		mutex_lock(&vm->hotplug_mutex);
-+	}
-+
-+	/* Try to unplug subblocks of plugged online blocks. */
-+	virtio_mem_for_each_mb_state(vm, mb_id, VIRTIO_MEM_MB_STATE_ONLINE) {
-+		rc = virtio_mem_mb_unplug_any_sb_online(vm, mb_id,
-+							&nb_sb);
-+		if (rc || !nb_sb)
-+			goto out_unlock;
-+		mutex_unlock(&vm->hotplug_mutex);
-+		cond_resched();
-+		mutex_lock(&vm->hotplug_mutex);
-+	}
-+
- 	mutex_unlock(&vm->hotplug_mutex);
--	return 0;
-+	return nb_sb ? -EBUSY : 0;
- out_unlock:
- 	mutex_unlock(&vm->hotplug_mutex);
- 	return rc;
-@@ -1330,7 +1429,8 @@ static void virtio_mem_run_wq(struct work_struct *work)
- 	case -EBUSY:
- 		/*
- 		 * The hypervisor cannot process our request right now
--		 * (e.g., out of memory, migrating).
-+		 * (e.g., out of memory, migrating) or we cannot free up
-+		 * any memory to unplug it (all plugged memory is busy).
- 		 */
- 	case -ENOMEM:
- 		/* Out of memory, try again later. */
+---
+References:
+[1] Documentation/interconnect/interconnect.rst
+[2] Documentation/devicetree/bindings/interconnect/interconnect.txt
+[3] https://patchwork.kernel.org/patch/10861757/ (original issue)
+[4] https://patchwork.kernel.org/cover/11083663/ (coupled regulators; merged)
+[5] https://patchwork.kernel.org/cover/11149497/ (dev_pm_qos for devfreq)
+[6] https://patchwork.kernel.org/cover/11054417/ (v1 of this RFC)
+
+Artur Świgoń (10):
+  devfreq: exynos-bus: Extract exynos_bus_profile_init()
+  devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
+  devfreq: exynos-bus: Change goto-based logic to if-else logic
+  devfreq: exynos-bus: Clean up code
+  interconnect: Export of_icc_get_from_provider()
+  interconnect: Relax requirement in of_icc_get_from_provider()
+  interconnect: Relax condition in apply_constraints()
+  arm: dts: exynos: Add parents and #interconnect-cells to Exynos4412
+  devfreq: exynos-bus: Add interconnect functionality to exynos-bus
+  arm: dts: exynos: Add interconnects to Exynos4412 mixer
+
+Marek Szyprowski (1):
+  drm: exynos: mixer: Add interconnect support
+
+ .../boot/dts/exynos4412-odroid-common.dtsi    |   1 +
+ arch/arm/boot/dts/exynos4412.dtsi             |  10 +
+ drivers/devfreq/exynos-bus.c                  | 319 +++++++++++++-----
+ drivers/gpu/drm/exynos/exynos_mixer.c         |  71 +++-
+ drivers/interconnect/core.c                   |  12 +-
+ include/linux/interconnect-provider.h         |   6 +
+ 6 files changed, 327 insertions(+), 92 deletions(-)
+
 -- 
-2.21.0
+2.17.1
 
