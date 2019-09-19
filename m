@@ -2,115 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0D6B8520
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E5AB84DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393854AbfISWR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:17:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392216AbfISWRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:17:54 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3BC2217D6;
-        Thu, 19 Sep 2019 22:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931474;
-        bh=ont1s2hWDsj0rjL5UpbAstBll8ppiMiCPDPkdEjRjYY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n7mEgwxcAjtxPmfvr8x9eeRBus4EQF5eenivrORuFdDxUABgM7UZlP4C5P7ZzjoK+
-         DDLulOQh0PsWdzHaHLFbHg0m52kFPk5b5FCN4ppbN+fUCNwHPjaiwCvjD0/xguFy1z
-         os47iZ5INQxcwohnRYEcmwSItH6kJZhwYn3ZHlFQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>, Kees Cook <keescook@chromium.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 59/59] media: technisat-usb2: break out of loop at end of buffer
-Date:   Fri, 20 Sep 2019 00:04:14 +0200
-Message-Id: <20190919214808.531153444@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2404480AbfISWPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:15:04 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43644 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393842AbfISWPA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:15:00 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a2so3166778pfo.10
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 15:15:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fB4zQQtxD6RQxzuoXRwLfGvFn/ooCdWNGohHK66LQ08=;
+        b=xODCt9c4PPzf7ZJP+bySIqn30TXjt1heT30OW1TE2tgQtVhEZ7PHRfvCGWTlZvgjNV
+         apIa133AHQl1MXOGINvY5iFkudp6kx2frahxdJAcNMzV4Y4J64OAEOnRdDYg8+HNB/99
+         nqJBshr9YGEOTxr7GHCPTuHdo1o0hTVg/jt0hakbqbYZt2h/5166qpMQW5S6VqM1V+Xw
+         etWTjs94jRmnO7JqoXz7dZN92pFkE5YflNvMSyPlBjqvNtq64WMXpUqtQB5kuK8Sbwo9
+         fx1+RAgTe8xE+mAHEuDd8+bLlYv0yz3sQOkn8B4Fkqa6lUkA15fs422p51e3RUn/AkKS
+         vMeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fB4zQQtxD6RQxzuoXRwLfGvFn/ooCdWNGohHK66LQ08=;
+        b=mDG1zuoM5vg9U2RmOm1IxQJDen9jjQrXDfcbk0fzN6ToncNdPq80Wj1POtqNFIkaIw
+         xEM8mAyNbfc4RVz4+pJgsO+KkORTGjYD1mkffFyGdvRFA+JnhfhEXxus92Bpl0V/btdp
+         aMpicFyJDqscuaZ+qQ68R9HBrW2zRrPeeWbUqYV7s/prd8yvOOHrYzHkn9mw28fLG2Mp
+         FVTAXoW7rc1/5zxa4aiieDo1mQ4eiE9+O2+pp0Gm6dJ9unuDgIxbNd1Hdxt2hPqWaixt
+         dIGp7G6Y7IlJzSty9JZDz+rJJKNWS6wr/T+159iEpxXSNU1REXtJSxcJRf72c9AQ/0/f
+         gZdg==
+X-Gm-Message-State: APjAAAX84CuWtdG7q5a+Z+DSC2bpDDqa/VerNOjoyJ++CitT8Smolc54
+        /6v4yo4OVM3Fk+yd5mTbMETstA==
+X-Google-Smtp-Source: APXvYqwHnPaYhBk4Lt3yi1dUPz66jlOkeds9a5M1ZpocrTHis+sK2zkXHck+Dypk2L3DX5oswWkkiQ==
+X-Received: by 2002:a17:90a:8991:: with SMTP id v17mr145915pjn.127.1568931299611;
+        Thu, 19 Sep 2019 15:14:59 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c62sm7071pfa.92.2019.09.19.15.14.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2019 15:14:59 -0700 (PDT)
+Date:   Thu, 19 Sep 2019 15:14:56 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Murali Nalajala <mnalajal@codeaurora.org>, rafael@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] base: soc: Export soc_device_to_device API
+Message-ID: <20190919221456.GA63675@minitux>
+References: <1568927624-13682-1-git-send-email-mnalajal@codeaurora.org>
+ <20190919213203.GA395325@kroah.com>
+ <20190919215300.GC1418@minitux>
+ <20190919215836.GA426988@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919215836.GA426988@kroah.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+On Thu 19 Sep 14:58 PDT 2019, Greg KH wrote:
 
-commit 0c4df39e504bf925ab666132ac3c98d6cbbe380b upstream.
+> On Thu, Sep 19, 2019 at 02:53:00PM -0700, Bjorn Andersson wrote:
+> > On Thu 19 Sep 14:32 PDT 2019, Greg KH wrote:
+> > 
+> > > On Thu, Sep 19, 2019 at 02:13:44PM -0700, Murali Nalajala wrote:
+> > > > If the soc drivers want to add custom sysfs entries it needs to
+> > > > access "dev" field in "struct soc_device". This can be achieved
+> > > > by "soc_device_to_device" API. Soc drivers which are built as a
+> > > > module they need above API to be exported. Otherwise one can
+> > > > observe compilation issues.
+> > > > 
+> > > > Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
+> > > > ---
+> > > >  drivers/base/soc.c | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+> > > > index 7c0c5ca..4ad52f6 100644
+> > > > --- a/drivers/base/soc.c
+> > > > +++ b/drivers/base/soc.c
+> > > > @@ -41,6 +41,7 @@ struct device *soc_device_to_device(struct soc_device *soc_dev)
+> > > >  {
+> > > >  	return &soc_dev->dev;
+> > > >  }
+> > > > +EXPORT_SYMBOL_GPL(soc_device_to_device);
+> > > >  
+> > > >  static umode_t soc_attribute_mode(struct kobject *kobj,
+> > > >  				struct attribute *attr,
+> > > 
+> > > What in-kernel driver needs this?
+> > > 
+> > 
+> > Half of the drivers interacting with the soc driver calls this API,
+> > several of these I see no reason for being builtin (e.g.
+> > ux500 andversatile). So I think this patch makes sense to allow us to
+> > build these as modules.
+> > 
+> > > Is linux-next breaking without this?
+> > > 
+> > 
+> > No, we postponed the addition of any sysfs attributes in the Qualcomm
+> > socinfo driver.
+> > 
+> > > We don't export things unless we have a user of the export.
+> > > 
+> > > Also, adding "custom" sysfs attributes is almost always not the correct
+> > > thing to do at all.  The driver should be doing it, by setting up the
+> > > attribute group properly so that the driver core can do it automatically
+> > > for it.
+> > > 
+> > > No driver should be doing individual add/remove of sysfs files.  If it
+> > > does so, it is almost guaranteed to be doing it incorrectly and racing
+> > > userspace.
+> > > 
+> > 
+> > The problem here is that the attributes are expected to be attached to
+> > the soc driver, which is separate from the platform-specific drivers. So
+> > there's no way to do platform specific attributes the right way.
+> > 
+> > > And yes, there's loads of in-kernel examples of doing this wrong, I've
+> > > been working on fixing that up, look at the patches now in Linus's tree
+> > > for platform and USB drivers that do this as examples of how to do it
+> > > right.
+> > > 
+> > 
+> > Agreed, this patch should not be used as an approval for any crazy
+> > attributes; but it's necessary in order to extend the soc device's
+> > attributes, per the current design.
+> 
+> Wait, no, let's not let the "current design" remain if it is broken!
+> 
+> Why can't the soc driver handle the attributes properly so that the
+> individual driver doesn't have to do the create/remove?
+> 
 
-Ensure we do not access the buffer beyond the end if no 0xff byte
-is encountered.
+The custom attributes that these drivers want to add to the common ones
+are known in advance, so I presume we could have them passed into
+soc_device_register() and registered together with the common
+attributes...
 
-Reported-by: syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+It sounds like it's worth a prototype.
 
----
- drivers/media/usb/dvb-usb/technisat-usb2.c |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
---- a/drivers/media/usb/dvb-usb/technisat-usb2.c
-+++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
-@@ -607,10 +607,9 @@ static int technisat_usb2_frontend_attac
- static int technisat_usb2_get_ir(struct dvb_usb_device *d)
- {
- 	struct technisat_usb2_state *state = d->priv;
--	u8 *buf = state->buf;
--	u8 *b;
--	int ret;
- 	struct ir_raw_event ev;
-+	u8 *buf = state->buf;
-+	int i, ret;
- 
- 	buf[0] = GET_IR_DATA_VENDOR_REQUEST;
- 	buf[1] = 0x08;
-@@ -646,26 +645,25 @@ unlock:
- 		return 0; /* no key pressed */
- 
- 	/* decoding */
--	b = buf+1;
- 
- #if 0
- 	deb_rc("RC: %d ", ret);
--	debug_dump(b, ret, deb_rc);
-+	debug_dump(buf + 1, ret, deb_rc);
- #endif
- 
- 	ev.pulse = 0;
--	while (1) {
--		ev.pulse = !ev.pulse;
--		ev.duration = (*b * FIRMWARE_CLOCK_DIVISOR * FIRMWARE_CLOCK_TICK) / 1000;
--		ir_raw_event_store(d->rc_dev, &ev);
--
--		b++;
--		if (*b == 0xff) {
-+	for (i = 1; i < ARRAY_SIZE(state->buf); i++) {
-+		if (buf[i] == 0xff) {
- 			ev.pulse = 0;
- 			ev.duration = 888888*2;
- 			ir_raw_event_store(d->rc_dev, &ev);
- 			break;
- 		}
-+
-+		ev.pulse = !ev.pulse;
-+		ev.duration = (buf[i] * FIRMWARE_CLOCK_DIVISOR *
-+			       FIRMWARE_CLOCK_TICK) / 1000;
-+		ir_raw_event_store(d->rc_dev, &ev);
- 	}
- 
- 	ir_raw_event_handle(d->rc_dev);
-
-
+Regards,
+Bjorn
