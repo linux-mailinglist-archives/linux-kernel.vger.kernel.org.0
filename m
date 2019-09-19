@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCB38B8779
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AC03B8712
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406980AbfISWgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:36:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43296 "EHLO mail.kernel.org"
+        id S2405694AbfISWKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:10:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405034AbfISWGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:06:00 -0400
+        id S2405672AbfISWK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:10:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B23721920;
-        Thu, 19 Sep 2019 22:05:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5872721907;
+        Thu, 19 Sep 2019 22:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930759;
-        bh=PZCwTfuWldxsg3C3Jw5YY8AHw2TBpq8aBpf9WBQhNXs=;
+        s=default; t=1568931027;
+        bh=DdbsRQrasbBJPd+uNCTuwjdggFssW12cvLMg0WbkFUU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PVDetxr+lgN897xig/CujbWSFTliGN7yzYkc8LyX+w/s3r+9dYxBu8FbR3T6L8faL
-         reqkP9nlg91vAWZc8jA8b+yhvAqfjJNw0ly7/7JA+93ItwOUcqDHMYOdydMPq/KZZq
-         JLvUUKSA+j15WP/+/5YnoXnRlBhuZJD3nazAEsx0=
+        b=bXW6uRIf6Q+4DiBDmJcDO7Cz+c7zVeTWte0MLPcYQrBHfetEoNl9dbEjSIHSQoYDO
+         kfhwxksUwuPPj6SpzlJJFY4MYXZLpO1IUMmG1Vz97awsOUnd97OlfOmNXYnDiaxDzo
+         i9EuZyviKIcbuWZY3Ng5DMRD/q/4hsSLKUhlinLU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 06/21] net_sched: let qdisc_put() accept NULL pointer
-Date:   Fri, 20 Sep 2019 00:03:07 +0200
-Message-Id: <20190919214701.920915648@linuxfoundation.org>
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Len Brown <len.brown@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 100/124] tools/power turbostat: Add Ice Lake NNPI support
+Date:   Fri, 20 Sep 2019 00:03:08 +0200
+Message-Id: <20190919214822.828810769@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
-References: <20190919214657.842130855@linuxfoundation.org>
+In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
+References: <20190919214819.198419517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,44 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 
-[ Upstream commit 6efb971ba8edfbd80b666f29de12882852f095ae ]
+[ Upstream commit d93ea567fc4eec2d3581015e23d2c555f8b393ba ]
 
-When tcf_block_get() fails in sfb_init(), q->qdisc is still a NULL
-pointer which leads to a crash in sfb_destroy(). Similar for
-sch_dsmark.
+This enables turbostat utility on Ice Lake NNPI SoC.
 
-Instead of fixing each separately, Linus suggested to just accept
-NULL pointer in qdisc_put(), which would make callers easier.
-
-(For sch_dsmark, the bug probably exists long before commit
-6529eaba33f0.)
-
-Fixes: 6529eaba33f0 ("net: sched: introduce tcf block infractructure")
-Reported-by: syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: https://lkml.org/lkml/2019/6/5/1034
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sched/sch_generic.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/power/x86/turbostat/turbostat.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -985,6 +985,9 @@ static void qdisc_destroy(struct Qdisc *
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 56c3e041d4f93..0a80f3cc24e31 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -4586,6 +4586,7 @@ unsigned int intel_model_duplicates(unsigned int model)
+ 		return INTEL_FAM6_SKYLAKE_MOBILE;
  
- void qdisc_put(struct Qdisc *qdisc)
- {
-+	if (!qdisc)
-+		return;
-+
- 	if (qdisc->flags & TCQ_F_BUILTIN ||
- 	    !refcount_dec_and_test(&qdisc->refcnt))
- 		return;
+ 	case INTEL_FAM6_ICELAKE_MOBILE:
++	case INTEL_FAM6_ICELAKE_NNPI:
+ 		return INTEL_FAM6_CANNONLAKE_MOBILE;
+ 	}
+ 	return model;
+-- 
+2.20.1
+
 
 
