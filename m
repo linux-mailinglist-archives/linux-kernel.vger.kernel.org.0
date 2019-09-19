@@ -2,47 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E640B856E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC7C2B85B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:24:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406666AbfISWVB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:21:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35120 "EHLO mail.kernel.org"
+        id S2407130AbfISWYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:24:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405750AbfISWUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:20:54 -0400
+        id S2407111AbfISWYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:24:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB1A6217D6;
-        Thu, 19 Sep 2019 22:20:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B477520678;
+        Thu, 19 Sep 2019 22:24:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931654;
-        bh=IaBM54VjXjLvBbyNVHfirjB5tFsoeGZwZDIjgVaGGhE=;
+        s=default; t=1568931847;
+        bh=TELwY7OlCOCI4eSmoimyIpgGxWsKQxb8Ou88hpFh3io=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c2gbgvRzEJDFpeiSx5oZ5QuLYAV41mesf20ZDz9JJDrSbvcZcnaQxqbfYKvyNa+GF
-         xRvmOJ/BA1MBRS5tI6eU/e3AJBG9paE8HYdYTRHXEaRJxvILS35aPNpNQjNz5SzabL
-         D0stU5wh3ASOWONJxARfm2LI2XZreeq87P61EFX4=
+        b=gEk6leaOxi/hMzwk5Sl4GxoJgzcIM2CYxgA+aPIHkpXpY8mknP50UTLDU8//ecp2m
+         v3kKn8F8/6XXY65XBZ2wQV1cOerIoy4Sgc0Jd5XjEgV6ADCEdusfqqLH/zVR2wE5ew
+         fOMpcqrBeoxT8g2FtoMQpYntBHWgQSUDtujxADUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Arnaldo Carvalho de Melo" <acme@kernel.org>, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Borislav Petkov" <bp@alien8.de>,
-        Stephane Eranian <eranian@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Namhyung Kim" <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 64/74] perf/x86/amd/ibs: Fix sample bias for dispatched micro-ops
-Date:   Fri, 20 Sep 2019 00:04:17 +0200
-Message-Id: <20190919214810.780897502@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 37/56] s390/bpf: use 32-bit index for tail calls
+Date:   Fri, 20 Sep 2019 00:04:18 +0200
+Message-Id: <20190919214758.200709915@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,141 +47,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kim Phillips <kim.phillips@amd.com>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit 0f4cd769c410e2285a4e9873a684d90423f03090 ]
+[ Upstream commit 91b4db5313a2c793aabc2143efb8ed0cf0fdd097 ]
 
-When counting dispatched micro-ops with cnt_ctl=1, in order to prevent
-sample bias, IBS hardware preloads the least significant 7 bits of
-current count (IbsOpCurCnt) with random values, such that, after the
-interrupt is handled and counting resumes, the next sample taken
-will be slightly perturbed.
+"p runtime/jit: pass > 32bit index to tail_call" fails when
+bpf_jit_enable=1, because the tail call is not executed.
 
-The current count bitfield is in the IBS execution control h/w register,
-alongside the maximum count field.
+This in turn is because the generated code assumes index is 64-bit,
+while it must be 32-bit, and as a result prog array bounds check fails,
+while it should pass. Even if bounds check would have passed, the code
+that follows uses 64-bit index to compute prog array offset.
 
-Currently, the IBS driver writes that register with the maximum count,
-leaving zeroes to fill the current count field, thereby overwriting
-the random bits the hardware preloaded for itself.
+Fix by using clrj instead of clgrj for comparing index with array size,
+and also by using llgfr for truncating index to 32 bits before using it
+to compute prog array offset.
 
-Fix the driver to actually retain and carry those random bits from the
-read of the IBS control register, through to its write, instead of
-overwriting the lower current count bits with zeroes.
-
-Tested with:
-
-perf record -c 100001 -e ibs_op/cnt_ctl=1/pp -a -C 0 taskset -c 0 <workload>
-
-'perf annotate' output before:
-
- 15.70  65:   addsd     %xmm0,%xmm1
- 17.30        add       $0x1,%rax
- 15.88        cmp       %rdx,%rax
-              je        82
- 17.32  72:   test      $0x1,%al
-              jne       7c
-  7.52        movapd    %xmm1,%xmm0
-  5.90        jmp       65
-  8.23  7c:   sqrtsd    %xmm1,%xmm0
- 12.15        jmp       65
-
-'perf annotate' output after:
-
- 16.63  65:   addsd     %xmm0,%xmm1
- 16.82        add       $0x1,%rax
- 16.81        cmp       %rdx,%rax
-              je        82
- 16.69  72:   test      $0x1,%al
-              jne       7c
-  8.30        movapd    %xmm1,%xmm0
-  8.13        jmp       65
-  8.24  7c:   sqrtsd    %xmm1,%xmm0
-  8.39        jmp       65
-
-Tested on Family 15h and 17h machines.
-
-Machines prior to family 10h Rev. C don't have the RDWROPCNT capability,
-and have the IbsOpCurCnt bitfield reserved, so this patch shouldn't
-affect their operation.
-
-It is unknown why commit db98c5faf8cb ("perf/x86: Implement 64-bit
-counter support for IBS") ignored the lower 4 bits of the IbsOpCurCnt
-field; the number of preloaded random bits has always been 7, AFAICT.
-
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: "Arnaldo Carvalho de Melo" <acme@kernel.org>
-Cc: <x86@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Borislav Petkov" <bp@alien8.de>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: "Namhyung Kim" <namhyung@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20190826195730.30614-1-kim.phillips@amd.com
+Fixes: 6651ee070b31 ("s390/bpf: implement bpf_tail_call() helper")
+Reported-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+Acked-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/amd/ibs.c         | 13 ++++++++++---
- arch/x86/include/asm/perf_event.h | 12 ++++++++----
- 2 files changed, 18 insertions(+), 7 deletions(-)
+ arch/s390/net/bpf_jit_comp.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
-index fd4484ae3ffca..112e3c4636b4f 100644
---- a/arch/x86/events/amd/ibs.c
-+++ b/arch/x86/events/amd/ibs.c
-@@ -671,10 +671,17 @@ fail:
+diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
+index e53d410e88703..bcf409997d6dc 100644
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -1067,8 +1067,8 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
+ 		/* llgf %w1,map.max_entries(%b2) */
+ 		EMIT6_DISP_LH(0xe3000000, 0x0016, REG_W1, REG_0, BPF_REG_2,
+ 			      offsetof(struct bpf_array, map.max_entries));
+-		/* clgrj %b3,%w1,0xa,label0: if %b3 >= %w1 goto out */
+-		EMIT6_PCREL_LABEL(0xec000000, 0x0065, BPF_REG_3,
++		/* clrj %b3,%w1,0xa,label0: if (u32)%b3 >= (u32)%w1 goto out */
++		EMIT6_PCREL_LABEL(0xec000000, 0x0077, BPF_REG_3,
+ 				  REG_W1, 0, 0xa);
  
- 	throttle = perf_event_overflow(event, &data, &regs);
- out:
--	if (throttle)
-+	if (throttle) {
- 		perf_ibs_stop(event, 0);
--	else
--		perf_ibs_enable_event(perf_ibs, hwc, period >> 4);
-+	} else {
-+		period >>= 4;
-+
-+		if ((ibs_caps & IBS_CAPS_RDWROPCNT) &&
-+		    (*config & IBS_OP_CNT_CTL))
-+			period |= *config & IBS_OP_CUR_CNT_RAND;
-+
-+		perf_ibs_enable_event(perf_ibs, hwc, period);
-+	}
+ 		/*
+@@ -1094,8 +1094,10 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
+ 		 *         goto out;
+ 		 */
  
- 	perf_event_update_userpage(event);
- 
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index f353061bba1d0..81d5ea71bbe94 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -200,16 +200,20 @@ struct x86_pmu_capability {
- #define IBSCTL_LVT_OFFSET_VALID		(1ULL<<8)
- #define IBSCTL_LVT_OFFSET_MASK		0x0F
- 
--/* ibs fetch bits/masks */
-+/* IBS fetch bits/masks */
- #define IBS_FETCH_RAND_EN	(1ULL<<57)
- #define IBS_FETCH_VAL		(1ULL<<49)
- #define IBS_FETCH_ENABLE	(1ULL<<48)
- #define IBS_FETCH_CNT		0xFFFF0000ULL
- #define IBS_FETCH_MAX_CNT	0x0000FFFFULL
- 
--/* ibs op bits/masks */
--/* lower 4 bits of the current count are ignored: */
--#define IBS_OP_CUR_CNT		(0xFFFF0ULL<<32)
-+/*
-+ * IBS op bits/masks
-+ * The lower 7 bits of the current count are random bits
-+ * preloaded by hardware and ignored in software
-+ */
-+#define IBS_OP_CUR_CNT		(0xFFF80ULL<<32)
-+#define IBS_OP_CUR_CNT_RAND	(0x0007FULL<<32)
- #define IBS_OP_CNT_CTL		(1ULL<<19)
- #define IBS_OP_VAL		(1ULL<<18)
- #define IBS_OP_ENABLE		(1ULL<<17)
+-		/* sllg %r1,%b3,3: %r1 = index * 8 */
+-		EMIT6_DISP_LH(0xeb000000, 0x000d, REG_1, BPF_REG_3, REG_0, 3);
++		/* llgfr %r1,%b3: %r1 = (u32) index */
++		EMIT4(0xb9160000, REG_1, BPF_REG_3);
++		/* sllg %r1,%r1,3: %r1 *= 8 */
++		EMIT6_DISP_LH(0xeb000000, 0x000d, REG_1, REG_1, REG_0, 3);
+ 		/* lg %r1,prog(%b2,%r1) */
+ 		EMIT6_DISP_LH(0xe3000000, 0x0004, REG_1, BPF_REG_2,
+ 			      REG_1, offsetof(struct bpf_array, ptrs));
 -- 
 2.20.1
 
