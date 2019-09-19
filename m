@@ -2,139 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A7BB79A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EBCB79AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:42:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389359AbfISMji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 08:39:38 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41494 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388029AbfISMji (ORCPT
+        id S2389452AbfISMmu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 08:42:50 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:5264 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387520AbfISMmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 08:39:38 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h7so2914814wrw.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 05:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=/9nzlO3catDpxNdlSs/iGbOfKBBKO21YP3lcrEeeoEQ=;
-        b=fVAVkCOq71OXtZ7J4EkZQGbxKZNZc4L2c8WJZFECgaG3XjO3lNrIVHVYVh9IMMO4ZA
-         AEMbIHHCpAmXbRHlDLww47nqyk/M6i4cvDy2bdZBbYNq1s5u4q00FU+zNh0S2Yp1nA4n
-         SvkzakdSSmj8vYi6Ar6il9zvKCLbJwaDHnshr78mjr3P0x17Z3CufbcLB/mZSwXDj5EH
-         /WplZOw3NE8LiOTVDf9UUFR/qqmcmWBsXas8QqUU6xk9S92tLgHQizN88RYDhuMS65aT
-         U2bmsscollEChMPqNqFdZhT/EgQWz1m084k/kjn+s2p5SWl+QjVtuJHXpfpNQYdksxaA
-         DOJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=/9nzlO3catDpxNdlSs/iGbOfKBBKO21YP3lcrEeeoEQ=;
-        b=opSASUzijd7mcxYJT61GGbOWf2lZzd5lVtZhPh7msxGxilo+IYO3VFOeA/j0OVWD3e
-         FLSZWN9lTfXzeADhE0MmMPAZgMLyhsSs35z+TSrajjyybFoSAhsoS0Eb28eEbmNFKVhg
-         oTKVIlgJQqEw8LfUuqLU1pauNa2IMtBK3HYPcJ0w3OtJSw5h3aGmf/RhaqniwVmUSdL4
-         La/5ArywqatNi1E2ksMrv5j8hUGBrph0A2dNgrcch31jzZY3OXHTMRrkp9GZtvdBK3WR
-         w29n1/YDi8G80f0L+PWsBLWDrtyRkXK1Tv4QqPtGd2dCKuZV+2gG9WUbMWpWV193wvHk
-         bLUg==
-X-Gm-Message-State: APjAAAVh73XAmjpAAVs/89+GXDdSHT0T7LHC3J0HPSOtj4SK4Th3l5xH
-        48Km3nZGrX8MZwh4jrTY9fFOsg==
-X-Google-Smtp-Source: APXvYqyLGBWany8mv0R6G9JKWZdXIcvLmproKvbB56WPUT5EotusdST4NAJsi4Wf0JYw0isKvhYwOg==
-X-Received: by 2002:adf:db06:: with SMTP id s6mr4131222wri.41.1568896775939;
-        Thu, 19 Sep 2019 05:39:35 -0700 (PDT)
-Received: from localhost ([109.190.253.11])
-        by smtp.gmail.com with ESMTPSA id d193sm8966640wmd.0.2019.09.19.05.39.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 05:39:35 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 05:39:33 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Anup Patel <Anup.Patel@wdc.com>
-cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Graf <graf@amazon.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Anup Patel <anup@brainfault.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 03/21] RISC-V: Export few kernel symbols
-In-Reply-To: <20190904161245.111924-5-anup.patel@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1909190537410.12151@viisi.sifive.com>
-References: <20190904161245.111924-1-anup.patel@wdc.com> <20190904161245.111924-5-anup.patel@wdc.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Thu, 19 Sep 2019 08:42:50 -0400
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8JCYFL2012555;
+        Thu, 19 Sep 2019 05:42:12 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=yxQIFb41lsENhDLTN1ejSVqcNx8iB7zovNB82Rs6DYc=;
+ b=piHNASCDYmXiDyEmk5MSth7D7uMJohVoh0osRWmZhrnuy2OvRDDU+K9zbQBFqU7x8nhe
+ 4DayJoV3LXafcyFyuax6U/UJ0eKfwGTHcsmcfI2h/ZdJrCQhI+4TEBfk7OLuyS4nlDnU
+ qycl7AlW1ObnUWP4f3xSXdDO+K8JoSy6vBF0RzUuAZYPPTQz6KjVkn2cVoZQk2Hc6dLR
+ ZmlKENMmNvWPrlhcL7jlDhjMc/Jljofxlhm68H+ZwyIxQeGhoHVZboM9yUY7YLUSzN0W
+ q760NyIMdYjDFko53LhpFBUflHDwgynsIHKhRW/6EgBmyBLgs8MHbMwOirQaYxy5i7nB rg== 
+Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2057.outbound.protection.outlook.com [104.47.41.57])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2v3vb0b22g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Sep 2019 05:42:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HahuLLJa5lmjJInwWZ006MHc/WsoZ7mYjNivwJH9rfnglmYPSk1bo5ZpC2J4YnadpcJQuwnb0/autpyPo9iLMC6mwukoiXvUjrXj/l/V3kDZU7M1HLOhUSSx4oVaPZF7IH6msB6GErBuiTLI3SJTEMr6iyRHPauAYnxYQJXWH/30x3O9u0CNME6280CZ0La90rqGmWKCw8VzUWwl76BWGWc2CAOlhjH5JaMWU5PadtnDhU05yExUI+YnQqoS+BYnH0ChOV1Wz/9pS+VPN7tlpP7mK52zuZC1qmzzwkw7tlFFtmq+dVdVwwVOeH0QkXf3VYeilPKAW59XACLnaOLLVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yxQIFb41lsENhDLTN1ejSVqcNx8iB7zovNB82Rs6DYc=;
+ b=St5ndtcwdtVKjumkoEde3FbVOVXW2LLvz13j3iziiv+HcYrZ5YebFN0u+/1S68x5RWRWw3eZ09ZSz41Py+I8ARnGB3Bq9CZF3J/708HyHjEf48kyyWVfjhLiacHdGtQou/rsnQf6IWrss/OeVn8omdKySRaCGz5NZrXR97DEIat8U9wC8Stsl38lN7f0LsnV3q/9fgCxECogXHwnbyGuAItfdCSgCm0dQULFmHVg9qiK8woc3Z/kdWEikxwc6D+U6ZBcr3m2F3WP+4r0JwVFRWnvSzaQGulE4gUYCMAFY5sQGFLO0csXho6PcD5wxtXzP1RPUZ13VXtfOzxAlIzGtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 158.140.1.28) smtp.rcpttodomain=gmail.com smtp.mailfrom=cadence.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yxQIFb41lsENhDLTN1ejSVqcNx8iB7zovNB82Rs6DYc=;
+ b=GTCaE50zYzA9DIccT9ppbSIeJiPQo/qrKVFtdoc5LjwOdlJrUuFlDswWDySSD8qnY4CZ9jb1z68tb30ri37ZZRIQw2dphgl5O2Wiw9ruVNdz/D6Po5xqsJg+5aj4ULB0DxGME/RxxhxhxwRuXssiL73riWuX0kAOFdaqXKSwjMU=
+Received: from CH2PR07CA0020.namprd07.prod.outlook.com (2603:10b6:610:20::33)
+ by MWHPR0701MB3641.namprd07.prod.outlook.com (2603:10b6:301:7d::34) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.13; Thu, 19 Sep
+ 2019 12:42:09 +0000
+Received: from DM3NAM05FT056.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::206) by CH2PR07CA0020.outlook.office365.com
+ (2603:10b6:610:20::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2284.20 via Frontend
+ Transport; Thu, 19 Sep 2019 12:42:08 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 158.140.1.28 as permitted sender)
+Received: from sjmaillnx2.cadence.com (158.140.1.28) by
+ DM3NAM05FT056.mail.protection.outlook.com (10.152.98.170) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2284.10 via Frontend Transport; Thu, 19 Sep 2019 12:42:08 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id x8JCg0fP014682
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Thu, 19 Sep 2019 05:42:02 -0700
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Thu, 19 Sep 2019 14:42:00 +0200
+Received: from lvlogina.cadence.com (10.165.176.102) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Thu, 19 Sep 2019 14:42:00 +0200
+Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id x8JCfxTb011358;
+        Thu, 19 Sep 2019 13:41:59 +0100
+Received: (from piotrs@localhost)
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id x8JCfttS011203;
+        Thu, 19 Sep 2019 13:41:55 +0100
+From:   Piotr Sroka <piotrs@cadence.com>
+CC:     Piotr Sroka <piotrs@cadence.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] - change calculating of position page containing BBM
+Date:   Thu, 19 Sep 2019 13:41:35 +0100
+Message-ID: <20190919124139.10856-1-piotrs@cadence.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(376002)(346002)(396003)(36092001)(199004)(189003)(1076003)(76130400001)(478600001)(47776003)(7416002)(476003)(5660300002)(1671002)(2616005)(8676002)(50466002)(51416003)(2906002)(426003)(8936002)(36756003)(126002)(6666004)(486006)(246002)(86362001)(356004)(50226002)(70586007)(305945005)(109986005)(336012)(87636003)(26826003)(16586007)(70206006)(26005)(316002)(54906003)(4326008)(186003)(48376002)(7636002)(42186006)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0701MB3641;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9824b149-186c-4b31-ecea-08d73cfec8c3
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:MWHPR0701MB3641;
+X-MS-TrafficTypeDiagnostic: MWHPR0701MB3641:
+X-Microsoft-Antispam-PRVS: <MWHPR0701MB3641EC0379A88C1CBA946F36DD890@MWHPR0701MB3641.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7219;
+X-Forefront-PRVS: 016572D96D
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: rZhMe58RNEDXabkfXtVxPjhRa5to/yrzis4oRq6usaeNdy8N56J+ioUd5C2KzgWf/ci6AKoIGcsuzrStKaSNfnrTIyO21JOXeSorIukiH8CQGLp6NekcAgmIoNPXuxaygy8kf5zN9R3n6iDBXINv2pdJp4U+SYdmw/eZqpRVWhhiHBQigzUNrL23oOyM1EUbKqtSnBjQeANSx22IsaD/yZEiQw3mQaHEUacAMXva7bNYC+/Lk2NOgDDYkfhM5r58UH1V+hr9cpeNo8Qwg+7IGEUI7UBDcb6jyYPPNeHePFV9+Htw/22pWdsYSiGku8YMSglrlHu5cyvJMRarippFQbLsEKbWUTd/JZxTR4AM4QZ6FEPoxGZCxTGor2Lq5sn+U9U93CjWcRDFZSV8AxAC/9Dfsj8vZNPc8eZGfu7ZWf0=
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2019 12:42:08.2536
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9824b149-186c-4b31-ecea-08d73cfec8c3
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0701MB3641
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-19_04:2019-09-19,2019-09-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 mlxscore=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 mlxlogscore=999
+ suspectscore=0 bulkscore=0 malwarescore=0 phishscore=0 spamscore=0
+ clxscore=1011 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1908290000 definitions=main-1909190119
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Sep 2019, Anup Patel wrote:
+Change calculating of position page containing BBM
 
-> From: Atish Patra <atish.patra@wdc.com>
-> 
-> Export few symbols used by kvm module. Without this, kvm cannot
-> be compiled as a module.
-> 
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> Signed-off-by: Anup Patel <anup.patel@wdc.com>
-> Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-> Reviewed-by: Alexander Graf <graf@amazon.com>
+If none of BBM flags is set then function nand_bbm_get_next_page 
+reports EINVAL. It causes that BBM is not read at all during scanning
+factory bad blocks. The result is that the BBT table is build without 
+checking factory BBM at all. For Micron flash memories none of this 
+flag is set if page size is different than 2048 bytes.
 
-Thanks, have updated this patch to apply and to clarify the patch title 
-and have queued the following for v5.4-rc.
+This patch changes the nand_bbm_get_next_page function.
+It will return 0 if none of BBM flag is set and page parameter is 0. 
+After that modification way of discovering factory bad blocks will work 
+similar as in kernel version 5.1.
 
-
-- Paul
-
-From: Atish Patra <atish.patra@wdc.com>
-Date: Wed, 4 Sep 2019 16:14:06 +0000
-Subject: [PATCH] RISC-V: Export kernel symbols for kvm
-
-Export few symbols used by kvm module. Without this, kvm cannot
-be compiled as a module.
-
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-Reviewed-by: Alexander Graf <graf@amazon.com>
-[paul.walmsley@sifive.com: updated to apply; clarified short patch 
- description]
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Piotr Sroka <piotrs@cadence.com>
 ---
- arch/riscv/kernel/smp.c  | 1 +
- arch/riscv/kernel/time.c | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/mtd/nand/raw/nand_base.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-index d70e3c0ee983..f849a2480600 100644
---- a/arch/riscv/kernel/smp.c
-+++ b/arch/riscv/kernel/smp.c
-@@ -210,3 +210,4 @@ void smp_send_reschedule(int cpu)
- {
- 	send_ipi_single(cpu, IPI_RESCHEDULE);
- }
-+EXPORT_SYMBOL_GPL(smp_send_reschedule);
-diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
-index 517d2153a933..8a25d1e440ca 100644
---- a/arch/riscv/kernel/time.c
-+++ b/arch/riscv/kernel/time.c
-@@ -9,6 +9,7 @@
- #include <asm/processor.h>
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 5c2c30a7dffa..f64e3b6605c6 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -292,12 +292,16 @@ int nand_bbm_get_next_page(struct nand_chip *chip, int page)
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+ 	int last_page = ((mtd->erasesize - mtd->writesize) >>
+ 			 chip->page_shift) & chip->pagemask;
++	unsigned int bbm_flags = NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE
++		| NAND_BBM_LASTPAGE;
  
- unsigned long riscv_timebase;
-+EXPORT_SYMBOL_GPL(riscv_timebase);
++	if (page == 0 && !(chip->options & bbm_flags))
++		return 0;
+ 	if (page == 0 && chip->options & NAND_BBM_FIRSTPAGE)
+ 		return 0;
+-	else if (page <= 1 && chip->options & NAND_BBM_SECONDPAGE)
++	if (page <= 1 && chip->options & NAND_BBM_SECONDPAGE)
+ 		return 1;
+-	else if (page <= last_page && chip->options & NAND_BBM_LASTPAGE)
++	if (page <= last_page && chip->options & NAND_BBM_LASTPAGE)
+ 		return last_page;
  
- void __init time_init(void)
- {
+ 	return -EINVAL;
 -- 
-2.23.0
+2.15.0
 
