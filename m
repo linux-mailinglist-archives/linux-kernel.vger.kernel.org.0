@@ -2,130 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E6DB7BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:07:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83738B7B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390125AbfISOHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:07:33 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:36263 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387729AbfISOHc (ORCPT
+        id S2388907AbfISOGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:06:31 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40800 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388605AbfISOGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:07:32 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MoNu2-1hr3gK0pC4-00opsW; Thu, 19 Sep 2019 16:07:08 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zhou Wang <wangzhou1@hisilicon.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        Mao Wenan <maowenan@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Hao Fang <fanghao11@huawei.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] crypto: hisilicon - allow compile-testing on x86
-Date:   Thu, 19 Sep 2019 16:05:53 +0200
-Message-Id: <20190919140650.1289963-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190919140650.1289963-1-arnd@arndb.de>
-References: <20190919140650.1289963-1-arnd@arndb.de>
+        Thu, 19 Sep 2019 10:06:31 -0400
+Received: by mail-lf1-f68.google.com with SMTP id d17so2470175lfa.7
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 07:06:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9jGZhci6ir2QQxaMaZ4RPKwsW6VmlML93zQ3UVVvLVc=;
+        b=OCn3gIYj+wUYxAtXas8eOyf4fSEWhP2JZywuNcvWhoXd2re/NpOYXHVgx+ktYyP5cV
+         f+T9+6Yleq+jPzmdljsDSTYYkv0hRJ4OXI6VngwNHBQhZ+MPKG8XvWun3Tnm4NO4agx6
+         jyhuQWbNOO26WlFgyizU4iA2+osQUAPnhKYiE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9jGZhci6ir2QQxaMaZ4RPKwsW6VmlML93zQ3UVVvLVc=;
+        b=ZRs/QlCuEKuA4CQ9FSZI1SI5ordO6BEMuE82Vf/IhD1E2upsH3VSILuZYu+FfYIreB
+         mielVic8/bsCxPm2M1tqg4abVC5LwdiUUrAPtm90hEKcj/8O1eSfjJVcfmJIYUtuNrcA
+         bwHsBP2rDnuDbjLa1fMamiOA/S/Z+6fg07nUAzMIyeEW6yLPDTny1zMBGMPJHAGtG4VR
+         ufKqr6+bKBsjXXIsNug6SE4aYlqU8TqRuh5v/k0aKD6TAEJ/T+RNb1jgmKFnoNVjVpnt
+         Apo9oUos2RGkK+QoXGsc6k9wNAhQLxMLjaBh1NpcK8I2EVj5bChEwXVfWVDb5PtKPEjB
+         EUIg==
+X-Gm-Message-State: APjAAAXE772/GM73aTmzoCEwBW6noKw49PEmRqrMIXXQn2h5LTXStZWR
+        NqWsTJ/hXfij17x2cBTK142FBZmWRaJcFO6A
+X-Google-Smtp-Source: APXvYqx94tejJIy0k7sD7BxbdRz2nLUSrH5aFo9cmoMdLo9lK0ILNVQtax9BnK0daUvVanbqCyRpiw==
+X-Received: by 2002:ac2:51a7:: with SMTP id f7mr5064133lfk.119.1568901989001;
+        Thu, 19 Sep 2019 07:06:29 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id h3sm1687886ljf.12.2019.09.19.07.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2019 07:06:28 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] backlight: pwm_bl: fix cie1913 comments and constant
+Date:   Thu, 19 Sep 2019 16:06:16 +0200
+Message-Id: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:L7yFWwAi2zf3EJZdDKTARe8DorH4eKw0qZyaUsxtBx/h0sffIYB
- e8Yw7mJLacGWfYTjz4p2DANakmc5fVkH/g00PMf2e9O1XYMlOk1l9xJxm4dQs8vPVJ16+rW
- csMCYx6e//nqUPpv7OHqtkaKee/me8uL0b+EsluvjkwWo59IhiAorJzdzcYzqgrqZYmJkLU
- R978hgPWrh33xNCwQgCiw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:U87jcL4Z/TM=:4pPibzFIUuSk1FSlna8JIa
- T2nINl/0ftlVxAFJw5TvQotaV3QAxh0CEfYUye6n2JfiDGNokKz57ptxjUrBf2vz2TdIUdMxi
- AhTKxNm8XdNCKKd81fyVb7CNYtTl77RahdYc6lfTsI2N+olkAmsz7q1uvFVQ2d3p6plPKFEOM
- n/Y4EZE7uxkU6kFJWcLYM5/bhVCBtCda/xUfd/70kENzzBfaFMVPTmoCO4GD85ulqxNzt3wTk
- e4RMXRAsi83Gng7ye+j/vEK0e5ahzw2MMDN2ASZJ3GzylxmnV815NK+q/h1tIwIjtd/ABIMQA
- tRvfoYBJaboNV1RNI26EzaVSxaSG85OivNGNV6juW6X4uZR7JHxJYYhHYuHt1Hm9sqvZLz2eC
- qwpKUSlhOtr/hE/RSYoRdAa/EvqBGkaETpZyeLvk4N/3RouOegrAijQLaZ+lTav7Z8+watKLa
- T5y+1PjoUtPrLNbvxHCe/zlVe+lzpJATYgKTLfKiMA2yQyEi/+MFBkqOR4OIMT9RqwDaNJzxD
- 2JqpLbStGTmNK7QQlu2+f/DkjPxF7fHsD6Mgg+EURLmd9Ar+KzxQcLlENUCWTGp5gahqSnKil
- QBA7ziFNzoG26Xywr0RAefqpr/yvU2PZnd7OCjp6Vd1YRt8N0kAgJsuoLMbCKspn1O4+3ZMpH
- lI1hkLH5r58vCzA4O+DniOTR3Kv/GT+44//nJRw46TP6aixs4lcHVN6g2Jo2f8xWU3CPR+Rpq
- v6DRTcTki+eJMLpitaEagg+eFsRLj0HPqr6JPFssFVdhMOnANGyNHT8SG2W2KrnXnLJ0ldhCw
- djVMui3MN2gphpYoSiMRZJZaAXqbBS0fIUj3RRc3WuR4K7QiL37OkujZGndeS1NUTFsmtkP1T
- RxTer+YX4QlPFeijdx6Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid missing arm64 specific warnings that get introduced
-in this driver, allow compile-testing on all 64-bit architectures.
+The "break-even" point for the two formulas is L==8, which is also
+what the code actually implements. [Incidentally, at that point one
+has Y=0.008856, not 0.08856].
 
-The only actual arm64 specific code in this driver is an open-
-coded 128 bit MMIO write. On non-arm64 the same can be done
-using memcpy_toio. What I also noticed is that the mmio store
-(either one) is not endian-safe, this will only work on little-
-endian configurations, so I also add a Kconfig dependency on
-that, regardless of the architecture.
-Finally, a depenndecy on CONFIG_64BIT is needed because of the
-writeq().
+Moreover, all the sources I can find say the linear factor is 903.3
+rather than 902.3, which makes sense since then the formulas agree at
+L==8, both yielding the 0.008856 figure to four significant digits.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/crypto/hisilicon/Kconfig | 8 +++++---
- drivers/crypto/hisilicon/qm.c    | 6 ++++++
- 2 files changed, 11 insertions(+), 3 deletions(-)
+ drivers/video/backlight/pwm_bl.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-index ebaf91e0146d..dfbd668a431e 100644
---- a/drivers/crypto/hisilicon/Kconfig
-+++ b/drivers/crypto/hisilicon/Kconfig
-@@ -16,14 +16,15 @@ config CRYPTO_DEV_HISI_SEC
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 2201b8c78641..be36be1cacb7 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -155,8 +155,8 @@ static const struct backlight_ops pwm_backlight_ops = {
+  *
+  * The CIE 1931 lightness formula is what actually describes how we perceive
+  * light:
+- *          Y = (L* / 902.3)           if L* ≤ 0.08856
+- *          Y = ((L* + 16) / 116)^3    if L* > 0.08856
++ *          Y = (L* / 903.3)           if L* ≤ 8
++ *          Y = ((L* + 16) / 116)^3    if L* > 8
+  *
+  * Where Y is the luminance, the amount of light coming out of the screen, and
+  * is a number between 0.0 and 1.0; and L* is the lightness, how bright a human
+@@ -169,9 +169,15 @@ static u64 cie1931(unsigned int lightness, unsigned int scale)
+ {
+ 	u64 retval;
  
- config CRYPTO_DEV_HISI_QM
- 	tristate
--	depends on ARM64 && PCI && PCI_MSI
-+	depends on ARM64 || COMPILE_TEST
-+	depends on PCI && PCI_MSI
- 	help
- 	  HiSilicon accelerator engines use a common queue management
- 	  interface. Specific engine driver may use this module.
- 
- config CRYPTO_HISI_SGL
- 	tristate
--	depends on ARM64
-+	depends on ARM64 || COMPILE_TEST
- 	help
- 	  HiSilicon accelerator engines use a common hardware scatterlist
- 	  interface for data format. Specific engine driver may use this
-@@ -31,7 +32,8 @@ config CRYPTO_HISI_SGL
- 
- config CRYPTO_DEV_HISI_ZIP
- 	tristate "Support for HiSilicon ZIP accelerator"
--	depends on ARM64 && PCI && PCI_MSI
-+	depends on PCI && PCI_MSI
-+	depends on ARM64 || (COMPILE_TEST && 64BIT)
- 	select CRYPTO_DEV_HISI_QM
- 	select CRYPTO_HISI_SGL
- 	select SG_SPLIT
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-index f975c393a603..a8ed699081b7 100644
---- a/drivers/crypto/hisilicon/qm.c
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -331,6 +331,12 @@ static void qm_mb_write(struct hisi_qm *qm, const void *src)
- 	void __iomem *fun_base = qm->io_base + QM_MB_CMD_SEND_BASE;
- 	unsigned long tmp0 = 0, tmp1 = 0;
- 
-+	if (!IS_ENABLED(CONFIG_ARM64)) {
-+		memcpy_toio(fun_base, src, 16);
-+		wmb();
-+		return;
-+	}
-+
- 	asm volatile("ldp %0, %1, %3\n"
- 		     "stp %0, %1, %2\n"
- 		     "dsb sy\n"
++	/*
++	 * @lightness is given as a number between 0 and 1, expressed
++	 * as a fixed-point number in scale @scale. Convert to a
++	 * percentage, still expressed as a fixed-point number, so the
++	 * above formulas can be applied.
++	 */
+ 	lightness *= 100;
+ 	if (lightness <= (8 * scale)) {
+-		retval = DIV_ROUND_CLOSEST_ULL(lightness * 10, 9023);
++		retval = DIV_ROUND_CLOSEST_ULL(lightness * 10, 9033);
+ 	} else {
+ 		retval = int_pow((lightness + (16 * scale)) / 116, 3);
+ 		retval = DIV_ROUND_CLOSEST_ULL(retval, (scale * scale));
 -- 
-2.20.0
+2.20.1
 
