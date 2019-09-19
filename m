@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55614B8525
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D79B84D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393875AbfISWSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:18:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59570 "EHLO mail.kernel.org"
+        id S2392042AbfISWOv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389941AbfISWSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:18:08 -0400
+        id S2393780AbfISWOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:14:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE04D20678;
-        Thu, 19 Sep 2019 22:18:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0509721920;
+        Thu, 19 Sep 2019 22:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931488;
-        bh=WoyyH/WhkP+nV+Xgh7izRnrD3GtpnV452JYFcLCroqE=;
+        s=default; t=1568931285;
+        bh=Yl59bSCmjGQO8ga6KfcvRC+PKgjgMXblO8qVnUO1YgM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x/Is3bBe/wCXfwN+QIPQPyyWZ2xHxZiC1RLOfpA2v8XBAIGGLCEUUyT2avZg7WKFw
-         tueguEZsFmiuJ4R1bkFkbUkTrjcyJ4uMD8aBDBG/Xmn0icZGzCZi0s5WSesH4f1q4N
-         56bbTwoU9BLN12CQZnoLvLI0b1fh1RtDqInu8/tM=
+        b=x+B1HhQ+m+0jEYZ7tfXXW96AX1KDlRNZDMyaukxL77tBPSdUm1Z7DQ9hlNMWoBgli
+         ssZn5ad1EcfIeS5JvN8ys5TGTMZJjrdaNIa2qVkmhcAZWt4kTHGmp5B/5L8pGwskME
+         YXKHBSjUMu6iOqoJYvJfEn7muKTh+wt2HTpwMy8I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, broonie@kernel.org,
+        sfr@canb.auug.org.au, akpm@linux-foundation.org, mhocko@suse.cz,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 39/59] i2c: designware: Synchronize IRQs when unregistering slave client
+Subject: [PATCH 4.19 69/79] x86/uaccess: Dont leak the AC flags into __get_user() argument evaluation
 Date:   Fri, 20 Sep 2019 00:03:54 +0200
-Message-Id: <20190919214806.776792993@linuxfoundation.org>
+Message-Id: <20190919214813.794977239@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,37 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit c486dcd2f1bbdd524a1e0149734b79e4ae329650 ]
+[ Upstream commit 9b8bd476e78e89c9ea26c3b435ad0201c3d7dbf5 ]
 
-Make sure interrupt handler i2c_dw_irq_handler_slave() has finished
-before clearing the the dev->slave pointer in i2c_dw_unreg_slave().
+Identical to __put_user(); the __get_user() argument evalution will too
+leak UBSAN crud into the __uaccess_begin() / __uaccess_end() region.
+While uncommon this was observed to happen for:
 
-There is possibility for a race if i2c_dw_irq_handler_slave() is running
-on another CPU while clearing the dev->slave pointer.
+  drivers/xen/gntdev.c: if (__get_user(old_status, batch->status[i]))
 
-Reported-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
-Reported-by: Wolfram Sang <wsa@the-dreams.de>
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+where UBSAN added array bound checking.
+
+This complements commit:
+
+  6ae865615fc4 ("x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation")
+
+Tested-by Sedat Dilek <sedat.dilek@gmail.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: broonie@kernel.org
+Cc: sfr@canb.auug.org.au
+Cc: akpm@linux-foundation.org
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: mhocko@suse.cz
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20190829082445.GM2369@hirez.programming.kicks-ass.net
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-designware-slave.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/uaccess.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-designware-slave.c b/drivers/i2c/busses/i2c-designware-slave.c
-index ea9578ab19a15..fccf936f4b9b5 100644
---- a/drivers/i2c/busses/i2c-designware-slave.c
-+++ b/drivers/i2c/busses/i2c-designware-slave.c
-@@ -206,6 +206,7 @@ static int i2c_dw_unreg_slave(struct i2c_client *slave)
- 
- 	dev->disable_int(dev);
- 	dev->disable(dev);
-+	synchronize_irq(dev->irq);
- 	dev->slave = NULL;
- 	pm_runtime_put(dev->dev);
- 
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 4111edb3188e2..9718303410614 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -451,8 +451,10 @@ do {									\
+ ({									\
+ 	int __gu_err;							\
+ 	__inttype(*(ptr)) __gu_val;					\
++	__typeof__(ptr) __gu_ptr = (ptr);				\
++	__typeof__(size) __gu_size = (size);				\
+ 	__uaccess_begin_nospec();					\
+-	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
++	__get_user_size(__gu_val, __gu_ptr, __gu_size, __gu_err, -EFAULT);	\
+ 	__uaccess_end();						\
+ 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+ 	__builtin_expect(__gu_err, 0);					\
 -- 
 2.20.1
 
