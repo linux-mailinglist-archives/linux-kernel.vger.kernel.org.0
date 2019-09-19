@@ -2,152 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B949B7BA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A08B7BAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:07:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389632AbfISOGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:06:39 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38029 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389439AbfISOGh (ORCPT
+        id S2390023AbfISOHW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:07:22 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53892 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387729AbfISOHV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:06:37 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y23so3741772ljn.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 07:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/yVIRHWuN5NvCtSgoWOt0FQ2pzS304r/JIoa8grAoeg=;
-        b=f2Ajvc95IBsXh7QC0KZ/teCtaJOBbCEfy1jTDghOCpoMue299R9/PRIrxJa61AhHv2
-         FGuAHPZ/5qwEVRMCyZVGIzWcRRE51U7Y9ufetLTkOildedAbixwpSSWt8s3BpyF78wJk
-         BEp3etejaiM41Nb/o2kwQSHvyAgLC7MFtjhs4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/yVIRHWuN5NvCtSgoWOt0FQ2pzS304r/JIoa8grAoeg=;
-        b=BEJMCnBOL6wbKhdZ05YQyAURncVUp0p8VgesDUSVG0NTC0kmeQUkEyzU/WrmCEFBY2
-         QxpfSLk3uRmEH27Ft50aZgFGX7GxNNEZGfPk/degVTX66h35CHgacDOKpu2H4pwKgEtf
-         NOH5ZV5PB2hIZxcO98e0U5M99+IUr18SsF0oIu9ZjnyyNVwfOwslSM6+++xtbkqG3zN/
-         +UkRm3+XDOt6P4ps3obaMKKYWThQLsS/oACAXMUhHJpJoiZ517Ta4jdDVaU1UNF0qsND
-         sTOPwPyFvSk2Njhj8V5w64+BjUkGG5Ud6p8jSybX4i5HoPVTKWCEPHJ5at9rPGyi57DS
-         2mkA==
-X-Gm-Message-State: APjAAAUA6lAEB0HZh3bETNj6zjXM0LeZT7VT0WNasP1c0eB9JaBA3f3r
-        BbPHvl/YQQaX5KMQnhLAFyYdjw==
-X-Google-Smtp-Source: APXvYqxNV7T4a+Lz/TAxhTojpZAjz21AOC3VAcsbmQjZSn1bKXyNDAPA+CiUO1gVMkRxzZv/TM5X0w==
-X-Received: by 2002:a2e:9854:: with SMTP id e20mr5681390ljj.72.1568901994159;
-        Thu, 19 Sep 2019 07:06:34 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id h3sm1687886ljf.12.2019.09.19.07.06.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 07:06:33 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] lib/math: remove int_pow()
-Date:   Thu, 19 Sep 2019 16:06:20 +0200
-Message-Id: <20190919140620.32407-5-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
-References: <20190919140620.32407-1-linux@rasmusvillemoes.dk>
+        Thu, 19 Sep 2019 10:07:21 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JE4LSn029434;
+        Thu, 19 Sep 2019 14:07:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=/YOWrbzA7kJtkI9FFDm8sH5YeE3VoVARbcy1fM1cXRE=;
+ b=qZLq+3h2EvEkLjvIyHKLJDAHQ32KYiaJdh0PBfakYyRHY5KW78HK8ieinAblp2oEFach
+ sLKV0aYEnAfvOOE66nEEtzEaWzwnYZeAeyk91KR2PYSnIPI3rNsAk1/q7e9LoWo013TP
+ qz3VMa4mtgybbXJfIVTvbLgML3oQkejaEyzF3u+jsy7/RZujEsiXXF3/GdTXA7HkcfMP
+ tcTTT3bfLh9VaCD8/mDwywpLwSdIl+mF5tSEyqXcd+y2jBBuOdn0sX+w27DicfOGhCrm
+ 7d99D8QKK0XUJLzVxppypl1TFcfjYxuNkQ0Wk3bYj4KO+++/ooKJNT0ytF0nDocv2gv/ Kg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2v3vb4m7fx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Sep 2019 14:07:09 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8JDwbWd176998;
+        Thu, 19 Sep 2019 14:07:08 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2v3vbs5jb4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Sep 2019 14:07:08 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8JE76Ts016960;
+        Thu, 19 Sep 2019 14:07:06 GMT
+Received: from [192.168.0.106] (/183.82.16.154)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Sep 2019 07:07:06 -0700
+Subject: Re: [PATCH] iwlwifi: fix a potential NULL pointer dereference
+To:     Johannes Berg <johannes@sipsolutions.net>, kvalo@codeaurora.org
+Cc:     davem@davemloft.net, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1568830262-5529-1-git-send-email-allen.pais@oracle.com>
+ <fd8813c1c3c02734d60f494a3c8081d95550ec85.camel@sipsolutions.net>
+From:   Allen <allen.pais@oracle.com>
+Message-ID: <2380f108-54a6-0110-4e2b-e66dd54ae800@oracle.com>
+Date:   Thu, 19 Sep 2019 19:37:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <fd8813c1c3c02734d60f494a3c8081d95550ec85.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=914
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909190132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=985 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909190133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No users left.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- Documentation/core-api/kernel-api.rst |  3 ---
- include/linux/kernel.h                |  1 -
- lib/math/Makefile                     |  2 +-
- lib/math/int_pow.c                    | 32 ---------------------------
- 4 files changed, 1 insertion(+), 37 deletions(-)
- delete mode 100644 lib/math/int_pow.c
 
-diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-index 08af5caf036d..5f9cf47581b3 100644
---- a/Documentation/core-api/kernel-api.rst
-+++ b/Documentation/core-api/kernel-api.rst
-@@ -144,9 +144,6 @@ Base 2 log and power Functions
- Integer power Functions
- -----------------------
- 
--.. kernel-doc:: lib/math/int_pow.c
--   :export:
--
- .. kernel-doc:: lib/math/int_sqrt.c
-    :export:
- 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 4fa360a13c1e..afe7c2cc81aa 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -487,7 +487,6 @@ extern int __kernel_text_address(unsigned long addr);
- extern int kernel_text_address(unsigned long addr);
- extern int func_ptr_is_kernel_text(void *ptr);
- 
--u64 int_pow(u64 base, unsigned int exp);
- unsigned long int_sqrt(unsigned long);
- 
- #if BITS_PER_LONG < 64
-diff --git a/lib/math/Makefile b/lib/math/Makefile
-index be6909e943bd..3e5db680a404 100644
---- a/lib/math/Makefile
-+++ b/lib/math/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
--obj-y += div64.o gcd.o lcm.o int_pow.o int_sqrt.o reciprocal_div.o
-+obj-y += div64.o gcd.o lcm.o int_sqrt.o reciprocal_div.o
- 
- obj-$(CONFIG_CORDIC)		+= cordic.o
- obj-$(CONFIG_PRIME_NUMBERS)	+= prime_numbers.o
-diff --git a/lib/math/int_pow.c b/lib/math/int_pow.c
-deleted file mode 100644
-index 622fc1ab3c74..000000000000
---- a/lib/math/int_pow.c
-+++ /dev/null
-@@ -1,32 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * An integer based power function
-- *
-- * Derived from drivers/video/backlight/pwm_bl.c
-- */
--
--#include <linux/export.h>
--#include <linux/kernel.h>
--#include <linux/types.h>
--
--/**
-- * int_pow - computes the exponentiation of the given base and exponent
-- * @base: base which will be raised to the given power
-- * @exp: power to be raised to
-- *
-- * Computes: pow(base, exp), i.e. @base raised to the @exp power
-- */
--u64 int_pow(u64 base, unsigned int exp)
--{
--	u64 result = 1;
--
--	while (exp) {
--		if (exp & 1)
--			result *= base;
--		exp >>= 1;
--		base *= base;
--	}
--
--	return result;
--}
--EXPORT_SYMBOL_GPL(int_pow);
--- 
-2.20.1
+> 
+> Anyway, as 0-day bot pointed out, this isn't really right. The cleanup
+> paths here are also tricky, so I arrived at this patch a few days ago:
+
+  My bad, I should have looked at the cleanup path.
+
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> index eb544811759d..882fdf7e5e7b 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+> @@ -3530,6 +3530,15 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
+>   	spin_lock_init(&trans_pcie->reg_lock);
+>   	mutex_init(&trans_pcie->mutex);
+>   	init_waitqueue_head(&trans_pcie->ucode_write_waitq);
+> +
+> +	trans_pcie->rba.alloc_wq = alloc_workqueue("rb_allocator",
+> +						   WQ_HIGHPRI | WQ_UNBOUND, 1);
+> +	if (!trans_pcie->rba.alloc_wq) {
+
+   I would like to stick to if(unlikely(!trans_pcie->rba.alloc_wq) just 
+for consistency.
+
+   Let me know if I could add your SOB and send out V2.
+
+- Allen
+
+> +		ret = -ENOMEM;
+> +		goto out_free_trans;
+> +	}
+> +	INIT_WORK(&trans_pcie->rba.rx_alloc, iwl_pcie_rx_allocator_work);
+> +
+>   	trans_pcie->tso_hdr_page = alloc_percpu(struct iwl_tso_hdr_page);
+>   	if (!trans_pcie->tso_hdr_page) {
+>   		ret = -ENOMEM;
+> @@ -3664,10 +3673,6 @@ struct iwl_trans *iwl_trans_pcie_alloc(struct pci_dev *pdev,
+>   		trans_pcie->inta_mask = CSR_INI_SET_MASK;
+>   	 }
+>   
+> -	trans_pcie->rba.alloc_wq = alloc_workqueue("rb_allocator",
+> -						   WQ_HIGHPRI | WQ_UNBOUND, 1);
+> -	INIT_WORK(&trans_pcie->rba.rx_alloc, iwl_pcie_rx_allocator_work);
+> -
+>   #ifdef CPTCFG_IWLWIFI_DEBUGFS
+>   	trans_pcie->fw_mon_data.state = IWL_FW_MON_DBGFS_STATE_CLOSED;
+>   	mutex_init(&trans_pcie->fw_mon_data.mutex);
+> @@ -3681,6 +3686,8 @@ out_free_ict:
+>   	iwl_pcie_free_ict(trans);
+>   out_no_pci:
+>   	free_percpu(trans_pcie->tso_hdr_page);
+> +	destroy_workqueue(trans_pcie->rba.alloc_wq);
+> +out_free_trans:
+>   	iwl_trans_free(trans);
+>   	return ERR_PTR(ret);
+>   }
+> 
+
 
