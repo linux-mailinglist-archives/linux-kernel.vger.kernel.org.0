@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5569B7701
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D856FB770E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:03:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389174AbfISKC3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:02:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42856 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388966AbfISKC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389081AbfISKC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 19 Sep 2019 06:02:28 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+Received: from mx1.redhat.com ([209.132.183.28]:50262 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388981AbfISKC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 06:02:27 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51AC0309BF06;
-        Thu, 19 Sep 2019 10:02:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C4193084045;
+        Thu, 19 Sep 2019 10:02:27 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-47.ams2.redhat.com [10.36.116.47])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A072219C5B;
-        Thu, 19 Sep 2019 10:02:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D8AEF60872;
+        Thu, 19 Sep 2019 10:02:24 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id EA740A1E0; Thu, 19 Sep 2019 12:02:23 +0200 (CEST)
+        id 0EFF09D75; Thu, 19 Sep 2019 12:02:24 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
@@ -31,22 +31,19 @@ Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 03/11] drm/shmem: drop VM_DONTDUMP
-Date:   Thu, 19 Sep 2019 12:02:15 +0200
-Message-Id: <20190919100223.13309-4-kraxel@redhat.com>
+Subject: [PATCH v3 04/11] drm/shmem: drop VM_IO
+Date:   Thu, 19 Sep 2019 12:02:16 +0200
+Message-Id: <20190919100223.13309-5-kraxel@redhat.com>
 In-Reply-To: <20190919100223.13309-1-kraxel@redhat.com>
 References: <20190919100223.13309-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 19 Sep 2019 10:02:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 19 Sep 2019 10:02:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not obvious why this is needed.  According to Deniel Vetter this is most
-likely a historic artefact dating back to the days where drm drivers
-exposed hardware registers as mmap'able gem objects, to avoid dumping
-touching those registers.  shmem gem objects surely don't need that ...
+VM_IO is wrong here, shmem uses normal ram not io memory.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
@@ -54,15 +51,15 @@ Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
-index a9a586630517..6efedab15016 100644
+index 6efedab15016..3bc69b1ffa7d 100644
 --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
 +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
 @@ -536,7 +536,7 @@ int drm_gem_shmem_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
  		return ret;
  	}
  
--	vma->vm_flags |= VM_IO | VM_MIXEDMAP | VM_DONTEXPAND | VM_DONTDUMP;
-+	vma->vm_flags |= VM_IO | VM_MIXEDMAP | VM_DONTEXPAND;
+-	vma->vm_flags |= VM_IO | VM_MIXEDMAP | VM_DONTEXPAND;
++	vma->vm_flags |= VM_MIXEDMAP | VM_DONTEXPAND;
  	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
  	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
  	vma->vm_ops = &drm_gem_shmem_vm_ops;
