@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1A4FB85A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:23:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0695B8634
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405176AbfISWXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:23:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38568 "EHLO mail.kernel.org"
+        id S2407271AbfISW1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:27:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394154AbfISWXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:23:07 -0400
+        id S1732787AbfISWUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E215021D71;
-        Thu, 19 Sep 2019 22:23:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1627C217D6;
+        Thu, 19 Sep 2019 22:20:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931786;
-        bh=gP1KFasB8WO5aIgzqJHmO5K+ABZ0LA7tXlnu06A8+bI=;
+        s=default; t=1568931643;
+        bh=bP67rUnQuQQMO/vk4mRw7dPx0htZlKaooFSF+6uvFV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OOO84z3xbFDdBWTtbWRzpJfKWdK2dHtMxjtVZGWXvVrC7YmWbVzlYFMWyjxL4tZGI
-         Vhv0v25hY493pLIjtHpzRYijOkppTRpbu7gEL2JQu2bSe5gE4eqEikpeMOXgF3jiw6
-         7984AMewRoaOS3hpU5lyvJiBc4923+DqbvSbUZa8=
+        b=EXrAdIQEsDTnPrsZuFUsiOuU925sP43nYL9ZrNUCVhSuTZVV3+gyTZfNeEwaFA2uR
+         wBsQQLz7brRqVlsj4HI7r/pYKfGMBc6vzneL1DRLqAuKYinck8/020pk/r9xgrmCXF
+         Am6AwyuENwVjK+5tTpjm64jNeG87VMM9Ni8+Lcsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 4.4 32/56] serial: sprd: correct the wrong sequence of arguments
-Date:   Fri, 20 Sep 2019 00:04:13 +0200
-Message-Id: <20190919214757.410786172@linuxfoundation.org>
+        stable@vger.kernel.org, Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 61/74] ARM: 8901/1: add a criteria for pfn_valid of arm
+Date:   Fri, 20 Sep 2019 00:04:14 +0200
+Message-Id: <20190919214810.492813939@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,35 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+From: zhaoyang <huangzhaoyang@gmail.com>
 
-commit 9c801e313195addaf11c16e155f50789d6ebfd19 upstream.
+[ Upstream commit 5b3efa4f1479c91cb8361acef55f9c6662feba57 ]
 
-The sequence of arguments which was passed to handle_lsr_errors() didn't
-match the parameters defined in that function, &lsr was passed to flag
-and &flag was passed to lsr, this patch fixed that.
+pfn_valid can be wrong when parsing a invalid pfn whose phys address
+exceeds BITS_PER_LONG as the MSB will be trimed when shifted.
 
-Fixes: b7396a38fb28 ("tty/serial: Add Spreadtrum sc9836-uart driver support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190905074151.5268-1-zhang.lyra@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The issue originally arise from bellowing call stack, which corresponding to
+an access of the /proc/kpageflags from userspace with a invalid pfn parameter
+and leads to kernel panic.
 
+[46886.723249] c7 [<c031ff98>] (stable_page_flags) from [<c03203f8>]
+[46886.723264] c7 [<c0320368>] (kpageflags_read) from [<c0312030>]
+[46886.723280] c7 [<c0311fb0>] (proc_reg_read) from [<c02a6e6c>]
+[46886.723290] c7 [<c02a6e24>] (__vfs_read) from [<c02a7018>]
+[46886.723301] c7 [<c02a6f74>] (vfs_read) from [<c02a778c>]
+[46886.723315] c7 [<c02a770c>] (SyS_pread64) from [<c0108620>]
+(ret_fast_syscall+0x0/0x28)
+
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/sprd_serial.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mm/init.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -240,7 +240,7 @@ static inline void sprd_rx(struct uart_p
- 
- 		if (lsr & (SPRD_LSR_BI | SPRD_LSR_PE |
- 			SPRD_LSR_FE | SPRD_LSR_OE))
--			if (handle_lsr_errors(port, &lsr, &flag))
-+			if (handle_lsr_errors(port, &flag, &lsr))
- 				continue;
- 		if (uart_handle_sysrq_char(port, ch))
- 			continue;
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 4fb1474141a61..0fe4a7025e467 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -192,6 +192,11 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+ int pfn_valid(unsigned long pfn)
+ {
++	phys_addr_t addr = __pfn_to_phys(pfn);
++
++	if (__phys_to_pfn(addr) != pfn)
++		return 0;
++
+ 	return memblock_is_map_memory(__pfn_to_phys(pfn));
+ }
+ EXPORT_SYMBOL(pfn_valid);
+-- 
+2.20.1
+
 
 
