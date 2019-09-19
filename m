@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58C8FB8760
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A479B8765
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405275AbfISWGr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:06:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44170 "EHLO mail.kernel.org"
+        id S2392673AbfISWgR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:36:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405254AbfISWGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:06:41 -0400
+        id S2404008AbfISWGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:06:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 296FA21907;
-        Thu, 19 Sep 2019 22:06:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEFB721907;
+        Thu, 19 Sep 2019 22:06:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930800;
-        bh=slnhpFEp5xIh7mPkMPWgPhf7Q9Yh1FvqHssoFJ05Vfw=;
+        s=default; t=1568930803;
+        bh=A96tY/4sS9HYUt1WTbvdvzg4QevFECvNRTBIpnu+yPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q3OZskpNW+R5yIoagR/Gj8Pek/JZ857xm6sXrPkKRiz6CwPQlAN7LRtP81scXRXcm
-         tsuL62JxR1XBxVBchsR+hXvsHIFyO56XkLxjsC0cJXULWGKFoGuWF2TaCY3+cAyt0i
-         xgLpMdLrUEuffGtyRKJVFE31TimRqkbrwAxnvdN8=
+        b=B7y2YE4aSgnVM5o4q5zkqVixKPpxHsEJIjxwq+r003UgHcqZ82MF8ljbhZNfaE/4t
+         8EORPLnHEcvYo2IdOfASscn+a/av9jdzihGSDjE9jrfcXhgwVX6nw+xGlaEmrqlMSx
+         fXbRC9npwvX+e7voLVyTGUAalXu0agu2edtnrsvs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 019/124] xen-netfront: do not assume sk_buff_head list is empty in error handling
-Date:   Fri, 20 Sep 2019 00:01:47 +0200
-Message-Id: <20190919214819.797972451@linuxfoundation.org>
+Subject: [PATCH 5.2 020/124] net: dsa: Fix load order between DSA drivers and taggers
+Date:   Fri, 20 Sep 2019 00:01:48 +0200
+Message-Id: <20190919214819.826331215@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -43,53 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongli Zhang <dongli.zhang@oracle.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 00b368502d18f790ab715e055869fd4bb7484a9b ]
+[ Upstream commit 23426a25e55a417dc104df08781b6eff95e65f3f ]
 
-When skb_shinfo(skb) is not able to cache extra fragment (that is,
-skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS), xennet_fill_frags() assumes
-the sk_buff_head list is already empty. As a result, cons is increased only
-by 1 and returns to error handling path in xennet_poll().
+The DSA core, DSA taggers and DSA drivers all make use of
+module_init(). Hence they get initialised at device_initcall() time.
+The ordering is non-deterministic. It can be a DSA driver is bound to
+a device before the needed tag driver has been initialised, resulting
+in the message:
 
-However, if the sk_buff_head list is not empty, queue->rx.rsp_cons may be
-set incorrectly. That is, queue->rx.rsp_cons would point to the rx ring
-buffer entries whose queue->rx_skbs[i] and queue->grant_rx_ref[i] are
-already cleared to NULL. This leads to NULL pointer access in the next
-iteration to process rx ring buffer entries.
+No tagger for this switch
 
-Below is how xennet_poll() does error handling. All remaining entries in
-tmpq are accounted to queue->rx.rsp_cons without assuming how many
-outstanding skbs are remained in the list.
+Rather than have this be fatal, return -EPROBE_DEFER so that it is
+tried again later once all the needed drivers have been loaded.
 
- 985 static int xennet_poll(struct napi_struct *napi, int budget)
-... ...
-1032           if (unlikely(xennet_set_skb_gso(skb, gso))) {
-1033                   __skb_queue_head(&tmpq, skb);
-1034                   queue->rx.rsp_cons += skb_queue_len(&tmpq);
-1035                   goto err;
-1036           }
-
-It is better to always have the error handling in the same way.
-
-Fixes: ad4f15dc2c70 ("xen/netfront: don't bug in case of too many frags")
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Fixes: d3b8c04988ca ("dsa: Add boilerplate helper to register DSA tag driver modules")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/dsa/dsa2.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -906,7 +906,7 @@ static RING_IDX xennet_fill_frags(struct
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
- 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
--			queue->rx.rsp_cons = ++cons;
-+			queue->rx.rsp_cons = ++cons + skb_queue_len(list);
- 			kfree_skb(nskb);
- 			return ~0U;
- 		}
+--- a/net/dsa/dsa2.c
++++ b/net/dsa/dsa2.c
+@@ -577,6 +577,8 @@ static int dsa_port_parse_cpu(struct dsa
+ 	tag_protocol = ds->ops->get_tag_protocol(ds, dp->index);
+ 	tag_ops = dsa_tag_driver_get(tag_protocol);
+ 	if (IS_ERR(tag_ops)) {
++		if (PTR_ERR(tag_ops) == -ENOPROTOOPT)
++			return -EPROBE_DEFER;
+ 		dev_warn(ds->dev, "No tagger for this switch\n");
+ 		return PTR_ERR(tag_ops);
+ 	}
 
 
