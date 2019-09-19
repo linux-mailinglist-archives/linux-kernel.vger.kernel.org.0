@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29602B8756
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D11A8B8746
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393131AbfISWHE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:07:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44588 "EHLO mail.kernel.org"
+        id S2405289AbfISWHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:07:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393117AbfISWHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:07:00 -0400
+        id S2393166AbfISWHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:07:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1952821907;
-        Thu, 19 Sep 2019 22:06:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2486218AF;
+        Thu, 19 Sep 2019 22:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930819;
-        bh=hFYo/74gVn52eg42PNmX0qBZBecS71x9smF8rN55b5I=;
+        s=default; t=1568930838;
+        bh=wGbDoTXpUGNvLUMPRNHZqIwC7xoPQwk3FoWRPShF1UQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w6zT5l6VLhTz9AzQfWSgRQOnJoN9FywNRHruMIZfQ3/74s+D1zxoDLMA6mPlTMwJw
-         TbxfSyLut8r5cjD5tjqUkzXDJW39+9XhN4/9xa1ku77D1LGdCKuPaRMNHWHTevmaOH
-         fA/xhnoB7wYpDpntOYQ6ZPcgsur/BbP4RuBDkRpI=
+        b=hPTs6j6kZExabXzcL7K8FUTkYVo6c+19UFPEwIiP6NmpVikAfZgTeJwf/IeSndoDR
+         +cRbeqthu5IWu7VqDonVQAopM/z4ebxjgfc6Dr6jz+9R1X0RRSPMzhSygyuLA3XlLX
+         Tm5nUN6xsokL5laSsVX8y3kk+SI5bk8rJwcaoaBo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Huang <huangwenabc@gmail.com>,
-        Ganapathi Bhat <gbhat@marvell.comg>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.2 025/124] mwifiex: Fix three heap overflow at parsing element in cfg80211_ap_settings
-Date:   Fri, 20 Sep 2019 00:01:53 +0200
-Message-Id: <20190919214819.972597811@linuxfoundation.org>
+        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 032/124] bus: ti-sysc: Fix using configured sysc mask value
+Date:   Fri, 20 Sep 2019 00:02:00 +0200
+Message-Id: <20190919214820.195703927@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -44,73 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Huang <huangwenabc@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 7caac62ed598a196d6ddf8d9c121e12e082cac3a upstream.
+[ Upstream commit e212abd452a4af3174fcd469d46656f83e135a19 ]
 
-mwifiex_update_vs_ie(),mwifiex_set_uap_rates() and
-mwifiex_set_wmm_params() call memcpy() without checking
-the destination size.Since the source is given from
-user-space, this may trigger a heap buffer overflow.
+We have cases where there are no softreset bits like with am335x lcdc.
+In that case ti,sysc-mask = <0> needs to be handled properly.
 
-Fix them by putting the length check before performing memcpy().
-
-This fix addresses CVE-2019-14814,CVE-2019-14815,CVE-2019-14816.
-
-Signed-off-by: Wen Huang <huangwenabc@gmail.com>
-Acked-by: Ganapathi Bhat <gbhat@marvell.comg>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Tested-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/marvell/mwifiex/ie.c      |    3 +++
- drivers/net/wireless/marvell/mwifiex/uap_cmd.c |    9 ++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ drivers/bus/ti-sysc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/ie.c
-+++ b/drivers/net/wireless/marvell/mwifiex/ie.c
-@@ -241,6 +241,9 @@ static int mwifiex_update_vs_ie(const u8
- 		}
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+index f5176a5d38cd9..56a2399f341e8 100644
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -1388,10 +1388,7 @@ static int sysc_init_sysc_mask(struct sysc *ddata)
+ 	if (error)
+ 		return 0;
  
- 		vs_ie = (struct ieee_types_header *)vendor_ie;
-+		if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >
-+			IEEE_MAX_IE_SIZE)
-+			return -EINVAL;
- 		memcpy(ie->ie_buffer + le16_to_cpu(ie->ie_length),
- 		       vs_ie, vs_ie->len + 2);
- 		le16_unaligned_add_cpu(&ie->ie_length, vs_ie->len + 2);
---- a/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-+++ b/drivers/net/wireless/marvell/mwifiex/uap_cmd.c
-@@ -265,6 +265,8 @@ mwifiex_set_uap_rates(struct mwifiex_uap
+-	if (val)
+-		ddata->cfg.sysc_val = val & ddata->cap->sysc_mask;
+-	else
+-		ddata->cfg.sysc_val = ddata->cap->sysc_mask;
++	ddata->cfg.sysc_val = val & ddata->cap->sysc_mask;
  
- 	rate_ie = (void *)cfg80211_find_ie(WLAN_EID_SUPP_RATES, var_pos, len);
- 	if (rate_ie) {
-+		if (rate_ie->len > MWIFIEX_SUPPORTED_RATES)
-+			return;
- 		memcpy(bss_cfg->rates, rate_ie + 1, rate_ie->len);
- 		rate_len = rate_ie->len;
- 	}
-@@ -272,8 +274,11 @@ mwifiex_set_uap_rates(struct mwifiex_uap
- 	rate_ie = (void *)cfg80211_find_ie(WLAN_EID_EXT_SUPP_RATES,
- 					   params->beacon.tail,
- 					   params->beacon.tail_len);
--	if (rate_ie)
-+	if (rate_ie) {
-+		if (rate_ie->len > MWIFIEX_SUPPORTED_RATES - rate_len)
-+			return;
- 		memcpy(bss_cfg->rates + rate_len, rate_ie + 1, rate_ie->len);
-+	}
- 
- 	return;
+ 	return 0;
  }
-@@ -391,6 +396,8 @@ mwifiex_set_wmm_params(struct mwifiex_pr
- 					    params->beacon.tail_len);
- 	if (vendor_ie) {
- 		wmm_ie = vendor_ie;
-+		if (*(wmm_ie + 1) > sizeof(struct mwifiex_types_wmm_info))
-+			return;
- 		memcpy(&bss_cfg->wmm_info, wmm_ie +
- 		       sizeof(struct ieee_types_header), *(wmm_ie + 1));
- 		priv->wmm_enabled = 1;
+-- 
+2.20.1
+
 
 
