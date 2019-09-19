@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0F83B83F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:06:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECD5DB83F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405237AbfISWGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:06:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43906 "EHLO mail.kernel.org"
+        id S2405249AbfISWGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:06:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405208AbfISWG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:06:27 -0400
+        id S2405236AbfISWGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:06:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88ABA218AF;
-        Thu, 19 Sep 2019 22:06:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B663521907;
+        Thu, 19 Sep 2019 22:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930787;
-        bh=0/tNebC7ygoIW5O3RIgQ+uWeQuh9LbW8bEVkAtHUGWc=;
+        s=default; t=1568930795;
+        bh=PZCwTfuWldxsg3C3Jw5YY8AHw2TBpq8aBpf9WBQhNXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UzelEI8DPQtn/rrgyauLiKqyBAm4FA6uaOB14kZZOLlQauaoP+bLLkgDawBeJoJwy
-         pbsHN3iTG1iwQzwTZu2p8m1TpaoLMW69A3+3OkjN5wLUvJMJni41hXXUKDrhcSEE/5
-         XRWz3yLR+ODZhY/RhSd6PeNn76VqRKHIRFFOBGac=
+        b=T8GNwO73Zsokx9wvnCy0x2rnWtPn+Yncb+kSdS41i+R09jI0OSJnAOMKenXT53drh
+         vU7O7Dq6L6lFHWrQYHpa2/ZSN4nQYRLhYGpgbNtgl5gFo3JkGLloljff8D+UOMYChM
+         L6W9r/x7FvG/ROKidhhfRmeUI/U0p7xFiHhPDmbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
+        syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 014/124] net: aquantia: fix limit of vlan filters
-Date:   Fri, 20 Sep 2019 00:01:42 +0200
-Message-Id: <20190919214819.655833034@linuxfoundation.org>
+Subject: [PATCH 5.2 017/124] net_sched: let qdisc_put() accept NULL pointer
+Date:   Fri, 20 Sep 2019 00:01:45 +0200
+Message-Id: <20190919214819.740487446@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -45,33 +49,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit 392349f60110dc2c3daf86464fd926afc53d6143 upstream.
+[ Upstream commit 6efb971ba8edfbd80b666f29de12882852f095ae ]
 
-Fix a limit condition of vlans on the interface before setting vlan
-promiscuous mode
+When tcf_block_get() fails in sfb_init(), q->qdisc is still a NULL
+pointer which leads to a crash in sfb_destroy(). Similar for
+sch_dsmark.
 
-Fixes: 48dd73d08d4dd ("net: aquantia: fix vlans not working over bridged network")
-Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
+Instead of fixing each separately, Linus suggested to just accept
+NULL pointer in qdisc_put(), which would make callers easier.
+
+(For sch_dsmark, the bug probably exists long before commit
+6529eaba33f0.)
+
+Fixes: 6529eaba33f0 ("net: sched: introduce tcf block infractructure")
+Reported-by: syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Jiri Pirko <jiri@resnulli.us>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/net/ethernet/aquantia/atlantic/aq_filters.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sched/sch_generic.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
-@@ -843,7 +843,7 @@ int aq_filters_vlans_update(struct aq_ni
- 		return err;
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -985,6 +985,9 @@ static void qdisc_destroy(struct Qdisc *
  
- 	if (aq_nic->ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) {
--		if (hweight < AQ_VLAN_MAX_FILTERS && hweight > 0) {
-+		if (hweight <= AQ_VLAN_MAX_FILTERS && hweight > 0) {
- 			err = aq_hw_ops->hw_filter_vlan_ctrl(aq_hw,
- 				!(aq_nic->packet_filter & IFF_PROMISC));
- 			aq_nic->aq_nic_cfg.is_vlan_force_promisc = false;
+ void qdisc_put(struct Qdisc *qdisc)
+ {
++	if (!qdisc)
++		return;
++
+ 	if (qdisc->flags & TCQ_F_BUILTIN ||
+ 	    !refcount_dec_and_test(&qdisc->refcnt))
+ 		return;
 
 
