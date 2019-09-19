@@ -2,142 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A3D1B77B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9AFB77BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388222AbfISKsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:48:47 -0400
-Received: from mail-eopbgr740121.outbound.protection.outlook.com ([40.107.74.121]:27920
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387520AbfISKsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 06:48:46 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jQTouy6eUKRRUktgATnJBZPemHH9vhzSatA6L4xVJl1ZoZxZBODxPzAiFjik0XJUwSG04DO+YrTYdwgwl2IwuEXcMKZhCW7fRFZC7fLx0hKHR19sCCnl0LLlBnbbQrn+7huLXxky26KMnS5hT5J2yLNj8hSxvTiqPv/EC1asVNAotkG7SIG2klo5ySzW1mr6NdGJT8E0DZWJlsDgxNU6qEEB6xADkiiBMV8cAjrC7/9c253GxYx0hSeo4hfI5Ove5EbGUP9tGtJ3E4egmQlVoTZPwChAc3kf2j3o4XB9Ps1eyqap2EK5dtJPNaiG2VvgioxhuEaS4cq60YVIJvREPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LnviiPQztF2wMhw8UUZtUuwkxVKisF9/Tz/Lv4RZuOA=;
- b=VGOhGNxj9rQz6SLMybVPyZjlDHJMBwZHpQ//NWCSAyUYQXbmr9M9OyQcK0EYTQTj+g0W6fHD+7TEkDp1CHZL6mK30UGVKYbL3OLyxKbN7f5qxpuWsi4codcFrOPgejfoVS9xAa7ENVD3Af4RZNEhwyePN0lhjy+TEIAJBGOO7nQH5+MnMsNqOBa6TfbhwIN27X9CYNRTD0aHaM6a96HLtJ5huvn1flHK92t2RuO3R2XNOvs7fHcF9hJWflirld/1HCvimw078Ji/RGvtxIjKXUhVyoeJg4ncnrTNozXKTrcrwDitnzF+tzoFaZ3P8+mXL/fUWjnw9ZpIUgLaCA9XPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analogixsemi.com; dmarc=pass action=none
- header.from=analogixsemi.com; dkim=pass header.d=analogixsemi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Analogixsemi.onmicrosoft.com; s=selector2-Analogixsemi-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LnviiPQztF2wMhw8UUZtUuwkxVKisF9/Tz/Lv4RZuOA=;
- b=HlgcVhy2o9lGl9AHUSheXsCIPlx2VfbOn9hxIi6cSOqXOiB2Yr1998JjCdzQiv4dIUt2aIr9hWL9QfnVPewhJRaX4echgpnZf39Rki5FRAkA9aigJMnHJAXkU4fIbfBrgavCNK4mWVgcQNYGZSvEQfjI27/OCU6yY7JZNNX03Pg=
-Received: from MN2PR04MB5886.namprd04.prod.outlook.com (20.179.22.213) by
- MN2PR04MB6861.namprd04.prod.outlook.com (10.186.145.202) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.17; Thu, 19 Sep 2019 10:48:42 +0000
-Received: from MN2PR04MB5886.namprd04.prod.outlook.com
- ([fe80::8520:f80f:ae9:63cd]) by MN2PR04MB5886.namprd04.prod.outlook.com
- ([fe80::8520:f80f:ae9:63cd%6]) with mapi id 15.20.2284.009; Thu, 19 Sep 2019
- 10:48:42 +0000
-From:   Xin Ji <xji@analogixsemi.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-CC:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Sheng Pan <span@analogixsemi.com>
-Subject: Re: [PATCH v1 0/2] Add initial support for slimport anx7625
-Thread-Topic: [PATCH v1 0/2] Add initial support for slimport anx7625
-Thread-Index: AQHVbrX5ZBWm7ngGmkilFiHXsbIhDacykSyAgABA+IA=
-Date:   Thu, 19 Sep 2019 10:48:42 +0000
-Message-ID: <20190919104833.GA30631@xin-VirtualBox>
-References: <cover.1568858880.git.xji@analogixsemi.com>
- <8bb69c72-50bf-c499-ff92-9e3662b4fe87@baylibre.com>
-In-Reply-To: <8bb69c72-50bf-c499-ff92-9e3662b4fe87@baylibre.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK2PR0302CA0011.apcprd03.prod.outlook.com
- (2603:1096:202::21) To MN2PR04MB5886.namprd04.prod.outlook.com
- (2603:10b6:208:a3::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xji@analogixsemi.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [114.247.245.252]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 40cdd32b-6061-4148-ddb4-08d73ceef006
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR04MB6861;
-x-ms-traffictypediagnostic: MN2PR04MB6861:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR04MB6861296ED3913D699C4D3F81C7890@MN2PR04MB6861.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 016572D96D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(376002)(366004)(39850400004)(396003)(346002)(53754006)(199004)(189003)(7736002)(6916009)(1076003)(486006)(6512007)(3846002)(186003)(6436002)(14454004)(6116002)(6246003)(229853002)(11346002)(5660300002)(386003)(54906003)(53546011)(476003)(2906002)(8936002)(102836004)(107886003)(305945005)(26005)(14444005)(6506007)(446003)(66066001)(7416002)(86362001)(6486002)(256004)(81156014)(478600001)(316002)(66446008)(9686003)(71200400001)(33716001)(76176011)(71190400001)(4326008)(99286004)(8676002)(25786009)(81166006)(66556008)(64756008)(66946007)(66476007)(52116002)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6861;H:MN2PR04MB5886.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: analogixsemi.com does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dymHbQKjO4hSuVaR6UkRsts+cUlPgc1YaM6SLeKjCJuyl4vFdP0bQY1ev2/QuyhPpGYGLcfXukYEDGQ8I8G20KLvvUsqq9hF6eU5k2oU7TPJ7pUciGywHmNkhP+XGFgWQoS/ib6Eb8KExATQruOsE+6FfNYZeLafTQsSSDzqgyStqWhWYS4u6lEXUuVh9fxmAtMc5d/DJ6IxdatPEomweG3saMpFZS9yfTsmB7Y3jn6eU1mAc9RtPnK2ac/my7ThigPHFQrFSMJ5mdY6qmyAG1Cudt9/lADPDCfI3KSoxz2/EQQ6L+V2yp5UulaDWRYX4ol+WuotSYKfcUBG2W5O2LAai7jv/YQo/QD4iyIqKt5/EdvcV8GFyLtxxy9BlYmK/uDHBFFmu9TH8mLJKSTCBcmkU4WBADdQtUDJEDxOuz8=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <96D1184EF9664145ACC2E445F4D00A84@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S2389385AbfISKvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 06:51:03 -0400
+Received: from mout.web.de ([212.227.15.4]:59627 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387987AbfISKvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 06:51:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1568890233;
+        bh=gk2fpL4tf9VggpIstfREPAvxj+olstdSC1GCzLekNqw=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=hQbxD0IeLduESvXiWcIQrh6lCPdGouAA/p4CZtJnV3uzCGoxtMB4dYcnLcv1LLiGm
+         VSQwueqfLgJVFCBrqlrjwJyPFsZZ/DkPXSlfN9+w2naIAaGYWxbFWs+/jwL1ofln3x
+         kL+eKZBnSdsSJ+i516Hus85/Brx/v0ChE0p6QlQA=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.132.191.36]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lgs1W-1hpbgN1c0c-00oGvM; Thu, 19
+ Sep 2019 12:50:33 +0200
+Subject: Re: [PATCH] mtd: st_spi_fsm: Use devm_platform_ioremap_resource() in
+ stfsm_probe()
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-mtd@lists.infradead.org
+Cc:     Allison Randal <allison@lohutok.net>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Himanshu Jha <himanshujha199640@gmail.com>
+References: <e1d32aa4-7c82-64e0-b7c4-33c94d9a2769@web.de>
+ <20190919111014.6c569cf3@xps13>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <17a1fccd-0ac3-f257-dec9-228b33a18cfa@web.de>
+Date:   Thu, 19 Sep 2019 12:50:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-X-OriginatorOrg: analogixsemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40cdd32b-6061-4148-ddb4-08d73ceef006
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2019 10:48:42.5587
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QJywVg77r63RDyezTwIqUYBbrQP7vRY9YJKEIfj1NIfV2Y2RuNTluwbAHPsvMlzP3+2UCZkHf+lNNg7MT5gOug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6861
+In-Reply-To: <20190919111014.6c569cf3@xps13>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8+u1HWWTRH6nzzO9AbrP7hhTnSrdv33bj/2tz+7v6J//YdZMq/D
+ diZ8naliyh4I2Sw5d/VgVzrytgBuUNka0lCUur0qTvTuo3Hk5wvPciHlUkBoG7votC5kLNb
+ 0f5e3juhCoZEKEQfT8J7XEe+ubk0l3Fk7DZqCY9wKK/icmiR5YLsl2c3fmAMENcqJelEUPF
+ RK1XHnhjItLDrcL+gD1gQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:TY3AGiQYbtg=:KDEntD9vgQ5O18ikVIqawi
+ GXPYhxZ7p4NMqQmxLn5PTYNstFHtp8OTBDuBawFfLUJo2K6Bc3jcP+0gC/oQ3gs6Ia58kNLF4
+ g7gDQZquonMIbvBwQFbY7gjBvT3kWGzHviDK6cGpPvHxq7wuiDG4sjvPLqsCTupxCXmpj7mJd
+ yI0aYh77/nUPXoEXLK/7GK6oX3JyoH9S+NhS61pRXGO1+xJfkasu62uqxEUpe/BJFD8p5hqWl
+ 6V7RkwFDTt/Hat6ZEaMFbTg5hYN07OvqeiA/Z+oMQl5jfn7xlFrjmG1eM5gcvyEA0n7m8oNIc
+ 1/YEEfO7DQ6sgK4uTXUmlXhyaivKV0MzJhz9cNXpP0lKvzkUFGTt2qHpWWDp5hnBIwqqqDFVB
+ Stc/yxDyv42HFQTzhoQC3Px6mTANDo2MihoTuo/SbdPYr0Mq5xGSMbl8liUGVWY05z3GEbl4u
+ igcyvIZg4mdyfvkstCb3wtWjE+Qkz9euYTe8BvKFOJEzWY0MS0Or6qEEdopYhLartkybW07Ww
+ qEhKOmDSe90ilD8+jNzASba/8m1gQfJEKLgw9WpTTdGnca2y3WX+dTHCtu14qB4JLoNPbGWCG
+ BHH0MHP5VUHkhXklCOWrMv33TUxZsy3tl8o1ioOt0G6TX/Cnx2G6xjVFWqIShs36QtzvrJMfq
+ l5jMCZIfElTBstLa3bF29US9lVIDVUg0tTigTuemQ1zQKK87d8cvUUTj3k8Vzo5O7T8TmmWZ0
+ spIEe3qC7qR9l0lApsprElG/gpY59LN9ObuSnCumKZWm0V25CqUPfeQe9+p/sS5vB2ZPv0xUe
+ juaVHQWeXz/FCgYfDjdM61TJgbz9OUSZ+lsBvp2OQjxFIEhE5dbwRJBOJdnG4pl5oMix7WlTV
+ LwwSjp5Oh7y0g9VNX7ebVmjVI6P1f9eUcfIczd+nMXsoNDTTCZAi8C4cu3Ei158Q7fjDgLmhH
+ Q0spGAHBuMaVdC4FGCU2wxZB7PweufQ3q6jLerHuEvbK+X/z1JzcEwAOQ+dgasob7f1dc1g4D
+ jk4T6vc0XMAVQg9Hi2WsC/ehRVByPFwZpBfInKV8+y83UaAPDL/izM+nyh1fZ/JU3Q1ttYUvI
+ sKp8m7nnUcvLO552+LSF0KM4U8OT3zMS9xRlccqsHjvpQyj7hNUMM5qIJCvM52/5SpPfr0qrI
+ cTLOBSS9xYyV0Eet7vczFdZAX5iyczHKkZIRbMDHW4WLUMV01gaqjuH+1pY73QwOcbKdt+F7m
+ ws79pX7b3SmYN8NUfr3JTn1rXgjoeraIXlcSqVA0C2UXaCJJeYiVdOPaVwGQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 08:56:01AM +0200, Neil Armstrong wrote:
-> Hi,
->=20
-> Please Cc dri-devel@lists.freedesktop.org
->=20
-> Thanks,
-> Neil
+>> +++ b/drivers/mtd/devices/st_spi_fsm.c
+>> @@ -2034,13 +2034,7 @@ static int stfsm_probe(struct platform_device *p=
+dev)
+>>
+>>  	platform_set_drvdata(pdev, fsm);
+>>
+>> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -	if (!res) {
+>> -		dev_err(&pdev->dev, "Resource not found\n");
+>> -		return -ENODEV;
+>> -	}
+>> -
+>> -	fsm->base =3D devm_ioremap_resource(&pdev->dev, res);
+>> +	fsm->base =3D devm_platform_ioremap_resource(pdev, 0);
+>>  	if (IS_ERR(fsm->base)) {
+>>  		dev_err(&pdev->dev,
+>>  			"Failed to reserve memory region %pR\n", res);
+>> --
+>> 2.23.0
+>>
+>
+>
+> Is this even compiled tested? 'res' is not initialized anymore so you
+> can't use it in the error trace. I suppose you should even drop it from
+> the stack parameters.
 
-OK, thanks.
-Xin
->=20
-> On 19/09/2019 08:51, Xin Ji wrote:
-> > Hi all,
-> >=20
-> > The following series add initial support for the Slimport ANX7625 trans=
-mitter, a
-> > ultra-low power Full-HD 4K MIPI to DP transmitter designed for portable=
- device.
-> >=20
-> > This is the first version upload, any mistakes, please let me know, I w=
-ill fix
-> > it in the next series.
-> >=20
-> > Thanks,
-> > Xin
-> >=20
-> >=20
-> > Xin Ji (2):
-> >   dt-bindings: drm/bridge: anx7625: MIPI to DP transmitter binding
-> >   drm/bridge: anx7625: Add anx7625 MIPI to DP bridge driver
-> >=20
-> >  .../devicetree/bindings/display/bridge/anx7625.txt |   42 +
-> >  drivers/gpu/drm/bridge/Makefile                    |    2 +-
-> >  drivers/gpu/drm/bridge/analogix/Kconfig            |    6 +
-> >  drivers/gpu/drm/bridge/analogix/Makefile           |    1 +
-> >  drivers/gpu/drm/bridge/analogix/anx7625.c          | 2086 ++++++++++++=
-++++++++
-> >  drivers/gpu/drm/bridge/analogix/anx7625.h          |  397 ++++
-> >  6 files changed, 2533 insertions(+), 1 deletion(-)
-> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/an=
-x7625.txt
-> >  create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.c
-> >  create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.h
-> >=20
+Would you accept to reduce the error message another bit?
+
+Regards,
+Markus
