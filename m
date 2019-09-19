@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFAC9B871F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DD0DB872E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405544AbfISWJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:09:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48138 "EHLO mail.kernel.org"
+        id S2394414AbfISWew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:34:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405493AbfISWJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:09:49 -0400
+        id S2405429AbfISWJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:09:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D8B221920;
-        Thu, 19 Sep 2019 22:09:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E880221928;
+        Thu, 19 Sep 2019 22:09:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930989;
-        bh=0dd297o4/giydwwbHGYujD6FY22aEiS50RVYkQurEz0=;
+        s=default; t=1568930969;
+        bh=lQYj4NUXHSkeIRtL2lZVGzZ2tZyvwgqLTUTTjnchcWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvKeejTT6lrGGyaGwh7J//EflkC81YARduYZo4E1NlndZPda8uXrcauoQRWs+EQUs
-         DUliRSa5AkBpQIEWUsev3u3cI+BskwBKohDPxVL8dL11YS9DMSgMFHIDwrEHr+WwrX
-         dmPVcGyUfPSOVHuFpaXYoGgPogbDhlrwGv7pMf3Y=
+        b=c30OzBzbBzJsIbKqN1iFffRxUnmbGuOeHE3v8nUEX7IgYQzfbt3nm59v/yCxk/XKa
+         ODIVHC+0G1igSqUxMTvuIjweOyYnm+NE8Whz2pb4/qnB88qiCb2ijWgfluUPXwTt4K
+         DurdW+MqqU9NnQI96My+Vz5dDuDUPBu5naaVdqFg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Chunming Zhou <david1.zhou@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 070/124] drm/amdgpu: fix dma_fence_wait without reference
-Date:   Fri, 20 Sep 2019 00:02:38 +0200
-Message-Id: <20190919214821.543026211@linuxfoundation.org>
+Subject: [PATCH 5.2 081/124] libceph: dont call crypto_free_sync_skcipher() on a NULL tfm
+Date:   Fri, 20 Sep 2019 00:02:49 +0200
+Message-Id: <20190919214821.960015249@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -46,61 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian König <christian.koenig@amd.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 42068e1ef961c719f967dbbb4ddcb394a0ba7917 ]
+[ Upstream commit e8c99200b4d117c340c392ebd5e62d85dfeed027 ]
 
-We need to grab a reference to the fence we wait for.
+In set_secret(), key->tfm is assigned to NULL on line 55, and then
+ceph_crypto_key_destroy(key) is executed.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+ceph_crypto_key_destroy(key)
+  crypto_free_sync_skcipher(key->tfm)
+    crypto_free_skcipher(&tfm->base);
+
+This happens to work because crypto_sync_skcipher is a trivial wrapper
+around crypto_skcipher: &tfm->base is still 0 and crypto_free_skcipher()
+handles that.  Let's not rely on the layout of crypto_sync_skcipher.
+
+This bug is found by a static analysis tool STCheck written by us.
+
+Fixes: 69d6302b65a8 ("libceph: Remove VLA usage of skcipher").
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c | 27 ++++++++++++++-----------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ net/ceph/crypto.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
-index a28a3d722ba29..62298ae5c81c0 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c
-@@ -535,21 +535,24 @@ int amdgpu_ctx_wait_prev_fence(struct amdgpu_ctx *ctx,
- 			       struct drm_sched_entity *entity)
- {
- 	struct amdgpu_ctx_entity *centity = to_amdgpu_ctx_entity(entity);
--	unsigned idx = centity->sequence & (amdgpu_sched_jobs - 1);
--	struct dma_fence *other = centity->fences[idx];
-+	struct dma_fence *other;
-+	unsigned idx;
-+	long r;
- 
--	if (other) {
--		signed long r;
--		r = dma_fence_wait(other, true);
--		if (r < 0) {
--			if (r != -ERESTARTSYS)
--				DRM_ERROR("Error (%ld) waiting for fence!\n", r);
-+	spin_lock(&ctx->ring_lock);
-+	idx = centity->sequence & (amdgpu_sched_jobs - 1);
-+	other = dma_fence_get(centity->fences[idx]);
-+	spin_unlock(&ctx->ring_lock);
- 
--			return r;
--		}
--	}
-+	if (!other)
-+		return 0;
- 
--	return 0;
-+	r = dma_fence_wait(other, true);
-+	if (r < 0 && r != -ERESTARTSYS)
-+		DRM_ERROR("Error (%ld) waiting for fence!\n", r);
-+
-+	dma_fence_put(other);
-+	return r;
+diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+index 5d6724cee38f9..4f75df40fb121 100644
+--- a/net/ceph/crypto.c
++++ b/net/ceph/crypto.c
+@@ -136,8 +136,10 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
+ 	if (key) {
+ 		kfree(key->key);
+ 		key->key = NULL;
+-		crypto_free_sync_skcipher(key->tfm);
+-		key->tfm = NULL;
++		if (key->tfm) {
++			crypto_free_sync_skcipher(key->tfm);
++			key->tfm = NULL;
++		}
+ 	}
  }
  
- void amdgpu_ctx_mgr_init(struct amdgpu_ctx_mgr *mgr)
 -- 
 2.20.1
 
