@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9BFB8713
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C849BB8777
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:37:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405705AbfISWKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:10:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48930 "EHLO mail.kernel.org"
+        id S2406889AbfISWgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:36:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405681AbfISWKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:10:32 -0400
+        id S2405105AbfISWGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:06:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D3D021920;
-        Thu, 19 Sep 2019 22:10:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF4C621927;
+        Thu, 19 Sep 2019 22:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931030;
-        bh=6k0UVRVuV3BzhmWx/7jUTuLa0+39oNOFja5xFGJCkng=;
+        s=default; t=1568930765;
+        bh=slnhpFEp5xIh7mPkMPWgPhf7Q9Yh1FvqHssoFJ05Vfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UwfkDDxnpZ6tOLWvMYjuNJIpW55DaUsqUdS3nDMY7Eq3EzKyyUP6pYS9trnJqpmty
-         dgl/J3nN18g2ZRYr+aasZbZZ1PN5qbkQ2DRwug3gzjIYft2UyTD0necl9X5CbSIjAG
-         52pSTiojpdZuAKihsHzWbY+dvdeWf4zY90/EK5Y4=
+        b=TKBIDNKZMiuXVCSC4GNzt0pm05hysQtgAbx9+M0A+SqOkOMymTHq+5nQS2viuSehu
+         NGtupbLK9z9Led/NJex53Hj4pKXtzmrpb5T/OwFuiKnji56Q/tyJuFNp8WZ26t+G7Q
+         xFCr3eLY4WZ/acF9EPNsy30Z1IyIE/3tzKnzXNA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <len.brown@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 101/124] tools/power turbostat: Fix CPU%C1 display value
+        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.3 08/21] xen-netfront: do not assume sk_buff_head list is empty in error handling
 Date:   Fri, 20 Sep 2019 00:03:09 +0200
-Message-Id: <20190919214822.884237497@linuxfoundation.org>
+Message-Id: <20190919214702.452008775@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
+References: <20190919214657.842130855@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,124 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+From: Dongli Zhang <dongli.zhang@oracle.com>
 
-[ Upstream commit 1e9042b9c8d46ada9ee7b3339a31f50d12e5d291 ]
+[ Upstream commit 00b368502d18f790ab715e055869fd4bb7484a9b ]
 
-In some case C1% will be wrong value, when platform doesn't have MSR for
-C1 residency.
+When skb_shinfo(skb) is not able to cache extra fragment (that is,
+skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS), xennet_fill_frags() assumes
+the sk_buff_head list is already empty. As a result, cons is increased only
+by 1 and returns to error handling path in xennet_poll().
 
-For example:
-Core    CPU     CPU%c1
--       -       100.00
-0       0       100.00
-0       2       100.00
-1       1       100.00
-1       3       100.00
+However, if the sk_buff_head list is not empty, queue->rx.rsp_cons may be
+set incorrectly. That is, queue->rx.rsp_cons would point to the rx ring
+buffer entries whose queue->rx_skbs[i] and queue->grant_rx_ref[i] are
+already cleared to NULL. This leads to NULL pointer access in the next
+iteration to process rx ring buffer entries.
 
-But adding Busy% will fix this
-Core    CPU     Busy%   CPU%c1
--       -       99.77   0.23
-0       0       99.77   0.23
-0       2       99.77   0.23
-1       1       99.77   0.23
-1       3       99.77   0.23
+Below is how xennet_poll() does error handling. All remaining entries in
+tmpq are accounted to queue->rx.rsp_cons without assuming how many
+outstanding skbs are remained in the list.
 
-This issue can be reproduced on most of the recent systems including
-Broadwell, Skylake and later.
+ 985 static int xennet_poll(struct napi_struct *napi, int budget)
+... ...
+1032           if (unlikely(xennet_set_skb_gso(skb, gso))) {
+1033                   __skb_queue_head(&tmpq, skb);
+1034                   queue->rx.rsp_cons += skb_queue_len(&tmpq);
+1035                   goto err;
+1036           }
 
-This is because if we don't select Busy% or Avg_MHz or Bzy_MHz then
-mperf value will not be read from MSR, so it will be 0. But this
-is required for C1% calculation when MSR for C1 residency is not present.
-Same is true for C3, C6 and C7 column selection.
+It is better to always have the error handling in the same way.
 
-So add another define DO_BIC_READ(), which doesn't depend on user
-column selection and use for mperf, C3, C6 and C7 related counters.
-So when there is no platform support for C1 residency counters,
-we still read these counters, if the CPU has support and user selected
-display of CPU%c1.
-
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: ad4f15dc2c70 ("xen/netfront: don't bug in case of too many frags")
+Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/power/x86/turbostat/turbostat.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/net/xen-netfront.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index 0a80f3cc24e31..5c0154cf190cc 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -506,6 +506,7 @@ unsigned long long bic_enabled = (0xFFFFFFFFFFFFFFFFULL & ~BIC_DISABLED_BY_DEFAU
- unsigned long long bic_present = BIC_USEC | BIC_TOD | BIC_sysfs | BIC_APIC | BIC_X2APIC;
- 
- #define DO_BIC(COUNTER_NAME) (bic_enabled & bic_present & COUNTER_NAME)
-+#define DO_BIC_READ(COUNTER_NAME) (bic_present & COUNTER_NAME)
- #define ENABLE_BIC(COUNTER_NAME) (bic_enabled |= COUNTER_NAME)
- #define BIC_PRESENT(COUNTER_BIT) (bic_present |= COUNTER_BIT)
- #define BIC_NOT_PRESENT(COUNTER_BIT) (bic_present &= ~COUNTER_BIT)
-@@ -1287,6 +1288,14 @@ delta_core(struct core_data *new, struct core_data *old)
- 	}
- }
- 
-+int soft_c1_residency_display(int bic)
-+{
-+	if (!DO_BIC(BIC_CPU_c1) || use_c1_residency_msr)
-+		return 0;
-+
-+	return DO_BIC_READ(bic);
-+}
-+
- /*
-  * old = new - old
-  */
-@@ -1322,7 +1331,8 @@ delta_thread(struct thread_data *new, struct thread_data *old,
- 
- 	old->c1 = new->c1 - old->c1;
- 
--	if (DO_BIC(BIC_Avg_MHz) || DO_BIC(BIC_Busy) || DO_BIC(BIC_Bzy_MHz)) {
-+	if (DO_BIC(BIC_Avg_MHz) || DO_BIC(BIC_Busy) || DO_BIC(BIC_Bzy_MHz) ||
-+	    soft_c1_residency_display(BIC_Avg_MHz)) {
- 		if ((new->aperf > old->aperf) && (new->mperf > old->mperf)) {
- 			old->aperf = new->aperf - old->aperf;
- 			old->mperf = new->mperf - old->mperf;
-@@ -1774,7 +1784,8 @@ int get_counters(struct thread_data *t, struct core_data *c, struct pkg_data *p)
- retry:
- 	t->tsc = rdtsc();	/* we are running on local CPU of interest */
- 
--	if (DO_BIC(BIC_Avg_MHz) || DO_BIC(BIC_Busy) || DO_BIC(BIC_Bzy_MHz)) {
-+	if (DO_BIC(BIC_Avg_MHz) || DO_BIC(BIC_Busy) || DO_BIC(BIC_Bzy_MHz) ||
-+	    soft_c1_residency_display(BIC_Avg_MHz)) {
- 		unsigned long long tsc_before, tsc_between, tsc_after, aperf_time, mperf_time;
- 
- 		/*
-@@ -1851,20 +1862,20 @@ retry:
- 	if (!(t->flags & CPU_IS_FIRST_THREAD_IN_CORE))
- 		goto done;
- 
--	if (DO_BIC(BIC_CPU_c3)) {
-+	if (DO_BIC(BIC_CPU_c3) || soft_c1_residency_display(BIC_CPU_c3)) {
- 		if (get_msr(cpu, MSR_CORE_C3_RESIDENCY, &c->c3))
- 			return -6;
- 	}
- 
--	if (DO_BIC(BIC_CPU_c6) && !do_knl_cstates) {
-+	if ((DO_BIC(BIC_CPU_c6) || soft_c1_residency_display(BIC_CPU_c6)) && !do_knl_cstates) {
- 		if (get_msr(cpu, MSR_CORE_C6_RESIDENCY, &c->c6))
- 			return -7;
--	} else if (do_knl_cstates) {
-+	} else if (do_knl_cstates || soft_c1_residency_display(BIC_CPU_c6)) {
- 		if (get_msr(cpu, MSR_KNL_CORE_C6_RESIDENCY, &c->c6))
- 			return -7;
- 	}
- 
--	if (DO_BIC(BIC_CPU_c7))
-+	if (DO_BIC(BIC_CPU_c7) || soft_c1_residency_display(BIC_CPU_c7))
- 		if (get_msr(cpu, MSR_CORE_C7_RESIDENCY, &c->c7))
- 			return -8;
- 
--- 
-2.20.1
-
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -906,7 +906,7 @@ static RING_IDX xennet_fill_frags(struct
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+ 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
+-			queue->rx.rsp_cons = ++cons;
++			queue->rx.rsp_cons = ++cons + skb_queue_len(list);
+ 			kfree_skb(nskb);
+ 			return ~0U;
+ 		}
 
 
