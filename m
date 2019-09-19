@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC209B84C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C96DB8540
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392070AbfISWNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:13:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53166 "EHLO mail.kernel.org"
+        id S2406622AbfISWTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:19:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732567AbfISWNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:13:54 -0400
+        id S2390275AbfISWTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D33192196F;
-        Thu, 19 Sep 2019 22:13:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C2E521924;
+        Thu, 19 Sep 2019 22:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931233;
-        bh=BGuyzmox+sYq/XPQbOvPmCqn5Y4KACHteLBcyR9H7kA=;
+        s=default; t=1568931542;
+        bh=nMVcyCBO+pu2YgbD35jIQJZ5asTgAX/Y8u6irtWayIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aB/h6qADLgKiiYEEl2KZoonl4eeGVsvpOZl1FrS9aaE0L1DtsMrAw/mMCumm+m1rS
-         VBCm9pmkBHLHhK7B/EUPh9H0z73wky+OooAhyX15twAycrKOQuFKnJ8F3+68E5V41C
-         g/SgbTCleo7cFxzhmYL5KzrVRfAt63IlsortSADM=
+        b=xHvw5w0s9V34//do5Lkj7HG6WrufFkeQkZOajDHsBO/c48+rypQH+n5VEBQB4aWlT
+         XdwNoH4lDO/Z1akxGu/9qB/H4tLx+7eZe7qzbSQMHAExWc3jnFMsgqRmNncHjjN8KE
+         NQXY6x8HUnch7HDdbTkfL488dgXdyNiHxDNJOGj4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 52/79] cifs: set domainName when a domain-key is used in multiuser
+        stable@vger.kernel.org, Xiaolei Li <xiaolei.li@mediatek.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.9 24/74] mtd: rawnand: mtk: Fix wrongly assigned OOB buffer pointer issue
 Date:   Fri, 20 Sep 2019 00:03:37 +0200
-Message-Id: <20190919214812.082014578@linuxfoundation.org>
+Message-Id: <20190919214807.117496666@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,72 +43,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Xiaolei Li <xiaolei.li@mediatek.com>
 
-[ Upstream commit f2aee329a68f5a907bcff11a109dfe17c0b41aeb ]
+commit 336d4b138be2dad372b67a2388e42805c48aaa38 upstream.
 
-RHBZ: 1710429
+One main goal of the function mtk_nfc_update_ecc_stats is to check
+whether sectors are all empty. If they are empty, set these sectors's
+data buffer and OOB buffer as 0xff.
 
-When we use a domain-key to authenticate using multiuser we must also set
-the domainnmame for the new volume as it will be used and passed to the server
-in the NTLMSSP Domain-name.
+But now, the sector OOB buffer pointer is wrongly assigned. We always
+do memset from sector 0.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+To fix this issue, pass start sector number to make OOB buffer pointer
+be properly assigned.
+
+Fixes: 1d6b1e464950 ("mtd: mediatek: driver for MTK Smart Device")
+Signed-off-by: Xiaolei Li <xiaolei.li@mediatek.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/cifs/connect.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/mtd/nand/mtk_nand.c |   21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 208430bb66fc6..75727518b272a 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -2756,6 +2756,7 @@ static int
- cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
+--- a/drivers/mtd/nand/mtk_nand.c
++++ b/drivers/mtd/nand/mtk_nand.c
+@@ -810,19 +810,21 @@ static int mtk_nfc_write_oob_std(struct
+ 	return ret & NAND_STATUS_FAIL ? -EIO : 0;
+ }
+ 
+-static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 sectors)
++static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 start,
++				    u32 sectors)
  {
- 	int rc = 0;
-+	int is_domain = 0;
- 	const char *delim, *payload;
- 	char *desc;
- 	ssize_t len;
-@@ -2803,6 +2804,7 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
- 			rc = PTR_ERR(key);
- 			goto out_err;
- 		}
-+		is_domain = 1;
+ 	struct nand_chip *chip = mtd_to_nand(mtd);
+ 	struct mtk_nfc *nfc = nand_get_controller_data(chip);
+ 	struct mtk_nfc_nand_chip *mtk_nand = to_mtk_nand(chip);
+ 	struct mtk_ecc_stats stats;
++	u32 reg_size = mtk_nand->fdm.reg_size;
+ 	int rc, i;
+ 
+ 	rc = nfi_readl(nfc, NFI_STA) & STA_EMP_PAGE;
+ 	if (rc) {
+ 		memset(buf, 0xff, sectors * chip->ecc.size);
+ 		for (i = 0; i < sectors; i++)
+-			memset(oob_ptr(chip, i), 0xff, mtk_nand->fdm.reg_size);
++			memset(oob_ptr(chip, start + i), 0xff, reg_size);
+ 		return 0;
  	}
  
- 	down_read(&key->sem);
-@@ -2860,6 +2862,26 @@ cifs_set_cifscreds(struct smb_vol *vol, struct cifs_ses *ses)
- 		goto out_key_put;
+@@ -842,7 +844,7 @@ static int mtk_nfc_read_subpage(struct m
+ 	u32 spare = mtk_nand->spare_per_sector;
+ 	u32 column, sectors, start, end, reg;
+ 	dma_addr_t addr;
+-	int bitflips;
++	int bitflips = 0;
+ 	size_t len;
+ 	u8 *buf;
+ 	int rc;
+@@ -910,14 +912,11 @@ static int mtk_nfc_read_subpage(struct m
+ 	if (rc < 0) {
+ 		dev_err(nfc->dev, "subpage done timeout\n");
+ 		bitflips = -EIO;
+-	} else {
+-		bitflips = 0;
+-		if (!raw) {
+-			rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
+-			bitflips = rc < 0 ? -ETIMEDOUT :
+-				mtk_nfc_update_ecc_stats(mtd, buf, sectors);
+-			mtk_nfc_read_fdm(chip, start, sectors);
+-		}
++	} else if (!raw) {
++		rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
++		bitflips = rc < 0 ? -ETIMEDOUT :
++			mtk_nfc_update_ecc_stats(mtd, buf, start, sectors);
++		mtk_nfc_read_fdm(chip, start, sectors);
  	}
  
-+	/*
-+	 * If we have a domain key then we must set the domainName in the
-+	 * for the request.
-+	 */
-+	if (is_domain && ses->domainName) {
-+		vol->domainname = kstrndup(ses->domainName,
-+					   strlen(ses->domainName),
-+					   GFP_KERNEL);
-+		if (!vol->domainname) {
-+			cifs_dbg(FYI, "Unable to allocate %zd bytes for "
-+				 "domain\n", len);
-+			rc = -ENOMEM;
-+			kfree(vol->username);
-+			vol->username = NULL;
-+			kfree(vol->password);
-+			vol->password = NULL;
-+			goto out_key_put;
-+		}
-+	}
-+
- out_key_put:
- 	up_read(&key->sem);
- 	key_put(key);
--- 
-2.20.1
-
+ 	dma_unmap_single(nfc->dev, addr, len, DMA_FROM_DEVICE);
 
 
