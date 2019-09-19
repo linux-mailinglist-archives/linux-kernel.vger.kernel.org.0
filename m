@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 738E2B8770
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:37:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2114EB8701
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405025AbfISWFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:05:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42718 "EHLO mail.kernel.org"
+        id S2407049AbfISWdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:33:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404989AbfISWFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:05:33 -0400
+        id S2405879AbfISWLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:11:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E6FD21928;
-        Thu, 19 Sep 2019 22:05:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45C7B218AF;
+        Thu, 19 Sep 2019 22:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930732;
-        bh=j01cT658w/1VTSLbJuQKoI9jLEcQMihVRRvktru5JPE=;
+        s=default; t=1568931104;
+        bh=RuAsJbetNaqUvGAevgs5C+R+84pnOicaOUpUpk5K3oU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IkiTnXj9JaTSUH4l2ObIpleA+InhI7AAazY9rbIUy4KdtIXtIPAHmke+JNoZDMhUT
-         +UWOD/aQ3qjk96QHQ6MML4qqDMgcR92ajhK1fChhOHHiQANiKZ2ORhBUd4qi6Z/8y7
-         dROcSJz9ubAuRHKAMGHaTD3XK264DZrrCHSdYWhA=
+        b=UbIe8eAp3pyfKgwy03h4Us/0IviS+6EkKc6zZ5qZxcZu3pCu4d/grM6bntv0hM5ev
+         PLEkuzmw2N3Rrwe/2OTburuCKDDDoxmIkTjAiCXhXdNO4s4+Nx9FwfUhL8x7pnx4JT
+         91wZAQmERjKRBh7NQax3UEUXrT6QCYUsWshCBsXI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Masashi Honma <masashi.honma@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 5.3 16/21] nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
-Date:   Fri, 20 Sep 2019 00:03:17 +0200
-Message-Id: <20190919214710.759303801@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 110/124] dmaengine: ti: dma-crossbar: Fix a memory leak bug
+Date:   Fri, 20 Sep 2019 00:03:18 +0200
+Message-Id: <20190919214823.188123999@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
-References: <20190919214657.842130855@linuxfoundation.org>
+In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
+References: <20190919214819.198419517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masashi Honma <masashi.honma@gmail.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit 4b2c5a14cd8005a900075f7dfec87473c6ee66fb upstream.
+[ Upstream commit 2c231c0c1dec42192aca0f87f2dc68b8f0cbc7d2 ]
 
-commit 1222a1601488 ("nl80211: Fix possible Spectre-v1 for CQM
-RSSI thresholds") was incomplete and requires one more fix to
-prevent accessing to rssi_thresholds[n] because user can control
-rssi_thresholds[i] values to make i reach to n. For example,
-rssi_thresholds = {-400, -300, -200, -100} when last is -34.
+In ti_dra7_xbar_probe(), 'rsv_events' is allocated through kcalloc(). Then
+of_property_read_u32_array() is invoked to search for the property.
+However, if this process fails, 'rsv_events' is not deallocated, leading to
+a memory leak bug. To fix this issue, free 'rsv_events' before returning
+the error.
 
-Cc: stable@vger.kernel.org
-Fixes: 1222a1601488 ("nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
-Link: https://lore.kernel.org/r/20190908005653.17433-1-masashi.honma@gmail.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Link: https://lore.kernel.org/r/1565938136-7249-1-git-send-email-wenwen@cs.uga.edu
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/nl80211.c |    4 +++-
+ drivers/dma/ti/dma-crossbar.c | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -10659,9 +10659,11 @@ static int cfg80211_cqm_rssi_update(stru
- 	hyst = wdev->cqm_config->rssi_hyst;
- 	n = wdev->cqm_config->n_rssi_thresholds;
+diff --git a/drivers/dma/ti/dma-crossbar.c b/drivers/dma/ti/dma-crossbar.c
+index ad2f0a4cd6a4d..f255056696eec 100644
+--- a/drivers/dma/ti/dma-crossbar.c
++++ b/drivers/dma/ti/dma-crossbar.c
+@@ -391,8 +391,10 @@ static int ti_dra7_xbar_probe(struct platform_device *pdev)
  
--	for (i = 0; i < n; i++)
-+	for (i = 0; i < n; i++) {
-+		i = array_index_nospec(i, n);
- 		if (last < wdev->cqm_config->rssi_thresholds[i])
- 			break;
-+	}
+ 		ret = of_property_read_u32_array(node, pname, (u32 *)rsv_events,
+ 						 nelm * 2);
+-		if (ret)
++		if (ret) {
++			kfree(rsv_events);
+ 			return ret;
++		}
  
- 	low_index = i - 1;
- 	if (low_index >= 0) {
+ 		for (i = 0; i < nelm; i++) {
+ 			ti_dra7_xbar_reserve(rsv_events[i][0], rsv_events[i][1],
+-- 
+2.20.1
+
 
 
