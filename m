@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29B58B8681
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CAE4B8580
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:22:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404560AbfISWQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:16:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57770 "EHLO mail.kernel.org"
+        id S2394089AbfISWVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:21:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406384AbfISWQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:16:53 -0400
+        id S1733140AbfISWTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7D9F20678;
-        Thu, 19 Sep 2019 22:16:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1247F20678;
+        Thu, 19 Sep 2019 22:19:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931412;
-        bh=eVr15m5kKJnEZ0cFWr1VeiANpGOhDU/iAn14qgtCilw=;
+        s=default; t=1568931586;
+        bh=9Cb/7Dxwdgc3rSVccFfgH4ZMgneEXgFibVvzSzLCIyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=baxLAfguN1OtZhbbnc9a3EsRcYCZZeLyct2KNFSca6S2VXDiaMSMZDQfqACIyu2SR
-         oyq9b3CeHYQ9jy6JVUYBvxLEfId6TNAvI6JZ1DDBy9cTridvqAYtDl0SbwYAN4UXi0
-         NsIXtmYPrxxW4jfoHsq3nBiM7AcuZDusVMXm2RuU=
+        b=eVxNsJsP/82zj3yRy7Pxx2t+lbBaQ9/jhvGiZQfj40v9rb3r5ek6+yTG/oSEAJpsO
+         VHKK+8zNo2h7bppS/Xbo+jhWdn63PCh2cgdiopKP8onNYk55BBZsfxXeKbmpOZ6KXC
+         avcPtY5vacF1IZ6LEXgu2Xi/gz2t1xOOgCG7ap+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongli Zhang <dongli.zhang@oracle.com>,
+        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 07/59] xen-netfront: do not assume sk_buff_head list is empty in error handling
+Subject: [PATCH 4.9 09/74] sctp: use transport pf_retrans in sctp_do_8_2_transport_strike
 Date:   Fri, 20 Sep 2019 00:03:22 +0200
-Message-Id: <20190919214757.744689312@linuxfoundation.org>
+Message-Id: <20190919214803.931884674@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dongli Zhang <dongli.zhang@oracle.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 00b368502d18f790ab715e055869fd4bb7484a9b ]
+[ Upstream commit 10eb56c582c557c629271f1ee31e15e7a9b2558b ]
 
-When skb_shinfo(skb) is not able to cache extra fragment (that is,
-skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS), xennet_fill_frags() assumes
-the sk_buff_head list is already empty. As a result, cons is increased only
-by 1 and returns to error handling path in xennet_poll().
+Transport should use its own pf_retrans to do the error_count
+check, instead of asoc's. Otherwise, it's meaningless to make
+pf_retrans per transport.
 
-However, if the sk_buff_head list is not empty, queue->rx.rsp_cons may be
-set incorrectly. That is, queue->rx.rsp_cons would point to the rx ring
-buffer entries whose queue->rx_skbs[i] and queue->grant_rx_ref[i] are
-already cleared to NULL. This leads to NULL pointer access in the next
-iteration to process rx ring buffer entries.
-
-Below is how xennet_poll() does error handling. All remaining entries in
-tmpq are accounted to queue->rx.rsp_cons without assuming how many
-outstanding skbs are remained in the list.
-
- 985 static int xennet_poll(struct napi_struct *napi, int budget)
-... ...
-1032           if (unlikely(xennet_set_skb_gso(skb, gso))) {
-1033                   __skb_queue_head(&tmpq, skb);
-1034                   queue->rx.rsp_cons += skb_queue_len(&tmpq);
-1035                   goto err;
-1036           }
-
-It is better to always have the error handling in the same way.
-
-Fixes: ad4f15dc2c70 ("xen/netfront: don't bug in case of too many frags")
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
+Fixes: 5aa93bcf66f4 ("sctp: Implement quick failover draft from tsvwg")
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/xen-netfront.c |    2 +-
+ net/sctp/sm_sideeffect.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -908,7 +908,7 @@ static RING_IDX xennet_fill_frags(struct
- 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
- 		}
- 		if (unlikely(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS)) {
--			queue->rx.rsp_cons = ++cons;
-+			queue->rx.rsp_cons = ++cons + skb_queue_len(list);
- 			kfree_skb(nskb);
- 			return ~0U;
- 		}
+--- a/net/sctp/sm_sideeffect.c
++++ b/net/sctp/sm_sideeffect.c
+@@ -509,7 +509,7 @@ static void sctp_do_8_2_transport_strike
+ 	if (net->sctp.pf_enable &&
+ 	   (transport->state == SCTP_ACTIVE) &&
+ 	   (transport->error_count < transport->pathmaxrxt) &&
+-	   (transport->error_count > asoc->pf_retrans)) {
++	   (transport->error_count > transport->pf_retrans)) {
+ 
+ 		sctp_assoc_control_transport(asoc, transport,
+ 					     SCTP_TRANSPORT_PF,
 
 
