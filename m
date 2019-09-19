@@ -2,52 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7BBB714F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 03:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 043D0B7159
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 03:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388348AbfISBza (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 21:55:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387630AbfISBza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 21:55:30 -0400
-Subject: Re: [GIT PULL] Btrfs updates for 5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568858129;
-        bh=QJrX8XXLkog0ID2O3CpD1VX61kiER/lSY4sEvp/C8Rg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=HOWehXWDbUgaTDwziPHUHFIBGLtnKGY9K+y+nNcxr5SMwJgmsiElw2eY2JqDkAZZe
-         pPN8p8RO01gcK6jAXNDFD66Q8/UYJyuSmeKN3InC8XrhdW8AodTZaKOjMa5YS++n4u
-         WeMFCVBbS2/GLwXuIeWIoqhqL70APUijx3KGOKSM=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1568631647.git.dsterba@suse.com>
-References: <cover.1568631647.git.dsterba@suse.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cover.1568631647.git.dsterba@suse.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4
-X-PR-Tracked-Commit-Id: 6af112b11a4bc1b560f60a618ac9c1dcefe9836e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7d14df2d280fb7411eba2eb96682da0683ad97f6
-Message-Id: <156885812946.31089.18026209226835825429.pr-tracker-bot@kernel.org>
-Date:   Thu, 19 Sep 2019 01:55:29 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S2388391AbfISB5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 21:57:03 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39614 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387841AbfISB5D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 21:57:03 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iAlgr-0005LH-5Z; Thu, 19 Sep 2019 01:57:01 +0000
+Date:   Thu, 19 Sep 2019 02:57:01 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [git pull] more mount API conversions
+Message-ID: <20190919015701.GJ1131@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Sep 2019 13:55:05 +0200:
+	Conversions to new API for shmem and friends and for mount_mtd()-using
+filesystems.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.4
+	As for the rest of the work.mount in -next, some of the conversions
+belong in the individual trees (e.g. binderfs one should definitely go through
+android folks, after getting redone on top of their changes).  I'm going to
+drop those and send the rest (trivial ones + stuff ACKed by maintainers) in
+a separate series - by that point they are independent from each other.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7d14df2d280fb7411eba2eb96682da0683ad97f6
+	Some stuff has already migrated into individual trees (NFS conversion,
+for example, or FUSE stuff, etc.); those presumably will go through the
+regular merges from corresponding trees.
 
-Thank you!
+The following changes since commit 0f071004109d9c8de7023b9a64fa2ba3fa87cbed:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+  mtd: Provide fs_context-aware mount_mtd() replacement (2019-09-05 14:34:23 -0400)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount2
+
+for you to fetch changes up to 74983ac20aeafc88d9ceed64a8bf2a9024c488d5:
+
+  vfs: Make fs_parse() handle fs_param_is_fd-type params better (2019-09-12 21:06:14 -0400)
+
+----------------------------------------------------------------
+Al Viro (7):
+      devtmpfs: don't mix {ramfs,shmem}_fill_super() with mount_single()
+      make ramfs_fill_super() static
+      make shmem_fill_super() static
+      shmem_parse_options(): use a separate structure to keep the results
+      shmem_parse_options(): don't bother with mpol in separate variable
+      shmem_parse_options(): take handling a single option into a helper
+      shmem_parse_one(): switch to use of fs_parse()
+
+David Howells (8):
+      vfs: Add a single-or-reconfig keying to vfs_get_super()
+      vfs: Convert romfs to use the new mount API
+      vfs: Convert cramfs to use the new mount API
+      vfs: Convert jffs2 to use the new mount API
+      mtd: Kill mount_mtd()
+      vfs: Convert squashfs to use the new mount API
+      vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount API
+      vfs: Make fs_parse() handle fs_param_is_fd-type params better
+
+ drivers/base/devtmpfs.c    |  38 +++--
+ drivers/mtd/mtdsuper.c     | 189 ----------------------
+ fs/cramfs/inode.c          |  69 ++++----
+ fs/fs_parser.c             |  18 ++-
+ fs/jffs2/fs.c              |  21 +--
+ fs/jffs2/os-linux.h        |   4 +-
+ fs/jffs2/super.c           | 172 ++++++++++----------
+ fs/ramfs/inode.c           |  99 +++++++-----
+ fs/romfs/super.c           |  46 +++---
+ fs/squashfs/super.c        | 100 ++++++------
+ fs/super.c                 |  35 ++++-
+ include/linux/fs_context.h |   4 +
+ include/linux/mtd/super.h  |   3 -
+ include/linux/ramfs.h      |   6 +-
+ include/linux/shmem_fs.h   |   3 +-
+ init/do_mounts.c           |  11 +-
+ mm/shmem.c                 | 385 +++++++++++++++++++++++++++++----------------
+ 17 files changed, 609 insertions(+), 594 deletions(-)
