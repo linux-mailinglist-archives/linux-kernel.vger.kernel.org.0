@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC477B8452
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 521A7B8453
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:10:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405555AbfISWJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:09:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48184 "EHLO mail.kernel.org"
+        id S2405565AbfISWJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:09:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405505AbfISWJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:09:52 -0400
+        id S2405493AbfISWJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:09:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 330AF21924;
-        Thu, 19 Sep 2019 22:09:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B090F218AF;
+        Thu, 19 Sep 2019 22:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930991;
-        bh=48NONwleXv7yulCxjWwTzPAFeGowSucCtbVQ7QAI4IA=;
+        s=default; t=1568930994;
+        bh=TuQF33/lKNBJ+SLWKBz0W/EM/1TqEHgqJdvn2dmtTc8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qvYkM2fQgxreh/LAesjwnixLztADdYdbNRTcSnpJhhfE11uvced1pSfFxqwjoObga
-         oojeLF+drjCoBnAmnt8JEaTOtr42ToljFispc/cxRBOxl5K/PdBMTx8cXCLKFHwnk/
-         j90uPbTsN6DhkWKrWfWIRgXlMkYml/q+PG019rcA=
+        b=hQLZwj/yemJZ2ZsP1kak4U1jHZaTZ8jJIX9ddflY6RxbcaZjWmHaTarHnZzeWcujv
+         MFu0WKa3proUNHUk4wULOJdEo5oUqv2k71ZLE1TLaqEe99+fGnhd3dWSsNfPH8vcKa
+         Wzvv0hV1j+6yrrB8421vAuGkrySgvCVZRxt815IM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>, acme@kernel.org,
-        Josh Hunt <johunt@akamai.com>, bpuranda@akamai.com,
-        mingo@redhat.com, jolsa@redhat.com, tglx@linutronix.de,
-        namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 088/124] perf/x86/intel: Restrict period on Nehalem
-Date:   Fri, 20 Sep 2019 00:02:56 +0200
-Message-Id: <20190919214822.235807874@linuxfoundation.org>
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Borislav Petkov" <bp@alien8.de>,
+        Stephane Eranian <eranian@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 089/124] perf/x86/amd/ibs: Fix sample bias for dispatched micro-ops
+Date:   Fri, 20 Sep 2019 00:02:57 +0200
+Message-Id: <20190919214822.274687501@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -47,92 +52,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Hunt <johunt@akamai.com>
+From: Kim Phillips <kim.phillips@amd.com>
 
-[ Upstream commit 44d3bbb6f5e501b873218142fe08cdf62a4ac1f3 ]
+[ Upstream commit 0f4cd769c410e2285a4e9873a684d90423f03090 ]
 
-We see our Nehalem machines reporting 'perfevents: irq loop stuck!' in
-some cases when using perf:
+When counting dispatched micro-ops with cnt_ctl=1, in order to prevent
+sample bias, IBS hardware preloads the least significant 7 bits of
+current count (IbsOpCurCnt) with random values, such that, after the
+interrupt is handled and counting resumes, the next sample taken
+will be slightly perturbed.
 
-perfevents: irq loop stuck!
-WARNING: CPU: 0 PID: 3485 at arch/x86/events/intel/core.c:2282 intel_pmu_handle_irq+0x37b/0x530
-...
-RIP: 0010:intel_pmu_handle_irq+0x37b/0x530
-...
-Call Trace:
-<NMI>
-? perf_event_nmi_handler+0x2e/0x50
-? intel_pmu_save_and_restart+0x50/0x50
-perf_event_nmi_handler+0x2e/0x50
-nmi_handle+0x6e/0x120
-default_do_nmi+0x3e/0x100
-do_nmi+0x102/0x160
-end_repeat_nmi+0x16/0x50
-...
-? native_write_msr+0x6/0x20
-? native_write_msr+0x6/0x20
-</NMI>
-intel_pmu_enable_event+0x1ce/0x1f0
-x86_pmu_start+0x78/0xa0
-x86_pmu_enable+0x252/0x310
-__perf_event_task_sched_in+0x181/0x190
-? __switch_to_asm+0x41/0x70
-? __switch_to_asm+0x35/0x70
-? __switch_to_asm+0x41/0x70
-? __switch_to_asm+0x35/0x70
-finish_task_switch+0x158/0x260
-__schedule+0x2f6/0x840
-? hrtimer_start_range_ns+0x153/0x210
-schedule+0x32/0x80
-schedule_hrtimeout_range_clock+0x8a/0x100
-? hrtimer_init+0x120/0x120
-ep_poll+0x2f7/0x3a0
-? wake_up_q+0x60/0x60
-do_epoll_wait+0xa9/0xc0
-__x64_sys_epoll_wait+0x1a/0x20
-do_syscall_64+0x4e/0x110
-entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7fdeb1e96c03
-...
+The current count bitfield is in the IBS execution control h/w register,
+alongside the maximum count field.
+
+Currently, the IBS driver writes that register with the maximum count,
+leaving zeroes to fill the current count field, thereby overwriting
+the random bits the hardware preloaded for itself.
+
+Fix the driver to actually retain and carry those random bits from the
+read of the IBS control register, through to its write, instead of
+overwriting the lower current count bits with zeroes.
+
+Tested with:
+
+perf record -c 100001 -e ibs_op/cnt_ctl=1/pp -a -C 0 taskset -c 0 <workload>
+
+'perf annotate' output before:
+
+ 15.70  65:   addsd     %xmm0,%xmm1
+ 17.30        add       $0x1,%rax
+ 15.88        cmp       %rdx,%rax
+              je        82
+ 17.32  72:   test      $0x1,%al
+              jne       7c
+  7.52        movapd    %xmm1,%xmm0
+  5.90        jmp       65
+  8.23  7c:   sqrtsd    %xmm1,%xmm0
+ 12.15        jmp       65
+
+'perf annotate' output after:
+
+ 16.63  65:   addsd     %xmm0,%xmm1
+ 16.82        add       $0x1,%rax
+ 16.81        cmp       %rdx,%rax
+              je        82
+ 16.69  72:   test      $0x1,%al
+              jne       7c
+  8.30        movapd    %xmm1,%xmm0
+  8.13        jmp       65
+  8.24  7c:   sqrtsd    %xmm1,%xmm0
+  8.39        jmp       65
+
+Tested on Family 15h and 17h machines.
+
+Machines prior to family 10h Rev. C don't have the RDWROPCNT capability,
+and have the IbsOpCurCnt bitfield reserved, so this patch shouldn't
+affect their operation.
+
+It is unknown why commit db98c5faf8cb ("perf/x86: Implement 64-bit
+counter support for IBS") ignored the lower 4 bits of the IbsOpCurCnt
+field; the number of preloaded random bits has always been 7, AFAICT.
+
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: acme@kernel.org
-Cc: Josh Hunt <johunt@akamai.com>
-Cc: bpuranda@akamai.com
-Cc: mingo@redhat.com
-Cc: jolsa@redhat.com
-Cc: tglx@linutronix.de
-Cc: namhyung@kernel.org
-Cc: alexander.shishkin@linux.intel.com
-Link: https://lkml.kernel.org/r/1566256411-18820-1-git-send-email-johunt@akamai.com
+Cc: "Arnaldo Carvalho de Melo" <acme@kernel.org>
+Cc: <x86@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Borislav Petkov" <bp@alien8.de>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: "Namhyung Kim" <namhyung@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/20190826195730.30614-1-kim.phillips@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/events/amd/ibs.c         | 13 ++++++++++---
+ arch/x86/include/asm/perf_event.h | 12 ++++++++----
+ 2 files changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 6179be624f357..2369ea1a1db79 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3572,6 +3572,11 @@ static u64 bdw_limit_period(struct perf_event *event, u64 left)
- 	return left;
- }
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index 62f317c9113af..5b35b7ea5d728 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -661,10 +661,17 @@ fail:
  
-+static u64 nhm_limit_period(struct perf_event *event, u64 left)
-+{
-+	return max(left, 32ULL);
-+}
+ 	throttle = perf_event_overflow(event, &data, &regs);
+ out:
+-	if (throttle)
++	if (throttle) {
+ 		perf_ibs_stop(event, 0);
+-	else
+-		perf_ibs_enable_event(perf_ibs, hwc, period >> 4);
++	} else {
++		period >>= 4;
 +
- PMU_FORMAT_ATTR(event,	"config:0-7"	);
- PMU_FORMAT_ATTR(umask,	"config:8-15"	);
- PMU_FORMAT_ATTR(edge,	"config:18"	);
-@@ -4550,6 +4555,7 @@ __init int intel_pmu_init(void)
- 		x86_pmu.pebs_constraints = intel_nehalem_pebs_event_constraints;
- 		x86_pmu.enable_all = intel_pmu_nhm_enable_all;
- 		x86_pmu.extra_regs = intel_nehalem_extra_regs;
-+		x86_pmu.limit_period = nhm_limit_period;
++		if ((ibs_caps & IBS_CAPS_RDWROPCNT) &&
++		    (*config & IBS_OP_CNT_CTL))
++			period |= *config & IBS_OP_CUR_CNT_RAND;
++
++		perf_ibs_enable_event(perf_ibs, hwc, period);
++	}
  
- 		mem_attr = nhm_mem_events_attrs;
+ 	perf_event_update_userpage(event);
  
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 1392d5e6e8d67..ee26e9215f187 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -252,16 +252,20 @@ struct pebs_lbr {
+ #define IBSCTL_LVT_OFFSET_VALID		(1ULL<<8)
+ #define IBSCTL_LVT_OFFSET_MASK		0x0F
+ 
+-/* ibs fetch bits/masks */
++/* IBS fetch bits/masks */
+ #define IBS_FETCH_RAND_EN	(1ULL<<57)
+ #define IBS_FETCH_VAL		(1ULL<<49)
+ #define IBS_FETCH_ENABLE	(1ULL<<48)
+ #define IBS_FETCH_CNT		0xFFFF0000ULL
+ #define IBS_FETCH_MAX_CNT	0x0000FFFFULL
+ 
+-/* ibs op bits/masks */
+-/* lower 4 bits of the current count are ignored: */
+-#define IBS_OP_CUR_CNT		(0xFFFF0ULL<<32)
++/*
++ * IBS op bits/masks
++ * The lower 7 bits of the current count are random bits
++ * preloaded by hardware and ignored in software
++ */
++#define IBS_OP_CUR_CNT		(0xFFF80ULL<<32)
++#define IBS_OP_CUR_CNT_RAND	(0x0007FULL<<32)
+ #define IBS_OP_CNT_CTL		(1ULL<<19)
+ #define IBS_OP_VAL		(1ULL<<18)
+ #define IBS_OP_ENABLE		(1ULL<<17)
 -- 
 2.20.1
 
