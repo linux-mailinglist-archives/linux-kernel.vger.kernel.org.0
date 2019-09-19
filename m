@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3447B8415
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F83B83F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:06:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393287AbfISWHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:07:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45396 "EHLO mail.kernel.org"
+        id S2405237AbfISWGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:06:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393269AbfISWHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:07:40 -0400
+        id S2405208AbfISWG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:06:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 688AB218AF;
-        Thu, 19 Sep 2019 22:07:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88ABA218AF;
+        Thu, 19 Sep 2019 22:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930859;
-        bh=Uuj6fa+HvSLw5t6MTO2P08i/ljV4VbXYamOjuOMQEKM=;
+        s=default; t=1568930787;
+        bh=0/tNebC7ygoIW5O3RIgQ+uWeQuh9LbW8bEVkAtHUGWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t7H05iGwXNmbvMunC+v0rHXuujuH3BHukx7lp/bqFNDyKweOhTeNsqvYjD5LNsXXF
-         q6tA+ZUI1equuPmAXbc/WncG9fN9L5OIuqjuuirGVb8MaYeYH38PbA/wstltl1NHUb
-         WSdGXSEz9WhF1jvzOmEVSSgLkbMeODUMeXlRQkvA=
+        b=UzelEI8DPQtn/rrgyauLiKqyBAm4FA6uaOB14kZZOLlQauaoP+bLLkgDawBeJoJwy
+         pbsHN3iTG1iwQzwTZu2p8m1TpaoLMW69A3+3OkjN5wLUvJMJni41hXXUKDrhcSEE/5
+         XRWz3yLR+ODZhY/RhSd6PeNn76VqRKHIRFFOBGac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        linyunsheng <linyunsheng@huawei.com>,
+        stable@vger.kernel.org,
+        Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 013/124] net: hns: fix LED configuration for marvell phy
-Date:   Fri, 20 Sep 2019 00:01:41 +0200
-Message-Id: <20190919214819.627489279@linuxfoundation.org>
+Subject: [PATCH 5.2 014/124] net: aquantia: fix limit of vlan filters
+Date:   Fri, 20 Sep 2019 00:01:42 +0200
+Message-Id: <20190919214819.655833034@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -44,79 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonglong Liu <liuyonglong@huawei.com>
+From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
 
-commit f4e5f775db5a4631300dccd0de5eafb50a77c131 upstream.
+commit 392349f60110dc2c3daf86464fd926afc53d6143 upstream.
 
-Since commit(net: phy: marvell: change default m88e1510 LED configuration),
-the active LED of Hip07 devices is always off, because Hip07 just
-use 2 LEDs.
-This patch adds a phy_register_fixup_for_uid() for m88e1510 to
-correct the LED configuration.
+Fix a limit condition of vlans on the interface before setting vlan
+promiscuous mode
 
-Fixes: 077772468ec1 ("net: phy: marvell: change default m88e1510 LED configuration")
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Reviewed-by: linyunsheng <linyunsheng@huawei.com>
+Fixes: 48dd73d08d4dd ("net: aquantia: fix vlans not working over bridged network")
+Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c |   23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_filters.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -11,6 +11,7 @@
- #include <linux/io.h>
- #include <linux/ip.h>
- #include <linux/ipv6.h>
-+#include <linux/marvell_phy.h>
- #include <linux/module.h>
- #include <linux/phy.h>
- #include <linux/platform_device.h>
-@@ -1149,6 +1150,13 @@ static void hns_nic_adjust_link(struct n
- 	}
- }
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_filters.c
+@@ -843,7 +843,7 @@ int aq_filters_vlans_update(struct aq_ni
+ 		return err;
  
-+static int hns_phy_marvell_fixup(struct phy_device *phydev)
-+{
-+	phydev->dev_flags |= MARVELL_PHY_LED0_LINK_LED1_ACTIVE;
-+
-+	return 0;
-+}
-+
- /**
-  *hns_nic_init_phy - init phy
-  *@ndev: net device
-@@ -1174,6 +1182,16 @@ int hns_nic_init_phy(struct net_device *
- 	if (h->phy_if != PHY_INTERFACE_MODE_XGMII) {
- 		phy_dev->dev_flags = 0;
- 
-+		/* register the PHY fixup (for Marvell 88E1510) */
-+		ret = phy_register_fixup_for_uid(MARVELL_PHY_ID_88E1510,
-+						 MARVELL_PHY_ID_MASK,
-+						 hns_phy_marvell_fixup);
-+		/* we can live without it, so just issue a warning */
-+		if (ret)
-+			netdev_warn(ndev,
-+				    "Cannot register PHY fixup, ret=%d\n",
-+				    ret);
-+
- 		ret = phy_connect_direct(ndev, phy_dev, hns_nic_adjust_link,
- 					 h->phy_if);
- 	} else {
-@@ -2429,8 +2447,11 @@ static int hns_nic_dev_remove(struct pla
- 		hns_nic_uninit_ring_data(priv);
- 	priv->ring_data = NULL;
- 
--	if (ndev->phydev)
-+	if (ndev->phydev) {
-+		phy_unregister_fixup_for_uid(MARVELL_PHY_ID_88E1510,
-+					     MARVELL_PHY_ID_MASK);
- 		phy_disconnect(ndev->phydev);
-+	}
- 
- 	if (!IS_ERR_OR_NULL(priv->ae_handle))
- 		hnae_put_handle(priv->ae_handle);
+ 	if (aq_nic->ndev->features & NETIF_F_HW_VLAN_CTAG_FILTER) {
+-		if (hweight < AQ_VLAN_MAX_FILTERS && hweight > 0) {
++		if (hweight <= AQ_VLAN_MAX_FILTERS && hweight > 0) {
+ 			err = aq_hw_ops->hw_filter_vlan_ctrl(aq_hw,
+ 				!(aq_nic->packet_filter & IFF_PROMISC));
+ 			aq_nic->aq_nic_cfg.is_vlan_force_promisc = false;
 
 
