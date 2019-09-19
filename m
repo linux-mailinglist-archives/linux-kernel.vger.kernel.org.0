@@ -2,75 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99A22B79B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04F65B79B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:49:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389555AbfISMsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 08:48:05 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33336 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387520AbfISMsE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 08:48:04 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r17so7114989wme.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 05:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=MYdRvcf8Wu6iYU4KZrqesPzUMUB/hNH+Kmue7l+9/nk=;
-        b=lkBxEenYPb1crgWNgulRmMTbLuL0WwnuqjTIsDC12hH2kru7EDSQgmhOcjfLsS2Jk3
-         ABgD54lhrYPwJ800Z35+fP8QMtRKZXHuqqeXwr2cbCjhBMjtfSlu6AfMDeC1g0phOuKo
-         47gyysY/XiECljEYQd9XP864CMiha1mPLGIkeYEnk56uFbDwkMQ6ayn9oS1mH4+dRYdy
-         lN3VMU4PgKtpMpOdCooXonokznRv/6vO0xAh38wTDy+EXLyi+OEDKD9yyW8DEYOFbGfA
-         nqBY3bwn3D/jeQwGX7fQ4W2tt5Kf9zwXK7Aou6Uv8EIY96Pp6myOfVEzMHnb2EONUSQq
-         +tvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=MYdRvcf8Wu6iYU4KZrqesPzUMUB/hNH+Kmue7l+9/nk=;
-        b=oXJEbj09PGFUr/OD+YATKH2zjMOnVix+zYdf+00ya4z1hl2VQLJytNJ9zArk3ZoJRK
-         Mt6Uh4SX9nFGoPHHc0HID6TClTLXgo9JsxwCUkfwCublQc0XUX6BGVGOz2NJ+HRCPtXl
-         q9tiB6VbhJVICnRpeyQwLpOoMuZerE5KXG4/jDRWW/8pLVy74riOkoqJHjKhtyHIED+8
-         6r04WQIQtUzzOj8RwyjMfPt/9OWx+repPMdBaICBkwTXUqr8cPfiNfvggxCig0PFkEim
-         pQIv0R1O7DTGjV7scJPKpmsOAc4j7GpOqNElH14HwZDAgMaoGGywV7jUU42KkEqfJwdu
-         FybA==
-X-Gm-Message-State: APjAAAW0DYpnVtTO+j5nsvAkiQCbeBMmzWRugL23l2vJkC6T2HCFPTA2
-        xX598zyADElgyPDrWt918R1LTg==
-X-Google-Smtp-Source: APXvYqydehwYm+ahwWpH/f3NBX2IBYskx/Tbnvs3t7TW+OqeIpe325S9YIiHJ4OAPKbXggjNHdT+XQ==
-X-Received: by 2002:a1c:9d15:: with SMTP id g21mr2864034wme.96.1568897282781;
-        Thu, 19 Sep 2019 05:48:02 -0700 (PDT)
-Received: from localhost ([109.190.253.11])
-        by smtp.gmail.com with ESMTPSA id p85sm12581592wme.23.2019.09.19.05.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 05:48:02 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 05:48:00 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Bin Meng <bmeng.cn@gmail.com>
-cc:     Palmer Dabbelt <palmer@sifive.com>, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] riscv: dts: sifive: Add ethernet0 to the aliases node
-In-Reply-To: <1567687574-22436-1-git-send-email-bmeng.cn@gmail.com>
-Message-ID: <alpine.DEB.2.21.9999.1909190547110.12151@viisi.sifive.com>
-References: <1567687574-22436-1-git-send-email-bmeng.cn@gmail.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S2390378AbfISMtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 08:49:24 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:36500 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387520AbfISMtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 08:49:24 -0400
+Received: from nazgul.tnic (unknown [193.86.95.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 039051EC04BC;
+        Thu, 19 Sep 2019 14:49:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1568897363;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=SvivuKiDv8mVFUG8Dwck4C5w7ji5KE7vzCHmIg2WcWA=;
+        b=Gm83Egjv2y3IHZ04hPe2qsDYEgMJriGC4xoXzWN3ngcLi7Koh2ogXS7vrbWty0heJ+fDmi
+        azz3rpDWHqDXmn6pBaIhSPsV5nAemg/PVcripkux1vbO/EgG+9A9rGJfnq+vFt5b40Z5ws
+        oOojf3v2beto+6aJgr//DYM1SQe2uzY=
+Date:   Thu, 19 Sep 2019 14:49:11 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     x86-ml <x86@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Improve memset
+Message-ID: <20190919124911.GA18148@nazgul.tnic>
+References: <20190913072237.GA12381@zn.tnic>
+ <20190917201021.evoxxj7vkcb45rpg@treble>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190917201021.evoxxj7vkcb45rpg@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 5 Sep 2019, Bin Meng wrote:
+On Tue, Sep 17, 2019 at 03:10:21PM -0500, Josh Poimboeuf wrote:
+> Then the "reverse alternatives" feature wouldn't be needed anyway.
 
-> U-Boot expects this alias to be in place in order to fix up the mac
-> address of the ethernet node.
-> 
-> Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+The intent was to have the default, most-used version be there at
+build-time, obviating the need to patch. Therefore on those old !ERMS
+CPUs we'll end up doing rep;stosb before patching, which is supported,
+albeit slow.
 
-Thanks, queued for v5.4-rc with Christoph's Reviewed-by.
+-- 
+Regards/Gruss,
+    Boris.
 
-
-- Paul
+ECO tip #101: Trim your mails when you reply.
+--
