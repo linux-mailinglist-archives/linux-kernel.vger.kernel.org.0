@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 009D2B84B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1C6B848D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:12:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393738AbfISWNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:13:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52250 "EHLO mail.kernel.org"
+        id S2405892AbfISWLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:11:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393719AbfISWNK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:13:10 -0400
+        id S2389875AbfISWLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:11:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B362C21907;
-        Thu, 19 Sep 2019 22:13:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6224B21927;
+        Thu, 19 Sep 2019 22:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931190;
-        bh=Gp/qNwM84RkpxRbHnSlX6RTzB2CnRAFH6erNUbPZOR0=;
+        s=default; t=1568931109;
+        bh=tPzGboQ2VnK6/pYSRZGVL6p0puK6dTpZVMtYRRdtCtU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=USMpj5Kh52OrIg1braDCN6IAJH9/SmP7LrxuKrQjcxl1JbtNHjtRkbWO/r+j4OK1A
-         OiR5fWetHnaPypDVgZBjj05xarWu6QEUqksQRlJDKAORKTnKWOcFGuETA9aQzRokzM
-         aXW7nB2VmLRlxDtLSvkAOXI7RoEf/FlP1aEhZIXY=
+        b=V/JxtGOuhZJJdFqoA/P0etpZtSo0KpxJ3//MwppC1KPywdKNT7N4BGIqK3ZOMHgAD
+         WPe8wMmlCXE2QHKT9vgHBE+kJZVfxkkc7IEtL6OD1mpp3huA3+NCIRPuR48yt+YKeM
+         4sfJDDMZxaeFjZN1WPA9/eILFPRVlcru6dTjb5Lk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, broonie@kernel.org,
+        sfr@canb.auug.org.au, akpm@linux-foundation.org, mhocko@suse.cz,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 34/79] netfilter: nft_flow_offload: missing netlink attribute policy
-Date:   Fri, 20 Sep 2019 00:03:19 +0200
-Message-Id: <20190919214810.768461442@linuxfoundation.org>
+Subject: [PATCH 5.2 112/124] x86/uaccess: Dont leak the AC flags into __get_user() argument evaluation
+Date:   Fri, 20 Sep 2019 00:03:20 +0200
+Message-Id: <20190919214823.256617645@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
+References: <20190919214819.198419517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +47,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pablo Neira Ayuso <pablo@netfilter.org>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 14c415862c0630e01712a4eeaf6159a2b1b6d2a4 ]
+[ Upstream commit 9b8bd476e78e89c9ea26c3b435ad0201c3d7dbf5 ]
 
-The netlink attribute policy for NFTA_FLOW_TABLE_NAME is missing.
+Identical to __put_user(); the __get_user() argument evalution will too
+leak UBSAN crud into the __uaccess_begin() / __uaccess_end() region.
+While uncommon this was observed to happen for:
 
-Fixes: a3c90f7a2323 ("netfilter: nf_tables: flow offload expression")
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+  drivers/xen/gntdev.c: if (__get_user(old_status, batch->status[i]))
+
+where UBSAN added array bound checking.
+
+This complements commit:
+
+  6ae865615fc4 ("x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation")
+
+Tested-by Sedat Dilek <sedat.dilek@gmail.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: broonie@kernel.org
+Cc: sfr@canb.auug.org.au
+Cc: akpm@linux-foundation.org
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: mhocko@suse.cz
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://lkml.kernel.org/r/20190829082445.GM2369@hirez.programming.kicks-ass.net
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_flow_offload.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/include/asm/uaccess.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index 69decbe2c9884..1ef8cb789c41a 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -149,6 +149,11 @@ static int nft_flow_offload_validate(const struct nft_ctx *ctx,
- 	return nft_chain_validate_hooks(ctx->chain, hook_mask);
- }
- 
-+static const struct nla_policy nft_flow_offload_policy[NFTA_FLOW_MAX + 1] = {
-+	[NFTA_FLOW_TABLE_NAME]	= { .type = NLA_STRING,
-+				    .len = NFT_NAME_MAXLEN - 1 },
-+};
-+
- static int nft_flow_offload_init(const struct nft_ctx *ctx,
- 				 const struct nft_expr *expr,
- 				 const struct nlattr * const tb[])
-@@ -207,6 +212,7 @@ static const struct nft_expr_ops nft_flow_offload_ops = {
- static struct nft_expr_type nft_flow_offload_type __read_mostly = {
- 	.name		= "flow_offload",
- 	.ops		= &nft_flow_offload_ops,
-+	.policy		= nft_flow_offload_policy,
- 	.maxattr	= NFTA_FLOW_MAX,
- 	.owner		= THIS_MODULE,
- };
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index c82abd6e4ca39..869794bd0fd98 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -442,8 +442,10 @@ __pu_label:							\
+ ({									\
+ 	int __gu_err;							\
+ 	__inttype(*(ptr)) __gu_val;					\
++	__typeof__(ptr) __gu_ptr = (ptr);				\
++	__typeof__(size) __gu_size = (size);				\
+ 	__uaccess_begin_nospec();					\
+-	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
++	__get_user_size(__gu_val, __gu_ptr, __gu_size, __gu_err, -EFAULT);	\
+ 	__uaccess_end();						\
+ 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+ 	__builtin_expect(__gu_err, 0);					\
 -- 
 2.20.1
 
