@@ -2,57 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1023CB7B62
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 15:59:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B00AEB7B7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732376AbfISN7V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 09:59:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732329AbfISN7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 09:59:21 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1E8A20665;
-        Thu, 19 Sep 2019 13:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568901560;
-        bh=I8osdBr5rK8/FGiX5xKVgPYs/R2ZYcecd+s4/UF9w7E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f8OD1gi3nEkTcNUJXlI6jOI0AXpXmj5vr0wFr4lUW9cV/3FEkMLfxB1hYO9dPEKHm
-         gem2FmhUVREnBHtoUT44ZUBnM2Khz7+40EO3x1jDJCu1W6YYQLVYOdOd92xjzNuT/u
-         1xPPixqNnXvMfZv8eLmwekOhdmVU7OIqADqoj3MU=
-Date:   Thu, 19 Sep 2019 15:59:18 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jerome Pouiller <Jerome.Pouiller@silabs.com>
-Cc:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        David Le Goff <David.Legoff@silabs.com>
-Subject: Re: [PATCH v2 20/20] staging: wfx: implement the rest of mac80211 API
-Message-ID: <20190919135918.GA3853501@kroah.com>
-References: <20190919135220.30663-1-Jerome.Pouiller@silabs.com>
- <20190919135220.30663-21-Jerome.Pouiller@silabs.com>
+        id S1732434AbfISODb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:03:31 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38252 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732143AbfISODb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:03:31 -0400
+Received: by mail-io1-f65.google.com with SMTP id k5so7965272iol.5;
+        Thu, 19 Sep 2019 07:03:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5/2Z+xK26B0Qa9nBtssF8FRk9MDYmDZ7v204MIYrXPQ=;
+        b=DLsWOHJytMjXzqdooDAScGRrLwolZBO1OrSvUyszMDhy2r9hjOgN48Q86vlfMu1nSJ
+         vUPEsxhOFj3/m8893jlHMEw4TQFJzkJET1FO9NTZ8cnCgGhDj+JBUf4RzoeLPXHWdbrz
+         DXAgqZ9ijGaS4N0tckhsEbH9W3jtcRQq5rnCJ1NooVNIYpL70KoObUOfYRPHdQYhjsGQ
+         9ZASgQf6TGzeJITRB23Z2CuU9GtnVJCT1rm9N0YP4SOKKSGGrutz85sueZsV7SUB1ZaY
+         //s1dQOZs07d2l55y9pa+biNMptcHOQDBvNZyD33Zum8+ESKRq609Ux8EaTE5ZVJq9Rt
+         7CGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5/2Z+xK26B0Qa9nBtssF8FRk9MDYmDZ7v204MIYrXPQ=;
+        b=D3P62ocWCT77CcNThJLSnPNI9dP68AKCVE+hzBTa6QeDJSWuJFCpJYgAsK5ZRM0T4a
+         nrpV3rIWjZR3vvFolynFumrFerfCLru2QZab2QTJ3eGggmeHlMHPtUSG/Axtg0HWQ3nY
+         UHh3hLaR5giTBgdzCN8ouG+7MUCmFNNPrw+Zk0zzSmWzPdKbUdOER6Lh4tGxy6wEOOwF
+         efNph1CFJlRE5uJzUVQphE1QhYPmTlQhpX4MHBR9RGhCDDPvqqPkxL2zdhwO8togZD9w
+         ecPXUksMBar2G6pXBBmBQqI4/hrmWH5fxaQhg1AetOKettxkgOfGAMqMA5BtczJ7llY4
+         q4aQ==
+X-Gm-Message-State: APjAAAV8uMX2InoZ/nJBJAGgDhY3M4bGqni4ARH/Ki5gtczDdAgZE6MS
+        A2XNqruqy77N+jwXfvOx+6cGoQf89tcET9H1IJ4=
+X-Google-Smtp-Source: APXvYqxp6gW43kwN3LJPPeCY0tft6kg9EeyqSAnHqBoR8n6r3SlG9KzQt20lImzP6tnJo3niaXDYX5XuA+ZcXpZc25o=
+X-Received: by 2002:a5d:9f4e:: with SMTP id u14mr12333009iot.106.1568901810170;
+ Thu, 19 Sep 2019 07:03:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190919135220.30663-21-Jerome.Pouiller@silabs.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <28368.1568875207@warthog.procyon.org.uk> <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
+ <16147.1568632167@warthog.procyon.org.uk> <16257.1568886562@warthog.procyon.org.uk>
+ <20190919131537.GA15392@bombadil.infradead.org>
+In-Reply-To: <20190919131537.GA15392@bombadil.infradead.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 19 Sep 2019 16:03:20 +0200
+Message-ID: <CAOi1vP-rQLhu=JF1H2Tmz21tM+FhTPYuKYjx05iSijv_QckVpQ@mail.gmail.com>
+Subject: Re: [GIT PULL afs: Development for 5.4
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 01:52:42PM +0000, Jerome Pouiller wrote:
-> From: Jérôme Pouiller <jerome.pouiller@silabs.com>
-> 
-> Signed-off-by: Jérôme Pouiller <jerome.pouiller@silabs.com>
+On Thu, Sep 19, 2019 at 3:55 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Sep 19, 2019 at 10:49:22AM +0100, David Howells wrote:
+> > David Howells <dhowells@redhat.com> wrote:
+> >
+> > > > However, I was close to unpulling it again. It has a merge commit with
+> > > > this merge message:
+> > > >
+> > > >     Merge remote-tracking branch 'net/master' into afs-next
+> > > >
+> > > > and that simply is not acceptable.
+> > >
+> > > Apologies - I meant to rebase that away.  There was a bug fix to rxrpc in
+> > > net/master that didn't get pulled into your tree until Saturday.
+> >
+> > Actually, waiting for all outstanding fixes to get merged and then rebasing
+> > might not be the right thing here.  The problem is that there are fixes in
+> > both trees: afs fixes go directly into yours whereas rxrpc fixes go via
+> > networking and I would prefer to base my patches on both of them for testing
+> > purposes.  What's the preferred method for dealing with that?  Base on a merge
+> > of the lastest of those fixes in each tree?
+>
+> Why is it organised this way?  I mean, yes, technically, rxrpc is a
+> generic layer-6 protocol that any blah blah blah, but in practice no
+> other user has come up in the last 37 years, so why bother pretending
+> one is going to?  Just git mv net/rxrpc fs/afs/ and merge everything
+> through your tree.
+>
+> I feel similarly about net/9p, net/sunrpc and net/ceph.  Every filesystem
+> comes with its own presentation layer; nobody reuses an existing one.
+> Just stop pretending they're separate components.
 
-I can not take patches without any changelog text :(
+net/ceph is also being used by drivers/block/rbd.c.  net/ceph was split
+out of fs/ceph when rbd was introduced.  We continued to manage them in
+a single ceph-client.git tree though.
 
+Thanks,
 
+                Ilya
