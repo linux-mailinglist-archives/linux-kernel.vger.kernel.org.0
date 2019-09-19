@@ -2,47 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16245B8692
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8150B86C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392479AbfISWQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:16:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56928 "EHLO mail.kernel.org"
+        id S2404367AbfISWOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392317AbfISWQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:16:27 -0400
+        id S2392224AbfISWOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:14:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A43E521927;
-        Thu, 19 Sep 2019 22:16:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31F4A21928;
+        Thu, 19 Sep 2019 22:14:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931387;
-        bh=HM89y0GM3yQ9uGNFebzaFnpLm1dfQiI9Y1XTs/Ja0fo=;
+        s=default; t=1568931254;
+        bh=/zn1JWC4udK02VZdQPPerR33ohGRkYLn8Tcfj/DZzDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B6V/m6qVTdy9Jqv9q6fmda+ikHDHvaSdXlHTUQ0SzklJLV3z1fKXpUdgKyyP/6P7t
-         ap5eLiVXkfAIcoj5dwbAuYbRvwjIt2L/tnkEHIh4/+xI9cjzxO/JkYR0G5USFAG0QT
-         Rt4wFBGEK3sjWRO618wweKSFkZmBCxljJs+1hP38=
+        b=g0ELyCmBiuGglpNdDq9/LWB/kv+0L57NCYg+IvpHjzcuZfhtqbV2ivtX6k0vbzWzv
+         ncOFwf6xVWyJbOhHcWLkbCunCt3SnykV1enTkJ1fv052+huQ4wodm8bL0gBsSeezu1
+         lhcxUN5G8NgjU+fCqePjHHxHbsW34IhnERGqsO5Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>, acme@kernel.org,
+        Josh Hunt <johunt@akamai.com>, bpuranda@akamai.com,
+        mingo@redhat.com, jolsa@redhat.com, tglx@linutronix.de,
+        namhyung@kernel.org, alexander.shishkin@linux.intel.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 27/59] ARM: 8874/1: mm: only adjust sections of valid mm structures
-Date:   Fri, 20 Sep 2019 00:03:42 +0200
-Message-Id: <20190919214805.014893472@linuxfoundation.org>
+Subject: [PATCH 4.19 59/79] perf/x86/intel: Restrict period on Nehalem
+Date:   Fri, 20 Sep 2019 00:03:44 +0200
+Message-Id: <20190919214812.680108137@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -52,50 +47,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Berger <opendmb@gmail.com>
+From: Josh Hunt <johunt@akamai.com>
 
-[ Upstream commit c51bc12d06b3a5494fbfcbd788a8e307932a06e9 ]
+[ Upstream commit 44d3bbb6f5e501b873218142fe08cdf62a4ac1f3 ]
 
-A timing hazard exists when an early fork/exec thread begins
-exiting and sets its mm pointer to NULL while a separate core
-tries to update the section information.
+We see our Nehalem machines reporting 'perfevents: irq loop stuck!' in
+some cases when using perf:
 
-This commit ensures that the mm pointer is not NULL before
-setting its section parameters. The arguments provided by
-commit 11ce4b33aedc ("ARM: 8672/1: mm: remove tasklist locking
-from update_sections_early()") are equally valid for not
-requiring grabbing the task_lock around this check.
-
-Fixes: 08925c2f124f ("ARM: 8464/1: Update all mm structures with section adjustments")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Acked-by: Laura Abbott <labbott@redhat.com>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+perfevents: irq loop stuck!
+WARNING: CPU: 0 PID: 3485 at arch/x86/events/intel/core.c:2282 intel_pmu_handle_irq+0x37b/0x530
+...
+RIP: 0010:intel_pmu_handle_irq+0x37b/0x530
+...
+Call Trace:
+<NMI>
+? perf_event_nmi_handler+0x2e/0x50
+? intel_pmu_save_and_restart+0x50/0x50
+perf_event_nmi_handler+0x2e/0x50
+nmi_handle+0x6e/0x120
+default_do_nmi+0x3e/0x100
+do_nmi+0x102/0x160
+end_repeat_nmi+0x16/0x50
+...
+? native_write_msr+0x6/0x20
+? native_write_msr+0x6/0x20
+</NMI>
+intel_pmu_enable_event+0x1ce/0x1f0
+x86_pmu_start+0x78/0xa0
+x86_pmu_enable+0x252/0x310
+__perf_event_task_sched_in+0x181/0x190
+? __switch_to_asm+0x41/0x70
+? __switch_to_asm+0x35/0x70
+? __switch_to_asm+0x41/0x70
+? __switch_to_asm+0x35/0x70
+finish_task_switch+0x158/0x260
+__schedule+0x2f6/0x840
+? hrtimer_start_range_ns+0x153/0x210
+schedule+0x32/0x80
+schedule_hrtimeout_range_clock+0x8a/0x100
+? hrtimer_init+0x120/0x120
+ep_poll+0x2f7/0x3a0
+? wake_up_q+0x60/0x60
+do_epoll_wait+0xa9/0xc0
+__x64_sys_epoll_wait+0x1a/0x20
+do_syscall_64+0x4e/0x110
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fdeb1e96c03
+...
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: acme@kernel.org
+Cc: Josh Hunt <johunt@akamai.com>
+Cc: bpuranda@akamai.com
+Cc: mingo@redhat.com
+Cc: jolsa@redhat.com
+Cc: tglx@linutronix.de
+Cc: namhyung@kernel.org
+Cc: alexander.shishkin@linux.intel.com
+Link: https://lkml.kernel.org/r/1566256411-18820-1-git-send-email-johunt@akamai.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/events/intel/core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index defb7fc264280..4fa12fcf1f5d8 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -722,7 +722,8 @@ static void update_sections_early(struct section_perm perms[], int n)
- 		if (t->flags & PF_KTHREAD)
- 			continue;
- 		for_each_thread(t, s)
--			set_section_perms(perms, n, true, s->mm);
-+			if (s->mm)
-+				set_section_perms(perms, n, true, s->mm);
- 	}
- 	set_section_perms(perms, n, true, current->active_mm);
- 	set_section_perms(perms, n, true, &init_mm);
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index db5a2ba617536..2dd8b0d64295a 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3319,6 +3319,11 @@ static u64 bdw_limit_period(struct perf_event *event, u64 left)
+ 	return left;
+ }
+ 
++static u64 nhm_limit_period(struct perf_event *event, u64 left)
++{
++	return max(left, 32ULL);
++}
++
+ PMU_FORMAT_ATTR(event,	"config:0-7"	);
+ PMU_FORMAT_ATTR(umask,	"config:8-15"	);
+ PMU_FORMAT_ATTR(edge,	"config:18"	);
+@@ -4115,6 +4120,7 @@ __init int intel_pmu_init(void)
+ 		x86_pmu.pebs_constraints = intel_nehalem_pebs_event_constraints;
+ 		x86_pmu.enable_all = intel_pmu_nhm_enable_all;
+ 		x86_pmu.extra_regs = intel_nehalem_extra_regs;
++		x86_pmu.limit_period = nhm_limit_period;
+ 
+ 		x86_pmu.cpu_events = nhm_events_attrs;
+ 
 -- 
 2.20.1
 
