@@ -2,163 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD89EB74D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:13:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01BDBB751C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731535AbfISINz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 04:13:55 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:62598 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbfISINz (ORCPT
+        id S2388311AbfISI3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 04:29:53 -0400
+Received: from 2.mo1.mail-out.ovh.net ([178.32.119.250]:39913 "EHLO
+        2.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725320AbfISI3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 04:13:55 -0400
-Received: from 79.184.255.25.ipv4.supernova.orange.pl (79.184.255.25) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.292)
- id 0ed5324655183c06; Thu, 19 Sep 2019 10:13:52 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-Cc:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "Moore, Robert" <robert.moore@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-acpi@vger.kernel.org, devel@acpica.org,
-        linux-kernel@vger.kernel.org, nv@vosn.de
-Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
-Date:   Thu, 19 Sep 2019 10:13:52 +0200
-Message-ID: <6851700.HULMXZj6Ep@kreacher>
-In-Reply-To: <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
-References: <20190906174605.GY2680@smile.fi.intel.com> <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
+        Thu, 19 Sep 2019 04:29:53 -0400
+X-Greylist: delayed 155106 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Sep 2019 04:29:50 EDT
+Received: from player168.ha.ovh.net (unknown [10.108.35.211])
+        by mo1.mail-out.ovh.net (Postfix) with ESMTP id CA6C4190369
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 10:11:04 +0200 (CEST)
+Received: from qperret.net (115.ip-51-255-42.eu [51.255.42.115])
+        (Authenticated sender: qperret@qperret.net)
+        by player168.ha.ovh.net (Postfix) with ESMTPSA id E53A09E20A08;
+        Thu, 19 Sep 2019 08:10:57 +0000 (UTC)
+Date:   Thu, 19 Sep 2019 10:10:53 +0200
+From:   Quentin Perret <qperret@qperret.net>
+To:     YT Chang <yt.chang@mediatek.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        wsd_upstream@mediatek.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 1/1] sched/eas: introduce system-wide overutil indicator
+Message-ID: <20190919081053.GA10561@qperret.net>
+References: <1568877622-28073-1-git-send-email-yt.chang@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568877622-28073-1-git-send-email-yt.chang@mediatek.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Ovh-Tracer-Id: 4041980666167909293
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrvddtgddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, September 12, 2019 10:07:42 AM CEST Nikolaus Voss wrote:
-> For unloading an ACPI table, it is necessary to provide the
-> index of the table. The method intended for dynamically
-> loading or hotplug addition of tables, acpi_load_table(),
-> should provide this information via an optional pointer
-> to the loaded table index.
+Hi,
+
+Could you please CC me on later versions of this ? I'm interested.
+
+On Thursday 19 Sep 2019 at 15:20:22 (+0800), YT Chang wrote:
+> When the system is overutilization, the load-balance crossing
+> clusters will be triggered and scheduler will not use energy
+> aware scheduling to choose CPUs.
 > 
-> This patch fixes the table unload function of acpi_configfs.
+> The overutilization means the loading of  ANY CPUs
+> exceeds threshold (80%).
 > 
-> Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Fixes: d06c47e3dd07f ("ACPI: configfs: Resolve objects on host-directed table loads")
-> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+> However, only 1 heavy task or while-1 program will run on highest
+> capacity CPUs and it still result to trigger overutilization. So
+> the system will not use Energy Aware scheduling.
+> 
+> To avoid it, a system-wide over-utilization indicator to trigger
+> load-balance cross clusters.
+> 
+> The policy is:
+> 	The loading of "ALL CPUs in the highest capacity"
+> 						exceeds threshold(80%) or
+> 	The loading of "Any CPUs not in the highest capacity"
+> 						exceed threshold(80%)
+> 
+> Signed-off-by: YT Chang <yt.chang@mediatek.com>
 
-Overall, I think that something similar to this patch will be needed, but
-please don't change the acpi_load_table() signature.  Instead, define it as
-a wrapper around a new function called, say, acpi_load_table_with_index()
-that will take two arguments, like acpi_load_table() in your patch.
+Right, so we originally went for the simpler implementation because in
+general when you have the biggest CPUs of the system running flat out at
+max freq, the micro-optimizations for energy on littles don't matter all
+that much. Is there a use-case where you see a big difference ?
 
-Then, you'd only need to call acpi_load_table_with_index() directly from
-acpi_table_aml_write().
+A second thing is RT pressure. If a big CPU is used at 50% by a CFS task
+and 50% by RT, we should mark it overutilized. Otherwise EAS will think
+the CFS task is 50% and try to down-migrate it. But the truth is, we
+dont know the size of the task ... So, I believe your patch breaks that
+ATM.
 
-In that case, IMO, it will be easier to handle the divergence between the
-upstream ACPICA and the kernel in the future in case the upstream doesn't
-decide to incorporate your change.
+And there is a similar problem with misfit. That is, a task running flat
+out on a big CPU will be flagged as misfit, even if there is nothing we
+can do about (we can't up-migrate it for obvious reasons). So perhaps we
+should look at a common solution for both issues, if deemed useful.
 
 > ---
->  drivers/acpi/acpi_configfs.c   | 2 +-
->  drivers/acpi/acpica/dbfileio.c | 2 +-
->  drivers/acpi/acpica/tbxfload.c | 8 ++++++--
->  drivers/firmware/efi/efi.c     | 2 +-
->  include/acpi/acpixf.h          | 3 ++-
->  5 files changed, 11 insertions(+), 6 deletions(-)
+>  kernel/sched/fair.c | 76 +++++++++++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 65 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/acpi/acpi_configfs.c b/drivers/acpi/acpi_configfs.c
-> index 57d9d574d4dde..77f81242a28e6 100644
-> --- a/drivers/acpi/acpi_configfs.c
-> +++ b/drivers/acpi/acpi_configfs.c
-> @@ -53,7 +53,7 @@ static ssize_t acpi_table_aml_write(struct config_item *cfg,
->  	if (!table->header)
->  		return -ENOMEM;
->  
-> -	ret = acpi_load_table(table->header);
-> +	ret = acpi_load_table(table->header, &table->index);
->  	if (ret) {
->  		kfree(table->header);
->  		table->header = NULL;
-> diff --git a/drivers/acpi/acpica/dbfileio.c b/drivers/acpi/acpica/dbfileio.c
-> index c6e25734dc5cd..e1b6e54a96ac1 100644
-> --- a/drivers/acpi/acpica/dbfileio.c
-> +++ b/drivers/acpi/acpica/dbfileio.c
-> @@ -93,7 +93,7 @@ acpi_status acpi_db_load_tables(struct acpi_new_table_desc *list_head)
->  	while (table_list_head) {
->  		table = table_list_head->table;
->  
-> -		status = acpi_load_table(table);
-> +		status = acpi_load_table(table, NULL);
->  		if (ACPI_FAILURE(status)) {
->  			if (status == AE_ALREADY_EXISTS) {
->  				acpi_os_printf
-> diff --git a/drivers/acpi/acpica/tbxfload.c b/drivers/acpi/acpica/tbxfload.c
-> index 86f1693f6d29a..d08cd8ffcbdb6 100644
-> --- a/drivers/acpi/acpica/tbxfload.c
-> +++ b/drivers/acpi/acpica/tbxfload.c
-> @@ -268,7 +268,8 @@ ACPI_EXPORT_SYMBOL_INIT(acpi_install_table)
->   *
->   * PARAMETERS:  table               - Pointer to a buffer containing the ACPI
->   *                                    table to be loaded.
-> - *
-> + *              table_idx           - Pointer to a u32 for storing the table
-> + *                                    index, might be NULL
->   * RETURN:      Status
->   *
->   * DESCRIPTION: Dynamically load an ACPI table from the caller's buffer. Must
-> @@ -278,7 +279,7 @@ ACPI_EXPORT_SYMBOL_INIT(acpi_install_table)
->   *              to ensure that the table is not deleted or unmapped.
->   *
->   ******************************************************************************/
-> -acpi_status acpi_load_table(struct acpi_table_header *table)
-> +acpi_status acpi_load_table(struct acpi_table_header *table, u32 *table_idx)
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 036be95..f4c3d70 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5182,10 +5182,71 @@ static inline bool cpu_overutilized(int cpu)
+>  static inline void update_overutilized_status(struct rq *rq)
 >  {
->  	acpi_status status;
->  	u32 table_index;
-> @@ -297,6 +298,9 @@ acpi_status acpi_load_table(struct acpi_table_header *table)
->  	status = acpi_tb_install_and_load_table(ACPI_PTR_TO_PHYSADDR(table),
->  						ACPI_TABLE_ORIGIN_EXTERNAL_VIRTUAL,
->  						FALSE, &table_index);
-> +	if (table_idx)
-> +		*table_idx = table_index;
+>  	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
+> -		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
+> -		trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
+> +		if (capacity_orig_of(cpu_of(rq)) < rq->rd->max_cpu_capacity) {
+> +			WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
+> +			trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
+> +		}
+>  	}
+>  }
 > +
->  	if (ACPI_SUCCESS(status)) {
+> +static
+> +void update_system_overutilized(struct sched_domain *sd, struct cpumask *cpus)
+> +{
+> +	unsigned long group_util;
+> +	bool intra_overutil = false;
+> +	unsigned long max_capacity;
+> +	struct sched_group *group = sd->groups;
+> +	struct root_domain *rd;
+> +	int this_cpu;
+> +	bool overutilized;
+> +	int i;
+> +
+> +	this_cpu = smp_processor_id();
+> +	rd = cpu_rq(this_cpu)->rd;
+> +	overutilized = READ_ONCE(rd->overutilized);
+> +	max_capacity = rd->max_cpu_capacity;
+> +
+> +	do {
+> +		group_util = 0;
+> +		for_each_cpu_and(i, sched_group_span(group), cpus) {
+> +			group_util += cpu_util(i);
+> +			if (cpu_overutilized(i)) {
+> +				if (capacity_orig_of(i) < max_capacity) {
+
+This is what breaks things with RT pressure I think.
+
+> +					intra_overutil = true;
+> +					break;
+> +				}
+> +			}
+> +		}
+> +
+> +		/*
+> +		 * A capacity base hint for over-utilization.
+> +		 * Not to trigger system overutiled if heavy tasks
+> +		 * in Big.cluster, so
+> +		 * add the free room(20%) of Big.cluster is impacted which means
+> +		 * system-wide over-utilization,
+> +		 * that considers whole cluster not single cpu
+> +		 */
+> +		if (group->group_weight > 1 && (group->sgc->capacity * 1024 <
+> +						group_util * capacity_margin)) {
+> +			intra_overutil = true;
+> +			break;
+> +		}
+
+What if we have only one big MC domain with both big and little CPUs and
+no DIE ? Say you have 4 big tasks, 4 big CPUs, 4 little CPUs (idle).
+You'll fail to mark the system overutilized no ?
+
+> +
+> +		group = group->next;
+> +
+> +	} while (group != sd->groups && !intra_overutil);
+> +
+> +	if (overutilized != intra_overutil) {
+> +		if (intra_overutil == true) {
+> +			WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
+> +			trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
+> +		} else {
+> +			WRITE_ONCE(rd->overutilized, 0);
+> +			trace_sched_overutilized_tp(rd, 0);
+> +		}
+> +	}
+> +}
+> +
+>  #else
+>  static inline void update_overutilized_status(struct rq *rq) { }
+>  #endif
+> @@ -8242,15 +8303,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
 >  
->  		/* Complete the initialization/resolution of new objects */
-> diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-> index ad3b1f4866b35..9773e4212baef 100644
-> --- a/drivers/firmware/efi/efi.c
-> +++ b/drivers/firmware/efi/efi.c
-> @@ -308,7 +308,7 @@ static __init int efivar_ssdt_load(void)
->  			goto free_data;
->  		}
+>  		/* update overload indicator if we are at root domain */
+>  		WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
+> -
+> -		/* Update over-utilization (tipping point, U >= 0) indicator */
+> -		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
+> -		trace_sched_overutilized_tp(rd, sg_status & SG_OVERUTILIZED);
+> -	} else if (sg_status & SG_OVERUTILIZED) {
+> -		struct root_domain *rd = env->dst_rq->rd;
+> -
+> -		WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
+> -		trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
+>  	}
+>  }
 >  
-> -		ret = acpi_load_table(data);
-> +		ret = acpi_load_table(data, NULL);
->  		if (ret) {
->  			pr_err("failed to load table: %d\n", ret);
->  			goto free_data;
-> diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h
-> index 3845c8fcc94e5..c90bbdc4146a6 100644
-> --- a/include/acpi/acpixf.h
-> +++ b/include/acpi/acpixf.h
-> @@ -452,7 +452,8 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
->  					       u8 physical))
+> @@ -8476,6 +8528,8 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
+>  	 */
+>  	update_sd_lb_stats(env, &sds);
 >  
->  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
-> -			    acpi_load_table(struct acpi_table_header *table))
-> +			    acpi_load_table(struct acpi_table_header *table,
-> +					    u32 *table_idx))
+> +	update_system_overutilized(env->sd, env->cpus);
+> +
+>  	if (sched_energy_enabled()) {
+>  		struct root_domain *rd = env->dst_rq->rd;
 >  
->  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
->  			    acpi_unload_parent_table(acpi_handle object))
+> -- 
+> 1.9.1
 > 
-
-
-
-
