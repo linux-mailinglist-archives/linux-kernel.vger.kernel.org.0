@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB1FB8648
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4908B867B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:29:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407299AbfISW2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:28:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33892 "EHLO mail.kernel.org"
+        id S2392422AbfISWRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:17:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393961AbfISWUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:20:03 -0400
+        id S2406449AbfISWRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:17:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 681F721907;
-        Thu, 19 Sep 2019 22:20:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91957217D6;
+        Thu, 19 Sep 2019 22:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931602;
-        bh=MKKCdTpxrjO/8GLYKplTiRHH7UYUIgrAhr+SMn0bOcY=;
+        s=default; t=1568931434;
+        bh=Gnb060WgRtLXs6JnHukAVdDIzLPHCh1bvcZjwA+WdiE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pVs0QGEQISfiHNFN1iM4q8g2UZbph3pCoeARM/p3Z8oEbsasWM+FiwYIW1pXV1rrA
-         TOALofm7ThZ5y3Hf2BcDuQVBgtaJ0dYML+Trd7VAoxiTzAOFVOsr/VWVLTvO3NhV5l
-         4K45hhkX8Mzd5MhWiB3Wf70OhkATL8VAtgbzEXuo=
+        b=IPlai6I59iLR1539vZ+nsGNcz7z++7JwKDZQzEw/ffGCIQQm0dBYcBj1mXm0w1qPl
+         bleFob94g4y7sBnTNxWHGCttblgUb+qHoPUfU8dE9GNICr5EmsIwcaZf03aMrH4TvK
+         LPJNsz8hi0qoXgtYA7xfCOt8usBu/s6VmQmEEb1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Len Brown <len.brown@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 47/74] s390/bpf: use 32-bit index for tail calls
+Subject: [PATCH 4.14 45/59] tools/power turbostat: fix buffer overrun
 Date:   Fri, 20 Sep 2019 00:04:00 +0200
-Message-Id: <20190919214809.343520917@linuxfoundation.org>
+Message-Id: <20190919214807.377475773@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,60 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Leoshkevich <iii@linux.ibm.com>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-[ Upstream commit 91b4db5313a2c793aabc2143efb8ed0cf0fdd097 ]
+[ Upstream commit eeb71c950bc6eee460f2070643ce137e067b234c ]
 
-"p runtime/jit: pass > 32bit index to tail_call" fails when
-bpf_jit_enable=1, because the tail call is not executed.
+turbostat could be terminated by general protection fault on some latest
+hardwares which (for example) support 9 levels of C-states and show 18
+"tADDED" lines. That bloats the total output and finally causes buffer
+overrun.  So let's extend the buffer to avoid this.
 
-This in turn is because the generated code assumes index is 64-bit,
-while it must be 32-bit, and as a result prog array bounds check fails,
-while it should pass. Even if bounds check would have passed, the code
-that follows uses 64-bit index to compute prog array offset.
-
-Fix by using clrj instead of clgrj for comparing index with array size,
-and also by using llgfr for truncating index to 32 bits before using it
-to compute prog array offset.
-
-Fixes: 6651ee070b31 ("s390/bpf: implement bpf_tail_call() helper")
-Reported-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Acked-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Signed-off-by: Len Brown <len.brown@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/net/bpf_jit_comp.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ tools/power/x86/turbostat/turbostat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
-index e4616090732a4..9b15a1dc66287 100644
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -1062,8 +1062,8 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
- 		/* llgf %w1,map.max_entries(%b2) */
- 		EMIT6_DISP_LH(0xe3000000, 0x0016, REG_W1, REG_0, BPF_REG_2,
- 			      offsetof(struct bpf_array, map.max_entries));
--		/* clgrj %b3,%w1,0xa,label0: if %b3 >= %w1 goto out */
--		EMIT6_PCREL_LABEL(0xec000000, 0x0065, BPF_REG_3,
-+		/* clrj %b3,%w1,0xa,label0: if (u32)%b3 >= (u32)%w1 goto out */
-+		EMIT6_PCREL_LABEL(0xec000000, 0x0077, BPF_REG_3,
- 				  REG_W1, 0, 0xa);
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 3e5f8b3db2720..19e345cf8193e 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -4488,7 +4488,7 @@ int initialize_counters(int cpu_id)
  
- 		/*
-@@ -1089,8 +1089,10 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
- 		 *         goto out;
- 		 */
- 
--		/* sllg %r1,%b3,3: %r1 = index * 8 */
--		EMIT6_DISP_LH(0xeb000000, 0x000d, REG_1, BPF_REG_3, REG_0, 3);
-+		/* llgfr %r1,%b3: %r1 = (u32) index */
-+		EMIT4(0xb9160000, REG_1, BPF_REG_3);
-+		/* sllg %r1,%r1,3: %r1 *= 8 */
-+		EMIT6_DISP_LH(0xeb000000, 0x000d, REG_1, REG_1, REG_0, 3);
- 		/* lg %r1,prog(%b2,%r1) */
- 		EMIT6_DISP_LH(0xe3000000, 0x0004, REG_1, BPF_REG_2,
- 			      REG_1, offsetof(struct bpf_array, ptrs));
+ void allocate_output_buffer()
+ {
+-	output_buffer = calloc(1, (1 + topo.num_cpus) * 1024);
++	output_buffer = calloc(1, (1 + topo.num_cpus) * 2048);
+ 	outp = output_buffer;
+ 	if (outp == NULL)
+ 		err(-1, "calloc output buffer");
 -- 
 2.20.1
 
