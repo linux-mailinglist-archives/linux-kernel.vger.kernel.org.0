@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1811DB84DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A7F5B8533
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393847AbfISWPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:15:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54736 "EHLO mail.kernel.org"
+        id S2406576AbfISWSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:18:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393839AbfISWO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:14:59 -0400
+        id S2393943AbfISWSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:18:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 393CB218AF;
-        Thu, 19 Sep 2019 22:14:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD5CA217D6;
+        Thu, 19 Sep 2019 22:18:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931298;
-        bh=9ZkUmIAtqapg5V4o9+m2L/LvSQjknh64QISz0pC6Op8=;
+        s=default; t=1568931515;
+        bh=c1ndb59zZ1NqEZrcv/TqARD5qfsyX2LH2PgcQYhFYYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nz3kV8nie4T7bPraOQXw3Ot1JT0MHXqZGQnBsLWUoqYOaiuecEYqwI1l5P9Y5mOaU
-         8+vZhDCf2gi3is5zxS/HbEqMYZl1CCaKV+7M/uzL+LYx9A3p4gY/+8zKvTSEK8Pk9z
-         /Gtk3wo4byw6lQp8ArlayktwZdiHTOAzjB4BGyCo=
+        b=Mkoig8i89zXYf/fwAQ56grjJOxU4CVBsB94iCZoNqKY3S/xh8xt5ird8mHvMywVtv
+         WWM2kg1CS6hhRQRTmyA4M6JsZxRXe8wq7cdmXk3ZVqavRE0ooDub0hhLhamoJYeKjS
+         VIqLJ+52ltdqxaYNnbqt01b1fpzhP3Tv1ougqm64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Eckelmann <sven@narfation.org>,
-        Simon Wunderlich <sw@simonwunderlich.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 43/79] batman-adv: Only read OGM2 tvlv_len after buffer len check
+        stable@vger.kernel.org, Kent Gibson <warthog618@gmail.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.9 15/74] gpio: fix line flag validation in lineevent_create
 Date:   Fri, 20 Sep 2019 00:03:28 +0200
-Message-Id: <20190919214811.470416788@linuxfoundation.org>
+Message-Id: <20190919214805.805223002@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,73 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Eckelmann <sven@narfation.org>
+From: Kent Gibson <warthog618@gmail.com>
 
-[ Upstream commit 0ff0f15a32c093381ad1abc06abe85afb561ab28 ]
+commit 5ca2f54b597c816df54ff1b28eb99cf7262b955d upstream.
 
-Multiple batadv_ogm2_packet can be stored in an skbuff. The functions
-batadv_v_ogm_send_to_if() uses batadv_v_ogm_aggr_packet() to check if there
-is another additional batadv_ogm2_packet in the skb or not before they
-continue processing the packet.
+lineevent_create should not allow any of GPIOHANDLE_REQUEST_OUTPUT,
+GPIOHANDLE_REQUEST_OPEN_DRAIN or GPIOHANDLE_REQUEST_OPEN_SOURCE to be set.
 
-The length for such an OGM2 is BATADV_OGM2_HLEN +
-batadv_ogm2_packet->tvlv_len. The check must first check that at least
-BATADV_OGM2_HLEN bytes are available before it accesses tvlv_len (which is
-part of the header. Otherwise it might try read outside of the currently
-available skbuff to get the content of tvlv_len.
+Fixes: d7c51b47ac11 ("gpio: userspace ABI for reading/writing GPIO lines")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Kent Gibson <warthog618@gmail.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 9323158ef9f4 ("batman-adv: OGMv2 - implement originators logic")
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/batman-adv/bat_v_ogm.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ drivers/gpio/gpiolib.c |    8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/net/batman-adv/bat_v_ogm.c b/net/batman-adv/bat_v_ogm.c
-index 2948b41b06d47..d241ccc0ca027 100644
---- a/net/batman-adv/bat_v_ogm.c
-+++ b/net/batman-adv/bat_v_ogm.c
-@@ -643,17 +643,23 @@ batadv_v_ogm_process_per_outif(struct batadv_priv *bat_priv,
-  * batadv_v_ogm_aggr_packet() - checks if there is another OGM aggregated
-  * @buff_pos: current position in the skb
-  * @packet_len: total length of the skb
-- * @tvlv_len: tvlv length of the previously considered OGM
-+ * @ogm2_packet: potential OGM2 in buffer
-  *
-  * Return: true if there is enough space for another OGM, false otherwise.
-  */
--static bool batadv_v_ogm_aggr_packet(int buff_pos, int packet_len,
--				     __be16 tvlv_len)
-+static bool
-+batadv_v_ogm_aggr_packet(int buff_pos, int packet_len,
-+			 const struct batadv_ogm2_packet *ogm2_packet)
- {
- 	int next_buff_pos = 0;
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -797,7 +797,9 @@ static int lineevent_create(struct gpio_
+ 	}
  
--	next_buff_pos += buff_pos + BATADV_OGM2_HLEN;
--	next_buff_pos += ntohs(tvlv_len);
-+	/* check if there is enough space for the header */
-+	next_buff_pos += buff_pos + sizeof(*ogm2_packet);
-+	if (next_buff_pos > packet_len)
-+		return false;
-+
-+	/* check if there is enough space for the optional TVLV */
-+	next_buff_pos += ntohs(ogm2_packet->tvlv_len);
+ 	/* This is just wrong: we don't look for events on output lines */
+-	if (lflags & GPIOHANDLE_REQUEST_OUTPUT) {
++	if ((lflags & GPIOHANDLE_REQUEST_OUTPUT) ||
++	    (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN) ||
++	    (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)) {
+ 		ret = -EINVAL;
+ 		goto out_free_label;
+ 	}
+@@ -811,10 +813,6 @@ static int lineevent_create(struct gpio_
  
- 	return (next_buff_pos <= packet_len) &&
- 	       (next_buff_pos <= BATADV_MAX_AGGREGATION_BYTES);
-@@ -830,7 +836,7 @@ int batadv_v_ogm_packet_recv(struct sk_buff *skb,
- 	ogm_packet = (struct batadv_ogm2_packet *)skb->data;
+ 	if (lflags & GPIOHANDLE_REQUEST_ACTIVE_LOW)
+ 		set_bit(FLAG_ACTIVE_LOW, &desc->flags);
+-	if (lflags & GPIOHANDLE_REQUEST_OPEN_DRAIN)
+-		set_bit(FLAG_OPEN_DRAIN, &desc->flags);
+-	if (lflags & GPIOHANDLE_REQUEST_OPEN_SOURCE)
+-		set_bit(FLAG_OPEN_SOURCE, &desc->flags);
  
- 	while (batadv_v_ogm_aggr_packet(ogm_offset, skb_headlen(skb),
--					ogm_packet->tvlv_len)) {
-+					ogm_packet)) {
- 		batadv_v_ogm_process(skb, ogm_offset, if_incoming);
- 
- 		ogm_offset += BATADV_OGM2_HLEN;
--- 
-2.20.1
-
+ 	ret = gpiod_direction_input(desc);
+ 	if (ret)
 
 
