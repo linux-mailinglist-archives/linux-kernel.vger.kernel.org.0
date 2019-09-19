@@ -2,63 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54132B78E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AADD0B78F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:11:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390132AbfISMHY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 08:07:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59678 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388712AbfISMHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 08:07:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AD906AB9B;
-        Thu, 19 Sep 2019 12:07:22 +0000 (UTC)
-Date:   Thu, 19 Sep 2019 05:07:03 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        David Bolvansky <david.bolvansky@gmail.com>
-Subject: Re: [PATCH] hugetlbfs: hugetlb_fault_mutex_hash cleanup
-Message-ID: <20190919120703.ixuv2itnui5ofhhr@linux-p48b>
-Mail-Followup-To: Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        David Bolvansky <david.bolvansky@gmail.com>
-References: <20190919011847.18400-1-mike.kravetz@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190919011847.18400-1-mike.kravetz@oracle.com>
-User-Agent: NeoMutt/20180716
+        id S2390188AbfISMLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 08:11:41 -0400
+Received: from mx60.baidu.com ([61.135.168.60]:48565 "EHLO
+        tc-sys-mailedm01.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390113AbfISMLk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 08:11:40 -0400
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Sep 2019 08:11:38 EDT
+Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
+        by tc-sys-mailedm01.tc.baidu.com (Postfix) with ESMTP id CD37E204005B;
+        Thu, 19 Sep 2019 20:04:47 +0800 (CST)
+From:   Li RongQing <lirongqing@baidu.com>
+To:     john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org, anna-maria@linutronix.de
+Subject: [PATCH] timer: read jiffies once when forwarding base clk
+Date:   Thu, 19 Sep 2019 20:04:47 +0800
+Message-Id: <1568894687-14499-1-git-send-email-lirongqing@baidu.com>
+X-Mailer: git-send-email 1.7.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Sep 2019, Mike Kravetz wrote:
+The below calltrace was reported, the cause is that timer is delayed
+bigger than 3 seconds
 
->A new clang diagnostic (-Wsizeof-array-div) warns about the calculation
->to determine the number of u32's in an array of unsigned longs. Suppress
->warning by adding parentheses.
->
->While looking at the above issue, noticed that the 'address' parameter
->to hugetlb_fault_mutex_hash is no longer used. So, remove it from the
->definition and all callers.
->
->No functional change.
->
->Reported-by: Nathan Chancellor <natechancellor@gmail.com>
->Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+    Hardware name: New H3C Technologies Co.,Ltd. UniServer R4950 G3/RS41R4950, BIOS 2.00.06 V700R003
+    Workqueue: events_unbound sched_tick_remote
+    RIP: 0010:sched_tick_remote+0xee/0x100
+    ...
+    Call Trace:
+    process_one_work+0x18c/0x3a0
+    worker_thread+0x30/0x380
+    ? process_one_work+0x3a0/0x3a0
+    kthread+0x113/0x130
+    ? kthread_create_worker_on_cpu+0x70/0x70
+    ret_from_fork+0x22/0x40
+    ---[ end trace 41bd884127493e39 ]---
 
-Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
+then write a program to test timer latency, it can reproduce this issue
+
+   static void sched_l_tick(struct timer_list *t)
+   {
+       unsigned long delta = jiffies - set_time;
+
+       if (delta > 3*HZ)
+               printk("abnormal %ld %d\n", delta, raw_smp_processor_id());
+
+       set_time = jiffies+HZ;
+       mod_timer(t, jiffies + HZ);
+    }
+
+further investigation shows jiffies maybe change when advence this base clk,
+twice read of jiffies maybe lead to that base clk is bigger than truely next
+event, and fire timer is skipped, so read jiffies once,
+
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Liang ZhiCheng <liangzhicheng@baidu.com>
+---
+ kernel/time/timer.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index 343c7ba33b1c..e2dbd0223635 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1593,24 +1593,27 @@ void timer_clear_idle(void)
+ static int collect_expired_timers(struct timer_base *base,
+ 				  struct hlist_head *heads)
+ {
++	unsigned long jnow;
++
++	jnow = READ_ONCE(jiffies);
+ 	/*
+ 	 * NOHZ optimization. After a long idle sleep we need to forward the
+ 	 * base to current jiffies. Avoid a loop by searching the bitfield for
+ 	 * the next expiring timer.
+ 	 */
+-	if ((long)(jiffies - base->clk) > 2) {
++	if ((long)(jnow - base->clk) > 2) {
+ 		unsigned long next = __next_timer_interrupt(base);
+ 
+ 		/*
+ 		 * If the next timer is ahead of time forward to current
+ 		 * jiffies, otherwise forward to the next expiry time:
+ 		 */
+-		if (time_after(next, jiffies)) {
++		if (time_after(next, jnow)) {
+ 			/*
+ 			 * The call site will increment base->clk and then
+ 			 * terminate the expiry loop immediately.
+ 			 */
+-			base->clk = jiffies;
++			base->clk = jnow;
+ 			return 0;
+ 		}
+ 		base->clk = next;
+-- 
+2.16.2
+
