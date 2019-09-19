@@ -2,115 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12E50B71B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 04:58:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DA04B71C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 05:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388499AbfISC6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 22:58:25 -0400
-Received: from mail-eopbgr40049.outbound.protection.outlook.com ([40.107.4.49]:16006
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388434AbfISC6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 22:58:24 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AKrQrIEmT1OWWgnUsKWHV7wmPrkIEifplatMoEB5PWZ5ezayDrK5uYNyzw492+vX2p5+0PoI8DejP2BeWYZ89BeqXPCIkN/IZfHQGOIwTfUzh53ELe/5kdOZ8fq2/Xfw23+yPE36yxBm6nJcLgQtjecVjjj9tKpROGKXW7TyiG4V+SDoUiFcpaOUgutb3/PNDAUi8YNjsVWFl7gxytJHO5o4XEUu/O3iBZhwGp38/6VJynByXNXOTaLoMn8HoVDCYnMgH9x+y2qY4fRrAMgx7+XCNfjl1LWoth+Tg+A3V6j+mXuNGoOfl2dHc+zqs7WhVl9HmVvdDZbdc7bKb8x6bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=51uYs/eundl+YXeL/YQa0zQL9WZBk9/Az0Kz3Ipen+8=;
- b=X86yvyZ8BPvkX+XOwd1qTNCD717LhP4hYEfDN5nv7hzqgx4FezvX1cppGEbLTyLqQqMqCgZiSmp05OmXk7lhyhhCEQyRCFCjVm8e2dYLNMFJKf0V7Ob/9LSM5xpZfc+fnV2RFjDRXakV0SRc9o//RAooPDYYrZ8HoB0VlQNsdwn8mksdG0HtijllE+QgDEMiy04lmOSbQWFEkMocEKHKqsMokYwv65o2rk4ikO3TTDnhThJlSi1ec8IJZam6L+LXDszOcm0CRMfldYJ67AjNHJe1W8eVj9Gei0pWfPceaVRHlfqg+VUBNwdnO3c6QVlnnLxjwZCBHFqnILFmp6wwRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=51uYs/eundl+YXeL/YQa0zQL9WZBk9/Az0Kz3Ipen+8=;
- b=JFM4ifZJcm40NWvC5tGeGY0bs185uhVwzysuSCRxhEPCK8VieP3RcJaIHCOh0rRlYpvrrOGljLdCASEoYsLg6ft0LY6GI+YvC4ZSsCwnl3wDcf0EyCSrZ1iCZGcO5ccQ5Atqx8bRGZlr4aDzkK7Xnu4OHnr8zghp/kYE4MmoY4U=
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com (20.179.233.80) by
- VE1PR04MB6367.eurprd04.prod.outlook.com (10.255.118.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.20; Thu, 19 Sep 2019 02:58:21 +0000
-Received: from VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::5049:d7e5:95ff:3d53]) by VE1PR04MB6479.eurprd04.prod.outlook.com
- ([fe80::5049:d7e5:95ff:3d53%7]) with mapi id 15.20.2284.009; Thu, 19 Sep 2019
- 02:58:21 +0000
-From:   "S.j. Wang" <shengjiu.wang@nxp.com>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "timur@kernel.org" <timur@kernel.org>,
-        "nicoleotsuka@gmail.com" <nicoleotsuka@gmail.com>,
-        "Xiubo.Lee@gmail.com" <Xiubo.Lee@gmail.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "lars@metafoo.de" <lars@metafoo.de>
-Subject: RE: [PATCH V2 3/4] ASoC: pcm_dmaengine: Extract
-        snd_dmaengine_pcm_set_runtime_hwparams
-Thread-Topic: [PATCH V2 3/4] ASoC: pcm_dmaengine: Extract
-        snd_dmaengine_pcm_set_runtime_hwparams
-Thread-Index: AdVulgpRceddTBjmTiyBOqg5p/ADHg==
-Date:   Thu, 19 Sep 2019 02:58:20 +0000
-Message-ID: <VE1PR04MB64799DE6C384435C8AB1918DE3890@VE1PR04MB6479.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=shengjiu.wang@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dcd07376-4cae-453f-1a18-08d73cad3ae3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6367;
-x-ms-traffictypediagnostic: VE1PR04MB6367:|VE1PR04MB6367:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VE1PR04MB636741439BBFBAE4421832E0E3890@VE1PR04MB6367.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2331;
-x-forefront-prvs: 016572D96D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(346002)(396003)(136003)(199004)(189003)(2201001)(6506007)(186003)(2906002)(256004)(316002)(486006)(66066001)(6246003)(55016002)(76116006)(66946007)(66476007)(71200400001)(71190400001)(7416002)(3846002)(74316002)(305945005)(6116002)(26005)(7736002)(102836004)(110136005)(52536014)(14454004)(99286004)(25786009)(229853002)(6436002)(7696005)(33656002)(64756008)(66556008)(66446008)(8936002)(81156014)(81166006)(86362001)(5660300002)(9686003)(476003)(2501003)(478600001)(4744005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6367;H:VE1PR04MB6479.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: DZFHJgnCSbRhtyatIq0lOhFkfLIjJyLrEWkZ8MQt1kGk2kWBaf4Um+JZBf2JdV3lVP2ZuRplAhg/2ulNNv+MER27VoIJMUDFTwayWZ5zzu/Ox4ofbtoRsmG2pEn0VvL7PQ13mdLtAHtl3BGQi/Ji8SnDJx58m6fRb691Z4KbuJPExJq2aVBIcx4jm8ozOP9aWPc7X2LdIvk37iOFJGyJ3fFaMYST6PWx6cM6p/DfxdRrnEy6y+noJGAG3YIdzF5hvkU1UuSh5R0XB1jeab6EjbjMdbW49LoUSECHmRIN4f880gMAUyyqbbgIVbBP1OAy3MIckZja0riJ1Lm9ACNw6W69GT8WLvoPqUBk8MwUQGUdnwhOYMmdSx68ExdH8vkliPckIQnZkHpP7wNv8pN1Xc8pHbdyqazUkvNYP4wSmX0=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2388537AbfISDCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 23:02:43 -0400
+Received: from aclms3.advantech.com.tw ([125.252.70.86]:46280 "EHLO
+        ACLMS3.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbfISDCn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 23:02:43 -0400
+Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS3.advantech.com.tw
+ (Clearswift SMTPRS 5.6.0) with ESMTP id <Tda5598ff72ac1401c8e70@ACLMS3.advantech.com.tw>;
+ Thu, 19 Sep 2019 11:02:40 +0800
+From:   <Amy.Shih@advantech.com.tw>
+To:     <she90122@gmail.com>
+CC:     <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
+        <bichan.lu@advantech.com.tw>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [v1,1/1] hwmon: (nct7904) Add array fan_alarm and vsen_alarm to store the alarms in nct7904_data struct.
+Date:   Thu, 19 Sep 2019 11:02:05 +0800
+Message-ID: <20190919030205.11440-1-Amy.Shih@advantech.com.tw>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dcd07376-4cae-453f-1a18-08d73cad3ae3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2019 02:58:20.8716
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3558+APjAGON0KcfHdcuyvIm6+AoVaBiXLTfb5tCMMAiXZ270CgzKhi0upRi1Pkssj2MwM1bMmSPEuxc7K7tYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6367
+Content-Type: text/plain
+X-Originating-IP: [172.17.10.114]
+X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
+ taipei08.ADVANTECH.CORP (172.20.0.235)
+X-StopIT: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+From: "amy.shih" <amy.shih@advantech.com.tw>
 
->=20
-> When set the runtime hardware parameters, we may need to query the
-> capability of DMA to complete the parameters.
->=20
-> This patch is to Extract this operation from
-> dmaengine_pcm_set_runtime_hwparams function to a separate function
-> snd_dmaengine_pcm_set_runtime_hwparams, that other components
-> which need this feature can call this function.
->=20
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
+SMI# interrupt for fan and voltage is Two-Times Interrupt Mode.
+Fan or voltage exceeds high limit or going below low limit,
+it will causes an interrupt if the previous interrupt has been
+reset by reading all the interrupt Status Register. Thus, add the
+array fan_alarm and vsen_alarm to store the alarms for all of the
+fan and voltage sensors.
 
-kbuild test robot report compile issue, will resend v3 after fixing.
+Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
+---
+ drivers/hwmon/nct7904.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-Best regards
-Wang shengjiu
+diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
+index f62dd1882451..b26419dbe840 100644
+--- a/drivers/hwmon/nct7904.c
++++ b/drivers/hwmon/nct7904.c
+@@ -99,6 +99,8 @@ struct nct7904_data {
+ 	u8 enable_dts;
+ 	u8 has_dts;
+ 	u8 temp_mode; /* 0: TR mode, 1: TD mode */
++	u8 fan_alarm[2];
++	u8 vsen_alarm[3];
+ };
+ 
+ /* Access functions */
+@@ -214,7 +216,15 @@ static int nct7904_read_fan(struct device *dev, u32 attr, int channel,
+ 				       SMI_STS5_REG + (channel >> 3));
+ 		if (ret < 0)
+ 			return ret;
+-		*val = (ret >> (channel & 0x07)) & 1;
++		if (!data->fan_alarm[channel >> 3])
++			data->fan_alarm[channel >> 3] = ret & 0xff;
++		else
++			/* If there is new alarm showing up */
++			data->fan_alarm[channel >> 3] |= (ret & 0xff);
++		*val = (data->fan_alarm[channel >> 3] >> (channel & 0x07)) & 1;
++		/* Needs to clean the alarm if alarm existing */
++		if (*val)
++			data->fan_alarm[channel >> 3] ^= 1 << (channel & 0x07);
+ 		return 0;
+ 	default:
+ 		return -EOPNOTSUPP;
+@@ -298,7 +308,15 @@ static int nct7904_read_in(struct device *dev, u32 attr, int channel,
+ 				       SMI_STS1_REG + (index >> 3));
+ 		if (ret < 0)
+ 			return ret;
+-		*val = (ret >> (index & 0x07)) & 1;
++		if (!data->vsen_alarm[index >> 3])
++			data->vsen_alarm[index >> 3] = ret & 0xff;
++		else
++			/* If there is new alarm showing up */
++			data->vsen_alarm[index >> 3] |= (ret & 0xff);
++		*val = (data->vsen_alarm[index >> 3] >> (index & 0x07)) & 1;
++		/* Needs to clean the alarm if alarm existing */
++		if (*val)
++			data->vsen_alarm[index >> 3] ^= 1 << (index & 0x07);
+ 		return 0;
+ 	default:
+ 		return -EOPNOTSUPP;
+-- 
+2.17.1
+
