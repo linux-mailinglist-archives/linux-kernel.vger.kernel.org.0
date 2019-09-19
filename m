@@ -2,49 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 800FAB835E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B397B8363
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404826AbfISVaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 17:30:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60354 "EHLO mail.kernel.org"
+        id S2404838AbfISVab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 17:30:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403945AbfISVa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 17:30:29 -0400
-Subject: Re: [git pull] Input updates for v5.4-rc0
+        id S2404824AbfISVaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 17:30:30 -0400
+Subject: Re: [GIT PULL] dma-mapping updates for 5.4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568928628;
-        bh=uaFnLzQBwhA4k9xpomHDaGT9r02uJmtRZ8iEhZl2EO4=;
+        s=default; t=1568928629;
+        bh=PxIMPCzSmLksihdPHjm4QGV5FFdSb/+jzcpKL6SE0QU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=WAqLggofYciyojaZGn4xm2l4/G5J44SwP14GqV51fftIPicOHGo2MxHbgqr6TjdGi
-         +fsBGl3Ar+18w6BivYaqllfsK7lmsZdj2kv1psSOB4+orbN2wEe0YwHklUPFeQcA1y
-         CeSqYvqAIbWzlfXePtQ7jw0/Si3TBewlPFU/c6VQ=
+        b=N/k9/zG0H5690gQsIVAD/7SuzY3PEW6cTpTLrwp3rkS316pDfWlnEBUlBH19Yagaz
+         qVYe9lAsrjiiMow0EZO6pPIXPPEf0nD7V3qA7HLSgdvmGPxiTG0pwfEcUaTMtYJ8fW
+         wNUFKGT3tipMpm+5G7gsgo+8sYF/B5zmohe/mduw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190917234004.GA145240@dtor-ws>
-References: <20190917234004.GA145240@dtor-ws>
+In-Reply-To: <20190918152748.GA21241@infradead.org>
+References: <20190918152748.GA21241@infradead.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190917234004.GA145240@dtor-ws>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
-X-PR-Tracked-Commit-Id: 0898782247ae533d1f4e47a06bc5d4870931b284
+X-PR-Tracked-Message-Id: <20190918152748.GA21241@infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git
+ tags/dma-mapping-5.4
+X-PR-Tracked-Commit-Id: c7d9eccb3c1e802c5cbb2a764eb0eb9807d9f12e
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c6cfaf4f86d9d15e5541adb3bb899d0b80f89ec7
-Message-Id: <156892862889.30913.1553387579406573122.pr-tracker-bot@kernel.org>
-Date:   Thu, 19 Sep 2019 21:30:28 +0000
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+X-PR-Merge-Commit-Id: 671df189537883f36cf9c7d4f9495bfac0f86627
+Message-Id: <156892862992.30913.10484528229946005623.pr-tracker-bot@kernel.org>
+Date:   Thu, 19 Sep 2019 21:30:29 +0000
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+        linux-mmc@vger.kernel.org, iommu@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 17 Sep 2019 16:40:04 -0700:
+The pull request you sent on Wed, 18 Sep 2019 08:27:48 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-5.4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c6cfaf4f86d9d15e5541adb3bb899d0b80f89ec7
+https://git.kernel.org/torvalds/c/671df189537883f36cf9c7d4f9495bfac0f86627
 
 Thank you!
 
