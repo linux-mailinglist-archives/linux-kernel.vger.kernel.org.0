@@ -2,109 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 569C8B8217
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B936BB821B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404573AbfISUCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 16:02:53 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37015 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404554AbfISUCw (ORCPT
+        id S2392414AbfISUDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 16:03:52 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36225 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390489AbfISUDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 16:02:52 -0400
-Received: by mail-qk1-f196.google.com with SMTP id u184so4769393qkd.4;
-        Thu, 19 Sep 2019 13:02:52 -0700 (PDT)
+        Thu, 19 Sep 2019 16:03:51 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 67so4237628oto.3;
+        Thu, 19 Sep 2019 13:03:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8tiLUzdYi4ITB45WucLNW+ND66QoXoPlA91lr3mWY0I=;
-        b=sbqDMqvcvX3x6cU1Bdz+6qPbXVu92Hlw7FpYhWcmNu2nb76PWtUJQnkwE98baOLrmI
-         0MY5otAgmrOc07A8Yw0QDg6TYwqi+mvnIXIpvyl6ZrblMCiJXvmVj9lbRaDSVNV+QHG4
-         67cVb+vU6c/ZsY1HTtHGdmiK6rFizS7IbGORW4k/+nBbjcSQiGBXcGYtSYOW62F56AGF
-         KTtEt9mAPo7t9Y4oJBowYtKY56XThUbC2h6tYPXdFXFriLnIeZRzsQoKFno5YPPTQq/7
-         CElIzcWjG2FWQf2DczVSoq2MHQxMYDCoemtFPqe2+IrN1xGdhKayesdkq08nUYx3ZwOQ
-         WysA==
+        bh=6fHpBKw6eUOwimptL+ITvgs75Vin3Zdq3uabBD6+JFk=;
+        b=u6+ZcWhSl1aG3A35Qb0Fd19psh9JCrKFkP3pP+Kb5YWJrplnAx6n1LDAaQqhi5ZqeG
+         jyg37wc0W5HHbAEgGWnj+/U231oZzC19ON9Rfo91cqTK1YiBcxFzRvsCGEFZVajL39BU
+         IxICNwcDbn7lpr+dCbIjgaoc2l/rrdjuqH/1PUK9/IOAvehhnEUgJr2gT7AKWGJy3dA5
+         reAGIbafrW81R9KGq+LLSQSM1d1f/MB5gldml/A6+cQDuet+ACqBeBdW1Y/SvRHoYzjg
+         597/gCDnetAWPqfKHAI31kFYvBIe7V6Ypq6IqICtfmdAhkPA70pyiiGAGdCgFb7F4kwQ
+         29kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8tiLUzdYi4ITB45WucLNW+ND66QoXoPlA91lr3mWY0I=;
-        b=lhHDaapT72xnTD1PFTZvH6rcMz/4SQ6Bb4sZLixz/vDTHUqzbImYkB17pXYFMJXBzy
-         zcKqv7KqFM69FWIKxbWuYY9O4WjXd1JO25HtGEZF/xEFAE6ZkTjTYM6gPJH8ahzVj26m
-         H7mFeva/pCmzUEnTVnrwnnZyXsgpTLwAQCcjnTq7qv/FEpkwz1RotZywGv/CTTkXKFxF
-         eevnZjIR3OuAqNOdRYhUjEgd4B396ND9DhpPziG5Gd0gcT3u4NenjB2hHrbn7zJf3dLH
-         c/mZ4RG++oFUsW9XgJia50rzpsZdMpYkHqj447NmYMWzz+F4ZefFqDIvb1Wk3hNwvGwM
-         1KRA==
-X-Gm-Message-State: APjAAAWap6OViTOZDrOKTCeSr6gXXkiXY0toFNPWoevLXQkwC6ogFrfK
-        8zg5E/Wx1wTAT6RlE7xYqh11denF3pgATfNdfes=
-X-Google-Smtp-Source: APXvYqwvmENtZwqOUjQyedETgKcY0/COJMPAGFK2CXOq7iyOjkYW6yMxk6opBKWcdNrSSEZYulbmcSZPLeNxXGPRIvE=
-X-Received: by 2002:a05:620a:119a:: with SMTP id b26mr4913032qkk.39.1568923371419;
- Thu, 19 Sep 2019 13:02:51 -0700 (PDT)
+        bh=6fHpBKw6eUOwimptL+ITvgs75Vin3Zdq3uabBD6+JFk=;
+        b=kA2k3gFfWHGRUQM2reJ7g0yV9insWO1n9FTEw3m0muh99cvlTI78JasDT2GqisDxI2
+         eXTKMDPH5d/fT7utNK1s8nvXqEyivj5AsNI1PGejnQQ7x6vuJP9s96iIcxO4C6AJHmT0
+         9M2oB0/8jDjPjUg5vHOqixewIIn2GyHRI9pqXiTfT484vckQjR6N2JNe232lDy343QY1
+         b/S95OgUkr45nUf/niVWlp9oMm01e77D0UbuVSn51A+J8uJw2VPpHBESXEyGrw6h2bjg
+         JsSCL2GvfDmNTcyQXkYlTtTp2/UpVgk1+8tflfyVslga0EZ5UwyLXm0RIw4G/1K8GhuO
+         X8Ow==
+X-Gm-Message-State: APjAAAXsjbmU9HD1WyVS5Z7IkcKwiEQEyu7b9QDU60yLx0Y9zU6Bras7
+        fIY/ke4Qb4PlPhm68o3NaupOFjh2KeeTqXE89vXEctNn
+X-Google-Smtp-Source: APXvYqzbB6OA805TN6az8052Brpw/uRvuz3y/MdV7wEM646Gr4PT2OrZKwoWHj/BiQcf4dPqGRq77DOrFesFh5Oj13c=
+X-Received: by 2002:a9d:6084:: with SMTP id m4mr7893739otj.6.1568923429439;
+ Thu, 19 Sep 2019 13:03:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190919160518.25901-1-ivan.khoronzhuk@linaro.org>
-In-Reply-To: <20190919160518.25901-1-ivan.khoronzhuk@linaro.org>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Thu, 19 Sep 2019 13:02:40 -0700
-Message-ID: <CAEf4BzbCjCYr5NMPctDkUggwpehnqZPVBSqZOsd9MvSq6WmnZQ@mail.gmail.com>
-Subject: Re: [PATCH bpf] libbpf: fix version identification on busybox
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin Lau <kafai@fb.com>, Andrii Nakryiko <andriin@fb.com>,
-        Yonghong Song <yhs@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+References: <1568895064-4116-1-git-send-email-jianxin.pan@amlogic.com> <1568895064-4116-3-git-send-email-jianxin.pan@amlogic.com>
+In-Reply-To: <1568895064-4116-3-git-send-email-jianxin.pan@amlogic.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 19 Sep 2019 22:03:38 +0200
+Message-ID: <CAFBinCDv2m_0tP+rdT1tgXhMs-hPE_cJ9TmO8h9ftDvJXvby+g@mail.gmail.com>
+Subject: Re: [PATCH 2/3] soc: amlogic: Add support for Secure power domains controller
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        Zhiqiang Liang <zhiqiang.liang@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 11:22 AM Ivan Khoronzhuk
-<ivan.khoronzhuk@linaro.org> wrote:
->
-> It's very often for embedded to have stripped version of sort in
-> busybox, when no -V option present. It breaks build natively on target
-> board causing recursive loop.
->
-> BusyBox v1.24.1 (2019-04-06 04:09:16 UTC) multi-call binary. \
-> Usage: sort [-nrugMcszbdfimSTokt] [-o FILE] [-k \
-> start[.offset][opts][,end[.offset][opts]] [-t CHAR] [FILE]...
->
-> Lets modify command a little to avoid -V option.
->
-> Fixes: dadb81d0afe732 ("libbpf: make libbpf.map source of truth for libbpf version")
->
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> ---
->
-> Based on bpf/master
->
->  tools/lib/bpf/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-> index c6f94cffe06e..a12490ad6215 100644
-> --- a/tools/lib/bpf/Makefile
-> +++ b/tools/lib/bpf/Makefile
-> @@ -3,7 +3,7 @@
->
->  LIBBPF_VERSION := $(shell \
->         grep -oE '^LIBBPF_([0-9.]+)' libbpf.map | \
-> -       sort -rV | head -n1 | cut -d'_' -f2)
-> +       cut -d'_' -f2 | sort -r | head -n1)
+Hi Jianxin,
 
-You can't just sort alphabetically, because:
+I added three comments below from a quick glance at this driver (I
+didn't have time for a complete review)
 
-1.2
-1.11
+On Thu, Sep 19, 2019 at 2:11 PM Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+[...]
+> +               pm_genpd_init(&dom->base, NULL,
+> +                             (match->domains[i].get_power ?
+> +                             match->domains[i].get_power(dom) : true));
+.get_power is never NULL in this driver so the ": true" part is
+effectively a no-op
 
-should be in that order. See discussion on mailing thread for original commit.
+[...]
+> +static const struct of_device_id meson_secure_pwrc_match_table[] = {
+> +       {
+> +               .compatible = "amlogic,meson-a1-pwrc",
+> +               .data = &meson_secure_a1_pwrc_data,
+> +       },
+> +       { }
+many drivers use a /* sentinel */ comment inside { }
 
->  LIBBPF_MAJOR_VERSION := $(firstword $(subst ., ,$(LIBBPF_VERSION)))
->
->  MAKEFLAGS += --no-print-directory
-> --
-> 2.17.1
->
+[...]
+> +arch_initcall_sync(meson_secure_pwrc_init);
+why arch_initcall_sync instead of builtin_platform_driver?
+$ grep -R arch_initcall_sync drivers/soc/
+$
+
+
+Martin
