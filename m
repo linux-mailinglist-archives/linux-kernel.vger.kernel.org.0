@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D831B849A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A7AB845B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:10:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405984AbfISWMY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:12:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51092 "EHLO mail.kernel.org"
+        id S2405622AbfISWKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:10:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405944AbfISWMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:12:15 -0400
+        id S2405609AbfISWKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:10:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0C1D21920;
-        Thu, 19 Sep 2019 22:12:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18ED121920;
+        Thu, 19 Sep 2019 22:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931135;
-        bh=wyklw6h7uu0PQ35u5IY/6t8dIFe54hrKDbD3NZ7d8xk=;
+        s=default; t=1568931008;
+        bh=gZSnvrdLULxwjHSAUZkDCTpkQxwg/SW7rI52snceEtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ulEqGzQsdQXzrGPBOL/dCzxRcRy4DYJrQs7LptGSJtyiwKowabn/9xUMq3ZgB176J
-         420JznClrJaLeyJF0ftQijjRDTkzawGFWhl5JLnv6Vin5KLDWlemqEGs2fRQAuTrZ3
-         Z5+q3htdFDC2n+tMU8X4jJMZspp2q01vcU6MHXB8=
+        b=PSpkPQy4qf1lb/qHdCl7D1aUgBcTRC22EUyWDzmxehR2j5jwSgWtQTNqsjbo3Y9N0
+         40v4eoycv7Na4SlHbLTOxmecu/eK2MDNmR8LrdfZNnITq97VK+9qnrok/Y0c7KLGhG
+         oeONXAFbIcetdwDJ7DtrmYBBiaudb+NccHEpHGvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Razvan Stefanescu <razvan.stefanescu@microchip.com>
-Subject: [PATCH 4.19 16/79] tty/serial: atmel: reschedule TX after RX was started
-Date:   Fri, 20 Sep 2019 00:03:01 +0200
-Message-Id: <20190919214809.242105899@linuxfoundation.org>
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Len Brown <len.brown@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 094/124] tools/power x86_energy_perf_policy: Fix "uninitialized variable" warnings at -O2
+Date:   Fri, 20 Sep 2019 00:03:02 +0200
+Message-Id: <20190919214822.475316673@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
+References: <20190919214819.198419517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +44,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Razvan Stefanescu <razvan.stefanescu@microchip.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit d2ace81bf902a9f11d52e59e5d232d2255a0e353 upstream.
+[ Upstream commit adb8049097a9ec4acd09fbd3aa8636199a78df8a ]
 
-When half-duplex RS485 communication is used, after RX is started, TX
-tasklet still needs to be  scheduled tasklet. This avoids console freezing
-when more data is to be transmitted, if the serial communication is not
-closed.
+x86_energy_perf_policy first uses __get_cpuid() to check the maximum
+CPUID level and exits if it is too low.  It then assumes that later
+calls will succeed (which I think is architecturally guaranteed).  It
+also assumes that CPUID works at all (which is not guaranteed on
+x86_32).
 
-Fixes: 69646d7a3689 ("tty/serial: atmel: RS485 HD w/DMA: enable RX after TX is stopped")
-Signed-off-by: Razvan Stefanescu <razvan.stefanescu@microchip.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190813074025.16218-1-razvan.stefanescu@microchip.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+If optimisations are enabled, gcc warns about potentially
+uninitialized variables.  Fix this by adding an exit-on-error after
+every call to __get_cpuid() instead of just checking the maximum
+level.
 
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Len Brown <len.brown@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/atmel_serial.c |    1 -
- 1 file changed, 1 deletion(-)
+ .../x86_energy_perf_policy.c                  | 26 +++++++++++--------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1270,7 +1270,6 @@ atmel_handle_transmit(struct uart_port *
+diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
+index 34a796b303fe2..7663abef51e96 100644
+--- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
++++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
+@@ -1259,6 +1259,15 @@ void probe_dev_msr(void)
+ 		if (system("/sbin/modprobe msr > /dev/null 2>&1"))
+ 			err(-5, "no /dev/cpu/0/msr, Try \"# modprobe msr\" ");
+ }
++
++static void get_cpuid_or_exit(unsigned int leaf,
++			     unsigned int *eax, unsigned int *ebx,
++			     unsigned int *ecx, unsigned int *edx)
++{
++	if (!__get_cpuid(leaf, eax, ebx, ecx, edx))
++		errx(1, "Processor not supported\n");
++}
++
+ /*
+  * early_cpuid()
+  * initialize turbo_is_enabled, has_hwp, has_epb
+@@ -1266,15 +1275,10 @@ void probe_dev_msr(void)
+  */
+ void early_cpuid(void)
+ {
+-	unsigned int eax, ebx, ecx, edx, max_level;
++	unsigned int eax, ebx, ecx, edx;
+ 	unsigned int fms, family, model;
  
- 			atmel_port->hd_start_rx = false;
- 			atmel_start_rx(port);
--			return;
- 		}
+-	__get_cpuid(0, &max_level, &ebx, &ecx, &edx);
+-
+-	if (max_level < 6)
+-		errx(1, "Processor not supported\n");
+-
+-	__get_cpuid(1, &fms, &ebx, &ecx, &edx);
++	get_cpuid_or_exit(1, &fms, &ebx, &ecx, &edx);
+ 	family = (fms >> 8) & 0xf;
+ 	model = (fms >> 4) & 0xf;
+ 	if (family == 6 || family == 0xf)
+@@ -1288,7 +1292,7 @@ void early_cpuid(void)
+ 		bdx_highest_ratio = msr & 0xFF;
+ 	}
  
- 		atmel_tasklet_schedule(atmel_port, &atmel_port->tasklet_tx);
+-	__get_cpuid(0x6, &eax, &ebx, &ecx, &edx);
++	get_cpuid_or_exit(0x6, &eax, &ebx, &ecx, &edx);
+ 	turbo_is_enabled = (eax >> 1) & 1;
+ 	has_hwp = (eax >> 7) & 1;
+ 	has_epb = (ecx >> 3) & 1;
+@@ -1306,7 +1310,7 @@ void parse_cpuid(void)
+ 
+ 	eax = ebx = ecx = edx = 0;
+ 
+-	__get_cpuid(0, &max_level, &ebx, &ecx, &edx);
++	get_cpuid_or_exit(0, &max_level, &ebx, &ecx, &edx);
+ 
+ 	if (ebx == 0x756e6547 && edx == 0x49656e69 && ecx == 0x6c65746e)
+ 		genuine_intel = 1;
+@@ -1315,7 +1319,7 @@ void parse_cpuid(void)
+ 		fprintf(stderr, "CPUID(0): %.4s%.4s%.4s ",
+ 			(char *)&ebx, (char *)&edx, (char *)&ecx);
+ 
+-	__get_cpuid(1, &fms, &ebx, &ecx, &edx);
++	get_cpuid_or_exit(1, &fms, &ebx, &ecx, &edx);
+ 	family = (fms >> 8) & 0xf;
+ 	model = (fms >> 4) & 0xf;
+ 	stepping = fms & 0xf;
+@@ -1340,7 +1344,7 @@ void parse_cpuid(void)
+ 		errx(1, "CPUID: no MSR");
+ 
+ 
+-	__get_cpuid(0x6, &eax, &ebx, &ecx, &edx);
++	get_cpuid_or_exit(0x6, &eax, &ebx, &ecx, &edx);
+ 	/* turbo_is_enabled already set */
+ 	/* has_hwp already set */
+ 	has_hwp_notify = eax & (1 << 8);
+-- 
+2.20.1
+
 
 
