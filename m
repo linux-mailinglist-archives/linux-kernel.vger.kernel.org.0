@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C686DB8547
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35B60B84AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:13:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389183AbfISWTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:19:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32946 "EHLO mail.kernel.org"
+        id S2393707AbfISWNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:13:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392452AbfISWTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:19:19 -0400
+        id S2406026AbfISWNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:13:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B584820678;
-        Thu, 19 Sep 2019 22:19:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C3AF21907;
+        Thu, 19 Sep 2019 22:13:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931559;
-        bh=eRqoDxPhzvVbfx3W3pJb3IwRfIRBOVWrUZjCX5SJ9ZI=;
+        s=default; t=1568931181;
+        bh=nQm9fmpxpPMRbefy42NAkue3FZlAfMV+pg0Kwb0mokM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B43Kgd1PQ0Pk17am7g9gr5SaWL+4zQZlkNPjFeC8ZuDKa0zE86Was6GhAtdwHq8UB
-         Sfy+ikWwSJMyTi7vTwCGf/XNKkVGN9+7nfhVPULafwvJZjXwJkdVH8mUNVzmuxJlxI
-         xWibVcRJnoVZNcmbuhhhGf7nqI0hNR9D7V/qlx9M=
+        b=F/OWM5tQXGYBn+kbTSvTvEJs/I/I7QfDVtq6RgI9NPnIRvNHFSeYjkFtI7GfRXoUS
+         j30uloUQrJBt/Ul87kbYn+LvB0KlsYVDtfNMxih9wcWRostHT8rmY5UBefwm5zQkoB
+         9J+VvBgOYHkOhln14oAnBVGeFzQf1Wd33QohdX2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 03/74] ipv6: Fix the link time qualifier of ping_v6_proc_exit_net()
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 31/79] tools: bpftool: close prog FD before exit on showing a single program
 Date:   Fri, 20 Sep 2019 00:03:16 +0200
-Message-Id: <20190919214801.207325640@linuxfoundation.org>
+Message-Id: <20190919214810.531834718@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,31 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Quentin Monnet <quentin.monnet@netronome.com>
 
-[ Upstream commit d23dbc479a8e813db4161a695d67da0e36557846 ]
+[ Upstream commit d34b044038bfb0e19caa8b019910efc465f41d5f ]
 
-The '.exit' functions from 'pernet_operations' structure should be marked
-as __net_exit, not __net_init.
+When showing metadata about a single program by invoking
+"bpftool prog show PROG", the file descriptor referring to the program
+is not closed before returning from the function. Let's close it.
 
-Fixes: d862e5461423 ("net: ipv6: Implement /proc/net/icmp6.")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
+Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
+Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/ping.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/bpf/bpftool/prog.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ping.c
-+++ b/net/ipv6/ping.c
-@@ -239,7 +239,7 @@ static int __net_init ping_v6_proc_init_
- 	return ping_proc_register(net, &ping_v6_seq_afinfo);
- }
+diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
+index bbba0d61570fe..4f9611af46422 100644
+--- a/tools/bpf/bpftool/prog.c
++++ b/tools/bpf/bpftool/prog.c
+@@ -381,7 +381,9 @@ static int do_show(int argc, char **argv)
+ 		if (fd < 0)
+ 			return -1;
  
--static void __net_init ping_v6_proc_exit_net(struct net *net)
-+static void __net_exit ping_v6_proc_exit_net(struct net *net)
- {
- 	return ping_proc_unregister(net, &ping_v6_seq_afinfo);
- }
+-		return show_prog(fd);
++		err = show_prog(fd);
++		close(fd);
++		return err;
+ 	}
+ 
+ 	if (argc)
+-- 
+2.20.1
+
 
 
