@@ -2,134 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83FABB7BB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7353B7B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732347AbfISOJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:09:49 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:57389 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727642AbfISOJt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:09:49 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1Mrfgi-1hpxqe1rC0-00ndmR; Thu, 19 Sep 2019 16:09:20 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zhou Wang <wangzhou1@hisilicon.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        John Garry <john.garry@huawei.com>,
-        Mao Wenan <maowenan@huawei.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] [v2] crypto: hisilicon - allow compile-testing on x86
-Date:   Thu, 19 Sep 2019 16:09:06 +0200
-Message-Id: <20190919140917.1290556-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190919140650.1289963-2-arnd@arndb.de>
-References: <20190919140650.1289963-2-arnd@arndb.de>
+        id S1732400AbfISOCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:02:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2740 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732323AbfISOCm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:02:42 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 118C5FBD00B0B2AFF39B;
+        Thu, 19 Sep 2019 22:02:37 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 19 Sep 2019
+ 22:02:14 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <airlied@linux.ie>, <daniel@ffwll.ch>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <David1.Zhou@amd.com>
+CC:     <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>
+Subject: [PATCH] drm/amdgpu: remove excess function parameter description
+Date:   Thu, 19 Sep 2019 22:09:09 +0800
+Message-ID: <1568902149-70787-1-git-send-email-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:U629Hd3cGnU8BwGfZLZmPjR9EqhyF7LggzzKaHMqmPXJG5SOoaG
- 56qWhLWW1tp3/1dhLgYLQaT2/VQYhnegAH24c+wTg/NKoqMW/uChNHZvLu2bF93uuiDxa0M
- /tmHdUwK7VHvYB3oyEYu66CoaWEUwJ179MbitGhoXO7b5Fm3B3L5rC8KbrGxvlCIKNJKdyT
- 8nDarTIeVn1ho1o4uQHxg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:EkShJhDQDqY=:qIOWDGVLQmjV8bKEgwt4Ov
- 3uj4+TxUABsXndAQ/dtvDmhlYgngeGssU3jdIGXldoJhuzhZvfBlYQ3r9lPXgff/T4NX5bszl
- I0aCwXe8pqFOPlB3ZXC2XxwNhfkVGJ6jt53i3YVrOsZ0HL0R3dMLDVAVPJ+H22NWJEXAEj9i3
- 0qLdhFGlhYVgmkpjMsMmG3FTXHAgN1mymMd9DKXfLtz0USx7gEHLr3cIRk/R5X/gudfzr38hj
- FA+xWPNWez8ryGCwqx5V7H0J8UfNbBnG0sA7qnRL8i1EXnCCJJXrdjMN/5S2aULq3XJH2J8q8
- bwP71nD/OLFCRsAzRomZMcHmncdhTAAOY1QByrJJhYI/gnF+mELnXKuCAH7UnQoPqCelOopbW
- jUpCcXNw+BVlm3riZgiU7LWaXAHC7Om6Tb7EiLF9teAszU9DlPDnfzuwJyTz8UAQOVLel3Jjc
- q2b8Wg/cNyr2zWDbzfoaumBRAUMPOdo+jWYRCMH8P6vtAJOINXonL1cAVy1KDfiGhP6BQ7lAz
- 703n+miWAxpUk3nIQf6bmykFL3FvTAkl7STw1RvbzZ7KjvP4dx108MZG4Vme2HP1p6rt3G0g/
- pAr9sLvLM0WpVJHuC2cw0TsrH13pFmfuevknC9wOkHvAcp24N/zWvkIxIvrleKWufcll+uFYE
- BvmumgFhPsb8QV2SwIWucUhV6zUY1ckw6tYJ4lfeuA9u2dC5IEZoXkM3Jt6OkB0c6GaeiVdFV
- a/d0o6ESZR5TFkEYufvCxnqRiwJXTk+NG2Zx4UcaL7QzAI6x+nuVIMZhPsWoSzTXGb6jUuaga
- fq0QC8zBhsApd1Not5VCsdafp3VIEcdoVnggnfS0kZ9iGiiEEE+JurBC3n53c9BJNffpma9kd
- xTPmXuUFdyb8yT8H7JbQ==
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid missing arm64 specific warnings that get introduced
-in this driver, allow compile-testing on all 64-bit architectures.
+Fixes gcc warning:
 
-The only actual arm64 specific code in this driver is an open-
-coded 128 bit MMIO write. On non-arm64 the same can be done
-using memcpy_toio. What I also noticed is that the mmio store
-(either one) is not endian-safe, this will only work on little-
-endian configurations, so I also add a Kconfig dependency on
-that, regardless of the architecture.
-Finally, a depenndecy on CONFIG_64BIT is needed because of the
-writeq().
+drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c:431: warning: Excess function
+parameter 'sw' description in 'vcn_v2_5_disable_clock_gating'
+drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c:550: warning: Excess function
+parameter 'sw' description in 'vcn_v2_5_enable_clock_gating'
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: cbead2bdfcf1 ("drm/amdgpu: add VCN2.5 VCPU start and stop")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
 ---
-v2: actually add !CPU_BIG_ENDIAN dependency as described in the
-changelog
----
- drivers/crypto/hisilicon/Kconfig | 9 ++++++---
- drivers/crypto/hisilicon/qm.c    | 6 ++++++
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-index ebaf91e0146d..7bfcaa7674fd 100644
---- a/drivers/crypto/hisilicon/Kconfig
-+++ b/drivers/crypto/hisilicon/Kconfig
-@@ -16,14 +16,15 @@ config CRYPTO_DEV_HISI_SEC
- 
- config CRYPTO_DEV_HISI_QM
- 	tristate
--	depends on ARM64 && PCI && PCI_MSI
-+	depends on ARM64 || COMPILE_TEST
-+	depends on PCI && PCI_MSI
- 	help
- 	  HiSilicon accelerator engines use a common queue management
- 	  interface. Specific engine driver may use this module.
- 
- config CRYPTO_HISI_SGL
- 	tristate
--	depends on ARM64
-+	depends on ARM64 || COMPILE_TEST
- 	help
- 	  HiSilicon accelerator engines use a common hardware scatterlist
- 	  interface for data format. Specific engine driver may use this
-@@ -31,7 +32,9 @@ config CRYPTO_HISI_SGL
- 
- config CRYPTO_DEV_HISI_ZIP
- 	tristate "Support for HiSilicon ZIP accelerator"
--	depends on ARM64 && PCI && PCI_MSI
-+	depends on PCI && PCI_MSI
-+	depends on ARM64 || (COMPILE_TEST && 64BIT)
-+	depends on !CPU_BIG_ENDIAN || COMPILE_TEST
- 	select CRYPTO_DEV_HISI_QM
- 	select CRYPTO_HISI_SGL
- 	select SG_SPLIT
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-index f975c393a603..a8ed699081b7 100644
---- a/drivers/crypto/hisilicon/qm.c
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -331,6 +331,12 @@ static void qm_mb_write(struct hisi_qm *qm, const void *src)
- 	void __iomem *fun_base = qm->io_base + QM_MB_CMD_SEND_BASE;
- 	unsigned long tmp0 = 0, tmp1 = 0;
- 
-+	if (!IS_ENABLED(CONFIG_ARM64)) {
-+		memcpy_toio(fun_base, src, 16);
-+		wmb();
-+		return;
-+	}
-+
- 	asm volatile("ldp %0, %1, %3\n"
- 		     "stp %0, %1, %2\n"
- 		     "dsb sy\n"
+diff --git a/drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c b/drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c
+index 395c225..9d778a0 100644
+--- a/drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c
++++ b/drivers/gpu/drm/amd/amdgpu/vcn_v2_5.c
+@@ -423,7 +423,6 @@ static void vcn_v2_5_mc_resume(struct amdgpu_device *adev)
+  * vcn_v2_5_disable_clock_gating - disable VCN clock gating
+  *
+  * @adev: amdgpu_device pointer
+- * @sw: enable SW clock gating
+  *
+  * Disable clock gating for VCN block
+  */
+@@ -542,7 +541,6 @@ static void vcn_v2_5_disable_clock_gating(struct amdgpu_device *adev)
+  * vcn_v2_5_enable_clock_gating - enable VCN clock gating
+  *
+  * @adev: amdgpu_device pointer
+- * @sw: enable SW clock gating
+  *
+  * Enable clock gating for VCN block
+  */
 -- 
-2.20.0
+2.7.4
 
