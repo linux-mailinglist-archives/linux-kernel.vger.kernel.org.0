@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51EB8B74C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A41B74C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:11:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbfISILH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 04:11:07 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:53258 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731341AbfISILG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 04:11:06 -0400
-Received: from localhost (unknown [86.58.254.34])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0D71C154EE362;
-        Thu, 19 Sep 2019 01:11:03 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 10:10:59 +0200 (CEST)
-Message-Id: <20190919.101059.1330167782179062709.davem@davemloft.net>
-To:     olteanv@gmail.com
-Cc:     navid.emamdoost@gmail.com, andrew@lunn.ch, emamd001@umn.edu,
-        smccaman@umn.edu, kjlu@umn.edu, vivien.didelot@gmail.com,
-        f.fainelli@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH v2] net: dsa: sja1105: prevent leaking memory
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <8d6f6c54-1758-7d98-c9b5-5c16b171c885@gmail.com>
-References: <20190918172106.GN9591@lunn.ch>
-        <20190918180439.12441-1-navid.emamdoost@gmail.com>
-        <8d6f6c54-1758-7d98-c9b5-5c16b171c885@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1731770AbfISILa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 04:11:30 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2735 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727033AbfISIL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 04:11:29 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 81500F5F3AA2D190C1C0;
+        Thu, 19 Sep 2019 16:11:25 +0800 (CST)
+Received: from [127.0.0.1] (10.63.139.185) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 19 Sep 2019
+ 16:11:15 +0800
+Subject: Re: [PATCH 2/2] crypto: hisilicon - avoid unused function warning
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20190906152250.1450649-1-arnd@arndb.de>
+ <20190906152250.1450649-2-arnd@arndb.de>
+ <20190913091718.GA6382@gondor.apana.org.au>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Zhou Wang <wangzhou1@hisilicon.com>
+Message-ID: <5D833821.5000504@hisilicon.com>
+Date:   Thu, 19 Sep 2019 16:11:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190913091718.GA6382@gondor.apana.org.au>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 19 Sep 2019 01:11:06 -0700 (PDT)
+X-Originating-IP: [10.63.139.185]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Oltean <olteanv@gmail.com>
-Date: Wed, 18 Sep 2019 23:00:20 +0300
+On 2019/9/13 17:17, Herbert Xu wrote:
+> On Fri, Sep 06, 2019 at 05:22:30PM +0200, Arnd Bergmann wrote:
+>> The only caller of hisi_zip_vf_q_assign() is hidden in an #ifdef,
+>> so the function causes a warning when CONFIG_PCI_IOV is disabled:
+>>
+>> drivers/crypto/hisilicon/zip/zip_main.c:740:12: error: unused function 'hisi_zip_vf_q_assign' [-Werror,-Wunused-function]
+>>
+>> Move it into the same #ifdef.
+>>
+>> Fixes: 79e09f30eeba ("crypto: hisilicon - add SRIOV support for ZIP")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>  drivers/crypto/hisilicon/zip/zip_main.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+> 
+> Please find a way to fix this warning without reducing compiler
+> coverage.  I prefer to see any compile issues immediately rather
+> than through automated build testing.
+> 
+> Thanks,
+>
 
-> Hi Navid,
-> 
-> Thanks for the patch.
-> 
-> On 9/18/19 9:04 PM, Navid Emamdoost wrote:
->> In sja1105_static_config_upload, in two cases memory is leaked: when
->> static_config_buf_prepare_for_upload fails and when sja1105_inhibit_tx
->> fails. In both cases config_buf should be released.
->> Fixes: 8aa9ebccae876 (avoid leaking config_buf)
->> Fixes: 1a4c69406cc1c (avoid leaking config_buf)
->> 
-> 
-> You're not supposed to add a short description of the patch here, but
-> rather the commit message of the patch you're fixing.
-> Add this to your ~/.gitconfig:
-> 
-> [pretty]
-> 	fixes = Fixes: %h (\"%s\")
-> 
-> And then run:
-> git show --pretty=fixes 8aa9ebccae87621d997707e4f25e53fddd7e30e4
-> 
-> Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105
-> 5-port L2 switch")
-> 
-> git show --pretty=fixes 1a4c69406cc1c3c42bb7391c8eb544e93fe9b320
-> 
-> Fixes: 1a4c69406cc1 ("net: dsa: sja1105: Prevent PHY jabbering during
-> switch reset")
+Sorry for missing this patch.
 
-However the Fixes: line should not be broken up like this with newlines.
+Seems other drivers also do like using #ifdef. Do you mean something like this:
+#ifdef CONFIG_PCI_IOV
+sriov_enable()
+...
+#else
+/* stub */
+sriov_enable()
+...
+#endif
+
+Best,
+Zhou
+
+
+
