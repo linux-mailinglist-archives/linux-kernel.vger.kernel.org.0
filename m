@@ -2,67 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99903B77D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4C4B77F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389657AbfISKxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:53:16 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:56948 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389585AbfISKxC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 06:53:02 -0400
-Received: by mail-io1-f72.google.com with SMTP id a22so664074ioq.23
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 03:53:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=jr/hT8uygPGiBuTwaFY7igDD72bmfCnEZQ3lM50QObE=;
-        b=NLgGRQQp0pgbNhGgbF5w47fU/SOOeeATPEwRw76y/a0QIB/1xzgOKA7wVhDjjNVwMw
-         odOCxSCdX5+hG4j/fTDsONd7RTVQlpfhupQryHdS04lp0hjhs0QcdPsAA8sCia3GyJzx
-         VZoAOvqwmFgGole42OQ0Zp/PmK2X+VcQd2JQuHmUgLd8cTIwt3MV0xL1XUdP5tQ2it3e
-         K+caMlYJL1eqH/7A/qZDJblzS2w0l2ccwqhQ81Oqd6YC68tpt/U+rkgrEXyq4B8iwS9p
-         xNWD4u/VBDkd9EzeVq5vapu/oeYMrZhA/0S+YmdZJSzd0yHMKc4y8BsyosqaxVazyJPR
-         E+AA==
-X-Gm-Message-State: APjAAAV/BCckbIkE6VuDm+a5Ow5Hm0pAktjZjb7Ig8YVxvpel1pPs9Wq
-        hfObSgzxtwBB2jIXxfPs2GTA0D11EVkylibynBVsv8HDXCsA
-X-Google-Smtp-Source: APXvYqwBWekg4rlOfT8nn0tmPSwzloIFaVhEADkdzXirXXPPYKk38+p+DJLKH5A4eUO0l/GsUaCDAVmO12kKaHk5yiREht3CTXR5
+        id S2389749AbfISKyj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 06:54:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42206 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387712AbfISKyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 06:54:36 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E30DB21929;
+        Thu, 19 Sep 2019 10:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568890475;
+        bh=rDgR/IXI3/KNnIOSsNKvBH94J0iAuZUG/sc3vnyuGDI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dL6NBBtdFOWNrEbiDMF7SAJ9/pmUh23uKcYzLxzNFIaTS1IBCOLPeSXqKuX8zudBn
+         JWOf1PtaVG6zMj+/KCuzk458potLQmEdee6I+Yxm5jpR8bOKoaxygZrU6pBmO9Y9j+
+         hZAky9zbjDHx0D8rC/Mq4PnsKuxlc7o5XHrdZl7Y=
+Date:   Thu, 19 Sep 2019 12:54:32 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Vineet Gupta <vineetg76@gmail.com>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kbuild test robot <lkp@intel.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>
+Subject: Re: stable backport for dc8635b78cd8669
+Message-ID: <20190919105432.GA2809200@kroah.com>
+References: <efb68643-3750-e94b-8387-6e4cacb3a82a@gmail.com>
+ <20190918185633.GB1944551@kroah.com>
+ <6bcb935a-4dae-48cc-ad1e-88a51b9d6a5c@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e618:: with SMTP id g24mr10724603ioh.277.1568890380520;
- Thu, 19 Sep 2019 03:53:00 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 03:53:00 -0700
-In-Reply-To: <20190919103504.GC30545@localhost>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d290e00592e5c17d@google.com>
-Subject: Re: KASAN: use-after-free Read in adu_disconnect
-From:   syzbot <syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, dmg@turingmachine.org,
-        gregkh@linuxfoundation.org, johan@kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6bcb935a-4dae-48cc-ad1e-88a51b9d6a5c@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Sep 18, 2019 at 01:10:04PM -0700, Vineet Gupta wrote:
+> On 9/18/19 11:56 AM, Greg Kroah-Hartman wrote:
+> > So is this only needed in 4.9.y and 4.4.y?
+> 
+> Yes indeed !
 
-syzbot has tested the proposed patch and the reproducer did not trigger  
-crash:
+It doesn't apply there at all, can you provide a working backport for
+those kernels so that I can queue it up?
 
-Reported-and-tested-by:  
-syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com
+thanks,
 
-Tested on:
-
-commit:         f0df5c1b usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c6633fa4ed00be5
-dashboard link: https://syzkaller.appspot.com/bug?extid=0243cb250a51eeefb8cc
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1440268d600000
-
-Note: testing is done by a robot and is best-effort only.
+greg k-h
