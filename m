@@ -2,100 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1547B776D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E518B777B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 12:32:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731981AbfISK2A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 06:28:00 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52961 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730905AbfISK17 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 06:27:59 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1iAtfK-0005Fo-Jo; Thu, 19 Sep 2019 12:27:58 +0200
-Message-ID: <7d694da8ffe098c6c8f6fe9c3a2306fda55eb655.camel@pengutronix.de>
-Subject: Re: [PATCH v2 1/3] dmaengine: imx-sdma: fix buffer ownership
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Philipp Puschmann <philipp.puschmann@emlix.com>,
-        linux-kernel@vger.kernel.org
-Cc:     yibin.gong@nxp.com, fugang.duan@nxp.com, dan.j.williams@intel.com,
-        vkoul@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date:   Thu, 19 Sep 2019 12:27:58 +0200
-In-Reply-To: <20190919102319.23368-2-philipp.puschmann@emlix.com>
-References: <20190911144943.21554-1-philipp.puschmann@emlix.com>
-         <20190919102319.23368-1-philipp.puschmann@emlix.com>
-         <20190919102319.23368-2-philipp.puschmann@emlix.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1732023AbfISKcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 06:32:22 -0400
+Received: from know-smtprelay-omc-7.server.virginmedia.net ([80.0.253.71]:51422
+        "EHLO know-smtprelay-omc-7.server.virginmedia.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730839AbfISKcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 06:32:22 -0400
+X-Greylist: delayed 334 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Sep 2019 06:32:20 EDT
+Received: from mail0.xen.dingwall.me.uk ([82.47.84.47])
+        by cmsmtp with ESMTPA
+        id Ate8iVpWQwGUPAte8i0GXZ; Thu, 19 Sep 2019 11:26:45 +0100
+X-Originating-IP: [82.47.84.47]
+X-Authenticated-User: james.dingwall@blueyonder.co.uk
+X-Spam: 0
+X-Authority: v=2.3 cv=Kc78TzQD c=1 sm=1 tr=0 a=0bfgdX8EJi0Cr9X0x0jFDA==:117
+ a=0bfgdX8EJi0Cr9X0x0jFDA==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
+ a=J70Eh1EUuV4A:10 a=_iWfOJ2ZPrAvU1I8eIcA:9 a=CjuIK1q_8ugA:10
+Received: from localhost (localhost [IPv6:::1])
+        by mail0.xen.dingwall.me.uk (Postfix) with ESMTP id 7866F10B82E;
+        Thu, 19 Sep 2019 10:26:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at dingwall.me.uk
+Received: from mail0.xen.dingwall.me.uk ([127.0.0.1])
+        by localhost (mail0.xen.dingwall.me.uk [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id kv4HqIXKkmdq; Thu, 19 Sep 2019 10:26:44 +0000 (UTC)
+Received: from behemoth.dingwall.me.uk (behemoth.dingwall.me.uk [IPv6:2001:470:695c:302::c0a8:105])
+        by dingwall.me.uk (Postfix) with ESMTP id 3091910B82B;
+        Thu, 19 Sep 2019 10:26:44 +0000 (UTC)
+Received: by behemoth.dingwall.me.uk (Postfix, from userid 1000)
+        id 0EF9BFAF4E; Thu, 19 Sep 2019 10:26:44 +0000 (UTC)
+Date:   Thu, 19 Sep 2019 10:26:43 +0000
+From:   James Dingwall <james@dingwall.me.uk>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: pstore does not work under xen
+Message-ID: <20190919102643.GA9400@dingwall.me.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-CMAE-Envelope: MS4wfJomvg9iPgx+gWwFPIbRIwHyoZadbL6yxHIZa5+54aW+Ml3wKVvUHxNatOMdbjhdqolAKEEg9dqV33D5RxMWDDOP9YwmP7tMq0Xq8T/fAxYJgQPy2JWr
+ RFHN805Zb5CNoLvMtiLaWegXF/PU05caqj17XL91U5FMp23QYsp1p0l6hxgHofx0z7dHiluyRPc3m7gcS2OBL1VczXN32fjCAvRUPBRuj+/FpWhuvIQJHUZN
+ uxQAfPGb4eauDkC1C/HA/H/rm65ptNK4P9ilhukBcfoU4Yp6fzqhWGAJyhQ8Zbv5zR8BSsq3Sz3TJgIS7VLHHFNG+ONfJwnD+9qAaPrOtsT01Fw/bE/PBQCJ
+ xjwy0AkoyvcO3Rud7jcA1Q8U+Y8g4w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+Hi,
 
-On Do, 2019-09-19 at 12:23 +0200, Philipp Puschmann wrote:
-> BD_DONE flag marks ownership of the buffer. When 1 SDMA owns the
-> buffer, when 0 ARM owns it. When processing the buffers in
-> sdma_update_channel_loop the ownership of the currently processed
-> buffer was set to SDMA again before running the callback function of
-> the buffer and while the sdma script may be running in parallel. So
-> there was the possibility to get the buffer overwritten by SDMA
-> before
-> it has been processed by kernel leading to kind of random errors in
-> the
-> upper layers, e.g. bluetooth.
-> 
-> Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
-> 
-> ---
-> 
-> Changelog v2:
->  - add dma_wb()
-> 
->  drivers/dma/imx-sdma.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index 9ba74ab7e912..e029a2443cfc 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -802,7 +802,6 @@ static void sdma_update_channel_loop(struct
-> sdma_channel *sdmac)
->  		*/
->  
->  		desc->chn_real_count = bd->mode.count;
-> -		bd->mode.status |= BD_DONE;
->  		bd->mode.count = desc->period_len;
->  		desc->buf_ptail = desc->buf_tail;
->  		desc->buf_tail = (desc->buf_tail + 1) % desc->num_bd;
-> @@ -817,6 +816,9 @@ static void sdma_update_channel_loop(struct
-> sdma_channel *sdmac)
->  		dmaengine_desc_get_callback_invoke(&desc->vd.tx, NULL);
->  		spin_lock(&sdmac->vc.lock);
->  
-> +		dma_wb();
+I have been investigating a regression in our environment where pstore 
+(efi-pstore specifically but I suspect this would affect all 
+implementations) no longer works after upgrading from a 4.4 to 5.0 
+kernel when running under xen.  (This is an Ubuntu kernel but I don't 
+think there are patches which affect this area.)
 
-Has this change been tested? The function you want here is called
-dma_wmb().
+In kernel/panic.c the flow of panic() is roughly:
 
-Regards,
-Lucas
+dump_stack();
 
-> +		bd->mode.status |= BD_DONE;
-> +
->  		if (error)
->  			sdmac->status = old_status;
->  	}
+atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
 
+kmsg_dump(KMSG_DUMP_PANIC);
+
+
+pstore registers a kdump callback which would normally be invoked by the 
+call to kmsg_dump() however in Xen there is a panic_notifier registered 
+which never returns preventing the pstore record being generated.  The 
+implementation of xen_panic_event() has changed since v4.4 but I don't 
+understand how this may have changed the behaviour.
+
+Adding a couple of printks in arch/x86/xen/enlighten.c:
+
+@@ -277,8 +278,10 @@ void xen_emergency_restart(void)
+ static int
+ xen_panic_event(struct notifier_block *this, unsigned long event, void *ptr)
+ {
++       printk(KERN_WARNING "enter xen_panic_event()\n");
+        if (!kexec_crash_loaded())
+                xen_reboot(SHUTDOWN_crash);
++       printk(KERN_WARNING "exit xen_panic_event()\n");
+        return NOTIFY_DONE;
+ }
+
+Only the first is printed when triggering a crash (echo c > 
+/proc/sysrq-trigger)
+
+[ 1185.458761] sysrq: SysRq : Trigger a crash
+[ 1185.476937] Kernel panic - not syncing: sysrq triggered crash
+[ 1185.495747] CPU: 1 PID: 19241 Comm: bash Tainted: P           OE     5.0.0-27-generic #4
+[ 1185.513387] Hardware name: HP ProLiant EC200a/ProLiant EC200a, BIOS U26 05/21/2018
+[ 1185.530705] Call Trace:
+[ 1185.548683]  dump_stack+0x63/0x85
+[ 1185.566553]  panic+0xfe/0x2b4
+[ 1185.583634]  sysrq_handle_crash+0x15/0x20
+[ 1185.600594]  __handle_sysrq+0x9f/0x170
+[ 1185.617613]  write_sysrq_trigger+0x34/0x40
+[ 1185.634271]  proc_reg_write+0x3e/0x60
+[ 1185.651407]  __vfs_write+0x1b/0x40
+[ 1185.668140]  vfs_write+0xb1/0x1a0
+[ 1185.685087]  ksys_write+0x5c/0xe0
+[ 1185.701190]  __x64_sys_write+0x1a/0x20
+[ 1185.717719]  do_syscall_64+0x5a/0x120
+[ 1185.733839]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 1185.749739] RIP: 0033:0x7fe42e4f5154
+[ 1185.764726] Code: 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 8d 05 b1 07 2e 00 8b 00 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 41 54 55 49 89 d4 53 48 89 f5
+[ 1185.797937] RSP: 002b:00007fff092d0358 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[ 1185.814701] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fe42e4f5154
+[ 1185.831241] RDX: 0000000000000002 RSI: 000055c1c224bf10 RDI: 0000000000000001
+[ 1185.848405] RBP: 000055c1c224bf10 R08: 000000000000000a R09: 0000000000000001
+[ 1185.869816] R10: 000000000000000a R11: 0000000000000246 R12: 00007fe42e7d1760
+[ 1185.888686] R13: 0000000000000002 R14: 00007fe42e7cd2a0 R15: 00007fe42e7cc760
+[ 1185.905369] Kernel Offset: disabled
+[ 1185.920295] enter xen_panic_event()
+(XEN) Hardware Dom0 crashed: rebooting machine in 5 seconds.
+(d1) Checking store ...xenstored: Checking store complete.xenstored: Checking store ...xenstored: Checking store complete.xenstored: Checking store ...xenstored: Checking store complete.xenstored: Checking store ...
+
+Sorry for the long Cc list, I'm not sure who's court this falls in.
+
+Thanks,
+James
