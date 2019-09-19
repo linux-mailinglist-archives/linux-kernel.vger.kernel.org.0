@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D11A8B8746
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F21B8748
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:35:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405289AbfISWHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:07:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44944 "EHLO mail.kernel.org"
+        id S2393215AbfISWH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:07:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393166AbfISWHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:07:19 -0400
+        id S2393166AbfISWHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:07:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2486218AF;
-        Thu, 19 Sep 2019 22:07:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9ACD7218AF;
+        Thu, 19 Sep 2019 22:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930838;
-        bh=wGbDoTXpUGNvLUMPRNHZqIwC7xoPQwk3FoWRPShF1UQ=;
+        s=default; t=1568930841;
+        bh=NZ1BsXKgGPlCcAzGWiNt0D1XMpiB4ymc0WgYmkVRm7M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hPTs6j6kZExabXzcL7K8FUTkYVo6c+19UFPEwIiP6NmpVikAfZgTeJwf/IeSndoDR
-         +cRbeqthu5IWu7VqDonVQAopM/z4ebxjgfc6Dr6jz+9R1X0RRSPMzhSygyuLA3XlLX
-         Tm5nUN6xsokL5laSsVX8y3kk+SI5bk8rJwcaoaBo=
+        b=D4l0ildYv2wyhTKNr83r/STb9mO9rbUAmP/mJ/e4zAxBSfoAD8F4iTVzK3T2QODyk
+         x9Kw15vuK/2GGwdg1ehS8bn5O8STTY42yIddZwdl1Cj24ArOh66IERIEF6pPrBdiFZ
+         oBRcznk0APLXQECEMylAWrA8ueFi1ikWB2+jtN1w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 032/124] bus: ti-sysc: Fix using configured sysc mask value
-Date:   Fri, 20 Sep 2019 00:02:00 +0200
-Message-Id: <20190919214820.195703927@linuxfoundation.org>
+Subject: [PATCH 5.2 033/124] ARM: dts: Fix flags for gpio7
+Date:   Fri, 20 Sep 2019 00:02:01 +0200
+Message-Id: <20190919214820.228685554@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -46,34 +46,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit e212abd452a4af3174fcd469d46656f83e135a19 ]
+[ Upstream commit 2e8647bbe1c8233a20c32fd2648258f2c05c7335 ]
 
-We have cases where there are no softreset bits like with am335x lcdc.
-In that case ti,sysc-mask = <0> needs to be handled properly.
+The ti,no-idle-on-init and ti,no-reset-on-init flags need to be at
+the interconnect target module level for the modules that have it
+defined. Otherwise we get the following warnings:
 
+dts flag should be at module level for ti,no-idle-on-init
+dts flag should be at module level for ti,no-reset-on-init
+
+Reviewed-by: Suman Anna <s-anna@ti.com>
 Tested-by: Keerthy <j-keerthy@ti.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/ti-sysc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi | 2 +-
+ arch/arm/boot/dts/dra7-evm.dts                  | 2 +-
+ arch/arm/boot/dts/dra7-l4.dtsi                  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index f5176a5d38cd9..56a2399f341e8 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -1388,10 +1388,7 @@ static int sysc_init_sysc_mask(struct sysc *ddata)
- 	if (error)
- 		return 0;
+diff --git a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
+index d50de7a6ea6c5..bc76f1705c0f6 100644
+--- a/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
++++ b/arch/arm/boot/dts/am57xx-beagle-x15-common.dtsi
+@@ -379,7 +379,7 @@
+ 	};
+ };
  
--	if (val)
--		ddata->cfg.sysc_val = val & ddata->cap->sysc_mask;
--	else
--		ddata->cfg.sysc_val = ddata->cap->sysc_mask;
-+	ddata->cfg.sysc_val = val & ddata->cap->sysc_mask;
+-&gpio7 {
++&gpio7_target {
+ 	ti,no-reset-on-init;
+ 	ti,no-idle-on-init;
+ };
+diff --git a/arch/arm/boot/dts/dra7-evm.dts b/arch/arm/boot/dts/dra7-evm.dts
+index 714e971b912a4..de7f85efaa512 100644
+--- a/arch/arm/boot/dts/dra7-evm.dts
++++ b/arch/arm/boot/dts/dra7-evm.dts
+@@ -498,7 +498,7 @@
+ 	phy-supply = <&ldousb_reg>;
+ };
  
- 	return 0;
- }
+-&gpio7 {
++&gpio7_target {
+ 	ti,no-reset-on-init;
+ 	ti,no-idle-on-init;
+ };
+diff --git a/arch/arm/boot/dts/dra7-l4.dtsi b/arch/arm/boot/dts/dra7-l4.dtsi
+index 23faedec08abd..63628e166c0cd 100644
+--- a/arch/arm/boot/dts/dra7-l4.dtsi
++++ b/arch/arm/boot/dts/dra7-l4.dtsi
+@@ -1261,7 +1261,7 @@
+ 			};
+ 		};
+ 
+-		target-module@51000 {			/* 0x48051000, ap 45 2e.0 */
++		gpio7_target: target-module@51000 {		/* 0x48051000, ap 45 2e.0 */
+ 			compatible = "ti,sysc-omap2", "ti,sysc";
+ 			ti,hwmods = "gpio7";
+ 			reg = <0x51000 0x4>,
 -- 
 2.20.1
 
