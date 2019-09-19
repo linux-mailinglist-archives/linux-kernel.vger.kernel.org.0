@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96348B8417
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 478C5B8425
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:08:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405309AbfISWHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:07:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45520 "EHLO mail.kernel.org"
+        id S2393394AbfISWIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:08:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405294AbfISWHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:07:45 -0400
+        id S2393369AbfISWIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:08:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C48BA218AF;
-        Thu, 19 Sep 2019 22:07:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62225218AF;
+        Thu, 19 Sep 2019 22:08:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930865;
-        bh=17rbaqT/jginQt/FhvS50ubtnD5Kp84zT/frCb6KDG8=;
+        s=default; t=1568930894;
+        bh=YGUky5l4b/jTQwvCUKgf0yLafhrXcctKofNMlj9R7Ao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RTzcFiC27sRlWzAsagrljG6fzt3FA1DJnR3zQRoXd1sc6rYhlhG1vnh1BKS211XmJ
-         2A2xCaC5uJ4bwtQOoqQJxF1mOYVOhTUWT/U/oNMPXm0KdWNfoHCABnfTvZF39VpOHi
-         x/kNeA5YXUMUjc+S61/OpYKs8abye4hMUpjBei+k=
+        b=gENUcj9LB1VQbGdpoY2RT4k0vgcXDIeyJBNc1P3PHs7N/eGqM6uqyBJkjBxPAbSp3
+         s9VDCsukmGFARzqegasoY1+wCEh5kTc0h+SNsirvGo/v1ugZr7w9dGkkueFrqEjyby
+         0lTvxN4wB0bDvbyvUTMO7jFtTCBMNedU2ax/EHgU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 035/124] arm64: dts: meson-g12a: add missing dwc2 phy-names
-Date:   Fri, 20 Sep 2019 00:02:03 +0200
-Message-Id: <20190919214820.295912007@linuxfoundation.org>
+Subject: [PATCH 5.2 036/124] s390/bpf: fix lcgr instruction encoding
+Date:   Fri, 20 Sep 2019 00:02:04 +0200
+Message-Id: <20190919214820.329463470@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -44,41 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Armstrong <narmstrong@baylibre.com>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit 3d4bacdc207a7b62941700b374e7199cbb184a43 ]
+[ Upstream commit bb2d267c448f4bc3a3389d97c56391cb779178ae ]
 
-The G12A USB2 OTG capable PHY uses a 8bit large UTMI bus, and the OTG
-controller gets the PHY but width by probing the associated phy.
+"masking, test in bounds 3" fails on s390, because
+BPF_ALU64_IMM(BPF_NEG, BPF_REG_2, 0) ignores the top 32 bits of
+BPF_REG_2. The reason is that JIT emits lcgfr instead of lcgr.
+The associated comment indicates that the code was intended to
+emit lcgr in the first place, it's just that the wrong opcode
+was used.
 
-By default it will use 16bit wide settings if a phy is not specified,
-in our case we specified the phy, but not the phy-names.
+Fix by using the correct opcode.
 
-The dwc2 bindings specifies that if phys is present, phy-names shall be
-"usb2-phy".
-
-Adding phy-names = "usb2-phy" solves the OTG PHY bus configuration.
-
-Fixes: 9baf7d6be730 ("arm64: dts: meson: g12a: Add G12A USB nodes")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+Fixes: 054623105728 ("s390/bpf: Add s390x eBPF JIT compiler backend")
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Acked-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/s390/net/bpf_jit_comp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-index 9f72396ba7103..4c92c197aeb8a 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
-@@ -591,6 +591,7 @@
- 				clocks = <&clkc CLKID_USB1_DDR_BRIDGE>;
- 				clock-names = "ddr";
- 				phys = <&usb2_phy1>;
-+				phy-names = "usb2-phy";
- 				dr_mode = "peripheral";
- 				g-rx-fifo-size = <192>;
- 				g-np-tx-fifo-size = <128>;
+diff --git a/arch/s390/net/bpf_jit_comp.c b/arch/s390/net/bpf_jit_comp.c
+index 5e7c630331590..9a711472cbdc0 100644
+--- a/arch/s390/net/bpf_jit_comp.c
++++ b/arch/s390/net/bpf_jit_comp.c
+@@ -853,7 +853,7 @@ static noinline int bpf_jit_insn(struct bpf_jit *jit, struct bpf_prog *fp, int i
+ 		break;
+ 	case BPF_ALU64 | BPF_NEG: /* dst = -dst */
+ 		/* lcgr %dst,%dst */
+-		EMIT4(0xb9130000, dst_reg, dst_reg);
++		EMIT4(0xb9030000, dst_reg, dst_reg);
+ 		break;
+ 	/*
+ 	 * BPF_FROM_BE/LE
 -- 
 2.20.1
 
