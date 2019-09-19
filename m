@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 281C3B8496
+	by mail.lfdr.de (Postfix) with ESMTP id A17AAB8497
 	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:12:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405938AbfISWMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:12:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50890 "EHLO mail.kernel.org"
+        id S2405950AbfISWMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:12:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391157AbfISWME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:12:04 -0400
+        id S2405915AbfISWMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:12:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EDBE218AF;
-        Thu, 19 Sep 2019 22:12:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ABF121924;
+        Thu, 19 Sep 2019 22:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931124;
-        bh=/EmtKW4tpK2ojcvdokiGTkFfuEyfUDdeeGHGxkYQbhM=;
+        s=default; t=1568931127;
+        bh=ouKyXAVyj6EMO2IS6VD8fdjtqEOD8VGdbxLgDFJDtEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OV+B18kW4T5piAGmtM1ulJzbEwzGYGesJFhr16+27DNybmniEzfkkHf8CqXhvMUrX
-         rLpm79ys+qKKRks5hC4KKa2lcyYAurUixxBmR2w4LMuuaNBDHmgonLoppXboNUCPUl
-         gJ9r7JY1f1RQhrPk9YYLohBqIJBKmj/bunLEHJOI=
+        b=Eenn43DhNO20kXvSGl13yA33TPV+RUhEzB+eB3QrD1IR18yEhnhWdwUxAXVwSAF4w
+         LbFZ/cp45UP4vkSFocpNmcPA40I19zH/nf2VPhnFajP9srutUAREzo1G8J0+yA4xh4
+         ar9SJhgVZ3zPnsophrG1Os3Pz6pXdmpuJi2mnUfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 12/79] net_sched: let qdisc_put() accept NULL pointer
-Date:   Fri, 20 Sep 2019 00:02:57 +0200
-Message-Id: <20190919214808.894122058@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Delco <delco@chromium.org>,
+        Jim Mattson <jmattson@google.com>,
+        syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 13/79] KVM: coalesced_mmio: add bounds checking
+Date:   Fri, 20 Sep 2019 00:02:58 +0200
+Message-Id: <20190919214808.978553296@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
 References: <20190919214807.612593061@linuxfoundation.org>
@@ -49,44 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Matt Delco <delco@chromium.org>
 
-[ Upstream commit 6efb971ba8edfbd80b666f29de12882852f095ae ]
+commit b60fe990c6b07ef6d4df67bc0530c7c90a62623a upstream.
 
-When tcf_block_get() fails in sfb_init(), q->qdisc is still a NULL
-pointer which leads to a crash in sfb_destroy(). Similar for
-sch_dsmark.
+The first/last indexes are typically shared with a user app.
+The app can change the 'last' index that the kernel uses
+to store the next result.  This change sanity checks the index
+before using it for writing to a potentially arbitrary address.
 
-Instead of fixing each separately, Linus suggested to just accept
-NULL pointer in qdisc_put(), which would make callers easier.
+This fixes CVE-2019-14821.
 
-(For sch_dsmark, the bug probably exists long before commit
-6529eaba33f0.)
-
-Fixes: 6529eaba33f0 ("net: sched: introduce tcf block infractructure")
-Reported-by: syzbot+d5870a903591faaca4ae@syzkaller.appspotmail.com
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Jiri Pirko <jiri@resnulli.us>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
+Signed-off-by: Matt Delco <delco@chromium.org>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
+[Use READ_ONCE. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sched/sch_generic.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/net/sched/sch_generic.c
-+++ b/net/sched/sch_generic.c
-@@ -950,6 +950,9 @@ void qdisc_destroy(struct Qdisc *qdisc)
- 	const struct Qdisc_ops  *ops = qdisc->ops;
- 	struct sk_buff *skb, *tmp;
+---
+ virt/kvm/coalesced_mmio.c |   17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -40,7 +40,7 @@ static int coalesced_mmio_in_range(struc
+ 	return 1;
+ }
  
-+	if (!qdisc)
-+		return;
-+
- 	if (qdisc->flags & TCQ_F_BUILTIN ||
- 	    !refcount_dec_and_test(&qdisc->refcnt))
- 		return;
+-static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
++static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
+ {
+ 	struct kvm_coalesced_mmio_ring *ring;
+ 	unsigned avail;
+@@ -52,7 +52,7 @@ static int coalesced_mmio_has_room(struc
+ 	 * there is always one unused entry in the buffer
+ 	 */
+ 	ring = dev->kvm->coalesced_mmio_ring;
+-	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
++	avail = (ring->first - last - 1) % KVM_COALESCED_MMIO_MAX;
+ 	if (avail == 0) {
+ 		/* full */
+ 		return 0;
+@@ -67,24 +67,27 @@ static int coalesced_mmio_write(struct k
+ {
+ 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+ 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
++	__u32 insert;
+ 
+ 	if (!coalesced_mmio_in_range(dev, addr, len))
+ 		return -EOPNOTSUPP;
+ 
+ 	spin_lock(&dev->kvm->ring_lock);
+ 
+-	if (!coalesced_mmio_has_room(dev)) {
++	insert = READ_ONCE(ring->last);
++	if (!coalesced_mmio_has_room(dev, insert) ||
++	    insert >= KVM_COALESCED_MMIO_MAX) {
+ 		spin_unlock(&dev->kvm->ring_lock);
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+ 	/* copy data in first free entry of the ring */
+ 
+-	ring->coalesced_mmio[ring->last].phys_addr = addr;
+-	ring->coalesced_mmio[ring->last].len = len;
+-	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
++	ring->coalesced_mmio[insert].phys_addr = addr;
++	ring->coalesced_mmio[insert].len = len;
++	memcpy(ring->coalesced_mmio[insert].data, val, len);
+ 	smp_wmb();
+-	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
++	ring->last = (insert + 1) % KVM_COALESCED_MMIO_MAX;
+ 	spin_unlock(&dev->kvm->ring_lock);
+ 	return 0;
+ }
 
 
