@@ -2,192 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E74B705D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 03:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5936B7061
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 03:20:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731309AbfISBTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 21:19:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:42278 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbfISBTH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 21:19:07 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8J1ETCf047234;
-        Thu, 19 Sep 2019 01:18:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2019-08-05; bh=Ch2HJE+ao/XO4Zo6dYUJC5rMUKG56FG1SeoCl8PNcq0=;
- b=ZFWaqmUM1jfh7MTipYBnUuhTIVwH6FcxbEWmWoKsPwqa1D+LgidKy6bgayqlzZOsmzSR
- fY91UzlTct4Qv+bmYp8DjzQmhYgYdMwuA1JARehPMprLE9ybIik8xwEKXHLCR/ZJsy2X
- f3nHGTEs23Bn1jU8aUpbISQ/MpywqlZ32TEJkfSiRXcIjyzhBS3mSb+1TGvX0NeGKwYN
- Cdtmp3Vk4/Ts6mfBljsl4aoIjBB+zSuvEq4W+OzdejByGj4gh95t1AlCVDAHdwNziAjG
- hgzCHVsEQD1QNRXndFYIQPUhnfNSvc1xbGr/ev5S3sYoqPhejWbCgygsbm6BwyEiGg/0 aw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2v3vb50n5d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Sep 2019 01:18:57 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8J1Drg2090667;
-        Thu, 19 Sep 2019 01:18:56 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2v3vb4c9xd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Sep 2019 01:18:56 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8J1ItqB011438;
-        Thu, 19 Sep 2019 01:18:55 GMT
-Received: from monkey.oracle.com (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 18 Sep 2019 18:18:54 -0700
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        David Bolvansky <david.bolvansky@gmail.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH] hugetlbfs: hugetlb_fault_mutex_hash cleanup
-Date:   Wed, 18 Sep 2019 18:18:47 -0700
-Message-Id: <20190919011847.18400-1-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.20.1
+        id S1731543AbfISBTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 21:19:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48704 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727114AbfISBTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 21:19:48 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E6F8D308FC4A;
+        Thu, 19 Sep 2019 01:19:46 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9723A60C18;
+        Thu, 19 Sep 2019 01:19:31 +0000 (UTC)
+Date:   Wed, 18 Sep 2019 21:19:28 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     cgroups@vger.kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Audit <linux-audit@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Network Development <netdev@vger.kernel.org>
+Cc:     mszeredi@redhat.com, Andy Lutomirski <luto@kernel.org>,
+        jlayton@redhat.com, Carlos O'Donell <carlos@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Simo Sorce <simo@redhat.com>, trondmy@primarydata.com,
+        Eric Paris <eparis@parisplace.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, dwalsh@redhat.com,
+        mpatel@redhat.com
+Subject: RFC(V4): Audit Kernel Container IDs
+Message-ID: <20190919011928.nsr4leqnomgumaac@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909190009
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9384 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909190009
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 19 Sep 2019 01:19:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new clang diagnostic (-Wsizeof-array-div) warns about the calculation
-to determine the number of u32's in an array of unsigned longs. Suppress
-warning by adding parentheses.
+Containers are a userspace concept.  The kernel knows nothing of them.
 
-While looking at the above issue, noticed that the 'address' parameter
-to hugetlb_fault_mutex_hash is no longer used. So, remove it from the
-definition and all callers.
+The Linux audit system needs a way to be able to track the container
+provenance of events and actions.  Audit needs the kernel's help to do
+this.
 
-No functional change.
+The motivations are:
 
-Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- fs/hugetlbfs/inode.c    |  4 ++--
- include/linux/hugetlb.h |  2 +-
- mm/hugetlb.c            | 10 +++++-----
- mm/userfaultfd.c        |  2 +-
- 4 files changed, 9 insertions(+), 9 deletions(-)
+- A sysadmin needs to be able to filter unwanted, irrelevant or
+  unimportant messages before they fill the queue so that important
+  messages don't get lost.  This is a certification requirement.
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index a478df035651..6e5eadee6b0d 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -440,7 +440,7 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 			u32 hash;
- 
- 			index = page->index;
--			hash = hugetlb_fault_mutex_hash(h, mapping, index, 0);
-+			hash = hugetlb_fault_mutex_hash(h, mapping, index);
- 			mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 			/*
-@@ -644,7 +644,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 		addr = index * hpage_size;
- 
- 		/* mutex taken here, fault path and hole punch */
--		hash = hugetlb_fault_mutex_hash(h, mapping, index, addr);
-+		hash = hugetlb_fault_mutex_hash(h, mapping, index);
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 		/* See if already present in mapping to avoid alloc/free */
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index edfca4278319..5bf11fffbbd4 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -106,7 +106,7 @@ void free_huge_page(struct page *page);
- void hugetlb_fix_reserve_counts(struct inode *inode);
- extern struct mutex *hugetlb_fault_mutex_table;
- u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
--				pgoff_t idx, unsigned long address);
-+				pgoff_t idx);
- 
- pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud);
- 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6d7296dd11b8..3705d3c69e32 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3847,7 +3847,7 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 			 * handling userfault.  Reacquire after handling
- 			 * fault to make calling code simpler.
- 			 */
--			hash = hugetlb_fault_mutex_hash(h, mapping, idx, haddr);
-+			hash = hugetlb_fault_mutex_hash(h, mapping, idx);
- 			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 			ret = handle_userfault(&vmf, VM_UFFD_MISSING);
- 			mutex_lock(&hugetlb_fault_mutex_table[hash]);
-@@ -3975,7 +3975,7 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 
- #ifdef CONFIG_SMP
- u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
--			    pgoff_t idx, unsigned long address)
-+			    pgoff_t idx)
- {
- 	unsigned long key[2];
- 	u32 hash;
-@@ -3983,7 +3983,7 @@ u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
- 	key[0] = (unsigned long) mapping;
- 	key[1] = idx;
- 
--	hash = jhash2((u32 *)&key, sizeof(key)/sizeof(u32), 0);
-+	hash = jhash2((u32 *)&key, sizeof(key)/(sizeof(u32)), 0);
- 
- 	return hash & (num_fault_mutexes - 1);
- }
-@@ -3993,7 +3993,7 @@ u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
-  * return 0 and avoid the hashing overhead.
-  */
- u32 hugetlb_fault_mutex_hash(struct hstate *h, struct address_space *mapping,
--			    pgoff_t idx, unsigned long address)
-+			    pgoff_t idx)
- {
- 	return 0;
- }
-@@ -4037,7 +4037,7 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 * get spurious allocation failures if two CPUs race to instantiate
- 	 * the same page in the page cache.
- 	 */
--	hash = hugetlb_fault_mutex_hash(h, mapping, idx, haddr);
-+	hash = hugetlb_fault_mutex_hash(h, mapping, idx);
- 	mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 	entry = huge_ptep_get(ptep);
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index c7ae74ce5ff3..640ff2bd9a69 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -269,7 +269,7 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
- 		 */
- 		idx = linear_page_index(dst_vma, dst_addr);
- 		mapping = dst_vma->vm_file->f_mapping;
--		hash = hugetlb_fault_mutex_hash(h, mapping, idx, dst_addr);
-+		hash = hugetlb_fault_mutex_hash(h, mapping, idx);
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
- 
- 		err = -ENOMEM;
--- 
-2.20.1
+- Security claims need to be made about containers, requiring tracking
+  of actions within those containers to ensure compliance with
+  established security policies.
 
+- It will be required to route messages from events local to an audit
+  daemon instance or host audit daemon instance.
+
+- nsIDs were considered seriously, but turns out to be insufficient for
+  efficient filtering, routing, and tracking.
+
+Since the concept of a container is entirely a userspace concept, a
+registration from the userspace container orchestration system initiates
+this.  This will define a point in time and a set of resources
+associated with a particular container with an audit container
+identifier.
+
+The registration is a u64 representing the audit container identifier.
+
+This is written to a special file in a pseudo filesystem (proc, since
+PID tree already exists) representing a process that will become a
+parent process in that container.  This write might place restrictions
+on mount namespaces required to define a container, or at least careful
+checking of namespaces in the kernel to verify permissions of the
+orchestrator so it can't change its own container ID.  A bind mount of
+nsfs may be necessary in the container orchestrator's mount namespace.
+This write can only happen once per process.
+
+Note: The justification for using a u64 is that it minimizes the
+information printed in every audit record, reducing bandwidth and limits
+comparisons to a single u64 which will be faster and less error-prone.
+
+[ALT:
+The registration is a
+netlink message to the audit subsystem of type AUDIT_SET_CONTID with a
+data structure including a u32 representing the PID of the target
+process to become the parent process in that container and a
+u64 representing the audit container identifier.
+:ALT]
+
+Require CAP_AUDIT_CONTROL to be able to carry out the registration.  At
+that time, record the target container's user-supplied audit container
+identifier along with a target container's parent process (which may
+become the target container's "init" process) process ID (referenced
+from the initial PID namespace) in a new record AUDIT_CONTAINER_OP with
+a qualifying op=$action field.
+
+Issue a new auxilliary record AUDIT_CONTAINER_ID for each valid
+audit container identifier present on an auditable action or event.
+
+Forked and cloned processes inherit their parent's audit container
+identifier, referenced from the process' task_struct indirectly in the
+audit pointer to a struct audit_task_info.  Since the audit
+container identifier is inherited rather than written, it can still be
+written once.  This will prevent tampering while allowing nesting.
+
+Mimic setns(2) and return an error if the process has already initiated
+threading or forked since this registration should happen before the
+process execution is started by the orchestrator and hence should not
+yet have any threads or children.  If this is deemed overly restrictive,
+switch all of the target's threads and children to the new containerID.
+
+Trust the orchestrator to judiciously use and restrict CAP_AUDIT_CONTROL.
+
+The audit container identifier will be stored in a refcounted kernel
+object that is searchable in a hashtabled list for efficient access.
+This is so that multiple container orchestrators/engines can operate on
+one machine without danger of them trampling each other's audit
+container identifiers.  The owner of each container will also be stored
+to be able to permit tasks to be injected into an existing container
+only by its owner.
+
+The total number of containers can be restricted by a total count.
+
+To permit nesting containers, the target container must be a descendant
+process of the container orchestrator and the container's parent
+container (if set) will be stored in the audit container identifier
+kernel object.  Report the chain of contids back to the top level
+container of a process.  Filters will check the chain of contids back to
+the top container.
+
+The total depth of container nesting can be restricted.
+
+When a container ceases to exist because the last process in that
+container has exited log the fact to balance the registration action.  
+(This is likely needed for certification accountability.)
+
+At this point it appears unnecessary to add a container session
+identifier since this is all tracked from loginuid and sessionid to
+communicate with the container orchestrator to spawn an additional
+session into an existing container which would be logged.  It can be
+added at a later date without breaking API should it be deemed
+necessary.
+
+To permit container nesting beyond the initial user namespace, add a
+capcontid flag per process in its audit audit_task_info struct to store
+this ability communicated either via /proc/PID/capcontid or an audit
+netlink message type AUDIT_SET_CAPCONTID.
+
+The following namespace logging actions are not needed for certification
+purposes at this point, but are helpful for tracking namespace activity.
+These are auxilliary records that are associated with namespace
+manipulation syscalls unshare(2), clone(2) and setns(2), so the records
+will only show up if explicit syscall rules have been added to document
+this activity.
+
+Log the creation of every namespace, inheriting/adding its spawning
+process' audit container identifier(s), if applicable.  Include the
+spawning and spawned namespace IDs (device and inode number tuples).
+[AUDIT_NS_CREATE, AUDIT_NS_DESTROY] [clone(2), unshare(2), setns(2)]
+Note: At this point it appears only network namespaces may need to track
+container IDs apart from processes since incoming packets may cause an
+auditable event before being associated with a process.  Since a
+namespace can be shared by processes in different containers, the
+namespace will need to track all containers to which it has been
+assigned.
+
+Upon registration, the target process' namespace IDs (in the form of a
+nsfs device number and inode number tuple) will be recorded in an
+AUDIT_NS_INFO auxilliary record.
+
+Log the destruction of every namespace that is no longer used by any
+process, including the namespace IDs (device and inode number tuples).
+[AUDIT_NS_DESTROY] [process exit, unshare(2), setns(2)]
+
+Issue a new auxilliary record AUDIT_NS_CHANGE listing (opt: op=$action)
+the parent and child namespace IDs for any changes to a process'
+namespaces. [setns(2)]
+Note: It may be possible to combine AUDIT_NS_* record formats and
+distinguish them with an op=$action field depending on the fields
+required for each message type.
+
+The audit container identifier will need to be reaped from all
+implicated namespaces upon the destruction of a container.
+
+This namespace information adds supporting information for tracking
+events not attributable to specific processes.
+
+Changelog:
+
+(Upstream V4)
+- Add elaborated motivations.
+- Switch AUDIT_CONTAINER to AUDIT_CONTAINER_OP
+- Switch AUDIT_CONTAINER_INFO to AUDIT_CONTAINER_ID
+- Add capcontid to mimic CAP_AUDIT_CONTROL in non-init user namespaces
+- Check for max contid depth
+- Check for max contid quantity
+- Store the contid in a refcounted kernel object filed by hashtable
+  lists
+- Mediate contid registration between peer orchestrators
+- Allow injection of processes into an existing container by container
+  owner
+
+(Upstream V3)
+- switch back to u64 (from pmoore, can be expanded to u128 in future if
+  need arises without breaking API.  u32 was originally proposed, up to
+  c36 discussed)
+- write-once, but children inherit audit container identifier and can
+  then still be written once
+- switch to CAP_AUDIT_CONTROL
+- group namespace actions together, auxilliary records to namespace
+  operations.
+
+(Upstream V2)
+- switch from u64 to u128 UUID
+- switch from "signal" and "trigger" to "register"
+- restrict registration to single process or force all threads and
+  children into same container
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
