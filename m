@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D184EB84B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:13:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B11B8491
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:12:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390807AbfISWNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:13:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52640 "EHLO mail.kernel.org"
+        id S2393273AbfISWME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:12:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732503AbfISWNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:13:30 -0400
+        id S2388719AbfISWL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:11:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F0FE218AF;
-        Thu, 19 Sep 2019 22:13:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF93921907;
+        Thu, 19 Sep 2019 22:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931209;
-        bh=2S5ca3zeqLvuDrPjmWtmmquNb12uXiWl3jcchHJyXSw=;
+        s=default; t=1568931118;
+        bh=iJiYBylmBVU7bUMfyMLcsvFBF4/8vYy8SG45FdeNJSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pwnTzV3E1tGa/lD8jR3mar6pDNfaUvu+mkPrp24rMbO9m1PoEbpIVhvduRo6MzgrO
-         I84dJ0lYfo/s4p+tYm+gS0Ad2EtzKU9jBqq6i4xWC5dd0ikQ0BvOrPmxq7vmEjY1GU
-         B6PFAR/p6cdt8PsZ0K0iRE9VcO27M0OB6s88v2Xk=
+        b=LpugMNtYrphuKeIhxDIfm6lq9VS7YelwehNATVHUHXtubXhpoO0DwZWueJQOsiR/u
+         SWCAB5U+muyNtlw/XAzIbXtrIjb9Egv1RPkcL+D0sIM9uopJtgc1juKuaK4u/Qo2iM
+         0A+NV+rKXWrQNp28pnOVzP6ogNABnphTkeELqUmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 07/79] media: tm6000: double free if usb disconnect while streaming
-Date:   Fri, 20 Sep 2019 00:02:52 +0200
-Message-Id: <20190919214808.368817768@linuxfoundation.org>
+        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Craig Gallek <kraig@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 10/79] udp: correct reuseport selection with connected sockets
+Date:   Fri, 20 Sep 2019 00:02:55 +0200
+Message-Id: <20190919214808.734045565@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
 References: <20190919214807.612593061@linuxfoundation.org>
@@ -43,135 +45,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Willem de Bruijn <willemb@google.com>
 
-commit 699bf94114151aae4dceb2d9dbf1a6312839dcae upstream.
+[ Upstream commit acdcecc61285faed359f1a3568c32089cc3a8329 ]
 
-The usb_bulk_urb will kfree'd on disconnect, so ensure the pointer is set
-to NULL after each free.
+UDP reuseport groups can hold a mix unconnected and connected sockets.
+Ensure that connections only receive all traffic to their 4-tuple.
 
-stop stream
-urb killing
-urb buffer free
-tm6000: got start feed request tm6000_start_feed
-tm6000: got start stream request tm6000_start_stream
-tm6000: pipe reset
-tm6000: got start feed request tm6000_start_feed
-tm6000: got start feed request tm6000_start_feed
-tm6000: got start feed request tm6000_start_feed
-tm6000: got start feed request tm6000_start_feed
-tm6000: IR URB failure: status: -71, length 0
-xhci_hcd 0000:00:14.0: ERROR unknown event type 37
-xhci_hcd 0000:00:14.0: ERROR unknown event type 37
-tm6000:  error tm6000_urb_received
-usb 1-2: USB disconnect, device number 5
-tm6000: disconnecting tm6000 #0
-==================================================================
-BUG: KASAN: use-after-free in dvb_fini+0x75/0x140 [tm6000_dvb]
-Read of size 8 at addr ffff888241044060 by task kworker/2:0/22
+Fast reuseport returns on the first reuseport match on the assumption
+that all matches are equal. Only if connections are present, return to
+the previous behavior of scoring all sockets.
 
-CPU: 2 PID: 22 Comm: kworker/2:0 Tainted: G        W         5.3.0-rc4+ #1
-Hardware name: LENOVO 20KHCTO1WW/20KHCTO1WW, BIOS N23ET65W (1.40 ) 07/02/2019
-Workqueue: usb_hub_wq hub_event
-Call Trace:
- dump_stack+0x9a/0xf0
- print_address_description.cold+0xae/0x34f
- __kasan_report.cold+0x75/0x93
- ? tm6000_fillbuf+0x390/0x3c0 [tm6000_alsa]
- ? dvb_fini+0x75/0x140 [tm6000_dvb]
- kasan_report+0xe/0x12
- dvb_fini+0x75/0x140 [tm6000_dvb]
- tm6000_close_extension+0x51/0x80 [tm6000]
- tm6000_usb_disconnect.cold+0xd4/0x105 [tm6000]
- usb_unbind_interface+0xe4/0x390
- device_release_driver_internal+0x121/0x250
- bus_remove_device+0x197/0x260
- device_del+0x268/0x550
- ? __device_links_no_driver+0xd0/0xd0
- ? usb_remove_ep_devs+0x30/0x3b
- usb_disable_device+0x122/0x400
- usb_disconnect+0x153/0x430
- hub_event+0x800/0x1e40
- ? trace_hardirqs_on_thunk+0x1a/0x20
- ? hub_port_debounce+0x1f0/0x1f0
- ? retint_kernel+0x10/0x10
- ? lock_is_held_type+0xf1/0x130
- ? hub_port_debounce+0x1f0/0x1f0
- ? process_one_work+0x4ae/0xa00
- process_one_work+0x4ba/0xa00
- ? pwq_dec_nr_in_flight+0x160/0x160
- ? do_raw_spin_lock+0x10a/0x1d0
- worker_thread+0x7a/0x5c0
- ? process_one_work+0xa00/0xa00
- kthread+0x1d5/0x200
- ? kthread_create_worker_on_cpu+0xd0/0xd0
- ret_from_fork+0x3a/0x50
+Record if connections are present and if so (1) treat such connected
+sockets as an independent match from the group, (2) only return
+2-tuple matches from reuseport and (3) do not return on the first
+2-tuple reuseport match to allow for a higher scoring match later.
 
-Allocated by task 2682:
- save_stack+0x1b/0x80
- __kasan_kmalloc.constprop.0+0xc2/0xd0
- usb_alloc_urb+0x28/0x60
- tm6000_start_feed+0x10a/0x300 [tm6000_dvb]
- dmx_ts_feed_start_filtering+0x86/0x120 [dvb_core]
- dvb_dmxdev_start_feed+0x121/0x180 [dvb_core]
- dvb_dmxdev_filter_start+0xcb/0x540 [dvb_core]
- dvb_demux_do_ioctl+0x7ed/0x890 [dvb_core]
- dvb_usercopy+0x97/0x1f0 [dvb_core]
- dvb_demux_ioctl+0x11/0x20 [dvb_core]
- do_vfs_ioctl+0x5d8/0x9d0
- ksys_ioctl+0x5e/0x90
- __x64_sys_ioctl+0x3d/0x50
- do_syscall_64+0x74/0xe0
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+New field has_conns is set without locks. No other fields in the
+bitmap are modified at runtime and the field is only ever set
+unconditionally, so an RMW cannot miss a change.
 
-Freed by task 22:
- save_stack+0x1b/0x80
- __kasan_slab_free+0x12c/0x170
- kfree+0xfd/0x3a0
- xhci_giveback_urb_in_irq+0xfe/0x230
- xhci_td_cleanup+0x276/0x340
- xhci_irq+0x1129/0x3720
- __handle_irq_event_percpu+0x6e/0x420
- handle_irq_event_percpu+0x6f/0x100
- handle_irq_event+0x55/0x84
- handle_edge_irq+0x108/0x3b0
- handle_irq+0x2e/0x40
- do_IRQ+0x83/0x1a0
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: e32ea7e74727 ("soreuseport: fast reuseport UDP socket selection")
+Link: http://lkml.kernel.org/r/CA+FuTSfRP09aJNYRt04SS6qj22ViiOEWaWmLAwX0psk8-PGNxw@mail.gmail.com
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Acked-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Craig Gallek <kraig@google.com>
+Signed-off-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/usb/tm6000/tm6000-dvb.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/net/sock_reuseport.h |   21 ++++++++++++++++++++-
+ net/core/sock_reuseport.c    |   15 +++++++++++++--
+ net/ipv4/datagram.c          |    2 ++
+ net/ipv4/udp.c               |    5 +++--
+ net/ipv6/datagram.c          |    2 ++
+ net/ipv6/udp.c               |    5 +++--
+ 6 files changed, 43 insertions(+), 7 deletions(-)
 
---- a/drivers/media/usb/tm6000/tm6000-dvb.c
-+++ b/drivers/media/usb/tm6000/tm6000-dvb.c
-@@ -105,6 +105,7 @@ static void tm6000_urb_received(struct u
- 			printk(KERN_ERR "tm6000:  error %s\n", __func__);
- 			kfree(urb->transfer_buffer);
- 			usb_free_urb(urb);
-+			dev->dvb->bulk_urb = NULL;
- 		}
- 	}
- }
-@@ -135,6 +136,7 @@ static int tm6000_start_stream(struct tm
- 	dvb->bulk_urb->transfer_buffer = kzalloc(size, GFP_KERNEL);
- 	if (!dvb->bulk_urb->transfer_buffer) {
- 		usb_free_urb(dvb->bulk_urb);
-+		dvb->bulk_urb = NULL;
- 		return -ENOMEM;
+--- a/include/net/sock_reuseport.h
++++ b/include/net/sock_reuseport.h
+@@ -21,7 +21,8 @@ struct sock_reuseport {
+ 	unsigned int		synq_overflow_ts;
+ 	/* ID stays the same even after the size of socks[] grows. */
+ 	unsigned int		reuseport_id;
+-	bool			bind_inany;
++	unsigned int		bind_inany:1;
++	unsigned int		has_conns:1;
+ 	struct bpf_prog __rcu	*prog;		/* optional BPF sock selector */
+ 	struct sock		*socks[0];	/* array of sock pointers */
+ };
+@@ -35,6 +36,24 @@ extern struct sock *reuseport_select_soc
+ 					  struct sk_buff *skb,
+ 					  int hdr_len);
+ extern int reuseport_attach_prog(struct sock *sk, struct bpf_prog *prog);
++
++static inline bool reuseport_has_conns(struct sock *sk, bool set)
++{
++	struct sock_reuseport *reuse;
++	bool ret = false;
++
++	rcu_read_lock();
++	reuse = rcu_dereference(sk->sk_reuseport_cb);
++	if (reuse) {
++		if (set)
++			reuse->has_conns = 1;
++		ret = reuse->has_conns;
++	}
++	rcu_read_unlock();
++
++	return ret;
++}
++
+ int reuseport_get_id(struct sock_reuseport *reuse);
+ 
+ #endif  /* _SOCK_REUSEPORT_H */
+--- a/net/core/sock_reuseport.c
++++ b/net/core/sock_reuseport.c
+@@ -292,8 +292,19 @@ struct sock *reuseport_select_sock(struc
+ 
+ select_by_hash:
+ 		/* no bpf or invalid bpf result: fall back to hash usage */
+-		if (!sk2)
+-			sk2 = reuse->socks[reciprocal_scale(hash, socks)];
++		if (!sk2) {
++			int i, j;
++
++			i = j = reciprocal_scale(hash, socks);
++			while (reuse->socks[i]->sk_state == TCP_ESTABLISHED) {
++				i++;
++				if (i >= reuse->num_socks)
++					i = 0;
++				if (i == j)
++					goto out;
++			}
++			sk2 = reuse->socks[i];
++		}
  	}
  
-@@ -161,6 +163,7 @@ static int tm6000_start_stream(struct tm
+ out:
+--- a/net/ipv4/datagram.c
++++ b/net/ipv4/datagram.c
+@@ -19,6 +19,7 @@
+ #include <net/sock.h>
+ #include <net/route.h>
+ #include <net/tcp_states.h>
++#include <net/sock_reuseport.h>
  
- 		kfree(dvb->bulk_urb->transfer_buffer);
- 		usb_free_urb(dvb->bulk_urb);
-+		dvb->bulk_urb = NULL;
- 		return ret;
+ int __ip4_datagram_connect(struct sock *sk, struct sockaddr *uaddr, int addr_len)
+ {
+@@ -73,6 +74,7 @@ int __ip4_datagram_connect(struct sock *
+ 	}
+ 	inet->inet_daddr = fl4->daddr;
+ 	inet->inet_dport = usin->sin_port;
++	reuseport_has_conns(sk, true);
+ 	sk->sk_state = TCP_ESTABLISHED;
+ 	sk_set_txhash(sk);
+ 	inet->inet_id = jiffies;
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -443,12 +443,13 @@ static struct sock *udp4_lib_lookup2(str
+ 		score = compute_score(sk, net, saddr, sport,
+ 				      daddr, hnum, dif, sdif, exact_dif);
+ 		if (score > badness) {
+-			if (sk->sk_reuseport) {
++			if (sk->sk_reuseport &&
++			    sk->sk_state != TCP_ESTABLISHED) {
+ 				hash = udp_ehashfn(net, daddr, hnum,
+ 						   saddr, sport);
+ 				result = reuseport_select_sock(sk, hash, skb,
+ 							sizeof(struct udphdr));
+-				if (result)
++				if (result && !reuseport_has_conns(sk, false))
+ 					return result;
+ 			}
+ 			badness = score;
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -31,6 +31,7 @@
+ #include <net/ip6_route.h>
+ #include <net/tcp_states.h>
+ #include <net/dsfield.h>
++#include <net/sock_reuseport.h>
+ 
+ #include <linux/errqueue.h>
+ #include <linux/uaccess.h>
+@@ -258,6 +259,7 @@ ipv4_connected:
+ 		goto out;
  	}
  
++	reuseport_has_conns(sk, true);
+ 	sk->sk_state = TCP_ESTABLISHED;
+ 	sk_set_txhash(sk);
+ out:
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -177,13 +177,14 @@ static struct sock *udp6_lib_lookup2(str
+ 		score = compute_score(sk, net, saddr, sport,
+ 				      daddr, hnum, dif, sdif, exact_dif);
+ 		if (score > badness) {
+-			if (sk->sk_reuseport) {
++			if (sk->sk_reuseport &&
++			    sk->sk_state != TCP_ESTABLISHED) {
+ 				hash = udp6_ehashfn(net, daddr, hnum,
+ 						    saddr, sport);
+ 
+ 				result = reuseport_select_sock(sk, hash, skb,
+ 							sizeof(struct udphdr));
+-				if (result)
++				if (result && !reuseport_has_conns(sk, false))
+ 					return result;
+ 			}
+ 			result = sk;
 
 
