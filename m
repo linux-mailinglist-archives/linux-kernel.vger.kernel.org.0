@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99F51B83FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E9BB8402
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:07:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393098AbfISWG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:06:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44392 "EHLO mail.kernel.org"
+        id S2393141AbfISWHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:07:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405279AbfISWGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:06:52 -0400
+        id S2393123AbfISWHC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:07:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D668421907;
-        Thu, 19 Sep 2019 22:06:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE1A721907;
+        Thu, 19 Sep 2019 22:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930811;
-        bh=3tM0UaXpK9hyBLBvIYjqMgOquMudUYvPcuK67Ua82Do=;
+        s=default; t=1568930822;
+        bh=xHZeo9vhS2BI1Gc35dfmKtmJEAlCNthIPihqclJ5Xwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1KR/zeiPMQwyJZ/80igVZbM4SkPQheJsIS5sHfOBlLa2TMUrYKG+ulYun+G/i5amR
-         chSH2ZjGFJdVeFEvuTHxpYNNBl5yYir0yfpHOpRyWJsrYprXAz0UuF16i+r2mn4K2C
-         FHEPhTpArt5mzSdPe+7sH+gt1yoFTuHyHAyb5FZ4=
+        b=fZFi5lqR7Glmh/wXtXWSOcYmzHsu0oQnouDcseXrBtcgjmdQrnP906DfjAHGE61/i
+         gPDH90hKdWNVgiCJ5ERUBhg+q4HJ8lG9eeufurcPGB6Dev+3OzGXgep8vu/Vg6NIOS
+         nCWqtySjGtx5iJXd5GV/MJLx3aepp8qvZDZuDTvo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 5.2 023/124] serial: sprd: correct the wrong sequence of arguments
-Date:   Fri, 20 Sep 2019 00:01:51 +0200
-Message-Id: <20190919214819.912302822@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Masashi Honma <masashi.honma@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 5.2 026/124] nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
+Date:   Fri, 20 Sep 2019 00:01:54 +0200
+Message-Id: <20190919214820.003228381@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -43,35 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+From: Masashi Honma <masashi.honma@gmail.com>
 
-commit 9c801e313195addaf11c16e155f50789d6ebfd19 upstream.
+commit 4b2c5a14cd8005a900075f7dfec87473c6ee66fb upstream.
 
-The sequence of arguments which was passed to handle_lsr_errors() didn't
-match the parameters defined in that function, &lsr was passed to flag
-and &flag was passed to lsr, this patch fixed that.
+commit 1222a1601488 ("nl80211: Fix possible Spectre-v1 for CQM
+RSSI thresholds") was incomplete and requires one more fix to
+prevent accessing to rssi_thresholds[n] because user can control
+rssi_thresholds[i] values to make i reach to n. For example,
+rssi_thresholds = {-400, -300, -200, -100} when last is -34.
 
-Fixes: b7396a38fb28 ("tty/serial: Add Spreadtrum sc9836-uart driver support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190905074151.5268-1-zhang.lyra@gmail.com
+Cc: stable@vger.kernel.org
+Fixes: 1222a1601488 ("nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Masashi Honma <masashi.honma@gmail.com>
+Link: https://lore.kernel.org/r/20190908005653.17433-1-masashi.honma@gmail.com
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/sprd_serial.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/wireless/nl80211.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -609,7 +609,7 @@ static inline void sprd_rx(struct uart_p
+--- a/net/wireless/nl80211.c
++++ b/net/wireless/nl80211.c
+@@ -10640,9 +10640,11 @@ static int cfg80211_cqm_rssi_update(stru
+ 	hyst = wdev->cqm_config->rssi_hyst;
+ 	n = wdev->cqm_config->n_rssi_thresholds;
  
- 		if (lsr & (SPRD_LSR_BI | SPRD_LSR_PE |
- 			   SPRD_LSR_FE | SPRD_LSR_OE))
--			if (handle_lsr_errors(port, &lsr, &flag))
-+			if (handle_lsr_errors(port, &flag, &lsr))
- 				continue;
- 		if (uart_handle_sysrq_char(port, ch))
- 			continue;
+-	for (i = 0; i < n; i++)
++	for (i = 0; i < n; i++) {
++		i = array_index_nospec(i, n);
+ 		if (last < wdev->cqm_config->rssi_thresholds[i])
+ 			break;
++	}
+ 
+ 	low_index = i - 1;
+ 	if (low_index >= 0) {
 
 
