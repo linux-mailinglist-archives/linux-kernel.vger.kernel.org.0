@@ -2,80 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65B01B8344
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CFC4B834D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:28:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390937AbfISVZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 17:25:52 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37131 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390868AbfISVZu (ORCPT
+        id S2392784AbfISV1d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 17:27:33 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39982 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390655AbfISV1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 17:25:50 -0400
-Received: by mail-lf1-f66.google.com with SMTP id w67so3454473lff.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 14:25:49 -0700 (PDT)
+        Thu, 19 Sep 2019 17:27:33 -0400
+Received: by mail-pl1-f196.google.com with SMTP id d22so2188839pll.7
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 14:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mFlQqPMwF2oKRoCy99o/0fcbEkaEzqDPgo54HkJjGwo=;
-        b=QYGEBRfB218lq3Cke9eCjqIiN6Wf0j2td7002hFcAjOvsFYVECsjYFCUkApgWn3no8
-         gEApY84ExYwT1UuZmVMX50F9llaHaFWKCUWUK9WH5z38tbwkYt1iwCfqojcLmUe2Dc24
-         DkNvqa74UAADSQNKgmT2moNbWhaBqIMeGf5Vg=
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1eFwN6VQoIVgZTWyIrMDT1Z2HKm27mGWj9Z/avCv2WM=;
+        b=WLLAVHKMkEqkBrDpAUPZfZ4ytCC0Dlr6FMIuwsZ9AN8V0mNiNaW0jkxD95BnZiHMxi
+         qarYueI8ei+IBtKxRMpotJ2s/Mu7DyoZMkUqsJ9CNz7GgdKrLBlOwiDogELObnn2UHpR
+         CGFCDa9DSeEbBcsNPanhYfWmTWJjwgz29GAMU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mFlQqPMwF2oKRoCy99o/0fcbEkaEzqDPgo54HkJjGwo=;
-        b=PikMZtsnl9xC58R3OmkECyfYjkQk3oRjoi0vuc5Ne+2FQM2IIc3CZDUzcl1IVlAoBQ
-         yDgLwubed5eGrA4QEoyc75tulSjkiET2iV0/u9LbIF4Me9bnq+4LFKTAoNVpamS4aSQ8
-         NuU89MnUpozXRIdDOnLNV5qEjeH+FgdEM0ameF3aEtirHutcUw9wIs8GOPz3Vh5FbMiF
-         f5zTEkVJaoMQIQ2hW9akGOKwySA99Bu0bgry4FJFLaPNQ0K6tlw5cscfqEu70ZEUCJW2
-         7IUWvsEiDkjF4rShR3wRAwJZMrxFYozWrhhT4Hced4o3Ic4bKZ6eMRu3faDNiYlvJrYb
-         6Ijw==
-X-Gm-Message-State: APjAAAUmomBJNoxZ9a/ZI/mz9BJbSPE2AwJWJXEqaiAzBC7UfrdFSpRG
-        FiGXCfliYQ/zDTTiI/9FxQzHR4OG8V8=
-X-Google-Smtp-Source: APXvYqwEyH9UgvJJKuYkQWKXNrgQqFw8vor4EajLIdedxRMxQQfoxUt3yD1IREgy+BGL434V5eCXJQ==
-X-Received: by 2002:ac2:4853:: with SMTP id 19mr5906481lfy.69.1568928348258;
-        Thu, 19 Sep 2019 14:25:48 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id z14sm1441813ljz.10.2019.09.19.14.25.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2019 14:25:46 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id a22so5102315ljd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 14:25:46 -0700 (PDT)
-X-Received: by 2002:a2e:1208:: with SMTP id t8mr4478514lje.84.1568928346030;
- Thu, 19 Sep 2019 14:25:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1eFwN6VQoIVgZTWyIrMDT1Z2HKm27mGWj9Z/avCv2WM=;
+        b=h+8mgNm6QgcGkFYGis4ieVFyMHSMmCQTEKdWJckvYApvnAcLuH3TvehdzguQfT68Z0
+         R3n4Jh4xPbpbKTY3ifbx4pulOTyrruebxwDQ+cHpiFvn6uFtGQ92gjmlCYEZh7LOZf1a
+         r00MQ4T89c2OFfmFez4gIYATyI/hAinULJifUFobuvDd9sEINqoJ9gyM58cPnbUqSscq
+         87ZI42sfwscJYWRtwSWZHCydMT92n/smID4+YmqYrNOEWfdVKYFfT73hjXt6dS5JUnpv
+         6R+rmn0rO5T8L5+9aH6Xgmr1uMzQVxvXuQK+lV62WQaSCr7gyg+kRGlI38sy/GSdif+C
+         G36A==
+X-Gm-Message-State: APjAAAWUk6HS7j+FN/RcMkXeEEEBUSZUOi/MXpRqWCulA9MoYXs0zMR3
+        vBFU7tLWWSNo4rQFioCo9znFww==
+X-Google-Smtp-Source: APXvYqzUrqDmlhSeuD997w0UB8kD5+ZRkrKOf7RYGruGWm+SZRArLf5CFPjvg0kYdcqo1SOAwcQ1sQ==
+X-Received: by 2002:a17:902:b20a:: with SMTP id t10mr12318381plr.277.1568928451427;
+        Thu, 19 Sep 2019 14:27:31 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id 197sm28584015pge.39.2019.09.19.14.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2019 14:27:30 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     mka@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: rockchip: Add cpu id to rk3288 efuse node
+Date:   Thu, 19 Sep 2019 14:26:41 -0700
+Message-Id: <20190919142611.1.I309434f00a2a9be71e4437991fe08abc12f06e2e@changeid>
+X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
 MIME-Version: 1.0
-References: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-In-Reply-To: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 19 Sep 2019 14:25:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjjP4YuM8myHkb20avZA8r=KCN3wLi2piWuPKBTH4T3vQ@mail.gmail.com>
-Message-ID: <CAHk-=wjjP4YuM8myHkb20avZA8r=KCN3wLi2piWuPKBTH4T3vQ@mail.gmail.com>
-Subject: Re: [GIT PULL] pin control bulk changes for v5.4
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 2:08 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> Alernatively you can wait for the m68k tree to come in first. Or we nudge Geert
-> to send the changes ASAP. The usage of a wildly different pin
-> controller on Atari hardware is only a compile testing artifact so
-> we didn't drill deeper into this.
+This just adds in another field of what's stored in the e-fuse on
+rk3288.  Though I can't personally promise that every rk3288 out there
+has the CPU ID stored in the eFuse at this location, there is some
+evidence that it is correct:
+- This matches what was in the Chrome OS 3.14 branch (see
+  EFUSE_CHIP_UID_OFFSET and EFUSE_CHIP_UID_LEN) for rk3288.
+- The upstream rk3399 dts file has this same data at the same offset
+  and with the same length, indiciating that this is likely common for
+  several modern Rockchip SoCs.
 
-The m68k tree came in days ago, long before your pull request. It was
-already merged on the first day of the merge window.
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-So no need to nudge Geert. We should be ok.
+ arch/arm/boot/dts/rk3288.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-              Linus
+diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+index cc893e154fe5..415b48fc3ce8 100644
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@ -1391,6 +1391,9 @@
+ 		clocks = <&cru PCLK_EFUSE256>;
+ 		clock-names = "pclk_efuse";
+ 
++		cpu_id: cpu-id@7 {
++			reg = <0x07 0x10>;
++		};
+ 		cpu_leakage: cpu_leakage@17 {
+ 			reg = <0x17 0x1>;
+ 		};
+-- 
+2.23.0.351.gc4317032e6-goog
+
