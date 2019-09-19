@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC93CB84CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC094B8517
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392255AbfISWO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:14:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53970 "EHLO mail.kernel.org"
+        id S2406494AbfISWRg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:17:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392247AbfISWO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:14:26 -0400
+        id S2406465AbfISWRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:17:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F8FB21924;
-        Thu, 19 Sep 2019 22:14:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 298B621920;
+        Thu, 19 Sep 2019 22:17:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931265;
-        bh=Lj7bkb2BiDO38UOg4KwiSGvkPNkyrZAhGxld/8od+KE=;
+        s=default; t=1568931452;
+        bh=74nf5UnRKvBiWWXFw3xnxICQuYxH0BWLfryXXrsDYPc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=utZ62FcfYjyAVYR5jd/b83l+r7O/NN9KzpC/rutd2nSVV5/OTcS3oK1lPAtjYerHE
-         NybsexMMJ0rMjZbxUlZHgSAwQ8cXyhsOX/A5d2z2OiAIQZUnnVFrusgdP8kOmyVP/k
-         PIKX1Ebk8UoBa+dY4YnCt6wjQyeGLa/FZuGO+K4o=
+        b=wIWaTN6WubEgiSqpZCT2ADr2mk78+YpLI3hFTx0ZmcWCbN0SoGRnCZJsD86hQe2rf
+         HwYnfSaAQr7M6UlJoHfTMpeSSl/G2yCKd3yFXzSkuagbkdjSf7NfZQKaoAYf6L5is5
+         i2yBJnk+GKz/Jh48CVut/kwp5T3MjZhp3vp2JQE4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Zephaniah E. Loss-Cutler-Hull" <zephaniah@gmail.com>,
-        Len Brown <len.brown@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 63/79] tools/power x86_energy_perf_policy: Fix argument parsing
-Date:   Fri, 20 Sep 2019 00:03:48 +0200
-Message-Id: <20190919214813.219467702@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 34/59] kallsyms: Dont let kallsyms_lookup_size_offset() fail on retrieving the first symbol
+Date:   Fri, 20 Sep 2019 00:03:49 +0200
+Message-Id: <20190919214806.003059718@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +47,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zephaniah E. Loss-Cutler-Hull <zephaniah@gmail.com>
+From: Marc Zyngier <maz@kernel.org>
 
-[ Upstream commit 03531482402a2bc4ab93cf6dde46833775e035e9 ]
+[ Upstream commit 2a1a3fa0f29270583f0e6e3100d609e09697add1 ]
 
-The -w argument in x86_energy_perf_policy currently triggers an
-unconditional segfault.
+An arm64 kernel configured with
 
-This is because the argument string reads: "+a:c:dD:E:e:f:m:M:rt:u:vw" and
-yet the argument handler expects an argument.
+  CONFIG_KPROBES=y
+  CONFIG_KALLSYMS=y
+  # CONFIG_KALLSYMS_ALL is not set
+  CONFIG_KALLSYMS_BASE_RELATIVE=y
 
-When parse_optarg_string is called with a null argument, we then proceed to
-crash in strncmp, not horribly friendly.
+reports the following kprobe failure:
 
-The man page describes -w as taking an argument, the long form
-(--hwp-window) is correctly marked as taking a required argument, and the
-code expects it.
+  [    0.032677] kprobes: failed to populate blacklist: -22
+  [    0.033376] Please take care of using kprobes.
 
-As such, this patch simply marks the short form (-w) as requiring an
-argument.
+It appears that kprobe fails to retrieve the symbol at address
+0xffff000010081000, despite this symbol being in System.map:
 
-Signed-off-by: Zephaniah E. Loss-Cutler-Hull <zephaniah@gmail.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
+  ffff000010081000 T __exception_text_start
+
+This symbol is part of the first group of aliases in the
+kallsyms_offsets array (symbol names generated using ugly hacks in
+scripts/kallsyms.c):
+
+  kallsyms_offsets:
+          .long   0x1000 // do_undefinstr
+          .long   0x1000 // efi_header_end
+          .long   0x1000 // _stext
+          .long   0x1000 // __exception_text_start
+          .long   0x12b0 // do_cp15instr
+
+Looking at the implementation of get_symbol_pos(), it returns the
+lowest index for aliasing symbols. In this case, it return 0.
+
+But kallsyms_lookup_size_offset() considers 0 as a failure, which
+is obviously wrong (there is definitely a valid symbol living there).
+In turn, the kprobe blacklisting stops abruptly, hence the original
+error.
+
+A CONFIG_KALLSYMS_ALL kernel wouldn't fail as there is always
+some random symbols at the beginning of this array, which are never
+looked up via kallsyms_lookup_size_offset.
+
+Fix it by considering that get_symbol_pos() is always successful
+(which is consistent with the other uses of this function).
+
+Fixes: ffc5089196446 ("[PATCH] Create kallsyms_lookup_size_offset()")
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/kallsyms.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-index bbef8bcf44d6d..2aba622d1c5aa 100644
---- a/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-+++ b/tools/power/x86/x86_energy_perf_policy/x86_energy_perf_policy.c
-@@ -546,7 +546,7 @@ void cmdline(int argc, char **argv)
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index 127e7cfafa552..3e1b66366ac23 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -296,8 +296,10 @@ int kallsyms_lookup_size_offset(unsigned long addr, unsigned long *symbolsize,
+ {
+ 	char namebuf[KSYM_NAME_LEN];
  
- 	progname = argv[0];
- 
--	while ((opt = getopt_long_only(argc, argv, "+a:c:dD:E:e:f:m:M:rt:u:vw",
-+	while ((opt = getopt_long_only(argc, argv, "+a:c:dD:E:e:f:m:M:rt:u:vw:",
- 				long_options, &option_index)) != -1) {
- 		switch (opt) {
- 		case 'a':
+-	if (is_ksym_addr(addr))
+-		return !!get_symbol_pos(addr, symbolsize, offset);
++	if (is_ksym_addr(addr)) {
++		get_symbol_pos(addr, symbolsize, offset);
++		return 1;
++	}
+ 	return !!module_address_lookup(addr, symbolsize, offset, NULL, namebuf) ||
+ 	       !!__bpf_address_lookup(addr, symbolsize, offset, namebuf);
+ }
 -- 
 2.20.1
 
