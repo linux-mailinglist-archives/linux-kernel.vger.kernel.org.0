@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED30B7424
+	by mail.lfdr.de (Postfix) with ESMTP id F2413B7426
 	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 09:34:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388692AbfISHeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 03:34:16 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54676 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388671AbfISHeN (ORCPT
+        id S2388718AbfISHeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 03:34:23 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41723 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388657AbfISHeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 03:34:13 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p7so3063087wmp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 00:34:12 -0700 (PDT)
+        Thu, 19 Sep 2019 03:34:15 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h7so1905342wrw.8
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 00:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AbILMuuDKN55sODbN+TLyTtglr3cL8J1sJ9BIBcXt6A=;
-        b=otw9vtrwhhPK8FHKTcBk1J76bXEWX0hh4qd3KHNz4DE/4ogtL5vjwN8cGO7gpWGqns
-         m3+31f30t6LakblwZJig06N4cS+FBHSap9q6xCdZto7aJKF3yZmmR1vb8EuScHhUJSjr
-         fBYdoTeaqZLSinNRy1KJ8hgTCrTgxIX/3WvqqWvoHXlBVwtcAU5YfRMgOY+uFrubEIIs
-         VtdY1+hc6mbIRODCttt/dayg7Nibpiaad1JXUFJgH1Nmfly7s4iMHFU3FoVEbgdWSR+j
-         NydRukRgLiPCJXIQ1w4L0YLvRXncbZFS12/YvxdbLNK2B2Iy4vvTPND4CMk4xvhEz2yL
-         PlRw==
+        bh=E0Lgz25SpUetPrpayHmg7zZdcUkNn2aH/KnWe2aleok=;
+        b=Lk+J5omQRVbDf3S2TzthQ2TDCGVfOORMYRykG6caePHrKT4UJLOqzRiVomJwl0v6Si
+         Zh5ON9sbhJ3nB4SATF5E6spIrYRy8+8bz2gvvd3eEajirzSv9l/jYn4+YCiLanGOZJ35
+         EpdhzEhoSF5cMu0ARjJSK84l14QiFALGNWSAFpLF4vIQWtWC86co/Bs+WpB0RJJZ3M4k
+         SURkqGWEDAhRG0csovcm51s9ACqc0d09JHgtg3SWiN6HbXPJQdcNvKa6e1UORvVRXGsr
+         bQsDRMz6SxErS/ZnVS1aw3rLhFF7KIdAi11uZaFZU3FpnW9vP97JToCaCnWADiFYI899
+         cQ4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AbILMuuDKN55sODbN+TLyTtglr3cL8J1sJ9BIBcXt6A=;
-        b=ukFhl6jd7V3+AWbFUNGD1QN6JhVdr060sXLpecoKFEut2wnNZs42gTn4hBSrATRRfo
-         bNp3cyDmFFP5JBzTdTBe34anQM+kEETVK1v+mNdeLR8wy3t5wSGyWLz+wTEgbJ7Ecvjm
-         PjoCcPCaeRGD9WvaVNAt018tC/oDlbYlZ6eTpfmLgMPfm4AUTmHbxRC8XMkg57iL7U6z
-         759r2uzEumoEwjwBORmlWqpMvnE8d8oHnfarGNINSvru4eKcyRP0CIf2x6p9m4lIsVl9
-         ibBvM6+MnRhNs/PApf6VpOjRb4BffRIXyFe1YDBDdBOsEVH5ceEqU3RLmdJ3mt1/+KJC
-         YnOw==
-X-Gm-Message-State: APjAAAUhqNsRENy++qZr9NSDxPiz/0Q6V+XPp0JUw/Ziobfe94v0yXX1
-        MyYy343wLDP0jMayQd/ybJInDGEPFzQ=
-X-Google-Smtp-Source: APXvYqxpPl3g706dHpPjD6Fj7lZifLAC7QISKvUu33MaZ0wHkZzQRJKtvkK64QA7785uZ9fehVzWtg==
-X-Received: by 2002:a05:600c:254f:: with SMTP id e15mr1487005wma.163.1568878450982;
-        Thu, 19 Sep 2019 00:34:10 -0700 (PDT)
+        bh=E0Lgz25SpUetPrpayHmg7zZdcUkNn2aH/KnWe2aleok=;
+        b=X+Yy4f2QpthjB8UAnpPiv2iP7sr0MQGjdT/7UDzQGwM3RmSO9vhVpjkDl/S5MZDfhN
+         B6seS9RFczJefpahLJ2K6El2KV3NTm4s5n/rKLYWyWYfW+yK8y/pQ4fVT0ztlf/O/i6Y
+         nH2JrP2SdAX1IjaZwpNV/WeP4tSAbTqMRFs7AF/wQ6ZMr5HR+KeNVXA3x2yiE0r2rS3F
+         DCL/QH+uqN+L0Om2GhXcEmONpy0ycaUvs+oCy1UhteJkt2ONaRpSrsH5oUF2H35A15kL
+         ZDRveVwT/53IO6gZl2YpzbS7SErq3lVYN2ULhXBRmoXKJDU7q3h7hG7kG7uJ7xG0wlTL
+         Y2yg==
+X-Gm-Message-State: APjAAAV8VTT4u7VlS49ZOIgwwZhNEOh2kwmdYPKftDyGLac3E0Wqdl3H
+        3iPrASnjirra2cH1YG63EFurJHuK7Aw=
+X-Google-Smtp-Source: APXvYqwyH0ReRA+hACHu1N8L5JDB+XX6bhNeHhHxkFsFk/LoCqsOeHrc1ozMrVhwY73vgXh/+lY/3A==
+X-Received: by 2002:adf:dbc6:: with SMTP id e6mr1492515wrj.149.1568878453024;
+        Thu, 19 Sep 2019 00:34:13 -0700 (PDT)
 Received: from localhost.localdomain ([2a01:e0a:f:6020:d555:8fca:a19c:222c])
-        by smtp.gmail.com with ESMTPSA id s12sm13300250wra.82.2019.09.19.00.34.09
+        by smtp.gmail.com with ESMTPSA id s12sm13300250wra.82.2019.09.19.00.34.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 19 Sep 2019 00:34:09 -0700 (PDT)
+        Thu, 19 Sep 2019 00:34:11 -0700 (PDT)
 From:   Vincent Guittot <vincent.guittot@linaro.org>
 To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
         peterz@infradead.org
@@ -51,9 +51,9 @@ Cc:     pauld@redhat.com, valentin.schneider@arm.com,
         srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
         dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
         hdanton@sina.com, Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v3 08/10] sched/fair: use utilization to select misfit task
-Date:   Thu, 19 Sep 2019 09:33:39 +0200
-Message-Id: <1568878421-12301-9-git-send-email-vincent.guittot@linaro.org>
+Subject: [PATCH v3 09/10] sched/fair: use load instead of runnable load in wakeup path
+Date:   Thu, 19 Sep 2019 09:33:40 +0200
+Message-Id: <1568878421-12301-10-git-send-email-vincent.guittot@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
 References: <1568878421-12301-1-git-send-email-vincent.guittot@linaro.org>
@@ -62,37 +62,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-utilization is used to detect a misfit task but the load is then used to
-select the task on the CPU which can lead to select a small task with
-high weight instead of the task that triggered the misfit migration.
+runnable load has been introduced to take into account the case where
+blocked load biases the wake up path which may end to select an overloaded
+CPU with a large number of runnable tasks instead of an underutilized
+CPU with a huge blocked load.
+
+Tha wake up path now starts to looks for idle CPUs before comparing
+runnable load and it's worth aligning the wake up path with the
+load_balance.
 
 Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Acked-by: Valentin Schneider <valentin.schneider@arm.com>
 ---
- kernel/sched/fair.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ kernel/sched/fair.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a7c8ee6..acca869 100644
+index acca869..39a37ae 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7429,14 +7429,8 @@ static int detach_tasks(struct lb_env *env)
- 			break;
+@@ -5485,7 +5485,7 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ 	s64 this_eff_load, prev_eff_load;
+ 	unsigned long task_load;
  
- 		case migrate_misfit:
--			load = task_h_load(p);
--
--			/*
--			 * utilization of misfit task might decrease a bit
--			 * since it has been recorded. Be conservative in the
--			 * condition.
--			 */
--			if (load < env->imbalance)
-+			/* This is not a misfit task */
-+			if (task_fits_capacity(p, capacity_of(env->src_cpu)))
- 				goto next;
+-	this_eff_load = cpu_runnable_load(cpu_rq(this_cpu));
++	this_eff_load = cpu_load(cpu_rq(this_cpu));
  
- 			env->imbalance = 0;
+ 	if (sync) {
+ 		unsigned long current_load = task_h_load(current);
+@@ -5503,7 +5503,7 @@ wake_affine_weight(struct sched_domain *sd, struct task_struct *p,
+ 		this_eff_load *= 100;
+ 	this_eff_load *= capacity_of(prev_cpu);
+ 
+-	prev_eff_load = cpu_runnable_load(cpu_rq(prev_cpu));
++	prev_eff_load = cpu_load(cpu_rq(prev_cpu));
+ 	prev_eff_load -= task_load;
+ 	if (sched_feat(WA_BIAS))
+ 		prev_eff_load *= 100 + (sd->imbalance_pct - 100) / 2;
+@@ -5591,7 +5591,7 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
+ 		max_spare_cap = 0;
+ 
+ 		for_each_cpu(i, sched_group_span(group)) {
+-			load = cpu_runnable_load(cpu_rq(i));
++			load = cpu_load(cpu_rq(i));
+ 			runnable_load += load;
+ 
+ 			avg_load += cfs_rq_load_avg(&cpu_rq(i)->cfs);
+@@ -5732,7 +5732,7 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
+ 				continue;
+ 			}
+ 
+-			load = cpu_runnable_load(cpu_rq(i));
++			load = cpu_load(cpu_rq(i));
+ 			if (load < min_load) {
+ 				min_load = load;
+ 				least_loaded_cpu = i;
 -- 
 2.7.4
 
