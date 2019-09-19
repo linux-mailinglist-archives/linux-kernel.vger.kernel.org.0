@@ -2,192 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33A77B82DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:44:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7329DB82D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:43:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390272AbfISUoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 16:44:14 -0400
-Received: from mail-eopbgr750072.outbound.protection.outlook.com ([40.107.75.72]:52098
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387403AbfISUoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 16:44:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c22TfhQrtIb+HZzmDp3pTN0crKwVQTGOSg8K3poqYC5T+nlAdcjQpeho+tQo0jKMkkwRdrrlaUUvcW/k/q+mVcfQmwKZ9gf8L4i7APoOC6+uBBy59z6Nxer+wCKP9st0UEGUVev+SdHvMrJKuweaPrjgH0v9kxDLw44urMAI4bTY8ac8oBx8F3Ah4/+MQhPJy2UOfEyUJNvQbT/3g0xrN8IDfCYga2QyZQRxq8+ch7OzdhUEfTM7t0cyLdAQktcMaXQ+HtPy9U3hXSI9Lur9SnkRaxrMAfJdIVuW3r2Jx9ti+JC97sw7R+KQONI9h4OEANeao15qVT8XiE8flLGOzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZQrI1z4p3JMQVIYjr6tGQ4BaJaBk/f9OJtfvb0JRoo=;
- b=M8AA/n6KAZTe9qC0xYSXJGJ1La2WFKVpy7KXteFAQtURG7c3fDK0drDKYGwh/2pDwtVWEn7y4gGGyrZe8Qrl/Zx8geBJXgiJYCqvTA35KjLcaeWOImly3+t0YcZNXT0Zl+VwshlOYJmsbR1HtmqzDMCohEBLOKtsqiOwx+cZ2mZqndKd6azI6cx6VwegzQmRgY/E1yc3fim0FUoDH3N2L9WFb3/ujW6owUbBzcL136ZOSXPA3BP7Q5Mk+6JLhHeqRwQGy28Wsl7qj3dWS+vl7l8vJE979IO7Rbw4rWcGmvsPRl3K5Ky4/dXLLLKOfVZUtfMa1XclJvBAFpzvCj8LQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
- dmarc=permerror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HZQrI1z4p3JMQVIYjr6tGQ4BaJaBk/f9OJtfvb0JRoo=;
- b=A7dGL4la5HMFUVjpqFjbww29hvZzYw6OXySlkq7++CyWJNkaf87AH6eVaCw9lrl2TQ5y3n5vleohpU2krTe4/xlvyTAsH0GE9b6GDY8nHQL4S1+3fIHdEXnKuwwWAplvo0ayk/HzPs4X4I4qMtNCLZ7/n3U7oJ04HMgn8uLZDSY=
-Received: from MN2PR12CA0015.namprd12.prod.outlook.com (2603:10b6:208:a8::28)
- by MWHPR12MB1487.namprd12.prod.outlook.com (2603:10b6:301:3::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.18; Thu, 19 Sep
- 2019 20:44:09 +0000
-Received: from CO1NAM03FT044.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::209) by MN2PR12CA0015.outlook.office365.com
- (2603:10b6:208:a8::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.19 via Frontend
- Transport; Thu, 19 Sep 2019 20:44:09 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
- CO1NAM03FT044.mail.protection.outlook.com (10.152.81.108) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2284.20 via Frontend Transport; Thu, 19 Sep 2019 20:44:09 +0000
-Received: from totem.amd.com (10.180.168.240) by SATLEXCHOV01.amd.com
- (10.181.40.71) with Microsoft SMTP Server (TLS) id 14.3.389.1; Thu, 19 Sep
- 2019 15:44:06 -0500
-From:   Kim Phillips <kim.phillips@amd.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-CC:     <kim.phillips@amd.com>,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Jiri Olsa" <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Borislav Petkov <bp@suse.de>, Martin Liska <mliska@suse.cz>,
-        Luke Mujica <lukemujica@google.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
-Subject: [PATCH 5/5] perf list: specify metrics are to be used with -M
-Date:   Thu, 19 Sep 2019 15:43:06 -0500
-Message-ID: <20190919204306.12598-5-kim.phillips@amd.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919204306.12598-1-kim.phillips@amd.com>
-References: <20190919204306.12598-1-kim.phillips@amd.com>
+        id S1732099AbfISUnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 16:43:09 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:48544 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1730741AbfISUnJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 16:43:09 -0400
+Received: (qmail 8976 invoked by uid 2102); 19 Sep 2019 16:43:08 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 19 Sep 2019 16:43:08 -0400
+Date:   Thu, 19 Sep 2019 16:43:08 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     syzbot <syzbot+745b0dff8028f9488eba@syzkaller.appspotmail.com>
+cc:     andreyknvl@google.com, <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <miquel@df.uba.ar>, <rio500-users@lists.sourceforge.net>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: invalid-free in disconnect_rio (2)
+In-Reply-To: <0000000000004349550592ebfd2d@google.com>
+Message-ID: <Pine.LNX.4.44L0.1909191639240.6904-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(346002)(376002)(136003)(396003)(428003)(199004)(189003)(426003)(81166006)(81156014)(2616005)(4326008)(48376002)(7416002)(486006)(50226002)(476003)(446003)(11346002)(44832011)(126002)(16526019)(186003)(26005)(478600001)(70586007)(70206006)(8676002)(8936002)(7736002)(86362001)(336012)(316002)(2870700001)(76176011)(7696005)(51416003)(3846002)(2906002)(6116002)(50466002)(305945005)(36756003)(47776003)(54906003)(6916009)(5660300002)(53416004)(1076003)(356004);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR12MB1487;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0bb6bb04-d736-4c06-40a0-08d73d421eec
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MWHPR12MB1487;
-X-MS-TrafficTypeDiagnostic: MWHPR12MB1487:
-X-Microsoft-Antispam-PRVS: <MWHPR12MB1487D549AA5B86122F8FBB2287890@MWHPR12MB1487.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 016572D96D
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: Xg/wKLBaCSsQl26LI/+pirpLTajP8gPdnXKNT8y2P1lQzoT3WFcRd0eU62mLUJ8mobR1GRSzJQ+wmp5/Z6wMIXh19ZKA27GHun3pzPjjNOskndlOHvT6CKaFgzI/33IKfeBFTWVmMKNbIIjU01z7UXkZCfDlFYWyaDQMX7zHOK5EgfXIp7OfSRcFk5x9Zzd/tRNI/0ciJ2+JgX00p6gHCk8TEcUbN9bVLmU1p7stDxZ8qpV0MEuBEvoRR6h4FeLO4WVZxKRbMT8IMTM0oVDn+t8/JEh9iWKcf4axOw5eYvbg/vdvsT9XJunIUXUHijeBgGSSJSDdwDo51VT5u+hoexZX89WaGhjDv+e3QcFcGNaLWsF7Hge29nLTHac4tSEoMKnoQJgc1dxUHjzJCrjbWT4Fps4x+wDUb9+WoNTCjIE=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2019 20:44:09.0148
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bb6bb04-d736-4c06-40a0-08d73d421eec
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1487
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Output of 'perf list metrics' before:
+On Thu, 19 Sep 2019, syzbot wrote:
 
-  $ perf list metrics
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    e0bd8d79 usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17d6f31d600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8847e5384a16f66a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=745b0dff8028f9488eba
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1009f769600000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b1d4b1600000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+745b0dff8028f9488eba@syzkaller.appspotmail.com
+> 
+> usb 5-1: New USB device found, idVendor=0841, idProduct=0001,  
+> bcdDevice=c5.d0
+> usb 5-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 5-1: config 0 descriptor??
+> rio500 5-1:0.133: Second USB Rio at address 2 refused
+> rio500: probe of 5-1:0.133 failed with error -16
+> usb 3-1: USB disconnect, device number 2
+> ==================================================================
+> BUG: KASAN: double-free or invalid-free in disconnect_rio+0x12b/0x1b0  
+> drivers/usb/misc/rio500.c:525
 
-  List of pre-defined events (to be used in -e):
+All right, that was a pretty dumb mistake on my part.  Checking for 
+whether a device has already been registered needs to be part of the 
+critical section.
 
-  Metrics:
+Alan Stern
 
-    C2_Pkg_Residency
-         [C2 residency percent per package]
-  ...
+#syz test: https://github.com/google/kasan.git e0bd8d79
 
-This misleads the uninitiated user to try:
+ drivers/usb/misc/rio500.c |   34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
-  $ perf stat -e C2_Pkg_Residency
-
-which gets:
-
-  event syntax error: 'C2_Pkg_Residency'
-                       \___ parser error
-  Run 'perf list' for a list of valid events
-
-Explicitly clarify that metrics and metricgroups are meant to
-be used with -M, and correct the grammar for the -e equivalent
-statement.
-
-Output of 'perf list metrics' after:
-
-  $ perf list metrics
-
-  List of pre-defined events (to be used with -e):
-
-  Metrics (to be used with -M):
-
-    C2_Pkg_Residency
-         [C2 residency percent per package]
-  ...
-
-Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Martin Liska <mliska@suse.cz>
-Cc: Luke Mujica <lukemujica@google.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-perf-users@vger.kernel.org
----
- tools/perf/builtin-list.c     | 2 +-
- tools/perf/util/metricgroup.c | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-index 08e62ae9d37e..be8e878aa556 100644
---- a/tools/perf/builtin-list.c
-+++ b/tools/perf/builtin-list.c
-@@ -51,7 +51,7 @@ int cmd_list(int argc, const char **argv)
- 	setup_pager();
+Index: usb-devel/drivers/usb/misc/rio500.c
+===================================================================
+--- usb-devel.orig/drivers/usb/misc/rio500.c
++++ usb-devel/drivers/usb/misc/rio500.c
+@@ -454,36 +454,35 @@ static int probe_rio(struct usb_interfac
+ {
+ 	struct usb_device *dev = interface_to_usbdev(intf);
+ 	struct rio_usb_data *rio = &rio_instance;
+-	int retval = -ENOMEM;
+-	char *ibuf, *obuf;
++	int retval;
  
- 	if (!raw_dump && pager_in_use())
--		printf("\nList of pre-defined events (to be used in -e):\n\n");
-+		printf("\nList of pre-defined events (to be used with -e):\n\n");
- 
- 	if (argc == 0) {
- 		print_events(NULL, raw_dump, !desc_flag, long_desc_flag,
-diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
-index a7c0424dbda3..f116848be9f7 100644
---- a/tools/perf/util/metricgroup.c
-+++ b/tools/perf/util/metricgroup.c
-@@ -377,9 +377,10 @@ void metricgroup__print(bool metrics, bool metricgroups, char *filter,
++	mutex_lock(&rio500_mutex);
+ 	if (rio->present) {
+ 		dev_info(&intf->dev, "Second USB Rio at address %d refused\n", dev->devnum);
+-		return -EBUSY;
++		retval = -EBUSY;
++		goto err_present;
  	}
+ 	dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
++	rio->present = 1;
  
- 	if (metricgroups && !raw)
--		printf("\nMetric Groups:\n\n");
-+		printf("\nMetric Groups");
- 	else if (metrics && !raw)
--		printf("\nMetrics:\n\n");
-+		printf("\nMetrics");
-+	printf(" (to be used with -M):\n\n");
+-	obuf = kmalloc(OBUF_SIZE, GFP_KERNEL);
+-	if (!obuf) {
++	retval = -ENOMEM;
++	rio->obuf = kmalloc(OBUF_SIZE, GFP_KERNEL);
++	if (!rio->obuf) {
+ 		dev_err(&dev->dev,
+ 			"probe_rio: Not enough memory for the output buffer\n");
+ 		goto err_obuf;
+ 	}
+-	dev_dbg(&intf->dev, "obuf address: %p\n", obuf);
++	dev_dbg(&intf->dev, "obuf address: %p\n", rio->obuf);
  
- 	for (node = rb_first_cached(&groups.entries); node; node = next) {
- 		struct mep *me = container_of(node, struct mep, nd);
--- 
-2.23.0
+-	ibuf = kmalloc(IBUF_SIZE, GFP_KERNEL);
+-	if (!ibuf) {
++	rio->ibuf = kmalloc(IBUF_SIZE, GFP_KERNEL);
++	if (!rio->ibuf) {
+ 		dev_err(&dev->dev,
+ 			"probe_rio: Not enough memory for the input buffer\n");
+ 		goto err_ibuf;
+ 	}
+-	dev_dbg(&intf->dev, "ibuf address: %p\n", ibuf);
++	dev_dbg(&intf->dev, "ibuf address: %p\n", rio->ibuf);
+ 
+-	mutex_lock(&rio500_mutex);
+ 	rio->rio_dev = dev;
+-	rio->ibuf = ibuf;
+-	rio->obuf = obuf;
+-	rio->present = 1;
+ 	mutex_unlock(&rio500_mutex);
+ 
+ 	retval = usb_register_dev(intf, &usb_rio_class);
+@@ -498,11 +497,14 @@ static int probe_rio(struct usb_interfac
+ 
+  err_register:
+ 	mutex_lock(&rio500_mutex);
+-	rio->present = 0;
+-	mutex_unlock(&rio500_mutex);
++	rio->rio_dev = NULL;
++	kfree(rio->ibuf);
+  err_ibuf:
+-	kfree(obuf);
++	kfree(rio->obuf);
+  err_obuf:
++	rio->present = 0;
++ err_present:
++	mutex_unlock(&rio500_mutex);
+ 	return retval;
+ }
+ 
 
