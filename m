@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27780B876B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6779B877B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:37:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405116AbfISWGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:06:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43186 "EHLO mail.kernel.org"
+        id S2407091AbfISWg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:36:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405063AbfISWFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:05:54 -0400
+        id S2405075AbfISWF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:05:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E396D21920;
-        Thu, 19 Sep 2019 22:05:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C37A321920;
+        Thu, 19 Sep 2019 22:05:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930754;
-        bh=gD4UllbfZ6AEB9mEPmsWhkhD7I5khRQJyueK5GvjFEU=;
+        s=default; t=1568930757;
+        bh=uid3Os48d7nQhIFvTqDHrh3Vj11rA7fwL1JrzgyC0v8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TkjedJ9ph8sbt44xAKJ1VQ8IhBUz/L8UMCPLr8t6LhlOSFa4zdSNySDG07Bq1suCQ
-         Gpf1IvpAIj9YKAXBbWOaVQJjdndwjxyvHHsMiIfce6gavS+o0amo/jXatXMfXIKaXH
-         fGsi/DsMI5ho6oma/odIiJo4imo0d34aA+Hmdh18=
+        b=bGROXAVCElHbOaKkUZBemoazPM7VZQGNOXK0V7xtSGejqKTKK5j73MW43ZNGwTaT0
+         Tm03xnOj/ogHZcdEvY2YWrPDYZpXrWGyGat+Fv/P66t+Qz23/IVIWAM5XVSflls/Jf
+         biyIt9dgpXnbtSC2a4bhzYXlBvAlUBwKJ2t0S1H0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        William Tu <u9012063@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 04/21] ip6_gre: fix a dst leak in ip6erspan_tunnel_xmit
-Date:   Fri, 20 Sep 2019 00:03:05 +0200
-Message-Id: <20190919214701.367021508@linuxfoundation.org>
+        stable@vger.kernel.org, Li Shuang <shuali@redhat.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Davide Caratti <dcaratti@redhat.com>
+Subject: [PATCH 5.3 05/21] net/sched: fix race between deactivation and dequeue for NOLOCK qdisc
+Date:   Fri, 20 Sep 2019 00:03:06 +0200
+Message-Id: <20190919214701.605942243@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
 References: <20190919214657.842130855@linuxfoundation.org>
@@ -44,35 +45,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 28e486037747c2180470b77c290d4090ad42f259 ]
+[ Upstream commit d518d2ed8640c1cbbbb6f63939e3e65471817367 ]
 
-In ip6erspan_tunnel_xmit(), if the skb will not be sent out, it has to
-be freed on the tx_err path. Otherwise when deleting a netns, it would
-cause dst/dev to leak, and dmesg shows:
+The test implemented by some_qdisc_is_busy() is somewhat loosy for
+NOLOCK qdisc, as we may hit the following scenario:
 
-  unregister_netdevice: waiting for lo to become free. Usage count = 1
+CPU1						CPU2
+// in net_tx_action()
+clear_bit(__QDISC_STATE_SCHED...);
+						// in some_qdisc_is_busy()
+						val = (qdisc_is_running(q) ||
+						       test_bit(__QDISC_STATE_SCHED,
+								&q->state));
+						// here val is 0 but...
+qdisc_run(q)
+// ... CPU1 is going to run the qdisc next
 
-Fixes: ef7baf5e083c ("ip6_gre: add ip6 erspan collect_md mode")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: William Tu <u9012063@gmail.com>
+As a conseguence qdisc_run() in net_tx_action() can race with qdisc_reset()
+in dev_qdisc_reset(). Such race is not possible for !NOLOCK qdisc as
+both the above bit operations are under the root qdisc lock().
+
+After commit 021a17ed796b ("pfifo_fast: drop unneeded additional lock on dequeue")
+the race can cause use after free and/or null ptr dereference, but the root
+cause is likely older.
+
+This patch addresses the issue explicitly checking for deactivation under
+the seqlock for NOLOCK qdisc, so that the qdisc_run() in the critical
+scenario becomes a no-op.
+
+Note that the enqueue() op can still execute concurrently with dev_qdisc_reset(),
+but that is safe due to the skb_array() locking, and we can't avoid that
+for NOLOCK qdiscs.
+
+Fixes: 021a17ed796b ("pfifo_fast: drop unneeded additional lock on dequeue")
+Reported-by: Li Shuang <shuali@redhat.com>
+Reported-and-tested-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_gre.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/net/pkt_sched.h |    7 ++++++-
+ net/core/dev.c          |   16 ++++++++++------
+ 2 files changed, 16 insertions(+), 7 deletions(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -968,7 +968,7 @@ static netdev_tx_t ip6erspan_tunnel_xmit
- 		if (unlikely(!tun_info ||
- 			     !(tun_info->mode & IP_TUNNEL_INFO_TX) ||
- 			     ip_tunnel_info_af(tun_info) != AF_INET6))
--			return -EINVAL;
-+			goto tx_err;
+--- a/include/net/pkt_sched.h
++++ b/include/net/pkt_sched.h
+@@ -118,7 +118,12 @@ void __qdisc_run(struct Qdisc *q);
+ static inline void qdisc_run(struct Qdisc *q)
+ {
+ 	if (qdisc_run_begin(q)) {
+-		__qdisc_run(q);
++		/* NOLOCK qdisc must check 'state' under the qdisc seqlock
++		 * to avoid racing with dev_qdisc_reset()
++		 */
++		if (!(q->flags & TCQ_F_NOLOCK) ||
++		    likely(!test_bit(__QDISC_STATE_DEACTIVATED, &q->state)))
++			__qdisc_run(q);
+ 		qdisc_run_end(q);
+ 	}
+ }
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3467,18 +3467,22 @@ static inline int __dev_xmit_skb(struct
+ 	qdisc_calculate_pkt_len(skb, q);
  
- 		key = &tun_info->key;
- 		memset(&fl6, 0, sizeof(fl6));
+ 	if (q->flags & TCQ_F_NOLOCK) {
+-		if (unlikely(test_bit(__QDISC_STATE_DEACTIVATED, &q->state))) {
+-			__qdisc_drop(skb, &to_free);
+-			rc = NET_XMIT_DROP;
+-		} else if ((q->flags & TCQ_F_CAN_BYPASS) && q->empty &&
+-			   qdisc_run_begin(q)) {
++		if ((q->flags & TCQ_F_CAN_BYPASS) && q->empty &&
++		    qdisc_run_begin(q)) {
++			if (unlikely(test_bit(__QDISC_STATE_DEACTIVATED,
++					      &q->state))) {
++				__qdisc_drop(skb, &to_free);
++				rc = NET_XMIT_DROP;
++				goto end_run;
++			}
+ 			qdisc_bstats_cpu_update(q, skb);
+ 
++			rc = NET_XMIT_SUCCESS;
+ 			if (sch_direct_xmit(skb, q, dev, txq, NULL, true))
+ 				__qdisc_run(q);
+ 
++end_run:
+ 			qdisc_run_end(q);
+-			rc = NET_XMIT_SUCCESS;
+ 		} else {
+ 			rc = q->enqueue(skb, q, &to_free) & NET_XMIT_MASK;
+ 			qdisc_run(q);
 
 
