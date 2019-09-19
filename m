@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F69FB84CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0C3B852A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392254AbfISWOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:14:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53856 "EHLO mail.kernel.org"
+        id S2393904AbfISWSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:18:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392238AbfISWOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:14:21 -0400
+        id S2393884AbfISWSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:18:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A298721924;
-        Thu, 19 Sep 2019 22:14:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 627EA222BD;
+        Thu, 19 Sep 2019 22:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931260;
-        bh=fyQekP0mArh+zpjTNqJQ4onGKRm1HDxeaza/MX5kIQc=;
+        s=default; t=1568931495;
+        bh=cz8gFurWnBpxuSWFcIrMIt/2/3SrCjZwpN/ECWAf+vg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bknqK1fig21sK9/Z1GhjKLONQz1wZ/NfwIogqDJ50tplLq3gZIfOzomprQ6ftaHTg
-         FgiycOpikj9OMB1UDgYoDCErXbgpl/8LxhP+fgilk63x1tvv9WPolQnlUlS6j8+3sO
-         aYXpcTGbunzAFvQEw7Shts/mBLcvnH4sgdw4ombI=
+        b=EOHdaFdH4BZW/fAPlkStkDFcoS03pbIoG2M6nHmfZxOxxfdZdCihZ6zk6UVy8rhXq
+         rp/oQ+8rBxMRXyZcs2wwfFdudTioIdy1SCeTbXjJbRvAa5KKs+iN6eY73q6y2Refew
+         rRFDx03AF61HFQM4UMFsZoYcZZg9AZcsxTFQw0Ro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 61/79] amd-xgbe: Fix error path in xgbe_mod_init()
-Date:   Fri, 20 Sep 2019 00:03:46 +0200
-Message-Id: <20190919214812.996287097@linuxfoundation.org>
+Subject: [PATCH 4.14 32/59] NFSv2: Fix eof handling
+Date:   Fri, 20 Sep 2019 00:03:47 +0200
+Message-Id: <20190919214805.839751995@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit b6b4dc4c1fa7f1c99398e7dc85758049645e9588 ]
+[ Upstream commit 71affe9be45a5c60b9772e1b2701710712637274 ]
 
-In xgbe_mod_init(), we should do cleanup if some error occurs
+If we received a reply from the server with a zero length read and
+no error, then that implies we are at eof.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: efbaa828330a ("amd-xgbe: Add support to handle device renaming")
-Fixes: 47f164deab22 ("amd-xgbe: Add PCI device support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/amd/xgbe/xgbe-main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/nfs/proc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-main.c b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-index b41f23679a087..7ce9c69e9c44f 100644
---- a/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-+++ b/drivers/net/ethernet/amd/xgbe/xgbe-main.c
-@@ -469,13 +469,19 @@ static int __init xgbe_mod_init(void)
- 
- 	ret = xgbe_platform_init();
- 	if (ret)
--		return ret;
-+		goto err_platform_init;
- 
- 	ret = xgbe_pci_init();
- 	if (ret)
--		return ret;
-+		goto err_pci_init;
- 
+diff --git a/fs/nfs/proc.c b/fs/nfs/proc.c
+index f7fd9192d4bc8..73d1f7277e482 100644
+--- a/fs/nfs/proc.c
++++ b/fs/nfs/proc.c
+@@ -589,7 +589,8 @@ static int nfs_read_done(struct rpc_task *task, struct nfs_pgio_header *hdr)
+ 		/* Emulate the eof flag, which isn't normally needed in NFSv2
+ 		 * as it is guaranteed to always return the file attributes
+ 		 */
+-		if (hdr->args.offset + hdr->res.count >= hdr->res.fattr->size)
++		if ((hdr->res.count == 0 && hdr->args.count > 0) ||
++		    hdr->args.offset + hdr->res.count >= hdr->res.fattr->size)
+ 			hdr->res.eof = 1;
+ 	}
  	return 0;
-+
-+err_pci_init:
-+	xgbe_platform_exit();
-+err_platform_init:
-+	unregister_netdevice_notifier(&xgbe_netdev_notifier);
-+	return ret;
- }
- 
- static void __exit xgbe_mod_exit(void)
 -- 
 2.20.1
 
