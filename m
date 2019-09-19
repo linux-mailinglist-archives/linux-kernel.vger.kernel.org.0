@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 973FEB8543
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C36EB8544
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406647AbfISWTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:19:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60980 "EHLO mail.kernel.org"
+        id S2390293AbfISWTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:19:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404569AbfISWTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:19:09 -0400
+        id S2406641AbfISWTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C065D20678;
-        Thu, 19 Sep 2019 22:19:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69EDD21924;
+        Thu, 19 Sep 2019 22:19:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931548;
-        bh=dds7yyew+Q7DthIfAXV2F78bppU+YezfeIJzAnwPfVE=;
+        s=default; t=1568931550;
+        bh=UwPwWnQUujDomChcfZB29rRr6co/+JKonyQaGZ7csTM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ahA3G1TInNGoSiiTYOU1lAml3jlqu3AXeDIbEulZqDxo6lDP/CG346NdUlBeLmMpk
-         eGikHE1Pcoranb/K7OnnXopJPCrb5MigxrJgt8a2Bcnv2F3YQJhmySulJp/nDRwt+f
-         xvbYXCey8/gOujdKRSiRd8T/D/gh5HtrfsiYtM+I=
+        b=wogcyngxt3SauuYkliDdy2N7q13hzbfBpCxoIweVNIx8aFrIIa9WB67fZphAmeI7t
+         U+jtETxUbs4kO1fL8th3P5j/L2gkf+qSwpFArvhlh2oiKAo1LK+HilX9fqQ36lXcSw
+         boAP4+4Krvkqtd3mK2geP34zAJ1vXCp5xf2csABg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 26/74] crypto: talitos - check AES key size
-Date:   Fri, 20 Sep 2019 00:03:39 +0200
-Message-Id: <20190919214807.377976288@linuxfoundation.org>
+Subject: [PATCH 4.9 27/74] crypto: talitos - fix CTR alg blocksize
+Date:   Fri, 20 Sep 2019 00:03:40 +0200
+Message-Id: <20190919214807.478438004@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
 References: <20190919214800.519074117@linuxfoundation.org>
@@ -45,57 +45,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 1ba34e71e9e56ac29a52e0d42b6290f3dc5bfd90 upstream.
+commit b9a05b6041cb9810a291315569b2af0d63c3680a upstream.
 
-Although the HW accepts any size and silently truncates
-it to the correct length, the extra tests expects EINVAL
-to be returned when the key size is not valid.
+CTR has a blocksize of 1.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Fixes: 4de9d0b547b9 ("crypto: talitos - Add ablkcipher algorithms")
+Fixes: 5e75ae1b3cef ("crypto: talitos - add new crypto modes")
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/talitos.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/crypto/talitos.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/crypto/talitos.c
 +++ b/drivers/crypto/talitos.c
-@@ -1528,6 +1528,18 @@ static int ablkcipher_setkey(struct cryp
- 	return 0;
- }
- 
-+static int ablkcipher_aes_setkey(struct crypto_ablkcipher *cipher,
-+				  const u8 *key, unsigned int keylen)
-+{
-+	if (keylen == AES_KEYSIZE_128 || keylen == AES_KEYSIZE_192 ||
-+	    keylen == AES_KEYSIZE_256)
-+		return ablkcipher_setkey(cipher, key, keylen);
-+
-+	crypto_ablkcipher_set_flags(cipher, CRYPTO_TFM_RES_BAD_KEY_LEN);
-+
-+	return -EINVAL;
-+}
-+
- static void common_nonsnoop_unmap(struct device *dev,
- 				  struct talitos_edesc *edesc,
- 				  struct ablkcipher_request *areq)
-@@ -2621,6 +2633,7 @@ static struct talitos_alg_template drive
- 				.min_keysize = AES_MIN_KEY_SIZE,
- 				.max_keysize = AES_MAX_KEY_SIZE,
- 				.ivsize = AES_BLOCK_SIZE,
-+				.setkey = ablkcipher_aes_setkey,
- 			}
- 		},
- 		.desc_hdr_template = DESC_HDR_TYPE_COMMON_NONSNOOP_NO_AFEU |
-@@ -2638,6 +2651,7 @@ static struct talitos_alg_template drive
- 				.min_keysize = AES_MIN_KEY_SIZE,
- 				.max_keysize = AES_MAX_KEY_SIZE,
- 				.ivsize = AES_BLOCK_SIZE,
-+				.setkey = ablkcipher_aes_setkey,
- 			}
- 		},
- 		.desc_hdr_template = DESC_HDR_TYPE_AESU_CTR_NONSNOOP |
+@@ -2644,7 +2644,7 @@ static struct talitos_alg_template drive
+ 		.alg.crypto = {
+ 			.cra_name = "ctr(aes)",
+ 			.cra_driver_name = "ctr-aes-talitos",
+-			.cra_blocksize = AES_BLOCK_SIZE,
++			.cra_blocksize = 1,
+ 			.cra_flags = CRYPTO_ALG_TYPE_ABLKCIPHER |
+ 				     CRYPTO_ALG_ASYNC,
+ 			.cra_ablkcipher = {
 
 
