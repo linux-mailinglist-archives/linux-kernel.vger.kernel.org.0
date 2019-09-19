@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AC80B7674
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 11:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4024AB767C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 11:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388868AbfISJiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 05:38:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41278 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388528AbfISJiR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 05:38:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h7so2319428wrw.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 02:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6nXme50vIoJjH0UMqXkc64d0qIp6gNTAIlH2LyUHGog=;
-        b=DR+/dAJA+mXD4C0wvuRVF9pzBcCVjEtQwJPyj0zCVNJOEg401UobN787J4oOZpXKrQ
-         +f+BOYs73Nv0gtvuItI0CcFXErrIwgD2tJK62f1i45wv9RCUbJmyu/eb7r2oltv8xoxs
-         nkGKCv3Puy4/NxyG4dLBQeY4XnsgQ30JObE1PptvfkK6g34hPZXoNiPdoOJNj2H+SAqT
-         6q0qi8f070u2KK0YPBra8fiv3oI+NdT7gqUlXmRETx79C5sYCfTTqOJ8bWKaOZNXTIYN
-         bHzvNGiElGTzjKowEdl3Rl+vLF0xVSu+pqjb0xnqAyVEA9nXcnbgcV37IhBK19wOjXq1
-         ku6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6nXme50vIoJjH0UMqXkc64d0qIp6gNTAIlH2LyUHGog=;
-        b=p0Pu4RM7gWbtEdnNGNkLxd9R1H0477MyoOxBY4RiL3WG8vHtC9Cji1awhK/CpZA6+t
-         M13P3muTMKj1GWbOwxn0Nm92vLQMEsU1rtn83mxfe05bYSzbXr+ccAPu9BU1w+9ibwj8
-         n6W+FP0m4uSimI9uBS/A5/EX/hQ3n/VYbvCp7sWIUbeF2XH6MXdAHxXilrx3GXhNASJM
-         JCusLh3cwIwv5dnD6ZWKYr5fH6htwZSxez899LL+j5dvdiXnJDP6Y8S2VnzkA6BBb3T3
-         /g6nsJNRoTULQVJ6AOkZQBmkZpj7MOZCevfDI3bJpTXZ6nn29G4i9twSGW82aLoaDuvW
-         NPMg==
-X-Gm-Message-State: APjAAAXE+MCsNueE1iU4cuf74vM62t9HfgqFBDKxPT6obTV/igkUYGI8
-        2PzK1wYajgVyBMNwRMn3/lDhGQ==
-X-Google-Smtp-Source: APXvYqzosaotPCD9Wry9JaxxWXkNUfADDM/jre6SiXpPoSFtALqDV+2F8/XxHOyItGVvmyF72/tECA==
-X-Received: by 2002:adf:e443:: with SMTP id t3mr6338044wrm.181.1568885893871;
-        Thu, 19 Sep 2019 02:38:13 -0700 (PDT)
-Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id a10sm9997797wrv.64.2019.09.19.02.38.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 02:38:13 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] clk: meson: clk-pll: always enable a critical PLL when setting the rate
-Date:   Thu, 19 Sep 2019 11:38:09 +0200
-Message-Id: <20190919093809.21364-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190919093627.21245-1-narmstrong@baylibre.com>
-References: <20190919093627.21245-1-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2388895AbfISJkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 05:40:39 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:56704 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388084AbfISJki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 05:40:38 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 74DB11A00E7;
+        Thu, 19 Sep 2019 11:40:36 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AB9CB1A02DD;
+        Thu, 19 Sep 2019 11:40:33 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E5F60402D0;
+        Thu, 19 Sep 2019 17:40:29 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V2] gpio: mxc: Only getting second IRQ when there is more than one IRQ
+Date:   Thu, 19 Sep 2019 17:39:17 +0800
+Message-Id: <1568885957-2968-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure we always enable a PLL on a set_rate() when the PLL is
-flagged as critical.
+On some of i.MX SoCs like i.MX8QXP, there is ONLY one IRQ for each
+GPIO bank, so it is better to check the IRQ count before getting
+second IRQ to avoid below error message during probe:
 
-This fixes the case when the Amlogic G12A SYS_PLL gets disabled by the
-PSCI firmware when resuming from suspend-to-memory, in the case
-where the CPU was not clocked by the SYS_PLL, but by the fixed PLL
-fixed divisors.
-In this particular case, when changing the PLL rate, CCF doesn't handle
-the fact the PLL could have been disabled in the meantime and set_rate()
-only changes the rate and never enables it again.
+[    1.070908] gpio-mxc 5d080000.gpio: IRQ index 1 not found
+[    1.077420] gpio-mxc 5d090000.gpio: IRQ index 1 not found
+[    1.083766] gpio-mxc 5d0a0000.gpio: IRQ index 1 not found
+[    1.090122] gpio-mxc 5d0b0000.gpio: IRQ index 1 not found
+[    1.096470] gpio-mxc 5d0c0000.gpio: IRQ index 1 not found
+[    1.102804] gpio-mxc 5d0d0000.gpio: IRQ index 1 not found
+[    1.109144] gpio-mxc 5d0e0000.gpio: IRQ index 1 not found
+[    1.115475] gpio-mxc 5d0f0000.gpio: IRQ index 1 not found
 
-Fixes: d6e81845b7d9 ("clk: meson: clk-pll: check if the clock is already enabled')
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/clk/meson/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since V1:
+	- use local variable irq_count instead or err to avoid confusion.
+---
+ drivers/gpio/gpio-mxc.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index ddb1e5634739..8c5adccb7959 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -379,7 +379,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 7907a87..c77d474 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -411,6 +411,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct mxc_gpio_port *port;
++	int irq_count;
+ 	int irq_base;
+ 	int err;
  
- 	/* If the pll is stopped, bail out now */
--	if (!enabled)
-+	if (!(hw->init->flags & CLK_IS_CRITICAL) && !enabled)
- 		return 0;
+@@ -426,9 +427,15 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 	if (IS_ERR(port->base))
+ 		return PTR_ERR(port->base);
  
- 	if (meson_clk_pll_enable(hw)) {
+-	port->irq_high = platform_get_irq(pdev, 1);
+-	if (port->irq_high < 0)
+-		port->irq_high = 0;
++	irq_count = platform_irq_count(pdev);
++	if (irq_count < 0)
++		return irq_count;
++
++	if (irq_count > 1) {
++		port->irq_high = platform_get_irq(pdev, 1);
++		if (port->irq_high < 0)
++			port->irq_high = 0;
++	}
+ 
+ 	port->irq = platform_get_irq(pdev, 0);
+ 	if (port->irq < 0)
 -- 
-2.22.0
+2.7.4
 
