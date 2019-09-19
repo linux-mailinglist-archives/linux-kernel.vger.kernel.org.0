@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F72BB8690
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6908B868B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406179AbfISWaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:30:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57096 "EHLO mail.kernel.org"
+        id S2436591AbfISW3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:29:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404454AbfISWQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:16:33 -0400
+        id S2406417AbfISWRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:17:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F16D21924;
-        Thu, 19 Sep 2019 22:16:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6576217D6;
+        Thu, 19 Sep 2019 22:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931393;
-        bh=IvU46ufIgJ4CzMSuwftImTGxs1s1RzZcG7u/afqd5Yg=;
+        s=default; t=1568931423;
+        bh=mj3U4sRDS8aeanAqrXJcjO6Wq6Bt5NxJ+ZBR9ABdTa0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EZ4/UezjocxDpnG7H3fFJYuIN419fva7E2T/jZ1n91YOUFDNPB/0nnOTj07E61bZt
-         KUZJcp6fzLWDQRvgbb+/6Lg+w3qbvaMl+kc1KlL/6soXi756ok9SFS3y/OxJmqlY24
-         NUREHytfQVvcQa6EIGFCGB+P3xWUqg5KtX3tJUXk=
+        b=CfnnxvUnwtZcuLZ5E4QQ6RBCr2GEBQCEE1FQqm5lZJkiB4dtLNDmFMJviKedou2qo
+         0BMeveSZhn/0k88uLP4guGuW7oqeVYIHblVo2wBZ/AUVbXMdFepFB1AjKvUXpmRYrQ
+         uG1zUw8jctgtSYCsgvSV6qqtiXK1ZWILLPxKjcjw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prashant Malani <pmalani@chromium.org>,
-        Hayes Wang <hayeswang@realtek.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jan Stancek <jstancek@redhat.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 29/59] r8152: Set memory to all 0xFFs on failed reg reads
-Date:   Fri, 20 Sep 2019 00:03:44 +0200
-Message-Id: <20190919214805.598788860@linuxfoundation.org>
+Subject: [PATCH 4.14 33/59] NFSv2: Fix write regression
+Date:   Fri, 20 Sep 2019 00:03:48 +0200
+Message-Id: <20190919214805.896609158@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
 References: <20190919214755.852282682@linuxfoundation.org>
@@ -45,50 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prashant Malani <pmalani@chromium.org>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit f53a7ad189594a112167efaf17ea8d0242b5ac00 ]
+[ Upstream commit d33d4beb522987d1c305c12500796f9be3687dee ]
 
-get_registers() blindly copies the memory written to by the
-usb_control_msg() call even if the underlying urb failed.
+Ensure we update the write result count on success, since the
+RPC call itself does not do so.
 
-This could lead to junk register values being read by the driver, since
-some indirect callers of get_registers() ignore the return values. One
-example is:
-  ocp_read_dword() ignores the return value of generic_ocp_read(), which
-  calls get_registers().
-
-So, emulate PCI "Master Abort" behavior by setting the buffer to all
-0xFFs when usb_control_msg() fails.
-
-This patch is copied from the r8152 driver (v2.12.0) published by
-Realtek (www.realtek.com).
-
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
-Acked-by: Hayes Wang <hayeswang@realtek.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Jan Stancek <jstancek@redhat.com>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Tested-by: Jan Stancek <jstancek@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/r8152.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/nfs/proc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 66beff4d76467..455eec3c46942 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -787,8 +787,11 @@ int get_registers(struct r8152 *tp, u16 value, u16 index, u16 size, void *data)
- 	ret = usb_control_msg(tp->udev, usb_rcvctrlpipe(tp->udev, 0),
- 			      RTL8152_REQ_GET_REGS, RTL8152_REQT_READ,
- 			      value, index, tmp, size, 500);
-+	if (ret < 0)
-+		memset(data, 0xff, size);
-+	else
-+		memcpy(data, tmp, size);
+diff --git a/fs/nfs/proc.c b/fs/nfs/proc.c
+index 73d1f7277e482..eff93315572e7 100644
+--- a/fs/nfs/proc.c
++++ b/fs/nfs/proc.c
+@@ -611,8 +611,10 @@ static int nfs_proc_pgio_rpc_prepare(struct rpc_task *task,
  
--	memcpy(data, tmp, size);
- 	kfree(tmp);
+ static int nfs_write_done(struct rpc_task *task, struct nfs_pgio_header *hdr)
+ {
+-	if (task->tk_status >= 0)
++	if (task->tk_status >= 0) {
++		hdr->res.count = hdr->args.count;
+ 		nfs_writeback_update_inode(hdr);
++	}
+ 	return 0;
+ }
  
- 	return ret;
 -- 
 2.20.1
 
