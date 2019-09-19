@@ -2,38 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2E0B8549
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EA2B84C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392802AbfISWTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:19:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33166 "EHLO mail.kernel.org"
+        id S2392242AbfISWOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392760AbfISWT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:19:28 -0400
+        id S2392166AbfISWOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:14:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 107C621924;
-        Thu, 19 Sep 2019 22:19:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE723218AF;
+        Thu, 19 Sep 2019 22:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931567;
-        bh=1JWXgRogTJAd1INSvWFNUJy3p0qKjgwc8OowBdOpFPg=;
+        s=default; t=1568931257;
+        bh=vhzAx/ndFW8mYkIEcffV/Gghf+F3CC60IEG+z+dWDVs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vlTS96aDkMehrCpNqB0s8WNdmuvIJHrfKwOiyHeAoyxg3ov4FOFsgKLwthmR2BHCv
-         4Cgw0jr0pTrd+43VIFxqz69A2v2Jad7J5aX1KKydxqEmrvR7qyZCt1YU+0cGueRBUN
-         EEKkuvMntMntFgwc/0G3it1K+no85GnvyunVh2gU=
+        b=KgUHmv2J5SIYZfxDcHW8kvFFekqJOsReTpFwOFe1Fot/BhAWusl8+nY/KGaAlr7Ro
+         bPKV4OB7F5VUxjlUxYxWMiEDp0IjjIt37t3hqzMejCpjitGHwuMkpgPooInnH8U6Ii
+         m3htMJcXS60+CpffwU6mntpId3WtZMBTy0jiat8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>
-Subject: [PATCH 4.9 32/74] drm/mediatek: mtk_drm_drv.c: Add of_node_put() before goto
+        stable@vger.kernel.org, Kim Phillips <kim.phillips@amd.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Borislav Petkov" <bp@alien8.de>,
+        Stephane Eranian <eranian@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 60/79] perf/x86/amd/ibs: Fix sample bias for dispatched micro-ops
 Date:   Fri, 20 Sep 2019 00:03:45 +0200
-Message-Id: <20190919214808.152703553@linuxfoundation.org>
+Message-Id: <20190919214812.890617076@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,44 +52,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nishka Dasgupta <nishkadg.linux@gmail.com>
+From: Kim Phillips <kim.phillips@amd.com>
 
-commit 165d42c012be69900f0e2f8545626cb9e7d4a832 upstream.
+[ Upstream commit 0f4cd769c410e2285a4e9873a684d90423f03090 ]
 
-Each iteration of for_each_child_of_node puts the previous
-node, but in the case of a goto from the middle of the loop, there is
-no put, thus causing a memory leak. Hence add an of_node_put before the
-goto in two places.
-Issue found with Coccinelle.
+When counting dispatched micro-ops with cnt_ctl=1, in order to prevent
+sample bias, IBS hardware preloads the least significant 7 bits of
+current count (IbsOpCurCnt) with random values, such that, after the
+interrupt is handled and counting resumes, the next sample taken
+will be slightly perturbed.
 
-Fixes: 119f5173628a (drm/mediatek: Add DRM Driver for Mediatek SoC MT8173)
+The current count bitfield is in the IBS execution control h/w register,
+alongside the maximum count field.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Currently, the IBS driver writes that register with the maximum count,
+leaving zeroes to fill the current count field, thereby overwriting
+the random bits the hardware preloaded for itself.
 
+Fix the driver to actually retain and carry those random bits from the
+read of the IBS control register, through to its write, instead of
+overwriting the lower current count bits with zeroes.
+
+Tested with:
+
+perf record -c 100001 -e ibs_op/cnt_ctl=1/pp -a -C 0 taskset -c 0 <workload>
+
+'perf annotate' output before:
+
+ 15.70  65:   addsd     %xmm0,%xmm1
+ 17.30        add       $0x1,%rax
+ 15.88        cmp       %rdx,%rax
+              je        82
+ 17.32  72:   test      $0x1,%al
+              jne       7c
+  7.52        movapd    %xmm1,%xmm0
+  5.90        jmp       65
+  8.23  7c:   sqrtsd    %xmm1,%xmm0
+ 12.15        jmp       65
+
+'perf annotate' output after:
+
+ 16.63  65:   addsd     %xmm0,%xmm1
+ 16.82        add       $0x1,%rax
+ 16.81        cmp       %rdx,%rax
+              je        82
+ 16.69  72:   test      $0x1,%al
+              jne       7c
+  8.30        movapd    %xmm1,%xmm0
+  8.13        jmp       65
+  8.24  7c:   sqrtsd    %xmm1,%xmm0
+  8.39        jmp       65
+
+Tested on Family 15h and 17h machines.
+
+Machines prior to family 10h Rev. C don't have the RDWROPCNT capability,
+and have the IbsOpCurCnt bitfield reserved, so this patch shouldn't
+affect their operation.
+
+It is unknown why commit db98c5faf8cb ("perf/x86: Implement 64-bit
+counter support for IBS") ignored the lower 4 bits of the IbsOpCurCnt
+field; the number of preloaded random bits has always been 7, AFAICT.
+
+Signed-off-by: Kim Phillips <kim.phillips@amd.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: "Arnaldo Carvalho de Melo" <acme@kernel.org>
+Cc: <x86@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Borislav Petkov" <bp@alien8.de>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: "Namhyung Kim" <namhyung@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/20190826195730.30614-1-kim.phillips@amd.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/events/amd/ibs.c         | 13 ++++++++++---
+ arch/x86/include/asm/perf_event.h | 12 ++++++++----
+ 2 files changed, 18 insertions(+), 7 deletions(-)
 
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -423,12 +423,15 @@ static int mtk_drm_probe(struct platform
- 			comp = devm_kzalloc(dev, sizeof(*comp), GFP_KERNEL);
- 			if (!comp) {
- 				ret = -ENOMEM;
-+				of_node_put(node);
- 				goto err_node;
- 			}
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index d50bb4dc06503..80c6d84cad67b 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -672,10 +672,17 @@ fail:
  
- 			ret = mtk_ddp_comp_init(dev, node, comp, comp_id, NULL);
--			if (ret)
-+			if (ret) {
-+				of_node_put(node);
- 				goto err_node;
-+			}
+ 	throttle = perf_event_overflow(event, &data, &regs);
+ out:
+-	if (throttle)
++	if (throttle) {
+ 		perf_ibs_stop(event, 0);
+-	else
+-		perf_ibs_enable_event(perf_ibs, hwc, period >> 4);
++	} else {
++		period >>= 4;
++
++		if ((ibs_caps & IBS_CAPS_RDWROPCNT) &&
++		    (*config & IBS_OP_CNT_CTL))
++			period |= *config & IBS_OP_CUR_CNT_RAND;
++
++		perf_ibs_enable_event(perf_ibs, hwc, period);
++	}
  
- 			private->ddp_comp[comp_id] = comp;
- 		}
+ 	perf_event_update_userpage(event);
+ 
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 78241b736f2a0..f6c4915a863e0 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -209,16 +209,20 @@ struct x86_pmu_capability {
+ #define IBSCTL_LVT_OFFSET_VALID		(1ULL<<8)
+ #define IBSCTL_LVT_OFFSET_MASK		0x0F
+ 
+-/* ibs fetch bits/masks */
++/* IBS fetch bits/masks */
+ #define IBS_FETCH_RAND_EN	(1ULL<<57)
+ #define IBS_FETCH_VAL		(1ULL<<49)
+ #define IBS_FETCH_ENABLE	(1ULL<<48)
+ #define IBS_FETCH_CNT		0xFFFF0000ULL
+ #define IBS_FETCH_MAX_CNT	0x0000FFFFULL
+ 
+-/* ibs op bits/masks */
+-/* lower 4 bits of the current count are ignored: */
+-#define IBS_OP_CUR_CNT		(0xFFFF0ULL<<32)
++/*
++ * IBS op bits/masks
++ * The lower 7 bits of the current count are random bits
++ * preloaded by hardware and ignored in software
++ */
++#define IBS_OP_CUR_CNT		(0xFFF80ULL<<32)
++#define IBS_OP_CUR_CNT_RAND	(0x0007FULL<<32)
+ #define IBS_OP_CNT_CTL		(1ULL<<19)
+ #define IBS_OP_VAL		(1ULL<<18)
+ #define IBS_OP_ENABLE		(1ULL<<17)
+-- 
+2.20.1
+
 
 
