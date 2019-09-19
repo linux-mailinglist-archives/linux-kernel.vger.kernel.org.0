@@ -2,86 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0B5DB70C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 03:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2DEB70CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 03:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387783AbfISB0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 21:26:25 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39001 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387767AbfISB0Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 21:26:25 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so1266228wrj.6
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 18:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fq+RpFCn2McWuMg3C5OlmcYZSlU9P8enqlr/h4VhVAg=;
-        b=AvugnqvMBEU2/e4eEo1SBrNXBDNXJgxlc+8OulchbPWmdEAonz0hLIBLOVLlL9G+q6
-         F0DT9/X4lY65BMyqV6XI7DiNNDQF9bm1hFV4roW8v/5Q4SFZEtwjpk+X0dSaeb5g6rAF
-         NBDKiBJ8in6K9vJGs3YiBBKvICzIsloJLgxrz0dmtAuExPQyOEZ7wkXAaN37jOvsH3Ct
-         MfqejGKk9X4FVBLosvLumd0vUakjx3eG2Wco6D2tThQL6rsG02giNV2o62u3WzZqDQeq
-         Js3I5VuDMmddVuCG+N2ye4LcOj/X1bocqfx84VXMYFO5KItYOd06OB8sI9DVZdp8Dfvf
-         1Ejg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fq+RpFCn2McWuMg3C5OlmcYZSlU9P8enqlr/h4VhVAg=;
-        b=ECPvc5M96HiSHTudQijuJB3fZMPMugDuE9lZToG/CIX8c+jU5piXWeu1N2aSdk30A9
-         y7U8uUfkso19gquX2ZTf6WhfMc1OkKoJlZ4XjUZNYzBC2PeZ00UFYDX9at0GHH8T39tR
-         fPQuojA8eYUDLbjtgQjC/9u/QqqXbmsbR3TfZjLZ2KcFlI+bPKJnv7jXG0keF7JOzStI
-         j081wHnQckk2JIxKmvIq9PjpQOUzOUMj04hjphw6G1PNCtYCy/GOSEx39IhfboFOL6sV
-         CnDwMa1HogmwzdqZA1v+LeB1jNGxZjhWtAiXpcw87ZSo+DeVSu7OoJ7XL6u0Yp80Aas6
-         c8tw==
-X-Gm-Message-State: APjAAAVfj7PY4x2z1k0VzQCI1j5gcZ6ftfkrsZZ6iFYjQtxfEH4gSj7j
-        Bk4K2TlPLBbJN1xCkwm451c=
-X-Google-Smtp-Source: APXvYqycZBvXFbe7Rt4Loa6FLejQrVV/zV6+SXTUHjTMG5YBdUo3RXSkmobHDRFcivZ/nknGK8MI3w==
-X-Received: by 2002:adf:9083:: with SMTP id i3mr5434855wri.310.1568856382862;
-        Wed, 18 Sep 2019 18:26:22 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id f13sm4400000wmj.17.2019.09.18.18.26.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2019 18:26:22 -0700 (PDT)
-Date:   Wed, 18 Sep 2019 18:26:20 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        David Bolvansky <david.bolvansky@gmail.com>
-Subject: Re: [PATCH] hugetlbfs: hugetlb_fault_mutex_hash cleanup
-Message-ID: <20190919012620.GA72561@archlinux-threadripper>
-References: <20190919011847.18400-1-mike.kravetz@oracle.com>
+        id S2387845AbfISB0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 21:26:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387790AbfISB01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 21:26:27 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75DFE21929;
+        Thu, 19 Sep 2019 01:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568856387;
+        bh=ZfiDspvJOuCGtSRwcP0HLJfYq04A5tt/6W88lsnxT34=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=r33y8fA4h5SG6PL6g15ar+nL6jQ3x3Je6k68k1xRemGhL4gJUzZStGUrJKsAt1jwa
+         4MuQ+8PmtsTR2e/ojhEYnO9nlmlst8hccvrISWUyESK0cj5q3FIVkPKHDo/+4MbqmD
+         +7Oi9/6lic26m7OgBRRIODrv7Dl6bdiWya07SYgY=
+Subject: Re: [PATCH 4.14 00/45] 4.14.145-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190918061222.854132812@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <330b4273-2ca1-b437-0ff0-c458ba31f88b@kernel.org>
+Date:   Wed, 18 Sep 2019 19:26:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190919011847.18400-1-mike.kravetz@oracle.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190918061222.854132812@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 06:18:47PM -0700, Mike Kravetz wrote:
-> A new clang diagnostic (-Wsizeof-array-div) warns about the calculation
-> to determine the number of u32's in an array of unsigned longs. Suppress
-> warning by adding parentheses.
+On 9/18/19 12:18 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.145 release.
+> There are 45 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> While looking at the above issue, noticed that the 'address' parameter
-> to hugetlb_fault_mutex_hash is no longer used. So, remove it from the
-> definition and all callers.
+> Responses should be made by Fri 20 Sep 2019 06:09:47 AM UTC.
+> Anything received after that time might be too late.
 > 
-> No functional change.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.145-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
 > 
-> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+> thanks,
+> 
+> greg k-h
+> 
 
-Thanks for the patch!
+Compiled and booted on my test system. No dmesg regressions.
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+thanks,
+-- Shuah
