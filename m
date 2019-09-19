@@ -2,56 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC591B6FFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 02:20:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D595B700B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 02:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387578AbfISAUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 20:20:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48948 "EHLO mail.kernel.org"
+        id S1730747AbfISAXf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 20:23:35 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59765 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387406AbfISAUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 20:20:15 -0400
-Subject: Re: [GIT PULL] fs-verity for 5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568852415;
-        bh=Kgnmdq9f4tydvkTaAzsFlsaT7RZYMwPGjy6eZyrv2lg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=d4TYbWotbCsYwIReC6TqfGLqYzZ83KC56t979ih9FDQTPr7IfbE0f5p7dLiPIIOqg
-         NCKzukI+2Hka2uUCA4sOvoKLK31ijYnyt5jdN+CsHO4N1CyMWrm8exGDvlc/q6deD6
-         cUVAtOMjNAHxacwwUFywbfjnrJ7WSFDHxHPCpjVA=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190916052053.GB8269@sol.localdomain>
-References: <20190916052053.GB8269@sol.localdomain>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190916052053.GB8269@sol.localdomain>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git
- tags/fsverity-for-linus
-X-PR-Tracked-Commit-Id: 95ae251fe82838b85c6d37e5a1775006e2a42ae0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f60c55a94e1d127186566f06294f2dadd966e9b4
-Message-Id: <156885241510.15091.4135567870760674350.pr-tracker-bot@kernel.org>
-Date:   Thu, 19 Sep 2019 00:20:15 +0000
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
+        id S1728516AbfISAXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 20:23:35 -0400
+Received: by ozlabs.org (Postfix, from userid 1003)
+        id 46YcyX5cBKz9sNf; Thu, 19 Sep 2019 10:23:32 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+        t=1568852612; bh=cu6MqzQ+Jjg6jBgAMHqPfsdtuEEEpXwelfg4ezvXdsY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nt4NYXLQPNaOq5EaXwA6J6CUQqtE4sYHQnvkHZSOhCjqqWJ01CdAB4tfDaD7elmpm
+         n8+n+jy0vrYBX7bhjUejT61fggDfeR0cgCIUnTuqNkpIC0IXNlLj5BQyxdJITIPcBR
+         mnSFYsZrVTQqPYzswqowK1En17cvpVKAST5slijgNdV7bpZykh7hDKsvP4WJVNLb/9
+         Ol1XIqjO/OL2LCmIx/vGzkgBlQMKHpTE8RacF1q2tw33WNlisVf3Zmdf+cisE74bOX
+         ghUTBd1CuYuzqzcB8Zaw4KJe2JcyTf9IC7kOu6x2wrhVjXAyrW69MyKAvq+7wse73h
+         GRj1zPawfFkIQ==
+Date:   Thu, 19 Sep 2019 10:22:42 +1000
+From:   Paul Mackerras <paulus@ozlabs.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/13] KVM: Provide common implementation for generic
+ dirty log functions
+Message-ID: <20190919002242.GA19503@blackberry>
+References: <20190911185038.24341-1-sean.j.christopherson@intel.com>
+ <20190911185038.24341-11-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911185038.24341-11-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 15 Sep 2019 22:20:53 -0700:
+On Wed, Sep 11, 2019 at 11:50:35AM -0700, Sean Christopherson wrote:
+> Move the implementations of KVM_GET_DIRTY_LOG and KVM_CLEAR_DIRTY_LOG
+> for CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT into common KVM code.
+> The arch specific implemenations are extremely similar, differing
+> only in whether the dirty log needs to be sync'd from hardware (x86)
+> and how the TLBs are flushed.  Add new arch hooks to handle sync
+> and TLB flush; the sync will also be used for non-generic dirty log
+> support in a future patch (s390).
+> 
+> The ulterior motive for providing a common implementation is to
+> eliminate the dependency between arch and common code with respect to
+> the memslot referenced by the dirty log, i.e. to make it obvious in the
+> code that the validity of the memslot is guaranteed, as a future patch
+> will rework memslot handling such that id_to_memslot() can return NULL.
 
-> git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
+I notice you add empty definitions of kvm_arch_sync_dirty_log() for
+PPC, both Book E and Book 3S.  Given that PPC doesn't select
+CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT, why is this necessary?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f60c55a94e1d127186566f06294f2dadd966e9b4
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Paul.
