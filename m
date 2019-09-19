@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1744B84E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E91D9B8537
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406092AbfISWPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:15:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54982 "EHLO mail.kernel.org"
+        id S2406591AbfISWSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:18:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406064AbfISWPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:15:08 -0400
+        id S2406583AbfISWSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:18:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76A6821927;
-        Thu, 19 Sep 2019 22:15:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C5EF21927;
+        Thu, 19 Sep 2019 22:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931307;
-        bh=h3bcOGtPLUCBSlVlXbcseSnPv5QaAVKpkn0I2pFFNnw=;
+        s=default; t=1568931523;
+        bh=NZ6dPLLpU+4968Do+DohxPC8whQXj0lNh8egrTRG3KY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y60t3lzEqmyh7RPeWOD9e9s9O/tJFHIpJJkRFQRQZlTuotLBX5W7z8xkyLWparWEd
-         FYriKQh2hSO4ynuSMx13mu6hS7RdvSjtWHoG2n0lYdLztrO6gyDyaEbg8+ryk/vqHY
-         wCAU//Zvthp6/OCZBOVRiSscR0Ft74BA4sIcxvL0=
+        b=xrFIotOocA6f7pUA4ly7wkLsKW1C900DI2u98Hidqscm0yi0JRpJPVZDNeC7DIN2X
+         p5NMyBXdEaXlvIFpFOtnIFNjmPPjPDBPqopbiQg/ETESDj7QLwxr4vJcq4opREh8Qj
+         iPewKSLUwpoSLc5H8KPiAwOYpjeFJay8SF3c7+Uo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, alan@linux.intel.com,
-        bp@alien8.de, cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        rahul.tanwar@intel.com, rppt@linux.ibm.com, tony.luck@intel.com,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 46/79] x86/apic: Fix arch_dynirq_lower_bound() bug for DT enabled machines
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Thomas Huth <thuth@redhat.com>
+Subject: [PATCH 4.9 18/74] KVM: s390: Do not leak kernel stack data in the KVM_S390_INTERRUPT ioctl
 Date:   Fri, 20 Sep 2019 00:03:31 +0200
-Message-Id: <20190919214811.667982823@linuxfoundation.org>
+Message-Id: <20190919214806.430318601@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,71 +45,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Thomas Huth <thuth@redhat.com>
 
-[ Upstream commit 3e5bedc2c258341702ddffbd7688c5e6eb01eafa ]
+commit 53936b5bf35e140ae27e4bbf0447a61063f400da upstream.
 
-Rahul Tanwar reported the following bug on DT systems:
+When the userspace program runs the KVM_S390_INTERRUPT ioctl to inject
+an interrupt, we convert them from the legacy struct kvm_s390_interrupt
+to the new struct kvm_s390_irq via the s390int_to_s390irq() function.
+However, this function does not take care of all types of interrupts
+that we can inject into the guest later (see do_inject_vcpu()). Since we
+do not clear out the s390irq values before calling s390int_to_s390irq(),
+there is a chance that we copy random data from the kernel stack which
+could be leaked to the userspace later.
 
-> 'ioapic_dynirq_base' contains the virtual IRQ base number. Presently, it is
-> updated to the end of hardware IRQ numbers but this is done only when IOAPIC
-> configuration type is IOAPIC_DOMAIN_LEGACY or IOAPIC_DOMAIN_STRICT. There is
-> a third type IOAPIC_DOMAIN_DYNAMIC which applies when IOAPIC configuration
-> comes from devicetree.
->
-> See dtb_add_ioapic() in arch/x86/kernel/devicetree.c
->
-> In case of IOAPIC_DOMAIN_DYNAMIC (DT/OF based system), 'ioapic_dynirq_base'
-> remains to zero initialized value. This means that for OF based systems,
-> virtual IRQ base will get set to zero.
+Specifically, the problem exists with the KVM_S390_INT_PFAULT_INIT
+interrupt: s390int_to_s390irq() does not handle it, and the function
+__inject_pfault_init() later copies irq->u.ext which contains the
+random kernel stack data. This data can then be leaked either to
+the guest memory in __deliver_pfault_init(), or the userspace might
+retrieve it directly with the KVM_S390_GET_IRQ_STATE ioctl.
 
-Such systems will very likely not even boot.
+Fix it by handling that interrupt type in s390int_to_s390irq(), too,
+and by making sure that the s390irq struct is properly pre-initialized.
+And while we're at it, make sure that s390int_to_s390irq() now
+directly returns -EINVAL for unknown interrupt types, so that we
+immediately get a proper error code in case we add more interrupt
+types to do_inject_vcpu() without updating s390int_to_s390irq()
+sometime in the future.
 
-For DT enabled machines ioapic_dynirq_base is irrelevant and not
-updated, so simply map the IRQ base 1:1 instead.
+Cc: stable@vger.kernel.org
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+Link: https://lore.kernel.org/kvm/20190912115438.25761-1-thuth@redhat.com
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Reported-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Tested-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Tested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: alan@linux.intel.com
-Cc: bp@alien8.de
-Cc: cheol.yong.kim@intel.com
-Cc: qi-ming.wu@intel.com
-Cc: rahul.tanwar@intel.com
-Cc: rppt@linux.ibm.com
-Cc: tony.luck@intel.com
-Link: http://lkml.kernel.org/r/20190821081330.1187-1-rahul.tanwar@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/io_apic.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/s390/kvm/interrupt.c |   10 ++++++++++
+ arch/s390/kvm/kvm-s390.c  |    2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
-index 4077e309e5c4c..ab22eded61d25 100644
---- a/arch/x86/kernel/apic/io_apic.c
-+++ b/arch/x86/kernel/apic/io_apic.c
-@@ -2432,7 +2432,13 @@ unsigned int arch_dynirq_lower_bound(unsigned int from)
- 	 * dmar_alloc_hwirq() may be called before setup_IO_APIC(), so use
- 	 * gsi_top if ioapic_dynirq_base hasn't been initialized yet.
- 	 */
--	return ioapic_initialized ? ioapic_dynirq_base : gsi_top;
-+	if (!ioapic_initialized)
-+		return gsi_top;
-+	/*
-+	 * For DT enabled machines ioapic_dynirq_base is irrelevant and not
-+	 * updated. So simply return @from if ioapic_dynirq_base == 0.
-+	 */
-+	return ioapic_dynirq_base ? : from;
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -1652,6 +1652,16 @@ int s390int_to_s390irq(struct kvm_s390_i
+ 	case KVM_S390_MCHK:
+ 		irq->u.mchk.mcic = s390int->parm64;
+ 		break;
++	case KVM_S390_INT_PFAULT_INIT:
++		irq->u.ext.ext_params = s390int->parm;
++		irq->u.ext.ext_params2 = s390int->parm64;
++		break;
++	case KVM_S390_RESTART:
++	case KVM_S390_INT_CLOCK_COMP:
++	case KVM_S390_INT_CPU_TIMER:
++		break;
++	default:
++		return -EINVAL;
+ 	}
+ 	return 0;
  }
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -3105,7 +3105,7 @@ long kvm_arch_vcpu_ioctl(struct file *fi
+ 	}
+ 	case KVM_S390_INTERRUPT: {
+ 		struct kvm_s390_interrupt s390int;
+-		struct kvm_s390_irq s390irq;
++		struct kvm_s390_irq s390irq = {};
  
- #ifdef CONFIG_X86_32
--- 
-2.20.1
-
+ 		r = -EFAULT;
+ 		if (copy_from_user(&s390int, argp, sizeof(s390int)))
 
 
