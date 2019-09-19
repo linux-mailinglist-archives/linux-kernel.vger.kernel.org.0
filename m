@@ -2,154 +2,338 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1392CB8787
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3919B878C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392135AbfISWpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:45:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729256AbfISWpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:45:18 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55D9A208C0;
-        Thu, 19 Sep 2019 22:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568933116;
-        bh=9t4m24bCa6On3TwKiyttvShF+09sL/iPY+usUt9nDRY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=L1MCyUBUYqaktX6FTVjUSNaPw7RSU2Tiv1KzBg2kLnqi/snozRyxJtZomRBGOWCFA
-         iBibJbVhzM6fgetGFBqOrBSwi07r9RgDXN7nmdPrxSw91FEQlVvWbNsXhW078tIL0N
-         ORYO8CDP0V/L/e0DLiLb3kHgS2+YlhVT4mSIiSzA=
-Date:   Fri, 20 Sep 2019 00:45:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Murali Nalajala <mnalajal@codeaurora.org>, rafael@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] base: soc: Export soc_device_to_device API
-Message-ID: <20190919224514.GA447028@kroah.com>
-References: <1568927624-13682-1-git-send-email-mnalajal@codeaurora.org>
- <20190919213203.GA395325@kroah.com>
- <20190919215300.GC1418@minitux>
- <20190919215836.GA426988@kroah.com>
- <20190919221456.GA63675@minitux>
- <20190919222525.GA445429@kroah.com>
- <20190919224017.GB63675@minitux>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190919224017.GB63675@minitux>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2393409AbfISWpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:45:54 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37900 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392137AbfISWpy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:45:54 -0400
+Received: by mail-ot1-f66.google.com with SMTP id e11so4580871otl.5;
+        Thu, 19 Sep 2019 15:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id;
+        bh=IAWauUnAqsTRSrfy63qmEZbpdzHCy9CCjiwO2vbS/QM=;
+        b=lCgIPt2b64Dq9Q8n7tz/AJ3m6JY5Y6SsTVjbtXIw3x9djKJAIR0LvvENfbu4ufSy67
+         3WuzAkGyDaFRFoCqA+0Vi8C/20KWDlUuq0kaMbYzu+S+POSxZlZQx5JvvbwEgTYA+J9W
+         LNdtp8XAq/BeelTbFuJJARUVHWpMT7yEtU7w1QLCuQgNMISdRIigESQLvafmStaHi7t+
+         M5eS9+8t/fzpLwCkYbB5hR5afgEPgQLc8rs/mMfvh7UubOAlUS51sIy7+7Sl59BQfC7G
+         WPvWzlUB8KMaZkgsYhuPmhnhPLrukQFRkhSajVPjyZIec2fB/o5y6fNFUU6SoVEaCqo8
+         0thQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=IAWauUnAqsTRSrfy63qmEZbpdzHCy9CCjiwO2vbS/QM=;
+        b=ZgGxHeuQsmjG7b8g5NJhNeXIuzXZfeMsY6qv79NH75MI/oqD/GpNcOH1HZWzLgoS02
+         +cYe+ZAivbh9H8RhtYm99JmXdOAG5divNe9oUL1gaMDb/1Bm7lFXOSYruG+KvSczCcOW
+         lRRzHTUQmkc6nU1cxlnP61lznyKOi6ijTHl0V/tmmLsUqqD7iVU5QDAsoWMFsrp+1jJn
+         A10TqFnDnrzYWmyax4tco1c2KzxmaoS8bcu6UKKm0L64teRmP4lRbATgqN4SxruE6Xhj
+         qXAX+/4Dx/O77tmtTW+obTSTRDiZ2zTVDoq9h3Xt6t2XbX2IzGA50fZ1s/3F3GzfHcFT
+         DVQg==
+X-Gm-Message-State: APjAAAXXKx6rkJSWc148ADfpjGSAV8uYniEsTWf7suFzU/BaWNH+9Oo4
+        3Mmdj4AT751yGpv/NaoUlt8=
+X-Google-Smtp-Source: APXvYqz9vb0btbVc/NK+VQLC+3CkcFHaI4U8OhgI81icjUC/TSYPjywZOdRyTW4NtS+/lcKR4VRcYA==
+X-Received: by 2002:a9d:6190:: with SMTP id g16mr8808973otk.302.1568933152988;
+        Thu, 19 Sep 2019 15:45:52 -0700 (PDT)
+Received: from localhost.localdomain (ip24-56-44-135.ph.ph.cox.net. [24.56.44.135])
+        by smtp.gmail.com with ESMTPSA id r187sm2860oie.17.2019.09.19.15.45.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Sep 2019 15:45:52 -0700 (PDT)
+From:   Matthew Cover <werekraken@gmail.com>
+X-Google-Original-From: Matthew Cover <matthew.cover@stackpath.com>
+To:     davem@davemloft.net, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        nikolay@cumulusnetworks.com, sd@queasysnail.net,
+        sbrivio@redhat.com, vincent@bernat.ch, kda@linux-powerpc.org,
+        matthew.cover@stackpath.com, jiri@mellanox.com,
+        edumazet@google.com, pabeni@redhat.com, idosch@mellanox.com,
+        petrm@mellanox.com, f.fainelli@gmail.com,
+        stephen@networkplumber.org, dsahern@gmail.com,
+        christian@brauner.io, jakub.kicinski@netronome.com,
+        roopa@cumulusnetworks.com, johannes.berg@intel.com,
+        mkubecek@suse.cz, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: [RFC net-next 1/2] Introduce an eBPF hookpoint for tx queue selection in the XPS (Transmit Packet Steering) code.
+Date:   Thu, 19 Sep 2019 15:45:42 -0700
+Message-Id: <20190919224542.91488-1-matthew.cover@stackpath.com>
+X-Mailer: git-send-email 2.15.2 (Apple Git-101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 03:40:17PM -0700, Bjorn Andersson wrote:
-> On Thu 19 Sep 15:25 PDT 2019, Greg KH wrote:
-> 
-> > On Thu, Sep 19, 2019 at 03:14:56PM -0700, Bjorn Andersson wrote:
-> > > On Thu 19 Sep 14:58 PDT 2019, Greg KH wrote:
-> > > 
-> > > > On Thu, Sep 19, 2019 at 02:53:00PM -0700, Bjorn Andersson wrote:
-> > > > > On Thu 19 Sep 14:32 PDT 2019, Greg KH wrote:
-> > > > > 
-> > > > > > On Thu, Sep 19, 2019 at 02:13:44PM -0700, Murali Nalajala wrote:
-> > > > > > > If the soc drivers want to add custom sysfs entries it needs to
-> > > > > > > access "dev" field in "struct soc_device". This can be achieved
-> > > > > > > by "soc_device_to_device" API. Soc drivers which are built as a
-> > > > > > > module they need above API to be exported. Otherwise one can
-> > > > > > > observe compilation issues.
-> > > > > > > 
-> > > > > > > Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
-> > > > > > > ---
-> > > > > > >  drivers/base/soc.c | 1 +
-> > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > 
-> > > > > > > diff --git a/drivers/base/soc.c b/drivers/base/soc.c
-> > > > > > > index 7c0c5ca..4ad52f6 100644
-> > > > > > > --- a/drivers/base/soc.c
-> > > > > > > +++ b/drivers/base/soc.c
-> > > > > > > @@ -41,6 +41,7 @@ struct device *soc_device_to_device(struct soc_device *soc_dev)
-> > > > > > >  {
-> > > > > > >  	return &soc_dev->dev;
-> > > > > > >  }
-> > > > > > > +EXPORT_SYMBOL_GPL(soc_device_to_device);
-> > > > > > >  
-> > > > > > >  static umode_t soc_attribute_mode(struct kobject *kobj,
-> > > > > > >  				struct attribute *attr,
-> > > > > > 
-> > > > > > What in-kernel driver needs this?
-> > > > > > 
-> > > > > 
-> > > > > Half of the drivers interacting with the soc driver calls this API,
-> > > > > several of these I see no reason for being builtin (e.g.
-> > > > > ux500 andversatile). So I think this patch makes sense to allow us to
-> > > > > build these as modules.
-> > > > > 
-> > > > > > Is linux-next breaking without this?
-> > > > > > 
-> > > > > 
-> > > > > No, we postponed the addition of any sysfs attributes in the Qualcomm
-> > > > > socinfo driver.
-> > > > > 
-> > > > > > We don't export things unless we have a user of the export.
-> > > > > > 
-> > > > > > Also, adding "custom" sysfs attributes is almost always not the correct
-> > > > > > thing to do at all.  The driver should be doing it, by setting up the
-> > > > > > attribute group properly so that the driver core can do it automatically
-> > > > > > for it.
-> > > > > > 
-> > > > > > No driver should be doing individual add/remove of sysfs files.  If it
-> > > > > > does so, it is almost guaranteed to be doing it incorrectly and racing
-> > > > > > userspace.
-> > > > > > 
-> > > > > 
-> > > > > The problem here is that the attributes are expected to be attached to
-> > > > > the soc driver, which is separate from the platform-specific drivers. So
-> > > > > there's no way to do platform specific attributes the right way.
-> > > > > 
-> > > > > > And yes, there's loads of in-kernel examples of doing this wrong, I've
-> > > > > > been working on fixing that up, look at the patches now in Linus's tree
-> > > > > > for platform and USB drivers that do this as examples of how to do it
-> > > > > > right.
-> > > > > > 
-> > > > > 
-> > > > > Agreed, this patch should not be used as an approval for any crazy
-> > > > > attributes; but it's necessary in order to extend the soc device's
-> > > > > attributes, per the current design.
-> > > > 
-> > > > Wait, no, let's not let the "current design" remain if it is broken!
-> > > > 
-> > > > Why can't the soc driver handle the attributes properly so that the
-> > > > individual driver doesn't have to do the create/remove?
-> > > > 
-> > > 
-> > > The custom attributes that these drivers want to add to the common ones
-> > > are known in advance, so I presume we could have them passed into
-> > > soc_device_register() and registered together with the common
-> > > attributes...
-> > > 
-> > > It sounds like it's worth a prototype.
-> > 
-> > Do you have an in-kernel example I can look at to get an idea of what is
-> > needed here?
-> > 
-> 
-> realview_soc_probe(), in drivers/soc/versatile/soc-realview.c,
-> implements the current mechanism of acquiring the soc's struct device
-> and then issuing a few device_create_file calls on that.
+WORK IN PROGRESS:
+  * bpf program loading works!
+  * txq steering via bpf program return code works!
+  * bpf program unloading not working.
+  * bpf program attached query not working.
+---
+ include/linux/netdevice.h    |  3 +++
+ include/uapi/linux/if_link.h | 12 +++++++++
+ net/core/dev.c               | 61 ++++++++++++++++++++++++++++++++++++-------
+ net/core/rtnetlink.c         | 62 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 129 insertions(+), 9 deletions(-)
 
-That looks to be a trivial driver to fix up.  Look at 6d03c140db2e
-("USB: phy: fsl-usb: convert platform driver to use dev_groups") as an
-example of how to do this.
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 9eda1c3..88e37d5 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -1966,6 +1966,7 @@ struct net_device {
+ #ifdef CONFIG_XPS
+ 	struct xps_dev_maps __rcu *xps_cpus_map;
+ 	struct xps_dev_maps __rcu *xps_rxqs_map;
++	struct bpf_prog __rcu     *xps_prog;
+ #endif
+ #ifdef CONFIG_NET_CLS_ACT
+ 	struct mini_Qdisc __rcu	*miniq_egress;
+@@ -2147,6 +2148,8 @@ struct netdev_queue *netdev_core_pick_tx(struct net_device *dev,
+ 					 struct sk_buff *skb,
+ 					 struct net_device *sb_dev);
+ 
++int dev_change_xps_fd(struct net_device *dev, int fd);
++
+ /* returns the headroom that the master device needs to take in account
+  * when forwarding to this dev
+  */
+diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
+index 4a8c02c..a23d241 100644
+--- a/include/uapi/linux/if_link.h
++++ b/include/uapi/linux/if_link.h
+@@ -167,6 +167,7 @@ enum {
+ 	IFLA_NEW_IFINDEX,
+ 	IFLA_MIN_MTU,
+ 	IFLA_MAX_MTU,
++	IFLA_XPS,
+ 	__IFLA_MAX
+ };
+ 
+@@ -979,6 +980,17 @@ enum {
+ 
+ #define IFLA_XDP_MAX (__IFLA_XDP_MAX - 1)
+ 
++/* XPS section */
++
++enum {
++	IFLA_XPS_UNSPEC,
++	IFLA_XPS_FD,
++	IFLA_XPS_ATTACHED,
++	__IFLA_XPS_MAX,
++};
++
++#define IFLA_XPS_MAX (__IFLA_XPS_MAX - 1)
++
+ enum {
+ 	IFLA_EVENT_NONE,
+ 	IFLA_EVENT_REBOOT,		/* internal reset / reboot */
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 71b18e8..a46d42b 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3663,26 +3663,34 @@ static int get_xps_queue(struct net_device *dev, struct net_device *sb_dev,
+ {
+ #ifdef CONFIG_XPS
+ 	struct xps_dev_maps *dev_maps;
++	struct bpf_prog *prog;
+ 	struct sock *sk = skb->sk;
++	int bpf_ret = -1;
+ 	int queue_index = -1;
+ 
+ 	if (!static_key_false(&xps_needed))
+ 		return -1;
+ 
+ 	rcu_read_lock();
+-	if (!static_key_false(&xps_rxqs_needed))
+-		goto get_cpus_map;
+ 
+-	dev_maps = rcu_dereference(sb_dev->xps_rxqs_map);
+-	if (dev_maps) {
+-		int tci = sk_rx_queue_get(sk);
++	prog = rcu_dereference(dev->xps_prog);
++	if (prog) {
++		bpf_ret = bpf_prog_run_clear_cb(prog, skb);
++		if (bpf_ret >= 0)
++			queue_index = bpf_ret % dev->num_tx_queues;
++	}
+ 
+-		if (tci >= 0 && tci < dev->num_rx_queues)
+-			queue_index = __get_xps_queue_idx(dev, skb, dev_maps,
+-							  tci);
++	if (queue_index < 0 && static_key_false(&xps_rxqs_needed)) {
++		dev_maps = rcu_dereference(sb_dev->xps_rxqs_map);
++		if (dev_maps) {
++			int tci = sk_rx_queue_get(sk);
++
++			if (tci >= 0 && tci < dev->num_rx_queues)
++				queue_index = __get_xps_queue_idx(dev, skb,
++								dev_maps, tci);
++		}
+ 	}
+ 
+-get_cpus_map:
+ 	if (queue_index < 0) {
+ 		dev_maps = rcu_dereference(sb_dev->xps_cpus_map);
+ 		if (dev_maps) {
+@@ -8170,6 +8178,41 @@ int dev_change_xdp_fd(struct net_device *dev, struct netlink_ext_ack *extack,
+ 	return err;
+ }
+ 
++static void dev_xps_install(struct net_device *dev, struct bpf_prog *prog)
++{
++#ifdef CONFIG_XPS
++	struct bpf_prog *old = rtnl_dereference(dev->xps_prog);
++	struct bpf_prog *new = prog;
++
++	rcu_assign_pointer(dev->xps_prog, new);
++	if (old)
++		bpf_prog_put(old);
++#endif
++}
++
++/**
++ *	dev_change_xps_fd - set or clear a bpf program for tx queue selection for a device
++ *	@dev: device
++ *	@fd: new program fd or negative value to clear
++ *
++ *	Set or clear a bpf program for a device
++ */
++int dev_change_xps_fd(struct net_device *dev, int fd)
++{
++	struct bpf_prog *prog = NULL;
++
++	ASSERT_RTNL();
++
++	prog = bpf_prog_get_type(fd, BPF_PROG_TYPE_SOCKET_FILTER);
++
++	if (IS_ERR(prog))
++		return PTR_ERR(prog);
++
++	dev_xps_install(dev, prog);
++
++	return 0;
++}
++
+ /**
+  *	dev_new_index	-	allocate an ifindex
+  *	@net: the applicable net namespace
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 1ee6460..202b59a 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -980,6 +980,15 @@ static size_t rtnl_xdp_size(void)
+ 	return xdp_size;
+ }
+ 
++static size_t rtnl_xps_size(void)
++{
++	size_t xps_size = nla_total_size(0) +	/* nest IFLA_XPS */
++			  nla_total_size(1) +	/* XPS_ATTACHED */
++			  nla_total_size(4);	/* XPS_PROG_ID */
++
++	return xps_size;
++}
++
+ static noinline size_t if_nlmsg_size(const struct net_device *dev,
+ 				     u32 ext_filter_mask)
+ {
+@@ -1018,6 +1027,7 @@ static noinline size_t if_nlmsg_size(const struct net_device *dev,
+ 	       + nla_total_size(MAX_PHYS_ITEM_ID_LEN) /* IFLA_PHYS_SWITCH_ID */
+ 	       + nla_total_size(IFNAMSIZ) /* IFLA_PHYS_PORT_NAME */
+ 	       + rtnl_xdp_size() /* IFLA_XDP */
++	       + rtnl_xps_size() /* IFLA_XPS */
+ 	       + nla_total_size(4)  /* IFLA_EVENT */
+ 	       + nla_total_size(4)  /* IFLA_NEW_NETNSID */
+ 	       + nla_total_size(4)  /* IFLA_NEW_IFINDEX */
+@@ -1455,6 +1465,31 @@ static int rtnl_xdp_fill(struct sk_buff *skb, struct net_device *dev)
+ 	return err;
+ }
+ 
++static int rtnl_xps_fill(struct sk_buff *skb, struct net_device *dev)
++{
++	struct nlattr *xps;
++	struct bpf_prog *xps_prog;
++	int err;
++
++	ASSERT_RTNL();
++
++	xps = nla_nest_start(skb, IFLA_XPS);
++	if (!xps)
++		return -EMSGSIZE;
++
++	xps_prog = rtnl_dereference(dev->xps_prog);
++	if (xps_prog) {
++		err = nla_put_u8(skb, IFLA_XPS_ATTACHED, xps_prog->aux->id);
++		if (err) {
++			nla_nest_cancel(skb, xps);
++			return err;
++		}
++	}
++
++	nla_nest_end(skb, xps);
++	return 0;
++}
++
+ static u32 rtnl_get_event(unsigned long event)
+ {
+ 	u32 rtnl_event_type = IFLA_EVENT_NONE;
+@@ -1697,6 +1732,9 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+ 		goto nla_put_failure_rcu;
+ 	rcu_read_unlock();
+ 
++	if (rtnl_xps_fill(skb, dev))
++		goto nla_put_failure;
++
+ 	nlmsg_end(skb, nlh);
+ 	return 0;
+ 
+@@ -1750,6 +1788,7 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+ 	[IFLA_CARRIER_DOWN_COUNT] = { .type = NLA_U32 },
+ 	[IFLA_MIN_MTU]		= { .type = NLA_U32 },
+ 	[IFLA_MAX_MTU]		= { .type = NLA_U32 },
++	[IFLA_XPS]		= { .type = NLA_NESTED },
+ };
+ 
+ static const struct nla_policy ifla_info_policy[IFLA_INFO_MAX+1] = {
+@@ -1801,6 +1840,11 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+ 	[IFLA_XDP_PROG_ID]	= { .type = NLA_U32 },
+ };
+ 
++static const struct nla_policy ifla_xps_policy[IFLA_XPS_MAX + 1] = {
++	[IFLA_XPS_FD]		= { .type = NLA_S32 },
++	[IFLA_XPS_ATTACHED]	= { .type = NLA_U8 },
++};
++
+ static const struct rtnl_link_ops *linkinfo_to_kind_ops(const struct nlattr *nla)
+ {
+ 	const struct rtnl_link_ops *ops = NULL;
+@@ -2709,6 +2753,24 @@ static int do_setlink(const struct sk_buff *skb,
+ 		}
+ 	}
+ 
++	if (tb[IFLA_XPS]) {
++		struct nlattr  *xps[IFLA_XPS_MAX + 1];
++
++		err = nla_parse_nested_deprecated(xps, IFLA_XPS_MAX,
++						  tb[IFLA_XPS],
++						  ifla_xps_policy, NULL);
++		if (err < 0)
++			goto errout;
++
++		if (xps[IFLA_XPS_FD]) {
++			err = dev_change_xps_fd(dev,
++						nla_get_s32(xps[IFLA_XPS_FD]));
++			if (err)
++				goto errout;
++			status |= DO_SETLINK_NOTIFY;
++		}
++	}
++
+ errout:
+ 	if (status & DO_SETLINK_MODIFIED) {
+ 		if ((status & DO_SETLINK_NOTIFY) == DO_SETLINK_NOTIFY)
+-- 
+1.8.3.1
 
-Also gotta love the total lack of error checking when calling
-device_create_file() in that driver :(
-
-thanks,
-
-greg k-h
