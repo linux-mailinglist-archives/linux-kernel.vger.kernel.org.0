@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC21B84B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DDDFB84B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732402AbfISWN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:13:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52462 "EHLO mail.kernel.org"
+        id S2393746AbfISWNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:13:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406044AbfISWNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:13:21 -0400
+        id S2389065AbfISWNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:13:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72E83218AF;
-        Thu, 19 Sep 2019 22:13:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45178218AF;
+        Thu, 19 Sep 2019 22:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931201;
-        bh=UwkLOss8wkclcHBYiCRbmLPM4E55ZqOq/fuQyOTsQlY=;
+        s=default; t=1568931203;
+        bh=MRUNO9C/94B63GnoViI+yGfylvAzUS9Io838A+lk0UA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=130Hp2eTb0qVR1/hQs7024NQU6JqPk/bKh4HJ65NA0xnBV91FNPhGmYXS+/fUI4LL
-         SimcOWBSHTwJT6HlycGWHdVRIknBQcqt/zZlXnja0SAQhSMAvsI93bCZqGgZLoE8tS
-         GfGSbjzXbVQNSJGa9btsWnacIvEVaMJ/PTsJn1NQ=
+        b=PCAAwn5Hb+C9Mdx3AIze7/JTrgjYxfOK5W42pkg3iOUECF+siZU+j0DhUqQpARokN
+         VIPVeOOPF+2xy1seNpa97cjjLaQwsVGmPUp9rRIcWsxKmhDJq6/0d10m4o5AjsibWf
+         S2GzOllgmlVRr2klGJGPQyJ/urnCkWSE1IsH2hcA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.19 04/79] Input: elan_i2c - remove Lenovo Legion Y7000 PnpID
-Date:   Fri, 20 Sep 2019 00:02:49 +0200
-Message-Id: <20190919214808.140980058@linuxfoundation.org>
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 05/79] powerpc/mm/radix: Use the right page size for vmemmap mapping
+Date:   Fri, 20 Sep 2019 00:02:50 +0200
+Message-Id: <20190919214808.182414532@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
 References: <20190919214807.612593061@linuxfoundation.org>
@@ -44,36 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-commit 0c043d70d04711fe6c380df9065fdc44192c49bf upstream.
+commit 89a3496e0664577043666791ec07fb731d57c950 upstream.
 
-Looks like the Bios of the Lenovo Legion Y7000 is using ELAN061B
-when the actual device is supposed to be used with hid-multitouch.
+We use mmu_vmemmap_psize to find the page size for mapping the vmmemap area.
+With radix translation, we are suboptimally setting this value to PAGE_SIZE.
 
-Remove it from the list of the supported device, hoping that
-no one will complain about the loss in functionality.
+We do check for 2M page size support and update mmu_vmemap_psize to use
+hugepage size but we suboptimally reset the value to PAGE_SIZE in
+radix__early_init_mmu(). This resulted in always mapping vmemmap area with
+64K page size.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203467
-Fixes: 738c06d0e456 ("Input: elan_i2c - add hardware ID for multiple Lenovo laptops")
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 2bfd65e45e87 ("powerpc/mm/radix: Add radix callbacks for early init routines")
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c_core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/mm/pgtable-radix.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1358,7 +1358,7 @@ static const struct acpi_device_id elan_
- 	{ "ELAN0618", 0 },
- 	{ "ELAN0619", 0 },
- 	{ "ELAN061A", 0 },
--	{ "ELAN061B", 0 },
-+/*	{ "ELAN061B", 0 }, not working on the Lenovo Legion Y7000 */
- 	{ "ELAN061C", 0 },
- 	{ "ELAN061D", 0 },
- 	{ "ELAN061E", 0 },
+--- a/arch/powerpc/mm/pgtable-radix.c
++++ b/arch/powerpc/mm/pgtable-radix.c
+@@ -521,14 +521,6 @@ void __init radix__early_init_devtree(vo
+ 	mmu_psize_defs[MMU_PAGE_64K].shift = 16;
+ 	mmu_psize_defs[MMU_PAGE_64K].ap = 0x5;
+ found:
+-#ifdef CONFIG_SPARSEMEM_VMEMMAP
+-	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
+-		/*
+-		 * map vmemmap using 2M if available
+-		 */
+-		mmu_vmemmap_psize = MMU_PAGE_2M;
+-	}
+-#endif /* CONFIG_SPARSEMEM_VMEMMAP */
+ 	return;
+ }
+ 
+@@ -567,7 +559,13 @@ void __init radix__early_init_mmu(void)
+ 
+ #ifdef CONFIG_SPARSEMEM_VMEMMAP
+ 	/* vmemmap mapping */
+-	mmu_vmemmap_psize = mmu_virtual_psize;
++	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
++		/*
++		 * map vmemmap using 2M if available
++		 */
++		mmu_vmemmap_psize = MMU_PAGE_2M;
++	} else
++		mmu_vmemmap_psize = mmu_virtual_psize;
+ #endif
+ 	/*
+ 	 * initialize page table size
 
 
