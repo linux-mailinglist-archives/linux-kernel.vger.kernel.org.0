@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27DBCB83E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17062B8465
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:10:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405094AbfISWGD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:06:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43080 "EHLO mail.kernel.org"
+        id S2405668AbfISWKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:10:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405041AbfISWFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:05:49 -0400
+        id S2405657AbfISWKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:10:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BA9221920;
-        Thu, 19 Sep 2019 22:05:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 130F021920;
+        Thu, 19 Sep 2019 22:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930748;
-        bh=0qOUK7DxgaowD+7uXfhLT4sDuEmqh4GKgVw/JQxHd3w=;
+        s=default; t=1568931019;
+        bh=hg3v9mNCEl88hPyO4T2hxcD97UjdZDKcsaSktvnl8vA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nOdhwbV4X4z9bmP4ZBaBqN92cZhPEZqJoteLl3tgdU49PTLZ+vgj9PaGEU8E5/gqc
-         o/buFss60QVTr3pg76j1FgIwTcouxAuEUMfgj+TbVq2/uBl0rGroOw8DPJVf6PiVhc
-         p4/Po5giMpT9+6G0U0mAPWsyFTGvWgkMWxuuSVYs=
+        b=p/N+SMv/hNZSSPrTdPQSaQSFyNlVXDJYSE2sDg/pEKMkl0RBNYGJPrgsOnFmcxLjL
+         EITlsWLQSm1fKYg6CB3F2sTkD/cUBRQaEudjl8uIViKZiDz1Wd0INBo5n59A6HSnUO
+         J3Tn38fkuoFTElaNd4wqnwGJfIIPp+rKv25KBPVA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>, Kees Cook <keescook@chromium.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 5.3 21/21] media: technisat-usb2: break out of loop at end of buffer
-Date:   Fri, 20 Sep 2019 00:03:22 +0200
-Message-Id: <20190919214713.907399353@linuxfoundation.org>
+        stable@vger.kernel.org, Todd Seidelmann <tseidelmann@linode.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 071/124] netfilter: xt_physdev: Fix spurious error message in physdev_mt_check
+Date:   Fri, 20 Sep 2019 00:02:39 +0200
+Message-Id: <20190919214821.585914950@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
-References: <20190919214657.842130855@linuxfoundation.org>
+In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
+References: <20190919214819.198419517@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,72 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Todd Seidelmann <tseidelmann@linode.com>
 
-commit 0c4df39e504bf925ab666132ac3c98d6cbbe380b upstream.
+[ Upstream commit 3cf2f450fff304be9cf4868bf0df17f253bc5b1c ]
 
-Ensure we do not access the buffer beyond the end if no 0xff byte
-is encountered.
+Simplify the check in physdev_mt_check() to emit an error message
+only when passed an invalid chain (ie, NF_INET_LOCAL_OUT).
+This avoids cluttering up the log with errors against valid rules.
 
-Reported-by: syzbot+eaaaf38a95427be88f4b@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+For large/heavily modified rulesets, current behavior can quickly
+overwhelm the ring buffer, because this function gets called on
+every change, regardless of the rule that was changed.
 
+Signed-off-by: Todd Seidelmann <tseidelmann@linode.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/dvb-usb/technisat-usb2.c |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ net/netfilter/xt_physdev.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/media/usb/dvb-usb/technisat-usb2.c
-+++ b/drivers/media/usb/dvb-usb/technisat-usb2.c
-@@ -608,10 +608,9 @@ static int technisat_usb2_frontend_attac
- static int technisat_usb2_get_ir(struct dvb_usb_device *d)
- {
- 	struct technisat_usb2_state *state = d->priv;
--	u8 *buf = state->buf;
--	u8 *b;
--	int ret;
- 	struct ir_raw_event ev;
-+	u8 *buf = state->buf;
-+	int i, ret;
- 
- 	buf[0] = GET_IR_DATA_VENDOR_REQUEST;
- 	buf[1] = 0x08;
-@@ -647,26 +646,25 @@ unlock:
- 		return 0; /* no key pressed */
- 
- 	/* decoding */
--	b = buf+1;
- 
- #if 0
- 	deb_rc("RC: %d ", ret);
--	debug_dump(b, ret, deb_rc);
-+	debug_dump(buf + 1, ret, deb_rc);
- #endif
- 
- 	ev.pulse = 0;
--	while (1) {
--		ev.pulse = !ev.pulse;
--		ev.duration = (*b * FIRMWARE_CLOCK_DIVISOR * FIRMWARE_CLOCK_TICK) / 1000;
--		ir_raw_event_store(d->rc_dev, &ev);
--
--		b++;
--		if (*b == 0xff) {
-+	for (i = 1; i < ARRAY_SIZE(state->buf); i++) {
-+		if (buf[i] == 0xff) {
- 			ev.pulse = 0;
- 			ev.duration = 888888*2;
- 			ir_raw_event_store(d->rc_dev, &ev);
- 			break;
- 		}
-+
-+		ev.pulse = !ev.pulse;
-+		ev.duration = (buf[i] * FIRMWARE_CLOCK_DIVISOR *
-+			       FIRMWARE_CLOCK_TICK) / 1000;
-+		ir_raw_event_store(d->rc_dev, &ev);
+diff --git a/net/netfilter/xt_physdev.c b/net/netfilter/xt_physdev.c
+index ead7c60222086..b92b22ce8abd3 100644
+--- a/net/netfilter/xt_physdev.c
++++ b/net/netfilter/xt_physdev.c
+@@ -101,11 +101,9 @@ static int physdev_mt_check(const struct xt_mtchk_param *par)
+ 	if (info->bitmask & (XT_PHYSDEV_OP_OUT | XT_PHYSDEV_OP_ISOUT) &&
+ 	    (!(info->bitmask & XT_PHYSDEV_OP_BRIDGED) ||
+ 	     info->invert & XT_PHYSDEV_OP_BRIDGED) &&
+-	    par->hook_mask & ((1 << NF_INET_LOCAL_OUT) |
+-	    (1 << NF_INET_FORWARD) | (1 << NF_INET_POST_ROUTING))) {
++	    par->hook_mask & (1 << NF_INET_LOCAL_OUT)) {
+ 		pr_info_ratelimited("--physdev-out and --physdev-is-out only supported in the FORWARD and POSTROUTING chains with bridged traffic\n");
+-		if (par->hook_mask & (1 << NF_INET_LOCAL_OUT))
+-			return -EINVAL;
++		return -EINVAL;
  	}
  
- 	ir_raw_event_handle(d->rc_dev);
+ 	if (!brnf_probed) {
+-- 
+2.20.1
+
 
 
