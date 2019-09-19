@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AED8EB86E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:33:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D5E1B86EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405996AbfISWMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:12:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51894 "EHLO mail.kernel.org"
+        id S2406032AbfISWND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:13:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393681AbfISWMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:12:51 -0400
+        id S2406008AbfISWM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:12:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75BB921928;
-        Thu, 19 Sep 2019 22:12:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB6B4218AF;
+        Thu, 19 Sep 2019 22:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931170;
-        bh=y+twx5L5mLyZA/HpEM5GdqYd/BMLorMN/INrMAODq3A=;
+        s=default; t=1568931179;
+        bh=mrHPstL9iqpCEs00xslJimRfbU5IgiEpQekd6zBwPBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ue5IpRDi6+eu2tS11NUGPIDBvRmMomHTmLbPeXCesxjePG6l/A7mhyiIfs3a9Int5
-         +WjOJ5vWzpJ1q6cPLH8Z+HBLAIvtIK0x0U29nYsW8aHJD4rYVlFlYPPQVjSUuNg0KQ
-         sn+xg4sYM8OCBK3PXSspzx3JOYkdwjX7SQpM2LQA=
+        b=gMBwpIMJrOdEEA3FoqRAye8ezwuKlxdcgKBffwR43Tr3HPr451FJhC81bOp2NVxux
+         jOtetM8WXWZlbe0nFHulD2KWORgS+7OLzS2dot6S13nD5RrepOFoVMLCJtIIOV5lFy
+         B8BGHGAGvWlgYlNsUhZ41OnN563ADmGAfCUt16lY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suman Anna <s-anna@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Ilya Leoshkevich <iii@linux.ibm.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 28/79] bus: ti-sysc: Simplify cleanup upon failures in sysc_probe()
-Date:   Fri, 20 Sep 2019 00:03:13 +0200
-Message-Id: <20190919214810.352045042@linuxfoundation.org>
+Subject: [PATCH 4.19 30/79] selftests/bpf: fix "bind{4, 6} deny specific IP & port" on s390
+Date:   Fri, 20 Sep 2019 00:03:15 +0200
+Message-Id: <20190919214810.467024983@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
 References: <20190919214807.612593061@linuxfoundation.org>
@@ -44,74 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit a304f483b6b00d42bde41c45ca52c670945348e2 ]
+[ Upstream commit 27df5c7068bf23cab282dc64b1c9894429b3b8a0 ]
 
-The clocks are not yet parsed and prepared until after a successful
-sysc_get_clocks(), so there is no need to unprepare the clocks upon
-any failure of any of the prior functions in sysc_probe(). The current
-code path would have been a no-op because of the clock validity checks
-within sysc_unprepare(), but let's just simplify the cleanup path by
-returning the error directly.
+"bind4 allow specific IP & port" and "bind6 deny specific IP & port"
+fail on s390 because of endianness issue: the 4 IP address bytes are
+loaded as a word and compared with a constant, but the value of this
+constant should be different on big- and little- endian machines, which
+is not the case right now.
 
-While at this, also fix the cleanup path for a sysc_init_resets()
-failure which is executed after the clocks are prepared.
+Use __bpf_constant_ntohl to generate proper value based on machine
+endianness.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: 1d436885b23b ("selftests/bpf: Selftest for sys_bind post-hooks.")
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/ti-sysc.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ tools/testing/selftests/bpf/test_sock.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
-index 4ca006e2137f7..e95b26319cd91 100644
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -1685,7 +1685,7 @@ static int sysc_probe(struct platform_device *pdev)
+diff --git a/tools/testing/selftests/bpf/test_sock.c b/tools/testing/selftests/bpf/test_sock.c
+index b8ebe2f580741..e9567122070a3 100644
+--- a/tools/testing/selftests/bpf/test_sock.c
++++ b/tools/testing/selftests/bpf/test_sock.c
+@@ -13,6 +13,7 @@
+ #include <bpf/bpf.h>
  
- 	error = sysc_init_dts_quirks(ddata);
- 	if (error)
--		goto unprepare;
-+		return error;
+ #include "cgroup_helpers.h"
++#include "bpf_endian.h"
+ #include "bpf_rlimit.h"
+ #include "bpf_util.h"
  
- 	error = sysc_get_clocks(ddata);
- 	if (error)
-@@ -1693,27 +1693,27 @@ static int sysc_probe(struct platform_device *pdev)
- 
- 	error = sysc_map_and_check_registers(ddata);
- 	if (error)
--		goto unprepare;
-+		return error;
- 
- 	error = sysc_init_sysc_mask(ddata);
- 	if (error)
--		goto unprepare;
-+		return error;
- 
- 	error = sysc_init_idlemodes(ddata);
- 	if (error)
--		goto unprepare;
-+		return error;
- 
- 	error = sysc_init_syss_mask(ddata);
- 	if (error)
--		goto unprepare;
-+		return error;
- 
- 	error = sysc_init_pdata(ddata);
- 	if (error)
--		goto unprepare;
-+		return error;
- 
- 	error = sysc_init_resets(ddata);
- 	if (error)
--		return error;
-+		goto unprepare;
- 
- 	pm_runtime_enable(ddata->dev);
- 	error = sysc_init_module(ddata);
+@@ -231,7 +232,8 @@ static struct sock_test tests[] = {
+ 			/* if (ip == expected && port == expected) */
+ 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
+ 				    offsetof(struct bpf_sock, src_ip6[3])),
+-			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x01000000, 4),
++			BPF_JMP_IMM(BPF_JNE, BPF_REG_7,
++				    __bpf_constant_ntohl(0x00000001), 4),
+ 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
+ 				    offsetof(struct bpf_sock, src_port)),
+ 			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x2001, 2),
+@@ -260,7 +262,8 @@ static struct sock_test tests[] = {
+ 			/* if (ip == expected && port == expected) */
+ 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
+ 				    offsetof(struct bpf_sock, src_ip4)),
+-			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x0100007F, 4),
++			BPF_JMP_IMM(BPF_JNE, BPF_REG_7,
++				    __bpf_constant_ntohl(0x7F000001), 4),
+ 			BPF_LDX_MEM(BPF_W, BPF_REG_7, BPF_REG_6,
+ 				    offsetof(struct bpf_sock, src_port)),
+ 			BPF_JMP_IMM(BPF_JNE, BPF_REG_7, 0x1002, 2),
 -- 
 2.20.1
 
