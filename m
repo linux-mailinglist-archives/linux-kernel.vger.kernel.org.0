@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 676DEB8592
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AF8EB855A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:20:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390435AbfISWWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:22:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37486 "EHLO mail.kernel.org"
+        id S2394015AbfISWUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406847AbfISWW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:22:27 -0400
+        id S2392636AbfISWUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9492F20678;
-        Thu, 19 Sep 2019 22:22:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8A03217D6;
+        Thu, 19 Sep 2019 22:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931746;
-        bh=txizpSKWNllJpJ8T6Vas/37oGmdhWUzm8YhP+TFhjJs=;
+        s=default; t=1568931619;
+        bh=/8h4w5nhnaGMZpvxL/ubUdla9HWv3VMjKfYOeJcLnj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r01GTohX7ctfgL48vFJmIxwn8cgn5eKl7NBZa48NykWZa5OTXT7Y576v3Fd3Zbspb
-         jMWXI+KLX/nzuNOBwFZfBYTQKYaTeFPYe7IsuIP2Csx8hdT4Byk6JWdJBeXZJK0K2t
-         qrY1+ixsrTuB7e65zhHC1veGI/DV6JQCFdEcU5E0=
+        b=vUofZ+DBSbQPotXehTqOVGLc9pYpNa+yTH+X3gWSXZ51eTZqF9Q17z4dMBdy+jx7z
+         ypr9FJ7u+MHkZNGv4Xn+hDaAxNi+J0tETJ3piln51uoq5mo2INdtIl3FrilhNBvqwo
+         xlDW3GD3O1UwNnkSg41VVxCMs9Nq6J8u0EAuQj/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 24/56] x86/build: Add -Wnoaddress-of-packed-member to REALMODE_CFLAGS, to silence GCC9 build warning
-Date:   Fri, 20 Sep 2019 00:04:05 +0200
-Message-Id: <20190919214755.167385430@linuxfoundation.org>
+        stable@vger.kernel.org, Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 53/74] batman-adv: Only read OGM2 tvlv_len after buffer len check
+Date:   Fri, 20 Sep 2019 00:04:06 +0200
+Message-Id: <20190919214809.989554987@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,49 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 42e0e95474fc6076b5cd68cab8fa0340a1797a72 upstream.
+[ Upstream commit 0ff0f15a32c093381ad1abc06abe85afb561ab28 ]
 
-One of the very few warnings I have in the current build comes from
-arch/x86/boot/edd.c, where I get the following with a gcc9 build:
+Multiple batadv_ogm2_packet can be stored in an skbuff. The functions
+batadv_v_ogm_send_to_if() uses batadv_v_ogm_aggr_packet() to check if there
+is another additional batadv_ogm2_packet in the skb or not before they
+continue processing the packet.
 
-   arch/x86/boot/edd.c: In function ‘query_edd’:
-   arch/x86/boot/edd.c:148:11: warning: taking address of packed member of ‘struct boot_params’ may result in an unaligned pointer value [-Waddress-of-packed-member]
-     148 |  mbrptr = boot_params.edd_mbr_sig_buffer;
-         |           ^~~~~~~~~~~
+The length for such an OGM2 is BATADV_OGM2_HLEN +
+batadv_ogm2_packet->tvlv_len. The check must first check that at least
+BATADV_OGM2_HLEN bytes are available before it accesses tvlv_len (which is
+part of the header. Otherwise it might try read outside of the currently
+available skbuff to get the content of tvlv_len.
 
-This warning triggers because we throw away all the CFLAGS and then make
-a new set for REALMODE_CFLAGS, so the -Wno-address-of-packed-member we
-added in the following commit is not present:
-
-  6f303d60534c ("gcc-9: silence 'address-of-packed-member' warning")
-
-The simplest solution for now is to adjust the warning for this version
-of CFLAGS as well, but it would definitely make sense to examine whether
-REALMODE_CFLAGS could be derived from CFLAGS, so that it picks up changes
-in the compiler flags environment automatically.
-
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Borislav Petkov <bp@alien8.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 9323158ef9f4 ("batman-adv: OGMv2 - implement originators logic")
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/Makefile |    1 +
- 1 file changed, 1 insertion(+)
+ net/batman-adv/bat_v_ogm.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -38,6 +38,7 @@ REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os
+diff --git a/net/batman-adv/bat_v_ogm.c b/net/batman-adv/bat_v_ogm.c
+index 1aeeadca620cd..f435435b447e0 100644
+--- a/net/batman-adv/bat_v_ogm.c
++++ b/net/batman-adv/bat_v_ogm.c
+@@ -618,17 +618,23 @@ batadv_v_ogm_process_per_outif(struct batadv_priv *bat_priv,
+  * batadv_v_ogm_aggr_packet - checks if there is another OGM aggregated
+  * @buff_pos: current position in the skb
+  * @packet_len: total length of the skb
+- * @tvlv_len: tvlv length of the previously considered OGM
++ * @ogm2_packet: potential OGM2 in buffer
+  *
+  * Return: true if there is enough space for another OGM, false otherwise.
+  */
+-static bool batadv_v_ogm_aggr_packet(int buff_pos, int packet_len,
+-				     __be16 tvlv_len)
++static bool
++batadv_v_ogm_aggr_packet(int buff_pos, int packet_len,
++			 const struct batadv_ogm2_packet *ogm2_packet)
+ {
+ 	int next_buff_pos = 0;
  
- REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -ffreestanding)
- REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -fno-stack-protector)
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -Wno-address-of-packed-member)
- REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), $(cc_stack_align4))
- export REALMODE_CFLAGS
+-	next_buff_pos += buff_pos + BATADV_OGM2_HLEN;
+-	next_buff_pos += ntohs(tvlv_len);
++	/* check if there is enough space for the header */
++	next_buff_pos += buff_pos + sizeof(*ogm2_packet);
++	if (next_buff_pos > packet_len)
++		return false;
++
++	/* check if there is enough space for the optional TVLV */
++	next_buff_pos += ntohs(ogm2_packet->tvlv_len);
  
+ 	return (next_buff_pos <= packet_len) &&
+ 	       (next_buff_pos <= BATADV_MAX_AGGREGATION_BYTES);
+@@ -775,7 +781,7 @@ int batadv_v_ogm_packet_recv(struct sk_buff *skb,
+ 	ogm_packet = (struct batadv_ogm2_packet *)skb->data;
+ 
+ 	while (batadv_v_ogm_aggr_packet(ogm_offset, skb_headlen(skb),
+-					ogm_packet->tvlv_len)) {
++					ogm_packet)) {
+ 		batadv_v_ogm_process(skb, ogm_offset, if_incoming);
+ 
+ 		ogm_offset += BATADV_OGM2_HLEN;
+-- 
+2.20.1
+
 
 
