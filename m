@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD83FB868D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:30:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4461B8775
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406123AbfISWaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:30:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57612 "EHLO mail.kernel.org"
+        id S2405082AbfISWF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:05:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406360AbfISWQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:16:47 -0400
+        id S2405034AbfISWFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:05:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B4B121927;
-        Thu, 19 Sep 2019 22:16:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6C8821927;
+        Thu, 19 Sep 2019 22:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931406;
-        bh=o3tP0NE4bLjkO/y323hJ12h+vGP22dZK+e8WsLUikco=;
+        s=default; t=1568930746;
+        bh=8NBCg4bn+YAcGGwPshiT26t1NXX+A+bvQ5yC6Q+ZwUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tSjnkzZAJHo0y4tOtoK0v484upam4wOIR9vAV5EkYGFEaGBSvyU/FZdE71/1j6oi7
-         5euhXGvBiyzBEx5wlErDTn1FWPwul2hEL5SomaRmfyhQ5TPPEttGg7qkC2n6gv1fbx
-         M1NHiYRZXcP+L4u+znEh+GSIRp3ThQyB9AoOxrq4=
+        b=O7mjpKkkF8w/E+SVmrnecFUlV1iVoUYzn96sq2CQQ4azAzXxRzHoeTFTHicvjpdT2
+         mCx9qlvsGqoHeR8qXuoAVWbHsmeqEcZ+7hm7WQMzPI2JK/0F9Ve+JWo0N4VRXszWfO
+         ahtWoJsndHQRoyMefSeePI9YoFp3hgy479Bn2H4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 4.14 05/59] phy: renesas: rcar-gen3-usb2: Disable clearing VBUS in over-current
-Date:   Fri, 20 Sep 2019 00:03:20 +0200
-Message-Id: <20190919214757.399176052@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Jann Horn <jannh@google.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.3 20/21] floppy: fix usercopy direction
+Date:   Fri, 20 Sep 2019 00:03:21 +0200
+Message-Id: <20190919214713.501711955@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
+References: <20190919214657.842130855@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,54 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Jann Horn <jannh@google.com>
 
-commit e6839c31a608e79f2057fab987dd814f5d3477e6 upstream.
+commit 52f6f9d74f31078964ca1574f7bb612da7877ac8 upstream.
 
-The hardware manual should be revised, but the initial value of
-VBCTRL.OCCLREN is set to 1 actually. If the bit is set, the hardware
-clears VBCTRL.VBOUT and ADPCTRL.DRVVBUS registers automatically
-when the hardware detects over-current signal from a USB power switch.
-However, since the hardware doesn't have any registers which
-indicates over-current, the driver cannot handle it at all. So, if
-"is_otg_channel" hardware detects over-current, since ADPCTRL.DRVVBUS
-register is cleared automatically, the channel cannot be used after
-that.
+As sparse points out, these two copy_from_user() should actually be
+copy_to_user().
 
-To resolve this behavior, this patch sets the VBCTRL.OCCLREN to 0
-to keep ADPCTRL.DRVVBUS even if the "is_otg_channel" hardware
-detects over-current. (We assume a USB power switch itself protects
-over-current and turns the VBUS off.)
-
-This patch is inspired by a BSP patch from Kazuya Mizuguchi.
-
-Fixes: 1114e2d31731 ("phy: rcar-gen3-usb2: change the mode to OTG on the combined channel")
-Cc: <stable@vger.kernel.org> # v4.5+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fixes: 229b53c9bf4e ("take floppy compat ioctls to sodding floppy.c")
+Cc: stable@vger.kernel.org
+Acked-by: Alexander Popov <alex.popov@linux.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/floppy.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -64,6 +64,7 @@
- 					 USB2_OBINT_IDDIGCHG)
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3780,7 +3780,7 @@ static int compat_getdrvprm(int drive,
+ 	v.native_format = UDP->native_format;
+ 	mutex_unlock(&floppy_mutex);
  
- /* VBCTRL */
-+#define USB2_VBCTRL_OCCLREN		BIT(16)
- #define USB2_VBCTRL_DRVVBUSSEL		BIT(8)
+-	if (copy_from_user(arg, &v, sizeof(struct compat_floppy_drive_params)))
++	if (copy_to_user(arg, &v, sizeof(struct compat_floppy_drive_params)))
+ 		return -EFAULT;
+ 	return 0;
+ }
+@@ -3816,7 +3816,7 @@ static int compat_getdrvstat(int drive,
+ 	v.bufblocks = UDRS->bufblocks;
+ 	mutex_unlock(&floppy_mutex);
  
- /* LINECTRL1 */
-@@ -278,6 +279,7 @@ static void rcar_gen3_init_otg(struct rc
- 	u32 val;
- 
- 	val = readl(usb2_base + USB2_VBCTRL);
-+	val &= ~USB2_VBCTRL_OCCLREN;
- 	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
- 	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
- 	val = readl(usb2_base + USB2_OBINTEN);
+-	if (copy_from_user(arg, &v, sizeof(struct compat_floppy_drive_struct)))
++	if (copy_to_user(arg, &v, sizeof(struct compat_floppy_drive_struct)))
+ 		return -EFAULT;
+ 	return 0;
+ Eintr:
 
 
