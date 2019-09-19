@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5CDB8477
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1265B852D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405835AbfISWLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:11:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49632 "EHLO mail.kernel.org"
+        id S2393927AbfISWS2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:18:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405816AbfISWLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:11:02 -0400
+        id S2393910AbfISWSW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:18:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63D4D21927;
-        Thu, 19 Sep 2019 22:11:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D805821A49;
+        Thu, 19 Sep 2019 22:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931060;
-        bh=AeTtAhhO3ekmXdN1I9ysSjm8aV2vHCTIt/9tWFksyFU=;
+        s=default; t=1568931501;
+        bh=4XeXMAQl36BSINDqn9rleIQYysRKYqrRW9jUf+jNRkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1BiLwJ3uK6mB/oHnwHh4nTXWyAb3qQTYbzGoV50gwSc/6bY2MPgS1xG1i346Opxod
-         ixME/Jq0UlawGQqpqqdvrCTRV3Cd/0uwIpozttZRfvPLuTinnf+grQdwI7kRbxvn00
-         rRCBK22mNmDJ0v2gpRRC5Mg7DN5kri/7UpCey/F0=
+        b=2L3Ei2iVLvoYz2b484peupAsIaToC7XPTNaJyWZ6fqORKMxoy0XrDpTv4S12uqRyC
+         NLTV+AUWgsOxA4OB79+5j9jZ7oiUx0euYvj7oCsaHKj3eoqEl7Z/pJ1tUWLSnmTRC3
+         clNAl1is25g7nyj37NW1lp5IEtUGtmlsuj8peSQ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sanjay K Kumar <sanjay.k.kumar@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 114/124] iommu/vt-d: Remove global page flush support
-Date:   Fri, 20 Sep 2019 00:03:22 +0200
-Message-Id: <20190919214823.332746659@linuxfoundation.org>
+        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
+        Yuchung Cheng <ycheng@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 10/74] tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
+Date:   Fri, 20 Sep 2019 00:03:23 +0200
+Message-Id: <20190919214804.728838256@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,144 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+From: Neal Cardwell <ncardwell@google.com>
 
-[ Upstream commit 8744daf4b0699b724ee0a56b313a6c0c4ea289e3 ]
+[ Upstream commit af38d07ed391b21f7405fa1f936ca9686787d6d2 ]
 
-Global pages support is removed from VT-d spec 3.0. Since global pages G
-flag only affects first-level paging structures and because DMA request
-with PASID are only supported by VT-d spec. 3.0 and onward, we can
-safely remove global pages support.
+Fix tcp_ecn_withdraw_cwr() to clear the correct bit:
+TCP_ECN_QUEUE_CWR.
 
-For kernel shared virtual address IOTLB invalidation, PASID
-granularity and page selective within PASID will be used. There is
-no global granularity supported. Without this fix, IOTLB invalidation
-will cause invalid descriptor error in the queued invalidation (QI)
-interface.
+Rationale: basically, TCP_ECN_DEMAND_CWR is a bit that is purely about
+the behavior of data receivers, and deciding whether to reflect
+incoming IP ECN CE marks as outgoing TCP th->ece marks. The
+TCP_ECN_QUEUE_CWR bit is purely about the behavior of data senders,
+and deciding whether to send CWR. The tcp_ecn_withdraw_cwr() function
+is only called from tcp_undo_cwnd_reduction() by data senders during
+an undo, so it should zero the sender-side state,
+TCP_ECN_QUEUE_CWR. It does not make sense to stop the reflection of
+incoming CE bits on incoming data packets just because outgoing
+packets were spuriously retransmitted.
 
-Fixes: 1c4f88b7f1f9 ("iommu/vt-d: Shared virtual address in scalable mode")
-Reported-by: Sanjay K Kumar <sanjay.k.kumar@intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The bug has been reproduced with packetdrill to manifest in a scenario
+with RFC3168 ECN, with an incoming data packet with CE bit set and
+carrying a TCP timestamp value that causes cwnd undo. Before this fix,
+the IP CE bit was ignored and not reflected in the TCP ECE header bit,
+and sender sent a TCP CWR ('W') bit on the next outgoing data packet,
+even though the cwnd reduction had been undone.  After this fix, the
+sender properly reflects the CE bit and does not set the W bit.
+
+Note: the bug actually predates 2005 git history; this Fixes footer is
+chosen to be the oldest SHA1 I have tested (from Sep 2007) for which
+the patch applies cleanly (since before this commit the code was in a
+.h file).
+
+Fixes: bdf1ee5d3bd3 ("[TCP]: Move code from tcp_ecn.h to tcp*.c and tcp.h & remove it")
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Yuchung Cheng <ycheng@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Cc: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/intel-svm.c   | 36 +++++++++++++++---------------------
- include/linux/intel-iommu.h |  3 ---
- 2 files changed, 15 insertions(+), 24 deletions(-)
+ net/ipv4/tcp_input.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index eceaa7e968ae8..641dc223c97b8 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -100,24 +100,19 @@ int intel_svm_finish_prq(struct intel_iommu *iommu)
- }
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -247,7 +247,7 @@ static void tcp_ecn_accept_cwr(struct tc
  
- static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_dev *sdev,
--				       unsigned long address, unsigned long pages, int ih, int gl)
-+				unsigned long address, unsigned long pages, int ih)
+ static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
  {
- 	struct qi_desc desc;
- 
--	if (pages == -1) {
--		/* For global kernel pages we have to flush them in *all* PASIDs
--		 * because that's the only option the hardware gives us. Despite
--		 * the fact that they are actually only accessible through one. */
--		if (gl)
--			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
--					QI_EIOTLB_DID(sdev->did) |
--					QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
--					QI_EIOTLB_TYPE;
--		else
--			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
--					QI_EIOTLB_DID(sdev->did) |
--					QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
--					QI_EIOTLB_TYPE;
-+	/*
-+	 * Do PASID granu IOTLB invalidation if page selective capability is
-+	 * not available.
-+	 */
-+	if (pages == -1 || !cap_pgsel_inv(svm->iommu->cap)) {
-+		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
-+			QI_EIOTLB_DID(sdev->did) |
-+			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-+			QI_EIOTLB_TYPE;
- 		desc.qw1 = 0;
- 	} else {
- 		int mask = ilog2(__roundup_pow_of_two(pages));
-@@ -127,7 +122,6 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
- 				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
- 				QI_EIOTLB_TYPE;
- 		desc.qw1 = QI_EIOTLB_ADDR(address) |
--				QI_EIOTLB_GL(gl) |
- 				QI_EIOTLB_IH(ih) |
- 				QI_EIOTLB_AM(mask);
- 	}
-@@ -162,13 +156,13 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
+-	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
++	tp->ecn_flags &= ~TCP_ECN_QUEUE_CWR;
  }
  
- static void intel_flush_svm_range(struct intel_svm *svm, unsigned long address,
--				  unsigned long pages, int ih, int gl)
-+				unsigned long pages, int ih)
- {
- 	struct intel_svm_dev *sdev;
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(sdev, &svm->devs, list)
--		intel_flush_svm_range_dev(svm, sdev, address, pages, ih, gl);
-+		intel_flush_svm_range_dev(svm, sdev, address, pages, ih);
- 	rcu_read_unlock();
- }
- 
-@@ -180,7 +174,7 @@ static void intel_invalidate_range(struct mmu_notifier *mn,
- 	struct intel_svm *svm = container_of(mn, struct intel_svm, notifier);
- 
- 	intel_flush_svm_range(svm, start,
--			      (end - start + PAGE_SIZE - 1) >> VTD_PAGE_SHIFT, 0, 0);
-+			      (end - start + PAGE_SIZE - 1) >> VTD_PAGE_SHIFT, 0);
- }
- 
- static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
-@@ -203,7 +197,7 @@ static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(sdev, &svm->devs, list) {
- 		intel_pasid_tear_down_entry(svm->iommu, sdev->dev, svm->pasid);
--		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
-+		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
- 	}
- 	rcu_read_unlock();
- 
-@@ -410,7 +404,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 				 * large and has to be physically contiguous. So it's
- 				 * hard to be as defensive as we might like. */
- 				intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
--				intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
-+				intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
- 				kfree_rcu(sdev, rcu);
- 
- 				if (list_empty(&svm->devs)) {
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 6a8dd4af01472..ba8dc520cc79a 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -346,7 +346,6 @@ enum {
- #define QI_PC_PASID_SEL		(QI_PC_TYPE | QI_PC_GRAN(1))
- 
- #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
--#define QI_EIOTLB_GL(gl)	(((u64)gl) << 7)
- #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
- #define QI_EIOTLB_AM(am)	(((u64)am))
- #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
-@@ -378,8 +377,6 @@ enum {
- #define QI_RESP_INVALID		0x1
- #define QI_RESP_FAILURE		0xf
- 
--#define QI_GRAN_ALL_ALL			0
--#define QI_GRAN_NONG_ALL		1
- #define QI_GRAN_NONG_PASID		2
- #define QI_GRAN_PSI_PASID		3
- 
--- 
-2.20.1
-
+ static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
 
 
