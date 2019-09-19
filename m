@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C96DB8540
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7792EB84C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406622AbfISWTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:19:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60882 "EHLO mail.kernel.org"
+        id S1732679AbfISWOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390275AbfISWTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:19:04 -0400
+        id S2392058AbfISWN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:13:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C2E521924;
-        Thu, 19 Sep 2019 22:19:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C9EB21907;
+        Thu, 19 Sep 2019 22:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931542;
-        bh=nMVcyCBO+pu2YgbD35jIQJZ5asTgAX/Y8u6irtWayIg=;
+        s=default; t=1568931238;
+        bh=F5CQ1+YvvSFo1TXnBiXKLipZLDPWDY9aNPbQDEsQ2n0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHvw5w0s9V34//do5Lkj7HG6WrufFkeQkZOajDHsBO/c48+rypQH+n5VEBQB4aWlT
-         XdwNoH4lDO/Z1akxGu/9qB/H4tLx+7eZe7qzbSQMHAExWc3jnFMsgqRmNncHjjN8KE
-         NQXY6x8HUnch7HDdbTkfL488dgXdyNiHxDNJOGj4=
+        b=jJ02e8Ht74ZxBIYDGD+/0HzddXB4vB1ygVXIhZnbfHP87tq4ETxYawLm1OgEoqk+Z
+         Gx5iIuqnrFXipEcNe1B40tdEPA5DX50TAuLahERbGHFoRG7wg322TnoPcJ/jcKHQAp
+         kfpZYTQKzMiUX7p3LzmU/Podjyjbfd6ZjPRQVJJs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaolei Li <xiaolei.li@mediatek.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.9 24/74] mtd: rawnand: mtk: Fix wrongly assigned OOB buffer pointer issue
-Date:   Fri, 20 Sep 2019 00:03:37 +0200
-Message-Id: <20190919214807.117496666@linuxfoundation.org>
+        stable@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 54/79] usb: host: xhci-tegra: Set DMA mask correctly
+Date:   Fri, 20 Sep 2019 00:03:39 +0200
+Message-Id: <20190919214812.225092786@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,84 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaolei Li <xiaolei.li@mediatek.com>
+From: Nagarjuna Kristam <nkristam@nvidia.com>
 
-commit 336d4b138be2dad372b67a2388e42805c48aaa38 upstream.
+[ Upstream commit 993cc8753453fccfe060a535bbe21fcf1001b626 ]
 
-One main goal of the function mtk_nfc_update_ecc_stats is to check
-whether sectors are all empty. If they are empty, set these sectors's
-data buffer and OOB buffer as 0xff.
+The Falcon microcontroller that runs the XUSB firmware and which is
+responsible for exposing the XHCI interface can address only 40 bits of
+memory. Typically that's not a problem because Tegra devices don't have
+enough system memory to exceed those 40 bits.
 
-But now, the sector OOB buffer pointer is wrongly assigned. We always
-do memset from sector 0.
+However, if the ARM SMMU is enable on Tegra186 and later, the addresses
+passed to the XUSB controller can be anywhere in the 48-bit IOV address
+space of the ARM SMMU. Since the DMA/IOMMU API starts allocating from
+the top of the IOVA space, the Falcon microcontroller is not able to
+load the firmware successfully.
 
-To fix this issue, pass start sector number to make OOB buffer pointer
-be properly assigned.
+Fix this by setting the DMA mask to 40 bits, which will force the DMA
+API to map the buffer for the firmware to an IOVA that is addressable by
+the Falcon.
 
-Fixes: 1d6b1e464950 ("mtd: mediatek: driver for MTK Smart Device")
-Signed-off-by: Xiaolei Li <xiaolei.li@mediatek.com>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/1566989697-13049-1-git-send-email-nkristam@nvidia.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/nand/mtk_nand.c |   21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/usb/host/xhci-tegra.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/mtd/nand/mtk_nand.c
-+++ b/drivers/mtd/nand/mtk_nand.c
-@@ -810,19 +810,21 @@ static int mtk_nfc_write_oob_std(struct
- 	return ret & NAND_STATUS_FAIL ? -EIO : 0;
- }
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index b1cce989bd123..fe37dacc695fc 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1148,6 +1148,16 @@ static int tegra_xusb_probe(struct platform_device *pdev)
  
--static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 sectors)
-+static int mtk_nfc_update_ecc_stats(struct mtd_info *mtd, u8 *buf, u32 start,
-+				    u32 sectors)
- {
- 	struct nand_chip *chip = mtd_to_nand(mtd);
- 	struct mtk_nfc *nfc = nand_get_controller_data(chip);
- 	struct mtk_nfc_nand_chip *mtk_nand = to_mtk_nand(chip);
- 	struct mtk_ecc_stats stats;
-+	u32 reg_size = mtk_nand->fdm.reg_size;
- 	int rc, i;
+ 	tegra_xusb_ipfs_config(tegra, regs);
  
- 	rc = nfi_readl(nfc, NFI_STA) & STA_EMP_PAGE;
- 	if (rc) {
- 		memset(buf, 0xff, sectors * chip->ecc.size);
- 		for (i = 0; i < sectors; i++)
--			memset(oob_ptr(chip, i), 0xff, mtk_nand->fdm.reg_size);
-+			memset(oob_ptr(chip, start + i), 0xff, reg_size);
- 		return 0;
- 	}
- 
-@@ -842,7 +844,7 @@ static int mtk_nfc_read_subpage(struct m
- 	u32 spare = mtk_nand->spare_per_sector;
- 	u32 column, sectors, start, end, reg;
- 	dma_addr_t addr;
--	int bitflips;
-+	int bitflips = 0;
- 	size_t len;
- 	u8 *buf;
- 	int rc;
-@@ -910,14 +912,11 @@ static int mtk_nfc_read_subpage(struct m
- 	if (rc < 0) {
- 		dev_err(nfc->dev, "subpage done timeout\n");
- 		bitflips = -EIO;
--	} else {
--		bitflips = 0;
--		if (!raw) {
--			rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
--			bitflips = rc < 0 ? -ETIMEDOUT :
--				mtk_nfc_update_ecc_stats(mtd, buf, sectors);
--			mtk_nfc_read_fdm(chip, start, sectors);
--		}
-+	} else if (!raw) {
-+		rc = mtk_ecc_wait_done(nfc->ecc, ECC_DECODE);
-+		bitflips = rc < 0 ? -ETIMEDOUT :
-+			mtk_nfc_update_ecc_stats(mtd, buf, start, sectors);
-+		mtk_nfc_read_fdm(chip, start, sectors);
- 	}
- 
- 	dma_unmap_single(nfc->dev, addr, len, DMA_FROM_DEVICE);
++	/*
++	 * The XUSB Falcon microcontroller can only address 40 bits, so set
++	 * the DMA mask accordingly.
++	 */
++	err = dma_set_mask_and_coherent(tegra->dev, DMA_BIT_MASK(40));
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
++		goto put_rpm;
++	}
++
+ 	err = tegra_xusb_load_firmware(tegra);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
+-- 
+2.20.1
+
 
 
