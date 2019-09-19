@@ -2,234 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DF76B8228
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 020C8B8232
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 22:07:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404595AbfISUEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 16:04:41 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:44697 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390510AbfISUEk (ORCPT
+        id S2392470AbfISUHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 16:07:11 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39170 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390722AbfISUHL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 16:04:40 -0400
-Received: by mail-qk1-f202.google.com with SMTP id x77so5317330qka.11
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 13:04:39 -0700 (PDT)
+        Thu, 19 Sep 2019 16:07:11 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w144so3859155oia.6;
+        Thu, 19 Sep 2019 13:07:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gtgAzLnc3RcqClKbOcZOPzy3aLAgaQlGmQMhkVqxZF4=;
-        b=uCPjqOKCheB3JWBJrlfYuDkISHzv0G4Z6mrhos4FIWGt3TrIatsarZ/tMgUseEGtMR
-         Pu0geTbVbLRjsPm5d2hAtrj8Js4k+fmCszhzK1ksVmS3J7LdjEWWQjjvPZQfSwtZ4dzo
-         pvaimLN03VPSR3/pElOFiiH3JDPZIN+iUyKKWlFmsiAFRWdk7Ys96J7u3UKHGwr912hC
-         iTv34MQmPRc3F1Okb7OfGJiF13QV5i2WZDGC8hG5On1nnkT8PX22E5gsxtpCk4pkuipk
-         MkcxQZDVSYlfj1lH7aCGNOAkNZ0NtnaRYzkmeB3wyJ6ArqHTr4ZuUpDOrwMxQae3hOYu
-         jAxA==
+        bh=6SLgslheBeIIJex/gf/ZVhEBmirzOWHGUduUXl+JfS0=;
+        b=f8nGhVnviG2KbGnxig/mqrpCztbeYB17qB2d4v8zgIMpIo21id++eyGrhRa7Hetlhu
+         1uIaChRD0JXsIkhaEnLlOVilPn+4x4RCBwn4qftOj/Hn1jiDkcWSr9iSRfpGqYg8IPyg
+         p6KZ5T0M5XXE7g4URtoFpVBwAr8qDD1kwXGZhmKQ5TN4D/ZBt9h1HabeDijheKoZ1Hq6
+         Am7QREthxBCAoFRWZlZc9Dn8FvVmj/Ct4TgYQLr4ctdbmmcuJtv86n7ETES+bEZxL1mQ
+         EVg7zzKRiWTN263W8ohXIHHzWdDRk8eIf0Lm/Lzn+chRgIy7X91h9B9AXapeP4UZEFK4
+         1Pqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=gtgAzLnc3RcqClKbOcZOPzy3aLAgaQlGmQMhkVqxZF4=;
-        b=GtLEHcquKHbDCDF55wNcpICH2avdGzeqXVsG070XFhxvwSwCg43wFCT5k5tUMpRcOd
-         MN7dHO/+6WJqnXz90ksYdbM0t6AzMOtbdzpnhSMHQC8wVhNqi2v4ILVRK1p81UYuMNSE
-         0Wc2NRVgutz1N3J4rOCLmhpYGfhpVm5ygrZb4p76j57HZYxAXSCFdss/YquyfcGI/pNn
-         0sGwcS7GCwcIcj5eHLXS/baSO35eqYpCe1HmZu4XKNEIQ6L+OIWiJh28IqT6WTfsCe14
-         ETEHqmXGOOlc6e5uCh4Qmwi0MEf73iDkPsytlH5oQobJqfY4Ma/iYWyHv/nuwPgE/EFJ
-         Poow==
-X-Gm-Message-State: APjAAAVH/RXUwYKYpGzWXq3wHY/UL7qC6Q/YltmHoCjErHm/m7SuImt+
-        b0vPUyDU9BSik3tu33KgO5znnEdabUQyTXCkvg==
-X-Google-Smtp-Source: APXvYqy4EO8/aLq3VaFLQjC6K64y37JXC1yIOLlXDl/8Vxv2N+fjR/v0HTS0Lgxe9P/FIqRA8uCA9fQSd4O9WIZNJw==
-X-Received: by 2002:a37:be87:: with SMTP id o129mr5066942qkf.254.1568923478704;
- Thu, 19 Sep 2019 13:04:38 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 13:04:28 -0700
-In-Reply-To: <20190919200428.188797-1-almasrymina@google.com>
-Message-Id: <20190919200428.188797-3-almasrymina@google.com>
-Mime-Version: 1.0
-References: <20190919200428.188797-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
-Subject: [PATCH 2/2] hugetlb: remove duplicated code
-From:   Mina Almasry <almasrymina@google.com>
-To:     mike.kravetz@oracle.com
-Cc:     almasrymina@google.com, rientjes@google.com, shakeelb@google.com,
-        gthelen@google.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6SLgslheBeIIJex/gf/ZVhEBmirzOWHGUduUXl+JfS0=;
+        b=LRo5IFeo7bCrSGTPwzfrS3V9994tSJ6StNPbYplCww/oZi062QD+1Ceusj+wGxsKTc
+         2S1ZWmHUWjuU7/+GG38QkQ8zFQlUUun4bmwcy73ioa/dbMnMFM5sby0WaCGgbA8EhpfW
+         pUPte2TuX/Z/tWC3hHILfw4liAmCvP4JV75rm/kCPYK4YCFPpVwG0M69vl9ogyUAE1Fh
+         Hj8ODuEtG3JLKpAyzS2mvqr84BBF+UQRbUGq3769TT0vm4LXPokdKWg06XHLkAElbyj7
+         J+1oIHZG0l1QesIKgLM0CvON8ccbM/SQbWZ3uS66kyTD+sdc/XBzv5LhW9+K886WXoqk
+         iYig==
+X-Gm-Message-State: APjAAAUzfXZ6uql9XutpVXopOzfL846dSj/7bH8GtlgN/4KY23ZbsorT
+        8MaLMGXdjmQzJ4AWbSABlQe2Yq0UrmSCuY5ZJPPiDOW5
+X-Google-Smtp-Source: APXvYqxs8KaOnta4oS+qOBnum0sYdK4kwfRs3AjdmxE14hPdeI3PYvm+RSVJQcA/eiB1hLB6FfwDBOgY14u/8HhKXfM=
+X-Received: by 2002:aca:3ad6:: with SMTP id h205mr3915280oia.129.1568923630403;
+ Thu, 19 Sep 2019 13:07:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <1568895064-4116-1-git-send-email-jianxin.pan@amlogic.com> <1568895064-4116-2-git-send-email-jianxin.pan@amlogic.com>
+In-Reply-To: <1568895064-4116-2-git-send-email-jianxin.pan@amlogic.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 19 Sep 2019 22:06:59 +0200
+Message-ID: <CAFBinCCxeYgso3WQWqNgWUwwCM835uo_6FftVv0YwYTFJV2Ovw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: power: add Amlogic secure power domains bindings
+To:     Jianxin Pan <jianxin.pan@amlogic.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        Zhiqiang Liang <zhiqiang.liang@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicated code between region_chg and region_add, and refactor it into
-a common function, add_reservation_in_range. This is mostly done because
-there is a follow up change in another series that disables region
-coalescing in region_add, and I want to make that change in one place
-only. It should improve maintainability anyway on its own.
+Hi Jianxin,
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+On Thu, Sep 19, 2019 at 2:11 PM Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+>
+> Add the bindings for the Amlogic Secure power domains, controlling the
+> secure power domains.
+>
+> The bindings targets the Amlogic A1 and C1 compatible SoCs, in which the
+> power domain registers are in secure world.
+>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> Signed-off-by: Zhiqiang Liang <zhiqiang.liang@amlogic.com>
+> ---
+>  .../bindings/power/amlogic,meson-sec-pwrc.yaml     | 32 ++++++++++++++++++++++
+>  include/dt-bindings/power/meson-a1-power.h         | 32 ++++++++++++++++++++++
+>  2 files changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+>  create mode 100644 include/dt-bindings/power/meson-a1-power.h
+>
+> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+> new file mode 100644
+> index 00000000..327e0d9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-sec-pwrc.yaml
+> @@ -0,0 +1,32 @@
+> +# SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +# Copyright (c) 2019 Amlogic, Inc
+> +# Author: Jianxin Pan <jianxin.pan@amlogic.com>
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/power/amlogic,meson-sec-pwrc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Amlogic Meson Secure Power Domains
+> +
+> +maintainers:
+> +  - Jianxin Pan <jianxin.pan@amlogic.com>
+> +
+> +description: |+
+> +  A1/C1 series The Secure Power Domains node should be the child of a syscon
+> +  node with the required property.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,meson-a1-pwrc
+> +
+> +required:
+> +  - compatible
+> +
+> +examples:
+> +  - |
+> +    pwrc: power-controller {
+> +          compatible = "amlogic,meson-a1-pwrc";
+> +    };
+not a comment about this binding but about the secure monitor in general:
+there's a recent discussion about the secure monitor in the nvmem bindings: [0]
 
----
- mm/hugetlb.c | 119 ++++++++++++++++++++++++---------------------------
- 1 file changed, 57 insertions(+), 62 deletions(-)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index a14f6047fc7e..052a2532528a 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -244,6 +244,60 @@ struct file_region {
- 	long to;
- };
+Martin
 
-+/* Must be called with resv->lock held. Calling this with count_only == true
-+ * will count the number of pages to be added but will not modify the linked
-+ * list.
-+ */
-+static long add_reservation_in_range(struct resv_map *resv, long f, long t,
-+				     bool count_only)
-+{
-+	long chg = 0;
-+	struct list_head *head = &resv->regions;
-+	struct file_region *rg = NULL, *trg = NULL, *nrg = NULL;
-+
-+	/* Locate the region we are before or in. */
-+	list_for_each_entry (rg, head, link)
-+		if (f <= rg->to)
-+			break;
-+
-+	/* Round our left edge to the current segment if it encloses us. */
-+	if (f > rg->from)
-+		f = rg->from;
-+
-+	chg = t - f;
-+
-+	/* Check for and consume any regions we now overlap with. */
-+	nrg = rg;
-+	list_for_each_entry_safe (rg, trg, rg->link.prev, link) {
-+		if (&rg->link == head)
-+			break;
-+		if (rg->from > t)
-+			break;
-+
-+		/* We overlap with this area, if it extends further than
-+		 * us then we must extend ourselves.  Account for its
-+		 * existing reservation.
-+		 */
-+		if (rg->to > t) {
-+			chg += rg->to - t;
-+			t = rg->to;
-+		}
-+		chg -= rg->to - rg->from;
-+
-+		if (!count_only && rg != nrg) {
-+			list_del(&rg->link);
-+			kfree(rg);
-+		}
-+	}
-+
-+	if (!count_only) {
-+		nrg->from = f;
-+		nrg->to = t;
-+	}
-+
-+	return chg;
-+}
-+
- /*
-  * Add the huge page range represented by [f, t) to the reserve
-  * map.  Existing regions will be expanded to accommodate the specified
-@@ -257,7 +311,7 @@ struct file_region {
- static long region_add(struct resv_map *resv, long f, long t)
- {
- 	struct list_head *head = &resv->regions;
--	struct file_region *rg, *nrg, *trg;
-+	struct file_region *rg, *nrg;
- 	long add = 0;
 
- 	spin_lock(&resv->lock);
-@@ -287,38 +341,7 @@ static long region_add(struct resv_map *resv, long f, long t)
- 		goto out_locked;
- 	}
-
--	/* Round our left edge to the current segment if it encloses us. */
--	if (f > rg->from)
--		f = rg->from;
--
--	/* Check for and consume any regions we now overlap with. */
--	nrg = rg;
--	list_for_each_entry_safe(rg, trg, rg->link.prev, link) {
--		if (&rg->link == head)
--			break;
--		if (rg->from > t)
--			break;
--
--		/* If this area reaches higher then extend our area to
--		 * include it completely.  If this is not the first area
--		 * which we intend to reuse, free it. */
--		if (rg->to > t)
--			t = rg->to;
--		if (rg != nrg) {
--			/* Decrement return value by the deleted range.
--			 * Another range will span this area so that by
--			 * end of routine add will be >= zero
--			 */
--			add -= (rg->to - rg->from);
--			list_del(&rg->link);
--			kfree(rg);
--		}
--	}
--
--	add += (nrg->from - f);		/* Added to beginning of region */
--	nrg->from = f;
--	add += t - nrg->to;		/* Added to end of region */
--	nrg->to = t;
-+	add = add_reservation_in_range(resv, f, t, false);
-
- out_locked:
- 	resv->adds_in_progress--;
-@@ -345,8 +368,6 @@ static long region_add(struct resv_map *resv, long f, long t)
-  */
- static long region_chg(struct resv_map *resv, long f, long t)
- {
--	struct list_head *head = &resv->regions;
--	struct file_region *rg;
- 	long chg = 0;
-
- 	spin_lock(&resv->lock);
-@@ -375,34 +396,8 @@ static long region_chg(struct resv_map *resv, long f, long t)
- 		goto retry_locked;
- 	}
-
--	/* Locate the region we are before or in. */
--	list_for_each_entry(rg, head, link)
--		if (f <= rg->to)
--			break;
--
--	/* Round our left edge to the current segment if it encloses us. */
--	if (f > rg->from)
--		f = rg->from;
--	chg = t - f;
--
--	/* Check for and consume any regions we now overlap with. */
--	list_for_each_entry(rg, rg->link.prev, link) {
--		if (&rg->link == head)
--			break;
--		if (rg->from > t)
--			goto out;
--
--		/* We overlap with this area, if it extends further than
--		 * us then we must extend ourselves.  Account for its
--		 * existing reservation. */
--		if (rg->to > t) {
--			chg += rg->to - t;
--			t = rg->to;
--		}
--		chg -= rg->to - rg->from;
--	}
-+	chg = add_reservation_in_range(resv, f, t, true);
-
--out:
- 	spin_unlock(&resv->lock);
- 	return chg;
- }
---
-2.23.0.351.gc4317032e6-goog
+[0] https://www.spinics.net/lists/arm-kernel/msg750010.html
