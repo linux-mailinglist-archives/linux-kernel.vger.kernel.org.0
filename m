@@ -2,99 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D64B7466
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 09:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB1E5B745E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 09:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731478AbfISHsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 03:48:24 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35397 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfISHsY (ORCPT
+        id S1731071AbfISHqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 03:46:06 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47201 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbfISHqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 03:48:24 -0400
-Received: by mail-wr1-f66.google.com with SMTP id v8so1993841wrt.2;
-        Thu, 19 Sep 2019 00:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=4+IikWYzTHVoP+qr/bH+QADSSsqMyHaDXXhUq1MQaqE=;
-        b=CdQ6YV2u8DkvN7NZv3oWamzT06hOVlVxmHK0/goVfJ5nYPRBaDq2MzukNnVes247od
-         6A/pVklUbgoTWlHmjo65l+vUzL1dxZJ+AJ6API3LDshNMG4Lo39mi2j3YMKQtdi5iyMX
-         k91ok8cbypGednfDRH+hiu/W01ecXreCaFnvov2ay/ZvgNslymEx+bxXLuqUz4U15Gb8
-         ///K99QyOBJ+RAtDcPlzICgC1FJJUllwS1e8anhhY7NAcdFGd4CT9Nuy0OR9tQw7YAqM
-         jg9jpcKKU4rut4Epc8K/jaWjD2wdGBsqFsaP3dO5xyAhyjGjDOX/e4MoIzBrY9b0vIwF
-         eThw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4+IikWYzTHVoP+qr/bH+QADSSsqMyHaDXXhUq1MQaqE=;
-        b=C2KKgeCLPKM9pXBpP6SY2v1p7a/Q1Rt165+3zpMoBuUBXcccFTIWmmGYdPemho5pqo
-         B8HrhXMMbfXkqpt0ECdFIcrns7kasXRDL4UJj9Rh/lddW/3WUYjWhiQcA6mKzl+527+t
-         ByzbZsWustE5tLsSuxqGIkadTYftdR5bpE2PQeSNsuHGMlF0U7dZFf3/Ya6F8P/n5Ae7
-         EH97RP3EMQK4s9wH2XIOuAFOro21T10YBrY8CTcOefIjNi4nNXSnBxDXhQPhQagMcB4U
-         YhBbeRKR1DoY8wtYBVMsJlXQU0nNMmbaV3iUlMBItv3Ki0GqYmSvShlA0P3af33KZYzz
-         9n4g==
-X-Gm-Message-State: APjAAAXg98RdtnRLIER1paG+gr/ELmObbEMfSHm4z3KgNRzKLzFjNcVF
-        qCuZvW+X+qyRG9QrgDGhebOjlPMjCmA=
-X-Google-Smtp-Source: APXvYqw+ahU3bBlwVkjXOnMv6LzIZQwXrl99hJ4LTJG7ynNbH/PcROfnsBVY/iP/I8DZyIaaNEALyg==
-X-Received: by 2002:adf:e485:: with SMTP id i5mr911416wrm.175.1568879302252;
-        Thu, 19 Sep 2019 00:48:22 -0700 (PDT)
-Received: from linux-code.mgc.mentorg.com (nat-sch.mentorg.com. [139.181.36.34])
-        by smtp.gmail.com with ESMTPSA id q66sm7120969wme.39.2019.09.19.00.48.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 00:48:21 -0700 (PDT)
-From:   Srikanth Krishnakar <skrishnakar@gmail.com>
-X-Google-Original-From: Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>
-To:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dvhart@infradead.org, andy@infradead.org
-Cc:     Cedric_Hombourger@mentor.com, Srikanth_Krishnakar@mentor.com,
-        jan.kiszka@siemens.com
-Subject: [PATCH] platform/x86: pmc_atom: Add Siemens SIMATIC IPC2x7E to critclk_systems DMI table
-Date:   Thu, 19 Sep 2019 13:15:56 +0530
-Message-Id: <20190919074556.25691-1-Srikanth_Krishnakar@mentor.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 19 Sep 2019 03:46:06 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 5A56E8164C; Thu, 19 Sep 2019 09:45:48 +0200 (CEST)
+Date:   Thu, 19 Sep 2019 09:46:01 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Daniel Drake <drake@endlessm.com>,
+        Ian W MORRISON <ianwmorrison@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 4.19 16/50] gpiolib: acpi: Add
+ gpiolib_acpi_run_edge_events_on_boot option and blacklist
+Message-ID: <20190919074601.GA6968@amd>
+References: <20190918061223.116178343@linuxfoundation.org>
+ <20190918061224.680169319@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Disposition: inline
+In-Reply-To: <20190918061224.680169319@linuxfoundation.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SIMATIC IPC227E and IPC277E uses the PMC clock for on-board components
-and gets stuck during boot if the clock is disabled. Therefore, add this
-device to the critical systems list.
 
-The Board revision does vary in some instances and hence use PRODUCT_NAME
-to allow the boards to boot with identical names.
+--uAKRQypu60I7Lcqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested on SIMATIC IPC227E and IPC277E.
+On Wed 2019-09-18 08:18:59, Greg Kroah-Hartman wrote:
+> From: Hans de Goede <hdegoede@redhat.com>
+>=20
+> commit 61f7f7c8f978b1c0d80e43c83b7d110ca0496eb4 upstream.
+>=20
+> Another day; another DSDT bug we need to workaround...
+>=20
+> Since commit ca876c7483b6 ("gpiolib-acpi: make sure we trigger edge events
+> at least once on boot") we call _AEI edge handlers at boot.
+>=20
+> In some rare cases this causes problems. One example of this is the Minix
+> Neo Z83-4 mini PC, this device has a clear DSDT bug where it has some copy
+> and pasted code for dealing with Micro USB-B connector host/device role
+> switching, while the mini PC does not even have a micro-USB connector.
+> This code, which should not be there, messes with the DDC data pin from
+> the HDMI connector (switching it to GPIO mode) breaking HDMI support.
+>=20
+> To avoid problems like this, this commit adds a new
+> gpiolib_acpi.run_edge_events_on_boot kernel commandline option, which
+> allows disabling the running of _AEI edge event handlers at boot.
 
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-CC: Jan Kiszka <jan.kiszka@siemens.com>
-CC: Cedric Hombourger <Cedric_Hombourger@mentor.com>
-Signed-off-by: Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>
----
- drivers/platform/x86/pmc_atom.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+So... apparently Windows does _not_ run _AEI edge event handlers at
+boot, otherwise Minix would realize that fault.
 
-diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
-index 9aca5e7ce6d0..1e48c2ec684e 100644
---- a/drivers/platform/x86/pmc_atom.c
-+++ b/drivers/platform/x86/pmc_atom.c
-@@ -419,7 +419,14 @@ static const struct dmi_system_id critclk_systems[] = {
- 		.ident = "SIMATIC IPC227E",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "6ES7647-8B"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "SIMATIC IPC227E"),
-+		},
-+	},
-+	{
-+		.ident = "SIMATIC IPC277E",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "SIMATIC IPC277E"),
- 		},
- 	},
- 	{ /*sentinel*/ }
--- 
-2.17.1
+Would it make sense not to do it by default, either?
 
+Best regards,
+								Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--uAKRQypu60I7Lcqm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEUEARECAAYFAl2DMjkACgkQMOfwapXb+vI6ugCdEebfVH22q7FiPfHqC6qCzlnC
+CLMAliAngsZDT3SZdRjwMFvR/UPcfew=
+=Vg10
+-----END PGP SIGNATURE-----
+
+--uAKRQypu60I7Lcqm--
