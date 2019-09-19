@@ -2,128 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E66EBB7DA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 17:10:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 937A8B7DD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 17:11:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404006AbfISPKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 11:10:09 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38267 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403990AbfISPKH (ORCPT
+        id S2390053AbfISPLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 11:11:31 -0400
+Received: from sonic303-24.consmr.mail.gq1.yahoo.com ([98.137.64.205]:46594
+        "EHLO sonic303-24.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728720AbfISPLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 11:10:07 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a23so3537293edv.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 08:10:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AtJmx7YzvmNMJX7vvcIKkFLqCflOxxyrvK1PoirDPTw=;
-        b=oP8A5i+95DshExg2j5Uy8V9cUWkT0LstsMnL2HErbO3Vbig4wntTV4m9mYDptkb17n
-         DAQHzC8LQ2HHXAIlqY5oIicOzr1wdnGP8KPctTWRc8JkI8n/5S2+1EkzYZyn93b7xA1L
-         NRMSQHt8iAoE7YAYXWfur0TQYTo8GWxJZe5JgQytR/3NugB/OyojB6PhG45vS5P5rCgU
-         vIx+13MlRVX+3pbxQFpNkjMlKkilkbYM3IuJysA6VOviuAKnocL55IrKfuuCVLzkrQjJ
-         X3ULAwILuiC2s4Vo0QyTdo9hMV7Jp7SwibWqDyGQH8nHWaysISxxH80tBDisIJEEM9WM
-         HTiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AtJmx7YzvmNMJX7vvcIKkFLqCflOxxyrvK1PoirDPTw=;
-        b=a7tA22dNvJGw3/T4tu4gqfXvBPisTFUG4tMLdoS45a3LcWEqPkOj+lMbNeRytUcOd4
-         0QMG9qHDWSw5NONW58hhTsRsafIZdlP2+wrSdBZU4dIwnbrID1Cjzpywi/86Gsv1e43r
-         fadsv/swLyBjXIGkb6uUVV01zRHL2MpthC9WPZg3xeS5PmoP6Xg5U/vgdsroEhPPhT27
-         89nLxZmjbPx82pCKi1HugrekCxEaSLcK46E7S+Sg7s1pOuppxS54em7g5dh2hr5RmN3U
-         zWWknwz+cRjMbFiN52WVq+dlm3UmIKnrNdEp7WA1mV9ekdlNpCOd6pa3FML14+hc5slF
-         wouQ==
-X-Gm-Message-State: APjAAAUQNz8fHll7OEk4gwMbFzMp1M6UnF3nfz/bXzfSukIivC0LY/xZ
-        aqHggoJMhlNP/Exj91mhtOsP9A==
-X-Google-Smtp-Source: APXvYqxYxiZ2bVj5BdC3D15rlj8ekrnex1zF/A83CKnKWTrXRSvBVCzcdgefGE1QNSwyzfOfjt1OGw==
-X-Received: by 2002:a17:906:244c:: with SMTP id a12mr14473110ejb.288.1568905805521;
-        Thu, 19 Sep 2019 08:10:05 -0700 (PDT)
-Received: from lophozonia ([85.195.192.192])
-        by smtp.gmail.com with ESMTPSA id j10sm1683364ede.59.2019.09.19.08.10.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 08:10:04 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 17:10:02 +0200
-From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        will.deacon@arm.com, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, jacob.jun.pan@linux.intel.com,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, robh+dt@kernel.org,
-        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 8/8] iommu/arm-smmu-v3: Add support for PCI PASID
-Message-ID: <20190919151002.GF1013538@lophozonia>
-References: <20190610184714.6786-1-jean-philippe.brucker@arm.com>
- <20190610184714.6786-9-jean-philippe.brucker@arm.com>
- <b0e3d9a9-6085-b393-1982-3dd95bf5d100@redhat.com>
+        Thu, 19 Sep 2019 11:11:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1568905889; bh=1O+vcGjb05gALj1QAad6oTp09F1ELiXLmBDLOinwAuQ=; h=Date:From:To:Cc:Subject:In-Reply-To:References:From:Subject; b=aydgU3m7Ou6Rcnz6J90S7pTQcDjThuA2WPQTJwSkPWoS2z//BLXddJq5s0FIIxfaIkDw9GsWzVsJ3mhoEjJB2KwyM86cnkdUnJF4FRvMq6zK5jHa9EY5UaLGN+U2930WKF4Nl77Z4gVcp1Y7Lo/ycnR7H0e7zH0FMcz5jW5WyktIZ5iEhJaw5J+XUYrij+21psX814JVrwyNcqszA+jUlvoKRD5Bou+E7jbCfmZiLdasSj5fZvOo0u7INbn/L8sddkOLaQU1uZKkySaQKN5iGLq/w7BUKwpPp/WWwFPfofKxfIbhZAZGwlikpN1ncrVg8L/ZnYAePT9Cpb3DXNEEkw==
+X-YMail-OSG: bWS3MbAVM1n2bVlxeCjg2TlJXEwEXoEGyq.F13_51W51aumfuTjEoZcd2ZUlYYp
+ stFoP_2g5EeXEqZeYPvxKWq0fNMnCYZHDZ0fkrERKiVX36Vt1W.TKP4AJDypwy3m2KyC0OVOnJZL
+ lNWHgRlUkG3GvIryChc7kpQmFEER56RW6RRxvUKy9Dw7i_m4K9W6LEnel6TXSkrGxFScevHaLPIb
+ cIaD7u1cl4BQgucbUHhIxkljUrG8rKIQdNRSkm3sUPLMNWC82p1TGNyuLMGrxVImSzAH5HOAbqIr
+ eb1nEvNXAmBlzuQe1gd_M9cMy0aU7Xp5xwllx7WdHOt7u4o.wqP.PsP2nBLOIHV7rHwqPZJutNsk
+ GVgcFZvwY0QOVy.22QoRTHqitXF5IV4SBE0tdpg8FjikNo76Gss5NPN5QKMc1AR10t0YSLtAU4Lh
+ eCIa7QVMsKdJINa6K8SHDOoTaZNHZEC84uzTgbnpcqIuXpzG0WFKU5NwKdWTX6mzC827UX5l86_G
+ Y3I2V2AC1m3cczrnTg2Jk_78saePb3O4tROy2dpdi2eUJmGtpnQhMXfprvzIQoPCwvhPJAm0VSaR
+ 7igRx3fUIVzar9zL8EXd24N88KP98alU2UYYoOcK1xpz5yeBTR9LV_JrBUH3kM06LUBPL7kKQ1FT
+ _rsK62RKBhagfpGB_sNarttM01UB6cZXFSS0QGalITrL4p8HXXIOuGZkpJYMenvUcXcePXJz7k9m
+ mRfmhsDdC37ejqg4NAF2sQLgjJDTnarPnJUUhGxHI1L95Cdg5Qs3FThDjIZP.3Zszf4bCgtdoSJ6
+ 8oOXIGi2MIhHwYyH5clNw89yC1UkGi0NN4A4UYecGMZnKT2FL89uiNkWmGA30V4P8ipi5sZj1blV
+ 11JrBME.JXClK.hTYUmyonRj8.7yedYE1ierTiuQ8as.QyIU0Ip6Awh8aKuSCyauYhItHz7mvI_Y
+ q.uB7eY1deNgdTngRS14yIMl9dyfpHZ5KHdDmQ1KwlKbRv_uaMUFAdxJwNQWFcFzXKC525vzR4.U
+ 37WeCqn04LlTvF8ZfyHyzhiDsBHO8dc81WzLIVGw22BC1FaAPSSQh05BNHurY3kmRAK9nOLKQL5d
+ SfhFvCWyCuub334uX7tNlsPqXJTMdSOJ_pLJJqWJ0Hq4JM.C5.tqPAZ27YnwBAfyqaijr_go_Byl
+ i6mQPFDvtpUFArRx3S35wK5NaIsf8t6MLYLRQ3MhchdystDZ8aOBTbGtGKDKGcDUXi.gvfpM0s8M
+ tEHadBg0X207GBLRP6HyVhfM6PBxpuMBu4JH52Hv1ahnKngljmMqC8IpAcQ_mIvpB84TwN7WBt6_
+ nMZ4OeTKJpgWVob0Qfs1fYuVo.vuXrf_J5.0rwtwzOg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.gq1.yahoo.com with HTTP; Thu, 19 Sep 2019 15:11:29 +0000
+Received: by smtp424.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d8617a679873d1c43053a5376a695e1e;
+          Thu, 19 Sep 2019 15:11:23 +0000 (UTC)
+Date:   Thu, 19 Sep 2019 23:11:16 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-erofs@lists.ozlabs.org, Miao Xie <miaoxie@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: erofs -next tree inclusion request
+Message-ID: <20190919150213.GA6138@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b0e3d9a9-6085-b393-1982-3dd95bf5d100@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190919145027.GN3642@sirena.co.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190919150213.GA6138.ref@hsiangkao-HP-ZHAN-66-Pro-G1>
+X-Mailer: WebService/1.1.14303 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 09:58:16AM +0200, Auger Eric wrote:
-> > +	ret = pci_enable_pasid(pdev, features);
-> > +	if (!ret)
-> > +		master->ssid_bits = min_t(u8, ilog2(num_pasids),
-> > +					  master->smmu->ssid_bits);
-> I don't really get why this setting is conditional to the success of
-> pci_enabled_pasid and not num_pasids > 0.
+On Thu, Sep 19, 2019 at 03:50:27PM +0100, Mark Brown wrote:
+> On Thu, Sep 19, 2019 at 10:37:22PM +0800, Gao Xiang wrote:
+> 
+> > The fixes only -fixes branch is
+> > git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git fixes
+> 
+> > Thanks for taking time on this stuff...
+> 
+> OK, thanks - I've added that for tomorrow and I'll try to remember to
+> add it onto the end of today's build too.  Like I said before you might
+> need to remind Stephen about the trees when he gets back on the 30th but
+> hopefully he'll see these mails.
 
-num_pasids only contains the value of the PCIe PASID capability. If
-pci_enable_pasid() fails then we want to leave master->ssid_bits to 0 so
-that we report to users that SVA and AUXD aren't supported.
+Thanks, I will keep eyes on -next branch and remind him when it's really
+necessary.
 
-> If it fails the ssid_bits is set to min(smmu->ssid_bits,
-> fwspec->num_pasid_bits) anyway.
->
-> > +	return ret;
-> > +}
-> > +
-> > +static void arm_smmu_disable_pasid(struct arm_smmu_master *master)
-> > +{
-> > +	struct pci_dev *pdev;
-> > +
-> > +	if (!dev_is_pci(master->dev))
-> > +		return;
-> > +
-> > +	pdev = to_pci_dev(master->dev);
-> > +
-> > +	if (!pdev->pasid_enabled)
-> > +		return;
-> > +
-> > +	pci_disable_pasid(pdev);
-> > +	master->ssid_bits = 0;
-> in case of a platform device you leave the ssid_bits to a value != 0. Is
-> that what you want?
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgement of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window.
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
+>         Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and
+>      * destined for the current or next Linux merge window.
 
-Yes, this is only for PCI devices, there is no standard way of disabling
-PASID in platform devices. We just take whatever the firmware gives us.
+Yes, I understand these rules (by keeping up with several previous rounds)
+and thanks for your reminder again.
 
-> > +}
-> > +
-> >  static void arm_smmu_detach_dev(struct arm_smmu_master *master)
-> >  {
-> >  	unsigned long flags;
-> > @@ -2413,6 +2456,9 @@ static int arm_smmu_add_device(struct device *dev)
-> >  
-> >  	master->ssid_bits = min(smmu->ssid_bits, fwspec->num_pasid_bits);
-> >  
-> > +	/* Note that PASID must be enabled before, and disabled after ATS */
-> > +	arm_smmu_enable_pasid(master);
-> In case the call fails, don't you want to handle the error and reset the
-> ssid_bits?
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
 
-This function fails if the device doesn't support PASID, and we leave
-ssid_bits to 0. That said, I think it would be nicer to move the above
-line (that deals with fwspec) into arm_smmu_enable_pasid()
+I will give a try after these commits are all solid and pull request with
+my PGP key then... Thank you...
 
 Thanks,
-Jean
+Gao Xiang
+
