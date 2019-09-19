@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCDB8B8509
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:17:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8366BB854B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:19:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406365AbfISWQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:16:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57432 "EHLO mail.kernel.org"
+        id S2392898AbfISWTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:19:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392348AbfISWQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:16:42 -0400
+        id S2392787AbfISWTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:19:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEB4121A49;
-        Thu, 19 Sep 2019 22:16:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D730A20678;
+        Thu, 19 Sep 2019 22:19:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931401;
-        bh=gdfIsCQ3akrb6/fwj/1NzIgPbIVHf0Aisr6RhVLPZNM=;
+        s=default; t=1568931570;
+        bh=W034x0wSS5mmCtPD4124rROzfcSw96M90lN4pTGITfM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NeFzeZveGkv7ZdlGCcVo2lD6ux6lALDJDfrdhxDNiA7t4AqKjYA+6Ig6QqMgCGyXb
-         5S8smh6jzpdRhApBfCMtvSFqD2mkZfpPpqVUU9ZaqgkRs9Ql82Xxwd13QJ8t80wyeu
-         fQtieDs7k8gk6dMMeEEX9UOoncEvp0adhjkunXgg=
+        b=nFeMTOVf6gTjuhAcNtp5Cyc8IPDAvWTwigxr9TNX3EYSjZTYjfO0mh+TFUya6mJGQ
+         RJ+VvyAMIIlZi8yBkTHWjMlUoKUZJOLzheTqudGkTH83GPfD4XGmVDrcJRZNujW6u2
+         BcGcAL28qxH938ePc3K07ZoowneSu4YAC8P9pSL4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 31/59] netfilter: nf_conntrack_ftp: Fix debug output
+        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 33/74] nvmem: Use the same permissions for eeprom as for nvmem
 Date:   Fri, 20 Sep 2019 00:03:46 +0200
-Message-Id: <20190919214805.760316960@linuxfoundation.org>
+Message-Id: <20190919214808.197323512@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
-References: <20190919214755.852282682@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,47 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Jarosch <thomas.jarosch@intra2net.com>
+From: Jean Delvare <jdelvare@suse.de>
 
-[ Upstream commit 3a069024d371125227de3ac8fa74223fcf473520 ]
+commit e70d8b287301eb6d7c7761c6171c56af62110ea3 upstream.
 
-The find_pattern() debug output was printing the 'skip' character.
-This can be a NULL-byte and messes up further pr_debug() output.
+The compatibility "eeprom" attribute is currently root-only no
+matter what the configuration says. The "nvmem" attribute does
+respect the setting of the root_only configuration bit, so do the
+same for "eeprom".
 
-Output without the fix:
-kernel: nf_conntrack_ftp: Pattern matches!
-kernel: nf_conntrack_ftp: Skipped up to `<7>nf_conntrack_ftp: find_pattern `PORT': dlen = 8
-kernel: nf_conntrack_ftp: find_pattern `EPRT': dlen = 8
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: b6c217ab9be6 ("nvmem: Add backwards compatibility support for older EEPROM drivers.")
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20190728184255.563332e6@endymion
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Output with the fix:
-kernel: nf_conntrack_ftp: Pattern matches!
-kernel: nf_conntrack_ftp: Skipped up to 0x0 delimiter!
-kernel: nf_conntrack_ftp: Match succeeded!
-kernel: nf_conntrack_ftp: conntrack_ftp: match `172,17,0,100,200,207' (20 bytes at 4150681645)
-kernel: nf_conntrack_ftp: find_pattern `PORT': dlen = 8
-
-Signed-off-by: Thomas Jarosch <thomas.jarosch@intra2net.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_ftp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvmem/core.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/net/netfilter/nf_conntrack_ftp.c b/net/netfilter/nf_conntrack_ftp.c
-index f0e9a7511e1ac..c236c7d1655d0 100644
---- a/net/netfilter/nf_conntrack_ftp.c
-+++ b/net/netfilter/nf_conntrack_ftp.c
-@@ -323,7 +323,7 @@ static int find_pattern(const char *data, size_t dlen,
- 		i++;
- 	}
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -401,10 +401,17 @@ static int nvmem_setup_compat(struct nvm
+ 	if (!config->base_dev)
+ 		return -EINVAL;
  
--	pr_debug("Skipped up to `%c'!\n", skip);
-+	pr_debug("Skipped up to 0x%hhx delimiter!\n", skip);
- 
- 	*numoff = i;
- 	*numlen = getnum(data + i, dlen - i, cmd, term, numoff);
--- 
-2.20.1
-
+-	if (nvmem->read_only)
+-		nvmem->eeprom = bin_attr_ro_root_nvmem;
+-	else
+-		nvmem->eeprom = bin_attr_rw_root_nvmem;
++	if (nvmem->read_only) {
++		if (config->root_only)
++			nvmem->eeprom = bin_attr_ro_root_nvmem;
++		else
++			nvmem->eeprom = bin_attr_ro_nvmem;
++	} else {
++		if (config->root_only)
++			nvmem->eeprom = bin_attr_rw_root_nvmem;
++		else
++			nvmem->eeprom = bin_attr_rw_nvmem;
++	}
+ 	nvmem->eeprom.attr.name = "eeprom";
+ 	nvmem->eeprom.size = nvmem->size;
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
 
 
