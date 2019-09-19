@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC291B85E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A979AB856D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390979AbfISWXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:23:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38414 "EHLO mail.kernel.org"
+        id S2406654AbfISWU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394140AbfISWXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:23:01 -0400
+        id S2394032AbfISWUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 833B121924;
-        Thu, 19 Sep 2019 22:23:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3335E20678;
+        Thu, 19 Sep 2019 22:20:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931781;
-        bh=M4XnMWuXxsOhiKJSxBS5CjqJ+fb6S51FmcyrajJ279c=;
+        s=default; t=1568931651;
+        bh=JGn3IDncK4xvyXxYnk8ag5YaB4m59tQ8igsrSqqrYlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PKbGlgpXfqel2UtqQbn8tw/JottyKlVPBaNjoceuzv9TZdOKNl657qRtxmnF7W5SH
-         22bEvjytv83AUyP0Idv3olMlwZbHzA+K+6A9BREXNg3C0y5x0ypfETzXuz3nwi6phf
-         54ObyJ1yYf+EP6RGx624iGwzBtmzXPHGGZpaGnLA=
+        b=yiNXocELKOXe56TEfbvVRyAfbRYjFOKFkH5KHhbX7H7Z/x+qDv57+M/Re+dngElx3
+         +dMgE1u/pU5t3fzuntckpzuPRXit8L7tEkxiq8rTW2oKNKLE2IjqCUgYp4EHPmcKS7
+         1c+KyjfogRM2Gh2HYh5yk+vGEKZrRirTQ5LVmlb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 09/56] tcp: fix tcp_ecn_withdraw_cwr() to clear TCP_ECN_QUEUE_CWR
+        stable@vger.kernel.org,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.9 37/74] powerpc/mm/radix: Use the right page size for vmemmap mapping
 Date:   Fri, 20 Sep 2019 00:03:50 +0200
-Message-Id: <20190919214748.450984159@linuxfoundation.org>
+Message-Id: <20190919214808.577253698@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,59 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neal Cardwell <ncardwell@google.com>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-[ Upstream commit af38d07ed391b21f7405fa1f936ca9686787d6d2 ]
+commit 89a3496e0664577043666791ec07fb731d57c950 upstream.
 
-Fix tcp_ecn_withdraw_cwr() to clear the correct bit:
-TCP_ECN_QUEUE_CWR.
+We use mmu_vmemmap_psize to find the page size for mapping the vmmemap area.
+With radix translation, we are suboptimally setting this value to PAGE_SIZE.
 
-Rationale: basically, TCP_ECN_DEMAND_CWR is a bit that is purely about
-the behavior of data receivers, and deciding whether to reflect
-incoming IP ECN CE marks as outgoing TCP th->ece marks. The
-TCP_ECN_QUEUE_CWR bit is purely about the behavior of data senders,
-and deciding whether to send CWR. The tcp_ecn_withdraw_cwr() function
-is only called from tcp_undo_cwnd_reduction() by data senders during
-an undo, so it should zero the sender-side state,
-TCP_ECN_QUEUE_CWR. It does not make sense to stop the reflection of
-incoming CE bits on incoming data packets just because outgoing
-packets were spuriously retransmitted.
+We do check for 2M page size support and update mmu_vmemap_psize to use
+hugepage size but we suboptimally reset the value to PAGE_SIZE in
+radix__early_init_mmu(). This resulted in always mapping vmemmap area with
+64K page size.
 
-The bug has been reproduced with packetdrill to manifest in a scenario
-with RFC3168 ECN, with an incoming data packet with CE bit set and
-carrying a TCP timestamp value that causes cwnd undo. Before this fix,
-the IP CE bit was ignored and not reflected in the TCP ECE header bit,
-and sender sent a TCP CWR ('W') bit on the next outgoing data packet,
-even though the cwnd reduction had been undone.  After this fix, the
-sender properly reflects the CE bit and does not set the W bit.
-
-Note: the bug actually predates 2005 git history; this Fixes footer is
-chosen to be the oldest SHA1 I have tested (from Sep 2007) for which
-the patch applies cleanly (since before this commit the code was in a
-.h file).
-
-Fixes: bdf1ee5d3bd3 ("[TCP]: Move code from tcp_ecn.h to tcp*.c and tcp.h & remove it")
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2bfd65e45e87 ("powerpc/mm/radix: Add radix callbacks for early init routines")
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp_input.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -225,7 +225,7 @@ static void tcp_ecn_accept_cwr(struct tc
- 
- static void tcp_ecn_withdraw_cwr(struct tcp_sock *tp)
- {
--	tp->ecn_flags &= ~TCP_ECN_DEMAND_CWR;
-+	tp->ecn_flags &= ~TCP_ECN_QUEUE_CWR;
+---
+ arch/powerpc/mm/pgtable-radix.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+--- a/arch/powerpc/mm/pgtable-radix.c
++++ b/arch/powerpc/mm/pgtable-radix.c
+@@ -287,14 +287,6 @@ void __init radix__early_init_devtree(vo
+ 	mmu_psize_defs[MMU_PAGE_64K].shift = 16;
+ 	mmu_psize_defs[MMU_PAGE_64K].ap = 0x5;
+ found:
+-#ifdef CONFIG_SPARSEMEM_VMEMMAP
+-	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
+-		/*
+-		 * map vmemmap using 2M if available
+-		 */
+-		mmu_vmemmap_psize = MMU_PAGE_2M;
+-	}
+-#endif /* CONFIG_SPARSEMEM_VMEMMAP */
+ 	return;
  }
  
- static void __tcp_ecn_check_ce(struct sock *sk, const struct sk_buff *skb)
+@@ -337,7 +329,13 @@ void __init radix__early_init_mmu(void)
+ 
+ #ifdef CONFIG_SPARSEMEM_VMEMMAP
+ 	/* vmemmap mapping */
+-	mmu_vmemmap_psize = mmu_virtual_psize;
++	if (mmu_psize_defs[MMU_PAGE_2M].shift) {
++		/*
++		 * map vmemmap using 2M if available
++		 */
++		mmu_vmemmap_psize = MMU_PAGE_2M;
++	} else
++		mmu_vmemmap_psize = mmu_virtual_psize;
+ #endif
+ 	/*
+ 	 * initialize page table size
 
 
