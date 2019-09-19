@@ -2,162 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3371B8627
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EA27B8644
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436566AbfISW1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:27:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40392 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393493AbfISW1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:27:11 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 016AA89AC7;
-        Thu, 19 Sep 2019 22:27:10 +0000 (UTC)
-Received: from x1.home (ovpn-118-102.phx2.redhat.com [10.3.118.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D856060BF1;
-        Thu, 19 Sep 2019 22:27:08 +0000 (UTC)
-Date:   Thu, 19 Sep 2019 16:27:08 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Matthew Rosato <mjrosato@linux.ibm.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>, sebott@linux.ibm.com,
-        gerald.schaefer@de.ibm.com, pasic@linux.ibm.com,
-        borntraeger@de.ibm.com, walling@linux.ibm.com,
-        linux-s390@vger.kernel.org, iommu@lists.linux-foundation.org,
-        joro@8bytes.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        heiko.carstens@de.ibm.com, robin.murphy@arm.com, gor@linux.ibm.com,
-        pmorel@linux.ibm.com
-Subject: Re: [PATCH v4 3/4] vfio: zpci: defining the VFIO headers
-Message-ID: <20190919162708.07d4eec4@x1.home>
-In-Reply-To: <0a62aba7-578a-6875-da4d-13e8b145cf9b@linux.ibm.com>
-References: <1567815231-17940-1-git-send-email-mjrosato@linux.ibm.com>
-        <1567815231-17940-4-git-send-email-mjrosato@linux.ibm.com>
-        <20190919172009.71b1c246.cohuck@redhat.com>
-        <0a62aba7-578a-6875-da4d-13e8b145cf9b@linux.ibm.com>
-Organization: Red Hat
+        id S2406214AbfISW1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:27:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51630 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405935AbfISW1t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:27:49 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BABD3616DA; Thu, 19 Sep 2019 22:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568932068;
+        bh=v4Fw1Ccf/Ml4nw4r3xNknb4uIdQAiU0adr4+naX9xMs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=REVa0NcMISAwfAkmgDXqIsrb/PKRju1p2TcymQ3K1GRyZha783cRfzyQ0RgVYWweI
+         Il9X/TAUJsPwdC6AuxodvIyNQN9TwPR2iUgZIi6rnMpOAgsnBEUYFXEQ1p7I1oAhsf
+         vG86uU71203hGkIq8RAskE4Itmw5J9jSxk9+Q80E=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 7BF93616B8;
+        Thu, 19 Sep 2019 22:27:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568932065;
+        bh=v4Fw1Ccf/Ml4nw4r3xNknb4uIdQAiU0adr4+naX9xMs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jMzhJlLamm3vIz12gBBjv49vXxrXiPMzuK1RKoyEL25W2yhYvJXsmyspjEo5z7Efj
+         X9MTR9VJgAfAzEYvkmXijuo2QcL+l5/xFfCOfOQJD1Q4FDTroT308vPcyTRYY9d4rS
+         s+UL1if4W15NxZCpxCcXU6XHDSnwoRATi2f0dZw0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 19 Sep 2019 22:27:10 +0000 (UTC)
+Date:   Thu, 19 Sep 2019 15:27:45 -0700
+From:   mnalajal@codeaurora.org
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, rafael@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] base: soc: Export soc_device_to_device API
+In-Reply-To: <20190919215836.GA426988@kroah.com>
+References: <1568927624-13682-1-git-send-email-mnalajal@codeaurora.org>
+ <20190919213203.GA395325@kroah.com> <20190919215300.GC1418@minitux>
+ <20190919215836.GA426988@kroah.com>
+Message-ID: <0fa861c7210c0e929a9955f48e1486ee@codeaurora.org>
+X-Sender: mnalajal@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Sep 2019 16:55:57 -0400
-Matthew Rosato <mjrosato@linux.ibm.com> wrote:
-
-> On 9/19/19 11:20 AM, Cornelia Huck wrote:
-> > On Fri,  6 Sep 2019 20:13:50 -0400
-> > Matthew Rosato <mjrosato@linux.ibm.com> wrote:
-> >   
-> >> From: Pierre Morel <pmorel@linux.ibm.com>
-> >>
-> >> We define a new device region in vfio.h to be able to
-> >> get the ZPCI CLP information by reading this region from
-> >> userland.
-> >>
-> >> We create a new file, vfio_zdev.h to define the structure
-> >> of the new region we defined in vfio.h
-> >>
-> >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> >> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> >> ---
-> >>  include/uapi/linux/vfio.h      |  1 +
-> >>  include/uapi/linux/vfio_zdev.h | 35 +++++++++++++++++++++++++++++++++++
-> >>  2 files changed, 36 insertions(+)
-> >>  create mode 100644 include/uapi/linux/vfio_zdev.h
-> >>
-> >> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> >> index 8f10748..8328c87 100644
-> >> --- a/include/uapi/linux/vfio.h
-> >> +++ b/include/uapi/linux/vfio.h
-> >> @@ -371,6 +371,7 @@ struct vfio_region_gfx_edid {
-> >>   * to do TLB invalidation on a GPU.
-> >>   */
-> >>  #define VFIO_REGION_SUBTYPE_IBM_NVLINK2_ATSD	(1)
-> >> +#define VFIO_REGION_SUBTYPE_ZDEV_CLP		(2)  
-> > 
-> > Using a subtype is fine, but maybe add a comment what this is for?
-> >   
+On 2019-09-19 14:58, Greg KH wrote:
+> On Thu, Sep 19, 2019 at 02:53:00PM -0700, Bjorn Andersson wrote:
+>> On Thu 19 Sep 14:32 PDT 2019, Greg KH wrote:
+>> 
+>> > On Thu, Sep 19, 2019 at 02:13:44PM -0700, Murali Nalajala wrote:
+>> > > If the soc drivers want to add custom sysfs entries it needs to
+>> > > access "dev" field in "struct soc_device". This can be achieved
+>> > > by "soc_device_to_device" API. Soc drivers which are built as a
+>> > > module they need above API to be exported. Otherwise one can
+>> > > observe compilation issues.
+>> > >
+>> > > Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
+>> > > ---
+>> > >  drivers/base/soc.c | 1 +
+>> > >  1 file changed, 1 insertion(+)
+>> > >
+>> > > diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+>> > > index 7c0c5ca..4ad52f6 100644
+>> > > --- a/drivers/base/soc.c
+>> > > +++ b/drivers/base/soc.c
+>> > > @@ -41,6 +41,7 @@ struct device *soc_device_to_device(struct soc_device *soc_dev)
+>> > >  {
+>> > >  	return &soc_dev->dev;
+>> > >  }
+>> > > +EXPORT_SYMBOL_GPL(soc_device_to_device);
+>> > >
+>> > >  static umode_t soc_attribute_mode(struct kobject *kobj,
+>> > >  				struct attribute *attr,
+>> >
+>> > What in-kernel driver needs this?
+>> >
+>> 
+>> Half of the drivers interacting with the soc driver calls this API,
+>> several of these I see no reason for being builtin (e.g.
+>> ux500 andversatile). So I think this patch makes sense to allow us to
+>> build these as modules.
+>> 
+>> > Is linux-next breaking without this?
+>> >
+>> 
+>> No, we postponed the addition of any sysfs attributes in the Qualcomm
+>> socinfo driver.
+>> 
+>> > We don't export things unless we have a user of the export.
+>> >
+>> > Also, adding "custom" sysfs attributes is almost always not the correct
+>> > thing to do at all.  The driver should be doing it, by setting up the
+>> > attribute group properly so that the driver core can do it automatically
+>> > for it.
+>> >
+>> > No driver should be doing individual add/remove of sysfs files.  If it
+>> > does so, it is almost guaranteed to be doing it incorrectly and racing
+>> > userspace.
+>> >
+>> 
+>> The problem here is that the attributes are expected to be attached to
+>> the soc driver, which is separate from the platform-specific drivers. 
+>> So
+>> there's no way to do platform specific attributes the right way.
+>> 
+>> > And yes, there's loads of in-kernel examples of doing this wrong, I've
+>> > been working on fixing that up, look at the patches now in Linus's tree
+>> > for platform and USB drivers that do this as examples of how to do it
+>> > right.
+>> >
+>> 
+>> Agreed, this patch should not be used as an approval for any crazy
+>> attributes; but it's necessary in order to extend the soc device's
+>> attributes, per the current design.
 > 
-> Fair point.  Maybe something like "IBM ZDEV CLP is used to pass zPCI
-> device features to guest"
-
-And if you're going to use a PCI vendor ID subtype, maintain consistent
-naming, VFIO_REGION_SUBTYPE_IBM_ZPCI_CLP or something.  Ideally there'd
-also be a reference to the struct provided through this region
-otherwise it's rather obscure to find by looking for the call to
-vfio_pci_register_dev_region() and ops defined for the region.  I
-wouldn't be opposed to defining the region structure here too rather
-than a separate file, but I guess you're following the example set by
-ccw.
-
-> >>  
-> >>  /*
-> >>   * The MSIX mappable capability informs that MSIX data of a BAR can be mmapped
-> >> diff --git a/include/uapi/linux/vfio_zdev.h b/include/uapi/linux/vfio_zdev.h
-> >> new file mode 100644
-> >> index 0000000..55e0d6d
-> >> --- /dev/null
-> >> +++ b/include/uapi/linux/vfio_zdev.h
-> >> @@ -0,0 +1,35 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> >> +/*
-> >> + * Region definition for ZPCI devices
-> >> + *
-> >> + * Copyright IBM Corp. 2019
-> >> + *
-> >> + * Author(s): Pierre Morel <pmorel@linux.ibm.com>
-> >> + */
-> >> +
-> >> +#ifndef _VFIO_ZDEV_H_
-> >> +#define _VFIO_ZDEV_H_
-> >> +
-> >> +#include <linux/types.h>
-> >> +
-> >> +/**
-> >> + * struct vfio_region_zpci_info - ZPCI information.  
-> > 
-> > Hm... probably should also get some more explanation. E.g. is that
-> > derived from a hardware structure?
-> >   
+> Wait, no, let's not let the "current design" remain if it is broken!
 > 
-> The structure itself is not mapped 1:1 to a hardware structure, but it
-> does serve as a collection of information that was derived from other
-> hardware structures.
+> Why can't the soc driver handle the attributes properly so that the
+> individual driver doesn't have to do the create/remove?
 > 
-> "Used for passing hardware feature information about a zpci device
-> between the host and guest" ?
+> thanks,
 > 
-> >> + *
-> >> + */
-> >> +struct vfio_region_zpci_info {
-> >> +	__u64 dasm;
-> >> +	__u64 start_dma;
-> >> +	__u64 end_dma;
-> >> +	__u64 msi_addr;
-> >> +	__u64 flags;
-> >> +	__u16 pchid;
-> >> +	__u16 mui;
-> >> +	__u16 noi;
-> >> +	__u16 maxstbl;
-> >> +	__u8 version;
-> >> +	__u8 gid;
-> >> +#define VFIO_PCI_ZDEV_FLAGS_REFRESH 1
-> >> +	__u8 util_str[];
-> >> +} __packed;
-> >> +
-> >> +#endif  
+> greg k-h
 
-I'm half tempted to suggest that this struct could be exposed directly
-through an info capability, the trouble is where.  It would be somewhat
-awkward to pick an arbitrary BAR or config space region to expose this
-info.  The VFIO_DEVICE_GET_INFO ioctl could include it, but we don't
-support capabilities on that return structure and I'm not sure it's
-worth implementing versus the solution here.  Just a thought.  Thanks,
-
-Alex
+Current soc framework is allowing the soc info drivers to create very 
+limited
+soc information as sysfs entries like machine name, family, revision and 
+soc_id.
+Sometimes it become a limited information for the clients to know more 
+about soc
+information. In this scenario soc info drivers are adding their own 
+sysfs entries
+on top of what soc framework is doing like hw_platform, 
+hw_platform_subtype etc.
+I believe this will be an issue for the other soc vendors as well. It is 
+good that
+if we could add these into the soc framework rather than individual 
+clients defining
+and adding them as per their requirement.
