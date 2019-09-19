@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85415B8726
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC5B5B86D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404906AbfISWee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:34:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47886 "EHLO mail.kernel.org"
+        id S2406441AbfISWcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:32:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405462AbfISWJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:09:38 -0400
+        id S2390588AbfISWNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:13:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D0DC21907;
-        Thu, 19 Sep 2019 22:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D69521907;
+        Thu, 19 Sep 2019 22:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930977;
-        bh=AXPR9OXJuhp5iAZ5tC1XbkvuhWf5TaT1co01bJ2eGsE=;
+        s=default; t=1568931211;
+        bh=HSDBrtfx0RrD3/Qa7HSXACxV8XQljFuckFcTvqevCnQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CF27y1I214x9qjCtnPqqai8qV6AUeP1YCBQ3sMQjoUdjAAl+I4hoxb2fnwdSkjP18
-         2E7ZiBJYjQuJwf4fZqnC/JExkN7G4IFX5bbdTK9CHJGbl1ty6gRPkdEWJhblbTLh4e
-         U6nA6LpR1iXybjBWhBr7ts4PoGubZpkh2/8D+5ZU=
+        b=v1j9P0W+FoItIQWeZpZkp4SdLBxhZty43lA2uhAV79sWjxPxeFo8qqEnOIyIGf0hD
+         rlHZPa+/qpvGykEQIQxp3Yka3gUdDtRIENeUvZgWlvQTpAABTT3SMCPb3YUsdGlY+G
+         euGXC5ljVJ9JNRJnTbGVNu6+QqOn4YUTHfb1Wa7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 084/124] ARM: 8901/1: add a criteria for pfn_valid of arm
-Date:   Fri, 20 Sep 2019 00:02:52 +0200
-Message-Id: <20190919214822.077733327@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 4.19 08/79] phy: renesas: rcar-gen3-usb2: Disable clearing VBUS in over-current
+Date:   Fri, 20 Sep 2019 00:02:53 +0200
+Message-Id: <20190919214808.486081633@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +44,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhaoyang <huangzhaoyang@gmail.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit 5b3efa4f1479c91cb8361acef55f9c6662feba57 ]
+commit e6839c31a608e79f2057fab987dd814f5d3477e6 upstream.
 
-pfn_valid can be wrong when parsing a invalid pfn whose phys address
-exceeds BITS_PER_LONG as the MSB will be trimed when shifted.
+The hardware manual should be revised, but the initial value of
+VBCTRL.OCCLREN is set to 1 actually. If the bit is set, the hardware
+clears VBCTRL.VBOUT and ADPCTRL.DRVVBUS registers automatically
+when the hardware detects over-current signal from a USB power switch.
+However, since the hardware doesn't have any registers which
+indicates over-current, the driver cannot handle it at all. So, if
+"is_otg_channel" hardware detects over-current, since ADPCTRL.DRVVBUS
+register is cleared automatically, the channel cannot be used after
+that.
 
-The issue originally arise from bellowing call stack, which corresponding to
-an access of the /proc/kpageflags from userspace with a invalid pfn parameter
-and leads to kernel panic.
+To resolve this behavior, this patch sets the VBCTRL.OCCLREN to 0
+to keep ADPCTRL.DRVVBUS even if the "is_otg_channel" hardware
+detects over-current. (We assume a USB power switch itself protects
+over-current and turns the VBUS off.)
 
-[46886.723249] c7 [<c031ff98>] (stable_page_flags) from [<c03203f8>]
-[46886.723264] c7 [<c0320368>] (kpageflags_read) from [<c0312030>]
-[46886.723280] c7 [<c0311fb0>] (proc_reg_read) from [<c02a6e6c>]
-[46886.723290] c7 [<c02a6e24>] (__vfs_read) from [<c02a7018>]
-[46886.723301] c7 [<c02a6f74>] (vfs_read) from [<c02a778c>]
-[46886.723315] c7 [<c02a770c>] (SyS_pread64) from [<c0108620>]
-(ret_fast_syscall+0x0/0x28)
+This patch is inspired by a BSP patch from Kazuya Mizuguchi.
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 1114e2d31731 ("phy: rcar-gen3-usb2: change the mode to OTG on the combined channel")
+Cc: <stable@vger.kernel.org> # v4.5+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/mm/init.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index 8e793cddac661..98e17388a563f 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -174,6 +174,11 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
- #ifdef CONFIG_HAVE_ARCH_PFN_VALID
- int pfn_valid(unsigned long pfn)
- {
-+	phys_addr_t addr = __pfn_to_phys(pfn);
-+
-+	if (__phys_to_pfn(addr) != pfn)
-+		return 0;
-+
- 	return memblock_is_map_memory(__pfn_to_phys(pfn));
- }
- EXPORT_SYMBOL(pfn_valid);
--- 
-2.20.1
-
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -66,6 +66,7 @@
+ 					 USB2_OBINT_IDDIGCHG)
+ 
+ /* VBCTRL */
++#define USB2_VBCTRL_OCCLREN		BIT(16)
+ #define USB2_VBCTRL_DRVVBUSSEL		BIT(8)
+ 
+ /* LINECTRL1 */
+@@ -289,6 +290,7 @@ static void rcar_gen3_init_otg(struct rc
+ 	u32 val;
+ 
+ 	val = readl(usb2_base + USB2_VBCTRL);
++	val &= ~USB2_VBCTRL_OCCLREN;
+ 	writel(val | USB2_VBCTRL_DRVVBUSSEL, usb2_base + USB2_VBCTRL);
+ 	writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
+ 	val = readl(usb2_base + USB2_OBINTEN);
 
 
