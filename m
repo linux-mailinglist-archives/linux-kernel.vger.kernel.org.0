@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3272B847A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:11:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDF28B84C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393547AbfISWLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:11:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49794 "EHLO mail.kernel.org"
+        id S2392203AbfISWOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:14:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391186AbfISWLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:11:09 -0400
+        id S2392166AbfISWOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:14:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AE5521927;
-        Thu, 19 Sep 2019 22:11:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0233621920;
+        Thu, 19 Sep 2019 22:14:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931068;
-        bh=e1h3js1akksNSdN7MbHfoSgbNrAbeyQ3zCDjASU0y00=;
+        s=default; t=1568931249;
+        bh=Ts8e8Hns3t4/ykTZIfN892InRBKDgKoLX54YAaNvoyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SgavgBn6F/7EvhQQiRQybiyBm1/oOs8i/v2f4imx1Mj6X3xDfmgSzROh6yDCogz1g
-         a8VF+xqiqfDjzULcTt11YJkCtzITAh49TtDLmV4Ac9YfyjiAaFHkJMfj5EfmvI8tTO
-         mvOh0OzBdim3L5shM71IrLRoluntWSKmPX/fmCt0=
+        b=q0kEbRSXD4wtRzFPMqixUeU3Av2pguI+/hInbjRAgtw2zQi3uQsjUXDlKFmaJIb0d
+         KrokxpH+X+0vT7z3WZNxy4YXCEV48Kzw0E7XZ1I+63gOGpE/+bA0NwJXopgJ103ASK
+         cFvbpntyZL8N91L8Vz+Zq3YhU0GsBSYlJZDLy4fY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Hillf Danton <hdanton@sina.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 117/124] keys: Fix missing null pointer check in request_key_auth_describe()
+Subject: [PATCH 4.19 40/79] xdp: unpin xdp umem pages in error path
 Date:   Fri, 20 Sep 2019 00:03:25 +0200
-Message-Id: <20190919214823.437246809@linuxfoundation.org>
+Message-Id: <20190919214811.273100959@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
-References: <20190919214819.198419517@linuxfoundation.org>
+In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
+References: <20190919214807.612593061@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,72 +46,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hillf Danton <hdanton@sina.com>
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 
-[ Upstream commit d41a3effbb53b1bcea41e328d16a4d046a508381 ]
+[ Upstream commit fb89c39455e4b49881c5a42761bd71f03d3ef888 ]
 
-If a request_key authentication token key gets revoked, there's a window in
-which request_key_auth_describe() can see it with a NULL payload - but it
-makes no check for this and something like the following oops may occur:
+Fix mem leak caused by missed unpin routine for umem pages.
 
-	BUG: Kernel NULL pointer dereference at 0x00000038
-	Faulting instruction address: 0xc0000000004ddf30
-	Oops: Kernel access of bad area, sig: 11 [#1]
-	...
-	NIP [...] request_key_auth_describe+0x90/0xd0
-	LR [...] request_key_auth_describe+0x54/0xd0
-	Call Trace:
-	[...] request_key_auth_describe+0x54/0xd0 (unreliable)
-	[...] proc_keys_show+0x308/0x4c0
-	[...] seq_read+0x3d0/0x540
-	[...] proc_reg_read+0x90/0x110
-	[...] __vfs_read+0x3c/0x70
-	[...] vfs_read+0xb4/0x1b0
-	[...] ksys_read+0x7c/0x130
-	[...] system_call+0x5c/0x70
-
-Fix this by checking for a NULL pointer when describing such a key.
-
-Also make the read routine check for a NULL pointer to be on the safe side.
-
-[DH: Modified to not take already-held rcu lock and modified to also check
- in the read routine]
-
-Fixes: 04c567d9313e ("[PATCH] Keys: Fix race between two instantiators of a key")
-Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Signed-off-by: Hillf Danton <hdanton@sina.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 8aef7340ae9695 ("xsk: introduce xdp_umem_page")
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/keys/request_key_auth.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ net/xdp/xdp_umem.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index e45b5cf3b97fd..8491becb57270 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -66,6 +66,9 @@ static void request_key_auth_describe(const struct key *key,
- {
- 	struct request_key_auth *rka = get_request_key_auth(key);
+diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
+index a3b037fbfecde..8cab91c482ff5 100644
+--- a/net/xdp/xdp_umem.c
++++ b/net/xdp/xdp_umem.c
+@@ -322,7 +322,7 @@ static int xdp_umem_reg(struct xdp_umem *umem, struct xdp_umem_reg *mr)
+ 	umem->pages = kcalloc(umem->npgs, sizeof(*umem->pages), GFP_KERNEL);
+ 	if (!umem->pages) {
+ 		err = -ENOMEM;
+-		goto out_account;
++		goto out_pin;
+ 	}
  
-+	if (!rka)
-+		return;
-+
- 	seq_puts(m, "key:");
- 	seq_puts(m, key->description);
- 	if (key_is_positive(key))
-@@ -83,6 +86,9 @@ static long request_key_auth_read(const struct key *key,
- 	size_t datalen;
- 	long ret;
+ 	for (i = 0; i < umem->npgs; i++)
+@@ -330,6 +330,8 @@ static int xdp_umem_reg(struct xdp_umem *umem, struct xdp_umem_reg *mr)
  
-+	if (!rka)
-+		return -EKEYREVOKED;
-+
- 	datalen = rka->callout_len;
- 	ret = datalen;
+ 	return 0;
  
++out_pin:
++	xdp_umem_unpin_pages(umem);
+ out_account:
+ 	xdp_umem_unaccount_pages(umem);
+ 	return err;
 -- 
 2.20.1
 
