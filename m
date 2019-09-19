@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 285BEB8723
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85415B8726
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405477AbfISWJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:09:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47854 "EHLO mail.kernel.org"
+        id S2404906AbfISWee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:34:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405454AbfISWJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:09:36 -0400
+        id S2405462AbfISWJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:09:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5845621D81;
-        Thu, 19 Sep 2019 22:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D0DC21907;
+        Thu, 19 Sep 2019 22:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568930974;
-        bh=TGRMB95YGQkQ03FI3rbztcHl2l8WMOmLww0pLVy6bpI=;
+        s=default; t=1568930977;
+        bh=AXPR9OXJuhp5iAZ5tC1XbkvuhWf5TaT1co01bJ2eGsE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x7lu99U37UaJvtZLQ711yU0rJFr0nuGETdQtLdTddp96IB/J+OHW5rDiWFEyfJNev
-         4ZzEHXQu/qL3CZf/8n3iVibD8t/azWDjy1rArFeJGedbpV6tlLESd/TV6lujK1BMLe
-         UHwZQv4JivAy2ZEdfxWHo1IZw5lHWe6ingYcfP9I=
+        b=CF27y1I214x9qjCtnPqqai8qV6AUeP1YCBQ3sMQjoUdjAAl+I4hoxb2fnwdSkjP18
+         2E7ZiBJYjQuJwf4fZqnC/JExkN7G4IFX5bbdTK9CHJGbl1ty6gRPkdEWJhblbTLh4e
+         U6nA6LpR1iXybjBWhBr7ts4PoGubZpkh2/8D+5ZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anup Patel <anup.patel@wdc.com>,
-        Alistair Francis <alistair.francis@wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
+        stable@vger.kernel.org, Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 083/124] RISC-V: Fix FIXMAP area corruption on RV32 systems
-Date:   Fri, 20 Sep 2019 00:02:51 +0200
-Message-Id: <20190919214822.038690311@linuxfoundation.org>
+Subject: [PATCH 5.2 084/124] ARM: 8901/1: add a criteria for pfn_valid of arm
+Date:   Fri, 20 Sep 2019 00:02:52 +0200
+Message-Id: <20190919214822.077733327@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190919214819.198419517@linuxfoundation.org>
 References: <20190919214819.198419517@linuxfoundation.org>
@@ -46,86 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anup Patel <Anup.Patel@wdc.com>
+From: zhaoyang <huangzhaoyang@gmail.com>
 
-[ Upstream commit a256f2e329df0773022d28df2c3d206b9aaf1e61 ]
+[ Upstream commit 5b3efa4f1479c91cb8361acef55f9c6662feba57 ]
 
-Currently, various virtual memory areas of Linux RISC-V are organized
-in increasing order of their virtual addresses is as follows:
-1. User space area (This is lowest area and starts at 0x0)
-2. FIXMAP area
-3. VMALLOC area
-4. Kernel area (This is highest area and starts at PAGE_OFFSET)
+pfn_valid can be wrong when parsing a invalid pfn whose phys address
+exceeds BITS_PER_LONG as the MSB will be trimed when shifted.
 
-The maximum size of user space aread is represented by TASK_SIZE.
+The issue originally arise from bellowing call stack, which corresponding to
+an access of the /proc/kpageflags from userspace with a invalid pfn parameter
+and leads to kernel panic.
 
-On RV32 systems, TASK_SIZE is defined as VMALLOC_START which causes the
-user space area to overlap the FIXMAP area. This allows user space apps
-to potentially corrupt the FIXMAP area and kernel OF APIs will crash
-whenever they access corrupted FDT in the FIXMAP area.
+[46886.723249] c7 [<c031ff98>] (stable_page_flags) from [<c03203f8>]
+[46886.723264] c7 [<c0320368>] (kpageflags_read) from [<c0312030>]
+[46886.723280] c7 [<c0311fb0>] (proc_reg_read) from [<c02a6e6c>]
+[46886.723290] c7 [<c02a6e24>] (__vfs_read) from [<c02a7018>]
+[46886.723301] c7 [<c02a6f74>] (vfs_read) from [<c02a778c>]
+[46886.723315] c7 [<c02a770c>] (SyS_pread64) from [<c0108620>]
+(ret_fast_syscall+0x0/0x28)
 
-On RV64 systems, TASK_SIZE is set to fixed 256GB and no other areas
-happen to overlap so we don't see any FIXMAP area corruptions.
-
-This patch fixes FIXMAP area corruption on RV32 systems by setting
-TASK_SIZE to FIXADDR_START. We also move FIXADDR_TOP, FIXADDR_SIZE,
-and FIXADDR_START defines to asm/pgtable.h so that we can avoid cyclic
-header includes.
-
-Signed-off-by: Anup Patel <anup.patel@wdc.com>
-Tested-by: Alistair Francis <alistair.francis@wdc.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/riscv/include/asm/fixmap.h  |  4 ----
- arch/riscv/include/asm/pgtable.h | 12 ++++++++++--
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ arch/arm/mm/init.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/riscv/include/asm/fixmap.h b/arch/riscv/include/asm/fixmap.h
-index c207f6634b91c..15b3edaabc280 100644
---- a/arch/riscv/include/asm/fixmap.h
-+++ b/arch/riscv/include/asm/fixmap.h
-@@ -25,10 +25,6 @@ enum fixed_addresses {
- 	__end_of_fixed_addresses
- };
- 
--#define FIXADDR_SIZE		(__end_of_fixed_addresses * PAGE_SIZE)
--#define FIXADDR_TOP		(VMALLOC_START)
--#define FIXADDR_START		(FIXADDR_TOP - FIXADDR_SIZE)
--
- #define FIXMAP_PAGE_IO		PAGE_KERNEL
- 
- #define __early_set_fixmap	__set_fixmap
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index f7c3f7de15f27..e6faa469c133b 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -408,14 +408,22 @@ static inline void pgtable_cache_init(void)
- #define VMALLOC_END      (PAGE_OFFSET - 1)
- #define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
- 
-+#define FIXADDR_TOP      VMALLOC_START
-+#ifdef CONFIG_64BIT
-+#define FIXADDR_SIZE     PMD_SIZE
-+#else
-+#define FIXADDR_SIZE     PGDIR_SIZE
-+#endif
-+#define FIXADDR_START    (FIXADDR_TOP - FIXADDR_SIZE)
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 8e793cddac661..98e17388a563f 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -174,6 +174,11 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+ #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+ int pfn_valid(unsigned long pfn)
+ {
++	phys_addr_t addr = __pfn_to_phys(pfn);
 +
- /*
-- * Task size is 0x40000000000 for RV64 or 0xb800000 for RV32.
-+ * Task size is 0x4000000000 for RV64 or 0x9fc00000 for RV32.
-  * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
-  */
- #ifdef CONFIG_64BIT
- #define TASK_SIZE (PGDIR_SIZE * PTRS_PER_PGD / 2)
- #else
--#define TASK_SIZE VMALLOC_START
-+#define TASK_SIZE FIXADDR_START
- #endif
- 
- #include <asm-generic/pgtable.h>
++	if (__phys_to_pfn(addr) != pfn)
++		return 0;
++
+ 	return memblock_is_map_memory(__pfn_to_phys(pfn));
+ }
+ EXPORT_SYMBOL(pfn_valid);
 -- 
 2.20.1
 
