@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7792EB84C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA9D9B84FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732679AbfISWOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:14:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53274 "EHLO mail.kernel.org"
+        id S2391193AbfISWQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:16:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392058AbfISWN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:13:59 -0400
+        id S2406298AbfISWQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:16:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C9EB21907;
-        Thu, 19 Sep 2019 22:13:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0CDD21924;
+        Thu, 19 Sep 2019 22:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931238;
-        bh=F5CQ1+YvvSFo1TXnBiXKLipZLDPWDY9aNPbQDEsQ2n0=;
+        s=default; t=1568931378;
+        bh=3p4OOSAcRYb5vPiN8bwGYGwWOeUJyiCJfryDv8Hasb8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jJ02e8Ht74ZxBIYDGD+/0HzddXB4vB1ygVXIhZnbfHP87tq4ETxYawLm1OgEoqk+Z
-         Gx5iIuqnrFXipEcNe1B40tdEPA5DX50TAuLahERbGHFoRG7wg322TnoPcJ/jcKHQAp
-         kfpZYTQKzMiUX7p3LzmU/Podjyjbfd6ZjPRQVJJs=
+        b=w//5IIQCjjNWph53WBVCcgxJhb5SCV12hLz8VCR1exxZauvrRq5lwky3L2pbkf0Xa
+         a2WQonuzvbMrQcvVxcjrqdVa6+l1+L8hjvRUGxG1LRtFkBT2DI40I/3j9qnxYaAV7Q
+         O5CNr839cO7F2vno3VhaWHfTwhtNlRh15/el5DXo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nagarjuna Kristam <nkristam@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 54/79] usb: host: xhci-tegra: Set DMA mask correctly
+Subject: [PATCH 4.14 24/59] NFS: Fix initialisation of I/O result struct in nfs_pgio_rpcsetup
 Date:   Fri, 20 Sep 2019 00:03:39 +0200
-Message-Id: <20190919214812.225092786@linuxfoundation.org>
+Message-Id: <20190919214804.437184368@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-References: <20190919214807.612593061@linuxfoundation.org>
+In-Reply-To: <20190919214755.852282682@linuxfoundation.org>
+References: <20190919214755.852282682@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,55 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nagarjuna Kristam <nkristam@nvidia.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit 993cc8753453fccfe060a535bbe21fcf1001b626 ]
+[ Upstream commit 17d8c5d145000070c581f2a8aa01edc7998582ab ]
 
-The Falcon microcontroller that runs the XUSB firmware and which is
-responsible for exposing the XHCI interface can address only 40 bits of
-memory. Typically that's not a problem because Tegra devices don't have
-enough system memory to exceed those 40 bits.
+Initialise the result count to 0 rather than initialising it to the
+argument count. The reason is that we want to ensure we record the
+I/O stats correctly in the case where an error is returned (for
+instance in the layoutstats).
 
-However, if the ARM SMMU is enable on Tegra186 and later, the addresses
-passed to the XUSB controller can be anywhere in the 48-bit IOV address
-space of the ARM SMMU. Since the DMA/IOMMU API starts allocating from
-the top of the IOVA space, the Falcon microcontroller is not able to
-load the firmware successfully.
-
-Fix this by setting the DMA mask to 40 bits, which will force the DMA
-API to map the buffer for the firmware to an IOVA that is addressable by
-the Falcon.
-
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Link: https://lore.kernel.org/r/1566989697-13049-1-git-send-email-nkristam@nvidia.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-tegra.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/nfs/pagelist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index b1cce989bd123..fe37dacc695fc 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1148,6 +1148,16 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
+index 132e568524dff..ceb6892d9bbdc 100644
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -566,7 +566,7 @@ static void nfs_pgio_rpcsetup(struct nfs_pgio_header *hdr,
+ 	}
  
- 	tegra_xusb_ipfs_config(tegra, regs);
- 
-+	/*
-+	 * The XUSB Falcon microcontroller can only address 40 bits, so set
-+	 * the DMA mask accordingly.
-+	 */
-+	err = dma_set_mask_and_coherent(tegra->dev, DMA_BIT_MASK(40));
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to set DMA mask: %d\n", err);
-+		goto put_rpm;
-+	}
-+
- 	err = tegra_xusb_load_firmware(tegra);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to load firmware: %d\n", err);
+ 	hdr->res.fattr   = &hdr->fattr;
+-	hdr->res.count   = count;
++	hdr->res.count   = 0;
+ 	hdr->res.eof     = 0;
+ 	hdr->res.verf    = &hdr->verf;
+ 	nfs_fattr_init(&hdr->fattr);
 -- 
 2.20.1
 
