@@ -2,103 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F62BB7B93
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D148DB7BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:07:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388153AbfISOFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:05:52 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37549 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732252AbfISOFw (ORCPT
+        id S2389901AbfISOHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:07:17 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:42117 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387729AbfISOHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:05:52 -0400
-Received: by mail-lf1-f68.google.com with SMTP id w67so2474905lff.4;
-        Thu, 19 Sep 2019 07:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h+oYWN2bIpXs7KBEHPN+VQbt2Knn5M+tAZIEiVvjPno=;
-        b=WnOLmi4XV+fV599arvh4a2gZ61D35bWIW65sZl4YLcHgL7/9m9nDOASpZ6mqQ6XC2l
-         GdZWsGc4tJambYUGw8KGL/NNyUy7l299bfuYXj/nOWdH++cO+ylhE/dFDT82KOEyfrUX
-         74HB9Fleun4Lz8khKtFolG4hQaZl5sV2UmAljYww8q47VrwS/bkYe4Va/kMf/9HZQlpI
-         5r4xitcBI4tfwi88E2mrI0pNqbUQkPNGJ1B7lMib2+rioqqqVhmabKllheM+RC5A+hU3
-         paH5b4MgaKleBDPJ+9I+uf0pON8CCULTEmCC3VBBRx5xANQlSBhDWcrLwjj60ED1wDLX
-         tRjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h+oYWN2bIpXs7KBEHPN+VQbt2Knn5M+tAZIEiVvjPno=;
-        b=bo2qawVqye7fJMJYGiRHm7LaG6xnr3sXxaub8lIosO8q1iKMO5w/O6WRR1YjeF8e8l
-         7FPWr6FoHAaPRHnBrG4vwxVhOQYxyvMoyCZSS86wjbf2rJ4mIUPoZsk2HUyLK8pvMgJy
-         8aAGNH4h86RGGmSjace3+mZ32UZ8RBcn2JNEDRnyAA6qgeJ6d31GPkzLmDTaCEvBtmN1
-         oK5eHw3cxTWM3UJTc17yobxQ59uPGaUMIwOcFxcuAfXKuZU/RQrqkp+RznV8ixMkZBxf
-         aXtO/ns6xrQdg8h1FgceH5hAIYT6cfbMDCy5568mn4oHVdYCA6ZmFs1iHn1vIsz/oYuw
-         trjw==
-X-Gm-Message-State: APjAAAUwl3D+3tWgPmUCbCMzvBs1bah2ubJM1tZdgtpu4njZXqOrlUmq
-        nGy9VS6vGZQ6TWucluK+wNI=
-X-Google-Smtp-Source: APXvYqxsPhcRFukc4IhdmQrXZloLSMPMyygyC8uuqAoW+bU7v9Y6FGk9oe/nfiOdkCTm7I9+kXY4xA==
-X-Received: by 2002:a19:ef05:: with SMTP id n5mr5030008lfh.192.1568901949733;
-        Thu, 19 Sep 2019 07:05:49 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id 77sm1689625ljf.85.2019.09.19.07.05.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 07:05:48 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id ED6ED4614AD; Thu, 19 Sep 2019 17:05:47 +0300 (MSK)
-Date:   Thu, 19 Sep 2019 17:05:47 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/9] select: Micro-optimise __estimate_accuracy()
-Message-ID: <20190919140547.GC2507@uranus.lan>
-References: <20190909102340.8592-1-dima@arista.com>
- <20190909102340.8592-5-dima@arista.com>
+        Thu, 19 Sep 2019 10:07:16 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MORIm-1iZmOB2Z3e-00PuQo; Thu, 19 Sep 2019 16:06:53 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Zhou Wang <wangzhou1@hisilicon.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Shiju Jose <shiju.jose@huawei.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] [v2] crypto: hisilicon - avoid unused function warning
+Date:   Thu, 19 Sep 2019 16:05:52 +0200
+Message-Id: <20190919140650.1289963-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909102340.8592-5-dima@arista.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:ZwJdmyrwyvAI76lZVS7F1Q8hQNWt/yXcQvcpDiKbJDFJbDM1PnS
+ SCGltrDG4/QulNus1EXaz8kBZEpEXCtB/frd0rciuFNCTO+cYNMAVjrPCi28ANd2PY7Fe1X
+ mrNE0r9FQQKm8SiQPru/4aPaWmLIi7nqLg6p1e4IHPRuWHA5TTFJ+CVXZrkq9+XWmCSvmac
+ 0k0J8et2IJZT/RVHuUh1A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:AyJRZaop9Qw=:JWNvO9GCfOBjZv2Q7mViev
+ bp0qwy3iPUvTA+bEAXvfHqIFUOhkyk3yd01jpqubGOzLzGZh9jtJa/kMjpisnGrQyBaKBOwQQ
+ NfvzbxBRpoB33nXZxA1jnKmkPMpxvEJpjWOFr56tp2z8TUQI7KX42wiqLcX28gssl8u3s+PJy
+ kBBx2LXL6kTT9Zxhg3eqg88VXYWPnN51k+jHHeLu4MFz6zbJJMEE6+40fwA0CowRW1TmaQCoi
+ WA9e8++HhDftI4+uEel42ouL6ZtBgX2EAERrk627wJiLXrye0THl2lCWOxYNHyoZu+lIisajA
+ Pe9li7AS35xA8zSwJmvFBX0PD+VN8VKfMWyPxglV834ktXL4Yhdmt8c5cxZB/Q5H61L+aLgsl
+ XJZUyWO5EOuZrzz9u8S5V7QR5uz1bhBafL6fKmlwPfIiSDNkjLCKA9mfXngr8qUggIp235+6n
+ 1DkM/7QNxNHd1qt78yeCq5/zUJkG+XNRHhHwecXvEzvmZKrvR5HSdLeDWdalK7edXxgs2hBtm
+ DJn7SWVGrkpIV7jOIAcCjftXcJULc6Gc28qQe+9GuC2xOWNl4sWLkftBVP8BuAEFx2rxleujp
+ ED1fiYdZP0GLnYjZ128Je1y2RBhgbY5f81PqTpLqLg/JcbYMfejIErIOWghJhhTq9jeYYUggI
+ hx62hXGvs8LdNFVaRAKQbDIXoH5vJDiZ5+FhgAvk7XO2d3MiGTe1pkB8T+xc3TpfkGdgfKwJW
+ OU3HQ9Q89XVo1BiyHszCTpvUGYttRbWO4S7FweB3SGLYTEFPEzh2yQSjqZmHfCmDVIM/Krspb
+ th2eOzGKRS9MwIUWcdVdRBbG5G5nHRY4MPFf04IO5O0Sgt5+WWiCwWdg1tYC5Csg7eY+ISUMP
+ gswxLundN5wmNmm4jHiA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 11:23:35AM +0100, Dmitry Safonov wrote:
-> Shift on s64 is faster than division, use it instead.
-> 
-> As the result of the patch there is a hardly user-visible effect:
-> poll(), select(), etc syscalls will be a bit more precise on ~2.3%
-> than before because 1000 != 1024 :)
-> 
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
-> ---
->  fs/select.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/select.c b/fs/select.c
-> index 12cdefd3be2d..2477c202631e 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -51,15 +51,14 @@
->  
->  static long __estimate_accuracy(ktime_t slack)
->  {
-> -	int divfactor = 1000;
-> -
->  	if (slack < 0)
->  		return 0;
+The only caller of hisi_zip_vf_q_assign() is hidden in an #ifdef,
+so the function causes a warning when CONFIG_PCI_IOV is disabled:
 
-Btw, don't you better use <= here?
+drivers/crypto/hisilicon/zip/zip_main.c:740:12: error: unused function 'hisi_zip_vf_q_assign' [-Werror,-Wunused-function]
+
+Replace the #ifdef with an IS_ENABLED() check that leads to the
+function being dropped based on the configuration.
+
+Fixes: 79e09f30eeba ("crypto: hisilicon - add SRIOV support for ZIP")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/crypto/hisilicon/zip/zip_main.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
+index 6e0ca75585d4..1b2ee96c888d 100644
+--- a/drivers/crypto/hisilicon/zip/zip_main.c
++++ b/drivers/crypto/hisilicon/zip/zip_main.c
+@@ -785,7 +785,6 @@ static int hisi_zip_clear_vft_config(struct hisi_zip *hisi_zip)
+ 
+ static int hisi_zip_sriov_enable(struct pci_dev *pdev, int max_vfs)
+ {
+-#ifdef CONFIG_PCI_IOV
+ 	struct hisi_zip *hisi_zip = pci_get_drvdata(pdev);
+ 	int pre_existing_vfs, num_vfs, ret;
+ 
+@@ -815,9 +814,6 @@ static int hisi_zip_sriov_enable(struct pci_dev *pdev, int max_vfs)
+ 	}
+ 
+ 	return num_vfs;
+-#else
+-	return 0;
+-#endif
+ }
+ 
+ static int hisi_zip_sriov_disable(struct pci_dev *pdev)
+@@ -948,7 +944,8 @@ static struct pci_driver hisi_zip_pci_driver = {
+ 	.id_table		= hisi_zip_dev_ids,
+ 	.probe			= hisi_zip_probe,
+ 	.remove			= hisi_zip_remove,
+-	.sriov_configure	= hisi_zip_sriov_configure,
++	.sriov_configure	= IS_ENABLED(CONFIG_PCI_IOV) ?
++					hisi_zip_sriov_configure : 0,
+ 	.err_handler		= &hisi_zip_err_handler,
+ };
+ 
+-- 
+2.20.0
+
