@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D225AB863E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0873B858B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393972AbfISWUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:20:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33830 "EHLO mail.kernel.org"
+        id S2406797AbfISWWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:22:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393262AbfISWUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:20:00 -0400
+        id S2406778AbfISWWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:22:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2A6C217D6;
-        Thu, 19 Sep 2019 22:19:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5877C21927;
+        Thu, 19 Sep 2019 22:22:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931600;
-        bh=9msoC85KjAkTZ+3NyTfzwtqHQ+ihqnOm2jDZUcXZ8B4=;
+        s=default; t=1568931729;
+        bh=ATTSTQNzeM8sUDrhqGjI62uCRviZbT7bue9ppOoviPs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UEst4zZlgOZt/N38E5iVy8npICU0J7cMltOEse1VsdhNU1DLX7ud8O2BzapK6wHoZ
-         26aubLcCln+XL41Z4ZtgLlIj8umAOfG666Tpm9QT5hTdw4Fq0ZTLhtbgicCFZoVaYk
-         eL7wfffZ7bycIAThkikmVbYoJnS8cyfgdEkavm3w=
+        b=SIBwdd53HHOsyzU7I8eubSnyXON7rFH2W5gqUdA26alQi5fMwvZzuVexUcS6xuo58
+         mG/a6zLGwjZI2CR+YHKXpejRObyl0LxukyaB9IC9OHi+92VZzp5vl7SdHGzg7H0ytx
+         tEFDsh94z3OmGxAlVraBY8/ENVSIY3Q3hCTomD90=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 46/74] ARM: OMAP2+: Fix omap4 errata warning on other SoCs
-Date:   Fri, 20 Sep 2019 00:03:59 +0200
-Message-Id: <20190919214809.265795230@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Maciej W. Rozycki" <macro@linux-mips.org>,
+        linux-mips@vger.kernel.org
+Subject: [PATCH 4.4 19/56] MIPS: VDSO: Use same -m%-float cflag as the kernel proper
+Date:   Fri, 20 Sep 2019 00:04:00 +0200
+Message-Id: <20190919214753.768218356@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +46,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit 45da5e09dd32fa98c32eaafe2513db6bd75e2f4f ]
+commit 0648e50e548d881d025b9419a1a168753c8e2bf7 upstream.
 
-We have errata i688 workaround produce warnings on SoCs other than
-omap4 and omap5:
+The MIPS VDSO build currently doesn't provide the -msoft-float flag to
+the compiler as the kernel proper does. This results in an attempt to
+use the compiler's default floating point configuration, which can be
+problematic in cases where this is incompatible with the target CPU's
+-march= flag. For example decstation_defconfig fails to build using
+toolchains in which gcc was configured --with-fp-32=xx with the
+following error:
 
-omap4_sram_init:Unable to allocate sram needed to handle errata I688
-omap4_sram_init:Unable to get sram pool needed to handle errata I688
+    LDS     arch/mips/vdso/vdso.lds
+  cc1: error: '-march=r3000' requires '-mfp32'
+  make[2]: *** [scripts/Makefile.build:379: arch/mips/vdso/vdso.lds] Error 1
 
-This is happening because there is no ti,omap4-mpu node, or no SRAM
-to configure for the other SoCs, so let's remove the warning based
-on the SoC revision checks.
+The kernel proper avoids this error because we build with the
+-msoft-float compiler flag, rather than using the compiler's default.
+Pass this flag through to the VDSO build so that it too becomes agnostic
+to the toolchain's floating point configuration.
 
-As nobody has complained it seems that the other SoC variants do not
-need this workaround.
+Note that this is filtered out from KBUILD_CFLAGS rather than simply
+always using -msoft-float such that if we switch the kernel to use
+-mno-float in the future the VDSO will automatically inherit the change.
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The VDSO doesn't actually include any floating point code, and its
+.MIPS.abiflags section is already manually generated to specify that
+it's compatible with any floating point ABI. As such this change should
+have no effect on the resulting VDSO, apart from fixing the build
+failure for affected toolchains.
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reported-by: Kevin Hilman <khilman@baylibre.com>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Fixes: ebb5e78cc634 ("MIPS: Initial implementation of a VDSO")
+Cc: Maciej W. Rozycki <macro@linux-mips.org>
+Cc: linux-mips@vger.kernel.org
+Cc: stable@vger.kernel.org # v4.4+
+Cc: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/arm/mach-omap2/omap4-common.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/mips/vdso/Makefile |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-omap2/omap4-common.c b/arch/arm/mach-omap2/omap4-common.c
-index cf65ab8bb0046..e5dcbda20129d 100644
---- a/arch/arm/mach-omap2/omap4-common.c
-+++ b/arch/arm/mach-omap2/omap4-common.c
-@@ -131,6 +131,9 @@ static int __init omap4_sram_init(void)
- 	struct device_node *np;
- 	struct gen_pool *sram_pool;
- 
-+	if (!soc_is_omap44xx() && !soc_is_omap54xx())
-+		return 0;
-+
- 	np = of_find_compatible_node(NULL, NULL, "ti,omap4-mpu");
- 	if (!np)
- 		pr_warn("%s:Unable to allocate sram needed to handle errata I688\n",
--- 
-2.20.1
-
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -7,6 +7,7 @@ ccflags-vdso := \
+ 	$(filter -E%,$(KBUILD_CFLAGS)) \
+ 	$(filter -mmicromips,$(KBUILD_CFLAGS)) \
+ 	$(filter -march=%,$(KBUILD_CFLAGS)) \
++	$(filter -m%-float,$(KBUILD_CFLAGS)) \
+ 	-D__VDSO__
+ cflags-vdso := $(ccflags-vdso) \
+ 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
 
 
