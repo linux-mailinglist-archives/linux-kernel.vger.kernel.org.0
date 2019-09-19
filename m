@@ -2,56 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B647DB8369
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C50FB836F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 23:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404889AbfISVak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 17:30:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
+        id S2392786AbfISVcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 17:32:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404864AbfISVag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 17:30:36 -0400
-Subject: Re: [GIT PULL] pin control bulk changes for v5.4
+        id S2391073AbfISVcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 17:32:07 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93992208C0;
+        Thu, 19 Sep 2019 21:32:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568928635;
-        bh=rAudkxjrnojRjWhOlu8DRJL856WKEG2t48JP9yKb3yI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jxHW4Se9LcGxu6mpWsLYUnWu3qlaeVKRC9oL4FZyz+zSypP7cqu8SaAm1fK7tcEOV
-         7UMu+t6nW3xTLcBP5J32TgvauSOKyoHoHNUaXT66UlGS6A+BEatxrQp/br51i5g7qI
-         EBN7+0gHKjtA83HdWMtyzPjpT5/pWWUR9IOYy1K8=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-References: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdaHfhNjR-3GJOO-47rqopmO1SE9dLAU+AiCaWTuLje=8w@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- tags/pinctrl-v5.4-1
-X-PR-Tracked-Commit-Id: cb0438e4436085d89706b5ccfce4d5da531253de
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3c2edc36a77420d8be05d656019dbc8c31535992
-Message-Id: <156892863593.30913.11813652033877690149.pr-tracker-bot@kernel.org>
-Date:   Thu, 19 Sep 2019 21:30:35 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
+        s=default; t=1568928726;
+        bh=fyy4pGkypScQBRM9b52pi6ZBUVk2OvSUIYo4S6uxfhg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bLMaT8iGJC+IywrDUUTZxffTo79vi6uPPkqKNpMTgbzTqcGEWoT3e6CU3sDQN7PL5
+         reqEcnIeu3XYtOoed0Tp6JKs+7O0nF45MgL8PP8t1w56IuBNI3PB4n1UR9e+bjDoWA
+         7qlFISStacI3VRWSihLsJKUWehJhEE2B+lJGwkZg=
+Date:   Thu, 19 Sep 2019 23:32:03 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Murali Nalajala <mnalajal@codeaurora.org>
+Cc:     rafael@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org
+Subject: Re: [PATCH] base: soc: Export soc_device_to_device API
+Message-ID: <20190919213203.GA395325@kroah.com>
+References: <1568927624-13682-1-git-send-email-mnalajal@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568927624-13682-1-git-send-email-mnalajal@codeaurora.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 19 Sep 2019 23:07:51 +0200:
+On Thu, Sep 19, 2019 at 02:13:44PM -0700, Murali Nalajala wrote:
+> If the soc drivers want to add custom sysfs entries it needs to
+> access "dev" field in "struct soc_device". This can be achieved
+> by "soc_device_to_device" API. Soc drivers which are built as a
+> module they need above API to be exported. Otherwise one can
+> observe compilation issues.
+> 
+> Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
+> ---
+>  drivers/base/soc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+> index 7c0c5ca..4ad52f6 100644
+> --- a/drivers/base/soc.c
+> +++ b/drivers/base/soc.c
+> @@ -41,6 +41,7 @@ struct device *soc_device_to_device(struct soc_device *soc_dev)
+>  {
+>  	return &soc_dev->dev;
+>  }
+> +EXPORT_SYMBOL_GPL(soc_device_to_device);
+>  
+>  static umode_t soc_attribute_mode(struct kobject *kobj,
+>  				struct attribute *attr,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v5.4-1
+What in-kernel driver needs this?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3c2edc36a77420d8be05d656019dbc8c31535992
+Is linux-next breaking without this?
 
-Thank you!
+We don't export things unless we have a user of the export.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Also, adding "custom" sysfs attributes is almost always not the correct
+thing to do at all.  The driver should be doing it, by setting up the
+attribute group properly so that the driver core can do it automatically
+for it.
+
+No driver should be doing individual add/remove of sysfs files.  If it
+does so, it is almost guaranteed to be doing it incorrectly and racing
+userspace.
+
+And yes, there's loads of in-kernel examples of doing this wrong, I've
+been working on fixing that up, look at the patches now in Linus's tree
+for platform and USB drivers that do this as examples of how to do it
+right.
+
+thanks,
+
+greg k-h
