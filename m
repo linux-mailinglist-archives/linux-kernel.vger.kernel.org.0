@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9960AB8020
+	by mail.lfdr.de (Postfix) with ESMTP id 2B190B801F
 	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 19:38:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404192AbfISRig (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 13:38:36 -0400
-Received: from mail.efficios.com ([167.114.142.138]:33618 "EHLO
+        id S2404057AbfISRif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 13:38:35 -0400
+Received: from mail.efficios.com ([167.114.142.138]:33688 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390907AbfISRic (ORCPT
+        with ESMTP id S2390958AbfISRic (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Sep 2019 13:38:32 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 839CB33186C;
+        by mail.efficios.com (Postfix) with ESMTP id EEFE2331894;
         Thu, 19 Sep 2019 13:38:31 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 6B2uJudFK36G; Thu, 19 Sep 2019 13:38:31 -0400 (EDT)
+        with ESMTP id qt4asNQH3WMj; Thu, 19 Sep 2019 13:38:31 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 0AC63331867;
+        by mail.efficios.com (Postfix) with ESMTP id 99047331878;
         Thu, 19 Sep 2019 13:38:31 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0AC63331867
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 99047331878
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
         s=default; t=1568914711;
-        bh=7Srmn34tOeDbJzYM48SWBd4hahO+yo5hhHH3R10GHHo=;
+        bh=2A9/n7ArrLAzW9IAuwPyXacDtSg9pVuTezAJwqTSuNo=;
         h=From:To:Date:Message-Id;
-        b=TE2Qe9D+j5GHsODWCrAOw4HVjjeosSCcT7MQ2Wqr0AJ6r2D0LJwXRtrV4SUB7B2m+
-         OZOQGEsPKm6QbpTEC1yjJ7taXPGNQa/ycR7JXEudAuuPoMe8gZcnIuoA402fo8Okqy
-         tPppvpprDpX+AJ47zOeZbhmO82yrnfAm7tnnc2uWtw+12eJ2aXxo3Esd6BsuytRGgQ
-         OSaKlGzUlTU/H+VVIr11U0N4XwrophZnyzSL5yMXEIXF968eiQkxYxLb5g7OypWGjU
-         PQti+6M4M37osMsUd+UULa3ccIKPUR37waLTojO6aIvRL5YcMbPnCp5znQ1LUddQXs
-         vd7sLmteJkl9A==
+        b=kGvu0mhB9bJ5chhInqeNSiDEy75GJcsYEvFZpuny32AY7Nyu+UCtnD0100GYwq95U
+         quddf5r/bys7spWer4zncQKnr0Zloi1E/iwjgyhYRaNhGiotE9khLpTDjX62Rishm6
+         N03T+LcilSltNpYFEoCN0sby6/mNsCOsxwChZMZY1miQ1krbc335DlMfFtwID9Lg+3
+         3K+p11uYOYH3knbtN9SgB9+jO3C5dqcorfggsFk8148mGZZmMKQUboSa8e3kg/TMba
+         y4984qN/1XY2VB0m2ymOsdDu443AhmoDQkf63aMnNn1hOt5kNhExfe6KgZKUSR0Xd9
+         TmLLuIS9d3tfw==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id dRpxlu-EFIKS; Thu, 19 Sep 2019 13:38:30 -0400 (EDT)
+        with ESMTP id q01PWsEaycNw; Thu, 19 Sep 2019 13:38:31 -0400 (EDT)
 Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id BC018331853;
-        Thu, 19 Sep 2019 13:38:30 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 03EF2331860;
+        Thu, 19 Sep 2019 13:38:31 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
@@ -52,9 +52,9 @@ Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
         Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH for 5.4 2/7] Cleanup: sched/membarrier: Remove redundant check
-Date:   Thu, 19 Sep 2019 13:37:00 -0400
-Message-Id: <20190919173705.2181-3-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 5.4 3/7] Cleanup: sched/membarrier: Only sync_core before usermode for same mm
+Date:   Thu, 19 Sep 2019 13:37:01 -0400
+Message-Id: <20190919173705.2181-4-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190919173705.2181-1-mathieu.desnoyers@efficios.com>
 References: <20190919173705.2181-1-mathieu.desnoyers@efficios.com>
@@ -63,8 +63,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checking that the number of threads is 1 is redundant with checking
-mm_users == 1.
+When the prev and next task's mm change, switch_mm() provides the core
+serializing guarantees before returning to usermode. The only case
+where an explicit core serialization is needed is when the scheduler
+keeps the same mm for prev and next.
 
 Suggested-by: Oleg Nesterov <oleg@redhat.com>
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
@@ -81,31 +83,22 @@ Cc: Mike Galbraith <efault@gmx.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/membarrier.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/sched/mm.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
-index 5110d91b1b0e..7e0a0d6535f3 100644
---- a/kernel/sched/membarrier.c
-+++ b/kernel/sched/membarrier.c
-@@ -186,7 +186,7 @@ static int membarrier_register_global_expedited(void)
- 	    MEMBARRIER_STATE_GLOBAL_EXPEDITED_READY)
- 		return 0;
- 	atomic_or(MEMBARRIER_STATE_GLOBAL_EXPEDITED, &mm->membarrier_state);
--	if (atomic_read(&mm->mm_users) == 1 && get_nr_threads(p) == 1) {
-+	if (atomic_read(&mm->mm_users) == 1) {
- 		/*
- 		 * For single mm user, single threaded process, we can
- 		 * simply issue a memory barrier after setting
-@@ -232,7 +232,7 @@ static int membarrier_register_private_expedited(int flags)
- 	if (flags & MEMBARRIER_FLAG_SYNC_CORE)
- 		atomic_or(MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE,
- 			  &mm->membarrier_state);
--	if (!(atomic_read(&mm->mm_users) == 1 && get_nr_threads(p) == 1)) {
-+	if (atomic_read(&mm->mm_users) != 1) {
- 		/*
- 		 * Ensure all future scheduler executions will observe the
- 		 * new thread flag state for this process.
+diff --git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
+index 4a7944078cc3..8557ec664213 100644
+--- a/include/linux/sched/mm.h
++++ b/include/linux/sched/mm.h
+@@ -362,6 +362,8 @@ enum {
+ 
+ static inline void membarrier_mm_sync_core_before_usermode(struct mm_struct *mm)
+ {
++	if (current->mm != mm)
++		return;
+ 	if (likely(!(atomic_read(&mm->membarrier_state) &
+ 		     MEMBARRIER_STATE_PRIVATE_EXPEDITED_SYNC_CORE)))
+ 		return;
 -- 
 2.17.1
 
