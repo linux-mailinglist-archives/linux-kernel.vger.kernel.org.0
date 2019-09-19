@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B076B8588
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D225AB863E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406784AbfISWWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:22:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36972 "EHLO mail.kernel.org"
+        id S2393972AbfISWUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:20:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404758AbfISWWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:22:07 -0400
+        id S2393262AbfISWUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:20:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B487721924;
-        Thu, 19 Sep 2019 22:22:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2A6C217D6;
+        Thu, 19 Sep 2019 22:19:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931727;
-        bh=yS15S4ft0wc0riRxiATHhmn5nzjFhfv4vQg+5N7czZI=;
+        s=default; t=1568931600;
+        bh=9msoC85KjAkTZ+3NyTfzwtqHQ+ihqnOm2jDZUcXZ8B4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jZy4+Rzio2YFRTax7RWQkdHt4FijROxh/PSmcfduNFu6uv94uJnp60GLWcESKtC7M
-         BOuoMcCQM9bpHFZttiuuJ9kQdRiSDyezaV3Z04ITnrIsJ0qO5SkKe4Ez6xn0Va7fv6
-         PasEC/ZuM44Vg8/Wh7ReKfXjuTZeDlW3GkM30+V0=
+        b=UEst4zZlgOZt/N38E5iVy8npICU0J7cMltOEse1VsdhNU1DLX7ud8O2BzapK6wHoZ
+         26aubLcCln+XL41Z4ZtgLlIj8umAOfG666Tpm9QT5hTdw4Fq0ZTLhtbgicCFZoVaYk
+         eL7wfffZ7bycIAThkikmVbYoJnS8cyfgdEkavm3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 18/56] MIPS: VDSO: Prevent use of smp_processor_id()
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 46/74] ARM: OMAP2+: Fix omap4 errata warning on other SoCs
 Date:   Fri, 20 Sep 2019 00:03:59 +0200
-Message-Id: <20190919214753.303821133@linuxfoundation.org>
+Message-Id: <20190919214809.265795230@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+References: <20190919214800.519074117@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,65 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@mips.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 351fdddd366245c0fb4636f32edfb4198c8d6b8c upstream.
+[ Upstream commit 45da5e09dd32fa98c32eaafe2513db6bd75e2f4f ]
 
-VDSO code should not be using smp_processor_id(), since it is executed
-in user mode.
-Introduce a VDSO-specific path which will cause a compile-time
-or link-time error (depending upon support for __compiletime_error) if
-the VDSO ever incorrectly attempts to use smp_processor_id().
+We have errata i688 workaround produce warnings on SoCs other than
+omap4 and omap5:
 
-[Matt Redfearn <matt.redfearn@imgtec.com>: Move before change to
-smp_processor_id in series]
+omap4_sram_init:Unable to allocate sram needed to handle errata I688
+omap4_sram_init:Unable to get sram pool needed to handle errata I688
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Signed-off-by: Matt Redfearn <matt.redfearn@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/17932/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This is happening because there is no ti,omap4-mpu node, or no SRAM
+to configure for the other SoCs, so let's remove the warning based
+on the SoC revision checks.
 
+As nobody has complained it seems that the other SoC variants do not
+need this workaround.
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/asm/smp.h |   12 +++++++++++-
- arch/mips/vdso/Makefile     |    3 ++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ arch/arm/mach-omap2/omap4-common.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/mips/include/asm/smp.h
-+++ b/arch/mips/include/asm/smp.h
-@@ -25,7 +25,17 @@ extern cpumask_t cpu_sibling_map[];
- extern cpumask_t cpu_core_map[];
- extern cpumask_t cpu_foreign_map;
+diff --git a/arch/arm/mach-omap2/omap4-common.c b/arch/arm/mach-omap2/omap4-common.c
+index cf65ab8bb0046..e5dcbda20129d 100644
+--- a/arch/arm/mach-omap2/omap4-common.c
++++ b/arch/arm/mach-omap2/omap4-common.c
+@@ -131,6 +131,9 @@ static int __init omap4_sram_init(void)
+ 	struct device_node *np;
+ 	struct gen_pool *sram_pool;
  
--#define raw_smp_processor_id() (current_thread_info()->cpu)
-+static inline int raw_smp_processor_id(void)
-+{
-+#if defined(__VDSO__)
-+	extern int vdso_smp_processor_id(void)
-+		__compiletime_error("VDSO should not call smp_processor_id()");
-+	return vdso_smp_processor_id();
-+#else
-+	return current_thread_info()->cpu;
-+#endif
-+}
-+#define raw_smp_processor_id raw_smp_processor_id
- 
- /* Map from cpu id to sequential logical cpu number.  This will only
-    not be idempotent when cpus failed to come on-line.	*/
---- a/arch/mips/vdso/Makefile
-+++ b/arch/mips/vdso/Makefile
-@@ -6,7 +6,8 @@ ccflags-vdso := \
- 	$(filter -I%,$(KBUILD_CFLAGS)) \
- 	$(filter -E%,$(KBUILD_CFLAGS)) \
- 	$(filter -mmicromips,$(KBUILD_CFLAGS)) \
--	$(filter -march=%,$(KBUILD_CFLAGS))
-+	$(filter -march=%,$(KBUILD_CFLAGS)) \
-+	-D__VDSO__
- cflags-vdso := $(ccflags-vdso) \
- 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
- 	-O2 -g -fPIC -fno-strict-aliasing -fno-common -fno-builtin -G 0 \
++	if (!soc_is_omap44xx() && !soc_is_omap54xx())
++		return 0;
++
+ 	np = of_find_compatible_node(NULL, NULL, "ti,omap4-mpu");
+ 	if (!np)
+ 		pr_warn("%s:Unable to allocate sram needed to handle errata I688\n",
+-- 
+2.20.1
+
 
 
