@@ -2,63 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A070B732A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 08:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7C9B731D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 08:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388112AbfISG35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 02:29:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2734 "EHLO huawei.com"
+        id S2387900AbfISGVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 02:21:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2681 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387929AbfISG35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 02:29:57 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B89A9442E70042431BFE;
-        Thu, 19 Sep 2019 14:29:55 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 19 Sep
- 2019 14:29:48 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>
-CC:     Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH] MAINTAINERS: erofs: complete sub-entries for erofs
-Date:   Thu, 19 Sep 2019 14:28:38 +0800
-Message-ID: <20190919062838.106423-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728230AbfISGVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 02:21:24 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0E1C4D25D45C7A3AE125;
+        Thu, 19 Sep 2019 14:21:22 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 19 Sep 2019 14:21:13 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <olteanv@gmail.com>, <andrew@lunn.ch>, <vivien.didelot@gmail.com>,
+        <f.fainelli@gmail.com>, <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH net] net: dsa: sja1105: Add dependency for NET_DSA_SJA1105_TAS
+Date:   Thu, 19 Sep 2019 14:38:19 +0800
+Message-ID: <20190919063819.164826-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a formal git tree and missing files for erofs
-after moving out of staging for everyone to blame
-in order for better improvement.
+If CONFIG_NET_DSA_SJA1105_TAS=y and CONFIG_NET_SCH_TAPRIO=n,
+below error can be found:
+drivers/net/dsa/sja1105/sja1105_tas.o: In function `sja1105_setup_tc_taprio':
+sja1105_tas.c:(.text+0x318): undefined reference to `taprio_offload_free'
+sja1105_tas.c:(.text+0x590): undefined reference to `taprio_offload_get'
+drivers/net/dsa/sja1105/sja1105_tas.o: In function `sja1105_tas_teardown':
+sja1105_tas.c:(.text+0x610): undefined reference to `taprio_offload_free'
+make: *** [vmlinux] Error 1
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+sja1105_tas needs tc-taprio, so this patch add the dependency for it.
+
+Fixes: 317ab5b86c8e ("net: dsa: sja1105: Configure the Time-Aware Scheduler via tc-taprio offload")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 ---
- MAINTAINERS | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/dsa/sja1105/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2b6f10ea1573..a3822e1866d8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6088,7 +6088,10 @@ M:	Gao Xiang <gaoxiang25@huawei.com>
- M:	Chao Yu <yuchao0@huawei.com>
- L:	linux-erofs@lists.ozlabs.org
- S:	Maintained
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git
-+F:	Documentation/filesystems/erofs.txt
- F:	fs/erofs/
-+F:	include/trace/events/erofs.h
- 
- ERRSEQ ERROR TRACKING INFRASTRUCTURE
- M:	Jeff Layton <jlayton@kernel.org>
+diff --git a/drivers/net/dsa/sja1105/Kconfig b/drivers/net/dsa/sja1105/Kconfig
+index 55424f3..f40b248 100644
+--- a/drivers/net/dsa/sja1105/Kconfig
++++ b/drivers/net/dsa/sja1105/Kconfig
+@@ -27,6 +27,7 @@ config NET_DSA_SJA1105_PTP
+ config NET_DSA_SJA1105_TAS
+ 	bool "Support for the Time-Aware Scheduler on NXP SJA1105"
+ 	depends on NET_DSA_SJA1105
++	depends on NET_SCH_TAPRIO
+ 	help
+ 	  This enables support for the TTEthernet-based egress scheduling
+ 	  engine in the SJA1105 DSA driver, which is controlled using a
 -- 
-2.17.1
+2.7.4
 
