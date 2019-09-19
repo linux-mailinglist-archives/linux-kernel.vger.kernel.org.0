@@ -2,99 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A9BB7006
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 02:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C985B7011
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 02:23:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbfISAXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Sep 2019 20:23:17 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39796 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728516AbfISAXP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Sep 2019 20:23:15 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 72so975657lfh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 17:23:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xCq/TbFsgyz/f5qDMbrPu7H+lk7tDCVio2gz6Xsr1jk=;
-        b=MjWYHCf0lYOJu/QH9oUEwcZ4Xj+0pYEV8kGM+muk3l+vc2eBgT0GnILRm6E3K4upAv
-         5wJi52x8CcGq4MaaKRKZbiGJU7VX9PpS0ne8bpsgPDNKYXV2yG3+G+2sYqoKkGTFDQaT
-         0DBmxCjXSSuy8q0/7sfftCtDXqZMtkWb+bWtg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xCq/TbFsgyz/f5qDMbrPu7H+lk7tDCVio2gz6Xsr1jk=;
-        b=G5YqM3KnzVezc+bVv/EN4KgDKqukjWSHAt6r6pfVdbrJSv9wPHCGyqpSrTQK3JKC1O
-         8UDlngYlt3WJC3HIMWkEkycDuy80xy8WiWDycNp2k9J0B/eMVpWXgKsmp2zqoFYSJcOY
-         Kk+RBv9CnCUnmuqc/qOgDzWh1nDYxzh2d0zfESoowiS2uQPmExmSGru8WB5lhgxqw0L4
-         5N+KczvppNL6SybJFLLjQewBu1lRMIujDkSfVOY0dol7GqvUlq5Ia8JpX5CgHbNOiIxG
-         3dsVRScdS1WUjK5iM7hOrj/Jw6sjPpp3XOsQ5jZ/yyqU8Bs8aaSTMhEilE+tmBKbeq5k
-         pwTA==
-X-Gm-Message-State: APjAAAXKvIAjIafhk9LJ1FG4JgmjtPjfTVG/z3hkZDqHaf4cZAEmgyg2
-        QBEGytY9TN4vVZOcQMTx7vnYgnnNLPo=
-X-Google-Smtp-Source: APXvYqxg2DWz3tBWtDx3Lpm8w5iQ583OFHjiV+aMy8kg5A6gr3OhKbRorG8rXP/pq6YB6R5PjBEuNw==
-X-Received: by 2002:a19:488f:: with SMTP id v137mr3332500lfa.26.1568852592202;
-        Wed, 18 Sep 2019 17:23:12 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id b21sm1250514lff.96.2019.09.18.17.23.11
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2019 17:23:11 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id y23so1725414ljn.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2019 17:23:11 -0700 (PDT)
-X-Received: by 2002:a2e:9854:: with SMTP id e20mr3795217ljj.72.1568852590551;
- Wed, 18 Sep 2019 17:23:10 -0700 (PDT)
+        id S2387558AbfISAXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Sep 2019 20:23:39 -0400
+Received: from ozlabs.org ([203.11.71.1]:35085 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730422AbfISAXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Sep 2019 20:23:35 -0400
+Received: by ozlabs.org (Postfix, from userid 1003)
+        id 46YcyX6FPFz9sNF; Thu, 19 Sep 2019 10:23:32 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+        t=1568852612; bh=cw3bVSIKyGLl8fd6W8ykuEcHQm9lvtEQ4ISh1Suv21A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R3NvO9RHRrBeHenKeGVQwRwaNzl90QJKU91Oh5UtKsnjPccYcuWsO/+sjMOyqwX7L
+         qXGlMsp052mihy0ZJJ2eIVJLqlRGa9kQM/LgVKA7ED5dZy2xxDU0F7hWJ5Tp54i1Oj
+         k55td7N92nS1j9aJa2rikaxwZ/Rett3ejrVCl2Y6XgJzt/d7qDn+ismHBncyRTAYV+
+         hS8OCe+151b9IycINykjKDkPYC/8MG9vZUkPbnlESnKeZ09ZuP4shL0f/tklBl/8Uc
+         RZALg8LGgjsbVJ+XmBlldREITO6j39TWleHK6T7JSCMg1LLpCOuW1Dvvlzw9Z/mO8v
+         uxbb98hT109Jg==
+Date:   Thu, 19 Sep 2019 10:23:28 +1000
+From:   Paul Mackerras <paulus@ozlabs.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/13] KVM: PPC: Move memslot memory allocation into
+ prepare_memory_region()
+Message-ID: <20190919002328.GB19503@blackberry>
+References: <20190911185038.24341-1-sean.j.christopherson@intel.com>
+ <20190911185038.24341-3-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-References: <16147.1568632167@warthog.procyon.org.uk>
-In-Reply-To: <16147.1568632167@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 18 Sep 2019 17:22:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
-Message-ID: <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com>
-Subject: Re: [GIT PULL afs: Development for 5.4
-To:     David Howells <dhowells@redhat.com>
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190911185038.24341-3-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 4:09 AM David Howells <dhowells@redhat.com> wrote:
->
-> Here's a set of patches for AFS.  The first three are trivial, deleting
-> unused symbols and rolling out a wrapper function.
+On Wed, Sep 11, 2019 at 11:50:27AM -0700, Sean Christopherson wrote:
+> Allocate the rmap array during kvm_arch_prepare_memory_region() to pave
+> the way for removing kvm_arch_create_memslot() altogether.  Moving PPC's
+> memory allocation only changes the order of kernel memory allocations
+> between PPC and common KVM code.
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-Pulled.
+Seems OK.
 
-However, I was close to unpulling it again. It has a merge commit with
-this merge message:
-
-    Merge remote-tracking branch 'net/master' into afs-next
-
-and that simply is not acceptable.
-
-Commit messages need to explain the commit. The same is even more true
-of merges!
-
-In a regular commit, you can at least look at the patch and say "ok,
-that  change is obvious and self-explanatory".
-
-In a merge commit, the _only_ explanation you have is basically the
-commit message, and when the commit message is garbage, the merge is
-garbage.
-
-If you can't explain why you are doing a merge, then you shouldn't do
-the merge. It's that simple.
-
-And if you can't be bothered to write the explanation down, I'm not
-sure I can be bothered to then pull the end result.
-
-             Linus
+Acked-by: Paul Mackerras <paulus@ozlabs.org>
