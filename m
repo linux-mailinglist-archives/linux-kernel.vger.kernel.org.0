@@ -2,87 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A7B7B7C5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9FAB7C39
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 16:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390439AbfISOXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 10:23:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:59234 "EHLO foss.arm.com"
+        id S2403884AbfISOYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 10:24:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:13527 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389303AbfISOXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 10:23:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D830337;
-        Thu, 19 Sep 2019 07:23:20 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.194.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F4F93F575;
-        Thu, 19 Sep 2019 07:23:19 -0700 (PDT)
-Date:   Thu, 19 Sep 2019 15:23:16 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Jing-Ting Wu <jing-ting.wu@mediatek.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        wsd_upstream@mediatek.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/1] sched/rt: avoid contend with CFS task
-Message-ID: <20190919142315.vmrrpvljpspqpurp@e107158-lin.cambridge.arm.com>
-References: <1567048502-6064-1-git-send-email-jing-ting.wu@mediatek.com>
- <d5100b2d-46c4-5811-8274-8b06710d2594@arm.com>
- <20190830145501.zadfv2ffuu7j46ft@e107158-lin.cambridge.arm.com>
- <1567689999.2389.5.camel@mtkswgap22>
- <CAKfTPtC3txstND=6YkWBJ16i06cQ7xueUpD5j-j-UfuSf0-z-g@mail.gmail.com>
- <1568892135.4892.10.camel@mtkswgap22>
- <CAKfTPtCuWrpW_o6r5cmGhLf_84PFHJhBk0pJ3fcbU_YgcBnTkQ@mail.gmail.com>
+        id S2387693AbfISOYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 10:24:05 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64D0C18C4275;
+        Thu, 19 Sep 2019 14:24:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-125-72.rdu2.redhat.com [10.10.125.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B41FB60C18;
+        Thu, 19 Sep 2019 14:24:01 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190919131537.GA15392@bombadil.infradead.org>
+References: <20190919131537.GA15392@bombadil.infradead.org> <28368.1568875207@warthog.procyon.org.uk> <CAHk-=wgJx0FKq5FUP85Os1HjTPds4B3aQwumnRJDp+XHEbVjfA@mail.gmail.com> <16147.1568632167@warthog.procyon.org.uk> <16257.1568886562@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL afs: Development for 5.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtCuWrpW_o6r5cmGhLf_84PFHJhBk0pJ3fcbU_YgcBnTkQ@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8820.1568903040.1@warthog.procyon.org.uk>
+Date:   Thu, 19 Sep 2019 15:24:00 +0100
+Message-ID: <8821.1568903040@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 19 Sep 2019 14:24:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/19/19 14:27, Vincent Guittot wrote:
-> > > > But for requirement of performance, I think it is better to differentiate between idle CPU and CPU has CFS task.
-> > > >
-> > > > For example, we use rt-app to evaluate runnable time on non-patched environment.
-> > > > There are (NR_CPUS-1) heavy CFS tasks and 1 RT Task. When a CFS task is running, the RT task wakes up and choose the same CPU.
-> > > > The CFS task will be preempted and keep runnable until it is migrated to another cpu by load balance.
-> > > > But load balance is not triggered immediately, it will be triggered until timer tick hits with some condition satisfied(ex. rq->next_balance).
-> > >
-> > > Yes you will have to wait for the next tick that will trigger an idle
-> > > load balance because you have an idle cpu and 2 runnable tack (1 RT +
-> > > 1CFS) on the same CPU. But you should not wait for more than  1 tick
-> > >
-> > > The current load_balance doesn't handle correctly the situation of 1
-> > > CFS and 1 RT task on same CPU while 1 CPU is idle. There is a rework
-> > > of the load_balance that is under review on the mailing list that
-> > > fixes this problem and your CFS task should migrate to the idle CPU
-> > > faster than now
-> > >
-> >
-> > Period load balance should be triggered when current jiffies is behind
-> > rq->next_balance, but rq->next_balance is not often exactly the same
-> > with next tick.
-> > If cpu_busy, interval = sd->balance_interval * sd->busy_factor, and
-> 
-> But if there is an idle CPU on the system, the next idle load balance
-> should apply shortly because the busy_factor is not used for this CPU
-> which is  not busy.
-> In this case, the next_balance interval is sd_weight which is probably
-> 4ms at cluster level and 8ms at system level in your case. This means
-> between 1 and 2 ticks
+Matthew Wilcox <willy@infradead.org> wrote:
 
-But if the CFS task we're preempting was latency sensitive - this 1 or 2 tick
-is too late of a recovery.
+> Why is it organised this way?  I mean, yes, technically, rxrpc is a
+> generic layer-6 protocol that any blah blah blah, but in practice no
+> other user has come up in the last 37 years, so why bother pretending
+> one is going to?  Just git mv net/rxrpc fs/afs/ and merge everything
+> through your tree.
 
-So while it's good we recover, but a preventative approach would be useful too.
-Just saying :-) I'm still not sure if this is the best longer term approach.
+Note that, unlike 9p, sunrpc and ceph, rxrpc is exposed as a network protocol
+and can be used directly with socket(AF_RXRPC, ...).  I have part of a
+userspace tool suite that uses this.
 
---
-Qais Yousef
+David
