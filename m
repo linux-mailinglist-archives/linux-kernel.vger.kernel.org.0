@@ -2,175 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50032B790C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CDFB7903
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 14:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390255AbfISMN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 08:13:26 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:45830 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390226AbfISMNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 08:13:21 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 33D291A0084;
-        Thu, 19 Sep 2019 14:13:20 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 08B9A1A01CD;
-        Thu, 19 Sep 2019 14:13:13 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5A9DC40309;
-        Thu, 19 Sep 2019 20:13:04 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, lars@metafoo.de
-Subject: [PATCH V3 4/4] ASoC: fsl_asrc: Fix error with S24_3LE format bitstream in i.MX8
-Date:   Thu, 19 Sep 2019 20:11:42 +0800
-Message-Id: <0fe619f4c8f0898cf51c7324c9a0784c5782ed91.1568861098.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1568861098.git.shengjiu.wang@nxp.com>
-References: <cover.1568861098.git.shengjiu.wang@nxp.com>
-In-Reply-To: <cover.1568861098.git.shengjiu.wang@nxp.com>
-References: <cover.1568861098.git.shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2390199AbfISMNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 08:13:00 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44585 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388792AbfISMNA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 08:13:00 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q11so2160228lfc.11;
+        Thu, 19 Sep 2019 05:12:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AAGhvqwd75jlWoyN7RtLuLmQlBabVo3K+eJUc/Gzlw8=;
+        b=I+fWSqLXskt+W9JCVUaVDdgxCjnHs9SngDhZ6ddtTpEHqRqALggs0Pzu9DGLeyUmlU
+         s5SntY7fIS15FYNNcS7Bgu8ZuXvdbUE1C0isqFYgjIdHMvI52zPc5si6SWtWbUHvPKI0
+         b0EXSvCx5+4/5aIMXUlky8wKD8nv3geoGMhf7Rn80LlcWTxVb8k/MBvu4ogIrQmTa1Bu
+         RXvZRgQqaMzIlwFvA+fueRmaT3PU3dgwXup/5ot7kwAgPgVQ4xDRgMJw8sWgHsPrEdkd
+         80Wbqpnjqske0K4nPjpA1l5wJdekIJV9rSXiSAbbXl6hJjXX+k/ZuhilCnnflRgBv2Tp
+         dhCw==
+X-Gm-Message-State: APjAAAUmCei2Y1na09s+VmqxpF5e9VLOhhYNyCng+upbeCL3Q/4uaBPK
+        qTO3LCZFmWVgzivdkTgT4Lzgac3/
+X-Google-Smtp-Source: APXvYqxkxMhx6AXLEzlWI2uF4kvz8bcFVDoGXg87MGyIpnW1DMdRhVl7Zz7XRH8wHiKEdibwpDoJ3Q==
+X-Received: by 2002:a05:6512:251:: with SMTP id b17mr5172700lfo.35.1568895177514;
+        Thu, 19 Sep 2019 05:12:57 -0700 (PDT)
+Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
+        by smtp.gmail.com with ESMTPSA id x76sm1859097ljb.81.2019.09.19.05.12.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Sep 2019 05:12:56 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92.2)
+        (envelope-from <johan@xi.terra>)
+        id 1iAvIu-0007yb-AS; Thu, 19 Sep 2019 14:12:57 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Stefan Schmidt <stefan@datenfreihafen.org>
+Cc:     Alexander Aring <alex.aring@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andreyknvl@google.com,
+        syzkaller-bugs@googlegroups.com, Johan Hovold <johan@kernel.org>,
+        stable <stable@vger.kernel.org>,
+        syzbot+f4509a9138a1472e7e80@syzkaller.appspotmail.com
+Subject: [PATCH] ieee802154: atusb: fix use-after-free at disconnect
+Date:   Thu, 19 Sep 2019 14:12:34 +0200
+Message-Id: <20190919121234.30620-1-johan@kernel.org>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is error "aplay: pcm_write:2023: write error: Input/output error"
-on i.MX8QM/i.MX8QXP platform for S24_3LE format.
+The disconnect callback was accessing the hardware-descriptor private
+data after having having freed it.
 
-In i.MX8QM/i.MX8QXP, the DMA is EDMA, which don't support 24bit
-sample, but we didn't add any constraint, that cause issues.
-
-So we need to query the caps of dma, then update the hw parameters
-according to the caps.
-
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Fixes: 7490b008d123 ("ieee802154: add support for atusb transceiver")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Cc: Alexander Aring <alex.aring@gmail.com>
+Reported-by: syzbot+f4509a9138a1472e7e80@syzkaller.appspotmail.com
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- sound/soc/fsl/fsl_asrc.c     |  4 +--
- sound/soc/fsl/fsl_asrc.h     |  3 +++
- sound/soc/fsl/fsl_asrc_dma.c | 52 +++++++++++++++++++++++++++++++-----
- 3 files changed, 50 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index 584badf956d2..0bf91a6f54b9 100644
---- a/sound/soc/fsl/fsl_asrc.c
-+++ b/sound/soc/fsl/fsl_asrc.c
-@@ -115,7 +115,7 @@ static void fsl_asrc_sel_proc(int inrate, int outrate,
-  * within range [ANCA, ANCA+ANCB-1], depends on the channels of pair A
-  * while pair A and pair C are comparatively independent.
-  */
--static int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
-+int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
- {
- 	enum asrc_pair_index index = ASRC_INVALID_PAIR;
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
-@@ -158,7 +158,7 @@ static int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
-  *
-  * It clears the resource from asrc_priv and releases the occupied channels.
-  */
--static void fsl_asrc_release_pair(struct fsl_asrc_pair *pair)
-+void fsl_asrc_release_pair(struct fsl_asrc_pair *pair)
- {
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
- 	enum asrc_pair_index index = pair->index;
-diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
-index 38af485bdd22..2b57e8c53728 100644
---- a/sound/soc/fsl/fsl_asrc.h
-+++ b/sound/soc/fsl/fsl_asrc.h
-@@ -462,4 +462,7 @@ struct fsl_asrc {
- #define DRV_NAME "fsl-asrc-dai"
- extern struct snd_soc_component_driver fsl_asrc_component;
- struct dma_chan *fsl_asrc_get_dma_channel(struct fsl_asrc_pair *pair, bool dir);
-+int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair);
-+void fsl_asrc_release_pair(struct fsl_asrc_pair *pair);
-+
- #endif /* _FSL_ASRC_H */
-diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-index 01052a0808b0..c1c8ee4aca54 100644
---- a/sound/soc/fsl/fsl_asrc_dma.c
-+++ b/sound/soc/fsl/fsl_asrc_dma.c
-@@ -16,13 +16,11 @@
+#syz test: https://github.com/google/kasan.git f0df5c1b
+
+ drivers/net/ieee802154/atusb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ieee802154/atusb.c b/drivers/net/ieee802154/atusb.c
+index ceddb424f887..0dd0ba915ab9 100644
+--- a/drivers/net/ieee802154/atusb.c
++++ b/drivers/net/ieee802154/atusb.c
+@@ -1137,10 +1137,11 @@ static void atusb_disconnect(struct usb_interface *interface)
  
- #define FSL_ASRC_DMABUF_SIZE	(256 * 1024)
+ 	ieee802154_unregister_hw(atusb->hw);
  
--static const struct snd_pcm_hardware snd_imx_hardware = {
-+static struct snd_pcm_hardware snd_imx_hardware = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
- 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 		SNDRV_PCM_INFO_MMAP |
--		SNDRV_PCM_INFO_MMAP_VALID |
--		SNDRV_PCM_INFO_PAUSE |
--		SNDRV_PCM_INFO_RESUME,
-+		SNDRV_PCM_INFO_MMAP_VALID,
- 	.buffer_bytes_max = FSL_ASRC_DMABUF_SIZE,
- 	.period_bytes_min = 128,
- 	.period_bytes_max = 65535, /* Limited by SDMA engine */
-@@ -276,6 +274,11 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
- 	struct device *dev = component->dev;
- 	struct fsl_asrc *asrc_priv = dev_get_drvdata(dev);
- 	struct fsl_asrc_pair *pair;
-+	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
-+	u8 dir = tx ? OUT : IN;
-+	struct dma_chan *tmp_chan;
-+	struct snd_dmaengine_dai_dma_data *dma_data;
-+	int ret;
++	usb_put_dev(atusb->usb_dev);
++
+ 	ieee802154_free_hw(atusb->hw);
  
- 	pair = kzalloc(sizeof(struct fsl_asrc_pair), GFP_KERNEL);
- 	if (!pair)
-@@ -285,9 +288,44 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
+ 	usb_set_intfdata(interface, NULL);
+-	usb_put_dev(atusb->usb_dev);
  
- 	runtime->private_data = pair;
- 
--	snd_pcm_hw_constraint_integer(substream->runtime,
--				      SNDRV_PCM_HW_PARAM_PERIODS);
--	snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
-+	ret = snd_pcm_hw_constraint_integer(substream->runtime,
-+					    SNDRV_PCM_HW_PARAM_PERIODS);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to set pcm hw params periods\n");
-+		return ret;
-+	}
-+
-+	/* Request a temp pair, which is release in the end */
-+	ret = fsl_asrc_request_pair(1, pair);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to request asrc pair\n");
-+		return ret;
-+	}
-+
-+	tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
-+	if (!tmp_chan) {
-+		dev_err(dev, "can't get dma channel\n");
-+		return -EINVAL;
-+	}
-+
-+	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
-+
-+	ret = snd_dmaengine_pcm_refine_runtime_hwparams(substream,
-+							dma_data,
-+							&snd_imx_hardware,
-+							tmp_chan);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to set runtime hwparams\n");
-+		return ret;
-+	}
-+
-+	ret = snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
-+	if (ret)
-+		return ret;
-+
-+	dma_release_channel(tmp_chan);
-+	fsl_asrc_release_pair(pair);
-+
- 
- 	return 0;
+ 	pr_debug("%s done\n", __func__);
  }
 -- 
-2.21.0
+2.23.0
 
