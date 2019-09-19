@@ -2,207 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01BDBB751C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 348B9B74FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2019 10:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388311AbfISI3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 04:29:53 -0400
-Received: from 2.mo1.mail-out.ovh.net ([178.32.119.250]:39913 "EHLO
-        2.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbfISI3x (ORCPT
+        id S2388231AbfISIUR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 04:20:17 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36020 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387581AbfISIUR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 04:29:53 -0400
-X-Greylist: delayed 155106 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Sep 2019 04:29:50 EDT
-Received: from player168.ha.ovh.net (unknown [10.108.35.211])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id CA6C4190369
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2019 10:11:04 +0200 (CEST)
-Received: from qperret.net (115.ip-51-255-42.eu [51.255.42.115])
-        (Authenticated sender: qperret@qperret.net)
-        by player168.ha.ovh.net (Postfix) with ESMTPSA id E53A09E20A08;
-        Thu, 19 Sep 2019 08:10:57 +0000 (UTC)
-Date:   Thu, 19 Sep 2019 10:10:53 +0200
-From:   Quentin Perret <qperret@qperret.net>
-To:     YT Chang <yt.chang@mediatek.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        wsd_upstream@mediatek.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 1/1] sched/eas: introduce system-wide overutil indicator
-Message-ID: <20190919081053.GA10561@qperret.net>
-References: <1568877622-28073-1-git-send-email-yt.chang@mediatek.com>
+        Thu, 19 Sep 2019 04:20:17 -0400
+Received: by mail-ed1-f66.google.com with SMTP id h2so2387789edn.3;
+        Thu, 19 Sep 2019 01:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DIjC86Ii4KsbkS8eTIPnEq2D8sVnXy/7hZpoMJXse74=;
+        b=XspEhnDiZYjUHScXvRrQYaOoqkttp3WHmWMbRGRag+fbX8nHQSaKs7mQoSk9TwAPuH
+         C+p7LH7/Dax1N2ydNhPL1R0IweJrVCRjjHBPMV95d+Yggk6zliEGKS0dCLsPN8Lnnxqe
+         mcnrBURdJzbN99YTdOxu3X9ZuRshelOBAEpQ6kbj9h2AzUbbxQY0pG73cNIQYs24G9Eu
+         WJGEWDpm5/7m6t6IH0o5E8PygdUWJEw+F7sy40aNWw+ZKLSYeUeCWUzTuDUVVcOG/Smn
+         3JdcZq/6Zgofre8ATzIkXX9LWkpA8ysfNEbZjfwZ5mPQoD2volG3yR0K7BY9diQ3/VO5
+         YuVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DIjC86Ii4KsbkS8eTIPnEq2D8sVnXy/7hZpoMJXse74=;
+        b=AhczJwEx2WEXYtuQ8nLDdE9l2OAzyTlRU6oogXQo0k+STO2sEk4DVi4akL5yTLVCu8
+         YAJTSGeT3MgkFQ8Ksrw/k1ma7RnklWs/lFLrM7cvV4ocDNlwaFWuUDV5SwNn1No2El5s
+         socO3M1H+PrfdHNd69g2VxOC1lZhcDGxX5IAXlyn8/j632JYZ9tAvo4VhUhueyAajeUH
+         5IHWch24ND0M7bTlKLh45qnw4DKUP8MnQii0ia6p7AGjuIUjGv8TSMKRVZgZcYqFSJWb
+         K6sQnfaH25kWoheSDtQ8ic8Dm0VfPThbLRj5tn3wFpfM6/I9mwq1RThj4qqBjfaIt5XL
+         9ImA==
+X-Gm-Message-State: APjAAAV9AszetHAdi3AVdNPFYaURDbfXRZEEDgHUPByLf9PaNCKKlCaR
+        knmeUAfJ3XKzmb/eO1UPWx5IHfh017u4ames+WA=
+X-Google-Smtp-Source: APXvYqzLEjmwjFGA0fOI8+ymfYiL1C3PMql4lxAa4Log1CCWsdwRJD9Y8Zci3lVmWs5UWc1aZXnEOMVUhcXmMOH1PT4=
+X-Received: by 2002:a17:906:400c:: with SMTP id v12mr12911025ejj.15.1568881215131;
+ Thu, 19 Sep 2019 01:20:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1568877622-28073-1-git-send-email-yt.chang@mediatek.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Ovh-Tracer-Id: 4041980666167909293
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrvddtgddtvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+References: <20190918172106.GN9591@lunn.ch> <20190918180439.12441-1-navid.emamdoost@gmail.com>
+ <8d6f6c54-1758-7d98-c9b5-5c16b171c885@gmail.com> <20190919.101059.1330167782179062709.davem@davemloft.net>
+In-Reply-To: <20190919.101059.1330167782179062709.davem@davemloft.net>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Thu, 19 Sep 2019 11:20:04 +0300
+Message-ID: <CA+h21hpDAkJw1qs6pkb1hz3pej8XbEkpEueCbjBEOLZ3bDkLDA@mail.gmail.com>
+Subject: Re: [PATCH v2] net: dsa: sja1105: prevent leaking memory
+To:     David Miller <davem@davemloft.net>
+Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>, kjlu@umn.edu,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 19 Sep 2019 at 11:11, David Miller <davem@davemloft.net> wrote:
+>
+> From: Vladimir Oltean <olteanv@gmail.com>
+> Date: Wed, 18 Sep 2019 23:00:20 +0300
+>
+> > Hi Navid,
+> >
+> > Thanks for the patch.
+> >
+> > On 9/18/19 9:04 PM, Navid Emamdoost wrote:
+> >> In sja1105_static_config_upload, in two cases memory is leaked: when
+> >> static_config_buf_prepare_for_upload fails and when sja1105_inhibit_tx
+> >> fails. In both cases config_buf should be released.
+> >> Fixes: 8aa9ebccae876 (avoid leaking config_buf)
+> >> Fixes: 1a4c69406cc1c (avoid leaking config_buf)
+> >>
+> >
+> > You're not supposed to add a short description of the patch here, but
+> > rather the commit message of the patch you're fixing.
+> > Add this to your ~/.gitconfig:
+> >
+> > [pretty]
+> >       fixes = Fixes: %h (\"%s\")
+> >
+> > And then run:
+> > git show --pretty=fixes 8aa9ebccae87621d997707e4f25e53fddd7e30e4
+> >
+> > Fixes: 8aa9ebccae87 ("net: dsa: Introduce driver for NXP SJA1105
+> > 5-port L2 switch")
+> >
+> > git show --pretty=fixes 1a4c69406cc1c3c42bb7391c8eb544e93fe9b320
+> >
+> > Fixes: 1a4c69406cc1 ("net: dsa: sja1105: Prevent PHY jabbering during
+> > switch reset")
+>
+> However the Fixes: line should not be broken up like this with newlines.
 
-Could you please CC me on later versions of this ? I'm interested.
+Sorry, my mail client did that automatically.
 
-On Thursday 19 Sep 2019 at 15:20:22 (+0800), YT Chang wrote:
-> When the system is overutilization, the load-balance crossing
-> clusters will be triggered and scheduler will not use energy
-> aware scheduling to choose CPUs.
-> 
-> The overutilization means the loading of  ANY CPUs
-> exceeds threshold (80%).
-> 
-> However, only 1 heavy task or while-1 program will run on highest
-> capacity CPUs and it still result to trigger overutilization. So
-> the system will not use Energy Aware scheduling.
-> 
-> To avoid it, a system-wide over-utilization indicator to trigger
-> load-balance cross clusters.
-> 
-> The policy is:
-> 	The loading of "ALL CPUs in the highest capacity"
-> 						exceeds threshold(80%) or
-> 	The loading of "Any CPUs not in the highest capacity"
-> 						exceed threshold(80%)
-> 
-> Signed-off-by: YT Chang <yt.chang@mediatek.com>
-
-Right, so we originally went for the simpler implementation because in
-general when you have the biggest CPUs of the system running flat out at
-max freq, the micro-optimizations for energy on littles don't matter all
-that much. Is there a use-case where you see a big difference ?
-
-A second thing is RT pressure. If a big CPU is used at 50% by a CFS task
-and 50% by RT, we should mark it overutilized. Otherwise EAS will think
-the CFS task is 50% and try to down-migrate it. But the truth is, we
-dont know the size of the task ... So, I believe your patch breaks that
-ATM.
-
-And there is a similar problem with misfit. That is, a task running flat
-out on a big CPU will be flagged as misfit, even if there is nothing we
-can do about (we can't up-migrate it for obvious reasons). So perhaps we
-should look at a common solution for both issues, if deemed useful.
-
-> ---
->  kernel/sched/fair.c | 76 +++++++++++++++++++++++++++++++++++++++++++++--------
->  1 file changed, 65 insertions(+), 11 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 036be95..f4c3d70 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5182,10 +5182,71 @@ static inline bool cpu_overutilized(int cpu)
->  static inline void update_overutilized_status(struct rq *rq)
->  {
->  	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
-> -		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
-> -		trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
-> +		if (capacity_orig_of(cpu_of(rq)) < rq->rd->max_cpu_capacity) {
-> +			WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
-> +			trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
-> +		}
->  	}
->  }
-> +
-> +static
-> +void update_system_overutilized(struct sched_domain *sd, struct cpumask *cpus)
-> +{
-> +	unsigned long group_util;
-> +	bool intra_overutil = false;
-> +	unsigned long max_capacity;
-> +	struct sched_group *group = sd->groups;
-> +	struct root_domain *rd;
-> +	int this_cpu;
-> +	bool overutilized;
-> +	int i;
-> +
-> +	this_cpu = smp_processor_id();
-> +	rd = cpu_rq(this_cpu)->rd;
-> +	overutilized = READ_ONCE(rd->overutilized);
-> +	max_capacity = rd->max_cpu_capacity;
-> +
-> +	do {
-> +		group_util = 0;
-> +		for_each_cpu_and(i, sched_group_span(group), cpus) {
-> +			group_util += cpu_util(i);
-> +			if (cpu_overutilized(i)) {
-> +				if (capacity_orig_of(i) < max_capacity) {
-
-This is what breaks things with RT pressure I think.
-
-> +					intra_overutil = true;
-> +					break;
-> +				}
-> +			}
-> +		}
-> +
-> +		/*
-> +		 * A capacity base hint for over-utilization.
-> +		 * Not to trigger system overutiled if heavy tasks
-> +		 * in Big.cluster, so
-> +		 * add the free room(20%) of Big.cluster is impacted which means
-> +		 * system-wide over-utilization,
-> +		 * that considers whole cluster not single cpu
-> +		 */
-> +		if (group->group_weight > 1 && (group->sgc->capacity * 1024 <
-> +						group_util * capacity_margin)) {
-> +			intra_overutil = true;
-> +			break;
-> +		}
-
-What if we have only one big MC domain with both big and little CPUs and
-no DIE ? Say you have 4 big tasks, 4 big CPUs, 4 little CPUs (idle).
-You'll fail to mark the system overutilized no ?
-
-> +
-> +		group = group->next;
-> +
-> +	} while (group != sd->groups && !intra_overutil);
-> +
-> +	if (overutilized != intra_overutil) {
-> +		if (intra_overutil == true) {
-> +			WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
-> +			trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
-> +		} else {
-> +			WRITE_ONCE(rd->overutilized, 0);
-> +			trace_sched_overutilized_tp(rd, 0);
-> +		}
-> +	}
-> +}
-> +
->  #else
->  static inline void update_overutilized_status(struct rq *rq) { }
->  #endif
-> @@ -8242,15 +8303,6 @@ static inline void update_sd_lb_stats(struct lb_env *env, struct sd_lb_stats *sd
->  
->  		/* update overload indicator if we are at root domain */
->  		WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
-> -
-> -		/* Update over-utilization (tipping point, U >= 0) indicator */
-> -		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
-> -		trace_sched_overutilized_tp(rd, sg_status & SG_OVERUTILIZED);
-> -	} else if (sg_status & SG_OVERUTILIZED) {
-> -		struct root_domain *rd = env->dst_rq->rd;
-> -
-> -		WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
-> -		trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
->  	}
->  }
->  
-> @@ -8476,6 +8528,8 @@ static struct sched_group *find_busiest_group(struct lb_env *env)
->  	 */
->  	update_sd_lb_stats(env, &sds);
->  
-> +	update_system_overutilized(env->sd, env->cpus);
-> +
->  	if (sched_energy_enabled()) {
->  		struct root_domain *rd = env->dst_rq->rd;
->  
-> -- 
-> 1.9.1
-> 
+-Vladimir
