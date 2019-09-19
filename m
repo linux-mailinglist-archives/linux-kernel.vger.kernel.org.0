@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A944FB856F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 954ADB85BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 00:24:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404731AbfISWVE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 18:21:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35228 "EHLO mail.kernel.org"
+        id S2405321AbfISWYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 18:24:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405537AbfISWU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 18:20:57 -0400
+        id S2407126AbfISWYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 18:24:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 584F621927;
-        Thu, 19 Sep 2019 22:20:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9462321929;
+        Thu, 19 Sep 2019 22:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568931656;
-        bh=fSg4w60wGc2fe1to3ZNBO/o5AAysdACtKnyKU+ecgZ0=;
+        s=default; t=1568931850;
+        bh=ZnDZXhBIRGN6OWMGxYRviA8kQtnsHMHEhPRM7nl7h60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mp4/gN+sgWMAh3HXPbM1WxoszUvgsiZqnbQyPnL2siFfy9w169blPWQ22PY2mmE+u
-         ncRwRC7P8B2BfC55AoNJoiTcE20EQxjV2GrVf5EhUOWEhgEVoQRzhfDLRPl92fN8ni
-         TxjSi2XEWEUZJxMVbwORFTl5iYY9m4O1Of6I2Wtg=
+        b=yte8qhvcRP9MDSpBEcddV9UMGqJ7KRn1A5bl3dRZ+lOVAusy7Ucl4F5nKtww9ffZa
+         W530S/aMgb34nBDtNs4lovmYSpZdVtoo9aiiPefpTtn2JAcDU4/AbtjOannQOqcjXi
+         SMbl6/vQukUp2BMUyuPSrBW0re3FlbA0lzLlZCN8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Len Brown <len.brown@intel.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 65/74] tools/power turbostat: fix buffer overrun
-Date:   Fri, 20 Sep 2019 00:04:18 +0200
-Message-Id: <20190919214810.836446342@linuxfoundation.org>
+Subject: [PATCH 4.4 38/56] NFSv4: Fix return values for nfs4_file_open()
+Date:   Fri, 20 Sep 2019 00:04:19 +0200
+Message-Id: <20190919214758.710383344@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
-References: <20190919214800.519074117@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+References: <20190919214742.483643642@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,35 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit eeb71c950bc6eee460f2070643ce137e067b234c ]
+[ Upstream commit 90cf500e338ab3f3c0f126ba37e36fb6a9058441 ]
 
-turbostat could be terminated by general protection fault on some latest
-hardwares which (for example) support 9 levels of C-states and show 18
-"tADDED" lines. That bloats the total output and finally causes buffer
-overrun.  So let's extend the buffer to avoid this.
+Currently, we are translating RPC level errors such as timeouts,
+as well as interrupts etc into EOPENSTALE, which forces a single
+replay of the open attempt. What we actually want to do is
+force the replay only in the cases where the returned error
+indicates that the file may have changed on the server.
 
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Signed-off-by: Len Brown <len.brown@intel.com>
+So the fix is to spell out the exact set of errors where we want
+to return EOPENSTALE.
+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/turbostat/turbostat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/nfs4file.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index b4c5d96e54c12..7c2c8e74aa9a9 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -3593,7 +3593,7 @@ int initialize_counters(int cpu_id)
- 
- void allocate_output_buffer()
- {
--	output_buffer = calloc(1, (1 + topo.num_cpus) * 1024);
-+	output_buffer = calloc(1, (1 + topo.num_cpus) * 2048);
- 	outp = output_buffer;
- 	if (outp == NULL)
- 		err(-1, "calloc output buffer");
+diff --git a/fs/nfs/nfs4file.c b/fs/nfs/nfs4file.c
+index d3e3761eacfa2..c5e884585c23a 100644
+--- a/fs/nfs/nfs4file.c
++++ b/fs/nfs/nfs4file.c
+@@ -73,13 +73,13 @@ nfs4_file_open(struct inode *inode, struct file *filp)
+ 	if (IS_ERR(inode)) {
+ 		err = PTR_ERR(inode);
+ 		switch (err) {
+-		case -EPERM:
+-		case -EACCES:
+-		case -EDQUOT:
+-		case -ENOSPC:
+-		case -EROFS:
+-			goto out_put_ctx;
+ 		default:
++			goto out_put_ctx;
++		case -ENOENT:
++		case -ESTALE:
++		case -EISDIR:
++		case -ENOTDIR:
++		case -ELOOP:
+ 			goto out_drop;
+ 		}
+ 	}
 -- 
 2.20.1
 
