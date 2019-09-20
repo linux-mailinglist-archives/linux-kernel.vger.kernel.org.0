@@ -2,131 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A12B929F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4A6B92CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391681AbfITOeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:34:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391631AbfITOeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:34:01 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FBC12190F
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 14:34:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568990040;
-        bh=5T/4VfiO/HqhsBQATWPC19/qw+SPrKZRtyV53KT0GwQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ERG/TepvuolOT6Mw8ez/j7trPLA7A2UHhgppUbM1UKt5I3anQ/LyiAyc1Gzj2TlKM
-         sADxzjaDUCB5buPl3eS2UovJkkkCM5lajx430tmkdOhaMKDDGW+G/nttRZzcXhrsdr
-         zAieZhwuQe6tN6TAp81EjJVKtEqxNKxDSB5o4mHU=
-Received: by mail-wr1-f52.google.com with SMTP id n14so6984599wrw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:34:00 -0700 (PDT)
-X-Gm-Message-State: APjAAAWjEmPtiUebluAdFWXBhVS88fE21FfuypzjpAE4IvQRSjLL75CU
-        5EmHgjFbE8sIjpryKeuC0ihIR/FodyAmYF/DfL9TVA==
-X-Google-Smtp-Source: APXvYqw97uK1m0GzlqxXwrKua5Pdc2B9TF8UZRisIXGn8aSTnAlq1AfsIBHJ3uk1lXhVKnKKQuKNgHptfa8+mPFi7KY=
-X-Received: by 2002:adf:fe0f:: with SMTP id n15mr12713274wrr.343.1568990038968;
- Fri, 20 Sep 2019 07:33:58 -0700 (PDT)
+        id S2392271AbfITOfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:35:39 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40800 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392242AbfITOfi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:35:38 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 7so7313869ljw.7
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=eG22Ig92s9S2RpEdkwbdrlgv61I8kOdAsevuATPJuW0=;
+        b=M+dIEX1A1BUBkYJA1NaxJ/Dk2bIogH7/IXqkD+bsjRIAP5Q/NfQY+4ioQzsks3M50H
+         dOei4m7tZlMlbOys6pa4LtIZG3xCYxjpVRABHzjhWsZZZ2XCJbPhXCr9NcLVDGEprgFY
+         871TvpCmF/jn5UlvAU/vABDPyngphH4JAR52q4N5yynRqZiH1irAoTsWcApL8KjpM5dt
+         MFAjnJuBGvM8o9Ran1MsxZmqxJx51GXg+Z6r0g5QEqpYn3wEyU32Jmp3e9J0eEJIX0/3
+         uXl0Qht/UJ1DBjSRq5Xs2teffcUbd2MWTrLzgp5ZMJyQnaudaOj4OgRUI0nxzh5w2HoL
+         qq/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=eG22Ig92s9S2RpEdkwbdrlgv61I8kOdAsevuATPJuW0=;
+        b=JZ1j9qKrEYS3rkWc7PSo79QVXTCRQynYG/ou7H8DbUz7NIgP3yKXW9Vh6iiHByorRh
+         w8SNFUKTG1Q9ou2zuEqAfrAmFw9TP21DZBDngVMbjStY4aTBFeAQBh4EjHAwkRtpH5gF
+         x4e2nvPU6C/l49TFyLcQHLxslFi6tBYju3HSWuDXCaeKDBVLRTxDEOhW1GZDZ4PwnFxI
+         A2bcYaXVCfgvVlAe1CvFnCuZf1Z9ar0To9WmcTuf9yCJkM8NYn2FZFAzV2TgQiJZvs8I
+         QYjtog8SF0ylYIY8A/XLPtE9s+RbPxjGH89CGF8dtG0wuz4M20aOrwOowZGP6CYNT0Sd
+         FBkA==
+X-Gm-Message-State: APjAAAVkeMNTSa9RoprWXi/SU/ue6XrXLEBPy/E6ilCG9H74hGTFtJF6
+        MffyGGecDIHjMi0A6GcmZtPOQ4h4pe+qLoiC61CSJg==
+X-Google-Smtp-Source: APXvYqxjZdaEJHiesNudzb/xRj2ojfaKoLXXiZW/EaP49yDX6YJ7yd0ufgwj155iS+tSV73tLx10YthVy1iTsH2UVqI=
+X-Received: by 2002:a05:651c:150:: with SMTP id c16mr9382369ljd.224.1568990135917;
+ Fri, 20 Sep 2019 07:35:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190912034421.GA2085@darwi-home-pc> <20190912082530.GA27365@mit.edu>
- <CAHk-=wjyH910+JRBdZf_Y9G54c1M=LBF8NKXB6vJcm9XjLnRfg@mail.gmail.com>
- <20190914122500.GA1425@darwi-home-pc> <008f17bc-102b-e762-a17c-e2766d48f515@gmail.com>
- <20190915052242.GG19710@mit.edu> <CAHk-=wgg2T=3KxrO-BY3nHJgMEyApjnO3cwbQb_0vxsn9qKN8Q@mail.gmail.com>
- <20190918211503.GA1808@darwi-home-pc> <20190918211713.GA2225@darwi-home-pc>
- <CAHk-=wiCqDiU7SE3FLn2W26MS_voUAuqj5XFa1V_tiGTrrW-zQ@mail.gmail.com> <20190920134609.GA2113@pc>
-In-Reply-To: <20190920134609.GA2113@pc>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 20 Sep 2019 07:33:47 -0700
-X-Gmail-Original-Message-ID: <CALCETrWvE5es3i+to33y6jw=Yf0Tw6ZfV-6QWjZT5v0fo76tWw@mail.gmail.com>
-Message-ID: <CALCETrWvE5es3i+to33y6jw=Yf0Tw6ZfV-6QWjZT5v0fo76tWw@mail.gmail.com>
-Subject: Re: [PATCH RFC v4 1/1] random: WARN on large getrandom() waits and
- introduce getrandom2()
-To:     "Ahmed S. Darwish" <darwish.07@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>
+References: <20190919214742.483643642@linuxfoundation.org>
+In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 20 Sep 2019 20:05:24 +0530
+Message-ID: <CA+G9fYstC9ffib=UGGtKPA7HVgSo4m6C6-fLk68cnmZwtC81vg@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/56] 4.4.194-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 6:46 AM Ahmed S. Darwish <darwish.07@gmail.com> wrote:
+On Fri, 20 Sep 2019 at 03:53, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> Hi,
+> This is the start of the stable review cycle for the 4.4.194 release.
+> There are 56 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On Wed, Sep 18, 2019 at 04:57:58PM -0700, Linus Torvalds wrote:
-> > On Wed, Sep 18, 2019 at 2:17 PM Ahmed S. Darwish <darwish.07@gmail.com> wrote:
-> > >
-> > > Since Linux v3.17, getrandom(2) has been created as a new and more
-> > > secure interface for pseudorandom data requests.  It attempted to
-> > > solve three problems, as compared to /dev/urandom:
->   >
-> > I don't think your patch is really _wrong_, but I think it's silly to
-> > introduce a new system call, when we have 30 bits left in the flags of
-> > the old one, and the old system call checked them.
-> >
-> > So it's much simpler and more straightforward to  just introduce a
-> > single new bit #2 that says "I actually know what I'm doing, and I'm
-> > explicitly asking for secure/insecure random data".
-> >
-> > And then say that the existing bit #1 just means "I want to wait for entropy".
-> >
-> > So then you end up with this:
-> >
-> >     /*
-> >      * Flags for getrandom(2)
-> >      *
-> >      * GRND_NONBLOCK    Don't block and return EAGAIN instead
-> >      * GRND_WAIT_ENTROPY        Explicitly wait for entropy
-> >      * GRND_EXPLICIT    Make it clear you know what you are doing
-> >      */
-> >     #define GRND_NONBLOCK               0x0001
-> >     #define GRND_WAIT_ENTROPY   0x0002
-> >     #define GRND_EXPLICIT               0x0004
+> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.4.194-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-What is this GRND_EXPLICIT thing?
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-A few weeks ago, I sent a whole series to address this, and I
-obviously didn't cc enough people.  I'll resend a rebased version
-today.  Meanwhile, some comments on this whole mess:
+Summary
+------------------------------------------------------------------------
 
-As I think everyone mostly agrees in this whole thread, getrandom()
-can't just magically start returning non-random results.  That would
-be a big problem.
+kernel: 4.4.194-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: 7b679e1a966bc6ac22d75cae76b97a9fded9367d
+git describe: v4.4.193-57-g7b679e1a966b
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.193-57-g7b679e1a966b
 
-Linus, I disagree that blocking while waiting for randomness is an
-error.  Sometimes you want to generate a key, you want to finish as
-quickly as possible, and you don't want to be in the business of
-fiddling with the setup of the kernel RNG.  I would argue that *most*
-crypto applications are in this category.  I think that the kernel
-should, instead, handle this mess itself.  As a first pass, it could
-be as simple as noticing that someone is blocking on randomness and
-kicking off a thread that does some randomish reads to the rootfs.
-This would roughly simulate the old behavior in which an ext4 rootfs
-did more IO than necessary.  A fancier version would, as discussed in
-this thread, do more clever things.
+No regressions (compared to build v4.4.193)
 
-(As an aside, I am not a fan of xoring or adding stuff to the CRNG
-state.  We should just use an actual crypto primitive for this.
-Accumulate the state in a buffer and SHA-512 it.  Or use something
-like the Keccak duplex sponge.  But this is a discussion for another
-day.)
+No fixes (compared to build v4.4.193)
 
-So I'm going to resend my series.  You can all fight over whether the
-patch that actually goes in should be based on my series or based on
-this patch.
+Ran 19960 total tests in the following environments and test suites.
 
---Andy
+Environments
+--------------
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-open-posix-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* network-basic-tests
+* perf
+* prep-tmp-disk
+* spectre-meltdown-checker-test
+* kvm-unit-tests
+* v4l2-compliance
+* install-android-platform-tools-r2600
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.4.194-rc1
+git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
+git branch: 4.4.194-rc1-hikey-20190919-563
+git commit: 8d201bfa44c8dc5d61d57c89ac925d6e1fefaeae
+git describe: 4.4.194-rc1-hikey-20190919-563
+Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
+-oe/build/4.4.194-rc1-hikey-20190919-563
+
+
+No regressions (compared to build 4.4.194-rc1-hikey-20190918-561)
+
+
+No fixes (compared to build 4.4.194-rc1-hikey-20190918-561)
+
+Ran 1536 total tests in the following environments and test suites.
+
+Environments
+--------------
+- hi6220-hikey - arm64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
