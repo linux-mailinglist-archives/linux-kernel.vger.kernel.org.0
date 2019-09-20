@@ -2,170 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82FE8B95F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A9FB95EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:45:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390962AbfITQrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:47:17 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37478 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390274AbfITQrQ (ORCPT
+        id S2389956AbfITQpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:45:24 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.68]:35702 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729208AbfITQpY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:47:16 -0400
-Received: by mail-qt1-f196.google.com with SMTP id d2so9415745qtr.4
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c57hxFA67fRRdSaSzWfUzlK33jYXyRtls9vYGbs8yPA=;
-        b=kTf1z///BD0MlbD3Rq+UybgtgBgOdhQqNDPBjwhi5czfm+yHZAia51VUsD6NOdA51U
-         fn9iKlq000D27RSHlObzLX9euuS2Zs51aX07i20aT+cbUqJF831KVLz9h1E54Wl41N6K
-         W1fdExGxOvUkHItGmKr8ZMAEOA2ClfioaxoHpoYYmydUKCT9sHIhQ0XlOj+/THXd5XUe
-         uLMTAyg5k+h7mBgRxV1+aGymigT8661B8mHvX9C/WqT313DImUZRoXPnecKdOP3EvSRH
-         r0llfbcTu5gee8p7Z35cYSPf3fYTPXLy0H1DfevFlFhx/XCWQe6Der6DFiZj6cCTb9DG
-         8Xdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c57hxFA67fRRdSaSzWfUzlK33jYXyRtls9vYGbs8yPA=;
-        b=gyxFp4M0j2JnaUleNfIYM+d1WwHeUAU6McMkFMLKiqHUX3SswAETJi9xCsxcLe6srQ
-         KRxONzAMSn56+L302xiGSh2iIAEnJyBdtlgAtcazXPDnyGOWmyDaiHA4nFGkdT8lM5MV
-         IRp/6mbbrvjjVf3ammfSb5vn91Q8w0l++hq1OUaeaqEXwPZ/qMBdcCQZaSOh0VZSLKGg
-         5dP1EOkWQYgI3zxw3UeGVmXM8iVw7dPHUjn0Hdp81LVnPD1FQHefxZOjidL96DJCTpd6
-         AwDeArxUoxfKV5d/xKkzyo4Rmtrx4U0JFFyDL9YvtH7q4AsZMRf/s3XRehouUUCkNmsa
-         L6tw==
-X-Gm-Message-State: APjAAAVYwrX+ZXKRwLcLLT/N2hMbMR3xlspOOjjCQ4jPC56qL+dwlA0D
-        FST6jSxz8IuI1GRQfQ61j9e9NgQDAI6aUmEw0A/avg==
-X-Google-Smtp-Source: APXvYqwRjEAOULXoKZ6CUYnmjU2a0N71ONaqspZQCNLeBC5JZAH1tJTZfOECYYyzvRxr3aSUr9djoP0BW4t5Rf498C8=
-X-Received: by 2002:ac8:7646:: with SMTP id i6mr4420523qtr.50.1568998033153;
- Fri, 20 Sep 2019 09:47:13 -0700 (PDT)
+        Fri, 20 Sep 2019 12:45:24 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 57F15F0E41
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:45:22 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id BM26ixrL690onBM26ifNqL; Fri, 20 Sep 2019 11:45:22 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:To:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5iTGY/iZKBM5pTYJE4uJXR7l9zLmKTHVaxZNgy/AAJ0=; b=oQg+QDU/KnmpswhtXGTEs6gy4L
+        lDCFWbcZsUApx5t/2BUBcxJaAKauYHjsUYAIJ5il3L57iXLo8PSW8FRlROy9cQlQqfBwPP0IKqoTZ
+        xl6qkWiEapThHHk/7hP6mrr7vYkq63fkPXPobZNiUQLZqgbcijfz/qf1I4qTNJZgyaiTJ9TAwmt/k
+        m/m04M+eAdDzc9084QU5eaigb4iddCx03nPQgGAWuBLAbVTjqgC4xaig2K2d8MiatFL9JnAgi17lK
+        qsKi+62l+HWBYEMo4vP3IZZHNntUqXGTUWK2gOPL7pzBoPB/6aveKxf+Cw3D2kbuZEirwATpBJLvj
+        40QfZWyQ==;
+Received: from lfbn-1-12653-249.w90-90.abo.wanadoo.fr ([90.90.196.249]:34510 helo=[192.168.1.21])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1iBM25-002h2k-LH; Fri, 20 Sep 2019 11:45:21 -0500
+To:     Felix Fietkau <nbd@nbd.name>, linux-wireless@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Roy Luo <royluo@google.com>, Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Networking <netdev@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+References: <20190704155324.56693-1-nbd@nbd.name>
+ <20190704155324.56693-4-nbd@nbd.name>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH 4/4] mt76: mt7615: sync with mt7603 rate control changes
+Message-ID: <ee49c064-1ea6-8262-7672-b91d1a9a037e@embeddedor.com>
+Date:   Fri, 20 Sep 2019 18:44:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com>
- <20190920163123.GC55224@lakrids.cambridge.arm.com>
-In-Reply-To: <20190920163123.GC55224@lakrids.cambridge.arm.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 20 Sep 2019 18:46:53 +0200
-Message-ID: <CACT4Y+ZwyBhR8pB7jON8eVObCGbJ54L8Sbz6Wfmy3foHkPb_fA@mail.gmail.com>
-Subject: Re: Kernel Concurrency Sanitizer (KCSAN)
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Marco Elver <elver@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Paul Turner <pjt@google.com>, Daniel Axtens <dja@axtens.net>,
-        Anatol Pomazau <anatol@google.com>,
-        Will Deacon <willdeacon@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190704155324.56693-4-nbd@nbd.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 90.90.196.249
+X-Source-L: No
+X-Exim-ID: 1iBM25-002h2k-LH
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: lfbn-1-12653-249.w90-90.abo.wanadoo.fr ([192.168.1.21]) [90.90.196.249]:34510
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 11
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 6:31 PM Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Fri, Sep 20, 2019 at 04:18:57PM +0200, Marco Elver wrote:
-> > Hi all,
->
-> Hi,
->
-> > We would like to share a new data-race detector for the Linux kernel:
-> > Kernel Concurrency Sanitizer (KCSAN) --
-> > https://github.com/google/ktsan/wiki/KCSAN  (Details:
-> > https://github.com/google/ktsan/blob/kcsan/Documentation/dev-tools/kcsan.rst)
->
-> Nice!
->
-> BTW kcsan_atomic_next() is missing a stub definition in <linux/kcsan.h>
-> when !CONFIG_KCSAN:
->
-> https://github.com/google/ktsan/commit/a22a093a0f0d0b582c82cdbac4f133a3f61d207c#diff-19d7c475b4b92aab8ba440415ab786ec
->
-> ... and I think the kcsan_{begin,end}_atomic() stubs need to be static
-> inline too.
->
-> It looks like this is easy enough to enable on arm64, with the only real
-> special case being secondary_start_kernel() which we might want to
-> refactor to allow some portions to be instrumented.
->
-> I pushed the trivial patches I needed to get arm64 booting to my arm64/kcsan
-> branch:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git arm64/kcsan
->
-> We have some interesting splats at boot time in stop_machine, which
-> don't seem to have been hit/fixed on x86 yet in the kcsan-with-fixes
-> branch, e.g.
->
-> [    0.237939] ==================================================================
-> [    0.239431] BUG: KCSAN: data-race in multi_cpu_stop+0xa8/0x198 and set_state+0x80/0xb0
-> [    0.241189]
-> [    0.241606] write to 0xffff00001003bd00 of 4 bytes by task 24 on cpu 3:
-> [    0.243435]  set_state+0x80/0xb0
-> [    0.244328]  multi_cpu_stop+0x16c/0x198
-> [    0.245406]  cpu_stopper_thread+0x170/0x298
-> [    0.246565]  smpboot_thread_fn+0x40c/0x560
-> [    0.247696]  kthread+0x1a8/0x1b0
-> [    0.248586]  ret_from_fork+0x10/0x18
-> [    0.249589]
-> [    0.250006] read to 0xffff00001003bd00 of 4 bytes by task 14 on cpu 1:
-> [    0.251804]  multi_cpu_stop+0xa8/0x198
-> [    0.252851]  cpu_stopper_thread+0x170/0x298
-> [    0.254008]  smpboot_thread_fn+0x40c/0x560
-> [    0.255135]  kthread+0x1a8/0x1b0
-> [    0.256027]  ret_from_fork+0x10/0x18
-> [    0.257036]
-> [    0.257449] Reported by Kernel Concurrency Sanitizer on:
-> [    0.258918] CPU: 1 PID: 14 Comm: migration/1 Not tainted 5.3.0-00007-g67ab35a199f4-dirty #3
-> [    0.261241] Hardware name: linux,dummy-virt (DT)
-> [    0.262517] ==================================================================
->
-> > To those of you who we mentioned at LPC that we're working on a
-> > watchpoint-based KTSAN inspired by DataCollider [1], this is it (we
-> > renamed it to KCSAN to avoid confusion with KTSAN).
-> > [1] http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf
-> >
-> > In the coming weeks we're planning to:
-> > * Set up a syzkaller instance.
-> > * Share the dashboard so that you can see the races that are found.
-> > * Attempt to send fixes for some races upstream (if you find that the
-> > kcsan-with-fixes branch contains an important fix, please feel free to
-> > point it out and we'll prioritize that).
-> >
-> > There are a few open questions:
-> > * The big one: most of the reported races are due to unmarked
-> > accesses; prioritization or pruning of races to focus initial efforts
-> > to fix races might be required. Comments on how best to proceed are
-> > welcome. We're aware that these are issues that have recently received
-> > attention in the context of the LKMM
-> > (https://lwn.net/Articles/793253/).
->
-> I think the big risk here is drive-by "fixes" masking the warnings
-> rather than fixing the actual issue. It's easy for people to suppress a
-> warning with {READ,WRITE}_ONCE(), so they're liable to do that even the
-> resulting race isn't benign.
->
-> I don't have a clue how to prevent that, though.
+Hi all,
 
-I think this is mostly orthogonal problem. E.g. for some syzbot bugs I
-see fixes that also try to simply "shut up" the immediate
-manifestation with whatever means, e.g. sprinkling some slinlocks. So
-(1) it's not unique to atomics, (2) presence of READ/WRITE_ONCE will
-make the reader aware of the fact that this runs concurrently with
-something else, and then they may ask themselves why this runs
-concurrently with something when the object is supposed to be private
-to the thread, and then maybe they re-fix it properly. Whereas if it's
-completely unmarked, nobody will even notice that this code accesses
-the object concurrently with other code. So even if READ/WRITE_ONCE
-was a wrong fix, it's still better to have it rather than not.
+On 7/4/19 10:53, Felix Fietkau wrote:
+[..]
+> +	for (i = 0, idx = first_idx; count && idx <= last_idx; idx++) {
+> +		struct ieee80211_tx_rate *cur_rate;
+> +		int cur_count;
+>  
+> -		info->status.rates[i].count = cur_count;
+> -		final_idx = i;
+> +		cur_rate = &rs->rates[idx / 2];
+> +		cur_count = min_t(int, MT7615_RATE_RETRY, count);
+>  		count -= cur_count;
+> +
+> +		if (idx && (cur_rate->idx != info->status.rates[i].idx ||
+> +			    cur_rate->flags != info->status.rates[i].flags)) {
+> +			i++;
+> +			if (i == ARRAY_SIZE(info->status.rates))
+
+Is this actually possible  ^^^^^^^ ?? in case it is, see my comments below...
+
+> +				break;
+> +
+> +			info->status.rates[i] = *cur_rate;
+> +			info->status.rates[i].count = 0;
+> +		}
+> +
+> +		info->status.rates[i].count += cur_count;
+>  	}
+>  
+>  out:
+> -	final_rate_flags = info->status.rates[final_idx].flags;
+> +	final_rate_flags = info->status.rates[i].flags;
+
+There is an out-of-bounds access here........^^^ and see below...
+
+>  
+>  	switch (FIELD_GET(MT_TX_RATE_MODE, final_rate)) {
+>  	case MT_PHY_TYPE_CCK:
+> @@ -713,8 +778,8 @@ static bool mt7615_fill_txs(struct mt7615_dev *dev, struct mt7615_sta *sta,
+>  		return false;
+>  	}
+>  
+> -	info->status.rates[final_idx].idx = final_rate;
+> -	info->status.rates[final_idx].flags = final_rate_flags;
+> +	info->status.rates[i].idx = final_rate;
+> +	info->status.rates[i].flags = final_rate_flags;
+
+here too ............... ^^^^
+
+>  
+>  	return true;
+>  }
+
+--
+Gustavo
