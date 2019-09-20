@@ -2,125 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EBAEB9521
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12970B954B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:22:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404122AbfITQUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:20:35 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42416 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387644AbfITQUf (ORCPT
+        id S2405122AbfITQV0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:21:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52865 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404965AbfITQVS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:20:35 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q12so4833679pff.9
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:20:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vlNGfK1QkeKihZ4C4Tfs64KHadfyM3q44e2VI4eyD3A=;
-        b=jPvq1xo2VKxr3BDR3r7JrBL+WPTyholNKVawQB0EIuY3oOAFbxYM/uA5HMC2fbYkic
-         N+WbDQvIvyuzqCIEBZvdePa9S1vqkH6K2m+EW/LDDM5YxksbqG7BltCluuCjXA8C6rA7
-         oHUFuiqrNcCKpzeBNyoIFf5CiOpQ7mWVH8K4LjuMdP+70bqDaHmnZ0Meec8zRHOKfRHW
-         WkfhMJuUv5shwWw4+4MZYjOsBWWfUVi91S2tVPqfkpzmI25/3+lVsKK8NU8bZ3jTRK1Q
-         VmeH6eXJojh3Y3TPr80WtGaHCxT9hYoF2HjqaXLkg8KcbvcmXvsnsKXNp1G8WPXDWFwI
-         GALA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vlNGfK1QkeKihZ4C4Tfs64KHadfyM3q44e2VI4eyD3A=;
-        b=HK6s1l4ckytEVddhKjFyTa5eoE44+oA23LgLepVAr6w6f/c15jKD07IVY9/PQ0Zf6A
-         6j6NJYIfocuW4fR9XAkoFxy28JGzq/68poM8jKPX5dB2WUASs28SuahMTdrrReay3o8c
-         ojzSsMv9aaYRSIEvGXERbzRRuJvLOaJF5+dAeyiOpWJwWDpRZcFvo16UhkUtip4PsGQ+
-         qvJafnHntOB/0ArK38QzQrG8GUUzBU9cqZvGd/Lk7ys4QztyJfovuplxqPzAq4Ha4FCs
-         oEbCzeD0HU1duA1oBxH4p40jPPetIxupffxHmge+t/xuHjHwfFbLLpk7ADbzxFqJbtDa
-         JdkQ==
-X-Gm-Message-State: APjAAAX1iHLif5D2h6NTy75IMCruxPJOFjH85YC+U5qhYAAQyywPTrAS
-        HeHhj1G+AtjiTGvD6NkbyQ8SeEtLEi2KqNWJd22Chg==
-X-Google-Smtp-Source: APXvYqwrqKTqYsi8OR1VdueDkW2Mi43aJ5Pj88pR9RVaDL1ha76c1BEGk/C9C4FKe3KucmQ34BVGRHYWuJyH1TnFXko=
-X-Received: by 2002:a17:90a:ff18:: with SMTP id ce24mr5537560pjb.123.1568996432715;
- Fri, 20 Sep 2019 09:20:32 -0700 (PDT)
+        Fri, 20 Sep 2019 12:21:18 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iBLeT-00040e-PO; Fri, 20 Sep 2019 18:20:57 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id EA51B1C0DF4;
+        Fri, 20 Sep 2019 18:20:56 +0200 (CEST)
+Date:   Fri, 20 Sep 2019 16:20:56 -0000
+From:   "tip-bot2 for Anju T Sudhakar" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf kvm: Add arch neutral function to choose
+ event for perf kvm record
+Cc:     Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20190718181749.30612-2-anju@linux.vnet.ibm.com>
+References: <20190718181749.30612-2-anju@linux.vnet.ibm.com>
 MIME-Version: 1.0
-References: <20190920153951.25762-1-ilie.halip@gmail.com>
-In-Reply-To: <20190920153951.25762-1-ilie.halip@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 20 Sep 2019 09:20:20 -0700
-Message-ID: <CAKwvOdkvrRgQ7KtGag0yDH+ry7a6=pd5xudrNm9X+5oVu2Z20A@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/pmac/smp: avoid unused-variable warnings
-To:     Ilie Halip <ilie.halip@gmail.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <156899645688.24167.9735365574301898952.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 8:41 AM Ilie Halip <ilie.halip@gmail.com> wrote:
->
-> When building with ppc64_defconfig, the compiler reports
-> that these 2 variables are not used:
->     warning: unused variable 'core99_l2_cache' [-Wunused-variable]
->     warning: unused variable 'core99_l3_cache' [-Wunused-variable]
->
-> They are only used when CONFIG_PPC64 is not defined. Move
-> them into a section which does the same macro check.
->
-> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
+The following commit has been merged into the perf/urgent branch of tip:
 
-Hi Ilie, thanks for the patch.  LGTM (Please include link tags if your
-link addresses a bug in our bug tracker; it helps us track where/when
-patches land, in case they need to be backported).
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Link: https://github.com/ClangBuiltLinux/linux/issues/663
+Commit-ID:     124eb5f82bf9395419b20205c4dcc1b8fcda7f29
+Gitweb:        https://git.kernel.org/tip/124eb5f82bf9395419b20205c4dcc1b8fcda7f29
+Author:        Anju T Sudhakar <anju@linux.vnet.ibm.com>
+AuthorDate:    Thu, 18 Jul 2019 23:47:48 +05:30
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Fri, 20 Sep 2019 10:28:26 -03:00
 
-> ---
->  arch/powerpc/platforms/powermac/smp.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/powerpc/platforms/powermac/smp.c b/arch/powerpc/platforms/powermac/smp.c
-> index f95fbdee6efe..e44c606f119e 100644
-> --- a/arch/powerpc/platforms/powermac/smp.c
-> +++ b/arch/powerpc/platforms/powermac/smp.c
-> @@ -648,6 +648,10 @@ static void smp_core99_pfunc_tb_freeze(int freeze)
->
->  static unsigned int core99_tb_gpio;    /* Timebase freeze GPIO */
->
-> +/* L2 and L3 cache settings to pass from CPU0 to CPU1 on G4 cpus */
-> +volatile static long int core99_l2_cache;
-> +volatile static long int core99_l3_cache;
-> +
->  static void smp_core99_gpio_tb_freeze(int freeze)
->  {
->         if (freeze)
-> @@ -660,10 +664,6 @@ static void smp_core99_gpio_tb_freeze(int freeze)
->
->  #endif /* !CONFIG_PPC64 */
->
-> -/* L2 and L3 cache settings to pass from CPU0 to CPU1 on G4 cpus */
-> -volatile static long int core99_l2_cache;
-> -volatile static long int core99_l3_cache;
-> -
->  static void core99_init_caches(int cpu)
->  {
->  #ifndef CONFIG_PPC64
-> --
-> 2.17.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20190920153951.25762-1-ilie.halip%40gmail.com.
+perf kvm: Add arch neutral function to choose event for perf kvm record
 
+'perf kvm record' uses 'cycles'(if the user did not specify any event)
+as the default event to profile the guest.
 
+This will not provide any proper samples from the guest incase of
+powerpc architecture, since in powerpc the PMUs are controlled by the
+guest rather than the host.
 
--- 
-Thanks,
-~Nick Desaulniers
+Patch adds a function to pick an arch specific event for 'perf kvm
+record', instead of selecting 'cycles' as a default event for all
+architectures.
+
+For powerpc this function checks for any user specified event, and if
+there isn't any it returns invalid instead of proceeding with 'cycles'
+event.
+
+Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Reviewed-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: linuxppc-dev@lists.ozlabs.org
+Link: http://lore.kernel.org/lkml/20190718181749.30612-2-anju@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/arch/powerpc/util/kvm-stat.c | 37 ++++++++++++++++++++++++-
+ tools/perf/builtin-kvm.c                | 12 +++++++-
+ tools/perf/util/kvm-stat.h              |  1 +-
+ 3 files changed, 49 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/arch/powerpc/util/kvm-stat.c b/tools/perf/arch/powerpc/util/kvm-stat.c
+index f0dbf7b..ec5b771 100644
+--- a/tools/perf/arch/powerpc/util/kvm-stat.c
++++ b/tools/perf/arch/powerpc/util/kvm-stat.c
+@@ -8,6 +8,7 @@
+ 
+ #include "book3s_hv_exits.h"
+ #include "book3s_hcalls.h"
++#include <subcmd/parse-options.h>
+ 
+ #define NR_TPS 4
+ 
+@@ -172,3 +173,39 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_unused)
+ 
+ 	return ret;
+ }
++
++/*
++ * Incase of powerpc architecture, pmu registers are programmable
++ * by guest kernel. So monitoring guest via host may not provide
++ * valid samples. It is better to fail the "perf kvm record"
++ * with default "cycles" event to monitor guest in powerpc.
++ *
++ * Function to parse the arguments and return appropriate values.
++ */
++int kvm_add_default_arch_event(int *argc, const char **argv)
++{
++	const char **tmp;
++	bool event = false;
++	int i, j = *argc;
++
++	const struct option event_options[] = {
++		OPT_BOOLEAN('e', "event", &event, NULL),
++		OPT_END()
++	};
++
++	tmp = calloc(j + 1, sizeof(char *));
++	if (!tmp)
++		return -EINVAL;
++
++	for (i = 0; i < j; i++)
++		tmp[i] = argv[i];
++
++	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
++	if (!event) {
++		free(tmp);
++		return -EINVAL;
++	}
++
++	free(tmp);
++	return 0;
++}
+diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+index 2b822be..6e3e366 100644
+--- a/tools/perf/builtin-kvm.c
++++ b/tools/perf/builtin-kvm.c
+@@ -1514,11 +1514,21 @@ perf_stat:
+ }
+ #endif /* HAVE_KVM_STAT_SUPPORT */
+ 
++int __weak kvm_add_default_arch_event(int *argc __maybe_unused,
++					const char **argv __maybe_unused)
++{
++	return 0;
++}
++
+ static int __cmd_record(const char *file_name, int argc, const char **argv)
+ {
+-	int rec_argc, i = 0, j;
++	int rec_argc, i = 0, j, ret;
+ 	const char **rec_argv;
+ 
++	ret = kvm_add_default_arch_event(&argc, argv);
++	if (ret)
++		return -EINVAL;
++
+ 	rec_argc = argc + 2;
+ 	rec_argv = calloc(rec_argc + 1, sizeof(char *));
+ 	rec_argv[i++] = strdup("record");
+diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
+index 8fd6ec2..6f0fa05 100644
+--- a/tools/perf/util/kvm-stat.h
++++ b/tools/perf/util/kvm-stat.h
+@@ -148,4 +148,5 @@ extern const char *kvm_entry_trace;
+ extern const char *kvm_exit_trace;
+ #endif /* HAVE_KVM_STAT_SUPPORT */
+ 
++extern int kvm_add_default_arch_event(int *argc, const char **argv);
+ #endif /* __PERF_KVM_STAT_H */
