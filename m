@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F46B9317
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 817EEB928D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392824AbfITOhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:37:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35742 "EHLO
+        id S2391592AbfITOdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:33:44 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36310 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388010AbfITOZA (ORCPT
+        by vger.kernel.org with ESMTP id S2388222AbfITOZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:00 -0400
+        Fri, 20 Sep 2019 10:25:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0004wo-3p; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqK-0004y6-KF; Fri, 20 Sep 2019 15:25:04 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007qJ-N9; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqH-0007z1-HK; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Eric Ren" <renzhen@linux.alibaba.com>,
-        "Jiufei Xue" <jiufei.xue@linux.alibaba.com>,
-        "Jan Kara" <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>
+        "Kalle Valo" <kvalo@codeaurora.org>,
+        "Christian Lamparter" <chunkeey@gmail.com>,
+        "Alan Stern" <stern@rowland.harvard.edu>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.244664188@decadent.org.uk>
+Message-ID: <lsq.1568989415.454818804@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 022/132] jbd2: check superblock mapped prior to
- committing
+Subject: [PATCH 3.16 122/132] p54usb: Fix race between disconnect and
+ firmware loading
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,47 +49,171 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 742b06b5628f2cd23cb51a034cb54dc33c6162c5 upstream.
+commit 6e41e2257f1094acc37618bf6c856115374c6922 upstream.
 
-We hit a BUG at fs/buffer.c:3057 if we detached the nbd device
-before unmounting ext4 filesystem.
+The syzbot fuzzer found a bug in the p54 USB wireless driver.  The
+issue involves a race between disconnect and the firmware-loader
+callback routine, and it has several aspects.
 
-The typical chain of events leading to the BUG:
-jbd2_write_superblock
-  submit_bh
-    submit_bh_wbc
-      BUG_ON(!buffer_mapped(bh));
+One big problem is that when the firmware can't be loaded, the
+callback routine tries to unbind the driver from the USB _device_ (by
+calling device_release_driver) instead of from the USB _interface_ to
+which it is actually bound (by calling usb_driver_release_interface).
 
-The block device is removed and all the pages are invalidated. JBD2
-was trying to write journal superblock to the block device which is
-no longer present.
+The race involves access to the private data structure.  The driver's
+disconnect handler waits for a completion that is signalled by the
+firmware-loader callback routine.  As soon as the completion is
+signalled, you have to assume that the private data structure may have
+been deallocated by the disconnect handler -- even if the firmware was
+loaded without errors.  However, the callback routine does access the
+private data several times after that point.
 
-Fix this by checking the journal superblock's buffer head prior to
-submitting.
+Another problem is that, in order to ensure that the USB device
+structure hasn't been freed when the callback routine runs, the driver
+takes a reference to it.  This isn't good enough any more, because now
+that the callback routine calls usb_driver_release_interface, it has
+to ensure that the interface structure hasn't been freed.
 
-Reported-by: Eric Ren <renzhen@linux.alibaba.com>
-Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-[bwh: Backported to 3.16: adjust context]
+Finally, the driver takes an unnecessary reference to the USB device
+structure in the probe function and drops the reference in the
+disconnect handler.  This extra reference doesn't accomplish anything,
+because the USB core already guarantees that a device structure won't
+be deallocated while a driver is still bound to any of its interfaces.
+
+To fix these problems, this patch makes the following changes:
+
+	Call usb_driver_release_interface() rather than
+	device_release_driver().
+
+	Don't signal the completion until after the important
+	information has been copied out of the private data structure,
+	and don't refer to the private data at all thereafter.
+
+	Lock udev (the interface's parent) before unbinding the driver
+	instead of locking udev->parent.
+
+	During the firmware loading process, take a reference to the
+	USB interface instead of the USB device.
+
+	Don't take an unnecessary reference to the device during probe
+	(and then don't drop it during disconnect).
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: syzbot+200d4bb11b23d929335f@syzkaller.appspotmail.com
+Acked-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/jbd2/journal.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wireless/p54/p54usb.c | 43 +++++++++-------------
+ 1 file changed, 18 insertions(+), 25 deletions(-)
 
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1344,6 +1344,10 @@ static int jbd2_write_superblock(journal
- 	journal_superblock_t *sb = journal->j_superblock;
- 	int ret;
+--- a/drivers/net/wireless/p54/p54usb.c
++++ b/drivers/net/wireless/p54/p54usb.c
+@@ -33,6 +33,8 @@ MODULE_ALIAS("prism54usb");
+ MODULE_FIRMWARE("isl3886usb");
+ MODULE_FIRMWARE("isl3887usb");
  
-+	/* Buffer got discarded which means block device got invalidated */
-+	if (!buffer_mapped(bh))
-+		return -EIO;
++static struct usb_driver p54u_driver;
 +
- 	trace_jbd2_write_superblock(journal, write_op);
- 	if (!(journal->j_flags & JBD2_BARRIER))
- 		write_op &= ~(REQ_FUA | REQ_FLUSH);
+ /*
+  * Note:
+  *
+@@ -921,9 +923,9 @@ static void p54u_load_firmware_cb(const
+ {
+ 	struct p54u_priv *priv = context;
+ 	struct usb_device *udev = priv->udev;
++	struct usb_interface *intf = priv->intf;
+ 	int err;
+ 
+-	complete(&priv->fw_wait_load);
+ 	if (firmware) {
+ 		priv->fw = firmware;
+ 		err = p54u_start_ops(priv);
+@@ -932,26 +934,22 @@ static void p54u_load_firmware_cb(const
+ 		dev_err(&udev->dev, "Firmware not found.\n");
+ 	}
+ 
+-	if (err) {
+-		struct device *parent = priv->udev->dev.parent;
+-
+-		dev_err(&udev->dev, "failed to initialize device (%d)\n", err);
+-
+-		if (parent)
+-			device_lock(parent);
++	complete(&priv->fw_wait_load);
++	/*
++	 * At this point p54u_disconnect may have already freed
++	 * the "priv" context. Do not use it anymore!
++	 */
++	priv = NULL;
+ 
+-		device_release_driver(&udev->dev);
+-		/*
+-		 * At this point p54u_disconnect has already freed
+-		 * the "priv" context. Do not use it anymore!
+-		 */
+-		priv = NULL;
++	if (err) {
++		dev_err(&intf->dev, "failed to initialize device (%d)\n", err);
+ 
+-		if (parent)
+-			device_unlock(parent);
++		usb_lock_device(udev);
++		usb_driver_release_interface(&p54u_driver, intf);
++		usb_unlock_device(udev);
+ 	}
+ 
+-	usb_put_dev(udev);
++	usb_put_intf(intf);
+ }
+ 
+ static int p54u_load_firmware(struct ieee80211_hw *dev,
+@@ -972,14 +970,14 @@ static int p54u_load_firmware(struct iee
+ 	dev_info(&priv->udev->dev, "Loading firmware file %s\n",
+ 	       p54u_fwlist[i].fw);
+ 
+-	usb_get_dev(udev);
++	usb_get_intf(intf);
+ 	err = request_firmware_nowait(THIS_MODULE, 1, p54u_fwlist[i].fw,
+ 				      device, GFP_KERNEL, priv,
+ 				      p54u_load_firmware_cb);
+ 	if (err) {
+ 		dev_err(&priv->udev->dev, "(p54usb) cannot load firmware %s "
+ 					  "(%d)!\n", p54u_fwlist[i].fw, err);
+-		usb_put_dev(udev);
++		usb_put_intf(intf);
+ 	}
+ 
+ 	return err;
+@@ -1011,8 +1009,6 @@ static int p54u_probe(struct usb_interfa
+ 	skb_queue_head_init(&priv->rx_queue);
+ 	init_usb_anchor(&priv->submitted);
+ 
+-	usb_get_dev(udev);
+-
+ 	/* really lazy and simple way of figuring out if we're a 3887 */
+ 	/* TODO: should just stick the identification in the device table */
+ 	i = intf->altsetting->desc.bNumEndpoints;
+@@ -1053,10 +1049,8 @@ static int p54u_probe(struct usb_interfa
+ 		priv->upload_fw = p54u_upload_firmware_net2280;
+ 	}
+ 	err = p54u_load_firmware(dev, intf);
+-	if (err) {
+-		usb_put_dev(udev);
++	if (err)
+ 		p54_free_common(dev);
+-	}
+ 	return err;
+ }
+ 
+@@ -1072,7 +1066,6 @@ static void p54u_disconnect(struct usb_i
+ 	wait_for_completion(&priv->fw_wait_load);
+ 	p54_unregister_common(dev);
+ 
+-	usb_put_dev(interface_to_usbdev(intf));
+ 	release_firmware(priv->fw);
+ 	p54_free_common(dev);
+ }
 
