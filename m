@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFDB5B9224
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1E7B92DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388590AbfITOZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:25:38 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35958 "EHLO
+        id S2391830AbfITOgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:36:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35898 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388084AbfITOZC (ORCPT
+        by vger.kernel.org with ESMTP id S2388077AbfITOZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:02 -0400
+        Fri, 20 Sep 2019 10:25:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0004xD-1S; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqE-0004xe-9L; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0007rH-34; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqD-0007rX-7A; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Potnuri Bharat Teja" <bharat@chelsio.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        "Jason Gunthorpe" <jgg@mellanox.com>
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.629864453@decadent.org.uk>
+Message-ID: <lsq.1568989415.205725287@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 034/132] RDMA/cxgb4: Fix null pointer dereference on
- alloc_skb failure
+Subject: [PATCH 3.16 037/132] crypto: arm/aes-neonbs - don't access
+ already-freed walk.iv
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,34 +49,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit a6d2a5a92e67d151c98886babdc86d530d27111c upstream.
+commit 767f015ea0b7ab9d60432ff6cd06b664fd71f50f upstream.
 
-Currently if alloc_skb fails to allocate the skb a null skb is passed to
-t4_set_arp_err_handler and this ends up dereferencing the null skb.  Avoid
-the NULL pointer dereference by checking for a NULL skb and returning
-early.
+If the user-provided IV needs to be aligned to the algorithm's
+alignmask, then skcipher_walk_virt() copies the IV into a new aligned
+buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
+if the caller unconditionally accesses walk.iv, it's a use-after-free.
 
-Addresses-Coverity: ("Dereference null return")
-Fixes: b38a0ad8ec11 ("RDMA/cxgb4: Set arp error handler for PASS_ACCEPT_RPL messages")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+arm32 xts-aes-neonbs doesn't set an alignmask, so currently it isn't
+affected by this despite unconditionally accessing walk.iv.  However
+this is more subtle than desired, and it was actually broken prior to
+the alignmask being removed by commit cc477bf64573 ("crypto: arm/aes -
+replace bit-sliced OpenSSL NEON code").  Thus, update xts-aes-neonbs to
+start checking the return value of skcipher_walk_virt().
+
+Fixes: e4e7f10bfc40 ("ARM: add support for bit sliced AES using NEON instructions")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/hw/cxgb4/cm.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/crypto/aesbs-glue.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/infiniband/hw/cxgb4/cm.c
-+++ b/drivers/infiniband/hw/cxgb4/cm.c
-@@ -346,6 +346,8 @@ static struct sk_buff *get_skb(struct sk
- 		skb_reset_transport_header(skb);
- 	} else {
- 		skb = alloc_skb(len, gfp);
-+		if (!skb)
-+			return NULL;
- 	}
- 	t4_set_arp_err_handler(skb, NULL, NULL);
- 	return skb;
+--- a/arch/arm/crypto/aesbs-glue.c
++++ b/arch/arm/crypto/aesbs-glue.c
+@@ -259,6 +259,8 @@ static int aesbs_xts_encrypt(struct blkc
+ 
+ 	blkcipher_walk_init(&walk, dst, src, nbytes);
+ 	err = blkcipher_walk_virt_block(desc, &walk, 8 * AES_BLOCK_SIZE);
++	if (err)
++		return err;
+ 
+ 	/* generate the initial tweak */
+ 	AES_encrypt(walk.iv, walk.iv, &ctx->twkey);
+@@ -283,6 +285,8 @@ static int aesbs_xts_decrypt(struct blkc
+ 
+ 	blkcipher_walk_init(&walk, dst, src, nbytes);
+ 	err = blkcipher_walk_virt_block(desc, &walk, 8 * AES_BLOCK_SIZE);
++	if (err)
++		return err;
+ 
+ 	/* generate the initial tweak */
+ 	AES_encrypt(walk.iv, walk.iv, &ctx->twkey);
 
