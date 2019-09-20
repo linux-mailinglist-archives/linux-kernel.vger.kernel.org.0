@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C2DEB92C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96447B924C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391781AbfITOfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:35:11 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36070 "EHLO
+        id S2391106AbfITObZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:31:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36800 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388139AbfITOZE (ORCPT
+        by vger.kernel.org with ESMTP id S2388365AbfITOZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:04 -0400
+        Fri, 20 Sep 2019 10:25:14 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-00051C-Nv; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqR-0004y2-Hm; Fri, 20 Sep 2019 15:25:11 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007y2-1Z; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqF-0007uH-4Y; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Amitkumar Karwar" <akarwar@marvell.com>,
-        "Karthik D A" <karthida@marvell.com>,
-        "Kalle Valo" <kvalo@codeaurora.org>
+        "Oliver Neukum" <oneukum@suse.com>,
+        "Johan Hovold" <johan@kernel.org>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.455354700@decadent.org.uk>
+Message-ID: <lsq.1568989415.692470111@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 110/132] mwifiex: vendor_ie length check for parse
- WMM IEs
+Subject: [PATCH 3.16 071/132] USB: serial: use variable for status
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,46 +47,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Karthik D A <karthida@marvell.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 113630b581d6d423998d2113a8e892ed6e6af6f9 upstream.
+commit 3161da970d38cd6ed2ba8cadec93874d1d06e11e upstream.
 
-While copying the vendor_ie obtained from the cfg80211_find_vendor_ie()
-to the struct mwifiex_types_wmm_info, length/size was inappropriate.
-This patch corrects the required length needed to the
-mwifiex_types_wmm_info
+This patch turns status in a variable read once from the URB.
+The long term plan is to deliver status to the callback.
+In addition it makes the code a bit more elegant.
 
-Signed-off-by: Karthik D A <karthida@marvell.com>
-Signed-off-by: Amitkumar Karwar <akarwar@marvell.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 3.16: adjust filename]
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/mwifiex/uap_cmd.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/serial/generic.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
---- a/drivers/net/wireless/mwifiex/uap_cmd.c
-+++ b/drivers/net/wireless/mwifiex/uap_cmd.c
-@@ -364,7 +364,7 @@ mwifiex_set_wmm_params(struct mwifiex_pr
- 		       struct cfg80211_ap_settings *params)
- {
- 	const u8 *vendor_ie;
--	struct ieee_types_header *wmm_ie;
-+	const u8 *wmm_ie;
- 	u8 wmm_oui[] = {0x00, 0x50, 0xf2, 0x02};
+--- a/drivers/usb/serial/generic.c
++++ b/drivers/usb/serial/generic.c
+@@ -350,6 +350,7 @@ void usb_serial_generic_read_bulk_callba
+ 	struct usb_serial_port *port = urb->context;
+ 	unsigned char *data = urb->transfer_buffer;
+ 	unsigned long flags;
++	int status = urb->status;
+ 	int i;
  
- 	vendor_ie = cfg80211_find_vendor_ie(WLAN_OUI_MICROSOFT,
-@@ -372,9 +372,9 @@ mwifiex_set_wmm_params(struct mwifiex_pr
- 					    params->beacon.tail,
- 					    params->beacon.tail_len);
- 	if (vendor_ie) {
--		wmm_ie = (struct ieee_types_header *)vendor_ie;
--		memcpy(&bss_cfg->wmm_info, wmm_ie + 1,
--		       sizeof(bss_cfg->wmm_info));
-+		wmm_ie = vendor_ie;
-+		memcpy(&bss_cfg->wmm_info, wmm_ie +
-+		       sizeof(struct ieee_types_header), *(wmm_ie + 1));
- 		priv->wmm_enabled = 1;
- 	} else {
- 		memset(&bss_cfg->wmm_info, 0, sizeof(bss_cfg->wmm_info));
+ 	for (i = 0; i < ARRAY_SIZE(port->read_urbs); ++i) {
+@@ -360,22 +361,22 @@ void usb_serial_generic_read_bulk_callba
+ 
+ 	dev_dbg(&port->dev, "%s - urb %d, len %d\n", __func__, i,
+ 							urb->actual_length);
+-	switch (urb->status) {
++	switch (status) {
+ 	case 0:
+ 		break;
+ 	case -ENOENT:
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
+ 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
+-							__func__, urb->status);
++							__func__, status);
+ 		return;
+ 	case -EPIPE:
+ 		dev_err(&port->dev, "%s - urb stopped: %d\n",
+-							__func__, urb->status);
++							__func__, status);
+ 		return;
+ 	default:
+ 		dev_dbg(&port->dev, "%s - nonzero urb status: %d\n",
+-							__func__, urb->status);
++							__func__, status);
+ 		goto resubmit;
+ 	}
+ 
+@@ -399,6 +400,7 @@ void usb_serial_generic_write_bulk_callb
+ {
+ 	unsigned long flags;
+ 	struct usb_serial_port *port = urb->context;
++	int status = urb->status;
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(port->write_urbs); ++i) {
+@@ -410,22 +412,22 @@ void usb_serial_generic_write_bulk_callb
+ 	set_bit(i, &port->write_urbs_free);
+ 	spin_unlock_irqrestore(&port->lock, flags);
+ 
+-	switch (urb->status) {
++	switch (status) {
+ 	case 0:
+ 		break;
+ 	case -ENOENT:
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
+ 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
+-							__func__, urb->status);
++							__func__, status);
+ 		return;
+ 	case -EPIPE:
+ 		dev_err_console(port, "%s - urb stopped: %d\n",
+-							__func__, urb->status);
++							__func__, status);
+ 		return;
+ 	default:
+ 		dev_err_console(port, "%s - nonzero urb status: %d\n",
+-							__func__, urb->status);
++							__func__, status);
+ 		goto resubmit;
+ 	}
+ 
 
