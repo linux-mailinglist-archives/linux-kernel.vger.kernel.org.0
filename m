@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D750CB9969
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9248EB9967
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388114AbfITV4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 17:56:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47018 "EHLO mail.kernel.org"
+        id S1730542AbfITV4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 17:56:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47046 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730461AbfITV4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730462AbfITV4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Sep 2019 17:56:24 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A558E20C01;
+        by mail.kernel.org (Postfix) with ESMTPSA id E3C282173E;
         Fri, 20 Sep 2019 21:56:22 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iBQt3-0005IN-SB; Fri, 20 Sep 2019 17:56:21 -0400
-Message-Id: <20190920215621.753333463@goodmis.org>
+        id 1iBQt4-0005Ir-1G; Fri, 20 Sep 2019 17:56:22 -0400
+Message-Id: <20190920215621.921710766@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Sep 2019 17:53:14 -0400
+Date:   Fri, 20 Sep 2019 17:53:15 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -31,8 +31,9 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
-Subject: [RFC][PATCH RT 3/7] revert-thermal
+        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com,
+        Daniel Wagner <daniel.wagner@bmw-carit.de>
+Subject: [RFC][PATCH RT 4/7] thermal: Defer thermal wakups to threads
 References: <20190920215311.165260719@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -41,119 +42,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Daniel Wagner <wagi@monom.org>
 
-Revert: thermal: Defer thermal wakups to threads
+[ Upstream commit ad2408dc248fe58536eef5b2b5734d8f9d3a280b ]
 
+On RT the spin lock in pkg_temp_thermal_platfrom_thermal_notify will
+call schedule while we run in irq context.
+
+[<ffffffff816850ac>] dump_stack+0x4e/0x8f
+[<ffffffff81680f7d>] __schedule_bug+0xa6/0xb4
+[<ffffffff816896b4>] __schedule+0x5b4/0x700
+[<ffffffff8168982a>] schedule+0x2a/0x90
+[<ffffffff8168a8b5>] rt_spin_lock_slowlock+0xe5/0x2d0
+[<ffffffff8168afd5>] rt_spin_lock+0x25/0x30
+[<ffffffffa03a7b75>] pkg_temp_thermal_platform_thermal_notify+0x45/0x134 [x86_pkg_temp_thermal]
+[<ffffffff8103d4db>] ? therm_throt_process+0x1b/0x160
+[<ffffffff8103d831>] intel_thermal_interrupt+0x211/0x250
+[<ffffffff8103d8c1>] smp_thermal_interrupt+0x21/0x40
+[<ffffffff8169415d>] thermal_interrupt+0x6d/0x80
+
+Let's defer the work to a kthread.
+
+Signed-off-by: Daniel Wagner <daniel.wagner@bmw-carit.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[bigeasy: reoder init/denit position. TODO: flush swork on exit]
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/thermal/x86_pkg_temp_thermal.c | 52 ++------------------------
- 1 file changed, 3 insertions(+), 49 deletions(-)
+ drivers/thermal/x86_pkg_temp_thermal.c | 28 +++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/thermal/x86_pkg_temp_thermal.c b/drivers/thermal/x86_pkg_temp_thermal.c
-index a5991cbb408f..1ef937d799e4 100644
+index 1ef937d799e4..82f21fd4afb0 100644
 --- a/drivers/thermal/x86_pkg_temp_thermal.c
 +++ b/drivers/thermal/x86_pkg_temp_thermal.c
-@@ -29,7 +29,6 @@
+@@ -29,6 +29,7 @@
  #include <linux/pm.h>
  #include <linux/thermal.h>
  #include <linux/debugfs.h>
--#include <linux/swork.h>
++#include <linux/kthread.h>
  #include <asm/cpu_device_id.h>
  #include <asm/mce.h>
  
-@@ -330,7 +329,7 @@ static void pkg_thermal_schedule_work(int cpu, struct delayed_work *work)
+@@ -329,7 +330,7 @@ static void pkg_thermal_schedule_work(int cpu, struct delayed_work *work)
  	schedule_delayed_work_on(cpu, work, ms);
  }
  
--static void pkg_thermal_notify_work(struct swork_event *event)
-+static int pkg_thermal_notify(u64 msr_val)
+-static int pkg_thermal_notify(u64 msr_val)
++static void pkg_thermal_notify_work(struct kthread_work *work)
  {
  	int cpu = smp_processor_id();
  	struct pkg_device *pkgdev;
-@@ -349,47 +348,9 @@ static void pkg_thermal_notify_work(struct swork_event *event)
+@@ -348,8 +349,32 @@ static int pkg_thermal_notify(u64 msr_val)
  	}
  
  	spin_unlock_irqrestore(&pkg_temp_lock, flags);
--}
--
--#ifdef CONFIG_PREEMPT_RT_FULL
--static struct swork_event notify_work;
--
--static int pkg_thermal_notify_work_init(void)
--{
--	int err;
--
--	err = swork_get();
--	if (err)
--		return err;
--
--	INIT_SWORK(&notify_work, pkg_thermal_notify_work);
++}
++
++#ifdef CONFIG_PREEMPT_RT_FULL
++static DEFINE_KTHREAD_WORK(notify_work, pkg_thermal_notify_work);
++
++static int pkg_thermal_notify(u64 msr_val)
++{
++	kthread_schedule_work(&notify_work);
++	return 0;
++}
++
++static void pkg_thermal_notify_flush(void)
++{
++	kthread_flush_work(&notify_work);
++}
++
++#else  /* !CONFIG_PREEMPT_RT_FULL */
++
++static void pkg_thermal_notify_flush(void) { }
++
++static int pkg_thermal_notify(u64 msr_val)
++{
++	pkg_thermal_notify_work(NULL);
  	return 0;
  }
++#endif /* CONFIG_PREEMPT_RT_FULL */
  
--static void pkg_thermal_notify_work_cleanup(void)
--{
--	swork_put();
--}
--
--static int pkg_thermal_notify(u64 msr_val)
--{
--	swork_queue(&notify_work);
--	return 0;
--}
--
--#else  /* !CONFIG_PREEMPT_RT_FULL */
--
--static int pkg_thermal_notify_work_init(void) { return 0; }
--
--static void pkg_thermal_notify_work_cleanup(void) {  }
--
--static int pkg_thermal_notify(u64 msr_val)
--{
--	pkg_thermal_notify_work(NULL);
--	return 0;
--}
--#endif /* CONFIG_PREEMPT_RT_FULL */
--
  static int pkg_temp_thermal_device_add(unsigned int cpu)
  {
- 	int pkgid = topology_logical_package_id(cpu);
-@@ -554,16 +515,11 @@ static int __init pkg_temp_thermal_init(void)
- 	if (!x86_match_cpu(pkg_temp_thermal_ids))
- 		return -ENODEV;
+@@ -548,6 +573,7 @@ static void __exit pkg_temp_thermal_exit(void)
+ 	platform_thermal_package_rate_control = NULL;
  
--	if (!pkg_thermal_notify_work_init())
--		return -ENODEV;
--
- 	max_packages = topology_max_packages();
- 	packages = kcalloc(max_packages, sizeof(struct pkg_device *),
- 			   GFP_KERNEL);
--	if (!packages) {
--		ret = -ENOMEM;
--		goto err;
--	}
-+	if (!packages)
-+		return -ENOMEM;
- 
- 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "thermal/x86_pkg:online",
- 				pkg_thermal_cpu_online,	pkg_thermal_cpu_offline);
-@@ -581,7 +537,6 @@ static int __init pkg_temp_thermal_init(void)
- 	return 0;
- 
- err:
--	pkg_thermal_notify_work_cleanup();
- 	kfree(packages);
- 	return ret;
- }
-@@ -595,7 +550,6 @@ static void __exit pkg_temp_thermal_exit(void)
  	cpuhp_remove_state(pkg_thermal_hp_state);
++	pkg_thermal_notify_flush();
  	debugfs_remove_recursive(debugfs);
  	kfree(packages);
--	pkg_thermal_notify_work_cleanup();
  }
- module_exit(pkg_temp_thermal_exit)
- 
 -- 
 2.20.1
 
