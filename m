@@ -2,228 +2,346 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C42D1B8FBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE5DB8FBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:26:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438364AbfITMZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 08:25:57 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:35986 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438330AbfITMZx (ORCPT
+        id S2438378AbfITM0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 08:26:24 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44547 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438330AbfITM0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 08:25:53 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8KCPnZO032289;
-        Fri, 20 Sep 2019 07:25:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568982349;
-        bh=XXPlhKsSVP9bLq6M6XNRfc0f/ghPj5h+psk5qulyPQM=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=SBp3nOi1mfrHj39dvPG3oFfr4wCMQczbOPx+Zj4G0Bf6PtzM2vYaiXP+a6LY+fbra
-         IP7ihk5SbOaExZjSFvHmWKh27yZHLwLU2bjcEpclxr6mql3kPght61x1fo6NDzYeyh
-         axnbEJeZJsL6mAJa+qnHEoj3nZfnFJEO4O5Kfp1E=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8KCPnFr125519
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Sep 2019 07:25:49 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 20
- Sep 2019 07:25:44 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 20 Sep 2019 07:25:44 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8KCPm26024342;
-        Fri, 20 Sep 2019 07:25:48 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <daniel.thompson@linaro.org>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmurphy@ti.com>, <tomi.valkeinen@ti.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v4 3/3] leds: Add control of the voltage/current regulator to the LED core
-Date:   Fri, 20 Sep 2019 14:25:25 +0200
-Message-ID: <20190920122525.15712-4-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190920122525.15712-1-jjhiblot@ti.com>
-References: <20190920122525.15712-1-jjhiblot@ti.com>
+        Fri, 20 Sep 2019 08:26:23 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i18so6536877wru.11;
+        Fri, 20 Sep 2019 05:26:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oxsV3AdP/y2Htp+QsY9w7k6IERAd2e9boT0EFnz+XOQ=;
+        b=UYYYM7FiBchXz5oyCRDVbyWlqe1XrMkxsgOfIw4+gnc+FygRf8Ri/VohtJJUwjRVex
+         vSVH/3ymomFDvxYpatMgRObR2OWpVml+wa2s+sTJ0ADlGeNVT1lhKzRewOlIHn56dNR5
+         DRL83lKsFIqBOu8l9cz3/m5ATsKZW8eXmDV29Z8Oo3vGB+lU1VEbytB8GWBn8OaZvUxL
+         4joH929h6sE7tDFLIdiYAvhBRi/6NsZZSDXv+SgnqRrbCstEvfyNgRqhTC0mUq9OlJet
+         iT4wepTMYyfte58Lts6zkv3PvF0HnieSmIj/jRApKjJMKZIyiWKw54j7VYib9VozdzVH
+         9nCQ==
+X-Gm-Message-State: APjAAAUBzMBqmXSvnm1Z3FDuyAz/1raYUx1b3xmc8hLutJbn3IPkYBdN
+        MD/v9QHID7RB1a1BsA7ZfJ0=
+X-Google-Smtp-Source: APXvYqwqAkPk97BzFIVayIAxVuquN/6ZNN4Dg0COLCB0d0ww4Rdgj0Q7BIBW7KyHCEfARato9A8JyA==
+X-Received: by 2002:adf:e5c3:: with SMTP id a3mr11446642wrn.217.1568982380611;
+        Fri, 20 Sep 2019 05:26:20 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id g11sm2020462wmh.45.2019.09.20.05.26.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2019 05:26:19 -0700 (PDT)
+Date:   Fri, 20 Sep 2019 14:26:16 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v3] dt-bindings: sound: Convert Samsung I2S controller to
+ dt-schema
+Message-ID: <20190920122616.GA26862@pi3>
+References: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
+ <CGME20190920115200eucas1p2253a3eb13373061ef8aa39131c98a319@eucas1p2.samsung.com>
+ <20190920113540.30687-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190920113540.30687-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A LED is usually powered by a voltage/current regulator. Let the LED core
-know about it. This allows the LED core to turn on or off the power supply
-as needed.
+On Fri, Sep 20, 2019 at 01:35:40PM +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
+> 
+> Convert Samsung I2S controller to newer dt-schema format.
+> 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v3:
+> - Removed quotation marks from strings in compatible property
+> - Added min/max items to dmas property
+> - Removed unneeded description from dma-names property
+> - Added specific dma-names
+> - Added clock description
+> - Added include directive to examples to use clock macros directly
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
----
- drivers/leds/led-class.c | 17 +++++++++++
- drivers/leds/led-core.c  | 65 ++++++++++++++++++++++++++++++++++++++--
- drivers/leds/leds.h      |  3 ++
- include/linux/leds.h     |  5 ++++
- 4 files changed, 88 insertions(+), 2 deletions(-)
+Guys, please stop attaching new versions of entire patchset to existing
+discussions with in-reply-to. Entire V2 was attached to V1. V3 is
+attached here. On some mail clients (GMail) this does not mark entire
+thread unread at it looks like someone just commented about something.
+Some other clients, e.g. mbsynsc with GMail, do not sync entire thread
+so new version looks like reply-to but attached to nothing (missing
+context). Not mentioning that you need additional effort on your side to
+copy+paste the in-reply-to ID.
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index e11177d77b4c..d122b6982efd 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -352,6 +352,7 @@ int led_classdev_register_ext(struct device *parent,
- 	char final_name[LED_MAX_NAME_SIZE];
- 	const char *proposed_name = composed_name;
- 	int ret;
-+	struct regulator *regulator;
- 
- 	if (init_data) {
- 		if (init_data->devname_mandatory && !init_data->devicename) {
-@@ -387,6 +388,22 @@ int led_classdev_register_ext(struct device *parent,
- 		dev_warn(parent, "Led %s renamed to %s due to name collision",
- 				led_cdev->name, dev_name(led_cdev->dev));
- 
-+	regulator = devm_regulator_get_optional(led_cdev->dev, "power");
-+	if (IS_ERR(regulator)) {
-+		if (regulator != ERR_PTR(-ENODEV)) {
-+			dev_err(led_cdev->dev, "Cannot get the power supply for %s\n",
-+				led_cdev->name);
-+			device_unregister(led_cdev->dev);
-+			mutex_unlock(&led_cdev->led_access);
-+			return PTR_ERR(regulator);
-+		}
-+		led_cdev->regulator = NULL;
-+	} else {
-+		led_cdev->regulator = regulator;
-+		led_cdev->regulator_state = REG_OFF;
-+		atomic_set(&led_cdev->target_regulator_state, REG_UNKNOWN);
-+	}
-+
- 	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
- 		ret = led_add_brightness_hw_changed(led_cdev);
- 		if (ret) {
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index 50e28a8f9357..287a8a6aad02 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -37,6 +37,43 @@ const char * const led_colors[LED_COLOR_ID_MAX] = {
- };
- EXPORT_SYMBOL_GPL(led_colors);
- 
-+static int __led_handle_regulator(struct led_classdev *led_cdev)
-+{
-+	int rc;
-+	int target_state = led_cdev->delayed_set_value ?  REG_ON : REG_OFF;
-+
-+	if (!led_cdev->regulator)
-+		return 0;
-+
-+	/*
-+	 * if the current regulator state is not the target state, we
-+	 * need to update it.
-+	 * note: No need for spinlock or atomic here because
-+	 * led_cdev->regulator_state is modified only in the context of
-+	 * the worqueue
-+	 */
-+	if (led_cdev->regulator_state != target_state) {
-+
-+		if (target_state == REG_ON)
-+			rc = regulator_enable(led_cdev->regulator);
-+		else
-+			rc = regulator_disable(led_cdev->regulator);
-+		if (rc) {
-+			/*
-+			 * If something went wrong with the regulator update,
-+			 * Make sure that led_set_brightness_nosleep() assume
-+			 * that the regultor is in the right state.
-+			 */
-+			atomic_set(&led_cdev->target_regulator_state,
-+				   REG_UNKNOWN);
-+			return rc;
-+		}
-+
-+		led_cdev->regulator_state = target_state;
-+	}
-+	return 0;
-+}
-+
- static int __led_set_brightness(struct led_classdev *led_cdev,
- 				enum led_brightness value)
- {
-@@ -135,6 +172,11 @@ static void set_brightness_delayed(struct work_struct *ws)
- 	    (led_cdev->flags & LED_HW_PLUGGABLE)))
- 		dev_err(led_cdev->dev,
- 			"Setting an LED's brightness failed (%d)\n", ret);
-+
-+	ret = __led_handle_regulator(led_cdev);
-+	if (ret)
-+		dev_err(led_cdev->dev,
-+			"Updating regulator state failed (%d)\n", ret);
- }
- 
- static void led_set_software_blink(struct led_classdev *led_cdev,
-@@ -269,8 +311,27 @@ EXPORT_SYMBOL_GPL(led_set_brightness);
- void led_set_brightness_nopm(struct led_classdev *led_cdev,
- 			      enum led_brightness value)
- {
--	/* Use brightness_set op if available, it is guaranteed not to sleep */
--	if (!__led_set_brightness(led_cdev, value))
-+	bool update_regulator = false;
-+	int old, new;
-+
-+	if (led_cdev->regulator) {
-+		/*
-+		 * Check if the regulator need to be updated.
-+		 * We use an atomic here because multiple threads could
-+		 * be calling this function at the same time. Using
-+		 * atomic_xchg() ensures the consistency between
-+		 * target_regulator_state, value and update_regulator
-+		 */
-+		new = !!value;
-+		old = atomic_xchg(&led_cdev->target_regulator_state, new);
-+		update_regulator = (old != new);
-+	}
-+
-+	/*
-+	 * If regulator state doesn't need to be changed, use brightness_set
-+	 * op if available, it is guaranteed not to sleep
-+	 */
-+	if (!update_regulator && !__led_set_brightness(led_cdev, value))
- 		return;
- 
- 	/* If brightness setting can sleep, delegate it to a work queue task */
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 0b577cece8f7..02f261ce77f2 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -11,6 +11,9 @@
- 
- #include <linux/rwsem.h>
- #include <linux/leds.h>
-+#include <linux/regulator/consumer.h>
-+
-+enum { REG_OFF = 0, REG_ON, REG_UNKNOWN };
- 
- static inline int led_get_brightness(struct led_classdev *led_cdev)
- {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 88bf2ceaabe6..8ce7cf937192 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -149,6 +149,11 @@ struct led_classdev {
- 
- 	/* Ensures consistent access to the LED Flash Class device */
- 	struct mutex		led_access;
-+
-+	/* regulator */
-+	struct regulator	*regulator;
-+	int			regulator_state;
-+	atomic_t		target_regulator_state;
- };
- 
- /**
--- 
-2.17.1
+> ---
+>  .../devicetree/bindings/sound/samsung-i2s.txt |  84 -----------
+>  .../bindings/sound/samsung-i2s.yaml           | 135 ++++++++++++++++++
+>  2 files changed, 135 insertions(+), 84 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+> deleted file mode 100644
+> index a88cb00fa096..000000000000
+> --- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+> +++ /dev/null
+> @@ -1,84 +0,0 @@
+> -* Samsung I2S controller
+> -
+> -Required SoC Specific Properties:
+> -
+> -- compatible : should be one of the following.
+> -   - samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
+> -   - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+> -     secondary fifo, s/w reset control and internal mux for root clk src.
+> -   - samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+> -     playback, stereo channel capture, secondary fifo using internal
+> -     or external dma, s/w reset control, internal mux for root clk src
+> -     and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+> -     is to allow transfer of multiple channel audio data on single data line.
+> -   - samsung,exynos7-i2s: with all the available features of exynos5 i2s,
+> -     exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
+> -     with only external dma and more no.of root clk sampling frequencies.
+> -   - samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
+> -     stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
+> -     slightly modified bit offsets.
+> -
+> -- reg: physical base address of the controller and length of memory mapped
+> -  region.
+> -- dmas: list of DMA controller phandle and DMA request line ordered pairs.
+> -- dma-names: identifier string for each DMA request line in the dmas property.
+> -  These strings correspond 1:1 with the ordered pairs in dmas.
+> -- clocks: Handle to iis clock and RCLK source clk.
+> -- clock-names:
+> -  i2s0 uses some base clocks from CMU and some are from audio subsystem internal
+> -  clock controller. The clock names for i2s0 should be "iis", "i2s_opclk0" and
+> -  "i2s_opclk1" as shown in the example below.
+> -  i2s1 and i2s2 uses clocks from CMU. The clock names for i2s1 and i2s2 should
+> -  be "iis" and "i2s_opclk0".
+> -  "iis" is the i2s bus clock and i2s_opclk0, i2s_opclk1 are sources of the root
+> -  clk. i2s0 has internal mux to select the source of root clk and i2s1 and i2s2
+> -  doesn't have any such mux.
 
+I think you still miss this description of clocks and Sylwester asked for it.
+
+> -- #clock-cells: should be 1, this property must be present if the I2S device
+> -  is a clock provider in terms of the common clock bindings, described in
+> -  ../clock/clock-bindings.txt.
+> -- clock-output-names (deprecated): from the common clock bindings, names of
+> -  the CDCLK I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+> -  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices respectively.
+
+You missed this. If you decide to remove deprecated properties, then
+make it in separate patach. You described this patch as pure conversion
+so I expect no logical/functional changes.
+
+> -
+> -There are following clocks available at the I2S device nodes:
+> - CLK_I2S_CDCLK    - the CDCLK (CODECLKO) gate clock,
+> - CLK_I2S_RCLK_PSR - the RCLK prescaler divider clock (corresponding to the
+> -		    IISPSR register),
+> - CLK_I2S_RCLK_SRC - the RCLKSRC mux clock (corresponding to RCLKSRC bit in
+> -		    IISMOD register).
+> -
+> -Refer to the SoC datasheet for availability of the above clocks.
+> -The CLK_I2S_RCLK_PSR and CLK_I2S_RCLK_SRC clocks are usually only available
+> -in the IIS Multi Audio Interface.
+> -
+> -Note: Old DTs may not have the #clock-cells property and then not use the I2S
+> -node as a clock supplier.
+> -
+> -Optional SoC Specific Properties:
+> -
+> -- samsung,idma-addr: Internal DMA register base address of the audio
+> -  sub system(used in secondary sound source).
+> -- pinctrl-0: Should specify pin control groups used for this controller.
+> -- pinctrl-names: Should contain only one value - "default".
+> -- #sound-dai-cells: should be 1.
+> -
+> -
+> -Example:
+> -
+> -i2s0: i2s@3830000 {
+> -	compatible = "samsung,s5pv210-i2s";
+> -	reg = <0x03830000 0x100>;
+> -	dmas = <&pdma0 10
+> -		&pdma0 9
+> -		&pdma0 8>;
+> -	dma-names = "tx", "rx", "tx-sec";
+> -	clocks = <&clock_audss EXYNOS_I2S_BUS>,
+> -		<&clock_audss EXYNOS_I2S_BUS>,
+> -		<&clock_audss EXYNOS_SCLK_I2S>;
+> -	clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+> -	#clock-cells = <1>;
+> -	samsung,idma-addr = <0x03000000>;
+> -	pinctrl-names = "default";
+> -	pinctrl-0 = <&i2s0_bus>;
+> -	#sound-dai-cells = <1>;
+> -};
+> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+> new file mode 100644
+> index 000000000000..20ae5da7f798
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
+> @@ -0,0 +1,135 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/samsung-i2s.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC I2S controller
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    description: |
+> +      samsung,s3c6410-i2s: for 8/16/24bit stereo I2S.
+> +
+> +      samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+> +      secondary fifo, s/w reset control and internal mux for root clk src.
+> +
+> +      samsung,exynos5420-i2s: for 8/16/24bit multichannel(5.1) I2S for
+> +      playback, stereo channel capture, secondary fifo using internal
+> +      or external dma, s/w reset control, internal mux for root clk src
+> +      and 7.1 channel TDM support for playback. TDM (Time division multiplexing)
+> +      is to allow transfer of multiple channel audio data on single data line.
+> +
+> +      samsung,exynos7-i2s: with all the available features of exynos5 i2s.
+> +      exynos7 I2S has 7.1 channel TDM support for capture, secondary fifo
+> +      with only external dma and more no.of root clk sampling frequencies.
+> +
+> +      samsung,exynos7-i2s1: I2S1 on previous samsung platforms supports
+> +      stereo channels. exynos7 i2s1 upgraded to 5.1 multichannel with
+> +      slightly modified bit offsets.
+> +    enum:
+> +      - samsung,s3c6410-i2s
+> +      - samsung,s5pv210-i2s
+> +      - samsung,exynos5420-i2s
+> +      - samsung,exynos7-i2s
+> +      - samsung,exynos7-i2s1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    minItems: 2
+> +    maxItems: 3
+> +
+> +  dma-names:
+> +    oneOf:
+> +      - items:
+> +          - const: tx
+> +          - const: rx
+> +      - items:
+> +          - const: tx
+> +          - const: rx
+> +          - const: tx-sec
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +    description: |
+> +      There are following clocks available at the I2S device nodes:
+> +      CLK_I2S_CDCLK:
+> +      the CDCLK (CODECLKO) gate clock.
+> +
+> +      CLK_I2S_RCLK_PSR:
+> +      RCLK prescaler divider clock corresponding to the IISPSR register.
+> +
+> +      CLK_I2S_RCLK_SRC:
+> +      RCLKSRC mux clock corresponding to RCLKSRC bit in IISMOD register.
+> +
+> +  clock-names:
+> +    oneOf:
+> +      - items:
+> +          - const: iis
+> +      - items:
+> +          - const: iis
+> +          - const: i2s_opclk0
+> +      - items:
+> +          - const: iis
+> +          - const: i2s_opclk0
+> +          - const: i2s_opclk1
+> +    description: |
+> +      "iis" is the i2s bus clock.
+> +      For i2s1 and i2s2 - "iis", "i2s_opclk0"
+> +      For i2s0 - "iis", "i2s_opclk0", "i2s_opclk1"
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  samsung,idma-addr:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Internal DMA register base address of the audio
+> +      sub system(used in secondary sound source).
+> +
+> +  pinctrl-0:
+> +    description: Should specify pin control groups used for this controller.
+> +
+> +  pinctrl-names:
+> +    const: default
+> +
+> +  "#sound-dai-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - dmas
+> +  - dma-names
+> +  - clocks
+> +  - clock-names
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/exynos-audss-clk.h>
+
+Does it really work? When I tried, it was failing... If you look up at
+resulting DTS example it is wrong.
+
+Best regards,
+Krzysztof
+
+> +
+> +    i2s0: i2s@3830000 {
+> +        compatible = "samsung,s5pv210-i2s";
+> +        reg = <0x03830000 0x100>;
+> +        dmas = <&pdma0 10>,
+> +                <&pdma0 9>,
+> +                <&pdma0 8>;
+> +        dma-names = "tx", "rx", "tx-sec";
+> +        clocks = <&clock_audss EXYNOS_I2S_BUS>,
+> +                <&clock_audss EXYNOS_I2S_BUS>,
+> +                <&clock_audss EXYNOS_SCLK_I2S>;
+> +        clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+> +        #clock-cells = <1>;
+> +        samsung,idma-addr = <0x03000000>;
+> +        pinctrl-names = "default";
+> +        pinctrl-0 = <&i2s0_bus>;
+> +        #sound-dai-cells = <1>;
+> +    };
+> +
+> -- 
+> 2.17.1
+> 
+> 
+> 
