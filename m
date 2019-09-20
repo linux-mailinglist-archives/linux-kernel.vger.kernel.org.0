@@ -2,45 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1762BB955A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65C54B953B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389036AbfITQWf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:22:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52871 "EHLO
+        id S2405537AbfITQVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:21:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52895 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404976AbfITQVT (ORCPT
+        with ESMTP id S2405374AbfITQVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:21:19 -0400
+        Fri, 20 Sep 2019 12:21:40 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iBLeT-00040f-PG; Fri, 20 Sep 2019 18:20:58 +0200
+        id 1iBLeV-00040t-1S; Fri, 20 Sep 2019 18:20:59 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 18B9A1C0E29;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CE4B71C0E2D;
         Fri, 20 Sep 2019 18:20:57 +0200 (CEST)
 Date:   Fri, 20 Sep 2019 16:20:57 -0000
-From:   "tip-bot2 for Anju T Sudhakar" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Sakari Ailus" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf kvm: Move kvm-stat header file from
- conditional inclusion to common include section
-Cc:     Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+Subject: [tip: perf/urgent] tools lib traceevent: Convert remaining %p[fF]
+ users to %p[sS]
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        devicetree@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Joe Perches <joe@perches.com>,
+        linux-acpi@vger.kernel.org, linux-trace-devel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linuxppc-dev@lists.ozlabs.org,
+        Petr Mladek <pmladek@suse.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190718181749.30612-1-anju@linux.vnet.ibm.com>
-References: <20190718181749.30612-1-anju@linux.vnet.ibm.com>
+In-Reply-To: <20190918133419.7969-2-sakari.ailus@linux.intel.com>
+References: <20190918133419.7969-2-sakari.ailus@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <156899645704.24167.11929677984675527670.tip-bot2@tip-bot2>
+Message-ID: <156899645777.24167.16043877590667740321.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -56,75 +60,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     8067b3da970baa12e6045400fdf009673b8dd3c2
-Gitweb:        https://git.kernel.org/tip/8067b3da970baa12e6045400fdf009673b8dd3c2
-Author:        Anju T Sudhakar <anju@linux.vnet.ibm.com>
-AuthorDate:    Thu, 18 Jul 2019 23:47:47 +05:30
+Commit-ID:     b295c3e39c1383e06ba1db4dd836018502e2ff3a
+Gitweb:        https://git.kernel.org/tip/b295c3e39c1383e06ba1db4dd836018502e2ff3a
+Author:        Sakari Ailus <sakari.ailus@linux.intel.com>
+AuthorDate:    Wed, 18 Sep 2019 16:34:07 +03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Fri, 20 Sep 2019 10:28:26 -03:00
 
-perf kvm: Move kvm-stat header file from conditional inclusion to common include section
+tools lib traceevent: Convert remaining %p[fF] users to %p[sS]
 
-Move kvm-stat header file to the common include section, and make the
-definitions in the header file under the conditional inclusion `#ifdef
-HAVE_KVM_STAT_SUPPORT`.
+There are no in-kernel %p[fF] users left. Convert the traceevent tool,
+too, to align with the kernel.
 
-This helps to define other 'perf kvm' related function prototypes in
-kvm-stat header file, which may not need kvm-stat support.
-
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Reviewed-By: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: devicetree@vger.kernel.org
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Joe Perches <joe@perches.com>
+Cc: linux-acpi@vger.kernel.org
+Cc: linux-trace-devel@vger.kernel.org
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Link: http://lore.kernel.org/lkml/20190718181749.30612-1-anju@linux.vnet.ibm.com
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Rafael J. Wysocki <rafael@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Link: http://lore.kernel.org/lkml/20190918133419.7969-2-sakari.ailus@linux.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-kvm.c   | 2 +-
- tools/perf/util/kvm-stat.h | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt | 10 ++--
+ tools/lib/traceevent/event-parse.c                             | 18 +++++--
+ 2 files changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index ac6d6e0..2b822be 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -21,6 +21,7 @@
- #include "util/top.h"
- #include "util/data.h"
- #include "util/ordered-events.h"
-+#include "util/kvm-stat.h"
- #include "ui/ui.h"
+diff --git a/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt b/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt
+index 38bfea3..f6aca0d 100644
+--- a/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt
++++ b/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt
+@@ -59,12 +59,12 @@ parser context.
  
- #include <sys/prctl.h>
-@@ -59,7 +60,6 @@ static const char *get_filename_for_perf_kvm(void)
- }
+ The _tep_register_function()_ function registers a function name mapped to an
+ address and (optional) module. This mapping is used in case the function tracer
+-or events have "%pF" or "%pS" parameter in its format string. It is common to
+-pass in the kallsyms function names with their corresponding addresses with this
++or events have "%pS" parameter in its format string. It is common to pass in
++the kallsyms function names with their corresponding addresses with this
+ function. The _tep_ argument is the trace event parser context. The _name_ is
+-the name of the function, the string is copied internally. The _addr_ is
+-the start address of the function. The _mod_ is the kernel module
+-the function may be in (NULL for none).
++the name of the function, the string is copied internally. The _addr_ is the
++start address of the function. The _mod_ is the kernel module the function may
++be in (NULL for none).
  
- #ifdef HAVE_KVM_STAT_SUPPORT
--#include "util/kvm-stat.h"
+ The _tep_register_print_string()_ function  registers a string by the address
+ it was stored in the kernel. Some strings internal to the kernel with static
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index bb22238..6f842af 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -4367,10 +4367,20 @@ static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, s
+ 					switch (*ptr) {
+ 					case 's':
+ 					case 'S':
+-					case 'f':
+-					case 'F':
+ 					case 'x':
+ 						break;
++					case 'f':
++					case 'F':
++						/*
++						 * Pre-5.5 kernels use %pf and
++						 * %pF for printing symbols
++						 * while kernels since 5.5 use
++						 * %pfw for fwnodes. So check
++						 * %p[fF] isn't followed by 'w'.
++						 */
++						if (ptr[1] != 'w')
++							break;
++						/* fall through */
+ 					default:
+ 						/*
+ 						 * Older kernels do not process
+@@ -4487,12 +4497,12 @@ get_bprint_format(void *data, int size __maybe_unused,
  
- void exit_event_get_key(struct evsel *evsel,
- 			struct perf_sample *sample,
-diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
-index 4691363..8fd6ec2 100644
---- a/tools/perf/util/kvm-stat.h
-+++ b/tools/perf/util/kvm-stat.h
-@@ -2,6 +2,8 @@
- #ifndef __PERF_KVM_STAT_H
- #define __PERF_KVM_STAT_H
+ 	printk = find_printk(tep, addr);
+ 	if (!printk) {
+-		if (asprintf(&format, "%%pf: (NO FORMAT FOUND at %llx)\n", addr) < 0)
++		if (asprintf(&format, "%%ps: (NO FORMAT FOUND at %llx)\n", addr) < 0)
+ 			return NULL;
+ 		return format;
+ 	}
  
-+#ifdef HAVE_KVM_STAT_SUPPORT
-+
- #include "tool.h"
- #include "stat.h"
- #include "record.h"
-@@ -144,5 +146,6 @@ extern const int decode_str_len;
- extern const char *kvm_exit_reason;
- extern const char *kvm_entry_trace;
- extern const char *kvm_exit_trace;
-+#endif /* HAVE_KVM_STAT_SUPPORT */
+-	if (asprintf(&format, "%s: %s", "%pf", printk->printk) < 0)
++	if (asprintf(&format, "%s: %s", "%ps", printk->printk) < 0)
+ 		return NULL;
  
- #endif /* __PERF_KVM_STAT_H */
+ 	return format;
