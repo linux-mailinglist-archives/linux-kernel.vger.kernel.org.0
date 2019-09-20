@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B412FB9557
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 479ECB9546
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:22:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405587AbfITQW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:22:28 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52885 "EHLO
+        id S2405362AbfITQVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:21:38 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52889 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405004AbfITQVV (ORCPT
+        with ESMTP id S2405011AbfITQVX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:21:21 -0400
+        Fri, 20 Sep 2019 12:21:23 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iBLek-0004Dt-Oh; Fri, 20 Sep 2019 18:21:14 +0200
+        id 1iBLem-0004Cm-9q; Fri, 20 Sep 2019 18:21:16 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B60941C0E3C;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 58D521C0E3A;
         Fri, 20 Sep 2019 18:21:02 +0200 (CEST)
 Date:   Fri, 20 Sep 2019 16:21:02 -0000
 From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf python: Add missing python/perf.so dependency
- for libperf
+Subject: [tip: perf/urgent] libperf: Add missing event.h file to install rule
 Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Michael Petlan <mpetlan@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190901124822.10132-2-jolsa@kernel.org>
-References: <20190901124822.10132-2-jolsa@kernel.org>
+In-Reply-To: <20190901124822.10132-5-jolsa@kernel.org>
+References: <20190901124822.10132-5-jolsa@kernel.org>
 MIME-Version: 1.0
-Message-ID: <156899646266.24167.12712177965413254265.tip-bot2@tip-bot2>
+Message-ID: <156899646228.24167.14002163604963866446.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,46 +52,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     5079bde790304959bf744c548efdd5be660ea8e2
-Gitweb:        https://git.kernel.org/tip/5079bde790304959bf744c548efdd5be660ea8e2
+Commit-ID:     227cb129858a3eb4b874937274b09834ffcc39b0
+Gitweb:        https://git.kernel.org/tip/227cb129858a3eb4b874937274b09834ffcc39b0
 Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Sun, 01 Sep 2019 14:48:19 +02:00
+AuthorDate:    Sun, 01 Sep 2019 14:48:22 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Tue, 10 Sep 2019 14:33:32 +01:00
 
-perf python: Add missing python/perf.so dependency for libperf
+libperf: Add missing event.h file to install rule
 
-The python/perf.so compilation needs libperf ready, otherwise it fails:
-
-  $ make python/perf.so JOBS=1
-    BUILD:   Doing 'make -j1' parallel build
-    GEN      python/perf.so
-  gcc: error: /home/jolsa/kernel/linux-perf/tools/perf/lib/libperf.a: No such file or directory
-
-Fixing this with by adding libperf dependency.
+So that this development header is properly installed and can be found
+by tools linking with libperf.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20190901124822.10132-2-jolsa@kernel.org
+Link: http://lore.kernel.org/lkml/20190901124822.10132-5-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.perf | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/lib/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index f9807d8..2ccc12f 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -567,7 +567,7 @@ all: shell_compatibility_test $(ALL_PROGRAMS) $(LANG_BINDINGS) $(OTHER_PROGRAMS)
- # Create python binding output directory if not already present
- _dummy := $(shell [ -d '$(OUTPUT)python' ] || mkdir -p '$(OUTPUT)python')
+diff --git a/tools/perf/lib/Makefile b/tools/perf/lib/Makefile
+index a67efb8..e325c05 100644
+--- a/tools/perf/lib/Makefile
++++ b/tools/perf/lib/Makefile
+@@ -146,6 +146,7 @@ install_headers:
+ 		$(call do_install,include/perf/threadmap.h,$(prefix)/include/perf,644); \
+ 		$(call do_install,include/perf/evlist.h,$(prefix)/include/perf,644); \
+ 		$(call do_install,include/perf/evsel.h,$(prefix)/include/perf,644);
++		$(call do_install,include/perf/event.h,$(prefix)/include/perf,644);
  
--$(OUTPUT)python/perf.so: $(PYTHON_EXT_SRCS) $(PYTHON_EXT_DEPS) $(LIBTRACEEVENT_DYNAMIC_LIST)
-+$(OUTPUT)python/perf.so: $(PYTHON_EXT_SRCS) $(PYTHON_EXT_DEPS) $(LIBTRACEEVENT_DYNAMIC_LIST) $(LIBPERF)
- 	$(QUIET_GEN)LDSHARED="$(CC) -pthread -shared" \
-         CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS) $(LIBTRACEEVENT_DYNAMIC_LIST_LDFLAGS)' \
- 	  $(PYTHON_WORD) util/setup.py \
+ install_pkgconfig: $(LIBPERF_PC)
+ 	$(call QUIET_INSTALL, $(LIBPERF_PC)) \
