@@ -2,153 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E646AB9775
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 20:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8586FB977B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 21:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406535AbfITS7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 14:59:10 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:53096 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406402AbfITS7J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 14:59:09 -0400
-Received: by mail-io1-f72.google.com with SMTP id g8so11990985iop.19
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:59:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fHMyxSwiQcNUowrlP4OwXGhbD4PSsSnYKAbGNNWdWLA=;
-        b=g8PxnyaKv+DVGnN7bJDdCVHz3EFKVYuURNBoZBSYonXt0cwgXfD+vvhWPI+cqQnE70
-         PUBzAHJWOXzMAinV8OxmCArRUF/v8pWw8vrUh1NxMn/NCq3a3wuOURDfoedq2JMBp8A3
-         W1d8tvWccmNTzCn9lW5zILdVwZcDHZQVKTNG9/edjaCVpaGVbuYTLCHSK13afJQgeVA7
-         M1Tn6lVmdJWfHCwX07fMWYK9E3HAgb1EgILOiJl0kBG+4z2O9NWFL41Lsc4ANmnX/ulW
-         emMy84VB9UvS+Owe/J8wzsCgLi7OvcVqjW9QU3L5vaBZ2Bk2WHNXzkIh1R6psKIQYJ4C
-         Y0HQ==
-X-Gm-Message-State: APjAAAWjlh6oXKNWyC24xtnveGYYeJGlOyPmkIh1ri1wlnpqShrbfKH1
-        E19QI42MtFgl72tc0tzZqkrA6C04z3mQadlLPPIBHjONpmSo
-X-Google-Smtp-Source: APXvYqz5/sCdVeuK7ngAhTFRPzQFbcZSs5qN8slbau2sIUwcivybpDVGzUvM2pnS3Al9wCHnQeEEv7jevX1gbbemcbKtR1V5YD9d
+        id S2406704AbfITTAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 15:00:37 -0400
+Received: from mout.web.de ([212.227.15.3]:39253 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405208AbfITTAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 15:00:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1569006024;
+        bh=5xwqHg64byu80G0cmgQ325jH+mwYDqd5Pno/t33K0b0=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=UuwzX0ciddejRM+QGvTLg+Klc4rxjgYJARAWNP2feTT0WJ9a4Yg2keaedm1BoRtF5
+         Mnkdrz3QLxT0pHECcIOmvgGrxGuBPdecpM4VHieAFQ8rey5r17R1okzq8hOqFmS1jQ
+         uqHPtkLRTCWh40+AeN9fb8YzghqtAkquo2MZkq8Y=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.117.22]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MRl2f-1idkli46ED-00SyeI; Fri, 20
+ Sep 2019 21:00:24 +0200
+To:     netdev@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] net/phy/mdio-mscc-miim: Adjustments for mscc_miim_probe()
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Message-ID: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
+Date:   Fri, 20 Sep 2019 21:00:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f315:: with SMTP id m21mr17837544ioh.12.1569005948028;
- Fri, 20 Sep 2019 11:59:08 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 11:59:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002ed3ab059300aaf1@google.com>
-Subject: BUG: unable to handle kernel paging request in __pm_runtime_resume
-From:   syzbot <syzbot+28ecdc146b8e7def92dd@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        len.brown@intel.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, pavel@ucw.cz,
-        rjw@rjwysocki.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xRnoPAo7xEhIJ5ZcmH2qZ4WOjEpYAkWC26S+oyaFya8XLbMupQl
+ NUMASdQ6kluJZpqpO6c3O9HH9P98V6oBDh7/peBRLVcG22QXOIE4xnm3GHHYbYOanUsSL1x
+ 2b+JcKUTa8k9eJuHPAJWc5ljI0L6kN6UwSERJFgic8AQQRk0xGYUDQu90fWYaiuTu0F+g3O
+ V3xh6PSimqPHGJuyd0cXA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tJIycuQYSkY=:8y84WTmFB4xEG8VXX0QfUQ
+ 0oFbxsNkdhrdIXG5HsXjCjBWVGYsCVxGKO07Hgzz4xcyxk0jn8PmY6Z06jpULq5QI5I/5E95e
+ X07RqwVc3yDydCJUAea/4jnsxM/+XKDg8Td/k6ktLpiL9mUcrCaoQmOm1MHd10xrUhBNfEXHe
+ v0qxNELgxOpY4WKgnLFXS6iEqBaTR7liYH9KmEGdIeCQ8haVn42QODr3jpQKWsQoKQ7ee/G7U
+ CEXlGFRbRNei++hkJCZyjRIwSh37dX+iarT0oRDofk3popWKGg1oQQ7XXtuKlBijMOdouqEq6
+ 9Kaj9ZuHPhhH7/rMcVZa2Kvp+E22flxWO1XyIidNWnf6yG8V6V6IieZ9+v8BgP3QD6EgpayWx
+ k38oTOPi7/jDaFB5ZzA3wQCP+T7E0tyWX10WUpb7Ez2QxzV1Y39MPzTVLFVBxzy1OfVYOmJtW
+ /ztKQLlessCUycfDr4r0ckVNbZ+pWD4dru0lB9ccX1vEhD6+joOBimHTQ8GzP5VtxSbPw3IGC
+ ctL4Y8l+cBtXGc3C6PuvOVDk394xyLu+7wFWmQ0BCYg9NjElribNAA6t1GceX/1qlSPhUOltZ
+ jDwWuFPOKcvGEzS0mkSJh/WfkFhZXDhyqd+1C16Wh8oXzvfBZYkuZN4LgfjBupvTJdh1PO4t8
+ 5zvfu/Jp+q+X+jIYHDfIiLnF3IvGQd7WsKUxLSOH/da2zzZXeJYbBDFH8uTk1EglPMfGvC1SU
+ dhxmxfqTa16gMXCbhSco66TOG8DG8iqbfuErZ3D4EIzWXiRrffgr/p9fhn5Shv4Mjq5qVoSsu
+ ZR4eKyVd7CMMyF6+nfkxuTUmcoCKG7Co6zlgOqpRAg75EmrBCIx3hPmkLv3soPPncG1avPSRj
+ vy6W3EvcyXQLlYzRKqVfZfhxZ4AM6C+qxOWQxYIvsIJN+adLPlRalU63XV4tg30ieJjXjVsId
+ 1jfXNs949DGqPsZPBWhw6QRLK59Rm5TkUVAVtmYijZyPb7PEVYMpfTfdhMZvgsicfeh8IaQfB
+ X2Jpj7KjNJuMsXBl5Z0CoPwoGKPZAg7o42rHKMExy/H9o2aHLga+DxRwrRCmCC1s3jGXC+pVF
+ EXVkU9YotS0kY9UlNa2xtEs59nT/bcv2RQ7ebqsOeNHl32LAQ/M8TZV5cjTfBh32I5KcWtkc+
+ giHDoi5WcYqaj3k38/ESfmpuVJ449unVwqc3JSjHsNVmY4kOmP58CHWCVdYEGdpFnOGu1W/g0
+ drHZ3Wjtluw2WHm6phb4lMYclP4jM0GhkpJpbvHfZ7gHc6/niQ80QE9RnhPk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 20 Sep 2019 20:52:25 +0200
 
-syzbot found the following crash on:
+Two update suggestions were taken into account
 
-HEAD commit:    e0bd8d79 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=1670fa55600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8847e5384a16f66a
-dashboard link: https://syzkaller.appspot.com/bug?extid=28ecdc146b8e7def92dd
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+from static source code analysis.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Markus Elfring (2):
+  Use devm_platform_ioremap_resource()
+  Move the setting of mii_bus structure members
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+28ecdc146b8e7def92dd@syzkaller.appspotmail.com
+ drivers/net/phy/mdio-mscc-miim.c | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
-BUG: unable to handle page fault for address: fffffbfff23530b1
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 21ffef067 P4D 21ffef067 PUD 21ffb2067 PMD 0
-Oops: 0000 [#1] SMP KASAN
-CPU: 1 PID: 17297 Comm: syz-executor.5 Not tainted 5.3.0+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:92 [inline]
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:109 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:135 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:166 [inline]
-RIP: 0010:check_memory_region_inline mm/kasan/generic.c:182 [inline]
-RIP: 0010:check_memory_region+0x117/0x190 mm/kasan/generic.c:192
-Code: 75 2f 49 89 e9 49 29 c1 e9 6c ff ff ff 5b b8 01 00 00 00 5d 41 5c c3  
-4d 85 c9 74 f1 49 01 d9 eb 09 48 83 c0 01 4c 39 c8 74 e3 <80> 38 00 74 f2  
-eb 92 4d 39 c2 74 4b e8 f8 e7 ff ff 31 c0 5b 5d 41
-RSP: 0018:ffff8881c7427710 EFLAGS: 00010086
-RAX: fffffbfff23530b1 RBX: fffffbfff23530b1 RCX: ffffffff8125804b
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff91a98588
-RBP: fffffbfff23530b2 R08: 0000000000000001 R09: fffffbfff23530b2
-R10: fffffbfff23530b1 R11: ffffffff91a9858f R12: ba771047467ec365
-R13: 00000000467ec365 R14: 0000000000000003 R15: ffff8881cbca2078
-FS:  00007f1c25a58700(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffbfff23530b1 CR3: 00000001d664d000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  test_bit include/asm-generic/bitops-instrumented.h:237 [inline]
-  __lock_acquire+0x133b/0x3eb0 kernel/locking/lockdep.c:3925
-  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4487
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x32/0x50 kernel/locking/spinlock.c:159
-  __pm_runtime_resume+0xf5/0x180 drivers/base/power/runtime.c:1077
-  pm_runtime_get_sync include/linux/pm_runtime.h:226 [inline]
-  usb_autopm_get_interface+0x1b/0x50 drivers/usb/core/driver.c:1709
-  usbhid_power+0x7c/0xe0 drivers/hid/usbhid/hid-core.c:1234
-  hid_hw_power include/linux/hid.h:1038 [inline]
-  hidraw_open+0x20d/0x740 drivers/hid/hidraw.c:282
-  chrdev_open+0x219/0x5c0 fs/char_dev.c:414
-  do_dentry_open+0x494/0x1120 fs/open.c:797
-  do_last fs/namei.c:3408 [inline]
-  path_openat+0x1430/0x3f50 fs/namei.c:3525
-  do_filp_open+0x1a1/0x280 fs/namei.c:3555
-  do_sys_open+0x3c0/0x580 fs/open.c:1089
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4138f1
-Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 19 00 00 c3 48  
-83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007f1c25a577a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 6666666666666667 RCX: 00000000004138f1
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007f1c25a57850
-RBP: 000000000075bf20 R08: 000000000000000f R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00007f1c25a586d4
-R13: 00000000004c8df7 R14: 00000000004dff20 R15: 00000000ffffffff
-Modules linked in:
-CR2: fffffbfff23530b1
----[ end trace 839607b5f3b5bbdf ]---
-RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:92 [inline]
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:109 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:135 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:166 [inline]
-RIP: 0010:check_memory_region_inline mm/kasan/generic.c:182 [inline]
-RIP: 0010:check_memory_region+0x117/0x190 mm/kasan/generic.c:192
-Code: 75 2f 49 89 e9 49 29 c1 e9 6c ff ff ff 5b b8 01 00 00 00 5d 41 5c c3  
-4d 85 c9 74 f1 49 01 d9 eb 09 48 83 c0 01 4c 39 c8 74 e3 <80> 38 00 74 f2  
-eb 92 4d 39 c2 74 4b e8 f8 e7 ff ff 31 c0 5b 5d 41
-RSP: 0018:ffff8881c7427710 EFLAGS: 00010086
-RAX: fffffbfff23530b1 RBX: fffffbfff23530b1 RCX: ffffffff8125804b
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff91a98588
-RBP: fffffbfff23530b2 R08: 0000000000000001 R09: fffffbfff23530b2
-R10: fffffbfff23530b1 R11: ffffffff91a9858f R12: ba771047467ec365
-R13: 00000000467ec365 R14: 0000000000000003 R15: ffff8881cbca2078
-FS:  00007f1c25a58700(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffffbfff23530b1 CR3: 00000001d664d000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+=2D-
+2.23.0
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
