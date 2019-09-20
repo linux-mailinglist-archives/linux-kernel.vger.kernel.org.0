@@ -2,115 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFFE2B95C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9755DB95D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbfITQgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:36:41 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56922 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfITQgk (ORCPT
+        id S2405108AbfITQhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:37:02 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43216 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387398AbfITQhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:36:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DJcRMUIoHnhHwFIAld5UtZEHloJI/VNoy6j6pLhjbfU=; b=m5D9R4nyDBQaUFOrlSve2bpIv
-        k/BcrkopN6ab2o88k84NRkLK59BBANzerFdOJp/azg8/ZvwnRVzvZOIC5YeKCvLLf1EkDuv065UWz
-        9ibPFbuytlPpa/9fl/LsxEzKaKSyGa4PAIwj5SPiiHpYdCHom/l9nKIVDHl/maI7jsGZ8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iBLte-00033E-Mq; Fri, 20 Sep 2019 16:36:38 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id ABB7E274293F; Fri, 20 Sep 2019 17:36:37 +0100 (BST)
-Date:   Fri, 20 Sep 2019 17:36:37 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 20
-Message-ID: <20190920163637.GI3822@sirena.co.uk>
+        Fri, 20 Sep 2019 12:37:02 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 4so3427105pld.10;
+        Fri, 20 Sep 2019 09:37:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kytUK243BodpWOmoCyeWZE1vUiqSLShY8MCbaHpZmRQ=;
+        b=ubHo9GaCWjHiHlskt24MjtWJi81e35GkBfWZVwG2O0ygovoKeNNP6qCCG1EOUt8D2v
+         OP7JjYFvLU12hNvzeP6dwQe3ewpN+wZcNIgR/H+g136cSMSjZZgbYEqiQFxEl3g8U8n3
+         a8icDjCjAeKOPXtkn+ZnOmpI4r/dUlXBJowMyj0TlnS7ArqE41iw5z0Umbc9AC+W5VH7
+         13nAWlg+1LATmrPt8GLA8PXA12dh4jryDnN9tOf8TKevua5P7V2kwHG4bPPZGxNO6r97
+         lOFzUQJ4o7fwLdTXQl6X/gubRas4n3gjF5IpiB8KTtP7GKATzGaRazotuaxDCgOrvy1F
+         jiWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=kytUK243BodpWOmoCyeWZE1vUiqSLShY8MCbaHpZmRQ=;
+        b=LLJfhwyKUt+t41r68ag0yrmqrYvbfDAVlS66tLEaxLMt/m7uuUlVgpFzcOrzW7m6hA
+         9QteLGQofSx3J6bUtO58sZe0clhmUPdOki3EQelZXUg7OYNkPpSiiLSSmtrH0Oz20pMa
+         EOf3S6fgnycmmXr5pNah4se8rzsP+0MepcWXWa9n4XWbJAvlAp1lueaz+Exe3qWNSXwb
+         rW6Q2IRti5TnpxgMnjxqgdebH3d54u4GlFOEAoqmi2iyFazkrePOabNXR5ZRPOHFc9Vz
+         odVwD2WIOU2GJmtYyPf9nSW+HLkWnnw7qdhVtxl+HfJwEN5lNN+Olo1L4OYpUd2RMXxl
+         5KWw==
+X-Gm-Message-State: APjAAAXAYBolj0ImuqKsTcyCaApLoGmujEaQlS7+7siEeAQBkLTPHdw4
+        S+re3UO0GhRjEybeDFkkuhQUpEBrQLg=
+X-Google-Smtp-Source: APXvYqwGh98V0uzQ6kMneUn8Qbt11F4Efx4ZfFXFMj4i3I44luTpdfNkgKelLBkujdLlrWpytdKSOw==
+X-Received: by 2002:a17:902:b94a:: with SMTP id h10mr16639638pls.165.1568997420999;
+        Fri, 20 Sep 2019 09:37:00 -0700 (PDT)
+Received: from [10.67.50.53] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id a17sm2762849pfi.178.2019.09.20.09.36.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Sep 2019 09:37:00 -0700 (PDT)
+Subject: Re: [0/2] net: dsa: vsc73xx: Adjustments for vsc73xx_platform_probe()
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Pawel Dembicki <paweldembicki@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
+ <20190920150924.GG3530@lunn.ch> <4a220bc4-0340-d54a-70bd-7bea62257b81@web.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <5d068275-796d-7d76-ba33-6eb03fb1d7cc@gmail.com>
+Date:   Fri, 20 Sep 2019 09:36:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SdaPbLtAangIkrMZ"
-Content-Disposition: inline
-X-Cookie: Stay away from hurricanes for a while.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4a220bc4-0340-d54a-70bd-7bea62257b81@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9/20/19 8:30 AM, Markus Elfring wrote:
+>> netdev is closed at the moment for patch.
+> 
+> I wonder about this information.
 
---SdaPbLtAangIkrMZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is covered here:
 
-Hi all,
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/networking/netdev-FAQ.rst#n40
 
-News: There will likely be no more -next builds until Stephen returns on
-the 30th, I *may* do some next week but it's more likely that I won't
-and it certainly won't be every day.
+and you can skip the reading and check this URL:
 
-Changes since 20190919:
+http://vger.kernel.org/~davem/net-next.html
 
-The thermal tree gained a conflict with Linus' tree which I fixed up.
+> 
+> 
+>> Please repost once it reopens, in about 2 weeks time.
+> 
+> I hope that the presented change possibilities can be integrated
+> in the near future also without a repetition of this small patch series.
+> https://lore.kernel.org/patchwork/project/lkml/list/?series=411271
 
-The akpm-current tree gained a conflict with the risc-v-fixes tree which
-I fixed up.
-
-Non-merge commits (relative to Linus' tree): 2719
- 2712 files changed, 92075 insertions(+), 40381 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log
-files in the Next directory.  Between each merge, the tree was built
-with a defconfig for arm64, an allmodconfig for x86_64, a
-multi_v7_defconfig for arm and a native build of tools/perf.
-
-Below is a summary of the state of the merge.
-
-I am currently merging 311 trees (counting Linus' and 77 trees of bug
-fix patches pending for the current merge release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---SdaPbLtAangIkrMZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2FABQACgkQJNaLcl1U
-h9B0oAf/UVIP4LrDU46vVRhUEy8SIiIYvRiSBAR1UQuvYKR/6wSrkKRRcrpcydmZ
-DN/9SudF9wB5uZuqDTW1GBCNVHWKP3aYDtdMnUoTfQ1RRLlK133m5GpjcBHL7WjD
-5GZH9/EYJpFJPw8Q+hyhd6ScBljtoTPg2mVey4ADRwsjCaFPac9mjAae0CmLSTKi
-Oo3IW2ZTTtjtfVl0tkKD+9fBhx5CVM8k/kbNXSDMAgwyews6HwWs2wNlFpY+GrX2
-oIMcbBijJiS3qYrMGXmodtTh8jJxfDCzTI4TKD47iTCQKBhpvnEqgdJiYf08IPqR
-vPobGqP6kL/kj/5uQmHZvZ3Ymz04fA==
-=IpSs
------END PGP SIGNATURE-----
-
---SdaPbLtAangIkrMZ--
+You will have to resend it, and unless a bug fix comes in, which would
+be the only reason for your changes not to be "current" anymore, then it
+should apply as-is and you should be fine.
+-- 
+Florian
