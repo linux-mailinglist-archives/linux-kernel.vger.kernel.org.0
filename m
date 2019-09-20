@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3229B922A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCBDEB9272
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388782AbfITOZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:25:54 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36108 "EHLO
+        id S1729143AbfITOcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:32:48 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36490 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388141AbfITOZE (ORCPT
+        by vger.kernel.org with ESMTP id S2388277AbfITOZK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:04 -0400
+        Fri, 20 Sep 2019 10:25:10 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0004xy-Gw; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqN-00050x-E3; Fri, 20 Sep 2019 15:25:07 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007td-Oy; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqG-0007wR-GQ; Fri, 20 Sep 2019 15:25:00 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Kailang Yang" <kailang@realtek.com>,
-        "Takashi Iwai" <tiwai@suse.de>
+        "Daniel Thompson" <daniel.thompson@linaro.org>,
+        "Lee Jones" <lee.jones@linaro.org>,
+        "Brian Masney" <masneyb@onstation.org>,
+        "Pavel Machek" <pavel@ucw.cz>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.213396990@decadent.org.uk>
+Message-ID: <lsq.1568989415.462426180@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 063/132] ALSA: hda/realtek - EAPD turn on later
+Subject: [PATCH 3.16 097/132] backlight: lm3630a: Return 0 on success in
+ update_status functions
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,37 +50,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Brian Masney <masneyb@onstation.org>
 
-commit 607ca3bd220f4022e6f5356026b19dafc363863a upstream.
+commit d3f48ec0954c6aac736ab21c34a35d7554409112 upstream.
 
-Let EAPD turn on after set pin output.
+lm3630a_bank_a_update_status() and lm3630a_bank_b_update_status()
+both return the brightness value if the brightness was successfully
+updated. Writing to these attributes via sysfs would cause a 'Bad
+address' error to be returned. These functions should return 0 on
+success, so let's change it to correct that error.
 
-[ NOTE: This change is supposed to reduce the possible click noises at
-  (runtime) PM resume.  The functionality should be same (i.e. the
-  verbs are executed correctly) no matter which order is, so this
-  should be safe to apply for all codecs -- tiwai ]
-
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 28e64a68a2ef ("backlight: lm3630: apply chip revision")
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/pci/hda/patch_realtek.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/video/backlight/lm3630a_bl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -831,11 +831,10 @@ static int alc_init(struct hda_codec *co
- 	if (spec->init_hook)
- 		spec->init_hook(codec);
+--- a/drivers/video/backlight/lm3630a_bl.c
++++ b/drivers/video/backlight/lm3630a_bl.c
+@@ -201,7 +201,7 @@ static int lm3630a_bank_a_update_status(
+ 				      LM3630A_LEDA_ENABLE, LM3630A_LEDA_ENABLE);
+ 	if (ret < 0)
+ 		goto out_i2c_err;
+-	return bl->props.brightness;
++	return 0;
  
-+	snd_hda_gen_init(codec);
- 	alc_fix_pll(codec);
- 	alc_auto_init_amp(codec, spec->init_amp);
+ out_i2c_err:
+ 	dev_err(pchip->dev, "i2c failed to access\n");
+@@ -278,7 +278,7 @@ static int lm3630a_bank_b_update_status(
+ 				      LM3630A_LEDB_ENABLE, LM3630A_LEDB_ENABLE);
+ 	if (ret < 0)
+ 		goto out_i2c_err;
+-	return bl->props.brightness;
++	return 0;
  
--	snd_hda_gen_init(codec);
--
- 	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
- 
- 	return 0;
+ out_i2c_err:
+ 	dev_err(pchip->dev, "i2c failed to access REG_CTRL\n");
 
