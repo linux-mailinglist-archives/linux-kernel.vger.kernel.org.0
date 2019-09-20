@@ -2,73 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 605C2B99F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 01:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D23EB99FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 01:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407084AbfITXMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 19:12:35 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:44278 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407072AbfITXMe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 19:12:34 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iBS4n-0003Hd-G9; Fri, 20 Sep 2019 23:12:33 +0000
-Date:   Sat, 21 Sep 2019 00:12:33 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [RFC] microoptimizing hlist_add_{before,behind}
-Message-ID: <20190920231233.GP1131@ZenIV.linux.org.uk>
+        id S2393953AbfITXRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 19:17:20 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:34726 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391290AbfITXRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 19:17:19 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1iBS8o-0002ql-AR; Sat, 21 Sep 2019 09:16:43 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 21 Sep 2019 09:16:34 +1000
+Date:   Sat, 21 Sep 2019 09:16:34 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-pci@vger.kernel.org,
+        Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "antoine.tenart@bootlin.com" <antoine.tenart@bootlin.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "pvanleeuwen@insidesecure.com" <pvanleeuwen@insidesecure.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: PCI: Add stub pci_irq_vector and others
+Message-ID: <20190920231634.GA31195@gondor.apana.org.au>
+References: <20190902141910.1080-1-yuehaibing@huawei.com>
+ <20190903014518.20880-1-yuehaibing@huawei.com>
+ <MN2PR20MB29732EEECB217DDDF822EDA5CAB80@MN2PR20MB2973.namprd20.prod.outlook.com>
+ <CAKv+Gu8PVYyA-mzjrhR6r6upMc=xzpAhsbkuKRtb8T2noo_2XQ@mail.gmail.com>
+ <20190904122600.GA28660@gondor.apana.org.au>
+ <20190920194216.GB226476@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190920194216.GB226476@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Neither hlist_add_before() nor hlist_add_behind() should ever
-be called with both arguments pointing to the same hlist_node.
-However, gcc doesn't know that, so it ends up with pointless reloads.
-AFAICS, the following generates better code, is obviously equivalent
-in case when arguments are different and actually even in case when
-they are same, the end result is identical (if the hlist hadn't been
-corrupted even earlier than that).
+On Fri, Sep 20, 2019 at 02:42:16PM -0500, Bjorn Helgaas wrote:
+> On Wed, Sep 04, 2019 at 10:26:00PM +1000, Herbert Xu wrote:
+> > On Wed, Sep 04, 2019 at 05:10:34AM -0700, Ard Biesheuvel wrote:
+> > >
+> > > This is the reason we have so many empty static inline functions in
+> > > header files - it ensures that the symbols are declared even if the
+> > > only invocations are from dead code.
+> > 
+> > Does this patch work?
+> > 
+> > ---8<---
+> > This patch adds stub functions pci_alloc_irq_vectors_affinity and
+> > pci_irq_vector when CONFIG_PCI is off so that drivers can use them
+> > without resorting to ifdefs.
+> > 
+> > It also moves the PCI_IRQ_* macros outside of the ifdefs so that
+> > they are always available.
+> > 
+> > Fixes: 625f269a5a7a ("crypto: inside-secure - add support for...")
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> > Reported-by: YueHaibing <yuehaibing@huawei.com>
+> > Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> 
+> Since you've already sent your crypto pull request for v5.4, would you
+> like me to include this in mine?
 
-	Objections?
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/include/linux/list.h b/include/linux/list.h
-index 85c92555e31f..aee8232e6827 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -793,21 +793,21 @@ static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h)
- static inline void hlist_add_before(struct hlist_node *n,
- 					struct hlist_node *next)
- {
--	n->pprev = next->pprev;
-+	struct hlist_node *p = n->pprev = next->pprev;
- 	n->next = next;
- 	next->pprev = &n->next;
--	WRITE_ONCE(*(n->pprev), n);
-+	WRITE_ONCE(*p, n);
- }
- 
- static inline void hlist_add_behind(struct hlist_node *n,
- 				    struct hlist_node *prev)
- {
--	n->next = prev->next;
-+	struct hlist_node *p = n->next = prev->next;
- 	prev->next = n;
- 	n->pprev = &prev->next;
- 
--	if (n->next)
--		n->next->pprev  = &n->next;
-+	if (p)
-+		p->pprev  = &n->next;
- }
- 
- /* after that we'll appear to be on some hlist and hlist_del will work */
+That would be great.  Thanks!
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
