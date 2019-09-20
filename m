@@ -2,108 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F85B8C0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F968B8C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:55:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437624AbfITHyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 03:54:12 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55598 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437613AbfITHyL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 03:54:11 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 87FAE61544; Fri, 20 Sep 2019 07:54:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568966050;
-        bh=J9ixUqe5hZvgjP3d9E63RycwkbxkMnQGaECw4yn9tE4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=iNg4yCYi6nJvVA7VKDGqgcKKIDXxTT+DAjnQ29dJ7SLbcCZFy1/MJv215C6R0U282
-         Cpb714yrWX3K6J5vBTTkQ/W5GOY3FGy8tDHaxPP/xp80BMpXVuSBmyUNTS+ZO6qCrh
-         ESCvMEcV8MCRirvsZ2wH2Mb4dtHB2R5X297BMdc4=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 8B7E5602E1;
-        Fri, 20 Sep 2019 07:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568966049;
-        bh=J9ixUqe5hZvgjP3d9E63RycwkbxkMnQGaECw4yn9tE4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PZH5MrZCqbyeRs8OOxV425gJhjvxUQcZ3azcX7C8eV93q9fb6y8xYdtulKffI9moP
-         m0zXJLnolr2rGQV0B3mIN0+FWGJ6VKNCJ1txtvuoH9d9e3LPwBmTawVm+udTcyEPdw
-         H4Ku1Qn3VfL+Vq/2+H8BYLW3c+NgepdxerLO5JFU=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 20 Sep 2019 13:24:09 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        id S2437648AbfITHzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 03:55:03 -0400
+Received: from mout.perfora.net ([74.208.4.197]:39083 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437613AbfITHzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 03:55:02 -0400
+Received: from marcel-nb-toradex-int.cardiotech.int ([81.221.138.184]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0MGPxO-1iOTHF1O7c-00DD9w; Fri, 20 Sep 2019 09:54:25 +0200
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     devicetree@vger.kernel.org, info@logictechno.com,
+        j.bauer@endrich.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCHv6 3/3] iommu: arm-smmu-impl: Add sdm845 implementation
- hook
-In-Reply-To: <5d83de74.1c69fb81.71c0f.f162@mx.google.com>
-References: <cover.1568712606.git.saiprakash.ranjan@codeaurora.org>
- <1513424ecec891d19c1aa3c599ec67db7964b6b2.1568712606.git.saiprakash.ranjan@codeaurora.org>
- <20190919002501.GA20859@builder>
- <a45e8fb6fe1a8cc914fedbfac65af009@codeaurora.org>
- <081fff2f5dacfa7b6f5df6364f088045@codeaurora.org>
- <5d83de74.1c69fb81.71c0f.f162@mx.google.com>
-Message-ID: <8268c9b4002f6b9b1c87fcc16920f57f@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH v1 1/2] dt-bindings: add vendor prefix for logic technologies limited
+Date:   Fri, 20 Sep 2019 09:54:10 +0200
+Message-Id: <20190920075411.15735-1-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:aQ4xStQWFccokTsnwpMEsTr19zszagYxLLJLxeRBk1kzhDNkFOH
+ OrZ9Z8sDaQaaZb6xOeD/vWutzISjM1DTSh6UJYijeN+XiP8EdCOrEZKWF4hkg3spLLizROy
+ +UkbkPMgL/DS0gbg2ANuzNFBui2iNVF5anESWW8FarmZZ4NeB+dZ2ZvBrrkJWq4sLiJJGAl
+ 7MVJ0O27AFsX/SdKp+C2g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:PwRLMrILxo4=:PGyhiCBnO2wa5RDaAzVr3D
+ X73wKMW9ke5Dk/nwMKjw89XtApvNKHMmMqWcTxv1fICC4wiCoZH7FsEeDy77pEWtKR4Neq4lD
+ rS4styjUA87UXWbHVl6pjHuHQzdCpUDE0vkQYSYgy2xjbqSfibf+XTi6mOaKnO2hSTe0jwH7h
+ fC3QuknNBvnUPwYZ3N/32JXAkJgsQAq6S3pt/TVK3NNSIgI2I1ptheSYL+vrvw1OX40wznRGh
+ yriEpDCjBPM45qowDdzQrU/VnnYKbVEf99WQb1HYVQrcqKutrLHE5xzPZ97BIEWC0El3LU+uh
+ Yl+zT2/Hp7Nz4XdrJ4ZWQ7Mj2+6+Dni1uCnaV+FOSQsoO+AdzVNuS6kqsDifoVy/Moeww/0lK
+ QE28vmRQsQ5pk/Gk5vcQ6z8xvgSs+k2DwawGRKbCcsqX68J/12xIfGKw8i3AqLgnevtRv5yvo
+ ttY8qimSw3nZ2RZ7OzcNuEer3MqD8W5tUlNkZhvmMhChfboEfuWZtn1b6tzw6I4YMyT4OVtHS
+ PqPFbQGX7YlgYJgRakdNFgFtueHOGf7+h7flMYQ0PCaESgQWxz3T2+7pwCsjvNQ8cDtQIyDep
+ 6Cb91WcfVDN0ZGJczFtXo2m7M1ctl/ds39f5TESiKcgEufncwNkSeKxlRytJVhpABmL4AuKCV
+ lrZD/Oc6ZT3q/ZRFF3bMajtfkTVrUa/xEQOjhdy+UbVrHCopY77Vi5qNF/A5fl9V0GsXTRZd1
+ NCZWSFUCKuGypZab2x3tcAJc1YAr7fHcJB2XIbsUfYwEof/KLOCiPE/hwItHMS6wrEY1ElbDH
+ ReFNUWIqGWaJOtsrx++YUVbSCXN1T6zz/Pr3rNVtvRIMWgzsOrtxMrwUIEin9w95w0mF5T/Z5
+ 1o4nFqCpM7GCpMaHV/+z/FxXqHdA4qSMKZ/nAjPYg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-09-20 01:30, Stephen Boyd wrote:
-> Quoting Sai Prakash Ranjan (2019-09-19 11:54:27)
->> On 2019-09-19 08:48, Sai Prakash Ranjan wrote:
->> > On 2019-09-19 05:55, Bjorn Andersson wrote:
->> >> In the transition to this new design we lost the ability to
->> >> enable/disable the safe toggle per board, which according to Vivek
->> >> would result in some issue with Cheza.
->> >>
->> >> Can you confirm that this is okay? (Or introduce the DT property for
->> >> enabling the safe_toggle logic?)
->> >>
->> >
->> > Hmm, I don't remember Vivek telling about any issue on Cheza because
->> > of this logic.
->> > But I will test this on Cheza and let you know.
->> >
->> 
->> I tested this on Cheza and no perf degradation nor any other issue is
->> seen
->> atleast openly, although I see this below stack dump always with
->> cant_sleep change added.
-> 
-> The usage of cant_sleep() here is wrong then, and the comment should be
-> removed from the scm API as well because it looks like it's perfectly 
-> OK
-> to call the function from a context that can sleep.
-> 
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Looking more into this downstream, it says this *can be called in atomic 
-context*
-and not *should be called only in atomic context*. So will remove 
-cant_sleep and
-modify the comment accordingly.
+Add vendor prefix for Logic Technologies Limited [1] which is a Chinese
+display manufacturer e.g. distributed by German Endrich Bauelemente
+Vertriebs GmbH [2].
 
+[1] https://logictechno.com/contact-us/
+[2] https://www.endrich.com/isi50_isi30_tft-displays/lt170410-1whc_isi30
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 967e78c5ec0a..1441146f394f 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -541,6 +541,8 @@ patternProperties:
+     description: Linear Technology Corporation
+   "^logicpd,.*":
+     description: Logic PD, Inc.
++  "^logictechno,.*":
++    description: Logic Technologies Limited
+   "^longcheer,.*":
+     description: Longcheer Technology (Shanghai) Co., Ltd.
+   "^lsi,.*":
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.21.0
+
