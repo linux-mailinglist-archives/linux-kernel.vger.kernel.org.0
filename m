@@ -2,107 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54EB8B8E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2642FB8E7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:28:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438107AbfITK2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 06:28:16 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33650 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393456AbfITK2P (ORCPT
+        id S2393512AbfITK2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 06:28:11 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33392 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393456AbfITK2K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 06:28:15 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8KAONSk009268;
-        Fri, 20 Sep 2019 10:28:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=o/+8VWjq66u4kHcS5rClvAfiki4/PccampY7VYyU+Kk=;
- b=B92q+1tuKam1I3qE2aYQemBNVvDpF6IWI8kLeAFDrrKJHJmj4vZxlWjDbcCBZytg3B9o
- PxvcEyccrLWGAs49aXR1doUSc3WHe32KQCQXJ3GwjfrJwenf6et1W9LEyCnLwiIwKHLa
- gmyvG6SbAsyMxKQCNddVuMEmMz43PX4gjP6wUZxs/QVISVPbl/DSBwa7LRK3n4KiEnEW
- B++4ER4KoZlhsFZGP/BpCoPMeahqqmSIGmMTWSLYLVZ1sdVYP8u1oO8C+Oz8+dw49VFj
- y8dbbP34RHrcdoeeC02sW05xbG0eEdXX/zzyPeO2CGdx9bteTDTxIxfTmDz/N2DH8u2i aA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2v3vb4sk28-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Sep 2019 10:28:12 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8KANZ3k086815;
-        Fri, 20 Sep 2019 10:26:12 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2v4g2v8nun-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Sep 2019 10:26:11 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8KAQA4C011944;
-        Fri, 20 Sep 2019 10:26:10 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 20 Sep 2019 03:26:09 -0700
-Date:   Fri, 20 Sep 2019 13:25:35 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Steve French <smfrench@gmail.com>,
-        Nicolai Stange <nicstange@gmail.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Chris Li <christ.li@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-sparse@vger.kernel.org
-Subject: Re: checkpatch warnings in sched.h
-Message-ID: <20190920102535.GA25547@kadam>
-References: <CAH2r5mu1+muust_HA8oOWjYSmH6cLZA-d7pRzGJJsHauoDdJdQ@mail.gmail.com>
+        Fri, 20 Sep 2019 06:28:10 -0400
+Received: by mail-ed1-f66.google.com with SMTP id c4so5945613edl.0;
+        Fri, 20 Sep 2019 03:28:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=1xe6a2/0gVc3Xq1ZtS/ISAo8XWj2OhYSkGlgwGDDGFE=;
+        b=pNY8p/u+GbxDTGOHVCOISF3kkioYS3CUw/I4pjLC2irZliKRTpOqqe/aFdbNiGte2X
+         ROGBWYy/1CQTtFQgW+MJ9SrYtQjec/x0tVU6na7GxiaCKjwfQsKMpyO4zZzeau1+Db1A
+         SpWnRiK6srczHnVAetC5UbWIpgHILAJjNzFMDYvdkAxf1r2bTVz48x0XNr2jmNu8HVaj
+         zj1tZgW2+zwBkV/DhNDsTrE8MZo6TyB1YFcf6pOES9eE+Ckr5MKbHF+QJU7sazDORpYT
+         TFHi7isk+VO2lj+QZtWj3Lg21Pm9ihMrKeFJoEcbrMnvQKKIfgbHc8GSA26upnczMD18
+         lKJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=1xe6a2/0gVc3Xq1ZtS/ISAo8XWj2OhYSkGlgwGDDGFE=;
+        b=svKa3CeoxRTmhcmnjEOpg9OXOVfVsqIcq3uSwiBCQuLPblq16nXhAulcn7RoYKoWss
+         aLRLaO0JyBo8crksp9oNJ0ugwSOiAsy6/1McuSfpu8cIu1uC6EjM/qISwRnT40oX89SQ
+         f7eRvuZGtD8I9nBkbabK7wXp8D1NcOLIlx7zZl7xkFB9p4brQiYYzcC0BhTW1XKgKmf5
+         vdKmNE/y7lD+BzJzp7L8MLgMSTTGNxD4lehaUu/44mpK8kA/8eBYKMjwjqamb3uTFaVD
+         uBSaU05jRLURo5qdqUMKV0EWGjPNH7Jl5nXS0RGfILLNuY5N5eCe+dvuXYBaZFr+h5Ag
+         qTmA==
+X-Gm-Message-State: APjAAAUlB+k/YQ/OEjso4ZoflhGczzFJOdct9GnBZRMSVNY5xUZQcQlH
+        5rCApWtcpGogznn5FRmzTZsJq26LMzbuovY/bHZvJ2oW
+X-Google-Smtp-Source: APXvYqzlgPv4JSSlSf1+BofyowDIzFDwFG3zB5iIlMvP/1bWPpneUY31JajU98BSHnq4SSh9zgxPw41zme+g4GLKtcw=
+X-Received: by 2002:a17:906:a84d:: with SMTP id dx13mr18844955ejb.230.1568975288528;
+ Fri, 20 Sep 2019 03:28:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAH2r5mu1+muust_HA8oOWjYSmH6cLZA-d7pRzGJJsHauoDdJdQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909200098
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909200098
+From:   Anatoly Pugachev <matorola@gmail.com>
+Date:   Fri, 20 Sep 2019 13:27:57 +0300
+Message-ID: <CADxRZqz_TF7jyGtbg9cVSnCGh2VzfCoRGBdCU_yE_v1cveq1Pg@mail.gmail.com>
+Subject: [sparc64] pktcdvd: setup of pktcdvd device failed
+To:     linux-block@vger.kernel.org
+Cc:     Sparc kernel list <sparclinux@vger.kernel.org>,
+        Linux Kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 02:34:46AM -0500, Steve French wrote:
-> Any hints to get rid of the noisy warnings in sched.h that make it
-> hard to spot real warnings:
-> 
-> /include/linux/sched.h:609:43: error: bad integer constant expression
-> /include/linux/sched.h:609:73: error: invalid named zero-width bitfield `value'
-> 
+Hello!
 
-This is a bug in Sparse and it's way worse than you think.  It actually
-disables the real Sparse warnings because now Sparse thinks it has
-encountered a parse error.  I think we should just ifdef out that Sparse
-code.
+Getting the following call trace on boot on sparc64 ldom/machine with
+current git kernel:
 
-The problem is that if you have code like:
+...
+[   13.352975] aes_sparc64: Using sparc64 aes opcodes optimized AES
+implementation
+[   13.428002] ------------[ cut here ]------------
+[   13.428081] WARNING: CPU: 21 PID: 586 at
+drivers/block/pktcdvd.c:2597 pkt_setup_dev+0x2e4/0x5a0 [pktcdvd]
+[   13.428147] Attempt to register a non-SCSI queue
+[   13.428184] Modules linked in: pktcdvd libdes cdrom aes_sparc64
+n2_rng md5_sparc64 sha512_sparc64 rng_core sha256_sparc64 flash
+sha1_sparc64 ip_tables x_tables ipv6 crc_ccitt nf_defrag_ipv6 autofs4
+ext4 crc16 mbcache jbd2 raid10 raid456 async_raid6_recov async_memcpy
+async_pq async_xor xor async_tx raid6_pq raid1 raid0 multipath linear
+md_mod crc32c_sparc64
+[   13.428452] CPU: 21 PID: 586 Comm: pktsetup Not tainted
+5.3.0-10169-g574cc4539762 #1234
+[   13.428507] Call Trace:
+[   13.428542]  [00000000004635c0] __warn+0xc0/0x100
+[   13.428582]  [0000000000463634] warn_slowpath_fmt+0x34/0x60
+[   13.428626]  [000000001045b244] pkt_setup_dev+0x2e4/0x5a0 [pktcdvd]
+[   13.428674]  [000000001045ccf4] pkt_ctl_ioctl+0x94/0x220 [pktcdvd]
+[   13.428724]  [00000000006b95c8] do_vfs_ioctl+0x628/0x6e0
+[   13.428764]  [00000000006b96c8] ksys_ioctl+0x48/0x80
+[   13.428803]  [00000000006b9714] sys_ioctl+0x14/0x40
+[   13.428847]  [0000000000406294] linux_sparc_syscall+0x34/0x44
+[   13.428890] irq event stamp: 4181
+[   13.428924] hardirqs last  enabled at (4189): [<00000000004e0a74>]
+console_unlock+0x634/0x6c0
+[   13.428984] hardirqs last disabled at (4196): [<00000000004e0540>]
+console_unlock+0x100/0x6c0
+[   13.429048] softirqs last  enabled at (3978): [<0000000000b2e2d8>]
+__do_softirq+0x498/0x520
+[   13.429110] softirqs last disabled at (3967): [<000000000042cfb4>]
+do_softirq_own_stack+0x34/0x60
+[   13.429172] ---[ end trace 2220ca468f32967d ]---
+[   13.430018] pktcdvd: setup of pktcdvd device failed
+[   13.455589] des_sparc64: Using sparc64 des opcodes optimized DES
+implementation
+[   13.515334] camellia_sparc64: Using sparc64 camellia opcodes
+optimized CAMELLIA implementation
+[   13.522856] pktcdvd: setup of pktcdvd device failed
+[   13.529327] pktcdvd: setup of pktcdvd device failed
+[   13.532932] pktcdvd: setup of pktcdvd device failed
+[   13.536165] pktcdvd: setup of pktcdvd device failed
+[   13.539372] pktcdvd: setup of pktcdvd device failed
+[   13.542834] pktcdvd: setup of pktcdvd device failed
+[   13.546536] pktcdvd: setup of pktcdvd device failed
+[   15.431071] XFS (dm-0): Mounting V5 Filesystem
+...
 
-	1 ? 1 :__bits_per()
 
-GCC treats that as a compile constant but Sparse says that it's not
-because all three elements of the conditional statement have to be
-constant.  See the code in evaluate_conditional_expression().  The
-complication is that Sparse sets the constant flags before calls
-expand_expression() to see what the condition part of the statement is
-so the code needs to shuffled around to set the constant bits to match
-GCC.
+Full boot log at [1] and kernel config [2].
 
-I'm going to #ifdef this out for Smatch later today but someone needs
-to do the same thing in Sparse because right now no one can check for
-endian bugs until this gets fixed.  It's been broken for a month so
-we'll probably get a flood of patches marking functions as static once
-we patch this and people start seeing that warning again.
+4.12.0 kernel have different message on boot for pktcdvd module
+(something with circular locking)...
 
-regards,
-dan carpenter
+4.14.0 kernel have OOPS, boot log at [3]
 
+starting from 4.16.0 and up to current git kernel messages are/almost
+the same ...
+
+1. https://github.com/mator/sparc64-dmesg/blob/master/dmesg-5.3.0-10169-g574cc4539762
+2. https://github.com/mator/sparc64-dmesg/blob/master/config-5.3.0-10169-g574cc4539762.gz
+3. https://github.com/mator/sparc64-dmesg/blob/master/dmesg-4.14.0
