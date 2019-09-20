@@ -2,145 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4FAB9772
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 20:58:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD4DBB9777
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 20:59:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406482AbfITS6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 14:58:09 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36224 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406417AbfITS6J (ORCPT
+        id S2436492AbfITS7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 14:59:14 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43931 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406402AbfITS7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 14:58:09 -0400
-Received: by mail-qk1-f193.google.com with SMTP id y189so8364192qkc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:58:08 -0700 (PDT)
+        Fri, 20 Sep 2019 14:59:13 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b2so7041861otq.10;
+        Fri, 20 Sep 2019 11:59:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hr3MeVBdlQG42007SWnObV8sbZ+3LIr/i0LOy/XBd40=;
-        b=T06PkeAM3zCg7WLjhfPgo8tMSc3VoETlqnkSDboSThVcx0bNMpAtjXxQGMHjt5UDXd
-         5z5kbIu8Q/l5MbqRAnYGH0CsFQZmCeJHmOtcpwxRZFf4Hisz7iB6PEZKsIy8FvcVXXNu
-         +Z6Fk+JLWaZYJ09Z+3mAAEHft1ViUFD62vW8ONjL1L7Y89ogbcKIQ6tv/tWU8La3nozG
-         7O6is2Xll025bDAuuV23qN3vsmWmdadvQAnwCNQ5CJ5Ek9BTvgPh4aFZd44TlWijsgeA
-         SS0oo6H57aDSUl4/5c5ZM6Wv036rgUuNIt1H5Y+U9PaLBrSSPlpjCwhEOlMJQmBf+sbd
-         8rYQ==
+        h=from:to:subject:date:message-id;
+        bh=J4vx9PYCckXSIkTAbdPAoy6ZQMTL3tsqc04FyxnbD98=;
+        b=NYbvempqSC6ct3jEQl32QlA0KvhKKkwMbnMwWmPFQOADK6qE/mClS572zIVdVzyS9x
+         Ur+w5wjoIde9sdkeF0Apk/onxx/6dPfBqk5JgRer1eAJkfRsNoGtdmqJT45ag9hsUB4b
+         +wOl4TuaLfkkIcDOjnepjrimn7RAWRY9QbOMD7WI1GG+wk5beMMOjmY2DCfKRMU9FG8T
+         8ZSoMemThFgPSIEoNpHqGkxEd0YYeEtyyuWcbA8A9nX47yJXppN1LsGS/O93px5vbm5/
+         q2fX4jFyzuNgCPCin//l4P8YtL9shptUQMU1FRHab6JXzh1zQqLkUNkV83Sno+9z0fiB
+         oCow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hr3MeVBdlQG42007SWnObV8sbZ+3LIr/i0LOy/XBd40=;
-        b=mXj0HA8gGeVKDszaDZCWd3K0+sXbuqiguQzMNBSox+8WwGHJk/8ifNtB6Z7LSFQaGs
-         8Ol0A6QFM1J5UemclrhMA7tBgsN5zLevTeVmF+7/ebrG04GztxlY8qmDwtlVx5C0KRs8
-         uz1kNys/y9O0GFCZ/WRJMYKisbfhw++XjOpcGVBzMdQnVfbjaEHOFZ3nIrVIPoo2VtlD
-         i3NgedmelK91Mhlz5sN9aXigWtXMTj2YY1HtCuWnFCnRAPcvZ4U9/acj+a1arIaig9rX
-         fvnTDw2td/swJlnmsaYa8OFjOqQU3OgFkwiWhLgQAbWSHtZ7MGM6scfGhjYDnDzKFCST
-         rR6A==
-X-Gm-Message-State: APjAAAV5c54wkrbyPVz+uwLKJoMkZp2fSIuL0C9EpqHgqeLgC5h5DVzc
-        Z3/E5UJ2dVLkgfc3H5KNQ1M=
-X-Google-Smtp-Source: APXvYqw6MTa3wppv8MVGLLqqZeaG7jRmRguiVhzM6ZHFt4wjy19LtySsu1prwWUXfIiH6NZU0+eZ6A==
-X-Received: by 2002:a37:ac01:: with SMTP id e1mr5317760qkm.140.1569005888291;
-        Fri, 20 Sep 2019 11:58:08 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([187.65.7.29])
-        by smtp.gmail.com with ESMTPSA id z13sm1263213qkj.34.2019.09.20.11.58.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 11:58:07 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id E629940340; Fri, 20 Sep 2019 15:58:04 -0300 (-03)
-Date:   Fri, 20 Sep 2019 15:58:04 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Mamatha Inamdar <mamatha4@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, jeremie.galarneau@efficios.com,
-        shawn@git.icu, tstoyanov@vmware.com, tglx@linutronix.de,
-        alexey.budankov@linux.intel.com, adrian.hunter@intel.com,
-        songliubraving@fb.com, ravi.bangoria@linux.ibm.com
-Subject: Re: [PATCH V2]Perf:Return error code for perf_session__new function
- on failure
-Message-ID: <20190920185804.GG4865@kernel.org>
-References: <20190822071223.17892.45782.stgit@localhost.localdomain>
- <20190822100718.GD28439@krava>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190822100718.GD28439@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=J4vx9PYCckXSIkTAbdPAoy6ZQMTL3tsqc04FyxnbD98=;
+        b=HXWqi+0R3Jq2UFt/WeFWASZUOfyeGgFBcuTddYJoTeUJ0gpGjUr9GVOa4wW+SORtM6
+         uV1ZVpZ+bLRh7dtriMGMMmE1roaJtWiFJ48/ldwqlq58axDJ30isiMTXi+zg8dg0sW7s
+         C8F7A9/spQLE/YjQhIYgMoIl/5JO6tFgxKSms01IXv6d8rROixwPr3TM0z06U1gcdXJf
+         m1BYzZXs1HYuz0WsSOd3GiyQqdoNabCQ4PgafFp6HRTG32z25m6BKvRKIgg6hPOfzcAi
+         sR39z9b/6CPXCc4GNrfP4Qu2mAzdj43IP8oOXwqLjd+2R3FINGHXP4JCyy1fr7YxdUsM
+         kmdg==
+X-Gm-Message-State: APjAAAVr3UjWvuUf+Y1eziTF/W+89JoLNXpKNoR6sY+vG9LjA9vj31Nq
+        MXkv0dt6v3igAkw4WaNUPas=
+X-Google-Smtp-Source: APXvYqy60VomBZgY1DfqMYb6nHbpCnQzp3RdIplihOP3add6tpSTYndbFek5dxwpqRJVlAgygDu2SA==
+X-Received: by 2002:a9d:4711:: with SMTP id a17mr7663392otf.90.1569005952199;
+        Fri, 20 Sep 2019 11:59:12 -0700 (PDT)
+Received: from localhost.localdomain (ip24-56-44-135.ph.ph.cox.net. [24.56.44.135])
+        by smtp.gmail.com with ESMTPSA id i5sm843490otk.10.2019.09.20.11.59.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Sep 2019 11:59:11 -0700 (PDT)
+From:   Matthew Cover <werekraken@gmail.com>
+X-Google-Original-From: Matthew Cover <matthew.cover@stackpath.com>
+To:     davem@davemloft.net, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        jasowang@redhat.com, edumazet@google.com, sdf@google.com,
+        mst@redhat.com, matthew.cover@stackpath.com, mail@timurcelik.de,
+        pabeni@redhat.com, nicolas.dichtel@6wind.com, wangli39@baidu.com,
+        lifei.shirley@bytedance.com, tglx@linutronix.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH net-next] tuntap: Fallback to automq on TUNSETSTEERINGEBPF prog negative return
+Date:   Fri, 20 Sep 2019 11:58:43 -0700
+Message-Id: <20190920185843.4096-1-matthew.cover@stackpath.com>
+X-Mailer: git-send-email 2.15.2 (Apple Git-101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Aug 22, 2019 at 12:07:18PM +0200, Jiri Olsa escreveu:
-> On Thu, Aug 22, 2019 at 12:50:49PM +0530, Mamatha Inamdar wrote:
-> > This Patch is to return error code of perf_new_session function
-> > on failure instead of NULL
-> > ----------------------------------------------
-> > Test Results:
-> > 
-> > Before Fix:
-> > 
-> > $ perf c2c report -input
-> > failed to open nput: No such file or directory
-> > 
-> > $ echo $?
-> > 0
-> > ------------------------------------------
-> > After Fix:
-> > 
-> > $ ./perf c2c report -input
-> > failed to open nput: No such file or directory
-> > 
-> > $ echo $?
-> > 254
-> 
-> [root@krava perf]# ./perf c2c report -input
-> failed to open nput: No such file or directory
-> [root@krava perf]# echo $?
-> 255
-> 
-> hum, not sure why I'm getting 255.. but it looks good now
-> 
-> Reviewed-by: Jiri Olsa <jolsa@redhat.com>
+Treat a negative return from a TUNSETSTEERINGEBPF bpf prog as a signal
+to fallback to tun_automq_select_queue() for tx queue selection.
 
-You guys missed this one, that I've corrected in my tree, i.e.
-TEST_ASSERT_VAL expects that second arg to be NULL in case of failure,
-so we need to invert the result of IS_ERR(session) to keep the
-expectation.
+Compilation of this exact patch was tested.
 
-- Arnaldo
+For functional testing 3 additional printk()s were added.
 
-diff --git a/tools/perf/tests/topology.c b/tools/perf/tests/topology.c
-index 7d845d913d7d..4a800499d7c3 100644
---- a/tools/perf/tests/topology.c
-+++ b/tools/perf/tests/topology.c
-@@ -8,6 +8,7 @@
- #include "session.h"
- #include "evlist.h"
- #include "debug.h"
-+#include <linux/err.h>
+Functional testing results (on 2 txq tap device):
+
+  [Fri Sep 20 18:33:27 2019] ========== tun no prog ==========
+  [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '-1'
+  [Fri Sep 20 18:33:27 2019] tuntap: tun_automq_select_queue() ran
+  [Fri Sep 20 18:33:27 2019] ========== tun prog -1 ==========
+  [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '-1'
+  [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '-1'
+  [Fri Sep 20 18:33:27 2019] tuntap: tun_automq_select_queue() ran
+  [Fri Sep 20 18:33:27 2019] ========== tun prog 0 ==========
+  [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '0'
+  [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '0'
+  [Fri Sep 20 18:33:27 2019] ========== tun prog 1 ==========
+  [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '1'
+  [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '1'
+  [Fri Sep 20 18:33:27 2019] ========== tun prog 2 ==========
+  [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '2'
+  [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '0'
+
+Signed-off-by: Matthew Cover <matthew.cover@stackpath.com>
+---
+ drivers/net/tun.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index aab0be4..173d159 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -583,35 +583,37 @@ static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+ 	return txq;
+ }
  
- #define TEMPL "/tmp/perf-test-XXXXXX"
- #define DATA_SIZE	10
-@@ -39,7 +40,7 @@ static int session_write_header(char *path)
- 	};
+-static u16 tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
++static int tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+ {
+ 	struct tun_prog *prog;
+ 	u32 numqueues;
+-	u16 ret = 0;
++	int ret = -1;
  
- 	session = perf_session__new(&data, false, NULL);
--	TEST_ASSERT_VAL("can't get session", session);
-+	TEST_ASSERT_VAL("can't get session", !IS_ERR(session));
+ 	numqueues = READ_ONCE(tun->numqueues);
+ 	if (!numqueues)
+ 		return 0;
  
- 	session->evlist = perf_evlist__new_default();
- 	TEST_ASSERT_VAL("can't get evlist", session->evlist);
-@@ -70,7 +71,7 @@ static int check_cpu_topology(char *path, struct perf_cpu_map *map)
- 	int i;
++	rcu_read_lock();
+ 	prog = rcu_dereference(tun->steering_prog);
+ 	if (prog)
+ 		ret = bpf_prog_run_clear_cb(prog->prog, skb);
++	rcu_read_unlock();
  
- 	session = perf_session__new(&data, false, NULL);
--	TEST_ASSERT_VAL("can't get session", session);
-+	TEST_ASSERT_VAL("can't get session", !IS_ERR(session));
+-	return ret % numqueues;
++	if (ret >= 0)
++		ret %= numqueues;
++
++	return ret;
+ }
  
- 	/* On platforms with large numbers of CPUs process_cpu_topology()
- 	 * might issue an error while reading the perf.data file section
+ static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
+ 			    struct net_device *sb_dev)
+ {
+ 	struct tun_struct *tun = netdev_priv(dev);
+-	u16 ret;
++	int ret;
+ 
+-	rcu_read_lock();
+-	if (rcu_dereference(tun->steering_prog))
+-		ret = tun_ebpf_select_queue(tun, skb);
+-	else
++	ret = tun_ebpf_select_queue(tun, skb);
++	if (ret < 0)
+ 		ret = tun_automq_select_queue(tun, skb);
+-	rcu_read_unlock();
+ 
+ 	return ret;
+ }
+-- 
+1.8.3.1
+
