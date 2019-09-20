@@ -2,80 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 531C0B8EAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 059ECB8EB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:55:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408760AbfITKyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 06:54:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:43558 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408747AbfITKyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 06:54:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C14C337;
-        Fri, 20 Sep 2019 03:54:01 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7FF83F575;
-        Fri, 20 Sep 2019 03:54:00 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 11:53:59 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, vidyas@nvidia.com,
-        treding@nvidia.com, linux-pci@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 -next] PCI: tegra: Add missing include file
-Message-ID: <20190920105358.GJ9720@e119886-lin.cambridge.arm.com>
-References: <20190920014807.38288-1-yuehaibing@huawei.com>
- <20190920103925.34404-1-yuehaibing@huawei.com>
+        id S2438128AbfITKzn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 06:55:43 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48296 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438081AbfITKzm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 06:55:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8p0tY0f9xgBLFACe9M44AaAuW3o+Zlx8X15TpbGjey0=; b=Zl9hMBg/roqkXI+Pn3oamK2TD
+        eBKwtp2d9cnX2CLxqgZ6D0L0SCUNEZJ6Clvk5wUvYeFLDCHTeMjaL78DKbyBZdlrXLTiyOztoMBsR
+        v5WWKy4w2sIxj/7BIYREs9VBeudFUHgH7HmvHeCbJIuKDPwadEUyA7NRPpO+555K2D/CE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iBGZf-0001aG-Di; Fri, 20 Sep 2019 10:55:39 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id D8D01274293C; Fri, 20 Sep 2019 11:55:38 +0100 (BST)
+Date:   Fri, 20 Sep 2019 11:55:38 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Pragnesh Patel <pragnesh.patel@sifive.com>
+Cc:     lgirdwood@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] fixed-regulator: dt-bindings: Fixed building error for
+ compatible property
+Message-ID: <20190920105538.GB3822@sirena.co.uk>
+References: <1568875145-2864-1-git-send-email-pragnesh.patel@sifive.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
 Content-Disposition: inline
-In-Reply-To: <20190920103925.34404-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <1568875145-2864-1-git-send-email-pragnesh.patel@sifive.com>
+X-Cookie: Stay away from hurricanes for a while.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 06:39:25PM +0800, YueHaibing wrote:
-> Fix build error without CONFIG_PINCTRL
-> 
-> drivers/pci/controller/dwc/pcie-tegra194.c: In function tegra_pcie_config_rp:
-> drivers/pci/controller/dwc/pcie-tegra194.c:1394:8: error: implicit declaration of function pinctrl_pm_select_default_state;
->  did you mean prandom_seed_full_state? [-Werror=implicit-function-declaration]
->   ret = pinctrl_pm_select_default_state(dev);
->         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->         prandom_seed_full_state
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: ab2a50e7602b ("PCI: tegra: Add support to configure sideband pins")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> v2: keep alphabetical order
-> ---
 
-Thanks,
+--b5gNqxB1S1yM7hjW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+On Thu, Sep 19, 2019 at 12:09:04PM +0530, Pragnesh Patel wrote:
+> Compatible property is not of type 'string', so remove const:
+> from it.
 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 09ed8e4..f89f5ac 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -22,6 +22,7 @@
->  #include <linux/of_pci.h>
->  #include <linux/pci.h>
->  #include <linux/phy/phy.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/random.h>
-> -- 
-> 2.7.4
-> 
-> 
+Please use subject lines matching the style for the subsystem.  This
+makes it easier for people to identify relevant patches.  There's no
+need to resubmit to fix this alone.
+
+--b5gNqxB1S1yM7hjW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2EsCkACgkQJNaLcl1U
+h9CKhwf+O7GegnloAg4l4BjReZMOu45L2Pdn4/Ua9uM40hSO+MKWFBZlFYJWz/Pe
++b3y1K+kLxQY+z+OnkT23Rr/j4h4FXeKgKdWwjek7va80C+1EPzOYM28VfF8PF86
+rMnymJPk0vbq6Xm05nZX++dApXDPLHMJHVpLh3lZUoNz4b++K9nWUhNpGsRWLNFY
+TyjGqyyGS08YbjCAUp+pJqGmVUSqW2JJBE1HrR/ru5h8RqL7+mBbAmR0GdnSwNIp
+rUQazY+9heCGRjz/Qjamgkp4HPozARGTFgcYjhSVpAOcaFlQdFfPTTwyUANM3woC
+5Thuz1bWC8uJiLZvwTuXPmdYODDusA==
+=hxy2
+-----END PGP SIGNATURE-----
+
+--b5gNqxB1S1yM7hjW--
