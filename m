@@ -2,139 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DBBB9049
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2325EB9055
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:07:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfITNFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 09:05:10 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39315 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbfITNFK (ORCPT
+        id S1727268AbfITNHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 09:07:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725842AbfITNHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 09:05:10 -0400
-Received: by mail-io1-f66.google.com with SMTP id a1so15972157ioc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 06:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=V5857UdtPy5LB2Qj3lCJ6EALsf9VjY4ozTOyQCCtBGw=;
-        b=UEGHzk2GzwFGmTZh0bMvpjw+ZTxI4UuQ46JyhNc+Q7HgzhT1dG+11UmOyBzCpzQY4s
-         lk0MHF/15pJ7XjuqR2/lGIxxUGl9/8RAU8Zu5Q4+A87uAvB2t13t+QAbeQO1Q1fw1gBB
-         ZKRFpb6au1iAuYTH0VI59bC2ky2zo+61KNrjyIPqi73XMkKrZgsxPm45Xx+1wRaiL1S2
-         EHtqIVjnodF5mn1wkgbC470zLtNPMNlVg1obE8ddgNMN+j1iSUHapYTYLu1PtWAJJqQJ
-         GQmXaQJEI/B66NhZgBExVjFcbXoSZMcvweZ9GTrE3E9tluhNTRhuaRzM1nZr/e08JnmB
-         1pSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=V5857UdtPy5LB2Qj3lCJ6EALsf9VjY4ozTOyQCCtBGw=;
-        b=BjpbkYRDFf4PAuS3q0UdmI6st99sHXkgAphDmAqa/pE/8AE/9smbxC0GX7T2AT0Ox2
-         QWJ7BSykQTjFMlLtrj0zZ5bdkvxCpIilaLc7Yq4D5ukumXQAZoUF0rBXiNtW3AmNBT+b
-         Rw5KpmAzx/Z0kjP+S4aKXYaTANiWtd3j/m/V+igE4KZ37vW2TB46DIAUpDYrfeQ5cnJJ
-         MhCo+L/CkzqDtl1fejKHvu5s12GnUYAwaKVxL66CKIZPYZiS8yCYoZseuQgwwggALiKt
-         n4i3DN++X6+IRbHn3cRaW8IphcpQnGnL8f/JMREqpH6Lf0zGqMT+KI9IOzY0wZd5fvI5
-         x8Ww==
-X-Gm-Message-State: APjAAAXkCyWcVKMTnDYgeghxcl3TtvMJoYTbuV/C2KZhoOCpqOkg2LGJ
-        6KZnsI+ow22gWeWmATl+z0/e7A==
-X-Google-Smtp-Source: APXvYqz5yXouKOTZlRsl2vibdMPIsushtwZaeMaqyPL5+VKJgbmnNBDavKKhox5RFzmBV1D/zcgCHg==
-X-Received: by 2002:a5e:8218:: with SMTP id l24mr13613162iom.56.1568984709226;
-        Fri, 20 Sep 2019 06:05:09 -0700 (PDT)
-Received: from [192.168.1.50] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m5sm2293192ioh.69.2019.09.20.06.05.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Sep 2019 06:05:08 -0700 (PDT)
-Subject: Re: [PATCH 2/2] block, bfq: delete "bfq" prefix from cgroup filenames
-To:     Paolo Valente <paolo.valente@linaro.org>, Tejun Heo <tj@kernel.org>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        noreply-spamdigest via bfq-iosched 
-        <bfq-iosched@googlegroups.com>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>,
-        cgroups@vger.kernel.org, Angelo Ruocco <angeloruocco90@gmail.com>
-References: <20190917165148.19146-1-paolo.valente@linaro.org>
- <20190917165148.19146-3-paolo.valente@linaro.org>
- <20190917213209.GK3084169@devbig004.ftw2.facebook.com>
- <4D39D2FA-A487-4FAD-A67E-B90750CE0BD4@linaro.org>
- <20190918151948.GL3084169@devbig004.ftw2.facebook.com>
- <4F416823-855F-4091-90B9-92253BF189FA@linaro.org>
- <A87FEC8A-3E1A-4DC8-89F7-5FAF63CF5B47@linaro.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <de7664b1-6f47-8a7b-b231-727336c0ef85@kernel.dk>
-Date:   Fri, 20 Sep 2019 07:05:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 20 Sep 2019 09:07:13 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8KD7CqK144394
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:07:12 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v4wq7vbdh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:07:10 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ldufour@linux.ibm.com>;
+        Fri, 20 Sep 2019 14:05:31 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 20 Sep 2019 14:05:27 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8KD5PkD56557750
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Sep 2019 13:05:25 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AEA9111C066;
+        Fri, 20 Sep 2019 13:05:25 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E2A2511C04C;
+        Fri, 20 Sep 2019 13:05:24 +0000 (GMT)
+Received: from pomme.com (unknown [9.145.3.52])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Sep 2019 13:05:24 +0000 (GMT)
+From:   Laurent Dufour <ldufour@linux.ibm.com>
+To:     mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        aneesh.kumar@linux.ibm.com, npiggin@gmail.com,
+        linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] powerpc/mm: Conditionally call H_BLOCK_REMOVE
+Date:   Fri, 20 Sep 2019 15:05:21 +0200
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <A87FEC8A-3E1A-4DC8-89F7-5FAF63CF5B47@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19092013-0016-0000-0000-000002AE913D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19092013-0017-0000-0000-0000330F465C
+Message-Id: <20190920130523.20441-1-ldufour@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-20_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=867 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909200126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/20/19 12:58 AM, Paolo Valente wrote:
-> 
-> 
->> Il giorno 18 set 2019, alle ore 18:19, Paolo Valente <paolo.valente@linaro.org> ha scritto:
->>
->>
->>
->>> Il giorno 18 set 2019, alle ore 17:19, Tejun Heo <tj@kernel.org> ha scritto:
->>>
->>> Hello,
->>>
->>> On Wed, Sep 18, 2019 at 07:18:50AM +0200, Paolo Valente wrote:
->>>> A solution that both fulfills userspace request and doesn't break
->>>> anything for hypothetical users of the current interface already made
->>>> it to mainline, and Linus liked it too.  It is:
->>>
->>> Linus didn't like it.  The implementation was a bit nasty.  That was
->>> why it became a subject in the first place.
->>>
->>>> 19e9da9e86c4 ("block, bfq: add weight symlink to the bfq.weight cgroup parameter")
->>>>
->>>> But it was then reverted on Tejun's request to do exactly what we
->>>> don't want do any longer now:
->>>> cf8929885de3 ("cgroup/bfq: revert bfq.weight symlink change")
->>>
->>> Note that the interface was wrong at the time too.
->>>
->>>> So, Jens, Tejun, can we please just revert that revert?
->>>
->>> I think presenting both io.weight and io.bfq.weight interfaces are
->>> probably the best course of action at this point but why does it have
->>> to be a symlink?  What's wrong with just creating another file with
->>> the same backing function?
->>>
->>
->> I think a symlink would be much clearer for users, given the confusion
->> already caused by two names for the same parameter.  But let's hear
->> others' opinion too.
->>
-> 
-> Jens, could you express your opinion on this?  Any solution you and
-> Tejun agree on is ok for me.  Also this new (fourth) possible
-> implementation of this fix, provided that then it is definitely ok for
-> both of you.
+Since the commit ba2dd8a26baa ("powerpc/pseries/mm: call H_BLOCK_REMOVE"),
+the call to H_BLOCK_REMOVE is always done if the feature is exhibited.
 
-Retaining both interfaces is arguably the right solution. It would be
-nice if we didn't have to, but the first bfq variant was incompatible
-with the in-kernel one, so we'll always have that out in the wild.
-Adding everything to stable doesn't work, as we still have existing
-kernels out there with the interface. In fact, in some ways that's
-worse, as you definitely don't want interfaces to change between two
-stable kernels.
+However, the hypervisor may not support all the block size for the hcall
+H_BLOCK_REMOVE depending on the segment base page size and actual page
+size.
 
-I know it's not ideal, and some better initial planning would have
-made it better, but we have to deal with the situation as it stands
-now.
+When unsupported block size is used, the hcall H_BLOCK_REMOVE is returning
+H_PARAM, which is triggering a BUG_ON check leading to a panic like this:
+
+kernel BUG at /home/srikar/work/linux.git/arch/powerpc/platforms/pseries/lpar.c:466!
+Oops: Exception in kernel mode, sig: 5 [#1]
+BE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
+Modules linked in:
+CPU: 28 PID: 583 Comm: modprobe Not tainted 5.2.0-master #5
+NIP: c0000000000be8dc LR: c0000000000be880 CTR: 0000000000000000
+REGS: c0000007e77fb130 TRAP: 0700  Not tainted (5.2.0-master)
+MSR: 8000000000029032 <SF,EE,ME,IR,DR,RI> CR: 42224824 XER: 20000000
+CFAR: c0000000000be8fc IRQMASK: 0
+GPR00: 0000000022224828 c0000007e77fb3c0 c000000001434d00 0000000000000005
+GPR04: 9000000004fa8c00 0000000000000000 0000000000000003 0000000000000001
+GPR08: c0000007e77fb450 0000000000000000 0000000000000001 ffffffffffffffff
+GPR12: c0000007e77fb450 c00000000edfcb80 0000cd7d3ea30000 c0000000016022b0
+GPR16: 00000000000000b0 0000cd7d3ea30000 0000000000000001 c080001f04f00105
+GPR20: 0000000000000003 0000000000000004 c000000fbeb05f58 c000000001602200
+GPR24: 0000000000000000 0000000000000004 8800000000000000 c000000000c5d148
+GPR28: c000000000000000 8000000000000000 a000000000000000 c0000007e77fb580
+NIP [c0000000000be8dc] .call_block_remove+0x12c/0x220
+LR [c0000000000be880] .call_block_remove+0xd0/0x220
+Call Trace:
+[c0000007e77fb3c0] [c000000fb8c00240] 0xc000000fb8c00240 (unreliable)
+[c0000007e77fb4e0] [c0000000000bfef8] .pSeries_lpar_flush_hash_range+0x578/0x670
+[c0000007e77fb660] [c000000000073994] .flush_hash_range+0x44/0x100
+[c0000007e77fb700] [c00000000007667c] .__flush_tlb_pending+0x3c/0xc0
+[c0000007e77fb780] [c0000000002d3fdc] .zap_pte_range+0x7ec/0x830
+[c0000007e77fb8d0] [c0000000002d4524] .unmap_page_range+0x3f4/0x540
+[c0000007e77fb9f0] [c0000000002d4a04] .unmap_vmas+0x94/0x120
+[c0000007e77fbab0] [c0000000002e0efc] .exit_mmap+0xac/0x1f0
+[c0000007e77fbbc0] [c0000000000fae1c] .mmput+0x9c/0x1f0
+[c0000007e77fbc40] [c000000000105738] .do_exit+0x388/0xd60
+[c0000007e77fbd20] [c0000000001061b4] .do_group_exit+0x54/0x100
+[c0000007e77fbdb0] [c000000000106274] .__se_sys_exit_group+0x14/0x20
+[c0000007e77fbe20] [c00000000000b688] system_call+0x5c/0x70
+Instruction dump:
+39400001 38a00000 4800003c 60000000 60420000 7fa9e800 38e00000 419e0014
+7d29d278 7d290074 7929d182 69270001 <0b070000> 7d495378 394a0001 7fa93040
+
+The PAPR document specifies the TLB Block Invalidate Characteristics which
+tells for each pair of segment base page size, actual page size, the size
+of the block the hcall H_BLOCK_REMOVE is supporting (cf Power Architecture
+Platform Requirements +, Section 7.3.16.23, page 252).
+
+Supporting various block sizes doesn't seem needed at that time since all
+systems I was able to play with was supporting an 8 addresses block size,
+which is the maximum through the hcall, or none at all. Supporting various
+size would complexify the algorithm in call_block_remove() so unless this
+is required, this is not done.
+
+In the case of block size different from 8, a warning message is displayed
+at boot time and that block size will be ignored checking for the
+H_BLOCK_REMOVE support.
+
+Due to the minimal amount of hardware showing a limited set of
+H_BLOCK_REMOVE supported page size, I don't think there is a need to push
+this series to the stable mailing list.
+
+The first patch is reading the characteristic through the hcall
+ibm,get-system-parameter and record the supported block size for each page
+size.  The second patch is changing the check used to detect the
+H_BLOCK_REMOVE availability to take care of the base page size and page
+size couple.
+
+Fixes: ba2dd8a26baa ("powerpc/pseries/mm: call H_BLOCK_REMOVE")
+
+Changes since V2:
+ - Adressing Michael's comments
+ - Remove some unedeed logging
+ - Replace "hblkr" prefix/suffix to "hlkbrm"
+ - In pseries_lpar_read_hblkrm_characteristics()
+   - Remove unneeded buffer's initialisation
+   - Limit endianness trouble
+   - Prevent potential buffer overflow.
+
+Changes since V1:
+ - Addressing Aneesh's comments
+ - Remove penc initialisation, this is already done in
+   mmu_psize_set_default_penc()
+ - Add details on the TLB Block Invalidate Characteristics's buffer format
+ - Introduce #define instead of using direct numerical values
+ - Function reading the characteristics is now directly called from
+   pSeries_setup_arch()
+ - The characteristics are now stored in a dedciated table static to lpar.c
+
+Laurent Dufour (2):
+  powperc/mm: read TLB Block Invalidate Characteristics
+  powerpc/mm: call H_BLOCK_REMOVE when supported
+
+ arch/powerpc/platforms/pseries/lpar.c    | 162 ++++++++++++++++++++++-
+ arch/powerpc/platforms/pseries/pseries.h |   1 +
+ arch/powerpc/platforms/pseries/setup.c   |   1 +
+ 3 files changed, 162 insertions(+), 2 deletions(-)
 
 -- 
-Jens Axboe
+2.23.0
 
