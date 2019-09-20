@@ -2,95 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB718B9184
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D83B918C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387800AbfITOTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:19:11 -0400
-Received: from mail-ot1-f41.google.com ([209.85.210.41]:39367 "EHLO
-        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387778AbfITOTK (ORCPT
+        id S2387843AbfITOU5 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Sep 2019 10:20:57 -0400
+Received: from mail-smail-vm21.hanmail.net ([203.133.180.203]:35210 "EHLO
+        mail-smail-vm21.hanmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387821AbfITOU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:19:10 -0400
-Received: by mail-ot1-f41.google.com with SMTP id s22so6320318otr.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:19:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=g3oaDqbgzggwPivHDVLZWW42Zmh9QYBbWFwvRIUuPVY=;
-        b=dRC/bCyN0tevx36b1thR/vkPXJ4Ot0YA4qvripWUgW5TuKlI7aoY0IbhkQvjZr8DcL
-         qgpJkd7OZFT9bmcWWbZL1S8yzjaMYm/FaowP0BATF7I8iIXeJkuyEhl0x223NcS+5cGv
-         /U1EuIBrp8mzyOMlk2tPCUuu01GgcQzPD8jrQHINqsh9ZRhJ4Kf9iptFu0Zb07usQB+c
-         4qE9VaVP9ZpgTS/H1JXkvW4R7KvxhHYlo/ovkRF4nS+KobHA+D73tZKXMBYs5Ye6ZFGy
-         9UIO0kQMZ92qBGjSB+WLcroyeTvOyTIueOVJxpD1MFVDXTugmW1gZjKIK4ZD3hCyfIfM
-         MtvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=g3oaDqbgzggwPivHDVLZWW42Zmh9QYBbWFwvRIUuPVY=;
-        b=S5pNJwlN/Fxkmtr6FTOruhYz4mQ1v1pLmtHL3gewoCZFqOmcistVM2Mq48AGDnCdXW
-         nBhKRVO1wgGIiCsDOBfXbSHkqDTedDnvk1BJynLnRIzeRxeBpDGVzHylEUixv04a2d9i
-         CKo6sqD+WjyPEc99kpVczuE8kJf05pGpNFGZh+R7SVXuklkCiU/j8HZnlR5JcylLXwKk
-         1tWgis0nyrqgrrIQhgHD7tlF5YQZBX+I2fFT+K9KefBG9f4a9WZUoqLCjmxhOwz1KUBa
-         GEyRqLFaDsoxY4U9l7Rp/1yyd43f/xYTdkEgrpeoPhlx4iGO3wL80DjaAOssawFbswww
-         z/Pg==
-X-Gm-Message-State: APjAAAVnX1V3xi0eiN2D/EbrsYM7n6oW+eFqCTL5rb1z3YmTY5IJdQIM
-        TtudQDSseLV7u974T1dnTw/guMTKBHJio2jyBToi3w==
-X-Google-Smtp-Source: APXvYqwU4kLJdTb8y/29KhEiEDF/lWw7e/AxoNpPCrwPgbRGewcYh6WokNuwr+5RnqKHkpxdyNcR75BY6YKOy8BmDuw=
-X-Received: by 2002:a9d:774b:: with SMTP id t11mr178617otl.2.1568989149028;
- Fri, 20 Sep 2019 07:19:09 -0700 (PDT)
+        Fri, 20 Sep 2019 10:20:57 -0400
+X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Sep 2019 10:20:56 EDT
+Received: from mail-hmail-smtp3 ([10.194.31.36])
+        by mail-smail-vm21.hanmail.net (8.13.8/8.9.1) with SMTP id x8KEF5K2010295;
+        Fri, 20 Sep 2019 23:15:05 +0900
+X-Hermes-Message-Id: n8KNCR0Bb1389127458
+Message-Id: <201909202312.n8KNCR0Bb1389127458@mail-hmail-smtp1>
+X-Originating-IP: 68.168.123.78
+Received: from mail-qpsmtp-vm11 ([10.61.241.138]) by hermes of mail-hmail-smtp1 (10.194.31.49) with ESMTP id n8KNCR0Bb1389127458; Fri, 20 Sep 2019 23:12:27 +0900 (KST)
+Received: from [68.168.123.78] (HELO [68.168.123.78]) (68.168.123.78)
+ by  (8.12.9/8.9.1) with ESMTPA; Fri, 20 Sep 2019 23:12:26 +0900
+Authentication-Results: mail-qpsmtp-vm11; auth=pass (login) smtp.auth=info.curt@daum.net
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-From:   Marco Elver <elver@google.com>
-Date:   Fri, 20 Sep 2019 16:18:57 +0200
-Message-ID: <CANpmjNPJ_bHjfLZCAPV23AXFfiPiyXXqqu72n6TgWzb2Gnu1eA@mail.gmail.com>
-Subject: Kernel Concurrency Sanitizer (KCSAN)
-To:     kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alexander Potapenko <glider@google.com>, paulmck@linux.ibm.com,
-        Paul Turner <pjt@google.com>, Daniel Axtens <dja@axtens.net>,
-        Anatol Pomazau <anatol@google.com>,
-        Will Deacon <willdeacon@google.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        stern@rowland.harvard.edu, akiyks@gmail.com, npiggin@gmail.com,
-        boqun.feng@gmail.com, dlustig@nvidia.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Great opportunity my good friend!
+To:     Recipients <info.curt@daum.net>
+From:   "Curt Launer" <info.curt@daum.net>
+Date:   Fri, 20 Sep 2019 07:12:08 -0700
+Reply-To: curtlauner@vivaldi.net
+X-HM-UT: pRqdzHCuhtDeREMfNFesUNSrwzNdiHbrdt/Evqyt/FA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Attn:
+This message is strictly for this mail ID owner.
 
-We would like to share a new data-race detector for the Linux kernel:
-Kernel Concurrency Sanitizer (KCSAN) --
-https://github.com/google/ktsan/wiki/KCSAN  (Details:
-https://github.com/google/ktsan/blob/kcsan/Documentation/dev-tools/kcsan.rst)
+My name is Curt Launer an Engineer and lives in Toronto, Canada.
+When  I was working  with Australian Worldwide Exploration (AWE) Sydney, Australia my company sent me to Brega Libya during Ghaddafi time.
 
-To those of you who we mentioned at LPC that we're working on a
-watchpoint-based KTSAN inspired by DataCollider [1], this is it (we
-renamed it to KCSAN to avoid confusion with KTSAN).
-[1] http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf
+We did the exploration and our company was paid part before death Ghedaffi.
+And then there is over invoiced sum of USD6,850,000.00 unpaid at finance company in Alexandria Egypt.
 
-In the coming weeks we're planning to:
-* Set up a syzkaller instance.
-* Share the dashboard so that you can see the races that are found.
-* Attempt to send fixes for some races upstream (if you find that the
-kcsan-with-fixes branch contains an important fix, please feel free to
-point it out and we'll prioritize that).
+Now I want you to assume as my partner so the finance house can process the payment and transfer to your care.
+Either by persoanl delivery, cash transfer or International Card Settlement system (The best).
 
-There are a few open questions:
-* The big one: most of the reported races are due to unmarked
-accesses; prioritization or pruning of races to focus initial efforts
-to fix races might be required. Comments on how best to proceed are
-welcome. We're aware that these are issues that have recently received
-attention in the context of the LKMM
-(https://lwn.net/Articles/793253/).
-* How/when to upstream KCSAN?
+Then you will be entitled with 45% of the total money.
 
-Feel free to test and send feedback.
+Please I want your comment to this before I give out further information please.
 
-Thanks,
--- Marco
+Please be sincere and hold it to your heart without disclosing it to any person.
+
+Curt Launer
+curtlauner@vivaldi.net
+
+111 Princes' Boulevard, M6K 3C3 Toronto, Canada.
