@@ -2,168 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75FE4B8BA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 296C1B8BAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437549AbfITHht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 03:37:49 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:35244 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437540AbfITHht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 03:37:49 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190920073746epoutp01e8718e566cdf2c1ceea76902c9be553c~GFWo0xcK02871128711epoutp01l
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:37:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190920073746epoutp01e8718e566cdf2c1ceea76902c9be553c~GFWo0xcK02871128711epoutp01l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1568965066;
-        bh=A9VwLK2HONaKzxMqWgpKvIUR94gfyUFzLGSLLzZCFMU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=QykhAfC6w8h/mlp867Rbkrvfn3n2E8IcyYJ8bzSGfY8gvKkhEwKSoGcZJMB3K5UY0
-         UlJcM4h+PVS0IP+Y+nlpQFXMGKLoqyHrKD1YEHwgY+MmpiJ0wcfP7TxmPGQOqQh4ZN
-         nhq+4+JaeLLDOdKxaLOwGxs0hTEXWWDQR2GE8OiY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190920073745epcas1p4d5fc1fe31d4c2233dc4ba6103960ad0f~GFWoR6F_q1921319213epcas1p4l;
-        Fri, 20 Sep 2019 07:37:45 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 46ZQY21VjkzMqYkY; Fri, 20 Sep
-        2019 07:37:42 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A6.28.04160.2C1848D5; Fri, 20 Sep 2019 16:37:38 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190920073737epcas1p44cdee180e028790bc569eeae9e548488~GFWhHWEFp1927219272epcas1p45;
-        Fri, 20 Sep 2019 07:37:37 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190920073737epsmtrp2f5e9ad6d10cd67b7ee1afe95faf9bdad~GFWhGo-Rx0892108921epsmtrp2i;
-        Fri, 20 Sep 2019 07:37:37 +0000 (GMT)
-X-AuditID: b6c32a38-b4bff70000001040-e0-5d8481c2bf5e
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9D.5D.03706.1C1848D5; Fri, 20 Sep 2019 16:37:37 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190920073737epsmtip11776f254ad97af8314ff63adf9fee920~GFWg71cZm0598005980epsmtip1H;
-        Fri, 20 Sep 2019 07:37:37 +0000 (GMT)
-Subject: Re: [PATCH v2] extcon-intel-cht-wc: Don't reset USB data connection
- at probe
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Yauhen Kharuzhy <jekhor@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Hans de Goede <hdegoede@redhat.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <8435e5df-711b-1669-0980-2ae49c6c412d@samsung.com>
-Date:   Fri, 20 Sep 2019 16:42:04 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VeRBW4W0vEr+KZzdJWMf5ANQP_LEAXXK8SPC8BC+97Yyg@mail.gmail.com>
+        id S2437575AbfITHkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 03:40:49 -0400
+Received: from mail-eopbgr40080.outbound.protection.outlook.com ([40.107.4.80]:63505
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2437540AbfITHks (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 03:40:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Okj6K6bL2Zc2gNJeSKiVv3rd/EWVZr9TuWOehz/zqtXy2G6NpAnZ0WTAc+yV/dlRZwkT5rtiYZef+ymwLFEKRK5mzRUrHfyexS6yQWosDh357IXstND9HOTPnsvbvv56dXiCO9xKOQhf/ZIrvESYkC2voo9GPv1gHz9LqKYE6qyS9iL+Pu32YfAeDmEa1h5Ec8LF04m920UM2onR1x6H2v//IbgIMlYT532U0ZCfJMdnNfNgL/XpR2vh+IN0d0xpZu28sqKkLYDXlflOoKQEfegbrmFomyO3MflpCkUusInbFr8nxkH1R/6qgC5k8y9zNWmsepYGNqSnLR4zztJkwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lyYvUJBRRY2TyGo7GDQ3F1UwyyTjaiCqJTyNK8rgOCs=;
+ b=DpGMg70vOwMapeXvScy8XPFXVe/DKrlDMwv0HgEWtdurOAm2upNvZxTXsYcyeXW7jypEuQpr/R5QsIsZXjDYubjVYeHFtsA6C5lSHm1Nph43HcJ8oVa8EW8Uk2jEhJTeA5fgJDIskTzPwa0TeqAPhVtIq0xn+1Az8KrxXT7fknS0gzsqkKtPQSWGp8krLLW67XN2PJUZOjjprEbVQ+7hTkcLC/FndIl7VhX9OY6rbF1MprvV+wIFiWimKXi0vyHdeT1BwqSYbGEL0T78ITbYYqnv03ToDhyQNCrqleOCxRDSWeoZdK9yEyAvXUu6jRCP17f3X8ht7HCDBTjhY5isEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lyYvUJBRRY2TyGo7GDQ3F1UwyyTjaiCqJTyNK8rgOCs=;
+ b=jsgHIxGCUtnl2bNM4lsdfd5auqM/PBGpMFCLzxMjILTD0H1Dg9V329Ymdy46sxa8M484dwFKps9sWFVKNacklNQqXWDfKbxvepKpKq0ybfGTjGMJrukBwnqKY+tvIvv/ymQD/FMhWnzEPoV7UmJ46LVkN6dNX5LEAhrmqmLloCg=
+Received: from AM6PR05MB5288.eurprd05.prod.outlook.com (20.177.198.151) by
+ AM6PR05MB5253.eurprd05.prod.outlook.com (20.177.191.222) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.20; Fri, 20 Sep 2019 07:40:46 +0000
+Received: from AM6PR05MB5288.eurprd05.prod.outlook.com
+ ([fe80::255f:e232:1ad8:65fb]) by AM6PR05MB5288.eurprd05.prod.outlook.com
+ ([fe80::255f:e232:1ad8:65fb%5]) with mapi id 15.20.2284.023; Fri, 20 Sep 2019
+ 07:40:46 +0000
+From:   Tal Gilboa <talgi@mellanox.com>
+To:     =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <uwe@kleine-koenig.org>,
+        Saeed Mahameed <saeedm@mellanox.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: dimlib: should it really be enabled by default? [Was: [PATCH]
+ trivial: lib/Kconfig: typo modertion -> moderation]
+Thread-Topic: dimlib: should it really be enabled by default? [Was: [PATCH]
+ trivial: lib/Kconfig: typo modertion -> moderation]
+Thread-Index: AQHVby5BqYDJgSPbmUCEc8FyduAIAac0LvyA
+Date:   Fri, 20 Sep 2019 07:40:45 +0000
+Message-ID: <28e1c85f-ca1c-b624-fad7-65d21a352fa7@mellanox.com>
+References: <20190919210314.22110-1-uwe@kleine-koenig.org>
+ <7acc93c7-d689-1fb2-e237-931560dfd8cb@kleine-koenig.org>
+In-Reply-To: <7acc93c7-d689-1fb2-e237-931560dfd8cb@kleine-koenig.org>
+Accept-Language: he-IL, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e1ud1dp9WuWnfyj1q0IB7Nd3fIWKUVig/pDieiFrJteprlX
-        u9MyI3yUmfSwh67mkx5Q9oJpvsosF4RBYplRliklZWJaSi8qaHe3yP8+fM85v/M953coQl1B
-        RlAZdjfvsnNWmgyVN/ojdbqO/AMp+nPFWvZogUfGfij1I3b0QYDuXb+oYHtaK0n2Zf4lchVp
-        avH2K03Vncmm8Tu9pOlYQx0yTfrmJSm2Zq5M57k03qXh7amOtAy7JY5et8G8xmxcpmd0zHI2
-        ltbYORsfRyesT9IlZlgDBmhNNmfNCkhJnCDQS+NXuhxZbl6T7hDccTTvTLM6lzujBM4mZNkt
-        UakO2wpGr482BhK3Z6Z/evKEdJbN2NP17LEsDxVPK0EhFGADXDj4VF6CQik1bkZwdaxJLgbU
-        eALBgHeXFPiKwOu9g0oQFax40xYv6W0IBk+fJ6SCcQTve6JFDsObYLC3O5g/C2+Esmt6USaw
-        H8GRR7tEJrEW2oefkyLPwAug9/vbYLoKx8Mz/w5RluPFMDn6GIk8G2+GiUG/QmQVngmdZ4eC
-        NkNwMrTdOqmUnp8DfUM1MonnQ+HNCkK0CXicBF9fLZIGToArhUN/OQxGHjQoJY6AybE2UuJc
-        uNx5n5SKixE0tHcrpEAMtF88JRONEjgSbrQuleQF0PKzCkmNp8PYlyMKaVUqKC5SSykLoWew
-        XybxXDh/6DBZimjvlHG8U0bwThnB+79ZLZLXoXDeKdgsvMA4DVN/2oeCh6llm9HtrvUdCFOI
-        nqbS7C5MUSu4bCHH1oGAIuhZqkpjQYpalcbl7OVdDrMry8oLHcgY2PYJImJ2qiNw5na3mTFG
-        x8TEsAZmmZFh6DkqkyUvRY0tnJvP5Hkn7/pXJ6NCIvLQ/kUj5K/E4caa1V323OE4j+fy3bJ+
-        WZ/5s+7M/e+KfPO+U2vffVRGNiQZCrSNsZ3lL3JOH6deGcIf1r4dSNj2q/nbqiJfS6hzy63y
-        z7nzu5bktVpXE3UHwo9VT5T2NJ2pehrv8V2or8/OiXKHv+4eqPjh+R3LKsPmGXZqPpYX7e1L
-        pOVCOsdoCZfA/QFiJv/urgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTvdgY0uswd152ha9TdOZLF5OOMxo
-        8eY4kHVw3VJWi8u75rBZ3G5cwebA5rFz1l12j3knAz3e77vK5tG3ZRWjx+dNcgGsUVw2Kak5
-        mWWpRfp2CVwZHy5dYiuYyl9x7tpFpgbGDp4uRg4OCQETiUd77boYOTmEBHYzSmy6FAFiSwhI
-        Sky7eJQZokRY4vDh4i5GLqCSt4wSdz4sZgapERYIl3hw9QIjiC0iECrxdM52ZpAiZoHDjBIX
-        Np9kh+i4ySSx9cMOdpAqNgEtif0vbrCB2PwCihJXfzxmBNnAK2Ance1wEkiYRUBV4vObi2BD
-        RQUiJA7vmAVm8woISpyc+YQFxOYUCJTYu3sS2EhmAXWJP/MuMUPY4hK3nsxngrDlJZq3zmae
-        wCg8C0n7LCQts5C0zELSsoCRZRWjZGpBcW56brFhgWFearlecWJucWleul5yfu4mRnD8aGnu
-        YLy8JP4QowAHoxIPr0J5c6wQa2JZcWXuIUYJDmYlEd45pk2xQrwpiZVVqUX58UWlOanFhxil
-        OViUxHmf5h2LFBJITyxJzU5NLUgtgskycXBKNTDO1Wfq/scYwXH8vOzGrV9rkrtkIqLnCb+t
-        PzHpzrXKl6eaM/c9rbhbrG3gWNDwNlK4RmK5Bzfft/R9cxUr8iXl/Avn/p2Zbh6qdMNM4eyR
-        G2res6+9VuWWrPnL9fLiwnSDFtNMnr79PicSV+RbTlFliRdp2ffms6jJjB3RD77e9Nulyjeh
-        0EeJpTgj0VCLuag4EQB30NUNmwIAAA==
-X-CMS-MailID: 20190920073737epcas1p44cdee180e028790bc569eeae9e548488
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [193.47.165.251]
+x-clientproxiedby: AM4PR0202CA0002.eurprd02.prod.outlook.com
+ (2603:10a6:200:89::12) To AM6PR05MB5288.eurprd05.prod.outlook.com
+ (2603:10a6:20b:6b::23)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=talgi@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8030bd2c-48e0-45e9-0248-08d73d9dd8bb
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR05MB5253;
+x-ms-traffictypediagnostic: AM6PR05MB5253:|AM6PR05MB5253:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR05MB5253AC6198B34C21BF222EF6D2880@AM6PR05MB5253.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0166B75B74
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(396003)(346002)(366004)(136003)(199004)(54094003)(189003)(25786009)(66574012)(71190400001)(4326008)(4744005)(2906002)(11346002)(81156014)(81166006)(446003)(8676002)(31686004)(2616005)(476003)(8936002)(486006)(6436002)(316002)(66066001)(6486002)(6512007)(110136005)(5660300002)(229853002)(102836004)(256004)(7736002)(3846002)(6116002)(76176011)(14444005)(6246003)(14454004)(305945005)(6506007)(386003)(53546011)(478600001)(186003)(31696002)(66946007)(66446008)(64756008)(66556008)(36756003)(66476007)(86362001)(6636002)(52116002)(26005)(99286004)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB5253;H:AM6PR05MB5288.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: g78OzJht70f3b/JG2jwj117ZiB3lp73fYF/3mLblM2OR/kQ7dbwpuSyKTbUe3jrZG7+jicqjcyeQ1Yv+vBIUA12bt1K/1RqZz9npoyZzfPafdSulRui2/lBA9vMJPb6oBUJa9h0854jHbxynM278zAWEX/DxKPmq8/J8eZ/UOZaOdvQtBZn/LSqCkiqwD45DjbMBheXg1uXJyBcAcSRrBPzNPTrsbEevOLfAZlpamtdchX15+eZFByKbagY12IYamSCkLmsMkflJ/z+SQ8Eq1DQ/hw1mQ4+344LBTtD3sewN1oxxGxagGepPUTwjD9LZpNQ9Tc4nRkPbIGpTv2gxFbJlXyT0jQs93SNsadRqkKrUr7JhFZWiOpfSEYVtNGUXd144KdyPAGO7Qqu6gEljr7+rRe06yC3VT8shIFxBeRo=
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190918071722epcas5p2891fbda9c34518a3d3e3b767f02fde7f
-References: <20190916211536.29646-1-jekhor@gmail.com>
-        <20190916211536.29646-2-jekhor@gmail.com>
-        <20190917111322.GD2680@smile.fi.intel.com>
-        <20190917132547.GA4226@jeknote.loshitsa1.net>
-        <CGME20190918071722epcas5p2891fbda9c34518a3d3e3b767f02fde7f@epcas5p2.samsung.com>
-        <CAHp75VeRBW4W0vEr+KZzdJWMf5ANQP_LEAXXK8SPC8BC+97Yyg@mail.gmail.com>
+Content-ID: <9AB30F2E3F6A4D4FB317AC2F5BA0CF7E@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8030bd2c-48e0-45e9-0248-08d73d9dd8bb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2019 07:40:45.5556
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: MUmr5OC4QLaFDGIVKJCMlOMgDsQX3/juAfIpYzLDJWP5FBeY0vjytGG359ZqOWTe0c/dTcglxJQePWDBOYx2lw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5253
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
-
-On 19. 9. 18. 오후 4:17, Andy Shevchenko wrote:
-> On Wed, Sep 18, 2019 at 2:04 AM Yauhen Kharuzhy <jekhor@gmail.com> wrote:
->>
->> On Tue, Sep 17, 2019 at 02:13:22PM +0300, Andy Shevchenko wrote:
->>> On Tue, Sep 17, 2019 at 12:15:36AM +0300, Yauhen Kharuzhy wrote:
->>>> Intel Cherry Trail Whiskey Cove extcon driver connect USB data lines to
->>>> PMIC at driver probing for further charger detection. This causes reset of
->>>> USB data sessions and removing all devices from bus. If system was
->>>> booted from Live CD or USB dongle, this makes system unusable.
->>>>
->>>> Check if USB ID pin is floating and re-route data lines in this case
->>>> only, don't touch otherwise.
->>>
->>>> +   ret = regmap_read(ext->regmap, CHT_WC_PWRSRC_STS, &pwrsrc_sts);
->>>> +   if (ret) {
->>>> +           dev_err(ext->dev, "Error reading pwrsrc status: %d\n", ret);
->>>> +           goto disable_sw_control;
->>>> +   }
->>>> +
->>>> +   id = cht_wc_extcon_get_id(ext, pwrsrc_sts);
->>>
->>> We have second implementation of this. Would it make sense to split to some
->>> helper?
->>
->> Do you mean the combination of regmap_read(...CHT_WC_PWRSRC_STS,
->> &pwrsrc_sts) with cht_wc_extcon_get_id()?
-> 
-> Yes.
-> 
->> In the cht_wc_extcon_pwrsrc_event() function the pwrsrc_sts is checked
->> for other bits also, so separation of PWRSRC_STS read and id calculation
->> to one routine will cause non-clear function calls like as
->> get_powersrc_and_check_id(..., &powersrc_sts, &id) which is not looks
->> better than current code duplication.
-> 
-> I see. Thanks for answer.
-> 
->> Or we need to spend some time for
->> refactoring and testing of cht_wc_extcon_pwrsrc_event() code.
-> 
-> Perhaps, In any case I'm not objecting of the current approach.
-> 
-
-If you think it is OK, could you reply with your tag?
-and I'll fix the multi-line comment by myself.
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+T24gOS8yMC8yMDE5IDEyOjA3IEFNLCBVd2UgS2xlaW5lLUvDtm5pZyB3cm90ZToNCj4gT24gOS8x
+OS8xOSAxMTowMyBQTSwgVXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGU6DQo+PiBGaXhlczogNGY3NWRh
+MzY2NmMwICgibGludXgvZGltOiBNb3ZlIGltcGxlbWVudGF0aW9uIHRvIC5jIGZpbGVzIikNCj4+
+IFNpZ25lZC1vZmYtYnk6IFV3ZSBLbGVpbmUtS8O2bmlnIDx1d2VAa2xlaW5lLWtvZW5pZy5vcmc+
+DQo+PiAtLS0NCj4+ICAgbGliL0tjb25maWcgfCAyICstDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAx
+IGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9saWIvS2Nv
+bmZpZyBiL2xpYi9LY29uZmlnDQo+PiBpbmRleCA0ZTZiMWMzZTRjOTguLmNjMDQxMjRlZDhmNyAx
+MDA2NDQNCj4+IC0tLSBhL2xpYi9LY29uZmlnDQo+PiArKysgYi9saWIvS2NvbmZpZw0KPj4gQEAg
+LTU1OSw3ICs1NTksNyBAQCBjb25maWcgRElNTElCDQo+PiAgIAlkZWZhdWx0IHkNCj4gDQo+IEJU
+VywgSSB3b25kZXIgYWJvdXQgdGhpcyAiZGVmYXVsdCB5Ii4gSSBzZWUgdGhlcmUgYXJlIHNvbWUg
+ZHJpdmVycyB0aGF0DQo+IHNlbGVjdCBESU1MSUIsIHNvIEkgd29uZGVyIGlmIEkgYmVuZWZpdCBm
+cm9tIGl0IGF0IGFsbCBpZiBJIGRvbid0IHVzZQ0KPiBzdWNoIGEgZHJpdmVyPyENCg0KVGhhbmtz
+IGZvciBicmluZ2luZyB0aGlzIHVwLiBUaGUgb25seSBiZW5lZml0IGZyb20gRElNIGNvbWVzIGZy
+b20gYSANCmRyaXZlciB0aGF0IHVzZSBpdC4gSSBkb24ndCBtaW5kIHRoZSBkZWZhdWx0IHdvdWxk
+IGJlIGNoYW5nZWQgYnV0IGZyb20gDQp3aGF0IEkgc2VlIG5vdCBhbGwgZHJpdmVycyB0aGF0IHVz
+ZSBESU0gaGF2ZSB0aGUgc2VsZWN0IERJTUxJQiBsaW5lIGluIA0KdGhlaXIgS2NvbmZpZyBmaWxl
+cywgc28gc3VjaCBhIGNoYW5nZSBzaG91bGQgbWFrZSBzdXJlIG5vIGZ1bmN0aW9uYWxpdHkgDQpp
+cyBicm9rZW4uDQoNCj4gDQo+IEJlc3QgcmVnYXJkcw0KPiBVd2UNCg==
