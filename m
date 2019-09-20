@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A926EB92CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAFD6B9311
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392251AbfITOfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:35:37 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36018 "EHLO
+        id S2392780AbfITOh0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:37:26 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35872 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388112AbfITOZD (ORCPT
+        by vger.kernel.org with ESMTP id S2388067AbfITOZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:03 -0400
+        Fri, 20 Sep 2019 10:25:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqG-0004xe-Qu; Fri, 20 Sep 2019 15:25:00 +0100
+        id 1iBJqE-0004xE-1T; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007sf-Be; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqD-0007rN-42; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Coly Li" <colyli@suse.de>, "Jens Axboe" <axboe@kernel.dk>,
-        "Hannes Reinecke" <hare@suse.com>
+        "Darren Hart (VMware)" <dvhart@infradead.org>,
+        "Colin Ian King" <colin.king@canonical.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.117364865@decadent.org.uk>
+Message-ID: <lsq.1568989415.175574097@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 051/132] bcache: never set KEY_PTRS of journal key to
- 0 in journal_reclaim()
+Subject: [PATCH 3.16 035/132] platform/x86: alienware-wmi: fix kfree on
+ potentially uninitialized pointer
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,93 +48,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Coly Li <colyli@suse.de>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 1bee2addc0c8470c8aaa65ef0599eeae96dd88bc upstream.
+commit 98e2630284ab741804bd0713e932e725466f2f84 upstream.
 
-In journal_reclaim() ja->cur_idx of each cache will be update to
-reclaim available journal buckets. Variable 'int n' is used to count how
-many cache is successfully reclaimed, then n is set to c->journal.key
-by SET_KEY_PTRS(). Later in journal_write_unlocked(), a for_each_cache()
-loop will write the jset data onto each cache.
+Currently the kfree of output.pointer can be potentially freeing
+an uninitalized pointer in the case where out_data is NULL. Fix this
+by reworking the case where out_data is not-null to perform the
+ACPI status check and also the kfree of outpoint.pointer in one block
+and hence ensuring the pointer is only freed when it has been used.
 
-The problem is, if all jouranl buckets on each cache is full, the
-following code in journal_reclaim(),
+Also replace the if (ptr != NULL) idiom with just if (ptr).
 
-529 for_each_cache(ca, c, iter) {
-530       struct journal_device *ja = &ca->journal;
-531       unsigned int next = (ja->cur_idx + 1) % ca->sb.njournal_buckets;
-532
-533       /* No space available on this device */
-534       if (next == ja->discard_idx)
-535               continue;
-536
-537       ja->cur_idx = next;
-538       k->ptr[n++] = MAKE_PTR(0,
-539                         bucket_to_sector(c, ca->sb.d[ja->cur_idx]),
-540                         ca->sb.nr_this_dev);
-541 }
-542
-543 bkey_init(k);
-544 SET_KEY_PTRS(k, n);
-
-If there is no available bucket to reclaim, the if() condition at line
-534 will always true, and n remains 0. Then at line 544, SET_KEY_PTRS()
-will set KEY_PTRS field of c->journal.key to 0.
-
-Setting KEY_PTRS field of c->journal.key to 0 is wrong. Because in
-journal_write_unlocked() the journal data is written in following loop,
-
-649	for (i = 0; i < KEY_PTRS(k); i++) {
-650-671		submit journal data to cache device
-672	}
-
-If KEY_PTRS field is set to 0 in jouranl_reclaim(), the journal data
-won't be written to cache device here. If system crahed or rebooted
-before bkeys of the lost journal entries written into btree nodes, data
-corruption will be reported during bcache reload after rebooting the
-system.
-
-Indeed there is only one cache in a cache set, there is no need to set
-KEY_PTRS field in journal_reclaim() at all. But in order to keep the
-for_each_cache() logic consistent for now, this patch fixes the above
-problem by not setting 0 KEY_PTRS of journal key, if there is no bucket
-available to reclaim.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: ff0e9f26288d ("platform/x86: alienware-wmi: Correct a memory leak")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/bcache/journal.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/platform/x86/alienware-wmi.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -507,11 +507,11 @@ static void journal_reclaim(struct cache
- 				  ca->sb.nr_this_dev);
- 	}
+--- a/drivers/platform/x86/alienware-wmi.c
++++ b/drivers/platform/x86/alienware-wmi.c
+@@ -433,23 +433,22 @@ static acpi_status alienware_hdmi_comman
  
--	bkey_init(k);
--	SET_KEY_PTRS(k, n);
+ 	input.length = (acpi_size) sizeof(*in_args);
+ 	input.pointer = in_args;
+-	if (out_data != NULL) {
++	if (out_data) {
+ 		output.length = ACPI_ALLOCATE_BUFFER;
+ 		output.pointer = NULL;
+ 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 1,
+ 					     command, &input, &output);
+-	} else
++		if (ACPI_SUCCESS(status)) {
++			obj = (union acpi_object *)output.pointer;
++			if (obj && obj->type == ACPI_TYPE_INTEGER)
++				*out_data = (u32)obj->integer.value;
++		}
++		kfree(output.pointer);
++	} else {
+ 		status = wmi_evaluate_method(WMAX_CONTROL_GUID, 1,
+ 					     command, &input, NULL);
 -
--	if (n)
-+	if (n) {
-+		bkey_init(k);
-+		SET_KEY_PTRS(k, n);
- 		c->journal.blocks_free = c->sb.bucket_size >> c->block_bits;
-+	}
- out:
- 	if (!journal_full(&c->journal))
- 		__closure_wake_up(&c->journal.wait);
-@@ -635,6 +635,9 @@ static void journal_write_unlocked(struc
- 		ca->journal.seq[ca->journal.cur_idx] = w->data->seq;
+-	if (ACPI_SUCCESS(status) && out_data != NULL) {
+-		obj = (union acpi_object *)output.pointer;
+-		if (obj && obj->type == ACPI_TYPE_INTEGER)
+-			*out_data = (u32) obj->integer.value;
  	}
+-	kfree(output.pointer);
+ 	return status;
+-
+ }
  
-+	/* If KEY_PTRS(k) == 0, this jset gets lost in air */
-+	BUG_ON(i == 0);
-+
- 	atomic_dec_bug(&fifo_back(&c->journal.pin));
- 	bch_journal_next(&c->journal);
- 	journal_reclaim(c);
+ static ssize_t show_hdmi_cable(struct device *dev,
 
