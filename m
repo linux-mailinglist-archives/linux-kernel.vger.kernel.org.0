@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C961BB91C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C17B91EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388486AbfITOZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:25:22 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35636 "EHLO
+        id S2389207AbfITO0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:26:41 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36938 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728952AbfITOY6 (ORCPT
+        by vger.kernel.org with ESMTP id S2388415AbfITOZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:24:58 -0400
+        Fri, 20 Sep 2019 10:25:17 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0004wS-Io; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqT-0004xy-Jl; Fri, 20 Sep 2019 15:25:13 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007pa-38; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqE-0007tx-T1; Fri, 20 Sep 2019 15:24:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
+        "Ladislav Michl" <ladis@linux-mips.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Oliver Neukum" <oneukum@suse.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.650123541@decadent.org.uk>
+Message-ID: <lsq.1568989415.572119509@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 013/132] media: wl128x: prevent two potential buffer
- overflows
+Subject: [PATCH 3.16 067/132] cdc-acm: store in and out pipes in acm structure
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,57 +48,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Ladislav Michl <ladis@linux-mips.org>
 
-commit 9c2ccc324b3a6cbc865ab8b3e1a09e93d3c8ade9 upstream.
+commit 74bccc9b71dc41d37e73fcdbcbec85310a670751 upstream.
 
-Smatch marks skb->data as untrusted so it warns that "evt_hdr->dlen"
-can copy up to 255 bytes and we only have room for two bytes.  Even
-if this comes from the firmware and we trust it, the new policy
-generally is just to fix it as kernel hardenning.
+Clearing stall needs pipe descriptor, store it in acm structure.
 
-I can't test this code so I tried to be very conservative.  I considered
-not allowing "evt_hdr->dlen == 1" because it doesn't initialize the
-whole variable but in the end I decided to allow it and manually
-initialized "asic_id" and "asic_ver" to zero.
-
-Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/media/radio/wl128x/fmdrv_common.c
-+++ b/drivers/media/radio/wl128x/fmdrv_common.c
-@@ -494,7 +494,8 @@ int fmc_send_cmd(struct fmdev *fmdev, u8
- 		return -EIO;
+ drivers/usb/class/cdc-acm.c | 33 +++++++++++++++++----------------
+ drivers/usb/class/cdc-acm.h |  1 +
+ 2 files changed, 18 insertions(+), 16 deletions(-)
+
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1355,8 +1355,16 @@ made_compressed_probe:
+ 	spin_lock_init(&acm->read_lock);
+ 	mutex_init(&acm->mutex);
+ 	acm->is_int_ep = usb_endpoint_xfer_int(epread);
+-	if (acm->is_int_ep)
++	if (acm->is_int_ep) {
+ 		acm->bInterval = epread->bInterval;
++		acm->in = usb_rcvintpipe(usb_dev, epread->bEndpointAddress);
++	} else {
++		acm->in = usb_rcvbulkpipe(usb_dev, epread->bEndpointAddress);
++	}
++	if (usb_endpoint_xfer_int(epwrite))
++		acm->out = usb_sndintpipe(usb_dev, epwrite->bEndpointAddress);
++	else
++		acm->out = usb_sndbulkpipe(usb_dev, epwrite->bEndpointAddress);
+ 	tty_port_init(&acm->port);
+ 	acm->port.ops = &acm_port_ops;
+ 	init_usb_anchor(&acm->delayed);
+@@ -1401,20 +1409,15 @@ made_compressed_probe:
+ 		}
+ 		urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+ 		urb->transfer_dma = rb->dma;
+-		if (acm->is_int_ep) {
+-			usb_fill_int_urb(urb, acm->dev,
+-					 usb_rcvintpipe(usb_dev, epread->bEndpointAddress),
+-					 rb->base,
++		if (acm->is_int_ep)
++			usb_fill_int_urb(urb, acm->dev, acm->in, rb->base,
+ 					 acm->readsize,
+ 					 acm_read_bulk_callback, rb,
+ 					 acm->bInterval);
+-		} else {
+-			usb_fill_bulk_urb(urb, acm->dev,
+-					  usb_rcvbulkpipe(usb_dev, epread->bEndpointAddress),
+-					  rb->base,
++		else
++			usb_fill_bulk_urb(urb, acm->dev, acm->in, rb->base,
+ 					  acm->readsize,
+ 					  acm_read_bulk_callback, rb);
+-		}
+ 
+ 		acm->read_urbs[i] = urb;
+ 		__set_bit(i, &acm->read_urbs_free);
+@@ -1430,12 +1433,10 @@ made_compressed_probe:
+ 		}
+ 
+ 		if (usb_endpoint_xfer_int(epwrite))
+-			usb_fill_int_urb(snd->urb, usb_dev,
+-				usb_sndintpipe(usb_dev, epwrite->bEndpointAddress),
++			usb_fill_int_urb(snd->urb, usb_dev, acm->out,
+ 				NULL, acm->writesize, acm_write_bulk, snd, epwrite->bInterval);
+ 		else
+-			usb_fill_bulk_urb(snd->urb, usb_dev,
+-				usb_sndbulkpipe(usb_dev, epwrite->bEndpointAddress),
++			usb_fill_bulk_urb(snd->urb, usb_dev, acm->out,
+ 				NULL, acm->writesize, acm_write_bulk, snd);
+ 		snd->urb->transfer_flags |= URB_NO_TRANSFER_DMA_MAP;
+ 		if (quirks & SEND_ZERO_PACKET)
+@@ -1504,8 +1505,8 @@ skip_countries:
  	}
- 	/* Send response data to caller */
--	if (response != NULL && response_len != NULL && evt_hdr->dlen) {
-+	if (response != NULL && response_len != NULL && evt_hdr->dlen &&
-+	    evt_hdr->dlen <= payload_len) {
- 		/* Skip header info and copy only response data */
- 		skb_pull(skb, sizeof(struct fm_event_msg_hdr));
- 		memcpy(response, skb->data, evt_hdr->dlen);
-@@ -590,6 +591,8 @@ static void fm_irq_handle_flag_getcmd_re
- 		return;
  
- 	fm_evt_hdr = (void *)skb->data;
-+	if (fm_evt_hdr->dlen > sizeof(fmdev->irq_info.flag))
-+		return;
+ 	if (quirks & CLEAR_HALT_CONDITIONS) {
+-		usb_clear_halt(usb_dev, usb_rcvbulkpipe(usb_dev, epread->bEndpointAddress));
+-		usb_clear_halt(usb_dev, usb_sndbulkpipe(usb_dev, epwrite->bEndpointAddress));
++		usb_clear_halt(usb_dev, acm->in);
++		usb_clear_halt(usb_dev, acm->out);
+ 	}
  
- 	/* Skip header info and copy only response data */
- 	skb_pull(skb, sizeof(struct fm_event_msg_hdr));
-@@ -1318,7 +1321,8 @@ static int load_default_rx_configuration
- /* Does FM power on sequence */
- static int fm_power_up(struct fmdev *fmdev, u8 mode)
- {
--	u16 payload, asic_id, asic_ver;
-+	u16 payload;
-+	__be16 asic_id = 0, asic_ver = 0;
- 	int resp_len, ret;
- 	u8 fw_name[50];
- 
+ 	return 0;
+--- a/drivers/usb/class/cdc-acm.h
++++ b/drivers/usb/class/cdc-acm.h
+@@ -83,6 +83,7 @@ struct acm {
+ 	struct usb_device *dev;				/* the corresponding usb device */
+ 	struct usb_interface *control;			/* control interface */
+ 	struct usb_interface *data;			/* data interface */
++	unsigned in, out;				/* i/o pipes */
+ 	struct tty_port port;			 	/* our tty port data */
+ 	struct urb *ctrlurb;				/* urbs */
+ 	u8 *ctrl_buffer;				/* buffers of urbs */
 
