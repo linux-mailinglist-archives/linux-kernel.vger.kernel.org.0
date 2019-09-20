@@ -2,99 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88A1AB9A8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 01:21:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407EEB9AA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 01:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407129AbfITXV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 19:21:29 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34181 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407095AbfITXTy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 19:19:54 -0400
-Received: by mail-pl1-f193.google.com with SMTP id d3so3899899plr.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 16:19:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:to:from:subject:user-agent:date;
-        bh=x3KkooxIJHeflg3Q/MEdAWrgYVbuQ7dU5z8XbMOS1lc=;
-        b=QzLHfKdIn3q1t4ZF2RMzkmMjfTHq/FprJnnZJs3zYFU7y2qEoRaLlRN0Y7Jq0AdNAC
-         PDfaWzDyVmNcPgDP160yRKk+6DjeC8GYQEpY8ACjMkLlsfsLOmx+dwv1tNluk5ekf3ru
-         UgXwy6ysHSMAxJ7o+Uw8r0YgF2N9y5ueHmVKo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:date;
-        bh=x3KkooxIJHeflg3Q/MEdAWrgYVbuQ7dU5z8XbMOS1lc=;
-        b=nQH8TD1qrwlhnfoFSbkddDRSkm/z1abn1hl/41eFDPmkwhWvOSDDNjUB9hDGJ1hlce
-         z70EEYvllbnM7oCOYFLShpIWxCGvQn9Xesdjik335LVbvbe4X3ynZ6Ge3saJuxT1SOXa
-         Iy25eq1c7xNlTW2JWTG6H7m4nDCZsasMYtA8VCVNiGV1p/3h9q/12xCgy8+2KXykmqS/
-         Okra/bH9gZmxSBTatcL1mHPIqkyN+aQFjOofi8g8Hx7iY0Jxf8mC2j/s8T6J8wsAvzjc
-         INcvHLVGn3s9czo5fi3x952ok1wBswsXawC7buQCkXSj7+2yVG0j/KKKzuCzSgMbdaos
-         ONmA==
-X-Gm-Message-State: APjAAAXG1oju113TXgvYxkiaf0FqXr6SFaUkrGO6sR9qjMBu747VV6LG
-        f7j6uXP1FhWNTYeItFsA/9iCbA==
-X-Google-Smtp-Source: APXvYqw+23bVFXVYDopNzEoteLtijFTF7+FHjQV5JUkx0GnkKnOeZTAyxgjw8he9IKiO6G9R5MvM2g==
-X-Received: by 2002:a17:902:5a89:: with SMTP id r9mr18599724pli.206.1569021594105;
-        Fri, 20 Sep 2019 16:19:54 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id a4sm2720148pgq.6.2019.09.20.16.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 16:19:53 -0700 (PDT)
-Message-ID: <5d855e99.1c69fb81.1d457.733b@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAHLCerNqsf1j4vsOPjdav8+UtXtGP55k6_==jjg1QeZ1qCX1RA@mail.gmail.com>
-References: <cover.1569015835.git.amit.kucheria@linaro.org> <f627e66c455f52b5662bef6526d7c72869808401.1569015835.git.amit.kucheria@linaro.org> <5d854c82.1c69fb81.66e1f.96ab@mx.google.com> <CAHLCerPqEK2sSGGtDj85DH+qCzgtWi4ainuQv8BgQ3-Dgi93BQ@mail.gmail.com> <5d854e1d.1c69fb81.4f771.9391@mx.google.com> <CAHLCerNqsf1j4vsOPjdav8+UtXtGP55k6_==jjg1QeZ1qCX1RA@mail.gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Brian Masney <masneyb@onstation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v4 09/15] arm64: dts: msm8996: thermal: Add interrupt support
-User-Agent: alot/0.8.1
-Date:   Fri, 20 Sep 2019 16:19:52 -0700
+        id S2407139AbfITXWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 19:22:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43534 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392595AbfITXWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 19:22:22 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC3602173E;
+        Fri, 20 Sep 2019 23:22:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569021742;
+        bh=FN/Lerp2b3ubf7CVg953Cj/AlJTpxRlHeVx64/izgIE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gLu1SzT+IWoQ4F+7fwDVxfR7LVBSf1GSBfOD3/UfDDngFXw+5ozkOQ+ft4pb7Qlib
+         L1CD8V9S7JU05U3iPcZSN7f/wptDiTuGzGHP9iLadCUqooTfeSZ0ALMikRIVIHtDV8
+         4shgFNjPnJVyv+wPTcJ5x5PXh/QjP/eO2Q5HKz7g=
+Date:   Fri, 20 Sep 2019 16:22:21 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Qian Cai <cai@lca.pw>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm/kmemleak: record the current memory pool size
+Message-Id: <20190920162221.51a800630561489a7e62821a@linux-foundation.org>
+In-Reply-To: <20190815100215.GB9352@arrakis.emea.arm.com>
+References: <1565809631-28933-1-git-send-email-cai@lca.pw>
+        <20190815100215.GB9352@arrakis.emea.arm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Kucheria (2019-09-20 15:14:58)
-> On Fri, Sep 20, 2019 at 3:09 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Ok so the plan is to change DT and then change it back? That sounds
-> > quite bad so please fix the thermal core to not care about this before
-> > applying these changes so that we don't churn DT.
->=20
-> Hi Stephen,
->=20
-> Our emails crossed paths. I think we could just make the property
-> optional so that we can remove the property completely for drivers
-> that support interrupts. Comments?
+On Thu, 15 Aug 2019 11:02:16 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-OK. This means that the delay properties become irrelevant once an
-interrupt is there? I guess that's OK. My concern is that we need to
-choose one or the other when it would be simpler to have both and
-fallback to the delays so that DT migration strategies are purely
-additive. It's not like the delays aren't calculated to be those numbers
-anymore. They're just not going to be used.
+> On Wed, Aug 14, 2019 at 03:07:11PM -0400, Qian Cai wrote:
+> > The only way to obtain the current memory pool size for a running kernel
+> > is to check back the kernel config file which is inconvenient. Record it
+> > in the kernel messages.
+> > 
+> > Signed-off-by: Qian Cai <cai@lca.pw>
+> > ---
+> >  mm/kmemleak.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> > index b8bbe9ac5472..1f74f8bcb4eb 100644
+> > --- a/mm/kmemleak.c
+> > +++ b/mm/kmemleak.c
+> > @@ -1967,7 +1967,8 @@ static int __init kmemleak_late_init(void)
+> >  		mutex_unlock(&scan_mutex);
+> >  	}
+> >  
+> > -	pr_info("Kernel memory leak detector initialized\n");
+> > +	pr_info("Kernel memory leak detector initialized (mem pool size: %d)\n",
+> > +		mem_pool_free_count);
+> 
+> I wouldn't actually call it the "memory pool size" as I see the size as
+> a constant set at config time. What about "memory pool available"?
+> 
+> (even this one is not entirely accurate since we have a
+> mem_pool_free_list but I expect such list not to have too many elements
+> at the late_initcall time)
+> 
+> If you change the printed string:
+> 
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
->=20
-> That is a bigger change to the bindings and I don't want to hold the
-> tsens interrupt support hostage to agreement on this.
-
-Alright. I admit I haven't looked into the details but is it hard for
-some reason to make it use interrupts before delays?
+--- a/mm/kmemleak.c~mm-kmemleak-record-the-current-memory-pool-size-fix
++++ a/mm/kmemleak.c
+@@ -1967,7 +1967,7 @@ static int __init kmemleak_late_init(voi
+ 		mutex_unlock(&scan_mutex);
+ 	}
+ 
+-	pr_info("Kernel memory leak detector initialized (mem pool size: %d)\n",
++	pr_info("Kernel memory leak detector initialized (mem pool available: %d)\n",
+ 		mem_pool_free_count);
+ 
+ 	return 0;
+_
 
