@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB8DFB91FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEE1B9213
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389690AbfITO1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:27:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39234 "EHLO mail.kernel.org"
+        id S2390289AbfITO3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:29:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389112AbfITO0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:26:32 -0400
+        id S2389137AbfITO0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:26:34 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74C9321A49;
-        Fri, 20 Sep 2019 14:26:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0324820B7C;
+        Fri, 20 Sep 2019 14:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568989591;
-        bh=nWOLRT3qcZ0kcr3etpWUbtT9PO9YK87+jIAM0caWO3M=;
+        s=default; t=1568989594;
+        bh=PeElNlpH9IG2KF67PPPdCydzhTDeRnFOcsjPh5VrkL8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=In+/M3bpO4/U51+DtpxGp3nHgN6YY+RK63AOFB8Fxt/HGe1FRC7xCqK6InEgstu8g
-         y9ObhxMVuOrM8k0X66M2SD3IvZIOn2iSVVrY70I4qAPvyGUTLqUpWAi1/OcAcRaOu/
-         U5J5PJEv7FeTX//iSAi6RuR+g7dXQct+/DUfOKpY=
+        b=Mh1dZfF1XeaA9QaEiJ10V3cKqfZujmTXUkDxbfuw1eIuWzubZOWFCACLYNqz95E96
+         4zIDWYJkuOLJp/6njYwMKlrctrgWVHbu8OlGo24pBMGF+zG2Ej4vSxyAFf3pfbX64K
+         VpLXbGFNM8g9xijnl1+koogN8Y/3skDP8+B1VCIo=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,9 +31,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 14/31] perf event: Move perf_event__synthesize* to event.h
-Date:   Fri, 20 Sep 2019 11:25:25 -0300
-Message-Id: <20190920142542.12047-15-acme@kernel.org>
+Subject: [PATCH 15/31] perf stat: Move perf_stat_synthesize_config() to event.h
+Date:   Fri, 20 Sep 2019 11:25:26 -0300
+Message-Id: <20190920142542.12047-16-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190920142542.12047-1-acme@kernel.org>
 References: <20190920142542.12047-1-acme@kernel.org>
@@ -46,153 +46,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Where is the perf_event__handler_t typedef they need, which was the only
-reason for header.h to be including event.h, untangle that.
+Together with the other synthsizers, and rename it to
+perf_event__synthesize_stat_events().
+
+This allows us to stop including event.h in util/stat.h.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-outjyzh1o29ndcv9lsqyzt87@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-q5ebhrp44txboobs86htu5r9@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/event.h  | 36 ++++++++++++++++++++++++++++++++++
- tools/perf/util/header.h | 42 +++-------------------------------------
- 2 files changed, 39 insertions(+), 39 deletions(-)
+ tools/perf/builtin-stat.c |  4 ++--
+ tools/perf/util/event.h   |  5 +++++
+ tools/perf/util/stat.c    | 10 +++++-----
+ tools/perf/util/stat.h    |  8 ++------
+ 4 files changed, 14 insertions(+), 13 deletions(-)
 
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 5bc0c570b7b6..b55e8060810b 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -540,8 +540,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 		if (err < 0)
+ 			return err;
+ 
+-		err = perf_stat_synthesize_config(&stat_config, NULL, evsel_list,
+-						  process_synthesized_event, is_pipe);
++		err = perf_event__synthesize_stat_events(&stat_config, NULL, evsel_list,
++							 process_synthesized_event, is_pipe);
+ 		if (err < 0)
+ 			return err;
+ 	}
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 47ad81d47b1a..4e6d33c76d57 100644
+index 4e6d33c76d57..89a2404170a0 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -279,6 +279,9 @@ enum {
- 
- void perf_event__print_totals(void);
- 
-+struct evlist;
-+struct evsel;
-+struct perf_session;
- struct perf_tool;
- struct perf_thread_map;
- struct perf_cpu_map;
-@@ -290,6 +293,39 @@ typedef int (*perf_event__handler_t)(struct perf_tool *tool,
+@@ -293,6 +293,11 @@ typedef int (*perf_event__handler_t)(struct perf_tool *tool,
  				     struct perf_sample *sample,
  				     struct machine *machine);
  
-+int perf_event__synthesize_attr(struct perf_tool *tool,
-+				struct perf_event_attr *attr, u32 ids, u64 *id,
-+				perf_event__handler_t process);
-+int perf_event__synthesize_attrs(struct perf_tool *tool,
-+				 struct evlist *evlist,
-+				 perf_event__handler_t process);
-+int perf_event__synthesize_build_id(struct perf_tool *tool,
-+				    struct dso *pos, u16 misc,
-+				    perf_event__handler_t process,
-+				    struct machine *machine);
-+int perf_event__synthesize_extra_attr(struct perf_tool *tool,
-+				      struct evlist *evsel_list,
-+				      perf_event__handler_t process,
-+				      bool is_pipe);
-+int perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
-+					     struct evsel *evsel,
-+					     perf_event__handler_t process);
-+int perf_event__synthesize_event_update_name(struct perf_tool *tool,
-+					     struct evsel *evsel,
-+					     perf_event__handler_t process);
-+int perf_event__synthesize_event_update_scale(struct perf_tool *tool,
-+					      struct evsel *evsel,
-+					      perf_event__handler_t process);
-+int perf_event__synthesize_event_update_unit(struct perf_tool *tool,
-+					     struct evsel *evsel,
-+					     perf_event__handler_t process);
-+int perf_event__synthesize_features(struct perf_tool *tool,
-+				    struct perf_session *session,
-+				    struct evlist *evlist,
-+				    perf_event__handler_t process);
-+int perf_event__synthesize_tracing_data(struct perf_tool *tool,
-+					int fd, struct evlist *evlist,
-+					perf_event__handler_t process);
- int perf_event__synthesize_thread_map(struct perf_tool *tool,
- 				      struct perf_thread_map *threads,
- 				      perf_event__handler_t process,
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index 3e48ae3c49b1..999dac41871e 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -5,10 +5,10 @@
- #include <linux/stddef.h>
- #include <linux/perf_event.h>
++int perf_event__synthesize_stat_events(struct perf_stat_config *config,
++				       struct perf_tool *tool,
++				       struct evlist *evlist,
++				       perf_event__handler_t process,
++				       bool attrs);
+ int perf_event__synthesize_attr(struct perf_tool *tool,
+ 				struct perf_event_attr *attr, u32 ids, u64 *id,
+ 				perf_event__handler_t process);
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index d309c1cc13db..2e318d95c528 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -495,11 +495,11 @@ int create_perf_stat_counter(struct evsel *evsel,
+ 	return perf_evsel__open_per_thread(evsel, evsel->core.threads);
+ }
+ 
+-int perf_stat_synthesize_config(struct perf_stat_config *config,
+-				struct perf_tool *tool,
+-				struct evlist *evlist,
+-				perf_event__handler_t process,
+-				bool attrs)
++int perf_event__synthesize_stat_events(struct perf_stat_config *config,
++				       struct perf_tool *tool,
++				       struct evlist *evlist,
++				       perf_event__handler_t process,
++				       bool attrs)
+ {
+ 	int err;
+ 
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 14fe3e548229..0f9c9f6e2041 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -7,8 +7,9 @@
  #include <sys/types.h>
-+#include <stdio.h> // FILE
- #include <stdbool.h>
- #include <linux/bitmap.h>
- #include <linux/types.h>
+ #include <sys/resource.h>
+ #include "rblist.h"
 -#include "event.h"
- #include "env.h"
- #include "pmu.h"
  
-@@ -94,6 +94,8 @@ struct perf_header {
++struct perf_cpu_map;
++struct perf_stat_config;
+ struct timespec;
  
- struct evlist;
- struct perf_session;
-+struct perf_tool;
-+union perf_event;
- 
- int perf_session__read_header(struct perf_session *session);
- int perf_session__write_header(struct perf_session *session,
-@@ -115,54 +117,16 @@ int perf_header__process_sections(struct perf_header *header, int fd,
- 
- int perf_header__fprintf_info(struct perf_session *s, FILE *fp, bool full);
- 
--int perf_event__synthesize_features(struct perf_tool *tool,
--				    struct perf_session *session,
--				    struct evlist *evlist,
--				    perf_event__handler_t process);
--
--int perf_event__synthesize_extra_attr(struct perf_tool *tool,
--				      struct evlist *evsel_list,
--				      perf_event__handler_t process,
--				      bool is_pipe);
--
- int perf_event__process_feature(struct perf_session *session,
- 				union perf_event *event);
--
--int perf_event__synthesize_attr(struct perf_tool *tool,
--				struct perf_event_attr *attr, u32 ids, u64 *id,
--				perf_event__handler_t process);
--int perf_event__synthesize_attrs(struct perf_tool *tool,
--				 struct evlist *evlist,
--				 perf_event__handler_t process);
--int perf_event__synthesize_event_update_unit(struct perf_tool *tool,
--					     struct evsel *evsel,
--					     perf_event__handler_t process);
--int perf_event__synthesize_event_update_scale(struct perf_tool *tool,
--					      struct evsel *evsel,
--					      perf_event__handler_t process);
--int perf_event__synthesize_event_update_name(struct perf_tool *tool,
--					     struct evsel *evsel,
--					     perf_event__handler_t process);
--int perf_event__synthesize_event_update_cpus(struct perf_tool *tool,
--					     struct evsel *evsel,
--					     perf_event__handler_t process);
- int perf_event__process_attr(struct perf_tool *tool, union perf_event *event,
- 			     struct evlist **pevlist);
- int perf_event__process_event_update(struct perf_tool *tool,
- 				     union perf_event *event,
- 				     struct evlist **pevlist);
- size_t perf_event__fprintf_event_update(union perf_event *event, FILE *fp);
--
--int perf_event__synthesize_tracing_data(struct perf_tool *tool,
--					int fd, struct evlist *evlist,
--					perf_event__handler_t process);
- int perf_event__process_tracing_data(struct perf_session *session,
- 				     union perf_event *event);
--
--int perf_event__synthesize_build_id(struct perf_tool *tool,
--				    struct dso *pos, u16 misc,
--				    perf_event__handler_t process,
--				    struct machine *machine);
- int perf_event__process_build_id(struct perf_session *session,
- 				 union perf_event *event);
- bool is_perf_magic(u64 magic);
+ struct stats {
+@@ -210,11 +211,6 @@ size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp);
+ int create_perf_stat_counter(struct evsel *evsel,
+ 			     struct perf_stat_config *config,
+ 			     struct target *target);
+-int perf_stat_synthesize_config(struct perf_stat_config *config,
+-				struct perf_tool *tool,
+-				struct evlist *evlist,
+-				perf_event__handler_t process,
+-				bool attrs);
+ void
+ perf_evlist__print_counters(struct evlist *evlist,
+ 			    struct perf_stat_config *config,
 -- 
 2.21.0
 
