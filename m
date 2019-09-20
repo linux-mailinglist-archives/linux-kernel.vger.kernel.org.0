@@ -2,265 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABA4B95A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDE6EB959E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393672AbfITQ0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:26:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388770AbfITQ0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:26:14 -0400
-Received: from localhost.localdomain (unknown [194.230.155.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0CDE20B7C;
-        Fri, 20 Sep 2019 16:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568996773;
-        bh=4R9KksLBflgwnFwdfsbQwC8r1tkX9fJuZeOy8CTsqv8=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=dCgFewKkpqX4rKlHBWPjrweWnOFxrpMVpda07dWULGSztuddcPhf2+S/5BiGCNlw4
-         Igce0K+mZmFFgNwbslK+6J3VZaqtZctC9iij3mmsezs/z78XSCjlLcPGk6Xmm472x7
-         yTyBaiEydtF9njOlXpAc8Qgo809XKknCTU5+dTJE=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] dt-bindings: arm: samsung: Convert Exynos PMU bindings to json-schema
-Date:   Fri, 20 Sep 2019 18:26:00 +0200
-Message-Id: <20190920162600.7486-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190920162600.7486-1-krzk@kernel.org>
-References: <20190920162600.7486-1-krzk@kernel.org>
+        id S2391841AbfITQ0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:26:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35476 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388770AbfITQ0K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 12:26:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=V/m8W9O2Haha1e8N7X661vaEYz514z0rIXOBFhZpOLk=; b=hnv/JQKMMZUbM9rlNbOlzpzJC
+        qtlcxyyrm/vuodKAFzgT0jVLnvq7LNNp2LsmEUWNsBv68rQti2lb8/po6ejkC9YCAZG4ZJySAyRU5
+        OsHSGKhbmILRgR9nzkofugFn6bbDKeh7syXjThHx2CxQEXr23N3QYi5Kl8ik7bG6ybUrvSRgqTjr2
+        Jxm38V5Whlt1KBsDFOsva8FclBT3fsGqai0pRlkWwKJlr6cp45uBiC3Q5Lf4FaAMxhtZRn48ktXbJ
+        2rsT/esVMfHCrp/uX4fJS4xrh2u5aD1DJn+D+Gdb7dZchtzrURT9WouujJ3oWjKcvylDfUVM5ruf4
+        yzH/lpbmA==;
+Received: from [2601:1c0:6280:3f0::9a1f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iBLjW-0000se-9u; Fri, 20 Sep 2019 16:26:10 +0000
+Subject: Re: [GIT PULL] Kselftest update for Linux 5.4-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <be8059f4-8e8f-cd18-0978-a9c861f6396b@linuxfoundation.org>
+ <CAHk-=wgs+UoZWfHGENWSVBd57Z-Vp0Nqe68R6wkDb5zF+cfvDg@mail.gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <adea75a4-d69e-4241-caf3-84c908871fb6@infradead.org>
+Date:   Fri, 20 Sep 2019 09:26:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAHk-=wgs+UoZWfHGENWSVBd57Z-Vp0Nqe68R6wkDb5zF+cfvDg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert Samsung Exynos Power Management Unit (PMU) bindings to DT schema
-format using json-schema.
+On 9/20/19 9:17 AM, Linus Torvalds wrote:
+> On Tue, Sep 17, 2019 at 12:26 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> This Kselftest update for Linux 5.4-rc1 consists of several fixes to
+>> existing tests and adds KUnit, a lightweight unit testing and mocking
+>> framework for the Linux kernel from Brendan Higgins.
+> 
+> So I pulled this, but then I almost immediately unpulled it.
+> 
+> My reason for doing that may be odd, but it's because of the top-level
+> 'kunit' directory. This shouldn't be on the top level.
+> 
+> The reason I react so strongly is that it actually breaks my finger
+> memory. I don't type out filenames - I auto-compete them. So "kernel/"
+> is "k<tab>", "drivers/" is "d<tab>" etc.
+> 
+> It already doesn't work for everything ("mm/" is actually "mm<tab>"
+> not because we have files in the git tree, but because the build
+> creates various "module" files), but this breaks a common pattern for
+> me.
+> 
+>> In the future KUnit will be linked to Kselftest framework to provide
+>> a way to trigger KUnit tests from user-space.
+> 
+> Can the kernel parts please move to lib/kunit/ or something like that?
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Please also move the top-level Kconfig menu item "KUnit support" to
+somewhere that is not top-level.  Maybe also in the lib/ menu.  Maybe
+in lib/Kconfig.debug.
 
----
 
-Changes since v2:
-1. Use select to skip other syscon nodes,
-2. Indent example with four spaces (more readable),
-3. Use pattern for clkoutN property,
-4. Include header with clock IDs in example to bring it closer to real DTS.
-
-Changes since v1:
-1. Fix clock-names to match all elements against schema (any number of
-   any clkoutN values).
-   This currently fails:
-       properties:clock-names:items: {'enum': ['clkout0', 'clkout1', 'clkout2',
-       'clkout3', 'clkout4', 'clkout5', 'clkout6', 'clkout7', 'clkout8',
-       'clkout9', 'clkout10', 'clkout11', 'clkout12', 'clkout13', 'clkout14',
-       'clkout15', 'clkout16']} is not of type 'array
-
-2. Add syscon reboot and poweroff nodes.
----
- .../devicetree/bindings/arm/samsung/pmu.txt   |  72 ------------
- .../devicetree/bindings/arm/samsung/pmu.yaml  | 105 ++++++++++++++++++
- 2 files changed, 105 insertions(+), 72 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-deleted file mode 100644
-index 433bfd7593ac..000000000000
---- a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-+++ /dev/null
-@@ -1,72 +0,0 @@
--SAMSUNG Exynos SoC series PMU Registers
--
--Properties:
-- - compatible : should contain two values. First value must be one from following list:
--		   - "samsung,exynos3250-pmu" - for Exynos3250 SoC,
--		   - "samsung,exynos4210-pmu" - for Exynos4210 SoC,
--		   - "samsung,exynos4412-pmu" - for Exynos4412 SoC,
--		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
--		   - "samsung,exynos5260-pmu" - for Exynos5260 SoC.
--		   - "samsung,exynos5410-pmu" - for Exynos5410 SoC,
--		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
--		   - "samsung,exynos5433-pmu" - for Exynos5433 SoC.
--		   - "samsung,exynos7-pmu" - for Exynos7 SoC.
--		second value must be always "syscon".
--
-- - reg : offset and length of the register set.
--
-- - #clock-cells : must be <1>, since PMU requires once cell as clock specifier.
--		The single specifier cell is used as index to list of clocks
--		provided by PMU, which is currently:
--			0 : SoC clock output (CLKOUT pin)
--
-- - clock-names : list of clock names for particular CLKOUT mux inputs in
--		following format:
--			"clkoutN", where N is a decimal number corresponding to
--			CLKOUT mux control bits value for given input, e.g.
--				"clkout0", "clkout7", "clkout15".
--
-- - clocks : list of phandles and specifiers to all input clocks listed in
--		clock-names property.
--
--Optional properties:
--
--Some PMUs are capable of behaving as an interrupt controller (mostly
--to wake up a suspended PMU). In which case, they can have the
--following properties:
--
--- interrupt-controller: indicate that said PMU is an interrupt controller
--
--- #interrupt-cells: must be identical to the that of the parent interrupt
--  controller.
--
--
--Optional nodes:
--
--- nodes defining the restart and poweroff syscon children
--
--
--Example :
--pmu_system_controller: system-controller@10040000 {
--	compatible = "samsung,exynos5250-pmu", "syscon";
--	reg = <0x10040000 0x5000>;
--	interrupt-controller;
--	#interrupt-cells = <3>;
--	interrupt-parent = <&gic>;
--	#clock-cells = <1>;
--	clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
--			"clkout4", "clkout8", "clkout9";
--	clocks = <&clock CLK_OUT_DMC>, <&clock CLK_OUT_TOP>,
--		<&clock CLK_OUT_LEFTBUS>, <&clock CLK_OUT_RIGHTBUS>,
--		<&clock CLK_OUT_CPU>, <&clock CLK_XXTI>,
--		<&clock CLK_XUSBXTI>;
--};
--
--Example of clock consumer :
--
--usb3503: usb3503@8 {
--	/* ... */
--	clock-names = "refclk";
--	clocks = <&pmu_system_controller 0>;
--	/* ... */
--};
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-new file mode 100644
-index 000000000000..73b56fc5bf58
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-@@ -0,0 +1,105 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/samsung/pmu.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC series Power Management Unit (PMU)
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+# Custom select to avoid matching all nodes with 'syscon'
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - samsung,exynos3250-pmu
-+          - samsung,exynos4210-pmu
-+          - samsung,exynos4412-pmu
-+          - samsung,exynos5250-pmu
-+          - samsung,exynos5260-pmu
-+          - samsung,exynos5410-pmu
-+          - samsung,exynos5420-pmu
-+          - samsung,exynos5433-pmu
-+          - samsung,exynos7-pmu
-+  required:
-+    - compatible
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - samsung,exynos3250-pmu
-+          - samsung,exynos4210-pmu
-+          - samsung,exynos4412-pmu
-+          - samsung,exynos5250-pmu
-+          - samsung,exynos5260-pmu
-+          - samsung,exynos5410-pmu
-+          - samsung,exynos5420-pmu
-+          - samsung,exynos5433-pmu
-+          - samsung,exynos7-pmu
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  clock-names:
-+    description:
-+      List of clock names for particular CLKOUT mux inputs
-+    minItems: 1
-+    maxItems: 32
-+    items:
-+      pattern: '^clkout([0-9]|[12][0-9]|3[0-1])$'
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 32
-+
-+  interrupt-controller:
-+    description:
-+      Some PMUs are capable of behaving as an interrupt controller (mostly
-+      to wake up a suspended PMU).
-+
-+  '#interrupt-cells':
-+    description:
-+      Must be identical to the that of the parent interrupt controller.
-+    const: 3
-+
-+  syscon-poweroff:
-+    $ref: "../../power/reset/syscon-poweroff.yaml#"
-+    type: object
-+    description:
-+      Node for power off method
-+
-+  syscon-reboot:
-+    $ref: "../../power/reset/syscon-reboot.yaml#"
-+    type: object
-+    description:
-+      Node for reboot method
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clock-names
-+  - clocks
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5250.h>
-+
-+    pmu_system_controller: system-controller@10040000 {
-+        compatible = "samsung,exynos5250-pmu", "syscon";
-+        reg = <0x10040000 0x5000>;
-+        interrupt-controller;
-+        #interrupt-cells = <3>;
-+        interrupt-parent = <&gic>;
-+        #clock-cells = <1>;
-+        clock-names = "clkout16";
-+        clocks = <&clock CLK_FIN_PLL>;
-+    };
 -- 
-2.17.1
-
+~Randy
