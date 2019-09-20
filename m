@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ECA3B923E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB31EB92D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390911AbfITOax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:30:53 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36964 "EHLO
+        id S2392295AbfITOfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:35:51 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35980 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388424AbfITOZR (ORCPT
+        by vger.kernel.org with ESMTP id S2388097AbfITOZC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:17 -0400
+        Fri, 20 Sep 2019 10:25:02 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqT-00050v-Kp; Fri, 20 Sep 2019 15:25:13 +0100
+        id 1iBJqE-0004xz-PE; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007sQ-8D; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqD-0007rh-Di; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "kbuild test robot" <lkp@intel.com>,
-        "Liu Bo" <bo.liu@linux.alibaba.com>,
-        "Miklos Szeredi" <mszeredi@redhat.com>
+        "Mukesh Ojha" <mojha@codeaurora.org>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Julia Lawall" <Julia.Lawall@lip6.fr>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.483469251@decadent.org.uk>
+Message-ID: <lsq.1568989415.230046658@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 048/132] fuse: fallocate: fix return with locked inode
+Subject: [PATCH 3.16 039/132] powerpc/83xx: Add missing of_node_put()
+ after of_device_is_available()
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,33 +49,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-commit 35d6fcbb7c3e296a52136347346a698a35af3fda upstream.
+commit 4df2cb633b5b22ba152511f1a55e718efca6c0d9 upstream.
 
-Do the proper cleanup in case the size check fails.
+Add an of_node_put() when a tested device node is not available.
 
-Tested with xfstests:generic/228
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Fixes: 0cbade024ba5 ("fuse: honor RLIMIT_FSIZE in fuse_file_fallocate")
-Cc: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: c026c98739c7e ("powerpc/83xx: Do not configure or probe disabled FSL DR USB controllers")
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/fuse/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/83xx/usb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3021,7 +3021,7 @@ static long fuse_file_fallocate(struct f
- 	    offset + length > i_size_read(inode)) {
- 		err = inode_newsize_ok(inode, offset + length);
- 		if (err)
--			return err;
-+			goto out;
- 	}
+--- a/arch/powerpc/platforms/83xx/usb.c
++++ b/arch/powerpc/platforms/83xx/usb.c
+@@ -222,8 +222,10 @@ int mpc837x_usb_cfg(void)
+ 	int ret = 0;
  
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
+ 	np = of_find_compatible_node(NULL, NULL, "fsl-usb2-dr");
+-	if (!np || !of_device_is_available(np))
++	if (!np || !of_device_is_available(np)) {
++		of_node_put(np);
+ 		return -ENODEV;
++	}
+ 	prop = of_get_property(np, "phy_type", NULL);
+ 
+ 	if (!prop || (strcmp(prop, "ulpi") && strcmp(prop, "serial"))) {
 
