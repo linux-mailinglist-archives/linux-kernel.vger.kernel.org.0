@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00FA9B8AD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7614B8ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437359AbfITGJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 02:09:20 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57796 "EHLO huawei.com"
+        id S2394661AbfITGKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 02:10:22 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2689 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437346AbfITGJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2437343AbfITGJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Sep 2019 02:09:13 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0C91F2C3FC8B30A70B4E;
-        Fri, 20 Sep 2019 14:09:12 +0800 (CST)
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DA00D7A163A68B1A4E34;
+        Fri, 20 Sep 2019 14:09:11 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 20 Sep 2019 14:09:01 +0800
+ 14.3.439.0; Fri, 20 Sep 2019 14:09:02 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Joe Perches <joe@perches.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -32,11 +32,11 @@ To:     Joe Perches <joe@perches.com>,
         Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>,
         <linux-kernel@vger.kernel.org>
 CC:     <wangkefeng.wang@huawei.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 19/32] scsi: Use pr_warn instead of pr_warning
-Date:   Fri, 20 Sep 2019 14:25:31 +0800
-Message-ID: <20190920062544.180997-20-wangkefeng.wang@huawei.com>
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Subject: [PATCH 20/32] sh/intc: Use pr_warn instead of pr_warning
+Date:   Fri, 20 Sep 2019 14:25:32 +0800
+Message-ID: <20190920062544.180997-21-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
 References: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
@@ -54,26 +54,28 @@ As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
 pr_warning"), removing pr_warning so all logging messages use a
 consistent <prefix>_warn style. Let's do it.
 
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/scsi/a3000.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/sh/intc/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/a3000.c b/drivers/scsi/a3000.c
-index 222c77c9621f..b6a0432f305a 100644
---- a/drivers/scsi/a3000.c
-+++ b/drivers/scsi/a3000.c
-@@ -39,7 +39,7 @@ static irqreturn_t a3000_intr(int irq, void *data)
- 		spin_unlock_irqrestore(instance->host_lock, flags);
- 		return IRQ_HANDLED;
- 	}
--	pr_warning("Non-serviced A3000 SCSI-interrupt? ISTR = %02x\n", status);
-+	pr_warn("Non-serviced A3000 SCSI-interrupt? ISTR = %02x\n", status);
- 	return IRQ_NONE;
- }
+diff --git a/drivers/sh/intc/core.c b/drivers/sh/intc/core.c
+index 46f0f322d4d8..8485e812d9b2 100644
+--- a/drivers/sh/intc/core.c
++++ b/drivers/sh/intc/core.c
+@@ -100,8 +100,8 @@ static void __init intc_register_irq(struct intc_desc *desc,
+ 		primary = 1;
  
+ 	if (!data[0] && !data[1])
+-		pr_warning("missing unique irq mask for irq %d (vect 0x%04x)\n",
+-			   irq, irq2evt(irq));
++		pr_warn("missing unique irq mask for irq %d (vect 0x%04x)\n",
++			irq, irq2evt(irq));
+ 
+ 	data[0] = data[0] ? data[0] : intc_get_mask_handle(desc, d, enum_id, 1);
+ 	data[1] = data[1] ? data[1] : intc_get_prio_handle(desc, d, enum_id, 1);
 -- 
 2.20.1
 
