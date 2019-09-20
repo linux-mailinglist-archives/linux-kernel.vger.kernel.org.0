@@ -2,118 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1053B88DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 03:15:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B691B88D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 03:11:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437063AbfITBO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 21:14:57 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:47270 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390887AbfITBO4 (ORCPT
+        id S2404253AbfITBLh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 21:11:37 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:37801 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391304AbfITBLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 21:14:56 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8K1EREo029238;
-        Fri, 20 Sep 2019 01:14:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=RzT6HGN5ilPEj3ysgPyiLqhQNYwu/YsTmBPbFV7k16U=;
- b=e2fEVBQuQqGhaxn8BGbSwPLu2nDDjWRhocRSxe79g0ssyw9O0PTIn4sWvFoLnEGOp1zF
- XJOMNrTEhC92R51QFkvO/Jbsizal5XVvxkvEUeRp01ayQGr4QExoA+BkvUINKonF5EwA
- WIXhV8tVUlYEdDjCbsK1SsUXCQy7ZEkA/4hGXcycAeeb06Q7bzJht4XxGxv7AhzhaFYR
- 8SXdGTjIlfEKbhPbq/tTBfHixH+1V2HUm8ZlcVadUmMC2ti281Dc4fmtvA1k7TrT5kew
- PkMIGxAd1Kj5EqNc40zVmFjQvkHxKxmsQJKPF41V0eTQcskCq+LoZQqG7W4r5mxsH8QE pg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2v3vb57a76-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Sep 2019 01:14:29 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8K1DE3g155216;
-        Fri, 20 Sep 2019 01:14:28 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2v3vbh6mw9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Sep 2019 01:14:28 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8K1ERIj023644;
-        Fri, 20 Sep 2019 01:14:27 GMT
-Received: from [192.168.86.205] (/69.181.241.203)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Sep 2019 18:14:27 -0700
-Subject: Re: [PATCH 1/2] soc: ti: big cleanup of Kconfig file
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>
-Cc:     Olof Johansson <olof@lixom.net>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Sandeep Nair <sandeep_n@ti.com>,
-        Dave Gerlach <d-gerlach@ti.com>, Keerthy <j-keerthy@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-References: <8437a1f9-18f2-dd03-4fea-de5ba71f25c9@infradead.org>
-From:   santosh.shilimkar@oracle.com
-Organization: Oracle Corporation
-Message-ID: <97a9a11e-7784-111e-c134-ef88bd6b51ec@oracle.com>
-Date:   Thu, 19 Sep 2019 18:14:25 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.7.2
+        Thu, 19 Sep 2019 21:11:37 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190920011132epoutp028dc66d6bb8445a3072775debce7b4b16~GAFarzYGc0672306723epoutp02b
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 01:11:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190920011132epoutp028dc66d6bb8445a3072775debce7b4b16~GAFarzYGc0672306723epoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1568941892;
+        bh=NSUo9i+kQt0hNblsLn1wFiMctqsDJi8mWqdj2EhUB/c=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=tEZ6djmiLuzNJ08iFIyYdWdrmuGTjVxqY2PxWPv/2aVn6ZmdPdf6PHDbi9CLoyfoe
+         60WfbDsBuaavsCXnCUZGbQ0OjuX+T9NjrVjipM55vJecuDg6y38B5dH2IAFv15+HOQ
+         e4D8MP79yYJUjweHy2wmtuBUvPSMZssB5xxdUq04=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190920011131epcas1p485a4f11873912b5ab75f13a3366a4b52~GAFaIHwI30839608396epcas1p4Z;
+        Fri, 20 Sep 2019 01:11:31 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 46ZFzP4XWfzMqYkZ; Fri, 20 Sep
+        2019 01:11:29 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        58.32.04066.147248D5; Fri, 20 Sep 2019 10:11:29 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190920011129epcas1p297a9ecd11256e1183281f4f1a93f8056~GAFXkmkA10549505495epcas1p2d;
+        Fri, 20 Sep 2019 01:11:29 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190920011129epsmtrp15447108d2a4daf9062909e2168a83930~GAFXjyA5b2091320913epsmtrp1F;
+        Fri, 20 Sep 2019 01:11:29 +0000 (GMT)
+X-AuditID: b6c32a37-e27ff70000000fe2-bc-5d842741a964
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DE.0E.03706.047248D5; Fri, 20 Sep 2019 10:11:28 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190920011128epsmtip12d6b5f591beff0d870a25d0f030d0e19~GAFXVtxSj3257932579epsmtip15;
+        Fri, 20 Sep 2019 01:11:28 +0000 (GMT)
+Subject: Re: [PATCH v2] devfreq: Add tracepoint for frequency changes
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <62b2228b-e198-2558-2afc-e5687935742b@samsung.com>
+Date:   Fri, 20 Sep 2019 10:15:57 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <8437a1f9-18f2-dd03-4fea-de5ba71f25c9@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190919174423.105030-1-mka@chromium.org>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909200012
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9385 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909200012
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmrq6jekuswYUdyhZnlx1kszjb9Ibd
+        4vKuOWwWn3uPMFpcOrCAyeLzhseMFrcbV7BZ7Ot4wOTA4TG74SKLR8u+W+we7/ddZfPo27KK
+        0ePzJrkA1qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23
+        zBygW5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BZYFesWJucWleel6yfm5VoYG
+        BkamQIUJ2RldD5YyFbwQqpixu5GtgXErfxcjJ4eEgIlEy/NWli5GLg4hgR2MEtNO7maEcD4x
+        Skz/0cUM4XxjlHg6fRU7TEvrqTZGEFtIYC+jxPE5/BBF7xkl+s9tYgZJCAu4SmxdB9EtInCM
+        UeLmw9NgCWaBNInXj3+BTWIT0JLY/+IGG4jNL6AocfXHY7CpvAJ2Ei2PXjKB2CwCqhL9j/ey
+        gNiiAhESnx4cZoWoEZQ4OfMJWJxTwFziyMQpTBDzxSVuPZkPZctLNG+dDXaEhMBnNoknTzZA
+        veAi0XfgGQuELSzx6vgWqLiUxMv+Nii7WmLlySNsEM0djBJb9l9ghUgYS+xfOhloAwfQBk2J
+        9bv0IcKKEjt/z2WEWMwn8e5rDytIiYQAr0RHmxBEibLE5Qd3mSBsSYnF7Z1sExiVZiF5ZxaS
+        F2YheWEWwrIFjCyrGMVSC4pz01OLDQuMkaN7EyM4oWqZ72DccM7nEKMAB6MSD69CeXOsEGti
+        WXFl7iFGCQ5mJRHeOaZNsUK8KYmVValF+fFFpTmpxYcYTYGhPZFZSjQ5H5js80riDU2NjI2N
+        LUwMzUwNDZXEeT3SG2KFBNITS1KzU1MLUotg+pg4OKUaGHOElt0P41z13VYw/OxBPXUTjVcs
+        qVyLDX/ftl5//V5F97/Q9Vde7GvtniATet1j4wHxlif2E48vuvk9yktBde+XK1u0dyu+7bcp
+        ZZ7G/3Hqtzl8Hurb3z+qfbwtfN7O9xyy/4OkPvbuC4t9OvXcf1eP+EMrJnWbGt7OFLz3mstb
+        LvzquTvnytKUWIozEg21mIuKEwH1AM6pvgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsWy7bCSnK6DekuswY8VVhZnlx1kszjb9Ibd
+        4vKuOWwWn3uPMFpcOrCAyeLzhseMFrcbV7BZ7Ot4wOTA4TG74SKLR8u+W+we7/ddZfPo27KK
+        0ePzJrkA1igum5TUnMyy1CJ9uwSujK4HS5kKXghVzNjdyNbAuJW/i5GTQ0LARKL1VBtjFyMX
+        h5DAbkaJu9/+MkIkJCWmXTzK3MXIAWQLSxw+XAxR85ZR4uK8P+wgNcICrhJb13Uxg9giAicY
+        JQ78ZAKxmQXSJDYs38cO0dDFKLH20FqwBJuAlsT+FzfYQGx+AUWJqz8egy3jFbCTaHn0EqyG
+        RUBVov/xXhYQW1QgQuLwjllQNYISJ2c+AYtzCphLHJk4BWqZusSfeZeYIWxxiVtP5kPF5SWa
+        t85mnsAoPAtJ+ywkLbOQtMxC0rKAkWUVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZw
+        ZGlp7mC8vCT+EKMAB6MSD69CeXOsEGtiWXFl7iFGCQ5mJRHeOaZNsUK8KYmVValF+fFFpTmp
+        xYcYpTlYlMR5n+YdixQSSE8sSc1OTS1ILYLJMnFwSjUwZj6bM9k4pzXytFlxWWPa3T+H1pvq
+        Bqzp+XDdtLD3+mIZHmPJv0sZrB8ed5D7u2nrqZT5jVpxXYvtovztHTw8LqcGLVojJO/aFdlh
+        qq0pXhjqtuy+TTXrh0CuB1u2Kk/tSL6s9kjt8y2xpA+BZe6PnV6c3iR+3r/1dfAKzzOcjUrH
+        j6yu6J+vxFKckWioxVxUnAgAVlpu96gCAAA=
+X-CMS-MailID: 20190920011129epcas1p297a9ecd11256e1183281f4f1a93f8056
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190919174436epcas4p17bf0528950813d3326237fcc56fd9b21
+References: <CGME20190919174436epcas4p17bf0528950813d3326237fcc56fd9b21@epcas4p1.samsung.com>
+        <20190919174423.105030-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/19/19 3:33 PM, Randy Dunlap wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+Hi,
+
+On 19. 9. 20. 오전 2:44, Matthias Kaehlcke wrote:
+> Add a tracepoint for frequency changes of devfreq devices and
+> use it.
 > 
-> Cleanup drivers/soc/ti/Kconfig:
-> - delete duplicate words
-> - end sentences with '.'
-> - fix typos/spellos
-> - Subsystem is one word
-> - capitalize acronyms
-> - reflow lines to be <= 80 columns
-> 
-> Fixes: 41f93af900a2 ("soc: ti: add Keystone Navigator QMSS driver")
-> Fixes: 88139ed03058 ("soc: ti: add Keystone Navigator DMA support")
-> Fixes: afe761f8d3e9 ("soc: ti: Add pm33xx driver for basic suspend support")
-> Fixes: 5a99ae0092fe ("soc: ti: pm33xx: AM437X: Add rtc_only with ddr in self-refresh support")
-> Fixes: a869b7b30dac ("soc: ti: Add Support for AM654 SoC config option")
-> Fixes: cff377f7897a ("soc: ti: Add Support for J721E SoC config option")
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Santosh Shilimkar <ssantosh@kernel.org>
-> Cc: Sandeep Nair <sandeep_n@ti.com>
-> Cc: Dave Gerlach <d-gerlach@ti.com>
-> Cc: Keerthy <j-keerthy@ti.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
-> @Santosh: MAINTAINERS says that you maintain drivers/soc/ti/*,
-> but there is more that Keystone-related code in that subdirectory
-> now... just in case you want to update that info.
->
-Yes am aware there more drivers and so far I have been taking
-care of everything in drivers/soc/ti/*
-
->   drivers/soc/ti/Kconfig |   20 ++++++++++----------
->   1 file changed, 10 insertions(+), 10 deletions(-)
+> (sending v2 without much delay wrt v1, since the change in devfreq
+>  probably isn't controversial, and I'll be offline a few days)
 > 
-Patch looks fine to me. Do you want me to pick this up ?
+> Changes in v2:
+> - included trace_devfreq_frequency_enabled() in the condition
+>   to avoid unnecessary evaluation when the trace point is
+>   disabled
+> ---
+>  drivers/devfreq/devfreq.c      |  3 +++
+>  include/trace/events/devfreq.h | 18 ++++++++++++++++++
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index ab22bf8a12d6..e9f04dcafb01 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -317,6 +317,9 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>  
+>  	devfreq->previous_freq = new_freq;
+>  
+> +	if (trace_devfreq_frequency_enabled() && new_freq != cur_freq)
+> +		trace_devfreq_frequency(devfreq, new_freq);
 
+You can change as following without 'new_freq' variable
+because devfreq->previous_freq is the new frequency.	
+	trace_devfreq_frequency(devfreq);
+
+> +
+>  	if (devfreq->suspend_freq)
+>  		devfreq->resume_freq = cur_freq;
+>  
+> diff --git a/include/trace/events/devfreq.h b/include/trace/events/devfreq.h
+> index cf5b8772175d..a62d32fe3c33 100644
+> --- a/include/trace/events/devfreq.h
+> +++ b/include/trace/events/devfreq.h
+> @@ -8,6 +8,24 @@
+>  #include <linux/devfreq.h>
+>  #include <linux/tracepoint.h>
+>  
+> +TRACE_EVENT(devfreq_frequency,
+> +	TP_PROTO(struct devfreq *devfreq, unsigned long freq),
+
+'unsigned long freq' parameter is not necessary.
+
+> +
+> +	TP_ARGS(devfreq, freq),
+> +
+> +	TP_STRUCT__entry(
+> +		__string(dev_name, dev_name(&devfreq->dev))
+> +		__field(unsigned long, freq)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__assign_str(dev_name, dev_name(&devfreq->dev));
+> +		__entry->freq = freq;
+
+Initialize the new frequency with 'devfreq->previous_freq' as following:
+
+		__entry->freq = devfreq->previous_freq;
+
+> +	),
+> +
+> +	TP_printk("dev_name=%s freq=%lu", __get_str(dev_name), __entry->freq)
+> +);
+> +
+>  TRACE_EVENT(devfreq_monitor,
+>  	TP_PROTO(struct devfreq *devfreq),
+>  
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
