@@ -2,105 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16DB7B8FFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C33E8B9003
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfITMum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 08:50:42 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41546 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfITMul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 08:50:41 -0400
-Received: by mail-qk1-f193.google.com with SMTP id p10so7140965qkg.8
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 05:50:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2hQDTQjnSsW1VsG1oz7/x04n4JF0426dRW41K9FNadk=;
-        b=ijzzmZ3nvF7W4G6FRYIveg83+VVXhZ1mbySwLz7P7vjbMH20YscYZLMa6yQ1Ei211J
-         rauPw9Bs3NzG3FilFYH4usejb8l+vmPvaElVOhJAnFRWMrLoV0Awdey55Jm0QEJdgN+7
-         4Pf3qhjAAVCv5g9GQovJ3UeJ3u7wLUaKGFQ85WtB8st4NoUKy9RWRdsaBTxMNzD1c01P
-         e4c3briubZW7NQ8e9ltVbNKymhKjonZIDtBC5u4xkTxnNeKdY07M9/jPQTmjSzBGSunV
-         OQaVqjiO1QXuxaypDk1MoJvp1JEAkFkjdTdHEAIWj720NGgurgqKPGGQsEa8yt+JrfkU
-         IJhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2hQDTQjnSsW1VsG1oz7/x04n4JF0426dRW41K9FNadk=;
-        b=Y5ltb67dpvcT4vHw2iuLYPkYm18+czdqAvWl4gHx10RFSEtzpcVLz3Gl7f9fmiDPF+
-         f4tmO54AlrDqPVWGRSpkV6VraOfceOGr1Pl23VZ5PcWdxl9hrr6YBLOyoxqPbPNouG1W
-         rnxVZ+NdRMw5SsOZYxRRSXIh/+igChIStL/qUzCf9wuw1QxnxXvqskULMll16864zeni
-         SQG/OETfu5mgRQf3zuuB1bdVY3eCRpkMsYkkjgpwkpJ3aJCVU2z4aqZnMIwHrKA2DUSs
-         cFAKsYforaqMG3uay6bshGXvGTtDomX9uHwsEc2R1b3j9liohedxkeqx41+X3F6oeY0z
-         J6Gg==
-X-Gm-Message-State: APjAAAX8fFP19imSAqYQ6CAGekl1T7gLSSggs1YDLTpmOh/pTorKfOVl
-        un43AITyHfiIDanGUslAcXLbbg==
-X-Google-Smtp-Source: APXvYqznecK3jhF+TBvYQOTZsoN72Wk/TTjLaioqEkVwBlAC/rb6eqpqbrFQUgdUDhneH2y8w9Ptrg==
-X-Received: by 2002:a37:a9c1:: with SMTP id s184mr3481758qke.360.1568983840132;
-        Fri, 20 Sep 2019 05:50:40 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a11sm931585qkc.123.2019.09.20.05.50.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Sep 2019 05:50:38 -0700 (PDT)
-Message-ID: <1568983836.5576.194.camel@lca.pw>
-Subject: Re: [PATCH -next] treewide: remove unused argument in lock_release()
-From:   Qian Cai <cai@lca.pw>
-To:     Will Deacon <will@kernel.org>, torvalds@linux-foundation.org
-Cc:     ast@kernel.org, akpm@linux-foundation.org, mingo@redhat.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, sean@poorly.run, airlied@linux.ie,
-        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        gregkh@linuxfoundation.org, jslaby@suse.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, tytso@mit.edu, jack@suse.com,
-        linux-ext4@vger.kernel.org, tj@kernel.org, mark@fasheh.com,
-        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
-        ocfs2-devel@oss.oracle.com, davem@davemloft.net,
-        daniel@iogearbox.net, netdev@vger.kernel.org, bpf@vger.kernel.org,
-        duyuyang@gmail.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, hannes@cmpxchg.org, mhocko@kernel.org,
-        vdavydov.dev@gmail.com, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, alexander.levin@microsoft.com
-Date:   Fri, 20 Sep 2019 08:50:36 -0400
-In-Reply-To: <20190920093700.7nfaghxdrmubp2do@willie-the-truck>
-References: <1568909380-32199-1-git-send-email-cai@lca.pw>
-         <20190920093700.7nfaghxdrmubp2do@willie-the-truck>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
+        id S1726618AbfITMwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 08:52:50 -0400
+Received: from foss.arm.com ([217.140.110.172]:44314 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726223AbfITMwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 08:52:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D67D1570;
+        Fri, 20 Sep 2019 05:52:49 -0700 (PDT)
+Received: from [192.168.2.253] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19D783F67D;
+        Fri, 20 Sep 2019 05:52:46 -0700 (PDT)
+Subject: Re: [PATCH] sched: rt: Make RT capacity aware
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Alessio Balsini <balsini@android.com>,
+        linux-kernel@vger.kernel.org
+References: <20190903103329.24961-1-qais.yousef@arm.com>
+ <20190904072524.09de28aa@oasis.local.home>
+ <20190904154052.ygbhtduzkfj3xs5d@e107158-lin.cambridge.arm.com>
+ <f25c1f61-f246-22c7-e627-4c4d39301af2@arm.com>
+ <20190918145233.kgntor5nb2gmnczd@e107158-lin.cambridge.arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <d307c2f6-f16c-4e9e-0476-91d49d115480@arm.com>
+Date:   Fri, 20 Sep 2019 14:52:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190918145233.kgntor5nb2gmnczd@e107158-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-09-20 at 10:38 +0100, Will Deacon wrote:
-> On Thu, Sep 19, 2019 at 12:09:40PM -0400, Qian Cai wrote:
-> > Since the commit b4adfe8e05f1 ("locking/lockdep: Remove unused argument
-> > in __lock_release"), @nested is no longer used in lock_release(), so
-> > remove it from all lock_release() calls and friends.
-> > 
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> > ---
+On 9/18/19 4:52 PM, Qais Yousef wrote:
+> On 09/13/19 14:30, Dietmar Eggemann wrote:
+>> On 9/4/19 4:40 PM, Qais Yousef wrote:
+>>> On 09/04/19 07:25, Steven Rostedt wrote:
+>>>> On Tue,  3 Sep 2019 11:33:29 +0100
+>>>> Qais Yousef <qais.yousef@arm.com> wrote:
+
+[...]
+
+>> On a big.LITTLE system (6 CPUs with [446 1024 1024 446 466 466] CPU
+>> capacity vector) I try to trace the handling of the 3rd big task
+>> (big2-2, util_min: 800, util_max: 1024) of an rt-app workload running 3
+>> of them.
+>>
+>> rt_task_fits_capacity() call in:
+>>
+>> tag 1: select_task_rq_rt(), 3-7: 1st till 5th in find_lowest_rq()
+>>
+>> [   37.505325] rt_task_fits_capacity: CPU3 tag=1 [big2-2 285] ret=0
+>> [   37.505882] find_lowest_rq: CPU3 [big2-2 285] tag=1 find_lowest_rq
+>> [   37.506509] CPU3 [big2-2 285] lowest_mask=0,3-5
+>> [   37.507971] rt_task_fits_capacity: CPU3 tag=3 [big2-2 285] ret=0
+>> [   37.508200] rt_task_fits_capacity: CPU3 tag=4 [big2-2 285] ret=0
+>> [   37.509486] rt_task_fits_capacity: CPU0 tag=5 [big2-2 285] ret=0
+>> [   37.510191] rt_task_fits_capacity: CPU3 tag=5 [big2-2 285] ret=0
+>> [   37.511334] rt_task_fits_capacity: CPU4 tag=5 [big2-2 285] ret=0
+>> [   37.512194] rt_task_fits_capacity: CPU5 tag=5 [big2-2 285] ret=0
+>> [   37.513210] rt_task_fits_capacity: CPU0 tag=6 [big2-2 285] ret=0
+>> [   37.514085] rt_task_fits_capacity: CPU3 tag=7 [big2-2 285] ret=0
+>> [   37.514732] --> select_task_rq_rt: CPU3 [big2-2 285] cpu=0
+>>
+>> Since CPU 0,3-5 can't run big2-2, it takes up to the test that the
+>> fitness hasn't changed. In case a capacity-aware (with fallback CPU)
+>> cpupri_find() would have returned a suitable lowest_mask, less work
+>> would have been needed.
 > 
-> Although this looks fine to me at a first glance, it might be slightly
-> easier to manage if you hit {spin,rwlock,seqcount,mutex,rwsem}_release()
-> first with coccinelle scripts, and then hack lock_release() as a final
-> patch. That way it's easy to regenerate things if needed.
+> rt_task_fits_capacity() is inlined and I'd expect all the data it accesses to
+> be cache hot, so it should be fast.
 
-I am not sure if it worth the extra efforts where I have to retest it on all
-architectures, and the patch is really simple, but I can certainly do that if
-you insist.
+My concern is not so much runtime but maintenance of the new code. We
+want to integrate a feature 'Asymmetric CPU capacity support' in RT and
+DL sched class which have the same overall design (DL was copied from
+RT). IMHO, the new feature 'Asymmetric CPU capacity support' has to be
+integrated the same way (if possible) to let people understand the
+related code easily.
 
-I have just confirmed the patch [1] also applied correctly to the latest
-mainline, so it might be the best time just for Linus to merge it directly so it
-does not introduce build errors later on?
+> I had 2 concerns with using cpupri_find()
+> 
+> 	1. find_lowest_rq() is not the only user
 
-[1]
+But the only one calling it with lowest_mask != NULL (like for DL
+find_later_rq() is the only one calling cpudl_find() with later_mask !=
+NULL.
 
-https://lore.kernel.org/lkml/1568909380-32199-1-git-send-email-cai@lca.pw/
+> 	2. The fallback mechanism means we either have to call cpupri_find()
+> 	   twice once to find filtered lowest_rq and the other to return the
+> 	   none filtered version.
+
+This is what I have in mind. (Only compile tested! ... and the 'if
+(cpumask_any(lowest_mask) >= nr_cpu_ids)' condition has to be considered
+as well):
+
+@@ -98,8 +103,26 @@ int cpupri_find(struct cpupri *cp, struct
+task_struct *p,
+                        continue;
+
+                if (lowest_mask) {
++                       int cpu, max_cap_cpu = -1;
++                       unsigned long max_cap = 0;
++
+                        cpumask_and(lowest_mask, p->cpus_ptr, vec->mask);
+
++                       for_each_cpu(cpu, lowest_mask) {
++                               unsigned long cap =
+arch_scale_cpu_capacity(cpu);
++
++                               if (!rt_task_fits_capacity(p, cpu))
++                                       cpumask_clear_cpu(cpu, lowest_mask);
++
++                               if (cap > max_cap) {
++                                       max_cap = cap;
++                                       max_cap_cpu = cpu;
++                               }
++                       }
++
++                       if (cpumask_empty(lowest_mask) && max_cap)
++                               cpumask_set_cpu(max_cap_cpu, lowest_mask);
++
+
+[...]
+
+>> I can't see the
+>>
+>> for_each_domain(cpu, sd) {
+>> 	for_each_cpu_and(best_cpu, lowest_mask, sched_domain_span(sd)) {
+>>                 ...
+>> 	}
+>> }
+>>
+>> other than we want to pick a CPU from the lowest_mask first which is
+>> closer to task_cpu(task).
+>>
+>> Qemu doesn't give me cluster:
+>>
+>> # cat /proc/sys/kernel/sched_domain/cpu0/domain*/name
+>> MC
+> 
+> I'm not sure I get what you're trying to get at here. Can you please elaborate
+> more?
+
+I was referring to this for each scheduler domain snippet:
+
+for_each_domain(cpu, sd) {
+
+}
+
+this would first look for a best_cpu in MC and then in DIE level in the
+original code. I remember that Steven asked about the for_each_cpu_and()
+you introduced here.
+But in case you can test the idea of introducing the changes in
+cpupri_find() you won't have to worry about this anymore.
+
+[...]
