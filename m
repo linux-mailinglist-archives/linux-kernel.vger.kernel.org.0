@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F608B9966
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAAFEB9965
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730537AbfITV40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 17:56:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46958 "EHLO mail.kernel.org"
+        id S1730519AbfITV4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 17:56:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730292AbfITV4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730459AbfITV4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Sep 2019 17:56:23 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6004B208C0;
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FC5420B7C;
         Fri, 20 Sep 2019 21:56:22 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iBQt3-0005HN-IT; Fri, 20 Sep 2019 17:56:21 -0400
-Message-Id: <20190920215621.437066593@goodmis.org>
+        id 1iBQt3-0005Ht-NB; Fri, 20 Sep 2019 17:56:21 -0400
+Message-Id: <20190920215621.597676075@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Sep 2019 17:53:12 -0400
+Date:   Fri, 20 Sep 2019 17:53:13 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -31,8 +31,10 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
-Subject: [RFC][PATCH RT 1/7] revert-aio
+        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com,
+        Mike Galbraith <umgwanakikbuti@gmail.com>,
+        Benjamin LaHaise <bcrl@kvack.org>
+Subject: [RFC][PATCH RT 2/7] fs/aio: simple simple work
 References: <20190920215311.165260719@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -41,67 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-revert: fs/aio: simple simple work
+[ Upstream commit 1a142116f6435ef070ecebb66d2d599507c10601 ]
 
+|BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:768
+|in_atomic(): 1, irqs_disabled(): 0, pid: 26, name: rcuos/2
+|2 locks held by rcuos/2/26:
+| #0:  (rcu_callback){.+.+..}, at: [<ffffffff810b1a12>] rcu_nocb_kthread+0x1e2/0x380
+| #1:  (rcu_read_lock_sched){.+.+..}, at: [<ffffffff812acd26>] percpu_ref_kill_rcu+0xa6/0x1c0
+|Preemption disabled at:[<ffffffff810b1a93>] rcu_nocb_kthread+0x263/0x380
+|Call Trace:
+| [<ffffffff81582e9e>] dump_stack+0x4e/0x9c
+| [<ffffffff81077aeb>] __might_sleep+0xfb/0x170
+| [<ffffffff81589304>] rt_spin_lock+0x24/0x70
+| [<ffffffff811c5790>] free_ioctx_users+0x30/0x130
+| [<ffffffff812ace34>] percpu_ref_kill_rcu+0x1b4/0x1c0
+| [<ffffffff810b1a93>] rcu_nocb_kthread+0x263/0x380
+| [<ffffffff8106e046>] kthread+0xd6/0xf0
+| [<ffffffff81591eec>] ret_from_fork+0x7c/0xb0
+
+replace this preempt_disable() friendly swork.
+
+Reported-By: Mike Galbraith <umgwanakikbuti@gmail.com>
+Suggested-by: Benjamin LaHaise <bcrl@kvack.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- fs/aio.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+ fs/aio.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/fs/aio.c b/fs/aio.c
-index 16dcf8521c2c..911e23087dfb 100644
+index 911e23087dfb..0c613d805bf1 100644
 --- a/fs/aio.c
 +++ b/fs/aio.c
-@@ -42,7 +42,6 @@
- #include <linux/ramfs.h>
- #include <linux/percpu-refcount.h>
- #include <linux/mount.h>
--#include <linux/swork.h>
- 
- #include <asm/kmap_types.h>
- #include <linux/uaccess.h>
-@@ -122,7 +121,6 @@ struct kioctx {
+@@ -121,6 +121,7 @@ struct kioctx {
  	long			nr_pages;
  
  	struct rcu_work		free_rwork;	/* see free_ioctx() */
--	struct swork_event	free_swork;	/* see free_ioctx() */
++	struct kthread_work	free_kwork;	/* see free_ioctx() */
  
  	/*
  	 * signals when all in-flight requests are done
-@@ -267,7 +265,6 @@ static int __init aio_setup(void)
- 		.mount		= aio_mount,
- 		.kill_sb	= kill_anon_super,
- 	};
--	BUG_ON(swork_get());
- 	aio_mnt = kern_mount(&aio_fs);
- 	if (IS_ERR(aio_mnt))
- 		panic("Failed to create aio fs mount.");
-@@ -609,9 +606,9 @@ static void free_ioctx_reqs(struct percpu_ref *ref)
+@@ -606,9 +607,9 @@ static void free_ioctx_reqs(struct percpu_ref *ref)
   * and ctx->users has dropped to 0, so we know no more kiocbs can be submitted -
   * now it's safe to cancel any that need to be.
   */
--static void free_ioctx_users_work(struct swork_event *sev)
-+static void free_ioctx_users(struct percpu_ref *ref)
+-static void free_ioctx_users(struct percpu_ref *ref)
++static void free_ioctx_users_work(struct kthread_work *work)
  {
--	struct kioctx *ctx = container_of(sev, struct kioctx, free_swork);
-+	struct kioctx *ctx = container_of(ref, struct kioctx, users);
+-	struct kioctx *ctx = container_of(ref, struct kioctx, users);
++	struct kioctx *ctx = container_of(work, struct kioctx, free_kwork);
  	struct aio_kiocb *req;
  
  	spin_lock_irq(&ctx->ctx_lock);
-@@ -629,14 +626,6 @@ static void free_ioctx_users_work(struct swork_event *sev)
+@@ -626,6 +627,14 @@ static void free_ioctx_users(struct percpu_ref *ref)
  	percpu_ref_put(&ctx->reqs);
  }
  
--static void free_ioctx_users(struct percpu_ref *ref)
--{
--	struct kioctx *ctx = container_of(ref, struct kioctx, users);
--
--	INIT_SWORK(&ctx->free_swork, free_ioctx_users_work);
--	swork_queue(&ctx->free_swork);
--}
--
++static void free_ioctx_users(struct percpu_ref *ref)
++{
++	struct kioctx *ctx = container_of(ref, struct kioctx, users);
++
++	kthread_init_work(&ctx->free_kwork, free_ioctx_users_work);
++	kthread_schedule_work(&ctx->free_kwork);
++}
++
  static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
  {
  	unsigned i, new_nr;
