@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2711BB9234
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14BDDB92A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390741AbfITOa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:30:29 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36946 "EHLO
+        id S2391703AbfITOe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:34:29 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36334 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388418AbfITOZR (ORCPT
+        by vger.kernel.org with ESMTP id S2388234AbfITOZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:17 -0400
+        Fri, 20 Sep 2019 10:25:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqU-0004y2-44; Fri, 20 Sep 2019 15:25:14 +0100
+        id 1iBJqL-00051H-2x; Fri, 20 Sep 2019 15:25:05 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007sL-50; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqH-0007yr-DA; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Miklos Szeredi" <mszeredi@redhat.com>,
-        "Liu Bo" <bo.liu@linux.alibaba.com>
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.97143488@decadent.org.uk>
+Message-ID: <lsq.1568989415.716175846@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 047/132] fuse: honor RLIMIT_FSIZE in fuse_file_fallocate
+Subject: [PATCH 3.16 120/132] media: smsusb: better handle optional alignment
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,37 +47,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Liu Bo <bo.liu@linux.alibaba.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit 0cbade024ba501313da3b7e5dd2a188a6bc491b5 upstream.
+commit a47686636d84eaec5c9c6e84bd5f96bed34d526d upstream.
 
-fstests generic/228 reported this failure that fuse fallocate does not
-honor what 'ulimit -f' has set.
+Most Siano devices require an alignment for the response.
 
-This adds the necessary inode_newsize_ok() check.
+Changeset f3be52b0056a ("media: usb: siano: Fix general protection fault in smsusb")
+changed the logic with gets such aligment, but it now produces a
+sparce warning:
 
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
-Fixes: 05ba1f082300 ("fuse: add FALLOCATE operation")
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+drivers/media/usb/siano/smsusb.c: In function 'smsusb_init_device':
+drivers/media/usb/siano/smsusb.c:447:37: warning: 'in_maxp' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  447 |   dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
+      |                             ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The sparse message itself is bogus, but a broken (or fake) USB
+eeprom could produce a negative value for response_alignment.
+
+So, change the code in order to check if the result is not
+negative.
+
+Fixes: 31e0456de5be ("media: usb: siano: Fix general protection fault in smsusb")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/fuse/file.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/media/usb/siano/smsusb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -3017,6 +3017,13 @@ static long fuse_file_fallocate(struct f
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -359,7 +359,7 @@ static int smsusb_init_device(struct usb
+ 	struct smsdevice_params_t params;
+ 	struct smsusb_device_t *dev;
+ 	int i, rc;
+-	int in_maxp = 0;
++	int align = 0;
+ 
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+@@ -379,14 +379,14 @@ static int smsusb_init_device(struct usb
+ 
+ 		if (desc->bEndpointAddress & USB_DIR_IN) {
+ 			dev->in_ep = desc->bEndpointAddress;
+-			in_maxp = usb_endpoint_maxp(desc);
++			align = usb_endpoint_maxp(desc) - sizeof(struct sms_msg_hdr);
+ 		} else {
+ 			dev->out_ep = desc->bEndpointAddress;
  		}
  	}
  
-+	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
-+	    offset + length > i_size_read(inode)) {
-+		err = inode_newsize_ok(inode, offset + length);
-+		if (err)
-+			return err;
-+	}
-+
- 	if (!(mode & FALLOC_FL_KEEP_SIZE))
- 		set_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
+ 	pr_debug("in_ep = %02x, out_ep = %02x\n", dev->in_ep, dev->out_ep);
+-	if (!dev->in_ep || !dev->out_ep) {	/* Missing endpoints? */
++	if (!dev->in_ep || !dev->out_ep || align < 0) {  /* Missing endpoints? */
+ 		smsusb_term_device(intf);
+ 		return -ENODEV;
+ 	}
+@@ -405,7 +405,7 @@ static int smsusb_init_device(struct usb
+ 		/* fall-thru */
+ 	default:
+ 		dev->buffer_size = USB2_BUFFER_SIZE;
+-		dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
++		dev->response_alignment = align;
  
+ 		params.flags |= SMS_DEVICE_FAMILY2;
+ 		break;
 
