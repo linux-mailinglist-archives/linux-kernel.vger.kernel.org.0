@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD69B92E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E58CB9319
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391891AbfITOgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:36:09 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35858 "EHLO
+        id S2392845AbfITOhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:37:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35784 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388063AbfITOZB (ORCPT
+        by vger.kernel.org with ESMTP id S2388032AbfITOZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:01 -0400
+        Fri, 20 Sep 2019 10:25:00 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0004xy-Pd; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqD-0004xB-VW; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0007rl-I0; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqD-0007r8-1Z; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Sakari Ailus" <sakari.ailus@linux.intel.com>
+        "Guenter Roeck" <linux@roeck-us.net>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.894816342@decadent.org.uk>
+Message-ID: <lsq.1568989415.512197110@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 040/132] media: ov6650: Fix sensor possibly not
- detected on probe
+Subject: [PATCH 3.16 032/132] hwmon: (w83627hf) Use request_muxed_region
+ for Super-IO accesses
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,45 +47,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit 933c1320847f5ed6b61a7d10f0a948aa98ccd7b0 upstream.
+commit e95fd518d05bfc087da6fcdea4900a57cfb083bd upstream.
 
-After removal of clock_start() from before soc_camera_init_i2c() in
-soc_camera_probe() by commit 9aea470b399d ("[media] soc-camera: switch
-I2C subdevice drivers to use v4l2-clk") introduced in v3.11, the ov6650
-driver could no longer probe the sensor successfully because its clock
-was no longer turned on in advance.  The issue was initially worked
-around by adding that missing clock_start() equivalent to OMAP1 camera
-interface driver - the only user of this sensor - but a propoer fix
-should be rather implemented in the sensor driver code itself.
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-Fix the issue by inserting a delay between the clock is turned on and
-the sensor I2C registers are read for the first time.
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
 
-Tested on Amstrad Delta with now out of tree but still locally
-maintained omap1_camera host driver.
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple drivers
+is synchronized.
 
-Fixes: 9aea470b399d ("[media] soc-camera: switch I2C subdevice drivers to use v4l2-clk")
-
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-[bwh: Backported to 3.16: adjust filename]
+Fixes: b72656dbc491 ("hwmon: (w83627hf) Stop using globals for I/O port numbers")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/i2c/soc_camera/ov6650.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hwmon/w83627hf.c | 42 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 37 insertions(+), 5 deletions(-)
 
---- a/drivers/media/i2c/soc_camera/ov6650.c
-+++ b/drivers/media/i2c/soc_camera/ov6650.c
-@@ -829,6 +829,8 @@ static int ov6650_video_probe(struct i2c
- 	if (ret < 0)
- 		return ret;
+--- a/drivers/hwmon/w83627hf.c
++++ b/drivers/hwmon/w83627hf.c
+@@ -130,17 +130,23 @@ superio_select(struct w83627hf_sio_data
+ 	outb(ld,  sio->sioaddr + 1);
+ }
  
-+	msleep(20);
+-static inline void
++static inline int
+ superio_enter(struct w83627hf_sio_data *sio)
+ {
++	if (!request_muxed_region(sio->sioaddr, 2, DRVNAME))
++		return -EBUSY;
 +
- 	/*
- 	 * check and show product ID and manufacturer ID
- 	 */
+ 	outb(0x87, sio->sioaddr);
+ 	outb(0x87, sio->sioaddr);
++
++	return 0;
+ }
+ 
+ static inline void
+ superio_exit(struct w83627hf_sio_data *sio)
+ {
+ 	outb(0xAA, sio->sioaddr);
++	release_region(sio->sioaddr, 2);
+ }
+ 
+ #define W627_DEVID 0x52
+@@ -1273,7 +1279,7 @@ static DEVICE_ATTR(name, S_IRUGO, show_n
+ static int __init w83627hf_find(int sioaddr, unsigned short *addr,
+ 				struct w83627hf_sio_data *sio_data)
+ {
+-	int err = -ENODEV;
++	int err;
+ 	u16 val;
+ 
+ 	static __initconst char *const names[] = {
+@@ -1285,7 +1291,11 @@ static int __init w83627hf_find(int sioa
+ 	};
+ 
+ 	sio_data->sioaddr = sioaddr;
+-	superio_enter(sio_data);
++	err = superio_enter(sio_data);
++	if (err)
++		return err;
++
++	err = -ENODEV;
+ 	val = force_id ? force_id : superio_inb(sio_data, DEVID);
+ 	switch (val) {
+ 	case W627_DEVID:
+@@ -1639,9 +1649,21 @@ static int w83627thf_read_gpio5(struct p
+ 	struct w83627hf_sio_data *sio_data = dev_get_platdata(&pdev->dev);
+ 	int res = 0xff, sel;
+ 
+-	superio_enter(sio_data);
++	if (superio_enter(sio_data)) {
++		/*
++		 * Some other driver reserved the address space for itself.
++		 * We don't want to fail driver instantiation because of that,
++		 * so display a warning and keep going.
++		 */
++		dev_warn(&pdev->dev,
++			 "Can not read VID data: Failed to enable SuperIO access\n");
++		return res;
++	}
++
+ 	superio_select(sio_data, W83627HF_LD_GPIO5);
+ 
++	res = 0xff;
++
+ 	/* Make sure these GPIO pins are enabled */
+ 	if (!(superio_inb(sio_data, W83627THF_GPIO5_EN) & (1<<3))) {
+ 		dev_dbg(&pdev->dev, "GPIO5 disabled, no VID function\n");
+@@ -1672,7 +1694,17 @@ static int w83687thf_read_vid(struct pla
+ 	struct w83627hf_sio_data *sio_data = dev_get_platdata(&pdev->dev);
+ 	int res = 0xff;
+ 
+-	superio_enter(sio_data);
++	if (superio_enter(sio_data)) {
++		/*
++		 * Some other driver reserved the address space for itself.
++		 * We don't want to fail driver instantiation because of that,
++		 * so display a warning and keep going.
++		 */
++		dev_warn(&pdev->dev,
++			 "Can not read VID data: Failed to enable SuperIO access\n");
++		return res;
++	}
++
+ 	superio_select(sio_data, W83627HF_LD_HWM);
+ 
+ 	/* Make sure these GPIO pins are enabled */
 
