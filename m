@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 913AEB8AE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C73AB8AE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:10:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394763AbfITGKp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 02:10:45 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57872 "EHLO huawei.com"
+        id S2437336AbfITGJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 02:09:11 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2687 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437280AbfITGJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 02:09:04 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C1A257DC74FEADF82FF1;
+        id S2437288AbfITGJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 02:09:05 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id DE8A493773930587732F;
         Fri, 20 Sep 2019 14:09:01 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 20 Sep 2019 14:08:51 +0800
+ 14.3.439.0; Fri, 20 Sep 2019 14:08:52 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Joe Perches <joe@perches.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -31,13 +31,10 @@ To:     Joe Perches <joe@perches.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>,
         <linux-kernel@vger.kernel.org>
-CC:     <wangkefeng.wang@huawei.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, <drbd-dev@lists.linbit.com>
-Subject: [PATCH 09/32] drbd: Use pr_warn instead of pr_warning
-Date:   Fri, 20 Sep 2019 14:25:21 +0800
-Message-ID: <20190920062544.180997-10-wangkefeng.wang@huawei.com>
+CC:     <wangkefeng.wang@huawei.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 10/32] gdrom: Use pr_warn instead of pr_warning
+Date:   Fri, 20 Sep 2019 14:25:22 +0800
+Message-ID: <20190920062544.180997-11-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
 References: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
@@ -55,45 +52,34 @@ As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
 pr_warning"), removing pr_warning so all logging messages use a
 consistent <prefix>_warn style. Let's do it.
 
-Cc: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Lars Ellenberg <lars.ellenberg@linbit.com>
 Cc: Jens Axboe <axboe@kernel.dk>
-Cc: drbd-dev@lists.linbit.com
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/block/drbd/drbd_nl.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/cdrom/gdrom.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index 5d52a2d32155..de2f94d0103a 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -268,19 +268,18 @@ static int drbd_adm_prepare(struct drbd_config_context *adm_ctx,
- 	/* some more paranoia, if the request was over-determined */
- 	if (adm_ctx->device && adm_ctx->resource &&
- 	    adm_ctx->device->resource != adm_ctx->resource) {
--		pr_warning("request: minor=%u, resource=%s; but that minor belongs to resource %s\n",
--				adm_ctx->minor, adm_ctx->resource->name,
--				adm_ctx->device->resource->name);
-+		pr_warn("request: minor=%u, resource=%s; but that minor belongs to resource %s\n",
-+			adm_ctx->minor, adm_ctx->resource->name,
-+			adm_ctx->device->resource->name);
- 		drbd_msg_put_info(adm_ctx->reply_skb, "minor exists in different resource");
- 		return ERR_INVALID_REQUEST;
+diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
+index 6626c84f66d1..5b21dc421c94 100644
+--- a/drivers/cdrom/gdrom.c
++++ b/drivers/cdrom/gdrom.c
+@@ -742,7 +742,7 @@ static int probe_gdrom(struct platform_device *devptr)
+ 	int err;
+ 	/* Start the device */
+ 	if (gdrom_execute_diagnostic() != 1) {
+-		pr_warning("ATA Probe for GDROM failed\n");
++		pr_warn("ATA Probe for GDROM failed\n");
+ 		return -ENODEV;
  	}
- 	if (adm_ctx->device &&
- 	    adm_ctx->volume != VOLUME_UNSPECIFIED &&
- 	    adm_ctx->volume != adm_ctx->device->vnr) {
--		pr_warning("request: minor=%u, volume=%u; but that minor is volume %u in %s\n",
--				adm_ctx->minor, adm_ctx->volume,
--				adm_ctx->device->vnr,
--				adm_ctx->device->resource->name);
-+		pr_warn("request: minor=%u, volume=%u; but that minor is volume %u in %s\n",
-+			adm_ctx->minor, adm_ctx->volume,
-+			adm_ctx->device->vnr, adm_ctx->device->resource->name);
- 		drbd_msg_put_info(adm_ctx->reply_skb, "minor exists as different volume");
- 		return ERR_INVALID_REQUEST;
- 	}
+ 	/* Print out firmware ID */
+@@ -814,7 +814,7 @@ static int probe_gdrom(struct platform_device *devptr)
+ probe_fail_no_mem:
+ 	unregister_blkdev(gdrom_major, GDROM_DEV_NAME);
+ 	gdrom_major = 0;
+-	pr_warning("Probe failed - error is 0x%X\n", err);
++	pr_warn("Probe failed - error is 0x%X\n", err);
+ 	return err;
+ }
+ 
 -- 
 2.20.1
 
