@@ -2,74 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33BFCB8E2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 11:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC74B8E30
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437966AbfITJ7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 05:59:16 -0400
-Received: from mga11.intel.com ([192.55.52.93]:55575 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405821AbfITJ7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 05:59:16 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Sep 2019 02:59:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,528,1559545200"; 
-   d="scan'208";a="178330120"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga007.jf.intel.com with ESMTP; 20 Sep 2019 02:59:14 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iBFh3-0006XH-2T; Fri, 20 Sep 2019 12:59:13 +0300
-Date:   Fri, 20 Sep 2019 12:59:13 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Kristian Klausen <kristian@klausen.dk>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: drivers/platform/x86/asus-wmi.c:464: undefined reference to
- `battery_hook_unregister'
-Message-ID: <20190920095913.GF2680@smile.fi.intel.com>
-References: <201909201138.uyiNM7oj%lkp@intel.com>
+        id S2437991AbfITKBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 06:01:48 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41824 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437968AbfITKBr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 06:01:47 -0400
+Received: by mail-io1-f67.google.com with SMTP id r26so14772636ioh.8
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 03:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=g994BJg/jPAigCOVsri275vhxV1YMwyqa+ZWpEcSJHY=;
+        b=iFc44JyzXlsEdJ8ZGOrWgpTK0QF37LYXPDpneIFX6jIh3j9MM3sAu1JGGTadYRKuwW
+         CGl0Fmrl34Sy+7DxuUlu82SW2IVLCHpQOmoeAApYxtgGdXZ4U4i504sEJ9qWkIE2mR0k
+         gWIeJskW/cZLd2m2sNLkxAFFne9NpN8DuiK+ZshTWQJboqhi3fk5xYVnFyDkbDoGmDam
+         5xiLOm5+J+eEPhm2b+N/5/2Xo/v4KTqIeYmEtXWgDctdq8wzZvJ/nzPPedZwHZKdqTOZ
+         vrp0QrFtQntkesy5Rp7I1O5fqPAz5BGq6ELB/cOVvXCoOkAZYUNmwlxjXXRnSLmzsb8Y
+         /3bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=g994BJg/jPAigCOVsri275vhxV1YMwyqa+ZWpEcSJHY=;
+        b=dSUU8APgN4gJvu68nF5pywNFGkqbe9ghE29IrFxyn1USd7adzY2EpqIen6MULWN8rO
+         oOHJ6BSarOnXXMnMGm8CoTSFaEwHh70Knn8t9JV2Zy1v0JRNcKjZ0kkgMr+IMNFzjdPb
+         JlVgLxyErKElS+aMEjveR49++UzTN1zROA7ijauSZGiYAfvYKX42XcwDeDoantARhiyu
+         4IRrkxjELeuapHdo/vexyTHL1cggKa92nYIMjRxSqQ9+/47luKOKCqGKc41sQLqRSI2l
+         fbDGxlj4Yvio8QKI3PQd5omDoFEy0a3ZfA2O985LUUlI7rkkaM02gmw1knFwPuNS4FDZ
+         NU8A==
+X-Gm-Message-State: APjAAAUo5IW/eGL0CuJTu6ZXyBAhHcyrublS6S0RIjXmKqPkasg+dhZV
+        yz4rKG2g0pKE39tTh4OR32Th8BccI8GgjtweLFF8EQ==
+X-Google-Smtp-Source: APXvYqxfUxvLHOR+Wn2vv6/tsz0PWRvLzPL3QAajZParvvSIWZcYkRXLxLuyaEQmx0JgaIHOXcW/CUZEbaflcc7pARM=
+X-Received: by 2002:a6b:e719:: with SMTP id b25mr11639828ioh.100.1568973705798;
+ Fri, 20 Sep 2019 03:01:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201909201138.uyiNM7oj%lkp@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190920090033.19438-1-green.wan@sifive.com>
+In-Reply-To: <20190920090033.19438-1-green.wan@sifive.com>
+From:   Pragnesh Patel <pragnesh.patel@sifive.com>
+Date:   Fri, 20 Sep 2019 15:31:35 +0530
+Message-ID: <CAN8ut8Lfo3zm2mjoiH3o4FSTkHexagwUFT=V3MpgcE=arm5c4g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: dmaengine: sf-pdma: add bindins for
+ SiFive PDMA
+To:     Green Wan <green.wan@sifive.com>
+Cc:     linux-hackers@sifive.com, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 11:23:43AM +0800, kbuild test robot wrote:
-> Hi Kristian,
-> 
-> FYI, the error/warning still remains.
-> 
-> tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   574cc4539762561d96b456dbc0544d8898bd4c6e
-> commit: 7973353e92ee1e7ca3b2eb361a4b7cb66c92abee platform/x86: asus-wmi: Refactor charge threshold to use the battery hooking API
-> date:   10 days ago
-> config: x86_64-randconfig-e001-201937 (attached as .config)
-> compiler: gcc-7 (Debian 7.4.0-13) 7.4.0
-> reproduce:
->         git checkout 7973353e92ee1e7ca3b2eb361a4b7cb66c92abee
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
+On Fri, Sep 20, 2019 at 2:30 PM Green Wan <green.wan@sifive.com> wrote:
+>
+> Add DT bindings document for Platform DMA(PDMA) driver of board,
+> HiFive Unleashed Rev A00.
+>
+> Signed-off-by: Green Wan <green.wan@sifive.com>
+> ---
+>  .../bindings/dma/sifive,fu540-c000-pdma.yaml  | 55 +++++++++++++++++++
+>  MAINTAINERS                                   |  5 ++
+>  2 files changed, 60 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml b/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+> new file mode 100644
+> index 000000000000..3ed015f2b83a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/sifive,fu540-c000-pdma.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SiFive Unleashed Rev C000 Platform DMA
+> +
+> +maintainers:
+> +  - Green Wan <green.wan@sifive.com>
+> +  - Palmer Debbelt <palmer@sifive.com>
+> +  - Paul Walmsley <paul.walmsley@sifive.com>
+> +
+> +description: |
+> +  Platform DMA is a DMA engine of SiFive Unleashed. It supports 4
+> +  channels. Each channel has 2 interrupts. One is for DMA done and
+> +  the other is for DME error.
+> +
+> +  In different SoC, DMA could be attached to different IRQ line.
+> +  DT file need to be changed to meet the difference. For technical
+> +  doc,
+> +
+> +  https://static.dev.sifive.com/FU540-C000-v1.0.pdf
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: sifive,fu540-c000-pdma
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 8
+> +    maxItems: 8
 
-The fix is on its way to linux-next followed by new PR to Linus within couple
-of days.
+"make dt_binding_check" should give you the error that interrupts is too short.
 
--- 
-With Best Regards,
-Andy Shevchenko
+When you say minItems: 8 then interrupts property should be like this:
+interrupts = <23>, <24>,  <25>,  <26>,  <27>,  <28>,  <29>,  <30>;
 
+So,  remove the minItems: 8 and change maxItems: 1 for interrupts =
+<23 24 25 26 27 28 29 30>;
 
+> +
+> +  '#dma-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - '#dma-cells'
+> +
+> +examples:
+> +  - |
+> +    dma@3000000 {
+> +      compatible = "sifive,fu540-c000-pdma";
+> +      reg = <0x0 0x3000000 0x0 0x8000>;
+> +      interrupts = <23 24 25 26 27 28 29 30>;
+> +      #dma-cells = <1>;
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 49f75d1b7b51..d0caa09a479e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14591,6 +14591,11 @@ F:     drivers/media/usb/siano/
+>  F:     drivers/media/usb/siano/
+>  F:     drivers/media/mmc/siano/
+>
+> +SIFIVE PDMA DRIVER
+> +M:     Green Wan <green.wan@sifive.com>
+> +S:     Maintained
+> +F:     Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
+> +
+>  SIFIVE DRIVERS
+>  M:     Palmer Dabbelt <palmer@sifive.com>
+>  M:     Paul Walmsley <paul.walmsley@sifive.com>
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-hackers" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-hackers+unsubscribe@sifive.com.
+> To view this discussion on the web visit https://groups.google.com/a/sifive.com/d/msgid/linux-hackers/20190920090033.19438-1-green.wan%40sifive.com.
