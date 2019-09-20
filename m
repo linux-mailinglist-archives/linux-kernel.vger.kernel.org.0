@@ -2,82 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E964EB90D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4A0B90D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbfITNlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 09:41:39 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38113 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbfITNli (ORCPT
+        id S1728236AbfITNmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 09:42:39 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:34716 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbfITNmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 09:41:38 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w10so3209297plq.5;
-        Fri, 20 Sep 2019 06:41:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4mRpAGaa4LcvbSRRDkHhn9jzI5wKRFTGQvNhLkn8oxQ=;
-        b=sruKvL4rJcvxHHqkn6oc5IA47qDfAr9cRo/rvJDpMHw6wlwB7mRXM50O8hZ9xc+10G
-         9drCqn2AaKbX2EabYJRYASrYU1UlOLDbCsWqTyChdFapzbpLyQH5quwSs6orC8P4qnBr
-         +n82MQq3/O71s0romefmddaLc+KGZzMix0Y1viKHPrh9U46jfPXV3sEE28hcsRhIntO8
-         xvqm2+TWljdIxOMI4t4zpl9K7XwPZz3KJV0ZUehAA9ZmFL23bq8nS4TgiP7vjNAKwZtL
-         cHCCgFA+szquX58fX71MUUfz3HdsasMpp0wM76nOFg7Wm3AZdqZjUedF2s+RLGaUVmRl
-         al4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4mRpAGaa4LcvbSRRDkHhn9jzI5wKRFTGQvNhLkn8oxQ=;
-        b=WkoKF2N4YWgY0gLuYZ4F5xPhsjjkyCmcXU6wE6iSDAM3tfKxSoUOfP8ZrZCmCWMcuS
-         Up3xFzMO/7fFUPj8S/tFykZsNdn16mzHQr3E06X2ZBdfa4IFY9b0tGSSiTqih3ALJAuT
-         m3pDZctbGqU0r/6Glrl20yEG0uxIf+22l7218JlyTh3X7RmcBSCeCVaL9lLP8xTiC78V
-         IcLmttwNygAg4ADIp36PuKaGX9oWh7R3eecY3fxw6af4mZ0uTIPCcGCgEssM1028qY0m
-         WmPLvkJ+tqbPFuStw3p23m5mlnjCT4Q2XG8HJU2HjgVvtddSvp9JKW20NGf66EkJycCh
-         5gBQ==
-X-Gm-Message-State: APjAAAVmTVIVl005cymq2Imuj+cUglhu0WS/Fgb7gXdveOOrWaf1IjYB
-        ufF0R5P17zgPaARPUJZUazQ=
-X-Google-Smtp-Source: APXvYqxtg++D+nmK0c8+qH6jsbE8m+ew1skiCF+c+fihjKFqSy53/jnXwtz2OPenwWpCWATfQHJO3A==
-X-Received: by 2002:a17:902:7785:: with SMTP id o5mr17586247pll.30.1568986898227;
-        Fri, 20 Sep 2019 06:41:38 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q71sm2441559pjb.26.2019.09.20.06.41.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Sep 2019 06:41:37 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 06:41:35 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/56] 4.4.194-stable review
-Message-ID: <20190920134135.GA26460@roeck-us.net>
-References: <20190919214742.483643642@linuxfoundation.org>
+        Fri, 20 Sep 2019 09:42:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xBchC21co1zSoAA232XoJcRl/YGG2YtjdTp+sQB4kOU=; b=kWpv/wvvqybuA9gJqkZMShqqR
+        V7SElLbkefrx1lTEaEbPafBqUmi3tODqq71K9VLs6XdoXOtRoUHN7DWRQhWKghSabT9BzWFzcUoAc
+        Ia3zii3x5bTkTcQfkvKXatbAH3JI3i+oFQCud0xT8/IxJg0jOn7JkRoHhb2+d3aMX0b53vW+LFW7w
+        fnWHtKPNKd08uge+YTUIQMtmVXFJKoalOwu6jo65aKYinLJmQPuxyiU8+8LaujWRVsIgBovQsEO25
+        R/rSrdxVH2yZzqmjGRXS2gAksl4YHw6ys+YKuL7Xufywy55womoXyJ3eWaUbbEAjjfKjsR7wLP/tW
+        HnXE8I4gA==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:41870)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1iBJAz-00048q-TJ; Fri, 20 Sep 2019 14:42:22 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1iBJAt-0005ql-Vd; Fri, 20 Sep 2019 14:42:15 +0100
+Date:   Fri, 20 Sep 2019 14:42:15 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     tinywrkb <tinywrkb@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Andrew Lunn <andrew@lunn.ch>,
+        Baruch Siach <baruch@tkos.co.il>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx6dl: SolidRun: add phy node with 100Mb/s
+ max-speed
+Message-ID: <20190920134215.GM25745@shell.armlinux.org.uk>
+References: <20190917124101.GA1200564@arch-dsk-01>
+ <20190917125434.GH20778@lunn.ch>
+ <20190917133253.GA1210141@arch-dsk-01>
+ <20190917133942.GR25745@shell.armlinux.org.uk>
+ <20190917151707.GV25745@shell.armlinux.org.uk>
+ <20190917153027.GW25745@shell.armlinux.org.uk>
+ <20190917163427.GA1475935@arch-dsk-01>
+ <20190917170419.GX25745@shell.armlinux.org.uk>
+ <20190917171913.GY25745@shell.armlinux.org.uk>
+ <20190917214201.GB25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190917214201.GB25745@shell.armlinux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 12:03:41AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.194 release.
-> There are 56 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Sep 17, 2019 at 10:42:01PM +0100, Russell King - ARM Linux admin wrote:
+> On Tue, Sep 17, 2019 at 06:19:13PM +0100, Russell King - ARM Linux admin wrote:
+> > whether you can get the link to come up at all.  You might need to see
+> > whether wiggling the RJ45 helps (I've had that sort of thing with some
+> > cables.)
+> > 
+> > You might also need "ethtool -s eth0 advertise ffcf" after trying that
+> > if it doesn't work to take the gigabit speeds out of the advertisement.
+> > 
+> > Thanks.
+> > 
+> >  drivers/net/phy/at803x.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
+> > index b3893347804d..85cf4a4a5e81 100644
+> > --- a/drivers/net/phy/at803x.c
+> > +++ b/drivers/net/phy/at803x.c
+> > @@ -296,6 +296,11 @@ static int at803x_config_init(struct phy_device *phydev)
+> >  	if (ret < 0)
+> >  		return ret;
+> >  
+> > +	/* Disable smartspeed */
+> > +	ret = phy_modify(phydev, 0x14, BIT(5), 0);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> >  	/* The RX and TX delay default is:
+> >  	 *   after HW reset: RX delay enabled and TX delay disabled
+> >  	 *   after SW reset: RX delay enabled, while TX delay retains the
 > 
-> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
-> Anything received after that time might be too late.
+> Hi,
 > 
+> Could you try this patch instead - it seems that the PHY needs to be
+> soft-reset for the write to take effect, and _even_ for the clearance
+> of the bit to become visible in the register.
+> 
+> I'm not expecting this on its own to solve anything, but it should at
+> least mean that the at803x doesn't modify the advertisement registers
+> itself.  It may mean that the link doesn't even come up without forcing
+> the advertisement via the ethtool command I mentioned before.
+> 
+> Thanks.
+> 
+>  drivers/net/phy/at803x.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
+> index b3893347804d..69a58c0e6b42 100644
+> --- a/drivers/net/phy/at803x.c
+> +++ b/drivers/net/phy/at803x.c
+> @@ -296,6 +296,16 @@ static int at803x_config_init(struct phy_device *phydev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	/* Disable smartspeed */
+> +	ret = phy_modify(phydev, 0x14, BIT(5), 0);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Must soft-reset the PHY for smartspeed disable to take effect */
+> +	ret = genphy_soft_reset(phydev);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	/* The RX and TX delay default is:
+>  	 *   after HW reset: RX delay enabled and TX delay disabled
+>  	 *   after SW reset: RX delay enabled, while TX delay retains the
 
-Build results:
-	total: 170 pass: 170 fail: 0
-Qemu test results:
-	total: 324 pass: 324 fail: 0
+Bad news I'm afraid.  It looks like the AR8035 has a bug in it.
+Disabling the SmartSpeed feature appears to make register 9, the
+1000BASET control register, read-only.
 
-Guenter
+For example:
+
+Reading 0x0009=0x0200
+Writing 0x0014=0x082c	<= smartspeed enabled
+Writing 0x0000=0xb100	<= soft reset
+Writing 0x0009=0x0600
+Reading 0x0009=0x0600	<= it took the value
+
+Reading 0x0009=0x0600
+Writing 0x0014=0x080c	<= smartspeed disabled
+Writing 0x0000=0xb100	<= soft reset
+Writing 0x0009=0x0200
+Reading 0x0009=0x0600	<= it ignored the write
+
+Reading 0x0009=0x0600
+Writing 0x0014=0x082c	<= smartspeed enabled
+Writing 0x0000=0xb100	<= soft reset
+Writing 0x0009=0x0200
+Reading 0x0009=0x0200	<= it took the value
+
+If it's going to make register 9 read-only when smartspeed is disabled,
+then that's another failure mode and autonegotiation cockup just
+waiting to happen - which I spotted when trying to configure the
+advertisement using ethtool, and finding that it was impossible to stop
+1000baseT/Full being advertised.
+
+I think the only sane approach - at least until we have something more
+reasonable in place - is to base the negotiation result off what is
+actually stored in the PHY registers at the time the link comes up, and
+not on the cached versions of what we should be advertising.
+
+5502b218e001 has caused this regression, and where we are now after
+more than a week of trying to come up with some fix for this
+regression, the only solution that seems to work without introducing
+more failures is to revert that commit.
+
+Adding Heiner (original commit author), Florian, David and netdev.
+
+Thoughts?
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
