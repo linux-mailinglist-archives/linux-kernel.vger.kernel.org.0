@@ -2,43 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD0AB954D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C7AFB9559
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405555AbfITQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:22:18 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52890 "EHLO
+        id S2405069AbfITQWc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:22:32 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52881 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405069AbfITQVY (ORCPT
+        with ESMTP id S2404997AbfITQVU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:21:24 -0400
+        Fri, 20 Sep 2019 12:21:20 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iBLen-0004Bh-55; Fri, 20 Sep 2019 18:21:17 +0200
+        id 1iBLej-0004DK-In; Fri, 20 Sep 2019 18:21:13 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CACAE1C0E38;
-        Fri, 20 Sep 2019 18:21:01 +0200 (CEST)
-Date:   Fri, 20 Sep 2019 16:21:01 -0000
-From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8798A1C0E3B;
+        Fri, 20 Sep 2019 18:21:02 +0200 (CEST)
+Date:   Fri, 20 Sep 2019 16:21:02 -0000
+From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf jvmti: Link against tools/lib/string.o to
- have weak strlcpy()
-Cc:     Thomas Richter <tmricht@linux.ibm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andreas Krebbel <krebbel@linux.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sergey Melnikov <melnikov.sergey.v@gmail.com>,
+Subject: [tip: perf/urgent] perf tests: Add libperf automated test for 'make
+ -C tools/perf build-test'
+Cc:     Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-x8vg9sffgb2t1tzqmhkrulh7@git.kernel.org>
-References: <tip-x8vg9sffgb2t1tzqmhkrulh7@git.kernel.org>
+In-Reply-To: <20190901124822.10132-4-jolsa@kernel.org>
+References: <20190901124822.10132-4-jolsa@kernel.org>
 MIME-Version: 1.0
-Message-ID: <156899646175.24167.8702357606249062818.tip-bot2@tip-bot2>
+Message-ID: <156899646246.24167.1384772520301168306.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,55 +53,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     79743bc927f695e5a24f26c31cfe2d69f6ee00f7
-Gitweb:        https://git.kernel.org/tip/79743bc927f695e5a24f26c31cfe2d69f6ee00f7
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 02 Sep 2019 15:37:21 -03:00
+Commit-ID:     9eab951f34dbd092ab520bda167f288899858306
+Gitweb:        https://git.kernel.org/tip/9eab951f34dbd092ab520bda167f288899858306
+Author:        Jiri Olsa <jolsa@kernel.org>
+AuthorDate:    Sun, 01 Sep 2019 14:48:21 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Fri, 20 Sep 2019 09:18:45 -03:00
+CommitterDate: Tue, 10 Sep 2019 14:33:32 +01:00
 
-perf jvmti: Link against tools/lib/string.o to have weak strlcpy()
+perf tests: Add libperf automated test for 'make -C tools/perf build-test'
 
-That is needed in systems such some S/390 distros.
+Add a libperf build test, that is triggered when one does:
 
-  $ readelf -s /tmp/build/perf/jvmti/jvmti-in.o | grep strlcpy
-	452: 0000000000002990   125 FUNC    WEAK   DEFAULT  119 strlcpy
-  $
+  $ make -C tools/perf build-test
 
-Thanks to Jiri Olsa for fixing up my initial stab at this, I forgot how
-Makefiles are picky about spaces versus tabs.
-
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andreas Krebbel <krebbel@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Sergey Melnikov <melnikov.sergey.v@gmail.com>
-Link: https://lkml.kernel.org/n/tip-x8vg9sffgb2t1tzqmhkrulh7@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/20190901124822.10132-4-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/jvmti/Build |  9 +++++++++
- 1 file changed, 9 insertions(+)
+ tools/perf/tests/make | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/jvmti/Build b/tools/perf/jvmti/Build
-index eaeb8cb..1e148bb 100644
---- a/tools/perf/jvmti/Build
-+++ b/tools/perf/jvmti/Build
-@@ -1,8 +1,17 @@
- jvmti-y += libjvmti.o
- jvmti-y += jvmti_agent.o
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index 70c4847..6b3afed 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -327,6 +327,10 @@ make_kernelsrc_tools:
+ 	(make -C ../../tools $(PARALLEL_OPT) $(K_O_OPT) perf) > $@ 2>&1 && \
+ 	test -x $(KERNEL_O)/tools/perf/perf && rm -f $@ || (cat $@ ; false)
  
-+# For strlcpy
-+jvmti-y += libstring.o
++make_libperf:
++	@echo "- make -C lib";
++	make -C lib clean >$@ 2>&1; make -C lib >>$@ 2>&1 && rm $@
 +
- CFLAGS_jvmti         = -fPIC -DPIC -I$(JDIR)/include -I$(JDIR)/include/linux
- CFLAGS_REMOVE_jvmti  = -Wmissing-declarations
- CFLAGS_REMOVE_jvmti += -Wstrict-prototypes
- CFLAGS_REMOVE_jvmti += -Wextra
- CFLAGS_REMOVE_jvmti += -Wwrite-strings
-+
-+CFLAGS_libstring.o += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
-+
-+$(OUTPUT)jvmti/libstring.o: ../lib/string.c FORCE
-+	$(call rule_mkdir)
-+	$(call if_changed_dep,cc_o_c)
+ FEATURES_DUMP_FILE := $(FULL_O)/BUILD_TEST_FEATURE_DUMP
+ FEATURES_DUMP_FILE_STATIC := $(FULL_O)/BUILD_TEST_FEATURE_DUMP_STATIC
+ 
+@@ -365,5 +369,5 @@ $(foreach t,$(run),$(if $(findstring make_static,$(t)),\
+ 			$(eval $(t) := $($(t)) FEATURES_DUMP=$(FEATURES_DUMP_FILE))))
+ endif
+ 
+-.PHONY: all $(run) $(run_O) tarpkg clean make_kernelsrc make_kernelsrc_tools
++.PHONY: all $(run) $(run_O) tarpkg clean make_kernelsrc make_kernelsrc_tools make_libperf
+ endif # ifndef MK
