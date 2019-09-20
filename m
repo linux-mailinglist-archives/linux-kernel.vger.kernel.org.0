@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EFE8B92A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D51A2B9308
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391716AbfITOeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:34:31 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36316 "EHLO
+        id S2391975AbfITOgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:36:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35878 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388232AbfITOZH (ORCPT
+        by vger.kernel.org with ESMTP id S2388072AbfITOZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:07 -0400
+        Fri, 20 Sep 2019 10:25:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqL-00050v-2h; Fri, 20 Sep 2019 15:25:05 +0100
+        id 1iBJqE-0004y5-NT; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007zV-O8; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqE-0007rv-01; Fri, 20 Sep 2019 15:24:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Marcel Holtmann" <marcel@holtmann.org>,
-        "Jeremy Cline" <jcline@redhat.com>,
-        syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com,
-        "Kefeng Wang" <wangkefeng.wang@huawei.com>
+        "James Prestwood" <james.prestwood@linux.intel.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.810725363@decadent.org.uk>
+Message-ID: <lsq.1568989415.851296032@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 128/132] Bluetooth: hci_ldisc: Postpone
- HCI_UART_PROTO_READY bit set in hci_uart_set_proto()
+Subject: [PATCH 3.16 042/132] PCI: Mark Atheros AR9462 to avoid bus reset
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,57 +47,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
+From: James Prestwood <james.prestwood@linux.intel.com>
 
-commit 56897b217a1d0a91c9920cb418d6b3fe922f590a upstream.
+commit 6afb7e26978da5e86e57e540fdce65c8b04f398a upstream.
 
-task A:                                task B:
-hci_uart_set_proto                     flush_to_ldisc
- - p->open(hu) -> h5_open  //alloc h5  - receive_buf
- - set_bit HCI_UART_PROTO_READY         - tty_port_default_receive_buf
- - hci_uart_register_dev                 - tty_ldisc_receive_buf
-                                          - hci_uart_tty_receive
-				           - test_bit HCI_UART_PROTO_READY
-				            - h5_recv
- - clear_bit HCI_UART_PROTO_READY             while() {
- - p->open(hu) -> h5_close //free h5
-				              - h5_rx_3wire_hdr
-				               - h5_reset()  //use-after-free
-                                              }
+When using PCI passthrough with this device, the host machine locks up
+completely when starting the VM, requiring a hard reboot.  Add a quirk to
+avoid bus resets on this device.
 
-It could use ioctl to set hci uart proto, but there is
-a use-after-free issue when hci_uart_register_dev() fail in
-hci_uart_set_proto(), see stack above, fix this by setting
-HCI_UART_PROTO_READY bit only when hci_uart_register_dev()
-return success.
-
-Reported-by: syzbot+899a33dc0fa0dbaf06a6@syzkaller.appspotmail.com
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reviewed-by: Jeremy Cline <jcline@redhat.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-[bwh: Backported to 3.16: adjust context]
+Fixes: c3e59ee4e766 ("PCI: Mark Atheros AR93xx to avoid bus reset")
+Link: https://lore.kernel.org/linux-pci/20190107213248.3034-1-james.prestwood@linux.intel.com
+Signed-off-by: James Prestwood <james.prestwood@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/bluetooth/hci_ldisc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pci/quirks.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -477,15 +477,14 @@ static int hci_uart_set_proto(struct hci
- 		return err;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3154,6 +3154,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_A
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0032, quirk_no_bus_reset);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x003c, quirk_no_bus_reset);
+ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0033, quirk_no_bus_reset);
++DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_ATHEROS, 0x0034, quirk_no_bus_reset);
  
- 	hu->proto = p;
--	set_bit(HCI_UART_PROTO_READY, &hu->flags);
- 
- 	err = hci_uart_register_dev(hu);
- 	if (err) {
--		clear_bit(HCI_UART_PROTO_READY, &hu->flags);
- 		p->close(hu);
- 		return err;
- 	}
- 
-+	set_bit(HCI_UART_PROTO_READY, &hu->flags);
- 	return 0;
- }
- 
+ static void pci_do_fixups(struct pci_dev *dev, struct pci_fixup *f,
+ 			  struct pci_fixup *end)
 
