@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 170ADB9256
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51C19B9328
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391247AbfITObn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:31:43 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36734 "EHLO
+        id S2392898AbfITOiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:38:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35720 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388348AbfITOZO (ORCPT
+        by vger.kernel.org with ESMTP id S2388004AbfITOY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:14 -0400
+        Fri, 20 Sep 2019 10:24:59 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqQ-0004y5-5R; Fri, 20 Sep 2019 15:25:10 +0100
+        id 1iBJqC-0004wZ-QM; Fri, 20 Sep 2019 15:24:56 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqF-0007uq-FP; Fri, 20 Sep 2019 15:24:59 +0100
+        id 1iBJqC-0007pk-Ef; Fri, 20 Sep 2019 15:24:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Hui Wang" <hui.wang@canonical.com>, "Takashi Iwai" <tiwai@suse.de>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.522114580@decadent.org.uk>
+Message-ID: <lsq.1568989415.232069857@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 078/132] ALSA: hda/hdmi - Read the pin sense from
- register when repolling
+Subject: [PATCH 3.16 015/132] cxgb3/l2t: Fix undefined behaviour
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,41 +47,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Wang <hui.wang@canonical.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-commit 8c2e6728c2bf95765b724e07d0278ae97cd1ee0d upstream.
+commit 76497732932f15e7323dc805e8ea8dc11bb587cf upstream.
 
-The driver will check the monitor presence when resuming from suspend,
-starting poll or interrupt triggers. In these 3 situations, the
-jack_dirty will be set to 1 first, then the hda_jack.c reads the
-pin_sense from register, after reading the register, the jack_dirty
-will be set to 0. But hdmi_repoll_work() is enabled in these 3
-situations, It will read the pin_sense a couple of times subsequently,
-since the jack_dirty is 0 now, It does not read the register anymore,
-instead it uses the shadow pin_sense which is read at the first time.
+The use of zero-sized array causes undefined behaviour when it is not
+the last member in a structure. As it happens to be in this case.
 
-It is meaningless to check the shadow pin_sense a couple of times,
-we need to read the register to check the real plugging state, so
-we set the jack_dirty to 1 in the hdmi_repoll_work().
+Also, the current code makes use of a language extension to the C90
+standard, but the preferred mechanism to declare variable-length
+types such as this one is a flexible array member, introduced in
+C99:
 
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-[bwh: Backported to 3.16: adjust context]
+struct foo {
+        int stuff;
+        struct boo array[];
+};
+
+By making use of the mechanism above, we will get a compiler warning
+in case the flexible array does not occur last. Which is beneficial
+to cultivate a high-quality code.
+
+Fixes: e48f129c2f20 ("[SCSI] cxgb3i: convert cdev->l2opt to use rcu to prevent NULL dereference")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -1632,6 +1632,12 @@ static void hdmi_repoll_eld(struct work_
- {
- 	struct hdmi_spec_per_pin *per_pin =
- 	container_of(to_delayed_work(work), struct hdmi_spec_per_pin, work);
-+	struct hda_codec *codec = per_pin->codec;
-+	struct hda_jack_tbl *jack;
-+
-+	jack = snd_hda_jack_tbl_get(codec, per_pin->pin_nid);
-+	if (jack)
-+		jack->jack_dirty = 1;
+ drivers/net/ethernet/chelsio/cxgb3/l2t.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/net/ethernet/chelsio/cxgb3/l2t.h
++++ b/drivers/net/ethernet/chelsio/cxgb3/l2t.h
+@@ -75,8 +75,8 @@ struct l2t_data {
+ 	struct l2t_entry *rover;	/* starting point for next allocation */
+ 	atomic_t nfree;		/* number of free entries */
+ 	rwlock_t lock;
+-	struct l2t_entry l2tab[0];
+ 	struct rcu_head rcu_head;	/* to handle rcu cleanup */
++	struct l2t_entry l2tab[];
+ };
  
- 	if (per_pin->repoll_count++ > 6)
- 		per_pin->repoll_count = 0;
+ typedef void (*arp_failure_handler_func)(struct t3cdev * dev,
 
