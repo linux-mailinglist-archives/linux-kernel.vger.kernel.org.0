@@ -2,92 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F5FFB8992
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 04:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66213B8996
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 04:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437076AbfITCzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 22:55:19 -0400
-Received: from alexa-out-tai-02.qualcomm.com ([103.229.16.227]:25257 "EHLO
-        alexa-out-tai-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388199AbfITCzT (ORCPT
+        id S2405718AbfITC4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 22:56:21 -0400
+Received: from pb-smtp2.pobox.com ([64.147.108.71]:53730 "EHLO
+        pb-smtp2.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404240AbfITC4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 22:55:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=qti.qualcomm.com; i=@qti.qualcomm.com; q=dns/txt;
-  s=qcdkim; t=1568948118; x=1600484118;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=h5GDMNjW+EjFMM6Brw8DWg04GozxHkTpURfiFQTUTHk=;
-  b=vOY4FwpTYzVD758IwZag6VQ6x74XXzvb9JCG+CR5908Qbi45Z0/4TV9v
-   M05+ODd4fVaLQ9UD9+fni/fTkHHrnuQQQYZZ3BBNhW9UMisqvOZ9GOo13
-   TmBNlrAmbXf8IQOz8RXYQfN+e40+7xtW6tfrIIOTTXnCQ82J1xgHRsuU+
-   Q=;
-Subject: RE: [PATCH v3] ath10k: support NET_DETECT WoWLAN feature
-Thread-Topic: [PATCH v3] ath10k: support NET_DETECT WoWLAN feature
-Received: from ironmsg01-tai.qualcomm.com ([10.249.140.6])
-  by alexa-out-tai-02.qualcomm.com with ESMTP; 20 Sep 2019 10:55:16 +0800
-Received: from aptaiexm02a.ap.qualcomm.com ([10.249.150.11])
-  by ironmsg01-tai.qualcomm.com with ESMTP/TLS/AES256-SHA; 20 Sep 2019 10:55:10 +0800
-Received: from aptaiexm02f.ap.qualcomm.com (10.249.150.16) by
- aptaiexm02a.ap.qualcomm.com (10.249.150.11) with Microsoft SMTP Server (TLS)
- id 15.0.1473.3; Fri, 20 Sep 2019 10:55:08 +0800
-Received: from aptaiexm02f.ap.qualcomm.com ([fe80::4152:1436:e436:faa1]) by
- aptaiexm02f.ap.qualcomm.com ([fe80::4152:1436:e436:faa1%19]) with mapi id
- 15.00.1473.005; Fri, 20 Sep 2019 10:55:08 +0800
-From:   Wen Gong <wgong@qti.qualcomm.com>
-To:     "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        Brian Norris <briannorris@chromium.org>
-CC:     linux-wireless <linux-wireless@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "ath10k@lists.infradead.org" <ath10k@lists.infradead.org>,
-        Wen Gong <wgong@codeaurora.org>
-Thread-Index: AQHVbXWiq8VLkeX27kapg8LCqChuTqcxeMfAgAJpkJA=
-Date:   Fri, 20 Sep 2019 02:55:08 +0000
-Message-ID: <40854e84bd4b4a9699b60530b1c373ad@aptaiexm02f.ap.qualcomm.com>
-References: <1534402113-14337-1-git-send-email-wgong@codeaurora.org>
- <20181114225910.GA220599@google.com>
- <CA+ASDXMh7vdfkA5jtJqWEU-g-4Ta5Xvy046zujyASZcESCGhAQ@mail.gmail.com>
- <87woe5aehr.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <87woe5aehr.fsf@kamboji.qca.qualcomm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.249.136.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 19 Sep 2019 22:56:20 -0400
+Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 66E8D27046;
+        Thu, 19 Sep 2019 22:56:18 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
+        :cc:subject:in-reply-to:message-id:references:mime-version
+        :content-type; s=sasl; bh=DxwA3Xb/j2BmQm76HYP5HmvpMK0=; b=OdjC06
+        zXUq8YTULHORUItoAvRfnXd08ov9T5VOAE7PUdURZvaXDFIBu2tDUneLwCI+u7fT
+        8mXT3pACfe7gXr29NpHrQYUEgX2U0XuXnEASOXyJEKp9gFxnprvG7b5Ppg5d6AQJ
+        g/BbnQeuxyLK697twtLUq9bztkvA8FT9mEJtY=
+Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp2.pobox.com (Postfix) with ESMTP id 5C03527044;
+        Thu, 19 Sep 2019 22:56:18 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
+ h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=KxVWMOQwuPubePImZVl5t1gqR2PwuYXiHV8sMvllCO4=; b=bEOK5oauHGt+2Vquj2cCGyyusTHwIBz7dSIQCFCFQG5bJPfYxBM4DfrV9G6Wp5h1lDlmtrWow6/NGlKOO4VamWy5uu8+7gLlg9l46wQ/aJROI+9TPnUhwtdcw1TzNR8Jjz9N6VgstxIPcIDslC88UAhXyJrHjwt7haI6LUHU4zU=
+Received: from yoda.home (unknown [24.203.50.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp2.pobox.com (Postfix) with ESMTPSA id AE87527043;
+        Thu, 19 Sep 2019 22:56:16 -0400 (EDT)
+        (envelope-from nico@fluxnic.net)
+Received: from xanadu.home (xanadu.home [192.168.2.2])
+        by yoda.home (Postfix) with ESMTPSA id DB46D2DA01D7;
+        Thu, 19 Sep 2019 22:56:15 -0400 (EDT)
+Date:   Thu, 19 Sep 2019 22:56:15 -0400 (EDT)
+From:   Nicolas Pitre <nico@fluxnic.net>
+To:     Greg KH <gregkh@linuxfoundation.org>
+cc:     Xiaoming Ni <nixiaoming@huawei.com>, penberg@cs.helsinki.fi,
+        jslaby@suse.com, textshell@uchuujin.de, sam@ravnborg.org,
+        daniel.vetter@ffwll.ch, mpatocka@redhat.com, ghalat@redhat.com,
+        linux-kernel@vger.kernel.org, yangyingliang@huawei.com,
+        yuehaibing@huawei.com, zengweilin@huawei.com
+Subject: Re: [PATCH] tty:vt: Add check the return value of kzalloc to avoid
+ oops
+In-Reply-To: <20190919092933.GA2684163@kroah.com>
+Message-ID: <nycvar.YSQ.7.76.1909192251210.24536@knanqh.ubzr>
+References: <1568884695-56789-1-git-send-email-nixiaoming@huawei.com> <20190919092933.GA2684163@kroah.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Pobox-Relay-ID: 36F541B0-DB52-11E9-A06F-D1361DBA3BAF-78420484!pb-smtp2.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: ath10k <ath10k-bounces@lists.infradead.org> On Behalf Of Kalle Valo
-> Sent: Wednesday, September 18, 2019 10:03 PM
-> To: Brian Norris <briannorris@chromium.org>
-> Cc: linux-wireless <linux-wireless@vger.kernel.org>; Linux Kernel <linux-
-> kernel@vger.kernel.org>; ath10k@lists.infradead.org; Wen Gong
-> <wgong@codeaurora.org>
-> Subject: [EXT] Re: [PATCH v3] ath10k: support NET_DETECT WoWLAN feature
->=20
-> So essentially the problem is that with firmwares supporting both
-> WMI_SERVICE_NLO and WMI_SERVICE_SPOOF_MAC_SUPPORT ath10k
-> enables
-> NL80211_FEATURE_SCAN_RANDOM_MAC_ADDR, but
-> NL80211_FEATURE_SCHED_SCAN_RANDOM_MAC_ADDR is not enabled
-> which is
-> inconsistent from user space point of view. Is my understanding correct?
->=20
-> Wen, can you enable NL80211_FEATURE_SCAN_RANDOM_MAC_ADDR?
-> Does firmware
-> support that?
+On Thu, 19 Sep 2019, Greg KH wrote:
 
-Yes, I test again, it is enabled NL80211_FEATURE_SCAN_RANDOM_MAC_ADDR now.
+> On Thu, Sep 19, 2019 at 05:18:15PM +0800, Xiaoming Ni wrote:
+> > Using kzalloc() to allocate memory in function con_init(), but not
+> > checking the return value, there is a risk of null pointer references
+> > oops.
+> > 
+> > Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
+> 
+> We keep having this be "reported" :(
 
->=20
-> _______________________________________________
-> ath10k mailing list
-> ath10k@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/ath10k
+Something probably needs to be "communicated" about that.
+
+> >  		vc_cons[currcons].d = vc = kzalloc(sizeof(struct vc_data), GFP_NOWAIT);
+> > +		if (unlikely(!vc)) {
+> > +			pr_warn("%s:failed to allocate memory for the %u vc\n",
+> > +					__func__, currcons);
+> > +			break;
+> > +		}
+> 
+> At init, this really can not happen.  Have you see it ever happen?
+
+This is maybe too subtle a fact. The "communication" could be done with 
+some GFP_WONTFAIL flag, and have the allocator simply pannic() if it 
+ever fails.
+
+
+Nicolas
