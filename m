@@ -2,175 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7C5B9156
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F061EB914E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbfITOD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:03:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52442 "EHLO mail.kernel.org"
+        id S1728554AbfITODK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:03:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54170 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727904AbfITOD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:03:57 -0400
-Received: from localhost (unknown [171.76.80.57])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727904AbfITODJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:03:09 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28F9E20644;
-        Fri, 20 Sep 2019 14:03:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568988235;
-        bh=K9lsB5ULphBbXbCVVVum93smBl4jbswhCzaYTFnOYGU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=PRaisUq1LTQ8eqtMtg/A7yQMIoAOCeqiLP4pcXmGM40qAoM6r6sYOHWxi62A7Kkjw
-         q3/KYqN5NZ1/rxsYMJwcUJ6hpIXlvTeeZQbKTzImEAxEA7eFwW8M0/fpMJg6qhyndz
-         9Vxm+nkSsgrKg3GDgCf4SDjyPJm8UauJuMVCL09A=
-Date:   Fri, 20 Sep 2019 19:32:47 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] soundwire updates for v5.4-rc1
-Message-ID: <20190920140247.GX4392@vkoul-mobl>
+        by mx1.redhat.com (Postfix) with ESMTPS id F3067C047B68;
+        Fri, 20 Sep 2019 14:03:08 +0000 (UTC)
+Received: from gondolin (dhcp-192-230.str.redhat.com [10.33.192.230])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 485445C1B5;
+        Fri, 20 Sep 2019 14:03:01 +0000 (UTC)
+Date:   Fri, 20 Sep 2019 16:02:58 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Matthew Rosato <mjrosato@linux.ibm.com>
+Cc:     sebott@linux.ibm.com, gerald.schaefer@de.ibm.com,
+        pasic@linux.ibm.com, borntraeger@de.ibm.com, walling@linux.ibm.com,
+        linux-s390@vger.kernel.org, iommu@lists.linux-foundation.org,
+        joro@8bytes.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, kvm@vger.kernel.org,
+        heiko.carstens@de.ibm.com, robin.murphy@arm.com, gor@linux.ibm.com,
+        pmorel@linux.ibm.com
+Subject: Re: [PATCH v4 3/4] vfio: zpci: defining the VFIO headers
+Message-ID: <20190920160258.70631905.cohuck@redhat.com>
+In-Reply-To: <0a62aba7-578a-6875-da4d-13e8b145cf9b@linux.ibm.com>
+References: <1567815231-17940-1-git-send-email-mjrosato@linux.ibm.com>
+        <1567815231-17940-4-git-send-email-mjrosato@linux.ibm.com>
+        <20190919172009.71b1c246.cohuck@redhat.com>
+        <0a62aba7-578a-6875-da4d-13e8b145cf9b@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="hOcCNbCCxyk/YU74"
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 20 Sep 2019 14:03:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 19 Sep 2019 16:55:57 -0400
+Matthew Rosato <mjrosato@linux.ibm.com> wrote:
 
---hOcCNbCCxyk/YU74
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 9/19/19 11:20 AM, Cornelia Huck wrote:
+> > On Fri,  6 Sep 2019 20:13:50 -0400
+> > Matthew Rosato <mjrosato@linux.ibm.com> wrote:
+> >   
+> >> From: Pierre Morel <pmorel@linux.ibm.com>
+> >>
+> >> We define a new device region in vfio.h to be able to
+> >> get the ZPCI CLP information by reading this region from
+> >> userland.
+> >>
+> >> We create a new file, vfio_zdev.h to define the structure
+> >> of the new region we defined in vfio.h
+> >>
+> >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> >> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
+> >> ---
+> >>  include/uapi/linux/vfio.h      |  1 +
+> >>  include/uapi/linux/vfio_zdev.h | 35 +++++++++++++++++++++++++++++++++++
+> >>  2 files changed, 36 insertions(+)
+> >>  create mode 100644 include/uapi/linux/vfio_zdev.h
 
-Hi Linus,
+> >> diff --git a/include/uapi/linux/vfio_zdev.h b/include/uapi/linux/vfio_zdev.h
+> >> new file mode 100644
+> >> index 0000000..55e0d6d
+> >> --- /dev/null
+> >> +++ b/include/uapi/linux/vfio_zdev.h
+> >> @@ -0,0 +1,35 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> >> +/*
+> >> + * Region definition for ZPCI devices
+> >> + *
+> >> + * Copyright IBM Corp. 2019
+> >> + *
+> >> + * Author(s): Pierre Morel <pmorel@linux.ibm.com>
+> >> + */
+> >> +
+> >> +#ifndef _VFIO_ZDEV_H_
+> >> +#define _VFIO_ZDEV_H_
+> >> +
+> >> +#include <linux/types.h>
+> >> +
+> >> +/**
+> >> + * struct vfio_region_zpci_info - ZPCI information.  
+> > 
+> > Hm... probably should also get some more explanation. E.g. is that
+> > derived from a hardware structure?
+> >   
+> 
+> The structure itself is not mapped 1:1 to a hardware structure, but it
+> does serve as a collection of information that was derived from other
+> hardware structures.
+> 
+> "Used for passing hardware feature information about a zpci device
+> between the host and guest" ?
 
-Normally soundwire updates go thru Greg (char) but this time around I
-missed the bus to send him due to some stuff.
+"zPCI specific hardware feature information for a device"?
 
-So with Greg's blessing here is the pull request for soundwire
-subsystem. Please pull to receive these updates.
+Are we reasonably sure that this is complete for now? I'm not sure if
+expanding this structure would work; adding another should always be
+possible, though (if a bit annoying).
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+> 
+> >> + *
+> >> + */
+> >> +struct vfio_region_zpci_info {
+> >> +	__u64 dasm;
+> >> +	__u64 start_dma;
+> >> +	__u64 end_dma;
+> >> +	__u64 msi_addr;
+> >> +	__u64 flags;
+> >> +	__u16 pchid;
+> >> +	__u16 mui;
+> >> +	__u16 noi;
+> >> +	__u16 maxstbl;
+> >> +	__u8 version;
+> >> +	__u8 gid;
+> >> +#define VFIO_PCI_ZDEV_FLAGS_REFRESH 1
+> >> +	__u8 util_str[];
+> >> +} __packed;
+> >> +
+> >> +#endif  
+> > 
+> >   
+> 
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/so=
-undwire-5.4-rc1
-
-for you to fetch changes up to dfcff3f8a5f18a0cfa233522b5647c2e6035fcb5:
-
-  soundwire: stream: make stream name a const pointer (2019-09-04 14:57:28 =
-+0530)
-
-----------------------------------------------------------------
-soundwire updates for v5.4-rc1
-
-This includes DT support thanks to Srini and more work done by Intel
-(Pierre) on improving cadence and intel support.
-
-Details:
- - Add DT bindings and DT support in core
- - Add debugfs support for soundwire properties
- - Improvements on streaming handling to core
- - Improved handling of Cadence module
- - More updates and improvements to Intel driver
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      soundwire: mipi_disco: Switch to use fwnode_property_count_uXX()
-
-Bard Liao (1):
-      soundwire: bus: set initial value to port_status
-
-Bard liao (1):
-      soundwire: include mod_devicetable.h to avoid compiling warnings
-
-Pierre-Louis Bossart (21):
-      soundwire: intel: remove BIOS work-arounds
-      soundwire: cadence_master: simplify bus clash interrupt clear
-      soundwire: bus: split handling of Device0 events
-      soundwire: intel: prevent possible dereference in hw_params
-      soundwire: intel: fix channel number reported by hardware
-      soundwire: cadence_master: revisit interrupt settings
-      soundwire: bus: improve dynamic debug comments for enumeration
-      soundwire: export helpers to find row and column values
-      soundwire: cadence_master: use firmware defaults for frame shape
-      soundwire: stream: fix disable sequence
-      soundwire: stream: remove unnecessary variable initializations
-      soundwire: add new mclk_freq field for properties
-      soundwire: intel: read mclk_freq property from firmware
-      soundwire: cadence_master: make use of mclk_freq property
-      soundwire: intel_init: add kernel module parameter to filter out links
-      soundwire: cadence_master: add kernel parameter to override interrupt=
- mask
-      soundwire: intel: move shutdown() callback and don't export symbol
-      soundwire: add debugfs support
-      soundwire: cadence_master: add debugfs register dump
-      soundwire: intel: add debugfs register dump
-      soundwire: intel: handle disabled links
-
-Rander Wang (1):
-      soundwire: cadence_master: fix divider setting in clock register
-
-Srinivas Kandagatla (3):
-      dt-bindings: soundwire: add slave bindings
-      soundwire: core: add device tree support for slave devices
-      soundwire: stream: make stream name a const pointer
-
-Vinod Koul (2):
-      soundwire: intel: remove unused variables
-      soundwire: Add compute_params callback
-
- .../bindings/soundwire/soundwire-controller.yaml   |  82 ++++++++
- drivers/soundwire/Makefile                         |   4 +
- drivers/soundwire/bus.c                            |  20 +-
- drivers/soundwire/bus.h                            |  24 ++-
- drivers/soundwire/bus_type.c                       |   3 +
- drivers/soundwire/cadence_master.c                 | 211 +++++++++++++++++=
-----
- drivers/soundwire/cadence_master.h                 |   6 +-
- drivers/soundwire/debugfs.c                        | 151 +++++++++++++++
- drivers/soundwire/intel.c                          | 211 +++++++++++++++++=
-++--
- drivers/soundwire/intel_init.c                     |  11 ++
- drivers/soundwire/mipi_disco.c                     |  18 +-
- drivers/soundwire/slave.c                          |  53 ++++++
- drivers/soundwire/stream.c                         | 105 ++++++----
- include/linux/soundwire/sdw.h                      |  20 +-
- include/linux/soundwire/sdw_intel.h                |   1 +
- 15 files changed, 819 insertions(+), 101 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soundwire/soundwire-c=
-ontroller.yaml
- create mode 100644 drivers/soundwire/debugfs.c
-
-Thanks
---=20
-~Vinod
-
---hOcCNbCCxyk/YU74
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJdhNwHAAoJEHwUBw8lI4NHhMgQALL3Eo4wxtF+CKCnu3zjarBZ
-ekJVYsijAz7ZVkbB0UDBYpxfS6Rn2XwqDyIO5KrSlZ+IG3zuKtnHuJ7vW8RtSj/s
-TVdovGu8JDYTEtvJisxaHbPfdq7DZ7GP2vWLh1hfN08ucjAsX/tFCX94w0ul9daD
-9l77q/9PXdwfuV8btCJrzoOKLdD3HyqVZdQgAmfWHzV35ZF2G8G7y+Np6Tjz/U+Z
-OJNxMMoVnG3g6AxGVoNavLUhA7TCRVKfUltXK2drH+Rcww2ouuXAX5dFqUG/UjaP
-bcs02p50RRkbzKmFo0zst3a+FprWkrGkELngSXIbQPZE4T91WkBArk7rNzN7mu64
-wrOevjEiIdMpNvPTIJO3TBHdYlitvbeW0ukn5YnT18FAPSwE2zwOkxUWBrvIXt8F
-R8d1kb9CtoM72KWvH7V/rcEzvNvrcNiy4QiXWK3nK1L86pl9HB1Wz1yuWAI8sX9t
-3Ps27RpJskymMy0tkonVCTzBLiMpYgGPndibSTYL1VeuAanAaqV+yT1wVhbiv2e1
-BgZtUg6OaDjj8nEHrB1bDlMDId89hdFipknMW8mbrtsnSTC7MA8FMGMJsFBymhzK
-8BSsrkBKFzU1OifxSx+zD+kLgguEck2raeNdniRwlwgl1q9JexIunK2IyawMVvCt
-GJ6Zzng7Li85e/4OX8fA
-=dsLL
------END PGP SIGNATURE-----
-
---hOcCNbCCxyk/YU74--
