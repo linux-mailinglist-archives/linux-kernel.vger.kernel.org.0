@@ -2,95 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E50AB9909
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DEC1B990B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:28:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbfITV1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 17:27:52 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46416 "EHLO mx1.redhat.com"
+        id S1730219AbfITV2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 17:28:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728362AbfITV1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 17:27:51 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727952AbfITV2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 17:28:44 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3039D18CB8EF;
-        Fri, 20 Sep 2019 21:27:51 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4756E5DA8D;
-        Fri, 20 Sep 2019 21:27:47 +0000 (UTC)
-Date:   Fri, 20 Sep 2019 17:27:46 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Milan Broz <gmazyland@gmail.com>
-Cc:     Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 0377D2080F;
+        Fri, 20 Sep 2019 21:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569014923;
+        bh=Iuvqw5we8caGe6LGqVMVAPtBvPYKodaDUEwUZjdxw9c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Uip1B6ghWH1LbFbKofmDP3xQgf9bd8aUqplb9/sHl1MDltNQrf5KqKqfru9eDK+cV
+         3nQeDyP1DqSMTdDFkoFeogwbRixSBOPX9qTlnhSDNnXp96UoE/xBllcVXKe2HaVPXu
+         kVXoVjair/ucXPvOivknJMUg2MxSwlLINYFuxBnY=
+Subject: Re: [PATCH 4.9 00/74] 4.9.194-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: dm-crypt error when CONFIG_CRYPTO_AUTHENC is disabled
-Message-ID: <20190920212746.GA22061@redhat.com>
-References: <20190920154434.GA923@gandi.net>
- <20190920173707.GA21143@redhat.com>
- <13e25b01-f344-ea1d-8f6c-9d0a60eb1e0f@gmail.com>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190919214800.519074117@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <c5c99be2-0b4b-3edb-dfea-232dcaddf5a2@kernel.org>
+Date:   Fri, 20 Sep 2019 15:28:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13e25b01-f344-ea1d-8f6c-9d0a60eb1e0f@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Fri, 20 Sep 2019 21:27:51 +0000 (UTC)
+In-Reply-To: <20190919214800.519074117@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20 2019 at  3:21pm -0400,
-Milan Broz <gmazyland@gmail.com> wrote:
-
-> On 20/09/2019 19:37, Mike Snitzer wrote:
-> > On Fri, Sep 20 2019 at 11:44am -0400,
-> > Thibaut Sautereau <thibaut.sautereau@clip-os.org> wrote:
-> > 
-> >> Hi,
-> >>
-> >> I just got a dm-crypt "crypt: Error allocating crypto tfm" error when
-> >> trying to "cryptsetup open" a volume. I found out that it was only
-> >> happening when I disabled CONFIG_CRYPTO_AUTHENC.
-> >>
-> >> drivers/md/dm-crypt.c includes the crypto/authenc.h header and seems to
-> >> use some CRYPTO_AUTHENC-related stuff. Therefore, shouldn't
-> >> CONFIG_DM_CRYPT select CONFIG_CRYPTO_AUTHENC?
-> > 
-> > Yes, it looks like commit ef43aa38063a6 ("dm crypt: add cryptographic
-> > data integrity protection (authenticated encryption)") should've added
-> > 'select CRYPTO_AUTHENC' to dm-crypt's Kconfig.  I'll let Milan weigh-in
-> > but that seems like the right way forward.
+On 9/19/19 4:03 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.194 release.
+> There are 74 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> No, I don't this so. It is like you use some algorithm that is just not compiled-in,
-> or it is disabled in the current state (because of FIPS mode od so) - it fails
-> to initialize it.
+> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
+> Anything received after that time might be too late.
 > 
-> I think we should not force dm-crypt to depend on AEAD - most users
-> do not use authenticated encryption, it is perfectly ok to keep this compiled out.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.194-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
 > 
-> I do not see any principal difference from disabling any other crypto
-> (if you disable XTS mode, it fails to open device that uses it).
+> thanks,
 > 
-> IMO the current config dependence is ok.
+> greg k-h
+> 
 
-That is a good point.  I hadn't considered the kernel compiles just fine
-without CRYPTO_AUTHENC.. which it clearly does.
+Compiled and booted on my test system. No dmesg regressions.
 
-SO I retract the question/thought of updating the Kconfig for dm-crypt
-in my previous mail.
+thanks,
+-- Shuah
 
-Though in hindsight: wonder whether the dm-integrity based dm-crypt
-authenticated encryption support should have been exposed as a proper
-CONFIG option within the DM_CRYPT section?  Rather than lean on the
-crypto subsystem to happily stub out the dm-crypt AEAD and AUTHENC
-related code dm-crypt could've established #ifdef boundaries for that
-code.
-
-I'm open to suggestions and/or confirmation that the way things are now
-is perfectly fine.  But I do see this report as something that should
-drive some improvement.
-
-Mike
