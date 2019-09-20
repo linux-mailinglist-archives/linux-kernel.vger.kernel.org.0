@@ -2,337 +2,349 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A00B8C0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF07B8C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437636AbfITHyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 03:54:50 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46632 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437626AbfITHyu (ORCPT
+        id S2437671AbfITHzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 03:55:14 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35916 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437613AbfITHzG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 03:54:50 -0400
-Received: by mail-ed1-f65.google.com with SMTP id t3so5438838edw.13
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 00:54:48 -0700 (PDT)
+        Fri, 20 Sep 2019 03:55:06 -0400
+Received: by mail-qt1-f193.google.com with SMTP id o12so7664214qtf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 00:55:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=globallogic.com; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gTl0/zojW/YMwD6857GyvtQiwPcC3wEmLLrOtd8M3CI=;
-        b=BN6jP/j17vDhUo9RVgyUGTkIc+LehR/6uoUew57ENg1nbEJV3vOHNrANL2YM3D2E1e
-         vgplHgKrLBiMOD5UButpnUPpHnBB1pz1FUWVSzFlZ0xoL7+5xo7qcQBO7oCOtFtlUYgS
-         oE9qJJpJN2UMcQUgMYFx2PjldVRgvYuZOyIkqTWdic6I3wXz+GflX48PLBgXym1TpTq9
-         4AXburDEU5vY9RNrtOHALgjfv2y/k6f6AKCDGhUKBqSwoa7Oo/hW0wyqd7SQ6S8YXFX4
-         EjZkbhurwYAygxFUG6EMDjdXeTZONglgFKS18WaJNY3YzbEQS++uyEMJC1nDHlRCIgtb
-         IB9Q==
+         :cc;
+        bh=KwDj2QSCLZxVyYtEECEq17KaUnvmQF/hnlPmqs/9dr8=;
+        b=sLcnNaHYqyVe09ueC2MqNm9hAi6NtdI+hETjAsq2zxitqadibGml8vdOxRF/8yRAn/
+         mMxaKPiEhmYhdeJ89TzNKcEU0/bICDPODJd4X7jl0nIG1w/5+2yV5+gmRN2Un+idBtnn
+         AoyrtccQqD/iL2tzoVC9fxfTwgGqtfkpKV6hba92NMSnPfisexjEnm50Pqy3Pvn+lArg
+         F1F4Qa/W4zDD5/iZhIbfLBavSC4PIdqePD9Xuw97MtYX/fVOB8T16b7Ylpz6bFaxYmMK
+         w0PvBR7jNzUiOdLqAR/TVmTHxl3EcZvHV0JEPP7XU7YEF5TyDnj8cdYOUk85TKsASuH2
+         IDpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gTl0/zojW/YMwD6857GyvtQiwPcC3wEmLLrOtd8M3CI=;
-        b=KK3QkJHREH9aZtJymmTz7STsv/L/8J5cytnf00pggWPRg79oy9+L2xZLujGGfklb/j
-         vcSaBCFjKzTTrhdK6V4X82Fp/wEd3A3/T1Tu15cVfVWpdu82zfMdk+UCx3E0KiQl/YRU
-         E5zCECUeNvt2j0bFeAB5lY46QOqYogHzs1IZydcVD496bL9gq04vsG+68H30q2gB2Q4L
-         2m2rvJvwtGEolKvMUI7NzPATvim8xGN2RcQ+5v8Upb+llboloGz997E+uf89hTEKSxR0
-         9lptgs1eN0li8F7ecMezkxjsZdwhgutZdWyzdcaydPQVUC0EfMSXMPw9bApjGXnmpY8D
-         3YcA==
-X-Gm-Message-State: APjAAAUMQgzGv+RmS74BI3/BVE96in25xW4hV/+wkR01kM7z5R24x31K
-        rgQjNr8Gh6rVN2cRU/lc6+3fPeKa1gd89ZCf/7lg+zM8dOw=
-X-Google-Smtp-Source: APXvYqy0f/V8Tbl32ICbiQGM3E97+0UMwzQeILI7xu9zHBxIokVKNM8p8CNybQHEf1aiPdJd6H5AmGtPFKDoJlRYdqA=
-X-Received: by 2002:a17:906:d050:: with SMTP id bo16mr18416776ejb.146.1568966087313;
- Fri, 20 Sep 2019 00:54:47 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=KwDj2QSCLZxVyYtEECEq17KaUnvmQF/hnlPmqs/9dr8=;
+        b=B3v57YJ9HyvP3DanbPX/OaKy3/nrK74vR3TIoAH+LBzEbyRm1ndBJfkzOsbJoi48ZM
+         I2fnmOhRu5XYUWdj+7B0HB02m9AlmRhF17HFImXh6+QwIHyf2e7iHwv95U68fo+XNTO5
+         LHm5OZTYnywN7OwfTF93/8SVFdJuiUj5ZcnbYC14CFHqJITmwLI/tAvbiQMflg73VhJx
+         l4H5jw69Eo5Po80NPeZMz9ksrJnkoanaQJnkYcJPokXnUYO8CysasQzUpUICqpK4ozr6
+         dLoNIUAQSAV/QtNRz1O6l84x7vN8oXTB9XRWzP6OXdGtsxkSBkTdC4GefTTmpZDM/5Hy
+         rf/g==
+X-Gm-Message-State: APjAAAVtuOx7SsEh75WHjRc9/rpm9yGviYQ6T9oMsaODplaBiRF0drEM
+        RrHpeAYFuoT7gcPfXPD1X50SKm84EREMLU4ofMjfxA==
+X-Google-Smtp-Source: APXvYqxqJnu7qkbF5LaroSyo9m1iltfxEtCuwaUn5g3te6y58hblphq2AyOIb5fA9OlmtJ/qS6NvGA2RSIQ1ncI2IVY=
+X-Received: by 2002:ac8:7319:: with SMTP id x25mr1858815qto.57.1568966103505;
+ Fri, 20 Sep 2019 00:55:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190919123703.8545-1-roman.stratiienko@globallogic.com>
- <20190919171754.x6lq73cctnqsjr4v@gilmour> <104595190.vWb6g8xIPX@jernej-laptop>
-In-Reply-To: <104595190.vWb6g8xIPX@jernej-laptop>
-From:   Roman Stratiienko <roman.stratiienko@globallogic.com>
-Date:   Fri, 20 Sep 2019 10:54:36 +0300
-Message-ID: <CAODwZ7sDpJH3CSt5P3h+2OJnpLExkb+mmyWy2mOpx=A-eG3seQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/sun4i: Use vi plane as primary
-To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
+References: <000000000000674b3d0592d2015b@google.com> <CACT4Y+YX3yNz7Fc8wUKsVR-rzusqmTnzP6ysZx+=3CzhVHk36w@mail.gmail.com>
+ <20190919170750.GO30224@paulmck-ThinkPad-P72> <CACT4Y+bHcy1ZOstVvSGezs+3Q=jccdWTeikm6mnZiXYCBi+Nyw@mail.gmail.com>
+ <20190919201200.GP30224@paulmck-ThinkPad-P72> <CACT4Y+YdodVKL2h-Z4Svjyd6kug2ORmfiP4jripSC9PpYw4RiA@mail.gmail.com>
+In-Reply-To: <CACT4Y+YdodVKL2h-Z4Svjyd6kug2ORmfiP4jripSC9PpYw4RiA@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 20 Sep 2019 09:54:52 +0200
+Message-ID: <CACT4Y+YLZeMSz1F_YEmbNVF=cxBJcOMOC6KNDXCddei49JMs4Q@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in sys_exit_group
+To:     paulmck@kernel.org
+Cc:     syzbot <syzbot+18379f2a19bc62c12565@syzkaller.appspotmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>, avagin@gmail.com,
+        Christian Brauner <christian@brauner.io>, dbueso@suse.de,
+        LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, prsood@codeaurora.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Resending  message in plain mode ]
-
-Hello guys,
-
-Actually, I believe this is True solution, and current one is wrong.
-Let me explain why.
-
-De2. 0 was designed to match Android hwcomposer hal requirements IMO.
-You can easily agree with this conclusion by comparing Composer HAL
-and De2. 0 hardware manuals.
-
-I faced at least 4 issues when trying to run Android using the
-mainline kernel sun8i mixer implementation. Current one, missing pixel
-formats (my previous patch), missing plane alpha and rotation
-properties. I plan to fix it and also send appropriate solution to the
-upstream.
-
-To achieve optimal UI performance Android requires at least 4 ui
-layers to make screen composition. Current patch enables 4th plane
-usable.
-
-As for using vi plane to display video. I assume that some of the
-current users may have regression in their software, but it could be
-easily fixed. For example if vi layer isn't fullscreen and should be
-on top of the other layers, it can actually be placed on the bottom
-and overlayed with pictures with transparent rectangles in video
-region.
-But I assume most of users such as browser etc. uses GPU for that.
-
-And if you are watching fullscreen video, I can imagine only subtitles
-layer and advertising layers on top of the video layers.
-
-
-On Thu, Sep 19, 2019 at 9:15 PM Jernej =C5=A0krabec <jernej.skrabec@siol.ne=
-t> wrote:
+On Fri, Sep 20, 2019 at 9:50 AM Dmitry Vyukov <dvyukov@google.com> wrote:
 >
-> Dne =C4=8Detrtek, 19. september 2019 ob 19:17:54 CEST je Maxime Ripard na=
-pisal(a):
-> > Hi,
+>  On Thu, Sep 19, 2019 at 10:12 PM Paul E. McKenney <paulmck@kernel.org> wrote:
 > >
-> > On Thu, Sep 19, 2019 at 03:37:03PM +0300, roman.stratiienko@globallogic=
-.com
-> wrote:
-> > > From: Roman Stratiienko <roman.stratiienko@globallogic.com>
+> > On Thu, Sep 19, 2019 at 07:39:03PM +0200, Dmitry Vyukov wrote:
+> > > On Thu, Sep 19, 2019 at 7:07 PM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > On Wed, Sep 18, 2019 at 05:05:26PM +0200, Dmitry Vyukov wrote:
+> > > > > On Wed, Sep 18, 2019 at 1:19 PM syzbot
+> > > > > <syzbot+18379f2a19bc62c12565@syzkaller.appspotmail.com> wrote:
+> > > > > >
+> > > > > > Hello,
+> > > > > >
+> > > > > > syzbot found the following crash on:
+> > > > > >
+> > > > > > HEAD commit:    a7f89616 Merge branch 'for-5.3-fixes' of git://git.kernel...
+> > > > > > git tree:       upstream
+> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=15c33079600000
+> > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=861a6f31647968de
+> > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=18379f2a19bc62c12565
+> > > > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1066bb85600000
+> > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e9f75e600000
+> > > > > >
+> > > > > > Bisection is inconclusive: the bug happens on the oldest tested release.
+> > > > > >
+> > > > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154d4969600000
+> > > > > > final crash:    https://syzkaller.appspot.com/x/report.txt?x=174d4969600000
+> > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=134d4969600000
+> > > > > >
+> > > > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > > > Reported-by: syzbot+18379f2a19bc62c12565@syzkaller.appspotmail.com
+> > > > > >
+> > > > > > rcu: INFO: rcu_preempt self-detected stall on CPU
+> > > > > > rcu:    1-...!: (10499 ticks this GP) idle=63a/1/0x4000000000000002
+> > > > > > softirq=10978/10978 fqs=0
+> > > > > >         (t=10501 jiffies g=10601 q=227)
+> > > > > > rcu: rcu_preempt kthread starved for 10502 jiffies! g10601 f0x0
+> > > >
+> > > > The key point is the above line: RCU's grace-period kthread has not
+> > > > had a chance to run for 10,502 jiffies.
+> > > >
+> > > > > > RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
+> > > >
+> > > > And it is sleeping normally.  The "RCU_GP_WAIT_FQS(5)" says that it was
+> > > > doing a fixed-time wait, which is normally for three jiffies, but never
+> > > > 10,000 of them.  Note that this kthread last ran on CPU 0.
+> > > >
+> > > > > > rcu: RCU grace-period kthread stack dump:
+> > > > > > rcu_preempt     I29040    10      2 0x80004000
+> > > > > > Call Trace:
+> > > > > >   context_switch kernel/sched/core.c:3254 [inline]
+> > > > > >   __schedule+0x755/0x1580 kernel/sched/core.c:3880
+> > > > > >   schedule+0xd9/0x260 kernel/sched/core.c:3947
+> > > > > >   schedule_timeout+0x486/0xc50 kernel/time/timer.c:1807
+> > > > > >   rcu_gp_fqs_loop kernel/rcu/tree.c:1611 [inline]
+> > > > > >   rcu_gp_kthread+0x9b2/0x18c0 kernel/rcu/tree.c:1768
+> > > > > >   kthread+0x361/0x430 kernel/kthread.c:255
+> > > > > >   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> > > >
+> > > > This stack trace is expected:  The RCU grace-period kthread is doing
+> > > > a fixed-time wait.  Note that this is a stack trace of this kthread,
+> > > > not necessarily of the CPU it was last running on.
+> > > >
+> > > > > > Sending NMI from CPU 1 to CPUs 0:
+> > > > > > INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.403
+> > > > > > msecs
+> > > >
+> > > > This is surprising.  Is this a guest OS?  If so, is the vCPU for CPU 0
+> > > > stuck somehow?  Did it get a SIGSTOP or some such?
+> > > >
+> > > > Clearly, if CPU 0 isn't running, RCU's grace-period kthread, which was
+> > > > last seen on CPU 0, might not be doing so well.
+> > > >
+> > > > OK, but we eventually did get a stack trace:
+> > > >
+> > > > > > NMI backtrace for cpu 0
+> > > > > > CPU: 0 PID: 10344 Comm: syz-executor933 Not tainted 5.3.0-rc8+ #0
+> > > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > > > > > Google 01/01/2011
+> > > > > > RIP: 0010:hhf_dequeue+0x552/0xa20 net/sched/sch_hhf.c:436
+> > > > > > Code: ff ff 45 31 ff e9 b0 02 00 00 e8 49 05 ac fb 48 8d 43 f0 41 be 01 00
+> > > > > > 00 00 49 8d 95 c0 02 00 00 48 39 c2 74 34 e8 2e 05 ac fb <49> 8d bd ac 03
+> > > > > > 00 00 48 89 f8 48 c1 e8 03 42 0f b6 14 20 48 89 f8
+> > > > > > RSP: 0018:ffff8880ae809038 EFLAGS: 00000206
+> > > > > > RAX: ffff8880a3970100 RBX: ffff8880a8b1d538 RCX: ffffffff85c66b39
+> > > > > > RDX: 0000000000000100 RSI: ffffffff85c66fd2 RDI: 0000000000000005
+> > > > > > RBP: ffff8880ae809088 R08: ffff8880a3970100 R09: 0000000000000000
+> > > > > > R10: fffffbfff134afaf R11: ffff8880a3970100 R12: dffffc0000000000
+> > > > > > R13: ffff8880a8b1d240 R14: 0000000000000001 R15: 0000000000000000
+> > > > > > FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+> > > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > > CR2: 00000000006dab10 CR3: 0000000008c6d000 CR4: 00000000001406f0
+> > > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > > > Call Trace:
+> > > > > >   <IRQ>
+> > > > > >   dequeue_skb net/sched/sch_generic.c:258 [inline]
+> > > > > >   qdisc_restart net/sched/sch_generic.c:361 [inline]
+> > > > > >   __qdisc_run+0x1e7/0x19d0 net/sched/sch_generic.c:379
+> > > > > >   __dev_xmit_skb net/core/dev.c:3533 [inline]
+> > > > > >   __dev_queue_xmit+0x16f1/0x3650 net/core/dev.c:3838
+> > > > > >   dev_queue_xmit+0x18/0x20 net/core/dev.c:3902
+> > > > > >   br_dev_queue_push_xmit+0x3f3/0x5c0 net/bridge/br_forward.c:52
+> > > > > >   NF_HOOK include/linux/netfilter.h:305 [inline]
+> > > > > >   NF_HOOK include/linux/netfilter.h:299 [inline]
+> > > > > >   br_forward_finish+0xfa/0x400 net/bridge/br_forward.c:65
+> > > > > >   NF_HOOK include/linux/netfilter.h:305 [inline]
+> > > > > >   NF_HOOK include/linux/netfilter.h:299 [inline]
+> > > > > >   __br_forward+0x641/0xb00 net/bridge/br_forward.c:109
+> > > > > >   deliver_clone+0x61/0xc0 net/bridge/br_forward.c:125
+> > > > > >   maybe_deliver+0x2c7/0x390 net/bridge/br_forward.c:181
+> > > > > >   br_flood+0x13a/0x3d0 net/bridge/br_forward.c:223
+> > > > > >   br_dev_xmit+0x98c/0x15a0 net/bridge/br_device.c:100
+> > > > > >   __netdev_start_xmit include/linux/netdevice.h:4406 [inline]
+> > > > > >   netdev_start_xmit include/linux/netdevice.h:4420 [inline]
+> > > > > >   xmit_one net/core/dev.c:3280 [inline]
+> > > > > >   dev_hard_start_xmit+0x1a3/0x9c0 net/core/dev.c:3296
+> > > > > >   __dev_queue_xmit+0x2b15/0x3650 net/core/dev.c:3869
+> > > > > >   dev_queue_xmit+0x18/0x20 net/core/dev.c:3902
+> > > > > >   neigh_hh_output include/net/neighbour.h:500 [inline]
+> > > > > >   neigh_output include/net/neighbour.h:509 [inline]
+> > > > > >   ip_finish_output2+0x1726/0x2570 net/ipv4/ip_output.c:228
+> > > > > >   __ip_finish_output net/ipv4/ip_output.c:308 [inline]
+> > > > > >   __ip_finish_output+0x5fc/0xb90 net/ipv4/ip_output.c:290
+> > > > > >   ip_finish_output+0x38/0x1f0 net/ipv4/ip_output.c:318
+> > > > > >   NF_HOOK_COND include/linux/netfilter.h:294 [inline]
+> > > > > >   ip_output+0x21f/0x640 net/ipv4/ip_output.c:432
+> > > > > >   dst_output include/net/dst.h:436 [inline]
+> > > > > >   ip_local_out+0xbb/0x190 net/ipv4/ip_output.c:125
+> > > > > >   igmpv3_sendpack+0x1b5/0x2c0 net/ipv4/igmp.c:426
+> > > > > >   igmpv3_send_cr net/ipv4/igmp.c:721 [inline]
+> > > > > >   igmp_ifc_timer_expire+0x687/0xa00 net/ipv4/igmp.c:809
+> > > >
+> > > > So this stack trace leads me to ask if networking has been hogging
+> > > > the CPU for the past 10,000 jiffies.  Perhaps there is a corner case
+> > > > that is not being addressed by the code that is supposed to move
+> > > > long-term processing from softirq to ksoftirqd?  Or perhaps more
+> > > > likely, the networking code isn't exiting its softirq handler, thus
+> > > > preventing the timer softirq handler from running, thus preventing
+> > > > RCU's grace-period kthread's sleep from ever ending.
+> > > >
+> > > > Is this consistent with what you are seeing?
+> > > >
+> > > > > This should have been parsed as "INFO: rcu detected stall in
+> > > > > igmp_ifc_timer_expire" which was already reported:
+> > > > > https://syzkaller.appspot.com/bug?id=330ce4f7626354cc6444c457c9a5e82d8a8c5055
+> > > > > So let's do:
+> > > > > #syz fix: sch_hhf: ensure quantum and hhf_non_hh_weight are non-zero
+> > > > >
+> > > > > +Paul, Tetsuo
+> > > > >
+> > > > > However, I cannot make sense of this kernel output (nor syzbot).
+> > > > > Here is full console output:
+> > > > > https://syzkaller.appspot.com/x/log.txt?x=15c33079600000
+> > > >
+> > > > I will bite...  What are all the "executing program" outputs?
+> > > >
+> > > > > This is "self-detected stall" which was detected in rcu_gp_kthread (?
+> > > > > usually these are detected in interrupts, no?)
+> > > >
+> > > > They are detected by the scheduling-clock interrupt handler, but
+> > > > stalls can be generated both at process and at interrupt levels.
+> > > >
+> > > > > and then the kthread runs on CPU 1 on top of the igmp_ifc_timer_expire
+> > > > > handler running in an interrupt (how can a kthread run on the
+> > > > > interrupt stack?)
+> > > > > and then it does NMI traceback for CPU 0, but that runs on CPU 1
+> > > > > (shouldn't NMI traceback run on CPU 0 too?)
+> > > > >
+> > > > > Any ideas what exactly happened here and how one can make sense of
+> > > > > such output to attribute it to some kernel activity that caused the
+> > > > > stall?
+> > > >
+> > > > My best guess based on what I am seeing is that a softirq handler
+> > > > is running for about ten seconds, which is too long.
+> > > >
+> > > > Do you have means for tracking softirq-handler durations?
 > > >
-> > > DE2.0 blender does not take into the account alpha channel of vi laye=
-r.
-> > > Thus makes overlaying of this layer totally opaque.
-> > > Using vi layer as bottom solves this issue.
->
-> What issue? Overlays don't have to be "full screen", thus missing support=
- for
-> alpha blending doesn't make it less valuable. And VI planes are already p=
-laced
-> at the bottom (zpos =3D 0).
->
+> > > The "executing program" are produced by userspace. Kernel and
+> > > userspace outputs are multiplexed later to restore order of events.
+> > > Kernel output is prefixed with "[  351.648071][    C1]".
 > > >
-> > > Tested on Android.
+> > > Yes, the networking is stuck dead in an infinite loop. That's a known
+> > > bug, already fixed by:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d4d6ec6dac07f263f06d847d6f732d6855522845
 > > >
-> > > Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
+> > > But I am interested why this report looks not like all other rcu
+> > > stalls and who should be the parsing logic to conclude that the stall
+> > > happened in igmp_ifc_timer_expire?
 > >
-> > It sounds like a workaround more than an actual fix.
+> > Because the infinite loop happened to prevent the RCU grace-period
+> > kthread from making progress.  The odds of that are a bit low, so
+> > most of the stall warnings would look different.
+>
+> But isn't it happens in all cases of infinite loops? Yet most other
+> reports look different and don't mention kthread. What's different
+> here?
+> Or is it another case of flaky reporting? We had that other case where
+> self-stall or remote-stall had the same timeout, so were reported
+> non-deterministically, or worse intermixed at the same time.
+>
+>
+> > I do expect to be revisiting the RCU CPU stall warning logic at some
+> > point.  Or are you asking how you could modify a script that figures
+> > this out?
+>
+> Both. Fixing parsing may be easier and will fix all old kernels too.
+> You know nobody uses kernel HEAD, people use down to 3.18 and maybe
+> older. You are not going to backport these changes all the way back,
+> right? :)
+>
+> > > Why it's detected by the kthread?
 > >
-> > If the VI planes can't use the alpha, then we should just stop
-> > reporting that format.
+> > It is not detected by the kthread.  The kthread has been interrupted
+> > indefinitely by the softirq processing, so is not in a position to
+> > detect much of anything.  It is instead detected as usual by the
+> > scheduling-clock interrupt.
+>
+> I don't see any rcu-liveness-checking interrupt handler in any
+> tracebacks. Where is it? Is it useful to traceback the ktread in such
+> case at all?
+>
+> What we do is the following, we find first apic_timer_interrupt on the
+> current CPU (presumably that the rcu-health-checking interrupt) and
+> then take the next "anchor" frame after that. This does not work in
+> this case, because the rcu-health-checking interrupt in missing.
+>
+>
+> > What is different is that the scheduling-clock interrupt detected
+> > that the grace-period kthread had not been running for an extended
+> > period of time.  It can detect this because the grace period kthread
+> > stores timestamps before each activity it undertakes.
 > >
-> > Jernej, what do you think?
+> > >                                   How it runs on top of an interrupt?
+> >
+> > It is not running on top of an interrupt.  Its stack was dumped
+> > separately.
 >
-> Commit message is misleading. What this commit actually does is moving pr=
-imary
-> plane from first UI plane to bottom most plane, i.e. first VI plane. Howe=
-ver, VI
-> planes are scarce resource, almost all mixers have only one. I wouldn't s=
-et it
-> as primary, because it's the only one which provide support for YUV forma=
-ts.
-> That could be used for example by video player for zero-copy rendering.
-> Probably most apps wouldn't touch it if it was primary (that's usually
-> reserved for window manager, if used).
+> I see. Usually the first stack is the traceback of the current stack.
+> So I was confused.
 >
-> I left few formats with alpha channel exposed by VI planes, just because =
-they
-> don't have equivalent format without alpha. But I'm fine with removing th=
-em if
-> you all agree on that.
+> > > And why one cpu tracebacks another one?
+> >
+> > The usual reason is because neither CPU's quiescent state was reported
+> > to the RCU core, so the stall-warning code dumped both stacks.
 >
-> Best regards,
-> Jernej
+> But should the other CPU traceback _itself_? Rather than being traced
+> back by another CPU?
+> E.g. see this report:
+> https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/350#L61-L83
+> Here the overall problem was detected by C2, but then C1 traces back itself.
+>
+> ... however even in that case C0 and C3 are traced by C2:
+> https://github.com/google/syzkaller/blob/master/pkg/report/testdata/linux/report/350#L84-L149
+> I can't understand this...
+> This makes understanding what happened harder because it's not easy to
+> exclude things on other CPUs.
+>
+>
 >
 > >
-> > Maxime
+> > My turn.  Why dothere appear to be multiple levels of interrupt, as
+> > in one interrupt interrupting another interrupt?
+>
+> I don't understand the question.
+> I see 1 apic_timer_interrupt on CPU 0 and 1 apic_timer_interrupt on CPU 1.
+>
+> > > As of now syzkaller parsed it as "in sys_exit_group", which lead to
+> > > the creation of a new bug and another email, which is suboptimal.
 > >
-> > > ---
-> > >
-> > >  drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 33 -----------------------
-> > >  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 36 ++++++++++++++++++++++++=
-+-
-> > >  2 files changed, 35 insertions(+), 34 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> > > b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c index dd2a1c851939..25183bad=
-c85f
-> > > 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> > > @@ -99,36 +99,6 @@ static int sun8i_ui_layer_update_coord(struct
-> > > sun8i_mixer *mixer, int channel,>
-> > >     insize =3D SUN8I_MIXER_SIZE(src_w, src_h);
-> > >     outsize =3D SUN8I_MIXER_SIZE(dst_w, dst_h);
-> > >
-> > > -   if (plane->type =3D=3D DRM_PLANE_TYPE_PRIMARY) {
-> > > -           bool interlaced =3D false;
-> > > -           u32 val;
-> > > -
-> > > -           DRM_DEBUG_DRIVER("Primary layer, updating global size
-> W: %u H: %u\n",
-> > > -                            dst_w, dst_h);
-> > > -           regmap_write(mixer->engine.regs,
-> > > -                        SUN8I_MIXER_GLOBAL_SIZE,
-> > > -                        outsize);
-> > > -           regmap_write(mixer->engine.regs,
-> > > -                        SUN8I_MIXER_BLEND_OUTSIZE(bld_base),
-> outsize);
-> > > -
-> > > -           if (state->crtc)
-> > > -                   interlaced =3D state->crtc->state-
-> >adjusted_mode.flags
-> > > -                           & DRM_MODE_FLAG_INTERLACE;
-> > > -
-> > > -           if (interlaced)
-> > > -                   val =3D SUN8I_MIXER_BLEND_OUTCTL_INTERLACED;
-> > > -           else
-> > > -                   val =3D 0;
-> > > -
-> > > -           regmap_update_bits(mixer->engine.regs,
-> > > -
-> SUN8I_MIXER_BLEND_OUTCTL(bld_base),
-> > > -
-> SUN8I_MIXER_BLEND_OUTCTL_INTERLACED,
-> > > -                              val);
-> > > -
-> > > -           DRM_DEBUG_DRIVER("Switching display mixer interlaced
-> mode %s\n",
-> > > -                            interlaced ? "on" : "off");
-> > > -   }
-> > > -
-> > >
-> > >     /* Set height and width */
-> > >     DRM_DEBUG_DRIVER("Layer source offset X: %d Y: %d\n",
-> > >
-> > >                      state->src.x1 >> 16, state->src.y1 >> 16);
-> > >
-> > > @@ -349,9 +319,6 @@ struct sun8i_ui_layer *sun8i_ui_layer_init_one(st=
-ruct
-> > > drm_device *drm,>
-> > >     if (!layer)
-> > >
-> > >             return ERR_PTR(-ENOMEM);
-> > >
-> > > -   if (index =3D=3D 0)
-> > > -           type =3D DRM_PLANE_TYPE_PRIMARY;
-> > > -
-> > >
-> > >     /* possible crtcs are set later */
-> > >     ret =3D drm_universal_plane_init(drm, &layer->plane, 0,
-> > >
-> > >                                    &sun8i_ui_layer_funcs,
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> > > b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c index 07c27e6a4b77..49c4074e=
-164f
-> > > 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> > > @@ -116,6 +116,36 @@ static int sun8i_vi_layer_update_coord(struct
-> > > sun8i_mixer *mixer, int channel,>
-> > >     insize =3D SUN8I_MIXER_SIZE(src_w, src_h);
-> > >     outsize =3D SUN8I_MIXER_SIZE(dst_w, dst_h);
-> > >
-> > > +   if (plane->type =3D=3D DRM_PLANE_TYPE_PRIMARY) {
-> > > +           bool interlaced =3D false;
-> > > +           u32 val;
-> > > +
-> > > +           DRM_DEBUG_DRIVER("Primary layer, updating global size
-> W: %u H: %u\n",
-> > > +                            dst_w, dst_h);
-> > > +           regmap_write(mixer->engine.regs,
-> > > +                        SUN8I_MIXER_GLOBAL_SIZE,
-> > > +                        outsize);
-> > > +           regmap_write(mixer->engine.regs,
-> > > +                        SUN8I_MIXER_BLEND_OUTSIZE(bld_base),
-> outsize);
-> > > +
-> > > +           if (state->crtc)
-> > > +                   interlaced =3D state->crtc->state-
-> >adjusted_mode.flags
-> > > +                           & DRM_MODE_FLAG_INTERLACE;
-> > > +
-> > > +           if (interlaced)
-> > > +                   val =3D SUN8I_MIXER_BLEND_OUTCTL_INTERLACED;
-> > > +           else
-> > > +                   val =3D 0;
-> > > +
-> > > +           regmap_update_bits(mixer->engine.regs,
-> > > +
-> SUN8I_MIXER_BLEND_OUTCTL(bld_base),
-> > > +
-> SUN8I_MIXER_BLEND_OUTCTL_INTERLACED,
-> > > +                              val);
-> > > +
-> > > +           DRM_DEBUG_DRIVER("Switching display mixer interlaced
-> mode %s\n",
-> > > +                            interlaced ? "on" : "off");
-> > > +   }
-> > > +
-> > >
-> > >     /* Set height and width */
-> > >     DRM_DEBUG_DRIVER("Layer source offset X: %d Y: %d\n",
-> > >
-> > >                      (state->src.x1 >> 16) & ~(format->hsub -
-> 1),
-> > >
-> > > @@ -445,6 +475,7 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(st=
-ruct
-> > > drm_device *drm,>
-> > >                                            struct
-> sun8i_mixer *mixer,
-> > >                                            int index)
-> > >
-> > >  {
-> > >
-> > > +   enum drm_plane_type type =3D DRM_PLANE_TYPE_OVERLAY;
-> > >
-> > >     struct sun8i_vi_layer *layer;
-> > >     unsigned int plane_cnt;
-> > >     int ret;
-> > >
-> > > @@ -453,12 +484,15 @@ struct sun8i_vi_layer
-> > > *sun8i_vi_layer_init_one(struct drm_device *drm,>
-> > >     if (!layer)
-> > >
-> > >             return ERR_PTR(-ENOMEM);
-> > >
-> > > +   if (index =3D=3D 0)
-> > > +           type =3D DRM_PLANE_TYPE_PRIMARY;
-> > > +
-> > >
-> > >     /* possible crtcs are set later */
-> > >     ret =3D drm_universal_plane_init(drm, &layer->plane, 0,
-> > >
-> > >                                    &sun8i_vi_layer_funcs,
-> > >                                    sun8i_vi_layer_formats,
-> > >
-> ARRAY_SIZE(sun8i_vi_layer_formats),
-> > >
-> > > -                                  NULL,
-> DRM_PLANE_TYPE_OVERLAY, NULL);
-> > > +                                  NULL, type, NULL);
-> > >
-> > >     if (ret) {
-> > >
-> > >             dev_err(drm->dev, "Couldn't initialize layer\n");
-> > >             return ERR_PTR(ret);
-> > >
-> > > --
-> > > 2.17.1
+> > I suggest having syzkaller look for something like "rcu: rcu_[a-z]*
+> > kthread starved for".
 >
->
->
->
+> And then what do we need to do to detect this as "in igmp_ifc_timer_expire"?
 
-
---=20
-Best regards,
-Roman Stratiienko
-Global Logic
-ADIT Team
+Another thing in this report that confuses me is this:
+The machine has 2 CPUs. The report contains 2 NMI tracebacks, both for
+CPU 0 and CPU 1. A CPU generally does not do NMI traceback for itself
+(right? it could do just traceback). The question is: what CPU the
+code that prints this runs on then?
