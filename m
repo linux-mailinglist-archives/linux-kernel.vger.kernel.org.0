@@ -2,75 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2EAB9010
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 181C2B901D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfITMyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 08:54:54 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35276 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfITMyx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 08:54:53 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iBIQs-0005Yn-1s; Fri, 20 Sep 2019 12:54:42 +0000
-Date:   Fri, 20 Sep 2019 13:54:42 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     dwmw2@infradead.org, dilinger@queued.net, richard@nod.at,
-        houtao1@huawei.com, bbrezillon@kernel.org, daniel.santos@pobox.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] jffs2:freely allocate memory when parameters are invalid
-Message-ID: <20190920125442.GA20754@ZenIV.linux.org.uk>
-References: <1568962478-126260-1-git-send-email-nixiaoming@huawei.com>
- <20190920114336.GM1131@ZenIV.linux.org.uk>
- <206f8d57-dad9-26c3-6bf6-1d000f5698d4@huawei.com>
- <20190920124532.GN1131@ZenIV.linux.org.uk>
+        id S1726835AbfITNBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 09:01:30 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:34598 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726807AbfITNBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 09:01:30 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1iBIWF-0007oQ-9S; Fri, 20 Sep 2019 23:00:16 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 20 Sep 2019 23:00:12 +1000
+Date:   Fri, 20 Sep 2019 23:00:12 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     davem@davemloft.net, john.garry@huawei.com,
+        Jonathan.Cameron@huawei.com, mcgrof@kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] crypto: hisilicon - Fix double free in
+ sec_free_hw_sgl()
+Message-ID: <20190920130012.GC23242@gondor.apana.org.au>
+References: <c9c52443-59a6-f909-f98b-eddffe999c2b@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190920124532.GN1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <c9c52443-59a6-f909-f98b-eddffe999c2b@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 01:45:33PM +0100, Al Viro wrote:
-> On Fri, Sep 20, 2019 at 08:21:53PM +0800, Xiaoming Ni wrote:
-> > 
-> > 
-> > On 2019/9/20 19:43, Al Viro wrote:
-> > > On Fri, Sep 20, 2019 at 02:54:38PM +0800, Xiaoming Ni wrote:
-> > >> Use kzalloc() to allocate memory in jffs2_fill_super().
-> > >> Freeing memory when jffs2_parse_options() fails will cause
-> > >> use-after-free and double-free in jffs2_kill_sb()
-> > > 
-> > > ... so we are not freeing it there.  What's the problem?
-> > 
-> > No code logic issues, no memory leaks
-> > 
-> > But there is too much code logic between memory allocation and free,
-> > which is difficult to understand.
+On Sun, Sep 15, 2019 at 05:26:56PM +0800, Yunfeng Ye wrote:
+> There are two problems in sec_free_hw_sgl():
 > 
-> Er?  An instance of jffs2 superblock might have a related object
-> attached to it; it is created in jffs2 superblock constructor and
-> freed in destructor.
+> First, when sgl_current->next is valid, @hw_sgl will be freed in the
+> first loop, but it free again after the loop.
 > 
-> > The modified code is easier to understand.
+> Second, sgl_current and sgl_current->next_sgl is not match when
+> dma_pool_free() is invoked, the third parameter should be the dma
+> address of sgl_current, but sgl_current->next_sgl is the dma address
+> of next chain, so use sgl_current->next_sgl is wrong.
 > 
-> You are making the cleanup logics harder to follow.
+> Fix this by deleting the last dma_pool_free() in sec_free_hw_sgl(),
+> modifying the condition for while loop, and matching the address for
+> dma_pool_free().
+> 
+> Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> ---
+>  drivers/crypto/hisilicon/sec/sec_algs.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
 
-PS: the whole point of ->kill_sb() is that it's always called on
-superblock destruction, whether that instance had been fully set
-up of failed halfway through.
-
-In particular, anything like foofs_fill_super() *will* be followed
-by ->kill_sb().  Always.  Which allows for simpler logics in
-failure exits.  And the main thing about those is that they are
-always the bitrot hot spots - they are systematically undertested,
-so that's the last place where you want something non-trivial.
-
-As for "too much code between"...  Huh?  We fail jffs2_fill_super()
-immediately, which has get_tree_mtd() (or mount_mtd() in slightly
-earlier kernels) destroy the superblock there and then...
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
