@@ -2,139 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6E47B94C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:00:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D68E8B94CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:01:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbfITQAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:00:51 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55329 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbfITQAu (ORCPT
+        id S1729301AbfITQBk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:01:40 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11671 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727529AbfITQBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:00:50 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a6so3065090wma.5;
-        Fri, 20 Sep 2019 09:00:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zm58YNY6Dy+Y0x1r7jLVH4bkhWKD3Gwt53hXtKO8kq8=;
-        b=PA5SoWs5YJ+mR1VNHbFtFU5u1HRpQcwttSgksag3UkYq/nWLYBtPTGIr4ii4OUrF0K
-         JSrTZo7JEJ1HQ9tyNk2rBgAB2hpJvLPH9KFKWGKRElT2xVO3TM1oTp37CisknRvQ4qZ2
-         CouMnFj8dC7Cj+O4s3Vaid0yR8vBw9tJjWZzt4giywTL5plWfjrVgudITYX7cokpq907
-         3aufnatdsqrHdj2x+Zt8eo4+3W4uDYgdc7TBTOJd3xZO1/bPywCOLltHTdh7TuL9vKge
-         s1LfFdjMzzTQxXTbopwl50bDYbr4LbQEz1Uf+t5kgjNWW0tlosSt68Zf2+z4d93a/2H+
-         dtcA==
-X-Gm-Message-State: APjAAAWGO2MY3x2GkzfIMSNJrHSm0u4rtxrxMsXZuYbwKTYkT4Gnxnia
-        HErktLDuD1xMulTwT37oecM=
-X-Google-Smtp-Source: APXvYqw5RsD4Q4Q/FLEEgM3Of3VABy7B6J+NrKyPTgMB+TInjENdG+0BV+2fXjhurlW8C7a/bE4Ueg==
-X-Received: by 2002:a1c:61d6:: with SMTP id v205mr2801780wmb.35.1568995246746;
-        Fri, 20 Sep 2019 09:00:46 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id g11sm2832677wmh.45.2019.09.20.09.00.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Sep 2019 09:00:45 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 18:00:43 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: watchdog: Convert Samsung SoC watchdog
- bindings to json-schema
-Message-ID: <20190920160043.GA3928@kozik-lap>
-References: <20190907144541.16949-1-krzk@kernel.org>
- <20190912170145.GA17889@bogus>
- <CAJKOXPfsUw-+yRc=GF+t=1pE7D3dF_wpRUwZpmfLnRbDyEmKeQ@mail.gmail.com>
- <CAL_JsqLtQ4yYJJiUcBrje+6SKiaXTmF-Cej_=ykeWKO+9ytM4Q@mail.gmail.com>
+        Fri, 20 Sep 2019 12:01:40 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d84f7e90000>; Fri, 20 Sep 2019 09:01:45 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Sep 2019 09:01:39 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Sep 2019 09:01:39 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Sep
+ 2019 16:01:39 +0000
+Received: from [10.21.132.148] (172.20.13.39) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Sep
+ 2019 16:01:37 +0000
+Subject: Re: [PATCH 5.3 00/21] 5.3.1-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <torvalds@linux-foundation.org>,
+        <akpm@linux-foundation.org>, <linux@roeck-us.net>,
+        <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190919214657.842130855@linuxfoundation.org>
+ <572eca6e-47a9-c554-c6b2-bafd4c5df18b@nvidia.com>
+ <20190920142432.GA601228@kroah.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <773b556a-acc2-c3e0-14e6-956a6d0b3bed@nvidia.com>
+Date:   Fri, 20 Sep 2019 17:01:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLtQ4yYJJiUcBrje+6SKiaXTmF-Cej_=ykeWKO+9ytM4Q@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190920142432.GA601228@kroah.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1568995305; bh=EPR13tILB3K8Yx+WgxSj+hc46Ns/lHPYAWSp7VVIJJI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=CCA7MsxHdNMhwXukhCp4TyXgwfOTT/a9Miro5qHbLhq2Nf8Uz3EXaKHNt/ItQULwy
+         1LFJqJdei6sM5d4zidDc3lQuFuoxeLN8z3AAnsLR3Rdl7XZycFLdZ6nUQS2OnlwrMt
+         kCoFTxvhjy3lsn1IDXexckeTADH8HZFqpuhwv29Q3bBPEV6YVLAvZVKaTBHbme/0Gb
+         Rcaje/gXs5YssoOUteszu8MKBR9rDZlERZV2tdAdW6LsP8tD+KMmXazL4Gzzto6a6H
+         q7k+1Z3L4D3ANzswapSTLsm4hS5gS0sJKj3V4OQXcne/XHXh2xLMxnmilViGQdGf4+
+         zoyXAHQpAVSDQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 10:46:27AM -0500, Rob Herring wrote:
-> On Wed, Sep 18, 2019 at 6:26 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Fri, 13 Sep 2019 at 16:36, Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Sat, Sep 07, 2019 at 04:45:40PM +0200, Krzysztof Kozlowski wrote:
-> > > > Convert Samsung S3C/S5P/Exynos watchdog bindings to DT schema format
-> > > > using json-schema.
-> > > >
-> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > ---
-> > > >  .../bindings/watchdog/samsung-wdt.txt         | 35 ----------
-> > > >  .../bindings/watchdog/samsung-wdt.yaml        | 69 +++++++++++++++++++
-> > > >  2 files changed, 69 insertions(+), 35 deletions(-)
-> > > >  delete mode 100644 Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> > > >  create mode 100644 Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> > >
-> > >
-> > > > diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..39f1ca3bc4db
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-> > > > @@ -0,0 +1,69 @@
-> > > > +# SPDX-License-Identifier: GPL-2.0
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/watchdog/samsung-wdt.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Samsung SoC Watchdog Timer Controller
-> > > > +
-> > > > +maintainers:
-> > > > +  - Krzysztof Kozlowski <krzk@kernel.org>
-> > > > +
-> > > > +description: |+
-> > > > +  The Samsung's Watchdog controller is used for resuming system operation
-> > > > +  after a preset amount of time during which the WDT reset event has not
-> > > > +  occurred.
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    enum:
-> > > > +      - samsung,s3c2410-wdt                   # for S3C2410
-> > > > +      - samsung,s3c6410-wdt                   # for S3C6410, S5PV210 and Exynos4
-> > > > +      - samsung,exynos5250-wdt                # for Exynos5250
-> > > > +      - samsung,exynos5420-wdt                # for Exynos5420
-> > > > +      - samsung,exynos7-wdt                   # for Exynos7
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  interrupts:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  samsung,syscon-phandle:
-> > > > +    $ref: '/schemas/types.yaml#/definitions/phandle'
-> > > > +    description:
-> > > > +      Phandle to the PMU system controller node (in case of Exynos5250
-> > > > +      and Exynos5420).
-> > > > +
-> > > > +  timeout-sec:
-> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > +    description:
-> > > > +      Watchdog timeout in seconds.
-> > >
-> > > We need a common schema for this and the node name.
-> >
-> > Common schema in dt-schema or in Linux kernel bindings? If the latter,
-> > I can add it.
+
+On 20/09/2019 15:24, Greg Kroah-Hartman wrote:
+> On Fri, Sep 20, 2019 at 02:54:26PM +0100, Jon Hunter wrote:
+>>
+>> On 19/09/2019 23:03, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 5.3.1 release.
+>>> There are 21 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.1-rc1.gz
+>>> or in the git tree and branch at:
+>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>> No new regressions* for Tegra ...
+>>
+>> Test results for stable-v5.3:
+>>     12 builds:	12 pass, 0 fail
+>>     22 boots:	22 pass, 0 fail
+>>     38 tests:	37 pass, 1 fail
+>>
+>> Linux version:	5.3.1-rc1-g0aa7f3d6baae
+>> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>>                 tegra194-p2972-0000, tegra20-ventana,
+>>                 tegra210-p2371-2180, tegra30-cardhu-a04
+>>
+>> * Note we had one regression in v5.3 for a warnings test for Tegra194
+>>   causing the above test failure. This has since been fixed by the
+>>   following commits [0] but given it is just a warning, I have not
+>>   bothered CC'ing for stable.
+>>
+>> Cheers
+>> Jon
+>>
+>> [0] https://lkml.org/lkml/2019/8/21/602
 > 
-> In the kernel is fine.
+> I'll be glad to take this in stable for 5.3.y, what is the git commit
+> id?
 
-I'll add it in next version then.
+OK, that would be great. The IDs are ...
 
-Best regards,
-Krzysztof
+commit 763719771e84b8c8c2f53af668cdc905faa608de
+Author: Jon Hunter <jonathanh@nvidia.com>
+Date:   Wed Aug 21 16:02:40 2019 +0100
 
+    clocksource/drivers/timer-of: Do not warn on deferred probe
+
+
+commit 14e019df1e64c8b19ce8e0b3da25b6f40c8716be
+Author: Jon Hunter <jonathanh@nvidia.com>
+Date:   Wed Aug 21 16:02:41 2019 +0100
+
+    clocksource/drivers: Do not warn on probe defer
+
+
+> Also, thanks for testing all of these and letting me know.
+
+No problem!
+
+Cheers
+Jon
+
+-- 
+nvpublic
