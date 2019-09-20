@@ -2,111 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3780BB8C57
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04164B8C5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:06:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405189AbfITIFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:05:05 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36127 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404886AbfITIFF (ORCPT
+        id S2393129AbfITIG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:06:56 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37216 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391003AbfITIG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:05:05 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h2so5534904edn.3;
-        Fri, 20 Sep 2019 01:05:03 -0700 (PDT)
+        Fri, 20 Sep 2019 04:06:56 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w67so4383611lff.4;
+        Fri, 20 Sep 2019 01:06:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GKB2cZsFSODM3FIuz4Y4YZ1vEc5k6RufqQEYaxRbI0w=;
-        b=qssZ7g5N4GQ7we9G9GowQLEHsAeYBpthajNHNMfdpjwWM3CI42L+Y59RfzoSUMLMyX
-         isxmD0xThXBNEu33QcEMe05n9Bbu7KSRopgvC7J1b3KvpRTg8br7L70CKYX5xDt1VSRR
-         bQzfEHqhrohgARd/gWxFix72DEEdysHmLnFfN7Vh/9UrFSGqdOB6alUN/8m0512g45Xd
-         y2LH7jjHxq6LQnxXZ20e/OjWAA2nUb0bgy6KnRMnhMS3KzNgQkFckB6N/uCCpi2oW6Qh
-         KHTjKQOlB/3TRWd2fniB/EZsmIN4aPgO27fa5oo2ooBNjI2uOKbBdQE2d+pfqE2zx2uO
-         QFVQ==
-X-Gm-Message-State: APjAAAUUaidcLDCjiVO6GDeR2lhos6J+7QE/GnaVH8AnG/njKRabgeKf
-        Cdl0n7W6uVxsQcqqkhcEWFE=
-X-Google-Smtp-Source: APXvYqwa+eS8V/8ubME5E0fy+R+976vJecAYytDHWT4EoYhpSFETPExd2G+R6Y8Y8OBdlIRne6gRzg==
-X-Received: by 2002:aa7:d38e:: with SMTP id x14mr21018641edq.102.1568966703382;
-        Fri, 20 Sep 2019 01:05:03 -0700 (PDT)
-Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.gmail.com with ESMTPSA id h7sm191025edn.73.2019.09.20.01.05.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2019 01:05:02 -0700 (PDT)
-Subject: Re: [PATCH v3 23/26] memstick: use PCI_STD_NUM_BARS
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Andrew Murray <andrew.murray@arm.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Maxim Levitsky <maximlevitsky@gmail.com>,
-        Alex Dubov <oakad@yahoo.com>
-References: <20190916204158.6889-1-efremov@linux.com>
- <20190916204158.6889-24-efremov@linux.com>
- <CAPDyKFoVEMex2_p1M-cFZnGLuwgK0wZk-kL_eZ=eDiT1tjvDGA@mail.gmail.com>
-From:   Denis Efremov <efremov@linux.com>
-Message-ID: <1bbe2bb0-1d3a-9151-eb2a-d2bb2c79250e@linux.com>
-Date:   Fri, 20 Sep 2019 11:05:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gz7X0SW/xnl3tGxq30hcsGDXhtDvbl61SOj/nTQHmns=;
+        b=MoFGy/N/BJqyBmJRHQzXBX6YRXNTo1aM9YXd2CDfNzyWDJpzkBYSbONbk5jom8R4iv
+         weOq25UybYgDboX8ae4b90z6wS/qte0iK8u7jAYF204S3chi5hjctE16L4TqjtNcTa1h
+         SxKQww7sx6tPGl0nLManLAvA6Noansa16M56ujlWMATtI+985X/VqJO8hV4EcarOIBXh
+         vErY9BKWQUPFA20/nMLkROH70tRDyl4D1vAYvlCrJs5SXY8/KPFjax7Xa23E0GAJ1Vm1
+         J6c4RfVZgktDvXfrJL2/3F52qkDw5UBnL5yY9YRilBtqsgdjuYTorKvWZA+IF233NEL6
+         wFxA==
+X-Gm-Message-State: APjAAAVl+qEAjRVhVWa8wHoOiUcuiqIped9qP5BqZ+3rqlSUsmDrDbru
+        6Jkj9XVcvrW6tsBabSj9pGFFBNDj
+X-Google-Smtp-Source: APXvYqxHl0pI/SGAh/IOmt6QUA+GVj4jg2AUfXvg7NBcDe2KX+TgHef+3ehDNCNWKjKFheZ7jsFwpw==
+X-Received: by 2002:ac2:5dd6:: with SMTP id x22mr7815896lfq.71.1568966812357;
+        Fri, 20 Sep 2019 01:06:52 -0700 (PDT)
+Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
+        by smtp.gmail.com with ESMTPSA id h3sm314833lfc.26.2019.09.20.01.06.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Sep 2019 01:06:51 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92.2)
+        (envelope-from <johan@kernel.org>)
+        id 1iBDwJ-00012r-2b; Fri, 20 Sep 2019 10:06:51 +0200
+Date:   Fri, 20 Sep 2019 10:06:51 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>, lanqing.liu@unisoc.com,
+        linux-serial@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [BACKPORT 4.14.y v2 6/6] serial: sprd: Modify the baud rate
+ calculation formula
+Message-ID: <20190920080651.GJ30545@localhost>
+References: <cover.1567649728.git.baolin.wang@linaro.org>
+ <4fe6ec82960301126b9f4be52dd6083c30e17420.1567649729.git.baolin.wang@linaro.org>
+ <20190905090130.GF1701@localhost>
+ <CAMz4kuJGmQxfy5mi1aZNL8SA8MQBSTTyDeWcHHEtG2aXsFZgug@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFoVEMex2_p1M-cFZnGLuwgK0wZk-kL_eZ=eDiT1tjvDGA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMz4kuJGmQxfy5mi1aZNL8SA8MQBSTTyDeWcHHEtG2aXsFZgug@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 20.09.2019 10:42, Ulf Hansson wrote:
-> On Mon, 16 Sep 2019 at 22:47, Denis Efremov <efremov@linux.com> wrote:
->>
->> Use define PCI_STD_NUM_BARS instead of PCI_ROM_RESOURCE for the number of
->> PCI BARs.
->>
->> Cc: Maxim Levitsky <maximlevitsky@gmail.com>
->> Cc: Alex Dubov <oakad@yahoo.com>
->> Cc: Ulf Hansson <ulf.hansson@linaro.org>
->> Signed-off-by: Denis Efremov <efremov@linux.com>
+On Thu, Sep 05, 2019 at 05:58:05PM +0800, Baolin Wang wrote:
+> Hi Johan,
 > 
-> Assuming this depends on other changes in the series?
-
-Yes, the first patch introduce define PCI_STD_NUM_BARS.
-
-> Thus this is
-> probably for PCI maintainers to pick up?
-
-Yes, this is for Bjorn's tree.
-
+> On Thu, 5 Sep 2019 at 17:01, Johan Hovold <johan@kernel.org> wrote:
+> >
+> > On Thu, Sep 05, 2019 at 11:11:26AM +0800, Baolin Wang wrote:
+> > > From: Lanqing Liu <lanqing.liu@unisoc.com>
+> > >
+> > > [Upstream commit 5b9cea15a3de5d65000d49f626b71b00d42a0577]
+> > >
+> > > When the source clock is not divisible by the expected baud rate and
+> > > the remainder is not less than half of the expected baud rate, the old
+> > > formular will round up the frequency division coefficient. This will
+> > > make the actual baud rate less than the expected value and can not meet
+> > > the external transmission requirements.
+> > >
+> > > Thus this patch modifies the baud rate calculation formula to support
+> > > the serial controller output the maximum baud rate.
+> > >
+> > > Signed-off-by: Lanqing Liu <lanqing.liu@unisoc.com>
+> > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > ---
+> > >  drivers/tty/serial/sprd_serial.c |    2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
+> > > index e902494..72e96ab8 100644
+> > > --- a/drivers/tty/serial/sprd_serial.c
+> > > +++ b/drivers/tty/serial/sprd_serial.c
+> > > @@ -380,7 +380,7 @@ static void sprd_set_termios(struct uart_port *port,
+> > >       /* ask the core to calculate the divisor for us */
+> > >       baud = uart_get_baud_rate(port, termios, old, 0, SPRD_BAUD_IO_LIMIT);
+> > >
+> > > -     quot = (unsigned int)((port->uartclk + baud / 2) / baud);
+> > > +     quot = port->uartclk / baud;
+> >
+> > Are you sure the original patch is even correct?
+> >
+> > By replacing the divisor rounding with truncation you are introducing
+> > larger errors for some baud rates, something which could possibly even
+> > break working systems.
 > 
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Our UART clock source is 26M, and there is no difference for lower
+> than 3M baud rate between dividing closest or dividing down.
+
+But there is; you have introduced larger errors for at least a few
+standard rates by changing to truncation.
+
+> But we have one special use case is our BT/GPS want to set 3.25M baud
+> rate, but we have to select 3M baud rate in baud_table since no 3.25M
+> setting. So in this case if we use the old formula, we will only get
+> about 2.8M baud rate, which can not meet our requirement. If we change
+> the dividing down method, we can get 3.25M baud rate.
 > 
-> Kind regards
-> Uffe
-> 
->> ---
->>  drivers/memstick/host/jmb38x_ms.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/memstick/host/jmb38x_ms.c b/drivers/memstick/host/jmb38x_ms.c
->> index 32747425297d..fd281c1d39b1 100644
->> --- a/drivers/memstick/host/jmb38x_ms.c
->> +++ b/drivers/memstick/host/jmb38x_ms.c
->> @@ -848,7 +848,7 @@ static int jmb38x_ms_count_slots(struct pci_dev *pdev)
->>  {
->>         int cnt, rc = 0;
->>
->> -       for (cnt = 0; cnt < PCI_ROM_RESOURCE; ++cnt) {
->> +       for (cnt = 0; cnt < PCI_STD_NUM_BARS; ++cnt) {
->>                 if (!(IORESOURCE_MEM & pci_resource_flags(pdev, cnt)))
->>                         break;
->>
->> --
->> 2.21.0
->>
+> I have to say this is a workaroud for our special case, and can solve
+> our problem. If you have any good suggestion, we can change to a
+> better solution. Thanks.
+
+Yeah, I don't think purposefully introducing larger errors, and risk
+breaking other people's setups, to work around that use case is
+warranted.
+
+We have an interface for setting arbitrary baudrates (TCSETS2) which you
+can you use (even if glibc support is still not in place). You'd just
+need to lift the seemingly arbitrary limitation to 3 Mbaud in the driver
+first.
+
+> > Perhaps the original patch should even be reverted, but in any case
+> > backporting this to stable looks questionable.
+
+So I think reverting this may be the right thing to do.
+
+Johan
