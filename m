@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF420B92E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F12B9292
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392387AbfITOga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:36:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35822 "EHLO
+        id S2391621AbfITOdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:33:49 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36340 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388039AbfITOZB (ORCPT
+        by vger.kernel.org with ESMTP id S2388238AbfITOZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:01 -0400
+        Fri, 20 Sep 2019 10:25:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0004y2-IE; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqM-0004xX-3Q; Fri, 20 Sep 2019 15:25:06 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0007rq-Q1; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqH-0007ym-CS; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "kbuild test robot" <lkp@intel.com>,
+        "Alan Stern" <stern@rowland.harvard.edu>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.730721277@decadent.org.uk>
+Message-ID: <lsq.1568989415.935204598@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 041/132] media: pvrusb2: Prevent a buffer overflow
+Subject: [PATCH 3.16 119/132] media: usb: siano: Fix false-positive
+ "uninitialized variable" warning
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,54 +49,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit c1ced46c7b49ad7bc064e68d966e0ad303f917fb upstream.
+commit 45457c01171fd1488a7000d1751c06ed8560ee38 upstream.
 
-The ctrl_check_input() function is called from pvr2_ctrl_range_check().
-It's supposed to validate user supplied input and return true or false
-depending on whether the input is valid or not.  The problem is that
-negative shifts or shifts greater than 31 are undefined in C.  In
-practice with GCC they result in shift wrapping so this function returns
-true for some inputs which are not valid and this could result in a
-buffer overflow:
+GCC complains about an apparently uninitialized variable recently
+added to smsusb_init_device().  It's a false positive, but to silence
+the warning this patch adds a trivial initialization.
 
-    drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:205 pvr2_ctrl_get_valname()
-    warn: uncapped user index 'names[val]'
-
-The cptr->hdw->input_allowed_mask mask is configured in pvr2_hdw_create()
-and the highest valid bit is BIT(4).
-
-Fixes: 7fb20fa38caa ("V4L/DVB (7299): pvrusb2: Improve logic which handles input choice availability")
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 ++
- drivers/media/usb/pvrusb2/pvrusb2-hdw.h | 1 +
- 2 files changed, 3 insertions(+)
+ drivers/media/usb/siano/smsusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -670,6 +670,8 @@ static int ctrl_get_input(struct pvr2_ct
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -359,7 +359,7 @@ static int smsusb_init_device(struct usb
+ 	struct smsdevice_params_t params;
+ 	struct smsusb_device_t *dev;
+ 	int i, rc;
+-	int in_maxp;
++	int in_maxp = 0;
  
- static int ctrl_check_input(struct pvr2_ctrl *cptr,int v)
- {
-+	if (v < 0 || v > PVR2_CVAL_INPUT_MAX)
-+		return 0;
- 	return ((1 << v) & cptr->hdw->input_allowed_mask) != 0;
- }
- 
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
-@@ -54,6 +54,7 @@
- #define PVR2_CVAL_INPUT_COMPOSITE 2
- #define PVR2_CVAL_INPUT_SVIDEO 3
- #define PVR2_CVAL_INPUT_RADIO 4
-+#define PVR2_CVAL_INPUT_MAX PVR2_CVAL_INPUT_RADIO
- 
- enum pvr2_config {
- 	pvr2_config_empty,    /* No configuration */
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
 
