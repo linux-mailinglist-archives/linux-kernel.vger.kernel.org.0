@@ -2,139 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6750FB9927
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:46:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57817B992A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:48:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfITVqT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 17:46:19 -0400
-Received: from mail-eopbgr710110.outbound.protection.outlook.com ([40.107.71.110]:55648
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725554AbfITVqS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 17:46:18 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eQYPSy867O4b/ls+Z4K9QtoKoq754Ty03rohnxDA2vgR9wzhTT8Su3JgLkNUHjLgLDEp9LhAKuAy7zU13xeEUH7yG5SKDmkPhH+CEhdn/Ote+Z5XiRZWLNoEYCA604FL+q+a0/CuJxB1rC3Z+a13SXWEHIGJnCdmUJyVurU+N4Iq5cI38HNTtXisnVtkISdlIks+yRfTUwo+OD5IoUkGz5meTXr3Ki+arr8Jq/Mha/ZAhoa+Hc9cwYE21sjCeLZhZ/EtF59kNoaDYGYLZBctnF9dSXivK46kC4+z41uPvdD8YgAeV9iFLuEfKAJ65AZ4n0Mfl77ARgguA4pmJmV1sA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a2bIJGcGWbCjVdFa2oEqE5aHmBkFT7B04fpxP46e2iU=;
- b=gh/By04zHBoBXikSWcoiTKyQLjnzsLPUFjQFvPkKIOlIusXVxCyqWNtU4eZsEI8rckq3zTnwjts+FrrL7EN/DJHXLFdYbOpHjGMOb9pYYWMEmAX4W45KcJzLCfqiwtKuw9P+ReCQnsNrNMrsDhHki7jr2JXsZPNS4sfb9Y3V9lsperustPqu6+EcYAp8gy5m2K9X8tQ17rNBAccbs19WtK0/XOcWWAj3nfJzlN+DQtHtHEagNS3C6ICFKrU3wvTN4dos/M7D3xyZVDCPhKjgrltQMwaq3Q8ojWlMeMT5lsZ+aF9Ppfsq32FfPjy9q3nG7JDM6tz/UiSWBesKwpgMiw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a2bIJGcGWbCjVdFa2oEqE5aHmBkFT7B04fpxP46e2iU=;
- b=j2Opu3lbFq4sOv3mqCccsUZlBNvJkJWtdga0qDNmdoxyZd7xMNC8sAJ0MHFDsuNzkaF4lgYwWXlH4tTdW0DuqewZZZvPphemLVXVu9IfHMxCdZBg03/3vIB+2qVhJ7KLCPxmG/G++CAk74DJkfPDJott5u94HggGL7fVnFe/hQg=
-Received: from BN8PR21MB1362.namprd21.prod.outlook.com (20.179.76.155) by
- BN8PR21MB1267.namprd21.prod.outlook.com (20.179.74.88) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.5; Fri, 20 Sep 2019 21:46:16 +0000
-Received: from BN8PR21MB1362.namprd21.prod.outlook.com
- ([fe80::4506:fd59:ba74:46d]) by BN8PR21MB1362.namprd21.prod.outlook.com
- ([fe80::4506:fd59:ba74:46d%7]) with mapi id 15.20.2284.009; Fri, 20 Sep 2019
- 21:46:15 +0000
-From:   Steve MacLean <Steve.MacLean@microsoft.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Changbin Du <changbin.du@intel.com>,
-        Eric Saint-Etienne <eric.saint.etienne@oracle.com>,
-        John Keeping <john@metanate.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Leo Yan <leo.yan@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Brian Robbins <brianrob@microsoft.com>,
-        Tom McDonald <Thomas.McDonald@microsoft.com>,
-        John Salem <josalem@microsoft.com>
-Subject: RE: [PATCH] perf map: fix overlapped map handling
-Thread-Topic: [PATCH] perf map: fix overlapped map handling
-Thread-Index: AdVv5y6SzPv23L21QnSQJe3E6wWQgAAA9l0AAAMWwpA=
-Date:   Fri, 20 Sep 2019 21:46:15 +0000
-Message-ID: <BN8PR21MB1362B1921DF8ABF3A19B43A5F7880@BN8PR21MB1362.namprd21.prod.outlook.com>
-References: <BN8PR21MB136261C1A4BB2C884F10FCECF7880@BN8PR21MB1362.namprd21.prod.outlook.com>
- <20190920193852.GI4865@kernel.org>
-In-Reply-To: <20190920193852.GI4865@kernel.org>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=stmaclea@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-20T21:46:14.0220960Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=fab38c1b-ef3a-4dc9-9413-1c4e641f36af;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Steve.MacLean@microsoft.com; 
-x-originating-ip: [24.163.126.65]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9b7fd220-3cfc-4819-9695-08d73e13f6a9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BN8PR21MB1267;
-x-ms-traffictypediagnostic: BN8PR21MB1267:|BN8PR21MB1267:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BN8PR21MB126789DFCAE4FA3295D463A7F7880@BN8PR21MB1267.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0166B75B74
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(376002)(366004)(39860400002)(346002)(136003)(189003)(199004)(5660300002)(8936002)(55016002)(99286004)(74316002)(66476007)(2906002)(66066001)(76176011)(6506007)(7416002)(9686003)(229853002)(6916009)(33656002)(10090500001)(54906003)(8676002)(8990500004)(4326008)(81156014)(81166006)(22452003)(256004)(6246003)(7696005)(316002)(107886003)(64756008)(52536014)(3846002)(4744005)(26005)(86362001)(446003)(66446008)(66556008)(186003)(66946007)(6116002)(76116006)(486006)(11346002)(7736002)(102836004)(71200400001)(14454004)(71190400001)(6436002)(10290500003)(305945005)(25786009)(478600001)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR21MB1267;H:BN8PR21MB1362.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hIlV3jSG/NDW9wTdFO1w3ahcSRQLhAl7LKNxBNRDaAUFTO6e01tXVpdmJGg+IKSwWM42vSQycOjphlYt+hq3HXFHkn7oV/qEl6OO8xq2pirIuz4etcKC1uNx1q+5SC6kdAyS5w5zMPr93Z65TpmBW0fmKG9G+wgddkx1eCQ113ime+PRz84kMHBL3oxbRHnbDCQNY1eiKT8Ye3R+LEbpEFEDVeIW7SAPbfFDbp1Z1TxnrrnlG+eQVnHzP+te9+MMso7STbtbP1SlcbIq1QHShnyG+ewtwj9YKvNgezsXqJNQtt0+9TbIgZFSr5TFa6OS50XN4kkFQ88Swl1oqm0Ww9qFzMbeHYInO0zpBaPtOZaP/TpndLJeKNRta4nfEERK/6ItTUNrku28/Ghj979PlUHPkaVLbSOqbnVotOfwrTw=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726405AbfITVsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 17:48:40 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40156 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbfITVsk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 17:48:40 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w10so4559241pgj.7;
+        Fri, 20 Sep 2019 14:48:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cOjgGJkyJP6zsyOzGyTZLAba7fauSCLYEeNHZNyuj6c=;
+        b=YZ5qfjEYvpWX+YTO596k5Omho/xNo/Jy0vDIcsOQShlWyRkgbIrMrJusl2sUFUmNm9
+         lZx7sGPdAjsfmmsRmj8VSOojWQt7Kx8tJVzUl7oVay8c1cSGei9keRAK9yKcjf5Tl1XX
+         C5yXB5uLdaez7pUVAFuVVrLHZLT/IULgRcHgKnshagUJWRDKt+x/NmMLzMgTSDNLr2l0
+         G3oDp7SpE7QCN39wS6l8KiRG2BkRy/bYpnNk4apJSqi6SLX0lN4aDD5dNZWqQ0p/pPBY
+         GlJ5/WD7VGD9lxzcQhxhzGiutAwlbRxDLHhOcznO6o58cPZSSO4bF/mpu1sjldmve2z/
+         ErLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cOjgGJkyJP6zsyOzGyTZLAba7fauSCLYEeNHZNyuj6c=;
+        b=e4E+6feve0P72wqQSjkdyCv2K928hxgBBhl3OY0kNSqxRmwqTc/quuo+BF867RS9gO
+         f8OY+mwNnphbF71CjRa65T9EHGbzPLnSHamHhJg1XqCQCZ3fcE7+6ifeSMJwiVnJulps
+         24HuhjTaJO1TxSmRLjqI0jBOflzuBRvQ4JbzNrOYwgKFCV80hN/brhZpv72VFnzCWqSF
+         6e73HDwRoNV7db8TAtP0UtuhErmDnwZZkH9yV5sXSoj6LDYYCvDMif0KWdaJPWlk6BLy
+         5Gb7vpxKcMg3Y4c6oOa6ClEo3UZweEfhqTNH5vXaJI+A3zfyX4MNj5fgPvkdU6JvC8AP
+         KAGA==
+X-Gm-Message-State: APjAAAV8BKA1F91ixqYkseaY7p1UWDEazA16/aBHmeQ2a9tXrL20Xd3W
+        PSVHdWkitUwg8naNGgNc+vY=
+X-Google-Smtp-Source: APXvYqwq30FwhkOXtw91IJSWNz6Ti1LQPyO8qH7HV1RkI5ss/197xZ9/ak5A01tnaXW3r15Gy2LR1Q==
+X-Received: by 2002:a65:6903:: with SMTP id s3mr17286927pgq.269.1569016119264;
+        Fri, 20 Sep 2019 14:48:39 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id w11sm6092481pfd.116.2019.09.20.14.48.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 20 Sep 2019 14:48:38 -0700 (PDT)
+Date:   Fri, 20 Sep 2019 14:47:47 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, inux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mmc: sdhci: Let drivers define their DMA mask
+Message-ID: <20190920214746.GA21389@Asurada-Nvidia.nvidia.com>
+References: <20190920145317.11972-1-thierry.reding@gmail.com>
+ <20190920145317.11972-2-thierry.reding@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b7fd220-3cfc-4819-9695-08d73e13f6a9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2019 21:46:15.7156
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 25W/HFk5lFeXPItOrI/f76lHccEczAdJllyU+G7HbZalbERMf4diEKxLJTTGHKBEitS/kDC/DOob6RBsrs9jfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR21MB1267
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190920145317.11972-2-thierry.reding@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>  			after->start =3D map->end;
->> +			after->pgoff =3D pos->map_ip(pos, map->end);
->
-> So is this equivalent to what __split_vma() does in the kernel, i.e.:
->
->        if (new_below)
->                new->vm_end =3D addr;
->        else {
->                new->vm_start =3D addr;
->                new->vm_pgoff +=3D ((addr - vma->vm_start) >> PAGE_SHIFT);
->        }
->
-> where new->vm_pgoff starts equal to the vm_pgoff of the mmap being split?
+On Fri, Sep 20, 2019 at 04:53:16PM +0200, Thierry Reding wrote:
+> From: Adrian Hunter <adrian.hunter@intel.com>
+> 
+> Add host operation ->set_dma_mask() so that drivers can define their own
+> DMA masks.
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-It is roughly equivalent.  The pgoff in struct map is stored in bytes not i=
-n pages, so it doesn't include the shift.
+Tested-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-An earlier version of this patch used:
-  			after->start =3D map->end;
-+			after->pgoff +=3D map->end - pos->start;
+Ran a boot test with both patches on a Tegra186 board.
 
-Instead of the newer Functionally equivalent:
-  			after->start =3D map->end;
-+			after->pgoff =3D pos->map_ip(pos, map->end);
+Thanks!
 
-I preferred the latter form as it made more sense with the assertion that t=
-he mapping of map->end should match in pos and after.
-
-Steve
+> ---
+>  drivers/mmc/host/sdhci.c | 12 ++++--------
+>  drivers/mmc/host/sdhci.h |  1 +
+>  2 files changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index a5dc5aae973e..bc04c3180477 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3756,18 +3756,14 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  		host->flags &= ~SDHCI_USE_ADMA;
+>  	}
+>  
+> -	/*
+> -	 * It is assumed that a 64-bit capable device has set a 64-bit DMA mask
+> -	 * and *must* do 64-bit DMA.  A driver has the opportunity to change
+> -	 * that during the first call to ->enable_dma().  Similarly
+> -	 * SDHCI_QUIRK2_BROKEN_64_BIT_DMA must be left to the drivers to
+> -	 * implement.
+> -	 */
+>  	if (sdhci_can_64bit_dma(host))
+>  		host->flags |= SDHCI_USE_64_BIT_DMA;
+>  
+>  	if (host->flags & (SDHCI_USE_SDMA | SDHCI_USE_ADMA)) {
+> -		ret = sdhci_set_dma_mask(host);
+> +		if (host->ops->set_dma_mask)
+> +			ret = host->ops->set_dma_mask(host);
+> +		else
+> +			ret = sdhci_set_dma_mask(host);
+>  
+>  		if (!ret && host->ops->enable_dma)
+>  			ret = host->ops->enable_dma(host);
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 902f855efe8f..8285498c0d8a 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -622,6 +622,7 @@ struct sdhci_ops {
+>  
+>  	u32		(*irq)(struct sdhci_host *host, u32 intmask);
+>  
+> +	int		(*set_dma_mask)(struct sdhci_host *host);
+>  	int		(*enable_dma)(struct sdhci_host *host);
+>  	unsigned int	(*get_max_clock)(struct sdhci_host *host);
+>  	unsigned int	(*get_min_clock)(struct sdhci_host *host);
+> -- 
+> 2.23.0
+> 
