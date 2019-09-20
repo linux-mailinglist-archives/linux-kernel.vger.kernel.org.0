@@ -2,122 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A013B8AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AFA3B8AFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437473AbfITGJu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 02:09:50 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58112 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437367AbfITGJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 02:09:23 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id EAE3FE3E38337AF6BEEA;
-        Fri, 20 Sep 2019 14:09:21 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 20 Sep 2019 14:09:11 +0800
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-To:     Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Alexei Starovoitov" <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-        <linux-kernel@vger.kernel.org>
-CC:     <wangkefeng.wang@huawei.com>
-Subject: [PATCH 29/32] tools lib api: Renaming pr_warning to pr_warn
-Date:   Fri, 20 Sep 2019 14:25:41 +0800
-Message-ID: <20190920062544.180997-30-wangkefeng.wang@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
-References: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
+        id S2394820AbfITGUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 02:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54370 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394810AbfITGUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 02:20:23 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F354C20882;
+        Fri, 20 Sep 2019 06:20:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568960422;
+        bh=3T4MBrrvAFoM5nVfdPzS+xVdO3QHAnjJT4ytFIM+Gzg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mT2ka4Nr4v3hC4nSuZb/06NB6lhQVzdlxhnSSPfNNayqKve2YzN4WH4VeVKY4W0Gc
+         fNAtOezhXRjHaXQ9apdMWD0/JySkkD1/VPZW1ifChgNla8HItF8DsQmmqsWo9980Kh
+         JcNFloX/JArYE27T3xdjnJuWgm8H+OkvFQdwaDLQ=
+Date:   Fri, 20 Sep 2019 08:20:20 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     roman.stratiienko@globallogic.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: drm/sun4i: Add missing pixel formats to the vi layer
+Message-ID: <20190920062020.zyt5ng6cxtu6muye@gilmour>
+References: <20190918110541.38124-1-roman.stratiienko@globallogic.com>
+ <9229663.7SG9YZCNdo@jernej-laptop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jyakblbkkxwj5w7k"
+Content-Disposition: inline
+In-Reply-To: <9229663.7SG9YZCNdo@jernej-laptop>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For kernel logging macro, pr_warning is completely removed and
-replaced by pr_warn, using pr_warn in tools lib api for symmetry
-to kernel logging macro, then we could drop pr_warning in the
-whole linux code.
 
-Changing __pr_warning to __pr_warn to be consistent.
+--jyakblbkkxwj5w7k
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
----
- tools/lib/api/debug-internal.h | 4 ++--
- tools/lib/api/debug.c          | 4 ++--
- tools/lib/api/fs/fs.c          | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+On Thu, Sep 19, 2019 at 08:53:10PM +0200, Jernej =C5=A0krabec wrote:
+> Dne sreda, 18. september 2019 ob 13:05:41 CEST je
+> roman.stratiienko@globallogic.com napisal(a):
+> > From: Roman Stratiienko <roman.stratiienko@globallogic.com>
+> >
+> > According to Allwinner DE2.0 Specification REV 1.0, vi layer supports t=
+he
+> > following pixel formats:  ABGR_8888, ARGB_8888, BGRA_8888, RGBA_8888
+>
+> It's true that DE2 VI layers support those formats, but it wouldn't change
+> anything because alpha blending is not supported by those planes. These
+> formats were deliberately left out because their counterparts without alp=
+ha
+> exist, for example ABGR8888 <-> XBGR8888. It would also confuse user, whi=
+ch
+> would expect that alpha blending works if format with alpha channel is
+> selected.
 
-diff --git a/tools/lib/api/debug-internal.h b/tools/lib/api/debug-internal.h
-index 80c783497d25..5a5820c11db8 100644
---- a/tools/lib/api/debug-internal.h
-+++ b/tools/lib/api/debug-internal.h
-@@ -10,11 +10,11 @@ do {				\
- 		(func)("libapi: " fmt, ##__VA_ARGS__); \
- } while (0)
- 
--extern libapi_print_fn_t __pr_warning;
-+extern libapi_print_fn_t __pr_warn;
- extern libapi_print_fn_t __pr_info;
- extern libapi_print_fn_t __pr_debug;
- 
--#define pr_warning(fmt, ...)	__pr(__pr_warning, fmt, ##__VA_ARGS__)
-+#define pr_warn(fmt, ...)	__pr(__pr_warn, fmt, ##__VA_ARGS__)
- #define pr_info(fmt, ...)	__pr(__pr_info, fmt, ##__VA_ARGS__)
- #define pr_debug(fmt, ...)	__pr(__pr_debug, fmt, ##__VA_ARGS__)
- 
-diff --git a/tools/lib/api/debug.c b/tools/lib/api/debug.c
-index 69b1ba3d1ee3..7708f0558e8c 100644
---- a/tools/lib/api/debug.c
-+++ b/tools/lib/api/debug.c
-@@ -15,7 +15,7 @@ static int __base_pr(const char *format, ...)
- 	return err;
- }
- 
--libapi_print_fn_t __pr_warning = __base_pr;
-+libapi_print_fn_t __pr_warn    = __base_pr;
- libapi_print_fn_t __pr_info    = __base_pr;
- libapi_print_fn_t __pr_debug;
- 
-@@ -23,7 +23,7 @@ void libapi_set_print(libapi_print_fn_t warn,
- 		      libapi_print_fn_t info,
- 		      libapi_print_fn_t debug)
- {
--	__pr_warning = warn;
-+	__pr_warn    = warn;
- 	__pr_info    = info;
- 	__pr_debug   = debug;
- }
-diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-index 7aba8243a0e7..11b3885e833e 100644
---- a/tools/lib/api/fs/fs.c
-+++ b/tools/lib/api/fs/fs.c
-@@ -381,8 +381,8 @@ int filename__read_str(const char *filename, char **buf, size_t *sizep)
- 		n = read(fd, bf + size, alloc_size - size);
- 		if (n < 0) {
- 			if (size) {
--				pr_warning("read failed %d: %s\n", errno,
--					 strerror_r(errno, sbuf, sizeof(sbuf)));
-+				pr_warn("read failed %d: %s\n", errno,
-+					strerror_r(errno, sbuf, sizeof(sbuf)));
- 				err = 0;
- 			} else
- 				err = -errno;
--- 
-2.20.1
+I'm not too familiar with the DE2 code, but why is alpha not working
+if the VI planes support formats with alpha?
 
+Thanks!
+Maxime
+
+--jyakblbkkxwj5w7k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXYRvowAKCRDj7w1vZxhR
+xRW4AP91J8qXurWjaYEIlShut/9F1o+AH+QFka253dVyQ1XzmQD9GKVxtyQFNqro
+T6dUZ4eM7nZmoFWRwll07iRaM6lFVQM=
+=cHIh
+-----END PGP SIGNATURE-----
+
+--jyakblbkkxwj5w7k--
