@@ -2,116 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0623B9124
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB30B9133
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbfITNv4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 09:51:56 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38554 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387571AbfITNvw (ORCPT
+        id S2387614AbfITNyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 09:54:31 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5623 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727481AbfITNyb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 09:51:52 -0400
-Received: by mail-ed1-f67.google.com with SMTP id l21so1684781edr.5;
-        Fri, 20 Sep 2019 06:51:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Mip9hhM4GlCkg7XXw8v5EimNCLlBX1UP4PMrnT65eGA=;
-        b=s+31JabZiBSdo4+9i5gb8psqbEpaYWX0NouUD8j24FHpLXBKJZT3w7DvtNwzGwgOtl
-         F1Z4h+NjiQYYkLiap4yaq1WZ63xSG1tG5IM63/MDSq6xdXex35ABgSmVoz5tBshVGKfL
-         TIbrCuuqKRs97G5Vvzys+NvjBAYICAUIkeitwQLtR1qJI+DfnuDG6P9Rpla+J2h5MPgn
-         s3ftV+xDrUEVV6ieF6T1GnyZ3iuAuMLagjX3qprOKiuik51BS4Xjz1cn6CXOEWWylY17
-         KFgpcaheCKyeizqu8P1v1oTDB4XWrA46KcBpN+dPZD3W3hDvaB0tlk25ZBYoJldLKqGe
-         spEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=Mip9hhM4GlCkg7XXw8v5EimNCLlBX1UP4PMrnT65eGA=;
-        b=CSguP5ZAP94nQrvMUaNg6EoX8jVD6tyETX91DSW4Aigjuhtm2p5UQRcKbCjeKrk2E7
-         JM2B+hOz9K2ukTH3TOj7OpXjIMp/QAt2i6H49ng6JACTm+U7JqnZP09TfvQOS9H2EG2T
-         yeaxF3iu++d9vW1trVNYJA26xf+B49+IMGFIO7FUUx5gNttzergJjH1fz6sZT7Lvk9jx
-         25y8far6sF2+R71UguzvaSYfPshdWtyUgXgrSCzkHhBsDe9qzIy/qqY6rexl1XmBDRSq
-         M2urOBO58hb80m2LmMT87sXQPMvWciYxp+rmaW2SxoKO+Ft7L+8CgUBpHATcBql4GGmP
-         76TQ==
-X-Gm-Message-State: APjAAAXBuAcEBF0z5VMMpBLOkFgTojnQQXJmOK/pjvMmOQQK5BqeC+H5
-        DcqBMcOgEZrVmbdQO6/lcP6HDzF2wAo=
-X-Google-Smtp-Source: APXvYqxm5+Jfk1GgeMe0PSir7qMXVQx82RmWbXFBTAxxk7fP+7RL3b75vrpVdOs1uQE40p3H/C5Qtw==
-X-Received: by 2002:a17:906:3e96:: with SMTP id a22mr3725252ejj.268.1568987510723;
-        Fri, 20 Sep 2019 06:51:50 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id t30sm337673edt.91.2019.09.20.06.51.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 06:51:49 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo@ribalda.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jacopo Mondi <jacopo@jmondi.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: [PATCH v6 7/7] media: imx214: Add new control with V4L2_CID_UNIT_CELL_SIZE
-Date:   Fri, 20 Sep 2019 15:51:37 +0200
-Message-Id: <20190920135137.10052-8-ricardo@ribalda.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190920135137.10052-1-ricardo@ribalda.com>
-References: <20190920135137.10052-1-ricardo@ribalda.com>
+        Fri, 20 Sep 2019 09:54:31 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d84da1c0000>; Fri, 20 Sep 2019 06:54:36 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Sep 2019 06:54:30 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Sep 2019 06:54:30 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Sep
+ 2019 13:54:30 +0000
+Received: from [10.21.132.148] (172.20.13.39) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Sep
+ 2019 13:54:28 +0000
+Subject: Re: [PATCH 5.3 00/21] 5.3.1-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190919214657.842130855@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <572eca6e-47a9-c554-c6b2-bafd4c5df18b@nvidia.com>
+Date:   Fri, 20 Sep 2019 14:54:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190919214657.842130855@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1568987676; bh=rA6uREOMyVKXWLc/tYX6zT+dL5UsDGrjU9N5Gg9eBzM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=pmVBqnE3oHT44sbYsVMaklsBFkmu4Tz39H1ojUSZPSSqnzuxh6+3Oxq1m2iwu+G4U
+         ueZ1UBwTZOmGwIt73wpWHHD4Ft63D3KOSgTWXa3fRiFtMe4mGM/BOafjrQO1z8EwDN
+         MN9Gg5us8/Vbaetv5+LuGYfR0ap72yRtUTjff9kiwX2Um/8sqcHVqmqg2pb2Aag2KB
+         1hR3dSp85VQbvkNBtvnrTFB5UMhs22v2Y+89X5Hgl2MGYPKaC2NZZK+CpVzsJdb7ws
+         ucoausMSOphBA5Q8wP1aO/q4ZZbweuXF+UOAE0AUly3IwR3HqUd+Q5tP3MN3ItIB/+
+         X4sV/84IOFhQQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
 
-According to the product brief, the unit cell size is 1120 nanometers^2.
+On 19/09/2019 23:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.1 release.
+> There are 21 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
+No new regressions* for Tegra ...
 
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
----
- drivers/media/i2c/imx214.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Test results for stable-v5.3:
+    12 builds:	12 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	37 pass, 1 fail
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 159a3a604f0e..57562e20c4ca 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -47,6 +47,7 @@ struct imx214 {
- 	struct v4l2_ctrl *pixel_rate;
- 	struct v4l2_ctrl *link_freq;
- 	struct v4l2_ctrl *exposure;
-+	struct v4l2_ctrl *unit_size;
- 
- 	struct regulator_bulk_data	supplies[IMX214_NUM_SUPPLIES];
- 
-@@ -948,6 +949,13 @@ static int imx214_probe(struct i2c_client *client)
- 	static const s64 link_freq[] = {
- 		IMX214_DEFAULT_LINK_FREQ,
- 	};
-+	struct v4l2_area unit_size = {
-+		.width = 1120,
-+		.height = 1120,
-+	};
-+	union v4l2_ctrl_ptr p_def = {
-+		.p_area = &unit_size,
-+	};
- 	int ret;
- 
- 	ret = imx214_parse_fwnode(dev);
-@@ -1029,6 +1037,10 @@ static int imx214_probe(struct i2c_client *client)
- 					     V4L2_CID_EXPOSURE,
- 					     0, 3184, 1, 0x0c70);
- 
-+	imx214->unit_size = v4l2_ctrl_new_std_compound(&imx214->ctrls,
-+						       NULL,
-+						       V4L2_CID_UNIT_CELL_SIZE,
-+						       p_def);
- 	ret = imx214->ctrls.error;
- 	if (ret) {
- 		dev_err(&client->dev, "%s control init failed (%d)\n",
+Linux version:	5.3.1-rc1-g0aa7f3d6baae
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+* Note we had one regression in v5.3 for a warnings test for Tegra194
+  causing the above test failure. This has since been fixed by the
+  following commits [0] but given it is just a warning, I have not
+  bothered CC'ing for stable.
+
+Cheers
+Jon
+
+[0] https://lkml.org/lkml/2019/8/21/602
+
 -- 
-2.23.0
-
+nvpublic
