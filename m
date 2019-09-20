@@ -2,81 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B77B8E05
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 11:48:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE63EB8E2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 11:59:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408586AbfITJsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 05:48:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43171 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405771AbfITJsK (ORCPT
+        id S2437978AbfITJ7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 05:59:50 -0400
+Received: from 9.mo173.mail-out.ovh.net ([46.105.72.44]:43404 "EHLO
+        9.mo173.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437968AbfITJ7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 05:48:10 -0400
-Received: from mail-wm1-f72.google.com ([209.85.128.72])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <connor.kuehl@canonical.com>)
-        id 1iBFWL-0005Aq-0s
-        for linux-kernel@vger.kernel.org; Fri, 20 Sep 2019 09:48:09 +0000
-Received: by mail-wm1-f72.google.com with SMTP id g82so955965wmg.9
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 02:48:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=B0gRBX2sU0Z6OKmHo7Z4yIU03olB4csImxHyIILBwAA=;
-        b=JC/YpPNc7WOKKAV8XgOhJxswjxjIAgtPkJYkbRcKMSabGYPOPxPNhbIJizxFuQkv+K
-         860kbqFYefiTuRZNdksbIP58N7WOL5o2bbKe/Z6ZvpU0CWAYucd2E8NAY+RWZ1Kgj5i/
-         iLt3/DKdeq2E5qbkf6tOCUzueGTkXpHtBtthsTQXht1vDO7mNNaqQkNhYYGw3FZPkRuf
-         WhWbLMXee7pykufUmnx2DBMGkaHOelgkiB0LnbiojoQVi8lxsoPNr/ASgnqdgS3yPNqO
-         fi7FvKhohb+Wczm8t3diwgtpzty/x6MfyyNdznuOrRi5BN2X8nlVQJiX113m73kgdwAK
-         OPcQ==
-X-Gm-Message-State: APjAAAWysRPp1Z/0BMNFDeupgaJQeFGDLQTzzxRFfz48y+Vb/hOhogms
-        Ir12kX6EFRE5cpGc377gwJON/bpYKGNgAVFBk4V1GQr0NHmGwwDFQw6nJogwcPBpyvshlq5GKiH
-        4hJ0rKmjcZAz5UEdAMxE0iDDunwldkPeTvdz5YU+Shg==
-X-Received: by 2002:a5d:430f:: with SMTP id h15mr11239560wrq.177.1568972888806;
-        Fri, 20 Sep 2019 02:48:08 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxVRY04L0KSUugiU+ntxgo+Wvpl8BGaO0LusgrffrFde1j3tGSNP2BDAc7riJC99gqoaqgZaw==
-X-Received: by 2002:a5d:430f:: with SMTP id h15mr11239545wrq.177.1568972888657;
-        Fri, 20 Sep 2019 02:48:08 -0700 (PDT)
-Received: from canonical.c.hoisthospitality.com (static-dcd-cqq-121001.business.bouyguestelecom.com. [212.194.121.1])
-        by smtp.gmail.com with ESMTPSA id z9sm2104375wrp.26.2019.09.20.02.48.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 02:48:07 -0700 (PDT)
-From:   Connor Kuehl <connor.kuehl@canonical.com>
-To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
-        straube.linux@gmail.com, devel@driverdev.osuosl.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] staging: rtl8188eu: remove unnecessary self-assignment
-Date:   Fri, 20 Sep 2019 11:48:07 +0200
-Message-Id: <20190920094807.9217-1-connor.kuehl@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 20 Sep 2019 05:59:49 -0400
+Received: from player755.ha.ovh.net (unknown [10.109.160.251])
+        by mo173.mail-out.ovh.net (Postfix) with ESMTP id 75CA311A5A6
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:41:32 +0200 (CEST)
+Received: from qperret.net (115.ip-51-255-42.eu [51.255.42.115])
+        (Authenticated sender: qperret@qperret.net)
+        by player755.ha.ovh.net (Postfix) with ESMTPSA id EB407A204CAF;
+        Fri, 20 Sep 2019 09:41:19 +0000 (UTC)
+Date:   Fri, 20 Sep 2019 11:41:15 +0200
+From:   Quentin Perret <qperret@qperret.net>
+To:     Pavan Kondeti <pkondeti@codeaurora.org>
+Cc:     peterz@infradead.org, mingo@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, juri.lelli@redhat.com, rjw@rjwysocki.net,
+        morten.rasmussen@arm.com, valentin.schneider@arm.com,
+        qais.yousef@arm.com, tkjos@google.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Speed-up energy-aware wake-ups
+Message-ID: <20190920094115.GA11503@qperret.net>
+References: <20190912094404.13802-1-qperret@qperret.net>
+ <20190920030215.GA20250@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190920030215.GA20250@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Ovh-Tracer-Id: 11442520755338894233
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrvddvgddukecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a self-assignment which is redundant. Fix this by removing the
-self-assignment.
+Hi Pavan,
 
-Addresses-Coverity: ("Self assignment")
+On Friday 20 Sep 2019 at 08:32:15 (+0530), Pavan Kondeti wrote:
+> Earlier, we are not checking the spare capacity for the prev_cpu. Now that the
+> continue statement is removed, prev_cpu could also be the max_spare_cap_cpu.
+> Actually that makes sense. Because there is no reason why we want to select
+> another CPU which has less spare capacity than previous CPU.
+> 
+> Is this behavior intentional?
 
-Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+The intent was indeed to not compute the energy for another CPU in
+prev_cpu's perf domain if prev_cpu is the one with max spare cap -- it
+is useless to do so since this other CPU cannot 'beat' prev_cpu and
+will never be chosen in the end.
+
+But I did miss that we'd end up computing the energy for prev_cpu
+twice ... Harmless but useless. So yeah, let's optimize that case too :)
+
+> When prev_cpu == max_spare_cap_cpu, we are evaluating the energy again for the
+> same CPU below. That could have been skipped by returning prev_cpu when
+> prev_cpu == max_spare_cap_cpu.
+
+Right, something like the patch below ? My test results are still
+looking good with it applied.
+
+Thanks for the careful review,
+Quentin
 ---
- drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c | 1 -
- 1 file changed, 1 deletion(-)
+From 7b8258287f180a2c383ebe397e8129f5f898ffbe Mon Sep 17 00:00:00 2001
+From: Quentin Perret <qperret@qperret.net>
+Date: Fri, 20 Sep 2019 09:07:20 +0100
+Subject: [PATCH] sched/fair: Avoid redundant EAS calculation
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-index 086f98d38cba..57ae0e83dd3e 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188e_hal_init.c
-@@ -552,7 +552,6 @@ void Hal_ReadAntennaDiversity88E(struct adapter *pAdapter, u8 *PROMContent, bool
- 			pHalData->AntDivCfg = 1; /*  0xC1[3] is ignored. */
- 	} else {
- 		pHalData->AntDivCfg = 0;
--		pHalData->TRxAntDivType = pHalData->TRxAntDivType; /*  The value in the driver setting of device manager. */
- 	}
- 	DBG_88E("EEPROM : AntDivCfg = %x, TRxAntDivType = %x\n", pHalData->AntDivCfg, pHalData->TRxAntDivType);
- }
+The EAS wake-up path computes the system energy for several CPU
+candidates: the CPU with maximum spare capacity in each performance
+domain, and the prev_cpu. However, if prev_cpu also happens to be the
+CPU with maximum spare capacity in its performance domain, the energy
+calculation is still done twice, unnecessarily.
+
+Add a condition to filter out this corner case before doing the energy
+calculation.
+
+Reported-by: Pavan Kondeti <pkondeti@codeaurora.org>
+Signed-off-by: Quentin Perret <qperret@qperret.net>
+---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d4bbf68c3161..7399382bc291 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -6412,7 +6412,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+ 		}
+ 
+ 		/* Evaluate the energy impact of using this CPU. */
+-		if (max_spare_cap_cpu >= 0) {
++		if (max_spare_cap_cpu >= 0 && max_spare_cap_cpu != prev_cpu) {
+ 			cur_delta = compute_energy(p, max_spare_cap_cpu, pd);
+ 			cur_delta -= base_energy_pd;
+ 			if (cur_delta < best_delta) {
 -- 
-2.17.1
+2.22.1
 
