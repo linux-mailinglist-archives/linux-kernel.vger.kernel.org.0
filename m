@@ -2,248 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD7E7B95C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFA9B95CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:36:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbfITQgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:36:03 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35102 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfITQgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:36:03 -0400
-Received: by mail-ed1-f66.google.com with SMTP id v8so7100609eds.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:36:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7hzm3K7b35rEliLwtwWMBUwsKHdn+N/LZtz2QhNViq0=;
-        b=CauVxj6MR1/RdV5hq7nYFTEiAQ38w+HRge127iXApIBR59r3qh4l0aPcKXW0Sbx/5A
-         RTg+s1ZfTru6nN27dI2fp0QIy1jAxhK/pl9MW19Gaug4CV+G1dKXBsgMiTLIA2UVybqO
-         UAmb13NlHSnT6mnFVOyne6rvTAbrt7Ej9OoVJFCBomxNr65ASSxT8YU4OTkLkMeT4JCj
-         +bJsQXHFF0pcImSMExHzjCEk3x1AHLLm2nsUrmzbOQCK69plnVx/IYiZRHQPC+WVubqz
-         Aegc9x+DYxt3BFMK0FyToqmU77UgRPf0rQW8PJc0lYgYLh/2uCixziS2U870hMWTxDnf
-         gr/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7hzm3K7b35rEliLwtwWMBUwsKHdn+N/LZtz2QhNViq0=;
-        b=b+0w2gCnwhLQv1MmOlZrSNn6sBH9F1FmbAX11ZUNoUIuKJmu00vEqd0sRoyvcm1bJV
-         tQGGJKOmeil7NzeF3gRHL0awZ3Q/hza2RWJxCOD4nM0Y0T31dEtQ02mjp4pkLi/27iai
-         Mlll9YdW8cd1z9jXiJC/NxdNLbkAzg3fAdN9Q3xi41jBFVOek13vk2xtlDVBqPT8lbVc
-         LBkJPb/efUAQLfUyOxGBjF0wcBJ/B1TGD8cHIT3LqNb76+5JLRpXndmM6T1jKRtJ3ETL
-         0gJXFP/5bq9sHR0/nYttJe5iS1YUZk1kV0EeTuwWl9RYyVPu+QDoc+OY28pVIAZ48+sE
-         q7fQ==
-X-Gm-Message-State: APjAAAXaGXQmbryRf8mzHCFYCoOV9CrfnqhxcukKKrCT+ua+CNKIY/o+
-        PCD0FR8u2sTzmPn/+p7X5klHqg==
-X-Google-Smtp-Source: APXvYqzlxtJkxMrObFiFEfMvTttDlFX1Lhn2rxHuQzhFG8RUkiyWTAgaUrjIEHSvAzKzYqD39ju+AQ==
-X-Received: by 2002:a50:ee92:: with SMTP id f18mr22835043edr.253.1568997360481;
-        Fri, 20 Sep 2019 09:36:00 -0700 (PDT)
-Received: from lophozonia ([85.195.192.192])
-        by smtp.gmail.com with ESMTPSA id y22sm277918eje.42.2019.09.20.09.35.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 09:35:59 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 18:35:58 +0200
-From:   Jean-Philippe Brucker <jean-philippe@linaro.org>
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 3/4] iommu/ioasid: Add custom allocators
-Message-ID: <20190920163558.GC1533866@lophozonia>
-References: <1568849194-47874-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1568849194-47874-4-git-send-email-jacob.jun.pan@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1568849194-47874-4-git-send-email-jacob.jun.pan@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2404773AbfITQgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:36:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50716 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725280AbfITQgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 12:36:44 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EFA420717;
+        Fri, 20 Sep 2019 16:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568997403;
+        bh=lIE4jV01uzsB+QRyAJS7o47UZFL6GYNBSj+eWiYGAFI=;
+        h=From:To:Subject:Date:From;
+        b=FRBD/clstpILo/t2RsJbrd5nAWmxfF7k1QzAfuNksHIxCuUbX3VbMclnmd1Ga6GGy
+         BlyOihuXoajb7Rzbh/qR0gJ5CsqKvcyCQYJukGGwloR5jrTh+twpsq3d23woB/ebce
+         dKDSCb39v3/pLRtu9ld0dhUO8/9Sk2bvg+/9lQsU=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: crypto: samsung: Convert SSS and SlimSSS bindings to json-schema
+Date:   Fri, 20 Sep 2019 18:36:35 +0200
+Message-Id: <20190920163635.9186-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 04:26:33PM -0700, Jacob Pan wrote:
-> +/*
-> + * struct ioasid_allocator_data - Internal data structure to hold information
-> + * about an allocator. There are two types of allocators:
-> + *
-> + * - Default allocator always has its own XArray to track the IOASIDs allocated.
-> + * - Custom allocators may share allocation helpers with different private data.
-> + *   Custom allocators share the same helper functions also share the same
-> + *   XArray.
+Convert Samsung Exynos Security SubSystem (SSS) and SlimSSS hardware
+crypto accelerator bindings to DT schema format using json-schema.
 
-"that share the same helper"
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> + * Rules:
-> + * 1. Default allocator is always available, not dynamically registered. This is
-> + *    to prevent race conditions with early boot code that want to register
-> + *    custom allocators or allocate IOASIDs.
-> + * 2. Custom allocators take precedence over the default allocator.
-> + * 3. When all custom allocators sharing the same helper functions are
-> + *    unregistered (e.g. due to hotplug), all outstanding IOASIDs must be
-> + *    freed.
-> + * 4. When switching between custom allocators sharing the same helper
-> + *    functions, outstanding IOASIDs are preserved.
-> + * 5. When switching between custom allocator and default allocator, all IOASIDs
-> + *    must be freed to ensure unadulterated space for the new allocator.
-> + *
-> + * @ops:	allocator helper functions and its data
-> + * @list:	registered custom allocators
-> + * @slist:	allocators share the same ops but different data
-> + * @flags:	attributes of the allocator
-> + * @xa		xarray holds the IOASID space
-> + * @users	number of allocators sharing the same ops and XArray
-> + */
-> +struct ioasid_allocator_data {
-> +	struct ioasid_allocator_ops *ops;
-> +	struct list_head list;
-> +	struct list_head slist;
-> +#define IOASID_ALLOCATOR_CUSTOM BIT(0) /* Needs framework to track results */
-> +	unsigned long flags;
-> +	struct xarray xa;
-> +	refcount_t users;
-> +};
-> +
-> +static DEFINE_SPINLOCK(ioasid_allocator_lock);
+---
 
-Thanks for making this a spinlock! I hit that sleep-in-atomic problem
-while updating iommu-sva to the new MMU notifier API, which doesn't
-allow sleeping in the free() callback.
+Rebased on linux-next due to conflicting change in MAINTAINERS file
+coming through arm-soc tree.
 
-I don't like having to use GFP_ATOMIC everywhere as a result, but can't
-see a better way. Maybe we can improve that later.
+Changes since v1:
+1. Add additionalProperties:false
+---
+ .../bindings/crypto/samsung-slimsss.txt       | 19 ------
+ .../bindings/crypto/samsung-slimsss.yaml      | 47 +++++++++++++++
+ .../bindings/crypto/samsung-sss.txt           | 32 ----------
+ .../bindings/crypto/samsung-sss.yaml          | 58 +++++++++++++++++++
+ MAINTAINERS                                   |  4 +-
+ 5 files changed, 107 insertions(+), 53 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
+ create mode 100644 Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+ delete mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.txt
+ create mode 100644 Documentation/devicetree/bindings/crypto/samsung-sss.yaml
 
-[...]
-> +/**
-> + * ioasid_unregister_allocator - Remove a custom IOASID allocator ops
-> + * @ops: the custom allocator to be removed
-> + *
-> + * Remove an allocator from the list, activate the next allocator in
-> + * the order it was registered. Or revert to default allocator if all
-> + * custom allocators are unregistered without outstanding IOASIDs.
-> + */
-> +void ioasid_unregister_allocator(struct ioasid_allocator_ops *ops)
-> +{
-> +	struct ioasid_allocator_data *pallocator;
-> +	struct ioasid_allocator_ops *sops;
-> +
-> +	spin_lock(&ioasid_allocator_lock);
-> +	if (list_empty(&allocators_list)) {
-> +		pr_warn("No custom IOASID allocators active!\n");
-> +		goto exit_unlock;
-> +	}
-> +
-> +	list_for_each_entry(pallocator, &allocators_list, list) {
-> +		if (!use_same_ops(pallocator->ops, ops))
-> +			continue;
-> +
-> +		if (refcount_read(&pallocator->users) == 1) {
-> +			/* No shared helper functions */
-> +			list_del(&pallocator->list);
-> +			/*
-> +			 * All IOASIDs should have been freed before
-> +			 * the last allocator that shares the same ops
-> +			 * is unregistered.
-> +			 */
-> +			WARN_ON(!xa_empty(&pallocator->xa));
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt b/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
+deleted file mode 100644
+index 7ec9a5a7727a..000000000000
+--- a/Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-Samsung SoC SlimSSS (Slim Security SubSystem) module
+-
+-The SlimSSS module in Exynos5433 SoC supports the following:
+--- Feeder (FeedCtrl)
+--- Advanced Encryption Standard (AES) with ECB,CBC,CTR,XTS and (CBC/XTS)/CTS
+--- SHA-1/SHA-256 and (SHA-1/SHA-256)/HMAC
+-
+-Required properties:
+-
+-- compatible : Should contain entry for slimSSS version:
+-  - "samsung,exynos5433-slim-sss" for Exynos5433 SoC.
+-- reg : Offset and length of the register set for the module
+-- interrupts : interrupt specifiers of SlimSSS module interrupts (one feed
+-		control interrupt).
+-
+-- clocks : list of clock phandle and specifier pairs for all clocks listed in
+-		clock-names property.
+-- clock-names : list of device clock input names; should contain "pclk" and
+-		"aclk" for slim-sss in Exynos5433.
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+new file mode 100644
+index 000000000000..04fe5dfa794a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/crypto/samsung-slimsss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC SlimSSS (Slim Security SubSystem) module
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Kamil Konieczny <k.konieczny@partner.samsung.com>
++
++description: |+
++  The SlimSSS module in Exynos5433 SoC supports the following:
++  -- Feeder (FeedCtrl)
++  -- Advanced Encryption Standard (AES) with ECB,CBC,CTR,XTS and (CBC/XTS)/CTS
++  -- SHA-1/SHA-256 and (SHA-1/SHA-256)/HMAC
++
++properties:
++  compatible:
++    items:
++      - const: samsung,exynos5433-slim-ss
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 2
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: aclk
++
++  interrupts:
++    description: One feed control interrupt.
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clock-names
++  - clocks
++  - interrupts
++
++additionalProperties: false
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+deleted file mode 100644
+index 7a5ca56683cc..000000000000
+--- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
++++ /dev/null
+@@ -1,32 +0,0 @@
+-Samsung SoC SSS (Security SubSystem) module
+-
+-The SSS module in S5PV210 SoC supports the following:
+--- Feeder (FeedCtrl)
+--- Advanced Encryption Standard (AES)
+--- Data Encryption Standard (DES)/3DES
+--- Public Key Accelerator (PKA)
+--- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
+--- PRNG: Pseudo Random Number Generator
+-
+-The SSS module in Exynos4 (Exynos4210) and
+-Exynos5 (Exynos5420 and Exynos5250) SoCs
+-supports the following also:
+--- ARCFOUR (ARC4)
+--- True Random Number Generator (TRNG)
+--- Secure Key Manager
+-
+-Required properties:
+-
+-- compatible : Should contain entries for this and backward compatible
+-  SSS versions:
+-  - "samsung,s5pv210-secss" for S5PV210 SoC.
+-  - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
+-		Exynos5260 and Exynos5420 SoCs.
+-- reg : Offset and length of the register set for the module
+-- interrupts : interrupt specifiers of SSS module interrupts (one feed
+-		control interrupt).
+-
+-- clocks : list of clock phandle and specifier pairs for all clocks  listed in
+-		clock-names property.
+-- clock-names : list of device clock input names; should contain one entry
+-		"secss".
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.yaml b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+new file mode 100644
+index 000000000000..cf1c47a81d7f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/crypto/samsung-sss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC SSS (Security SubSystem) module
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Kamil Konieczny <k.konieczny@partner.samsung.com>
++
++description: |+
++  The SSS module in S5PV210 SoC supports the following:
++  -- Feeder (FeedCtrl)
++  -- Advanced Encryption Standard (AES)
++  -- Data Encryption Standard (DES)/3DES
++  -- Public Key Accelerator (PKA)
++  -- SHA-1/SHA-256/MD5/HMAC (SHA-1/SHA-256/MD5)/PRNG
++  -- PRNG: Pseudo Random Number Generator
++
++  The SSS module in Exynos4 (Exynos4210) and Exynos5 (Exynos5420 and Exynos5250)
++  SoCs supports the following also:
++  -- ARCFOUR (ARC4)
++  -- True Random Number Generator (TRNG)
++  -- Secure Key Manager
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - samsung,s5pv210-secss           # for S5PV210
++          - samsung,exynos4210-secss        # for Exynos4210, Exynos4212,
++                                            # Exynos4412, Exynos5250,
++                                            # Exynos5260 and Exynos5420
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: secss
++
++  interrupts:
++    description: One feed control interrupt.
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clock-names
++  - clocks
++  - interrupts
++
++additionalProperties: false
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ee4e873c0f9a..331c40ae6a01 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14256,8 +14256,8 @@ M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
+ L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
+-F:	Documentation/devicetree/bindings/crypto/samsung-sss.txt
++F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.yaml
++F:	Documentation/devicetree/bindings/crypto/samsung-sss.yaml
+ F:	drivers/crypto/s5p-sss.c
+ 
+ SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+-- 
+2.17.1
 
-The function doc seems to say that we revert to the default allocator
-only if there wasn't any outstanding IOASID, which isn't what this does.
-To follow the doc, we'd need to return here instead of continuing. The
-best solution would be to return with an error, but since we don't
-propagate errors I think leaking stuff is preferable to leaving the
-allocator registered, since the caller might free the ops when this
-function return. So I would keep the code like that but change the
-function's comment. What do you think is best?
-
-> +			kfree(pallocator);
-> +			if (list_empty(&allocators_list)) {
-> +				pr_info("No custom IOASID allocators, switch to default.\n");
-> +				active_allocator = &default_allocator;
-
-I'm concerned about the active_allocator variable, because ioasid_find()
-accesses it without holding ioasid_allocator_lock. It is holding the RCU
-read lock, so I think we need to free pallocator after a RCU grace
-period (using kfree_rcu)? I think we also need to update
-active_allocator with rcu_assign_pointer() and dereference it with
-rcu_dereference()
-
-> +			} else if (pallocator == active_allocator) {
-> +				active_allocator = list_first_entry(&allocators_list, struct ioasid_allocator_data, list);
-> +				pr_info("IOASID allocator changed");
-> +			}
-> +			break;
-> +		}
-> +		/*
-> +		 * Find the matching shared ops to delete,
-> +		 * but keep outstanding IOASIDs
-> +		 */
-> +		list_for_each_entry(sops, &pallocator->slist, list) {
-> +			if (sops == ops) {
-> +				list_del(&ops->list);
-> +				if (refcount_dec_and_test(&pallocator->users))
-> +					pr_err("no shared ops\n");
-
-That's not possible, right, since dec_and_test only returns true if
-pallocator->users was 1, which we already checked against? I find
-pallocator->users a bit redundant since you can use list_is_empty() or
-list_is_singular() on pallocator->slist
-
-[...]
->  ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
->  		      void *private)
->  {
-> -	ioasid_t id;
->  	struct ioasid_data *data;
-> +	void *adata;
-> +	ioasid_t id;
->  
->  	data = kzalloc(sizeof(*data), GFP_KERNEL);
->  	if (!data)
-> @@ -76,14 +324,34 @@ ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
->  	data->set = set;
->  	data->private = private;
->  
-> -	if (xa_alloc(&ioasid_xa, &id, data, XA_LIMIT(min, max), GFP_KERNEL)) {
-> -		pr_err("Failed to alloc ioasid from %d to %d\n", min, max);
-> +	/*
-> +	 * Custom allocator needs allocator data to perform platform specific
-> +	 * operations.
-> +	 */
-> +	spin_lock(&ioasid_allocator_lock);
-> +	adata = active_allocator->flags & IOASID_ALLOCATOR_CUSTOM ? active_allocator->ops->pdata : data;
-> +	id = active_allocator->ops->alloc(min, max, adata);
-> +	if (id == INVALID_IOASID) {
-> +		pr_err("Failed ASID allocation %lu\n", active_allocator->flags);
->  		goto exit_free;
->  	}
-> +
-> +	if (active_allocator->flags & IOASID_ALLOCATOR_CUSTOM) {
-> +		/* Custom allocator needs framework to store and track allocation results */
-> +		min = max = id;
-> +
-> +		if (xa_alloc(&active_allocator->xa, &id, data, XA_LIMIT(min, max), GFP_KERNEL)) {
-
-Or just XA_LIMIT(id, id), and merge the two ifs?
-
-You do need GFP_ATOMIC here.
-
-> +			pr_err("Failed to alloc ioasid from %d to %d\n", min, max);
-
-Maybe just "Failed to alloc ioasid %d\n" then
-
-> +			active_allocator->ops->free(id, NULL);
-
-Why doesn't this call need to pass active_allocator->ops->pdata like the
-one in ioasid_free()?
-
-Thanks,
-Jean
