@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67EDFB92B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA13B92CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392136AbfITOeu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:34:50 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36232 "EHLO
+        id S2391730AbfITOef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:34:35 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36306 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388188AbfITOZG (ORCPT
+        by vger.kernel.org with ESMTP id S2388228AbfITOZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:06 -0400
+        Fri, 20 Sep 2019 10:25:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqJ-0004y2-TZ; Fri, 20 Sep 2019 15:25:03 +0100
+        id 1iBJqL-00051J-0v; Fri, 20 Sep 2019 15:25:05 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqG-0007x8-NO; Fri, 20 Sep 2019 15:25:00 +0100
+        id 1iBJqH-0007zL-Lz; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Bob Peterson" <rpeterso@redhat.com>
+        "Jian Luo" <luojian5@huawei.com>,
+        "Jason Yan" <yanaijie@huawei.com>,
+        "John Garry" <john.garry@huawei.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.69803285@decadent.org.uk>
+Message-ID: <lsq.1568989415.708070718@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 103/132] GFS2: don't set rgrp gl_object until it's
- inserted into rgrp tree
+Subject: [PATCH 3.16 126/132] scsi: libsas: delete sas port if expander
+ discover failed
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,78 +50,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Jason Yan <yanaijie@huawei.com>
 
-commit 36e4ad0316c017d5b271378ed9a1c9a4b77fab5f upstream.
+commit 3b0541791453fbe7f42867e310e0c9eb6295364d upstream.
 
-Before this patch, function read_rindex_entry would set a rgrp
-glock's gl_object pointer to itself before inserting the rgrp into
-the rgrp rbtree. The problem is: if another process was also reading
-the rgrp in, and had already inserted its newly created rgrp, then
-the second call to read_rindex_entry would overwrite that value,
-then return a bad return code to the caller. Later, other functions
-would reference the now-freed rgrp memory by way of gl_object.
-In some cases, that could result in gfs2_rgrp_brelse being called
-twice for the same rgrp: once for the failed attempt and once for
-the "real" rgrp release. Eventually the kernel would panic.
-There are also a number of other things that could go wrong when
-a kernel module is accessing freed storage. For example, this could
-result in rgrp corruption because the fake rgrp would point to a
-fake bitmap in memory too, causing gfs2_inplace_reserve to search
-some random memory for free blocks, and find some, since we were
-never setting rgd->rd_bits to NULL before freeing it.
+The sas_port(phy->port) allocated in sas_ex_discover_expander() will not be
+deleted when the expander failed to discover. This will cause resource leak
+and a further issue of kernel BUG like below:
 
-This patch fixes the problem by not setting gl_object until we
-have successfully inserted the rgrp into the rbtree. Also, it sets
-rd_bits to NULL as it frees them, which will ensure any accidental
-access to the wrong rgrp will result in a kernel panic rather than
-file system corruption, which is preferred.
+[159785.843156]  port-2:17:29: trying to add phy phy-2:17:29 fails: it's
+already part of another port
+[159785.852144] ------------[ cut here  ]------------
+[159785.856833] kernel BUG at drivers/scsi/scsi_transport_sas.c:1086!
+[159785.863000] Internal error: Oops - BUG: 0 [#1] SMP
+[159785.867866] CPU: 39 PID: 16993 Comm: kworker/u96:2 Tainted: G
+W  OE     4.19.25-vhulk1901.1.0.h111.aarch64 #1
+[159785.878458] Hardware name: Huawei Technologies Co., Ltd.
+Hi1620EVBCS/Hi1620EVBCS, BIOS Hi1620 CS B070 1P TA 03/21/2019
+[159785.889231] Workqueue: 0000:74:02.0_disco_q sas_discover_domain
+[159785.895224] pstate: 40c00009 (nZcv daif +PAN +UAO)
+[159785.900094] pc : sas_port_add_phy+0x188/0x1b8
+[159785.904524] lr : sas_port_add_phy+0x188/0x1b8
+[159785.908952] sp : ffff0001120e3b80
+[159785.912341] x29: ffff0001120e3b80 x28: 0000000000000000
+[159785.917727] x27: ffff802ade8f5400 x26: ffff0000681b7560
+[159785.923111] x25: ffff802adf11a800 x24: ffff0000680e8000
+[159785.928496] x23: ffff802ade8f5728 x22: ffff802ade8f5708
+[159785.933880] x21: ffff802adea2db40 x20: ffff802ade8f5400
+[159785.939264] x19: ffff802adea2d800 x18: 0000000000000010
+[159785.944649] x17: 00000000821bf734 x16: ffff00006714faa0
+[159785.950033] x15: ffff0000e8ab4ecf x14: 7261702079646165
+[159785.955417] x13: 726c612073277469 x12: ffff00006887b830
+[159785.960802] x11: ffff00006773eaa0 x10: 7968702079687020
+[159785.966186] x9 : 0000000000002453 x8 : 726f702072656874
+[159785.971570] x7 : 6f6e6120666f2074 x6 : ffff802bcfb21290
+[159785.976955] x5 : ffff802bcfb21290 x4 : 0000000000000000
+[159785.982339] x3 : ffff802bcfb298c8 x2 : 337752b234c2ab00
+[159785.987723] x1 : 337752b234c2ab00 x0 : 0000000000000000
+[159785.993108] Process kworker/u96:2 (pid: 16993, stack limit =
+0x0000000072dae094)
+[159786.000576] Call trace:
+[159786.003097]  sas_port_add_phy+0x188/0x1b8
+[159786.007179]  sas_ex_get_linkrate.isra.5+0x134/0x140
+[159786.012130]  sas_ex_discover_expander+0x128/0x408
+[159786.016906]  sas_ex_discover_dev+0x218/0x4c8
+[159786.021249]  sas_ex_discover_devices+0x9c/0x1a8
+[159786.025852]  sas_discover_root_expander+0x134/0x160
+[159786.030802]  sas_discover_domain+0x1b8/0x1e8
+[159786.035148]  process_one_work+0x1b4/0x3f8
+[159786.039230]  worker_thread+0x54/0x470
+[159786.042967]  kthread+0x134/0x138
+[159786.046269]  ret_from_fork+0x10/0x18
+[159786.049918] Code: 91322300 f0004402 91178042 97fe4c9b (d4210000)
+[159786.056083] Modules linked in: hns3_enet_ut(OE) hclge(OE) hnae3(OE)
+hisi_sas_test_hw(OE) hisi_sas_test_main(OE) serdes(OE)
+[159786.067202] ---[ end trace 03622b9e2d99e196  ]---
+[159786.071893] Kernel panic - not syncing: Fatal exception
+[159786.077190] SMP: stopping secondary CPUs
+[159786.081192] Kernel Offset: disabled
+[159786.084753] CPU features: 0x2,a2a00a38
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-[bwh: Backported to 3.16: adjust context]
+Fixes: 2908d778ab3e ("[SCSI] aic94xx: new driver")
+Reported-by: Jian Luo <luojian5@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -731,6 +731,7 @@ void gfs2_clear_rgrpd(struct gfs2_sbd *s
- 
- 		gfs2_free_clones(rgd);
- 		kfree(rgd->rd_bits);
-+		rgd->rd_bits = NULL;
- 		return_all_reservations(rgd);
- 		kmem_cache_free(gfs2_rgrpd_cachep, rgd);
+ drivers/scsi/libsas/sas_expander.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -977,6 +977,8 @@ static struct domain_device *sas_ex_disc
+ 		list_del(&child->dev_list_node);
+ 		spin_unlock_irq(&parent->port->dev_list_lock);
+ 		sas_put_device(child);
++		sas_port_delete(phy->port);
++		phy->port = NULL;
+ 		return NULL;
  	}
-@@ -925,10 +926,6 @@ static int read_rindex_entry(struct gfs2
- 	if (error)
- 		goto fail;
- 
--	rgd->rd_gl->gl_object = rgd;
--	rgd->rd_gl->gl_vm.start = (rgd->rd_addr * bsize) & PAGE_CACHE_MASK;
--	rgd->rd_gl->gl_vm.end = PAGE_CACHE_ALIGN((rgd->rd_addr +
--						  rgd->rd_length) * bsize) - 1;
- 	rgd->rd_rgl = (struct gfs2_rgrp_lvb *)rgd->rd_gl->gl_lksb.sb_lvbptr;
- 	rgd->rd_flags &= ~GFS2_RDF_UPTODATE;
- 	if (rgd->rd_data > sdp->sd_max_rg_data)
-@@ -936,14 +933,20 @@ static int read_rindex_entry(struct gfs2
- 	spin_lock(&sdp->sd_rindex_spin);
- 	error = rgd_insert(rgd);
- 	spin_unlock(&sdp->sd_rindex_spin);
--	if (!error)
-+	if (!error) {
-+		rgd->rd_gl->gl_object = rgd;
-+		rgd->rd_gl->gl_vm.start = (rgd->rd_addr * bsize) & PAGE_MASK;
-+		rgd->rd_gl->gl_vm.end = PAGE_ALIGN((rgd->rd_addr +
-+						    rgd->rd_length) * bsize) - 1;
- 		return 0;
-+	}
- 
- 	error = 0; /* someone else read in the rgrp; free it and ignore it */
- 	gfs2_glock_put(rgd->rd_gl);
- 
- fail:
- 	kfree(rgd->rd_bits);
-+	rgd->rd_bits = NULL;
- 	kmem_cache_free(gfs2_rgrpd_cachep, rgd);
- 	return error;
- }
+ 	list_add_tail(&child->siblings, &parent->ex_dev.children);
 
