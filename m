@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15693B9291
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B736B9333
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391604AbfITOdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:33:47 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36332 "EHLO
+        id S2392953AbfITOi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:38:27 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35682 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388235AbfITOZH (ORCPT
+        by vger.kernel.org with ESMTP id S1728998AbfITOY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:07 -0400
+        Fri, 20 Sep 2019 10:24:59 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqL-00051F-2b; Fri, 20 Sep 2019 15:25:05 +0100
+        id 1iBJqC-0004wd-Rz; Fri, 20 Sep 2019 15:24:56 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007yw-FZ; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqC-0007q0-HM; Fri, 20 Sep 2019 15:24:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Oliver Neukum" <oneukum@suse.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        syzbot+a0cbdbd6d169020c8959@syzkaller.appspotmail.com
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        "Wolfram Sang" <wsa+renesas@sang-engineering.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.19241258@decadent.org.uk>
+Message-ID: <lsq.1568989415.762338474@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 121/132] USB: sisusbvga: fix oops in error path of
- sisusb_probe
+Subject: [PATCH 3.16 018/132] rtc: don't reference bogus function pointer
+ in kdoc
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,53 +48,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 9a5729f68d3a82786aea110b1bfe610be318f80a upstream.
+commit c48cadf5bf4becefcd0751b97995d2350aa9bb57 upstream.
 
-The pointer used to log a failure of usb_register_dev() must
-be set before the error is logged.
+The mentioned function pointer is long gone since early 2011. Remove the
+reference in the comment and reword it slightly.
 
-v2: fix that minor is not available before registration
-
-Signed-off-by: oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+a0cbdbd6d169020c8959@syzkaller.appspotmail.com
-Fixes: 7b5cd5fefbe02 ("USB: SisUSB2VGA: Convert printk to dev_* macros")
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 51ba60c5bb3b ("RTC: Cleanup rtc_class_ops->update_irq_enable()")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/misc/sisusbvga/sisusb.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/rtc/interface.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/misc/sisusbvga/sisusb.c
-+++ b/drivers/usb/misc/sisusbvga/sisusb.c
-@@ -3093,6 +3093,13 @@ static int sisusb_probe(struct usb_inter
- 
- 	mutex_init(&(sisusb->lock));
- 
-+	sisusb->sisusb_dev = dev;
-+	sisusb->vrambase   = SISUSB_PCI_MEMBASE;
-+	sisusb->mmiobase   = SISUSB_PCI_MMIOBASE;
-+	sisusb->mmiosize   = SISUSB_PCI_MMIOSIZE;
-+	sisusb->ioportbase = SISUSB_PCI_IOPORTBASE;
-+	/* Everything else is zero */
-+
- 	/* Register device */
- 	if ((retval = usb_register_dev(intf, &usb_sisusb_class))) {
- 		dev_err(&sisusb->sisusb_dev->dev, "Failed to get a minor for device %d\n",
-@@ -3101,13 +3108,7 @@ static int sisusb_probe(struct usb_inter
- 		goto error_1;
- 	}
- 
--	sisusb->sisusb_dev = dev;
--	sisusb->minor      = intf->minor;
--	sisusb->vrambase   = SISUSB_PCI_MEMBASE;
--	sisusb->mmiobase   = SISUSB_PCI_MMIOBASE;
--	sisusb->mmiosize   = SISUSB_PCI_MMIOSIZE;
--	sisusb->ioportbase = SISUSB_PCI_IOPORTBASE;
--	/* Everything else is zero */
-+	sisusb->minor = intf->minor;
- 
- 	/* Allocate buffers */
- 	sisusb->ibufsize = SISUSB_IBUF_SIZE;
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -492,10 +492,9 @@ out:
+ 	mutex_unlock(&rtc->ops_lock);
+ #ifdef CONFIG_RTC_INTF_DEV_UIE_EMUL
+ 	/*
+-	 * Enable emulation if the driver did not provide
+-	 * the update_irq_enable function pointer or if returned
+-	 * -EINVAL to signal that it has been configured without
+-	 * interrupts or that are not available at the moment.
++	 * Enable emulation if the driver returned -EINVAL to signal that it has
++	 * been configured without interrupts or they are not available at the
++	 * moment.
+ 	 */
+ 	if (err == -EINVAL)
+ 		err = rtc_dev_update_irq_enable_emul(rtc, enabled);
 
