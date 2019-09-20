@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A054FB91C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92885B91D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388571AbfITOZf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:25:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35758 "EHLO
+        id S2388907AbfITO0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:26:13 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36708 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388019AbfITOZA (ORCPT
+        by vger.kernel.org with ESMTP id S2388340AbfITOZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:00 -0400
+        Fri, 20 Sep 2019 10:25:13 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0004x2-PA; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqQ-00051H-8w; Fri, 20 Sep 2019 15:25:10 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007qi-TX; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqF-0007uW-9o; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "YueHaibing" <yuehaibing@huawei.com>,
-        "Robert Jarzmik" <robert.jarzmik@free.fr>
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "Mark Brown" <broonie@kernel.org>,
+        "Nicolin Chen" <nicoleotsuka@gmail.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.912264975@decadent.org.uk>
+Message-ID: <lsq.1568989415.957852696@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 027/132] ARM: pxa: ssp: Fix "WARNING: invalid free of
- devm_ allocated data"
+Subject: [PATCH 3.16 074/132] ASoC: fsl_esai: Fix missing break in switch
+ statement
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,41 +49,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: "S.j. Wang" <shengjiu.wang@nxp.com>
 
-commit 9ee8578d953023cc57e7e736ae48502c707c0210 upstream.
+commit 903c220b1ece12f17c868e43f2243b8f81ff2d4c upstream.
 
-Since commit 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
-kfree, iounmap, clk_put etc are not needed anymore in remove path.
+case ESAI_HCKT_EXTAL and case ESAI_HCKR_EXTAL should be
+independent of each other, so replace fall-through with break.
 
-Fixes: 1c459de1e645 ("ARM: pxa: ssp: use devm_ functions")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-[ commit message spelling fix ]
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Fixes: 43d24e76b698 ("ASoC: fsl_esai: Add ESAI CPU DAI driver")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm/plat-pxa/ssp.c | 6 ------
- 1 file changed, 6 deletions(-)
-
---- a/arch/arm/plat-pxa/ssp.c
-+++ b/arch/arm/plat-pxa/ssp.c
-@@ -232,18 +232,12 @@ static int pxa_ssp_probe(struct platform
- 
- static int pxa_ssp_remove(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct ssp_device *ssp;
- 
- 	ssp = platform_get_drvdata(pdev);
- 	if (ssp == NULL)
- 		return -ENODEV;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	release_mem_region(res->start, resource_size(res));
--
--	clk_put(ssp->clk);
--
- 	mutex_lock(&ssp_lock);
- 	list_del(&ssp->node);
- 	mutex_unlock(&ssp_lock);
+--- a/sound/soc/fsl/fsl_esai.c
++++ b/sound/soc/fsl/fsl_esai.c
+@@ -245,6 +245,7 @@ static int fsl_esai_set_dai_sysclk(struc
+ 		break;
+ 	case ESAI_HCKT_EXTAL:
+ 		ecr |= ESAI_ECR_ETI;
++		break;
+ 	case ESAI_HCKR_EXTAL:
+ 		ecr |= ESAI_ECR_ERI;
+ 		break;
 
