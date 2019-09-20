@@ -2,77 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14E9BB8D10
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D774EB8D1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437814AbfITIl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:41:27 -0400
-Received: from plaes.org ([188.166.43.21]:56356 "EHLO plaes.org"
+        id S2437826AbfITIpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:45:31 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40858 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437766AbfITIl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:41:27 -0400
-X-Greylist: delayed 527 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Sep 2019 04:41:26 EDT
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 4ED0A401A2;
-        Fri, 20 Sep 2019 08:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1568968358; bh=B88eQXvMcqPCljBCgykzFFLBC6ki+6QWIgs8CmMzNSc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=hP5K+LGolyuLvkyMObHkPDJI+3SO5aqs2BkePcyR3N8tnNSGB3eem7s8Ay08w9saL
-         2vdVZbGw9haNc1RLljjA7cyr5LjLxYLZHPgK3IvhnNQgvjByHZqpy4OKjHro5lC5FE
-         ydiX6NoQqtkd97+MqM8DPBPabL2+0lBAL3sFYO3qWa4VnLsLYRigwi400a/IAFLfJL
-         EPzWkE2zEUi4vJ6B8LviMqM2oMwWVVYGiwMlTvC+Fehc1aHUHCVGqY+yn4MXM3IZT9
-         PBF3avKVDYYgVmEcNNgEGVGvpI5m/4gMCupSoKyE4BhuObRcLr42AKaDwklSPoLoYf
-         37EmmfpP3SBcw==
-Date:   Fri, 20 Sep 2019 08:32:37 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     mripard@kernel.org, wens@csie.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, priit.laes@paf.com
-Subject: [BUG] sun4i: axp209: no atomic i2c transfer handler
-Message-ID: <20190920083237.GA11657@plaes.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2404774AbfITIpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 04:45:31 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D764200479;
+        Fri, 20 Sep 2019 10:45:29 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DCFBF20007B;
+        Fri, 20 Sep 2019 10:45:24 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6B24C40309;
+        Fri, 20 Sep 2019 16:45:19 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-devel@linux.nxdi.nxp.com, Shawn Guo <shawnguo@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Wen He <wen.he_1@nxp.com>
+Subject: [v2 1/2] arm64: dts: ls1028a: Update the clock providers for the Mali DP500
+Date:   Fri, 20 Sep 2019 16:34:18 +0800
+Message-Id: <20190920083419.5092-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heya!
+In order to maximise performance of the LCD Controller's 64-bit AXI
+bus, for any give speed bin of the device, the AXI master interface
+clock(ACLK) clock can be up to CPU_frequency/2, which is already
+capable of optimal performance. In general, ACLK is always expected
+to be equal to CPU_frequency/2. APB slave interface clock(PCLK) and
+Main processing clock(PCLK) both are tied to the same clock as ACLK.
 
-I have seen following warning message for few times when shutting down the
-machine (Olinuxino Lime2-emmc) running the mainline kernel.
+This change followed the LS1028A Architecture Specification Manual.
 
-[snip]
-WARNING: CPU: 0 PID: 1 at drivers/i2c/i2c-core.h:41 i2c_transfer+0xe8/0xf4
-No atomic I2C transfer handler for 'i2c-1'
-Modules linked in: enc28j60
-CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 5.3.0-rc8-paf+ #28
-Hardware name: Allwinner sun7i (A20) Family
-[<c010ee08>] (unwind_backtrace) from [<c010b5b8>] (show_stack+0x10/0x14)
-[<c010b5b8>] (show_stack) from [<c06bf2b4>] (dump_stack+0x88/0x9c)
-[<c06bf2b4>] (dump_stack) from [<c011e044>] (__warn+0xd4/0xf0)
-[<c011e044>] (__warn) from [<c011dbe4>] (warn_slowpath_fmt+0x48/0x6c)
-[<c011dbe4>] (warn_slowpath_fmt) from [<c051ce20>] (i2c_transfer+0xe8/0xf4)
-[<c051ce20>] (i2c_transfer) from [<c051ce78>] (i2c_transfer_buffer_flags+0x4c/0x70)
-[<c051ce78>] (i2c_transfer_buffer_flags) from [<c046c2a4>] (regmap_i2c_write+0x14/0x30)
-[<c046c2a4>] (regmap_i2c_write) from [<c0468180>] (_regmap_raw_write_impl+0x588/0x63c)
-[<c0468180>] (_regmap_raw_write_impl) from [<c0468b50>] (regmap_write+0x3c/0x5c)
-[<c0468b50>] (regmap_write) from [<c046f554>] (axp20x_power_off+0x2c/0x38)
-[<c046f554>] (axp20x_power_off) from [<c013e8a4>] (sys_reboot+0x14c/0x1e0)
-[<c013e8a4>] (sys_reboot) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
-Exception stack(0xef04ffa8 to 0xef04fff0)
-ffa0:                   00427954 00000000 fee1dead 28121969 4321fedc 16814300
-ffc0: 00427954 00000000 00000000 00000058 bec15c78 00000000 bec15c10 004266f8
-ffe0: 00000058 bec15b6c b6f69d45 b6eeb746
-[/snip]
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+---
+change in v2:
+        - add details commit description for this change. 
+        - v1: Link: https://lore.kernel.org/patchwork/patch/1119145/
 
-The enc28j60 module is SPI, so it has nothing to do with the message.
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
-Any ideas where to look?
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 72b9a75976a1..51fa8f57fdac 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -86,20 +86,6 @@
+ 		clocks = <&osc_27m>;
+ 	};
+ 
+-	aclk: clock-axi {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <650000000>;
+-		clock-output-names= "aclk";
+-	};
+-
+-	pclk: clock-apb {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <650000000>;
+-		clock-output-names= "pclk";
+-	};
+-
+ 	reboot {
+ 		compatible ="syscon-reboot";
+ 		regmap = <&dcfg>;
+@@ -679,7 +665,8 @@
+ 		interrupts = <0 222 IRQ_TYPE_LEVEL_HIGH>,
+ 			     <0 223 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "DE", "SE";
+-		clocks = <&dpclk 0>, <&aclk>, <&aclk>, <&pclk>;
++		clocks = <&dpclk 0>, <&clockgen 2 2>, <&clockgen 2 2>,
++			 <&clockgen 2 2>;
+ 		clock-names = "pxlclk", "mclk", "aclk", "pclk";
+ 		arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
+ 		arm,malidp-arqos-value = <0xd000d000>;
+-- 
+2.17.1
 
-Päikest,
-Priit :)
