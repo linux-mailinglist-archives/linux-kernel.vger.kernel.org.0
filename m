@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D72ABB92E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DECDB9229
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392090AbfITOgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:36:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35864 "EHLO
+        id S2388737AbfITOZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:25:50 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36114 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388065AbfITOZB (ORCPT
+        by vger.kernel.org with ESMTP id S2388144AbfITOZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:01 -0400
+        Fri, 20 Sep 2019 10:25:04 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0004y7-Lm; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqH-00051H-Ug; Fri, 20 Sep 2019 15:25:02 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007s6-26; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqH-0007yJ-87; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        luto@kernel.org, "Peter Zijlstra" <peterz@infradead.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Randy Dunlap" <rdunlap@infradead.org>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+        "Hui Peng" <benquike@gmail.com>, "Takashi Iwai" <tiwai@suse.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Mathias Payer" <mathias.payer@nebelwelt.net>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.600636306@decadent.org.uk>
+Message-ID: <lsq.1568989415.695753136@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 044/132] x86/uaccess: Dont leak the AC flag into
- __put_user() argument evaluation
+Subject: [PATCH 3.16 113/132] ALSA: usb-audio: Fix an OOB bug in
+ parse_audio_mixer_unit
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,56 +49,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Hui Peng <benquike@gmail.com>
 
-commit 6ae865615fc43d014da2fd1f1bba7e81ee622d1b upstream.
+commit daac07156b330b18eb5071aec4b3ddca1c377f2c upstream.
 
-The __put_user() macro evaluates it's @ptr argument inside the
-__uaccess_begin() / __uaccess_end() region. While this would normally
-not be expected to be an issue, an UBSAN bug (it ignored -fwrapv,
-fixed in GCC 8+) would transform the @ptr evaluation for:
+The `uac_mixer_unit_descriptor` shown as below is read from the
+device side. In `parse_audio_mixer_unit`, `baSourceID` field is
+accessed from index 0 to `bNrInPins` - 1, the current implementation
+assumes that descriptor is always valid (the length  of descriptor
+is no shorter than 5 + `bNrInPins`). If a descriptor read from
+the device side is invalid, it may trigger out-of-bound memory
+access.
 
-  drivers/gpu/drm/i915/i915_gem_execbuffer.c: if (unlikely(__put_user(offset, &urelocs[r-stack].presumed_offset))) {
+```
+struct uac_mixer_unit_descriptor {
+	__u8 bLength;
+	__u8 bDescriptorType;
+	__u8 bDescriptorSubtype;
+	__u8 bUnitID;
+	__u8 bNrInPins;
+	__u8 baSourceID[];
+}
+```
 
-into a signed-overflow-UB check and trigger the objtool AC validation.
+This patch fixes the bug by add a sanity check on the length of
+the descriptor.
 
-Finish this commit:
-
-  2a418cf3f5f1 ("x86/uaccess: Don't leak the AC flag into __put_user() value evaluation")
-
-and explicitly evaluate all 3 arguments early.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: luto@kernel.org
-Fixes: 2a418cf3f5f1 ("x86/uaccess: Don't leak the AC flag into __put_user() value evaluation")
-Link: http://lkml.kernel.org/r/20190424072208.695962771@infradead.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/include/asm/uaccess.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ sound/usb/mixer.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -422,10 +422,11 @@ do {									\
- #define __put_user_nocheck(x, ptr, size)			\
- ({								\
- 	int __pu_err;						\
--	__typeof__(*(ptr)) __pu_val;				\
--	__pu_val = x;						\
-+	__typeof__(*(ptr)) __pu_val = (x);			\
-+	__typeof__(ptr) __pu_ptr = (ptr);			\
-+	__typeof__(size) __pu_size = (size);			\
- 	__uaccess_begin();					\
--	__put_user_size(__pu_val, (ptr), (size), __pu_err, -EFAULT); \
-+	__put_user_size(__pu_val, __pu_ptr, __pu_size, __pu_err, -EFAULT); \
- 	__uaccess_end();					\
- 	__pu_err;						\
- })
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1594,6 +1594,7 @@ static int parse_audio_mixer_unit(struct
+ 	int pin, ich, err;
+ 
+ 	if (desc->bLength < 11 || !(input_pins = desc->bNrInPins) ||
++	    desc->bLength < sizeof(*desc) + desc->bNrInPins ||
+ 	    !(num_outs = uac_mixer_unit_bNrChannels(desc))) {
+ 		usb_audio_err(state->chip,
+ 			      "invalid MIXER UNIT descriptor %d\n",
 
