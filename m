@@ -2,225 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B22EB99C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 00:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E015B99CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 00:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393905AbfITWo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 18:44:57 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60788 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393815AbfITWo5 (ORCPT
+        id S2406152AbfITWtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 18:49:33 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:32845 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387598AbfITWtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 18:44:57 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 67B1A2F9;
-        Sat, 21 Sep 2019 00:44:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1569019495;
-        bh=kQDyvHPUjw3ozJ1+wTwounJvN79D6opBdCaeOTs2x9Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UWbPcxKrMj+hvtXUoCF6cf0fWjZ2vMZVr7HkcGFmJPe4KH71uorDSUFbzJWO8Ynph
-         nxyBKxcUMkvMLBBbwjdkM2m1JP9GTFWuC8HgBfmv1dhgNxDRzlWEEJgZX/wXhPVRRw
-         qRerWEjniRMrDSdIXytqrOQIhM98nYCkO640l9mw=
-Date:   Sat, 21 Sep 2019 01:44:46 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Fri, 20 Sep 2019 18:49:33 -0400
+Received: by mail-io1-f68.google.com with SMTP id m11so19869459ioo.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 15:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wOpJQk7o6uD40KwVMmu8VQcBIeJeRyt/YndwGm9kx/0=;
+        b=ACsUX2E2WcuZZFmvPnh2nXTsETrz8yamMn3bO6rMtq/UC1IFTo5Q9N2tcaMQH2EChi
+         o/5jdQNjzXTYviqKafcRo+xbmAAD7tKV/F5Xa6eGMWs3pc+c62WzMfvlrNp4/m42ne2S
+         jvZLlMIqQrSeOuc6YRgeLnUMd/KxDX/Uy0olM0H0qNgMjgfXnjHrDAo0PO8adFmuL6rr
+         fv5gGcbx1HRGvda/OiHQ4QxhLuqr14NxyS3INmNjyLnHP1dnMcTcSCQxFc22TBfBz4lZ
+         ZNZn5IL8lRABN6AB0iWFzBsNmz5PWd9P/Mst27mRvSxjMWFczBsgGOERFcDn+YHm15t7
+         y3Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wOpJQk7o6uD40KwVMmu8VQcBIeJeRyt/YndwGm9kx/0=;
+        b=AslU+2K6Z17/vgwMhbiH0L3XX3mNmmrjRf+RxPez92htnOo6ReHW8yR2cRzU+pO+vv
+         Od+u7T+Ny1bJef2/jcfusJMQMF35OyJlHwxG3kNChlWCSZ1MYiAThwtubFz982US3jWn
+         btiX8JzVG8KiCeu7MsuR9hrUkjloFNjf4hnNxc4zB+VnJfb5uvbk7//6hgWvTg2x4079
+         EBAUUDECIvgXruP1jiWHkTs3bNYHtX77BgbYDX8Ng039zn/2TzY83zcKCbpa/Ke9IUTa
+         TDc9vMfqPjdQ/nv+xsVkXnZp4KIIKpc3llM8qLdnuHou5UlqNDKfcHuaQUJpnBlpoMu+
+         2/2g==
+X-Gm-Message-State: APjAAAXBj/CFcmhX44Ogim8baPp/1ZZajsyRq/CkkK5qenX1GAMwCEAY
+        PVkEgdPCHq+x6sVXQCniU2LoUcgQsrg=
+X-Google-Smtp-Source: APXvYqwwbVOjmnF+xSJ83lf0QEM65bDBvT+0GLoqdM7aVkcp+sFzFWRjgpRovLgsdFtvQ4qa85aHqQ==
+X-Received: by 2002:a6b:3a43:: with SMTP id h64mr550056ioa.89.1569019771106;
+        Fri, 20 Sep 2019 15:49:31 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id a14sm3835732ioo.85.2019.09.20.15.49.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2019 15:49:30 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>, Rex Zhu <Rex.Zhu@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 6/9] drm: rcar-du: crtc: Enable and disable CMMs
-Message-ID: <20190920224446.GD12672@pendragon.ideasonboard.com>
-References: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
- <20190906135436.10622-7-jacopo+renesas@jmondi.org>
- <bc443263-5f20-f022-34c8-1e521243dec1@ideasonboard.com>
- <20190912080720.bn7bmu2o3gacrpf4@uno.localdomain>
- <a0f0554d-1bb0-fefa-a5d5-a252f7426c36@ideasonboard.com>
- <20190918232336.GB11474@pendragon.ideasonboard.com>
- <96aded2c-f083-6e3d-c07d-f392f52a01b0@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <96aded2c-f083-6e3d-c07d-f392f52a01b0@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Subject: [PATCH] drm/amdgpu: release allocated memory
+Date:   Fri, 20 Sep 2019 17:49:10 -0500
+Message-Id: <20190920224915.2788-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+In amdgpu_vmid_grab_idle, fences is being leaked in one execution path.
+The missing kfree was added.
 
-On Thu, Sep 19, 2019 at 09:08:18AM +0100, Kieran Bingham wrote:
-> On 19/09/2019 00:23, Laurent Pinchart wrote:
-> > On Thu, Sep 12, 2019 at 10:19:30AM +0100, Kieran Bingham wrote:
-> >> On 12/09/2019 09:07, Jacopo Mondi wrote:
-> >>> On Wed, Sep 11, 2019 at 07:40:27PM +0100, Kieran Bingham wrote:
-> >>>> On 06/09/2019 14:54, Jacopo Mondi wrote:
-> >>>>> Enable/disable the CMM associated with a CRTC at CRTC start and stop
-> >>>>> time and enable the CMM unit through the Display Extensional Functions
-> >>>>> register at group setup time.
-> >>>>>
-> >>>>> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> >>>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> >>>>> ---
-> >>>>>  drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 7 +++++++
-> >>>>>  drivers/gpu/drm/rcar-du/rcar_du_group.c | 8 ++++++++
-> >>>>>  drivers/gpu/drm/rcar-du/rcar_du_regs.h  | 5 +++++
-> >>>>>  3 files changed, 20 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> >>>>> index 23f1d6cc1719..3dac605c3a67 100644
-> >>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> >>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-> >>>>> @@ -21,6 +21,7 @@
-> >>>>>  #include <drm/drm_plane_helper.h>
-> >>>>>  #include <drm/drm_vblank.h>
-> >>>>>
-> >>>>> +#include "rcar_cmm.h"
-> >>>>>  #include "rcar_du_crtc.h"
-> >>>>>  #include "rcar_du_drv.h"
-> >>>>>  #include "rcar_du_encoder.h"
-> >>>>> @@ -619,6 +620,9 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
-> >>>>>  	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
-> >>>>>  		rcar_du_vsp_disable(rcrtc);
-> >>>>>
-> >>>>> +	if (rcrtc->cmm)
-> >>>>> +		rcar_cmm_disable(rcrtc->cmm);
-> >>>>> +
-> >>>>>  	/*
-> >>>>>  	 * Select switch sync mode. This stops display operation and configures
-> >>>>>  	 * the HSYNC and VSYNC signals as inputs.
-> >>>>> @@ -686,6 +690,9 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
-> >>>>>  	}
-> >>>>>
-> >>>>>  	rcar_du_crtc_start(rcrtc);
-> >>>>> +
-> >>>>> +	if (rcrtc->cmm)
-> >>>>> +		rcar_cmm_enable(rcrtc->cmm);
-> >>>>>  }
-> >>>>>
-> >>>>>  static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
-> >>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> >>>>> index 9eee47969e77..25d0fc125d7a 100644
-> >>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> >>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
-> >>>>> @@ -147,6 +147,14 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
-> >>>>>
-> >>>>>  	rcar_du_group_setup_pins(rgrp);
-> >>>>>
-> >>>>> +	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
-> >>>>> +		u32 defr7 = DEFR7_CODE
-> >>>>> +			  | (rgrp->cmms_mask & BIT(1) ? DEFR7_CMME1 : 0)
-> >>>>> +			  | (rgrp->cmms_mask & BIT(0) ? DEFR7_CMME0 : 0);
-> >>>>> +
-> >>>>> +		rcar_du_group_write(rgrp, DEFR7, defr7);
-> >>>>> +	}
-> >>>>> +
-> >>>>
-> >>>> What's the effect here on platforms with a CMM, but with
-> >>>> CONFIG_DRM_RCAR_CMM unset?
-> >>>>
-> >>>> Will this incorrectly configure the DU ?
-> >>>>
-> >>>> Will it stall the display if the DU tries to interact with another
-> >>>> module which is not enabled?
-> >>>
-> >>> I recall I tested that (that's why I had to add stubs for CMM
-> >>> functions, as I had linkage errors otherwise) and thing seems to be
-> >>> fine as the CMM configuration/enblement resolve to an empty function.
-> >>
-> >> Yes, I see the stubs to allow for linkage, but it's the hardware I'm
-> >> concerned about. If it passes the tests and doesn't break then that's
-> >> probably ok ... but I'm really weary that we're enabling a hardware
-> >> pipeline with a disabled component in the middle.
-> >>
-> >>> Would you prefer to have this guarded by an #if IS_ENABLED() ?
-> >>
-> >> I don't think we need a compile time conditional, but I'd say it
-> >> probably needs to be more about whether the CMM has actually probed or not
-> >>
-> >> Aha, and I see that in rcar_du_cmm_init() we already do a
-> >> call to rcar_cmm_init(), which if fails will leave rcdu->cmms[i] as
-> >> NULL. So that's catered for, which results in the rgrp->cmms_mask being
-> >> correctly representative of whether there is a CMM connected or not.
-> > 
-> > Doesn't this result in probe failure ?
-> 
-> I think I mis-spoke above, I didn't mean "if rcar_cmm_init() fails" I
-> meant "if rcar_du_cmm_init() determines there are no connected CMM's or
-> if they are disabled."
-> 
-> If rcar_cmm_init() returns a failure, then yes we will fail to probe.
-> 
-> But I think it's up to rcar_du_cmm_init() to determine if the CMM exists
-> or not (or is enabled) and if that's not a failure case then it should
-> not prevent the probing of the DU.
-> 
-> In fact, I've now seen that if CONFIG_DRM_RCAR_CMM is not enabled,
-> rcar_cmm_init() returns 0, and I think in fact it should return -ENODEV,
-> with an exception on that return value in rcar_du_cmm_init() so that the
-> DU continues with no CMM attached there.
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I've replied to your other e-mail regarding this, and I agree with you.
-
-> >>  ... so I think that means the ...
-> >>  "if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM))" is somewhat redundant:
-> >>
-> >>
-> >> This could be:
-> >>
-> >>   if (rgrp->cmms_mask) {
-> >> 	u32 defr7 = DEFR7_CODE
-> >> 		  | (rgrp->cmms_mask & BIT(1) ? DEFR7_CMME1 : 0)
-> >> 		  | (rgrp->cmms_mask & BIT(0) ? DEFR7_CMME0 : 0);
-> >>
-> >>   rcar_du_group_write(rgrp, DEFR7, defr7);
-> >>
-> >> Or in fact, if we don't mind writing 0 to DEFR7 when there is no CMM
-> >> (which is safe by the looks of things as DEFR7 is available on all
-> >> platforms), then we can even remove the outer conditional, and leave
-> >> this all up to the ternary operators to write the correct value to the
-> >> defr7.
-> >>
-> >> Phew ... net result - your current code *is* safe with the
-> >> CONFIG_DRM_RCAR_CMM option disabled. I'll leave it up to you if you want
-> >> to simplify the code here and remove the RCAR_DU_FEATURE_CMM.
-> >>
-> >> As this RCAR_DU_FEATURE_CMM flag is only checked here, removing it would
-> >> however simplify all of the rcar_du_device_info structures.
-> >>
-> >> So - with or without the _FEATURE_CMM" simplification, this patch looks
-> >> functional and safe so:
-> >>
-> >>
-> >> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>
-> >>>>>  	if (rcdu->info->gen >= 2) {
-> >>>>>  		rcar_du_group_setup_defr8(rgrp);
-> >>>>>  		rcar_du_group_setup_didsr(rgrp);
-> >>>>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> >>>>> index bc87f080b170..fb9964949368 100644
-> >>>>> --- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> >>>>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
-> >>>>> @@ -197,6 +197,11 @@
-> >>>>>  #define DEFR6_MLOS1		(1 << 2)
-> >>>>>  #define DEFR6_DEFAULT		(DEFR6_CODE | DEFR6_TCNE1)
-> >>>>>
-> >>>>> +#define DEFR7			0x000ec
-> >>>>> +#define DEFR7_CODE		(0x7779 << 16)
-> >>>>> +#define DEFR7_CMME1		BIT(6)
-> >>>>> +#define DEFR7_CMME0		BIT(4)
-> >>>>> +
-> >>>>>  /* -----------------------------------------------------------------------------
-> >>>>>   * R8A7790-only Control Registers
-> >>>>>   */
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
+index 57b3d8a9bef3..9063cd36fa94 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
+@@ -244,6 +244,7 @@ static int amdgpu_vmid_grab_idle(struct amdgpu_vm *vm,
+ 		r = amdgpu_sync_fence(adev, sync, &array->base, false);
+ 		dma_fence_put(ring->vmid_wait);
+ 		ring->vmid_wait = &array->base;
++		kfree(fences);
+ 		return r;
+ 	}
+ 	kfree(fences);
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
