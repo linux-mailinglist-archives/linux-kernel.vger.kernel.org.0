@@ -2,124 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F198B9928
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42CD8B992F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfITVsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 17:48:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbfITVsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 17:48:02 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06098206C2;
-        Fri, 20 Sep 2019 21:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569016081;
-        bh=OEB9selO6qWOkLDV6zPRfKT8jxShJFah86gtPaMgXLw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sQ5180kTJU8tOgJkw7uiK3T0p+qkq7+9nc3VkAeAHrbAiNr5WR2fGa/EZLW1aF+f/
-         fXapMq6noAV7C28cDFIkySz4h9qKih8F4SN4uA9OvjVlvhPdXWGCP7vabJXhbf+JET
-         S5sLzYd/Ejy5YkturfUtvDYL7BaFotTLN/7ETF1U=
-Date:   Fri, 20 Sep 2019 14:47:59 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Milan Broz <gmazyland@gmail.com>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [dm-devel] dm-crypt error when CONFIG_CRYPTO_AUTHENC is disabled
-Message-ID: <20190920214758.GA162854@gmail.com>
-Mail-Followup-To: Mike Snitzer <snitzer@redhat.com>,
-        Milan Broz <gmazyland@gmail.com>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
-        linux-kernel@vger.kernel.org
-References: <20190920154434.GA923@gandi.net>
- <20190920173707.GA21143@redhat.com>
- <13e25b01-f344-ea1d-8f6c-9d0a60eb1e0f@gmail.com>
- <20190920212746.GA22061@redhat.com>
+        id S1726632AbfITVv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 17:51:27 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43182 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbfITVv0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 17:51:26 -0400
+Received: by mail-qt1-f195.google.com with SMTP id c3so10357475qtv.10;
+        Fri, 20 Sep 2019 14:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JyV3eQ6Txws71HKCK24SrBhT6PsVZFz2DYxOGXDUyAU=;
+        b=ZqCT0beTqmAjmXhDyXh28o7FSbUyirsuCTK6mfjtWlHrDSPUB6Wrl/3k94MT2YFwup
+         EbbiOW1eTm7wyq0p+MKUcDg/kBZXhsVbHhTHpHx1aqTtG6jOPqPXm//y1H/FHLQrjn04
+         9sWGA2Pgoqih53m1DHJjZeHGUDb3zTLl7GR7swZZkcReY1jSq0MrDns6SHahQKeKqpl7
+         GZzM//3p082FukWjfvxb1snV2hdsPPV47n30lniGj5kj7rn/hd20551dhsO4DyPNCIp1
+         SUDGe50CDrhXsVwkX7MbeNwi2SUH8mmXaXKCJwFL4pD8qexXtosWChP/MXPecMo1f6sB
+         YCgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JyV3eQ6Txws71HKCK24SrBhT6PsVZFz2DYxOGXDUyAU=;
+        b=G2BIWc58ztSw05UKS2IkZu6E50PaQXmu3DnGgmhbmjYb80BYfHH3NANX1gpFV7L8sq
+         nVWLJgghvl+8Ocfw/mJykFqynZGvTatkdGGMepkAQ08yIMpKTThH1kyzqyjJdhs2rCWs
+         vAl82Ya0E+GTjU5AO9mczLR7dqjFNjiw7WKe2ao85RIXqtZz7QZtsPJp/48MNOB0O/8x
+         Jsh/hSHLjQ01tadRh32XK0W47tyRyG3tkpVcvx2BwwutQMjk1zBl+vGv6NTzYBV0wdRW
+         AuiTtn9bZdkIbWGTwE4OtioCX6Uvu3KW4NgvLi0iPqO38V5YqRHwFYWAOVpiv9pe0w+Y
+         LsIQ==
+X-Gm-Message-State: APjAAAVLTot1zxQXHpPBy6XGizLSBInfzrwFuL3iorrldL2AG85Myoji
+        ScQ8pNAs2CPuVC3rDpINRhHzdtPR3pWGWa43jA+myQ==
+X-Google-Smtp-Source: APXvYqxfY8raxBEebjXOuo+E4xqbSqW+LOmgA/YRHzphdGNLvbHWp48LTp6h50xBP99SDiX0r2hsxmbCKWQCeE81ug4=
+X-Received: by 2002:ac8:1417:: with SMTP id k23mr5352617qtj.93.1569016284859;
+ Fri, 20 Sep 2019 14:51:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190920212746.GA22061@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190919160518.25901-1-ivan.khoronzhuk@linaro.org>
+ <CAEf4BzbCjCYr5NMPctDkUggwpehnqZPVBSqZOsd9MvSq6WmnZQ@mail.gmail.com>
+ <20190920082204.GC8870@khorivan> <CAEf4BzaVuaN3HhMu8W_i9z4n-2zfjqxBXyOEOaQHexxZq7b3qg@mail.gmail.com>
+ <20190920183449.GA2760@khorivan> <20190920191941.GB2760@khorivan>
+In-Reply-To: <20190920191941.GB2760@khorivan>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Fri, 20 Sep 2019 14:51:14 -0700
+Message-ID: <CAEf4BzZGeY-WD17mq6FTd7Rae_f26j4kBAWCmuppeu4VjZxvUg@mail.gmail.com>
+Subject: Re: [PATCH bpf] libbpf: fix version identification on busybox
+To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin Lau <kafai@fb.com>, Andrii Nakryiko <andriin@fb.com>,
+        Yonghong Song <yhs@fb.com>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 05:27:46PM -0400, Mike Snitzer wrote:
-> On Fri, Sep 20 2019 at  3:21pm -0400,
-> Milan Broz <gmazyland@gmail.com> wrote:
-> 
-> > On 20/09/2019 19:37, Mike Snitzer wrote:
-> > > On Fri, Sep 20 2019 at 11:44am -0400,
-> > > Thibaut Sautereau <thibaut.sautereau@clip-os.org> wrote:
-> > > 
-> > >> Hi,
-> > >>
-> > >> I just got a dm-crypt "crypt: Error allocating crypto tfm" error when
-> > >> trying to "cryptsetup open" a volume. I found out that it was only
-> > >> happening when I disabled CONFIG_CRYPTO_AUTHENC.
-> > >>
-> > >> drivers/md/dm-crypt.c includes the crypto/authenc.h header and seems to
-> > >> use some CRYPTO_AUTHENC-related stuff. Therefore, shouldn't
-> > >> CONFIG_DM_CRYPT select CONFIG_CRYPTO_AUTHENC?
-> > > 
-> > > Yes, it looks like commit ef43aa38063a6 ("dm crypt: add cryptographic
-> > > data integrity protection (authenticated encryption)") should've added
-> > > 'select CRYPTO_AUTHENC' to dm-crypt's Kconfig.  I'll let Milan weigh-in
-> > > but that seems like the right way forward.
-> > 
-> > No, I don't this so. It is like you use some algorithm that is just not compiled-in,
-> > or it is disabled in the current state (because of FIPS mode od so) - it fails
-> > to initialize it.
-> > 
-> > I think we should not force dm-crypt to depend on AEAD - most users
-> > do not use authenticated encryption, it is perfectly ok to keep this compiled out.
-> > 
-> > I do not see any principal difference from disabling any other crypto
-> > (if you disable XTS mode, it fails to open device that uses it).
-> > 
-> > IMO the current config dependence is ok.
-> 
-> That is a good point.  I hadn't considered the kernel compiles just fine
-> without CRYPTO_AUTHENC.. which it clearly does.
-> 
-> SO I retract the question/thought of updating the Kconfig for dm-crypt
-> in my previous mail.
-> 
-> Though in hindsight: wonder whether the dm-integrity based dm-crypt
-> authenticated encryption support should have been exposed as a proper
-> CONFIG option within the DM_CRYPT section?  Rather than lean on the
-> crypto subsystem to happily stub out the dm-crypt AEAD and AUTHENC
-> related code dm-crypt could've established #ifdef boundaries for that
-> code.
-> 
-> I'm open to suggestions and/or confirmation that the way things are now
-> is perfectly fine.  But I do see this report as something that should
-> drive some improvement.
-> 
+On Fri, Sep 20, 2019 at 12:19 PM Ivan Khoronzhuk
+<ivan.khoronzhuk@linaro.org> wrote:
+>
+> On Fri, Sep 20, 2019 at 09:34:51PM +0300, Ivan Khoronzhuk wrote:
+> >On Fri, Sep 20, 2019 at 09:41:54AM -0700, Andrii Nakryiko wrote:
+> >>On Fri, Sep 20, 2019 at 1:22 AM Ivan Khoronzhuk
+> >><ivan.khoronzhuk@linaro.org> wrote:
+> >>>
+> >>>On Thu, Sep 19, 2019 at 01:02:40PM -0700, Andrii Nakryiko wrote:
+> >>>>On Thu, Sep 19, 2019 at 11:22 AM Ivan Khoronzhuk
+> >>>><ivan.khoronzhuk@linaro.org> wrote:
+> >>>>>
+> >>>>> It's very often for embedded to have stripped version of sort in
+> >>>>> busybox, when no -V option present. It breaks build natively on target
+> >>>>> board causing recursive loop.
+> >>>>>
+> >>>>> BusyBox v1.24.1 (2019-04-06 04:09:16 UTC) multi-call binary. \
+> >>>>> Usage: sort [-nrugMcszbdfimSTokt] [-o FILE] [-k \
+> >>>>> start[.offset][opts][,end[.offset][opts]] [-t CHAR] [FILE]...
+> >>>>>
+> >>>>> Lets modify command a little to avoid -V option.
+> >>>>>
+> >>>>> Fixes: dadb81d0afe732 ("libbpf: make libbpf.map source of truth for libbpf version")
+> >>>>>
+> >>>>> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> >>>>> ---
+> >>>>>
+> >>>>> Based on bpf/master
+> >>>>>
+> >>>>>  tools/lib/bpf/Makefile | 2 +-
+> >>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
+> >>>>> index c6f94cffe06e..a12490ad6215 100644
+> >>>>> --- a/tools/lib/bpf/Makefile
+> >>>>> +++ b/tools/lib/bpf/Makefile
+> >>>>> @@ -3,7 +3,7 @@
+> >>>>>
+> >>>>>  LIBBPF_VERSION := $(shell \
+> >>>>>         grep -oE '^LIBBPF_([0-9.]+)' libbpf.map | \
+> >>>>> -       sort -rV | head -n1 | cut -d'_' -f2)
+> >>>>> +       cut -d'_' -f2 | sort -r | head -n1)
+> >>>>
+> >>>>You can't just sort alphabetically, because:
+> >>>>
+> >>>>1.2
+> >>>>1.11
+> >>>>
+> >>>>should be in that order. See discussion on mailing thread for original commit.
+> >>>
+> >>>if X1.X2.X3, where X = {0,1,....99999}
+> >>>Then it can be:
+> >>>
+> >>>-LIBBPF_VERSION := $(shell \
+> >>>-       grep -oE '^LIBBPF_([0-9.]+)' libbpf.map | \
+> >>>-       sort -rV | head -n1 | cut -d'_' -f2)
+> >>>+_LBPFLIST := $(patsubst %;,%,$(patsubst LIBBPF_%,%,$(filter LIBBPF_%, \
+> >>>+           $(shell cat libbpf.map))))
+> >>>+_LBPFLIST2 := $(foreach v,$(_LBPFLIST), \
+> >>>+               $(subst $() $(),,$(foreach n,$(subst .,$() $(),$(v)), \
+> >>>+                       $(shell printf "%05d" $(n)))))
+> >>>+_LBPF_VER := $(word $(words $(sort $(_LBPFLIST2))), $(sort $(_LBPFLIST2)))
+> >>>+LIBBPF_VERSION := $(patsubst %_$(_LBPF_VER),%,$(filter %_$(_LBPF_VER), \
+> >>>+        $(join $(addsuffix _, $(_LBPFLIST)),$(_LBPFLIST2))))
+> >>>
+> >>>It's bigger but avoids invocations of grep/sort/cut/head, only cat/printf
+> >>>, thus -V option also.
+> >>>
+> >>
+> >>No way, this is way too ugly (and still unreliable, if we ever have
+> >>X.Y.Z.W or something). I'd rather go with my original approach of
+> >Yes, forgot to add
+> >X1,X2,X3,...XN, where X = {0,1,....99999} and N = const for all versions.
+> >But frankly, 1.0.0 looks too far.
+>
+> It actually works for any numbs of X1.X2...X100
+> but not when you have couple kindof:
+> X1.X2.X3
+> and
+> X1.X2.X3.X4
+>
+> But, no absolutely any problem to extend this solution to handle all cases,
+> by just adding leading 0 to every "transformed version", say limit it to 10
+> possible 'dots' (%5*10d) and it will work as clocks. Advantage - mostly make
+> functions.
+>
+> Here can be couple more solutions with sed, not sure it can look less maniac.
+>
+> >
+> >>fetching the last version in libbpf.map file. See
+> >>https://www.spinics.net/lists/netdev/msg592703.html.
+>
+> Yes it's nice but, no sort, no X1.X2.X3....XN
+>
+> Main is to solve it for a long time.
 
-FWIW, I think you're being saved right now by the craziness in the crypto
-subsystem Kconfig options: CONFIG_DM_CRYPT selects CONFIG_CBC, which selects
-CONFIG_CRYPTO_MANAGER, which selects CONFIG_CRYPTO_MANAGER2, which selects
-CONFIG_CRYPTO_AEAD2 (and all the other algorithm types, for that matter).
-This makes the AEAD API available.
+Thinking a bit more about this, I'm even more convinced that we should
+just go with my original approach: find last section in libbpf.map and
+extract LIBBPF version from that. That will handle whatever crazy
+version format we might decide to use (e.g., 1.2.3-experimental).
+We'll just need to make sure that latest version is the last in
+libbpf.map, which will just happen naturally. So instead of this
+Makefile complexity, please can you port back my original approach?
+Thanks!
 
-If this wasn't the case, dm-crypt's use of crypto_alloc_aead() would be causing
-a link error in some kernel configurations, since CONFIG_DM_CRYPT doesn't
-actually select the AEAD API itself.
-
-At some point I (or someone else up to the task) might try to fix the crypto
-subsystem to not make every template select every algorithm type.  In that
-happens, we'll need to update the users like dm-crypt to explicitly select the
-algorithm types they're using, if they were being implicitly selected before.
-
-In any case, allowing users to compile out the AEAD support in dm-crypt would
-also be nice if it's not too difficult, since not everyone needs it.
-
-- Eric
+>
+> >>
+> >>>>
+> >>>>>  LIBBPF_MAJOR_VERSION := $(firstword $(subst ., ,$(LIBBPF_VERSION)))
+> >>>>>
+> >>>>>  MAKEFLAGS += --no-print-directory
+> >>>>> --
+> >>>>> 2.17.1
+> >>>>>
+> >>>
+> >>>--
+> >>>Regards,
+> >>>Ivan Khoronzhuk
+> >
+> >--
+> >Regards,
+> >Ivan Khoronzhuk
+>
+> --
+> Regards,
+> Ivan Khoronzhuk
