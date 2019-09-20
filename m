@@ -2,79 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF075B8BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B9EB8BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 09:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437603AbfITHsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 03:48:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36566 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437580AbfITHsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 03:48:05 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D71DA811DC
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:48:04 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id k9so833973wmb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 00:48:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GKORzqIRH8UFUe4Xtmmfu6KCmszYBGYE6BwrxWii7Vw=;
-        b=RvjXeXalP7U6BgX0g3ChcHI2hqxmpsjV510ftitSeOAVVUUBHzrBifja3dPqY2ktze
-         0jb0fZSNCqPg+QZlaGlCiOHrndTZs4CMXMMgdmbodQ8C5izUOXMgi1stKtxUepdGX7Of
-         NNm0wgGNggJKzPJ8pB9SmGB0up3Kypghhss2oCMbk0qvdLDWcX/VRkK5brUOFXhIrwEU
-         Eb4Yoq4gEfPgFTlip6YQ0LkwTlwS2Sx+Jujp7yIBwnl+MAj/q4+fc0zU6fC1gLG1FpXG
-         XN0GujpIArA1QK8O9c0pPiD2m5fMkN1uKZ1ddWxeo64VR2mkHzTfwK/AFKvdjVrSOosB
-         mZyg==
-X-Gm-Message-State: APjAAAVXDwuyjj7f418k+S2a38bn4+DrCxPZDdr0400W1RCNG33m5TTk
-        BxR02hzXlxt4OOVA0zqOD+5+WpUD+aLXhPubQBm0wSjdm3zeR+rEZmlix4BemJaH3a31XchOQdb
-        EPIuDwtWOKv3syDlh9VK6KRTv
-X-Received: by 2002:a5d:4d42:: with SMTP id a2mr11317093wru.89.1568965683591;
-        Fri, 20 Sep 2019 00:48:03 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqydSp1q3IPC5Ee/GOcfWjH/pT4DM0fXSnx1nHrzzgH37xFQc+n72/iPZHmbuMH5HvPeGLyqsQ==
-X-Received: by 2002:a5d:4d42:: with SMTP id a2mr11317074wru.89.1568965683377;
-        Fri, 20 Sep 2019 00:48:03 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c46c:2acb:d8d2:21d8? ([2001:b07:6468:f312:c46c:2acb:d8d2:21d8])
-        by smtp.gmail.com with ESMTPSA id w125sm1665640wmg.32.2019.09.20.00.48.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2019 00:48:02 -0700 (PDT)
-Subject: Re: [RFC 0/2] kvm: Use host timekeeping in guest.
-To:     Suleiman Souhlal <suleiman@google.com>, rkrcmar@redhat.com,
-        tglx@linutronix.de
-Cc:     john.stultz@linaro.org, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20190920062713.78503-1-suleiman@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <1ec0b238-61a7-8353-026e-3a2ee23e6240@redhat.com>
-Date:   Fri, 20 Sep 2019 09:48:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2404932AbfITHvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 03:51:04 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:57631 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404904AbfITHvD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 03:51:03 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1M4K2r-1iBUnx2Whd-000HEj; Fri, 20 Sep 2019 09:50:48 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: ti: fix SND_SOC_DM365_VOICE_CODEC dependencies
+Date:   Fri, 20 Sep 2019 09:50:18 +0200
+Message-Id: <20190920075046.3210393-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190920062713.78503-1-suleiman@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:EAKPTZ+itukL2iznqTUk5rPIMXBlBv9PWcQDjxKpT9O//vnk5gh
+ rAOyC8URZPiUfTgkKlxvXoVXPAwpUOUyBc0xu0jumnINBPwIcw5VCV1whnDmt15T78vaj+V
+ KZBJvmieL310Wovz0k/cDx/thz7NXU/w31Vz4vpXtYosVVoU55dDg6Sm1k/LOvm4G84/dYT
+ tJTF76m7Jh3v+6ff4FffA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:pklhRZ2wyO4=:XKxLr9F1esW2k/1CYBwAZ1
+ p6hU9OeU8jh6CmeIfSMgqs3GHdq17Y9JtBjCI54ia/904VPOE/xlrlfqufyoXbA2kdrJgmzxH
+ sUOpcfn86X0zl1zGbd4rWbzgZ8sAaDA+bCVQsVKPn4jTwvkf54irU3EYvaHr7O5DPlYcn1jPE
+ sqTlgeoGzmwIAsMiNYAHDhnd2HsogtybRZwkL307fcfIktlVFnDX/lWSsUQ1ivP6swjA2mzB+
+ 8LXTwspTBe5slOJELG1qo0uHoluy6sQFZcEp/AEKLwfwevC+dCfijD87ElENqhBFDbZG9E7np
+ Sm5u845gRCukKCEiv9MoavuuTZLjLyqNuLWUBkH2WdaJd6bb4zdHZ1i9A5zWoeBtMlPzzkPTJ
+ U3SDT0f9r0a0Wlb+DS8d7Z+QD3wSyUBOYzyJdtut/kOPdPMwRCOqremPdwCIs3T8BdO/4N1Ik
+ 9U525jwIbditIYdpvm+LfxVqNPfIqKpu8Yh2DYVvvap9NLDkORv0Sm21lrD5Y90cOV7UK71F+
+ 3DMvCH9YwvE50r6K1BvcuQLG0zJ8GFzxVSVCE2foMyOQU/dUk9u+5D2mIxhPJ3/6FsUZI93J4
+ pttyejLqRP6Up5O/Vjv50dSljBxAwXkOyFHsvruHsHp9Vwx+SoAjhuBebch0iHZc0ZltlABEf
+ nGoHWubqzFGasR1GTGiBMuiyo4nlaL/bq8l942kUgP3nFH+bLKC5lFtmH7EyNhvEaN+V35URq
+ GSSNJbJK+6VgT3M32QcNabqLLHbtjkjf6R7n7bWJud2XwngeE9BWsfxv5lYgtX8sAEhwGkvPr
+ 94/qfrrwSsPKRE3wXXnGYXgyoRHPCBtZrSQ5CuXzEFR4osEHZGUGJaYtE0yrZAql+ifRz3zsQ
+ eWcZ83+5KHTe4qoG+ouQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/09/19 08:27, Suleiman Souhlal wrote:
-> To do that, I am changing kvmclock to request to the host to copy
-> its timekeeping parameters (mult, base, cycle_last, etc), so that
-> the guest timekeeper can use the same values, so that time can
-> be synchronized between the guest and the host.
-> 
-> Any suggestions or feedback would be highly appreciated.
+SND_SOC_DM365_VOICE_CODEC is a 'bool' option in a choice statement,
+meaning it cannot be set to =m, but it selects two other drivers
+that we may want to be loadable modules after all:
 
-I'm not a timekeeping maintainer, but I don't think the
-kernel/time/timekeeping.c changes are acceptable.
+WARNING: unmet direct dependencies detected for SND_SOC_CQ0093VC
+  Depends on [m]: SOUND [=m] && !UML && SND [=m] && SND_SOC [=m]
+  Selected by [y]:
+  - SND_SOC_DM365_VOICE_CODEC [=y] && <choice>
+  Selected by [m]:
+  - SND_SOC_ALL_CODECS [=m] && SOUND [=m] && !UML && SND [=m] && SND_SOC [=m] && COMPILE_TEST [=y]
 
-Is the PTP driver not enough?
+Add an intermediate symbol that sets SND_SOC_CQ0093VC and
+MFD_DAVINCI_VOICECODEC to =m if SND_SOC=m.
 
-Paolo
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ sound/soc/ti/Kconfig | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/ti/Kconfig b/sound/soc/ti/Kconfig
+index 87a9b9dd4e98..29f61053ab62 100644
+--- a/sound/soc/ti/Kconfig
++++ b/sound/soc/ti/Kconfig
+@@ -200,11 +200,18 @@ config SND_SOC_DM365_AIC3X_CODEC
+ 
+ config SND_SOC_DM365_VOICE_CODEC
+ 	bool "Voice Codec - CQ93VC"
+-	select MFD_DAVINCI_VOICECODEC
+-	select SND_SOC_CQ0093VC
+ 	help
+ 	  Say Y if you want to add support for SoC On-chip voice codec
+ endchoice
+ 
++config SND_SOC_DM365_VOICE_CODEC_MODULE
++	def_tristate y
++	depends on SND_SOC_DM365_VOICE_CODEC && SND_SOC
++	select MFD_DAVINCI_VOICECODEC
++	select SND_SOC_CQ0093VC
++	help
++	  The is an internal symbol needed to ensure that the codec
++	  and MFD driver can be built as loadable modules if necessary.
++
+ endmenu
+ 
+-- 
+2.20.0
+
