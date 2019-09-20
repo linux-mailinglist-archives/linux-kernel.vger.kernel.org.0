@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9C4B94FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:13:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E0F1B9504
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392069AbfITQNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:13:16 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37162 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388473AbfITQNQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:13:16 -0400
-Received: by mail-qk1-f196.google.com with SMTP id u184so7871128qkd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:13:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+KRt2eO4265RvjOZt0uXZpaJi7G2Fc0WrcvWpo7dNLs=;
-        b=PC5Rm/MNlVYG4hAUpVfxggZ29cqeMZ0SbqOzGCvjSO/AEVVluIBPdz4p6e+w2gcUV1
-         JYawH7yifWF5Pp9d09F9f+XcjFDIke/gu7/K5/d0zWBo7og0ocmUSq5dstDe4UJGbFaG
-         wq7GxlinSzw2L3Ljj+tR2FrD7VCUS+JkD07c+XOpKKmO3/wZXbMi4DJUVfiJ1ap517j5
-         W272PKtk7l0n3aFyg4dKNPUOQm1fSqRwKkbNGCl/Pj34yLsdzNuTVfKX75ooJeyDUtNJ
-         bhiMS4SQqvvlvriNSO/HSBGNJABpHrm0C1W/pcAk0wRZT/RvdY1pGLy11GOcNJPAjwm4
-         a0fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+KRt2eO4265RvjOZt0uXZpaJi7G2Fc0WrcvWpo7dNLs=;
-        b=oKH6jaskd2/IjaNGbnkM/nOoovFlHele1sPNeVfPzm0gd42kDXkHMb+Paw93rJJG29
-         IEPORdDjrCWr88B53Klkkd872yhoOQQSX6Fxn3gb4qNatTC687c3V+fJRvk6t2fCNVsJ
-         GeO1RnmXAX0gFv6SREW1qIh4F2vJmOHmFLWNYBuvxe+x7EHfC1tAPUTAySmNnoapvTOn
-         ADF7Wxs4RLIbx7DL24JqP9wtJYgcgX3zojHvvo066JZ7Ott9/rFBIth6Ao7D2IZI90a7
-         rZ/oLCUDyh6WM/Y8ZiVt/c60i8vzX2uPhk3AQtrc4jIJsvrg9Iy6AmsfvGMEMsFZReiN
-         1O1A==
-X-Gm-Message-State: APjAAAXpVY6Hi9nam4MwXs09fwzz8WF85jw0kp1j0+POn/maGRPVSBQm
-        EmZsq4aROpAfIYWIjIJ49xqFTcY05Q4KA0uNvWI=
-X-Google-Smtp-Source: APXvYqwBdbXYB9whMv59Ht+lFG9oCle+iuMEfAA3OUQXDylTx0BKXVaENvwYUBi2YcBlQNBa44m1najM2kKPfflpUfo=
-X-Received: by 2002:ae9:dec2:: with SMTP id s185mr4535890qkf.203.1568995995092;
- Fri, 20 Sep 2019 09:13:15 -0700 (PDT)
+        id S2392496AbfITQOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:14:16 -0400
+Received: from mail-eopbgr50109.outbound.protection.outlook.com ([40.107.5.109]:1926
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388473AbfITQOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 12:14:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Nj1CXZf5FeuzIJLQdnUkYqGu8zw6h0omyl6/J4ZI5y9btf2b/Yp4YHRThNubXjwO3DvTW5CN14xKscSc9ZZFcIjfSB/un063rxzpNBnehweTQlJYw7+MSft5BGpPxGrOJ5alImQwa91YiqbOr1ZOPs3L7SurkI578s4/ug0Z6XDz8s7c4mL/e3NALg6TVzRVljd0Q0U10M3bg9/1akiHMutGnTA3gksyjkZsybqUF2RXepwylgwkQGoiovbRErOR08z9yZq4F3Gj4UFhzreugf/Sdo3xSHDK4oqKSioqFifjMndj8Z0258IESisjYoyhMuWomj9s6gpZQXsMhTLPzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m+4Bh2ybJkFMdS6p2FgiVBrSvTxmmSFZY39CoLCdlnA=;
+ b=OWwlYLRQplYUbxpxkTfeoYpdiELPjnatpJr0t7OysU4GE6GDBOOztJjkaJgKRNwwkdQSDran1BurcaTLGDb38HQ7y34HIWnjYKuiT9UW74Zl+tlY4lp+HbP0QUsy9K5jVPva2RScd4QbT4Linn5sn47G4GgYwqS0E0JJP8zbs9gK5EPVKkWwA0yI8XFaHOKzttqzX7O6najwuS9j9U6eX8cysfgo5GklTtfI95xVuoOgpz3pVdRHv6I+2yC+aOqUt7RSIyRiT7UGE2h3FmsVqIGZZK+3CdnW3Sq7TqbmMze+ZifvyOpD3H3b1FzNmPI/EsuPZn8Nu/32SWChCrfIwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
+ dkim=pass header.d=nokia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m+4Bh2ybJkFMdS6p2FgiVBrSvTxmmSFZY39CoLCdlnA=;
+ b=KUj/mG6bpk2wFlM3g8V7PWZf7Z2Djnwq0W/QjE1WPn7f8NdywigQHPiJoJAA10VCbVgb13TTUPnytI/xcXcAQq9vqq6lUAcaG6pc+aILMFbX83brqrnDO5ZYcE1oOzJdG6TLG4PFYDvU48F6yRrTovt43bqfQIzhBWKEVqZjP8A=
+Received: from AM6PR0702MB3527.eurprd07.prod.outlook.com (52.133.24.149) by
+ AM6PR0702MB3605.eurprd07.prod.outlook.com (52.133.20.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.17; Fri, 20 Sep 2019 16:14:12 +0000
+Received: from AM6PR0702MB3527.eurprd07.prod.outlook.com
+ ([fe80::892c:2b90:e54f:ab56]) by AM6PR0702MB3527.eurprd07.prod.outlook.com
+ ([fe80::892c:2b90:e54f:ab56%3]) with mapi id 15.20.2284.009; Fri, 20 Sep 2019
+ 16:14:12 +0000
+From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+To:     Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Grant Likely <grant.likely@secretlab.ca>
+CC:     Mark Brown <broonie@opensource.wolfsonmicro.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        "Glavinic-Pecotic, Matija (EXT - DE/Ulm)" 
+        <matija.glavinic-pecotic.ext@nokia.com>,
+        "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 3/3] genirq/irqdomain: Detect type race in
+ irq_create_fwspec_mapping()
+Thread-Topic: [PATCH 3/3] genirq/irqdomain: Detect type race in
+ irq_create_fwspec_mapping()
+Thread-Index: AQHVaU6gc4wd5DvxjEeG+LE441tLCKc0yF8AgAAB4AA=
+Date:   Fri, 20 Sep 2019 16:14:11 +0000
+Message-ID: <f3092af0-b354-b8cb-7c07-b874c2dd909f@nokia.com>
+References: <20190912094343.5480-1-alexander.sverdlin@nokia.com>
+ <20190912094343.5480-4-alexander.sverdlin@nokia.com>
+ <e86441c4-9ce2-b0f2-f8ca-2823497b4d6d@kernel.org>
+In-Reply-To: <e86441c4-9ce2-b0f2-f8ca-2823497b4d6d@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [131.228.32.166]
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
+x-clientproxiedby: HE1PR05CA0193.eurprd05.prod.outlook.com
+ (2603:10a6:3:f9::17) To AM6PR0702MB3527.eurprd07.prod.outlook.com
+ (2603:10a6:209:11::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 89be7f80-18a8-4727-94b7-08d73de592ed
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM6PR0702MB3605;
+x-ms-traffictypediagnostic: AM6PR0702MB3605:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR0702MB3605A8D18B471A2359EFFDF588880@AM6PR0702MB3605.eurprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0166B75B74
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(396003)(136003)(39860400002)(366004)(346002)(189003)(199004)(14444005)(54906003)(5660300002)(4326008)(53546011)(305945005)(6246003)(66946007)(110136005)(31686004)(229853002)(6486002)(316002)(6512007)(256004)(14454004)(36756003)(71190400001)(71200400001)(6436002)(58126008)(31696002)(25786009)(2906002)(99286004)(66446008)(65806001)(478600001)(3846002)(52116002)(446003)(86362001)(11346002)(26005)(8936002)(8676002)(81166006)(66066001)(2616005)(76176011)(486006)(7736002)(476003)(66476007)(6506007)(386003)(65956001)(66556008)(64756008)(186003)(2501003)(102836004)(6116002)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0702MB3605;H:AM6PR0702MB3527.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: V5/DJOPOnyRCQ51zTMezhJxJhgS6cdRw0GJGx6Jw187DJ28ibH3jJl9mKi+ijtYrX+vWonl9zqLb7ldh6xiE1dmn0+b6AGiWEO1fClJw2agLq0lqOkyLxzTnJ6WeZkkVyMGS19pcoVAehRW8W5ZniEBUGY78L4DkOGJPdgt21QN5ZoCt2TMSFDFKiVGj4EoiW9ZZ3NBQTzN9RW5BXBq7anK92VCAcptyilam7WlMusXFN0Oy9nnhnXAEWjVk/SA5WUBMYmnx5zwrrhy8bnJV4j0XT563VvRaBsEOuzYsMv4RYLhgjJHUNitvikNwJpqErkmYW2FedleZPicHMqBhYLn1kpTYBz5/FAsOfyMVdCNI+0Dd54URnPoPgQ0OiV6UBLpTOLU1s0vF9fmcdf7QR8NLJyHTpuCHQH52KubpehM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <10F9AF03540D2049B1A9119B56583365@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190828073130.83800-1-namhyung@kernel.org> <20190828073130.83800-3-namhyung@kernel.org>
- <20190828144911.GR2263813@devbig004.ftw2.facebook.com> <20190831030321.GA93532@google.com>
- <20190831045815.GE2263813@devbig004.ftw2.facebook.com> <CAPhsuW42ivYU=U5E9jLMWZZgXP_Dv0C_SMFBsiXa53=6bN-=Wg@mail.gmail.com>
- <20190916152325.GD3084169@devbig004.ftw2.facebook.com> <CAPhsuW54+YNkj3fnmS6P0=eEdzZ4YvV7Yv+t-d-OnRNNgxPS+Q@mail.gmail.com>
- <CAM9d7cg_AKCyifV7xDm7sJ4=wgG_K=qu013TSTHqLiCRh9m_pg@mail.gmail.com>
-In-Reply-To: <CAM9d7cg_AKCyifV7xDm7sJ4=wgG_K=qu013TSTHqLiCRh9m_pg@mail.gmail.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Fri, 20 Sep 2019 09:13:04 -0700
-Message-ID: <CAPhsuW6zxkKd3ExXj5GCq+4yEWv85qmM9_Weatv4PoVd+aWKDQ@mail.gmail.com>
-Subject: Re: [PATCH 2/9] perf/core: Add PERF_SAMPLE_CGROUP feature
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89be7f80-18a8-4727-94b7-08d73de592ed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2019 16:14:11.9802
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7oP78RRKgI+UQ8I8sifiOlc2P4LTbE5G6rPtIfldnHkrIB2A/BHkXdd3ZBPkJrSxyZVr7P7aEsevmb6kaVFm+L/Cqvh+7VN8IzZwo0B0c18=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0702MB3605
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Namhyung,
-
-On Fri, Sep 20, 2019 at 1:47 AM Namhyung Kim <namhyung@kernel.org> wrote:
->
-> Hello Song,
->
-> On Thu, Sep 19, 2019 at 3:43 PM Song Liu <liu.song.a23@gmail.com> wrote:
->
-> > Sharing some offline discussions with Tejun.
-> >
-> > ino in current kernfs is not a good unique ID for cgroup, because it doesn't
-> > increase monotonically. So we need to improve kernfs.
-> >
-> > For 64-bit, we can make the ino monotonic, and use it as the ID.
-> > For 32-bit, we need to make the ino monotonic. and use <ino> and <gen>
-> > as the 64-bit ID.
->
-> Thanks for the sharing information!  For 32-bit, while the ino itself is not
-> monotonic, gen << 32 + ino is monotonic right?  I think we can use the
-> same logic of kernfs id allocation, but not sure what the problem Tejun
-> mentioned before is.
-
-How would we manage gen here? One way that works is:
-1. make ino monotonic,
-2. increase gen when 32-bit ino overflows
-
-I think current kernfs id is not monotonic, so it can be reused before overflow.
-
-Thanks,
-Song
+SGkhDQoNCk9uIDIwLzA5LzIwMTkgMTg6MDcsIE1hcmMgWnluZ2llciB3cm90ZToNCj4+IGlycV9j
+cmVhdGVfZndzcGVjX21hcHBpbmcoKSBjYW4gcmFjZSB3aXRoIGl0c2VsZiBkdXJpbmcgSVJRIHRy
+aWdnZXIgdHlwZQ0KPj4gY29uZmlndXJhdGlvbi4gUG9zc2libGUgc2NlbmFyaW9zIGluY2x1ZGU6
+DQo+Pg0KPj4gLSBNYXBwaW5nIGV4aXN0cywgdHdvIGlycV9jcmVhdGVfZndzcGVjX21hcHBpbmco
+KSBydW5uaW5nIGluIHBhcmFsbGVsIGRvDQo+PiAgIG5vdCBkZXRlY3QgdHlwZSBtaXNtYXRjaCwg
+SVJRIHJlbWFpbnMgY29uZmlndXJlZCB3aXRoIG9uZSBvZiB0aGUNCj4+ICAgZGlmZmVyZW50IHRy
+aWdnZXIgdHlwZXMgcmFuZG9tbHkNCj4+IC0gU2Vjb25kIGNhbGwgdG8gaXJxX2NyZWF0ZV9md3Nw
+ZWNfbWFwcGluZygpIHNlZXMgZXhpc3RpbmcgbWFwcGluZyBqdXN0DQo+PiAgIGNyZWF0ZWQgYnkg
+Zmlyc3QgY2FsbCwgYnV0IGVhcmxpZXIgaXJxZF9zZXRfdHJpZ2dlcl90eXBlKCkgY2FsbCByYWNl
+cw0KPj4gICB3aXRoIGxhdGVyIGlycWRfc2V0X3RyaWdnZXJfdHlwZSgpID0+IHRvdGFsbHkgdW5k
+ZXRlY3RlZCwgSVJRIHR5cGUNCj4+ICAgaXMgYmVpbmcgc2V0IHJhbmRvbWx5IHRvIGVpdGhlciBv
+bmUgb3IgYW5vdGhlciB0eXBlDQo+IElzIHRoYXQgYW4gYWN0dWFsIHRoaW5nPyBGcmFua2x5LCB0
+aGUgc2NlbmFyaW8geW91J3JlIGRlc2NyaWJpbmcgaGVyZQ0KPiBzZWVtcyB0byBjYXJyeSB0aGUg
+aGFsbG1hcmtzIG9mIGEgY29tcGxldGVseSBicm9rZW4gc3lzdGVtLiBDYW4geW91DQo+IHBvaW50
+IGF0IGEgc3lzdGVtIHN1cHBvcnRlZCBpbiBtYWlubGluZSB0aGF0IHdvdWxkIGJlaGF2ZSBhcyBz
+dWNoPw0KDQpCcmllZmx5IHNwZWFraW5nLCB0aGlzIHJhY2UgaXMgYWJvdXQgbm90LWNvbXBsYWlu
+aW5nIGluIGNhc2Ugb2YgYSBicm9rZW4NCmRldmljZSB0cmVlLiBUaGlzIGlzIG5vdCBzb21ldGhp
+bmcgcHVyZWx5IHRoZW9yZXRpY2FsLiBJIGRvbid0IGtub3cgaWYNCkRUcyB1bmRlciBhcmNoL2Fy
+bS9ib290L2R0cyBhcmUgYWxsIGNvcnJlY3QsIGJ1dCBJIHNhdyBhIGxvdCBEVHMgZnJvbQ0Kc2ls
+aWNvbmUgdmVuZG9ycyBhbmQgdmVyeSBsaXR0bGUgb2YgdGhlbSB3ZXJlIDEwMCUgY29ycmVjdC4N
+Cg0KSW4gb3RoZXIgd29yZHMsIHRoaXMgcGF0Y2ggcmVwYWlycyBlcnJvci1oYW5kbGluZy4gV2l0
+aCAxMDAlIGNvcnJlY3QNCkRUcyAob3IgQUNQSSB0YWJsZXMsIGhhdmUgeW91IHNlZW4gb25lIDEw
+MCUgY29ycmVjdCBCVFc/IDopKSBpdCdzDQpub3QgcmVxdWlyZWQuDQoNCi0tIA0KQmVzdCByZWdh
+cmRzLA0KQWxleGFuZGVyIFN2ZXJkbGluLg0K
