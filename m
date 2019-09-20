@@ -2,104 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E1A0B93BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0209B93C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:11:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393302AbfITPKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 11:10:38 -0400
-Received: from mail-eopbgr130088.outbound.protection.outlook.com ([40.107.13.88]:25252
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S2393347AbfITPLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 11:11:55 -0400
+Received: from mail-eopbgr60044.outbound.protection.outlook.com ([40.107.6.44]:24165
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387614AbfITPKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 11:10:38 -0400
+        id S2390869AbfITPLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 11:11:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sHVkMlSR2b6lI592n0vukuzMF2CuiDiXSXEf8V8Zhzw=;
+ b=LH5AE6PrFrq8mHV3szGUZQHhZnlFkKZRwqNzi/m6RGZnqW+mP9O93F1orDjmokTY/sMxgGe7BY9FmTEl6wu+igdYdy+fvw9aB4zbEoOC964bfa6p8VCujqpiDCHjxCXWlbRYX3PO5HIlffG9c4wly8BeDx+voq4WJ1ALU/cxBiE=
+Received: from VI1PR08CA0192.eurprd08.prod.outlook.com (2603:10a6:800:d2::22)
+ by VI1PR08MB2799.eurprd08.prod.outlook.com (2603:10a6:802:19::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.20; Fri, 20 Sep
+ 2019 15:11:48 +0000
+Received: from DB5EUR03FT061.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e0a::201) by VI1PR08CA0192.outlook.office365.com
+ (2603:10a6:800:d2::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2284.20 via Frontend
+ Transport; Fri, 20 Sep 2019 15:11:48 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ DB5EUR03FT061.mail.protection.outlook.com (10.152.21.234) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2284.20 via Frontend Transport; Fri, 20 Sep 2019 15:11:47 +0000
+Received: ("Tessian outbound 96594883d423:v31"); Fri, 20 Sep 2019 15:11:43 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 559811f6c7f1a935
+X-CR-MTA-TID: 64aa7808
+Received: from eb9bcdb5fd13.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.0.53])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 3CD20C1C-D022-4971-B17E-3C2D0624BF6B.1;
+        Fri, 20 Sep 2019 15:11:37 +0000
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01lp2053.outbound.protection.outlook.com [104.47.0.53])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id eb9bcdb5fd13.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Fri, 20 Sep 2019 15:11:37 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LQ8/D/8h4IPPBrneAKwOTEwBpf1GlKbagfIwvcdZa+7HbOKKgqzlsjxENl8Tpw8tWYWvqtdmIe4IKqSb39RNdfzEhnwnA3qqgNpXuD8bUHK8xfnrmqiv4b+ICUsjGyYWLcXByhT9KFZlzpRNqzfUvDcDEYwzGSy3hWubli6DoDUWKjZWXW4G7EwEWL/VTWh4eoKPRlvSZ0AbCzqtNip4Y4wGl5MXexkIhIavHfDuVuMfPMZpg8sSAGftEA5IDXlzBLIl0JmO6H7jBgOxD8j+rekmYaozrXqBXQBcL+Y41dCTrOXqD+jm6kpVzHO0ta4YD7Xvylu3mcsdhl40/3NLGQ==
+ b=T4O34PFubAK/EOitBubVvox0j8+Op7Z+yHC3J1V2t5WMAcCr2VmYrO8J24FJseV5TMXx82nvnxrGeQZ/UMR43RGS5RVqpAfSaje/y7qMnNC3RDSG58PwBnYflqBxHgNNB63zlLNeHuScrvhXu+UteZST7WxKv8RpDdneTgh48pYtum27VvGJ7vV8jC6vIleEUVgImG/LdbrOCVLfrnJwA330XMcnbtGSYvwbz2IbAPCGT78DmJk1yBfaHWQokkx0XW4t+nt5cJwpfMcO/PBvhaTCoU/OUxNAvObYLPpzDvTzFG0nPVNqcM0agv8C9comhnIYx5lRQDQT1QidmBPn8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6Pdlvgjo+b2+ONsRIbYLHAOu2Wnqh0XWIYNMHetG/zY=;
- b=YwlqGivDw60UOYzi/fGtEVqcngLgjdc+FA90hzjYc5q/FN4Hj7+DkeS3+ykC5avK8WqybBxIE8UD90/1wdOwJ8MdikwmcK+62eyUn4J6yXQUL7BBKV6wUJgYNCNo54muz6yrMMK+iyJ4UilnxEZ+/gJRufF84Cs2fcHreY5PYlPuuZc9hz4mJ9BRSya51PmZEwtjNg/pp3LtgjNarbt+nvSk0r1t1N0VqxMPZnQ/IlgNn3ytX5e3WKgwPY8JIUZiCCjav5n2qf83BpG3tfyYH7rLy44FVLcdRMYLiwpIVEznxM/5Zo4lS0qYwroyK6biWe7xSqf0z09Hxgyv2TBviw==
+ bh=sHVkMlSR2b6lI592n0vukuzMF2CuiDiXSXEf8V8Zhzw=;
+ b=oc05TgBFek8iNvODGrCcPyk0eXVB0bAmE9NccC0zKbfRjK577cW3eG0KfV2pobo9odrcgzUYvZr7gH1jLGhbEM7vj3oO3nrXDT9eyOM7MsCiy6tFWSDiybX5jCtQiYKdLzU+/sQfUDtydF78V9gAtbA3U6TCI9RD0LIAVr2Q2gargdEVFdvIaqgNBllAcjgOG38zABcMtfpufe37CqnXEGvlNa2VEBeXnGQ3HU+fz3OV/x4kn0qVSHGsfUW1iAYQQVe8gHpd0qmlPqAercPgm7Cq6lTG7YgXXaH3r10I8zhwEd7WpXO2YC6Pdbyg3MfD6w6XJDoRNEa7WndJ1YjQzg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6Pdlvgjo+b2+ONsRIbYLHAOu2Wnqh0XWIYNMHetG/zY=;
- b=hlFII1gxjdOCyt9SdQRXYnNtiiksjmk3PqcXUH2VnbZxVXm5xjWZBzraRZ3+M4aiREn73z34CregZY1Yvp3sVQsjHLyWlQSBkSL/VARFnmFYHoGgaJPZHe/FeFgCvZiIeiGUqymryBEv1/QZdh0dxvpVz8lsOzx+fXCz+xUALg4=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3758.eurprd04.prod.outlook.com (52.134.15.152) with Microsoft SMTP
+ bh=sHVkMlSR2b6lI592n0vukuzMF2CuiDiXSXEf8V8Zhzw=;
+ b=LH5AE6PrFrq8mHV3szGUZQHhZnlFkKZRwqNzi/m6RGZnqW+mP9O93F1orDjmokTY/sMxgGe7BY9FmTEl6wu+igdYdy+fvw9aB4zbEoOC964bfa6p8VCujqpiDCHjxCXWlbRYX3PO5HIlffG9c4wly8BeDx+voq4WJ1ALU/cxBiE=
+Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
+ VI1PR08MB3264.eurprd08.prod.outlook.com (52.134.30.147) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.22; Fri, 20 Sep 2019 15:10:35 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::70b4:7829:2e8e:1196]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::70b4:7829:2e8e:1196%7]) with mapi id 15.20.2263.023; Fri, 20 Sep 2019
- 15:10:35 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC:     Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
+ 15.20.2284.20; Fri, 20 Sep 2019 15:11:35 +0000
+Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
+ ([fe80::f164:4d79:79f:dc6f]) by VI1PR08MB4078.eurprd08.prod.outlook.com
+ ([fe80::f164:4d79:79f:dc6f%7]) with mapi id 15.20.2263.023; Fri, 20 Sep 2019
+ 15:11:34 +0000
+From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
+To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/12] crypto: caam - use devres to de-initialize QI
-Thread-Topic: [PATCH 08/12] crypto: caam - use devres to de-initialize QI
-Thread-Index: AQHVYslz5HTVGbpFOkm2nlNFNP9K8w==
-Date:   Fri, 20 Sep 2019 15:10:35 +0000
-Message-ID: <VI1PR0402MB3485456ECDC7F92D332912CB98880@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20190904023515.7107-1-andrew.smirnov@gmail.com>
- <20190904023515.7107-9-andrew.smirnov@gmail.com>
-Accept-Language: en-US
+Subject: [PATCH] drm/komeda: Fix typos in komeda_splitter_validate
+Thread-Topic: [PATCH] drm/komeda: Fix typos in komeda_splitter_validate
+Thread-Index: AQHVb8WxZ1V2B5EmMkKFYK26VJ4Bbw==
+Date:   Fri, 20 Sep 2019 15:11:34 +0000
+Message-ID: <20190920151117.22725-1-mihail.atanassov@arm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
+x-originating-ip: [217.140.106.55]
+x-clientproxiedby: LO2P265CA0326.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a4::26) To VI1PR08MB4078.eurprd08.prod.outlook.com
+ (2603:10a6:803:e5::28)
+x-mailer: git-send-email 2.23.0
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Mihail.Atanassov@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b44076bb-cb67-43ed-9d78-08d73ddcb029
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3758;
-x-ms-traffictypediagnostic: VI1PR0402MB3758:|VI1PR0402MB3758:
+X-MS-Office365-Filtering-Correlation-Id: 456bdace-1532-47c9-737a-08d73ddcdb32
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB3264;
+X-MS-TrafficTypeDiagnostic: VI1PR08MB3264:|VI1PR08MB3264:|VI1PR08MB2799:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB3758E58A80925517B6F2F75198880@VI1PR0402MB3758.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2000;
+X-Microsoft-Antispam-PRVS: <VI1PR08MB2799B91687E86988022F3A348F880@VI1PR08MB2799.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:4125;OLM:4125;
 x-forefront-prvs: 0166B75B74
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(366004)(39860400002)(376002)(199004)(189003)(110136005)(66066001)(71200400001)(71190400001)(305945005)(74316002)(186003)(26005)(4326008)(7736002)(316002)(102836004)(256004)(66446008)(64756008)(76116006)(6506007)(25786009)(53546011)(66946007)(66476007)(66556008)(9686003)(6246003)(7696005)(76176011)(99286004)(55016002)(478600001)(6436002)(2501003)(486006)(86362001)(8936002)(91956017)(14454004)(81156014)(33656002)(2906002)(8676002)(81166006)(52536014)(476003)(229853002)(54906003)(3846002)(5660300002)(44832011)(4744005)(446003)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3758;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(136003)(396003)(39860400002)(199004)(189003)(486006)(50226002)(44832011)(99286004)(476003)(52116002)(2616005)(6512007)(305945005)(66476007)(8936002)(6486002)(256004)(6436002)(66066001)(14444005)(25786009)(14454004)(5640700003)(81166006)(8676002)(86362001)(6506007)(386003)(81156014)(26005)(102836004)(186003)(478600001)(36756003)(6116002)(54906003)(2351001)(4326008)(66946007)(4744005)(5660300002)(7736002)(316002)(64756008)(6916009)(66556008)(66446008)(71190400001)(71200400001)(3846002)(1076003)(2906002)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3264;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pUjnQXxKtAxRGKngPKQlN42X8k4QFLu89GQ7iemoOX/WQdaoaf1lQf/O+cofg/RYVm5tfYLEPRDd1a7PsIj6KU+N0MoPcZ+BWJGM/rHaoK7GvBDLxTJtpcONOC6XHiBQ8JMfZ+ynEkldL2BaasLeWAV62RuoXERyEdnc5xhrJyn0ZxXgP+Itv1sIcRUxm6PN7JFYnUBp+a/Wp7zufg6TUKA0Gp/yB7dfhmh9E7tqpHDfkjfdq98UM2hy+fDKXEr2dD+CY4EFRNvcSS7TtCfLmVJ2/UtT70AthFwchNS6FciHg6ELWq/tTaAxvgI0JVPR2C7iOesbzj1fvGjxpeTOWXzqxm4dHCrw5VJsZmj1/gfLD+e0SXbKENezjq/ZIhM9pUG5EcxKeIyKf7XbetK2d6S/hN7ROT0c9XPZ24p7N3M=
-Content-Type: text/plain; charset="iso-8859-2"
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info-Original: pZ4kEpFU60Lz5LR0rKpbeVpBzCccW+SFe5z2yjrCuiMlQ0DbjJlm/h0geq0mGaqc3wD+3JO5SE0IfZHdI1fcZvsAyaIOi0kcjnnBENmKfKTakO5KTOuc13z9xW2jeIrRjnhSzSrxxIOxNpRfc4CLETJOXF9AGRrRvPbuZw9W+ZQriPZn3JTPsulNhlsRDFrs+vkD852WPd1dnDqDbmASpux7lQDcfEE2ob8QpgJQrp3G1DcLxEmzRrCg78Ywfap9dH2v0NgW75tHslg1cDJAOzY/bZpeIiYQNfbYJJqWagLgLPc4V4GJyfWy7jxtpTM/qij5D4U553kXEwXR+7G2kxvcAwIgJ1sXxRO23wS5NvWh897QccV/Ny3et9vat2u9Z6GrRvdcA/+BtYq2//pqfcfHEgl4x4TQEJdazIkG+fw=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b44076bb-cb67-43ed-9d78-08d73ddcb029
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2019 15:10:35.1132
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3264
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Mihail.Atanassov@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT061.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(39860400002)(396003)(376002)(199004)(189003)(4744005)(86362001)(25786009)(14454004)(4326008)(486006)(186003)(22756006)(70586007)(6862004)(23756003)(50466002)(102836004)(336012)(476003)(478600001)(386003)(6506007)(76130400001)(5660300002)(26826003)(2351001)(126002)(63350400001)(70206006)(26005)(1076003)(99286004)(2616005)(36756003)(6512007)(14444005)(356004)(47776003)(8676002)(81156014)(81166006)(50226002)(305945005)(7736002)(8746002)(8936002)(54906003)(5640700003)(316002)(2906002)(66066001)(3846002)(6116002)(2501003)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB2799;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 3e808726-8e9d-4170-0aa9-08d73ddcd374
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(710020)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB2799;
+NoDisclaimer: True
+X-Forefront-PRVS: 0166B75B74
+X-Microsoft-Antispam-Message-Info: Y3YoXzQed3suMqGuCZp7iuQw6vYjsXP8pIUNMkYgP9U8j6x7+plYPqpOrcXrO9pZnrUDuHyzPNVRuo0Deau1gUvt3xTFDseGmzKs08S1upWyrZ7zKwyNn3jm/WN+IUFNQg0M1mSLdUl+ZnbFC2CvyRdbtFDgSUMQXVDkUXlZc0bfJ/atAR8iM6WHDQ+OQroji1GDnWUyWFlPaHi3sgZwmBOH5ule3m1fI7nQC2WVHsCBEMCau4bI8K8KGQLznNfZfJkcfa0bfmv83u5rlofcelIo2gLfAF8UPfLtkJ56MkFoX2poCo3TLKKQXaTqIFENirkfoUcVbd/UunrQuKRU9bOCAqE3rIuVa0SJXHQuOG0segKdbe33bqkJ/zns7hLjnVsBnQ7meKx9AerKdI0e/j/vIfFj0GT8qrjKbInUWVg=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2019 15:11:47.5330
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V4rBpqlAIVIShwDjA6LX2x9tuvizBGYINr0GUmYc4s6alBsbXmYKsNOS8Df3OM72fT6f3u+OmzsEh3ir/Eo7jg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3758
+X-MS-Exchange-CrossTenant-Network-Message-Id: 456bdace-1532-47c9-737a-08d73ddcdb32
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2799
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/4/2019 5:35 AM, Andrey Smirnov wrote:=0A=
-> Use devres to de-initialize the QI and drop explicit de-initialization=0A=
-> code in caam_remove().=0A=
-> =0A=
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>=0A=
-> Cc: Chris Healy <cphealy@gmail.com>=0A=
-> Cc: Lucas Stach <l.stach@pengutronix.de>=0A=
-> Cc: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>=0A=
-> Cc: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
-> Cc: linux-crypto@vger.kernel.org=0A=
-> Cc: linux-kernel@vger.kernel.org=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
+Fix both the string and the struct member being printed.
+
+Fixes: 264b9436d23b ("drm/komeda: Enable writeback split support")
+Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
+---
+ drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/d=
+rivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+index 950235af1e79..de64a6a9964e 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+@@ -564,8 +564,8 @@ komeda_splitter_validate(struct komeda_splitter *splitt=
+er,
+ 	}
+=20
+ 	if (!in_range(&splitter->vsize, dflow->in_h)) {
+-		DRM_DEBUG_ATOMIC("split in_in: %d exceed the acceptable range.\n",
+-				 dflow->in_w);
++		DRM_DEBUG_ATOMIC("split in_h: %d exceed the acceptable range.\n",
++				 dflow->in_h);
+ 		return -EINVAL;
+ 	}
+=20
+--=20
+2.23.0
+
