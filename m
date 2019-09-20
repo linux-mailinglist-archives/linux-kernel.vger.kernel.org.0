@@ -2,203 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42BDFB91CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA925B919A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388844AbfITOZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:25:56 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36178 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388165AbfITOZF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:05 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqJ-0004xe-Lp; Fri, 20 Sep 2019 15:25:03 +0100
-Received: from ben by deadeye with local (Exim 4.92.1)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqG-0007xD-PP; Fri, 20 Sep 2019 15:25:00 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S2387911AbfITOYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:24:22 -0400
+Received: from mail-eopbgr10062.outbound.protection.outlook.com ([40.107.1.62]:30702
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387845AbfITOYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:24:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N5ytb+0I/I+il0Yr3WnyX4CihE4CwuhyiaJh0cP4Sns=;
+ b=ni7nbs5M01N1w8+hQjF99jdmGwq1AGEtPmzj72XFpbUd3AL6EK4MSesAdFKreob4Lujq75fVRa71tPKWTOPAhiXlyg52XO0fOfQWAuo34Xd/ADWMI6KxiOuoY7hRU0Xa/iQLy0f+xqPWtrcrGx8/K8XexjnUJXR7AbKpfO2C0po=
+Received: from VE1PR08CA0002.eurprd08.prod.outlook.com (2603:10a6:803:104::15)
+ by HE1PR0802MB2570.eurprd08.prod.outlook.com (2603:10a6:3:df::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2263.17; Fri, 20 Sep
+ 2019 14:24:14 +0000
+Received: from DB5EUR03FT060.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e0a::207) by VE1PR08CA0002.outlook.office365.com
+ (2603:10a6:803:104::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2284.18 via Frontend
+ Transport; Fri, 20 Sep 2019 14:24:13 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ DB5EUR03FT060.mail.protection.outlook.com (10.152.21.231) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2284.20 via Frontend Transport; Fri, 20 Sep 2019 14:24:12 +0000
+Received: ("Tessian outbound d5a1f2820a4f:v31"); Fri, 20 Sep 2019 14:24:10 +0000
+X-CR-MTA-TID: 64aa7808
+Received: from 10583a20677c.1 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.12.51])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 4B71E7A5-D560-4E3A-9037-104A8F31A7E2.1;
+        Fri, 20 Sep 2019 14:24:05 +0000
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04lp2051.outbound.protection.outlook.com [104.47.12.51])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id 10583a20677c.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Fri, 20 Sep 2019 14:24:05 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YtG757f6Bw1s1rOksLO+aAsaldXIGWOjv8qWZziJxBWbVD3rWADYfzg3VuMGMXGHjlubS08Pf4PAbMAax5nWWJHz8cXFeZueBkR9sKTq+DRwERXHtW/d47X/wSMtjFSKWQel3NttP+x962thHg3vQb1Iwya3vU9TogEOAlwPOha2b7Ukt/wNWe+bTsRHUEzFKfiS0CUK/2W2Lbi05xYOpm+uTsgAzcGjpUtc4bHDBUd3QSquddoLYSPEoAaKZPdrkfFXW66hy5YPKT3F3OjT2b15cM6PxldG16A8o9fD34se8qce4MF+5wRsSYqy1fco6dYmUa0x7f16RGRZcBM0dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N5ytb+0I/I+il0Yr3WnyX4CihE4CwuhyiaJh0cP4Sns=;
+ b=GzN/ha5ildakkEIkjPn8QnDAkP9reYcQnN7kvUuQfTVS/jAzq1eeLgfntddaUo/+z8VI6vhfE8PZBs87mCvQneDyWnUYkR0Rdn7JaaN8otqrFTEQ6gN9pui+XoRK+rRqlnfuCNx+m+g3T0bCw81Iwgg/jHKRrOPOe6kIDMH5nc31DaoyVzA/uZ9wLcBaul2xabR9NQrnDOHnWVWYNgst8Ima6npdCloWXcWO+NmE0lnp5DPmREwT2XcNcT2OU4olCl1lxTqkos2waWFfY1X0jWDdcx/aSI0cOev3rInbP2fqwQmMuHc0KTBGk1BtQc1XpPPOkzDEZM3G+51u8drc1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N5ytb+0I/I+il0Yr3WnyX4CihE4CwuhyiaJh0cP4Sns=;
+ b=ni7nbs5M01N1w8+hQjF99jdmGwq1AGEtPmzj72XFpbUd3AL6EK4MSesAdFKreob4Lujq75fVRa71tPKWTOPAhiXlyg52XO0fOfQWAuo34Xd/ADWMI6KxiOuoY7hRU0Xa/iQLy0f+xqPWtrcrGx8/K8XexjnUJXR7AbKpfO2C0po=
+Received: from DB7PR08MB3082.eurprd08.prod.outlook.com (52.134.110.24) by
+ DB7PR08MB3324.eurprd08.prod.outlook.com (52.135.128.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2263.15; Fri, 20 Sep 2019 14:24:04 +0000
+Received: from DB7PR08MB3082.eurprd08.prod.outlook.com
+ ([fe80::3dcd:d5e4:c17:489d]) by DB7PR08MB3082.eurprd08.prod.outlook.com
+ ([fe80::3dcd:d5e4:c17:489d%5]) with mapi id 15.20.2284.023; Fri, 20 Sep 2019
+ 14:24:04 +0000
+From:   "Justin He (Arm Technology China)" <Justin.He@arm.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>, nd <nd@arm.com>,
+        "hejianet@gmail.com" <hejianet@gmail.com>
+Subject: RE: [PATCH v7 3/3] mm: fix double page fault on arm64 if PTE_AF is
+ cleared
+Thread-Topic: [PATCH v7 3/3] mm: fix double page fault on arm64 if PTE_AF is
+ cleared
+Thread-Index: AQHVb7sLaOwb1dEY50+Jn8LDfSzGEKc0ndmAgAAAN+A=
+Date:   Fri, 20 Sep 2019 14:24:04 +0000
+Message-ID: <DB7PR08MB3082D3733CBACE61C50AD13EF7880@DB7PR08MB3082.eurprd08.prod.outlook.com>
+References: <20190920135437.25622-1-justin.he@arm.com>
+ <20190920135437.25622-4-justin.he@arm.com>
+ <20190920142113.52mdiflo4yghlsmu@box>
+In-Reply-To: <20190920142113.52mdiflo4yghlsmu@box>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ts-tracking-id: 8c3a65df-0bd5-4fde-8b4c-6568642a7620.0
+x-checkrecipientchecked: true
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Justin.He@arm.com; 
+x-originating-ip: [113.29.88.7]
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: 8576b1ee-178f-408b-0b35-08d73dd6357b
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR08MB3324;
+X-MS-TrafficTypeDiagnostic: DB7PR08MB3324:|HE1PR0802MB2570:
+X-MS-Exchange-PUrlCount: 1
+X-Microsoft-Antispam-PRVS: <HE1PR0802MB2570DA9CCC86CF39861C324FF7880@HE1PR0802MB2570.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:9508;OLM:9508;
+x-forefront-prvs: 0166B75B74
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(39860400002)(366004)(136003)(346002)(189003)(199004)(13464003)(76116006)(66066001)(14444005)(25786009)(6436002)(74316002)(6506007)(6916009)(71200400001)(256004)(305945005)(99286004)(186003)(55236004)(7736002)(102836004)(26005)(6306002)(316002)(71190400001)(53546011)(55016002)(8936002)(6246003)(54906003)(5660300002)(66556008)(66476007)(478600001)(64756008)(229853002)(486006)(7696005)(6116002)(11346002)(966005)(476003)(66574012)(4326008)(86362001)(66946007)(3846002)(52536014)(9686003)(76176011)(14454004)(81166006)(446003)(2906002)(33656002)(66446008)(8676002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR08MB3324;H:DB7PR08MB3082.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info-Original: sfjH1eLdOIr+wxLcjOH7XGebrCnzegD42vg1ikq2fFbz95NxAgK42zsCOKgv3AT4ONicbQkuE4JoTt/SRCtRZVRFjkUNn7CgGURakf5/HwmFHkERdT9KDIB7XbAKEGoQGcNeZ39nw5ylTs+HRvE1pMQC12x0wPCJq1b0fvJvW30eVc8Ov0FLqRcjklpBth2mF4GTGRFlflWIeiUnpM1KrJcGciG/6caZD+F4RiaNy912mIXj08H2ZP9y+rmguemnIkzGWoFJcQkwvdLuq1/e4ssdD6iaC9DanwguaqTqx0CDTQfmd04LBXb+hJ4CIuhM3FgIG4FHVwvTocZ4gZhAl9SCHhM4HsjC644EoWr/gTbl67v58G5Bcxk4dBXsO87AvPkDx/y9r6YLk8CT4Q1RCb/zhZYN6k6q80rdW7LOR4M=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Alexander Kochetkov" <al.kochet@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.717043708@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 104/132] net: arc_emac: fix koops caused by sk_buff free
-In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3324
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Justin.He@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT060.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(39860400002)(396003)(189003)(199004)(13464003)(66066001)(26005)(2906002)(6116002)(3846002)(47776003)(6246003)(14444005)(229853002)(5660300002)(52536014)(486006)(966005)(478600001)(14454004)(6862004)(476003)(86362001)(9686003)(55016002)(126002)(6306002)(107886003)(26826003)(22756006)(54906003)(316002)(4326008)(33656002)(74316002)(76130400001)(7736002)(70586007)(305945005)(70206006)(50466002)(8936002)(11346002)(446003)(336012)(81166006)(8676002)(81156014)(436003)(7696005)(2486003)(23676004)(63350400001)(186003)(356004)(102836004)(53546011)(25786009)(76176011)(99286004)(6506007)(66574012);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0802MB2570;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 2532dadd-350c-4375-aeea-08d73dd63097
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(710020)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:HE1PR0802MB2570;
+NoDisclaimer: True
+X-Forefront-PRVS: 0166B75B74
+X-Microsoft-Antispam-Message-Info: dzxaoKZlQouoisdZEsiTnm0Xj14avfmDlgeVQNABXth77cS2hUL/MbpIoKt9MZFXMlTCWzyj4ojHeQW7BZ44OIlhF1itar8VUBm7wFkW1bdYYNJwkqCajU1nTcPWVpVTu2Okx0UcDMKJ4PE5Max8PPnf+TJ3jxhcJgMbyPTMx2cCn9xaf7foRlSvlASCF778PQEauQw+P3vqAA9d1i62na2n5xtynXmzf7Ce9lMoseAmZvS24Gt7sVrBNes/GPGC/hHTjRlHWaJDeGxEeOJaESZxZ+heMsno2HDBO1qAYRtCZHpoStsrkgPUZqzqGYswYdCAuX4cpfUy4d/8awVPEwf6s5VB2GRzzSn6KtKkgYkUP800IJiGbpS63BfKEpJoVYvxhfCf17PhDWKuxKMpGnbAN1vuxv0KEsuqsEAIfXs=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2019 14:24:12.5266
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8576b1ee-178f-408b-0b35-08d73dd6357b
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0802MB2570
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.74-rc1 review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Alexander Kochetkov <al.kochet@gmail.com>
-
-commit c278c253f3d992c6994d08aa0efb2b6806ca396f upstream.
-
-There is a race between arc_emac_tx() and arc_emac_tx_clean().
-sk_buff got freed by arc_emac_tx_clean() while arc_emac_tx()
-submitting sk_buff.
-
-In order to free sk_buff arc_emac_tx_clean() checks:
-    if ((info & FOR_EMAC) || !txbd->data)
-        break;
-    ...
-    dev_kfree_skb_irq(skb);
-
-If condition false, arc_emac_tx_clean() free sk_buff.
-
-In order to submit txbd, arc_emac_tx() do:
-    priv->tx_buff[*txbd_curr].skb = skb;
-    ...
-    priv->txbd[*txbd_curr].data = cpu_to_le32(addr);
-    ...
-    ...  <== arc_emac_tx_clean() check condition here
-    ...  <== (info & FOR_EMAC) is false
-    ...  <== !txbd->data is false
-    ...
-    *info = cpu_to_le32(FOR_EMAC | FIRST_OR_LAST_MASK | len);
-
-In order to reproduce the situation,
-run device:
-    # iperf -s
-run on host:
-    # iperf -t 600 -c <device-ip-addr>
-
-[   28.396284] ------------[ cut here ]------------
-[   28.400912] kernel BUG at .../net/core/skbuff.c:1355!
-[   28.414019] Internal error: Oops - BUG: 0 [#1] SMP ARM
-[   28.419150] Modules linked in:
-[   28.422219] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G    B           4.4.0+ #120
-[   28.429516] Hardware name: Rockchip (Device Tree)
-[   28.434216] task: c0665070 ti: c0660000 task.ti: c0660000
-[   28.439622] PC is at skb_put+0x10/0x54
-[   28.443381] LR is at arc_emac_poll+0x260/0x474
-[   28.447821] pc : [<c03af580>]    lr : [<c028fec4>]    psr: a0070113
-[   28.447821] sp : c0661e58  ip : eea68502  fp : ef377000
-[   28.459280] r10: 0000012c  r9 : f08b2000  r8 : eeb57100
-[   28.464498] r7 : 00000000  r6 : ef376594  r5 : 00000077  r4 : ef376000
-[   28.471015] r3 : 0030488b  r2 : ef13e880  r1 : 000005ee  r0 : eeb57100
-[   28.477534] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[   28.484658] Control: 10c5387d  Table: 8eaf004a  DAC: 00000051
-[   28.490396] Process swapper/0 (pid: 0, stack limit = 0xc0660210)
-[   28.496393] Stack: (0xc0661e58 to 0xc0662000)
-[   28.500745] 1e40:                                                       00000002 00000000
-[   28.508913] 1e60: 00000000 ef376520 00000028 f08b23b8 00000000 ef376520 ef7b6900 c028fc64
-[   28.517082] 1e80: 2f158000 c0661ea8 c0661eb0 0000012c c065e900 c03bdeac ffff95e9 c0662100
-[   28.525250] 1ea0: c0663924 00000028 c0661ea8 c0661ea8 c0661eb0 c0661eb0 0000001e c0660000
-[   28.533417] 1ec0: 40000003 00000008 c0695a00 0000000a c066208c 00000100 c0661ee0 c0027410
-[   28.541584] 1ee0: ef0fb700 2f158000 00200000 ffff95e8 00000004 c0662100 c0662080 00000003
-[   28.549751] 1f00: 00000000 00000000 00000000 c065b45c 0000001e ef005000 c0647a30 00000000
-[   28.557919] 1f20: 00000000 c0027798 00000000 c005cf40 f0802100 c0662ffc c0661f60 f0803100
-[   28.566088] 1f40: c0661fb8 c00093bc c000ffb4 60070013 ffffffff c0661f94 c0661fb8 c00137d4
-[   28.574267] 1f60: 00000001 00000000 00000000 c001ffa0 00000000 c0660000 00000000 c065a364
-[   28.582441] 1f80: c0661fb8 c0647a30 00000000 00000000 00000000 c0661fb0 c000ffb0 c000ffb4
-[   28.590608] 1fa0: 60070013 ffffffff 00000051 00000000 00000000 c005496c c0662400 c061bc40
-[   28.598776] 1fc0: ffffffff ffffffff 00000000 c061b680 00000000 c0647a30 00000000 c0695294
-[   28.606943] 1fe0: c0662488 c0647a2c c066619c 6000406a 413fc090 6000807c 00000000 00000000
-[   28.615127] [<c03af580>] (skb_put) from [<ef376520>] (0xef376520)
-[   28.621218] Code: e5902054 e590c090 e3520000 0a000000 (e7f001f2)
-[   28.627307] ---[ end trace 4824734e2243fdb6 ]---
-
-[   34.377068] Internal error: Oops: 17 [#1] SMP ARM
-[   34.382854] Modules linked in:
-[   34.385947] CPU: 0 PID: 3 Comm: ksoftirqd/0 Not tainted 4.4.0+ #120
-[   34.392219] Hardware name: Rockchip (Device Tree)
-[   34.396937] task: ef02d040 ti: ef05c000 task.ti: ef05c000
-[   34.402376] PC is at __dev_kfree_skb_irq+0x4/0x80
-[   34.407121] LR is at arc_emac_poll+0x130/0x474
-[   34.411583] pc : [<c03bb640>]    lr : [<c028fd94>]    psr: 60030013
-[   34.411583] sp : ef05de68  ip : 0008e83c  fp : ef377000
-[   34.423062] r10: c001bec4  r9 : 00000000  r8 : f08b24c8
-[   34.428296] r7 : f08b2400  r6 : 00000075  r5 : 00000019  r4 : ef376000
-[   34.434827] r3 : 00060000  r2 : 00000042  r1 : 00000001  r0 : 00000000
-[   34.441365] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[   34.448507] Control: 10c5387d  Table: 8f25c04a  DAC: 00000051
-[   34.454262] Process ksoftirqd/0 (pid: 3, stack limit = 0xef05c210)
-[   34.460449] Stack: (0xef05de68 to 0xef05e000)
-[   34.464827] de60:                   ef376000 c028fd94 00000000 c0669480 c0669480 ef376520
-[   34.473022] de80: 00000028 00000001 00002ae4 ef376520 ef7b6900 c028fc64 2f158000 ef05dec0
-[   34.481215] dea0: ef05dec8 0000012c c065e900 c03bdeac ffff983f c0662100 c0663924 00000028
-[   34.489409] dec0: ef05dec0 ef05dec0 ef05dec8 ef05dec8 ef7b6000 ef05c000 40000003 00000008
-[   34.497600] dee0: c0695a00 0000000a c066208c 00000100 ef05def8 c0027410 ef7b6000 40000000
-[   34.505795] df00: 04208040 ffff983e 00000004 c0662100 c0662080 00000003 ef05c000 ef027340
-[   34.513985] df20: ef05c000 c0666c2c 00000000 00000001 00000002 00000000 00000000 c0027568
-[   34.522176] df40: ef027340 c003ef48 ef027300 00000000 ef027340 c003edd4 00000000 00000000
-[   34.530367] df60: 00000000 c003c37c ffffff7f 00000001 00000000 ef027340 00000000 00030003
-[   34.538559] df80: ef05df80 ef05df80 00000000 00000000 ef05df90 ef05df90 ef05dfac ef027300
-[   34.546750] dfa0: c003c2a4 00000000 00000000 c000f578 00000000 00000000 00000000 00000000
-[   34.554939] dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[   34.563129] dfe0: 00000000 00000000 00000000 00000000 00000013 00000000 ffffffff dfff7fff
-[   34.571360] [<c03bb640>] (__dev_kfree_skb_irq) from [<c028fd94>] (arc_emac_poll+0x130/0x474)
-[   34.579840] [<c028fd94>] (arc_emac_poll) from [<c03bdeac>] (net_rx_action+0xdc/0x28c)
-[   34.587712] [<c03bdeac>] (net_rx_action) from [<c0027410>] (__do_softirq+0xcc/0x1f8)
-[   34.595482] [<c0027410>] (__do_softirq) from [<c0027568>] (run_ksoftirqd+0x2c/0x50)
-[   34.603168] [<c0027568>] (run_ksoftirqd) from [<c003ef48>] (smpboot_thread_fn+0x174/0x18c)
-[   34.611466] [<c003ef48>] (smpboot_thread_fn) from [<c003c37c>] (kthread+0xd8/0xec)
-[   34.619075] [<c003c37c>] (kthread) from [<c000f578>] (ret_from_fork+0x14/0x3c)
-[   34.626317] Code: e8bd8010 e3a00000 e12fff1e e92d4010 (e59030a4)
-[   34.632572] ---[ end trace cca5a3d86a82249a ]---
-
-Signed-off-by: Alexander Kochetkov <al.kochet@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/net/ethernet/arc/emac_main.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
---- a/drivers/net/ethernet/arc/emac_main.c
-+++ b/drivers/net/ethernet/arc/emac_main.c
-@@ -150,7 +150,7 @@ static void arc_emac_tx_clean(struct net
- 		struct sk_buff *skb = tx_buff->skb;
- 		unsigned int info = le32_to_cpu(txbd->info);
- 
--		if ((info & FOR_EMAC) || !txbd->data)
-+		if ((info & FOR_EMAC) || !txbd->data || !skb)
- 			break;
- 
- 		if (unlikely(info & (DROP | DEFR | LTCL | UFLO))) {
-@@ -178,6 +178,7 @@ static void arc_emac_tx_clean(struct net
- 
- 		txbd->data = 0;
- 		txbd->info = 0;
-+		tx_buff->skb = NULL;
- 
- 		*txbd_dirty = (*txbd_dirty + 1) % TX_BD_NUM;
- 
-@@ -594,7 +595,6 @@ static int arc_emac_tx(struct sk_buff *s
- 	dma_unmap_addr_set(&priv->tx_buff[*txbd_curr], addr, addr);
- 	dma_unmap_len_set(&priv->tx_buff[*txbd_curr], len, len);
- 
--	priv->tx_buff[*txbd_curr].skb = skb;
- 	priv->txbd[*txbd_curr].data = cpu_to_le32(addr);
- 
- 	/* Make sure pointer to data buffer is set */
-@@ -604,6 +604,11 @@ static int arc_emac_tx(struct sk_buff *s
- 
- 	*info = cpu_to_le32(FOR_EMAC | FIRST_OR_LAST_MASK | len);
- 
-+	/* Make sure info word is set */
-+	wmb();
-+
-+	priv->tx_buff[*txbd_curr].skb = skb;
-+
- 	/* Increment index to point to the next BD */
- 	*txbd_curr = (*txbd_curr + 1) % TX_BD_NUM;
- 
-
+VGhhbmtzIGZvciB5b3VyIHBhdGVudCByZXZpZXcg8J+Yig0KDQotLQ0KQ2hlZXJzLA0KSnVzdGlu
+IChKaWEgSGUpDQoNCg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEtp
+cmlsbCBBLiBTaHV0ZW1vdiA8a2lyaWxsQHNodXRlbW92Lm5hbWU+DQo+IFNlbnQ6IDIwMTnlubQ5
+5pyIMjDml6UgMjI6MjENCj4gVG86IEp1c3RpbiBIZSAoQXJtIFRlY2hub2xvZ3kgQ2hpbmEpIDxK
+dXN0aW4uSGVAYXJtLmNvbT4NCj4gQ2M6IENhdGFsaW4gTWFyaW5hcyA8Q2F0YWxpbi5NYXJpbmFz
+QGFybS5jb20+OyBXaWxsIERlYWNvbg0KPiA8d2lsbEBrZXJuZWwub3JnPjsgTWFyayBSdXRsYW5k
+IDxNYXJrLlJ1dGxhbmRAYXJtLmNvbT47IEphbWVzIE1vcnNlDQo+IDxKYW1lcy5Nb3JzZUBhcm0u
+Y29tPjsgTWFyYyBaeW5naWVyIDxtYXpAa2VybmVsLm9yZz47IE1hdHRoZXcNCj4gV2lsY294IDx3
+aWxseUBpbmZyYWRlYWQub3JnPjsgS2lyaWxsIEEuIFNodXRlbW92DQo+IDxraXJpbGwuc2h1dGVt
+b3ZAbGludXguaW50ZWwuY29tPjsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
+Ow0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1tbUBrdmFjay5vcmc7IFN1
+enVraSBQb3Vsb3NlDQo+IDxTdXp1a2kuUG91bG9zZUBhcm0uY29tPjsgUHVuaXQgQWdyYXdhbCA8
+cHVuaXRhZ3Jhd2FsQGdtYWlsLmNvbT47DQo+IEFuc2h1bWFuIEtoYW5kdWFsIDxBbnNodW1hbi5L
+aGFuZHVhbEBhcm0uY29tPjsgQWxleCBWYW4gQnJ1bnQNCj4gPGF2YW5icnVudEBudmlkaWEuY29t
+PjsgUm9iaW4gTXVycGh5IDxSb2Jpbi5NdXJwaHlAYXJtLmNvbT47DQo+IFRob21hcyBHbGVpeG5l
+ciA8dGdseEBsaW51dHJvbml4LmRlPjsgQW5kcmV3IE1vcnRvbiA8YWtwbUBsaW51eC0NCj4gZm91
+bmRhdGlvbi5vcmc+OyBKw6lyw7RtZSBHbGlzc2UgPGpnbGlzc2VAcmVkaGF0LmNvbT47IFJhbHBo
+IENhbXBiZWxsDQo+IDxyY2FtcGJlbGxAbnZpZGlhLmNvbT47IGhlamlhbmV0QGdtYWlsLmNvbTsg
+S2FseSBYaW4gKEFybSBUZWNobm9sb2d5DQo+IENoaW5hKSA8S2FseS5YaW5AYXJtLmNvbT47IG5k
+IDxuZEBhcm0uY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY3IDMvM10gbW06IGZpeCBkb3Vi
+bGUgcGFnZSBmYXVsdCBvbiBhcm02NCBpZiBQVEVfQUYgaXMNCj4gY2xlYXJlZA0KPiANCj4gT24g
+RnJpLCBTZXAgMjAsIDIwMTkgYXQgMDk6NTQ6MzdQTSArMDgwMCwgSmlhIEhlIHdyb3RlOg0KPiA+
+IFdoZW4gd2UgdGVzdGVkIHBtZGsgdW5pdCB0ZXN0IFsxXSB2bW1hbGxvY19mb3JrIFRFU1QxIGlu
+IGFybTY0IGd1ZXN0LA0KPiB0aGVyZQ0KPiA+IHdpbGwgYmUgYSBkb3VibGUgcGFnZSBmYXVsdCBp
+biBfX2NvcHlfZnJvbV91c2VyX2luYXRvbWljIG9mDQo+IGNvd191c2VyX3BhZ2UuDQo+ID4NCj4g
+PiBCZWxvdyBjYWxsIHRyYWNlIGlzIGZyb20gYXJtNjQgZG9fcGFnZV9mYXVsdCBmb3IgZGVidWdn
+aW5nIHB1cnBvc2UNCj4gPiBbICAxMTAuMDE2MTk1XSBDYWxsIHRyYWNlOg0KPiA+IFsgIDExMC4w
+MTY4MjZdICBkb19wYWdlX2ZhdWx0KzB4NWE0LzB4NjkwDQo+ID4gWyAgMTEwLjAxNzgxMl0gIGRv
+X21lbV9hYm9ydCsweDUwLzB4YjANCj4gPiBbICAxMTAuMDE4NzI2XSAgZWwxX2RhKzB4MjAvMHhj
+NA0KPiA+IFsgIDExMC4wMTk0OTJdICBfX2FyY2hfY29weV9mcm9tX3VzZXIrMHgxODAvMHgyODAN
+Cj4gPiBbICAxMTAuMDIwNjQ2XSAgZG9fd3BfcGFnZSsweGIwLzB4ODYwDQo+ID4gWyAgMTEwLjAy
+MTUxN10gIF9faGFuZGxlX21tX2ZhdWx0KzB4OTk0LzB4MTMzOA0KPiA+IFsgIDExMC4wMjI2MDZd
+ICBoYW5kbGVfbW1fZmF1bHQrMHhlOC8weDE4MA0KPiA+IFsgIDExMC4wMjM1ODRdICBkb19wYWdl
+X2ZhdWx0KzB4MjQwLzB4NjkwDQo+ID4gWyAgMTEwLjAyNDUzNV0gIGRvX21lbV9hYm9ydCsweDUw
+LzB4YjANCj4gPiBbICAxMTAuMDI1NDIzXSAgZWwwX2RhKzB4MjAvMHgyNA0KPiA+DQo+ID4gVGhl
+IHB0ZSBpbmZvIGJlZm9yZSBfX2NvcHlfZnJvbV91c2VyX2luYXRvbWljIGlzIChQVEVfQUYgaXMg
+Y2xlYXJlZCk6DQo+ID4gW2ZmZmY5YjAwNzAwMF0gcGdkPTAwMDAwMDAyM2Q0ZjgwMDMsIHB1ZD0w
+MDAwMDAwMjNkYTliMDAzLA0KPiBwbWQ9MDAwMDAwMDIzZDRiMzAwMywgcHRlPTM2MDAwMDI5ODYw
+N2JkMw0KPiA+DQo+ID4gQXMgdG9sZCBieSBDYXRhbGluOiAiT24gYXJtNjQgd2l0aG91dCBoYXJk
+d2FyZSBBY2Nlc3MgRmxhZywgY29weWluZyBmcm9tDQo+ID4gdXNlciB3aWxsIGZhaWwgYmVjYXVz
+ZSB0aGUgcHRlIGlzIG9sZCBhbmQgY2Fubm90IGJlIG1hcmtlZCB5b3VuZy4gU28gd2UNCj4gPiBh
+bHdheXMgZW5kIHVwIHdpdGggemVyb2VkIHBhZ2UgYWZ0ZXIgZm9yaygpICsgQ29XIGZvciBwZm4g
+bWFwcGluZ3MuIHdlDQo+ID4gZG9uJ3QgYWx3YXlzIGhhdmUgYSBoYXJkd2FyZS1tYW5hZ2VkIGFj
+Y2VzcyBmbGFnIG9uIGFybTY0LiINCj4gPg0KPiA+IFRoaXMgcGF0Y2ggZml4IGl0IGJ5IGNhbGxp
+bmcgcHRlX21reW91bmcuIEFsc28sIHRoZSBwYXJhbWV0ZXIgaXMNCj4gPiBjaGFuZ2VkIGJlY2F1
+c2Ugdm1mIHNob3VsZCBiZSBwYXNzZWQgdG8gY293X3VzZXJfcGFnZSgpDQo+ID4NCj4gPiBBZGQg
+YSBXQVJOX09OX09OQ0Ugd2hlbiBfX2NvcHlfZnJvbV91c2VyX2luYXRvbWljKCkgcmV0dXJucyBl
+cnJvcg0KPiA+IGluIGNhc2UgdGhlcmUgY2FuIGJlIHNvbWUgb2JzY3VyZSB1c2UtY2FzZS4oYnkg
+S2lyaWxsKQ0KPiA+DQo+ID4gWzFdIGh0dHBzOi8vZ2l0aHViLmNvbS9wbWVtL3BtZGsvdHJlZS9t
+YXN0ZXIvc3JjL3Rlc3Qvdm1tYWxsb2NfZm9yaw0KPiA+DQo+ID4gUmVwb3J0ZWQtYnk6IFlpYm8g
+Q2FpIDxZaWJvLkNhaUBhcm0uY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEppYSBIZSA8anVzdGlu
+LmhlQGFybS5jb20+DQo+IA0KPiBBY2tlZC1ieTogS2lyaWxsIEEuIFNodXRlbW92IDxraXJpbGwu
+c2h1dGVtb3ZAbGludXguaW50ZWwuY29tPg0KPiANCj4gLS0NCj4gIEtpcmlsbCBBLiBTaHV0ZW1v
+dg0K
