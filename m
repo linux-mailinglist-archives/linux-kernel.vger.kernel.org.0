@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C041B91DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B63FEB91C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:25:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389244AbfITO0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:26:42 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36974 "EHLO
+        id S2388533AbfITOZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:25:28 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35708 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388426AbfITOZR (ORCPT
+        by vger.kernel.org with ESMTP id S2387994AbfITOY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:17 -0400
+        Fri, 20 Sep 2019 10:24:59 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqT-0004xz-Ju; Fri, 20 Sep 2019 15:25:13 +0100
+        id 1iBJqC-0004wW-Q3; Fri, 20 Sep 2019 15:24:56 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007tT-N0; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqC-0007pf-AV; Fri, 20 Sep 2019 15:24:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Kirill Tkhai" <ktkhai@virtuozzo.com>, "Jan Kara" <jack@suse.cz>
+        "syzbot" <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>,
+        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Kay Sievers" <kay@vrfy.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.13309909@decadent.org.uk>
+Message-ID: <lsq.1568989415.819247637@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 061/132] ext4: actually request zeroing of inode
- table after grow
+Subject: [PATCH 3.16 014/132] kobject: Don't trigger kobject_uevent(KOBJ_REMOVE)
+ twice.
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,34 +50,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 310a997fd74de778b9a4848a64be9cda9f18764a upstream.
+commit c03a0fd0b609e2f5c669c2b7f27c8e1928e9196e upstream.
 
-It is never possible, that number of block groups decreases,
-since only online grow is supported.
+syzbot is hitting use-after-free bug in uinput module [1]. This is because
+kobject_uevent(KOBJ_REMOVE) is called again due to commit 0f4dafc0563c6c49
+("Kobject: auto-cleanup on final unref") after memory allocation fault
+injection made kobject_uevent(KOBJ_REMOVE) from device_del() from
+input_unregister_device() fail, while uinput_destroy_device() is expecting
+that kobject_uevent(KOBJ_REMOVE) is not called after device_del() from
+input_unregister_device() completed.
 
-But after a growing occured, we have to zero inode tables
-for just created new block groups.
+That commit intended to catch cases where nobody even attempted to send
+"remove" uevents. But there is no guarantee that an event will ultimately
+be sent. We are at the point of no return as far as the rest of the kernel
+is concerned; there are no repeats or do-overs.
 
-Fixes: 19c5246d2516 ("ext4: add new online resize interface")
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
+Also, it is not clear whether some subsystem depends on that commit.
+If no subsystem depends on that commit, it will be better to remove
+the state_{add,remove}_uevent_sent logic. But we don't want to risk
+a regression (in a patch which will be backported) by trying to remove
+that logic. Therefore, as a first step, let's avoid the use-after-free bug
+by making sure that kobject_uevent(KOBJ_REMOVE) won't be triggered twice.
+
+[1] https://syzkaller.appspot.com/bug?id=8b17c134fe938bbddd75a45afaa9e68af43a362d
+
+Reported-by: syzbot <syzbot+f648cfb7e0b52bf7ae32@syzkaller.appspotmail.com>
+Analyzed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: 0f4dafc0563c6c49 ("Kobject: auto-cleanup on final unref")
+Cc: Kay Sievers <kay@vrfy.org>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -634,7 +634,7 @@ group_add_out:
- 		if (err == 0)
- 			err = err2;
- 		mnt_drop_write_file(filp);
--		if (!err && (o_group > EXT4_SB(sb)->s_groups_count) &&
-+		if (!err && (o_group < EXT4_SB(sb)->s_groups_count) &&
- 		    ext4_has_group_desc_csum(sb) &&
- 		    test_opt(sb, INIT_INODE_TABLE))
- 			err = ext4_register_li_request(sb, o_group);
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -178,6 +178,13 @@ int kobject_uevent_env(struct kobject *k
+ 	struct uevent_sock *ue_sk;
+ #endif
+ 
++	/*
++	 * Mark "remove" event done regardless of result, for some subsystems
++	 * do not want to re-trigger "remove" event via automatic cleanup.
++	 */
++	if (action == KOBJ_REMOVE)
++		kobj->state_remove_uevent_sent = 1;
++
+ 	pr_debug("kobject: '%s' (%p): %s\n",
+ 		 kobject_name(kobj), kobj, __func__);
+ 
+@@ -275,8 +282,6 @@ int kobject_uevent_env(struct kobject *k
+ 	 */
+ 	if (action == KOBJ_ADD)
+ 		kobj->state_add_uevent_sent = 1;
+-	else if (action == KOBJ_REMOVE)
+-		kobj->state_remove_uevent_sent = 1;
+ 
+ 	mutex_lock(&uevent_sock_mutex);
+ 	/* we will send an event, so request a new sequence number */
 
