@@ -2,112 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86BB9B9415
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 739B0B941A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:35:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404099AbfITPfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 11:35:18 -0400
-Received: from mail-eopbgr80042.outbound.protection.outlook.com ([40.107.8.42]:16864
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404071AbfITPfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 11:35:17 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AXHq+xAQbrwuQ20h/ZKi8mD9VQGBsO63KnrHxHt8D3mm2fVA/pE/5E5ggBmi+E46Mger77UObY4uSu4RVFQTwj+pgot3Gl9wFuZz5fmpvzKopapdALw7P541/i+jkj07gIhuaF2UJZ921qXw+lLV5i08PID4D9P4z+8qkb9vtqleQKZ/xI1/5hUV7xeVCzh/HFV3lKQH5kj/rIgKHIk5557zTjMsK09yLuMZM0cjS+iMw/SAec4IaqvaURr/iFkIpe5OfiyS1Cxw75R/ENSRV7wodN1aZ6tOmwOGZZb5wTK972oo3WbTrNUYGKCsUDFEGTxqDQBad/f0mRlFqC7eCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LsiFeYlSNElQ9Qd3tvDYD78AWUCH4sz4eA52gQyBZ6E=;
- b=WuCpwQ9Jcyag9J2Wq8XUruWehpopb/fBFTvJKVB1g3xJlH9Kt0Dqd89gXbo16LI6CIbhQXe8kSkVArqxKOYWcYMME2NZwpIr4axoejvn1sKylqtT+xdMPE/30TCpcLMZiTtHdmaS97KpXJt00yF5wakvbMSpmGjz5ajlJCMo3Da+fi1VmuVbWiluf0nl9WnZHb4qjejP87c/KG1tU4vP18SIpTOKp7H7XFt8f/20QHCGQuSzD1X4YF6qc1Krjz5jdNEt2tMBLU1ug1Nsw9ydjRVNUXSjvBQCrBY089BpIOPFvBOXz/9WWgDuuYgGai7ZptVzYEkSGGu2hZS+zTCWuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LsiFeYlSNElQ9Qd3tvDYD78AWUCH4sz4eA52gQyBZ6E=;
- b=snLB+6cZ+GHw60sXZ+ZBzSvNDEPnA6Kn+0C9qVjM2JgIggyyz4hPMtcE+7MPRJ103il1DqQDKrFz2ppa2rxqZGQgsA/SYLSqzKHSOXEn8Va6O8Eij/kUv50tzIgFzpr6rfJyDn5blGSAApwp434JZmreTQbr4m7py5xAtHemDvA=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3792.eurprd04.prod.outlook.com (52.134.16.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.23; Fri, 20 Sep 2019 15:35:14 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::70b4:7829:2e8e:1196]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::70b4:7829:2e8e:1196%7]) with mapi id 15.20.2263.023; Fri, 20 Sep 2019
- 15:35:14 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC:     Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 10/12] crypto: caam - populate platform devices last
-Thread-Topic: [PATCH 10/12] crypto: caam - populate platform devices last
-Thread-Index: AQHVYsl10q9huA5nekC38LfZsQ11ew==
-Date:   Fri, 20 Sep 2019 15:35:13 +0000
-Message-ID: <VI1PR0402MB3485D61A50108A58FCAEF20098880@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <20190904023515.7107-1-andrew.smirnov@gmail.com>
- <20190904023515.7107-11-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 82404500-2261-42ba-995a-08d73de0218d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3792;
-x-ms-traffictypediagnostic: VI1PR0402MB3792:|VI1PR0402MB3792:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB3792A8CF1B04323C8B71040198880@VI1PR0402MB3792.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:494;
-x-forefront-prvs: 0166B75B74
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(136003)(346002)(396003)(376002)(189003)(199004)(14454004)(91956017)(2906002)(81166006)(8676002)(33656002)(8936002)(81156014)(2501003)(6436002)(86362001)(486006)(44832011)(5660300002)(6116002)(446003)(4744005)(229853002)(52536014)(476003)(3846002)(54906003)(26005)(4326008)(186003)(316002)(7736002)(74316002)(110136005)(305945005)(66066001)(71190400001)(71200400001)(7696005)(6246003)(76176011)(9686003)(478600001)(55016002)(76116006)(99286004)(102836004)(256004)(64756008)(66946007)(25786009)(6506007)(66556008)(66446008)(53546011)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3792;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: xOQEnp500Gld/xm8Ma1BaMJsFEoEQBE4pfikPoN68wwwwENk9C870AoaSZsxfHTeDys9/rJ8spzDpqpBVMkuFyyw/PNgK/oMTE4pCZlXtE20/deCwV5P/KclzGTVnUKvVpT16Lf4IioGX8tc66RnxXPBXtzqD6dtL8Nfq0TS9iliZxdEMQrApBPtogp2bW1S4RfWHMR/ig+puFtdjpHBEmtgX/MTutdh/qrr39B0e0J/nHjof7PpssaZJflYq1zyvZ7uTxkOq81O6Is/5nW1Is3P8ZIvb4cgK9OTQNilQiWU8Hg8JSU5JLbmALKzOj0aRewVWMgurKleWlJqLzjMbM1TUbfFnmvGMhx56MnrugtAH27t9mBdsEO4VRshZ9ifKEqV4BHhOcXRK6aDzl2nN3HLTRwscKmqMByhOy+34AE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2404123AbfITPfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 11:35:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39154 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388863AbfITPfj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 11:35:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jv6jwZLjeneciY2Go2v67af3R12NQ37nUpqtm2+kHRM=; b=dmaT+BytqE1t23KxTkYNziZ/Y
+        3xjHWp/RdLqFG11O/LTqk54oLdHl1uGUY9p3q5X5jXMvcqJSDDbwVtK9YRyN/cJ3A7zLpWVdADvfF
+        9pzkIpbaqqldFhtglrfAVgHPyjMA7vf2+i4Yc/OiydVfmniS5Rtbuh6uEGGtBhVb5FHqc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1iBKwZ-0002mq-TN; Fri, 20 Sep 2019 15:35:35 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 205AB274293F; Fri, 20 Sep 2019 16:35:35 +0100 (BST)
+Date:   Fri, 20 Sep 2019 16:35:35 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Greentime Hu <greentime.hu@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ risc-v-fixes tree
+Message-ID: <20190920153535.GG3822@sirena.co.uk>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82404500-2261-42ba-995a-08d73de0218d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2019 15:35:13.9062
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iQYhbREhg7AQr9TkiFFH+t9O1rLKJIa7a8Wm0vwJzaevRRjCK6pCkfQ+DR0rUbygUfrMp6TybaCrevA9oWO5yw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3792
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lHGcFxmlz1yfXmOs"
+Content-Disposition: inline
+X-Cookie: Stay away from hurricanes for a while.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/4/2019 5:35 AM, Andrey Smirnov wrote:=0A=
-> @@ -906,6 +900,13 @@ static int caam_probe(struct platform_device *pdev)=
-=0A=
->  	debugfs_create_blob("tdsk", S_IRUSR | S_IRGRP | S_IROTH, ctrlpriv->ctl,=
-=0A=
->  			    &ctrlpriv->ctl_tdsk_wrap);=0A=
->  #endif=0A=
-> +=0A=
-> +	ret =3D devm_of_platform_populate(dev);=0A=
-> +	if (ret) {=0A=
-> +		dev_err(dev, "JR platform devices creation error\n");=0A=
-> +		return ret;=0A=
-> +	}=0A=
-> +=0A=
->  	return 0;=0A=
->  }=0A=
-This is a bit better:=0A=
-=0A=
-	if (ret)=0A=
-		dev_err(dev, "JR platform devices creation error\n");=0A=
-=0A=
-	return ret;=0A=
-=0A=
-Horia=0A=
+
+--lHGcFxmlz1yfXmOs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  arch/riscv/include/asm/pgtable.h
+
+between commit:
+
+  b6f2b2e600a27b798 ("RISC-V: Fix building error when CONFIG_SPARSEMEM_MANU=
+AL=3Dy")
+
+=66rom the risc-v-fixes tree and commit:
+
+   e10b0ff68eee9f59 ("mm: consolidate pgtable_cache_init() and pgd_cache_in=
+it()")
+
+=66rom the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc arch/riscv/include/asm/pgtable.h
+index 1be4f70ab2660,f45f6fbd2a50d..0000000000000
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@@ -439,13 -411,12 +439,8 @@@ extern void *dtb_early_va
+  extern void setup_bootmem(void);
+  extern void paging_init(void);
+ =20
+- static inline void pgtable_cache_init(void)
+- {
+- 	/* No page table caches to initialize */
+- }
+ -#define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
+ -#define VMALLOC_END      (PAGE_OFFSET - 1)
+ -#define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
+--
+  /*
+ - * Task size is 0x4000000000 for RV64 or 0xb800000 for RV32.
+ + * Task size is 0x4000000000 for RV64 or 0x9fc00000 for RV32.
+   * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
+   */
+  #ifdef CONFIG_64BIT
+
+--lHGcFxmlz1yfXmOs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2E8cYACgkQJNaLcl1U
+h9DwIgf/Yk/LkPBeRdpiRkluEKMxHCUj7c3Yr2rXQ6eqPFnLMKhUx6ljfSgc7pHZ
+1AD7RXPDvJO3Yq291egkMnWM+MgxTz1fkQCQRSaCduxRogfXXrxEPAC8zwRQoaHC
+WfpUgPDVctUf/W4+QIC4fwGLwdnyFbfMgoaLUwQ+PAw+l5A8utf+6qMKKMtwdgmi
+1sDKE9V/K3cPxI2vv1psFCLjXYagUhSX8PE8So+VAs61w3j531zjfDY0Z3KageHt
+tsFibX58ZWUWfxkXaAZsyggEsafErf2y1CLU+vUHT0KnMldsFrdVdy0DuPXP75f/
+JixbyJTuVwYj4FQPFFShMrIxsaGKMw==
+=Gg5i
+-----END PGP SIGNATURE-----
+
+--lHGcFxmlz1yfXmOs--
