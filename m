@@ -2,130 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37E2B8ADA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:10:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EF3CB8AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437454AbfITGKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 02:10:01 -0400
-Received: from mail-eopbgr770094.outbound.protection.outlook.com ([40.107.77.94]:45526
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437368AbfITGKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 02:10:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M8wkcfH7AV3Mq94ozsweglhwfYgBvgUC22VQB+QOYMbR7fQjyHnip4uYZ6kkI6LfeqRJjFgVlhXho4JPXjTgZeyAqf312tKM2ebm/ufcr8LfthWP0bK+/F1nImOt8N2aR9AZDwNTJ0rCo0N6Y2c4fxggKhyckCB8BgAlLS3O0ZjqiiPRW90MS88Q4PDAKiGFMYM6FlxVBaEsMbNUMtrFhAivWz98n+t7fDeQ1/XjBV92bgSQFAFhnVPSx3jaYKu+D8sWWLKIaQ5x34xNtefNCZU9H4fa6Uft+K46KJa2EkAhyiYcOf3Dd0BBxphlGexLBAU5cDDmyXPDoi7eOKYz9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kiBUeMytGe2H5MkYqmU6RvQe6JnU7XjlCFhFw+pzafY=;
- b=Q8eg44klFGZ8wqc3tMbF+VBNSJqj4RvDlZXPmqZ2mL3sRKEE4Pueotjyc42yIqPqo4Cz0/Dquu24o5w5R7rV0avfRO1fP1j+DFNOs+jkdYjVSlLY/rzitb/qgeZheKM1QWo9FzFkuD/CZOPnI0e2HyMRwGh9RAn0Ug7Fhu8goI1RB/UojmhTjiWAtHkghjt4Nx2QU/juuCSbESVZGXcN+wAeFM5c4ugO5DA+8Icp4Yr3Oi3DlK7DVKt8E0kZUBaRH2XvulXvetZVZpCP65hQNnkuf00XU6egajacUK1LAVKr8Knxg6hs0J+Z0plc5sQHBa2Q7SpuLQSYMFyofIuQyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analogixsemi.com; dmarc=pass action=none
- header.from=analogixsemi.com; dkim=pass header.d=analogixsemi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Analogixsemi.onmicrosoft.com; s=selector2-Analogixsemi-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kiBUeMytGe2H5MkYqmU6RvQe6JnU7XjlCFhFw+pzafY=;
- b=3Y7K5XHL/V9ShmEvHindFYdgc2pTy4swaZYnoGdMpf3Qy2/A9+5vJXvm2gKl0FODbu8BGK+pR2NkP4NFVYtngX2MBM43t3/lWw5Qwg1Nlp4at9KHqMvRiJzqUy9RjVCwi633udkZYKNpStoGGPmZjhTO1bFOBijJpDFpaFQxIfU=
-Received: from MN2PR04MB5886.namprd04.prod.outlook.com (20.179.22.213) by
- MN2PR04MB5647.namprd04.prod.outlook.com (20.179.21.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.20; Fri, 20 Sep 2019 06:09:56 +0000
-Received: from MN2PR04MB5886.namprd04.prod.outlook.com
- ([fe80::8520:f80f:ae9:63cd]) by MN2PR04MB5886.namprd04.prod.outlook.com
- ([fe80::8520:f80f:ae9:63cd%6]) with mapi id 15.20.2284.009; Fri, 20 Sep 2019
- 06:09:56 +0000
-From:   Xin Ji <xji@analogixsemi.com>
-To:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Sheng Pan <span@analogixsemi.com>
-Subject: [PATCH v1 0/2] Add initial support for slimport anx7625
-Thread-Topic: [PATCH v1 0/2] Add initial support for slimport anx7625
-Thread-Index: AQHVb3oGgGDh16C3uESSEg10z5x9Ew==
-Date:   Fri, 20 Sep 2019 06:09:56 +0000
-Message-ID: <cover.1568957788.git.xji@analogixsemi.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0P153CA0020.APCP153.PROD.OUTLOOK.COM
- (2603:1096:203:18::32) To MN2PR04MB5886.namprd04.prod.outlook.com
- (2603:10b6:208:a3::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xji@analogixsemi.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [114.247.245.252]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: aba42eed-bd6b-4ca5-853c-08d73d9128c8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR04MB5647;
-x-ms-traffictypediagnostic: MN2PR04MB5647:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR04MB5647CE0AF8AD31B1BCB9068AC7880@MN2PR04MB5647.namprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0166B75B74
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(39850400004)(346002)(136003)(189003)(199004)(53754006)(66946007)(386003)(4326008)(107886003)(14444005)(14454004)(6486002)(7736002)(6436002)(25786009)(256004)(305945005)(36756003)(71190400001)(71200400001)(7416002)(478600001)(66556008)(66446008)(5660300002)(476003)(52116002)(2616005)(64756008)(8936002)(66476007)(81166006)(8676002)(2501003)(26005)(66066001)(81156014)(86362001)(6512007)(186003)(99286004)(316002)(6506007)(102836004)(6116002)(3846002)(110136005)(4744005)(2906002)(54906003)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB5647;H:MN2PR04MB5886.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: analogixsemi.com does not
- designate permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Bc5ikVPi5JG8KbVqQtF7LTDJyZwvLkFLmtSSAssPoFHhLLwaxh1ioM9DLuqWWOxbgCbhqNm6HwRjpQKzpf1827HlY+3zcvdPeeGXEdE/BTIT4NDbYNvrBe0KhapmhZcHZzNES3mdzul+/MPbd+fyJU/mwfHxi3Yvwc5NxRnxGwOgyFBZHTLKTapRjVQJGFf66/qp6f8MLy6eM9SNWwNZ0WxZ8BIpOczaKEVs1wzCRzLLXej6G3qEvYMaT+cbX8wcIk6ke5Hr8wneHQMFZVDuCk0j8ldt2shYrTtiDYZPA902QT/eemNQSKMrUfOTQMZ2SUc+w6f0xy6HljhIjAL3qLLiQ7ZwBt8xc/jxxm6wGRAstNSCT2oi33okOoqHspsXRwSQR6MSMeBi06FasboyA0FQNsBJCVoE/VDRxBYZUyo=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <390CB1780B5B05498754EE9C43F4B189@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S2394782AbfITGKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 02:10:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51078 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394772AbfITGKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 02:10:53 -0400
+Received: from localhost (unknown [145.15.244.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1C9020644;
+        Fri, 20 Sep 2019 06:10:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568959852;
+        bh=DdBcbVRENUO54Bp6t6sSNCw9+KudSOiy7KOisGl0Jcg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Hzdh/+d2RcGhzFVKV+4Rr6zdTctpOtRlIzbb4gS18YcRU+hHjkg1lfIVJoKs2UX37
+         DzxWTUd1V5HXVZpS24wM9wu+s35rRhAIkwbEP6gr7G4ub6Bk3ofUUohCHHSan+h9E9
+         uZHEIwU+T1HlOpUoB/AI8TkHmLvw9n5OMNRcpkwk=
+Date:   Fri, 20 Sep 2019 08:10:06 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Murali Nalajala <mnalajal@codeaurora.org>, rafael@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] base: soc: Export soc_device_to_device API
+Message-ID: <20190920061006.GC473898@kroah.com>
+References: <1568927624-13682-1-git-send-email-mnalajal@codeaurora.org>
+ <20190919213203.GA395325@kroah.com>
+ <20190919215300.GC1418@minitux>
+ <20190919215836.GA426988@kroah.com>
+ <20190919221456.GA63675@minitux>
+ <20190919222525.GA445429@kroah.com>
+ <20190919224017.GB63675@minitux>
+ <20190919224514.GA447028@kroah.com>
+ <20190920033651.GC63675@minitux>
 MIME-Version: 1.0
-X-OriginatorOrg: analogixsemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aba42eed-bd6b-4ca5-853c-08d73d9128c8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2019 06:09:56.2015
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: I7i0/Fd8GU62Ut2gea0I2V0SHI3R8oiTJsUUIf8vG6pnp5Yqarp01+1CiE8jNhw+QZAFTgCBifL0z7VRfIKL2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB5647
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190920033651.GC63675@minitux>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Thu, Sep 19, 2019 at 08:36:51PM -0700, Bjorn Andersson wrote:
+> On Thu 19 Sep 15:45 PDT 2019, Greg KH wrote:
+> 
+> > On Thu, Sep 19, 2019 at 03:40:17PM -0700, Bjorn Andersson wrote:
+> > > On Thu 19 Sep 15:25 PDT 2019, Greg KH wrote:
+> > > 
+> > > > On Thu, Sep 19, 2019 at 03:14:56PM -0700, Bjorn Andersson wrote:
+> > > > > On Thu 19 Sep 14:58 PDT 2019, Greg KH wrote:
+> > > > > 
+> > > > > > On Thu, Sep 19, 2019 at 02:53:00PM -0700, Bjorn Andersson wrote:
+> > > > > > > On Thu 19 Sep 14:32 PDT 2019, Greg KH wrote:
+> > > > > > > 
+> > > > > > > > On Thu, Sep 19, 2019 at 02:13:44PM -0700, Murali Nalajala wrote:
+> > > > > > > > > If the soc drivers want to add custom sysfs entries it needs to
+> > > > > > > > > access "dev" field in "struct soc_device". This can be achieved
+> > > > > > > > > by "soc_device_to_device" API. Soc drivers which are built as a
+> > > > > > > > > module they need above API to be exported. Otherwise one can
+> > > > > > > > > observe compilation issues.
+> > > > > > > > > 
+> > > > > > > > > Signed-off-by: Murali Nalajala <mnalajal@codeaurora.org>
+> > > > > > > > > ---
+> > > > > > > > >  drivers/base/soc.c | 1 +
+> > > > > > > > >  1 file changed, 1 insertion(+)
+> > > > > > > > > 
+> > > > > > > > > diff --git a/drivers/base/soc.c b/drivers/base/soc.c
+> > > > > > > > > index 7c0c5ca..4ad52f6 100644
+> > > > > > > > > --- a/drivers/base/soc.c
+> > > > > > > > > +++ b/drivers/base/soc.c
+> > > > > > > > > @@ -41,6 +41,7 @@ struct device *soc_device_to_device(struct soc_device *soc_dev)
+> > > > > > > > >  {
+> > > > > > > > >  	return &soc_dev->dev;
+> > > > > > > > >  }
+> > > > > > > > > +EXPORT_SYMBOL_GPL(soc_device_to_device);
+> > > > > > > > >  
+> > > > > > > > >  static umode_t soc_attribute_mode(struct kobject *kobj,
+> > > > > > > > >  				struct attribute *attr,
+> > > > > > > > 
+> > > > > > > > What in-kernel driver needs this?
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > Half of the drivers interacting with the soc driver calls this API,
+> > > > > > > several of these I see no reason for being builtin (e.g.
+> > > > > > > ux500 andversatile). So I think this patch makes sense to allow us to
+> > > > > > > build these as modules.
+> > > > > > > 
+> > > > > > > > Is linux-next breaking without this?
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > No, we postponed the addition of any sysfs attributes in the Qualcomm
+> > > > > > > socinfo driver.
+> > > > > > > 
+> > > > > > > > We don't export things unless we have a user of the export.
+> > > > > > > > 
+> > > > > > > > Also, adding "custom" sysfs attributes is almost always not the correct
+> > > > > > > > thing to do at all.  The driver should be doing it, by setting up the
+> > > > > > > > attribute group properly so that the driver core can do it automatically
+> > > > > > > > for it.
+> > > > > > > > 
+> > > > > > > > No driver should be doing individual add/remove of sysfs files.  If it
+> > > > > > > > does so, it is almost guaranteed to be doing it incorrectly and racing
+> > > > > > > > userspace.
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > The problem here is that the attributes are expected to be attached to
+> > > > > > > the soc driver, which is separate from the platform-specific drivers. So
+> > > > > > > there's no way to do platform specific attributes the right way.
+> > > > > > > 
+> > > > > > > > And yes, there's loads of in-kernel examples of doing this wrong, I've
+> > > > > > > > been working on fixing that up, look at the patches now in Linus's tree
+> > > > > > > > for platform and USB drivers that do this as examples of how to do it
+> > > > > > > > right.
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > Agreed, this patch should not be used as an approval for any crazy
+> > > > > > > attributes; but it's necessary in order to extend the soc device's
+> > > > > > > attributes, per the current design.
+> > > > > > 
+> > > > > > Wait, no, let's not let the "current design" remain if it is broken!
+> > > > > > 
+> > > > > > Why can't the soc driver handle the attributes properly so that the
+> > > > > > individual driver doesn't have to do the create/remove?
+> > > > > > 
+> > > > > 
+> > > > > The custom attributes that these drivers want to add to the common ones
+> > > > > are known in advance, so I presume we could have them passed into
+> > > > > soc_device_register() and registered together with the common
+> > > > > attributes...
+> > > > > 
+> > > > > It sounds like it's worth a prototype.
+> > > > 
+> > > > Do you have an in-kernel example I can look at to get an idea of what is
+> > > > needed here?
+> > > > 
+> > > 
+> > > realview_soc_probe(), in drivers/soc/versatile/soc-realview.c,
+> > > implements the current mechanism of acquiring the soc's struct device
+> > > and then issuing a few device_create_file calls on that.
+> > 
+> > That looks to be a trivial driver to fix up.  Look at 6d03c140db2e
+> > ("USB: phy: fsl-usb: convert platform driver to use dev_groups") as an
+> > example of how to do this.
+> > 
+> 
+> The difference between the two cases is that in the fsl-usb case it's
+> attributes of the device itself, while in the soc case the realview-soc
+> driver (or the others doing this) calls soc_device_register() to
+> register a new (dangling) soc device, which it then adds its attributes
+> onto.
 
-The following series add initial support for the Slimport ANX7625 transmitt=
-er, a
-ultra-low power Full-HD 4K MIPI to DP transmitter designed for portable dev=
-ice.
+That sounds really really odd.  Why can't the soc device do the creation
+"automatically" when the device is registered?  The soc core should
+handle this for the soc "drivers", that's what it is there for.
 
-This is the first version upload, any mistakes, please let me know, I will =
-fix
-it in the next series.
+> We can't use dev_groups, because the soc_device (soc.c) isn't actually a
+> driver and the list of attributes is a combination of things from soc.c
+> and e.g. soc-realview.c.
+> 
+> But if we pass a struct attribute_group into soc_device_register() and
+> then have that register both groups using dev.groups, this should be
+> much cleaner at least.
 
-Thanks,
-Xin
+Don't you have a structure you can store these in as well?
 
+thanks,
 
-Xin Ji (2):
-  dt-bindings: drm/bridge: anx7625: MIPI to DP transmitter binding
-  drm/bridge: anx7625: Add anx7625 MIPI to DP bridge driver
-
- .../bindings/display/bridge/anx7625.yaml           |   84 +
- drivers/gpu/drm/bridge/Makefile                    |    2 +-
- drivers/gpu/drm/bridge/analogix/Kconfig            |    6 +
- drivers/gpu/drm/bridge/analogix/Makefile           |    1 +
- drivers/gpu/drm/bridge/analogix/anx7625.c          | 2085 ++++++++++++++++=
-++++
- drivers/gpu/drm/bridge/analogix/anx7625.h          |  397 ++++
- 6 files changed, 2574 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/anx762=
-5.yaml
- create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.c
- create mode 100644 drivers/gpu/drm/bridge/analogix/anx7625.h
-
---=20
-2.7.4
-
+greg k-h
