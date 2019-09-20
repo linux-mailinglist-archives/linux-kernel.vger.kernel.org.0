@@ -2,81 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 531B8B8D1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6491B8D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437838AbfITIpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:45:34 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:40888 "EHLO inva021.nxp.com"
+        id S2437813AbfITIog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:44:36 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:48932 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404807AbfITIpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:45:31 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 147AE200794;
-        Fri, 20 Sep 2019 10:45:30 +0200 (CEST)
+        id S2405234AbfITIof (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 04:44:35 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 94BDF1A0097;
+        Fri, 20 Sep 2019 10:44:31 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D3CEF20048B;
-        Fri, 20 Sep 2019 10:45:25 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 62F2D40310;
-        Fri, 20 Sep 2019 16:45:20 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-devel@linux.nxdi.nxp.com, Shawn Guo <shawnguo@kernel.org>,
-        Li Yang <leoyang.li@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Wen He <wen.he_1@nxp.com>
-Subject: [v2 2/2] arm64: dts: ls1028a: Update the DT node definition for dpclk
-Date:   Fri, 20 Sep 2019 16:34:19 +0800
-Message-Id: <20190920083419.5092-2-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190920083419.5092-1-wen.he_1@nxp.com>
-References: <20190920083419.5092-1-wen.he_1@nxp.com>
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2ED431A004C;
+        Fri, 20 Sep 2019 10:44:28 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A35B6402E6;
+        Fri, 20 Sep 2019 16:44:23 +0800 (SGT)
+From:   Lei Xu <lei.xu@nxp.com>
+To:     linux-devel@linux.nxdi.nxp.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, Lei Xu <lei.xu@nxp.com>
+Subject: [PATCH] powerpc:mark expected switch fall-throughs
+Date:   Fri, 20 Sep 2019 16:45:40 +0800
+Message-Id: <20190920084540.3449-1-lei.xu@nxp.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update DT node name clock-controller to clock-display, also change
-the property #clock-cells value to zero.
+When building kernel with -Wimplicit-fallthrough and -Werror, it
+reported the follwoing errors:
 
-This update according the feedback of the Display output interface
-clock driver upstream.
+arch/powerpc/kernel/align.c: In function ‘emulate_spe’:
+arch/powerpc/kernel/align.c:178:8: error: this statement may fall through [-Werror=implicit-fallthrough=]
+    ret |= __get_user_inatomic(temp.v[3], p++);
+        ^~
+arch/powerpc/kernel/align.c:179:3: note: here
+   case 4:
+   ^~~~
+arch/powerpc/kernel/align.c:181:8: error: this statement may fall through [-Werror=implicit-fallthrough=]
+    ret |= __get_user_inatomic(temp.v[5], p++);
+        ^~
+arch/powerpc/kernel/align.c:182:3: note: here
+   case 2:
+   ^~~~
+arch/powerpc/kernel/align.c:261:8: error: this statement may fall through [-Werror=implicit-fallthrough=]
+    ret |= __put_user_inatomic(data.v[3], p++);
+        ^~
+arch/powerpc/kernel/align.c:262:3: note: here
+   case 4:
+   ^~~~
+arch/powerpc/kernel/align.c:264:8: error: this statement may fall through [-Werror=implicit-fallthrough=]
+    ret |= __put_user_inatomic(data.v[5], p++);
+        ^~
+arch/powerpc/kernel/align.c:265:3: note: here
+   case 2:
+   ^~~~
+cc1: all warnings being treated as errors
 
-Link: https://lore.kernel.org/patchwork/patch/1113832/
-Signed-off-by: Wen He <wen.he_1@nxp.com>
+This patch fixs the above errors.
+
+Signed-off-by: Lei Xu <lei.xu@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/align.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 51fa8f57fdac..db1e186352d8 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -79,10 +79,10 @@
- 		clock-output-names = "phy_27m";
- 	};
- 
--	dpclk: clock-controller@f1f0000 {
-+	dpclk: clock-display@f1f0000 {
- 		compatible = "fsl,ls1028a-plldig";
- 		reg = <0x0 0xf1f0000 0x0 0xffff>;
--		#clock-cells = <1>;
-+		#clock-cells = <0>;
- 		clocks = <&osc_27m>;
- 	};
- 
-@@ -665,7 +665,7 @@
- 		interrupts = <0 222 IRQ_TYPE_LEVEL_HIGH>,
- 			     <0 223 IRQ_TYPE_LEVEL_HIGH>;
- 		interrupt-names = "DE", "SE";
--		clocks = <&dpclk 0>, <&clockgen 2 2>, <&clockgen 2 2>,
-+		clocks = <&dpclk>, <&clockgen 2 2>, <&clockgen 2 2>,
- 			 <&clockgen 2 2>;
- 		clock-names = "pxlclk", "mclk", "aclk", "pclk";
- 		arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
+diff --git a/arch/powerpc/kernel/align.c b/arch/powerpc/kernel/align.c
+index 7107ad8..92045ed 100644
+--- a/arch/powerpc/kernel/align.c
++++ b/arch/powerpc/kernel/align.c
+@@ -176,9 +176,11 @@ static int emulate_spe(struct pt_regs *regs, unsigned int reg,
+ 			ret |= __get_user_inatomic(temp.v[1], p++);
+ 			ret |= __get_user_inatomic(temp.v[2], p++);
+ 			ret |= __get_user_inatomic(temp.v[3], p++);
++			/* fall through */
+ 		case 4:
+ 			ret |= __get_user_inatomic(temp.v[4], p++);
+ 			ret |= __get_user_inatomic(temp.v[5], p++);
++			/* fall through */
+ 		case 2:
+ 			ret |= __get_user_inatomic(temp.v[6], p++);
+ 			ret |= __get_user_inatomic(temp.v[7], p++);
+@@ -259,9 +261,11 @@ static int emulate_spe(struct pt_regs *regs, unsigned int reg,
+ 			ret |= __put_user_inatomic(data.v[1], p++);
+ 			ret |= __put_user_inatomic(data.v[2], p++);
+ 			ret |= __put_user_inatomic(data.v[3], p++);
++			/* fall through */
+ 		case 4:
+ 			ret |= __put_user_inatomic(data.v[4], p++);
+ 			ret |= __put_user_inatomic(data.v[5], p++);
++			/* fall through */
+ 		case 2:
+ 			ret |= __put_user_inatomic(data.v[6], p++);
+ 			ret |= __put_user_inatomic(data.v[7], p++);
 -- 
-2.17.1
+2.9.3
 
