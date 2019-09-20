@@ -2,87 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52278B8A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 07:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CB0B8A9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 07:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392439AbfITFjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 01:39:03 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:3100 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390510AbfITFjD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 01:39:03 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8K5ZtCj010154;
-        Fri, 20 Sep 2019 07:38:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=x/LNhVtfhccWnby7ce3HapzzopKDh8uTONbGR64CIfI=;
- b=byWPlN9k23fx4bMu8O6OfpGaDaCZxe32slTjjs5JoP2+1Fsx7/qBylP/Hu+D7wIT8qpj
- IY/2BS07hhtI9utLZ5PpioCr3yjVHT0RDYYpvHiGOE1pLdm7dU/sntkQsDuThbkWlLG1
- W3S4aX+D6FPPUgIb006J5cbUK9VSslRk2uzbMkjDL6Mt3G/Is6I9sQOHIFUUyCiSp+Ho
- CeeewL8VfP/OeBjarwg3IPXl3soCiO3GD/YwR2SrfFOSsptrM+u/nhZYS9DQ8D2NLGfG
- uzpOLXDGITZZKNuvoMk6NSDiQVBfDPJaTGQu1mETn1aVAYd7DUIVd4nsW2djmiyu8qkG qw== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2v3va18qd9-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 20 Sep 2019 07:38:43 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3379B4C;
-        Fri, 20 Sep 2019 05:38:40 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E09AA2209BE;
-        Fri, 20 Sep 2019 07:38:39 +0200 (CEST)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 20 Sep
- 2019 07:38:39 +0200
-Received: from localhost (10.201.22.222) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 20 Sep 2019 07:38:39
- +0200
-From:   Christophe Roullier <christophe.roullier@st.com>
-To:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
-        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <peppe.cavallaro@st.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <christophe.roullier@st.com>, <andrew@lunn.ch>
-Subject: [PATCH  5/5] ARM: dts: stm32: Enable gating of the MAC TX clock during TX low-power mode on stm32mp157c
-Date:   Fri, 20 Sep 2019 07:38:17 +0200
-Message-ID: <20190920053817.13754-6-christophe.roullier@st.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190920053817.13754-1-christophe.roullier@st.com>
-References: <20190920053817.13754-1-christophe.roullier@st.com>
+        id S2392468AbfITFp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 01:45:28 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2742 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389862AbfITFp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 01:45:28 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5B463D0D5863D95363E7;
+        Fri, 20 Sep 2019 13:45:26 +0800 (CST)
+Received: from [127.0.0.1] (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 20 Sep 2019
+ 13:45:23 +0800
+Subject: Re: drivers/crypto/inside-secure/safexcel.c:840:9: error: implicit
+ declaration of function 'pci_irq_vector'; did you mean 'rcu_irq_enter'?
+To:     kbuild test robot <lkp@intel.com>,
+        Pascal van Leeuwen <pvanleeuwen@insidesecure.com>
+References: <201909200943.xYWyp0BG%lkp@intel.com>
+CC:     <kbuild-all@01.org>, <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+From:   Yuehaibing <yuehaibing@huawei.com>
+Message-ID: <91bcb10e-ef1a-3979-d597-999552114746@huawei.com>
+Date:   Fri, 20 Sep 2019 13:45:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.22.222]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-20_01:2019-09-19,2019-09-20 signatures=0
+In-Reply-To: <201909200943.xYWyp0BG%lkp@intel.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is no activity on ethernet phy link, the ETH_GTX_CLK is cut
+Herbert,
 
-Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+This has been fixed in below patch, but I can't find it in linux-next.
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index f51d6222a0e8..d78dfc44a1fb 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -1293,6 +1293,7 @@
- 			st,syscon = <&syscfg 0x4>;
- 			snps,mixed-burst;
- 			snps,pbl = <2>;
-+			snps,en-tx-lpi-clockgating;
- 			snps,axi-config = <&stmmac_axi_config_0>;
- 			snps,tso;
- 			status = "disabled";
--- 
-2.17.1
+https://patchwork.kernel.org/patch/11129983/
+
+On 2019/9/20 9:03, kbuild test robot wrote:
+> Hi Pascal,
+> 
+> FYI, the error/warning still remains.
+> 
+> tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   574cc4539762561d96b456dbc0544d8898bd4c6e
+> commit: 625f269a5a7a3643771320387e474bd0a61d9654 crypto: inside-secure - add support for PCI based FPGA development board
+> date:   3 weeks ago
+> config: sh-allmodconfig (attached as .config)
+> compiler: sh4-linux-gcc (GCC) 7.4.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 625f269a5a7a3643771320387e474bd0a61d9654
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.4.0 make.cross ARCH=sh 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/crypto/inside-secure/safexcel.c: In function 'safexcel_request_ring_irq':
+>>> drivers/crypto/inside-secure/safexcel.c:840:9: error: implicit declaration of function 'pci_irq_vector'; did you mean 'rcu_irq_enter'? [-Werror=implicit-function-declaration]
+>       irq = pci_irq_vector(pci_pdev, irqid);
+>             ^~~~~~~~~~~~~~
+>             rcu_irq_enter
+>    drivers/crypto/inside-secure/safexcel.c: In function 'safexcel_probe_generic':
+>>> drivers/crypto/inside-secure/safexcel.c:1043:9: error: implicit declaration of function 'pci_alloc_irq_vectors'; did you mean 'pci_alloc_consistent'? [-Werror=implicit-function-declaration]
+>       ret = pci_alloc_irq_vectors(pci_pdev,
+>             ^~~~~~~~~~~~~~~~~~~~~
+>             pci_alloc_consistent
+>>> drivers/crypto/inside-secure/safexcel.c:1046:10: error: 'PCI_IRQ_MSI' undeclared (first use in this function); did you mean 'IRQ_MSK'?
+>              PCI_IRQ_MSI | PCI_IRQ_MSIX);
+>              ^~~~~~~~~~~
+>              IRQ_MSK
+>    drivers/crypto/inside-secure/safexcel.c:1046:10: note: each undeclared identifier is reported only once for each function it appears in
+>>> drivers/crypto/inside-secure/safexcel.c:1046:24: error: 'PCI_IRQ_MSIX' undeclared (first use in this function); did you mean 'PCI_IRQ_MSI'?
+>              PCI_IRQ_MSI | PCI_IRQ_MSIX);
+>                            ^~~~~~~~~~~~
+>                            PCI_IRQ_MSI
+>    drivers/crypto/inside-secure/safexcel.c: In function 'safexcel_init':
+>    drivers/crypto/inside-secure/safexcel.c:1402:6: warning: unused variable 'rc' [-Wunused-variable]
+>      int rc;
+>          ^~
+>    cc1: some warnings being treated as errors
+> 
+> vim +840 drivers/crypto/inside-secure/safexcel.c
+> 
+>    826	
+>    827	static int safexcel_request_ring_irq(void *pdev, int irqid,
+>    828					     int is_pci_dev,
+>    829					     irq_handler_t handler,
+>    830					     irq_handler_t threaded_handler,
+>    831					     struct safexcel_ring_irq_data *ring_irq_priv)
+>    832	{
+>    833		int ret, irq;
+>    834		struct device *dev;
+>    835	
+>    836		if (IS_ENABLED(CONFIG_PCI) && is_pci_dev) {
+>    837			struct pci_dev *pci_pdev = pdev;
+>    838	
+>    839			dev = &pci_pdev->dev;
+>  > 840			irq = pci_irq_vector(pci_pdev, irqid);
+>    841			if (irq < 0) {
+>    842				dev_err(dev, "unable to get device MSI IRQ %d (err %d)\n",
+>    843					irqid, irq);
+>    844				return irq;
+>    845			}
+>    846		} else if (IS_ENABLED(CONFIG_OF)) {
+>    847			struct platform_device *plf_pdev = pdev;
+>    848			char irq_name[6] = {0}; /* "ringX\0" */
+>    849	
+>    850			snprintf(irq_name, 6, "ring%d", irqid);
+>    851			dev = &plf_pdev->dev;
+>    852			irq = platform_get_irq_byname(plf_pdev, irq_name);
+>    853	
+>    854			if (irq < 0) {
+>    855				dev_err(dev, "unable to get IRQ '%s' (err %d)\n",
+>    856					irq_name, irq);
+>    857				return irq;
+>    858			}
+>    859		}
+>    860	
+>    861		ret = devm_request_threaded_irq(dev, irq, handler,
+>    862						threaded_handler, IRQF_ONESHOT,
+>    863						dev_name(dev), ring_irq_priv);
+>    864		if (ret) {
+>    865			dev_err(dev, "unable to request IRQ %d\n", irq);
+>    866			return ret;
+>    867		}
+>    868	
+>    869		return irq;
+>    870	}
+>    871	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
 
