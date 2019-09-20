@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D3EEB8AC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:09:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36490B8AC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392410AbfITGJP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 02:09:15 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57632 "EHLO huawei.com"
+        id S2437373AbfITGJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 02:09:23 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2688 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437307AbfITGJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 02:09:08 -0400
+        id S2437344AbfITGJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 02:09:13 -0400
 Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D06CA73DDC47281C735C;
-        Fri, 20 Sep 2019 14:09:06 +0800 (CST)
+        by Forcepoint Email with ESMTP id D17EC44B850B7E9A7A24;
+        Fri, 20 Sep 2019 14:09:11 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 20 Sep 2019 14:08:58 +0800
+ 14.3.439.0; Fri, 20 Sep 2019 14:09:03 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Joe Perches <joe@perches.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -31,11 +31,10 @@ To:     Joe Perches <joe@perches.com>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>,
         <linux-kernel@vger.kernel.org>
-CC:     <wangkefeng.wang@huawei.com>, Rob Herring <robh+dt@kernel.org>,
-        "Frank Rowand" <frowand.list@gmail.com>
-Subject: [PATCH 16/32] of: Use pr_warn instead of pr_warning
-Date:   Fri, 20 Sep 2019 14:25:28 +0800
-Message-ID: <20190920062544.180997-17-wangkefeng.wang@huawei.com>
+CC:     <wangkefeng.wang@huawei.com>, Karsten Keil <isdn@linux-pingi.de>
+Subject: [PATCH 21/32] staging: Use pr_warn instead of pr_warning
+Date:   Fri, 20 Sep 2019 14:25:33 +0800
+Message-ID: <20190920062544.180997-22-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
 References: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
@@ -53,62 +52,26 @@ As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
 pr_warning"), removing pr_warning so all logging messages use a
 consistent <prefix>_warn style. Let's do it.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- drivers/of/fdt.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/staging/isdn/gigaset/interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 223d617ecfe1..f1c23aad951e 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -412,8 +412,8 @@ void *__unflatten_device_tree(const void *blob,
- 	/* Second pass, do actual unflattening */
- 	unflatten_dt_nodes(blob, mem, dad, mynodes);
- 	if (be32_to_cpup(mem + size) != 0xdeadbeef)
--		pr_warning("End of tree marker overwritten: %08x\n",
--			   be32_to_cpup(mem + size));
-+		pr_warn("End of tree marker overwritten: %08x\n",
-+			be32_to_cpup(mem + size));
- 
- 	if (detached && mynodes) {
- 		of_node_set_flag(*mynodes, OF_DETACHED);
-@@ -1120,25 +1120,25 @@ void __init __weak early_init_dt_add_memory_arch(u64 base, u64 size)
- 	size &= PAGE_MASK;
- 
- 	if (base > MAX_MEMBLOCK_ADDR) {
--		pr_warning("Ignoring memory block 0x%llx - 0x%llx\n",
--				base, base + size);
-+		pr_warn("Ignoring memory block 0x%llx - 0x%llx\n",
-+			base, base + size);
- 		return;
+diff --git a/drivers/staging/isdn/gigaset/interface.c b/drivers/staging/isdn/gigaset/interface.c
+index 17fa615a8c68..9ddadd07e707 100644
+--- a/drivers/staging/isdn/gigaset/interface.c
++++ b/drivers/staging/isdn/gigaset/interface.c
+@@ -518,7 +518,7 @@ void gigaset_if_init(struct cardstate *cs)
+ 	if (!IS_ERR(cs->tty_dev))
+ 		dev_set_drvdata(cs->tty_dev, cs);
+ 	else {
+-		pr_warning("could not register device to the tty subsystem\n");
++		pr_warn("could not register device to the tty subsystem\n");
+ 		cs->tty_dev = NULL;
  	}
- 
- 	if (base + size - 1 > MAX_MEMBLOCK_ADDR) {
--		pr_warning("Ignoring memory range 0x%llx - 0x%llx\n",
--				((u64)MAX_MEMBLOCK_ADDR) + 1, base + size);
-+		pr_warn("Ignoring memory range 0x%llx - 0x%llx\n",
-+			((u64)MAX_MEMBLOCK_ADDR) + 1, base + size);
- 		size = MAX_MEMBLOCK_ADDR - base + 1;
- 	}
- 
- 	if (base + size < phys_offset) {
--		pr_warning("Ignoring memory block 0x%llx - 0x%llx\n",
--			   base, base + size);
-+		pr_warn("Ignoring memory block 0x%llx - 0x%llx\n",
-+			base, base + size);
- 		return;
- 	}
- 	if (base < phys_offset) {
--		pr_warning("Ignoring memory range 0x%llx - 0x%llx\n",
--			   base, phys_offset);
-+		pr_warn("Ignoring memory range 0x%llx - 0x%llx\n",
-+			base, phys_offset);
- 		size -= phys_offset - base;
- 		base = phys_offset;
- 	}
+ 	mutex_unlock(&cs->mutex);
 -- 
 2.20.1
 
