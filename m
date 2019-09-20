@@ -2,115 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1560CB9318
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 914F7B922E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392834AbfITOhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:37:40 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35804 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388036AbfITOZA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:00 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0004xX-9L; Fri, 20 Sep 2019 15:24:58 +0100
-Received: from ben by deadeye with local (Exim 4.92.1)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0007rc-8K; Fri, 20 Sep 2019 15:24:57 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S2388868AbfITO35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:29:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388850AbfITOZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:25:58 -0400
+Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AB8F20882;
+        Fri, 20 Sep 2019 14:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568989557;
+        bh=8tS2cpwMnR0yGFuX3AlIQxRUJKM+LfMuo4w3GtTG5DY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0qLax+rHaht1EK7zfl3mIRR7xQ4HIaqBXqaq8q/9iQDFAYDrQKzuRSyDTfGCv4qgu
+         Rrf5ttfJf6f8IFC2HTVSmajknXDwCBnjQG9bJYUMIHgYgWr40JXy9p8BawN4QOvO3t
+         Ku425EBLmaq6T/NpYVPCrJPv0cYiriHk0NroBE00=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 02/31] perf tests: Add libperf automated test for 'make -C tools/perf build-test'
+Date:   Fri, 20 Sep 2019 11:25:13 -0300
+Message-Id: <20190920142542.12047-3-acme@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190920142542.12047-1-acme@kernel.org>
+References: <20190920142542.12047-1-acme@kernel.org>
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Kees Cook" <keescook@chromium.org>,
-        "Shuah Khan" <skhan@linuxfoundation.org>
-Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.410157827@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 038/132] selftests/ipc: Fix msgque compiler warnings
-In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.74-rc1 review patch.  If anyone has any objections, please let me know.
+From: Jiri Olsa <jolsa@kernel.org>
 
-------------------
+Add a libperf build test, that is triggered when one does:
 
-From: Kees Cook <keescook@chromium.org>
+  $ make -C tools/perf build-test
 
-commit a147faa96f832f76e772b1e448e94ea84c774081 upstream.
-
-This fixes the various compiler warnings when building the msgque
-selftest. The primary change is using sys/msg.h instead of linux/msg.h
-directly to gain the API declarations.
-
-Fixes: 3a665531a3b7 ("selftests: IPC message queue copy feature test")
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/20190901124822.10132-4-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/testing/selftests/ipc/msgque.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ tools/perf/tests/make | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/ipc/msgque.c
-+++ b/tools/testing/selftests/ipc/msgque.c
-@@ -1,8 +1,9 @@
-+#define _GNU_SOURCE
- #include <stdlib.h>
- #include <stdio.h>
- #include <string.h>
- #include <errno.h>
--#include <linux/msg.h>
-+#include <sys/msg.h>
- #include <fcntl.h>
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index 70c48475896d..6b3afed5d910 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -327,6 +327,10 @@ make_kernelsrc_tools:
+ 	(make -C ../../tools $(PARALLEL_OPT) $(K_O_OPT) perf) > $@ 2>&1 && \
+ 	test -x $(KERNEL_O)/tools/perf/perf && rm -f $@ || (cat $@ ; false)
  
- #define MAX_MSG_SIZE		32
-@@ -70,7 +71,7 @@ int restore_queue(struct msgque_data *ms
- 	return 0;
++make_libperf:
++	@echo "- make -C lib";
++	make -C lib clean >$@ 2>&1; make -C lib >>$@ 2>&1 && rm $@
++
+ FEATURES_DUMP_FILE := $(FULL_O)/BUILD_TEST_FEATURE_DUMP
+ FEATURES_DUMP_FILE_STATIC := $(FULL_O)/BUILD_TEST_FEATURE_DUMP_STATIC
  
- destroy:
--	if (msgctl(id, IPC_RMID, 0))
-+	if (msgctl(id, IPC_RMID, NULL))
- 		printf("Failed to destroy queue: %d\n", -errno);
- 	return ret;
- }
-@@ -117,7 +118,7 @@ int check_and_destroy_queue(struct msgqu
+@@ -365,5 +369,5 @@ $(foreach t,$(run),$(if $(findstring make_static,$(t)),\
+ 			$(eval $(t) := $($(t)) FEATURES_DUMP=$(FEATURES_DUMP_FILE))))
+ endif
  
- 	ret = 0;
- err:
--	if (msgctl(msgque->msq_id, IPC_RMID, 0)) {
-+	if (msgctl(msgque->msq_id, IPC_RMID, NULL)) {
- 		printf("Failed to destroy queue: %d\n", -errno);
- 		return -errno;
- 	}
-@@ -126,7 +127,7 @@ err:
- 
- int dump_queue(struct msgque_data *msgque)
- {
--	struct msqid64_ds ds;
-+	struct msqid_ds ds;
- 	int kern_id;
- 	int i, ret;
- 
-@@ -243,7 +244,7 @@ int main(int argc, char **argv)
- 	return 0;
- 
- err_destroy:
--	if (msgctl(msgque.msq_id, IPC_RMID, 0)) {
-+	if (msgctl(msgque.msq_id, IPC_RMID, NULL)) {
- 		printf("Failed to destroy queue: %d\n", -errno);
- 		return -errno;
- 	}
+-.PHONY: all $(run) $(run_O) tarpkg clean make_kernelsrc make_kernelsrc_tools
++.PHONY: all $(run) $(run_O) tarpkg clean make_kernelsrc make_kernelsrc_tools make_libperf
+ endif # ifndef MK
+-- 
+2.21.0
 
