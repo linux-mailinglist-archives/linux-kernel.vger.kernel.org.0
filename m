@@ -2,227 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77543B915D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:05:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55469B916D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387449AbfITOFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:05:36 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41902 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727904AbfITOFf (ORCPT
+        id S2387707AbfITOLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:11:53 -0400
+Received: from mail.w1.fi ([212.71.239.96]:60768 "EHLO
+        li674-96.members.linode.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387562AbfITOLx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:05:35 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g13so6267198otp.8
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/bt9s8iSgfxjO75odSd5FLVQOrczyANz18siYaB/70g=;
-        b=UK80wxYR6MWXy40PM3TwPZP2pD2sFhPy52wQk21gNcGB/SCBHppKRl9zoGiY15jKZF
-         22cUrSwEhvSHKPYQb4OKThSah8aa001ZFpGkjmLcbnrpu1P18oVpWG+zbZWu1rzq3nX7
-         J7S6zrfOgI+ZcqbVZC83KYfBTUEufyIEQNw80=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/bt9s8iSgfxjO75odSd5FLVQOrczyANz18siYaB/70g=;
-        b=akwcsLUDlrx/PgO3NEFsCr0S+H0iTKI/8B9hotdDN/Mflwk+T7xVqHSofiLz1Jn3PX
-         vPrBCK4Q+pMEwh+mdTnNKqmSV/l24eLYXHzTgRLqrySF1F0L1yLq6BSt16ng2PCN6eCs
-         kq3dhvTcsydrraLC13psaBjbE9MgR1b6XJhlIB3sXH+QYS1F2nba/gMdljm8e8SpQd4p
-         4no6vvR8btF9ssWZ9EO6FcYCENqaicwdk2luTMKKzrkUTcm0AR6KNfMqZdprBhC31R5h
-         zQGUwn8IbrONJkIClTBwGNzBmxBKJiz70MvWosOkXPs3IK6nlOLhWaIS1Vs/O4WqpyKI
-         WO+w==
-X-Gm-Message-State: APjAAAW7iPwp2C5iiFgv3gCuCrX+jdBB5ztdmgTBUg6bw1+4d/iIa7Zs
-        4qlBBFIUwxkjB1IE6jlEoZbutSIiZsODSqsNMPFjvA==
-X-Google-Smtp-Source: APXvYqxja27wgUREnk3jJsiTRzKjBztfyyo/LxEMyvahoTp+szdUihByVlLG/GL31LIK4bK1yKcwVsZANvkferfR89U=
-X-Received: by 2002:a9d:7006:: with SMTP id k6mr11446512otj.303.1568988333826;
- Fri, 20 Sep 2019 07:05:33 -0700 (PDT)
+        Fri, 20 Sep 2019 10:11:53 -0400
+X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Sep 2019 10:11:51 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by li674-96.members.linode.com (Postfix) with ESMTP id 6738411952;
+        Fri, 20 Sep 2019 14:01:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at w1.fi
+Received: from li674-96.members.linode.com ([127.0.0.1])
+        by localhost (mail.w1.fi [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id hAKQx5DjrZrw; Fri, 20 Sep 2019 14:01:45 +0000 (UTC)
+Received: by jm (sSMTP sendmail emulation); Fri, 20 Sep 2019 17:01:43 +0300
+Date:   Fri, 20 Sep 2019 17:01:43 +0300
+From:   Jouni Malinen <j@w1.fi>
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hostap@lists.infradead.org,
+        openwrt-devel@lists.openwrt.org,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Subject: Re: [PATCH RFC] cfg80211: add new command for reporting wiphy crashes
+Message-ID: <20190920140143.GA30514@w1.fi>
+References: <20190920133708.15313-1-zajec5@gmail.com>
 MIME-Version: 1.0
-References: <20190909134241.23297-1-ayan.halder@arm.com> <20190917125301.GQ3958@phenom.ffwll.local>
- <CAPj87rPKp1ogZhk_fMrsX885zkAh1PB4usNQUd4KxNFUv4vsFw@mail.gmail.com>
- <20190918120406.2ylkxx2rqsbhn2te@e110455-lin.cambridge.arm.com>
- <CAPj87rOc3MvkjrX1qHpGuVUaGLuZiC7QYBO9v3T2NS+dicLC1g@mail.gmail.com>
- <20190919140323.GA3456@arm.com> <CAKMK7uHYy9pfmqV_qE948QMPOaxHsJ2sy3+J4kQqixanLP_SUQ@mail.gmail.com>
- <20190919151310.GA12236@arm.com>
-In-Reply-To: <20190919151310.GA12236@arm.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 20 Sep 2019 16:05:22 +0200
-Message-ID: <CAKMK7uFJMmPT=-=OEEypxADhvcOwip+8RcnFnyPdt08EMLmZog@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm:- Add a modifier to denote 'protected' framebuffer
-To:     Ayan Halder <Ayan.Halder@arm.com>
-Cc:     Daniel Stone <daniel@fooishbar.org>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "airlied@linux.ie" <airlied@linux.ie>, nd <nd@arm.com>,
-        "sean@poorly.run" <sean@poorly.run>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190920133708.15313-1-zajec5@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 5:13 PM Ayan Halder <Ayan.Halder@arm.com> wrote:
->
-> On Thu, Sep 19, 2019 at 04:10:42PM +0200, Daniel Vetter wrote:
-> > On Thu, Sep 19, 2019 at 4:03 PM Ayan Halder <Ayan.Halder@arm.com> wrote:
-> > >
-> > > On Wed, Sep 18, 2019 at 10:30:12PM +0100, Daniel Stone wrote:
-> > >
-> > > Hi All,
-> > > Thanks for your suggestions.
-> > >
-> > > > Hi Liviu,
-> > > >
-> > > > On Wed, 18 Sep 2019 at 13:04, Liviu Dudau <Liviu.Dudau@arm.com> wrote:
-> > > > > On Wed, Sep 18, 2019 at 09:49:40AM +0100, Daniel Stone wrote:
-> > > > > > I totally agree. Framebuffers aren't about the underlying memory they
-> > > > > > point to, but about how to _interpret_ that memory: it decorates a
-> > > > > > pointer with width, height, stride, format, etc, to allow you to make
-> > > > > > sense of that memory. I see content protection as being the same as
-> > > > > > physical contiguity, which is a property of the underlying memory
-> > > > > > itself. Regardless of the width, height, or format, you just cannot
-> > > > > > access that memory unless it's under the appropriate ('secure enough')
-> > > > > > conditions.
-> > > > > >
-> > > > > > So I think a dmabuf attribute would be most appropriate, since that's
-> > > > > > where you have to do all your MMU handling, and everything else you
-> > > > > > need to do to allow access to that buffer, anyway.
-> > > > >
-> > > > > Isn't it how AMD currently implements protected buffers as well?
-> > > >
-> > > > No idea to be honest, I haven't seen anything upstream.
-> > > >
-> > > > > > There's a lot of complexity beyond just 'it's protected'; for
-> > > > > > instance, some CP providers mandate that their content can only be
-> > > > > > streamed over HDCP 2.2 Type-1 when going through an external
-> > > > > > connection. One way you could do that is to use a secure world
-> > > > > > (external controller like Intel's ME, or CPU-internal enclave like SGX
-> > > > > > or TEE) to examine the display pipe configuration, and only then allow
-> > > > > > access to the buffers and/or keys. Stuff like that is always going to
-> > > > > > be out in the realm of vendor & product-policy-specific add-ons, but
-> > > > > > it should be possible to agree on at least the basic mechanics and
-> > > > > > expectations of a secure path without things like that.
-> > > > >
-> > > > > I also expect that going through the secure world will be pretty much transparent for
-> > > > > the kernel driver, as the most likely hardware implementations would enable
-> > > > > additional signaling that will get trapped and handled by the secure OS. I'm not
-> > > > > trying to simplify things, just taking the stance that it is userspace that is
-> > > > > coordinating all this, we're trying only to find a common ground on how to handle
-> > > > > this in the kernel.
-> > > >
-> > > > Yeah, makes sense.
-> > > >
-> > > > As a strawman, how about a new flag to drmPrimeHandleToFD() which sets
-> > > > the 'protected' flag on the resulting dmabuf?
-> > >
-> > > To be honest, during our internal discussion james.qian.wang@arm.com had a
-> > > similar suggestion of adding a new flag to dma_buf but I decided
-> > > against it.
-> > >
-> > > As per my understanding, adding custom dma buf flags (like
-> > > AMDGPU_GEM_CREATE_XXX, etc) is possible if we(Arm) had our own allocator. We
-> > > rely on the dumb allocator and ion allocator for framebuffer creation.
-> > >
-> > > I was looking at an allocator independent way of userspace
-> > > communicating to the drm framework that the framebuffer is protected.
-> > >
-> > > Thus, it looked to me that framebuffer modifier is the best (or the least
-> > > corrupt) way of going forth.
-> > >
-> > > We use ion and dumb allocator for framebuffer object creation. The way
-> > > I see it is as follows :-
-> > >
-> > > 1. For ion allocator :-
-> > > Userspace can specify that it wants the buffer from a secure heap or any other
-> > > special region of heap. The ion driver will either fault into the secure os to
-> > > create the buffers or it will do some other magic. Honestly, I have still not
-> > > figured that out. But it will be agnostic to the drm core.
-> >
-> > Allocating buffers from a special heap is what I expected the
-> > interface to be. The issue is that if we specify the secure mode any
-> > time later on, then it could be changed. E.g. with Daniel Stone's idea
-> > of a handle2fd flag, you could export the buffer twice, once secure,
-> > once non-secure. That sounds like a silly thing to me, and better to
-> > prevent that - or is this actually possible/wanted, i.e. do we want to
-> > change the secure mode for a buffer later on?
-> >
-> > > The userspace gets a handle to the buffer and then it calls addFB2 with
-> > > DRM_FORMAT_MOD_ARM_PROTECTED, so that the driver can configure the
-> > > dpu's protection bits (to access the memory with special signals).
-> >
-> > If we allocate a secure buffer there's no need for flags anymore I
-> > think - it would be a property of the underlying buffer (like a
-> > contiguous buffer). All we need are two things:
-> > - make sure secure buffers can only be imported by secure-buffer aware drivers
-> > - some way for such drivers to figure out whether they deal with a
-> > secure buffer or not.
->
-> I am with you on this. Yes, we need to communicate the above two
-> things.
->
-> >
-> > There's no need for any flags anywhere else with the ion/secure
-> > dma-buf heap solution. E.g. for contig buffer we also dont pass around
-> > a DRM_FORMAT_MOD_PHYSICALLY_CONTIG for addfb2.
->
-> Sorry, I could not follow you here. For the driver to know if it is importing
-> a secure buffer or using a secure buffer, it needs some flags, right?
+On Fri, Sep 20, 2019 at 03:37:08PM +0200, Rafał Miłecki wrote:
+> Hardware or firmware instability may result in unusable wiphy. In such
+> cases usually a hardware reset is needed. To allow a full recovery
+> kernel has to indicate problem to the user space.
 
-It needs that information somehow. It doesn't necessarily need to be a
-flag in the uapi, it could be simply a bit of information attached to
-the dma-buf.
+Why? Shouldn't the driver be able to handle this on its own since all
+the previous configuration was done through the driver anyway. As far as
+I know, there are drivers that do indeed try to do this and handle it
+successfully at least for station mode. AP mode may be more complex, but
+for that one, I guess it would be fine to drop all associations (and
+provide indication of that to user space) and just restart the BSS.
 
-> Or on a second thought, are you suggesting that we should stick with
-> a dma_buf flag (IS_PROTECTED) only ?
+> This new nl80211 command lets user space known wiphy has crashed and has
+> been just recovered. When applicable it should result in supplicant or
+> authenticator reconfiguring all interfaces.
 
-Not sure whether you mean some kind of uapi dma-buf flag or something
-internal, so not clear whether I should say yes or no.
+For me, that is not really "recovered" if some additional
+reconfiguration steps are needed.. I'd like to get a more detailed view
+on what exactly might need to be reconfigured and how would user space
+know what exactly to do. Or would the plan here be that the driver would
+not even indicate this crash if it is actually able to internally
+recover fully from the firmware restart?
 
-> > > 2. For dumb allocator :-
-> > > I am curious to know if we can add 'IS_PROTECTED' flag to
-> > > drm_mode_create_dumb.flags. This can/might be used to set dma_buf
-> > > flags. Let me know if this is an incorrect/forbidden path.
-> >
-> > dumb is dumb, this definitely feels like the wrong interface to me.
-> >
-> > > In a nutshell, my objective is to figure out if the userspace is able
-> > > to communicate to the drm core about the 'protection' status of the
-> > > buffer without introducing Arm specific buffer allocator.
-> >
-> > Why does userspace need to communicate this again? What's the issue
-> > with using an ARM specific allocator for this?
->
-> We never felt the need to create an Arm specific allocator. Either
-> Dumb or Ion allocator would always suffice our purpose.
->
-> To upstream 'protected mode' feature of our komeda driver, if we need to
-> write our own allocator, it will be a big overhead. :)
+> I'd like to use this new cfg80211_crash_report() in brcmfmac after a
+> successful recovery from a FullMAC firmware crash.
+> 
+> Later on I'd like to modify hostapd to reconfigure wiphy using a
+> previously used setup.
 
-There has been patches floating around to add a secure buffer heap (to
-ion, or as a new stand-alone allocator). I'm assuming that secure
-buffer mode is something that's at least somewhat standardized in the
-arm world (so that all the gfx ip can share such a buffer). Hence a
-standalone allocator that all drivers which want to support these
-secure buffers on arm platforms can interface with sounds like a good
-idea to me.
+So this implies that at least something would need to happen in AP mode.
+Do you have a list of items that the driver cannot do on its own and why
+it would be better to do them from user space?
 
-> Also to answer your earlier question
->
-> "But if it's a generic flag, how do you combine that with other
-> modifiers? Like if you have a tiled buffer, but also encrypted? Or
-> afbc compressed, or whatever else. I'd expect for your hw encryption
-> is orthogonal to the buffer/tiling/compression format used?"
->
-> Yes, hw encryption(protected mode) is orthogonal/independent to AFBC compression.
-> Thus, any/all AFBC buffers can be supported with/without protected
-> mode.
+> I'm OpenWrt developer & user and I got annoyed by my devices not auto
+> recovering after various failures. There are things I cannot fix (hw
+> failures or closed fw crashes) but I still expect my devices to get
+> back to operational state as soon as possible on their own.
 
-Ok, so definitely not a modifier then.
--Daniel
+I fully agree with the auto recovery being important thing to cover for
+this, but I'm not yet convinced that this needs user space action. Or if
+it does, there would need to be more detailed way of indicating what
+exactly is needed for user space to do. The proposed change here is just
+saying "hey, I crashed and did something to get the hardware/firmware
+responding again" which does not really tell much to user space other
+than potentially requiring full disable + re-enable for the related
+interfaces. And that is something that should not actually be done in
+all cases of firmware crashes since there are drivers that handle
+recovery in a manner that is in practice completely transparent to user
+space.
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Jouni Malinen                                            PGP id EFC895FA
