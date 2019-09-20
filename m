@@ -2,115 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2CEB9481
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6310B9487
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404532AbfITPxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 11:53:04 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404366AbfITPxD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 11:53:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ehfHqKGq02VDpyHgsdO6CgZKeSAkHux13i46LeTOUmM=; b=hETyHfglQKP6WR4B6RG5ZmaQD
-        95C2f8tvVoss9pKS2CCwzh/44MR1IyzmMPxDliQc4yCQ4itL0mJex15dHhpw1ucGzyvOIO7o/jsr7
-        jofX0RjUj16USAEJCkU3VblfmrZvkT5X3grzhzOtxns4zR2HeKwp0ROGCYgr/6BZWsnrt9hrMJC3U
-        bETYi0g+1ASXehjzUWv0+6FhtyBB+Nw3ivPf83z/RYRa49ay5KeoJIdddaB1O9dxBB6XaaxuRiInX
-        rHEQfzmMWnXGaWIFmspCPjhFUtiTIqXfCX4myMqxSQyzp0jeHAhd2Ls8a2bZrR+3pzmi6iObihOnT
-        tQ1driPtQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iBLDQ-0003vK-Bt; Fri, 20 Sep 2019 15:53:00 +0000
-Date:   Fri, 20 Sep 2019 08:53:00 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jia He <justin.he@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+        id S2404623AbfITPxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 11:53:12 -0400
+Received: from muru.com ([72.249.23.125]:34078 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404366AbfITPxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 11:53:11 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id C93FF80AA;
+        Fri, 20 Sep 2019 15:53:40 +0000 (UTC)
+Date:   Fri, 20 Sep 2019 08:53:06 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Andreas Kemnade <andreas@kemnade.info>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Punit Agrawal <punitagrawal@gmail.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Alex Van Brunt <avanbrunt@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>, hejianet@gmail.com,
-        Kaly Xin <Kaly.Xin@arm.com>, nd@arm.com
-Subject: Re: [PATCH v7 3/3] mm: fix double page fault on arm64 if PTE_AF is
- cleared
-Message-ID: <20190920155300.GC15392@bombadil.infradead.org>
-References: <20190920135437.25622-1-justin.he@arm.com>
- <20190920135437.25622-4-justin.he@arm.com>
+        Rob Herring <robh@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>
+Subject: Re: [Letux-kernel] [PATCH 2/2] DTS: ARM: gta04: introduce legacy
+ spi-cs-high to make display work again
+Message-ID: <20190920155306.GT5610@atomide.com>
+References: <20190831084852.5e726cfa@aktux>
+ <ED6A6797-D1F9-473B-ABFF-B6951A924BC1@goldelico.com>
+ <CACRpkdZQgPVvB=78vOFsHe5n45Vwe4N6JJOcm1_vz5FbAw9CYA@mail.gmail.com>
+ <1624298A-C51B-418A-96C3-EA09367A010D@goldelico.com>
+ <CACRpkdZvpPOM1Ug-=GHf7Z-2VEbJz3Cuo7+0yDFuNm5ShXK8=Q@mail.gmail.com>
+ <7DF102BC-C818-4D27-988F-150C7527E6CC@goldelico.com>
+ <20190920142059.GO5610@atomide.com>
+ <633E7AD9-A909-4619-BBD7-8CFD965FDFF7@goldelico.com>
+ <20190920172947.51c1fdec@aktux>
+ <96E62EC2-2A3E-4722-A9DE-3F320B0A98B0@goldelico.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190920135437.25622-4-justin.he@arm.com>
+In-Reply-To: <96E62EC2-2A3E-4722-A9DE-3F320B0A98B0@goldelico.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 09:54:37PM +0800, Jia He wrote:
-> -static inline void cow_user_page(struct page *dst, struct page *src, unsigned long va, struct vm_area_struct *vma)
-> +static inline int cow_user_page(struct page *dst, struct page *src,
-> +				struct vm_fault *vmf)
->  {
+* H. Nikolaus Schaller <hns@goldelico.com> [190920 15:50]:
+> 
+> > Am 20.09.2019 um 17:29 schrieb Andreas Kemnade <andreas@kemnade.info>:
+> > 
+> > On Fri, 20 Sep 2019 16:54:18 +0200
+> > "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
+> > 
+> >>> Am 20.09.2019 um 16:20 schrieb Tony Lindgren <tony@atomide.com>:
+> >>> 
+> >>> * H. Nikolaus Schaller <hns@goldelico.com> [190920 09:19]:  
+> >>>>> Am 20.09.2019 um 10:55 schrieb Linus Walleij <linus.walleij@linaro.org>:
+> >>>>> I suggest to go both way:
+> >>>>> apply this oneliner and tag for stable so that GTA04 works
+> >>>>> again.
+> >>>>> 
+> >>>>> Then for the next kernel think about a possible more abitious
+> >>>>> whitelist solution and after adding that remove *all* "spi-cs-high"
+> >>>>> flags from all device trees in the kernel after fixing them
+> >>>>> all up.  
+> >>>> 
+> >>>> Ok, that looks like a viable path.  
+> >>> 
+> >>> Please repost the oneline so people can ack easily. At least
+> >>> I've already lost track of this thread.  
+> >> 
+> >> It is all here:
+> >> 
+> >> https://patchwork.kernel.org/patch/11035253/
+> >> 
+> > It is the full one (incl. documentation), not the oneline and does not
+> > apply.
+> 
+> Looks as if it was sitting too long in the queue and linux-next has changed
+> the basis in the meantime, while v5.3 has not yet.
+> 
+> Documentation/devicetree/bindings/spi/spi-bus.txt -> spi-controller.yaml
+> 
+> So it should still apply for v5.3.1 and earlier and we need both versions.
+> One for stable and one for linux-next. I don't know how to handle such cases.
 
-Can we talk about the return type here?
+Please just repost a minimal dts one line fix. Then a separate
+patch for the documentation changes.
 
-> +			} else {
-> +				/* Other thread has already handled the fault
-> +				 * and we don't need to do anything. If it's
-> +				 * not the case, the fault will be triggered
-> +				 * again on the same address.
-> +				 */
-> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
-> +				return -1;
-...
-> +	return 0;
->  }
+Regards,
 
-So -1 for "try again" and 0 for "succeeded".
-
-> +		if (cow_user_page(new_page, old_page, vmf)) {
-
-Then we use it like a bool.  But it's kind of backwards from a bool because
-false is success.
-
-> +			/* COW failed, if the fault was solved by other,
-> +			 * it's fine. If not, userspace would re-fault on
-> +			 * the same address and we will handle the fault
-> +			 * from the second attempt.
-> +			 */
-> +			put_page(new_page);
-> +			if (old_page)
-> +				put_page(old_page);
-> +			return 0;
-
-And we don't use the return value; in fact we invert it.
-
-Would this make more sense:
-
-static inline bool cow_user_page(struct page *dst, struct page *src,
-					struct vm_fault *vmf)
-...
-				pte_unmap_unlock(vmf->pte, vmf->ptl);
-				return false;
-...
-	return true;
-...
-		if (!cow_user_page(new_page, old_page, vmf)) {
-
-That reads more sensibly for me.  We could also go with returning a
-vm_fault_t, but that would be more complex than needed today, I think.
+Tony
