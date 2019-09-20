@@ -2,128 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A17FB984D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 22:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49088B9853
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 22:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbfITUMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 16:12:22 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:46256 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbfITUMV (ORCPT
+        id S1728715AbfITUPP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 16:15:15 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35946 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfITUPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 16:12:21 -0400
-Received: by mail-qt1-f193.google.com with SMTP id u22so10052076qtq.13
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 13:12:21 -0700 (PDT)
+        Fri, 20 Sep 2019 16:15:15 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y19so8030093wrd.3;
+        Fri, 20 Sep 2019 13:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t1DVA3vKOlm/AZ8L4zulEE1hMXuljgOJAsGAyVpUvUI=;
-        b=YUxS8rzK+f0gbi1Cu0GWV0MhZV0YpDvHEnfJ4R8mcMrXdyvN91fGs0GZgDxvaGqP/m
-         KpoMUYs+uf0bq4QbaK9tVHYnq16V1te91foBq4Qnk6EdJi9dXmaVjil+q5LdeIdWgppR
-         UujYQE/f8DTiORI37BMmMNemWvW1tl3Vf5qTRc/feiWdPr1yMbJkG8AwT+fjyt4M67jL
-         7btY37HOE/cfp8/BA1Rjf11cLr9Yv1P76R2jUQNTph0AdSUCDPBvn+Ncs33PCrsiqGEf
-         Zdm0/Ik8AUEMg9tShfWSUnr6VwNcKH3rC/IuxqZ9okbs7uRHiOAzAMrjb5HDyAekYvOl
-         SmFQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YmwvldoBPWC/WT/RXbjQtuTjZqYBNPW2mhbUP/g7mkk=;
+        b=KXKI5iR+QlI/KdDF+TIMTQSlIAEIU2NwdpjFNc77gTncHwCvgnKDhePDMeIjIZE21o
+         fk7io/Zq82vh7JgzlX7ZEaben9WMf+nAuHjT3Kcf5JbG8OeNxKDLguEe/SForVK9sxJN
+         eKjU2vhPKI14DwZoFCvVEEfjdKrB0Al82TRTLedoaxeFX9V9S5he7TT7P5/HEpcX8hhI
+         3FPCkC75lqUP/F06P9hAFD+dMVV2J38iSSaGjASUVGzZx4LMax+pjJWk8FmWBIUMlXDN
+         zwyumFFjA/Of7xc3IQnBgohzEsoEh1RwmIKet7Xwdp+c2+BRqZbMle2gp17fMmw8HC/2
+         D+uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t1DVA3vKOlm/AZ8L4zulEE1hMXuljgOJAsGAyVpUvUI=;
-        b=QoZn45abjglGzAfHqZzVoH8jiJX3gQ3ieKEmwUUuDqDmAe0ByUYg9Ef+eJ8jgogjnB
-         AVH93YKtmq0hytyOTcRtRz3ZHmhk6MgC1F80EgHcPSqbjx8O1AKE8Wtu3OMlsDfM/643
-         Ea2dmi9136FOmD/SbbmpO7S/mExCZI1tk59uYLsCY9iGnO9+EUPvdeUF8mMYN5NnPGal
-         2Q0OkIriUNLGogMlLTQo+139yq3xbvmBqzZqBHsJnN2gnfB89SwttPwfl0CapIVZHPyH
-         u2R0DtSlInrkavTUBs8aytWHCfZsxPXZst7/RkPD8rXPPStow69qIAYfqUCA1SO7lyz+
-         n0Rw==
-X-Gm-Message-State: APjAAAUTXAMCcFkNgclSomiba9epnbnDn9X9THfrOQfw9zcKs1dGjxQJ
-        4J3yS9hZF3XQ8UMCtOiEPgmbR1KSrgYZyrE5N+PMVQ==
-X-Google-Smtp-Source: APXvYqz/pNz6cRXqH8bTMfzVNZ+nlOMnGpp+f52AX7IwmjRsndWr0wWX0fLW2Hnxw2cuDZB95eiTwEgdZSrpMiawh30=
-X-Received: by 2002:ad4:44e2:: with SMTP id p2mr14478831qvt.126.1569010340743;
- Fri, 20 Sep 2019 13:12:20 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YmwvldoBPWC/WT/RXbjQtuTjZqYBNPW2mhbUP/g7mkk=;
+        b=M5Tv3HC6LRQo+eFHrSNhtIyFbmEzfN0IFYWWxAhW0jmjcursKm/ZUjzFlSBCby4r9J
+         7VFD8iBU23vsuiyoZj0cWXKMZhtXKQ4Tv+4X2N2GmqomFhnMDn/Moloz4QrRRZlFJT9k
+         8AIoAQysTI18AXkEoi9qU/JGyW3zF/jO6Xio+3SAQMmJpI1XatHIAjRDbdwsng3uxrOx
+         93xSiX03SJWHdYOzIOPK9GBCk/qbX0jvLfNngK4IykXBiZ21tsjnLlAmJb3bK+xM5Cxl
+         tmeUqc8HvXgvERmc8AzaAk3RgECVEsAp0DJkTxoTEKg9pvp6N68foKaZrDDFu25zRxMP
+         kI8A==
+X-Gm-Message-State: APjAAAXSE9OIGN0I7fcGZXe7iauv8fX7/eFjQZNBdt8ITrX1Do9Ntifl
+        0pFSP7NwaKDO0BNc5Z5SNn1jy/wr
+X-Google-Smtp-Source: APXvYqx6+sdaU70hXxlIPqhW+U3FE2jByAg2cQMt0HBe9NU57j4N0yDakGpC6HOgeDCGa0SnXE2Ouw==
+X-Received: by 2002:adf:f406:: with SMTP id g6mr12752046wro.325.1569010512960;
+        Fri, 20 Sep 2019 13:15:12 -0700 (PDT)
+Received: from [192.168.2.202] (pD9E5A855.dip0.t-ipconnect.de. [217.229.168.85])
+        by smtp.gmail.com with ESMTPSA id w22sm2121846wmc.16.2019.09.20.13.15.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2019 13:15:12 -0700 (PDT)
+Subject: Re: [PATCH] serdev: Add ACPI devices by ResourceSource field
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-serial@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190919195624.1140941-1-luzmaximilian@gmail.com>
+ <79c9533f-882d-f2b2-b6f3-b94fa49b4367@redhat.com>
+From:   Maximilian Luz <luzmaximilian@gmail.com>
+Message-ID: <d5e07b37-c295-91d0-30b4-b12065d2d302@gmail.com>
+Date:   Fri, 20 Sep 2019 22:15:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-References: <cover.1568239378.git.amit.kucheria@linaro.org>
- <8f539b28c25d22b8f515c131cd6b24c309f7ca90.1568239378.git.amit.kucheria@linaro.org>
- <20190913101239.GB2559@bogus>
-In-Reply-To: <20190913101239.GB2559@bogus>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Fri, 20 Sep 2019 13:12:09 -0700
-Message-ID: <CAP245DUykhQ0OCs=BvM6nYD63NoBndn=vGUFEJ=DK7tEXp_=KQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] arm64: Kconfig: Fix VEXPRESS driver dependencies
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lists LAKML <linux-arm-kernel@lists.infradead.org>,
-        arm-soc <arm@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <79c9533f-882d-f2b2-b6f3-b94fa49b4367@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 3:12 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On Thu, Sep 12, 2019 at 03:48:47AM +0530, Amit Kucheria wrote:
-> > Push various VEXPRESS drivers behind ARCH_VEXPRESS dependency so that it
-> > doesn't get enabled by default on other platforms.
-> >
->
-> I couldn't understand the motivation for these changes from the cover letter.
+Hi,
 
-Yes, the cover letter for this series needs to be a lot better. Sorry.
-In summary, I found a bunch of drivers in defconfig that were getting
-called in early_initcall and core_initcall even when the platform or
-COMPILE_TEST was not enabled. So I was just trying to ring fence some
-of those drivers as a proof of concept to see if these changes were
-acceptable upstream.
+On 9/20/19 10:50 AM, Hans de Goede wrote:
+> Also I will give this a test-run on some of the existing devices
+> which rely on the instantiation of serdev devices for ACPI
+> devices which are childs of the uart device.
 
-Let me try again with a better cover letter and using the pattern Arnd
-suggested elsewhere.
+Thank you for testing! Will get to your other mail shortly.
 
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  drivers/bus/Kconfig           | 2 +-
-> >  drivers/clk/versatile/Kconfig | 4 ++--
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> > index d80e8d70bf10..b2b1beee9953 100644
-> > --- a/drivers/bus/Kconfig
-> > +++ b/drivers/bus/Kconfig
-> > @@ -166,7 +166,7 @@ config UNIPHIER_SYSTEM_BUS
-> >
-> >  config VEXPRESS_CONFIG
-> >       bool "Versatile Express configuration bus"
-> > -     default y if ARCH_VEXPRESS
-> > +     depends on ARCH_VEXPRESS
-> >       depends on ARM || ARM64
-> >       depends on OF
-> >       select REGMAP
-> > diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> > index ac766855ba16..826750292c1e 100644
-> > --- a/drivers/clk/versatile/Kconfig
-> > +++ b/drivers/clk/versatile/Kconfig
-> > @@ -5,8 +5,8 @@ config ICST
-> >  config COMMON_CLK_VERSATILE
-> >       bool "Clock driver for ARM Reference designs"
-> >       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
-> > -             ARCH_VERSATILE || ARCH_VEXPRESS || ARM64 || \
-> > -             COMPILE_TEST
-> > +             ARCH_VERSATILE || ARCH_VEXPRESS || COMPILE_TEST
-> > +     depends on ARM64
->
-> This will break 32-bit platforms.
->
-> --
-> Regards,
-> Sudeep
+> Given the above I think you may want to also limit your patch to
+> only instantiate a "struct device" for the first UARTSerialBusV2
+> in an ACPI "Device()"'s  .
+
+Right, I will change this for a v2 once the issue revealed by your
+testing has been resolved.
+
+> I hope this sheds some clarity on the (muddy) situation wrt
+> I2cSerialBusV2 handling.
+
+Thank you again, this has definitely helped clear things up for me and
+your write-up is much appreciated!
+
+Maximilian
