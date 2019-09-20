@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE23EB92C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AB55B927B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388238AbfITOfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:35:19 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36038 "EHLO
+        id S2391458AbfITOdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:33:08 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36420 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388129AbfITOZE (ORCPT
+        by vger.kernel.org with ESMTP id S2388259AbfITOZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:04 -0400
+        Fri, 20 Sep 2019 10:25:09 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0004xz-HJ; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqH-00051F-U6; Fri, 20 Sep 2019 15:25:02 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007tY-OO; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqH-0007yD-62; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,12 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johan Hovold" <johan@kernel.org>
+        "ruippan" <ruippan@tencent.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "yongduan" <yongduan@tencent.com>,
+        "Tyler Hicks" <tyhicks@canonical.com>,
+        "Lidong Chen" <lidongchen@tencent.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.882376429@decadent.org.uk>
+Message-ID: <lsq.1568989415.700934050@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 062/132] USB: serial: fix initial-termios handling
+Subject: [PATCH 3.16 112/132] vhost: make sure log_num < in_num
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -46,72 +50,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: yongduan <yongduan@tencent.com>
 
-commit 579bebe5dd522580019e7b10b07daaf500f9fb1e upstream.
+commit 060423bfdee3f8bc6e2c1bac97de24d5415e2bc4 upstream.
 
-The USB-serial driver init_termios callback is used to override the
-default initial terminal settings provided by USB-serial core.
+The code assumes log_num < in_num everywhere, and that is true as long as
+in_num is incremented by descriptor iov count, and log_num by 1. However
+this breaks if there's a zero sized descriptor.
 
-After a bug was fixed in the original implementation introduced by
-commit fe1ae7fdd2ee ("tty: USB serial termios bits"), the init_termios
-callback was no longer called just once on first use as intended but
-rather on every (first) open.
+As a result, if a malicious guest creates a vring desc with desc.len = 0,
+it may cause the host kernel to crash by overflowing the log array. This
+bug can be triggered during the VM migration.
 
-This specifically meant that the terminal settings saved on (final)
-close were ignored when reopening a port for drivers overriding the
-initial settings.
+There's no need to log when desc.len = 0, so just don't increment log_num
+in this case.
 
-Also update the outdated function header referring to the creation of
-termios objects.
-
-Fixes: 7e29bb4b779f ("usb-serial: fix termios initialization logic")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: 3a4d5c94e959 ("vhost_net: a kernel-level virtio server")
+Reviewed-by: Lidong Chen <lidongchen@tencent.com>
+Signed-off-by: ruippan <ruippan@tencent.com>
+Signed-off-by: yongduan <yongduan@tencent.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/usb-serial.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/vhost/vhost.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/usb-serial.c
-+++ b/drivers/usb/serial/usb-serial.c
-@@ -167,9 +167,9 @@ void usb_serial_put(struct usb_serial *s
-  * @driver: the driver (USB in our case)
-  * @tty: the tty being created
-  *
-- * Create the termios objects for this tty.  We use the default
-+ * Initialise the termios structure for this tty.  We use the default
-  * USB serial settings but permit them to be overridden by
-- * serial->type->init_termios.
-+ * serial->type->init_termios on first open.
-  *
-  * This is the first place a new tty gets used.  Hence this is where we
-  * acquire references to the usb_serial structure and the driver module,
-@@ -181,6 +181,7 @@ static int serial_install(struct tty_dri
- 	int idx = tty->index;
- 	struct usb_serial *serial;
- 	struct usb_serial_port *port;
-+	bool init_termios;
- 	int retval = -ENODEV;
- 
- 	port = usb_serial_port_get_by_minor(idx);
-@@ -195,14 +196,16 @@ static int serial_install(struct tty_dri
- 	if (retval)
- 		goto error_get_interface;
- 
-+	init_termios = (driver->termios[idx] == NULL);
-+
- 	retval = tty_port_install(&port->port, driver, tty);
- 	if (retval)
- 		goto error_init_termios;
- 
- 	mutex_unlock(&serial->disc_mutex);
- 
--	/* allow the driver to update the settings */
--	if (serial->type->init_termios)
-+	/* allow the driver to update the initial settings */
-+	if (init_termios && serial->type->init_termios)
- 		serial->type->init_termios(tty);
- 
- 	tty->driver_data = port;
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -1194,7 +1194,7 @@ static int get_indirect(struct vhost_vir
+ 		/* If this is an input descriptor, increment that count. */
+ 		if (desc.flags & VRING_DESC_F_WRITE) {
+ 			*in_num += ret;
+-			if (unlikely(log)) {
++			if (unlikely(log && ret)) {
+ 				log[*log_num].addr = desc.addr;
+ 				log[*log_num].len = desc.len;
+ 				++*log_num;
+@@ -1317,7 +1317,7 @@ int vhost_get_vq_desc(struct vhost_virtq
+ 			/* If this is an input descriptor,
+ 			 * increment that count. */
+ 			*in_num += ret;
+-			if (unlikely(log)) {
++			if (unlikely(log && ret)) {
+ 				log[*log_num].addr = desc.addr;
+ 				log[*log_num].len = desc.len;
+ 				++*log_num;
 
