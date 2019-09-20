@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B8D8B9282
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27831B927A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390706AbfITOc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:32:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36466 "EHLO
+        id S2391431AbfITOdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:33:06 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36440 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388273AbfITOZJ (ORCPT
+        by vger.kernel.org with ESMTP id S2388266AbfITOZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Sep 2019 10:25:09 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqN-00051E-LP; Fri, 20 Sep 2019 15:25:07 +0100
+        id 1iBJqN-0004xy-7v; Fri, 20 Sep 2019 15:25:07 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqG-0007w5-98; Fri, 20 Sep 2019 15:25:00 +0100
+        id 1iBJqG-0007wz-MZ; Fri, 20 Sep 2019 15:25:00 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Lukas Czerner" <lczerner@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>
+        "Bob Peterson" <rpeterso@redhat.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.281627329@decadent.org.uk>
+Message-ID: <lsq.1568989415.156942783@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 093/132] ext4: fix data corruption caused by
- overlapping unaligned and aligned IO
+Subject: [PATCH 3.16 102/132] GFS2: Fix rgrp end rounding problem for
+ bsize < page size
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,49 +47,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Czerner <lczerner@redhat.com>
+From: Bob Peterson <rpeterso@redhat.com>
 
-commit 57a0da28ced8707cb9f79f071a016b9d005caf5a upstream.
+commit 31dddd9eb9ebae9a2a9b502750e9e481d752180a upstream.
 
-Unaligned AIO must be serialized because the zeroing of partial blocks
-of unaligned AIO can result in data corruption in case it's overlapping
-another in flight IO.
+This patch fixes a bug introduced by commit 7005c3e. That patch
+tries to map a vm range for resource groups, but the calculation
+breaks down when the block size is less than the page size.
 
-Currently we wait for all unwritten extents before we submit unaligned
-AIO which protects data in case of unaligned AIO is following overlapping
-IO. However if a unaligned AIO is followed by overlapping aligned AIO we
-can still end up corrupting data.
-
-To fix this, we must make sure that the unaligned AIO is the only IO in
-flight by waiting for unwritten extents conversion not just before the
-IO submission, but right after it as well.
-
-This problem can be reproduced by xfstest generic/538
-
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-[bwh: Backported to 3.16:
- - Test aio_mutex instead of unaligned_aio
- - Adjust context]
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/file.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/gfs2/rgrp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -173,6 +173,13 @@ ext4_file_write_iter(struct kiocb *iocb,
- 	}
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -926,8 +926,9 @@ static int read_rindex_entry(struct gfs2
+ 		goto fail;
  
- 	ret = __generic_file_write_iter(iocb, from);
-+	/*
-+	 * Unaligned direct AIO must be the only IO in flight. Otherwise
-+	 * overlapping aligned IO after unaligned might result in data
-+	 * corruption.
-+	 */
-+	if (ret == -EIOCBQUEUED && aio_mutex)
-+		ext4_unwritten_wait(inode);
- 	mutex_unlock(&inode->i_mutex);
- 
- 	if (ret > 0) {
+ 	rgd->rd_gl->gl_object = rgd;
+-	rgd->rd_gl->gl_vm.start = rgd->rd_addr * bsize;
+-	rgd->rd_gl->gl_vm.end = rgd->rd_gl->gl_vm.start + (rgd->rd_length * bsize) - 1;
++	rgd->rd_gl->gl_vm.start = (rgd->rd_addr * bsize) & PAGE_CACHE_MASK;
++	rgd->rd_gl->gl_vm.end = PAGE_CACHE_ALIGN((rgd->rd_addr +
++						  rgd->rd_length) * bsize) - 1;
+ 	rgd->rd_rgl = (struct gfs2_rgrp_lvb *)rgd->rd_gl->gl_lksb.sb_lvbptr;
+ 	rgd->rd_flags &= ~GFS2_RDF_UPTODATE;
+ 	if (rgd->rd_data > sdp->sd_max_rg_data)
 
