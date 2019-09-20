@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF9CEB9321
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E687B92E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392870AbfITOh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:37:57 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35762 "EHLO
+        id S2392027AbfITOgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:36:21 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35836 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388020AbfITOZA (ORCPT
+        by vger.kernel.org with ESMTP id S2388055AbfITOZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:00 -0400
+        Fri, 20 Sep 2019 10:25:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0004wz-P8; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqD-0004xC-Vu; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007qe-Rj; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqD-0007rD-2D; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will.deacon@arm.com>, "Jann Horn" <jannh@google.com>
+        "Guenter Roeck" <linux@roeck-us.net>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.890702323@decadent.org.uk>
+Message-ID: <lsq.1568989415.800348046@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 026/132] arm64: compat: Reduce address limit
+Subject: [PATCH 3.16 033/132] hwmon: (vt1211) Use request_muxed_region for
+ Super-IO accesses
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,50 +47,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+From: Guenter Roeck <linux@roeck-us.net>
 
-commit d263119387de9975d2acba1dfd3392f7c5979c18 upstream.
+commit 14b97ba5c20056102b3dd22696bf17b057e60976 upstream.
 
-Currently, compat tasks running on arm64 can allocate memory up to
-TASK_SIZE_32 (UL(0x100000000)).
+Super-IO accesses may fail on a system with no or unmapped LPC bus.
 
-This means that mmap() allocations, if we treat them as returning an
-array, are not compliant with the sections 6.5.8 of the C standard
-(C99) which states that: "If the expression P points to an element of
-an array object and the expression Q points to the last element of the
-same array object, the pointer expression Q+1 compares greater than P".
+Also, other drivers may attempt to access the LPC bus at the same time,
+resulting in undefined behavior.
 
-Redefine TASK_SIZE_32 to address the issue.
+Use request_muxed_region() to ensure that IO access on the requested
+address space is supported, and to ensure that access by multiple drivers
+is synchronized.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Jann Horn <jannh@google.com>
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-[will: fixed typo in comment]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-[bwh: Backported to 3.16: adjust filename]
+Fixes: 2219cd81a6cd ("hwmon/vt1211: Add probing of alternate config index port")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm64/include/asm/memory.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/hwmon/vt1211.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -53,7 +53,15 @@
- #define TASK_SIZE_64		(UL(1) << VA_BITS)
+--- a/drivers/hwmon/vt1211.c
++++ b/drivers/hwmon/vt1211.c
+@@ -226,15 +226,21 @@ static inline void superio_select(int si
+ 	outb(ldn, sio_cip + 1);
+ }
  
- #ifdef CONFIG_COMPAT
-+#ifdef CONFIG_ARM64_64K_PAGES
-+/*
-+ * With CONFIG_ARM64_64K_PAGES enabled, the last page is occupied
-+ * by the compat vectors page.
-+ */
- #define TASK_SIZE_32		UL(0x100000000)
-+#else
-+#define TASK_SIZE_32		(UL(0x100000000) - PAGE_SIZE)
-+#endif /* CONFIG_ARM64_64K_PAGES */
- #define TASK_SIZE		(test_thread_flag(TIF_32BIT) ? \
- 				TASK_SIZE_32 : TASK_SIZE_64)
- #define TASK_SIZE_OF(tsk)	(test_tsk_thread_flag(tsk, TIF_32BIT) ? \
+-static inline void superio_enter(int sio_cip)
++static inline int superio_enter(int sio_cip)
+ {
++	if (!request_muxed_region(sio_cip, 2, DRVNAME))
++		return -EBUSY;
++
+ 	outb(0x87, sio_cip);
+ 	outb(0x87, sio_cip);
++
++	return 0;
+ }
+ 
+ static inline void superio_exit(int sio_cip)
+ {
+ 	outb(0xaa, sio_cip);
++	release_region(sio_cip, 2);
+ }
+ 
+ /* ---------------------------------------------------------------------
+@@ -1280,11 +1286,14 @@ EXIT:
+ 
+ static int __init vt1211_find(int sio_cip, unsigned short *address)
+ {
+-	int err = -ENODEV;
++	int err;
+ 	int devid;
+ 
+-	superio_enter(sio_cip);
++	err = superio_enter(sio_cip);
++	if (err)
++		return err;
+ 
++	err = -ENODEV;
+ 	devid = force_id ? force_id : superio_inb(sio_cip, SIO_VT1211_DEVID);
+ 	if (devid != SIO_VT1211_ID)
+ 		goto EXIT;
 
