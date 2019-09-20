@@ -2,49 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C54B953B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 981F0B956F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:23:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405537AbfITQVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:21:55 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52895 "EHLO
+        id S2404820AbfITQVK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:21:10 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52750 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405374AbfITQVk (ORCPT
+        with ESMTP id S2393448AbfITQVJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:21:40 -0400
+        Fri, 20 Sep 2019 12:21:09 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iBLeV-00040t-1S; Fri, 20 Sep 2019 18:20:59 +0200
+        id 1iBLeV-00040u-OQ; Fri, 20 Sep 2019 18:20:59 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id CE4B71C0E2D;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9D1541C0E2C;
         Fri, 20 Sep 2019 18:20:57 +0200 (CEST)
 Date:   Fri, 20 Sep 2019 16:20:57 -0000
-From:   "tip-bot2 for Sakari Ailus" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Srikar Dronamraju" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] tools lib traceevent: Convert remaining %p[fF]
- users to %p[sS]
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        devicetree@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Joe Perches <joe@perches.com>,
-        linux-acpi@vger.kernel.org, linux-trace-devel@vger.kernel.org,
-        Namhyung Kim <namhyung@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+Subject: [tip: perf/urgent] perf stat: Reset previous counts on repeat with interval
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Stephane Eranian <eranian@google.com>, stable@vger.kernel.org,
+        #@tip-bot2.tec.linutronix.de, v3.9+@tip-bot2.tec.linutronix.de,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190918133419.7969-2-sakari.ailus@linux.intel.com>
-References: <20190918133419.7969-2-sakari.ailus@linux.intel.com>
+In-Reply-To: <20190904094738.9558-2-srikar@linux.vnet.ibm.com>
+References: <20190904094738.9558-2-srikar@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Message-ID: <156899645777.24167.16043877590667740321.tip-bot2@tip-bot2>
+Message-ID: <156899645757.24167.10654954672512242730.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -60,100 +54,167 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     b295c3e39c1383e06ba1db4dd836018502e2ff3a
-Gitweb:        https://git.kernel.org/tip/b295c3e39c1383e06ba1db4dd836018502e2ff3a
-Author:        Sakari Ailus <sakari.ailus@linux.intel.com>
-AuthorDate:    Wed, 18 Sep 2019 16:34:07 +03:00
+Commit-ID:     b63fd11cced17fcb8e133def29001b0f6aaa5e06
+Gitweb:        https://git.kernel.org/tip/b63fd11cced17fcb8e133def29001b0f6aaa5e06
+Author:        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+AuthorDate:    Wed, 04 Sep 2019 15:17:37 +05:30
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Fri, 20 Sep 2019 10:28:26 -03:00
 
-tools lib traceevent: Convert remaining %p[fF] users to %p[sS]
+perf stat: Reset previous counts on repeat with interval
 
-There are no in-kernel %p[fF] users left. Convert the traceevent tool,
-too, to align with the kernel.
+When using 'perf stat' with repeat and interval option, it shows wrong
+values for events.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: devicetree@vger.kernel.org
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: linux-acpi@vger.kernel.org
-Cc: linux-trace-devel@vger.kernel.org
+The wrong values will be shown for the first interval on the second and
+subsequent repetitions.
+
+Without the fix:
+
+  # perf stat -r 3 -I 2000 -e faults -e sched:sched_switch -a sleep 5
+
+     2.000282489                 53      faults
+     2.000282489                513      sched:sched_switch
+     4.005478208              3,721      faults
+     4.005478208              2,666      sched:sched_switch
+     5.025470933                395      faults
+     5.025470933              1,307      sched:sched_switch
+     2.009602825 1,84,46,74,40,73,70,95,47,520      faults 		<------
+     2.009602825 1,84,46,74,40,73,70,95,49,568      sched:sched_switch  <------
+     4.019612206              4,730      faults
+     4.019612206              2,746      sched:sched_switch
+     5.039615484              3,953      faults
+     5.039615484              1,496      sched:sched_switch
+     2.000274620 1,84,46,74,40,73,70,95,47,520      faults		<------
+     2.000274620 1,84,46,74,40,73,70,95,47,520      sched:sched_switch	<------
+     4.000480342              4,282      faults
+     4.000480342              2,303      sched:sched_switch
+     5.000916811              1,322      faults
+     5.000916811              1,064      sched:sched_switch
+  #
+
+prev_raw_counts is allocated when using intervals. This is used when
+calculating the difference in the counts of events when using interval.
+
+The current counts are stored in prev_raw_counts to calculate the
+differences in the next iteration.
+
+On the first interval of the second and subsequent repetitions,
+prev_raw_counts would be the values stored in the last interval of the
+previous repetitions, while the current counts will only be for the
+first interval of the current repetition.
+
+Hence there is a possibility of events showing up as big number.
+
+Fix this by resetting prev_raw_counts whenever perf stat repeats the
+command.
+
+With the fix:
+
+  # perf stat -r 3 -I 2000 -e faults -e sched:sched_switch -a sleep 5
+
+     2.019349347              2,597      faults
+     2.019349347              2,753      sched:sched_switch
+     4.019577372              3,098      faults
+     4.019577372              2,532      sched:sched_switch
+     5.019415481              1,879      faults
+     5.019415481              1,356      sched:sched_switch
+     2.000178813              8,468      faults
+     2.000178813              2,254      sched:sched_switch
+     4.000404621              7,440      faults
+     4.000404621              1,266      sched:sched_switch
+     5.040196079              2,458      faults
+     5.040196079                556      sched:sched_switch
+     2.000191939              6,870      faults
+     2.000191939              1,170      sched:sched_switch
+     4.000414103                541      faults
+     4.000414103                902      sched:sched_switch
+     5.000809863                450      faults
+     5.000809863                364      sched:sched_switch
+  #
+
+Committer notes:
+
+This was broken since the cset introducing the --interval feature, i.e.
+--repeat + --interval wasn't tested at that point, add the Fixes tag so
+that automatic scripts can pick this up.
+
+Fixes: 13370a9b5bb8 ("perf stat: Add interval printing")
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Rafael J. Wysocki <rafael@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Link: http://lore.kernel.org/lkml/20190918133419.7969-2-sakari.ailus@linux.intel.com
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: stable@vger.kernel.org # v3.9+
+Link: http://lore.kernel.org/lkml/20190904094738.9558-2-srikar@linux.vnet.ibm.com
+[ Fixed up conflicts with libperf, i.e. some perf_{evsel,evlist} lost the 'perf' prefix ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt | 10 ++--
- tools/lib/traceevent/event-parse.c                             | 18 +++++--
- 2 files changed, 19 insertions(+), 9 deletions(-)
+ tools/perf/builtin-stat.c |  3 +++
+ tools/perf/util/stat.c    | 17 +++++++++++++++++
+ tools/perf/util/stat.h    |  1 +
+ 3 files changed, 21 insertions(+)
 
-diff --git a/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt b/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt
-index 38bfea3..f6aca0d 100644
---- a/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt
-+++ b/tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt
-@@ -59,12 +59,12 @@ parser context.
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index eece3d1..fa4b148 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -1952,6 +1952,9 @@ int cmd_stat(int argc, const char **argv)
+ 			fprintf(output, "[ perf stat: executing run #%d ... ]\n",
+ 				run_idx + 1);
  
- The _tep_register_function()_ function registers a function name mapped to an
- address and (optional) module. This mapping is used in case the function tracer
--or events have "%pF" or "%pS" parameter in its format string. It is common to
--pass in the kallsyms function names with their corresponding addresses with this
-+or events have "%pS" parameter in its format string. It is common to pass in
-+the kallsyms function names with their corresponding addresses with this
- function. The _tep_ argument is the trace event parser context. The _name_ is
--the name of the function, the string is copied internally. The _addr_ is
--the start address of the function. The _mod_ is the kernel module
--the function may be in (NULL for none).
-+the name of the function, the string is copied internally. The _addr_ is the
-+start address of the function. The _mod_ is the kernel module the function may
-+be in (NULL for none).
++		if (run_idx != 0)
++			perf_evlist__reset_prev_raw_counts(evsel_list);
++
+ 		status = run_perf_stat(argc, argv, run_idx);
+ 		if (forever && status != -1) {
+ 			print_counters(NULL, argc, argv);
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index 0657120..fcd5434 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -162,6 +162,15 @@ static void perf_evsel__free_prev_raw_counts(struct evsel *evsel)
+ 	evsel->prev_raw_counts = NULL;
+ }
  
- The _tep_register_print_string()_ function  registers a string by the address
- it was stored in the kernel. Some strings internal to the kernel with static
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index bb22238..6f842af 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -4367,10 +4367,20 @@ static struct tep_print_arg *make_bprint_args(char *fmt, void *data, int size, s
- 					switch (*ptr) {
- 					case 's':
- 					case 'S':
--					case 'f':
--					case 'F':
- 					case 'x':
- 						break;
-+					case 'f':
-+					case 'F':
-+						/*
-+						 * Pre-5.5 kernels use %pf and
-+						 * %pF for printing symbols
-+						 * while kernels since 5.5 use
-+						 * %pfw for fwnodes. So check
-+						 * %p[fF] isn't followed by 'w'.
-+						 */
-+						if (ptr[1] != 'w')
-+							break;
-+						/* fall through */
- 					default:
- 						/*
- 						 * Older kernels do not process
-@@ -4487,12 +4497,12 @@ get_bprint_format(void *data, int size __maybe_unused,
- 
- 	printk = find_printk(tep, addr);
- 	if (!printk) {
--		if (asprintf(&format, "%%pf: (NO FORMAT FOUND at %llx)\n", addr) < 0)
-+		if (asprintf(&format, "%%ps: (NO FORMAT FOUND at %llx)\n", addr) < 0)
- 			return NULL;
- 		return format;
++static void perf_evsel__reset_prev_raw_counts(struct evsel *evsel)
++{
++	if (evsel->prev_raw_counts) {
++		evsel->prev_raw_counts->aggr.val = 0;
++		evsel->prev_raw_counts->aggr.ena = 0;
++		evsel->prev_raw_counts->aggr.run = 0;
++       }
++}
++
+ static int perf_evsel__alloc_stats(struct evsel *evsel, bool alloc_raw)
+ {
+ 	int ncpus = perf_evsel__nr_cpus(evsel);
+@@ -212,6 +221,14 @@ void perf_evlist__reset_stats(struct evlist *evlist)
  	}
+ }
  
--	if (asprintf(&format, "%s: %s", "%pf", printk->printk) < 0)
-+	if (asprintf(&format, "%s: %s", "%ps", printk->printk) < 0)
- 		return NULL;
++void perf_evlist__reset_prev_raw_counts(struct evlist *evlist)
++{
++	struct evsel *evsel;
++
++	evlist__for_each_entry(evlist, evsel)
++		perf_evsel__reset_prev_raw_counts(evsel);
++}
++
+ static void zero_per_pkg(struct evsel *counter)
+ {
+ 	if (counter->per_pkg_mask)
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 0f9c9f6..edbeb2f 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -193,6 +193,7 @@ void perf_stat__collect_metric_expr(struct evlist *);
+ int perf_evlist__alloc_stats(struct evlist *evlist, bool alloc_raw);
+ void perf_evlist__free_stats(struct evlist *evlist);
+ void perf_evlist__reset_stats(struct evlist *evlist);
++void perf_evlist__reset_prev_raw_counts(struct evlist *evlist);
  
- 	return format;
+ int perf_stat_process_counter(struct perf_stat_config *config,
+ 			      struct evsel *counter);
