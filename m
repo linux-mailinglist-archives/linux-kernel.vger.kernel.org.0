@@ -2,88 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDE6EB959E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8436CB95AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391841AbfITQ0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:26:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35476 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388770AbfITQ0K (ORCPT
+        id S2391067AbfITQaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:30:14 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45317 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388966AbfITQaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:26:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V/m8W9O2Haha1e8N7X661vaEYz514z0rIXOBFhZpOLk=; b=hnv/JQKMMZUbM9rlNbOlzpzJC
-        qtlcxyyrm/vuodKAFzgT0jVLnvq7LNNp2LsmEUWNsBv68rQti2lb8/po6ejkC9YCAZG4ZJySAyRU5
-        OsHSGKhbmILRgR9nzkofugFn6bbDKeh7syXjThHx2CxQEXr23N3QYi5Kl8ik7bG6ybUrvSRgqTjr2
-        Jxm38V5Whlt1KBsDFOsva8FclBT3fsGqai0pRlkWwKJlr6cp45uBiC3Q5Lf4FaAMxhtZRn48ktXbJ
-        2rsT/esVMfHCrp/uX4fJS4xrh2u5aD1DJn+D+Gdb7dZchtzrURT9WouujJ3oWjKcvylDfUVM5ruf4
-        yzH/lpbmA==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iBLjW-0000se-9u; Fri, 20 Sep 2019 16:26:10 +0000
-Subject: Re: [GIT PULL] Kselftest update for Linux 5.4-rc1
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <be8059f4-8e8f-cd18-0978-a9c861f6396b@linuxfoundation.org>
- <CAHk-=wgs+UoZWfHGENWSVBd57Z-Vp0Nqe68R6wkDb5zF+cfvDg@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <adea75a4-d69e-4241-caf3-84c908871fb6@infradead.org>
-Date:   Fri, 20 Sep 2019 09:26:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 20 Sep 2019 12:30:13 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q64so7628387ljb.12
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:30:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3qfHDj62HozW8w7YWwj9CkN9/sQfc3fOAZsNubcgArY=;
+        b=ZQIGHEoM2VE/RUJCyR8wJqhG4SoL3m5ky7t1mnKhLv11uqJxbD6lRJm5k/4ajS8Sdo
+         UMhvXa/MmA5zyCc/ENaP9s79+xZOTrHtnrS7z9ra7Xe2HT/ekZVmC2KO+GbdBvDc35H9
+         t5l05A8TLonE+2sI7SlSpw7F1/5/t4r9zscBw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3qfHDj62HozW8w7YWwj9CkN9/sQfc3fOAZsNubcgArY=;
+        b=UJl/abPJZdpzp/buzTtTwnWTh4yrPxqdflmMJ5pn6r4mA7x5LMpJj7ONpAz8ngWF56
+         o5aWe97LHhMjFkwnWe19uK6sA9/xalHUPi7TFMvqxmZgJ3/OWmdXnym224jJOQ8eJLkI
+         ELI6llcPA4gXGroWqa8r8nh6T/n9PT61WlmFqVEc9KrBfVZOnTzXRQekHABCb1M06Ilp
+         K+Tarkx83zcTQK+vTXPc/WdPc13NVQ3D44K7Acr5mptMN+59FNBTVybzW/Hn0w02Gya4
+         kanddSG1n6qSBPKYqIWW2ees3F21D3pfTtZER5xXUMg7d3FnTVYBoC8wqrxDq1vad7ZT
+         HMLA==
+X-Gm-Message-State: APjAAAXockCX8WBNF88/Af5F7OPcK3ThsLxlgQI2ZdlbLDqEjysNZz8I
+        F8Pgwqjk0nLqtNgmJAcjPihGxck/GL4=
+X-Google-Smtp-Source: APXvYqyuXEBNarP+JG9IoGJ2UZIP6YG0oQQXgktLJYCoQM6oe8ouZojE2j5hfnjO1c7o3WDo5EuiqQ==
+X-Received: by 2002:a2e:58a:: with SMTP id 132mr9187717ljf.132.1568997010688;
+        Fri, 20 Sep 2019 09:30:10 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id s26sm582695lfc.60.2019.09.20.09.30.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2019 09:30:08 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id y3so6282767ljj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 09:30:08 -0700 (PDT)
+X-Received: by 2002:a2e:96d3:: with SMTP id d19mr411864ljj.165.1568997007674;
+ Fri, 20 Sep 2019 09:30:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgs+UoZWfHGENWSVBd57Z-Vp0Nqe68R6wkDb5zF+cfvDg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190912034421.GA2085@darwi-home-pc> <20190912082530.GA27365@mit.edu>
+ <CAHk-=wjyH910+JRBdZf_Y9G54c1M=LBF8NKXB6vJcm9XjLnRfg@mail.gmail.com>
+ <20190914122500.GA1425@darwi-home-pc> <008f17bc-102b-e762-a17c-e2766d48f515@gmail.com>
+ <20190915052242.GG19710@mit.edu> <CAHk-=wgg2T=3KxrO-BY3nHJgMEyApjnO3cwbQb_0vxsn9qKN8Q@mail.gmail.com>
+ <20190918211503.GA1808@darwi-home-pc> <20190918211713.GA2225@darwi-home-pc>
+ <CAHk-=wiCqDiU7SE3FLn2W26MS_voUAuqj5XFa1V_tiGTrrW-zQ@mail.gmail.com>
+ <20190920134609.GA2113@pc> <CALCETrWvE5es3i+to33y6jw=Yf0Tw6ZfV-6QWjZT5v0fo76tWw@mail.gmail.com>
+In-Reply-To: <CALCETrWvE5es3i+to33y6jw=Yf0Tw6ZfV-6QWjZT5v0fo76tWw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 20 Sep 2019 09:29:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgW8rN2EVL_Rdn63V9vQO0GkZ=RQFeqqsYJM==8fujpPg@mail.gmail.com>
+Message-ID: <CAHk-=wgW8rN2EVL_Rdn63V9vQO0GkZ=RQFeqqsYJM==8fujpPg@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 1/1] random: WARN on large getrandom() waits and
+ introduce getrandom2()
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/20/19 9:17 AM, Linus Torvalds wrote:
-> On Tue, Sep 17, 2019 at 12:26 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> This Kselftest update for Linux 5.4-rc1 consists of several fixes to
->> existing tests and adds KUnit, a lightweight unit testing and mocking
->> framework for the Linux kernel from Brendan Higgins.
-> 
-> So I pulled this, but then I almost immediately unpulled it.
-> 
-> My reason for doing that may be odd, but it's because of the top-level
-> 'kunit' directory. This shouldn't be on the top level.
-> 
-> The reason I react so strongly is that it actually breaks my finger
-> memory. I don't type out filenames - I auto-compete them. So "kernel/"
-> is "k<tab>", "drivers/" is "d<tab>" etc.
-> 
-> It already doesn't work for everything ("mm/" is actually "mm<tab>"
-> not because we have files in the git tree, but because the build
-> creates various "module" files), but this breaks a common pattern for
-> me.
-> 
->> In the future KUnit will be linked to Kselftest framework to provide
->> a way to trigger KUnit tests from user-space.
-> 
-> Can the kernel parts please move to lib/kunit/ or something like that?
+On Fri, Sep 20, 2019 at 7:34 AM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> What is this GRND_EXPLICIT thing?
 
-Please also move the top-level Kconfig menu item "KUnit support" to
-somewhere that is not top-level.  Maybe also in the lib/ menu.  Maybe
-in lib/Kconfig.debug.
+Your own email gives the explanation:
 
+> Linus, I disagree that blocking while waiting for randomness is an
+> error.  Sometimes you want to generate a key
 
--- 
-~Randy
+That's *exactly* why GRND_EXPLICIT needs to be done regardless.
+
+The keyword there is "Sometimes".
+
+But people currently use "getrandom(0)" when they DO NOT want a key,
+they just want some miscellaneous random numbers for some totally
+non-security-related reason.
+
+And that will continue. Exactly because the people who do not want a
+key by definition aren't thinking about it very hard.
+
+So the interface was very much mis-designed from the get-go. It was
+designed purely for key people, even though generating keys is by no
+means the most common reason for wanting a block of "random" numbers.
+
+So GRND_EXPLICIT is there very much to make sure people who want true
+secure keys will say so, and five years from now we will not have the
+confusion between "Oh, I wasn't thinking about bootup". Because at a
+minimum, in the near future getrandom(0) will warn about the
+ambiguity. Or it will use some questionable jitter entropy that some
+real key users will look at sideways and go "I don't want that".
+
+This is an ABI design issue. The old ABI was fundamentally misdesigned
+and actively encouraged the current situation of mixing secure and
+insecure callers for that getrandom(0).
+
+And it's entirely orthogonal to _any_ actual technical change we will
+do (like removing the old GRND_RANDOM behavior entirely, which is
+insane for other reasons and nobody ever wanted or likely used).
+
+            Linus
