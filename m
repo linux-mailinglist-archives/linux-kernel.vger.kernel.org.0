@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D71F3B9267
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6568B9332
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391418AbfITOcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:32:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36636 "EHLO
+        id S2392943AbfITOiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:38:25 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35700 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388317AbfITOZM (ORCPT
+        by vger.kernel.org with ESMTP id S2387992AbfITOY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:12 -0400
+        Fri, 20 Sep 2019 10:24:59 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqN-000512-7v; Fri, 20 Sep 2019 15:25:07 +0100
+        id 1iBJqD-0004wl-3q; Fri, 20 Sep 2019 15:24:57 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqG-0007wm-JO; Fri, 20 Sep 2019 15:25:00 +0100
+        id 1iBJqC-0007qF-LQ; Fri, 20 Sep 2019 15:24:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Kumar Gala" <galak@kernel.crashing.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Timur Tabi" <timur@freescale.com>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>,
-        "Mihai Caraman" <mihai.caraman@freescale.com>
+        "=?UTF-8?q?Stefan=20M=C3=A4tje?=" <stefan.maetje@esd.eu>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        "Bjorn Helgaas" <bhelgaas@google.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.737387212@decadent.org.uk>
+Message-ID: <lsq.1568989415.779577266@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 099/132] drivers/virt/fsl_hypervisor.c: dereferencing
- error pointers in ioctl
+Subject: [PATCH 3.16 021/132] PCI: Work around Pericom PCIe-to-PCI bridge
+ Retrain Link erratum
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,101 +49,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Stefan Mätje <stefan.maetje@esd.eu>
 
-commit c8ea3663f7a8e6996d44500ee818c9330ac4fd88 upstream.
+commit 4ec73791a64bab25cabf16a6067ee478692e506d upstream.
 
-strndup_user() returns error pointers on error, and then in the error
-handling we pass the error pointers to kfree().  It will cause an Oops.
+Due to an erratum in some Pericom PCIe-to-PCI bridges in reverse mode
+(conventional PCI on primary side, PCIe on downstream side), the Retrain
+Link bit needs to be cleared manually to allow the link training to
+complete successfully.
 
-Link: http://lkml.kernel.org/r/20181218082003.GD32567@kadam
-Fixes: 6db7199407ca ("drivers/virt: introduce Freescale hypervisor management driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Timur Tabi <timur@freescale.com>
-Cc: Mihai Caraman <mihai.caraman@freescale.com>
-Cc: Kumar Gala <galak@kernel.crashing.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+If it is not cleared manually, the link training is continuously restarted
+and no devices below the PCI-to-PCIe bridge can be accessed.  That means
+drivers for devices below the bridge will be loaded but won't work and may
+even crash because the driver is only reading 0xffff.
+
+See the Pericom Errata Sheet PI7C9X111SLB_errata_rev1.2_102711.pdf for
+details.  Devices known as affected so far are: PI7C9X110, PI7C9X111SL,
+PI7C9X130.
+
+Add a new flag, clear_retrain_link, in struct pci_dev.  Quirks for affected
+devices set this bit.
+
+Note that pcie_retrain_link() lives in aspm.c because that's currently the
+only place we use it, but this erratum is not specific to ASPM, and we may
+retrain links for other reasons in the future.
+
+Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
+[bhelgaas: apply regardless of CONFIG_PCIEASPM]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+[bwh: Backported to 3.16:
+ - Use dev_info() instead of pci_info()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/virt/fsl_hypervisor.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/pci/pcie/aspm.c |  9 +++++++++
+ drivers/pci/quirks.c    | 17 +++++++++++++++++
+ include/linux/pci.h     |  2 ++
+ 3 files changed, 28 insertions(+)
 
---- a/drivers/virt/fsl_hypervisor.c
-+++ b/drivers/virt/fsl_hypervisor.c
-@@ -338,8 +338,8 @@ static long ioctl_dtprop(struct fsl_hv_i
- 	struct fsl_hv_ioctl_prop param;
- 	char __user *upath, *upropname;
- 	void __user *upropval;
--	char *path = NULL, *propname = NULL;
--	void *propval = NULL;
-+	char *path, *propname;
-+	void *propval;
- 	int ret = 0;
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -184,6 +184,15 @@ static bool pcie_retrain_link(struct pci
+ 	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
+ 	reg16 |= PCI_EXP_LNKCTL_RL;
+ 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
++	if (parent->clear_retrain_link) {
++		/*
++		 * Due to an erratum in some devices the Retrain Link bit
++		 * needs to be cleared again manually to allow the link
++		 * training to succeed.
++		 */
++		reg16 &= ~PCI_EXP_LNKCTL_RL;
++		pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
++	}
  
- 	/* Get the parameters from the user. */
-@@ -351,32 +351,30 @@ static long ioctl_dtprop(struct fsl_hv_i
- 	upropval = (void __user *)(uintptr_t)param.propval;
+ 	/* Wait for link training end. Break out after waiting for timeout */
+ 	start_jiffies = jiffies;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -2047,6 +2047,23 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_IN
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f4, quirk_disable_aspm_l0s);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1508, quirk_disable_aspm_l0s);
  
- 	path = strndup_user(upath, FH_DTPROP_MAX_PATHLEN);
--	if (IS_ERR(path)) {
--		ret = PTR_ERR(path);
--		goto out;
--	}
-+	if (IS_ERR(path))
-+		return PTR_ERR(path);
++/*
++ * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
++ * Link bit cleared after starting the link retrain process to allow this
++ * process to finish.
++ *
++ * Affected devices: PI7C9X110, PI7C9X111SL, PI7C9X130.  See also the
++ * Pericom Errata Sheet PI7C9X111SLB_errata_rev1.2_102711.pdf.
++ */
++static void quirk_enable_clear_retrain_link(struct pci_dev *dev)
++{
++	dev->clear_retrain_link = 1;
++	dev_info(&dev->dev, "Enable PCIe Retrain Link quirk\n");
++}
++DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe110, quirk_enable_clear_retrain_link);
++DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe111, quirk_enable_clear_retrain_link);
++DECLARE_PCI_FIXUP_HEADER(0x12d8, 0xe130, quirk_enable_clear_retrain_link);
++
+ static void fixup_rev1_53c810(struct pci_dev *dev)
+ {
+ 	/* rev 1 ncr53c810 chips don't set the class at all which means
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -308,6 +308,8 @@ struct pci_dev {
+ 						   powered on/off by the
+ 						   corresponding bridge */
+ 	unsigned int	ignore_hotplug:1;	/* Ignore hotplug events */
++	unsigned int	clear_retrain_link:1;	/* Need to clear Retrain Link
++						   bit manually */
+ 	unsigned int	d3_delay;	/* D3->D0 transition time in ms */
+ 	unsigned int	d3cold_delay;	/* D3cold->D0 transition time in ms */
  
- 	propname = strndup_user(upropname, FH_DTPROP_MAX_PATHLEN);
- 	if (IS_ERR(propname)) {
- 		ret = PTR_ERR(propname);
--		goto out;
-+		goto err_free_path;
- 	}
- 
- 	if (param.proplen > FH_DTPROP_MAX_PROPLEN) {
- 		ret = -EINVAL;
--		goto out;
-+		goto err_free_propname;
- 	}
- 
- 	propval = kmalloc(param.proplen, GFP_KERNEL);
- 	if (!propval) {
- 		ret = -ENOMEM;
--		goto out;
-+		goto err_free_propname;
- 	}
- 
- 	if (set) {
- 		if (copy_from_user(propval, upropval, param.proplen)) {
- 			ret = -EFAULT;
--			goto out;
-+			goto err_free_propval;
- 		}
- 
- 		param.ret = fh_partition_set_dtprop(param.handle,
-@@ -395,7 +393,7 @@ static long ioctl_dtprop(struct fsl_hv_i
- 			if (copy_to_user(upropval, propval, param.proplen) ||
- 			    put_user(param.proplen, &p->proplen)) {
- 				ret = -EFAULT;
--				goto out;
-+				goto err_free_propval;
- 			}
- 		}
- 	}
-@@ -403,10 +401,12 @@ static long ioctl_dtprop(struct fsl_hv_i
- 	if (put_user(param.ret, &p->ret))
- 		ret = -EFAULT;
- 
--out:
--	kfree(path);
-+err_free_propval:
- 	kfree(propval);
-+err_free_propname:
- 	kfree(propname);
-+err_free_path:
-+	kfree(path);
- 
- 	return ret;
- }
 
