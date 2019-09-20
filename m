@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDCB0B9327
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ECF9B9288
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392933AbfITOiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:38:15 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35694 "EHLO
+        id S2391543AbfITOd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:33:28 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36374 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728899AbfITOY7 (ORCPT
+        by vger.kernel.org with ESMTP id S2388249AbfITOZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:24:59 -0400
+        Fri, 20 Sep 2019 10:25:08 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0004wa-Sk; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqM-0004xe-Ed; Fri, 20 Sep 2019 15:25:06 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007pr-FY; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqH-0007yg-Bc; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "=?UTF-8?q?Noralf=20Tr=C3=B8nnes?=" <noralf@tronnes.org>,
-        "Daniel Vetter" <daniel.vetter@ffwll.ch>
+        "Alan Stern" <stern@rowland.harvard.edu>,
+        "Johan Hovold" <johan@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.173739634@decadent.org.uk>
+Message-ID: <lsq.1568989415.539744470@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 016/132] drm/fb-helper: dpms_legacy(): Only set on
- connectors in use
+Subject: [PATCH 3.16 118/132] media: usb: siano: Fix general protection
+ fault in smsusb
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,52 +49,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Noralf Trønnes <noralf@tronnes.org>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 65a102f68005891d7f39354cfd79099908df6d51 upstream.
+commit 31e0456de5be379b10fea0fa94a681057114a96e upstream.
 
-For each enabled crtc the functions sets dpms on all registered connectors.
-Limit this to only doing it once and on the connectors actually in use.
+The syzkaller USB fuzzer found a general-protection-fault bug in the
+smsusb part of the Siano DVB driver.  The fault occurs during probe
+because the driver assumes without checking that the device has both
+IN and OUT endpoints and the IN endpoint is ep1.
 
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Fixes: 023eb571a1d0 ("drm: correctly update connector DPMS status in drm_fb_helper")
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190326175546.18126-3-noralf@tronnes.org
+By slightly rearranging the driver's initialization code, we can make
+the appropriate checks early on and thus avoid the problem.  If the
+expected endpoints aren't present, the new code safely returns -ENODEV
+from the probe routine.
+
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+Reported-and-tested-by: syzbot+53f029db71c19a47325a@syzkaller.appspotmail.com
+Reviewed-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/drm_fb_helper.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/media/usb/siano/smsusb.c | 33 +++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -453,8 +453,8 @@ static void drm_fb_helper_dpms(struct fb
- {
- 	struct drm_fb_helper *fb_helper = info->par;
- 	struct drm_device *dev = fb_helper->dev;
--	struct drm_crtc *crtc;
- 	struct drm_connector *connector;
-+	struct drm_mode_set *modeset;
- 	int i, j;
+--- a/drivers/media/usb/siano/smsusb.c
++++ b/drivers/media/usb/siano/smsusb.c
+@@ -359,6 +359,7 @@ static int smsusb_init_device(struct usb
+ 	struct smsdevice_params_t params;
+ 	struct smsusb_device_t *dev;
+ 	int i, rc;
++	int in_maxp;
  
- 	/*
-@@ -475,14 +475,13 @@ static void drm_fb_helper_dpms(struct fb
+ 	/* create device object */
+ 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
+@@ -372,6 +373,24 @@ static int smsusb_init_device(struct usb
+ 	dev->udev = interface_to_usbdev(intf);
+ 	dev->state = SMSUSB_DISCONNECTED;
+ 
++	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
++		struct usb_endpoint_descriptor *desc =
++				&intf->cur_altsetting->endpoint[i].desc;
++
++		if (desc->bEndpointAddress & USB_DIR_IN) {
++			dev->in_ep = desc->bEndpointAddress;
++			in_maxp = usb_endpoint_maxp(desc);
++		} else {
++			dev->out_ep = desc->bEndpointAddress;
++		}
++	}
++
++	pr_debug("in_ep = %02x, out_ep = %02x\n", dev->in_ep, dev->out_ep);
++	if (!dev->in_ep || !dev->out_ep) {	/* Missing endpoints? */
++		smsusb_term_device(intf);
++		return -ENODEV;
++	}
++
+ 	params.device_type = sms_get_board(board_id)->type;
+ 
+ 	switch (params.device_type) {
+@@ -386,24 +405,12 @@ static int smsusb_init_device(struct usb
+ 		/* fall-thru */
+ 	default:
+ 		dev->buffer_size = USB2_BUFFER_SIZE;
+-		dev->response_alignment =
+-		    le16_to_cpu(dev->udev->ep_in[1]->desc.wMaxPacketSize) -
+-		    sizeof(struct sms_msg_hdr);
++		dev->response_alignment = in_maxp - sizeof(struct sms_msg_hdr);
+ 
+ 		params.flags |= SMS_DEVICE_FAMILY2;
+ 		break;
  	}
  
- 	for (i = 0; i < fb_helper->crtc_count; i++) {
--		crtc = fb_helper->crtc_info[i].mode_set.crtc;
-+		modeset = &fb_helper->crtc_info[i].mode_set;
- 
--		if (!crtc->enabled)
-+		if (!modeset->crtc->enabled)
- 			continue;
- 
--		/* Walk the connectors & encoders on this fb turning them on/off */
--		for (j = 0; j < fb_helper->connector_count; j++) {
--			connector = fb_helper->connector_info[j]->connector;
-+		for (j = 0; j < modeset->num_connectors; j++) {
-+			connector = modeset->connectors[j];
- 			connector->funcs->dpms(connector, dpms_mode);
- 			drm_object_property_set_value(&connector->base,
- 				dev->mode_config.dpms_property, dpms_mode);
+-	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
+-		if (intf->cur_altsetting->endpoint[i].desc. bEndpointAddress & USB_DIR_IN)
+-			dev->in_ep = intf->cur_altsetting->endpoint[i].desc.bEndpointAddress;
+-		else
+-			dev->out_ep = intf->cur_altsetting->endpoint[i].desc.bEndpointAddress;
+-	}
+-
+-	sms_info("in_ep = %02x, out_ep = %02x",
+-		dev->in_ep, dev->out_ep);
+-
+ 	params.device = &dev->udev->dev;
+ 	params.buffer_size = dev->buffer_size;
+ 	params.num_buffers = MAX_BUFFERS;
 
