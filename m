@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F12B9292
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3229B922A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391621AbfITOdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:33:49 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36340 "EHLO
+        id S2388782AbfITOZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:25:54 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36108 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388238AbfITOZH (ORCPT
+        by vger.kernel.org with ESMTP id S2388141AbfITOZE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:07 -0400
+        Fri, 20 Sep 2019 10:25:04 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqM-0004xX-3Q; Fri, 20 Sep 2019 15:25:06 +0100
+        id 1iBJqH-0004xy-Gw; Fri, 20 Sep 2019 15:25:01 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007ym-CS; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqE-0007td-Oy; Fri, 20 Sep 2019 15:24:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "kbuild test robot" <lkp@intel.com>,
-        "Alan Stern" <stern@rowland.harvard.edu>
+        "Kailang Yang" <kailang@realtek.com>,
+        "Takashi Iwai" <tiwai@suse.de>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.935204598@decadent.org.uk>
+Message-ID: <lsq.1568989415.213396990@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 119/132] media: usb: siano: Fix false-positive
- "uninitialized variable" warning
+Subject: [PATCH 3.16 063/132] ALSA: hda/realtek - EAPD turn on later
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,31 +47,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 45457c01171fd1488a7000d1751c06ed8560ee38 upstream.
+commit 607ca3bd220f4022e6f5356026b19dafc363863a upstream.
 
-GCC complains about an apparently uninitialized variable recently
-added to smsusb_init_device().  It's a false positive, but to silence
-the warning this patch adds a trivial initialization.
+Let EAPD turn on after set pin output.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[ NOTE: This change is supposed to reduce the possible click noises at
+  (runtime) PM resume.  The functionality should be same (i.e. the
+  verbs are executed correctly) no matter which order is, so this
+  should be safe to apply for all codecs -- tiwai ]
+
+Signed-off-by: Kailang Yang <kailang@realtek.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/usb/siano/smsusb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/media/usb/siano/smsusb.c
-+++ b/drivers/media/usb/siano/smsusb.c
-@@ -359,7 +359,7 @@ static int smsusb_init_device(struct usb
- 	struct smsdevice_params_t params;
- 	struct smsusb_device_t *dev;
- 	int i, rc;
--	int in_maxp;
-+	int in_maxp = 0;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -831,11 +831,10 @@ static int alc_init(struct hda_codec *co
+ 	if (spec->init_hook)
+ 		spec->init_hook(codec);
  
- 	/* create device object */
- 	dev = kzalloc(sizeof(struct smsusb_device_t), GFP_KERNEL);
++	snd_hda_gen_init(codec);
+ 	alc_fix_pll(codec);
+ 	alc_auto_init_amp(codec, spec->init_amp);
+ 
+-	snd_hda_gen_init(codec);
+-
+ 	snd_hda_apply_fixup(codec, HDA_FIXUP_ACT_INIT);
+ 
+ 	return 0;
 
