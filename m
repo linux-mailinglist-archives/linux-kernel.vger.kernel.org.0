@@ -2,107 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB703B8EBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA043B8EB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438067AbfITK6Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 06:58:25 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:35685 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405611AbfITK6Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 06:58:24 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id BBF233C057C;
-        Fri, 20 Sep 2019 12:58:20 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id tAlcWgkEYNsu; Fri, 20 Sep 2019 12:58:15 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 25BE63C04C0;
-        Fri, 20 Sep 2019 12:58:15 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 20 Sep
- 2019 12:58:14 +0200
-Date:   Fri, 20 Sep 2019 12:58:11 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>,
-        <linux-renesas-soc@vger.kernel.org>
-CC:     <fweisbec@gmail.com>, <tglx@linutronix.de>, <mingo@kernel.org>,
-        <erosca@de.adit-jv.com>, <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH V1 0/1] tick: broadcast-hrtimer: Fix a race in bc_set_next
-Message-ID: <20190920105811.GA16527@vmlxhi-102.adit-jv.com>
-References: <20190918144138.24839-1-balasubramani_vivekanandan@mentor.com>
+        id S2438070AbfITKzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 06:55:20 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2700 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2408762AbfITKzU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 06:55:20 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C58A4FE6724F5DA473F8;
+        Fri, 20 Sep 2019 18:55:18 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 20 Sep 2019 18:55:10 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Joe Perches <joe@perches.com>, Arnd Bergmann <arnd@arndb.de>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, <linux-kernel@vger.kernel.org>
+CC:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        "Andy Shevchenko" <andy@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v2 1/3] platform/x86: eeepc-laptop: Use pr_warn instead of pr_warning
+Date:   Fri, 20 Sep 2019 19:12:05 +0800
+Message-ID: <20190920111207.129106-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <CAHp75VdQES5oasGzi0JdnZAEL2AfCozHJaHBa9dpg1Ya_N17-A@mail.gmail.com>
+References: <CAHp75VdQES5oasGzi0JdnZAEL2AfCozHJaHBa9dpg1Ya_N17-A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190918144138.24839-1-balasubramani_vivekanandan@mentor.com>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+linux-renesas-soc
+As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
+pr_warning"), removing pr_warning so all logging messages use a
+consistent <prefix>_warn style. Let's do it.
 
-In hope that the issue reported in [1] was seen by other members of
-Renesas community.
+Cc: Corentin Chary <corentin.chary@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andy@infradead.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+---
+ drivers/platform/x86/eeepc-laptop.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1] https://lkml.org/lkml/2019/9/18/711
-
-On Wed, Sep 18, 2019 at 04:41:37PM +0200, Balasubramani Vivekanandan wrote:
-> I was investigating a rcu stall warning on ARM64 Renesas Rcar3
-> platform. On analysis I found that rcu stall warning was because the
-> rcu_preempt kthread was starved of cpu time. rcu_preempt was blocked in
-> the function schedule_timeout() and never woken up. On further
-> investigation I found that local timer interrupts were not happening on
-> the cpu where the rcu_preempt kthread was blocked. So the rcu_preempt
-> was not woken up after timeout.
-> I continued my analysis to debug why the timer failed on the cpu. I
-> found that when cpu goes through idle state cycle, the timer failure
-> happens. When the cpu enters the idle state it subscribes to the tick
-> broadcast clock and shutsdown the local timer. Then on exit from idle
-> state the local timer is programmed to fire interrupts. But I found that
-> the during the error scenario, cpu fails to program the local timer on
-> exit from idle state. The below code in
-> __tick_broadcast_oneshot_control() is where the idle code exit path goes
-> through and fails to program the timer hardware
-> 
-> now = ktime_get();
-> if (dev->next_event <= now) {
-> 	cpumask_set_cpu(cpu, tick_broadcast_force_mask);
-> 		goto out;
-> }
-> 
-> The value in next_event will be earlier than current time because the
-> tick broadcast clock did not wake up the cpu on its subcribed
-> timeout. Later when the cpu is woken up due to some other event this
-> condition will arise. After the cpu woken up, any further timeout
-> requests by any task on the cpu might fail to program the timer
-> hardware because the value in next_event will be earlier than the
-> current time.
-> Then I focussed on why the tick broadcast clock failed to wake up the
-> cpu. I noticed a race condition in the hrtimer based tick broadcast
-> clock. The race condition results in a condition where the tick
-> broadcast hrtimer is never restarted. I have created a patch to fix the
-> race condition. Please review 
-> 
-> Balasubramani Vivekanandan (1):
->   tick: broadcast-hrtimer: Fix a race in bc_set_next
-> 
->  kernel/time/tick-broadcast-hrtimer.c | 58 ++++++++++++++++++++++------
->  kernel/time/tick-broadcast.c         |  2 +
->  2 files changed, 48 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/platform/x86/eeepc-laptop.c b/drivers/platform/x86/eeepc-laptop.c
+index f3f74a9c109e..776868d5e458 100644
+--- a/drivers/platform/x86/eeepc-laptop.c
++++ b/drivers/platform/x86/eeepc-laptop.c
+@@ -578,7 +578,7 @@ static void eeepc_rfkill_hotplug(struct eeepc_laptop *eeepc, acpi_handle handle)
+ 
+ 	port = acpi_get_pci_dev(handle);
+ 	if (!port) {
+-		pr_warning("Unable to find port\n");
++		pr_warn("Unable to find port\n");
+ 		goto out_unlock;
+ 	}
+ 
 -- 
-Best Regards,
-Eugeniu
+2.20.1
+
