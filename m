@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9C32B9245
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1A2DB926B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:32:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391052AbfITObK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:31:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36914 "EHLO
+        id S2388416AbfITOc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:32:29 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36538 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388402AbfITOZQ (ORCPT
+        by vger.kernel.org with ESMTP id S2388302AbfITOZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:16 -0400
+        Fri, 20 Sep 2019 10:25:11 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqT-0004y6-Fl; Fri, 20 Sep 2019 15:25:13 +0100
+        id 1iBJqO-0004y2-Vb; Fri, 20 Sep 2019 15:25:09 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqF-0007u8-0k; Fri, 20 Sep 2019 15:24:59 +0100
+        id 1iBJqG-0007ve-0n; Fri, 20 Sep 2019 15:25:00 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Romain Izard" <romain.izard.pro@gmail.com>,
-        "Oliver Neukum" <oneukum@suse.com>
+        "Kees Cook" <keescook@chromium.org>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.480153938@decadent.org.uk>
+Message-ID: <lsq.1568989415.805533588@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 069/132] usb: cdc-acm: fix race during wakeup
- blocking TX traffic
+Subject: [PATCH 3.16 088/132] platform/x86: sony-laptop: Fix unintentional
+ fall-through
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,44 +49,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Romain Izard <romain.izard.pro@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-commit 93e1c8a638308980309e009cc40b5a57ef87caf1 upstream.
+commit 1cbd7a64959d33e7a2a1fa2bf36a62b350a9fcbd upstream.
 
-When the kernel is compiled with preemption enabled, the URB completion
-handler can run in parallel with the work responsible for waking up the
-tty layer. If the URB handler sets the EVENT_TTY_WAKEUP bit during the
-call to tty_port_tty_wakeup() to signal that there is room for additional
-input, it will be cleared at the end of this call. As a result, TX traffic
-on the upper layer will be blocked.
+It seems that the default case should return AE_CTRL_TERMINATE, instead
+of falling through to case ACPI_RESOURCE_TYPE_END_TAG and returning AE_OK;
+otherwise the line of code at the end of the function is unreachable and
+makes no sense:
 
-This can be seen with a kernel configured with CONFIG_PREEMPT, and a fast
-modem connected with PPP running over a USB CDC-ACM port.
+return AE_CTRL_TERMINATE;
 
-Use test_and_clear_bit() instead, which ensures that each wakeup requested
-by the URB completion code will trigger a call to tty_port_tty_wakeup().
+This fix is based on the following thread of discussion:
 
-Fixes: 1aba579f3cf5 cdc-acm: handle read pipe errors
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Acked-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+https://lore.kernel.org/patchwork/patch/959782/
+
+Fixes: 33a04454527e ("sony-laptop: Add SNY6001 device handling (sonypi reimplementation)")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/class/cdc-acm.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/platform/x86/sony-laptop.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -510,10 +510,8 @@ static void acm_softint(struct work_stru
- 		clear_bit(EVENT_RX_STALL, &acm->flags);
- 	}
+--- a/drivers/platform/x86/sony-laptop.c
++++ b/drivers/platform/x86/sony-laptop.c
+@@ -4401,14 +4401,16 @@ sony_pic_read_possible_resource(struct a
+ 			}
+ 			return AE_OK;
+ 		}
++
++	case ACPI_RESOURCE_TYPE_END_TAG:
++		return AE_OK;
++
+ 	default:
+ 		dprintk("Resource %d isn't an IRQ nor an IO port\n",
+ 			resource->type);
++		return AE_CTRL_TERMINATE;
  
--	if (test_bit(EVENT_TTY_WAKEUP, &acm->flags)) {
-+	if (test_and_clear_bit(EVENT_TTY_WAKEUP, &acm->flags))
- 		tty_port_tty_wakeup(&acm->port);
--		clear_bit(EVENT_TTY_WAKEUP, &acm->flags);
--	}
+-	case ACPI_RESOURCE_TYPE_END_TAG:
+-		return AE_OK;
+ 	}
+-	return AE_CTRL_TERMINATE;
  }
  
- /*
+ static int sony_pic_possible_resources(struct acpi_device *device)
 
