@@ -2,73 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D242DB8CC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48518B8CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395278AbfITI1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:27:07 -0400
-Received: from sonic317-28.consmr.mail.bf2.yahoo.com ([74.6.129.83]:34881 "EHLO
-        sonic317-28.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388411AbfITI1H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:27:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1568968025; bh=zPC9p8T5S06DA73PD5F75wViZ/EpBpeYylTS7OqjCU4=; h=Date:From:Reply-To:Subject:From:Subject; b=nnDIF05TSjqUOxLwoS2PdR8guus8mBS25qjPu9KiTwVvxlCUkl7nvXnyc71bxEUFfajgDmSUHtwE/Xpb1UqFBCfZckDvRJObf9/Ldw6aXc9eucszhKmg6DK4vjmT/m+4xGDPRwZCppFMViGNHb6+RsQgRbm7KbdTw1QFFJPj4c54R0Hokr519k2LLDm1xX2B/uc6Sr00dbZtmLYn8qRwHcUMjkta9fAa6MbPnFXuS+L5kRIaN9yWlb8WEZBx2pYb66ET6Nlwc+IA0VngUfR0xXZyQhRkgiydgH8i+3b4iM8HNyKtFIG7kXma9rX+a469JC6SkHZWfr0d0c7xVVVA1w==
-X-YMail-OSG: Uj75ns8VM1nBezpEbaXbumQT14wfbDNg0VJIB15lkg_.JBthXsG4lTHJGRSxHch
- xmgjl.AJTEPss7tG.ZbybEoHCesV3zFsaiA88FOqnKMMknqNP0hUkWYL4EruZ7ECm2rtWgd2sHvc
- ScriZVmL1CFl3O9tTxkpDDblSTQ0f.BdruNzCeOxbP8I8C4H65KyAUy42J_tL.jXadC8aDhHt86t
- nSlSAUEr_2OpRYQl13qd_GgIYOLc_W1LHrAHivPgXmlfW4myt7K0T.KLJCFg.Hd_UCWNRgFnPO3l
- slb9bSskyYoqSoJLohH.c_ve1hv7X._T4fXL_WTMw1FCGj9RrAfnTi4Ec0HA4dGJD_Lkxpsfbnyv
- Jyh3k0URFL.VqtIyl_DFDOCk8RBWANBvawMrBIVhAxTk9.yBr376dNR9JS3EHf3JVZM06P.BYT8e
- OCvQlv6xuZqa21zTSlNVCrP27zSQF5nf6ln.ImpDw0wnazixvkQ55EM91Xo5PuMJnDrOnYluNu3n
- k_SIxDzkdsVS9dHV2lBteJuXkxbbqgxHoWMaoxVeh5wSCh5uJphKWn._zyoxrstwYC9FBxPfM7Rh
- NwOJ7DOPMV8Z5.v8g3HBiGCzyYKuVMLlgAQUF1w1jlUSbNX421StSgNZjo6zEfqNg7F_7wdZRsHv
- IUNWuhv57_8YA2_AoGdJd1GM.LwVyL6pV2q_XrdoswajDTQRemL9NTxAREyR9cJ28gyxzHvg6Ngo
- 4ngJoEOi1JkF1YARXh0K4C1K0x230ZEmssCE2Ta4nFOk_tzvjmcWRjQ.F3mh3jlHl9b3Xl6uDmEk
- gAbSAR9Mav8csUmM9Ay6SR0u1MEHf4QSi.q4AUEn7xrWlx8vOWA8hZD47kw70QhG4IseqlQo2tKk
- 2QP_hXs47P8M0rMqCmkqfTu5rq4oNaaAUYv_lubHiSLficlD.rDOxUS_wx1iq2DAnRALpIHNDm9u
- LakqUDOHGN05iHtaaKHLpdKPcQJuMtfAMqN7uoz0JmcVwoEEm95oIRcQzH6AqtqH8qNWq2iqXaBm
- EwJzOcrc14qS9Rh2Mc_lOaKJmUHXitnRhaCKtEbD7C11752SymOaEoiqCTzTbUGP4rLAoK_rJdy0
- WTZmbv1xppBvcf2mbpWZRtgO_K28I3Qvys9KXxcLFuFc1UyyZpkZCx72.XYwECluAy5O4V9KCDBg
- o63TgvgRfacrklBOl09VJD5gluWr436ilooKWXThYSnfwinapuQHe3AmV9caJZike07ytgTzj_RV
- rX.dCjot37txuiAsZV1z_TQs5aoucm1kvNjM-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Fri, 20 Sep 2019 08:27:05 +0000
-Date:   Fri, 20 Sep 2019 08:27:02 +0000 (UTC)
-From:   Ms Lisa Hugh <lisa.hugh222@gmail.com>
-Reply-To: ms.lisahugh000@gmail.com
-Message-ID: <1074883072.6851247.1568968022574@mail.yahoo.com>
-Subject: FROM MS LISA HUGH(BUSINESS).
+        id S2395296AbfITI1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:27:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2691 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388411AbfITI1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 04:27:16 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 10334526B13114035257;
+        Fri, 20 Sep 2019 16:27:14 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 20 Sep 2019 16:27:03 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <netanel@amazon.com>, <saeedb@amazon.com>, <zorik@amazon.com>,
+        <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH net] net: ena: Add dependency for ENA_ETHERNET
+Date:   Fri, 20 Sep 2019 16:44:05 +0800
+Message-ID: <20190920084405.140750-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If CONFIG_ENA_ETHERNET=y and CONFIG_DIMLIB=n,
+below erros can be found:
+drivers/net/ethernet/amazon/ena/ena_netdev.o: In function `ena_dim_work':
+ena_netdev.c:(.text+0x21cc): undefined reference to `net_dim_get_rx_moderation'
+ena_netdev.c:(.text+0x21cc): relocation truncated to
+fit: R_AARCH64_CALL26 against undefined symbol `net_dim_get_rx_moderation'
+drivers/net/ethernet/amazon/ena/ena_netdev.o: In function `ena_io_poll':
+ena_netdev.c:(.text+0x7bd4): undefined reference to `net_dim'
+ena_netdev.c:(.text+0x7bd4): relocation truncated to fit:
+R_AARCH64_CALL26 against undefined symbol `net_dim'
 
+After commit 282faf61a053 ("net: ena: switch to dim algorithm for rx adaptive
+interrupt moderation"), it introduces dim algorithm, which configured by CONFIG_DIMLIB.
 
-Dear Friend,
+Fixes: 282faf61a053 ("net: ena: switch to dim algorithm for rx adaptive interrupt moderation")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/ethernet/amazon/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
+diff --git a/drivers/net/ethernet/amazon/Kconfig b/drivers/net/ethernet/amazon/Kconfig
+index 69ca99d..fe46df4 100644
+--- a/drivers/net/ethernet/amazon/Kconfig
++++ b/drivers/net/ethernet/amazon/Kconfig
+@@ -18,7 +18,7 @@ if NET_VENDOR_AMAZON
+ 
+ config ENA_ETHERNET
+ 	tristate "Elastic Network Adapter (ENA) support"
+-	depends on PCI_MSI && !CPU_BIG_ENDIAN
++	depends on PCI_MSI && !CPU_BIG_ENDIAN && DIMLIB
+ 	---help---
+ 	  This driver supports Elastic Network Adapter (ENA)"
+ 
+-- 
+2.7.4
 
-Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
-
-I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me forsuccess.
-
-Note/ 50% for you why 50% for me after success of the transfer to your bank
-account.
-
-Below information is what i need from you so will can be reaching each
-other
-
-1)Full name ...
-2)Private telephone number...
-3)Age...
-4)Nationality...
-5)Occupation ...
-
-
-Thanks.
-
-Ms Lisa Hugh
