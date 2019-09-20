@@ -2,149 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 654B8B9819
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 21:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A686B982B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 21:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729858AbfITTwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 15:52:34 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38557 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729829AbfITTwb (ORCPT
+        id S1727952AbfITT5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 15:57:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34110 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726835AbfITT5d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 15:52:31 -0400
-Received: by mail-pf1-f195.google.com with SMTP id h195so5212028pfe.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 12:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=gcNXvtSyWvuQ5LByHh2uePUN26jQ3PokWQXYeNMdTRo=;
-        b=m/Dmg/JW+4n89iQLkwR9YixMDIeVf27zFQCHMeU2vrr/Vf/mPOfxnNvPfe3OPGVCIb
-         JgAPKsXQJhnD7tFI5MlKzN2xVjy8lP1etFfFQJ6uqTzpoQ2zt6AqXypDzmNHpc8wPlxV
-         crjt8+KJWIThyAPCT4EQPrvHrdHbinVspic5j9BKz5RbkcHdT9crv3tv4qpn/aE9eA1n
-         PMBQ0OAdva2QoUZMRO40b1D4dh+MZ0oPBPl/uwt1PjK41QI5n4GP65bK/tOOocfdaOPb
-         fW7AswBfwe7B/XRzdJs+JsavsZIwjqyEid+QSgHJFI3Ye2MQDRaVklFCyYyobPXtLX0a
-         K9pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=gcNXvtSyWvuQ5LByHh2uePUN26jQ3PokWQXYeNMdTRo=;
-        b=ICeLVFOmtR1dL2noB+miocN39MeYc7SFABIc7oWjv9WZ8ZfaSt0XvMcHFp2SvEc0tR
-         AOXj9uZIGqMNDiz/gsZeuvZNMRnfrATy+UEd/F4kq7b4WkODEGm+aeDZBnnooF2zPVrz
-         gmGoBUyEPv2stWoDa+LG8EWDQjwr02e4HnIe2KfPTbzcqxphC9WdynagayREUNCWngkU
-         hbJh5vKtq4nT02tMswIVl4m/WUlMqozVZyDZubt2PcbDTh+dcNFFa+NgKVjIZ7MLF16P
-         WW23AOIn41R7lYhmmu4dqcGVdru6kJh/GtG3V2Tol3fqUFNrU26z/AcMrbGOXS2yLt3J
-         0dOw==
-X-Gm-Message-State: APjAAAX2MIGs9cmh4gdADLrd3EE35HtaSXikIf2dbsVs8ibqUmK35adh
-        kq/o7c8+IRxQdT+tYM/8qHncHg==
-X-Google-Smtp-Source: APXvYqxtb4M5gtpX7qWD4dcjCAwsr874h41gGdjXYxHCsHqxUWbY1aFs2BvIpYyEDF4qF+PsPWIWvw==
-X-Received: by 2002:a62:cb:: with SMTP id 194mr20209663pfa.130.1569009150487;
-        Fri, 20 Sep 2019 12:52:30 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b006:e11f:c970:783e:78af:e8f5? ([2600:1010:b006:e11f:c970:783e:78af:e8f5])
-        by smtp.gmail.com with ESMTPSA id c20sm5107273pfd.122.2019.09.20.12.52.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2019 12:52:29 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RFC v4 1/1] random: WARN on large getrandom() waits and introduce getrandom2()
-Date:   Fri, 20 Sep 2019 12:52:28 -0700
-Message-Id: <C5BE6F0F-15B1-404B-A490-5B4E5C8C61A0@amacapital.net>
-References: <20190920193740.GD1889@1wt.eu>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>
-In-Reply-To: <20190920193740.GD1889@1wt.eu>
-To:     Willy Tarreau <w@1wt.eu>
-X-Mailer: iPhone Mail (17A577)
+        Fri, 20 Sep 2019 15:57:33 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8KJqVpw055501;
+        Fri, 20 Sep 2019 15:57:07 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v51uh8jv4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Sep 2019 15:57:06 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8KJv6KE065468;
+        Fri, 20 Sep 2019 15:57:06 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v51uh8ju4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Sep 2019 15:57:06 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8KJoH7a013688;
+        Fri, 20 Sep 2019 19:57:04 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma04wdc.us.ibm.com with ESMTP id 2v3vc5rqxc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Sep 2019 19:57:04 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8KJv2SX27394310
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Sep 2019 19:57:02 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A23E57805E;
+        Fri, 20 Sep 2019 19:57:02 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 00CC57805C;
+        Fri, 20 Sep 2019 19:56:57 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.184])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Sep 2019 19:56:57 +0000 (GMT)
+Message-ID: <56444e28eeb8e5ca7322112a7c8359d1d89ffe2d.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 00/11] Introduces new count-based method for
+ monitoring lockless pagetable wakls
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        Ganesh Goudar <ganeshgr@linux.ibm.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Keith Busch <keith.busch@intel.com>
+Date:   Fri, 20 Sep 2019 16:56:56 -0300
+In-Reply-To: <20190920195047.7703-1-leonardo@linux.ibm.com>
+References: <20190920195047.7703-1-leonardo@linux.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-zBmeUsHIw6iPjGkcXUp7"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909200162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--=-zBmeUsHIw6iPjGkcXUp7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> On Sep 20, 2019, at 12:37 PM, Willy Tarreau <w@1wt.eu> wrote:
->=20
-> =EF=BB=BFOn Fri, Sep 20, 2019 at 12:22:17PM -0700, Andy Lutomirski wrote:
->> Perhaps userland could register a helper that takes over and does
->> something better?
->=20
-> If userland sees the failure it can do whatever the developer/distro
-> packager thought suitable for the system facing this condition.
->=20
->> But I think the kernel really should do something
->> vaguely reasonable all by itself.
->=20
-> Definitely, that's what Linus' proposal was doing. Sleeping for some time
-> is what I call "vaguely reasonable".
+On Fri, 2019-09-20 at 16:50 -0300, Leonardo Bras wrote:
+> *** BLURB HERE ***
 
-I don=E2=80=99t buy it. We have existing programs that can deadlock on boot.=
- Just throwing -EAGAIN at them in a syscall that didn=E2=80=99t previously b=
-lock does not strike me as reasonable.
+Sorry, something gone terribly wrong with my cover letter.
+I will try to find it and send here, or rewrite it.
 
->=20
->> If nothing else, we want the ext4
->> patch that provoked this whole discussion to be applied,
->=20
-> Oh absolutely!
->=20
->> which means
->> that we need to unbreak userspace somehow, and returning garbage it to
->> is not a good choice.
->=20
-> It depends how it's used. I'd claim that we certainly use randoms for
-> other things (such as ASLR/hashtables) *before* using them to generate
-> long lived keys thus we can have a bit more time to get some more
-> entropy before reaching the point of producing these keys.
+Best regards,
 
-The problem is that we don=E2=80=99t know what userspace is doing with the o=
-utput from getrandom(..., 0), so I think we have to be conservative. New ker=
-nels need to work with old user code. It=E2=80=99s okay if they=E2=80=99re s=
-lower to boot than they could be.
+--=-zBmeUsHIw6iPjGkcXUp7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
->=20
->> Here are some possible approaches that come to mind:
->>=20
->> int count;
->> while (crng isn't inited) {
->>  msleep(1);
->> }
->>=20
->> and modify add_timer_randomness() to at least credit a tiny bit to
->> crng_init_cnt.
->=20
-> Without a timeout it's sure we'll still face some situations where
-> it blocks forever, which is the current problem.
+-----BEGIN PGP SIGNATURE-----
 
-The point is that we keep the timer running by looping like this, which shou=
-ld cause add_timer_randomness() to get called continuously, which should pre=
-vent the deadlock.  I assume the deadlock is because we go into nohz-idle an=
-d we sit there with nothing happening at all.
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl2FLwgACgkQlQYWtz9S
+ttS4pxAAyLJQGQqLn3/uCt8mF14TTKklTkgtYZYnjrUAkq41RmZdzGrnmqw2Doc6
+a++i7yM121uUavh3aOJjh5lzFIg09k56oq6j0yKgbG6bFv78GxgHeoD18Cha6sma
+H1GVGCBenJ5MlyVWRv5kMYVEzRJrQ0iB4x0mDeLHChjYOf6tvqlHTNfviTW5/vck
+ZuMIrE1XYXjVRwyt6M5IX90gxpck15kz5e+thMr1a0RdXgCpIQSSYfrvcWfhYjQP
+rrPooy7AFBb1HlMgkq9T3KNcvauier39RWnHqcoO6HC9hIW8GwDrA+oG0NhdU06z
+u11JNHWp1o1K/cVpzpU5keDqUq6yypvoMrxsuqUHnc942ZP9TidK1x1BpxlbP/VR
+o7aV7kXjmVPcdLbvzIAtitouyuerZApeC7kh7RcJ8/cz6FE6rQMAvpSc+rT+CJY2
+3s/WH8YjND1+j1/1ronLW9wnFgC9/LFXkU1/uIFcZwLjv/PPVcvdXtuKkauCfByp
+0M5qjbAKpQYmwGPda9i0M26JyUmIqeVv7XEqz6G3EXEpgJFPUU7YvmLtD6lHZr01
+CenwanUxJqI+TCVm1L0dGFq0uhUMUR6BaDKMEtp5Kx5EZF1pXju/OPHMylsQSdHt
+fN8APotYSE0C6exwJp6fV2sYVWzX9X1T1PItn7sZEyoj+fwL4qg=
+=Fz6o
+-----END PGP SIGNATURE-----
 
->=20
->> Or we do something like intentionally triggering readahead on some
->> offset on the root block device.
->=20
-> You don't necessarily have such a device, especially when you're
-> in an initramfs. It's precisely where userland can be smarter. When
-> the caller is sfdisk for example, it does have more chances to try
-> to perform I/O than when it's a tiny http server starting to present
-> a configuration page.
-
-What I mean is: allow user code to register a usermode helper that helps get=
- entropy. Or just convince distros to bundle some useful daemon that starts a=
-t early boot and lives in the initramfs.
+--=-zBmeUsHIw6iPjGkcXUp7--
 
