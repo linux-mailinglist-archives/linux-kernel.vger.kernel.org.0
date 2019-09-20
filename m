@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B1D5B8934
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 04:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02E0AB8935
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 04:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404321AbfITCVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Sep 2019 22:21:51 -0400
-Received: from foss.arm.com ([217.140.110.172]:40132 "EHLO foss.arm.com"
+        id S2404681AbfITCV4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Sep 2019 22:21:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:40158 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390999AbfITCVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Sep 2019 22:21:51 -0400
+        id S2404324AbfITCV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Sep 2019 22:21:56 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FCAD1570;
-        Thu, 19 Sep 2019 19:21:50 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E37B1597;
+        Thu, 19 Sep 2019 19:21:55 -0700 (PDT)
 Received: from localhost.localdomain (entos-thunderx2-02.shanghai.arm.com [10.169.40.54])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0AD113F67D;
-        Thu, 19 Sep 2019 19:21:45 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D6E083F67D;
+        Thu, 19 Sep 2019 19:21:50 -0700 (PDT)
 From:   Jia He <justin.he@arm.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will@kernel.org>,
@@ -37,9 +37,9 @@ Cc:     Punit Agrawal <punitagrawal@gmail.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Ralph Campbell <rcampbell@nvidia.com>, hejianet@gmail.com,
         Kaly Xin <Kaly.Xin@arm.com>, Jia He <justin.he@arm.com>
-Subject: [PATCH v6 1/3] arm64: cpufeature: introduce helper cpu_has_hw_af()
-Date:   Fri, 20 Sep 2019 10:21:30 +0800
-Message-Id: <20190920022132.149467-2-justin.he@arm.com>
+Subject: [PATCH v6 2/3] arm64: mm: implement arch_faults_on_old_pte() on arm64
+Date:   Fri, 20 Sep 2019 10:21:31 +0800
+Message-Id: <20190920022132.149467-3-justin.he@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190920022132.149467-1-justin.he@arm.com>
 References: <20190920022132.149467-1-justin.he@arm.com>
@@ -48,39 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We unconditionally set the HW_AFDBM capability and only enable it on
-CPUs which really have the feature. But sometimes we need to know
-whether this cpu has the capability of HW AF. So decouple AF from
-DBM by new helper cpu_has_hw_af().
+On arm64 without hardware Access Flag, copying fromuser will fail because
+the pte is old and cannot be marked young. So we always end up with zeroed
+page after fork() + CoW for pfn mappings. we don't always have a
+hardware-managed access flag on arm64.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Suggested-by: Suzuki Poulose <Suzuki.Poulose@arm.com>
+Hence implement arch_faults_on_old_pte on arm64 to indicate that it might
+cause page fault when accessing old pte.
+
 Signed-off-by: Jia He <justin.he@arm.com>
 ---
- arch/arm64/include/asm/cpufeature.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/include/asm/pgtable.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-index c96ffa4722d3..46caf934ba4e 100644
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@ -667,6 +667,16 @@ static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
- 	default: return CONFIG_ARM64_PA_BITS;
- 	}
- }
-+
-+/* Decouple AF from AFDBM. */
-+static inline bool cpu_has_hw_af(void)
-+{
-+	if (IS_ENABLED(CONFIG_ARM64_HW_AFDBM))
-+		return read_cpuid(ID_AA64MMFR1_EL1) & 0xf;
-+
-+	return false;
-+}
-+
- #endif /* __ASSEMBLY__ */
- 
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index e09760ece844..4a9939615e41 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -868,6 +868,18 @@ static inline void update_mmu_cache(struct vm_area_struct *vma,
+ #define phys_to_ttbr(addr)	(addr)
  #endif
+ 
++/*
++ * On arm64 without hardware Access Flag, copying fromuser will fail because
++ * the pte is old and cannot be marked young. So we always end up with zeroed
++ * page after fork() + CoW for pfn mappings. we don't always have a
++ * hardware-managed access flag on arm64.
++ */
++static inline bool arch_faults_on_old_pte(void)
++{
++	return !cpu_has_hw_af();
++}
++#define arch_faults_on_old_pte arch_faults_on_old_pte
++
+ #endif /* !__ASSEMBLY__ */
+ 
+ #endif /* __ASM_PGTABLE_H */
 -- 
 2.17.1
 
