@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B62E3B91D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E544AB91D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388863AbfITOZ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:25:59 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36446 "EHLO
+        id S2388933AbfITO0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:26:16 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36668 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388268AbfITOZJ (ORCPT
+        by vger.kernel.org with ESMTP id S2388324AbfITOZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:09 -0400
+        Fri, 20 Sep 2019 10:25:13 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqN-0004y7-6H; Fri, 20 Sep 2019 15:25:07 +0100
+        id 1iBJqP-0004y6-I0; Fri, 20 Sep 2019 15:25:09 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007yS-9c; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqF-0007vU-U2; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -28,14 +28,15 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
         "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Luke Nowakowski-Krijger" <lnowakow@eng.ucsd.edu>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
         "Hans Verkuil" <hverkuil-cisco@xs4all.nl>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.791343078@decadent.org.uk>
+Message-ID: <lsq.1568989415.389664793@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 115/132] media: radio-raremono: change devm_k*alloc
- to k*alloc
+Subject: [PATCH 3.16 086/132] media: davinci/vpbe: array underflow in
+ vpbe_enum_outputs()
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,107 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit c666355e60ddb4748ead3bdd983e3f7f2224aaf0 upstream.
+commit b72845ee5577b227131b1fef23f9d9a296621d7b upstream.
 
-Change devm_k*alloc to k*alloc to manually allocate memory
+In vpbe_enum_outputs() we check if (temp_index >= cfg->num_outputs) but
+the problem is that "temp_index" can be negative.  This patch changes
+the types to unsigned to address this array underflow bug.
 
-The manual allocation and freeing of memory is necessary because when
-the USB radio is disconnected, the memory associated with devm_k*alloc
-is freed. Meaning if we still have unresolved references to the radio
-device, then we get use-after-free errors.
+Fixes: 66715cdc3224 ("[media] davinci vpbe: VPBE display driver")
 
-This patch fixes this by manually allocating memory, and freeing it in
-the v4l2.release callback that gets called when the last radio device
-exits.
-
-Reported-and-tested-by: syzbot+a4387f5b6b799f6becbf@syzkaller.appspotmail.com
-
-Signed-off-by: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Acked-by: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-[hverkuil-cisco@xs4all.nl: cleaned up two small checkpatch.pl warnings]
-[hverkuil-cisco@xs4all.nl: prefix subject with driver name]
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/radio/radio-raremono.c | 30 +++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+ drivers/media/platform/davinci/vpbe.c | 2 +-
+ include/media/davinci/vpbe.h          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/radio/radio-raremono.c
-+++ b/drivers/media/radio/radio-raremono.c
-@@ -283,6 +283,14 @@ static int vidioc_g_frequency(struct fil
- 	return 0;
- }
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -130,7 +130,7 @@ static int vpbe_enum_outputs(struct vpbe
+ 			     struct v4l2_output *output)
+ {
+ 	struct vpbe_config *cfg = vpbe_dev->cfg;
+-	int temp_index = output->index;
++	unsigned int temp_index = output->index;
  
-+static void raremono_device_release(struct v4l2_device *v4l2_dev)
-+{
-+	struct raremono_device *radio = to_raremono_dev(v4l2_dev);
-+
-+	kfree(radio->buffer);
-+	kfree(radio);
-+}
-+
- /* File system interface */
- static const struct v4l2_file_operations usb_raremono_fops = {
- 	.owner		= THIS_MODULE,
-@@ -307,12 +315,14 @@ static int usb_raremono_probe(struct usb
- 	struct raremono_device *radio;
- 	int retval = 0;
- 
--	radio = devm_kzalloc(&intf->dev, sizeof(struct raremono_device), GFP_KERNEL);
--	if (radio)
--		radio->buffer = devm_kmalloc(&intf->dev, BUFFER_LENGTH, GFP_KERNEL);
--
--	if (!radio || !radio->buffer)
-+	radio = kzalloc(sizeof(*radio), GFP_KERNEL);
-+	if (!radio)
-+		return -ENOMEM;
-+	radio->buffer = kmalloc(BUFFER_LENGTH, GFP_KERNEL);
-+	if (!radio->buffer) {
-+		kfree(radio);
- 		return -ENOMEM;
-+	}
- 
- 	radio->usbdev = interface_to_usbdev(intf);
- 	radio->intf = intf;
-@@ -336,7 +346,8 @@ static int usb_raremono_probe(struct usb
- 	if (retval != 3 ||
- 	    (get_unaligned_be16(&radio->buffer[1]) & 0xfff) == 0x0242) {
- 		dev_info(&intf->dev, "this is not Thanko's Raremono.\n");
--		return -ENODEV;
-+		retval = -ENODEV;
-+		goto free_mem;
- 	}
- 
- 	dev_info(&intf->dev, "Thanko's Raremono connected: (%04X:%04X)\n",
-@@ -345,7 +356,7 @@ static int usb_raremono_probe(struct usb
- 	retval = v4l2_device_register(&intf->dev, &radio->v4l2_dev);
- 	if (retval < 0) {
- 		dev_err(&intf->dev, "couldn't register v4l2_device\n");
--		return retval;
-+		goto free_mem;
- 	}
- 
- 	mutex_init(&radio->lock);
-@@ -357,6 +368,7 @@ static int usb_raremono_probe(struct usb
- 	radio->vdev.ioctl_ops = &usb_raremono_ioctl_ops;
- 	radio->vdev.lock = &radio->lock;
- 	radio->vdev.release = video_device_release_empty;
-+	radio->v4l2_dev.release = raremono_device_release;
- 
- 	usb_set_intfdata(intf, &radio->v4l2_dev);
- 
-@@ -373,6 +385,10 @@ static int usb_raremono_probe(struct usb
- 	}
- 	dev_err(&intf->dev, "could not register video device\n");
- 	v4l2_device_unregister(&radio->v4l2_dev);
-+
-+free_mem:
-+	kfree(radio->buffer);
-+	kfree(radio);
- 	return retval;
- }
- 
+ 	if (temp_index >= cfg->num_outputs)
+ 		return -EINVAL;
+--- a/include/media/davinci/vpbe.h
++++ b/include/media/davinci/vpbe.h
+@@ -96,7 +96,7 @@ struct vpbe_config {
+ 	struct encoder_config_info *ext_encoders;
+ 	/* amplifier information goes here */
+ 	struct amp_config_info *amp;
+-	int num_outputs;
++	unsigned int num_outputs;
+ 	/* Order is venc outputs followed by LCD and then external encoders */
+ 	struct vpbe_output *outputs;
+ };
 
