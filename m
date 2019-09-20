@@ -2,124 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8261CB972E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 20:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAA6EB9731
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 20:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436475AbfITS35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 14:29:57 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39584 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406366AbfITS34 (ORCPT
+        id S2406531AbfITSba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 14:31:30 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33292 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406488AbfITSb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 14:29:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id v4so442208pff.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:29:56 -0700 (PDT)
+        Fri, 20 Sep 2019 14:31:29 -0400
+Received: by mail-ot1-f67.google.com with SMTP id g25so7043131otl.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=su37uabqeDyNPGVbSy4LqMylRvJekDBMIJQOmAbSrms=;
-        b=okqPnLwcRVFAFawtFpNAsOM/l6PAjdVUI4aWBFLH6PcKUlwJPqfVibKuhiLaiEvyjX
-         YF3vdcFzm7VQGbWu8A1tmTfWurx0OPEZRuO0HCKGaCCaas0wF0nNqk71cq8AmBT9tCfv
-         cvAI8wimfyvmpY7+b9mDlhkTr+z95vp6N7iSCSpPu9L+UbGYirqBsaMxfA6CpV7EqYvi
-         g7IgYjddC3+CAWtIVG2TORJCXBBiZL0DUy1lNplzldwBX8vlKQ12d5acnX5K/atIF2cg
-         16Suk191AECRxh3jGrkh/Gm7hxi1wY7zn0I2TfuJYtkDAo33tKLNzHxAThuUFgY3qINM
-         xLpA==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YhEh8bVzYUGuUCB/RpHUx78n8Qc9+jFz1obXEDydgGw=;
+        b=A+jpbUMt0eQyN9IeJlC+6ZG3CYqMX3zZLIMp0aWDMveI99go9TGsKvmQQYHQU/DrQT
+         rzDqBeTODojWZUAHWTBfF65DPs1ZYeZp96wCBpIV59NW53jvSnsdtPBs4NemKWzgiWws
+         crKQJb2NIE9OvYaBFANsTHDHtqOVg69nieaZDOH5CKSXAiRKHOQ5M3XoY4Z1Vxw57Snl
+         +MbA6DAPhFag6JTu1b0fFiN+VgAu62Zuus5tgsYTvGZIoxZBSIHSy7hFpxIP8dOPmkoB
+         dFOWcZXf86ENnEuRv8zBV73wAFcTTPKcHRhs1oz0ialrnNLtej2MgHiKXCojYMynJXT8
+         kxuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=su37uabqeDyNPGVbSy4LqMylRvJekDBMIJQOmAbSrms=;
-        b=eevJ5yFywnbX9KwjQFEXWmWXgl3rqqPUHnMuLP9AXgW0vnjTizr52w2dalQ+djoMOW
-         lpJd81oqnQ6CcUifTDN6fdqkpGLBaLP6pcrnsR9lzOuaACZ62btX4pUy82It+t9AMX4y
-         OcWxu/gMIkQ1JDTVgaGnhMhee+hBM55AhHY7wGjSdubV7mcNA+oTJnZyoCox91DckvIw
-         kJtQMdq5UKAq23Q1mlhE0m9jpRLOVGyPkewvVn5sfkR37F1cp9tl0lPz1tTXnF2gE8rb
-         vmXRnvZPU7gkSGJpvoqtwqN26UGrcDT4BoDpS3XdZ099Ta8oCvM+Naj2ub65VwgmQAcf
-         hLUg==
-X-Gm-Message-State: APjAAAVAQtOB1ESTozekEFz0u5kJySRRYg6h9GyQCPhF/MV7zValkp0B
-        a6rFPAdn9+ygWgetoxJU+pgGYQ==
-X-Google-Smtp-Source: APXvYqw+IQcWT5VEowqn7ypP2rDJ8xYsWnAzjXoY3fTO9SwtB8M9afvxyLB0ZPbfNcYita9kGI3xpg==
-X-Received: by 2002:a62:1888:: with SMTP id 130mr19342667pfy.72.1569004195553;
-        Fri, 20 Sep 2019 11:29:55 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b006:e11f:c970:783e:78af:e8f5? ([2600:1010:b006:e11f:c970:783e:78af:e8f5])
-        by smtp.gmail.com with ESMTPSA id 74sm2391968pfy.78.2019.09.20.11.29.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2019 11:29:54 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RFC v4 1/1] random: WARN on large getrandom() waits and introduce getrandom2()
-Date:   Fri, 20 Sep 2019 11:29:52 -0700
-Message-Id: <7D3731D2-348F-4561-A52D-AA7DAAEE258B@amacapital.net>
-References: <78a4b774-ef6b-62cb-57db-8e1ff8d29f72@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>
-In-Reply-To: <78a4b774-ef6b-62cb-57db-8e1ff8d29f72@gmail.com>
-To:     "Alexander E. Patrakov" <patrakov@gmail.com>
-X-Mailer: iPhone Mail (17A577)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YhEh8bVzYUGuUCB/RpHUx78n8Qc9+jFz1obXEDydgGw=;
+        b=rI1iWKwOm+k5wsJpKmtU/j1Tdeaqvs869SCy/aYbvtqaa9CLV+j9z36A/VYYrNneoT
+         fN5/ElUudzcfBsPeWuXMCfxKcSjFJOAHEMwRV0uf4B19xF65VHkG71Z0hEUbvx0PUElV
+         bOIH59heyGp3vwO0vjoAta9rKjYuxys8/jwH2bOraTQGk+GUhGhreBtVyCGH6xR5djTv
+         pd7xh0LrtWf07lGUtNMrfVpbeoBhH+YHEX0Nr6UcNJOfY5NuAlRPnZb5BolIPqBVoFUb
+         cWIPdQG4k/7U4HpS1ZAAt6idBZdy9CPcVBJsk9saJeoKw4t7U0BdkWaAtc8thNtpawFM
+         TRUw==
+X-Gm-Message-State: APjAAAUmbQoTiLgKu5EBDYfcj62XR1reEoYDV/VIRvGDKGr1BhAA+ZUT
+        s6H940h3GtBtLjrV4gw0qTSs0DjtgXU9hpbxB7ylRgx8A6U=
+X-Google-Smtp-Source: APXvYqw3ifHvoFnzQ3exGPJpJXSnXKYAdYLlKTBTPDAEXq5TsrOPPKZJgZpC1mlD62hN93w9yJRbykcofvi3kYWSMGo=
+X-Received: by 2002:a9d:3b02:: with SMTP id z2mr1415168otb.71.1569004288709;
+ Fri, 20 Sep 2019 11:31:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <1568988209.5576.199.camel@lca.pw> <87r24bhwng.fsf@linux.ibm.com> <1569003478.5576.202.camel@lca.pw>
+In-Reply-To: <1569003478.5576.202.camel@lca.pw>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 20 Sep 2019 11:31:16 -0700
+Message-ID: <CAPcyv4idejYpTS=ErsEJWgBxBsC1aS9=NCyvMEDO1rwqRktEmg@mail.gmail.com>
+Subject: Re: "Pick the right alignment default when creating dax devices"
+ failed to build on powerpc
+To:     Qian Cai <cai@lca.pw>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 20, 2019 at 11:18 AM Qian Cai <cai@lca.pw> wrote:
+>
+> On Fri, 2019-09-20 at 19:55 +0530, Aneesh Kumar K.V wrote:
+> > Qian Cai <cai@lca.pw> writes:
+> >
+> > > The linux-next commit "libnvdimm/dax: Pick the right alignment default when
+> > > creating dax devices" causes powerpc failed to build with this config. Reverted
+> > > it fixed the issue.
+> > >
+> > > ERROR: "hash__has_transparent_hugepage" [drivers/nvdimm/libnvdimm.ko] undefined!
+> > > ERROR: "radix__has_transparent_hugepage" [drivers/nvdimm/libnvdimm.ko]
+> > > undefined!
+> > > make[1]: *** [scripts/Makefile.modpost:93: __modpost] Error 1
+> > > make: *** [Makefile:1305: modules] Error 2
+> > >
+> > > [1] https://patchwork.kernel.org/patch/11133445/
+> > > [2] https://raw.githubusercontent.com/cailca/linux-mm/master/powerpc.config
+> >
+> > Sorry for breaking the build. How about?
+>
+> It works fine.
 
-
-> On Sep 20, 2019, at 11:15 AM, Alexander E. Patrakov <patrakov@gmail.com> w=
-rote:
->=20
-> =EF=BB=BF20.09.2019 22:52, Andy Lutomirski =D0=BF=D0=B8=D1=88=D0=B5=D1=82:=
-
->> I think that, given existing software, we should make two or three
->> changes to fix the basic problems here:
->> 1. Add GRND_INSECURE: at least let new applications do the right thing
->> going forward.
->> 2. Fix what is arguably a straight up kernel bug, not even an ABI
->> issue: when a user program is blocking in getrandom(..., 0), the
->> kernel happily sits there doing absolutely nothing and deadlocks the
->> system as a result.  This IMO isn't an ABI issue -- it's an
->> implementation problem.  How about we make getrandom() (probably
->> actually wait_for_random_bytes()) do something useful to try to seed
->> the RNG if the system is otherwise not doing IO.
->> 3. Optionally, entirely in user code: Get glibc to add new *library*
->> functions: getentropy_secure_blocking() and getentropy_insecure() or
->> whatever they want to call them.  Deprecate getentropy().
->> I think #2 is critical.  Right now, suppose someone has a system that
->> neets to do a secure network request (a la Red Hat's Clevis).  I have
->> no idea what Clevis actually does, but it wouldn't be particularly
->> crazy to do a DH exchange or sign with an EC key to ask some network
->> server to help unlock a dm-crypt volume.  If the system does this at
->> boot, it needs to use getrandom(..., 0), GRND_EXPLICIT, or whatever,
->> because it NEEDS a secure random number.  No about of ABI fiddling
->> will change this.  The kernel should *work* in this case rather than
->> deadlocking.
->=20
-> Let me express a little bit of disagreement with the logic here.
->=20
-> I do agree that #2 is critical, and the Clevis use case is a perfect examp=
-le why it is important. I doubt that it is solvable without trusting jitter e=
-ntropy, or without provoking a dummy read on a random block device, just for=
- timings, or maybe some other interaction with the external world - but Will=
-y already said "it seems fishy". However, _if_ it is solved, then we don't n=
-eed GRND_INSECURE, because solving #2 is equivalent to magically making secu=
-re random numbers always available.
->=20
->=20
-
-I beg to differ. There is a big difference between =E2=80=9Cdo your best *ri=
-ght now*=E2=80=9D and =E2=80=9Cgive me a real secure result in a vaguely tim=
-ely manner=E2=80=9D.
-
-For example, the former is useful for ASLR or hash table randomization. The l=
-atter is not.=
+Thanks, but let's delay "libnvdimm/dax: Pick the right alignment
+default when creating dax devices" until after -rc1 to allow Michael
+time to ack/nak this new export.
