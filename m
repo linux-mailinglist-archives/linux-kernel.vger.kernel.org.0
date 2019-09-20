@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F439B9235
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98689B930E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390775AbfITOab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:30:31 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36952 "EHLO
+        id S2392757AbfITOhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:37:24 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35894 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388419AbfITOZR (ORCPT
+        by vger.kernel.org with ESMTP id S2388075AbfITOZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:17 -0400
+        Fri, 20 Sep 2019 10:25:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqT-00051E-Ki; Fri, 20 Sep 2019 15:25:13 +0100
+        id 1iBJqE-0004xJ-1W; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007sV-9m; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqD-0007rS-5L; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,12 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Slava Pestov" <sp@daterainc.com>
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.196882684@decadent.org.uk>
+Message-ID: <lsq.1568989415.620662485@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 049/132] bcache: fix memory corruption in init error path
+Subject: [PATCH 3.16 036/132] crypto: salsa20 - don't access already-freed
+ walk.iv
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -46,55 +49,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Slava Pestov <sp@daterainc.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit c9a78332b42cbdcdd386a95192a716b67d1711a4 upstream.
+commit edaf28e996af69222b2cb40455dbb5459c2b875a upstream.
 
-If register_cache_set() failed, we would touch ca->set after
-it had already been freed. Also, fix an assertion to catch
-this.
+If the user-provided IV needs to be aligned to the algorithm's
+alignmask, then skcipher_walk_virt() copies the IV into a new aligned
+buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
+if the caller unconditionally accesses walk.iv, it's a use-after-free.
 
-Change-Id: I748e5f5b223e2d9b2602075dec2f997cced2394d
-[bwh: Backported to 3.16: adjust context]
+salsa20-generic doesn't set an alignmask, so currently it isn't affected
+by this despite unconditionally accessing walk.iv.  However this is more
+subtle than desired, and it was actually broken prior to the alignmask
+being removed by commit b62b3db76f73 ("crypto: salsa20-generic - cleanup
+and convert to skcipher API").
+
+Since salsa20-generic does not update the IV and does not need any IV
+alignment, update it to use req->iv instead of walk.iv.
+
+Fixes: 2407d60872dd ("[CRYPTO] salsa20: Salsa20 stream cipher")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/bcache/super.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ crypto/salsa20_generic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1365,8 +1365,11 @@ static void cache_set_free(struct closur
- 	bch_journal_free(c);
+--- a/crypto/salsa20_generic.c
++++ b/crypto/salsa20_generic.c
+@@ -186,7 +186,7 @@ static int encrypt(struct blkcipher_desc
+ 	blkcipher_walk_init(&walk, dst, src, nbytes);
+ 	err = blkcipher_walk_virt_block(desc, &walk, 64);
  
- 	for_each_cache(ca, c, i)
--		if (ca)
-+		if (ca) {
-+			ca->set = NULL;
-+			c->cache[ca->sb.nr_this_dev] = NULL;
- 			kobject_put(&ca->kobj);
-+		}
+-	salsa20_ivsetup(ctx, walk.iv);
++	salsa20_ivsetup(ctx, desc->info);
  
- 	bch_bset_sort_state_free(&c->sort);
- 	free_pages((unsigned long) c->uuids, ilog2(bucket_pages(c)));
-@@ -1804,8 +1807,10 @@ void bch_cache_release(struct kobject *k
- 	struct cache *ca = container_of(kobj, struct cache, kobj);
- 	unsigned i;
- 
--	if (ca->set)
-+	if (ca->set) {
-+		BUG_ON(ca->set->cache[ca->sb.nr_this_dev] != ca);
- 		ca->set->cache[ca->sb.nr_this_dev] = NULL;
-+	}
- 
- 	bio_split_pool_free(&ca->bio_split_hook);
- 
-@@ -1868,7 +1873,7 @@ static int cache_alloc(struct cache_sb *
- }
- 
- static int register_cache(struct cache_sb *sb, struct page *sb_page,
--				  struct block_device *bdev, struct cache *ca)
-+				struct block_device *bdev, struct cache *ca)
- {
- 	char name[BDEVNAME_SIZE];
- 	const char *err = NULL; /* must be set for any error case */
+ 	while (walk.nbytes >= 64) {
+ 		salsa20_encrypt_bytes(ctx, walk.dst.virt.addr,
 
