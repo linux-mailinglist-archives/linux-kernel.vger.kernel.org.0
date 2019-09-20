@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A8A5B980B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 21:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12855B980F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 21:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729784AbfITTvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 15:51:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34424 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726794AbfITTvx (ORCPT
+        id S1729812AbfITTwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 15:52:17 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17544 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726089AbfITTwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 15:51:53 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8KJm141039068;
-        Fri, 20 Sep 2019 15:51:22 -0400
+        Fri, 20 Sep 2019 15:52:16 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8KJnsAK129060;
+        Fri, 20 Sep 2019 15:51:30 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v50uetuk4-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v549p29uq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Sep 2019 15:51:22 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8KJnH6A042230;
-        Fri, 20 Sep 2019 15:51:22 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v50uetujg-1
+        Fri, 20 Sep 2019 15:51:30 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8KJo66C130302;
+        Fri, 20 Sep 2019 15:51:30 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v549p29uf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Sep 2019 15:51:21 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8KJoHqe015546;
-        Fri, 20 Sep 2019 19:51:20 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma05wdc.us.ibm.com with ESMTP id 2v3vbu8p2f-1
+        Fri, 20 Sep 2019 15:51:30 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8KJoIxa004548;
+        Fri, 20 Sep 2019 19:51:29 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma02wdc.us.ibm.com with ESMTP id 2v3vbu8p4p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Sep 2019 19:51:20 +0000
+        Fri, 20 Sep 2019 19:51:29 +0000
 Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8KJpJPZ54788488
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8KJpRHZ50332112
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Sep 2019 19:51:19 GMT
+        Fri, 20 Sep 2019 19:51:27 GMT
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2EE4278060;
+        by IMSVA (Postfix) with ESMTP id 608D77805F;
+        Fri, 20 Sep 2019 19:51:27 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3FC778064;
         Fri, 20 Sep 2019 19:51:19 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 931697805E;
-        Fri, 20 Sep 2019 19:51:14 +0000 (GMT)
 Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.184])
         by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 20 Sep 2019 19:51:14 +0000 (GMT)
+        Fri, 20 Sep 2019 19:51:19 +0000 (GMT)
 From:   Leonardo Bras <leonardo@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
@@ -70,9 +70,9 @@ Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         John Hubbard <jhubbard@nvidia.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCH v2 01/11] powerpc/mm: Adds counting method to monitor lockless pgtable walks
-Date:   Fri, 20 Sep 2019 16:50:37 -0300
-Message-Id: <20190920195047.7703-2-leonardo@linux.ibm.com>
+Subject: [PATCH v2 02/11] asm-generic/pgtable: Adds dummy functions to monitor lockless pgtable walks
+Date:   Fri, 20 Sep 2019 16:50:38 -0300
+Message-Id: <20190920195047.7703-3-leonardo@linux.ibm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190920195047.7703-1-leonardo@linux.ibm.com>
 References: <20190920195047.7703-1-leonardo@linux.ibm.com>
@@ -84,94 +84,50 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=998 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1908290000 definitions=main-1909200161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's necessary to monitor lockless pagetable walks, in order to avoid doing
-THP splitting/collapsing during them.
+There is a need to monitor lockless pagetable walks, in order to avoid
+doing THP splitting/collapsing during them.
 
 Some methods rely on local_irq_{save,restore}, but that can be slow on
 cases with a lot of cpus are used for the process.
 
-In order to speedup some cases, I propose a refcount-based approach, that
+In order to speedup these cases, I propose a refcount-based approach, that
 counts the number of lockless pagetable	walks happening on the process.
 
-This method does not exclude the current irq-oriented method. It works as a
-complement to skip unnecessary waiting.
-
-start_lockless_pgtbl_walk(mm)
-	Insert before starting any lockless pgtable walk
-end_lockless_pgtbl_walk(mm)
-	Insert after the end of any lockless pgtable walk
-	(Mostly after the ptep is last used)
-running_lockless_pgtbl_walk(mm)
-	Returns the number of lockless pgtable walks running
+Given that there are lockless pagetable walks on generic code, it's
+necessary to create dummy functions for archs that won't use the approach.
 
 Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
 ---
- arch/powerpc/include/asm/book3s/64/mmu.h |  3 +++
- arch/powerpc/mm/book3s64/mmu_context.c   |  1 +
- arch/powerpc/mm/book3s64/pgtable.c       | 17 +++++++++++++++++
- 3 files changed, 21 insertions(+)
+ include/asm-generic/pgtable.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/book3s/64/mmu.h b/arch/powerpc/include/asm/book3s/64/mmu.h
-index 23b83d3593e2..13b006e7dde4 100644
---- a/arch/powerpc/include/asm/book3s/64/mmu.h
-+++ b/arch/powerpc/include/asm/book3s/64/mmu.h
-@@ -116,6 +116,9 @@ typedef struct {
- 	/* Number of users of the external (Nest) MMU */
- 	atomic_t copros;
- 
-+	/* Number of running instances of lockless pagetable walk*/
-+	atomic_t lockless_pgtbl_walk_count;
-+
- 	struct hash_mm_context *hash_context;
- 
- 	unsigned long vdso_base;
-diff --git a/arch/powerpc/mm/book3s64/mmu_context.c b/arch/powerpc/mm/book3s64/mmu_context.c
-index 2d0cb5ba9a47..3dd01c0ca5be 100644
---- a/arch/powerpc/mm/book3s64/mmu_context.c
-+++ b/arch/powerpc/mm/book3s64/mmu_context.c
-@@ -200,6 +200,7 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 75d9d68a6de7..6eb4fabb5595 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -1172,6 +1172,15 @@ static inline bool arch_has_pfn_modify_check(void)
  #endif
- 	atomic_set(&mm->context.active_cpus, 0);
- 	atomic_set(&mm->context.copros, 0);
-+	atomic_set(&mm->context.lockless_pgtbl_walk_count, 0);
+ #endif
  
- 	return 0;
- }
-diff --git a/arch/powerpc/mm/book3s64/pgtable.c b/arch/powerpc/mm/book3s64/pgtable.c
-index 7d0e0d0d22c4..13239b17a22c 100644
---- a/arch/powerpc/mm/book3s64/pgtable.c
-+++ b/arch/powerpc/mm/book3s64/pgtable.c
-@@ -98,6 +98,23 @@ void serialize_against_pte_lookup(struct mm_struct *mm)
- 	smp_call_function_many(mm_cpumask(mm), do_nothing, NULL, 1);
- }
- 
-+void start_lockless_pgtbl_walk(struct mm_struct *mm)
++#ifndef __HAVE_ARCH_LOCKLESS_PGTBL_WALK_COUNTER
++static inline void start_lockless_pgtbl_walk(struct mm_struct *mm) { }
++static inline void end_lockless_pgtbl_walk(struct mm_struct *mm) { }
++static inline int running_lockless_pgtbl_walk(struct mm_struct *mm)
 +{
-+	atomic_inc(&mm->context.lockless_pgtbl_walk_count);
++	return 0;
 +}
-+EXPORT_SYMBOL(start_lockless_pgtbl_walk);
-+
-+void end_lockless_pgtbl_walk(struct mm_struct *mm)
-+{
-+	atomic_dec(&mm->context.lockless_pgtbl_walk_count);
-+}
-+EXPORT_SYMBOL(end_lockless_pgtbl_walk);
-+
-+int running_lockless_pgtbl_walk(struct mm_struct *mm)
-+{
-+	return atomic_read(&mm->context.lockless_pgtbl_walk_count);
-+}
++#endif
 +
  /*
-  * We use this to invalidate a pmdp entry before switching from a
-  * hugepte to regular pmd entry.
+  * On some architectures it depends on the mm if the p4d/pud or pmd
+  * layer of the page table hierarchy is folded or not.
 -- 
 2.20.1
 
