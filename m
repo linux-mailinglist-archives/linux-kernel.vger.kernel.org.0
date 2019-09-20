@@ -2,167 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61B29B8D35
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:51:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB48B8D3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408342AbfITIvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:51:13 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39545 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405346AbfITIvN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:51:13 -0400
-Received: by mail-lf1-f67.google.com with SMTP id 72so4468684lfh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 01:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zIK1gtR2VAgqI25bOAo9P0A+M/0NEfNWxEFQpC0ed4g=;
-        b=IL2YeVVOQFHRdWlofI9jH/napiLP/qrH7Ep+y9faHSgo7WQEIKTUdAzpuaQA8SqkY1
-         scHjmFrFGgRc8tQhjHg3NT7myRyx+8zO+VvvFLRWckOHUqWDotd+jCuAZA3HI2eoA+Lt
-         Sj9pi0lv7bBTGFlpxGvCtVQ1PDbnkhLqIkSNL7/0y5GU9rcD3LafVlRyAH5U/U6NL3//
-         BdlSb2lSdTuL2HwmPGUt0UUejIgAtXwu3QAgavvSUCr90mcJh9j/AR/mO4VqIIGmw85P
-         M9X+Akh6tnZ6XoZe+3lLLzJYmjyHgGrBIaIIFK7Uxjz/zJXRsaoXNu3xHKpIggDR3UuZ
-         oSsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zIK1gtR2VAgqI25bOAo9P0A+M/0NEfNWxEFQpC0ed4g=;
-        b=kP1o/aBPFY1scuYB+GdjRu4aICSkKVejCQu36UDbDXjd9dGK3MayOD49FylXpPl6Hx
-         ojJ+Y7TrqATsZyrjbuxwG87dYZHZoguFBtRnUhxlpol6qMhXv4IZhy+bDIqd1EvLOgxT
-         ixbqXO/icfv5r2x1ywZuIwdpAfRHO+ENSKB6MOkUoikAS7pVk3E/G+l7Em1by1QaD4r2
-         D1U70g8KLQ5ozUsTnKFxDOTeeAn8c6ORjaFElfhqdEdn67KOPZGhih9AXF72xBEAIxBF
-         2HHV8LVnfAHAG3Y1zCXnT8B/kfkIr2eqxpa5VWf9GI0hyl52r0b235GGpDelHVbEeGMG
-         B3lg==
-X-Gm-Message-State: APjAAAW7PD+Kvw6IVoHCRhGZkv66nN5jiG7XkNh6g3zrJZUbpNpX4wtQ
-        5cQUADw7sNJqHewGiiSCyOmst0f2CU4Z/lHUnDauIiYJiLk=
-X-Google-Smtp-Source: APXvYqzbbTB32LmFOnnaWg0hpAl48UhlO/D6hLTKcniCdSi+QI6Ez7Rr3AFYweJqmrlLoL0DbkygDkqR35iMC/3w/+s=
-X-Received: by 2002:ac2:48af:: with SMTP id u15mr8312303lfg.75.1568969471206;
- Fri, 20 Sep 2019 01:51:11 -0700 (PDT)
+        id S2408373AbfITIxs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:53:48 -0400
+Received: from mx1.emlix.com ([188.40.240.192]:60966 "EHLO mx1.emlix.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405574AbfITIxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 04:53:48 -0400
+Received: from mailer.emlix.com (unknown [81.20.119.6])
+        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.emlix.com (Postfix) with ESMTPS id B8BB2602BA;
+        Fri, 20 Sep 2019 10:53:44 +0200 (CEST)
+Subject: Re: [PATCH v4 2/3] dmaengine: imx-sdma: fix dma freezes
+To:     =?UTF-8?Q?Jan_L=c3=bcbbe?= <jlu@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Cc:     fugang.duan@nxp.com, festevam@gmail.com, s.hauer@pengutronix.de,
+        vkoul@kernel.org, linux-imx@nxp.com, kernel@pengutronix.de,
+        dan.j.williams@intel.com, yibin.gong@nxp.com, shawnguo@kernel.org,
+        dmaengine@vger.kernel.or, linux-arm-kernel@lists.infradead.org,
+        l.stach@pengutronix.de
+References: <20190919142942.12469-1-philipp.puschmann@emlix.com>
+ <20190919142942.12469-3-philipp.puschmann@emlix.com>
+ <ad87f175496358adb825240f1de609318ed8204c.camel@pengutronix.de>
+From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+Openpgp: preference=signencrypt
+Message-ID: <9305e5ff-f555-3c6e-9e99-36d88edcae0a@emlix.com>
+Date:   Fri, 20 Sep 2019 10:53:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190919214807.612593061@linuxfoundation.org>
-In-Reply-To: <20190919214807.612593061@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 20 Sep 2019 14:21:00 +0530
-Message-ID: <CA+G9fYsdAOWeRSxnrWOJVaw1tp7QVgOgHw-i58Ek7hknAEq0cA@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/79] 4.19.75-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ad87f175496358adb825240f1de609318ed8204c.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019 at 03:43, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.75 release.
-> There are 79 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.75-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Jan,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Am 19.09.19 um 17:19 schrieb Jan Lübbe:
+> Hi Philipp,
+> 
+> see below...
+> 
+> On Thu, 2019-09-19 at 16:29 +0200, Philipp Puschmann wrote:
+>> For some years and since many kernel versions there are reports that the
+>> RX UART SDMA channel stops working at some point. The workaround was to
+>> disable DMA for RX. This commit tries to fix the problem itself.
+>>
+>> Due to its license i wasn't able to debug the sdma script itself but it
+>> somehow leads to blocking the scheduling of the channel script when a
+>> running sdma script does not find any free descriptor in the ring to put
+>> its data into.
+>>
+>> If we detect such a potential case we manually restart the channel.
+>>
+>> As sdmac->desc is constant we can move desc out of the loop.
+>>
+>> Fixes: 1ec1e82f2510 ("dmaengine: Add Freescale i.MX SDMA support")
+>> Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
+>> Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+>> ---
+>>
+>> Changelog v4:
+>>  - fixed the fixes tag
+>>  
+>> Changelog v3:
+>>  - use correct dma_wmb() instead of dma_wb()
+>>  - add fixes tag
+>>  
+>> Changelog v2:
+>>  - clarify comment and commit description
+>>
+>>  drivers/dma/imx-sdma.c | 21 +++++++++++++++++----
+>>  1 file changed, 17 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+>> index e029a2443cfc..a32b5962630e 100644
+>> --- a/drivers/dma/imx-sdma.c
+>> +++ b/drivers/dma/imx-sdma.c
+>> @@ -775,21 +775,23 @@ static void sdma_start_desc(struct sdma_channel *sdmac)
+>>  static void sdma_update_channel_loop(struct sdma_channel *sdmac)
+>>  {
+>>  	struct sdma_buffer_descriptor *bd;
+>> -	int error = 0;
+>> -	enum dma_status	old_status = sdmac->status;
+>> +	struct sdma_desc *desc = sdmac->desc;
+>> +	int error = 0, cnt = 0;
+>> +	enum dma_status old_status = sdmac->status;
+>>  
+>>  	/*
+>>  	 * loop mode. Iterate over descriptors, re-setup them and
+>>  	 * call callback function.
+>>  	 */
+>> -	while (sdmac->desc) {
+>> -		struct sdma_desc *desc = sdmac->desc;
+>> +	while (desc) {
+>>  
+>>  		bd = &desc->bd[desc->buf_tail];
+>>  
+>>  		if (bd->mode.status & BD_DONE)
+>>  			break;
+>>  
+>> +		cnt++;
+>> +
+>>  		if (bd->mode.status & BD_RROR) {
+>>  			bd->mode.status &= ~BD_RROR;
+>>  			sdmac->status = DMA_ERROR;
+>> @@ -822,6 +824,17 @@ static void sdma_update_channel_loop(struct sdma_channel *sdmac)
+>>  		if (error)
+>>  			sdmac->status = old_status;
+>>  	}
+>> +
+>> +	/* In some situations it may happen that the sdma does not found any
+>                                                           ^ hasn't
+>> +	 * usable descriptor in the ring to put data into. The channel is
+>> +	 * stopped then. While there is no specific error condition we can
+>> +	 * check for, a necessary condition is that all available buffers for
+>> +	 * the current channel have been written to by the sdma script. In
+>> +	 * this case and after we have made the buffers available again,
+>> +	 * we restart the channel.
+>> +	 */
+> 
+> Are you sure we can't miss cases where we only had to make some buffers
+> available again, but the SDMA already ran out of buffers before?
+Think so, yes.
+> 
+> A while ago, I was debugging a similar issue triggered by receiving
+> data with a wrong baud rate, which leads to all descriptors being
+> marked with the error flag very quickly (and the SDMA stalling).
+> I noticed that you can check if the channel is still running by
+> checking the SDMA_H_STATSTOP register & BIT(sdmac->channel).
 
-Summary
-------------------------------------------------------------------------
+I think checking for this register is the better approach. Then i could drop the
+cnt variable. And by droppting cnt i would propose to move the check and reenabling
+to the end of the while loop to reenable the channel after freeing first buffer.
 
-kernel: 4.19.75-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 42a609acc1b2b5a744dd9ad3d3eb6a71906e4bcc
-git describe: v4.19.74-80-g42a609acc1b2
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.74-80-g42a609acc1b2
+> 
+> I also added a flag for the sdmac->flags field to allow stopping the
+> channel from the callback (otherwise it would enable the channel
+> again).
 
+Could memory and compiler ordering a problem here?
+I'm not that into these kind of problems, but is this
+	sdmac->flags &= ~IMX_DMA_ACTIVE;
+  	writel_relaxed(BIT(channel), sdma->regs + SDMA_H_STATSTOP);
+guaranteed to be free of race conditions?
 
-No regressions (compared to build v4.19.74)
+Regards,
+Philipp
 
-No fixes (compared to build v4.19.74)
-
-
-Ran 21908 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* libgpiod
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* ssuite
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+> 
+> Attached is my current version of that patch for reference.
+> 
+>> +	if (cnt >= desc->num_bd)
+>> +		sdma_enable_channel(sdmac->sdma, sdmac->channel);
+>>  }
+>>  
+>>  static void mxc_sdma_handle_channel_normal(struct sdma_channel *data)
