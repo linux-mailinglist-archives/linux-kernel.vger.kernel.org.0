@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457E9B91DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6C7B91DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388981AbfITO0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:26:20 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36722 "EHLO
+        id S2389158AbfITO0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:26:35 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36780 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388343AbfITOZN (ORCPT
+        by vger.kernel.org with ESMTP id S2388362AbfITOZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:13 -0400
+        Fri, 20 Sep 2019 10:25:14 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqQ-00051C-50; Fri, 20 Sep 2019 15:25:10 +0100
+        id 1iBJqQ-00050v-9E; Fri, 20 Sep 2019 15:25:10 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqF-0007v5-MH; Fri, 20 Sep 2019 15:24:59 +0100
+        id 1iBJqF-0007uR-8E; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Christoph Probst" <kernel@probst.it>,
-        "Steve French" <stfrench@microsoft.com>,
-        "Pavel Shilovsky" <pshilov@microsoft.com>
+        "Rob Herring" <robh@kernel.org>,
+        "Nick Desaulniers" <ndesaulniers@google.com>,
+        "David Laight" <David.Laight@ACULAB.COM>,
+        "Phong Tran" <tranmanphong@gmail.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.242105668@decadent.org.uk>
+Message-ID: <lsq.1568989415.920663841@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 081/132] cifs: fix strcat buffer overflow and reduce
- raciness in smb21_set_oplock_level()
+Subject: [PATCH 3.16 073/132] of: fix clang -Wunsequenced for be32_to_cpu()
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,59 +49,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christoph Probst <kernel@probst.it>
+From: Phong Tran <tranmanphong@gmail.com>
 
-commit 6a54b2e002c9d00b398d35724c79f9fe0d9b38fb upstream.
+commit 440868661f36071886ed360d91de83bd67c73b4f upstream.
 
-Change strcat to strncpy in the "None" case to fix a buffer overflow
-when cinode->oplock is reset to 0 by another thread accessing the same
-cinode. It is never valid to append "None" to any other message.
+Now, make the loop explicit to avoid clang warning.
 
-Consolidate multiple writes to cinode->oplock to reduce raciness.
+./include/linux/of.h:238:37: warning: multiple unsequenced modifications
+to 'cell' [-Wunsequenced]
+                r = (r << 32) | be32_to_cpu(*(cell++));
+                                                  ^~
+./include/linux/byteorder/generic.h:95:21: note: expanded from macro
+'be32_to_cpu'
+                    ^
+./include/uapi/linux/byteorder/little_endian.h:40:59: note: expanded
+from macro '__be32_to_cpu'
+                                                          ^
+./include/uapi/linux/swab.h:118:21: note: expanded from macro '__swab32'
+        ___constant_swab32(x) :                 \
+                           ^
+./include/uapi/linux/swab.h:18:12: note: expanded from macro
+'___constant_swab32'
+        (((__u32)(x) & (__u32)0x000000ffUL) << 24) |            \
+                  ^
 
-Signed-off-by: Christoph Probst <kernel@probst.it>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/460
+Suggested-by: David Laight <David.Laight@ACULAB.COM>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+[robh: fix up whitespace]
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cifs/smb2ops.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ include/linux/of.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1000,26 +1000,28 @@ smb21_set_oplock_level(struct cifsInodeI
- 		       unsigned int epoch, bool *purge_cache)
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -171,8 +171,8 @@ extern struct device_node *of_find_all_n
+ static inline u64 of_read_number(const __be32 *cell, int size)
  {
- 	char message[5] = {0};
-+	unsigned int new_oplock = 0;
- 
- 	oplock &= 0xFF;
- 	if (oplock == SMB2_OPLOCK_LEVEL_NOCHANGE)
- 		return;
- 
--	cinode->oplock = 0;
- 	if (oplock & SMB2_LEASE_READ_CACHING_HE) {
--		cinode->oplock |= CIFS_CACHE_READ_FLG;
-+		new_oplock |= CIFS_CACHE_READ_FLG;
- 		strcat(message, "R");
- 	}
- 	if (oplock & SMB2_LEASE_HANDLE_CACHING_HE) {
--		cinode->oplock |= CIFS_CACHE_HANDLE_FLG;
-+		new_oplock |= CIFS_CACHE_HANDLE_FLG;
- 		strcat(message, "H");
- 	}
- 	if (oplock & SMB2_LEASE_WRITE_CACHING_HE) {
--		cinode->oplock |= CIFS_CACHE_WRITE_FLG;
-+		new_oplock |= CIFS_CACHE_WRITE_FLG;
- 		strcat(message, "W");
- 	}
--	if (!cinode->oplock)
--		strcat(message, "None");
-+	if (!new_oplock)
-+		strncpy(message, "None", sizeof(message));
-+
-+	cinode->oplock = new_oplock;
- 	cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
- 		 &cinode->vfs_inode);
+ 	u64 r = 0;
+-	while (size--)
+-		r = (r << 32) | be32_to_cpu(*(cell++));
++	for (; size--; cell++)
++		r = (r << 32) | be32_to_cpu(*cell);
+ 	return r;
  }
+ 
 
