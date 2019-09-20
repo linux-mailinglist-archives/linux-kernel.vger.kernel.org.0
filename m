@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAAFEB9965
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D750CB9969
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730519AbfITV4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 17:56:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46982 "EHLO mail.kernel.org"
+        id S2388114AbfITV4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 17:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730459AbfITV4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 17:56:23 -0400
+        id S1730461AbfITV4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 17:56:24 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FC5420B7C;
+        by mail.kernel.org (Postfix) with ESMTPSA id A558E20C01;
         Fri, 20 Sep 2019 21:56:22 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iBQt3-0005Ht-NB; Fri, 20 Sep 2019 17:56:21 -0400
-Message-Id: <20190920215621.597676075@goodmis.org>
+        id 1iBQt3-0005IN-SB; Fri, 20 Sep 2019 17:56:21 -0400
+Message-Id: <20190920215621.753333463@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Sep 2019 17:53:13 -0400
+Date:   Fri, 20 Sep 2019 17:53:14 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -31,10 +31,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com,
-        Mike Galbraith <umgwanakikbuti@gmail.com>,
-        Benjamin LaHaise <bcrl@kvack.org>
-Subject: [RFC][PATCH RT 2/7] fs/aio: simple simple work
+        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
+Subject: [RFC][PATCH RT 3/7] revert-thermal
 References: <20190920215311.165260719@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -43,75 +41,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit 1a142116f6435ef070ecebb66d2d599507c10601 ]
+Revert: thermal: Defer thermal wakups to threads
 
-|BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:768
-|in_atomic(): 1, irqs_disabled(): 0, pid: 26, name: rcuos/2
-|2 locks held by rcuos/2/26:
-| #0:  (rcu_callback){.+.+..}, at: [<ffffffff810b1a12>] rcu_nocb_kthread+0x1e2/0x380
-| #1:  (rcu_read_lock_sched){.+.+..}, at: [<ffffffff812acd26>] percpu_ref_kill_rcu+0xa6/0x1c0
-|Preemption disabled at:[<ffffffff810b1a93>] rcu_nocb_kthread+0x263/0x380
-|Call Trace:
-| [<ffffffff81582e9e>] dump_stack+0x4e/0x9c
-| [<ffffffff81077aeb>] __might_sleep+0xfb/0x170
-| [<ffffffff81589304>] rt_spin_lock+0x24/0x70
-| [<ffffffff811c5790>] free_ioctx_users+0x30/0x130
-| [<ffffffff812ace34>] percpu_ref_kill_rcu+0x1b4/0x1c0
-| [<ffffffff810b1a93>] rcu_nocb_kthread+0x263/0x380
-| [<ffffffff8106e046>] kthread+0xd6/0xf0
-| [<ffffffff81591eec>] ret_from_fork+0x7c/0xb0
-
-replace this preempt_disable() friendly swork.
-
-Reported-By: Mike Galbraith <umgwanakikbuti@gmail.com>
-Suggested-by: Benjamin LaHaise <bcrl@kvack.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- fs/aio.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/thermal/x86_pkg_temp_thermal.c | 52 ++------------------------
+ 1 file changed, 3 insertions(+), 49 deletions(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 911e23087dfb..0c613d805bf1 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -121,6 +121,7 @@ struct kioctx {
- 	long			nr_pages;
+diff --git a/drivers/thermal/x86_pkg_temp_thermal.c b/drivers/thermal/x86_pkg_temp_thermal.c
+index a5991cbb408f..1ef937d799e4 100644
+--- a/drivers/thermal/x86_pkg_temp_thermal.c
++++ b/drivers/thermal/x86_pkg_temp_thermal.c
+@@ -29,7 +29,6 @@
+ #include <linux/pm.h>
+ #include <linux/thermal.h>
+ #include <linux/debugfs.h>
+-#include <linux/swork.h>
+ #include <asm/cpu_device_id.h>
+ #include <asm/mce.h>
  
- 	struct rcu_work		free_rwork;	/* see free_ioctx() */
-+	struct kthread_work	free_kwork;	/* see free_ioctx() */
- 
- 	/*
- 	 * signals when all in-flight requests are done
-@@ -606,9 +607,9 @@ static void free_ioctx_reqs(struct percpu_ref *ref)
-  * and ctx->users has dropped to 0, so we know no more kiocbs can be submitted -
-  * now it's safe to cancel any that need to be.
-  */
--static void free_ioctx_users(struct percpu_ref *ref)
-+static void free_ioctx_users_work(struct kthread_work *work)
- {
--	struct kioctx *ctx = container_of(ref, struct kioctx, users);
-+	struct kioctx *ctx = container_of(work, struct kioctx, free_kwork);
- 	struct aio_kiocb *req;
- 
- 	spin_lock_irq(&ctx->ctx_lock);
-@@ -626,6 +627,14 @@ static void free_ioctx_users(struct percpu_ref *ref)
- 	percpu_ref_put(&ctx->reqs);
+@@ -330,7 +329,7 @@ static void pkg_thermal_schedule_work(int cpu, struct delayed_work *work)
+ 	schedule_delayed_work_on(cpu, work, ms);
  }
  
-+static void free_ioctx_users(struct percpu_ref *ref)
-+{
-+	struct kioctx *ctx = container_of(ref, struct kioctx, users);
-+
-+	kthread_init_work(&ctx->free_kwork, free_ioctx_users_work);
-+	kthread_schedule_work(&ctx->free_kwork);
-+}
-+
- static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+-static void pkg_thermal_notify_work(struct swork_event *event)
++static int pkg_thermal_notify(u64 msr_val)
  {
- 	unsigned i, new_nr;
+ 	int cpu = smp_processor_id();
+ 	struct pkg_device *pkgdev;
+@@ -349,47 +348,9 @@ static void pkg_thermal_notify_work(struct swork_event *event)
+ 	}
+ 
+ 	spin_unlock_irqrestore(&pkg_temp_lock, flags);
+-}
+-
+-#ifdef CONFIG_PREEMPT_RT_FULL
+-static struct swork_event notify_work;
+-
+-static int pkg_thermal_notify_work_init(void)
+-{
+-	int err;
+-
+-	err = swork_get();
+-	if (err)
+-		return err;
+-
+-	INIT_SWORK(&notify_work, pkg_thermal_notify_work);
+ 	return 0;
+ }
+ 
+-static void pkg_thermal_notify_work_cleanup(void)
+-{
+-	swork_put();
+-}
+-
+-static int pkg_thermal_notify(u64 msr_val)
+-{
+-	swork_queue(&notify_work);
+-	return 0;
+-}
+-
+-#else  /* !CONFIG_PREEMPT_RT_FULL */
+-
+-static int pkg_thermal_notify_work_init(void) { return 0; }
+-
+-static void pkg_thermal_notify_work_cleanup(void) {  }
+-
+-static int pkg_thermal_notify(u64 msr_val)
+-{
+-	pkg_thermal_notify_work(NULL);
+-	return 0;
+-}
+-#endif /* CONFIG_PREEMPT_RT_FULL */
+-
+ static int pkg_temp_thermal_device_add(unsigned int cpu)
+ {
+ 	int pkgid = topology_logical_package_id(cpu);
+@@ -554,16 +515,11 @@ static int __init pkg_temp_thermal_init(void)
+ 	if (!x86_match_cpu(pkg_temp_thermal_ids))
+ 		return -ENODEV;
+ 
+-	if (!pkg_thermal_notify_work_init())
+-		return -ENODEV;
+-
+ 	max_packages = topology_max_packages();
+ 	packages = kcalloc(max_packages, sizeof(struct pkg_device *),
+ 			   GFP_KERNEL);
+-	if (!packages) {
+-		ret = -ENOMEM;
+-		goto err;
+-	}
++	if (!packages)
++		return -ENOMEM;
+ 
+ 	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "thermal/x86_pkg:online",
+ 				pkg_thermal_cpu_online,	pkg_thermal_cpu_offline);
+@@ -581,7 +537,6 @@ static int __init pkg_temp_thermal_init(void)
+ 	return 0;
+ 
+ err:
+-	pkg_thermal_notify_work_cleanup();
+ 	kfree(packages);
+ 	return ret;
+ }
+@@ -595,7 +550,6 @@ static void __exit pkg_temp_thermal_exit(void)
+ 	cpuhp_remove_state(pkg_thermal_hp_state);
+ 	debugfs_remove_recursive(debugfs);
+ 	kfree(packages);
+-	pkg_thermal_notify_work_cleanup();
+ }
+ module_exit(pkg_temp_thermal_exit)
+ 
 -- 
 2.20.1
 
