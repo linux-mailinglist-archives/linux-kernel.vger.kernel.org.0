@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96447B924C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDCB0B9327
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391106AbfITObZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:31:25 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36800 "EHLO
+        id S2392933AbfITOiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:38:15 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35694 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388365AbfITOZO (ORCPT
+        by vger.kernel.org with ESMTP id S1728899AbfITOY7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:14 -0400
+        Fri, 20 Sep 2019 10:24:59 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqR-0004y2-Hm; Fri, 20 Sep 2019 15:25:11 +0100
+        id 1iBJqC-0004wa-Sk; Fri, 20 Sep 2019 15:24:56 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqF-0007uH-4Y; Fri, 20 Sep 2019 15:24:59 +0100
+        id 1iBJqC-0007pr-FY; Fri, 20 Sep 2019 15:24:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Oliver Neukum" <oneukum@suse.com>,
-        "Johan Hovold" <johan@kernel.org>
+        "=?UTF-8?q?Noralf=20Tr=C3=B8nnes?=" <noralf@tronnes.org>,
+        "Daniel Vetter" <daniel.vetter@ffwll.ch>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.692470111@decadent.org.uk>
+Message-ID: <lsq.1568989415.173739634@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 071/132] USB: serial: use variable for status
+Subject: [PATCH 3.16 016/132] drm/fb-helper: dpms_legacy(): Only set on
+ connectors in use
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,91 +48,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Noralf Trønnes <noralf@tronnes.org>
 
-commit 3161da970d38cd6ed2ba8cadec93874d1d06e11e upstream.
+commit 65a102f68005891d7f39354cfd79099908df6d51 upstream.
 
-This patch turns status in a variable read once from the URB.
-The long term plan is to deliver status to the callback.
-In addition it makes the code a bit more elegant.
+For each enabled crtc the functions sets dpms on all registered connectors.
+Limit this to only doing it once and on the connectors actually in use.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+Fixes: 023eb571a1d0 ("drm: correctly update connector DPMS status in drm_fb_helper")
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190326175546.18126-3-noralf@tronnes.org
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/generic.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/drm_fb_helper.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/serial/generic.c
-+++ b/drivers/usb/serial/generic.c
-@@ -350,6 +350,7 @@ void usb_serial_generic_read_bulk_callba
- 	struct usb_serial_port *port = urb->context;
- 	unsigned char *data = urb->transfer_buffer;
- 	unsigned long flags;
-+	int status = urb->status;
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(port->read_urbs); ++i) {
-@@ -360,22 +361,22 @@ void usb_serial_generic_read_bulk_callba
- 
- 	dev_dbg(&port->dev, "%s - urb %d, len %d\n", __func__, i,
- 							urb->actual_length);
--	switch (urb->status) {
-+	switch (status) {
- 	case 0:
- 		break;
- 	case -ENOENT:
- 	case -ECONNRESET:
- 	case -ESHUTDOWN:
- 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
--							__func__, urb->status);
-+							__func__, status);
- 		return;
- 	case -EPIPE:
- 		dev_err(&port->dev, "%s - urb stopped: %d\n",
--							__func__, urb->status);
-+							__func__, status);
- 		return;
- 	default:
- 		dev_dbg(&port->dev, "%s - nonzero urb status: %d\n",
--							__func__, urb->status);
-+							__func__, status);
- 		goto resubmit;
- 	}
- 
-@@ -399,6 +400,7 @@ void usb_serial_generic_write_bulk_callb
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -453,8 +453,8 @@ static void drm_fb_helper_dpms(struct fb
  {
- 	unsigned long flags;
- 	struct usb_serial_port *port = urb->context;
-+	int status = urb->status;
- 	int i;
+ 	struct drm_fb_helper *fb_helper = info->par;
+ 	struct drm_device *dev = fb_helper->dev;
+-	struct drm_crtc *crtc;
+ 	struct drm_connector *connector;
++	struct drm_mode_set *modeset;
+ 	int i, j;
  
- 	for (i = 0; i < ARRAY_SIZE(port->write_urbs); ++i) {
-@@ -410,22 +412,22 @@ void usb_serial_generic_write_bulk_callb
- 	set_bit(i, &port->write_urbs_free);
- 	spin_unlock_irqrestore(&port->lock, flags);
- 
--	switch (urb->status) {
-+	switch (status) {
- 	case 0:
- 		break;
- 	case -ENOENT:
- 	case -ECONNRESET:
- 	case -ESHUTDOWN:
- 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
--							__func__, urb->status);
-+							__func__, status);
- 		return;
- 	case -EPIPE:
- 		dev_err_console(port, "%s - urb stopped: %d\n",
--							__func__, urb->status);
-+							__func__, status);
- 		return;
- 	default:
- 		dev_err_console(port, "%s - nonzero urb status: %d\n",
--							__func__, urb->status);
-+							__func__, status);
- 		goto resubmit;
+ 	/*
+@@ -475,14 +475,13 @@ static void drm_fb_helper_dpms(struct fb
  	}
  
+ 	for (i = 0; i < fb_helper->crtc_count; i++) {
+-		crtc = fb_helper->crtc_info[i].mode_set.crtc;
++		modeset = &fb_helper->crtc_info[i].mode_set;
+ 
+-		if (!crtc->enabled)
++		if (!modeset->crtc->enabled)
+ 			continue;
+ 
+-		/* Walk the connectors & encoders on this fb turning them on/off */
+-		for (j = 0; j < fb_helper->connector_count; j++) {
+-			connector = fb_helper->connector_info[j]->connector;
++		for (j = 0; j < modeset->num_connectors; j++) {
++			connector = modeset->connectors[j];
+ 			connector->funcs->dpms(connector, dpms_mode);
+ 			drm_object_property_set_value(&connector->base,
+ 				dev->mode_config.dpms_property, dpms_mode);
 
