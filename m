@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C766BB9289
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCD69B92E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391565AbfITOda (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:33:30 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36352 "EHLO
+        id S2391891AbfITOgJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:36:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35858 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388242AbfITOZI (ORCPT
+        by vger.kernel.org with ESMTP id S2388063AbfITOZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:08 -0400
+        Fri, 20 Sep 2019 10:25:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqL-00051E-3D; Fri, 20 Sep 2019 15:25:05 +0100
+        id 1iBJqE-0004xy-Pd; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007zp-SZ; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqD-0007rl-I0; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Ian Abbott" <abbotti@mev.co.uk>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        "Sakari Ailus" <sakari.ailus@linux.intel.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.304704907@decadent.org.uk>
+Message-ID: <lsq.1568989415.894816342@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 132/132] staging: comedi: dt282x: fix a null  pointer
- deref on interrupt
+Subject: [PATCH 3.16 040/132] media: ov6650: Fix sensor possibly not
+ detected on probe
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,47 +49,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ian Abbott <abbotti@mev.co.uk>
+From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-commit b8336be66dec06bef518030a0df9847122053ec5 upstream.
+commit 933c1320847f5ed6b61a7d10f0a948aa98ccd7b0 upstream.
 
-The interrupt handler `dt282x_interrupt()` causes a null pointer
-dereference for those supported boards that have no analog output
-support.  For these boards, `dev->write_subdev` will be `NULL` and
-therefore the `s_ao` subdevice pointer variable will be `NULL`.  In that
-case, the following call near the end of the interrupt handler results
-in a null pointer dereference:
+After removal of clock_start() from before soc_camera_init_i2c() in
+soc_camera_probe() by commit 9aea470b399d ("[media] soc-camera: switch
+I2C subdevice drivers to use v4l2-clk") introduced in v3.11, the ov6650
+driver could no longer probe the sensor successfully because its clock
+was no longer turned on in advance.  The issue was initially worked
+around by adding that missing clock_start() equivalent to OMAP1 camera
+interface driver - the only user of this sensor - but a propoer fix
+should be rather implemented in the sensor driver code itself.
 
-	cfc_handle_events(dev, s_ao);
+Fix the issue by inserting a delay between the clock is turned on and
+the sensor I2C registers are read for the first time.
 
-[ Upstream equivalent:
-	comedi_handle_events(dev, s_ao);
-  -- IA ]
+Tested on Amstrad Delta with now out of tree but still locally
+maintained omap1_camera host driver.
 
-Fix it by only calling the above function if `s_ao` is valid.
+Fixes: 9aea470b399d ("[media] soc-camera: switch I2C subdevice drivers to use v4l2-clk")
 
-(There are other uses of `s_ao` by the interrupt handler that may or may
-not be reached depending on values of hardware registers.  Trust that
-they are reliable for now.)
-
-Fixes: f21c74fa4cfe ("staging: comedi: dt282x: use cfc_handle_events()")
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/comedi/drivers/dt282x.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/i2c/soc_camera/ov6650.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/staging/comedi/drivers/dt282x.c
-+++ b/drivers/staging/comedi/drivers/dt282x.c
-@@ -483,7 +483,8 @@ static irqreturn_t dt282x_interrupt(int
- 	}
- #endif
- 	cfc_handle_events(dev, s);
--	cfc_handle_events(dev, s_ao);
-+	if (s_ao)
-+		cfc_handle_events(dev, s_ao);
+--- a/drivers/media/i2c/soc_camera/ov6650.c
++++ b/drivers/media/i2c/soc_camera/ov6650.c
+@@ -829,6 +829,8 @@ static int ov6650_video_probe(struct i2c
+ 	if (ret < 0)
+ 		return ret;
  
- 	return IRQ_RETVAL(handled);
- }
++	msleep(20);
++
+ 	/*
+ 	 * check and show product ID and manufacturer ID
+ 	 */
 
