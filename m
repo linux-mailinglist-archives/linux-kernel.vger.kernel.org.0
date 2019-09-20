@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7E3B9287
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF420B92E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391509AbfITOd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:33:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36282 "EHLO
+        id S2392387AbfITOga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:36:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35822 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388204AbfITOZI (ORCPT
+        by vger.kernel.org with ESMTP id S2388039AbfITOZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:08 -0400
+        Fri, 20 Sep 2019 10:25:01 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqK-0004xy-KH; Fri, 20 Sep 2019 15:25:04 +0100
+        id 1iBJqE-0004y2-IE; Fri, 20 Sep 2019 15:24:58 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007z6-I8; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqD-0007rq-Q1; Fri, 20 Sep 2019 15:24:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com,
-        "Takashi Iwai" <tiwai@suse.de>
+        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.843775932@decadent.org.uk>
+Message-ID: <lsq.1568989415.730721277@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 123/132] ALSA: line6: Fix write on zero-sized buffer
+Subject: [PATCH 3.16 041/132] media: pvrusb2: Prevent a buffer overflow
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,42 +48,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 3450121997ce872eb7f1248417225827ea249710 upstream.
+commit c1ced46c7b49ad7bc064e68d966e0ad303f917fb upstream.
 
-LINE6 drivers allocate the buffers based on the value returned from
-usb_maxpacket() calls.  The manipulated device may return zero for
-this, and this results in the kmalloc() with zero size (and it may
-succeed) while the other part of the driver code writes the packet
-data with the fixed size -- which eventually overwrites.
+The ctrl_check_input() function is called from pvr2_ctrl_range_check().
+It's supposed to validate user supplied input and return true or false
+depending on whether the input is valid or not.  The problem is that
+negative shifts or shifts greater than 31 are undefined in C.  In
+practice with GCC they result in shift wrapping so this function returns
+true for some inputs which are not valid and this could result in a
+buffer overflow:
 
-This patch adds a simple sanity check for the invalid buffer size for
-avoiding that problem.
+    drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:205 pvr2_ctrl_get_valname()
+    warn: uncapped user index 'names[val]'
 
-Reported-by: syzbot+219f00fb49874dcaea17@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-[bwh: Backported to 3.16:
- - Driver doesn't support asymmetrical packet sizes, so only check
-   snd_line6_pcm::max_packet_size
- - Adjust filename]
+The cptr->hdw->input_allowed_mask mask is configured in pvr2_hdw_create()
+and the highest valid bit is BIT(4).
+
+Fixes: 7fb20fa38caa ("V4L/DVB (7299): pvrusb2: Improve logic which handles input choice availability")
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/staging/line6/pcm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 ++
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.h | 1 +
+ 2 files changed, 3 insertions(+)
 
---- a/drivers/staging/line6/pcm.c
-+++ b/drivers/staging/line6/pcm.c
-@@ -492,6 +492,11 @@ int line6_init_pcm(struct usb_line6 *lin
- 				usb_rcvisocpipe(line6->usbdev, ep_read), 0),
- 			usb_maxpacket(line6->usbdev,
- 				usb_sndisocpipe(line6->usbdev, ep_write), 1));
-+	if (!line6pcm->max_packet_size) {
-+		dev_err(line6pcm->line6->ifcdev,
-+			"cannot get proper max packet size\n");
-+		return -EINVAL;
-+	}
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+@@ -670,6 +670,8 @@ static int ctrl_get_input(struct pvr2_ct
  
- 	line6pcm->properties = properties;
- 	line6->line6pcm = line6pcm;
+ static int ctrl_check_input(struct pvr2_ctrl *cptr,int v)
+ {
++	if (v < 0 || v > PVR2_CVAL_INPUT_MAX)
++		return 0;
+ 	return ((1 << v) & cptr->hdw->input_allowed_mask) != 0;
+ }
+ 
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.h
+@@ -54,6 +54,7 @@
+ #define PVR2_CVAL_INPUT_COMPOSITE 2
+ #define PVR2_CVAL_INPUT_SVIDEO 3
+ #define PVR2_CVAL_INPUT_RADIO 4
++#define PVR2_CVAL_INPUT_MAX PVR2_CVAL_INPUT_RADIO
+ 
+ enum pvr2_config {
+ 	pvr2_config_empty,    /* No configuration */
 
