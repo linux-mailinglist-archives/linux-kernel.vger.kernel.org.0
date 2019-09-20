@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B96CFB981E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 21:53:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C570B981B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 21:52:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbfITTxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 15:53:05 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725842AbfITTxF (ORCPT
+        id S1729898AbfITTwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 15:52:40 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64930 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726215AbfITTwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 15:53:05 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8KJlwQD081871;
-        Fri, 20 Sep 2019 15:52:06 -0400
+        Fri, 20 Sep 2019 15:52:38 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8KJltD0113598;
+        Fri, 20 Sep 2019 15:52:12 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v530nd7ap-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v4sh5q5rg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Sep 2019 15:52:06 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8KJmERn082604;
-        Fri, 20 Sep 2019 15:52:05 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v530nd7a6-1
+        Fri, 20 Sep 2019 15:52:12 -0400
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8KJlxCt113727;
+        Fri, 20 Sep 2019 15:52:10 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v4sh5q5qu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Sep 2019 15:52:05 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8KJoH78025081;
-        Fri, 20 Sep 2019 19:52:04 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma01dal.us.ibm.com with ESMTP id 2v3vbucv88-1
+        Fri, 20 Sep 2019 15:52:10 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8KJoHuv002198;
+        Fri, 20 Sep 2019 19:52:09 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma03dal.us.ibm.com with ESMTP id 2v3vbuvu81-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Sep 2019 19:52:04 +0000
+        Fri, 20 Sep 2019 19:52:09 +0000
 Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8KJq26T56558020
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8KJq79n61145468
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Sep 2019 19:52:02 GMT
+        Fri, 20 Sep 2019 19:52:07 GMT
 Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 543F978067;
+        by IMSVA (Postfix) with ESMTP id 47CBB7805C;
+        Fri, 20 Sep 2019 19:52:07 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B02567805E;
         Fri, 20 Sep 2019 19:52:02 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AFD1178060;
-        Fri, 20 Sep 2019 19:51:57 +0000 (GMT)
 Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.184])
         by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 20 Sep 2019 19:51:57 +0000 (GMT)
+        Fri, 20 Sep 2019 19:52:02 +0000 (GMT)
 From:   Leonardo Bras <leonardo@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
 Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
@@ -70,9 +70,9 @@ Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         John Hubbard <jhubbard@nvidia.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCH v2 09/11] powerpc/kvm/book3s_64: Applies counting method to monitor lockless pgtbl walks
-Date:   Fri, 20 Sep 2019 16:50:45 -0300
-Message-Id: <20190920195047.7703-10-leonardo@linux.ibm.com>
+Subject: [PATCH v2 10/11] powerpc/book3s_64: Enables counting method to monitor lockless pgtbl walk
+Date:   Fri, 20 Sep 2019 16:50:46 -0300
+Message-Id: <20190920195047.7703-11-leonardo@linux.ibm.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190920195047.7703-1-leonardo@linux.ibm.com>
 References: <20190920195047.7703-1-leonardo@linux.ibm.com>
@@ -84,198 +84,38 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=649 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1908290000 definitions=main-1909200161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Applies the counting-based method for monitoring all book3s_64-related
-functions that do lockless pagetable walks.
+Enables count-based monitoring method for lockless pagetable walks on
+PowerPC book3s_64.
+
+Other architectures/platforms fallback to using generic dummy functions.
 
 Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
 ---
-It may be necessary to merge an older patch first:
-powerpc: kvm: Reduce calls to get current->mm by storing the value locally
-Link: https://lore.kernel.org/linuxppc-dev/20190919222748.20761-1-leonardo@linux.ibm.com/
+ arch/powerpc/include/asm/book3s/64/pgtable.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- arch/powerpc/kvm/book3s_64_mmu_hv.c    |  2 ++
- arch/powerpc/kvm/book3s_64_mmu_radix.c | 20 ++++++++++++++++++--
- arch/powerpc/kvm/book3s_64_vio_hv.c    |  4 ++++
- 3 files changed, 24 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-index f2b9aea43216..a938733c3f7b 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -622,6 +622,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 			 * We need to protect against page table destruction
- 			 * hugepage split and collapse.
- 			 */
-+			start_lockless_pgtbl_walk(mm);
- 			local_irq_save(flags);
- 			ptep = find_current_mm_pte(mm->pgd, hva, NULL, NULL);
- 			if (ptep) {
-@@ -630,6 +631,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 					write_ok = 1;
- 			}
- 			local_irq_restore(flags);
-+			end_lockless_pgtbl_walk(mm);
- 		}
- 	}
- 
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_radix.c b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-index 2d415c36a61d..d46f8258d8d6 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_radix.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_radix.c
-@@ -741,6 +741,7 @@ bool kvmppc_hv_handle_set_rc(struct kvm *kvm, pgd_t *pgtable, bool writing,
- 	unsigned long pgflags;
- 	unsigned int shift;
- 	pte_t *ptep;
-+	bool ret = false;
- 
- 	/*
- 	 * Need to set an R or C bit in the 2nd-level tables;
-@@ -755,12 +756,14 @@ bool kvmppc_hv_handle_set_rc(struct kvm *kvm, pgd_t *pgtable, bool writing,
- 	 * We can do this without disabling irq because the Linux MM
- 	 * subsystem doesn't do THP splits and collapses on this tree.
- 	 */
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	ptep = __find_linux_pte(pgtable, gpa, NULL, &shift);
- 	if (ptep && pte_present(*ptep) && (!writing || pte_write(*ptep))) {
- 		kvmppc_radix_update_pte(kvm, ptep, 0, pgflags, gpa, shift);
--		return true;
-+		ret = true;
- 	}
--	return false;
-+	end_lockless_pgtbl_walk(kvm->mm);
-+	return ret;
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index 06a6a5344770..7a8813dfaee9 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -1391,5 +1391,10 @@ static inline bool pgd_is_leaf(pgd_t pgd)
+ 	return !!(pgd_raw(pgd) & cpu_to_be64(_PAGE_PTE));
  }
  
- int kvmppc_book3s_instantiate_page(struct kvm_vcpu *vcpu,
-@@ -813,6 +816,7 @@ int kvmppc_book3s_instantiate_page(struct kvm_vcpu *vcpu,
- 	 * Read the PTE from the process' radix tree and use that
- 	 * so we get the shift and attribute bits.
- 	 */
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	local_irq_disable();
- 	ptep = __find_linux_pte(vcpu->arch.pgdir, hva, NULL, &shift);
- 	/*
-@@ -821,12 +825,14 @@ int kvmppc_book3s_instantiate_page(struct kvm_vcpu *vcpu,
- 	 */
- 	if (!ptep) {
- 		local_irq_enable();
-+		end_lockless_pgtbl_walk(kvm->mm);
- 		if (page)
- 			put_page(page);
- 		return RESUME_GUEST;
- 	}
- 	pte = *ptep;
- 	local_irq_enable();
-+	end_lockless_pgtbl_walk(kvm->mm);
- 
- 	/* If we're logging dirty pages, always map single pages */
- 	large_enable = !(memslot->flags & KVM_MEM_LOG_DIRTY_PAGES);
-@@ -972,10 +978,12 @@ int kvm_unmap_radix(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 	unsigned long gpa = gfn << PAGE_SHIFT;
- 	unsigned int shift;
- 
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	ptep = __find_linux_pte(kvm->arch.pgtable, gpa, NULL, &shift);
- 	if (ptep && pte_present(*ptep))
- 		kvmppc_unmap_pte(kvm, ptep, gpa, shift, memslot,
- 				 kvm->arch.lpid);
-+	end_lockless_pgtbl_walk(kvm->mm);
- 	return 0;				
- }
- 
-@@ -989,6 +997,7 @@ int kvm_age_radix(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 	int ref = 0;
- 	unsigned long old, *rmapp;
- 
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	ptep = __find_linux_pte(kvm->arch.pgtable, gpa, NULL, &shift);
- 	if (ptep && pte_present(*ptep) && pte_young(*ptep)) {
- 		old = kvmppc_radix_update_pte(kvm, ptep, _PAGE_ACCESSED, 0,
-@@ -1001,6 +1010,7 @@ int kvm_age_radix(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 					       1UL << shift);
- 		ref = 1;
- 	}
-+	end_lockless_pgtbl_walk(kvm->mm);
- 	return ref;
- }
- 
-@@ -1013,9 +1023,11 @@ int kvm_test_age_radix(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 	unsigned int shift;
- 	int ref = 0;
- 
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	ptep = __find_linux_pte(kvm->arch.pgtable, gpa, NULL, &shift);
- 	if (ptep && pte_present(*ptep) && pte_young(*ptep))
- 		ref = 1;
-+	end_lockless_pgtbl_walk(kvm->mm);
- 	return ref;
- }
- 
-@@ -1030,6 +1042,7 @@ static int kvm_radix_test_clear_dirty(struct kvm *kvm,
- 	int ret = 0;
- 	unsigned long old, *rmapp;
- 
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	ptep = __find_linux_pte(kvm->arch.pgtable, gpa, NULL, &shift);
- 	if (ptep && pte_present(*ptep) && pte_dirty(*ptep)) {
- 		ret = 1;
-@@ -1046,6 +1059,7 @@ static int kvm_radix_test_clear_dirty(struct kvm *kvm,
- 					       1UL << shift);
- 		spin_unlock(&kvm->mmu_lock);
- 	}
-+	end_lockless_pgtbl_walk(kvm->mm);
- 	return ret;
- }
- 
-@@ -1084,6 +1098,7 @@ void kvmppc_radix_flush_memslot(struct kvm *kvm,
- 
- 	gpa = memslot->base_gfn << PAGE_SHIFT;
- 	spin_lock(&kvm->mmu_lock);
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	for (n = memslot->npages; n; --n) {
- 		ptep = __find_linux_pte(kvm->arch.pgtable, gpa, NULL, &shift);
- 		if (ptep && pte_present(*ptep))
-@@ -1091,6 +1106,7 @@ void kvmppc_radix_flush_memslot(struct kvm *kvm,
- 					 kvm->arch.lpid);
- 		gpa += PAGE_SIZE;
- 	}
-+	end_lockless_pgtbl_walk(kvm->mm);
- 	spin_unlock(&kvm->mmu_lock);
- }
- 
-diff --git a/arch/powerpc/kvm/book3s_64_vio_hv.c b/arch/powerpc/kvm/book3s_64_vio_hv.c
-index b4f20f13b860..d7ea44f28993 100644
---- a/arch/powerpc/kvm/book3s_64_vio_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_vio_hv.c
-@@ -431,6 +431,7 @@ long kvmppc_rm_h_put_tce(struct kvm_vcpu *vcpu, unsigned long liobn,
- static long kvmppc_rm_ua_to_hpa(struct kvm_vcpu *vcpu,
- 		unsigned long ua, unsigned long *phpa)
- {
-+	struct kvm *kvm = vcpu->kvm;
- 	pte_t *ptep, pte;
- 	unsigned shift = 0;
- 
-@@ -443,10 +444,13 @@ static long kvmppc_rm_ua_to_hpa(struct kvm_vcpu *vcpu,
- 	 * to exit which will agains result in the below page table walk
- 	 * to finish.
- 	 */
++#define __HAVE_ARCH_LOCKLESS_PGTBL_WALK_COUNTER
++void start_lockless_pgtbl_walk(struct mm_struct *mm);
++void end_lockless_pgtbl_walk(struct mm_struct *mm);
++int running_lockless_pgtbl_walk(struct mm_struct *mm);
 +
-+	start_lockless_pgtbl_walk(kvm->mm);
- 	ptep = __find_linux_pte(vcpu->arch.pgdir, ua, NULL, &shift);
- 	if (!ptep || !pte_present(*ptep))
- 		return -ENXIO;
- 	pte = *ptep;
-+	end_lockless_pgtbl_walk(kvm->mm);
- 
- 	if (!shift)
- 		shift = PAGE_SHIFT;
+ #endif /* __ASSEMBLY__ */
+ #endif /* _ASM_POWERPC_BOOK3S_64_PGTABLE_H_ */
 -- 
 2.20.1
 
