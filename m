@@ -2,82 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32E21B8FC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3A9B8FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408979AbfITM2V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 08:28:21 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36558 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406113AbfITM2V (ORCPT
+        id S2408998AbfITM3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 08:29:12 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45137 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404619AbfITM3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 08:28:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y19so6605816wrd.3;
-        Fri, 20 Sep 2019 05:28:19 -0700 (PDT)
+        Fri, 20 Sep 2019 08:29:11 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q64so6850145ljb.12
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 05:29:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=zRqTS3V+m+4w0d7L5MeANtoAWhuIONw+ofn7LfLax7M=;
+        b=GNbjA0OLqlXcmqK1epU19sHUETfXuc5bNucGPbu43hbBJRRCHB84gR38mBnRnV4QDn
+         IsLVHtJ/kjm4u7fOP6Xnu/6GT+JJyZBaOnsg6ZJijLJnhT5zeOg9QWCV0kWvAAbLFriF
+         O50eGu7iyy1t1jvOHVL5qWjQ7YgiuPKF6YtZxDRY1ymTQljCalRidsAh/YRtDx13VLkd
+         +ydRU7HEhHJlDDdy5aCCUk5PhtNQ7vpwRDXzpV9Jlwzbs5BcBPrTgXlXehqdant/eC2d
+         PXKCsTgY02l6NJsYzdfLbI6nUsWt8jgtQdnJiUAWfOqwxIWCpigPQVr4pg+cp1Y97Z9Z
+         PmKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GA3pOvw9cvyvH9sQ+qekD5v2QhBspBBVn0FQG6OPUYU=;
-        b=RxjJh/Tbs0notO6fx7MLNPTa/FabYt7579brB6eYll9t36KyZIpMjXvbO8G+yC6QtQ
-         vh1wUMaAqqo4QUS1wgO6TIgh2u99ftffUvOmfH5l1dLP+7QYkacj/woGfB/6vyUJKOMU
-         UAXnCYYVCTho1x3PgX0avo35EFW0cVB96nJ7CPU9p+GPOgQR8i2qU8xDh+DjYQ6wxJoV
-         XNWOYzQ6aon+lGV8vdr/sPwTletI4rSIOCqEn+UGr8n5r1d6UgYX2IfzUIKI1eEaEYud
-         JoZZ2hbH1G3+2QwJ2T6ZUvYUkSadWREwPyOA1q1XG/+kUn0KFu0U/FUIX/2Eq3WtpX4q
-         II1w==
-X-Gm-Message-State: APjAAAXkIY23MXNtRxMeD3Ra9hrlXBdz3jBOxrsrxfbP9IDi+QLxh9LT
-        4BVgGi+IC7AGkKc2YGyTQOk=
-X-Google-Smtp-Source: APXvYqxmnGq2oEEutMlmvckBo6TPiKxSSizcfXtvJxNZXc6nbSs9KT2dgYsJ0qwY1AyhJqAnzhcTjg==
-X-Received: by 2002:a5d:430f:: with SMTP id h15mr11854947wrq.177.1568982499009;
-        Fri, 20 Sep 2019 05:28:19 -0700 (PDT)
-Received: from pi3 ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id n8sm2186709wma.7.2019.09.20.05.28.17
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=zRqTS3V+m+4w0d7L5MeANtoAWhuIONw+ofn7LfLax7M=;
+        b=h5WqRiZxGnuqF+RwexQCqHw+/3qo75XoT2I6N9KKVz/gAPv46p1sOlxhqpCtpSZR6r
+         W1g4wx+3J1anLmRqyRF0CUjRwD7NcykHViliRYB5gAofZk1KgCIBGgslrT+B5iCchZt5
+         IyOILlOdN5DRVOtOnWlSlZIHcVnUvS0q3vgFEpjtEzjkbdle5yKsMMJTS9cpfyHjJGdQ
+         462W3GshG+KLPlY478HKMqXUuXdUSp1psFTq3wW1IXzxyX33OVgjJVs0xT++KCchPH4z
+         XwBJHZv6nJ1OnKa78/f7tRXWrGSAj0CSAovkO1xYJ09lTr9oTQ1MCxBIIIvwxdo8T3zJ
+         PczQ==
+X-Gm-Message-State: APjAAAU9gLdhAInByaWLl8iES5dnU63JectuV8/sXZbgFYerpR7TmjA3
+        N12bl9D2nnIlJB6F94PiRtE=
+X-Google-Smtp-Source: APXvYqysZ6X7F0kXPqDsa2l37Rkz7d6wWrYJIuXm6C88aYt/3zLc9GrhGdjYqnFW1nniutXZSOKk2A==
+X-Received: by 2002:a2e:6804:: with SMTP id c4mr9364426lja.120.1568982549984;
+        Fri, 20 Sep 2019 05:29:09 -0700 (PDT)
+Received: from uranus.localdomain ([5.18.103.226])
+        by smtp.gmail.com with ESMTPSA id z72sm418739ljb.98.2019.09.20.05.29.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 05:28:18 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 14:28:15 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: exynos: split phandle in dmas property
-Message-ID: <20190920122815.GB26862@pi3>
-References: <CAL_JsqJ=QWk07y=h7dHFiRrKuE7NGoUr50bu3kiOC+YU8qS9jg@mail.gmail.com>
- <CGME20190920121525eucas1p27562c205c41200221540b720c9084fb4@eucas1p2.samsung.com>
- <20190920121431.31678-1-m.szyprowski@samsung.com>
+        Fri, 20 Sep 2019 05:29:08 -0700 (PDT)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id ED22E461797; Fri, 20 Sep 2019 15:29:07 +0300 (MSK)
+Date:   Fri, 20 Sep 2019 15:29:07 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>
+Subject: [PATCH] mm, memcg: assign shrinker_map before kvfree
+Message-ID: <20190920122907.GG2507@uranus.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190920121431.31678-1-m.szyprowski@samsung.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 02:14:30PM +0200, Marek Szyprowski wrote:
-> From: Maciej Falkowski <m.falkowski@samsung.com>
-> 
-> Change representation of phandle array as then
-> dt-schema counts number of its items properly.
-> 
-> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi | 14 +++++++-------
->  arch/arm/boot/dts/exynos5410.dtsi |  6 +++---
->  arch/arm/boot/dts/exynos5420.dtsi | 14 +++++++-------
->  3 files changed, 17 insertions(+), 17 deletions(-)
+Currently there is a small gap between fetching pointer, calling
+kvfree and assign its value to nil. In current callgraph it is
+not a problem (since memcg_free_shrinker_maps is running from
+memcg_alloc_shrinker_maps and mem_cgroup_css_free only) still
+this looks suspicious and we can easily eliminate the gap at all.
 
-Looks good, I'll take it after merge window but why this is in-reply-to
-(inside thread) of completely different patchset?
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Cyrill Gorcunov <gorcunov@gmail.com>
+---
+ mm/memcontrol.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
-
+Index: linux-tip.git/mm/memcontrol.c
+===================================================================
+--- linux-tip.git.orig/mm/memcontrol.c
++++ linux-tip.git/mm/memcontrol.c
+@@ -364,9 +364,9 @@ static void memcg_free_shrinker_maps(str
+ 	for_each_node(nid) {
+ 		pn = mem_cgroup_nodeinfo(memcg, nid);
+ 		map = rcu_dereference_protected(pn->shrinker_map, true);
++		rcu_assign_pointer(pn->shrinker_map, NULL);
+ 		if (map)
+ 			kvfree(map);
+-		rcu_assign_pointer(pn->shrinker_map, NULL);
+ 	}
+ }
+ 
