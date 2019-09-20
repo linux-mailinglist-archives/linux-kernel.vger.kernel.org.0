@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAA38B92A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10579B924D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391746AbfITOeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:34:36 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36304 "EHLO
+        id S2391138AbfITOb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:31:26 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36776 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388221AbfITOZH (ORCPT
+        by vger.kernel.org with ESMTP id S2388361AbfITOZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:07 -0400
+        Fri, 20 Sep 2019 10:25:14 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqK-0004y7-GH; Fri, 20 Sep 2019 15:25:04 +0100
+        id 1iBJqP-000512-UW; Fri, 20 Sep 2019 15:25:10 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007yX-AI; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqF-0007vA-OL; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com,
-        "Oliver Neukum" <oneukum@suse.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Oleg Nesterov" <oleg@redhat.com>,
+        "Orit Wasserman" <orit.was@gmail.com>,
+        "Elazar Leibovich" <elazar@lightbitslabs.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Ingo Molnar" <mingo@redhat.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.637410494@decadent.org.uk>
+Message-ID: <lsq.1568989415.223863765@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 116/132] USB: rio500: refuse more than one device at
- a time
+Subject: [PATCH 3.16 082/132] tracing: Fix partial reading of trace
+ event's id file
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,81 +51,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Elazar Leibovich <elazar@lightbitslabs.com>
 
-commit 3864d33943b4a76c6e64616280e98d2410b1190f upstream.
+commit cbe08bcbbe787315c425dde284dcb715cfbf3f39 upstream.
 
-This driver is using a global variable. It cannot handle more than
-one device at a time. The issue has been existing since the dawn
-of the driver.
+When reading only part of the id file, the ppos isn't tracked correctly.
+This is taken care by simple_read_from_buffer.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+35f04d136fc975a70da4@syzkaller.appspotmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reading a single byte, and then the next byte would result EOF.
+
+While this seems like not a big deal, this breaks abstractions that
+reads information from files unbuffered. See for example
+https://github.com/golang/go/issues/29399
+
+This code was mentioned as problematic in
+commit cd458ba9d5a5
+("tracing: Do not (ab)use trace_seq in event_id_read()")
+
+An example C code that show this bug is:
+
+  #include <stdio.h>
+  #include <stdint.h>
+
+  #include <sys/types.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #include <unistd.h>
+
+  int main(int argc, char **argv) {
+    if (argc < 2)
+      return 1;
+    int fd = open(argv[1], O_RDONLY);
+    char c;
+    read(fd, &c, 1);
+    printf("First  %c\n", c);
+    read(fd, &c, 1);
+    printf("Second %c\n", c);
+  }
+
+Then run with, e.g.
+
+  sudo ./a.out /sys/kernel/debug/tracing/events/tcp/tcp_set_state/id
+
+You'll notice you're getting the first character twice, instead of the
+first two characters in the id file.
+
+Link: http://lkml.kernel.org/r/20181231115837.4932-1-elazar@lightbitslabs.com
+
+Cc: Orit Wasserman <orit.was@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Fixes: 23725aeeab10b ("ftrace: provide an id file for each event")
+Signed-off-by: Elazar Leibovich <elazar@lightbitslabs.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/misc/rio500.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ kernel/trace/trace_events.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/usb/misc/rio500.c
-+++ b/drivers/usb/misc/rio500.c
-@@ -464,15 +464,23 @@ static int probe_rio(struct usb_interfac
- {
- 	struct usb_device *dev = interface_to_usbdev(intf);
- 	struct rio_usb_data *rio = &rio_instance;
--	int retval;
-+	int retval = 0;
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -1007,9 +1007,6 @@ event_id_read(struct file *filp, char __
+ 	char buf[32];
+ 	int len;
  
--	dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
-+	mutex_lock(&rio500_mutex);
-+	if (rio->present) {
-+		dev_info(&intf->dev, "Second USB Rio at address %d refused\n", dev->devnum);
-+		retval = -EBUSY;
-+		goto bail_out;
-+	} else {
-+		dev_info(&intf->dev, "USB Rio found at address %d\n", dev->devnum);
-+	}
+-	if (*ppos)
+-		return 0;
+-
+ 	if (unlikely(!id))
+ 		return -ENODEV;
  
- 	retval = usb_register_dev(intf, &usb_rio_class);
- 	if (retval) {
- 		dev_err(&dev->dev,
- 			"Not able to get a minor for this device.\n");
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 
- 	rio->rio_dev = dev;
-@@ -481,7 +489,8 @@ static int probe_rio(struct usb_interfac
- 		dev_err(&dev->dev,
- 			"probe_rio: Not enough memory for the output buffer\n");
- 		usb_deregister_dev(intf, &usb_rio_class);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 	dev_dbg(&intf->dev, "obuf address:%p\n", rio->obuf);
- 
-@@ -490,7 +499,8 @@ static int probe_rio(struct usb_interfac
- 			"probe_rio: Not enough memory for the input buffer\n");
- 		usb_deregister_dev(intf, &usb_rio_class);
- 		kfree(rio->obuf);
--		return -ENOMEM;
-+		retval = -ENOMEM;
-+		goto bail_out;
- 	}
- 	dev_dbg(&intf->dev, "ibuf address:%p\n", rio->ibuf);
- 
-@@ -498,8 +508,10 @@ static int probe_rio(struct usb_interfac
- 
- 	usb_set_intfdata (intf, rio);
- 	rio->present = 1;
-+bail_out:
-+	mutex_unlock(&rio500_mutex);
- 
--	return 0;
-+	return retval;
- }
- 
- static void disconnect_rio(struct usb_interface *intf)
 
