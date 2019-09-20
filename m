@@ -2,51 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1AD2B9093
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89562B908B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 15:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfITNXc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 09:23:32 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:34640 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726794AbfITNXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 09:23:32 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1iBIVj-0007oG-OP; Fri, 20 Sep 2019 22:59:44 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 20 Sep 2019 22:59:40 +1000
-Date:   Fri, 20 Sep 2019 22:59:40 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: talitos - fix missing break in switch statement
-Message-ID: <20190920125940.GA23242@gondor.apana.org.au>
-References: <20190909052952.GA32131@embeddedor>
+        id S1727472AbfITNUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 09:20:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49851 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbfITNUn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 09:20:43 -0400
+Received: from static-dcd-cqq-121001.business.bouyguestelecom.com ([212.194.121.1] helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iBIq1-0002KN-07; Fri, 20 Sep 2019 13:20:41 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Will Drewry <wad@chromium.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-um@lists.infradead.org,
+        x86@kernel.org
+Subject: [PATCH] seccomp: remove unused arg from secure_computing()
+Date:   Fri, 20 Sep 2019 15:19:09 +0200
+Message-Id: <20190920131907.6886-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909052952.GA32131@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 12:29:52AM -0500, Gustavo A. R. Silva wrote:
-> Add missing break statement in order to prevent the code from falling
-> through to case CRYPTO_ALG_TYPE_AHASH.
-> 
-> Fixes: aeb4c132f33d ("crypto: talitos - Convert to new AEAD interface")
-> Cc: stable@vger.kernel.org
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/crypto/talitos.c | 1 +
->  1 file changed, 1 insertion(+)
+While touching seccomp code I realized that the struct seccomp_data
+argument to secure_computing() seems to be unused by all current
+callers. So let's remove it unless there is some subtlety I missed.
+Note, I only tested this on x86.
 
-Patch applied.  Thanks.
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Drewry <wad@chromium.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-parisc@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-um@lists.infradead.org
+Cc: x86@kernel.org
+---
+ arch/arm/kernel/ptrace.c              | 2 +-
+ arch/arm64/kernel/ptrace.c            | 2 +-
+ arch/parisc/kernel/ptrace.c           | 2 +-
+ arch/s390/kernel/ptrace.c             | 4 ++--
+ arch/um/kernel/skas/syscall.c         | 2 +-
+ arch/x86/entry/vsyscall/vsyscall_64.c | 2 +-
+ include/linux/seccomp.h               | 6 +++---
+ 7 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm/kernel/ptrace.c b/arch/arm/kernel/ptrace.c
+index 324352787aea..b606cded90cd 100644
+--- a/arch/arm/kernel/ptrace.c
++++ b/arch/arm/kernel/ptrace.c
+@@ -923,7 +923,7 @@ asmlinkage int syscall_trace_enter(struct pt_regs *regs, int scno)
+ 
+ 	/* Do seccomp after ptrace; syscall may have changed. */
+ #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
+-	if (secure_computing(NULL) == -1)
++	if (secure_computing() == -1)
+ 		return -1;
+ #else
+ 	/* XXX: remove this once OABI gets fixed */
+diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+index 3cf3b135027e..010a835302d3 100644
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -1816,7 +1816,7 @@ int syscall_trace_enter(struct pt_regs *regs)
+ 	}
+ 
+ 	/* Do the secure computing after ptrace; failures should be fast. */
+-	if (secure_computing(NULL) == -1)
++	if (secure_computing() == -1)
+ 		return -1;
+ 
+ 	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
+diff --git a/arch/parisc/kernel/ptrace.c b/arch/parisc/kernel/ptrace.c
+index 9f6ff7bc06f9..f8c07dcbfb49 100644
+--- a/arch/parisc/kernel/ptrace.c
++++ b/arch/parisc/kernel/ptrace.c
+@@ -342,7 +342,7 @@ long do_syscall_trace_enter(struct pt_regs *regs)
+ 	}
+ 
+ 	/* Do the secure computing check after ptrace. */
+-	if (secure_computing(NULL) == -1)
++	if (secure_computing() == -1)
+ 		return -1;
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+diff --git a/arch/s390/kernel/ptrace.c b/arch/s390/kernel/ptrace.c
+index ad71132374f0..ed80bdfbf5fe 100644
+--- a/arch/s390/kernel/ptrace.c
++++ b/arch/s390/kernel/ptrace.c
+@@ -439,7 +439,7 @@ static int poke_user(struct task_struct *child, addr_t addr, addr_t data)
+ long arch_ptrace(struct task_struct *child, long request,
+ 		 unsigned long addr, unsigned long data)
+ {
+-	ptrace_area parea; 
++	ptrace_area parea;
+ 	int copied, ret;
+ 
+ 	switch (request) {
+@@ -856,7 +856,7 @@ asmlinkage long do_syscall_trace_enter(struct pt_regs *regs)
+ 	}
+ 
+ 	/* Do the secure computing check after ptrace. */
+-	if (secure_computing(NULL)) {
++	if (secure_computing()) {
+ 		/* seccomp failures shouldn't expose any additional code. */
+ 		return -1;
+ 	}
+diff --git a/arch/um/kernel/skas/syscall.c b/arch/um/kernel/skas/syscall.c
+index 44bb10785075..fc37259d5971 100644
+--- a/arch/um/kernel/skas/syscall.c
++++ b/arch/um/kernel/skas/syscall.c
+@@ -35,7 +35,7 @@ void handle_syscall(struct uml_pt_regs *r)
+ 		goto out;
+ 
+ 	/* Do the seccomp check after ptrace; failures should be fast. */
+-	if (secure_computing(NULL) == -1)
++	if (secure_computing() == -1)
+ 		goto out;
+ 
+ 	syscall = UPT_SYSCALL_NR(r);
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
+index e7c596dea947..b10cbf71a8cc 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -222,7 +222,7 @@ bool emulate_vsyscall(unsigned long error_code,
+ 	 */
+ 	regs->orig_ax = syscall_nr;
+ 	regs->ax = -ENOSYS;
+-	tmp = secure_computing(NULL);
++	tmp = secure_computing();
+ 	if ((!tmp && regs->orig_ax != syscall_nr) || regs->ip != address) {
+ 		warn_bad_vsyscall(KERN_DEBUG, regs,
+ 				  "seccomp tried to change syscall nr or ip");
+diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+index 84868d37b35d..03583b6d1416 100644
+--- a/include/linux/seccomp.h
++++ b/include/linux/seccomp.h
+@@ -33,10 +33,10 @@ struct seccomp {
+ 
+ #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
+ extern int __secure_computing(const struct seccomp_data *sd);
+-static inline int secure_computing(const struct seccomp_data *sd)
++static inline int secure_computing(void)
+ {
+ 	if (unlikely(test_thread_flag(TIF_SECCOMP)))
+-		return  __secure_computing(sd);
++		return  __secure_computing(NULL);
+ 	return 0;
+ }
+ #else
+@@ -59,7 +59,7 @@ struct seccomp { };
+ struct seccomp_filter { };
+ 
+ #ifdef CONFIG_HAVE_ARCH_SECCOMP_FILTER
+-static inline int secure_computing(struct seccomp_data *sd) { return 0; }
++static inline int secure_computing(void) { return 0; }
+ #else
+ static inline void secure_computing_strict(int this_syscall) { return; }
+ #endif
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.23.0
+
