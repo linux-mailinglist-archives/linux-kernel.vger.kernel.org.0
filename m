@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F0F2B9249
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E8E8B9225
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391071AbfITObS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:31:18 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36908 "EHLO
+        id S2388623AbfITOZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:25:41 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36000 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388396AbfITOZQ (ORCPT
+        by vger.kernel.org with ESMTP id S2388105AbfITOZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:16 -0400
+        Fri, 20 Sep 2019 10:25:03 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqT-000512-DD; Fri, 20 Sep 2019 15:25:13 +0100
+        id 1iBJqG-0004xD-Kj; Fri, 20 Sep 2019 15:25:00 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0007ts-RA; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqE-0007sA-2p; Fri, 20 Sep 2019 15:24:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Oliver Neukum" <oneukum@suse.de>
+        "Takashi Iwai" <tiwai@suse.de>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.70460827@decadent.org.uk>
+Message-ID: <lsq.1568989415.364236498@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 066/132] cdc-acm: fix race between callback and
- unthrottle
+Subject: [PATCH 3.16 045/132] ALSA: usb-audio: Handle the error from
+ snd_usb_mixer_apply_create_quirk()
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,59 +47,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 36e59e0d70d6150e7a2155c54612ea875e88ce8d upstream.
+commit 328e9f6973be2ee67862cb17bf6c0c5c5918cd72 upstream.
 
-Abn URB may be may marked free only after the buffer has been
-processed or there is a small window during which it could
-be submitted on another CPU and overwrite an unprocessed buffer
+The error from snd_usb_mixer_apply_create_quirk() is ignored in the
+current usb-audio driver code, which will continue the probing even
+after the error.  Let's take it more serious.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust context]
+Fixes: 7b1eda223deb ("ALSA: usb-mixer: factor out quirks")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/class/cdc-acm.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ sound/usb/mixer.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -419,19 +419,21 @@ static void acm_read_bulk_callback(struc
- 	struct acm_rb *rb = urb->context;
- 	struct acm *acm = rb->instance;
- 	unsigned long flags;
-+	int status = urb->status;
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -2499,7 +2499,9 @@ int snd_usb_create_mixer(struct snd_usb_
+ 	    (err = snd_usb_mixer_status_create(mixer)) < 0)
+ 		goto _error;
  
- 	dev_vdbg(&acm->data->dev, "%s - urb %d, len %d\n", __func__,
- 					rb->index, urb->actual_length);
--	set_bit(rb->index, &acm->read_urbs_free);
+-	snd_usb_mixer_apply_create_quirk(mixer);
++	err = snd_usb_mixer_apply_create_quirk(mixer);
++	if (err < 0)
++		goto _error;
  
- 	if (!acm->dev) {
-+		set_bit(rb->index, &acm->read_urbs_free);
- 		dev_dbg(&acm->data->dev, "%s - disconnected\n", __func__);
- 		return;
- 	}
- 
- 	if (urb->status) {
-+		set_bit(rb->index, &acm->read_urbs_free);
- 		dev_dbg(&acm->data->dev, "%s - non-zero urb status: %d\n",
--							__func__, urb->status);
-+							__func__, status);
- 		if ((urb->status != -ENOENT) || (urb->actual_length == 0))
- 			return;
- 	}
-@@ -439,6 +441,12 @@ static void acm_read_bulk_callback(struc
- 	usb_mark_last_busy(acm->dev);
- 
- 	acm_process_read_urb(acm, urb);
-+	/*
-+	 * Unthrottle may run on another CPU which needs to see events
-+	 * in the same order. Submission has an implict barrier
-+	 */
-+	smp_mb__before_atomic();
-+	set_bit(rb->index, &acm->read_urbs_free);
- 
- 	/* throttle device if requested by tty */
- 	spin_lock_irqsave(&acm->read_lock, flags);
+ 	err = snd_device_new(chip->card, SNDRV_DEV_CODEC, mixer, &dev_ops);
+ 	if (err < 0)
 
