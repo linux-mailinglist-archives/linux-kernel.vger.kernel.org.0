@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87398B926F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60030B92A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391045AbfITOce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:32:34 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36508 "EHLO
+        id S2390878AbfITOej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:34:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36300 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388284AbfITOZK (ORCPT
+        by vger.kernel.org with ESMTP id S2388215AbfITOZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:10 -0400
+        Fri, 20 Sep 2019 10:25:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqN-00051F-Lo; Fri, 20 Sep 2019 15:25:07 +0100
+        id 1iBJqK-00051C-Rg; Fri, 20 Sep 2019 15:25:04 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqG-0007vo-4H; Fri, 20 Sep 2019 15:25:00 +0100
+        id 1iBJqH-0007zR-NL; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Miroslav Lichvar" <mlichvar@redhat.com>,
-        "John Stultz" <john.stultz@linaro.org>,
-        "Prarit Bhargava" <prarit@redhat.com>,
-        "Ondrej Mosnacek" <omosnace@redhat.com>,
-        "Richard Cochran" <richardcochran@gmail.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+        "Loic Poulain" <loic.poulain@intel.com>,
+        "Marcel Holtmann" <marcel@holtmann.org>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.865748957@decadent.org.uk>
+Message-ID: <lsq.1568989415.915776834@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 090/132] ntp: Allow TAI-UTC offset to be set to zero
+Subject: [PATCH 3.16 127/132] Bluetooth: hci_ldisc: Fix null pointer
+ derefence in case of early data
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,42 +48,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miroslav Lichvar <mlichvar@redhat.com>
+From: Loic Poulain <loic.poulain@intel.com>
 
-commit fdc6bae940ee9eb869e493990540098b8c0fd6ab upstream.
+commit 84cb3df02aea4b00405521e67c4c67c2d525c364 upstream.
 
-The ADJ_TAI adjtimex mode sets the TAI-UTC offset of the system clock.
-It is typically set by NTP/PTP implementations and it is automatically
-updated by the kernel on leap seconds. The initial value is zero (which
-applications may interpret as unknown), but this value cannot be set by
-adjtimex. This limitation seems to go back to the original "nanokernel"
-implementation by David Mills.
+HCI_UART_PROTO_SET flag is set before hci_uart_set_proto call. If we
+receive data from tty layer during this procedure, proto pointer may
+not be assigned yet, leading to null pointer dereference in rx method
+hci_uart_tty_receive.
 
-Change the ADJ_TAI check to accept zero as a valid TAI-UTC offset in
-order to allow setting it back to the initial value.
+This patch fixes this issue by introducing HCI_UART_PROTO_READY flag in
+order to avoid any proto operation before proto opening and assignment.
 
-Fixes: 153b5d054ac2 ("ntp: support for TAI")
-Suggested-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Link: https://lkml.kernel.org/r/20190417084833.7401-1-mlichvar@redhat.com
+Signed-off-by: Loic Poulain <loic.poulain@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/time/ntp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/hci_ldisc.c | 11 +++++++----
+ drivers/bluetooth/hci_uart.h  |  1 +
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -588,7 +588,7 @@ static inline void process_adjtimex_mode
- 		time_constant = max(time_constant, 0l);
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -225,7 +225,7 @@ static int hci_uart_flush(struct hci_dev
+ 	tty_ldisc_flush(tty);
+ 	tty_driver_flush_buffer(tty);
+ 
+-	if (test_bit(HCI_UART_PROTO_SET, &hu->flags))
++	if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+ 		hu->proto->flush(hu);
+ 
+ 	return 0;
+@@ -342,7 +342,7 @@ static void hci_uart_tty_close(struct tt
+ 
+ 	cancel_work_sync(&hu->write_work);
+ 
+-	if (test_and_clear_bit(HCI_UART_PROTO_SET, &hu->flags)) {
++	if (test_and_clear_bit(HCI_UART_PROTO_READY, &hu->flags)) {
+ 		if (hdev) {
+ 			if (test_bit(HCI_UART_REGISTERED, &hu->flags))
+ 				hci_unregister_dev(hdev);
+@@ -350,6 +350,7 @@ static void hci_uart_tty_close(struct tt
+ 		}
+ 		hu->proto->close(hu);
  	}
++	clear_bit(HCI_UART_PROTO_SET, &hu->flags);
  
--	if (txc->modes & ADJ_TAI && txc->constant > 0)
-+	if (txc->modes & ADJ_TAI && txc->constant >= 0)
- 		*time_tai = txc->constant;
+ 	kfree(hu);
+ }
+@@ -376,7 +377,7 @@ static void hci_uart_tty_wakeup(struct t
+ 	if (tty != hu->tty)
+ 		return;
  
- 	if (txc->modes & ADJ_OFFSET)
+-	if (test_bit(HCI_UART_PROTO_SET, &hu->flags))
++	if (test_bit(HCI_UART_PROTO_READY, &hu->flags))
+ 		hci_uart_tx_wakeup(hu);
+ }
+ 
+@@ -399,7 +400,7 @@ static void hci_uart_tty_receive(struct
+ 	if (!hu || tty != hu->tty)
+ 		return;
+ 
+-	if (!test_bit(HCI_UART_PROTO_SET, &hu->flags))
++	if (!test_bit(HCI_UART_PROTO_READY, &hu->flags))
+ 		return;
+ 
+ 	spin_lock(&hu->rx_lock);
+@@ -476,9 +477,11 @@ static int hci_uart_set_proto(struct hci
+ 		return err;
+ 
+ 	hu->proto = p;
++	set_bit(HCI_UART_PROTO_READY, &hu->flags);
+ 
+ 	err = hci_uart_register_dev(hu);
+ 	if (err) {
++		clear_bit(HCI_UART_PROTO_READY, &hu->flags);
+ 		p->close(hu);
+ 		return err;
+ 	}
+--- a/drivers/bluetooth/hci_uart.h
++++ b/drivers/bluetooth/hci_uart.h
+@@ -81,6 +81,7 @@ struct hci_uart {
+ /* HCI_UART proto flag bits */
+ #define HCI_UART_PROTO_SET	0
+ #define HCI_UART_REGISTERED	1
++#define HCI_UART_PROTO_READY	2
+ 
+ /* TX states  */
+ #define HCI_UART_SENDING	1
 
