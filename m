@@ -2,101 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21E28B9218
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D68AB933B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390427AbfITO31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:29:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:45584 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389000AbfITO3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:29:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C5B5337;
-        Fri, 20 Sep 2019 07:29:24 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E188E3F67D;
-        Fri, 20 Sep 2019 07:29:22 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 15:29:20 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [RFC patch 07/15] arm64/syscall: Remove obscure flag check
-Message-ID: <20190920142920.GB21231@arrakis.emea.arm.com>
-References: <20190919150314.054351477@linutronix.de>
- <20190919150809.145400160@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S2392973AbfITOil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:38:41 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35630 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728948AbfITOY6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:24:58 -0400
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iBJqC-0004wB-HD; Fri, 20 Sep 2019 15:24:56 +0100
+Received: from ben by deadeye with local (Exim 4.92.1)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1iBJqB-0007pV-Ss; Fri, 20 Sep 2019 15:24:55 +0100
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-In-Reply-To: <20190919150809.145400160@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
+        "Nathan Chancellor" <natechancellor@gmail.com>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
+Date:   Fri, 20 Sep 2019 15:23:35 +0100
+Message-ID: <lsq.1568989415.168510138@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+X-Patchwork-Hint: ignore
+Subject: [PATCH 3.16 012/132] media: davinci-isif: avoid uninitialized
+ variable use
+In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 05:03:21PM +0200, Thomas Gleixner wrote:
-> The syscall handling code has an obscure check of pending work which does a
-> shortcut before returning to user space. It calls into the exit work code
-> when the flags at entry time required an entry into the slowpath. That does
-> not make sense because the underlying work functionality will reevaluate
-> the flags anyway and not do anything.
+3.16.74-rc1 review patch.  If anyone has any objections, please let me know.
 
-The current C code was just matching the original behaviour in asm
-(converted by commit f37099b6992a0b81). The idea IIRC was to always pair
-a syscall_trace_enter() with a syscall_trace_exit() irrespective of the
-thread flag changes. I think the behaviour is preserved with your patch
-if no-one clears the work flags during el0_svc_common().
+------------------
 
-> @@ -105,33 +103,15 @@ static void el0_svc_common(struct pt_reg
->  	user_exit();
->  
->  	scno = syscall_enter_from_usermode(regs, scno);
-> -	if (scno == NO_SYSCALL)
-> -		goto trace_exit;
-> -
-> -	invoke_syscall(regs, scno, sc_nr, syscall_table);
-> +	if (scno != NO_SYSCALL)
-> +		invoke_syscall(regs, scno, sc_nr, syscall_table);
->  
-> -	/*
-> -	 * The tracing status may have changed under our feet, so we have to
-> -	 * check again. However, if we were tracing entry, then we always trace
-> -	 * exit regardless, as the old entry assembly did.
-> -	 */
-> -	if (!has_syscall_work(flags) && !IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
-> -		local_daif_mask();
-> -		flags = current_thread_info()->flags;
-> -		if (!has_syscall_work(flags)) {
-> -			/*
-> -			 * We're off to userspace, where interrupts are
-> -			 * always enabled after we restore the flags from
-> -			 * the SPSR.
-> -			 */
-> -			trace_hardirqs_on();
-> -			return;
-> -		}
-> +	local_daif_mask();
-> +	if (has_syscall_work(current_thread_info()->flags) ||
-> +	    IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
->  		local_daif_restore(DAIF_PROCCTX);
-> +		syscall_trace_exit(regs);
->  	}
+From: Arnd Bergmann <arnd@arndb.de>
 
-That's missing a trace_hardirqs_on() (off done in local_daif_mask())
-before returning.
+commit 0e633f97162c1c74c68e2eb20bbd9259dce87cd9 upstream.
 
-> -
-> -trace_exit:
-> -	syscall_trace_exit(regs);
->  }
+clang warns about a possible variable use that gcc never
+complained about:
 
--- 
-Catalin
+drivers/media/platform/davinci/isif.c:982:32: error: variable 'frame_size' is uninitialized when used here
+      [-Werror,-Wuninitialized]
+                dm365_vpss_set_pg_frame_size(frame_size);
+                                             ^~~~~~~~~~
+drivers/media/platform/davinci/isif.c:887:2: note: variable 'frame_size' is declared here
+        struct vpss_pg_frame_size frame_size;
+        ^
+1 error generated.
+
+There is no initialization for this variable at all, and there
+has never been one in the mainline kernel, so we really should
+not put that stack data into an mmio register.
+
+On the other hand, I suspect that gcc checks the condition
+more closely and notices that the global
+isif_cfg.bayer.config_params.test_pat_gen flag is initialized
+to zero and never written to from any code path, so anything
+depending on it can be eliminated.
+
+To shut up the clang warning, just remove the dead code manually,
+it has probably never been used because any attempt to do so
+would have resulted in undefined behavior.
+
+Fixes: 63e3ab142fa3 ("V4L/DVB: V4L - vpfe capture - source for ISIF driver on DM365")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/media/platform/davinci/isif.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+--- a/drivers/media/platform/davinci/isif.c
++++ b/drivers/media/platform/davinci/isif.c
+@@ -890,9 +890,7 @@ static int isif_set_hw_if_params(struct
+ static int isif_config_ycbcr(void)
+ {
+ 	struct isif_ycbcr_config *params = &isif_cfg.ycbcr;
+-	struct vpss_pg_frame_size frame_size;
+ 	u32 modeset = 0, ccdcfg = 0;
+-	struct vpss_sync_pol sync;
+ 
+ 	dev_dbg(isif_cfg.dev, "\nStarting isif_config_ycbcr...");
+ 
+@@ -980,13 +978,6 @@ static int isif_config_ycbcr(void)
+ 		/* two fields are interleaved in memory */
+ 		regw(0x00000249, SDOFST);
+ 
+-	/* Setup test pattern if enabled */
+-	if (isif_cfg.bayer.config_params.test_pat_gen) {
+-		sync.ccdpg_hdpol = params->hd_pol;
+-		sync.ccdpg_vdpol = params->vd_pol;
+-		dm365_vpss_set_sync_pol(sync);
+-		dm365_vpss_set_pg_frame_size(frame_size);
+-	}
+ 	return 0;
+ }
+ 
+
