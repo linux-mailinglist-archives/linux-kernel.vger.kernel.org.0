@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA1A6B922C
+	by mail.lfdr.de (Postfix) with ESMTP id 36C71B922B
 	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:30:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390539AbfITO3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:29:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38456 "EHLO mail.kernel.org"
+        id S2390473AbfITO3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:29:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729010AbfITO0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:26:05 -0400
+        id S1726427AbfITO0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:26:07 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E37112190F;
-        Fri, 20 Sep 2019 14:26:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62D662086A;
+        Fri, 20 Sep 2019 14:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568989563;
-        bh=j9JIp04yemUIXawwDP4v/th9nKNvB0MLgaTiiLk2gHU=;
+        s=default; t=1568989567;
+        bh=g/uEh/2zZmM3i0kN5I9jxRL0l/wRQEFgOClyigDz634=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gPvEMIEbprmixEdODD6uciFMeTyiYATjsoQE3mN+CJuAheUDs0HtWo8iAudGeeLO/
-         QSPYKpChFp7TzZaMjes819oaADcXDTJw4CQ8K0DJZRcjEGkt7EZ3v4KMB8yoxN33NZ
-         Uf8QpwySW9Wof22ZDKSPk+SrXlxbt+KemOxjfNi4=
+        b=VPRzLS93JgI409tfZhO3bPJ3A1uZo9mzb9ucXn9ZlnCB8cz6blLAmJlr1fW8ngMhd
+         Y+jYso+f2r5xlRel4olefHYRdioUyg1NobhRxT1SIerKk+TXZLNeZk+18QXooG8AZg
+         jcodSa+4LmEmgzS5TeKv/KsnVz753V0UJ2iSwGdQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Joe Mario <jmario@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 04/31] libperf: Adopt perf_cpu_map__max() function
-Date:   Fri, 20 Sep 2019 11:25:15 -0300
-Message-Id: <20190920142542.12047-5-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andreas Krebbel <krebbel@linux.ibm.com>,
+        Sergey Melnikov <melnikov.sergey.v@gmail.com>
+Subject: [PATCH 05/31] perf jvmti: Link against tools/lib/string.o to have weak strlcpy()
+Date:   Fri, 20 Sep 2019 11:25:16 -0300
+Message-Id: <20190920142542.12047-6-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190920142542.12047-1-acme@kernel.org>
 References: <20190920142542.12047-1-acme@kernel.org>
@@ -48,103 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-From 'perf stat', so that it can be used from multiple places.
+That is needed in systems such some S/390 distros.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Joe Mario <jmario@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
+  $ readelf -s /tmp/build/perf/jvmti/jvmti-in.o | grep strlcpy
+	452: 0000000000002990   125 FUNC    WEAK   DEFAULT  119 strlcpy
+  $
+
+Thanks to Jiri Olsa for fixing up my initial stab at this, I forgot how
+Makefiles are picky about spaces versus tabs.
+
+Reported-by: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andreas Krebbel <krebbel@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20190902121255.536-2-jolsa@kernel.org
+Cc: Sergey Melnikov <melnikov.sergey.v@gmail.com>
+Link: https://lkml.kernel.org/n/tip-x8vg9sffgb2t1tzqmhkrulh7@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c            | 14 +-------------
- tools/perf/lib/cpumap.c              | 12 ++++++++++++
- tools/perf/lib/include/perf/cpumap.h |  1 +
- tools/perf/lib/libperf.map           |  1 +
- 4 files changed, 15 insertions(+), 13 deletions(-)
+ tools/perf/jvmti/Build | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 7e17bf9f700a..5bc0c570b7b6 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -822,18 +822,6 @@ static int perf_stat__get_core(struct perf_stat_config *config __maybe_unused,
- 	return cpu_map__get_core(map, cpu, NULL);
- }
+diff --git a/tools/perf/jvmti/Build b/tools/perf/jvmti/Build
+index eaeb8cb5379b..1e148bbdf820 100644
+--- a/tools/perf/jvmti/Build
++++ b/tools/perf/jvmti/Build
+@@ -1,8 +1,17 @@
+ jvmti-y += libjvmti.o
+ jvmti-y += jvmti_agent.o
  
--static int cpu_map__get_max(struct perf_cpu_map *map)
--{
--	int i, max = -1;
--
--	for (i = 0; i < map->nr; i++) {
--		if (map->map[i] > max)
--			max = map->map[i];
--	}
--
--	return max;
--}
--
- static int perf_stat__get_aggr(struct perf_stat_config *config,
- 			       aggr_get_id_t get_id, struct perf_cpu_map *map, int idx)
- {
-@@ -928,7 +916,7 @@ static int perf_stat_init_aggr_mode(void)
- 	 * taking the highest cpu number to be the size of
- 	 * the aggregation translate cpumap.
- 	 */
--	nr = cpu_map__get_max(evsel_list->core.cpus);
-+	nr = perf_cpu_map__max(evsel_list->core.cpus);
- 	stat_config.cpus_aggr_map = perf_cpu_map__empty_new(nr + 1);
- 	return stat_config.cpus_aggr_map ? 0 : -ENOMEM;
- }
-diff --git a/tools/perf/lib/cpumap.c b/tools/perf/lib/cpumap.c
-index 1f0e6f334237..2ca1fafa620d 100644
---- a/tools/perf/lib/cpumap.c
-+++ b/tools/perf/lib/cpumap.c
-@@ -260,3 +260,15 @@ int perf_cpu_map__idx(struct perf_cpu_map *cpus, int cpu)
- 
- 	return -1;
- }
++# For strlcpy
++jvmti-y += libstring.o
 +
-+int perf_cpu_map__max(struct perf_cpu_map *map)
-+{
-+	int i, max = -1;
+ CFLAGS_jvmti         = -fPIC -DPIC -I$(JDIR)/include -I$(JDIR)/include/linux
+ CFLAGS_REMOVE_jvmti  = -Wmissing-declarations
+ CFLAGS_REMOVE_jvmti += -Wstrict-prototypes
+ CFLAGS_REMOVE_jvmti += -Wextra
+ CFLAGS_REMOVE_jvmti += -Wwrite-strings
 +
-+	for (i = 0; i < map->nr; i++) {
-+		if (map->map[i] > max)
-+			max = map->map[i];
-+	}
++CFLAGS_libstring.o += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
 +
-+	return max;
-+}
-diff --git a/tools/perf/lib/include/perf/cpumap.h b/tools/perf/lib/include/perf/cpumap.h
-index 8aa995c59498..ac9aa497f84a 100644
---- a/tools/perf/lib/include/perf/cpumap.h
-+++ b/tools/perf/lib/include/perf/cpumap.h
-@@ -16,6 +16,7 @@ LIBPERF_API void perf_cpu_map__put(struct perf_cpu_map *map);
- LIBPERF_API int perf_cpu_map__cpu(const struct perf_cpu_map *cpus, int idx);
- LIBPERF_API int perf_cpu_map__nr(const struct perf_cpu_map *cpus);
- LIBPERF_API bool perf_cpu_map__empty(const struct perf_cpu_map *map);
-+LIBPERF_API int perf_cpu_map__max(struct perf_cpu_map *map);
- 
- #define perf_cpu_map__for_each_cpu(cpu, idx, cpus)		\
- 	for ((idx) = 0, (cpu) = perf_cpu_map__cpu(cpus, idx);	\
-diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index dc4d66363bc4..cd0d17b996c8 100644
---- a/tools/perf/lib/libperf.map
-+++ b/tools/perf/lib/libperf.map
-@@ -9,6 +9,7 @@ LIBPERF_0.0.1 {
- 		perf_cpu_map__nr;
- 		perf_cpu_map__cpu;
- 		perf_cpu_map__empty;
-+		perf_cpu_map__max;
- 		perf_thread_map__new_dummy;
- 		perf_thread_map__set_pid;
- 		perf_thread_map__comm;
++$(OUTPUT)jvmti/libstring.o: ../lib/string.c FORCE
++	$(call rule_mkdir)
++	$(call if_changed_dep,cc_o_c)
 -- 
 2.21.0
 
