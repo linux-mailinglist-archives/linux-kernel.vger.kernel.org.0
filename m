@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B79AB927C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6297B92B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391492AbfITOdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:33:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36396 "EHLO
+        id S2392162AbfITOez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:34:55 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36228 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388255AbfITOZI (ORCPT
+        by vger.kernel.org with ESMTP id S2388190AbfITOZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:08 -0400
+        Fri, 20 Sep 2019 10:25:06 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqM-0004y2-FS; Fri, 20 Sep 2019 15:25:06 +0100
+        id 1iBJqH-0004y7-8i; Fri, 20 Sep 2019 15:25:01 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007yc-B1; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqE-0007tN-Kr; Fri, 20 Sep 2019 15:24:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,16 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Oliver Neukum" <oneukum@suse.com>,
-        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
-        syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com
+        "Kalle Valo" <kvalo@codeaurora.org>,
+        "Christian Lamparter" <chunkeey@gmail.com>,
+        "Pan Bian" <bianpan2016@163.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.91336269@decadent.org.uk>
+Message-ID: <lsq.1568989415.50110479@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 117/132] media: cpia2_usb: first wake up, then free
- in disconnect
+Subject: [PATCH 3.16 060/132] p54: drop device reference count if fails to
+ enable device
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -50,42 +49,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit eff73de2b1600ad8230692f00bc0ab49b166512a upstream.
+commit 8149069db81853570a665f5e5648c0e526dc0e43 upstream.
 
-Kasan reported a use after free in cpia2_usb_disconnect()
-It first freed everything and then woke up those waiting.
-The reverse order is correct.
+The function p54p_probe takes an extra reference count of the PCI
+device. However, the extra reference count is not dropped when it fails
+to enable the PCI device. This patch fixes the bug.
 
-Fixes: 6c493f8b28c67 ("[media] cpia2: major overhaul to get it in a working state again")
-
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Acked-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/usb/cpia2/cpia2_usb.c | 3 ++-
+ drivers/net/wireless/p54/p54pci.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/media/usb/cpia2/cpia2_usb.c
-+++ b/drivers/media/usb/cpia2/cpia2_usb.c
-@@ -884,7 +884,6 @@ static void cpia2_usb_disconnect(struct
- 	cpia2_unregister_camera(cam);
- 	v4l2_device_disconnect(&cam->v4l2_dev);
- 	mutex_unlock(&cam->v4l2_lock);
--	v4l2_device_put(&cam->v4l2_dev);
+--- a/drivers/net/wireless/p54/p54pci.c
++++ b/drivers/net/wireless/p54/p54pci.c
+@@ -551,7 +551,7 @@ static int p54p_probe(struct pci_dev *pd
+ 	err = pci_enable_device(pdev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Cannot enable new PCI device\n");
+-		return err;
++		goto err_put;
+ 	}
  
- 	if(cam->buffers) {
- 		DBG("Wakeup waiting processes\n");
-@@ -897,6 +896,8 @@ static void cpia2_usb_disconnect(struct
- 	DBG("Releasing interface\n");
- 	usb_driver_release_interface(&cpia2_driver, intf);
- 
-+	v4l2_device_put(&cam->v4l2_dev);
-+
- 	LOG("CPiA2 camera disconnected.\n");
+ 	mem_addr = pci_resource_start(pdev, 0);
+@@ -636,6 +636,7 @@ static int p54p_probe(struct pci_dev *pd
+ 	pci_release_regions(pdev);
+  err_disable_dev:
+ 	pci_disable_device(pdev);
++err_put:
+ 	pci_dev_put(pdev);
+ 	return err;
  }
- 
 
