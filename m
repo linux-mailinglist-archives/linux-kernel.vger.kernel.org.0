@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FEC6B921D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C3B1B91E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbfITO0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:26:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36520 "EHLO
+        id S2389094AbfITO0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:26:30 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36748 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388286AbfITOZL (ORCPT
+        by vger.kernel.org with ESMTP id S2388355AbfITOZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:11 -0400
+        Fri, 20 Sep 2019 10:25:14 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqN-00051H-M8; Fri, 20 Sep 2019 15:25:07 +0100
+        id 1iBJqR-0004xX-Hp; Fri, 20 Sep 2019 15:25:11 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqG-0007vy-7D; Fri, 20 Sep 2019 15:25:00 +0100
+        id 1iBJqF-0007uM-6e; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,12 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Paul Dufresne" <dufresnep@gmail.com>,
-        "=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>,
-        "Alex Deucher" <alexander.deucher@amd.com>
+        "Johan Hovold" <johan@kernel.org>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.591577538@decadent.org.uk>
+Message-ID: <lsq.1568989415.778189460@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 092/132] drm/radeon: prefer lower reference dividers
+Subject: [PATCH 3.16 072/132] USB: serial: fix unthrottle races
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,39 +46,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian König <christian.koenig@amd.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 2e26ccb119bde03584be53406bbd22e711b0d6e6 upstream.
+commit 3f5edd58d040bfa4b74fb89bc02f0bc6b9cd06ab upstream.
 
-Instead of the closest reference divider prefer the lowest,
-this fixes flickering issues on HP Compaq nx9420.
+Fix two long-standing bugs which could potentially lead to memory
+corruption or leave the port throttled until it is reopened (on weakly
+ordered systems), respectively, when read-URB completion races with
+unthrottle().
 
-Bugs: https://bugs.freedesktop.org/show_bug.cgi?id=108514
-Suggested-by: Paul Dufresne <dufresnep@gmail.com>
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-[bwh: Backported to 3.16: adjust context]
+First, the URB must not be marked as free before processing is complete
+to prevent it from being submitted by unthrottle() on another CPU.
+
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  process_urb();
+	  smp_mb__before_atomic();
+	  set_bit(i, free);		  if (test_and_clear_bit(i, free))
+	  					  submit_urb();
+
+Second, the URB must be marked as free before checking the throttled
+flag to prevent unthrottle() on another CPU from failing to observe that
+the URB needs to be submitted if complete() sees that the throttled flag
+is set.
+
+	CPU 1				CPU 2
+	================		================
+	complete()			unthrottle()
+	  set_bit(i, free);		  throttled = 0;
+	  smp_mb__after_atomic();	  smp_mb();
+	  if (throttled)		  if (test_and_clear_bit(i, free))
+	  	  return;			  submit_urb();
+
+Note that test_and_clear_bit() only implies barriers when the test is
+successful. To handle the case where the URB is still in use an explicit
+barrier needs to be added to unthrottle() for the second race condition.
+
+Fixes: d83b405383c9 ("USB: serial: add support for multiple read urbs")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/radeon/radeon_display.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/serial/generic.c | 39 +++++++++++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 7 deletions(-)
 
---- a/drivers/gpu/drm/radeon/radeon_display.c
-+++ b/drivers/gpu/drm/radeon/radeon_display.c
-@@ -942,12 +942,12 @@ static void avivo_get_fb_ref_div(unsigne
- 	ref_div_max = max(min(100 / post_div, ref_div_max), 1u);
+--- a/drivers/usb/serial/generic.c
++++ b/drivers/usb/serial/generic.c
+@@ -350,6 +350,7 @@ void usb_serial_generic_read_bulk_callba
+ 	struct usb_serial_port *port = urb->context;
+ 	unsigned char *data = urb->transfer_buffer;
+ 	unsigned long flags;
++	bool stopped = false;
+ 	int status = urb->status;
+ 	int i;
  
- 	/* get matching reference and feedback divider */
--	*ref_div = min(max(DIV_ROUND_CLOSEST(den, post_div), 1u), ref_div_max);
-+	*ref_div = min(max(den/post_div, 1u), ref_div_max);
- 	*fb_div = DIV_ROUND_CLOSEST(nom * *ref_div * post_div, den);
- 
- 	/* limit fb divider to its maximum */
-         if (*fb_div > fb_div_max) {
--		*ref_div = DIV_ROUND_CLOSEST(*ref_div * fb_div_max, *fb_div);
-+		*ref_div = (*ref_div * fb_div_max)/(*fb_div);
- 		*fb_div = fb_div_max;
+@@ -357,33 +358,51 @@ void usb_serial_generic_read_bulk_callba
+ 		if (urb == port->read_urbs[i])
+ 			break;
  	}
+-	set_bit(i, &port->read_urbs_free);
+ 
+ 	dev_dbg(&port->dev, "%s - urb %d, len %d\n", __func__, i,
+ 							urb->actual_length);
+ 	switch (status) {
+ 	case 0:
++		usb_serial_debug_data(&port->dev, __func__, urb->actual_length,
++							data);
++		port->serial->type->process_read_urb(urb);
+ 		break;
+ 	case -ENOENT:
+ 	case -ECONNRESET:
+ 	case -ESHUTDOWN:
+ 		dev_dbg(&port->dev, "%s - urb stopped: %d\n",
+ 							__func__, status);
+-		return;
++		stopped = true;
++		break;
+ 	case -EPIPE:
+ 		dev_err(&port->dev, "%s - urb stopped: %d\n",
+ 							__func__, status);
+-		return;
++		stopped = true;
++		break;
+ 	default:
+ 		dev_dbg(&port->dev, "%s - nonzero urb status: %d\n",
+ 							__func__, status);
+-		goto resubmit;
++		break;
+ 	}
+ 
+-	usb_serial_debug_data(&port->dev, __func__, urb->actual_length, data);
+-	port->serial->type->process_read_urb(urb);
++	/*
++	 * Make sure URB processing is done before marking as free to avoid
++	 * racing with unthrottle() on another CPU. Matches the barriers
++	 * implied by the test_and_clear_bit() in
++	 * usb_serial_generic_submit_read_urb().
++	 */
++	smp_mb__before_atomic();
++	set_bit(i, &port->read_urbs_free);
++	/*
++	 * Make sure URB is marked as free before checking the throttled flag
++	 * to avoid racing with unthrottle() on another CPU. Matches the
++	 * smp_mb() in unthrottle().
++	 */
++	smp_mb__after_atomic();
++
++	if (stopped)
++		return;
+ 
+-resubmit:
+ 	/* Throttle the device if requested by tty */
+ 	spin_lock_irqsave(&port->lock, flags);
+ 	port->throttled = port->throttle_req;
+@@ -458,6 +477,12 @@ void usb_serial_generic_unthrottle(struc
+ 	port->throttled = port->throttle_req = 0;
+ 	spin_unlock_irq(&port->lock);
+ 
++	/*
++	 * Matches the smp_mb__after_atomic() in
++	 * usb_serial_generic_read_bulk_callback().
++	 */
++	smp_mb();
++
+ 	if (was_throttled)
+ 		usb_serial_generic_submit_read_urbs(port, GFP_KERNEL);
  }
 
