@@ -2,163 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE46EB920B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E28B9218
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390135AbfITO2R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:28:17 -0400
-Received: from mout.web.de ([212.227.15.3]:53205 "EHLO mout.web.de"
+        id S2390427AbfITO31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:29:27 -0400
+Received: from foss.arm.com ([217.140.110.172]:45584 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389778AbfITO2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:28:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1568989682;
-        bh=kdzZIwCly4T9zp29vrSfE2M+d5f7xcC9TUVJt32lSys=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
-        b=Rc4bDu/Jv0umTJbDyJZZqeHkEZK7Q70ob2pjYLpMtB/dHeN4aJJUaqTlEav9mcDNM
-         5e+BkGY5tivBSMWV/pWt25KJpAZwh8Ox8Q5eoUQL7CYGLT6W74dgpdjTUSp2yYk8Uh
-         g9S6BKWrzcezmKVyn3PBNEeW4aJTQqFwu1AwtbqY=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.244.117.22]) by smtp.web.de (mrweb004
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MVXnr-1ihyDl0pmJ-00Yx3q; Fri, 20
- Sep 2019 16:28:02 +0200
-Subject: [PATCH 1/2] net: dsa: vsc73xx: Use devm_platform_ioremap_resource()
- in vsc73xx_platform_probe()
-From:   Markus Elfring <Markus.Elfring@web.de>
-To:     netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Pawel Dembicki <paweldembicki@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <dbc78014-6ed4-5080-8208-0a5930a3bf6e@web.de>
-Date:   Fri, 20 Sep 2019 16:28:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S2389000AbfITO3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:29:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C5B5337;
+        Fri, 20 Sep 2019 07:29:24 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E188E3F67D;
+        Fri, 20 Sep 2019 07:29:22 -0700 (PDT)
+Date:   Fri, 20 Sep 2019 15:29:20 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [RFC patch 07/15] arm64/syscall: Remove obscure flag check
+Message-ID: <20190920142920.GB21231@arrakis.emea.arm.com>
+References: <20190919150314.054351477@linutronix.de>
+ <20190919150809.145400160@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <98fee5f4-1e45-a0c6-2a38-9201b201c6eb@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eaHOMc8N0+305YH/nAoGgTtwujnEWWyNrxbqXIy8TqENwpAxYyC
- Lyhg7CQIZHa3ZGvjPK7m0yHuyqBBXSQ59+D6aDz8i8oW47ql5JK7Swwni4yRS+Zo9EPrtEH
- VCkvu9z6JG8/4r3pMxGtV82VjGiHD0TUyg6auYpda90eH1WUV0HwY1FQEb/G+XL4w2FwCOJ
- 4n07ih3keq6ReQqkeWyAA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:281xM9Molak=:Zf81jyMzl8OKZLMlvl3IPz
- hMAEFaIklXt6n3ph8dndb01wP+lGSK20kV7UD5PEvMKlmi6I1dJ6sBsZHgx7EtrpvnmhRvKmc
- 0xla+IrzPEau2ItZXGmR9/q0S9JNJiGxLAUTawgHgTmRs1g5pEU6lJ2a/4ZcOD6dGe6dHM8uw
- ff8uGPs6kMBG9/EJaWNuZ3TNS9EIkfXWPHLy7nIZYKgkTin7GQUdMg1bw5ktgwe783djL0kte
- HoNtuZumO6usEn4gilhHUCz9eZk4B0Oyz0p4U4+Bh9SsJgAl+M7+Wr/BLd/wnOv2xyNkdke3D
- WjCgECLoh2a4KOKAHXsnbRr6HlABNZXLJwJTtZW4x/SdKYicQCmQs7Qe7ls+d4JqcTzM+3S3e
- qvq/EOdxbwG5Nhl/+y1iutgpG6CKSks6nF9syVsqzAbKou1tY+SsA9vPjtUxx0BZF+akXsErv
- QafW+uULjDwABqdpuw7RZlWxoV2Wrsze2xjWKYB4POt3QOiFT3KFuqnNuFfTaLQgQAZBvZvnK
- vjiBnknBGGajnAf05iKe2BjcpUnnemekWs7/dtDSKUDnvdAwWbZUpCJgLxJcXpSIjkThfckn3
- EA+GXxpQYSJ82nxMZOOD8di5k4ASTy41w8lPsWxrvXRisbYVaZ3s8T8BqPzMPC4GovjbWZKpq
- m9ajMKo1SVaxbU01iB9NNtP8tXu90sT7EwzC1Oz5ElDfzqOkgW+uO4btC80f7OETwcphwgZm9
- 911O1NumfzRYAUk9eL7eB/k15R/4DqGNp3P9uSQVKTvbMQpGlXxZSVV9tG1CvQ1jIldPvtMAr
- Rag7kEzxDLJN/yUuLp6vOy6m9R+mUowjZXaSAT8srVrmlk7szVEjFtqZwXa9EqacUZtJibjUf
- Hf7BN41chxN20U3dpuGDIvw8hASJQqI8llnkBDBarDoD+XLndzkNaHtQi3VUTzue08ALgtWLb
- trI2NjJwLgqombKpJDeshNNg5+Rh3QSiXvEffr74fICNBxDkSUE/bQREMf61GFt/ADUIFJ88F
- /TqqW3uwsxZUo6xkV9OcB1Un1Qq+UpMMgNny3kkBlmfWcKVQmGiXwrr6iIhTvuQFJw9ZHN3FS
- 2JMGUkP/kPYFxRmZDU9Tyyp1M2VHATukj/d0yRd+UEZZV398SmUJZ4H/yiD7zYqUebFBh8tN6
- mhHLeAtBrvV/ZMOjFweHc040HmzDiTMWwF2zpta6whzStkNap/+60+A6APdSIHw445xkWIMqk
- eWwcwT3dK47Qu97hPhtFB9DbJCgwW6INjL5tqUUye76fvuCWEMsjydrdlcTI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190919150809.145400160@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Sep 2019 15:23:39 +0200
+On Thu, Sep 19, 2019 at 05:03:21PM +0200, Thomas Gleixner wrote:
+> The syscall handling code has an obscure check of pending work which does a
+> shortcut before returning to user space. It calls into the exit work code
+> when the flags at entry time required an entry into the slowpath. That does
+> not make sense because the underlying work functionality will reevaluate
+> the flags anyway and not do anything.
 
-Simplify this function implementation by using a known wrapper function.
+The current C code was just matching the original behaviour in asm
+(converted by commit f37099b6992a0b81). The idea IIRC was to always pair
+a syscall_trace_enter() with a syscall_trace_exit() irrespective of the
+thread flag changes. I think the behaviour is preserved with your patch
+if no-one clears the work flags during el0_svc_common().
 
-This issue was detected by using the Coccinelle software.
+> @@ -105,33 +103,15 @@ static void el0_svc_common(struct pt_reg
+>  	user_exit();
+>  
+>  	scno = syscall_enter_from_usermode(regs, scno);
+> -	if (scno == NO_SYSCALL)
+> -		goto trace_exit;
+> -
+> -	invoke_syscall(regs, scno, sc_nr, syscall_table);
+> +	if (scno != NO_SYSCALL)
+> +		invoke_syscall(regs, scno, sc_nr, syscall_table);
+>  
+> -	/*
+> -	 * The tracing status may have changed under our feet, so we have to
+> -	 * check again. However, if we were tracing entry, then we always trace
+> -	 * exit regardless, as the old entry assembly did.
+> -	 */
+> -	if (!has_syscall_work(flags) && !IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
+> -		local_daif_mask();
+> -		flags = current_thread_info()->flags;
+> -		if (!has_syscall_work(flags)) {
+> -			/*
+> -			 * We're off to userspace, where interrupts are
+> -			 * always enabled after we restore the flags from
+> -			 * the SPSR.
+> -			 */
+> -			trace_hardirqs_on();
+> -			return;
+> -		}
+> +	local_daif_mask();
+> +	if (has_syscall_work(current_thread_info()->flags) ||
+> +	    IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
+>  		local_daif_restore(DAIF_PROCCTX);
+> +		syscall_trace_exit(regs);
+>  	}
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/dsa/vitesse-vsc73xx-platform.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+That's missing a trace_hardirqs_on() (off done in local_daif_mask())
+before returning.
 
-diff --git a/drivers/net/dsa/vitesse-vsc73xx-platform.c b/drivers/net/dsa/=
-vitesse-vsc73xx-platform.c
-index 0541785f9fee..a3bbf9bd1bf1 100644
-=2D-- a/drivers/net/dsa/vitesse-vsc73xx-platform.c
-+++ b/drivers/net/dsa/vitesse-vsc73xx-platform.c
-@@ -89,7 +89,6 @@ static int vsc73xx_platform_probe(struct platform_device=
- *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
- 	struct vsc73xx_platform *vsc_platform;
--	struct resource *res =3D NULL;
- 	int ret;
+> -
+> -trace_exit:
+> -	syscall_trace_exit(regs);
+>  }
 
- 	vsc_platform =3D devm_kzalloc(dev, sizeof(*vsc_platform), GFP_KERNEL);
-@@ -101,16 +100,7 @@ static int vsc73xx_platform_probe(struct platform_dev=
-ice *pdev)
- 	vsc_platform->vsc.dev =3D dev;
- 	vsc_platform->vsc.priv =3D vsc_platform;
- 	vsc_platform->vsc.ops =3D &vsc73xx_platform_ops;
--
--	/* obtain I/O memory space */
--	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "cannot obtain I/O memory space\n");
--		ret =3D -ENXIO;
--		return ret;
--	}
--
--	vsc_platform->base_addr =3D devm_ioremap_resource(&pdev->dev, res);
-+	vsc_platform->base_addr =3D devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(vsc_platform->base_addr)) {
- 		dev_err(&pdev->dev, "cannot request I/O memory space\n");
- 		ret =3D -ENXIO;
-=2D-
-2.23.0
-
+-- 
+Catalin
