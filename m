@@ -2,129 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72675B93E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2417FB93E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 17:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392272AbfITPW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 11:22:27 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39028 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391431AbfITPW1 (ORCPT
+        id S2392538AbfITPW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 11:22:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35897 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388486AbfITPW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Sep 2019 11:22:27 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r3so7177144wrj.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 08:22:24 -0700 (PDT)
+Received: by mail-wr1-f68.google.com with SMTP id y19so7197132wrd.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 08:22:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=M41FWwfMZykUG3UM5E046d+kFCa62CVo9tq7sqloUQo=;
-        b=lBiMJbJ8SP2xPJnxD0QXmaCiaGVgc/luSB7quljeb/tNOQjbiTWde10YS5NC0o+lIo
-         XACAsxAt2dHCFZpuiygDF+VG+/zdkw5c+q6DpIZSJYu2ysKszIH5a0kEgfiCRLswID87
-         U1YcBsvAEpuW465UoCfxOO2zfxpI7DrHV1rnqkdpfkMUhg4hAnSqNrrkWiGt+VkC5+CD
-         AM8x5EZmghdQtwIq+MV5t36Zwzi5+Iv6SxRGhJOj1QlOGJUiy9IJHDyP3NNxnRrITkMZ
-         9lWgWSzcuCvKhQMr//5T+7lshh74WGoHFBj9cblwOwW3zCQ5cCzsRsto/0YGiYjBUbtw
-         earg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=bxChQ2KhuPQDXJyvF0uqDEGqjNvnWGadSs4vVg4OZC4=;
+        b=GWCDCVa9x+LcBo9RIkPxzZlkKsL8iwDQ6ed4sHkCJgp1p8wnBORtjJaIr+QsPnTmTy
+         bpEmCBAn8yBA9tIwX5v0a0SVkSkD8lKq3TfhWldqe2cCLWOkdPTvBWffAgfv0ZtsUPzD
+         jAgt+CqJzAG2rL2AWMGsGICTjoU32PPBBXZG6pNJxRHlnzZ1YciIp/n5zXCGnbviBDax
+         SdwiSfRez14+Z+0lZZevT8p552ENzueu6oSr/Jw7y3Ils18cFMpzKHQS4P529wBexIyT
+         e9DsF7a7jyBzeqdI13a8y4+naZ0z+1oe+62fQF4xTAlEb7vgyHBcYLqgRdoOfCTs+kDF
+         rcrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=M41FWwfMZykUG3UM5E046d+kFCa62CVo9tq7sqloUQo=;
-        b=QRbLev4XiDmy+gZe5thfO+J3OWpbX7t9ruE8MhnpnLF0qsqMGjN3ByNiuFhcnWyxhh
-         17O72VOJRxC+94G7VGjDX1GWON9VijSzwoMyT78k3gRQaphgkRz4Qd6hIy6bkROq9PyR
-         EgRFdj+Lwux8lAAfnf+D4ogCsHEtWcQpR8ADUTpOFKFdzLI6jpGUgCzQ6NEBOGbYa/O/
-         x+WF8cvxGNi1NbtQ3xXNw/iSWWT2ZdjgfLTziu0QXG3RDypb8Wx3H126XFH/UiriLLtj
-         RBuBT5rA+wjjR79NhEVFB5gygBqgLS0uXVC7VofWmK5TzFpSFPWxrefvMKNRysSCVXmh
-         5Plw==
-X-Gm-Message-State: APjAAAXB+ZlxUC3xv8+oBEEUP/ZXoT6fyo6wEU1FKGkI6mxmrs3/RKfQ
-        ZCvpb3pzPPYc455DGywaPA==
-X-Google-Smtp-Source: APXvYqz5PvVcL7hZ4s7uRgz13dCdRpKSUwPca8d0Rfd0sw1PnoV+1iH696zUK7TIfiul2u/BEeMZFw==
-X-Received: by 2002:a5d:66cb:: with SMTP id k11mr11707893wrw.174.1568992943758;
-        Fri, 20 Sep 2019 08:22:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=bxChQ2KhuPQDXJyvF0uqDEGqjNvnWGadSs4vVg4OZC4=;
+        b=kQWg7mJbcqPjz4zcvyTX8gUQKb6eDRNCZVtEI4m5YZ+dKXZbzRfwufihq4OXB6aJqB
+         EXNV+G7C6iDg65OuJe/2Vgz4ZBAr73h+7o4/j+JnQ6cwY9ZWpwQzicQ1VUlIr2R7uKcz
+         i2kqlQ+Q/a0RxJHOHiEfr6/X1z8yIzAwPUoGI6KOXD+LBUHDlBecWskW/OSCeqUECcrt
+         DWktw2GxZG5DXfY99RWizCKH2p3B70Galt0IzAKx5YdBFPu34gyNIf9C9Ci3wWm41d5P
+         paKfJLaQvx6RsicJBLCg2r3M4dQzA9Ea2y93SGZ4V5vYFbMHLbf/KkHJmq+nAwR4+/j/
+         VhcA==
+X-Gm-Message-State: APjAAAWqPgSEL0fkHaILQuNunrfZrR7Nj2dhcViuT3gD1dWieL4uw1vd
+        wbpVGUlbN/Mv+DpTjFe5Gg==
+X-Google-Smtp-Source: APXvYqwSov2RFYjiycJUdmsX1tCGJszjG119pBIcDVV7ViT/emxjjg2iLDsVBRwWgngn5nEkOtlcyg==
+X-Received: by 2002:adf:c58b:: with SMTP id m11mr11831072wrg.252.1568992944803;
+        Fri, 20 Sep 2019 08:22:24 -0700 (PDT)
 Received: from buster-jangle.bmw-carit.intra ([217.89.178.117])
-        by smtp.gmail.com with ESMTPSA id x2sm3152901wrn.81.2019.09.20.08.22.22
+        by smtp.gmail.com with ESMTPSA id x2sm3152901wrn.81.2019.09.20.08.22.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 08:22:23 -0700 (PDT)
+        Fri, 20 Sep 2019 08:22:24 -0700 (PDT)
 From:   "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
 Cc:     Joel Fernandes <joel@joelfernandes.org>,
         "Viktor Rosendahl (BMW)" <viktor.rosendahl@gmail.com>
-Subject: [PATCH v7 0/4] Some new features for the preempt/irqsoff tracers
-Date:   Fri, 20 Sep 2019 17:22:15 +0200
-Message-Id: <20190920152219.12920-1-viktor.rosendahl@gmail.com>
+Subject: [PATCH v7 1/4] ftrace: Implement fs notification for tracing_max_latency
+Date:   Fri, 20 Sep 2019 17:22:16 +0200
+Message-Id: <20190920152219.12920-2-viktor.rosendahl@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190920152219.12920-1-viktor.rosendahl@gmail.com>
+References: <20190920152219.12920-1-viktor.rosendahl@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
+This patch implements the feature that the tracing_max_latency file,
+e.g. /sys/kernel/debug/tracing/tracing_max_latency will receive
+notifications through the fsnotify framework when a new latency is
+available.
 
-There are not many changes this time. I mainly changed my email address,
-tweaked a commit message and removed the cluttering of a copyright message.
+One particularly interesting use of this facility is when enabling
+threshold tracing, through /sys/kernel/debug/tracing/tracing_thresh,
+together with the preempt/irqsoff tracers. This makes it possible to
+implement a user space program that can, with equal probability,
+obtain traces of latencies that occur immediately after each other in
+spite of the fact that the preempt/irqsoff tracers operate in overwrite
+mode.
 
-Changes in v7:
-- [PATCH 1/4]:
-  * I have added some reasons to end of the commit message why I believe that
-    it makes sense to create a new workqueue.
+This facility works with the hwlat, preempt/irqsoff, and wakeup
+tracers.
 
-- [PATCH 2/4]:
-  * Removed the cluttering of the copyright message.
+The tracers may call the latency_fsnotify() from places such as
+__schedule() or do_idle(); this makes it impossible to call
+queue_work() directly without risking a deadlock. The same would
+happen with a softirq,  kernel thread or tasklet. For this reason we
+use the irq_work mechanism to call queue_work().
 
-- [PATCH 3/4]:
-  * No change
+This patch creates a new workqueue. The reason for doing this is that
+I wanted to use the WQ_UNBOUND and WQ_HIGHPRI flags.  My thinking was
+that WQ_UNBOUND might help with the latency in some important cases.
 
-- [PACTH 4/4]:
-  * No change
+If we use:
 
-This series is meant to address two issues with the latency tracing.
+queue_work(system_highpri_wq, &tr->fsnotify_work);
 
-The first three patches provide a method to trace latencies that always
-occurs very close to each other and to differentiate between them, in spite
-of the fact that the latency tracers work in overwrite mode.
+then the work will (almost) always execute on the same CPU but if we are
+unlucky that CPU could be too busy while there could be another CPU in
+the system that would be able to process the work soon enough.
 
-[PATCH 1/4] This implement fs notification for tracing_max_latency. It
-makes it possible for userspace to detect when a new latency has been
-detected.
+queue_work_on() could be used to queue the work on another CPU but it
+seems difficult to select the right CPU.
 
-[PATCH 2/4] This extends the preemptirq_delay_test module so that it can be
-used to generate a burst of closely occurring latencies.
+Signed-off-by: Viktor Rosendahl (BMW) <viktor.rosendahl@gmail.com>
+---
+ kernel/trace/trace.c       | 75 +++++++++++++++++++++++++++++++++++++-
+ kernel/trace/trace.h       | 18 +++++++++
+ kernel/trace/trace_hwlat.c |  4 +-
+ 3 files changed, 94 insertions(+), 3 deletions(-)
 
-[PATCH 3/4] This adds a user space program to the tools directory that
-utilizes the fs notification feature and a randomized algorithm to print out
-any of the latencies in a burst with approximately equal probability.
-
-The last patch is not directly connected but earlier it didn't apply
-cleanly on its own. However, now it does, so in principle it could be
-applied separately from the others.
-
-[PATCH 4/4] This adds the option console-latency to the trace options. This
-makes it possible to enable tracing of console latencies.
-
-best regards,
-
-Viktor
-
-Viktor Rosendahl (BMW) (4):
-  ftrace: Implement fs notification for tracing_max_latency
-  preemptirq_delay_test: Add the burst feature and a sysfs trigger
-  Add the latency-collector to tools
-  ftrace: Add an option for tracing console latencies
-
- include/linux/irqflags.h             |   22 +
- kernel/printk/printk.c               |    6 +-
- kernel/trace/Kconfig                 |    6 +-
- kernel/trace/preemptirq_delay_test.c |  144 ++-
- kernel/trace/trace.c                 |   75 +-
- kernel/trace/trace.h                 |   19 +
- kernel/trace/trace_hwlat.c           |    4 +-
- kernel/trace/trace_irqsoff.c         |   12 +
- tools/Makefile                       |   14 +-
- tools/trace/Makefile                 |   20 +
- tools/trace/latency-collector.c      | 1212 ++++++++++++++++++++++++++
- 11 files changed, 1501 insertions(+), 33 deletions(-)
- create mode 100644 tools/trace/Makefile
- create mode 100644 tools/trace/latency-collector.c
-
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 947ba433865f..2d2150bf0d42 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -44,6 +44,9 @@
+ #include <linux/trace.h>
+ #include <linux/sched/clock.h>
+ #include <linux/sched/rt.h>
++#include <linux/fsnotify.h>
++#include <linux/irq_work.h>
++#include <linux/workqueue.h>
+ 
+ #include "trace.h"
+ #include "trace_output.h"
+@@ -1480,6 +1483,74 @@ static ssize_t trace_seq_to_buffer(struct trace_seq *s, void *buf, size_t cnt)
+ 
+ unsigned long __read_mostly	tracing_thresh;
+ 
++#if (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
++	defined(CONFIG_FSNOTIFY)
++
++static const struct file_operations tracing_max_lat_fops;
++static struct workqueue_struct *fsnotify_wq;
++
++static void latency_fsnotify_workfn(struct work_struct *work)
++{
++	struct trace_array *tr = container_of(work, struct trace_array,
++					      fsnotify_work);
++	fsnotify(tr->d_max_latency->d_inode, FS_MODIFY,
++		 tr->d_max_latency->d_inode, FSNOTIFY_EVENT_INODE, NULL, 0);
++}
++
++static void latency_fsnotify_workfn_irq(struct irq_work *iwork)
++{
++	struct trace_array *tr = container_of(iwork, struct trace_array,
++					      fsnotify_irqwork);
++	queue_work(fsnotify_wq, &tr->fsnotify_work);
++}
++
++static void trace_create_maxlat_file(struct trace_array *tr,
++				     struct dentry *d_tracer)
++{
++	INIT_WORK(&tr->fsnotify_work, latency_fsnotify_workfn);
++	init_irq_work(&tr->fsnotify_irqwork, latency_fsnotify_workfn_irq);
++	tr->d_max_latency = trace_create_file("tracing_max_latency", 0644,
++					      d_tracer, &tr->max_latency,
++					      &tracing_max_lat_fops);
++}
++
++__init static int latency_fsnotify_init(void)
++{
++	fsnotify_wq = alloc_workqueue("tr_max_lat_wq",
++				      WQ_UNBOUND | WQ_HIGHPRI, 0);
++	if (!fsnotify_wq) {
++		pr_err("Unable to allocate tr_max_lat_wq\n");
++		return -ENOMEM;
++	}
++	return 0;
++}
++
++late_initcall_sync(latency_fsnotify_init);
++
++void latency_fsnotify(struct trace_array *tr)
++{
++	if (!fsnotify_wq)
++		return;
++	/*
++	 * We cannot call queue_work(&tr->fsnotify_work) from here because it's
++	 * possible that we are called from __schedule() or do_idle(), which
++	 * could cause a deadlock.
++	 */
++	irq_work_queue(&tr->fsnotify_irqwork);
++}
++
++/*
++ * (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
++ *  defined(CONFIG_FSNOTIFY)
++ */
++#else
++
++#define trace_create_maxlat_file(tr, d_tracer)				\
++	trace_create_file("tracing_max_latency", 0644, d_tracer,	\
++			  &tr->max_latency, &tracing_max_lat_fops)
++
++#endif
++
+ #ifdef CONFIG_TRACER_MAX_TRACE
+ /*
+  * Copy the new maximum trace into the separate maximum-trace
+@@ -1518,6 +1589,7 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
+ 
+ 	/* record this tasks comm */
+ 	tracing_record_cmdline(tsk);
++	latency_fsnotify(tr);
+ }
+ 
+ /**
+@@ -8550,8 +8622,7 @@ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer)
+ 	create_trace_options_dir(tr);
+ 
+ #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
+-	trace_create_file("tracing_max_latency", 0644, d_tracer,
+-			&tr->max_latency, &tracing_max_lat_fops);
++	trace_create_maxlat_file(tr, d_tracer);
+ #endif
+ 
+ 	if (ftrace_create_function_files(tr, d_tracer))
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 005f08629b8b..4913ed1138aa 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -16,6 +16,8 @@
+ #include <linux/trace_events.h>
+ #include <linux/compiler.h>
+ #include <linux/glob.h>
++#include <linux/irq_work.h>
++#include <linux/workqueue.h>
+ 
+ #ifdef CONFIG_FTRACE_SYSCALLS
+ #include <asm/unistd.h>		/* For NR_SYSCALLS	     */
+@@ -264,6 +266,11 @@ struct trace_array {
+ #endif
+ #if defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)
+ 	unsigned long		max_latency;
++#ifdef CONFIG_FSNOTIFY
++	struct dentry		*d_max_latency;
++	struct work_struct	fsnotify_work;
++	struct irq_work		fsnotify_irqwork;
++#endif
+ #endif
+ 	struct trace_pid_list	__rcu *filtered_pids;
+ 	/*
+@@ -785,6 +792,17 @@ void update_max_tr_single(struct trace_array *tr,
+ 			  struct task_struct *tsk, int cpu);
+ #endif /* CONFIG_TRACER_MAX_TRACE */
+ 
++#if (defined(CONFIG_TRACER_MAX_TRACE) || defined(CONFIG_HWLAT_TRACER)) && \
++	defined(CONFIG_FSNOTIFY)
++
++void latency_fsnotify(struct trace_array *tr);
++
++#else
++
++#define latency_fsnotify(tr)     do { } while (0)
++
++#endif
++
+ #ifdef CONFIG_STACKTRACE
+ void __trace_stack(struct trace_array *tr, unsigned long flags, int skip,
+ 		   int pc);
+diff --git a/kernel/trace/trace_hwlat.c b/kernel/trace/trace_hwlat.c
+index fa95139445b2..9c379261ee89 100644
+--- a/kernel/trace/trace_hwlat.c
++++ b/kernel/trace/trace_hwlat.c
+@@ -254,8 +254,10 @@ static int get_sample(void)
+ 		trace_hwlat_sample(&s);
+ 
+ 		/* Keep a running maximum ever recorded hardware latency */
+-		if (sample > tr->max_latency)
++		if (sample > tr->max_latency) {
+ 			tr->max_latency = sample;
++			latency_fsnotify(tr);
++		}
+ 	}
+ 
+ out:
 -- 
 2.17.1
 
