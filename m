@@ -2,122 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5FC4B91F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16467B9205
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389510AbfITO1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:27:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35064 "EHLO mx1.redhat.com"
+        id S2389990AbfITO1r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:27:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388913AbfITO0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:26:15 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2389727AbfITO1o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:27:44 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7857F8980F5;
-        Fri, 20 Sep 2019 14:26:14 +0000 (UTC)
-Received: from gondolin (dhcp-192-230.str.redhat.com [10.33.192.230])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B2E2F5D717;
-        Fri, 20 Sep 2019 14:26:10 +0000 (UTC)
-Date:   Fri, 20 Sep 2019 16:26:07 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Matthew Rosato <mjrosato@linux.ibm.com>
-Cc:     sebott@linux.ibm.com, gerald.schaefer@de.ibm.com,
-        pasic@linux.ibm.com, borntraeger@de.ibm.com, walling@linux.ibm.com,
-        linux-s390@vger.kernel.org, iommu@lists.linux-foundation.org,
-        joro@8bytes.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, kvm@vger.kernel.org,
-        heiko.carstens@de.ibm.com, robin.murphy@arm.com, gor@linux.ibm.com,
-        pmorel@linux.ibm.com
-Subject: Re: [PATCH v4 4/4] vfio: pci: Using a device region to retrieve
- zPCI information
-Message-ID: <20190920162607.16198c92.cohuck@redhat.com>
-In-Reply-To: <c5c5c46e-371b-5be0-064a-b89195cdc3f6@linux.ibm.com>
-References: <1567815231-17940-1-git-send-email-mjrosato@linux.ibm.com>
-        <1567815231-17940-5-git-send-email-mjrosato@linux.ibm.com>
-        <20190919172505.2eb075f8.cohuck@redhat.com>
-        <c5c5c46e-371b-5be0-064a-b89195cdc3f6@linux.ibm.com>
-Organization: Red Hat GmbH
+        by mail.kernel.org (Postfix) with ESMTPSA id 66BE4207E0;
+        Fri, 20 Sep 2019 14:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568989663;
+        bh=ghgHNejQL358r2B/DNFwL3bC0elAyTaTbcMW1ICh5+4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Ej+FZBsVIR5wcjNZ3pTGUkG4OxBzmdx+otHI8uJEC3dcjJq5qq5sCU7NqOW4La/iL
+         duMN0fkjzMP+dmgilh0UWWxU0DcE8Y2f65vQ+q7qPo/o6mI0ziadbNQTpdwcy7AvVp
+         Dzwgr6rhJwyoGvE42LYHUh5v0912ToHRQ7X6vAh4=
+Date:   Fri, 20 Sep 2019 15:27:39 +0100
+From:   Will Deacon <will@kernel.org>
+To:     vincenzo.frascino@arm.com
+Cc:     linux-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, linux@armlinux.org.uk,
+        ard.biesheuvel@linaro.org, catalin.marinas@arm.com
+Subject: Problems with arm64 compat vdso
+Message-ID: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Fri, 20 Sep 2019 14:26:14 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Sep 2019 16:57:10 -0400
-Matthew Rosato <mjrosato@linux.ibm.com> wrote:
+Hi Vincenzo,
 
-> On 9/19/19 11:25 AM, Cornelia Huck wrote:
-> > On Fri,  6 Sep 2019 20:13:51 -0400
-> > Matthew Rosato <mjrosato@linux.ibm.com> wrote:
-> >   
-> >> From: Pierre Morel <pmorel@linux.ibm.com>
-> >>
-> >> We define a new configuration entry for VFIO/PCI, VFIO_PCI_ZDEV
-> >>
-> >> When the VFIO_PCI_ZDEV feature is configured we initialize
-> >> a new device region, VFIO_REGION_SUBTYPE_ZDEV_CLP, to hold
-> >> the information from the ZPCI device the use
-> >>
-> >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> >> Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
-> >> ---
-> >>  drivers/vfio/pci/Kconfig            |  7 +++
-> >>  drivers/vfio/pci/Makefile           |  1 +
-> >>  drivers/vfio/pci/vfio_pci.c         |  9 ++++
-> >>  drivers/vfio/pci/vfio_pci_private.h | 10 +++++
-> >>  drivers/vfio/pci/vfio_pci_zdev.c    | 85 +++++++++++++++++++++++++++++++++++++
-> >>  5 files changed, 112 insertions(+)
-> >>  create mode 100644 drivers/vfio/pci/vfio_pci_zdev.c
-> >>
-> >> diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-> >> index ac3c1dd..d4562a8 100644
-> >> --- a/drivers/vfio/pci/Kconfig
-> >> +++ b/drivers/vfio/pci/Kconfig
-> >> @@ -45,3 +45,10 @@ config VFIO_PCI_NVLINK2
-> >>  	depends on VFIO_PCI && PPC_POWERNV
-> >>  	help
-> >>  	  VFIO PCI support for P9 Witherspoon machine with NVIDIA V100 GPUs
-> >> +
-> >> +config VFIO_PCI_ZDEV
-> >> +	bool "VFIO PCI Generic for ZPCI devices"
-> >> +	depends on VFIO_PCI && S390
-> >> +	default y
-> >> +	help
-> >> +	  VFIO PCI support for S390 Z-PCI devices  
-> >   
-> >>From that description, I'd have no idea whether I'd want that or not.  
-> > Is there any downside to enabling it?
-> >   
-> 
-> :) Not really, you're just getting information from the hardware vs
-> using hard-coded defaults.  The only reason I could think of to turn it
-> off would be if you wanted/needed to restore this hard-coded behavior.
+I've been running into a few issues with the COMPAT vDSO. Please could
+you have a look?
 
-I'm not really sure whether that's worth adding a Kconfig switch for.
-Won't older versions simply ignore the new region anyway?
+If I do the following:
 
-Also, I don't think we have any migration compatibility issues, as
-vfio-pci devices are not (yet) migrateable anyway.
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+[...]
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+[set CONFIG_CROSS_COMPILE_COMPAT_VDSO="arm-linux-gnueabihf-"]
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 
-> 
-> bool "VFIO PCI support for generic ZPCI devices" ?
+Then I see the following warning:
 
-"Support zPCI-specific configuration for VFIO PCI" ?
+arch/arm64/Makefile:62: CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built
 
-> 
-> "Support for sharing ZPCI hardware device information between the host
-> and guests." ?
+even though the compat vDSO *has* been built:
 
-"Enabling this options exposes a region containing hardware
-configuration for zPCI devices. This enables userspace (e.g. QEMU) to
-supply proper configuration values instead of hard-coded defaults for
-zPCI devices passed through via VFIO on s390.
+$ file arch/arm64/kernel/vdso32/vdso.so
+arch/arm64/kernel/vdso32/vdso.so: ELF 32-bit LSB pie executable, ARM, EABI5 version 1 (SYSV), dynamically linked, BuildID[sha1]=c67f6c786f2d2d6f86c71f708595594aa25247f6, stripped
 
-Say Y here."
+However, I also get some warnings because arm64 headers are being included
+in the compat vDSO build:
 
-?
+In file included from ./arch/arm64/include/asm/thread_info.h:17:0,
+                 from ./include/linux/thread_info.h:38,
+                 from ./arch/arm64/include/asm/preempt.h:5,
+                 from ./include/linux/preempt.h:78,
+                 from ./include/linux/spinlock.h:51,
+                 from ./include/linux/seqlock.h:36,
+                 from ./include/linux/time.h:6,
+                 from /usr/local/google/home/willdeacon/work/linux/lib/vdso/gettimeofday.c:7,
+                 from <command-line>:0:
+./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
+./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  u64 __addr = (u64)addr & ~__tag_shifted(0xff);
+               ^
+In file included from ./arch/arm64/include/asm/pgtable-hwdef.h:8:0,
+                 from ./arch/arm64/include/asm/processor.h:34,
+                 from ./arch/arm64/include/asm/elf.h:118,
+                 from ./include/linux/elf.h:5,
+                 from ./include/linux/elfnote.h:62,
+                 from arch/arm64/kernel/vdso32/note.c:11:
+./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
+./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  u64 __addr = (u64)addr & ~__tag_shifted(0xff);
+               ^
+Worse, if your compat binutils isn't up-to-date, you'll actually run into
+a build failure:
+
+/tmp/ccFCrjUg.s:80: Error: invalid barrier type -- `dmb ishld'
+/tmp/ccFCrjUg.s:124: Error: invalid barrier type -- `dmb ishld'
+
+There also appears to be a problem getting the toolchain prefix from Kconfig.
+If, for example, I do:
+
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+[...]
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+[set CONFIG_CROSS_COMPILE_COMPAT_VDSO="vincenzo"]
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+arch/arm64/Makefile:64: *** vincenzogcc not found, check CROSS_COMPILE_COMPAT.  Stop.
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+[set CONFIG_CROSS_COMPILE_COMPAT_VDSO="arm-linux-gnueabihf-"]
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+arch/arm64/Makefile:64: *** vincenzogcc not found, check CROSS_COMPILE_COMPAT.  Stop.
+$ grep CONFIG_CROSS_COMPILE_COMPAT_VDSO .config
+CONFIG_CROSS_COMPILE_COMPAT_VDSO="arm-linux-gnueabihf-"
+
+which is irritating, because it seems to force a 'mrproper' if you don't
+get the prefix right first time.
+
+Cheers,
+
+Will
