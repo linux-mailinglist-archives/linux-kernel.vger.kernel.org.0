@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC3EB92DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A56B92BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391835AbfITOgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:36:08 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35896 "EHLO
+        id S2392205AbfITOfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:35:01 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36190 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388076AbfITOZB (ORCPT
+        by vger.kernel.org with ESMTP id S2388169AbfITOZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:01 -0400
+        Fri, 20 Sep 2019 10:25:05 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0004wp-Gj; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqJ-0004xX-Ez; Fri, 20 Sep 2019 15:25:03 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007qO-OZ; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqG-0007xM-Qs; Fri, 20 Sep 2019 15:25:00 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "Eric Biggers" <ebiggers@google.com>,
-        "Tim Chen" <tim.c.chen@linux.intel.com>
+        "Dave Chinner" <dchinner@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.964141469@decadent.org.uk>
+Message-ID: <lsq.1568989415.105114856@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 023/132] crypto: crct10dif-generic - fix use via
- crypto_shash_digest()
+Subject: [PATCH 3.16 105/132] xfs: clear sb->s_fs_info on mount failure
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,62 +47,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit 307508d1072979f4435416f87936f87eaeb82054 upstream.
+commit c9fbd7bbc23dbdd73364be4d045e5d3612cf6e82 upstream.
 
-The ->digest() method of crct10dif-generic reads the current CRC value
-from the shash_desc context.  But this value is uninitialized, causing
-crypto_shash_digest() to compute the wrong result.  Fix it.
+We recently had an oops reported on a 4.14 kernel in
+xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
+and so the m_perag_tree lookup walked into lala land.
 
-Probably this wasn't noticed before because lib/crc-t10dif.c only uses
-crypto_shash_update(), not crypto_shash_digest().  Likewise,
-crypto_shash_digest() is not yet tested by the crypto self-tests because
-those only test the ahash API which only uses shash init/update/final.
+Essentially, the machine was under memory pressure when the mount
+was being run, xfs_fs_fill_super() failed after allocating the
+xfs_mount and attaching it to sb->s_fs_info. It then cleaned up and
+freed the xfs_mount, but the sb->s_fs_info field still pointed to
+the freed memory. Hence when the superblock shrinker then ran
+it fell off the bad pointer.
 
-This bug was detected by my patches that improve testmgr to fuzz
-algorithms against their generic implementation.
+With the superblock shrinker problem fixed at teh VFS level, this
+stale s_fs_info pointer is still a problem - we use it
+unconditionally in ->put_super when the superblock is being torn
+down, and hence we can still trip over it after a ->fill_super
+call failure. Hence we need to clear s_fs_info if
+xfs-fs_fill_super() fails, and we need to check if it's valid in
+the places it can potentially be dereferenced after a ->fill_super
+failure.
 
-Fixes: 2d31e518a428 ("crypto: crct10dif - Wrap crc_t10dif function all to use crypto transform framework")
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-Off-By: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- crypto/crct10dif_generic.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ fs/xfs/xfs_super.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/crypto/crct10dif_generic.c
-+++ b/crypto/crct10dif_generic.c
-@@ -65,10 +65,9 @@ static int chksum_final(struct shash_des
- 	return 0;
- }
- 
--static int __chksum_finup(__u16 *crcp, const u8 *data, unsigned int len,
--			u8 *out)
-+static int __chksum_finup(__u16 crc, const u8 *data, unsigned int len, u8 *out)
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1038,6 +1038,10 @@ xfs_fs_put_super(
  {
--	*(__u16 *)out = crc_t10dif_generic(*crcp, data, len);
-+	*(__u16 *)out = crc_t10dif_generic(crc, data, len);
- 	return 0;
- }
+ 	struct xfs_mount	*mp = XFS_M(sb);
  
-@@ -77,15 +76,13 @@ static int chksum_finup(struct shash_des
++	/* if ->fill_super failed, we have no mount to tear down */
++	if (!sb->s_fs_info)
++		return;
++
+ 	xfs_filestream_unmount(mp);
+ 	xfs_unmountfs(mp);
+ 
+@@ -1045,6 +1049,8 @@ xfs_fs_put_super(
+ 	xfs_icsb_destroy_counters(mp);
+ 	xfs_destroy_mount_workqueues(mp);
+ 	xfs_close_devices(mp);
++
++	sb->s_fs_info = NULL;
+ 	xfs_free_fsname(mp);
+ 	kfree(mp);
+ }
+@@ -1514,6 +1520,7 @@ out_destroy_workqueues:
+  out_close_devices:
+ 	xfs_close_devices(mp);
+  out_free_fsname:
++	sb->s_fs_info = NULL;
+ 	xfs_free_fsname(mp);
+ 	kfree(mp);
+  out:
+@@ -1540,6 +1547,9 @@ xfs_fs_nr_cached_objects(
+ 	struct super_block	*sb,
+ 	int			nid)
  {
- 	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
- 
--	return __chksum_finup(&ctx->crc, data, len, out);
-+	return __chksum_finup(ctx->crc, data, len, out);
++	/* Paranoia: catch incorrect calls during mount setup or teardown */
++	if (WARN_ON_ONCE(!sb->s_fs_info))
++		return 0;
+ 	return xfs_reclaim_inodes_count(XFS_M(sb));
  }
  
- static int chksum_digest(struct shash_desc *desc, const u8 *data,
- 			 unsigned int length, u8 *out)
- {
--	struct chksum_desc_ctx *ctx = shash_desc_ctx(desc);
--
--	return __chksum_finup(&ctx->crc, data, length, out);
-+	return __chksum_finup(0, data, length, out);
- }
- 
- static struct shash_alg alg = {
 
