@@ -2,66 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53241B8A7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 07:33:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AB2BB8A8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 07:39:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392346AbfITFds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 01:33:48 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:39854 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390374AbfITFds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 01:33:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id A6614FB03;
-        Fri, 20 Sep 2019 07:33:46 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id mbFqnZjl7fSg; Fri, 20 Sep 2019 07:33:45 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id EA8D648849; Thu, 19 Sep 2019 22:27:07 -0700 (PDT)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] leds: lm3692x: Use flags from LM3692X_BRT_CTRL
-Date:   Thu, 19 Sep 2019 22:27:07 -0700
-Message-Id: <0cb2b013f979f4ef2e0a84bb98baee3724c19f00.1568957104.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <cover.1568957104.git.agx@sigxcpu.org>
-References: <cover.1568957104.git.agx@sigxcpu.org>
+        id S2404626AbfITFjE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 01:39:04 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:55520 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2391495AbfITFjD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 01:39:03 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8K5aNoE011702;
+        Fri, 20 Sep 2019 07:38:45 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=2+X7n8kYh+eyI478R9QoZl24SqMf0i4AANekeGpV2V0=;
+ b=ySI1gz8EsDId0kzQY4W84DAFuq9V69QawSnxRh7fEx4kGIWW4Azmc8XZC9s9UiwQhRst
+ DxZ4FJM21Az8yZ89nwklS4vWWrjewf30GZZ8YT893+zZCovqcurAuW6UzVD+7OpQrv4H
+ LqTYbVBrfHPpnomVy5TCanJh7xxf//Mj0h3n7QUH8iwkg896kZTpaYTe/H27JBtIGKbd
+ sXcm7ByrUoy2UFpFkkXaJ1NhWP5LFMCMwI7XUpLJzBcpYd4n8uEpregIrnZJatHii2OA
+ 5jUSMfk0lzz12y0FW38zcl4SLOAytkUYGiEXD5Upna3u+ZZUoElBbZHiZQaHqYnEQTLQ sA== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2v3vcbrpu1-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 20 Sep 2019 07:38:45 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0791C50;
+        Fri, 20 Sep 2019 05:38:35 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C31752209C6;
+        Fri, 20 Sep 2019 07:38:34 +0200 (CEST)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
+ (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 20 Sep
+ 2019 07:38:34 +0200
+Received: from localhost (10.201.22.222) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 20 Sep 2019 07:38:34
+ +0200
+From:   Christophe Roullier <christophe.roullier@st.com>
+To:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
+        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <peppe.cavallaro@st.com>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <christophe.roullier@st.com>, <andrew@lunn.ch>
+Subject: [PATCH  0/5] net: ethernet: stmmac: some fixes and optimization
+Date:   Fri, 20 Sep 2019 07:38:12 +0200
+Message-ID: <20190920053817.13754-1-christophe.roullier@st.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.22.222]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-20_01:2019-09-19,2019-09-20 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use LM3692X_RAMP_EN instead of LM3692X_PWM_HYSTER_4LSB
-since the later is a flag for the PWM register. The
-actual register value remains unchanged.
+Some improvements (manage syscfg as optional clock, update slew rate of
+ETH_MDIO pin, Enable gating of the MAC TX clock during TX low-power mode)
+Fix warning build message when W=1
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Reviewed-by: Dan Murphy <dmurphy@ti.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- drivers/leds/leds-lm3692x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Christophe Roullier (5):
+  net: ethernet: stmmac: Add support for syscfg clock
+  net: ethernet: stmmac: fix warning when w=1 option is used during
+    build
+  ARM: dts: stm32: remove syscfg clock on stm32mp157c ethernet
+  ARM: dts: stm32: adjust slew rate for Ethernet
+  ARM: dts: stm32: Enable gating of the MAC TX clock during TX low-power
+    mode on stm32mp157c
 
-diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-index d8a60c7c8077..a404b66b31e5 100644
---- a/drivers/leds/leds-lm3692x.c
-+++ b/drivers/leds/leds-lm3692x.c
-@@ -269,7 +269,7 @@ static int lm3692x_init(struct lm3692x_led *led)
- 		goto out;
- 
- 	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL,
--			LM3692X_BL_ADJ_POL | LM3692X_PWM_HYSTER_4LSB);
-+			LM3692X_BL_ADJ_POL | LM3692X_RAMP_EN);
- 	if (ret)
- 		goto out;
- 
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi     |  9 +++-
+ arch/arm/boot/dts/stm32mp157c.dtsi            |  7 ++--
+ .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 42 ++++++++++++-------
+ 3 files changed, 38 insertions(+), 20 deletions(-)
+
 -- 
-2.23.0.rc1
+2.17.1
 
