@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 568F6B91B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 457E9B91DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388303AbfITOZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:25:10 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35588 "EHLO
+        id S2388981AbfITO0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:26:20 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36722 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728861AbfITOY5 (ORCPT
+        by vger.kernel.org with ESMTP id S2388343AbfITOZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:24:57 -0400
+        Fri, 20 Sep 2019 10:25:13 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqB-0004vd-90; Fri, 20 Sep 2019 15:24:55 +0100
+        id 1iBJqQ-00051C-50; Fri, 20 Sep 2019 15:25:10 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqA-0007or-Ec; Fri, 20 Sep 2019 15:24:54 +0100
+        id 1iBJqF-0007v5-MH; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+        "Christoph Probst" <kernel@probst.it>,
+        "Steve French" <stfrench@microsoft.com>,
+        "Pavel Shilovsky" <pshilov@microsoft.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.269130865@decadent.org.uk>
+Message-ID: <lsq.1568989415.242105668@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 004/132] media: cx18: update *pos correctly in
- cx18_read_pos()
+Subject: [PATCH 3.16 081/132] cifs: fix strcat buffer overflow and reduce
+ raciness in smb21_set_oplock_level()
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,31 +49,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Christoph Probst <kernel@probst.it>
 
-commit 7afb0df554292dca7568446f619965fb8153085d upstream.
+commit 6a54b2e002c9d00b398d35724c79f9fe0d9b38fb upstream.
 
-We should be updating *pos.  The current code is a no-op.
+Change strcat to strncpy in the "None" case to fix a buffer overflow
+when cinode->oplock is reset to 0 by another thread accessing the same
+cinode. It is never valid to append "None" to any other message.
 
-Fixes: 1c1e45d17b66 ("V4L/DVB (7786): cx18: new driver for the Conexant CX23418 MPEG encoder chip")
+Consolidate multiple writes to cinode->oplock to reduce raciness.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Christoph Probst <kernel@probst.it>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/pci/cx18/cx18-fileops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/smb2ops.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/media/pci/cx18/cx18-fileops.c
-+++ b/drivers/media/pci/cx18/cx18-fileops.c
-@@ -489,7 +489,7 @@ static ssize_t cx18_read_pos(struct cx18
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -1000,26 +1000,28 @@ smb21_set_oplock_level(struct cifsInodeI
+ 		       unsigned int epoch, bool *purge_cache)
+ {
+ 	char message[5] = {0};
++	unsigned int new_oplock = 0;
  
- 	CX18_DEBUG_HI_FILE("read %zd from %s, got %zd\n", count, s->name, rc);
- 	if (rc > 0)
--		pos += rc;
-+		*pos += rc;
- 	return rc;
+ 	oplock &= 0xFF;
+ 	if (oplock == SMB2_OPLOCK_LEVEL_NOCHANGE)
+ 		return;
+ 
+-	cinode->oplock = 0;
+ 	if (oplock & SMB2_LEASE_READ_CACHING_HE) {
+-		cinode->oplock |= CIFS_CACHE_READ_FLG;
++		new_oplock |= CIFS_CACHE_READ_FLG;
+ 		strcat(message, "R");
+ 	}
+ 	if (oplock & SMB2_LEASE_HANDLE_CACHING_HE) {
+-		cinode->oplock |= CIFS_CACHE_HANDLE_FLG;
++		new_oplock |= CIFS_CACHE_HANDLE_FLG;
+ 		strcat(message, "H");
+ 	}
+ 	if (oplock & SMB2_LEASE_WRITE_CACHING_HE) {
+-		cinode->oplock |= CIFS_CACHE_WRITE_FLG;
++		new_oplock |= CIFS_CACHE_WRITE_FLG;
+ 		strcat(message, "W");
+ 	}
+-	if (!cinode->oplock)
+-		strcat(message, "None");
++	if (!new_oplock)
++		strncpy(message, "None", sizeof(message));
++
++	cinode->oplock = new_oplock;
+ 	cifs_dbg(FYI, "%s Lease granted on inode %p\n", message,
+ 		 &cinode->vfs_inode);
  }
- 
 
