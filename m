@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51762B92E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80909B929C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392366AbfITOg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:36:27 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35846 "EHLO
+        id S2391650AbfITOeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:34:09 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36292 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388053AbfITOZB (ORCPT
+        by vger.kernel.org with ESMTP id S2388214AbfITOZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:01 -0400
+        Fri, 20 Sep 2019 10:25:07 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0004x8-1a; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqK-00050x-RV; Fri, 20 Sep 2019 15:25:04 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007qt-VA; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqH-0007zf-PR; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "John Garry" <john.garry@huawei.com>,
-        "Guenter Roeck" <linux@roeck-us.net>,
-        "Kefeng Wang" <wangkefeng.wang@huawei.com>
+        "Jim Mattson" <jmattson@google.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Matt Delco" <delco@chromium.org>,
+        syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.488371457@decadent.org.uk>
+Message-ID: <lsq.1568989415.143749949@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 029/132] hwmon: (pc87427) Use request_muxed_region
- for Super-IO accesses
+Subject: [PATCH 3.16 130/132] KVM: coalesced_mmio: add bounds checking
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,65 +49,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Matt Delco <delco@chromium.org>
 
-commit 755a9b0f8aaa5639ba5671ca50080852babb89ce upstream.
+commit b60fe990c6b07ef6d4df67bc0530c7c90a62623a upstream.
 
-Super-IO accesses may fail on a system with no or unmapped LPC bus.
+The first/last indexes are typically shared with a user app.
+The app can change the 'last' index that the kernel uses
+to store the next result.  This change sanity checks the index
+before using it for writing to a potentially arbitrary address.
 
-Also, other drivers may attempt to access the LPC bus at the same time,
-resulting in undefined behavior.
+This fixes CVE-2019-14821.
 
-Use request_muxed_region() to ensure that IO access on the requested
-address space is supported, and to ensure that access by multiple drivers
-is synchronized.
-
-Fixes: ba224e2c4f0a7 ("hwmon: New PC87427 hardware monitoring driver")
-Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Reported-by: John Garry <john.garry@huawei.com>
-Cc: John Garry <john.garry@huawei.com>
-Acked-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 5f94c1741bdc ("KVM: Add coalesced MMIO support (common part)")
+Signed-off-by: Matt Delco <delco@chromium.org>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reported-by: syzbot+983c866c3dd6efa3662a@syzkaller.appspotmail.com
+[Use READ_ONCE. - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[bwh: Backported to 3.16:
+ - Use ACCESS_ONCE() instead of READ_ONCE()
+ - kvm_coalesced_mmio_zone::pio field is not supported]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hwmon/pc87427.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ virt/kvm/coalesced_mmio.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
---- a/drivers/hwmon/pc87427.c
-+++ b/drivers/hwmon/pc87427.c
-@@ -106,6 +106,13 @@ static const char *logdev_str[2] = { DRV
- #define LD_IN		1
- #define LD_TEMP		1
- 
-+static inline int superio_enter(int sioaddr)
-+{
-+	if (!request_muxed_region(sioaddr, 2, DRVNAME))
-+		return -EBUSY;
-+	return 0;
-+}
-+
- static inline void superio_outb(int sioaddr, int reg, int val)
- {
- 	outb(reg, sioaddr);
-@@ -122,6 +129,7 @@ static inline void superio_exit(int sioa
- {
- 	outb(0x02, sioaddr);
- 	outb(0x02, sioaddr + 1);
-+	release_region(sioaddr, 2);
+--- a/virt/kvm/coalesced_mmio.c
++++ b/virt/kvm/coalesced_mmio.c
+@@ -39,7 +39,7 @@ static int coalesced_mmio_in_range(struc
+ 	return 1;
  }
  
- /*
-@@ -1221,7 +1229,11 @@ static int __init pc87427_find(int sioad
+-static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev)
++static int coalesced_mmio_has_room(struct kvm_coalesced_mmio_dev *dev, u32 last)
  {
- 	u16 val;
- 	u8 cfg, cfg_b;
--	int i, err = 0;
-+	int i, err;
-+
-+	err = superio_enter(sioaddr);
-+	if (err)
-+		return err;
+ 	struct kvm_coalesced_mmio_ring *ring;
+ 	unsigned avail;
+@@ -51,7 +51,7 @@ static int coalesced_mmio_has_room(struc
+ 	 * there is always one unused entry in the buffer
+ 	 */
+ 	ring = dev->kvm->coalesced_mmio_ring;
+-	avail = (ring->first - ring->last - 1) % KVM_COALESCED_MMIO_MAX;
++	avail = (ring->first - last - 1) % KVM_COALESCED_MMIO_MAX;
+ 	if (avail == 0) {
+ 		/* full */
+ 		return 0;
+@@ -65,24 +65,27 @@ static int coalesced_mmio_write(struct k
+ {
+ 	struct kvm_coalesced_mmio_dev *dev = to_mmio(this);
+ 	struct kvm_coalesced_mmio_ring *ring = dev->kvm->coalesced_mmio_ring;
++	__u32 insert;
  
- 	/* Identify device */
- 	val = force_id ? force_id : superio_inb(sioaddr, SIOREG_DEVID);
+ 	if (!coalesced_mmio_in_range(dev, addr, len))
+ 		return -EOPNOTSUPP;
+ 
+ 	spin_lock(&dev->kvm->ring_lock);
+ 
+-	if (!coalesced_mmio_has_room(dev)) {
++	insert = ACCESS_ONCE(ring->last);
++	if (!coalesced_mmio_has_room(dev, insert) ||
++	    insert >= KVM_COALESCED_MMIO_MAX) {
+ 		spin_unlock(&dev->kvm->ring_lock);
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+ 	/* copy data in first free entry of the ring */
+ 
+-	ring->coalesced_mmio[ring->last].phys_addr = addr;
+-	ring->coalesced_mmio[ring->last].len = len;
+-	memcpy(ring->coalesced_mmio[ring->last].data, val, len);
++	ring->coalesced_mmio[insert].phys_addr = addr;
++	ring->coalesced_mmio[insert].len = len;
++	memcpy(ring->coalesced_mmio[insert].data, val, len);
+ 	smp_wmb();
+-	ring->last = (ring->last + 1) % KVM_COALESCED_MMIO_MAX;
++	ring->last = (insert + 1) % KVM_COALESCED_MMIO_MAX;
+ 	spin_unlock(&dev->kvm->ring_lock);
+ 	return 0;
+ }
 
