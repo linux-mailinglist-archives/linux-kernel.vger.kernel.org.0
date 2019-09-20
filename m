@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37302B9297
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B79AB927C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:33:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391642AbfITOeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:34:05 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36276 "EHLO
+        id S2391492AbfITOdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:33:13 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36396 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388200AbfITOZH (ORCPT
+        by vger.kernel.org with ESMTP id S2388255AbfITOZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:07 -0400
+        Fri, 20 Sep 2019 10:25:08 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqK-000512-Kh; Fri, 20 Sep 2019 15:25:04 +0100
+        id 1iBJqM-0004y2-FS; Fri, 20 Sep 2019 15:25:06 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqH-0007za-On; Fri, 20 Sep 2019 15:25:01 +0100
+        id 1iBJqH-0007yc-B1; Fri, 20 Sep 2019 15:25:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,13 +27,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Kalle Valo" <kvalo@codeaurora.org>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
+        "Oliver Neukum" <oneukum@suse.com>,
+        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
+        syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.871264820@decadent.org.uk>
+Message-ID: <lsq.1568989415.91336269@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 129/132] ath6kl: add some bounds checking
+Subject: [PATCH 3.16 117/132] media: cpia2_usb: first wake up, then free
+ in disconnect
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -47,58 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 5d6751eaff672ea77642e74e92e6c0ac7f9709ab upstream.
+commit eff73de2b1600ad8230692f00bc0ab49b166512a upstream.
 
-The "ev->traffic_class" and "reply->ac" variables come from the network
-and they're used as an offset into the wmi->stream_exist_for_ac[] array.
-Those variables are u8 so they can be 0-255 but the stream_exist_for_ac[]
-array only has WMM_NUM_AC (4) elements.  We need to add a couple bounds
-checks to prevent array overflows.
+Kasan reported a use after free in cpia2_usb_disconnect()
+It first freed everything and then woke up those waiting.
+The reverse order is correct.
 
-I also modified one existing check from "if (traffic_class > 3) {" to
-"if (traffic_class >= WMM_NUM_AC) {" just to make them all consistent.
+Fixes: 6c493f8b28c67 ("[media] cpia2: major overhaul to get it in a working state again")
 
-Fixes: bdcd81707973 (" Add ath6kl cleaned up driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+0c90fc937c84f97d0aa6@syzkaller.appspotmail.com
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/ath/ath6kl/wmi.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/media/usb/cpia2/cpia2_usb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/ath/ath6kl/wmi.c
-+++ b/drivers/net/wireless/ath/ath6kl/wmi.c
-@@ -1155,6 +1155,10 @@ static int ath6kl_wmi_pstream_timeout_ev
- 		return -EINVAL;
+--- a/drivers/media/usb/cpia2/cpia2_usb.c
++++ b/drivers/media/usb/cpia2/cpia2_usb.c
+@@ -884,7 +884,6 @@ static void cpia2_usb_disconnect(struct
+ 	cpia2_unregister_camera(cam);
+ 	v4l2_device_disconnect(&cam->v4l2_dev);
+ 	mutex_unlock(&cam->v4l2_lock);
+-	v4l2_device_put(&cam->v4l2_dev);
  
- 	ev = (struct wmi_pstream_timeout_event *) datap;
-+	if (ev->traffic_class >= WMM_NUM_AC) {
-+		ath6kl_err("invalid traffic class: %d\n", ev->traffic_class);
-+		return -EINVAL;
-+	}
+ 	if(cam->buffers) {
+ 		DBG("Wakeup waiting processes\n");
+@@ -897,6 +896,8 @@ static void cpia2_usb_disconnect(struct
+ 	DBG("Releasing interface\n");
+ 	usb_driver_release_interface(&cpia2_driver, intf);
  
- 	/*
- 	 * When the pstream (fat pipe == AC) timesout, it means there were
-@@ -1496,6 +1500,10 @@ static int ath6kl_wmi_cac_event_rx(struc
- 		return -EINVAL;
++	v4l2_device_put(&cam->v4l2_dev);
++
+ 	LOG("CPiA2 camera disconnected.\n");
+ }
  
- 	reply = (struct wmi_cac_event *) datap;
-+	if (reply->ac >= WMM_NUM_AC) {
-+		ath6kl_err("invalid AC: %d\n", reply->ac);
-+		return -EINVAL;
-+	}
- 
- 	if ((reply->cac_indication == CAC_INDICATION_ADMISSION_RESP) &&
- 	    (reply->status_code != IEEE80211_TSPEC_STATUS_ADMISS_ACCEPTED)) {
-@@ -2608,7 +2616,7 @@ int ath6kl_wmi_delete_pstream_cmd(struct
- 	u16 active_tsids = 0;
- 	int ret;
- 
--	if (traffic_class > 3) {
-+	if (traffic_class >= WMM_NUM_AC) {
- 		ath6kl_err("invalid traffic class: %d\n", traffic_class);
- 		return -EINVAL;
- 	}
 
