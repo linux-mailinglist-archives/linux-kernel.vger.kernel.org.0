@@ -2,139 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F7F3B8CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:33:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79DE5B8D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:40:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437764AbfITIdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:33:50 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49788 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404945AbfITIdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:33:50 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 526151DA269D57266B53;
-        Fri, 20 Sep 2019 16:33:48 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.179) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Fri, 20 Sep 2019
- 16:33:39 +0800
-Subject: Re: [PATCH 2/2] [v2] crypto: hisilicon - allow compile-testing on x86
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Zhou Wang <wangzhou1@hisilicon.com>
-References: <20190919140650.1289963-2-arnd@arndb.de>
- <20190919140917.1290556-1-arnd@arndb.de>
-CC:     Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Mao Wenan <maowenan@huawei.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Shiju Jose <shiju.jose@huawei.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <f801a4c1-8fa6-8c14-120c-49c24ec84449@huawei.com>
-Date:   Fri, 20 Sep 2019 09:33:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S2437672AbfITIj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:39:59 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46229 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405234AbfITIj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 04:39:59 -0400
+Received: by mail-ed1-f66.google.com with SMTP id t3so5558121edw.13;
+        Fri, 20 Sep 2019 01:39:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WCr8CPJIbQdsDFVeXzCBJIO+AejaAKprgzLbff1WJj4=;
+        b=QFI7VBX6R3I/OMMPkbocBqhrTtmVDaUtE53gV0kBuMQat9djL0d2B/+ZwrrFD6tAAF
+         Bb1JT4yeWewvEjT5w8Cza61Y2NgUuvrKOOCONnoeGphNuZAJljHTkFdLDaRvKbHwXc88
+         IH+r/GrrduNfOCzChaKgdOKdDMmA6Tz+ugpfWGP0DR6Vc+QfwyWjBiOlunCnNvU0EKTF
+         CKdQdAefh6Yl+CirKqUZiD70l6tEj+7hN397468ftn5trHy0bHhPYpuNTS0SjGfiMDh2
+         9Gr+D1SqNeI40z68iHD44jTzDUJ8Wtb7UQhaRCqTjRt8J/8RyRTLSOJS13hcLarq7NE7
+         i+Iw==
+X-Gm-Message-State: APjAAAVCq79yYjaqe1clYBRwVbW+1gaddDoybbYxk3ODz2G0nEHUS3uj
+        ySyToD3ATVPSImtBfD6PrYsQJI4OOEM=
+X-Google-Smtp-Source: APXvYqxHOg7mYNanK1Q6V1OXObSCNpb5/HzFmFTJe9VuHAM1pOUWJWMEA2IhZksqCkHF5yKPycwbBw==
+X-Received: by 2002:a17:906:2ec8:: with SMTP id s8mr18694368eji.275.1568968794627;
+        Fri, 20 Sep 2019 01:39:54 -0700 (PDT)
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com. [209.85.221.45])
+        by smtp.gmail.com with ESMTPSA id q9sm154609eja.31.2019.09.20.01.39.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2019 01:39:53 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id h7so5832593wrw.8;
+        Fri, 20 Sep 2019 01:39:53 -0700 (PDT)
+X-Received: by 2002:a5d:668d:: with SMTP id l13mr11159369wru.279.1568968793107;
+ Fri, 20 Sep 2019 01:39:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190919140917.1290556-1-arnd@arndb.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.179]
-X-CFilter-Loop: Reflected
+References: <20190920083237.GA11657@plaes.org>
+In-Reply-To: <20190920083237.GA11657@plaes.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 20 Sep 2019 16:39:41 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65JrZXV9vb6pbCHfJvE3AawBxcWEpQH7C3woxnXpbN7vw@mail.gmail.com>
+Message-ID: <CAGb2v65JrZXV9vb6pbCHfJvE3AawBxcWEpQH7C3woxnXpbN7vw@mail.gmail.com>
+Subject: Re: [BUG] sun4i: axp209: no atomic i2c transfer handler
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>, priit.laes@paf.com,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/09/2019 15:09, Arnd Bergmann wrote:
-> To avoid missing arm64 specific warnings that get introduced
-> in this driver, allow compile-testing on all 64-bit architectures.
+On Fri, Sep 20, 2019 at 4:32 PM Priit Laes <plaes@plaes.org> wrote:
 >
-> The only actual arm64 specific code in this driver is an open-
-> coded 128 bit MMIO write. On non-arm64 the same can be done
-> using memcpy_toio. What I also noticed is that the mmio store
-> (either one) is not endian-safe, this will only work on little-
-> endian configurations, so I also add a Kconfig dependency on
-> that, regardless of the architecture.
-> Finally, a depenndecy on CONFIG_64BIT is needed because of the
-
-nit: spelling mistake
-
-> writeq().
+> Heya!
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: actually add !CPU_BIG_ENDIAN dependency as described in the
-> changelog
-> ---
->  drivers/crypto/hisilicon/Kconfig | 9 ++++++---
->  drivers/crypto/hisilicon/qm.c    | 6 ++++++
->  2 files changed, 12 insertions(+), 3 deletions(-)
+> I have seen following warning message for few times when shutting down the
+> machine (Olinuxino Lime2-emmc) running the mainline kernel.
 >
-> diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-> index ebaf91e0146d..7bfcaa7674fd 100644
-> --- a/drivers/crypto/hisilicon/Kconfig
-> +++ b/drivers/crypto/hisilicon/Kconfig
-> @@ -16,14 +16,15 @@ config CRYPTO_DEV_HISI_SEC
+> [snip]
+> WARNING: CPU: 0 PID: 1 at drivers/i2c/i2c-core.h:41 i2c_transfer+0xe8/0xf4
+> No atomic I2C transfer handler for 'i2c-1'
+> Modules linked in: enc28j60
+> CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted 5.3.0-rc8-paf+ #28
+> Hardware name: Allwinner sun7i (A20) Family
+> [<c010ee08>] (unwind_backtrace) from [<c010b5b8>] (show_stack+0x10/0x14)
+> [<c010b5b8>] (show_stack) from [<c06bf2b4>] (dump_stack+0x88/0x9c)
+> [<c06bf2b4>] (dump_stack) from [<c011e044>] (__warn+0xd4/0xf0)
+> [<c011e044>] (__warn) from [<c011dbe4>] (warn_slowpath_fmt+0x48/0x6c)
+> [<c011dbe4>] (warn_slowpath_fmt) from [<c051ce20>] (i2c_transfer+0xe8/0xf4)
+> [<c051ce20>] (i2c_transfer) from [<c051ce78>] (i2c_transfer_buffer_flags+0x4c/0x70)
+> [<c051ce78>] (i2c_transfer_buffer_flags) from [<c046c2a4>] (regmap_i2c_write+0x14/0x30)
+> [<c046c2a4>] (regmap_i2c_write) from [<c0468180>] (_regmap_raw_write_impl+0x588/0x63c)
+> [<c0468180>] (_regmap_raw_write_impl) from [<c0468b50>] (regmap_write+0x3c/0x5c)
+> [<c0468b50>] (regmap_write) from [<c046f554>] (axp20x_power_off+0x2c/0x38)
+> [<c046f554>] (axp20x_power_off) from [<c013e8a4>] (sys_reboot+0x14c/0x1e0)
+> [<c013e8a4>] (sys_reboot) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
+> Exception stack(0xef04ffa8 to 0xef04fff0)
+> ffa0:                   00427954 00000000 fee1dead 28121969 4321fedc 16814300
+> ffc0: 00427954 00000000 00000000 00000058 bec15c78 00000000 bec15c10 004266f8
+> ffe0: 00000058 bec15b6c b6f69d45 b6eeb746
+> [/snip]
 >
->  config CRYPTO_DEV_HISI_QM
->  	tristate
-> -	depends on ARM64 && PCI && PCI_MSI
-> +	depends on ARM64 || COMPILE_TEST
-> +	depends on PCI && PCI_MSI
->  	help
->  	  HiSilicon accelerator engines use a common queue management
->  	  interface. Specific engine driver may use this module.
+> The enc28j60 module is SPI, so it has nothing to do with the message.
 >
->  config CRYPTO_HISI_SGL
->  	tristate
-> -	depends on ARM64
-> +	depends on ARM64 || COMPILE_TEST
->  	help
->  	  HiSilicon accelerator engines use a common hardware scatterlist
->  	  interface for data format. Specific engine driver may use this
-> @@ -31,7 +32,9 @@ config CRYPTO_HISI_SGL
->
->  config CRYPTO_DEV_HISI_ZIP
->  	tristate "Support for HiSilicon ZIP accelerator"
-> -	depends on ARM64 && PCI && PCI_MSI
-> +	depends on PCI && PCI_MSI
-> +	depends on ARM64 || (COMPILE_TEST && 64BIT)
-> +	depends on !CPU_BIG_ENDIAN || COMPILE_TEST
->  	select CRYPTO_DEV_HISI_QM
->  	select CRYPTO_HISI_SGL
->  	select SG_SPLIT
-> diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-> index f975c393a603..a8ed699081b7 100644
-> --- a/drivers/crypto/hisilicon/qm.c
-> +++ b/drivers/crypto/hisilicon/qm.c
-> @@ -331,6 +331,12 @@ static void qm_mb_write(struct hisi_qm *qm, const void *src)
->  	void __iomem *fun_base = qm->io_base + QM_MB_CMD_SEND_BASE;
->  	unsigned long tmp0 = 0, tmp1 = 0;
->
+> Any ideas where to look?
 
-Hi Arnd,
+This looks like it's complaining that i2c-1 (i2c-mv64xxx) does not have
+.master_xfer_atomic , which should be used in atomic contexts.
 
-> +	if (!IS_ENABLED(CONFIG_ARM64)) {
-> +		memcpy_toio(fun_base, src, 16);
-> +		wmb();
-> +		return;
-> +	}
-> +
->  	asm volatile("ldp %0, %1, %3\n"
->  		     "stp %0, %1, %2\n"
->  		     "dsb sy\n"
->
+include/linux/i2c.h says:
 
-As I understand, this operation needs to be done atomically. So - even 
-though your change is just for compile testing - the memcpy_to_io() may 
-not do the same thing on other archs, right?
+   @master_xfer_atomic: same as @master_xfer. Yet, only using atomic context
+     so e.g. PMICs can be accessed very late before shutdown. Optional.
 
-I just wonder if it's right to make that change, or at least warn the 
-imaginary user of possible malfunction for !arm64.
-
-Thanks,
-John
-
-
-
+ChenYu
