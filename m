@@ -2,142 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9CD5B8CBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D242DB8CC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395265AbfITI0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:26:36 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33394 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393491AbfITI0g (ORCPT
+        id S2395278AbfITI1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:27:07 -0400
+Received: from sonic317-28.consmr.mail.bf2.yahoo.com ([74.6.129.83]:34881 "EHLO
+        sonic317-28.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388411AbfITI1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:26:36 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a22so6285131ljd.0;
-        Fri, 20 Sep 2019 01:26:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fdZ5HvIuPAhLyOkWuGcwvBz11Qizv3lmaxqWfjEpQIg=;
-        b=Uo2v7zHQohL5k8y3afgUkHpm12JblVG7SV1KHR6VguqWuwe7l7sz5NJOsmbuhF9r2t
-         ii3R13Ai+LdnW4cFwgJi4putacBphj8lxZ4aV9FEsugnD5gk7h+KDTwlD+2KS0+J78Iy
-         LpT3j7BdIunoLQdzSv0TuDUP+Jyj1O16UP9Tpu1itL2LY5/AeYTtivkNVnRVVv5lYjqR
-         mOQ3BCnt+huiCza2I8I/d3vfmtDX3/EEB61KhkF9sOn21Vn167jBnIKXskP7sIAtBv20
-         0CSkUBpIysvBChPJ1n2f2GSFjfysqg0JZ6Yo9QpD90u0w35a9HloGj9ydSRgL76nSvWg
-         zaxQ==
-X-Gm-Message-State: APjAAAVXKhvg3XVQ0LAz8h1SXsDQXgl0zSHzonbYYqpA2DAqrrjsuzej
-        LFpk48n1CJ+Dey1jrMRxVPQ=
-X-Google-Smtp-Source: APXvYqyjRvgwdjOc+j3FPuLa4K5+hLxfHX8rsN8LzxEh4gyoVC++I90hz0W6G96TCRxUgx/gxrmZiw==
-X-Received: by 2002:a2e:9585:: with SMTP id w5mr8352208ljh.220.1568967992591;
-        Fri, 20 Sep 2019 01:26:32 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id o19sm290922ljj.99.2019.09.20.01.26.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Sep 2019 01:26:31 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92.2)
-        (envelope-from <johan@kernel.org>)
-        id 1iBEFL-0001Bf-Te; Fri, 20 Sep 2019 10:26:31 +0200
-Date:   Fri, 20 Sep 2019 10:26:31 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     syzbot <syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com>
-Cc:     andreyknvl@google.com, dmg@turingmachine.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in adu_disconnect
-Message-ID: <20190920082631.GL30545@localhost>
-References: <000000000000d12d24058f5d6b65@google.com>
- <000000000000a12822058fb4f408@google.com>
- <20190919103504.GC30545@localhost>
+        Fri, 20 Sep 2019 04:27:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1568968025; bh=zPC9p8T5S06DA73PD5F75wViZ/EpBpeYylTS7OqjCU4=; h=Date:From:Reply-To:Subject:From:Subject; b=nnDIF05TSjqUOxLwoS2PdR8guus8mBS25qjPu9KiTwVvxlCUkl7nvXnyc71bxEUFfajgDmSUHtwE/Xpb1UqFBCfZckDvRJObf9/Ldw6aXc9eucszhKmg6DK4vjmT/m+4xGDPRwZCppFMViGNHb6+RsQgRbm7KbdTw1QFFJPj4c54R0Hokr519k2LLDm1xX2B/uc6Sr00dbZtmLYn8qRwHcUMjkta9fAa6MbPnFXuS+L5kRIaN9yWlb8WEZBx2pYb66ET6Nlwc+IA0VngUfR0xXZyQhRkgiydgH8i+3b4iM8HNyKtFIG7kXma9rX+a469JC6SkHZWfr0d0c7xVVVA1w==
+X-YMail-OSG: Uj75ns8VM1nBezpEbaXbumQT14wfbDNg0VJIB15lkg_.JBthXsG4lTHJGRSxHch
+ xmgjl.AJTEPss7tG.ZbybEoHCesV3zFsaiA88FOqnKMMknqNP0hUkWYL4EruZ7ECm2rtWgd2sHvc
+ ScriZVmL1CFl3O9tTxkpDDblSTQ0f.BdruNzCeOxbP8I8C4H65KyAUy42J_tL.jXadC8aDhHt86t
+ nSlSAUEr_2OpRYQl13qd_GgIYOLc_W1LHrAHivPgXmlfW4myt7K0T.KLJCFg.Hd_UCWNRgFnPO3l
+ slb9bSskyYoqSoJLohH.c_ve1hv7X._T4fXL_WTMw1FCGj9RrAfnTi4Ec0HA4dGJD_Lkxpsfbnyv
+ Jyh3k0URFL.VqtIyl_DFDOCk8RBWANBvawMrBIVhAxTk9.yBr376dNR9JS3EHf3JVZM06P.BYT8e
+ OCvQlv6xuZqa21zTSlNVCrP27zSQF5nf6ln.ImpDw0wnazixvkQ55EM91Xo5PuMJnDrOnYluNu3n
+ k_SIxDzkdsVS9dHV2lBteJuXkxbbqgxHoWMaoxVeh5wSCh5uJphKWn._zyoxrstwYC9FBxPfM7Rh
+ NwOJ7DOPMV8Z5.v8g3HBiGCzyYKuVMLlgAQUF1w1jlUSbNX421StSgNZjo6zEfqNg7F_7wdZRsHv
+ IUNWuhv57_8YA2_AoGdJd1GM.LwVyL6pV2q_XrdoswajDTQRemL9NTxAREyR9cJ28gyxzHvg6Ngo
+ 4ngJoEOi1JkF1YARXh0K4C1K0x230ZEmssCE2Ta4nFOk_tzvjmcWRjQ.F3mh3jlHl9b3Xl6uDmEk
+ gAbSAR9Mav8csUmM9Ay6SR0u1MEHf4QSi.q4AUEn7xrWlx8vOWA8hZD47kw70QhG4IseqlQo2tKk
+ 2QP_hXs47P8M0rMqCmkqfTu5rq4oNaaAUYv_lubHiSLficlD.rDOxUS_wx1iq2DAnRALpIHNDm9u
+ LakqUDOHGN05iHtaaKHLpdKPcQJuMtfAMqN7uoz0JmcVwoEEm95oIRcQzH6AqtqH8qNWq2iqXaBm
+ EwJzOcrc14qS9Rh2Mc_lOaKJmUHXitnRhaCKtEbD7C11752SymOaEoiqCTzTbUGP4rLAoK_rJdy0
+ WTZmbv1xppBvcf2mbpWZRtgO_K28I3Qvys9KXxcLFuFc1UyyZpkZCx72.XYwECluAy5O4V9KCDBg
+ o63TgvgRfacrklBOl09VJD5gluWr436ilooKWXThYSnfwinapuQHe3AmV9caJZike07ytgTzj_RV
+ rX.dCjot37txuiAsZV1z_TQs5aoucm1kvNjM-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Fri, 20 Sep 2019 08:27:05 +0000
+Date:   Fri, 20 Sep 2019 08:27:02 +0000 (UTC)
+From:   Ms Lisa Hugh <lisa.hugh222@gmail.com>
+Reply-To: ms.lisahugh000@gmail.com
+Message-ID: <1074883072.6851247.1568968022574@mail.yahoo.com>
+Subject: FROM MS LISA HUGH(BUSINESS).
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190919103504.GC30545@localhost>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 12:35:04PM +0200, Johan Hovold wrote:
-> On Fri, Aug 09, 2019 at 01:24:04PM -0700, syzbot wrote:
-> > syzbot has found a reproducer for the following crash on:
-> > 
-> > HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-> > git tree:       https://github.com/google/kasan.git usb-fuzzer
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13871a4a600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0243cb250a51eeefb8cc
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c4c8e2600000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d80d2c600000
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com
-> > 
-> > usb 1-1: USB disconnect, device number 4
-> > ==================================================================
-> > BUG: KASAN: use-after-free in atomic64_read  
-> > include/asm-generic/atomic-instrumented.h:836 [inline]
-> > BUG: KASAN: use-after-free in atomic_long_read  
-> > include/asm-generic/atomic-long.h:28 [inline]
-> > BUG: KASAN: use-after-free in __mutex_unlock_slowpath+0x96/0x670  
-> > kernel/locking/mutex.c:1211
-> > Read of size 8 at addr ffff8881d1d0aa00 by task kworker/0:1/12
-> 
-> Should be fixed by the below patch.
-> 
-> #syz test: https://github.com/google/kasan.git f0df5c1b
 
-Hmm. Let's try that again with the commit id from the report...
 
-#syz test: https://github.com/google/kasan.git e96407b4
+Dear Friend,
 
-Johan
+I am Ms Lisa Hugh work with the department of Audit and accounting manager here in the Bank(B.O.A).
 
-> From 6f09430ae18085a1552fc641e53d3a3e678db6f3 Mon Sep 17 00:00:00 2001
-> From: Johan Hovold <johan@kernel.org>
-> Date: Thu, 19 Sep 2019 11:48:38 +0200
-> Subject: [PATCH] USB: adutux: fix use-after-free on disconnect
-> 
-> The driver was clearing its struct usb_device pointer, which it uses as
-> an inverted disconnected flag, before deregistering the character device
-> and without serialising against racing release().
-> 
-> This could lead to a use-after-free if a racing release() callback
-> observes the cleared pointer and frees the driver data before
-> disconnect() is finished with it.
-> 
-> This could also lead to NULL-pointer dereferences in a racing open().
-> 
-> Fixes: f08812d5eb8f ("USB: FIx locks and urb->status in adutux (updated)")
-> Reported-by: syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com
-> Cc: stable <stable@vger.kernel.org>     # 2.6.24
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> ---
-> 
->  drivers/usb/misc/adutux.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/usb/misc/adutux.c b/drivers/usb/misc/adutux.c
-> index 344d523b0502..bcc138990e2f 100644
-> --- a/drivers/usb/misc/adutux.c
-> +++ b/drivers/usb/misc/adutux.c
-> @@ -762,14 +762,15 @@ static void adu_disconnect(struct usb_interface *interface)
->  
->  	dev = usb_get_intfdata(interface);
->  
-> -	mutex_lock(&dev->mtx);	/* not interruptible */
-> -	dev->udev = NULL;	/* poison */
->  	usb_deregister_dev(interface, &adu_class);
-> -	mutex_unlock(&dev->mtx);
->  
->  	mutex_lock(&adutux_mutex);
->  	usb_set_intfdata(interface, NULL);
->  
-> +	mutex_lock(&dev->mtx);	/* not interruptible */
-> +	dev->udev = NULL;	/* poison */
-> +	mutex_unlock(&dev->mtx);
-> +
->  	/* if the device is not opened, then we clean up right now */
->  	if (!dev->open_count)
->  		adu_delete(dev);
+Please i need your assistance for the transferring of thIs fund to your bank account for both of us benefit for life time investment, amount (US$4.5M DOLLARS).
+
+I have every inquiry details to make the bank believe you and release the fund in within 5 banking working days with your full co-operation with me forsuccess.
+
+Note/ 50% for you why 50% for me after success of the transfer to your bank
+account.
+
+Below information is what i need from you so will can be reaching each
+other
+
+1)Full name ...
+2)Private telephone number...
+3)Age...
+4)Nationality...
+5)Occupation ...
+
+
+Thanks.
+
+Ms Lisa Hugh
