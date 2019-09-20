@@ -2,76 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 327B4B8ABF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08BD1B8AC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 08:09:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437218AbfITGIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 02:08:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408261AbfITGIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 02:08:17 -0400
-Received: from localhost (unknown [145.15.244.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64BDD20644;
-        Fri, 20 Sep 2019 06:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568959696;
-        bh=mWG1Jx2zQxwa3AhlOl1Bm5pNoGL7+pi+3Zp+OGk4y08=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2V3AKCpsCLu6C7lLk2VhFP/kd1dLmiut0wOoF7UVzSCoGo/Viq+ocwIZ3niFWS/Nk
-         ABbbBTIr4/z+SZybxUOxzaVdCh/+qKeTqxBEGwM7cX+cizCcBq8dQLKFEslwf1OfZw
-         kGPmNcztrnil27xJkwTiTQudpQE9bUmzvByDcp+I=
-Date:   Fri, 20 Sep 2019 08:08:12 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ayman Bagabas <ayman.bagabas@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Matan Ziv-Av <matan@svgalib.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Peng Hao <peng.hao2@zte.com.cn>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mattias Jacobsson <2pi@mok.nu>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] platform/x86: huawei-wmi: Add quirks and module
- parameters
-Message-ID: <20190920060812.GB473898@kroah.com>
-References: <20190920003938.21617-1-ayman.bagabas@gmail.com>
- <20190920003938.21617-3-ayman.bagabas@gmail.com>
+        id S2437230AbfITGIz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 02:08:55 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2744 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2408276AbfITGIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 02:08:54 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 92C6F238268DF2A63800;
+        Fri, 20 Sep 2019 14:08:51 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 20 Sep 2019 14:08:43 +0800
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+To:     Joe Perches <joe@perches.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Alexei Starovoitov" <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-kernel@vger.kernel.org>
+CC:     <wangkefeng.wang@huawei.com>
+Subject: [PATCH 00/32] Kill pr_warning in the whole linux code
+Date:   Fri, 20 Sep 2019 14:25:12 +0800
+Message-ID: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190920003938.21617-3-ayman.bagabas@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 08:39:07PM -0400, Ayman Bagabas wrote:
-> Introduce quirks and module parameters. 3 quirks are added:
-> 1. Fixes reporting brightness keys twice since it's already handled by
->    acpi-video.
-> 2. Some models need a short delay when setting battery thresholds to
->    prevent a race condition when two processes read/write. (will be used later)
-> 3. Matebook X (2017) handles micmute led through the "legacy" interface
->    which is not currently implemented. Use ACPI EC method to control
->    this led. (will be used later)
-> 
-> 2 module parameters are added to enable this short delay and/or report
->   brightness keys through this driver.
+There are pr_warning and pr_warng to show WARNING level message,             
+most of the code using pr_warn, number based on next-20190919,
+                                                                             
+pr_warn: 5189   pr_warning: 546 (tools: 398, others: 148)                    
+                                                                             
+Joe Perches posted a patch, commit f2c2cbcc35d4 ("powerpc: Use               
+pr_warn instead of pr_warning"), which is beginning to remove                
+pr_warning, so all logging messages use a consistent pr_warn                 
+style once pr_warning removed, and checkpatch also sugguests                 
+that better to use pr_warn instead of pr_warning.                            
+                                                                             
+Let's carry on with the work to standardize the logging macro,               
+kill pr_warning in the whole linux code.                                     
+                                                                             
+Note, for tools api/bpf/perf part, rename pr_warning to pr_warn              
+to keep the consistence, with this patchset,                                 
+                                                                             
+pr_warn: 5730   pr_warning: 0                                                
+                                                                             
+Miscellanea:                                                                 
+o Coalesce formats                                                           
+o Realign arguments                                                          
+o Remove unnecessary line continuations                                      
 
-module parameters are a pain to manage and handle over time.  Is there
-any way you can "automatically" figure this out, or use a sysfs file
-instead?
+Kefeng Wang (32):
+  alpha: Use pr_warn instead of pr_warning
+  arm64: Use pr_warn instead of pr_warning
+  ia64: Use pr_warn instead of pr_warning
+  riscv: Use pr_warn instead of pr_warning
+  sh: Use pr_warn instead of pr_warning
+  sparc: Use pr_warn instead of pr_warning
+  x86: Use pr_warn instead of pr_warning
+  acpi: Use pr_warn instead of pr_warning
+  drbd: Use pr_warn instead of pr_warning
+  gdrom: Use pr_warn instead of pr_warning
+  clocksource: samsung_pwm_timer: Use pr_warn instead of pr_warning
+  crypto: n2: Use pr_warn instead of pr_warning
+  ide: Use pr_warn instead of pr_warning
+  idsn: Use pr_warn instead of pr_warning
+  macintosh: Use pr_warn instead of pr_warning
+  of: Use pr_warn instead of pr_warning
+  oprofile: Use pr_warn instead of pr_warning
+  platform/x86: Use pr_warn instead of pr_warning
+  scsi: Use pr_warn instead of pr_warning
+  sh/intc: Use pr_warn instead of pr_warning
+  staging: Use pr_warn instead of pr_warning
+  fs: afs: Use pr_warn instead of pr_warning
+  vgacon: Use pr_warn instead of pr_warning
+  dma-debug: Use pr_warn instead of pr_warning
+  trace: Use pr_warn instead of pr_warning
+  lib: cpu_rmap: Use pr_warn instead of pr_warning
+  ASoC: samsung: Use pr_warn instead of pr_warning
+  printk: Drop pr_warning
+  tools lib api: Renaming pr_warning to pr_warn
+  tools lib bpf: Renaming pr_warning to pr_warn
+  tools perf: Renaming pr_warning to pr_warn
+  checkpatch: Drop pr_warning check
 
-thanks,
+ arch/alpha/kernel/perf_event.c            |   4 +-
+ arch/arm64/kernel/hw_breakpoint.c         |   8 +-
+ arch/arm64/kernel/smp.c                   |  11 +-
+ arch/ia64/kernel/setup.c                  |   2 +-
+ arch/riscv/kernel/module.c                |   4 +-
+ arch/sh/boards/mach-sdk7786/nmi.c         |   2 +-
+ arch/sh/drivers/pci/fixups-sdk7786.c      |   2 +-
+ arch/sh/kernel/io_trapped.c               |   2 +-
+ arch/sh/kernel/setup.c                    |   2 +-
+ arch/sh/mm/consistent.c                   |   5 +-
+ arch/sparc/kernel/smp_64.c                |   6 +-
+ arch/x86/kernel/amd_gart_64.c             |  11 +-
+ arch/x86/kernel/apic/apic.c               |  41 +-
+ arch/x86/kernel/setup_percpu.c            |   4 +-
+ arch/x86/kernel/tboot.c                   |  15 +-
+ arch/x86/kernel/tsc_sync.c                |   8 +-
+ arch/x86/kernel/umip.c                    |   6 +-
+ arch/x86/mm/kmmio.c                       |   7 +-
+ arch/x86/mm/mmio-mod.c                    |   6 +-
+ arch/x86/mm/numa_emulation.c              |   4 +-
+ arch/x86/mm/testmmiotrace.c               |   6 +-
+ arch/x86/oprofile/op_x86_model.h          |   6 +-
+ arch/x86/platform/olpc/olpc-xo15-sci.c    |   2 +-
+ arch/x86/platform/sfi/sfi.c               |   3 +-
+ arch/x86/xen/setup.c                      |   2 +-
+ drivers/acpi/apei/apei-base.c             |  36 +-
+ drivers/acpi/apei/einj.c                  |   4 +-
+ drivers/acpi/apei/erst-dbg.c              |   5 +-
+ drivers/acpi/apei/ghes.c                  |  25 +-
+ drivers/acpi/apei/hest.c                  |  14 +-
+ drivers/acpi/battery.c                    |   2 +-
+ drivers/acpi/resource.c                   |   4 +-
+ drivers/block/drbd/drbd_nl.c              |  13 +-
+ drivers/cdrom/gdrom.c                     |   4 +-
+ drivers/clocksource/samsung_pwm_timer.c   |   2 +-
+ drivers/crypto/n2_core.c                  |  12 +-
+ drivers/ide/tx4938ide.c                   |   2 +-
+ drivers/ide/tx4939ide.c                   |   6 +-
+ drivers/isdn/hardware/mISDN/avmfritz.c    |  16 +-
+ drivers/isdn/hardware/mISDN/hfcmulti.c    |   8 +-
+ drivers/isdn/hardware/mISDN/hfcpci.c      |   3 +-
+ drivers/isdn/hardware/mISDN/hfcsusb.c     |   4 +-
+ drivers/isdn/hardware/mISDN/mISDNipac.c   |   4 +-
+ drivers/isdn/hardware/mISDN/mISDNisar.c   |  10 +-
+ drivers/isdn/hardware/mISDN/netjet.c      |   8 +-
+ drivers/isdn/hardware/mISDN/w6692.c       |  12 +-
+ drivers/isdn/mISDN/hwchannel.c            |   7 +-
+ drivers/macintosh/windfarm_fcu_controls.c |   4 +-
+ drivers/macintosh/windfarm_lm87_sensor.c  |   4 +-
+ drivers/macintosh/windfarm_pm72.c         |  22 +-
+ drivers/macintosh/windfarm_rm31.c         |   6 +-
+ drivers/of/fdt.c                          |  20 +-
+ drivers/oprofile/oprofile_perf.c          |   8 +-
+ drivers/platform/x86/asus-laptop.c        |   2 +-
+ drivers/platform/x86/eeepc-laptop.c       |   2 +-
+ drivers/platform/x86/intel_oaktrail.c     |  10 +-
+ drivers/scsi/a3000.c                      |   2 +-
+ drivers/sh/intc/core.c                    |   4 +-
+ drivers/staging/isdn/gigaset/interface.c  |   2 +-
+ drivers/video/console/vgacon.c            |   6 +-
+ fs/afs/flock.c                            |   4 +-
+ fs/afs/inode.c                            |  13 +-
+ fs/afs/yfsclient.c                        |   4 +-
+ include/linux/printk.h                    |   3 +-
+ kernel/dma/debug.c                        |   2 +-
+ kernel/trace/trace_benchmark.c            |   4 +-
+ lib/cpu_rmap.c                            |   2 +-
+ scripts/checkpatch.pl                     |   9 -
+ sound/soc/samsung/s3c-i2s-v2.c            |   6 +-
+ tools/lib/api/debug-internal.h            |   4 +-
+ tools/lib/api/debug.c                     |   4 +-
+ tools/lib/api/fs/fs.c                     |   4 +-
+ tools/lib/bpf/btf.c                       |  56 +-
+ tools/lib/bpf/btf_dump.c                  |  20 +-
+ tools/lib/bpf/libbpf.c                    | 652 +++++++++++-----------
+ tools/lib/bpf/libbpf_internal.h           |   2 +-
+ tools/lib/bpf/xsk.c                       |   4 +-
+ tools/perf/arch/x86/util/intel-pt.c       |   2 +-
+ tools/perf/builtin-annotate.c             |   7 +-
+ tools/perf/builtin-buildid-cache.c        |  28 +-
+ tools/perf/builtin-diff.c                 |  12 +-
+ tools/perf/builtin-help.c                 |  10 +-
+ tools/perf/builtin-inject.c               |   8 +-
+ tools/perf/builtin-probe.c                |  14 +-
+ tools/perf/builtin-record.c               |  10 +-
+ tools/perf/builtin-report.c               |   2 +-
+ tools/perf/builtin-script.c               |  14 +-
+ tools/perf/builtin-stat.c                 |  18 +-
+ tools/perf/builtin-timechart.c            |  12 +-
+ tools/perf/builtin-top.c                  |   2 +-
+ tools/perf/builtin-trace.c                |   8 +-
+ tools/perf/lib/internal.h                 |   2 +-
+ tools/perf/ui/browsers/scripts.c          |   2 +-
+ tools/perf/util/bpf-loader.c              |   6 +-
+ tools/perf/util/bpf-prologue.c            |   4 +-
+ tools/perf/util/callchain.c               |   2 +-
+ tools/perf/util/config.c                  |   8 +-
+ tools/perf/util/data-convert-bt.c         |   4 +-
+ tools/perf/util/data.c                    |   2 +-
+ tools/perf/util/debug.c                   |   4 +-
+ tools/perf/util/debug.h                   |   2 +-
+ tools/perf/util/event.c                   |  14 +-
+ tools/perf/util/evlist.c                  |   4 +-
+ tools/perf/util/evsel.c                   |  19 +-
+ tools/perf/util/header.c                  |  20 +-
+ tools/perf/util/jitdump.c                 |   4 +-
+ tools/perf/util/llvm-utils.c              |  18 +-
+ tools/perf/util/machine.c                 |   2 +-
+ tools/perf/util/parse-branch-options.c    |   3 +-
+ tools/perf/util/perf-hooks.c              |   6 +-
+ tools/perf/util/probe-event.c             |  90 +--
+ tools/perf/util/probe-file.c              |  36 +-
+ tools/perf/util/probe-finder.c            | 112 ++--
+ tools/perf/util/record.c                  |  18 +-
+ tools/perf/util/session.c                 |   2 +-
+ tools/perf/util/srcline.c                 |   6 +-
+ tools/perf/util/thread-stack.c            |   4 +-
+ tools/perf/util/thread_map.c              |   2 +-
+ tools/perf/util/trace-event-parse.c       |   2 +-
+ tools/perf/util/unwind-libunwind-local.c  |   9 +-
+ 120 files changed, 882 insertions(+), 927 deletions(-)
 
-greg k-h
+-- 
+2.20.1
+
