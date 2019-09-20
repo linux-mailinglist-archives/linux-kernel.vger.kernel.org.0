@@ -2,220 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4A6B92CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E92DAB92ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392271AbfITOfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:35:39 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40800 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392242AbfITOfi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:35:38 -0400
-Received: by mail-lj1-f195.google.com with SMTP id 7so7313869ljw.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=eG22Ig92s9S2RpEdkwbdrlgv61I8kOdAsevuATPJuW0=;
-        b=M+dIEX1A1BUBkYJA1NaxJ/Dk2bIogH7/IXqkD+bsjRIAP5Q/NfQY+4ioQzsks3M50H
-         dOei4m7tZlMlbOys6pa4LtIZG3xCYxjpVRABHzjhWsZZZ2XCJbPhXCr9NcLVDGEprgFY
-         871TvpCmF/jn5UlvAU/vABDPyngphH4JAR52q4N5yynRqZiH1irAoTsWcApL8KjpM5dt
-         MFAjnJuBGvM8o9Ran1MsxZmqxJx51GXg+Z6r0g5QEqpYn3wEyU32Jmp3e9J0eEJIX0/3
-         uXl0Qht/UJ1DBjSRq5Xs2teffcUbd2MWTrLzgp5ZMJyQnaudaOj4OgRUI0nxzh5w2HoL
-         qq/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=eG22Ig92s9S2RpEdkwbdrlgv61I8kOdAsevuATPJuW0=;
-        b=JZ1j9qKrEYS3rkWc7PSo79QVXTCRQynYG/ou7H8DbUz7NIgP3yKXW9Vh6iiHByorRh
-         w8SNFUKTG1Q9ou2zuEqAfrAmFw9TP21DZBDngVMbjStY4aTBFeAQBh4EjHAwkRtpH5gF
-         x4e2nvPU6C/l49TFyLcQHLxslFi6tBYju3HSWuDXCaeKDBVLRTxDEOhW1GZDZ4PwnFxI
-         A2bcYaXVCfgvVlAe1CvFnCuZf1Z9ar0To9WmcTuf9yCJkM8NYn2FZFAzV2TgQiJZvs8I
-         QYjtog8SF0ylYIY8A/XLPtE9s+RbPxjGH89CGF8dtG0wuz4M20aOrwOowZGP6CYNT0Sd
-         FBkA==
-X-Gm-Message-State: APjAAAVkeMNTSa9RoprWXi/SU/ue6XrXLEBPy/E6ilCG9H74hGTFtJF6
-        MffyGGecDIHjMi0A6GcmZtPOQ4h4pe+qLoiC61CSJg==
-X-Google-Smtp-Source: APXvYqxjZdaEJHiesNudzb/xRj2ojfaKoLXXiZW/EaP49yDX6YJ7yd0ufgwj155iS+tSV73tLx10YthVy1iTsH2UVqI=
-X-Received: by 2002:a05:651c:150:: with SMTP id c16mr9382369ljd.224.1568990135917;
- Fri, 20 Sep 2019 07:35:35 -0700 (PDT)
+        id S2391783AbfITOgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:36:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388039AbfITOgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:36:33 -0400
+Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C0F4206C2;
+        Fri, 20 Sep 2019 14:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568990192;
+        bh=UdNzovcKyZpZxczO/+ZLqGn4wfUX7R9VU6/eNsOHJVI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PsuELdiTwZ0uKFAseBBIl+FQ0jl+wrcFUUF7O+agBb8n4p/1RXoRd+Gj+s1nnTKVP
+         /vAFAl6VvdLTOmFytk5ShVdgJ7wNzqTFir9jPam6YTzprE+wYYjQyw5JX4H4JXB/gh
+         BabaDD/Dla7e99lS72oDsItadPSr4V3dJPpGIErY=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     Theodore Tso <tytso@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH v2 0/7] Rework random blocking
+Date:   Fri, 20 Sep 2019 07:36:22 -0700
+Message-Id: <cover.1568990048.git.luto@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190919214742.483643642@linuxfoundation.org>
-In-Reply-To: <20190919214742.483643642@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 20 Sep 2019 20:05:24 +0530
-Message-ID: <CA+G9fYstC9ffib=UGGtKPA7HVgSo4m6C6-fLk68cnmZwtC81vg@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/56] 4.4.194-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019 at 03:53, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.4.194 release.
-> There are 56 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat 21 Sep 2019 09:44:25 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.194-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+This makes two major semantic changes to Linux's random APIs:
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+It adds getentropy(..., GRND_INSECURE).  This causes getentropy to
+always return *something*.  There is no guarantee whatsoever that
+the result will be cryptographically random or even unique, but the
+kernel will give the best quality random output it can.  The name is
+a big hint: the resulting output is INSECURE.
 
-Summary
-------------------------------------------------------------------------
+The purpose of this is to allow programs that genuinely want
+best-effort entropy to get it without resorting to /dev/urandom.
+Plenty of programs do this because they need to do *something*
+during boot and they can't afford to wait.  Calling it "INSECURE" is
+probably the best we can do to discourage using this API for things
+that need security.
 
-kernel: 4.4.194-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 7b679e1a966bc6ac22d75cae76b97a9fded9367d
-git describe: v4.4.193-57-g7b679e1a966b
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.193-57-g7b679e1a966b
+This series also removes the blocking pool and makes /dev/random
+work just like getentropy(..., 0) and makes GRND_RANDOM a no-op.  I
+believe that Linux's blocking pool has outlived its usefulness.
+Linux's CRNG generates output that is good enough to use even for
+key generation.  The blocking pool is not stronger in any material
+way, and keeping it around requires a lot of infrastructure of
+dubious value.
 
-No regressions (compared to build v4.4.193)
+This series should not break any existing programs.  /dev/urandom is
+unchanged.  /dev/random will still block just after booting, but it
+will block less than it used to.  getentropy() with existing flags
+will return output that is, for practical purposes, just as strong
+as before.
 
-No fixes (compared to build v4.4.193)
+Changes from v1:
+ - Rebased to v5.3.  No other changes.
 
-Ran 19960 total tests in the following environments and test suites.
+Andy Lutomirski (7):
+  random: Don't wake crng_init_wait when crng_init == 1
+  random: Add GRND_INSECURE to return best-effort non-cryptographic
+    bytes
+  random: Ignore GRND_RANDOM in getentropy(2)
+  random: Make /dev/random be almost like /dev/urandom
+  random: Remove the blocking pool
+  random: Delete code to pull data into pools
+  random: Remove kernel.random.read_wakeup_threshold
 
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+ drivers/char/random.c       | 234 ++++--------------------------------
+ include/uapi/linux/random.h |   4 +-
+ 2 files changed, 27 insertions(+), 211 deletions(-)
 
-Test Suites
------------
-* build
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* prep-tmp-disk
-* spectre-meltdown-checker-test
-* kvm-unit-tests
-* v4l2-compliance
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
+-- 
+2.21.0
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.194-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.194-rc1-hikey-20190919-563
-git commit: 8d201bfa44c8dc5d61d57c89ac925d6e1fefaeae
-git describe: 4.4.194-rc1-hikey-20190919-563
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.194-rc1-hikey-20190919-563
-
-
-No regressions (compared to build 4.4.194-rc1-hikey-20190918-561)
-
-
-No fixes (compared to build 4.4.194-rc1-hikey-20190918-561)
-
-Ran 1536 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
