@@ -2,106 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6367B8E96
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C1DEB8E9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 12:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408689AbfITKjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 06:39:17 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:35520 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408680AbfITKjR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 06:39:17 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id ECDC73C04C0;
-        Fri, 20 Sep 2019 12:39:13 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7f23A7y2QV3m; Fri, 20 Sep 2019 12:39:08 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 25BE23C057F;
-        Fri, 20 Sep 2019 12:39:08 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 20 Sep
- 2019 12:39:07 +0200
-Date:   Fri, 20 Sep 2019 12:39:04 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Balasubramani Vivekanandan 
-        <balasubramani_vivekanandan@mentor.com>, <fweisbec@gmail.com>,
-        <tglx@linutronix.de>, <mingo@kernel.org>
-CC:     <erosca@de.adit-jv.com>, <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH V1 0/1] tick: broadcast-hrtimer: Fix a race in bc_set_next
-Message-ID: <20190920103904.GA16207@vmlxhi-102.adit-jv.com>
-References: <20190918144138.24839-1-balasubramani_vivekanandan@mentor.com>
+        id S2408700AbfITKqW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 06:46:22 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2698 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732138AbfITKqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 06:46:21 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id EDE72A0D9F2F7E1AE577;
+        Fri, 20 Sep 2019 18:46:18 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 20 Sep 2019
+ 18:46:12 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lorenzo.pieralisi@arm.com>, <andrew.murray@arm.com>,
+        <bhelgaas@google.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <vidyas@nvidia.com>,
+        <yuehaibing@huawei.com>, <treding@nvidia.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 -next] PCI: tegra: Add missing include file
+Date:   Fri, 20 Sep 2019 18:39:25 +0800
+Message-ID: <20190920103925.34404-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190920014807.38288-1-yuehaibing@huawei.com>
+References: <20190920014807.38288-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190918144138.24839-1-balasubramani_vivekanandan@mentor.com>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+linux-renesas-soc
+Fix build error without CONFIG_PINCTRL
 
-In hope that the issue reported in [1] was seen by other members of
-Renesas community.
+drivers/pci/controller/dwc/pcie-tegra194.c: In function tegra_pcie_config_rp:
+drivers/pci/controller/dwc/pcie-tegra194.c:1394:8: error: implicit declaration of function pinctrl_pm_select_default_state;
+ did you mean prandom_seed_full_state? [-Werror=implicit-function-declaration]
+  ret = pinctrl_pm_select_default_state(dev);
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        prandom_seed_full_state
 
-[1] https://lkml.org/lkml/2019/9/18/711
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: ab2a50e7602b ("PCI: tegra: Add support to configure sideband pins")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Vidya Sagar <vidyas@nvidia.com>
+---
+v2: keep alphabetical order
+---
+ drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Wed, Sep 18, 2019 at 04:41:37PM +0200, Balasubramani Vivekanandan wrote:
-> I was investigating a rcu stall warning on ARM64 Renesas Rcar3
-> platform. On analysis I found that rcu stall warning was because the
-> rcu_preempt kthread was starved of cpu time. rcu_preempt was blocked in
-> the function schedule_timeout() and never woken up. On further
-> investigation I found that local timer interrupts were not happening on
-> the cpu where the rcu_preempt kthread was blocked. So the rcu_preempt
-> was not woken up after timeout.
-> I continued my analysis to debug why the timer failed on the cpu. I
-> found that when cpu goes through idle state cycle, the timer failure
-> happens. When the cpu enters the idle state it subscribes to the tick
-> broadcast clock and shutsdown the local timer. Then on exit from idle
-> state the local timer is programmed to fire interrupts. But I found that
-> the during the error scenario, cpu fails to program the local timer on
-> exit from idle state. The below code in
-> __tick_broadcast_oneshot_control() is where the idle code exit path goes
-> through and fails to program the timer hardware
-> 
-> now = ktime_get();
-> if (dev->next_event <= now) {
-> 	cpumask_set_cpu(cpu, tick_broadcast_force_mask);
-> 		goto out;
-> }
-> 
-> The value in next_event will be earlier than current time because the
-> tick broadcast clock did not wake up the cpu on its subcribed
-> timeout. Later when the cpu is woken up due to some other event this
-> condition will arise. After the cpu woken up, any further timeout
-> requests by any task on the cpu might fail to program the timer
-> hardware because the value in next_event will be earlier than the
-> current time.
-> Then I focussed on why the tick broadcast clock failed to wake up the
-> cpu. I noticed a race condition in the hrtimer based tick broadcast
-> clock. The race condition results in a condition where the tick
-> broadcast hrtimer is never restarted. I have created a patch to fix the
-> race condition. Please review 
-> 
-> Balasubramani Vivekanandan (1):
->   tick: broadcast-hrtimer: Fix a race in bc_set_next
-> 
->  kernel/time/tick-broadcast-hrtimer.c | 58 ++++++++++++++++++++++------
->  kernel/time/tick-broadcast.c         |  2 +
->  2 files changed, 48 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 09ed8e4..f89f5ac 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -22,6 +22,7 @@
+ #include <linux/of_pci.h>
+ #include <linux/pci.h>
+ #include <linux/phy/phy.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/random.h>
 -- 
-Best Regards,
-Eugeniu
+2.7.4
+
+
