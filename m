@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 379DEB9320
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC521B9254
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392893AbfITOiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:38:01 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35732 "EHLO
+        id S2391218AbfITObj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:31:39 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36736 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388007AbfITOZA (ORCPT
+        by vger.kernel.org with ESMTP id S2388353AbfITOZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:00 -0400
+        Fri, 20 Sep 2019 10:25:14 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0004wf-Sz; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqQ-00051F-99; Fri, 20 Sep 2019 15:25:10 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007q5-I5; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqF-0007ub-Ah; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Mukesh Ojha" <mojha@codeaurora.org>,
-        "Hulk Robot" <hulkci@huawei.com>,
-        "YueHaibing" <yuehaibing@huawei.com>
+        "Laurentiu Tudor" <laurentiu.tudor@nxp.com>,
+        "Michael Ellerman" <mpe@ellerman.id.au>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.664709071@decadent.org.uk>
+Message-ID: <lsq.1568989415.618609984@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 019/132] ehea: Fix a copy-paste err in ehea_init_port_res
+Subject: [PATCH 3.16 075/132] powerpc/booke64: set RI in default MSR
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,32 +47,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-commit c8f191282f819ab4e9b47b22a65c6c29734cefce upstream.
+commit 5266e58d6cd90ac85c187d673093ad9cb649e16d upstream.
 
-pr->tx_bytes should be assigned to tx_bytes other than
-rx_bytes.
+Set RI in the default kernel's MSR so that the architected way of
+detecting unrecoverable machine check interrupts has a chance to work.
+This is inline with the MSR setup of the rest of booke powerpc
+architectures configured here.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: ce45b873028f ("ehea: Fixing statistics")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/ibm/ehea/ehea_main.c | 2 +-
+ arch/powerpc/include/asm/reg_booke.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/ibm/ehea/ehea_main.c
-+++ b/drivers/net/ethernet/ibm/ehea/ehea_main.c
-@@ -1476,7 +1476,7 @@ static int ehea_init_port_res(struct ehe
+--- a/arch/powerpc/include/asm/reg_booke.h
++++ b/arch/powerpc/include/asm/reg_booke.h
+@@ -29,7 +29,7 @@
+ #if defined(CONFIG_PPC_BOOK3E_64)
+ #define MSR_64BIT	MSR_CM
  
- 	memset(pr, 0, sizeof(struct ehea_port_res));
- 
--	pr->tx_bytes = rx_bytes;
-+	pr->tx_bytes = tx_bytes;
- 	pr->tx_packets = tx_packets;
- 	pr->rx_bytes = rx_bytes;
- 	pr->rx_packets = rx_packets;
+-#define MSR_		(MSR_ME | MSR_CE)
++#define MSR_		(MSR_ME | MSR_RI | MSR_CE)
+ #define MSR_KERNEL	(MSR_ | MSR_64BIT)
+ #define MSR_USER32	(MSR_ | MSR_PR | MSR_EE)
+ #define MSR_USER64	(MSR_USER32 | MSR_64BIT)
 
