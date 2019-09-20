@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 787BCB8D98
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 11:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35ECEB8D9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 11:25:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408476AbfITJZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 05:25:26 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:55558 "EHLO huawei.com"
+        id S2408501AbfITJZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 05:25:34 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2752 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2408445AbfITJZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 05:25:25 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 41D85F2F6259E1ED2F63;
-        Fri, 20 Sep 2019 17:25:24 +0800 (CST)
+        id S2408489AbfITJZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 05:25:31 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5BE021C00D45B90B9019;
+        Fri, 20 Sep 2019 17:25:29 +0800 (CST)
 Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
  (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 20 Sep 2019
- 17:25:18 +0800
+ 17:25:19 +0800
 From:   Jason Yan <yanaijie@huawei.com>
 To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
         <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
@@ -27,9 +27,9 @@ CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
         <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
         <jingxiangfeng@huawei.com>, <zhaohongjiang@huawei.com>,
         <oss@buserror.net>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v7 02/12] powerpc: move memstart_addr and kernstart_addr to init-common.c
-Date:   Fri, 20 Sep 2019 17:45:36 +0800
-Message-ID: <20190920094546.44948-3-yanaijie@huawei.com>
+Subject: [PATCH v7 03/12] powerpc: introduce kernstart_virt_addr to store the kernel base
+Date:   Fri, 20 Sep 2019 17:45:37 +0800
+Message-ID: <20190920094546.44948-4-yanaijie@huawei.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190920094546.44948-1-yanaijie@huawei.com>
 References: <20190920094546.44948-1-yanaijie@huawei.com>
@@ -42,8 +42,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These two variables are both defined in init_32.c and init_64.c. Move
-them to init-common.c and make them __ro_after_init.
+Now the kernel base is a fixed value - KERNELBASE. To support KASLR, we
+need a variable to store the kernel base.
 
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 Cc: Diana Craciun <diana.craciun@nxp.com>
@@ -57,59 +57,36 @@ Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
 Reviewed-by: Diana Craciun <diana.craciun@nxp.com>
 Tested-by: Diana Craciun <diana.craciun@nxp.com>
 ---
- arch/powerpc/mm/init-common.c | 5 +++++
- arch/powerpc/mm/init_32.c     | 5 -----
- arch/powerpc/mm/init_64.c     | 5 -----
- 3 files changed, 5 insertions(+), 10 deletions(-)
+ arch/powerpc/include/asm/page.h | 2 ++
+ arch/powerpc/mm/init-common.c   | 2 ++
+ 2 files changed, 4 insertions(+)
 
+diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+index 0d52f57fca04..4d32d1b561d6 100644
+--- a/arch/powerpc/include/asm/page.h
++++ b/arch/powerpc/include/asm/page.h
+@@ -315,6 +315,8 @@ void arch_free_page(struct page *page, int order);
+ 
+ struct vm_area_struct;
+ 
++extern unsigned long kernstart_virt_addr;
++
+ #include <asm-generic/memory_model.h>
+ #endif /* __ASSEMBLY__ */
+ #include <asm/slice.h>
 diff --git a/arch/powerpc/mm/init-common.c b/arch/powerpc/mm/init-common.c
-index a84da92920f7..e223da482c0c 100644
+index e223da482c0c..42ef7a6e6098 100644
 --- a/arch/powerpc/mm/init-common.c
 +++ b/arch/powerpc/mm/init-common.c
-@@ -21,6 +21,11 @@
- #include <asm/pgtable.h>
- #include <asm/kup.h>
+@@ -25,6 +25,8 @@ phys_addr_t memstart_addr __ro_after_init = (phys_addr_t)~0ull;
+ EXPORT_SYMBOL_GPL(memstart_addr);
+ phys_addr_t kernstart_addr __ro_after_init;
+ EXPORT_SYMBOL_GPL(kernstart_addr);
++unsigned long kernstart_virt_addr __ro_after_init = KERNELBASE;
++EXPORT_SYMBOL_GPL(kernstart_virt_addr);
  
-+phys_addr_t memstart_addr __ro_after_init = (phys_addr_t)~0ull;
-+EXPORT_SYMBOL_GPL(memstart_addr);
-+phys_addr_t kernstart_addr __ro_after_init;
-+EXPORT_SYMBOL_GPL(kernstart_addr);
-+
  static bool disable_kuep = !IS_ENABLED(CONFIG_PPC_KUEP);
  static bool disable_kuap = !IS_ENABLED(CONFIG_PPC_KUAP);
- 
-diff --git a/arch/powerpc/mm/init_32.c b/arch/powerpc/mm/init_32.c
-index b04896a88d79..872df48ae41b 100644
---- a/arch/powerpc/mm/init_32.c
-+++ b/arch/powerpc/mm/init_32.c
-@@ -56,11 +56,6 @@
- phys_addr_t total_memory;
- phys_addr_t total_lowmem;
- 
--phys_addr_t memstart_addr = (phys_addr_t)~0ull;
--EXPORT_SYMBOL(memstart_addr);
--phys_addr_t kernstart_addr;
--EXPORT_SYMBOL(kernstart_addr);
--
- #ifdef CONFIG_RELOCATABLE
- /* Used in __va()/__pa() */
- long long virt_phys_offset;
-diff --git a/arch/powerpc/mm/init_64.c b/arch/powerpc/mm/init_64.c
-index a44f6281ca3a..c836f1269ee7 100644
---- a/arch/powerpc/mm/init_64.c
-+++ b/arch/powerpc/mm/init_64.c
-@@ -63,11 +63,6 @@
- 
- #include <mm/mmu_decl.h>
- 
--phys_addr_t memstart_addr = ~0;
--EXPORT_SYMBOL_GPL(memstart_addr);
--phys_addr_t kernstart_addr;
--EXPORT_SYMBOL_GPL(kernstart_addr);
--
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- /*
-  * Given an address within the vmemmap, determine the pfn of the page that
 -- 
 2.17.2
 
