@@ -2,143 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE9E7B95E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 416BFB95EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 18:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbfITQmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 12:42:07 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33558 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729069AbfITQmG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:42:06 -0400
-Received: by mail-qt1-f195.google.com with SMTP id r5so9430821qtd.0;
-        Fri, 20 Sep 2019 09:42:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kqT5lIVpsBt9QgotSREzEDcmUdKvdLEfcdlmXuAx+xk=;
-        b=bCKyfITEKTXsbQLWL/X7tZ3LWMdwmrHZUwtTYcuA+LHSnQDaeCPy+Wy/PMqWOOTLOa
-         VKn5Hzm4PIfK4m4yrkFrTf+WA1Sn1nRK06DdEbtV5HmX6Hq60mpscbjAfsEZ0q3InPIF
-         kpuozEjIWvfPAGBw60M3DF53gURbxxmXZhQvjuQVzh7ypy9tIaQ0UwDlO36Q2wAbT96t
-         fN3vRrefgW/a64cH1/Fk9HDQq3XeuSIa9IgVuF55jjkFRPEoZaZ4rHzgBlFiGYNJm+CK
-         05thmQqLc5n8gEK+Xs38wTd7UDJBbF5y9F9a3X3InXr1xDxLFoLygZ4lQqZBSrSs8M5A
-         CRdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kqT5lIVpsBt9QgotSREzEDcmUdKvdLEfcdlmXuAx+xk=;
-        b=uEMQF+YMCghP3DFXxDfiVAHKFLx7NxgWk5UlPkKGjJYeU7w21rFBbYW5fkRbSzzKJs
-         ZLuNk0v5y2MkFNVKEp4POzLDyzXdvMet9YmVKBFAyq1LlrXsccSwfkHwMuQWkdQpLgin
-         vgO8ORGJWWooHJkrBLwcvQzFGpvAT/ktO3ycZWnzszeWgiUbiiTQeqrs/lhhQzeR631H
-         6OXtOIW61kMdlLdmvS8ovPgzZS53rMsESeQX8hHjr6WJ48khLG3UsyLokMDLS3hq1AD/
-         vAunxmps4CowH+IRx7f6itViugXWG+bSqylyTQO2mK7H54a6o7tvOBYec+56wvBX5dCJ
-         nDUA==
-X-Gm-Message-State: APjAAAXrHgvaXdJqU+uCbxPWom38GbSpvasjZz4+Up8LzOrulH0r0XOG
-        OET0mwn9fpSFlhejjbGo4kd7ehlw33oZ3AoN/dI=
-X-Google-Smtp-Source: APXvYqwHlEZPBHp6TKMq1Bn/wdXI2AU0A7FFVFNUPrCMEWbLJufkAEjZObSWazLl9RrBYJT3ie5Lgd1RVV4XtK9V9EU=
-X-Received: by 2002:a0c:e48b:: with SMTP id n11mr14252983qvl.38.1568997725782;
- Fri, 20 Sep 2019 09:42:05 -0700 (PDT)
+        id S2404544AbfITQpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 12:45:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389184AbfITQpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 12:45:46 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68FFB20717;
+        Fri, 20 Sep 2019 16:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568997945;
+        bh=7uHZpCyprQ+ExDBGZqIoxuu9cl0f/lWQvotmf0EacHA=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=ceDU+qwuK9oo+gOGz+xEIQPbYNs+uXlRoiQwcFQpYWpEl+BJEsUuClxUZFtdIozhS
+         V5a6zobi1vycFbhwmfKDa3+AzkItBBjMn1NAq3VX7+ydvGeAg2UsrdDhWFYIcWT07Q
+         LnT7F3T1SXulg9eyo04RR5eolqZkazCMLxE0c6rU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190919160518.25901-1-ivan.khoronzhuk@linaro.org>
- <CAEf4BzbCjCYr5NMPctDkUggwpehnqZPVBSqZOsd9MvSq6WmnZQ@mail.gmail.com> <20190920082204.GC8870@khorivan>
-In-Reply-To: <20190920082204.GC8870@khorivan>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Fri, 20 Sep 2019 09:41:54 -0700
-Message-ID: <CAEf4BzaVuaN3HhMu8W_i9z4n-2zfjqxBXyOEOaQHexxZq7b3qg@mail.gmail.com>
-Subject: Re: [PATCH bpf] libbpf: fix version identification on busybox
-To:     Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin Lau <kafai@fb.com>, Andrii Nakryiko <andriin@fb.com>,
-        Yonghong Song <yhs@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190920145543.1732316-1-arnd@arndb.de>
+References: <20190920145543.1732316-1-arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] mbox: qcom: avoid unused-variable warning
+User-Agent: alot/0.8.1
+Date:   Fri, 20 Sep 2019 09:45:44 -0700
+Message-Id: <20190920164545.68FFB20717@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 1:22 AM Ivan Khoronzhuk
-<ivan.khoronzhuk@linaro.org> wrote:
->
-> On Thu, Sep 19, 2019 at 01:02:40PM -0700, Andrii Nakryiko wrote:
-> >On Thu, Sep 19, 2019 at 11:22 AM Ivan Khoronzhuk
-> ><ivan.khoronzhuk@linaro.org> wrote:
-> >>
-> >> It's very often for embedded to have stripped version of sort in
-> >> busybox, when no -V option present. It breaks build natively on target
-> >> board causing recursive loop.
-> >>
-> >> BusyBox v1.24.1 (2019-04-06 04:09:16 UTC) multi-call binary. \
-> >> Usage: sort [-nrugMcszbdfimSTokt] [-o FILE] [-k \
-> >> start[.offset][opts][,end[.offset][opts]] [-t CHAR] [FILE]...
-> >>
-> >> Lets modify command a little to avoid -V option.
-> >>
-> >> Fixes: dadb81d0afe732 ("libbpf: make libbpf.map source of truth for libbpf version")
-> >>
-> >> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> >> ---
-> >>
-> >> Based on bpf/master
-> >>
-> >>  tools/lib/bpf/Makefile | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
-> >> index c6f94cffe06e..a12490ad6215 100644
-> >> --- a/tools/lib/bpf/Makefile
-> >> +++ b/tools/lib/bpf/Makefile
-> >> @@ -3,7 +3,7 @@
-> >>
-> >>  LIBBPF_VERSION := $(shell \
-> >>         grep -oE '^LIBBPF_([0-9.]+)' libbpf.map | \
-> >> -       sort -rV | head -n1 | cut -d'_' -f2)
-> >> +       cut -d'_' -f2 | sort -r | head -n1)
-> >
-> >You can't just sort alphabetically, because:
-> >
-> >1.2
-> >1.11
-> >
-> >should be in that order. See discussion on mailing thread for original commit.
->
-> if X1.X2.X3, where X = {0,1,....99999}
-> Then it can be:
->
-> -LIBBPF_VERSION := $(shell \
-> -       grep -oE '^LIBBPF_([0-9.]+)' libbpf.map | \
-> -       sort -rV | head -n1 | cut -d'_' -f2)
-> +_LBPFLIST := $(patsubst %;,%,$(patsubst LIBBPF_%,%,$(filter LIBBPF_%, \
-> +           $(shell cat libbpf.map))))
-> +_LBPFLIST2 := $(foreach v,$(_LBPFLIST), \
-> +               $(subst $() $(),,$(foreach n,$(subst .,$() $(),$(v)), \
-> +                       $(shell printf "%05d" $(n)))))
-> +_LBPF_VER := $(word $(words $(sort $(_LBPFLIST2))), $(sort $(_LBPFLIST2)))
-> +LIBBPF_VERSION := $(patsubst %_$(_LBPF_VER),%,$(filter %_$(_LBPF_VER), \
-> +        $(join $(addsuffix _, $(_LBPFLIST)),$(_LBPFLIST2))))
->
-> It's bigger but avoids invocations of grep/sort/cut/head, only cat/printf
-> , thus -V option also.
->
+Quoting Arnd Bergmann (2019-09-20 07:55:29)
+> Without CONFIG_OF, there is no reference to the apcs_clk_match_table[]
+> array, causing a harmless warning:
+>=20
+> drivers/mailbox/qcom-apcs-ipc-mailbox.c:57:28: error: unused variable 'ap=
+cs_clk_match_table' [-Werror,-Wunused-variable]
+>         const struct of_device_id apcs_clk_match_table[] =3D {
+>=20
+> Move the variable out of the variable scope and mark it 'static'
+> to avoid the warning (static const variables get silently dropped
+> by the compiler), and avoid the on-stack copy at the same time.
+>=20
+> Fixes: 78c86458a440 ("mbox: qcom: add APCS child device for QCS404")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qc=
+om-apcs-ipc-mailbox.c
+> index eeebafd546e5..10557a950c2d 100644
+> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> @@ -45,6 +45,12 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops =
+=3D {
+>         .send_data =3D qcom_apcs_ipc_send_data,
+>  };
+> =20
+> +static const struct of_device_id apcs_clk_match_table[] =3D {
+> +       { .compatible =3D "qcom,msm8916-apcs-kpss-global", },
+> +       { .compatible =3D "qcom,qcs404-apcs-apps-global", },
+> +       {}
+> +};
+> +
+>  static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  {
+>         struct qcom_apcs_ipc *apcs;
+> @@ -54,11 +60,6 @@ static int qcom_apcs_ipc_probe(struct platform_device =
+*pdev)
+>         void __iomem *base;
+>         unsigned long i;
+>         int ret;
+> -       const struct of_device_id apcs_clk_match_table[] =3D {
 
-No way, this is way too ugly (and still unreliable, if we ever have
-X.Y.Z.W or something). I'd rather go with my original approach of
-fetching the last version in libbpf.map file. See
-https://www.spinics.net/lists/netdev/msg592703.html.
+Does marking it static here work too? It would be nice to limit the
+scope of this variable to this function instead of making it a global.
+Also, it might be slightly smaller code size if that works.
 
-> >
-> >>  LIBBPF_MAJOR_VERSION := $(firstword $(subst ., ,$(LIBBPF_VERSION)))
-> >>
-> >>  MAKEFLAGS += --no-print-directory
-> >> --
-> >> 2.17.1
-> >>
->
-> --
-> Regards,
-> Ivan Khoronzhuk
+> -               { .compatible =3D "qcom,msm8916-apcs-kpss-global", },
+> -               { .compatible =3D "qcom,qcs404-apcs-apps-global", },
+> -               {}
+> -       };
+> =20
+>         apcs =3D devm_kzalloc(&pdev->dev, sizeof(*apcs), GFP_KERNEL);
+>         if (!apcs)
