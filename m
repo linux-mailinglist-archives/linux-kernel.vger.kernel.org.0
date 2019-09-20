@@ -2,86 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAA6EB9731
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 20:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 236ECB9730
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 20:31:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406531AbfITSba (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 14:31:30 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33292 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406488AbfITSb3 (ORCPT
+        id S2436492AbfITSbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 14:31:23 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33048 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406515AbfITSbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 14:31:29 -0400
-Received: by mail-ot1-f67.google.com with SMTP id g25so7043131otl.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:31:29 -0700 (PDT)
+        Fri, 20 Sep 2019 14:31:22 -0400
+Received: by mail-qk1-f194.google.com with SMTP id x134so8320127qkb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 11:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YhEh8bVzYUGuUCB/RpHUx78n8Qc9+jFz1obXEDydgGw=;
-        b=A+jpbUMt0eQyN9IeJlC+6ZG3CYqMX3zZLIMp0aWDMveI99go9TGsKvmQQYHQU/DrQT
-         rzDqBeTODojWZUAHWTBfF65DPs1ZYeZp96wCBpIV59NW53jvSnsdtPBs4NemKWzgiWws
-         crKQJb2NIE9OvYaBFANsTHDHtqOVg69nieaZDOH5CKSXAiRKHOQ5M3XoY4Z1Vxw57Snl
-         +MbA6DAPhFag6JTu1b0fFiN+VgAu62Zuus5tgsYTvGZIoxZBSIHSy7hFpxIP8dOPmkoB
-         dFOWcZXf86ENnEuRv8zBV73wAFcTTPKcHRhs1oz0ialrnNLtej2MgHiKXCojYMynJXT8
-         kxuw==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2lNQY02XZiW/7zD9ydR22Y5cya+wo/HYqbRdJENNudM=;
+        b=gJQ6pdk6pcIK4nCkT47MTAb09/eCw09Bp1OhrPNM6/ftlDmZ2qGPjsvuQydmTYBfaJ
+         s+eOHbu3mDTyC4LNoSCa9Kl/hPoA1/FoCY6uOosKKCbrOCcTPfOcz/pe0P/T4TD9EqHW
+         K0hFWM23r7R4+91Jme2Tenrt7/AsjOZIrgjxfD4MMDD1xlc+jzBPPzg8+W8BfrCJLloZ
+         dX2sAlWMb4pEs9fHr0GcMDCvS+Aarlioeh/1E2NggQO4BVeghiPsqo3Wlc3NC7/TiG/p
+         +krLd3llJa2M63pVp+EylZpSZWLdSAyPXKeWrnO+0cw+XMSU3fzqO2jidzpcUTbn0NAC
+         7p4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YhEh8bVzYUGuUCB/RpHUx78n8Qc9+jFz1obXEDydgGw=;
-        b=rI1iWKwOm+k5wsJpKmtU/j1Tdeaqvs869SCy/aYbvtqaa9CLV+j9z36A/VYYrNneoT
-         fN5/ElUudzcfBsPeWuXMCfxKcSjFJOAHEMwRV0uf4B19xF65VHkG71Z0hEUbvx0PUElV
-         bOIH59heyGp3vwO0vjoAta9rKjYuxys8/jwH2bOraTQGk+GUhGhreBtVyCGH6xR5djTv
-         pd7xh0LrtWf07lGUtNMrfVpbeoBhH+YHEX0Nr6UcNJOfY5NuAlRPnZb5BolIPqBVoFUb
-         cWIPdQG4k/7U4HpS1ZAAt6idBZdy9CPcVBJsk9saJeoKw4t7U0BdkWaAtc8thNtpawFM
-         TRUw==
-X-Gm-Message-State: APjAAAUmbQoTiLgKu5EBDYfcj62XR1reEoYDV/VIRvGDKGr1BhAA+ZUT
-        s6H940h3GtBtLjrV4gw0qTSs0DjtgXU9hpbxB7ylRgx8A6U=
-X-Google-Smtp-Source: APXvYqw3ifHvoFnzQ3exGPJpJXSnXKYAdYLlKTBTPDAEXq5TsrOPPKZJgZpC1mlD62hN93w9yJRbykcofvi3kYWSMGo=
-X-Received: by 2002:a9d:3b02:: with SMTP id z2mr1415168otb.71.1569004288709;
- Fri, 20 Sep 2019 11:31:28 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2lNQY02XZiW/7zD9ydR22Y5cya+wo/HYqbRdJENNudM=;
+        b=HwbgkZnK4aBhystG2SqI2KZAhCOAzImuGZskbK1yVwbEt1VIi76p3nzHRI3TOrbPHP
+         QxOKm9rz+ssHOcpv/fkbItU4V+LnwNLVJu3jiKo6zSlRYu3VEHDB27NAZtbQXqNL95Xl
+         ZX6Q9Yop9N/JBb0DQjFOrPXrZI73H0WV7U6vHS7+AW+kmDNq47PT/NNoHteK86XW+RoZ
+         +CQnyDvwYSCIUZEFF2QQAbcgawtS+6Z42DWtxUXj/BIDGdqPrhXIC0xhFrfTGp0jkCBx
+         9yqyQedZVq5+hU6wAzcsOpUMgzWHd0WbttREWOSq+qbHv5sB6XKnvdG+exgPA6tLOydn
+         PNqg==
+X-Gm-Message-State: APjAAAX1/AEkk+h/o7p6fkMtn8oNmNL9Z2u6UkG/EmwuVKN3hgBdvT9/
+        2cxOb77pGjTldIMgt72WP+4=
+X-Google-Smtp-Source: APXvYqzB3AHLJb66GsMnakU04sDD3acLCTO8gwpALfVh3f4VaE9KcyDTGwD7tuCjQODybA6EikL7Pg==
+X-Received: by 2002:ae9:e411:: with SMTP id q17mr5175888qkc.494.1569004281965;
+        Fri, 20 Sep 2019 11:31:21 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([187.65.7.29])
+        by smtp.gmail.com with ESMTPSA id l129sm1358303qkd.84.2019.09.20.11.31.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2019 11:31:21 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 2CFDD40340; Fri, 20 Sep 2019 15:31:18 -0300 (-03)
+Date:   Fri, 20 Sep 2019 15:31:18 -0300
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [BUGFIX PATCH] perf/probe: Fix to clear tev->nargs in
+ clear_probe_trace_event()
+Message-ID: <20190920183118.GE4865@kernel.org>
+References: <156856587999.25775.5145779959474477595.stgit@devnote2>
 MIME-Version: 1.0
-References: <1568988209.5576.199.camel@lca.pw> <87r24bhwng.fsf@linux.ibm.com> <1569003478.5576.202.camel@lca.pw>
-In-Reply-To: <1569003478.5576.202.camel@lca.pw>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 20 Sep 2019 11:31:16 -0700
-Message-ID: <CAPcyv4idejYpTS=ErsEJWgBxBsC1aS9=NCyvMEDO1rwqRktEmg@mail.gmail.com>
-Subject: Re: "Pick the right alignment default when creating dax devices"
- failed to build on powerpc
-To:     Qian Cai <cai@lca.pw>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156856587999.25775.5145779959474477595.stgit@devnote2>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 11:18 AM Qian Cai <cai@lca.pw> wrote:
->
-> On Fri, 2019-09-20 at 19:55 +0530, Aneesh Kumar K.V wrote:
-> > Qian Cai <cai@lca.pw> writes:
-> >
-> > > The linux-next commit "libnvdimm/dax: Pick the right alignment default when
-> > > creating dax devices" causes powerpc failed to build with this config. Reverted
-> > > it fixed the issue.
-> > >
-> > > ERROR: "hash__has_transparent_hugepage" [drivers/nvdimm/libnvdimm.ko] undefined!
-> > > ERROR: "radix__has_transparent_hugepage" [drivers/nvdimm/libnvdimm.ko]
-> > > undefined!
-> > > make[1]: *** [scripts/Makefile.modpost:93: __modpost] Error 1
-> > > make: *** [Makefile:1305: modules] Error 2
-> > >
-> > > [1] https://patchwork.kernel.org/patch/11133445/
-> > > [2] https://raw.githubusercontent.com/cailca/linux-mm/master/powerpc.config
-> >
-> > Sorry for breaking the build. How about?
->
-> It works fine.
+Em Mon, Sep 16, 2019 at 01:44:40AM +0900, Masami Hiramatsu escreveu:
+> Since add_probe_trace_event() can reuse tf->tevs[i] after
+> calling clear_probe_trace_event(), this can make perf-probe
+> crash if the 1st attempt of probe event finding fails to find
+> an event argument, and the 2nd attempt fails to find probe point.
+> 
+> E.g.
+>   $ perf probe -D "task_pid_nr tsk"
+>   Failed to find 'tsk' in this function.
+>   Failed to get entry address of warn_bad_vsyscall
+>   Segmentation fault (core dumped)
 
-Thanks, but let's delay "libnvdimm/dax: Pick the right alignment
-default when creating dax devices" until after -rc1 to allow Michael
-time to ack/nak this new export.
+Thanks, tested and applied!
+
+- Arnaldo
+ 
+> 
+> Fixes: 092b1f0b5f9f ("perf probe: Clear probe_trace_event when add_probe_trace_event() fails")
+> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Wang Nan <wangnan0@huawei.com>
+> ---
+>  tools/perf/util/probe-event.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index b8e0967c5c21..91cab5f669d2 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -2331,6 +2331,7 @@ void clear_probe_trace_event(struct probe_trace_event *tev)
+>  		}
+>  	}
+>  	zfree(&tev->args);
+> +	tev->nargs = 0;
+>  }
+>  
+>  struct kprobe_blacklist_node {
+
+-- 
+
+- Arnaldo
