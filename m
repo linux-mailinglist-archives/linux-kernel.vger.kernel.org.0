@@ -2,147 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB43B8C89
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:22:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC924B8CAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 10:25:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395205AbfITIWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 04:22:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44063 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393179AbfITIWL (ORCPT
+        id S2405254AbfITIZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 04:25:06 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:41561 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404617AbfITIZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 04:22:11 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m13so6167580ljj.11
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 01:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hOm0RSVxiN9cy/2zlDkuDpGL5XVU330++py7GJHjAx0=;
-        b=gpxypbyVCKkOGbVW+Afzq0G0SijqxBGhC3HHNQu38FBsCf3mjnrrXApKO4u8mD5Ge3
-         zA04+tnmTerkM4T1RJ7krUmnB+9hTEFLGJXEb12Rj7tOexqvl+NS34gitG6WfSllFUWh
-         4jKwiMG6K5ttmC0iW8Q0blWchaToknxTaq+xx5nUNjEIhDlZ7S96cWZ1yNPU3qPe62aT
-         INq3V5DtnKDJFTpcH19QS0y3kVdWHtz23xRU/H+KEZJ7m5AG/GrfFIJPrCDg5eZ8ICEB
-         RG4tAhxqXtZROOpeRHPk9By6C7D7GJeujMxAGxPFpnXTUGQimTyzigJgMQ//nJSFb65u
-         p+7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=hOm0RSVxiN9cy/2zlDkuDpGL5XVU330++py7GJHjAx0=;
-        b=sJP5/vBI+82dxOgOfolm8n5iuVZZ0UVhqjw4cWAS5wSv+Jx0QcMazhIRc8jAVICTin
-         7ZdTyxmsfFaQR3R8gegytmlL9B8YZMUIxYxp7nVyIDmVcp8W61Wa8R7Lvd0wRkkyjECQ
-         SkauTPAtqBqVobCMbjrpRQ74s7CyNWGFAuKVtDwzNAqbVTJa2iLhpq9TJ1eqabfE2lUI
-         FVV2MzK0h3NZMawjVTSCc8+l4tF40AWpdfCE74AS1zpVR5qlczvXGc5ZnRo3K0PD5JdV
-         MBiQ4LadCaXntpai1u9cCdPDwR2ra+7whAALiZUKr8L/m9QLwvIyT4coy0wZfWw8K8mE
-         HxJg==
-X-Gm-Message-State: APjAAAVLhmc61YqOSnx6Ukxfl2TVfHgDHN/+lTDRTnazSx6JDNJJ95eP
-        gwY/0u8G8EzE00zauPqfFC+AGQ==
-X-Google-Smtp-Source: APXvYqwL1jMaxNVYlobOS7lqzCZWK0IyjHtQ8tNd29VLU4eery6g9+RMfYffbt3kONUMacbsmztDtw==
-X-Received: by 2002:a05:651c:c4:: with SMTP id 4mr6073391ljr.111.1568967729239;
-        Fri, 20 Sep 2019 01:22:09 -0700 (PDT)
-Received: from khorivan (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id k15sm270207ljg.65.2019.09.20.01.22.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 20 Sep 2019 01:22:08 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 11:22:06 +0300
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin Lau <kafai@fb.com>, Andrii Nakryiko <andriin@fb.com>,
-        Yonghong Song <yhs@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf] libbpf: fix version identification on busybox
-Message-ID: <20190920082204.GC8870@khorivan>
-Mail-Followup-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, Martin Lau <kafai@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>, Yonghong Song <yhs@fb.com>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190919160518.25901-1-ivan.khoronzhuk@linaro.org>
- <CAEf4BzbCjCYr5NMPctDkUggwpehnqZPVBSqZOsd9MvSq6WmnZQ@mail.gmail.com>
+        Fri, 20 Sep 2019 04:25:06 -0400
+Received: from [IPv6:2001:983:e9a7:1:3829:6e33:4e49:c53d] ([IPv6:2001:983:e9a7:1:3829:6e33:4e49:c53d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id BEDuiUAZp9D4hBEDvici7v; Fri, 20 Sep 2019 10:25:03 +0200
+Subject: Re: [Patch 00/13] media: am437x-vpfe: overdue maintenance
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190919204125.15254-1-bparrot@ti.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <5fe1a8a8-6172-fefa-639d-42f5be783227@xs4all.nl>
+Date:   Fri, 20 Sep 2019 10:25:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzbCjCYr5NMPctDkUggwpehnqZPVBSqZOsd9MvSq6WmnZQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190919204125.15254-1-bparrot@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfCEl8Zg+pT8jUZ1VC/6ND5ioAgkQ/bpYt96qNa0T48BgXQteVJe12DIco1ekeDWG0KGXCCOmVyoG+bu2cGai+/rsGNXyiqlXXrot0rSKPPzlSaqQFG9O
+ 2fgqcGxJa4KP6U2qASFXOSfFLFt5MTXQ8V1r7OnhgnuVJ4QPXqQeRnJ3aLL4mtyUKRAIbd9KaOhOUY/rNGKLxqvCy/5zYfF/bBX+4bAvis4MhrJfFDyhNB9v
+ 5d5Z/Op7djU+fM/1jBTTiXTCPSsRvidDVmln7vBg7MJlEoRzrszfNZ0XWVJgYNKzRbh0JvXs9u/VygH5tM8G6feYLgjPn3Qsj1pI4qG5F78suAe9AIKZBRxW
+ il/mLuW6+Vg5paaNNegnAH/VubOz6nI/qUtL8xAPln3Lqd/znfc2y9IZq+BzilKwayq3r57U
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 01:02:40PM -0700, Andrii Nakryiko wrote:
->On Thu, Sep 19, 2019 at 11:22 AM Ivan Khoronzhuk
-><ivan.khoronzhuk@linaro.org> wrote:
->>
->> It's very often for embedded to have stripped version of sort in
->> busybox, when no -V option present. It breaks build natively on target
->> board causing recursive loop.
->>
->> BusyBox v1.24.1 (2019-04-06 04:09:16 UTC) multi-call binary. \
->> Usage: sort [-nrugMcszbdfimSTokt] [-o FILE] [-k \
->> start[.offset][opts][,end[.offset][opts]] [-t CHAR] [FILE]...
->>
->> Lets modify command a little to avoid -V option.
->>
->> Fixes: dadb81d0afe732 ("libbpf: make libbpf.map source of truth for libbpf version")
->>
->> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
->> ---
->>
->> Based on bpf/master
->>
->>  tools/lib/bpf/Makefile | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
->> index c6f94cffe06e..a12490ad6215 100644
->> --- a/tools/lib/bpf/Makefile
->> +++ b/tools/lib/bpf/Makefile
->> @@ -3,7 +3,7 @@
->>
->>  LIBBPF_VERSION := $(shell \
->>         grep -oE '^LIBBPF_([0-9.]+)' libbpf.map | \
->> -       sort -rV | head -n1 | cut -d'_' -f2)
->> +       cut -d'_' -f2 | sort -r | head -n1)
->
->You can't just sort alphabetically, because:
->
->1.2
->1.11
->
->should be in that order. See discussion on mailing thread for original commit.
+On 9/19/19 10:41 PM, Benoit Parrot wrote:
+> This patch series is a collection of patches we have been carrying for a
+> while.
+> 
+> A few patches do fix actual bug and v4l2-compliance errors/warnings.
+> Other are drivers re-work to simplify/clarify the code for easier
+> maintenance.
+> 
+> We also include the SPDX Licensing update which seemed to have been
+> missed by the global script thus far.
+> 
+> Changes since v1:
+> - Address review comment from Joe, Hans and Prabhakar
+> - Cleaned-up the function entry debug log
+> - Split off the pcr change into its own patch
+> - Rework/combine two patches but remove code churn
+> - fix miscellaneous typos
 
-if X1.X2.X3, where X = {0,1,....99999}
-Then it can be:
+Just to verify: this patch from v1 has been dropped in this v2, right?
 
--LIBBPF_VERSION := $(shell \
--       grep -oE '^LIBBPF_([0-9.]+)' libbpf.map | \
--       sort -rV | head -n1 | cut -d'_' -f2)
-+_LBPFLIST := $(patsubst %;,%,$(patsubst LIBBPF_%,%,$(filter LIBBPF_%, \
-+           $(shell cat libbpf.map))))
-+_LBPFLIST2 := $(foreach v,$(_LBPFLIST), \
-+               $(subst $() $(),,$(foreach n,$(subst .,$() $(),$(v)), \
-+                       $(shell printf "%05d" $(n)))))
-+_LBPF_VER := $(word $(words $(sort $(_LBPFLIST2))), $(sort $(_LBPFLIST2)))
-+LIBBPF_VERSION := $(patsubst %_$(_LBPF_VER),%,$(filter %_$(_LBPF_VER), \
-+        $(join $(addsuffix _, $(_LBPFLIST)),$(_LBPFLIST2))))
+[Patch 08/13] media: am437x-vpfe: Maintain a reference to the current vpfe_fmt
 
-It's bigger but avoids invocations of grep/sort/cut/head, only cat/printf
-, thus -V option also.
-
->
->>  LIBBPF_MAJOR_VERSION := $(firstword $(subst ., ,$(LIBBPF_VERSION)))
->>
->>  MAKEFLAGS += --no-print-directory
->> --
->> 2.17.1
->>
-
--- 
 Regards,
-Ivan Khoronzhuk
+
+	Hans
+
+> 
+> =============================
+> 
+> v4l2-compliance SHA: 5b168dc8473911227890526bad26553d9e8ff81b, 32 bits
+> 
+> Compliance test for vpfe device /dev/video0:
+> 
+> Driver Info:
+> 	Driver name      : vpfe
+> 	Card type        : TI AM437x VPFE
+> 	Bus info         : platform:vpfe 48326000.vpfe
+> 	Driver version   : 5.3.0
+> 	Capabilities     : 0x85200001
+> 		Vide o Capture
+> 		Read/Write
+> 		Streaming
+> 		Extended Pix Format
+> 		D evice Capabilities
+> 	Device Caps      : 0x05200001
+> 		Video Capt ure
+> 		Read/Write
+> 		Streaming
+> 		Extended Pix Format
+> 
+> Required ioctls:
+> 	test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+> 	test second /dev/video0 open: OK
+> 	test VIDIOC_QUERYCAP: OK
+> 	test VIDIOC_G/S_PRIORITY: OK
+> 	test for unlimited opens: OK
+> 
+> Debug ioctls:
+> 	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+> 	test VIDIOC_LOG_STATUS: OK
+> 
+> Input ioctls:
+> 	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+> 	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+> 	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+> 	test VIDIOC_G/S/ENUMINPUT: OK
+> 	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+> 	Inputs: 1 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+> 	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+> 	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+> 	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+> 	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+> 	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+> 	Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+> 	test VIDIOC_ENUM/G/S/QUERY_STD: OK
+> 	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+> 	test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+> 	test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+> Control ioctls (Input 0):
+> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+> 	test VIDIOC_QUERYCTRL: OK
+> 	test VIDIOC_G/S_CTRL: OK
+> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+> 	Standard Controls: 3 Private Controls: 0
+> 
+> Format ioctls (Input 0):
+> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+> 	test VIDIOC_G/S_PARM: OK
+> 	test VIDIOC_G_FBUF: OK (Not Supported)
+> 	test VIDIOC_G_FMT: OK
+> 	test VIDIOC_TRY_FMT: OK
+> 	test VIDIOC_S_FMT: OK
+> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+> 		fail: v4l2-test-formats.cpp(1419): node->frmsizes_count[pixfmt] > 1
+> 	test Cropping: FAIL
+> 	test Composing: OK (Not Supported)
+> 	test Scaling: OK (Not Supported)
+> 
+> Codec ioctls (Input 0):
+> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls (Input 0):
+> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+> 	test VIDIOC_EXPBUF: OK
+> 	test Requests: OK (Not Supported)
+> 
+> Test input 0:
+> 
+> Streaming ioctls:
+> 	test read/write: OK
+> 	test blocking wait: OK
+> 	test MMAP (no poll): OK                           
+> 	test MMAP (select): OK                            
+> 	test MMAP (epoll): OK                             
+> 	test USERPTR (no poll): OK (Not Supported)
+> 	test USERPTR (select): OK (Not Supported)
+> 	test DMABUF: Cannot test, specify --expbuf-device
+> 
+> Total for vpfe device /dev/video0: 51, Succeeded: 50, Failed: 1, Warnings: 0
+> dd
+> ============================
+> 
+> Benoit Parrot (12):
+>   media: am437x-vpfe: Fix missing first line
+>   media: am437x-vpfe: Rework ISR routine for clarity
+>   media: am437x-vpfe: Wait for end of frame before tear-down
+>   media: am437x-vpfe: fix start streaming error path
+>   media: am437x-vpfe: Streamlined vb2 buffer cleanup
+>   media: am437x-vpfe: Setting STD to current value is not an error
+>   media: am437x-vpfe: Use a per instance format array instead of a
+>     static one
+>   media: am437x-vpfe: fix function trace debug log
+>   media: am437x-vpfe: Remove print_fourcc helper
+>   media: am437x-vpfe: TRY_FMT ioctl is not really trying anything
+>   media: am437x-vpfe: Remove per bus width static data
+>   media: am437x-vpfe: Switch to SPDX Licensing
+> 
+> Dave Gerlach (1):
+>   media: am437x-vpfe: Fix suspend path to always handle pinctrl config
+> 
+>  drivers/media/platform/am437x/am437x-vpfe.c   | 878 ++++++++----------
+>  drivers/media/platform/am437x/am437x-vpfe.h   |  45 +-
+>  .../media/platform/am437x/am437x-vpfe_regs.h  |  10 +-
+>  3 files changed, 406 insertions(+), 527 deletions(-)
+> 
+
