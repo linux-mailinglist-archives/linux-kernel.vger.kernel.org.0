@@ -2,63 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9530B8FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C130B8FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 14:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408967AbfITMWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 08:22:04 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43764 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406276AbfITMWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 08:22:04 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9B838EC4FBE89CAAA15E;
-        Fri, 20 Sep 2019 20:22:02 +0800 (CST)
-Received: from [127.0.0.1] (10.57.88.168) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Fri, 20 Sep 2019
- 20:21:54 +0800
-Subject: Re: [PATCH] jffs2:freely allocate memory when parameters are invalid
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     <dwmw2@infradead.org>, <dilinger@queued.net>, <richard@nod.at>,
-        <houtao1@huawei.com>, <bbrezillon@kernel.org>,
-        <daniel.santos@pobox.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1568962478-126260-1-git-send-email-nixiaoming@huawei.com>
- <20190920114336.GM1131@ZenIV.linux.org.uk>
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-Message-ID: <206f8d57-dad9-26c3-6bf6-1d000f5698d4@huawei.com>
-Date:   Fri, 20 Sep 2019 20:21:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2438329AbfITMZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 08:25:52 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49434 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408945AbfITMZu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 08:25:50 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8KCPjSE071956;
+        Fri, 20 Sep 2019 07:25:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568982346;
+        bh=4TyJ5sizsTzi/H33Mo1wWvezZRRG5B0ADthV0dE35aI=;
+        h=From:To:CC:Subject:Date;
+        b=IdJ6fdlLW78lRCYMwbOIiIJJH0hm/utSpaDmuL7BnOW0hrXUBEs8hNmJEcrFlfHrg
+         vBGuPCRihgLp7Vc0vqbafd1xUib/UxZhh9VnpIiKb6my1chGPfrvpHjXyXdv10eem9
+         UKbql1OR93ipflY4bQ/FpbA91lUqlRPdfDTleveY=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8KCPj2X095282;
+        Fri, 20 Sep 2019 07:25:45 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 20
+ Sep 2019 07:25:41 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 20 Sep 2019 07:25:41 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8KCPiY1016302;
+        Fri, 20 Sep 2019 07:25:45 -0500
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <daniel.thompson@linaro.org>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dmurphy@ti.com>, <tomi.valkeinen@ti.com>,
+        Jean-Jacques Hiblot <jjhiblot@ti.com>
+Subject: [PATCH v4 0/3] leds: Add control of the voltage/current regulator to the LED core
+Date:   Fri, 20 Sep 2019 14:25:22 +0200
+Message-ID: <20190920122525.15712-1-jjhiblot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20190920114336.GM1131@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.88.168]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series makes it possible for the LED core to manage the power supply
+of a LED. It uses the regulator API to disable/enable the power if when the
+LED is turned on/off.
+This is especially useful in situations where the LED driver/controller is
+not supplying the power.
+Because updating a regulator state can block, it is always defered to
+set_brightness_delayed().
 
+changes in v4:
+- Add a new patch to make led_set_brightness_sync() use
+  led_set_brightness_nosleep() and then wait the work to be done
+- Rework how the core knows how the regulator needs to be updated.
 
-On 2019/9/20 19:43, Al Viro wrote:
-> On Fri, Sep 20, 2019 at 02:54:38PM +0800, Xiaoming Ni wrote:
->> Use kzalloc() to allocate memory in jffs2_fill_super().
->> Freeing memory when jffs2_parse_options() fails will cause
->> use-after-free and double-free in jffs2_kill_sb()
-> 
-> ... so we are not freeing it there.  What's the problem?
+changes in v3:
+- reword device-tree description
+- reword commit log
+- remove regulator updates from functions used in atomic context. If the
+  regulator must be updated, it is defered to a workqueue.
+- Fix led_set_brightness_sync() to work with the non-blocking function
+  __led_set_brightness()
 
-No code logic issues, no memory leaks
+changes in v2:
+- use devm_regulator_get_optional() to avoid using the dummy regulator and
+  do some unnecessary work
 
-But there is too much code logic between memory allocation and free,
-which is difficult to understand.
+Jean-Jacques Hiblot (3):
+  led: make led_set_brightness_sync() use led_set_brightness_nosleep()
+  dt-bindings: leds: document the "power-supply" property
+  leds: Add control of the voltage/current regulator to the LED core
 
-The modified code is easier to understand.
+ .../devicetree/bindings/leds/common.txt       |  6 ++
+ drivers/leds/led-class.c                      | 17 ++++
+ drivers/leds/led-core.c                       | 77 +++++++++++++++++--
+ drivers/leds/leds.h                           |  3 +
+ include/linux/leds.h                          |  5 ++
+ 5 files changed, 101 insertions(+), 7 deletions(-)
 
-thanks
-
-Xiaoming Ni
+-- 
+2.17.1
 
