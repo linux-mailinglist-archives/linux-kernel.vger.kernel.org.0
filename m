@@ -2,89 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56584B9251
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DC6B9258
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391181AbfITObc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:31:32 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44084 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388361AbfITOb3 (ORCPT
+        id S2391287AbfITObr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:31:47 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:32802 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391248AbfITObp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:31:29 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m13so7246027ljj.11
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:31:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/UmKmcVdfGL0BM9xGNj29OG99mu12S2rRbnsThHYS5s=;
-        b=VBwkT+GOvE6WhewRzb8gEAcfycr3A0ewtfXEzwupM26LaUIU5UgbDTBdRydyd1uZLe
-         alI4qn+V5JBIcLczrxIEmPo4F/tvBUhjDP/hsqh5P+nZj0lkruGMN8Fr230gWgXhuzIS
-         C4tsv/YvLTFXH6IIm0F5QNcY5S1OPbOwaOjHoM6AfhlxFCaLM5BCMoyT7CglKgZjMdC5
-         xpUJ08c7BDB4Y4pejdwwZmrAK9HI7p1aFtu+oNXaCwocp5Th4bERX+teYDoXSiKIvhEy
-         gc9wXY1egizDGxO1gfaL+VRaX8q01t02lyQvVMy+piZwkpurWiX6YY7VRcx40+A1ttcq
-         TqdQ==
+        Fri, 20 Sep 2019 10:31:45 -0400
+Received: by mail-lf1-f67.google.com with SMTP id y127so5243559lfc.0;
+        Fri, 20 Sep 2019 07:31:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/UmKmcVdfGL0BM9xGNj29OG99mu12S2rRbnsThHYS5s=;
-        b=CWxCNg/1212cPxxiNvFi8FzbAY++186ac3qsE8pfsVkyHQrj2LcfRiLr8BEAD/98Mo
-         /aXCm0ENmeDLvYxo8rgze5UXCKHYoeJPlHn+SmiNR1zxROhg1VOPIqJ+wmQcy33MRlAM
-         VPfOGO+AlotMbJ9S4AOHF6Z6kEqX1qu016tjk3BcQotl+W0Tn9hDqpvBwrlUFzBg8FK7
-         cVMgvMuTQ3afAYNC5lu3xu3p+865Kjlw4rpZbkUbJTr0sgfIUWOKwdPKcDH8cqR0F13W
-         56K+x+T52+gI7kGEmOKgoby/eMku8Pd9saJCDYrShCneTcsNbMqZF0MvYILZ+yci9aoT
-         qltg==
-X-Gm-Message-State: APjAAAVMP0TE1+3SaCzwl0uSRzpPkQJ2EAhEAdz8XN3xjv7Ab3MH/9r5
-        wcgVdf/8I5FnDJ64xeL+XVA=
-X-Google-Smtp-Source: APXvYqyLzlsjpVbQcNQ6ef6GTDOk1e4X5tDUNzj8rguwYrEjgY6qCI+c0KT+yKYy2gDBoOlPkP0jHA==
-X-Received: by 2002:a2e:1409:: with SMTP id u9mr9522774ljd.162.1568989887598;
-        Fri, 20 Sep 2019 07:31:27 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id k28sm527415lfj.33.2019.09.20.07.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2019 07:31:26 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id 8A2FE460473; Fri, 20 Sep 2019 17:31:23 +0300 (MSK)
-Date:   Fri, 20 Sep 2019 17:31:23 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: [PATCH] mm, memcg: assign shrinker_map before kvfree
-Message-ID: <20190920143123.GI2507@uranus.lan>
-References: <20190920122907.GG2507@uranus.lan>
- <8a4b5293-6f79-2a5d-4ac8-f8fc17f13b6e@virtuozzo.com>
+        bh=0D+HcS3eYRO8w2KAABy0yZn8AP90c9VP4mZxrrQxx3c=;
+        b=XsfcY41kHNFIQAqijkXWBwr1CkxFPA9eUyJCUETuXiI8njZs/yO+3oRTr3Xiaxl96Q
+         PO5zqnzvwsqee7Mdx+3aUTJGZSMDHXkKBVaJ1zFhqnlwRMS0aEn8JqecUuCxgnLp9q+9
+         62yu3YMoBGG572N2HHbq15KI7ejXtNXM80IQV/SAJgaEhqOjOtmm1WI8uGg0usEO1i1b
+         a7nFXf7QDD0ThrDIsLMFL8SryMS0OyAE6oibfx9H0LaVgytDCpSkrfD2loctyS6zuXk/
+         TCA5RuICeViq9yb02zctVnyJQJ8dZkbcaL0f7smsLfhqSGF9MIxmJtvLd+kyB0Ge8hBe
+         x6JQ==
+X-Gm-Message-State: APjAAAUrnw0U1AeAIsSRjqhwcArWocQusETWVL6RKVialpXaIyeF6lbf
+        IDNs9jAZ/wHz6EdOB7ui7HI=
+X-Google-Smtp-Source: APXvYqw0csjT0HMNGuHMynPlZ5ASphurdIOkZe7dZTq5s+cv/iGYo6NhkbI4z0KU2hYq2OuvT8yQRw==
+X-Received: by 2002:ac2:5487:: with SMTP id t7mr2960893lfk.96.1568989903063;
+        Fri, 20 Sep 2019 07:31:43 -0700 (PDT)
+Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
+        by smtp.gmail.com with ESMTPSA id y13sm482490ljd.51.2019.09.20.07.31.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Sep 2019 07:31:41 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92.2)
+        (envelope-from <johan@kernel.org>)
+        id 1iBJwk-0004Ml-5n; Fri, 20 Sep 2019 16:31:42 +0200
+Date:   Fri, 20 Sep 2019 16:31:42 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        syzbot <syzbot+0243cb250a51eeefb8cc@syzkaller.appspotmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        dmg@turingmachine.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: KASAN: use-after-free Read in adu_disconnect
+Message-ID: <20190920143142.GR30545@localhost>
+References: <20190920090803.GM30545@localhost>
+ <000000000000174fe60592f893e1@google.com>
+ <20190920100233.GP30545@localhost>
+ <CACT4Y+a18nm92r889vJNrwq2518FYMV-cOqiKPQ53VwqwK0oMA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8a4b5293-6f79-2a5d-4ac8-f8fc17f13b6e@virtuozzo.com>
+In-Reply-To: <CACT4Y+a18nm92r889vJNrwq2518FYMV-cOqiKPQ53VwqwK0oMA@mail.gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 05:11:00PM +0300, Kirill Tkhai wrote:
-> 
-> The current scheme is following. We allocate shrinker_map in css_online,
-> while normal freeing happens in css_free. The NULLifying of pointer is needed
-> in case of "abnormal freeing", when memcg_free_shrinker_maps() is called
-> from memcg_alloc_shrinker_maps(). The NULLifying guarantees, we won't free
-> pn->shrinker_map twice.
-> 
-> There are no races or problems with kvfree() and rcu_assign_pointer() order,
-> because of nobody can reference shrinker_map before memcg is online.
-> 
-> In case of this rcu_assign_pointer() confuses, we may just remove is from
-> the function, and call it only on css_free. Something like the below:
+On Fri, Sep 20, 2019 at 12:08:30PM +0200, Dmitry Vyukov wrote:
+> On Fri, Sep 20, 2019 at 12:02 PM Johan Hovold <johan@kernel.org> wrote:
+> >
+> > On Fri, Sep 20, 2019 at 02:20:00AM -0700, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot has tested the proposed patch but the reproducer still triggered
+> > > crash:
+> > > KASAN: use-after-free Read in adu_interrupt_in_callback
 
-Kirill, I know that there is no problem now (as I pointed in changelog),
-simply a regular pattern of free after assign is being reversed, which
-made me nervious. Anyway dropping assigns doesn't help much from my pov
-so lets leave it as is. The good point is that we've this conversation
-and if someone get a bit confused in future the google will reveal this
-text. Which is enough I think.
+> > This looks like a separate issue, which should be fixed by a separate
+> > patch. Not sure how to tell syzbot that. Dmitry?
+> 
+> There is no way, but also no need. There is nothing it can do with that info.
+> If you think it's a separate one and you fixed the first one, mail the
+> patch with the first fix.
+> Optionally, you can fix the second one as well, and then ask it to
+> test a patch with 2 fixes (but you will need either to squash them or
+> point to a git tree with both commits).
+> 
+> > There's is indeed another bug in the driver, which could lead to crashes
+> > in the completion handler after clearing the struct usb_device pointer,
+> > but possibly also to the above use-after-free if a new device is probed
+> > immediately after a disconnect.
+> >
+> > The below patch addresses both bugs, let's see if that helps.
+> >
+> > #syz test: https://github.com/google/kasan.git e96407b4
+
+Ok, so I was using an old syzbot kernel from when this was first
+reported and apparently hit a second issue which had since been fixed by
+Alan.
+
+I was starring at usb-next and couldn't see how it was possible to
+trigger this, but that code had Alan's fix 303911cfc5b9 ("USB: core: Fix
+races in character device registration and deregistraion").
+
+Guess I had to bitten by this to learn the syzbot interface. ;)
+
+Johan
