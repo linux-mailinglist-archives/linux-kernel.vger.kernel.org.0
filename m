@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9248EB9967
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B48F0B996B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 23:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbfITV4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 17:56:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47046 "EHLO mail.kernel.org"
+        id S1730617AbfITV4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 17:56:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730462AbfITV4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 17:56:24 -0400
+        id S1730473AbfITV4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 17:56:23 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3C282173E;
-        Fri, 20 Sep 2019 21:56:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 215A9217F5;
+        Fri, 20 Sep 2019 21:56:23 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1iBQt4-0005Ir-1G; Fri, 20 Sep 2019 17:56:22 -0400
-Message-Id: <20190920215621.921710766@goodmis.org>
+        id 1iBQt4-0005JL-96; Fri, 20 Sep 2019 17:56:22 -0400
+Message-Id: <20190920215622.166520596@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Fri, 20 Sep 2019 17:53:15 -0400
+Date:   Fri, 20 Sep 2019 17:53:16 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org,
         linux-rt-users <linux-rt-users@vger.kernel.org>
@@ -31,9 +31,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         John Kacur <jkacur@redhat.com>,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Julia Cartwright <julia@ni.com>,
-        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com,
-        Daniel Wagner <daniel.wagner@bmw-carit.de>
-Subject: [RFC][PATCH RT 4/7] thermal: Defer thermal wakups to threads
+        Daniel Wagner <wagi@monom.org>, tom.zanussi@linux.intel.com
+Subject: [RFC][PATCH RT 5/7] revert-block
 References: <20190920215311.165260719@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -42,97 +41,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Wagner <wagi@monom.org>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-[ Upstream commit ad2408dc248fe58536eef5b2b5734d8f9d3a280b ]
+Revert swork version of: block: blk-mq: move blk_queue_usage_counter_release() into process context
 
-On RT the spin lock in pkg_temp_thermal_platfrom_thermal_notify will
-call schedule while we run in irq context.
+In order to switch to upstream, we need to revert the swork code.
 
-[<ffffffff816850ac>] dump_stack+0x4e/0x8f
-[<ffffffff81680f7d>] __schedule_bug+0xa6/0xb4
-[<ffffffff816896b4>] __schedule+0x5b4/0x700
-[<ffffffff8168982a>] schedule+0x2a/0x90
-[<ffffffff8168a8b5>] rt_spin_lock_slowlock+0xe5/0x2d0
-[<ffffffff8168afd5>] rt_spin_lock+0x25/0x30
-[<ffffffffa03a7b75>] pkg_temp_thermal_platform_thermal_notify+0x45/0x134 [x86_pkg_temp_thermal]
-[<ffffffff8103d4db>] ? therm_throt_process+0x1b/0x160
-[<ffffffff8103d831>] intel_thermal_interrupt+0x211/0x250
-[<ffffffff8103d8c1>] smp_thermal_interrupt+0x21/0x40
-[<ffffffff8169415d>] thermal_interrupt+0x6d/0x80
-
-Let's defer the work to a kthread.
-
-Signed-off-by: Daniel Wagner <daniel.wagner@bmw-carit.de>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-[bigeasy: reoder init/denit position. TODO: flush swork on exit]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/thermal/x86_pkg_temp_thermal.c | 28 +++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ block/blk-core.c       | 14 +-------------
+ include/linux/blkdev.h |  2 --
+ 2 files changed, 1 insertion(+), 15 deletions(-)
 
-diff --git a/drivers/thermal/x86_pkg_temp_thermal.c b/drivers/thermal/x86_pkg_temp_thermal.c
-index 1ef937d799e4..82f21fd4afb0 100644
---- a/drivers/thermal/x86_pkg_temp_thermal.c
-+++ b/drivers/thermal/x86_pkg_temp_thermal.c
-@@ -29,6 +29,7 @@
- #include <linux/pm.h>
- #include <linux/thermal.h>
- #include <linux/debugfs.h>
-+#include <linux/kthread.h>
- #include <asm/cpu_device_id.h>
- #include <asm/mce.h>
- 
-@@ -329,7 +330,7 @@ static void pkg_thermal_schedule_work(int cpu, struct delayed_work *work)
- 	schedule_delayed_work_on(cpu, work, ms);
+diff --git a/block/blk-core.c b/block/blk-core.c
+index f7e16b4466f0..3f08d6fd0787 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -969,21 +969,12 @@ void blk_queue_exit(struct request_queue *q)
+ 	percpu_ref_put(&q->q_usage_counter);
  }
  
--static int pkg_thermal_notify(u64 msr_val)
-+static void pkg_thermal_notify_work(struct kthread_work *work)
+-static void blk_queue_usage_counter_release_swork(struct swork_event *sev)
+-{
+-	struct request_queue *q =
+-		container_of(sev, struct request_queue, mq_pcpu_wake);
+-
+-	wake_up_all(&q->mq_freeze_wq);
+-}
+-
+ static void blk_queue_usage_counter_release(struct percpu_ref *ref)
  {
- 	int cpu = smp_processor_id();
- 	struct pkg_device *pkgdev;
-@@ -348,8 +349,32 @@ static int pkg_thermal_notify(u64 msr_val)
- 	}
+ 	struct request_queue *q =
+ 		container_of(ref, struct request_queue, q_usage_counter);
  
- 	spin_unlock_irqrestore(&pkg_temp_lock, flags);
-+}
-+
-+#ifdef CONFIG_PREEMPT_RT_FULL
-+static DEFINE_KTHREAD_WORK(notify_work, pkg_thermal_notify_work);
-+
-+static int pkg_thermal_notify(u64 msr_val)
-+{
-+	kthread_schedule_work(&notify_work);
-+	return 0;
-+}
-+
-+static void pkg_thermal_notify_flush(void)
-+{
-+	kthread_flush_work(&notify_work);
-+}
-+
-+#else  /* !CONFIG_PREEMPT_RT_FULL */
-+
-+static void pkg_thermal_notify_flush(void) { }
-+
-+static int pkg_thermal_notify(u64 msr_val)
-+{
-+	pkg_thermal_notify_work(NULL);
- 	return 0;
+-	if (wq_has_sleeper(&q->mq_freeze_wq))
+-		swork_queue(&q->mq_pcpu_wake);
++	wake_up_all(&q->mq_freeze_wq);
  }
-+#endif /* CONFIG_PREEMPT_RT_FULL */
  
- static int pkg_temp_thermal_device_add(unsigned int cpu)
- {
-@@ -548,6 +573,7 @@ static void __exit pkg_temp_thermal_exit(void)
- 	platform_thermal_package_rate_control = NULL;
+ static void blk_rq_timed_out_timer(struct timer_list *t)
+@@ -1080,7 +1071,6 @@ struct request_queue *blk_alloc_queue_node(gfp_t gfp_mask, int node_id,
+ 	queue_flag_set_unlocked(QUEUE_FLAG_BYPASS, q);
  
- 	cpuhp_remove_state(pkg_thermal_hp_state);
-+	pkg_thermal_notify_flush();
- 	debugfs_remove_recursive(debugfs);
- 	kfree(packages);
- }
+ 	init_waitqueue_head(&q->mq_freeze_wq);
+-	INIT_SWORK(&q->mq_pcpu_wake, blk_queue_usage_counter_release_swork);
+ 
+ 	/*
+ 	 * Init percpu_ref in atomic mode so that it's faster to shutdown.
+@@ -3970,8 +3960,6 @@ int __init blk_dev_init(void)
+ 	if (!kblockd_workqueue)
+ 		panic("Failed to create kblockd\n");
+ 
+-	BUG_ON(swork_get());
+-
+ 	request_cachep = kmem_cache_create("blkdev_requests",
+ 			sizeof(struct request), 0, SLAB_PANIC, NULL);
+ 
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 7b7c0bc6a514..f1960add94df 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -27,7 +27,6 @@
+ #include <linux/percpu-refcount.h>
+ #include <linux/scatterlist.h>
+ #include <linux/blkzoned.h>
+-#include <linux/swork.h>
+ 
+ struct module;
+ struct scsi_ioctl_command;
+@@ -656,7 +655,6 @@ struct request_queue {
+ #endif
+ 	struct rcu_head		rcu_head;
+ 	wait_queue_head_t	mq_freeze_wq;
+-	struct swork_event	mq_pcpu_wake;
+ 	struct percpu_ref	q_usage_counter;
+ 	struct list_head	all_q_node;
+ 
 -- 
 2.20.1
 
