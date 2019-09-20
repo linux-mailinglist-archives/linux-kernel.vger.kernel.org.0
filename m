@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E20DB9326
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:38:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F46B9317
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392915AbfITOiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:38:13 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35702 "EHLO
+        id S2392824AbfITOhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:37:38 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35742 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387993AbfITOY7 (ORCPT
+        by vger.kernel.org with ESMTP id S2388010AbfITOZA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:24:59 -0400
+        Fri, 20 Sep 2019 10:25:00 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0004wk-3z; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqD-0004wo-3p; Fri, 20 Sep 2019 15:24:57 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqC-0007qA-JG; Fri, 20 Sep 2019 15:24:56 +0100
+        id 1iBJqC-0007qJ-N9; Fri, 20 Sep 2019 15:24:56 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "=?UTF-8?q?Stefan=20M=C3=A4tje?=" <stefan.maetje@esd.eu>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "Bjorn Helgaas" <bhelgaas@google.com>
+        "Eric Ren" <renzhen@linux.alibaba.com>,
+        "Jiufei Xue" <jiufei.xue@linux.alibaba.com>,
+        "Jan Kara" <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.605726088@decadent.org.uk>
+Message-ID: <lsq.1568989415.244664188@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 020/132] PCI: Factor out pcie_retrain_link() function
+Subject: [PATCH 3.16 022/132] jbd2: check superblock mapped prior to
+ committing
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,82 +49,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Mätje <stefan.maetje@esd.eu>
+From: Jiufei Xue <jiufei.xue@linux.alibaba.com>
 
-commit 86fa6a344209d9414ea962b1f1ac6ade9dd7563a upstream.
+commit 742b06b5628f2cd23cb51a034cb54dc33c6162c5 upstream.
 
-Factor out pcie_retrain_link() to use for Pericom Retrain Link quirk.  No
-functional change intended.
+We hit a BUG at fs/buffer.c:3057 if we detached the nbd device
+before unmounting ext4 filesystem.
 
-Signed-off-by: Stefan Mätje <stefan.maetje@esd.eu>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+The typical chain of events leading to the BUG:
+jbd2_write_superblock
+  submit_bh
+    submit_bh_wbc
+      BUG_ON(!buffer_mapped(bh));
+
+The block device is removed and all the pages are invalidated. JBD2
+was trying to write journal superblock to the block device which is
+no longer present.
+
+Fix this by checking the journal superblock's buffer head prior to
+submitting.
+
+Reported-by: Eric Ren <renzhen@linux.alibaba.com>
+Signed-off-by: Jiufei Xue <jiufei.xue@linux.alibaba.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Jan Kara <jack@suse.cz>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/pcie/aspm.c | 40 ++++++++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+ fs/jbd2/journal.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -175,6 +175,29 @@ static void pcie_clkpm_cap_init(struct p
- 	link->clkpm_capable = (blacklist) ? 0 : capable;
- }
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -1344,6 +1344,10 @@ static int jbd2_write_superblock(journal
+ 	journal_superblock_t *sb = journal->j_superblock;
+ 	int ret;
  
-+static bool pcie_retrain_link(struct pcie_link_state *link)
-+{
-+	struct pci_dev *parent = link->pdev;
-+	unsigned long start_jiffies;
-+	u16 reg16;
++	/* Buffer got discarded which means block device got invalidated */
++	if (!buffer_mapped(bh))
++		return -EIO;
 +
-+	pcie_capability_read_word(parent, PCI_EXP_LNKCTL, &reg16);
-+	reg16 |= PCI_EXP_LNKCTL_RL;
-+	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
-+
-+	/* Wait for link training end. Break out after waiting for timeout */
-+	start_jiffies = jiffies;
-+	for (;;) {
-+		pcie_capability_read_word(parent, PCI_EXP_LNKSTA, &reg16);
-+		if (!(reg16 & PCI_EXP_LNKSTA_LT))
-+			break;
-+		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
-+			break;
-+		msleep(1);
-+	}
-+	return !(reg16 & PCI_EXP_LNKSTA_LT);
-+}
-+
- /*
-  * pcie_aspm_configure_common_clock: check if the 2 ends of a link
-  *   could use common clock. If they are, configure them to use the
-@@ -184,7 +207,6 @@ static void pcie_aspm_configure_common_c
- {
- 	int same_clock = 1;
- 	u16 reg16, parent_reg, child_reg[8];
--	unsigned long start_jiffies;
- 	struct pci_dev *child, *parent = link->pdev;
- 	struct pci_bus *linkbus = parent->subordinate;
- 	/*
-@@ -224,21 +246,7 @@ static void pcie_aspm_configure_common_c
- 		reg16 &= ~PCI_EXP_LNKCTL_CCC;
- 	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
- 
--	/* Retrain link */
--	reg16 |= PCI_EXP_LNKCTL_RL;
--	pcie_capability_write_word(parent, PCI_EXP_LNKCTL, reg16);
--
--	/* Wait for link training end. Break out after waiting for timeout */
--	start_jiffies = jiffies;
--	for (;;) {
--		pcie_capability_read_word(parent, PCI_EXP_LNKSTA, &reg16);
--		if (!(reg16 & PCI_EXP_LNKSTA_LT))
--			break;
--		if (time_after(jiffies, start_jiffies + LINK_RETRAIN_TIMEOUT))
--			break;
--		msleep(1);
--	}
--	if (!(reg16 & PCI_EXP_LNKSTA_LT))
-+	if (pcie_retrain_link(link))
- 		return;
- 
- 	/* Training failed. Restore common clock configurations */
+ 	trace_jbd2_write_superblock(journal, write_op);
+ 	if (!(journal->j_flags & JBD2_BARRIER))
+ 		write_op &= ~(REQ_FUA | REQ_FLUSH);
 
