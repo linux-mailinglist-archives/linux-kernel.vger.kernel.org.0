@@ -2,109 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9882FB8DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 11:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D30C1B8DD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 11:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437898AbfITJZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 05:25:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2694 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2408502AbfITJZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 05:25:35 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 696D475169ACCDB8F39B;
-        Fri, 20 Sep 2019 17:25:34 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 20 Sep 2019
- 17:25:27 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>
-CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
-        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
-        <jingxiangfeng@huawei.com>, <zhaohongjiang@huawei.com>,
-        <oss@buserror.net>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v7 12/12] powerpc/fsl_booke/32: Document KASLR implementation
-Date:   Fri, 20 Sep 2019 17:45:46 +0800
-Message-ID: <20190920094546.44948-13-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190920094546.44948-1-yanaijie@huawei.com>
-References: <20190920094546.44948-1-yanaijie@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+        id S2405920AbfITJdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 05:33:21 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51575 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393257AbfITJdV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 05:33:21 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 7so1677497wme.1;
+        Fri, 20 Sep 2019 02:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=NrUm6zOy/EJ9ibCviGBB/bXjF+HcDw0sqxAwwkPU5YQ=;
+        b=E8x50LQQARW0bDW+w5d63gBizCAHESZUz/7+xvVDGBONbjH2uZkaBWSPPRoSqXsIyY
+         SBKd0OnR0uH1PUHLA9rpkBHS9g+/IX0YamCrah/BSfYOXhQREI0LW2T91fPie7uZ7D2u
+         Te4Oe7Ankb/cMBcHU1u+iBxIMsC3p6Ubec5hTBn3HlKTFPd8bKWjlCQYCPBx+Hxp458+
+         5LBax+bpp+cO1fuocLfVvvSwHfpwRIv955J5Zv3sni/f2kn+eJrFx5uP5F0qQuHBf6kv
+         fpSqyNXq9EMKlufxR9Qr4byxA+Sf18NM3z+PD60GQxCvom2nkx7T02qVDfApj+/hlAOE
+         zwKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=NrUm6zOy/EJ9ibCviGBB/bXjF+HcDw0sqxAwwkPU5YQ=;
+        b=sV591coUXDZELvErYj4BM4YuhEyxugw7EBn+t8x8cnWmLEOkGcvLcFg8lSMv3t6oya
+         W0Td/TxGHBuEKHnyuDxMVO1tT1vwhC6diIEuw/RFijxQvDeXsKZMpO1QO5TJEixXSx4X
+         9GAhhiQVwb5wGDDe9ziKebcuZalUM3Oc7x0U5GQwc+qmKcLolP7wXMsTQ+WY36JgvWfs
+         pE511PiHtJP+MhqPxYIE7J8CIESw/Autnu0phnENKrsVOS+dnqtvbXI/JT97Qh+n4O3+
+         1heMI7Chy8uXdR7OJUCHwoEI0/VW3ynP7+/U3fNY9/n4gey91XxQGppxPmXumcdAUZds
+         RHEw==
+X-Gm-Message-State: APjAAAWpNsGkmALumFwTgZvzMmRWQPFhfzIIFOzxapFfu7Ojx5dU3ocX
+        EebULCShFm0Cv7q3bsK0i4cIagjcJ9I=
+X-Google-Smtp-Source: APXvYqyykmr/1lYPAKZgF+2vPkYifML5oM0ue4sQIEA5SMH7KsYZIDn76PKiZEu0yUnlNOcZf+2JTg==
+X-Received: by 2002:a05:600c:114e:: with SMTP id z14mr2470460wmz.134.1568971998305;
+        Fri, 20 Sep 2019 02:33:18 -0700 (PDT)
+Received: from linux-code.mgc.mentorg.com (nat-sch.mentorg.com. [139.181.36.34])
+        by smtp.gmail.com with ESMTPSA id h63sm1760268wmf.15.2019.09.20.02.33.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2019 02:33:17 -0700 (PDT)
+From:   Srikanth Krishnakar <skrishnakar@gmail.com>
+X-Google-Original-From: Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>
+To:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dvhart@infradead.org, andy@infradead.org, jan.kiszka@siemens.com
+Cc:     Cedric_Hombourger@mentor.com, volker.edenhofer@siemens.com,
+        Srikanth_Krishnakar@mentor.com
+Subject: [PATCH v2] platform/x86: pmc_atom: Add Siemens SIMATIC IPC277E to critclk_systems DMI table
+Date:   Fri, 20 Sep 2019 15:01:56 +0530
+Message-Id: <20190920093156.18885-1-Srikanth_Krishnakar@mentor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <972f063e-e1da-7248-90ab-e9b12481641d@siemens.com>
+References: <972f063e-e1da-7248-90ab-e9b12481641d@siemens.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add document to explain how we implement KASLR for fsl_booke32.
+The SIMATIC IPC277E uses the PMC clock for on-board components
+and gets stuck during boot if the clock is disabled. Therefore,
+add this device to the critical systems list.
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Cc: Diana Craciun <diana.craciun@nxp.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>
+Tested on SIMATIC IPC277E.
+
+Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+Reviewed-by: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Cedric Hombourger <Cedric_Hombourger@mentor.com>
+Signed-off-by: Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>
 ---
- Documentation/powerpc/kaslr-booke32.rst | 42 +++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/powerpc/kaslr-booke32.rst
 
-diff --git a/Documentation/powerpc/kaslr-booke32.rst b/Documentation/powerpc/kaslr-booke32.rst
-new file mode 100644
-index 000000000000..8b259fdfdf03
---- /dev/null
-+++ b/Documentation/powerpc/kaslr-booke32.rst
-@@ -0,0 +1,42 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===========================
-+KASLR for Freescale BookE32
-+===========================
-+
-+The word KASLR stands for Kernel Address Space Layout Randomization.
-+
-+This document tries to explain the implementation of the KASLR for
-+Freescale BookE32. KASLR is a security feature that deters exploit
-+attempts relying on knowledge of the location of kernel internals.
-+
-+Since CONFIG_RELOCATABLE has already supported, what we need to do is
-+map or copy kernel to a proper place and relocate. Freescale Book-E
-+parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
-+entries are not suitable to map the kernel directly in a randomized
-+region, so we chose to copy the kernel to a proper place and restart to
-+relocate.
-+
-+Entropy is derived from the banner and timer base, which will change every
-+build and boot. This not so much safe so additionally the bootloader may
-+pass entropy via the /chosen/kaslr-seed node in device tree.
-+
-+We will use the first 512M of the low memory to randomize the kernel
-+image. The memory will be split in 64M zones. We will use the lower 8
-+bit of the entropy to decide the index of the 64M zone. Then we chose a
-+16K aligned offset inside the 64M zone to put the kernel in::
-+
-+    KERNELBASE
-+
-+        |-->   64M   <--|
-+        |               |
-+        +---------------+    +----------------+---------------+
-+        |               |....|    |kernel|    |               |
-+        +---------------+    +----------------+---------------+
-+        |                         |
-+        |----->   offset    <-----|
-+
-+                              kernstart_virt_addr
-+
-+To enable KASLR, set CONFIG_RANDOMIZE_BASE = y. If KASLR is enable and you
-+want to disable it at runtime, add "nokaslr" to the kernel cmdline.
+Suggested for linux-stable v4.14.x and above.
+Depends on ad0d315b4d4e ("platform/x86: pmc_atom: Add Siemens SIMATIC IPC227E to critclk_systems DMI table")
+
+ drivers/platform/x86/pmc_atom.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/platform/x86/pmc_atom.c b/drivers/platform/x86/pmc_atom.c
+index 9aca5e7ce6d0..07d1b911e72f 100644
+--- a/drivers/platform/x86/pmc_atom.c
++++ b/drivers/platform/x86/pmc_atom.c
+@@ -422,6 +422,13 @@ static const struct dmi_system_id critclk_systems[] = {
+ 			DMI_MATCH(DMI_PRODUCT_VERSION, "6ES7647-8B"),
+ 		},
+ 	},
++	{
++		.ident = "SIMATIC IPC277E",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "SIEMENS AG"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "6AV7882-0"),
++		},
++	},
+ 	{ /*sentinel*/ }
+ };
+ 
 -- 
-2.17.2
+2.17.1
 
