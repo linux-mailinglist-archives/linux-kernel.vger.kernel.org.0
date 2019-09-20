@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98689B930E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24571B9263
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392757AbfITOhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:37:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35894 "EHLO
+        id S2390975AbfITOcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:32:12 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:36688 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388075AbfITOZB (ORCPT
+        by vger.kernel.org with ESMTP id S2388328AbfITOZN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:25:01 -0400
+        Fri, 20 Sep 2019 10:25:13 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqE-0004xJ-1W; Fri, 20 Sep 2019 15:24:58 +0100
+        id 1iBJqP-0004xz-Vr; Fri, 20 Sep 2019 15:25:10 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1iBJqD-0007rS-5L; Fri, 20 Sep 2019 15:24:57 +0100
+        id 1iBJqF-0007vF-Q8; Fri, 20 Sep 2019 15:24:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,15 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "Eric Biggers" <ebiggers@google.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "David S. Miller" <davem@davemloft.net>,
+        "David Ahern" <dsahern@gmail.com>
 Date:   Fri, 20 Sep 2019 15:23:35 +0100
-Message-ID: <lsq.1568989415.620662485@decadent.org.uk>
+Message-ID: <lsq.1568989415.560226731@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 036/132] crypto: salsa20 - don't access already-freed
- walk.iv
+Subject: [PATCH 3.16 083/132] ipv4: Fix raw socket lookup for local traffic
 In-Reply-To: <lsq.1568989414.954567518@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -49,42 +47,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: David Ahern <dsahern@gmail.com>
 
-commit edaf28e996af69222b2cb40455dbb5459c2b875a upstream.
+commit 19e4e768064a87b073a4b4c138b55db70e0cfb9f upstream.
 
-If the user-provided IV needs to be aligned to the algorithm's
-alignmask, then skcipher_walk_virt() copies the IV into a new aligned
-buffer walk.iv.  But skcipher_walk_virt() can fail afterwards, and then
-if the caller unconditionally accesses walk.iv, it's a use-after-free.
+inet_iif should be used for the raw socket lookup. inet_iif considers
+rt_iif which handles the case of local traffic.
 
-salsa20-generic doesn't set an alignmask, so currently it isn't affected
-by this despite unconditionally accessing walk.iv.  However this is more
-subtle than desired, and it was actually broken prior to the alignmask
-being removed by commit b62b3db76f73 ("crypto: salsa20-generic - cleanup
-and convert to skcipher API").
+As it stands, ping to a local address with the '-I <dev>' option fails
+ever since ping was changed to use SO_BINDTODEVICE instead of
+cmsg + IP_PKTINFO.
 
-Since salsa20-generic does not update the IV and does not need any IV
-alignment, update it to use req->iv instead of walk.iv.
+IPv6 works fine.
 
-Fixes: 2407d60872dd ("[CRYPTO] salsa20: Salsa20 stream cipher")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- crypto/salsa20_generic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/raw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/crypto/salsa20_generic.c
-+++ b/crypto/salsa20_generic.c
-@@ -186,7 +186,7 @@ static int encrypt(struct blkcipher_desc
- 	blkcipher_walk_init(&walk, dst, src, nbytes);
- 	err = blkcipher_walk_virt_block(desc, &walk, 64);
+--- a/net/ipv4/raw.c
++++ b/net/ipv4/raw.c
+@@ -167,6 +167,7 @@ static int icmp_filter(const struct sock
+  */
+ static int raw_v4_input(struct sk_buff *skb, const struct iphdr *iph, int hash)
+ {
++	int dif = inet_iif(skb);
+ 	struct sock *sk;
+ 	struct hlist_head *head;
+ 	int delivered = 0;
+@@ -179,8 +180,7 @@ static int raw_v4_input(struct sk_buff *
  
--	salsa20_ivsetup(ctx, walk.iv);
-+	salsa20_ivsetup(ctx, desc->info);
+ 	net = dev_net(skb->dev);
+ 	sk = __raw_v4_lookup(net, __sk_head(head), iph->protocol,
+-			     iph->saddr, iph->daddr,
+-			     skb->dev->ifindex);
++			     iph->saddr, iph->daddr, dif);
  
- 	while (walk.nbytes >= 64) {
- 		salsa20_encrypt_bytes(ctx, walk.dst.virt.addr,
+ 	while (sk) {
+ 		delivered = 1;
 
