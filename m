@@ -2,107 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C455BB92FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 839BCB9342
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2019 16:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392689AbfITOg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 10:36:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49090 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392496AbfITOgi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 10:36:38 -0400
-Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 739D22196E;
-        Fri, 20 Sep 2019 14:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568990197;
-        bh=48YHBcgZFu1F8D2WFbpxkLRezHZiaeSa/tHcV9zv9WI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YbsVw4SDrXKVLW2Ro5x3VmOWumryYqEkpKnfpuvWi8L9E0zkTp9UaYB6MlnmwWN/k
-         apCt+7Mxms39DF7fLnYteSStWhKluhjNyjnSXQKcBv9Qc56sTqe6nIqqRM9m/BrfUf
-         VoGe5XyS9dTNhxoIAchcfvTruCdz8IOnRdOQLwX8=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     Theodore Tso <tytso@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v2 7/7] random: Remove kernel.random.read_wakeup_threshold
-Date:   Fri, 20 Sep 2019 07:36:29 -0700
-Message-Id: <66b16acf2953fc033abc9641b9cf43d23e75a8e9.1568990048.git.luto@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1568990048.git.luto@kernel.org>
-References: <cover.1568990048.git.luto@kernel.org>
+        id S2392989AbfITOi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 10:38:56 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33303 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389025AbfITOiy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 10:38:54 -0400
+Received: by mail-wm1-f68.google.com with SMTP id r17so9714347wme.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 07:38:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QpV7/+yAaByU9Gkvq1/TvnZG5n90383ADAkpodmCXBA=;
+        b=lj8TXUiuIegfzRLSf+IsVql/zQQi6GFZkqQDxgz95XHsiUsXg5DoeBHTX2r5lfEuVL
+         99o/mHwpCF20bDx+1HOUdBYqPPcXQOkQQ9h1Syh2E2RcuD8hNK6Gd42Y9tIBKP1Y+PM3
+         cFHd7RMsJTSbEAEja3SWep4tucmR+Jo3cdNLQhml7wo+yG5jTcXTWxRuM7h2Hz/vwCqt
+         MGGHxUXcvar9xbktUx/GrnEC33yWbAM6/sZFmuwZWoVf/D4RZB+8cOS31kjekKOlHC3K
+         VPOPcf6qjzRwp210fcvX0LdHM01TRUo8i3RIJJnORMEzFGTtcr5EJhXu5CC78nLaKvLt
+         SoZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QpV7/+yAaByU9Gkvq1/TvnZG5n90383ADAkpodmCXBA=;
+        b=TzEK6NADrMgsyDZ9sLbZAgNaMWYL56ZrNNSW0M6TAS/M3EHRMRxCGXTglJoz856Gvk
+         Kytp7Xpe67aBZ86TuC/UDL/xqwLC30Kwo8fsnnWHgs5AqLnj2Q/LBw2zdc1a7cCct3DY
+         JsfSU/TMV91UwT5tvz16jbtyqoehPmUr6FK5grYin6XOy8JXSG/hDa+LNVUBFsPg2oWS
+         CLJ6ng5p0ZkwB4WwgSD/1CjiWJY6AbORHAl+3Pcom0CD+A5Ou72hVKhmXwi312TrZeKt
+         GipGA/X/6jXihQw2SbHLWtsKAwjOe2cahSTZE7yNIOslUvqCYezbjQvme44GjhEnBFpp
+         yeig==
+X-Gm-Message-State: APjAAAXEkWKJV+yfkbl/6DHZuPIbQPnWT0YQ9rm0zTo2A2lDD9ePKIGa
+        3kjXYRisFKhWV+xXSB7l5tKZOmshQrsKZONaX8Q=
+X-Google-Smtp-Source: APXvYqw0EraUFYMhhNXRZxVr3iyCe1OeR0Iuge+9+HdkT5FN0Vn52o2HVYZsNRrV6bRmbu8jYWhELT7ZMhNGnb7ayFg=
+X-Received: by 2002:a05:600c:24d1:: with SMTP id 17mr3773509wmu.104.1568990332904;
+ Fri, 20 Sep 2019 07:38:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1568962478-126260-1-git-send-email-nixiaoming@huawei.com>
+ <20190920114336.GM1131@ZenIV.linux.org.uk> <206f8d57-dad9-26c3-6bf6-1d000f5698d4@huawei.com>
+ <20190920124532.GN1131@ZenIV.linux.org.uk> <20190920125442.GA20754@ZenIV.linux.org.uk>
+ <eb679ad2-4020-951c-e4d1-60cb059a5ca8@huawei.com>
+In-Reply-To: <eb679ad2-4020-951c-e4d1-60cb059a5ca8@huawei.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Fri, 20 Sep 2019 16:38:39 +0200
+Message-ID: <CAFLxGvzeLTVfA17DMEi5tSkzkUgJncjX5oHWe207x7bfUtugtw@mail.gmail.com>
+Subject: Re: [PATCH] jffs2:freely allocate memory when parameters are invalid
+To:     Xiaoming Ni <nixiaoming@huawei.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Richard Weinberger <richard@nod.at>, dilinger@queued.net,
+        LKML <linux-kernel@vger.kernel.org>, daniel.santos@pobox.com,
+        linux-mtd@lists.infradead.org, houtao1@huawei.com,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It has no effect any more, so remove it.  We can revert this if
-there is some user code that expects to be able to set this sysctl.
+On Fri, Sep 20, 2019 at 4:14 PM Xiaoming Ni <nixiaoming@huawei.com> wrote:
+> I still think this is easier to understand:
+>  Free the memory allocated by the current function in the failed branch
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
- drivers/char/random.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+Please note that jffs2 is in "odd fixes only" maintenance mode.
+Therefore patches like this cannot be processed.
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 99fea5cc29a8..2a284f30cac4 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -369,12 +369,6 @@
- #define ENTROPY_SHIFT 3
- #define ENTROPY_BITS(r) ((r)->entropy_count >> ENTROPY_SHIFT)
- 
--/*
-- * The minimum number of bits of entropy before we wake up a read on
-- * /dev/random.  Should be enough to do a significant reseed.
-- */
--static int random_read_wakeup_bits = 64;
--
- /*
-  * If the entropy count falls under this number of bits, then we
-  * should wake up processes which are selecting or polling on write
-@@ -1982,8 +1976,7 @@ SYSCALL_DEFINE3(getrandom, char __user *, buf, size_t, count,
- 
- #include <linux/sysctl.h>
- 
--static int min_read_thresh = 8, min_write_thresh;
--static int max_read_thresh = OUTPUT_POOL_WORDS * 32;
-+static int min_write_thresh;
- static int max_write_thresh = INPUT_POOL_WORDS * 32;
- static int random_min_urandom_seed = 60;
- static char sysctl_bootid[16];
-@@ -2058,15 +2051,6 @@ struct ctl_table random_table[] = {
- 		.proc_handler	= proc_do_entropy,
- 		.data		= &input_pool.entropy_count,
- 	},
--	{
--		.procname	= "read_wakeup_threshold",
--		.data		= &random_read_wakeup_bits,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= &min_read_thresh,
--		.extra2		= &max_read_thresh,
--	},
- 	{
- 		.procname	= "write_wakeup_threshold",
- 		.data		= &random_write_wakeup_bits,
+On my never ending review queue are some other jffs2 patches which
+seem to address
+real problems. These go first.
+
+I see that many patches come form Huawai, maybe one of you can help
+maintaining jffs2?
+Reviews, tests, etc.. are very welcome!
+
 -- 
-2.21.0
-
+Thanks,
+//richard
