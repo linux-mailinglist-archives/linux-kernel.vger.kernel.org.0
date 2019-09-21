@@ -2,118 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C605BB9CF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 09:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33062B9D07
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 10:34:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437742AbfIUHgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 03:36:47 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:53000 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437704AbfIUHgp (ORCPT
+        id S2393292AbfIUIeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 04:34:18 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36477 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393108AbfIUIeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 03:36:45 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 7DCC7613E499;
-        Sat, 21 Sep 2019 09:36:42 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id pDRSi2FE9BcI; Sat, 21 Sep 2019 09:36:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 36990613E49B;
-        Sat, 21 Sep 2019 09:36:42 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 74EVnzMEAycD; Sat, 21 Sep 2019 09:36:42 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 171ED613E499;
-        Sat, 21 Sep 2019 09:36:42 +0200 (CEST)
-Date:   Sat, 21 Sep 2019 09:36:42 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>
-Message-ID: <1224182178.3529.1569051402039.JavaMail.zimbra@nod.at>
-Subject: [GIT PULL] UBI/UBIFS/JFFS2 updates for 5.4-rc1
+        Sat, 21 Sep 2019 04:34:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y19so8996487wrd.3
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2019 01:34:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zStaxsoeo6auhiqAbIDJnsQ/1nVLtBA7SNO4fTK543s=;
+        b=tdXVx7TmgHKXedoGKVONdyFFRPVfMTpEmCtCE/svXLN+l9OOHFWcxEv1mvdnEhZCDw
+         fTq7oTfItVagj7V7QPFNPlPcubzjLXUZX75t62YWE3KycfhO9MppvYxNBP0fgHHAsUL0
+         F+tk3RwGlPPpyxzII6kr3Bjwi90TLl/fb16Mr9PrXlfKikckcv2oEaQ6DR8DFsG2oKgg
+         6JjB9BnmJAXpzM1uNY4HiXX3Oo8Wwi9nxYD5HBlePHmJiY3dbqnmdgUIcTxiT0ItTRRB
+         yuG2p6m8D67S214J6k2CrftiHt3cSvFvD6r1HuOxvDemkm40TXRV+nTaWURlkB58x6RE
+         RQBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zStaxsoeo6auhiqAbIDJnsQ/1nVLtBA7SNO4fTK543s=;
+        b=m8gXLJKfE1E1PbI0EiMsfgMwL4CqAE8YgmtgmoYUJx3L7lO4tzJL6+nkOa41ipSzK4
+         0pvpR1bnU4CkL9PmyYI28JETX01K8baWhbE3d8MmfpsOnWv9SfSANVnRVHXg1q/Y6nzK
+         RTHqKwpa4IlXRbhZndz33+HMgu3mtYHJdelLfpvmiDY14ip3eNqaCq6Dkb6pcIyINHQw
+         +8IqAiRlQ3l9joqcPk7dzW8QatsOJodL7yMzBoroc3ToRs3tnP6q8k9L43/XyQTJvHce
+         3hGc4j/tU6KPXfKleHtsh8I9yvh6bQQ7qLMga4dGuwMfGBeYdtCfQQ9cya60hvkVNv8g
+         qzsA==
+X-Gm-Message-State: APjAAAXmw9jDV78kA2EQoE2ldKrkFs/Y/fTq4ku1cfkLCF6qQZjomelV
+        ohJ/a0y+4R8v4+eCxBkF3w==
+X-Google-Smtp-Source: APXvYqzgm2sR6AX5hwEUsQgFUFrr1dyNrnlvkSbOfjq9QV1NYuYG9N/DY2ZANZ0Inwd+oAj3kMbntw==
+X-Received: by 2002:adf:e4ce:: with SMTP id v14mr15024419wrm.15.1569054855881;
+        Sat, 21 Sep 2019 01:34:15 -0700 (PDT)
+Received: from avx2 ([46.53.254.141])
+        by smtp.gmail.com with ESMTPSA id y186sm11226132wmd.26.2019.09.21.01.34.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 21 Sep 2019 01:34:15 -0700 (PDT)
+Date:   Sat, 21 Sep 2019 11:34:13 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] objtool: bump function name limit to 256 characters
+Message-ID: <20190921083413.GA14409@avx2>
+References: <20190920182503.GA15073@avx2>
+ <20190920194035.mwsvz7nyc4peph2j@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
-Thread-Index: XWVcrwQH697MbsYhdr9Nkm4o9xdpbw==
-Thread-Topic: UBI/UBIFS/JFFS2 updates for 5.4-rc1
+Content-Disposition: inline
+In-Reply-To: <20190920194035.mwsvz7nyc4peph2j@treble>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri, Sep 20, 2019 at 02:40:35PM -0500, Josh Poimboeuf wrote:
+> On Fri, Sep 20, 2019 at 09:25:03PM +0300, Alexey Dobriyan wrote:
+> > Fix the following warning:
+> > 
+> > net/core/devlink.o: warning: objtool: _ZL31devlink_nl_sb_tc_pool_bind_fillP7sk_buffP7devlinkP12devlink_portP10devlink_sbt20devlink_sb_pool_type15devlink_commandjji.constprop.0.cold(): parent function name exceeds maximum length of 128 characters
+> 
+> Hm, since when do we have mangled symbols in the kernel?
 
-The following changes since commit 089cf7f6ecb266b6a4164919a2e69bd2f938374a:
-
-  Linux 5.3-rc7 (2019-09-02 09:57:40 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/upstream-5.4-rc1
-
-for you to fetch changes up to 6a379f67454a3c740671ed6c7793b76ffecef50b:
-
-  jffs2: Fix memory leak in jffs2_scan_eraseblock() error path (2019-09-15 22:42:41 +0200)
-
-Please note that there is a small merge conflict between
-9163e0184bd7d5f ("ubifs: Fix memory leak bug in alloc_ubifs_info() error path")
-from UBIFS tree and 
-
-50d7aad57710e2b ("vfs: Convert ubifs to use the new mount API")
-from VFS tree.
-
-----------------------------------------------------------------
-This pull request contains the following changes for UBI, UBIFS and JFFS2:
-
-UBI:
-- Be less stupid when placing a fastmap anchor
-- Try harder to get an empty PEB in case of contention
-- Make ubiblock to warn if image is not a multiple of 512
-
-UBIFS:
-- Various fixes in error paths
-
-JFFS2:
-- Various fixes in error paths
-
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      jffs2: Remove jffs2_gc_fetch_page and jffs2_gc_release_page
-
-Colin Ian King (1):
-      ubifs: Remove redundant assignment to pointer fname
-
-Jia-Ju Bai (1):
-      jffs2: Fix possible null-pointer dereferences in jffs2_add_frag_to_fragtree()
-
-Richard Weinberger (2):
-      ubi: Don't do anchor move within fastmap area
-      ubi: block: Warn if volume size is not multiple of 512
-
-Wenwen Wang (4):
-      ubifs: Fix memory leak in read_znode() error path
-      ubifs: Fix memory leak in __ubifs_node_verify_hmac error path
-      ubifs: Fix memory leak bug in alloc_ubifs_info() error path
-      jffs2: Fix memory leak in jffs2_scan_eraseblock() error path
-
-Zhihao Cheng (1):
-      ubi: ubi_wl_get_peb: Increase the number of attempts while getting PEB
-
- drivers/mtd/ubi/block.c      | 43 +++++++++++++++++++++++++++++++++++--------
- drivers/mtd/ubi/fastmap-wl.c |  6 +++---
- drivers/mtd/ubi/wl.c         |  6 ++++++
- fs/jffs2/fs.c                | 27 ---------------------------
- fs/jffs2/gc.c                | 21 +++++++++++++--------
- fs/jffs2/nodelist.c          |  2 +-
- fs/jffs2/os-linux.h          |  3 ---
- fs/jffs2/scan.c              |  5 ++++-
- fs/ubifs/auth.c              |  4 +++-
- fs/ubifs/debug.c             |  1 -
- fs/ubifs/super.c             |  4 +++-
- fs/ubifs/tnc_misc.c          |  1 +
- 12 files changed, 69 insertions(+), 54 deletions(-)
+We don't, yet :-)
