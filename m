@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9462FB9CEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 09:36:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57319B9CEF
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 09:36:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437720AbfIUHgl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 03:36:41 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:52950 "EHLO
+        id S2437732AbfIUHgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 03:36:45 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:52976 "EHLO
         lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437704AbfIUHgl (ORCPT
+        with ESMTP id S2437705AbfIUHgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 03:36:41 -0400
+        Sat, 21 Sep 2019 03:36:44 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id B27EE613E48F;
-        Sat, 21 Sep 2019 09:36:36 +0200 (CEST)
+        by lithops.sigma-star.at (Postfix) with ESMTP id 6319D608310C;
+        Sat, 21 Sep 2019 09:36:40 +0200 (CEST)
 Received: from lithops.sigma-star.at ([127.0.0.1])
         by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 8LRhbZBfEK3a; Sat, 21 Sep 2019 09:36:36 +0200 (CEST)
+        with ESMTP id ilQrffyV4CW8; Sat, 21 Sep 2019 09:36:39 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 0C5A4608310C;
-        Sat, 21 Sep 2019 09:36:36 +0200 (CEST)
+        by lithops.sigma-star.at (Postfix) with ESMTP id D5914613E49B;
+        Sat, 21 Sep 2019 09:36:39 +0200 (CEST)
 Received: from lithops.sigma-star.at ([127.0.0.1])
         by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id AAvyw0qq3rPx; Sat, 21 Sep 2019 09:36:35 +0200 (CEST)
+        with ESMTP id y12NbUqo-tQA; Sat, 21 Sep 2019 09:36:39 +0200 (CEST)
 Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id D4827613E48F;
-        Sat, 21 Sep 2019 09:36:35 +0200 (CEST)
-Date:   Sat, 21 Sep 2019 09:36:35 +0200 (CEST)
+        by lithops.sigma-star.at (Postfix) with ESMTP id AF1CC613E499;
+        Sat, 21 Sep 2019 09:36:39 +0200 (CEST)
+Date:   Sat, 21 Sep 2019 09:36:39 +0200 (CEST)
 From:   Richard Weinberger <richard@nod.at>
 To:     torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        miquel.raynal@bootlin.com, vigneshr@ti.com
-Message-ID: <1742349117.3527.1569051395780.JavaMail.zimbra@nod.at>
-Subject: [GIT PULL] MTD updates for 5.4-rc1
+        linux-um <linux-um@lists.infradead.org>,
+        anton ivanov <anton.ivanov@cambridgegreys.com>
+Message-ID: <466534311.3528.1569051399653.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] UML updates for 5.4-rc1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [195.201.40.130]
 X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
-Thread-Index: rQa3AljWYs866iAse/6ysnw0R7/J5A==
-Thread-Topic: MTD updates for 5.4-rc1
+Thread-Index: HRx4bnt0zNOkT+gCjIYD7sjawTx5hg==
+Thread-Topic: UML updates for 5.4-rc1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,266 +55,210 @@ The following changes since commit 089cf7f6ecb266b6a4164919a2e69bd2f938374a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git tags/mtd/for-5.4
+  git://git.kernel.org/pub/scm/linux/kernel/git/rw/uml.git tags/for-linus-5.4-rc1
 
-for you to fetch changes up to 2cfcfadb8e1380938d6631cffa4fa567b13f52b2:
+for you to fetch changes up to 73625ed66389d4c620520058d828f43a93ab4d0c:
 
-  mtd: pmc551: Remove set but not used variable 'soff_lo' (2019-09-15 23:51:07 +0200)
-
-----------------------------------------------------------------
-This pull-request contains the following changes for MTD:
-
-MTD core changes:
-- add debugfs nodes for querying the flash name and id
-- mtd parser reorganization
-
-SPI NOR core changes:
-- always use bounce buffer for register read/writes
-- move m25p80 code in spi-nor.c
-- rework hwcaps selection for the spi-mem case
-- rework the core in order to move the manufacturer specific code
-  out of it:
-    - regroup flash parameters in 'struct spi_nor_flash_parameter'
-    - add default_init() and post_sfdp() hooks to tweak the flash
-      parameters
-    - introduce the ->set_4byte(), ->convert_addr() and ->setup()
-      methods, to deal with manufacturer specific code
-    - rework the SPI NOR lock/unlock logic
-- fix an error code in spi_nor_read_raw()
-- fix a memory leak bug
-- enable the debugfs for the partname and partid
-- add support for few flashes
-
-SPI NOR controller drivers changes:
-- intel-spi:
-    - Whitelist 4B read commands
-    - Add support for Intel Tiger Lake SPI serial flash
-- aspeed-smc: Add of_node_put()
-- hisi-sfc: Add of_node_put()
-- cadence-quadspi: Fix QSPI RCU Schedule Stall
-
-NAND core:
-- Fixing typos
-- Adding missing of_node_put() in various drivers
-
-Raw NAND controller drivers:
-
-- Macronix: new controller driver
-- Omap2: Fixing the number of bitflips returned
-- Brcmnand: Fix a pointer not iterating over all the page chunks
-- W90x900: Driver removed
-- Onenand: Fix a memory leak
-- Sharpsl: Missing include guard
-- STM32: Avoid warnings when building with W=1
-- Ingenic: Fix a coccinelle warning
-- r852: Call a helper to simplify the code
-
-CFI core:
-- Kill useless initializer in mtd_do_chip_probe()
-- Fix a rare write failure seen on some cfi_cmdset_0002 compliant
-  Parallel NORs
-- Bunch of cleanups for cfi_cmdset_0002 driver's write functions by
-  Tokunori Ikegami <ikegami.t@gmail.com>
+  um: irq: Fix LAST_IRQ usage in init_IRQ() (2019-09-16 08:38:58 +0200)
 
 ----------------------------------------------------------------
-Alexander Sverdlin (1):
-      mtd: spi-nor: intel-spi: Whitelist 4B read commands
+This pull request contains the following changes for UML:
 
-Arnd Bergmann (1):
-      mtd: rawnand: remove w90x900 driver
+- virtio support
+- Fixes for our new time travel mode
+- Various improvements to make lockdep and kasan work better
+- SPDX header updates
 
-Ashish Kumar (2):
-      mtd: spi-nor: Add support for mt35xu02g
-      mtd: spi-nor: Rename "n25q512a" to "mt25qu512a (n25q512a)"
+----------------------------------------------------------------
+Alex Dewar (4):
+      um: Add SPDX headers for files in arch/um/drivers
+      um: Add SPDX headers to files in arch/um/kernel/
+      um: Add SPDX headers for files in arch/um/os-Linux
+      um: Add SPDX headers for files in arch/um/include
 
-Avi Fishman (1):
-      mtd: spi-nor: Add Winbond w25q256jvm
+Anton Ivanov (5):
+      um: Fix off by one error in IRQ enumeration
+      um: Add legacy tap support and rename existing vector to hybrid
+      um: Added support for unix socket transports and bess transport
+      um: Add checks to mtu parameter parsing
+      um: Error handling fixes in vector drivers
 
-Boris Brezillon (9):
-      mtd: spi-nor: Move m25p80 code in spi-nor.c
-      mtd: spi-nor: Rework hwcaps selection for the spi-mem case
-      mtd: spi-nor: Add a default_init() fixup hook for gd25q256
-      mtd: spi-nor: Create a ->set_4byte() method
-      mtd: spi-nor: Rework the SPI NOR lock/unlock logic
-      mtd: spi-nor: Add post_sfdp() hook to tweak flash config
-      mtd: spi-nor: Add spansion_post_sfdp_fixups()
-      mtd: spi-nor: Add a ->convert_addr() method
-      mtd: spi-nor: Add the SPI_NOR_XSR_RDY flag
+Erel Geron (2):
+      um: drivers: Add virtio vhost-user driver
+      um: irq: Fix LAST_IRQ usage in init_IRQ()
 
-Christoph Hellwig (1):
-      mtd: pxa2xx: Use ioremap_cache insted of ioremap_cached
-
-Christophe Kerello (1):
-      mtd: rawnand: stm32_fmc2: avoid warnings when building with W=1 option
-
-Chuhong Yuan (1):
-      mtd: rawnand: r852: Use dev_get_drvdata
-
-Claire Lin (1):
-      mtd: rawnand: brcmnand: Fix ecc chunk calculation for erased page bitfips
-
-Colin Ian King (1):
-      mtd: rawnand: remove redundant assignment to variable ret
-
-Dan Carpenter (1):
-      mtd: spi-nor: Fix an error code in spi_nor_read_raw()
-
-Eugeniy Paltsev (1):
-      mtd: spi-nor: add support for sst26wf016b memory IC
-
-Julia Lawall (1):
-      mtd: rawnand: ingenic: fix devm_platform_ioremap_resource.cocci warnings
-
-Jungseung Lee (1):
-      mtd: spi-nor : Remove SPI_NOR_HAS_TB flag on s25fl512s
-
-Linus Walleij (5):
-      mtd: parsers: Move TI AR7 parser
-      mtd: parsers: Move BCM47xx parser
-      mtd: parsers: Move BCM63xx parser
-      mtd: parsers: Move OF parser
-      mtd: parsers: Move CMDLINE parser
+Johannes Berg (13):
+      um: Remove sig_info[SIGALRM]
+      um: Avoid using uninitialized regs
+      um: Remove misleading #define ARCh_IRQ_ENABLED
+      um: Implement TRACE_IRQFLAGS_SUPPORT
+      um: Fix VDSO compiler warning
+      um: Place (soft)irq text with macros
+      um: Enable CONFIG_CONSTRUCTORS
+      um: time-travel: Fix periodic timers
+      um: time-travel: Restrict time update in IRQ handler
+      um: Don't use generic barrier.h
+      um: Use real DMA barriers
+      um: virtio: Implement VHOST_USER_PROTOCOL_F_SLAVE_REQ
+      um: virtio: Implement VHOST_USER_PROTOCOL_F_REPLY_ACK
 
 Masahiro Yamada (1):
-      mtd: rawnand: sharpsl: add include guard to linux/mtd/sharpsl.h
+      um: Remove meaningless clearing of clean-files
 
-Mason Yang (2):
-      mtd: rawnand: Add Macronix raw NAND controller driver
-      dt-bindings: mtd: Document Macronix raw NAND controller bindings
-
-Mika Westerberg (1):
-      mtd: spi-nor: intel-spi: Add support for Intel Tiger Lake SPI serial flash
-
-Nishka Dasgupta (7):
-      mtd: rawnand: vf610: Add of_node_put() before goto
-      mtd: rawnand: oxnas: Add of_node_put()
-      mtd: rawnand: tango: Add of_node_put() before return
-      mtd: rawnand: meson: Add of_node_put() before return
-      mtd: rawnand: ingenic: Add of_node_put() before return
-      mtd: spi-nor: aspeed-smc: Add of_node_put()
-      mtd: spi-nor: hisi-sfc: Add of_node_put() before break
-
-Richard Weinberger (3):
-      Merge tag 'nand/for-5.4' of git://git.kernel.org/.../mtd/linux into mtd/for-5.4
-      Merge tag 'spi-nor/for-5.4' of git://git.kernel.org/.../mtd/linux into mtd/for-5.4
-      Merge tag 'cfi/for-5.4-rc1' of https://github.com/r-vignesh/linux into mtd/for-5.4
-
-Sascha Hauer (1):
-      mtd: rawnand: omap2: Fix number of bitflips reporting with ELM
-
-Sergei Shtylyov (1):
-      mtd: chips: gen_probe: kill useless initializer in mtd_do_chip_probe()
-
-Thor Thayer (1):
-      mtd: spi-nor: Fix Cadence QSPI RCU Schedule Stall
-
-Tokunori Ikegami (9):
-      mtd: cfi_cmdset_0002: Use chip_good() to retry in do_write_oneword()
-      mtd: cfi_cmdset_0002: Remove goto statement from do_write_buffer()
-      mtd: cfi_cmdset_0002: Split do_write_oneword() to reduce function size
-      mtd: cfi_cmdset_0002: Split do_write_oneword() op_done goto statement
-      mtd: cfi_cmdset_0002: Split write-to-buffer-reset sequence
-      mtd: cfi_cmdset_0002: Split wait for write buffer completion sequence
-      mtd: cfi_cmdset_0002: Split do_write_oneword() to reduce exit paths
-      mtd: cfi_cmdset_0002: Disable write buffer functions if FORCE_WORD_WRITE is 1
-      mtd: cfi_cmdset_0002: Fix do_erase_chip() to get chip as erasing mode
-
-Tudor Ambarus (17):
-      mtd: spi-nor: fix description for int (*flash_is_locked)()
-      mtd: nand: fix typo, s/erasablocks/eraseblocks
-      Merge tag 'v5.3-rc6' into spi-nor/next
-      mtd: spi-nor: Remove unused macro
-      mtd: spi-nor: Regroup flash parameter and settings
-      mtd: spi-nor: Use nor->params
-      mtd: spi-nor: Drop quad_enable() from 'struct spi-nor'
-      mtd: spi-nor: Move erase_map to 'struct spi_nor_flash_parameter'
-      mtd: spi-nor: Add default_init() hook to tweak flash parameters
-      mtd: spi-nor: Move manufacturer quad_enable() in ->default_init()
-      mtd: spi-nor: Split spi_nor_init_params()
-      mtd: spi-nor: Add a ->setup() method
-      mtd: spi-nor: Add s3an_post_sfdp_fixups()
-      mtd: spi-nor: Bring flash params init together
-      mtd: spi-nor: Introduce spi_nor_set_addr_width()
-      mtd: spi-nor: Introduce spi_nor_get_flash_info()
-      mtd: spi-nor: remove superfluous pass of nor->info->sector_size
-
-Vignesh Raghavendra (1):
-      mtd: spi-nor: always use bounce buffer for register read/writes
-
-Wenwen Wang (4):
-      mtd: spi-nor: fix a memory leak bug
-      mtd: onenand_base: Fix a memory leak bug
-      mtd: rawnand: Fix a memory leak bug
-      mtd: sm_ftl: Fix memory leak in sm_init_zone() error path
-
-Wolfram Sang (1):
-      mtd: pismo: Simplify getting the adapter of a client
-
-Xiaoming Ni (1):
-      mtd: phram: Module parameters add writable permissions
-
-Zhuohao Lee (2):
-      mtd: mtdcore: add debugfs nodes for querying the flash name and id
-      mtd: spi-nor: enable the debugfs for the partname and partid
-
-zhengbin (1):
-      mtd: pmc551: Remove set but not used variable 'soff_lo'
-
- .../devicetree/bindings/mtd/mxic-nand.txt          |   36 +
- drivers/mtd/Kconfig                                |   67 -
- drivers/mtd/Makefile                               |    5 -
- drivers/mtd/chips/cfi_cmdset_0002.c                |  299 ++--
- drivers/mtd/chips/gen_probe.c                      |    2 +-
- drivers/mtd/devices/Kconfig                        |   18 -
- drivers/mtd/devices/Makefile                       |    1 -
- drivers/mtd/devices/m25p80.c                       |  347 ----
- drivers/mtd/devices/phram.c                        |    2 +-
- drivers/mtd/devices/pmc551.c                       |    9 +-
- drivers/mtd/maps/pismo.c                           |    3 +-
- drivers/mtd/maps/pxa2xx-flash.c                    |    3 +-
- drivers/mtd/mtdcore.c                              |   86 +-
- drivers/mtd/nand/onenand/onenand_base.c            |    3 +
- drivers/mtd/nand/raw/Kconfig                       |   14 +-
- drivers/mtd/nand/raw/Makefile                      |    2 +-
- drivers/mtd/nand/raw/brcmnand/brcmnand.c           |    5 +-
- drivers/mtd/nand/raw/ingenic/ingenic_nand_drv.c    |    5 +-
- drivers/mtd/nand/raw/meson_nand.c                  |    1 +
- drivers/mtd/nand/raw/mxic_nand.c                   |  582 +++++++
- drivers/mtd/nand/raw/nand_base.c                   |    2 +-
- drivers/mtd/nand/raw/nand_bbt.c                    |   10 +-
- drivers/mtd/nand/raw/nuc900_nand.c                 |  304 ----
- drivers/mtd/nand/raw/omap2.c                       |    2 +-
- drivers/mtd/nand/raw/oxnas_nand.c                  |    8 +-
- drivers/mtd/nand/raw/r852.c                        |    4 +-
- drivers/mtd/nand/raw/stm32_fmc2_nand.c             |   90 +-
- drivers/mtd/nand/raw/tango_nand.c                  |    1 +
- drivers/mtd/nand/raw/vf610_nfc.c                   |    1 +
- drivers/mtd/parsers/Kconfig                        |   68 +
- drivers/mtd/parsers/Makefile                       |    5 +
- drivers/mtd/{ => parsers}/ar7part.c                |    0
- drivers/mtd/{ => parsers}/bcm47xxpart.c            |    0
- drivers/mtd/{ => parsers}/bcm63xxpart.c            |    0
- drivers/mtd/{ => parsers}/cmdlinepart.c            |    0
- drivers/mtd/{ => parsers}/ofpart.c                 |    0
- drivers/mtd/sm_ftl.c                               |    5 +-
- drivers/mtd/spi-nor/Kconfig                        |    2 +
- drivers/mtd/spi-nor/aspeed-smc.c                   |    4 +-
- drivers/mtd/spi-nor/cadence-quadspi.c              |   19 +-
- drivers/mtd/spi-nor/hisi-sfc.c                     |    1 +
- drivers/mtd/spi-nor/intel-spi-pci.c                |    1 +
- drivers/mtd/spi-nor/intel-spi.c                    |    2 +
- drivers/mtd/spi-nor/spi-nor.c                      | 1712 +++++++++++++++-----
- include/linux/mtd/mtd.h                            |    3 +
- include/linux/mtd/nand.h                           |    2 +-
- include/linux/mtd/sharpsl.h                        |    5 +
- include/linux/mtd/spi-nor.h                        |  291 +++-
- 48 files changed, 2531 insertions(+), 1501 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mtd/mxic-nand.txt
- delete mode 100644 drivers/mtd/devices/m25p80.c
- create mode 100644 drivers/mtd/nand/raw/mxic_nand.c
- delete mode 100644 drivers/mtd/nand/raw/nuc900_nand.c
- rename drivers/mtd/{ => parsers}/ar7part.c (100%)
- rename drivers/mtd/{ => parsers}/bcm47xxpart.c (100%)
- rename drivers/mtd/{ => parsers}/bcm63xxpart.c (100%)
- rename drivers/mtd/{ => parsers}/cmdlinepart.c (100%)
- rename drivers/mtd/{ => parsers}/ofpart.c (100%)
+ arch/um/drivers/Kconfig                  |    7 +
+ arch/um/drivers/Makefile                 |    3 +-
+ arch/um/drivers/chan.h                   |    2 +-
+ arch/um/drivers/chan_kern.c              |    2 +-
+ arch/um/drivers/chan_user.c              |    2 +-
+ arch/um/drivers/chan_user.h              |    2 +-
+ arch/um/drivers/cow_user.c               |    2 +-
+ arch/um/drivers/daemon.h                 |    2 +-
+ arch/um/drivers/daemon_kern.c            |    2 +-
+ arch/um/drivers/daemon_user.c            |    2 +-
+ arch/um/drivers/fd.c                     |    2 +-
+ arch/um/drivers/harddog_user.c           |    2 +-
+ arch/um/drivers/hostaudio_kern.c         |    2 +-
+ arch/um/drivers/line.c                   |    2 +-
+ arch/um/drivers/line.h                   |    2 +-
+ arch/um/drivers/mconsole.h               |    2 +-
+ arch/um/drivers/mconsole_kern.c          |    2 +-
+ arch/um/drivers/mconsole_kern.h          |    2 +-
+ arch/um/drivers/mconsole_user.c          |    2 +-
+ arch/um/drivers/net_kern.c               |    2 +-
+ arch/um/drivers/net_user.c               |    2 +-
+ arch/um/drivers/null.c                   |    2 +-
+ arch/um/drivers/pcap_kern.c              |    2 +-
+ arch/um/drivers/pcap_user.c              |    2 +-
+ arch/um/drivers/pcap_user.h              |    2 +-
+ arch/um/drivers/port.h                   |    2 +-
+ arch/um/drivers/port_kern.c              |    2 +-
+ arch/um/drivers/port_user.c              |    2 +-
+ arch/um/drivers/pty.c                    |    2 +-
+ arch/um/drivers/slip_kern.c              |    2 +-
+ arch/um/drivers/slip_user.c              |    2 +-
+ arch/um/drivers/slirp_kern.c             |    2 +-
+ arch/um/drivers/slirp_user.c             |    2 +-
+ arch/um/drivers/ssl.c                    |    2 +-
+ arch/um/drivers/stdio_console.c          |    2 +-
+ arch/um/drivers/stdio_console.h          |    2 +-
+ arch/um/drivers/tty.c                    |    2 +-
+ arch/um/drivers/ubd.h                    |    2 +-
+ arch/um/drivers/ubd_kern.c               |    2 +-
+ arch/um/drivers/ubd_user.c               |    2 +-
+ arch/um/drivers/umcast.h                 |    2 +-
+ arch/um/drivers/umcast_kern.c            |    2 +-
+ arch/um/drivers/umcast_user.c            |    2 +-
+ arch/um/drivers/vde.h                    |    2 +-
+ arch/um/drivers/vde_kern.c               |    2 +-
+ arch/um/drivers/vde_user.c               |    2 +-
+ arch/um/drivers/vector_kern.c            |   44 +-
+ arch/um/drivers/vector_kern.h            |    3 +-
+ arch/um/drivers/vector_transports.c      |   42 +-
+ arch/um/drivers/vector_user.c            |  293 +++++---
+ arch/um/drivers/vector_user.h            |    9 +-
+ arch/um/drivers/vhost_user.h             |  117 +++
+ arch/um/drivers/virtio_uml.c             | 1177 ++++++++++++++++++++++++++++++
+ arch/um/drivers/xterm.c                  |    2 +-
+ arch/um/drivers/xterm.h                  |    2 +-
+ arch/um/drivers/xterm_kern.c             |    2 +-
+ arch/um/include/asm/Kbuild               |    1 -
+ arch/um/include/asm/common.lds.S         |    2 +-
+ arch/um/include/asm/irq.h                |    7 +-
+ arch/um/include/asm/irqflags.h           |    1 -
+ arch/um/include/asm/kmap_types.h         |    2 +-
+ arch/um/include/asm/mmu.h                |    2 +-
+ arch/um/include/asm/mmu_context.h        |    2 +-
+ arch/um/include/asm/page.h               |    2 +-
+ arch/um/include/asm/pgalloc.h            |    2 +-
+ arch/um/include/asm/pgtable-2level.h     |    2 +-
+ arch/um/include/asm/pgtable-3level.h     |    2 +-
+ arch/um/include/asm/pgtable.h            |    2 +-
+ arch/um/include/asm/processor-generic.h  |    2 +-
+ arch/um/include/asm/ptrace-generic.h     |    2 +-
+ arch/um/include/asm/thread_info.h        |    2 +-
+ arch/um/include/asm/tlbflush.h           |    2 +-
+ arch/um/include/asm/uaccess.h            |    2 +-
+ arch/um/include/shared/arch.h            |    2 +-
+ arch/um/include/shared/as-layout.h       |    2 +-
+ arch/um/include/shared/elf_user.h        |    2 +-
+ arch/um/include/shared/frame_kern.h      |    2 +-
+ arch/um/include/shared/irq_kern.h        |    2 +-
+ arch/um/include/shared/irq_user.h        |    2 +-
+ arch/um/include/shared/kern.h            |    2 +-
+ arch/um/include/shared/kern_util.h       |    2 +-
+ arch/um/include/shared/longjmp.h         |    2 +-
+ arch/um/include/shared/mem.h             |    2 +-
+ arch/um/include/shared/net_kern.h        |    2 +-
+ arch/um/include/shared/net_user.h        |    2 +-
+ arch/um/include/shared/os.h              |   14 +-
+ arch/um/include/shared/ptrace_user.h     |    2 +-
+ arch/um/include/shared/registers.h       |    2 +-
+ arch/um/include/shared/sigio.h           |    2 +-
+ arch/um/include/shared/skas/mm_id.h      |    2 +-
+ arch/um/include/shared/skas/skas.h       |    2 +-
+ arch/um/include/shared/skas/stub-data.h  |    2 +-
+ arch/um/include/shared/timer-internal.h  |   11 +-
+ arch/um/include/shared/um_malloc.h       |    2 +-
+ arch/um/include/shared/user.h            |    2 +-
+ arch/um/kernel/Makefile                  |    3 +-
+ arch/um/kernel/config.c.in               |    4 +-
+ arch/um/kernel/dyn.lds.S                 |    3 +-
+ arch/um/kernel/exec.c                    |    2 +-
+ arch/um/kernel/exitcode.c                |    2 +-
+ arch/um/kernel/gmon_syms.c               |    2 +-
+ arch/um/kernel/gprof_syms.c              |    2 +-
+ arch/um/kernel/initrd.c                  |    2 +-
+ arch/um/kernel/irq.c                     |    4 +-
+ arch/um/kernel/ksyms.c                   |    4 +-
+ arch/um/kernel/mem.c                     |    3 +-
+ arch/um/kernel/physmem.c                 |    3 +-
+ arch/um/kernel/process.c                 |   18 +-
+ arch/um/kernel/ptrace.c                  |    2 +-
+ arch/um/kernel/reboot.c                  |    2 +-
+ arch/um/kernel/sigio.c                   |    2 +-
+ arch/um/kernel/signal.c                  |   30 +-
+ arch/um/kernel/skas/Makefile             |    2 +-
+ arch/um/kernel/skas/clone.c              |    2 +-
+ arch/um/kernel/skas/mmu.c                |    6 +-
+ arch/um/kernel/skas/process.c            |    4 +-
+ arch/um/kernel/skas/syscall.c            |    2 +-
+ arch/um/kernel/skas/uaccess.c            |    2 +-
+ arch/um/kernel/syscall.c                 |    2 +-
+ arch/um/kernel/time.c                    |   13 +-
+ arch/um/kernel/tlb.c                     |    2 +-
+ arch/um/kernel/trap.c                    |    2 +-
+ arch/um/kernel/um_arch.c                 |    3 +-
+ arch/um/kernel/umid.c                    |    2 +-
+ arch/um/kernel/uml.lds.S                 |    2 +
+ arch/um/os-Linux/Makefile                |    2 +-
+ arch/um/os-Linux/drivers/Makefile        |    2 +-
+ arch/um/os-Linux/drivers/etap.h          |    2 +-
+ arch/um/os-Linux/drivers/ethertap_kern.c |    2 +-
+ arch/um/os-Linux/drivers/ethertap_user.c |    2 +-
+ arch/um/os-Linux/drivers/tuntap.h        |    2 +-
+ arch/um/os-Linux/drivers/tuntap_kern.c   |    2 +-
+ arch/um/os-Linux/drivers/tuntap_user.c   |    2 +-
+ arch/um/os-Linux/file.c                  |   46 +-
+ arch/um/os-Linux/helper.c                |    2 +-
+ arch/um/os-Linux/irq.c                   |    2 +-
+ arch/um/os-Linux/main.c                  |    4 +-
+ arch/um/os-Linux/mem.c                   |    2 +-
+ arch/um/os-Linux/process.c               |    2 +-
+ arch/um/os-Linux/registers.c             |    2 +-
+ arch/um/os-Linux/sigio.c                 |    8 +-
+ arch/um/os-Linux/signal.c                |   52 +-
+ arch/um/os-Linux/skas/Makefile           |    2 +-
+ arch/um/os-Linux/skas/mem.c              |    2 +-
+ arch/um/os-Linux/skas/process.c          |   14 +-
+ arch/um/os-Linux/start_up.c              |    2 +-
+ arch/um/os-Linux/time.c                  |    2 +-
+ arch/um/os-Linux/tty.c                   |    2 +-
+ arch/um/os-Linux/umid.c                  |    2 +-
+ arch/um/os-Linux/util.c                  |    2 +-
+ arch/x86/um/asm/barrier.h                |   12 +-
+ arch/x86/um/vdso/um_vdso.c               |    2 +-
+ init/Kconfig                             |    1 -
+ kernel/gcov/Kconfig                      |    2 +-
+ 154 files changed, 1913 insertions(+), 291 deletions(-)
+ create mode 100644 arch/um/drivers/vhost_user.h
+ create mode 100644 arch/um/drivers/virtio_uml.c
