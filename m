@@ -2,70 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCBCFB9F37
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D15B9F30
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:40:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731446AbfIURlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 13:41:02 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:44139 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731403AbfIURlC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 13:41:02 -0400
-Received: by mail-io1-f72.google.com with SMTP id m3so16167710ion.11
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2019 10:41:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Vou0Mi/j/M2Ma5Ajew5/N8RpeWCXouricDj+EREdNZY=;
-        b=eIkPx7bYzpsyK7uBLDA9ap/5h1c6dWVxT8OEHJZ9t4uSiFJEks7M/8qvQcR+PBpBk1
-         gUqnBeNKF1SOP/wXJjHbTBdIVPXdIGLlkY2/8cJxyhIMl4QYq1T4A04aGkD8NPAMSA+v
-         Mf4TnEDsmFVm1oLryxMj+GcbenmJ6P9uGC31IHR4Uy8foDU94m6w/A+TK/NxnSD0999r
-         QksNKaDBY/KrFLSsKtwmp49onSYPuiOI5Ac/uxPgs/FB0jPKtn/2D/82mmkHuTLEb+C+
-         qEUEeU+BRBFsxbHYhMxb1eyM0xXvT2q4H/dFFZiCxIrAAhDv1tvKw0Znp1VT5o5E8Nxw
-         75hw==
-X-Gm-Message-State: APjAAAVeevaHDo5abfu6YBLGHfjqe/IG5lH1jW7/q2Q9/+zql2Bi1PEm
-        AV/RuNwXjeXq16HWmhGO2vw0AouM+SIEDL55xoMMxK0Tz145
-X-Google-Smtp-Source: APXvYqyr/QnaH7gCOgIYf0MJcv1TUeTtRpr75v8rwd0Su2cX1DH7UXwxXu2hOzyHWLdGdlgaclDhr2teY+qtZB+BASzqQhvSpW0K
+        id S1731185AbfIURiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 13:38:02 -0400
+Received: from mga01.intel.com ([192.55.52.88]:43482 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727225AbfIURiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 13:38:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2019 10:38:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,532,1559545200"; 
+   d="scan'208";a="200032667"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga002.jf.intel.com with ESMTP; 21 Sep 2019 10:38:00 -0700
+Date:   Sat, 21 Sep 2019 10:42:04 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH 3/4] iommu/ioasid: Add custom allocators
+Message-ID: <20190921104204.238f5908@jacob-builder>
+In-Reply-To: <20190920163558.GC1533866@lophozonia>
+References: <1568849194-47874-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1568849194-47874-4-git-send-email-jacob.jun.pan@linux.intel.com>
+        <20190920163558.GC1533866@lophozonia>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:ec07:: with SMTP id c7mr4441481ioh.84.1569087661223;
- Sat, 21 Sep 2019 10:41:01 -0700 (PDT)
-Date:   Sat, 21 Sep 2019 10:41:01 -0700
-In-Reply-To: <000000000000727bd10590c9cf6c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ab325a059313b071@google.com>
-Subject: Re: KASAN: use-after-free Read in rxrpc_release_call
-From:   syzbot <syzbot+eed305768ece6682bb7f@syzkaller.appspotmail.com>
-To:     MAILER_DAEMON@email.uscc.net, davem@davemloft.net,
-        dhowells@redhat.com, hdanton@sina.com,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+On Fri, 20 Sep 2019 18:35:58 +0200
+Jean-Philippe Brucker <jean-philippe@linaro.org> wrote:
 
-commit 2baec2c3f854d1f79c7bb28386484e144e864a14
-Author: David Howells <dhowells@redhat.com>
-Date:   Wed May 24 16:02:32 2017 +0000
+> On Wed, Sep 18, 2019 at 04:26:33PM -0700, Jacob Pan wrote:
+> > +/*
+> > + * struct ioasid_allocator_data - Internal data structure to hold
+> > information
+> > + * about an allocator. There are two types of allocators:
+> > + *
+> > + * - Default allocator always has its own XArray to track the
+> > IOASIDs allocated.
+> > + * - Custom allocators may share allocation helpers with different
+> > private data.
+> > + *   Custom allocators share the same helper functions also share
+> > the same
+> > + *   XArray.  
+> 
+> "that share the same helper"
+> 
+> > + * Rules:
+> > + * 1. Default allocator is always available, not dynamically
+> > registered. This is
+> > + *    to prevent race conditions with early boot code that want to
+> > register
+> > + *    custom allocators or allocate IOASIDs.
+> > + * 2. Custom allocators take precedence over the default allocator.
+> > + * 3. When all custom allocators sharing the same helper functions
+> > are
+> > + *    unregistered (e.g. due to hotplug), all outstanding IOASIDs
+> > must be
+> > + *    freed.
+> > + * 4. When switching between custom allocators sharing the same
+> > helper
+> > + *    functions, outstanding IOASIDs are preserved.
+> > + * 5. When switching between custom allocator and default
+> > allocator, all IOASIDs
+> > + *    must be freed to ensure unadulterated space for the new
+> > allocator.
+> > + *
+> > + * @ops:	allocator helper functions and its data
+> > + * @list:	registered custom allocators
+> > + * @slist:	allocators share the same ops but different data
+> > + * @flags:	attributes of the allocator
+> > + * @xa		xarray holds the IOASID space
+> > + * @users	number of allocators sharing the same ops and
+> > XArray
+> > + */
+> > +struct ioasid_allocator_data {
+> > +	struct ioasid_allocator_ops *ops;
+> > +	struct list_head list;
+> > +	struct list_head slist;
+> > +#define IOASID_ALLOCATOR_CUSTOM BIT(0) /* Needs framework to track
+> > results */
+> > +	unsigned long flags;
+> > +	struct xarray xa;
+> > +	refcount_t users;
+> > +};
+> > +
+> > +static DEFINE_SPINLOCK(ioasid_allocator_lock);  
+> 
+> Thanks for making this a spinlock! I hit that sleep-in-atomic problem
+> while updating iommu-sva to the new MMU notifier API, which doesn't
+> allow sleeping in the free() callback.
+> 
+> I don't like having to use GFP_ATOMIC everywhere as a result, but
+> can't see a better way. Maybe we can improve that later.
+> 
+> [...]
+> > +/**
+> > + * ioasid_unregister_allocator - Remove a custom IOASID allocator
+> > ops
+> > + * @ops: the custom allocator to be removed
+> > + *
+> > + * Remove an allocator from the list, activate the next allocator
+> > in
+> > + * the order it was registered. Or revert to default allocator if
+> > all
+> > + * custom allocators are unregistered without outstanding IOASIDs.
+> > + */
+> > +void ioasid_unregister_allocator(struct ioasid_allocator_ops *ops)
+> > +{
+> > +	struct ioasid_allocator_data *pallocator;
+> > +	struct ioasid_allocator_ops *sops;
+> > +
+> > +	spin_lock(&ioasid_allocator_lock);
+> > +	if (list_empty(&allocators_list)) {
+> > +		pr_warn("No custom IOASID allocators active!\n");
+> > +		goto exit_unlock;
+> > +	}
+> > +
+> > +	list_for_each_entry(pallocator, &allocators_list, list) {
+> > +		if (!use_same_ops(pallocator->ops, ops))
+> > +			continue;
+> > +
+> > +		if (refcount_read(&pallocator->users) == 1) {
+> > +			/* No shared helper functions */
+> > +			list_del(&pallocator->list);
+> > +			/*
+> > +			 * All IOASIDs should have been freed
+> > before
+> > +			 * the last allocator that shares the same
+> > ops
+> > +			 * is unregistered.
+> > +			 */
+> > +			WARN_ON(!xa_empty(&pallocator->xa));  
+> 
+> The function doc seems to say that we revert to the default allocator
+> only if there wasn't any outstanding IOASID, which isn't what this
+> does. To follow the doc, we'd need to return here instead of
+> continuing. The best solution would be to return with an error, but
+> since we don't propagate errors I think leaking stuff is preferable
+> to leaving the allocator registered, since the caller might free the
+> ops when this function return. So I would keep the code like that but
+> change the function's comment. What do you think is best?
+> 
+I agree, unregister allocator should not fail. I will change the
+comments stating that if allocator is unregistered prior to freeing all
+outstanding IOASIDs, these IOASIDs will be orphaned and lost.
 
-     rxrpc: Support network namespacing
+> > +			kfree(pallocator);
+> > +			if (list_empty(&allocators_list)) {
+> > +				pr_info("No custom IOASID
+> > allocators, switch to default.\n");
+> > +				active_allocator =
+> > &default_allocator;  
+> 
+> I'm concerned about the active_allocator variable, because
+> ioasid_find() accesses it without holding ioasid_allocator_lock. It
+> is holding the RCU read lock, so I think we need to free pallocator
+> after a RCU grace period (using kfree_rcu)? I think we also need to
+> update active_allocator with rcu_assign_pointer() and dereference it
+> with rcu_dereference()
+> 
+right, will do. ioasid_find is on the fast path, so we try not to use
+spinlock.
+> > +			} else if (pallocator == active_allocator)
+> > {
+> > +				active_allocator =
+> > list_first_entry(&allocators_list, struct ioasid_allocator_data,
+> > list);
+> > +				pr_info("IOASID allocator
+> > changed");
+> > +			}
+> > +			break;
+> > +		}
+> > +		/*
+> > +		 * Find the matching shared ops to delete,
+> > +		 * but keep outstanding IOASIDs
+> > +		 */
+> > +		list_for_each_entry(sops, &pallocator->slist,
+> > list) {
+> > +			if (sops == ops) {
+> > +				list_del(&ops->list);
+> > +				if
+> > (refcount_dec_and_test(&pallocator->users))
+> > +					pr_err("no shared
+> > ops\n");  
+> 
+> That's not possible, right, since dec_and_test only returns true if
+> pallocator->users was 1, which we already checked against? I find
+> pallocator->users a bit redundant since you can use list_is_empty() or
+> list_is_singular() on pallocator->slist
+> 
+you are right, no need for the refcount, just check the status of the
+shared op list.
+> [...]
+> >  ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
+> > ioasid_t max, void *private)
+> >  {
+> > -	ioasid_t id;
+> >  	struct ioasid_data *data;
+> > +	void *adata;
+> > +	ioasid_t id;
+> >  
+> >  	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> >  	if (!data)
+> > @@ -76,14 +324,34 @@ ioasid_t ioasid_alloc(struct ioasid_set *set,
+> > ioasid_t min, ioasid_t max, data->set = set;
+> >  	data->private = private;
+> >  
+> > -	if (xa_alloc(&ioasid_xa, &id, data, XA_LIMIT(min, max),
+> > GFP_KERNEL)) {
+> > -		pr_err("Failed to alloc ioasid from %d to %d\n",
+> > min, max);
+> > +	/*
+> > +	 * Custom allocator needs allocator data to perform
+> > platform specific
+> > +	 * operations.
+> > +	 */
+> > +	spin_lock(&ioasid_allocator_lock);
+> > +	adata = active_allocator->flags &
+> > IOASID_ALLOCATOR_CUSTOM ? active_allocator->ops->pdata : data;
+> > +	id = active_allocator->ops->alloc(min, max, adata);
+> > +	if (id == INVALID_IOASID) {
+> > +		pr_err("Failed ASID allocation %lu\n",
+> > active_allocator->flags); goto exit_free;
+> >  	}
+> > +
+> > +	if (active_allocator->flags & IOASID_ALLOCATOR_CUSTOM) {
+> > +		/* Custom allocator needs framework to store and
+> > track allocation results */
+> > +		min = max = id;
+> > +
+> > +		if (xa_alloc(&active_allocator->xa, &id, data,
+> > XA_LIMIT(min, max), GFP_KERNEL)) {  
+> 
+> Or just XA_LIMIT(id, id), and merge the two ifs?
+> 
+much better, thanks for the suggestions.
+> You do need GFP_ATOMIC here.
+> 
+right, will change.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16240b09600000
-start commit:   f97c81dc Merge tag 'armsoc-late' of git://git.kernel.org/p..
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=15240b09600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11240b09600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61f948934213449f
-dashboard link: https://syzkaller.appspot.com/bug?extid=eed305768ece6682bb7f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cf8ea1600000
+> > +			pr_err("Failed to alloc ioasid from %d to
+> > %d\n", min, max);  
+> 
+> Maybe just "Failed to alloc ioasid %d\n" then
+> 
+agreed. just failed on a specific id, not range.
+> > +			active_allocator->ops->free(id, NULL);  
+> 
+> Why doesn't this call need to pass active_allocator->ops->pdata like
+> the one in ioasid_free()?
+> 
+Good catch, this call also need pdata.
+> Thanks,
+> Jean
 
-Reported-by: syzbot+eed305768ece6682bb7f@syzkaller.appspotmail.com
-Fixes: 2baec2c3f854 ("rxrpc: Support network namespacing")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
