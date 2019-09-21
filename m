@@ -2,101 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 932CCB9CE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 09:27:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9EEB9CEC
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 09:32:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbfIUH0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 03:26:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45204 "EHLO huawei.com"
+        id S2437700AbfIUHcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 03:32:05 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39616 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731071AbfIUH0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 03:26:53 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2127DC7C5191A21989DE;
-        Sat, 21 Sep 2019 15:26:46 +0800 (CST)
-Received: from [127.0.0.1] (10.57.88.168) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Sat, 21 Sep 2019
- 15:26:39 +0800
-Subject: Re: [PATCH] tty:vt: Add check the return value of kzalloc to avoid
- oops
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Pitre <nico@fluxnic.net>
-CC:     <penberg@cs.helsinki.fi>, <jslaby@suse.com>,
-        <textshell@uchuujin.de>, <sam@ravnborg.org>,
-        <daniel.vetter@ffwll.ch>, <mpatocka@redhat.com>,
-        <ghalat@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <yangyingliang@huawei.com>, <yuehaibing@huawei.com>,
-        <zengweilin@huawei.com>
-References: <1568884695-56789-1-git-send-email-nixiaoming@huawei.com>
- <20190919092933.GA2684163@kroah.com>
- <nycvar.YSQ.7.76.1909192251210.24536@knanqh.ubzr>
- <20190920060426.GA473496@kroah.com>
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-Message-ID: <bee63793-e9f4-ecc4-7966-765207009c75@huawei.com>
-Date:   Sat, 21 Sep 2019 15:26:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731097AbfIUHcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 03:32:05 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0EA66880282CD6222434;
+        Sat, 21 Sep 2019 15:32:02 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 21 Sep
+ 2019 15:31:54 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>
+CC:     LKML <linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH] erofs: fix erofs_get_meta_page locking by a cleanup
+Date:   Sat, 21 Sep 2019 15:30:35 +0800
+Message-ID: <20190921073035.209811-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20190920060426.GA473496@kroah.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.88.168]
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+After doing more drop_caches stress test on
+our products, I found the mistake introduced by
+a very recent cleanup [1].
 
-On 2019/9/20 14:04, Greg KH wrote:
-> On Thu, Sep 19, 2019 at 10:56:15PM -0400, Nicolas Pitre wrote:
->> On Thu, 19 Sep 2019, Greg KH wrote:
->>
->>> On Thu, Sep 19, 2019 at 05:18:15PM +0800, Xiaoming Ni wrote:
->>>> Using kzalloc() to allocate memory in function con_init(), but not
->>>> checking the return value, there is a risk of null pointer references
->>>> oops.
->>>>
->>>> Signed-off-by: Xiaoming Ni <nixiaoming@huawei.com>
->>>
->>> We keep having this be "reported" :(
->>
->> Something probably needs to be "communicated" about that.
-> 
-> I know, but it's also kind of fun to see what these "automated" checkers
-> find, sometimes the resulting patches almost work properly :)
-> 
-> This one is really close, I think if the likely/unlikely gets cleaned
-> up, it is viable.
-> 
->>>>  		vc_cons[currcons].d = vc = kzalloc(sizeof(struct vc_data), GFP_NOWAIT);
->>>> +		if (unlikely(!vc)) {
->>>> +			pr_warn("%s:failed to allocate memory for the %u vc\n",
->>>> +					__func__, currcons);
->>>> +			break;
->>>> +		}
->>>
->>> At init, this really can not happen.  Have you see it ever happen?
->>
->> This is maybe too subtle a fact. The "communication" could be done with 
->> some GFP_WONTFAIL flag, and have the allocator simply pannic() if it 
->> ever fails.
-> 
-> That's a good idea to do as well.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> .
-> 
-Thank you for your advice.
+The current rule is that "erofs_get_meta_page"
+should be returned with page locked (although
+it's mostly unnecessary for read-only fs after
+pages are PG_Uptodate), but a fix should be
+done for this.
 
-@ Nicolas Pitre
-Can I make a v2 patch based on your advice ?
-Or you will submit a patch for "GFP_WONTFAIL" yourself ?
+[1] https://lore.kernel.org/r/20190904020912.63925-26-gaoxiang25@huawei.com
+Fixes: 618f40ea026b ("erofs: use read_cache_page_gfp for erofs_get_meta_page")
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ fs/erofs/data.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-thanks
-Xiaoming Ni
-
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 8a9fcbd0e8ac..e0207dba31cb 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -34,11 +34,17 @@ static void erofs_readendio(struct bio *bio)
+ 
+ struct page *erofs_get_meta_page(struct super_block *sb, erofs_blk_t blkaddr)
+ {
+-	struct inode *const bd_inode = sb->s_bdev->bd_inode;
+-	struct address_space *const mapping = bd_inode->i_mapping;
++	struct address_space *const mapping = sb->s_bdev->bd_inode->i_mapping;
++	struct page *page;
+ 
+-	return read_cache_page_gfp(mapping, blkaddr,
++	page = read_cache_page_gfp(mapping, blkaddr,
+ 				   mapping_gfp_constraint(mapping, ~__GFP_FS));
++	if (IS_ERR(page))
++		return PTR_ERR(page);
++
++	/* should already be PageUptodate */
++	lock_page(page);
++	return page;
+ }
+ 
+ static int erofs_map_blocks_flatmode(struct inode *inode,
+-- 
+2.17.1
 
