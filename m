@@ -2,74 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5A46B9F11
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7813DB9F1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:10:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407851AbfIUREC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 13:04:02 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32977 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406192AbfIUREC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 13:04:02 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b9so9802847wrs.0;
-        Sat, 21 Sep 2019 10:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=55amjIu2TF3CCD9dfZQ7gR+oWC1rkKKs0l26DxHMq2I=;
-        b=ux3fQc910IEW3PhTVTjkp+MKFpIHLHjhin61mmPdzaqD9j6z9Bh1v+6QQIXhqsn8V8
-         vVfT0zEhnayS+nlKVow11xrXEVvHHaOoIYgkv8AtvQxY3lmoQfBeBb5JiJdi8VyPToTs
-         NLuqLWTcx2RzwPnzxqQLXxG0IMIm5org8JvP4E7mNyF9PqH1roOYKkWrcqcdQJqnc7qC
-         ufHm0YBE23Z2ijPma0C33C6dO3u9XbnhjtvuoOGEjl0outphR/3WsHkHiy1NDb3QG/Mz
-         40zZlD5ILulJelu3ipm5lWBQq8oPrUvBdrfdzIlPjhMp9yFomWqEAHOb+UVp1PfkgfiX
-         hMfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=55amjIu2TF3CCD9dfZQ7gR+oWC1rkKKs0l26DxHMq2I=;
-        b=ogHo4SrgaMV6B8OgeUYqKDmcAoKfuA2BWSkF73Eujm6B0HroP2ptgY4fbdWKHyAC8D
-         XLUl+3X+rBcMpG8G9Xamp/o9e5an6iND3cSO5QYj4af7bXs+u/dV3fePdX8tYP2UiOrW
-         8AsmZceI+tXcNyScx7bBZD0wOkDqp5I2rlNit6NIVSl5GkOJbk9Rml5cdHfRPWdnZ/5S
-         AzpeEj366dGF/30kRTRPGoKGZkuxCHGV6T+ODhfv0S2gxHETDRAqJ4iXyCJ+pVC0GQSk
-         jjEN99Aje4bVfvxqOTLpdfNMVUaxBGxyXT3QI5z7asxH/zRLH/IqjwSt5BFHHP3l/L1U
-         1fTw==
-X-Gm-Message-State: APjAAAULq3IfaH1nLc9+1lCs6kC3J+11Klr880JVjUbtiAiLPnu3Q6vz
-        aauGHdpwwpa150haGwvRG7LOmKF0
-X-Google-Smtp-Source: APXvYqxFL84KLpSZMc5/N059+0hlyRMOj1E0IZ+6Y7dGH/TmX232EhUn0HdzjZ8RYcOqvPmaKLSWRw==
-X-Received: by 2002:adf:de08:: with SMTP id b8mr14928562wrm.200.1569085439582;
-        Sat, 21 Sep 2019 10:03:59 -0700 (PDT)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id t14sm5136519wrs.6.2019.09.21.10.03.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 21 Sep 2019 10:03:59 -0700 (PDT)
-Date:   Sat, 21 Sep 2019 19:03:57 +0200
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     mjpeg-users@lists.sourceforge.net, linux-media@vger.kernel.org,
-        mchehab@kernel.org, laurent.pinchart@ideasonboard.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: bringing back media/zoran driver
-Message-ID: <20190921170357.GA26626@Red>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731127AbfIURKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 13:10:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726465AbfIURKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 13:10:22 -0400
+Subject: Re: [GIT PULL] printk for 5.4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569085822;
+        bh=EStalLVlkrFkvERQtdrDZSLsXj8Di/QwCb/l6m8W8Bs=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=u0U/a7u90qr20rRY92QE3M6ngVS2vGMfg21m2ZwJjU77+ttu33RvdSnE1+z/m4+/k
+         IM07mZG3F1GwQJBoDZSpRxxuYrSLlJ2fw4mbzmPB4dfsBZC3wFWzMgCqYjmUJI+eF2
+         3yeQditcHbCNQxejnPhQsu5WYu0PL2Ffc9hjHaMA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190916112431.jsts2owcco5pg4jg@pathway.suse.cz>
+References: <20190916112431.jsts2owcco5pg4jg@pathway.suse.cz>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190916112431.jsts2owcco5pg4jg@pathway.suse.cz>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk
+ tags/printk-for-5.4
+X-PR-Tracked-Commit-Id: ae88de56a1893bdccc7b5af8c12556de649d675e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 56c1e8343494f0a315c99964ea1a952478394a8d
+Message-Id: <156908582197.8665.6078284819252997115.pr-tracker-bot@kernel.org>
+Date:   Sat, 21 Sep 2019 17:10:21 +0000
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hello
+The pull request you sent on Mon, 16 Sep 2019 13:24:31 +0200:
 
-I am the owner of a zoran based DC10+ card.
-I am in the need of using it since yesterday and I found that its driver was removed.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk tags/printk-for-5.4
 
-Reverting the removing patch made to a temporary working situation.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/56c1e8343494f0a315c99964ea1a952478394a8d
 
-If I understand correctly, it was removed due to lack of vb2 convertion.
-If I am able to do this vb2 conversion, does bring it back in mainline will be posssible ?
-In that case I am ready to assume to be the maintainer if needed.
+Thank you!
 
-Regards
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
