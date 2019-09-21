@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D7C2B9EAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 17:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64532B9EB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 17:37:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438276AbfIUPbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 11:31:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52862 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389131AbfIUPbz (ORCPT
+        id S2438317AbfIUPhk convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 21 Sep 2019 11:37:40 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:58904 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438303AbfIUPhj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 11:31:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=8PmFm3Ly74x23hP2R9ri85RFIU5A1cox0jMPByyW+Tc=; b=JgVAv2oWNL8JcdncfAzhmr88E
-        BRxgEuBJGO3RXO0xxKlmXuEInWJgSQwauiaQPyx5j+oUqASWzL0aUPWyOP6kQOwEONpCGvwjTU3Pp
-        FjsRzovkmaYCOcnLXeNLYkx6yhcIXulqGn2IqCXh7v8bu31kcDiCMLI1SD3Oqno4AucxKsynJWbSO
-        /6T827HLMcWDa8sazxmyeq6CdgsNLe2yPvnEZTNRk9r3swRYcapwt7NryzliPoRCDuyqII/KR5l0g
-        Tv+hyzGxFCjD+WCg2zD5LGbonL+v1f4FSkXPcRsw4GxWN+Iy6FTdr0iEPTFwtf/hxlJrVoFE5Vjtz
-        uzLV+ynHw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iBhMV-0008Rg-KL; Sat, 21 Sep 2019 15:31:51 +0000
-Date:   Sat, 21 Sep 2019 08:31:51 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jia He <justin.he@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Suzuki Poulose <Suzuki.Poulose@arm.com>,
-        Punit Agrawal <punitagrawal@gmail.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Alex Van Brunt <avanbrunt@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ralph Campbell <rcampbell@nvidia.com>, hejianet@gmail.com,
-        Kaly Xin <Kaly.Xin@arm.com>, nd@arm.com
-Subject: Re: [PATCH v8 3/3] mm: fix double page fault on arm64 if PTE_AF is
- cleared
-Message-ID: <20190921153151.GE15392@bombadil.infradead.org>
-References: <20190921135054.142360-1-justin.he@arm.com>
- <20190921135054.142360-4-justin.he@arm.com>
+        Sat, 21 Sep 2019 11:37:39 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 0E94B608310C;
+        Sat, 21 Sep 2019 17:37:37 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 8SXr9EMJTOpX; Sat, 21 Sep 2019 17:37:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 55133613E499;
+        Sat, 21 Sep 2019 17:37:36 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id bXykVNXxa5Ah; Sat, 21 Sep 2019 17:37:36 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 1042D608310C;
+        Sat, 21 Sep 2019 17:37:36 +0200 (CEST)
+Date:   Sat, 21 Sep 2019 17:37:35 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Hou Tao <houtao1@huawei.com>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Boris Brezillon <bbrezillon@kernel.org>, dilinger@queued.net,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        daniel santos <daniel.santos@pobox.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Message-ID: <1837147225.3667.1569080255850.JavaMail.zimbra@nod.at>
+In-Reply-To: <b2425bd2-38e9-cb9b-4151-94891f3a71d1@huawei.com>
+References: <1568962478-126260-1-git-send-email-nixiaoming@huawei.com> <20190920114336.GM1131@ZenIV.linux.org.uk> <206f8d57-dad9-26c3-6bf6-1d000f5698d4@huawei.com> <20190920124532.GN1131@ZenIV.linux.org.uk> <20190920125442.GA20754@ZenIV.linux.org.uk> <eb679ad2-4020-951c-e4d1-60cb059a5ca8@huawei.com> <CAFLxGvzeLTVfA17DMEi5tSkzkUgJncjX5oHWe207x7bfUtugtw@mail.gmail.com> <b2425bd2-38e9-cb9b-4151-94891f3a71d1@huawei.com>
+Subject: Re: [PATCH] jffs2:freely allocate memory when parameters are
+ invalid
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190921135054.142360-4-justin.he@arm.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: jffs2:freely allocate memory when parameters are invalid
+Thread-Index: jsGu5gCQ4Vd/48D/3p31+ncM705uWQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 21, 2019 at 09:50:54PM +0800, Jia He wrote:
-> When we tested pmdk unit test [1] vmmalloc_fork TEST1 in arm64 guest, there
-> will be a double page fault in __copy_from_user_inatomic of cow_user_page.
-> 
-> Below call trace is from arm64 do_page_fault for debugging purpose
-> [  110.016195] Call trace:
-> [  110.016826]  do_page_fault+0x5a4/0x690
-> [  110.017812]  do_mem_abort+0x50/0xb0
-> [  110.018726]  el1_da+0x20/0xc4
-> [  110.019492]  __arch_copy_from_user+0x180/0x280
-> [  110.020646]  do_wp_page+0xb0/0x860
-> [  110.021517]  __handle_mm_fault+0x994/0x1338
-> [  110.022606]  handle_mm_fault+0xe8/0x180
-> [  110.023584]  do_page_fault+0x240/0x690
-> [  110.024535]  do_mem_abort+0x50/0xb0
-> [  110.025423]  el0_da+0x20/0x24
-> 
-> The pte info before __copy_from_user_inatomic is (PTE_AF is cleared):
-> [ffff9b007000] pgd=000000023d4f8003, pud=000000023da9b003, pmd=000000023d4b3003, pte=360000298607bd3
-> 
-> As told by Catalin: "On arm64 without hardware Access Flag, copying from
-> user will fail because the pte is old and cannot be marked young. So we
-> always end up with zeroed page after fork() + CoW for pfn mappings. we
-> don't always have a hardware-managed access flag on arm64."
-> 
-> This patch fix it by calling pte_mkyoung. Also, the parameter is
-> changed because vmf should be passed to cow_user_page()
-> 
-> Add a WARN_ON_ONCE when __copy_from_user_inatomic() returns error
-> in case there can be some obscure use-case.(by Kirill)
-> 
-> [1] https://github.com/pmem/pmdk/tree/master/src/test/vmmalloc_fork
-> 
-> Reported-by: Yibo Cai <Yibo.Cai@arm.com>
-> Signed-off-by: Jia He <justin.he@arm.com>
+Tao,
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+----- Ursprüngliche Mail -----
+> Von: "Hou Tao" <houtao1@huawei.com>
+> In Huawei we use jffs2 broadly in our products to support filesystem on raw
+> NOR flash and NAND flash, so fixing the bugs in jffs2 means a lot to us.
+> 
+> Although I have not read all of jffs2 code thoroughly, I had find and "fixed"
+> some bugs in jffs2 and I am willing to do any help in the jffs2 community. Maybe
+> we can start by testing and reviewing the pending patches in patch work ?
+
+yes, this is a good idea.
+In MTD's patchwork the jffs2 queue is in bad shape. I tried to catch up
+but failed to find enough time. So with more eyeballs I think we can bring it
+in shape again.
+Basically we need to classify which patches fix important stuff and which do not.
+
+Some time ago I make xfstests work with jffs2, I can share (and upstream) these
+patches too.
+One of my goals is making sure that we don't break jffs2. xfstests can help.
+
+Are you on the OFTC IRC network? On #mtd you can find us MTD guys.
+
+Thanks,
+//richard
