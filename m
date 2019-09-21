@@ -2,73 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 185ADB9BEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 03:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E890AB9BF0
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 03:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437309AbfIUBzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 21:55:53 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:38614 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437018AbfIUBzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 21:55:52 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 3C6878FF3F0438D8E6E6;
-        Sat, 21 Sep 2019 09:55:50 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x8L1ta04061200;
-        Sat, 21 Sep 2019 09:55:36 +0800 (GMT-8)
-        (envelope-from zhang.lin16@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019092109561847-3748946 ;
-          Sat, 21 Sep 2019 09:56:18 +0800 
-From:   zhanglin <zhang.lin16@zte.com.cn>
-To:     paul@paul-moore.com
-Cc:     sds@tycho.nsa.gov, eparis@parisplace.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, jiang.xuexin@zte.com.cn,
-        zhanglin <zhang.lin16@zte.com.cn>
-Subject: [PATCH] selinux: Remove load size limit
-Date:   Sat, 21 Sep 2019 09:57:15 +0800
-Message-Id: <1569031035-12354-1-git-send-email-zhang.lin16@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-09-21 09:56:18,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-09-21 09:55:42,
-        Serialize complete at 2019-09-21 09:55:42
-X-MAIL: mse-fl1.zte.com.cn x8L1ta04061200
+        id S1730785AbfIUB7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 21:59:07 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:38555 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404899AbfIUB7E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Sep 2019 21:59:04 -0400
+Received: by mail-qk1-f194.google.com with SMTP id u186so9272306qkc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 18:59:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=K0xV+Q/+lH76qOTLHDeb3Rh6Bv6ZBT2WraMP2UWkKjo=;
+        b=kUQMMuXZKtVLWjQKUDQyrAgbpeaceIA2XHUy6ZVa7euUj6gsHX7ejCXN1o5KhlEC1A
+         n9RgkwV5q6GBbqTktGELZT4rqF4ta0V87SpGEOhE87LFAy6xJa23LYNqwhPGFusvoTZy
+         7LbfRvKH9XX3VsE5OebA1n/TP1v3Exnb79JTXEcL6HQNgZ7Y8DAeqDs5NIig/ifoRmWA
+         YvvJ+fQ/smPo9ehuAVdoJkXID6d1AWQRdQ8DTnvj2dtaRJVuyCvRE2f9H7ykzsheISxe
+         ZchxaBNF/R8FLjKAvkwL2YbOCVgHnDRfVBOxFpCi+aPETJwHn6+BUqqpuiUW+qvmbtOl
+         cqmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=K0xV+Q/+lH76qOTLHDeb3Rh6Bv6ZBT2WraMP2UWkKjo=;
+        b=nMN07oIKT3mgysRzPjiqvKMJJ5+PqHuL/+SeVzo3EmJ1UaP2ccKrvrnzYOHZbxdqWG
+         lxrI/okTeLLQvx/z8ucFFVnT0wQAFinm6hR1XImuP7aMCWvJ6fMAYMgGKXSrfFXH5Uex
+         Nu3EmlyUrU4sxGC12eY3YtygpDV4JWsSnEH8X4PxopJItuCq30hpG3XEVkm21hHi3WTs
+         8LFGZXdzsVjTCZq1VOxsvyd2wClQnPR+rZWHeQFPWqDZpBH7bp4YSJTN4XusOdKd9fBE
+         ZoI/QJ6R/oXOrSUcwhJ4jyfXl/7Mooy+m76d8N3fLtm9F1ltkJ48GraofGZoXAMGxp8q
+         ROVA==
+X-Gm-Message-State: APjAAAW1AXLSacg0+9lW5TjfLKWLfDVEsun2rGUMlAZyzC18hVUqkz+K
+        dyqni8RPo8JlVSV+LFfFSQrBn9mW5HE=
+X-Google-Smtp-Source: APXvYqzjGPQtE8Y6sHZG9JaqI1r/KJoOZFrWFWqe4IGv9iu7j2P2VgCYm0PYtma5uli6Vxi6rkdlAw==
+X-Received: by 2002:a37:2e42:: with SMTP id u63mr6729022qkh.157.1569031143058;
+        Fri, 20 Sep 2019 18:59:03 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id w131sm2150108qka.85.2019.09.20.18.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2019 18:59:02 -0700 (PDT)
+Date:   Fri, 20 Sep 2019 18:58:59 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
+Cc:     <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <davem@davemloft.net>,
+        <robh+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: net: remove un-implemented property
+Message-ID: <20190920185859.6ebf05f1@cakuba.netronome.com>
+In-Reply-To: <20190918111447.3084-1-alexandru.ardelean@analog.com>
+References: <20190918111447.3084-1-alexandru.ardelean@analog.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Load size was limited to 64MB, this was legacy limitation due to vmalloc()
-which was removed a while ago.
+On Wed, 18 Sep 2019 14:14:47 +0300, Alexandru Ardelean wrote:
+> The `adi,disable-energy-detect` property was implemented in an initial
+> version of the `adin` driver series, but after a review it was discarded in
+> favor of implementing the ETHTOOL_PHY_EDPD phy-tunable option.
+> 
+> With the ETHTOOL_PHY_EDPD control, it's possible to disable/enable
+> Energy-Detect-Power-Down for the `adin` PHY, so this device-tree is not
+> needed.
+> 
+> Fixes: 767078132ff9 ("dt-bindings: net: add bindings for ADIN PHY driver")
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-Limiting load size to 64MB is both pointless and affects real world use
-cases.
-
-Signed-off-by: zhanglin <zhang.lin16@zte.com.cn>
----
- security/selinux/selinuxfs.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index f3a5a138a096..4249400e9712 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -549,10 +549,6 @@ static ssize_t sel_write_load(struct file *file, const char __user *buf,
- 	if (*ppos != 0)
- 		goto out;
- 
--	length = -EFBIG;
--	if (count > 64 * 1024 * 1024)
--		goto out;
--
- 	length = -ENOMEM;
- 	data = vmalloc(count);
- 	if (!data)
--- 
-2.17.1
-
+Applied, thank you!
