@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 474F7B9B95
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 02:21:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3326B9B92
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 02:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405181AbfIUAU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 20:20:57 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:54533 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436973AbfIUATW (ORCPT
+        id S2437145AbfIUAUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 20:20:49 -0400
+Received: from mail-yw1-f74.google.com ([209.85.161.74]:49478 "EHLO
+        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437174AbfIUAT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 20:19:22 -0400
-Received: by mail-qk1-f201.google.com with SMTP id v143so10124576qka.21
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 17:19:22 -0700 (PDT)
+        Fri, 20 Sep 2019 20:19:29 -0400
+Received: by mail-yw1-f74.google.com with SMTP id 2so6815973ywj.16
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 17:19:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=XOGsKwy33nriWO2piNArgCsTjyMNHJTJvDyvFgo5s6U=;
-        b=Sgz7213+qbN86RpnjYxwE7eAvRTa0YN6r1fXC9nQwi+bQLfmJ0RS4WpN0N81z/odi6
-         XGU7gCUSbBUdgle5NaqiHXybHGODmoKDWh/0HAkn64T1Co7SCCYmXUpCIrrnRh6Jb2Ll
-         XjhlpTMqtnLolZQwP4aDBcCgL59XhMxAa5lJCd2J1Bs9Ujfs0mesiC80xjKZ798sbyV+
-         vVOclVVTpXfND0vcjZ+oQRPMBJniMNy5trFLGfHLvvfXmpzxMSeWVg1bhaD800YWS3Zv
-         cO7oaTS4ubnNeNZIACnRD79K40w8Hjvmr0YhQlHzIcQKEkRRSV52zVfDjQ/PSTjPN9NX
-         xkxQ==
+        bh=Ps4mUI1wXYQhLtVI103dUb/qTWn9bG8Bcp8PtHYLuE4=;
+        b=EpNbfjIJuRPOCOw8ygVt5WAvRpQfiHatGYZwjgY/UZ3UU4/J5JO29UPtRNCKNGwr4u
+         HR5TU9ANXlXVmgDGBTzBUUqpxyem/qzyq7qmjUXu1MGvm2lf3eReibfSpVaSU1x46VOX
+         vQaLLmYjM8czMG9fp6VLmj58rn147nDT/G87jkl9sYjW+zzWZtggw8MOoUMcsRv1YSdu
+         OcSmW/Yfal5Mdf89cgfBhi4EHglzpZ23RP8my3Qer2lvn0/q9sKxat8FQ+A1Oc8q35Es
+         5PlZkq0yAipFEDl8SPEYZTEdNhhJ5hP1AsApRbss8lUYOAmCSW0WkUqxjyIWZ7co7DUi
+         5fZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=XOGsKwy33nriWO2piNArgCsTjyMNHJTJvDyvFgo5s6U=;
-        b=rJ/fvHDArwMyFYHFgZKF6Qh7FgxJbCG5MGr0PEabupuEPe9CDB1iEMQ+GN6reto3jy
-         h4y938CI24reOCnWbXLvGYOyAw2E/9gqtc/X0GlS43WhVMPeEGpPhAu7gXIDmKkeyHFc
-         iJc58BzXLdcBRCz7H+ks6K4bew3dKYgQxL6W4GYiqRjur8a/g7kNp0OVNkVEkhE0M94a
-         N8EqsVbw8INGDbU6aTfVlHhploAoyocXlzZV5gRj8YlqsXwqLMAus181CKBFj7hJAHJ1
-         zn3jfSWOK8YZMOzKQY9vGGE3WPsypFGx0GwOcF9x3+WodrZHkdp7uOmFTKSU4MXaYY+r
-         4PqQ==
-X-Gm-Message-State: APjAAAW5tYyfUVV5+wK347Y8Fh6GErG/MDE5sjiPQJk+3lxwxO0KbB00
-        dWbQGS6hDyn87nPCOqWTwUBZBNksYCvr1QS6ASwkVQ==
-X-Google-Smtp-Source: APXvYqyhYc2gzw2zw7hNHJ45JP5rJlx8noEcdat85g5q14wTmwmkyJ6JmxX9AzFR4w2ah2LgF306gHYAybhUcuUrVrOySQ==
-X-Received: by 2002:a0c:9792:: with SMTP id l18mr12691255qvd.79.1569025161226;
- Fri, 20 Sep 2019 17:19:21 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 17:18:42 -0700
+        bh=Ps4mUI1wXYQhLtVI103dUb/qTWn9bG8Bcp8PtHYLuE4=;
+        b=mirbEsYLcYcZuk0/vjSRv4JVem47ii3t1xJk71+dy9GRalNAdFIJIg8Gtx4cvXsBFj
+         ZNuReKsWB7hQOQKp9Wqum2a5Z+fI3qx1yfVY+uDyuoA7MUg0QkYRTueJvsMc6tR8a1yA
+         FkxJogMj0lyEztEUQj7+zHi2+yDs8oLl+2cvRBwsyyxTbQBSyKOBTxjrlBpWHor/MiCy
+         P6zf7EGFCEHLEp2cqGIrweEWU+cSNUQIhTHlneMQFu/c8owrFBGfUyYYPT4yAhyPVqOl
+         UpYDPiAVQCTJBdND0DzuiE0G1mWVfAlbPdbxdIu1T/ls08+oO5vWBU1kteDnbblJrXYQ
+         5VZA==
+X-Gm-Message-State: APjAAAUJt8ZESl2+OKQvivcdtl0IJq7OyLtTxY/LbFFTKSpLqXdzgWoZ
+        UhxFlZfUzonh5D0p9+4M+nAs2MeyfKJu7JI61zBnQQ==
+X-Google-Smtp-Source: APXvYqxnvbMbdy5YJ/mEtKLf76ImSyCOMAVrkXJYz9e4+aH2Re3qbb/KlZrY7S4PNlrAaGxfIXAnQgsfQqHuv/2j4Q6tqA==
+X-Received: by 2002:a25:8201:: with SMTP id q1mr12174472ybk.373.1569025166777;
+ Fri, 20 Sep 2019 17:19:26 -0700 (PDT)
+Date:   Fri, 20 Sep 2019 17:18:44 -0700
 In-Reply-To: <20190921001855.200947-1-brendanhiggins@google.com>
-Message-Id: <20190921001855.200947-7-brendanhiggins@google.com>
+Message-Id: <20190921001855.200947-9-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20190921001855.200947-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
-Subject: [PATCH v17 06/19] lib: enable building KUnit in lib/
+Subject: [PATCH v17 08/19] objtool: add kunit_try_catch_throw to the noreturn list
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
         jpoimboe@redhat.com, keescook@google.com,
@@ -67,54 +67,43 @@ Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
         richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
         wfg@linux.intel.com, torvalds@linux-foundation.org,
         Brendan Higgins <brendanhiggins@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>
+        kbuild test robot <lkp@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KUnit is a new unit testing framework for the kernel and when used is
-built into the kernel as a part of it. Add KUnit to the lib Kconfig and
-Makefile to allow it to be actually built.
+Fix the following warning seen on GCC 7.3:
+  kunit/test-test.o: warning: objtool: kunit_test_unsuccessful_try() falls through to next function kunit_test_catch()
 
+kunit_try_catch_throw is a function added in the following patch in this
+series; it allows KUnit, a unit testing framework for the kernel, to
+bail out of a broken test. As a consequence, it is a new __noreturn
+function that objtool thinks is broken (as seen above). So fix this
+warning by adding kunit_try_catch_throw to objtool's noreturn list.
+
+Reported-by: kbuild test robot <lkp@intel.com>
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Kees Cook <keescook@chromium.org>
+Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Link: https://www.spinics.net/lists/linux-kbuild/msg21708.html
+Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- lib/Kconfig.debug | 2 ++
- lib/Makefile      | 2 ++
- 2 files changed, 4 insertions(+)
+ tools/objtool/check.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 5960e2980a8a..1c69640e712f 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1681,6 +1681,8 @@ config PROVIDE_OHCI1394_DMA_INIT
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 176f2f084060..0c8e17f946cd 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -145,6 +145,7 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 		"usercopy_abort",
+ 		"machine_real_restart",
+ 		"rewind_stack_do_exit",
++		"kunit_try_catch_throw",
+ 	};
  
- 	  See Documentation/debugging-via-ohci1394.txt for more information.
- 
-+source "lib/kunit/Kconfig"
-+
- menuconfig RUNTIME_TESTING_MENU
- 	bool "Runtime Testing"
- 	def_bool y
-diff --git a/lib/Makefile b/lib/Makefile
-index 29c02a924973..67e79d3724ed 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -96,6 +96,8 @@ obj-$(CONFIG_TEST_MEMINIT) += test_meminit.o
- 
- obj-$(CONFIG_TEST_LIVEPATCH) += livepatch/
- 
-+obj-$(CONFIG_KUNIT) += kunit/
-+
- ifeq ($(CONFIG_DEBUG_KOBJECT),y)
- CFLAGS_kobject.o += -DDEBUG
- CFLAGS_kobject_uevent.o += -DDEBUG
+ 	if (!func)
 -- 
 2.23.0.351.gc4317032e6-goog
 
