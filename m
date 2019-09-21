@@ -2,277 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6D15B9F30
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D6ABB9F3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbfIURiC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 13:38:02 -0400
-Received: from mga01.intel.com ([192.55.52.88]:43482 "EHLO mga01.intel.com"
+        id S1727064AbfIURu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 13:50:56 -0400
+Received: from mout.web.de ([212.227.17.12]:36665 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727225AbfIURiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 13:38:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2019 10:38:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,532,1559545200"; 
-   d="scan'208";a="200032667"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 21 Sep 2019 10:38:00 -0700
-Date:   Sat, 21 Sep 2019 10:42:04 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Jean-Philippe Brucker <jean-philippe@linaro.org>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 3/4] iommu/ioasid: Add custom allocators
-Message-ID: <20190921104204.238f5908@jacob-builder>
-In-Reply-To: <20190920163558.GC1533866@lophozonia>
-References: <1568849194-47874-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1568849194-47874-4-git-send-email-jacob.jun.pan@linux.intel.com>
-        <20190920163558.GC1533866@lophozonia>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1726413AbfIURu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 13:50:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1569088248;
+        bh=01KhcEVaovNKmDRrNUSUWrG8wAUPK/XdKwsrTNvk9ms=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=UKDOi1Tpf/HhZEQ0L5SXzwOHi95W7PbtOLyqDSZB4pPzhlbIHvZqeCF6dORMUSTfU
+         koBA3263OTcdakvhfqihKVfVaGv1sEbjUmtIfovINY8KyTINBN/sYfDkSpoxeU7WN0
+         hs97EMWtAo2kKyjHyee/6iQ0B2RYkkPXQB7OgZDE=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([2.244.64.44]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MGRZc-1iOung2DfU-00DCpg; Sat, 21
+ Sep 2019 19:50:48 +0200
+To:     dri-devel@lists.freedesktop.org,
+        Brian Starkey <brian.starkey@arm.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] drm/komeda: Use devm_platform_ioremap_resource() in
+ komeda_dev_create()
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <64a6ea39-3e4b-2ebe-74f7-98720e581e3e@web.de>
+Date:   Sat, 21 Sep 2019 19:50:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2k8y4xw3Rgii+T8PbvI0l1DR68+jfybpTh5FEijYJB5QA/bos8d
+ KmNtOmDSHS+KBdrwFvMy+GHZkqcOnMhJG5PbdWxN/ctyAWf5m5b86PVQLDOaWf4/GOeOs0Y
+ sFl+eNcvece36uDfAAxFAiHW5+YNGBb4rGASUMrBUZz+GUL17Ugw8aCpqd79VT80lSHv4pa
+ PVyZ6wFB0f4ulJEtZXZJw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:F8BFKyOmTXE=:SZ+WPYuykf61gJqSMPeAcp
+ g+lJF5ChYf+0Xs7CZwmi+HAtMflXZS6ynzBLC+CZsWK3sfrLPKKyhm+H9HBwz6rj/NW/WFrf6
+ NOGaQK+ANKCkc09PgPxTnnM4n8YHwulIyg5TyiNYyMwFaQ3COGOi+xLjzP2TamhJ9dxtc33vK
+ RCdoGKWJKrN5R95aLH8YyNDdSHhtTwMn+LJeWsAFsUBxU7dE/xe8CRsMBJoWrO3LNMKMVviRl
+ M7RoWWgumiQJjak/Ag76vWOnw8TVYG1dvGOFZMq5suo2R65OqqryfDy7bPZDOaGAUFquxgyRP
+ afk7BKwqayPTMQqDFCsfG7mlwUr6+DngvKjw3wC4qVW7DU3SsDimgoWfgDPbaWtwYi0bA7XCi
+ xjXV4DfyVRMUU9iZrRiCEIYWnldT4uel/pBcs5jYcYczIu6FkmqXgQealCbpu78i77Zmivqao
+ EwU7DmmOXg0i0lyQEecKe8qBuuMhgi+Hk9/MOKo81e17MgyAFrjtufB5N/JlOCcevgryn89Ig
+ YQQsjQPdSFJ106ZPfuGfuvOMhchdvNw01HuHqMzQJ9BVdvqYg0WWEr7MP/4hXkFrAs94JwFVs
+ 024YfmcXel11NKnkIYa0lv2snNE72JYDwDA9EpmJz5HtFwFXlS1dAHbcTlD9sYMK9ckmb1imN
+ QwbwgqtJzLxUGRe/i1L+u2Hn34RPpoHkEPhgGJ1M+rnvAms3ozsqhIt448NnrXWjddp/KjKzo
+ HFwTQipGjshvaXfrkkup0FRV3nohqra241Tc9ylpCSdMIn+OqHR30BdGw62u/cqK/CzZT7/Ly
+ odyFlRTvYQZhiBI889E4jIbYkA3MSVc62hIeA1v2oruN0LeAG/3tTme3j6pXnZsxe3wn31GQ/
+ dJqWbmBxdHTbxeiIPkV0giVjLX27GcA73axCANkkaE7IrYSqNhLnw0okADCmiBRiNUBhogufp
+ fjGl98v70Tg83uxW0uXaCStnVxHkOTSbIOuHBtK89LNva2PbafO+b70Y1sAvawfbNy56uL0pW
+ dz+kbb5r0xbTaxHXnj44xaujvCIIZyYNSsK/ut9VLp+EaI6r4cnQbAGdwfrLHOKkKYhkiycml
+ oLUgAsnwxbRVtorXX6NXw3iT4Jlv6yE2IyFPQzkRz0Y+4TRoIxMPWoJ5+WBj77VIH+DTpqYDO
+ V0lxPfXpxhLGW1zmNwWouw7fprQ/q/y/jWqZHanhPF4+nspMSfLiGl5K3SbgUVQZEOcObUYIx
+ NwMLPsmls2XSvpiEzGpOv0659fXEylFeiUt4JvMIT5btllcdUgwN6lyBbeX8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019 18:35:58 +0200
-Jean-Philippe Brucker <jean-philippe@linaro.org> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2019 19:43:51 +0200
 
-> On Wed, Sep 18, 2019 at 04:26:33PM -0700, Jacob Pan wrote:
-> > +/*
-> > + * struct ioasid_allocator_data - Internal data structure to hold
-> > information
-> > + * about an allocator. There are two types of allocators:
-> > + *
-> > + * - Default allocator always has its own XArray to track the
-> > IOASIDs allocated.
-> > + * - Custom allocators may share allocation helpers with different
-> > private data.
-> > + *   Custom allocators share the same helper functions also share
-> > the same
-> > + *   XArray.  
-> 
-> "that share the same helper"
-> 
-> > + * Rules:
-> > + * 1. Default allocator is always available, not dynamically
-> > registered. This is
-> > + *    to prevent race conditions with early boot code that want to
-> > register
-> > + *    custom allocators or allocate IOASIDs.
-> > + * 2. Custom allocators take precedence over the default allocator.
-> > + * 3. When all custom allocators sharing the same helper functions
-> > are
-> > + *    unregistered (e.g. due to hotplug), all outstanding IOASIDs
-> > must be
-> > + *    freed.
-> > + * 4. When switching between custom allocators sharing the same
-> > helper
-> > + *    functions, outstanding IOASIDs are preserved.
-> > + * 5. When switching between custom allocator and default
-> > allocator, all IOASIDs
-> > + *    must be freed to ensure unadulterated space for the new
-> > allocator.
-> > + *
-> > + * @ops:	allocator helper functions and its data
-> > + * @list:	registered custom allocators
-> > + * @slist:	allocators share the same ops but different data
-> > + * @flags:	attributes of the allocator
-> > + * @xa		xarray holds the IOASID space
-> > + * @users	number of allocators sharing the same ops and
-> > XArray
-> > + */
-> > +struct ioasid_allocator_data {
-> > +	struct ioasid_allocator_ops *ops;
-> > +	struct list_head list;
-> > +	struct list_head slist;
-> > +#define IOASID_ALLOCATOR_CUSTOM BIT(0) /* Needs framework to track
-> > results */
-> > +	unsigned long flags;
-> > +	struct xarray xa;
-> > +	refcount_t users;
-> > +};
-> > +
-> > +static DEFINE_SPINLOCK(ioasid_allocator_lock);  
-> 
-> Thanks for making this a spinlock! I hit that sleep-in-atomic problem
-> while updating iommu-sva to the new MMU notifier API, which doesn't
-> allow sleeping in the free() callback.
-> 
-> I don't like having to use GFP_ATOMIC everywhere as a result, but
-> can't see a better way. Maybe we can improve that later.
-> 
-> [...]
-> > +/**
-> > + * ioasid_unregister_allocator - Remove a custom IOASID allocator
-> > ops
-> > + * @ops: the custom allocator to be removed
-> > + *
-> > + * Remove an allocator from the list, activate the next allocator
-> > in
-> > + * the order it was registered. Or revert to default allocator if
-> > all
-> > + * custom allocators are unregistered without outstanding IOASIDs.
-> > + */
-> > +void ioasid_unregister_allocator(struct ioasid_allocator_ops *ops)
-> > +{
-> > +	struct ioasid_allocator_data *pallocator;
-> > +	struct ioasid_allocator_ops *sops;
-> > +
-> > +	spin_lock(&ioasid_allocator_lock);
-> > +	if (list_empty(&allocators_list)) {
-> > +		pr_warn("No custom IOASID allocators active!\n");
-> > +		goto exit_unlock;
-> > +	}
-> > +
-> > +	list_for_each_entry(pallocator, &allocators_list, list) {
-> > +		if (!use_same_ops(pallocator->ops, ops))
-> > +			continue;
-> > +
-> > +		if (refcount_read(&pallocator->users) == 1) {
-> > +			/* No shared helper functions */
-> > +			list_del(&pallocator->list);
-> > +			/*
-> > +			 * All IOASIDs should have been freed
-> > before
-> > +			 * the last allocator that shares the same
-> > ops
-> > +			 * is unregistered.
-> > +			 */
-> > +			WARN_ON(!xa_empty(&pallocator->xa));  
-> 
-> The function doc seems to say that we revert to the default allocator
-> only if there wasn't any outstanding IOASID, which isn't what this
-> does. To follow the doc, we'd need to return here instead of
-> continuing. The best solution would be to return with an error, but
-> since we don't propagate errors I think leaking stuff is preferable
-> to leaving the allocator registered, since the caller might free the
-> ops when this function return. So I would keep the code like that but
-> change the function's comment. What do you think is best?
-> 
-I agree, unregister allocator should not fail. I will change the
-comments stating that if allocator is unregistered prior to freeing all
-outstanding IOASIDs, these IOASIDs will be orphaned and lost.
+Simplify this function implementation by using a known wrapper function.
 
-> > +			kfree(pallocator);
-> > +			if (list_empty(&allocators_list)) {
-> > +				pr_info("No custom IOASID
-> > allocators, switch to default.\n");
-> > +				active_allocator =
-> > &default_allocator;  
-> 
-> I'm concerned about the active_allocator variable, because
-> ioasid_find() accesses it without holding ioasid_allocator_lock. It
-> is holding the RCU read lock, so I think we need to free pallocator
-> after a RCU grace period (using kfree_rcu)? I think we also need to
-> update active_allocator with rcu_assign_pointer() and dereference it
-> with rcu_dereference()
-> 
-right, will do. ioasid_find is on the fast path, so we try not to use
-spinlock.
-> > +			} else if (pallocator == active_allocator)
-> > {
-> > +				active_allocator =
-> > list_first_entry(&allocators_list, struct ioasid_allocator_data,
-> > list);
-> > +				pr_info("IOASID allocator
-> > changed");
-> > +			}
-> > +			break;
-> > +		}
-> > +		/*
-> > +		 * Find the matching shared ops to delete,
-> > +		 * but keep outstanding IOASIDs
-> > +		 */
-> > +		list_for_each_entry(sops, &pallocator->slist,
-> > list) {
-> > +			if (sops == ops) {
-> > +				list_del(&ops->list);
-> > +				if
-> > (refcount_dec_and_test(&pallocator->users))
-> > +					pr_err("no shared
-> > ops\n");  
-> 
-> That's not possible, right, since dec_and_test only returns true if
-> pallocator->users was 1, which we already checked against? I find
-> pallocator->users a bit redundant since you can use list_is_empty() or
-> list_is_singular() on pallocator->slist
-> 
-you are right, no need for the refcount, just check the status of the
-shared op list.
-> [...]
-> >  ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min,
-> > ioasid_t max, void *private)
-> >  {
-> > -	ioasid_t id;
-> >  	struct ioasid_data *data;
-> > +	void *adata;
-> > +	ioasid_t id;
-> >  
-> >  	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> >  	if (!data)
-> > @@ -76,14 +324,34 @@ ioasid_t ioasid_alloc(struct ioasid_set *set,
-> > ioasid_t min, ioasid_t max, data->set = set;
-> >  	data->private = private;
-> >  
-> > -	if (xa_alloc(&ioasid_xa, &id, data, XA_LIMIT(min, max),
-> > GFP_KERNEL)) {
-> > -		pr_err("Failed to alloc ioasid from %d to %d\n",
-> > min, max);
-> > +	/*
-> > +	 * Custom allocator needs allocator data to perform
-> > platform specific
-> > +	 * operations.
-> > +	 */
-> > +	spin_lock(&ioasid_allocator_lock);
-> > +	adata = active_allocator->flags &
-> > IOASID_ALLOCATOR_CUSTOM ? active_allocator->ops->pdata : data;
-> > +	id = active_allocator->ops->alloc(min, max, adata);
-> > +	if (id == INVALID_IOASID) {
-> > +		pr_err("Failed ASID allocation %lu\n",
-> > active_allocator->flags); goto exit_free;
-> >  	}
-> > +
-> > +	if (active_allocator->flags & IOASID_ALLOCATOR_CUSTOM) {
-> > +		/* Custom allocator needs framework to store and
-> > track allocation results */
-> > +		min = max = id;
-> > +
-> > +		if (xa_alloc(&active_allocator->xa, &id, data,
-> > XA_LIMIT(min, max), GFP_KERNEL)) {  
-> 
-> Or just XA_LIMIT(id, id), and merge the two ifs?
-> 
-much better, thanks for the suggestions.
-> You do need GFP_ATOMIC here.
-> 
-right, will change.
+This issue was detected by using the Coccinelle software.
 
-> > +			pr_err("Failed to alloc ioasid from %d to
-> > %d\n", min, max);  
-> 
-> Maybe just "Failed to alloc ioasid %d\n" then
-> 
-agreed. just failed on a specific id, not range.
-> > +			active_allocator->ops->free(id, NULL);  
-> 
-> Why doesn't this call need to pass active_allocator->ops->pdata like
-> the one in ioasid_free()?
-> 
-Good catch, this call also need pdata.
-> Thanks,
-> Jean
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gpu=
+/drm/arm/display/komeda/komeda_dev.c
+index ca64a129c594..a387d923962e 100644
+=2D-- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+@@ -172,19 +172,12 @@ struct komeda_dev *komeda_dev_create(struct device *=
+dev)
+ 	struct platform_device *pdev =3D to_platform_device(dev);
+ 	const struct komeda_product_data *product;
+ 	struct komeda_dev *mdev;
+-	struct resource *io_res;
+ 	int err =3D 0;
+
+ 	product =3D of_device_get_match_data(dev);
+ 	if (!product)
+ 		return ERR_PTR(-ENODEV);
+
+-	io_res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!io_res) {
+-		DRM_ERROR("No registers defined.\n");
+-		return ERR_PTR(-ENODEV);
+-	}
+-
+ 	mdev =3D devm_kzalloc(dev, sizeof(*mdev), GFP_KERNEL);
+ 	if (!mdev)
+ 		return ERR_PTR(-ENOMEM);
+@@ -192,7 +185,7 @@ struct komeda_dev *komeda_dev_create(struct device *de=
+v)
+ 	mutex_init(&mdev->lock);
+
+ 	mdev->dev =3D dev;
+-	mdev->reg_base =3D devm_ioremap_resource(dev, io_res);
++	mdev->reg_base =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mdev->reg_base)) {
+ 		DRM_ERROR("Map register space failed.\n");
+ 		err =3D PTR_ERR(mdev->reg_base);
+=2D-
+2.23.0
 
