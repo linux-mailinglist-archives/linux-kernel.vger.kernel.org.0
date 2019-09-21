@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A92C3B9B2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 02:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F826B9B47
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 02:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437209AbfIUAT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Sep 2019 20:19:29 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:48827 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407359AbfIUATZ (ORCPT
+        id S2437394AbfIUATn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Sep 2019 20:19:43 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:53403 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437326AbfIUATd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Sep 2019 20:19:25 -0400
-Received: by mail-pg1-f202.google.com with SMTP id w13so5424521pge.15
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 17:19:24 -0700 (PDT)
+        Fri, 20 Sep 2019 20:19:33 -0400
+Received: by mail-pf1-f202.google.com with SMTP id x10so5822411pfr.20
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2019 17:19:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=HUig3O/TcISsFITrNK1jfa3MiZCemlEwRwNLdW9+MBA=;
-        b=bXhlCrQbOYlLwsh2RvftzRIh23Jl9nh9scdsLl9WgWP6lalPe8eEkD6o+unjnTY4QX
-         hKEBphnraOXtLfjCiiS9R8zDls4TqdEUH/YgLb+45J6Uit4NDCpUgKfDQaNWmuq43Apo
-         xRZaI7/HBm+X7O8MVIj7248LsMH4nnbp+jnTRf3Ju91hPYI2/LxME7JRgKlTSxWc5Lgv
-         O6xqS6u2ki5/EHt4F+CBMU38Qr3ivXEa7NVQlemgq9PvHDijn72TqYXTkx0n3B2VAv+g
-         XVIWOV8Y3uTZkT1FI+OtOS55/ZXz69jPb8090aspbrg0tbhfw3kS7Gf8Mipp/i/tYzvB
-         2rSQ==
+        bh=XEXF0aWtRP7hmX6yjkpnHC7BrzYVm/zOhA0NZRgvhNA=;
+        b=Dra6iRlZbj4Rqx8BK5ci6GvPBA4YGhBJ6RMnCfqDC1Er0WhfonE4FgeNIqw1ZwuYHr
+         2X/ff9rVqAivCTJkTEKyzDOHA9JyV+0IwGpKPzm3MIbV2G/fkld4uhJCgjwHET99xcxH
+         fd2E5eVNVyo+FopmL4QsuAsP3jzbiXXUI3sugKiKTx2EsfLbt0yjShGCcnwWBp9GK8/R
+         fyBJsgh2xa6GsMdCHoOEfxHFhnDogpkfUGhW3C2gDOA6Doowd/I8MiLnc2ivYmgcwTkO
+         q7FDjqFAKdKJV0RBPHZK9Au3y5d5gtEzeR1VLV1ZWOSYGvztNB6q/aqOsUXOICUatjAE
+         1Taw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=HUig3O/TcISsFITrNK1jfa3MiZCemlEwRwNLdW9+MBA=;
-        b=ZYPGXCFPzz5e9zwg9FGyHm58xXpSl6fJC87jAPIapInb82scnt5JoMYpoUUNouAakv
-         uDy8zybpWbbkBPoO0zCATRXDZa3kYcp2VzLfgy2JXF3rbALS5hxnabB46jFI39llSukl
-         jbpLsMxewho1Mx+eWrgiyqy9TGLAOiz5TFp3MlNrZaWD9p3Vg/Y0tDWHuNAIs+FK5HRU
-         cUJM/sHiGWVwb5JHaKbci8KPhSQqaAqhuZqQqeuweEYbQMiXKtONnWrv+eeHitfuoEuW
-         M0mH45rXXwUOWRpE7A7NBXlS6KEcC7xQdEmP5JkeouVMiWNXrPGIWBI2Z15v9ePaOdvd
-         e+Sg==
-X-Gm-Message-State: APjAAAUBaN8c/QrLs0DQ2u6oyxd/BRPprQAIkrLoDVelGXQZV2LeT2Dh
-        ZSyBmaHxKNdbO2vXbRYQz5A/32+byOLZNTduBvv9Zg==
-X-Google-Smtp-Source: APXvYqyXnnjiwjZHHbUIqJ3PyOl/Lbl6F7f5nYwBpu5YxWWvg9AuxdDHLi/bNjIdfvEzKNXDkVxOWAy19HA7e1bwTVU8mA==
-X-Received: by 2002:a63:f745:: with SMTP id f5mr3312171pgk.175.1569025163763;
- Fri, 20 Sep 2019 17:19:23 -0700 (PDT)
-Date:   Fri, 20 Sep 2019 17:18:43 -0700
+        bh=XEXF0aWtRP7hmX6yjkpnHC7BrzYVm/zOhA0NZRgvhNA=;
+        b=ePeiidBVy7NIeYITto2gZvuLaqgjZSph85ok8FKFUTWokT+uwgu9wNJOvJUB9rr02o
+         k2MYhZjCRWrJrhIp0Ztcq76FasfCA916wA5T1F4F5ggdWTXpVTpZGRCEUDmR2xAxTiqA
+         sJdGQBlTYMs8kaiOLoIrJ/EUKNrPJbrebxt6/8doDArBBZjUMHmppR+hPz/U9Cj1GJ0e
+         HU9LTIkjDnQL/FOwcSS/YXeorQ9v60kXlTR955T/sL4OZLSVU4Mwh5wXosMTyOPx/R+5
+         7AbmCvdRZwa4aLoSUbd964rp8NYxS4dikdRdL1zKpXBl+KLwTaVGdGhyn0JQzEvbXzgV
+         VYCA==
+X-Gm-Message-State: APjAAAVmvzgdoJ4eip/4a8Vx2tSGDaw1zSM1Y9QDN4dKzOTZo0xP5VbP
+        AwMCwyl0BGk7oHTHdTcVxG0Bm5tNTR+iztW6rPTX7w==
+X-Google-Smtp-Source: APXvYqxlNiTiVDoLGm7gicBAQJqK6SEUb3uB1fEZiMQB7IRA2E+sdg+0+05mefYUZ9i4sFC+aICY+qZzL1Y5G4LZgbHmxQ==
+X-Received: by 2002:a63:2f44:: with SMTP id v65mr17507270pgv.380.1569025172132;
+ Fri, 20 Sep 2019 17:19:32 -0700 (PDT)
+Date:   Fri, 20 Sep 2019 17:18:46 -0700
 In-Reply-To: <20190921001855.200947-1-brendanhiggins@google.com>
-Message-Id: <20190921001855.200947-8-brendanhiggins@google.com>
+Message-Id: <20190921001855.200947-11-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20190921001855.200947-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
-Subject: [PATCH v17 07/19] kunit: test: add initial tests
+Subject: [PATCH v17 10/19] kunit: test: add tests for kunit test abort
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
         jpoimboe@redhat.com, keescook@google.com,
@@ -73,218 +73,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a test for string stream along with a simpler example.
+Add KUnit tests for the KUnit test abort mechanism (see preceding
+commit). Add tests both for general try catch mechanism as well as
+non-architecture specific mechanism.
 
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
- lib/kunit/Kconfig              | 25 ++++++++++
- lib/kunit/Makefile             |  4 ++
- lib/kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++
- lib/kunit/string-stream-test.c | 52 ++++++++++++++++++++
- 4 files changed, 169 insertions(+)
- create mode 100644 lib/kunit/example-test.c
- create mode 100644 lib/kunit/string-stream-test.c
+ lib/kunit/Makefile    |   3 +-
+ lib/kunit/test-test.c | 106 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 108 insertions(+), 1 deletion(-)
+ create mode 100644 lib/kunit/test-test.c
 
-diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
-index 666b9cb67a74..3868c226cf31 100644
---- a/lib/kunit/Kconfig
-+++ b/lib/kunit/Kconfig
-@@ -11,3 +11,28 @@ menuconfig KUNIT
- 	  special hardware when using UML. Can also be used on most other
- 	  architectures. For more information, please see
- 	  Documentation/dev-tools/kunit/.
-+
-+if KUNIT
-+
-+config KUNIT_TEST
-+	bool "KUnit test for KUnit"
-+	depends on KUNIT
-+	help
-+	  Enables the unit tests for the KUnit test framework. These tests test
-+	  the KUnit test framework itself; the tests are both written using
-+	  KUnit and test KUnit. This option should only be enabled for testing
-+	  purposes by developers interested in testing that KUnit works as
-+	  expected.
-+
-+config KUNIT_EXAMPLE_TEST
-+	bool "Example test for KUnit"
-+	depends on KUNIT
-+	help
-+	  Enables an example unit test that illustrates some of the basic
-+	  features of KUnit. This test only exists to help new users understand
-+	  what KUnit is and how it is used. Please refer to the example test
-+	  itself, lib/kunit/example-test.c, for more information. This option
-+	  is intended for curious hackers who would like to understand how to
-+	  use KUnit for kernel development.
-+
-+endif # KUNIT
 diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
-index 6dcbe309036b..4e46450bcb3a 100644
+index c9176c9c578c..769d9402b5d3 100644
 --- a/lib/kunit/Makefile
 +++ b/lib/kunit/Makefile
-@@ -1,3 +1,7 @@
- obj-$(CONFIG_KUNIT) +=			test.o \
- 					string-stream.o \
- 					assert.o
-+
-+obj-$(CONFIG_KUNIT_TEST) +=		string-stream-test.o
-+
-+obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=	example-test.o
-diff --git a/lib/kunit/example-test.c b/lib/kunit/example-test.c
+@@ -3,6 +3,7 @@ obj-$(CONFIG_KUNIT) +=			test.o \
+ 					assert.o \
+ 					try-catch.o
+ 
+-obj-$(CONFIG_KUNIT_TEST) +=		string-stream-test.o
++obj-$(CONFIG_KUNIT_TEST) +=		test-test.o \
++					string-stream-test.o
+ 
+ obj-$(CONFIG_KUNIT_EXAMPLE_TEST) +=	example-test.o
+diff --git a/lib/kunit/test-test.c b/lib/kunit/test-test.c
 new file mode 100644
-index 000000000000..f64a829aa441
+index 000000000000..06d34d36b103
 --- /dev/null
-+++ b/lib/kunit/example-test.c
-@@ -0,0 +1,88 @@
++++ b/lib/kunit/test-test.c
+@@ -0,0 +1,106 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Example KUnit test to show how to use KUnit.
++ * KUnit test for core test infrastructure.
 + *
 + * Copyright (C) 2019, Google LLC.
 + * Author: Brendan Higgins <brendanhiggins@google.com>
 + */
-+
 +#include <kunit/test.h>
 +
-+/*
-+ * This is the most fundamental element of KUnit, the test case. A test case
-+ * makes a set EXPECTATIONs and ASSERTIONs about the behavior of some code; if
-+ * any expectations or assertions are not met, the test fails; otherwise, the
-+ * test passes.
-+ *
-+ * In KUnit, a test case is just a function with the signature
-+ * `void (*)(struct kunit *)`. `struct kunit` is a context object that stores
-+ * information about the current test.
-+ */
-+static void example_simple_test(struct kunit *test)
++struct kunit_try_catch_test_context {
++	struct kunit_try_catch *try_catch;
++	bool function_called;
++};
++
++static void kunit_test_successful_try(void *data)
 +{
-+	/*
-+	 * This is an EXPECTATION; it is how KUnit tests things. When you want
-+	 * to test a piece of code, you set some expectations about what the
-+	 * code should do. KUnit then runs the test and verifies that the code's
-+	 * behavior matched what was expected.
-+	 */
-+	KUNIT_EXPECT_EQ(test, 1 + 1, 2);
++	struct kunit *test = data;
++	struct kunit_try_catch_test_context *ctx = test->priv;
++
++	ctx->function_called = true;
 +}
 +
-+/*
-+ * This is run once before each test case, see the comment on
-+ * example_test_suite for more information.
-+ */
-+static int example_test_init(struct kunit *test)
++static void kunit_test_no_catch(void *data)
 +{
-+	kunit_info(test, "initializing\n");
++	struct kunit *test = data;
++
++	KUNIT_FAIL(test, "Catch should not be called\n");
++}
++
++static void kunit_test_try_catch_successful_try_no_catch(struct kunit *test)
++{
++	struct kunit_try_catch_test_context *ctx = test->priv;
++	struct kunit_try_catch *try_catch = ctx->try_catch;
++
++	kunit_try_catch_init(try_catch,
++			     test,
++			     kunit_test_successful_try,
++			     kunit_test_no_catch);
++	kunit_try_catch_run(try_catch, test);
++
++	KUNIT_EXPECT_TRUE(test, ctx->function_called);
++}
++
++static void kunit_test_unsuccessful_try(void *data)
++{
++	struct kunit *test = data;
++	struct kunit_try_catch_test_context *ctx = test->priv;
++	struct kunit_try_catch *try_catch = ctx->try_catch;
++
++	kunit_try_catch_throw(try_catch);
++	KUNIT_FAIL(test, "This line should never be reached\n");
++}
++
++static void kunit_test_catch(void *data)
++{
++	struct kunit *test = data;
++	struct kunit_try_catch_test_context *ctx = test->priv;
++
++	ctx->function_called = true;
++}
++
++static void kunit_test_try_catch_unsuccessful_try_does_catch(struct kunit *test)
++{
++	struct kunit_try_catch_test_context *ctx = test->priv;
++	struct kunit_try_catch *try_catch = ctx->try_catch;
++
++	kunit_try_catch_init(try_catch,
++			     test,
++			     kunit_test_unsuccessful_try,
++			     kunit_test_catch);
++	kunit_try_catch_run(try_catch, test);
++
++	KUNIT_EXPECT_TRUE(test, ctx->function_called);
++}
++
++static int kunit_try_catch_test_init(struct kunit *test)
++{
++	struct kunit_try_catch_test_context *ctx;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++
++	test->priv = ctx;
++
++	ctx->try_catch = kunit_kmalloc(test,
++				       sizeof(*ctx->try_catch),
++				       GFP_KERNEL);
++	if (!ctx->try_catch)
++		return -ENOMEM;
 +
 +	return 0;
 +}
 +
-+/*
-+ * Here we make a list of all the test cases we want to add to the test suite
-+ * below.
-+ */
-+static struct kunit_case example_test_cases[] = {
-+	/*
-+	 * This is a helper to create a test case object from a test case
-+	 * function; its exact function is not important to understand how to
-+	 * use KUnit, just know that this is how you associate test cases with a
-+	 * test suite.
-+	 */
-+	KUNIT_CASE(example_simple_test),
++static struct kunit_case kunit_try_catch_test_cases[] = {
++	KUNIT_CASE(kunit_test_try_catch_successful_try_no_catch),
++	KUNIT_CASE(kunit_test_try_catch_unsuccessful_try_does_catch),
 +	{}
 +};
 +
-+/*
-+ * This defines a suite or grouping of tests.
-+ *
-+ * Test cases are defined as belonging to the suite by adding them to
-+ * `kunit_cases`.
-+ *
-+ * Often it is desirable to run some function which will set up things which
-+ * will be used by every test; this is accomplished with an `init` function
-+ * which runs before each test case is invoked. Similarly, an `exit` function
-+ * may be specified which runs after every test case and can be used to for
-+ * cleanup. For clarity, running tests in a test suite would behave as follows:
-+ *
-+ * suite.init(test);
-+ * suite.test_case[0](test);
-+ * suite.exit(test);
-+ * suite.init(test);
-+ * suite.test_case[1](test);
-+ * suite.exit(test);
-+ * ...;
-+ */
-+static struct kunit_suite example_test_suite = {
-+	.name = "example",
-+	.init = example_test_init,
-+	.test_cases = example_test_cases,
++static struct kunit_suite kunit_try_catch_test_suite = {
++	.name = "kunit-try-catch-test",
++	.init = kunit_try_catch_test_init,
++	.test_cases = kunit_try_catch_test_cases,
 +};
-+
-+/*
-+ * This registers the above test suite telling KUnit that this is a suite of
-+ * tests that need to be run.
-+ */
-+kunit_test_suite(example_test_suite);
-diff --git a/lib/kunit/string-stream-test.c b/lib/kunit/string-stream-test.c
-new file mode 100644
-index 000000000000..75229e267c32
---- /dev/null
-+++ b/lib/kunit/string-stream-test.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * KUnit test for struct string_stream.
-+ *
-+ * Copyright (C) 2019, Google LLC.
-+ * Author: Brendan Higgins <brendanhiggins@google.com>
-+ */
-+
-+#include <kunit/string-stream.h>
-+#include <kunit/test.h>
-+#include <linux/slab.h>
-+
-+static void string_stream_test_empty_on_creation(struct kunit *test)
-+{
-+	struct string_stream *stream = alloc_string_stream(test, GFP_KERNEL);
-+
-+	KUNIT_EXPECT_TRUE(test, string_stream_is_empty(stream));
-+}
-+
-+static void string_stream_test_not_empty_after_add(struct kunit *test)
-+{
-+	struct string_stream *stream = alloc_string_stream(test, GFP_KERNEL);
-+
-+	string_stream_add(stream, "Foo");
-+
-+	KUNIT_EXPECT_FALSE(test, string_stream_is_empty(stream));
-+}
-+
-+static void string_stream_test_get_string(struct kunit *test)
-+{
-+	struct string_stream *stream = alloc_string_stream(test, GFP_KERNEL);
-+	char *output;
-+
-+	string_stream_add(stream, "Foo");
-+	string_stream_add(stream, " %s", "bar");
-+
-+	output = string_stream_get_string(stream);
-+	KUNIT_EXPECT_STREQ(test, output, "Foo bar");
-+}
-+
-+static struct kunit_case string_stream_test_cases[] = {
-+	KUNIT_CASE(string_stream_test_empty_on_creation),
-+	KUNIT_CASE(string_stream_test_not_empty_after_add),
-+	KUNIT_CASE(string_stream_test_get_string),
-+	{}
-+};
-+
-+static struct kunit_suite string_stream_test_suite = {
-+	.name = "string-stream-test",
-+	.test_cases = string_stream_test_cases
-+};
-+kunit_test_suite(string_stream_test_suite);
++kunit_test_suite(kunit_try_catch_test_suite);
 -- 
 2.23.0.351.gc4317032e6-goog
 
