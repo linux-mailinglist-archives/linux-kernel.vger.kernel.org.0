@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 662E0B9EF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4100FB9EFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:02:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438364AbfIURCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 13:02:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39654 "EHLO mail.kernel.org"
+        id S2438381AbfIURCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 13:02:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438031AbfIURCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 13:02:11 -0400
+        id S2438031AbfIURCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 13:02:15 -0400
 Received: from localhost.localdomain (unknown [194.230.155.145])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CCB321907;
-        Sat, 21 Sep 2019 17:02:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49C4321882;
+        Sat, 21 Sep 2019 17:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569085330;
-        bh=r0Q4VB/j5PL/rgZkRPpQzQ1S0oUxFSc3euGBv7t4Az4=;
+        s=default; t=1569085334;
+        bh=MnKtv/tVqwT4kcJd+5kJhN0nMZpd4Rb6U5zHzZea9kc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iyOhYRg0R5F0iOR+PFexeovw1dm3Y/lUP4Q6QAZvnyIAqXwpcBmHP0xwaLEuvkjie
-         UAVvBK183DtsynyHXphvY3hl3WhaJnqB5jJI8U99dHNVaE2TcfDe68pRR9W6f9Qt1u
-         dQjam3/1D0HS0sUCYVuVLWYkaKR/w19AxQgYecv8=
+        b=Qdzak8FXP6sF8L36U+PL+SiqYIyQODTkLk9gEs6cDNSplUhr21xWrYLZsacQJ4otl
+         O5qhwe5zbzuiGF2pfAzrAdjBf5hDooZxA5F0XQ6UjYwB+QNmC7LOG1yab/wC0yW8BE
+         a4OJPmQJa1VDWY+f9H1Mv1FcMZnfXAObLIJcu7Bo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -36,9 +36,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [PATCH v3 3/8] arm64: dts: exynos: Rename Multi Core Timer node to "timer"
-Date:   Sat, 21 Sep 2019 19:01:47 +0200
-Message-Id: <20190921170152.5033-3-krzk@kernel.org>
+Subject: [RFT v3 4/8] ARM: dts: exynos: Remove MCT subnode for interrupt map on Exynos4210
+Date:   Sat, 21 Sep 2019 19:01:48 +0200
+Message-Id: <20190921170152.5033-4-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190921170152.5033-1-krzk@kernel.org>
 References: <20190921170152.5033-1-krzk@kernel.org>
@@ -47,28 +47,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The device node name should reflect generic class of a device so rename
-the Multi Core Timer node from "mct" to "timer".  This will be also in
-sync with upcoming DT schema.  No functional change.
+Multi Core Timer node has interrupts routed to two different parents -
+GIC and combiner.  This was modeled with a interrupt-map within a
+subnode but can be expressed in an easier and more common way, directly
+in the node itself.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-index a76f620f7f35..8baf3c645eae 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
-@@ -754,7 +754,7 @@
- 			status = "disabled";
+---
+
+Not tested.
+---
+ arch/arm/boot/dts/exynos4210.dtsi | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 6d3f19562aab..38c49ab8c733 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -109,23 +109,19 @@
+ 		mct: timer@10050000 {
+ 			compatible = "samsung,exynos4210-mct";
+ 			reg = <0x10050000 0x800>;
+-			interrupt-parent = <&mct_map>;
+-			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+ 			clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MCT>;
+ 			clock-names = "fin_pll", "mct";
+-
+-			mct_map: mct-map {
+-				#interrupt-cells = <1>;
+-				#address-cells = <0>;
+-				#size-cells = <0>;
+-				interrupt-map =
+-					<0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
++			#address-cells = <0>;
++			#size-cells = <0>;
++			#interrupt-cells = <1>;
++			interrupt-parent = <&mct>;
++			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
++			interrupt-map = <0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
+ 					<1 &gic 0 69 IRQ_TYPE_LEVEL_HIGH>,
+ 					<2 &combiner 12 6>,
+ 					<3 &combiner 12 7>,
+ 					<4 &gic 0 42 IRQ_TYPE_LEVEL_HIGH>,
+ 					<5 &gic 0 48 IRQ_TYPE_LEVEL_HIGH>;
+-			};
  		};
  
--		mct@101c0000 {
-+		timer@101c0000 {
- 			compatible = "samsung,exynos4210-mct";
- 			reg = <0x101c0000 0x800>;
- 			interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
+ 		watchdog: watchdog@10060000 {
 -- 
 2.17.1
 
