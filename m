@@ -2,98 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A20B9F4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 20:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D2DDB9F50
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 20:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbfIUSLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 14:11:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32892 "EHLO mail.kernel.org"
+        id S1731772AbfIUSPX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 14:15:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbfIUSLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 14:11:39 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 489FE2080F;
-        Sat, 21 Sep 2019 18:11:36 +0000 (UTC)
+        id S1731744AbfIUSPW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 14:15:22 -0400
+Subject: Re: [GIT PULL] first round of SCSI updates for the 5.3+ merge window
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569089498;
-        bh=+j2NftTgVB/uEJoBJMJYrqT3F+1ZbejcQjaaV0Bb4EM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=B6i+hZbYCOt8hATSgKEzQiiJJi2hhGFxf5t5XRnZPn0U4b7R7ni4qtoFnXK6Ybexd
-         g3buqih/uEPQZP6b9rQ9jKzWQhuM2Lki35HBBhNL6ve222tlO7DEcY8xtqfSyLRBhk
-         0iQk9gJJMUdBHyNjKBvvmGMMZI7X52+gLgt43OH0=
-Date:   Sat, 21 Sep 2019 19:11:33 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "navid.emamdoost@gmail.com" <navid.emamdoost@gmail.com>,
-        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
-        "emamd001@umn.edu" <emamd001@umn.edu>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "smccaman@umn.edu" <smccaman@umn.edu>,
-        "kjlu@umn.edu" <kjlu@umn.edu>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>
-Subject: Re: [PATCH v2] iio: imu: adis16400: release allocated memory on
- failure
-Message-ID: <20190921191133.62f12b65@archlinux>
-In-Reply-To: <d4c21c74d88e542771818720e6270e4d6141b686.camel@analog.com>
-References: <84e2832b52cc88665ff071942c1545b83eeb5602.camel@analog.com>
-        <20190919155003.2207-1-navid.emamdoost@gmail.com>
-        <d4c21c74d88e542771818720e6270e4d6141b686.camel@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1569089722;
+        bh=EiG57zb4vKAoSv369pkR5LsK1+EQhcuZFP0Q3Zji8+A=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=FnflgwCb37YF2UtmrUFTKahuERkemwSa25OFsByQslGVDzWOY37TAt27ovCjgNR43
+         Z8Dn3pBo6wk18Ysw5V5IJQIjd8/322LApYx0ZLE1ee65T66C2P+B3QEaBEFf7OwgMP
+         +I2FtW6Ap5E9kh1Zp4T/sSxD8oBCieoCZgCnK9EY=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1568933249.25516.10.camel@HansenPartnership.com>
+References: <1568933249.25516.10.camel@HansenPartnership.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1568933249.25516.10.camel@HansenPartnership.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
+X-PR-Tracked-Commit-Id: e74006edd0d42b45ff37ae4ae13c614cfa30056b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 10fd71780f7d155f4e35fecfad0ebd4a725a244b
+Message-Id: <156908972219.32474.7469326079291147244.pr-tracker-bot@kernel.org>
+Date:   Sat, 21 Sep 2019 18:15:22 +0000
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019 06:46:37 +0000
-"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
+The pull request you sent on Thu, 19 Sep 2019 15:47:29 -0700:
 
-> On Thu, 2019-09-19 at 10:50 -0500, Navid Emamdoost wrote:
-> > In adis_update_scan_mode, if allocation for adis->buffer fails,
-> > previously allocated adis->xfer needs to be released.
-> > 
-> > v2: added adis->xfer = NULL to avoid any potential double free. 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
 
-Version changes go below the --- so they don't get recorded in the
-git tree log when it's applied.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/10fd71780f7d155f4e35fecfad0ebd4a725a244b
 
- 
-> 
-> Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Applied to the fixes-togreg branch of iio.git. Thanks,
+Thank you!
 
-Jonathan
-
-> 
-> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> > ---
-> >  drivers/iio/imu/adis_buffer.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/imu/adis_buffer.c
-> > b/drivers/iio/imu/adis_buffer.c
-> > index 9ac8356d9a95..f446ff497809 100644
-> > --- a/drivers/iio/imu/adis_buffer.c
-> > +++ b/drivers/iio/imu/adis_buffer.c
-> > @@ -78,8 +78,11 @@ int adis_update_scan_mode(struct iio_dev *indio_dev,
-> >  		return -ENOMEM;
-> >  
-> >  	adis->buffer = kcalloc(indio_dev->scan_bytes, 2, GFP_KERNEL);
-> > -	if (!adis->buffer)
-> > +	if (!adis->buffer) {
-> > +		kfree(adis->xfer);
-> > +		adis->xfer = NULL;
-> >  		return -ENOMEM;
-> > +	}
-> >  
-> >  	rx = adis->buffer;
-> >  	tx = rx + scan_count;  
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
