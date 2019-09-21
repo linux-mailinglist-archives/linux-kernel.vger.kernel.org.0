@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B36DB9EFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2437EB9F03
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 19:02:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438412AbfIURCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 13:02:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40176 "EHLO mail.kernel.org"
+        id S2438433AbfIURCg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 13:02:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438395AbfIURC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 13:02:26 -0400
+        id S2438407AbfIURCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 13:02:30 -0400
 Received: from localhost.localdomain (unknown [194.230.155.145])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC43621882;
-        Sat, 21 Sep 2019 17:02:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F78F21907;
+        Sat, 21 Sep 2019 17:02:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569085346;
-        bh=K7z//Y/yLJWsZpw2WZeSz4YckSjsAIIkQrg5GbosjAU=;
+        s=default; t=1569085349;
+        bh=WMIbHRXqKnTwV8Qyk4jQI2KbATovpC39pOQTs+GXcc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eOCyX2tGs+6hBnI46pENiaekDrJv2+ild9ii0foLROp6wXYdIrsxBJGc7K73fVjBV
-         /WJPERUnAjGmhfrBOV1I4pRs+PCF3/b0ZvhPpHitUgG030cPL4oyWAEeEyjGnoshBY
-         7NmqiV3yAEkvPX3NLyS1AM4vEogbSsfz2Zq1ElH8=
+        b=Jn4oa/WZlNu7XYMRyE3vTpcyy7SDnSQ+LtCys+Cm8vBnYTyInxGkF//s24yG0dQ6j
+         tlH9/OEOS4zVc9KHgRphEc3DrVt8hSdMjy24cqhja0nhBFxCFv5DJnD2VyhB2Qerql
+         Oc5FC5g6t8yJv1hwGkHoSZkBI7VJFDIThDe+dFaQ=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -36,9 +36,9 @@ To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>
-Subject: [RFT v3 7/8] ARM: dts: exynos: Remove MCT subnode for interrupt map on Exynos54xx
-Date:   Sat, 21 Sep 2019 19:01:51 +0200
-Message-Id: <20190921170152.5033-7-krzk@kernel.org>
+Subject: [PATCH v3 8/8] ARM: dts: exynos: Use defines for MCT interrupt GIC SPI/PPI specifier
+Date:   Sat, 21 Sep 2019 19:01:52 +0200
+Message-Id: <20190921170152.5033-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190921170152.5033-1-krzk@kernel.org>
 References: <20190921170152.5033-1-krzk@kernel.org>
@@ -47,65 +47,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multi Core Timer node has interrupts routed to two different parents -
-GIC and combiner.  This was modeled with a interrupt-map within a
-subnode but can be expressed in an easier and more common way, directly
-in the node itself.
-
-Tested on Odroid XU (Exynos5410), Odroid HC1 (Exynos5422) and Arndale
-Octa (Exynos5420).
+Replace hard-coded number with appropriate define for GIC SPI or PPI
+specifier in interrupt.  This makes code easier to read.  No expected
+functionality change.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/exynos54xx.dtsi | 37 ++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 20 deletions(-)
+ arch/arm/boot/dts/exynos4210.dtsi |  8 ++++----
+ arch/arm/boot/dts/exynos4412.dtsi |  4 ++--
+ arch/arm/boot/dts/exynos5250.dtsi |  4 ++--
+ arch/arm/boot/dts/exynos54xx.dtsi | 16 ++++++++--------
+ 4 files changed, 16 insertions(+), 16 deletions(-)
 
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 38c49ab8c733..650bee6355e4 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -116,12 +116,12 @@
+ 			#interrupt-cells = <1>;
+ 			interrupt-parent = <&mct>;
+ 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+-			interrupt-map = <0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
+-					<1 &gic 0 69 IRQ_TYPE_LEVEL_HIGH>,
++			interrupt-map = <0 &gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++					<1 &gic GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+ 					<2 &combiner 12 6>,
+ 					<3 &combiner 12 7>,
+-					<4 &gic 0 42 IRQ_TYPE_LEVEL_HIGH>,
+-					<5 &gic 0 48 IRQ_TYPE_LEVEL_HIGH>;
++					<4 &gic GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++					<5 &gic GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		watchdog: watchdog@10060000 {
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 7e2dabefd53f..0810c14bf424 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -253,11 +253,11 @@
+ 			#interrupt-cells = <1>;
+ 			interrupt-parent = <&mct>;
+ 			interrupts = <0>, <1>, <2>, <3>, <4>;
+-			interrupt-map = <0 &gic 0 57 IRQ_TYPE_LEVEL_HIGH>,
++			interrupt-map = <0 &gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+ 					<1 &combiner 12 5>,
+ 					<2 &combiner 12 6>,
+ 					<3 &combiner 12 7>,
+-					<4 &gic 1 12 IRQ_TYPE_LEVEL_HIGH>;
++					<4 &gic GIC_PPI 12 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		watchdog: watchdog@10060000 {
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index e0fcf3c2f537..61f22feefda9 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -247,8 +247,8 @@
+ 					<1 &combiner 23 4>,
+ 					<2 &combiner 25 2>,
+ 					<3 &combiner 25 3>,
+-					<4 &gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
+-					<5 &gic 0 121 IRQ_TYPE_LEVEL_HIGH>;
++					<4 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++					<5 &gic GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
+ 		pinctrl_0: pinctrl@11400000 {
 diff --git a/arch/arm/boot/dts/exynos54xx.dtsi b/arch/arm/boot/dts/exynos54xx.dtsi
-index 247d23872384..a1c10a9a86f8 100644
+index a1c10a9a86f8..f52c7ce5d320 100644
 --- a/arch/arm/boot/dts/exynos54xx.dtsi
 +++ b/arch/arm/boot/dts/exynos54xx.dtsi
-@@ -67,27 +67,24 @@
- 		mct: timer@101c0000 {
- 			compatible = "samsung,exynos4210-mct";
- 			reg = <0x101c0000 0xb00>;
--			interrupt-parent = <&mct_map>;
-+			#address-cells = <0>;
-+			#size-cells = <0>;
-+			#interrupt-cells = <1>;
-+			interrupt-parent = <&mct>;
- 			interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>,
--					<8>, <9>, <10>, <11>;
--
--			mct_map: mct-map {
--				#interrupt-cells = <1>;
--				#address-cells = <0>;
--				#size-cells = <0>;
--				interrupt-map = <0 &combiner 23 3>,
--						<1 &combiner 23 4>,
--						<2 &combiner 25 2>,
--						<3 &combiner 25 3>,
--						<4 &gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
--						<5 &gic 0 121 IRQ_TYPE_LEVEL_HIGH>,
--						<6 &gic 0 122 IRQ_TYPE_LEVEL_HIGH>,
--						<7 &gic 0 123 IRQ_TYPE_LEVEL_HIGH>,
--						<8 &gic 0 128 IRQ_TYPE_LEVEL_HIGH>,
--						<9 &gic 0 129 IRQ_TYPE_LEVEL_HIGH>,
--						<10 &gic 0 130 IRQ_TYPE_LEVEL_HIGH>,
--						<11 &gic 0 131 IRQ_TYPE_LEVEL_HIGH>;
--			};
-+				     <8>, <9>, <10>, <11>;
-+			interrupt-map = <0 &combiner 23 3>,
-+					<1 &combiner 23 4>,
-+					<2 &combiner 25 2>,
-+					<3 &combiner 25 3>,
-+					<4 &gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
-+					<5 &gic 0 121 IRQ_TYPE_LEVEL_HIGH>,
-+					<6 &gic 0 122 IRQ_TYPE_LEVEL_HIGH>,
-+					<7 &gic 0 123 IRQ_TYPE_LEVEL_HIGH>,
-+					<8 &gic 0 128 IRQ_TYPE_LEVEL_HIGH>,
-+					<9 &gic 0 129 IRQ_TYPE_LEVEL_HIGH>,
-+					<10 &gic 0 130 IRQ_TYPE_LEVEL_HIGH>,
-+					<11 &gic 0 131 IRQ_TYPE_LEVEL_HIGH>;
+@@ -77,14 +77,14 @@
+ 					<1 &combiner 23 4>,
+ 					<2 &combiner 25 2>,
+ 					<3 &combiner 25 3>,
+-					<4 &gic 0 120 IRQ_TYPE_LEVEL_HIGH>,
+-					<5 &gic 0 121 IRQ_TYPE_LEVEL_HIGH>,
+-					<6 &gic 0 122 IRQ_TYPE_LEVEL_HIGH>,
+-					<7 &gic 0 123 IRQ_TYPE_LEVEL_HIGH>,
+-					<8 &gic 0 128 IRQ_TYPE_LEVEL_HIGH>,
+-					<9 &gic 0 129 IRQ_TYPE_LEVEL_HIGH>,
+-					<10 &gic 0 130 IRQ_TYPE_LEVEL_HIGH>,
+-					<11 &gic 0 131 IRQ_TYPE_LEVEL_HIGH>;
++					<4 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++					<5 &gic GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++					<6 &gic GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
++					<7 &gic GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
++					<8 &gic GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
++					<9 &gic GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
++					<10 &gic GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
++					<11 &gic GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
  		};
  
  		watchdog: watchdog@101d0000 {
