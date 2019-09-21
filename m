@@ -2,103 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46F39B9FB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 22:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D674BB9FB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2019 22:47:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbfIUUck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 16:32:40 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57752 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfIUUck (ORCPT
+        id S1726287AbfIUUrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 16:47:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35986 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbfIUUrC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 16:32:40 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id DCD22807C7; Sat, 21 Sep 2019 22:32:23 +0200 (CEST)
-Date:   Sat, 21 Sep 2019 22:32:37 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     pavel@denx.de
-Cc:     linux-kernel@vger.kernel.org,
-        Willem de Bruijn <willemb@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Craig Gallek <kraig@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 4.19 10/79] udp: correct reuseport selection with
- connected sockets
-Message-ID: <20190921203237.GB14868@amd>
-References: <20190919214807.612593061@linuxfoundation.org>
- <20190919214808.734045565@linuxfoundation.org>
+        Sat, 21 Sep 2019 16:47:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mhIFsxbL1ECHUPkxDc2BqJV9UMfhjnMp75p0+vAPSwE=; b=BD4d2FETYOmNTZ+PhA1a5yRrG
+        lmetew4cKUQvtLVAZHKV9JBMJP/esLdPZzLLuXihXajcDeqHcTfy3d3H8KFQaf8PEgMH235ZyrjQp
+        NzY9Gs4pB1oEixZ4kHZ4CBx6VDCQ+SynPlPvA9QNptCFYNU1Np7UQHHzhWkpx4fzlf3w6Alx26LA7
+        8RW2+GC1pa0a0sEzymergUY3vBnnDQ8FvxykqC1nC18tlh/mbKTf95FlvRlJRStSdWITA2d8H65gn
+        s7NEfE8XbeZ9KNjLRv9FZThmwy8D42gqynQ1L5Kz7VFtPefutZCaJHj/vZaDgXM+6G+WYHSU+N9ql
+        Vv1wn0yQg==;
+Received: from [2601:1c0:6280:3f0::9a1f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iBmHT-0004P1-42; Sat, 21 Sep 2019 20:46:59 +0000
+Subject: Re: [PATCH 2/2] soc: ti: move 2 driver config options into the TI SOC
+ drivers menu
+To:     LKML <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>
+Cc:     Olof Johansson <olof@lixom.net>, Nishanth Menon <nm@ti.com>,
+        Benjamin Fair <b-fair@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+References: <ae4b494c-9723-1bc2-e471-e0e9f7df6e8f@infradead.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <2f0cd6cf-83c3-f60f-3d72-fd0cec64105e@infradead.org>
+Date:   Sat, 21 Sep 2019 13:46:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="+pHx0qQiF2pBVqBT"
-Content-Disposition: inline
-In-Reply-To: <20190919214808.734045565@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <ae4b494c-9723-1bc2-e471-e0e9f7df6e8f@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Santosh,
 
---+pHx0qQiF2pBVqBT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Would you also pick up patch 2/2, which I didn't Cc: you on?    :(
+
+Do I need to resend it?
+
+Thanks.
+
+On 9/19/19 3:33 PM, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Move the AM654 and J721E SOC config options inside the "TI SOC drivers"
+> menu with the other TI SOC drivers.
+> 
+> Fixes: a869b7b30dac ("soc: ti: Add Support for AM654 SoC config option")
+> Fixes: cff377f7897a ("soc: ti: Add Support for J721E SoC config option")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: Nishanth Menon <nm@ti.com>
+> Cc: Benjamin Fair <b-fair@ti.com>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> ---
+>  drivers/soc/ti/Kconfig |   20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> --- lnx-53.orig/drivers/soc/ti/Kconfig
+> +++ lnx-53/drivers/soc/ti/Kconfig
+> @@ -1,4 +1,12 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> +
+> +# TI SOC drivers
+> +#
+> +menuconfig SOC_TI
+> +	bool "TI SOC drivers support"
+> +
+> +if SOC_TI
+> +
+>  # 64-bit ARM SoCs from TI
+>  if ARM64
+>  
+> @@ -14,17 +22,9 @@ config ARCH_K3_J721E_SOC
+>  	help
+>  	  Enable support for TI's J721E SoC Family.
+>  
+> -endif
+> +endif # ARCH_K3
+>  
+> -endif
+> -
+> -#
+> -# TI SOC drivers
+> -#
+> -menuconfig SOC_TI
+> -	bool "TI SOC drivers support"
+> -
+> -if SOC_TI
+> +endif # ARM64
+>  
+>  config KEYSTONE_NAVIGATOR_QMSS
+>  	tristate "Keystone Queue Manager Subsystem"
+> 
+> 
+> 
 
 
-On Fri 2019-09-20 00:02:55, Greg Kroah-Hartman wrote:
-> From: Willem de Bruijn <willemb@google.com>
->=20
-> [ Upstream commit acdcecc61285faed359f1a3568c32089cc3a8329 ]
->=20
-> UDP reuseport groups can hold a mix unconnected and connected sockets.
-> Ensure that connections only receive all traffic to their 4-tuple.
->=20
-> Fast reuseport returns on the first reuseport match on the assumption
-> that all matches are equal. Only if connections are present, return to
-> the previous behavior of scoring all sockets.
->=20
-> Record if connections are present and if so (1) treat such connected
-> sockets as an independent match from the group, (2) only return
-> 2-tuple matches from reuseport and (3) do not return on the first
-> 2-tuple reuseport match to allow for a higher scoring match later.
->=20
-> New field has_conns is set without locks. No other fields in the
-> bitmap are modified at runtime and the field is only ever set
-> unconditionally, so an RMW cannot miss a change.
-
-That's an ... extremely tricky game with concurrent access. I'm pretty
-sure it is not valid C, but maybe it is acceptable for kernel.
-
-> --- a/include/net/sock_reuseport.h
-> +++ b/include/net/sock_reuseport.h
-> @@ -21,7 +21,8 @@ struct sock_reuseport {
->  	unsigned int		synq_overflow_ts;
->  	/* ID stays the same even after the size of socks[] grows. */
->  	unsigned int		reuseport_id;
-> -	bool			bind_inany;
-> +	unsigned int		bind_inany:1;
-> +	unsigned int		has_conns:1;
-
-But should it at least be commented here? If someone adds another int :1,
-he may get a surprise...
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---+pHx0qQiF2pBVqBT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl2GiOUACgkQMOfwapXb+vLb6wCggDl0JjSzuLuVv0oxRREVTOFY
-Y0EAni8wDVvlrdVRBByQOLaLyoNZa13t
-=zkuo
------END PGP SIGNATURE-----
-
---+pHx0qQiF2pBVqBT--
+-- 
+~Randy
