@@ -2,45 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E72E9BA503
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61305BA504
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394461AbfIVSx4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:53:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53534 "EHLO mail.kernel.org"
+        id S2394475AbfIVSx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:53:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394340AbfIVSxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:53:36 -0400
+        id S2394356AbfIVSxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:53:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9486921D6C;
-        Sun, 22 Sep 2019 18:53:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9788F21D56;
+        Sun, 22 Sep 2019 18:53:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178415;
-        bh=6udvi2yLiVhB84Voc7+vk5tUjJuKiJpMivh3EZYLisI=;
+        s=default; t=1569178418;
+        bh=9tdpQ5MRKMrYml1SMjDNx+7OaO3nSLGYFfNcKHsiyus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E0hpY0IWdTK0ffNeNeVN0fI7JKqvS8HvFsWXZ4MxEyqEuxULla6HHyclRiT82D9Sl
-         Pu8vAsXyMg9ZaDUFlAKPkKdlIhP/p+3DVEhqXt+xuh3hRCrddTIx8yzO1EfN4Hp2sY
-         Luif7y/aZdAvxr9+gj3M0dNMT3XjLIxkj7L92fXg=
+        b=hANXvmHKk5eh9LKgk04E5ky98ADlXLQVTyk7wzq+k3oVc89QO75mfFQqd1/4QoPfN
+         QiHqsucIOlxbd1n0Li5ilZ9B5iujZWY8x77Hu6BPXyVaA2DjWu5UCeGTEL5Ll1a6ig
+         Q4+ojAbJeIOq1sJhO79sjwLhNEdhmzPxB5VqdkoI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Austin Kim <austindh.kim@gmail.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Travis <mike.travis@hpe.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, allison@lohutok.net,
-        andy@infradead.org, armijn@tjaldur.nl, bp@alien8.de,
-        dvhart@infradead.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        kjlu@umn.edu, platform-driver-x86@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 154/185] x86/platform/uv: Fix kmalloc() NULL check routine
-Date:   Sun, 22 Sep 2019 14:48:52 -0400
-Message-Id: <20190922184924.32534-154-sashal@kernel.org>
+Cc:     "M. Vefa Bicakci" <m.v.b@runbox.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 156/185] platform/x86: intel_pmc_core: Do not ioremap RAM
+Date:   Sun, 22 Sep 2019 14:48:54 -0400
+Message-Id: <20190922184924.32534-156-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -53,57 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Austin Kim <austindh.kim@gmail.com>
+From: "M. Vefa Bicakci" <m.v.b@runbox.com>
 
-[ Upstream commit 864b23f0169d5bff677e8443a7a90dfd6b090afc ]
+[ Upstream commit 7d505758b1e556cdf65a5e451744fe0ae8063d17 ]
 
-The result of kmalloc() should have been checked ahead of below statement:
+On a Xen-based PVH virtual machine with more than 4 GiB of RAM,
+intel_pmc_core fails initialization with the following warning message
+from the kernel, indicating that the driver is attempting to ioremap
+RAM:
 
-	pqp = (struct bau_pq_entry *)vp;
+  ioremap on RAM at 0x00000000fe000000 - 0x00000000fe001fff
+  WARNING: CPU: 1 PID: 434 at arch/x86/mm/ioremap.c:186 __ioremap_caller.constprop.0+0x2aa/0x2c0
+...
+  Call Trace:
+   ? pmc_core_probe+0x87/0x2d0 [intel_pmc_core]
+   pmc_core_probe+0x87/0x2d0 [intel_pmc_core]
 
-Move BUG_ON(!vp) before above statement.
+This issue appears to manifest itself because of the following fallback
+mechanism in the driver:
 
-Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Hedi Berriche <hedi.berriche@hpe.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Travis <mike.travis@hpe.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: allison@lohutok.net
-Cc: andy@infradead.org
-Cc: armijn@tjaldur.nl
-Cc: bp@alien8.de
-Cc: dvhart@infradead.org
-Cc: gregkh@linuxfoundation.org
-Cc: hpa@zytor.com
-Cc: kjlu@umn.edu
-Cc: platform-driver-x86@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190905232951.GA28779@LGEARND20B15
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+	if (lpit_read_residency_count_address(&slp_s0_addr))
+		pmcdev->base_addr = PMC_BASE_ADDR_DEFAULT;
+
+The validity of address PMC_BASE_ADDR_DEFAULT (i.e., 0xFE000000) is not
+verified by the driver, which is what this patch introduces. With this
+patch, if address PMC_BASE_ADDR_DEFAULT is in RAM, then the driver will
+not attempt to ioremap the aforementioned address.
+
+Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/uv/tlb_uv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/platform/x86/intel_pmc_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index 0c7dfec4acac8..5a66d73620ce4 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -1815,9 +1815,9 @@ static void pq_init(int node, int pnode)
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index be6cda89dcf5b..01a530e2f8017 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -882,10 +882,14 @@ static int pmc_core_probe(struct platform_device *pdev)
+ 	if (pmcdev->map == &spt_reg_map && !pci_dev_present(pmc_pci_ids))
+ 		pmcdev->map = &cnp_reg_map;
  
- 	plsize = (DEST_Q_SIZE + 1) * sizeof(struct bau_pq_entry);
- 	vp = kmalloc_node(plsize, GFP_KERNEL, node);
--	pqp = (struct bau_pq_entry *)vp;
--	BUG_ON(!pqp);
-+	BUG_ON(!vp);
+-	if (lpit_read_residency_count_address(&slp_s0_addr))
++	if (lpit_read_residency_count_address(&slp_s0_addr)) {
+ 		pmcdev->base_addr = PMC_BASE_ADDR_DEFAULT;
+-	else
++
++		if (page_is_ram(PHYS_PFN(pmcdev->base_addr)))
++			return -ENODEV;
++	} else {
+ 		pmcdev->base_addr = slp_s0_addr - pmcdev->map->slp_s0_offset;
++	}
  
-+	pqp = (struct bau_pq_entry *)vp;
- 	cp = (char *)pqp + 31;
- 	pqp = (struct bau_pq_entry *)(((unsigned long)cp >> 5) << 5);
- 
+ 	pmcdev->regbase = ioremap(pmcdev->base_addr,
+ 				  pmcdev->map->regmap_length);
 -- 
 2.20.1
 
