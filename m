@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E676BA4F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26FFFBA4F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393573AbfIVSxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:53:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52082 "EHLO mail.kernel.org"
+        id S2393898AbfIVSxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:53:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392961AbfIVSws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:52:48 -0400
+        id S2389121AbfIVSww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:52:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5138621BE5;
-        Sun, 22 Sep 2019 18:52:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DC5D208C2;
+        Sun, 22 Sep 2019 18:52:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178368;
-        bh=/rangsZ0ELaQluOZKEg4V40zOt8+RCVaCUrHYUx7Wvw=;
+        s=default; t=1569178372;
+        bh=0NklFi5BNWNDgAY2+lWD5jgqXv5IH1+D0pno6Bub/tg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aJc/vZjwAjZGT+OXVaDRabBY3+7uNkRzabe2LIXXu5iJBAB/gc5xZSPKqxFPJxMN1
-         TNe0Squsbj2N9MKY5xjxY/oydpLZ9wnJhHUhhJNgRe20y+QPl+Mw97LnC2AMVrBIsy
-         XKWW+th9fvTrRXDF5EvCP1LArHTDO5eVEH3LJARQ=
+        b=W7JqdPLzKpTVka0f99+QbZxyF2/9CREx24zd8JgGyPrTctJwftYhH4UPfJtPVpc7g
+         m1iOUJw85dUN0guUO7LSpS0IY1cgSqMrFUAADxMhnWc8VF2mOMvT/KqYESpBmQ/byd
+         1nqzpPAluQovoipn6vQMImlk/y/+AIj3bbYj+ZRg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Eddie James <eajames@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 119/185] media: aspeed-video: address a protential usage of an unitialized var
-Date:   Sun, 22 Sep 2019 14:48:17 -0400
-Message-Id: <20190922184924.32534-119-sashal@kernel.org>
+Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Daniel Drake <drake@endlessm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 122/185] ASoC: es8316: fix headphone mixer volume table
+Date:   Sun, 22 Sep 2019 14:48:20 -0400
+Message-Id: <20190922184924.32534-122-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -43,55 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 
-[ Upstream commit 31b8b0bd6e55c3ea5a08bb8141fa5d3c90600e3b ]
+[ Upstream commit f972d02fee2496024cfd6f59021c9d89d54922a6 ]
 
-While this might not occur in practice, if the device is doing
-the right thing, it would be teoretically be possible to have
-both hsync_counter and vsync_counter negatives.
+This patch fix setting table of Headphone mixer volume.
+Current code uses 4 ... 7 values but these values are prohibited.
 
-If this ever happen, ctrl will be undefined, but the driver
-will still call:
+Correct settings are the following:
+  0000 -12dB
+  0001 -10.5dB
+  0010 -9dB
+  0011 -7.5dB
+  0100 -6dB
+  1000 -4.5dB
+  1001 -3dB
+  1010 -1.5dB
+  1011 0dB
 
-	aspeed_video_update(video, VE_CTRL, 0, ctrl);
-
-Change the code to prevent this to happen.
-
-This was warned by cppcheck:
-
-	[drivers/media/platform/aspeed-video.c:653]: (error) Uninitialized variable: ctrl
-
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Reviewed-by: Daniel Drake <drake@endlessm.com>
+Link: https://lore.kernel.org/r/20190826153900.25969-1-katsuhiro@katsuster.net
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/aspeed-video.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/soc/codecs/es8316.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
-index de0f192afa8b1..388c32a11345d 100644
---- a/drivers/media/platform/aspeed-video.c
-+++ b/drivers/media/platform/aspeed-video.c
-@@ -632,7 +632,7 @@ static void aspeed_video_check_and_set_polarity(struct aspeed_video *video)
- 	}
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index 6db002cc20582..96d04896193f2 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -51,7 +51,10 @@ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(adc_vol_tlv, -9600, 50, 1);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_max_gain_tlv, -650, 150, 0);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_min_gain_tlv, -1200, 150, 0);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_target_tlv, -1650, 150, 0);
+-static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(hpmixer_gain_tlv, -1200, 150, 0);
++static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(hpmixer_gain_tlv,
++	0, 4, TLV_DB_SCALE_ITEM(-1200, 150, 0),
++	8, 11, TLV_DB_SCALE_ITEM(-450, 150, 0),
++);
  
- 	if (hsync_counter < 0 || vsync_counter < 0) {
--		u32 ctrl;
-+		u32 ctrl = 0;
+ static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(adc_pga_gain_tlv,
+ 	0, 0, TLV_DB_SCALE_ITEM(-350, 0, 0),
+@@ -89,7 +92,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
+ 	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
+ 		       4, 0, 3, 1, hpout_vol_tlv),
+ 	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
+-		       0, 4, 7, 0, hpmixer_gain_tlv),
++		       0, 4, 11, 0, hpmixer_gain_tlv),
  
- 		if (hsync_counter < 0) {
- 			ctrl = VE_CTRL_HSYNC_POL;
-@@ -652,7 +652,8 @@ static void aspeed_video_check_and_set_polarity(struct aspeed_video *video)
- 				V4L2_DV_VSYNC_POS_POL;
- 		}
- 
--		aspeed_video_update(video, VE_CTRL, 0, ctrl);
-+		if (ctrl)
-+			aspeed_video_update(video, VE_CTRL, 0, ctrl);
- 	}
- }
- 
+ 	SOC_ENUM("Playback Polarity", dacpol),
+ 	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
 -- 
 2.20.1
 
