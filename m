@@ -2,221 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6552FBA042
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 04:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 726CEBA040
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 04:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfIVCil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 22:38:41 -0400
-Received: from mail-pl1-f171.google.com ([209.85.214.171]:41926 "EHLO
-        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbfIVCik (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 22:38:40 -0400
-Received: by mail-pl1-f171.google.com with SMTP id t10so4931143plr.8
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2019 19:38:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=u8q6MNCABMDlM/R1LIFa8oysDHH50DToOChOmjLLVbU=;
-        b=iY9lbdiaKjI60gd9i5XxcIo6DblArB55ty+VPbKRX/kyc9Gy3Gw50rzuxdw27vlObx
-         wpR7GADzfAeh3ONtf/Pi2BBPnYqM5Dra3cVQ89qBgVb95cIOBq8Y3SvmjW45RDKImbAp
-         v9bXenkDNzLliTetGiP/9JHcIo4Z+31qy3G9e6lsvTWfle8/qSP8cjiRGISFY23ZhpNp
-         6O5pfg1SKFEv3tVqJTiLDeSrGBA15JauDm3HNRMfVzdGxMVWC7U7pNwSKJ78E59OAwpa
-         22EeuBxgp6OwXzyl60jD84Za8lWZUZbwXdiFgFOt1QYSGggNyOO8gytEfIVqMjRosmad
-         ZDlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=u8q6MNCABMDlM/R1LIFa8oysDHH50DToOChOmjLLVbU=;
-        b=uWPYkJO1ecfm/VTTP4IwLeKpQ9vFpV4gTFiVqbKX+P8M6RrSCIrnCWHPUlhDgMIsia
-         lusfw+GMxXLTox2voV+BIf6vN6hs9zQ/dYsrvOooRYBEK1OPkHmI7U8OzwtB46Kzto+G
-         gA1UXQ3y9lYLA5nGQJ3f7SdkrauVfSEjvfr/Pg8m8quFx/1P3/t+sg9a5CGQfSQD4VQu
-         Krr8wmv9XARB5D60nDm6J1l4O3DZUj60dwD16WxB3YMx3FJZo5roy1kUzYKM6yZ9uK7R
-         aZdEfx3VL/8RzMLdwgNFjeooCgkoZu0oXc0Khz56VKxriAJkg+NlBMmuQiJyethES80J
-         xFkA==
-X-Gm-Message-State: APjAAAW/R0u9k60yskjnuHSTC9QpqslVi8zZz2vNImr0ePZPiTS54DTm
-        oTJNB2zAR7GeaUXXVPVX38geYmy+gzg=
-X-Google-Smtp-Source: APXvYqyOEvNRiD0iZKONmxhfNJYaMFYLbAWE2hUQu3uv5FWEpnE1eqLrtc9jkYyS267LnXJ056L2jQ==
-X-Received: by 2002:a17:902:aa93:: with SMTP id d19mr321916plr.301.1569119919582;
-        Sat, 21 Sep 2019 19:38:39 -0700 (PDT)
-Received: from localhost.localdomain ([207.148.65.56])
-        by smtp.gmail.com with ESMTPSA id p20sm5597047pgj.47.2019.09.21.19.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2019 19:38:39 -0700 (PDT)
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, Changbin Du <changbin.du@gmail.com>
-Subject: [PATCH v2 1/2] perf: support multiple debug options separated by ','
-Date:   Sun, 22 Sep 2019 10:38:22 +0800
-Message-Id: <20190922023823.12543-2-changbin.du@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190922023823.12543-1-changbin.du@gmail.com>
-References: <20190922023823.12543-1-changbin.du@gmail.com>
+        id S1727234AbfIVCid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 22:38:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39534 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727070AbfIVCid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 22:38:33 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DB2243086218;
+        Sun, 22 Sep 2019 02:38:32 +0000 (UTC)
+Received: from [10.72.12.58] (ovpn-12-58.pek2.redhat.com [10.72.12.58])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7E5B85D9E2;
+        Sun, 22 Sep 2019 02:38:28 +0000 (UTC)
+Subject: Re: [PATCH RESEND] nbd: avoid losing pointer to reallocated
+ config->socks in nbd_add_socket
+To:     Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-block@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        nbd@other.debian.org
+Cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+References: <20190920160644.GA15739@asgard.redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <b8c7fdec-700d-e4a6-9fd6-a63c09e7a613@redhat.com>
+Date:   Sun, 22 Sep 2019 10:38:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190920160644.GA15739@asgard.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Sun, 22 Sep 2019 02:38:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for multiple debug options separated by ',' and
-non-int values.
-	--debug verbose=2,stderr
+On 2019/9/21 0:06, Eugene Syromiatnikov wrote:
+> In the (very unlikely) case of config->socks reallocation success
+> and nsock allocation failure config->nsock will not get updated
+> with the new pointer to socks array. Fix it by updating config->socks
+> right after reallocation successfulness check.
+>
+> Fixes: 9561a7ade0c2 ("nbd: add multi-connection support")
+> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+> Cc: stable@vger.kernel.org # 4.10+
+> ---
+>   drivers/block/nbd.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index a8e3815..a04c686 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -987,14 +987,14 @@ static int nbd_add_socket(struct nbd_device *nbd, unsigned long arg,
+>   		sockfd_put(sock);
+>   		return -ENOMEM;
+>   	}
+> +	config->socks = socks;
+> +
+>   	nsock = kzalloc(sizeof(struct nbd_sock), GFP_KERNEL);
+>   	if (!nsock) {
+>   		sockfd_put(sock);
+>   		return -ENOMEM;
+>   	}
+>   
+> -	config->socks = socks;
+> -
 
-Signed-off-by: Changbin Du <changbin.du@gmail.com>
----
- tools/perf/Documentation/perf.txt | 10 ++--
- tools/perf/util/debug.c           | 86 ++++++++++++++++---------------
- 2 files changed, 50 insertions(+), 46 deletions(-)
+This makes sense.
 
-diff --git a/tools/perf/Documentation/perf.txt b/tools/perf/Documentation/perf.txt
-index 401f0ed67439..c05a94b2488e 100644
---- a/tools/perf/Documentation/perf.txt
-+++ b/tools/perf/Documentation/perf.txt
-@@ -19,11 +19,11 @@ OPTIONS
- 	  --debug verbose=2 # sets verbose = 2
- 
- 	List of debug variables allowed to set:
--	  verbose          - general debug messages
--	  ordered-events   - ordered events object debug messages
--	  data-convert     - data convert command debug messages
--	  stderr           - write debug output (option -v) to stderr
--	                     in browser mode
-+	  verbose=level		- general debug messages
-+	  ordered-events=level	- ordered events object debug messages
-+	  data-convert=level	- data convert command debug messages
-+	  stderr		- write debug output (option -v) to stderr
-+				  in browser mode
- 
- --buildid-dir::
- 	Setup buildid cache directory. It has higher priority than
-diff --git a/tools/perf/util/debug.c b/tools/perf/util/debug.c
-index a1b59bd35519..ae6eb6d1c695 100644
---- a/tools/perf/util/debug.c
-+++ b/tools/perf/util/debug.c
-@@ -27,7 +27,7 @@
- int verbose;
- bool dump_trace = false, quiet = false;
- int debug_ordered_events;
--static int redirect_to_stderr;
-+static bool redirect_to_stderr;
- int debug_data_convert;
- 
- int veprintf(int level, int var, const char *fmt, va_list args)
-@@ -173,41 +173,18 @@ void trace_event(union perf_event *event)
- 		     trace_event_printer, event);
- }
- 
--static struct debug_variable {
--	const char *name;
--	int *ptr;
--} debug_variables[] = {
--	{ .name = "verbose",		.ptr = &verbose },
--	{ .name = "ordered-events",	.ptr = &debug_ordered_events},
--	{ .name = "stderr",		.ptr = &redirect_to_stderr},
--	{ .name = "data-convert",	.ptr = &debug_data_convert },
--	{ .name = NULL, }
--};
--
--int perf_debug_option(const char *str)
-+static int str2loglevel(const char *vstr)
- {
--	struct debug_variable *var = &debug_variables[0];
--	char *vstr, *s = strdup(str);
- 	int v = 1;
--
--	vstr = strchr(s, '=');
--	if (vstr)
--		*vstr++ = 0;
--
--	while (var->name) {
--		if (!strcmp(s, var->name))
--			break;
--		var++;
--	}
--
--	if (!var->name) {
--		pr_err("Unknown debug variable name '%s'\n", s);
--		free(s);
--		return -1;
--	}
-+	char *endptr;
- 
- 	if (vstr) {
--		v = atoi(vstr);
-+		v = strtol(vstr, &endptr,0);
-+		if (vstr == endptr) {
-+			fprintf(stderr, "warning: '%s' is not a digit\n", vstr);
-+			return -1;
-+		}
-+
- 		/*
- 		 * Allow only values in range (0, 10),
- 		 * otherwise set 0.
-@@ -218,20 +195,47 @@ int perf_debug_option(const char *str)
- 	if (quiet)
- 		v = -1;
- 
--	*var->ptr = v;
--	free(s);
-+	return v;
-+}
-+
-+int perf_debug_option(const char *str)
-+{
-+	char *sep, *vstr;
-+	char *dstr = strdup(str);
-+	char *opt = dstr;
-+
-+	do {
-+		if ((sep = strchr(opt, ',')) != NULL)
-+			*sep = '\0';
-+
-+		vstr = strchr(opt, '=');
-+		if (vstr)
-+			*vstr++ = 0;
-+
-+		if (!strcmp(opt, "verbose"))
-+			verbose = str2loglevel(vstr);
-+		else if (!strcmp(opt, "ordered-events"))
-+			debug_ordered_events = str2loglevel(vstr);
-+		else if (!strcmp(opt, "data-convert"))
-+			debug_data_convert = str2loglevel(vstr);
-+		else if (!strcmp(opt, "stderr"))
-+			redirect_to_stderr = true;
-+		else {
-+			fprintf(stderr, "unkown debug option '%s'\n", opt);
-+			free(dstr);
-+			return -1;
-+		}
-+
-+		opt = sep + 1;
-+	} while (sep && sep[1]);
-+
-+	free(dstr);
- 	return 0;
- }
- 
- int perf_quiet_option(void)
- {
--	struct debug_variable *var = &debug_variables[0];
--
--	/* disable all debug messages */
--	while (var->name) {
--		*var->ptr = -1;
--		var++;
--	}
-+	verbose = debug_ordered_events = debug_data_convert = -1;
- 
- 	return 0;
- }
--- 
-2.20.1
+If the socks allocating successes, then the old config->socks will be 
+freed by krealloc() and return the new one, but if the nsock allocating 
+fails, the config->socks will hold the released memory, which may cause 
+the kernel crash.
+
+Thanks
+
+BRs
+
+
+
+>   	nsock->fallback_index = -1;
+>   	nsock->dead = false;
+>   	mutex_init(&nsock->tx_lock);
+
 
