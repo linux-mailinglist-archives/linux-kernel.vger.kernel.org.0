@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3DDBA746
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9FDBA752
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394753AbfIVS5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:57:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59412 "EHLO mail.kernel.org"
+        id S2394860AbfIVS5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:57:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394729AbfIVS5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:57:01 -0400
+        id S2394823AbfIVS51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:57:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1884D214D9;
-        Sun, 22 Sep 2019 18:57:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D32EA214D9;
+        Sun, 22 Sep 2019 18:57:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178620;
-        bh=K+q3mHnwRmnhbB9RNRwxP3slO8LmOvrVsRKDXNrA6zk=;
+        s=default; t=1569178646;
+        bh=SJoa6ch7YWT88IzJRbD/Ujj7hZoK2RBN31oGU40WAAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iLSqvH624FXaj8unq8EwPBYWfFduk4/zp/cmdSiQOOk+kWCYJqNEJMBLBViCa+GGF
-         OduWr0pbhBaXu1Q1LoNqKY7P6R3oCKljjxMFp4vDn7uTINagp85clw3K5Sw/dshCCt
-         g/CpQBqalLcMv8wiskknvJZ8w5aF7a0I1Ury/d8Q=
+        b=C5zyDQOpGUaLmF74egoNCP7KuuV7xh1ntP7tZ9XYosCfZ/SeyibkJeg0uvMFFKUcT
+         NZlgWR8lJKtZPJ/RPRfcqCVSBHQCDeVddcl09oJrisqKwjVIF+bpo3mAlCJusLYH2C
+         dWOiWFICPX0m3o2YJKQXDgGQHP3gYWU/+4Z5hjbA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nigel Croxon <ncroxon@redhat.com>,
-        Song Liu <songliubraving@fb.com>,
-        Sasha Levin <sashal@kernel.org>, linux-raid@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 119/128] raid5: don't increment read_errors on EILSEQ return
-Date:   Sun, 22 Sep 2019 14:54:09 -0400
-Message-Id: <20190922185418.2158-119-sashal@kernel.org>
+Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Igor Opaniuk <igor.opaniuk@toradex.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/89] ASoC: sgtl5000: Fix charge pump source assignment
+Date:   Sun, 22 Sep 2019 14:55:51 -0400
+Message-Id: <20190922185717.3412-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
-References: <20190922185418.2158-1-sashal@kernel.org>
+In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
+References: <20190922185717.3412-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,44 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nigel Croxon <ncroxon@redhat.com>
+From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 
-[ Upstream commit b76b4715eba0d0ed574f58918b29c1b2f0fa37a8 ]
+[ Upstream commit b6319b061ba279577fd7030a9848fbd6a17151e3 ]
 
-While MD continues to count read errors returned by the lower layer.
-If those errors are -EILSEQ, instead of -EIO, it should NOT increase
-the read_errors count.
+If VDDA != VDDIO and any of them is greater than 3.1V, charge pump
+source can be assigned automatically [1].
 
-When RAID6 is set up on dm-integrity target that detects massive
-corruption, the leg will be ejected from the array.  Even if the
-issue is correctable with a sector re-write and the array has
-necessary redundancy to correct it.
+[1] https://www.nxp.com/docs/en/data-sheet/SGTL5000.pdf
 
-The leg is ejected because it runs up the rdev->read_errors beyond
-conf->max_nr_stripes.  The return status in dm-drypt when there is
-a data integrity error is -EILSEQ (BLK_STS_PROTECTION).
-
-Signed-off-by: Nigel Croxon <ncroxon@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Link: https://lore.kernel.org/r/20190719100524.23300-7-oleksandr.suvorov@toradex.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/raid5.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/codecs/sgtl5000.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index d26e5e9bea427..dbc4655a95768 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -2540,7 +2540,8 @@ static void raid5_end_read_request(struct bio * bi)
- 		int set_bad = 0;
+diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
+index 0b11a2e01b2fc..b649675d190d2 100644
+--- a/sound/soc/codecs/sgtl5000.c
++++ b/sound/soc/codecs/sgtl5000.c
+@@ -1084,12 +1084,17 @@ static int sgtl5000_set_power_regs(struct snd_soc_codec *codec)
+ 					SGTL5000_INT_OSC_EN);
+ 		/* Enable VDDC charge pump */
+ 		ana_pwr |= SGTL5000_VDDC_CHRGPMP_POWERUP;
+-	} else if (vddio >= 3100 && vdda >= 3100) {
++	} else {
+ 		ana_pwr &= ~SGTL5000_VDDC_CHRGPMP_POWERUP;
+-		/* VDDC use VDDIO rail */
+-		lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
+-		lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
+-			    SGTL5000_VDDC_MAN_ASSN_SHIFT;
++		/*
++		 * if vddio == vdda the source of charge pump should be
++		 * assigned manually to VDDIO
++		 */
++		if (vddio == vdda) {
++			lreg_ctrl |= SGTL5000_VDDC_ASSN_OVRD;
++			lreg_ctrl |= SGTL5000_VDDC_MAN_ASSN_VDDIO <<
++				    SGTL5000_VDDC_MAN_ASSN_SHIFT;
++		}
+ 	}
  
- 		clear_bit(R5_UPTODATE, &sh->dev[i].flags);
--		atomic_inc(&rdev->read_errors);
-+		if (!(bi->bi_status == BLK_STS_PROTECTION))
-+			atomic_inc(&rdev->read_errors);
- 		if (test_bit(R5_ReadRepl, &sh->dev[i].flags))
- 			pr_warn_ratelimited(
- 				"md/raid:%s: read error on replacement device (sector %llu on %s).\n",
+ 	snd_soc_write(codec, SGTL5000_CHIP_LINREG_CTRL, lreg_ctrl);
 -- 
 2.20.1
 
