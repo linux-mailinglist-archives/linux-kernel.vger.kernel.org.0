@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26FFFBA4F4
+	by mail.lfdr.de (Postfix) with ESMTP id 96588BA4F5
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393898AbfIVSxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:53:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52194 "EHLO mail.kernel.org"
+        id S2394048AbfIVSxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:53:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389121AbfIVSww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:52:52 -0400
+        id S2393285AbfIVSw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:52:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5DC5D208C2;
-        Sun, 22 Sep 2019 18:52:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C574021479;
+        Sun, 22 Sep 2019 18:52:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178372;
-        bh=0NklFi5BNWNDgAY2+lWD5jgqXv5IH1+D0pno6Bub/tg=;
+        s=default; t=1569178375;
+        bh=CguQhBGjD/VMo7E6gLNngt9pIJo06htO8RE80jx/QE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W7JqdPLzKpTVka0f99+QbZxyF2/9CREx24zd8JgGyPrTctJwftYhH4UPfJtPVpc7g
-         m1iOUJw85dUN0guUO7LSpS0IY1cgSqMrFUAADxMhnWc8VF2mOMvT/KqYESpBmQ/byd
-         1nqzpPAluQovoipn6vQMImlk/y/+AIj3bbYj+ZRg=
+        b=sCgo2s51pnPQ40JDwPUBpZ2LStRdLbQh8NIMlGfGLqmvwiGbvZwpW77B7lEBGVjPV
+         2Hi6SdOzUwtbsSV6+ZR/RKMXCyEjnimTFeZ5qzwTW6ER6Bsa1mWGghZ6y+PgsBt8GC
+         mWzMlmvAaGXVnm0tKFBk0YBzkJSk9Oi6Ua8u7YiE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Daniel Drake <drake@endlessm.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Neil Horman <nhorman@tuxdriver.com>, djuran@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 122/185] ASoC: es8316: fix headphone mixer volume table
-Date:   Sun, 22 Sep 2019 14:48:20 -0400
-Message-Id: <20190922184924.32534-122-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 125/185] x86/apic/vector: Warn when vector space exhaustion breaks affinity
+Date:   Sun, 22 Sep 2019 14:48:23 -0400
+Message-Id: <20190922184924.32534-125-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -44,58 +43,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+From: Neil Horman <nhorman@tuxdriver.com>
 
-[ Upstream commit f972d02fee2496024cfd6f59021c9d89d54922a6 ]
+[ Upstream commit 743dac494d61d991967ebcfab92e4f80dc7583b3 ]
 
-This patch fix setting table of Headphone mixer volume.
-Current code uses 4 ... 7 values but these values are prohibited.
+On x86, CPUs are limited in the number of interrupts they can have affined
+to them as they only support 256 interrupt vectors per CPU. 32 vectors are
+reserved for the CPU and the kernel reserves another 22 for internal
+purposes. That leaves 202 vectors for assignement to devices.
 
-Correct settings are the following:
-  0000 -12dB
-  0001 -10.5dB
-  0010 -9dB
-  0011 -7.5dB
-  0100 -6dB
-  1000 -4.5dB
-  1001 -3dB
-  1010 -1.5dB
-  1011 0dB
+When an interrupt is set up or the affinity is changed by the kernel or the
+administrator, the vector assignment code attempts to honor the requested
+affinity mask. If the vector space on the CPUs in that affinity mask is
+exhausted the code falls back to a wider set of CPUs and assigns a vector
+on a CPU outside of the requested affinity mask silently.
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Reviewed-by: Daniel Drake <drake@endlessm.com>
-Link: https://lore.kernel.org/r/20190826153900.25969-1-katsuhiro@katsuster.net
-Signed-off-by: Mark Brown <broonie@kernel.org>
+While the effective affinity is reflected in the corresponding
+/proc/irq/$N/effective_affinity* files the silent breakage of the requested
+affinity can lead to unexpected behaviour for administrators.
+
+Add a pr_warn() when this happens so that adminstrators get at least
+informed about it in the syslog.
+
+[ tglx: Massaged changelog and made the pr_warn() more informative ]
+
+Reported-by: djuran@redhat.com
+Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: djuran@redhat.com
+Link: https://lkml.kernel.org/r/20190822143421.9535-1-nhorman@tuxdriver.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/es8316.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/kernel/apic/vector.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index 6db002cc20582..96d04896193f2 100644
---- a/sound/soc/codecs/es8316.c
-+++ b/sound/soc/codecs/es8316.c
-@@ -51,7 +51,10 @@ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(adc_vol_tlv, -9600, 50, 1);
- static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_max_gain_tlv, -650, 150, 0);
- static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_min_gain_tlv, -1200, 150, 0);
- static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_target_tlv, -1650, 150, 0);
--static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(hpmixer_gain_tlv, -1200, 150, 0);
-+static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(hpmixer_gain_tlv,
-+	0, 4, TLV_DB_SCALE_ITEM(-1200, 150, 0),
-+	8, 11, TLV_DB_SCALE_ITEM(-450, 150, 0),
-+);
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index fdacb864c3dd4..2c5676b0a6e7f 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -398,6 +398,17 @@ static int activate_reserved(struct irq_data *irqd)
+ 		if (!irqd_can_reserve(irqd))
+ 			apicd->can_reserve = false;
+ 	}
++
++	/*
++	 * Check to ensure that the effective affinity mask is a subset
++	 * the user supplied affinity mask, and warn the user if it is not
++	 */
++	if (!cpumask_subset(irq_data_get_effective_affinity_mask(irqd),
++			    irq_data_get_affinity_mask(irqd))) {
++		pr_warn("irq %u: Affinity broken due to vector space exhaustion.\n",
++			irqd->irq);
++	}
++
+ 	return ret;
+ }
  
- static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(adc_pga_gain_tlv,
- 	0, 0, TLV_DB_SCALE_ITEM(-350, 0, 0),
-@@ -89,7 +92,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
- 	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
- 		       4, 0, 3, 1, hpout_vol_tlv),
- 	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
--		       0, 4, 7, 0, hpmixer_gain_tlv),
-+		       0, 4, 11, 0, hpmixer_gain_tlv),
- 
- 	SOC_ENUM("Playback Polarity", dacpol),
- 	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
 -- 
 2.20.1
 
