@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1990BA489
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BAF4BA48A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392446AbfIVStg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:49:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46176 "EHLO mail.kernel.org"
+        id S2392494AbfIVStk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:49:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392084AbfIVStL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:49:11 -0400
+        id S2392203AbfIVStS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:49:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB16E21BE5;
-        Sun, 22 Sep 2019 18:49:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 764FE21479;
+        Sun, 22 Sep 2019 18:49:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178150;
-        bh=lx1Y0pfDUEwiqhs7oUO14XYU//xDyG5LDm4+Z39ZEwY=;
+        s=default; t=1569178157;
+        bh=1Rla/CRhwULzh57jcjmACw1sEEzYO9KbZYXxxksqJQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PshsTJPOnwMe+lSVWnXDvOmTtqB+el2+3JZatr/KvQEh2PgvfDK9BKTlQItmIv/HT
-         lQaZNEx51LoucXAgkC79QnIOxymZoqC3OzexQF4Yl/x6oZNcX33gT8zN0gS+b/rg7q
-         oPAW0/gXseaJT50hPQy6jTiNFFcms/Gq0BzBKxF0=
+        b=IW5SMZD9pD1OjmD78tOzMRZT96Aghc5fjnl444jH+ZuJ/cI4MQlGyFG00OY2OPp9g
+         bmUIapXUxvCifFGYBcHL3nmJ0Si7LaGdJJXKIX5enASYeP0+5w0CXXTrvAqC3wORfW
+         4LXgCZxbugMEczAknfTuIDE6+NHUmI4FAeRgjRxM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        kbuild test robot <lkp@intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 5.3 197/203] iommu/amd: Override wrong IVRS IOAPIC on Raven Ridge systems
-Date:   Sun, 22 Sep 2019 14:43:43 -0400
-Message-Id: <20190922184350.30563-197-sashal@kernel.org>
+Cc:     Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 202/203] btrfs: Detect unbalanced tree with empty leaf before crashing btree operations
+Date:   Sun, 22 Sep 2019 14:43:48 -0400
+Message-Id: <20190922184350.30563-202-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -45,192 +43,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit 93d051550ee02eaff9a2541d825605a7bd778027 ]
+[ Upstream commit 62fdaa52a3d00a875da771719b6dc537ca79fce1 ]
 
-Raven Ridge systems may have malfunction touchpad or hang at boot if
-incorrect IVRS IOAPIC is provided by BIOS.
+[BUG]
+With crafted image, btrfs will panic at btree operations:
 
-Users already found correct "ivrs_ioapic=" values, let's put them inside
-kernel to workaround buggy BIOS.
+  kernel BUG at fs/btrfs/ctree.c:3894!
+  invalid opcode: 0000 [#1] SMP PTI
+  CPU: 0 PID: 1138 Comm: btrfs-transacti Not tainted 5.0.0-rc8+ #9
+  RIP: 0010:__push_leaf_left+0x6b6/0x6e0
+  RSP: 0018:ffffc0bd4128b990 EFLAGS: 00010246
+  RAX: 0000000000000000 RBX: ffffa0a4ab8f0e38 RCX: 0000000000000000
+  RDX: ffffa0a280000000 RSI: 0000000000000000 RDI: ffffa0a4b3814000
+  RBP: ffffc0bd4128ba38 R08: 0000000000001000 R09: ffffc0bd4128b948
+  R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000240
+  R13: ffffa0a4b556fb60 R14: ffffa0a4ab8f0af0 R15: ffffa0a4ab8f0af0
+  FS: 0000000000000000(0000) GS:ffffa0a4b7a00000(0000) knlGS:0000000000000000
+  CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00007f2461c80020 CR3: 000000022b32a006 CR4: 00000000000206f0
+  Call Trace:
+  ? _cond_resched+0x1a/0x50
+  push_leaf_left+0x179/0x190
+  btrfs_del_items+0x316/0x470
+  btrfs_del_csums+0x215/0x3a0
+  __btrfs_free_extent.isra.72+0x5a7/0xbe0
+  __btrfs_run_delayed_refs+0x539/0x1120
+  btrfs_run_delayed_refs+0xdb/0x1b0
+  btrfs_commit_transaction+0x52/0x950
+  ? start_transaction+0x94/0x450
+  transaction_kthread+0x163/0x190
+  kthread+0x105/0x140
+  ? btrfs_cleanup_transaction+0x560/0x560
+  ? kthread_destroy_worker+0x50/0x50
+  ret_from_fork+0x35/0x40
+  Modules linked in:
+  ---[ end trace c2425e6e89b5558f ]---
 
-BugLink: https://bugs.launchpad.net/bugs/1795292
-BugLink: https://bugs.launchpad.net/bugs/1837688
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+[CAUSE]
+The offending csum tree looks like this:
+
+  checksum tree key (CSUM_TREE ROOT_ITEM 0)
+  node 29741056 level 1 items 14 free 107 generation 19 owner CSUM_TREE
+	  ...
+	  key (EXTENT_CSUM EXTENT_CSUM 85975040) block 29630464 gen 17
+	  key (EXTENT_CSUM EXTENT_CSUM 89911296) block 29642752 gen 17 <<<
+	  key (EXTENT_CSUM EXTENT_CSUM 92274688) block 29646848 gen 17
+	  ...
+
+  leaf 29630464 items 6 free space 1 generation 17 owner CSUM_TREE
+	  item 0 key (EXTENT_CSUM EXTENT_CSUM 85975040) itemoff 3987 itemsize 8
+		  range start 85975040 end 85983232 length 8192
+	  ...
+  leaf 29642752 items 0 free space 3995 generation 17 owner 0
+		      ^ empty leaf            invalid owner ^
+
+  leaf 29646848 items 1 free space 602 generation 17 owner CSUM_TREE
+	  item 0 key (EXTENT_CSUM EXTENT_CSUM 92274688) itemoff 627 itemsize 3368
+		  range start 92274688 end 95723520 length 3448832
+
+So we have a corrupted csum tree where one tree leaf is completely
+empty, causing unbalanced btree, thus leading to unexpected btree
+balance error.
+
+[FIX]
+For this particular case, we handle it in two directions to catch it:
+- Check if the tree block is empty through btrfs_verify_level_key()
+  So that invalid tree blocks won't be read out through
+  btrfs_search_slot() and its variants.
+
+- Check 0 tree owner in tree checker
+  NO tree is using 0 as its tree owner, detect it and reject at tree
+  block read time.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202821
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/Makefile           |  2 +-
- drivers/iommu/amd_iommu.h        | 14 +++++
- drivers/iommu/amd_iommu_init.c   |  5 +-
- drivers/iommu/amd_iommu_quirks.c | 92 ++++++++++++++++++++++++++++++++
- 4 files changed, 111 insertions(+), 2 deletions(-)
- create mode 100644 drivers/iommu/amd_iommu.h
- create mode 100644 drivers/iommu/amd_iommu_quirks.c
+ fs/btrfs/disk-io.c      | 10 ++++++++++
+ fs/btrfs/tree-checker.c |  6 ++++++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-index f13f36ae1af65..c6a277e698484 100644
---- a/drivers/iommu/Makefile
-+++ b/drivers/iommu/Makefile
-@@ -10,7 +10,7 @@ obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
- obj-$(CONFIG_IOMMU_IOVA) += iova.o
- obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
- obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
--obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o
-+obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o amd_iommu_quirks.o
- obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += amd_iommu_debugfs.o
- obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
- obj-$(CONFIG_ARM_SMMU) += arm-smmu.o
-diff --git a/drivers/iommu/amd_iommu.h b/drivers/iommu/amd_iommu.h
-new file mode 100644
-index 0000000000000..12d540d9b59b0
---- /dev/null
-+++ b/drivers/iommu/amd_iommu.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef AMD_IOMMU_H
-+#define AMD_IOMMU_H
-+
-+int __init add_special_device(u8 type, u8 id, u16 *devid, bool cmd_line);
-+
-+#ifdef CONFIG_DMI
-+void amd_iommu_apply_ivrs_quirks(void);
-+#else
-+static void amd_iommu_apply_ivrs_quirks(void) { }
-+#endif
-+
-+#endif
-diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-index 4413aa67000e5..568c52317757c 100644
---- a/drivers/iommu/amd_iommu_init.c
-+++ b/drivers/iommu/amd_iommu_init.c
-@@ -32,6 +32,7 @@
- #include <asm/irq_remapping.h>
- 
- #include <linux/crash_dump.h>
-+#include "amd_iommu.h"
- #include "amd_iommu_proto.h"
- #include "amd_iommu_types.h"
- #include "irq_remapping.h"
-@@ -1002,7 +1003,7 @@ static void __init set_dev_entry_from_acpi(struct amd_iommu *iommu,
- 	set_iommu_for_device(iommu, devid);
- }
- 
--static int __init add_special_device(u8 type, u8 id, u16 *devid, bool cmd_line)
-+int __init add_special_device(u8 type, u8 id, u16 *devid, bool cmd_line)
- {
- 	struct devid_map *entry;
- 	struct list_head *list;
-@@ -1153,6 +1154,8 @@ static int __init init_iommu_from_acpi(struct amd_iommu *iommu,
- 	if (ret)
- 		return ret;
- 
-+	amd_iommu_apply_ivrs_quirks();
-+
- 	/*
- 	 * First save the recommended feature enable bits from ACPI
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 97beb351a10cd..65af7eb3f7bd7 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -416,6 +416,16 @@ int btrfs_verify_level_key(struct extent_buffer *eb, int level,
  	 */
-diff --git a/drivers/iommu/amd_iommu_quirks.c b/drivers/iommu/amd_iommu_quirks.c
-new file mode 100644
-index 0000000000000..c235f79b7a200
---- /dev/null
-+++ b/drivers/iommu/amd_iommu_quirks.c
-@@ -0,0 +1,92 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
+ 	if (btrfs_header_generation(eb) > fs_info->last_trans_committed)
+ 		return 0;
 +
-+/*
-+ * Quirks for AMD IOMMU
-+ *
-+ * Copyright (C) 2019 Kai-Heng Feng <kai.heng.feng@canonical.com>
-+ */
++	/* We have @first_key, so this @eb must have at least one item */
++	if (btrfs_header_nritems(eb) == 0) {
++		btrfs_err(fs_info,
++		"invalid tree nritems, bytenr=%llu nritems=0 expect >0",
++			  eb->start);
++		WARN_ON(IS_ENABLED(CONFIG_BTRFS_DEBUG));
++		return -EUCLEAN;
++	}
 +
-+#ifdef CONFIG_DMI
-+#include <linux/dmi.h>
-+
-+#include "amd_iommu.h"
-+
-+#define IVHD_SPECIAL_IOAPIC		1
-+
-+struct ivrs_quirk_entry {
-+	u8 id;
-+	u16 devid;
-+};
-+
-+enum {
-+	DELL_INSPIRON_7375 = 0,
-+	DELL_LATITUDE_5495,
-+	LENOVO_IDEAPAD_330S_15ARR,
-+};
-+
-+static const struct ivrs_quirk_entry ivrs_ioapic_quirks[][3] __initconst = {
-+	/* ivrs_ioapic[4]=00:14.0 ivrs_ioapic[5]=00:00.2 */
-+	[DELL_INSPIRON_7375] = {
-+		{ .id = 4, .devid = 0xa0 },
-+		{ .id = 5, .devid = 0x2 },
-+		{}
-+	},
-+	/* ivrs_ioapic[4]=00:14.0 */
-+	[DELL_LATITUDE_5495] = {
-+		{ .id = 4, .devid = 0xa0 },
-+		{}
-+	},
-+	/* ivrs_ioapic[32]=00:14.0 */
-+	[LENOVO_IDEAPAD_330S_15ARR] = {
-+		{ .id = 32, .devid = 0xa0 },
-+		{}
-+	},
-+	{}
-+};
-+
-+static int __init ivrs_ioapic_quirk_cb(const struct dmi_system_id *d)
-+{
-+	const struct ivrs_quirk_entry *i;
-+
-+	for (i = d->driver_data; i->id != 0 && i->devid != 0; i++)
-+		add_special_device(IVHD_SPECIAL_IOAPIC, i->id, (u16 *)&i->devid, 0);
-+
-+	return 0;
-+}
-+
-+static const struct dmi_system_id ivrs_quirks[] __initconst = {
-+	{
-+		.callback = ivrs_ioapic_quirk_cb,
-+		.ident = "Dell Inspiron 7375",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 7375"),
-+		},
-+		.driver_data = (void *)&ivrs_ioapic_quirks[DELL_INSPIRON_7375],
-+	},
-+	{
-+		.callback = ivrs_ioapic_quirk_cb,
-+		.ident = "Dell Latitude 5495",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 5495"),
-+		},
-+		.driver_data = (void *)&ivrs_ioapic_quirks[DELL_LATITUDE_5495],
-+	},
-+	{
-+		.callback = ivrs_ioapic_quirk_cb,
-+		.ident = "Lenovo ideapad 330S-15ARR",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "81FB"),
-+		},
-+		.driver_data = (void *)&ivrs_ioapic_quirks[LENOVO_IDEAPAD_330S_15ARR],
-+	},
-+	{}
-+};
-+
-+void __init amd_iommu_apply_ivrs_quirks(void)
-+{
-+	dmi_check_system(ivrs_quirks);
-+}
-+#endif
+ 	if (found_level)
+ 		btrfs_node_key_to_cpu(eb, &found_key, 0);
+ 	else
+diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
+index d83adda6c090a..9634cae1e1b1d 100644
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -991,6 +991,12 @@ static int check_leaf(struct extent_buffer *leaf, bool check_item_data)
+ 				    owner);
+ 			return -EUCLEAN;
+ 		}
++		/* Unknown tree */
++		if (owner == 0) {
++			generic_err(leaf, 0,
++				"invalid owner, root 0 is not defined");
++			return -EUCLEAN;
++		}
+ 		return 0;
+ 	}
+ 
 -- 
 2.20.1
 
