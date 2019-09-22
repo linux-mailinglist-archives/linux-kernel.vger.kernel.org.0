@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF5C2BA62F
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29953BA639
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391429AbfIVSsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:48:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44644 "EHLO mail.kernel.org"
+        id S2391599AbfIVSs1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:48:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391301AbfIVSsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:48:00 -0400
+        id S2391457AbfIVSsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:48:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D185F214AF;
-        Sun, 22 Sep 2019 18:47:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62CED214D9;
+        Sun, 22 Sep 2019 18:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178079;
-        bh=WsyQeQ0LKRlhdI1QG341Q+aStMLnCD6mISC3+nH3hEY=;
+        s=default; t=1569178092;
+        bh=almqlEgrShZjlwAf+YmnkiSQmi+dQpvSMs4EOo+e5No=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jytDDgEqfa2iLz+pNYJQjygAWuhsdrLlM49yN8cJ9mpu+LFKw+5gpQi5IxO3Ixb2w
-         A+o4EzXt+A0Jd8NvOqyrV44bkmU4fgPuyhOeYIlcXY50FE2DOruMekFxFuSmUlu9Nv
-         r9s7yENdiZqRfK51ZOTwGFytq/7HGksjJ1MhCH5U=
+        b=QkRy1uRaR94eQnmAMR5IVLLqDYmcInUxGH0x03M2YeYtQm9PGEVuAaNIyweFtfVi0
+         ajGvoFtdhS2hHNcH82MoFx3JB1WBhjIFo16pCNwLfeP63QMZEHq9EuVCJ2foTqIYNP
+         vfnWor40iwiM/k7E1QWKr2Ug5eKyUAVNSOeVb4xk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cezary Rojewski <cezary.rojewski@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 150/203] ASoC: Intel: Haswell: Adjust machine device private context
-Date:   Sun, 22 Sep 2019 14:42:56 -0400
-Message-Id: <20190922184350.30563-150-sashal@kernel.org>
+Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 157/203] ACPI: custom_method: fix memory leaks
+Date:   Sun, 22 Sep 2019 14:43:03 -0400
+Message-Id: <20190922184350.30563-157-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -44,51 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cezary Rojewski <cezary.rojewski@intel.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit ca964edf0ddbfec2cb10b3d251d09598e7ca9b13 ]
+[ Upstream commit 03d1571d9513369c17e6848476763ebbd10ec2cb ]
 
-Apart from Haswell machines, all other devices have their private data
-set to snd_soc_acpi_mach instance.
+In cm_write(), 'buf' is allocated through kzalloc(). In the following
+execution, if an error occurs, 'buf' is not deallocated, leading to memory
+leaks. To fix this issue, free 'buf' before returning the error.
 
-Changes for HSW/ BDW boards introduced with series:
-https://patchwork.kernel.org/cover/10782035/
-
-added support for dai_link platform_name adjustments within card probe
-routines. These take for granted private_data points to
-snd_soc_acpi_mach whereas for Haswell, it's sst_pdata instead. Change
-private context of platform_device - representing machine board - to
-address this.
-
-Fixes: e87055d732e3 ("ASoC: Intel: haswell: platform name fixup support")
-Fixes: 7e40ddcf974a ("ASoC: Intel: bdw-rt5677: platform name fixup support")
-Fixes: 2d067b2807f9 ("ASoC: Intel: broadwell: platform name fixup support")
-Signed-off-by: Cezary Rojewski <cezary.rojewski@intel.com>
-Link: https://lore.kernel.org/r/20190822113616.22702-2-cezary.rojewski@intel.com
-Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 526b4af47f44 ("ACPI: Split out custom_method functionality into an own driver")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/intel/common/sst-acpi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/acpi/custom_method.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/intel/common/sst-acpi.c b/sound/soc/intel/common/sst-acpi.c
-index 0e8e0a7a11df3..5854868650b9e 100644
---- a/sound/soc/intel/common/sst-acpi.c
-+++ b/sound/soc/intel/common/sst-acpi.c
-@@ -141,11 +141,12 @@ static int sst_acpi_probe(struct platform_device *pdev)
+diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
+index b2ef4c2ec955d..fd66a736621cf 100644
+--- a/drivers/acpi/custom_method.c
++++ b/drivers/acpi/custom_method.c
+@@ -49,8 +49,10 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 	if ((*ppos > max_size) ||
+ 	    (*ppos + count > max_size) ||
+ 	    (*ppos + count < count) ||
+-	    (count > uncopied_bytes))
++	    (count > uncopied_bytes)) {
++		kfree(buf);
+ 		return -EINVAL;
++	}
+ 
+ 	if (copy_from_user(buf + (*ppos), user_buf, count)) {
+ 		kfree(buf);
+@@ -70,6 +72,7 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 		add_taint(TAINT_OVERRIDDEN_ACPI_TABLE, LOCKDEP_NOW_UNRELIABLE);
  	}
  
- 	platform_set_drvdata(pdev, sst_acpi);
-+	mach->pdata = sst_pdata;
- 
- 	/* register machine driver */
- 	sst_acpi->pdev_mach =
- 		platform_device_register_data(dev, mach->drv_name, -1,
--					      sst_pdata, sizeof(*sst_pdata));
-+					      mach, sizeof(*mach));
- 	if (IS_ERR(sst_acpi->pdev_mach))
- 		return PTR_ERR(sst_acpi->pdev_mach);
++	kfree(buf);
+ 	return count;
+ }
  
 -- 
 2.20.1
