@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60BADBA558
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EE4BA55C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405732AbfIVS4o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:56:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58862 "EHLO mail.kernel.org"
+        id S2394705AbfIVS45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:56:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408190AbfIVS4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:56:41 -0400
+        id S2391071AbfIVS4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:56:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DFE121D7A;
-        Sun, 22 Sep 2019 18:56:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B211C214D9;
+        Sun, 22 Sep 2019 18:56:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178600;
-        bh=57zbMiVngujYeilxbGZGmOy0krEqRQDQymwGIukHjns=;
+        s=default; t=1569178611;
+        bh=lvpeCriczaHEZAkOKWAz/cDpVco9ZhiJA1uH8EtM2DU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KIMJuJGN1OpE2oXwZw1Y+5BCmNRDEGsggmFUTHHpit0YfXz+LBCK3X6gRDgJ8pr5p
-         lqL+OJVfV9CF8qSTuBfkA67OjbJcWi08KiI5wfo2CMULakyEU/53nAsLyRjhOyewe0
-         xK0SEuIReBFfpA0nu2U36VPUxhNf0O9JKiJvhXlw=
+        b=uu00s49B7oPotXd/+U2JPn7nOVD+QKijHXYQRp0VB0YSRPflNvKKAg3qc/pEMQ1YM
+         quplgnLCJAquvTXnhbWilKjJo80GpND2letVi/wvAiIcdFxquUQKNy4mDH7BbgMdUX
+         l2a6mQ/SobVYldvB1hY332ffGH2sf/xA8qaxUOYc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yufen Yu <yuyufen@huawei.com>, NeilBrown <neilb@suse.de>,
-        Song Liu <songliubraving@fb.com>,
-        Sasha Levin <sashal@kernel.org>, linux-raid@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 104/128] md/raid1: fail run raid1 array when active disk less than one
-Date:   Sun, 22 Sep 2019 14:53:54 -0400
-Message-Id: <20190922185418.2158-104-sashal@kernel.org>
+Cc:     "M. Vefa Bicakci" <m.v.b@runbox.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 111/128] platform/x86: intel_pmc_core: Do not ioremap RAM
+Date:   Sun, 22 Sep 2019 14:54:01 -0400
+Message-Id: <20190922185418.2158-111-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -43,76 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: "M. Vefa Bicakci" <m.v.b@runbox.com>
 
-[ Upstream commit 07f1a6850c5d5a65c917c3165692b5179ac4cb6b ]
+[ Upstream commit 7d505758b1e556cdf65a5e451744fe0ae8063d17 ]
 
-When run test case:
-  mdadm -CR /dev/md1 -l 1 -n 4 /dev/sd[a-d] --assume-clean --bitmap=internal
-  mdadm -S /dev/md1
-  mdadm -A /dev/md1 /dev/sd[b-c] --run --force
+On a Xen-based PVH virtual machine with more than 4 GiB of RAM,
+intel_pmc_core fails initialization with the following warning message
+from the kernel, indicating that the driver is attempting to ioremap
+RAM:
 
-  mdadm --zero /dev/sda
-  mdadm /dev/md1 -a /dev/sda
+  ioremap on RAM at 0x00000000fe000000 - 0x00000000fe001fff
+  WARNING: CPU: 1 PID: 434 at arch/x86/mm/ioremap.c:186 __ioremap_caller.constprop.0+0x2aa/0x2c0
+...
+  Call Trace:
+   ? pmc_core_probe+0x87/0x2d0 [intel_pmc_core]
+   pmc_core_probe+0x87/0x2d0 [intel_pmc_core]
 
-  echo offline > /sys/block/sdc/device/state
-  echo offline > /sys/block/sdb/device/state
-  sleep 5
-  mdadm -S /dev/md1
+This issue appears to manifest itself because of the following fallback
+mechanism in the driver:
 
-  echo running > /sys/block/sdb/device/state
-  echo running > /sys/block/sdc/device/state
-  mdadm -A /dev/md1 /dev/sd[a-c] --run --force
+	if (lpit_read_residency_count_address(&slp_s0_addr))
+		pmcdev->base_addr = PMC_BASE_ADDR_DEFAULT;
 
-mdadm run fail with kernel message as follow:
-[  172.986064] md: kicking non-fresh sdb from array!
-[  173.004210] md: kicking non-fresh sdc from array!
-[  173.022383] md/raid1:md1: active with 0 out of 4 mirrors
-[  173.022406] md1: failed to create bitmap (-5)
+The validity of address PMC_BASE_ADDR_DEFAULT (i.e., 0xFE000000) is not
+verified by the driver, which is what this patch introduces. With this
+patch, if address PMC_BASE_ADDR_DEFAULT is in RAM, then the driver will
+not attempt to ioremap the aforementioned address.
 
-In fact, when active disk in raid1 array less than one, we
-need to return fail in raid1_run().
-
-Reviewed-by: NeilBrown <neilb@suse.de>
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: M. Vefa Bicakci <m.v.b@runbox.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/raid1.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/platform/x86/intel_pmc_core.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 54010675df9a5..6929d110d8048 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -3105,6 +3105,13 @@ static int raid1_run(struct mddev *mddev)
- 		    !test_bit(In_sync, &conf->mirrors[i].rdev->flags) ||
- 		    test_bit(Faulty, &conf->mirrors[i].rdev->flags))
- 			mddev->degraded++;
-+	/*
-+	 * RAID1 needs at least one disk in active
-+	 */
-+	if (conf->raid_disks - mddev->degraded < 1) {
-+		ret = -EINVAL;
-+		goto abort;
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index 088d1c2047e6b..36bd2545afb62 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -685,10 +685,14 @@ static int __init pmc_core_probe(void)
+ 	if (pmcdev->map == &spt_reg_map && !pci_dev_present(pmc_pci_ids))
+ 		pmcdev->map = &cnp_reg_map;
+ 
+-	if (lpit_read_residency_count_address(&slp_s0_addr))
++	if (lpit_read_residency_count_address(&slp_s0_addr)) {
+ 		pmcdev->base_addr = PMC_BASE_ADDR_DEFAULT;
+-	else
++
++		if (page_is_ram(PHYS_PFN(pmcdev->base_addr)))
++			return -ENODEV;
++	} else {
+ 		pmcdev->base_addr = slp_s0_addr - pmcdev->map->slp_s0_offset;
 +	}
  
- 	if (conf->raid_disks - mddev->degraded == 1)
- 		mddev->recovery_cp = MaxSector;
-@@ -3138,8 +3145,12 @@ static int raid1_run(struct mddev *mddev)
- 	ret =  md_integrity_register(mddev);
- 	if (ret) {
- 		md_unregister_thread(&mddev->thread);
--		raid1_free(mddev, conf);
-+		goto abort;
- 	}
-+	return 0;
-+
-+abort:
-+	raid1_free(mddev, conf);
- 	return ret;
- }
- 
+ 	pmcdev->regbase = ioremap(pmcdev->base_addr,
+ 				  pmcdev->map->regmap_length);
 -- 
 2.20.1
 
