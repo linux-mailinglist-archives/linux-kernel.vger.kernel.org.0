@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0895BA740
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15EA5BA741
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394678AbfIVS4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:56:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59064 "EHLO mail.kernel.org"
+        id S2394694AbfIVS4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:56:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394647AbfIVS4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:56:49 -0400
+        id S2394660AbfIVS4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:56:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86E7921D79;
-        Sun, 22 Sep 2019 18:56:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CBF92184D;
+        Sun, 22 Sep 2019 18:56:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178608;
-        bh=uaOIWpsIf8+dt111emlxC4v/ymc0+qk134NPY6ms2Vg=;
+        s=default; t=1569178610;
+        bh=oxUGfmRL9iGpIDJ2pCNJq5o2xCvzlbFrr0Q4xmMQX0s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJfusZ7zstbNfoMdlhUCS/WmMEiBxZ4v1aAsLaJwf2YEuZuFPwsvgBRzWNKA0Utit
-         gTm2uLE115yy3+JKpC+4c0x3I4ZgRHZNMp/oEP5ruGOa2rvt7NA5ViZq2LawQBFN8L
-         113RLxkO/xZMEqJStCJ2uxF9dPaj68w2bAieD8Us=
+        b=Y9g4ElcegDn+uMLL9wcAbFaAONj7LJHGlE9VuXpic03kSXNvgvWEJufn7QDL4wLkC
+         +H72aadCmzjQz9HxS2dIsIyPOANmpAxXPB3nTPZhi+WG1GDMUchHaPo8ONPRVn8gjN
+         tp6dSDDyN34Yin1m7knWsHAHfFEcZWvveaTPfI3Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Austin Kim <austindh.kim@gmail.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
+Cc:     Gayatri Kammela <gayatri.kammela@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Travis <mike.travis@hpe.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, allison@lohutok.net,
-        andy@infradead.org, armijn@tjaldur.nl, bp@alien8.de,
-        dvhart@infradead.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        kjlu@umn.edu, platform-driver-x86@vger.kernel.org,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 109/128] x86/platform/uv: Fix kmalloc() NULL check routine
-Date:   Sun, 22 Sep 2019 14:53:59 -0400
-Message-Id: <20190922185418.2158-109-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 110/128] x86/cpu: Add Tiger Lake to Intel family
+Date:   Sun, 22 Sep 2019 14:54:00 -0400
+Message-Id: <20190922185418.2158-110-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -53,57 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Austin Kim <austindh.kim@gmail.com>
+From: Gayatri Kammela <gayatri.kammela@intel.com>
 
-[ Upstream commit 864b23f0169d5bff677e8443a7a90dfd6b090afc ]
+[ Upstream commit 6e1c32c5dbb4b90eea8f964c2869d0bde050dbe0 ]
 
-The result of kmalloc() should have been checked ahead of below statement:
+Add the model numbers/CPUIDs of Tiger Lake mobile and desktop to the
+Intel family.
 
-	pqp = (struct bau_pq_entry *)vp;
-
-Move BUG_ON(!vp) before above statement.
-
-Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-Cc: Hedi Berriche <hedi.berriche@hpe.com>
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Travis <mike.travis@hpe.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>
+Cc: Rahul Tanwar <rahul.tanwar@linux.intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: allison@lohutok.net
-Cc: andy@infradead.org
-Cc: armijn@tjaldur.nl
-Cc: bp@alien8.de
-Cc: dvhart@infradead.org
-Cc: gregkh@linuxfoundation.org
-Cc: hpa@zytor.com
-Cc: kjlu@umn.edu
-Cc: platform-driver-x86@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190905232951.GA28779@LGEARND20B15
+Link: https://lkml.kernel.org/r/20190905193020.14707-2-tony.luck@intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/uv/tlb_uv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/intel-family.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-index a4130b84d1ff5..3a693e7c7434f 100644
---- a/arch/x86/platform/uv/tlb_uv.c
-+++ b/arch/x86/platform/uv/tlb_uv.c
-@@ -1817,9 +1817,9 @@ static void pq_init(int node, int pnode)
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index aebedbaf52607..5d0b72f281402 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -58,6 +58,9 @@
+ #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
+ #define INTEL_FAM6_ICELAKE_NNPI		0x9D
  
- 	plsize = (DEST_Q_SIZE + 1) * sizeof(struct bau_pq_entry);
- 	vp = kmalloc_node(plsize, GFP_KERNEL, node);
--	pqp = (struct bau_pq_entry *)vp;
--	BUG_ON(!pqp);
-+	BUG_ON(!vp);
++#define INTEL_FAM6_TIGERLAKE_L		0x8C
++#define INTEL_FAM6_TIGERLAKE		0x8D
++
+ /* "Small Core" Processors (Atom) */
  
-+	pqp = (struct bau_pq_entry *)vp;
- 	cp = (char *)pqp + 31;
- 	pqp = (struct bau_pq_entry *)(((unsigned long)cp >> 5) << 5);
- 
+ #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
 -- 
 2.20.1
 
