@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0968ABA63B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524BEBA63E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391659AbfIVSse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:48:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45012 "EHLO mail.kernel.org"
+        id S2391738AbfIVSsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:48:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391513AbfIVSsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:48:17 -0400
+        id S2391571AbfIVSsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:48:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16DA1214D9;
-        Sun, 22 Sep 2019 18:48:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B2AB21479;
+        Sun, 22 Sep 2019 18:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178097;
-        bh=ZaoPHwtLHsvaA+ZAcx1/9Bq15BWjd0+3loZmP5V6Kmo=;
+        s=default; t=1569178103;
+        bh=1XALEhAKuCd7LzKwV2e9wuvt2c6ap39x/F2yqvgyk8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJDEh8YUep+macwhKWOs3hlEqxI8JMN6mpkKlP1FL0pEuTn7DsHbjyhB2HLsbXUwy
-         s+Nd6nzykiIcJTAq43sV7VouN0Nm0QE8e+yYVCV1YcZEJcdinWK5nnaZv83lwQP8vd
-         xAvDmGlMOgs6qrLa4z5eUVl6Ac9zddi/F1PvKvb4=
+        b=BxaEZ+9+bLlwTvOAcJQBNP+Jpadeo8PGKa8cx5lYeVNWVI4Gz826dAbv7MTf9LdVa
+         wTn5GTbdQLEMxWdcpVpQTgrUOEgycRJNSf7Euc5XibbZuzcpoCbjIGASzoIlMQB2Ro
+         0yGe01aX7+6ZnCo9+FJfW4QQrZ9f3jenB5rXLQvs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marcel Bocu <marcel.p.bocu@gmail.com>, Vicki Pfau <vi@endrift.com>,
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        "Woods, Brian" <Brian.Woods@amd.com>,
-        Clemens Ladisch <clemens@ladisch.de>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 160/203] hwmon: (k10temp) Add support for AMD family 17h, model 70h CPUs
-Date:   Sun, 22 Sep 2019 14:43:06 -0400
-Message-Id: <20190922184350.30563-160-sashal@kernel.org>
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 164/203] kprobes: Prohibit probing on BUG() and WARN() address
+Date:   Sun, 22 Sep 2019 14:43:10 -0400
+Message-Id: <20190922184350.30563-164-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -49,64 +50,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcel Bocu <marcel.p.bocu@gmail.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 12163cfbfc0f804cc7d27bc20e8d266ce7459260 ]
+[ Upstream commit e336b4027775cb458dc713745e526fa1a1996b2a ]
 
-It would seem like model 70h is behaving in the same way as model 30h,
-so let's just add the new F3 PCI ID to the list of compatible devices.
+Since BUG() and WARN() may use a trap (e.g. UD2 on x86) to
+get the address where the BUG() has occurred, kprobes can not
+do single-step out-of-line that instruction. So prohibit
+probing on such address.
 
-Unlike previous Ryzen/Threadripper, Ryzen gen 3 processors do not need
-temperature offsets anymore. This has been reported in the press and
-verified on my Ryzen 3700X by checking that the idle temperature
-reported by k10temp is matching the temperature reported by the
-firmware.
+Without this fix, if someone put a kprobe on WARN(), the
+kernel will crash with invalid opcode error instead of
+outputing warning message, because kernel can not find
+correct bug address.
 
-Vicki Pfau sent an identical patch after I checked that no-one had
-written this patch. I would have been happy about dropping my patch but
-unlike for his patch series, I had already Cc:ed the x86 people and
-they already reviewed the changes. Since Vicki has not answered to
-any email after his initial series, let's assume she is on vacation
-and let's avoid duplication of reviews from the maintainers and merge
-my series. To acknowledge Vicki's anteriority, I added her S-o-b to
-the patch.
-
-v2, suggested by Guenter Roeck and Brian Woods:
-  - rename from 71h to 70h
-
-Signed-off-by: Vicki Pfau <vi@endrift.com>
-Signed-off-by: Marcel Bocu <marcel.p.bocu@gmail.com>
-Tested-by: Marcel Bocu <marcel.p.bocu@gmail.com>
-
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Naveen N . Rao <naveen.n.rao@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: "Woods, Brian" <Brian.Woods@amd.com>
-Cc: Clemens Ladisch <clemens@ladisch.de>
-Cc: Jean Delvare <jdelvare@suse.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-hwmon@vger.kernel.org
-Link: https://lore.kernel.org/r/20190722174653.2391-1-marcel.p.bocu@gmail.com
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Link: https://lkml.kernel.org/r/156750890133.19112.3393666300746167111.stgit@devnote2
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/k10temp.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/linux/bug.h | 5 +++++
+ kernel/kprobes.c    | 3 ++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/k10temp.c b/drivers/hwmon/k10temp.c
-index c77e89239dcd9..5c1dddde193c3 100644
---- a/drivers/hwmon/k10temp.c
-+++ b/drivers/hwmon/k10temp.c
-@@ -349,6 +349,7 @@ static const struct pci_device_id k10temp_id_table[] = {
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
- 	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_M30H_DF_F3) },
-+	{ PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_17H_M70H_DF_F3) },
- 	{ PCI_VDEVICE(HYGON, PCI_DEVICE_ID_AMD_17H_DF_F3) },
- 	{}
- };
+diff --git a/include/linux/bug.h b/include/linux/bug.h
+index fe5916550da8c..f639bd0122f39 100644
+--- a/include/linux/bug.h
++++ b/include/linux/bug.h
+@@ -47,6 +47,11 @@ void generic_bug_clear_once(void);
+ 
+ #else	/* !CONFIG_GENERIC_BUG */
+ 
++static inline void *find_bug(unsigned long bugaddr)
++{
++	return NULL;
++}
++
+ static inline enum bug_trap_type report_bug(unsigned long bug_addr,
+ 					    struct pt_regs *regs)
+ {
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index d9770a5393c89..ebe8315a756a2 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1514,7 +1514,8 @@ static int check_kprobe_address_safe(struct kprobe *p,
+ 	/* Ensure it is not in reserved area nor out of text */
+ 	if (!kernel_text_address((unsigned long) p->addr) ||
+ 	    within_kprobe_blacklist((unsigned long) p->addr) ||
+-	    jump_label_text_reserved(p->addr, p->addr)) {
++	    jump_label_text_reserved(p->addr, p->addr) ||
++	    find_bug((unsigned long)p->addr)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 -- 
 2.20.1
 
