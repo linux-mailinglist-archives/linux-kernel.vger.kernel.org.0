@@ -2,49 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C797BBA626
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7E57BA62A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391208AbfIVSrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:47:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44278 "EHLO mail.kernel.org"
+        id S2391349AbfIVSsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:48:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391134AbfIVSrq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:47:46 -0400
+        id S2391269AbfIVSr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:47:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECC87214D9;
-        Sun, 22 Sep 2019 18:47:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A6C121BE5;
+        Sun, 22 Sep 2019 18:47:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178065;
-        bh=wsTJHiMFPOoHIgER7mlVFFqhW8kRSBgcp+tO9JjJ15I=;
+        s=default; t=1569178077;
+        bh=L1K4pFSWiGXddrGuntvqMf6aFH0zGkbfckIzZT0ushM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GLbdw2ZdovNqJR5Uelowm7WLIXx3SgKyhYcWGn0yWa4EN0WR9+G6ohffC5y/u3Rzp
-         k0wOUPLp0nEbrNFxMTbF3E79mJrz9J22vxTIVY+ImO4lWTuObJBaYTw0FgsxHgspJ2
-         9nE0AQ55eKi868HjbHk9Y3zNRGk+geKTnnx2Pri4=
+        b=aUUvrQoufL/fRPFcT7+fvLDJcdyyjuUwiy6RhXPCBri+3/bZzSBjL2fqOPndpXjjh
+         Z3vLPfdHzPHUWgYnqBdHE+lEeRfMDrCD21/HoSXcNbX87FOXFevoQUGL0aImuvzbvs
+         wBn6s6srkied7N6u9A6UF/81fQ9IjWwU6ZoxyliA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Karl Rister <krister@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Brendan Gregg <brendan.d.gregg@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>,
+Cc:     Will Deacon <will@kernel.org>,
+        Andrew Murray <andrew.murray@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 139/203] perf evlist: Use unshare(CLONE_FS) in sb threads to let setns(CLONE_NEWNS) work
-Date:   Sun, 22 Sep 2019 14:42:45 -0400
-Message-Id: <20190922184350.30563-139-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 148/203] arm64: lse: Make ARM64_LSE_ATOMICS depend on JUMP_LABEL
+Date:   Sun, 22 Sep 2019 14:42:54 -0400
+Message-Id: <20190922184350.30563-148-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -53,158 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Will Deacon <will@kernel.org>
 
-[ Upstream commit b397f8468fa27f08b83b348ffa56a226f72453af ]
+[ Upstream commit b32baf91f60fb9c7010bff87e68132f2ce31d9a8 ]
 
-When we started using a thread to catch the PERF_RECORD_BPF_EVENT meta
-data events to then ask the kernel for further info (BTF, etc) for BPF
-programs shortly after they get loaded, we forgot to use
-unshare(CLONE_FS) as was done in:
+Support for LSE atomic instructions (CONFIG_ARM64_LSE_ATOMICS) relies on
+a static key to select between the legacy LL/SC implementation which is
+available on all arm64 CPUs and the super-duper LSE implementation which
+is available on CPUs implementing v8.1 and later.
 
-  868a832918f6 ("perf top: Support lookup of symbols in other mount namespaces.")
+Unfortunately, when building a kernel with CONFIG_JUMP_LABEL disabled
+(e.g. because the toolchain doesn't support 'asm goto'), the static key
+inside the atomics code tries to use atomics itself. This results in a
+mess of circular includes and a build failure:
 
-Do it so that we can enter the namespaces to read the build-ids at the
-end of a 'perf record' session for the DSOs that had hits.
+In file included from ./arch/arm64/include/asm/lse.h:11,
+                 from ./arch/arm64/include/asm/atomic.h:16,
+                 from ./include/linux/atomic.h:7,
+                 from ./include/asm-generic/bitops/atomic.h:5,
+                 from ./arch/arm64/include/asm/bitops.h:26,
+                 from ./include/linux/bitops.h:19,
+                 from ./include/linux/kernel.h:12,
+                 from ./include/asm-generic/bug.h:18,
+                 from ./arch/arm64/include/asm/bug.h:26,
+                 from ./include/linux/bug.h:5,
+                 from ./include/linux/page-flags.h:10,
+                 from kernel/bounds.c:10:
+./include/linux/jump_label.h: In function ‘static_key_count’:
+./include/linux/jump_label.h:254:9: error: implicit declaration of function ‘atomic_read’ [-Werror=implicit-function-declaration]
+  return atomic_read(&key->enabled);
+         ^~~~~~~~~~~
 
-Before:
+[ ... more of the same ... ]
 
-Starting a 'stress-ng --cpus 8' inside a container and then, outside the
-container running:
+Since LSE atomic instructions are not critical to the operation of the
+kernel, make them depend on JUMP_LABEL at compile time.
 
-  # perf record -a --namespaces sleep 5
-  # perf buildid-list | grep stress-ng
-  #
-
-We would end up with a 'perf.data' file that had no entry in its
-build-id table for the /usr/bin/stress-ng binary inside the container
-that got tons of PERF_RECORD_SAMPLEs.
-
-After:
-
-  # perf buildid-list | grep stress-ng
-  f2ed02c68341183a124b9b0f6e2e6c493c465b29 /usr/bin/stress-ng
-  #
-
-Then its just a matter of making sure that that binary debuginfo package
-gets available in a place that 'perf report' will look at build-id keyed
-ELF files, which, in my case, on a f30 notebook, was a matter of
-installing the debuginfo file for the distro used in the container,
-fedora 31:
-
-  # rpm -ivh http://fedora.c3sl.ufpr.br/linux/development/31/Everything/x86_64/debug/tree/Packages/s/stress-ng-debuginfo-0.07.29-10.fc31.x86_64.rpm
-
-Then, because perf currently looks for those debuginfo files (richer ELF
-symtab) inside that namespace (look at the setns calls):
-
-  openat(AT_FDCWD, "/proc/self/ns/mnt", O_RDONLY) = 137
-  openat(AT_FDCWD, "/proc/13169/ns/mnt", O_RDONLY) = 139
-  setns(139, CLONE_NEWNS)                 = 0
-  stat("/usr/bin/stress-ng", {st_mode=S_IFREG|0755, st_size=3065416, ...}) = 0
-  openat(AT_FDCWD, "/usr/bin/stress-ng", O_RDONLY) = 140
-  fcntl(140, F_GETFD)                     = 0
-  fstat(140, {st_mode=S_IFREG|0755, st_size=3065416, ...}) = 0
-  mmap(NULL, 3065416, PROT_READ, MAP_PRIVATE, 140, 0) = 0x7ff2fdc5b000
-  munmap(0x7ff2fdc5b000, 3065416)         = 0
-  close(140)                              = 0
-  stat("stress-ng-0.07.29-10.fc31.x86_64.debug", 0x7fff45d71260) = -1 ENOENT (No such file or directory)
-  stat("/usr/bin/stress-ng-0.07.29-10.fc31.x86_64.debug", 0x7fff45d71260) = -1 ENOENT (No such file or directory)
-  stat("/usr/bin/.debug/stress-ng-0.07.29-10.fc31.x86_64.debug", 0x7fff45d71260) = -1 ENOENT (No such file or directory)
-  stat("/usr/lib/debug/usr/bin/stress-ng-0.07.29-10.fc31.x86_64.debug", 0x7fff45d71260) = -1 ENOENT (No such file or directory)
-  stat("/root/.debug/.build-id/f2/ed02c68341183a124b9b0f6e2e6c493c465b29", 0x7fff45d711e0) = -1 ENOENT (No such file or directory)
-
-To only then go back to the "host" namespace to look just in the users's
-~/.debug cache:
-
-  setns(137, CLONE_NEWNS)                 = 0
-  chdir("/root")                          = 0
-  close(137)                              = 0
-  close(139)                              = 0
-  stat("/root/.debug/.build-id/f2/ed02c68341183a124b9b0f6e2e6c493c465b29/elf", 0x7fff45d732e0) = -1 ENOENT (No such file or directory)
-
-It continues to fail to resolve symbols:
-
-  # perf report | grep stress-ng | head -5
-     9.50%  stress-ng-cpu    stress-ng    [.] 0x0000000000021ac1
-     8.58%  stress-ng-cpu    stress-ng    [.] 0x0000000000021ab4
-     8.51%  stress-ng-cpu    stress-ng    [.] 0x0000000000021489
-     7.17%  stress-ng-cpu    stress-ng    [.] 0x00000000000219b6
-     3.93%  stress-ng-cpu    stress-ng    [.] 0x0000000000021478
-  #
-
-To overcome that we use:
-
-  # perf buildid-cache -v --add /usr/lib/debug/usr/bin/stress-ng-0.07.29-10.fc31.x86_64.debug
-  Adding f2ed02c68341183a124b9b0f6e2e6c493c465b29 /usr/lib/debug/usr/bin/stress-ng-0.07.29-10.fc31.x86_64.debug: Ok
-  #
-  # ls -la /root/.debug/.build-id/f2/ed02c68341183a124b9b0f6e2e6c493c465b29/elf
-  -rw-r--r--. 3 root root 2401184 Jul 27 07:03 /root/.debug/.build-id/f2/ed02c68341183a124b9b0f6e2e6c493c465b29/elf
-  # file /root/.debug/.build-id/f2/ed02c68341183a124b9b0f6e2e6c493c465b29/elf
-  /root/.debug/.build-id/f2/ed02c68341183a124b9b0f6e2e6c493c465b29/elf: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter \004, BuildID[sha1]=f2ed02c68341183a124b9b0f6e2e6c493c465b29, for GNU/Linux 3.2.0, with debug_info, not stripped, too many notes (256)
-  #
-
-Now it finally works:
-
-  # perf report | grep stress-ng | head -5
-    23.59%  stress-ng-cpu    stress-ng    [.] ackermann
-    23.33%  stress-ng-cpu    stress-ng    [.] is_prime
-    17.36%  stress-ng-cpu    stress-ng    [.] stress_cpu_sieve
-     6.08%  stress-ng-cpu    stress-ng    [.] stress_cpu_correlate
-     3.55%  stress-ng-cpu    stress-ng    [.] queens_try
-  #
-
-I'll make sure that it looks for the build-id keyed files in both the
-"host" namespace (the namespace the user running 'perf record' was a the
-time of the recording) and in the container namespace, as it shouldn't
-matter where a content based key lookup finds the ELF file to use in
-resolving symbols, etc.
-
-Reported-by: Karl Rister <krister@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Stanislav Fomichev <sdf@google.com>
-Cc: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
-Fixes: 657ee5531903 ("perf evlist: Introduce side band thread")
-Link: https://lkml.kernel.org/n/tip-g79k0jz41adiaeuqud742t2l@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/evlist.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index b0364d923f764..070c3bd578827 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -20,6 +20,7 @@
- #include "bpf-event.h"
- #include <signal.h>
- #include <unistd.h>
-+#include <sched.h>
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 3adcec05b1f67..27405ac94228b 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1263,6 +1263,7 @@ config ARM64_PAN
  
- #include "parse-events.h"
- #include <subcmd/parse-options.h>
-@@ -1870,6 +1871,14 @@ static void *perf_evlist__poll_thread(void *arg)
- 	struct perf_evlist *evlist = arg;
- 	bool draining = false;
- 	int i, done = 0;
-+	/*
-+	 * In order to read symbols from other namespaces perf to needs to call
-+	 * setns(2).  This isn't permitted if the struct_fs has multiple users.
-+	 * unshare(2) the fs so that we may continue to setns into namespaces
-+	 * that we're observing when, for instance, reading the build-ids at
-+	 * the end of a 'perf record' session.
-+	 */
-+	unshare(CLONE_FS);
- 
- 	while (!done) {
- 		bool got_data = false;
+ config ARM64_LSE_ATOMICS
+ 	bool "Atomic instructions"
++	depends on JUMP_LABEL
+ 	default y
+ 	help
+ 	  As part of the Large System Extensions, ARMv8.1 introduces new
 -- 
 2.20.1
 
