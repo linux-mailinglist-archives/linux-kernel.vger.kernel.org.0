@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4315FBA571
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B605BA573
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394853AbfIVS5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:57:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59956 "EHLO mail.kernel.org"
+        id S2438598AbfIVS5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:57:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389176AbfIVS5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:57:25 -0400
+        id S2394818AbfIVS50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:57:26 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE99F206C2;
-        Sun, 22 Sep 2019 18:57:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D58F72186A;
+        Sun, 22 Sep 2019 18:57:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178644;
-        bh=pV0YIwz+WaScIgPsWMQgTf+9XGIf/soXGhCLwRFPouU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ivuGuUKmWe4PaDy8MIrPXKnyJASJkHvY8BNxYXzzSsgxgMOLPtCA/XobH2tPsBf43
-         dhBIHCduUtvi96/2Y2ZhDavmVhnyV21CdYb9dUr9t+ifOkly26N87VtMMUXjJ77+os
-         3m2b7gMvke/W7s3iHJ6pNqEp+kz5VcjBjiWgC27o=
+        s=default; t=1569178645;
+        bh=7dFsxG1YLl3GjuYFLgokzQIzvV40LA4esZrNSpI38To=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eD6CtK+MFtGtPfNhAddJ4VgKRwuJIKNsBdF92VQuGY7fOAi6WJ90l9ovLwAo80Dng
+         2qxaIxsYxRzSV5dTTub+2FKOl9bY1Zp94gDkiIe55yyEhxxDVdPZsz03GV/X7fiOkf
+         9bTzVfmfycMO/irWUegcJDF3IUT0rnobDlHbhyuY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 01/89] ALSA: hda: Flush interrupts on disabling
-Date:   Sun, 22 Sep 2019 14:55:49 -0400
-Message-Id: <20190922185717.3412-1-sashal@kernel.org>
+Cc:     Axel Lin <axel.lin@ingics.com>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 02/89] regulator: lm363x: Fix off-by-one n_voltages for lm3632 ldo_vpos/ldo_vneg
+Date:   Sun, 22 Sep 2019 14:55:50 -0400
+Message-Id: <20190922185717.3412-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
+References: <20190922185717.3412-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -40,75 +42,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Axel Lin <axel.lin@ingics.com>
 
-[ Upstream commit caa8422d01e983782548648e125fd617cadcec3f ]
+[ Upstream commit 1e2cc8c5e0745b545d4974788dc606d678b6e564 ]
 
-I was looking at
+According to the datasheet https://www.ti.com/lit/ds/symlink/lm3632a.pdf
+Table 20. VPOS Bias Register Field Descriptions VPOS[5:0]
+Sets the Positive Display Bias (LDO) Voltage (50 mV per step)
+000000: 4 V
+000001: 4.05 V
+000010: 4.1 V
+....................
+011101: 5.45 V
+011110: 5.5 V (Default)
+011111: 5.55 V
+....................
+100111: 5.95 V
+101000: 6 V
+Note: Codes 101001 to 111111 map to 6 V
 
-<4> [241.835158] general protection fault: 0000 [#1] PREEMPT SMP PTI
-<4> [241.835181] CPU: 1 PID: 214 Comm: kworker/1:3 Tainted: G     U            5.2.0-CI-CI_DRM_6509+ #1
-<4> [241.835199] Hardware name: Dell Inc.                 OptiPlex 745                 /0GW726, BIOS 2.3.1  05/21/2007
-<4> [241.835234] Workqueue: events snd_hdac_bus_process_unsol_events [snd_hda_core]
-<4> [241.835256] RIP: 0010:input_handle_event+0x16d/0x5e0
-<4> [241.835270] Code: 48 8b 93 58 01 00 00 8b 52 08 89 50 04 8b 83 f8 06 00 00 48 8b 93 00 07 00 00 8d 70 01 48 8d 04 c2 83 e1 08 89 b3 f8 06 00 00 <66> 89 28 66 44 89 60 02 44 89 68 04 8b 93 f8 06 00 00 0f 84 fd fe
-<4> [241.835304] RSP: 0018:ffffc9000019fda0 EFLAGS: 00010046
-<4> [241.835317] RAX: 6b6b6b6ec6c6c6c3 RBX: ffff8880290fefc8 RCX: 0000000000000000
-<4> [241.835332] RDX: 000000006b6b6b6b RSI: 000000006b6b6b6c RDI: 0000000000000046
-<4> [241.835347] RBP: 0000000000000005 R08: 0000000000000000 R09: 0000000000000001
-<4> [241.835362] R10: ffffc9000019faa0 R11: 0000000000000000 R12: 0000000000000004
-<4> [241.835377] R13: 0000000000000000 R14: ffff8880290ff1d0 R15: 0000000000000293
-<4> [241.835392] FS:  0000000000000000(0000) GS:ffff88803de80000(0000) knlGS:0000000000000000
-<4> [241.835409] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4> [241.835422] CR2: 00007ffe9a99e9b7 CR3: 000000002f588000 CR4: 00000000000006e0
-<4> [241.835436] Call Trace:
-<4> [241.835449]  input_event+0x45/0x70
-<4> [241.835464]  snd_jack_report+0xdc/0x100
-<4> [241.835490]  snd_hda_jack_report_sync+0x83/0xc0 [snd_hda_codec]
-<4> [241.835512]  snd_hdac_bus_process_unsol_events+0x5a/0x70 [snd_hda_core]
-<4> [241.835530]  process_one_work+0x245/0x610
+The LM3632_LDO_VSEL_MAX should be 0b101000 (0x28), so the maximum voltage
+can match the datasheet.
 
-which has the hallmarks of a worker queued from interrupt after it was
-supposedly cancelled (note the POISON_FREE), and I could not see where
-the interrupt would be flushed on shutdown so added the likely suspects.
-
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111174
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 3a8d1a73a037 ("regulator: add LM363X driver")
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Link: https://lore.kernel.org/r/20190626132632.32629-1-axel.lin@ingics.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/hda/hdac_controller.c | 2 ++
- sound/pci/hda/hda_intel.c   | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/regulator/lm363x-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/hda/hdac_controller.c b/sound/hda/hdac_controller.c
-index 778b42ba90b80..3377f0bc28280 100644
---- a/sound/hda/hdac_controller.c
-+++ b/sound/hda/hdac_controller.c
-@@ -442,6 +442,8 @@ static void azx_int_disable(struct hdac_bus *bus)
- 	list_for_each_entry(azx_dev, &bus->stream_list, list)
- 		snd_hdac_stream_updateb(azx_dev, SD_CTL, SD_INT_MASK, 0);
+diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
+index ce5f7d9ad475f..30f576a5daf18 100644
+--- a/drivers/regulator/lm363x-regulator.c
++++ b/drivers/regulator/lm363x-regulator.c
+@@ -33,7 +33,7 @@
  
-+	synchronize_irq(bus->irq);
-+
- 	/* disable SIE for all streams */
- 	snd_hdac_chip_writeb(bus, INTCTL, 0);
+ /* LM3632 */
+ #define LM3632_BOOST_VSEL_MAX		0x26
+-#define LM3632_LDO_VSEL_MAX		0x29
++#define LM3632_LDO_VSEL_MAX		0x28
+ #define LM3632_VBOOST_MIN		4500000
+ #define LM3632_VLDO_MIN			4000000
  
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index 682f9657c16c6..a5314a08cfa85 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -1413,9 +1413,9 @@ static int azx_free(struct azx *chip)
- 	}
- 
- 	if (bus->chip_init) {
-+		azx_stop_chip(chip);
- 		azx_clear_irq_pending(chip);
- 		azx_stop_all_streams(chip);
--		azx_stop_chip(chip);
- 	}
- 
- 	if (bus->irq >= 0)
 -- 
 2.20.1
 
