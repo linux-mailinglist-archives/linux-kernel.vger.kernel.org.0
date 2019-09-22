@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 427A5BA6F9
+	by mail.lfdr.de (Postfix) with ESMTP id ACB2DBA6FA
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfIVSyt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:54:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54898 "EHLO mail.kernel.org"
+        id S2408043AbfIVSyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:54:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404396AbfIVSyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:54:24 -0400
+        id S2405054AbfIVSy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:54:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36E72208C2;
-        Sun, 22 Sep 2019 18:54:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F91921A4A;
+        Sun, 22 Sep 2019 18:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178464;
-        bh=CQg4llB20lc/ODXXWRGsZEH6sxP9m4w2YL2WQYMk5UM=;
+        s=default; t=1569178466;
+        bh=oQUUreUDYQHQk1iKn9p/xFlfXzQbV7DA5p78Im2qQj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MyHmkrohLp/b0kyZ7xpN/LpmRs4c11sLuu+wtxG1qTp7zWaARtWZ1WgAMsbfm+D6a
-         bBwYEf3Vr6LoRauihlJtiEIrUJEPMSxZNmou7OIISU5nGhTXqbjL1126uo0coxU2pY
-         3Fi5qbstJ4FZC/GuNjSAgjZ0dQEydIfCR255hWig=
+        b=oayiUhjSnBaGl0axoIJUmZ//d3IWUfhB/CcXHatn58Hf2rLT1exxe+WIkBYU4M7sX
+         j4U9MJCk5fOWC4yErPcgnnARoGdhHCI7wUodXh74ZXxqzlcPzBlfyfAhuwZkkpD9mu
+         SqOHoXtILyUhNEKUGVQrMBIwb1yt7tPCFI2zripc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Igor Opaniuk <igor.opaniuk@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 004/128] ASoC: sgtl5000: Fix of unmute outputs on probe
-Date:   Sun, 22 Sep 2019 14:52:14 -0400
-Message-Id: <20190922185418.2158-4-sashal@kernel.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Ian Jackson <ian.jackson@citrix.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 006/128] firmware: qcom_scm: Use proper types for dma mappings
+Date:   Sun, 22 Sep 2019 14:52:16 -0400
+Message-Id: <20190922185418.2158-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -46,49 +47,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 631bc8f0134ae9620d86a96b8c5f9445d91a2dca ]
+[ Upstream commit 6e37ccf78a53296c6c7bf426065762c27829eb84 ]
 
-To enable "zero cross detect" for ADC/HP, change
-HP_ZCD_EN/ADC_ZCD_EN bits only instead of writing the whole
-CHIP_ANA_CTRL register.
+We need to use the proper types and convert between physical addresses
+and dma addresses here to avoid mismatch warnings. This is especially
+important on systems with a different size for dma addresses and
+physical addresses. Otherwise, we get the following warning:
 
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
-Reviewed-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Reviewed-by: Igor Opaniuk <igor.opaniuk@toradex.com>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-Link: https://lore.kernel.org/r/20190719100524.23300-6-oleksandr.suvorov@toradex.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+  drivers/firmware/qcom_scm.c: In function "qcom_scm_assign_mem":
+  drivers/firmware/qcom_scm.c:469:47: error: passing argument 3 of "dma_alloc_coherent" from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+We also fix the size argument to dma_free_coherent() because that size
+doesn't need to be aligned after it's already aligned on the allocation
+size. In fact, dma debugging expects the same arguments to be passed to
+both the allocation and freeing sides of the functions so changing the
+size is incorrect regardless.
+
+Reported-by: Ian Jackson <ian.jackson@citrix.com>
+Cc: Ian Jackson <ian.jackson@citrix.com>
+Cc: Julien Grall <julien.grall@arm.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/sgtl5000.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/firmware/qcom_scm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/sgtl5000.c b/sound/soc/codecs/sgtl5000.c
-index 60764f6201b19..f9817029bffbb 100644
---- a/sound/soc/codecs/sgtl5000.c
-+++ b/sound/soc/codecs/sgtl5000.c
-@@ -1280,6 +1280,7 @@ static int sgtl5000_probe(struct snd_soc_component *component)
- 	int ret;
- 	u16 reg;
- 	struct sgtl5000_priv *sgtl5000 = snd_soc_component_get_drvdata(component);
-+	unsigned int zcd_mask = SGTL5000_HP_ZCD_EN | SGTL5000_ADC_ZCD_EN;
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index e778af766fae3..98c987188835b 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -18,6 +18,7 @@
+ #include <linux/init.h>
+ #include <linux/cpumask.h>
+ #include <linux/export.h>
++#include <linux/dma-direct.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/module.h>
+ #include <linux/types.h>
+@@ -449,6 +450,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	phys_addr_t mem_to_map_phys;
+ 	phys_addr_t dest_phys;
+ 	phys_addr_t ptr_phys;
++	dma_addr_t ptr_dma;
+ 	size_t mem_to_map_sz;
+ 	size_t dest_sz;
+ 	size_t src_sz;
+@@ -466,9 +468,10 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	ptr_sz = ALIGN(src_sz, SZ_64) + ALIGN(mem_to_map_sz, SZ_64) +
+ 			ALIGN(dest_sz, SZ_64);
  
- 	/* power up sgtl5000 */
- 	ret = sgtl5000_set_power_regs(component);
-@@ -1305,9 +1306,8 @@ static int sgtl5000_probe(struct snd_soc_component *component)
- 	reg = ((sgtl5000->lrclk_strength) << SGTL5000_PAD_I2S_LRCLK_SHIFT | 0x5f);
- 	snd_soc_component_write(component, SGTL5000_CHIP_PAD_STRENGTH, reg);
+-	ptr = dma_alloc_coherent(__scm->dev, ptr_sz, &ptr_phys, GFP_KERNEL);
++	ptr = dma_alloc_coherent(__scm->dev, ptr_sz, &ptr_dma, GFP_KERNEL);
+ 	if (!ptr)
+ 		return -ENOMEM;
++	ptr_phys = dma_to_phys(__scm->dev, ptr_dma);
  
--	snd_soc_component_write(component, SGTL5000_CHIP_ANA_CTRL,
--			SGTL5000_HP_ZCD_EN |
--			SGTL5000_ADC_ZCD_EN);
-+	snd_soc_component_update_bits(component, SGTL5000_CHIP_ANA_CTRL,
-+		zcd_mask, zcd_mask);
+ 	/* Fill source vmid detail */
+ 	src = ptr;
+@@ -498,7 +501,7 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
  
- 	snd_soc_component_update_bits(component, SGTL5000_CHIP_MIC_CTRL,
- 			SGTL5000_BIAS_R_MASK,
+ 	ret = __qcom_scm_assign_mem(__scm->dev, mem_to_map_phys, mem_to_map_sz,
+ 				    ptr_phys, src_sz, dest_phys, dest_sz);
+-	dma_free_coherent(__scm->dev, ALIGN(ptr_sz, SZ_64), ptr, ptr_phys);
++	dma_free_coherent(__scm->dev, ptr_sz, ptr, ptr_dma);
+ 	if (ret) {
+ 		dev_err(__scm->dev,
+ 			"Assign memory protection call failed %d.\n", ret);
 -- 
 2.20.1
 
