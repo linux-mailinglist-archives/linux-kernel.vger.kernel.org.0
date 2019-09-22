@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A38C9BABA6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 22:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29797BABAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 22:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731898AbfIVU0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 16:26:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55494 "EHLO mail.kernel.org"
+        id S2390613AbfIVU2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 16:28:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729448AbfIVU0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 16:26:19 -0400
-Received: from localhost (unknown [83.86.89.107])
+        id S2388240AbfIVU2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 16:28:53 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C2020644;
-        Sun, 22 Sep 2019 20:26:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C56620644;
+        Sun, 22 Sep 2019 20:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569183978;
-        bh=ACizQUFYHGKWoMd8vZf3jhgppZadA/zQ5NL5LjTKYxk=;
+        s=default; t=1569184132;
+        bh=aNmux5WskQasXL3W5fSP8ZeWxPMhq3DVtOInr703h6k=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1lpzry+VvaPNVUSq4wXF+ay/HTfQg37nhI79vgBN3yn8CtNdx4K1M7MiEHY7FOfRi
-         WCdV4u5g+DZJtvYDGT8JIFfJhidNrEAo7cGMXDZoHvs2NuRA5wiSHKiAHVaKbivGFq
-         lAWa3/ey4Krex4c2G10VVIH3jst4v7eQftl4FTSA=
-Date:   Sun, 22 Sep 2019 22:26:11 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Austin Kim <austindh.kim@gmail.com>,
-        Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Travis <mike.travis@hpe.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>, allison@lohutok.net,
-        andy@infradead.org, armijn@tjaldur.nl, bp@alien8.de,
-        dvhart@infradead.org, hpa@zytor.com, kjlu@umn.edu,
-        platform-driver-x86@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH AUTOSEL 5.2 154/185] x86/platform/uv: Fix kmalloc() NULL
- check routine
-Message-ID: <20190922202611.GB2719513@kroah.com>
-References: <20190922184924.32534-1-sashal@kernel.org>
- <20190922184924.32534-154-sashal@kernel.org>
+        b=grEjxYiaui+8pzlJzi4Uxw9wBu+cJ7hfHMnmlrjZ/rOTd9eIlDw4z7lkn1YCyANJF
+         gbm4oy3c9/bRzjwckCvg8YQka0iTqlVECGOUBs2h1SdQlJWQiGvcYoR7hlAmIJNbH9
+         jvPihnmlinAqdtJmr6Yvk7HAHDVahns74+xtV11U=
+Date:   Sun, 22 Sep 2019 21:28:47 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        kgdb-bugreport@lists.sourceforge.net,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: [PATCH] MAINTAINERS: kgdb: Add myself as a reviewer for kgdb/kdb
+Message-ID: <20190922202846.n2gtdkio6ygu6mhn@willie-the-truck>
+References: <20190920104404.1.I237e68e8825e2d6ac26f8e847f521fe2fcc3705a@changeid>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190922184924.32534-154-sashal@kernel.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20190920104404.1.I237e68e8825e2d6ac26f8e847f521fe2fcc3705a@changeid>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 22, 2019 at 02:48:52PM -0400, Sasha Levin wrote:
-> From: Austin Kim <austindh.kim@gmail.com>
+On Fri, Sep 20, 2019 at 10:44:47AM -0700, Douglas Anderson wrote:
+> I'm interested in kdb / kgdb and have sent various fixes over the
+> years.  I'd like to get CCed on patches so I can be aware of them and
+> also help review.
 > 
-> [ Upstream commit 864b23f0169d5bff677e8443a7a90dfd6b090afc ]
-> 
-> The result of kmalloc() should have been checked ahead of below statement:
-> 
-> 	pqp = (struct bau_pq_entry *)vp;
-> 
-> Move BUG_ON(!vp) before above statement.
-> 
-> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-> Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
-> Cc: Hedi Berriche <hedi.berriche@hpe.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Mike Travis <mike.travis@hpe.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Russ Anderson <russ.anderson@hpe.com>
-> Cc: Steve Wahl <steve.wahl@hpe.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: allison@lohutok.net
-> Cc: andy@infradead.org
-> Cc: armijn@tjaldur.nl
-> Cc: bp@alien8.de
-> Cc: dvhart@infradead.org
-> Cc: gregkh@linuxfoundation.org
-> Cc: hpa@zytor.com
-> Cc: kjlu@umn.edu
-> Cc: platform-driver-x86@vger.kernel.org
-> Link: https://lkml.kernel.org/r/20190905232951.GA28779@LGEARND20B15
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  arch/x86/platform/uv/tlb_uv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/platform/uv/tlb_uv.c b/arch/x86/platform/uv/tlb_uv.c
-> index 0c7dfec4acac8..5a66d73620ce4 100644
-> --- a/arch/x86/platform/uv/tlb_uv.c
-> +++ b/arch/x86/platform/uv/tlb_uv.c
-> @@ -1815,9 +1815,9 @@ static void pq_init(int node, int pnode)
->  
->  	plsize = (DEST_Q_SIZE + 1) * sizeof(struct bau_pq_entry);
->  	vp = kmalloc_node(plsize, GFP_KERNEL, node);
-> -	pqp = (struct bau_pq_entry *)vp;
-> -	BUG_ON(!pqp);
-> +	BUG_ON(!vp);
->  
-> +	pqp = (struct bau_pq_entry *)vp;
->  	cp = (char *)pqp + 31;
->  	pqp = (struct bau_pq_entry *)(((unsigned long)cp >> 5) << 5);
->  
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c740cf3f93ef..d243c70fc8ce 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9052,6 +9052,7 @@ F:	security/keys/
+>  KGDB / KDB /debug_core
+>  M:	Jason Wessel <jason.wessel@windriver.com>
+>  M:	Daniel Thompson <daniel.thompson@linaro.org>
+> +R:	Douglas Anderson <dianders@chromium.org>
+>  W:	http://kgdb.wiki.kernel.org/
+>  L:	kgdb-bugreport@lists.sourceforge.net
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git
 
-Please drop from everywhere.
+Acked-by: Will Deacon <will@kernel.org>
 
-thanks,
+I really wanted to rip kgdb out of arm64 a while ago and you stopped me, so
+you deserve to have your name in lights ;)
 
-greg k-h
+Thanks.
+
+Will
