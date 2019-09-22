@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF900BA485
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A4FDBA486
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392350AbfIVSt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:49:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46108 "EHLO mail.kernel.org"
+        id S2392379AbfIVSt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:49:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392024AbfIVStH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:49:07 -0400
+        id S2392040AbfIVStI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:49:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABB7421479;
-        Sun, 22 Sep 2019 18:49:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED70E21D56;
+        Sun, 22 Sep 2019 18:49:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178146;
-        bh=3vz0jGokF/tADKiAtasvrTU/In2SROOiBNXQon2ojrc=;
+        s=default; t=1569178147;
+        bh=rPaLg1m9winrfrc8LJ+1bVDOdUBp4c8jxgZhSx0iDT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xq153oXOi7DhKNjj+BkRCZ7vvF+wbQr3SMIkkALfm5y0J4mz4FdP9o8FW0FPpi6EE
-         MKgYib18JfwtcY9ATtkNo1V2O+xehaMcxIhoDIluxJ5VUEdWO1JF5Y4YLv29A4or7b
-         nti6D/rG7rTqDiKORHzvBj/gwinc1gukxL3ySwI4=
+        b=EB8Joz4K4LoULNQdKJT4IrWPJATfCZYbwn9kBLCm838Z+nL7LVuiX1CGWi+JeLmwp
+         zneU8W5hyHIZWkDSl3aft7jGMHY4cGquHh35LqSc6o1St+9871WLgtyOFhvEQkLVeM
+         GKtrRW4LkNjz+UziKNNBuF13oVgePfvhUr84Br+M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 194/203] media: ttusb-dec: Fix info-leak in ttusb_dec_send_command()
-Date:   Sun, 22 Sep 2019 14:43:40 -0400
-Message-Id: <20190922184350.30563-194-sashal@kernel.org>
+Cc:     Jani Nikula <jani.nikula@intel.com>,
+        =?UTF-8?q?G=C3=B6ran=20Uddeborg?= <goeran@uddeborg.se>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.3 195/203] drm: fix module name in edid_firmware log message
+Date:   Sun, 22 Sep 2019 14:43:41 -0400
+Message-Id: <20190922184350.30563-195-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -45,38 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: Jani Nikula <jani.nikula@intel.com>
 
-[ Upstream commit a10feaf8c464c3f9cfdd3a8a7ce17e1c0d498da1 ]
+[ Upstream commit ade925995b172f1d7410d1c665b2f47c5e99bef0 ]
 
-The function at issue does not always initialize each byte allocated
-for 'b' and can therefore leak uninitialized memory to a USB device in
-the call to usb_bulk_msg()
+The module is drm_kms_helper, not drm_kms_firmware.
 
-Use kzalloc() instead of kmalloc()
-
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+0522702e9d67142379f1@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204549
+Reported-by: Göran Uddeborg <goeran@uddeborg.se>
+Fixes: ac6c35a4d8c7 ("drm: add backwards compatibility support for drm_kms_helper.edid_firmware")
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190821094312.5514-1-jani.nikula@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/ttusb-dec/ttusb_dec.c | 2 +-
+ drivers/gpu/drm/drm_kms_helper_common.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/usb/ttusb-dec/ttusb_dec.c b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-index 1d0afa340f47c..3198f9624b7c0 100644
---- a/drivers/media/usb/ttusb-dec/ttusb_dec.c
-+++ b/drivers/media/usb/ttusb-dec/ttusb_dec.c
-@@ -319,7 +319,7 @@ static int ttusb_dec_send_command(struct ttusb_dec *dec, const u8 command,
+diff --git a/drivers/gpu/drm/drm_kms_helper_common.c b/drivers/gpu/drm/drm_kms_helper_common.c
+index d9a5ac81949e2..221a8528c9937 100644
+--- a/drivers/gpu/drm/drm_kms_helper_common.c
++++ b/drivers/gpu/drm/drm_kms_helper_common.c
+@@ -40,7 +40,7 @@ MODULE_LICENSE("GPL and additional rights");
+ /* Backward compatibility for drm_kms_helper.edid_firmware */
+ static int edid_firmware_set(const char *val, const struct kernel_param *kp)
+ {
+-	DRM_NOTE("drm_kms_firmware.edid_firmware is deprecated, please use drm.edid_firmware instead.\n");
++	DRM_NOTE("drm_kms_helper.edid_firmware is deprecated, please use drm.edid_firmware instead.\n");
  
- 	dprintk("%s\n", __func__);
- 
--	b = kmalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
-+	b = kzalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);
- 	if (!b)
- 		return -ENOMEM;
- 
+ 	return __drm_set_edid_firmware_path(val);
+ }
 -- 
 2.20.1
 
