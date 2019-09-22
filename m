@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B383FBA4AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C40EBA4AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404670AbfIVSu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:50:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48252 "EHLO mail.kernel.org"
+        id S2404829AbfIVSvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:51:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404193AbfIVSuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:50:55 -0400
+        id S2404193AbfIVSu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:50:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 610332190F;
-        Sun, 22 Sep 2019 18:50:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 650D821BE5;
+        Sun, 22 Sep 2019 18:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178254;
-        bh=iPazQ00aOuuilt+GzDQbr9bRbIVeHkRFhHoRkii1JTQ=;
+        s=default; t=1569178259;
+        bh=kJC6Awz8EDg7dPEGltPbxNIzRDp5I4Bk/eB1xSqgAyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=okVBUsCK3qcWnm9KgnmODdqxpEb1zY6RtLJCxjAAZ4jbz7Io8ROtRBzJJhgBvriSy
-         OVniqB2jdBOHpiIV2G7/Fp9hapVJdZ3RbjOXix06e2OP3oe05Gu8tNfiefIj503tnl
-         NAhiCYbGiCREylT54k1tCB5FSrarSNvrCVD1kjAY=
+        b=1dA0nwjKMm4kQUR38zd4+uTQTaX+gnvIcDk2dhN32WGBs9pO3+cM3ctnFi14MwzXe
+         43cXw9SNGAVFgBMQSx22EumYd3ZEm/gvD9xqEqBABOByppqMWskmnjnzLhf4RCFISf
+         st3tm7oaCCMuzen20HyhwOuTVxr+PwqunBBQ9hl0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 045/185] media: media/platform: fsl-viu.c: fix build for MICROBLAZE
-Date:   Sun, 22 Sep 2019 14:47:03 -0400
-Message-Id: <20190922184924.32534-45-sashal@kernel.org>
+Cc:     Keyon Jie <yang.jie@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 048/185] ASoC: hdac_hda: fix page fault issue by removing race
+Date:   Sun, 22 Sep 2019 14:47:06 -0400
+Message-Id: <20190922184924.32534-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -44,42 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Keyon Jie <yang.jie@linux.intel.com>
 
-[ Upstream commit 6898dd580a045341f844862ceb775144156ec1af ]
+[ Upstream commit 804cbf4bb063204ca6c2471baa694548aab02ce3 ]
 
-arch/microblaze/ defines out_be32() and in_be32(), so don't do that
-again in the driver source.
+There is a race between hda codec device removing and the
+jack-detecting work, which will lead to a page fault issue as the
+latter work is accessing codec device which could be already removed.
 
-Fixes these build warnings:
+Here add the cancellation of jack-detecting work before codecs are actually
+removed to avoid the race and fix the issue.
 
-../drivers/media/platform/fsl-viu.c:36: warning: "out_be32" redefined
-../arch/microblaze/include/asm/io.h:50: note: this is the location of the previous definition
-../drivers/media/platform/fsl-viu.c:37: warning: "in_be32" redefined
-../arch/microblaze/include/asm/io.h:53: note: this is the location of the previous definition
-
-Fixes: 29d750686331 ("media: fsl-viu: allow building it with COMPILE_TEST")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Bug: https://github.com/thesofproject/linux/issues/1067
+Signed-off-by: Keyon Jie <yang.jie@linux.intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20190807145030.26117-1-pierre-louis.bossart@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/fsl-viu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/hdac_hda.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/media/platform/fsl-viu.c b/drivers/media/platform/fsl-viu.c
-index 691be788e38b3..b74e4f50d7d9f 100644
---- a/drivers/media/platform/fsl-viu.c
-+++ b/drivers/media/platform/fsl-viu.c
-@@ -32,7 +32,7 @@
- #define VIU_VERSION		"0.5.1"
+diff --git a/sound/soc/codecs/hdac_hda.c b/sound/soc/codecs/hdac_hda.c
+index 7d49402569149..91242b6f8ea7a 100644
+--- a/sound/soc/codecs/hdac_hda.c
++++ b/sound/soc/codecs/hdac_hda.c
+@@ -495,6 +495,10 @@ static int hdac_hda_dev_probe(struct hdac_device *hdev)
  
- /* Allow building this driver with COMPILE_TEST */
--#ifndef CONFIG_PPC
-+#if !defined(CONFIG_PPC) && !defined(CONFIG_MICROBLAZE)
- #define out_be32(v, a)	iowrite32be(a, (void __iomem *)v)
- #define in_be32(a)	ioread32be((void __iomem *)a)
- #endif
+ static int hdac_hda_dev_remove(struct hdac_device *hdev)
+ {
++	struct hdac_hda_priv *hda_pvt;
++
++	hda_pvt = dev_get_drvdata(&hdev->dev);
++	cancel_delayed_work_sync(&hda_pvt->codec.jackpoll_work);
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
