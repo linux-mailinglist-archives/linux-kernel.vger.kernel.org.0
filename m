@@ -2,64 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B50DBABF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE911BABEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388529AbfIVW1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 18:27:37 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41983 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfIVW1g (ORCPT
+        id S1729795AbfIVW0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 18:26:53 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37788 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfIVW0x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 18:27:36 -0400
-Received: by mail-io1-f66.google.com with SMTP id r26so28879504ioh.8
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 15:27:36 -0700 (PDT)
+        Sun, 22 Sep 2019 18:26:53 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y5so7877644pfo.4
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 15:26:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=netronome-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:in-reply-to:references
          :organization:mime-version:content-transfer-encoding;
-        bh=hImOzMJ05KmBv4g1KzY6JsfY72PzUxGoGBvm1paBJpM=;
-        b=LGqOAQrDCH7KD0IkMFNMW57vSH55x+6WbDjd+go1NQvZ9dUbZq/P8FVdunL40Hde4j
-         2vjuAIMWnuCjHR4/pgoOyWvSSlh8IA/OFZnDV3Mv+7twIMdSIc1Z6X57Uj6bPn6orJuQ
-         +2zQy8jS4pFoMfk9EVpO2Pgg2XN+zaNhWWaeairm6fQz0eWyUwSPTWWRiOuilW+ltgsM
-         Uic0to6pKBNioMBtARf8M26aP7qmc9AqrVgQs41vDHouCR5T0fSnKnJor93xoaEP7LKw
-         8r9EtllMMhHvjvK7TD93tWAZqqev2J++wziySKgO5Aj1IWl+nkOmU25P0vYlR7hzA/6q
-         Ob7g==
+        bh=1sFK61oUgqTUxUpxUiqsl6lQSNHdbhMzERalasfMwlM=;
+        b=Ywwl1SvxcgwtUppOmsgJLh+h2Ktkybgp4Vaz60SiIbKtvB1T1dsQGvBpVTiSPJ4bYa
+         1qGFtfriYz4HlLKI4jr6q3I1ZtohSL9s2jglVQQEgFTTbNyCyq9Rqw7ivrBTRcifK4S/
+         uHO2W2SdD7S27fGbs79iEGknXjYQ/+S/J/2Tjh/EWonGk0Ndnms8xZcEOzgUV4zaUxt/
+         M3J8q589xxu9nDBYUrNfnS5lHECL7smxl0KQ60ErNkiUtUUX4Kt7m2Lb8DgaO1kO/aiB
+         9hgX5TQVYLALaXuhUnQsehHBs+9+GqTykdtjFpY3fj4QsceSspM9FFzJ3uVtnWWNJOh3
+         Pnmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
          :references:organization:mime-version:content-transfer-encoding;
-        bh=hImOzMJ05KmBv4g1KzY6JsfY72PzUxGoGBvm1paBJpM=;
-        b=ZquTQKHQro+/QlHKD5mcT0v1r4FbZ3eRZ/kFGGQbkQnhQJsCDn0n46yo2hffslxBOP
-         SesYiP8pRTR74e+Sn1hS7Soff7ih7K9ryR4+8Al3fW5tFAwxjdFiAftpGdDzDdNSQgvy
-         S5TkRzgocjAh5+4BCq15f4PoLvxUHCGv3M6xcQ1kXpGUxizD2j0065fE87jczO73pbg6
-         GUD1jZqYFH68O8snvY3sG6TRNyW8uxfxPV613pCbw2QA3TiJ2lYE0OC5/PR76a5AJWA2
-         HTVlEc7WGnPMsfXG5a4od7fnRxDi3Ghe+QLIpB50D7wCtEyfVSGBdn+i33Adn/eNpwyK
-         uaXw==
-X-Gm-Message-State: APjAAAUmlhI0j+vAEW73KZrM8F+sWwaugFUhhUGAaXpWJyAS2jMzjn6Q
-        ENjDSQGso02pYR0x2LgRUJsYYl9B+x4=
-X-Google-Smtp-Source: APXvYqyC8GFMaLszqNzF5bZkrveNmENlCSweZt7S0Z8Fa1QnU/6Bl4atw0oHwiEOelkywLGWoSjI5w==
-X-Received: by 2002:a63:358a:: with SMTP id c132mr26480848pga.32.1569189406117;
-        Sun, 22 Sep 2019 14:56:46 -0700 (PDT)
+        bh=1sFK61oUgqTUxUpxUiqsl6lQSNHdbhMzERalasfMwlM=;
+        b=rX30Afk9rtMBqxF086li9vt+PSeqVzJFqSa5t8hRNyYs0iI7cspuZ4Ig/Xd/RRaDs8
+         vRSY4RmL0dPOc0zf/LkgVNft/i8jJO3FEhh3rNJcRH2INUQnLYHSDu3T03piSLuYkvSZ
+         5hoknAIQ+xfF+IfZ3kK7pmHyZKbIhOvbsQVMV3gH3xt6tfPxz+CQSuB+9iY8Cr0Rq2wd
+         pDmmnFOyJsn1JR3UYbIr9eMiFuzkp7h+631lkLD0WxKQF5SwGtqGYyQHq93tKYt4NVEf
+         SjFk5vCedlM0TmvbwEowKQCgSvUnjrgbzMS1l34Nhkqt89ymR0QiPF5kP8CG814wzOQA
+         OoPw==
+X-Gm-Message-State: APjAAAWa83fQLvvdzlDzrqyH2xrxZtqtt73+uWlxM8zquuj/0+OdMQpj
+        Pb0eXzhwvZvEXlrD39McANHIyA==
+X-Google-Smtp-Source: APXvYqx3wbLK6wMJ/WfshHZeRj3cjQnRgP7ZB71oVaFz42qy5jeUxtXdRvPoDikZXJxqH1xLOjkVpQ==
+X-Received: by 2002:a17:90a:c212:: with SMTP id e18mr17011375pjt.110.1569191212590;
+        Sun, 22 Sep 2019 15:26:52 -0700 (PDT)
 Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id e192sm10967639pfh.83.2019.09.22.14.56.45
+        by smtp.gmail.com with ESMTPSA id c125sm11159763pfa.107.2019.09.22.15.26.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2019 14:56:45 -0700 (PDT)
-Date:   Sun, 22 Sep 2019 14:56:42 -0700
+        Sun, 22 Sep 2019 15:26:52 -0700 (PDT)
+Date:   Sun, 22 Sep 2019 15:26:49 -0700
 From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>
-Cc:     netdev@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: stmmac: selftests: Flow Control test can also
- run with ASYM Pause
-Message-ID: <20190922145642.55453135@cakuba.netronome.com>
-In-Reply-To: <f35fa5a51f52fc1ef17a0a9ecd470e2a6792b3f8.1568887745.git.joabreu@synopsys.com>
-References: <f35fa5a51f52fc1ef17a0a9ecd470e2a6792b3f8.1568887745.git.joabreu@synopsys.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: dsa: b53: Use the correct style for SPDX License
+ Identifier
+Message-ID: <20190922152649.1fbe1df9@cakuba.netronome.com>
+In-Reply-To: <20190921133011.GA2994@nishad>
+References: <20190921133011.GA2994@nishad>
 Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -69,20 +71,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Sep 2019 12:09:49 +0200, Jose Abreu wrote:
-> The Flow Control selftest is also available with ASYM Pause. Lets add
-> this check to the test and fix eventual false positive failures.
+On Sat, 21 Sep 2019 19:00:16 +0530, Nishad Kamdar wrote:
+> This patch corrects the SPDX License Identifier style
+> in header file for Broadcom BCM53xx managed switch driver.
+> For C header files Documentation/process/license-rules.rst
+> mandates C-like comments (opposed to C source files where
+> C++ style should be used)
 > 
-> Fixes: 091810dbded9 ("net: stmmac: Introduce selftests support")
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+> Changes made by using a script provided by Joe Perches here:
+> https://lkml.org/lkml/2019/2/7/46.
+> 
+> Suggested-by: Joe Perches <joe@perches.com>
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 
-Hi Jose! 
-
-Thanks for the patch it looks good, seems like you posted it from 
-a slightly different email address than was used for signoff:
-
-From: Jose Abreu <Jose.Abreu@synopsys.com>
-vs
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-
-Could you please fix and repost? Automation may get upset otherwise.
+Applied, thank you!
