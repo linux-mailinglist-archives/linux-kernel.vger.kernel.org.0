@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7665ABA537
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D485ABA53A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438394AbfIVSzd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:55:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56736 "EHLO mail.kernel.org"
+        id S2438434AbfIVSzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:55:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408072AbfIVSza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:55:30 -0400
+        id S2438384AbfIVSzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:55:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC6F521D7F;
-        Sun, 22 Sep 2019 18:55:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E271721D81;
+        Sun, 22 Sep 2019 18:55:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178529;
-        bh=3wpKbNFeBPHCVXwP7lQzhIQwzF7qt9gB+BvM+k3051k=;
+        s=default; t=1569178532;
+        bh=3TBPpUvQrXT/SFyjnF4LAeHputJ0ewAoJYd6bGHXiIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0IhOYImNuc1Src5iGOszq/loYiwdClfnLP527n6lm4Nz+2pQwoRx/yCjrnXmmGoT7
-         TWL3h7Or9N9Royng2DmyY/CoiQoNaAmmwOFKpOT0cIq/zyNaXo9UNRcNlT8qX5SQO6
-         Ztid5gdA9jj1e3G3J7166Wlo+ztLnvqTwi4Cxo4c=
+        b=jDb2RLjvfUasaQ/HfaPXsqGFSutb9zJZtbLH6ZwMXTsdUE1HI/BKtyFv/pW2xoNcO
+         qrWcUXOCNnDYl4BKJV65rQ5LRk6/LfbCmmfn3xHy3KRMS7u/sLiYm78lWkIWBzm7+T
+         ti7E+QMvlJo02rTloh9eLkH3Ik8IiaiB/jtcn/6k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 053/128] media: vsp1: fix memory leak of dl on error return path
-Date:   Sun, 22 Sep 2019 14:53:03 -0400
-Message-Id: <20190922185418.2158-53-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 055/128] media: omap3isp: Don't set streaming state on random subdevs
+Date:   Sun, 22 Sep 2019 14:53:05 -0400
+Message-Id: <20190922185418.2158-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -46,42 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-[ Upstream commit 70c55c1ad1a76e804ee5330e134674f5d2741cb7 ]
+[ Upstream commit 7ef57be07ac146e70535747797ef4aee0f06e9f9 ]
 
-Currently when the call vsp1_dl_body_get fails and returns null the
-error return path leaks the allocation of dl. Fix this by kfree'ing
-dl before returning.
+The streaming state should be set to the first upstream sub-device only,
+not everywhere, for a sub-device driver itself knows how to best control
+the streaming state of its own upstream sub-devices.
 
-Addresses-Coverity: ("Resource leak")
-
-Fixes: 5d7936b8e27d ("media: vsp1: Convert display lists to use new body pool")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/omap3isp/isp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 26289adaf658c..a5634ca85a316 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -557,8 +557,10 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
+diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
+index 432bc7fbedc99..addd03b517481 100644
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -722,6 +722,10 @@ static int isp_pipeline_enable(struct isp_pipeline *pipe,
+ 					s_stream, mode);
+ 			pipe->do_propagation = true;
+ 		}
++
++		/* Stop at the first external sub-device. */
++		if (subdev->dev != isp->dev)
++			break;
+ 	}
  
- 	/* Get a default body for our list. */
- 	dl->body0 = vsp1_dl_body_get(dlm->pool);
--	if (!dl->body0)
-+	if (!dl->body0) {
-+		kfree(dl);
- 		return NULL;
-+	}
+ 	return 0;
+@@ -836,6 +840,10 @@ static int isp_pipeline_disable(struct isp_pipeline *pipe)
+ 						      &subdev->entity);
+ 			failure = -ETIMEDOUT;
+ 		}
++
++		/* Stop at the first external sub-device. */
++		if (subdev->dev != isp->dev)
++			break;
+ 	}
  
- 	header_offset = dl->body0->max_entries * sizeof(*dl->body0->entries);
- 
+ 	return failure;
 -- 
 2.20.1
 
