@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73A9FBA661
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AEEABA66A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392775AbfIVSuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:50:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46792 "EHLO mail.kernel.org"
+        id S2403754AbfIVSuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:50:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391593AbfIVStp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:49:45 -0400
+        id S2392761AbfIVSuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:50:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E526A214AF;
-        Sun, 22 Sep 2019 18:49:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACE2D214AF;
+        Sun, 22 Sep 2019 18:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178184;
-        bh=dFcVQl6E0c+wU1d5wfNevRmUe9k+SvO0hOvFIQK6V7I=;
+        s=default; t=1569178210;
+        bh=dojeDYxDcSaMAmdiQPqZM0xxtY9cfX6MMKaYkfr+Zbw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dJhWoBsZCLt3NpwtsC2cx40X12QIeNHmGVsEbsFIvSVtW6N349LzZualMql8NbXlt
-         ErEq+vMaOVbVBub/9w2XIWmdu4XblSaZY+6mJjn8IyY/C6GzLGcTqCqjTbkjkrAulu
-         Tx+jroVeDOZ/LbgQpP3w4yv4CHTEj8kdi3PTR2wc=
+        b=gFtlAUfCxDmLKpk94ZtRbCh4hSt0PVYQW3tMdJF20mRmyvibz13TumUjpZgp67Jbt
+         +oFcCMBAgqVme5JZh/TCcY2k2IsD2Ak6qYLWWDQhsisISCwDOevHi+t5ir16811ERd
+         +1XWx3t5ZEDhDiSha2cO1G94XwGVSHft1w5pUQaQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pan Xiuli <xiuli.pan@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 014/185] ASoC: SOF: pci: mark last_busy value at runtime PM init
-Date:   Sun, 22 Sep 2019 14:46:32 -0400
-Message-Id: <20190922184924.32534-14-sashal@kernel.org>
+Cc:     Michael Tretter <m.tretter@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 017/185] media: vb2: reorder checks in vb2_poll()
+Date:   Sun, 22 Sep 2019 14:46:35 -0400
+Message-Id: <20190922184924.32534-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -45,38 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pan Xiuli <xiuli.pan@linux.intel.com>
+From: Michael Tretter <m.tretter@pengutronix.de>
 
-[ Upstream commit f1b1b9b136827915624136624ff54aba5890a15b ]
+[ Upstream commit 8d86a15649957c182e90fa2b1267c16699bc12f1 ]
 
-If last_busy value is not set at runtime PM enable, the device will be
-suspend immediately after usage counter is 0. Set the last_busy value to
-make sure delay is working at first boot up.
+When reaching the end of stream, V4L2 clients may expect the
+V4L2_EOS_EVENT before being able to dequeue the last buffer, which has
+the V4L2_BUF_FLAG_LAST flag set.
 
-Signed-off-by: Pan Xiuli <xiuli.pan@linux.intel.com>
-Signed-off-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Link: https://lore.kernel.org/r/20190722141402.7194-2-pierre-louis.bossart@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+If the vb2_poll() function first checks for events and afterwards if
+buffers are available, a driver can queue the V4L2_EOS_EVENT event and
+return the buffer after the check for events but before the check for
+buffers. This causes vb2_poll() to signal that the buffer with
+V4L2_BUF_FLAG_LAST can be read without the V4L2_EOS_EVENT being
+available.
+
+First, check for available buffers and afterwards for events to ensure
+that if vb2_poll() signals POLLIN | POLLRDNORM for the
+V4L2_BUF_FLAG_LAST buffer, it also signals POLLPRI for the
+V4L2_EOS_EVENT.
+
+Signed-off-by: Michael Tretter <m.tretter@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/sof/sof-pci-dev.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/sof/sof-pci-dev.c b/sound/soc/sof/sof-pci-dev.c
-index b778dffb2d25c..49daf1390dac0 100644
---- a/sound/soc/sof/sof-pci-dev.c
-+++ b/sound/soc/sof/sof-pci-dev.c
-@@ -203,6 +203,9 @@ static void sof_pci_probe_complete(struct device *dev)
- 	 */
- 	pm_runtime_allow(dev);
- 
-+	/* mark last_busy for pm_runtime to make sure not suspend immediately */
-+	pm_runtime_mark_last_busy(dev);
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index fb9ac7696fc6e..bd9bfeee385fb 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -872,17 +872,19 @@ EXPORT_SYMBOL_GPL(vb2_queue_release);
+ __poll_t vb2_poll(struct vb2_queue *q, struct file *file, poll_table *wait)
+ {
+ 	struct video_device *vfd = video_devdata(file);
+-	__poll_t res = 0;
++	__poll_t res;
 +
- 	/* follow recommendation in pci-driver.c to decrement usage counter */
- 	pm_runtime_put_noidle(dev);
++	res = vb2_core_poll(q, file, wait);
+ 
+ 	if (test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags)) {
+ 		struct v4l2_fh *fh = file->private_data;
+ 
+ 		poll_wait(file, &fh->wait, wait);
+ 		if (v4l2_event_pending(fh))
+-			res = EPOLLPRI;
++			res |= EPOLLPRI;
+ 	}
+ 
+-	return res | vb2_core_poll(q, file, wait);
++	return res;
  }
+ EXPORT_SYMBOL_GPL(vb2_poll);
+ 
 -- 
 2.20.1
 
