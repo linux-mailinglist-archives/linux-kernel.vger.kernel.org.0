@@ -2,63 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEACCBABE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B50DBABF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:27:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfIVWTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 18:19:42 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33958 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfIVWTm (ORCPT
+        id S2388529AbfIVW1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 18:27:37 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41983 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfIVW1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 18:19:42 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b128so7881138pfa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 15:19:42 -0700 (PDT)
+        Sun, 22 Sep 2019 18:27:36 -0400
+Received: by mail-io1-f66.google.com with SMTP id r26so28879504ioh.8
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 15:27:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=netronome-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:in-reply-to:references
          :organization:mime-version:content-transfer-encoding;
-        bh=PmAznyfs4k+mWd//xBrPme3TcumsUBoHQjEZq6u+NLY=;
-        b=Q9CxQCZVN3CeKim3T14DI+dzH5PlCDTA8QmbsW+C8eax7IIA/NB0aFCLOE5uEMlnah
-         n9HfkK054QH0pzmBa/MaaPHryLTCxiQvGwyx9m2DBJ3+fWXwG4tZ1JBoHBYs79JyChbx
-         r5rFDF448s/NfZ2lrFLEI/35LniKtZVDGfAnyeOltNGUbu+hXauDlNLnNAaQqWncuzo2
-         +3937Vc7WBUdbsp3LzrmK2ZIuYecnYyYnVMqeOVgiI0Tg/28mg73wkAS2nR2q0eakRY3
-         9/YK/KVHUUOG6XAHJmFirHgZxtOEbFencrEJwS4yKpWhp/Wx/AxSLIA3VX7LS190gJnR
-         PoVw==
+        bh=hImOzMJ05KmBv4g1KzY6JsfY72PzUxGoGBvm1paBJpM=;
+        b=LGqOAQrDCH7KD0IkMFNMW57vSH55x+6WbDjd+go1NQvZ9dUbZq/P8FVdunL40Hde4j
+         2vjuAIMWnuCjHR4/pgoOyWvSSlh8IA/OFZnDV3Mv+7twIMdSIc1Z6X57Uj6bPn6orJuQ
+         +2zQy8jS4pFoMfk9EVpO2Pgg2XN+zaNhWWaeairm6fQz0eWyUwSPTWWRiOuilW+ltgsM
+         Uic0to6pKBNioMBtARf8M26aP7qmc9AqrVgQs41vDHouCR5T0fSnKnJor93xoaEP7LKw
+         8r9EtllMMhHvjvK7TD93tWAZqqev2J++wziySKgO5Aj1IWl+nkOmU25P0vYlR7hzA/6q
+         Ob7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
          :references:organization:mime-version:content-transfer-encoding;
-        bh=PmAznyfs4k+mWd//xBrPme3TcumsUBoHQjEZq6u+NLY=;
-        b=VWbgOcR2kxzALjmHyVfuXOQYUzUBRVahwyArkulClvnSgOC1EXlq0EM10RstklwJ6d
-         L+R9a1bVR+BVzE734Ifi4Wcd/pakpNK+/Isn5jpbvUX1R33/kp32zo3xlshQpbRGEzkz
-         ywc+zYINbOiEAn9OHPvpZiFHy0GXiS+dS5HxLBwIUb7MK2/NC/uCTdZSyItkqPBsxpDg
-         2nL2oqA5x1HYkN0HbhXysf0jU7L/2YvUX+U3T2HU2X7xzKDmgwsJJaeaj54+olulhncc
-         MRq9HxtNY+/21OZ9I2aX0O8ohVwQ2levJlcDiiudIqX84Ok0KMTZKoiqJX+KM8qy+uDt
-         iNlg==
-X-Gm-Message-State: APjAAAWl4oxhrEbTykq0KC3/xdRjjfeYhf8cGgoYO1+vPsAcR0ioQm/4
-        zeP8vFfO7ndg9Vj8bF8COGy12w==
-X-Google-Smtp-Source: APXvYqzciIn5+C8G7UZYhYgLD06dOmlQZq70XrUrVD2u2KT92kUx/KmLzyi/sFi09I3djSRu2p/rmQ==
-X-Received: by 2002:a17:90a:8087:: with SMTP id c7mr17644769pjn.56.1569190380757;
-        Sun, 22 Sep 2019 15:13:00 -0700 (PDT)
+        bh=hImOzMJ05KmBv4g1KzY6JsfY72PzUxGoGBvm1paBJpM=;
+        b=ZquTQKHQro+/QlHKD5mcT0v1r4FbZ3eRZ/kFGGQbkQnhQJsCDn0n46yo2hffslxBOP
+         SesYiP8pRTR74e+Sn1hS7Soff7ih7K9ryR4+8Al3fW5tFAwxjdFiAftpGdDzDdNSQgvy
+         S5TkRzgocjAh5+4BCq15f4PoLvxUHCGv3M6xcQ1kXpGUxizD2j0065fE87jczO73pbg6
+         GUD1jZqYFH68O8snvY3sG6TRNyW8uxfxPV613pCbw2QA3TiJ2lYE0OC5/PR76a5AJWA2
+         HTVlEc7WGnPMsfXG5a4od7fnRxDi3Ghe+QLIpB50D7wCtEyfVSGBdn+i33Adn/eNpwyK
+         uaXw==
+X-Gm-Message-State: APjAAAUmlhI0j+vAEW73KZrM8F+sWwaugFUhhUGAaXpWJyAS2jMzjn6Q
+        ENjDSQGso02pYR0x2LgRUJsYYl9B+x4=
+X-Google-Smtp-Source: APXvYqyC8GFMaLszqNzF5bZkrveNmENlCSweZt7S0Z8Fa1QnU/6Bl4atw0oHwiEOelkywLGWoSjI5w==
+X-Received: by 2002:a63:358a:: with SMTP id c132mr26480848pga.32.1569189406117;
+        Sun, 22 Sep 2019 14:56:46 -0700 (PDT)
 Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id r187sm7877357pfc.105.2019.09.22.15.12.59
+        by smtp.gmail.com with ESMTPSA id e192sm10967639pfh.83.2019.09.22.14.56.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2019 15:13:00 -0700 (PDT)
-Date:   Sun, 22 Sep 2019 15:12:57 -0700
+        Sun, 22 Sep 2019 14:56:45 -0700 (PDT)
+Date:   Sun, 22 Sep 2019 14:56:42 -0700
 From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Christophe Roullier <christophe.roullier@st.com>
-Cc:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
-        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@st.com>, <peppe.cavallaro@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <andrew@lunn.ch>
-Subject: Re: [PATCH  0/5] net: ethernet: stmmac: some fixes and optimization
-Message-ID: <20190922151257.51173d89@cakuba.netronome.com>
-In-Reply-To: <20190920053817.13754-1-christophe.roullier@st.com>
-References: <20190920053817.13754-1-christophe.roullier@st.com>
+To:     Jose Abreu <Jose.Abreu@synopsys.com>
+Cc:     netdev@vger.kernel.org, Joao Pinto <Joao.Pinto@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: stmmac: selftests: Flow Control test can also
+ run with ASYM Pause
+Message-ID: <20190922145642.55453135@cakuba.netronome.com>
+In-Reply-To: <f35fa5a51f52fc1ef17a0a9ecd470e2a6792b3f8.1568887745.git.joabreu@synopsys.com>
+References: <f35fa5a51f52fc1ef17a0a9ecd470e2a6792b3f8.1568887745.git.joabreu@synopsys.com>
 Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -68,21 +69,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Sep 2019 07:38:12 +0200, Christophe Roullier wrote:
-> Some improvements (manage syscfg as optional clock, update slew rate of
-> ETH_MDIO pin, Enable gating of the MAC TX clock during TX low-power mode)
-> Fix warning build message when W=1
+On Thu, 19 Sep 2019 12:09:49 +0200, Jose Abreu wrote:
+> The Flow Control selftest is also available with ASYM Pause. Lets add
+> this check to the test and fix eventual false positive failures.
+> 
+> Fixes: 091810dbded9 ("net: stmmac: Introduce selftests support")
+> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 
-There seems to be some new features/cleanups (or improvements as
-you say) here. Could you explain the negative impact not applying 
-these changes will have? Patches 1 and 3 in particular.
+Hi Jose! 
 
-net-next is now closed [1], and will reopen some time after the merge
-window is over. For now we are only expecting fixes for the net tree.
+Thanks for the patch it looks good, seems like you posted it from 
+a slightly different email address than was used for signoff:
 
-Could you (a) provide stronger motivation these changes are fixes; or
-(b) separate the fixes from improvements?
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+vs
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 
-Thank you!
-
-[1] https://www.kernel.org/doc/html/latest/networking/netdev-FAQ.html
+Could you please fix and repost? Automation may get upset otherwise.
