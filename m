@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15EA5BA741
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3DDBA746
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394694AbfIVS4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:56:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59112 "EHLO mail.kernel.org"
+        id S2394753AbfIVS5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:57:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394660AbfIVS4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:56:51 -0400
+        id S2394729AbfIVS5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:57:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CBF92184D;
-        Sun, 22 Sep 2019 18:56:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1884D214D9;
+        Sun, 22 Sep 2019 18:57:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178610;
-        bh=oxUGfmRL9iGpIDJ2pCNJq5o2xCvzlbFrr0Q4xmMQX0s=;
+        s=default; t=1569178620;
+        bh=K+q3mHnwRmnhbB9RNRwxP3slO8LmOvrVsRKDXNrA6zk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y9g4ElcegDn+uMLL9wcAbFaAONj7LJHGlE9VuXpic03kSXNvgvWEJufn7QDL4wLkC
-         +H72aadCmzjQz9HxS2dIsIyPOANmpAxXPB3nTPZhi+WG1GDMUchHaPo8ONPRVn8gjN
-         tp6dSDDyN34Yin1m7knWsHAHfFEcZWvveaTPfI3Y=
+        b=iLSqvH624FXaj8unq8EwPBYWfFduk4/zp/cmdSiQOOk+kWCYJqNEJMBLBViCa+GGF
+         OduWr0pbhBaXu1Q1LoNqKY7P6R3oCKljjxMFp4vDn7uTINagp85clw3K5Sw/dshCCt
+         g/CpQBqalLcMv8wiskknvJZ8w5aF7a0I1Ury/d8Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Gayatri Kammela <gayatri.kammela@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 110/128] x86/cpu: Add Tiger Lake to Intel family
-Date:   Sun, 22 Sep 2019 14:54:00 -0400
-Message-Id: <20190922185418.2158-110-sashal@kernel.org>
+Cc:     Nigel Croxon <ncroxon@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>, linux-raid@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 119/128] raid5: don't increment read_errors on EILSEQ return
+Date:   Sun, 22 Sep 2019 14:54:09 -0400
+Message-Id: <20190922185418.2158-119-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -47,42 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gayatri Kammela <gayatri.kammela@intel.com>
+From: Nigel Croxon <ncroxon@redhat.com>
 
-[ Upstream commit 6e1c32c5dbb4b90eea8f964c2869d0bde050dbe0 ]
+[ Upstream commit b76b4715eba0d0ed574f58918b29c1b2f0fa37a8 ]
 
-Add the model numbers/CPUIDs of Tiger Lake mobile and desktop to the
-Intel family.
+While MD continues to count read errors returned by the lower layer.
+If those errors are -EILSEQ, instead of -EIO, it should NOT increase
+the read_errors count.
 
-Suggested-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190905193020.14707-2-tony.luck@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+When RAID6 is set up on dm-integrity target that detects massive
+corruption, the leg will be ejected from the array.  Even if the
+issue is correctable with a sector re-write and the array has
+necessary redundancy to correct it.
+
+The leg is ejected because it runs up the rdev->read_errors beyond
+conf->max_nr_stripes.  The return status in dm-drypt when there is
+a data integrity error is -EILSEQ (BLK_STS_PROTECTION).
+
+Signed-off-by: Nigel Croxon <ncroxon@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/intel-family.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/md/raid5.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index aebedbaf52607..5d0b72f281402 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -58,6 +58,9 @@
- #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
- #define INTEL_FAM6_ICELAKE_NNPI		0x9D
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index d26e5e9bea427..dbc4655a95768 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -2540,7 +2540,8 @@ static void raid5_end_read_request(struct bio * bi)
+ 		int set_bad = 0;
  
-+#define INTEL_FAM6_TIGERLAKE_L		0x8C
-+#define INTEL_FAM6_TIGERLAKE		0x8D
-+
- /* "Small Core" Processors (Atom) */
- 
- #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
+ 		clear_bit(R5_UPTODATE, &sh->dev[i].flags);
+-		atomic_inc(&rdev->read_errors);
++		if (!(bi->bi_status == BLK_STS_PROTECTION))
++			atomic_inc(&rdev->read_errors);
+ 		if (test_bit(R5_ReadRepl, &sh->dev[i].flags))
+ 			pr_warn_ratelimited(
+ 				"md/raid:%s: read error on replacement device (sector %llu on %s).\n",
 -- 
 2.20.1
 
