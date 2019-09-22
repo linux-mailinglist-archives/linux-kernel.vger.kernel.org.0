@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6E9DBA524
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50CF1BA525
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436455AbfIVSy7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:54:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55470 "EHLO mail.kernel.org"
+        id S2437065AbfIVSzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:55:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55574 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404530AbfIVSyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:54:45 -0400
+        id S1726828AbfIVSys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:54:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FC6921D6C;
-        Sun, 22 Sep 2019 18:54:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F2FB21D7C;
+        Sun, 22 Sep 2019 18:54:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178484;
-        bh=E+8DDLBbjMszKWIYzvh2j4yfRBKcj4KQ5wwXpznjhCo=;
+        s=default; t=1569178488;
+        bh=REPlmJ3AG9u8ggMbAE/uWkhiDbswCFmGAr0G8TJ0BKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tqY0Z4fGPlRmxG2IzsCg/7AwGeAE58wGyEaqhRFBduH1M1xfjMdKu9WWPLeMC3aIG
-         zWc5VZl096FOQ3MOm7AoIerG5f1yV3Z93XHI9herejHf14KUvURjlGc8bPrMGc/ic4
-         dtWShxk2ZT3nxf9iQVe+5jb6oq8qeXibvonL0WLU=
+        b=i8e6le3U+hN0fKAcqIAf7QpHb6lmm5ecD3gi6j4XDt7DAjovBFOJd87K10W9o/2l3
+         5dQTLlgMbgI2vTdvK4VJD/TByAAM08PALBcf9kQ00sNbdazzO/12F4CNOo2qNQ61mY
+         j5a5Rv0ZAd3OseQc4L4C2OwfML4ym+49tbzc47eA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
+Cc:     Robert Richter <rrichter@marvell.com>,
+        Borislav Petkov <bp@suse.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 020/128] x86/apic: Soft disable APIC before initializing it
-Date:   Sun, 22 Sep 2019 14:52:30 -0400
-Message-Id: <20190922185418.2158-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 023/128] EDAC/mc: Fix grain_bits calculation
+Date:   Sun, 22 Sep 2019 14:52:33 -0400
+Message-Id: <20190922185418.2158-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -43,45 +47,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Robert Richter <rrichter@marvell.com>
 
-[ Upstream commit 2640da4cccf5cc613bf26f0998b9e340f4b5f69c ]
+[ Upstream commit 3724ace582d9f675134985727fd5e9811f23c059 ]
 
-If the APIC was already enabled on entry of setup_local_APIC() then
-disabling it soft via the SPIV register makes a lot of sense.
+The grain in EDAC is defined as "minimum granularity for an error
+report, in bytes". The following calculation of the grain_bits in
+edac_mc is wrong:
 
-That masks all LVT entries and brings it into a well defined state.
+	grain_bits = fls_long(e->grain) + 1;
 
-Otherwise previously enabled LVTs which are not touched in the setup
-function stay unmasked and might surprise the just booting kernel.
+Where grain_bits is defined as:
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190722105219.068290579@linutronix.de
+	grain = 1 << grain_bits
+
+Example:
+
+	grain = 8	# 64 bit (8 bytes)
+	grain_bits = fls_long(8) + 1
+	grain_bits = 4 + 1 = 5
+
+	grain = 1 << grain_bits
+	grain = 1 << 5 = 32
+
+Replace it with the correct calculation:
+
+	grain_bits = fls_long(e->grain - 1);
+
+The example gives now:
+
+	grain_bits = fls_long(8 - 1)
+	grain_bits = fls_long(7)
+	grain_bits = 3
+
+	grain = 1 << 3 = 8
+
+Also, check if the hardware reports a reasonable grain != 0 and fallback
+with a warning to 1 byte granularity otherwise.
+
+ [ bp: massage a bit. ]
+
+Signed-off-by: Robert Richter <rrichter@marvell.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190624150758.6695-2-rrichter@marvell.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/apic.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/edac/edac_mc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
-index 9bfbe1fa0339c..dfdd1caf0d55d 100644
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1538,6 +1538,14 @@ static void setup_local_APIC(void)
- 		return;
- 	}
+diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
+index 7d3edd7139328..f59511bd99261 100644
+--- a/drivers/edac/edac_mc.c
++++ b/drivers/edac/edac_mc.c
+@@ -1246,9 +1246,13 @@ void edac_mc_handle_error(const enum hw_event_mc_err_type type,
+ 	if (p > e->location)
+ 		*(p - 1) = '\0';
  
-+	/*
-+	 * If this comes from kexec/kcrash the APIC might be enabled in
-+	 * SPIV. Soft disable it before doing further initialization.
-+	 */
-+	value = apic_read(APIC_SPIV);
-+	value &= ~APIC_SPIV_APIC_ENABLED;
-+	apic_write(APIC_SPIV, value);
+-	/* Report the error via the trace interface */
+-	grain_bits = fls_long(e->grain) + 1;
++	/* Sanity-check driver-supplied grain value. */
++	if (WARN_ON_ONCE(!e->grain))
++		e->grain = 1;
 +
- #ifdef CONFIG_X86_32
- 	/* Pound the ESR really hard over the head with a big hammer - mbligh */
- 	if (lapic_is_integrated() && apic->disable_esr) {
++	grain_bits = fls_long(e->grain - 1);
+ 
++	/* Report the error via the trace interface */
+ 	if (IS_ENABLED(CONFIG_RAS))
+ 		trace_mc_event(type, e->msg, e->label, e->error_count,
+ 			       mci->mc_idx, e->top_layer, e->mid_layer,
 -- 
 2.20.1
 
