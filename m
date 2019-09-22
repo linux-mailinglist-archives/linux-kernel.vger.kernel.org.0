@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE668BA5EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FC51BA5F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390197AbfIVSqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:46:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42996 "EHLO mail.kernel.org"
+        id S2390324AbfIVSqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:46:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390149AbfIVSqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:46:43 -0400
+        id S2390199AbfIVSqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:46:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEFA1214AF;
-        Sun, 22 Sep 2019 18:46:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81FBD21A4A;
+        Sun, 22 Sep 2019 18:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178002;
-        bh=laBXdjhEBj/+X/JVTuEkEsHnRzQeu89qrZqIqosxvkg=;
+        s=default; t=1569178006;
+        bh=Crki/rhPZBSSiGnUAfWFpCxUMjGFSdR3yUOWDXh92Rk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0cjrGVl0lewtS1m9wU/GdJHd0XJoWK56G1vpc80YJzufgkGjN3JFjQnOBM7l/p2jW
-         a5u/zQa1A6/JnD+r7cu7WhE5jTT/eneGJToYABRJk2H15y02YRHzQaLDYPvF791a0L
-         /keOVVhk3Wnn6WyARXPjujcuR8Zsf9ceM+fcV3SI=
+        b=oIm3S1cYk/aR1CRgjINalV9R0zuHRZ38IfDYD9lSaLODJ080xR7oQNThdBcX1uXKk
+         esjr6mI5T2f40Nfoa9XgqNUAezy4rdQXaIkxhK0vXjrymXp2Knml5lK8TerG4hJKrq
+         2eupm4goe0QKkn9Wa6UDEkcLoP+FmiiwmcW6gUgY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 091/203] arm64: dts: qcom: qcs404-evb: Mark WCSS clocks protected
-Date:   Sun, 22 Sep 2019 14:41:57 -0400
-Message-Id: <20190922184350.30563-91-sashal@kernel.org>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        syzbot+2d4fc2a0c45ad8da7e99@syzkaller.appspotmail.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 094/203] media: radio/si470x: kill urb on error
+Date:   Sun, 22 Sep 2019 14:42:00 -0400
+Message-Id: <20190922184350.30563-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -45,46 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-[ Upstream commit 54d895bea43c94f31304d59f82d755b7f4b59e7c ]
+[ Upstream commit 0d616f2a3fdbf1304db44d451d9f07008556923b ]
 
-'7d0c76bdf227 ("clk: qcom: Add WCSS gcc clock control for QCS404")'
-introduces two new clocks to gcc. These are not used before
-clk_disable_unused() and as such the clock framework tries to disable
-them.
+In the probe() function radio->int_in_urb was not killed if an
+error occurred in the probe sequence. It was also missing in
+the disconnect.
 
-But on the EVB these registers are only accessible through TrustZone, so
-these clocks must be marked as "protected" to prevent the clock code
-from touching them.
+This caused this syzbot issue:
 
-Numerical values are used as the constants are not yet available in a
-common tree.
+https://syzkaller.appspot.com/bug?extid=2d4fc2a0c45ad8da7e99
 
-Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reported-by: Mark Brown <broonie@kernel.org>
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-and-tested-by: syzbot+2d4fc2a0c45ad8da7e99@syzkaller.appspotmail.com
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/radio/si470x/radio-si470x-usb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index 11c0a7137823d..db6df76e97a1a 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -61,7 +61,9 @@
- 	protected-clocks = <GCC_BIMC_CDSP_CLK>,
- 			   <GCC_CDSP_CFG_AHB_CLK>,
- 			   <GCC_CDSP_BIMC_CLK_SRC>,
--			   <GCC_CDSP_TBU_CLK>;
-+			   <GCC_CDSP_TBU_CLK>,
-+			   <141>, /* GCC_WCSS_Q6_AHB_CLK */
-+			   <142>; /* GCC_WCSS_Q6_AXIM_CLK */
- };
+diff --git a/drivers/media/radio/si470x/radio-si470x-usb.c b/drivers/media/radio/si470x/radio-si470x-usb.c
+index 49073747b1e7b..fedff68d8c496 100644
+--- a/drivers/media/radio/si470x/radio-si470x-usb.c
++++ b/drivers/media/radio/si470x/radio-si470x-usb.c
+@@ -734,7 +734,7 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
+ 	/* start radio */
+ 	retval = si470x_start_usb(radio);
+ 	if (retval < 0)
+-		goto err_all;
++		goto err_buf;
  
- &pms405_spmi_regulators {
+ 	/* set initial frequency */
+ 	si470x_set_freq(radio, 87.5 * FREQ_MUL); /* available in all regions */
+@@ -749,6 +749,8 @@ static int si470x_usb_driver_probe(struct usb_interface *intf,
+ 
+ 	return 0;
+ err_all:
++	usb_kill_urb(radio->int_in_urb);
++err_buf:
+ 	kfree(radio->buffer);
+ err_ctrl:
+ 	v4l2_ctrl_handler_free(&radio->hdl);
+@@ -822,6 +824,7 @@ static void si470x_usb_driver_disconnect(struct usb_interface *intf)
+ 	mutex_lock(&radio->lock);
+ 	v4l2_device_disconnect(&radio->v4l2_dev);
+ 	video_unregister_device(&radio->videodev);
++	usb_kill_urb(radio->int_in_urb);
+ 	usb_set_intfdata(intf, NULL);
+ 	mutex_unlock(&radio->lock);
+ 	v4l2_device_put(&radio->v4l2_dev);
 -- 
 2.20.1
 
