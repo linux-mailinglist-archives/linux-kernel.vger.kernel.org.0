@@ -2,261 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B15AFBA007
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 02:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1365BA01D
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 03:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfIVADw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Sep 2019 20:03:52 -0400
-Received: from mga04.intel.com ([192.55.52.120]:43337 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbfIVADv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Sep 2019 20:03:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Sep 2019 17:03:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,534,1559545200"; 
-   d="scan'208";a="192716878"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 21 Sep 2019 17:03:48 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.com>
-Cc:     "Yi Liu" <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        "Christoph Hellwig" <hch@infradead.org>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v2 4/4] iommu: Introduce guest PASID bind function
-Date:   Sat, 21 Sep 2019 17:07:50 -0700
-Message-Id: <1569110870-12603-5-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1569110870-12603-1-git-send-email-jacob.jun.pan@linux.intel.com>
-References: <1569110870-12603-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        id S1727028AbfIVB3Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Sep 2019 21:29:25 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41977 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbfIVB3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Sep 2019 21:29:24 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q7so6890728pfh.8
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2019 18:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=DMn51Td2POv7lnNtwrlqLDrrj+YMQmgwExP4qEnhkL0=;
+        b=zUYdMzna+R2zI2XOIyeaGmiAQEOgz44LaSfLXx6lFbqfgrl593w7NRGN5Tx79Sg0nC
+         rqmOSjzYTVpE7gpQKTwJ6aNM8domemfqPq2SsPiNeVcRgZ5jzvLoqJOKZYwRWRruT76g
+         NtXXOAGrYH9fCamvfsFyq3Q18r9dMsP4crRMUJNiQwgoSwKACp9OTwyUsTVPpZ6WX+Ju
+         oPgrT7UqF3RXupTacwi0wxzsbahoD2mcZwCdwrqbQ+xBkvAbSWAUT0KUXCAgaw8vUeTd
+         kTrK6OhtnVYOhjOLHr8TcNb27iuNK4yNosm20xNdu8UIUWi3iI7C0KDduGjz+afJZEJq
+         HPfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=DMn51Td2POv7lnNtwrlqLDrrj+YMQmgwExP4qEnhkL0=;
+        b=anTLcdD+fZ9pZmQGLFwr7iFYbIolddaM1QhfXRNSDBPKdL7hy6l9CAerZDANPsb0hE
+         nyAdlPgR04/I4ub6Pn1fZJwaTV/XUmLaOkKh5OQq+20Rbky+N9gWBTCC6C6yrbUY30En
+         E32yFjyVu1dhefw3GNAlpxgQMPAXRY1itI1wzQ8LDr+XZvzj+0ZXbahEs+SEL6mLRwLI
+         2qZWQ7PT9ACx6UPSyAcLezpg5Mvx5Ptn1PbqyTAGsI8aBvPXIPYcX5KYJiYH6JlsGu0M
+         wTxRVi974KkhHJljEnuDxFY/V7EgH9A5boqbP76oigs2l+BesB12Ix7EI9N3+VfQdfEu
+         9vJA==
+X-Gm-Message-State: APjAAAX2UqWge4m8Nlnk2qSX0prlwn8Pdg+B7E2qOZSYYy8x8Q4BgZ9K
+        Dc8Ul/lofMew06r9tB92ZIn7Ag==
+X-Google-Smtp-Source: APXvYqzz/GhdU9GscNtk7wgkNvw74Uykne3188YvZa4yf9TZxZP7AruZajWUrGbVd5Ja2vbApg/Abw==
+X-Received: by 2002:aa7:9116:: with SMTP id 22mr15330509pfh.81.1569115764088;
+        Sat, 21 Sep 2019 18:29:24 -0700 (PDT)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id d69sm5638100pfd.175.2019.09.21.18.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Sep 2019 18:29:23 -0700 (PDT)
+Date:   Sat, 21 Sep 2019 18:29:20 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Peter Mamonov <pmamonov@gmail.com>, andrew@lunn.ch
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v3] net/phy: fix DP83865 10 Mbps HDX loopback
+ disable function
+Message-ID: <20190921182920.172ea69d@cakuba.netronome.com>
+In-Reply-To: <20190918162755.24024-1-pmamonov@gmail.com>
+References: <20190918162755.24024-1-pmamonov@gmail.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Guest shared virtual address (SVA) may require host to shadow guest
-PASID tables. Guest PASID can also be allocated from the host via
-enlightened interfaces. In this case, guest needs to bind the guest
-mm, i.e. cr3 in guest physical address to the actual PASID table in
-the host IOMMU. Nesting will be turned on such that guest virtual
-address can go through a two level translation:
-- 1st level translates GVA to GPA
-- 2nd level translates GPA to HPA
-This patch introduces APIs to bind guest PASID data to the assigned
-device entry in the physical IOMMU. See the diagram below for usage
-explanation.
+On Wed, 18 Sep 2019 19:27:55 +0300, Peter Mamonov wrote:
+> According to the DP83865 datasheet "the 10 Mbps HDX loopback can be
+> disabled in the expanded memory register 0x1C0.1". The driver erroneously
+> used bit 0 instead of bit 1.
+> 
+> Fixes: 4621bf129856 ("phy: Add file missed in previous commit.")
+> Signed-off-by: Peter Mamonov <pmamonov@gmail.com>
 
-    .-------------.  .---------------------------.
-    |   vIOMMU    |  | Guest process mm, FL only |
-    |             |  '---------------------------'
-    .----------------/
-    | PASID Entry |--- PASID cache flush -
-    '-------------'                       |
-    |             |                       V
-    |             |                      GP
-    '-------------'
-Guest
-------| Shadow |----------------------- GP->HP* ---------
-      v        v                          |
-Host                                      v
-    .-------------.  .----------------------.
-    |   pIOMMU    |  | Bind FL for GVA-GPA  |
-    |             |  '----------------------'
-    .----------------/  |
-    | PASID Entry |     V (Nested xlate)
-    '----------------\.---------------------.
-    |             |   |Set SL to GPA-HPA    |
-    |             |   '---------------------'
-    '-------------'
-
-Where:
- - FL = First level/stage one page tables
- - SL = Second level/stage two page tables
- - GP = Guest PASID
- - HP = Host PASID
-* Conversion needed if non-identity GP-HP mapping option is chosen.
-
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
-Reviewed-by: Jean-Philippe Brucker <jean-philippe@linaro.com>
----
- drivers/iommu/iommu.c      | 20 ++++++++++++++++
- include/linux/iommu.h      | 22 +++++++++++++++++
- include/uapi/linux/iommu.h | 59 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 101 insertions(+)
-
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index e27dec2d39b8..5523c035abb9 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1620,6 +1620,26 @@ int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
- }
- EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
- 
-+int iommu_sva_bind_gpasid(struct iommu_domain *domain,
-+			   struct device *dev, struct iommu_gpasid_bind_data *data)
-+{
-+	if (unlikely(!domain->ops->sva_bind_gpasid))
-+		return -ENODEV;
-+
-+	return domain->ops->sva_bind_gpasid(domain, dev, data);
-+}
-+EXPORT_SYMBOL_GPL(iommu_sva_bind_gpasid);
-+
-+int iommu_sva_unbind_gpasid(struct iommu_domain *domain, struct device *dev,
-+			     ioasid_t pasid)
-+{
-+	if (unlikely(!domain->ops->sva_unbind_gpasid))
-+		return -ENODEV;
-+
-+	return domain->ops->sva_unbind_gpasid(dev, pasid);
-+}
-+EXPORT_SYMBOL_GPL(iommu_sva_unbind_gpasid);
-+
- static void __iommu_detach_device(struct iommu_domain *domain,
- 				  struct device *dev)
- {
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index cf8b504966b0..0440312db86a 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -13,6 +13,7 @@
- #include <linux/errno.h>
- #include <linux/err.h>
- #include <linux/of.h>
-+#include <linux/ioasid.h>
- #include <uapi/linux/iommu.h>
- 
- #define IOMMU_READ	(1 << 0)
-@@ -230,6 +231,8 @@ struct iommu_sva_ops {
-  * @page_response: handle page request response
-  * @cache_invalidate: invalidate translation caches
-  * @pgsize_bitmap: bitmap of all possible supported page sizes
-+ * @sva_bind_gpasid: bind guest pasid and mm
-+ * @sva_unbind_gpasid: unbind guest pasid and mm
-  */
- struct iommu_ops {
- 	bool (*capable)(enum iommu_cap);
-@@ -294,6 +297,10 @@ struct iommu_ops {
- 			     struct iommu_page_response *msg);
- 	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
- 				struct iommu_cache_invalidate_info *inv_info);
-+	int (*sva_bind_gpasid)(struct iommu_domain *domain,
-+			struct device *dev, struct iommu_gpasid_bind_data *data);
-+
-+	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
- 
- 	unsigned long pgsize_bitmap;
- };
-@@ -401,6 +408,10 @@ extern void iommu_detach_device(struct iommu_domain *domain,
- extern int iommu_cache_invalidate(struct iommu_domain *domain,
- 				  struct device *dev,
- 				  struct iommu_cache_invalidate_info *inv_info);
-+extern int iommu_sva_bind_gpasid(struct iommu_domain *domain,
-+		struct device *dev, struct iommu_gpasid_bind_data *data);
-+extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
-+				struct device *dev, ioasid_t pasid);
- extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
- extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
- extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
-@@ -950,6 +961,17 @@ iommu_cache_invalidate(struct iommu_domain *domain,
- {
- 	return -ENODEV;
- }
-+static inline int iommu_sva_bind_gpasid(struct iommu_domain *domain,
-+				struct device *dev, struct iommu_gpasid_bind_data *data)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
-+					   struct device *dev, int pasid)
-+{
-+	return -ENODEV;
-+}
- 
- #endif /* CONFIG_IOMMU_API */
- 
-diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
-index f3e96214df8e..4ad3496e5c43 100644
---- a/include/uapi/linux/iommu.h
-+++ b/include/uapi/linux/iommu.h
-@@ -262,4 +262,63 @@ struct iommu_cache_invalidate_info {
- 	};
- };
- 
-+/**
-+ * struct iommu_gpasid_bind_data_vtd - Intel VT-d specific data on device and guest
-+ * SVA binding.
-+ *
-+ * @flags:	VT-d PASID table entry attributes
-+ * @pat:	Page attribute table data to compute effective memory type
-+ * @emt:	Extended memory type
-+ *
-+ * Only guest vIOMMU selectable and effective options are passed down to
-+ * the host IOMMU.
-+ */
-+struct iommu_gpasid_bind_data_vtd {
-+#define IOMMU_SVA_VTD_GPASID_SRE	(1 << 0) /* supervisor request */
-+#define IOMMU_SVA_VTD_GPASID_EAFE	(1 << 1) /* extended access enable */
-+#define IOMMU_SVA_VTD_GPASID_PCD	(1 << 2) /* page-level cache disable */
-+#define IOMMU_SVA_VTD_GPASID_PWT	(1 << 3) /* page-level write through */
-+#define IOMMU_SVA_VTD_GPASID_EMTE	(1 << 4) /* extended mem type enable */
-+#define IOMMU_SVA_VTD_GPASID_CD		(1 << 5) /* PASID-level cache disable */
-+	__u64 flags;
-+	__u32 pat;
-+	__u32 emt;
-+};
-+
-+/**
-+ * struct iommu_gpasid_bind_data - Information about device and guest PASID binding
-+ * @version:	Version of this data structure
-+ * @format:	PASID table entry format
-+ * @flags:	Additional information on guest bind request
-+ * @gpgd:	Guest page directory base of the guest mm to bind
-+ * @hpasid:	Process address space ID used for the guest mm in host IOMMU
-+ * @gpasid:	Process address space ID used for the guest mm in guest IOMMU
-+ * @addr_width:	Guest virtual address width
-+ * @padding:	Reserved for future use (should be zero)
-+ * @vtd:	Intel VT-d specific data
-+ *
-+ * Guest to host PASID mapping can be an identity or non-identity, where guest
-+ * has its own PASID space. For non-identify mapping, guest to host PASID lookup
-+ * is needed when VM programs guest PASID into an assigned device. VMM may
-+ * trap such PASID programming then request host IOMMU driver to convert guest
-+ * PASID to host PASID based on this bind data.
-+ */
-+struct iommu_gpasid_bind_data {
-+#define IOMMU_GPASID_BIND_VERSION_1	1
-+	__u32 version;
-+#define IOMMU_PASID_FORMAT_INTEL_VTD	1
-+	__u32 format;
-+#define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid */
-+	__u64 flags;
-+	__u64 gpgd;
-+	__u64 hpasid;
-+	__u64 gpasid;
-+	__u32 addr_width;
-+	__u8  padding[12];
-+	/* Vendor specific data */
-+	union {
-+		struct iommu_gpasid_bind_data_vtd vtd;
-+	};
-+};
-+
- #endif /* _UAPI_IOMMU_H */
--- 
-2.7.4
-
+Applied, queued, thank you!
