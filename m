@@ -2,41 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 652A2BA52E
+	by mail.lfdr.de (Postfix) with ESMTP id D3B8EBA52F
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408074AbfIVSzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:55:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55726 "EHLO mail.kernel.org"
+        id S2437608AbfIVSzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:55:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408053AbfIVSyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:54:55 -0400
+        id S2437375AbfIVSzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:55:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D542222C1;
-        Sun, 22 Sep 2019 18:54:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E58B12190F;
+        Sun, 22 Sep 2019 18:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178494;
-        bh=I6mLupdicjRHBWyEFst+0fM+XGoYu7qjKSS+PJ4HJa8=;
+        s=default; t=1569178505;
+        bh=qv9ygTfvEiKSBYql2/cnEalR9CuEm7hiXBuwEhcKLyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m2l7VihObVEltbEO7yAd+pvKH6SCas/wembAbpkCwyaNoM3py7GJVUIK3sXbh/hyB
-         uJGirje7ffq/PNi9d3POqLmBqhqdx7Jv6/n0vrgooW0BkutX+Qvgd9ldKI/5qHF99/
-         bytqCNKN16D2MGLz3h0sD7E2MHO8X8GSiK1xcqzo=
+        b=qwvEBzVnWAsR2qr7Nf78HtC6OyrIJ+WFsfPSSXAHRTTqsTrFvAeAk/+AgjTzJuumE
+         StwPJD9aKdNb4OD8NxFojVAjfNfp2IRsEjSVIkH8wXQn+hE5jyMD+UEOYvmHX7wWo4
+         vujY4r386tea/zN0gDYawcx//e0B/Cv1QrJWsJaU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Borislav Petkov <bp@suse.de>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        James Morse <james.morse@arm.com>,
-        kernel-janitors@vger.kernel.org,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 028/128] EDAC/altera: Use the proper type for the IRQ status bits
-Date:   Sun, 22 Sep 2019 14:52:38 -0400
-Message-Id: <20190922185418.2158-28-sashal@kernel.org>
+Cc:     Alessio Balsini <balsini@android.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 037/128] loop: Add LOOP_SET_DIRECT_IO to compat ioctl
+Date:   Sun, 22 Sep 2019 14:52:47 -0400
+Message-Id: <20190922185418.2158-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -49,57 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Alessio Balsini <balsini@android.com>
 
-[ Upstream commit 8faa1cf6ed82f33009f63986c3776cc48af1b7b2 ]
+[ Upstream commit fdbe4eeeb1aac219b14f10c0ed31ae5d1123e9b8 ]
 
-Smatch complains about the cast of a u32 pointer to unsigned long:
+Enabling Direct I/O with loop devices helps reducing memory usage by
+avoiding double caching.  32 bit applications running on 64 bits systems
+are currently not able to request direct I/O because is missing from the
+lo_compat_ioctl.
 
-  drivers/edac/altera_edac.c:1878 altr_edac_a10_irq_handler()
-  warn: passing casted pointer '&irq_status' to 'find_first_bit()'
+This patch fixes the compatibility issue mentioned above by exporting
+LOOP_SET_DIRECT_IO as additional lo_compat_ioctl() entry.
+The input argument for this ioctl is a single long converted to a 1-bit
+boolean, so compatibility is preserved.
 
-This code wouldn't work on a 64 bit big endian system because it would
-read past the end of &irq_status.
-
- [ bp: massage. ]
-
-Fixes: 13ab8448d2c9 ("EDAC, altera: Add ECC Manager IRQ controller support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: kernel-janitors@vger.kernel.org
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190624134717.GA1754@mwanda
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Alessio Balsini <balsini@android.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/altera_edac.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/block/loop.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index 5762c3c383f2e..56de378ad13dc 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -1956,6 +1956,7 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 	struct altr_arria10_edac *edac = irq_desc_get_handler_data(desc);
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	int irq = irq_desc_get_irq(desc);
-+	unsigned long bits;
- 
- 	dberr = (irq == edac->db_irq) ? 1 : 0;
- 	sm_offset = dberr ? A10_SYSMGR_ECC_INTSTAT_DERR_OFST :
-@@ -1965,7 +1966,8 @@ static void altr_edac_a10_irq_handler(struct irq_desc *desc)
- 
- 	regmap_read(edac->ecc_mgr_map, sm_offset, &irq_status);
- 
--	for_each_set_bit(bit, (unsigned long *)&irq_status, 32) {
-+	bits = irq_status;
-+	for_each_set_bit(bit, &bits, 32) {
- 		irq = irq_linear_revmap(edac->domain, dberr * 32 + bit);
- 		if (irq)
- 			generic_handle_irq(irq);
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index cef8e00c9d9d6..126c2c5146732 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1719,6 +1719,7 @@ static int lo_compat_ioctl(struct block_device *bdev, fmode_t mode,
+ 	case LOOP_SET_FD:
+ 	case LOOP_CHANGE_FD:
+ 	case LOOP_SET_BLOCK_SIZE:
++	case LOOP_SET_DIRECT_IO:
+ 		err = lo_ioctl(bdev, mode, cmd, arg);
+ 		break;
+ 	default:
 -- 
 2.20.1
 
