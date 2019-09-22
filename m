@@ -2,33 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D1BBA5E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65B9CBA5EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390010AbfIVSqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:46:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42588 "EHLO mail.kernel.org"
+        id S2390123AbfIVSqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:46:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389973AbfIVSq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:46:29 -0400
+        id S2390029AbfIVSqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:46:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2404420882;
-        Sun, 22 Sep 2019 18:46:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C10421907;
+        Sun, 22 Sep 2019 18:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569177988;
-        bh=iI2WbB/rCnOHq0Uw2puFP3RXiZkcf6+ZTzmBSTYmT9c=;
+        s=default; t=1569177991;
+        bh=jKwoBq+Gu6aMJLrH40ZDGEDu3NwN+bC42hFxiIttA+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NCiHBYmdEaM9quja4FI4eNrMSBUulkKHZV+LHioechVUauHOBS5KIQFKna9QqKB8+
-         o1vGQ5zL7J1KkywONfLXYkKA+EIF7IvYoJsLa/n2OjT1AYYa9+jy5+XmKyhi0RRewU
-         ur+LHD9ufLGrb0mirEmpSon9Mf0lyn76OIbiPN/0=
+        b=jggfUd8NS1DTOerGOkJA5PVxDznjKXX/60vgrtiBUEWWNtXauDQHWnQcvrIHAhjBa
+         Df5FdRBLn3c7+RI1Y1stpGaZJzgt7UjEa9BedobKSO/NpN1HGEBu1/6ulIyMc53MTo
+         rVJ5BUygdiFfAgu6lJ8z7B+9BaR9Q/ObFqwoGsPQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 081/203] ALSA: hda: Add codec on bus address table lately
-Date:   Sun, 22 Sep 2019 14:41:47 -0400
-Message-Id: <20190922184350.30563-81-sashal@kernel.org>
+Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 083/203] media: i2c: ov5645: Fix power sequence
+Date:   Sun, 22 Sep 2019 14:41:49 -0400
+Message-Id: <20190922184350.30563-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -41,84 +47,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-[ Upstream commit ee5f85d9290fe25d460bd320b7fe073075d72d33 ]
+[ Upstream commit 092e8eb90a7dc7dd210cd4e2ea36075d0a7f96af ]
 
-The call of snd_hdac_bus_add_device() is needed only for registering
-the codec onto the bus caddr_tbl[] that is referred essentially only
-in the unsol event handler.  That is, the reason of this call and the
-release by the counter-part function snd_hdac_bus_remove_device() is
-just to assure that the unsol event gets notified to the codec.
+This is mostly a port of Jacopo's fix:
 
-But the current implementation of the unsol notification wouldn't work
-properly when the codec is still in a premature init state.  So this
-patch tries to work around it by delaying the caddr_tbl[] registration
-at the point of snd_hdac_device_register().
+  commit aa4bb8b8838ffcc776a79f49a4d7476b82405349
+  Author: Jacopo Mondi <jacopo@jmondi.org>
+  Date:   Fri Jul 6 05:51:52 2018 -0400
 
-Also, the order of snd_hdac_bus_remove_device() and device_del() calls
-are shuffled to make sure that the unsol event is masked before
-deleting the device.
+  media: ov5640: Re-work MIPI startup sequence
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204565
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+In the OV5645 case, the changes are:
+
+- At set_power(1) time power up MIPI Tx/Rx and set data and clock lanes in
+  LP11 during 'sleep' and 'idle' with MIPI clock in non-continuous mode.
+- At set_power(0) time power down MIPI Tx/Rx (in addition to the current
+  power down of regulators and clock gating).
+- At s_stream time enable/disable the MIPI interface output.
+
+With this commit the sensor is able to enter LP-11 mode during power up,
+as expected by some CSI-2 controllers.
+
+Many thanks to Fabio Estevam for his help debugging this issue.
+
+Tested-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/hda/hdac_device.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/media/i2c/ov5645.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/sound/hda/hdac_device.c b/sound/hda/hdac_device.c
-index b26cc93e7e103..033bcef8751a8 100644
---- a/sound/hda/hdac_device.c
-+++ b/sound/hda/hdac_device.c
-@@ -61,10 +61,6 @@ int snd_hdac_device_init(struct hdac_device *codec, struct hdac_bus *bus,
- 	pm_runtime_get_noresume(&codec->dev);
- 	atomic_set(&codec->in_pm, 0);
+diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
+index 124c8df046337..58972c884705c 100644
+--- a/drivers/media/i2c/ov5645.c
++++ b/drivers/media/i2c/ov5645.c
+@@ -45,6 +45,8 @@
+ #define		OV5645_CHIP_ID_HIGH_BYTE	0x56
+ #define OV5645_CHIP_ID_LOW		0x300b
+ #define		OV5645_CHIP_ID_LOW_BYTE		0x45
++#define OV5645_IO_MIPI_CTRL00		0x300e
++#define OV5645_PAD_OUTPUT00		0x3019
+ #define OV5645_AWB_MANUAL_CONTROL	0x3406
+ #define		OV5645_AWB_MANUAL_ENABLE	BIT(0)
+ #define OV5645_AEC_PK_MANUAL		0x3503
+@@ -55,6 +57,7 @@
+ #define		OV5645_ISP_VFLIP		BIT(2)
+ #define OV5645_TIMING_TC_REG21		0x3821
+ #define		OV5645_SENSOR_MIRROR		BIT(1)
++#define OV5645_MIPI_CTRL00		0x4800
+ #define OV5645_PRE_ISP_TEST_SETTING_1	0x503d
+ #define		OV5645_TEST_PATTERN_MASK	0x3
+ #define		OV5645_SET_TEST_PATTERN(x)	((x) & OV5645_TEST_PATTERN_MASK)
+@@ -121,7 +124,6 @@ static const struct reg_value ov5645_global_init_setting[] = {
+ 	{ 0x3503, 0x07 },
+ 	{ 0x3002, 0x1c },
+ 	{ 0x3006, 0xc3 },
+-	{ 0x300e, 0x45 },
+ 	{ 0x3017, 0x00 },
+ 	{ 0x3018, 0x00 },
+ 	{ 0x302e, 0x0b },
+@@ -350,7 +352,10 @@ static const struct reg_value ov5645_global_init_setting[] = {
+ 	{ 0x3a1f, 0x14 },
+ 	{ 0x0601, 0x02 },
+ 	{ 0x3008, 0x42 },
+-	{ 0x3008, 0x02 }
++	{ 0x3008, 0x02 },
++	{ OV5645_IO_MIPI_CTRL00, 0x40 },
++	{ OV5645_MIPI_CTRL00, 0x24 },
++	{ OV5645_PAD_OUTPUT00, 0x70 }
+ };
  
--	err = snd_hdac_bus_add_device(bus, codec);
--	if (err < 0)
--		goto error;
--
- 	/* fill parameters */
- 	codec->vendor_id = snd_hdac_read_parm(codec, AC_NODE_ROOT,
- 					      AC_PAR_VENDOR_ID);
-@@ -143,15 +139,22 @@ int snd_hdac_device_register(struct hdac_device *codec)
- 	err = device_add(&codec->dev);
- 	if (err < 0)
- 		return err;
-+	err = snd_hdac_bus_add_device(codec->bus, codec);
-+	if (err < 0)
-+		goto error;
- 	mutex_lock(&codec->widget_lock);
- 	err = hda_widget_sysfs_init(codec);
- 	mutex_unlock(&codec->widget_lock);
--	if (err < 0) {
--		device_del(&codec->dev);
--		return err;
--	}
-+	if (err < 0)
-+		goto error_remove;
+ static const struct reg_value ov5645_setting_sxga[] = {
+@@ -737,13 +742,9 @@ static int ov5645_s_power(struct v4l2_subdev *sd, int on)
+ 				goto exit;
+ 			}
  
- 	return 0;
-+
-+ error_remove:
-+	snd_hdac_bus_remove_device(codec->bus, codec);
-+ error:
-+	device_del(&codec->dev);
-+	return err;
- }
- EXPORT_SYMBOL_GPL(snd_hdac_device_register);
- 
-@@ -165,8 +168,8 @@ void snd_hdac_device_unregister(struct hdac_device *codec)
- 		mutex_lock(&codec->widget_lock);
- 		hda_widget_sysfs_exit(codec);
- 		mutex_unlock(&codec->widget_lock);
--		device_del(&codec->dev);
- 		snd_hdac_bus_remove_device(codec->bus, codec);
-+		device_del(&codec->dev);
+-			ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
+-					       OV5645_SYSTEM_CTRL0_STOP);
+-			if (ret < 0) {
+-				ov5645_set_power_off(ov5645);
+-				goto exit;
+-			}
++			usleep_range(500, 1000);
+ 		} else {
++			ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x58);
+ 			ov5645_set_power_off(ov5645);
+ 		}
  	}
- }
- EXPORT_SYMBOL_GPL(snd_hdac_device_unregister);
+@@ -1049,11 +1050,20 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
+ 			dev_err(ov5645->dev, "could not sync v4l2 controls\n");
+ 			return ret;
+ 		}
++
++		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x45);
++		if (ret < 0)
++			return ret;
++
+ 		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
+ 				       OV5645_SYSTEM_CTRL0_START);
+ 		if (ret < 0)
+ 			return ret;
+ 	} else {
++		ret = ov5645_write_reg(ov5645, OV5645_IO_MIPI_CTRL00, 0x40);
++		if (ret < 0)
++			return ret;
++
+ 		ret = ov5645_write_reg(ov5645, OV5645_SYSTEM_CTRL0,
+ 				       OV5645_SYSTEM_CTRL0_STOP);
+ 		if (ret < 0)
 -- 
 2.20.1
 
