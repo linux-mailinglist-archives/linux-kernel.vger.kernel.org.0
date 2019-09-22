@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 385C6BA6AE
+	by mail.lfdr.de (Postfix) with ESMTP id A2288BA6AF
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407827AbfIVSwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:52:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51002 "EHLO mail.kernel.org"
+        id S1728392AbfIVSwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:52:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407718AbfIVSwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:52:14 -0400
+        id S2407851AbfIVSwS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:52:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B40C221479;
-        Sun, 22 Sep 2019 18:52:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE77D2190F;
+        Sun, 22 Sep 2019 18:52:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178333;
-        bh=FhMqtDm73GhvjtyVWDtKRVY17JuvvD8eg/8rpvN6FjU=;
+        s=default; t=1569178337;
+        bh=BMdLIydfr0XqiBTIBaO/y9dLc3t97LMQFjAyQ1K7uX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eAljFacNAWxYB1+dErbQAYMIEzNjNynDRv0RNvgErY87dIGlpBQ2Oe/2CsNbp6yKt
-         XMw5+uHMFIXRuFPLgPW2/lS3MskAmBOau5IucyPuu5EVW8NBk+imNHKIjIRxF1ZPrP
-         MejWDkAiFAjXpuaVINFll0U0G8a3yWNWvtYwBtWI=
+        b=qfKNPmKWWIt5nTeSbAR/IdOg8+ZnQpr1XVzgHTVkDlIO2iCT7+Tt3Yo4K78eW3qpX
+         IT4dcvVdhtvg1qtXkrE2Ueq3dCWzDgcRYU0u9ZLRDo6nEJJLQPfc5U1o5TwkZeqflT
+         MTi/99whbpxwZEYEYagtTkE1E2BbQWK7miPYCgJo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 096/185] s390/kasan: provide uninstrumented __strlen
-Date:   Sun, 22 Sep 2019 14:47:54 -0400
-Message-Id: <20190922184924.32534-96-sashal@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 099/185] posix-cpu-timers: Sanitize bogus WARNONS
+Date:   Sun, 22 Sep 2019 14:47:57 -0400
+Message-Id: <20190922184924.32534-99-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -43,63 +43,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-[ Upstream commit f45f7b5bdaa4828ce871cf03f7c01599a0de57a5 ]
+[ Upstream commit 692117c1f7a6770ed41dd8f277cd9fed1dfb16f1 ]
 
-s390 kasan code uses sclp_early_printk to report initialization
-failures. The code doing that should not be instrumented, because kasan
-shadow memory has not been set up yet. Even though sclp_early_core.c is
-compiled with instrumentation disabled it uses strlen function, which
-is instrumented and would produce shadow memory access if used. To
-avoid that, introduce uninstrumented __strlen function to be used
-instead.
+Warning when p == NULL and then proceeding and dereferencing p does not
+make any sense as the kernel will crash with a NULL pointer dereference
+right away.
 
-Before commit 7e0d92f00246 ("s390/kasan: improve string/memory functions
-checks") few string functions (including strlen) were escaping kasan
-instrumentation due to usage of platform specific versions which are
-implemented in inline assembly.
+Bailing out when p == NULL and returning an error code does not cure the
+underlying problem which caused p to be NULL. Though it might allow to
+do proper debugging.
 
-Fixes: 7e0d92f00246 ("s390/kasan: improve string/memory functions checks")
-Acked-by: Ilya Leoshkevich <iii@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Same applies to the clock id check in set_process_cpu_timer().
+
+Clean them up and make them return without trying to do further damage.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lkml.kernel.org/r/20190819143801.846497772@linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/string.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ kernel/time/posix-cpu-timers.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/arch/s390/include/asm/string.h b/arch/s390/include/asm/string.h
-index 70d87db54e627..4c0690fc5167e 100644
---- a/arch/s390/include/asm/string.h
-+++ b/arch/s390/include/asm/string.h
-@@ -71,11 +71,16 @@ extern void *__memmove(void *dest, const void *src, size_t n);
- #define memcpy(dst, src, len) __memcpy(dst, src, len)
- #define memmove(dst, src, len) __memmove(dst, src, len)
- #define memset(s, c, n) __memset(s, c, n)
-+#define strlen(s) __strlen(s)
-+
-+#define __no_sanitize_prefix_strfunc(x) __##x
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 0a426f4e31251..5bbad147a90cf 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -375,7 +375,8 @@ static int posix_cpu_timer_del(struct k_itimer *timer)
+ 	struct sighand_struct *sighand;
+ 	struct task_struct *p = timer->it.cpu.task;
  
- #ifndef __NO_FORTIFY
- #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
- #endif
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return -EINVAL;
  
-+#else
-+#define __no_sanitize_prefix_strfunc(x) x
- #endif /* defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__) */
+ 	/*
+ 	 * Protect against sighand release/switch in exit/exec and process/
+@@ -580,7 +581,8 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 	u64 old_expires, new_expires, old_incr, val;
+ 	int ret;
  
- void *__memset16(uint16_t *s, uint16_t v, size_t count);
-@@ -163,8 +168,8 @@ static inline char *strcpy(char *dst, const char *src)
- }
- #endif
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return -EINVAL;
  
--#ifdef __HAVE_ARCH_STRLEN
--static inline size_t strlen(const char *s)
-+#if defined(__HAVE_ARCH_STRLEN) || (defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__))
-+static inline size_t __no_sanitize_prefix_strfunc(strlen)(const char *s)
+ 	/*
+ 	 * Use the to_ktime conversion because that clamps the maximum
+@@ -715,10 +717,11 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 
+ static void posix_cpu_timer_get(struct k_itimer *timer, struct itimerspec64 *itp)
  {
- 	register unsigned long r0 asm("0") = 0;
- 	const char *tmp = s;
+-	u64 now;
+ 	struct task_struct *p = timer->it.cpu.task;
++	u64 now;
+ 
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return;
+ 
+ 	/*
+ 	 * Easy part: convert the reload time.
+@@ -1000,12 +1003,13 @@ static void check_process_timers(struct task_struct *tsk,
+  */
+ static void posix_cpu_timer_rearm(struct k_itimer *timer)
+ {
++	struct task_struct *p = timer->it.cpu.task;
+ 	struct sighand_struct *sighand;
+ 	unsigned long flags;
+-	struct task_struct *p = timer->it.cpu.task;
+ 	u64 now;
+ 
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return;
+ 
+ 	/*
+ 	 * Fetch the current sample and update the timer's expiry time.
+@@ -1202,7 +1206,9 @@ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clock_idx,
+ 	u64 now;
+ 	int ret;
+ 
+-	WARN_ON_ONCE(clock_idx == CPUCLOCK_SCHED);
++	if (WARN_ON_ONCE(clock_idx >= CPUCLOCK_SCHED))
++		return;
++
+ 	ret = cpu_timer_sample_group(clock_idx, tsk, &now);
+ 
+ 	if (oldval && ret != -EINVAL) {
 -- 
 2.20.1
 
