@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED0CFBA439
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6726EBA43A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390450AbfIVSq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:46:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43190 "EHLO mail.kernel.org"
+        id S2390516AbfIVSrC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:47:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390307AbfIVSqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:46:52 -0400
+        id S2390405AbfIVSq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:46:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFC79208C2;
-        Sun, 22 Sep 2019 18:46:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BECA206C2;
+        Sun, 22 Sep 2019 18:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178011;
-        bh=J857V+s2eCUvaCpjWd7tdKg18VSQm5KUn4SWhVl283w=;
+        s=default; t=1569178015;
+        bh=gzyP2iDTSZJkcDxjXtyZpYtn6CrWpPanXtKAD1JQ+j4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sjkQ+RfwaLIsQCgXZB0wX0n7T16je9LmutJUpH72PJKJmUENBvMjvLge0R/x1hnr3
-         MWRfpDzuyWTZG6o5larLVNEzK4RMD2PKCVTPRuGglNvUOKMEhtPyuAMknK/UnaQGHA
-         n9aSpbZp5yU4r/q5TFnc/9S+mNf+UP4DKg2F//j8=
+        b=zUCbwd4zX9Ezq+LaoQgh4gaYhTVPDeAVbHP3c/yjlbe7aZYKkkHqaEc4W7nDiWtyx
+         fwi/pV54orRrS0AjptA1TCBVjom9vqoURw6UpJLpDMmNPBHWKB6c+Eh67sFKHtBu70
+         oFBqBNbsg+CBkmygqBozXdENvtZ/c+7m0GqumXmA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.3 098/203] tools headers: Fixup bitsperlong per arch includes
-Date:   Sun, 22 Sep 2019 14:42:04 -0400
-Message-Id: <20190922184350.30563-98-sashal@kernel.org>
+Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 102/203] ASoC: mchp-i2s-mcc: Fix unprepare of GCLK
+Date:   Sun, 22 Sep 2019 14:42:08 -0400
+Message-Id: <20190922184350.30563-102-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -46,110 +43,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 
-[ Upstream commit 42fc2e9ef9603a7948aaa4ffd8dfb94b30294ad8 ]
+[ Upstream commit 988b59467b2b14523a266957affbe9eca3e99fc9 ]
 
-We were getting the file by luck, from one of the paths in -I, fix it to
-get it from the proper place:
+If hw_free() gets called after hw_params(), GCLK remains prepared,
+preventing further use of it. This patch fixes this by unpreparing the
+clock in hw_free() or if hw_params() gets an error.
 
-  $ cd tools/include/uapi/asm/
-  [acme@quaco asm]$ grep include bitsperlong.h
-  #include "../../arch/x86/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/arm64/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/powerpc/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/s390/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/sparc/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/mips/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
-  #include "../../arch/alpha/include/uapi/asm/bitsperlong.h"
-  #include <asm-generic/bitsperlong.h>
-  $ ls -la ../../arch/x86/include/uapi/asm/bitsperlong.h
-  ls: cannot access '../../arch/x86/include/uapi/asm/bitsperlong.h': No such file or directory
-  $ ls -la ../../../arch/*/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 237 ../../../arch/alpha/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 841 ../../../arch/arm64/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 966 ../../../arch/hexagon/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 234 ../../../arch/ia64/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 100 ../../../arch/microblaze/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 244 ../../../arch/mips/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 352 ../../../arch/parisc/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 312 ../../../arch/powerpc/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 353 ../../../arch/riscv/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 292 ../../../arch/s390/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 323 ../../../arch/sparc/include/uapi/asm/bitsperlong.h
-  -rw-rw-r--. 1 320 ../../../arch/x86/include/uapi/asm/bitsperlong.h
-  $
-
-Found while fixing some other problem, before it was escaping the
-tools/ chroot and using stuff in the kernel sources:
-
-    CC       /tmp/build/perf/util/find_bit.o
-In file included from /git/linux/tools/include/../../arch/x86/include/uapi/asm/bitsperlong.h:11,
-                 from /git/linux/tools/include/uapi/asm/bitsperlong.h:3,
-                 from /git/linux/tools/include/linux/bits.h:6,
-                 from /git/linux/tools/include/linux/bitops.h:13,
-                 from ../lib/find_bit.c:17:
-
-  # cd /git/linux/tools/include/../../arch/x86/include/uapi/asm/
-  # pwd
-  /git/linux/arch/x86/include/uapi/asm
-  #
-
-Now it is getting the one we want it to, i.e. the one inside tools/:
-
-    CC       /tmp/build/perf/util/find_bit.o
-  In file included from /git/linux/tools/arch/x86/include/uapi/asm/bitsperlong.h:11,
-                   from /git/linux/tools/include/linux/bits.h:6,
-                   from /git/linux/tools/include/linux/bitops.h:13,
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-8f8cfqywmf6jk8a3ucr0ixhu@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 7e0cdf545a55 ("ASoC: mchp-i2s-mcc: add driver for I2SC Multi-Channel Controller")
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Link: https://lore.kernel.org/r/20190820162411.24836-2-codrin.ciubotariu@microchip.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/include/uapi/asm/bitsperlong.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ sound/soc/atmel/mchp-i2s-mcc.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/tools/include/uapi/asm/bitsperlong.h b/tools/include/uapi/asm/bitsperlong.h
-index 57aaeaf8e1920..edba4d93e9e6a 100644
---- a/tools/include/uapi/asm/bitsperlong.h
-+++ b/tools/include/uapi/asm/bitsperlong.h
-@@ -1,22 +1,22 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #if defined(__i386__) || defined(__x86_64__)
--#include "../../arch/x86/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/x86/include/uapi/asm/bitsperlong.h"
- #elif defined(__aarch64__)
--#include "../../arch/arm64/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/arm64/include/uapi/asm/bitsperlong.h"
- #elif defined(__powerpc__)
--#include "../../arch/powerpc/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/powerpc/include/uapi/asm/bitsperlong.h"
- #elif defined(__s390__)
--#include "../../arch/s390/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/s390/include/uapi/asm/bitsperlong.h"
- #elif defined(__sparc__)
--#include "../../arch/sparc/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/sparc/include/uapi/asm/bitsperlong.h"
- #elif defined(__mips__)
--#include "../../arch/mips/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/mips/include/uapi/asm/bitsperlong.h"
- #elif defined(__ia64__)
--#include "../../arch/ia64/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/ia64/include/uapi/asm/bitsperlong.h"
- #elif defined(__riscv)
--#include "../../arch/riscv/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/riscv/include/uapi/asm/bitsperlong.h"
- #elif defined(__alpha__)
--#include "../../arch/alpha/include/uapi/asm/bitsperlong.h"
-+#include "../../../arch/alpha/include/uapi/asm/bitsperlong.h"
- #else
- #include <asm-generic/bitsperlong.h>
- #endif
+diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
+index 8272915fa09b9..ab7d5f98e759e 100644
+--- a/sound/soc/atmel/mchp-i2s-mcc.c
++++ b/sound/soc/atmel/mchp-i2s-mcc.c
+@@ -670,8 +670,13 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 
+ 	ret = regmap_write(dev->regmap, MCHP_I2SMCC_MRA, mra);
+-	if (ret < 0)
++	if (ret < 0) {
++		if (dev->gclk_use) {
++			clk_unprepare(dev->gclk);
++			dev->gclk_use = 0;
++		}
+ 		return ret;
++	}
+ 	return regmap_write(dev->regmap, MCHP_I2SMCC_MRB, mrb);
+ }
+ 
+@@ -710,9 +715,13 @@ static int mchp_i2s_mcc_hw_free(struct snd_pcm_substream *substream,
+ 		regmap_write(dev->regmap, MCHP_I2SMCC_CR, MCHP_I2SMCC_CR_CKDIS);
+ 
+ 		if (dev->gclk_running) {
+-			clk_disable_unprepare(dev->gclk);
++			clk_disable(dev->gclk);
+ 			dev->gclk_running = 0;
+ 		}
++		if (dev->gclk_use) {
++			clk_unprepare(dev->gclk);
++			dev->gclk_use = 0;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
