@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49087BA471
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A33BEBA474
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391778AbfIVSss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:48:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45296 "EHLO mail.kernel.org"
+        id S2391871AbfIVSsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:48:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391532AbfIVSs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:48:26 -0400
+        id S2391656AbfIVSsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:48:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB9BE2186A;
-        Sun, 22 Sep 2019 18:48:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6BF321D7B;
+        Sun, 22 Sep 2019 18:48:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178105;
-        bh=UcXwOX4Q3s/OeMb0P6GUol/4vmnAyQo333LJD65XGZo=;
+        s=default; t=1569178113;
+        bh=P6WhpmMdBIGrX0O3XwXmFKVq11nYdl3AZ1TqwXFHXIo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l1qFw5+2N2xTmzeVqr/dGplC12K5lk2Jl5o7tkzOUFDtAqxTKGn/4UPTxFlhi+gX+
-         FZc8p4iVph/jPLoTdqes76R2C1rKqH3GUlXmDgxTI/EvkRQJGTAf65PdECRs1Hqd9s
-         J0pG2DxnqcxVNCZMNi65VnKMA1fgoNXkLoCri1UQ=
+        b=PR5DELoJrBc2A9CcwaRCjytCZsr5hh9PRpRCDj+klaspuFWscRqF0cemDzzceyFqy
+         ZNSNub9G5BBRV7gDtwm7BMl/3gB+bUssjNSTXYPdmz/PkGc778ObXwPbg/9VU6IBBf
+         1K2XvYp7ePnAwsrsdq89on0Azb+K7GfMxmIiSpIU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Marc Zyngier <maz@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.3 166/203] irqchip/sifive-plic: set max threshold for ignored handlers
-Date:   Sun, 22 Sep 2019 14:43:12 -0400
-Message-Id: <20190922184350.30563-166-sashal@kernel.org>
+Cc:     Gayatri Kammela <gayatri.kammela@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 170/203] x86/cpu: Add Tiger Lake to Intel family
+Date:   Sun, 22 Sep 2019 14:43:16 -0400
+Message-Id: <20190922184350.30563-170-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -44,62 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
+From: Gayatri Kammela <gayatri.kammela@intel.com>
 
-[ Upstream commit 9ce06497c2722a0f9109e4cc3ce35b7a69617886 ]
+[ Upstream commit 6e1c32c5dbb4b90eea8f964c2869d0bde050dbe0 ]
 
-When running in M-mode, the S-mode plic handlers are still listed in the
-device tree.  Ignore them by setting the maximum threshold.
+Add the model numbers/CPUIDs of Tiger Lake mobile and desktop to the
+Intel family.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Suggested-by: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190905193020.14707-2-tony.luck@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/irqchip/irq-sifive-plic.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/intel-family.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index cf755964f2f8b..c72c036aea768 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -244,6 +244,7 @@ static int __init plic_init(struct device_node *node,
- 		struct plic_handler *handler;
- 		irq_hw_number_t hwirq;
- 		int cpu, hartid;
-+		u32 threshold = 0;
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index fe7c205233f1c..9ae1c0f05fd2d 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -73,6 +73,9 @@
+ #define INTEL_FAM6_ICELAKE_MOBILE	0x7E
+ #define INTEL_FAM6_ICELAKE_NNPI		0x9D
  
- 		if (of_irq_parse_one(node, i, &parent)) {
- 			pr_err("failed to parse parent for context %d.\n", i);
-@@ -266,10 +267,16 @@ static int __init plic_init(struct device_node *node,
- 			continue;
- 		}
++#define INTEL_FAM6_TIGERLAKE_L		0x8C
++#define INTEL_FAM6_TIGERLAKE		0x8D
++
+ /* "Small Core" Processors (Atom) */
  
-+		/*
-+		 * When running in M-mode we need to ignore the S-mode handler.
-+		 * Here we assume it always comes later, but that might be a
-+		 * little fragile.
-+		 */
- 		handler = per_cpu_ptr(&plic_handlers, cpu);
- 		if (handler->present) {
- 			pr_warn("handler already present for context %d.\n", i);
--			continue;
-+			threshold = 0xffffffff;
-+			goto done;
- 		}
- 
- 		handler->present = true;
-@@ -279,8 +286,9 @@ static int __init plic_init(struct device_node *node,
- 		handler->enable_base =
- 			plic_regs + ENABLE_BASE + i * ENABLE_PER_HART;
- 
-+done:
- 		/* priority must be > threshold to trigger an interrupt */
--		writel(0, handler->hart_base + CONTEXT_THRESHOLD);
-+		writel(threshold, handler->hart_base + CONTEXT_THRESHOLD);
- 		for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
- 			plic_toggle(handler, hwirq, 0);
- 		nr_handlers++;
+ #define INTEL_FAM6_ATOM_BONNELL		0x1C /* Diamondville, Pineview */
 -- 
 2.20.1
 
