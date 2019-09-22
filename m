@@ -2,186 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53FCFBA3C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3960BA41D
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388814AbfIVSoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:44:32 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:19458
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388761AbfIVSoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:44:22 -0400
-X-IronPort-AV: E=Sophos;i="5.64,537,1559512800"; 
-   d="scan'208";a="320239964"
-Received: from ip-215.net-89-2-7.rev.numericable.fr (HELO hadrien) ([89.2.7.215])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Sep 2019 20:43:48 +0200
-Date:   Sun, 22 Sep 2019 20:43:48 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     =?ISO-8859-15?Q?Guido_G=FCnther?= <agx@sigxcpu.org>
-cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        =?ISO-8859-15?Q?Guido_G=FCnther?= <agx@sigxcpu.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>,
-        kbuild-all@01.org
-Subject: Re: [PATCH v6 2/2] drm/bridge: Add NWL MIPI DSI host controller
- support (fwd)
-Message-ID: <alpine.DEB.2.21.1909222042340.2575@hadrien>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2389809AbfIVSqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:46:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389708AbfIVSp7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:45:59 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 370C9206B6;
+        Sun, 22 Sep 2019 18:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569177957;
+        bh=QfMwwp7k4LX8qa7VmAQXWyOp4djjbtF2k0Y/KYrJ/lo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bhCIviT2CLMlXiJrdUoj82ykiucHaCPjfz0CaqHOKQi9dUvhx+Zkopw+sDYhR4y4M
+         pq1eYpcpqfDJcV4Yn7yQKyW17vQhn1iuFhyqMEEQMdleL8KA3d2L6zNscWzksET7D2
+         y29Riszm2+eAsNP1yWCV3Xf487UIOa343Abb89gI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xiaofei Tan <tanxiaofei@huawei.com>,
+        James Morse <james.morse@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-efi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 062/203] efi: cper: print AER info of PCIe fatal error
+Date:   Sun, 22 Sep 2019 14:41:28 -0400
+Message-Id: <20190922184350.30563-62-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
+References: <20190922184350.30563-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-348580464-1569177829=:2575"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Xiaofei Tan <tanxiaofei@huawei.com>
 
---8323329-348580464-1569177829=:2575
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+[ Upstream commit b194a77fcc4001dc40aecdd15d249648e8a436d1 ]
 
-Hello,
+AER info of PCIe fatal error is not printed in the current driver.
+Because APEI driver will panic directly for fatal error, and can't
+run to the place of printing AER info.
 
-Color_format is unsigned, so it won't be less than 0 on line 272.
+An example log is as following:
+{763}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 11
+{763}[Hardware Error]: event severity: fatal
+{763}[Hardware Error]:  Error 0, type: fatal
+{763}[Hardware Error]:   section_type: PCIe error
+{763}[Hardware Error]:   port_type: 0, PCIe end point
+{763}[Hardware Error]:   version: 4.0
+{763}[Hardware Error]:   command: 0x0000, status: 0x0010
+{763}[Hardware Error]:   device_id: 0000:82:00.0
+{763}[Hardware Error]:   slot: 0
+{763}[Hardware Error]:   secondary_bus: 0x00
+{763}[Hardware Error]:   vendor_id: 0x8086, device_id: 0x10fb
+{763}[Hardware Error]:   class_code: 000002
+Kernel panic - not syncing: Fatal hardware error!
 
-julia
+This issue was imported by the patch, '37448adfc7ce ("aerdrv: Move
+cper_print_aer() call out of interrupt context")'. To fix this issue,
+this patch adds print of AER info in cper_print_pcie() for fatal error.
 
----------- Forwarded message ----------
-Date: Mon, 23 Sep 2019 02:29:34 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v6 2/2] drm/bridge: Add NWL MIPI DSI host controller support
+Here is the example log after this patch applied:
+{24}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 10
+{24}[Hardware Error]: event severity: fatal
+{24}[Hardware Error]:  Error 0, type: fatal
+{24}[Hardware Error]:   section_type: PCIe error
+{24}[Hardware Error]:   port_type: 0, PCIe end point
+{24}[Hardware Error]:   version: 4.0
+{24}[Hardware Error]:   command: 0x0546, status: 0x4010
+{24}[Hardware Error]:   device_id: 0000:01:00.0
+{24}[Hardware Error]:   slot: 0
+{24}[Hardware Error]:   secondary_bus: 0x00
+{24}[Hardware Error]:   vendor_id: 0x15b3, device_id: 0x1019
+{24}[Hardware Error]:   class_code: 000002
+{24}[Hardware Error]:   aer_uncor_status: 0x00040000, aer_uncor_mask: 0x00000000
+{24}[Hardware Error]:   aer_uncor_severity: 0x00062010
+{24}[Hardware Error]:   TLP Header: 000000c0 01010000 00000001 00000000
+Kernel panic - not syncing: Fatal hardware error!
 
-CC: kbuild-all@01.org
-In-Reply-To: <c0ac0b203fb65ae7efd1b9b54664b491ca2fb157.1569170717.git.agx@sigxcpu.org>
-References: <c0ac0b203fb65ae7efd1b9b54664b491ca2fb157.1569170717.git.agx@sigxcpu.org>
-TO: "Guido Günther" <agx@sigxcpu.org>
-CC:
-
-Hi "Guido,
-
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[cannot apply to v5.3 next-20190920]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Guido-G-nther/drm-bridge-Add-NWL-MIPI-DSI-host-controller-support/20190923-005010
-:::::: branch date: 2 hours ago
-:::::: commit date: 2 hours ago
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-
->> drivers/gpu/drm/bridge/nwl-dsi.c:272:5-17: WARNING: Unsigned expression compared with zero: color_format < 0
-
-# https://github.com/0day-ci/linux/commit/060069512cb50e3218b55005b6cc92b82e0a7856
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 060069512cb50e3218b55005b6cc92b82e0a7856
-vim +272 drivers/gpu/drm/bridge/nwl-dsi.c
-
-060069512cb50e Guido Günther 2019-09-22  245
-060069512cb50e Guido Günther 2019-09-22  246  static int nwl_dsi_config_dpi(struct nwl_dsi *dsi)
-060069512cb50e Guido Günther 2019-09-22  247  {
-060069512cb50e Guido Günther 2019-09-22  248  	u32 color_format, mode;
-060069512cb50e Guido Günther 2019-09-22  249  	bool burst_mode;
-060069512cb50e Guido Günther 2019-09-22  250  	int hfront_porch, hback_porch, vfront_porch, vback_porch;
-060069512cb50e Guido Günther 2019-09-22  251  	int hsync_len, vsync_len;
-060069512cb50e Guido Günther 2019-09-22  252
-060069512cb50e Guido Günther 2019-09-22  253  	hfront_porch = dsi->mode.hsync_start - dsi->mode.hdisplay;
-060069512cb50e Guido Günther 2019-09-22  254  	hsync_len = dsi->mode.hsync_end - dsi->mode.hsync_start;
-060069512cb50e Guido Günther 2019-09-22  255  	hback_porch = dsi->mode.htotal - dsi->mode.hsync_end;
-060069512cb50e Guido Günther 2019-09-22  256
-060069512cb50e Guido Günther 2019-09-22  257  	vfront_porch = dsi->mode.vsync_start - dsi->mode.vdisplay;
-060069512cb50e Guido Günther 2019-09-22  258  	vsync_len = dsi->mode.vsync_end - dsi->mode.vsync_start;
-060069512cb50e Guido Günther 2019-09-22  259  	vback_porch = dsi->mode.vtotal - dsi->mode.vsync_end;
-060069512cb50e Guido Günther 2019-09-22  260
-060069512cb50e Guido Günther 2019-09-22  261  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "hfront_porch = %d\n", hfront_porch);
-060069512cb50e Guido Günther 2019-09-22  262  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "hback_porch = %d\n", hback_porch);
-060069512cb50e Guido Günther 2019-09-22  263  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "hsync_len = %d\n", hsync_len);
-060069512cb50e Guido Günther 2019-09-22  264  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "hdisplay = %d\n", dsi->mode.hdisplay);
-060069512cb50e Guido Günther 2019-09-22  265  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "vfront_porch = %d\n", vfront_porch);
-060069512cb50e Guido Günther 2019-09-22  266  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "vback_porch = %d\n", vback_porch);
-060069512cb50e Guido Günther 2019-09-22  267  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "vsync_len = %d\n", vsync_len);
-060069512cb50e Guido Günther 2019-09-22  268  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "vactive = %d\n", dsi->mode.vdisplay);
-060069512cb50e Guido Günther 2019-09-22  269  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "clock = %d kHz\n", dsi->mode.clock);
-060069512cb50e Guido Günther 2019-09-22  270
-060069512cb50e Guido Günther 2019-09-22  271  	color_format = nwl_dsi_get_dpi_pixel_format(dsi->format);
-060069512cb50e Guido Günther 2019-09-22 @272  	if (color_format < 0) {
-060069512cb50e Guido Günther 2019-09-22  273  		DRM_DEV_ERROR(dsi->dev, "Invalid color format 0x%x\n",
-060069512cb50e Guido Günther 2019-09-22  274  			      dsi->format);
-060069512cb50e Guido Günther 2019-09-22  275  		return color_format;
-060069512cb50e Guido Günther 2019-09-22  276  	}
-060069512cb50e Guido Günther 2019-09-22  277  	DRM_DEV_DEBUG_DRIVER(dsi->dev, "pixel fmt = %d\n", dsi->format);
-060069512cb50e Guido Günther 2019-09-22  278
-060069512cb50e Guido Günther 2019-09-22  279  	nwl_dsi_write(dsi, NWL_DSI_INTERFACE_COLOR_CODING, NWL_DSI_DPI_24_BIT);
-060069512cb50e Guido Günther 2019-09-22  280  	nwl_dsi_write(dsi, NWL_DSI_PIXEL_FORMAT, color_format);
-060069512cb50e Guido Günther 2019-09-22  281  	/*
-060069512cb50e Guido Günther 2019-09-22  282  	 * Adjusting input polarity based on the video mode results in
-060069512cb50e Guido Günther 2019-09-22  283  	 * a black screen so always pick active low:
-060069512cb50e Guido Günther 2019-09-22  284  	 */
-060069512cb50e Guido Günther 2019-09-22  285  	nwl_dsi_write(dsi, NWL_DSI_VSYNC_POLARITY,
-060069512cb50e Guido Günther 2019-09-22  286  		      NWL_DSI_VSYNC_POLARITY_ACTIVE_LOW);
-060069512cb50e Guido Günther 2019-09-22  287  	nwl_dsi_write(dsi, NWL_DSI_HSYNC_POLARITY,
-060069512cb50e Guido Günther 2019-09-22  288  		      NWL_DSI_HSYNC_POLARITY_ACTIVE_LOW);
-060069512cb50e Guido Günther 2019-09-22  289
-060069512cb50e Guido Günther 2019-09-22  290  	burst_mode = (dsi->dsi_mode_flags & MIPI_DSI_MODE_VIDEO_BURST) &&
-060069512cb50e Guido Günther 2019-09-22  291  		     !(dsi->dsi_mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE);
-060069512cb50e Guido Günther 2019-09-22  292
-060069512cb50e Guido Günther 2019-09-22  293  	if (burst_mode) {
-060069512cb50e Guido Günther 2019-09-22  294  		nwl_dsi_write(dsi, NWL_DSI_VIDEO_MODE, NWL_DSI_VM_BURST_MODE);
-060069512cb50e Guido Günther 2019-09-22  295  		nwl_dsi_write(dsi, NWL_DSI_PIXEL_FIFO_SEND_LEVEL, 256);
-060069512cb50e Guido Günther 2019-09-22  296  	} else {
-060069512cb50e Guido Günther 2019-09-22  297  		mode = ((dsi->dsi_mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) ?
-060069512cb50e Guido Günther 2019-09-22  298  				NWL_DSI_VM_BURST_MODE_WITH_SYNC_PULSES :
-060069512cb50e Guido Günther 2019-09-22  299  				NWL_DSI_VM_NON_BURST_MODE_WITH_SYNC_EVENTS);
-060069512cb50e Guido Günther 2019-09-22  300  		nwl_dsi_write(dsi, NWL_DSI_VIDEO_MODE, mode);
-060069512cb50e Guido Günther 2019-09-22  301  		nwl_dsi_write(dsi, NWL_DSI_PIXEL_FIFO_SEND_LEVEL,
-060069512cb50e Guido Günther 2019-09-22  302  			      dsi->mode.hdisplay);
-060069512cb50e Guido Günther 2019-09-22  303  	}
-060069512cb50e Guido Günther 2019-09-22  304
-060069512cb50e Guido Günther 2019-09-22  305  	nwl_dsi_write(dsi, NWL_DSI_HFP, hfront_porch);
-060069512cb50e Guido Günther 2019-09-22  306  	nwl_dsi_write(dsi, NWL_DSI_HBP, hback_porch);
-060069512cb50e Guido Günther 2019-09-22  307  	nwl_dsi_write(dsi, NWL_DSI_HSA, hsync_len);
-060069512cb50e Guido Günther 2019-09-22  308
-060069512cb50e Guido Günther 2019-09-22  309  	nwl_dsi_write(dsi, NWL_DSI_ENABLE_MULT_PKTS, 0x0);
-060069512cb50e Guido Günther 2019-09-22  310  	nwl_dsi_write(dsi, NWL_DSI_BLLP_MODE, 0x1);
-060069512cb50e Guido Günther 2019-09-22  311  	nwl_dsi_write(dsi, NWL_DSI_USE_NULL_PKT_BLLP, 0x0);
-060069512cb50e Guido Günther 2019-09-22  312  	nwl_dsi_write(dsi, NWL_DSI_VC, 0x0);
-060069512cb50e Guido Günther 2019-09-22  313
-060069512cb50e Guido Günther 2019-09-22  314  	nwl_dsi_write(dsi, NWL_DSI_PIXEL_PAYLOAD_SIZE, dsi->mode.hdisplay);
-060069512cb50e Guido Günther 2019-09-22  315  	nwl_dsi_write(dsi, NWL_DSI_VACTIVE, dsi->mode.vdisplay - 1);
-060069512cb50e Guido Günther 2019-09-22  316  	nwl_dsi_write(dsi, NWL_DSI_VBP, vback_porch);
-060069512cb50e Guido Günther 2019-09-22  317  	nwl_dsi_write(dsi, NWL_DSI_VFP, vfront_porch);
-060069512cb50e Guido Günther 2019-09-22  318
-060069512cb50e Guido Günther 2019-09-22  319  	return 0;
-060069512cb50e Guido Günther 2019-09-22  320  }
-060069512cb50e Guido Günther 2019-09-22  321
-
+Fixes: 37448adfc7ce ("aerdrv: Move cper_print_aer() call out of interrupt context")
+Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+Reviewed-by: James Morse <james.morse@arm.com>
+[ardb: put parens around terms of && operator]
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
---8323329-348580464-1569177829=:2575--
+ drivers/firmware/efi/cper.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+index 8fa977c7861f9..addf0749dd8b6 100644
+--- a/drivers/firmware/efi/cper.c
++++ b/drivers/firmware/efi/cper.c
+@@ -390,6 +390,21 @@ static void cper_print_pcie(const char *pfx, const struct cper_sec_pcie *pcie,
+ 		printk(
+ 	"%s""bridge: secondary_status: 0x%04x, control: 0x%04x\n",
+ 	pfx, pcie->bridge.secondary_status, pcie->bridge.control);
++
++	/* Fatal errors call __ghes_panic() before AER handler prints this */
++	if ((pcie->validation_bits & CPER_PCIE_VALID_AER_INFO) &&
++	    (gdata->error_severity & CPER_SEV_FATAL)) {
++		struct aer_capability_regs *aer;
++
++		aer = (struct aer_capability_regs *)pcie->aer_info;
++		printk("%saer_uncor_status: 0x%08x, aer_uncor_mask: 0x%08x\n",
++		       pfx, aer->uncor_status, aer->uncor_mask);
++		printk("%saer_uncor_severity: 0x%08x\n",
++		       pfx, aer->uncor_severity);
++		printk("%sTLP Header: %08x %08x %08x %08x\n", pfx,
++		       aer->header_log.dw0, aer->header_log.dw1,
++		       aer->header_log.dw2, aer->header_log.dw3);
++	}
+ }
+ 
+ static void cper_print_tstamp(const char *pfx,
+-- 
+2.20.1
+
