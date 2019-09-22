@@ -2,40 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD099BA75A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB4CBA75E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438646AbfIVS5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:57:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60128 "EHLO mail.kernel.org"
+        id S2438683AbfIVS5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:57:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438499AbfIVS5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:57:34 -0400
+        id S2394818AbfIVS5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:57:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E321206C2;
-        Sun, 22 Sep 2019 18:57:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86A122186A;
+        Sun, 22 Sep 2019 18:57:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178653;
-        bh=VI40FhFAfw1ko5hRgrNOZflOsfqYo09dM5rBjVrmxnw=;
+        s=default; t=1569178659;
+        bh=Xl2elV2ZT10DYuQvJd9qDHbzliuUMTkiEbjCUrmdKss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FW79a+ZYKYJmRq6zZfT70DWr4P5bx+3LvkwTRiGqJM6ohnO9cbLOLh/Jh2AIZrPPB
-         iBmTBwTsXbWhY7dbn8KmcGoEJZfzv0GnloPJrO4XJcZ0PceBfp/COZVH3o8pPgAymf
-         Vz6/pgaqVli4age09G4WSME2qAZCeh+vEHh0Bj1Y=
+        b=LwuhuxXlFqqL5voTO+C0DZdBhwzCAFtSdlM/k6+mPRNKpPnPcb5Icj6jRILJONDAA
+         fTqlEYce2oyg3ioQN+rS3lj0QfFWu9Vn/iIa/JMf2oYe5M+p9i2UXt2tBxOt74G8l1
+         3+ZmbiuMnm9BG0pPiJM8wvfAcP4talHi5nEljTbo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 08/89] media: exynos4-is: fix leaked of_node references
-Date:   Sun, 22 Sep 2019 14:55:56 -0400
-Message-Id: <20190922185717.3412-8-sashal@kernel.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, lizefan@huawei.com,
+        longman@redhat.com, luca.abeni@santannapisa.it,
+        rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 12/89] sched/core: Fix CPU controller for !RT_GROUP_SCHED
+Date:   Sun, 22 Sep 2019 14:56:00 -0400
+Message-Id: <20190922185717.3412-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
 References: <20190922185717.3412-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,63 +51,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Juri Lelli <juri.lelli@redhat.com>
 
-[ Upstream commit da79bf41a4d170ca93cc8f3881a70d734a071c37 ]
+[ Upstream commit a07db5c0865799ebed1f88be0df50c581fb65029 ]
 
-The call to of_get_child_by_name returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+On !CONFIG_RT_GROUP_SCHED configurations it is currently not possible to
+move RT tasks between cgroups to which CPU controller has been attached;
+but it is oddly possible to first move tasks around and then make them
+RT (setschedule to FIFO/RR).
 
-Detected by coccinelle with the following warnings:
-drivers/media/platform/exynos4-is/fimc-is.c:813:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 807, but without a corresponding object release within this function.
-drivers/media/platform/exynos4-is/fimc-is.c:870:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 807, but without a corresponding object release within this function.
-drivers/media/platform/exynos4-is/fimc-is.c:885:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 807, but without a corresponding object release within this function.
-drivers/media/platform/exynos4-is/media-dev.c:545:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 541, but without a corresponding object release within this function.
-drivers/media/platform/exynos4-is/media-dev.c:528:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 499, but without a corresponding object release within this function.
-drivers/media/platform/exynos4-is/media-dev.c:534:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 499, but without a corresponding object release within this function.
+E.g.:
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+  # mkdir /sys/fs/cgroup/cpu,cpuacct/group1
+  # chrt -fp 10 $$
+  # echo $$ > /sys/fs/cgroup/cpu,cpuacct/group1/tasks
+  bash: echo: write error: Invalid argument
+  # chrt -op 0 $$
+  # echo $$ > /sys/fs/cgroup/cpu,cpuacct/group1/tasks
+  # chrt -fp 10 $$
+  # cat /sys/fs/cgroup/cpu,cpuacct/group1/tasks
+  2345
+  2598
+  # chrt -p 2345
+  pid 2345's current scheduling policy: SCHED_FIFO
+  pid 2345's current scheduling priority: 10
+
+Also, as Michal noted, it is currently not possible to enable CPU
+controller on unified hierarchy with !CONFIG_RT_GROUP_SCHED (if there
+are any kernel RT threads in root cgroup, they can't be migrated to the
+newly created CPU controller's root in cgroup_update_dfl_csses()).
+
+Existing code comes with a comment saying the "we don't support RT-tasks
+being in separate groups". Such comment is however stale and belongs to
+pre-RT_GROUP_SCHED times. Also, it doesn't make much sense for
+!RT_GROUP_ SCHED configurations, since checks related to RT bandwidth
+are not performed at all in these cases.
+
+Make moving RT tasks between CPU controller groups viable by removing
+special case check for RT (and DEADLINE) tasks.
+
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Michal Koutný <mkoutny@suse.com>
+Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: lizefan@huawei.com
+Cc: longman@redhat.com
+Cc: luca.abeni@santannapisa.it
+Cc: rostedt@goodmis.org
+Link: https://lkml.kernel.org/r/20190719063455.27328-1-juri.lelli@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/exynos4-is/fimc-is.c   | 1 +
- drivers/media/platform/exynos4-is/media-dev.c | 2 ++
- 2 files changed, 3 insertions(+)
+ kernel/sched/core.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 5ddb2321e9e48..0fe9be93fabe2 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -819,6 +819,7 @@ static int fimc_is_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 
- 	is->pmu_regs = of_iomap(node, 0);
-+	of_node_put(node);
- 	if (!is->pmu_regs)
- 		return -ENOMEM;
- 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index d4656d5175d7e..b2eb830c0360a 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -496,6 +496,7 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
- 			continue;
- 
- 		ret = fimc_md_parse_port_node(fmd, port, index);
-+		of_node_put(port);
- 		if (ret < 0) {
- 			of_node_put(node);
- 			goto rpm_put;
-@@ -529,6 +530,7 @@ static int __of_get_csis_id(struct device_node *np)
- 	if (!np)
- 		return -EINVAL;
- 	of_property_read_u32(np, "reg", &reg);
-+	of_node_put(np);
- 	return reg - FIMC_INPUT_MIPI_CSI2_0;
- }
- 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ff128e281d1c6..3d24d401b9d42 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6342,10 +6342,6 @@ static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
+ #ifdef CONFIG_RT_GROUP_SCHED
+ 		if (!sched_rt_can_attach(css_tg(css), task))
+ 			return -EINVAL;
+-#else
+-		/* We don't support RT-tasks being in separate groups */
+-		if (task->sched_class != &fair_sched_class)
+-			return -EINVAL;
+ #endif
+ 		/*
+ 		 * Serialize against wake_up_new_task() such that if its
 -- 
 2.20.1
 
