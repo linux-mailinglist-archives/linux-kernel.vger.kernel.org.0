@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B40BA6AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 385C6BA6AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393055AbfIVSwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:52:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50440 "EHLO mail.kernel.org"
+        id S2407827AbfIVSwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:52:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406764AbfIVSwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:52:01 -0400
+        id S2407718AbfIVSwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:52:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57F6C208C2;
-        Sun, 22 Sep 2019 18:52:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B40C221479;
+        Sun, 22 Sep 2019 18:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178321;
-        bh=eMPlCWxTQpyconOk0Sr//jZgoyEkKBpyv80QPkFVPI4=;
+        s=default; t=1569178333;
+        bh=FhMqtDm73GhvjtyVWDtKRVY17JuvvD8eg/8rpvN6FjU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IyZgaokE6dYGWUJPlVn5mnMXYBCqXdqLdE+mWzonD/aZJAsD27X127pu3ypo2qd7k
-         rKbfacjXc+hs9txe3z1+81EXTeH6NDahPQNxIYnWiWs5QldMRmjtqVqXoiruzybWLX
-         Wd6xRfBf/06RNFwQYlOR5koMIelysl2B2iAxddrk=
+        b=eAljFacNAWxYB1+dErbQAYMIEzNjNynDRv0RNvgErY87dIGlpBQ2Oe/2CsNbp6yKt
+         XMw5+uHMFIXRuFPLgPW2/lS3MskAmBOau5IucyPuu5EVW8NBk+imNHKIjIRxF1ZPrP
+         MejWDkAiFAjXpuaVINFll0U0G8a3yWNWvtYwBtWI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Collingbourne <pcc@google.com>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.2 087/185] powerpc/Makefile: Always pass --synthetic to nm if supported
-Date:   Sun, 22 Sep 2019 14:47:45 -0400
-Message-Id: <20190922184924.32534-87-sashal@kernel.org>
+Cc:     Vasily Gorbik <gor@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 096/185] s390/kasan: provide uninstrumented __strlen
+Date:   Sun, 22 Sep 2019 14:47:54 -0400
+Message-Id: <20190922184924.32534-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -44,63 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Vasily Gorbik <gor@linux.ibm.com>
 
-[ Upstream commit 117acf5c29dd89e4c86761c365b9724dba0d9763 ]
+[ Upstream commit f45f7b5bdaa4828ce871cf03f7c01599a0de57a5 ]
 
-Back in 2004 we added logic to arch/ppc64/Makefile to pass
-the --synthetic option to nm, if it was supported by nm.
+s390 kasan code uses sclp_early_printk to report initialization
+failures. The code doing that should not be instrumented, because kasan
+shadow memory has not been set up yet. Even though sclp_early_core.c is
+compiled with instrumentation disabled it uses strlen function, which
+is instrumented and would produce shadow memory access if used. To
+avoid that, introduce uninstrumented __strlen function to be used
+instead.
 
-Then in 2005 when arch/ppc64 and arch/ppc were merged, the logic to
-add --synthetic was moved inside an #ifdef CONFIG_PPC64 block within
-arch/powerpc/Makefile, and has remained there since.
+Before commit 7e0d92f00246 ("s390/kasan: improve string/memory functions
+checks") few string functions (including strlen) were escaping kasan
+instrumentation due to usage of platform specific versions which are
+implemented in inline assembly.
 
-That was fine, though crufty, until recently when a change to
-init/Kconfig added a config time check that uses $(NM). On powerpc
-that leads to an infinite loop because Kconfig uses $(NM) to calculate
-some values, then the powerpc Makefile changes $(NM), which Kconfig
-notices and restarts.
-
-The original commit that added --synthetic simply said:
-  On new toolchains we need to use nm --synthetic or we miss code
-  symbols.
-
-And the nm man page says that the --synthetic option causes nm to:
-  Include synthetic symbols in the output. These are special symbols
-  created by the linker for various purposes.
-
-So it seems safe to always pass --synthetic if nm supports it, ie. on
-32-bit and 64-bit, it just means 32-bit kernels might have more
-symbols reported (and in practice I see no extra symbols). Making it
-unconditional avoids the #ifdef CONFIG_PPC64, which in turn avoids the
-infinite loop.
-
-Debugged-by: Peter Collingbourne <pcc@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Will Deacon <will@kernel.org>
+Fixes: 7e0d92f00246 ("s390/kasan: improve string/memory functions checks")
+Acked-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/Makefile | 2 --
- 1 file changed, 2 deletions(-)
+ arch/s390/include/asm/string.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index c345b79414a96..403f7e193833a 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -39,13 +39,11 @@ endif
- uname := $(shell uname -m)
- KBUILD_DEFCONFIG := $(if $(filter ppc%,$(uname)),$(uname),ppc64)_defconfig
+diff --git a/arch/s390/include/asm/string.h b/arch/s390/include/asm/string.h
+index 70d87db54e627..4c0690fc5167e 100644
+--- a/arch/s390/include/asm/string.h
++++ b/arch/s390/include/asm/string.h
+@@ -71,11 +71,16 @@ extern void *__memmove(void *dest, const void *src, size_t n);
+ #define memcpy(dst, src, len) __memcpy(dst, src, len)
+ #define memmove(dst, src, len) __memmove(dst, src, len)
+ #define memset(s, c, n) __memset(s, c, n)
++#define strlen(s) __strlen(s)
++
++#define __no_sanitize_prefix_strfunc(x) __##x
  
--ifdef CONFIG_PPC64
- new_nm := $(shell if $(NM) --help 2>&1 | grep -- '--synthetic' > /dev/null; then echo y; else echo n; fi)
+ #ifndef __NO_FORTIFY
+ #define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
+ #endif
  
- ifeq ($(new_nm),y)
- NM		:= $(NM) --synthetic
- endif
--endif
++#else
++#define __no_sanitize_prefix_strfunc(x) x
+ #endif /* defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__) */
  
- # BITS is used as extension for files which are available in a 32 bit
- # and a 64 bit version to simplify shared Makefiles.
+ void *__memset16(uint16_t *s, uint16_t v, size_t count);
+@@ -163,8 +168,8 @@ static inline char *strcpy(char *dst, const char *src)
+ }
+ #endif
+ 
+-#ifdef __HAVE_ARCH_STRLEN
+-static inline size_t strlen(const char *s)
++#if defined(__HAVE_ARCH_STRLEN) || (defined(CONFIG_KASAN) && !defined(__SANITIZE_ADDRESS__))
++static inline size_t __no_sanitize_prefix_strfunc(strlen)(const char *s)
+ {
+ 	register unsigned long r0 asm("0") = 0;
+ 	const char *tmp = s;
 -- 
 2.20.1
 
