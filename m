@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B4CABA442
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61E13BA445
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390732AbfIVSrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:47:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43594 "EHLO mail.kernel.org"
+        id S2390943AbfIVSrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:47:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390622AbfIVSrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:47:13 -0400
+        id S2390806AbfIVSrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:47:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 733BA206C2;
-        Sun, 22 Sep 2019 18:47:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36C13208C2;
+        Sun, 22 Sep 2019 18:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178032;
-        bh=17ENxLHu3L2mMH6u0ZNP5nKyjgrAqv2BiX847xF1hn4=;
+        s=default; t=1569178045;
+        bh=6Ktj9zXXi9b3bAjU5OSe3uz1uAckroEcPDIgl37r6dk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eTCfbK4p4ElIq2aa2C1zz1onLA3gB/JncJpPeL6McUcBK3DFrlp9PbIHkku0d2h4g
-         mAkD/XydC2sMO5U5/aahyLOApxthsZF+a1gqe8nsqAMl3utZgfbn28ApCHA2KL9hhG
-         8oOQcEg60aFjLrQUZO3ANxNrCkWX+7GkDcoQfYkE=
+        b=knA+kmBENMz+SYyI4zgbV7ubgtG9TwEaW1Cw/uBqPOZlMxBaPiOPrpSRd23DQ7sm2
+         6Art+Kyc8joaeI55tFUN1mCFEfG1OSLdmi+LUTaIKw6N0bRTwvZCxLY7VhFbv+e3eP
+         yz9hHUIIvbIaAwQjyfQuLxqhWfKkQbcu7MY/B9CU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yazen Ghannam <yazen.ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 114/203] EDAC/amd64: Recognize DRAM device type ECC capability
-Date:   Sun, 22 Sep 2019 14:42:20 -0400
-Message-Id: <20190922184350.30563-114-sashal@kernel.org>
+Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 124/203] media: saa7146: add cleanup in hexium_attach()
+Date:   Sun, 22 Sep 2019 14:42:30 -0400
+Message-Id: <20190922184350.30563-124-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -47,69 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit f8be8e5680225ac9caf07d4545f8529b7395327f ]
+[ Upstream commit 42e64117d3b4a759013f77bbcf25ab6700e55de7 ]
 
-AMD Family 17h systems support x4 and x16 DRAM devices. However, the
-device type is not checked when setting mci.edac_ctl_cap.
+If saa7146_register_device() fails, no cleanup is executed, leading to
+memory/resource leaks. To fix this issue, perform necessary cleanup work
+before returning the error.
 
-Set the appropriate capability flag based on the device type.
-
-Default to x8 DRAM device when neither the x4 or x16 bits are set.
-
- [ bp: reverse cpk_en check to save an indentation level. ]
-
-Fixes: 2d09d8f301f5 ("EDAC, amd64: Determine EDAC MC capabilities on Fam17h")
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20190821235938.118710-3-Yazen.Ghannam@amd.com
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/edac/amd64_edac.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/media/pci/saa7146/hexium_gemini.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index dd60cf5a3d969..ffe56a8fe39da 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -3150,12 +3150,15 @@ static bool ecc_enabled(struct pci_dev *F3, u16 nid)
- static inline void
- f17h_determine_edac_ctl_cap(struct mem_ctl_info *mci, struct amd64_pvt *pvt)
- {
--	u8 i, ecc_en = 1, cpk_en = 1;
-+	u8 i, ecc_en = 1, cpk_en = 1, dev_x4 = 1, dev_x16 = 1;
- 
- 	for_each_umc(i) {
- 		if (pvt->umc[i].sdp_ctrl & UMC_SDP_INIT) {
- 			ecc_en &= !!(pvt->umc[i].umc_cap_hi & UMC_ECC_ENABLED);
- 			cpk_en &= !!(pvt->umc[i].umc_cap_hi & UMC_ECC_CHIPKILL_CAP);
-+
-+			dev_x4  &= !!(pvt->umc[i].dimm_cfg & BIT(6));
-+			dev_x16 &= !!(pvt->umc[i].dimm_cfg & BIT(7));
- 		}
+diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
+index dca20a3d98e25..f962269306707 100644
+--- a/drivers/media/pci/saa7146/hexium_gemini.c
++++ b/drivers/media/pci/saa7146/hexium_gemini.c
+@@ -292,6 +292,9 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
+ 	ret = saa7146_register_device(&hexium->video_dev, dev, "hexium gemini", VFL_TYPE_GRABBER);
+ 	if (ret < 0) {
+ 		pr_err("cannot register capture v4l2 device. skipping.\n");
++		saa7146_vv_release(dev);
++		i2c_del_adapter(&hexium->i2c_adapter);
++		kfree(hexium);
+ 		return ret;
  	}
- 
-@@ -3163,8 +3166,15 @@ f17h_determine_edac_ctl_cap(struct mem_ctl_info *mci, struct amd64_pvt *pvt)
- 	if (ecc_en) {
- 		mci->edac_ctl_cap |= EDAC_FLAG_SECDED;
- 
--		if (cpk_en)
-+		if (!cpk_en)
-+			return;
-+
-+		if (dev_x4)
- 			mci->edac_ctl_cap |= EDAC_FLAG_S4ECD4ED;
-+		else if (dev_x16)
-+			mci->edac_ctl_cap |= EDAC_FLAG_S16ECD16ED;
-+		else
-+			mci->edac_ctl_cap |= EDAC_FLAG_S8ECD8ED;
- 	}
- }
  
 -- 
 2.20.1
