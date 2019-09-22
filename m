@@ -2,176 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 428DCBA2D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 15:56:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8522BBA2D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 16:05:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbfIVN4B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 09:56:01 -0400
-Received: from mout.web.de ([212.227.17.11]:42999 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728613AbfIVN4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 09:56:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1569160554;
-        bh=lX6emF+xjsAZLDbG4WIHkDXFQUJXQ8PmDva8OKKoGb0=;
-        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
-        b=EQBxSWAn87+ihu55I+DwdCCJabdPCkKa7/rtFwYntS2bdA5N215Rd3F+CUzNh93xn
-         s7wpI/UrPx86Lt5dRBfcvyW8a6fltYUJzRHR+03VwRabvXs2iE9CV8eyTRaEK/K0BH
-         dO68ehF/hi7DI6pLdpXwIWGsIOoLG2KUtlAF8B+A=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([2.244.8.78]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Ljrq1-1hetNb32u9-00brWF; Sun, 22
- Sep 2019 15:55:54 +0200
-To:     linux-ide@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Nishka Dasgupta <nishkadg.linux@gmail.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] ata: libahci_platform: Use common error handling code in
- ahci_platform_get_resources()
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Message-ID: <6ca97aeb-0892-ed0e-a149-b25848adf324@web.de>
-Date:   Sun, 22 Sep 2019 15:55:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S1729047AbfIVOFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 10:05:38 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:55887 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728488AbfIVOFi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 10:05:38 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1iC2UR-0002wi-EL; Sun, 22 Sep 2019 16:05:27 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B60021C0131;
+        Sun, 22 Sep 2019 16:05:26 +0200 (CEST)
+Date:   Sun, 22 Sep 2019 14:05:26 -0000
+From:   "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf tests: Fix static build test
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20190905090924.GA1949@krava>
+References: <20190905090924.GA1949@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/4/JbLOSCKw/9J5S3k0+ovryNiywB5oTV3LWxinMqTowLGWW6XW
- B8LTFsJLYcpDGuJJbUXzveI9a7bmWaGI3PkVoQiTfljJwQQp06ea+OYzSncxC/jy3RkIz5s
- Rk/D5O78s1176Eu6V25fAZoxhlAOEkghSG1q1z8i78Z49xwa7CrRBo5JsMpf8cFcko511sW
- ON8roMuYhsyRdb6lD2Xrw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uKkoYPDikFg=:8N06mFnT4RnyiF0j/pyk7t
- 8Zfh+bLyizrjFV4QeXkIcxQSciTgu4VJkiqBj/gTHpDr7IjetdLkLMankVMLETda0KR+MjrKR
- g/RvimeJiopDsExTyiF8/Gk/cC+Noxob8nMRMnBg3I7o3gXSQmQdMkJa35RqgAKAeal31pqvG
- fVEpAKK8nepG8xGpievF/jlrggrlgBR++lyqIvRgKh2MoFxdk6K7s35Hi+8GG+zBApzb4HCSx
- W5XpVOw75ylx200awJ99l248ISTr0oiTIsVVZI+MvRPsM/sZtbV1P6NaSTrYsqMn0B4dxY7vY
- cUecoxlSLcbEw5xhwDMoyqcfheCSxB7MPkMF9TX51cY+74JxBH2DQHciKuEgEuHkVMPcnMsOu
- Cklidz33On/rvqhb6BdO1JJSu/JELMjeEu4KPiiMY0kStlMb/p96FsdU9G4ScYkyNWXYUnp3T
- 91+F71LNv/0DY8wOWnReanL8BR7XA9ATIPZawMncZpY77+LZgdmNSvfbJdhrhfL5FW2hBdE45
- vCGh67Q7n1uGk0T8aPd1vdLzKG29axytWfeuVClzwu13iWEvjdgQZikuPwqu71EoHc5QNj5Jc
- xDC/b5P4poscnIrEbJiihb1ur6UNypQ9kz8t1dFEiu/xhJjgmuw0g0bZjxKF0IEXVQtu8SHVq
- FEzVeOCNXu4HJyoFeVc+YSf28Ij+Djlp0gs23x/iwXGN6cxNukdTi6QXeULvgmGzhpgdKEivv
- txdoHRiNfMlfHmqJskRki2lZajvOdmBYhnacCRAq0ie+NcLu6mq8CfyiwTdf6QfvwtIuNQ3OR
- S4JNXEtTuA5J7wrc6G4WF+IrPuuljeJ9kVWoyLdSLzvnotTIxdt90AOVAOoZDbfweNVZVj9PE
- Q5mg7rLefch45+FfaKVreRxzUCvMxAKCeavWSZ84LSBjFdQU1qpGHVDq7JAxJURRRkhd0wH8M
- cwnn122pzOScmRPgr+5BU8+Ar8TErUTcHsi9ow/WYISVAGa+c2DvHhJ58tZrDzdqRmb0DfD36
- 4mgUb5dm/5Uq66fpz1/Xt53N9ChTnMaKUUuRBxInZ9NPRzJa7Xph+GOEz8opIfF5PfZAzVd5z
- VwfEtc15NOPo9/XzPOUSvzp7Jm1bHYQIEG1kHzHxSDwpBPnOu595QnhIjtjgb4U/mndZztdwK
- ZiG//J02iX434NY2xdk31jRvMexxtCnQN99/BdglQUzAwP8ghXHQZQwuyoijJ+NX1YJftOfDz
- MiSezxLtd51k92H9GUvPPS1DoyJdWFEivR7bkrnocybzlyQIDeG+ksW62+X8=
+Message-ID: <156916112669.4511.15106187732638392365.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sun, 22 Sep 2019 15:42:46 +0200
+The following commit has been merged into the perf/urgent branch of tip:
 
-Convert the call of the function =E2=80=9Cof_node_put=E2=80=9D to another =
-jump target
-so that it can be better reused at three places in this function.
+Commit-ID:     b117b9b48b24cbb090dd3844b563b464d60a6278
+Gitweb:        https://git.kernel.org/tip/b117b9b48b24cbb090dd3844b563b464d60a6278
+Author:        Jiri Olsa <jolsa@redhat.com>
+AuthorDate:    Thu, 05 Sep 2019 11:09:24 +02:00
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Fri, 20 Sep 2019 14:37:28 -03:00
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/ata/libahci_platform.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+perf tests: Fix static build test
 
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform=
-.c
-index e742780950de..7b2e364f3bd5 100644
-=2D-- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -497,8 +497,7 @@ struct ahci_host_priv *ahci_platform_get_resources(str=
-uct platform_device *pdev,
+Disable the potentional shared library features, which breaks static
+build if they are enabled and detected: jvmti and vdso libraries.
 
- 			if (of_property_read_u32(child, "reg", &port)) {
- 				rc =3D -EINVAL;
--				of_node_put(child);
--				goto err_out;
-+				goto err_put_node;
- 			}
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lore.kernel.org/lkml/20190905090924.GA1949@krava
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/make | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- 			if (port >=3D hpriv->nports) {
-@@ -515,18 +514,14 @@ struct ahci_host_priv *ahci_platform_get_resources(s=
-truct platform_device *pdev,
- 			if (port_dev) {
- 				rc =3D ahci_platform_get_regulator(hpriv, port,
- 								&port_dev->dev);
--				if (rc =3D=3D -EPROBE_DEFER) {
--					of_node_put(child);
--					goto err_out;
--				}
-+				if (rc =3D=3D -EPROBE_DEFER)
-+					goto err_put_node;
- 			}
- #endif
-
- 			rc =3D ahci_platform_get_phy(hpriv, port, dev, child);
--			if (rc) {
--				of_node_put(child);
--				goto err_out;
--			}
-+			if (rc)
-+				goto err_put_node;
-
- 			enabled_ports++;
- 		}
-@@ -558,6 +553,8 @@ struct ahci_host_priv *ahci_platform_get_resources(str=
-uct platform_device *pdev,
- 	devres_remove_group(dev, NULL);
- 	return hpriv;
-
-+err_put_node:
-+	of_node_put(child);
- err_out:
- 	devres_release_group(dev, NULL);
- 	return ERR_PTR(rc);
-=2D-
-2.23.0
-
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index 6b3afed..c850d16 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -100,7 +100,7 @@ make_install_info   := install-info
+ make_install_pdf    := install-pdf
+ make_install_prefix       := install prefix=/tmp/krava
+ make_install_prefix_slash := install prefix=/tmp/krava/
+-make_static         := LDFLAGS=-static
++make_static         := LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1
+ 
+ # all the NO_* variable combined
+ make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1
