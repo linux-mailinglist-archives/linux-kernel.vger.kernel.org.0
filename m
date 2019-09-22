@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B605BA573
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84DE4BA576
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438598AbfIVS5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:57:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59968 "EHLO mail.kernel.org"
+        id S2438633AbfIVS5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:57:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394818AbfIVS50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:57:26 -0400
+        id S2394850AbfIVS5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:57:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D58F72186A;
-        Sun, 22 Sep 2019 18:57:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAF322186A;
+        Sun, 22 Sep 2019 18:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178645;
-        bh=7dFsxG1YLl3GjuYFLgokzQIzvV40LA4esZrNSpI38To=;
+        s=default; t=1569178651;
+        bh=nE9nz5evbkAO8wmG0ixscqvwNdd1KDUNZZz1Dyjbub8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eD6CtK+MFtGtPfNhAddJ4VgKRwuJIKNsBdF92VQuGY7fOAi6WJ90l9ovLwAo80Dng
-         2qxaIxsYxRzSV5dTTub+2FKOl9bY1Zp94gDkiIe55yyEhxxDVdPZsz03GV/X7fiOkf
-         9bTzVfmfycMO/irWUegcJDF3IUT0rnobDlHbhyuY=
+        b=mdhtEGc0kKueewHy1hSq5zc0i5gV83SGPLLnSVVMs9Ve6fVO5OLmNsbhZNpxRMfyQ
+         wmvyTdxte6CgFqTwHVBNTKZYpRxVr5GiIJPcynuLI7CGzwu/Fuxhc3L0INq5coUWwt
+         WmyKpdrlCFb8feCG9bouEesaaBS3cLS7IKTRi5HA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Axel Lin <axel.lin@ingics.com>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 02/89] regulator: lm363x: Fix off-by-one n_voltages for lm3632 ldo_vpos/ldo_vneg
-Date:   Sun, 22 Sep 2019 14:55:50 -0400
-Message-Id: <20190922185717.3412-2-sashal@kernel.org>
+Cc:     Sean Young <sean@mess.org>, Sean Wang <sean.wang@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 07/89] media: mtk-cir: lower de-glitch counter for rc-mm protocol
+Date:   Sun, 22 Sep 2019 14:55:55 -0400
+Message-Id: <20190922185717.3412-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
 References: <20190922185717.3412-1-sashal@kernel.org>
@@ -42,50 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Sean Young <sean@mess.org>
 
-[ Upstream commit 1e2cc8c5e0745b545d4974788dc606d678b6e564 ]
+[ Upstream commit 5dd4b89dc098bf22cd13e82a308f42a02c102b2b ]
 
-According to the datasheet https://www.ti.com/lit/ds/symlink/lm3632a.pdf
-Table 20. VPOS Bias Register Field Descriptions VPOS[5:0]
-Sets the Positive Display Bias (LDO) Voltage (50 mV per step)
-000000: 4 V
-000001: 4.05 V
-000010: 4.1 V
-....................
-011101: 5.45 V
-011110: 5.5 V (Default)
-011111: 5.55 V
-....................
-100111: 5.95 V
-101000: 6 V
-Note: Codes 101001 to 111111 map to 6 V
+The rc-mm protocol can't be decoded by the mtk-cir since the de-glitch
+filter removes pulses/spaces shorter than 294 microseconds.
 
-The LM3632_LDO_VSEL_MAX should be 0b101000 (0x28), so the maximum voltage
-can match the datasheet.
+Tested on a BananaPi R2.
 
-Fixes: 3a8d1a73a037 ("regulator: add LM363X driver")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Link: https://lore.kernel.org/r/20190626132632.32629-1-axel.lin@ingics.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sean Young <sean@mess.org>
+Acked-by: Sean Wang <sean.wang@kernel.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/regulator/lm363x-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/rc/mtk-cir.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/regulator/lm363x-regulator.c b/drivers/regulator/lm363x-regulator.c
-index ce5f7d9ad475f..30f576a5daf18 100644
---- a/drivers/regulator/lm363x-regulator.c
-+++ b/drivers/regulator/lm363x-regulator.c
-@@ -33,7 +33,7 @@
+diff --git a/drivers/media/rc/mtk-cir.c b/drivers/media/rc/mtk-cir.c
+index e88eb64e8e693..00a4a0dfcab87 100644
+--- a/drivers/media/rc/mtk-cir.c
++++ b/drivers/media/rc/mtk-cir.c
+@@ -44,6 +44,11 @@
+ /* Fields containing pulse width data */
+ #define MTK_WIDTH_MASK		  (GENMASK(7, 0))
  
- /* LM3632 */
- #define LM3632_BOOST_VSEL_MAX		0x26
--#define LM3632_LDO_VSEL_MAX		0x29
-+#define LM3632_LDO_VSEL_MAX		0x28
- #define LM3632_VBOOST_MIN		4500000
- #define LM3632_VLDO_MIN			4000000
++/* IR threshold */
++#define MTK_IRTHD		 0x14
++#define MTK_DG_CNT_MASK		 (GENMASK(12, 8))
++#define MTK_DG_CNT(x)		 ((x) << 8)
++
+ /* Bit to enable interrupt */
+ #define MTK_IRINT_EN		  BIT(0)
  
+@@ -411,6 +416,9 @@ static int mtk_ir_probe(struct platform_device *pdev)
+ 	mtk_w32_mask(ir, val, ir->data->fields[MTK_HW_PERIOD].mask,
+ 		     ir->data->fields[MTK_HW_PERIOD].reg);
+ 
++	/* Set de-glitch counter */
++	mtk_w32_mask(ir, MTK_DG_CNT(1), MTK_DG_CNT_MASK, MTK_IRTHD);
++
+ 	/* Enable IR and PWM */
+ 	val = mtk_r32(ir, MTK_CONFIG_HIGH_REG);
+ 	val |= MTK_OK_COUNT(ir->data->ok_count) |  MTK_PWM_EN | MTK_IR_EN;
 -- 
 2.20.1
 
