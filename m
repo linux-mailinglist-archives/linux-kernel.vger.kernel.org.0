@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8A9BA64C
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD70BA650
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391993AbfIVStF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:49:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45610 "EHLO mail.kernel.org"
+        id S2392101AbfIVStN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:49:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391711AbfIVSsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:48:41 -0400
+        id S2391825AbfIVSsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:48:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B917F208C2;
-        Sun, 22 Sep 2019 18:48:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98316214AF;
+        Sun, 22 Sep 2019 18:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178120;
-        bh=A5X2Og1r81lOw6mPlGwfMS/sB3j/vqTSU+w3envdz6k=;
+        s=default; t=1569178132;
+        bh=HiwsV5TpdnN+VgtHgx7ikNQaIghLwyuaB9/PgqbRLeY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fp/m5hM/Rw0duo9SmgsfuQGLex0xKJMuz1YHdqWlw9zURHLD+3eCfS7S9fWuyNvHo
-         +dZinFnUAbXvmgozoaBleJnDyui9OsiZXCc29D4WBt1iH7538UfOm/avpERhPBsZnz
-         8CqgupovYcZ5TefwPQY2EC9MVTg+vJXXB7xIdaoA=
+        b=fWyx95J7tzCOxV7moZzYxSgQXNazJ8cgRzJ2jkfXhmyNODsx0DgCQkAAPjMTyxPdN
+         sdwAK0488rRcSxH9FebRHrAwqhLr7Spavvdea0pzBn/7fmrgZHOhOPcm2f/BjQYsM4
+         /m/eMutu3AqP9UGJ/VndvwMGAadNVHdfsXhh2UdE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        David Arcari <darcari@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 176/203] tools/power/x86/intel-speed-select: Fix memory leak
-Date:   Sun, 22 Sep 2019 14:43:22 -0400
-Message-Id: <20190922184350.30563-176-sashal@kernel.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 184/203] mmc: core: Add helper function to indicate if SDIO IRQs is enabled
+Date:   Sun, 22 Sep 2019 14:43:30 -0400
+Message-Id: <20190922184350.30563-184-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -45,69 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prarit Bhargava <prarit@redhat.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-[ Upstream commit 3bc3d30ca324bfc3045a1a7fe1f5fe5ad5d92fd9 ]
+[ Upstream commit bd880b00697befb73eff7220ee20bdae4fdd487b ]
 
-cpumasks are allocated by calling the alloc_cpu_mask() function and are
-never free'd.  They should be free'd after the commands have run.
+To avoid each host driver supporting SDIO IRQs, from keeping track
+internally about if SDIO IRQs has been claimed, let's introduce a common
+helper function, sdio_irq_claimed().
 
-Fix the memory leaks by calling free_cpu_set().
+The function returns true if SDIO IRQs are claimed, via using the
+information about the number of claimed irqs. This is safe, even without
+any locks, as long as the helper function is called only from
+runtime/system suspend callbacks of the host driver.
 
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: David Arcari <darcari@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/intel-speed-select/isst-config.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ include/linux/mmc/host.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 91c5ad1685a15..6a10dea01eefc 100644
---- a/tools/power/x86/intel-speed-select/isst-config.c
-+++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -603,6 +603,10 @@ static int isst_fill_platform_info(void)
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 4a351cb7f20fc..cf87c673cbb81 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -493,6 +493,15 @@ void mmc_command_done(struct mmc_host *host, struct mmc_request *mrq);
  
- 	close(fd);
+ void mmc_cqe_request_done(struct mmc_host *host, struct mmc_request *mrq);
  
-+	if (isst_platform_info.api_version > supported_api_ver) {
-+		printf("Incompatible API versions; Upgrade of tool is required\n");
-+		return -1;
-+	}
- 	return 0;
- }
- 
-@@ -1529,6 +1533,7 @@ static void cmdline(int argc, char **argv)
++/*
++ * May be called from host driver's system/runtime suspend/resume callbacks,
++ * to know if SDIO IRQs has been claimed.
++ */
++static inline bool sdio_irq_claimed(struct mmc_host *host)
++{
++	return host->sdio_irqs > 0;
++}
++
+ static inline void mmc_signal_sdio_irq(struct mmc_host *host)
  {
- 	int opt;
- 	int option_index = 0;
-+	int ret;
- 
- 	static struct option long_options[] = {
- 		{ "cpu", required_argument, 0, 'c' },
-@@ -1590,13 +1595,14 @@ static void cmdline(int argc, char **argv)
- 	set_max_cpu_num();
- 	set_cpu_present_cpu_mask();
- 	set_cpu_target_cpu_mask();
--	isst_fill_platform_info();
--	if (isst_platform_info.api_version > supported_api_ver) {
--		printf("Incompatible API versions; Upgrade of tool is required\n");
--		exit(0);
--	}
-+	ret = isst_fill_platform_info();
-+	if (ret)
-+		goto out;
- 
- 	process_command(argc, argv);
-+out:
-+	free_cpu_set(present_cpumask);
-+	free_cpu_set(target_cpumask);
- }
- 
- int main(int argc, char **argv)
+ 	host->ops->enable_sdio_irq(host, 0);
 -- 
 2.20.1
 
