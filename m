@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D68BA583
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF2EBA584
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438773AbfIVS6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:58:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60978 "EHLO mail.kernel.org"
+        id S2408258AbfIVS6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:58:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405384AbfIVS6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:58:17 -0400
+        id S2438787AbfIVS62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:58:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D694C208C2;
-        Sun, 22 Sep 2019 18:58:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7842721479;
+        Sun, 22 Sep 2019 18:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178696;
-        bh=cn6NzZ9VbJI2M0TVHdR5+d1pVaa64iCqsLuPxdNrJMI=;
+        s=default; t=1569178707;
+        bh=++ww0M8FldhONH/sKfUkcOspcDTMgTrhuVQH5MzsDWA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AR/pHhnUJZFQZJuU10Q4zXTm91VfzMymuNDCndjNmhU23puLDSzjZ/QP/x6Dx5sYp
-         YOsXvOyZezPVkBhCZeSlCSgcpniKcxFFkcrbfMmpw9YT5OR+gnefWxViWMoporecKd
-         hutPoSqIrybOa8Wo1OV6k3a4D4lTxezR9I5EyO5o=
+        b=SeEdSE7vhDJmDe8YTjCU2OISgdA3zbMWAnhunvLn6Pa9Vn8p9LfJaiQ8dqlo2BXgk
+         ENx6iggTYc+typBeEOIwoapl/z0R86MqrpFB0ZsuVcy0+rbZO8w6crdFhtBSxnF9qz
+         USnEeMWbwZdDl6zCseRITbur0QcgvF6Mm0JI+YgY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Darius Rad <alpha@area49.net>, Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 36/89] media: rc: imon: Allow iMON RC protocol for ffdc 7e device
-Date:   Sun, 22 Sep 2019 14:56:24 -0400
-Message-Id: <20190922185717.3412-36-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, kbuild test robot <lkp@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 43/89] net: lpc-enet: fix printk format strings
+Date:   Sun, 22 Sep 2019 14:56:31 -0400
+Message-Id: <20190922185717.3412-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
 References: <20190922185717.3412-1-sashal@kernel.org>
@@ -43,51 +42,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Darius Rad <alpha@area49.net>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit b20a6e298bcb8cb8ae18de26baaf462a6418515b ]
+[ Upstream commit de6f97b2bace0e2eb6c3a86e124d1e652a587b56 ]
 
-Allow selecting the IR protocol, MCE or iMON, for a device that
-identifies as follows (with config id 0x7e):
+compile-testing this driver on other architectures showed
+multiple warnings:
 
-15c2:ffdc SoundGraph Inc. iMON PAD Remote Controller
+  drivers/net/ethernet/nxp/lpc_eth.c: In function 'lpc_eth_drv_probe':
+  drivers/net/ethernet/nxp/lpc_eth.c:1337:19: warning: format '%d' expects argument of type 'int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
 
-As the driver is structured to default to iMON when both RC
-protocols are supported, existing users of this device (using MCE
-protocol) will need to manually switch to MCE (RC-6) protocol from
-userspace (with ir-keytable, sysfs).
+  drivers/net/ethernet/nxp/lpc_eth.c:1342:19: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
 
-Signed-off-by: Darius Rad <alpha@area49.net>
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Use format strings that work on all architectures.
+
+Link: https://lore.kernel.org/r/20190809144043.476786-10-arnd@arndb.de
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/rc/imon.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/nxp/lpc_eth.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/rc/imon.c b/drivers/media/rc/imon.c
-index 0c46155a8e9da..a7547c88e4c36 100644
---- a/drivers/media/rc/imon.c
-+++ b/drivers/media/rc/imon.c
-@@ -1963,12 +1963,17 @@ static void imon_get_ffdc_type(struct imon_context *ictx)
- 		break;
- 	/* iMON VFD, MCE IR */
- 	case 0x46:
--	case 0x7e:
- 	case 0x9e:
- 		dev_info(ictx->dev, "0xffdc iMON VFD, MCE IR");
- 		detected_display_type = IMON_DISPLAY_TYPE_VFD;
- 		allowed_protos = RC_PROTO_BIT_RC6_MCE;
- 		break;
-+	/* iMON VFD, iMON or MCE IR */
-+	case 0x7e:
-+		dev_info(ictx->dev, "0xffdc iMON VFD, iMON or MCE IR");
-+		detected_display_type = IMON_DISPLAY_TYPE_VFD;
-+		allowed_protos |= RC_PROTO_BIT_RC6_MCE;
-+		break;
- 	/* iMON LCD, MCE IR */
- 	case 0x9f:
- 		dev_info(ictx->dev, "0xffdc iMON LCD, MCE IR");
+diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
+index 08381ef8bdb48..41d30f55c946b 100644
+--- a/drivers/net/ethernet/nxp/lpc_eth.c
++++ b/drivers/net/ethernet/nxp/lpc_eth.c
+@@ -1371,13 +1371,14 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	pldat->dma_buff_base_p = dma_handle;
+ 
+ 	netdev_dbg(ndev, "IO address space     :%pR\n", res);
+-	netdev_dbg(ndev, "IO address size      :%d\n", resource_size(res));
++	netdev_dbg(ndev, "IO address size      :%zd\n",
++			(size_t)resource_size(res));
+ 	netdev_dbg(ndev, "IO address (mapped)  :0x%p\n",
+ 			pldat->net_base);
+ 	netdev_dbg(ndev, "IRQ number           :%d\n", ndev->irq);
+-	netdev_dbg(ndev, "DMA buffer size      :%d\n", pldat->dma_buff_size);
+-	netdev_dbg(ndev, "DMA buffer P address :0x%08x\n",
+-			pldat->dma_buff_base_p);
++	netdev_dbg(ndev, "DMA buffer size      :%zd\n", pldat->dma_buff_size);
++	netdev_dbg(ndev, "DMA buffer P address :%pad\n",
++			&pldat->dma_buff_base_p);
+ 	netdev_dbg(ndev, "DMA buffer V address :0x%p\n",
+ 			pldat->dma_buff_base_v);
+ 
+@@ -1424,8 +1425,8 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_out_unregister_netdev;
+ 
+-	netdev_info(ndev, "LPC mac at 0x%08x irq %d\n",
+-	       res->start, ndev->irq);
++	netdev_info(ndev, "LPC mac at 0x%08lx irq %d\n",
++	       (unsigned long)res->start, ndev->irq);
+ 
+ 	phydev = ndev->phydev;
+ 
 -- 
 2.20.1
 
