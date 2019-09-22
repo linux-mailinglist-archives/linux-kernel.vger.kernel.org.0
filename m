@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DFFBBA603
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E54BA610
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390536AbfIVSrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:47:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43280 "EHLO mail.kernel.org"
+        id S2390768AbfIVSrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:47:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390416AbfIVSq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:46:57 -0400
+        id S2390641AbfIVSrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:47:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F74E214D9;
-        Sun, 22 Sep 2019 18:46:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4143214D9;
+        Sun, 22 Sep 2019 18:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178017;
-        bh=vBEmhhmIsaUgoODDW4Mr5/z4iIlJ7s5TnhyGP3zP5/w=;
+        s=default; t=1569178034;
+        bh=nxhfcdcem27JgN1iEngjzJ+W+McMsJHgH8HRx+nl0Sc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1xn8EHyN8TNXqZJ+tt9yI+IWfvRFi32/nUcw3egbsGXPD8lBecssPHwdlfxfEcR0d
-         Gnw1sL8YAhRvmjfS0NlQiw0+f5FiUWTPIXFOrYyC/mN30gwG/u3YRfP3GqFrN5xeYB
-         tgY1AYof8bpn0HBv1YHSMtaLLbUQhOEFce2YWqOk=
+        b=T32sLot+GnDhVATM5EtOe7zr6kMaxu+HSCbtdCi7z4oMcDL+UxdxGaQRzUecN1CKO
+         5N3plpMVTmPxwgTktQFhw8x3SXD1ennbwNRkhP3NeTohspqvyVTp/KHTyMsiMCdzrz
+         AB13jBdYyYJ6v8Pcwj7dCXFqtDp7CpxpVV20H9rs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mike Christie <mchristi@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org, nbd@other.debian.org
-Subject: [PATCH AUTOSEL 5.3 103/203] nbd: add missing config put
-Date:   Sun, 22 Sep 2019 14:42:09 -0400
-Message-Id: <20190922184350.30563-103-sashal@kernel.org>
+Cc:     Yazen Ghannam <yazen.ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 115/203] EDAC/amd64: Decode syndrome before translating address
+Date:   Sun, 22 Sep 2019 14:42:21 -0400
+Message-Id: <20190922184350.30563-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -44,46 +47,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Christie <mchristi@redhat.com>
+From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-[ Upstream commit 887e975c4172d0d5670c39ead2f18ba1e4ec8133 ]
+[ Upstream commit 8a2eaab7daf03b23ac902481218034ae2fae5e16 ]
 
-Fix bug added with the patch:
+AMD Family 17h systems currently require address translation in order to
+report the system address of a DRAM ECC error. This is currently done
+before decoding the syndrome information. The syndrome information does
+not depend on the address translation, so the proper EDAC csrow/channel
+reporting can function without the address. However, the syndrome
+information will not be decoded if the address translation fails.
 
-commit 8f3ea35929a0806ad1397db99a89ffee0140822a
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Mon Jul 16 12:11:35 2018 -0400
+Decode the syndrome information before doing the address translation.
+The syndrome information is architecturally defined in MCA_SYND and can
+be considered robust. The address translation is system-specific and may
+fail on newer systems without proper updates to the translation
+algorithm.
 
-    nbd: handle unexpected replies better
-
-where if the timeout handler runs when the completion path is and we fail
-to grab the mutex in the timeout handler we will leave a config reference
-and cannot free the config later.
-
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 713ad54675fd ("EDAC, amd64: Define and register UMC error decode function")
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190821235938.118710-6-Yazen.Ghannam@amd.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/nbd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/edac/amd64_edac.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index e21d2ded732b7..a69a90ad92088 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -357,8 +357,10 @@ static enum blk_eh_timer_return nbd_xmit_timeout(struct request *req,
- 	}
- 	config = nbd->config;
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index ffe56a8fe39da..608fdab566b32 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -2550,13 +2550,6 @@ static void decode_umc_error(int node_id, struct mce *m)
  
--	if (!mutex_trylock(&cmd->lock))
-+	if (!mutex_trylock(&cmd->lock)) {
-+		nbd_config_put(nbd);
- 		return BLK_EH_RESET_TIMER;
+ 	err.channel = find_umc_channel(m);
+ 
+-	if (umc_normaddr_to_sysaddr(m->addr, pvt->mc_node_id, err.channel, &sys_addr)) {
+-		err.err_code = ERR_NORM_ADDR;
+-		goto log_error;
+-	}
+-
+-	error_address_to_page_and_offset(sys_addr, &err);
+-
+ 	if (!(m->status & MCI_STATUS_SYNDV)) {
+ 		err.err_code = ERR_SYND;
+ 		goto log_error;
+@@ -2573,6 +2566,13 @@ static void decode_umc_error(int node_id, struct mce *m)
+ 
+ 	err.csrow = m->synd & 0x7;
+ 
++	if (umc_normaddr_to_sysaddr(m->addr, pvt->mc_node_id, err.channel, &sys_addr)) {
++		err.err_code = ERR_NORM_ADDR;
++		goto log_error;
 +	}
- 
- 	if (config->num_connections > 1) {
- 		dev_err_ratelimited(nbd_to_dev(nbd),
++
++	error_address_to_page_and_offset(sys_addr, &err);
++
+ log_error:
+ 	__log_ecc_error(mci, &err, ecc_type);
+ }
 -- 
 2.20.1
 
