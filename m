@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04CF9BA5D0
+	by mail.lfdr.de (Postfix) with ESMTP id 6E467BA5D1
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:45:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389589AbfIVSpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:45:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41432 "EHLO mail.kernel.org"
+        id S2389596AbfIVSpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:45:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389547AbfIVSpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:45:43 -0400
+        id S2389398AbfIVSpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:45:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1101D2196E;
-        Sun, 22 Sep 2019 18:45:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32BAC20882;
+        Sun, 22 Sep 2019 18:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569177942;
-        bh=c0HS9vBTQOn2wgK3HorCqLxirZgXOoitDmt8CKIkcZw=;
+        s=default; t=1569177943;
+        bh=/SiC1b9j8s5dkXxghdD5HO3MXsCZs6ZS7C/TYS9uG9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ViMI0aGE88mihPcGM+NypivROnrHv0YwbayqhUv7FAQbKgCBLqNqeBlRhhDchsRi9
-         Uj+DONrqmVxeL0DKaYG+0WZMcVvQucVR3gPAee9VdFXviIK7Cd69TuKxAQArBw1HRS
-         O5oqBS+aBLzs4vEGF9PEZer5D6+YxBuPMaqcl18M=
+        b=fUeE8JkTa27ZSJJLJ3tK2Qch/dViW9DVQJlBPKu2XB/6u+IFZedKlsLwTrmL2+jIE
+         EHh6H70SeN5oAriuy4skaGH9VNQ+t29I9mIuC26puB8Boxdio5lSvIhFpWldN9yTKI
+         8UtPQhncAsBGkcHfZbOEoH1/muVIPzcS/tkPL3RM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Guoqing Jiang <jgq516@gmail.com>,
         Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
         Song Liu <songliubraving@fb.com>,
         Sasha Levin <sashal@kernel.org>, linux-raid@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 051/203] md: don't call spare_active in md_reap_sync_thread if all member devices can't work
-Date:   Sun, 22 Sep 2019 14:41:17 -0400
-Message-Id: <20190922184350.30563-51-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 052/203] md: don't set In_sync if array is frozen
+Date:   Sun, 22 Sep 2019 14:41:18 -0400
+Message-Id: <20190922184350.30563-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -46,41 +46,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Guoqing Jiang <jgq516@gmail.com>
 
-[ Upstream commit 0d8ed0e9bf9643f27f4816dca61081784dedb38d ]
+[ Upstream commit 062f5b2ae12a153644c765e7ba3b0f825427be1d ]
 
-When add one disk to array, the md_reap_sync_thread is responsible
-to activate the spare and set In_sync flag for the new member in
-spare_active().
+When a disk is added to array, the following path is called in mdadm.
 
-But if raid1 has one member disk A, and disk B is added to the array.
-Then we offline A before all the datas are synchronized from A to B,
-obviously B doesn't have the latest data as A, but B is still marked
-with In_sync flag.
+Manage_subdevs -> sysfs_freeze_array
+               -> Manage_add
+               -> sysfs_set_str(&info, NULL, "sync_action","idle")
 
-So let's not call spare_active under the condition, otherwise B is
-still showed with 'U' state which is not correct.
+Then from kernel side, Manage_add invokes the path (add_new_disk ->
+validate_super = super_1_validate) to set In_sync flag.
+
+Since In_sync means "device is in_sync with rest of array", and the new
+added disk need to resync thread to help the synchronization of data.
+And md_reap_sync_thread would call spare_active to set In_sync for the
+new added disk finally. So don't set In_sync if array is in frozen.
 
 Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
 Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/md.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/md/md.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 24638ccedce42..fd62be3ca2871 100644
+index fd62be3ca2871..232ea1f519963 100644
 --- a/drivers/md/md.c
 +++ b/drivers/md/md.c
-@@ -9043,7 +9043,8 @@ void md_reap_sync_thread(struct mddev *mddev)
- 	/* resync has finished, collect result */
- 	md_unregister_thread(&mddev->sync_thread);
- 	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
--	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery)) {
-+	    !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
-+	    mddev->degraded != mddev->raid_disks) {
- 		/* success...*/
- 		/* activate any spares */
- 		if (mddev->pers->spare_active(mddev)) {
+@@ -1826,8 +1826,15 @@ static int super_1_validate(struct mddev *mddev, struct md_rdev *rdev)
+ 				if (!(le32_to_cpu(sb->feature_map) &
+ 				      MD_FEATURE_RECOVERY_BITMAP))
+ 					rdev->saved_raid_disk = -1;
+-			} else
+-				set_bit(In_sync, &rdev->flags);
++			} else {
++				/*
++				 * If the array is FROZEN, then the device can't
++				 * be in_sync with rest of array.
++				 */
++				if (!test_bit(MD_RECOVERY_FROZEN,
++					      &mddev->recovery))
++					set_bit(In_sync, &rdev->flags);
++			}
+ 			rdev->raid_disk = role;
+ 			break;
+ 		}
 -- 
 2.20.1
 
