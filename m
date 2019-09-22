@@ -2,115 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D301BAC03
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 878C1BABFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:30:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388982AbfIVWeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 18:34:19 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45429 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388488AbfIVWeS (ORCPT
+        id S1730241AbfIVWao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 18:30:44 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:35377 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfIVWao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 18:34:18 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r134so8603466lff.12;
-        Sun, 22 Sep 2019 15:34:16 -0700 (PDT)
+        Sun, 22 Sep 2019 18:30:44 -0400
+Received: by mail-vs1-f65.google.com with SMTP id s7so8230751vsl.2;
+        Sun, 22 Sep 2019 15:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4f2RiUEyYcYFcBgFz1k/UjSfnNL+xowf1XmECwoKC/g=;
-        b=jAZlux2Hoov1RqCJlqmmKxwXdFHaETUdjVWCvrTUJKfUh7+paUI6OOEL1lgtjm+JIL
-         PUo6LZEbQzjG00Tai8rqwzLIfnYE60LtT6hICVHY6Qdbn5JpZGpxmtKUvrT2oveXCa3n
-         rdGFNoK0VKKXUq9RB2uFCQOXCRfFYx1pglz0YCbZHErkS+MgcOkSMhHmfrdh5u5BRDkh
-         ujMcz7en92dWnFc2NTnAQpwAGEQOskUY9zr0qRMPoL9av0Wkp2pL+dNpgGtiE0OCIMWj
-         X8Q1NMgBYK3j5wPkeGcZ8KiJNsEtOjkOKqSCTuliZekdA98/r0T7SWueV0BdabtYQVaS
-         O1tg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GEvOfGA8f9CvBKQHIGcv1svReVin0bIV7g885ijSJlg=;
+        b=ZdqUYKQuuFTeEF9N2YAZXmP3xJ06lBg5MabIav78ArG8i20hvkyeS9fUPLtvSy7CBu
+         Cu4L5ViEyC85V5tLS3CLdt3v6WXwyNkVjezSVh357+inIhHAqn5R4pdQFWDM4qjl8Tq6
+         YtHWsqcFnynQV53mjStKr1Mu9uDdbPxxLOJHs61WCMZaS7SOCMbssjuoVgIor79Ji58y
+         PmOdhOmvTMGP1MF+dv2XIutBDlymZLD3s061S15g/pHSmhCHw5iFjeKechmfrgbf+aZn
+         8aMsLKrZp8kcQrhxfL2JSN5X3X6cm1p+/kzD/hvWRKh9/Qs0B8CkEgwqUF7ykDCeQUR/
+         YzCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4f2RiUEyYcYFcBgFz1k/UjSfnNL+xowf1XmECwoKC/g=;
-        b=B7qU0rRsgPZYRztzxdN+71UKRUpQicEZZduHp/T8b+FG223Rbc4fdJskQ6kPbG8MUF
-         HMFTjxX6fgVZuVhKVF69qcb/qxxW3vaZjcNrkWrMF8x2ihx7BCBRmuhKPOBmA/Lrw2Ex
-         FKThCLNG1c9o/ob7TEaMxNoZo+vgZxEpPMgXiMNyLXQc2rChWmPkxKgxWHvciu//6hj/
-         zSq2U1a8XXFTCO6rEvvd9z6GY/7ZJSshcEezpr/Xmh8Vin3072b/4mBem6frD3rS1Rsf
-         rx4PSPUKdxhIbPZu4f6vtdxngf/uImIty2GuwUXxRlMoRXPotk20hgShibyWf1w+H6w9
-         wukg==
-X-Gm-Message-State: APjAAAUS1CM/A5FwhoAk3wC4Mu1cUprLECfwvAXEB0CUNdVmZsqOUtwC
-        W4Ku2v2LAcdnM6UYzYxbKZUWhNfz
-X-Google-Smtp-Source: APXvYqxlv/fN1SmtNQdjOMr9+/0vIXBnud7NxJw3/5p3jHE3sHP0gedjudM2e9Kj2tEoRt3WJyuCtw==
-X-Received: by 2002:a19:6455:: with SMTP id b21mr15210702lfj.167.1569188842740;
-        Sun, 22 Sep 2019 14:47:22 -0700 (PDT)
-Received: from [192.168.2.145] (ppp94-29-32-67.pppoe.spdop.ru. [94.29.32.67])
-        by smtp.googlemail.com with ESMTPSA id e7sm1798725lfn.12.2019.09.22.14.47.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Sep 2019 14:47:22 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] clk: tegra: divider: Add missing check for
- enable-bit on rate's recalculation
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190723025245.27754-1-digetx@gmail.com>
-Message-ID: <4f2695ce-f683-2e4b-34b9-8937feee5e1b@gmail.com>
-Date:   Mon, 23 Sep 2019 00:47:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GEvOfGA8f9CvBKQHIGcv1svReVin0bIV7g885ijSJlg=;
+        b=K9e7Fv4nQNVB9l7VM9qbdxnvZs+bv0FNElNjYDAlZyMFRAH4PZyEOdLGPHEN96k4oe
+         URTHDDX/7FC+vpxbyi3jyeCFLLxNfkGzdJN97+V5VQSY5OHbPDOmPuhwIgqESNDxr8hz
+         yOIf9BOQ7YUZFvYAZnoNlAepD73YGUyLWa4r2H3FUk1zMuY0dFw+Ug0JKYUFmMsldioi
+         n26mtLBcFZ/nL7sWwE/kxnfPB1jjLov3rMZMakJUI7lVO8Y5wsRsWgAkr2z4QgmLjaCY
+         5XHLK1vb7XLkyJwOGLPl+0FmLg9NwNV0zkNzfhe2lfBzz4RtOADYuTLcOqx2Z793fWZk
+         KMKg==
+X-Gm-Message-State: APjAAAX98G9vXv9JfiI2Y8DCYaRLUtqJhrlxs2NJcDt+J78XiwnPZSDP
+        DsFB640aTMLqdDTeTFMWbsW7T49RM3mwZkccttw=
+X-Google-Smtp-Source: APXvYqwnUa/TgTDV4oCtPNe5sDe6oRVcgTuFY6Aq/EGWEmyJX3ECE/Rxkw4e8028mE9PGvEI14Yt7f8XNtGPd4EOlaM=
+X-Received: by 2002:a67:c181:: with SMTP id h1mr6143186vsj.195.1569191441370;
+ Sun, 22 Sep 2019 15:30:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190723025245.27754-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190920185843.4096-1-matthew.cover@stackpath.com>
+ <20190922080326-mutt-send-email-mst@kernel.org> <CAGyo_hqGbFdt1PoDrmo=S5iTO8TwbrbtOJtbvGT1WrFFMLwk-Q@mail.gmail.com>
+ <20190922162546-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20190922162546-mutt-send-email-mst@kernel.org>
+From:   Matt Cover <werekraken@gmail.com>
+Date:   Sun, 22 Sep 2019 15:30:29 -0700
+Message-ID: <CAGyo_hr+_oSwVSKSqKTXaouaMK-6b8+NVLTxWmZD3vn07GEGWA@mail.gmail.com>
+Subject: Re: [PATCH net-next] tuntap: Fallback to automq on TUNSETSTEERINGEBPF
+ prog negative return
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     davem@davemloft.net, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        Jason Wang <jasowang@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Stanislav Fomichev <sdf@google.com>,
+        Matthew Cover <matthew.cover@stackpath.com>,
+        mail@timurcelik.de, pabeni@redhat.com,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        wangli39@baidu.com, lifei.shirley@bytedance.com,
+        tglx@linutronix.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-23.07.2019 5:52, Dmitry Osipenko пишет:
-> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
-> have any effect in that case. Please note that there are no known bugs
-> caused by the missing check.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
-> 
-> Changelog:
-> 
-> v2: Changed the commit's description from 'Fix' to 'Add' in response to the
->     Stephen's Boyd question about the need to backport the patch into stable
->     kernels. The backporting is not really needed.
-> 
->  drivers/clk/tegra/clk-divider.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index e76731fb7d69..f33c19045386 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
->  	int div, mul;
->  	u64 rate = parent_rate;
->  
-> -	reg = readl_relaxed(divider->reg) >> divider->shift;
-> -	div = reg & div_mask(divider);
-> +	reg = readl_relaxed(divider->reg);
-> +
-> +	if ((divider->flags & TEGRA_DIVIDER_UART) &&
-> +	    !(reg & PERIPH_CLK_UART_DIV_ENB))
-> +		return rate;
-> +
-> +	div = (reg >> divider->shift) & div_mask(divider);
->  
->  	mul = get_mul(divider);
->  	div += mul;
-> 
+On Sun, Sep 22, 2019 at 1:36 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Sun, Sep 22, 2019 at 10:43:19AM -0700, Matt Cover wrote:
+> > On Sun, Sep 22, 2019 at 5:37 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > >
+> > > On Fri, Sep 20, 2019 at 11:58:43AM -0700, Matthew Cover wrote:
+> > > > Treat a negative return from a TUNSETSTEERINGEBPF bpf prog as a signal
+> > > > to fallback to tun_automq_select_queue() for tx queue selection.
+> > > >
+> > > > Compilation of this exact patch was tested.
+> > > >
+> > > > For functional testing 3 additional printk()s were added.
+> > > >
+> > > > Functional testing results (on 2 txq tap device):
+> > > >
+> > > >   [Fri Sep 20 18:33:27 2019] ========== tun no prog ==========
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '-1'
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: tun_automq_select_queue() ran
+> > > >   [Fri Sep 20 18:33:27 2019] ========== tun prog -1 ==========
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '-1'
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '-1'
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: tun_automq_select_queue() ran
+> > > >   [Fri Sep 20 18:33:27 2019] ========== tun prog 0 ==========
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '0'
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '0'
+> > > >   [Fri Sep 20 18:33:27 2019] ========== tun prog 1 ==========
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '1'
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '1'
+> > > >   [Fri Sep 20 18:33:27 2019] ========== tun prog 2 ==========
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '2'
+> > > >   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '0'
+> > > >
+> > > > Signed-off-by: Matthew Cover <matthew.cover@stackpath.com>
+> > >
+> > >
+> > > Could you add a bit more motivation data here?
+> >
+> > Thank you for these questions Michael.
+> >
+> > I'll plan on adding the below information to the
+> > commit message and submitting a v2 of this patch
+> > when net-next reopens. In the meantime, it would
+> > be very helpful to know if these answers address
+> > some of your concerns.
+> >
+> > > 1. why is this a good idea
+> >
+> > This change allows TUNSETSTEERINGEBPF progs to
+> > do any of the following.
+> >  1. implement queue selection for a subset of
+> >     traffic (e.g. special queue selection logic
+> >     for ipv4, but return negative and use the
+> >     default automq logic for ipv6)
+> >  2. determine there isn't sufficient information
+> >     to do proper queue selection; return
+> >     negative and use the default automq logic
+> >     for the unknown
+> >  3. implement a noop prog (e.g. do
+> >     bpf_trace_printk() then return negative and
+> >     use the default automq logic for everything)
+> >
+> > > 2. how do we know existing userspace does not rely on existing behaviour
+> >
+> > Prior to this change a negative return from a
+> > TUNSETSTEERINGEBPF prog would have been cast
+> > into a u16 and traversed netdev_cap_txqueue().
+> >
+> > In most cases netdev_cap_txqueue() would have
+> > found this value to exceed real_num_tx_queues
+> > and queue_index would be updated to 0.
+> >
+> > It is possible that a TUNSETSTEERINGEBPF prog
+> > return a negative value which when cast into a
+> > u16 results in a positive queue_index less than
+> > real_num_tx_queues. For example, on x86_64, a
+> > return value of -65535 results in a queue_index
+> > of 1; which is a valid queue for any multiqueue
+> > device.
+> >
+> > It seems unlikely, however as stated above is
+> > unfortunately possible, that existing
+> > TUNSETSTEERINGEBPF programs would choose to
+> > return a negative value rather than return the
+> > positive value which holds the same meaning.
+> >
+> > It seems more likely that future
+> > TUNSETSTEERINGEBPF programs would leverage a
+> > negative return and potentially be loaded into
+> > a kernel with the old behavior.
+>
+> OK if we are returning a special
+> value, shouldn't we limit it? How about a special
+> value with this meaning?
+> If we are changing an ABI let's at least make it
+> extensible.
+>
 
-Hello Peter,
+A special value with this meaning sounds
+good to me. I'll plan on adding a define
+set to -1 to cause the fallback to automq.
 
-ACK?
+The way I was initially viewing the old
+behavior was that returning negative was
+undefined; it happened to have the
+outcomes I walked through, but not
+necessarily by design.
+
+In order to keep the new behavior
+extensible, how should we state that a
+negative return other than -1 is
+undefined and therefore subject to
+change. Is something like this
+sufficient?
+
+  Documentation/networking/tc-actions-env-rules.txt
+
+Additionally, what should the new
+behavior implement when a negative other
+than -1 is returned? I would like to have
+it do the same thing as -1 for now, but
+with the understanding that this behavior
+is undefined. Does this sound reasonable?
+
+> > > 3. why doesn't userspace need a way to figure out whether it runs on a kernel with and
+> > >    without this patch
+> >
+> > There may be some value in exposing this fact
+> > to the ebpf prog loader. What is the standard
+> > practice here, a define?
+>
+>
+> We'll need something at runtime - people move binaries between kernels
+> without rebuilding then. An ioctl is one option.
+> A sysfs attribute is another, an ethtool flag yet another.
+> A combination of these is possible.
+>
+> And if we are doing this anyway, maybe let userspace select
+> the new behaviour? This way we can stay compatible with old
+> userspace...
+>
+
+Understood. I'll look into adding an
+ioctl to activate the new behavior. And
+perhaps a method of checking which is
+behavior is currently active (in case we
+ever want to change the default, say
+after some suitably long transition
+period).
+
+> > >
+> > >
+> > > thanks,
+> > > MST
+> > >
+> > > > ---
+> > > >  drivers/net/tun.c | 20 +++++++++++---------
+> > > >  1 file changed, 11 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> > > > index aab0be4..173d159 100644
+> > > > --- a/drivers/net/tun.c
+> > > > +++ b/drivers/net/tun.c
+> > > > @@ -583,35 +583,37 @@ static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+> > > >       return txq;
+> > > >  }
+> > > >
+> > > > -static u16 tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+> > > > +static int tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+> > > >  {
+> > > >       struct tun_prog *prog;
+> > > >       u32 numqueues;
+> > > > -     u16 ret = 0;
+> > > > +     int ret = -1;
+> > > >
+> > > >       numqueues = READ_ONCE(tun->numqueues);
+> > > >       if (!numqueues)
+> > > >               return 0;
+> > > >
+> > > > +     rcu_read_lock();
+> > > >       prog = rcu_dereference(tun->steering_prog);
+> > > >       if (prog)
+> > > >               ret = bpf_prog_run_clear_cb(prog->prog, skb);
+> > > > +     rcu_read_unlock();
+> > > >
+> > > > -     return ret % numqueues;
+> > > > +     if (ret >= 0)
+> > > > +             ret %= numqueues;
+> > > > +
+> > > > +     return ret;
+> > > >  }
+> > > >
+> > > >  static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
+> > > >                           struct net_device *sb_dev)
+> > > >  {
+> > > >       struct tun_struct *tun = netdev_priv(dev);
+> > > > -     u16 ret;
+> > > > +     int ret;
+> > > >
+> > > > -     rcu_read_lock();
+> > > > -     if (rcu_dereference(tun->steering_prog))
+> > > > -             ret = tun_ebpf_select_queue(tun, skb);
+> > > > -     else
+> > > > +     ret = tun_ebpf_select_queue(tun, skb);
+> > > > +     if (ret < 0)
+> > > >               ret = tun_automq_select_queue(tun, skb);
+> > > > -     rcu_read_unlock();
+> > > >
+> > > >       return ret;
+> > > >  }
+> > > > --
+> > > > 1.8.3.1
