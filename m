@@ -2,58 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07794BA897
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30846BA8AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:50:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389212AbfIVTFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 15:05:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730021AbfIVTF2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 15:05:28 -0400
-Subject: Re: [GIT PULL] rpmsg updates for v5.4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569179128;
-        bh=dnwM7XjZooR/q4G7qPNF5DV2oKs3nqYWtd6hsHVT8QU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=0044Yp1HFI0mc1GAZEqH7sOQeE1n1xC0k96T6c2oleFfaijqYlAsw9F1szpGE10yj
-         d7JHSznKOcFxGJHd2hFB8JYlibw52kkb7rZECTgn1LD7I9BoE+SUc9+uS0IVoxTx9k
-         CS7SHwQngIaZZ0NuQA2jdkGiuCVn5QoywY2C1Hco=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190921165912.GB6693@tuxbook-pro>
-References: <20190921165912.GB6693@tuxbook-pro>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190921165912.GB6693@tuxbook-pro>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc
- tags/rpmsg-v5.4
-X-PR-Tracked-Commit-Id: 9fe69a725e238ac279027f0132e50617a63b847d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 379bb045171dea3e2ee01b32fe88f2afe1fe2fa8
-Message-Id: <156917912820.24588.8130624863228290812.pr-tracker-bot@kernel.org>
-Date:   Sun, 22 Sep 2019 19:05:28 +0000
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Suman Anna <s-anna@ti.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+        id S1730207AbfIVTGn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 15:06:43 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58321 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439182AbfIVTFo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 15:05:44 -0400
+X-Originating-IP: 90.65.161.137
+Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 0162360006;
+        Sun, 22 Sep 2019 19:05:42 +0000 (UTC)
+Date:   Sun, 22 Sep 2019 21:05:42 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Nick Crews <ncrews@chromium.org>, bleung@chromium.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org,
+        dlaurie@chromium.org
+Subject: Re: [PATCH v2 1/2] rtc: wilco-ec: Remove yday and wday calculations
+Message-ID: <20190922190542.GC3185@piout.net>
+References: <20190916181215.501-1-ncrews@chromium.org>
+ <20190922161306.GA1999@bug>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190922161306.GA1999@bug>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 21 Sep 2019 09:59:12 -0700:
+On 22/09/2019 18:13:06+0200, Pavel Machek wrote:
+> On Mon 2019-09-16 12:12:15, Nick Crews wrote:
+> > The tm_yday and tm_wday fields are not used by userspace,
+> > so since they aren't needed within the driver, don't
+> > bother calculating them. This is especially needed since
+> > the rtc_year_days() call was crashing if the HW returned
+> > an invalid time.
+> > 
+> > Signed-off-by: Nick Crews <ncrews@chromium.org>
+> > ---
+> >  drivers/rtc/rtc-wilco-ec.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+> > index 8ad4c4e6d557..e84faa268caf 100644
+> > --- a/drivers/rtc/rtc-wilco-ec.c
+> > +++ b/drivers/rtc/rtc-wilco-ec.c
+> > @@ -110,10 +110,6 @@ static int wilco_ec_rtc_read(struct device *dev, struct rtc_time *tm)
+> >  	tm->tm_mday	= rtc.day;
+> >  	tm->tm_mon	= rtc.month - 1;
+> >  	tm->tm_year	= rtc.year + (rtc.century * 100) - 1900;
+> > -	tm->tm_yday	= rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
+> > -
+> > -	/* Don't compute day of week, we don't need it. */
+> > -	tm->tm_wday = -1;
+> >  
+> >  	return 0;
+> 
+> Are you sure? It would be bad to pass unititialized memory to userspace...
+> 
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc tags/rpmsg-v5.4
+This problem doesn't exist because userspace is passing the memory, not
+the other way around.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/379bb045171dea3e2ee01b32fe88f2afe1fe2fa8
+> If userspace does not need those fields, why are they there?
+> 
 
-Thank you!
+This is coming from struct tm, it is part of C89 but I think I was not
+born when this decision was made. man rtc properly reports that those
+fields are unused and no userspace tools are actually making use of
+them. Nobody cares about the broken down representation of the time.
+What is done is use the ioctl then mktime to have a UNIX timestamp.
+
+"The mktime function ignores the specified contents of the tm_wday,
+tm_yday, tm_gmtoff, and tm_zone members of the broken-down time
+structure. It uses the values of the other components to determine the
+calendar time; it’s permissible for these components to have
+unnormalized values outside their normal ranges. The last thing that
+mktime does is adjust the components of the brokentime structure,
+including the members that were initially ignored."
+
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
