@@ -2,87 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C308BABF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1BDBABF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:29:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387800AbfIVW1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 18:27:08 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46935 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfIVW1I (ORCPT
+        id S1730015AbfIVW3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 18:29:21 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41240 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729883AbfIVW3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 18:27:08 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q5so7837014pfg.13
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 15:27:07 -0700 (PDT)
+        Sun, 22 Sep 2019 18:29:20 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h7so11838011wrw.8;
+        Sun, 22 Sep 2019 15:29:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=4122js9VzeoHge4cdqVUvNxYMN8/LRqY7OEquLQFbJQ=;
-        b=gFi6WBCT2RXWKrRM2WOLIRmqm06uTxsTjzM9ZkFHUuOz5wtfUQDFEUjXiaTB1i2YQP
-         yt8wVUq0pvqZ9tuwaNeCBnCBHtEYN5iua9oR7D+rGvqKx7SbmW4hjEvgYa7p4ebKu1TE
-         +JCyq6oCJXJ5rnvPbB+PdoS+zcl/9VGsPaYp06k2rKvV9rYXtCMrOdb2xDY98MiUhvCD
-         lEdSdAJjkaDjDL72MyFSCDXHxJ4+2rZv+3BblS5n5sXm9VD8xbh7OS3WClnDaLMSFz2L
-         qW3fp7zExm6H2WKT8G6wBIRfo75pT/AbrDU2zGH0UN9Kjzf04FGpSeEmK5h0WazJnenp
-         v0EA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9F/+/m59W3Dcig0n0hbTlhgv2402meDrVVrsrjXeJKw=;
+        b=CzA6rUVQzQuRmiGW/YjIwozCjvGCOHLdNL5i5iEYLdhUc7lGGrFaSeJIXSBerLbFdM
+         9iAaZr0TCMQCQ8nuUzho7il+2IhMIMJrS4D4oZzNGUjBgPx7U1D2Ds4ELZ9rhoL2f35W
+         DnCkQ6TUDXbNP1vJIrMOeEYnr1mPsRTCcxmHmZXztOSEmi0Hf1fLT0XtKXrXblnXaXND
+         h4UEKs1UeRL0eamP9ftN8JkT6+lJDy6hDXe9o7RY3AspaX09fH8RnOSaSbuSjItaaWeF
+         /Cin3FasCqlFphbmO7kj4gZ6bbde+r2oE73bPXG5CBIDUvR0+Mj1VwcUE9y0ikcqfWdX
+         7weQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=4122js9VzeoHge4cdqVUvNxYMN8/LRqY7OEquLQFbJQ=;
-        b=SLrRkkujEi1OigJ9a5p0vs3Qwdqs3BQDL+A8TfJI6VB9Z/crVccDYFbpbkn7rtiAkv
-         Uuq+oJpkAC3rd5ttKatYoMm7gmYar2TpkRB+WXsK+U/TT00G2An1C4OyGkwnT5PsbTtH
-         oqNjgp3KVKRKBGSY2mVu7zrwj5OrGLUZmzRqua6CTeWAk4Sk2hqn36tWCv3PCAKtWtVL
-         VNvEfuywUNUxPjHIxEuyzkDVsG2smrxk02ngHOqcAMDr+CH8qqjD2M7bpZlXuyz+ZDWC
-         U0RxXvo5ik5jl6+7sX87EZxSbLnp8FhsHle2AwAobepUnOYQsNIZTJxnpYbcEQwRUfz7
-         Qmmg==
-X-Gm-Message-State: APjAAAW0h6OXyCvLBlBDkY0qrEni7QRIfSDelHt2shXTBMND96ftqtUk
-        x78GPQPTCx9lGX4dKaLW9FyiWw==
-X-Google-Smtp-Source: APXvYqzyICwgu2nsF0p3uEHmrh0rScEPh1VCeMpKC62Xdw4iwuAiKtc/bOayJ0c7xkb5C7wzKV4toQ==
-X-Received: by 2002:a62:ac02:: with SMTP id v2mr29467462pfe.109.1569191227648;
-        Sun, 22 Sep 2019 15:27:07 -0700 (PDT)
-Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
-        by smtp.gmail.com with ESMTPSA id u10sm9477135pfm.71.2019.09.22.15.27.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2019 15:27:07 -0700 (PDT)
-Date:   Sun, 22 Sep 2019 15:27:05 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9F/+/m59W3Dcig0n0hbTlhgv2402meDrVVrsrjXeJKw=;
+        b=GoU0j6P2afCTCEh5xXXrpA5ogtxjHRNk/Smi2Z6lPaOWw3BN0MI87J8JHNt5HICyJb
+         slSGLKJdo6PatJONaSQ1iIb6AOL1ab5dHn1m7LNMRtaS5Z/pCZSib7S2Gc3y1YK2YtXn
+         jENQtUYDffnKfGnEChEkScSGZQBDiIVWtwnvztsiOcJayo1h6ooshKnLw1/AomOadZTh
+         N7ukG5jEoaYeFFun5iaPGrNnZ4Duj0XJa0qqkhZ1zPtrOxBALqSH2zKENORWclgCP8A7
+         lrXYsAUJBkDRqF2ZVbk/qLP82ydv7uJSsXUL4G0tB/TUhxQAVxpy6VECuA1mOzLfEDK9
+         uvkQ==
+X-Gm-Message-State: APjAAAXBK2YHhUyoR6bix4mRnsQw4iEGtDKZM8cm8kzfedXmPq7MM35m
+        2ONBSq8S2x2cF1Xo1Nru29IErXH+
+X-Google-Smtp-Source: APXvYqz803890ifCAZk3zmRNKNz51yt4V6yZulA5FDFsi8VDPkNULWIzAdGIBSzq2/cUEe4aYmufiw==
+X-Received: by 2002:a5d:6a09:: with SMTP id m9mr7608305wru.12.1569191357572;
+        Sun, 22 Sep 2019 15:29:17 -0700 (PDT)
+Received: from [192.168.2.202] (pD9EA35A6.dip0.t-ipconnect.de. [217.234.53.166])
+        by smtp.gmail.com with ESMTPSA id c10sm15870791wrf.58.2019.09.22.15.29.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Sep 2019 15:29:16 -0700 (PDT)
+Subject: Re: [PATCH] serdev: Add ACPI devices by ResourceSource field
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Rob Herring <robh@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
-        <u.kleine-koenig@pengutronix.de>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: Use the correct style for SPDX License
- Identifier
-Message-ID: <20190922152705.59b66b0c@cakuba.netronome.com>
-In-Reply-To: <20190921134522.GA3575@nishad>
-References: <20190921134522.GA3575@nishad>
-Organization: Netronome Systems, Ltd.
+        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-serial@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190919195624.1140941-1-luzmaximilian@gmail.com>
+ <50b016a1-ed4a-b848-4658-a05731727d7e@redhat.com>
+From:   Maximilian Luz <luzmaximilian@gmail.com>
+Message-ID: <4c2cc8b7-8541-0912-3162-399777dc8dd2@gmail.com>
+Date:   Mon, 23 Sep 2019 00:29:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <50b016a1-ed4a-b848-4658-a05731727d7e@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 21 Sep 2019 19:15:25 +0530, Nishad Kamdar wrote:
-> This patch corrects the SPDX License Identifier style
-> in header file for Distributed Switch Architecture drivers.
-> For C header files Documentation/process/license-rules.rst
-> mandates C-like comments (opposed to C source files where
-> C++ style should be used)
-> 
-> Changes made by using a script provided by Joe Perches here:
-> https://lkml.org/lkml/2019/2/7/46.
-> 
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+Hi all,
 
-Applied, thank you!
+On 9/20/19 5:00 PM, Hans de Goede wrote:
+> So as promised I've given this patch a try, unfortunately it breaks
+> existing users of ACPI serdev device instantation.
+> 
+> After adding this patch "ls /sys/bus/serial/devices" is empty,
+> where as before it gives:
+> 
+> [root@dhcp-45-50 ~]# ls -l /sys/bus/serial/devices/
+> total 0
+> lrwxrwxrwx. 1 root root 0 Sep 20 16:43 serial0 -> ../../../devices/pci0000:00/8086228A:00/serial0
+> lrwxrwxrwx. 1 root root 0 Sep 20 16:43 serial0-0 -> ../../../devices/pci0000:00/8086228A:00/serial0/serial0-0
+> 
+> And since the serdev is missing bluetooth does not work.
+
+Thanks to some testing by Hans, it turns out that the reason for this is
+that acpi_walk_resources fails with AE_AML_INVALID_RESOURCE_TYPE for a
+specific device. If anyone is interested, the _CRS of the device in
+question is
+
+     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+     {
+         Name (NAM, Buffer (0x14)
+         {
+             "\\_SB.PCI0.SDHB.BRC1"
+         })
+         Name (SPB, Buffer (0x0C)
+         {
+             /* 0000 */  0x8E, 0x1D, 0x00, 0x01, 0x00, 0xC0, 0x02, 0x00,
+             /* 0008 */  0x00, 0x01, 0x00, 0x00
+         })
+         Name (END, ResourceTemplate ()
+         {
+         })
+         Concatenate (SPB, NAM, Local0)
+         Concatenate (Local0, END, Local1)
+         Return (Local1)
+     }
+
+To solve this, I propose ignoring errors that occur when evaluating the
+_CRS method. Note that with the previously discussed change for v2,
+where we will only look at the first device in _CRS, we should be able
+to handle errors from the actual serdev device allocation separately
+(and only ignore AML evaluation errors).
+
+Further, I think it might also make sense to move the status and
+already-enumerated checks out of acpi_serdev_register_device to before
+looking at _CRS. On one hand, this might save us from unnecessarily
+checking the _CRS on devices that are not present, but on the other
+hand, moving the status check may cause more AML code execution, as we'd
+be checking the status of every device, even if it doesn't have a _CRS.
+Maybe a better solution would be something like: Check if device has
+already been enumerated, then check for _CRS presence, then for
+status/device-presence, and finally look at _CRS contents and
+potentially allocate serdev client?
+
+Regards,
+
+Maximilian
