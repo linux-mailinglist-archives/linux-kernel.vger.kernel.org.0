@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EF04BA72A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0C0BBA72E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394576AbfIVS4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:56:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58178 "EHLO mail.kernel.org"
+        id S2438583AbfIVS40 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:56:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438538AbfIVS4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:56:15 -0400
+        id S2438524AbfIVS4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:56:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 812C021479;
-        Sun, 22 Sep 2019 18:56:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA7CC206C2;
+        Sun, 22 Sep 2019 18:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178575;
-        bh=T+aCyAiEDOzNUK91tdmqUu+c6rJ8cwy/8kf1dw1hA2g=;
+        s=default; t=1569178579;
+        bh=+uyytMnHPZ8tfTwYzREjh2FgvYlgzf9L90Z00QOUgjY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=js3a037zNdD+2reRE+FwIeoqHa4tWjLfEMiVA9Qb5Vowkg8dlfvO1K2qhv45DV8nL
-         hhudTLffCwwzJKnZ/qkZH9wVM0ThV6bb6zr9XprEXbhUMtjDDVg9jkRyolWUEecquy
-         iDawvKqnndYOWBiRmtkljLzwLIBEyKio7rNqOH6U=
+        b=NV3zBLW61DkfqWa6CzVThmkM90Uh2t2XIZYAz+ZqoAcm/eTCLtwUneJqPV+FcFXss
+         rsCYfLs4xjKl+Q2XUjS1G27jMEZF43E3B1CTFAubxduFtZOrn6U5JPy+gWBnTuQsCP
+         RtvIHpDRsjldPy/9XhD50N0qZVWxlPVzzVLY9XjA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Neil Horman <nhorman@tuxdriver.com>, djuran@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 086/128] x86/apic/vector: Warn when vector space exhaustion breaks affinity
-Date:   Sun, 22 Sep 2019 14:53:36 -0400
-Message-Id: <20190922185418.2158-86-sashal@kernel.org>
+Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 089/128] ASoC: fsl_ssi: Fix clock control issue in master mode
+Date:   Sun, 22 Sep 2019 14:53:39 -0400
+Message-Id: <20190922185418.2158-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -43,62 +43,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Horman <nhorman@tuxdriver.com>
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-[ Upstream commit 743dac494d61d991967ebcfab92e4f80dc7583b3 ]
+[ Upstream commit 696d05225cebffd172008d212657be90e823eac0 ]
 
-On x86, CPUs are limited in the number of interrupts they can have affined
-to them as they only support 256 interrupt vectors per CPU. 32 vectors are
-reserved for the CPU and the kernel reserves another 22 for internal
-purposes. That leaves 202 vectors for assignement to devices.
+The test case is
+arecord -Dhw:0 -d 10 -f S16_LE -r 48000 -c 2 temp.wav &
+aplay -Dhw:0 -d 30 -f S16_LE -r 48000 -c 2 test.wav
 
-When an interrupt is set up or the affinity is changed by the kernel or the
-administrator, the vector assignment code attempts to honor the requested
-affinity mask. If the vector space on the CPUs in that affinity mask is
-exhausted the code falls back to a wider set of CPUs and assigns a vector
-on a CPU outside of the requested affinity mask silently.
+There will be error after end of arecord:
+aplay: pcm_write:2051: write error: Input/output error
 
-While the effective affinity is reflected in the corresponding
-/proc/irq/$N/effective_affinity* files the silent breakage of the requested
-affinity can lead to unexpected behaviour for administrators.
+Capture and Playback work in parallel in master mode, one
+substream stops, the other substream is impacted, the
+reason is that clock is disabled wrongly.
 
-Add a pr_warn() when this happens so that adminstrators get at least
-informed about it in the syslog.
+The clock's reference count is not increased when second
+substream starts, the hw_param() function returns in the
+beginning because first substream is enabled, then in end
+of first substream, the hw_free() disables the clock.
 
-[ tglx: Massaged changelog and made the pr_warn() more informative ]
+This patch is to move the clock enablement to the place
+before checking of the device enablement in hw_param().
 
-Reported-by: djuran@redhat.com
-Signed-off-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: djuran@redhat.com
-Link: https://lkml.kernel.org/r/20190822143421.9535-1-nhorman@tuxdriver.com
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Link: https://lore.kernel.org/r/1567012817-12625-1-git-send-email-shengjiu.wang@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/apic/vector.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ sound/soc/fsl/fsl_ssi.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 10e1d17aa0608..c352ca2e1456f 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -400,6 +400,17 @@ static int activate_reserved(struct irq_data *irqd)
- 		if (!irqd_can_reserve(irqd))
- 			apicd->can_reserve = false;
- 	}
-+
-+	/*
-+	 * Check to ensure that the effective affinity mask is a subset
-+	 * the user supplied affinity mask, and warn the user if it is not
-+	 */
-+	if (!cpumask_subset(irq_data_get_effective_affinity_mask(irqd),
-+			    irq_data_get_affinity_mask(irqd))) {
-+		pr_warn("irq %u: Affinity broken due to vector space exhaustion.\n",
-+			irqd->irq);
-+	}
-+
- 	return ret;
- }
+diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+index 0a648229e6430..bc1372c5f3243 100644
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@ -799,15 +799,6 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
+ 	u32 wl = SSI_SxCCR_WL(sample_size);
+ 	int ret;
  
+-	/*
+-	 * SSI is properly configured if it is enabled and running in
+-	 * the synchronous mode; Note that AC97 mode is an exception
+-	 * that should set separate configurations for STCCR and SRCCR
+-	 * despite running in the synchronous mode.
+-	 */
+-	if (ssi->streams && ssi->synchronous)
+-		return 0;
+-
+ 	if (fsl_ssi_is_i2s_master(ssi)) {
+ 		ret = fsl_ssi_set_bclk(substream, dai, hw_params);
+ 		if (ret)
+@@ -823,6 +814,15 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
++	/*
++	 * SSI is properly configured if it is enabled and running in
++	 * the synchronous mode; Note that AC97 mode is an exception
++	 * that should set separate configurations for STCCR and SRCCR
++	 * despite running in the synchronous mode.
++	 */
++	if (ssi->streams && ssi->synchronous)
++		return 0;
++
+ 	if (!fsl_ssi_is_ac97(ssi)) {
+ 		/*
+ 		 * Keep the ssi->i2s_net intact while having a local variable
 -- 
 2.20.1
 
