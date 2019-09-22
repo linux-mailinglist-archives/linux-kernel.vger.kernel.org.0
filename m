@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74B33BA4D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D469BA4D3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407291AbfIVSwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:52:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50694 "EHLO mail.kernel.org"
+        id S2407736AbfIVSwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:52:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407086AbfIVSwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:52:08 -0400
+        id S2407206AbfIVSwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:52:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1DDD21479;
-        Sun, 22 Sep 2019 18:52:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63BCF21479;
+        Sun, 22 Sep 2019 18:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178327;
-        bh=gzyP2iDTSZJkcDxjXtyZpYtn6CrWpPanXtKAD1JQ+j4=;
+        s=default; t=1569178330;
+        bh=XUmmIth62BR1fhxQkpaj7JH5ZHWo0kcvwHPpfRdMUzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sGUDWizTkxvsuxV6yiL/OfXUfF9jvmtY+TvW9RoxemWfIuZKssxhtl188lYJzwsaI
-         WpLegE5/MWb47MRV08L1zBpRwB8spcLTPjgcDjZnXa4MK0oH4WFJc/volhXx82sJfu
-         P3KQMZ8OpaG5nshJ8Qqzcx7+54zdmc0jpxxjc+4Q=
+        b=QcGM+efBIc8m555gN8D+XCZ7+WzynqF0bQ3qzWN+OCG67rl1mI3NjZXIVeT6xjhBg
+         f9FvwPdbgoUsnylz808NddhHEe+wPt4TrijvgSc22AprFm++SRsdntaDNitaevUnyE
+         K0MywES+oY03S+mLEEt3sEgrhJpi2SHx4/GzRx+s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 092/185] ASoC: mchp-i2s-mcc: Fix unprepare of GCLK
-Date:   Sun, 22 Sep 2019 14:47:50 -0400
-Message-Id: <20190922184924.32534-92-sashal@kernel.org>
+Cc:     Liguang Zhang <zhangliguang@linux.alibaba.com>,
+        Borislav Petkov <bp@suse.de>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 094/185] ACPI / APEI: Release resources if gen_pool_add() fails
+Date:   Sun, 22 Sep 2019 14:47:52 -0400
+Message-Id: <20190922184924.32534-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -43,57 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+From: Liguang Zhang <zhangliguang@linux.alibaba.com>
 
-[ Upstream commit 988b59467b2b14523a266957affbe9eca3e99fc9 ]
+[ Upstream commit 6abc7622271dc520f241462e2474c71723638851 ]
 
-If hw_free() gets called after hw_params(), GCLK remains prepared,
-preventing further use of it. This patch fixes this by unpreparing the
-clock in hw_free() or if hw_params() gets an error.
+Destroy ghes_estatus_pool and release memory allocated via vmalloc() on
+errors in ghes_estatus_pool_init() in order to avoid memory leaks.
 
-Fixes: 7e0cdf545a55 ("ASoC: mchp-i2s-mcc: add driver for I2SC Multi-Channel Controller")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Link: https://lore.kernel.org/r/20190820162411.24836-2-codrin.ciubotariu@microchip.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+ [ bp: do the labels properly and with descriptive names and massage. ]
+
+Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: https://lkml.kernel.org/r/1563173924-47479-1-git-send-email-zhangliguang@linux.alibaba.com
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/atmel/mchp-i2s-mcc.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/acpi/apei/ghes.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
-index 8272915fa09b9..ab7d5f98e759e 100644
---- a/sound/soc/atmel/mchp-i2s-mcc.c
-+++ b/sound/soc/atmel/mchp-i2s-mcc.c
-@@ -670,8 +670,13 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
- 	}
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 993940d582f50..6875bf629f16e 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -153,6 +153,7 @@ static void ghes_unmap(void __iomem *vaddr, enum fixed_addresses fixmap_idx)
+ int ghes_estatus_pool_init(int num_ghes)
+ {
+ 	unsigned long addr, len;
++	int rc;
  
- 	ret = regmap_write(dev->regmap, MCHP_I2SMCC_MRA, mra);
--	if (ret < 0)
-+	if (ret < 0) {
-+		if (dev->gclk_use) {
-+			clk_unprepare(dev->gclk);
-+			dev->gclk_use = 0;
-+		}
- 		return ret;
-+	}
- 	return regmap_write(dev->regmap, MCHP_I2SMCC_MRB, mrb);
+ 	ghes_estatus_pool = gen_pool_create(GHES_ESTATUS_POOL_MIN_ALLOC_ORDER, -1);
+ 	if (!ghes_estatus_pool)
+@@ -164,7 +165,7 @@ int ghes_estatus_pool_init(int num_ghes)
+ 	ghes_estatus_pool_size_request = PAGE_ALIGN(len);
+ 	addr = (unsigned long)vmalloc(PAGE_ALIGN(len));
+ 	if (!addr)
+-		return -ENOMEM;
++		goto err_pool_alloc;
+ 
+ 	/*
+ 	 * New allocation must be visible in all pgd before it can be found by
+@@ -172,7 +173,19 @@ int ghes_estatus_pool_init(int num_ghes)
+ 	 */
+ 	vmalloc_sync_all();
+ 
+-	return gen_pool_add(ghes_estatus_pool, addr, PAGE_ALIGN(len), -1);
++	rc = gen_pool_add(ghes_estatus_pool, addr, PAGE_ALIGN(len), -1);
++	if (rc)
++		goto err_pool_add;
++
++	return 0;
++
++err_pool_add:
++	vfree((void *)addr);
++
++err_pool_alloc:
++	gen_pool_destroy(ghes_estatus_pool);
++
++	return -ENOMEM;
  }
  
-@@ -710,9 +715,13 @@ static int mchp_i2s_mcc_hw_free(struct snd_pcm_substream *substream,
- 		regmap_write(dev->regmap, MCHP_I2SMCC_CR, MCHP_I2SMCC_CR_CKDIS);
- 
- 		if (dev->gclk_running) {
--			clk_disable_unprepare(dev->gclk);
-+			clk_disable(dev->gclk);
- 			dev->gclk_running = 0;
- 		}
-+		if (dev->gclk_use) {
-+			clk_unprepare(dev->gclk);
-+			dev->gclk_use = 0;
-+		}
- 	}
- 
- 	return 0;
+ static int map_gen_v2(struct ghes *ghes)
 -- 
 2.20.1
 
