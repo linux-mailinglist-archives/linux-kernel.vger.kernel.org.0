@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87467BA651
+	by mail.lfdr.de (Postfix) with ESMTP id F0C3DBA652
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392129AbfIVStO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:49:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45856 "EHLO mail.kernel.org"
+        id S2392157AbfIVStQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:49:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391849AbfIVSsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:48:54 -0400
+        id S2391864AbfIVSsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:48:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E179421A4C;
-        Sun, 22 Sep 2019 18:48:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 345E821479;
+        Sun, 22 Sep 2019 18:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178133;
-        bh=seL4JwafJp8UZCv4oDKz5AUomDKOVrqUXEXpQSwlfAk=;
+        s=default; t=1569178135;
+        bh=55epLifv/9ypt2pWBrwbCrVU96q+XbcR0MUL9tS6NaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R/e9FwQ1MW20+xas3O2McVpbTs5r+RJarKz9bVNGYm2fWzvZvJ40F+8/rlHI2Sex1
-         Rie02hHJFXPOqRcGfbRLYCwgrs10JfHWprV1aVQ0Ghfbv6EMT+Ca5zyjODhg+Ey0GD
-         RxGThTUv2J2q85sHA6IRJZGo3+t+1Y3XOVqJFShM=
+        b=tb080fzcea1f3yGtTMjbTNmM6VxTVHTS2d8bqRDtnoikMwPnZLNy9qVTmh3wM7PQ7
+         MmywxsbZnmpYkw5cTlBsQrsPjL0Bj9yQnB8d8pyLZphpnFYF3MZjqN+ces/CRbghGA
+         WaikZbjJEZzkN/CMLt94Tztev1ZzvMrsaAGumMG0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 185/203] mmc: dw_mmc: Re-store SDIO IRQs mask at system resume
-Date:   Sun, 22 Sep 2019 14:43:31 -0400
-Message-Id: <20190922184350.30563-185-sashal@kernel.org>
+Cc:     Nigel Croxon <ncroxon@redhat.com>,
+        Song Liu <songliubraving@fb.com>,
+        Sasha Levin <sashal@kernel.org>, linux-raid@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 186/203] raid5: don't increment read_errors on EILSEQ return
+Date:   Sun, 22 Sep 2019 14:43:32 -0400
+Message-Id: <20190922184350.30563-186-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -44,46 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Nigel Croxon <ncroxon@redhat.com>
 
-[ Upstream commit 7c526608d5afb62cbc967225e2ccaacfdd142e9d ]
+[ Upstream commit b76b4715eba0d0ed574f58918b29c1b2f0fa37a8 ]
 
-In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
-the driver. However, this still means dw_mci_runtime_suspend|resume() gets
-called during system suspend/resume, via pm_runtime_force_suspend|resume().
-This means during system suspend/resume, the register context of the dw_mmc
-device most likely loses its register context, even in cases when SDIO IRQs
-have been enabled.
+While MD continues to count read errors returned by the lower layer.
+If those errors are -EILSEQ, instead of -EIO, it should NOT increase
+the read_errors count.
 
-To re-enable the SDIO IRQs during system resume, the dw_mmc driver
-currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
-the SDIO card, but this isn't the recommended solution. Instead, it's
-better to deal with this locally in the dw_mmc driver, so let's do that.
+When RAID6 is set up on dm-integrity target that detects massive
+corruption, the leg will be ejected from the array.  Even if the
+issue is correctable with a sector re-write and the array has
+necessary redundancy to correct it.
 
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+The leg is ejected because it runs up the rdev->read_errors beyond
+conf->max_nr_stripes.  The return status in dm-drypt when there is
+a data integrity error is -EILSEQ (BLK_STS_PROTECTION).
+
+Signed-off-by: Nigel Croxon <ncroxon@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/dw_mmc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/md/raid5.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index eea52e2c5a0ce..79c55c7b4afd9 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -3460,6 +3460,10 @@ int dw_mci_runtime_resume(struct device *dev)
- 	/* Force setup bus to guarantee available clock output */
- 	dw_mci_setup_bus(host->slot, true);
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 21514edb2bea3..d574701185db9 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -2526,7 +2526,8 @@ static void raid5_end_read_request(struct bio * bi)
+ 		int set_bad = 0;
  
-+	/* Re-enable SDIO interrupts. */
-+	if (sdio_irq_claimed(host->slot->mmc))
-+		__dw_mci_enable_sdio_irq(host->slot, 1);
-+
- 	/* Now that slots are all setup, we can enable card detect */
- 	dw_mci_enable_cd(host);
- 
+ 		clear_bit(R5_UPTODATE, &sh->dev[i].flags);
+-		atomic_inc(&rdev->read_errors);
++		if (!(bi->bi_status == BLK_STS_PROTECTION))
++			atomic_inc(&rdev->read_errors);
+ 		if (test_bit(R5_ReadRepl, &sh->dev[i].flags))
+ 			pr_warn_ratelimited(
+ 				"md/raid:%s: read error on replacement device (sector %llu on %s).\n",
 -- 
 2.20.1
 
