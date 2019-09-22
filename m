@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E52B9BA6EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 182CABA6F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:47:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393726AbfIVSyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:54:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53842 "EHLO mail.kernel.org"
+        id S2405571AbfIVSy3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:54:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394410AbfIVSxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:53:48 -0400
+        id S2394496AbfIVSyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:54:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03E1F21BE5;
-        Sun, 22 Sep 2019 18:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB3AD2190F;
+        Sun, 22 Sep 2019 18:54:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178426;
-        bh=fP7mtkBeozDd3ru7q/dWJl8QsplEw+feOxj/O/dCgDs=;
+        s=default; t=1569178442;
+        bh=8RTrsxUPtiQV8fJJjQUR1PBXXKK19v9iUcCIGPA+was=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F6XjAJuHpMBA8eSpRAlG+KMKpy6NwOGNs+QZtTVzLPmHNEdvCqcVWVGaVJM/NN3US
-         Y4upe4CDPBbp9vAbXYSaMvKOMCaorSvJi6I5eAE7Q0Cj/OqoEvaw8iD/EsL3P8pwFU
-         kGrlBUvZKAy13UV/BmPmVBsyP8FoWAFUntAYRZn4=
+        b=f/+IMPD8l4moNEUc1mUfH9TMtzVOWheIsAZBSqXlnWulxvyita3thhQ56cco+wJ/r
+         4A+vu/Ya/M4t3ms25xNIaotGGeyS3vU7mAYHOZ2KYoyGnihiJO7H0/mLeFU0IHhj35
+         q8ftte+bWGFr/opRnpTqvVnBM8HRx/60+qvOwock=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 163/185] mmc: core: Clarify sdio_irq_pending flag for MMC_CAP2_SDIO_IRQ_NOTHREAD
-Date:   Sun, 22 Sep 2019 14:49:01 -0400
-Message-Id: <20190922184924.32534-163-sashal@kernel.org>
+Cc:     Ahzo <Ahzo@tutanota.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 175/185] drm/amd/powerplay/smu7: enforce minimal VBITimeout (v2)
+Date:   Sun, 22 Sep 2019 14:49:13 -0400
+Message-Id: <20190922184924.32534-175-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -44,100 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Ahzo <Ahzo@tutanota.com>
 
-[ Upstream commit 36d57efb4af534dd6b442ea0b9a04aa6dfa37abe ]
+[ Upstream commit f659bb6dae58c113805f92822e4c16ddd3156b79 ]
 
-The sdio_irq_pending flag is used to let host drivers indicate that it has
-signaled an IRQ. If that is the case and we only have a single SDIO func
-that have claimed an SDIO IRQ, our assumption is that we can avoid reading
-the SDIO_CCCR_INTx register and just call the SDIO func irq handler
-immediately. This makes sense, but the flag is set/cleared in a somewhat
-messy order, let's fix that up according to below.
+This fixes screen corruption/flickering on 75 Hz displays.
 
-First, the flag is currently set in sdio_run_irqs(), which is executed as a
-work that was scheduled from sdio_signal_irq(). To make it more implicit
-that the host have signaled an IRQ, let's instead immediately set the flag
-in sdio_signal_irq(). This also makes the behavior consistent with host
-drivers that uses the legacy, mmc_signal_sdio_irq() API. This have no
-functional impact, because we don't expect host drivers to call
-sdio_signal_irq() until after the work (sdio_run_irqs()) have been executed
-anyways.
+v2: make print statement debug only (Alex)
 
-Second, currently we never clears the flag when using the sdio_run_irqs()
-work, but only when using the sdio_irq_thread(). Let make the behavior
-consistent, by moving the flag to be cleared inside the common
-process_sdio_pending_irqs() function. Additionally, tweak the behavior of
-the flag slightly, by avoiding to clear it unless we processed the SDIO
-IRQ. The purpose with this at this point, is to keep the information about
-whether there have been an SDIO IRQ signaled by the host, so at system
-resume we can decide to process it without reading the SDIO_CCCR_INTx
-register.
-
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=102646
+Reviewed-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Ahzo <Ahzo@tutanota.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/core/sdio_irq.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/mmc/core/sdio_irq.c b/drivers/mmc/core/sdio_irq.c
-index 9f54a259a1b36..e4823ef0a0de9 100644
---- a/drivers/mmc/core/sdio_irq.c
-+++ b/drivers/mmc/core/sdio_irq.c
-@@ -31,6 +31,7 @@ static int process_sdio_pending_irqs(struct mmc_host *host)
- {
- 	struct mmc_card *card = host->card;
- 	int i, ret, count;
-+	bool sdio_irq_pending = host->sdio_irq_pending;
- 	unsigned char pending;
- 	struct sdio_func *func;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+index 048757e8f4949..d1919d343cce4 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+@@ -4064,6 +4064,11 @@ static int smu7_program_display_gap(struct pp_hwmgr *hwmgr)
  
-@@ -38,13 +39,16 @@ static int process_sdio_pending_irqs(struct mmc_host *host)
- 	if (mmc_card_suspended(card))
- 		return 0;
+ 	data->frame_time_x2 = frame_time_in_us * 2 / 100;
  
-+	/* Clear the flag to indicate that we have processed the IRQ. */
-+	host->sdio_irq_pending = false;
++	if (data->frame_time_x2 < 280) {
++		pr_debug("%s: enforce minimal VBITimeout: %d -> 280\n", __func__, data->frame_time_x2);
++		data->frame_time_x2 = 280;
++	}
 +
- 	/*
- 	 * Optimization, if there is only 1 function interrupt registered
- 	 * and we know an IRQ was signaled then call irq handler directly.
- 	 * Otherwise do the full probe.
- 	 */
- 	func = card->sdio_single_irq;
--	if (func && host->sdio_irq_pending) {
-+	if (func && sdio_irq_pending) {
- 		func->irq_handler(func);
- 		return 1;
- 	}
-@@ -96,7 +100,6 @@ void sdio_run_irqs(struct mmc_host *host)
- {
- 	mmc_claim_host(host);
- 	if (host->sdio_irqs) {
--		host->sdio_irq_pending = true;
- 		process_sdio_pending_irqs(host);
- 		if (host->ops->ack_sdio_irq)
- 			host->ops->ack_sdio_irq(host);
-@@ -115,6 +118,7 @@ void sdio_irq_work(struct work_struct *work)
+ 	display_gap2 = pre_vbi_time_in_us * (ref_clock / 100);
  
- void sdio_signal_irq(struct mmc_host *host)
- {
-+	host->sdio_irq_pending = true;
- 	queue_delayed_work(system_wq, &host->sdio_irq_work, 0);
- }
- EXPORT_SYMBOL_GPL(sdio_signal_irq);
-@@ -160,7 +164,6 @@ static int sdio_irq_thread(void *_host)
- 		if (ret)
- 			break;
- 		ret = process_sdio_pending_irqs(host);
--		host->sdio_irq_pending = false;
- 		mmc_release_host(host);
- 
- 		/*
+ 	cgs_write_ind_register(hwmgr->device, CGS_IND_REG__SMC, ixCG_DISPLAY_GAP_CNTL2, display_gap2);
 -- 
 2.20.1
 
