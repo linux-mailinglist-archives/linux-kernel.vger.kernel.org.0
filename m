@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4FCBA428
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08439BA429
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389902AbfIVSqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:46:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42386 "EHLO mail.kernel.org"
+        id S2389969AbfIVSq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:46:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389850AbfIVSqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:46:17 -0400
+        id S2389892AbfIVSqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:46:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA78B21D7C;
-        Sun, 22 Sep 2019 18:46:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D164A20882;
+        Sun, 22 Sep 2019 18:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569177977;
-        bh=dPMBz+h3etmnxoqEa7dwetX9+Br6b4R4IuSCrpEqtQg=;
+        s=default; t=1569177982;
+        bh=dmdbnGlcQ67LSvX15BeOkemg/oVzkc782wV47LPJXig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cUQH7Knk++lH2Sz/OPcjYLn3qQKJ4pxspbQYbFWfqjH0a7gD7nWwkpplBXKXYN4TZ
-         0QWlQl97gvMqMOkadNNTnaNDd/nJPxSWDheRA7gSAlgnNfyL9QfdDum5YFhYK+SOHG
-         HKXjfeFNUBjJ5bVZvCMC2nJacbB7za/hnY5m3X88=
+        b=ciwArBraNaElTAgzUjmvV/lZB3bic6MW7iDqd8ROXlMnsZjIiRMCJG7LuHsIEWg6f
+         G8yMMCZbQEhmVXB7NGis9m7KQRbSSrFXAgHPU0iQNGBwo13FGSz/fkHUT7w2mVEtYe
+         IPP0gNiIXiT6e3zoMouel9Nw5v2whdqrnagFAOdQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 074/203] arm64/efi: Move variable assignments after SECTIONS
-Date:   Sun, 22 Sep 2019 14:41:40 -0400
-Message-Id: <20190922184350.30563-74-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Vinod Koul <vkoul@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 077/203] dmaengine: iop-adma: use correct printk format strings
+Date:   Sun, 22 Sep 2019 14:41:43 -0400
+Message-Id: <20190922184350.30563-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184350.30563-1-sashal@kernel.org>
 References: <20190922184350.30563-1-sashal@kernel.org>
@@ -43,173 +42,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 90776dd1c427cbb4d381aa4b13338f1fb1d20f5e ]
+[ Upstream commit 00c9755524fbaa28117be774d7c92fddb5ca02f3 ]
 
-It seems that LLVM's linker does not correctly handle variable assignments
-involving section positions that are updated during the SECTIONS
-parsing. Commit aa69fb62bea1 ("arm64/efi: Mark __efistub_stext_offset as
-an absolute symbol explicitly") ran into this too, but found a different
-workaround.
+When compile-testing on other architectures, we get lots of warnings
+about incorrect format strings, like:
 
-However, this was not enough, as other variables were also miscalculated
-which manifested as boot failures under UEFI where __efistub__end was
-not taking the correct _end value (they should be the same):
+   drivers/dma/iop-adma.c: In function 'iop_adma_alloc_slots':
+   drivers/dma/iop-adma.c:307:6: warning: format '%x' expects argument of type 'unsigned int', but argument 6 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
 
-$ ld.lld -EL -maarch64elf --no-undefined -X -shared \
-	-Bsymbolic -z notext -z norelro --no-apply-dynamic-relocs \
-	-o vmlinux.lld -T poc.lds --whole-archive vmlinux.o && \
-  readelf -Ws vmlinux.lld | egrep '\b(__efistub_|)_end\b'
-368272: ffff000002218000     0 NOTYPE  LOCAL  HIDDEN    38 __efistub__end
-368322: ffff000012318000     0 NOTYPE  GLOBAL DEFAULT   38 _end
+   drivers/dma/iop-adma.c: In function 'iop_adma_prep_dma_memcpy':
+>> drivers/dma/iop-adma.c:518:40: warning: format '%u' expects argument of type 'unsigned int', but argument 5 has type 'size_t {aka long unsigned int}' [-Wformat=]
 
-$ aarch64-linux-gnu-ld.bfd -EL -maarch64elf --no-undefined -X -shared \
-	-Bsymbolic -z notext -z norelro --no-apply-dynamic-relocs \
-	-o vmlinux.bfd -T poc.lds --whole-archive vmlinux.o && \
-  readelf -Ws vmlinux.bfd | egrep '\b(__efistub_|)_end\b'
-338124: ffff000012318000     0 NOTYPE  LOCAL  DEFAULT  ABS __efistub__end
-383812: ffff000012318000     0 NOTYPE  GLOBAL DEFAULT 15325 _end
+Use %zu for printing size_t as required, and cast the dma_addr_t
+arguments to 'u64' for printing with %llx. Ideally this should use
+the %pad format string, but that requires an lvalue argument that
+doesn't work here.
 
-To work around this, all of the __efistub_-prefixed variable assignments
-need to be moved after the linker script's SECTIONS entry. As it turns
-out, this also solves the problem fixed in commit aa69fb62bea1, so those
-changes are reverted here.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/634
-Link: https://bugs.llvm.org/show_bug.cgi?id=42990
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Link: https://lore.kernel.org/r/20190809163334.489360-3-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/image-vars.h  | 51 +++++++++++++++++++++++++++++++++
- arch/arm64/kernel/image.h       | 42 ---------------------------
- arch/arm64/kernel/vmlinux.lds.S |  2 ++
- 3 files changed, 53 insertions(+), 42 deletions(-)
- create mode 100644 arch/arm64/kernel/image-vars.h
+ drivers/dma/iop-adma.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/kernel/image-vars.h b/arch/arm64/kernel/image-vars.h
-new file mode 100644
-index 0000000000000..25a2a9b479c2f
---- /dev/null
-+++ b/arch/arm64/kernel/image-vars.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Linker script variables to be set after section resolution, as
-+ * ld.lld does not like variables assigned before SECTIONS is processed.
-+ */
-+#ifndef __ARM64_KERNEL_IMAGE_VARS_H
-+#define __ARM64_KERNEL_IMAGE_VARS_H
-+
-+#ifndef LINKER_SCRIPT
-+#error This file should only be included in vmlinux.lds.S
-+#endif
-+
-+#ifdef CONFIG_EFI
-+
-+__efistub_stext_offset = stext - _text;
-+
-+/*
-+ * The EFI stub has its own symbol namespace prefixed by __efistub_, to
-+ * isolate it from the kernel proper. The following symbols are legally
-+ * accessed by the stub, so provide some aliases to make them accessible.
-+ * Only include data symbols here, or text symbols of functions that are
-+ * guaranteed to be safe when executed at another offset than they were
-+ * linked at. The routines below are all implemented in assembler in a
-+ * position independent manner
-+ */
-+__efistub_memcmp		= __pi_memcmp;
-+__efistub_memchr		= __pi_memchr;
-+__efistub_memcpy		= __pi_memcpy;
-+__efistub_memmove		= __pi_memmove;
-+__efistub_memset		= __pi_memset;
-+__efistub_strlen		= __pi_strlen;
-+__efistub_strnlen		= __pi_strnlen;
-+__efistub_strcmp		= __pi_strcmp;
-+__efistub_strncmp		= __pi_strncmp;
-+__efistub_strrchr		= __pi_strrchr;
-+__efistub___flush_dcache_area	= __pi___flush_dcache_area;
-+
-+#ifdef CONFIG_KASAN
-+__efistub___memcpy		= __pi_memcpy;
-+__efistub___memmove		= __pi_memmove;
-+__efistub___memset		= __pi_memset;
-+#endif
-+
-+__efistub__text			= _text;
-+__efistub__end			= _end;
-+__efistub__edata		= _edata;
-+__efistub_screen_info		= screen_info;
-+
-+#endif
-+
-+#endif /* __ARM64_KERNEL_IMAGE_VARS_H */
-diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
-index 2b85c0d6fa3d1..c7d38c660372c 100644
---- a/arch/arm64/kernel/image.h
-+++ b/arch/arm64/kernel/image.h
-@@ -65,46 +65,4 @@
- 	DEFINE_IMAGE_LE64(_kernel_offset_le, TEXT_OFFSET);	\
- 	DEFINE_IMAGE_LE64(_kernel_flags_le, __HEAD_FLAGS);
+diff --git a/drivers/dma/iop-adma.c b/drivers/dma/iop-adma.c
+index c6c0143670d9d..a776857d89c8f 100644
+--- a/drivers/dma/iop-adma.c
++++ b/drivers/dma/iop-adma.c
+@@ -116,9 +116,9 @@ static void __iop_adma_slot_cleanup(struct iop_adma_chan *iop_chan)
+ 	list_for_each_entry_safe(iter, _iter, &iop_chan->chain,
+ 					chain_node) {
+ 		pr_debug("\tcookie: %d slot: %d busy: %d "
+-			"this_desc: %#x next_desc: %#x ack: %d\n",
++			"this_desc: %#x next_desc: %#llx ack: %d\n",
+ 			iter->async_tx.cookie, iter->idx, busy,
+-			iter->async_tx.phys, iop_desc_get_next_desc(iter),
++			iter->async_tx.phys, (u64)iop_desc_get_next_desc(iter),
+ 			async_tx_test_ack(&iter->async_tx));
+ 		prefetch(_iter);
+ 		prefetch(&_iter->async_tx);
+@@ -306,9 +306,9 @@ iop_adma_alloc_slots(struct iop_adma_chan *iop_chan, int num_slots,
+ 				int i;
+ 				dev_dbg(iop_chan->device->common.dev,
+ 					"allocated slot: %d "
+-					"(desc %p phys: %#x) slots_per_op %d\n",
++					"(desc %p phys: %#llx) slots_per_op %d\n",
+ 					iter->idx, iter->hw_desc,
+-					iter->async_tx.phys, slots_per_op);
++					(u64)iter->async_tx.phys, slots_per_op);
  
--#ifdef CONFIG_EFI
--
--/*
-- * Use ABSOLUTE() to avoid ld.lld treating this as a relative symbol:
-- * https://github.com/ClangBuiltLinux/linux/issues/561
-- */
--__efistub_stext_offset = ABSOLUTE(stext - _text);
--
--/*
-- * The EFI stub has its own symbol namespace prefixed by __efistub_, to
-- * isolate it from the kernel proper. The following symbols are legally
-- * accessed by the stub, so provide some aliases to make them accessible.
-- * Only include data symbols here, or text symbols of functions that are
-- * guaranteed to be safe when executed at another offset than they were
-- * linked at. The routines below are all implemented in assembler in a
-- * position independent manner
-- */
--__efistub_memcmp		= __pi_memcmp;
--__efistub_memchr		= __pi_memchr;
--__efistub_memcpy		= __pi_memcpy;
--__efistub_memmove		= __pi_memmove;
--__efistub_memset		= __pi_memset;
--__efistub_strlen		= __pi_strlen;
--__efistub_strnlen		= __pi_strnlen;
--__efistub_strcmp		= __pi_strcmp;
--__efistub_strncmp		= __pi_strncmp;
--__efistub_strrchr		= __pi_strrchr;
--__efistub___flush_dcache_area	= __pi___flush_dcache_area;
--
--#ifdef CONFIG_KASAN
--__efistub___memcpy		= __pi_memcpy;
--__efistub___memmove		= __pi_memmove;
--__efistub___memset		= __pi_memset;
--#endif
--
--__efistub__text			= _text;
--__efistub__end			= _end;
--__efistub__edata		= _edata;
--__efistub_screen_info		= screen_info;
--
--#endif
--
- #endif /* __ARM64_KERNEL_IMAGE_H */
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index 7fa0083749078..803b24d2464ae 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -245,6 +245,8 @@ SECTIONS
- 	HEAD_SYMBOLS
- }
+ 				/* pre-ack all but the last descriptor */
+ 				if (num_slots != slots_per_op)
+@@ -516,7 +516,7 @@ iop_adma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dma_dest,
+ 		return NULL;
+ 	BUG_ON(len > IOP_ADMA_MAX_BYTE_COUNT);
  
-+#include "image-vars.h"
-+
- /*
-  * The HYP init code and ID map text can't be longer than a page each,
-  * and should not cross a page boundary.
+-	dev_dbg(iop_chan->device->common.dev, "%s len: %u\n",
++	dev_dbg(iop_chan->device->common.dev, "%s len: %zu\n",
+ 		__func__, len);
+ 
+ 	spin_lock_bh(&iop_chan->lock);
+@@ -549,7 +549,7 @@ iop_adma_prep_dma_xor(struct dma_chan *chan, dma_addr_t dma_dest,
+ 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
+ 
+ 	dev_dbg(iop_chan->device->common.dev,
+-		"%s src_cnt: %d len: %u flags: %lx\n",
++		"%s src_cnt: %d len: %zu flags: %lx\n",
+ 		__func__, src_cnt, len, flags);
+ 
+ 	spin_lock_bh(&iop_chan->lock);
+@@ -582,7 +582,7 @@ iop_adma_prep_dma_xor_val(struct dma_chan *chan, dma_addr_t *dma_src,
+ 	if (unlikely(!len))
+ 		return NULL;
+ 
+-	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %u\n",
++	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %zu\n",
+ 		__func__, src_cnt, len);
+ 
+ 	spin_lock_bh(&iop_chan->lock);
+@@ -620,7 +620,7 @@ iop_adma_prep_dma_pq(struct dma_chan *chan, dma_addr_t *dst, dma_addr_t *src,
+ 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
+ 
+ 	dev_dbg(iop_chan->device->common.dev,
+-		"%s src_cnt: %d len: %u flags: %lx\n",
++		"%s src_cnt: %d len: %zu flags: %lx\n",
+ 		__func__, src_cnt, len, flags);
+ 
+ 	if (dmaf_p_disabled_continue(flags))
+@@ -683,7 +683,7 @@ iop_adma_prep_dma_pq_val(struct dma_chan *chan, dma_addr_t *pq, dma_addr_t *src,
+ 		return NULL;
+ 	BUG_ON(len > IOP_ADMA_XOR_MAX_BYTE_COUNT);
+ 
+-	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %u\n",
++	dev_dbg(iop_chan->device->common.dev, "%s src_cnt: %d len: %zu\n",
+ 		__func__, src_cnt, len);
+ 
+ 	spin_lock_bh(&iop_chan->lock);
 -- 
 2.20.1
 
