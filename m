@@ -2,163 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A97FBBA2A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 14:37:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 389FEBA2AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 14:38:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfIVMhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 08:37:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35002 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728920AbfIVMhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 08:37:40 -0400
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4987481F10
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 12:37:39 +0000 (UTC)
-Received: by mail-qt1-f200.google.com with SMTP id f15so14110380qth.6
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 05:37:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZIZ6PVJwNqKV66/6V0eWwKczW/IuITxJoofGCnfWMcw=;
-        b=c77fwRyiUNrtR8+yFhC7EXaqOrYZz5Gw9FhjmAf465ElCz3M4juYhLZgexeV7osHUp
-         BVAOuInf7Qg6mFQG2WwPYXiYJofPHfZI0Dc9NzYAfnf57k3Ka86jyCMfwibCnrxPnrz6
-         OrECtmVo58DEGgd8blx7WUGR40MZDV8KF88kCxTY7sldrvmcB2bxc2TpqWFRDjHFYHgF
-         iBuMEpJKnBjCj5JFA5chKNFetIlWSx1TXmKU3msLY6i+qiG7fzVh5fVdjKt65Bq9HBnX
-         ztBUHvj5zT+O8zDS90C4QB2IazrIZC6xxzi7ZRsSeASA803GWkB8aQaynDDuEk+Zx7td
-         3e+Q==
-X-Gm-Message-State: APjAAAVHRSptOR6FsvXxYCt0LjLErAsf+LEMwhjyfinS7sszCzwdO9aU
-        v5gZT6PHZ4nD9KL9UzsHjOrE9ersPbJYc5JPtvIO09zwp6MgaKwG3n35f26pU3SSqZCryd3boOq
-        4Z5EFJ7Cg5V7bPShV/5Q+Qf/3
-X-Received: by 2002:a0c:b0cb:: with SMTP id p11mr20902506qvc.216.1569155858544;
-        Sun, 22 Sep 2019 05:37:38 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzCmU3TskOEyZFzEQEVup/JmX+POAXnjml1Z6r35N3M5NYpi2V6FhRyoe8OlTiMpNbNUDXHPA==
-X-Received: by 2002:a0c:b0cb:: with SMTP id p11mr20902486qvc.216.1569155858290;
-        Sun, 22 Sep 2019 05:37:38 -0700 (PDT)
-Received: from redhat.com (bzq-79-176-40-226.red.bezeqint.net. [79.176.40.226])
-        by smtp.gmail.com with ESMTPSA id w18sm3976903qts.44.2019.09.22.05.37.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2019 05:37:37 -0700 (PDT)
-Date:   Sun, 22 Sep 2019 08:37:30 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Matthew Cover <werekraken@gmail.com>
-Cc:     davem@davemloft.net, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        jasowang@redhat.com, edumazet@google.com, sdf@google.com,
-        matthew.cover@stackpath.com, mail@timurcelik.de, pabeni@redhat.com,
-        nicolas.dichtel@6wind.com, wangli39@baidu.com,
-        lifei.shirley@bytedance.com, tglx@linutronix.de,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH net-next] tuntap: Fallback to automq on
- TUNSETSTEERINGEBPF prog negative return
-Message-ID: <20190922080326-mutt-send-email-mst@kernel.org>
-References: <20190920185843.4096-1-matthew.cover@stackpath.com>
+        id S1729004AbfIVMiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 08:38:12 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:45505 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728826AbfIVMiM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 08:38:12 -0400
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iC17v-0003vt-Fm; Sun, 22 Sep 2019 14:38:07 +0200
+Date:   Sun, 22 Sep 2019 13:38:05 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        bcm-kernel-feedback-list@broadcom.com (open list:BROADCOM BMIPS MIPS
+        ARCHITECTURE),
+        linux-mips@vger.kernel.org (open list:BROADCOM BMIPS MIPS ARCHITECTURE)
+Subject: Re: [PATCH v2 5/5] irqchip/irq-bcm7038-l1: Support
+ brcm,int-fwd-mask
+Message-ID: <20190922133805.2cdf2d99@why>
+In-Reply-To: <20190913191542.9908-6-f.fainelli@gmail.com>
+References: <20190913191542.9908-1-f.fainelli@gmail.com>
+        <20190913191542.9908-6-f.fainelli@gmail.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190920185843.4096-1-matthew.cover@stackpath.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: f.fainelli@gmail.com, linux-kernel@vger.kernel.org, tglx@linutronix.de, jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com, cernekee@gmail.com, devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-mips@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 11:58:43AM -0700, Matthew Cover wrote:
-> Treat a negative return from a TUNSETSTEERINGEBPF bpf prog as a signal
-> to fallback to tun_automq_select_queue() for tx queue selection.
-> 
-> Compilation of this exact patch was tested.
-> 
-> For functional testing 3 additional printk()s were added.
-> 
-> Functional testing results (on 2 txq tap device):
-> 
->   [Fri Sep 20 18:33:27 2019] ========== tun no prog ==========
->   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '-1'
->   [Fri Sep 20 18:33:27 2019] tuntap: tun_automq_select_queue() ran
->   [Fri Sep 20 18:33:27 2019] ========== tun prog -1 ==========
->   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '-1'
->   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '-1'
->   [Fri Sep 20 18:33:27 2019] tuntap: tun_automq_select_queue() ran
->   [Fri Sep 20 18:33:27 2019] ========== tun prog 0 ==========
->   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '0'
->   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '0'
->   [Fri Sep 20 18:33:27 2019] ========== tun prog 1 ==========
->   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '1'
->   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '1'
->   [Fri Sep 20 18:33:27 2019] ========== tun prog 2 ==========
->   [Fri Sep 20 18:33:27 2019] tuntap: bpf_prog_run_clear_cb() returned '2'
->   [Fri Sep 20 18:33:27 2019] tuntap: tun_ebpf_select_queue() returned '0'
-> 
-> Signed-off-by: Matthew Cover <matthew.cover@stackpath.com>
+On Fri, 13 Sep 2019 12:15:42 -0700
+Florian Fainelli <f.fainelli@gmail.com> wrote:
 
-
-Could you add a bit more motivation data here?
-1. why is this a good idea
-2. how do we know existing userspace does not rely on existing behaviour
-3. why doesn't userspace need a way to figure out whether it runs on a kernel with and
-   without this patch
-
-
-thanks,
-MST
-
+> On some specific chips like 7211 we need to leave some interrupts
+> untouched/forwarded to the VPU which is another agent in the system
+> making use of that interrupt controller hardware (goes to both ARM GIC
+> and VPU L1 interrupt controller). Make that possible by using the
+> existing brcm,int-fwd-mask property.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
->  drivers/net/tun.c | 20 +++++++++++---------
->  1 file changed, 11 insertions(+), 9 deletions(-)
+>  drivers/irqchip/irq-bcm7038-l1.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-> index aab0be4..173d159 100644
-> --- a/drivers/net/tun.c
-> +++ b/drivers/net/tun.c
-> @@ -583,35 +583,37 @@ static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb)
->  	return txq;
->  }
+> diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
+> index 0673a44bbdc2..811a34201dd4 100644
+> --- a/drivers/irqchip/irq-bcm7038-l1.c
+> +++ b/drivers/irqchip/irq-bcm7038-l1.c
+> @@ -44,6 +44,7 @@ struct bcm7038_l1_chip {
+>  	struct list_head	list;
+>  	u32			wake_mask[MAX_WORDS];
+>  #endif
+> +	u32			irq_fwd_mask[MAX_WORDS];
+>  	u8			affinity[MAX_WORDS * IRQS_PER_WORD];
+>  };
 >  
-> -static u16 tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
-> +static int tun_ebpf_select_queue(struct tun_struct *tun, struct sk_buff *skb)
->  {
->  	struct tun_prog *prog;
->  	u32 numqueues;
-> -	u16 ret = 0;
-> +	int ret = -1;
->  
->  	numqueues = READ_ONCE(tun->numqueues);
->  	if (!numqueues)
->  		return 0;
->  
-> +	rcu_read_lock();
->  	prog = rcu_dereference(tun->steering_prog);
->  	if (prog)
->  		ret = bpf_prog_run_clear_cb(prog->prog, skb);
-> +	rcu_read_unlock();
->  
-> -	return ret % numqueues;
-> +	if (ret >= 0)
-> +		ret %= numqueues;
-> +
-> +	return ret;
->  }
->  
->  static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
->  			    struct net_device *sb_dev)
->  {
->  	struct tun_struct *tun = netdev_priv(dev);
-> -	u16 ret;
+> @@ -265,6 +266,7 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+>  	resource_size_t sz;
+>  	struct bcm7038_l1_cpu *cpu;
+>  	unsigned int i, n_words, parent_irq;
 > +	int ret;
 >  
-> -	rcu_read_lock();
-> -	if (rcu_dereference(tun->steering_prog))
-> -		ret = tun_ebpf_select_queue(tun, skb);
-> -	else
-> +	ret = tun_ebpf_select_queue(tun, skb);
-> +	if (ret < 0)
->  		ret = tun_automq_select_queue(tun, skb);
-> -	rcu_read_unlock();
+>  	if (of_address_to_resource(dn, idx, &res))
+>  		return -EINVAL;
+> @@ -278,6 +280,14 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+>  	else if (intc->n_words != n_words)
+>  		return -EINVAL;
 >  
->  	return ret;
->  }
-> -- 
-> 1.8.3.1
+> +	ret = of_property_read_u32_array(dn , "brcm,int-fwd-mask",
+
+What is the exact meaning of "fwd"? Forward? FirmWare Dementia?
+
+> +					 intc->irq_fwd_mask, n_words);
+> +	if (ret != 0 && ret != -EINVAL) {
+> +		/* property exists but has the wrong number of words */
+> +		pr_err("invalid brcm,int-fwd-mask property\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	cpu = intc->cpus[idx] = kzalloc(sizeof(*cpu) + n_words * sizeof(u32),
+>  					GFP_KERNEL);
+>  	if (!cpu)
+> @@ -288,8 +298,9 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+>  		return -ENOMEM;
+>  
+>  	for (i = 0; i < n_words; i++) {
+> -		l1_writel(0xffffffff, cpu->map_base + reg_mask_set(intc, i));
+> -		cpu->mask_cache[i] = 0xffffffff;
+> +		l1_writel(0xffffffff & ~intc->irq_fwd_mask[i],
+> +			  cpu->map_base + reg_mask_set(intc, i));
+> +		cpu->mask_cache[i] = 0xffffffff & ~intc->irq_fwd_mask[i];
+
+I seem to remember that (0xffffffff & whatever) == whatever, as long as
+'whatever' is a 32bit quantity. So what it this for?
+
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
