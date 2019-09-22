@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83AABBA4EC
+	by mail.lfdr.de (Postfix) with ESMTP id 150A0BA4EB
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388926AbfIVSw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:52:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51770 "EHLO mail.kernel.org"
+        id S2393189AbfIVSwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:52:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407948AbfIVSwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:52:37 -0400
+        id S2407951AbfIVSwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:52:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7594521BE5;
-        Sun, 22 Sep 2019 18:52:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7B272190F;
+        Sun, 22 Sep 2019 18:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178357;
-        bh=xEyFGuV9urV2Izp0x4mN7WNWUY36GjkjKfAmNsiu/P8=;
+        s=default; t=1569178358;
+        bh=6Ktj9zXXi9b3bAjU5OSe3uz1uAckroEcPDIgl37r6dk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=meQfy2k1lejmFNAi/vk8mBGuPznHsTgnjdHr1kuVdoqhta6hlfYx3IlzAWpRdjToD
-         T3H1OlJ7ODcG8S2wkpbbKQXpS0z0k6EfQudSg30rYbSoCW/HyzWq0d0VrGR3lQQYn7
-         MrAK0P1d0xmMfpAXGgRcJFieCHC2cahKjpFjvjfw=
+        b=nRqTN3aa9ZdL3Bf0BSBuNaXRGdJktWG5ShIE0eo5Q+9uw3KCaOpceWLseGJ7SmwJ/
+         D5MAxBDIlkRUWZhJhfRwDa1w+NjO9fZ6J2AWpKawPIWqaM/NvmcXEJYehYwkzlZ7sE
+         AWVhIPwpK1RyIP0YehKDrJu+kDD5Sl7qad5aGZRU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 112/185] media: cec-notifier: clear cec_adap in cec_notifier_unregister
-Date:   Sun, 22 Sep 2019 14:48:10 -0400
-Message-Id: <20190922184924.32534-112-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 113/185] media: saa7146: add cleanup in hexium_attach()
+Date:   Sun, 22 Sep 2019 14:48:11 -0400
+Message-Id: <20190922184924.32534-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -43,45 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 14d5511691e5290103bc480998bc322e68f139d4 ]
+[ Upstream commit 42e64117d3b4a759013f77bbcf25ab6700e55de7 ]
 
-If cec_notifier_cec_adap_unregister() is called before
-cec_unregister_adapter() then everything is OK (and this is the
-case today). But if it is the other way around, then
-cec_notifier_unregister() is called first, and that doesn't
-set n->cec_adap to NULL.
+If saa7146_register_device() fails, no cleanup is executed, leading to
+memory/resource leaks. To fix this issue, perform necessary cleanup work
+before returning the error.
 
-So if e.g. cec_notifier_set_phys_addr() is called after
-cec_notifier_unregister() but before cec_unregister_adapter()
-then n->cec_adap points to an unregistered and likely deleted
-cec adapter. So just set n->cec_adap->notifier and n->cec_adap
-to NULL for rubustness.
-
-Eventually cec_notifier_unregister will disappear and this will
-be simplified substantially.
-
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/cec/cec-notifier.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/pci/saa7146/hexium_gemini.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/cec/cec-notifier.c b/drivers/media/cec/cec-notifier.c
-index 9598c7778871a..c4aa27e0c4308 100644
---- a/drivers/media/cec/cec-notifier.c
-+++ b/drivers/media/cec/cec-notifier.c
-@@ -124,6 +124,8 @@ void cec_notifier_unregister(struct cec_notifier *n)
- {
- 	mutex_lock(&n->lock);
- 	n->callback = NULL;
-+	n->cec_adap->notifier = NULL;
-+	n->cec_adap = NULL;
- 	mutex_unlock(&n->lock);
- 	cec_notifier_put(n);
- }
+diff --git a/drivers/media/pci/saa7146/hexium_gemini.c b/drivers/media/pci/saa7146/hexium_gemini.c
+index dca20a3d98e25..f962269306707 100644
+--- a/drivers/media/pci/saa7146/hexium_gemini.c
++++ b/drivers/media/pci/saa7146/hexium_gemini.c
+@@ -292,6 +292,9 @@ static int hexium_attach(struct saa7146_dev *dev, struct saa7146_pci_extension_d
+ 	ret = saa7146_register_device(&hexium->video_dev, dev, "hexium gemini", VFL_TYPE_GRABBER);
+ 	if (ret < 0) {
+ 		pr_err("cannot register capture v4l2 device. skipping.\n");
++		saa7146_vv_release(dev);
++		i2c_del_adapter(&hexium->i2c_adapter);
++		kfree(hexium);
+ 		return ret;
+ 	}
+ 
 -- 
 2.20.1
 
