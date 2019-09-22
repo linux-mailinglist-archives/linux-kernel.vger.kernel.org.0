@@ -2,111 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A2A8BA702
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC301BA708
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408085AbfIVSzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:55:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55988 "EHLO mail.kernel.org"
+        id S2438356AbfIVSzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:55:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437197AbfIVSzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:55:04 -0400
+        id S2405617AbfIVSz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:55:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB62021A4A;
-        Sun, 22 Sep 2019 18:55:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27965208C2;
+        Sun, 22 Sep 2019 18:55:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178503;
-        bh=i5xIGvAmJ611D+9rinA4VEpsJYMNIu3CSB0dALNOkD8=;
+        s=default; t=1569178528;
+        bh=nrvU+TCofrQxh44dgJtqKNLuAH30NreF7C0BN1Tm5+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iZrw1PMqr4pgHdOgGMPDtmuteeNe19YREGXBkAoxOsJnkIGeXZchi7+7Q3oVIayyq
-         Ca0yCYaIe84AS3AirF2axRt3Ms87gC5jknssei9s1OZEaJEIVlrmID+nfeIdBAizWG
-         FSVa9I+YF8EY/ftpO2UOGuruJG5jFWlRI43E1hYw=
+        b=ZfliitYuAOpxZ10nz7xmcaYDoNnD0TCvo0NUqK8RC2lSxT/oqld3QnUuR3GRv4DlS
+         Z4sj9HDywrtIv5YJaFBZ/5Qb7RkhufauCeddgby+c/UWGPMos+yZJOy2VhFNHKPZHa
+         E9k/VHF9dIxEFymtFKbaJrXQOK+e2P2Zo2gX0grA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Valdis=20Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        linux-edac@vger.kernel.org, x86@kernel.org,
+Cc:     Tan Xiaojun <tanxiaojun@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 035/128] RAS: Fix prototype warnings
-Date:   Sun, 22 Sep 2019 14:52:45 -0400
-Message-Id: <20190922185418.2158-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 052/128] perf record: Support aarch64 random socket_id assignment
+Date:   Sun, 22 Sep 2019 14:53:02 -0400
+Message-Id: <20190922185418.2158-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valdis Klētnieks <valdis.kletnieks@vt.edu>
+From: Tan Xiaojun <tanxiaojun@huawei.com>
 
-[ Upstream commit 0a54b809a3a2c31e1055b45b03708eb730222be1 ]
+[ Upstream commit 0a4d8fb229dd78f9e0752817339e19e903b37a60 ]
 
-When building with C=2 and/or W=1, legitimate warnings are issued about
-missing prototypes:
+Same as in the commit 01766229533f ("perf record: Support s390 random
+socket_id assignment"), aarch64 also have this problem.
 
-    CHECK   drivers/ras/debugfs.c
-  drivers/ras/debugfs.c:4:15: warning: symbol 'ras_debugfs_dir' was not declared. Should it be static?
-  drivers/ras/debugfs.c:8:5: warning: symbol 'ras_userspace_consumers' was not declared. Should it be static?
-  drivers/ras/debugfs.c:38:12: warning: symbol 'ras_add_daemon_trace' was not declared. Should it be static?
-  drivers/ras/debugfs.c:54:13: warning: symbol 'ras_debugfs_init' was not declared. Should it be static?
-    CC      drivers/ras/debugfs.o
-  drivers/ras/debugfs.c:8:5: warning: no previous prototype for 'ras_userspace_consumers' [-Wmissing-prototypes]
-      8 | int ras_userspace_consumers(void)
-        |     ^~~~~~~~~~~~~~~~~~~~~~~
-  drivers/ras/debugfs.c:38:12: warning: no previous prototype for 'ras_add_daemon_trace' [-Wmissing-prototypes]
-     38 | int __init ras_add_daemon_trace(void)
-        |            ^~~~~~~~~~~~~~~~~~~~
-  drivers/ras/debugfs.c:54:13: warning: no previous prototype for 'ras_debugfs_init' [-Wmissing-prototypes]
-     54 | void __init ras_debugfs_init(void)
-        |             ^~~~~~~~~~~~~~~~
+Without this fix:
 
-Provide the proper includes.
+  [root@localhost perf]# ./perf report --header -I -v
+  ...
+  socket_id number is too big.You may need to upgrade the perf tool.
 
- [ bp: Take care of the same warnings for cec.c too. ]
+  # ========
+  # captured on    : Thu Aug  1 22:58:38 2019
+  # header version : 1
+  ...
+  # Core ID and Socket ID information is not available
+  ...
 
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac@vger.kernel.org
-Cc: x86@kernel.org
-Link: http://lkml.kernel.org/r/7168.1565218769@turing-police
+With this fix:
+  [root@localhost perf]# ./perf report --header -I -v
+  ...
+  cpumask list: 0-31
+  cpumask list: 32-63
+  cpumask list: 64-95
+  cpumask list: 96-127
+
+  # ========
+  # captured on    : Thu Aug  1 22:58:38 2019
+  # header version : 1
+  ...
+  # CPU 0: Core ID 0, Socket ID 36
+  # CPU 1: Core ID 1, Socket ID 36
+  ...
+  # CPU 126: Core ID 126, Socket ID 8442
+  # CPU 127: Core ID 127, Socket ID 8442
+  ...
+
+Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Link: http://lkml.kernel.org/r/1564717737-21602-1-git-send-email-tanxiaojun@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ras/cec.c     | 1 +
- drivers/ras/debugfs.c | 2 ++
- 2 files changed, 3 insertions(+)
+ tools/perf/util/header.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ras/cec.c b/drivers/ras/cec.c
-index 5d2b2c02cbbec..0c719787876a5 100644
---- a/drivers/ras/cec.c
-+++ b/drivers/ras/cec.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/mm.h>
- #include <linux/gfp.h>
-+#include <linux/ras.h>
- #include <linux/kernel.h>
- #include <linux/workqueue.h>
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 54c34c107cab5..0c70788593c8d 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2184,8 +2184,10 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 	/* On s390 the socket_id number is not related to the numbers of cpus.
+ 	 * The socket_id number might be higher than the numbers of cpus.
+ 	 * This depends on the configuration.
++	 * AArch64 is the same.
+ 	 */
+-	if (ph->env.arch && !strncmp(ph->env.arch, "s390", 4))
++	if (ph->env.arch && (!strncmp(ph->env.arch, "s390", 4)
++			  || !strncmp(ph->env.arch, "aarch64", 7)))
+ 		do_core_id_test = false;
  
-diff --git a/drivers/ras/debugfs.c b/drivers/ras/debugfs.c
-index 501603057dffe..12a161377f4f8 100644
---- a/drivers/ras/debugfs.c
-+++ b/drivers/ras/debugfs.c
-@@ -1,4 +1,6 @@
- #include <linux/debugfs.h>
-+#include <linux/ras.h>
-+#include "debugfs.h"
- 
- struct dentry *ras_debugfs_dir;
- 
+ 	for (i = 0; i < (u32)cpu_nr; i++) {
 -- 
 2.20.1
 
