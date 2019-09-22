@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F09BA4B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04FB7BA4BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbfIVSvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:51:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49006 "EHLO mail.kernel.org"
+        id S2405270AbfIVSv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:51:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729206AbfIVSvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:51:17 -0400
+        id S1728899AbfIVSvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:51:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10E9421A4C;
-        Sun, 22 Sep 2019 18:51:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADB59208C2;
+        Sun, 22 Sep 2019 18:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178277;
-        bh=0hsYqkua7Amw8NXUD4oWNn9p7PeLlwgDiZhYrqNPV9Y=;
+        s=default; t=1569178278;
+        bh=VJr7Y3c3/7SQkTk7jHzdjI9G2kexbWM60u3dseRor3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H8v/OFX7wKcEBsqosg9hBadv7M8ZwlUd30T68U/21N5Ud2a0GQIfxTpJhGOP/rbou
-         /9yDI7SxPFBRihau4Ypn8dxIBfidgM3qQHxKinmbTwLiJ6ZykdqnUWalZU/8ifECvp
-         0wKV36etZNvzKqQC6rIwvEze51WCepzxwEi8kJWY=
+        b=hEPNxNq842K1LbctaQS3clS68p1QwAvR2vF5aQuOaF7GdvFxXiMsqsUfbptGxqndp
+         q9kM2QKakYI+0q8nsUkjt7futm024SqDQoW57XROA7vRslajBatA0dpnnQl1Xy7ZTt
+         9RO6Je4/2MfGriOks4mBXh/0+Qs3xMZTwJNW5sK8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
@@ -32,9 +32,9 @@ Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Taeung Song <treeze.taeung@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 059/185] perf config: Honour $PERF_CONFIG env var to specify alternate .perfconfig
-Date:   Sun, 22 Sep 2019 14:47:17 -0400
-Message-Id: <20190922184924.32534-59-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 060/185] perf test vfs_getname: Disable ~/.perfconfig to get default output
+Date:   Sun, 22 Sep 2019 14:47:18 -0400
+Message-Id: <20190922184924.32534-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -50,42 +50,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 61a461fcbd62d42c29a1ea6a9cc3838ad9f49401 ]
+[ Upstream commit 4fe94ce1c6ba678b5f12b94bb9996eea4fc99e85 ]
 
-We had this comment in Documentation/perf_counter/config.c, i.e. since
-when we got this from the git sources, but never really did that
-getenv("PERF_CONFIG"), do it now as I need to disable whatever
-~/.perfconfig root has so that tests parsing tool output are done for
-the expected default output or that we specify an alternate config file
-that when read will make the tools produce expected output.
+To get the expected output we have to ignore whatever changes the user
+has in its ~/.perfconfig file, so set PERF_CONFIG to /dev/null to
+achieve that.
+
+Before:
+
+  # egrep 'trace|show_' ~/.perfconfig
+  [trace]
+  	show_zeros = yes
+  	show_duration = no
+  	show_timestamp = no
+  	show_arg_names = no
+  	show_prefix = yes
+  # echo $PERF_CONFIG
+
+  # perf test "trace + vfs_getname"
+  70: Check open filename arg using perf trace + vfs_getname: FAILED!
+  # export PERF_CONFIG=/dev/null
+  # perf test "trace + vfs_getname"
+  70: Check open filename arg using perf trace + vfs_getname: Ok
+  #
+
+After:
+
+  # egrep 'trace|show_' ~/.perfconfig
+  [trace]
+  	show_zeros = yes
+  	show_duration = no
+  	show_timestamp = no
+  	show_arg_names = no
+  	show_prefix = yes
+  # echo $PERF_CONFIG
+
+  # perf test "trace + vfs_getname"
+  70: Check open filename arg using perf trace + vfs_getname: Ok
+  #
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Taeung Song <treeze.taeung@gmail.com>
-Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
-Link: https://lkml.kernel.org/n/tip-jo209zac9rut0dz1rqvbdlgm@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-3up27pexg5i3exuzqrvt4m8u@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/perf.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/tests/shell/trace+probe_vfs_getname.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index 72df4b6fa36fd..4c45cdf38adae 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -440,6 +440,9 @@ int main(int argc, const char **argv)
+diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+index 147efeb6b1959..e97f55ba61c23 100755
+--- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+@@ -31,6 +31,10 @@ if [ $err -ne 0 ] ; then
+ 	exit $err
+ fi
  
- 	srandom(time(NULL));
- 
-+	/* Setting $PERF_CONFIG makes perf read _only_ the given config file. */
-+	config_exclusive_filename = getenv("PERF_CONFIG");
++# Do not use whatever ~/.perfconfig file, it may change the output
++# via trace.{show_timestamp,show_prefix,etc}
++export PERF_CONFIG=/dev/null
 +
- 	err = perf_config(perf_default_config, NULL);
- 	if (err)
- 		return err;
+ trace_open_vfs_getname
+ err=$?
+ rm -f ${file}
 -- 
 2.20.1
 
