@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1045BA548
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28214BA54A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 20:58:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408166AbfIVS4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:56:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57682 "EHLO mail.kernel.org"
+        id S2438536AbfIVS4O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:56:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408119AbfIVSz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:55:57 -0400
+        id S2404244AbfIVS4M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:56:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 032E82184D;
-        Sun, 22 Sep 2019 18:55:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECA422184D;
+        Sun, 22 Sep 2019 18:56:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178557;
-        bh=B05maExQbhzmRz3QtW0v5BieCGz5HdQQOqgZortZCcA=;
+        s=default; t=1569178571;
+        bh=aBfrh3L5PZ4K35YPTLRGipJ41jGGSUx0n61xmPkmCZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vv1dGigcj2DPR6weTZuGmKm6drNBKsscQtyrU+Ww6Qzalfs6KMWlKWRa0mtsUMnZo
-         fYJKlUU1TIqadS1jBsDq5XbI4ES23Xtn6RFdap1JipwHpuz6Wv+64qdd/FgjtDOGAY
-         btiq0EoEMroHO8PKoqTW8oUUvuRM388vGFDveEU4=
+        b=NdqzR8ykUbFhfnbSjTJZzltZ4M+ungNHY7BcO0FNdXlA7wnevIBkGxBKjsx0VG57k
+         0In+tmV+1Qaid7X8P7xjxyEs3NL6xH8d0EigQ9n2tUJV60aUAFMDGFMqKEcPO/B9VF
+         QqSDMDb8Vuy0LF5D6iGsZTUrMhhlOD8TSGWWmEwk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Gerald BAEZA <gerald.baeza@st.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Daniel Drake <drake@endlessm.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 072/128] libperf: Fix alignment trap with xyarray contents in 'perf stat'
-Date:   Sun, 22 Sep 2019 14:53:22 -0400
-Message-Id: <20190922185418.2158-72-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 083/128] ASoC: es8316: fix headphone mixer volume table
+Date:   Sun, 22 Sep 2019 14:53:33 -0400
+Message-Id: <20190922185418.2158-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185418.2158-1-sashal@kernel.org>
 References: <20190922185418.2158-1-sashal@kernel.org>
@@ -49,56 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald BAEZA <gerald.baeza@st.com>
+From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 
-[ Upstream commit d9c5c083416500e95da098c01be092b937def7fa ]
+[ Upstream commit f972d02fee2496024cfd6f59021c9d89d54922a6 ]
 
-Following the patch 'perf stat: Fix --no-scale', an alignment trap
-happens in process_counter_values() on ARMv7 platforms due to the
-attempt to copy non 64 bits aligned double words (pointed by 'count')
-via a NEON vectored instruction ('vld1' with 64 bits alignment
-constraint).
+This patch fix setting table of Headphone mixer volume.
+Current code uses 4 ... 7 values but these values are prohibited.
 
-This patch sets a 64 bits alignment constraint on 'contents[]' field in
-'struct xyarray' since the 'count' pointer used above points to such a
-structure.
+Correct settings are the following:
+  0000 -12dB
+  0001 -10.5dB
+  0010 -9dB
+  0011 -7.5dB
+  0100 -6dB
+  1000 -4.5dB
+  1001 -3dB
+  1010 -1.5dB
+  1011 0dB
 
-Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1566464769-16374-1-git-send-email-gerald.baeza@st.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Reviewed-by: Daniel Drake <drake@endlessm.com>
+Link: https://lore.kernel.org/r/20190826153900.25969-1-katsuhiro@katsuster.net
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/xyarray.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ sound/soc/codecs/es8316.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/xyarray.h b/tools/perf/util/xyarray.h
-index 7ffe562e7ae7f..2627b038b6f2a 100644
---- a/tools/perf/util/xyarray.h
-+++ b/tools/perf/util/xyarray.h
-@@ -2,6 +2,7 @@
- #ifndef _PERF_XYARRAY_H_
- #define _PERF_XYARRAY_H_ 1
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index e97d12d578b00..9ebe77c3784a8 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -46,7 +46,10 @@ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(adc_vol_tlv, -9600, 50, 1);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_max_gain_tlv, -650, 150, 0);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_min_gain_tlv, -1200, 150, 0);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_target_tlv, -1650, 150, 0);
+-static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(hpmixer_gain_tlv, -1200, 150, 0);
++static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(hpmixer_gain_tlv,
++	0, 4, TLV_DB_SCALE_ITEM(-1200, 150, 0),
++	8, 11, TLV_DB_SCALE_ITEM(-450, 150, 0),
++);
  
-+#include <linux/compiler.h>
- #include <sys/types.h>
+ static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(adc_pga_gain_tlv,
+ 	0, 0, TLV_DB_SCALE_ITEM(-350, 0, 0),
+@@ -84,7 +87,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
+ 	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
+ 		       4, 0, 3, 1, hpout_vol_tlv),
+ 	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
+-		       0, 4, 7, 0, hpmixer_gain_tlv),
++		       0, 4, 11, 0, hpmixer_gain_tlv),
  
- struct xyarray {
-@@ -10,7 +11,7 @@ struct xyarray {
- 	size_t entries;
- 	size_t max_x;
- 	size_t max_y;
--	char contents[];
-+	char contents[] __aligned(8);
- };
- 
- struct xyarray *xyarray__new(int xlen, int ylen, size_t entry_size);
+ 	SOC_ENUM("Playback Polarity", dacpol),
+ 	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
 -- 
 2.20.1
 
