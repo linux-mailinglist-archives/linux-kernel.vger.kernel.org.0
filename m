@@ -2,47 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CB4CBA75E
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E819FBA761
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2019 21:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438683AbfIVS5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 14:57:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60270 "EHLO mail.kernel.org"
+        id S2438714AbfIVS6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 14:58:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394818AbfIVS5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:57:40 -0400
+        id S2438640AbfIVS5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Sep 2019 14:57:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86A122186A;
-        Sun, 22 Sep 2019 18:57:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 385362190F;
+        Sun, 22 Sep 2019 18:57:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178659;
-        bh=Xl2elV2ZT10DYuQvJd9qDHbzliuUMTkiEbjCUrmdKss=;
+        s=default; t=1569178665;
+        bh=q7MH5xjL57lYshgLlsRFQ3lgZeENdcd5LR0JjZVkFok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LwuhuxXlFqqL5voTO+C0DZdBhwzCAFtSdlM/k6+mPRNKpPnPcb5Icj6jRILJONDAA
-         fTqlEYce2oyg3ioQN+rS3lj0QfFWu9Vn/iIa/JMf2oYe5M+p9i2UXt2tBxOt74G8l1
-         3+ZmbiuMnm9BG0pPiJM8wvfAcP4talHi5nEljTbo=
+        b=RT/OkQwqF7zBATM9QlTz76CS1/EuLGz2tKqzcdYYIkzCI+cpVR8UssCCKOHxZsJa5
+         uyG+ATCUywmiNMz45LXOaDv9hNQJXpks2g/DnkZp/hbmiYXbnzdvLW+66vBJHGEWhC
+         qEV9cXafEJROr5c0gW1DUdKiytUwf/45iXZDa6As=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, lizefan@huawei.com,
-        longman@redhat.com, luca.abeni@santannapisa.it,
-        rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
+Cc:     Robert Richter <rrichter@marvell.com>,
+        Borislav Petkov <bp@suse.de>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 12/89] sched/core: Fix CPU controller for !RT_GROUP_SCHED
-Date:   Sun, 22 Sep 2019 14:56:00 -0400
-Message-Id: <20190922185717.3412-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 17/89] EDAC/mc: Fix grain_bits calculation
+Date:   Sun, 22 Sep 2019 14:56:05 -0400
+Message-Id: <20190922185717.3412-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922185717.3412-1-sashal@kernel.org>
 References: <20190922185717.3412-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -51,79 +47,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juri Lelli <juri.lelli@redhat.com>
+From: Robert Richter <rrichter@marvell.com>
 
-[ Upstream commit a07db5c0865799ebed1f88be0df50c581fb65029 ]
+[ Upstream commit 3724ace582d9f675134985727fd5e9811f23c059 ]
 
-On !CONFIG_RT_GROUP_SCHED configurations it is currently not possible to
-move RT tasks between cgroups to which CPU controller has been attached;
-but it is oddly possible to first move tasks around and then make them
-RT (setschedule to FIFO/RR).
+The grain in EDAC is defined as "minimum granularity for an error
+report, in bytes". The following calculation of the grain_bits in
+edac_mc is wrong:
 
-E.g.:
+	grain_bits = fls_long(e->grain) + 1;
 
-  # mkdir /sys/fs/cgroup/cpu,cpuacct/group1
-  # chrt -fp 10 $$
-  # echo $$ > /sys/fs/cgroup/cpu,cpuacct/group1/tasks
-  bash: echo: write error: Invalid argument
-  # chrt -op 0 $$
-  # echo $$ > /sys/fs/cgroup/cpu,cpuacct/group1/tasks
-  # chrt -fp 10 $$
-  # cat /sys/fs/cgroup/cpu,cpuacct/group1/tasks
-  2345
-  2598
-  # chrt -p 2345
-  pid 2345's current scheduling policy: SCHED_FIFO
-  pid 2345's current scheduling priority: 10
+Where grain_bits is defined as:
 
-Also, as Michal noted, it is currently not possible to enable CPU
-controller on unified hierarchy with !CONFIG_RT_GROUP_SCHED (if there
-are any kernel RT threads in root cgroup, they can't be migrated to the
-newly created CPU controller's root in cgroup_update_dfl_csses()).
+	grain = 1 << grain_bits
 
-Existing code comes with a comment saying the "we don't support RT-tasks
-being in separate groups". Such comment is however stale and belongs to
-pre-RT_GROUP_SCHED times. Also, it doesn't make much sense for
-!RT_GROUP_ SCHED configurations, since checks related to RT bandwidth
-are not performed at all in these cases.
+Example:
 
-Make moving RT tasks between CPU controller groups viable by removing
-special case check for RT (and DEADLINE) tasks.
+	grain = 8	# 64 bit (8 bytes)
+	grain_bits = fls_long(8) + 1
+	grain_bits = 4 + 1 = 5
 
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Michal Koutný <mkoutny@suse.com>
-Reviewed-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Acked-by: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: lizefan@huawei.com
-Cc: longman@redhat.com
-Cc: luca.abeni@santannapisa.it
-Cc: rostedt@goodmis.org
-Link: https://lkml.kernel.org/r/20190719063455.27328-1-juri.lelli@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+	grain = 1 << grain_bits
+	grain = 1 << 5 = 32
+
+Replace it with the correct calculation:
+
+	grain_bits = fls_long(e->grain - 1);
+
+The example gives now:
+
+	grain_bits = fls_long(8 - 1)
+	grain_bits = fls_long(7)
+	grain_bits = 3
+
+	grain = 1 << 3 = 8
+
+Also, check if the hardware reports a reasonable grain != 0 and fallback
+with a warning to 1 byte granularity otherwise.
+
+ [ bp: massage a bit. ]
+
+Signed-off-by: Robert Richter <rrichter@marvell.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190624150758.6695-2-rrichter@marvell.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/edac/edac_mc.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ff128e281d1c6..3d24d401b9d42 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6342,10 +6342,6 @@ static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
- #ifdef CONFIG_RT_GROUP_SCHED
- 		if (!sched_rt_can_attach(css_tg(css), task))
- 			return -EINVAL;
--#else
--		/* We don't support RT-tasks being in separate groups */
--		if (task->sched_class != &fair_sched_class)
--			return -EINVAL;
- #endif
- 		/*
- 		 * Serialize against wake_up_new_task() such that if its
+diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
+index 80801c616395e..f7fa05fee45a1 100644
+--- a/drivers/edac/edac_mc.c
++++ b/drivers/edac/edac_mc.c
+@@ -1240,9 +1240,13 @@ void edac_mc_handle_error(const enum hw_event_mc_err_type type,
+ 	if (p > e->location)
+ 		*(p - 1) = '\0';
+ 
+-	/* Report the error via the trace interface */
+-	grain_bits = fls_long(e->grain) + 1;
++	/* Sanity-check driver-supplied grain value. */
++	if (WARN_ON_ONCE(!e->grain))
++		e->grain = 1;
++
++	grain_bits = fls_long(e->grain - 1);
+ 
++	/* Report the error via the trace interface */
+ 	if (IS_ENABLED(CONFIG_RAS))
+ 		trace_mc_event(type, e->msg, e->label, e->error_count,
+ 			       mci->mc_idx, e->top_layer, e->mid_layer,
 -- 
 2.20.1
 
