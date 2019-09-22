@@ -2,132 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD1BDBABF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:29:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F8DBAC00
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 00:32:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbfIVW3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 18:29:21 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41240 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729883AbfIVW3U (ORCPT
+        id S2388868AbfIVWcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 18:32:42 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:34961 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388618AbfIVWcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 18:29:20 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h7so11838011wrw.8;
-        Sun, 22 Sep 2019 15:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9F/+/m59W3Dcig0n0hbTlhgv2402meDrVVrsrjXeJKw=;
-        b=CzA6rUVQzQuRmiGW/YjIwozCjvGCOHLdNL5i5iEYLdhUc7lGGrFaSeJIXSBerLbFdM
-         9iAaZr0TCMQCQ8nuUzho7il+2IhMIMJrS4D4oZzNGUjBgPx7U1D2Ds4ELZ9rhoL2f35W
-         DnCkQ6TUDXbNP1vJIrMOeEYnr1mPsRTCcxmHmZXztOSEmi0Hf1fLT0XtKXrXblnXaXND
-         h4UEKs1UeRL0eamP9ftN8JkT6+lJDy6hDXe9o7RY3AspaX09fH8RnOSaSbuSjItaaWeF
-         /Cin3FasCqlFphbmO7kj4gZ6bbde+r2oE73bPXG5CBIDUvR0+Mj1VwcUE9y0ikcqfWdX
-         7weQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9F/+/m59W3Dcig0n0hbTlhgv2402meDrVVrsrjXeJKw=;
-        b=GoU0j6P2afCTCEh5xXXrpA5ogtxjHRNk/Smi2Z6lPaOWw3BN0MI87J8JHNt5HICyJb
-         slSGLKJdo6PatJONaSQ1iIb6AOL1ab5dHn1m7LNMRtaS5Z/pCZSib7S2Gc3y1YK2YtXn
-         jENQtUYDffnKfGnEChEkScSGZQBDiIVWtwnvztsiOcJayo1h6ooshKnLw1/AomOadZTh
-         N7ukG5jEoaYeFFun5iaPGrNnZ4Duj0XJa0qqkhZ1zPtrOxBALqSH2zKENORWclgCP8A7
-         lrXYsAUJBkDRqF2ZVbk/qLP82ydv7uJSsXUL4G0tB/TUhxQAVxpy6VECuA1mOzLfEDK9
-         uvkQ==
-X-Gm-Message-State: APjAAAXBK2YHhUyoR6bix4mRnsQw4iEGtDKZM8cm8kzfedXmPq7MM35m
-        2ONBSq8S2x2cF1Xo1Nru29IErXH+
-X-Google-Smtp-Source: APXvYqz803890ifCAZk3zmRNKNz51yt4V6yZulA5FDFsi8VDPkNULWIzAdGIBSzq2/cUEe4aYmufiw==
-X-Received: by 2002:a5d:6a09:: with SMTP id m9mr7608305wru.12.1569191357572;
-        Sun, 22 Sep 2019 15:29:17 -0700 (PDT)
-Received: from [192.168.2.202] (pD9EA35A6.dip0.t-ipconnect.de. [217.234.53.166])
-        by smtp.gmail.com with ESMTPSA id c10sm15870791wrf.58.2019.09.22.15.29.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Sep 2019 15:29:16 -0700 (PDT)
-Subject: Re: [PATCH] serdev: Add ACPI devices by ResourceSource field
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-serial@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190919195624.1140941-1-luzmaximilian@gmail.com>
- <50b016a1-ed4a-b848-4658-a05731727d7e@redhat.com>
-From:   Maximilian Luz <luzmaximilian@gmail.com>
-Message-ID: <4c2cc8b7-8541-0912-3162-399777dc8dd2@gmail.com>
-Date:   Mon, 23 Sep 2019 00:29:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Sun, 22 Sep 2019 18:32:41 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iC9LR-0008N2-IH; Sun, 22 Sep 2019 15:24:37 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iC9LQ-0005B3-SS; Sun, 22 Sep 2019 15:24:37 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190917100350.GB1872@dhcp22.suse.cz>
+        <38349607-b09c-fa61-ccbb-20bee9f282a3@gmx.de>
+        <20190917153830.GE1872@dhcp22.suse.cz>
+        <87ftku96md.fsf@x220.int.ebiederm.org>
+        <20190918071541.GB12770@dhcp22.suse.cz>
+        <87h8585bej.fsf@x220.int.ebiederm.org>
+        <20190922065801.GB18814@dhcp22.suse.cz>
+Date:   Sun, 22 Sep 2019 16:24:10 -0500
+In-Reply-To: <20190922065801.GB18814@dhcp22.suse.cz> (Michal Hocko's message
+        of "Sun, 22 Sep 2019 08:58:01 +0200")
+Message-ID: <875zlk3tz9.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <50b016a1-ed4a-b848-4658-a05731727d7e@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1iC9LQ-0005B3-SS;;;mid=<875zlk3tz9.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1976R+De7cUhIv9x7RdCVrOgZXcs3liSwU=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4992]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Michal Hocko <mhocko@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 315 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 3.5 (1.1%), b_tie_ro: 2.5 (0.8%), parse: 1.02
+        (0.3%), extract_message_metadata: 14 (4.4%), get_uri_detail_list: 2.3
+        (0.7%), tests_pri_-1000: 16 (5.0%), tests_pri_-950: 1.00 (0.3%),
+        tests_pri_-900: 0.81 (0.3%), tests_pri_-90: 20 (6.3%), check_bayes: 19
+        (5.9%), b_tokenize: 5 (1.7%), b_tok_get_all: 7 (2.2%), b_comp_prob:
+        1.66 (0.5%), b_tok_touch_all: 2.9 (0.9%), b_finish: 0.61 (0.2%),
+        tests_pri_0: 250 (79.3%), check_dkim_signature: 0.37 (0.1%),
+        check_dkim_adsp: 2.2 (0.7%), poll_dns_idle: 0.70 (0.2%), tests_pri_10:
+        1.68 (0.5%), tests_pri_500: 5 (1.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: threads-max observe limits
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Michal Hocko <mhocko@kernel.org> writes:
 
-On 9/20/19 5:00 PM, Hans de Goede wrote:
-> So as promised I've given this patch a try, unfortunately it breaks
-> existing users of ACPI serdev device instantation.
-> 
-> After adding this patch "ls /sys/bus/serial/devices" is empty,
-> where as before it gives:
-> 
-> [root@dhcp-45-50 ~]# ls -l /sys/bus/serial/devices/
-> total 0
-> lrwxrwxrwx. 1 root root 0 Sep 20 16:43 serial0 -> ../../../devices/pci0000:00/8086228A:00/serial0
-> lrwxrwxrwx. 1 root root 0 Sep 20 16:43 serial0-0 -> ../../../devices/pci0000:00/8086228A:00/serial0/serial0-0
-> 
-> And since the serdev is missing bluetooth does not work.
+> From 711000fdc243b6bc68a92f9ef0017ae495086d39 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Sun, 22 Sep 2019 08:45:28 +0200
+> Subject: [PATCH] kernel/sysctl.c: do not override max_threads provided by
+>  userspace
+>
+> Partially revert 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
+> because the patch is causing a regression to any workload which needs to
+> override the auto-tuning of the limit provided by kernel.
+>
+> set_max_threads is implementing a boot time guesstimate to provide a
+> sensible limit of the concurrently running threads so that runaways will
+> not deplete all the memory. This is a good thing in general but there
+> are workloads which might need to increase this limit for an application
+> to run (reportedly WebSpher MQ is affected) and that is simply not
+> possible after the mentioned change. It is also very dubious to override
+> an admin decision by an estimation that doesn't have any direct relation
+> to correctness of the kernel operation.
+>
+> Fix this by dropping set_max_threads from sysctl_max_threads so any
+> value is accepted as long as it fits into MAX_THREADS which is important
+> to check because allowing more threads could break internal robust futex
+> restriction. While at it, do not use MIN_THREADS as the lower boundary
+> because it is also only a heuristic for automatic estimation and admin
+> might have a good reason to stop new threads to be created even when
+> below this limit.
+>
+> Fixes: 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
+> Cc: stable
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
-Thanks to some testing by Hans, it turns out that the reason for this is
-that acpi_walk_resources fails with AE_AML_INVALID_RESOURCE_TYPE for a
-specific device. If anyone is interested, the _CRS of the device in
-question is
-
-     Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
-     {
-         Name (NAM, Buffer (0x14)
-         {
-             "\\_SB.PCI0.SDHB.BRC1"
-         })
-         Name (SPB, Buffer (0x0C)
-         {
-             /* 0000 */  0x8E, 0x1D, 0x00, 0x01, 0x00, 0xC0, 0x02, 0x00,
-             /* 0008 */  0x00, 0x01, 0x00, 0x00
-         })
-         Name (END, ResourceTemplate ()
-         {
-         })
-         Concatenate (SPB, NAM, Local0)
-         Concatenate (Local0, END, Local1)
-         Return (Local1)
-     }
-
-To solve this, I propose ignoring errors that occur when evaluating the
-_CRS method. Note that with the previously discussed change for v2,
-where we will only look at the first device in _CRS, we should be able
-to handle errors from the actual serdev device allocation separately
-(and only ignore AML evaluation errors).
-
-Further, I think it might also make sense to move the status and
-already-enumerated checks out of acpi_serdev_register_device to before
-looking at _CRS. On one hand, this might save us from unnecessarily
-checking the _CRS on devices that are not present, but on the other
-hand, moving the status check may cause more AML code execution, as we'd
-be checking the status of every device, even if it doesn't have a _CRS.
-Maybe a better solution would be something like: Check if device has
-already been enumerated, then check for _CRS presence, then for
-status/device-presence, and finally look at _CRS contents and
-potentially allocate serdev client?
-
-Regards,
-
-Maximilian
+> ---
+>  kernel/fork.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 2852d0e76ea3..ef865be37e98 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -2929,7 +2929,7 @@ int sysctl_max_threads(struct ctl_table *table, int write,
+>  	struct ctl_table t;
+>  	int ret;
+>  	int threads = max_threads;
+> -	int min = MIN_THREADS;
+> +	int min = 1;
+>  	int max = MAX_THREADS;
+>  
+>  	t = *table;
+> @@ -2941,7 +2941,7 @@ int sysctl_max_threads(struct ctl_table *table, int write,
+>  	if (ret || !write)
+>  		return ret;
+>  
+> -	set_max_threads(threads);
+> +	max_threads = threads;
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.20.1
