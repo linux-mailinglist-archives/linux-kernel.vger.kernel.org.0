@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37B32BBBF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFCF9BBBFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:05:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfIWTCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 15:02:12 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43954 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbfIWTCL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:02:11 -0400
-Received: by mail-lj1-f194.google.com with SMTP id n14so9759618ljj.10
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 12:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nfMT6FFABs8+WVOQ4a5gNHPABOSr1e233skwsQrCiw8=;
-        b=IpzY4nqJc66P16YRm5ZfJwieV6oydkv4tIN11aSpzafuJZq6yNKAstSXQChu2guroN
-         J2IQDMziYaomuguf6h05Q9XzLki4nCDmgldzB9zsmDlMzx8nZoSIAweGHXXeWyeukUhJ
-         DFCCvN44yT+LeYV5J6NQE7cdJtFiUpgev6CS4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nfMT6FFABs8+WVOQ4a5gNHPABOSr1e233skwsQrCiw8=;
-        b=hfLPt2l21CP6AP/YaHcBChbgVLOK9MugZxAhp9PUraD06+BEH7/kvXHtERg/3r47cM
-         9+1keyEHSKiip7iCKdJquJ9o9oMgYi6pt90bAsy8M/I9CwDPxPAVRAWF/slmbeZPwM1q
-         jPZtZbRyrQKYaf+ordrI7mOLdpYDqjPpSdOHlHuFI1OQKXztpiI208FAZxHz8d+sOI9m
-         6gB/ZUWTHwR3NRKLqxITYpgCWsVjMgipGOwIpKVFA8XbQF/bxsWusm35W43XwTRr2dIl
-         XjNTYZV2uggWCz5EccbOY9jKjBIv7x8mJECzbqi0yOMff7rShgcA33zNsYssanHX5Pm9
-         tgnQ==
-X-Gm-Message-State: APjAAAXMWkqPGkBuXJVCJ769QLSSGxUfP2ao4RnXskI9kKkmJpviDSj/
-        lQ6quisubyLuRZojpwdUyePdNj32W0s=
-X-Google-Smtp-Source: APXvYqzb1t5QkXsdU0Vzgx30avh+JcGzEIzrXQuBI0f4cfuwONN3ls9QB40rH9fSucaz8KottYJQiQ==
-X-Received: by 2002:a2e:98ce:: with SMTP id s14mr544196ljj.108.1569265328697;
-        Mon, 23 Sep 2019 12:02:08 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id x25sm1272768ljb.60.2019.09.23.12.02.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2019 12:02:07 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id d17so10985662lfa.7
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 12:02:05 -0700 (PDT)
-X-Received: by 2002:a19:f204:: with SMTP id q4mr624411lfh.29.1569265324930;
- Mon, 23 Sep 2019 12:02:04 -0700 (PDT)
+        id S1732345AbfIWTFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 15:05:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41436 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726708AbfIWTFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 15:05:17 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C7A51DBA;
+        Mon, 23 Sep 2019 19:05:17 +0000 (UTC)
+Received: from mail (ovpn-120-159.rdu2.redhat.com [10.10.120.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E3F7260852;
+        Mon, 23 Sep 2019 19:05:14 +0000 (UTC)
+Date:   Mon, 23 Sep 2019 15:05:14 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/17] KVM: retpolines: x86: eliminate retpoline from
+ vmx.c exit handlers
+Message-ID: <20190923190514.GB19996@redhat.com>
+References: <20190920212509.2578-1-aarcange@redhat.com>
+ <20190920212509.2578-16-aarcange@redhat.com>
+ <87o8zb8ik1.fsf@vitty.brq.redhat.com>
+ <7329012d-0b3b-ce86-f58d-3d2d5dc5a790@redhat.com>
 MIME-Version: 1.0
-References: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
-In-Reply-To: <CAJ-EccM49yBA+xgkR+3m5pEAJqmH_+FxfuAjijrQxaxxMUAt3Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 23 Sep 2019 12:01:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
-Message-ID: <CAHk-=wiAsJLw1egFEE=Z7-GGtM6wcvtyytXZA1+BHqta4gg6Hw@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID LSM changes for 5.4
-To:     Micah Morton <mortonm@chromium.org>, Jann Horn <jannh@google.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7329012d-0b3b-ce86-f58d-3d2d5dc5a790@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Mon, 23 Sep 2019 19:05:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 10:41 AM Micah Morton <mortonm@chromium.org> wrote:
->
-> Fix for SafeSetID bug that was introduced in 5.3
+On Mon, Sep 23, 2019 at 11:57:57AM +0200, Paolo Bonzini wrote:
+> On 23/09/19 11:31, Vitaly Kuznetsov wrote:
+> > +#ifdef CONFIG_RETPOLINE
+> > +		if (exit_reason == EXIT_REASON_MSR_WRITE)
+> > +			return handle_wrmsr(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_PREEMPTION_TIMER)
+> > +			return handle_preemption_timer(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_PENDING_INTERRUPT)
+> > +			return handle_interrupt_window(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+> > +			return handle_external_interrupt(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_HLT)
+> > +			return handle_halt(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_PAUSE_INSTRUCTION)
+> > +			return handle_pause(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_MSR_READ)
+> > +			return handle_rdmsr(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_CPUID)
+> > +			return handle_cpuid(vcpu);
+> > +		else if (exit_reason == EXIT_REASON_EPT_MISCONFIG)
+> > +			return handle_ept_misconfig(vcpu);
+> > +#endif
+> >  		return kvm_vmx_exit_handlers[exit_reason](vcpu);
+> 
+> Most of these, while frequent, are already part of slow paths.
+> 
+> I would keep only EXIT_REASON_MSR_WRITE, EXIT_REASON_PREEMPTION_TIMER,
+> EXIT_REASON_EPT_MISCONFIG and add EXIT_REASON_IO_INSTRUCTION.
 
-So this seems to be a good fix, but the bug itself came from the fact that
+Intuition doesn't work great when it comes to CPU speculative
+execution runtime. I can however run additional benchmarks to verify
+your theory that keeping around frequent retpolines will still perform
+ok.
 
-    rcu_swap_protected(..)
+> If you make kvm_vmx_exit_handlers const, can the compiler substitute for
+> instance kvm_vmx_exit_handlers[EXIT_REASON_MSR_WRITE] with handle_wrmsr?
+>  Just thinking out loud, not sure if it's an improvement code-wise.
 
-is so hard to read, and I don't see *why* it's so pointlessly hard to read.
+gcc gets right if you make it const, it calls kvm_emulate_wrmsr in
+fact. However I don't think const will fly
+with_vmx_hardware_setup()... in fact at runtime testing nested I just
+got:
 
-Yes, we have some macros that change their arguments, but they have a
-_reason_ to do so (ie they return two different values) and they tend
-to be very special in other ways too.
-
-But rcu_swap_protected() has no reason for it's odd semantics.
-
-Looking at that 'handle_policy_update()' function, it's entirely
-reasonable to think "pol cannot possibly be NULL". When I looked at
-the fix patch, that was my initial reaction too, and it's probably the
-reason Jann's commit 03638e62f55f ("LSM: SafeSetID: rewrite userspace
-API to atomic updates") had that bug to begin with.
-
-I don't see the original discussion at all, it's not on
-Linux-Security-Module for some reason, so I can't tell when/if the
-NULL pointer test got deleted.
-
-Anyway, this bug would likely had been avoided if rcu_swap_protected()
-just returned the old pointer instead of changing the argument.
-
-There are only a handful or users of that macro, maybe this could be fixed?
-
-Adding some of the RCU parties to the participants..
-
-Also, the commit message for this fix was a mess, I feel. It says
-"SafeSetID: Stop releasing uninitialized ruleset", but the ruleset it
-releases is perfectly initialized. It just might be NULL because it
-doesn't _exist_.
-
-           Linus
+BUG: unable to handle page fault for address: ffffffffa00751e0
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0003) - permissions violation
+PGD 2424067 P4D 2424067 PUD 2425063 PMD 7cc09067 PTE 80000000741cb161
+Oops: 0003 [#1] SMP NOPTI
+CPU: 1 PID: 4458 Comm: insmod Not tainted 5.3.0+ #1
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS ?-20190711_202441-buildvm-armv7-10.arm.fedoraproject.or4
+RIP: 0010:nested_vmx_hardware_setup+0x29a/0x37a [kvm_intel]
+Code: 41 ff c5 66 89 2c 85 20 92 0b a0 66 44 89 34 85 22 92 0b a0 49 ff c7 e9 e6 fe ff ff 44 89 2d 28 24 fc ff 48
+RSP: 0018:ffffc90000257c18 EFLAGS: 00010246
+RAX: ffffffffa001e0b0 RBX: ffffffffa0075140 RCX: 0000000000000000
+RDX: ffff888078f60000 RSI: 0000000000002401 RDI: 0000000000000018
+RBP: 0000000000006c08 R08: 0000000000001000 R09: 000000000007ffdc
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000006c08
+R13: 0000000000000017 R14: 0000000000000268 R15: 0000000000000018
+FS:  00007f7fb7ef0b80(0000) GS:ffff88807da40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffa00751e0 CR3: 0000000079620001 CR4: 0000000000160ee0
+Call Trace:
+ hardware_setup+0x4df/0x5b2 [kvm_intel]
+ kvm_arch_hardware_setup+0x2f/0x27b [kvm_intel]
+ kvm_init+0x5d/0x26d [kvm_intel]
