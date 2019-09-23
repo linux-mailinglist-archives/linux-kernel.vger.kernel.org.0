@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54243BB916
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 18:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E374FBB919
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 18:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387983AbfIWQIR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 12:08:17 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36450 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387969AbfIWQIP (ORCPT
+        id S2388187AbfIWQI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 12:08:28 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39296 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387819AbfIWQIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 12:08:15 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y22so9409554pfr.3
+        Mon, 23 Sep 2019 12:08:16 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s17so5224278plp.6
         for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 09:08:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2BxhOdJYXJi532SmentxbXVQYJErTKd5nVs++YvZFCU=;
-        b=FuJY65Uccx36X3yZKLYnu5YgoLkoKPHdaCgcxI4S3TLOblQObylYTyM2jj+nF8rT0/
-         wKwhN0mJ0QORonekDL+A+pYZXSlNOkrbFoETnBLYUZyi4+4YqHR0H/JyPGKIFmZ7b/6Z
-         nyeYgnu9EVky+iLmTg6GeRPSw4Ae7h36sN/IwIrqlxo0MgqJvpQOjHKuyb6Xqdk90hLd
-         qcSiDIRuvQ5VCzh4PBcdrNCFPZATaeszoier7rCXg1QcPnyExYfodq1GSToljEwJ9vZg
-         q0YTKL3e/eTPv1ZMvAhgWVHC9NaoNFKYsivR48KdZiNbGMbznV2txAnDg6FxMYZIin4T
-         T/PA==
+        bh=hEw6NY5M2Jhu1QjE48KzJEVuyxHVkatyT3269XxLGmY=;
+        b=TQqgxpQ7HQmVgDVqV7HrYin2y0u7zy7VtKMraO8LlIyWmnlJIRl3J90jSsm/6tboTi
+         1tT6qLIC2RAcNeBwM56cD6sO3sRxN1O8gjgaE8ToFmbsSqCKQnqemRgEN1j9pEFd9Kkr
+         Bbbm6ZBVJ2oFTXralq+Lx56we80H8zTzrtpV2r7e+zxBETseLoJT3u4JEvkXFaSFG+ng
+         0pGju6cldDNrZtSQcZVX3YqjyFJpFGu5QRAaA45cAybKCKIbLv905Wadg64AIaqx1+eA
+         R9xYF2Mccqj/fEqvnT7jSBR6nVQqSDWGNiXAJYwkbc2BfBgoQKveTieg89Ee7zVt0gSu
+         6nCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2BxhOdJYXJi532SmentxbXVQYJErTKd5nVs++YvZFCU=;
-        b=DKjPSNxxseJTT26q0pTVcGNe3Yk2/Gdw9M6sAWSeKhPRbX3gqg4ws7Onf+CJ2kE6kg
-         /WladwCiHJ45sVPQMm8stOZeUUH9QIhghI373mfMtoSqQwpiPte8dzYblAciSqIShA3q
-         87Rh2CbHyQ3HNmC+g7ItpRwSyh8ofLVZETx24vkTBde5dzeR7V/GIexTBLUOAsZ9EZhz
-         PHY//mNGUXJHO+i6lhBP8N4hIAUGcOyQbcXSdo//1KkytgsMiryAYJAvkmZDguE08qlT
-         A47j05KRTgZFs1frHuiMmB5HzanbPyNjJR/Hxc+cWWh4aJKGaWuYQsbMFcTrYJ8Yb+jQ
-         p6rQ==
-X-Gm-Message-State: APjAAAVBxHpAjr6jcNsIHvg/LqdnYZUxjkXrccdPzdgfXIAyItgC2W/8
-        ksMAUGcZPA8WwsNe1oPL30LKDA==
-X-Google-Smtp-Source: APXvYqw6T/7IjKrKVaAajLeADPD6VoGJqijdG5Z3NMpXxdMrCV8teoH5N4iSVsr2pq+grVHMPX0jOw==
-X-Received: by 2002:a63:1d02:: with SMTP id d2mr708391pgd.190.1569254893704;
-        Mon, 23 Sep 2019 09:08:13 -0700 (PDT)
+        bh=hEw6NY5M2Jhu1QjE48KzJEVuyxHVkatyT3269XxLGmY=;
+        b=qmzsZe97KDMX0KjYbMf+nLOGPwbQrWH8guhFqlT9ElGCYk99Lf1M4ErudXGIaiKKKW
+         y67oEcwWVurNmtfV7TwNbilpqMfOnc62GUBH+W3P/iRy5JZrL8q32z5AmStjdaPiqlrX
+         MXgvy1RoG2NDs/mDace3tQj3rHDWYzYylDOzljRUibrhZEpkdmp/W6MRyknzL3j0vwC5
+         4cybnxxnhwo8ywIid+xdxvPoVvbs9m9MUbCwbHIImkBrUJtcwaVepq3iKZcrdGkxP6Fn
+         qeXebBjZnRQLCOfZeaQjQ4woz/YlGo8CsR6g4HeLWIiNvjArAPKHJSwhTG3lKqI2/RjL
+         Zq9w==
+X-Gm-Message-State: APjAAAU6KyC9lSkzE/FtCWbdZ7ETaIjSUnpHSs+IAhuF13VCKtU9gQb4
+        5p5LYiOGYZ5ma1lENuAcuLsUcw==
+X-Google-Smtp-Source: APXvYqzYvstHngp+mpEkYmBTvKA704PC5takAGBvXAF4amCQPbuqmQn3+vdqDjFC0khug+QY1Yvzng==
+X-Received: by 2002:a17:902:b086:: with SMTP id p6mr455657plr.315.1569254895147;
+        Mon, 23 Sep 2019 09:08:15 -0700 (PDT)
 Received: from localhost.localdomain ([12.206.46.62])
-        by smtp.gmail.com with ESMTPSA id r1sm9880006pgv.70.2019.09.23.09.08.12
+        by smtp.gmail.com with ESMTPSA id r1sm9880006pgv.70.2019.09.23.09.08.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 09:08:13 -0700 (PDT)
+        Mon, 23 Sep 2019 09:08:14 -0700 (PDT)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -58,9 +58,9 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mike Leach <mike.leach@linaro.org>,
         Coresight ML <coresight@lists.linaro.org>
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 2/5] perf cs-etm: Support thread stack
-Date:   Tue, 24 Sep 2019 00:07:56 +0800
-Message-Id: <20190923160759.14866-3-leo.yan@linaro.org>
+Subject: [PATCH v2 3/5] perf cs-etm: Support branch filter
+Date:   Tue, 24 Sep 2019 00:07:57 +0800
+Message-Id: <20190923160759.14866-4-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190923160759.14866-1-leo.yan@linaro.org>
 References: <20190923160759.14866-1-leo.yan@linaro.org>
@@ -69,108 +69,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arm CoreSight doesn't support thread stack, thus the decoding cannot
-display the symbol with indented spaces to reflect the stack depth.
+If user specifies options -F,+callindent or call chain related options,
+it means the user only cares about functions calls and returns; thus in
+this case it's pointless to generate samples for other types of
+branches.
 
-This patch adds support thread stack, this allows 'perf script' to
-support option '-F,+callindent'.
+To output only pairs of calls and returns, this patch introduces branch
+filter and the filter is set according to synthetic options.  Finally,
+perf can output only for calls and returns and without redundant
+branches.
 
 Before:
 
   # perf script -F,+callindent
-            main  2808          1          branches: coresight_test1                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
-            main  2808          1          branches: printf@plt                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
-            main  2808          1          branches: printf@plt                           aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
-            main  2808          1          branches: _init                                aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
-            main  2808          1          branches: _dl_fixup                            ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.so)
-            main  2808          1          branches: _dl_lookup_symbol_x                  ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+            main  2808          1          branches:                 coresight_test1@plt                                  aaaaba8d37d8 main+0x14 (/root/coresight_test/main)
+            main  2808          1          branches:                     coresight_test1@plt                              aaaaba8d367c coresight_test1@plt+0xc (/root/coresight_test/main)
+            main  2808          1          branches:                     _init                                            aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+            main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
+            main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
+            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
+            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
+            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
+            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
   [...]
 
 After:
 
   # perf script -F,+callindent
-            main  2808          1          branches:                 coresight_test1                                      ffff8634f5c8 coresight_test1+0x3c (/root/coresight_test/libcstest.so)
-            main  2808          1          branches:                 printf@plt                                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
-            main  2808          1          branches:                     printf@plt                                       aaaaba8d36bc printf@plt+0xc (/root/coresight_test/main)
-            main  2808          1          branches:                     _init                                            aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
+            main  2808          1          branches:                 coresight_test1@plt                                  aaaaba8d37d8 main+0x14 (/root/coresight_test/main)
             main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
             main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+            main  2808          1          branches:                             do_lookup_x                              ffff8636a49c _dl_lookup_symbol_x+0x104 (/lib/aarch64-linux-gnu/ld-2.28.
+            main  2808          1          branches:                                 check_match                          ffff86369bf0 do_lookup_x+0x238 (/lib/aarch64-linux-gnu/ld-2.28.so)
+            main  2808          1          branches:                                     strcmp                           ffff86369888 check_match+0x70 (/lib/aarch64-linux-gnu/ld-2.28.so)
+            main  2808          1          branches:                 printf@plt                                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
+            main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
+            main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
+            main  2808          1          branches:                             do_lookup_x                              ffff8636a49c _dl_lookup_symbol_x+0x104 (/lib/aarch64-linux-gnu/ld-2.28.
+            main  2808          1          branches:                                 _dl_name_match_p                     ffff86369af0 do_lookup_x+0x138 (/lib/aarch64-linux-gnu/ld-2.28.so)
+            main  2808          1          branches:                                     strcmp                           ffff8636f7f0 _dl_name_match_p+0x18 (/lib/aarch64-linux-gnu/ld-2.28.so)
   [...]
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- tools/perf/util/cs-etm.c | 44 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ tools/perf/util/cs-etm.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 1de3f9361193..6bdc9cd8293c 100644
+index 6bdc9cd8293c..018c7e682ded 100644
 --- a/tools/perf/util/cs-etm.c
 +++ b/tools/perf/util/cs-etm.c
-@@ -1116,6 +1116,45 @@ static void cs_etm__copy_insn(struct cs_etm_queue *etmq,
- 			   sample->insn_len, (void *)sample->insn);
- }
+@@ -55,6 +55,7 @@ struct cs_etm_auxtrace {
  
-+static void cs_etm__add_stack_event(struct cs_etm_queue *etmq,
-+				    struct cs_etm_traceid_queue *tidq)
-+{
-+	struct cs_etm_auxtrace *etm = etmq->etm;
-+	u8 trace_chan_id = tidq->trace_chan_id;
-+	int insn_len;
-+	u64 from_ip, to_ip;
+ 	int num_cpu;
+ 	u32 auxtrace_type;
++	u32 branches_filter;
+ 	u64 branches_sample_type;
+ 	u64 branches_id;
+ 	u64 instructions_sample_type;
+@@ -1222,6 +1223,10 @@ static int cs_etm__synth_branch_sample(struct cs_etm_queue *etmq,
+ 	} dummy_bs;
+ 	u64 ip;
+ 
++	if (etm->branches_filter &&
++	    !(etm->branches_filter & tidq->prev_packet->flags))
++		return 0;
 +
-+	if (etm->synth_opts.thread_stack) {
-+		from_ip = cs_etm__last_executed_instr(tidq->prev_packet);
-+		to_ip = cs_etm__first_executed_instr(tidq->packet);
-+
-+		insn_len = cs_etm__instr_size(etmq, trace_chan_id,
-+					      tidq->prev_packet->isa, from_ip);
-+
-+		/*
-+		 * Create thread stacks by keeping track of calls and returns;
-+		 * any call pushes thread stack, return pops the stack, and
-+		 * flush stack when the trace is discontinuous.
-+		 */
-+		thread_stack__event(tidq->thread, tidq->prev_packet->cpu,
-+				    tidq->prev_packet->flags,
-+				    from_ip, to_ip, insn_len,
-+				    etmq->buffer->buffer_nr);
-+	} else {
-+		/*
-+		 * The thread stack can be output via thread_stack__process();
-+		 * thus the detailed information about paired calls and returns
-+		 * will be facilitated by Python script for the db-export.
-+		 *
-+		 * Need to set trace buffer number and flush thread stack if the
-+		 * trace buffer number has been alternate.
-+		 */
-+		thread_stack__set_trace_nr(tidq->thread,
-+					   tidq->prev_packet->cpu,
-+					   etmq->buffer->buffer_nr);
-+	}
-+}
-+
- static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
- 					    struct cs_etm_traceid_queue *tidq,
- 					    u64 addr, u64 period)
-@@ -1392,6 +1431,9 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
- 		tidq->period_instructions = instrs_over;
+ 	ip = cs_etm__last_executed_instr(tidq->prev_packet);
+ 
+ 	event->sample.header.type = PERF_RECORD_SAMPLE;
+@@ -2638,6 +2643,13 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 				session->itrace_synth_opts->thread_stack;
  	}
  
-+	if (tidq->prev_packet->last_instr_taken_branch)
-+		cs_etm__add_stack_event(etmq, tidq);
++	if (etm->synth_opts.calls)
++		etm->branches_filter |= PERF_IP_FLAG_CALL | PERF_IP_FLAG_ASYNC |
++					PERF_IP_FLAG_TRACE_END;
++	if (etm->synth_opts.returns)
++		etm->branches_filter |= PERF_IP_FLAG_RETURN |
++					PERF_IP_FLAG_TRACE_BEGIN;
 +
- 	if (etm->sample_branches) {
- 		bool generate_sample = false;
- 
-@@ -2592,6 +2634,8 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
- 		itrace_synth_opts__set_default(&etm->synth_opts,
- 				session->itrace_synth_opts->default_no_sample);
- 		etm->synth_opts.callchain = false;
-+		etm->synth_opts.thread_stack =
-+				session->itrace_synth_opts->thread_stack;
- 	}
- 
  	err = cs_etm__synth_events(etm, session);
+ 	if (err)
+ 		goto err_delete_thread;
 -- 
 2.17.1
 
