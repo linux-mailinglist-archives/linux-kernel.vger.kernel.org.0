@@ -2,29 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D45BB487
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:56:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F038BB43B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502105AbfIWM4K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:56:10 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:48504 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437533AbfIWM4I (ORCPT
+        id S2501953AbfIWMth (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:49:37 -0400
+Received: from regular1.263xmail.com ([211.150.70.200]:41492 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729328AbfIWMtg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:56:08 -0400
-Received: from localhost (unknown [192.168.167.227])
-        by lucky1.263xmail.com (Postfix) with ESMTP id DE03566909;
-        Mon, 23 Sep 2019 20:48:21 +0800 (CST)
+        Mon, 23 Sep 2019 08:49:36 -0400
+Received: from hjc?rock-chips.com (unknown [192.168.167.175])
+        by regular1.263xmail.com (Postfix) with ESMTP id 51CD1340;
+        Mon, 23 Sep 2019 20:49:33 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
 X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P14169T140710336407296S1569242883858959_;
-        Mon, 23 Sep 2019 20:48:21 +0800 (CST)
+        by smtp.263.net (postfix) whith ESMTP id P28975T139999806740224S1569242970112868_;
+        Mon, 23 Sep 2019 20:49:32 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <029ba5340883946e18a39005adc9a83e>
+X-UNIQUE-TAG: <b51224ed549f04fece0cf705ffb16e26>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -33,19 +36,16 @@ X-SENDER-IP: 58.22.7.114
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org, CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+To:     dri-devel@lists.freedesktop.org, Shawn Guo <shawnguo@kernel.org>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     hjc@rock-chips.com, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 15/36] drm/mediatek: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:47:39 +0800
-Message-Id: <1569242880-182878-5-git-send-email-hjc@rock-chips.com>
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 17/36] drm/zte: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:49:09 +0800
+Message-Id: <1569242968-183093-2-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
-References: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
+In-Reply-To: <1569242968-183093-1-git-send-email-hjc@rock-chips.com>
+References: <1569242968-183093-1-git-send-email-hjc@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,36 +56,31 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_fb.c    | 2 +-
- drivers/gpu/drm/mediatek/mtk_drm_plane.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/zte/zx_plane.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_fb.c b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-index 3f230a2..fd80548 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_fb.c
-@@ -69,7 +69,7 @@ struct drm_framebuffer *mtk_drm_mode_fb_create(struct drm_device *dev,
- 	if (!gem)
- 		return ERR_PTR(-ENOENT);
+diff --git a/drivers/gpu/drm/zte/zx_plane.c b/drivers/gpu/drm/zte/zx_plane.c
+index 086c50f..c265dd3 100644
+--- a/drivers/gpu/drm/zte/zx_plane.c
++++ b/drivers/gpu/drm/zte/zx_plane.c
+@@ -218,7 +218,7 @@ static void zx_vl_plane_atomic_update(struct drm_plane *plane,
+ 		cma_obj = drm_fb_cma_get_gem_obj(fb, i);
+ 		paddr = cma_obj->paddr + fb->offsets[i];
+ 		paddr += src_y * fb->pitches[i];
+-		paddr += src_x * fb->format->cpp[i];
++		paddr += src_x * fb->format->bpp[i] / 8;
+ 		zx_writel(paddr_reg, paddr);
+ 		paddr_reg += 4;
+ 	}
+@@ -379,7 +379,7 @@ static void zx_gl_plane_atomic_update(struct drm_plane *plane,
+ 	dst_w = plane->state->crtc_w;
+ 	dst_h = plane->state->crtc_h;
  
--	bpp = info->cpp[0];
-+	bpp = info->bpp[0] / 8;
- 	size = (height - 1) * cmd->pitches[0] + width * bpp;
- 	size += cmd->offsets[0];
+-	bpp = fb->format->cpp[0];
++	bpp = fb->format->bpp[0] / 8;
  
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_plane.c b/drivers/gpu/drm/mediatek/mtk_drm_plane.c
-index 584a9ec..97d38db 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_plane.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_plane.c
-@@ -121,7 +121,7 @@ static void mtk_plane_atomic_update(struct drm_plane *plane,
- 	pitch = fb->pitches[0];
- 	format = fb->format->format;
- 
--	addr += (plane->state->src.x1 >> 16) * fb->format->cpp[0];
-+	addr += (plane->state->src.x1 >> 16) * fb->format->bpp[0] / 8;
- 	addr += (plane->state->src.y1 >> 16) * pitch;
- 
- 	state->pending.enable = true;
+ 	cma_obj = drm_fb_cma_get_gem_obj(fb, 0);
+ 	paddr = cma_obj->paddr + fb->offsets[0];
 -- 
 2.7.4
 
