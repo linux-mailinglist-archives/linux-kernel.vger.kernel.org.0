@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E374FBB919
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 18:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2719BB917
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 18:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388187AbfIWQI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 12:08:28 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39296 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387819AbfIWQIQ (ORCPT
+        id S2388011AbfIWQIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 12:08:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34510 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387969AbfIWQIS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 12:08:16 -0400
-Received: by mail-pl1-f195.google.com with SMTP id s17so5224278plp.6
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 09:08:15 -0700 (PDT)
+        Mon, 23 Sep 2019 12:08:18 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b128so9415511pfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 09:08:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hEw6NY5M2Jhu1QjE48KzJEVuyxHVkatyT3269XxLGmY=;
-        b=TQqgxpQ7HQmVgDVqV7HrYin2y0u7zy7VtKMraO8LlIyWmnlJIRl3J90jSsm/6tboTi
-         1tT6qLIC2RAcNeBwM56cD6sO3sRxN1O8gjgaE8ToFmbsSqCKQnqemRgEN1j9pEFd9Kkr
-         Bbbm6ZBVJ2oFTXralq+Lx56we80H8zTzrtpV2r7e+zxBETseLoJT3u4JEvkXFaSFG+ng
-         0pGju6cldDNrZtSQcZVX3YqjyFJpFGu5QRAaA45cAybKCKIbLv905Wadg64AIaqx1+eA
-         R9xYF2Mccqj/fEqvnT7jSBR6nVQqSDWGNiXAJYwkbc2BfBgoQKveTieg89Ee7zVt0gSu
-         6nCw==
+        bh=ETR3TzZ5ptxgZyXVIEMbUVt7wSrL6NEDEKof5BmO9Pc=;
+        b=dBIwpdcLFGtVRpg1U8Z6A1m4LJ6TPyQtUZIPjP0m2JG5ph/MeYzA06C3QUqx/J/Oz0
+         Nha+yE04DSTymZFcdc5tXQxPtbM1rsWA6f87YptLUpNpPUozJhycUMDE0Lkebfq8wk66
+         4D/wKTKCPlV41H9n0evAjSTIZJAPycEurI+doNmcTwXOv/09PW4SgEvI/BE3RO94AP5L
+         mmK5rjsvbHqztuVn55Gkx6fR0aIwjXyEC129IoQINbL2gNld9cL0+MH0QULxK6bHuLX0
+         bdHc2E7/Zjphfly3enKC5U91ddmgPs9lRUPQFQSMOrPMmlR6ypbBPerX7Ig/Q1DxvAGW
+         5Mqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hEw6NY5M2Jhu1QjE48KzJEVuyxHVkatyT3269XxLGmY=;
-        b=qmzsZe97KDMX0KjYbMf+nLOGPwbQrWH8guhFqlT9ElGCYk99Lf1M4ErudXGIaiKKKW
-         y67oEcwWVurNmtfV7TwNbilpqMfOnc62GUBH+W3P/iRy5JZrL8q32z5AmStjdaPiqlrX
-         MXgvy1RoG2NDs/mDace3tQj3rHDWYzYylDOzljRUibrhZEpkdmp/W6MRyknzL3j0vwC5
-         4cybnxxnhwo8ywIid+xdxvPoVvbs9m9MUbCwbHIImkBrUJtcwaVepq3iKZcrdGkxP6Fn
-         qeXebBjZnRQLCOfZeaQjQ4woz/YlGo8CsR6g4HeLWIiNvjArAPKHJSwhTG3lKqI2/RjL
-         Zq9w==
-X-Gm-Message-State: APjAAAU6KyC9lSkzE/FtCWbdZ7ETaIjSUnpHSs+IAhuF13VCKtU9gQb4
-        5p5LYiOGYZ5ma1lENuAcuLsUcw==
-X-Google-Smtp-Source: APXvYqzYvstHngp+mpEkYmBTvKA704PC5takAGBvXAF4amCQPbuqmQn3+vdqDjFC0khug+QY1Yvzng==
-X-Received: by 2002:a17:902:b086:: with SMTP id p6mr455657plr.315.1569254895147;
-        Mon, 23 Sep 2019 09:08:15 -0700 (PDT)
+        bh=ETR3TzZ5ptxgZyXVIEMbUVt7wSrL6NEDEKof5BmO9Pc=;
+        b=gb3nIdqlK2VTeKkN9r0MhVeuNGzJvlmkUxJk8yy/d4HCrx9lhMPQ7I2YURt+oYmm+k
+         mvNkFWNkQzErWAzSB6/wAecB50KJr66HoQ4XOJ0yaSAkIJoAo8n/n2HctQFIwVnfoMy6
+         0srdvcZkchHOOQ+r70NWuyBhHm458eBeEmJZh1lS9YbsFYM/jCS4+GqNoo1tH15D3J6K
+         gSUAz9G/L9P8NNeH29Yp9hBFu/mHOETOyzPZzt6aahdPxSK1cqCqKzkKLqI2XuLFHgCF
+         rCEbN4sQZS2ELyOHjwS3dWKwDQN7RTke9ya7WgQjesW33PPmMA7SR8b43qtRZoFYo1A0
+         ehVA==
+X-Gm-Message-State: APjAAAXGwMuknQaGpVV4T4k370GfFiHhkUjQVg8rUT966eqzs3hr43zU
+        9gyg/L04QhkwIIdRAVyKb4ZbDA==
+X-Google-Smtp-Source: APXvYqwdieSmWLuOn6xr91NTuHLb3msNNF1sfUL5GeSFMr/A0e9DzJSlTHcLIr09sONJ1C1DyBkI8A==
+X-Received: by 2002:a17:90a:b302:: with SMTP id d2mr245796pjr.3.1569254897444;
+        Mon, 23 Sep 2019 09:08:17 -0700 (PDT)
 Received: from localhost.localdomain ([12.206.46.62])
-        by smtp.gmail.com with ESMTPSA id r1sm9880006pgv.70.2019.09.23.09.08.13
+        by smtp.gmail.com with ESMTPSA id r1sm9880006pgv.70.2019.09.23.09.08.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 09:08:14 -0700 (PDT)
+        Mon, 23 Sep 2019 09:08:16 -0700 (PDT)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -58,9 +58,9 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mike Leach <mike.leach@linaro.org>,
         Coresight ML <coresight@lists.linaro.org>
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 3/5] perf cs-etm: Support branch filter
-Date:   Tue, 24 Sep 2019 00:07:57 +0800
-Message-Id: <20190923160759.14866-4-leo.yan@linaro.org>
+Subject: [PATCH v2 4/5] perf cs-etm: Support callchain for instruction sample
+Date:   Tue, 24 Sep 2019 00:07:58 +0800
+Message-Id: <20190923160759.14866-5-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190923160759.14866-1-leo.yan@linaro.org>
 References: <20190923160759.14866-1-leo.yan@linaro.org>
@@ -69,86 +69,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If user specifies options -F,+callindent or call chain related options,
-it means the user only cares about functions calls and returns; thus in
-this case it's pointless to generate samples for other types of
-branches.
-
-To output only pairs of calls and returns, this patch introduces branch
-filter and the filter is set according to synthetic options.  Finally,
-perf can output only for calls and returns and without redundant
-branches.
+CoreSight has supported the thread stack; so based on the thread stack
+we can synthesize call chain for the instruction sample; the call chain
+can be used by itrace option '--itrace=g'.
 
 Before:
 
-  # perf script -F,+callindent
-            main  2808          1          branches:                 coresight_test1@plt                                  aaaaba8d37d8 main+0x14 (/root/coresight_test/main)
-            main  2808          1          branches:                     coresight_test1@plt                              aaaaba8d367c coresight_test1@plt+0xc (/root/coresight_test/main)
-            main  2808          1          branches:                     _init                                            aaaaba8d3650 _init+0x30 (/root/coresight_test/main)
-            main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
-            main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
-            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
-            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
-            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
-            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
-            main  2808          1          branches:                                                                      ffff8636a3f4 _dl_lookup_symbol_x+0x5c (/lib/aarch64-linux-gnu/ld-2.28.s
+  # perf script --itrace=g16l64i100
+            main  1579        100      instructions:  ffff0000102137f0 group_sched_in+0xb0 ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff000010213b78 flexible_sched_in+0xf0 ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff0000102135ac event_sched_in.isra.57+0x74 ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff000010219344 perf_swevent_add+0x6c ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff000010214854 perf_event_update_userpage+0x4c ([kernel.kallsyms])
   [...]
 
 After:
 
-  # perf script -F,+callindent
-            main  2808          1          branches:                 coresight_test1@plt                                  aaaaba8d37d8 main+0x14 (/root/coresight_test/main)
-            main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
-            main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
-            main  2808          1          branches:                             do_lookup_x                              ffff8636a49c _dl_lookup_symbol_x+0x104 (/lib/aarch64-linux-gnu/ld-2.28.
-            main  2808          1          branches:                                 check_match                          ffff86369bf0 do_lookup_x+0x238 (/lib/aarch64-linux-gnu/ld-2.28.so)
-            main  2808          1          branches:                                     strcmp                           ffff86369888 check_match+0x70 (/lib/aarch64-linux-gnu/ld-2.28.so)
-            main  2808          1          branches:                 printf@plt                                           aaaaba8d37ec main+0x28 (/root/coresight_test/main)
-            main  2808          1          branches:                     _dl_fixup                                        ffff86373b4c _dl_runtime_resolve+0x40 (/lib/aarch64-linux-gnu/ld-2.28.s
-            main  2808          1          branches:                         _dl_lookup_symbol_x                          ffff8636e078 _dl_fixup+0xb8 (/lib/aarch64-linux-gnu/ld-2.28.so)
-            main  2808          1          branches:                             do_lookup_x                              ffff8636a49c _dl_lookup_symbol_x+0x104 (/lib/aarch64-linux-gnu/ld-2.28.
-            main  2808          1          branches:                                 _dl_name_match_p                     ffff86369af0 do_lookup_x+0x138 (/lib/aarch64-linux-gnu/ld-2.28.so)
-            main  2808          1          branches:                                     strcmp                           ffff8636f7f0 _dl_name_match_p+0x18 (/lib/aarch64-linux-gnu/ld-2.28.so)
+  # perf script --itrace=g16l64i100
+
+  main  1579        100      instructions:
+          ffff000010213b78 flexible_sched_in+0xf0 ([kernel.kallsyms])
+          ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
+
+  main  1579        100      instructions:
+          ffff0000102135ac event_sched_in.isra.57+0x74 ([kernel.kallsyms])
+          ffff0000102137a0 group_sched_in+0x60 ([kernel.kallsyms])
+          ffff000010213b84 flexible_sched_in+0xfc ([kernel.kallsyms])
+          ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
+
+  main  1579        100      instructions:
+          ffff000010219344 perf_swevent_add+0x6c ([kernel.kallsyms])
+          ffff0000102135f4 event_sched_in.isra.57+0xbc ([kernel.kallsyms])
+          ffff0000102137a0 group_sched_in+0x60 ([kernel.kallsyms])
+          ffff000010213b84 flexible_sched_in+0xfc ([kernel.kallsyms])
+          ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
   [...]
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- tools/perf/util/cs-etm.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ tools/perf/util/cs-etm.c | 35 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 6bdc9cd8293c..018c7e682ded 100644
+index 018c7e682ded..bd09254a7208 100644
 --- a/tools/perf/util/cs-etm.c
 +++ b/tools/perf/util/cs-etm.c
-@@ -55,6 +55,7 @@ struct cs_etm_auxtrace {
+@@ -17,6 +17,7 @@
+ #include <stdlib.h>
  
- 	int num_cpu;
- 	u32 auxtrace_type;
-+	u32 branches_filter;
- 	u64 branches_sample_type;
- 	u64 branches_id;
- 	u64 instructions_sample_type;
-@@ -1222,6 +1223,10 @@ static int cs_etm__synth_branch_sample(struct cs_etm_queue *etmq,
- 	} dummy_bs;
- 	u64 ip;
+ #include "auxtrace.h"
++#include "callchain.h"
+ #include "color.h"
+ #include "cs-etm.h"
+ #include "cs-etm-decoder/cs-etm-decoder.h"
+@@ -73,6 +74,7 @@ struct cs_etm_traceid_queue {
+ 	size_t last_branch_pos;
+ 	union perf_event *event_buf;
+ 	struct thread *thread;
++	struct ip_callchain *chain;
+ 	struct branch_stack *last_branch;
+ 	struct branch_stack *last_branch_rb;
+ 	struct cs_etm_packet *prev_packet;
+@@ -250,6 +252,16 @@ static int cs_etm__init_traceid_queue(struct cs_etm_queue *etmq,
+ 	if (!tidq->prev_packet)
+ 		goto out_free;
  
-+	if (etm->branches_filter &&
-+	    !(etm->branches_filter & tidq->prev_packet->flags))
-+		return 0;
++	if (etm->synth_opts.callchain) {
++		size_t sz = sizeof(struct ip_callchain);
 +
- 	ip = cs_etm__last_executed_instr(tidq->prev_packet);
++		/* Add 1 to callchain_sz for callchain context */
++		sz += (etm->synth_opts.callchain_sz + 1) * sizeof(u64);
++		tidq->chain = zalloc(sz);
++		if (!tidq->chain)
++			goto out_free;
++	}
++
+ 	if (etm->synth_opts.last_branch) {
+ 		size_t sz = sizeof(struct branch_stack);
  
- 	event->sample.header.type = PERF_RECORD_SAMPLE;
-@@ -2638,6 +2643,13 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
- 				session->itrace_synth_opts->thread_stack;
+@@ -274,6 +286,7 @@ static int cs_etm__init_traceid_queue(struct cs_etm_queue *etmq,
+ 	zfree(&tidq->last_branch);
+ 	zfree(&tidq->prev_packet);
+ 	zfree(&tidq->packet);
++	zfree(&tidq->chain);
+ out:
+ 	return rc;
+ }
+@@ -545,6 +558,7 @@ static void cs_etm__free_traceid_queues(struct cs_etm_queue *etmq)
+ 		zfree(&tidq->last_branch_rb);
+ 		zfree(&tidq->prev_packet);
+ 		zfree(&tidq->packet);
++		zfree(&tidq->chain);
+ 		zfree(&tidq);
+ 
+ 		/*
+@@ -1125,7 +1139,7 @@ static void cs_etm__add_stack_event(struct cs_etm_queue *etmq,
+ 	int insn_len;
+ 	u64 from_ip, to_ip;
+ 
+-	if (etm->synth_opts.thread_stack) {
++	if (etm->synth_opts.callchain || etm->synth_opts.thread_stack) {
+ 		from_ip = cs_etm__last_executed_instr(tidq->prev_packet);
+ 		to_ip = cs_etm__first_executed_instr(tidq->packet);
+ 
+@@ -1181,6 +1195,14 @@ static int cs_etm__synth_instruction_sample(struct cs_etm_queue *etmq,
+ 
+ 	cs_etm__copy_insn(etmq, tidq->trace_chan_id, tidq->packet, &sample);
+ 
++	if (etm->synth_opts.callchain) {
++		thread_stack__sample(tidq->thread, tidq->packet->cpu,
++				     tidq->chain,
++				     etm->synth_opts.callchain_sz + 1,
++				     sample.ip, etm->kernel_start);
++		sample.callchain = tidq->chain;
++	}
++
+ 	if (etm->synth_opts.last_branch) {
+ 		cs_etm__copy_last_branch_rb(etmq, tidq);
+ 		sample.branch_stack = tidq->last_branch;
+@@ -1368,6 +1390,8 @@ static int cs_etm__synth_events(struct cs_etm_auxtrace *etm,
+ 		attr.sample_type &= ~(u64)PERF_SAMPLE_ADDR;
  	}
  
-+	if (etm->synth_opts.calls)
-+		etm->branches_filter |= PERF_IP_FLAG_CALL | PERF_IP_FLAG_ASYNC |
-+					PERF_IP_FLAG_TRACE_END;
-+	if (etm->synth_opts.returns)
-+		etm->branches_filter |= PERF_IP_FLAG_RETURN |
-+					PERF_IP_FLAG_TRACE_BEGIN;
++	if (etm->synth_opts.callchain)
++		attr.sample_type |= PERF_SAMPLE_CALLCHAIN;
+ 	if (etm->synth_opts.last_branch)
+ 		attr.sample_type |= PERF_SAMPLE_BRANCH_STACK;
+ 
+@@ -2638,7 +2662,6 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 	} else {
+ 		itrace_synth_opts__set_default(&etm->synth_opts,
+ 				session->itrace_synth_opts->default_no_sample);
+-		etm->synth_opts.callchain = false;
+ 		etm->synth_opts.thread_stack =
+ 				session->itrace_synth_opts->thread_stack;
+ 	}
+@@ -2650,6 +2673,14 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 		etm->branches_filter |= PERF_IP_FLAG_RETURN |
+ 					PERF_IP_FLAG_TRACE_BEGIN;
+ 
++	if (etm->synth_opts.callchain && !symbol_conf.use_callchain) {
++		symbol_conf.use_callchain = true;
++		if (callchain_register_param(&callchain_param) < 0) {
++			symbol_conf.use_callchain = false;
++			etm->synth_opts.callchain = false;
++		}
++	}
 +
  	err = cs_etm__synth_events(etm, session);
  	if (err)
