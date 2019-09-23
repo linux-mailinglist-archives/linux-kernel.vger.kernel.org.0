@@ -2,91 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A458DBBC23
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3399CBBC26
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:18:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733287AbfIWTRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 15:17:42 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:36754 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbfIWTRm (ORCPT
+        id S1733302AbfIWTSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 15:18:18 -0400
+Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:26701 "EHLO
+        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbfIWTSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:17:42 -0400
-Received: by mail-lf1-f65.google.com with SMTP id x80so11034292lff.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 12:17:41 -0700 (PDT)
+        Mon, 23 Sep 2019 15:18:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vrRLQn3RzqvLOL/i6mhPpJ10+RmKd1euOe+YMl2OYp0=;
-        b=f1ffZU2sPanOCuHiBceitjTlbhQE9vji8lZ1iD711xp+ldw6uJgEuKLN8+GC7Byalb
-         nwAAiPg7+uP3R5SZCV+80m9S4HOJl9DPeuyxvFQv5NWy9NXmONOgY1hB9hDLeuHfYCdW
-         +1/jkugNzglnZ4KwGRBl0e6c1DD4gcxsNkFuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vrRLQn3RzqvLOL/i6mhPpJ10+RmKd1euOe+YMl2OYp0=;
-        b=P50pUsPBVUbvVP4vltgwVfqNlGzY6seXAnoiAt4CmdhbSqX3F9jNz8UtRD+y+7IkB6
-         RFXMYLc+8KJ3/3EfSUAyoklmyakFzQJ3t05vP/SQd6xgfOSwRLln0KElW8s7k9gS1pig
-         gAnEusKWDkYqvktbWVooji//5KWOmWdoHA5Ok3bSnXJXr7YIX7lS1T6kHVPsizKsr3J+
-         2KhQVs3OaMdK18yOwP//878lwYb/h756v8wJ9pdljqA9V/sQmi9ZnvRJ5viW8zqwizQY
-         fKTxuAxYTaUYUW3LujaehrEhMPAdRjY9bmOL5hwB6FIYLkU9f9tS7daP7HWe9usHKlXw
-         eCNg==
-X-Gm-Message-State: APjAAAX+4WRrc6Yl8BH+FGRJ4r2oRjF41pbnA2Z+nwPZr8NffDHTICev
-        e67c7rFJ+lsw27fuitb6Kju96jKjO/E=
-X-Google-Smtp-Source: APXvYqzK2dU34889JQ7TczvVoWoOb3nJR7HfoHYRYIyLzEQHW7GaPR8i4TP9k2hSrxCF0IA0DTPolQ==
-X-Received: by 2002:ac2:568c:: with SMTP id 12mr644601lfr.133.1569266259990;
-        Mon, 23 Sep 2019 12:17:39 -0700 (PDT)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id k23sm2525253ljc.13.2019.09.23.12.17.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2019 12:17:39 -0700 (PDT)
-Received: by mail-lf1-f47.google.com with SMTP id t8so10968116lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 12:17:38 -0700 (PDT)
-X-Received: by 2002:ac2:47f8:: with SMTP id b24mr684575lfp.134.1569266258665;
- Mon, 23 Sep 2019 12:17:38 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1569266296; x=1600802296;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=bsmJrqHV0ewka5Gks3Mfd3lHn1T9YXvQXU5YVqVSqwk=;
+  b=p6zgLyP4dVaU6HhYNpk2k0wmfejOYuJ5kg94dVXM4mrF+hhQoEVw9h2y
+   FB3FPlKmjcw1Hjbu5GK/zULfJ47jiWdqrd4X/ik0tHaw5NiBCnp2UHDOS
+   zaxwJWVch1VtH4DiH4VCCZdOT04fSWWWX6wmOUD0mgeMTf7oJXukmKTxT
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.64,541,1559520000"; 
+   d="scan'208";a="786844310"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 23 Sep 2019 19:18:03 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
+        by email-inbound-relay-2c-4e7c8266.us-west-2.amazon.com (Postfix) with ESMTPS id 0FBE2A2412;
+        Mon, 23 Sep 2019 19:18:03 +0000 (UTC)
+Received: from EX13D19EUB003.ant.amazon.com (10.43.166.69) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 23 Sep 2019 19:18:02 +0000
+Received: from ua9e4f3715fbc5f.ant.amazon.com (10.43.161.176) by
+ EX13D19EUB003.ant.amazon.com (10.43.166.69) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 23 Sep 2019 19:17:55 +0000
+From:   Hanna Hawa <hhhawa@amazon.com>
+To:     <bp@alien8.de>, <mchehab@kernel.org>, <james.morse@arm.com>,
+        <rrichter@marvell.com>
+CC:     <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dwmw@amazon.co.uk>, <benh@amazon.com>, <ronenk@amazon.com>,
+        <talel@amazon.com>, <jonnyc@amazon.com>, <hanochu@amazon.com>,
+        <hhhawa@amazon.com>
+Subject: [PATCH v4 0/2] Add an API for edac device, for mulriple errors
+Date:   Mon, 23 Sep 2019 20:17:39 +0100
+Message-ID: <20190923191741.29322-1-hhhawa@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <d2418da0-056b-2e6f-ae40-acdfa842e341@schaufler-ca.com>
-In-Reply-To: <d2418da0-056b-2e6f-ae40-acdfa842e341@schaufler-ca.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 23 Sep 2019 12:17:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whNEGetrwyShSLP_5nCA2+YTR9kdNFw7aLua9jaR-YvJg@mail.gmail.com>
-Message-ID: <CAHk-=whNEGetrwyShSLP_5nCA2+YTR9kdNFw7aLua9jaR-YvJg@mail.gmail.com>
-Subject: Re: [GIT PULL] Smack patches for v5.4
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.43.161.176]
+X-ClientProxiedBy: EX13D08UWC002.ant.amazon.com (10.43.162.168) To
+ EX13D19EUB003.ant.amazon.com (10.43.166.69)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 10:24 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> This is my first direct pull request. I think I have followed process
-> correctly, but if not I will attend to my error as required.
+Add an API for EDAC device to report for multiple errors, and move the
+old report function to use the new API.
 
-The contents look fine.
+Changes from v3:
+----------------
+- Move count check to inline function
+- Fix count variable describtion
+  (Reported-by: kbuild test robot <lkp@intel.com>)
 
-However, it's from an open hosting site - github. Which is fine, I
-take pull requests from github all the time.  But I require that they
-be sent using a signed tag, so that I can verify that yes, it's really
-from you.
+Changes from v2:
+----------------
+- Remove copy of edac_device_handle_*() functions, modify the existing
+functions.
 
-And no, I don't do pgp email, even t hough I see that there's a
-signature on your email itself.
+Changes from v1:
+----------------
+- use 'unsigned int' instead of u16
+- update variable name to be count
+- remove WARN_ON and simply exit if count is zero
+- add inline functions in header file
 
-git uses pgp too, but unlike pgp email signatures, the git support for
-pgp signing is useful and user-friendly and just _works_, rather than
-the complete and useless disaster that is pgp email [1].
+Hanna Hawa (2):
+  edac: Add an API for edac device to report for multiple errors
+  edac: move edac_device_handle_*() API functions to header
 
-So please make it a signed tag with "git tag -s" and ask me to pull
-that tag instead.
+ drivers/edac/edac_device.c | 44 +++++++++++++++++----------------
+ drivers/edac/edac_device.h | 50 +++++++++++++++++++++++++++++++++-----
+ 2 files changed, 67 insertions(+), 27 deletions(-)
 
-                        Linus
+-- 
+2.17.1
 
-[1] https://www.vice.com/en_us/article/vvbw9a/even-the-inventor-of-pgp-doesnt-use-pgp
