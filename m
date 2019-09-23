@@ -2,121 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F31ADBBB1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:18:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB4EABBB21
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440411AbfIWSSE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 14:18:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438191AbfIWSSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:18:04 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBFDC21928
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 18:18:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569262683;
-        bh=KQ8YtMSUvBH+IEHZPN4F+9fUdawjUfYBpTtUWbWv5xA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EcTmLIqMPZQJAyFQKFNsUCMcomj2YImlbE7UswNurg5uOjUS7B+ZrDdmYbbiZXoSj
-         7hMyu8oOOf7xnjv5MJ0jhjA717vnLvJOhZys2yHl4jCElJn2dFfYMbs+Ky4tAeStgw
-         U3XBQmOfYiB7wqP6GXpDomgUvdOh8hhcEPuP3gEE=
-Received: by mail-wr1-f52.google.com with SMTP id l11so15063618wrx.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 11:18:02 -0700 (PDT)
-X-Gm-Message-State: APjAAAUG/Ow9KAGX1VCKzP8FSh90f99MSf5mdP4R0FJTufpZdMt8wRsk
-        BFRRVpPC5+zedEYKDNEBih6a6PcdJSxl5lk2Z5aIQw==
-X-Google-Smtp-Source: APXvYqw9QoPpUoxk4JNixTG3ZMLD68/a+CDLIBqUsLls0MSYtDH5cRZnjxNzbm5yL+MNYc9za6vT6Uwp++RwwMYwHhA=
-X-Received: by 2002:a5d:4647:: with SMTP id j7mr578006wrs.106.1569262681278;
- Mon, 23 Sep 2019 11:18:01 -0700 (PDT)
+        id S2440425AbfIWSSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 14:18:40 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33184 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438191AbfIWSSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 14:18:39 -0400
+Received: by mail-lf1-f66.google.com with SMTP id y127so10923357lfc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 11:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MZ2lLvVAj8wl/1PRSv9GS/7a80MR0W+vCbBFmNK2zW8=;
+        b=VDL1koFlc/i2eabI5QJ87yDehJLeHLeKc+Wn7KTI1jPvb1B2gKWjVqfgjGVTW1Peh7
+         VnINX6uNybuSAl/1cyj4c0YZyplLXMytHuGLTEQQC0nBWS6OH8hsZG20SSbmrUZQUcAJ
+         boubqvO7pY8gE8wphkLkqxwCDihobZE7QpTKY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MZ2lLvVAj8wl/1PRSv9GS/7a80MR0W+vCbBFmNK2zW8=;
+        b=NutH2XSG9wHwgw2GMTI+LQsk2V+KoTftGXbRAcGUEDvjQCizPsRI8qn8zj6/JrKZdb
+         PfLAK16K7w04gsHGyWFR4gUQvjosRaHeF1sCWyWK4fslIM7Q/WO3Ol1xINwuGG5LFrBX
+         vDxY+Dh806ksAPD774qmLrU1LqRk1+4/Xt2Z7BGi/aQKvf7cz77Tm+RAx4ayzGNlnRhb
+         Ip4PVLggi0g4Z2GXdhEet2jIAdQsEXl9rInVqMwagHkdaZCMls4yZkQkGWliOGzoqsxG
+         +IO2Hva6VQuCAU1O3McwyqWuUOx1TvQlHSDrTlYpgII2oz7deAKTKqQlttq3CeQD5BgX
+         gzdA==
+X-Gm-Message-State: APjAAAUoK0XU0rAyztTlHbPXeCd+4LHHKS0v552kYX6asgHZQx4R0l+E
+        rwfF2DRSKZaYAO3KPow93iRfaSywZnI=
+X-Google-Smtp-Source: APXvYqxyLt1IeTFjDLc2/2hoxNhKTU91jmvcBOJbqoWpIdFJUTjsiSB2yueB+ywTo+qwE/zXWcOxHw==
+X-Received: by 2002:a19:4bd7:: with SMTP id y206mr549160lfa.9.1569262717002;
+        Mon, 23 Sep 2019 11:18:37 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id n8sm2370295lfk.21.2019.09.23.11.18.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 11:18:36 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id b20so9309511ljj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 11:18:35 -0700 (PDT)
+X-Received: by 2002:a2e:8789:: with SMTP id n9mr447393lji.52.1569262715339;
+ Mon, 23 Sep 2019 11:18:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190919150314.054351477@linutronix.de> <20190919150809.860645841@linutronix.de>
-In-Reply-To: <20190919150809.860645841@linutronix.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 23 Sep 2019 11:17:50 -0700
-X-Gmail-Original-Message-ID: <CALCETrWjDtcued8nYv=FtcjREz8C4Kj6OaCCirUkbZQForSo+A@mail.gmail.com>
-Message-ID: <CALCETrWjDtcued8nYv=FtcjREz8C4Kj6OaCCirUkbZQForSo+A@mail.gmail.com>
-Subject: Re: [RFC patch 14/15] workpending: Provide infrastructure for work
- before entering a guest
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
+References: <20190921231022.kawfomtmka737arq@pburton-laptop>
+ <CAHk-=wjmJbF3p9vZTW2nbeD4LkG-JZV+uqv8BnxzojJ5SZsLjw@mail.gmail.com> <20190923180728.flp6jx4jc2bh7cys@pburton-laptop>
+In-Reply-To: <20190923180728.flp6jx4jc2bh7cys@pburton-laptop>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 Sep 2019 11:18:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiC_B8R6th+83vKwGT1H-8vtFrmMg+1mK_P8n3VeWAWRg@mail.gmail.com>
+Message-ID: <CAHk-=wiC_B8R6th+83vKwGT1H-8vtFrmMg+1mK_P8n3VeWAWRg@mail.gmail.com>
+Subject: Re: [GIT PULL] MIPS changes
+To:     Paul Burton <paul.burton@mips.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 8:09 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+On Mon, Sep 23, 2019 at 11:07 AM Paul Burton <paul.burton@mips.com> wrote:
 >
-> Entering a guest is similar to exiting to user space. Pending work like
-> handling signals, rescheduling, task work etc. needs to be handled before
-> that.
->
-> Provide generic infrastructure to avoid duplication of the same handling code
-> all over the place.
->
-> Update ARM64 struct kvm_vcpu_stat with a signal_exit member so the generic
-> code compiles.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  arch/arm64/include/asm/kvm_host.h |    1
->  include/linux/entry-common.h      |   66 ++++++++++++++++++++++++++++++++++++++
->  kernel/entry/common.c             |   44 +++++++++++++++++++++++++
->  3 files changed, 111 insertions(+)
->
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -409,6 +409,7 @@ struct kvm_vcpu_stat {
->         u64 wfi_exit_stat;
->         u64 mmio_exit_user;
->         u64 mmio_exit_kernel;
-> +       u64 signal_exits;
->         u64 exits;
->  };
->
-> --- a/include/linux/entry-common.h
-> +++ b/include/linux/entry-common.h
-> @@ -255,4 +255,70 @@ static inline void arch_syscall_exit_tra
->  /* Common syscall exit function */
->  void syscall_exit_to_usermode(struct pt_regs *regs, long syscall, long retval);
->
-> +#if IS_ENABLED(CONFIG_KVM)
-> +
-> +#include <linux/kvm_host.h>
-> +
-> +#ifndef ARCH_EXIT_TO_GUESTMODE_WORK
-> +# define ARCH_EXIT_TO_GUESTMODE_WORK   (0)
-> +#endif
-> +
-> +#define EXIT_TO_GUESTMODE_WORK                                         \
-> +       (_TIF_NEED_RESCHED | _TIF_SIGPENDING | _TIF_NOTIFY_RESUME |     \
-> +        ARCH_EXIT_TO_GUESTMODE_WORK)
-> +
-> +int core_exit_to_guestmode_work(struct kvm *kvm, struct kvm_vcpu *vcpu,
-> +                               unsigned long ti_work);
-> +
-> +/**
-> + * arch_exit_to_guestmode - Architecture specific exit to guest mode function
-> + * @kvm:       Pointer to the guest instance
-> + * @vcpu:      Pointer to current's VCPU data
-> + * @ti_work:   Cached TIF flags gathered in exit_to_guestmode()
-> + *
-> + * Invoked from core_exit_to_guestmode_work(). Can be replaced by
-> + * architecture specific code.
-> + */
-> +static inline int arch_exit_to_guestmode(struct kvm *kvm, struct kvm_vcpu *vcpu,
-> +                                        unsigned long ti_work);
+> Another issue is that there are currently 'expected' warnings dotted
+> through the tree for various defconfigs
 
-Can you add a comment about whether IRQs are supposed to be off (I
-assume they are) and perhaps a lockdep assertion to verify it?
+This is why I refuse to have _any_ warnings at all in my tree during
+the merge window.
+
+If you have expected warnings, you will ignore the new and valid ones.
+So the only acceptable situation is "no warnings".
+
+In honesty, I actually do have one warning in my tree:
+
+  samples/vfs/test-statx.c:24:15: warning: =E2=80=98struct foo=E2=80=99 dec=
+lared
+inside parameter list will not be visible outside of this definition
+or declaration
+     24 | #define statx foo
+        |               ^~~
+
+but because it's in the sample code, it pretty much never gets rebuilt
+for me unless I basically do a "git clean" to get rid of everything,
+so I don't normally see it for any normal pull.
+
+So I've ignored that one warning, although I've actually been tempted
+to just remove the sample because of it.
+
+Adding David and Al to the cc just in case they have some simple fixup
+for it that is likely to work across different user headers.
+
+I considered just adding a
+
+     struct foo;
+
+declaration, but the whole thing is incredibly ugly.
+
+                  Linus
