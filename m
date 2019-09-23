@@ -2,89 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4FE3BB65A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C49BB64D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:13:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732512AbfIWOOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:14:33 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56864 "EHLO inva020.nxp.com"
+        id S2437656AbfIWON2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:13:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732495AbfIWOO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:14:28 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6CA141A02EB;
-        Mon, 23 Sep 2019 16:14:26 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F44F1A0262;
-        Mon, 23 Sep 2019 16:14:26 +0200 (CEST)
-Received: from fsr-ub1664-121.ea.freescale.net (fsr-ub1664-121.ea.freescale.net [10.171.82.171])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id DCA1820613;
-        Mon, 23 Sep 2019 16:14:25 +0200 (CEST)
-From:   Laurentiu Palcu <laurentiu.palcu@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     agx@sigxcpu.org, l.stach@pengutronix.de,
-        Laurentiu Palcu <laurentiu.palcu@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] arm64: dts: imx8mq: add DCSS node
-Date:   Mon, 23 Sep 2019 17:13:19 +0300
-Message-Id: <1569248002-2485-6-git-send-email-laurentiu.palcu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1569248002-2485-1-git-send-email-laurentiu.palcu@nxp.com>
-References: <1569248002-2485-1-git-send-email-laurentiu.palcu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2404847AbfIWON2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 10:13:28 -0400
+Received: from localhost (lfbn-ncy-1-150-155.w83-194.abo.wanadoo.fr [83.194.232.155])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 306DF20578;
+        Mon, 23 Sep 2019 14:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569248007;
+        bh=kpxPgEg0SUFhUmPgDRXXbOqqrktiGx5C5nmICpq9Cr8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=al7D2uFJV6kDW0PM4RbmZTqNkcDYM0cSmAcZ8m5KeEk/bdzTjwbT7IQnEGVAEjukN
+         20bxM3VZFkA6JDjphzRiQfERq2Y2pVMdCZ0jNuXE4Ef9IgsDj9dVgFucgMI2MCpGBb
+         +cJ+G+3qOLttOylNC03wUoi6FMf4tR5o2YEegfus=
+Date:   Mon, 23 Sep 2019 16:13:25 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [patch 6/6] posix-cpu-timers: Make PID=0 and PID=self handling
+ consistent
+Message-ID: <20190923141324.GB10778@lenoir>
+References: <20190905120339.561100423@linutronix.de>
+ <20190905120540.162032542@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190905120540.162032542@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the node for iMX8MQ Display Controller Subsystem.
+On Thu, Sep 05, 2019 at 02:03:45PM +0200, Thomas Gleixner wrote:
+> If the PID encoded into the clock id is 0 then the target is either the
+> calling thread itself or the process to which it belongs.
+> 
+> If the current thread encodes its own PID on a process wide clock then
+> there is no reason not to treat it in the same way as the PID=0 case.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  kernel/time/posix-cpu-timers.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> --- a/kernel/time/posix-cpu-timers.c
+> +++ b/kernel/time/posix-cpu-timers.c
+> @@ -90,7 +90,14 @@ static struct task_struct *lookup_task(c
+>  
+>  	} else {
+>  		/*
+> -		 * For processes require that p is group leader.
+> +		 * Timer is going to be attached to a process. If p is
+> +		 * current then treat it like the PID=0 case above.
+> +		 */
+> +		if (p == current)
+> +			return current->group_leader;
+> +
+> +		/*
+> +		 * For foreign processes require that p is group leader.
+>  		 */
+>  		if (!has_group_leader_pid(p))
+>  			return NULL;
 
-Signed-off-by: Laurentiu Palcu <laurentiu.palcu@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+So, right after you should have that:
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index 52aae34..d4aa778 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -871,6 +871,31 @@
- 				interrupt-controller;
- 				#interrupt-cells = <1>;
- 			};
-+
-+			dcss: dcss@0x32e00000 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				compatible = "nxp,imx8mq-dcss";
-+				reg = <0x32e00000 0x2D000>, <0x32e2f000 0x1000>;
-+				interrupts = <6>, <8>, <9>;
-+				interrupt-names = "ctx_ld", "ctxld_kick", "vblank";
-+				interrupt-parent = <&irqsteer>;
-+				clocks = <&clk IMX8MQ_CLK_DISP_APB_ROOT>,
-+					 <&clk IMX8MQ_CLK_DISP_AXI_ROOT>,
-+					 <&clk IMX8MQ_CLK_DISP_RTRM_ROOT>,
-+					 <&clk IMX8MQ_VIDEO2_PLL_OUT>,
-+					 <&clk IMX8MQ_CLK_DISP_DTRC>;
-+				clock-names = "apb", "axi", "rtrm", "pix", "dtrc";
-+				assigned-clocks = <&clk IMX8MQ_CLK_DISP_AXI>,
-+						  <&clk IMX8MQ_CLK_DISP_RTRM>,
-+						  <&clk IMX8MQ_VIDEO2_PLL1_REF_SEL>;
-+				assigned-clock-parents = <&clk IMX8MQ_SYS1_PLL_800M>,
-+							 <&clk IMX8MQ_SYS1_PLL_800M>,
-+							 <&clk IMX8MQ_CLK_27M>;
-+				assigned-clock-rates = <800000000>,
-+							   <400000000>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		gpu: gpu@38000000 {
--- 
-2.7.4
+                if (same_thread_group(p, current))
+                        return p;
 
+Which I suggested to convert as:
+
+                if (p == current)
+                        return p;
+
+Either way, you can now remove those lines.
+
+And then:
+
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
