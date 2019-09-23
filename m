@@ -2,108 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE959BADA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 08:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D24ABADA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 08:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392344AbfIWGBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 02:01:34 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:58644 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387519AbfIWGBa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 02:01:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1569218489;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=vdX8tdsz8p0cI70eNyOOHHqPsOCERsGcj5XIq8ZYihI=;
-        b=Tf3LoB5AcFjrp+t5TCu0UdTg+rCsupYY81c8Vdy7a/NPbVegtjfVI3XuqSaXxLa4VXqfFE
-        em+cqeoRE2kwETVEUYLbqqefs85Qbw4IQf3kWpkN5U1PSj8LiB2CnOA1tUlJ5WCOCeWijA
-        euzjhkaEl+WHHU9RMj43U2UAtJo64tw=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-22-Ix0ysnPhOm21q-xhLsjRyA-1; Mon, 23 Sep 2019 02:01:28 -0400
-Received: by mail-pf1-f200.google.com with SMTP id z13so9491860pfr.15
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2019 23:01:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=6whaabGHABPeYQY1Y8LH/wuL+jQ1IMXfQogkhGaUTG4=;
-        b=MaP1/peU+Kupc3afKqM83SSoEz8jUQK9lrlvIAwPeIkl9h1h6Yn2RLcoVex5V8D3/j
-         myU74MQ6FabHFFxJFhQCIaKjIPmPZpTcnt4XTlk6b+m3Nj4Iy9q/epGkcA0Vb9MWDfSn
-         87paBoIFRuVPxKIXmGxOeTPOvsAGZBW9XrT0vsHALQTks6MoW+HDSORVEo/qE5eZk5xi
-         pxm3R+CQjhx4MvhpI34sCgpEc6X63B9Cmi3LNHTdpUPokp+p3WuFwl5zLleTe8vprc72
-         P4VGYFToVUrplcshUCsIgoyuLh3yTZTtWJSTeS3rcEWpBl6RPf5ET3qW0FR5gKfOgaU+
-         /1Jg==
-X-Gm-Message-State: APjAAAUI9V58ZvJBXEu1XssUALefbT7b5n4tn6FdHGbkWkY7/lQAeR6O
-        VbCvSxec/M+6aVSEOCdKTvGCm9qWzDUBuggrZ9zYbIr0NQR3jhoseO63Hv+5VyUgH3VNoq5LVmg
-        etIPSd2PE6j7GUqf+WaBRx06k
-X-Received: by 2002:a65:4286:: with SMTP id j6mr28025367pgp.218.1569218487153;
-        Sun, 22 Sep 2019 23:01:27 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyvR4MEfVgME/VvqMT+nE4Yv61JPtHdtmXLPt2MgBFKd99JPBW+AmK8Ul3rDdKdprEPdJMtSw==
-X-Received: by 2002:a65:4286:: with SMTP id j6mr28025339pgp.218.1569218486738;
-        Sun, 22 Sep 2019 23:01:26 -0700 (PDT)
-Received: from machine1 ([125.16.200.50])
-        by smtp.gmail.com with ESMTPSA id l72sm14191309pjb.7.2019.09.22.23.01.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2019 23:01:26 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 11:31:22 +0530
-From:   "Milan P. Gandhi" <mgandhi@redhat.com>
-To:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com
-Subject: [PATCH] scsi: core: Log SCSI command age with errors
-Message-ID: <20190923060122.GA9603@machine1>
+        id S2392538AbfIWGG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 02:06:58 -0400
+Received: from mga11.intel.com ([192.55.52.93]:65031 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387519AbfIWGG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 02:06:58 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Sep 2019 23:06:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,539,1559545200"; 
+   d="scan'208";a="188965441"
+Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.6])
+  by fmsmga007.fm.intel.com with ESMTP; 22 Sep 2019 23:06:54 -0700
+Date:   Mon, 23 Sep 2019 14:06:43 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc:     kbuild-all@01.org, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sinan Kaya <okaya@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        Stuart Hayes <stuart.w.hayes@gmail.com>,
+        Matan Ziv-Av <matan@svgalib.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peng Hao <peng.hao2@zte.com.cn>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mattias Jacobsson <2pi@mok.nu>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] platform/x86: huawei-wmi: Add battery charging
+ thresholds
+Message-ID: <20190923060643.GE15734@shao2-debian>
 MIME-Version: 1.0
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-MC-Unique: Ix0ysnPhOm21q-xhLsjRyA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20190920160250.12510-5-ayman.bagabas@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Couple of users had requested to print the SCSI command age along=20
-with command failure errors. This is a small change, but allows=20
-users to get more important information about the command that was=20
-failed, it would help the users in debugging the command failures:
+Hi Ayman,
 
-Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on next-20190918]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Ayman-Bagabas/platform-x86-Huawei-WMI-laptop-extras-driver/20190921-072831
+base:   next-20190918
+:::::: branch date: 31 hours ago
+:::::: commit date: 31 hours ago
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+smatch warnings:
+drivers/platform/x86/huawei-wmi.c:327 huawei_wmi_battery_get() error: buffer overflow 'ret' 256 <= 256
+
+# https://github.com/0day-ci/linux/commit/2b04f79aef9a86ecb9483dd27a82498fa56bc0c9
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 2b04f79aef9a86ecb9483dd27a82498fa56bc0c9
+vim +/ret +327 drivers/platform/x86/huawei-wmi.c
+
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  311  
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  312  static int huawei_wmi_battery_get(int *start, int *end)
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  313  {
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  314  	u8 ret[0x100];
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  315  	int err, i;
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  316  
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  317  	err = huawei_wmi_cmd(BATTERY_THRESH_GET, ret, 0x100);
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  318  	if (err)
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  319  		return err;
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  320  
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  321  	/* Find the last two non-zero values. Return status is ignored. */
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  322  	i = 0x100;
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  323  	do {
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  324  		if (start)
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  325  			*start = ret[i-1];
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  326  		if (end)
+2b04f79aef9a86 Ayman Bagabas 2019-09-20 @327  			*end = ret[i];
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  328  	} while (i > 2 && !ret[i--]);
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  329  
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  330  	return 0;
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  331  }
+2b04f79aef9a86 Ayman Bagabas 2019-09-20  332  
+
 ---
-diff --git a/drivers/scsi/scsi_logging.c b/drivers/scsi/scsi_logging.c
-index ecc5918e372a..ca2182bc53c6 100644
---- a/drivers/scsi/scsi_logging.c
-+++ b/drivers/scsi/scsi_logging.c
-@@ -437,6 +437,7 @@ void scsi_print_result(const struct scsi_cmnd *cmd, con=
-st char *msg,
- =09const char *mlret_string =3D scsi_mlreturn_string(disposition);
- =09const char *hb_string =3D scsi_hostbyte_string(cmd->result);
- =09const char *db_string =3D scsi_driverbyte_string(cmd->result);
-+=09unsigned long cmd_age =3D (jiffies - cmd->jiffies_at_alloc) / HZ;
-=20
- =09logbuf =3D scsi_log_reserve_buffer(&logbuf_len);
- =09if (!logbuf)
-@@ -478,10 +479,15 @@ void scsi_print_result(const struct scsi_cmnd *cmd, c=
-onst char *msg,
-=20
- =09if (db_string)
- =09=09off +=3D scnprintf(logbuf + off, logbuf_len - off,
--=09=09=09=09 "driverbyte=3D%s", db_string);
-+=09=09=09=09 "driverbyte=3D%s ", db_string);
- =09else
- =09=09off +=3D scnprintf(logbuf + off, logbuf_len - off,
--=09=09=09=09 "driverbyte=3D0x%02x", driver_byte(cmd->result));
-+=09=09=09=09 "driverbyte=3D0x%02x ",
-+=09=09=09=09 driver_byte(cmd->result));
-+
-+=09off +=3D scnprintf(logbuf + off, logbuf_len - off,
-+=09=09=09 "cmd-age=3D%lus", cmd_age);
-+
- out_printk:
- =09dev_printk(KERN_INFO, &cmd->device->sdev_gendev, "%s", logbuf);
- =09scsi_log_release_buffer(logbuf);
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
