@@ -2,68 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E496DBBC32
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B74BBC37
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbfIWTVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 15:21:49 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:36248 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbfIWTVt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:21:49 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCTu7-0000C1-H5; Mon, 23 Sep 2019 19:21:47 +0000
-Date:   Mon, 23 Sep 2019 20:21:47 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] several more mount API conversions
-Message-ID: <20190923192147.GC26530@ZenIV.linux.org.uk>
+        id S2440439AbfIWTYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 15:24:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54494 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2440392AbfIWTYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 15:24:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2F23CAD72;
+        Mon, 23 Sep 2019 19:23:59 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 23 Sep 2019 21:23:57 +0200
+From:   Roman Penyaev <rpenyaev@suse.de>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Eric Wong <normalperson@yhbt.net>
+Subject: Re: [PATCH] epoll: simplify ep_poll_safewake() for
+ CONFIG_DEBUG_LOCK_ALLOC
+In-Reply-To: <a07adc0e-590e-623c-3c80-e28af39bd19c@akamai.com>
+References: <1567628549-11501-1-git-send-email-jbaron@akamai.com>
+ <a07adc0e-590e-623c-3c80-e28af39bd19c@akamai.com>
+Message-ID: <1b26e25fcc0e6c54cbdb9e66dade17db@suse.de>
+X-Sender: rpenyaev@suse.de
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Assorted conversions of options parsing to new API.
-gfs2 is probably the most serious one here; the rest is
-trivial stuff.  Other things in what used to be #work.mount
-are going to wait for the next cycle (and preferably go via
-git trees of the filesystems involved).
+On 2019-09-23 17:43, Jason Baron wrote:
+> On 9/4/19 4:22 PM, Jason Baron wrote:
+>> Currently, ep_poll_safewake() in the CONFIG_DEBUG_LOCK_ALLOC case uses
+>> ep_call_nested() in order to pass the correct subclass argument to
+>> spin_lock_irqsave_nested(). However, ep_call_nested() adds unnecessary
+>> checks for epoll depth and loops that are already verified when doing
+>> EPOLL_CTL_ADD. This mirrors a conversion that was done for
+>> !CONFIG_DEBUG_LOCK_ALLOC in: commit 37b5e5212a44 ("epoll: remove
+>> ep_call_nested() from ep_eventpoll_poll()")
+>> 
+>> Signed-off-by: Jason Baron <jbaron@akamai.com>
+>> Cc: Davidlohr Bueso <dave@stgolabs.net>
+>> Cc: Roman Penyaev <rpenyaev@suse.de>
+>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>> Cc: Eric Wong <normalperson@yhbt.net>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> ---
+>>  fs/eventpoll.c | 36 +++++++++++++-----------------------
+>>  1 file changed, 13 insertions(+), 23 deletions(-)
+>> 
+>> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+>> index d7f1f50..a9b2737 100644
+>> --- a/fs/eventpoll.c
+>> +++ b/fs/eventpoll.c
+>> @@ -551,28 +551,23 @@ static int ep_call_nested(struct nested_calls 
+>> *ncalls,
+>>   */
+>>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>> 
+>> -static struct nested_calls poll_safewake_ncalls;
+>> -
+>> -static int ep_poll_wakeup_proc(void *priv, void *cookie, int 
+>> call_nests)
+>> -{
+>> -	unsigned long flags;
+>> -	wait_queue_head_t *wqueue = (wait_queue_head_t *)cookie;
+>> -
+>> -	spin_lock_irqsave_nested(&wqueue->lock, flags, call_nests + 1);
+>> -	wake_up_locked_poll(wqueue, EPOLLIN);
+>> -	spin_unlock_irqrestore(&wqueue->lock, flags);
+>> -
+>> -	return 0;
+>> -}
+>> +static DEFINE_PER_CPU(int, wakeup_nest);
+>> 
+>>  static void ep_poll_safewake(wait_queue_head_t *wq)
+>>  {
+>> -	int this_cpu = get_cpu();
+>> -
+>> -	ep_call_nested(&poll_safewake_ncalls,
+>> -		       ep_poll_wakeup_proc, NULL, wq, (void *) (long) this_cpu);
+>> +	unsigned long flags;
+>> +	int subclass;
+>> 
+>> -	put_cpu();
+>> +	local_irq_save(flags);
+>> +	preempt_disable();
+>> +	subclass = __this_cpu_read(wakeup_nest);
+>> +	spin_lock_nested(&wq->lock, subclass + 1);
+>> +	__this_cpu_inc(wakeup_nest);
+>> +	wake_up_locked_poll(wq, POLLIN);
+>> +	__this_cpu_dec(wakeup_nest);
+>> +	spin_unlock(&wq->lock);
+>> +	local_irq_restore(flags);
+>> +	preempt_enable();
+>>  }
 
-The following changes since commit 74983ac20aeafc88d9ceed64a8bf2a9024c488d5:
+What if reduce number of lines with something as the following:
 
-  vfs: Make fs_parse() handle fs_param_is_fd-type params better (2019-09-12 21:06:14 -0400)
+    int this_cpu = get_cpu();
+    subclass = __this_cpu_inc_return(wakeup_nest);
+    spin_lock_irqsave_nested(&wq->lock, flags, subclass);
+    wake_up_locked_poll(wq, POLLIN);
+    spin_unlock_irqrestore(&wq->lock, flags);
+    __this_cpu_dec(wakeup_nest);
+    put_cpu();
 
-are available in the git repository at:
+Other than that looks good to me.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount3
+Reviewed-by: Roman Penyaev <rpenyaev@suse.de>
 
-for you to fetch changes up to 1f52aa08d12f8d359e71b4bfd73ca9d5d668e4da:
-
-  gfs2: Convert gfs2 to fs_context (2019-09-18 22:47:05 -0400)
-
-----------------------------------------------------------------
-Andrew Price (1):
-      gfs2: Convert gfs2 to fs_context
-
-David Howells (5):
-      vfs: Convert bpf to use the new mount API
-      vfs: Convert functionfs to use the new mount API
-      hypfs: Fix error number left in struct pointer member
-      vfs: Convert hypfs to use the new mount API
-      vfs: Convert spufs to use the new mount API
-
- arch/powerpc/platforms/cell/spufs/inode.c | 207 +++++++------
- arch/s390/hypfs/inode.c                   | 137 +++++----
- drivers/usb/gadget/function/f_fs.c        | 233 +++++++-------
- fs/gfs2/incore.h                          |   8 +-
- fs/gfs2/ops_fstype.c                      | 495 ++++++++++++++++++++++--------
- fs/gfs2/super.c                           | 333 +-------------------
- fs/gfs2/super.h                           |   3 +-
- kernel/bpf/inode.c                        |  92 ++++--
- 8 files changed, 749 insertions(+), 759 deletions(-)
+--
+Roman
