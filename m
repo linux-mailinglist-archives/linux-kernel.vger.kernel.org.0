@@ -2,32 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5A87BB44F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F409BB484
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439578AbfIWMwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:52:08 -0400
-Received: from regular1.263xmail.com ([211.150.70.196]:37188 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404967AbfIWMwH (ORCPT
+        id S2439733AbfIWM4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:56:06 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:48462 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437481AbfIWM4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:52:07 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.16])
-        by regular1.263xmail.com (Postfix) with ESMTP id 0DEC2B96;
-        Mon, 23 Sep 2019 20:44:00 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
+        Mon, 23 Sep 2019 08:56:05 -0400
+X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Sep 2019 08:56:02 EDT
+Received: from localhost (unknown [192.168.167.227])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 1CBF866344;
+        Mon, 23 Sep 2019 20:48:05 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
 X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P3051T140289744058112S1569242621440080_;
-        Mon, 23 Sep 2019 20:44:00 +0800 (CST)
+        by smtp.263.net (postfix) whith ESMTP id P14169T140710336407296S1569242883858959_;
+        Mon, 23 Sep 2019 20:48:04 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <6e704a054898d3f23dd3220778556226>
+X-UNIQUE-TAG: <dcbf38747a55e5c1495e51f206d0b1dd>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -37,18 +35,14 @@ X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
 To:     dri-devel@lists.freedesktop.org,
-        "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>
 Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/36] drm/arm: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:41:14 +0800
-Message-Id: <1569242500-182337-11-git-send-email-hjc@rock-chips.com>
+Subject: [PATCH 11/36] drm/armada: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:47:35 +0800
+Message-Id: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1569242500-182337-7-git-send-email-hjc@rock-chips.com>
-References: <1569242500-182337-7-git-send-email-hjc@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,50 +53,52 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c | 2 +-
- drivers/gpu/drm/arm/malidp_hw.c                         | 2 +-
- drivers/gpu/drm/arm/malidp_planes.c                     | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/armada/armada_fbdev.c | 2 +-
+ drivers/gpu/drm/armada/armada_plane.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-index 3b0a70e..d02dfc6 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-@@ -89,7 +89,7 @@ komeda_fb_afbc_size_check(struct komeda_fb *kfb, struct drm_file *file,
- 				    alignment_header);
+diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
+index 090cc0d..a2e4344 100644
+--- a/drivers/gpu/drm/armada/armada_fbdev.c
++++ b/drivers/gpu/drm/armada/armada_fbdev.c
+@@ -88,7 +88,7 @@ static int armada_fbdev_create(struct drm_fb_helper *fbh,
+ 	drm_fb_helper_fill_info(info, fbh, sizes);
  
- 	kfb->afbc_size = kfb->offset_payload + n_blocks *
--			 ALIGN(info->cpp[0] * AFBC_SUPERBLK_PIXELS,
-+			 ALIGN(info->bpp[0] / 8 * AFBC_SUPERBLK_PIXELS,
- 			       AFBC_SUPERBLK_ALIGNMENT);
- 	min_size = kfb->afbc_size + fb->offsets[0];
- 	if (min_size > obj->size) {
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index bd8265f..54be8d1 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -384,7 +384,7 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
- int malidp_format_get_bpp(u32 fmt)
- {
- 	const struct drm_format_info *info = drm_format_info(fmt);
--	int bpp = info->cpp[0] * 8;
-+	int bpp = info->bpp[0];
+ 	DRM_DEBUG_KMS("allocated %dx%d %dbpp fb: 0x%08llx\n",
+-		dfb->fb.width, dfb->fb.height, dfb->fb.format->cpp[0] * 8,
++		dfb->fb.width, dfb->fb.height, dfb->fb.format->bpp[0],
+ 		(unsigned long long)obj->phys_addr);
  
- 	if (bpp == 0) {
- 		switch (fmt) {
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index 3c70a53..628f325 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -225,7 +225,7 @@ bool malidp_format_mod_supported(struct drm_device *drm,
+ 	return 0;
+diff --git a/drivers/gpu/drm/armada/armada_plane.c b/drivers/gpu/drm/armada/armada_plane.c
+index e7cc2b3..fa400ac 100644
+--- a/drivers/gpu/drm/armada/armada_plane.c
++++ b/drivers/gpu/drm/armada/armada_plane.c
+@@ -46,13 +46,13 @@ void armada_drm_plane_calc(struct drm_plane_state *state, u32 addrs[2][3],
+ 	int i;
  
- 	if (modifier & AFBC_SPLIT) {
- 		if (!info->is_yuv) {
--			if (info->cpp[0] <= 2) {
-+			if (info->bpp[0] <= 16) {
- 				DRM_DEBUG_KMS("RGB formats <= 16bpp are not supported with SPLIT\n");
- 				return false;
- 			}
+ 	DRM_DEBUG_KMS("pitch %u x %d y %d bpp %d\n",
+-		      fb->pitches[0], x, y, format->cpp[0] * 8);
++		      fb->pitches[0], x, y, format->bpp[0]);
+ 
+ 	if (num_planes > 3)
+ 		num_planes = 3;
+ 
+ 	addrs[0][0] = addr + fb->offsets[0] + y * fb->pitches[0] +
+-		      x * format->cpp[0];
++		      x * format->bpp[0] / 8;
+ 	pitches[0] = fb->pitches[0];
+ 
+ 	y /= format->vsub;
+@@ -60,7 +60,7 @@ void armada_drm_plane_calc(struct drm_plane_state *state, u32 addrs[2][3],
+ 
+ 	for (i = 1; i < num_planes; i++) {
+ 		addrs[0][i] = addr + fb->offsets[i] + y * fb->pitches[i] +
+-			      x * format->cpp[i];
++			      x * format->bpp[i] / 8;
+ 		pitches[i] = fb->pitches[i];
+ 	}
+ 	for (; i < 3; i++) {
 -- 
 2.7.4
 
