@@ -2,69 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D2EFBB24E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCBD0BB250
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:37:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439386AbfIWKg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 06:36:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36674 "EHLO mx1.suse.de"
+        id S2439499AbfIWKhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:37:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36922 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727056AbfIWKg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 06:36:58 -0400
+        id S1729662AbfIWKhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 06:37:41 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 803F7B018;
-        Mon, 23 Sep 2019 10:36:56 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 12:36:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        virtualization@lists.linux-foundation.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH RFC v3 1/9] ACPI: NUMA: export pxm_to_node
-Message-ID: <20190923103655.GG6016@dhcp22.suse.cz>
-References: <20190919142228.5483-1-david@redhat.com>
- <20190919142228.5483-2-david@redhat.com>
- <f4d8204e-71a1-855e-3992-35f7ec90440c@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4d8204e-71a1-855e-3992-35f7ec90440c@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by mx1.suse.de (Postfix) with ESMTP id D4972B152;
+        Mon, 23 Sep 2019 10:37:39 +0000 (UTC)
+From:   Daniel Wagner <dwagner@suse.de>
+To:     QLogic-Storage-Upstream@cavium.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Wagner <dwagner@suse.de>
+Subject: [PATCH] scsi: qedf: Add port_id getter
+Date:   Mon, 23 Sep 2019 12:37:38 +0200
+Message-Id: <20190923103738.67749-1-dwagner@suse.de>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-09-19 12:13:11, David Hildenbrand wrote:
-> On 19.09.19 16:22, David Hildenbrand wrote:
-> > Will be needed by virtio-mem to identify the node from a pxm.
-> > 
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Cc: Len Brown <lenb@kernel.org>
-> > Cc: linux-acpi@vger.kernel.org
-> > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > ---
-> >  drivers/acpi/numa.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-> > index eadbf90e65d1..d5847fa7ac69 100644
-> > --- a/drivers/acpi/numa.c
-> > +++ b/drivers/acpi/numa.c
-> > @@ -35,6 +35,7 @@ int pxm_to_node(int pxm)
-> >  		return NUMA_NO_NODE;
-> >  	return pxm_to_node_map[pxm];
-> >  }
-> > +EXPORT_SYMBOL(pxm_to_node);
-> 
-> FWIW, this is a fairly old patch I dragged along and I think I'll
-> convert this to EXPORT_SYMBOL_GPL now that I know better :)
+Add qedf_get_host_port_id() to the transport template.
 
-All other exports in this file are EXPORT_SYMBOL. Why is this one
-considered special to restrict the access?
+The fc_transport_template initializes the port_id member to the
+default value of -1. The new getter ensures that the sysfs entry shows
+the current value and not the default one, e.g by using 'lsscsi -H -t'
+
+Signed-off-by: Daniel Wagner <dwagner@suse.de>
+---
+ drivers/scsi/qedf/qedf_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
+index 9c24f3834d70..8fe8c3fdde1b 100644
+--- a/drivers/scsi/qedf/qedf_main.c
++++ b/drivers/scsi/qedf/qedf_main.c
+@@ -1926,6 +1926,13 @@ static int qedf_fcoe_reset(struct Scsi_Host *shost)
+ 	return 0;
+ }
+ 
++static void qedf_get_host_port_id(struct Scsi_Host *shost)
++{
++	struct fc_lport *lport = shost_priv(shost);
++
++	fc_host_port_id(shost) = lport->port_id;
++}
++
+ static struct fc_host_statistics *qedf_fc_get_host_stats(struct Scsi_Host
+ 	*shost)
+ {
+@@ -1996,6 +2003,7 @@ static struct fc_function_template qedf_fc_transport_fn = {
+ 	.show_host_active_fc4s = 1,
+ 	.show_host_maxframe_size = 1,
+ 
++	.get_host_port_id = qedf_get_host_port_id,
+ 	.show_host_port_id = 1,
+ 	.show_host_supported_speeds = 1,
+ 	.get_host_speed = fc_get_host_speed,
 -- 
-Michal Hocko
-SUSE Labs
+2.16.4
+
