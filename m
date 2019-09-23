@@ -2,228 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8295DBB225
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 181D3BB220
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:21:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439476AbfIWKVN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 06:21:13 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:50820 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439457AbfIWKVM (ORCPT
+        id S2439437AbfIWKVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:21:07 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45447 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439425AbfIWKVG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 06:21:12 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8NAL7Uw040462;
-        Mon, 23 Sep 2019 05:21:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569234067;
-        bh=1LIb46R+iv+ywgqwnKJpcNZUZ+MdGsvBooOdeuNHDOA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=oOn9yQjyMHjxzPpguI7yvS/mzQEnihxeQ62UQ5FOf0UVWlh9k4MvchlSrurMAebBz
-         t2T2HYdlGH2nR0TsCfA/oTDfgbIKTsq8wpCHylA49SORMzFzHJ+ePOx7qlLr032Yds
-         udFzNq6EcR+lsS40ohYyKx7oZHI8jtZ2tiRFSKAU=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8NAL76I043979
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Sep 2019 05:21:07 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 23
- Sep 2019 05:21:07 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 23 Sep 2019 05:21:01 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8NAL6OM118850;
-        Mon, 23 Sep 2019 05:21:06 -0500
-From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
-        <daniel.thompson@linaro.org>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmurphy@ti.com>, <tomi.valkeinen@ti.com>,
-        Jean-Jacques Hiblot <jjhiblot@ti.com>
-Subject: [PATCH v5 3/3] leds: Add control of the voltage/current regulator to the LED core
-Date:   Mon, 23 Sep 2019 12:20:59 +0200
-Message-ID: <20190923102059.17818-4-jjhiblot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190923102059.17818-1-jjhiblot@ti.com>
-References: <20190923102059.17818-1-jjhiblot@ti.com>
+        Mon, 23 Sep 2019 06:21:06 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 4so7749586pgm.12
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 03:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=CXvbstD2m08lCzQh36duEA5ws0bxBPn6LqTdvVcfkS4=;
+        b=IDEfImopZM+uhUkTwx6z6NBrJo2aMW0JluC4He2eeVrx3Enr+nqtwDcFdQ90gDWTN7
+         f5dKe1J5zyEesLT/TIMB4N9k8Aznfh1hRu0K2ice0sEUQzsNEF7ABYH54cBkC2nMXvCW
+         sOEWLqL9bIDP0KhdmDg8oMuztPgg2t0TBvAvacpuoYYybqc7ifYt0XYAu6L+Zyd3z5kW
+         AZtM2lEo9LHDl2+lBZtV8y9kTSYWg7XUzBemMsMa829ubhzUNkhxh6GFy4h8boT+hRpI
+         Y9IKxnj2RBhQ1dlbaypEXmmru6Jm0bnYfcFZfEa/fq9AXS7EE/PczhtK5F/PBdR0hzAB
+         9rOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=CXvbstD2m08lCzQh36duEA5ws0bxBPn6LqTdvVcfkS4=;
+        b=ehuSGyYH3cB8dqOKWTnfNjQmWelJckAlYTeKjKce5/4QjztAKWW+/NOZ/seSv5qZVa
+         ICEeeoBtyOZqRfXXpZkRKcQdaEIPQ6EDceiWl11VEfrn7jRBPkGHvuQyLF/zXGTD+9n2
+         qiBwIeABHZwHHTw9AH1yB/PtazsemrpM1K//2L9gbV7kxgjHNmw7hDthCb/OqUXuziA7
+         QcDKYpWskKqBAGd7w5h0FuVXo05SKEvSz0e0bK7FbdpuC0A1KmCBOrM9OQm8NARCKn5a
+         Z8Rn2NPN/KN2/Cw5DPbDznH7/lbE/kfh9avVFEv3y/odV1/PylaTXu2uhCh8JwOyJz3/
+         nHTw==
+X-Gm-Message-State: APjAAAWVVuw++5FscFliqxRGlz+7TATIbYxrHwQjHCptxCdpL9ayhFvE
+        2ui1uIVQPJ2NHvu/YoMHZgs=
+X-Google-Smtp-Source: APXvYqwgTjx/Ho05abUBRZtOqhFdPYqvJK1KmpHYQN3e+VYW1sen0LuZHG10cGI6bBC7ftaWS4s/8w==
+X-Received: by 2002:a62:8702:: with SMTP id i2mr32616605pfe.187.1569234065362;
+        Mon, 23 Sep 2019 03:21:05 -0700 (PDT)
+Received: from localhost ([110.70.15.104])
+        by smtp.gmail.com with ESMTPSA id q71sm11380351pjb.26.2019.09.23.03.21.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 03:21:04 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 19:21:00 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Theodore Ts'o <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: printk() + memory offline deadlock (WAS Re: page_alloc.shuffle=1
+ + CONFIG_PROVE_LOCKING=y = arm64 hang)
+Message-ID: <20190923102100.GA1171@jagdpanzerIV>
+References: <1566509603.5576.10.camel@lca.pw>
+ <1567717680.5576.104.camel@lca.pw>
+ <1568128954.5576.129.camel@lca.pw>
+ <20190911011008.GA4420@jagdpanzerIV>
+ <1568289941.5576.140.camel@lca.pw>
+ <20190916104239.124fc2e5@gandalf.local.home>
+ <1568817579.5576.172.camel@lca.pw>
+ <20190918155059.GA158834@tigerII.localdomain>
+ <1568823006.5576.178.camel@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1568823006.5576.178.camel@lca.pw>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A LED is usually powered by a voltage/current regulator. Let the LED core
-know about it. This allows the LED core to turn on or off the power supply
-as needed.
+On (09/18/19 12:10), Qian Cai wrote:
+[..]
+> > So you have debug objects enabled. Right? This thing does not behave
+> > when it comes to printing. debug_objects are slightly problematic.
+> 
+> Yes, but there is an also a similar splat without the debug_objects. It looks
+> like anything try to allocate memory in that path will trigger it anyway.
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
----
- drivers/leds/led-class.c | 17 +++++++++++
- drivers/leds/led-core.c  | 65 ++++++++++++++++++++++++++++++++++++++--
- drivers/leds/leds.h      |  3 ++
- include/linux/leds.h     |  5 ++++
- 4 files changed, 88 insertions(+), 2 deletions(-)
+Appears to be different, yet somehow very familiar.
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index e11177d77b4c..d122b6982efd 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -352,6 +352,7 @@ int led_classdev_register_ext(struct device *parent,
- 	char final_name[LED_MAX_NAME_SIZE];
- 	const char *proposed_name = composed_name;
- 	int ret;
-+	struct regulator *regulator;
- 
- 	if (init_data) {
- 		if (init_data->devname_mandatory && !init_data->devicename) {
-@@ -387,6 +388,22 @@ int led_classdev_register_ext(struct device *parent,
- 		dev_warn(parent, "Led %s renamed to %s due to name collision",
- 				led_cdev->name, dev_name(led_cdev->dev));
- 
-+	regulator = devm_regulator_get_optional(led_cdev->dev, "power");
-+	if (IS_ERR(regulator)) {
-+		if (regulator != ERR_PTR(-ENODEV)) {
-+			dev_err(led_cdev->dev, "Cannot get the power supply for %s\n",
-+				led_cdev->name);
-+			device_unregister(led_cdev->dev);
-+			mutex_unlock(&led_cdev->led_access);
-+			return PTR_ERR(regulator);
-+		}
-+		led_cdev->regulator = NULL;
-+	} else {
-+		led_cdev->regulator = regulator;
-+		led_cdev->regulator_state = REG_OFF;
-+		atomic_set(&led_cdev->target_regulator_state, REG_UNKNOWN);
-+	}
-+
- 	if (led_cdev->flags & LED_BRIGHT_HW_CHANGED) {
- 		ret = led_add_brightness_hw_changed(led_cdev);
- 		if (ret) {
-diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
-index d318f9b0382d..155a158c7b8d 100644
---- a/drivers/leds/led-core.c
-+++ b/drivers/leds/led-core.c
-@@ -37,6 +37,43 @@ const char * const led_colors[LED_COLOR_ID_MAX] = {
- };
- EXPORT_SYMBOL_GPL(led_colors);
- 
-+static int __led_handle_regulator(struct led_classdev *led_cdev)
-+{
-+	int rc;
-+	int target_state = led_cdev->delayed_set_value ?  REG_ON : REG_OFF;
-+
-+	if (!led_cdev->regulator)
-+		return 0;
-+
-+	/*
-+	 * if the current regulator state is not the target state, we
-+	 * need to update it.
-+	 * note: No need for spinlock or atomic here because
-+	 * led_cdev->regulator_state is modified only in the context of
-+	 * the worqueue
-+	 */
-+	if (led_cdev->regulator_state != target_state) {
-+
-+		if (target_state == REG_ON)
-+			rc = regulator_enable(led_cdev->regulator);
-+		else
-+			rc = regulator_disable(led_cdev->regulator);
-+		if (rc) {
-+			/*
-+			 * If something went wrong with the regulator update,
-+			 * Make sure that led_set_brightness_nosleep() assume
-+			 * that the regultor is in the right state.
-+			 */
-+			atomic_set(&led_cdev->target_regulator_state,
-+				   REG_UNKNOWN);
-+			return rc;
-+		}
-+
-+		led_cdev->regulator_state = target_state;
-+	}
-+	return 0;
-+}
-+
- static int __led_set_brightness(struct led_classdev *led_cdev,
- 				enum led_brightness value)
- {
-@@ -135,6 +172,11 @@ static void set_brightness_delayed(struct work_struct *ws)
- 	    (led_cdev->flags & LED_HW_PLUGGABLE)))
- 		dev_err(led_cdev->dev,
- 			"Setting an LED's brightness failed (%d)\n", ret);
-+
-+	ret = __led_handle_regulator(led_cdev);
-+	if (ret)
-+		dev_err(led_cdev->dev,
-+			"Updating regulator state failed (%d)\n", ret);
- }
- 
- static void led_set_software_blink(struct led_classdev *led_cdev,
-@@ -269,8 +311,27 @@ EXPORT_SYMBOL_GPL(led_set_brightness);
- void led_set_brightness_nopm(struct led_classdev *led_cdev,
- 			      enum led_brightness value)
- {
--	/* Use brightness_set op if available, it is guaranteed not to sleep */
--	if (!__led_set_brightness(led_cdev, value))
-+	bool update_regulator = false;
-+	int old, new;
-+
-+	if (led_cdev->regulator) {
-+		/*
-+		 * Check if the regulator need to be updated.
-+		 * We use an atomic here because multiple threads could
-+		 * be calling this function at the same time. Using
-+		 * atomic_xchg() ensures the consistency between
-+		 * target_regulator_state, value and update_regulator
-+		 */
-+		new = !!value;
-+		old = atomic_xchg(&led_cdev->target_regulator_state, new);
-+		update_regulator = (old != new);
-+	}
-+
-+	/*
-+	 * If regulator state doesn't need to be changed, use brightness_set
-+	 * op if available, it is guaranteed not to sleep
-+	 */
-+	if (!update_regulator && !__led_set_brightness(led_cdev, value))
- 		return;
- 
- 	/* If brightness setting can sleep, delegate it to a work queue task */
-diff --git a/drivers/leds/leds.h b/drivers/leds/leds.h
-index 0b577cece8f7..02f261ce77f2 100644
---- a/drivers/leds/leds.h
-+++ b/drivers/leds/leds.h
-@@ -11,6 +11,9 @@
- 
- #include <linux/rwsem.h>
- #include <linux/leds.h>
-+#include <linux/regulator/consumer.h>
-+
-+enum { REG_OFF = 0, REG_ON, REG_UNKNOWN };
- 
- static inline int led_get_brightness(struct led_classdev *led_cdev)
- {
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 88bf2ceaabe6..8ce7cf937192 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -149,6 +149,11 @@ struct led_classdev {
- 
- 	/* Ensures consistent access to the LED Flash Class device */
- 	struct mutex		led_access;
-+
-+	/* regulator */
-+	struct regulator	*regulator;
-+	int			regulator_state;
-+	atomic_t		target_regulator_state;
- };
- 
- /**
--- 
-2.17.1
+> [  297.425908] WARNING: possible circular locking dependency detected
+> [  297.425908] 5.3.0-next-20190917 #8 Not tainted
+> [  297.425909] ------------------------------------------------------
+> [  297.425910] test.sh/8653 is trying to acquire lock:
+> [  297.425911] ffffffff865a4460 (console_owner){-.-.}, at:
+> console_unlock+0x207/0x750
+> 
+> [  297.425914] but task is already holding lock:
+> [  297.425915] ffff88883fff3c58 (&(&zone->lock)->rlock){-.-.}, at:
+> __offline_isolated_pages+0x179/0x3e0
+> 
+> [  297.425919] which lock already depends on the new lock.
+> 
+> 
+> [  297.425920] the existing dependency chain (in reverse order) is:
+> 
+> [  297.425922] -> #3 (&(&zone->lock)->rlock){-.-.}:
+> [  297.425925]        __lock_acquire+0x5b3/0xb40
+> [  297.425925]        lock_acquire+0x126/0x280
+> [  297.425926]        _raw_spin_lock+0x2f/0x40
+> [  297.425927]        rmqueue_bulk.constprop.21+0xb6/0x1160
+> [  297.425928]        get_page_from_freelist+0x898/0x22c0
+> [  297.425928]        __alloc_pages_nodemask+0x2f3/0x1cd0
+> [  297.425929]        alloc_pages_current+0x9c/0x110
+> [  297.425930]        allocate_slab+0x4c6/0x19c0
+> [  297.425931]        new_slab+0x46/0x70
+> [  297.425931]        ___slab_alloc+0x58b/0x960
+> [  297.425932]        __slab_alloc+0x43/0x70
+> [  297.425933]        __kmalloc+0x3ad/0x4b0
+> [  297.425933]        __tty_buffer_request_room+0x100/0x250
+> [  297.425934]        tty_insert_flip_string_fixed_flag+0x67/0x110
+> [  297.425935]        pty_write+0xa2/0xf0
+> [  297.425936]        n_tty_write+0x36b/0x7b0
+> [  297.425936]        tty_write+0x284/0x4c0
+> [  297.425937]        __vfs_write+0x50/0xa0
+> [  297.425938]        vfs_write+0x105/0x290
+> [  297.425939]        redirected_tty_write+0x6a/0xc0
+> [  297.425939]        do_iter_write+0x248/0x2a0
+> [  297.425940]        vfs_writev+0x106/0x1e0
+> [  297.425941]        do_writev+0xd4/0x180
+> [  297.425941]        __x64_sys_writev+0x45/0x50
+> [  297.425942]        do_syscall_64+0xcc/0x76c
+> [  297.425943]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> [  297.425944] -> #2 (&(&port->lock)->rlock){-.-.}:
+> [  297.425946]        __lock_acquire+0x5b3/0xb40
+> [  297.425947]        lock_acquire+0x126/0x280
+> [  297.425948]        _raw_spin_lock_irqsave+0x3a/0x50
+> [  297.425949]        tty_port_tty_get+0x20/0x60
+> [  297.425949]        tty_port_default_wakeup+0xf/0x30
+> [  297.425950]        tty_port_tty_wakeup+0x39/0x40
+> [  297.425951]        uart_write_wakeup+0x2a/0x40
+> [  297.425952]        serial8250_tx_chars+0x22e/0x440
+> [  297.425952]        serial8250_handle_irq.part.8+0x14a/0x170
+> [  297.425953]        serial8250_default_handle_irq+0x5c/0x90
+> [  297.425954]        serial8250_interrupt+0xa6/0x130
+> [  297.425955]        __handle_irq_event_percpu+0x78/0x4f0
+> [  297.425955]        handle_irq_event_percpu+0x70/0x100
+> [  297.425956]        handle_irq_event+0x5a/0x8b
+> [  297.425957]        handle_edge_irq+0x117/0x370
+> [  297.425958]        do_IRQ+0x9e/0x1e0
+> [  297.425958]        ret_from_intr+0x0/0x2a
+> [  297.425959]        cpuidle_enter_state+0x156/0x8e0
+> [  297.425960]        cpuidle_enter+0x41/0x70
+> [  297.425960]        call_cpuidle+0x5e/0x90
+> [  297.425961]        do_idle+0x333/0x370
+> [  297.425962]        cpu_startup_entry+0x1d/0x1f
+> [  297.425962]        start_secondary+0x290/0x330
+> [  297.425963]        secondary_startup_64+0xb6/0xc0
+> 
+> [  297.425964] -> #1 (&port_lock_key){-.-.}:
+> [  297.425967]        __lock_acquire+0x5b3/0xb40
+> [  297.425967]        lock_acquire+0x126/0x280
+> [  297.425968]        _raw_spin_lock_irqsave+0x3a/0x50
+> [  297.425969]        serial8250_console_write+0x3e4/0x450
+> [  297.425970]        univ8250_console_write+0x4b/0x60
+> [  297.425970]        console_unlock+0x501/0x750
+> [  297.425971]        vprintk_emit+0x10d/0x340
+> [  297.425972]        vprintk_default+0x1f/0x30
+> [  297.425972]        vprintk_func+0x44/0xd4
+> [  297.425973]        printk+0x9f/0xc5
+> [  297.425974]        register_console+0x39c/0x520
+> [  297.425975]        univ8250_console_init+0x23/0x2d
+> [  297.425975]        console_init+0x338/0x4cd
+> [  297.425976]        start_kernel+0x534/0x724
+> [  297.425977]        x86_64_start_reservations+0x24/0x26
+> [  297.425977]        x86_64_start_kernel+0xf4/0xfb
+> [  297.425978]        secondary_startup_64+0xb6/0xc0
+> 
+> [  297.425979] -> #0 (console_owner){-.-.}:
+> [  297.425982]        check_prev_add+0x107/0xea0
+> [  297.425982]        validate_chain+0x8fc/0x1200
+> [  297.425983]        __lock_acquire+0x5b3/0xb40
+> [  297.425984]        lock_acquire+0x126/0x280
+> [  297.425984]        console_unlock+0x269/0x750
+> [  297.425985]        vprintk_emit+0x10d/0x340
+> [  297.425986]        vprintk_default+0x1f/0x30
+> [  297.425987]        vprintk_func+0x44/0xd4
+> [  297.425987]        printk+0x9f/0xc5
+> [  297.425988]        __offline_isolated_pages.cold.52+0x2f/0x30a
+> [  297.425989]        offline_isolated_pages_cb+0x17/0x30
+> [  297.425990]        walk_system_ram_range+0xda/0x160
+> [  297.425990]        __offline_pages+0x79c/0xa10
+> [  297.425991]        offline_pages+0x11/0x20
+> [  297.425992]        memory_subsys_offline+0x7e/0xc0
+> [  297.425992]        device_offline+0xd5/0x110
+> [  297.425993]        state_store+0xc6/0xe0
+> [  297.425994]        dev_attr_store+0x3f/0x60
+> [  297.425995]        sysfs_kf_write+0x89/0xb0
+> [  297.425995]        kernfs_fop_write+0x188/0x240
+> [  297.425996]        __vfs_write+0x50/0xa0
+> [  297.425997]        vfs_write+0x105/0x290
+> [  297.425997]        ksys_write+0xc6/0x160
+> [  297.425998]        __x64_sys_write+0x43/0x50
+> [  297.425999]        do_syscall_64+0xcc/0x76c
+> [  297.426000]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
+I suppose you run with CONFIG_DEBUG_VM...
+
+So we have
+
+port->lock -> MM -> zone->lock
+	// from pty_write()->__tty_buffer_request_room()->kmalloc()
+
+vs
+
+zone->lock -> printk() -> port->lock
+	// from __offline_pages()->__offline_isolated_pages()->printk()
+
+
+A number of debugging options make the kernel less stable.
+Sad but true.
+
+	-ss
