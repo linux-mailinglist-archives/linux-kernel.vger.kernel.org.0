@@ -2,83 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49E0EBB78F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 305D3BB782
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:07:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfIWPJt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 11:09:49 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbfIWPJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 11:09:49 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3168A308424C;
-        Mon, 23 Sep 2019 15:09:49 +0000 (UTC)
-Received: from krava (unknown [10.40.205.167])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3C56060BEE;
-        Mon, 23 Sep 2019 15:09:44 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 17:09:43 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH 10/73] libperf: Add perf_mmap struct
-Message-ID: <20190923150943.GA19642@krava>
-References: <20190913132355.21634-1-jolsa@kernel.org>
- <20190913132355.21634-11-jolsa@kernel.org>
- <20190923150533.GG16544@kernel.org>
+        id S1726512AbfIWPHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 11:07:08 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57808 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbfIWPHI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 11:07:08 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8NF73fh089611;
+        Mon, 23 Sep 2019 10:07:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569251223;
+        bh=1dIFHJa5GMgHtqK1tr5O5RDeOMNxuXY7Y8ZccX6G4bg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=cZCk4z/y0dO+RmJ7PV1Qj2cEHHFy8oexfcEDpUh3GDzvytWV4n8Jdyr51sSS4Hxx1
+         dpi9rxmEY3LJGkcaNbYEuWHcNGVlhQr1vRmf9K325lsA5YGz7v0/al9uI17P/q/FlR
+         Oz8yjWIsNztf2gCnPd/0jlxKtzn5atAe2/BcLyBM=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8NF732w077633;
+        Mon, 23 Sep 2019 10:07:03 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 23
+ Sep 2019 10:06:57 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 23 Sep 2019 10:06:57 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8NF733b047566;
+        Mon, 23 Sep 2019 10:07:03 -0500
+Subject: Re: [PATCH v8 6/9] leds: multicolor: Introduce a multicolor class
+ definition
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190920174139.30079-1-dmurphy@ti.com>
+ <20190920174139.30079-7-dmurphy@ti.com>
+ <135685e7-e3cc-da4d-3349-9affba5b89cc@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <f371559c-f9f6-d799-d741-afa28c5b89bc@ti.com>
+Date:   Mon, 23 Sep 2019 10:11:28 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923150533.GG16544@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 23 Sep 2019 15:09:49 +0000 (UTC)
+In-Reply-To: <135685e7-e3cc-da4d-3349-9affba5b89cc@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 12:05:33PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Sep 13, 2019 at 03:22:52PM +0200, Jiri Olsa escreveu:
-> > Add the perf_mmap to libperf.
-> > 
-> > The definition is added into:
-> > 
-> >   include/internal/mmap.h
-> > 
-> > which is not to be included by users, but shared
-> > within perf and libperf.
-> 
-> > diff --git a/tools/perf/lib/include/internal/mmap.h b/tools/perf/lib/include/internal/mmap.h
-> > new file mode 100644
-> > index 000000000000..8d10559dee49
-> > --- /dev/null
-> > +++ b/tools/perf/lib/include/internal/mmap.h
-> > @@ -0,0 +1,19 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef __LIBPERF_INTERNAL_MMAP_H
-> > +#define __LIBPERF_INTERNAL_MMAP_H
-> > +
-> > +#include <linux/refcount.h>
-> > +#include <linux/compiler.h>
-> > +#include <stdlib.h>
-> > +#include <stdbool.h>
-> 
-> So you're doing this with high granularity, cool! But then you should
-> take care not to add unnecessary stuff here, i.e. these four headers are
+Jacek
 
-yea, they will be needed for added fields in following patches
+On 9/21/19 1:08 PM, Jacek Anaszewski wrote:
+> Dan,
+>
+> One more remark below.
+>
+> On 9/20/19 7:41 PM, Dan Murphy wrote:
+>> Introduce a multicolor class that groups colored LEDs
+>> within a LED node.
+>>
+>> The framework allows for dynamically setting individual LEDs
+>> or setting brightness levels of LEDs and updating them virtually
+>> simultaneously.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>   drivers/leds/Kconfig                 |  10 +
+>>   drivers/leds/Makefile                |   1 +
+>>   drivers/leds/led-class-multicolor.c  | 316 +++++++++++++++++++++++++++
+>>   include/linux/led-class-multicolor.h |  76 +++++++
+>>   4 files changed, 403 insertions(+)
+>>   create mode 100644 drivers/leds/led-class-multicolor.c
+>>   create mode 100644 include/linux/led-class-multicolor.h
+>>
+>> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+>> index 6e7703fd03d0..cfb1ebb6517f 100644
+>> --- a/drivers/leds/Kconfig
+>> +++ b/drivers/leds/Kconfig
+>> @@ -30,6 +30,16 @@ config LEDS_CLASS_FLASH
+> [...]
+>> +static int led_multicolor_init_color_dir(struct led_classdev_mc_data *data,
+>> +					 struct led_classdev_mc *mcled_cdev)
+>> +{
+>> +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
+>> +	u32 color_id;
+>> +	int ret;
+>> +	int i, j = 0;
+>> +
+>> +	data->mcled_cdev = mcled_cdev;
+>> +
+>> +	ret = sysfs_create_group(&led_cdev->dev->kobj, &led_color_group);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	for (i = 0; i < LED_COLOR_ID_MAX; i++) {
+>> +		color_id = (mcled_cdev->available_colors & (1 << i));
+> Please use bitops for accessing available_colors.
+>
+>> +		if (color_id) {
+> Here you need: if (test_bit(i, &mcled_cdev->available_colors))
 
-> not necessary at this point in the series, I'm removing them and adding
-> as they become necessary.
+Then I can get rid of the color_id and just use test_bit.
 
-ok, thanks
+Then your other request for color_mask is not needed because we can just 
+test against the incremental 'i'
 
-jirka
+Dan
+
+>> +			ret = led_multicolor_init_color(data, mcled_cdev, i, j);
+>> +			if (ret)
+>> +				break;
+>> +
+>> +			j++;
+>> +		}
+>> +	}
+>> +
+>> +	return ret;
+>> +}
