@@ -2,96 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01853BBE01
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81AC6BBE06
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:35:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390180AbfIWVe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 17:34:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58710 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729120AbfIWVe3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:34:29 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ADE5186E86F;
-        Mon, 23 Sep 2019 21:34:28 +0000 (UTC)
-Received: from krava (ovpn-204-49.brq.redhat.com [10.40.204.49])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C8BCF60BFB;
-        Mon, 23 Sep 2019 21:34:27 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 23:34:27 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] perf tools: Support single perf.data file
- directory
-Message-ID: <20190923213427.GB12521@krava>
-References: <20190916085646.6199-1-adrian.hunter@intel.com>
- <20190916085646.6199-2-adrian.hunter@intel.com>
+        id S2502949AbfIWVft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 17:35:49 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41649 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729120AbfIWVfs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 17:35:48 -0400
+Received: by mail-lj1-f194.google.com with SMTP id f5so15205022ljg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 14:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9rPInDrQugcHITDKVlAr25OdVNJWqsDyo3I0eQIcB8s=;
+        b=QRQw9OiPKf3NL4+42cCQt9hdrKOKSwqrn7y+nD4tFRTZhdtc1rRPQE3KLj7T0ud8Nb
+         O4lyuCLSC6h7R9V0+6rlQYTgkDuHSM2x3HgaHrXIDvJa8n/IcSMtLHWVemU5M7jQVfQ1
+         K7zBB1/KHELfhnbpTOVxgWweyzfVmmjNrhRtE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9rPInDrQugcHITDKVlAr25OdVNJWqsDyo3I0eQIcB8s=;
+        b=mTrVzjak7RxGJTr8L+OSvmkyzwyPdEwdd2+fw75GMmyz5o2AeUeEthx7UbHhXc6/J8
+         W7Va+bcCCj0MLS25d+s9dFJlmUwDNGakq+eLxVh/civ9Oerz99KSkBfkCq0EsVVUXI7s
+         dF4IYjl/KMAQAbtov6vdKQXE4LN7fxtdq4d7HI41P8ZxiY3XRv2ytaPLcpVVfWBgX3el
+         2aTpJ3MyZSYDp+j4nJr1ODAg79wNFPTyby5Un6gvPMoCl/LL16WP3ujHRLKX4Dc1xIsu
+         zwTuISSsCL/8g3HVluhSFdI71QGw/GCH7OKbfn6TWsBKV/+WPZwhtn+aT2GekL/Pga8f
+         eu+A==
+X-Gm-Message-State: APjAAAWOSo3QATPpX51KOTkVwSVPYYhEv5liY9a7excQ0GwqvgC7FGSo
+        qRrA+Qly5mURuvJzToSiLfawwyXSvr4=
+X-Google-Smtp-Source: APXvYqxSijKXcREWKI6/CL5PK06Tm2CO2zZtFL2NF1dBayqxyJ0ka8iwx6/pJ+Dmqzuh6VKlUEa9CQ==
+X-Received: by 2002:a2e:761a:: with SMTP id r26mr824152ljc.137.1569274546195;
+        Mon, 23 Sep 2019 14:35:46 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id c4sm2472738lfm.4.2019.09.23.14.35.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 14:35:45 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id m13so15138887ljj.11
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 14:35:45 -0700 (PDT)
+X-Received: by 2002:a2e:3015:: with SMTP id w21mr814171ljw.165.1569274544776;
+ Mon, 23 Sep 2019 14:35:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916085646.6199-2-adrian.hunter@intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Mon, 23 Sep 2019 21:34:28 +0000 (UTC)
+References: <745ac819-f2ae-4525-1855-535daf783638@schaufler-ca.com>
+In-Reply-To: <745ac819-f2ae-4525-1855-535daf783638@schaufler-ca.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 Sep 2019 14:35:28 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg1zkUTdnx5pNVOf=uuSJiEywNiztQe4oRiPb1pfA399w@mail.gmail.com>
+Message-ID: <CAHk-=wg1zkUTdnx5pNVOf=uuSJiEywNiztQe4oRiPb1pfA399w@mail.gmail.com>
+Subject: Re: [GIT PULL] Smack patches for v5.4 - retry
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 11:56:45AM +0300, Adrian Hunter wrote:
-> Support directory output that contains a regular perf.data file. This is
-> preparation for adding support for putting a copy of /proc/kcore in that
-> directory.
-> 
-> Distinguish the multiple file case from the regular (single) perf.data file
-> case by adding data->is_multi_file.
+On Mon, Sep 23, 2019 at 1:14 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> Thank for the instruction. I think this is correct.
 
-SNIP
+Looks fine, pulled.
 
->  static int open_file_read(struct perf_data *data)
->  {
->  	struct stat st;
-> @@ -302,12 +312,17 @@ static int open_dir(struct perf_data *data)
->  {
->  	int ret;
->  
-> -	/*
-> -	 * So far we open only the header, so we can read the data version and
-> -	 * layout.
-> -	 */
-> -	if (asprintf(&data->file.path, "%s/header", data->path) < 0)
-> -		return -1;
-> +	if (perf_data__is_multi_file(data)) {
-> +		/*
-> +		 * So far we open only the header, so we can read the data version and
-> +		 * layout.
-> +		 */
-> +		if (asprintf(&data->file.path, "%s/header", data->path) < 0)
-> +			return -1;
-> +	} else {
-> +		if (asprintf(&data->file.path, "%s/perf.data", data->path) < 0)
-> +			return -1;
-> +	}
+That said, when I look closer:
 
-first, please note that there's support for perf.data directory code,
-but it's not been enabled yet, so we can do any changes there without
-breaking existing users
+> Jia-Ju Bai (1):
+>       security: smack: Fix possible null-pointer dereferences in smack_socket_sock_rcv_skb()
 
-currently the logic is prepared to have perf.data DIR_FORMAT feature
-to define the layout of the directory
+This one seems wrong.
 
-it'd be great to have just single point where we get directory layout,
-not checking on files names first and checking on DIR_FORMAT later
+Not seriously so, but the quoting the logic from the commit:
 
-also the kcore will be beneficial for other layouts,
-so would be great to make it somehow optional/switchable
+    In smack_socket_sock_rcv_skb(), there is an if statement
+    on line 3920 to check whether skb is NULL:
 
-one of the options could be to have DIR_FORMAT feature as the source
-of directory layout and it'd have bitmask of files/dirs (like kcore_dir)
-available in the directory
+        if (skb && skb->secmark != 0)
 
-thanks,
-jirka
+    This check indicates skb can be NULL in some cases.
+
+and the fact is, skb _cannot_ be NULL, because when you test the
+security of receiving an skb, you by definition always have an skb.
+
+There is one single place that calls security_sock_rcv_skb(), and it
+very much has a real skb.
+
+So instead of adding a _new_ test for skb being NULL, the old test for
+a NULL skb should just have been removed. It really doesn't make any
+sense to have a NULL skb in that path - if some memory allocation had
+failed on the receive path, that just means that the receive is never
+done, it doesn't mean that you'd test a NULL skb for security policy
+violations.
+
+Anyway, it's pulled, but I think somebody should have checked and
+thought about the automated tool reports a bit more..
+
+               Linus
