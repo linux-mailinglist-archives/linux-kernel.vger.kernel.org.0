@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333C4BB465
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:53:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96378BB468
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:53:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439660AbfIWMxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:53:18 -0400
-Received: from regular1.263xmail.com ([211.150.70.198]:35822 "EHLO
+        id S2502073AbfIWMx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:53:26 -0400
+Received: from regular1.263xmail.com ([211.150.70.204]:39844 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439639AbfIWMxR (ORCPT
+        with ESMTP id S2439638AbfIWMxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:53:17 -0400
+        Mon, 23 Sep 2019 08:53:21 -0400
 Received: from hjc?rock-chips.com (unknown [192.168.167.76])
-        by regular1.263xmail.com (Postfix) with ESMTP id 3CDB225F;
-        Mon, 23 Sep 2019 20:53:15 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id 56ED7252;
+        Mon, 23 Sep 2019 20:53:16 +0800 (CST)
 X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -25,9 +25,9 @@ X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P32757T140634167924480S1569243191006336_;
-        Mon, 23 Sep 2019 20:53:14 +0800 (CST)
+        Mon, 23 Sep 2019 20:53:15 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <af08d0d1a88de418102cc211dc241298>
+X-UNIQUE-TAG: <52b64afd7198c0ece3c36d3dd94a73ec>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -36,15 +36,14 @@ X-SENDER-IP: 58.22.7.114
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
+To:     dri-devel@lists.freedesktop.org,
+        Paul Cercueil <paul@crapouillou.net>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>
-Cc:     hjc@rock-chips.com, virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 28/36] drm/qxl: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:53:01 +0800
-Message-Id: <1569243189-183445-3-git-send-email-hjc@rock-chips.com>
+Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 29/36] drm/ingenic: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:53:02 +0800
+Message-Id: <1569243189-183445-4-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1569243189-183445-1-git-send-email-hjc@rock-chips.com>
 References: <1569243189-183445-1-git-send-email-hjc@rock-chips.com>
@@ -58,22 +57,22 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/qxl/qxl_draw.c | 2 +-
+ drivers/gpu/drm/ingenic/ingenic-drm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/qxl/qxl_draw.c b/drivers/gpu/drm/qxl/qxl_draw.c
-index 5bebf1e..71c18e6 100644
---- a/drivers/gpu/drm/qxl/qxl_draw.c
-+++ b/drivers/gpu/drm/qxl/qxl_draw.c
-@@ -141,7 +141,7 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
- 	struct qxl_rect *rects;
- 	int stride = fb->pitches[0];
- 	/* depth is not actually interesting, we don't mask with it */
--	int depth = fb->format->cpp[0] * 8;
-+	int depth = fb->format->bpp[0];
- 	uint8_t *surface_base;
- 	struct qxl_release *release;
- 	struct qxl_bo *clips_bo;
+diff --git a/drivers/gpu/drm/ingenic/ingenic-drm.c b/drivers/gpu/drm/ingenic/ingenic-drm.c
+index ec32e1c..70ccec5 100644
+--- a/drivers/gpu/drm/ingenic/ingenic-drm.c
++++ b/drivers/gpu/drm/ingenic/ingenic-drm.c
+@@ -375,7 +375,7 @@ static void ingenic_drm_plane_atomic_update(struct drm_plane *plane,
+ 
+ 	width = state->crtc->state->adjusted_mode.hdisplay;
+ 	height = state->crtc->state->adjusted_mode.vdisplay;
+-	cpp = state->fb->format->cpp[plane->index];
++	cpp = state->fb->format->bpp[plane->index] / 8;
+ 
+ 	priv->dma_hwdesc->addr = drm_fb_cma_get_gem_addr(state->fb, state, 0);
+ 	priv->dma_hwdesc->cmd = width * height * cpp / 4;
 -- 
 2.7.4
 
