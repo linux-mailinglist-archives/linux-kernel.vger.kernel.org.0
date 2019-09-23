@@ -2,276 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C472BB1C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C939BB1C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407384AbfIWJ4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 05:56:47 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:60452 "EHLO honk.sigxcpu.org"
+        id S2404970AbfIWJ6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 05:58:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57526 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405201AbfIWJ4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 05:56:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id CFEE1FB03;
-        Mon, 23 Sep 2019 11:56:44 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id v9IW8wa-mQuy; Mon, 23 Sep 2019 11:56:42 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 64590486BC; Mon, 23 Sep 2019 02:56:42 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 02:56:42 -0700
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Andrzej Hajda <a.hajda@samsung.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v6 1/2] dt-bindings: display/bridge: Add binding for NWL
- mipi dsi host controller
-Message-ID: <20190923095642.GA8381@bogon.m.sigxcpu.org>
-References: <cover.1569170717.git.agx@sigxcpu.org>
- <CGME20190922164722epcas3p2c44bddf9e6fd86cae5ab72ca078296b8@epcas3p2.samsung.com>
- <3bef8eb6a7dd32406e31c68f39ccde3accb58222.1569170717.git.agx@sigxcpu.org>
- <18619804-ffe8-f3a5-aa54-ab590b3a83c0@samsung.com>
+        id S2405009AbfIWJ6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 05:58:01 -0400
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E278C054C52
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 09:58:01 +0000 (UTC)
+Received: by mail-wm1-f71.google.com with SMTP id k67so4754464wmf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 02:58:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wzehYQ/q/Unr9ua1VQFlkvwitkghryuoSUrqvQKWtys=;
+        b=Z7jh5nhCPEqXNqawRi3YIeViNSknyx5HB9l4ucf93zhMJ2dnMcLFRKyLVFGF4lFFr3
+         JM5DfIo34DcJ44L1nZpU4QsUKs6KLbAh9TFRe9nUfe+/XwyWxmG3fQ4X4SHFLUjU04Yy
+         sg6llhpE2n3OdO9PBv/53mJoE/5unz7GAGSBXdYBXt0Wn3g6FTSNxaEGsFcCQ5KxSISf
+         0pIRHDOQSDq6OSsrbWxayaGejAa7BYeA2njfg1Qq5fzf3gGuIyaSs274Bj/kfxhT6eD5
+         kjaFX1XNz64wEvwM8Y7ye7NG/t4shCXJFwbY7AEuO1jd//0AuhS069TLNVXhPj2y+srn
+         SYvg==
+X-Gm-Message-State: APjAAAWRhT0SVNuFgv3H1081gXsDcWgkb/k1vY8jSEcDMCWxaEgMOkZf
+        kI5Ec4Fb7K+NQmYu7L8eSUoG6T4GVf2ERaSiltsiJZ1EKgZwZ/b/jqs8gbvYnPWdWo8zQt+c6zz
+        WddATK5Rgj2XdQAASy4mv6Ycv
+X-Received: by 2002:adf:f9c9:: with SMTP id w9mr19828665wrr.172.1569232679351;
+        Mon, 23 Sep 2019 02:57:59 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqw+R47KLkJmnU7l8Zxf4zZxqnGS/qkxsg/JQjqPn/GlshVIlfYKQ2eupxBkl7MdJyTJq5f6zQ==
+X-Received: by 2002:adf:f9c9:: with SMTP id w9mr19828652wrr.172.1569232679116;
+        Mon, 23 Sep 2019 02:57:59 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:9520:22e6:6416:5c36? ([2001:b07:6468:f312:9520:22e6:6416:5c36])
+        by smtp.gmail.com with ESMTPSA id c1sm8310783wmk.20.2019.09.23.02.57.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 02:57:58 -0700 (PDT)
+Subject: Re: [PATCH 15/17] KVM: retpolines: x86: eliminate retpoline from
+ vmx.c exit handlers
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190920212509.2578-1-aarcange@redhat.com>
+ <20190920212509.2578-16-aarcange@redhat.com>
+ <87o8zb8ik1.fsf@vitty.brq.redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <7329012d-0b3b-ce86-f58d-3d2d5dc5a790@redhat.com>
+Date:   Mon, 23 Sep 2019 11:57:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <18619804-ffe8-f3a5-aa54-ab590b3a83c0@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87o8zb8ik1.fsf@vitty.brq.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Mon, Sep 23, 2019 at 10:59:34AM +0200, Andrzej Hajda wrote:
-> On 22.09.2019 18:47, Guido Günther wrote:
-> > The Northwest Logic MIPI DSI IP core can be found in NXPs i.MX8 SoCs.
-> >
-> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
-> > Tested-by: Robert Chiras <robert.chiras@nxp.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../bindings/display/bridge/nwl-dsi.yaml      | 176 ++++++++++++++++++
-> >  1 file changed, 176 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > new file mode 100644
-> > index 000000000000..31119c7885ff
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/bridge/nwl-dsi.yaml
-> > @@ -0,0 +1,176 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: https://protect2.fireeye.com/url?k=7c9397fbdbbe3fd5.7c921cb4-87fc4542b5f41502&u=http://devicetree.org/schemas/display/bridge/nwl-dsi.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Northwest Logic MIPI-DSI controller on i.MX SoCs
-> > +
-> > +maintainers:
-> > +  - Guido Gúnther <agx@sigxcpu.org>
-> > +  - Robert Chiras <robert.chiras@nxp.com>
-> > +
-> > +description: |
-> > +  NWL MIPI-DSI host controller found on i.MX8 platforms. This is a dsi bridge for
-> > +  the SOCs NWL MIPI-DSI host controller.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: fsl,imx8mq-nwl-dsi
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: DSI core clock
-> > +      - description: RX_ESC clock (used in escape mode)
-> > +      - description: TX_ESC clock (used in escape mode)
-> > +      - description: PHY_REF clock
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: core
-> > +      - const: rx_esc
-> > +      - const: tx_esc
-> > +      - const: phy_ref
-> > +
-> > +  mux-controls:
-> > +    description:
-> > +      mux controller node to use for operating the input mux
-> > +
-> > +  phys:
-> > +    maxItems: 1
-> > +    description:
-> > +      A phandle to the phy module representing the DPHY
-> > +
-> > +  phy-names:
-> > +    items:
-> > +      - const: dphy
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  resets:
-> > +    items:
-> > +      - description: dsi byte reset line
-> > +      - description: dsi dpi reset line
-> > +      - description: dsi esc reset line
-> > +      - description: dsi pclk reset line
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: byte
-> > +      - const: dpi
-> > +      - const: esc
-> > +      - const: pclk
-> > +
-> > +  ports:
-> > +    type: object
-> > +    description:
-> > +      A node containing DSI input & output port nodes with endpoint
-> > +      definitions as documented in
-> > +      Documentation/devicetree/bindings/graph.txt.
-> > +    properties:
-> > +      port@0:
-> > +        type: object
-> > +        description:
-> > +          Input port node to receive pixel data from the
-> > +          display controller
-> > +
-> > +      port@1:
-> > +        type: object
-> > +        description:
-> > +          DSI output port node to the panel or the next bridge
-> > +          in the chain
-> > +
-> > +      '#address-cells':
-> > +        const: 1
-> > +
-> > +      '#size-cells':
-> > +        const: 0
-> > +
-> > +    required:
-> > +      - '#address-cells'
-> > +      - '#size-cells'
-> > +      - port@0
-> > +      - port@1
-> > +
-> > +    additionalProperties: false
-> > +
-> > +patternProperties:
-> > +  "^panel@[0-9]+$":
-> > +    type: object
-> > +
-> > +required:
-> > +  - '#address-cells'
-> > +  - '#size-cells'
-> > +  - clock-names
-> > +  - clocks
-> > +  - compatible
-> > +  - interrupts
-> > +  - mux-controls
-> 
-> 
-> As I understand mux is not a part of the device, so maybe would be safer
-> to make it optional.
+On 23/09/19 11:31, Vitaly Kuznetsov wrote:
+> +#ifdef CONFIG_RETPOLINE
+> +		if (exit_reason == EXIT_REASON_MSR_WRITE)
+> +			return handle_wrmsr(vcpu);
+> +		else if (exit_reason == EXIT_REASON_PREEMPTION_TIMER)
+> +			return handle_preemption_timer(vcpu);
+> +		else if (exit_reason == EXIT_REASON_PENDING_INTERRUPT)
+> +			return handle_interrupt_window(vcpu);
+> +		else if (exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
+> +			return handle_external_interrupt(vcpu);
+> +		else if (exit_reason == EXIT_REASON_HLT)
+> +			return handle_halt(vcpu);
+> +		else if (exit_reason == EXIT_REASON_PAUSE_INSTRUCTION)
+> +			return handle_pause(vcpu);
+> +		else if (exit_reason == EXIT_REASON_MSR_READ)
+> +			return handle_rdmsr(vcpu);
+> +		else if (exit_reason == EXIT_REASON_CPUID)
+> +			return handle_cpuid(vcpu);
+> +		else if (exit_reason == EXIT_REASON_EPT_MISCONFIG)
+> +			return handle_ept_misconfig(vcpu);
+> +#endif
+>  		return kvm_vmx_exit_handlers[exit_reason](vcpu);
 
-I had mux-sel required for imx8mq *only* but Rob suggested to make things
-required in general until we add other SoCs:
+Most of these, while frequent, are already part of slow paths.
 
-    https://lore.kernel.org/linux-arm-kernel/CAL_JsqK-5=WMZgNuJDTJ3Dm3YOJNw_9QCrPOOSe7MQzMV26pHw@mail.gmail.com/
+I would keep only EXIT_REASON_MSR_WRITE, EXIT_REASON_PREEMPTION_TIMER,
+EXIT_REASON_EPT_MISCONFIG and add EXIT_REASON_IO_INSTRUCTION.
 
-Cheers,
- -- Guido
+If you make kvm_vmx_exit_handlers const, can the compiler substitute for
+instance kvm_vmx_exit_handlers[EXIT_REASON_MSR_WRITE] with handle_wrmsr?
+ Just thinking out loud, not sure if it's an improvement code-wise.
 
-> 
-> 
-> Regards
-> 
-> Andrzej
-> 
-> 
-> > +  - phy-names
-> > +  - phys
-> > +  - ports
-> > +  - reg
-> > +  - reset-names
-> > +  - resets
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > + - |
-> > +
-> > +   mipi_dsi: mipi_dsi@30a00000 {
-> > +              #address-cells = <1>;
-> > +              #size-cells = <0>;
-> > +              compatible = "fsl,imx8mq-nwl-dsi";
-> > +              reg = <0x30A00000 0x300>;
-> > +              clocks = <&clk 163>, <&clk 244>, <&clk 245>, <&clk 164>;
-> > +              clock-names = "core", "rx_esc", "tx_esc", "phy_ref";
-> > +              interrupts = <0 34 4>;
-> > +              mux-controls = <&mux 0>;
-> > +              power-domains = <&pgc_mipi>;
-> > +              resets = <&src 0>, <&src 1>, <&src 2>, <&src 3>;
-> > +              reset-names = "byte", "dpi", "esc", "pclk";
-> > +              phys = <&dphy>;
-> > +              phy-names = "dphy";
-> > +
-> > +              panel@0 {
-> > +                      compatible = "rocktech,jh057n00900";
-> > +                      reg = <0>;
-> > +                      port@0 {
-> > +                           panel_in: endpoint {
-> > +                                     remote-endpoint = <&mipi_dsi_out>;
-> > +                           };
-> > +                      };
-> > +              };
-> > +
-> > +              ports {
-> > +                    #address-cells = <1>;
-> > +                    #size-cells = <0>;
-> > +
-> > +                    port@0 {
-> > +                           reg = <0>;
-> > +                           mipi_dsi_in: endpoint {
-> > +                                        remote-endpoint = <&lcdif_mipi_dsi>;
-> > +                           };
-> > +                    };
-> > +                    port@1 {
-> > +                           reg = <1>;
-> > +                           mipi_dsi_out: endpoint {
-> > +                                         remote-endpoint = <&panel_in>;
-> > +                           };
-> > +                    };
-> > +              };
-> > +      };
-> 
-> 
+Paolo
+
+Paolo
