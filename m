@@ -2,146 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDB08BBCBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29DD1BBCC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502548AbfIWUW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 16:22:28 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34644 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728647AbfIWUW1 (ORCPT
+        id S2502570AbfIWUXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 16:23:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22352 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728856AbfIWUXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 16:22:27 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y135so46552wmc.1;
-        Mon, 23 Sep 2019 13:22:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sABo8fLMmTTmo2WcsGn2dlPsS9QgOD70KLdhw5rDeGk=;
-        b=JekV9Lb2cMDaSOrgeBz8Tn9/0nx6HQ6EVSgTz/JQ8h7n5jlEXZevyQVgO/LRuqyiGl
-         LmfXXexf/2f/Wh1RnH1/JX3/lL4lMdUuh0PZ7+Byh2TTyk5Hrp90LcHtlVW2iPI29/2P
-         Yeie3y6t/iZGO3hIvelLPRGUPMZ/MG27pt1fK7UvI8+2QL75w4IBfVfWL2ZtIzjOKSDy
-         KWC6qhsxMndz0dm3yunmJns07e5qNiV/ONwHtq3K95GmMPy27awR8p0ioxArtrQb5T8e
-         ZKFfFHoKr4LYqsIb54AmzuKD7GXsCV+f8VBu169S5J2SwbvYdjKaYbLMTU8bzmSXWGn5
-         pBMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sABo8fLMmTTmo2WcsGn2dlPsS9QgOD70KLdhw5rDeGk=;
-        b=srZfMKkBK36bNjCEHv/jIDHzXJecrFvBSa5fRY41xRwwGFzOAhUkROUPZTvkgUSaN2
-         uubQ7GqEn3qvm0blSP6tFEtO8NEAuaeoBwxWNR0+ak+J0e64rAoPsXuSjFLNwXXE7FXZ
-         7u2aYpchO3voYSG4yJ2k5+t7JTzvWp8HS60gC7PIhiwNrjG6064GhHLGTyQRXTLFdQDu
-         +/Mig2/aODdCgKmUN2iBvkaDdgWJA4dUii4F9hEiQj7dKlJko2cdHE7U2f1TAdoete/R
-         t0xkfojVKuquGrTNwzSZZtWiJ4rScG9aHl95ghCDZN2eME2sroyNGN7hmYkVGjYFfkKU
-         NO7g==
-X-Gm-Message-State: APjAAAVjPD+MvrfwrMeGrl/Q2ZHjeYkbc1NjV8LXbRALMxz3s95fl4eR
-        nlFoMADUwlpAsSLVkssWtQE=
-X-Google-Smtp-Source: APXvYqz48BF1OX5tCIYtwrl2pglXhd4mgeM4GQHOc01MiZ8dCkcAlC5rWIPKpoQkfzJ70dhv+/CSQA==
-X-Received: by 2002:a7b:c932:: with SMTP id h18mr950909wml.86.1569270143968;
-        Mon, 23 Sep 2019 13:22:23 -0700 (PDT)
-Received: from ?IPv6:2001:a61:243d:bf01:c49e:ef23:e680:96b1? ([2001:a61:243d:bf01:c49e:ef23:e680:96b1])
-        by smtp.gmail.com with ESMTPSA id g185sm23169800wme.10.2019.09.23.13.22.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2019 13:22:23 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: For review: pidfd_open(2) manual page
-To:     Daniel Colascione <dancol@google.com>,
-        Florian Weimer <fw@deneb.enyo.de>
-References: <90399dee-53d8-a82c-3871-9ec8f94601ce@gmail.com>
- <87tv939td6.fsf@mid.deneb.enyo.de>
- <CAKOZuetTgKjgWZpCaBz8q662MwVQ-UhrV4oWFqKEWr35mQTFLw@mail.gmail.com>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <39790bc7-f417-1172-0f06-5cdefabda7e1@gmail.com>
-Date:   Mon, 23 Sep 2019 22:22:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 23 Sep 2019 16:23:53 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8NKLptd060389;
+        Mon, 23 Sep 2019 16:23:21 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v72aqw6as-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Sep 2019 16:23:20 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8NKM9tW063386;
+        Mon, 23 Sep 2019 16:23:20 -0400
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v72aqw6ab-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Sep 2019 16:23:20 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8NKJKTN027588;
+        Mon, 23 Sep 2019 20:23:18 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03dal.us.ibm.com with ESMTP id 2v5bg6v1em-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Sep 2019 20:23:18 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8NKNGNj62259636
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Sep 2019 20:23:16 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A8847BE051;
+        Mon, 23 Sep 2019 20:23:16 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3BE51BE04F;
+        Mon, 23 Sep 2019 20:23:08 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.184])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 23 Sep 2019 20:23:08 +0000 (GMT)
+Message-ID: <c64d34118542d5c2d31b8f6b7802d2a29dac71ef.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 11/11] powerpc/mm/book3s64/pgtable: Uses counting
+ method to skip serializing
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     John Hubbard <jhubbard@nvidia.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Ganesh Goudar <ganeshgr@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>
+Date:   Mon, 23 Sep 2019 17:23:03 -0300
+In-Reply-To: <1568b3ef-cec9-bf47-edaa-c775c2f544fb@nvidia.com>
+References: <20190920195047.7703-1-leonardo@linux.ibm.com>
+         <20190920195047.7703-12-leonardo@linux.ibm.com>
+         <1b39eaa7-751d-40bc-d3d7-41aaa15be42a@nvidia.com>
+         <24863d8904c6e05e5dd48cab57db4274675ae654.camel@linux.ibm.com>
+         <4ea26ffb-ad03-bdff-7893-95332b22a5fd@nvidia.com>
+         <18c5c378db98f223a0663034baa9fd6ce42f1ec7.camel@linux.ibm.com>
+         <8706a1f1-0c5e-d152-938b-f355b9a5aaa8@nvidia.com>
+         <dc9fad3577551d34ead36c0f7340a573086c0cab.camel@linux.ibm.com>
+         <1568b3ef-cec9-bf47-edaa-c775c2f544fb@nvidia.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-rL8yHUayTEy37kqretQV"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-In-Reply-To: <CAKOZuetTgKjgWZpCaBz8q662MwVQ-UhrV4oWFqKEWr35mQTFLw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-23_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909230170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Daniel,
 
-Than you for reviewing the page!
+--=-rL8yHUayTEy37kqretQV
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/23/19 1:26 PM, Daniel Colascione wrote:
-> On Mon, Sep 23, 2019 at 3:53 AM Florian Weimer <fw@deneb.enyo.de> wrote:
->>
->> * Michael Kerrisk:
->>
->>> SYNOPSIS
->>>        int pidfd_open(pid_t pid, unsigned int flags);
->>
->> Should this mention <sys/types.h> for pid_t?
->>
->>> ERRORS
->>>        EINVAL flags is not 0.
->>>
->>>        EINVAL pid is not valid.
->>>
->>>        ESRCH  The process specified by pid does not exist.
->>
->> Presumably, EMFILE and ENFILE are also possible errors, and so is
->> ENOMEM.
->>
->>>        A  PID  file descriptor can be monitored using poll(2), select(2),
->>>        and epoll(7).  When the process that it refers to terminates,  the
->>>        file descriptor indicates as readable.
-> 
-> The phrase "becomes readable" is simpler than "indicates as readable"
-> and conveys the same meaning. I agree with Florian's comment on this
-> point below.
+On Mon, 2019-09-23 at 12:58 -0700, John Hubbard wrote:
+>=20
+> CPU 0                            CPU 1
+> ------                         --------------
+>                                READ(pte) (re-ordered at run time)
+>                                atomic_inc(val) (no run-time memory barrie=
+r!)
+>                           =20
+> pmd_clear(pte)
+> if (val)
+>     run_on_all_cpus(): IPI
+>                                local_irq_disable() (also not a mem barrie=
+r)
+>=20
+>                                if(pte)
+>                                   walk page tables
 
-See my reply to Florian. (I did change the text here.)
+Let me see if I can understand,
+On most patches, it would be:
 
->>> Note, however, that in the
->>>        current implementation, nothing can be read from the file descrip‐
->>>        tor.
->>
->> “is indicated as readable” or “becomes readable”?  Will reading block?
->>
->>>        The  pidfd_open()  system call is the preferred way of obtaining a
->>>        PID file descriptor.  The alternative is to obtain a file descrip‐
->>>        tor by opening a /proc/[pid] directory.  However, the latter tech‐
->>>        nique is possible only if the proc(5) file system is mounted; fur‐
->>>        thermore,  the  file  descriptor  obtained in this way is not pol‐
->>>        lable.
-> 
-> Referring to procfs directory FDs as pidfds will probably confuse
-> people. I'd just omit this paragraph.
+CPU 0                            CPU 1
+------				--------------
+				ptep =3D __find_linux_pte =20
+				(re-ordered at run time)
+				atomic_inc(val)=20
+pmd_clear(pte)
+smp_mb()
+if (val)
+    run_on_all_cpus(): IPI
+                               local_irq_disable()=20
 
-See my reply to Christian (and feel free to argue the point, please).
-So far, I have made no change here.
+                               if(ptep)
+                                  pte =3D *ptep;
 
->> One question is whether the glibc wrapper should fall back back to the
->> /proc subdirectory if it is not available.  Probably not.
-> 
-> I'd prefer that glibc not provide this kind of fallback.
-> posix_fallocate-style emulation is, IMHO, too surprising.
-
-Agreed.
-
-Cheers,
-
-Michael
+Is that what you meant?
 
 
--- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+
+--=-rL8yHUayTEy37kqretQV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl2JKacACgkQlQYWtz9S
+ttQNQQ//YZoIqwIEI8Lrj+C7R1TaXBuOjUoK9YNDTE6IjHRf1s5nkhUpn68/joo+
+VKKvccIS6lJFZOMq9cpBn8/UtitXlmTwmM3zmfSRzKjXQJZJk2IeioBlB5d16L9q
+Y8IS8kojfI3DoDDF5XRGU+FQbwMUqTNkKpvWevAotkldLhE2ZvUkoJSEUM7X4MqQ
+C67Pbbgpsz+q5ZcEW6JbAolW6/nQXYCevzRj8hJ1+inreFKp7KoiBsOebVvW4LMD
+L6GhEJiKvgFK2HpqEECNApqDDFnPDh0CxELo/sf4J0eV5hVKSkZrpJaJBVUmCQ+9
+Z6rn7BHQd/uM0P9bqWvv6+M+IVriOuwNZ/jRe312heD7IlWDccytoqRjo5xfuBUp
+PTowmJ/zUUH7bpPEAnVP3qzEqyvMsUKiVuYK9Fxnfx+fMLVokjbXvosRoLJ8+I8d
+71xd5iyjyIGRoxntKukRNpwrPoftF7dTVFHTpYwstM7FQXrGEex5wnnLwXGeOwUF
+gevW1ayr2mu0u/TchxKO0tvCeu8gVnbiBmtEsJYIXMTAt8RGNqKBcekYnuFUAIuq
+hF7Qg2DGeGlwjMwdpWZBNSBv8Fvq45Y/m0ggvH3Ey18WF3rwS9FDWbT/ix4PEJUC
+x2GH0X9bTNwrhVLjwRPuHyOVMfulhA1DVbRq+H+/2cNXr6ewLNE=
+=DGT/
+-----END PGP SIGNATURE-----
+
+--=-rL8yHUayTEy37kqretQV--
+
