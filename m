@@ -2,71 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC96BB26C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D357DBB26D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:49:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732074AbfIWKtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 06:49:22 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38841 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730083AbfIWKtV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 06:49:21 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u28so9709605lfc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 03:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=ujHLycPjegsmfJ2BqSezGX934GpllFZfGm2KJTJxGcw=;
-        b=C4rNt4TEdW/32iIqeful7d9WDeWlHSwxiiM+Or3Pp8stajCx45bMwM9v2yhC/+pzBJ
-         3WDjAKsjokX5CMqRq6iVtTILtlTn+FCuWt/jifKlZYsoFcINw97YanvJAxWav3GnhRp5
-         vmZm08aW8XpZEoSnO+6jDdMEsVga9qaQ5NYH9zCS9xhVABhRTvSmxBHamhU790nCosqv
-         Smh7/pI6mBeHipFLBos/X1Vg7ALpMYg8oRI0h8TuDi+L5K1qyKQDIH87JFdENzCYXCIa
-         F203xOVyUEBoUi7PTigPWqzaSj3xXObMPetwqF17prSGfvCDM18nhI5uI+zBUG2SO2Hm
-         3RLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=ujHLycPjegsmfJ2BqSezGX934GpllFZfGm2KJTJxGcw=;
-        b=O1LyUv0ECMnOVM4PQFB56GVvn2btnD9fRfRACykQZsgHVW7lj7AXoxn6nPxjuTNPCB
-         9zaq9oSYf8cJcBUaSczOTV3GKpdM/4NoNNoJaYX7vz1BzlkRnHeFCtCmlR9267YWtqxB
-         raY4IAb13F1LwfjHflcCDk8PY2ws3v0axAdCkwjYdg8/QhNB0qo+mtB21Iec+1cALehV
-         t36hyoK/6hOMcUDgHy6RgdvuE98VEqURes/PXsK1D5tNUZiH0BgttbUneCrchpDwr2w+
-         ORit21w+vHCnLD+J347ixrJUFu615bcw+AFTMNar1bm6y+2NxgWeB+eedvODVZXi3Ie3
-         IiYQ==
-X-Gm-Message-State: APjAAAUD8HFkrMZLO0gVstIucUZ59MdJxPmafgTCoWRTa0dAglSpoMcR
-        CZVpgkCzHUnZJrDCdwQXNdrxOQ/Z+4ieioG27fY=
-X-Google-Smtp-Source: APXvYqxaS+VAZCmtLx0WeMk+9OZPoFXxOtaT1WbmClPKPrEvJDvRo0y5kAa7p8eEummwC3OLK95EuuDQa+jh/fDPGR8=
-X-Received: by 2002:a19:2489:: with SMTP id k131mr9878575lfk.52.1569235759656;
- Mon, 23 Sep 2019 03:49:19 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:5415:0:0:0:0:0 with HTTP; Mon, 23 Sep 2019 03:49:19
- -0700 (PDT)
-From:   Daniel Philip Mark <danielphilipmark@gmail.com>
-Date:   Mon, 23 Sep 2019 11:49:19 +0100
-Message-ID: <CAJ_8-bHDeeCmnx6zM+6o6n-+uxh=do1wd8O4RR2GaRi3U1yTdA@mail.gmail.com>
-Subject: Sveiki
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1732113AbfIWKtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:49:45 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:41780 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732076AbfIWKtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 06:49:45 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9CBAF1A02C7;
+        Mon, 23 Sep 2019 12:49:43 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C6A91A002E;
+        Mon, 23 Sep 2019 12:49:39 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E6CD6402EE;
+        Mon, 23 Sep 2019 18:49:33 +0800 (SGT)
+From:   Ran Wang <ran.wang_1@nxp.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Cc:     linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list),
+        Ran Wang <ran.wang_1@nxp.com>
+Subject: [PATCH] usb: hub add filter for device with specific VID&PID
+Date:   Mon, 23 Sep 2019 18:51:02 +0800
+Message-Id: <20190923105102.37413-1-ran.wang_1@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sveiki
-D=C4=81rgais draugs,
-Es esmu barr.Daniel Philip Mark, person=C4=ABgais advok=C4=81ts Late Mr.J.B=
-.
-Es sazin=C4=81jos ar jums, =C5=86emot v=C4=93r=C4=81 naudas l=C4=ABdzek=C4=
-=BCu iemaksu (USD 10,5 miljoni)
-banka, uz kuru kop=C5=A1 mana klienta, kur=C5=A1 i., n=C4=81ves nav atsaukt=
-s
-ticiet, ka esat j=C5=ABsu radinieks, jo jums ir t=C4=81ds pats uzv=C4=81rds=
- ar
-vi=C5=86am.Lai ieg=C5=ABtu papildinform=C4=81ciju, nekav=C4=93joties sazini=
-eties ar mani.
-Sveicieni,
-Barrs.Daniels Filips Marks
+USB 2.0 Embedded Host PET Automated Test (CH6) 6.7.23 A-UUT "Unsupported
+Device" Message require to stop enumerating device with VID=0x1a0a PID=0x0201
+and pop message to declare this device is not supported.
+
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+---
+ drivers/usb/core/hub.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index bbcfa63..3cda0da 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -4982,6 +4982,18 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+ 		if (status < 0)
+ 			goto loop;
+ 
++		 /* USB 2.0 Embedded Host PET Automated Test (CH6)
++		 * 6.7.23 A-UUT "Unsupported Device" Message
++		 * require to filter out below device when enumeration
++		 */
++		if ((udev->descriptor.idVendor == 0x1a0a)
++		 && (udev->descriptor.idProduct == 0x0201)) {
++			dev_err(&udev->dev, "This device is not supported: idVendor=0x%x idProduct=0x%x\n",
++				udev->descriptor.idVendor,
++				udev->descriptor.idProduct);
++			goto done;
++		}
++
+ 		if (udev->quirks & USB_QUIRK_DELAY_INIT)
+ 			msleep(2000);
+ 
+-- 
+2.7.4
+
