@@ -2,114 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02397BB1BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB7B9BB1C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:56:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407360AbfIWJzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 05:55:53 -0400
-Received: from foss.arm.com ([217.140.110.172]:39734 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406222AbfIWJzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 05:55:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82FFD1000;
-        Mon, 23 Sep 2019 02:55:52 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B578E3F59C;
-        Mon, 23 Sep 2019 02:55:51 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 10:55:46 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: pci: endpoint test BUG
-Message-ID: <20190923095546.GA3719@e121166-lin.cambridge.arm.com>
-References: <20190916020630.1584-1-hdanton@sina.com>
- <20190916112246.GA6693@e121166-lin.cambridge.arm.com>
- <815ad936-8b98-0931-89f7-b97922a7c77d@ti.com>
- <20190920152026.GC10172@e121166-lin.cambridge.arm.com>
- <c1e7862c-d61d-6ecd-f70c-73870f343940@infradead.org>
- <c2cadd96-a6d5-45f9-9abc-4c89b4a8b056@VE1EUR03FT044.eop-EUR03.prod.protection.outlook.com>
+        id S2407443AbfIWJ4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 05:56:52 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40313 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405175AbfIWJ4v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 05:56:51 -0400
+Received: by mail-io1-f67.google.com with SMTP id h144so31854302iof.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 02:56:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9RVgREEtnY7K1Q4RqEFR226fjeu69yeEhgWmLQQ1HSI=;
+        b=bXBOVmO9x51Zeb1vvbz+vROZa/zxo6m/j9+fhWU3iYEUhBW+tRhHBCj5EcvGdGHOE7
+         RyRWRgMzzVGhIXUJJsFWM8XP4FhBptfPxGYmugcvOizueRaMiFAIvw1f16Oq/2HINvQ+
+         rBbM7lH4yeRKpEWewjKe4BxjXyYENOZ7ca9VTaVVrb0ZlwSiI2LRf70LHe9AItCITmMn
+         9h+1ZnjcYoDhUUpeBd5g61NY6tt+av9Mnb3/XFSP4ZxcBsPVZtJgTt95SEGMx/QtoHnI
+         Bkb7iN7y0yjQjyY+n1rPBlhzCz+M2JFHl/TJDFdO0kt0qt0Y0RaXrLGvU42UVNY1f06C
+         VWlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9RVgREEtnY7K1Q4RqEFR226fjeu69yeEhgWmLQQ1HSI=;
+        b=qPc5lPn51Wh9soPz8k6fTKJ6v3iyCWHlrNsicj6c39LbbjvfifLrSlzbr0CqE8/vw7
+         H+3PhXqsmX1jOiNeU+HZMDGUO++9BNOV2A4CToSZKAjvqeVD765alA6EF8qGw4dizluG
+         zceD88XCH3BmJM6B4YKwnNXUG2mLGHbenhilzmSR2W43revdal/QMVsiC3Ob6DMswIKJ
+         b8tOrwwLnahbEfCUSWGthWTw2TJJWlSAR4/o7qeND75RbhBBhKUJG6TTDbZkaoxduod1
+         wKAz9XWosCfzkc+86zU0QVttQIyBehjIr+AouAsAENNJ2ZH5xSWrPXrLu6qButlzFZha
+         7ehw==
+X-Gm-Message-State: APjAAAViAzrjiJYqGhmzH3JcmFFXtugNTkIPL6q3fv9cWaHqpFfnIO/a
+        qegrYOTgUlCcnLUDbKEtn+YrQ+QgTJd++Hjzsbk=
+X-Google-Smtp-Source: APXvYqxGoKclm6T821IxCLJucK7Nvbhkem6415ZtQLZWjIFbauOnrrsRXTu/LboV91eUGR4OpybVkOpRXt7P3TBYmhU=
+X-Received: by 2002:a5d:8b07:: with SMTP id k7mr28249575ion.20.1569232610529;
+ Mon, 23 Sep 2019 02:56:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2cadd96-a6d5-45f9-9abc-4c89b4a8b056@VE1EUR03FT044.eop-EUR03.prod.protection.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190922083342.GO13569@xsang-OptiPlex-9020> <20190922150328.6722-1-alexander.kapshuk@gmail.com>
+ <20190923091934.GA15355@zn.tnic>
+In-Reply-To: <20190923091934.GA15355@zn.tnic>
+From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Date:   Mon, 23 Sep 2019 12:56:14 +0300
+Message-ID: <CAJ1xhMVrbAYi2=2L1Tt5qdOWGPHgo_htMZTZQVjJyWNTda2z+w@mail.gmail.com>
+Subject: Re: [PATCH RESEND] gen-insn-attr-x86.awk: Fix regexp warnings
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        kbuild test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Sep 21, 2019 at 10:04:55AM +0800, Hillf Danton wrote:
+On Mon, Sep 23, 2019 at 12:19 PM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Sun, Sep 22, 2019 at 06:03:28PM +0300, Alexander Kapshuk wrote:
+> > This patch fixes the regexp warnings shown below:
+> > GEN      /home/sasha/torvalds/tools/objtool/arch/x86/lib/inat-tables.c
+> > awk: ../arch/x86/tools/gen-insn-attr-x86.awk:260: warning: regexp escape sequence `\:' is not a known regexp operator
+> > awk: ../arch/x86/tools/gen-insn-attr-x86.awk:350: (FILENAME=../arch/x86/lib/x86-opcode-map.txt FNR=41) warning: regexp escape sequence `\&' is not a known regexp operator
 > >
-> 
-> >> It will be resent if no one saw the message.
-> 
-> > 
-> 
-> > I didn't see it and I can't find it on lore.kernel.org/linux-pci/.
-> 
-> > 
-> 
-> Respin, git send-email works/jj/pci-epf-uaf.txt
-> 
-> ...
-> 
-> From: Hillf Danton <hdanton@sina.com>
-> 
-> To: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Cc: linux-pci <linux-pci@vger.kernel.org>,
-> 
->         LKML <linux-kernel@vger.kernel.org>,
-> 
->         Randy Dunlap <rdunlap@infradead.org>,
-> 
->         Al Viro <viro@zeniv.linux.org.uk>,
-> 
->         Dan Carpenter <dan.carpenter@oracle.com>,
-> 
->         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-> 
->         Kishon Vijay Abraham I <kishon@ti.com>,
-> 
->         Andrey Konovalov <andreyknvl@google.com>,
-> 
->         Hillf Danton <hdanton@sina.com>
-> 
-> Subject: [PATCH] PCI: endpoint: Fix uaf on unregistering driver
-> 
-> Date: Sat, 21 Sep 2019 09:58:28 +0800
-> 
-> Message-Id: <20190921015828.15644-1-hdanton@sina.com>
-> 
-> MIME-Version: 1.0
-> 
-> Content-Transfer-Encoding: 8bit
-> 
->  
-> 
-> Result: 250
-> 
->  
-> 
-> And let me know you see it.
+> > The ':' and '&' characters need not escaping when used in string constants
+> > as part of regular expressions.
+>
+> How do you trigger this?
+>
+> I don't see it in my builds so it looks like environment thing. What
+> flavor of awk is yours?
+>
+> Thx.
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-I do not think any of your messages hit the vger mailing lists, avoid
-html.
-
-I have not received any patch and they are not in the mailing list
-archives either.
-
-Please check your email/SMTP set-up. I do not apply patches that
-are not on linux-pci@vger, worst case you can attach the patch to your
-reply and I can send it on your behalf but we must do this quickly.
-
-Lorenzo
-
-> Thanks
-> 
-> Hillf
-> 
+gawk 5.0.1-1 on Arch Linux.
