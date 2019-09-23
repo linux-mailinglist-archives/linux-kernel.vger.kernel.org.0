@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96236BBB4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C295EBBB59
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440469AbfIWS0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 14:26:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:46682 "EHLO foss.arm.com"
+        id S2502197AbfIWS0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 14:26:48 -0400
+Received: from foss.arm.com ([217.140.110.172]:46706 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438244AbfIWS0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:26:43 -0400
+        id S2440471AbfIWS0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 14:26:47 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4E3DF15AB;
-        Mon, 23 Sep 2019 11:26:43 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7985B15BF;
+        Mon, 23 Sep 2019 11:26:46 -0700 (PDT)
 Received: from big-swifty.lan (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC8DD3F694;
-        Mon, 23 Sep 2019 11:26:39 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B381E3F694;
+        Mon, 23 Sep 2019 11:26:43 -0700 (PDT)
 From:   Marc Zyngier <maz@kernel.org>
 To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 Cc:     Eric Auger <eric.auger@redhat.com>,
@@ -27,9 +27,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>,
         Jason Cooper <jason@lakedaemon.net>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Andrew Murray <Andrew.Murray@arm.com>
-Subject: [PATCH 04/35] irqchip/gic-v3: Detect GICv4.1 supporting RVPEID
-Date:   Mon, 23 Sep 2019 19:25:35 +0100
-Message-Id: <20190923182606.32100-5-maz@kernel.org>
+Subject: [PATCH 05/35] irqchip/gic-v3: Add GICv4.1 VPEID size discovery
+Date:   Mon, 23 Sep 2019 19:25:36 +0100
+Message-Id: <20190923182606.32100-6-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190923182606.32100-1-maz@kernel.org>
 References: <20190923182606.32100-1-maz@kernel.org>
@@ -40,87 +40,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GICv4.1 supports the RVPEID ("Residency per vPE ID"), which allows for
-a much efficient way of making virtual CPUs resident (to allow direct
-injection of interrupts).
-
-The functionnality needs to be discovered on each and every redistributor
-in the system, and disabled if the settings are inconsistent.
+While GICv4.0 mandates 16 bit worth of VPEIDs, GICv4.1 allows smaller
+implementations to be built. Add the required glue to dynamically
+compute the limit.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3.c       | 21 ++++++++++++++++++---
- include/linux/irqchip/arm-gic-v3.h |  2 ++
- 2 files changed, 20 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c   | 11 ++++++++++-
+ drivers/irqchip/irq-gic-v3.c       |  3 +++
+ include/linux/irqchip/arm-gic-v3.h |  5 +++++
+ 3 files changed, 18 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index c94eb287393b..17b77a0b9d97 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -119,7 +119,16 @@ struct its_node {
+ #define ITS_ITT_ALIGN		SZ_256
+ 
+ /* The maximum number of VPEID bits supported by VLPI commands */
+-#define ITS_MAX_VPEID_BITS	(16)
++#define ITS_MAX_VPEID_BITS						\
++	({								\
++		int nvpeid = 16;					\
++		if (gic_rdists->has_rvpeid &&				\
++		    gic_rdists->gicd_typer2 & GICD_TYPER2_VIL)		\
++			nvpeid = 1 + (gic_rdists->gicd_typer2 &		\
++				      GICD_TYPER2_VID);			\
++									\
++		nvpeid;							\
++	})
+ #define ITS_MAX_VPEID		(1 << (ITS_MAX_VPEID_BITS))
+ 
+ /* Convert page order to size in bytes */
 diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 422664ac5f53..0b545e2c3498 100644
+index 0b545e2c3498..fb6360161d6c 100644
 --- a/drivers/irqchip/irq-gic-v3.c
 +++ b/drivers/irqchip/irq-gic-v3.c
-@@ -849,8 +849,21 @@ static int __gic_update_rdist_properties(struct redist_region *region,
- 					 void __iomem *ptr)
- {
- 	u64 typer = gic_read_typer(ptr + GICR_TYPER);
-+
- 	gic_data.rdists.has_vlpis &= !!(typer & GICR_TYPER_VLPIS);
--	gic_data.rdists.has_direct_lpi &= !!(typer & GICR_TYPER_DirectLPIS);
-+
-+	/* RVPEID implies some form of DirectLPI, no matter what the doc says... :-/ */
-+	gic_data.rdists.has_rvpeid &= !!(typer & GICR_TYPER_RVPEID);
-+	gic_data.rdists.has_direct_lpi &= (!!(typer & GICR_TYPER_DirectLPIS) |
-+					   gic_data.rdists.has_rvpeid);
-+
-+	/* Detect non-sensical configurations */
-+	if (WARN_ON_ONCE(gic_data.rdists.has_rvpeid && !gic_data.rdists.has_vlpis)) {
-+		gic_data.rdists.has_direct_lpi = false;
-+		gic_data.rdists.has_vlpis = false;
-+		gic_data.rdists.has_rvpeid = false;
-+	}
-+
- 	gic_data.ppi_nr = min(GICR_TYPER_NR_PPIS(typer), gic_data.ppi_nr);
+@@ -1556,6 +1556,9 @@ static int __init gic_init_bases(void __iomem *dist_base,
  
- 	return 1;
-@@ -863,9 +876,10 @@ static void gic_update_rdist_properties(void)
- 	if (WARN_ON(gic_data.ppi_nr == UINT_MAX))
- 		gic_data.ppi_nr = 0;
- 	pr_info("%d PPIs implemented\n", gic_data.ppi_nr);
--	pr_info("%sVLPI support, %sdirect LPI support\n",
-+	pr_info("%sVLPI support, %sdirect LPI support, %sRVPEID support\n",
- 		!gic_data.rdists.has_vlpis ? "no " : "",
--		!gic_data.rdists.has_direct_lpi ? "no " : "");
-+		!gic_data.rdists.has_direct_lpi ? "no " : "",
-+		!gic_data.rdists.has_rvpeid ? "no " : "");
- }
- 
- /* Check whether it's single security state view */
-@@ -1546,6 +1560,7 @@ static int __init gic_init_bases(void __iomem *dist_base,
+ 	pr_info("%d SPIs implemented\n", GIC_LINE_NR - 32);
+ 	pr_info("%d Extended SPIs implemented\n", GIC_ESPI_NR);
++
++	gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
++
+ 	gic_data.domain = irq_domain_create_tree(handle, &gic_irq_domain_ops,
  						 &gic_data);
  	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
- 	gic_data.rdists.rdist = alloc_percpu(typeof(*gic_data.rdists.rdist));
-+	gic_data.rdists.has_rvpeid = true;
- 	gic_data.rdists.has_vlpis = true;
- 	gic_data.rdists.has_direct_lpi = true;
- 
 diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 5cc10cf7cb3e..b34e0c113697 100644
+index b34e0c113697..71730b9def0c 100644
 --- a/include/linux/irqchip/arm-gic-v3.h
 +++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -234,6 +234,7 @@
- #define GICR_TYPER_VLPIS		(1U << 1)
- #define GICR_TYPER_DirectLPIS		(1U << 3)
- #define GICR_TYPER_LAST			(1U << 4)
-+#define GICR_TYPER_RVPEID		(1U << 7)
+@@ -13,6 +13,7 @@
+ #define GICD_CTLR			0x0000
+ #define GICD_TYPER			0x0004
+ #define GICD_IIDR			0x0008
++#define GICD_TYPER2			0x000C
+ #define GICD_STATUSR			0x0010
+ #define GICD_SETSPI_NSR			0x0040
+ #define GICD_CLRSPI_NSR			0x0048
+@@ -89,6 +90,9 @@
+ #define GICD_TYPER_ESPIS(typer)						\
+ 	(((typer) & GICD_TYPER_ESPI) ? GICD_TYPER_SPIS((typer) >> 27) : 0)
  
- #define GIC_V3_REDIST_SIZE		0x20000
++#define GICD_TYPER2_VIL			(1U << 7)
++#define GICD_TYPER2_VID			GENMASK(4, 0)
++
+ #define GICD_IROUTER_SPI_MODE_ONE	(0U << 31)
+ #define GICD_IROUTER_SPI_MODE_ANY	(1U << 31)
  
-@@ -613,6 +614,7 @@ struct rdists {
+@@ -613,6 +617,7 @@ struct rdists {
+ 	void			*prop_table_va;
  	u64			flags;
  	u32			gicd_typer;
++	u32			gicd_typer2;
  	bool			has_vlpis;
-+	bool			has_rvpeid;
+ 	bool			has_rvpeid;
  	bool			has_direct_lpi;
- };
- 
 -- 
 2.20.1
 
