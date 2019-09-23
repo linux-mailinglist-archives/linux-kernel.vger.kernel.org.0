@@ -2,80 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F015FBB3C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:30:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD39BB3CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:33:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393818AbfIWMaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:30:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51226 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388199AbfIWMaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:30:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 316D9AF16;
-        Mon, 23 Sep 2019 12:30:09 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 14:30:08 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-hyperv@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Qian Cai <cai@lca.pw>, Sasha Levin <sashal@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v1 0/3] mm/memory_hotplug: Export generic_online_page()
-Message-ID: <20190923123008.GP6016@dhcp22.suse.cz>
-References: <20190909114830.662-1-david@redhat.com>
- <f73c4d0f-ad81-81a6-1107-852f2b9cad41@redhat.com>
- <20190923085807.GD6016@dhcp22.suse.cz>
- <df15f269-48df-8738-c714-9fae3cb3b44c@redhat.com>
- <20190923111559.GK6016@dhcp22.suse.cz>
- <88ac3511-4ad8-d5c8-8e6a-0cca0a0f0989@redhat.com>
- <20190923120719.GM6016@dhcp22.suse.cz>
- <b60b783e-a251-f155-3cef-e0fa4a18abd0@redhat.com>
+        id S2394272AbfIWMdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:33:17 -0400
+Received: from mga05.intel.com ([192.55.52.43]:29087 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392341AbfIWMdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 08:33:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 05:33:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,539,1559545200"; 
+   d="scan'208";a="218523740"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Sep 2019 05:33:15 -0700
+Subject: Re: [PATCH 1/2] mmc: sdhci: Check card status after reset
+To:     Raul E Rangel <rrangel@chromium.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+References: <20190904164625.236978-1-rrangel@chromium.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <6e65c246-a485-91c8-53e1-2ad0319a1e89@intel.com>
+Date:   Mon, 23 Sep 2019 15:31:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b60b783e-a251-f155-3cef-e0fa4a18abd0@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190904164625.236978-1-rrangel@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-09-19 14:20:05, David Hildenbrand wrote:
-> On 23.09.19 14:07, Michal Hocko wrote:
-> > On Mon 23-09-19 13:34:18, David Hildenbrand wrote:
-> >> On 23.09.19 13:15, Michal Hocko wrote:
-> > [...]
-> >>> I am wondering why those pages get onlined when they are, in fact,
-> >>> supposed to be offline.
-> >>>
-> >>
-> >> It's the current way of emulating sub-memory-block hotplug on top of the
-> >> memory bock device API we have. Hyper-V and XEN have been using that for
-> >> a long time.
-> > 
-> > Do they really have to use the existing block interface when they in
-> > fact do not operate on the block granularity? Zone device memory already
-> > acts on sub section/block boundaries.
-> > 
+On 4/09/19 7:46 PM, Raul E Rangel wrote:
+> In sdhci_do_reset we call the reset callback which is typically
+> sdhci_reset. sdhci_reset can wait for up to 100ms waiting for the
+> controller to reset. If SDHCI_RESET_ALL was passed as the flag, the
+> controller will clear the IRQ mask. If during that 100ms the card is
+> removed there is no notification to the MMC system that the card was
+> removed. So from the drivers point of view the card is always present.
 > 
-> Yes, we need memory blocks, especially for user space to properly online
-> them (as we discussed a while back, to decide on a zone) and for udev
-> events, to e.g., properly reload kexec when memory blocks get
-> added/removed/onlined/offlined.
+> By making sdhci_reinit compare the present state it can schedule a
+> rescan if the card was removed while a reset was in progress.
+> 
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
-Just to make sure I really follow. We need a user interface to control
-where the memory gets onlined but it is the driver which determines
-which part of the block really gets onlined, right?
--- 
-Michal Hocko
-SUSE Labs
+Should have Acked this ages ago, sorry :-(
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+> Sorry this took me so long to send out. I tested out the patch set on
+> 5.3-rc5 with multiple devices.
+> 
+> This patch was proposed here by Adrian: https://patchwork.kernel.org/patch/10925469/#22691177
+> 
+>  drivers/mmc/host/sdhci.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index a5dc5aae973e..b0045880ee3d 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -337,8 +337,19 @@ static void sdhci_init(struct sdhci_host *host, int soft)
+>  
+>  static void sdhci_reinit(struct sdhci_host *host)
+>  {
+> +	u32 cd = host->ier & (SDHCI_INT_CARD_REMOVE | SDHCI_INT_CARD_INSERT);
+> +
+>  	sdhci_init(host, 0);
+>  	sdhci_enable_card_detection(host);
+> +
+> +	/*
+> +	 * A change to the card detect bits indicates a change in present state,
+> +	 * refer sdhci_set_card_detection(). A card detect interrupt might have
+> +	 * been missed while the host controller was being reset, so trigger a
+> +	 * rescan to check.
+> +	 */
+> +	if (cd != (host->ier & (SDHCI_INT_CARD_REMOVE | SDHCI_INT_CARD_INSERT)))
+> +		mmc_detect_change(host->mmc, msecs_to_jiffies(200));
+>  }
+>  
+>  static void __sdhci_led_activate(struct sdhci_host *host)
+> 
+
