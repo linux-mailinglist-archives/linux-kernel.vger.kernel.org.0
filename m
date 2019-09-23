@@ -2,140 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA9DDBB3B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6915BBB3A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438797AbfIWM1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:27:34 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4334 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732441AbfIWM1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:27:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 05:27:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,539,1559545200"; 
-   d="scan'208";a="203116684"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Sep 2019 05:27:26 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
-        yi.l.liu@intel.com, yi.y.sun@intel.com,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
-        Yi Sun <yi.y.sun@linux.intel.com>
-Subject: [RFC PATCH 4/4] iommu/vt-d: Identify domains using first level page table
-Date:   Mon, 23 Sep 2019 20:24:54 +0800
-Message-Id: <20190923122454.9888-5-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190923122454.9888-1-baolu.lu@linux.intel.com>
-References: <20190923122454.9888-1-baolu.lu@linux.intel.com>
+        id S1732269AbfIWMZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:25:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48890 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730431AbfIWMZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 08:25:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A54DEAEAE;
+        Mon, 23 Sep 2019 12:25:14 +0000 (UTC)
+Date:   Mon, 23 Sep 2019 14:25:13 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alastair D'Silva <alastair@au1.ibm.com>
+Cc:     alastair@d-silva.org, Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Wei Yang <richard.weiyang@gmail.com>, Qian Cai <cai@lca.pw>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Ira Weiny <ira.weiny@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] memory_hotplug: Add a bounds check to
+ check_hotplug_memory_range()
+Message-ID: <20190923122513.GO6016@dhcp22.suse.cz>
+References: <20190917010752.28395-1-alastair@au1.ibm.com>
+ <20190917010752.28395-2-alastair@au1.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190917010752.28395-2-alastair@au1.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This checks whether a domain should use first level page table
-for map/unmap. And if so, we should attach the domain to the
-device in first level translation mode.
+On Tue 17-09-19 11:07:47, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> On PowerPC, the address ranges allocated to OpenCAPI LPC memory
+> are allocated from firmware. These address ranges may be higher
+> than what older kernels permit, as we increased the maximum
+> permissable address in commit 4ffe713b7587
+> ("powerpc/mm: Increase the max addressable memory to 2PB"). It is
+> possible that the addressable range may change again in the
+> future.
+> 
+> In this scenario, we end up with a bogus section returned from
+> __section_nr (see the discussion on the thread "mm: Trigger bug on
+> if a section is not found in __section_nr").
+> 
+> Adding a check here means that we fail early and have an
+> opportunity to handle the error gracefully, rather than rumbling
+> on and potentially accessing an incorrect section.
+> 
+> Further discussion is also on the thread ("powerpc: Perform a bounds
+> check in arch_add_memory").
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Cc: Yi Sun <yi.y.sun@linux.intel.com>
-Cc: Sanjay Kumar <sanjay.k.kumar@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 41 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 38 insertions(+), 3 deletions(-)
+It would be nicer to refer to this by a message-id based url.
+E.g. http://lkml.kernel.org/r/20190827052047.31547-1-alastair@au1.ibm.com
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 103480016010..d539e6a6c3dd 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1722,6 +1722,26 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
- #endif
- }
  
-+/*
-+ * Check and return whether first level is used by default for
-+ * DMA translation.
-+ */
-+static bool first_level_by_default(void)
-+{
-+	struct dmar_drhd_unit *drhd;
-+	struct intel_iommu *iommu;
-+
-+	rcu_read_lock();
-+	for_each_active_iommu(iommu, drhd)
-+		if (!sm_supported(iommu) ||
-+		    !ecap_flts(iommu->ecap) ||
-+		    !cap_caching_mode(iommu->cap))
-+			return false;
-+	rcu_read_unlock();
-+
-+	return true;
-+}
-+
- static struct dmar_domain *alloc_domain(int flags)
- {
- 	struct dmar_domain *domain;
-@@ -1736,6 +1756,9 @@ static struct dmar_domain *alloc_domain(int flags)
- 	domain->has_iotlb_device = false;
- 	INIT_LIST_HEAD(&domain->devices);
- 
-+	if (first_level_by_default())
-+		domain->flags |= DOMAIN_FLAG_FIRST_LEVEL_TRANS;
-+
- 	return domain;
- }
- 
-@@ -2625,6 +2648,11 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
- 		if (hw_pass_through && domain_type_is_si(domain))
- 			ret = intel_pasid_setup_pass_through(iommu, domain,
- 					dev, PASID_RID2PASID);
-+		else if (domain_type_is_flt(domain))
-+			ret = intel_pasid_setup_first_level(iommu, dev,
-+					domain->pgd, PASID_RID2PASID,
-+					domain->iommu_did[iommu->seq_id],
-+					PASID_FLAG_SUPERVISOR_MODE);
- 		else
- 			ret = intel_pasid_setup_second_level(iommu, domain,
- 					dev, PASID_RID2PASID);
-@@ -5349,8 +5377,14 @@ static int aux_domain_add_dev(struct dmar_domain *domain,
- 		goto attach_failed;
- 
- 	/* Setup the PASID entry for mediated devices: */
--	ret = intel_pasid_setup_second_level(iommu, domain, dev,
--					     domain->default_pasid);
-+	if (domain_type_is_flt(domain))
-+		ret = intel_pasid_setup_first_level(iommu, dev,
-+				domain->pgd, domain->default_pasid,
-+				domain->iommu_did[iommu->seq_id],
-+				PASID_FLAG_SUPERVISOR_MODE);
-+	else
-+		ret = intel_pasid_setup_second_level(iommu, domain, dev,
-+						     domain->default_pasid);
- 	if (ret)
- 		goto table_failed;
- 	spin_unlock(&iommu->lock);
-@@ -5583,7 +5617,8 @@ static phys_addr_t intel_iommu_iova_to_phys(struct iommu_domain *domain,
- 	int level = 0;
- 	u64 phys = 0;
- 
--	if (dmar_domain->flags & DOMAIN_FLAG_LOSE_CHILDREN)
-+	if ((dmar_domain->flags & DOMAIN_FLAG_LOSE_CHILDREN) ||
-+	    (dmar_domain->flags & DOMAIN_FLAG_FIRST_LEVEL_TRANS))
- 		return 0;
- 
- 	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>  include/linux/memory_hotplug.h |  1 +
+>  mm/memory_hotplug.c            | 13 ++++++++++++-
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index f46ea71b4ffd..bc477e98a310 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -110,6 +110,7 @@ extern void __online_page_increment_counters(struct page *page);
+>  extern void __online_page_free(struct page *page);
+>  
+>  extern int try_online_node(int nid);
+> +int check_hotplug_memory_addressable(u64 start, u64 size);
+>  
+>  extern int arch_add_memory(int nid, u64 start, u64 size,
+>  			struct mhp_restrictions *restrictions);
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index c73f09913165..02cb9a74f561 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1030,6 +1030,17 @@ int try_online_node(int nid)
+>  	return ret;
+>  }
+>  
+> +int check_hotplug_memory_addressable(u64 start, u64 size)
+> +{
+> +#ifdef MAX_PHYSMEM_BITS
+> +	if ((start + size - 1) >> MAX_PHYSMEM_BITS)
+> +		return -E2BIG;
+> +#endif
+
+Is there any arch which doesn't define this? We seemed to be using this
+in sparsemem code without any ifdefs.
+
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(check_hotplug_memory_addressable);
+
+If you squashed the patch 2 then it would become clear why this needs to
+be exported because you would have a driver user. I find it a bit
+unfortunate to expect that any driver which uses the hotplug code is
+expected to know that this check should be called. This sounds too error
+prone. Why hasn't been this done at __add_pages layer?
+
+> +
+>  static int check_hotplug_memory_range(u64 start, u64 size)
+>  {
+>  	/* memory range must be block size aligned */
+> @@ -1040,7 +1051,7 @@ static int check_hotplug_memory_range(u64 start, u64 size)
+>  		return -EINVAL;
+>  	}
+>  
+> -	return 0;
+> +	return check_hotplug_memory_addressable(start, size);
+
+This will result in a silent failure (unlike misaligned case). Is this
+what we want?
+
+>  }
+>  
+>  static int online_memory_block(struct memory_block *mem, void *arg)
+> -- 
+> 2.21.0
+> 
+
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
