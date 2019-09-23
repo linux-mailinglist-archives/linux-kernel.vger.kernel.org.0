@@ -2,98 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 200B5BB692
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D5FEBB685
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:20:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408345AbfIWOW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:22:28 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:40722 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405915AbfIWOW1 (ORCPT
+        id S2407468AbfIWOUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:20:13 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36434 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407008AbfIWOUN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:22:27 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8NEJCZE111282;
-        Mon, 23 Sep 2019 14:21:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=ijA5URtv/98vHuAZIGyZ6iuoFF4Fyn/jEc22CmlTEdM=;
- b=NXa4V1GZRACyU93DDdoCr11+k0CdEOiuckcdwo8czwRjYcwhkGkAgGq2fP/TkCXV4+E5
- K/9Klh+oa9OPyZo3clbzVcl2UStzv4mRxtp0SFca0jcIOIzO+0F22ZEgqOAa+CaozuGF
- Tx7jVP1EYC3sxEQvGd0STjaeD7dR4VCqdCvSJPwHZrsvyf7tClONkVD8UM3zwJMByrtz
- UT6k4hzU57Fsb5TzFSdexrU0xL0BsC9cMpQWf4rY8/0Ok9zXmlBWfPZCSO+d9Sn+BngR
- l/8aLHn3wztAIrqtyc7/sPtfl72EYnhUlX1JCRlb4krkrxCUwVfYdjuMwxA+1NMkFZU/ CQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2v5b9tf9gx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Sep 2019 14:21:55 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8NEJDrK129050;
-        Mon, 23 Sep 2019 14:19:54 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2v5bpgfa06-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Sep 2019 14:19:53 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8NEIj3W006948;
-        Mon, 23 Sep 2019 14:18:45 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Sep 2019 07:18:44 -0700
-Date:   Mon, 23 Sep 2019 17:18:36 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] nvme: fix an error code in nvme_init_subsystem()
-Message-ID: <20190923141836.GA31251@mwanda>
+        Mon, 23 Sep 2019 10:20:13 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v24so13925167ljj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 07:20:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cn9/9Me6Kmp4Xn9AfJMQMku3qxEXOlFZIGtDmEDrJpc=;
+        b=abcoxhvNE4QzsWdjpcm4fIk+YAxDnJvfoFRGb46mpPwEFg0aOpeJ0eaheg3tZgT4ZG
+         ojpl8m/oDAh+qYbzYsIcSeNXc5m5DY3mfdWvxLXTBeWP7wfLsaIXItCLI6UZUPW+vtJ1
+         VGOT858b8NEkfBIvrgsoW5+e3A7n18FZCZM84=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cn9/9Me6Kmp4Xn9AfJMQMku3qxEXOlFZIGtDmEDrJpc=;
+        b=LAtc8ShgXk2+0UKtsHYeivajA3MhggtFWOJi6VA/piH+qHMeBPhcfjn+W/nDoll6WD
+         AMZDUx4moceBEnSsLG3oofO4KU979FnzuXFGSUeHnmfHM81ApXPz6Ddx43KO7Vcm1ygu
+         daHdw9601BUvAfUeIca34Ogt+JbkV8Id/9l8U95nPB8a7VNomKa7V2sF07NoN43vwBpz
+         qZKF3lqUjN73CWOnpCmfmht+mpnS5yflrwNAzirt0YbgoHNQrjO8bmzYpmcU/xc+UkhE
+         DKW6vs0w5IMHaRmw8tDAAkMcbor3jrlVxewfjlaRIGX0QOO6XDRih5/gLCXchiQoCJNd
+         tVjg==
+X-Gm-Message-State: APjAAAUprvBtbLKeNA4YCS84MeOXMA05jQm7BnRMVAI2Ph9ZbSYhr8tm
+        bJhdKyC+MwpIcjG3xqjbk29UuyCZ+X7So4nV
+X-Google-Smtp-Source: APXvYqy+Ki9LgN+TwomD1Y4hGoRYgJaAEevteVNzRvde3/6GQAoELKo5qYA33O6wCDX/Pq8W4P59VQ==
+X-Received: by 2002:a2e:3902:: with SMTP id g2mr17815555lja.196.1569248411411;
+        Mon, 23 Sep 2019 07:20:11 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id b21sm2230125lff.96.2019.09.23.07.20.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 07:20:10 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: devicetree.c: remove orphan pinctrl_dt_has_hogs()
+Date:   Mon, 23 Sep 2019 16:20:05 +0200
+Message-Id: <20190923142005.5632-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909230140
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909230140
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"ret" should be a negative error code here, but it's either success or
-possibly uninitialized.
+The helper pinctrl_dt_has_hogs() was introduced in
+99e4f67508e1 (pinctrl: core: Use delayed work for hogs), but the sole
+use then got removed shortly after in 950b0d91dc10 (pinctrl: core: Fix
+regression caused by delayed work for hogs).
 
-Fixes: 32fd90c40768 ("nvme: change locking for the per-subsystem controller list")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- drivers/nvme/host/core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pinctrl/devicetree.c | 15 ---------------
+ drivers/pinctrl/devicetree.h |  7 -------
+ 2 files changed, 22 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 63b37d08ac98..f6acbff3e3bc 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2540,8 +2540,9 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 		list_add_tail(&subsys->entry, &nvme_subsystems);
- 	}
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index 5d6d8b1e9062..6716a406d128 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -166,21 +166,6 @@ static int dt_remember_dummy_state(struct pinctrl *p, const char *statename)
+ 	return dt_remember_or_free_map(p, statename, NULL, map, 1);
+ }
  
--	if (sysfs_create_link(&subsys->dev.kobj, &ctrl->device->kobj,
--			dev_name(ctrl->device))) {
-+	ret = sysfs_create_link(&subsys->dev.kobj, &ctrl->device->kobj,
-+				dev_name(ctrl->device));
-+	if (ret) {
- 		dev_err(ctrl->device,
- 			"failed to create sysfs link from subsystem.\n");
- 		goto out_put_subsystem;
+-bool pinctrl_dt_has_hogs(struct pinctrl_dev *pctldev)
+-{
+-	struct device_node *np;
+-	struct property *prop;
+-	int size;
+-
+-	np = pctldev->dev->of_node;
+-	if (!np)
+-		return false;
+-
+-	prop = of_find_property(np, "pinctrl-0", &size);
+-
+-	return prop ? true : false;
+-}
+-
+ int pinctrl_dt_to_map(struct pinctrl *p, struct pinctrl_dev *pctldev)
+ {
+ 	struct device_node *np = p->dev->of_node;
+diff --git a/drivers/pinctrl/devicetree.h b/drivers/pinctrl/devicetree.h
+index 00e645d7fac7..efa80779de4f 100644
+--- a/drivers/pinctrl/devicetree.h
++++ b/drivers/pinctrl/devicetree.h
+@@ -9,8 +9,6 @@ struct of_phandle_args;
+ 
+ #ifdef CONFIG_OF
+ 
+-bool pinctrl_dt_has_hogs(struct pinctrl_dev *pctldev);
+-
+ void pinctrl_dt_free_maps(struct pinctrl *p);
+ int pinctrl_dt_to_map(struct pinctrl *p, struct pinctrl_dev *pctldev);
+ 
+@@ -23,11 +21,6 @@ int pinctrl_parse_index_with_args(const struct device_node *np,
+ 
+ #else
+ 
+-static inline bool pinctrl_dt_has_hogs(struct pinctrl_dev *pctldev)
+-{
+-	return false;
+-}
+-
+ static inline int pinctrl_dt_to_map(struct pinctrl *p,
+ 				    struct pinctrl_dev *pctldev)
+ {
 -- 
 2.20.1
 
