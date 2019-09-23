@@ -2,89 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8D4BB009
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C50BB014
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731992AbfIWIyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 04:54:18 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47195 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731971AbfIWIyS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 04:54:18 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iCK6p-0002FR-FW; Mon, 23 Sep 2019 10:54:15 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iCK6o-0000rV-MN; Mon, 23 Sep 2019 10:54:14 +0200
-Date:   Mon, 23 Sep 2019 10:54:14 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/4] pwm: mxs: add support for inverse polarity
-Message-ID: <20190923085414.6d3gbby6gglpjsfe@pengutronix.de>
-References: <20190923081348.6843-1-linux@rasmusvillemoes.dk>
- <20190923081348.6843-4-linux@rasmusvillemoes.dk>
- <20190923082735.tzxyhvjlnztsxhsc@pengutronix.de>
- <d2b29144-3de8-4561-3292-49db7e697aca@rasmusvillemoes.dk>
+        id S2405498AbfIWI6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 04:58:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51152 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729483AbfIWI6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 04:58:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E41CEAAB2;
+        Mon, 23 Sep 2019 08:58:07 +0000 (UTC)
+Date:   Mon, 23 Sep 2019 10:58:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-hyperv@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Qian Cai <cai@lca.pw>, Sasha Levin <sashal@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: Re: [PATCH v1 0/3] mm/memory_hotplug: Export generic_online_page()
+Message-ID: <20190923085807.GD6016@dhcp22.suse.cz>
+References: <20190909114830.662-1-david@redhat.com>
+ <f73c4d0f-ad81-81a6-1107-852f2b9cad41@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2b29144-3de8-4561-3292-49db7e697aca@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <f73c4d0f-ad81-81a6-1107-852f2b9cad41@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 10:45:56AM +0200, Rasmus Villemoes wrote:
-> On 23/09/2019 10.27, Uwe Kleine-König wrote:
-> > On Mon, Sep 23, 2019 at 10:13:47AM +0200, Rasmus Villemoes wrote:
-> >>
-> >>  
-> >> +	pol_bits = state->polarity == PWM_POLARITY_NORMAL ?
-> >> +		PERIOD_POLARITY_NORMAL : PERIOD_POLARITY_INVERSE;
-> >> +
-> >>  	writel(duty_cycles << 16,
-> >>  	       mxs->base + PWM_ACTIVE0 + pwm->hwpwm * 0x20);
-> >> -	writel(PERIOD_PERIOD(period_cycles) | PERIOD_POLARITY_NORMAL | PERIOD_CDIV(div),
-> >> +	writel(PERIOD_PERIOD(period_cycles) | pol_bits | PERIOD_CDIV(div),
+On Fri 20-09-19 10:17:54, David Hildenbrand wrote:
+> On 09.09.19 13:48, David Hildenbrand wrote:
+> > Based on linux/next + "[PATCH 0/3] Remove __online_page_set_limits()"
 > > 
-> > When will this affect the output? Only on the next start of a period, or
-> > immediatly? Can it happen that this results in a mixed output (i.e. a
-> > period that has already the new duty cycle from the line above but not
-> > the new polarity (or period)?
+> > Let's replace the __online_page...() functions by generic_online_page().
+> > Hyper-V only wants to delay the actual onlining of un-backed pages, so we
+> > can simpy re-use the generic function.
+> > 
+> > Only compile-tested.
+> > 
+> > Cc: Souptick Joarder <jrdr.linux@gmail.com>
+> > 
+> > David Hildenbrand (3):
+> >   mm/memory_hotplug: Export generic_online_page()
+> >   hv_balloon: Use generic_online_page()
+> >   mm/memory_hotplug: Remove __online_page_free() and
+> >     __online_page_increment_counters()
+> > 
+> >  drivers/hv/hv_balloon.c        |  3 +--
+> >  include/linux/memory_hotplug.h |  4 +---
+> >  mm/memory_hotplug.c            | 17 ++---------------
+> >  3 files changed, 4 insertions(+), 20 deletions(-)
+> > 
 > 
-> The data sheet says "Also, when the user reprograms the channel in this
-> manner, the new register values will not take effect until the beginning
-> of a new output period. This eliminates the potential for output
-> glitches that could occur if the registers were updated while the
-> channel was enabled and in the middle of a cycle.". So I think this
-> should be ok. "this manner" refers to the registers being written in the
-> proper order (first ACTIVEn, then PERIODn).
+> Ping, any comments on this one?
 
-OK. IMHO this is worth a code comment.
+Unification makes a lot of sense to me. You can add
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-Best regards
-Uwe
-
+I will most likely won't surprise if I asked for more here though ;)
+I have to confess I really detest the whole concept of a hidden callback
+with a very weird API. Is this something we can do about? I do realize
+that adding a callback would require either cluttering the existing APIs
+but maybe we can come up with something more clever. Or maybe existing
+external users of online callback can do that as a separate step after
+the online is completed - or is this impossible due to locking
+guarantees?
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Michal Hocko
+SUSE Labs
