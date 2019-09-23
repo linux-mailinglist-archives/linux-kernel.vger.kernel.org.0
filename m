@@ -2,82 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC81BBA99
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 19:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6897BBA9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 19:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440198AbfIWRgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 13:36:10 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41194 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389167AbfIWRgJ (ORCPT
+        id S2440202AbfIWRib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 13:38:31 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41421 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394159AbfIWRib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 13:36:09 -0400
-Received: by mail-oi1-f196.google.com with SMTP id w17so8314172oiw.8
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 10:36:09 -0700 (PDT)
+        Mon, 23 Sep 2019 13:38:31 -0400
+Received: by mail-qk1-f193.google.com with SMTP id p10so16279458qkg.8;
+        Mon, 23 Sep 2019 10:38:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=XNaGnPLBrYlAHfoGjy0jKQo/KIqdraCEqQpwAJaDfZU=;
-        b=ZOij/jqUeyqlWbehaHe97cAC+dc4xpguajHiagJGy6PkiAuvojfc/DKOn+NapT2mDh
-         AYnJgEXZ7hdYYnuPHeULNFZ65oWSjcH5Ia6HVq1eomqru3iGiIX1oF9ztlmD2NdSu7yk
-         /UGq1U6cGAgvsj6N9xZ4yxd/vhD9h3XCS+NtFY/SH0skkjIV2tGrSb0Gq6ku/J7orItP
-         PBSAwZzplOiIQI2IFicTyMS38uh4hZVVz+h7s8McdbDqnJPZ9tFfVcalztUhy8gxPXYo
-         mnoFlpNFVqCaqj/L0Axcwjk2wAelkI21RghCn09sI8LOQmixwHL6G+uzBPlcZZ6zmq71
-         Nhrw==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jVhjzvHtl5HnGqhTLYxKVj47U4X/BFJJeBsnSkYYla0=;
+        b=GHgb8Gj9Eg7yyV8axYLveLmLIPVXs4qBekQCAj112ufQn96vUb9z3JrRVAxssUBxnE
+         xp8W6LFwYHZ/nIObtw7HYngFclWG+eYErJ+gPA1CjHQekNEVMVOpZCTqCiV2xXyNmuJF
+         SGT8BZ12WgC0fAt2oz7naCorGhKJdX46SUubM95ur0YInd7E3CyC8UtYJwZwdIb9xEUp
+         FlordW2U2JYwO8TJNxd0o1yTrRlmjn4aHOVJ26AL1YF/STU/kSaSSG2DtV/STYCiXmT0
+         FljyuE1XbGEmT5Qe11HkMOapPhlIfSWCg4fTm2azFON2D3m1kNHYT04WBU9lCWty1VV7
+         4mZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=XNaGnPLBrYlAHfoGjy0jKQo/KIqdraCEqQpwAJaDfZU=;
-        b=CGP3xyLRABuc3sl4NpvsOUPrkqp0bUxqvTEUXZOQ77PVBeEGS11kPPqkxdjW7eHVIj
-         BHji5mJR4ymByIxQVoLMVK2Sg2elRARFH8tOYSJ/UEBUxqtppS+p6jUDYunivj8WQrvp
-         jZq+gwyh3kHPfPGkDZhBkZSwuLEz1UeV4TnIv7SuxDvjUNwlC8KrD1CCJKsR5ErFpZH5
-         YsVMbtLFbrAM3LUPzV56iMVNsMYOzxUTfllYVdybhO2gsr5PMkM4pl7fHwLHbE0IzkS8
-         ycEcdGfdliRW1Uu2SHLCb7Iy+Paq2jpsI6nKopqdoMuj3t8n/a4AYydQK6n9tVjqMp8I
-         B1YA==
-X-Gm-Message-State: APjAAAXKes14Ku8V+Onr77hyvVxBEn6Tz+gcXnwkANdR75B5hHbFiPJ8
-        xKItud0/MwqMI7MdT2bb2FmtRHlWHHPYeyGm++U=
-X-Google-Smtp-Source: APXvYqyOxzrlnvzmLK3BKmRfwnwArLoK1jNlR7dBkorsL90OIvPOGRUnQkRfzL97+o9hAP63ApIxI0s+yrjj9ojG9U4=
-X-Received: by 2002:aca:f002:: with SMTP id o2mr1094461oih.62.1569260168796;
- Mon, 23 Sep 2019 10:36:08 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jVhjzvHtl5HnGqhTLYxKVj47U4X/BFJJeBsnSkYYla0=;
+        b=adaR4q0RmGiA5bGMVCkCu96ppVD93ypnSGU0zxBwrBev1Shaqf3l0q7Ajdj7ICrNmw
+         IurtMsYd42IBbwIciTm9s/4ZAjH5SyybqIuZPQ1ybAr+NY+gj6E4rMa62m/ZLoEElap+
+         U4fOw3jEbxEn2exDvLDhN3ix4wlPMiNA9AJGy2xjHHA4i8PgflDIPYkIAAwAU9onvhuB
+         9Dv3R4S2X73y3h9xx+Xzv3qohpAVCnwGOsjTv0PISRdtmrUN7aBdRMKkmIlpPOyJW9eo
+         yP6rz6x3ckl2COtS0bw1mUmdSHzISCObVFE4WZBuRODgonXD+5GfXB1xtabV46JLZlbT
+         Wfog==
+X-Gm-Message-State: APjAAAWRD2D8+hONv3PdJN+a/uciE5CDDBj5g/05r7/ko8uIwL/GjOSS
+        vq/ajPA4qRIPpug/XiF1LkU=
+X-Google-Smtp-Source: APXvYqw9KCunNUQ8rqfLMPulMwZ5wIertQSZS+QZLf1Uj5+GYoyxOk0Yg+rWS8WR2DJusq1QAp2ylQ==
+X-Received: by 2002:a05:620a:149a:: with SMTP id w26mr1090671qkj.234.1569260309090;
+        Mon, 23 Sep 2019 10:38:29 -0700 (PDT)
+Received: from quaco.ghostprotocols.net (189-94-129-1.3g.claro.net.br. [189.94.129.1])
+        by smtp.gmail.com with ESMTPSA id v5sm7592368qtk.66.2019.09.23.10.38.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 10:38:28 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 80F7241105; Mon, 23 Sep 2019 14:38:24 -0300 (-03)
+Date:   Mon, 23 Sep 2019 14:38:24 -0300
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 0/6] tools/lib/traceevent: Man page updates and some file
+ movement
+Message-ID: <20190923173824.GB28265@kernel.org>
+References: <20190919212335.400961206@goodmis.org>
+ <20190923142839.GD16544@kernel.org>
+ <20190923143927.GE16544@kernel.org>
+ <20190923145249.GF16544@kernel.org>
+ <20190923111248.5ebdbfd5@oasis.local.home>
+ <20190923115929.453b68f1@oasis.local.home>
 MIME-Version: 1.0
-Received: by 2002:a4a:9488:0:0:0:0:0 with HTTP; Mon, 23 Sep 2019 10:36:05
- -0700 (PDT)
-Reply-To: stellerbarid@barid.com
-From:   "Mrs. Stellar Maoris" <mrsbeccy8@gmail.com>
-Date:   Mon, 23 Sep 2019 10:36:05 -0700
-Message-ID: <CAHU1do3ry5ZJOuXbmZN9wvwm5kDn45vFe+dw3NK3iaxQLx-dhA@mail.gmail.com>
-Subject: Hello Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923115929.453b68f1@oasis.local.home>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear Friend.
+Em Mon, Sep 23, 2019 at 11:59:29AM -0400, Steven Rostedt escreveu:
+> On Mon, 23 Sep 2019 11:12:48 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > Yeah. Let's not apply this one yet till we figure out what broke. I'll
+> > take a look at it too.
+> 
+> Does this help?
 
-I=E2=80=99m  Mrs. Stellar Maoris  a manger in  HSBC  bank  of  Spain Madrid=
-, I
-am sending
-this brief letter  to seek for  your partnership and long term relationship=
-,
-I have an important and urgent issue I want to discuss with you privately a=
-bout
-Transaction fund worth the sum of $9.5m America dollars left by most
-of the greedy
-Asia Kuwait politician in our bank here in Spain Madrid A fund which
-suppose to have been use to develop the continent.
+yeap, did the trick, I'm folding this one with the faulty one, thanks
+for the prompt reply.
 
-If you know that you can invest this fund into profitable business in
-your country by the end we shall have 50%50 share each, kindly get
-back to me for more detail and procedures.
+- Arnaldo
+ 
+> -- Steve
+> 
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index f9807d8c005b..7544166dd466 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -292,7 +292,7 @@ endif
+>  LIBTRACEEVENT = $(TE_PATH)libtraceevent.a
+>  export LIBTRACEEVENT
+>  
+> -LIBTRACEEVENT_DYNAMIC_LIST = $(TE_PATH)libtraceevent-dynamic-list
+> +LIBTRACEEVENT_DYNAMIC_LIST = $(TE_PATH)plugins/libtraceevent-dynamic-list
+>  
+>  #
+>  # The static build has no dynsym table, so this does not work for
+> @@ -737,7 +737,7 @@ libtraceevent_plugins: FORCE
+>  	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) plugins
+>  
+>  $(LIBTRACEEVENT_DYNAMIC_LIST): libtraceevent_plugins
+> -	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) $(OUTPUT)libtraceevent-dynamic-list
+> +	$(Q)$(MAKE) -C $(TRACE_EVENT_DIR) $(LIBTRACEEVENT_FLAGS) O=$(OUTPUT) $(OUTPUT)plugins/libtraceevent-dynamic-list
+>  
+>  $(LIBTRACEEVENT)-clean:
+>  	$(call QUIET_CLEAN, libtraceevent)
 
-Your urgent respond will be highly appreciated
-Awaiting to hear from you asap.
-My Regard.
-Stellar Maoris
-Email: stellerbarid@barid.com
-Phone Number:  +34(62) 768 5146
+-- 
+
+- Arnaldo
