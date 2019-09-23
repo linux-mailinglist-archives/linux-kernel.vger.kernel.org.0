@@ -2,95 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DECE0BBD45
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:48:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B500BBD47
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:49:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389458AbfIWUsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 16:48:46 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43572 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389052AbfIWUsq (ORCPT
+        id S2390018AbfIWUt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 16:49:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54927 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389052AbfIWUt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 16:48:46 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v27so2566639pgk.10
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 13:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nUgRSkoDI5HIlvd1QcYFDyolqVga7j1qtEHfJ+8gxnQ=;
-        b=GivnRW5mV4+6/svlNvgJuoze4kT8deBE3EL4DtQlUdbdSlSdqH3zrkcK585VAc2DkX
-         N8Q+YY94IdMGkrs79yTc7ghVyfPdUTB3jrxnyOC9kTm32sOYByPVQRXxbTXSaAaZo+S7
-         M4JFDJhRDy8ml1pJ7p0xevCWFJTSy1z6QclkBvh43GzVu/cnAqS4VU7nTwZ1iEE2j1JN
-         +rfWJ0BdV/+BVDF+XEuNLAJCp3+QdHj+OsiamWsnBPYHCv7/bCvL5wYAPqbJXSCETC8i
-         X9YY2Rmyv+SuYcjj1/g4cy4ooggS0ro/5+6/1U09TfqFTjAvTwM/8ZEi2b01yMSnpE8e
-         OMaQ==
+        Mon, 23 Sep 2019 16:49:27 -0400
+Received: from mail-pl1-f197.google.com ([209.85.214.197])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <connor.kuehl@canonical.com>)
+        id 1iCVGv-0006eK-0y
+        for linux-kernel@vger.kernel.org; Mon, 23 Sep 2019 20:49:25 +0000
+Received: by mail-pl1-f197.google.com with SMTP id a6so9285698pls.20
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 13:49:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=nUgRSkoDI5HIlvd1QcYFDyolqVga7j1qtEHfJ+8gxnQ=;
-        b=V+Q0fJyWZWiPcAGsy24yRzM8uoR2Nx9mFtHpcnvMNwcQjYkk5cj7JvAgbcD9gtVLJX
-         i0co2s1NhYSRUItvrtezamieUMTJl+xlp0WLXn8b2Y4mCrxSsIEMlTQoX21ZrMYI8EfN
-         jrtEp6fxEpKgCDGnKBgHy6W+xi3pjmueGLZHva+KdMGzDPOmRLXiDtA/aHf37hxfS2px
-         xZZOQbA6ydq5QLXzeduyrO6ymWcVMti0AFvNdRLtX7gANwdm21lYvRyA6P2yoc6rPkTy
-         Gs59fAC1DqSxf7O2/AkEkElVRWUkav5D7xTd7poEsuKTwvmIr3PdNqVR32yTPSz29ZvO
-         6Qgg==
-X-Gm-Message-State: APjAAAXcLizu1f1SwmzR6+6cugkh80W81drj8grBw107MZ8560+sBUx/
-        xQx9n4g0qupddg9Nm0IjsYc6MpifpaXAGw==
-X-Google-Smtp-Source: APXvYqw48cSQQjn+PidujI2PTC9qv93Tm8GIvX9VsJPAws6pbfuG9DkxwCiWL7PrBYLzRzUWJbrHHQ==
-X-Received: by 2002:a62:5847:: with SMTP id m68mr1649730pfb.23.1569271723341;
-        Mon, 23 Sep 2019 13:48:43 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.79])
-        by smtp.gmail.com with ESMTPSA id a13sm13504968pfg.10.2019.09.23.13.48.41
+        bh=zxNzTOgLv3xy8mspZc8sJjMKJWb5QYhOaWEZbCssyrY=;
+        b=d3lryXOYQeeaO115jZpkPUL48X0xotYee3hjEDarQS4DRUz4x9C+/kYfxov1XHE+CE
+         7A/CFEzLqpKf1V89OwQVQ8uvj5lVgnxeWvewgptyUA5VYHUUrLFN0Ql9oCqRiFEav8SI
+         4tSMgNUddMt8jMGntJHEZV1rI6efu+gNnDlCoJ9RghInTwhS6GhRZQe+9vFXjWzJzl8N
+         jtgd7/IIUC82P54XKLiCbDg4aEHNrV4QewANaP5gJbGSMEuDZ1ncXhIn0f8pZ3lsOo16
+         LQTl+auz9yxTGBBq5hqNknYVeCjTkmedBNCnzt5Yq0JynaMTND2m7mInlIJhDUMEfRD0
+         C6rw==
+X-Gm-Message-State: APjAAAXIJB7qDKC6YVt41Sh/6H6HvaIJactTlVA13zxM//RrCHGcP04p
+        X3TgpVpzOSXpLaJt50YQnTKUISpLTMn3DWZ8c/xPz7KQ2jM8+JzXxYdIt5rS9TyaxOJbiRUKs3/
+        d2tYJ3GiO0PQPGgZqAGWwBuyvwpGIVY6pph3f5oUcWQ==
+X-Received: by 2002:a17:902:690c:: with SMTP id j12mr1732974plk.83.1569271763803;
+        Mon, 23 Sep 2019 13:49:23 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwli3eb22E3YEdIGn5DbGXJLCk8NNBHFV4LNYMsOLq2A+mEoRbs+jBfvKS9LRTbrNZ3vP0cuA==
+X-Received: by 2002:a17:902:690c:: with SMTP id j12mr1732961plk.83.1569271763608;
+        Mon, 23 Sep 2019 13:49:23 -0700 (PDT)
+Received: from [192.168.0.179] (c-71-63-131-226.hsd1.or.comcast.net. [71.63.131.226])
+        by smtp.gmail.com with ESMTPSA id w69sm15338576pgd.91.2019.09.23.13.49.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Sep 2019 13:48:42 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] Optimise io_uring completion waiting
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1569139018.git.asml.silence@gmail.com>
- <a4996ae7-ac0a-447b-49b2-7e96275aad29@kernel.dk>
- <20190923083549.GA42487@gmail.com>
- <c15b2d54-c722-8fb4-266f-b589c1a21aa5@gmail.com>
- <df612e90-8999-0085-d2d6-4418e044e429@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <731b2087-7786-5374-68ff-8cba42f0cd68@kernel.dk>
-Date:   Mon, 23 Sep 2019 14:48:40 -0600
+        Mon, 23 Sep 2019 13:49:22 -0700 (PDT)
+Subject: Re: [PATCH] staging: rtl8188eu: remove dead code in do-while
+ conditional step
+To:     Larry Finger <Larry.Finger@lwfinger.net>,
+        gregkh@linuxfoundation.org, straube.linux@gmail.com,
+        devel@driverdev.osuosl.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20190923194806.25347-1-connor.kuehl@canonical.com>
+ <c2ce3fb0-6407-982a-a3f2-172cef17f2a6@lwfinger.net>
+From:   Connor Kuehl <connor.kuehl@canonical.com>
+Message-ID: <25c92ca9-0025-503e-3468-0df5de8ec2c9@canonical.com>
+Date:   Mon, 23 Sep 2019 13:49:21 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <df612e90-8999-0085-d2d6-4418e044e429@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <c2ce3fb0-6407-982a-a3f2-172cef17f2a6@lwfinger.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/23/19 10:32 AM, Pavel Begunkov wrote:
-> Sorry, mixed the threads.
+On 9/23/19 1:38 PM, Larry Finger wrote:
+> On 9/23/19 2:48 PM, Connor Kuehl wrote:
+>> The local variable 'bcmd_down' is always set to true almost immediately
+>> before the do-while's condition is checked. As a result, !bcmd_down
+>> evaluates to false which short circuits the logical AND operator meaning
+>> that the second operand is never reached and is therefore dead code.
+>>
+>> Addresses-Coverity: ("Logically dead code")
+>>
+>> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+>> ---
+>>   drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c 
+>> b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+>> index 47352f210c0b..a4b317937b23 100644
+>> --- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+>> +++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+>> @@ -48,7 +48,6 @@ static u8 _is_fw_read_cmd_down(struct adapter 
+>> *adapt, u8 msgbox_num)
+>>   static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 
+>> CmdLen, u8 *pCmdBuffer)
+>>   {
+>>       u8 bcmd_down = false;
+>> -    s32 retry_cnts = 100;
+>>       u8 h2c_box_num;
+>>       u32 msgbox_addr;
+>>       u32 msgbox_ex_addr;
+>> @@ -103,7 +102,7 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, 
+>> u8 ElementID, u32 CmdLen, u8 *p
+>>           adapt->HalData->LastHMEBoxNum =
+>>               (h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
+>> -    } while ((!bcmd_down) && (retry_cnts--));
+>> +    } while (!bcmd_down);
+>>       ret = _SUCCESS;
 > 
->>>
->>> I'm not sure an extension is needed for such a special interface, why not
->>> just put a ->threshold value next to the ctx->wait field and use either
->>> the regular wait_event() APIs with the proper condition, or
->>> wait_event_cmd() style APIs if you absolutely need something more complex
->>> to happen inside?
-> Ingo,
-> io_uring works well without this patch just using wait_event_*() with
-> proper condition, but there are performance issues with spurious
-> wakeups. Detailed description in the previous mail.
-> Am I missing something?
+> This patch is correct; however, the do..while loop will always be 
+> executed once, thus you could remove the loop and the loop variable 
+> bcmd_down.
 
-I think we can do the same thing, just wrapping the waitqueue in a
-structure with a count in it, on the stack. Got some flight time
-coming up later today, let me try and cook up a patch.
+Ah, yes! That makes sense, good catch.
 
--- 
-Jens Axboe
+> 
+> @greg: If you would prefer a two-step process, then this one is OK.
+
+I'll do whichever is preferred. I'm happy to NACK this and send a v2 
+with the dead code and loop removed or I can send a separate patch based 
+on this one to remove the loop.
+
+Thank you,
+
+Connor
+
+> 
+> Larry
+> 
 
