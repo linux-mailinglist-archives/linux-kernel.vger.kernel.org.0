@@ -2,148 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728C4BBCA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:14:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1250CBBCAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502492AbfIWUOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 16:14:38 -0400
-Received: from sonic304-16.consmr.mail.bf2.yahoo.com ([74.6.128.39]:35227 "EHLO
-        sonic304-16.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728647AbfIWUOh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 16:14:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1569269675; bh=gZmGJlv4hrpFUzDUxsn1OYX/cY1MvwCXhCTnHpimK0o=; h=To:Cc:From:Subject:Date:From:Subject; b=iC4dUtHfoI3/nwf1eG0JLt4OWMmyTN35OFebmvc56jp9muuAJ/N0AcrKp7Blr2gUxHIZ4ls5qPDpBDDX20COcNuFWN2HQSopn/ltFJbJA7gD28IgielL4lZqqxPqD8XpIqA9JzjUFz85dUGWMEcnwvhpDpYh+MQH85ENLP/h0VSO7cDjJJvx2C+pNCZ3GnZ/G/WjxzxM34HalnsWa0DM+OXxATTAO4CSndTznW17Qe41OWQDx9yw2Y+PYudHG++pvgX6ckKAXHAB+3lfMxDl0rdx43/He46OVlry5gjv1gBqI11buaqayYF0I3wla4bfAKE1p0Z32+7WeJu5iJRspQ==
-X-YMail-OSG: prutIjcVM1lWibnMWR2WIz0.EA8oDZ01UHzykBLk5JP5zoJ6.7ZaUiH_qTSNy2z
- 19anuG1dEKZExrR3B.47E6WDuXB0ctwbiOttIpLqF1sIv_K1aNoee4Bo7_c1RGZhlxcMdG8nl_YD
- TahRX82vdD6._LMg21_hNftEgA7VqIOiaEt1zhTi5QnMuKcAhIQkR5GCzCiMzI1_auMhZBfYVXoY
- 1mr9ey8kR6oCA3T1dF5rk1oRQR3k5_A0Gh.UPdCy7Y72rurs9g7OmaF8q0H7qaWDBx7d4DKKtHNx
- z9mcjfZWiNe.lwruGI21buPMgbCx_DvliHWhypR.ffZ0_yaoeH4X7AxJFIhtQoDqdJllFGAtpLVV
- weMPhhgS7hHrcc_5sB59SWs80Qh1QfGpTyBa8Uk0.forRr6hPoxkThYffSEAtvNwZrvI.jVLnqWk
- Z2MqUJ7A0L0A.0.FZBMAxrblBmyKVhIgEnw.e1TnAzPEZEaRDR7T.ctZIL4gwpyl7LWPHzJRVTMj
- aCQUIz8kLKdmLPBDewGmI22eh5iu6HiYqpSqtDj6h1dPQqmIkfVmZCcPJoSuyZBkXRWUns1FuRoj
- wqyv1rMzGrQgVcqjk2l0p2TqnNW3Zti5POFjIuLXd095Z1GxPy8iL4Rq9n15Iu4ABQvwXIjnVvEa
- YRPQ3A6fif_5EKqdTwrJ8.NEJKjFcr4WRGemE9nKvHS1WkGL_YUwCtTFSWCUuhsQzo1O9FFDEDmi
- bjs4xK0j5eiqkJY8AR7h5EGma_Iqgqw1gLTb6_g6MQP4il9PER3jRInDXdaL.m1YznFuU9dls0SU
- NRqEZnoCe7kO_3s07pmOtXy9OpN2cED94Vt5Ew_JkrvzwgX.b_3jdY1XV2powOEwTcxDla7w2UhV
- lOneetA1AKFsadkUrymvwmUUnO_qJtaIzAb2NqcP_NDpfKeW99hAUEYEQppe05LpXA.Pewe2Dck.
- NeWAAWuDsTzT4cKw5otHARkHfHcyOs.rleTToexdtz_TWS9Ldg6frSvyREmnMuufjCZyOC7uAne6
- FP_dQaeAYTdRrVCr_YiHaS3XaO87Lo1dY8becL1hIiC6IQrHCqvsMQYYUjWoKea8jW8VmRuIuXEy
- 280Rvn41o4bx1xnrQKzhd3WYG8ziFSjkLQYJFNTSnwHurlHXDJ2yeg0LNXTp0bH9NaHTu3ePTwKY
- ylQLTB6RgjKJICfpa1sC0ElP7wRP8.CmVY.Pnkx9h9uyG3bNuQShKq0QjNra24SgvdqiI6uRgcyy
- 6F51ctWl96adylAkM4vzwMfr9_T3_uNKibgAJO7HURb1XJj9E4coF8zZ2dcxtujqm_pmS6GtmtOJ
- uibTPzwvtHHj17JGsKWzibQ83SBPK_9fa2oeJqe7nkX5BaA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.bf2.yahoo.com with HTTP; Mon, 23 Sep 2019 20:14:35 +0000
-Received: by smtp411.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 53b77dcb71c3f3a1a6facb94d16fd6cc;
-          Mon, 23 Sep 2019 20:14:34 +0000 (UTC)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, casey@schaufler-ca.com
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=casey@schaufler-ca.com; keydata=
- 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
- abzjfg==
-Subject: [GIT PULL] Smack patches for v5.4 - retry
-Message-ID: <745ac819-f2ae-4525-1855-535daf783638@schaufler-ca.com>
-Date:   Mon, 23 Sep 2019 13:14:33 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2502463AbfIWUSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 16:18:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728647AbfIWUSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 16:18:02 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C996205F4;
+        Mon, 23 Sep 2019 20:18:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569269881;
+        bh=1cS+V/2T6hNQDP2dZSXrP1Xl7F2JPVXoQBrGnhIIPto=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=uCQg0YOuP/QFqnR+R+RbQxNx8ri4unVWRFrjFAw3XVDUoGJOVcYLXFDm98fFifPCF
+         xhFWllvd7JOhbF6YB82C7hWZ46zQEZp5t2CYtIJhjbBN8gDSWVAEEIPvT/Lf/NO7RV
+         NfF133HbqciMhpf6r0BUlHGlbDyOHVIgaZ1FmiJA=
+Message-ID: <5d5a93637934867e1b3352763da8e3d9f9e6d683.camel@kernel.org>
+Subject: Re: Lease semantic proposal
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ira Weiny <ira.weiny@intel.com>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Date:   Mon, 23 Sep 2019 16:17:59 -0400
+In-Reply-To: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
+References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus
+On Mon, 2019-09-23 at 12:08 -0700, Ira Weiny wrote:
+> Since the last RFC patch set[1] much of the discussion of supporting RDMA with
+> FS DAX has been around the semantics of the lease mechanism.[2]  Within that
+> thread it was suggested I try and write some documentation and/or tests for the
+> new mechanism being proposed.  I have created a foundation to test lease
+> functionality within xfstests.[3] This should be close to being accepted.
+> Before writing additional lease tests, or changing lots of kernel code, this
+> email presents documentation for the new proposed "layout lease" semantic.
+> 
+> At Linux Plumbers[4] just over a week ago, I presented the current state of the
+> patch set and the outstanding issues.  Based on the discussion there, well as
+> follow up emails, I propose the following addition to the fcntl() man page.
+> 
+> Thank you,
+> Ira
+> 
+> [1] https://lkml.org/lkml/2019/8/9/1043
+> [2] https://lkml.org/lkml/2019/8/9/1062
+> [3] https://www.spinics.net/lists/fstests/msg12620.html
+> [4] https://linuxplumbersconf.org/event/4/contributions/368/
+> 
+> 
 
-Thank for the instruction. I think this is correct.
-I have four patches for v5.4. Nothing is major. All but one are in
-response to mechanically detected potential issues. The remaining
-patch cleans up kernel-doc notations.
+Thank you so much for doing this, Ira. This allows us to debate the
+user-visible behavior semantics without getting bogged down in the
+implementation details. More comments below:
 
+> <fcntl man page addition>
+> Layout Leases
+> -------------
+> 
+> Layout (F_LAYOUT) leases are special leases which can be used to control and/or
+> be informed about the manipulation of the underlying layout of a file.
+> 
+> A layout is defined as the logical file block -> physical file block mapping
+> including the file size and sharing of physical blocks among files.  Note that
+> the unwritten state of a block is not considered part of file layout.
+> 
+> **Read layout lease F_RDLCK | F_LAYOUT**
+> 
+> Read layout leases can be used to be informed of layout changes by the
+> system or other users.  This lease is similar to the standard read (F_RDLCK)
+> lease in that any attempt to change the _layout_ of the file will be reported to
+> the process through the lease break process.  But this lease is different
+> because the file can be opened for write and data can be read and/or written to
+> the file as long as the underlying layout of the file does not change.
+> Therefore, the lease is not broken if the file is simply open for write, but
+> _may_ be broken if an operation such as, truncate(), fallocate() or write()
+> results in changing the underlying layout.
+> 
+> **Write layout lease (F_WRLCK | F_LAYOUT)**
+> 
+> Write Layout leases can be used to break read layout leases to indicate that
+> the process intends to change the underlying layout lease of the file.
+> 
+> A process which has taken a write layout lease has exclusive ownership of the
+> file layout and can modify that layout as long as the lease is held.
+> Operations which change the layout are allowed by that process.  But operations
+> from other file descriptors which attempt to change the layout will break the
+> lease through the standard lease break process.  The F_LAYOUT flag is used to
+> indicate a difference between a regular F_WRLCK and F_WRLCK with F_LAYOUT.  In
+> the F_LAYOUT case opens for write do not break the lease.  But some operations,
+> if they change the underlying layout, may.
+> 
+> The distinction between read layout leases and write layout leases is that
+> write layout leases can change the layout without breaking the lease within the
+> owning process.  This is useful to guarantee a layout prior to specifying the
+> unbreakable flag described below.
+> 
+> 
 
-The following changes since commit 0ecfebd2b52404ae0c54a878c872bb93363ada=
-36:
+The above sounds totally reasonable. You're essentially exposing the
+behavior of nfsd's layout leases to userland. To be clear, will F_LAYOUT
+leases work the same way as "normal" leases, wrt signals and timeouts?
 
-  Linux 5.2 (2019-07-07 15:41:56 -0700)
+I do wonder if we're better off not trying to "or" in flags for this,
+and instead have a separate set of commands (maybe F_RDLAYOUT,
+F_WRLAYOUT, F_UNLAYOUT). Maybe I'm just bikeshedding though -- I don't
+feel terribly strongly about it.
 
-are available in the Git repository at:
+Also, at least in NFSv4, layouts are handed out for a particular byte
+range in a file. Should we consider doing this with an API that allows
+for that in the future? Is this something that would be desirable for
+your RDMA+DAX use-cases?
 
-  https://github.com/cschaufler/smack-next.git tags/smack-for-5.4-rc1
+We could add a new F_SETLEASE variant that takes a struct with a byte
+range (something like struct flock).
 
-for you to fetch changes up to e5bfad3d7acc5702f32aafeb388362994f4d7bd0:
+> **Unbreakable Layout Leases (F_UNBREAK)**
+> 
+> In order to support pinning of file pages by direct user space users an
+> unbreakable flag (F_UNBREAK) can be used to modify the read and write layout
+> lease.  When specified, F_UNBREAK indicates that any user attempting to break
+> the lease will fail with ETXTBUSY rather than follow the normal breaking
+> procedure.
+> 
+> Both read and write layout leases can have the unbreakable flag (F_UNBREAK)
+> specified.  The difference between an unbreakable read layout lease and an
+> unbreakable write layout lease are that an unbreakable read layout lease is
+> _not_ exclusive.  This means that once a layout is established on a file,
+> multiple unbreakable read layout leases can be taken by multiple processes and
+> used to pin the underlying pages of that file.
+> 
+> Care must therefore be taken to ensure that the layout of the file is as the
+> user wants prior to using the unbreakable read layout lease.  A safe mechanism
+> to do this would be to take a write layout lease and use fallocate() to set the
+> layout of the file.  The layout lease can then be "downgraded" to unbreakable
+> read layout as long as no other user broke the write layout lease.
+> 
 
-  smack: use GFP_NOFS while holding inode_smack::smk_lock (2019-09-04 09:=
-37:07 -0700)
+Will userland require any special privileges in order to set an
+F_UNBREAK lease? This seems like something that could be used for DoS. I
+assume that these will never time out.
 
-----------------------------------------------------------------
-I have four patches for v5.4. Nothing is major. All but one are in
-response to mechanically detected potential issues. The remaining
-patch cleans up kernel-doc notations.
+How will we deal with the case where something is is squatting on an
+F_UNBREAK lease and isn't letting it go?
 
-----------------------------------------------------------------
-Eric Biggers (1):
-      smack: use GFP_NOFS while holding inode_smack::smk_lock
+Leases are technically "owned" by the file description -- we can't
+necessarily trace it back to a single task in a threaded program. The
+kernel task that set the lease may have exited by the time we go
+looking.
 
-Jann Horn (1):
-      Smack: Don't ignore other bprm->unsafe flags if LSM_UNSAFE_PTRACE i=
-s set
+Will we be content trying to determine this using /proc/locks+lsof, etc,
+or will we need something better?
 
-Jia-Ju Bai (1):
-      security: smack: Fix possible null-pointer dereferences in smack_so=
-cket_sock_rcv_skb()
+> </fcntl man page addition>
 
-luanshi (1):
-      smack: fix some kernel-doc notations
-
- security/smack/smack_access.c |  6 +++---
- security/smack/smack_lsm.c    | 40 ++++++++++++++++++++-----------------=
----
- 2 files changed, 23 insertions(+), 23 deletions(-)
-
+-- 
+Jeff Layton <jlayton@kernel.org>
 
