@@ -2,112 +2,264 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4744BB71B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88ED3BB70B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:45:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440088AbfIWOti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:49:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42270 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438376AbfIWOti (ORCPT
+        id S2440056AbfIWOpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:45:55 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52596 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437697AbfIWOpz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:49:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V2TL1OkDh2oEnzgGPwW5rtpt6oXK+wm5wbqIRlf2l1M=; b=fBUGYc37z1z4Dwgz8h7k1qSR0
-        U+bUQeuZqrp4+f7NFKghpdFDI+GyU72GyNbolbLg/ujP/Zs5Pb38MtGSQUn9FspPZdAPUKiG7HbsM
-        /R5VkMEPorraJItOpntT35WuLltovyfHS8qPGMk4HdvsDOe9t5Ry24DMm3abqd64L/3xopQQNfAY1
-        +Ey9BBsSbEdCESaZZ0cAUxRg8GLitzEereuD83WHln6ObRBTesfn8VcYW39tCygANQCIHitaF0YyY
-        G7V5DFn7EpxWIVKsSUYsa32XkQjBhj7pWmLVZ724qlmn2gi5FFqGAxkrR2s2Q7vuOls/LapBjd+Ys
-        anbHzSNZw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCPef-0001SS-Ly; Mon, 23 Sep 2019 14:49:33 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 2DE9F303DFD;
-        Mon, 23 Sep 2019 16:48:46 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 547962B08BBAE; Mon, 23 Sep 2019 16:49:31 +0200 (CEST)
-Date:   Mon, 23 Sep 2019 16:49:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Do we need to correct barriering in circular-buffers.rst?
-Message-ID: <20190923144931.GC2369@hirez.programming.kicks-ass.net>
-References: <CAHk-=wj85tOp8WjcUp6gwstp4Cg2WT=p209S=fOzpWAgqqQPKg@mail.gmail.com>
- <20190915145905.hd5xkc7uzulqhtzr@willie-the-truck>
- <25289.1568379639@warthog.procyon.org.uk>
- <28447.1568728295@warthog.procyon.org.uk>
- <20190917170716.ud457wladfhhjd6h@willie-the-truck>
- <15228.1568821380@warthog.procyon.org.uk>
- <5385.1568901546@warthog.procyon.org.uk>
+        Mon, 23 Sep 2019 10:45:55 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8NEjoWu108889;
+        Mon, 23 Sep 2019 09:45:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569249950;
+        bh=KNjuOX+vwg6GtwTQNfFD1HZBpvPavaNQbyRLTvz612Q=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=LZhI9SgUPNBO+xnYBpS5ULVjqcqVRdqyeOlY+eHUTykb4AL6YNMAu1mbLxIE22rlj
+         uxO7/Jdi9q2hzk0xAmN4Jv74FQNZQt9CJBetVp8sQ0hXkpUbRDENdeyp44/VFkssoP
+         yHvw1PrRsv7icCfBOvZ+xZKvD8fvhqppfiSMj/5Q=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8NEjo75112345
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Sep 2019 09:45:50 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 23
+ Sep 2019 09:45:44 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 23 Sep 2019 09:45:49 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8NEjnpL015659;
+        Mon, 23 Sep 2019 09:45:49 -0500
+Subject: Re: [PATCH v8 2/9] documention: leds: Add multicolor class
+ documentation
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190920174139.30079-1-dmurphy@ti.com>
+ <20190920174139.30079-3-dmurphy@ti.com>
+ <2f2d40d7-aa4f-a38d-19a7-425a111adb64@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <56d9a7a6-7cdb-8ac0-5e41-f45fad914c55@ti.com>
+Date:   Mon, 23 Sep 2019 09:50:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5385.1568901546@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2f2d40d7-aa4f-a38d-19a7-425a111adb64@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 19, 2019 at 02:59:06PM +0100, David Howells wrote:
+Jacek
 
-> But I don't agree with this.  You're missing half the barriers.  There should
-> be *four* barriers.  The document mandates only 3 barriers, and uses
-> READ_ONCE() where the fourth should be, i.e.:
-> 
->    thread #1            thread #2
-> 
->                         smp_load_acquire(head)
->                         ... read data from queue ..
->                         smp_store_release(tail)
-> 
->    READ_ONCE(tail)
->    ... add data to queue ..
->    smp_store_release(head)
-> 
+Thanks for the review
 
-Notably your READ_ONCE() pseudo code is lacking a conditional;
-kernel/events/ring_buffer.c writes it like so:
+On 9/21/19 7:28 AM, Jacek Anaszewski wrote:
+> Dan,
+>
+> On 9/20/19 7:41 PM, Dan Murphy wrote:
+>> Add the support documentation on the multicolor LED framework.
+>> This document defines the directores and file generated by the
+> Now there will be one directory created.
+>
+> Apart from that - all documentation should go in the same patch
+> as the feature being added. So patches 1,2 and 3 should be melded
+> together.
 
- *   kernel                             user
- *
- *   if (LOAD ->data_tail) {            LOAD ->data_head
- *                      (A)             smp_rmb()       (C)
- *      STORE $data                     LOAD $data
- *      smp_wmb()       (B)             smp_mb()        (D)
- *      STORE ->data_head               STORE ->data_tail
- *   }
- *
- * Where A pairs with D, and B pairs with C.
- *
- * In our case (A) is a control dependency that separates the load of
- * the ->data_tail and the stores of $data. In case ->data_tail
- * indicates there is no room in the buffer to store $data we do not.
- *
- * D needs to be a full barrier since it separates the data READ
- * from the tail WRITE.
- *
- * For B a WMB is sufficient since it separates two WRITEs, and for C
- * an RMB is sufficient since it separates two READs.
+I think only patches 1 & 2 should be squashed into a single patch.
 
-Where 'kernel' is the producer and 'user' is the consumer. This was
-written before load-acquire and store-release came about (I _think_),
-and I've so far resisted updating B to store-release because smp_wmb()
-is actually cheaper than store-release on a number of architectures
-(notably ARM).
+Patch 3 are the dt-bindings which should be separated
 
-C ought to be a load-aquire, and D really should be a store-release, but
-I don't think the perf userspace has that (or uses C11).
+
+>
+>> multicolor framework.  It also documents usage.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>   Documentation/leds/index.rst                 |  1 +
+>>   Documentation/leds/leds-class-multicolor.rst | 91 ++++++++++++++++++++
+>>   2 files changed, 92 insertions(+)
+>>   create mode 100644 Documentation/leds/leds-class-multicolor.rst
+>>
+>> diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
+>> index 060f4e485897..bc70c6aa7138 100644
+>> --- a/Documentation/leds/index.rst
+>> +++ b/Documentation/leds/index.rst
+>> @@ -9,6 +9,7 @@ LEDs
+>>   
+>>      leds-class
+>>      leds-class-flash
+>> +   leds-class-multicolor
+>>      ledtrig-oneshot
+>>      ledtrig-transient
+>>      ledtrig-usbport
+>> diff --git a/Documentation/leds/leds-class-multicolor.rst b/Documentation/leds/leds-class-multicolor.rst
+>> new file mode 100644
+>> index 000000000000..063c9a411a1d
+>> --- /dev/null
+>> +++ b/Documentation/leds/leds-class-multicolor.rst
+>> @@ -0,0 +1,91 @@
+>> +====================================
+>> +Multi Color LED handling under Linux
+>> +====================================
+>> +
+>> +Description
+>> +===========
+>> +There are varying monochrome LED colors available for application.  These
+>> +LEDs can be used as a single use case LED or can be mixed with other color
+>> +LEDs to produce the full spectrum of color.
+> I'd say it won't be the most frequent use case. We can expect rather
+> compound RGB, RGBA[UV] etc. LED elements being connected to iouts of
+> multi color LED controllers like LP50xx. TI mentions RGB LEDs in its
+> application notes for instance. I'd mention that in the first place
+> and leave what you have above as another use case.
+
+Which application notes are you referring to?
+
+
+>> Color LEDs that are grouped
+>> +can be presented under a single LED node with individual color control.
+> Let's skip "with individual color control". This is rather a means for
+> keeping backward compatibility. Main goal of the MC class is multi color
+> control. We can elaborate on how individual control can be achieved,
+> namely one needs to set brightness to max and then can use
+> the whole 0-<color>_max_intensity intensity scale for given iout.
+> But his can be implied from the information provided below.
+
+Ack
+
+
+>> +The multicolor class groups these LEDs and allows dynamically setting the value
+> What does "dynamically" stand for here? I assume you thought of altering
+> colors without changing global brightness, but now it is not the case.
+
+I updated this from what you said below
+
+
+>> +of a single LED or setting the intensity values of the LEDs in the group and
+>> +updating the LEDs virtually simultaneously.
+> I propose below instead of the above three lines:
+>
+> The multi color class groups these LEDs and allows controlling two
+> aspects of the final combined color: hue and lightness. The former is
+> controlled via <color>_intensity files and the latter is controlled
+> via brightness file.
+>
+> For more details on hue and lightness notions please refer to
+> https://en.wikipedia.org/wiki/CIECAM02.
+>
+> Note that intensity files only cache the written value and the actual
+> change of hardware state occurs upon writing brightness file. This
+> allows for changing many factors of the perceived color in a virtually
+> unnoticeable way for the human observer.
+
+Ack
+
+
+>> +Multicolor Class Control
+>> +========================
+>> +The multicolor class presents the LED groups under a directory called "colors".
+>> +This directory is a child under the LED parent node created by the led_class
+>> +framework.  The led_class framework is documented in led-class.rst within this
+>> +documentation directory.
+>> +
+>> +Each colored LED will have two files created under the colors directory
+>> +<led_color>_intensity and <led_color>_max_intensity. These files will contain
+> s/led_color/color/
+Ack
+>
+>> +one of LED_COLOR_ID_* definitions from the header
+>> +include/dt-bindings/leds/common.h.
+>> +
+>> +Directory Layout Example
+>> +========================
+>> +root:/sys/class/leds/rgb:grouped_leds# ls -lR colors/
+>> +-rw-rwxr-- 1 root root 4096 Jul 7 03:10 red_max_intensity
+>> +--w--wx-w- 1 root root 4096 Jul 7 03:10 red_intensity
+>> +-rw-rwxr-- 1 root root 4096 Jul 7 03:10 green_max_intensity
+>> +--w--wx-w- 1 root root 4096 Jul 7 03:10 green_intensity
+>> +-rw-rwxr-- 1 root root 4096 Jul 7 03:10 blue_max_intensity
+>> +--w--wx-w- 1 root root 4096 Jul 7 03:10 blue_intensity
+>> +
+>> +Multicolor Class Brightness Control
+>> +===================================
+>> +The multiclor class framework will calculate each monochrome LEDs intensity.
+>> +
+>> +The brightness level for each LED is calculated based on the color LED
+>> +intensity setting divided by the color LED max intensity setting multiplied by
+>> +the requested value.
+> s/value/brightness/
+
+Ack
+
+
+>> +
+>> +led_brightness = requested_value * led_color_intensity/led_color_max_intensity
+> led_brightness = brightness * <color>_intensity/<color>_max_intensity
+
+Ack
+
+
+>> +
+>> +Example:
+>> +Three LEDs are present in the group as defined in "Directory Layout Example"
+>> +within this document.
+>> +
+>> +A user first writes the color LED brightness file with the brightness level that
+>> +is necessary to achieve a blueish violet output from the RGB LED group.
+>> +
+>> +echo 138 > /sys/class/leds/rgb:grouped_leds/red_intensity
+>> +echo 43 > /sys/class/leds/rgb:grouped_leds/green_intensity
+>> +echo 226 > /sys/class/leds/rgb:grouped_leds/blue_intensity
+>> +
+>> +red -
+>> +	intensity = 138
+>> +	max_intensity = 255
+>> +green -
+>> +	intensity = 43
+>> +	max_intensity = 255
+>> +blue -
+>> +	intensity = 226
+>> +	max_intensity = 255
+>> +
+>> +The user can control the brightness of that RGB group by writing the parent
+>> +'brightness' control.  Assuming a parent max_brightness of 255 the user may want
+>> +to dim the LED color group to half.  The user would write a value of 128 to the
+>> +parent brightness file then the values written to each LED will be adjusted
+>> +base on this value
+>> +
+>> +cat /sys/class/leds/rgb:grouped_leds/max_brightness
+>> +255
+>> +echo 128 > /sys/class/leds/rgb:grouped_leds/brightness
+>> +
+>> +adjusted_red_value = 128 * 138/255 = 69
+>> +adjusted_green_value = 128 * 43/255 = 21
+>> +adjusted_blue_value = 128 * 226/255 = 113
+>> +
+>> +Reading the parent brightness file will return the current brightness value of
+>> +the color LED group.
+>> +
+>> +cat /sys/class/leds/rgb:grouped_leds/max_brightness
+>> +255
+>> +
+>> +echo 128 > /sys/class/leds/rgb:grouped_leds/brightness
+>> +
+>> +cat /sys/class/leds/rgb:grouped_leds/max_brightness
+> s/max_brightness/brightness/
+>
+Ack
+
+Dan
+
+>> +128
+>>
