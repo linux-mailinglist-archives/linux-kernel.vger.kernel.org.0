@@ -2,192 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28BEBB6CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:31:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B5A6BB6D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:32:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439949AbfIWObX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:31:23 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:41267 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439896AbfIWObK (ORCPT
+        id S2439971AbfIWOcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:32:04 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34260 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437427AbfIWOcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:31:10 -0400
-Received: by mail-io1-f70.google.com with SMTP id q18so1403900ios.8
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 07:31:09 -0700 (PDT)
+        Mon, 23 Sep 2019 10:32:04 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b128so9259211pfa.1;
+        Mon, 23 Sep 2019 07:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NdWL2Xiq3cS/BfrYS0FnV72zAIIRU8nsmqTk9Q6D73w=;
+        b=N+sph3QsTYxFcVE4teLhSOS62PeOUnNTYuHCACNp8IP+DxF/jMGabVX/dzhbnS3w8c
+         5HrfWEBRIhutPZWCM5HD2OBf8RQOM6LEWmpgAGu3CgTUA7zLIAweiUmtSPJkTOZ4cGRu
+         5uPWJgVR5/nr8OvHIyj53u5BvkmwfNu7VstGFAndgKpgMWx43zhDm4lSQxLmYBaxCc4v
+         bFETaNs51UwkWP2a/zA5OjhiwkE9ZX10hIppNckrMPiRTuaTi11B1zhMElbK7aZVBr2D
+         Pxfk8Updtto8c+BYP2sb4kZHfgXqpAbbqmjcoAkLHcimrHm9Z2jA/eU43oyoK1lPU3y1
+         IitA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=t5GzUgDKqAsJJIrc/y0We/hon+3Gb6L50Kiv8jhO32s=;
-        b=ZqQTTwOTxoVKGc1hsiG8S1OlSwPXeM+jFMLJWH+2gXhF13cJ/1BpPXy8j06Ygbhnqw
-         zkhO3MviRbZW7OyBIdgZzIwmDsRsl/PpZScZWybYaFN00zyedvzDD+vcI0SOL7yZf4Ch
-         +WA6g5gQrhTdC4Gm+aVZKX0ECkizEiItKzgmX00d0pSv2kERMtN/VFx33xeGKqMFWN61
-         C/lg3KdLdzqdJsKZ0nYxJhGjHEF6EwSKSWgPHHyAGmvwfImHRgvWzK24tKW5a8gJTx1j
-         8Gno5BLqk3/e50HCtWtcOuB18Q7T7QKT/e1wumgGEPXWnk5yxSDYtAIBjCYTYH1JOLEU
-         pP0Q==
-X-Gm-Message-State: APjAAAXkEioTrUcJ9hJAN3GyuX/N06kyw8KCc1VWj0iqzpwI/cmOChpK
-        cLvI3Ze1PsBukLB4gU/A88WcDpmQP36TnjqZjrpdgXX04yVu
-X-Google-Smtp-Source: APXvYqygjs8rziKX3oCTm0/CVZpZP3Qn1/8KkaeihCoVx7UQ/YMWGQ83OnW7kUJ1fiCWZH1BuZcl/adA8gF+4f2f0JwfSuc+CNHD
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NdWL2Xiq3cS/BfrYS0FnV72zAIIRU8nsmqTk9Q6D73w=;
+        b=JLAv+9qg1ZQwz5pGiXY/i/KRGdBc3Jv8JD4YOa3yVfEaXUJPRcXCU2xYZjKDNgxWg2
+         kRqKYZCoiGoX4exbB2AT/8LgSVSKNNpgyHpkvCWXA426S9KXRco5YKKR3+5vGSJe2Hve
+         QwaY3/LKXHpbT4SM9HTDTNN8tjjd1cL4UjFRvIcysHez/iF5iBteFerVBwKoIeECWVr5
+         eLmcCpLHMsNxPC4YsfS9eFkrkTbwUVMMl9lWM/dzSF/8nC9sg070j0a2ASyEG2MHTKT4
+         SvuT7/2f4BSmnQvirI5OZ2rh0hq3roIAy94Kaj/wZMMshZ8vYz5cLPsNja7YfFZRXxAA
+         lkBQ==
+X-Gm-Message-State: APjAAAWR9XlqMY2yqtXZR93m0Dfv30vE3Fe4jZXrTH7nTX118+hyPjs2
+        ggOaYpwMrrBBhAY+wKaSyD3NtzoD
+X-Google-Smtp-Source: APXvYqwVxWY2hR1+J8pjDw5gRFB44H/IjwFJtZUdUo2dJ+GvCZD4N9S5ELVmVfG9Lgyzp4bzrtEfIg==
+X-Received: by 2002:a63:515a:: with SMTP id r26mr242299pgl.121.1569249123574;
+        Mon, 23 Sep 2019 07:32:03 -0700 (PDT)
+Received: from Gentoo ([103.231.91.35])
+        by smtp.gmail.com with ESMTPSA id bx18sm9556925pjb.26.2019.09.23.07.31.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Sep 2019 07:32:02 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 20:01:48 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
+        Jiri Slaby <jslaby@suse.cz>
+Subject: Re: Linux 5.3.1
+Message-ID: <20190923143145.GA17787@Gentoo>
+References: <20190921063708.GA1083465@kroah.com>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e512:: with SMTP id y18mr7936715ioc.4.1569249069417;
- Mon, 23 Sep 2019 07:31:09 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 07:31:09 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000058cce90593394589@google.com>
-Subject: KASAN: use-after-free Read in v4l2_release (2)
-From:   syzbot <syzbot+ac438d7ad8171b0ecbbe@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, boris.brezillon@collabora.com,
-        ezequiel@collabora.com, hverkuil@xs4all.nl,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org, mchehab@kernel.org,
-        niklas.soderlund+renesas@ragnatech.se, s.nawrocki@samsung.com,
-        sakari.ailus@linux.intel.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
+In-Reply-To: <20190921063708.GA1083465@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-HEAD commit:    e0bd8d79 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d4b6a1600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8847e5384a16f66a
-dashboard link: https://syzkaller.appspot.com/bug?extid=ac438d7ad8171b0ecbbe
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+On 08:37 Sat 21 Sep 2019, Greg KH wrote:
+>I'm announcing the release of the 5.3.1 kernel.
+>
+>All users of the 5.3 kernel series must upgrade.
+>
+>The updated 5.3.y git tree can be found at:
+>	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git lin=
+ux-5.3.y
+>and can be browsed at the normal kernel.org git web browser:
+>	https://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3D=
+summary
+>
+>thanks,
+>
+>greg k-h
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Thanks, a bunch Greg! :)
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ac438d7ad8171b0ecbbe@syzkaller.appspotmail.com
-
-usb 4-1: usbvision_write_reg: failed: error -19
-usbvision_audio_off: can't write reg
-usbvision_radio_close: Final disconnect
-==================================================================
-BUG: KASAN: use-after-free in v4l2_release+0x2f1/0x390  
-drivers/media/v4l2-core/v4l2-dev.c:459
-Read of size 4 at addr ffff8881c5c55228 by task v4l_id/16726
-
-CPU: 0 PID: 16726 Comm: v4l_id Not tainted 5.3.0+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:618
-  v4l2_release+0x2f1/0x390 drivers/media/v4l2-core/v4l2-dev.c:459
-  __fput+0x2d7/0x840 fs/file_table.c:280
-  task_work_run+0x13f/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x1d2/0x200 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:300
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7f26b3e742b0
-Code: 40 75 0b 31 c0 48 83 c4 08 e9 0c ff ff ff 48 8d 3d c5 32 08 00 e8 c0  
-07 02 00 83 3d 45 a3 2b 00 00 75 10 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 73 31 c3 48 83 ec 08 e8 ce 8a 01 00 48 89 04 24
-RSP: 002b:00007fff0e393978 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 00007f26b3e742b0
-RDX: 00007f26b412adf0 RSI: 0000000000000001 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007f26b412adf0 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000400884
-R13: 00007fff0e393ad0 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 2757:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:493 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:466
-  kmalloc include/linux/slab.h:552 [inline]
-  kzalloc include/linux/slab.h:748 [inline]
-  usbvision_alloc drivers/media/usb/usbvision/usbvision-video.c:1298 [inline]
-  usbvision_probe.cold+0x5c5/0x1f1f  
-drivers/media/usb/usbvision/usbvision-video.c:1452
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2201
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:430
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:490
-  device_add+0xae6/0x16f0 drivers/base/core.c:2201
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Freed by task 16726:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:455
-  slab_free_hook mm/slub.c:1423 [inline]
-  slab_free_freelist_hook mm/slub.c:1474 [inline]
-  slab_free mm/slub.c:3016 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3957
-  usbvision_release+0x181/0x1c0  
-drivers/media/usb/usbvision/usbvision-video.c:1347
-  usbvision_radio_close.cold+0x6f/0x74  
-drivers/media/usb/usbvision/usbvision-video.c:1113
-  v4l2_release+0x2e7/0x390 drivers/media/v4l2-core/v4l2-dev.c:455
-  __fput+0x2d7/0x840 fs/file_table.c:280
-  task_work_run+0x13f/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x1d2/0x200 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:300
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881c5c54200
-  which belongs to the cache kmalloc-8k of size 8192
-The buggy address is located 4136 bytes inside of
-  8192-byte region [ffff8881c5c54200, ffff8881c5c56200)
-The buggy address belongs to the page:
-page:ffffea0007171400 refcount:1 mapcount:0 mapping:ffff8881da00c500  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 0000000000000000 0000000100000001 ffff8881da00c500
-raw: 0000000000000000 0000000080030003 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881c5c55100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881c5c55180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881c5c55200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                   ^
-  ffff8881c5c55280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881c5c55300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+Thanks,
+Bhaskar
+>
+>------------
+>
+> Documentation/filesystems/overlayfs.txt           |    2
+> Documentation/sphinx/automarkup.py                |    2
+> Makefile                                          |    2
+> arch/arm64/include/asm/pgtable.h                  |   12 ++-
+> drivers/block/floppy.c                            |    4 -
+> drivers/firmware/google/vpd.c                     |    4 -
+> drivers/firmware/google/vpd_decode.c              |   55 +++++++++-------
+> drivers/firmware/google/vpd_decode.h              |    6 -
+> drivers/media/usb/dvb-usb/technisat-usb2.c        |   22 +++---
+> drivers/media/usb/tm6000/tm6000-dvb.c             |    3
+> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   12 ++-
+> drivers/net/xen-netfront.c                        |    2
+> drivers/phy/qualcomm/phy-qcom-qmp.c               |   33 ++++-----
+> drivers/phy/renesas/phy-rcar-gen3-usb2.c          |    2
+> drivers/tty/serial/atmel_serial.c                 |    1
+> drivers/tty/serial/sprd_serial.c                  |    2
+> drivers/usb/core/config.c                         |   12 ++-
+> fs/overlayfs/ovl_entry.h                          |    1
+> fs/overlayfs/super.c                              |   73 ++++++++++++++--=
+------
+> include/net/pkt_sched.h                           |    7 +-
+> include/net/sock_reuseport.h                      |   20 +++++-
+> net/core/dev.c                                    |   16 +++-
+> net/core/sock_reuseport.c                         |   15 +++-
+> net/dsa/dsa2.c                                    |    2
+> net/ipv4/datagram.c                               |    2
+> net/ipv4/udp.c                                    |    5 -
+> net/ipv6/datagram.c                               |    2
+> net/ipv6/ip6_gre.c                                |    2
+> net/ipv6/udp.c                                    |    5 -
+> net/sched/sch_generic.c                           |    3
+> net/wireless/nl80211.c                            |    4 -
+> virt/kvm/coalesced_mmio.c                         |   19 +++--
+> 32 files changed, 226 insertions(+), 126 deletions(-)
+>
+>Alan Stern (1):
+>      USB: usbcore: Fix slab-out-of-bounds bug during device reset
+>
+>Amir Goldstein (1):
+>      ovl: fix regression caused by overlapping layers detection
+>
+>Andrew Lunn (1):
+>      net: dsa: Fix load order between DSA drivers and taggers
+>
+>Bjorn Andersson (1):
+>      phy: qcom-qmp: Correct ready status, again
+>
+>Chunyan Zhang (1):
+>      serial: sprd: correct the wrong sequence of arguments
+>
+>Cong Wang (1):
+>      net_sched: let qdisc_put() accept NULL pointer
+>
+>Dongli Zhang (1):
+>      xen-netfront: do not assume sk_buff_head list is empty in error hand=
+ling
+>
+>Greg Kroah-Hartman (1):
+>      Linux 5.3.1
+>
+>Hung-Te Lin (1):
+>      firmware: google: check if size is valid when decoding VPD data
+>
+>Jann Horn (1):
+>      floppy: fix usercopy direction
+>
+>Jonathan Neusch=E4fer (1):
+>      Documentation: sphinx: Add missing comma to list of strings
+>
+>Jose Abreu (1):
+>      net: stmmac: Hold rtnl lock in suspend/resume callbacks
+>
+>Masashi Honma (1):
+>      nl80211: Fix possible Spectre-v1 for CQM RSSI thresholds
+>
+>Matt Delco (1):
+>      KVM: coalesced_mmio: add bounds checking
+>
+>Paolo Abeni (1):
+>      net/sched: fix race between deactivation and dequeue for NOLOCK qdisc
+>
+>Razvan Stefanescu (1):
+>      tty/serial: atmel: reschedule TX after RX was started
+>
+>Sean Young (2):
+>      media: tm6000: double free if usb disconnect while streaming
+>      media: technisat-usb2: break out of loop at end of buffer
+>
+>Will Deacon (1):
+>      Revert "arm64: Remove unnecessary ISBs from set_{pte,pmd,pud}"
+>
+>Willem de Bruijn (1):
+>      udp: correct reuseport selection with connected sockets
+>
+>Xin Long (1):
+>      ip6_gre: fix a dst leak in ip6erspan_tunnel_xmit
+>
+>Yoshihiro Shimoda (1):
+>      phy: renesas: rcar-gen3-usb2: Disable clearing VBUS in over-current
+>
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl2I100ACgkQsjqdtxFL
+KRVd1wf8Cn9lZ+rU6FwMb1+W/8nLyh8EK7c9rSQWkuZWwhLQlMbLWs/CS8Uzwhhy
++q36BCH05L7hn1XeI8/Rs30oriZqOzp3lJBgxAL31AJ8rOwGZiPXyg03DszCL2js
+Al8Ej7rYd7wBbQKWuqh/tMptoog3bUMituZl1JlFSmqimINNC4MztwaDowfrwSJt
+OQDDXP+X+M8tkY59BEe5KN+6qydAr5ZeRcQAI73X2TFw44KaEKSO8zULopeyMkUe
+a2HBSb1/mRCfAqyu/U2PKCkgUcBeTr1dd2qcNHttshKlsg46/q8qYHFRPWtsmE4T
+bNBNlD7nwA0JovQHzHIxjlN0wUZDNw==
+=S0eI
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
