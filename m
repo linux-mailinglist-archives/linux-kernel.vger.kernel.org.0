@@ -2,130 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CFDEBBE94
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C6A9BBE90
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:40:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503465AbfIWWlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 18:41:24 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:22620 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392282AbfIWWlX (ORCPT
+        id S2503445AbfIWWkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 18:40:25 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39545 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503436AbfIWWkY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 18:41:23 -0400
-Received: from grover.flets-west.jp (softbank126021098169.bbtec.net [126.21.98.169]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x8NMeEuJ017051;
-        Tue, 24 Sep 2019 07:40:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x8NMeEuJ017051
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569278415;
-        bh=QLpqgwiwdHsVJ7lYAMtFWzbVRcNyLxBKNZxEbuiniCM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qm6ynigy6gEkhspkwQmqf/q+uQz6jl90Xidb6J6R5+ckOxnq8t5m0Z+spHOVmEska
-         C5TKt7JXhzLBDghbbsoQy1pjxhl8SBlG5hMc4ncLPIw26GHX6SjRcUDFxYjCk5uzxp
-         vC3a1IX3N6HCeM7JUPHnjYVZP5JLYoHRThPwfKdgoMK/OrAf9104vYPITF7ZNwnJs+
-         tQXTgbeDY3PdU1vAHjxuHGZCeSfayrbJ7WRrPltV/EVRARta7FZ//IoolLr/8U9IgA
-         V6TDxBxQ7zikO8pNXDbR1rJvyAPD4lS+z4s2QBSNeCJmuYQNozeyA4vxKHB/y4y/dy
-         j9tKsc05mkmhg==
-X-Nifty-SrcIP: [126.21.98.169]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        netfilter-devel@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] netfilter: use __u8 instead of uint8_t in uapi header
-Date:   Tue, 24 Sep 2019 07:40:06 +0900
-Message-Id: <20190923224007.20179-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 23 Sep 2019 18:40:24 -0400
+Received: by mail-io1-f66.google.com with SMTP id a1so37603374ioc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 15:40:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vHYRjKpjUR53YCjkUqHPKrrRzHshQ7D80bU5+29eeEA=;
+        b=YlWRPdEz1WQ8va4MecQIlRUa2+z/fx21wRaAPyz0MB8KEVYB6WqTx/Io+xX2GVuTDG
+         OHCtxkuKlVPneQ1QqcefA6bd/2euIBQ/R82RPs0fUDh4dInPNkEsSzW/lHkdORsVscGa
+         UBITQubA9r6rcWY/UULAhCzE019T7TN9b3xIA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vHYRjKpjUR53YCjkUqHPKrrRzHshQ7D80bU5+29eeEA=;
+        b=KE506YfU+PS/z2uJWnCkntRQQE84xuGm6oNkLHiCuzPImJNI/FavWtyWeoT6JQr4BZ
+         mWKy4lIdZ0fLN586Wp8iW14x9BcpduhEItRTuhPmP8h0OXjPCVCQxBjjo/CD9u0a2+dD
+         Da9Poe6mvMJXPg80VVRktVGcxQMsqP3ts627zLuXsJi6QfWNYcXEJOaiH+Vdziz+nu2E
+         F55K2TLrzNHVcREZBqaks3Bdg+WvVspcACUByYYTFpErTr+3mZyjV02h5DQ/pXx6wiLM
+         1wMIFxZrKj0SL/ONc6pPTUPw+5A0ZQq4NuuGFIETpNtPznQxyQmlMFfsKkT/G9IfDxMW
+         Rdlg==
+X-Gm-Message-State: APjAAAXRy6bceF4B5yfT7ZmDDZFdm2PPVG8bzTFs3tq8osD5Go2lxWIF
+        QucoRA9BTptDkQIp0o4qQlY3xR6E4VU=
+X-Google-Smtp-Source: APXvYqwVS+XDBPga/B2NNM0QbOWtmFQIfEvio5sGRM9yYg+qQQOvYzzt6ExADBM53Zg5qa/FMQMJqA==
+X-Received: by 2002:a5e:9911:: with SMTP id t17mr9862ioj.283.1569278423571;
+        Mon, 23 Sep 2019 15:40:23 -0700 (PDT)
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
+        by smtp.gmail.com with ESMTPSA id i26sm12322176iol.84.2019.09.23.15.40.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 15:40:22 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id z19so15416912ior.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 15:40:22 -0700 (PDT)
+X-Received: by 2002:a6b:b704:: with SMTP id h4mr1926798iof.218.1569278422105;
+ Mon, 23 Sep 2019 15:40:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190917154021.14693-1-m.felsch@pengutronix.de>
+ <20190917154021.14693-2-m.felsch@pengutronix.de> <CAD=FV=W7M8mwQqnPyU9vsK5VAdqqJdQdyxcoe9FRRGTY8zjnFw@mail.gmail.com>
+ <20190923181431.GU2036@sirena.org.uk> <CAD=FV=WVGj8xzKFFxsjpeuqtVzSvv22cHmWBRJtTbH00eC=E9w@mail.gmail.com>
+ <20190923184907.GY2036@sirena.org.uk>
+In-Reply-To: <20190923184907.GY2036@sirena.org.uk>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 23 Sep 2019 15:40:09 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VkaXDn034EFnJWYvWwyLgvq7ajfgMRm9mbhQeRKmPDRQ@mail.gmail.com>
+Message-ID: <CAD=FV=VkaXDn034EFnJWYvWwyLgvq7ajfgMRm9mbhQeRKmPDRQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] regulator: core: fix boot-on regulators use_count usage
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Marco Felsch <m.felsch@pengutronix.de>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        ckeepax@opensource.cirrus.com, LKML <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_UAPI_HEADER_TEST=y, exported headers are compile-tested to
-make sure they can be included from user-space.
+Hi,
 
-Currently, linux/netfilter_bridge/ebtables.h is excluded from the test
-coverage. To make it join the compile-test, we need to fix the build
-errors attached below.
+On Mon, Sep 23, 2019 at 11:49 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Mon, Sep 23, 2019 at 11:36:11AM -0700, Doug Anderson wrote:
+> > On Mon, Sep 23, 2019 at 11:14 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> > > Boot on means that it's powered on when the kernel starts, it's
+> > > for regulators that we can't read back the status of.
+>
+> > 1. Would it be valid to say that it's always incorrect to set this
+> > property if there is a way to read the status back from the regulator?
+>
+> As originally intended, yes.  I'm now not 100% sure that it won't
+> break any existing systems though :/
 
-For a case like this, we decided to use __u{8,16,32,64} variable types
-in this discussion:
+Should I change the bindings doc to say that?
 
-  https://lkml.org/lkml/2019/6/5/18
 
-Build log:
+> > 2. Would this be a valid description of how the property is expected to behave
+> > a) At early boot this regulator will be turned on if it wasn't already on.
+> > b) If no clients are found for this regulator after everything has
+> > loaded, this regulator will be automatically disabled.
+>
+> > If so then I don't _think_ #2b is happening, but I haven't confirmed.
+>
+> > > boot-on just refers to the status at boot, we can still turn
+> > > those regulators off later on if we want to.
+>
+> > How, exactly?  As of my commit 5451781dadf8 ("regulator: core: Only
+> > count load for enabled consumers") if you do:
+>
+> >   r = regulator_get(...)
+> >   regulator_disable(r)
+>
+> > ...then you'll get "Underflow of regulator enable count".  In other
+> > words, if a given regulator client disables more times than it enables
+> > then you will get an error.  Since there is no client that did the
+> > initial "boot" enable then there's no way to do the disable unless it
+> > happens automatically (as per 2b above).
+>
+> It should be possible to do a regulator_disable() though I'm not
+> sure anyone actually uses that.  The pattern for a regular
+> consumer should be the normal enable/disable pair to handle
+> shared usage, only an exclusive consumer should be able to use
+> just a straight disable.
 
-  CC      usr/include/linux/netfilter_bridge/ebtables.h.s
-In file included from <command-line>:32:0:
-./usr/include/linux/netfilter_bridge/ebtables.h:126:4: error: unknown type name ‘uint8_t’
-    uint8_t revision;
-    ^~~~~~~
-./usr/include/linux/netfilter_bridge/ebtables.h:139:4: error: unknown type name ‘uint8_t’
-    uint8_t revision;
-    ^~~~~~~
-./usr/include/linux/netfilter_bridge/ebtables.h:152:4: error: unknown type name ‘uint8_t’
-    uint8_t revision;
-    ^~~~~~~
+Ah, I see, I wasn't aware of the "exclusive" special case!  Marco: is
+this working for you?  I wonder if we need to match
+"regulator->enable_count" to "rdev->use_count" at the end of
+_regulator_get() in the exclusive case...
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2:
- - Rebase on the latest Linus tree (commit 9f7582d15f82)
-
- include/uapi/linux/netfilter_bridge/ebtables.h | 6 +++---
- usr/include/Makefile                           | 1 -
- 2 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/include/uapi/linux/netfilter_bridge/ebtables.h b/include/uapi/linux/netfilter_bridge/ebtables.h
-index 3b86c14ea49d..8076c940ffeb 100644
---- a/include/uapi/linux/netfilter_bridge/ebtables.h
-+++ b/include/uapi/linux/netfilter_bridge/ebtables.h
-@@ -123,7 +123,7 @@ struct ebt_entry_match {
- 	union {
- 		struct {
- 			char name[EBT_EXTENSION_MAXNAMELEN];
--			uint8_t revision;
-+			__u8 revision;
- 		};
- 		struct xt_match *match;
- 	} u;
-@@ -136,7 +136,7 @@ struct ebt_entry_watcher {
- 	union {
- 		struct {
- 			char name[EBT_EXTENSION_MAXNAMELEN];
--			uint8_t revision;
-+			__u8 revision;
- 		};
- 		struct xt_target *watcher;
- 	} u;
-@@ -149,7 +149,7 @@ struct ebt_entry_target {
- 	union {
- 		struct {
- 			char name[EBT_EXTENSION_MAXNAMELEN];
--			uint8_t revision;
-+			__u8 revision;
- 		};
- 		struct xt_target *target;
- 	} u;
-diff --git a/usr/include/Makefile b/usr/include/Makefile
-index 05c71ef42f51..c9449aaf438d 100644
---- a/usr/include/Makefile
-+++ b/usr/include/Makefile
-@@ -38,7 +38,6 @@ header-test- += linux/ivtv.h
- header-test- += linux/jffs2.h
- header-test- += linux/kexec.h
- header-test- += linux/matroxfb.h
--header-test- += linux/netfilter_bridge/ebtables.h
- header-test- += linux/netfilter_ipv4/ipt_LOG.h
- header-test- += linux/netfilter_ipv6/ip6t_LOG.h
- header-test- += linux/nfc.h
--- 
-2.17.1
-
+-Doug
