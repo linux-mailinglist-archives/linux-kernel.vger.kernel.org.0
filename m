@@ -2,170 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B1BBB857
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 646FBBB865
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732709AbfIWPrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 11:47:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728507AbfIWPrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 11:47:40 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD480307D90D;
-        Mon, 23 Sep 2019 15:47:39 +0000 (UTC)
-Received: from [10.36.116.92] (ovpn-116-92.ams2.redhat.com [10.36.116.92])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3540560BFB;
-        Mon, 23 Sep 2019 15:47:25 +0000 (UTC)
-Subject: Re: [PATCH v10 3/6] mm: Introduce Reported pages
-From:   David Hildenbrand <david@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     virtio-dev@lists.oasis-open.org, kvm list <kvm@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-arm-kernel@lists.infradead.org,
-        Oscar Salvador <osalvador@suse.de>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        Rik van Riel <riel@surriel.com>, lcapitulino@redhat.com,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-References: <20190918175109.23474.67039.stgit@localhost.localdomain>
- <20190918175249.23474.51171.stgit@localhost.localdomain>
- <20190923041330-mutt-send-email-mst@kernel.org>
- <CAKgT0UfFBO9h3heGSo+AaZgUNpy5uuOm3yh62bYwYJ5dq+t1gQ@mail.gmail.com>
- <20190923105746-mutt-send-email-mst@kernel.org>
- <CAKgT0Ufp0bdz3YkbAoKWd5DALFjAkHaSUn_UywW1+3hk4tjPSQ@mail.gmail.com>
- <20190923113722-mutt-send-email-mst@kernel.org>
- <baf3dd5c-9368-d621-a83a-114bb5ae8291@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <49395e48-175f-8483-77f5-5fc3aca8b7cb@redhat.com>
-Date:   Mon, 23 Sep 2019 17:47:24 +0200
+        id S1732748AbfIWPsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 11:48:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38498 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728551AbfIWPse (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 11:48:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=M6naaO3eN2JtKgsodjGmbFEb7omduasR6eHtDOBj/YU=; b=WDxDdSVtxB4MQheuYDglZVo77
+        ITnMkIz7R+0s/TcK9u0iB564ZvSW2OG/lJv1lRwdjnxBatB+wSX35svuC1yd5Ea1AxQ52gRn6cmF2
+        /83K/HFVn4+skc/Wt6uGE+DwUbc77iTcslmEjK/CRAvgV+6YQUkzJbtlBrr5Q+8JJKlmrTyBq44/u
+        TJiHeSIwQ3VM6J44S1d1yNryMKLsQ8iZf1OrD6FnYs6OHkND8aMMMkrLPNGm6nhYxiQsA6gnvmund
+        vT7S7hcNSvEXvCDhPF31ee1v2WxWOnkGIihjEU+7pqNLhV5/Kty9KSYUOFACXDa3f7vCTTX3UOnh6
+        bZwx9NxQw==;
+Received: from [2601:1c0:6280:3f0::9a1f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCQZ9-00063q-MO; Mon, 23 Sep 2019 15:47:55 +0000
+Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for
+ KUnit
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
+        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, richard@nod.at,
+        rientjes@google.com, rostedt@goodmis.org, wfg@linux.intel.com,
+        torvalds@linux-foundation.org,
+        Felix Guo <felixguoxiuping@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20190923090249.127984-1-brendanhiggins@google.com>
+ <20190923090249.127984-16-brendanhiggins@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d87eba35-ae09-0c53-bbbe-51ee9dc9531f@infradead.org>
+Date:   Mon, 23 Sep 2019 08:47:53 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <baf3dd5c-9368-d621-a83a-114bb5ae8291@redhat.com>
+In-Reply-To: <20190923090249.127984-16-brendanhiggins@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 23 Sep 2019 15:47:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23.09.19 17:45, David Hildenbrand wrote:
-> On 23.09.19 17:37, Michael S. Tsirkin wrote:
->> On Mon, Sep 23, 2019 at 08:28:00AM -0700, Alexander Duyck wrote:
->>> On Mon, Sep 23, 2019 at 8:00 AM Michael S. Tsirkin <mst@redhat.com> wrote:
->>>>
->>>> On Mon, Sep 23, 2019 at 07:50:15AM -0700, Alexander Duyck wrote:
->>>>>>> +static inline void
->>>>>>> +page_reporting_reset_boundary(struct zone *zone, unsigned int order, int mt)
->>>>>>> +{
->>>>>>> +     int index;
->>>>>>> +
->>>>>>> +     if (order < PAGE_REPORTING_MIN_ORDER)
->>>>>>> +             return;
->>>>>>> +     if (!test_bit(ZONE_PAGE_REPORTING_ACTIVE, &zone->flags))
->>>>>>> +             return;
->>>>>>> +
->>>>>>> +     index = get_reporting_index(order, mt);
->>>>>>> +     reported_boundary[index] = &zone->free_area[order].free_list[mt];
->>>>>>> +}
->>>>>>
->>>>>> So this seems to be costly.
->>>>>> I'm guessing it's the access to flags:
->>>>>>
->>>>>>
->>>>>>         /* zone flags, see below */
->>>>>>         unsigned long           flags;
->>>>>>
->>>>>>         /* Primarily protects free_area */
->>>>>>         spinlock_t              lock;
->>>>>>
->>>>>>
->>>>>>
->>>>>> which is in the same cache line as the lock.
->>>>>
->>>>> I'm not sure what you mean by this being costly?
->>>>
->>>> I've just been wondering why does will it scale report a 1.5% regression
->>>> with this patch.
->>>
->>> Are you talking about data you have collected from a test you have
->>> run, or the data I have run?
->>
->> About the kernel test robot auto report that was sent recently.
+On 9/23/19 2:02 AM, Brendan Higgins wrote:
+> Add documentation for KUnit, the Linux kernel unit testing framework.
+> - Add intro and usage guide for KUnit
+> - Add API reference
 > 
-> https://lkml.org/lkml/2019/9/21/112
-> 
-> And if I'm correct, that regression is observable in case reporting is
-> not enabled. (so with this patch applied only, e.g., on a bare-metal system)
-> 
+> Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  Documentation/dev-tools/index.rst           |   1 +
+>  Documentation/dev-tools/kunit/api/index.rst |  16 +
+>  Documentation/dev-tools/kunit/api/test.rst  |  11 +
+>  Documentation/dev-tools/kunit/faq.rst       |  62 +++
+>  Documentation/dev-tools/kunit/index.rst     |  79 +++
+>  Documentation/dev-tools/kunit/start.rst     | 180 ++++++
+>  Documentation/dev-tools/kunit/usage.rst     | 576 ++++++++++++++++++++
+>  7 files changed, 925 insertions(+)
+>  create mode 100644 Documentation/dev-tools/kunit/api/index.rst
+>  create mode 100644 Documentation/dev-tools/kunit/api/test.rst
+>  create mode 100644 Documentation/dev-tools/kunit/faq.rst
+>  create mode 100644 Documentation/dev-tools/kunit/index.rst
+>  create mode 100644 Documentation/dev-tools/kunit/start.rst
+>  create mode 100644 Documentation/dev-tools/kunit/usage.rst
 
-To be even more precise: # CONFIG_PAGE_REPORTING is not set
+
+> diff --git a/Documentation/dev-tools/kunit/start.rst b/Documentation/dev-tools/kunit/start.rst
+> new file mode 100644
+> index 000000000000..6dc229e46bb3
+> --- /dev/null
+> +++ b/Documentation/dev-tools/kunit/start.rst
+> @@ -0,0 +1,180 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===============
+> +Getting Started
+> +===============
+> +
+> +Installing dependencies
+> +=======================
+> +KUnit has the same dependencies as the Linux kernel. As long as you can build
+> +the kernel, you can run KUnit.
+> +
+> +KUnit Wrapper
+> +=============
+> +Included with KUnit is a simple Python wrapper that helps format the output to
+> +easily use and read KUnit output. It handles building and running the kernel, as
+> +well as formatting the output.
+> +
+> +The wrapper can be run with:
+> +
+> +.. code-block:: bash
+> +
+> +   ./tools/testing/kunit/kunit.py run
+> +
+> +Creating a kunitconfig
+> +======================
+> +The Python script is a thin wrapper around Kbuild as such, it needs to be
+
+                                       around Kbuild. As such,
+
+> +configured with a ``kunitconfig`` file. This file essentially contains the
+> +regular Kernel config, with the specific test targets as well.
+> +
+> +.. code-block:: bash
+> +
+> +	git clone -b master https://kunit.googlesource.com/kunitconfig $PATH_TO_KUNITCONFIG_REPO
+> +	cd $PATH_TO_LINUX_REPO
+> +	ln -s $PATH_TO_KUNIT_CONFIG_REPO/kunitconfig kunitconfig
+> +
+> +You may want to add kunitconfig to your local gitignore.
+> +
+> +Verifying KUnit Works
+> +---------------------
+> +
+> +To make sure that everything is set up correctly, simply invoke the Python
+> +wrapper from your kernel repo:
+> +
+> +.. code-block:: bash
+> +
+> +	./tools/testing/kunit/kunit.py
+> +
+> +.. note::
+> +   You may want to run ``make mrproper`` first.
+
+I normally use O=builddir when building kernels.
+Does this support using O=builddir ?
+
+> +
+> +If everything worked correctly, you should see the following:
+> +
+> +.. code-block:: bash
+> +
+> +	Generating .config ...
+> +	Building KUnit Kernel ...
+> +	Starting KUnit Kernel ...
+> +
+> +followed by a list of tests that are run. All of them should be passing.
+> +
+> +.. note::
+> +   Because it is building a lot of sources for the first time, the ``Building
+> +   kunit kernel`` step may take a while.
+> +
+> +Writing your first test
+> +=======================
+
+[snip]
+
+> diff --git a/Documentation/dev-tools/kunit/usage.rst b/Documentation/dev-tools/kunit/usage.rst
+> new file mode 100644
+> index 000000000000..c6e69634e274
+> --- /dev/null
+> +++ b/Documentation/dev-tools/kunit/usage.rst
+
+TBD...
+
 
 -- 
-
-Thanks,
-
-David / dhildenb
+~Randy
