@@ -2,113 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 472B2BAEE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:08:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F118FBAF00
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405544AbfIWIIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 04:08:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36648 "EHLO mx1.suse.de"
+        id S2406494AbfIWINL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 04:13:11 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56040 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726001AbfIWIIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 04:08:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 594E1B023;
-        Mon, 23 Sep 2019 08:08:09 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 10:08:08 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: threads-max observe limits
-Message-ID: <20190923080808.GA6016@dhcp22.suse.cz>
-References: <20190917100350.GB1872@dhcp22.suse.cz>
- <38349607-b09c-fa61-ccbb-20bee9f282a3@gmx.de>
- <20190917153830.GE1872@dhcp22.suse.cz>
- <87ftku96md.fsf@x220.int.ebiederm.org>
- <20190918071541.GB12770@dhcp22.suse.cz>
- <87h8585bej.fsf@x220.int.ebiederm.org>
- <20190922065801.GB18814@dhcp22.suse.cz>
- <875zlk3tz9.fsf@x220.int.ebiederm.org>
+        id S2406068AbfIWINL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 04:13:11 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9E0579FB19B0FFC506F4;
+        Mon, 23 Sep 2019 16:13:09 +0800 (CST)
+Received: from use12-sp2.huawei.com (10.67.188.167) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 23 Sep 2019 16:13:08 +0800
+From:   wangxu <wangxu72@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+        <namhyung@kernel.org>, <gregkh@linuxfoundation.org>
+CC:     <tglx@linutronix.de>, <rfontana@redhat.com>, <allison@lohutok.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] sample/hw_breakpoint: avoid sample hw_breakpoint recursion for arm/arm64
+Date:   Mon, 23 Sep 2019 16:09:35 +0800
+Message-ID: <1569226175-101782-1-git-send-email-wangxu72@huawei.com>
+X-Mailer: git-send-email 1.8.5.6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875zlk3tz9.fsf@x220.int.ebiederm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.67.188.167]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew, do you want me to send the patch or you can grab it from here?
+From: Wang Xu <wangxu72@huawei.com>
 
-On Sun 22-09-19 16:24:10, Eric W. Biederman wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
-> 
-> > From 711000fdc243b6bc68a92f9ef0017ae495086d39 Mon Sep 17 00:00:00 2001
-> > From: Michal Hocko <mhocko@suse.com>
-> > Date: Sun, 22 Sep 2019 08:45:28 +0200
-> > Subject: [PATCH] kernel/sysctl.c: do not override max_threads provided by
-> >  userspace
-> >
-> > Partially revert 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
-> > because the patch is causing a regression to any workload which needs to
-> > override the auto-tuning of the limit provided by kernel.
-> >
-> > set_max_threads is implementing a boot time guesstimate to provide a
-> > sensible limit of the concurrently running threads so that runaways will
-> > not deplete all the memory. This is a good thing in general but there
-> > are workloads which might need to increase this limit for an application
-> > to run (reportedly WebSpher MQ is affected) and that is simply not
-> > possible after the mentioned change. It is also very dubious to override
-> > an admin decision by an estimation that doesn't have any direct relation
-> > to correctness of the kernel operation.
-> >
-> > Fix this by dropping set_max_threads from sysctl_max_threads so any
-> > value is accepted as long as it fits into MAX_THREADS which is important
-> > to check because allowing more threads could break internal robust futex
-> > restriction. While at it, do not use MIN_THREADS as the lower boundary
-> > because it is also only a heuristic for automatic estimation and admin
-> > might have a good reason to stop new threads to be created even when
-> > below this limit.
-> >
-> > Fixes: 16db3d3f1170 ("kernel/sysctl.c: threads-max observe limits")
-> > Cc: stable
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+For x86/ppc, hw_breakpoint is triggered after the instruction is
+executed.
 
-Thanks Eric.
+For arm/arm64, which is triggered before the instruction executed.
+Arm/arm64 skips the instruction by using single step. But it only
+supports default overflow_handler.
 
-> > ---
-> >  kernel/fork.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 2852d0e76ea3..ef865be37e98 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -2929,7 +2929,7 @@ int sysctl_max_threads(struct ctl_table *table, int write,
-> >  	struct ctl_table t;
-> >  	int ret;
-> >  	int threads = max_threads;
-> > -	int min = MIN_THREADS;
-> > +	int min = 1;
-> >  	int max = MAX_THREADS;
-> >  
-> >  	t = *table;
-> > @@ -2941,7 +2941,7 @@ int sysctl_max_threads(struct ctl_table *table, int write,
-> >  	if (ret || !write)
-> >  		return ret;
-> >  
-> > -	set_max_threads(threads);
-> > +	max_threads = threads;
-> >  
-> >  	return 0;
-> >  }
-> > -- 
-> > 2.20.1
+This patch provides a chance to avoid sample hw_breakpoint recursion
+for arm/arm64 by adding 'struct perf_event_attr.bp_step'.
 
+Signed-off-by: Wang Xu <wangxu72@huawei.com>
+---
+ include/linux/perf_event.h              | 3 +++
+ include/uapi/linux/perf_event.h         | 3 ++-
+ samples/hw_breakpoint/data_breakpoint.c | 1 +
+ 3 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 61448c1..f270eb7 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1024,6 +1024,9 @@ extern int perf_event_output(struct perf_event *event,
+ 		return true;
+ 	if (unlikely(event->overflow_handler == perf_event_output_backward))
+ 		return true;
++	/* avoid sample hw_breakpoint recursion */
++	if (unlikely(event->attr.bp_step))
++		return true;
+ 	return false;
+ }
+ 
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index bb7b271..95b81c2 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -375,7 +375,8 @@ struct perf_event_attr {
+ 				ksymbol        :  1, /* include ksymbol events */
+ 				bpf_event      :  1, /* include bpf events */
+ 				aux_output     :  1, /* generate AUX records instead of events */
+-				__reserved_1   : 32;
++				bp_step        :  1,
++				__reserved_1   : 31;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+diff --git a/samples/hw_breakpoint/data_breakpoint.c b/samples/hw_breakpoint/data_breakpoint.c
+index c585047..9fe1351 100644
+--- a/samples/hw_breakpoint/data_breakpoint.c
++++ b/samples/hw_breakpoint/data_breakpoint.c
+@@ -46,6 +46,7 @@ static int __init hw_break_module_init(void)
+ 	attr.bp_addr = kallsyms_lookup_name(ksym_name);
+ 	attr.bp_len = HW_BREAKPOINT_LEN_4;
+ 	attr.bp_type = HW_BREAKPOINT_W | HW_BREAKPOINT_R;
++	attr.bp_step = true;
+ 
+ 	sample_hbp = register_wide_hw_breakpoint(&attr, sample_hbp_handler, NULL);
+ 	if (IS_ERR((void __force *)sample_hbp)) {
 -- 
-Michal Hocko
-SUSE Labs
+1.8.5.6
+
