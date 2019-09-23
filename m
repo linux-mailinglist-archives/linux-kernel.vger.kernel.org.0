@@ -2,135 +2,279 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF594BB7DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DC58BB7D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731600AbfIWP2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 11:28:12 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44564 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfIWP2M (ORCPT
+        id S1727381AbfIWPYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 11:24:24 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:59626 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfIWPYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 11:28:12 -0400
-Received: by mail-io1-f65.google.com with SMTP id j4so34366979iog.11;
-        Mon, 23 Sep 2019 08:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ovt/JswJZVCgn7gC8S4lJscYd7cbBemmVRbh0mTK6j8=;
-        b=DIL1sv8HFoMOCTvY7W467j9MaGY0XQ/cpfliC2FJd/FeyrcnifvBizVcCTvnyAFGIO
-         cGheg0eSIIuJBVwN3y7Zr6AyEA6w42em57dkPqn/YBaIGXhMY+V3T02jinZJJdmndquZ
-         wmQjkGFyh4MAxEMt95AnBtjAbpPBEgxpszO0c1Jhco2oTN/3BzvoJk4R22PEA65ByoAs
-         hERyYTCJW35FEYvB9k5mPgTit9zhbKRMFJtM4CaQY7vGLmPJESVRCVfwVRRpWb6+zdws
-         At0ZjLLmFGNozw0nE8OSV6p54JuOZl5KaOWm8llJUap4yEcI7FuKiYJbA9urGVmIhU1E
-         iHoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ovt/JswJZVCgn7gC8S4lJscYd7cbBemmVRbh0mTK6j8=;
-        b=uP2A97MXVMvtIOQJvAaipBhFS5du5aab9hT61+L7We0Q4TXDuCIdxqQsQJZurApbSd
-         RD5qgV/3TK42EYfyQd+0I9t8pVDhI+i+EAKRf+9FOaU45HfV3rOjIcPtJ+oaVF2jr3gz
-         P1g0Qx90XZzrMNP4439tG7SCjESjN1NUnFPHNlC8w21dyjqyVuUul2a0/CjVcm+gTwka
-         MV/n3gpdsn/3g/McAx6ts6sehetchpC8ZuIV3nCV+cwsMxNnn7I955R2sKitb7hmK2J0
-         wm6SIYI90q6uzYrM9HNarjhrtMqhQ8+dm8GIbrraFD8j2FeADrqFnXCEi9/M3sFPGgKY
-         EybA==
-X-Gm-Message-State: APjAAAU+kfrd7Zd/O3OoX60QGGwicYyUEJo88OlEw7o6/x1zO5k8kL01
-        EcBFucqIWYrW7mROhIcGZ0ibKjTUMGLVRxEqft8=
-X-Google-Smtp-Source: APXvYqy2qdjvGFEyVfH+HCnC4m6roo43HVkj5cfovY7yzUHvANgw9POBQ+vbh318GLdMzmTYpQDcuZxK3VD9smRReus=
-X-Received: by 2002:a5e:990f:: with SMTP id t15mr1173125ioj.270.1569252491032;
- Mon, 23 Sep 2019 08:28:11 -0700 (PDT)
+        Mon, 23 Sep 2019 11:24:24 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8NFOIvP093861;
+        Mon, 23 Sep 2019 10:24:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569252258;
+        bh=tLkDVFQOcgXKvvnUWQcn8FwnumQeqXVs0+qEVTBQ6DM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=kPFr+FOaCTCRJKkfoQBxgbqPe1uBT6Yt/jlsqq/8n4BKEA383j0Dl7VrtWz0eq5b3
+         QjE0Ot7CjNl+AVunK/MXapVNBqR8Iyb092XC+4OXnqpj/9j6mip6WCr4Y/VRMjYXtQ
+         gMdOam5EIUCaa1CD1/9lyRTgqxVZHSFXIRK6Va/0=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8NFOIWf043563
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Sep 2019 10:24:18 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 23
+ Sep 2019 10:24:17 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 23 Sep 2019 10:24:17 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8NFOH6x070861;
+        Mon, 23 Sep 2019 10:24:17 -0500
+Subject: Re: [PATCH v8 7/9] dt: bindings: lp50xx: Introduce the lp50xx family
+ of RGB drivers
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190920174139.30079-1-dmurphy@ti.com>
+ <20190920174139.30079-8-dmurphy@ti.com>
+ <73a95bac-7433-5b06-5701-c742307aa004@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <ba92d95a-9f2c-6b37-74d3-4e3a87ad28bf@ti.com>
+Date:   Mon, 23 Sep 2019 10:28:42 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190918175109.23474.67039.stgit@localhost.localdomain>
- <20190918175249.23474.51171.stgit@localhost.localdomain> <20190923041330-mutt-send-email-mst@kernel.org>
- <CAKgT0UfFBO9h3heGSo+AaZgUNpy5uuOm3yh62bYwYJ5dq+t1gQ@mail.gmail.com> <20190923105746-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20190923105746-mutt-send-email-mst@kernel.org>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Mon, 23 Sep 2019 08:28:00 -0700
-Message-ID: <CAKgT0Ufp0bdz3YkbAoKWd5DALFjAkHaSUn_UywW1+3hk4tjPSQ@mail.gmail.com>
-Subject: Re: [PATCH v10 3/6] mm: Introduce Reported pages
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     virtio-dev@lists.oasis-open.org, kvm list <kvm@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-arm-kernel@lists.infradead.org,
-        Oscar Salvador <osalvador@suse.de>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        Rik van Riel <riel@surriel.com>, lcapitulino@redhat.com,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <73a95bac-7433-5b06-5701-c742307aa004@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 8:00 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+Jacek
+
+On 9/21/19 10:13 AM, Jacek Anaszewski wrote:
+> Dan,
 >
-> On Mon, Sep 23, 2019 at 07:50:15AM -0700, Alexander Duyck wrote:
-> > > > +static inline void
-> > > > +page_reporting_reset_boundary(struct zone *zone, unsigned int order, int mt)
-> > > > +{
-> > > > +     int index;
-> > > > +
-> > > > +     if (order < PAGE_REPORTING_MIN_ORDER)
-> > > > +             return;
-> > > > +     if (!test_bit(ZONE_PAGE_REPORTING_ACTIVE, &zone->flags))
-> > > > +             return;
-> > > > +
-> > > > +     index = get_reporting_index(order, mt);
-> > > > +     reported_boundary[index] = &zone->free_area[order].free_list[mt];
-> > > > +}
-> > >
-> > > So this seems to be costly.
-> > > I'm guessing it's the access to flags:
-> > >
-> > >
-> > >         /* zone flags, see below */
-> > >         unsigned long           flags;
-> > >
-> > >         /* Primarily protects free_area */
-> > >         spinlock_t              lock;
-> > >
-> > >
-> > >
-> > > which is in the same cache line as the lock.
-> >
-> > I'm not sure what you mean by this being costly?
+> On 9/20/19 7:41 PM, Dan Murphy wrote:
+>> Introduce the bindings for the Texas Instruments LP5036, LP5030, LP5024,
+>> LP5018, LP5012 and LP5009 RGB LED device driver.  The LP5036/30/24/18/12/9
+>> can control RGB LEDs individually or as part of a control bank group.
+>> These devices have the ability to adjust the mixing control for the RGB
+>> LEDs to obtain different colors independent of the overall brightness of
+>> the LED grouping.
+>>
+>> Datasheet:
+>> http://www.ti.com/lit/ds/symlink/lp5012.pdf
+>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
+>> http://www.ti.com/lit/ds/symlink/lp5036.pdf
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>   .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++++++++++++++++
+>>   1 file changed, 148 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp50xx.txt b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+>> new file mode 100644
+>> index 000000000000..9d05f43042e0
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+>> @@ -0,0 +1,148 @@
+>> +* Texas Instruments - LP5009/12/18/24/30/36 RGB LED driver
+>> +
+>> +The LP50XX is multi-channel, I2C RGB LED Drivers that can group RGB LEDs into
+>> +a LED group or control them individually.
+>> +
+>> +The difference in these RGB LED drivers is the number of supported RGB modules.
+>> +
+>> +Required parent properties:
+>> +	- compatible:
+>> +		"ti,lp5009"
+>> +		"ti,lp5012"
+>> +		"ti,lp5018"
+>> +		"ti,lp5024"
+>> +		"ti,lp5030"
+>> +		"ti,lp5036"
+>> +	- reg :  I2C slave address
+>> +		lp5009/12 - 0x28
+>> +		lp5018/24 - 0x28
+>> +		lp5030/36 - 0x30
+>> +	- #address-cells : 1
+>> +	- #size-cells : 0
+>> +
+>> +Optional parent properties:
+>> +	- enable-gpios : gpio pin to enable/disable the device.
+>> +	- vled-supply : LED supply
+>> +
+>> +Required child properties:
+>> +	- #address-cells : 1
+>> +	- #size-cells : 0
+>> +	- reg : This is the LED module number.
+>> +	- color : see Documentation/devicetree/bindings/leds/common.txt
+>> +	- function : see Documentation/devicetree/bindings/leds/common.txt
+>> +
+>> +Required child properties only is LED modules will be banked:
+>> +	- ti,led-bank : This property denotes the LED module numbers that will
+>> +			be controlled as a single RGB cluster.  Each LED module
+>> +			number will be controlled by a single LED class instance.
+>> +			There can only be one instance of the ti,led-bank
+>> +			property for each device node.
+>> +
+>> +Required grandchildren properties:
+>> +	- reg : A single entry denoting the LED module that controls
+>> +		the RGB cluster.
+>> +	- color : see Documentation/devicetree/bindings/leds/leds-multicolor.txt
+>> +	- led-sources : see Documentation/devicetree/bindings/leds/common.txt
+>> +
+>> +The LED outputs associated with the LED modules are defined in Table 1 of the
+>> +corresponding data sheets.
+> We must enclose this information here.
+
+That will make this doc pretty messy especially with the LP5036 entries.
+
+I would have to do ascii art to make it understandable and basically 
+there is not a delta in the lesser devices in the outputs
+
+I don't see value in reproducing this data sheet contents in the 
+dt-bindings.
+
+For example (LP5012) and then for the LP5036 multiply this by 3
+
+Table 1.
+
+Bank Number and LED Number Assignment
+OUT NUMBER BANK NUMBER  RGB LED MODULE NUMBER
+OUT0                    Bank A
+OUT1                    Bank B                        LED0
+OUT2                    Bank C
+
+OUT3                    Bank A
+OUT4                    Bank B                        LED1
+OUT5                    Bank C
+
+OUT6                    Bank A
+OUT7                    Bank B                        LED2
+OUT8                    Bank C
+
+OUT9 (LP5012 only) Bank A
+OUT10 (LP5012 only) Bank B                  LED3
+OUT11 (LP5012 only) Bank C
+
+
 >
-> I've just been wondering why does will it scale report a 1.5% regression
-> with this patch.
+>> +
+>> +LP5009 - 2 Total RGB cluster LED outputs 0-1
 
-Are you talking about data you have collected from a test you have
-run, or the data I have run?
+This should be 3 total not 2
 
-In the case of the data I have run I notice almost no difference as
-long as the pages are not actually being madvised. Once I turn on the
-madvise then I start seeing the regression, but almost all of that is
-due to page zeroing/faulting. There isn't expected to be a gain from
-this patchset until you start having guests dealing with memory
-overcommit on the host. Then at that point the patch set should start
-showing gains when the madvise bits are enabled in QEMU.
+Dan
 
-Also the test I have been running is a modified version of the
-page_fault1 test to specifically target transparent huge pages in
-order to make this test that much more difficult, the standard
-page_fault1 test wasn't showing much of anything since the overhead
-for breaking a 2M page into 512 4K pages and zeroing those
-individually in the guest  was essentially drowning out the effect of
-the patches themselves.
-
-- Alex
+>> +LP5012 - 4 Total RGB cluster LED outputs 0-3
+>> +LP5018 - 6 Total RGB cluster LED outputs 0-5
+>> +LP5024 - 8 Total RGB cluster LED outputs 0-7
+>> +LP5030 - 10 Total RGB cluster LED outputs 0-9
+>> +LP5036 - 12 Total RGB cluster LED outputs 0-11
+>> +
+>> +Optional child properties:
+>> +	- label : see Documentation/devicetree/bindings/leds/common.txt
+>> +	- linux,default-trigger :
+>> +	   see Documentation/devicetree/bindings/leds/common.txt
+>> +
+>> +Examples:
+>> +led-controller@29 {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <0>;
+>> +	compatible = "ti,lp5024";
+>> +	reg = <0x29>;
+>> +	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>> +	vled-supply = <&vmmcsd_fixed>;
+>> +
+>> +	multi-led@1 {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		reg = <1>;
+>> +		color = <LED_COLOR_ID_MULTI>;
+>> +		function = LED_FUNCTION_STATUS;
+>> +
+>> +		led@3 {
+>> +			reg = <3>;
+>> +			color = <LED_COLOR_ID_RED>;
+>> +		};
+>> +
+>> +		led@4 {
+>> +			reg = <4>;
+>> +			color = <LED_COLOR_ID_GREEN>;
+>> +		};
+>> +
+>> +		led@5 {
+>> +			reg = <5>;
+>> +			color = <LED_COLOR_ID_BLUE>;
+>> +		};
+>> +	};
+>> +
+>> +	multi-led@2 {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		reg = <2>;
+>> +		color = <LED_COLOR_ID_MULTI>;
+>> +		function = LED_FUNCTION_STANDBY;
+>> +		ti,led-bank = <2 3 5>;
+>> +
+>> +		led@6 {
+>> +			reg = <0x6>;
+>> +			color = <LED_COLOR_ID_RED>;
+>> +			led-sources = <6 9 15>;
+>> +		};
+>> +
+>> +		led@7 {
+>> +			reg = <0x7>;
+>> +			color = <LED_COLOR_ID_GREEN>;
+>> +			led-sources = <7 10 16>;
+>> +		};
+>> +
+>> +		led@8 {
+>> +			reg = <0x8>;
+>> +			color = <LED_COLOR_ID_BLUE>;
+>> +			led-sources = <8 11 17>;
+>> +		};
+>> +	};
+>> +
+>> +	multi-led@4 {
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		reg = <4>;
+>> +		color = <LED_COLOR_ID_MULTI>;
+>> +		function = LED_FUNCTION_ACTIVITY;
+>> +
+>> +		led@12 {
+>> +			reg = <12>;
+>> +			color = <LED_COLOR_ID_RED>;
+>> +		};
+>> +
+>> +		led@13 {
+>> +			reg = <13>;
+>> +			color = <LED_COLOR_ID_GREEN>;
+>> +		};
+>> +
+>> +		led@14 {
+>> +			reg = <14>;
+>> +			color = <LED_COLOR_ID_BLUE>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +For more product information please see the link below:
+>> +http://www.ti.com/lit/ds/symlink/lp5012.pdf
+>> +http://www.ti.com/lit/ds/symlink/lp5024.pdf
+>> +http://www.ti.com/lit/ds/symlink/lp5036.pdf
+>>
