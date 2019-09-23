@@ -2,105 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C939BB1C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C74BB1D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:01:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404970AbfIWJ6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 05:58:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57526 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405009AbfIWJ6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 05:58:01 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E278C054C52
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 09:58:01 +0000 (UTC)
-Received: by mail-wm1-f71.google.com with SMTP id k67so4754464wmf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 02:58:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wzehYQ/q/Unr9ua1VQFlkvwitkghryuoSUrqvQKWtys=;
-        b=Z7jh5nhCPEqXNqawRi3YIeViNSknyx5HB9l4ucf93zhMJ2dnMcLFRKyLVFGF4lFFr3
-         JM5DfIo34DcJ44L1nZpU4QsUKs6KLbAh9TFRe9nUfe+/XwyWxmG3fQ4X4SHFLUjU04Yy
-         sg6llhpE2n3OdO9PBv/53mJoE/5unz7GAGSBXdYBXt0Wn3g6FTSNxaEGsFcCQ5KxSISf
-         0pIRHDOQSDq6OSsrbWxayaGejAa7BYeA2njfg1Qq5fzf3gGuIyaSs274Bj/kfxhT6eD5
-         kjaFX1XNz64wEvwM8Y7ye7NG/t4shCXJFwbY7AEuO1jd//0AuhS069TLNVXhPj2y+srn
-         SYvg==
-X-Gm-Message-State: APjAAAWRhT0SVNuFgv3H1081gXsDcWgkb/k1vY8jSEcDMCWxaEgMOkZf
-        kI5Ec4Fb7K+NQmYu7L8eSUoG6T4GVf2ERaSiltsiJZ1EKgZwZ/b/jqs8gbvYnPWdWo8zQt+c6zz
-        WddATK5Rgj2XdQAASy4mv6Ycv
-X-Received: by 2002:adf:f9c9:: with SMTP id w9mr19828665wrr.172.1569232679351;
-        Mon, 23 Sep 2019 02:57:59 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqw+R47KLkJmnU7l8Zxf4zZxqnGS/qkxsg/JQjqPn/GlshVIlfYKQ2eupxBkl7MdJyTJq5f6zQ==
-X-Received: by 2002:adf:f9c9:: with SMTP id w9mr19828652wrr.172.1569232679116;
-        Mon, 23 Sep 2019 02:57:59 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:9520:22e6:6416:5c36? ([2001:b07:6468:f312:9520:22e6:6416:5c36])
-        by smtp.gmail.com with ESMTPSA id c1sm8310783wmk.20.2019.09.23.02.57.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2019 02:57:58 -0700 (PDT)
-Subject: Re: [PATCH 15/17] KVM: retpolines: x86: eliminate retpoline from
- vmx.c exit handlers
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190920212509.2578-1-aarcange@redhat.com>
- <20190920212509.2578-16-aarcange@redhat.com>
- <87o8zb8ik1.fsf@vitty.brq.redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <7329012d-0b3b-ce86-f58d-3d2d5dc5a790@redhat.com>
-Date:   Mon, 23 Sep 2019 11:57:57 +0200
+        id S2407531AbfIWKBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:01:19 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52164 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407398AbfIWKBQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 06:01:16 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8NA1Ac2117639;
+        Mon, 23 Sep 2019 05:01:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569232870;
+        bh=bop2ehz1wB641+wwnJfyqzQLSIrzQRGO11Uw2gHnBI4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=X+lcm42pU50o1fzParKUDJvSJ9k1fSdveaBWLHASrP9ERQ4F22osiGViTrj4l8L61
+         CZF7FjW6+GDQsx1edf8V/gVTBelIY+XjT1xyc/OnkZ3XzYfpWwMb21YtYsgqKyYDG/
+         VCqUC0LZEy4Q5HIDP9ZjyaZMhIuhWecPZg9EVM8k=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8NA1ABM018292
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Sep 2019 05:01:10 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 23
+ Sep 2019 05:01:09 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 23 Sep 2019 05:01:04 -0500
+Received: from [10.250.99.146] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8NA18ml122460;
+        Mon, 23 Sep 2019 05:01:08 -0500
+Subject: Re: [PATCH v4 2/2] leds: tlc591xx: use
+ devm_led_classdev_register_ext()
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <dmurphy@ti.com>
+CC:     <tomi.valkeinen@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190920115806.14475-1-jjhiblot@ti.com>
+ <20190920115806.14475-3-jjhiblot@ti.com>
+ <b4387d66-febd-ff20-7b5e-e66e5de8a988@gmail.com>
+From:   Jean-Jacques Hiblot <jjhiblot@ti.com>
+Message-ID: <1b0dd104-3deb-ea42-ab59-522f21d8dffe@ti.com>
+Date:   Mon, 23 Sep 2019 12:01:07 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <87o8zb8ik1.fsf@vitty.brq.redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <b4387d66-febd-ff20-7b5e-e66e5de8a988@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/09/19 11:31, Vitaly Kuznetsov wrote:
-> +#ifdef CONFIG_RETPOLINE
-> +		if (exit_reason == EXIT_REASON_MSR_WRITE)
-> +			return handle_wrmsr(vcpu);
-> +		else if (exit_reason == EXIT_REASON_PREEMPTION_TIMER)
-> +			return handle_preemption_timer(vcpu);
-> +		else if (exit_reason == EXIT_REASON_PENDING_INTERRUPT)
-> +			return handle_interrupt_window(vcpu);
-> +		else if (exit_reason == EXIT_REASON_EXTERNAL_INTERRUPT)
-> +			return handle_external_interrupt(vcpu);
-> +		else if (exit_reason == EXIT_REASON_HLT)
-> +			return handle_halt(vcpu);
-> +		else if (exit_reason == EXIT_REASON_PAUSE_INSTRUCTION)
-> +			return handle_pause(vcpu);
-> +		else if (exit_reason == EXIT_REASON_MSR_READ)
-> +			return handle_rdmsr(vcpu);
-> +		else if (exit_reason == EXIT_REASON_CPUID)
-> +			return handle_cpuid(vcpu);
-> +		else if (exit_reason == EXIT_REASON_EPT_MISCONFIG)
-> +			return handle_ept_misconfig(vcpu);
-> +#endif
->  		return kvm_vmx_exit_handlers[exit_reason](vcpu);
 
-Most of these, while frequent, are already part of slow paths.
+On 20/09/2019 22:29, Jacek Anaszewski wrote:
+> Hi Jean,
+>
+> Thank you for the update.
+>
+> On 9/20/19 1:58 PM, Jean-Jacques Hiblot wrote:
+>> Use devm_led_classdev_register_ext() to pass the fwnode to the LED core.
+>> The fwnode can then be used by the firmware core to create meaningful
+>> names.
+>>
+>> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
+>> ---
+>>   drivers/leds/leds-tlc591xx.c | 8 +++++---
+>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/leds/leds-tlc591xx.c b/drivers/leds/leds-tlc591xx.c
+>> index bbdaa3148317..8eadb673dc2e 100644
+>> --- a/drivers/leds/leds-tlc591xx.c
+>> +++ b/drivers/leds/leds-tlc591xx.c
+>> @@ -186,6 +186,9 @@ tlc591xx_probe(struct i2c_client *client,
+>>   
+>>   	for_each_child_of_node(np, child) {
+>>   		struct tlc591xx_led *led;
+>> +		struct led_init_data init_data = {};
+>> +
+>> +		init_data.fwnode = of_fwnode_handle(child);
+>>   
+>>   		err = of_property_read_u32(child, "reg", &reg);
+>>   		if (err) {
+>> @@ -200,8 +203,6 @@ tlc591xx_probe(struct i2c_client *client,
+>>   		led = &priv->leds[reg];
+>>   
+>>   		led->active = true;
+>> -		led->ldev.name =
+>> -			of_get_property(child, "label", NULL) ? : child->name;
+>>   		led->ldev.default_trigger =
+>>   			of_get_property(child, "linux,default-trigger", NULL);
+>>   
+>> @@ -209,7 +210,8 @@ tlc591xx_probe(struct i2c_client *client,
+>>   		led->led_no = reg;
+>>   		led->ldev.brightness_set_blocking = tlc591xx_brightness_set;
+>>   		led->ldev.max_brightness = LED_FULL;
+> I was asking for removing tabove assignment, but we can always do that
+> in the incremental patch.
 
-I would keep only EXIT_REASON_MSR_WRITE, EXIT_REASON_PREEMPTION_TIMER,
-EXIT_REASON_EPT_MISCONFIG and add EXIT_REASON_IO_INSTRUCTION.
+right. I forgot to remove this one.
 
-If you make kvm_vmx_exit_handlers const, can the compiler substitute for
-instance kvm_vmx_exit_handlers[EXIT_REASON_MSR_WRITE] with handle_wrmsr?
- Just thinking out loud, not sure if it's an improvement code-wise.
+Looking into it, it looks like the TLC actually has 257 levels (OFF, 
+PWM: 0% to 99.6%, and full ON)
 
-Paolo
+I'll send a patch for this after testing.
 
-Paolo
+JJ
+
+
+>
+> Patch set applied to the for-5.5 branch. Thanks.
+>
+>> -		err = devm_led_classdev_register(dev, &led->ldev);
+>> +		err = devm_led_classdev_register_ext(dev, &led->ldev,
+>> +						     &init_data);
+>>   		if (err < 0) {
+>>   			dev_err(dev, "couldn't register LED %s\n",
+>>   				led->ldev.name);
+>>
