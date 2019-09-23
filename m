@@ -2,98 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FEFDBBE6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13442BBE75
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503275AbfIWW00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 18:26:26 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43891 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390460AbfIWW00 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 18:26:26 -0400
-Received: by mail-ed1-f65.google.com with SMTP id r9so14454153edl.10;
-        Mon, 23 Sep 2019 15:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rs2RJDT5CsHbbEtk6Tq8OPTXVr0+QPsaOdJbfaooK0s=;
-        b=aj0n9SYvFIYCRxpn20Jz+FRTJT0KI+N5uVRMrxxEpuhyjLbdEoS1G9UzMTavhqTMWL
-         1LCe2i8i2ERqrH2v8e+Br3FQO+eO6jERm2FkKcW6wPK0ChFI2+XTooznTacB4rvoJzbJ
-         EwL2dOAquvmqhdDCmqLqSIMqII9gJxgpCwt4zV/JvI+xFOKzoT9d2Gxer0x6aoxYbYFw
-         PfcImqKzbV6AYykpbw9rwmP+G5tfi1N5t8tyx5ueI1CdVQ14TsY2lS6yEO5k5j41/Gpy
-         JPpOQXcdiOsRx8HloPeT68q5AHuowfy7lgwJaRyrfeF0Jdy0vCjpTW0WM1crdjdZ7sIC
-         OJgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rs2RJDT5CsHbbEtk6Tq8OPTXVr0+QPsaOdJbfaooK0s=;
-        b=aw6lr4twK+3f6JLmTaTooj4yuHni9sqDLpQG8/gSWRl4HKZOczF+a1bZUii3AzeT/V
-         /YCGKZjfwzMl2k95l8F0pHmHBGF+8gieyijkBTzL0T/CQiKwkADxlfW5IXPltSRjEgmY
-         CLuKNiqrFwpl7QsCRk5VYz6Ko6hx9558UrBO0zl84BMcKA0X+AXBgrIHk2Iiy5W5BWQL
-         3HW3HbyjaNC+ixog7ZOQHgqRd5acnX1w0q9iep5+zfFUnNecRJCD3ZlerCXmDKE1UGdl
-         EBO77it8APyuuaOETA9dR8prFmj+HzFZTA5YRtP0w+wdHav8SZo+U913ThVuHldoOO02
-         BDtA==
-X-Gm-Message-State: APjAAAXvfDBpxrr/zk0PlkhEVDAFwhhGReRvhDXsJst6wnPWU1sIBM6y
-        ioVZLiU1icVcXLNWihaTgwVoZai35T2MqATMYk8=
-X-Google-Smtp-Source: APXvYqySJ1IkREdlT+UI4UOVQVT+SfLT1tYPl30tjmrGFsNVQKX6YQUTs7Yc92vR0eMvX6JFzK296KU+kWVADdNeZTs=
-X-Received: by 2002:a50:918d:: with SMTP id g13mr2529336eda.64.1569277583256;
- Mon, 23 Sep 2019 15:26:23 -0700 (PDT)
+        id S2503310AbfIWW1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 18:27:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:5127 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391372AbfIWW1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 18:27:36 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 15:27:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,542,1559545200"; 
+   d="scan'208";a="188271691"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga008.fm.intel.com with ESMTP; 23 Sep 2019 15:27:35 -0700
+Date:   Mon, 23 Sep 2019 15:27:34 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/17] x86: spec_ctrl: fix SPEC_CTRL initialization after
+ kexec
+Message-ID: <20190923222734.GP18195@linux.intel.com>
+References: <20190920212509.2578-1-aarcange@redhat.com>
+ <20190920212509.2578-2-aarcange@redhat.com>
+ <c56d8911-5323-ac40-97b3-fa8920725197@redhat.com>
+ <20190923153057.GA18195@linux.intel.com>
+ <20190923173421.GA13551@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:aa7:c354:0:0:0:0:0 with HTTP; Mon, 23 Sep 2019 15:26:22
- -0700 (PDT)
-In-Reply-To: <20190807155738.GA9394@azazel.net>
-References: <20190807183606.372ca1a4@canb.auug.org.au> <f54391d9-6259-d08b-8b5f-c844093071d8@infradead.org>
- <20190807155738.GA9394@azazel.net>
-From:   Ivan Kalvachev <ikalvachev@gmail.com>
-Date:   Tue, 24 Sep 2019 01:26:22 +0300
-Message-ID: <CABA=pqeES0C2+7GpAOYuCOqd5DrbZhjS1Tkrxn4kGxXQJkrAfg@mail.gmail.com>
-Subject: Re: linux-next: Tree for Aug 7 (net/bridge/netfilter/nf_conntrack_bridge.c)
-To:     Jeremy Sowden <jeremy@azazel.net>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        bridge@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923173421.GA13551@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/7/19, Jeremy Sowden <jeremy@azazel.net> wrote:
-> On 2019-08-07, at 08:29:44 -0700, Randy Dunlap wrote:
->> On 8/7/19 1:36 AM, Stephen Rothwell wrote:
->> > Hi all,
->> >
->> > Changes since 20190806:
->>
->> on i386:
->> when CONFIG_NF_TABLES is not set/enabled:
->>
->>   CC      net/bridge/netfilter/nf_conntrack_bridge.o
->> In file included from
->> ../net/bridge/netfilter/nf_conntrack_bridge.c:21:0:
->> ../include/net/netfilter/nf_tables.h: In function
->> =E2=80=98nft_gencursor_next=E2=80=99:
->> ../include/net/netfilter/nf_tables.h:1224:14: error: =E2=80=98const stru=
-ct
->> net=E2=80=99 has no member named =E2=80=98nft=E2=80=99; did you mean =E2=
-=80=98nf=E2=80=99?
->>   return net->nft.gencursor + 1 =3D=3D 1 ? 1 : 0;
->>               ^~~
->
-> I've just posted a series of fixes for netfilter header compilation
-> failures, and I think it includes the fix for that:
->
->
-> https://lore.kernel.org/netdev/20190807141705.4864-5-jeremy@azazel.net/T/=
-#u
+On Mon, Sep 23, 2019 at 01:34:21PM -0400, Andrea Arcangeli wrote:
+> Per subject of the patch, 14 is also an optimization that while not a
+> strict requirement, is somewhat related to the monolithic conversion
+> because in fact it may naturally disappear if I rename the vmx/svm
+> functions directly.
+> 
+> 15 16 17 don't have the monolithic tag in the subject of the patch and
+> they're obviously unrelated to the monolithic conversion, but when I
+> did the first research on this idea of dropping kvm.ko a couple of
+> months ago, things didn't really work well until I got rid of those
+> few last retpolines too. If felt as if the large retpoline regression
+> wasn't linear with the number of retpolines executed for each vmexit,
+> and that it was more linear with the percentage of vmexits that hit on
+> any number of retpolines. So while they're not part of the monolithic
+> conversion I assumed they're required to run any meaningful benchmark.
+> 
+> I can drop 15 16 17 from further submits of course, after clarifying
+> benchmark should be only run on the v1 full set I posted earlier, or
+> they wouldn't be meaningful.
 
-Have these patches been committed?
-
-I just hit the same bug in linux-5.3.1 release.
+I like the patches, I'd just prefer that they be sent in a separate
+series so they can churn independently.
