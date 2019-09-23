@@ -2,20 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F409BB484
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67596BB48A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439733AbfIWM4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:56:06 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:48462 "EHLO
+        id S2502126AbfIWM4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:56:18 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:45518 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437481AbfIWM4F (ORCPT
+        with ESMTP id S2439722AbfIWM4H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:56:05 -0400
-X-Greylist: delayed 469 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Sep 2019 08:56:02 EDT
+        Mon, 23 Sep 2019 08:56:07 -0400
 Received: from localhost (unknown [192.168.167.227])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 1CBF866344;
-        Mon, 23 Sep 2019 20:48:05 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id 7C69B5CB2C;
+        Mon, 23 Sep 2019 20:48:07 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
@@ -23,9 +22,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P14169T140710336407296S1569242883858959_;
-        Mon, 23 Sep 2019 20:48:04 +0800 (CST)
+        Mon, 23 Sep 2019 20:48:07 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <dcbf38747a55e5c1495e51f206d0b1dd>
+X-UNIQUE-TAG: <95f5866d2024431c3e32ce476f28709a>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -35,14 +34,19 @@ X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
 To:     dri-devel@lists.freedesktop.org,
-        Russell King <linux@armlinux.org.uk>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>
-Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 11/36] drm/armada: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:47:35 +0800
-Message-Id: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
+Cc:     hjc@rock-chips.com, amd-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 12/36] drm/radeon: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:47:36 +0800
+Message-Id: <1569242880-182878-2-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
+References: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,52 +57,175 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/armada/armada_fbdev.c | 2 +-
- drivers/gpu/drm/armada/armada_plane.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/radeon/atombios_crtc.c      | 10 +++++-----
+ drivers/gpu/drm/radeon/r100.c               |  4 ++--
+ drivers/gpu/drm/radeon/radeon_display.c     |  6 +++---
+ drivers/gpu/drm/radeon/radeon_fb.c          |  2 +-
+ drivers/gpu/drm/radeon/radeon_legacy_crtc.c | 14 +++++++-------
+ 5 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/gpu/drm/armada/armada_fbdev.c b/drivers/gpu/drm/armada/armada_fbdev.c
-index 090cc0d..a2e4344 100644
---- a/drivers/gpu/drm/armada/armada_fbdev.c
-+++ b/drivers/gpu/drm/armada/armada_fbdev.c
-@@ -88,7 +88,7 @@ static int armada_fbdev_create(struct drm_fb_helper *fbh,
- 	drm_fb_helper_fill_info(info, fbh, sizes);
+diff --git a/drivers/gpu/drm/radeon/atombios_crtc.c b/drivers/gpu/drm/radeon/atombios_crtc.c
+index da2c9e2..e8a033f 100644
+--- a/drivers/gpu/drm/radeon/atombios_crtc.c
++++ b/drivers/gpu/drm/radeon/atombios_crtc.c
+@@ -1285,7 +1285,7 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
  
- 	DRM_DEBUG_KMS("allocated %dx%d %dbpp fb: 0x%08llx\n",
--		dfb->fb.width, dfb->fb.height, dfb->fb.format->cpp[0] * 8,
-+		dfb->fb.width, dfb->fb.height, dfb->fb.format->bpp[0],
- 		(unsigned long long)obj->phys_addr);
+ 				/* Calculate the macrotile mode index. */
+ 				tile_split_bytes = 64 << tile_split;
+-				tileb = 8 * 8 * target_fb->format->cpp[0];
++				tileb = 8 * target_fb->format->bpp[0];
+ 				tileb = min(tile_split_bytes, tileb);
  
- 	return 0;
-diff --git a/drivers/gpu/drm/armada/armada_plane.c b/drivers/gpu/drm/armada/armada_plane.c
-index e7cc2b3..fa400ac 100644
---- a/drivers/gpu/drm/armada/armada_plane.c
-+++ b/drivers/gpu/drm/armada/armada_plane.c
-@@ -46,13 +46,13 @@ void armada_drm_plane_calc(struct drm_plane_state *state, u32 addrs[2][3],
- 	int i;
+ 				for (index = 0; tileb > 64; index++)
+@@ -1293,14 +1293,14 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
  
- 	DRM_DEBUG_KMS("pitch %u x %d y %d bpp %d\n",
--		      fb->pitches[0], x, y, format->cpp[0] * 8);
-+		      fb->pitches[0], x, y, format->bpp[0]);
+ 				if (index >= 16) {
+ 					DRM_ERROR("Wrong screen bpp (%u) or tile split (%u)\n",
+-						  target_fb->format->cpp[0] * 8,
++						  target_fb->format->bpp[0],
+ 						  tile_split);
+ 					return -EINVAL;
+ 				}
  
- 	if (num_planes > 3)
- 		num_planes = 3;
+ 				num_banks = (rdev->config.cik.macrotile_mode_array[index] >> 6) & 0x3;
+ 			} else {
+-				switch (target_fb->format->cpp[0] * 8) {
++				switch (target_fb->format->bpp[0]) {
+ 				case 8:
+ 					index = 10;
+ 					break;
+@@ -1423,7 +1423,7 @@ static int dce4_crtc_do_set_base(struct drm_crtc *crtc,
+ 	WREG32(EVERGREEN_GRPH_X_END + radeon_crtc->crtc_offset, target_fb->width);
+ 	WREG32(EVERGREEN_GRPH_Y_END + radeon_crtc->crtc_offset, target_fb->height);
  
- 	addrs[0][0] = addr + fb->offsets[0] + y * fb->pitches[0] +
--		      x * format->cpp[0];
-+		      x * format->bpp[0] / 8;
- 	pitches[0] = fb->pitches[0];
+-	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->cpp[0];
++	fb_pitch_pixels = target_fb->pitches[0] / (target_fb->format->bpp[0] / 8);
+ 	WREG32(EVERGREEN_GRPH_PITCH + radeon_crtc->crtc_offset, fb_pitch_pixels);
+ 	WREG32(EVERGREEN_GRPH_ENABLE + radeon_crtc->crtc_offset, 1);
  
- 	y /= format->vsub;
-@@ -60,7 +60,7 @@ void armada_drm_plane_calc(struct drm_plane_state *state, u32 addrs[2][3],
+@@ -1639,7 +1639,7 @@ static int avivo_crtc_do_set_base(struct drm_crtc *crtc,
+ 	WREG32(AVIVO_D1GRPH_X_END + radeon_crtc->crtc_offset, target_fb->width);
+ 	WREG32(AVIVO_D1GRPH_Y_END + radeon_crtc->crtc_offset, target_fb->height);
  
- 	for (i = 1; i < num_planes; i++) {
- 		addrs[0][i] = addr + fb->offsets[i] + y * fb->pitches[i] +
--			      x * format->cpp[i];
-+			      x * format->bpp[i] / 8;
- 		pitches[i] = fb->pitches[i];
+-	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->cpp[0];
++	fb_pitch_pixels = target_fb->pitches[0] / (target_fb->format->bpp[0] / 8);
+ 	WREG32(AVIVO_D1GRPH_PITCH + radeon_crtc->crtc_offset, fb_pitch_pixels);
+ 	WREG32(AVIVO_D1GRPH_ENABLE + radeon_crtc->crtc_offset, 1);
+ 
+diff --git a/drivers/gpu/drm/radeon/r100.c b/drivers/gpu/drm/radeon/r100.c
+index 7089dfc..85b3081 100644
+--- a/drivers/gpu/drm/radeon/r100.c
++++ b/drivers/gpu/drm/radeon/r100.c
+@@ -3229,7 +3229,7 @@ void r100_bandwidth_update(struct radeon_device *rdev)
+ 			rdev->mode_info.crtcs[0]->base.primary->fb;
+ 
+ 		mode1 = &rdev->mode_info.crtcs[0]->base.mode;
+-		pixel_bytes1 = fb->format->cpp[0];
++		pixel_bytes1 = fb->format->bpp[0] / 8;
  	}
- 	for (; i < 3; i++) {
+ 	if (!(rdev->flags & RADEON_SINGLE_CRTC)) {
+ 		if (rdev->mode_info.crtcs[1]->base.enabled) {
+@@ -3237,7 +3237,7 @@ void r100_bandwidth_update(struct radeon_device *rdev)
+ 				rdev->mode_info.crtcs[1]->base.primary->fb;
+ 
+ 			mode2 = &rdev->mode_info.crtcs[1]->base.mode;
+-			pixel_bytes2 = fb->format->cpp[0];
++			pixel_bytes2 = fb->format->bpp[0] / 8;
+ 		}
+ 	}
+ 
+diff --git a/drivers/gpu/drm/radeon/radeon_display.c b/drivers/gpu/drm/radeon/radeon_display.c
+index e81b01f..066202c 100644
+--- a/drivers/gpu/drm/radeon/radeon_display.c
++++ b/drivers/gpu/drm/radeon/radeon_display.c
+@@ -540,19 +540,19 @@ static int radeon_crtc_page_flip_target(struct drm_crtc *crtc,
+ 	if (!ASIC_IS_AVIVO(rdev)) {
+ 		/* crtc offset is from display base addr not FB location */
+ 		base -= radeon_crtc->legacy_display_base_addr;
+-		pitch_pixels = fb->pitches[0] / fb->format->cpp[0];
++		pitch_pixels = fb->pitches[0] / fb->format->bpp[0] / 8;
+ 
+ 		if (tiling_flags & RADEON_TILING_MACRO) {
+ 			if (ASIC_IS_R300(rdev)) {
+ 				base &= ~0x7ff;
+ 			} else {
+-				int byteshift = fb->format->cpp[0] * 8 >> 4;
++				int byteshift = fb->format->bpp[0] >> 4;
+ 				int tile_addr = (((crtc->y >> 3) * pitch_pixels +  crtc->x) >> (8 - byteshift)) << 11;
+ 				base += tile_addr + ((crtc->x << byteshift) % 256) + ((crtc->y % 8) << 8);
+ 			}
+ 		} else {
+ 			int offset = crtc->y * pitch_pixels + crtc->x;
+-			switch (fb->format->cpp[0] * 8) {
++			switch (fb->format->bpp[0]) {
+ 			case 8:
+ 			default:
+ 				offset *= 1;
+diff --git a/drivers/gpu/drm/radeon/radeon_fb.c b/drivers/gpu/drm/radeon/radeon_fb.c
+index 2c564f4..5c6057f 100644
+--- a/drivers/gpu/drm/radeon/radeon_fb.c
++++ b/drivers/gpu/drm/radeon/radeon_fb.c
+@@ -138,7 +138,7 @@ static int radeonfb_create_pinned_object(struct radeon_fbdev *rfbdev,
+ 	u32 cpp;
+ 
+ 	info = drm_get_format_info(rdev->ddev, mode_cmd);
+-	cpp = info->cpp[0];
++	cpp = info->bpp[0] / 8;
+ 
+ 	/* need to align pitch with crtc limits */
+ 	mode_cmd->pitches[0] = radeon_align_pitch(rdev, mode_cmd->width, cpp,
+diff --git a/drivers/gpu/drm/radeon/radeon_legacy_crtc.c b/drivers/gpu/drm/radeon/radeon_legacy_crtc.c
+index a1985a5..21f6b25 100644
+--- a/drivers/gpu/drm/radeon/radeon_legacy_crtc.c
++++ b/drivers/gpu/drm/radeon/radeon_legacy_crtc.c
+@@ -400,7 +400,7 @@ int radeon_crtc_do_set_base(struct drm_crtc *crtc,
+ 	else
+ 		target_fb = crtc->primary->fb;
+ 
+-	switch (target_fb->format->cpp[0] * 8) {
++	switch (target_fb->format->bpp[0]) {
+ 	case 8:
+ 		format = 2;
+ 		break;
+@@ -474,9 +474,9 @@ int radeon_crtc_do_set_base(struct drm_crtc *crtc,
+ 
+ 	crtc_offset_cntl = 0;
+ 
+-	pitch_pixels = target_fb->pitches[0] / target_fb->format->cpp[0];
+-	crtc_pitch = DIV_ROUND_UP(pitch_pixels * target_fb->format->cpp[0] * 8,
+-				  target_fb->format->cpp[0] * 8 * 8);
++	pitch_pixels = target_fb->pitches[0] / target_fb->format->bpp[0] / 8;
++	crtc_pitch = DIV_ROUND_UP(pitch_pixels * target_fb->format->bpp[0],
++				  target_fb->format->bpp[0] * 8);
+ 	crtc_pitch |= crtc_pitch << 16;
+ 
+ 	crtc_offset_cntl |= RADEON_CRTC_GUI_TRIG_OFFSET_LEFT_EN;
+@@ -501,14 +501,14 @@ int radeon_crtc_do_set_base(struct drm_crtc *crtc,
+ 			crtc_tile_x0_y0 = x | (y << 16);
+ 			base &= ~0x7ff;
+ 		} else {
+-			int byteshift = target_fb->format->cpp[0] * 8 >> 4;
++			int byteshift = target_fb->format->bpp[0] >> 4;
+ 			int tile_addr = (((y >> 3) * pitch_pixels +  x) >> (8 - byteshift)) << 11;
+ 			base += tile_addr + ((x << byteshift) % 256) + ((y % 8) << 8);
+ 			crtc_offset_cntl |= (y % 16);
+ 		}
+ 	} else {
+ 		int offset = y * pitch_pixels + x;
+-		switch (target_fb->format->cpp[0] * 8) {
++		switch (target_fb->format->bpp[0]) {
+ 		case 8:
+ 			offset *= 1;
+ 			break;
+@@ -599,7 +599,7 @@ static bool radeon_set_crtc_timing(struct drm_crtc *crtc, struct drm_display_mod
+ 		}
+ 	}
+ 
+-	switch (fb->format->cpp[0] * 8) {
++	switch (fb->format->bpp[0]) {
+ 	case 8:
+ 		format = 2;
+ 		break;
 -- 
 2.7.4
 
