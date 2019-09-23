@@ -2,88 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DCF4BC9D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B9CDBC9E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:11:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409703AbfIXOKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 10:10:06 -0400
-Received: from foss.arm.com ([217.140.110.172]:59814 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730778AbfIXOKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 10:10:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B747337;
-        Tue, 24 Sep 2019 07:10:05 -0700 (PDT)
-Received: from [192.168.1.50] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A79B13F59C;
-        Tue, 24 Sep 2019 07:10:01 -0700 (PDT)
-Subject: Re: [PATCH] sched: fix migration to invalid cpu in
- __set_cpus_allowed_ptr
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        shikemeng <shikemeng@huawei.com>, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org
-References: <979d57f8-802b-57e5-632a-f94ad0f9d6a1@arm.com>
- <1568535662-14956-1-git-send-email-shikemeng@huawei.com>
- <5dfd4844-6c36-3b8d-203b-564d7ad7103d@arm.com>
- <40680310-60b3-589a-d0e8-b4dd723db10a@arm.com>
- <1d8e6aab-5258-494c-c4cd-1802eda34d59@arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <706581c9-e4ee-967d-b010-4798afd2245e@arm.com>
-Date:   Tue, 24 Sep 2019 16:09:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2441247AbfIXOLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 10:11:06 -0400
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:33563 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436897AbfIXOLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 10:11:05 -0400
+Received: from localhost.localdomain ([93.23.14.234])
+        by mwinf5d19 with ME
+        id 5SB02100B52zbZp03SB1gG; Tue, 24 Sep 2019 16:11:03 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 24 Sep 2019 16:11:03 +0200
+X-ME-IP: 93.23.14.234
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     bharat@chelsio.com, dledford@redhat.com, jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] RDMA/iw_cgxb4: Fix an error handling path in 'c4iw_connect()'
+Date:   Mon, 23 Sep 2019 21:07:46 +0200
+Message-Id: <20190923190746.10964-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1d8e6aab-5258-494c-c4cd-1802eda34d59@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/23/19 6:06 PM, Valentin Schneider wrote:
-> On 23/09/2019 16:43, Dietmar Eggemann wrote:
->> I'm not sure that CONFIG_DEBUG_PER_CPU_MAPS=y will help you here.
->>
->> __set_cpus_allowed_ptr(...)
->> {
->>     ...
->>     dest_cpu = cpumask_any_and(...)
->>     ...
->> }
->>
->> With:
->>
->> #define cpumask_any_and(mask1, mask2) cpumask_first_and((mask1), (mask2))
->> #define cpumask_first_and(src1p, src2p) cpumask_next_and(-1, (src1p),
->> (src2p))
->>
->> cpumask_next_and() is called with n = -1 and in this case does not
->> invoke cpumask_check().
->>
-> 
-> It won't warn here because it's still a valid return value, but it should
-> warn in the cpumask_test_cpu() that follows (in is_cpu_allowed()) because
-> it would be passed a value >= nr_cpu_ids. So at the very least this config
-> does catch cpumask_any*() return values being blindly passed to
-> cpumask_test_cpu().
+We should jump to fail3 in order to undo the 'xa_insert_irq()' call.
 
-OK, I see and agree.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Not sure which Fixes tag to use because of the many refactorings in this
+area. So I've choosen to use none :).
+The issue was already there in 4a740838bf44c. This commit has renamed
+all labels because a new fail1 was introduced. I've not searched further.
 
-But IMHO, we still don't call cpumask_test_cpu(dest_cpu, ...), right.
+Naming of error labels should be improved. Having nowadays a fail5
+between fail2 and fail3 (because fail5 was the last
+error handling path added) is not that readable.
+However, it goes beyong the purpose of this patch.
 
-What the patch fixes is that it closes the window between two reads of
-cpu_active_mask in which cpuhp can potentially punch a hole into the
-cpu_active_mask.
+Maybe, just using a fail2a, just as already done in 9f5a9632e412 (which
+introduced fail5) would be enough.
+---
+ drivers/infiniband/hw/cxgb4/cm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-If p is not running or queued and it's state is unequal to TASK_WAKING,
-a 'dest_cpu == nr_cpu_ids' goes unnoticed. Otherwise we see an 'unable
-to handle kernel paging request' or 'unable to handle page fault for
-address' bug in migration_cpu_stop() or move_queued_task().
-
-Do I miss something?
-
-[...]
+diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+index e87fc0408470..81440eaf0a00 100644
+--- a/drivers/infiniband/hw/cxgb4/cm.c
++++ b/drivers/infiniband/hw/cxgb4/cm.c
+@@ -3381,7 +3381,7 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
+ 		if (raddr->sin_addr.s_addr == htonl(INADDR_ANY)) {
+ 			err = pick_local_ipaddrs(dev, cm_id);
+ 			if (err)
+-				goto fail2;
++				goto fail3;
+ 		}
+ 
+ 		/* find a route */
+@@ -3403,7 +3403,7 @@ int c4iw_connect(struct iw_cm_id *cm_id, struct iw_cm_conn_param *conn_param)
+ 		if (ipv6_addr_type(&raddr6->sin6_addr) == IPV6_ADDR_ANY) {
+ 			err = pick_local_ip6addrs(dev, cm_id);
+ 			if (err)
+-				goto fail2;
++				goto fail3;
+ 		}
+ 
+ 		/* find a route */
+-- 
+2.20.1
 
