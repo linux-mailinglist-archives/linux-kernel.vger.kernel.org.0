@@ -2,140 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B37C3BB743
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0979BBB754
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731232AbfIWOz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:55:59 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35077 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731128AbfIWOz6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:55:58 -0400
-Received: by mail-io1-f68.google.com with SMTP id q10so34224383iop.2;
-        Mon, 23 Sep 2019 07:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aJSkN3O3R055m+qpJx/Tm2HyfkEZX9CoGjygiAHKo+g=;
-        b=gysmm9SedIHwKk43YK3DQp+CGCZC3a0JoqbVuZXFDfM7s7tI05+eBgvd9zlJT0ufYF
-         LNSj++cFYfxLREA8TSOtM6d7szFNRwrQfRYyHBxbb7EzfUL86rthVAOWZeCOfNTmU+gk
-         lwt8SF1824iQXKk3ma3/8RrREG4xDzdnjOsv2h5Bj0SBCRrrvscqW4MBz959+gL0hBMh
-         M5vjZz+QeRZX3QTSVjt/05/sWJf7zcoY8h8en678AqXCzGJU3hfndwTJuA5nYAAS8asV
-         +QlrgBF0YTWeDwT0J+zXbwuAfLgJWtBap6FVa5NEJ3/xyP+J2QIrazfvRecu5Voax5dC
-         4L9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aJSkN3O3R055m+qpJx/Tm2HyfkEZX9CoGjygiAHKo+g=;
-        b=XaN8/fo9c+Ww6oVGzGEuQRG5OQ7BElt2aDeSc0/uRJLBrl11Uj8xZ1UT8nPUDwBTDY
-         3+Ihu4ZsjlTb5wPwxEe53wVCyt/HaU0aAfhIHCM/zwHIS6Lv2/NLrZl6S6E57Bd3qi50
-         YP6HyLBgREASmTuvBXf9Qzy1xJUVOqS1R9/pknlLxz0wGUSx5oBBLz9k0t/zBy3j2DFS
-         afFv7/J+8OOvVGvaTPTE1HFxNGQmAyFTRZr/t1+Y5o03qfprStjvRxxJQBpnEjJR5+zu
-         I8+3r0A7WsKOEw7jm7YjaEEVALCAbVXMGRz6NKGpDSFnZLrUjpvuY78PZFNs78+xnXyo
-         zt0Q==
-X-Gm-Message-State: APjAAAUI9H2yFmewHG1Q/cit3mWJheTu7wBtosLBUCnuF8flfI2ei5L+
-        rNRwkCxJiIExWM1OmXbG7D9BzooCIVopUFNhcpg=
-X-Google-Smtp-Source: APXvYqz3umQLZs1WqpUvvzKbf1OvBAzKpjy4hK6udNDouR2tEvv08QtBYHQKN8m3xT72wndDH8FytOxzmRkmAiayeiE=
-X-Received: by 2002:a5d:9c4c:: with SMTP id 12mr672385iof.276.1569250557575;
- Mon, 23 Sep 2019 07:55:57 -0700 (PDT)
+        id S1727514AbfIWO5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:57:35 -0400
+Received: from foss.arm.com ([217.140.110.172]:43722 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbfIWO5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 10:57:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7CCAA1000;
+        Mon, 23 Sep 2019 07:57:34 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 05FCC3F59C;
+        Mon, 23 Sep 2019 07:57:32 -0700 (PDT)
+Subject: Re: [PATCH v2 5/5] irqchip/irq-bcm7038-l1: Support brcm,int-fwd-mask
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Cernekee <cernekee@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:BROADCOM BMIPS MIPS ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "open list:BROADCOM BMIPS MIPS ARCHITECTURE" 
+        <linux-mips@vger.kernel.org>
+References: <20190913191542.9908-1-f.fainelli@gmail.com>
+ <20190913191542.9908-6-f.fainelli@gmail.com> <20190922133805.2cdf2d99@why>
+ <260e61b8-a083-743e-43fc-70b9ea644e0e@gmail.com>
+ <fbc07e1e-8c72-8728-2acb-647db533e31b@kernel.org>
+ <8b0f18ef-7b72-e6fd-9930-0f698ced270b@gmail.com>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <7610ea17-de8a-d475-7a9e-8f314f5f34a3@kernel.org>
+Date:   Mon, 23 Sep 2019 15:57:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20190923135808.815-1-philipp.puschmann@emlix.com>
-In-Reply-To: <20190923135808.815-1-philipp.puschmann@emlix.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 23 Sep 2019 09:55:46 -0500
-Message-ID: <CAHCN7xJL_x1ryOoNW+R2hOZ9dMFem9wni8Uo8QOA3wxpzKLbqQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] Fix UART DMA freezes for i.MX SOCs
-To:     Philipp Puschmann <philipp.puschmann@emlix.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        fugang.duan@nxp.com, jlu@pengutronix.de,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>, vkoul@kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        dmaengine@vger.kernel.org, dan.j.williams@intel.com,
-        Robin Gong <yibin.gong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8b0f18ef-7b72-e6fd-9930-0f698ced270b@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 8:58 AM Philipp Puschmann
-<philipp.puschmann@emlix.com> wrote:
->
-> For some years and since many kernel versions there are reports that
-> RX UART DMA channel stops working at one point. So far the usual
-> workaround was to disable RX DMA. This patches fix the underlying
-> problem.
->
-> When a running sdma script does not find any usable destination buffer
-> to put its data into it just leads to stopping the channel being
-> scheduled again. As solution we manually retrigger the sdma script for
-> this channel and by this dissolve the freeze.
->
-> While this seems to work fine so far, it may come to buffer overruns
-> when the channel - even temporary - is stopped. This case has to be
-> addressed by device drivers by increasing the number of DMA periods.
->
-> This patch series was tested with the current kernel and backported to
-> kernel 4.15 with a special use case using a WL1837MOD via UART and
-> provoking the hanging of UART RX DMA within seconds after starting a
-> test application. It resulted in well known
->   "Bluetooth: hci0: command 0x0408 tx timeout"
-> errors and complete stop of UART data reception. Our Bluetooth traffic
-> consists of many independent small packets, mostly only a few bytes,
-> causing high usage of periods.
->
+On 23/09/2019 15:39, Florian Fainelli wrote:
+> 
+> 
+> On 9/23/2019 1:52 AM, Marc Zyngier wrote:
+>> On 22/09/2019 20:08, Florian Fainelli wrote:
+>>>
+>>>
+>>> On 9/22/2019 5:38 AM, Marc Zyngier wrote:
+>>>> On Fri, 13 Sep 2019 12:15:42 -0700
+>>>> Florian Fainelli <f.fainelli@gmail.com> wrote:
+>>>>
+>>>>> On some specific chips like 7211 we need to leave some interrupts
+>>>>> untouched/forwarded to the VPU which is another agent in the system
+>>>>> making use of that interrupt controller hardware (goes to both ARM GIC
+>>>>> and VPU L1 interrupt controller). Make that possible by using the
+>>>>> existing brcm,int-fwd-mask property.
+>>>>>
+>>>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>>>>> ---
+>>>>>  drivers/irqchip/irq-bcm7038-l1.c | 15 +++++++++++++--
+>>>>>  1 file changed, 13 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/irqchip/irq-bcm7038-l1.c b/drivers/irqchip/irq-bcm7038-l1.c
+>>>>> index 0673a44bbdc2..811a34201dd4 100644
+>>>>> --- a/drivers/irqchip/irq-bcm7038-l1.c
+>>>>> +++ b/drivers/irqchip/irq-bcm7038-l1.c
+>>>>> @@ -44,6 +44,7 @@ struct bcm7038_l1_chip {
+>>>>>  	struct list_head	list;
+>>>>>  	u32			wake_mask[MAX_WORDS];
+>>>>>  #endif
+>>>>> +	u32			irq_fwd_mask[MAX_WORDS];
+>>>>>  	u8			affinity[MAX_WORDS * IRQS_PER_WORD];
+>>>>>  };
+>>>>>  
+>>>>> @@ -265,6 +266,7 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+>>>>>  	resource_size_t sz;
+>>>>>  	struct bcm7038_l1_cpu *cpu;
+>>>>>  	unsigned int i, n_words, parent_irq;
+>>>>> +	int ret;
+>>>>>  
+>>>>>  	if (of_address_to_resource(dn, idx, &res))
+>>>>>  		return -EINVAL;
+>>>>> @@ -278,6 +280,14 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+>>>>>  	else if (intc->n_words != n_words)
+>>>>>  		return -EINVAL;
+>>>>>  
+>>>>> +	ret = of_property_read_u32_array(dn , "brcm,int-fwd-mask",
+>>>>
+>>>> What is the exact meaning of "fwd"? Forward? FirmWare Dementia?
+>>>
+>>> Here it is meant to be "forward", we have defined this property name
+>>> before for irq-bcm7120-l2.c and felt like reusing the same name to avoid
+>>> multiplying properties would be appropriate, see patch #4. If you prefer
+>>> something named brcm,firmware-configured-mask, let me know.
+>>
+>> It's just a name, but I found it a bit confusing. Bah, never mind.
+>>
+>>>>
+>>>>> +					 intc->irq_fwd_mask, n_words);
+>>>>> +	if (ret != 0 && ret != -EINVAL) {
+>>>>> +		/* property exists but has the wrong number of words */
+>>>>> +		pr_err("invalid brcm,int-fwd-mask property\n");
+>>>>> +		return -EINVAL;
+>>>>> +	}
+>>>>> +
+>>>>>  	cpu = intc->cpus[idx] = kzalloc(sizeof(*cpu) + n_words * sizeof(u32),
+>>>>>  					GFP_KERNEL);
+>>>>>  	if (!cpu)
+>>>>> @@ -288,8 +298,9 @@ static int __init bcm7038_l1_init_one(struct device_node *dn,
+>>>>>  		return -ENOMEM;
+>>>>>  
+>>>>>  	for (i = 0; i < n_words; i++) {
+>>>>> -		l1_writel(0xffffffff, cpu->map_base + reg_mask_set(intc, i));
+>>>>> -		cpu->mask_cache[i] = 0xffffffff;
+>>>>> +		l1_writel(0xffffffff & ~intc->irq_fwd_mask[i],
+>>>>> +			  cpu->map_base + reg_mask_set(intc, i));
+>>>>> +		cpu->mask_cache[i] = 0xffffffff & ~intc->irq_fwd_mask[i];
+>>>>
+>>>> I seem to remember that (0xffffffff & whatever) == whatever, as long as
+>>>> 'whatever' is a 32bit quantity. So what it this for?
+>>>
+>>> It is 0xffff_ffff & ~whatever here.
+>>
+>> Which doesn't change anything.
+>>
+>>> In the absence of this property
+>>> being specified, the data is all zeroed out, so we would have
+>>> 0xffff_ffff & 0xffff_ffff which is 0xffff_ffff. If this property is
+>>> specified, we would have one more or bits set, and it would be e.g.:
+>>> 0x100 so we would have 0xffff_ffff & ~(0x100) = 0xffff_feff which is
+>>> what we would want here to preserve whatever the firmware has already
+>>> configured.
+>>
+>> OK, I must be stupid:
+>>
+>> #include <stdio.h>
+>>
+>> int main(int argc, char *argv[])
+>> {
+>> 	unsigned int v = 0x100;
+>> 	printf ("%x\n", ~v);
+>> }
+>> maz@filthy-habit$ ./x
+>> fffffeff
+>>
+>> You might as well OR it with zeroes, if you want.
+> 
+> Not sure I understand your point here.
+> 
+> We used to write 0xffff_ffff to both the hardware and the mask cache to
+> have all interrupts masked by default. Now we want to have some bits
+> optionally set to 0 (unmasked), based on the brcm,int-fwd-mask property,
+> which is what this patch achieves (or tries to). If we write, say
+> 0xffff_feff to the hardware, which has a Write Only register behavior,
+> then we also want to have the mask cache be set to the same value for
+> consistency if nothing else. Am I failing at doing what I just described
+> and also failing at see it?
 
-Using the 4.19.y branch, this seems to working just fine for me with an i.MX6Q
-with WL1837MOD Bluetooth connected to UART2.  I am still seeing some
-timeouts with 5.3, but I'm going to continue to run some tests.
+You write this:
 
-Tested-by: Adam Ford <aford173@gmail.com> #imx6q w/ 4.19 Kernel
+>  	for (i = 0; i < n_words; i++) {
+> -		l1_writel(0xffffffff, cpu->map_base + reg_mask_set(intc, i));
+> -		cpu->mask_cache[i] = 0xffffffff;
+> +		l1_writel(0xffffffff & ~intc->irq_fwd_mask[i],
+> +			  cpu->map_base + reg_mask_set(intc, i));
+> +		cpu->mask_cache[i] = 0xffffffff & ~intc->irq_fwd_mask[i];
+>  	}
 
-> Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
-> Reviewed-by: Fugang Duan <fugang.duan@nxp.com>
->
-> ---
->
-> Changelog v5:
->  - join with patch version from Jan Luebbe
->  - adapt comments and patch descriptions
->  - add Reviewed-by
->
-> Changelog v4:
->  - fixed the fixes tags
->
-> Changelog v3:
->  - fixes typo in dma_wmb
->  - add fixes tags
->
-> Changelog v2:
->  - adapt title (this patches are not only for i.MX6)
->  - improve some comments and patch descriptions
->  - add a dma_wb() around BD_DONE flag
->  - add Reviewed-by tags
->  - split off  "serial: imx: adapt rx buffer and dma periods"
->
-> Philipp Puschmann (3):
->   dmaengine: imx-sdma: fix buffer ownership
->   dmaengine: imx-sdma: fix dma freezes
->   dmaengine: imx-sdma: drop redundant variable
->
->  drivers/dma/imx-sdma.c | 37 +++++++++++++++++++++++++++----------
->  1 file changed, 27 insertions(+), 10 deletions(-)
->
-> --
-> 2.23.0
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+And I'm saying that this is strictly equivalent to:
+
+ 	for (i = 0; i < n_words; i++) {
+		l1_writel(~intc->irq_fwd_mask[i],
+			  cpu->map_base + reg_mask_set(intc, i));
+		cpu->mask_cache[i] = ~intc->irq_fwd_mask[i];
+ 	}
+
+without this 0xffffffff that does exactly nothing (I'm pretty sure the
+compiler drops it anyway).
+
+	M.
+-- 
+Jazz is not dead, it just smells funny...
