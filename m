@@ -2,79 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8DEDBB76A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:01:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E573BB770
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbfIWPBQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 11:01:16 -0400
-Received: from netrider.rowland.org ([192.131.102.5]:43755 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727515AbfIWPBQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 11:01:16 -0400
-Received: (qmail 27837 invoked by uid 500); 23 Sep 2019 11:01:15 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 23 Sep 2019 11:01:15 -0400
-Date:   Mon, 23 Sep 2019 11:01:15 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     Ran Wang <ran.wang_1@nxp.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Dennis Wassenberg <dennis.wassenberg@secunet.com>,
-        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: hub add filter for device with specific VID&PID
-In-Reply-To: <20190923105102.37413-1-ran.wang_1@nxp.com>
-Message-ID: <Pine.LNX.4.44L0.1909231059260.24712-100000@netrider.rowland.org>
+        id S1731730AbfIWPDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 11:03:40 -0400
+Received: from mga14.intel.com ([192.55.52.115]:26036 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726084AbfIWPDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 11:03:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 08:03:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,540,1559545200"; 
+   d="scan'208";a="203140575"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 23 Sep 2019 08:03:34 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 23 Sep 2019 18:03:33 +0300
+Date:   Mon, 23 Sep 2019 18:03:33 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 06/11] drm/bridge: ti-tfp410: switch to using
+ fwnode_gpiod_get_index()
+Message-ID: <20190923150333.GD16243@kuha.fi.intel.com>
+References: <20190911075215.78047-1-dmitry.torokhov@gmail.com>
+ <20190911075215.78047-7-dmitry.torokhov@gmail.com>
+ <20190920231228.GH12672@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190920231228.GH12672@pendragon.ideasonboard.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Sep 2019, Ran Wang wrote:
-
-> USB 2.0 Embedded Host PET Automated Test (CH6) 6.7.23 A-UUT "Unsupported
-> Device" Message require to stop enumerating device with VID=0x1a0a PID=0x0201
-> and pop message to declare this device is not supported.
+On Sat, Sep 21, 2019 at 02:12:28AM +0300, Laurent Pinchart wrote:
+> Hi Dmitry,
 > 
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> ---
->  drivers/usb/core/hub.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> (CC'ing Heikki as the original author of software nodes support)
 > 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index bbcfa63..3cda0da 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -4982,6 +4982,18 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
->  		if (status < 0)
->  			goto loop;
->  
-> +		 /* USB 2.0 Embedded Host PET Automated Test (CH6)
-> +		 * 6.7.23 A-UUT "Unsupported Device" Message
-> +		 * require to filter out below device when enumeration
-> +		 */
-> +		if ((udev->descriptor.idVendor == 0x1a0a)
-> +		 && (udev->descriptor.idProduct == 0x0201)) {
-> +			dev_err(&udev->dev, "This device is not supported: idVendor=0x%x idProduct=0x%x\n",
-> +				udev->descriptor.idVendor,
-> +				udev->descriptor.idProduct);
+> Thank you for the patch.
+> 
+> On Wed, Sep 11, 2019 at 12:52:10AM -0700, Dmitry Torokhov wrote:
+> > Instead of fwnode_get_named_gpiod() that I plan to hide away, let's use
+> > the new fwnode_gpiod_get_index() that mimics gpiod_get_index(), bit
+> 
+> s/bit/but/
+> 
+> > works with arbitrary firmware node.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> On a side note, as I'm not very familiar with software nodes, I tried to
+> see how they are to be used, and it seems they are completely
+> undocumented :-( Heikki, is this something that could be fixed ?
 
-There's no need to write out the Vendor and Product IDs.  They already 
-appear in the "New device" message.
+OK. I'll start writing API documentation for it.
 
-> +			goto done;
-> +		}
-> +
->  		if (udev->quirks & USB_QUIRK_DELAY_INIT)
->  			msleep(2000);
+thanks,
 
-Shouldn't this be implemented as a device quirk?
-
-Alan Stern
-
+-- 
+heikki
