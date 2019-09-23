@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20E71BB45A
+	by mail.lfdr.de (Postfix) with ESMTP id F2136BB45C
 	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:53:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439615AbfIWMw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:52:27 -0400
-Received: from regular1.263xmail.com ([211.150.70.204]:39686 "EHLO
+        id S2439634AbfIWMwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:52:37 -0400
+Received: from regular1.263xmail.com ([211.150.70.203]:59210 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437050AbfIWMw0 (ORCPT
+        with ESMTP id S2439605AbfIWMwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:52:26 -0400
+        Mon, 23 Sep 2019 08:52:36 -0400
 Received: from hjc?rock-chips.com (unknown [192.168.167.128])
-        by regular1.263xmail.com (Postfix) with ESMTP id 773B922F;
-        Mon, 23 Sep 2019 20:52:22 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id 907B23E4;
+        Mon, 23 Sep 2019 20:52:27 +0800 (CST)
 X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -25,9 +25,9 @@ X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P15436T140160991741696S1569243121384240_;
-        Mon, 23 Sep 2019 20:52:21 +0800 (CST)
+        Mon, 23 Sep 2019 20:52:26 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <100cee606d44a935076a63a8b3b5c1cb>
+X-UNIQUE-TAG: <e6bfbf9941a2acc204e22cd8bc1ef476>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -36,20 +36,27 @@ X-SENDER-IP: 58.22.7.114
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org, Dave Airlie <airlied@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
+To:     dri-devel@lists.freedesktop.org,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
         Sam Ravnborg <sam@ravnborg.org>,
-        Sandy Huang <hjc@rock-chips.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Eric Anholt <eric@anholt.net>,
-        virtualization@lists.linux-foundation.org,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 23/36] drm/cirrus: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:51:46 +0800
-Message-Id: <1569243119-183293-3-git-send-email-hjc@rock-chips.com>
+Subject: [PATCH 24/36] drm/hisilicon: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:51:47 +0800
+Message-Id: <1569243119-183293-4-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1569243119-183293-1-git-send-email-hjc@rock-chips.com>
 References: <1569243119-183293-1-git-send-email-hjc@rock-chips.com>
@@ -63,51 +70,36 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/cirrus/cirrus.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/cirrus/cirrus.c b/drivers/gpu/drm/cirrus/cirrus.c
-index 89d9e6f..ba47fdf 100644
---- a/drivers/gpu/drm/cirrus/cirrus.c
-+++ b/drivers/gpu/drm/cirrus/cirrus.c
-@@ -121,7 +121,7 @@ static void wreg_hdr(struct cirrus_device *cirrus, u8 val)
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
+index cc4c417..6bfb327 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
+@@ -122,11 +122,11 @@ static void hibmc_plane_atomic_update(struct drm_plane *plane,
  
- static int cirrus_convert_to(struct drm_framebuffer *fb)
- {
--	if (fb->format->cpp[0] == 4 && fb->pitches[0] > CIRRUS_MAX_PITCH) {
-+	if (fb->format->bpp[0] == 32 && fb->pitches[0] > CIRRUS_MAX_PITCH) {
- 		if (fb->width * 3 <= CIRRUS_MAX_PITCH)
- 			/* convert from XR24 to RG24 */
- 			return 3;
-@@ -138,7 +138,7 @@ static int cirrus_cpp(struct drm_framebuffer *fb)
+ 	writel(gpu_addr, priv->mmio + HIBMC_CRT_FB_ADDRESS);
  
- 	if (convert_cpp)
- 		return convert_cpp;
--	return fb->format->cpp[0];
-+	return fb->format->bpp[0] / 8;
+-	reg = state->fb->width * (state->fb->format->cpp[0]);
++	reg = state->fb->width * (state->fb->format->bpp[0] / 8);
+ 	/* now line_pad is 16 */
+ 	reg = PADDING(16, reg);
+ 
+-	line_l = state->fb->width * state->fb->format->cpp[0];
++	line_l = state->fb->width * state->fb->format->bpp[0] / 8;
+ 	line_l = PADDING(16, line_l);
+ 	writel(HIBMC_FIELD(HIBMC_CRT_FB_WIDTH_WIDTH, reg) |
+ 	       HIBMC_FIELD(HIBMC_CRT_FB_WIDTH_OFFS, line_l),
+@@ -136,7 +136,7 @@ static void hibmc_plane_atomic_update(struct drm_plane *plane,
+ 	reg = readl(priv->mmio + HIBMC_CRT_DISP_CTL);
+ 	reg &= ~HIBMC_CRT_DISP_CTL_FORMAT_MASK;
+ 	reg |= HIBMC_FIELD(HIBMC_CRT_DISP_CTL_FORMAT,
+-			   state->fb->format->cpp[0] * 8 / 16);
++			   state->fb->format->bpp[0] / 16);
+ 	writel(reg, priv->mmio + HIBMC_CRT_DISP_CTL);
  }
  
- static int cirrus_pitch(struct drm_framebuffer *fb)
-@@ -306,16 +306,16 @@ static int cirrus_fb_blit_rect(struct drm_framebuffer *fb,
- 	if (!vmap)
- 		return -ENOMEM;
- 
--	if (cirrus->cpp == fb->format->cpp[0])
-+	if (cirrus->cpp == fb->format->bpp[0] / 8)
- 		drm_fb_memcpy_dstclip(cirrus->vram,
- 				      vmap, fb, rect);
- 
--	else if (fb->format->cpp[0] == 4 && cirrus->cpp == 2)
-+	else if (fb->format->bpp[0] == 32 && cirrus->cpp == 2)
- 		drm_fb_xrgb8888_to_rgb565_dstclip(cirrus->vram,
- 						  cirrus->pitch,
- 						  vmap, fb, rect, false);
- 
--	else if (fb->format->cpp[0] == 4 && cirrus->cpp == 3)
-+	else if (fb->format->bpp[0] == 32 && cirrus->cpp == 3)
- 		drm_fb_xrgb8888_to_rgb888_dstclip(cirrus->vram,
- 						  cirrus->pitch,
- 						  vmap, fb, rect);
 -- 
 2.7.4
 
