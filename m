@@ -2,460 +2,696 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F82BBEAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4392CBBEB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407711AbfIWW61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 18:58:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49878 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729156AbfIWW61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 18:58:27 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEDC721971;
-        Mon, 23 Sep 2019 22:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569279505;
-        bh=+T6SXgfbrBUwzMFS5UV+Sf/Q9vGJeKcUUBFpDPW/JSw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=F6cEOylWQ2PlXlX6GXhCETwj0nYNVzh1svJUvNeCjoGA6C4bCNXL0zvBbWmB33L3d
-         zRC7yg5nAeEWxtB7KE0GcOZeJ66It11Svn9puHwsqxTK2/rR893EwfJDQuw5XANoN5
-         jeyBE6C9ghMXzU561LYcL+oW5d/WPyRmazcJPxIc=
-Date:   Mon, 23 Sep 2019 17:58:22 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: [GIT PULL] PCI changes for v5.4
-Message-ID: <20190923225822.GC11938@google.com>
+        id S2503515AbfIWW7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 18:59:16 -0400
+Received: from mail-eopbgr30070.outbound.protection.outlook.com ([40.107.3.70]:29575
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2407729AbfIWW7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 18:59:15 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g9JCBzsZNn6lAK43IVlL7CfY8vvKXJdv88wVm1k7XjJAfTXzt5hJ5Dg2tvXrA7nV3rM3UfTRdXjJ5vRNXIZSGYA2JwXiX5xKJi6P04Dy99dsRGobEM+vyWjEh7G+QR8J5bQ3ZjXKFzzC4KGjt000xHjPZe+ZA3c0/C6AdULIAbn00pNsZG9uA3P8ysCMjqQzqO4nuIOxcOrJNwOgflKQJCjq77c1PdyJOilOMZO+dQhbHRUCykJZm5NcpMHiu6YeY5iLzVY+1DpUGCd4859Am85SP54R196O0Tc9tK+aFSBb5z8pud75IbkKC/22Gkn8o0fPcTzXCNXU1cab+XV2Jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XpvBjoE7Lh6iGPxVem3k/E2DdftxJNe62TjlVLzJ1J8=;
+ b=oe+DWsobpdUwLhZu/dXcScIbL1UHenDptIbyznWupjUSd0jZFMvPTz1BgtC5x4NlROxXFJk3e8pAIFkXLdoNG19OE87eXimFFdt/V6FeV5FrXy3hQyVaguVLj1Mg6ii63CKdazgfx0Ys6YYjS1FN3TTWw90mf0oPQRkYqCiHNVpEeLObdrSoVY5TNj9UzkUFX151HNqnCaJu46N4na40MSk2mFQ9KC4tdY078xXOPatIUZ2Oxz/fMGSjGKpW05YhxajOv0SpbqXeTyL/hUh/MKDtyQtE+7ySfHcm0ibzyPkOqSjtDjlNzFPtR/vrBPPJ+j2v6AnN5sqo5pUgdAzXkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XpvBjoE7Lh6iGPxVem3k/E2DdftxJNe62TjlVLzJ1J8=;
+ b=NZfQDh/ufuPsgtMWXQBWFVxtXn4hNONSTnZpFybgPNgmSfncAqX+psTNy0VPDb8vyKj5rLafEi0b4PqhmWA34sV+3pG1prNdjXgL147FYAKc7MwEnfZXv23NR176ws6rCHku8o+qlDmVgmCxYmlHA5JcEfS8+mp2A2OmhipZ9nY=
+Received: from AM0PR05MB4866.eurprd05.prod.outlook.com (20.176.214.160) by
+ AM0PR05MB6225.eurprd05.prod.outlook.com (20.178.114.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.20; Mon, 23 Sep 2019 22:59:09 +0000
+Received: from AM0PR05MB4866.eurprd05.prod.outlook.com
+ ([fe80::bc4c:7c4c:d3e2:8b28]) by AM0PR05MB4866.eurprd05.prod.outlook.com
+ ([fe80::bc4c:7c4c:d3e2:8b28%6]) with mapi id 15.20.2284.023; Mon, 23 Sep 2019
+ 22:59:09 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Jason Wang <jasowang@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tiwei.bie@intel.com" <tiwei.bie@intel.com>
+CC:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+        "cunming.liang@intel.com" <cunming.liang@intel.com>,
+        "zhihong.wang@intel.com" <zhihong.wang@intel.com>,
+        "rob.miller@broadcom.com" <rob.miller@broadcom.com>,
+        "xiao.w.wang@intel.com" <xiao.w.wang@intel.com>,
+        "haotian.wang@sifive.com" <haotian.wang@sifive.com>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "zhi.a.wang@intel.com" <zhi.a.wang@intel.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>,
+        "farman@linux.ibm.com" <farman@linux.ibm.com>,
+        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
+        "sebott@linux.ibm.com" <sebott@linux.ibm.com>,
+        "oberpar@linux.ibm.com" <oberpar@linux.ibm.com>,
+        "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>,
+        "gor@linux.ibm.com" <gor@linux.ibm.com>,
+        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>,
+        "akrowiak@linux.ibm.com" <akrowiak@linux.ibm.com>,
+        "freude@linux.ibm.com" <freude@linux.ibm.com>,
+        "lingshan.zhu@intel.com" <lingshan.zhu@intel.com>,
+        Ido Shamay <idos@mellanox.com>,
+        "eperezma@redhat.com" <eperezma@redhat.com>,
+        "lulu@redhat.com" <lulu@redhat.com>
+Subject: RE: [PATCH 2/6] mdev: introduce device specific ops
+Thread-Topic: [PATCH 2/6] mdev: introduce device specific ops
+Thread-Index: AQHVcg97F7axka9YNkeut4ZP3pfHkqc53s5w
+Date:   Mon, 23 Sep 2019 22:59:08 +0000
+Message-ID: <AM0PR05MB4866D870687C7EA7190A91B2D1850@AM0PR05MB4866.eurprd05.prod.outlook.com>
+References: <20190923130331.29324-1-jasowang@redhat.com>
+ <20190923130331.29324-3-jasowang@redhat.com>
+In-Reply-To: <20190923130331.29324-3-jasowang@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [208.176.44.194]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 33e5995d-95b1-4f92-3d96-08d74079a485
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR05MB6225;
+x-ms-traffictypediagnostic: AM0PR05MB6225:|AM0PR05MB6225:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR05MB62251CD5FF90C107B58D4682D1850@AM0PR05MB6225.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0169092318
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(376002)(136003)(39850400004)(346002)(13464003)(199004)(189003)(7736002)(102836004)(7416002)(110136005)(478600001)(53546011)(76176011)(99286004)(7696005)(316002)(186003)(2501003)(76116006)(66946007)(476003)(11346002)(66066001)(4326008)(54906003)(33656002)(6506007)(26005)(30864003)(446003)(5660300002)(8936002)(229853002)(14444005)(6116002)(3846002)(8676002)(66556008)(25786009)(55016002)(64756008)(52536014)(66446008)(74316002)(14454004)(486006)(66476007)(7406005)(71190400001)(71200400001)(6436002)(81156014)(2906002)(305945005)(6246003)(256004)(86362001)(9686003)(81166006)(2201001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB6225;H:AM0PR05MB4866.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: OKVuI/HWyuE8TtA5rjA87PwSYgFWkKYjGQwcJZGSiobYHl0Kaiw7fszpEF8g32v91QUNoi8t9nTKmQg7Nv/8TvY9UgxHUswAM+Tl/C93s7uHQC2tKOxwZEo0a6XR2GX1XLGSQmbV7I4SZlrLZjB1S/6RbEmLtyolN3LzbyP1du5/7YiZNSNK9NhdKSho7bb58+2MLRUZZZuy5hRUypg0GhsNdonQQXKIjfCZT2Zkw8y+D1EudrOelpvtocids8M8oEIva30BNXyt4LUjc8HdtKsKNqbEJTVC4e2N2DJr2I+40FEoxpzPt6Xl5GsBnX5x4V8yLs2bSk/YHpdwe2xf8hnsJagbki8/Rv16+kEJ0f2952cOiy5MlDRjleoLnkcuG1k9bdKYRKb1m+g+cJ9K6b0tpB9nCE/sbLUVyGVsh+Q=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33e5995d-95b1-4f92-3d96-08d74079a485
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2019 22:59:08.9061
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TPNBrKCIXrsAa+EVnp/OTYJpkGTSGbjvCIPPXjdYnxmne8jU+a3l4UWNOMHz3NQGbFCI9ihe+A4PtU1jQfVj6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB6225
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
-are available in the Git repository at:
+> -----Original Message-----
+> From: Jason Wang <jasowang@redhat.com>
+> Sent: Monday, September 23, 2019 8:03 AM
+> To: kvm@vger.kernel.org; linux-s390@vger.kernel.org; linux-
+> kernel@vger.kernel.org; dri-devel@lists.freedesktop.org; intel-
+> gfx@lists.freedesktop.org; intel-gvt-dev@lists.freedesktop.org;
+> kwankhede@nvidia.com; alex.williamson@redhat.com; mst@redhat.com;
+> tiwei.bie@intel.com
+> Cc: virtualization@lists.linux-foundation.org; netdev@vger.kernel.org;
+> cohuck@redhat.com; maxime.coquelin@redhat.com;
+> cunming.liang@intel.com; zhihong.wang@intel.com;
+> rob.miller@broadcom.com; xiao.w.wang@intel.com;
+> haotian.wang@sifive.com; zhenyuw@linux.intel.com; zhi.a.wang@intel.com;
+> jani.nikula@linux.intel.com; joonas.lahtinen@linux.intel.com;
+> rodrigo.vivi@intel.com; airlied@linux.ie; daniel@ffwll.ch;
+> farman@linux.ibm.com; pasic@linux.ibm.com; sebott@linux.ibm.com;
+> oberpar@linux.ibm.com; heiko.carstens@de.ibm.com; gor@linux.ibm.com;
+> borntraeger@de.ibm.com; akrowiak@linux.ibm.com; freude@linux.ibm.com;
+> lingshan.zhu@intel.com; Ido Shamay <idos@mellanox.com>;
+> eperezma@redhat.com; lulu@redhat.com; Parav Pandit
+> <parav@mellanox.com>; Jason Wang <jasowang@redhat.com>
+> Subject: [PATCH 2/6] mdev: introduce device specific ops
+>=20
+> Currently, except for the create and remove. The rest of mdev_parent_ops =
+is
+> designed for vfio-mdev driver only and may not help for kernel mdev drive=
+r.
+> Follow the class id support by previous patch, this patch introduces devi=
+ce
+> specific ops pointer inside parent ops which points to device specific op=
+s (e.g
+> vfio ops). This allows the future drivers like virtio-mdev to implement i=
+ts own
+> device specific ops.
+>=20
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  .../driver-api/vfio-mediated-device.rst       |  4 +-
+>  MAINTAINERS                                   |  1 +
+>  drivers/gpu/drm/i915/gvt/kvmgt.c              | 15 +++---
+>  drivers/s390/cio/vfio_ccw_ops.c               | 15 ++++--
+>  drivers/s390/crypto/vfio_ap_ops.c             | 11 ++--
+>  drivers/vfio/mdev/vfio_mdev.c                 | 31 ++++++-----
+>  include/linux/mdev.h                          | 36 ++-----------
+>  include/linux/vfio_mdev.h                     | 53 +++++++++++++++++++
+>  samples/vfio-mdev/mbochs.c                    | 17 +++---
+>  samples/vfio-mdev/mdpy.c                      | 17 +++---
+>  samples/vfio-mdev/mtty.c                      | 15 ++++--
+>  11 files changed, 138 insertions(+), 77 deletions(-)  create mode 100644
+> include/linux/vfio_mdev.h
+>=20
+> diff --git a/Documentation/driver-api/vfio-mediated-device.rst
+> b/Documentation/driver-api/vfio-mediated-device.rst
+> index 0e052072e1d8..3ab00e48212f 100644
+> --- a/Documentation/driver-api/vfio-mediated-device.rst
+> +++ b/Documentation/driver-api/vfio-mediated-device.rst
+> @@ -152,7 +152,9 @@ callbacks per mdev parent device, per mdev type, or
+> any other categorization.
+>  Vendor drivers are expected to be fully asynchronous in this respect or
+> provide their own internal resource protection.)
+>=20
+> -The callbacks in the mdev_parent_ops structure are as follows:
+> +The device specific callbacks are referred through device_ops pointer
+> +in mdev_parent_ops. For vfio-mdev device, its callbacks in device_ops
+> +are as follows:
+>=20
+>  * open: open callback of mediated device
+>  * close: close callback of mediated device diff --git a/MAINTAINERS
+> b/MAINTAINERS index b2326dece28e..89832b316500 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -17075,6 +17075,7 @@ S:	Maintained
+>  F:	Documentation/driver-api/vfio-mediated-device.rst
+>  F:	drivers/vfio/mdev/
+>  F:	include/linux/mdev.h
+> +F:	include/linux/vfio_mdev.h
+>  F:	samples/vfio-mdev/
+>=20
+>  VFIO PLATFORM DRIVER
+> diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c
+> b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> index 19d51a35f019..8ea86b1e69f1 100644
+> --- a/drivers/gpu/drm/i915/gvt/kvmgt.c
+> +++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+> @@ -42,6 +42,7 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/vfio.h>
+>  #include <linux/mdev.h>
+> +#include <linux/vfio_mdev.h>
+>  #include <linux/debugfs.h>
+>=20
+>  #include <linux/nospec.h>
+> @@ -1600,20 +1601,22 @@ static const struct attribute_group
+> *intel_vgpu_groups[] =3D {
+>  	NULL,
+>  };
+>=20
+> -static struct mdev_parent_ops intel_vgpu_ops =3D {
+> -	.mdev_attr_groups       =3D intel_vgpu_groups,
+> -	.create			=3D intel_vgpu_create,
+> -	.remove			=3D intel_vgpu_remove,
+> -
+> +static struct vfio_mdev_parent_ops intel_vfio_vgpu_ops =3D {
+
+Naming it with _dev prefix as intel_vfio_vgpu_dev_ops is better to differen=
+tiate with parent_ops.
+
+>  	.open			=3D intel_vgpu_open,
+>  	.release		=3D intel_vgpu_release,
+> -
+>  	.read			=3D intel_vgpu_read,
+>  	.write			=3D intel_vgpu_write,
+>  	.mmap			=3D intel_vgpu_mmap,
+>  	.ioctl			=3D intel_vgpu_ioctl,
+>  };
+>=20
+> +static struct mdev_parent_ops intel_vgpu_ops =3D {
+> +	.mdev_attr_groups       =3D intel_vgpu_groups,
+> +	.create			=3D intel_vgpu_create,
+> +	.remove			=3D intel_vgpu_remove,
+> +	.device_ops	        =3D &intel_vfio_vgpu_ops,
+> +};
+> +
+>  static int kvmgt_host_init(struct device *dev, void *gvt, const void *op=
+s)  {
+>  	struct attribute **kvm_type_attrs;
+> diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_=
+ops.c
+> index 246ff0f80944..02122bbc213e 100644
+> --- a/drivers/s390/cio/vfio_ccw_ops.c
+> +++ b/drivers/s390/cio/vfio_ccw_ops.c
+> @@ -12,6 +12,7 @@
+>=20
+>  #include <linux/vfio.h>
+>  #include <linux/mdev.h>
+> +#include <linux/vfio_mdev.h>
+>  #include <linux/nospec.h>
+>  #include <linux/slab.h>
+>=20
+> @@ -574,11 +575,7 @@ static ssize_t vfio_ccw_mdev_ioctl(struct
+> mdev_device *mdev,
+>  	}
+>  }
+>=20
+> -static const struct mdev_parent_ops vfio_ccw_mdev_ops =3D {
+> -	.owner			=3D THIS_MODULE,
+> -	.supported_type_groups  =3D mdev_type_groups,
+> -	.create			=3D vfio_ccw_mdev_create,
+> -	.remove			=3D vfio_ccw_mdev_remove,
+> +static const struct vfio_mdev_parent_ops vfio_mdev_ops =3D {
+>  	.open			=3D vfio_ccw_mdev_open,
+>  	.release		=3D vfio_ccw_mdev_release,
+>  	.read			=3D vfio_ccw_mdev_read,
+> @@ -586,6 +583,14 @@ static const struct mdev_parent_ops
+> vfio_ccw_mdev_ops =3D {
+>  	.ioctl			=3D vfio_ccw_mdev_ioctl,
+>  };
+>=20
+> +static const struct mdev_parent_ops vfio_ccw_mdev_ops =3D {
+> +	.owner			=3D THIS_MODULE,
+> +	.supported_type_groups  =3D mdev_type_groups,
+> +	.create			=3D vfio_ccw_mdev_create,
+> +	.remove			=3D vfio_ccw_mdev_remove,
+> +	.device_ops		=3D &vfio_mdev_ops,
+> +};
+> +
+>  int vfio_ccw_mdev_reg(struct subchannel *sch)  {
+>  	return mdev_register_vfio_device(&sch->dev, &vfio_ccw_mdev_ops);
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c
+> b/drivers/s390/crypto/vfio_ap_ops.c
+> index 7487fc39d2c5..4251becc7a6d 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/kvm_host.h>
+>  #include <linux/module.h>
+> +#include <linux/vfio_mdev.h>
+>  #include <asm/kvm.h>
+>  #include <asm/zcrypt.h>
+>=20
+> @@ -1280,15 +1281,19 @@ static ssize_t vfio_ap_mdev_ioctl(struct
+> mdev_device *mdev,
+>  	return ret;
+>  }
+>=20
+> +static const struct vfio_mdev_parent_ops vfio_mdev_ops =3D {
+> +	.open			=3D vfio_ap_mdev_open,
+> +	.release		=3D vfio_ap_mdev_release,
+> +	.ioctl			=3D vfio_ap_mdev_ioctl,
+> +};
+> +
+>  static const struct mdev_parent_ops vfio_ap_matrix_ops =3D {
+>  	.owner			=3D THIS_MODULE,
+>  	.supported_type_groups	=3D vfio_ap_mdev_type_groups,
+>  	.mdev_attr_groups	=3D vfio_ap_mdev_attr_groups,
+>  	.create			=3D vfio_ap_mdev_create,
+>  	.remove			=3D vfio_ap_mdev_remove,
+> -	.open			=3D vfio_ap_mdev_open,
+> -	.release		=3D vfio_ap_mdev_release,
+> -	.ioctl			=3D vfio_ap_mdev_ioctl,
+> +	.device_ops		=3D &vfio_mdev_ops,
+>  };
+>=20
+>  int vfio_ap_mdev_register(void)
+> diff --git a/drivers/vfio/mdev/vfio_mdev.c b/drivers/vfio/mdev/vfio_mdev.=
+c
+> index fd2a4d9a3f26..d23c9f58c84f 100644
+> --- a/drivers/vfio/mdev/vfio_mdev.c
+> +++ b/drivers/vfio/mdev/vfio_mdev.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/vfio.h>
+>  #include <linux/mdev.h>
+> +#include <linux/vfio_mdev.h>
+>=20
+>  #include "mdev_private.h"
+>=20
+> @@ -25,15 +26,16 @@ static int vfio_mdev_open(void *device_data)  {
+>  	struct mdev_device *mdev =3D device_data;
+>  	struct mdev_parent *parent =3D mdev->parent;
+> +	const struct vfio_mdev_parent_ops *ops =3D parent->ops->device_ops;
+>  	int ret;
+>=20
+> -	if (unlikely(!parent->ops->open))
+> +	if (unlikely(!ops->open))
+>  		return -EINVAL;
+>=20
+device_ops is optional and can be NULL for mdev devices which are not requi=
+red to be mapped via vfio.
+So please change to,
+
+If (!ops || !ops->open)
+	return -EINVAL;
+
+and rest of the below places.
+
+>  	if (!try_module_get(THIS_MODULE))
+>  		return -ENODEV;
+>=20
+> -	ret =3D parent->ops->open(mdev);
+> +	ret =3D ops->open(mdev);
+>  	if (ret)
+>  		module_put(THIS_MODULE);
+>=20
+> @@ -44,9 +46,10 @@ static void vfio_mdev_release(void *device_data)  {
+>  	struct mdev_device *mdev =3D device_data;
+>  	struct mdev_parent *parent =3D mdev->parent;
+> +	const struct vfio_mdev_parent_ops *ops =3D parent->ops->device_ops;
+>=20
+> -	if (likely(parent->ops->release))
+> -		parent->ops->release(mdev);
+> +	if (likely(ops->release))
+> +		ops->release(mdev);
+>=20
+>  	module_put(THIS_MODULE);
+>  }
+> @@ -56,11 +59,12 @@ static long vfio_mdev_unlocked_ioctl(void
+> *device_data,  {
+>  	struct mdev_device *mdev =3D device_data;
+>  	struct mdev_parent *parent =3D mdev->parent;
+> +	const struct vfio_mdev_parent_ops *ops =3D parent->ops->device_ops;
+>=20
+> -	if (unlikely(!parent->ops->ioctl))
+> +	if (unlikely(!ops->ioctl))
+>  		return -EINVAL;
+>=20
+> -	return parent->ops->ioctl(mdev, cmd, arg);
+> +	return ops->ioctl(mdev, cmd, arg);
+>  }
+>=20
+>  static ssize_t vfio_mdev_read(void *device_data, char __user *buf, @@ -6=
+8,11
+> +72,12 @@ static ssize_t vfio_mdev_read(void *device_data, char __user *b=
+uf,
+> {
+>  	struct mdev_device *mdev =3D device_data;
+>  	struct mdev_parent *parent =3D mdev->parent;
+> +	const struct vfio_mdev_parent_ops *ops =3D parent->ops->device_ops;
+>=20
+> -	if (unlikely(!parent->ops->read))
+> +	if (unlikely(!ops->read))
+>  		return -EINVAL;
+>=20
+> -	return parent->ops->read(mdev, buf, count, ppos);
+> +	return ops->read(mdev, buf, count, ppos);
+>  }
+>=20
+>  static ssize_t vfio_mdev_write(void *device_data, const char __user *buf=
+, @@
+> -80,22 +85,24 @@ static ssize_t vfio_mdev_write(void *device_data, const =
+char
+> __user *buf,  {
+>  	struct mdev_device *mdev =3D device_data;
+>  	struct mdev_parent *parent =3D mdev->parent;
+> +	const struct vfio_mdev_parent_ops *ops =3D parent->ops->device_ops;
+>=20
+> -	if (unlikely(!parent->ops->write))
+> +	if (unlikely(!ops->write))
+>  		return -EINVAL;
+>=20
+> -	return parent->ops->write(mdev, buf, count, ppos);
+> +	return ops->write(mdev, buf, count, ppos);
+>  }
+>=20
+>  static int vfio_mdev_mmap(void *device_data, struct vm_area_struct *vma)=
+  {
+>  	struct mdev_device *mdev =3D device_data;
+>  	struct mdev_parent *parent =3D mdev->parent;
+> +	const struct vfio_mdev_parent_ops *ops =3D parent->ops->device_ops;
+>=20
+> -	if (unlikely(!parent->ops->mmap))
+> +	if (unlikely(!ops->mmap))
+>  		return -EINVAL;
+>=20
+> -	return parent->ops->mmap(mdev, vma);
+> +	return ops->mmap(mdev, vma);
+>  }
+>=20
+>  static const struct vfio_device_ops vfio_mdev_dev_ops =3D { diff --git
+> a/include/linux/mdev.h b/include/linux/mdev.h index
+> 3ebae310f599..fa167bcb81e1 100644
+> --- a/include/linux/mdev.h
+> +++ b/include/linux/mdev.h
+> @@ -48,30 +48,8 @@ struct device *mdev_get_iommu_device(struct device
+> *dev);
+>   *			@mdev: mdev_device device structure which is being
+>   *			       destroyed
+>   *			Returns integer: success (0) or error (< 0)
+> - * @open:		Open mediated device.
+> - *			@mdev: mediated device.
+> - *			Returns integer: success (0) or error (< 0)
+> - * @release:		release mediated device
+> - *			@mdev: mediated device.
+> - * @read:		Read emulation callback
+> - *			@mdev: mediated device structure
+> - *			@buf: read buffer
+> - *			@count: number of bytes to read
+> - *			@ppos: address.
+> - *			Retuns number on bytes read on success or error.
+> - * @write:		Write emulation callback
+> - *			@mdev: mediated device structure
+> - *			@buf: write buffer
+> - *			@count: number of bytes to be written
+> - *			@ppos: address.
+> - *			Retuns number on bytes written on success or error.
+> - * @ioctl:		IOCTL callback
+> - *			@mdev: mediated device structure
+> - *			@cmd: ioctl command
+> - *			@arg: arguments to ioctl
+> - * @mmap:		mmap callback
+> - *			@mdev: mediated device structure
+> - *			@vma: vma structure
+> + * @device_ops:         Device specific emulation callback.
+> + *
+>   * Parent device that support mediated device should be registered with =
+mdev
+>   * module with mdev_parent_ops structure.
+>   **/
+> @@ -83,15 +61,7 @@ struct mdev_parent_ops {
+>=20
+>  	int     (*create)(struct kobject *kobj, struct mdev_device *mdev);
+>  	int     (*remove)(struct mdev_device *mdev);
+> -	int     (*open)(struct mdev_device *mdev);
+> -	void    (*release)(struct mdev_device *mdev);
+> -	ssize_t (*read)(struct mdev_device *mdev, char __user *buf,
+> -			size_t count, loff_t *ppos);
+> -	ssize_t (*write)(struct mdev_device *mdev, const char __user *buf,
+> -			 size_t count, loff_t *ppos);
+> -	long	(*ioctl)(struct mdev_device *mdev, unsigned int cmd,
+> -			 unsigned long arg);
+> -	int	(*mmap)(struct mdev_device *mdev, struct vm_area_struct
+> *vma);
+> +	const void *device_ops;
+>  };
+>=20
+>  /* interface for exporting mdev supported type attributes */ diff --git
+> a/include/linux/vfio_mdev.h b/include/linux/vfio_mdev.h new file mode
+> 100644 index 000000000000..0c1b34f98f5d
+> --- /dev/null
+> +++ b/include/linux/vfio_mdev.h
+> @@ -0,0 +1,53 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * VFIO Mediated device definition
+> + */
+> +
+> +#ifndef VFIO_MDEV_H
+> +#define VFIO_MDEV_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/mdev.h>
+> +
+> +/**
+> + * struct vfio_mdev_parent_ops - Structure to be registered for each
+> + * parent device to register the device to vfio-mdev module.
+> + *
+> + * @open:		Open mediated device.
+> + *			@mdev: mediated device.
+> + *			Returns integer: success (0) or error (< 0)
+> + * @release:		release mediated device
+> + *			@mdev: mediated device.
+> + * @read:		Read emulation callback
+> + *			@mdev: mediated device structure
+> + *			@buf: read buffer
+> + *			@count: number of bytes to read
+> + *			@ppos: address.
+> + *			Retuns number on bytes read on success or error.
+> + * @write:		Write emulation callback
+> + *			@mdev: mediated device structure
+> + *			@buf: write buffer
+> + *			@count: number of bytes to be written
+> + *			@ppos: address.
+> + *			Retuns number on bytes written on success or error.
+> + * @ioctl:		IOCTL callback
+> + *			@mdev: mediated device structure
+> + *			@cmd: ioctl command
+> + *			@arg: arguments to ioctl
+> + * @mmap:		mmap callback
+> + *			@mdev: mediated device structure
+> + *			@vma: vma structure
+> + */
+> +struct vfio_mdev_parent_ops {
+> +	int     (*open)(struct mdev_device *mdev);
+> +	void    (*release)(struct mdev_device *mdev);
+> +	ssize_t (*read)(struct mdev_device *mdev, char __user *buf,
+> +			size_t count, loff_t *ppos);
+> +	ssize_t (*write)(struct mdev_device *mdev, const char __user *buf,
+> +			 size_t count, loff_t *ppos);
+> +	long	(*ioctl)(struct mdev_device *mdev, unsigned int cmd,
+> +			 unsigned long arg);
+> +	int	(*mmap)(struct mdev_device *mdev, struct vm_area_struct
+> *vma);
+> +};
+> +
+> +#endif
+> diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c inde=
+x
+> 71a4469be85d..107cc30d0f45 100644
+> --- a/samples/vfio-mdev/mbochs.c
+> +++ b/samples/vfio-mdev/mbochs.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/mdev.h>
+> +#include <linux/vfio_mdev.h>
+>  #include <linux/pci.h>
+>  #include <linux/dma-buf.h>
+>  #include <linux/highmem.h>
+> @@ -1418,12 +1419,7 @@ static struct attribute_group *mdev_type_groups[]
+> =3D {
+>  	NULL,
+>  };
+>=20
+> -static const struct mdev_parent_ops mdev_fops =3D {
+> -	.owner			=3D THIS_MODULE,
+> -	.mdev_attr_groups	=3D mdev_dev_groups,
+> -	.supported_type_groups	=3D mdev_type_groups,
+> -	.create			=3D mbochs_create,
+> -	.remove			=3D mbochs_remove,
+> +static const struct vfio_mdev_parent_ops vfio_mdev_ops =3D {
+>  	.open			=3D mbochs_open,
+>  	.release		=3D mbochs_close,
+>  	.read			=3D mbochs_read,
+> @@ -1432,6 +1428,15 @@ static const struct mdev_parent_ops mdev_fops =3D =
+{
+>  	.mmap			=3D mbochs_mmap,
+>  };
+>=20
+> +static const struct mdev_parent_ops mdev_fops =3D {
+> +	.owner			=3D THIS_MODULE,
+> +	.mdev_attr_groups	=3D mdev_dev_groups,
+> +	.supported_type_groups	=3D mdev_type_groups,
+> +	.create			=3D mbochs_create,
+> +	.remove			=3D mbochs_remove,
+> +	.device_ops		=3D &vfio_mdev_ops,
+> +};
+> +
+>  static const struct file_operations vd_fops =3D {
+>  	.owner		=3D THIS_MODULE,
+>  };
+> diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c index
+> d3029dd27d91..2cd2018a53f9 100644
+> --- a/samples/vfio-mdev/mdpy.c
+> +++ b/samples/vfio-mdev/mdpy.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/iommu.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/mdev.h>
+> +#include <linux/vfio_mdev.h>
+>  #include <linux/pci.h>
+>  #include <drm/drm_fourcc.h>
+>  #include "mdpy-defs.h"
+> @@ -725,12 +726,7 @@ static struct attribute_group *mdev_type_groups[] =
+=3D {
+>  	NULL,
+>  };
+>=20
+> -static const struct mdev_parent_ops mdev_fops =3D {
+> -	.owner			=3D THIS_MODULE,
+> -	.mdev_attr_groups	=3D mdev_dev_groups,
+> -	.supported_type_groups	=3D mdev_type_groups,
+> -	.create			=3D mdpy_create,
+> -	.remove			=3D mdpy_remove,
+> +static const struct vfio_mdev_parent_ops vfio_mdev_ops =3D {
+>  	.open			=3D mdpy_open,
+>  	.release		=3D mdpy_close,
+>  	.read			=3D mdpy_read,
+> @@ -739,6 +735,15 @@ static const struct mdev_parent_ops mdev_fops =3D {
+>  	.mmap			=3D mdpy_mmap,
+>  };
+>=20
+> +static const struct mdev_parent_ops mdev_fops =3D {
+> +	.owner			=3D THIS_MODULE,
+> +	.mdev_attr_groups	=3D mdev_dev_groups,
+> +	.supported_type_groups	=3D mdev_type_groups,
+> +	.create			=3D mdpy_create,
+> +	.remove			=3D mdpy_remove,
+> +	.device_ops		=3D &vfio_mdev_ops,
+> +};
+> +
+>  static const struct file_operations vd_fops =3D {
+>  	.owner		=3D THIS_MODULE,
+>  };
+> diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c index
+> 744c88a6b22c..e427425b5daf 100644
+> --- a/samples/vfio-mdev/mtty.c
+> +++ b/samples/vfio-mdev/mtty.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/ctype.h>
+>  #include <linux/file.h>
+>  #include <linux/mdev.h>
+> +#include <linux/vfio_mdev.h>
+>  #include <linux/pci.h>
+>  #include <linux/serial.h>
+>  #include <uapi/linux/serial_reg.h>
+> @@ -1410,6 +1411,14 @@ static struct attribute_group *mdev_type_groups[]
+> =3D {
+>  	NULL,
+>  };
+>=20
+> +static const struct vfio_mdev_parent_ops vfio_mdev_ops =3D {
+> +	.open                   =3D mtty_open,
+> +	.release                =3D mtty_close,
+> +	.read                   =3D mtty_read,
+> +	.write                  =3D mtty_write,
+> +	.ioctl		        =3D mtty_ioctl,
+> +};
+> +
+>  static const struct mdev_parent_ops mdev_fops =3D {
+>  	.owner                  =3D THIS_MODULE,
+>  	.dev_attr_groups        =3D mtty_dev_groups,
+> @@ -1417,11 +1426,7 @@ static const struct mdev_parent_ops mdev_fops =3D =
+{
+>  	.supported_type_groups  =3D mdev_type_groups,
+>  	.create                 =3D mtty_create,
+>  	.remove			=3D mtty_remove,
+> -	.open                   =3D mtty_open,
+> -	.release                =3D mtty_close,
+> -	.read                   =3D mtty_read,
+> -	.write                  =3D mtty_write,
+> -	.ioctl		        =3D mtty_ioctl,
+> +	.device_ops             =3D &vfio_mdev_ops,
+>  };
+>=20
+>  static void mtty_device_release(struct device *dev)
+> --
+> 2.19.1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v5.4-changes
-
-for you to fetch changes up to c5048a73b4770304699cb15e3ffcb97acab685f7:
-
-  Merge branch 'pci/trivial' (2019-09-23 16:10:31 -0500)
-
-----------------------------------------------------------------
-
-You should see minor conflicts in drivers/pci/Kconfig and
-drivers/pci/controller/pci-hyperv.c related to some changes merged via
-the net tree.
-
-
-Enumeration:
-
-  - Consolidate _HPP/_HPX stuff in pci-acpi.c and simplify it (Krzysztof
-    Wilczynski)
-
-  - Fix incorrect PCIe device types and remove dev->has_secondary_link to
-    simplify code that deals with upstream/downstream ports (Mika
-    Westerberg)
-
-  - After suspend, restore Resizable BAR size bits correctly for 1MB BARs
-    (Sumit Saxena)
-
-  - Enable PCI_MSI_IRQ_DOMAIN support for RISC-V (Wesley Terpstra)
-
-Virtualization:
-
-  - Add ACS quirks for iProc PAXB (Abhinav Ratna), Amazon Annapurna Labs
-    (Ali Saidi)
-
-  - Move sysfs SR-IOV functions to iov.c (Kelsey Skunberg)
-
-  - Remove group write permissions from sysfs sriov_numvfs,
-    sriov_drivers_autoprobe (Kelsey Skunberg)
-
-Hotplug:
-
-  - Simplify pciehp indicator control (Denis Efremov)
-
-Peer-to-peer DMA:
-
-  - Allow P2P DMA between root ports for whitelisted bridges (Logan
-    Gunthorpe)
-
-  - Whitelist some Intel host bridges for P2P DMA (Logan Gunthorpe)
-
-  - DMA map P2P DMA requests that traverse host bridge (Logan Gunthorpe)
-
-Amazon Annapurna Labs host bridge driver:
-
-  - Add DT binding and controller driver (Jonathan Chocron)
-
-Hyper-V host bridge driver:
-
-  - Fix hv_pci_dev->pci_slot use-after-free (Dexuan Cui)
-
-  - Fix PCI domain number collisions (Haiyang Zhang)
-
-  - Use instance ID bytes 4 & 5 as PCI domain numbers (Haiyang Zhang)
-
-  - Fix build errors on non-SYSFS config (Randy Dunlap)
-
-i.MX6 host bridge driver:
-
-  - Limit DBI register length (Stefan Agner)
-
-Intel VMD host bridge driver:
-
-  - Fix config addressing issues (Jon Derrick)
-
-Layerscape host bridge driver:
-
-  - Add bar_fixed_64bit property to endpoint driver (Xiaowei Bao)
-
-  - Add CONFIG_PCI_LAYERSCAPE_EP to build EP/RC drivers separately (Xiaowei
-    Bao)
-
-Mediatek host bridge driver:
-
-  - Add MT7629 controller support (Jianjun Wang)
-
-Mobiveil host bridge driver:
-
-  - Fix CPU base address setup (Hou Zhiqiang)
-
-  - Make "num-lanes" property optional (Hou Zhiqiang)
-
-Tegra host bridge driver:
-
-  - Fix OF node reference leak (Nishka Dasgupta)
-
-  - Disable MSI for root ports to work around design problem (Vidya Sagar)
-
-  - Add Tegra194 DT binding and controller support (Vidya Sagar)
-
-  - Add support for sideband pins and slot regulators (Vidya Sagar)
-
-  - Add PIPE2UPHY support (Vidya Sagar)
-
-Misc:
-
-  - Remove unused pci_block_cfg_access() et al (Kelsey Skunberg)
-
-  - Unexport pci_bus_get(), etc (Kelsey Skunberg)
-
-  - Hide PM, VC, link speed, ATS, ECRC, PTM constants and interfaces in the
-    PCI core (Kelsey Skunberg)
-
-  - Clean up sysfs DEVICE_ATTR() usage (Kelsey Skunberg)
-
-  - Mark expected switch fall-through (Gustavo A. R. Silva)
-
-  - Propagate errors for optional regulators and PHYs (Thierry Reding)
-
-  - Fix kernel command line resource_alignment parameter issues (Logan
-    Gunthorpe)
-
-
-----------------------------------------------------------------
-Abhinav Ratna (1):
-      PCI: Add ACS quirk for iProc PAXB
-
-Alexey Kardashevskiy (1):
-      PCI: Correct pci=resource_alignment parameter example
-
-Ali Saidi (1):
-      PCI: Add ACS quirk for Amazon Annapurna Labs root ports
-
-Bjorn Helgaas (21):
-      PCI: Fix typos and whitespace errors
-      PCI: pciehp: Refer to "Indicators" instead of "LEDs" in comments
-      Merge branch 'pci/aspm'
-      Merge branch 'pci/encapsulate'
-      Merge branch 'pci/enumeration'
-      Merge branch 'pci/misc'
-      Merge branch 'pci/msi'
-      Merge branch 'pci/p2pdma'
-      Merge branch 'pci/pciehp'
-      Merge branch 'pci/resource'
-      Merge branch 'remotes/lorenzo/pci/al'
-      Merge branch 'remotes/lorenzo/pci/dwc'
-      Merge branch 'remotes/lorenzo/pci/hv'
-      Merge branch 'remotes/lorenzo/pci/imx'
-      Merge branch 'remotes/lorenzo/pci/layerscape'
-      Merge branch 'remotes/lorenzo/pci/mediatek'
-      Merge branch 'remotes/lorenzo/pci/misc'
-      Merge branch 'remotes/lorenzo/pci/mobiveil'
-      Merge branch 'lorenzo/pci/tegra'
-      Merge branch 'remotes/lorenzo/pci/vmd'
-      Merge branch 'pci/trivial'
-
-Denis Efremov (6):
-      PCI: Convert pci_resource_to_user() to a weak function
-      PCI: Use PCI_SRIOV_NUM_BARS in loops instead of PCI_IOV_RESOURCE_END
-      PCI: pciehp: Add pciehp_set_indicators() to set both indicators
-      PCI: pciehp: Combine adjacent indicator updates
-      PCI: pciehp: Remove pciehp_set_attention_status()
-      PCI: pciehp: Remove pciehp_green_led_{on,off,blink}()
-
-Dexuan Cui (1):
-      PCI: hv: Avoid use of hv_pci_dev->pci_slot after freeing it
-
-Fuqian Huang (1):
-      PCI: Use devm_add_action_or_reset()
-
-Gustavo A. R. Silva (1):
-      PCI: Mark expected switch fall-through
-
-Haiyang Zhang (2):
-      PCI: hv: Detect and fix Hyper-V PCI domain number collision
-      PCI: hv: Use bytes 4 and 5 from instance ID as the PCI domain numbers
-
-Herbert Xu (1):
-      PCI: Add pci_irq_vector() and other stubs when !CONFIG_PCI
-
-Hou Zhiqiang (5):
-      PCI: mobiveil: Fix the CPU base address setup in inbound window
-      dt-bindings: PCI: designware: Remove the num-lanes from Required properties
-      PCI: dwc: Return directly when num-lanes is not found
-      ARM: dts: ls1021a: Remove num-lanes property from PCIe nodes
-      arm64: dts: fsl: Remove num-lanes property from PCIe nodes
-
-Jianjun Wang (2):
-      dt-bindings: PCI: Add support for MT7629
-      PCI: mediatek: Add controller support for MT7629
-
-Jon Derrick (2):
-      PCI: vmd: Fix config addressing when using bus offsets
-      PCI: vmd: Fix shadow offsets to reflect spec changes
-
-Jonathan Chocron (6):
-      PCI: Add Amazon's Annapurna Labs vendor ID
-      PCI/VPD: Prevent VPD access for Amazon's Annapurna Labs Root Port
-      PCI: Add quirk to disable MSI-X support for Amazon's Annapurna Labs Root Port
-      dt-bindings: PCI: Add Amazon's Annapurna Labs PCIe host bridge binding
-      PCI: dwc: al: Add Amazon Annapurna Labs PCIe controller driver
-      PCI: dwc: Add validation that PCIe core is set to correct mode
-
-Kelsey Skunberg (19):
-      PCI: Remove pci_block_cfg_access() et al (unused)
-      PCI: Unexport pci_bus_get() and pci_bus_put()
-      PCI: Unexport pci_bus_sem
-      PCI: Make PCI_PM_* delay times private
-      PCI: Make pci_check_pme_status(), pci_pme_wakeup_bus() private
-      PCI: Make pci_get_host_bridge_device(), pci_put_host_bridge_device() private
-      PCI: Make pci_save_vc_state(), pci_restore_vc_state(), etc private
-      PCI: Make pci_hotplug_io_size, mem_size, and bus_size private
-      PCI: Make pci_bus_get(), pci_bus_put() private
-      PCI: Make pcie_update_link_speed() private
-      PCI: Make pci_ats_init() private
-      PCI: Make pcie_set_ecrc_checking(), pcie_ecrc_get_policy() private
-      PCI: Make pci_enable_ptm() private
-      PCI: Make pci_set_of_node(), etc private
-      PCI: sysfs: Define device attributes with DEVICE_ATTR*()
-      PCI: sysfs: Change DEVICE_ATTR() to DEVICE_ATTR_WO()
-      PCI: sysfs: Change permissions from symbolic to octal
-      PCI/IOV: Move sysfs SR-IOV functions to iov.c
-      PCI/IOV: Remove group write permission from sriov_numvfs, sriov_drivers_autoprobe
-
-Krzysztof Wilczynski (7):
-      PCI: Move ASPM declarations to linux/pci.h
-      PCI/ACPI: Rename _HPX structs from hpp_* to hpx_*
-      PCI/ACPI: Move _HPP & _HPX functions to pci-acpi.c
-      PCI/ACPI: Remove unnecessary struct hotplug_program_ops
-      PCI: Remove unnecessary returns
-      PCI: Add pci_info_ratelimited() to ratelimit PCI separately
-      PCI: Use static const struct, not const static struct
-
-Logan Gunthorpe (17):
-      PCI/P2PDMA: Introduce private pagemap structure
-      PCI/P2PDMA: Add provider's pci_dev to pci_p2pdma_pagemap struct
-      PCI/P2PDMA: Add constants for map type results to upstream_bridge_distance()
-      PCI/P2PDMA: Factor out __upstream_bridge_distance()
-      PCI/P2PDMA: Apply host bridge whitelist for ACS
-      PCI/P2PDMA: Factor out host_bridge_whitelist()
-      PCI/P2PDMA: Whitelist some Intel host bridges
-      PCI/P2PDMA: Add attrs argument to pci_p2pdma_map_sg()
-      PCI/P2PDMA: Introduce pci_p2pdma_unmap_sg()
-      PCI/P2PDMA: Factor out __pci_p2pdma_map_sg()
-      PCI/P2PDMA: Store mapping method in an xarray
-      PCI/P2PDMA: dma_map() requests that traverse the host bridge
-      PCI/P2PDMA: Allow IOMMU for host bridge whitelist
-      PCI/P2PDMA: Update pci_p2pdma_distance_many() documentation
-      PCI: Clean up resource_alignment parameter to not require static buffer
-      PCI: Move pci_[get|set]_resource_alignment_param() into their callers
-      PCI: Force trailing new line to resource_alignment_param in sysfs
-
-Lorenzo Pieralisi (1):
-      MAINTAINERS: Add PCI native host/endpoint controllers designated reviewer
-
-Lubomir Rintel (1):
-      PCI: OF: Correct of_irq_parse_pci() documentation
-
-Mika Westerberg (2):
-      PCI: Make pcie_downstream_port() available outside of access.c
-      PCI: Get rid of dev->has_secondary_link flag
-
-Nishka Dasgupta (2):
-      PCI: tegra: Fix OF node reference leak
-      PCI: kirin: Make structure kirin_dw_pcie_ops constant
-
-Randy Dunlap (1):
-      PCI: pci-hyperv: Fix build errors on non-SYSFS config
-
-Stefan Agner (1):
-      PCI: imx6: Limit DBI register length
-
-Sumit Saxena (1):
-      PCI: Restore Resizable BAR size bits correctly for 1MB BARs
-
-Thierry Reding (6):
-      PCI: rockchip: Propagate errors for optional regulators
-      PCI: exynos: Propagate errors for optional PHYs
-      PCI: imx6: Propagate errors for optional regulators
-      PCI: armada8x: Propagate errors for optional PHYs
-      PCI: histb: Propagate errors for optional regulators
-      PCI: iproc: Propagate errors for optional PHYs
-
-Vidya Sagar (19):
-      PCI: Add #defines for some of PCIe spec r4.0 features
-      PCI: Disable MSI for Tegra root ports
-      PCI: dwc: Group DBI registers writes requiring unlocking
-      PCI: dwc: Move config space capability search API
-      PCI: dwc: Add extended configuration space capability search API
-      PCI: dwc: Export dw_pcie_wait_for_link() API
-      dt-bindings: PCI: designware: Add binding for CDM register check
-      PCI: dwc: Add support to enable CDM register check
-      dt-bindings: Add PCIe supports-clkreq property
-      dt-bindings: PCI: tegra: Add device tree support for Tegra194
-      dt-bindings: PHY: P2U: Add Tegra194 P2U block
-      phy: tegra: Add PCIe PIPE2UPHY support
-      PCI: tegra: Add Tegra194 PCIe support
-      dt-bindings: PCI: tegra: Add sideband pins configuration entries
-      dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
-      PCI: tegra: Add support to configure sideband pins
-      PCI: tegra: Add support to enable slot regulators
-      arm64: tegra: Add configuration for PCIe C5 sideband signals
-      arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
-
-Wesley Terpstra (1):
-      PCI/MSI: Enable PCI_MSI_IRQ_DOMAIN support for RISC-V
-
-Xiaowei Bao (2):
-      PCI: layerscape: Add the bar_fixed_64bit property to the endpoint driver
-      PCI: layerscape: Add CONFIG_PCI_LAYERSCAPE_EP to build EP/RC separately
-
- Documentation/admin-guide/kernel-parameters.txt    |    5 +-
- .../devicetree/bindings/pci/designware-pcie.txt    |    6 +-
- .../devicetree/bindings/pci/fsl,imx6q-pcie.txt     |    2 +-
- .../devicetree/bindings/pci/mediatek-pcie.txt      |    1 +
- .../bindings/pci/nvidia,tegra194-pcie.txt          |  171 ++
- .../devicetree/bindings/pci/pci-armada8k.txt       |    2 +-
- Documentation/devicetree/bindings/pci/pci.txt      |    5 +
- Documentation/devicetree/bindings/pci/pcie-al.txt  |   46 +
- .../devicetree/bindings/phy/phy-tegra194-p2u.txt   |   28 +
- MAINTAINERS                                        |    4 +-
- arch/arm/boot/dts/ls1021a.dtsi                     |    2 -
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi     |    1 -
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi     |    3 -
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi     |    6 -
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi     |    3 -
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi     |    4 -
- arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   24 +
- arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |    4 +-
- arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   38 +-
- arch/microblaze/include/asm/pci.h                  |    2 -
- arch/mips/include/asm/pci.h                        |    1 -
- arch/powerpc/include/asm/pci.h                     |    2 -
- arch/sparc/include/asm/pci.h                       |    2 -
- drivers/acpi/pci_root.c                            |    1 -
- drivers/char/xillybus/xillybus_pcie.c              |    1 -
- drivers/infiniband/core/rw.c                       |    6 +-
- drivers/net/ethernet/intel/e1000e/e1000.h          |    1 -
- drivers/net/ethernet/jme.c                         |    1 -
- drivers/net/ethernet/realtek/r8169_main.c          |    1 -
- drivers/net/wireless/ath/ath5k/pci.c               |    1 -
- drivers/net/wireless/intel/iwlegacy/3945-mac.c     |    1 -
- drivers/net/wireless/intel/iwlegacy/4965-mac.c     |    1 -
- drivers/net/wireless/intel/iwlwifi/pcie/trans.c    |    1 -
- drivers/nvme/host/pci.c                            |   10 +-
- drivers/pci/Kconfig                                |    6 +-
- drivers/pci/access.c                               |    9 -
- drivers/pci/bus.c                                  |    2 -
- drivers/pci/controller/dwc/Kconfig                 |   42 +-
- drivers/pci/controller/dwc/Makefile                |    4 +-
- drivers/pci/controller/dwc/pci-exynos.c            |    2 +-
- drivers/pci/controller/dwc/pci-imx6.c              |   37 +-
- drivers/pci/controller/dwc/pci-layerscape-ep.c     |    1 +
- drivers/pci/controller/dwc/pcie-al.c               |  365 +++++
- drivers/pci/controller/dwc/pcie-armada8k.c         |    7 +-
- drivers/pci/controller/dwc/pcie-designware-ep.c    |   45 +-
- drivers/pci/controller/dwc/pcie-designware-host.c  |   30 +-
- drivers/pci/controller/dwc/pcie-designware.c       |   96 +-
- drivers/pci/controller/dwc/pcie-designware.h       |   12 +
- drivers/pci/controller/dwc/pcie-histb.c            |    4 +-
- drivers/pci/controller/dwc/pcie-kirin.c            |    2 +-
- drivers/pci/controller/dwc/pcie-tegra194.c         | 1732 ++++++++++++++++++++
- drivers/pci/controller/pci-host-common.c           |    3 +-
- drivers/pci/controller/pci-hyperv.c                |   94 +-
- drivers/pci/controller/pci-tegra.c                 |   22 +-
- drivers/pci/controller/pcie-iproc-platform.c       |    9 +-
- drivers/pci/controller/pcie-mediatek.c             |   20 +-
- drivers/pci/controller/pcie-mobiveil.c             |   10 +-
- drivers/pci/controller/pcie-rockchip-host.c        |   16 +-
- drivers/pci/controller/vmd.c                       |   25 +-
- drivers/pci/hotplug/cpci_hotplug_core.c            |    1 -
- drivers/pci/hotplug/cpqphp_core.c                  |    1 -
- drivers/pci/hotplug/cpqphp_ctrl.c                  |    4 -
- drivers/pci/hotplug/cpqphp_nvram.h                 |    5 +-
- drivers/pci/hotplug/ibmphp_res.c                   |    1 +
- drivers/pci/hotplug/pciehp.h                       |   11 +-
- drivers/pci/hotplug/pciehp_core.c                  |    9 +-
- drivers/pci/hotplug/pciehp_ctrl.c                  |   39 +-
- drivers/pci/hotplug/pciehp_hpc.c                   |   87 +-
- drivers/pci/hotplug/rpadlpar_core.c                |    1 -
- drivers/pci/hotplug/rpaphp_core.c                  |    1 -
- drivers/pci/iov.c                                  |  171 +-
- drivers/pci/of.c                                   |    2 +-
- drivers/pci/p2pdma.c                               |  374 +++--
- drivers/pci/pci-acpi.c                             |  410 ++++-
- drivers/pci/pci-bridge-emul.c                      |    4 +-
- drivers/pci/pci-sysfs.c                            |  223 +--
- drivers/pci/pci.c                                  |   87 +-
- drivers/pci/pci.h                                  |   68 +-
- drivers/pci/pcie/aspm.c                            |    9 +-
- drivers/pci/pcie/err.c                             |    2 +-
- drivers/pci/probe.c                                |  326 +---
- drivers/pci/quirks.c                               |  106 +-
- drivers/pci/search.c                               |    1 -
- drivers/pci/setup-bus.c                            |    4 +-
- drivers/pci/vc.c                                   |    5 +-
- drivers/pci/vpd.c                                  |    6 +
- drivers/phy/tegra/Kconfig                          |    7 +
- drivers/phy/tegra/Makefile                         |    1 +
- drivers/phy/tegra/phy-tegra194-p2u.c               |  120 ++
- drivers/scsi/aacraid/linit.c                       |    1 -
- drivers/scsi/hpsa.c                                |    1 -
- drivers/scsi/mpt3sas/mpt3sas_scsih.c               |    1 -
- include/linux/memremap.h                           |    1 -
- include/linux/pci-aspm.h                           |   36 -
- include/linux/pci-p2pdma.h                         |   28 +-
- include/linux/pci.h                                |  133 +-
- include/linux/pci_hotplug.h                        |  100 --
- include/linux/pci_ids.h                            |    3 +
- include/uapi/linux/pci_regs.h                      |   15 +-
- 99 files changed, 4201 insertions(+), 1186 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/pcie-al.txt
- create mode 100644 Documentation/devicetree/bindings/phy/phy-tegra194-p2u.txt
- create mode 100644 drivers/pci/controller/dwc/pcie-tegra194.c
- create mode 100644 drivers/phy/tegra/phy-tegra194-p2u.c
- delete mode 100644 include/linux/pci-aspm.h
