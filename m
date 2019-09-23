@@ -2,132 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C347BB4E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 15:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4956DBB4E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 15:06:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395453AbfIWNFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 09:05:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:42112 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395406AbfIWNFy (ORCPT
+        id S2395562AbfIWNGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 09:06:09 -0400
+Received: from regular1.263xmail.com ([211.150.70.201]:51890 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730313AbfIWNGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 09:05:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KK5CweoZFmTboyAVRkA3uCBmCg9UBP82hZtoihTcpvs=; b=uaC4XjbGqGx/N525LJnotE1lw
-        Bh1Jj6OtGqlRFKF+Ss5FkhC4BEYrUKjOOmaN0ameuMUk1oEmxEXQQCwOE0/oLNn1O0DAEL2yZXt4H
-        8wfog6n8GV1XGpKm3JEjBRYnOFhhOKGHLLrj3qfWA8HGxQiveAPAsZTzIbHPOdKgAX/5AZ1k3cHp4
-        1Quuej74g5WKD7zij60AkD2A3Pj4mp2MKz+G2zx/YY2IoO9AFlibSDYJNFvx9iPCUXCmXY7Mj/A08
-        WB05TEPgzeIQYqaWv92FYu2L9ERfBoGd2IQoE51iwbXGN+KsUxZTZdoePOMEbnngjpuTAwat5G3wF
-        Juc4PYIkw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCO1p-0003U9-It; Mon, 23 Sep 2019 13:05:22 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 40DD6301A7A;
-        Mon, 23 Sep 2019 15:04:34 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 65FA620C3E177; Mon, 23 Sep 2019 15:05:19 +0200 (CEST)
-Date:   Mon, 23 Sep 2019 15:05:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yunfeng Cui <cui.yunfeng@zte.com.cn>
-Cc:     christian@brauner.io, keescook@chromium.org, luto@amacapital.net,
-        wad@chromium.org, akpm@linux-foundation.org, mingo@kernel.org,
-        mhocko@suse.com, elena.reshetova@intel.com, aarcange@redhat.com,
-        ldv@altlinux.org, arunks@codeaurora.org, guro@fb.com,
-        joel@joelfernandes.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, jiang.xuexin@zte.com.cn,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] futex: robust futex maybe never be awaked, on rare
- situation.
-Message-ID: <20190923130519.GH2332@hirez.programming.kicks-ass.net>
-References: <1569208700-24044-1-git-send-email-cui.yunfeng@zte.com.cn>
+        Mon, 23 Sep 2019 09:06:09 -0400
+Received: from hjc?rock-chips.com (unknown [192.168.167.76])
+        by regular1.263xmail.com (Postfix) with ESMTP id 774492D6;
+        Mon, 23 Sep 2019 21:05:26 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.10.69] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P32760T140634052613888S1569243921745443_;
+        Mon, 23 Sep 2019 21:05:24 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <0b6fdb288fe78861d4a4f870d3f2f563>
+X-RL-SENDER: hjc@rock-chips.com
+X-SENDER: hjc@rock-chips.com
+X-LOGIN-NAME: hjc@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH 01/36] drm/fourcc: Add 2 plane YCbCr 10bit format support
+To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+References: <1569242365-182133-1-git-send-email-hjc@rock-chips.com>
+ <1569242365-182133-2-git-send-email-hjc@rock-chips.com>
+ <20190923125314.GJ1208@intel.com>
+From:   "sandy.huang" <hjc@rock-chips.com>
+Message-ID: <82664d48-36de-15fd-3b30-a12907e5bfcd@rock-chips.com>
+Date:   Mon, 23 Sep 2019 06:05:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1569208700-24044-1-git-send-email-cui.yunfeng@zte.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190923125314.GJ1208@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 11:18:20AM +0800, Yunfeng Cui wrote:
-> I use model checker find a issue of robust and pi futex. On below
-> situation, the owner can't find something in pi_state_list, while
-> the requester will be blocked, never be awaked.
-> 
-> CPU0                       CPU1
->                            futex_lock_pi
->                            /*some cs code*/
-> futex_lock_pi
->   futex_lock_pi_atomic
->     ...
->     newval = uval | FUTEX_WAITERS;
->     ret = lock_pi_update_atomic(uaddr, uval, newval);
->     ...
->     attach_to_pi_owner
->      ....
->      p = find_get_task_by_vpid(pid);
->      if (!p)
->        return handle_exit_race(uaddr, uval, NULL);
->        ....
->        raw_spin_lock_irq(&p->pi_lock);
->        ....
->        pi_state = alloc_pi_state();
->        ....
->                            do_exit->mm_release
->                            if (unlikely(tsk->robust_list)) {
->                              exit_robust_list(tsk);
->                              tsk->robust_list = NULL;
->                            }
->                            if (unlikely(!list_empty(&tsk->pi_state_list)))
->                              exit_pi_state_list(tsk); /*WILL MISS*/
->       list_add(&pi_state->list, &p->pi_state_list);
->     WILL BLOCKED, NEVER WAKEUP!
 
-Did you forget/overlook the pi_lock fiddling in do_exit() ? I'm thinking
-that would make the above impossible.
+在 2019/9/23 上午5:53, Ville Syrjälä 写道:
+> On Mon, Sep 23, 2019 at 08:38:50PM +0800, Sandy Huang wrote:
+>> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+>> index 3feeaa3..5fe89e9 100644
+>> --- a/include/uapi/drm/drm_fourcc.h
+>> +++ b/include/uapi/drm/drm_fourcc.h
+>> @@ -266,6 +266,21 @@ extern "C" {
+>>   #define DRM_FORMAT_P016		fourcc_code('P', '0', '1', '6') /* 2x2 subsampled Cr:Cb plane 16 bits per channel */
+>>   
+>>   /*
+>> + * 2 plane YCbCr 10bit
+>> + * index 0 = Y plane, [9:0] Y
+>> + * index 1 = Cr:Cb plane, [19:0] Cr:Cb little endian
+>> + * or
+>> + * index 1 = Cb:Cr plane, [19:0] Cb:Cr little endian
+> What does "little endian" even mean for these?
 
-> Signed-off-by: Yunfeng Cui <cui.yunfeng@zte.com.cn>
-> Reviewed-by: Bo Wang <wang.bo116@zte.com.cn>
-> Reviewed-by: Yi Wang <wang.yi59@zte.com.cn>
-> ---
->  kernel/fork.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 53e780748fe3..58b90f21dac4 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1277,15 +1277,16 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
->  	if (unlikely(tsk->robust_list)) {
->  		exit_robust_list(tsk);
->  		tsk->robust_list = NULL;
-> +		/*Check pi_state_list of task on pi_lock be acquired*/
-> +		exit_pi_state_list(tsk);
->  	}
->  #ifdef CONFIG_COMPAT
->  	if (unlikely(tsk->compat_robust_list)) {
->  		compat_exit_robust_list(tsk);
->  		tsk->compat_robust_list = NULL;
-> +		exit_pi_state_list(tsk);
->  	}
->  #endif
-> -	if (unlikely(!list_empty(&tsk->pi_state_list)))
-> -		exit_pi_state_list(tsk);
->  #endif
+It's Inherited from the following define, the difference is 8bit and 10bit.
 
-I'm also thinking this breaks all sorts by not unconditionally calling
-exit_pi_state_list(). Specifically, it could leak PI-state for !robust
-futexes.
+/*
+  * 2 plane YCbCr
+  * index 0 = Y plane, [7:0] Y
+  * index 1 = Cr:Cb plane, [15:0] Cr:Cb little endian
+  * or
+  * index 1 = Cb:Cr plane, [15:0] Cb:Cr little endian
+  */
+#define DRM_FORMAT_NV12        fourcc_code('N', 'V', '1', '2') /* 2x2 
+subsampled Cr:Cb plane */
+#define DRM_FORMAT_NV21        fourcc_code('N', 'V', '2', '1') /* 2x2 
+subsampled Cb:Cr plane */
+#define DRM_FORMAT_NV16        fourcc_code('N', 'V', '1', '6') /* 2x1 
+subsampled Cr:Cb plane */
+#define DRM_FORMAT_NV61        fourcc_code('N', 'V', '6', '1') /* 2x1 
+subsampled Cb:Cr plane */
+#define DRM_FORMAT_NV24        fourcc_code('N', 'V', '2', '4') /* 
+non-subsampled Cr:Cb plane */
+#define DRM_FORMAT_NV42        fourcc_code('N', 'V', '4',
 
->  
->  	uprobe_free_utask(tsk);
+
+>
+>> + */
+>> +
+>> +#define DRM_FORMAT_NV12_10	fourcc_code('N', 'A', '1', '2') /* 2x2 subsampled Cr:Cb plane */
+>> +#define DRM_FORMAT_NV21_10	fourcc_code('N', 'A', '2', '1') /* 2x2 subsampled Cb:Cr plane */
+>> +#define DRM_FORMAT_NV16_10	fourcc_code('N', 'A', '1', '6') /* 2x1 subsampled Cr:Cb plane */
+>> +#define DRM_FORMAT_NV61_10	fourcc_code('N', 'A', '6', '1') /* 2x1 subsampled Cb:Cr plane */
+>> +#define DRM_FORMAT_NV24_10	fourcc_code('N', 'A', '2', '4') /* non-subsampled Cr:Cb plane */
+>> +#define DRM_FORMAT_NV42_10	fourcc_code('N', 'A', '4', '2') /* non-subsampled Cb:Cr plane */
+>> +
+>> +/*
+>>    * 3 plane YCbCr
+>>    * index 0: Y plane, [7:0] Y
+>>    * index 1: Cb plane, [7:0] Cb
+>> -- 
+>> 2.7.4
+>>
+>>
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
