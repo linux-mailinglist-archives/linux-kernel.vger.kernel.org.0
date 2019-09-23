@@ -2,161 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DCFEBBC34
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 844A9BBC40
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:27:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733238AbfIWTXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 15:23:12 -0400
-Received: from mga06.intel.com ([134.134.136.31]:39669 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728032AbfIWTXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:23:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 12:23:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,541,1559545200"; 
-   d="scan'208";a="193192367"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 23 Sep 2019 12:23:10 -0700
-Date:   Mon, 23 Sep 2019 12:27:15 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jacob.jun.pan@linux.intel.com
-Subject: Re: [RFC PATCH 0/4] Use 1st-level for DMA remapping in guest
-Message-ID: <20190923122715.53de79d0@jacob-builder>
-In-Reply-To: <20190923122454.9888-1-baolu.lu@linux.intel.com>
-References: <20190923122454.9888-1-baolu.lu@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728181AbfIWT1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 15:27:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46594 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfIWT1p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 15:27:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WVIoWsK1jLddXUNnNoYLXIn98UncMl2WWv8vMlp/XIk=; b=OywFVHdH1BOWczhEITQgThKZe9
+        9zDCC7HcqNpHuoK6lYmTjN3eGfXsZTTslsujszPktBq/thH2ie9UKgYC4ViVRYhO+GDpxr9PWwSJu
+        kq6nQasdPh5kZRa1G3feP8NgWjooaKidJ4ADPRnIbVq7+8srsVyt7HhPrEfp9/6lDGF/dzKTn7HPx
+        caVqvuYddK4QkPuPkWcmR1nmMkcYbBjH0C5oxhFbEKZDWH6+0BYrkkEppVIl7ApewJsjnSEu1zc7K
+        QAH3N8VDLEv7F0aAgFKDdoys9QrO/4mDzyufT4HIX+sZtN+WD5wcoIC0bkQkD90grtxZxmgkutfpf
+        erJdb5iA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCTzs-0006Vf-BA; Mon, 23 Sep 2019 19:27:44 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CEFA7305E42;
+        Mon, 23 Sep 2019 21:26:56 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1685820C3E177; Mon, 23 Sep 2019 21:27:42 +0200 (CEST)
+Date:   Mon, 23 Sep 2019 21:27:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@redhat.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] sched/wait: Add wait_threshold
+Message-ID: <20190923192742.GH2369@hirez.programming.kicks-ass.net>
+References: <cover.1569139018.git.asml.silence@gmail.com>
+ <d99ce2f7c98d4408aea50f515bbb6b89bc7850e8.1569139018.git.asml.silence@gmail.com>
+ <20190923071932.GD2349@hirez.programming.kicks-ass.net>
+ <3e359937-5b19-8a4c-4243-ba2edff68504@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3e359937-5b19-8a4c-4243-ba2edff68504@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baolu,
 
-On Mon, 23 Sep 2019 20:24:50 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?
 
-> This patchset aims to move IOVA (I/O Virtual Address) translation
-> to 1st-level page table under scalable mode. The major purpose of
-> this effort is to make guest IOVA support more efficient.
-> 
-> As Intel VT-d architecture offers caching-mode, guest IOVA (GIOVA)
-> support is now implemented in a shadow page manner. The device
-> simulation software, like QEMU, has to figure out GIOVA->GPA mapping
-> and writes to a shadowed page table, which will be used by pIOMMU.
-> Each time when mappings are created or destroyed in vIOMMU, the
-> simulation software will intervene. The change on GIOVA->GPA will be
-> shadowed to host, and the pIOMMU will be updated via VFIO/IOMMU
-> interfaces.
-> 
-> 
->      .-----------.
->      |  vIOMMU   |
->      |-----------|                 .--------------------.
->      |           |IOTLB flush trap |        QEMU        |
->      .-----------. (map/unmap)     |--------------------|
->      | GVA->GPA  |---------------->|      .----------.  |
->      '-----------'                 |      | GPA->HPA |  |
->      |           |                 |      '----------'  |
->      '-----------'                 |                    |
->                                    |                    |
->                                    '--------------------'
->                                                 |
->             <------------------------------------
->             |
->             v VFIO/IOMMU API
->       .-----------.
->       |  pIOMMU   |
->       |-----------|
->       |           |
->       .-----------.
->       | GVA->HPA  |
->       '-----------'
->       |           |
->       '-----------'
-> 
-> In VT-d 3.0, scalable mode is introduced, which offers two level
-> translation page tables and nested translation mode. Regards to
-> GIOVA support, it can be simplified by 1) moving the GIOVA support
-> over 1st-level page table to store GIOVA->GPA mapping in vIOMMU,
-> 2) binding vIOMMU 1st level page table to the pIOMMU, 3) using pIOMMU
-> second level for GPA->HPA translation, and 4) enable nested (a.k.a.
-> dual stage) translation in host. Compared with current shadow GIOVA
-> support, the new approach is more secure and software is simplified
-> as we only need to flush the pIOMMU IOTLB and possible device-IOTLB
-> when an IOVA mapping in vIOMMU is torn down.
-> 
->      .-----------.
->      |  vIOMMU   |
->      |-----------|                 .-----------.
->      |           |IOTLB flush trap |   QEMU    |
->      .-----------.    (unmap)      |-----------|
->      | GVA->GPA  |---------------->|           |
->      '-----------'                 '-----------'
->      |           |                       |
->      '-----------'                       |
->            <------------------------------
->            |      VFIO/IOMMU          
->            |  cache invalidation and  
->            | guest gpd bind interfaces
->            v
-For vSVA, the guest PGD bind interface will mark the PASID as guest
-PASID and will inject page request into the guest. In FL gIOVA case, I
-guess we are assuming there is no page fault for GIOVA. I will need to
-add a flag in the gpgd bind such that any PRS will be auto responded
-with invalid.
+On Mon, Sep 23, 2019 at 07:37:46PM +0300, Pavel Begunkov wrote:
+> Just in case duplicating a mail from the cover-letter thread:
 
-Also, native use of IOVA FL map is not to be supported? i.e. IOMMU API
-and DMA API for native usage will continue to be SL only?
->      .-----------.
->      |  pIOMMU   |
->      |-----------|
->      .-----------.
->      | GVA->GPA  |<---First level
->      '-----------'
->      | GPA->HPA  |<---Scond level
->      '-----------'
->      '-----------'
-> 
-> This patch series only aims to achieve the first goal, a.k.a using
-> first level translation for IOVA mappings in vIOMMU. I am sending
-> it out for your comments. Any comments, suggestions and concerns are
-> welcomed.
-> 
+Just because every patch should have a self contained and coherent
+Changelog.
+
+> It could be done with @cond indeed, that's how it works for now.
+> However, this addresses performance issues only.
+>=20
+> The problem with wait_event_*() is that, if we have a counter and are
+> trying to wake up tasks after each increment, it would schedule each
+> waiting task O(threshold) times just for it to spuriously check @cond
+> and go back to sleep. All that overhead (memory barriers, registers
+> save/load, accounting, etc) turned out to be enough for some workloads
+> to slow down the system.
+>=20
+> With this specialisation it still traverses a wait list and makes
+> indirect calls to the checker callback, but the list supposedly is
+> fairly  small, so performance there shouldn't be a problem, at least for
+> now.
+>=20
+> Regarding semantics; It should wake a task when a value passed to
+> wake_up_threshold() is greater or equal then a task's threshold, that is
+> specified individually for each task in wait_threshold_*().
+>=20
+> In pseudo code:
+> ```
+> def wake_up_threshold(n, wait_queue):
+> 	for waiter in wait_queue:
+> 		waiter.wake_up_if(n >=3D waiter.threshold);
+> ```
+>=20
+> Any thoughts how to do it better? Ideas are very welcome.
+>=20
+> BTW, this monster is mostly a copy-paste from wait_event_*(),
+> wait_bit_*(). We could try to extract some common parts from these
+> three, but that's another topic.
+
+I don't think that is another topic at all. It is a quality of
+implementation issue. We already have too many copies of all that (3).
+
+So basically you want to fudge the wake function to do the/a @cond test,
+not unlike what wait_bit already does, but differenly.
+
+I'm really rather annoyed with C for not having proper lambda functions;
+that would make all this so much easier. Anyway, let me have a poke at
+this in the morning, it's late already.
+
+Also, is anything actually using wait_queue_entry::private ? I'm
+not finding any in a hurry.
 
 
-> Based-on-idea-by: Ashok Raj <ashok.raj@intel.com>
-> Based-on-idea-by: Kevin Tian <kevin.tian@intel.com>
-> Based-on-idea-by: Liu Yi L <yi.l.liu@intel.com>
-> Based-on-idea-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Based-on-idea-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
-> 
-> Lu Baolu (4):
->   iommu/vt-d: Move domain_flush_cache helper into header
->   iommu/vt-d: Add first level page table interfaces
->   iommu/vt-d: Map/unmap domain with mmmap/mmunmap
->   iommu/vt-d: Identify domains using first level page table
-> 
->  drivers/iommu/Makefile             |   2 +-
->  drivers/iommu/intel-iommu.c        | 142 ++++++++++--
->  drivers/iommu/intel-pgtable.c      | 342
-> +++++++++++++++++++++++++++++ include/linux/intel-iommu.h        |
-> 31 ++- include/trace/events/intel_iommu.h |  60 +++++
->  5 files changed, 553 insertions(+), 24 deletions(-)
->  create mode 100644 drivers/iommu/intel-pgtable.c
-> 
-
-[Jacob Pan]
