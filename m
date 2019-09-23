@@ -2,157 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E874BB0F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7610FBB102
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731727AbfIWJHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 05:07:43 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34837 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727392AbfIWJHm (ORCPT
+        id S1732006AbfIWJI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 05:08:56 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:50864 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731943AbfIWJIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 05:07:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1569229661;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=T8T8RjJYcGGqEc0WFaCwZbXoPKLFlizfkrKrigbsteU=;
-        b=A535mhzS3PlFDWKRvfzViQAeeoRcUXJ7n9ERbVNRp/m9N7IvJDcZwVLcMwS1RDuE6YIs9P
-        NiHZ6raC5AmQcTY8b+MBDpP2sJiTOvsd2JcPo9bSlO4kiH1LvZ8dkCMVKFUyIB67kIarCd
-        4qzghlZ6/ROt3jCY1xkgW+2RKhwa+bQ=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-88-vslaCADiPbCjmOoldbpv0w-1; Mon, 23 Sep 2019 05:07:40 -0400
-Received: by mail-ed1-f72.google.com with SMTP id k5so5632573edx.13
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 02:07:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z5+JUdEcNbNbYnUHKbmarfCuTHHHOe0SmXNsWUScQrU=;
-        b=lafCcVnApHCQLDiQ8QDR7YrMZ9Zgbpe8W5qZAJjo1jA/ORTyaOFioQwd7HxLNeG+xw
-         VOT6x+D4nmBw0DF4iNRJEpv9oS30BnYm2ay/qllD3c083ou1eJq+78pe3aafgs9GebSo
-         o4f0a0T43p9jx7ucFrq5u2JaPZhBc2nCWYYvHrklv+iXkhGRf9Zr5niStjPItd+erzO4
-         zQQHEH9VUQjf3cEB/AwhQZMThOd6yFIpZ8yhCS/gSggGuxN2BJePXCiUfKylz9x0wM/2
-         Exwy0tQUfA119aLhhEUFFLD/JqPu0OgQHy5YB/wb+uO6tchZv3yV66mvMH3DtumDQuIq
-         NaKw==
-X-Gm-Message-State: APjAAAV36mbr2xoCqM79MkX51avq65C1TxYZj20HLPkBL5I4Vp55vNeL
-        plYIGP92SgJB2sLK26Dhnkf7CDPzR7wrvUCKzjNcFFE+gDi1F8xqnI9EPtXW0XJ0pjcUcBhYUei
-        Hi4BUmFDu8fE8JLsnjYVWhati
-X-Received: by 2002:a50:fc0c:: with SMTP id i12mr34693069edr.82.1569229659513;
-        Mon, 23 Sep 2019 02:07:39 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyCzq+l6MJPGlCUee90zOAQDFcFCUx0OtBxlJM4Nzjg7r/Nu6TdCyo4uiEsmUp7Cb5ztI+lUw==
-X-Received: by 2002:a50:fc0c:: with SMTP id i12mr34693051edr.82.1569229659394;
-        Mon, 23 Sep 2019 02:07:39 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id s16sm2244451edd.39.2019.09.23.02.07.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2019 02:07:38 -0700 (PDT)
-Subject: Re: [PATCH] ata: libahci_platform: Use common error handling code in
- ahci_platform_get_resources()
-To:     Markus Elfring <Markus.Elfring@web.de>, linux-ide@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <6ca97aeb-0892-ed0e-a149-b25848adf324@web.de>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <7463a1d5-e76f-99a6-5a1e-f9477da3c1da@redhat.com>
-Date:   Mon, 23 Sep 2019 11:07:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Mon, 23 Sep 2019 05:08:54 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 03979634C87;
+        Mon, 23 Sep 2019 12:07:52 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1iCKK0-0002AD-TH; Mon, 23 Sep 2019 12:07:52 +0300
+Date:   Mon, 23 Sep 2019 12:07:52 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     mchehab@kernel.org, robh+dt@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        c.barrett@framos.com, a.brela@framos.com
+Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add entry for IMX290 CMOS image
+ sensor driver
+Message-ID: <20190923090752.GK5525@valkosipuli.retiisi.org.uk>
+References: <20190830091943.22646-1-manivannan.sadhasivam@linaro.org>
+ <20190830091943.22646-4-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <6ca97aeb-0892-ed0e-a149-b25848adf324@web.de>
-Content-Language: en-US
-X-MC-Unique: vslaCADiPbCjmOoldbpv0w-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190830091943.22646-4-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 22-09-2019 15:55, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Sun, 22 Sep 2019 15:42:46 +0200
->=20
-> Convert the call of the function =E2=80=9Cof_node_put=E2=80=9D to another=
- jump target
-> so that it can be better reused at three places in this function.
->=20
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
+On Fri, Aug 30, 2019 at 02:49:43PM +0530, Manivannan Sadhasivam wrote:
+> Add MAINTAINERS entry for Sony IMX290 CMOS image sensor driver.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->   drivers/ata/libahci_platform.c | 17 +++++++----------
->   1 file changed, 7 insertions(+), 10 deletions(-)
->=20
-> diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platfor=
-m.c
-> index e742780950de..7b2e364f3bd5 100644
-> --- a/drivers/ata/libahci_platform.c
-> +++ b/drivers/ata/libahci_platform.c
-> @@ -497,8 +497,7 @@ struct ahci_host_priv *ahci_platform_get_resources(st=
-ruct platform_device *pdev,
->=20
->   =09=09=09if (of_property_read_u32(child, "reg", &port)) {
->   =09=09=09=09rc =3D -EINVAL;
-> -=09=09=09=09of_node_put(child);
-> -=09=09=09=09goto err_out;
-> +=09=09=09=09goto err_put_node;
->   =09=09=09}
->=20
->   =09=09=09if (port >=3D hpriv->nports) {
-> @@ -515,18 +514,14 @@ struct ahci_host_priv *ahci_platform_get_resources(=
-struct platform_device *pdev,
->   =09=09=09if (port_dev) {
->   =09=09=09=09rc =3D ahci_platform_get_regulator(hpriv, port,
->   =09=09=09=09=09=09=09=09&port_dev->dev);
-> -=09=09=09=09if (rc =3D=3D -EPROBE_DEFER) {
-> -=09=09=09=09=09of_node_put(child);
-> -=09=09=09=09=09goto err_out;
-> -=09=09=09=09}
-> +=09=09=09=09if (rc =3D=3D -EPROBE_DEFER)
-> +=09=09=09=09=09goto err_put_node;
->   =09=09=09}
->   #endif
->=20
->   =09=09=09rc =3D ahci_platform_get_phy(hpriv, port, dev, child);
-> -=09=09=09if (rc) {
-> -=09=09=09=09of_node_put(child);
-> -=09=09=09=09goto err_out;
-> -=09=09=09}
-> +=09=09=09if (rc)
-> +=09=09=09=09goto err_put_node;
->=20
->   =09=09=09enabled_ports++;
->   =09=09}
-> @@ -558,6 +553,8 @@ struct ahci_host_priv *ahci_platform_get_resources(st=
-ruct platform_device *pdev,
->   =09devres_remove_group(dev, NULL);
->   =09return hpriv;
->=20
-> +err_put_node:
-> +=09of_node_put(child);
->   err_out:
->   =09devres_release_group(dev, NULL);
->   =09return ERR_PTR(rc);
-> --
-> 2.23.0
->=20
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f7c84004187d..0ee261fca602 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14962,6 +14962,14 @@ S:	Maintained
+>  F:	drivers/media/i2c/imx274.c
+>  F:	Documentation/devicetree/bindings/media/i2c/imx274.txt
+>  
+> +SONY IMX290 SENSOR DRIVER
+> +M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +L:	linux-media@vger.kernel.org
+> +T:	git git://linuxtv.org/media_tree.git
+> +S:	Maintained
+> +F:	drivers/media/i2c/imx290.c
+> +F:	Documentation/devicetree/bindings/media/i2c/imx290.txt
+> +
+>  SONY IMX319 SENSOR DRIVER
+>  M:	Bingbu Cao <bingbu.cao@intel.com>
+>  L:	linux-media@vger.kernel.org
 
+Please squash this change to the first patch.
+
+-- 
+Sakari Ailus
