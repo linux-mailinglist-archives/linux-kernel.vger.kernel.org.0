@@ -2,63 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 237F4BADA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 08:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6655BADA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 08:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392413AbfIWGD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 02:03:57 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51446 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387519AbfIWGD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 02:03:57 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7EA74DD58FF8F5F3B84D;
-        Mon, 23 Sep 2019 14:03:55 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Mon, 23 Sep 2019
- 14:03:47 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <bfields@fieldses.org>, <chuck.lever@oracle.com>
-CC:     <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] nfsd: Make nfsd_reset_boot_verifier_locked static
-Date:   Mon, 23 Sep 2019 13:58:59 +0800
-Message-ID: <20190923055859.5616-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2392272AbfIWGAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 02:00:25 -0400
+Received: from mga06.intel.com ([134.134.136.31]:43150 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387519AbfIWGAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 02:00:25 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Sep 2019 23:00:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,539,1559545200"; 
+   d="scan'208";a="363524324"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga005.jf.intel.com with ESMTP; 22 Sep 2019 23:00:23 -0700
+Date:   Mon, 23 Sep 2019 14:00:05 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mm: fix return value of p[um]dp_set_access_flags
+Message-ID: <20190923060005.GB7750@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190919082549.3895-1-richardw.yang@linux.intel.com>
+ <307c9866-c037-5d87-709f-840bdb577283@intel.com>
+ <20190920021821.GA8472@richard>
+ <2fde036a-f64e-ce58-65bf-a089e7c673aa@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2fde036a-f64e-ce58-65bf-a089e7c673aa@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+On Fri, Sep 20, 2019 at 09:16:12AM -0700, Dave Hansen wrote:
+>On 9/19/19 7:18 PM, Wei Yang wrote:
+>> Last but not least, since update_mmu_cache_pmd is empty, even return
+>> value is not correct, it doesn't break anything.
+>
+>In other words, this patch has no functional effect and does not provide
+>a "fix".  What's the point of patching this stuff if it has no effect?
 
-fs/nfsd/nfssvc.c:364:6: warning:
- symbol 'nfsd_reset_boot_verifier_locked' was not declared. Should it be static?
+It correct the function semantics. The return value of these function doesn't
+meet the requirement, which will be misleading and we still need to dig in the
+history to find out the correct answer.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/nfsd/nfssvc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In case we would have a valid cache update mechanism, this would introduce a
+problem.
 
-diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
-index 3caaf56..fdf7ed4 100644
---- a/fs/nfsd/nfssvc.c
-+++ b/fs/nfsd/nfssvc.c
-@@ -361,7 +361,7 @@ void nfsd_copy_boot_verifier(__be32 verf[2], struct nfsd_net *nn)
- 	done_seqretry(&nn->boot_lock, seq);
- }
- 
--void nfsd_reset_boot_verifier_locked(struct nfsd_net *nn)
-+static void nfsd_reset_boot_verifier_locked(struct nfsd_net *nn)
- {
- 	ktime_get_real_ts64(&nn->nfssvc_boot);
- }
+So I suggest to fix the return value to reflect the true meaning.
+
 -- 
-2.7.4
-
-
+Wei Yang
+Help you, Help me
