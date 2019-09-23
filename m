@@ -2,109 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A3D1BBDE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDEE5BBDF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503082AbfIWV2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 17:28:04 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44699 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732345AbfIWV2D (ORCPT
+        id S2503141AbfIWVbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 17:31:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58418 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729120AbfIWVbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:28:03 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w6so8936888oie.11
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 14:28:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XyHYr4tKJV5lm5mCsroazIfQVv/o2NZykn1ewMncF1E=;
-        b=NGQHlcSav/bgAy0eYIW53+dy/MJrBGnm/wJo/dyC6cSQz2MBKGA+ojlsAtSmF+sNqx
-         VDe35TDuB3eR9akecJZqu0672y6M1btk3QjNhM0W5H03Av5y2+aoRQtBIsjRU+xVE5VC
-         1UBa1ee6GuKxKeg/pk+O6mETUjjJe9JhyaORgmMk7BJIEZb92MqzJMI3CY3IKgltjkcz
-         RzBefvQMUpmHq5pmUTkUtc8uN3Q4s4nbbD0eHMU+35Tlhq493UsRICNmI61PMnY9yhcD
-         8C9QXUMyy24XJIb9siYolXYHhgLtn3sS+fBYKxNXpq5mpgJSCZV9fkeDvNuLj0crF7Nf
-         maRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XyHYr4tKJV5lm5mCsroazIfQVv/o2NZykn1ewMncF1E=;
-        b=ZXUos9wnSfWpQolm6mIoSlE/0+fWEsSrVDsF05LNlSkiZKIWmWY2q73DfWhxV0Rb1y
-         p0HMJ3xbww95Qfu8YktEZhqaehs/KjH537lKa0SkdHVi/p0MoqWaljzuamJjgPUX4Uug
-         y2DpDpFZbBSaNyEkqgpp2X4Yfmg2dhwuDzdZ1mHhFDGiPhBV/tIv5/k0vcDBJ4k/U8oE
-         RPXjIZFulLB70lO11/gxExRutqzfx00oYepEQV45NoZFxLKBNP/TBqlM/ZkvaggDAC3K
-         sShPeuW3woO4gmipcUSBdbrtI6Q/QsPOSfDmSjvvDMXfIe9puOIcwdCtG/lIVIAytmHK
-         6TYA==
-X-Gm-Message-State: APjAAAUFkYdh54HQY2E0BRwxofufut9jfVb8YswWZs2NCDSqQEBHRH0H
-        hCA6KsvJaMg9DDaUjuh7K63CRXnp14db9UzS/DN6pg==
-X-Google-Smtp-Source: APXvYqwPptlgnNLhw8/JNeUDzZMDmvZaQh9W9r9dY79Z4Drq6xjXrXwxYv3zs9ifbmG3vIRSplJeJvadjfJHqOqkkLc=
-X-Received: by 2002:aca:4b05:: with SMTP id y5mr1856981oia.70.1569274082986;
- Mon, 23 Sep 2019 14:28:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <1568988209.5576.199.camel@lca.pw> <87r24bhwng.fsf@linux.ibm.com>
- <1569003478.5576.202.camel@lca.pw> <CAPcyv4idejYpTS=ErsEJWgBxBsC1aS9=NCyvMEDO1rwqRktEmg@mail.gmail.com>
- <A619A864-511D-4782-8789-5AEC8797A111@ellerman.id.au>
-In-Reply-To: <A619A864-511D-4782-8789-5AEC8797A111@ellerman.id.au>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 23 Sep 2019 14:27:52 -0700
-Message-ID: <CAPcyv4hSjL+kjR1is3O5BPp8K4763SvDhuUzSTc6O6JNtfW2ew@mail.gmail.com>
-Subject: Re: "Pick the right alignment default when creating dax devices"
- failed to build on powerpc
-To:     Michael Ellerman <michael@ellerman.id.au>
-Cc:     Qian Cai <cai@lca.pw>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Mon, 23 Sep 2019 17:31:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=O4AJzqwx8UNRh0+dCT8Ph5aKpjRexgGPb//cNFsda+Y=; b=RsebLDQx/T22kd9NN7O9OTg5V
+        3+HWJNeFeZV/brf5F4kVky0J3WD+Z+J5wsncdtuiDeJ+I8f7U2CGR85reETvmwKxf5biit/usSFwR
+        3cftnFOqk8YwTtJFcihOFpkCr1jCDWydkdIIBYrKxjyBx2d/G8rpQuaa8QU4v4cPfVfqn19BeZQ5g
+        fSFL5NQWTeG0vsDULREYmkyX7fRbz7/KMJepTGQnSicewM6G9fyfXHKlb0mKqJ9X3DgwMnDHkXoUl
+        F+E8CXXrYh6HFgMbuPhRs1smdzdW8pn/gcbnOYVKmIlZ5b95l20n2HvhukC3CB2lp3GnAEnMttbsH
+        CxzckVOxw==;
+Received: from [2601:1c0:6280:3f0::9a1f]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCVuZ-0003lg-TH; Mon, 23 Sep 2019 21:30:23 +0000
+Subject: Re: [PATCH v18 15/19] Documentation: kunit: add documentation for
+ KUnit
+To:     shuah <shuah@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Felix Guo <felixguoxiuping@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>
+References: <20190923090249.127984-1-brendanhiggins@google.com>
+ <20190923090249.127984-16-brendanhiggins@google.com>
+ <d87eba35-ae09-0c53-bbbe-51ee9dc9531f@infradead.org>
+ <CAFd5g45y-NWzbn8E8hUg=n4U5E+N6_4D8eCXhQ74Y0N4zqVW=w@mail.gmail.com>
+ <d7a61045-8fe6-a104-ece9-67b69c379425@infradead.org>
+ <d5dc04ab-9be5-b258-c302-29f8045d6aaa@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <437bc2d1-f26b-0f04-324f-cbdca989e42c@infradead.org>
+Date:   Mon, 23 Sep 2019 14:30:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <d5dc04ab-9be5-b258-c302-29f8045d6aaa@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 22, 2019 at 5:04 AM Michael Ellerman <michael@ellerman.id.au> wrote:
->
->
->
-> On 21 September 2019 4:31:16 am AEST, Dan Williams <dan.j.williams@intel.com> wrote:
-> >On Fri, Sep 20, 2019 at 11:18 AM Qian Cai <cai@lca.pw> wrote:
-> >>
-> >> On Fri, 2019-09-20 at 19:55 +0530, Aneesh Kumar K.V wrote:
-> >> > Qian Cai <cai@lca.pw> writes:
-> >> >
-> >> > > The linux-next commit "libnvdimm/dax: Pick the right alignment
-> >default when
-> >> > > creating dax devices" causes powerpc failed to build with this
-> >config. Reverted
-> >> > > it fixed the issue.
-> >> > >
-> >> > > ERROR: "hash__has_transparent_hugepage"
-> >[drivers/nvdimm/libnvdimm.ko] undefined!
-> >> > > ERROR: "radix__has_transparent_hugepage"
-> >[drivers/nvdimm/libnvdimm.ko]
-> >> > > undefined!
-> >> > > make[1]: *** [scripts/Makefile.modpost:93: __modpost] Error 1
-> >> > > make: *** [Makefile:1305: modules] Error 2
-> >> > >
-> >> > > [1] https://patchwork.kernel.org/patch/11133445/
-> >> > > [2]
-> >https://raw.githubusercontent.com/cailca/linux-mm/master/powerpc.config
-> >> >
-> >> > Sorry for breaking the build. How about?
-> >>
-> >> It works fine.
-> >
-> >Thanks, but let's delay "libnvdimm/dax: Pick the right alignment
-> >default when creating dax devices" until after -rc1 to allow Michael
-> >time to ack/nak this new export.
->
-> Thanks Dan. It looks fine to me:
->
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+On 9/23/19 2:18 PM, shuah wrote:
 
-Thanks Michael. Aneesh, care to resend with this ack, but also reword
-the changelog to say that this patch is a pre-requisite for the follow
-on patch to pick dax device alignment? In other words, lets hide this
-compile breakage from git-bisect by merging this export before the
-consumer patch.
+> I would like to apply the series very soon so it gets some soak time
+> after this move in linux-next and it can still make the rc1.
+> 
+> Since there changes can be addressed after rc1, I would like to not
+> require Brendan to do another version before I apply.
+> 
+> Hope you are okay with that Randy!
+> 
+> thanks,
+> -- Shuah
+
+Sure, no problem, go for it .
+
+-- 
+~Randy
