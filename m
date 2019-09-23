@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0955CBB414
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5E05BB424
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:48:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439555AbfIWMqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:46:05 -0400
-Received: from regular1.263xmail.com ([211.150.70.195]:33788 "EHLO
+        id S1730720AbfIWMsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:48:06 -0400
+Received: from regular1.263xmail.com ([211.150.70.206]:57198 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbfIWMqF (ORCPT
+        with ESMTP id S1730377AbfIWMsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:46:05 -0400
+        Mon, 23 Sep 2019 08:48:06 -0400
 Received: from hjc?rock-chips.com (unknown [192.168.167.16])
-        by regular1.263xmail.com (Postfix) with ESMTP id 3B792B76;
-        Mon, 23 Sep 2019 20:43:44 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id 1CF38452;
+        Mon, 23 Sep 2019 20:43:56 +0800 (CST)
 X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -25,9 +25,9 @@ X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P3051T140289744058112S1569242621440080_;
-        Mon, 23 Sep 2019 20:43:45 +0800 (CST)
+        Mon, 23 Sep 2019 20:43:57 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <1d669510ee6b1eb3d84b0708437add94>
+X-UNIQUE-TAG: <fe5a9893bb74d8c2b2afc522284afcec>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -36,14 +36,32 @@ X-SENDER-IP: 58.22.7.114
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org,
-        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/36] drm/gma500: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:41:11 +0800
-Message-Id: <1569242500-182337-8-git-send-email-hjc@rock-chips.com>
+To:     dri-devel@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Bruce Wang <bzwang@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Shayenne Moura <shayenneluzmoura@gmail.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Allison Randal <allison@lohutok.net>,
+        Sandy Huang <hjc@rock-chips.com>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 08/36] drm/msm: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:41:12 +0800
+Message-Id: <1569242500-182337-9-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1569242500-182337-7-git-send-email-hjc@rock-chips.com>
 References: <1569242500-182337-7-git-send-email-hjc@rock-chips.com>
@@ -57,105 +75,66 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/gma500/framebuffer.c         | 4 ++--
- drivers/gpu/drm/gma500/gma_display.c         | 4 ++--
- drivers/gpu/drm/gma500/mdfld_intel_display.c | 6 +++---
- drivers/gpu/drm/gma500/oaktrail_crtc.c       | 4 ++--
- 4 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 4 ++--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 2 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c  | 2 +-
+ drivers/gpu/drm/msm/msm_fb.c              | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
-index 218f3bb..97e9274 100644
---- a/drivers/gpu/drm/gma500/framebuffer.c
-+++ b/drivers/gpu/drm/gma500/framebuffer.c
-@@ -61,7 +61,7 @@ static int psbfb_setcolreg(unsigned regno, unsigned red, unsigned green,
- 	    (transp << info->var.transp.offset);
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index b3417d5..c57731c 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -1148,8 +1148,8 @@ static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
+ 				fb->base.id, (char *) &fb->format->format,
+ 				fb->width, fb->height);
+ 			for (i = 0; i < ARRAY_SIZE(fb->format->cpp); ++i)
+-				seq_printf(s, "cpp[%d]:%u ",
+-						i, fb->format->cpp[i]);
++				seq_printf(s, "bpp[%d]:%u ",
++						i, fb->format->bpp[i]);
+ 			seq_puts(s, "\n\t");
  
- 	if (regno < 16) {
--		switch (fb->format->cpp[0] * 8) {
-+		switch (fb->format->bpp[0]) {
- 		case 16:
- 			((uint32_t *) info->pseudo_palette)[regno] = v;
- 			break;
-@@ -221,7 +221,7 @@ static int psb_framebuffer_init(struct drm_device *dev,
- 	 * 4 bytes per pixel.
- 	 */
- 	info = drm_get_format_info(dev, mode_cmd);
--	if (!info || !info->depth || info->cpp[0] > 4)
-+	if (!info || !info->depth || info->bpp[0] > 32)
- 		return -EINVAL;
+ 			seq_printf(s, "modifier:%8llu ", fb->modifier);
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+index ff14555..61ab4dc 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+@@ -790,7 +790,7 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
+ 	width = mdp5_crtc->cursor.width;
+ 	height = mdp5_crtc->cursor.height;
  
- 	if (mode_cmd->pitches[0] & 63)
-diff --git a/drivers/gpu/drm/gma500/gma_display.c b/drivers/gpu/drm/gma500/gma_display.c
-index e20ccb5..95e975e 100644
---- a/drivers/gpu/drm/gma500/gma_display.c
-+++ b/drivers/gpu/drm/gma500/gma_display.c
-@@ -78,14 +78,14 @@ int gma_pipe_set_base(struct drm_crtc *crtc, int x, int y,
- 	if (ret < 0)
- 		goto gma_pipe_set_base_exit;
- 	start = gtt->offset;
--	offset = y * fb->pitches[0] + x * fb->format->cpp[0];
-+	offset = y * fb->pitches[0] + x * fb->format->bpp[0] / 8;
+-	stride = width * info->cpp[0];
++	stride = width * info->bpp[0] / 8;
  
- 	REG_WRITE(map->stride, fb->pitches[0]);
+ 	get_roi(crtc, &roi_w, &roi_h);
  
- 	dspcntr = REG_READ(map->cntr);
- 	dspcntr &= ~DISPPLANE_PIXFORMAT_MASK;
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+index 776337f..992477d 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+@@ -147,7 +147,7 @@ uint32_t mdp5_smp_calculate(struct mdp5_smp *smp,
+ 	for (i = 0; i < nplanes; i++) {
+ 		int n, fetch_stride, cpp;
  
--	switch (fb->format->cpp[0] * 8) {
-+	switch (fb->format->bpp[0]) {
- 	case 8:
- 		dspcntr |= DISPPLANE_8BPP;
- 		break;
-diff --git a/drivers/gpu/drm/gma500/mdfld_intel_display.c b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-index b8bfb96..5564472 100644
---- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
-+++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
-@@ -139,7 +139,7 @@ static int check_fb(struct drm_framebuffer *fb)
- 	if (!fb)
- 		return 0;
+-		cpp = info->cpp[i];
++		cpp = info->bpp[i] / 8;
+ 		fetch_stride = width * cpp / (i ? hsub : 1);
  
--	switch (fb->format->cpp[0] * 8) {
-+	switch (fb->format->bpp[0]) {
- 	case 8:
- 	case 16:
- 	case 24:
-@@ -187,13 +187,13 @@ static int mdfld__intel_pipe_set_base(struct drm_crtc *crtc, int x, int y,
- 		return 0;
+ 		n = DIV_ROUND_UP(fetch_stride * nlines, smp->blk_size);
+diff --git a/drivers/gpu/drm/msm/msm_fb.c b/drivers/gpu/drm/msm/msm_fb.c
+index 5bcd5e5..4545fa1 100644
+--- a/drivers/gpu/drm/msm/msm_fb.c
++++ b/drivers/gpu/drm/msm/msm_fb.c
+@@ -172,7 +172,7 @@ static struct drm_framebuffer *msm_framebuffer_init(struct drm_device *dev,
+ 		unsigned int min_size;
  
- 	start = to_gtt_range(fb->obj[0])->offset;
--	offset = y * fb->pitches[0] + x * fb->format->cpp[0];
-+	offset = y * fb->pitches[0] + x * fb->format->bpp[0] / 8;
+ 		min_size = (height - 1) * mode_cmd->pitches[i]
+-			 + width * info->cpp[i]
++			 + width * info->bpp[i] / 8
+ 			 + mode_cmd->offsets[i];
  
- 	REG_WRITE(map->stride, fb->pitches[0]);
- 	dspcntr = REG_READ(map->cntr);
- 	dspcntr &= ~DISPPLANE_PIXFORMAT_MASK;
- 
--	switch (fb->format->cpp[0] * 8) {
-+	switch (fb->format->bpp[0]) {
- 	case 8:
- 		dspcntr |= DISPPLANE_8BPP;
- 		break;
-diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
-index 167c107..8278dfb 100644
---- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
-+++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
-@@ -607,14 +607,14 @@ static int oaktrail_pipe_set_base(struct drm_crtc *crtc,
- 		return 0;
- 
- 	start = to_gtt_range(fb->obj[0])->offset;
--	offset = y * fb->pitches[0] + x * fb->format->cpp[0];
-+	offset = y * fb->pitches[0] + x * fb->format->bpp[0] / 8;
- 
- 	REG_WRITE(map->stride, fb->pitches[0]);
- 
- 	dspcntr = REG_READ(map->cntr);
- 	dspcntr &= ~DISPPLANE_PIXFORMAT_MASK;
- 
--	switch (fb->format->cpp[0] * 8) {
-+	switch (fb->format->bpp[0]) {
- 	case 8:
- 		dspcntr |= DISPPLANE_8BPP;
- 		break;
+ 		if (bos[i]->size < min_size) {
 -- 
 2.7.4
 
