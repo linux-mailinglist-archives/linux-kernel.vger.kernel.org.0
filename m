@@ -2,103 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2FEBB5EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 15:58:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65746BB5FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 15:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408337AbfIWN6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 09:58:45 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:42148 "EHLO mx1.emlix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408320AbfIWN6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 09:58:44 -0400
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id 476D85FBA6;
-        Mon, 23 Sep 2019 15:58:43 +0200 (CEST)
-From:   Philipp Puschmann <philipp.puschmann@emlix.com>
+        id S2437503AbfIWN72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 09:59:28 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41206 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406093AbfIWN71 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 09:59:27 -0400
+Received: by mail-io1-f67.google.com with SMTP id r26so33564083ioh.8;
+        Mon, 23 Sep 2019 06:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=TWgZDntOMYE0pJNm4v4MgMyLm0itzJK9E74UOUCbCFE=;
+        b=B6+Apv1RJdQ37kPuvdWmbO89qv/PsqiCAo0SHwzGcoxdyvfEqfwzhWz1meFjdy5Qmy
+         FleS6wpU7zVYpcZ+YfcRFuKwacSpdwFFZisI3SHNVLViCulRlqARzzNs2SUuUsaLSQUl
+         4uflfyrUNRCdxIo7WqfLV8eCpoUEKQio8eriblIs2B3fyAqVvW5UxHXOHNHk9uU5nkox
+         H8IJRYlEx4N9UMwDqs3Y9+abnO4HyZIoWBfDueK0BDOkGxcMSM+dQJSYkhPb0UR2WTqz
+         +XP6r5K7iU5aB2pJk3ZsIq/yzaOTQ94h3qTCj5MzKYqXmiahKMl50AunGqWhyHEeZW+m
+         Eiqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TWgZDntOMYE0pJNm4v4MgMyLm0itzJK9E74UOUCbCFE=;
+        b=Jb4qrETBxHGIlV5HdIPG1gg1mbk5UBcCvqvxcUwQ1QyRynL6l1pl6DYvAtQDGCIl6c
+         gOF+HWQ3yUeQAXDkbGX0XjYHH6xtuVtYHOdXKFN9iL+eiZK68dBylkEzj76mSeukoFkZ
+         eFNaZ+mJoAC96s9jqaVH/fvq6gc8Yg3r7YmSCU0x/Yqw6Bs5I5HAieyyfjkxm9OB+/zu
+         zNq/SSYnqKoNid65hSxVuXhv/YsPDG4XxfwaLY3Fwzg2zkF7OAVrCWiGgk6WWmQ6wbJA
+         GhIy9BbWPJwKB3U376FzdSfLqSfiXwm3FU2PeNo5UYuLwSH7jiBu1o55YD4Pysw+akHA
+         p6Ag==
+X-Gm-Message-State: APjAAAVXhRMvwiSyGewH1SaJHQZI0WmdHgMmMS3ZejDXwc0CKLs6ckR/
+        4LRHRlQQ6kcauYsT5x+Pvy5PsFDi1g8=
+X-Google-Smtp-Source: APXvYqzI3T+bagBhR2MF2H7ERsE6p1dgAN3VtZkGUyom8CDjGxaFnduVlvnhZcEySEGl1KbkJnnSOg==
+X-Received: by 2002:a6b:e507:: with SMTP id y7mr30970192ioc.264.1569247166121;
+        Mon, 23 Sep 2019 06:59:26 -0700 (PDT)
+Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
+        by smtp.gmail.com with ESMTPSA id j11sm7917262ioa.55.2019.09.23.06.59.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 06:59:25 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     u.kleine-koenig@pengutronix.de, gregkh@linuxfoundation.org,
-        yibin.gong@nxp.com, fugang.duan@nxp.com, l.stach@pengutronix.de,
-        jslaby@suse.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Philipp Puschmann <philipp.puschmann@emlix.com>
-Subject: [PATCH v3] serial: imx: adapt rx buffer and dma periods
-Date:   Mon, 23 Sep 2019 15:58:42 +0200
-Message-Id: <20190923135842.956-1-philipp.puschmann@emlix.com>
-X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     linux-omap@vger.kernel.org, Adam Ford <aford173@gmail.com>
+Subject: [PATCH] MAINTAINERS: Add logicpd-som-lv and logicpd-torpedo to OMAP TREE
+Date:   Mon, 23 Sep 2019 08:59:06 -0500
+Message-Id: <20190923135908.23080-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using only 4 DMA periods for UART RX is very few if we have a high
-frequency of small transfers - like in our case using Bluetooth with
-many small packets via UART - causing many dma transfers but in each
-only filling a fraction of a single buffer. Such a case may lead to
-the situation that DMA RX transfer is triggered but no free buffer is
-available. When this happens dma channel ist stopped - with the patch
-"dmaengine: imx-sdma: fix dma freezes" temporarily only - with the
-possible consequences that:
-with disabled hw flow control:
-  If enough data is incoming on UART port the RX FIFO runs over and
-  characters will be lost. What then happens depends on upper layer.
+The OMAP DEVICE TREE SUPPORT lists a bunch of device tree files
+with wildcard names using am3*, am4*, am5*, dra7*, and *omap*.
+Unfortunately, the LogicPD boards do not follow this convention
+so changes to these boards don't get automatically flagged to
+route to the omap mailing list.  After consulting with Tony
+Lindgren, he agreed it made sense to add these boards to the
+list.
 
-with enabled hw flow control:
-  If enough data is incoming on UART port the RX FIFO reaches a level
-  where CTS is deasserted and remote device sending the data stops.
-  If it fails to stop timely the i.MX' RX FIFO may run over and data
-  get lost. Otherwise it's internal TX buffer may getting filled to
-  a point where it runs over and data is again lost. It depends on
-  the remote device how this case is handled and if it is recoverable.
+This patch adds the omap based boards to the omap device tree
+maintainer list.
 
-Obviously we want to avoid having no free buffers available. So we
-decrease the size of the buffers and increase their number and the
-total buffer size.
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
----
-
-Changelog v4:
- - fix total buffer size
-
-Changelog v3:
- - enhance description
-
-Changelog v2:
- - split this patch from series "Fix UART DMA freezes for iMX6"
- - add Reviewed-by tag
-
- drivers/tty/serial/imx.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 87c58f9f6390..51dc19833eab 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1034,8 +1034,6 @@ static void imx_uart_timeout(struct timer_list *t)
- 	}
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a50e97a63bc8..0ee89575699c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11645,6 +11645,8 @@ F:	arch/arm/boot/dts/*am3*
+ F:	arch/arm/boot/dts/*am4*
+ F:	arch/arm/boot/dts/*am5*
+ F:	arch/arm/boot/dts/*dra7*
++F:	arch/arm/boot/dts/logicpd-som-lv*
++F:	arch/arm/boot/dts/logicpd-torpedo*
  
--#define RX_BUF_SIZE	(PAGE_SIZE)
--
- /*
-  * There are two kinds of RX DMA interrupts(such as in the MX6Q):
-  *   [1] the RX DMA buffer is full.
-@@ -1118,7 +1116,8 @@ static void imx_uart_dma_rx_callback(void *data)
- }
- 
- /* RX DMA buffer periods */
--#define RX_DMA_PERIODS 4
-+#define RX_DMA_PERIODS	16
-+#define RX_BUF_SIZE	(RX_DMA_PERIODS * PAGE_SIZE / 4)
- 
- static int imx_uart_start_rx_dma(struct imx_port *sport)
- {
+ OMAP DISPLAY SUBSYSTEM and FRAMEBUFFER SUPPORT (DSS2)
+ L:	linux-omap@vger.kernel.org
 -- 
-2.23.0
+2.17.1
 
