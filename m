@@ -2,115 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 863E7BB0CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A730CBB0E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 11:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393624AbfIWJEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 05:04:45 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39518 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393166AbfIWJEm (ORCPT
+        id S1731560AbfIWJFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 05:05:17 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36701 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729484AbfIWJFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 05:04:42 -0400
-Received: by mail-lf1-f68.google.com with SMTP id 72so9485841lfh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 02:04:41 -0700 (PDT)
+        Mon, 23 Sep 2019 05:05:15 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y22so8760829pfr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 02:05:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0JN1h+SdmbTH3kP7+d/LSAM256ls91/0oIY0PsAnI9c=;
-        b=aHR6ZebyZ8DZpvzN5FPwizkSeWcTkugKWZ3zU5/wa6l5Q54ddMLdKKjzClEkVBcAIr
-         R9Q0bAQBeD134Z05K7waWJ3GB31hRmYeoFBRNl9zeHVJguBN1TqCMfcnOhtE6FKLfkxC
-         CB14f/dGMHvj7B3B1ElGiiHTXvRW9zUSm2oWo=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v8pa0Tk6FlMlkzD8bXA6NA6bMdvmrzwl4PAFIDbVMYM=;
+        b=NvXQgh6IW3soN2kC6YtQSTm4nJDtjH7T1g1wwUk4J2MMTXgFeWqE4zDVwCvgvthfAE
+         WGgMCY+3F8tX2ulk7a71LHHwNjjj6szslWqQDPwjwKZALkV5YkTouU1UbPdDScjYS1A3
+         tU4aEIFZK99BR3XOVeaN/cSOFn3rfi7yObVLV3PWs+NfL5qPlxMyeRQLXGH1oSX1DcR+
+         Y00Kq9GxGhG7rrAxC5FyQBB+KSDkFMah1k7qmSzRXBnClfBw0q/Abrxnd2xhD8r5qEtT
+         Tri2HbzI2Jc1bPenj4gaZNMu/v3ap/CxdJdQ2lrX7Qpp+yqg86whqYHZk9TgPcLogoid
+         i1DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0JN1h+SdmbTH3kP7+d/LSAM256ls91/0oIY0PsAnI9c=;
-        b=NGnGZrpiHCQkKq/9WOoGz4Je7WVFevIZv//RZccnFgaCOR2oEPffjqf3Mc85JQ/bEF
-         /Rk63P6bHdPIG6To7uQax48AZV6i2U0tM0OWl4zf9ZaDJojxIn2hljNcNZOa0kwQ0N04
-         2xUIzZ4i7+JffcvkVI0YHclkazDBCFlut8WD6QT4Pze20VlQ1e3cpVY9ybvZ9BI/ebtp
-         CZyr89iBfclGZTded8WX35QSRqEr7rGaoWzDOLS8Bhz2jG1SPO4qmjR9k0/3c17hjt3/
-         /vIdk4P3tfFVsmrrkszuX47Hm1ROo1tktcBFgXCGAXWnqqafHjFvOOz75OaWADarRn70
-         HWBw==
-X-Gm-Message-State: APjAAAURyTbkbe9zIljcgTM6riE6Ev23mrox+2HWCa2KLHmRnFvLBVH9
-        MvD8BauHh/wWEYe05Q3+fJ+N0A==
-X-Google-Smtp-Source: APXvYqxE0UImPNGet4+HJgvkP3IVnXfnoznq6mWvl/4K5U7NnkgngpqSc4uPgwZPAR8lLmN00SF+gg==
-X-Received: by 2002:ac2:5091:: with SMTP id f17mr16518413lfm.107.1569229480930;
-        Mon, 23 Sep 2019 02:04:40 -0700 (PDT)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id g26sm2174673lje.80.2019.09.23.02.04.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Sep 2019 02:04:40 -0700 (PDT)
-Subject: Re: [PATCH 1/4] pwm: mxs: implement ->apply
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-References: <20190923081348.6843-1-linux@rasmusvillemoes.dk>
- <20190923081348.6843-2-linux@rasmusvillemoes.dk>
- <20190923082459.huqpbz5eseonkscv@pengutronix.de>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <a6407644-0b5b-ba46-9435-0d14be9066a5@rasmusvillemoes.dk>
-Date:   Mon, 23 Sep 2019 11:04:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v8pa0Tk6FlMlkzD8bXA6NA6bMdvmrzwl4PAFIDbVMYM=;
+        b=BeeTUh2qakKJ2ihbPW8UWOzlDibdI1jJb9V8IZYCfxiVRGOp5EPM79QZY66D8cT/1X
+         GpFGq2L3Yf8NiWf07gmjzaRAaDpUakPSnN7yQq21eoDx659NLZc0AknxXHHbieGq98WT
+         nE5tgw4aMt/JoThw+vJfrKHtU0vf0fh4wLXqqgs8kbDJ7gJp5I8HKOcWw90rM9VJYsyZ
+         pOxD6ocOV4WtWWSB7jGOnX7jnfuKV+Qo0tEIZrz17JGCexgkC64DJ9BLNCif3yqJWf/y
+         q0ZmZ4hOehf4+36FqIrC4z8DALAXLSARLRzKu8k/l3yC+tzUkaSqLbMkQK9N6PwSZgq6
+         uvmg==
+X-Gm-Message-State: APjAAAXS+6UprjqrG3THo0nS0cNNiivOAfXIhhFZjUf8iS3qpGrqYtek
+        6JgReOAK+3cXhcRSB6nJ1enTI27DBL6k/HLmezU5UA==
+X-Google-Smtp-Source: APXvYqwcsKtiLcxSzZRbvj/9c2PAwvr8gZTaDk07lPhILKUwjb/s/yL4yzfAO84TT2ZemaVLn8TDzTeRlveY2nu9F6o=
+X-Received: by 2002:a17:90a:1746:: with SMTP id 6mr5388129pjm.117.1569229513429;
+ Mon, 23 Sep 2019 02:05:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190923082459.huqpbz5eseonkscv@pengutronix.de>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190921001855.200947-1-brendanhiggins@google.com>
+ <20190921001855.200947-8-brendanhiggins@google.com> <944ac47d-1411-9ebd-d0d4-a616c88c9c20@infradead.org>
+In-Reply-To: <944ac47d-1411-9ebd-d0d4-a616c88c9c20@infradead.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Mon, 23 Sep 2019 02:05:02 -0700
+Message-ID: <CAFd5g44e9bdK8h5+U1MkqPNuf2k9vnu-iPFLTzGajEHPEcRpHQ@mail.gmail.com>
+Subject: Re: [PATCH v17 07/19] kunit: test: add initial tests
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        shuah <shuah@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Petr Mladek <pmladek@suse.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/09/2019 10.24, Uwe Kleine-König wrote:
-> Hello Rasmus,
-> 
-> On Mon, Sep 23, 2019 at 10:13:45AM +0200, Rasmus Villemoes wrote:
->> In preparation for supporting setting the polarity, switch the driver
->> to support the ->apply method.
->>
-> 
-> Maybe it would be easier to review when converting from .config +
-> .enable + .disable to .apply in a single step. (Note this "maybe" is
-> honest, I'm not entirely sure.)
+On Sun, Sep 22, 2019 at 9:28 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 9/20/19 5:18 PM, Brendan Higgins wrote:
+> > Add a test for string stream along with a simpler example.
+> >
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+> >  lib/kunit/Kconfig              | 25 ++++++++++
+> >  lib/kunit/Makefile             |  4 ++
+> >  lib/kunit/example-test.c       | 88 ++++++++++++++++++++++++++++++++++
+> >  lib/kunit/string-stream-test.c | 52 ++++++++++++++++++++
+> >  4 files changed, 169 insertions(+)
+> >  create mode 100644 lib/kunit/example-test.c
+> >  create mode 100644 lib/kunit/string-stream-test.c
+> >
+> > diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+> > index 666b9cb67a74..3868c226cf31 100644
+> > --- a/lib/kunit/Kconfig
+> > +++ b/lib/kunit/Kconfig
+> > @@ -11,3 +11,28 @@ menuconfig KUNIT
+> >         special hardware when using UML. Can also be used on most other
+> >         architectures. For more information, please see
+> >         Documentation/dev-tools/kunit/.
+> > +
+> > +if KUNIT
+>
+> The 'if' above provides the dependency clause, so the 2 'depends on KUNIT'
+> below are not needed.  They are redundant.
 
-I tried to make .apply do exactly what the old sequence of calls from
-the core to the individual methods would do, and for that it seemed a
-little easier to keep the old methods around - but yes, I do need to be
-more careful than that to provide the atomicity guarantee that the
-legacy methods did not. It's also much easier to squash than to split,
-so for now I'll leave them separate - if somebody prefers them squashed,
-I'll do that.
+Thanks for catching that. I fixed it in the new revision I just sent out.
 
-> There is a bug: If the PWM is running at (say) period=100ms, duty=0ms
-> and we call
-> pwm_apply_state(pwm, { .enabled = false, duty=100000, period=1000000 });
-> the output might get high which it should not.
+> > +
+> > +config KUNIT_TEST
+> > +     bool "KUnit test for KUnit"
+> > +     depends on KUNIT
+> > +     help
+> > +       Enables the unit tests for the KUnit test framework. These tests test
+> > +       the KUnit test framework itself; the tests are both written using
+> > +       KUnit and test KUnit. This option should only be enabled for testing
+> > +       purposes by developers interested in testing that KUnit works as
+> > +       expected.
+> > +
+> > +config KUNIT_EXAMPLE_TEST
+> > +     bool "Example test for KUnit"
+> > +     depends on KUNIT
+> > +     help
+> > +       Enables an example unit test that illustrates some of the basic
+> > +       features of KUnit. This test only exists to help new users understand
+> > +       what KUnit is and how it is used. Please refer to the example test
+> > +       itself, lib/kunit/example-test.c, for more information. This option
+> > +       is intended for curious hackers who would like to understand how to
+> > +       use KUnit for kernel development.
+> > +
+> > +endif # KUNIT
 
-Ah, yes. So I suppose that if we're changing from enabled to disabled,
-we should simply disable it in the CTRL register before changing the
-duty/period.
-
-> Also there is a bug already in .config: You are not supposed to call
-> clk_get_rate if the clk might be off.
-
-Interesting, I didn't know that. So the prepare_enable logic needs to be
-moved before we start computing the period/duty cycles. Do you know why
-it has apparently worked so far? I would have thought such a rule would
-be enforced by the clock framework, or at least produced a warning.
-
-Thanks for the fast review. I'll wait a day or two to see if there are
-other comments before sending out a v2.
-
-Rasmus
+Cheers
