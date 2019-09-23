@@ -2,205 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63979BB30D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 13:47:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA70BB31B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 13:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501897AbfIWLq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 07:46:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54780 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729982AbfIWLqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 07:46:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 51009B152;
-        Mon, 23 Sep 2019 11:46:51 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: [PATCH v6 4/4] MIPS: SGI-IP27: fix readb/writeb addressing
-Date:   Mon, 23 Sep 2019 13:46:34 +0200
-Message-Id: <20190923114636.6748-5-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20190923114636.6748-1-tbogendoerfer@suse.de>
-References: <20190923114636.6748-1-tbogendoerfer@suse.de>
+        id S1729725AbfIWLtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 07:49:32 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:41554 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfIWLtb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 07:49:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ph1WQsqjHm2MqFAqK+Rq1wUKmhEoeBwxc1DezgR1MvQ=; b=xjOY/yJAxhq3pjMxLi2rMPdo1
+        +G+szJYH/C+RE8i4eCh+peXajGrou/54xo/DrAFyJQHEumqz60ByBk8BjnbMQnMwXHFr8m1gmN7X8
+        g60ACSYpGBFCKbGMbUczJe1op8OLUaNboInW2OhqIqatD8eLrcJVGmjCsvFw09/AFjZ33E/OvsQy8
+        46/AVmIOgZvrmvPoCPMqUBTdb4LZTmGi+J8g2IpreKxNjfIgcrsHCWjQgey+n0iuuuueMxQG24cAp
+        9ga4ah4xiGBi0giLBwYxLDU8vB52cOokTqGNZdPweaavVQ7Z2RjpIsH7LMXvbijU/mNKOah3iAjPM
+        onquEZ/VA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCMqI-0002oW-EL; Mon, 23 Sep 2019 11:49:22 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C1954301A7A;
+        Mon, 23 Sep 2019 13:48:35 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DB7D820C3E177; Mon, 23 Sep 2019 13:49:20 +0200 (CEST)
+Date:   Mon, 23 Sep 2019 13:49:20 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+        linux-arch@vger.kernel.org, jgross@suse.com
+Subject: Re: [RFC patch 10/15] x86/entry: Move irq tracing to C code
+Message-ID: <20190923114920.GF2332@hirez.programming.kicks-ass.net>
+References: <20190919150314.054351477@linutronix.de>
+ <20190919150809.446771597@linutronix.de>
+ <20190923084718.GG2349@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1909231227050.2003@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1909231227050.2003@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our chosen byte swapping, which is what firmware already uses, is to
-do readl/writel by normal lw/sw intructions (data invariance). This
-also means we need to mangle addresses for u8 and u16 accesses. The
-mangling for 16bit has been done aready, but 8bit one was missing.
-Correcting this causes different addresses for accesses to the
-SuperIO and local bus of the IOC3 chip. This is fixed by changing
-byte order in ioc3 and m48rtc_rtc structs.
+On Mon, Sep 23, 2019 at 12:27:47PM +0200, Thomas Gleixner wrote:
+> On Mon, 23 Sep 2019, Peter Zijlstra wrote:
+> 
+> > On Thu, Sep 19, 2019 at 05:03:24PM +0200, Thomas Gleixner wrote:
+> > > To prepare for converting the exit to usermode code to the generic version,
+> > > move the irqflags tracing into C code.
+> > > 
+> > > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > > ---
+> > >  arch/x86/entry/common.c          |   10 ++++++++++
+> > >  arch/x86/entry/entry_32.S        |   11 +----------
+> > >  arch/x86/entry/entry_64.S        |   10 ++--------
+> > >  arch/x86/entry/entry_64_compat.S |   21 ---------------------
+> > >  4 files changed, 13 insertions(+), 39 deletions(-)
+> > > 
+> > > --- a/arch/x86/entry/common.c
+> > > +++ b/arch/x86/entry/common.c
+> > > @@ -102,6 +102,8 @@ static void exit_to_usermode_loop(struct
+> > >  	struct thread_info *ti = current_thread_info();
+> > >  	u32 cached_flags;
+> > >  
+> > > +	trace_hardirqs_off();
+> > 
+> > Bah.. so this gets called from:
+> > 
+> >  - C code, with IRQs disabled
+> >  - entry_64.S:error_exit
+> >  - entry_32.S:resume_userspace
+> > 
+> > The first obviously doesn't need this annotation, but this patch doesn't
+> > remove the TRACE_IRQS_OFF from entry_64.S and only the 32bit case is
+> > changed.
+> > 
+> > Is that entry_64.S case an oversight, or do we need an extensive comment
+> > on this one?
+> 
+> Lemme stare at that again. At some point I probably lost track in that maze.
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
- arch/mips/include/asm/mach-ip27/mangle-port.h |  4 +--
- arch/mips/include/asm/sn/ioc3.h               | 38 +++++++++++++--------------
- drivers/rtc/rtc-m48t35.c                      | 11 ++++++++
- drivers/tty/serial/8250/8250_ioc3.c           |  4 +--
- 4 files changed, 34 insertions(+), 23 deletions(-)
+While walking the kids to school I wondered WTH we need to call
+TRACE_IRQS_OFF in the first place. If this is the return from exception
+path, interrupts had better be disabled already (in exception enter).
 
-diff --git a/arch/mips/include/asm/mach-ip27/mangle-port.h b/arch/mips/include/asm/mach-ip27/mangle-port.h
-index f6e4912ea062..27c56efa519f 100644
---- a/arch/mips/include/asm/mach-ip27/mangle-port.h
-+++ b/arch/mips/include/asm/mach-ip27/mangle-port.h
-@@ -8,7 +8,7 @@
- #ifndef __ASM_MACH_IP27_MANGLE_PORT_H
- #define __ASM_MACH_IP27_MANGLE_PORT_H
- 
--#define __swizzle_addr_b(port)	(port)
-+#define __swizzle_addr_b(port)	((port) ^ 3)
- #define __swizzle_addr_w(port)	((port) ^ 2)
- #define __swizzle_addr_l(port)	(port)
- #define __swizzle_addr_q(port)	(port)
-@@ -20,6 +20,6 @@
- # define ioswabl(a, x)		(x)
- # define __mem_ioswabl(a, x)	cpu_to_le32(x)
- # define ioswabq(a, x)		(x)
--# define __mem_ioswabq(a, x)	cpu_to_le32(x)
-+# define __mem_ioswabq(a, x)	cpu_to_le64(x)
- 
- #endif /* __ASM_MACH_IP27_MANGLE_PORT_H */
-diff --git a/arch/mips/include/asm/sn/ioc3.h b/arch/mips/include/asm/sn/ioc3.h
-index 78ef760ddde4..3865d3225780 100644
---- a/arch/mips/include/asm/sn/ioc3.h
-+++ b/arch/mips/include/asm/sn/ioc3.h
-@@ -21,50 +21,50 @@ struct ioc3_serialregs {
- 
- /* SUPERIO uart register map */
- struct ioc3_uartregs {
-+	u8	iu_lcr;
- 	union {
--		u8	iu_rbr;	/* read only, DLAB == 0 */
--		u8	iu_thr;	/* write only, DLAB == 0 */
--		u8	iu_dll;	/* DLAB == 1 */
-+		u8	iu_iir;	/* read only */
-+		u8	iu_fcr;	/* write only */
- 	};
- 	union {
- 		u8	iu_ier;	/* DLAB == 0 */
- 		u8	iu_dlm;	/* DLAB == 1 */
- 	};
- 	union {
--		u8	iu_iir;	/* read only */
--		u8	iu_fcr;	/* write only */
-+		u8	iu_rbr;	/* read only, DLAB == 0 */
-+		u8	iu_thr;	/* write only, DLAB == 0 */
-+		u8	iu_dll;	/* DLAB == 1 */
- 	};
--	u8	iu_lcr;
--	u8	iu_mcr;
--	u8	iu_lsr;
--	u8	iu_msr;
- 	u8	iu_scr;
-+	u8	iu_msr;
-+	u8	iu_lsr;
-+	u8	iu_mcr;
- };
- 
- struct ioc3_sioregs {
- 	u8	fill[0x141];	/* starts at 0x141 */
- 
--	u8	uartc;
- 	u8	kbdcg;
-+	u8	uartc;
- 
--	u8	fill0[0x150 - 0x142 - 1];
-+	u8	fill0[0x151 - 0x142 - 1];
- 
--	u8	pp_data;
--	u8	pp_dsr;
- 	u8	pp_dcr;
-+	u8	pp_dsr;
-+	u8	pp_data;
- 
--	u8	fill1[0x158 - 0x152 - 1];
-+	u8	fill1[0x159 - 0x153 - 1];
- 
--	u8	pp_fifa;
--	u8	pp_cfgb;
- 	u8	pp_ecr;
-+	u8	pp_cfgb;
-+	u8	pp_fifa;
- 
--	u8	fill2[0x168 - 0x15a - 1];
-+	u8	fill2[0x16a - 0x15b - 1];
- 
--	u8	rtcad;
- 	u8	rtcdat;
-+	u8	rtcad;
- 
--	u8	fill3[0x170 - 0x169 - 1];
-+	u8	fill3[0x170 - 0x16b - 1];
- 
- 	struct ioc3_uartregs	uartb;	/* 0x20170  */
- 	struct ioc3_uartregs	uarta;	/* 0x20178  */
-diff --git a/drivers/rtc/rtc-m48t35.c b/drivers/rtc/rtc-m48t35.c
-index d3a75d447fce..e8194f1f01a8 100644
---- a/drivers/rtc/rtc-m48t35.c
-+++ b/drivers/rtc/rtc-m48t35.c
-@@ -20,6 +20,16 @@
- 
- struct m48t35_rtc {
- 	u8	pad[0x7ff8];    /* starts at 0x7ff8 */
-+#ifdef CONFIG_SGI_IP27
-+	u8	hour;
-+	u8	min;
-+	u8	sec;
-+	u8	control;
-+	u8	year;
-+	u8	month;
-+	u8	date;
-+	u8	day;
-+#else
- 	u8	control;
- 	u8	sec;
- 	u8	min;
-@@ -28,6 +38,7 @@ struct m48t35_rtc {
- 	u8	date;
- 	u8	month;
- 	u8	year;
-+#endif
- };
- 
- #define M48T35_RTC_SET		0x80
-diff --git a/drivers/tty/serial/8250/8250_ioc3.c b/drivers/tty/serial/8250/8250_ioc3.c
-index 2be6ed2967e0..4c405f1b9c67 100644
---- a/drivers/tty/serial/8250/8250_ioc3.c
-+++ b/drivers/tty/serial/8250/8250_ioc3.c
-@@ -23,12 +23,12 @@ struct ioc3_8250_data {
- 
- static unsigned int ioc3_serial_in(struct uart_port *p, int offset)
- {
--	return readb(p->membase + offset);
-+	return readb(p->membase + (offset ^ 3));
- }
- 
- static void ioc3_serial_out(struct uart_port *p, int offset, int value)
- {
--	writeb(value, p->membase + offset);
-+	writeb(value, p->membase + (offset ^ 3));
- }
- 
- static int serial8250_ioc3_probe(struct platform_device *pdev)
--- 
-2.13.7
+For entry_64.S we have:
 
+  - idtentry_part; which does TRACE_IRQS_OFF at the start and error_exit
+    at the end.
+
+  - xen_do_hypervisor_callback, xen_failsafe_callback -- which are
+    confusing.
+
+So in the normal case, it appears we can simply do:
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index b7c3ea4cb19d..e9cf59ac554e 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1368,8 +1368,6 @@ END(error_entry)
+ 
+ ENTRY(error_exit)
+ 	UNWIND_HINT_REGS
+-	DISABLE_INTERRUPTS(CLBR_ANY)
+-	TRACE_IRQS_OFF
+ 	testb	$3, CS(%rsp)
+ 	jz	retint_kernel
+ 	jmp	retint_user
+
+and all should be well. This leaves Xen...
+
+For entry_32.S it looks like nothing uses 'resume_userspace' so that
+ENTRY can go away. Which then leaves:
+
+ * ret_from_intr:
+  - common_spurious: TRACE_IRQS_OFF
+  - common_interrupt: TRACE_IRQS_OFF
+  - BUILD_INTERRUPT3: TRACE_IRQS_OFF
+  - xen_do_upcall: ...
+
+ * ret_from_exception:
+  - xen_failsafe_callback: ...
+  - common_exception_read_cr2: TRACE_IRQS_OFF
+  - common_exception: TRACE_IRQS_OFF
+  - int3: TRACE_IRQS_OFF
+
+Which again suggests:
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index f83ca5aa8b77..7a19e7413a8e 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -825,9 +825,6 @@ END(ret_from_fork)
+ 	cmpl	$USER_RPL, %eax
+ 	jb	restore_all_kernel		# not returning to v8086 or userspace
+ 
+-ENTRY(resume_userspace)
+-	DISABLE_INTERRUPTS(CLBR_ANY)
+-	TRACE_IRQS_OFF
+ 	movl	%esp, %eax
+ 	call	prepare_exit_to_usermode
+ 	jmp	restore_all
+
+with the notable exception (oh teh pun!) being Xen... _again_.
+
+With these patchlets on, we'd want prepare_exit_to_usermode() to
+validate the IRQ state, but AFAICT it _should_ all just 'work' (famous
+last words).
+
+Cc Juergen because Xen
