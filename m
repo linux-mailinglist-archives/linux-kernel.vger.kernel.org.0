@@ -2,100 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7721EBBA42
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 19:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2C5FBBA56
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 19:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407411AbfIWRR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 13:17:58 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35235 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfIWRR5 (ORCPT
+        id S2502154AbfIWRU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 13:20:57 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37311 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407395AbfIWRU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 13:17:57 -0400
-Received: by mail-qk1-f196.google.com with SMTP id w2so16257142qkf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 10:17:57 -0700 (PDT)
+        Mon, 23 Sep 2019 13:20:56 -0400
+Received: by mail-ot1-f65.google.com with SMTP id k32so12838845otc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 10:20:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NqsehSBKMKDO8NnwgZk11cPX0Pb+XtQ+3DVSQLpGbJo=;
-        b=LGTXvmj+7/EJH4QYdmB05CZVGcHxpOXXQSP85/rWtT5nOtbNoaGGKivN4EXG1GMX4m
-         T+TpllFX4nO3p4uD0NHIewInxNN0kzdFPpsK3i6qP2G8mwhGmQxurRSkH2gpL7qk/JAt
-         ZxhSz50Vhqbt3cFmvvFp6iv+J9aBUgUrSuJdQAJ+4bPLv4PUTPqV56Gp6S+fxFAdBkWj
-         sV10kJ2tLNVSv3/srOpqH4iUiE+i/O0yWH+dXLJksa1yJEdxcQ0oExSJMSJ1XQPvK8q/
-         ER9/VOB8a3Dwv8oPW/nmMJ7j3wNgm/uaLRRjimemqIXNlU0r+xfZfMgqQ0tJ1+Q2gUzo
-         pTrQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3yXbds+KWz7AvWD5TWTm/1vwliD4GfchZEVwGqijOTs=;
+        b=LxYbLPVbZKfHIcJpS+oUJCXvGteRaVLbkSEV1wPbzWPMGoxPC1ppu3Q9S7QH27l8KI
+         bH7aC4nxya3YAQgOCDxz1Ws+LTztWF0MZ8X6wloU7WRkiGwtv/YSHmE9C1XfgkmGMQNo
+         Uyx8wXaqfl6IxtIVA750fPHz5eAH6KBY156F0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NqsehSBKMKDO8NnwgZk11cPX0Pb+XtQ+3DVSQLpGbJo=;
-        b=rQuhyBBf0r1jS2DmXotE9ucY31D8gVMUJK8WoR7Zq+q1/QVMcCnX7yT/N26QgZKXbq
-         YtTW24xhhjnoWRC5cZFy3wqYExYdgaUqTj2F3qIQFnlqQXA2Gk9RczDLR9mKws6hbIaS
-         FAV3fsLVMV61v/Jb62Jju8MRar2wUxnmsOpzF4jA7eiMpYrTZrNRTSJBe5LSFVtCQQ/4
-         19b6ePgWZGFtdiQ/oqZ1pvcvaMHUQeirLRBt08FytN4ApPdvCABWuDf+dCt7w4C81SoA
-         pExBLNSj31KPF7I/BaQbMmWMXV2c9IiDl2O6hF/dGBRaHiTe4g66E3TQ7vYm9vb3s7Ny
-         mNiw==
-X-Gm-Message-State: APjAAAWEh2S2cZD/3nX+8Sw4jj1TGV+2SxBdtjLPG2LCZkLmalqWwzg6
-        +fg74dY0R25eaFhteFIkkm8=
-X-Google-Smtp-Source: APXvYqzQY91GpAjlBimxNHbbd38GmmzfY3qT6CV8kJMFT2ZSyjHb6tn75miQqKFyAeh0emvPyNM3mw==
-X-Received: by 2002:a37:a68e:: with SMTP id p136mr919474qke.49.1569259076654;
-        Mon, 23 Sep 2019 10:17:56 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id k54sm6917600qtf.28.2019.09.23.10.17.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Sep 2019 10:17:56 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 23 Sep 2019 13:17:54 -0400
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>
-Subject: [PATCH] x86/purgatory: Add $(DISABLE_STACKLEAK_PLUGIN)
-Message-ID: <20190923171753.GA2252517@rani.riverdale.lan>
-References: <20190922173241.GA44503@rani.riverdale.lan>
- <CAKwvOd=X9+uxQSzKad8B-Lw=ZarBT+SfNpBm_TE0k+DeJZmrsw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3yXbds+KWz7AvWD5TWTm/1vwliD4GfchZEVwGqijOTs=;
+        b=XKlLpuUHKMNs4h4bFg6yeAtm5C3H6oGIt/bQWK5YeGteZkoUMUEPQkq92GPV2PwjW4
+         JqFdcxZxO5H1wve1tsuLIiUFKCFAIh56N3SRqmEQdx20v93TOYfd6AlRXk50gKExIWMK
+         Hds3Sv2nrbIbumI74blWsQMTskq2iszN1kQFuY58Y26+32yd/YBjxyw2eLfqNJeWpsTk
+         W3FMm8zTHChnuFBCHVRJg/BRiPzUFq1Rw0nsZQENI4bb9DKjINSldjzNpbm/LSArx6HI
+         0GWJiUyRbH5l98ie5AVufaAo/MJOeCji8+7Hu1vQJESCrNXnO9+slmvvDKoY25TJr3XW
+         4C7w==
+X-Gm-Message-State: APjAAAV5XksRENuM1nF7hbP+BT/hfWD9YMScxee1D0YE3FbBmNnopQc6
+        5LLTafP3dB5glQp1NzpDRU5+KGBDos8=
+X-Google-Smtp-Source: APXvYqx/ex1JS+NRaPEYGhCTtTYmduiFUmVVwdlFQIuKzAReSwOPcqlnmIVpO4XRHcvU4tgHyO99Tg==
+X-Received: by 2002:a05:6830:2059:: with SMTP id f25mr733995otp.137.1569259255040;
+        Mon, 23 Sep 2019 10:20:55 -0700 (PDT)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
+        by smtp.gmail.com with ESMTPSA id r19sm3828877ota.79.2019.09.23.10.20.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 10:20:54 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id g13so12817915otp.8
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 10:20:54 -0700 (PDT)
+X-Received: by 2002:a9d:621a:: with SMTP id g26mr790118otj.236.1569259253904;
+ Mon, 23 Sep 2019 10:20:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKwvOd=X9+uxQSzKad8B-Lw=ZarBT+SfNpBm_TE0k+DeJZmrsw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190916181215.501-1-ncrews@chromium.org> <20190922161306.GA1999@bug>
+ <20190922190542.GC3185@piout.net>
+In-Reply-To: <20190922190542.GC3185@piout.net>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Mon, 23 Sep 2019 11:20:42 -0600
+X-Gmail-Original-Message-ID: <CAHX4x876iDn_6Q1+p1SNMncHJezSUQysfM+py0gjD2ytMKBj=w@mail.gmail.com>
+Message-ID: <CAHX4x876iDn_6Q1+p1SNMncHJezSUQysfM+py0gjD2ytMKBj=w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rtc: wilco-ec: Remove yday and wday calculations
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Benson Leung <bleung@chromium.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Duncan Laurie <dlaurie@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than
-reset KBUILD_CFLAGS") kexec breaks is GCC_PLUGIN_STACKLEAK is enabled, as
-the purgatory contains undefined references to stackleak_track_stack.
-Attempting to load a kexec kernel results in:
-	kexec: Undefined symbol: stackleak_track_stack
-	kexec-bzImage64: Loading purgatory failed
+On Sun, Sep 22, 2019 at 1:05 PM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> On 22/09/2019 18:13:06+0200, Pavel Machek wrote:
+> > On Mon 2019-09-16 12:12:15, Nick Crews wrote:
+> > > The tm_yday and tm_wday fields are not used by userspace,
+> > > so since they aren't needed within the driver, don't
+> > > bother calculating them. This is especially needed since
+> > > the rtc_year_days() call was crashing if the HW returned
+> > > an invalid time.
+> > >
+> > > Signed-off-by: Nick Crews <ncrews@chromium.org>
+> > > ---
+> > >  drivers/rtc/rtc-wilco-ec.c | 4 ----
+> > >  1 file changed, 4 deletions(-)
+> > >
+> > > diff --git a/drivers/rtc/rtc-wilco-ec.c b/drivers/rtc/rtc-wilco-ec.c
+> > > index 8ad4c4e6d557..e84faa268caf 100644
+> > > --- a/drivers/rtc/rtc-wilco-ec.c
+> > > +++ b/drivers/rtc/rtc-wilco-ec.c
+> > > @@ -110,10 +110,6 @@ static int wilco_ec_rtc_read(struct device *dev,=
+ struct rtc_time *tm)
+> > >     tm->tm_mday     =3D rtc.day;
+> > >     tm->tm_mon      =3D rtc.month - 1;
+> > >     tm->tm_year     =3D rtc.year + (rtc.century * 100) - 1900;
+> > > -   tm->tm_yday     =3D rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm=
+_year);
+> > > -
+> > > -   /* Don't compute day of week, we don't need it. */
+> > > -   tm->tm_wday =3D -1;
+> > >
+> > >     return 0;
+> >
+> > Are you sure? It would be bad to pass unititialized memory to userspace=
+...
+> >
+>
+> This problem doesn't exist because userspace is passing the memory, not
+> the other way around.
+>
+> > If userspace does not need those fields, why are they there?
+> >
+>
+> This is coming from struct tm, it is part of C89 but I think I was not
+> born when this decision was made. man rtc properly reports that those
+> fields are unused and no userspace tools are actually making use of
+> them. Nobody cares about the broken down representation of the time.
+> What is done is use the ioctl then mktime to have a UNIX timestamp.
+>
+> "The mktime function ignores the specified contents of the tm_wday,
+> tm_yday, tm_gmtoff, and tm_zone members of the broken-down time
+> structure. It uses the values of the other components to determine the
+> calendar time; it=E2=80=99s permissible for these components to have
+> unnormalized values outside their normal ranges. The last thing that
+> mktime does is adjust the components of the brokentime structure,
+> including the members that were initially ignored."
 
-Fix this by disabling the stackleak plugin for purgatory.
+This is very non-obvious and I only knew this from talking to you,
+Alexandre. Perhaps we should add this note to the RTC core,
+such as in the description for rtc_class_ops?
 
-Fixes: b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than reset KBUILD_CFLAGS")
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- arch/x86/purgatory/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+For this patch, do you want me to make any further changes?
 
-diff --git a/arch/x86/purgatory/Makefile b/arch/x86/purgatory/Makefile
-index 527749066d31..fb4ee5444379 100644
---- a/arch/x86/purgatory/Makefile
-+++ b/arch/x86/purgatory/Makefile
-@@ -25,6 +25,7 @@ KCOV_INSTRUMENT := n
- 
- PURGATORY_CFLAGS_REMOVE := -mcmodel=kernel
- PURGATORY_CFLAGS := -mcmodel=large -ffreestanding -fno-zero-initialized-in-bss
-+PURGATORY_CFLAGS += $(DISABLE_STACKLEAK_PLUGIN)
- 
- # Default KBUILD_CFLAGS can have -pg option set when FTRACE is enabled. That
- # in turn leaves some undefined symbols like __fentry__ in purgatory and not
--- 
-2.21.0
+Thanks,
+Nick
 
+>
+>
+> --
+> Alexandre Belloni, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
