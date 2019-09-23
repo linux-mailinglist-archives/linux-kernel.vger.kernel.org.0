@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 391D3BBB8E
+	by mail.lfdr.de (Postfix) with ESMTP id ACC1FBBB8F
 	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733064AbfIWS2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 14:28:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:47208 "EHLO foss.arm.com"
+        id S2502420AbfIWS2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 14:28:25 -0400
+Received: from foss.arm.com ([217.140.110.172]:47224 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733006AbfIWS2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:28:18 -0400
+        id S1726279AbfIWS2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 14:28:21 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09DEF2972;
-        Mon, 23 Sep 2019 11:28:18 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 668392A68;
+        Mon, 23 Sep 2019 11:28:21 -0700 (PDT)
 Received: from big-swifty.lan (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E8623F694;
-        Mon, 23 Sep 2019 11:28:14 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DD6E3F694;
+        Mon, 23 Sep 2019 11:28:18 -0700 (PDT)
 From:   Marc Zyngier <maz@kernel.org>
 To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 Cc:     Eric Auger <eric.auger@redhat.com>,
@@ -27,9 +27,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>,
         Jason Cooper <jason@lakedaemon.net>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Andrew Murray <Andrew.Murray@arm.com>
-Subject: [PATCH 30/35] irqchip/gic-v4.1: Add VSGI property setup
-Date:   Mon, 23 Sep 2019 19:26:01 +0100
-Message-Id: <20190923182606.32100-31-maz@kernel.org>
+Subject: [PATCH 31/35] irqchip/gic-v4.1: Eagerly vmap vPEs
+Date:   Mon, 23 Sep 2019 19:26:02 +0100
+Message-Id: <20190923182606.32100-32-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190923182606.32100-1-maz@kernel.org>
 References: <20190923182606.32100-1-maz@kernel.org>
@@ -40,50 +40,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the SGI configuration entry point for KVM to use.
+Now that we have HW-accelerated SGIs being delivered to VPEs, it
+becomes required to map the VPEs on all ITSs instead of relying
+on the lazy approach that we would use when using the ITS-list
+mechanism.
 
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v4.c       | 13 +++++++++++++
- include/linux/irqchip/arm-gic-v4.h |  1 +
- 2 files changed, 14 insertions(+)
+ drivers/irqchip/irq-gic-v3-its.c | 39 +++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic-v4.c b/drivers/irqchip/irq-gic-v4.c
-index a29a063861bc..b937e51a9178 100644
---- a/drivers/irqchip/irq-gic-v4.c
-+++ b/drivers/irqchip/irq-gic-v4.c
-@@ -324,6 +324,19 @@ int its_prop_update_vlpi(int irq, u8 config, bool inv)
- 	return irq_set_vcpu_affinity(irq, &info);
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 4aae9582182b..a1e8c4c2598a 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1417,12 +1417,31 @@ static int its_irq_set_irqchip_state(struct irq_data *d,
+ 	return 0;
  }
  
-+int its_prop_update_vsgi(int irq, u8 priority, bool group)
++/*
++ * Two favourable cases:
++ *
++ * (a) Either we have a GICv4.1, and all vPEs have to be mapped at all times
++ *     for vSGI delivery
++ *
++ * (b) Or the ITSs do not use a list map, meaning that VMOVP is cheap enough
++ *     and we're better off mapping all VPEs always
++ *
++ * If neither (a) nor (b) is true, then we map VLPIs on demand.
++ *
++ */
++static bool gic_requires_eager_mapping(void)
 +{
-+	struct its_cmd_info info = {
-+		.cmd_type = PROP_UPDATE_SGI,
-+		{
-+			.priority	= priority,
-+			.group		= group,
-+		},
-+	};
++	if (!its_list_map || gic_rdists->has_rvpeid)
++		return true;
 +
-+	return irq_set_vcpu_affinity(irq, &info);
++	return false;
 +}
 +
- int its_init_v4(struct irq_domain *domain,
- 		const struct irq_domain_ops *vpe_ops,
- 		const struct irq_domain_ops *sgi_ops)
-diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm-gic-v4.h
-index 5578cbe7430b..b894796df9ab 100644
---- a/include/linux/irqchip/arm-gic-v4.h
-+++ b/include/linux/irqchip/arm-gic-v4.h
-@@ -127,6 +127,7 @@ int its_map_vlpi(int irq, struct its_vlpi_map *map);
- int its_get_vlpi(int irq, struct its_vlpi_map *map);
- int its_unmap_vlpi(int irq);
- int its_prop_update_vlpi(int irq, u8 config, bool inv);
-+int its_prop_update_vsgi(int irq, u8 priority, bool group);
+ static void its_map_vm(struct its_node *its, struct its_vm *vm)
+ {
+ 	unsigned long flags;
  
- struct irq_domain_ops;
- int its_init_v4(struct irq_domain *domain,
+-	/* Not using the ITS list? Everything is always mapped. */
+-	if (!its_list_map)
++	if (gic_requires_eager_mapping())
+ 		return;
+ 
+ 	raw_spin_lock_irqsave(&vmovp_lock, flags);
+@@ -1456,7 +1475,7 @@ static void its_unmap_vm(struct its_node *its, struct its_vm *vm)
+ 	unsigned long flags;
+ 
+ 	/* Not using the ITS list? Everything is always mapped. */
+-	if (!its_list_map)
++	if (gic_requires_eager_mapping())
+ 		return;
+ 
+ 	raw_spin_lock_irqsave(&vmovp_lock, flags);
+@@ -3957,8 +3976,12 @@ static int its_vpe_irq_domain_activate(struct irq_domain *domain,
+ 	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+ 	struct its_node *its;
+ 
+-	/* If we use the list map, we issue VMAPP on demand... */
+-	if (its_list_map)
++	/*
++	 * If we use the list map, we issue VMAPP on demand... Unless
++	 * we're on a GICv4.1 and we eagerly map the VPE on all ITSs
++	 * so that VSGIs can work.
++	 */
++	if (!gic_requires_eager_mapping())
+ 		return 0;
+ 
+ 	/* Map the VPE to the first possible CPU */
+@@ -3984,10 +4007,10 @@ static void its_vpe_irq_domain_deactivate(struct irq_domain *domain,
+ 	struct its_node *its;
+ 
+ 	/*
+-	 * If we use the list map, we unmap the VPE once no VLPIs are
+-	 * associated with the VM.
++	 * If we use the list map on GICv4.0, we unmap the VPE once no
++	 * VLPIs are associated with the VM.
+ 	 */
+-	if (its_list_map)
++	if (!gic_requires_eager_mapping())
+ 		return;
+ 
+ 	list_for_each_entry(its, &its_nodes, entry) {
 -- 
 2.20.1
 
