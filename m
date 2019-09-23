@@ -2,19 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5B8BBB48B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 893F2BB486
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439740AbfIWM4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:56:22 -0400
-Received: from lucky1.263xmail.com ([211.157.147.132]:45492 "EHLO
+        id S2502094AbfIWM4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:56:08 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:52370 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437548AbfIWM4U (ORCPT
+        with ESMTP id S2439723AbfIWM4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:56:20 -0400
+        Mon, 23 Sep 2019 08:56:06 -0400
+X-Greylist: delayed 463 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Sep 2019 08:56:04 EDT
 Received: from localhost (unknown [192.168.167.227])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 0560F5CA40;
-        Mon, 23 Sep 2019 20:48:18 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id 109A842F3B;
+        Mon, 23 Sep 2019 20:48:19 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
@@ -22,9 +23,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P14169T140710336407296S1569242883858959_;
-        Mon, 23 Sep 2019 20:48:17 +0800 (CST)
+        Mon, 23 Sep 2019 20:48:19 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <6dc34a8606be9c4da5e7b4229724bf36>
+X-UNIQUE-TAG: <c5aed142c552fbfd0a9d05c825523723>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -33,14 +34,16 @@ X-SENDER-IP: 58.22.7.114
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
+To:     dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Sandy Huang <hjc@rock-chips.com>
-Cc:     nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/36] drm/nouveau: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:47:37 +0800
-Message-Id: <1569242880-182878-3-git-send-email-hjc@rock-chips.com>
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     hjc@rock-chips.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 14/36] drm/tegra: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:47:38 +0800
+Message-Id: <1569242880-182878-4-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
 References: <1569242880-182878-1-git-send-email-hjc@rock-chips.com>
@@ -54,71 +57,50 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/nouveau/dispnv04/crtc.c     | 7 ++++---
- drivers/gpu/drm/nouveau/dispnv50/base507c.c | 4 ++--
- drivers/gpu/drm/nouveau/dispnv50/ovly507e.c | 2 +-
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/tegra/dc.c  | 2 +-
+ drivers/gpu/drm/tegra/drm.c | 2 +-
+ drivers/gpu/drm/tegra/fb.c  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/crtc.c b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-index f22f010..59d2f07 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/crtc.c
-@@ -874,11 +874,12 @@ nv04_crtc_do_mode_set_base(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index fbf57bc..850aef2 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -705,7 +705,7 @@ static void tegra_plane_atomic_update(struct drm_plane *plane,
+ 	window.dst.y = plane->state->dst.y1;
+ 	window.dst.w = drm_rect_width(&plane->state->dst);
+ 	window.dst.h = drm_rect_height(&plane->state->dst);
+-	window.bits_per_pixel = fb->format->cpp[0] * 8;
++	window.bits_per_pixel = fb->format->bpp[0];
+ 	window.bottom_up = tegra_fb_is_bottom_up(fb) || state->bottom_up;
  
- 	/* Update the framebuffer location. */
- 	regp->fb_start = nv_crtc->fb.offset & ~3;
--	regp->fb_start += (y * drm_fb->pitches[0]) + (x * drm_fb->format->cpp[0]);
-+	regp->fb_start += (y * drm_fb->pitches[0]) +
-+				(x * drm_fb->format->bpp[0] / 8);
- 	nv_set_crtc_base(dev, nv_crtc->index, regp->fb_start);
- 
- 	/* Update the arbitration parameters. */
--	nouveau_calc_arb(dev, crtc->mode.clock, drm_fb->format->cpp[0] * 8,
-+	nouveau_calc_arb(dev, crtc->mode.clock, drm_fb->format->bpp[0],
- 			 &arb_burst, &arb_lwm);
- 
- 	regp->CRTC[NV_CIO_CRE_FF_INDEX] = arb_burst;
-@@ -1238,7 +1239,7 @@ nv04_crtc_page_flip(struct drm_crtc *crtc, struct drm_framebuffer *fb,
- 
- 	/* Initialize a page flip struct */
- 	*s = (struct nv04_page_flip_state)
--		{ { }, event, crtc, fb->format->cpp[0] * 8, fb->pitches[0],
-+		{ { }, event, crtc, fb->format->bpp[0], fb->pitches[0],
- 		  new_bo->bo.offset };
- 
- 	/* Keep vblanks on during flip, for the target crtc of this flip */
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/base507c.c b/drivers/gpu/drm/nouveau/dispnv50/base507c.c
-index d5e295c..59883bd0 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/base507c.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/base507c.c
-@@ -190,12 +190,12 @@ base507c_acquire(struct nv50_wndw *wndw, struct nv50_wndw_atom *asyw,
- 		return ret;
- 
- 	if (!wndw->func->ilut) {
--		if ((asyh->base.cpp != 1) ^ (fb->format->cpp[0] != 1))
-+		if (asyh->base.cpp != 1 ^ fb->format->bpp[0] != 8)
- 			asyh->state.color_mgmt_changed = true;
+ 	/* copy from state */
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 6fb7d74..ec6c5a2 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -973,7 +973,7 @@ static int tegra_debugfs_framebuffers(struct seq_file *s, void *data)
+ 		seq_printf(s, "%3d: user size: %d x %d, depth %d, %d bpp, refcount %d\n",
+ 			   fb->base.id, fb->width, fb->height,
+ 			   fb->format->depth,
+-			   fb->format->cpp[0] * 8,
++			   fb->format->bpp[0],
+ 			   drm_framebuffer_read_refcount(fb));
  	}
  
- 	asyh->base.depth = fb->format->depth;
--	asyh->base.cpp = fb->format->cpp[0];
-+	asyh->base.cpp = fb->format->bpp[0] / 8;
- 	asyh->base.x = asyw->state.src.x1 >> 16;
- 	asyh->base.y = asyw->state.src.y1 >> 16;
- 	asyh->base.w = asyw->state.fb->width;
-diff --git a/drivers/gpu/drm/nouveau/dispnv50/ovly507e.c b/drivers/gpu/drm/nouveau/dispnv50/ovly507e.c
-index cc41766..c6c2e0b 100644
---- a/drivers/gpu/drm/nouveau/dispnv50/ovly507e.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/ovly507e.c
-@@ -135,7 +135,7 @@ ovly507e_acquire(struct nv50_wndw *wndw, struct nv50_wndw_atom *asyw,
- 	if (ret)
- 		return ret;
+diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+index e34325c..d5f5e1a 100644
+--- a/drivers/gpu/drm/tegra/fb.c
++++ b/drivers/gpu/drm/tegra/fb.c
+@@ -148,7 +148,7 @@ struct drm_framebuffer *tegra_fb_create(struct drm_device *drm,
+ 			goto unreference;
+ 		}
  
--	asyh->ovly.cpp = fb->format->cpp[0];
-+	asyh->ovly.cpp = fb->format->bpp[0] / 8;
- 	return 0;
- }
+-		bpp = info->cpp[i];
++		bpp = info->bpp[i] / 8;
  
+ 		size = (height - 1) * cmd->pitches[i] +
+ 		       width * bpp + cmd->offsets[i];
 -- 
 2.7.4
 
