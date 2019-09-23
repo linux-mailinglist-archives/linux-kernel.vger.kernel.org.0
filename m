@@ -2,107 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D6DBB41C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:46:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022F5BB430
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:49:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501954AbfIWMqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:46:34 -0400
-Received: from regular1.263xmail.com ([211.150.70.204]:38764 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2501944AbfIWMqd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:46:33 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.177])
-        by regular1.263xmail.com (Postfix) with ESMTP id 62F4E20C;
-        Mon, 23 Sep 2019 20:46:30 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P31562T139824700114688S1569242788771874_;
-        Mon, 23 Sep 2019 20:46:29 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <63b6f95d940d4daec52631830833bb85>
-X-RL-SENDER: hjc@rock-chips.com
-X-SENDER: hjc@rock-chips.com
-X-LOGIN-NAME: hjc@rock-chips.com
-X-FST-TO: dri-devel@lists.freedesktop.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org,
-        "James (Qian) Wang" <james.qian.wang@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/36] drm/arm: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:46:23 +0800
-Message-Id: <1569242784-182780-1-git-send-email-hjc@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
+        id S2501962AbfIWMtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:49:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57228 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730461AbfIWMtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 08:49:06 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D10683091755;
+        Mon, 23 Sep 2019 12:49:05 +0000 (UTC)
+Received: from treble (ovpn-123-153.rdu2.redhat.com [10.10.123.153])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8CED75D717;
+        Mon, 23 Sep 2019 12:49:04 +0000 (UTC)
+Date:   Mon, 23 Sep 2019 07:49:01 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Tree for Sep 18 (objtool)
+Message-ID: <20190923124901.3ayejcis5ijrsvbx@treble>
+References: <20190918221053.GV2596@sirena.co.uk>
+ <be0fb087-5fb4-a790-90dd-cc2af62419e7@infradead.org>
+ <20190923092024.GI2349@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190923092024.GI2349@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 23 Sep 2019 12:49:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpp[BytePerPlane] can't describe the 10bit data format correctly,
-So we use bpp[BitPerPlane] to instead cpp.
+On Mon, Sep 23, 2019 at 11:20:24AM +0200, Peter Zijlstra wrote:
+> On Wed, Sep 18, 2019 at 09:04:21PM -0700, Randy Dunlap wrote:
+> > On 9/18/19 3:10 PM, Mark Brown wrote:
+> > > Hi all,
+> > > 
+> > > Changes since 20190917:
+> > > 
+> > 
+> > on x86_64:
+> > 
+> > drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: i915_gem_execbuffer2_ioctl()+0x2fb: call to gen8_canonical_addr() with UACCESS enabled
+> 
+> I'm thinking that comes from:
+> 
+> 				offset = gen8_canonical_addr(offset & ~UPDATE);
+> 				if (unlikely(__put_user(offset, &urelocs[r-stack].presumed_offset))) {
+> 
+> however, per commit 6ae865615fc4 (and 2a418cf3f5f1) the compiler really
+> should not be sticking gen8_canonical_addr() after __uaccess_begin().
+> 
+> /me puzzled...
 
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
----
- drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c | 2 +-
- drivers/gpu/drm/arm/malidp_hw.c                         | 2 +-
- drivers/gpu/drm/arm/malidp_planes.c                     | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+I think you're looking at the wrong code.  It has user_access_begin/end
+around it:
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-index 3b0a70e..d02dfc6 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_framebuffer.c
-@@ -89,7 +89,7 @@ komeda_fb_afbc_size_check(struct komeda_fb *kfb, struct drm_file *file,
- 				    alignment_header);
- 
- 	kfb->afbc_size = kfb->offset_payload + n_blocks *
--			 ALIGN(info->cpp[0] * AFBC_SUPERBLK_PIXELS,
-+			 ALIGN(info->bpp[0] / 8 * AFBC_SUPERBLK_PIXELS,
- 			       AFBC_SUPERBLK_ALIGNMENT);
- 	min_size = kfb->afbc_size + fb->offsets[0];
- 	if (min_size > obj->size) {
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index bd8265f..54be8d1 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -384,7 +384,7 @@ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *
- int malidp_format_get_bpp(u32 fmt)
- {
- 	const struct drm_format_info *info = drm_format_info(fmt);
--	int bpp = info->cpp[0] * 8;
-+	int bpp = info->bpp[0];
- 
- 	if (bpp == 0) {
- 		switch (fmt) {
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index 3c70a53..628f325 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -225,7 +225,7 @@ bool malidp_format_mod_supported(struct drm_device *drm,
- 
- 	if (modifier & AFBC_SPLIT) {
- 		if (!info->is_yuv) {
--			if (info->cpp[0] <= 2) {
-+			if (info->bpp[0] <= 16) {
- 				DRM_DEBUG_KMS("RGB formats <= 16bpp are not supported with SPLIT\n");
- 				return false;
- 			}
+		if (!user_access_begin(user_exec_list, count * sizeof(*user_exec_list)))
+			goto end;
+
+		for (i = 0; i < args->buffer_count; i++) {
+			if (!(exec2_list[i].offset & UPDATE))
+				continue;
+
+			exec2_list[i].offset =
+				gen8_canonical_addr(exec2_list[i].offset & PIN_OFFSET_MASK);
+			unsafe_put_user(exec2_list[i].offset,
+					&user_exec_list[i].offset,
+					end_user);
+		}
+end_user:
+		user_access_end();
+
+
 -- 
-2.7.4
-
-
-
+Josh
