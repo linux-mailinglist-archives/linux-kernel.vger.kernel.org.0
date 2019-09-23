@@ -2,70 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1418BBC15
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06608BBC18
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:13:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733238AbfIWTMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 15:12:54 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726307AbfIWTMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:12:54 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0A92B368DA;
-        Mon, 23 Sep 2019 19:12:54 +0000 (UTC)
-Received: from mail (ovpn-120-159.rdu2.redhat.com [10.10.120.159])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A2EF5C1B2;
-        Mon, 23 Sep 2019 19:12:51 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 15:12:50 -0400
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 15/17] KVM: retpolines: x86: eliminate retpoline from
- vmx.c exit handlers
-Message-ID: <20190923191250.GC19996@redhat.com>
-References: <20190920212509.2578-1-aarcange@redhat.com>
- <20190920212509.2578-16-aarcange@redhat.com>
- <87o8zb8ik1.fsf@vitty.brq.redhat.com>
- <20190923163746.GE18195@linux.intel.com>
- <24dc5c23-eed8-22db-fd15-5a165a67e747@redhat.com>
- <20190923174244.GA19996@redhat.com>
- <20190923181558.GI18195@linux.intel.com>
+        id S1733259AbfIWTN0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 15:13:26 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41513 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbfIWTNZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 15:13:25 -0400
+Received: by mail-ed1-f65.google.com with SMTP id f20so13993508edv.8
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 12:13:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=stujTPtuGxuh59HTJ15B3m0skvzv4BxR2W0z7AHqmAs=;
+        b=oyQ71NyOLCUCt3yrY4nzC3lmDE+RcloHR0cEYYRhtoJqaMrnTmBYWSRql93lKpdu/2
+         bQrXfU9nfGQiEaAJlAXpotQPEAdsSUEJzcK1TJZdtDuOUgQpzT68LYoBtLzhCFlZpTRJ
+         sOnLNz+ZCb/ooZ7Iz+F3s9J4d0eKTxzB9FAn34SubnMWewIiyOjoe9FDaI1tIMpIlgun
+         AK+RuOBGaMOfBm1D/kLl4+++0qsBgwRznMqymwyisovqATfNnGBGb/epBk1cSr2HYziZ
+         oBCaqwi4skj15AXxVrdUY03bPLGkEMGpebrDS+lLUEFOg8+Rrbn4NAaqNBqr7ymyjR8s
+         BdVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=stujTPtuGxuh59HTJ15B3m0skvzv4BxR2W0z7AHqmAs=;
+        b=jQyZ2E1ZAiGNtOn1UTLX2cEkGkPu3REUZ2k6awoLktELBbyHkxMkOaPQfC6i8Q75WF
+         wGhE+zLTUgbYEvM2Sheb6kkN5cVIshqOuEx/Vod8SuLHxYKWMO1XaMPYrcr72amP9P3H
+         oWh2JLms3tzkU41B8rWUiYKkOvpjYCKaeloXgywwQqSRMFtkuTlyqAXKcBUBhRHyP2en
+         4sT7J1biAJ2qb+BMXp999RBFwqFvtEGcF9X9hxbWffGnfSsuuZ6MaggoFVnkA9ENXTbk
+         r5NCCyeeTo1n6n93wRY2BT1N+gUz3Wy3FMDYBBnWF0ha952jbL4JO8J6WPN2kM2Hu6VQ
+         WGAQ==
+X-Gm-Message-State: APjAAAU4j2Oya4tz5a9QmNA6yqp6HV/spw5ocQU60qlPpXnV57h1E06N
+        Ur0eWL1mPD10vx8Io244qTpo5DlZUQpRrSQRQW9Rfw==
+X-Google-Smtp-Source: APXvYqwRmTK/cSlvNliNjYHt44n1Pba7VrLA3KdlnvROdyhykOSCNlF6ArPxqorDu7Day5E1074ogmGxE30V3X5XG3E=
+X-Received: by 2002:aa7:d7d3:: with SMTP id e19mr1824376eds.80.1569266002752;
+ Mon, 23 Sep 2019 12:13:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923181558.GI18195@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 23 Sep 2019 19:12:54 +0000 (UTC)
+References: <20190722103330.255312-1-marc.zyngier@arm.com> <CA+CK2bAFgDcc6ySCz7zzyeN0wg5WTcxFrKYQ6y5sz7grw-BfAw@mail.gmail.com>
+ <86k1c9nrsa.wl-marc.zyngier@arm.com>
+In-Reply-To: <86k1c9nrsa.wl-marc.zyngier@arm.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Mon, 23 Sep 2019 15:13:11 -0400
+Message-ID: <CA+CK2bBzoxDz2BgqbJn8-MzL-aaSon+mqKuAmikH-nBnwm0O2g@mail.gmail.com>
+Subject: Re: [PATCH 0/3] arm64: Allow early timestamping of kernel log
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 11:15:58AM -0700, Sean Christopherson wrote:
-> On the flip side, using a switch for the fast-path handlers gives the
-> compiler more flexibility to rearrange and combine checks.  Of course that
-> doesn't mean the compiler will actually generate faster code for our
-> purposes :-)
-> 
-> Anyways, getting rid of the retpolines is much more important.
+On Tue, Jul 23, 2019 at 3:17 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
+>
+> On Mon, 22 Jul 2019 21:52:42 +0100,
+> Pavel Tatashin <pasha.tatashin@soleen.com> wrote:
+> >
+> > On Mon, Jul 22, 2019 at 3:33 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > >
+> > > So far, we've let the arm64 kernel start its meaningful time stamping
+> > > of the kernel log pretty late, which is caused by sched_clock() being
+> > > initialised rather late compared to other architectures.
+> > >
+> > > Pavel Tatashin proposed[1] to move the initialisation of sched_clock
+> > > much earlier, which I had objections to. The reason for initialising
+> > > sched_clock late is that a number of systems have broken counters, and
+> > > we need to apply all kind of terrifying workarounds to avoid time
+> > > going backward on the affected platforms. Being able to identify the
+> > > right workaround comes pretty late in the kernel boot, and providing
+> > > an unreliable sched_clock, even for a short period of time, isn't an
+> > > appealing prospect.
+> > >
+> > > To address this, I'm proposing that we allow an architecture to chose
+> > > to (1) divorce time stamping and sched_clock during the early phase of
+> > > booting, and (2) inherit the time stamping clock as the new epoch the
+> > > first time a sched_sched clock gets registered.
 
-Precisely because of your last point, if we throw away the
-deterministic priority, then we could drop the whole structure like
-Vitaly suggested and we'd rely on gcc to add the indirect jump on a
-non-retpoline build.
+Hi Marc,
 
-Solving the nested if we drop the structure and we don't pretend to
-make it const, isn't tricky: it only requires one more check if nested
-is enabled. The same variable that will have to be checked is also the
-variable that needs to be checked in the
-kvm_x86_ops->check_nested_events replacement later to drop the
-kvm_x86_ops struct as a whole like kvm_pmu_ops was dropped clean.
+I know we briefly discussed this at plumbers, but I want to bring it
+up again, because I am still puzzled why it is not possible to
+stabilize unstable clock early in boot.
+
+Here is an example where clock is stabilized:
+https://soleen.com/source/xref/linux/kernel/sched/clock.c?r=457c8996#265
+
+It uses a value that is read at last ticks to normalize clock, and
+because ticks are not available early in boot instead we can make sure
+that early in boot sched_clock() never returns value smaller than
+previously returned value, and if we want to be extra careful, we can
+also make sure that sched_clock() early in boot does not jump ahead by
+more than some fixed amount of time i.e. more than one hour.
+
+If sched_clock() is available early we will get the benefit of having
+other tracers that use it to debug early boot information.
+
+Pasha
