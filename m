@@ -2,113 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B73BBCF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBBBBBBCE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:34:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502784AbfIWUfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 16:35:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56884 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502755AbfIWUfE (ORCPT
+        id S2502654AbfIWUei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 16:34:38 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34972 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728647AbfIWUei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 16:35:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jeUp5+lKmcF/04ueHLJZUYIvt6Ip7WoukEyBumn2fVY=; b=Rp7KwCGBA1u0fTRuTtn353Iqg
-        U1m+WAQt9nn2fAGVujebKUGETSc3lGylxo6ybOFrC6OjqOh6jQ3v/DS5f3WAkIPyz8mslZ534nPPF
-        w/unipekNmfUEpWS+8sKsDNny4hh/TUmdhJAPIZWH2ZRICzTYlxFR1ynoVzBW1pYsSzPlTXy9kFo8
-        Isg6dRFXpBOi7a6PiA7uGzWX65FTAfllSiv/KpO5JJ5OOAofnU1CPXj0xiiTFQerXgpuCzvcT/6/Q
-        SuqnTR2lR5rXkZN2iOh+yxAo8ns7Qujb+vZw/+amd8qwDo2R1+BLFhPLMDyxnUTx5OlVv5h2LyDch
-        CDhZ19tzw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCV2F-0002BC-Is; Mon, 23 Sep 2019 20:34:15 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C0BAA301A7A;
-        Mon, 23 Sep 2019 22:33:25 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0BAD120D80D4E; Mon, 23 Sep 2019 22:34:11 +0200 (CEST)
-Date:   Mon, 23 Sep 2019 22:34:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>, catalin.marinas@arm.com,
-        will@kernel.org, mingo@redhat.com, bp@alien8.de, rth@twiddle.net,
-        ink@jurassic.park.msu.ru, mattst88@gmail.com,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
-        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
-        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
-        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
-        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
-        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
-        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
-        dave.hansen@linux.intel.com, luto@kernel.org, len.brown@intel.com,
-        axboe@kernel.dk, dledford@redhat.com, jeffrey.t.kirsher@intel.com,
-        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
-        linux-mips@vger.kernel.org, rafael@kernel.org,
-        gregkh@linuxfoundation.org
-Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
-Message-ID: <20190923203410.GI2369@hirez.programming.kicks-ass.net>
-References: <1568724534-146242-1-git-send-email-linyunsheng@huawei.com>
- <20190923151519.GE2369@hirez.programming.kicks-ass.net>
- <20190923152856.GB17206@dhcp22.suse.cz>
- <20190923154852.GG2369@hirez.programming.kicks-ass.net>
- <20190923165235.GD17206@dhcp22.suse.cz>
+        Mon, 23 Sep 2019 16:34:38 -0400
+Received: by mail-pg1-f195.google.com with SMTP id a24so8659718pgj.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 13:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lqhPf0WylVWrQq3bujKuRCUKeKaYyeeOquS4YZjsMbs=;
+        b=RZqJZ2jMiQ4jrVlplk0gInJ2H9AKuD/9MozDl+VOtFFs+4z68Obn9Bk09TPSSP0cT0
+         TgSq1ja39iNbYKpWpf2355Susly26z95NREFOtyfSXBVLGy0QcVGFyAqEJPlhtAXuf+5
+         ZhM4VuRkGoU1gCHP7HrwbPv/kneZVTtd8XT/Dr74pWEsIaeBKVMFUgWTxuDKidTRFGH4
+         DYIgov3lFIa6nyaSKl6SWF+sKjNRXovwtcRZOJuuefq27ulSTsDsjQqQJWu1yYIHq37p
+         cEiLZJfEBTIsAv4SjPs9UQ7m7C7ejeKkUZb2vg2neglAqqwH1ckgtbxGzZCCp3MX1wht
+         1NFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lqhPf0WylVWrQq3bujKuRCUKeKaYyeeOquS4YZjsMbs=;
+        b=gECjluoK4tpPnd6pKxqmqZd4wibtscFmKt+35GBzikthC34/Urx/YlwUEk81pS6oHz
+         /R/R5VNQcv6ektPkacAtNXOyhzYJbxuiQUwdfH3Ipmoq6pPJ6qdtZbIu80UIFZLfTWoa
+         wXCyiYrAIy/I0jK72u3lHsxEGgfbcxy2x9/ZpDBlYhrQ+1zXGILDqkWNwKXLd43btn6l
+         euYNI3quRQJsmgMrlaxhJ+p37yfOrzGliIxSLAGtQ3BWY1v2H8hPG/mSxkpQyMzofYTM
+         ZJ5rejQmvC1XAs2mWRfkO0waA2A3sQzPgw6GCzlnbszCOP5F5vqbaf23VEoxgSwqOKJL
+         fNzA==
+X-Gm-Message-State: APjAAAXA2RZwFqJrIoOIr6NcnlMnoljJAsTS6d7SPNyvwX0spm4Z7mK2
+        md9O4LGUj3fPzTONdQJSXlE3qg==
+X-Google-Smtp-Source: APXvYqyI36p0gwtWDtXSdCopzx1YDRzh+phPa0M6jgW9Gv5XSjc6bvVBD+vSl5ERXkzo6iljFFSZ7Q==
+X-Received: by 2002:a63:2943:: with SMTP id p64mr1669712pgp.98.1569270876837;
+        Mon, 23 Sep 2019 13:34:36 -0700 (PDT)
+Received: from xakep.corp.microsoft.com (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id n29sm12798676pgm.4.2019.09.23.13.34.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 13:34:36 -0700 (PDT)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        ebiederm@xmission.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        james.morse@arm.com, vladimir.murzin@arm.com,
+        matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
+        mark.rutland@arm.com
+Subject: [PATCH v5 00/17] arm64: MMU enabled kexec relocation
+Date:   Mon, 23 Sep 2019 16:34:10 -0400
+Message-Id: <20190923203427.294286-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923165235.GD17206@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 06:52:35PM +0200, Michal Hocko wrote:
-> On Mon 23-09-19 17:48:52, Peter Zijlstra wrote:
+Changelog:
+v5:
+	- Addressed comments from Matthias Brugger: added review-by's, improved
+	  comments, and made cleanups to swsusp_arch_resume() in addition to
+	  create_safe_exec_page().
+	- Synced with mainline tip.
 
-> To the NUMA_NO_NODE itself. Your earlier email noted:
-> : > +
-> : >  	if ((unsigned)node >= nr_node_ids) {
-> : >  		printk(KERN_WARNING
-> : >  			"cpumask_of_node(%d): (unsigned)node >= nr_node_ids(%u)\n",
-> : 
-> : I still think this makes absolutely no sense what so ever.
-> 
-> Did you mean the NUMA_NO_NODE handling or the specific node >= nr_node_ids
-> check?
+v4:
+	- Addressed comments from James Morse.
+	- Split "check pgd table allocation" into two patches, and moved to
+	  the beginning of series  for simpler backport of the fixes.
+	  Added "Fixes:" tags to commit logs.
+	- Changed "arm64, hibernate:" to "arm64: hibernate:"
+	- Added Reviewed-by's
+	- Moved "add PUD_SECT_RDONLY" earlier in series to be with other
+	  clean-ups
+	- Added "Derived from:" to arch/arm64/mm/trans_pgd.c
+	- Removed "flags" from trans_info
+	- Changed .trans_alloc_page assumption to return zeroed page.
+	- Simplify changes to trans_pgd_map_page(), by keeping the old
+	  code.
+	- Simplify changes to trans_pgd_create_copy, by keeping the old
+	  code.
+	- Removed: "add trans_pgd_create_empty"
+	- replace init_mm with NULL, and keep using non "__" version of
+	  populate functions.
+v3:
+	- Split changes to create_safe_exec_page() into several patches for
+	  easier review as request by Mark Rutland. This is why this series
+	  has 3 more patches.
+	- Renamed trans_table to tans_pgd as agreed with Mark. The header
+	  comment in trans_pgd.c explains that trans stands for
+	  transitional page tables. Meaning they are used in transition
+	  between two kernels.
+v2:
+	- Fixed hibernate bug reported by James Morse
+	- Addressed comments from James Morse:
+	  * More incremental changes to trans_table
+	  * Removed TRANS_FORCEMAP
+	  * Added kexec reboot data for image with 380M in size.
 
-The NUMA_NO_NODE thing. It's is physical impossibility. And if the
-device description doesn't give us a node, then the description is
-incomplete and wrong and we should bloody well complain about it.
+Enable MMU during kexec relocation in order to improve reboot performance.
 
-> Because as to NUMA_NO_NODE I believe this makes sense because this is
-> the only way that a device is not bound to any numa node.
+If kexec functionality is used for a fast system update, with a minimal
+downtime, the relocation of kernel + initramfs takes a significant portion
+of reboot.
 
-Which is a physical impossibility.
+The reason for slow relocation is because it is done without MMU, and thus
+not benefiting from D-Cache.
 
-> I even the
-> ACPI standard is considering this optional. Yunsheng Lin has referred to
-> the specific part of the standard in one of the earlier discussions.
-> Trying to guess the node affinity is worse than providing all CPUs IMHO.
+Performance data
+----------------
+For this experiment, the size of kernel plus initramfs is small, only 25M.
+If initramfs was larger, than the improvements would be greater, as time
+spent in relocation is proportional to the size of relocation.
 
-I'm saying the ACPI standard is wrong. Explain to me how it is
-physically possible to have a device without NUMA affinity in a NUMA
-system?
+Previously:
+kernel shutdown	0.022131328s
+relocation	0.440510736s
+kernel startup	0.294706768s
 
- 1) The fundamental interconnect is not uniform.
- 2) The device needs to actually be somewhere.
+Relocation was taking: 58.2% of reboot time
 
-From these it seems to follow that access to the device is subject to
-NUMA.
+Now:
+kernel shutdown	0.032066576s
+relocation	0.022158152s
+kernel startup	0.296055880s
+
+Now: Relocation takes 6.3% of reboot time
+
+Total reboot is x2.16 times faster.
+
+With bigger userland (fitImage 380M), the reboot time is improved by 3.57s,
+and is reduced from 3.9s down to 0.33s
+
+Previous approaches and discussions
+-----------------------------------
+https://lore.kernel.org/lkml/20190909181221.309510-1-pasha.tatashin@soleen.com
+version 4 of this series
+
+https://lore.kernel.org/lkml/20190821183204.23576-1-pasha.tatashin@soleen.com
+version 3 of this series
+
+https://lore.kernel.org/lkml/20190817024629.26611-1-pasha.tatashin@soleen.com
+version 2 of this series
+
+https://lore.kernel.org/lkml/20190801152439.11363-1-pasha.tatashin@soleen.com
+version 1 of this series
+
+https://lore.kernel.org/lkml/20190709182014.16052-1-pasha.tatashin@soleen.com
+reserve space for kexec to avoid relocation, involves changes to generic code
+to optimize a problem that exists on arm64 only:
+
+https://lore.kernel.org/lkml/20190716165641.6990-1-pasha.tatashin@soleen.com
+The first attempt to enable MMU, some bugs that prevented performance
+improvement. The page tables unnecessary configured idmap for the whole
+physical space.
+
+https://lore.kernel.org/lkml/20190731153857.4045-1-pasha.tatashin@soleen.com
+No linear copy, bug with EL2 reboots.
+
+Pavel Tatashin (17):
+  kexec: quiet down kexec reboot
+  arm64: hibernate: pass the allocated pgdp to ttbr0
+  arm64: hibernate: check pgd table allocation
+  arm64: hibernate: use get_safe_page directly
+  arm64: hibernate: remove gotos as they are not needed
+  arm64: hibernate: rename dst to page in create_safe_exec_page
+  arm64: hibernate: add PUD_SECT_RDONLY
+  arm64: hibernate: add trans_pgd public functions
+  arm64: hibernate: move page handling function to new trans_pgd.c
+  arm64: trans_pgd: make trans_pgd_map_page generic
+  arm64: trans_pgd: pass allocator trans_pgd_create_copy
+  arm64: trans_pgd: pass NULL instead of init_mm to *_populate functions
+  kexec: add machine_kexec_post_load()
+  arm64: kexec: move relocation function setup and clean up
+  arm64: kexec: add expandable argument to relocation function
+  arm64: kexec: configure trans_pgd page table for kexec
+  arm64: kexec: enable MMU during kexec relocation
+
+ arch/arm64/Kconfig                     |   4 +
+ arch/arm64/include/asm/kexec.h         |  51 ++++-
+ arch/arm64/include/asm/pgtable-hwdef.h |   1 +
+ arch/arm64/include/asm/trans_pgd.h     |  34 ++++
+ arch/arm64/kernel/asm-offsets.c        |  14 ++
+ arch/arm64/kernel/cpu-reset.S          |   4 +-
+ arch/arm64/kernel/cpu-reset.h          |   8 +-
+ arch/arm64/kernel/hibernate.c          | 245 +++++--------------------
+ arch/arm64/kernel/machine_kexec.c      | 196 ++++++++++++++++----
+ arch/arm64/kernel/relocate_kernel.S    | 196 ++++++++++----------
+ arch/arm64/mm/Makefile                 |   1 +
+ arch/arm64/mm/trans_pgd.c              | 244 ++++++++++++++++++++++++
+ kernel/kexec.c                         |   4 +
+ kernel/kexec_core.c                    |   8 +-
+ kernel/kexec_file.c                    |   4 +
+ kernel/kexec_internal.h                |   2 +
+ 16 files changed, 674 insertions(+), 342 deletions(-)
+ create mode 100644 arch/arm64/include/asm/trans_pgd.h
+ create mode 100644 arch/arm64/mm/trans_pgd.c
+
+-- 
+2.23.0
 
