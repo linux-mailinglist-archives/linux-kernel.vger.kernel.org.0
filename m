@@ -2,110 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FA8BBD2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:40:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32B6CBBD34
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388384AbfIWUin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 16:38:43 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46264 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387586AbfIWUin (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 16:38:43 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f21so13335147otl.13;
-        Mon, 23 Sep 2019 13:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sweUxZxJQosgkHBCYd8BKEHHN75LnY+P6m8uRQ6mgPE=;
-        b=LJv03hsqxE7HeQxEDwFpfAn/DjAJR3E9WORr/bIi5FIQGwRrHSRpvlNmA1OyrIT0/5
-         m7p7Rj+VSyMoqAmoXxt6PZtc4ffTgJDZUyw5z+i401rzSy9ZWvQ/FsQnaH5IzUSFZhH9
-         p/qEosXDAiQWmcyJFhNAZ+Cyd+VY+A8DsLr4bv6BoNv27QdFlV/DK+xqjwvvzrVEjrhc
-         e32nisHV2HUkkZ90zh40XBB96WGpkKtuvPPPM8TcZllI9BuhgS40JE0jD+BPxDXQGOjd
-         audrENWHDcGzQei1boeFz6THkaawWLHeQp79muBhkMlYe9eahigwz9diIcH3n8hHFCSb
-         MU6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sweUxZxJQosgkHBCYd8BKEHHN75LnY+P6m8uRQ6mgPE=;
-        b=Zr9kr8z+AWTewoZ5kEJ8sEFpIyVcMS05qnDxXwobDwfiLdKS+TH15oE30GW8ALafCe
-         5IrEwmEPEWTv9N7dflJEjhfDEoiC/RAHNnmxVjrG5shJ3/9a4HJ5dRg7+kq99TLg/NPP
-         un5C1sDDUJEUyT9spKQkG1c3uFOlmQ10XU4quUrrGgHGYnZrFvv0FCA8vq6fLS0ErIDl
-         N7XPDblBL9PyF2CJ71bgQXFbSSz5XXxBUi5hEyRCtlA5+59IifnfWfiaBlh8Rt6vSg4U
-         M86uiNSnyoJyVwdiTVJtXaUmv79XxHC6zNEiLyJkvvcxKTpqBnK7kqOc2ChSJN3tMkt6
-         CA8Q==
-X-Gm-Message-State: APjAAAWbve0tXnIWfqy/YtbpiJO01YVNagvEyALBEtrSCHxa2bSy3Br/
-        WGZHfdacnES90mZ+8r/7bbaaLEnh
-X-Google-Smtp-Source: APXvYqxVGuW3Yqgnxvh8w8QHADv1Q7TKMCTm0SavQ/Xl+LXxhXcGKhfZQ7iNGJHU34SMXI9bp2Lhtg==
-X-Received: by 2002:a9d:744d:: with SMTP id p13mr143941otk.76.1569271122026;
-        Mon, 23 Sep 2019 13:38:42 -0700 (PDT)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id d9sm3881232ote.11.2019.09.23.13.38.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2019 13:38:40 -0700 (PDT)
-Subject: Re: [PATCH] staging: rtl8188eu: remove dead code in do-while
- conditional step
-To:     Connor Kuehl <connor.kuehl@canonical.com>,
-        gregkh@linuxfoundation.org, straube.linux@gmail.com,
-        devel@driverdev.osuosl.org
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20190923194806.25347-1-connor.kuehl@canonical.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <c2ce3fb0-6407-982a-a3f2-172cef17f2a6@lwfinger.net>
-Date:   Mon, 23 Sep 2019 15:38:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
-MIME-Version: 1.0
-In-Reply-To: <20190923194806.25347-1-connor.kuehl@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S2388715AbfIWUi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 16:38:57 -0400
+Received: from mail-eopbgr00042.outbound.protection.outlook.com ([40.107.0.42]:36848
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387586AbfIWUi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 16:38:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oO2LYJUWnWWGa6CIMNTYzGZCWjQ/FCWbOlRQ/MBSnW2QeIXiGELImjhxMxJngQDWbad2lh1SzfZCWahWgguakMTOUxiAFDOz6Cfgz6RnqHoojTSlokI1Z6S1kSk52m36D97up72XxtzSATEqyTCpFHrbwR9jvHWO+KW9H9SkWUZQq2AOiseSFhd7K4aOUL9RYNraqTf7+eawj0rXXAFY2jeSVwGSah45gCMbdE/2vVKcuri2O42W3Sg6d+Y5ebuI1CCt44ibZHCdmGbw3rRLGWmwMX0BnTsrEmurlHsNLHiWcE7RbgPMrAbyVD8mO60Ipu3higk9TdiB7VEgE285kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kSI+6iEGC4A2yaFehDZuygNUSUB7NWuwAdVNqPZEAq4=;
+ b=RsqgGG/TeNJRvhACBwRB3xd9f4SygscG9QPhtHkxV5WyZanacHciUZFnsKC4jyNQZe2JQK0Wa9Qmz001OYnhUFHbHhazSMGVHkP9/9sYdm9Dkm5k5QGpeeDdzR1Kcfn5Rz/TKlbZAAU9dJVICH4wJzS7JWgfjzAgRwzFAA6zv3qPd/MIicIphGRoE9qKZbXDFuORf7Sw7yk/X6IAffrda6drZy49M2Ew0t7noMiMkd46j15s5fW26lKFEbi16zz0tyLXstG/9zHDz2kjkGBUr46M28J2vC/iCWf/+7NBPrE7LfpeOGQ4TsR64kHX1u4GnpfWepWH45SRLYOSGl6Xhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kSI+6iEGC4A2yaFehDZuygNUSUB7NWuwAdVNqPZEAq4=;
+ b=NRq5SN2psgbvlMxVS+MdX+KF5BvqQbi5BgJlZG+n1OiGOYjghMb4BH1yQ8cDetaerHZC1Azz7LIRqT84vbgXwX7IelBFK1240kfB1AR05fKZ+6z/f2FuJZqsQjwrE9bfWFKpfgvKGLFlEU3igC/Hl0wZ0urGUDWDzh/sJqFU4oM=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB5856.eurprd04.prod.outlook.com (20.178.204.210) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.18; Mon, 23 Sep 2019 20:38:53 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::15cd:b6e7:5016:ae8]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::15cd:b6e7:5016:ae8%2]) with mapi id 15.20.2284.023; Mon, 23 Sep 2019
+ 20:38:53 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Sasha Levin <sashal@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH AUTOSEL 4.19 075/128] PM / devfreq: passive: Use non-devm
+ notifiers
+Thread-Topic: [PATCH AUTOSEL 4.19 075/128] PM / devfreq: passive: Use non-devm
+ notifiers
+Thread-Index: AQHVcXdiqSlNsnfqLkGLrgtGWZnq9w==
+Date:   Mon, 23 Sep 2019 20:38:53 +0000
+Message-ID: <VI1PR04MB7023BD0451C047D6A59D986EEE850@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <20190922185418.2158-1-sashal@kernel.org>
+ <20190922185418.2158-75-sashal@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e2d2cc4b-1bd1-4ffa-14aa-08d740660c58
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5856;
+x-ms-traffictypediagnostic: VI1PR04MB5856:
+x-microsoft-antispam-prvs: <VI1PR04MB58566D6F50F01286E397F62FEE850@VI1PR04MB5856.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:17;
+x-forefront-prvs: 0169092318
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(136003)(376002)(39860400002)(189003)(199004)(81156014)(71190400001)(186003)(81166006)(52536014)(8676002)(4326008)(54906003)(33656002)(66946007)(64756008)(44832011)(91956017)(66556008)(66446008)(229853002)(446003)(8936002)(110136005)(66066001)(99286004)(14454004)(25786009)(76176011)(7696005)(26005)(76116006)(486006)(66476007)(316002)(478600001)(55016002)(6246003)(5660300002)(476003)(6116002)(7736002)(9686003)(86362001)(6436002)(305945005)(102836004)(3846002)(53546011)(256004)(14444005)(74316002)(2906002)(6506007)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5856;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: DD139zQMylr6wv8zflxZnvTU1lajReey12ktQd/D/YaszY/OBfOK6B5+5sik7DjqA5CVEd50L6ZbcvXief1nxlMHT6bbS0T7tVJEWMjLir/koJzGwkPFVY+jr9OKd0RMKh6Ix5tPsiA0YjBMyE0yeME6mnKvUY5UJACkbqBi88S6nVR030uV9jj3M09yo/DSYiKkpq4hLIuwpOXcPeiv9wwh/KFlh/oimBh/kX+Opy3eIQr8Spz1uHSSu1GEndiHIoNyP08x1OqlCyKIhWgoRMZCGyFrIsiHXxUGtK6raMrdEAhi1dDRVzPgBOb0B/hyqKWcbtduPEFZ9Il2mDB6TG7Qe5BZs4bNWEEjxaohkkLkhpGuly9SU7oIByfSApuy847X/ecSXRM5Vs2FCnD/BnVQEt61DxyYwCr6Rdr6lFY=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2d2cc4b-1bd1-4ffa-14aa-08d740660c58
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2019 20:38:53.3705
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2pHGZM46SviTd0IHjP3ECxNNYSo2T2IvZM08e77dvMo2VuGS3H0w3jHO/gQNvEcrkQfUD2XIB3yIjfZ+4IhFiQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5856
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/23/19 2:48 PM, Connor Kuehl wrote:
-> The local variable 'bcmd_down' is always set to true almost immediately
-> before the do-while's condition is checked. As a result, !bcmd_down
-> evaluates to false which short circuits the logical AND operator meaning
-> that the second operand is never reached and is therefore dead code.
-> 
-> Addresses-Coverity: ("Logically dead code")
-> 
-> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
-> ---
->   drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> index 47352f210c0b..a4b317937b23 100644
-> --- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> +++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> @@ -48,7 +48,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
->   static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
->   {
->   	u8 bcmd_down = false;
-> -	s32 retry_cnts = 100;
->   	u8 h2c_box_num;
->   	u32 msgbox_addr;
->   	u32 msgbox_ex_addr;
-> @@ -103,7 +102,7 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
->   		adapt->HalData->LastHMEBoxNum =
->   			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
->   
-> -	} while ((!bcmd_down) && (retry_cnts--));
-> +	} while (!bcmd_down);
->   
->   	ret = _SUCCESS;
-
-This patch is correct; however, the do..while loop will always be executed once, 
-thus you could remove the loop and the loop variable bcmd_down.
-
-@greg: If you would prefer a two-step process, then this one is OK.
-
-Larry
-
+On 22.09.2019 21:56, Sasha Levin wrote:=0A=
+> From: Leonard Crestez <leonard.crestez@nxp.com>=0A=
+> =0A=
+> [ Upstream commit 0ef7c7cce43f6ecc2b96d447e69b2900a9655f7c ]=0A=
+=0A=
+This will introduce an "unused variable warning" unless you also =0A=
+cherry-pick commit 0465814831a9 ("PM / devfreq: passive: fix compiler =0A=
+warning").=0A=
+=0A=
+> The devfreq passive governor registers and unregisters devfreq=0A=
+> transition notifiers on DEVFREQ_GOV_START/GOV_STOP using devm wrappers.=
+=0A=
+> =0A=
+> If devfreq itself is registered with devm then a warning is triggered on=
+=0A=
+> rmmod from devm_devfreq_unregister_notifier. Call stack looks like this:=
+=0A=
+> =0A=
+> 	devm_devfreq_unregister_notifier+0x30/0x40=0A=
+> 	devfreq_passive_event_handler+0x4c/0x88=0A=
+> 	devfreq_remove_device.part.8+0x6c/0x9c=0A=
+> 	devm_devfreq_dev_release+0x18/0x20=0A=
+> 	release_nodes+0x1b0/0x220=0A=
+> 	devres_release_all+0x78/0x84=0A=
+> 	device_release_driver_internal+0x100/0x1c0=0A=
+> 	driver_detach+0x4c/0x90=0A=
+> 	bus_remove_driver+0x7c/0xd0=0A=
+> 	driver_unregister+0x2c/0x58=0A=
+> 	platform_driver_unregister+0x10/0x18=0A=
+> 	imx_devfreq_platdrv_exit+0x14/0xd40 [imx_devfreq]=0A=
+> =0A=
+> This happens because devres_release_all will first remove all the nodes=
+=0A=
+> into a separate todo list so the nested devres_release from=0A=
+> devm_devfreq_unregister_notifier won't find anything.=0A=
+> =0A=
+> Fix the warning by calling the non-devm APIS for frequency notification.=
+=0A=
+> Using devm wrappers is not actually useful for a governor anyway: it=0A=
+> relies on the devfreq core to correctly match the GOV_START/GOV_STOP=0A=
+> notifications.=0A=
+> =0A=
+> Fixes: 996133119f57 ("PM / devfreq: Add new passive governor")=0A=
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>=0A=
+> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>=0A=
+> Signed-off-by: Sasha Levin <sashal@kernel.org>=0A=
+> ---=0A=
+>   drivers/devfreq/governor_passive.c | 6 +++---=0A=
+>   1 file changed, 3 insertions(+), 3 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governo=
+r_passive.c=0A=
+> index 3bc29acbd54e8..22fd41b4c1098 100644=0A=
+> --- a/drivers/devfreq/governor_passive.c=0A=
+> +++ b/drivers/devfreq/governor_passive.c=0A=
+> @@ -168,12 +168,12 @@ static int devfreq_passive_event_handler(struct dev=
+freq *devfreq,=0A=
+>   			p_data->this =3D devfreq;=0A=
+>   =0A=
+>   		nb->notifier_call =3D devfreq_passive_notifier_call;=0A=
+> -		ret =3D devm_devfreq_register_notifier(dev, parent, nb,=0A=
+> +		ret =3D devfreq_register_notifier(parent, nb,=0A=
+>   					DEVFREQ_TRANSITION_NOTIFIER);=0A=
+>   		break;=0A=
+>   	case DEVFREQ_GOV_STOP:=0A=
+> -		devm_devfreq_unregister_notifier(dev, parent, nb,=0A=
+> -					DEVFREQ_TRANSITION_NOTIFIER);=0A=
+> +		WARN_ON(devfreq_unregister_notifier(parent, nb,=0A=
+> +					DEVFREQ_TRANSITION_NOTIFIER));=0A=
+>   		break;=0A=
+>   	default:=0A=
+>   		break;=0A=
+> =0A=
+=0A=
