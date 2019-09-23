@@ -2,390 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A21CBBBE8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BD7BBE92
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503433AbfIWWkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 18:40:18 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33059 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391723AbfIWWkS (ORCPT
+        id S2503456AbfIWWkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 18:40:45 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34779 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392282AbfIWWko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 18:40:18 -0400
-Received: by mail-io1-f66.google.com with SMTP id z19so15416478ior.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 15:40:17 -0700 (PDT)
+        Mon, 23 Sep 2019 18:40:44 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b128so10117321pfa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 15:40:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language;
-        bh=wBvsJCew/juxa4FkdqrZ1jE3icFHhSqPKtev8ETjJDE=;
-        b=RAzcrKu65XL0Hm0df0vxHgRREUpG6PPkTAHS6DTTIgpC+AfnAG7lyvtsuiKrQOJoAa
-         Sg5Ce27HfS7Axm6eKRYHC5lGxqsuMOm3Osztla4P3CMvCKvXgj8CqiTT1odlMC92Waep
-         /1/kXAz9syBf7lGUQ9BOIMODkiAd0+HUqWQv0=
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=dV/VFIBBnqaIS6aRCC/wcXHFeYbMA2iZ1Q9+7enJTQg=;
+        b=Ne7PIJi24GGIHptbAvF1PYuU1lPdUtAI8cUiMgsIavTd3Ni4NUMgE5ngyrSH0WjFpJ
+         y6V13OYicPJFLnGdpvQOoM2ZiBUQgeKR6S3xP0qepIBvlRosmtun5YhV47GwZBMhwHIi
+         fUrNZg8L5+CM3H1+fM8iP30LIcWfeOB4xauFw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language;
-        bh=wBvsJCew/juxa4FkdqrZ1jE3icFHhSqPKtev8ETjJDE=;
-        b=Ifst2L9Ez/XDn6GEkIbvCzspLJRMmu2sEJrLjTSkimT77rI2D00YE2t28pS5emaaaI
-         DQwBrYTXDrEhqgjrFoteuOjTM2gsjZP6V2y1g8ZQTfZhgDxMbRLXYfAcZAFsU1Sgkz3E
-         pYEZZohr4NvMNkhen886iS8fTuBC+Gvz3CaH3XndW6MBUJytIxyHkjj4nIGPXl6rpGYP
-         waaemUIibBDQhs/XX9M0r19+8hZSNRE1+6WwA+x0qX5sjjz8yoOb7Ue5FUOoG+F+PZKS
-         Pgp1WH2oCaf9HmZd+Tf5/T6x/5JCft67IpX+9kPUoO7e/Y943ynwlcd/iQGeh2lwi663
-         UEIQ==
-X-Gm-Message-State: APjAAAXqyN9qs4+g032Mvk39PuJO/HWe5bR5PY2Rk2mBs9amihFNwjWk
-        9k/xsqx8/ueD96N7I2o/VFll8Q==
-X-Google-Smtp-Source: APXvYqwW6Sz4DnNvx+q70hhi92gqXDEV4GSXDCi0Tm3wciyrGRlxdVLcVy/1HRlq2c2LFW1RRDPWNA==
-X-Received: by 2002:a6b:2bc1:: with SMTP id r184mr2030230ior.146.1569278417060;
-        Mon, 23 Sep 2019 15:40:17 -0700 (PDT)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id k2sm8040ios.19.2019.09.23.15.40.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Sep 2019 15:40:16 -0700 (PDT)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] Kselftest update for Linux 5.4-rc1
-Message-ID: <47009c0c-9b64-5824-0c1c-8cdc1a2265de@linuxfoundation.org>
-Date:   Mon, 23 Sep 2019 16:40:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dV/VFIBBnqaIS6aRCC/wcXHFeYbMA2iZ1Q9+7enJTQg=;
+        b=iICMlj6PkQRlEavKie8wG6dpe8dHWlSCaOoJywrOUb/OHyRMB1rXaif2OWYiMdbPG2
+         7DnlmMGWAa8ZrQhmI5h3oHR13fo9ZDWR5J+fswhPAuaRcuBTkwltIZnybY/9iv3xDIR7
+         Xgs6hKVONYLNZfjCFe/hm8dcM1B6Eqrqrw4o9abLuhBQDIjOnHXWczJWzN8Kss6ZHUWv
+         Ge+dOA6odwv/xGskT/l5J2/7rMqOIKfyIHZwe7XsXXbEAYZh6sLWrwO+1xO7rJNBd82i
+         xUU3mBvNuliPnUfNDVGQZO5FA8KYz/pKIUs9opo1iQcyKw0ktX/st+2RXXhmM5OlNUKN
+         3PCA==
+X-Gm-Message-State: APjAAAUy7XaNZ5vrR/mLDWnGGCk15ZXb2S8s1lWNJvJhkld6ziB2LyMm
+        +Ui50eS42ObfWnwpLrts3UqZJQ==
+X-Google-Smtp-Source: APXvYqwJ/YZFjqVIePIntTXndtIsstaltiFMdt5JylGJwMjKeHF8y7vM9oVdgnJmvOsINhEnrCrbCw==
+X-Received: by 2002:a65:504c:: with SMTP id k12mr2257623pgo.252.1569278443553;
+        Mon, 23 Sep 2019 15:40:43 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id o42sm19687393pjo.32.2019.09.23.15.40.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 15:40:42 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 15:40:41 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: Use make invocation's -j argument for
+ parallelism
+Message-ID: <201909231537.0FC0474C@keescook>
+References: <201909191438.C00E6DB@keescook>
+ <20190922140331.3ffe8604@lwn.net>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------AF2964C81749270537BD7314"
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190922140331.3ffe8604@lwn.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------AF2964C81749270537BD7314
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Sun, Sep 22, 2019 at 02:03:31PM -0600, Jonathan Corbet wrote:
+> On Thu, 19 Sep 2019 14:44:37 -0700
+> Kees Cook <keescook@chromium.org> wrote:
+> 
+> > While sphinx 1.7 and later supports "-jauto" for parallelism, this
+> > effectively ignores the "-j" flag used in the "make" invocation, which
+> > may cause confusion for build systems. Instead, extract the available
+> 
+> What sort of confusion might we expect?  Or, to channel akpm, "what are the
+> user-visible effects of this bug"?
 
-Hi Linus,
+When I run "make htmldocs -j16" with a pre-1.7 sphinx, it is not
+parallelized. When I run "make htmldocs -j8" with 1.7+ sphinx, it uses
+all my CPUs instead of 8. :)
 
-Please pull the following Kselftest update for Linux 5.4-rc1.
+> > +	-j $(shell python3 $(srctree)/scripts/jobserver-count $(SPHINX_PARALLEL)) \
+> 
+> This (and the shebang line in the script itself) will cause the docs build
+> to fail on systems lacking Python 3.  While we have talked about requiring
+> Python 3 for the docs build, we have not actually taken that step yet.  We
+> probably shouldn't sneak it in here.  I don't see anything in the script
+> that should require a specific Python version, so I think it should be
+> tweaked to be version-independent and just invoke "python".
 
-This Kselftest update for Linux 5.4-rc1 consists of several fixes to
-existing tests.
+Ah, no problem. I can fix this. In a quick scan it looked like sphinx
+was python3, but I see now that's just my install. :)
 
-diff is attached.
+> >  	-b $2 \
+> >  	-c $(abspath $(srctree)/$(src)) \
+> >  	-d $(abspath $(BUILDDIR)/.doctrees/$3) \
+> > diff --git a/scripts/jobserver-count b/scripts/jobserver-count
+> > new file mode 100755
+> > index 000000000000..ff6ebe6b0194
+> > --- /dev/null
+> > +++ b/scripts/jobserver-count
+> > @@ -0,0 +1,53 @@
+> > +#!/usr/bin/env python3
+> > +# SPDX-License-Identifier: GPL-2.0-or-later
+> 
+> By license-rules.rst, this should be GPL-2.0+
 
-This pull has just the ksleftest patches I sent in my previous pull
-request. I dropped the KUnit patches and rebased.
+Whoops, thanks.
 
-I will send another pull request for the KUnit work later on this
-week.
+> > +# Extract and prepare jobserver file descriptors from envirnoment.
+> > +try:
+> > +	# Fetch the make environment options.
+> > +	flags = os.environ['MAKEFLAGS']
+> > +
+> > +	# Look for "--jobserver=R,W"
+> > +	opts = [x for x in flags.split(" ") if x.startswith("--jobserver")]
+> > +
+> > +	# Parse out R,W file descriptor numbers and set them nonblocking.
+> > +	fds = opts[0].split("=", 1)[1]
+> > +	reader, writer = [nonblock(int(x)) for x in fds.split(",", 1)]
+> > +except:
+> 
+> So I have come to really dislike bare "except" clauses; I've seen them hide
+> too many bugs.  In this case, perhaps it's justified, but still ... it bugs
+> me ...
 
-Please note that there is conflict between
+Fair enough. I will adjust this (and the later instance).
 
-tools/testing/selftests/tpm2/Makefile
+> 
+> > +	# Any failures here should result in just using the default
+> > +	# specified parallelism.
+> > +	print(default)
+> > +	sys.exit(0)
+> > +
+> > +# Read out as many jobserver slots as possible.
+> > +jobs = b""
+> > +while True:
+> > +	try:
+> > +		slot = os.read(reader, 1)
+> > +		jobs += slot
+> > +	except:
+> 
+> This one, I think, should be explicit; anything other than EWOULDBLOCK
+> indicates a real problem, right?
+> 
+> > +		break
+> > +# Return all the reserved slots.
+> > +os.write(writer, jobs)
+> 
+> You made writer nonblocking, so it seems plausible that we could leak some
+> slots here, no?  Does writer really need to be nonblocking?
 
-between commit:
+Good point. I will fix this too.
 
-   3fb2179b0f3553a ("selftests/tpm2: Add the missing TEST_FILES assignment")
+> 
+> > +# If the jobserver was (impossibly) full or communication failed, use default.
+> > +if len(jobs) < 1:
+> > +	print(default)
+> > +
+> > +# Report available slots (with a bump for our caller's reserveration).
+> > +print(len(jobs) + 1)
+> 
+> The last question I have is...why is it that we have to do this complex
+> dance rather than just passing the "-j" option through directly to sphinx?
+> That comes down to the "confusion" mentioned at the top, I assume.  It
+> would be good to understand that?
 
-from the tpmdd tree and commit:
+There is no method I have found to discover the -j option's contents
+(intentionally so, it seems) from within make. :(
 
-   d04e26067d13f01 ("selftests: tpm2: install python files")
-
-Please take the fix from kselftest tree which is the correct
-version for this change.
-
-d04e26067d13f01 ("selftests: tpm2: install python files")
-
-Please let me know if you have any questions and/or concerns.
-
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-
-The following changes since commit d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1:
-
-   Linux 5.3-rc5 (2019-08-18 14:31:08 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest 
-tags/linux-kselftest-5.4-rc1.1
-
-for you to fetch changes up to 721cb3c8bc8890e824b7be53bf951960ff7811f9:
-
-   selftests: tpm2: install python files (2019-09-23 08:33:16 -0600)
-
-----------------------------------------------------------------
-linux-kselftest-5.4-rc1.1
-
-This Kselftest update for Linux 5.4-rc1 consists of fixes to existing
-tests.
-
-----------------------------------------------------------------
-Anders Roxell (2):
-       selftests: livepatch: add missing fragments to config
-       selftests: tpm2: install python files
-
-George G. Davis (2):
-       selftests: watchdog: Add optional file argument
-       selftests: watchdog: cleanup whitespace in usage options
-
-Ilya Leoshkevich (1):
-       selftests: use "$(MAKE)" instead of "make"
-
-Masanari Iida (1):
-       selftest/ftrace: Fix typo in trigger-snapshot.tc
-
-Tycho Andersen (1):
-       selftests/seccomp: fix build on older kernels
-
-  tools/testing/selftests/Makefile                   | 22 ++++++------
-  .../ftrace/test.d/trigger/trigger-snapshot.tc      |  2 +-
-  tools/testing/selftests/livepatch/config           |  2 ++
-  tools/testing/selftests/seccomp/seccomp_bpf.c      |  5 +++
-  tools/testing/selftests/tpm2/Makefile              |  1 +
-  tools/testing/selftests/watchdog/watchdog-test.c   | 41 
-+++++++++++++++-------
-  6 files changed, 48 insertions(+), 25 deletions(-)
-----------------------------------------------------------------
-
---------------AF2964C81749270537BD7314
-Content-Type: text/x-patch;
- name="linux-kselftest-5.4-rc1.1.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="linux-kselftest-5.4-rc1.1.diff"
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 25b43a8c2b15..c3feccb99ff5 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -126,9 +126,9 @@ endif
- # in the default INSTALL_HDR_PATH usr/include.
- khdr:
- ifeq (1,$(DEFAULT_INSTALL_HDR_PATH))
--	make --no-builtin-rules ARCH=$(ARCH) -C $(top_srcdir) headers_install
-+	$(MAKE) --no-builtin-rules ARCH=$(ARCH) -C $(top_srcdir) headers_install
- else
--	make --no-builtin-rules INSTALL_HDR_PATH=$$BUILD/usr \
-+	$(MAKE) --no-builtin-rules INSTALL_HDR_PATH=$$BUILD/usr \
- 		ARCH=$(ARCH) -C $(top_srcdir) headers_install
- endif
- 
-@@ -136,35 +136,35 @@ all: khdr
- 	@for TARGET in $(TARGETS); do		\
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
- 		mkdir $$BUILD_TARGET  -p;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET;\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET;\
- 	done;
- 
- run_tests: all
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET run_tests;\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET run_tests;\
- 	done;
- 
- hotplug:
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET;\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET;\
- 	done;
- 
- run_hotplug: hotplug
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET run_full_test;\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET run_full_test;\
- 	done;
- 
- clean_hotplug:
- 	@for TARGET in $(TARGETS_HOTPLUG); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
- 	done;
- 
- run_pstore_crash:
--	make -C pstore run_crash
-+	$(MAKE) -C pstore run_crash
- 
- # Use $BUILD as the default install root. $BUILD points to the
- # right output location for the following cases:
-@@ -184,7 +184,7 @@ ifdef INSTALL_PATH
- 	install -m 744 kselftest/prefix.pl $(INSTALL_PATH)/kselftest/
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET INSTALL_PATH=$(INSTALL_PATH)/$$TARGET install; \
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET INSTALL_PATH=$(INSTALL_PATH)/$$TARGET install; \
- 	done;
- 
- 	@# Ask all targets to emit their test scripts
-@@ -203,7 +203,7 @@ ifdef INSTALL_PATH
- 		echo "[ -w /dev/kmsg ] && echo \"kselftest: Running tests in $$TARGET\" >> /dev/kmsg" >> $(ALL_SCRIPT); \
- 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
- 		echo -n "run_many" >> $(ALL_SCRIPT); \
--		make -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
-+		$(MAKE) -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
- 		echo "" >> $(ALL_SCRIPT);	    \
- 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
- 	done;
-@@ -216,7 +216,7 @@ endif
- clean:
- 	@for TARGET in $(TARGETS); do \
- 		BUILD_TARGET=$$BUILD/$$TARGET;	\
--		make OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
-+		$(MAKE) OUTPUT=$$BUILD_TARGET -C $$TARGET clean;\
- 	done;
- 
- .PHONY: khdr all run_tests hotplug run_hotplug clean_hotplug run_pstore_crash install clean
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/trigger-snapshot.tc b/tools/testing/selftests/ftrace/test.d/trigger/trigger-snapshot.tc
-index 7717c0a09686..ac738500d17f 100644
---- a/tools/testing/selftests/ftrace/test.d/trigger/trigger-snapshot.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/trigger-snapshot.tc
-@@ -28,7 +28,7 @@ if [ -z "$FEATURE" ]; then
-     exit_unsupported
- fi
- 
--echo "Test snapshot tigger"
-+echo "Test snapshot trigger"
- echo 0 > snapshot
- echo 1 > events/sched/sched_process_fork/enable
- ( echo "forked")
-diff --git a/tools/testing/selftests/livepatch/config b/tools/testing/selftests/livepatch/config
-index 0dd7700464a8..ad23100cb27c 100644
---- a/tools/testing/selftests/livepatch/config
-+++ b/tools/testing/selftests/livepatch/config
-@@ -1 +1,3 @@
-+CONFIG_LIVEPATCH=y
-+CONFIG_DYNAMIC_DEBUG=y
- CONFIG_TEST_LIVEPATCH=m
-diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-index 6ef7f16c4cf5..7f8b5c8982e3 100644
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -199,6 +199,11 @@ struct seccomp_notif_sizes {
- };
- #endif
- 
-+#ifndef PTRACE_EVENTMSG_SYSCALL_ENTRY
-+#define PTRACE_EVENTMSG_SYSCALL_ENTRY	1
-+#define PTRACE_EVENTMSG_SYSCALL_EXIT	2
-+#endif
-+
- #ifndef seccomp
- int seccomp(unsigned int op, unsigned int flags, void *args)
- {
-diff --git a/tools/testing/selftests/tpm2/Makefile b/tools/testing/selftests/tpm2/Makefile
-index 9dd848427a7b..1a5db1eb8ed5 100644
---- a/tools/testing/selftests/tpm2/Makefile
-+++ b/tools/testing/selftests/tpm2/Makefile
-@@ -2,3 +2,4 @@
- include ../lib.mk
- 
- TEST_PROGS := test_smoke.sh test_space.sh
-+TEST_PROGS_EXTENDED := tpm2.py tpm2_tests.py
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index c2333c78cf04..afff120c7be6 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -19,7 +19,7 @@
- 
- int fd;
- const char v = 'V';
--static const char sopts[] = "bdehp:t:Tn:NL";
-+static const char sopts[] = "bdehp:t:Tn:NLf:";
- static const struct option lopts[] = {
- 	{"bootstatus",          no_argument, NULL, 'b'},
- 	{"disable",             no_argument, NULL, 'd'},
-@@ -31,6 +31,7 @@ static const struct option lopts[] = {
- 	{"pretimeout",    required_argument, NULL, 'n'},
- 	{"getpretimeout",       no_argument, NULL, 'N'},
- 	{"gettimeleft",		no_argument, NULL, 'L'},
-+	{"file",          required_argument, NULL, 'f'},
- 	{NULL,                  no_argument, NULL, 0x0}
- };
- 
-@@ -69,16 +70,19 @@ static void term(int sig)
- static void usage(char *progname)
- {
- 	printf("Usage: %s [options]\n", progname);
--	printf(" -b, --bootstatus    Get last boot status (Watchdog/POR)\n");
--	printf(" -d, --disable       Turn off the watchdog timer\n");
--	printf(" -e, --enable        Turn on the watchdog timer\n");
--	printf(" -h, --help          Print the help message\n");
--	printf(" -p, --pingrate=P    Set ping rate to P seconds (default %d)\n", DEFAULT_PING_RATE);
--	printf(" -t, --timeout=T     Set timeout to T seconds\n");
--	printf(" -T, --gettimeout    Get the timeout\n");
--	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
--	printf(" -N, --getpretimeout Get the pretimeout\n");
--	printf(" -L, --gettimeleft   Get the time left until timer expires\n");
-+	printf(" -f, --file\t\tOpen watchdog device file\n");
-+	printf("\t\t\tDefault is /dev/watchdog\n");
-+	printf(" -b, --bootstatus\tGet last boot status (Watchdog/POR)\n");
-+	printf(" -d, --disable\t\tTurn off the watchdog timer\n");
-+	printf(" -e, --enable\t\tTurn on the watchdog timer\n");
-+	printf(" -h, --help\t\tPrint the help message\n");
-+	printf(" -p, --pingrate=P\tSet ping rate to P seconds (default %d)\n",
-+	       DEFAULT_PING_RATE);
-+	printf(" -t, --timeout=T\tSet timeout to T seconds\n");
-+	printf(" -T, --gettimeout\tGet the timeout\n");
-+	printf(" -n, --pretimeout=T\tSet the pretimeout to T seconds\n");
-+	printf(" -N, --getpretimeout\tGet the pretimeout\n");
-+	printf(" -L, --gettimeleft\tGet the time left until timer expires\n");
- 	printf("\n");
- 	printf("Parameters are parsed left-to-right in real-time.\n");
- 	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
-@@ -92,14 +96,20 @@ int main(int argc, char *argv[])
- 	int ret;
- 	int c;
- 	int oneshot = 0;
-+	char *file = "/dev/watchdog";
- 
- 	setbuf(stdout, NULL);
- 
--	fd = open("/dev/watchdog", O_WRONLY);
-+	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
-+		if (c == 'f')
-+			file = optarg;
-+	}
-+
-+	fd = open(file, O_WRONLY);
- 
- 	if (fd == -1) {
- 		if (errno == ENOENT)
--			printf("Watchdog device not enabled.\n");
-+			printf("Watchdog device (%s) not found.\n", file);
- 		else if (errno == EACCES)
- 			printf("Run watchdog as root.\n");
- 		else
-@@ -108,6 +118,8 @@ int main(int argc, char *argv[])
- 		exit(-1);
- 	}
- 
-+	optind = 0;
-+
- 	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
- 		switch (c) {
- 		case 'b':
-@@ -190,6 +202,9 @@ int main(int argc, char *argv[])
- 			else
- 				printf("WDIOC_GETTIMELEFT error '%s'\n", strerror(errno));
- 			break;
-+		case 'f':
-+			/* Handled above */
-+			break;
- 
- 		default:
- 			usage(argv[0]);
-
---------------AF2964C81749270537BD7314--
+-- 
+Kees Cook
