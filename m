@@ -2,123 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 533FBBBB40
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4166BBB52
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732994AbfIWS0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 14:26:13 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:52014 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732942AbfIWS0M (ORCPT
+        id S2440482AbfIWS0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 14:26:49 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49010 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438244AbfIWS0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:26:12 -0400
-Received: by mail-io1-f69.google.com with SMTP id x13so9770323ioa.18
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 11:26:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Wp+WOxmIS7xEA02hFIkA48OyPRBkMcKVWO+Q59/ep3w=;
-        b=TaxWI6XIPDvHX5oY6yrN9k5nHnbk1HFSu8ElDI0RS8lvwDFvbhSz28jB/+U/RbVnfw
-         Pjozxd3YCb3zlZftRB+YpYbDeywe/KKssrWMRnxDIJicl1VFcq4R9zjM4tYbE3LdyDd/
-         LSvhdN0qjsbeY1GfPLDiYv3aLpXWssPeBKjjAQarRF84f6GzAS6EA3KZmN0RpV8xke47
-         92aVKyDJdVZQWtg5MbRXMb805s8vBUplfJzMJqAreKw3+PGtMHP9u3qusPizyNkMtzvn
-         ZvNwdY37gAuspwqM5Y8cD2SChtluBZCPrjDP3jXpsrt4vmh1DMfIvgEno3Rbgos7v58q
-         LORg==
-X-Gm-Message-State: APjAAAWqiUwofkM1vcodWpGF6PmtgsyS7Kv6aUqtqm9fNyFN3naclh2c
-        cANh2aXtBICR0/8ERMsoqcGL6ddES1OJtpF9G7Wpx9a51nrT
-X-Google-Smtp-Source: APXvYqxXKvyI6gkF2fxEbgVSBMSnm/K5sNn1xNC4xSjPHJP1Zu+7ehuPVelloZn8PCtalDMPhbxYLmpW2im/PNrqrRraa3dXqS0B
+        Mon, 23 Sep 2019 14:26:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zw+H0cLzv/wwqoCNPLuepePG6BXzshdDMwI7nmGluWE=; b=fKjhg1afHN0bskjgwyq9Io5Cu
+        Uy0KP8nn8p8ohmwBpELJ9JE/+fVoxTyba9bySGimHT6golLOxvZ0pAbFoNxr9uKGSvSA5BIxMtEXm
+        yzngWO3G+0KzgEAjcKOxDl9W86UWTmdQi6InLrl40Pfi9MGte/6+khTJKabJteeX0bAb8=;
+Received: from [12.157.10.114] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iCT2X-0004Xp-9o; Mon, 23 Sep 2019 18:26:25 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 46260D01F26; Mon, 23 Sep 2019 19:26:23 +0100 (BST)
+Date:   Mon, 23 Sep 2019 11:26:23 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Jiri Kosina <trivial@kernel.org>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH trivial] sound: Fix Kconfig indentation
+Message-ID: <20190923182623.GX2036@sirena.org.uk>
+References: <20190923154547.26532-1-krzk@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8c17:: with SMTP id n23mr818164ioj.46.1569263171386;
- Mon, 23 Sep 2019 11:26:11 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 11:26:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e3c7de05933c8d39@google.com>
-Subject: general protection fault in finish_writeback_work
-From:   syzbot <syzbot+828abc56e48ada4b0195@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AaroDtM9M79Ffl67"
+Content-Disposition: inline
+In-Reply-To: <20190923154547.26532-1-krzk@kernel.org>
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+--AaroDtM9M79Ffl67
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-HEAD commit:    24ccb0ab qede: qede_fp: simplify a bit 'qede_rx_build_skb()'
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a5b229600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dfcf592db22b9132
-dashboard link: https://syzkaller.appspot.com/bug?extid=828abc56e48ada4b0195
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+On Mon, Sep 23, 2019 at 05:45:47PM +0200, Krzysztof Kozlowski wrote:
+> Adjust indentation from spaces to tab (+optional two spaces) as in
+> coding style with command like:
+>     $ sed -e 's/^        /\t/' -i */Kconfig
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+828abc56e48ada4b0195@syzkaller.appspotmail.com
+--AaroDtM9M79Ffl67
+Content-Type: application/pgp-signature; name="signature.asc"
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 8777 Comm: kworker/u4:5 Not tainted 5.3.0+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: writeback wb_workfn (flush-8:0)
-RIP: 0010:__lock_acquire+0x1265/0x4e70 kernel/locking/lockdep.c:3828
-Code: 00 0f 85 0e 26 00 00 48 81 c4 e8 00 00 00 5b 41 5c 41 5d 41 5e 41 5f  
-5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f  
-85 dd 2a 00 00 49 81 3e a0 25 06 8a 0f 84 4e ee ff
-RSP: 0018:ffff88806930f938 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 03fffe22022b47e2 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff88806930fa48 R08: 0000000000000001 R09: 0000000000000001
-R10: fffffbfff138cf90 R11: ffff8880693002c0 R12: 1ffff110115a3f15
-R13: 0000000000000000 R14: 1ffff110115a3f15 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2136820ea0 CR3: 000000008ab86000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
-  __wake_up_common_lock+0xc8/0x150 kernel/sched/wait.c:122
-  __wake_up+0xe/0x10 kernel/sched/wait.c:142
-  finish_writeback_work.isra.0+0xf6/0x120 fs/fs-writeback.c:168
-  wb_do_writeback fs/fs-writeback.c:2030 [inline]
-  wb_workfn+0x34f/0x11e0 fs/fs-writeback.c:2070
-  process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace b7a1091622454beb ]---
-RIP: 0010:__lock_acquire+0x1265/0x4e70 kernel/locking/lockdep.c:3828
-Code: 00 0f 85 0e 26 00 00 48 81 c4 e8 00 00 00 5b 41 5c 41 5d 41 5e 41 5f  
-5d c3 48 b8 00 00 00 00 00 fc ff df 4c 89 f2 48 c1 ea 03 <80> 3c 02 00 0f  
-85 dd 2a 00 00 49 81 3e a0 25 06 8a 0f 84 4e ee ff
-RSP: 0018:ffff88806930f938 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 03fffe22022b47e2 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff88806930fa48 R08: 0000000000000001 R09: 0000000000000001
-R10: fffffbfff138cf90 R11: ffff8880693002c0 R12: 1ffff110115a3f15
-R13: 0000000000000000 R14: 1ffff110115a3f15 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2136820ea0 CR3: 000000008ab86000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2JDk4ACgkQJNaLcl1U
+h9AK3Af/Tumh0ikqpRGJ0LZQlwnZL1S5vUwKQexSehpfKUrROssuMuDooB4KfBpz
+ADosYAcnRlbfTq0/WyLAbhOUUYfA11tff0W8JqcdhWDupk+DWkHGiSgARTy18/fx
+QQIiYsgO/MAiMJLVUS8Qm55ro7At6IGI6nGxDUtLowI/2OBxRrIXLlik9szhF9UL
+hfh0nRX4R2gIj33W/MuTWPLiRf2SUAvK95Z7+0QoiCMAwY+d4NKkjNTdqCKJWfeK
+FRBvFxRrd7KWIVq41QLWFp7FX3+fPEMhi2Setm0a7XVTszCKb09uxOIIKNJ8JwDv
+vOR6rMrZvaRkVnVT+BsW5n9HY6OksQ==
+=gZw4
+-----END PGP SIGNATURE-----
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--AaroDtM9M79Ffl67--
