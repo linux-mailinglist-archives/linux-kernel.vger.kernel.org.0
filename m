@@ -2,129 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858BABBEAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 00:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA915BBEB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 01:00:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407734AbfIWW7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 18:59:11 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40678 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388587AbfIWW7L (ORCPT
+        id S2407787AbfIWXAb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 19:00:31 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40691 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407756AbfIWXAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 18:59:11 -0400
-Received: by mail-pf1-f194.google.com with SMTP id x127so10131249pfb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 15:59:11 -0700 (PDT)
+        Mon, 23 Sep 2019 19:00:30 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so8891108pgj.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 16:00:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=y3z1k4gVNAaPIrfZzgoCW8IDcBYw5cfRh8zYf6ua3ow=;
-        b=acu4taYfUhopSZ/FZ0DfFK9vw+1y6QouHY91xUqg+5XYUZBzHEmMK7/agA8QWKZ38K
-         gSOe2DGR6TC//GWU0Qkss5sMiFYQjLUMpXL6ObW+ioTVnvccSaWQZG/DwXn6sUHQWUwo
-         +TR1dW1VihKSd7pGvXWmkh6d7GG7Cwf0lpc0g=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Cxi307Bkpn4j+jiDXKsNJo43HrT9bZvKE+wlsNTb2vo=;
+        b=nODLwMTRvcFnGrX/zrqVQmiRwJplI1RrjiEAU6Zj6tA0Y7w4ftRM/iNbtP2VVCojIx
+         MKCGE/iJ7EYbTPMCb61gdelYNeeIWDaFwvmmm8fM53w3T8h0lZslkySjqG2pyvNxaVO+
+         bjU8V3X9T+tUUE0boXjqVWqbmCRG75WNganvYsIH6qNh0o69xd7CmKX6u9Y1xzDENblT
+         rkcyg5cAPU8wacBT9N8eNQlxXO4YdiMbfc/uZtMLO4i5tVHIPK7DQ5zqllka0gQEBD3z
+         d9jGw34v0TCyCq1Pued+j5FYRJBFijr7Udm939aOXQHq7GM4xHQDTRghwrnqQxc/VAnN
+         WYVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=y3z1k4gVNAaPIrfZzgoCW8IDcBYw5cfRh8zYf6ua3ow=;
-        b=TheCQSOncI3Bt3Zh8p6u0ioVUghJHhVdL26dvx8tcsZP/6QF6JL/MAYZuhD2awZ+Ps
-         ioJ+iCaw9RWvcYnjaS4fEJPUYgwhdByQ7EiB9ziEEqEtyM+jAgoRBaffcotGC+htbQQW
-         Z6GY3wveis6v7RKSZBxNkBWn/RmZhzx9+jSPQAZRB/QKA3eF4WTk2N5U8HIONKMx2maX
-         uVQDnfoKoCpWUtjOtlZxlnPaJrZzzhKha3yX1o13oKY6GTii5GBHkMPP5ESbhIrKGIm/
-         npQJbsQe7swIVqC25IOuYIyTmAc3xCjPP7WbyWU6z9nKX8U4pDC7prfR+pFUmrI22o42
-         cBxA==
-X-Gm-Message-State: APjAAAV4EebvQx1gywy7CSGVZYJpV2NfzRQTngAE7SRB+R51XOX4lyM/
-        dPN6VdW/RrW3OVpgxam7nXoAsA==
-X-Google-Smtp-Source: APXvYqzC0oJkIVQqCSyw7IVni9HHJq0DhtsYJeDEiYatLGTyGs22f0t7scv9POwDos4m/Y7CrMr5Yw==
-X-Received: by 2002:a63:df10:: with SMTP id u16mr1671596pgg.373.1569279550656;
-        Mon, 23 Sep 2019 15:59:10 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e14sm6227427pjt.8.2019.09.23.15.59.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 15:59:09 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 15:59:08 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     James Dingwall <james@dingwall.me.uk>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Juergen Gross <jgross@suse.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: pstore does not work under xen
-Message-ID: <201909231556.7FF7A11@keescook>
-References: <20190919102643.GA9400@dingwall.me.uk>
- <3908561D78D1C84285E8C5FCA982C28F7F472015@ORSMSX115.amr.corp.intel.com>
- <20190919161430.GA28042@dingwall.me.uk>
- <ae56e2c0-b2d3-835d-04cb-e4404d979859@oracle.com>
- <20190923154227.GA11201@dingwall.me.uk>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Cxi307Bkpn4j+jiDXKsNJo43HrT9bZvKE+wlsNTb2vo=;
+        b=oIV0Hz3vMkvwC+Pup5bBVQQwJAS7fDkgqJHmvcAZYS7NiL00zzBe3tFxxbq8oy9h+o
+         MBAXbzsaQIn/p2yJDc2e9L/7JJk+Z5wGH2VYyWq4NNM2cdpHsgyjkwmC1K5994GNUIe3
+         MSIZXerjFZWVRoNoDzptb9aLKSo5+qKoFY3NuYM2HDqinKoWRgOp4hxrJp8kDxliwh+m
+         mlr/XtiG1iW9PhJdlmRMHOY3vw/ny+L+Ocoy4/VCnMM44i4tGwkXeRw4JM6aG1Uylg9O
+         UJ30oQrjkK3i3iYVfZ/0WfbraN6SzxuF2VgAkxd+dKK88+vrEM5pVT5z5vSuZIiEvtGw
+         qklg==
+X-Gm-Message-State: APjAAAWrNc8takywzLJpikv1b4Xrv2FLj8S2COELp6BtQr6XcqCBg11F
+        ATzVAV1gK+Mc/5qBbciPMtURIdCMJYI=
+X-Google-Smtp-Source: APXvYqyjbEye/XbSU187L1OdRVB7k7qjYrq7gfkFPmEuO36sQdB/ogRa8PveZWy3H4fXpgrq6zYpuA==
+X-Received: by 2002:a17:90a:fc8c:: with SMTP id ci12mr1972096pjb.38.1569279629150;
+        Mon, 23 Sep 2019 16:00:29 -0700 (PDT)
+Received: from ?IPv6:2600:380:7421:c743:b137:2b87:43b6:a795? ([2600:380:7421:c743:b137:2b87:43b6:a795])
+        by smtp.gmail.com with ESMTPSA id i37sm12006325pje.23.2019.09.23.16.00.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Sep 2019 16:00:28 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] Optimise io_uring completion waiting
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1569139018.git.asml.silence@gmail.com>
+ <a4996ae7-ac0a-447b-49b2-7e96275aad29@kernel.dk>
+ <20190923083549.GA42487@gmail.com>
+ <c15b2d54-c722-8fb4-266f-b589c1a21aa5@gmail.com>
+ <df612e90-8999-0085-d2d6-4418e044e429@gmail.com>
+ <731b2087-7786-5374-68ff-8cba42f0cd68@kernel.dk>
+Message-ID: <759b9b48-1de3-1d43-3e39-9c530bfffaa0@kernel.dk>
+Date:   Mon, 23 Sep 2019 17:00:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923154227.GA11201@dingwall.me.uk>
+In-Reply-To: <731b2087-7786-5374-68ff-8cba42f0cd68@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 03:42:27PM +0000, James Dingwall wrote:
-> On Thu, Sep 19, 2019 at 12:37:40PM -0400, Boris Ostrovsky wrote:
-> > On 9/19/19 12:14 PM, James Dingwall wrote:
-> > > On Thu, Sep 19, 2019 at 03:51:33PM +0000, Luck, Tony wrote:
-> > >>> I have been investigating a regression in our environment where pstore 
-> > >>> (efi-pstore specifically but I suspect this would affect all 
-> > >>> implementations) no longer works after upgrading from a 4.4 to 5.0 
-> > >>> kernel when running under xen.  (This is an Ubuntu kernel but I don't 
-> > >>> think there are patches which affect this area.)
-> > >> I don't have any answer for this ... but want to throw out the idea that
-> > >> VMM systems could provide some hypercalls to guests to save/return
-> > >> some blob of memory (perhaps the "save" triggers automagically if the
-> > >> guest crashes?).
-> > >>
-> > >> That would provide a much better pstore back end than relying on emulation
-> > >> of EFI persistent variables (which have severe contraints on size, and don't
-> > >> support some pstore modes because you can't dynamically update EFI variables
-> > >> hundreds of times per second).
-> > >>
-> > > For clarification this is a dom0 crash rather than an HVM guest with EFI.  I
-> > > should probably have also mentioned the xen verion has changed from 4.8.4 to
-> > > 4.11.2 in case its behaviour on detection of crashed domain has changed.
-> > >
-> > > (For capturing guest crashes we have enabled xenconsole logging so the
-> > > hvc0 log is available in dom0.)
-> > 
-> > 
-> > Do you only see this difference between 4.4 and 5.0 when you crash via
-> > sysrq?
-> > 
-> > Because that's where things changed. On 4.4 we seem to be forcing an
-> > oops, which eventually calls kmsg_dump() and then panic. On 5.0 we call
-> > panic() directly from sysrq handler. And because Xen's panic notifier
-> > doesn't return we never get a chance to call kmsg_dump().
-> > 
+On 9/23/19 2:48 PM, Jens Axboe wrote:
+> On 9/23/19 10:32 AM, Pavel Begunkov wrote:
+>> Sorry, mixed the threads.
+>>
+>>>>
+>>>> I'm not sure an extension is needed for such a special interface, why not
+>>>> just put a ->threshold value next to the ctx->wait field and use either
+>>>> the regular wait_event() APIs with the proper condition, or
+>>>> wait_event_cmd() style APIs if you absolutely need something more complex
+>>>> to happen inside?
+>> Ingo,
+>> io_uring works well without this patch just using wait_event_*() with
+>> proper condition, but there are performance issues with spurious
+>> wakeups. Detailed description in the previous mail.
+>> Am I missing something?
 > 
-> Ok, I see that change in 8341f2f222d729688014ce8306727fdb9798d37e.  I 
-> hadn't tested it any other way before.  Using the null pointer 
-> de-reference module code at [1] a pstore record is generated as expected 
-> when the module is loaded (panic_on_oops=1).
+> I think we can do the same thing, just wrapping the waitqueue in a
+> structure with a count in it, on the stack. Got some flight time
+> coming up later today, let me try and cook up a patch.
 
-This change looks correct -- it just gets us directly to the panic()
-state instead of exercising the various exception handlers.
+Totally untested, and sent out 5 min before departure... But something
+like this.
 
-> I have also tested swapping the kmsg_dump() / 
-> atomic_notifier_call_chain() around in panic.c and this also results in 
-> a pstore record being created with sysrq-c.  I don't know if that would 
-> be an acceptable solution though since it may break behaviour that other 
-> things depend on.
 
-I don't think reordering these is a good idea: as the comments say,
-there might be work done in the notifier chain that kmsg_dump() will
-want to capture (e.g. the KASLR base offset).
-
-The situation seems to be that notifier callbacks must return -- I think
-Xen needs fixing here.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index ca7570aca430..c2f9e1da26dd 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -2768,6 +2768,37 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit,
+ 	return submit;
+ }
+ 
++struct io_wait_queue {
++	struct wait_queue_entry wq;
++	struct io_ring_ctx *ctx;
++	struct task_struct *task;
++	unsigned to_wait;
++	unsigned nr_timeouts;
++};
++
++static inline bool io_should_wake(struct io_wait_queue *iowq)
++{
++	struct io_ring_ctx *ctx = iowq->ctx;
++
++	return io_cqring_events(ctx->rings) >= iowq->to_wait ||
++			atomic_read(&ctx->cq_timeouts) != iowq->nr_timeouts;
++}
++
++static int io_wake_function(struct wait_queue_entry *curr, unsigned int mode,
++			    int wake_flags, void *key)
++{
++	struct io_wait_queue *iowq = container_of(curr, struct io_wait_queue,
++							wq);
++
++	if (io_should_wake(iowq)) {
++		list_del_init(&curr->entry);
++		wake_up_process(iowq->task);
++		return 1;
++	}
++
++	return -1;
++}
++
+ /*
+  * Wait until events become available, if we don't already have some. The
+  * application must reap them itself, as they reside on the shared cq ring.
+@@ -2775,8 +2806,16 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit,
+ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+ 			  const sigset_t __user *sig, size_t sigsz)
+ {
++	struct io_wait_queue iowq = {
++		.wq = {
++			.func	= io_wake_function,
++			.entry	= LIST_HEAD_INIT(iowq.wq.entry),
++		},
++		.task		= current,
++		.ctx		= ctx,
++		.to_wait	= min_events,
++	};
+ 	struct io_rings *rings = ctx->rings;
+-	unsigned nr_timeouts;
+ 	int ret;
+ 
+ 	if (io_cqring_events(rings) >= min_events)
+@@ -2795,15 +2834,16 @@ static int io_cqring_wait(struct io_ring_ctx *ctx, int min_events,
+ 			return ret;
+ 	}
+ 
+-	nr_timeouts = atomic_read(&ctx->cq_timeouts);
+-	/*
+-	 * Return if we have enough events, or if a timeout occured since
+-	 * we started waiting. For timeouts, we always want to return to
+-	 * userspace.
+-	 */
+-	ret = wait_event_interruptible(ctx->wait,
+-				io_cqring_events(rings) >= min_events ||
+-				atomic_read(&ctx->cq_timeouts) != nr_timeouts);
++	iowq.nr_timeouts = atomic_read(&ctx->cq_timeouts);
++	prepare_to_wait_exclusive(&ctx->wait, &iowq.wq, TASK_INTERRUPTIBLE);
++	do {
++		if (io_should_wake(&iowq))
++			break;
++		schedule();
++		set_current_state(TASK_INTERRUPTIBLE);
++	} while (1);
++	finish_wait(&ctx->wait, &iowq.wq);
++
+ 	restore_saved_sigmask_unless(ret == -ERESTARTSYS);
+ 	if (ret == -ERESTARTSYS)
+ 		ret = -EINTR;
 
 -- 
-Kees Cook
+Jens Axboe
+
