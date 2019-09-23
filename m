@@ -2,117 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E54F4BBC5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A227BBBC5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:48:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502298AbfIWTpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 15:45:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48272 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728181AbfIWTpO (ORCPT
+        id S1728747AbfIWTsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 15:48:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52365 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728592AbfIWTsm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:45:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=T1wJieVaGSw4lrkxEJrL75LlxCo53ZqCpjN+xiCeBz8=; b=g1nbejpoexev69wtsvisH4Osm
-        brLtMi6HvXX6Ax3zVt39fQ8/JNWMV0C7C07CJ/YZMiFFEQhbf7ibX5hLf2mVvTj9LF95yLY6rMPsa
-        dx6SrWL9uAUf/SRVJ4q/ULpWzw/RdMAYnp7HLSTEVi4IHWSZxWg7LG3uQGEbP4jjupy/OR6PUNZfQ
-        Pq43gOnI9oaW0CrDNUehEaVArnHBvia3krsGo4CY+xUbh7RrZctDY6trAQir3aY5Ke/RZ2jls2VDa
-        beG65sms9r5lgsNG3CNlluxt4/HufjcAz+ixMe5hvE8ZRs+TSX/4pgBSulMFzG50MvQKP70eDATuG
-        9fTP0e5Yg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCUGj-00046c-3r; Mon, 23 Sep 2019 19:45:09 +0000
-Date:   Mon, 23 Sep 2019 12:45:09 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Lin Feng <linf@wangsu.com>, Michal Hocko <mhocko@kernel.org>,
-        corbet@lwn.net, mcgrof@kernel.org, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        keescook@chromium.org, mchehab+samsung@kernel.org,
-        mgorman@techsingularity.net, vbabka@suse.cz, ktkhai@virtuozzo.com,
-        hannes@cmpxchg.org, Omar Sandoval <osandov@fb.com>,
-        Ming Lei <ming.lei@redhat.com>
-Subject: Re: Is congestion broken?
-Message-ID: <20190923194509.GC1855@bombadil.infradead.org>
-References: <20190917115824.16990-1-linf@wangsu.com>
- <20190917120646.GT29434@bombadil.infradead.org>
- <20190918123342.GF12770@dhcp22.suse.cz>
- <6ae57d3e-a3f4-a3db-5654-4ec6001941a9@wangsu.com>
- <20190919034949.GF9880@bombadil.infradead.org>
- <20190923111900.GH15392@bombadil.infradead.org>
- <45d8b7a6-8548-65f5-cccf-9f451d4ae3d4@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45d8b7a6-8548-65f5-cccf-9f451d4ae3d4@kernel.dk>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Mon, 23 Sep 2019 15:48:42 -0400
+Received: from mail-pg1-f199.google.com ([209.85.215.199])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <connor.kuehl@canonical.com>)
+        id 1iCUK8-0000jE-HO
+        for linux-kernel@vger.kernel.org; Mon, 23 Sep 2019 19:48:40 +0000
+Received: by mail-pg1-f199.google.com with SMTP id r12so9916063pgm.16
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 12:48:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1S3tbuayATJvDzZnpsz9pe1S0VUYhd/3QByEuRe2Xx4=;
+        b=boodLpNgXu2AsjVJBS9UE4smdX4oZlo4x/AB3EbNjFdXj//Ud7IseyI1tKNUU/Efu8
+         PDRyj225Cz1mRhx9ffnLpdY4gBSQ7KHXWgh+7dPxEgZsMXgnRuQIcpIh2gec/46XTMXf
+         k/23Jc0RWfMJOE3+9EeZKKhCXKwbfDpOVuIZtHa0Wb3GqvcGDM+WUn6jfDwr7XtqqssQ
+         l5gXbrqfWs2tCWelszESK6/1W/EPTVvhF7Xg8alS9SCAzPrfNiCGk7zZiYg4IJ+ney2q
+         qeBhcLPDU6GN0mvGHjHsGK7AuaB2wVxswEEvgBRg0utXyuely4x4whew/fS8mL35ckPc
+         SCng==
+X-Gm-Message-State: APjAAAV87Zb7IcmoC1hfkGzFtkTP+7tGqdc0icliXAerOIeWE491M5fV
+        W06aGVTM4CkwuhobVFU7am29INASsmKYAqIGKUZTPORwoFDbgTBTWRS5OShZXcz7BKHs/buKWGD
+        E1r9MriQ+TMyG9mUKq00zcZSLbltjtbvgsG9tfmujvg==
+X-Received: by 2002:a62:3586:: with SMTP id c128mr1393910pfa.105.1569268119372;
+        Mon, 23 Sep 2019 12:48:39 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxIyO7oQ4DlmMEmBB+e51zn7In6laZj0i5/rIJzv56lsoRzXrY1pqufNNLtuyies+wIQgTOKw==
+X-Received: by 2002:a62:3586:: with SMTP id c128mr1393900pfa.105.1569268119227;
+        Mon, 23 Sep 2019 12:48:39 -0700 (PDT)
+Received: from localhost.localdomain (c-71-63-131-226.hsd1.or.comcast.net. [71.63.131.226])
+        by smtp.gmail.com with ESMTPSA id g12sm16477924pfb.97.2019.09.23.12.48.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 12:48:38 -0700 (PDT)
+From:   Connor Kuehl <connor.kuehl@canonical.com>
+To:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
+        straube.linux@gmail.com, devel@driverdev.osuosl.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: rtl8188eu: remove dead code in do-while conditional step
+Date:   Mon, 23 Sep 2019 12:48:06 -0700
+Message-Id: <20190923194806.25347-1-connor.kuehl@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 01:38:23PM -0600, Jens Axboe wrote:
-> On 9/23/19 5:19 AM, Matthew Wilcox wrote:
-> > 
-> > Ping Jens?
-> > 
-> > On Wed, Sep 18, 2019 at 08:49:49PM -0700, Matthew Wilcox wrote:
-> >> On Thu, Sep 19, 2019 at 10:33:10AM +0800, Lin Feng wrote:
-> >>> On 9/18/19 20:33, Michal Hocko wrote:
-> >>>> I absolutely agree here. From you changelog it is also not clear what is
-> >>>> the underlying problem. Both congestion_wait and wait_iff_congested
-> >>>> should wake up early if the congestion is handled. Is this not the case?
-> >>>
-> >>> For now I don't know why, codes seem should work as you said, maybe I need to
-> >>> trace more of the internals.
-> >>> But weird thing is that once I set the people-disliked-tunable iowait
-> >>> drop down instantly, this is contradictory to the code design.
-> >>
-> >> Yes, this is quite strange.  If setting a smaller timeout makes a
-> >> difference, that indicates we're not waking up soon enough.  I see
-> >> two possibilities; one is that a wakeup is missing somewhere -- ie the
-> >> conditions under which we call clear_wb_congested() are wrong.  Or we
-> >> need to wake up sooner.
-> >>
-> >> Umm.  We have clear_wb_congested() called from exactly one spot --
-> >> clear_bdi_congested().  That is only called from:
-> >>
-> >> drivers/block/pktcdvd.c
-> >> fs/ceph/addr.c
-> >> fs/fuse/control.c
-> >> fs/fuse/dev.c
-> >> fs/nfs/write.c
-> >>
-> >> Jens, is something supposed to be calling clear_bdi_congested() in the
-> >> block layer?  blk_clear_congested() used to exist until October 29th
-> >> last year.  Or is something else supposed to be waking up tasks that
-> >> are sleeping on congestion?
-> 
-> Congestion isn't there anymore. It was always broken as a concept imho,
-> since it was inherently racy. We used the old batching mechanism in the
-> legacy stack to signal it, and it only worked for some devices.
+The local variable 'bcmd_down' is always set to true almost immediately
+before the do-while's condition is checked. As a result, !bcmd_down
+evaluates to false which short circuits the logical AND operator meaning
+that the second operand is never reached and is therefore dead code.
 
-Umm.  OK.  Well, something that used to work is now broken.  So how
-should we fix it?  Take a look at shrink_node() in mm/vmscan.c.  If we've
-submitted a lot of writes to a device, and overloaded it, we want to
-sleep until it's able to take more writes:
+Addresses-Coverity: ("Logically dead code")
 
-                /*
-                 * Stall direct reclaim for IO completions if underlying BDIs
-                 * and node is congested. Allow kswapd to continue until it
-                 * starts encountering unqueued dirty pages or cycling through
-                 * the LRU too quickly.
-                 */
-                if (!sc->hibernation_mode && !current_is_kswapd() &&
-                   current_may_throttle() && pgdat_memcg_congested(pgdat, root))
-                        wait_iff_congested(BLK_RW_ASYNC, HZ/10);
+Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+---
+ drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-With a standard block device, that now sleeps until the timeout (100ms)
-expires, which is far too long for a modern SSD but is probably tuned
-just right for some legacy piece of spinning rust (or indeed a modern
-USB stick).  How would the block layer like to indicate to the mm layer
-"I am too busy, please let the device work for a bit"?
+diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+index 47352f210c0b..a4b317937b23 100644
+--- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
++++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+@@ -48,7 +48,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
+ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
+ {
+ 	u8 bcmd_down = false;
+-	s32 retry_cnts = 100;
+ 	u8 h2c_box_num;
+ 	u32 msgbox_addr;
+ 	u32 msgbox_ex_addr;
+@@ -103,7 +102,7 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
+ 		adapt->HalData->LastHMEBoxNum =
+ 			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
+ 
+-	} while ((!bcmd_down) && (retry_cnts--));
++	} while (!bcmd_down);
+ 
+ 	ret = _SUCCESS;
+ 
+-- 
+2.17.1
+
