@@ -2,68 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A8D5BBB1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5744ABBB23
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440402AbfIWSSb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 14:18:31 -0400
-Received: from mga11.intel.com ([192.55.52.93]:53477 "EHLO mga11.intel.com"
+        id S2440437AbfIWSSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 14:18:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438191AbfIWSSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:18:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 11:18:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,541,1559545200"; 
-   d="scan'208";a="272368651"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga001.jf.intel.com with ESMTP; 23 Sep 2019 11:18:30 -0700
-Message-ID: <44b6fd7a71d9e9f7dd82ac51473f45b48fa4679d.camel@linux.intel.com>
-Subject: Re: [PATCH 0/2] intel-speed-select: Convert output to tables
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Prarit Bhargava <prarit@redhat.com>,
-        platform-driver-x86@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Mon, 23 Sep 2019 11:18:30 -0700
-In-Reply-To: <20190923131638.6668-1-prarit@redhat.com>
-References: <20190923131638.6668-1-prarit@redhat.com>
+        id S2438191AbfIWSSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 14:18:47 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7116E2168B
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 18:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569262726;
+        bh=LO4GTKKSHWB9kcHekO7hnomAZooSVXs0I2xg7poD4DY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=j0BZXQIpX2MOlhf9SNznn8IGzntp+2babJIqLVhkcA9epdql6lJxsc3WfrZx4AT2H
+         sCnl/bTZ5yOO4OB4REdI7QlHWu57x01sWSen0jTwTw33GaDgw8KHXRFivZkFtwGjq1
+         /saaLIbAjaaHg35vxirC2Q74D3G6RlwxqQiPpEJU=
+Received: by mail-wm1-f47.google.com with SMTP id v17so10329360wml.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 11:18:46 -0700 (PDT)
+X-Gm-Message-State: APjAAAU4RwyfCoMn+M18UsyBrrZn/JhVTbgbj8ObcW/8Q3CTntAQEpiM
+        A6twtWcdj0obVJVyYGwZIOrcevUAhs3gfd8No3SLrA==
+X-Google-Smtp-Source: APXvYqyuY3H2DKNpr0Bzr8dbUHAxIiCTpvK12u2LHOiAR0CZVPK82iYnYzgf0u3M5gP9FATk1J7gn1h2vcuI6Q6N73Y=
+X-Received: by 2002:a1c:6143:: with SMTP id v64mr689647wmb.79.1569262724979;
+ Mon, 23 Sep 2019 11:18:44 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190919150314.054351477@linutronix.de>
+In-Reply-To: <20190919150314.054351477@linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 23 Sep 2019 11:18:33 -0700
+X-Gmail-Original-Message-ID: <CALCETrVpG9iH821LMuL5OOrAeRekYjYE9fyK3KkCwohN6ZUcXg@mail.gmail.com>
+Message-ID: <CALCETrVpG9iH821LMuL5OOrAeRekYjYE9fyK3KkCwohN6ZUcXg@mail.gmail.com>
+Subject: Re: [RFC patch 00/15] entry: Provide generic implementation for host
+ and guest entry/exit work
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-09-23 at 09:16 -0400, Prarit Bhargava wrote:
-> The turbo ratio limits and turbo frequencies add a large amount of
-> lines to the output.  The output can be truncated into human and
-> machine readable tables to reduce the number of lines of output.
-> 
-Unfortunately this breaks json output. The idea is that the software
-should be able to parse json output using available json libraries and
-consume information, without developing complex parser.
-For example:
-#intel-speed-select -o out.json -f json perf-profile info
-Copy paste contents of out.json in any online json editor/tools, itshouldn't give error. 
+On Thu, Sep 19, 2019 at 8:09 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> When working on a way to move out the posix cpu timer expiry out of the
+> timer interrupt context, I noticed that KVM is not handling pending task
+> work before entering a guest. A quick hack was to add that to the x86 KVM
+> handling loop. The discussion ended with a request to make this a generic
+> infrastructure possible with also moving the per arch implementations of
+> the enter from and return to user space handling generic.
+>
+>   https://lore.kernel.org/r/89E42BCC-47A8-458B-B06A-D6A20D20512C@amacapital.net
+>
+> You asked for it, so don't complain that you have to review it :)
+>
+> The series implements the syscall enter/exit and the general exit to
+> userspace work handling along with the pre guest enter functionality.
+>
+> The series converts x86 and ARM64. x86 is fully tested including selftests
+> etc. ARM64 is only compile tested for now as my only ARM64 testbox is not
+> available right now.
 
-Thanks,
-Srinivas
-
-
-> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> 
-> Prarit Bhargava (2):
->   intel-speed-select: Display turbo-ratio-limits as a table
->   intel-speed-select: Display turbo frequencies in a table
-> 
->  .../x86/intel-speed-select/isst-display.c     | 196 +++++++++-------
-> --
->  1 file changed, 94 insertions(+), 102 deletions(-)
-> 
-
+Other than the comments I sent so far, I like this series.
