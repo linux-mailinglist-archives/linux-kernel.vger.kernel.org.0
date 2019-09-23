@@ -2,130 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD832BBDEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:30:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE363BBDF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503110AbfIWVay (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 17:30:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49972 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732345AbfIWVay (ORCPT
+        id S2503124AbfIWVbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 17:31:09 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39029 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729120AbfIWVbI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:30:54 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8NLN3AP091077;
-        Mon, 23 Sep 2019 17:30:42 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v740wkjnj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Sep 2019 17:30:42 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8NLPiYH027618;
-        Mon, 23 Sep 2019 21:30:41 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma04dal.us.ibm.com with ESMTP id 2v5bg74hy0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Sep 2019 21:30:41 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8NLUdXr30015898
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Sep 2019 21:30:40 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C75A8C6059;
-        Mon, 23 Sep 2019 21:30:39 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C759C6057;
-        Mon, 23 Sep 2019 21:30:38 +0000 (GMT)
-Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.184])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 23 Sep 2019 21:30:37 +0000 (GMT)
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 1/1] powerpc: kvm: Reduce calls to get current->mm by storing the value locally
-Date:   Mon, 23 Sep 2019 18:30:23 -0300
-Message-Id: <20190923213022.7740-1-leonardo@linux.ibm.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 23 Sep 2019 17:31:08 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v4so5331494pff.6;
+        Mon, 23 Sep 2019 14:31:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M2IFVrWJfMOAbZ8zA9rzidNehYbIVV/clhh3kKcrw9E=;
+        b=o8Q/uBGSu8ZdsYS0hUd/MewIisiM0eWQnwEplzkf+gYm/+TEQ0x7wO5DVHWHHVe/1B
+         0R0x1l1ZgAZL2svOvsBblBhkx5ehvs33a2hc77H9E6JVDuHr4xO8nflmbNTSSO5jD9iQ
+         h4hdHieLDX+zxUZwtq2k28rij1Zk4LOQEoC4vll4zH/9+V+z8ZHdrlLNkJ9veJHtkxnt
+         PLv3/AUQxmm8hLJdIYeGw2crjNLORwJVUzqMuxBVVf9cgcI4a5WWmlBYmZKVDoesuY+l
+         kJhKM/vSQcJ9fjG9cZDQzi+wF15QqnJHsXhg3AnAD4+JcbXEzmxJwwEhbqD4zA/IVwoE
+         TxiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M2IFVrWJfMOAbZ8zA9rzidNehYbIVV/clhh3kKcrw9E=;
+        b=o9ZOte/izGDEaX426hAhp0oZlnRj9vetu0m2ce6mteC2OjvhqX/Oucp+S3JyKOtlQZ
+         d+uHIsZns5E8zMOIdtuzwbYLEJ0Lk4P/A4ZWLR9zR4t7kGDtn6MODbENmokM50kgtcpd
+         dcf2mjgtKznOzoaIJCmXCRL//aT0sI4qnL2Kt53foyyEsoghLtCKA942fp9V/j936DIN
+         32mjHvTe2xT1AsKhMuG6vdnKsHua70JCiHqjCHmsZgCSg3iCdoh9fMh0SoCd+INoMyMr
+         G9RPG6q7puGjSg9Iva/OdNXrZezaEIQr4LQw1Ioaq09q+pBzrHbewKm2RqXjI4iOhSl8
+         dlDA==
+X-Gm-Message-State: APjAAAWa6Pzdpd1qYL2W9Lm3tsF/otwWmuBrAGBTqRqbgUmxCssItAyu
+        rF65gMwOZWT+iTI/SowUTNLuUUoK
+X-Google-Smtp-Source: APXvYqz11dgh3msJRTJFiRiQ3k2P7vA2ePQWKiABBwCaAzm+nc2axjz7y3bjzbHGSmKtH1j4Z0C4gg==
+X-Received: by 2002:a17:90a:8d13:: with SMTP id c19mr1716231pjo.142.1569274267670;
+        Mon, 23 Sep 2019 14:31:07 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id z22sm12576337pgf.10.2019.09.23.14.31.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 14:31:06 -0700 (PDT)
+Subject: Re: [PATCH] kcm: use BPF_PROG_RUN
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Yonghong Song <yhs@fb.com>
+Cc:     Sami Tolvanen <samitolvanen@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Tom Herbert <tom@herbertland.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190905211528.97828-1-samitolvanen@google.com>
+ <0f77cc31-4df5-a74f-5b64-a1e3fc439c6d@fb.com>
+ <CAADnVQJxrPDZtKAik4VEzvw=TwY6PoWytfp7HcQt5Jsaja7mxw@mail.gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <048e82f4-5b31-f9f4-5bf7-82dfbf7ec8f3@gmail.com>
+Date:   Mon, 23 Sep 2019 14:31:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-23_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=351 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909230179
+In-Reply-To: <CAADnVQJxrPDZtKAik4VEzvw=TwY6PoWytfp7HcQt5Jsaja7mxw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reduces the number of calls to get_current() in order to get the value of
-current->mm by doing it once and storing the value, since it is not
-supposed to change inside the same process).
 
-Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
----
-Re-sending to all lists involved. (I missed kvm ones)
 
- arch/powerpc/kvm/book3s_64_mmu_hv.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+On 9/6/19 10:06 AM, Alexei Starovoitov wrote:
+> On Fri, Sep 6, 2019 at 3:03 AM Yonghong Song <yhs@fb.com> wrote:
+>>
+>>
+>>
+>> On 9/5/19 2:15 PM, Sami Tolvanen wrote:
+>>> Instead of invoking struct bpf_prog::bpf_func directly, use the
+>>> BPF_PROG_RUN macro.
+>>>
+>>> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+>>
+>> Acked-by: Yonghong Song <yhs@fb.com>
+> 
+> Applied. Thanks
+> 
 
-diff --git a/arch/powerpc/kvm/book3s_64_mmu_hv.c b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-index 9a75f0e1933b..f2b9aea43216 100644
---- a/arch/powerpc/kvm/book3s_64_mmu_hv.c
-+++ b/arch/powerpc/kvm/book3s_64_mmu_hv.c
-@@ -508,6 +508,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 	struct vm_area_struct *vma;
- 	unsigned long rcbits;
- 	long mmio_update;
-+	struct mm_struct *mm;
+Then we probably need this as well, what do you think ?
+
+diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
+index 8f12f5c6ab875ebaa6c59c6268c337919fb43bb9..6508e88efdaf57f206b84307f5ad5915a2ed21f7 100644
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -378,8 +378,13 @@ static int kcm_parse_func_strparser(struct strparser *strp, struct sk_buff *skb)
+ {
+        struct kcm_psock *psock = container_of(strp, struct kcm_psock, strp);
+        struct bpf_prog *prog = psock->bpf_prog;
++       int res;
  
- 	if (kvm_is_radix(kvm))
- 		return kvmppc_book3s_radix_page_fault(run, vcpu, ea, dsisr);
-@@ -584,6 +585,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 	is_ci = false;
- 	pfn = 0;
- 	page = NULL;
-+	mm = current->mm;
- 	pte_size = PAGE_SIZE;
- 	writing = (dsisr & DSISR_ISSTORE) != 0;
- 	/* If writing != 0, then the HPTE must allow writing, if we get here */
-@@ -592,8 +594,8 @@ int kvmppc_book3s_hv_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 	npages = get_user_pages_fast(hva, 1, writing ? FOLL_WRITE : 0, pages);
- 	if (npages < 1) {
- 		/* Check if it's an I/O mapping */
--		down_read(&current->mm->mmap_sem);
--		vma = find_vma(current->mm, hva);
-+		down_read(&mm->mmap_sem);
-+		vma = find_vma(mm, hva);
- 		if (vma && vma->vm_start <= hva && hva + psize <= vma->vm_end &&
- 		    (vma->vm_flags & VM_PFNMAP)) {
- 			pfn = vma->vm_pgoff +
-@@ -602,7 +604,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 			is_ci = pte_ci(__pte((pgprot_val(vma->vm_page_prot))));
- 			write_ok = vma->vm_flags & VM_WRITE;
- 		}
--		up_read(&current->mm->mmap_sem);
-+		up_read(&mm->mmap_sem);
- 		if (!pfn)
- 			goto out_put;
- 	} else {
-@@ -621,8 +623,7 @@ int kvmppc_book3s_hv_page_fault(struct kvm_run *run, struct kvm_vcpu *vcpu,
- 			 * hugepage split and collapse.
- 			 */
- 			local_irq_save(flags);
--			ptep = find_current_mm_pte(current->mm->pgd,
--						   hva, NULL, NULL);
-+			ptep = find_current_mm_pte(mm->pgd, hva, NULL, NULL);
- 			if (ptep) {
- 				pte = kvmppc_read_update_linux_pte(ptep, 1);
- 				if (__pte_write(pte))
--- 
-2.20.1
-
+-       return BPF_PROG_RUN(prog, skb);
++       preempt_disable();
++       res = BPF_PROG_RUN(prog, skb);
++       preempt_enable();
++
++       return res;
+ }
+ 
+ static int kcm_read_sock_done(struct strparser *strp, int err)
