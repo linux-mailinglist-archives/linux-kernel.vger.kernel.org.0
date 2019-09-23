@@ -2,80 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7273BBB67C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3756BB64B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:13:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732657AbfIWORn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:17:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52899 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730669AbfIWORm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:17:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9032A356C9;
-        Mon, 23 Sep 2019 14:17:42 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-16.phx2.redhat.com [10.3.112.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A92B60852;
-        Mon, 23 Sep 2019 14:17:41 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 2170011DF; Mon, 23 Sep 2019 11:17:38 -0300 (BRT)
-Date:   Mon, 23 Sep 2019 11:17:38 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Stephane Eranian <eranian@google.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@elte.hu,
-        jolsa@redhat.com, namhyung@kernel.org
-Subject: Re: [PATCH v2] perf record: fix priv level with branch sampling for
- paranoid=2
-Message-ID: <20190923141738.GB3617@redhat.com>
-References: <20190920230356.41420-1-eranian@google.com>
- <20190923140345.GA3617@redhat.com>
+        id S2407407AbfIWONU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:13:20 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50728 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404847AbfIWONU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 10:13:20 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8NEDFYh074217;
+        Mon, 23 Sep 2019 09:13:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569247996;
+        bh=pylUPeCNtRYYZvjwR77bzHfG+zVG/7+gE+JoZOyPgmM=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=Hgbv4v36BP4W3UhGYlKUnVLDXwiAqEaYuizHFb2RbcmN8fb5t0hew/PgBEN4dpVUf
+         MmFqV3ki2K+x/aZjJhgJbxCkb6xKig6A28L9495kXCOl2tjNMr33HK15/FLr+0y8rv
+         NapSH1ZHlwYb73LCStx0KzPlbAjatWoQK6Hc4jCc=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8NEDF6T082043
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Sep 2019 09:13:15 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 23
+ Sep 2019 09:13:10 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 23 Sep 2019 09:13:09 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8NEDF8s092017;
+        Mon, 23 Sep 2019 09:13:15 -0500
+Subject: Re: [PATCH v3 3/5] leds: lm3692x: Handle failure to probe the
+ regulator
+To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <cover.1569100154.git.agx@sigxcpu.org>
+ <32fd08565f8dff39ce9a13f7b0a2546d22913b3a.1569100154.git.agx@sigxcpu.org>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <c1073a35-adaa-1a9b-e1d6-1b36ee7ac1a5@ti.com>
+Date:   Mon, 23 Sep 2019 09:17:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923140345.GA3617@redhat.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 23 Sep 2019 14:17:42 +0000 (UTC)
+In-Reply-To: <32fd08565f8dff39ce9a13f7b0a2546d22913b3a.1569100154.git.agx@sigxcpu.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Sep 23, 2019 at 11:03:45AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Thanks, tested added Jiri's Acked-by, applied, added this note:
-> 
-> Committer testing:
-> 
-> After aplying the patch we get:
-> 
->   [acme@quaco ~]$ perf record -b -e cycles date
->   WARNING: Kernel address maps (/proc/{kallsyms,modules}) are restricted,
->   check /proc/sys/kernel/kptr_restrict and /proc/sys/kernel/perf_event_paranoid.
-> 
->   Samples in kernel functions may not be resolved if a suitable vmlinux
->   file is not found in the buildid cache or in the vmlinux path.
-> 
->   Samples in kernel modules won't be resolved at all.
-> 
->   If some relocation was applied (e.g. kexec) symbols may be misresolved
->   even with a suitable vmlinux or kallsyms file.
-> 
->   Mon 23 Sep 2019 11:00:59 AM -03
->   [ perf record: Woken up 1 times to write data ]
->   [ perf record: Captured and wrote 0.005 MB perf.data (14 samples) ]
->   [acme@quaco ~]$ perf evlist -v
->   cycles:u: size: 112, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|PERIOD|BRANCH_STACK, read_format: ID, disabled: 1, inherit: 1, exclude_kernel: 1, exclude_hv: 1, mmap: 1, comm: 1, freq: 1, enable_on_exec: 1, task: 1, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1, branch_sample_type: ANY
->   [acme@quaco ~]$
-> 
-> That warning about restricted kernel maps will be suppressed in a follow
-> up patch, as perf_event_attr.exclude_kernel is set, i.e. no samples for
-> the kernel will be taken and thus no need for those maps
+Guido
 
-Its there:
+Thanks for the update
 
-https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?h=perf/core&id=c8b567c8a96a35acff746b1eef6f859e2a9fc195
+Reviewed-by: Dan Murphy <dmurphy@ti.com>
 
-- Arnaldo
+On 9/21/19 4:12 PM, Guido Günther wrote:
+> Instead use devm_regulator_get_optional since the regulator
+> is optional and check for errors.
+>
+> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
+> ---
+>   drivers/leds/leds-lm3692x.c | 13 +++++++++++--
+>   1 file changed, 11 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
+> index ad76e34455ff..54e9bd2d288b 100644
+> --- a/drivers/leds/leds-lm3692x.c
+> +++ b/drivers/leds/leds-lm3692x.c
+> @@ -337,9 +337,18 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
+>   		return ret;
+>   	}
+>   
+> -	led->regulator = devm_regulator_get(&led->client->dev, "vled");
+> -	if (IS_ERR(led->regulator))
+> +	led->regulator = devm_regulator_get_optional(&led->client->dev, "vled");
+> +	if (IS_ERR(led->regulator)) {
+> +		ret = PTR_ERR(led->regulator);
+> +		if (ret != -ENODEV) {
+> +			if (ret != -EPROBE_DEFER)
+> +				dev_err(&led->client->dev,
+> +					"Failed to get vled regulator: %d\n",
+> +					ret);
+> +			return ret;
+> +		}
+>   		led->regulator = NULL;
+> +	}
+>   
+>   	child = device_get_next_child_node(&led->client->dev, child);
+>   	if (!child) {
