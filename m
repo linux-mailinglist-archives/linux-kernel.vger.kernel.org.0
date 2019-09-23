@@ -2,152 +2,564 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17215BB86C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B790BB876
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:50:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732770AbfIWPtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 11:49:15 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:42499 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728595AbfIWPtO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 11:49:14 -0400
-Received: by mail-io1-f72.google.com with SMTP id w1so1139753ioj.9
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 08:49:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=aTe9vFgxnQSUbqzD1uvP+ahz/Hl3A6XwhKJCZ9nDuOs=;
-        b=BHrLhwuTZmR6mZKAGY5WzZj6QwB39SbIiYy0i+bob6qMt15rQlC5hwIMK1fXu96cKq
-         hDiOFaCjdzLD7FN7u0DYs8cxm/8Lx6MrMB+ZbgdTTrcxFyPgWGa1JTUpcJAtUIpHHdch
-         2KApt8g1YI850r51cuzyAsluYL1J+AXdK7wo2xBC4fnYWQbbEQ4NB4QYVl3UASomkGfb
-         a79Yfl+mLlB05yAGMmy8BC0U0OBn1PyyqYn77JkzFu0L8Ogz0v888dIWJasfkYD8uKim
-         +G5OP7Hz5n4/boMsRRCR+azAZj9lCLzMYuWxYOU4IeiZepeyr+zWDpxudNPgxCqxVupW
-         X3bg==
-X-Gm-Message-State: APjAAAUyjA3yHwCcvVREbrbr2KueDIroj/12NkdK8OEusso1K/4CdsNo
-        NkmY29TVH4Df8sqBmsDt+PlI9+zBz8NAyHIg8HvggS48EYaZ
-X-Google-Smtp-Source: APXvYqxPjdQBB4Fscqb4QFuBDGFKVQVQx/4U6ZEhKpwVw/nNziP7PXssR1WqgphK6lL3xLS8f87kiSF4AJU/MRIDv/RT2Bht86lN
-MIME-Version: 1.0
-X-Received: by 2002:a5d:814f:: with SMTP id f15mr16445345ioo.134.1569253751401;
- Mon, 23 Sep 2019 08:49:11 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 08:49:11 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006a3a2f05933a5c53@google.com>
-Subject: general protection fault in xsk_map_update_elem
-From:   syzbot <syzbot+491c1b7565ba9069ecae@syzkaller.appspotmail.com>
-To:     ast@kernel.org, bjorn.topel@intel.com, bpf@vger.kernel.org,
-        daniel@iogearbox.net, davem@davemloft.net, hawk@kernel.org,
-        jakub.kicinski@netronome.com, john.fastabend@gmail.com,
-        jonathan.lemon@gmail.com, kafai@fb.com,
-        linux-kernel@vger.kernel.org, magnus.karlsson@intel.com,
-        netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+        id S1732785AbfIWPuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 11:50:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728182AbfIWPuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 11:50:09 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D06020835;
+        Mon, 23 Sep 2019 15:50:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569253808;
+        bh=a/gnp0VA43q9tw8vxlsMsjkP9jypIqy2k1SvccaheYU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bPQYcEFIvxg2tJ8VOXDkany+/p5qbWPIVaEMsk5bLaFy05XP0ZCkEdTGVN2mbLSEw
+         vS5Of4Mlv3hzBkDxqzu0apHXHhplWRlPBDjTPQtqJFYn1M53Kyw6cF3iR2UOIUGLob
+         s/ODlBe8DHnmg8aOKaltmArUNfPYLWGQNIPSAI0Y=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jiri Kosina <trivial@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        lima@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH trivial] gpu: Fix Kconfig indentation
+Date:   Mon, 23 Sep 2019 17:49:32 +0200
+Message-Id: <20190923154932.6807-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgYjQxZGFlMDYgTWVyZ2UgdGFnICd4ZnMtNS40LW1lcmdlLTcnIG9mIGdpdDovL2dp
-dC5rZXJuZWwuby4uDQpnaXQgdHJlZTogICAgICAgbmV0LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xMzBiMjVhZDYwMDAwMA0K
-a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
-PWRmY2Y1OTJkYjIyYjkxMzINCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
-cG90LmNvbS9idWc/ZXh0aWQ9NDkxYzFiNzU2NWJhOTA2OWVjYWUNCmNvbXBpbGVyOiAgICAgICBn
-Y2MgKEdDQykgOS4wLjAgMjAxODEyMzEgKGV4cGVyaW1lbnRhbCkNCnN5eiByZXBybzogICAgICBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTE1NWEwYzI5NjAwMDAw
-DQpDIHJlcHJvZHVjZXI6ICAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC9yZXByby5j
-P3g9MTcyYmY2ZDk2MDAwMDANCg0KVGhlIGJ1ZyB3YXMgYmlzZWN0ZWQgdG86DQoNCmNvbW1pdCAw
-NDAyYWNkNjgzYzY3ODg3NGRmNmJkYmMyMzUzMGNhMDdlYTE5MzUzDQpBdXRob3I6IEJqw7ZybiBU
-w7ZwZWwgPGJqb3JuLnRvcGVsQGludGVsLmNvbT4NCkRhdGU6ICAgVGh1IEF1ZyAxNSAwOTozMDox
-MyAyMDE5ICswMDAwDQoNCiAgICAgeHNrOiByZW1vdmUgQUZfWERQIHNvY2tldCBmcm9tIG1hcCB3
-aGVuIHRoZSBzb2NrZXQgaXMgcmVsZWFzZWQNCg0KYmlzZWN0aW9uIGxvZzogIGh0dHBzOi8vc3l6
-a2FsbGVyLmFwcHNwb3QuY29tL3gvYmlzZWN0LnR4dD94PTEwZDRhODIzNjAwMDAwDQpmaW5hbCBj
-cmFzaDogICAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC9yZXBvcnQudHh0P3g9MTJk
-NGE4MjM2MDAwMDANCmNvbnNvbGUgb3V0cHV0OiBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNv
-bS94L2xvZy50eHQ/eD0xNGQ0YTgyMzYwMDAwMA0KDQpJTVBPUlRBTlQ6IGlmIHlvdSBmaXggdGhl
-IGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0Og0KUmVwb3J0
-ZWQtYnk6IHN5emJvdCs0OTFjMWI3NTY1YmE5MDY5ZWNhZUBzeXprYWxsZXIuYXBwc3BvdG1haWwu
-Y29tDQpGaXhlczogMDQwMmFjZDY4M2M2ICgieHNrOiByZW1vdmUgQUZfWERQIHNvY2tldCBmcm9t
-IG1hcCB3aGVuIHRoZSBzb2NrZXQgaXMgIA0KcmVsZWFzZWQiKQ0KDQpSRFg6IDAwMDAwMDAwMDAw
-MDAwMjAgUlNJOiAwMDAwMDAwMDIwMDAwMTAwIFJESTogMDAwMDAwMDAwMDAwMDAwMg0KUkJQOiAw
-MDAwMDAwMDAwMDAwMDA1IFIwODogMDAwMDAwMDAwMDAwMDAwMSBSMDk6IDAwMDA3ZmZlZjQ1MDAw
-MzMNClIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyNDYgUjEyOiAwMDAw
-MDAwMDAwNDAxZmYwDQpSMTM6IDAwMDAwMDAwMDA0MDIwODAgUjE0OiAwMDAwMDAwMDAwMDAwMDAw
-IFIxNTogMDAwMDAwMDAwMDAwMDAwMA0Ka2FzYW46IENPTkZJR19LQVNBTl9JTkxJTkUgZW5hYmxl
-ZA0Ka2FzYW46IEdQRiBjb3VsZCBiZSBjYXVzZWQgYnkgTlVMTC1wdHIgZGVyZWYgb3IgdXNlciBt
-ZW1vcnkgYWNjZXNzDQpnZW5lcmFsIHByb3RlY3Rpb24gZmF1bHQ6IDAwMDAgWyMxXSBQUkVFTVBU
-IFNNUCBLQVNBTg0KQ1BVOiAxIFBJRDogODg3OCBDb21tOiBzeXotZXhlY3V0b3I4MzUgTm90IHRh
-aW50ZWQgNS4zLjArICMwDQpIYXJkd2FyZSBuYW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5n
-aW5lL0dvb2dsZSBDb21wdXRlIEVuZ2luZSwgQklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KUklQ
-OiAwMDEwOl9fbGlzdF9hZGQgaW5jbHVkZS9saW51eC9saXN0Lmg6NjQgW2lubGluZV0NClJJUDog
-MDAxMDpsaXN0X2FkZF90YWlsIGluY2x1ZGUvbGludXgvbGlzdC5oOjkzIFtpbmxpbmVdDQpSSVA6
-IDAwMTA6eHNrX21hcF9zb2NrX2FkZCBrZXJuZWwvYnBmL3hza21hcC5jOjYyIFtpbmxpbmVdDQpS
-SVA6IDAwMTA6eHNrX21hcF91cGRhdGVfZWxlbSsweDc5Yy8weGFjMCBrZXJuZWwvYnBmL3hza21h
-cC5jOjI2NQ0KQ29kZTogMDAgZmMgZmYgZGYgNDggYzEgZWEgMDMgODAgM2MgMDIgMDAgMGYgODUg
-ZWYgMDIgMDAgMDAgNGMgODkgZTIgNGQgODkgIA0KYTcgZDggMDUgMDAgMDAgNDggYjggMDAgMDAg
-MDAgMDAgMDAgZmMgZmYgZGYgNDggYzEgZWEgMDMgPDgwPiAzYyAwMiAwMCAwZiAgDQo4NSBjMCAw
-MiAwMCAwMCA0OSA4ZCA3YyAyNCAwOCA0OSA4ZCA4NyBkMCAwNSAwMCAwMA0KUlNQOiAwMDE4OmZm
-ZmY4ODgwOWE1MTdiYjggRUZMQUdTOiAwMDAxMDI0Ng0KUkFYOiBkZmZmZmMwMDAwMDAwMDAwIFJC
-WDogZmZmZjg4ODA5Y2NjNDlkMCBSQ1g6IGZmZmZmZmZmODE4NjgwNzANClJEWDogMDAwMDAwMDAw
-MDAwMDAwMCBSU0k6IGZmZmZmZmZmODE4NjgwODUgUkRJOiAwMDAwMDAwMDAwMDAwMDAxDQpSQlA6
-IGZmZmY4ODgwOWE1MTdjNzggUjA4OiBmZmZmODg4MGExMGQyMDAwIFIwOTogZmZmZmVkMTAxMzRh
-MmY2NQ0KUjEwOiBmZmZmZWQxMDEzNGEyZjY0IFIxMTogMDAwMDAwMDAwMDAwMDAwMyBSMTI6IDAw
-MDAwMDAwMDAwMDAwMDANClIxMzogZmZmZjg4ODA5Y2NjNDllMCBSMTQ6IGZmZmY4ODgwODlkYjU1
-ODAgUjE1OiBmZmZmODg4MDljY2M0NDAwDQpGUzogIDAwMDA1NTU1NTVkZjI4ODAoMDAwMCkgR1M6
-ZmZmZjg4ODBhZTkwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQpDUzogIDAwMTAg
-RFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpDUjI6IDAwMDAwMDAwMjAw
-MDAwNDAgQ1IzOiAwMDAwMDAwMDk4NWU1MDAwIENSNDogMDAwMDAwMDAwMDE0MDZlMA0KRFIwOiAw
-MDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAwMDAwMDAwMDAw
-MDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAw
-MDAwMDAwMDAwNDAwDQpDYWxsIFRyYWNlOg0KICBtYXBfdXBkYXRlX2VsZW0rMHhjODIvMHgxMGIw
-IGtlcm5lbC9icGYvc3lzY2FsbC5jOjk2Ng0KICBfX2RvX3N5c19icGYrMHg4YjUvMHgzMzUwIGtl
-cm5lbC9icGYvc3lzY2FsbC5jOjI4NTQNCiAgX19zZV9zeXNfYnBmIGtlcm5lbC9icGYvc3lzY2Fs
-bC5jOjI4MjUgW2lubGluZV0NCiAgX194NjRfc3lzX2JwZisweDczLzB4YjAga2VybmVsL2JwZi9z
-eXNjYWxsLmM6MjgyNQ0KICBkb19zeXNjYWxsXzY0KzB4ZmEvMHg3NjAgYXJjaC94ODYvZW50cnkv
-Y29tbW9uLmM6MjkwDQogIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUN
-ClJJUDogMDAzMzoweDQ0MDcwOQ0KQ29kZTogMTggODkgZDAgYzMgNjYgMmUgMGYgMWYgODQgMDAg
-MDAgMDAgMDAgMDAgMGYgMWYgMDAgNDggODkgZjggNDggODkgZjcgIA0KNDggODkgZDYgNDggODkg
-Y2EgNGQgODkgYzIgNGQgODkgYzggNGMgOGIgNGMgMjQgMDggMGYgMDUgPDQ4PiAzZCAwMSBmMCBm
-ZiAgDQpmZiAwZiA4MyA1YiAxNCBmYyBmZiBjMyA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMA0K
-UlNQOiAwMDJiOjAwMDA3ZmZlZjQ1MDM0NzggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDogMDAw
-MDAwMDAwMDAwMDE0MQ0KUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDdmZmVmNDUwMzQ4
-MCBSQ1g6IDAwMDAwMDAwMDA0NDA3MDkNClJEWDogMDAwMDAwMDAwMDAwMDAyMCBSU0k6IDAwMDAw
-MDAwMjAwMDAxMDAgUkRJOiAwMDAwMDAwMDAwMDAwMDAyDQpSQlA6IDAwMDAwMDAwMDAwMDAwMDUg
-UjA4OiAwMDAwMDAwMDAwMDAwMDAxIFIwOTogMDAwMDdmZmVmNDUwMDAzMw0KUjEwOiAwMDAwMDAw
-MDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDAwMDAwMDA0MDFmZjANClIx
-MzogMDAwMDAwMDAwMDQwMjA4MCBSMTQ6IDAwMDAwMDAwMDAwMDAwMDAgUjE1OiAwMDAwMDAwMDAw
-MDAwMDAwDQpNb2R1bGVzIGxpbmtlZCBpbjoNCi0tLVsgZW5kIHRyYWNlIGE5NWI5YjkyNmY4NTYw
-NzcgXS0tLQ0KUklQOiAwMDEwOl9fbGlzdF9hZGQgaW5jbHVkZS9saW51eC9saXN0Lmg6NjQgW2lu
-bGluZV0NClJJUDogMDAxMDpsaXN0X2FkZF90YWlsIGluY2x1ZGUvbGludXgvbGlzdC5oOjkzIFtp
-bmxpbmVdDQpSSVA6IDAwMTA6eHNrX21hcF9zb2NrX2FkZCBrZXJuZWwvYnBmL3hza21hcC5jOjYy
-IFtpbmxpbmVdDQpSSVA6IDAwMTA6eHNrX21hcF91cGRhdGVfZWxlbSsweDc5Yy8weGFjMCBrZXJu
-ZWwvYnBmL3hza21hcC5jOjI2NQ0KQ29kZTogMDAgZmMgZmYgZGYgNDggYzEgZWEgMDMgODAgM2Mg
-MDIgMDAgMGYgODUgZWYgMDIgMDAgMDAgNGMgODkgZTIgNGQgODkgIA0KYTcgZDggMDUgMDAgMDAg
-NDggYjggMDAgMDAgMDAgMDAgMDAgZmMgZmYgZGYgNDggYzEgZWEgMDMgPDgwPiAzYyAwMiAwMCAw
-ZiAgDQo4NSBjMCAwMiAwMCAwMCA0OSA4ZCA3YyAyNCAwOCA0OSA4ZCA4NyBkMCAwNSAwMCAwMA0K
-UlNQOiAwMDE4OmZmZmY4ODgwOWE1MTdiYjggRUZMQUdTOiAwMDAxMDI0Ng0KUkFYOiBkZmZmZmMw
-MDAwMDAwMDAwIFJCWDogZmZmZjg4ODA5Y2NjNDlkMCBSQ1g6IGZmZmZmZmZmODE4NjgwNzANClJE
-WDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODE4NjgwODUgUkRJOiAwMDAwMDAwMDAw
-MDAwMDAxDQpSQlA6IGZmZmY4ODgwOWE1MTdjNzggUjA4OiBmZmZmODg4MGExMGQyMDAwIFIwOTog
-ZmZmZmVkMTAxMzRhMmY2NQ0KUjEwOiBmZmZmZWQxMDEzNGEyZjY0IFIxMTogMDAwMDAwMDAwMDAw
-MDAwMyBSMTI6IDAwMDAwMDAwMDAwMDAwMDANClIxMzogZmZmZjg4ODA5Y2NjNDllMCBSMTQ6IGZm
-ZmY4ODgwODlkYjU1ODAgUjE1OiBmZmZmODg4MDljY2M0NDAwDQpGUzogIDAwMDA1NTU1NTVkZjI4
-ODAoMDAwMCkgR1M6ZmZmZjg4ODBhZTkwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAw
-DQpDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpDUjI6
-IDAwMDAwMDAwMjAwMDAwNDAgQ1IzOiAwMDAwMDAwMDk4NWU1MDAwIENSNDogMDAwMDAwMDAwMDE0
-MDZlMA0KRFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAw
-MDAwMDAwMDAwMDAwMDANCkRSMzogMDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAwMDAwZmZmZTBm
-ZjAgRFI3OiAwMDAwMDAwMDAwMDAwNDAwDQoNCg0KLS0tDQpUaGlzIGJ1ZyBpcyBnZW5lcmF0ZWQg
-YnkgYSBib3QuIEl0IG1heSBjb250YWluIGVycm9ycy4NClNlZSBodHRwczovL2dvby5nbC90cHNt
-RUogZm9yIG1vcmUgaW5mb3JtYXRpb24gYWJvdXQgc3l6Ym90Lg0Kc3l6Ym90IGVuZ2luZWVycyBj
-YW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNvbS4NCg0Kc3l6Ym90IHdp
-bGwga2VlcCB0cmFjayBvZiB0aGlzIGJ1ZyByZXBvcnQuIFNlZToNCmh0dHBzOi8vZ29vLmdsL3Rw
-c21FSiNzdGF0dXMgZm9yIGhvdyB0byBjb21tdW5pY2F0ZSB3aXRoIHN5emJvdC4NCkZvciBpbmZv
-cm1hdGlvbiBhYm91dCBiaXNlY3Rpb24gcHJvY2VzcyBzZWU6IGh0dHBzOi8vZ29vLmdsL3Rwc21F
-SiNiaXNlY3Rpb24NCnN5emJvdCBjYW4gdGVzdCBwYXRjaGVzIGZvciB0aGlzIGJ1ZywgZm9yIGRl
-dGFpbHMgc2VlOg0KaHR0cHM6Ly9nb28uZ2wvdHBzbUVKI3Rlc3RpbmctcGF0Y2hlcw0K
+Adjust indentation from spaces to tab (+optional two spaces) as in
+coding style with command like:
+    $ sed -e 's/^        /\t/' -i */Kconfig
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/gpu/drm/Kconfig                  |  10 +-
+ drivers/gpu/drm/amd/display/Kconfig      |  20 ++--
+ drivers/gpu/drm/bridge/Kconfig           |   8 +-
+ drivers/gpu/drm/i915/Kconfig             |  12 +-
+ drivers/gpu/drm/i915/Kconfig.debug       | 144 +++++++++++------------
+ drivers/gpu/drm/lima/Kconfig             |   2 +-
+ drivers/gpu/drm/mgag200/Kconfig          |   8 +-
+ drivers/gpu/drm/nouveau/Kconfig          |   2 +-
+ drivers/gpu/drm/omapdrm/displays/Kconfig |   6 +-
+ drivers/gpu/drm/omapdrm/dss/Kconfig      |  12 +-
+ drivers/gpu/drm/rockchip/Kconfig         |   8 +-
+ drivers/gpu/drm/udl/Kconfig              |   2 +-
+ drivers/gpu/vga/Kconfig                  |   2 +-
+ 13 files changed, 118 insertions(+), 118 deletions(-)
+
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index e67c194c2aca..7cb6e4eb99e8 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -207,8 +207,8 @@ config DRM_RADEON
+ 	tristate "ATI Radeon"
+ 	depends on DRM && PCI && MMU
+ 	select FW_LOADER
+-        select DRM_KMS_HELPER
+-        select DRM_TTM
++	select DRM_KMS_HELPER
++	select DRM_TTM
+ 	select POWER_SUPPLY
+ 	select HWMON
+ 	select BACKLIGHT_CLASS_DEVICE
+@@ -226,9 +226,9 @@ config DRM_AMDGPU
+ 	tristate "AMD GPU"
+ 	depends on DRM && PCI && MMU
+ 	select FW_LOADER
+-        select DRM_KMS_HELPER
++	select DRM_KMS_HELPER
+ 	select DRM_SCHED
+-        select DRM_TTM
++	select DRM_TTM
+ 	select POWER_SUPPLY
+ 	select HWMON
+ 	select BACKLIGHT_CLASS_DEVICE
+@@ -266,7 +266,7 @@ config DRM_VKMS
+ 	  If M is selected the module will be called vkms.
+ 
+ config DRM_ATI_PCIGART
+-        bool
++	bool
+ 
+ source "drivers/gpu/drm/exynos/Kconfig"
+ 
+diff --git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
+index 71991a28a775..0a35cb8e803a 100644
+--- a/drivers/gpu/drm/amd/display/Kconfig
++++ b/drivers/gpu/drm/amd/display/Kconfig
+@@ -23,16 +23,16 @@ config DRM_AMD_DC_DCN2_0
+ 	depends on DRM_AMD_DC && X86
+ 	depends on DRM_AMD_DC_DCN1_0
+ 	help
+-	    Choose this option if you want to have
+-	    Navi support for display engine
++	  Choose this option if you want to have
++	  Navi support for display engine
+ 
+ config DRM_AMD_DC_DCN2_1
+-        bool "DCN 2.1 family"
+-        depends on DRM_AMD_DC && X86
+-        depends on DRM_AMD_DC_DCN2_0
+-        help
+-            Choose this option if you want to have
+-            Renoir support for display engine
++	bool "DCN 2.1 family"
++	depends on DRM_AMD_DC && X86
++	depends on DRM_AMD_DC_DCN2_0
++	help
++	  Choose this option if you want to have
++	  Renoir support for display engine
+ 
+ config DRM_AMD_DC_DSC_SUPPORT
+ 	bool "DSC support"
+@@ -41,8 +41,8 @@ config DRM_AMD_DC_DSC_SUPPORT
+ 	depends on DRM_AMD_DC_DCN1_0
+ 	depends on DRM_AMD_DC_DCN2_0
+ 	help
+-	    Choose this option if you want to have
+-	    Dynamic Stream Compression support
++	  Choose this option if you want to have
++	  Dynamic Stream Compression support
+ 
+ config DEBUG_KERNEL_DC
+ 	bool "Enable kgdb break in DC"
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 1cc9f502c1f2..a5aa7ec16000 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -60,10 +60,10 @@ config DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW
+ 	select DRM_KMS_HELPER
+ 	select DRM_PANEL
+ 	---help---
+-          This is a driver for the display bridges of
+-          GE B850v3 that convert dual channel LVDS
+-          to DP++. This is used with the i.MX6 imx-ldb
+-          driver. You are likely to say N here.
++	  This is a driver for the display bridges of
++	  GE B850v3 that convert dual channel LVDS
++	  to DP++. This is used with the i.MX6 imx-ldb
++	  driver. You are likely to say N here.
+ 
+ config DRM_NXP_PTN3460
+ 	tristate "NXP PTN3460 DP/LVDS bridge"
+diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+index 0d21402945ab..3c6d57df262d 100644
+--- a/drivers/gpu/drm/i915/Kconfig
++++ b/drivers/gpu/drm/i915/Kconfig
+@@ -76,7 +76,7 @@ config DRM_I915_CAPTURE_ERROR
+ 	  This option enables capturing the GPU state when a hang is detected.
+ 	  This information is vital for triaging hangs and assists in debugging.
+ 	  Please report any hang to
+-            https://bugs.freedesktop.org/enter_bug.cgi?product=DRI
++	    https://bugs.freedesktop.org/enter_bug.cgi?product=DRI
+ 	  for triaging.
+ 
+ 	  If in doubt, say "Y".
+@@ -105,11 +105,11 @@ config DRM_I915_USERPTR
+ 	  If in doubt, say "Y".
+ 
+ config DRM_I915_GVT
+-        bool "Enable Intel GVT-g graphics virtualization host support"
+-        depends on DRM_I915
+-        depends on 64BIT
+-        default n
+-        help
++	bool "Enable Intel GVT-g graphics virtualization host support"
++	depends on DRM_I915
++	depends on 64BIT
++	default n
++	help
+ 	  Choose this option if you want to enable Intel GVT-g graphics
+ 	  virtualization technology host support with integrated graphics.
+ 	  With GVT-g, it's possible to have one integrated graphics
+diff --git a/drivers/gpu/drm/i915/Kconfig.debug b/drivers/gpu/drm/i915/Kconfig.debug
+index 00786a142ff0..eea79125b3ea 100644
+--- a/drivers/gpu/drm/i915/Kconfig.debug
++++ b/drivers/gpu/drm/i915/Kconfig.debug
+@@ -1,34 +1,34 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_I915_WERROR
+-        bool "Force GCC to throw an error instead of a warning when compiling"
+-        # As this may inadvertently break the build, only allow the user
+-        # to shoot oneself in the foot iff they aim really hard
+-        depends on EXPERT
+-        # We use the dependency on !COMPILE_TEST to not be enabled in
+-        # allmodconfig or allyesconfig configurations
+-        depends on !COMPILE_TEST
++	bool "Force GCC to throw an error instead of a warning when compiling"
++	# As this may inadvertently break the build, only allow the user
++	# to shoot oneself in the foot iff they aim really hard
++	depends on EXPERT
++	# We use the dependency on !COMPILE_TEST to not be enabled in
++	# allmodconfig or allyesconfig configurations
++	depends on !COMPILE_TEST
+ 	select HEADER_TEST
+-        default n
+-        help
+-          Add -Werror to the build flags for (and only for) i915.ko.
+-          Do not enable this unless you are writing code for the i915.ko module.
++	default n
++	help
++	  Add -Werror to the build flags for (and only for) i915.ko.
++	  Do not enable this unless you are writing code for the i915.ko module.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG
+-        bool "Enable additional driver debugging"
+-        depends on DRM_I915
+-        select DEBUG_FS
+-        select PREEMPT_COUNT
+-        select REFCOUNT_FULL
+-        select I2C_CHARDEV
+-        select STACKDEPOT
+-        select DRM_DP_AUX_CHARDEV
+-        select X86_MSR # used by igt/pm_rpm
+-        select DRM_VGEM # used by igt/prime_vgem (dmabuf interop checks)
+-        select DRM_DEBUG_MM if DRM=y
++	bool "Enable additional driver debugging"
++	depends on DRM_I915
++	select DEBUG_FS
++	select PREEMPT_COUNT
++	select REFCOUNT_FULL
++	select I2C_CHARDEV
++	select STACKDEPOT
++	select DRM_DP_AUX_CHARDEV
++	select X86_MSR # used by igt/pm_rpm
++	select DRM_VGEM # used by igt/prime_vgem (dmabuf interop checks)
++	select DRM_DEBUG_MM if DRM=y
+ 	select DRM_DEBUG_SELFTEST
+ 	select DMABUF_SELFTESTS
+ 	select SW_SYNC # signaling validation framework (igt/syncobj*)
+@@ -36,14 +36,14 @@ config DRM_I915_DEBUG
+ 	select DRM_I915_SELFTEST
+ 	select DRM_I915_DEBUG_RUNTIME_PM
+ 	select DRM_I915_DEBUG_MMIO
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will catch some internal issues.
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will catch some internal issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_MMIO
+ 	bool "Always insert extra checks around mmio access by default"
+@@ -59,16 +59,16 @@ config DRM_I915_DEBUG_MMIO
+ 	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_GEM
+-        bool "Insert extra checks into the GEM internals"
+-        default n
+-        depends on DRM_I915_WERROR
+-        help
+-          Enable extra sanity checks (including BUGs) along the GEM driver
+-          paths that may slow the system down and if hit hang the machine.
++	bool "Insert extra checks into the GEM internals"
++	default n
++	depends on DRM_I915_WERROR
++	help
++	  Enable extra sanity checks (including BUGs) along the GEM driver
++	  paths that may slow the system down and if hit hang the machine.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_ERRLOG_GEM
+ 	bool "Insert extra logging (very verbose) for common GEM errors"
+@@ -111,41 +111,41 @@ config DRM_I915_TRACE_GTT
+ 	  If in doubt, say "N".
+ 
+ config DRM_I915_SW_FENCE_DEBUG_OBJECTS
+-        bool "Enable additional driver debugging for fence objects"
+-        depends on DRM_I915
+-        select DEBUG_OBJECTS
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will catch some internal issues.
++	bool "Enable additional driver debugging for fence objects"
++	depends on DRM_I915
++	select DEBUG_OBJECTS
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will catch some internal issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_SW_FENCE_CHECK_DAG
+-        bool "Enable additional driver debugging for detecting dependency cycles"
+-        depends on DRM_I915
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will catch some internal issues.
++	bool "Enable additional driver debugging for detecting dependency cycles"
++	depends on DRM_I915
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will catch some internal issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_GUC
+-        bool "Enable additional driver debugging for GuC"
+-        depends on DRM_I915
+-        default n
+-        help
+-          Choose this option to turn on extra driver debugging that may affect
+-          performance but will help resolve GuC related issues.
++	bool "Enable additional driver debugging for GuC"
++	depends on DRM_I915
++	default n
++	help
++	  Choose this option to turn on extra driver debugging that may affect
++	  performance but will help resolve GuC related issues.
+ 
+-          Recommended for driver developers only.
++	  Recommended for driver developers only.
+ 
+-          If in doubt, say "N".
++	  If in doubt, say "N".
+ 
+ config DRM_I915_SELFTEST
+ 	bool "Enable selftests upon driver load"
+@@ -178,15 +178,15 @@ config DRM_I915_SELFTEST_BROKEN
+ 	  If in doubt, say "N".
+ 
+ config DRM_I915_LOW_LEVEL_TRACEPOINTS
+-        bool "Enable low level request tracing events"
+-        depends on DRM_I915
+-        default n
+-        help
+-          Choose this option to turn on low level request tracing events.
+-          This provides the ability to precisely monitor engine utilisation
+-          and also analyze the request dependency resolving timeline.
+-
+-          If in doubt, say "N".
++	bool "Enable low level request tracing events"
++	depends on DRM_I915
++	default n
++	help
++	  Choose this option to turn on low level request tracing events.
++	  This provides the ability to precisely monitor engine utilisation
++	  and also analyze the request dependency resolving timeline.
++
++	  If in doubt, say "N".
+ 
+ config DRM_I915_DEBUG_VBLANK_EVADE
+ 	bool "Enable extra debug warnings for vblank evasion"
+diff --git a/drivers/gpu/drm/lima/Kconfig b/drivers/gpu/drm/lima/Kconfig
+index bb4ddc6bb0a6..652af7f50ea9 100644
+--- a/drivers/gpu/drm/lima/Kconfig
++++ b/drivers/gpu/drm/lima/Kconfig
+@@ -10,4 +10,4 @@ config DRM_LIMA
+        depends on OF
+        select DRM_SCHED
+        help
+-         DRM driver for ARM Mali 400/450 GPUs.
++	 DRM driver for ARM Mali 400/450 GPUs.
+diff --git a/drivers/gpu/drm/mgag200/Kconfig b/drivers/gpu/drm/mgag200/Kconfig
+index 76fee0fbdcae..4b31ef376abc 100644
+--- a/drivers/gpu/drm/mgag200/Kconfig
++++ b/drivers/gpu/drm/mgag200/Kconfig
+@@ -6,8 +6,8 @@ config DRM_MGAG200
+ 	select DRM_VRAM_HELPER
+ 	help
+ 	 This is a KMS driver for the MGA G200 server chips, it
+-         does not support the original MGA G200 or any of the desktop
+-         chips. It requires 0.3.0 of the modesetting userspace driver,
+-         and a version of mga driver that will fail on KMS enabled
+-         devices.
++	 does not support the original MGA G200 or any of the desktop
++	 chips. It requires 0.3.0 of the modesetting userspace driver,
++	 and a version of mga driver that will fail on KMS enabled
++	 devices.
+ 
+diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
+index 3558df043592..9c990266e876 100644
+--- a/drivers/gpu/drm/nouveau/Kconfig
++++ b/drivers/gpu/drm/nouveau/Kconfig
+@@ -2,7 +2,7 @@
+ config DRM_NOUVEAU
+ 	tristate "Nouveau (NVIDIA) cards"
+ 	depends on DRM && PCI && MMU
+-        select FW_LOADER
++	select FW_LOADER
+ 	select DRM_KMS_HELPER
+ 	select DRM_TTM
+ 	select BACKLIGHT_CLASS_DEVICE if DRM_NOUVEAU_BACKLIGHT
+diff --git a/drivers/gpu/drm/omapdrm/displays/Kconfig b/drivers/gpu/drm/omapdrm/displays/Kconfig
+index 240dda102845..b562a8cd61bf 100644
+--- a/drivers/gpu/drm/omapdrm/displays/Kconfig
++++ b/drivers/gpu/drm/omapdrm/displays/Kconfig
+@@ -8,18 +8,18 @@ config DRM_OMAP_ENCODER_OPA362
+ 	  through a GPIO.
+ 
+ config DRM_OMAP_ENCODER_TPD12S015
+-        tristate "TPD12S015 HDMI ESD protection and level shifter"
++	tristate "TPD12S015 HDMI ESD protection and level shifter"
+ 	help
+ 	  Driver for TPD12S015, which offers HDMI ESD protection and level
+ 	  shifting.
+ 
+ config DRM_OMAP_CONNECTOR_HDMI
+-        tristate "HDMI Connector"
++	tristate "HDMI Connector"
+ 	help
+ 	  Driver for a generic HDMI connector.
+ 
+ config DRM_OMAP_CONNECTOR_ANALOG_TV
+-        tristate "Analog TV Connector"
++	tristate "Analog TV Connector"
+ 	help
+ 	  Driver for a generic analog TV connector.
+ 
+diff --git a/drivers/gpu/drm/omapdrm/dss/Kconfig b/drivers/gpu/drm/omapdrm/dss/Kconfig
+index 956f23e1452d..72ae79c0c9b4 100644
+--- a/drivers/gpu/drm/omapdrm/dss/Kconfig
++++ b/drivers/gpu/drm/omapdrm/dss/Kconfig
+@@ -6,12 +6,12 @@ config OMAP_DSS_BASE
+ 	tristate
+ 
+ menuconfig OMAP2_DSS
+-        tristate "OMAP2+ Display Subsystem support"
++	tristate "OMAP2+ Display Subsystem support"
+ 	select OMAP_DSS_BASE
+ 	select VIDEOMODE_HELPERS
+ 	select OMAP2_DSS_INIT
+ 	select HDMI
+-        help
++	help
+ 	  OMAP2+ Display Subsystem support.
+ 
+ if OMAP2_DSS
+@@ -52,7 +52,7 @@ config OMAP2_DSS_DPI
+ 
+ config OMAP2_DSS_VENC
+ 	bool "VENC support"
+-        default y
++	default y
+ 	help
+ 	  OMAP Video Encoder support for S-Video and composite TV-out.
+ 
+@@ -61,7 +61,7 @@ config OMAP2_DSS_HDMI_COMMON
+ 
+ config OMAP4_DSS_HDMI
+ 	bool "HDMI support for OMAP4"
+-        default y
++	default y
+ 	select OMAP2_DSS_HDMI_COMMON
+ 	help
+ 	  HDMI support for OMAP4 based SoCs.
+@@ -85,7 +85,7 @@ config OMAP5_DSS_HDMI
+ 
+ config OMAP2_DSS_SDI
+ 	bool "SDI support"
+-        default n
++	default n
+ 	help
+ 	  SDI (Serial Display Interface) support.
+ 
+@@ -94,7 +94,7 @@ config OMAP2_DSS_SDI
+ 
+ config OMAP2_DSS_DSI
+ 	bool "DSI support"
+-        default n
++	default n
+ 	help
+ 	  MIPI DSI (Display Serial Interface) support.
+ 
+diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+index 6f4222f8beeb..1670a5cae3c7 100644
+--- a/drivers/gpu/drm/rockchip/Kconfig
++++ b/drivers/gpu/drm/rockchip/Kconfig
+@@ -28,17 +28,17 @@ config ROCKCHIP_ANALOGIX_DP
+ 	  on RK3288 or RK3399 based SoC, you should select this option.
+ 
+ config ROCKCHIP_CDN_DP
+-        bool "Rockchip cdn DP"
++	bool "Rockchip cdn DP"
+ 	depends on EXTCON=y || (EXTCON=m && DRM_ROCKCHIP=m)
+-        help
++	help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the cdn DP driver. If you want to enable Dp on
+ 	  RK3399 based SoC, you should select this
+ 	  option.
+ 
+ config ROCKCHIP_DW_HDMI
+-        bool "Rockchip specific extensions for Synopsys DW HDMI"
+-        help
++	bool "Rockchip specific extensions for Synopsys DW HDMI"
++	help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the Synopsys DesignWare HDMI driver. If you want to
+ 	  enable HDMI on RK3288 or RK3399 based SoC, you should select
+diff --git a/drivers/gpu/drm/udl/Kconfig b/drivers/gpu/drm/udl/Kconfig
+index b4d179b87f01..b13aa33990f3 100644
+--- a/drivers/gpu/drm/udl/Kconfig
++++ b/drivers/gpu/drm/udl/Kconfig
+@@ -8,4 +8,4 @@ config DRM_UDL
+ 	select DRM_KMS_HELPER
+ 	help
+ 	  This is a KMS driver for the USB displaylink video adapters.
+-          Say M/Y to add support for these devices via drm/kms interfaces.
++	  Say M/Y to add support for these devices via drm/kms interfaces.
+diff --git a/drivers/gpu/vga/Kconfig b/drivers/gpu/vga/Kconfig
+index c8c770b05ed9..1ad4c4ef0b5e 100644
+--- a/drivers/gpu/vga/Kconfig
++++ b/drivers/gpu/vga/Kconfig
+@@ -28,6 +28,6 @@ config VGA_SWITCHEROO
+ 	help
+ 	  Many laptops released in 2008/9/10 have two GPUs with a multiplexer
+ 	  to switch between them. This adds support for dynamic switching when
+-          X isn't running and delayed switching until the next logoff. This
++	  X isn't running and delayed switching until the next logoff. This
+ 	  feature is called hybrid graphics, ATI PowerXpress, and Nvidia
+ 	  HybridPower.
+-- 
+2.17.1
+
