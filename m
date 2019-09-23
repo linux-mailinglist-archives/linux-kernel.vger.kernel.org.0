@@ -2,136 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F44FBB6B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F4BBB6BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:29:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439881AbfIWO2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:28:44 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35540 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439850AbfIWO2o (ORCPT
+        id S2394161AbfIWO3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:29:54 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:41335 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389590AbfIWO3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:28:44 -0400
-Received: by mail-qt1-f195.google.com with SMTP id m15so17392276qtq.2;
-        Mon, 23 Sep 2019 07:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6A8RKDCmDyC878dQzWO1YL9aQQceEgwXiR2QrHFFGlA=;
-        b=hdwgJmi/OVMqfuXrRAZeb0OgAK6fayty3d7SxMspb13PzIAJPc2nxxdt/gg+2pFmMD
-         ynAsDJOC+JhPaS+yH3wx0OWaSng4qioq1sLTr9M4c4pMcM/n4E2NcOedo/I62qscVYpI
-         V9i7AZ/dmhgNg+B+CBUoxHSV2A9kcXRBfJXe4vr/tU62VADfBwiyM9qOCxSg44HHJPIQ
-         oQRsLYSCN8+DPGjI3vJcio7U1zKVtRr2OhYKx+S1D0j26dEA/j8uncfEqeLpBfpQyRNn
-         rDWDq3dZxdnBzMv8YLKaX92hiMgR7P0r7jVk270RCt6dqz3aqLqThOJwjAzPIpNo3pcE
-         7m3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6A8RKDCmDyC878dQzWO1YL9aQQceEgwXiR2QrHFFGlA=;
-        b=hlUqzZrk+44cjY4qZX9vbwNyhQV+eon8YbjF53R03DoOnIPayIbzl7awn17tf6PBPp
-         deeKRsEYjjwDsPRHXqG3S+8w4DLWuAbv3wGKkCq6mSNDwaQ2nQUcPF+JhjvOJqBq5MHO
-         gcM2N4Nq1c+/8JJEnKpj3QacS+ampvkLZ8oWoy33z+cv6m8vnl93fd1lLcFqX82DysZq
-         7xto5VQ4nUXiVh2AyD/2IhSXl8gJ87TtRk0ECz8U9A1RARX/PGI6J/HXWO8gwm6OZ56m
-         8Sfixx1b8cg73AjyHmRf4kq7dYRLH8bnGhI4eQ/pDZ0TzK/YKD2dsQ+uEdvyAEbjpJT0
-         BZ0g==
-X-Gm-Message-State: APjAAAW0ajnc58w87/LF84ki45kDvB1UvBz080mOEVKP1E/YMbLUNO2E
-        QDxZIljR0zl6Ojnx5SPAXhY/vc7u
-X-Google-Smtp-Source: APXvYqzu+1OF6w8eowpANLEXk423/6OlJh65DRR8MqDt7DSkgSyaTtx5szHDosXF8d6z2uOr5tAIKA==
-X-Received: by 2002:ac8:1289:: with SMTP id y9mr164797qti.201.1569248922064;
-        Mon, 23 Sep 2019 07:28:42 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id 44sm6646756qtt.13.2019.09.23.07.28.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 07:28:41 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 4EE6941105; Mon, 23 Sep 2019 11:28:39 -0300 (-03)
-Date:   Mon, 23 Sep 2019 11:28:39 -0300
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/6] tools/lib/traceevent: Man page updates and some file
- movement
-Message-ID: <20190923142839.GD16544@kernel.org>
-References: <20190919212335.400961206@goodmis.org>
+        Mon, 23 Sep 2019 10:29:54 -0400
+Received: from [172.58.27.190] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iCPLW-0001df-Gy; Mon, 23 Sep 2019 14:29:47 +0000
+Date:   Mon, 23 Sep 2019 16:29:34 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Daniel Colascione <dancol@google.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: For review: pidfd_send_signal(2) manual page
+Message-ID: <20190923142932.2gujbddnzyp4ujeu@wittgenstein>
+References: <f21dbd73-5ef4-fb5b-003f-ff4fec34a1de@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190919212335.400961206@goodmis.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f21dbd73-5ef4-fb5b-003f-ff4fec34a1de@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Sep 19, 2019 at 05:23:35PM -0400, Steven Rostedt escreveu:
-> Hi Arnaldo,
+On Mon, Sep 23, 2019 at 11:12:00AM +0200, Michael Kerrisk (man-pages) wrote:
+> Hello Christian and all,
 > 
-> This is a series of man page updates to the libtraceevent code, as
-> well as a fix to one missing prototype and some movement of the location
-> of the plugins (to have the plugins in their own directory).
+> Below, I have the rendered version of the current draft of
+> the pidfd_send_signal(2) manual page that I have written.
+> The page source can be found in a Git branch at:
+> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/log/?h=draft_pidfd
+> 
+> I would be pleased to receive corrections and notes on any
+> details that should be added. (For example, are there error
+> cases that I have missed?)
+> 
+> Would you be able to review please?
 
-Thanks, applied.
+Michael,
 
-- Arnaldo
- 
-> -- Steve
-> 
-> 
-> 
-> 
-> Tzvetomir Stoyanov (2):
->       tools/lib/traceevent: Man pages for libtraceevent event print related API
->       tools/lib/traceevent: Man pages for tep plugins APIs
-> 
-> Tzvetomir Stoyanov (VMware) (4):
->       tools/lib/traceevent: Man pages fix, rename tep_ref_get() to tep_get_ref()
->       tools/lib/traceevent: Man pages fix, changes in event printing APIs
->       tools/lib/traceevent: Add tep_get_event() in event-parse.h
->       tools/lib/traceevent: Move traceevent plugins in its own subdirectory
-> 
-> ----
->  tools/lib/traceevent/Build                         |  11 -
->  .../Documentation/libtraceevent-event_print.txt    | 130 ++++++++++++
->  .../Documentation/libtraceevent-handle.txt         |   8 +-
->  .../Documentation/libtraceevent-plugins.txt        |  99 +++++++++
->  .../lib/traceevent/Documentation/libtraceevent.txt |  15 +-
->  tools/lib/traceevent/Makefile                      |  94 ++-------
->  tools/lib/traceevent/event-parse.h                 |   2 +
->  tools/lib/traceevent/plugins/Build                 |  10 +
->  tools/lib/traceevent/plugins/Makefile              | 222 +++++++++++++++++++++
->  .../lib/traceevent/{ => plugins}/plugin_cfg80211.c |   0
->  .../lib/traceevent/{ => plugins}/plugin_function.c |   0
->  .../lib/traceevent/{ => plugins}/plugin_hrtimer.c  |   0
->  tools/lib/traceevent/{ => plugins}/plugin_jbd2.c   |   0
->  tools/lib/traceevent/{ => plugins}/plugin_kmem.c   |   0
->  tools/lib/traceevent/{ => plugins}/plugin_kvm.c    |   0
->  .../lib/traceevent/{ => plugins}/plugin_mac80211.c |   0
->  .../traceevent/{ => plugins}/plugin_sched_switch.c |   0
->  tools/lib/traceevent/{ => plugins}/plugin_scsi.c   |   0
->  tools/lib/traceevent/{ => plugins}/plugin_xen.c    |   0
->  19 files changed, 485 insertions(+), 106 deletions(-)
->  create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-event_print.txt
->  create mode 100644 tools/lib/traceevent/Documentation/libtraceevent-plugins.txt
->  create mode 100644 tools/lib/traceevent/plugins/Build
->  create mode 100644 tools/lib/traceevent/plugins/Makefile
->  rename tools/lib/traceevent/{ => plugins}/plugin_cfg80211.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_function.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_hrtimer.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_jbd2.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_kmem.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_kvm.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_mac80211.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_sched_switch.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_scsi.c (100%)
->  rename tools/lib/traceevent/{ => plugins}/plugin_xen.c (100%)
+A big big thank you for doing this! Really appreciated.
+I'm happy to review this!
 
--- 
+> 
+> Thanks,
+> 
+> Michael
+> 
+> 
+> NAME
+>        pidfd_send_signal - send a signal to a process specified by a file
+>        descriptor
+> 
+> SYNOPSIS
+>        int pidfd_send_signal(int pidfd, int sig, siginfo_t info,
+>                              unsigned int flags);
+> 
+> DESCRIPTION
+>        The pidfd_send_signal() system call sends the signal  sig  to  the
+>        target  process  referred  to by pidfd, a PID file descriptor that
+>        refers to a process.
+> 
+>        If the info argument points to a  siginfo_t  buffer,  that  buffer
+>        should be populated as described in rt_sigqueueinfo(2).
+> 
+>        If  the  info  argument  is  a NULL pointer, this is equivalent to
+>        specifying a pointer to a siginfo_t buffer whose fields match  the
+>        values  that  are  implicitly supplied when a signal is sent using
+>        kill(2):
+> 
+>        *  si_signo is set to the signal number;
+>        *  si_errno is set to 0;
+>        *  si_code is set to SI_USER;
+>        *  si_pid is set to the caller's PID; and
+>        *  si_uid is set to the caller's real user ID.
+> 
+>        The calling process must either be in the same  PID  namespace  as
+>        the  process  referred  to  by pidfd, or be in an ancestor of that
+>        namespace.
+> 
+>        The flags argument is reserved for  future  use;  currently,  this
+>        argument must be specified as 0.
+> 
+> RETURN VALUE
+>        On  success,  pidfd_send_signal()  returns  0.   On success, -1 is
 
-- Arnaldo
+This should probably be "On error, -1 is [...]".
+
+>        returned and errno is set to indicate the cause of the error.
+> 
+> ERRORS
+>        EBADF  pidfd is not a valid PID file descriptor.
+> 
+>        EINVAL sig is not a valid signal.
+> 
+>        EINVAL The calling process is not in a PID namespace from which it
+>               can send a signal to the target process.
+> 
+>        EINVAL flags is not 0.
+> 
+>        EPERM  The  calling  process  does not have permission to send the
+>               signal to the target process.
+> 
+>        EPERM  pidfd  doesn't  refer   to   the   calling   process,   and
+>               info.si_code is invalid (see rt_sigqueueinfo(2)).
+> 
+>        ESRCH  The target process does not exist.
+> 
+> VERSIONS
+>        pidfd_send_signal() first appeared in Linux 5.1.
+> 
+> CONFORMING TO
+>        pidfd_send_signal() is Linux specific.
+> 
+> NOTES
+>        Currently, there is no glibc wrapper for this system call; call it
+>        using syscall(2).
+> 
+>    PID file descriptors
+>        The pidfd argument is a PID file  descriptor,  a  file  descriptor
+>        that  refers  to  process.  Such a file descriptor can be obtained
+>        in any of the following ways:
+> 
+>        *  by opening a /proc/[pid] directory;
+> 
+>        *  using pidfd_open(2); or
+> 
+>        *  via the PID file descriptor that  is  returned  by  a  call  to
+>           clone(2) or clone3(2) that specifies the CLONE_PIDFD flag.
+> 
+>        The  pidfd_send_signal()  system call allows the avoidance of race
+>        conditions that occur when using traditional interfaces  (such  as
+>        kill(2)) to signal a process.  The problem is that the traditional
+>        interfaces specify the target process via a process ID (PID), with
+>        the  result  that the sender may accidentally send a signal to the
+>        wrong process if the originally intended target process has termi‐
+>        nated  and its PID has been recycled for another process.  By con‐
+>        trast, a PID file descriptor is a stable reference to  a  specific
+>        process;  if  that  process  terminates,  then the file descriptor
+>        ceases to be  valid  and  the  caller  of  pidfd_send_signal()  is
+>        informed of this fact via an ESRCH error.
+> 
+> EXAMPLE
+>        #define _GNU_SOURCE
+>        #include <limits.h>
+>        #include <signal.h>
+>        #include <fcntl.h>
+>        #include <stdio.h>
+>        #include <string.h>
+>        #include <stdlib.h>
+>        #include <unistd.h>
+>        #include <sys/syscall.h>
+> 
+>        #ifndef __NR_pidfd_send_signal
+>        #define __NR_pidfd_send_signal 424
+>        #endif
+> 
+>        static
+>        int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
+>                unsigned int flags)
+>        {
+>            return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
+>        }
+> 
+>        int
+>        main(int argc, char *argv[])
+>        {
+>            siginfo_t info;
+>            char path[PATH_MAX];
+>            int pidfd, sig;
+> 
+>            if (argc != 3) {
+>                fprintf(stderr, "Usage: %s <pid> <signal>\n", argv[0]);
+>                exit(EXIT_FAILURE);
+>            }
+> 
+>            sig = atoi(argv[2]);
+> 
+>            /* Obtain a PID file descriptor by opening the /proc/PID directory
+>               of the target process */
+> 
+>            snprintf(path, sizeof(path), "/proc/%s", argv[1]);
+> 
+>            pidfd = open(path, O_RDONLY);
+>            if (pidfd == -1) {
+>                perror("open");
+>                exit(EXIT_FAILURE);
+>            }
+> 
+>            /* Populate a 'siginfo_t' structure for use with
+>               pidfd_send_signal() */
+> 
+>            memset(&info, 0, sizeof(info));
+>            info.si_code = SI_QUEUE;
+>            info.si_signo = sig;
+>            info.si_errno = 0;
+>            info.si_uid = getuid();
+>            info.si_pid = getpid();
+>            info.si_value.sival_int = 1234;
+> 
+>            /* Send the signal */
+> 
+>            if (pidfd_send_signal(pidfd, sig, &info, 0) == -1) {
+>                perror("pidfd_send_signal");
+>                exit(EXIT_FAILURE);
+>            }
+> 
+>            exit(EXIT_SUCCESS);
+>        }
+> 
+> SEE ALSO
+>        clone(2),   kill(2),   pidfd_open(2),  rt_sigqueueinfo(2),  sigac‐
+>        tion(2), pid_namespaces(7), signal(7)
+> 
