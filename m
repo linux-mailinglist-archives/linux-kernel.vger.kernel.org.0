@@ -2,277 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FAB0BB1EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D374DBB209
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438882AbfIWKIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 06:08:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39911 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405389AbfIWKIR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 06:08:17 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r3so13233408wrj.6;
-        Mon, 23 Sep 2019 03:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eGzE/JEJtt+rvm91KEZllp8C2a/sv8MDOECcgYTWrp4=;
-        b=qNVe5cllZXwIgGgc+Y49JzgZFlBGYqVrqy320/XyQvq4D0adVk/p3rfM6gn8QmIMhm
-         rVcfW7q1L8aWD4sGnyPqcuK4vdR3HGR1lR1dd4QwSHNUWoqh98sy7tuOW3vmRyKnO/MB
-         kubCtIQl7hsf7+7t2QQdDs5enciQ54XvdJLsc22RHhPfpPqGB6bgzUCMmQ8mce+dVi5B
-         DVHsPm3tNxA6ePwv9f565008d5CVENcU88Dng66L6sPchTuhAV0NU92DaICWWPz03ig2
-         ifSz9Q0mh6e/oiqcFuZfnm4H91fjQSXi/qUcUH5fRsEhUAw6TLbg5aVXvuNMmrBScGlT
-         kjQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eGzE/JEJtt+rvm91KEZllp8C2a/sv8MDOECcgYTWrp4=;
-        b=ggKwuLSR0PJrZBMpPD4ybAdQ9Uoe8d0lZQE2vW/4akxG3St0jL5J4VmvKOVh5EZX8k
-         mARaeLYB1FucQiAAlldORmTQxTTxJaE+XjvZSE9PQ50XRf7TYqPyiHAOOSICox/Slkp1
-         +GCyhrbKm3ECsUpHT5R6OZB9WNv8PReDZAvW4rn9Cy2VQv3FjwU21J42b8P2wjcYSBBk
-         ELWZ9k04vtBl1qWtzsfIxR9dFNgHnbOAaCJTQzLhrnaQBhmNSKtluUlawLCsUizv0HEw
-         71D+GhIasDFvRPdJC5waDQfY3NqbIg0N57uQyyFcJvm0wmsBlERg//hV+vq/faNp0SSW
-         wp/Q==
-X-Gm-Message-State: APjAAAWQ/lxfERgOH7ivXNjlxfukj1gH+23SENSGN9OD4ul0OjDDwWWY
-        1LLG+gNtzXDKdkioG5z3fOQ=
-X-Google-Smtp-Source: APXvYqzAKeHpn5DdsVoIdn0Rnwpwx7oDjkyyi5edbCPKTyjYii+IQjWIzOl/pB4FprjKwdj4Myl3qQ==
-X-Received: by 2002:adf:f606:: with SMTP id t6mr20253689wrp.197.1569233294337;
-        Mon, 23 Sep 2019 03:08:14 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id y13sm13796985wrg.8.2019.09.23.03.08.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 03:08:13 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] mmc: tegra: Implement ->set_dma_mask()
-Date:   Mon, 23 Sep 2019 12:08:10 +0200
-Message-Id: <20190923100810.12698-2-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190923100810.12698-1-thierry.reding@gmail.com>
-References: <20190923100810.12698-1-thierry.reding@gmail.com>
+        id S2439186AbfIWKOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:14:20 -0400
+Received: from mail-eopbgr50050.outbound.protection.outlook.com ([40.107.5.50]:3097
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2406278AbfIWKOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 06:14:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xo9XvHS0OLKJefPvnTrivtFQ7Xk1F+bXmjZCpLiLxuM=;
+ b=AHecwFxjhGbL1Q1AHniLVbkfKQ3XeuA2tQPFaqmcggL6Ujlibda/cahoftmomCOOvLJ9FztfaBt0KvQy+buKGz6LKBc3UNTQDuehXmzxoHdWsE9mDILZiGbYvyUHQWckz6H/Bi2vyxIFRTn5ZnukxMw3ky47Or3J7VqRrgWkfvo=
+Received: from VI1PR08CA0181.eurprd08.prod.outlook.com (2603:10a6:800:d2::11)
+ by HE1PR08MB2826.eurprd08.prod.outlook.com (2603:10a6:7:31::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.19; Mon, 23 Sep
+ 2019 10:14:15 +0000
+Received: from DB5EUR03FT054.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e0a::207) by VI1PR08CA0181.outlook.office365.com
+ (2603:10a6:800:d2::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.18 via Frontend
+ Transport; Mon, 23 Sep 2019 10:14:14 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ DB5EUR03FT054.mail.protection.outlook.com (10.152.20.248) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.20 via Frontend Transport; Mon, 23 Sep 2019 10:14:13 +0000
+Received: ("Tessian outbound 96594883d423:v31"); Mon, 23 Sep 2019 10:14:06 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 28f9ddc391ad51a0
+X-CR-MTA-TID: 64aa7808
+Received: from a6c42b9a4ed7.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.6.55])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 1B60AD72-FA0C-40B9-8969-202C1731ED53.1;
+        Mon, 23 Sep 2019 10:10:29 +0000
+Received: from EUR02-VE1-obe.outbound.protection.outlook.com (mail-ve1eur02lp2055.outbound.protection.outlook.com [104.47.6.55])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id a6c42b9a4ed7.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384);
+    Mon, 23 Sep 2019 10:10:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A2sGn3HRZo2qq5GNROI7k2zR+7R8P80Pka6hZtsE7fbm79ai+wA3XMQXHqZrpNm3D77k25UOsWcy1J3TnLogcvI2Xaw9CysAoZT0N71xWlcV0vDp0joHPxWkdXvknsPoG5bPdEf8m0rYxMVVcce9DniC9p/YuqTjK/w4DzX0lRf/kPXcOVGZC5m2sxB+PUBj2kiaBMTDsCxIvKkVgRXB/XWfubMiZVUow/77HkYxldp+eH8wpDv5kgr3H9HlNkULws2oPMdDhgVczsXR9so7FKTrKYxa9lHh8+j/xwMXln0o10IUzt8sJYCwSXgIECFpDxBSs/hxMeLjd4XflRzL2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xo9XvHS0OLKJefPvnTrivtFQ7Xk1F+bXmjZCpLiLxuM=;
+ b=DZGkBDUIEjRwIU/HmcoTkToqJogn2/9iUafbQy+Thr/BrZhDlE1V3ahmM8v2XHI/alT20cxQBelhjPL7XLc4bETCJFLLWpLuIq7IsHgIxb5PThTSObgkseKPhTfuWdE8KCiX1kKtv57m2wAcqdhMw+U29xscQYQba48sYHwMjAGFK9vOguslQz23HNHms1123rmuJPZ3/JewxYMyrR3312gk6rm5wd/zDBDH57uJM1xiOnPi7yH5DXoNHXs6j/PPgxXmZC42f/mJ4UprWS7WcB5Nt+8JEwx3cfmlRyLOCDZfXFaKhXDB1mQWOL15fLS4gantWf98vvrvwZRXFAKgxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xo9XvHS0OLKJefPvnTrivtFQ7Xk1F+bXmjZCpLiLxuM=;
+ b=AHecwFxjhGbL1Q1AHniLVbkfKQ3XeuA2tQPFaqmcggL6Ujlibda/cahoftmomCOOvLJ9FztfaBt0KvQy+buKGz6LKBc3UNTQDuehXmzxoHdWsE9mDILZiGbYvyUHQWckz6H/Bi2vyxIFRTn5ZnukxMw3ky47Or3J7VqRrgWkfvo=
+Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
+ VI1PR08MB5503.eurprd08.prod.outlook.com (52.133.246.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.20; Mon, 23 Sep 2019 10:10:26 +0000
+Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
+ ([fe80::f164:4d79:79f:dc6f]) by VI1PR08MB4078.eurprd08.prod.outlook.com
+ ([fe80::f164:4d79:79f:dc6f%7]) with mapi id 15.20.2284.023; Mon, 23 Sep 2019
+ 10:10:26 +0000
+From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
+To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] drm/komeda: Workaround for broken FLIP_COMPLETE timestamps
+Thread-Topic: [PATCH v2] drm/komeda: Workaround for broken FLIP_COMPLETE
+ timestamps
+Thread-Index: AQHVcfceR0CHSFhcZEiwMH6z8RYyLQ==
+Date:   Mon, 23 Sep 2019 10:10:26 +0000
+Message-ID: <20190923101017.35114-1-mihail.atanassov@arm.com>
+References: <20190919132759.18358-1-mihail.atanassov@arm.com>
+In-Reply-To: <20190919132759.18358-1-mihail.atanassov@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [217.140.106.55]
+x-clientproxiedby: AM0PR05CA0025.eurprd05.prod.outlook.com
+ (2603:10a6:208:55::38) To VI1PR08MB4078.eurprd08.prod.outlook.com
+ (2603:10a6:803:e5::28)
+x-mailer: git-send-email 2.23.0
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=Mihail.Atanassov@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: cb56579e-cab8-40de-886a-08d7400ec87c
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB5503;
+X-MS-TrafficTypeDiagnostic: VI1PR08MB5503:|VI1PR08MB5503:|HE1PR08MB2826:
+X-MS-Exchange-PUrlCount: 1
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <HE1PR08MB28267EA9882DB6D13B0F510A8F850@HE1PR08MB2826.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:8882;OLM:8882;
+x-forefront-prvs: 0169092318
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(199004)(189003)(54906003)(50226002)(6512007)(446003)(6306002)(476003)(316002)(66066001)(66556008)(99286004)(71200400001)(8936002)(2616005)(4326008)(71190400001)(11346002)(36756003)(6436002)(26005)(8676002)(486006)(6916009)(102836004)(2351001)(6486002)(76176011)(44832011)(2501003)(52116002)(5640700003)(6506007)(386003)(186003)(81166006)(81156014)(6116002)(3846002)(64756008)(66446008)(86362001)(305945005)(7736002)(66476007)(2906002)(25786009)(5660300002)(66946007)(256004)(14444005)(14454004)(478600001)(1076003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB5503;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info-Original: WRIR6Tf9SUBt14lle3mYAIfwKaMdd6oBgFILXQd5gwitn8FOcMP4lIJUJ01b9n+1UiK86YxbvcFzqwfgqaNEntQiSVrw5mGSfPhCm1RvbXxMyEn1n03W669sLXSAbw2IiFud3J+3pxlzo8Ky9qA7lGZxO2fYrIlp7rRUXEV+igtsyYSu2/EAZKa7WWrNLom6JieBBz/sHy3sOTvzl3S8Xup0z8wF5xtMUyi9ab0GBpnDJQFPigEbF06+lB48wOVX+M5st7SHTsly6KeBU58bQnR6gvsrn1xFkopxkhTtWj63lKal754Db1X1ryzQKxFsCXeDTMiS1WFusB8dgNZav0Ec3UuUNPnb9ZNQaUnq3zJ9rpzP4KsEidDewNbSiPjJKiRmotwIzWGO3aKCbz2S/USwIHPw9abVKuhW/0hHxZY=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5503
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Mihail.Atanassov@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT054.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(396003)(376002)(346002)(199004)(189003)(2501003)(14444005)(305945005)(7736002)(6862004)(356004)(4326008)(336012)(54906003)(66066001)(23756003)(316002)(70206006)(6306002)(6116002)(70586007)(50466002)(47776003)(86362001)(6512007)(76130400001)(1076003)(50226002)(8936002)(99286004)(5640700003)(25786009)(76176011)(3846002)(26005)(36756003)(386003)(6506007)(81166006)(8676002)(102836004)(81156014)(8746002)(2906002)(11346002)(186003)(446003)(486006)(26826003)(5660300002)(478600001)(126002)(14454004)(2616005)(476003)(22756006)(63350400001)(6486002)(2351001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR08MB2826;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 08f56c00-e7f2-4cd9-d976-08d7400e411c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(710020)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:HE1PR08MB2826;
+NoDisclaimer: True
+X-Forefront-PRVS: 0169092318
+X-Microsoft-Antispam-Message-Info: 1VmJAPmQld2qt8MtgHk/+AW5nRU1L11G0qY8owB7rg3mxMgHeTPEueEZ/I1MKTtE5dlFNzKkGDZ2SqK/s/kT07VuXgRVpJFUMiQy+BZg2dAZUWtlpJeK0grv/iSIBLb1QKfAf9BWxnfpdx3omb4Mr7hsouPg3DkCh6ejHES/9bd8ldzFZQOUIqleFm2uJcSFQ6BBLXPwOjC6wAeha6lUXXbkVq7K5eC03RqmI1rA64fd1N7Zm6LnbYh5tRirGf5n21t/vi/fna+Az4IJxCHufLakc1mDd19ZeppgqrucJsWDXd/+MJqKbqvfmGfCpuVMknq2nEqw/+nVKFRVBg3SxPFUjOyvGeHrrx3O/wcNccoXQtCe/FdC5QO3Cop6oo8V8QKPZMNLvIGy39XoBymOehb3QK3+eiLpfvd8/EGAVrk=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2019 10:14:13.3058
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb56579e-cab8-40de-886a-08d7400ec87c
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR08MB2826
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolin Chen <nicoleotsuka@gmail.com>
+When initially turning a crtc on, drm_reset_vblank_timestamp will
+set the vblank timestamp to 0 for any driver that doesn't provide
+a ->get_vblank_timestamp() hook.
 
-The SDHCI controller on Tegra186 supports 40-bit addressing, which is
-usually enough to address all of system memory. However, if the SDHCI
-controller is behind an IOMMU, the address space can go beyond. This
-happens on Tegra186 and later where the ARM SMMU has an input address
-space of 48 bits. If the DMA API is backed by this ARM SMMU, the top-
-down IOVA allocator will cause IOV addresses to be returned that the
-SDHCI controller cannot access.
+Unfortunately, the FLIP_COMPLETE event depends on that timestamp,
+and the only way to regenerate a valid one is to have vblank
+interrupts enabled and have a valid in-ISR call to
+drm_crtc_handle_vblank.
 
-Unfortunately, prior to the introduction of the ->set_dma_mask() host
-operation, the SDHCI core would set either a 64-bit DMA mask if the
-controller claimed to support 64-bit addressing, or a 32-bit DMA mask
-otherwise.
+Additionally, if the user doesn't request vblanks but _does_ request
+FLIP_COMPLETE events, we still don't have a good timestamp: it'll be the
+same stamp as the last vblank one.
 
-Since the full 64 bits cannot be addressed on Tegra, this had to be
-worked around in commit 68481a7e1c84 ("mmc: tegra: Mark 64 bit dma
-broken on Tegra186") by setting the SDHCI_QUIRK2_BROKEN_64_BIT_DMA
-quirk, which effectively restricts the DMA mask to 32 bits.
+Work around the issue by always enabling vblanks when the CRTC is on.
+Reducing the amount of time that PL0 has to be unmasked would be nice to
+fix at a later time.
 
-One disadvantage of this is that dma_map_*() APIs will now try to use
-the swiotlb to bounce DMA to addresses beyond of the controller's DMA
-mask. This in turn caused degraded performance and can lead to
-situations where the swiotlb buffer is exhausted, which in turn leads
-to DMA transfers to fail.
+Changes since v1 [https://patchwork.freedesktop.org/patch/331727/]:
+ - moved drm_crtc_vblank_put call to the ->atomic_disable() hook
 
-With the recent introduction of the ->set_dma_mask() host operation,
-this can now be properly fixed. For each generation of Tegra, the exact
-supported DMA mask can be configured. This kills two birds with one
-stone: it avoids the use of bounce buffers because system memory never
-exceeds the addressable memory range of the SDHCI controllers on these
-devices, and at the same time when an IOMMU is involved, it prevents
-IOV addresses from being allocated beyond the addressible range of the
-controllers.
-
-Since the DMA mask is now properly handled, the 64-bit DMA quirk can be
-removed.
-
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-[treding@nvidia.com: provide more background in commit message]
-Tested-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: Liviu Dudau <Liviu.Dudau@arm.com>
+Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
 ---
-Changes in v2:
-- add Tested-by from Nicolin, Acked-by from Adrian
+ drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/mmc/host/sdhci-tegra.c | 48 ++++++++++++++++++++--------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 02d8f524bb9e..7bc950520fd9 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/delay.h>
-+#include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/init.h>
-@@ -104,6 +105,7 @@
- 
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
-+	u64 dma_mask;
- 	u32 nvquirks;
- 	u8 min_tap_delay;
- 	u8 max_tap_delay;
-@@ -1233,11 +1235,25 @@ static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
- 	.update_dcmd_desc = sdhci_tegra_update_dcmd_desc,
- };
- 
-+static int tegra_sdhci_set_dma_mask(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *platform = sdhci_priv(host);
-+	struct sdhci_tegra *tegra = sdhci_pltfm_priv(platform);
-+	const struct sdhci_tegra_soc_data *soc = tegra->soc_data;
-+	struct device *dev = mmc_dev(host->mmc);
-+
-+	if (soc->dma_mask)
-+		return dma_set_mask_and_coherent(dev, soc->dma_mask);
-+
-+	return 0;
-+}
-+
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-+	.set_dma_mask = tegra_sdhci_set_dma_mask,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
- 	.platform_execute_tuning = tegra_sdhci_execute_tuning,
-@@ -1257,6 +1273,7 @@ static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
- 	.pdata = &sdhci_tegra20_pdata,
-+	.dma_mask = DMA_BIT_MASK(32),
- 	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
- 		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
- };
-@@ -1283,6 +1300,7 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- 	.pdata = &sdhci_tegra30_pdata,
-+	.dma_mask = DMA_BIT_MASK(32),
- 	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
- 		    NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_SDR104 |
-@@ -1295,6 +1313,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
- 	.write_w    = tegra_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-+	.set_dma_mask = tegra_sdhci_set_dma_mask,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
- 	.platform_execute_tuning = tegra_sdhci_execute_tuning,
-@@ -1316,6 +1335,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
- 	.pdata = &sdhci_tegra114_pdata,
-+	.dma_mask = DMA_BIT_MASK(32),
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
-@@ -1325,22 +1345,13 @@ static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
--		   /*
--		    * The TRM states that the SD/MMC controller found on
--		    * Tegra124 can address 34 bits (the maximum supported by
--		    * the Tegra memory controller), but tests show that DMA
--		    * to or from above 4 GiB doesn't work. This is possibly
--		    * caused by missing programming, though it's not obvious
--		    * what sequence is required. Mark 64-bit DMA broken for
--		    * now to fix this for existing users (e.g. Nyan boards).
--		    */
--		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra114_sdhci_ops,
- };
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
- 	.pdata = &sdhci_tegra124_pdata,
-+	.dma_mask = DMA_BIT_MASK(34),
- };
- 
- static const struct sdhci_ops tegra210_sdhci_ops = {
-@@ -1349,6 +1360,7 @@ static const struct sdhci_ops tegra210_sdhci_ops = {
- 	.write_w    = tegra210_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-+	.set_dma_mask = tegra_sdhci_set_dma_mask,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
-@@ -1369,6 +1381,7 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- 	.pdata = &sdhci_tegra210_pdata,
-+	.dma_mask = DMA_BIT_MASK(34),
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
-@@ -1383,6 +1396,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-+	.set_dma_mask = tegra_sdhci_set_dma_mask,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
-@@ -1398,20 +1412,13 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
--	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
--		   /* SDHCI controllers on Tegra186 support 40-bit addressing.
--		    * IOVA addresses are 48-bit wide on Tegra186.
--		    * With 64-bit dma mask used for SDHCI, accesses can
--		    * be broken. Disable 64-bit dma, which would fall back
--		    * to 32-bit dma mask. Ideally 40-bit dma mask would work,
--		    * But it is not supported as of now.
--		    */
--		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra186_sdhci_ops,
- };
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 	.pdata = &sdhci_tegra186_pdata,
-+	.dma_mask = DMA_BIT_MASK(40),
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
-@@ -1424,6 +1431,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra194 = {
- 	.pdata = &sdhci_tegra186_pdata,
-+	.dma_mask = DMA_BIT_MASK(39),
- 	.nvquirks = NVQUIRK_NEEDS_PAD_CONTROL |
- 		    NVQUIRK_HAS_PADCALIB |
- 		    NVQUIRK_DIS_CARD_CLK_CONFIG_TAP |
--- 
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
+/drm/arm/display/komeda/komeda_crtc.c
+index 34bc73ca18bc..d06679afb228 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
+@@ -489,6 +489,7 @@ komeda_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	pm_runtime_get_sync(crtc->dev->dev);
+ 	komeda_crtc_prepare(to_kcrtc(crtc));
+ 	drm_crtc_vblank_on(crtc);
++	WARN_ON(drm_crtc_vblank_get(crtc));
+ 	komeda_crtc_do_flush(crtc, old);
+ }
+=20
+@@ -581,6 +582,7 @@ komeda_crtc_atomic_disable(struct drm_crtc *crtc,
+ 		komeda_crtc_flush_and_wait_for_flip_done(kcrtc, disable_done);
+ 	}
+=20
++	drm_crtc_vblank_put(crtc);
+ 	drm_crtc_vblank_off(crtc);
+ 	komeda_crtc_unprepare(kcrtc);
+ 	pm_runtime_put(crtc->dev->dev);
+--=20
 2.23.0
 
