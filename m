@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2536BBB0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:15:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E165BBB13
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:16:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440302AbfIWSPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 14:15:41 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:23926 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2394280AbfIWSPk (ORCPT
+        id S2440392AbfIWSQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 14:16:22 -0400
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:22210 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2440382AbfIWSQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:15:40 -0400
-Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
-        by mx0a-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8NI1klJ006535;
-        Mon, 23 Sep 2019 18:15:22 GMT
-Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
-        by mx0a-002e3701.pphosted.com with ESMTP id 2v72ny8fux-1
+        Mon, 23 Sep 2019 14:16:22 -0400
+Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8NI1nWv022787;
+        Mon, 23 Sep 2019 18:15:57 GMT
+Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2v6q0rkuxe-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Sep 2019 18:15:22 +0000
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g4t3425.houston.hpe.com (Postfix) with ESMTP id 322709A;
-        Mon, 23 Sep 2019 18:15:21 +0000 (UTC)
+        Mon, 23 Sep 2019 18:15:57 +0000
+Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
+        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 683E54F;
+        Mon, 23 Sep 2019 18:15:56 +0000 (UTC)
 Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 67BEF4E;
-        Mon, 23 Sep 2019 18:15:20 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 13:15:20 -0500
+        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id 997D147;
+        Mon, 23 Sep 2019 18:15:55 +0000 (UTC)
+Date:   Mon, 23 Sep 2019 13:15:55 -0500
 From:   Steve Wahl <steve.wahl@hpe.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -40,9 +40,9 @@ To:     Thomas Gleixner <tglx@linutronix.de>,
         Zhenzhong Duan <zhenzhong.duan@oracle.com>
 Cc:     Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
         dimitri.sivanich@hpe.com, mike.travis@hpe.com
-Subject: [PATCH v2 1/2] x86/boot/64: Make level2_kernel_pgt pages invalid
- outside kernel area.
-Message-ID: <51b87d62e0cade3c46a69706b9be249190abc7bd.1569004923.git.steve.wahl@hpe.com>
+Subject: [PATCH v2 2/2] x86/boot/64: round memory hole size up to next PMD
+ page.
+Message-ID: <b0c6487fdd8ca33daa2ac1604b60fac8ed5b020f.1569004923.git.steve.wahl@hpe.com>
 References: <cover.1569004922.git.steve.wahl@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,95 +52,88 @@ User-Agent: Mutt/1.12.1 (2019-06-15)
 X-HPE-SCL: -1
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
  definitions=2019-09-23_05:2019-09-23,2019-09-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- clxscore=1015 impostorscore=0 suspectscore=0 phishscore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 malwarescore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1908290000
- definitions=main-1909230158
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ suspectscore=2 spamscore=0 priorityscore=1501 malwarescore=0
+ mlxlogscore=999 adultscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1909230158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our hardware (UV aka Superdome Flex) has address ranges marked
-reserved by the BIOS. Access to these ranges is caught as an error,
-causing the BIOS to halt the system.
-
-Initial page tables mapped a large range of physical addresses that
-were not checked against the list of BIOS reserved addresses, and
-sometimes included reserved addresses in part of the mapped range.
-Including the reserved range in the map allowed processor speculative
-accesses to the reserved range, triggering a BIOS halt.
-
-Used early in booting, the page table level2_kernel_pgt addresses 1
-GiB divided into 2 MiB pages, and it was set up to linearly map a full
-1 GiB of physical addresses that included the physical address range
-of the kernel image, as chosen by KASLR.  But this also included a
-large range of unused addresses on either side of the kernel image.
-And unlike the kernel image's physical address range, this extra
-mapped space was not checked against the BIOS tables of usable RAM
-addresses.  So there were times when the addresses chosen by KASLR
-would result in processor accessible mappings of BIOS reserved
-physical addresses.
-
-The kernel code did not directly access any of this extra mapped
-space, but having it mapped allowed the processor to issue speculative
-accesses into reserved memory, causing system halts.
-
-This was encountered somewhat rarely on a normal system boot, and much
-more often when starting the crash kernel if "crashkernel=512M,high"
-was specified on the command line (this heavily restricts the physical
-address of the crash kernel, in our case usually within 1 GiB of
-reserved space).
-
-The solution is to invalidate the pages of this table outside the
-kernel image's space before the page table is activated.  This patch
-has been validated to fix this problem on our hardware.
+The kernel image map is created using PMD pages, which can include
+some extra space beyond what's actually needed.  Round the size of the
+memory hole we search for up to the next PMD boundary, to be certain
+all of the space to be mapped is usable RAM and includes no reserved
+areas.
 
 Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
 Cc: stable@vger.kernel.org
 ---
 Changes since v1:
-  * Added comment.
-  * Reworked changelog text.
+  * This patch is completely new to this verison.
 
- arch/x86/kernel/head64.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ arch/x86/boot/compressed/misc.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 29ffa495bd1c..ee9d0e3e0c46 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -222,13 +222,27 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 	 * we might write invalid pmds, when the kernel is relocated
- 	 * cleanup_highmap() fixes this up along with the mappings
- 	 * beyond _end.
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 53ac0cb2396d..9652d5c2afda 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -345,6 +345,7 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
+ {
+ 	const unsigned long kernel_total_size = VO__end - VO__text;
+ 	unsigned long virt_addr = LOAD_PHYSICAL_ADDR;
++	unsigned long needed_size;
+ 
+ 	/* Retain x86 boot parameters pointer passed from startup_32/64. */
+ 	boot_params = rmode;
+@@ -379,26 +380,38 @@ asmlinkage __visible void *extract_kernel(void *rmode, memptr heap,
+ 	free_mem_ptr     = heap;	/* Heap */
+ 	free_mem_end_ptr = heap + BOOT_HEAP_SIZE;
+ 
++	/*
++	 * The memory hole needed for the kernel is the larger of either
++	 * the entire decompressed kernel plus relocation table, or the
++	 * entire decompressed kernel plus .bss and .brk sections.
 +	 *
-+	 * Only the region occupied by the kernel image has so far
-+	 * been checked against the table of usable memory regions
-+	 * provided by the firmware, so invalidate pages outside that
-+	 * region.  A page table entry that maps to a reserved area of
-+	 * memory would allow processor speculation into that area,
-+	 * and on some hardware (particularly the UV platform) even
-+	 * speculative access to some reserved areas is caught as an
-+	 * error, causing the BIOS to halt the system.
- 	 */
- 
- 	pmd = fixup_pointer(level2_kernel_pgt, physaddr);
--	for (i = 0; i < PTRS_PER_PMD; i++) {
-+	for (i = 0; i < pmd_index((unsigned long)_text); i++)
-+		pmd[i] &= ~_PAGE_PRESENT;
++	 * On X86_64, the memory is mapped with PMD pages. Round the
++	 * size up so that the full extent of PMD pages mapped is
++	 * included in the check against the valid memory table
++	 * entries. This ensures the full mapped area is usable RAM
++	 * and doesn't include any reserved areas.
++	 */
++	needed_size = max(output_len, kernel_total_size);
++#ifdef CONFIG_X86_64
++	needed_size = ALIGN(needed_size, MIN_KERNEL_ALIGN);
++#endif
 +
-+	for (; i <= pmd_index((unsigned long)_end); i++)
- 		if (pmd[i] & _PAGE_PRESENT)
- 			pmd[i] += load_delta;
--	}
-+
-+	for (; i < PTRS_PER_PMD; i++)
-+		pmd[i] &= ~_PAGE_PRESENT;
+ 	/* Report initial kernel position details. */
+ 	debug_putaddr(input_data);
+ 	debug_putaddr(input_len);
+ 	debug_putaddr(output);
+ 	debug_putaddr(output_len);
+ 	debug_putaddr(kernel_total_size);
++	debug_putaddr(needed_size);
  
- 	/*
- 	 * Fixup phys_base - remove the memory encryption mask to obtain
+ #ifdef CONFIG_X86_64
+ 	/* Report address of 32-bit trampoline */
+ 	debug_putaddr(trampoline_32bit);
+ #endif
+ 
+-	/*
+-	 * The memory hole needed for the kernel is the larger of either
+-	 * the entire decompressed kernel plus relocation table, or the
+-	 * entire decompressed kernel plus .bss and .brk sections.
+-	 */
+ 	choose_random_location((unsigned long)input_data, input_len,
+ 				(unsigned long *)&output,
+-				max(output_len, kernel_total_size),
++				needed_size,
+ 				&virt_addr);
+ 
+ 	/* Validate memory location choices. */
 -- 
 2.21.0
 
