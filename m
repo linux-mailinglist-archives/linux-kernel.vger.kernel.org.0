@@ -2,164 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29DD1BBCC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC893BBCC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 22:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502570AbfIWUXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 16:23:54 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22352 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728856AbfIWUXx (ORCPT
+        id S2387475AbfIWUXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 16:23:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54672 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728856AbfIWUXQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 16:23:53 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8NKLptd060389;
-        Mon, 23 Sep 2019 16:23:21 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v72aqw6as-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Sep 2019 16:23:20 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8NKM9tW063386;
-        Mon, 23 Sep 2019 16:23:20 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v72aqw6ab-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Sep 2019 16:23:20 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8NKJKTN027588;
-        Mon, 23 Sep 2019 20:23:18 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03dal.us.ibm.com with ESMTP id 2v5bg6v1em-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Sep 2019 20:23:18 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8NKNGNj62259636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Sep 2019 20:23:16 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A8847BE051;
-        Mon, 23 Sep 2019 20:23:16 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3BE51BE04F;
-        Mon, 23 Sep 2019 20:23:08 +0000 (GMT)
-Received: from leobras.br.ibm.com (unknown [9.18.235.184])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 23 Sep 2019 20:23:08 +0000 (GMT)
-Message-ID: <c64d34118542d5c2d31b8f6b7802d2a29dac71ef.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 11/11] powerpc/mm/book3s64/pgtable: Uses counting
- method to skip serializing
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     John Hubbard <jhubbard@nvidia.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Ganesh Goudar <ganeshgr@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Allison Randal <allison@lohutok.net>
-Date:   Mon, 23 Sep 2019 17:23:03 -0300
-In-Reply-To: <1568b3ef-cec9-bf47-edaa-c775c2f544fb@nvidia.com>
-References: <20190920195047.7703-1-leonardo@linux.ibm.com>
-         <20190920195047.7703-12-leonardo@linux.ibm.com>
-         <1b39eaa7-751d-40bc-d3d7-41aaa15be42a@nvidia.com>
-         <24863d8904c6e05e5dd48cab57db4274675ae654.camel@linux.ibm.com>
-         <4ea26ffb-ad03-bdff-7893-95332b22a5fd@nvidia.com>
-         <18c5c378db98f223a0663034baa9fd6ce42f1ec7.camel@linux.ibm.com>
-         <8706a1f1-0c5e-d152-938b-f355b9a5aaa8@nvidia.com>
-         <dc9fad3577551d34ead36c0f7340a573086c0cab.camel@linux.ibm.com>
-         <1568b3ef-cec9-bf47-edaa-c775c2f544fb@nvidia.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-rL8yHUayTEy37kqretQV"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Mon, 23 Sep 2019 16:23:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aA6G5j/GWFQWf58bWS2Roiwr5zclNDQNpoKs51CyLPM=; b=BX3GqwsBgnQQgV++O4xX6CkcI
+        JhotC/8SeJ562+p9UL/7eJKXVJBN0CSZRnC6ua7vx2gicvuDtoLdPz283sNtiDMcVuPdnW8j8pkpv
+        mERlNKstfpOaXZa8+uONVcrkp50NFFOiWfrusLXapduXsF+SEtqUrSynFqDjd7x+S2OK9bLgCWbyf
+        6RtphSKrMLULAL9Swczng10X0aonz1hJidhrTOn7dHI+Xd17ClfcSO/0EJpNxGKHc5icWscGkMKPp
+        edRY97RSGf2vs78ZpvIcbZZJTfmz/OYdCuN0VeoNTLYYBDM9ypOuwlTBTwEHYrIUubeo0stALWp8l
+        Bh5h/Fy3w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCUrY-0007gq-ND; Mon, 23 Sep 2019 20:23:13 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 65451305E42;
+        Mon, 23 Sep 2019 22:22:25 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id ADE2420D80D40; Mon, 23 Sep 2019 22:23:10 +0200 (CEST)
+Date:   Mon, 23 Sep 2019 22:23:10 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@redhat.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v2 1/2] sched/wait: Add wait_threshold
+Message-ID: <20190923202310.GA2386@hirez.programming.kicks-ass.net>
+References: <cover.1569139018.git.asml.silence@gmail.com>
+ <d99ce2f7c98d4408aea50f515bbb6b89bc7850e8.1569139018.git.asml.silence@gmail.com>
+ <20190923071932.GD2349@hirez.programming.kicks-ass.net>
+ <3e359937-5b19-8a4c-4243-ba2edff68504@gmail.com>
+ <20190923192742.GH2369@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-23_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909230170
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923192742.GH2369@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 23, 2019 at 09:27:42PM +0200, Peter Zijlstra wrote:
 
---=-rL8yHUayTEy37kqretQV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+> Also, is anything actually using wait_queue_entry::private ? I'm
+> not finding any in a hurry.
 
-On Mon, 2019-09-23 at 12:58 -0700, John Hubbard wrote:
->=20
-> CPU 0                            CPU 1
-> ------                         --------------
->                                READ(pte) (re-ordered at run time)
->                                atomic_inc(val) (no run-time memory barrie=
-r!)
->                           =20
-> pmd_clear(pte)
-> if (val)
->     run_on_all_cpus(): IPI
->                                local_irq_disable() (also not a mem barrie=
-r)
->=20
->                                if(pte)
->                                   walk page tables
+That is; outside of default_wake_function(). I don't see a sensible
+reason for that field to be 'void *' nor for the name 'private'.
 
-Let me see if I can understand,
-On most patches, it would be:
-
-CPU 0                            CPU 1
-------				--------------
-				ptep =3D __find_linux_pte =20
-				(re-ordered at run time)
-				atomic_inc(val)=20
-pmd_clear(pte)
-smp_mb()
-if (val)
-    run_on_all_cpus(): IPI
-                               local_irq_disable()=20
-
-                               if(ptep)
-                                  pte =3D *ptep;
-
-Is that what you meant?
-
-
-
---=-rL8yHUayTEy37kqretQV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl2JKacACgkQlQYWtz9S
-ttQNQQ//YZoIqwIEI8Lrj+C7R1TaXBuOjUoK9YNDTE6IjHRf1s5nkhUpn68/joo+
-VKKvccIS6lJFZOMq9cpBn8/UtitXlmTwmM3zmfSRzKjXQJZJk2IeioBlB5d16L9q
-Y8IS8kojfI3DoDDF5XRGU+FQbwMUqTNkKpvWevAotkldLhE2ZvUkoJSEUM7X4MqQ
-C67Pbbgpsz+q5ZcEW6JbAolW6/nQXYCevzRj8hJ1+inreFKp7KoiBsOebVvW4LMD
-L6GhEJiKvgFK2HpqEECNApqDDFnPDh0CxELo/sf4J0eV5hVKSkZrpJaJBVUmCQ+9
-Z6rn7BHQd/uM0P9bqWvv6+M+IVriOuwNZ/jRe312heD7IlWDccytoqRjo5xfuBUp
-PTowmJ/zUUH7bpPEAnVP3qzEqyvMsUKiVuYK9Fxnfx+fMLVokjbXvosRoLJ8+I8d
-71xd5iyjyIGRoxntKukRNpwrPoftF7dTVFHTpYwstM7FQXrGEex5wnnLwXGeOwUF
-gevW1ayr2mu0u/TchxKO0tvCeu8gVnbiBmtEsJYIXMTAt8RGNqKBcekYnuFUAIuq
-hF7Qg2DGeGlwjMwdpWZBNSBv8Fvq45Y/m0ggvH3Ey18WF3rwS9FDWbT/ix4PEJUC
-x2GH0X9bTNwrhVLjwRPuHyOVMfulhA1DVbRq+H+/2cNXr6ewLNE=
-=DGT/
------END PGP SIGNATURE-----
-
---=-rL8yHUayTEy37kqretQV--
-
+But _that_ is something we can fix later.
