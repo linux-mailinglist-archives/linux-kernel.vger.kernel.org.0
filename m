@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38E7ABB42A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0955CBB414
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732484AbfIWMsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:48:33 -0400
-Received: from regular1.263xmail.com ([211.150.70.205]:37076 "EHLO
+        id S2439555AbfIWMqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:46:05 -0400
+Received: from regular1.263xmail.com ([211.150.70.195]:33788 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730467AbfIWMsd (ORCPT
+        with ESMTP id S1726436AbfIWMqF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:48:33 -0400
+        Mon, 23 Sep 2019 08:46:05 -0400
 Received: from hjc?rock-chips.com (unknown [192.168.167.16])
-        by regular1.263xmail.com (Postfix) with ESMTP id E60AA4A6;
-        Mon, 23 Sep 2019 20:43:41 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id 3B792B76;
+        Mon, 23 Sep 2019 20:43:44 +0800 (CST)
 X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -25,9 +25,9 @@ X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P3051T140289744058112S1569242621440080_;
-        Mon, 23 Sep 2019 20:43:43 +0800 (CST)
+        Mon, 23 Sep 2019 20:43:45 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <24fd09c575207babae724215753035c6>
+X-UNIQUE-TAG: <1d669510ee6b1eb3d84b0708437add94>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -37,35 +37,16 @@ X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
 To:     dri-devel@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Huang Rui <ray.huang@amd.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        David Francis <David.Francis@amd.com>,
-        Mario Kleiner <mario.kleiner.de@gmail.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/36] drm/amd: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:41:10 +0800
-Message-Id: <1569242500-182337-7-git-send-email-hjc@rock-chips.com>
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 07/36] drm/gma500: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:41:11 +0800
+Message-Id: <1569242500-182337-8-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1569242500-182337-7-git-send-email-hjc@rock-chips.com>
+References: <1569242500-182337-7-git-send-email-hjc@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -76,110 +57,105 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c            | 2 +-
- drivers/gpu/drm/amd/amdgpu/dce_v10_0.c            | 2 +-
- drivers/gpu/drm/amd/amdgpu/dce_v11_0.c            | 2 +-
- drivers/gpu/drm/amd/amdgpu/dce_v6_0.c             | 2 +-
- drivers/gpu/drm/amd/amdgpu/dce_v8_0.c             | 2 +-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 6 +++---
- 6 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/gma500/framebuffer.c         | 4 ++--
+ drivers/gpu/drm/gma500/gma_display.c         | 4 ++--
+ drivers/gpu/drm/gma500/mdfld_intel_display.c | 6 +++---
+ drivers/gpu/drm/gma500/oaktrail_crtc.c       | 4 ++--
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
-index eb3569b..895a54c 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
-@@ -133,7 +133,7 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
- 	u32 cpp;
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index 218f3bb..97e9274 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -61,7 +61,7 @@ static int psbfb_setcolreg(unsigned regno, unsigned red, unsigned green,
+ 	    (transp << info->var.transp.offset);
  
- 	info = drm_get_format_info(adev->ddev, mode_cmd);
--	cpp = info->cpp[0];
-+	cpp = info->bpp[0] / 8;
+ 	if (regno < 16) {
+-		switch (fb->format->cpp[0] * 8) {
++		switch (fb->format->bpp[0]) {
+ 		case 16:
+ 			((uint32_t *) info->pseudo_palette)[regno] = v;
+ 			break;
+@@ -221,7 +221,7 @@ static int psb_framebuffer_init(struct drm_device *dev,
+ 	 * 4 bytes per pixel.
+ 	 */
+ 	info = drm_get_format_info(dev, mode_cmd);
+-	if (!info || !info->depth || info->cpp[0] > 4)
++	if (!info || !info->depth || info->bpp[0] > 32)
+ 		return -EINVAL;
  
- 	/* need to align pitch with crtc limits */
- 	mode_cmd->pitches[0] = amdgpu_align_pitch(adev, mode_cmd->width, cpp,
-diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
-index 1ffd196..ebf548c 100644
---- a/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_v10_0.c
-@@ -2034,7 +2034,7 @@ static int dce_v10_0_crtc_do_set_base(struct drm_crtc *crtc,
- 	WREG32(mmGRPH_X_END + amdgpu_crtc->crtc_offset, target_fb->width);
- 	WREG32(mmGRPH_Y_END + amdgpu_crtc->crtc_offset, target_fb->height);
+ 	if (mode_cmd->pitches[0] & 63)
+diff --git a/drivers/gpu/drm/gma500/gma_display.c b/drivers/gpu/drm/gma500/gma_display.c
+index e20ccb5..95e975e 100644
+--- a/drivers/gpu/drm/gma500/gma_display.c
++++ b/drivers/gpu/drm/gma500/gma_display.c
+@@ -78,14 +78,14 @@ int gma_pipe_set_base(struct drm_crtc *crtc, int x, int y,
+ 	if (ret < 0)
+ 		goto gma_pipe_set_base_exit;
+ 	start = gtt->offset;
+-	offset = y * fb->pitches[0] + x * fb->format->cpp[0];
++	offset = y * fb->pitches[0] + x * fb->format->bpp[0] / 8;
  
--	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->cpp[0];
-+	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->bpp[0] / 8;
- 	WREG32(mmGRPH_PITCH + amdgpu_crtc->crtc_offset, fb_pitch_pixels);
+ 	REG_WRITE(map->stride, fb->pitches[0]);
  
- 	dce_v10_0_grph_enable(crtc, true);
-diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
-index 9e0782b..4400a59 100644
---- a/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_v11_0.c
-@@ -2076,7 +2076,7 @@ static int dce_v11_0_crtc_do_set_base(struct drm_crtc *crtc,
- 	WREG32(mmGRPH_X_END + amdgpu_crtc->crtc_offset, target_fb->width);
- 	WREG32(mmGRPH_Y_END + amdgpu_crtc->crtc_offset, target_fb->height);
+ 	dspcntr = REG_READ(map->cntr);
+ 	dspcntr &= ~DISPPLANE_PIXFORMAT_MASK;
  
--	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->cpp[0];
-+	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->bpp[0] / 8;
- 	WREG32(mmGRPH_PITCH + amdgpu_crtc->crtc_offset, fb_pitch_pixels);
+-	switch (fb->format->cpp[0] * 8) {
++	switch (fb->format->bpp[0]) {
+ 	case 8:
+ 		dspcntr |= DISPPLANE_8BPP;
+ 		break;
+diff --git a/drivers/gpu/drm/gma500/mdfld_intel_display.c b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+index b8bfb96..5564472 100644
+--- a/drivers/gpu/drm/gma500/mdfld_intel_display.c
++++ b/drivers/gpu/drm/gma500/mdfld_intel_display.c
+@@ -139,7 +139,7 @@ static int check_fb(struct drm_framebuffer *fb)
+ 	if (!fb)
+ 		return 0;
  
- 	dce_v11_0_grph_enable(crtc, true);
-diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-index 4bf453e..fc74153 100644
---- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
-@@ -1969,7 +1969,7 @@ static int dce_v6_0_crtc_do_set_base(struct drm_crtc *crtc,
- 	WREG32(mmGRPH_X_END + amdgpu_crtc->crtc_offset, target_fb->width);
- 	WREG32(mmGRPH_Y_END + amdgpu_crtc->crtc_offset, target_fb->height);
+-	switch (fb->format->cpp[0] * 8) {
++	switch (fb->format->bpp[0]) {
+ 	case 8:
+ 	case 16:
+ 	case 24:
+@@ -187,13 +187,13 @@ static int mdfld__intel_pipe_set_base(struct drm_crtc *crtc, int x, int y,
+ 		return 0;
  
--	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->cpp[0];
-+	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->bpp[0] / 8;
- 	WREG32(mmGRPH_PITCH + amdgpu_crtc->crtc_offset, fb_pitch_pixels);
+ 	start = to_gtt_range(fb->obj[0])->offset;
+-	offset = y * fb->pitches[0] + x * fb->format->cpp[0];
++	offset = y * fb->pitches[0] + x * fb->format->bpp[0] / 8;
  
- 	dce_v6_0_grph_enable(crtc, true);
-diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
-index b23418c..94dfb4f 100644
---- a/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/dce_v8_0.c
-@@ -1943,7 +1943,7 @@ static int dce_v8_0_crtc_do_set_base(struct drm_crtc *crtc,
- 	WREG32(mmGRPH_X_END + amdgpu_crtc->crtc_offset, target_fb->width);
- 	WREG32(mmGRPH_Y_END + amdgpu_crtc->crtc_offset, target_fb->height);
+ 	REG_WRITE(map->stride, fb->pitches[0]);
+ 	dspcntr = REG_READ(map->cntr);
+ 	dspcntr &= ~DISPPLANE_PIXFORMAT_MASK;
  
--	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->cpp[0];
-+	fb_pitch_pixels = target_fb->pitches[0] / target_fb->format->bpp[0] / 8;
- 	WREG32(mmGRPH_PITCH + amdgpu_crtc->crtc_offset, fb_pitch_pixels);
+-	switch (fb->format->cpp[0] * 8) {
++	switch (fb->format->bpp[0]) {
+ 	case 8:
+ 		dspcntr |= DISPPLANE_8BPP;
+ 		break;
+diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+index 167c107..8278dfb 100644
+--- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
++++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+@@ -607,14 +607,14 @@ static int oaktrail_pipe_set_base(struct drm_crtc *crtc,
+ 		return 0;
  
- 	dce_v8_0_grph_enable(crtc, true);
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 760af66..d11ab18 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -2746,7 +2746,7 @@ fill_plane_buffer_attributes(struct amdgpu_device *adev,
- 		plane_size->grph.surface_size.width = fb->width;
- 		plane_size->grph.surface_size.height = fb->height;
- 		plane_size->grph.surface_pitch =
--			fb->pitches[0] / fb->format->cpp[0];
-+			fb->pitches[0] / fb->format->bpp[0] / 8;
+ 	start = to_gtt_range(fb->obj[0])->offset;
+-	offset = y * fb->pitches[0] + x * fb->format->cpp[0];
++	offset = y * fb->pitches[0] + x * fb->format->bpp[0] / 8;
  
- 		address->type = PLN_ADDR_TYPE_GRAPHICS;
- 		address->grph.addr.low_part = lower_32_bits(afb->address);
-@@ -2759,7 +2759,7 @@ fill_plane_buffer_attributes(struct amdgpu_device *adev,
- 		plane_size->video.luma_size.width = fb->width;
- 		plane_size->video.luma_size.height = fb->height;
- 		plane_size->video.luma_pitch =
--			fb->pitches[0] / fb->format->cpp[0];
-+			fb->pitches[0] / fb->format->bpp[0] / 8;
+ 	REG_WRITE(map->stride, fb->pitches[0]);
  
- 		plane_size->video.chroma_size.x = 0;
- 		plane_size->video.chroma_size.y = 0;
-@@ -2768,7 +2768,7 @@ fill_plane_buffer_attributes(struct amdgpu_device *adev,
- 		plane_size->video.chroma_size.height = fb->height / 2;
+ 	dspcntr = REG_READ(map->cntr);
+ 	dspcntr &= ~DISPPLANE_PIXFORMAT_MASK;
  
- 		plane_size->video.chroma_pitch =
--			fb->pitches[1] / fb->format->cpp[1];
-+			fb->pitches[1] / fb->format->bpp[1] / 8;
- 
- 		address->type = PLN_ADDR_TYPE_VIDEO_PROGRESSIVE;
- 		address->video_progressive.luma_addr.low_part =
+-	switch (fb->format->cpp[0] * 8) {
++	switch (fb->format->bpp[0]) {
+ 	case 8:
+ 		dspcntr |= DISPPLANE_8BPP;
+ 		break;
 -- 
 2.7.4
 
