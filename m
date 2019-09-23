@@ -2,43 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D21A8BB6C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9F9BBB6C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:31:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439938AbfIWObS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:31:18 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:41253 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439904AbfIWObK (ORCPT
+        id S2439925AbfIWObL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:31:11 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:45718 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437929AbfIWObK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Sep 2019 10:31:10 -0400
-Received: by mail-io1-f70.google.com with SMTP id q18so1403821ios.8
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 07:31:08 -0700 (PDT)
+Received: by mail-io1-f71.google.com with SMTP id o11so23679228iop.12
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 07:31:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=TCANX9Z4wqakA7+UgGz6KKJIG/CHv0FeIjT+3p5HhKI=;
-        b=Uew230xVh+JwXx1N5j7RcadV4nALTRpHhwmEUJw4GHoU2wTbquoHD/WGFvUJ+ZyP7A
-         sjACABXcQRIE4oRiZG+lEKOhitYhSJznLzZ3ssQQYNbnFESUupY1gYaIu4mImSeXj16J
-         35NOAiNNDYX9RDnOjTVeCfux72iMUdemNrmwGVOggsJ/BszlL4CIL1DtkWeUSoWh/iFo
-         DBxULSFVxe+Da74wyC/S9BNsj27SyIoPRrwdaEKEfEHQPlLJIIB8tUx8d6xmlElk3yVq
-         xub2lrG8UT9L/26i6wM5LJpR9h1jtH2GAAU9iHwmt4af+IjlNS1u4gyAqkNdUVL+6eF9
-         jtJA==
-X-Gm-Message-State: APjAAAU/Dq5r/+x9qy1dSXs5bFoNL86QXhkI+ZoMkKhonmrKwFsZfsqG
-        uzfimOa5H2z/giRtrsdaeHw/kAttGDW2m5Xu1ojwS8K9FOTp
-X-Google-Smtp-Source: APXvYqxJB3A4CIAcZ0gXoycjwMtanAhME82UMq8Vx+DjKRi8rmsg74ML/WkN4zLN0J3r++Yn9e7IcQH1GwWFupByGTS0xoGX9nxw
+        bh=IjRWi0jZFV58CzEU6Vz96oJ3ckiiGtQva6OmGGp82do=;
+        b=HMKJA9H9dfWHAhP4XOjPb3rKiv+COeBhk5irVu8EQvkpI75BvO7MZJyT/9Xj39HKiW
+         TxYHfSKpUZk9liDvIDaqNANobzMBP0nHiLSoeylS21zrGg2IvLWsP1hyiBAhwfi3PaMl
+         hk3lvdUHYpjraYVkkkldi0wMfin0Yk3oLftaKtBU3GH6H2VBhH5bmekABC9AoL8vX1X/
+         SLyU7eZevCd0cQQ5K09N2H2NibGXRyXC+2diV5kjx+c1QkXJWrSU5BECF9RMrYXQV3/f
+         czA6WbReLuZE/LSiGPNSmulAmRJZq5hXTrMgohYVJ1Gzgf7rtdTpR8gkbCJbygVdIWCD
+         X8PQ==
+X-Gm-Message-State: APjAAAXd3APhYr2YDkQh4uKfJKCoHg1RHZ1dLkqFC+JM/ktbv1QI7jEB
+        7b8DCBkW437m4xDx+bf89UpapUzOIqFMaP4Xq9ZKNd5FQ5BQ
+X-Google-Smtp-Source: APXvYqyN5oPKaKaKyB9gLvZTbrJM10JGjoZQ7SBJTkcl1Lp0zhZp1sKCMx4gbu74vwXRFFbxm4WmIBHgzuizw49MC+Cr7hIkXc8s
 MIME-Version: 1.0
-X-Received: by 2002:a6b:254:: with SMTP id 81mr19072860ioc.17.1569249068351;
- Mon, 23 Sep 2019 07:31:08 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 07:31:08 -0700
+X-Received: by 2002:a02:5ec4:: with SMTP id h187mr36416109jab.101.1569249069062;
+ Mon, 23 Sep 2019 07:31:09 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 07:31:09 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000488dd305933945d2@google.com>
-Subject: WARNING in _chaoskey_fill/usb_submit_urb
-From:   syzbot <syzbot+f5349b421c6213d34ce2@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000005365ff0593394532@google.com>
+Subject: KASAN: use-after-free Read in xpad_play_effect
+From:   syzbot <syzbot+bea56e0be9fb9106bcf3@syzkaller.appspotmail.com>
+To:     aicommander@gmail.com, andreyknvl@google.com,
+        dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        ramzeto@gmail.com, rfontana@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        tom@steelseries.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,65 +54,121 @@ syzbot found the following crash on:
 
 HEAD commit:    e0bd8d79 usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=1452c6a1600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14aeeab1600000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=8847e5384a16f66a
-dashboard link: https://syzkaller.appspot.com/bug?extid=f5349b421c6213d34ce2
+dashboard link: https://syzkaller.appspot.com/bug?extid=bea56e0be9fb9106bcf3
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16342d45600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=166769b1600000
+
+Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+f5349b421c6213d34ce2@syzkaller.appspotmail.com
+Reported-by: syzbot+bea56e0be9fb9106bcf3@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-URB 00000000052bee21 submitted while active
-WARNING: CPU: 1 PID: 1794 at drivers/usb/core/urb.c:362  
-usb_submit_urb+0x10c1/0x13b0 drivers/usb/core/urb.c:362
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 1794 Comm: syz-executor305 Not tainted 5.3.0+ #0
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x3377/0x3eb0  
+kernel/locking/lockdep.c:3828
+Read of size 8 at addr ffff8881ceebdc10 by task syz-executor.4/7298
+
+CPU: 0 PID: 7298 Comm: syz-executor.4 Not tainted 5.3.0+ #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0xca/0x13e lib/dump_stack.c:113
-  panic+0x2a3/0x6da kernel/panic.c:219
-  __warn.cold+0x20/0x4a kernel/panic.c:576
-  report_bug+0x262/0x2a0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
-  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
-RIP: 0010:usb_submit_urb+0x10c1/0x13b0 drivers/usb/core/urb.c:362
-Code: 89 de e8 92 5b ee fd 84 db 0f 85 42 f6 ff ff e8 55 5a ee fd 4c 89 fe  
-48 c7 c7 00 c2 18 86 c6 05 f3 cf 38 04 01 e8 f4 e5 c3 fd <0f> 0b e9 20 f6  
-ff ff c7 44 24 14 01 00 00 00 e9 d7 f6 ff ff 41 bd
-RSP: 0018:ffff8881d0427b68 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8128d9ad RDI: ffffed103a084f5f
-RBP: ffff8881d070b180 R08: ffff8881d4934800 R09: ffffed103b663ee7
-R10: ffffed103b663ee6 R11: ffff8881db31f737 R12: ffff8881d070b180
-R13: 00000000fffffff0 R14: 0000000000000000 R15: ffff8881d5c22400
-  _chaoskey_fill.part.0+0xe0/0x470 drivers/usb/misc/chaoskey.c:367
-  _chaoskey_fill+0x1ad/0x230 drivers/usb/misc/chaoskey.c:361
-  chaoskey_read+0x2c2/0x4c0 drivers/usb/misc/chaoskey.c:434
-  __vfs_read+0x76/0x100 fs/read_write.c:425
-  vfs_read+0x1ea/0x430 fs/read_write.c:461
-  ksys_read+0x127/0x250 fs/read_write.c:587
+  print_address_description+0x6a/0x32c mm/kasan/report.c:351
+  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+  kasan_report+0xe/0x12 mm/kasan/common.c:618
+  __lock_acquire+0x3377/0x3eb0 kernel/locking/lockdep.c:3828
+  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4487
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x32/0x50 kernel/locking/spinlock.c:159
+  xpad_play_effect+0xfe/0xc50 drivers/input/joystick/xpad.c:1225
+  ml_play_effects+0x817/0x1270 drivers/input/ff-memless.c:398
+  ml_ff_playback+0x285/0x3d0 drivers/input/ff-memless.c:460
+  input_ff_event+0x13a/0x2e0 drivers/input/ff-core.c:286
+  input_handle_event+0x64e/0x1330 drivers/input/input.c:374
+  input_inject_event+0x30a/0x323 drivers/input/input.c:462
+  evdev_write+0x2c9/0x410 drivers/input/evdev.c:561
+  __vfs_write+0x76/0x100 fs/read_write.c:494
+  vfs_write+0x262/0x5c0 fs/read_write.c:558
+  ksys_write+0x1e8/0x250 fs/read_write.c:611
   do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4419c9
-Code: e8 8c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+RIP: 0033:0x459a09
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc317ed1f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004419c9
-RDX: 0000000000000009 RSI: 0000000020000040 RDI: 0000000000000004
-RBP: 000000000000e12e R08: 000000000000000f R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402720
-R13: 00000000004027b0 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f53d068cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459a09
+RDX: 0000000000000364 RSI: 00000000200000c0 RDI: 0000000000000005
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f53d068d6d4
+R13: 00000000004c9bfc R14: 00000000004e1480 R15: 00000000ffffffff
+
+Allocated by task 6364:
+  save_stack+0x1b/0x80 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:493 [inline]
+  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:466
+  slab_post_alloc_hook mm/slab.h:520 [inline]
+  slab_alloc_node mm/slub.c:2770 [inline]
+  __kmalloc_node_track_caller+0xfc/0x3d0 mm/slub.c:4365
+  __kmalloc_reserve.isra.0+0x39/0xe0 net/core/skbuff.c:141
+  __alloc_skb+0xef/0x5a0 net/core/skbuff.c:209
+  alloc_skb include/linux/skbuff.h:1049 [inline]
+  netlink_alloc_large_skb net/netlink/af_netlink.c:1174 [inline]
+  netlink_sendmsg+0x8cd/0xcc0 net/netlink/af_netlink.c:1892
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg+0xcf/0x120 net/socket.c:657
+  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
+  __sys_sendmsg+0xec/0x1b0 net/socket.c:2356
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 6364:
+  save_stack+0x1b/0x80 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:455
+  slab_free_hook mm/slub.c:1423 [inline]
+  slab_free_freelist_hook mm/slub.c:1474 [inline]
+  slab_free mm/slub.c:3016 [inline]
+  kfree+0xe4/0x2f0 mm/slub.c:3957
+  skb_free_head+0x8b/0xa0 net/core/skbuff.c:591
+  skb_release_data+0x41f/0x7c0 net/core/skbuff.c:611
+  skb_release_all+0x46/0x60 net/core/skbuff.c:665
+  __kfree_skb net/core/skbuff.c:679 [inline]
+  consume_skb net/core/skbuff.c:838 [inline]
+  consume_skb+0xd9/0x320 net/core/skbuff.c:832
+  netlink_unicast_kernel net/netlink/af_netlink.c:1303 [inline]
+  netlink_unicast+0x4d7/0x690 net/netlink/af_netlink.c:1328
+  netlink_sendmsg+0x802/0xcc0 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:637 [inline]
+  sock_sendmsg+0xcf/0x120 net/socket.c:657
+  ___sys_sendmsg+0x803/0x920 net/socket.c:2311
+  __sys_sendmsg+0xec/0x1b0 net/socket.c:2356
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881ceebdb00
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 272 bytes inside of
+  1024-byte region [ffff8881ceebdb00, ffff8881ceebdf00)
+The buggy address belongs to the page:
+page:ffffea00073baf00 refcount:1 mapcount:0 mapping:ffff8881da002280  
+index:0x0 compound_mapcount: 0
+flags: 0x200000000010200(slab|head)
+raw: 0200000000010200 0000000000000000 0000000100000001 ffff8881da002280
+raw: 0000000000000000 00000000000e000e 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881ceebdb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881ceebdb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881ceebdc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                          ^
+  ffff8881ceebdc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881ceebdd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
@@ -119,5 +178,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
