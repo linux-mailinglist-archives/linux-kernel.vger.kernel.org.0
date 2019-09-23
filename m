@@ -2,131 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2447BBAE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B131FBBADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 20:02:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440302AbfIWSFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 14:05:54 -0400
-Received: from dvalin.narfation.org ([213.160.73.56]:38386 "EHLO
-        dvalin.narfation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390851AbfIWSFx (ORCPT
+        id S2440277AbfIWSCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 14:02:42 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42783 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393421AbfIWSCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 14:05:53 -0400
-X-Greylist: delayed 572 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Sep 2019 14:05:50 EDT
-Received: from sven-edge.localnet (unknown [IPv6:2a00:1ca0:1480:f9fc::4065])
-        by dvalin.narfation.org (Postfix) with ESMTPSA id D9AF31FFAB;
-        Mon, 23 Sep 2019 17:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-        s=20121; t=1569259611;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JUegENmeIHHiT+O9uIIOxc1zWJHPwvIxI2SvuwGf54A=;
-        b=dVWTU2YRhbvNTjzU5zWqJuZwGuXdr2Y5i4h8fAIbmfcxuBJK1ZG+fGo/W/YblVDINcKj0n
-        B670FTOeqbkbbqdtvLu3HbF2eoleJzXw6Dgnm1/VfifonzNleM7VytHWdyYL6G301L3qIC
-        tdTHwh8/l2Z9JQUVmzRFgWWvKZS3wUo=
-From:   Sven Eckelmann <sven@narfation.org>
-To:     b.a.t.m.a.n@lists.open-mesh.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        Jiri Kosina <trivial@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        lvs-devel@vger.kernel.org, rds-devel@oss.oracle.com
-Subject: Re: [PATCH trivial 1/2] net: Fix Kconfig indentation
-Date:   Mon, 23 Sep 2019 19:56:12 +0200
-Message-ID: <2354684.0ZvKvX0iQ3@sven-edge>
-In-Reply-To: <20190923155243.6997-1-krzk@kernel.org>
-References: <20190923155243.6997-1-krzk@kernel.org>
+        Mon, 23 Sep 2019 14:02:41 -0400
+Received: by mail-io1-f66.google.com with SMTP id n197so35664189iod.9
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 11:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VwjyBXRozExm0XpCeJELI5XTzLyPmFyoar9fwKTAON8=;
+        b=V0w1WyfQqO30zshuIlBtIkPctR6ceCucPy15Vc+LaXGAi0s4BSl/LmDl6PbVBK/iLT
+         2qh7ngpZiw8TpdiIrYjg5aOjoBaE1+AjlJ6iyNk8IOnJM7Wo3WjfHCBbMTJIRLUA8DGX
+         Tr4AzF3Ya6j+1+KZRDPoJKBsRPX/oki0Jalag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VwjyBXRozExm0XpCeJELI5XTzLyPmFyoar9fwKTAON8=;
+        b=ljv2MmfwX7s4mpiI6+JMF+sisLkRAHne0y61FFWcvPhzyAYobrIT21ZOF5tOcwLBip
+         pm+4Z0Iuf146b/KUzh5GHh0HIFdKxIa71uc3u8mmVhVPQ/YpYcj74oAiYwY75SO/WjLa
+         3235EMad3+UzD1SllEzu3r7pnD/KvFsGo0TUUgA6NhGbtqFe4l0OjMcbbyH5fYRgnrog
+         xPzWXEUzzvVLwYPeL1nqbou9BmXkpLYo0t65PG0/011VKtjVvCkxtdsCS2l1oxbtCj7Z
+         nZv6NWD7Ya+INIa1+sHiIXZbgeA6Z+OLoLIF7YX6+eNpc44GFfMGG5vdkQF6Wr0vfRxe
+         Tafw==
+X-Gm-Message-State: APjAAAWG9Q3wDUBrPDXk5PMt45HpCGooCBopyqySF804H+aL4ToivBK1
+        rW44COaBdvCOHgXutyDWBa33hdR8R9Q=
+X-Google-Smtp-Source: APXvYqydzTzzQHFrG02iBDWzJw979t/Q+A9W3DOXdlyjM+iqnKXOkEUtlU0AGjymLN+LqhTodZ0loQ==
+X-Received: by 2002:a02:b09c:: with SMTP id v28mr708806jah.137.1569261760577;
+        Mon, 23 Sep 2019 11:02:40 -0700 (PDT)
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
+        by smtp.gmail.com with ESMTPSA id y23sm10364315iob.28.2019.09.23.11.02.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 11:02:39 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id v2so35642524iob.10
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 11:02:39 -0700 (PDT)
+X-Received: by 2002:a5d:88c9:: with SMTP id i9mr563522iol.269.1569261758688;
+ Mon, 23 Sep 2019 11:02:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2306317.z6aVZVsvuq"; micalg="pgp-sha512"; protocol="application/pgp-signature"
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-        s=20121; t=1569259612;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JUegENmeIHHiT+O9uIIOxc1zWJHPwvIxI2SvuwGf54A=;
-        b=x1TVkKv99+ozAK7NGhKJppOQTZ3rt6BG5uCQ9jX1Cu6VwaJ1Z9e2XjHeZoi0ylFmE0Qgv2
-        uPumTYEhEqN0pwscCMrxg05p8YgwwZxS95AE3BnKHxJCx8DfTCCPdTAyKbC6OzxnJqzLC+
-        xMuRoeIhRMuvm0RcjlgRZSLiQKlXzBQ=
-ARC-Seal: i=1; s=20121; d=narfation.org; t=1569259612; a=rsa-sha256;
-        cv=none;
-        b=sC+Bw4VcxyWYjzxCJPweIGNX+Yyrk334W9KKcHzvmcS/hWk8OQo5sJew0irtt83lHu620y
-        GR1yOu+K+tFNotiu7Ji8FKdtPcJdPj6tP5KcJpiNcjdVnKzc1GUdEDf7J4u+rCReuDLD9y
-        a6G6B/KjsDql8SBNK00XkdLiqUmNeNQ=
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=sven smtp.mailfrom=sven@narfation.org
+References: <20190917154021.14693-1-m.felsch@pengutronix.de> <20190917154021.14693-2-m.felsch@pengutronix.de>
+In-Reply-To: <20190917154021.14693-2-m.felsch@pengutronix.de>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 23 Sep 2019 11:02:26 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=W7M8mwQqnPyU9vsK5VAdqqJdQdyxcoe9FRRGTY8zjnFw@mail.gmail.com>
+Message-ID: <CAD=FV=W7M8mwQqnPyU9vsK5VAdqqJdQdyxcoe9FRRGTY8zjnFw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] regulator: core: fix boot-on regulators use_count usage
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     zhang.chunyan@linaro.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, ckeepax@opensource.cirrus.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart2306317.z6aVZVsvuq
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-On Monday, 23 September 2019 17:52:42 CEST Krzysztof Kozlowski wrote:
-> --- a/net/batman-adv/Kconfig
-> +++ b/net/batman-adv/Kconfig
-> @@ -12,11 +12,11 @@ config BATMAN_ADV
->         depends on NET
->         select LIBCRC32C
->         help
-> -          B.A.T.M.A.N. (better approach to mobile ad-hoc networking) is
-> -          a routing protocol for multi-hop ad-hoc mesh networks. The
-> -          networks may be wired or wireless. See
-> -          https://www.open-mesh.org/ for more information and user space
-> -          tools.
-> +         B.A.T.M.A.N. (better approach to mobile ad-hoc networking) is
-> +         a routing protocol for multi-hop ad-hoc mesh networks. The
-> +         networks may be wired or wireless. See
-> +         https://www.open-mesh.org/ for more information and user space
-> +         tools.
->  
->  config BATMAN_ADV_BATMAN_V
->         bool "B.A.T.M.A.N. V protocol"
-
-Acked-by: Sven Eckelmann <sven@narfation.org>
-
-Kind regards,
-	Sven
-
---nextPart2306317.z6aVZVsvuq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAl2JBzwACgkQXYcKB8Em
-e0YTVg/+PgtfvbyO8UPeEG3nkvaRcMywQsGWWB2nkRfHXA+QnFghJNXsvPHonkd+
-QQ1E5I3loiK90VFbdRR8R0o5G57WPTFAivY334UAL1m5qOZT1bMKwI971dT0GCny
-a9+BhZEjt729e7WlSOvkT/v7BHo8lxyHH5+x33dxMJF0oSD5UDdH8VZX9PCBTJ1g
-4+O3e18WyQdsXFi3G2N75DcT+OhRle2P7T6yfgD0Ro5ViMqeTigsdmw+kpq8x8IK
-fyUN3oo5vqFnH3sEEXFshmxAqAVjPjzzoRYTFTupTw8yDOTL2REIgU75HZ0WP2w6
-eQ03/+7hKhujukr4V/bwVPMf6WJ1mi9+cz88Op8BkY/UgFgAYJSUhnfeoLo1pK6q
-ewEwagQfFibXUqtebAoam3z20Mb7rnrUmQJbUvPLQatL76qUaonJp3yxUMnrOWo+
-GmDWR4zgHgwatjOBeGCPBuF3PBMPWe1NBrA0EF7+33gZu6pttf3Z6XLNUWCw3unx
-xQCR1dn7VzUA+/FdFZfVoUlGBPeqWzqdyp3Os2ymDHJRp6jZWTd2gX6KvldvWTDR
-dU2SmyvoOovNLFWyBd7rC7vud0aWMJUHypD2IlEMCPprnu+m33Lhqx8nrbF/goZL
-drH0F1BJDs5jlWehfTwnnaNdqZEuzamWT8GEJAUBj8Iq5R6+35s=
-=OS2O
------END PGP SIGNATURE-----
-
---nextPart2306317.z6aVZVsvuq--
+Hi,
 
 
+On Tue, Sep 17, 2019 at 8:40 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
+>
+> Since commit 1fc12b05895e ("regulator: core: Avoid propagating to
+> supplies when possible") regulators marked with boot-on can't be
+> disabled anymore because the commit handles always-on and boot-on
+> regulators the same way.
+>
+> Now commit 05f224ca6693 ("regulator: core: Clean enabling always-on
+> regulators + their supplies") changed the regulator_resolve_supply()
+> logic a bit by using 'use_count'. So we can't just skip the
+> 'use_count++' during set_machine_constraints(). The easiest way I found
+> is to correct the 'use_count' just before returning the rdev device
+> during regulator_register().
+>
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> ---
+>  drivers/regulator/core.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 
+I will freely admit my ignorance here, but I've always been slightly
+confused by the "always-on" vs. "boot-on" distinction...
+
+The bindings say:
+
+  regulator-always-on:
+    description: boolean, regulator should never be disabled
+
+  regulator-boot-on:
+    description: bootloader/firmware enabled regulator
+
+For 'boot-on' that's a bit ambiguous about what it means.  The
+constraints have a bit more details:
+
+ * @always_on: Set if the regulator should never be disabled.
+ * @boot_on: Set if the regulator is enabled when the system is initially
+ *           started.  If the regulator is not enabled by the hardware or
+ *           bootloader then it will be enabled when the constraints are
+ *           applied.
+
+
+What I would take from that is that "boot_on" means that we expect
+that the firmware probably turned this regulator on but if it didn't
+then the kernel should turn it on (and presumably leave it on?).  That
+would mean that your patch is incorrect, I think?
+
+
+...but then that begs the question of why we have two attributes?
+Maybe this has already been discussed before and someone can point me
+to a previous discussion?  We should probably make it more clear in
+the bindings and/or the constraints.
+
+===
+
+NOTE: I'm curious why you even have the "regulator-boot-on" attribute
+in your case to begin with.  Why not leave it off?
+
+
+-Doug
