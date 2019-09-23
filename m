@@ -2,116 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B44BFBBDC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:23:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAE99BBDD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:24:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503011AbfIWVXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 17:23:13 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35066 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388117AbfIWVXM (ORCPT
+        id S2503033AbfIWVYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 17:24:09 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:34567 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388395AbfIWVYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:23:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=0RChqD8gufqrC52I0W7my4ugNN03wWJCMZqZC40eNIs=; b=Va5BDDrVg2t+
-        U4Yav0A2EiOeMbHZkmUFajYv/LmKTBlI5tNReHgN3OA53uZPAveYKacTgPr/zkN3h5GSe5Lm9Ki5E
-        SmjnhDbDX+A1EY+kHVVymNGg80D1wD/ixNBQPVYbsfhqIxKTKS0wW0vUNhe+fygsptXmbb5ZxkMEq
-        eMdKg=;
-Received: from [12.157.10.114] (helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1iCVnX-0005Wr-MK; Mon, 23 Sep 2019 21:23:07 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id CFB9ED02FE4; Mon, 23 Sep 2019 22:23:05 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        Philippe Schenker <philippe.schenker@toradex.com>
-Subject: Applied "regulator: fixed: Prevent NULL pointer dereference when !CONFIG_OF" to the regulator tree
-In-Reply-To: <20190922022928.28355-1-axel.lin@ingics.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190923212305.CFB9ED02FE4@fitzroy.sirena.org.uk>
-Date:   Mon, 23 Sep 2019 22:23:05 +0100 (BST)
+        Mon, 23 Sep 2019 17:24:09 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iCVoW-0001PW-Bn; Mon, 23 Sep 2019 15:24:08 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iCVoV-0001wk-Qg; Mon, 23 Sep 2019 15:24:08 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190917100350.GB1872@dhcp22.suse.cz>
+        <38349607-b09c-fa61-ccbb-20bee9f282a3@gmx.de>
+        <20190917153830.GE1872@dhcp22.suse.cz>
+        <87ftku96md.fsf@x220.int.ebiederm.org>
+        <20190918071541.GB12770@dhcp22.suse.cz>
+        <87h8585bej.fsf@x220.int.ebiederm.org>
+        <20190922065801.GB18814@dhcp22.suse.cz>
+        <875zlk3tz9.fsf@x220.int.ebiederm.org>
+        <20190923080808.GA6016@dhcp22.suse.cz>
+Date:   Mon, 23 Sep 2019 16:23:40 -0500
+In-Reply-To: <20190923080808.GA6016@dhcp22.suse.cz> (Michal Hocko's message of
+        "Mon, 23 Sep 2019 10:08:08 +0200")
+Message-ID: <87mueuu2oz.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1iCVoV-0001wk-Qg;;;mid=<87mueuu2oz.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+hxpSDtOo3FHzcbUiojMZiFj7TaPT97BQ=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=8.0 tests=ALL_TRUSTED,BAYES_20,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        * -0.0 BAYES_20 BODY: Bayes spam probability is 5 to 20%
+        *      [score: 0.1956]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Michal Hocko <mhocko@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 185 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.7 (1.5%), b_tie_ro: 1.90 (1.0%), parse: 0.72
+        (0.4%), extract_message_metadata: 1.97 (1.1%), get_uri_detail_list:
+        0.27 (0.1%), tests_pri_-1000: 3.4 (1.9%), tests_pri_-950: 1.27 (0.7%),
+        tests_pri_-900: 1.05 (0.6%), tests_pri_-90: 14 (7.4%), check_bayes: 12
+        (6.6%), b_tokenize: 3.5 (1.9%), b_tok_get_all: 3.9 (2.1%),
+        b_comp_prob: 1.22 (0.7%), b_tok_touch_all: 1.86 (1.0%), b_finish: 0.63
+        (0.3%), tests_pri_0: 141 (76.4%), check_dkim_signature: 0.46 (0.3%),
+        check_dkim_adsp: 2.3 (1.3%), poll_dns_idle: 0.84 (0.5%), tests_pri_10:
+        3.2 (1.7%), tests_pri_500: 8 (4.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: threads-max observe limits
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   regulator: fixed: Prevent NULL pointer dereference when !CONFIG_OF
+Michal,
 
-has been applied to the regulator tree at
+Thinking about this I have a hunch about what changed.  I think at some
+point we changed from 4k to 8k kernel stacks.  So I suspect if your
+client is seeing a lower threads-max it is because the size of the
+kernel data structures increased.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 1d6db22ff7d67a17c571543c69c63b1d261249b0 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Sun, 22 Sep 2019 10:29:28 +0800
-Subject: [PATCH] regulator: fixed: Prevent NULL pointer dereference when
- !CONFIG_OF
-
-Use of_device_get_match_data which has NULL test for match before
-dereference match->data. Add NULL test for drvtype so it still works
-for fixed_voltage_ops when !CONFIG_OF.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Reviewed-by: Philippe Schenker <philippe.schenker@toradex.com>
-Link: https://lore.kernel.org/r/20190922022928.28355-1-axel.lin@ingics.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/fixed.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
-index d90a6fd8cbc7..f81533070058 100644
---- a/drivers/regulator/fixed.c
-+++ b/drivers/regulator/fixed.c
-@@ -144,8 +144,7 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct fixed_voltage_config *config;
- 	struct fixed_voltage_data *drvdata;
--	const struct fixed_dev_type *drvtype =
--		of_match_device(dev->driver->of_match_table, dev)->data;
-+	const struct fixed_dev_type *drvtype = of_device_get_match_data(dev);
- 	struct regulator_config cfg = { };
- 	enum gpiod_flags gflags;
- 	int ret;
-@@ -177,7 +176,7 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
- 	drvdata->desc.type = REGULATOR_VOLTAGE;
- 	drvdata->desc.owner = THIS_MODULE;
- 
--	if (drvtype->has_enable_clock) {
-+	if (drvtype && drvtype->has_enable_clock) {
- 		drvdata->desc.ops = &fixed_voltage_clkenabled_ops;
- 
- 		drvdata->enable_clock = devm_clk_get(dev, NULL);
--- 
-2.20.1
+Eric
 
