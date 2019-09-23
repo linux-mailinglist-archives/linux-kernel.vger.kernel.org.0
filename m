@@ -2,198 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D374DBB209
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6B9BB1F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:11:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439186AbfIWKOU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 06:14:20 -0400
-Received: from mail-eopbgr50050.outbound.protection.outlook.com ([40.107.5.50]:3097
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406278AbfIWKOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 06:14:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xo9XvHS0OLKJefPvnTrivtFQ7Xk1F+bXmjZCpLiLxuM=;
- b=AHecwFxjhGbL1Q1AHniLVbkfKQ3XeuA2tQPFaqmcggL6Ujlibda/cahoftmomCOOvLJ9FztfaBt0KvQy+buKGz6LKBc3UNTQDuehXmzxoHdWsE9mDILZiGbYvyUHQWckz6H/Bi2vyxIFRTn5ZnukxMw3ky47Or3J7VqRrgWkfvo=
-Received: from VI1PR08CA0181.eurprd08.prod.outlook.com (2603:10a6:800:d2::11)
- by HE1PR08MB2826.eurprd08.prod.outlook.com (2603:10a6:7:31::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.19; Mon, 23 Sep
- 2019 10:14:15 +0000
-Received: from DB5EUR03FT054.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e0a::207) by VI1PR08CA0181.outlook.office365.com
- (2603:10a6:800:d2::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.18 via Frontend
- Transport; Mon, 23 Sep 2019 10:14:14 +0000
-Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=none action=none
- header.from=arm.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of arm.com: DNS Timeout)
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5EUR03FT054.mail.protection.outlook.com (10.152.20.248) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.20 via Frontend Transport; Mon, 23 Sep 2019 10:14:13 +0000
-Received: ("Tessian outbound 96594883d423:v31"); Mon, 23 Sep 2019 10:14:06 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 28f9ddc391ad51a0
-X-CR-MTA-TID: 64aa7808
-Received: from a6c42b9a4ed7.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.6.55])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 1B60AD72-FA0C-40B9-8969-202C1731ED53.1;
-        Mon, 23 Sep 2019 10:10:29 +0000
-Received: from EUR02-VE1-obe.outbound.protection.outlook.com (mail-ve1eur02lp2055.outbound.protection.outlook.com [104.47.6.55])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id a6c42b9a4ed7.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384);
-    Mon, 23 Sep 2019 10:10:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A2sGn3HRZo2qq5GNROI7k2zR+7R8P80Pka6hZtsE7fbm79ai+wA3XMQXHqZrpNm3D77k25UOsWcy1J3TnLogcvI2Xaw9CysAoZT0N71xWlcV0vDp0joHPxWkdXvknsPoG5bPdEf8m0rYxMVVcce9DniC9p/YuqTjK/w4DzX0lRf/kPXcOVGZC5m2sxB+PUBj2kiaBMTDsCxIvKkVgRXB/XWfubMiZVUow/77HkYxldp+eH8wpDv5kgr3H9HlNkULws2oPMdDhgVczsXR9so7FKTrKYxa9lHh8+j/xwMXln0o10IUzt8sJYCwSXgIECFpDxBSs/hxMeLjd4XflRzL2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xo9XvHS0OLKJefPvnTrivtFQ7Xk1F+bXmjZCpLiLxuM=;
- b=DZGkBDUIEjRwIU/HmcoTkToqJogn2/9iUafbQy+Thr/BrZhDlE1V3ahmM8v2XHI/alT20cxQBelhjPL7XLc4bETCJFLLWpLuIq7IsHgIxb5PThTSObgkseKPhTfuWdE8KCiX1kKtv57m2wAcqdhMw+U29xscQYQba48sYHwMjAGFK9vOguslQz23HNHms1123rmuJPZ3/JewxYMyrR3312gk6rm5wd/zDBDH57uJM1xiOnPi7yH5DXoNHXs6j/PPgxXmZC42f/mJ4UprWS7WcB5Nt+8JEwx3cfmlRyLOCDZfXFaKhXDB1mQWOL15fLS4gantWf98vvrvwZRXFAKgxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xo9XvHS0OLKJefPvnTrivtFQ7Xk1F+bXmjZCpLiLxuM=;
- b=AHecwFxjhGbL1Q1AHniLVbkfKQ3XeuA2tQPFaqmcggL6Ujlibda/cahoftmomCOOvLJ9FztfaBt0KvQy+buKGz6LKBc3UNTQDuehXmzxoHdWsE9mDILZiGbYvyUHQWckz6H/Bi2vyxIFRTn5ZnukxMw3ky47Or3J7VqRrgWkfvo=
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
- VI1PR08MB5503.eurprd08.prod.outlook.com (52.133.246.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.20; Mon, 23 Sep 2019 10:10:26 +0000
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::f164:4d79:79f:dc6f]) by VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::f164:4d79:79f:dc6f%7]) with mapi id 15.20.2284.023; Mon, 23 Sep 2019
- 10:10:26 +0000
-From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
-To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Daniel Vetter <daniel@ffwll.ch>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
-        Liviu Dudau <Liviu.Dudau@arm.com>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] drm/komeda: Workaround for broken FLIP_COMPLETE timestamps
-Thread-Topic: [PATCH v2] drm/komeda: Workaround for broken FLIP_COMPLETE
- timestamps
-Thread-Index: AQHVcfceR0CHSFhcZEiwMH6z8RYyLQ==
-Date:   Mon, 23 Sep 2019 10:10:26 +0000
-Message-ID: <20190923101017.35114-1-mihail.atanassov@arm.com>
-References: <20190919132759.18358-1-mihail.atanassov@arm.com>
-In-Reply-To: <20190919132759.18358-1-mihail.atanassov@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [217.140.106.55]
-x-clientproxiedby: AM0PR05CA0025.eurprd05.prod.outlook.com
- (2603:10a6:208:55::38) To VI1PR08MB4078.eurprd08.prod.outlook.com
- (2603:10a6:803:e5::28)
-x-mailer: git-send-email 2.23.0
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-Correlation-Id: cb56579e-cab8-40de-886a-08d7400ec87c
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR08MB5503;
-X-MS-TrafficTypeDiagnostic: VI1PR08MB5503:|VI1PR08MB5503:|HE1PR08MB2826:
-X-MS-Exchange-PUrlCount: 1
-x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <HE1PR08MB28267EA9882DB6D13B0F510A8F850@HE1PR08MB2826.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:8882;OLM:8882;
-x-forefront-prvs: 0169092318
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(199004)(189003)(54906003)(50226002)(6512007)(446003)(6306002)(476003)(316002)(66066001)(66556008)(99286004)(71200400001)(8936002)(2616005)(4326008)(71190400001)(11346002)(36756003)(6436002)(26005)(8676002)(486006)(6916009)(102836004)(2351001)(6486002)(76176011)(44832011)(2501003)(52116002)(5640700003)(6506007)(386003)(186003)(81166006)(81156014)(6116002)(3846002)(64756008)(66446008)(86362001)(305945005)(7736002)(66476007)(2906002)(25786009)(5660300002)(66946007)(256004)(14444005)(14454004)(478600001)(1076003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB5503;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info-Original: WRIR6Tf9SUBt14lle3mYAIfwKaMdd6oBgFILXQd5gwitn8FOcMP4lIJUJ01b9n+1UiK86YxbvcFzqwfgqaNEntQiSVrw5mGSfPhCm1RvbXxMyEn1n03W669sLXSAbw2IiFud3J+3pxlzo8Ky9qA7lGZxO2fYrIlp7rRUXEV+igtsyYSu2/EAZKa7WWrNLom6JieBBz/sHy3sOTvzl3S8Xup0z8wF5xtMUyi9ab0GBpnDJQFPigEbF06+lB48wOVX+M5st7SHTsly6KeBU58bQnR6gvsrn1xFkopxkhTtWj63lKal754Db1X1ryzQKxFsCXeDTMiS1WFusB8dgNZav0Ec3UuUNPnb9ZNQaUnq3zJ9rpzP4KsEidDewNbSiPjJKiRmotwIzWGO3aKCbz2S/USwIHPw9abVKuhW/0hHxZY=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S2407575AbfIWKLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:11:33 -0400
+Received: from foss.arm.com ([217.140.110.172]:39990 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405389AbfIWKLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 06:11:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C59CA1000;
+        Mon, 23 Sep 2019 03:11:31 -0700 (PDT)
+Received: from [10.162.40.137] (p8cg001049571a15.blr.arm.com [10.162.40.137])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 537933F694;
+        Mon, 23 Sep 2019 03:11:29 -0700 (PDT)
+Subject: Re: [PATCH] arm64: use generic free_initrd_mem()
+To:     Mike Rapoport <rppt@kernel.org>, Laura Abbott <labbott@redhat.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1568618488-19055-1-git-send-email-rppt@kernel.org>
+ <0ba20aa4-d2dd-2263-6b5f-16a5c8a39f67@redhat.com>
+ <20190916135542.GC5196@rapoport-lnx>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <e1ffc4f9-91cc-a4e1-b549-c28a392bdc71@arm.com>
+Date:   Mon, 23 Sep 2019 15:41:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB5503
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT054.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(396003)(376002)(346002)(199004)(189003)(2501003)(14444005)(305945005)(7736002)(6862004)(356004)(4326008)(336012)(54906003)(66066001)(23756003)(316002)(70206006)(6306002)(6116002)(70586007)(50466002)(47776003)(86362001)(6512007)(76130400001)(1076003)(50226002)(8936002)(99286004)(5640700003)(25786009)(76176011)(3846002)(26005)(36756003)(386003)(6506007)(81166006)(8676002)(102836004)(81156014)(8746002)(2906002)(11346002)(186003)(446003)(486006)(26826003)(5660300002)(478600001)(126002)(14454004)(2616005)(476003)(22756006)(63350400001)(6486002)(2351001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR08MB2826;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 08f56c00-e7f2-4cd9-d976-08d7400e411c
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(710020)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:HE1PR08MB2826;
-NoDisclaimer: True
-X-Forefront-PRVS: 0169092318
-X-Microsoft-Antispam-Message-Info: 1VmJAPmQld2qt8MtgHk/+AW5nRU1L11G0qY8owB7rg3mxMgHeTPEueEZ/I1MKTtE5dlFNzKkGDZ2SqK/s/kT07VuXgRVpJFUMiQy+BZg2dAZUWtlpJeK0grv/iSIBLb1QKfAf9BWxnfpdx3omb4Mr7hsouPg3DkCh6ejHES/9bd8ldzFZQOUIqleFm2uJcSFQ6BBLXPwOjC6wAeha6lUXXbkVq7K5eC03RqmI1rA64fd1N7Zm6LnbYh5tRirGf5n21t/vi/fna+Az4IJxCHufLakc1mDd19ZeppgqrucJsWDXd/+MJqKbqvfmGfCpuVMknq2nEqw/+nVKFRVBg3SxPFUjOyvGeHrrx3O/wcNccoXQtCe/FdC5QO3Cop6oo8V8QKPZMNLvIGy39XoBymOehb3QK3+eiLpfvd8/EGAVrk=
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2019 10:14:13.3058
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb56579e-cab8-40de-886a-08d7400ec87c
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR08MB2826
+In-Reply-To: <20190916135542.GC5196@rapoport-lnx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When initially turning a crtc on, drm_reset_vblank_timestamp will
-set the vblank timestamp to 0 for any driver that doesn't provide
-a ->get_vblank_timestamp() hook.
 
-Unfortunately, the FLIP_COMPLETE event depends on that timestamp,
-and the only way to regenerate a valid one is to have vblank
-interrupts enabled and have a valid in-ISR call to
-drm_crtc_handle_vblank.
 
-Additionally, if the user doesn't request vblanks but _does_ request
-FLIP_COMPLETE events, we still don't have a good timestamp: it'll be the
-same stamp as the last vblank one.
+On 09/16/2019 07:25 PM, Mike Rapoport wrote:
+> (added linux-arch)
+> 
+> On Mon, Sep 16, 2019 at 08:23:29AM -0400, Laura Abbott wrote:
+>> On 9/16/19 8:21 AM, Mike Rapoport wrote:
+>>> From: Mike Rapoport <rppt@linux.ibm.com>
+>>>
+>>> arm64 calls memblock_free() for the initrd area in its implementation of
+>>> free_initrd_mem(), but this call has no actual effect that late in the boot
+>>> process. By the time initrd is freed, all the reserved memory is managed by
+>>> the page allocator and the memblock.reserved is unused, so there is no
+>>> point to update it.
+>>>
+>>
+>> People like to use memblock for keeping track of memory even if it has no
+>> actual effect. We made this change explicitly (see 05c58752f9dc ("arm64: To remove
+>> initrd reserved area entry from memblock") That said, moving to the generic
+>> APIs would be nice. Maybe we can find another place to update the accounting?
+> 
+> Any other place in arch/arm64 would make it messy because it would have to
+> duplicate keepinitrd logic.
+> 
+> We could put the memblock_free() in the generic free_initrd_mem() with
+> something like:
+> 
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index c47dad0..403c6a0 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -531,6 +531,10 @@ void __weak free_initrd_mem(unsigned long start,
+> unsigned long end)
+>  {
+>         free_reserved_area((void *)start, (void *)end, POISON_FREE_INITMEM,
+>                         "initrd");
+> +
+> +#ifdef CONFIG_ARCH_KEEP_MEMBLOCK
+> +       memblock_free(__virt_to_phys(start), end - start);
+> +#endif
+>  }
 
-Work around the issue by always enabling vblanks when the CRTC is on.
-Reducing the amount of time that PL0 has to be unmasked would be nice to
-fix at a later time.
+This makes sense.
 
-Changes since v1 [https://patchwork.freedesktop.org/patch/331727/]:
- - moved drm_crtc_vblank_put call to the ->atomic_disable() hook
+>  
+>  #ifdef CONFIG_KEXEC_CORE
+> 
+> 
+> Then powerpc and s390 folks will also be able to track the initrd memory :)
 
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: Liviu Dudau <Liviu.Dudau@arm.com>
-Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
----
- drivers/gpu/drm/arm/display/komeda/komeda_crtc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Sure.
 
-diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/gpu=
-/drm/arm/display/komeda/komeda_crtc.c
-index 34bc73ca18bc..d06679afb228 100644
---- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-+++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-@@ -489,6 +489,7 @@ komeda_crtc_atomic_enable(struct drm_crtc *crtc,
- 	pm_runtime_get_sync(crtc->dev->dev);
- 	komeda_crtc_prepare(to_kcrtc(crtc));
- 	drm_crtc_vblank_on(crtc);
-+	WARN_ON(drm_crtc_vblank_get(crtc));
- 	komeda_crtc_do_flush(crtc, old);
- }
-=20
-@@ -581,6 +582,7 @@ komeda_crtc_atomic_disable(struct drm_crtc *crtc,
- 		komeda_crtc_flush_and_wait_for_flip_done(kcrtc, disable_done);
- 	}
-=20
-+	drm_crtc_vblank_put(crtc);
- 	drm_crtc_vblank_off(crtc);
- 	komeda_crtc_unprepare(kcrtc);
- 	pm_runtime_put(crtc->dev->dev);
---=20
-2.23.0
-
+> 
+>>> Without the memblock_free() call the only difference between arm64 and the
+>>> generic versions of free_initrd_mem() is the memory poisoning. Switching
+>>> arm64 to the generic version will enable the poisoning.
+>>>
+>>> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+>>> ---
+>>>
+>>> I've boot tested it on qemu and I've checked that kexec works.
+>>>
+>>>  arch/arm64/mm/init.c | 8 --------
+>>>  1 file changed, 8 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>>> index f3c7952..8ad2934 100644
+>>> --- a/arch/arm64/mm/init.c
+>>> +++ b/arch/arm64/mm/init.c
+>>> @@ -567,14 +567,6 @@ void free_initmem(void)
+>>>  	unmap_kernel_range((u64)__init_begin, (u64)(__init_end - __init_begin));
+>>>  }
+>>> -#ifdef CONFIG_BLK_DEV_INITRD
+>>> -void __init free_initrd_mem(unsigned long start, unsigned long end)
+>>> -{
+>>> -	free_reserved_area((void *)start, (void *)end, 0, "initrd");
+>>> -	memblock_free(__virt_to_phys(start), end - start);
+>>> -}
+>>> -#endif
+>>> -
+>>>  /*
+>>>   * Dump out memory limit information on panic.
+>>>   */
+>>>
+>>
+> 
