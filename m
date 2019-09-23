@@ -2,71 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2707EBB1DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F3A3BB1E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407580AbfIWKCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 06:02:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39490 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405454AbfIWKCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 06:02:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 91FA3AF65;
-        Mon, 23 Sep 2019 10:02:44 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 90AD61E4669; Mon, 23 Sep 2019 12:02:59 +0200 (CEST)
-Date:   Mon, 23 Sep 2019 12:02:59 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Chengguang Xu <cgxu519@zoho.com.cn>
-Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] quota: code cleanup for hash bits calculation
-Message-ID: <20190923100259.GD20367@quack2.suse.cz>
-References: <20190921015628.54335-1-cgxu519@zoho.com.cn>
+        id S2436758AbfIWKFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:05:18 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40309 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406837AbfIWKFS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 06:05:18 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10so7745197pgj.7
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 03:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GN9uWlPH+mRUOKL6lisCqKrCCm1x4VV54XbjaAcOsJ0=;
+        b=AdFpKtale+UdPAqRVVH0fkEU9i6SHcwJqBcZYBseNzuhLNt/NGzkC55oi6FdJOLoxV
+         G8gYDbiJ/ypG3KYfe05iuGw4zN20zFWoKRZnpto7CEvt/noqO370oRIwYRXwKURk/CKv
+         aPxVdXi2O/j6jwwc5X4Ew8Gfk5+NLYhkyuDnKWYDyhTfcWvaB9k12IzYX8tShQLmD4sx
+         L83adHOpCCNixrrUI4IWEbL7G7ZZjS+VaFaWfTydnm5enr2oD7BD9y+G9uC1pbaVYsXz
+         a0NfzT0rvg6uVMn0JLO69l0lTCNBkBwR4VeMNnneXHNUlLUeOLdmRB3a8URubE4GBMdR
+         TByQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GN9uWlPH+mRUOKL6lisCqKrCCm1x4VV54XbjaAcOsJ0=;
+        b=ZsylborIandRlIRWL42AgUvDaLZNXElDOvNlddTLOsB1KeNXeNZXUz1hHFnPgJhv/+
+         CvhGi+IF2twcJxJzKTXheqJby7ai/K9h3STqXKywUZWl131HGLsfAT8/CAdz8g5xIDnz
+         rF8MbBbS7IrzB96h50KV7HUpVbyYCbM91zhlU6xqgxrZV6+uFhaChtYPfeCmaBb3MULD
+         KOujZrILN8iBA2r11dm05pOIhyZW1FAtqJUYnfc+YiKtvrxwiDLNOT87Mn5Hq6DSVkgY
+         Hku7t2pjVGh217PgOYZaXWPFavt1ituGNQvjZkslC2GTD6KR5LbtKd08kMBhn/bTSWsC
+         Ckzw==
+X-Gm-Message-State: APjAAAUoxhbac7YXTUDzJLGLku+x7t8ssJXABwea89QcLh35ZerInbF+
+        sBAloCr6WukxCjXT+Zm61kBpV/Wx
+X-Google-Smtp-Source: APXvYqymz9dteM+jXvuRx1ZHLlJbP4zvdHYa0ZZN0LO8z3y9tkVXTV3Vwftor/JPVb1+/OrL/pdRNQ==
+X-Received: by 2002:a63:c851:: with SMTP id l17mr4954033pgi.6.1569233117617;
+        Mon, 23 Sep 2019 03:05:17 -0700 (PDT)
+Received: from localhost ([110.70.15.104])
+        by smtp.gmail.com with ESMTPSA id a13sm12231312pfg.10.2019.09.23.03.05.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 03:05:16 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 19:05:13 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     zhe.he@windriver.com
+Cc:     pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] printk: Fix unnecessary returning broken pipe error from
+ devkmsg_read
+Message-ID: <20190923100513.GA51932@jagdpanzerIV>
+References: <1568813503-420025-1-git-send-email-zhe.he@windriver.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190921015628.54335-1-cgxu519@zoho.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1568813503-420025-1-git-send-email-zhe.he@windriver.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 21-09-19 09:56:28, Chengguang Xu wrote:
-> Code cleanup for hash bits calculation by
-> calling rounddown_pow_of_two() and ilog2()
+On (09/18/19 21:31), zhe.he@windriver.com wrote:
 > 
-> Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
+> When users read the buffer from start, there is no need to return -EPIPE
+> since the possible overflows will not affect the output.
+>
+[..]
+> -	if (user->seq < log_first_seq) {
+> +	if (user->seq == 0) {
+> +		user->seq = log_first_seq;
+> +	} else if (user->seq < log_first_seq) {
+>  		/* our last seen message is gone, return error and reset */
+>  		user->idx = log_first_idx;
+>  		user->seq = log_first_seq;
 
-Thanks for the patch! One comment below:
+A tough call.
 
-> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-> index 6e826b454082..679dd3b5db70 100644
-> --- a/fs/quota/dquot.c
-> +++ b/fs/quota/dquot.c
-> @@ -2983,13 +2983,9 @@ static int __init dquot_init(void)
->  
->  	/* Find power-of-two hlist_heads which can fit into allocation */
->  	nr_hash = (1UL << order) * PAGE_SIZE / sizeof(struct hlist_head);
-> -	dq_hash_bits = 0;
-> -	do {
-> -		dq_hash_bits++;
-> -	} while (nr_hash >> dq_hash_bits);
-> -	dq_hash_bits--;
-> +	nr_hash = rounddown_pow_of_two(nr_hash);
-> +	dq_hash_bits = ilog2(nr_hash);
->  
-> -	nr_hash = 1UL << dq_hash_bits;
+User-space wants to read messages which are gone: log_first_seq > user->seq.
 
-Why not just:
-	dq_hash_bits = ilog2(nr_hash);
-	nr_hash = 1UL << dq_hash_bits;
+I think returning EPIPE is sort of appropriate; user-space, possibly,
+can printf(stderr, "Some /dev/kmsg messages are gone\n"); or something
+like that.
 
-That way we need to compute fls() only once...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	-ss
