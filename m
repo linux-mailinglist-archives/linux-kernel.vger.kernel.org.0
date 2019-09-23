@@ -2,141 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6915BBB3A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:25:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F586BB3B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732269AbfIWMZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:25:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48890 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730431AbfIWMZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:25:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A54DEAEAE;
-        Mon, 23 Sep 2019 12:25:14 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 14:25:13 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alastair D'Silva <alastair@au1.ibm.com>
-Cc:     alastair@d-silva.org, Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richard.weiyang@gmail.com>, Qian Cai <cai@lca.pw>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] memory_hotplug: Add a bounds check to
- check_hotplug_memory_range()
-Message-ID: <20190923122513.GO6016@dhcp22.suse.cz>
-References: <20190917010752.28395-1-alastair@au1.ibm.com>
- <20190917010752.28395-2-alastair@au1.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917010752.28395-2-alastair@au1.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2439477AbfIWM1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:27:46 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38074 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439375AbfIWM1o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 08:27:44 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w10so6461152plq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 05:27:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=auNuXMeMyMe+nvucDBj+uIoi22EYZzDpjbiwmbcP0hY=;
+        b=Dwi8Rwhpumd5m1szOxbaiwVHT5innrszEicWzrrUjwjiwKU9vH8idiORVVxfc3YaBF
+         MmN6wUtjKZRzAPiGc5ccWNEHYjxjBfZeFx/u1KXE2OBnvqvLR+iplp9IwpJtNZGnZcVk
+         FU0zEgJkE+dWYPwzRyQuxNV/PLJFq0gyOkzhRxIJHmz5IxYaiZ3lg3gPETxYrjN1D09f
+         +NjCxIQJ1p0GxAfnpt1TWgLUa9OG3CJDuvvFHpYv+cufV+rXJ6aw4UNxeyPU7vbjojlk
+         uoc2VakbM/0u28AYPAw8U0FizeD1Le14QM5P5vJ3UyHjM1kIFu9UdZSN8rvgRwNe/Q2C
+         Aq8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=auNuXMeMyMe+nvucDBj+uIoi22EYZzDpjbiwmbcP0hY=;
+        b=hn64gjMKcpWPlP56KTt50Az8I4i6piVAr1qQR7nDyDhn0oyWGOv4/uv6aW9brzsikA
+         bxDYcSjhclKISyr85nLqFjwmjm+pJHvWQj1BkyXilp3zfIbEbwrEPUvxIea9GYM5z7Zy
+         +7g/rlDoVav+jYgJHfEpqm9M9rawBQeqiALwQS+Qk29u8bRQddaONhU4HIg5I1avmo2V
+         +yYbtcSU8601qGR4uo8BwKR+B31vSaYP5McGjZzLCqJ6pv2/o6g7mnq7SNFI7dS9dah6
+         Grh6m9/EhsBS16GT76DhOqeon4qa5peCU6mmq4LBAS99NSV+H9yvm/tDTB/6h0hbQ73h
+         xDtg==
+X-Gm-Message-State: APjAAAWkLAO/d5cWrmLS8PvxchYrbAFiF3M+cXz5iAI87og8ZNDg0A0t
+        WGd1NBtur+TSPgSCrkTRuvI=
+X-Google-Smtp-Source: APXvYqx292SWALRo+kG8973EYAzY7HhL1QO4p/t7Sznp4vgFroRNUkc3Vk/6TcRGXm/I4os3PGwoKQ==
+X-Received: by 2002:a17:902:7008:: with SMTP id y8mr31550908plk.176.1569241664061;
+        Mon, 23 Sep 2019 05:27:44 -0700 (PDT)
+Received: from mi-OptiPlex-7050.mioffice.cn ([43.224.245.180])
+        by smtp.gmail.com with ESMTPSA id 202sm9692016pfu.161.2019.09.23.05.27.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 23 Sep 2019 05:27:43 -0700 (PDT)
+From:   Pengfei Li <lpf.vector@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, vbabka@suse.cz, guro@fb.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Pengfei Li <lpf.vector@gmail.com>
+Subject: [PATCH v6 0/3] mm, slab: Make kmalloc_info[] contain all types of names
+Date:   Mon, 23 Sep 2019 20:27:25 +0800
+Message-Id: <1569241648-26908-1-git-send-email-lpf.vector@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-09-19 11:07:47, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> On PowerPC, the address ranges allocated to OpenCAPI LPC memory
-> are allocated from firmware. These address ranges may be higher
-> than what older kernels permit, as we increased the maximum
-> permissable address in commit 4ffe713b7587
-> ("powerpc/mm: Increase the max addressable memory to 2PB"). It is
-> possible that the addressable range may change again in the
-> future.
-> 
-> In this scenario, we end up with a bogus section returned from
-> __section_nr (see the discussion on the thread "mm: Trigger bug on
-> if a section is not found in __section_nr").
-> 
-> Adding a check here means that we fail early and have an
-> opportunity to handle the error gracefully, rather than rumbling
-> on and potentially accessing an incorrect section.
-> 
-> Further discussion is also on the thread ("powerpc: Perform a bounds
-> check in arch_add_memory").
+Changes in v6
+--
+1. abandon patch 4-7 (Because there is not enough reason to explain
+that they are beneficial)
 
-It would be nicer to refer to this by a message-id based url.
-E.g. http://lkml.kernel.org/r/20190827052047.31547-1-alastair@au1.ibm.com
+Changes in v5
+--
+1. patch 1/7:
+    - rename SET_KMALLOC_SIZE to INIT_KMALLOC_INFO
+2. patch 5/7:
+    - fix build errors (Reported-by: kbuild test robot)
+    - make all_kmalloc_info[] static (Reported-by: kbuild test robot)
+3. patch 6/7:
+    - for robustness, determine kmalloc_cache is !NULL in
+      new_kmalloc_cache()
+4. add ack tag from David Rientjes
 
- 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->  include/linux/memory_hotplug.h |  1 +
->  mm/memory_hotplug.c            | 13 ++++++++++++-
->  2 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-> index f46ea71b4ffd..bc477e98a310 100644
-> --- a/include/linux/memory_hotplug.h
-> +++ b/include/linux/memory_hotplug.h
-> @@ -110,6 +110,7 @@ extern void __online_page_increment_counters(struct page *page);
->  extern void __online_page_free(struct page *page);
->  
->  extern int try_online_node(int nid);
-> +int check_hotplug_memory_addressable(u64 start, u64 size);
->  
->  extern int arch_add_memory(int nid, u64 start, u64 size,
->  			struct mhp_restrictions *restrictions);
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index c73f09913165..02cb9a74f561 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1030,6 +1030,17 @@ int try_online_node(int nid)
->  	return ret;
->  }
->  
-> +int check_hotplug_memory_addressable(u64 start, u64 size)
-> +{
-> +#ifdef MAX_PHYSMEM_BITS
-> +	if ((start + size - 1) >> MAX_PHYSMEM_BITS)
-> +		return -E2BIG;
-> +#endif
+Changes in v4
+--
+1. [old] abandon patch 4/4
+2. [new] patch 4/7:
+    - return ZERO_SIZE_ALLOC instead 0 for zero sized requests
+3. [new] patch 5/7:
+    - reorder kmalloc_info[], kmalloc_caches[] (in order of size)
+    - hard to split, so slightly larger
+4. [new] patch 6/7:
+    - initialize kmalloc_cache[] with the same size but different
+      types
+5. [new] patch 7/7:
+    - modify kmalloc_caches[type][idx] to kmalloc_caches[idx][type]
 
-Is there any arch which doesn't define this? We seemed to be using this
-in sparsemem code without any ifdefs.
+Patch 4-7 are newly added, more information can be obtained from
+commit messages.
 
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(check_hotplug_memory_addressable);
+Changes in v3
+--
+1. restore __initconst (patch 1/4)
+2. rename patch 3/4
+3. add more clarification for patch 4/4
+4. add ack tag from Roman Gushchin
 
-If you squashed the patch 2 then it would become clear why this needs to
-be exported because you would have a driver user. I find it a bit
-unfortunate to expect that any driver which uses the hotplug code is
-expected to know that this check should be called. This sounds too error
-prone. Why hasn't been this done at __add_pages layer?
+Changes in v2
+--
+1. remove __initconst (patch 1/5)
+2. squash patch 2/5
+3. add ack tag from Vlastimil Babka
 
-> +
->  static int check_hotplug_memory_range(u64 start, u64 size)
->  {
->  	/* memory range must be block size aligned */
-> @@ -1040,7 +1051,7 @@ static int check_hotplug_memory_range(u64 start, u64 size)
->  		return -EINVAL;
->  	}
->  
-> -	return 0;
-> +	return check_hotplug_memory_addressable(start, size);
 
-This will result in a silent failure (unlike misaligned case). Is this
-what we want?
+There are three types of kmalloc, KMALLOC_NORMAL, KMALLOC_RECLAIM
+and KMALLOC_DMA.
 
->  }
->  
->  static int online_memory_block(struct memory_block *mem, void *arg)
-> -- 
-> 2.21.0
-> 
+The name of KMALLOC_NORMAL is contained in kmalloc_info[].name,
+but the names of KMALLOC_RECLAIM and KMALLOC_DMA are dynamically
+generated by kmalloc_cache_name().
+
+Patch1 predefines the names of all types of kmalloc to save
+the time spent dynamically generating names.
+
+These changes make sense, and the time spent by new_kmalloc_cache()
+has been reduced by approximately 36.3%.
+
+                         Time spent by new_kmalloc_cache()
+                                  (CPU cycles)
+5.3-rc7                              66264
+5.3-rc7+patch                        42188
+
+Pengfei Li (3):
+  mm, slab: Make kmalloc_info[] contain all types of names
+  mm, slab: Remove unused kmalloc_size()
+  mm, slab_common: Use enum kmalloc_cache_type to iterate over kmalloc
+    caches
+
+ include/linux/slab.h | 20 -----------
+ mm/slab.c            |  7 ++--
+ mm/slab.h            |  2 +-
+ mm/slab_common.c     | 99 ++++++++++++++++++++++++++++------------------------
+ 4 files changed, 58 insertions(+), 70 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
