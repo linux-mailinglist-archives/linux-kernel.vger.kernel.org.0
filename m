@@ -2,109 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4704ABBDBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3B74BBDC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 23:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502994AbfIWVUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 17:20:37 -0400
-Received: from mga06.intel.com ([134.134.136.31]:48531 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502984AbfIWVUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 17:20:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 14:20:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,541,1559545200"; 
-   d="scan'208";a="339861676"
-Received: from ray.jf.intel.com (HELO [10.24.9.85]) ([10.24.9.85])
-  by orsmga004.jf.intel.com with ESMTP; 23 Sep 2019 14:20:36 -0700
-Subject: Re: [PATCH v2 2/2] x86/boot/64: round memory hole size up to next PMD
- page.
-To:     Steve Wahl <steve.wahl@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc:     Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
-        dimitri.sivanich@hpe.com, mike.travis@hpe.com
-References: <cover.1569004922.git.steve.wahl@hpe.com>
- <b0c6487fdd8ca33daa2ac1604b60fac8ed5b020f.1569004923.git.steve.wahl@hpe.com>
-From:   Dave Hansen <dave.hansen@intel.com>
+        id S2502999AbfIWVVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 17:21:43 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41788 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388859AbfIWVVn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 17:21:43 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h7so15539918wrw.8;
+        Mon, 23 Sep 2019 14:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yDiZLJhE5QfqyJecos8R/R/0KtO0neQxJZxGWvPk/oU=;
+        b=Xc1MXyRMf1XN3QaiwjwD+RNZY0Did9AEFkdIBX839fOAfu0zcN2pA2gupdWh+ebhfR
+         A8Jqs2egrBgtpKyDifwy0MdyWhfcx0FpkFa8aeVfFzLPOrEdccPP9V6tjy/UnqGEXK7o
+         Np2agBCgWBNCn9VoN2jkcFsVAxKKLcRM6asVt/QJvKgCnlDWDIQX+8atnOGH4J6xsNzH
+         19LZwcYTf6HyZsOxrAfieF/aI6T+yO23jAjkgbhCLdr4I7bi8102TknAAhXc5MIsy/y4
+         w6Kua0LOsctusxvT+R8lOYHyC5NXTi4ap8u1NEZTGdErNiZe8Oq8v5h64xrKsVJyTqOT
+         D6jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=yDiZLJhE5QfqyJecos8R/R/0KtO0neQxJZxGWvPk/oU=;
+        b=MpwV7cPf7ui9fqqdJL1et1+7bw2HZUs5OrhdwcIjvBfA1+5/sQI9m6k9Yq0Anf9Un1
+         XD3PRHX2uY4T7N1vegprEX978JpgltgYFvHSra8qhoQykG24Qp70CxntDSqAmiSr0xJK
+         QBELh8KINRomi3lVpRutGua2Y7Svyg/BImthzK1+B+u0Gzipdzm0k/8AQTLsyytpyndA
+         KFOjQj9ehYIdH93qvavs7nCGdEM5EOVESSg54GHElsCXmrRfu+PPfd8oVkCRDlsmVpWu
+         ZAfT2EPDfAIQHPOwK/Xp1ZkoJEeGSrlRhTZXzlOA+HS5jttviUoGawkpJd8RJsDE7Vy8
+         DQ0w==
+X-Gm-Message-State: APjAAAXEGCxq+qsj/Oa32BAg2TxE+brsjBUOb2GslMYoApn3PHlUY8xq
+        4OPerB0Q2SNAZKalxvnePUCzBzh4
+X-Google-Smtp-Source: APXvYqw8BMdw/K+S2Aatyt9aUv5sU+9FztJ1EAP6H/Y1J0UNT0R3mecr8hqxQ53nutNUUC69WnZqEw==
+X-Received: by 2002:adf:fa10:: with SMTP id m16mr958942wrr.322.1569273699477;
+        Mon, 23 Sep 2019 14:21:39 -0700 (PDT)
+Received: from [192.168.1.19] (bdr247.neoplus.adsl.tpnet.pl. [83.28.3.247])
+        by smtp.gmail.com with ESMTPSA id c4sm10118294wru.31.2019.09.23.14.21.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Sep 2019 14:21:38 -0700 (PDT)
+Subject: Re: [PATCH v8 2/9] documention: leds: Add multicolor class
+ documentation
+To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
+Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190920174139.30079-1-dmurphy@ti.com>
+ <20190920174139.30079-3-dmurphy@ti.com>
+ <2f2d40d7-aa4f-a38d-19a7-425a111adb64@gmail.com>
+ <56d9a7a6-7cdb-8ac0-5e41-f45fad914c55@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <edd60d59-fdfc-2383-6cc8-e084e86e7a37@intel.com>
-Date:   Mon, 23 Sep 2019 14:20:35 -0700
+Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b49c11e5-7271-b1a7-6f51-dba1dd7c1e26@gmail.com>
+Date:   Mon, 23 Sep 2019 23:21:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <b0c6487fdd8ca33daa2ac1604b60fac8ed5b020f.1569004923.git.steve.wahl@hpe.com>
+In-Reply-To: <56d9a7a6-7cdb-8ac0-5e41-f45fad914c55@ti.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/23/19 11:15 AM, Steve Wahl wrote:
-> The kernel image map is created using PMD pages, which can include
-> some extra space beyond what's actually needed.  Round the size of the
-> memory hole we search for up to the next PMD boundary, to be certain
-> all of the space to be mapped is usable RAM and includes no reserved
-> areas.
+Dan,
 
-This looks good.  It also fully closes any possibility that anyone's
-future hardware will hit issues like this as long as they mark the
-memory reserved, right?
+On 9/23/19 4:50 PM, Dan Murphy wrote:
+> Jacek
+> 
+> Thanks for the review
+> 
+> On 9/21/19 7:28 AM, Jacek Anaszewski wrote:
+>> Dan,
+>>
+>> On 9/20/19 7:41 PM, Dan Murphy wrote:
+>>> Add the support documentation on the multicolor LED framework.
+>>> This document defines the directores and file generated by the
+>> Now there will be one directory created.
+>>
+>> Apart from that - all documentation should go in the same patch
+>> as the feature being added. So patches 1,2 and 3 should be melded
+>> together.
+> 
+> I think only patches 1 & 2 should be squashed into a single patch.
+> 
+> Patch 3 are the dt-bindings which should be separated
 
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Right.
+
+>>> multicolor framework.  It also documents usage.
+>>>
+>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>> ---
+>>>   Documentation/leds/index.rst                 |  1 +
+>>>   Documentation/leds/leds-class-multicolor.rst | 91 ++++++++++++++++++++
+>>>   2 files changed, 92 insertions(+)
+>>>   create mode 100644 Documentation/leds/leds-class-multicolor.rst
+>>>
+>>> diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
+>>> index 060f4e485897..bc70c6aa7138 100644
+>>> --- a/Documentation/leds/index.rst
+>>> +++ b/Documentation/leds/index.rst
+>>> @@ -9,6 +9,7 @@ LEDs
+>>>        leds-class
+>>>      leds-class-flash
+>>> +   leds-class-multicolor
+>>>      ledtrig-oneshot
+>>>      ledtrig-transient
+>>>      ledtrig-usbport
+>>> diff --git a/Documentation/leds/leds-class-multicolor.rst
+>>> b/Documentation/leds/leds-class-multicolor.rst
+>>> new file mode 100644
+>>> index 000000000000..063c9a411a1d
+>>> --- /dev/null
+>>> +++ b/Documentation/leds/leds-class-multicolor.rst
+>>> @@ -0,0 +1,91 @@
+>>> +====================================
+>>> +Multi Color LED handling under Linux
+>>> +====================================
+>>> +
+>>> +Description
+>>> +===========
+>>> +There are varying monochrome LED colors available for application. 
+>>> These
+>>> +LEDs can be used as a single use case LED or can be mixed with other
+>>> color
+>>> +LEDs to produce the full spectrum of color.
+>> I'd say it won't be the most frequent use case. We can expect rather
+>> compound RGB, RGBA[UV] etc. LED elements being connected to iouts of
+>> multi color LED controllers like LP50xx. TI mentions RGB LEDs in its
+>> application notes for instance. I'd mention that in the first place
+>> and leave what you have above as another use case.
+> 
+> Which application notes are you referring to?
+
+I don't remember if it was titled exactly AN, but I do remember a sample
+PCB design using RGB LEDs mounted circle-wise to achieve the demo
+sample shown in the TI LP50xx presentation videos we were discussing
+somewhere in last Jan/Feb/March.
+
+-- 
+Best regards,
+Jacek Anaszewski
