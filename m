@@ -2,182 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97723BBC28
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67A9ABBC30
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 21:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388044AbfIWTSa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 15:18:30 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45899 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733304AbfIWTSa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 15:18:30 -0400
-Received: by mail-oi1-f193.google.com with SMTP id o205so8598978oib.12
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 12:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B3ARO5P/voRkLJ/81OmVWnKq2PkaLTCLvs0/erY8l7Q=;
-        b=pRA8Z7DeRl2OOy1dNWWDy0CL0IrwV7LUvJzzR2ABsv6pUjW/XX9u2HzDv9vBVFadV2
-         2lU+3fhdJcim/5u0Gj3TS3JjuFzMeUGudM47BZgjk5TbrpfvUL9uH77I1+atWzIDSF5o
-         iEd7vic1+EXvvA4WqhVAArbE5Wqd8pFFlJ/8kvBx05JEp4OYVDNciV4+Q7nqzuNhpD99
-         kngMj+JgNgiSE6w3392QPy2urAOPwmomOc9W4PUoVxTYlQmgs9gZhi2VfLGGGKNS0ft7
-         cd52S56jiMT+CLw7kGwmqogkAe+erQxqJCIoNrPjLCTxFZtkgLii6jIwlntqttqDiURy
-         OaSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B3ARO5P/voRkLJ/81OmVWnKq2PkaLTCLvs0/erY8l7Q=;
-        b=rCrd0Glniq+InShtak2aR38Wh8SWntxoT7eH1I/5ZdlDG5e0SG9qDVMwYAG0tnvT/j
-         uT6jOmh5vh5OkNfFyJtIRIuqdf+s0ImP6o1u+2aDrsM68Bx77O6J+OciygNh82Qgwvwu
-         G53aHRxN51otFBDjvwF2+z46wA5tGWRqluQq4n9BacxZm5wRxmzJ/pPPMbLHH9+7TJIv
-         vSo8vk7zsy/4ap1ywYjmjwiAWCt1BuaQoMMxc0sXngsWZF6mP3sxaEYnp0EDKNtx+Xa4
-         8I4hryXpF8mNu8VaSQABjmnvjI+a9i3tL9k/l9TEsi0gioj0EU1WiZGfvAMkT8mcXR16
-         4B5A==
-X-Gm-Message-State: APjAAAV+0X8GttHu7tgD+1jEnpTwl3d/huo1meoqMgmkAvOmxXgnryPu
-        N0p61HaZ6E0RbqdsmATkZOZxMRJcQ6HOmM2qHH+Dmw==
-X-Google-Smtp-Source: APXvYqyIFK37RA36Cren3KxbuT1te6ouv5XN7/M6AabOpKvhgk4ImEHFhmGInEf1Ic45eJ7lnqBROdyPOAXNBiFU0tE=
-X-Received: by 2002:aca:ed08:: with SMTP id l8mr1394322oih.151.1569266308493;
- Mon, 23 Sep 2019 12:18:28 -0700 (PDT)
+        id S1727909AbfIWTVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 15:21:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:1455 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbfIWTVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 15:21:32 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DFC213082E4E;
+        Mon, 23 Sep 2019 19:21:32 +0000 (UTC)
+Received: from mail (ovpn-120-159.rdu2.redhat.com [10.10.120.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BAF2160BFB;
+        Mon, 23 Sep 2019 19:21:32 +0000 (UTC)
+Date:   Mon, 23 Sep 2019 15:21:31 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/17] KVM: monolithic: x86: convert the kvm_x86_ops
+ methods to external functions
+Message-ID: <20190923192131.GD19996@redhat.com>
+References: <20190920212509.2578-1-aarcange@redhat.com>
+ <20190920212509.2578-3-aarcange@redhat.com>
+ <9b188fb8-b930-047f-d1c0-fe27cbe27338@redhat.com>
 MIME-Version: 1.0
-References: <20190919222421.27408-1-almasrymina@google.com> <3c73d2b7-f8d0-16bf-b0f0-86673c3e9ce3@oracle.com>
-In-Reply-To: <3c73d2b7-f8d0-16bf-b0f0-86673c3e9ce3@oracle.com>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Mon, 23 Sep 2019 12:18:17 -0700
-Message-ID: <CAHS8izOj2AT4tX-+Hcb8LB2TOUKJDHScDtJ80u4M6OWpwktq0g@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] hugetlb_cgroup: Add hugetlb_cgroup reservation limits
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Aneesh Kumar <aneesh.kumar@linux.vnet.ibm.com>,
-        shuah <shuah@kernel.org>, David Rientjes <rientjes@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        khalid.aziz@oracle.com, open list <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        cgroups@vger.kernel.org,
-        =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b188fb8-b930-047f-d1c0-fe27cbe27338@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 23 Sep 2019 19:21:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 10:47 AM Mike Kravetz <mike.kravetz@oracle.com> wrote:
->
-> On 9/19/19 3:24 PM, Mina Almasry wrote:
-> > Patch series implements hugetlb_cgroup reservation usage and limits, which
-> > track hugetlb reservations rather than hugetlb memory faulted in. Details of
-> > the approach is 1/7.
->
-> Thanks for your continued efforts Mina.
->
+On Mon, Sep 23, 2019 at 12:19:30PM +0200, Paolo Bonzini wrote:
+> On 20/09/19 23:24, Andrea Arcangeli wrote:
+> > diff --git a/arch/x86/kvm/svm_ops.c b/arch/x86/kvm/svm_ops.c
+> > new file mode 100644
+> > index 000000000000..2aaabda92179
+> > --- /dev/null
+> > +++ b/arch/x86/kvm/svm_ops.c
+> > @@ -0,0 +1,672 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + *  arch/x86/kvm/svm_ops.c
+> > + *
+> > + *  Copyright 2019 Red Hat, Inc.
+> > + */
+> > +
+> > +int kvm_x86_ops_cpu_has_kvm_support(void)
+> > +{
+> > +	return has_svm();
+> > +}
+> 
+> Can you just rename all the functions in vmx/ and svm.c, instead of
+> adding forwarders?
 
-And thanks for your reviews so far.
-
-> One thing that has bothered me with this approach from the beginning is that
-> hugetlb reservations are related to, but somewhat distinct from hugetlb
-> allocations.  The original (existing) huegtlb cgroup implementation does not
-> take reservations into account.  This is an issue you are trying to address
-> by adding a cgroup support for hugetlb reservations.  However, this new
-> reservation cgroup ignores hugetlb allocations at fault time.
->
-> I 'think' the whole purpose of any hugetlb cgroup is to manage the allocation
-> of hugetlb pages.  Both the existing cgroup code and the reservation approach
-> have what I think are some serious flaws.  Consider a system with 100 hugetlb
-> pages available.  A sysadmin, has two groups A and B and wants to limit hugetlb
-> usage to 50 pages each.
->
-> With the existing implementation, a task in group A could create a mmap of
-> 100 pages in size and reserve all 100 pages.  Since the pages are 'reserved',
-> nobody in group B can allocate ANY huge pages.  This is true even though
-> no pages have been allocated in A (or B).
->
-> With the reservation implementation, a task in group A could use MAP_NORESERVE
-> and allocate all 100 pages without taking any reservations.
->
-> As mentioned in your documentation, it would be possible to use both the
-> existing (allocation) and new reservation cgroups together.  Perhaps if both
-> are setup for the 50/50 split things would work a little better.
->
-> However, instead of creating a new reservation crgoup how about adding
-> reservation support to the existing allocation cgroup support.  One could
-> even argue that a reservation is an allocation as it sets aside huge pages
-> that can only be used for a specific purpose.  Here is something that
-> may work.
->
-> Starting with the existing allocation cgroup.
-> - When hugetlb pages are reserved, the cgroup of the task making the
->   reservations is charged.  Tracking for the charged cgroup is done in the
->   reservation map in the same way proposed by this patch set.
-> - At page fault time,
->   - If a reservation already exists for that specific area do not charge the
->     faulting task.  No tracking in page, just the reservation map.
->   - If no reservation exists, charge the group of the faulting task.  Tracking
->     of this information is in the page itself as implemented today.
-> - When the hugetlb object is removed, compare the reservation map with any
->   allocated pages.  If cgroup tracking information exists in page, uncharge
->   that group.  Otherwise, unharge the group (if any) in the reservation map.
->
-> One of the advantages of a separate reservation cgroup is that the existing
-> code is unmodified.  Combining the two provides a more complete/accurate
-> solution IMO.  But, it has the potential to break existing users.
->
-> I really would like to get feedback from anyone that knows how the existing
-> hugetlb cgroup controller may be used today.  Comments from Aneesh would
-> be very welcome to know if reservations were considered in development of the
-> existing code.
-> --
-
-FWIW, I'm aware of the interaction with NORESERVE and my thoughts are:
-
-AFAICT, the 2 counter approach we have here is strictly superior to
-the 1 upgraded counter approach. Consider these points:
-
-- From what I can tell so far, everything you can do with the 1
-counter approach, you can do with the two counter approach by setting
-both limit_in_bytes and reservation_limit_in_bytes to the limit value.
-That will limit both reservations and at fault allocations.
-
-- The 2 counter approach preserves existing usage of hugetlb cgroups,
-so no need to muck around with reverting the feature some time from
-now because of broken users. No existing users of hugetlb cgroups need
-to worry about the effect of this on their usage.
-
-- Users that use hugetlb memory strictly through reservations can use
-only reservation_limit_in_bytes and enjoy cgroup limits that never
-SIGBUS the application. This is our usage for example.
-
-- The 2 counter approach provides more info to the sysadmin. The
-sysadmin knows exactly how much reserved bytes there are via
-reservation_usage_in_bytes, and how much actually in use bytes there
-are via usage_in_bytes. They can even detect NORESERVE usage if
-usage_in_bytes > reservation_usage_in_bytes. failcnt shows failed
-reservations *and* failed allocations at fault, etc. All around better
-debuggability when things go wrong. I think this is particularly
-troubling for the 1 upgraded counter approach. That counter's
-usage_in_bytes doesn't tell you if the usage came from reservations or
-allocations at fault time.
-
-- Honestly, I think the 2 counter approach is easier to document and
-understand by the userspace? 1 counter that vaguely tracks both the
-reservations and usage and decides whether or not to charge at fault
-time seems hard to understand what really happened after something
-goes wrong. 1 counter that tracks reservations and 1 counter that
-tracks actual usage seem much simpler to digest, and provide better
-visibility to what the cgroup is doing as I mentioned above.
-
-I think it may be better if I keep the 2 counter approach but
-thoroughly document the interaction between the existing counters and
-NORESERVE. What do you think?
-
-FWIW, it may be prudent to consider deprecating MAP_NORESERVE, if
-that's an option. I'm not sure what that benefit that provides
-applications, and on the other hand it makes it hard for the kernel to
-guarantee the hugetlb memory is available to the application that
-requested it, and makes it harder for the cgroups to police hugetlb
-usage without SIGBUSing something. But that may be a discussion for
-another proposal.
-
-> Mike Kravetz
+I can do that, I thought this was cleaner as it still retained the
+abstraction separated from the mixup of the rest of the vmx/svm code,
+but it'll work the same by dropping the abstraction in kvm_ops.h and
+just maintaining a common name between the svm.c and vmx.c files, gcc
+already built it that way after all.
