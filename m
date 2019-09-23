@@ -2,80 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15935BB469
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B06BB466
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502084AbfIWMxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:53:31 -0400
-Received: from regular1.263xmail.com ([211.150.70.200]:42048 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439662AbfIWMxV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2439673AbfIWMxV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 23 Sep 2019 08:53:21 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.76])
-        by regular1.263xmail.com (Postfix) with ESMTP id DA46D36B;
-        Mon, 23 Sep 2019 20:53:17 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P32757T140634167924480S1569243191006336_;
-        Mon, 23 Sep 2019 20:53:17 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <646fc713930f5b9e95bb9ba616184176>
-X-RL-SENDER: hjc@rock-chips.com
-X-SENDER: hjc@rock-chips.com
-X-LOGIN-NAME: hjc@rock-chips.com
-X-FST-TO: dri-devel@lists.freedesktop.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     hjc@rock-chips.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 30/36] drm/sti: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:53:03 +0800
-Message-Id: <1569243189-183445-5-git-send-email-hjc@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1569243189-183445-1-git-send-email-hjc@rock-chips.com>
-References: <1569243189-183445-1-git-send-email-hjc@rock-chips.com>
+Received: from mga09.intel.com ([134.134.136.24]:38332 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2439663AbfIWMxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 08:53:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 05:53:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,539,1559545200"; 
+   d="scan'208";a="272268468"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga001.jf.intel.com with SMTP; 23 Sep 2019 05:53:15 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Mon, 23 Sep 2019 15:53:15 +0300
+Date:   Mon, 23 Sep 2019 15:53:15 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Sandy Huang <hjc@rock-chips.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/36] drm/fourcc: Add 2 plane YCbCr 10bit format support
+Message-ID: <20190923125314.GJ1208@intel.com>
+References: <1569242365-182133-1-git-send-email-hjc@rock-chips.com>
+ <1569242365-182133-2-git-send-email-hjc@rock-chips.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1569242365-182133-2-git-send-email-hjc@rock-chips.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpp[BytePerPlane] can't describe the 10bit data format correctly,
-So we use bpp[BitPerPlane] to instead cpp.
+On Mon, Sep 23, 2019 at 08:38:50PM +0800, Sandy Huang wrote:
+> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> index 3feeaa3..5fe89e9 100644
+> --- a/include/uapi/drm/drm_fourcc.h
+> +++ b/include/uapi/drm/drm_fourcc.h
+> @@ -266,6 +266,21 @@ extern "C" {
+>  #define DRM_FORMAT_P016		fourcc_code('P', '0', '1', '6') /* 2x2 subsampled Cr:Cb plane 16 bits per channel */
+>  
+>  /*
+> + * 2 plane YCbCr 10bit
+> + * index 0 = Y plane, [9:0] Y
+> + * index 1 = Cr:Cb plane, [19:0] Cr:Cb little endian
+> + * or
+> + * index 1 = Cb:Cr plane, [19:0] Cb:Cr little endian
 
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
----
- drivers/gpu/drm/sti/sti_gdp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What does "little endian" even mean for these?
 
-diff --git a/drivers/gpu/drm/sti/sti_gdp.c b/drivers/gpu/drm/sti/sti_gdp.c
-index 11595c7..9280271 100644
---- a/drivers/gpu/drm/sti/sti_gdp.c
-+++ b/drivers/gpu/drm/sti/sti_gdp.c
-@@ -775,7 +775,7 @@ static void sti_gdp_atomic_update(struct drm_plane *drm_plane,
- 			 (unsigned long)cma_obj->paddr);
- 
- 	/* pixel memory location */
--	bpp = fb->format->cpp[0];
-+	bpp = fb->format->bpp[0] / 8;
- 	top_field->gam_gdp_pml = (u32)cma_obj->paddr + fb->offsets[0];
- 	top_field->gam_gdp_pml += src_x * bpp;
- 	top_field->gam_gdp_pml += src_y * fb->pitches[0];
+> + */
+> +
+> +#define DRM_FORMAT_NV12_10	fourcc_code('N', 'A', '1', '2') /* 2x2 subsampled Cr:Cb plane */
+> +#define DRM_FORMAT_NV21_10	fourcc_code('N', 'A', '2', '1') /* 2x2 subsampled Cb:Cr plane */
+> +#define DRM_FORMAT_NV16_10	fourcc_code('N', 'A', '1', '6') /* 2x1 subsampled Cr:Cb plane */
+> +#define DRM_FORMAT_NV61_10	fourcc_code('N', 'A', '6', '1') /* 2x1 subsampled Cb:Cr plane */
+> +#define DRM_FORMAT_NV24_10	fourcc_code('N', 'A', '2', '4') /* non-subsampled Cr:Cb plane */
+> +#define DRM_FORMAT_NV42_10	fourcc_code('N', 'A', '4', '2') /* non-subsampled Cb:Cr plane */
+> +
+> +/*
+>   * 3 plane YCbCr
+>   * index 0: Y plane, [7:0] Y
+>   * index 1: Cb plane, [7:0] Cb
+> -- 
+> 2.7.4
+> 
+> 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-2.7.4
-
-
-
+Ville Syrjälä
+Intel
