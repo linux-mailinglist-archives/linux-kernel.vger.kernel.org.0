@@ -2,82 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B983BAEF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:11:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E067BAEFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405737AbfIWILm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 04:11:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37810 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388953AbfIWILm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 04:11:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D323EAC3E;
-        Mon, 23 Sep 2019 08:11:40 +0000 (UTC)
-References: <20190923003846.GB15734@shao2-debian>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Richard Palethorpe <rpalethorpe@suse.de>
-To:     ltp@lists.linux.it
-Cc:     Andy Lutomirski <luto@kernel.org>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [LTP] 12abeb544d: ltp.read_all_dev.fail
-Reply-To: rpalethorpe@suse.de
-In-reply-to: <20190923003846.GB15734@shao2-debian>
-Date:   Mon, 23 Sep 2019 10:11:40 +0200
-Message-ID: <871rw7l9dv.fsf@rpws.prws.suse.cz>
+        id S2405878AbfIWIMm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 04:12:42 -0400
+Received: from mga05.intel.com ([192.55.52.43]:11443 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388953AbfIWIMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 04:12:42 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Sep 2019 01:12:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,539,1559545200"; 
+   d="scan'208";a="203076028"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 23 Sep 2019 01:12:38 -0700
+Received: by lahna (sSMTP sendmail emulation); Mon, 23 Sep 2019 11:12:37 +0300
+Date:   Mon, 23 Sep 2019 11:12:37 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Keith Busch <keith.busch@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Frederick Lawler <fred@fredlawl.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] PCI: pciehp: Prevent deadlock on disconnect
+Message-ID: <20190923081237.GB2773@lahna.fi.intel.com>
+References: <20190812143133.75319-1-mika.westerberg@linux.intel.com>
+ <20190812143133.75319-2-mika.westerberg@linux.intel.com>
+ <20190923053403.jdjw6ed3sub6iuou@wunner.de>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923053403.jdjw6ed3sub6iuou@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Lukas,
 
-kernel test robot <rong.a.chen@intel.com> writes:
+On Mon, Sep 23, 2019 at 07:34:03AM +0200, Lukas Wunner wrote:
+> On Mon, Aug 12, 2019 at 05:31:33PM +0300, Mika Westerberg wrote:
+> > If there are more than one PCIe switch with hotplug downstream ports
+> > hot-removing them leads to a following deadlock:
+> 
+> For the record, I think my comments on v1 of this patch still apply:
+> 
+> https://patchwork.ozlabs.org/patch/1117870/#2230798
 
-> FYI, we noticed the following commit (built with gcc-7):
->
-> commit: 12abeb544d548f55f56323fc6e5e6c0fb74f58e1 ("horrible test hack")
-> https://kernel.googlesource.com/pub/scm/linux/kernel/git/luto/linux.git random/kill-it
->
-> in testcase: ltp
-> with following parameters:
->
-> 	disk: 1HDD
-> 	fs: ext4
-> 	test: fs-02
->
-> test-description: The LTP testsuite contains a collection of tools for testing the Linux kernel and related features.
-> test-url: http://linux-test-project.github.io/
->
->
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
->
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->
->
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <rong.a.chen@intel.com>
->
-> <<<test_start>>>
-> tag=read_all_dev stime=1569106866
-> cmdline="read_all -d /dev -p -q -r 10"
-> contacts=""
-> analysis=exit
-> <<<test_output>>>
-> tst_test.c:1108: INFO: Timeout per run is 0h 05m 00s
-> Test timeouted, sending SIGKILL!
-> tst_test.c:1148: INFO: If you are running on slow machine, try exporting LTP_TIMEOUT_MUL > 1
-> tst_test.c:1149: BROK: Test killed! (timeout?)
+Well, so do I ;-)
 
-So perhaps this is caused by reads of /dev/random hanging? At any rate,
-I suppose this is intended to deliberately break something, so we can
-ignore it.
+As I tried to explain in v1 discussion, I think what we do here in this
+patch is correct thing to do regardless. I mean once the hardware is
+gone the driver should not do any decisions based on what it thinks it
+reads from the now missing hardware. This also makes the deadlock
+problem go away on all the system I've been testing. Where previously I
+was able to reproduce the deadlock 100% reliably I have not seen it
+happen once with this one applied (and haven't got reports from our
+internal testing either).
 
---
-Thank you,
-Richard.
+Regarding suggestion of unbinding PCI drivers without
+pci_lock_rescan_remove() hold, I haven't looked it too closely but I
+think we need to take that lock anyway because when we are unbinding a
+hotplug driver it is supposed to remove the hierarchy below touching the
+shared structures, possibly concurrently. Unfortunately there is no
+documentation what data pci_lock_rescan_remove() actually protects so
+first one needs to understand that. I think one way to clean up this is
+to use finer grained locking (with documented lock ordering) for PCI bus
+structures that can be accessed simultaneusly by different threads. But
+that is not a simple task.
