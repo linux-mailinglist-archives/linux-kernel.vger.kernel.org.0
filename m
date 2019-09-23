@@ -2,378 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21B75BAC91
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 04:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09553BAC98
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 04:27:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404350AbfIWCZY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Sep 2019 22:25:24 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41956 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404136AbfIWCZN (ORCPT
+        id S2392066AbfIWC1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Sep 2019 22:27:36 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:46132 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390293AbfIWC1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Sep 2019 22:25:13 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q7so8169522pfh.8;
-        Sun, 22 Sep 2019 19:25:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aYTIb5+HeXvcNODzGlkiruxjeMT6SF7+WnXVgect7+c=;
-        b=JQb2Ef8HDbkf2q+B56wFJAtwl43uTQ/7YjMyMie5A0OUkG5NV2j1LBRAXpk3uI76Im
-         0yH6WI2CMzuBdFdqzwk7URfj71sYpE9offwa6gIXqNqIiWtYO6/1DJqOGUSJX9CyOIZM
-         eHzofP4gDUvH14hXFztPN3ShQrYsjk2nXKL1LqZ4ERbyfV3PBFFLh7pAS8ySLr3zZuHO
-         yC80CAEUQYdDnlbkwnoJQe20fdiOM7dK4CxqiqhOrqXxTNDF2GOUED6Gv40Irm3ixSSZ
-         xa2JV3EegnsM253skPuP+/n7meKwAUBlhgWHvZ5SkVGym9/Lv5i9sc6LRd8goZ9L/AGy
-         Jc7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aYTIb5+HeXvcNODzGlkiruxjeMT6SF7+WnXVgect7+c=;
-        b=d+lMZsBJ+MJUZCnLyJnxiaB0qsJFonMB2IE22kqhpjlnwBzGGs+DDVcZ32ze3WthDT
-         hO3ounYpfphw0vEluq4jsBNIiOUMGpYIwUxUsm4OQAIudtjcMnI70VQRDm1R7VMu7xtv
-         vEUDU4kLfoApS9u6nvObcgAMiGqUAwmUlcZC7zcg6gpN6wknU//gO37b40kTnzuFdMx0
-         YxWnk4OPInKvRr/sNFp2tfwAGJQcIlT/A9UBSuALImTJYiyOVls/SL+ljRBHbzdk+H8D
-         rhUUNR1ggxX99sWXthoSb7Fsz2dnnVGpWs39g+rU3JF89aSNmuPQAjrzApy8CpOnItRZ
-         DlAg==
-X-Gm-Message-State: APjAAAWtW1wPeYf9ak0TbAbr9DYHOKa0kzBYIYTrjlhWum+AS4Jv/ck8
-        IyAHKpR5yW3leb5G+I2oF9iY+mVK
-X-Google-Smtp-Source: APXvYqyO6FF61b2fEjY4lrea5JdKPhIY1Vn9x+3qqiapoACQpFLE9nkfJucV5PK8GtNlid4dZwaTBw==
-X-Received: by 2002:a17:90a:bf0e:: with SMTP id c14mr17660886pjs.69.1569205512042;
-        Sun, 22 Sep 2019 19:25:12 -0700 (PDT)
-Received: from localhost (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
-        by smtp.gmail.com with ESMTPSA id a17sm9305366pfi.178.2019.09.22.19.25.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 22 Sep 2019 19:25:11 -0700 (PDT)
-From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-X-Google-Original-From: "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-To:     johan@kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: [PATCH V2 7/7] USB: serial: f81232: Add gpiolib to GPIO device
-Date:   Mon, 23 Sep 2019 10:24:49 +0800
-Message-Id: <20190923022449.10952-8-hpeter+linux_kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
-References: <20190923022449.10952-1-hpeter+linux_kernel@gmail.com>
+        Sun, 22 Sep 2019 22:27:36 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x8N2Pj3o013232, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x8N2Pj3o013232
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 23 Sep 2019 10:25:45 +0800
+Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Mon, 23 Sep
+ 2019 10:25:44 +0800
+From:   James Tai <james.tai@realtek.com>
+To:     "'Arnd Bergmann'" <arnd@arndb.de>
+CC:     "jamestai.sky@gmail.com" <jamestai.sky@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        "Doug Anderson" <armlinux@m.disordat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        "Thierry Reding" <treding@nvidia.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        "Rob Herring" <robh@kernel.org>,
+        =?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
+        Phinex Hung <phinex@realtek.com>,
+        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>
+Subject: RE: [PATCH] ARM: Add support for Realtek SOC
+Thread-Topic: [PATCH] ARM: Add support for Realtek SOC
+Thread-Index: AQHVY67V+8blpY45FUyr2dN3mgK/RqccOwQAgAf67ACAAW8fgIASLtdg
+Date:   Mon, 23 Sep 2019 02:25:43 +0000
+Message-ID: <43B123F21A8CFE44A9641C099E4196FFCF8E7CA5@RTITMBSVM04.realtek.com.tw>
+References: <20190905054647.1235-1-james.tai@realtek.com>
+ <CAK8P3a13=VBZnj6E=s7mZk0o7Q3XkMHgcsL12s-3psuOWsfOtQ@mail.gmail.com>
+ <43B123F21A8CFE44A9641C099E4196FFCF8DA1D0@RTITMBSVM04.realtek.com.tw>
+ <CAK8P3a39VrC1Xn+HZc5gvh1-nUYKywDGjTfO9WPCqim89WtGAg@mail.gmail.com>
+In-Reply-To: <CAK8P3a39VrC1Xn+HZc5gvh1-nUYKywDGjTfO9WPCqim89WtGAg@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.190.187]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Fintek F81534A series contains 3 GPIOs per UART and The max GPIOs
-is 12x3 = 36 GPIOs and this patch will implements GPIO device as a
-gpiochip to control all GPIO pins even transforms to transceiver pins.
-
-Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
----
- drivers/usb/serial/f81232.c | 249 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 249 insertions(+)
-
-diff --git a/drivers/usb/serial/f81232.c b/drivers/usb/serial/f81232.c
-index 82cc1e6cff62..dc9b28738b80 100644
---- a/drivers/usb/serial/f81232.c
-+++ b/drivers/usb/serial/f81232.c
-@@ -18,6 +18,7 @@
- #include <linux/moduleparam.h>
- #include <linux/mutex.h>
- #include <linux/uaccess.h>
-+#include <linux/gpio.h>
- #include <linux/usb.h>
- #include <linux/usb/serial.h>
- #include <linux/serial_reg.h>
-@@ -104,6 +105,8 @@ MODULE_DEVICE_TABLE(usb, all_serial_id_table);
- #define F81534A_TRIGGER_MULTPILE_4X	BIT(3)
- #define F81534A_FIFO_128BYTE		(BIT(1) | BIT(0))
- 
-+#define F81534A_MAX_PORT		12
-+
- /* Serial port self GPIO control, 2bytes [control&output data][input data] */
- #define F81534A_GPIO_REG		0x10e
- #define F81534A_GPIO_MODE2_DIR		BIT(6) /* 1: input, 0: output */
-@@ -115,6 +118,13 @@ MODULE_DEVICE_TABLE(usb, all_serial_id_table);
- 
- #define F81534A_CMD_ENABLE_PORT		0x116
- 
-+/*
-+ * Control device global GPIO control,
-+ * 2bytes [control&output data][input data]
-+ */
-+#define F81534A_CTRL_GPIO_REG		0x1601
-+#define F81534A_CTRL_GPIO_MAX_PIN	3
-+
- struct f81232_private {
- 	struct mutex lock;
- 	u8 modem_control;
-@@ -126,6 +136,12 @@ struct f81232_private {
- 	struct usb_serial_port *port;
- };
- 
-+struct f81534a_ctrl_private {
-+	struct usb_interface *intf;
-+	struct gpio_chip chip;
-+	struct mutex lock;
-+};
-+
- static u32 const baudrate_table[] = { 115200, 921600, 1152000, 1500000 };
- static u8 const clock_table[] = { F81232_CLK_1_846_MHZ, F81232_CLK_14_77_MHZ,
- 				F81232_CLK_18_46_MHZ, F81232_CLK_24_MHZ };
-@@ -863,6 +879,50 @@ static void f81232_lsr_worker(struct work_struct *work)
- 		dev_warn(&port->dev, "read LSR failed: %d\n", status);
- }
- 
-+static int f81534a_ctrl_get_register(struct usb_device *dev, u16 reg, u16 size,
-+					void *val)
-+{
-+	int retry = F81534A_ACCESS_REG_RETRY;
-+	int status;
-+	u8 *tmp;
-+
-+	tmp = kmalloc(size, GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	while (retry--) {
-+		status = usb_control_msg(dev,
-+					usb_rcvctrlpipe(dev, 0),
-+					F81534A_REGISTER_REQUEST,
-+					F81534A_GET_REGISTER,
-+					reg,
-+					0,
-+					tmp,
-+					size,
-+					USB_CTRL_GET_TIMEOUT);
-+		if (status != size) {
-+			status = usb_translate_errors(status);
-+			if (status == -EIO)
-+				continue;
-+
-+			status = -EIO;
-+		} else {
-+			status = 0;
-+			memcpy(val, tmp, size);
-+		}
-+
-+		break;
-+	}
-+
-+	if (status) {
-+		dev_err(&dev->dev, "get reg: %x, failed status: %d\n", reg,
-+				status);
-+	}
-+
-+	kfree(tmp);
-+	return status;
-+}
-+
- static int f81534a_ctrl_set_register(struct usb_device *dev, u16 reg, u16 size,
- 					void *val)
- {
-@@ -908,6 +968,182 @@ static int f81534a_ctrl_set_register(struct usb_device *dev, u16 reg, u16 size,
- 	return status;
- }
- 
-+#ifdef CONFIG_GPIOLIB
-+static int f81534a_ctrl_set_mask_register(struct usb_device *dev, u16 reg,
-+		u8 mask, u8 val)
-+{
-+	int status;
-+	u8 tmp;
-+
-+	status = f81534a_ctrl_get_register(dev, reg, 1, &tmp);
-+	if (status)
-+		return status;
-+
-+
-+	tmp = (tmp & ~mask) | (val & mask);
-+
-+	status = f81534a_ctrl_set_register(dev, reg, 1, &tmp);
-+	if (status)
-+		return status;
-+
-+	return 0;
-+}
-+
-+static int f81534a_gpio_get(struct gpio_chip *chip, unsigned int gpio_num)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	u8 tmp[2];
-+	int set;
-+	int idx;
-+	int reg;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+	reg = F81534A_CTRL_GPIO_REG + set;
-+
-+	mutex_lock(&priv->lock);
-+
-+	status = f81534a_ctrl_get_register(dev, reg, sizeof(tmp), tmp);
-+	if (status) {
-+		mutex_unlock(&priv->lock);
-+		return status;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+
-+	return !!(tmp[1] & BIT(idx));
-+}
-+
-+static int f81534a_gpio_direction_in(struct gpio_chip *chip,
-+					unsigned int gpio_num)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	int set;
-+	int idx;
-+	int reg;
-+	u8 mask;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+	mask = F81534A_GPIO_MODE0_DIR << idx;
-+	reg = F81534A_CTRL_GPIO_REG + set;
-+
-+	mutex_lock(&priv->lock);
-+	status = f81534a_ctrl_set_mask_register(dev, reg, mask, mask);
-+	mutex_unlock(&priv->lock);
-+
-+	return status;
-+}
-+
-+static int f81534a_gpio_direction_out(struct gpio_chip *chip,
-+				     unsigned int gpio_num, int val)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	int set;
-+	int idx;
-+	int reg;
-+	u8 mask;
-+	u8 data;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+	mask = (F81534A_GPIO_MODE0_DIR << idx) | BIT(idx);
-+	reg = F81534A_CTRL_GPIO_REG + set;
-+	data = val ? BIT(idx) : 0;
-+
-+	mutex_lock(&priv->lock);
-+	status = f81534a_ctrl_set_mask_register(dev, reg, mask, data);
-+	mutex_unlock(&priv->lock);
-+
-+	return status;
-+}
-+
-+static void f81534a_gpio_set(struct gpio_chip *chip, unsigned int gpio_num,
-+				int val)
-+{
-+	f81534a_gpio_direction_out(chip, gpio_num, val);
-+}
-+
-+static int f81534a_gpio_get_direction(struct gpio_chip *chip,
-+				unsigned int gpio_num)
-+{
-+	struct f81534a_ctrl_private *priv = gpiochip_get_data(chip);
-+	struct usb_interface *intf = priv->intf;
-+	struct usb_device *dev = interface_to_usbdev(intf);
-+	int status;
-+	u8 tmp[2];
-+	int set;
-+	int idx;
-+	int reg;
-+	u8 mask;
-+
-+	set = gpio_num / F81534A_CTRL_GPIO_MAX_PIN;
-+	idx = gpio_num % F81534A_CTRL_GPIO_MAX_PIN;
-+	mask = F81534A_GPIO_MODE0_DIR << idx;
-+	reg = F81534A_CTRL_GPIO_REG + set;
-+
-+	mutex_lock(&priv->lock);
-+
-+	status = f81534a_ctrl_get_register(dev, reg, sizeof(tmp), tmp);
-+	if (status) {
-+		mutex_unlock(&priv->lock);
-+		return status;
-+	}
-+
-+	mutex_unlock(&priv->lock);
-+
-+	if (tmp[0] & mask)
-+		return GPIOF_DIR_IN;
-+
-+	return GPIOF_DIR_OUT;
-+}
-+
-+static int f81534a_prepare_gpio(struct usb_interface *intf)
-+{
-+	struct f81534a_ctrl_private *priv = usb_get_intfdata(intf);
-+	int status;
-+
-+	priv->chip.parent = &intf->dev;
-+	priv->chip.owner = THIS_MODULE;
-+	priv->chip.get_direction = f81534a_gpio_get_direction,
-+	priv->chip.get = f81534a_gpio_get;
-+	priv->chip.direction_input = f81534a_gpio_direction_in;
-+	priv->chip.set = f81534a_gpio_set;
-+	priv->chip.direction_output = f81534a_gpio_direction_out;
-+	priv->chip.label = "f81534a";
-+	priv->chip.can_sleep = true;
-+	/* M0(SD)/M1/M2 */
-+	priv->chip.ngpio = F81534A_CTRL_GPIO_MAX_PIN * F81534A_MAX_PORT;
-+	priv->chip.base = -1;
-+
-+	priv->intf = intf;
-+	mutex_init(&priv->lock);
-+
-+	status = devm_gpiochip_add_data(&intf->dev, &priv->chip, priv);
-+	if (status) {
-+		dev_err(&intf->dev, "failed to register gpiochip: %d\n",
-+				status);
-+		return status;
-+	}
-+
-+	return 0;
-+}
-+#else
-+static int f81534a_prepare_gpio(struct usb_interface *intf)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int f81534a_ctrl_enable_all_ports(struct usb_interface *intf)
- {
- 	struct usb_device *dev = interface_to_usbdev(intf);
-@@ -930,8 +1166,21 @@ static int f81534a_ctrl_probe(struct usb_interface *intf,
- 				const struct usb_device_id *id)
- {
- 	struct usb_device *dev = interface_to_usbdev(intf);
-+	struct f81534a_ctrl_private *priv;
- 	int status;
- 
-+	priv = devm_kzalloc(&intf->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	mutex_init(&priv->lock);
-+	usb_set_intfdata(intf, priv);
-+	priv->intf = intf;
-+
-+	status = f81534a_prepare_gpio(intf);
-+	if (status)
-+		return status;
-+
- 	status = f81534a_ctrl_enable_all_ports(intf);
- 	if (status)
- 		return status;
--- 
-2.17.1
-
+PiA8amFtZXMudGFpQHJlYWx0ZWsuY29tPiB3cm90ZToNCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFU
+Q0hdIEFSTTogQWRkIHN1cHBvcnQgZm9yIFJlYWx0ZWsgU09DDQo+IA0KPiA+ID4gPiBAQCAtMTQ4
+LDYgKzE0OCw3IEBAIGVuZGlmDQo+ID4gPiA+ICB0ZXh0b2ZzLSQoQ09ORklHX0FSQ0hfTVNNOFg2
+MCkgOj0gMHgwMDIwODAwMA0KPiA+ID4gPiAgdGV4dG9mcy0kKENPTkZJR19BUkNIX01TTTg5NjAp
+IDo9IDB4MDAyMDgwMDANCj4gPiA+ID4gIHRleHRvZnMtJChDT05GSUdfQVJDSF9NRVNPTikgOj0g
+MHgwMDIwODAwMA0KPiA+ID4gPiArdGV4dG9mcy0kKENPTkZJR19BUkNIX1JFQUxURUspIDo9IDB4
+MDAyMDgwMDANCj4gPiA+ID4gIHRleHRvZnMtJChDT05GSUdfQVJDSF9BWFhJQSkgOj0gMHgwMDMw
+ODAwMA0KPiA+ID4NCj4gPiA+IENhbiB5b3UgZXhwbGFpbiB3aHkgdGhpcyBpcyBuZWVkZWQgZm9y
+IHlvdXIgcGxhdGZvcm0/DQo+ID4gPg0KPiA+IFdlIG5lZWQgdG8gcmVzZXJ2ZSBtZW1vcnkgKDB4
+MDAwMDAwMDAgfiAweDAwMUIwMDAwKSBmb3Igcm9tIGFuZCBib290DQo+IGNvZGUuDQo+IA0KPiBP
+ay4NCj4gDQo+ID4gPiA+ICtjb25maWcgQVJDSF9SVEQxNlhYDQo+ID4gPiA+ICsgICAgICAgYm9v
+bCAiRW5hYmxlIHN1cHBvcnQgZm9yIFJURDE2MTkiDQo+ID4gPiA+ICsgICAgICAgZGVwZW5kcyBv
+biBBUkNIX1JFQUxURUsNCj4gPiA+ID4gKyAgICAgICBzZWxlY3QgQVJNX0dJQ19WMw0KPiA+ID4g
+PiArICAgICAgIHNlbGVjdCBBUk1fUFNDSQ0KPiA+ID4NCj4gPiA+IEFzIEkgdW5kZXJzdGFuZCwg
+dGhpcyBjaGlwIHVzZXMgYSBDb3J0ZXgtQTU1LiBXaGF0IGlzIHRoZSByZWFzb24gZm9yDQo+ID4g
+PiBhZGRpbmcgc3VwcG9ydCBvbmx5IHRvIHRoZSAzMi1iaXQgQVJNIGFyY2hpdGVjdHVyZSByYXRo
+ZXIgdGhhbiA2NC1iaXQ/DQo+ID4NCj4gPiBUaGUgUlREMTZYWCBwbGF0Zm9ybSBhbHNvIHN1cHBv
+cnQgdGhlIDY0LWJpdCBBUk0gYXJjaGl0ZWN0dXJlLg0KPiA+IEkgd2lsbCBhZGQgdGhlIDY0LWJp
+dCBBUk0gYXJjaGl0ZWN0dXJlIGluIG5ldyB2ZXJzaW9uIHBhdGNoLg0KPiA+DQo+ID4gPiBNb3N0
+IDY0LWJpdCBTb0NzIGFyZSBvbmx5IHN1cHBvcnRlZCB3aXRoIGFyY2gvYXJtNjQsIGJ1dCBnZW5l
+cmFsbHkNCj4gPiA+IHNwZWFraW5nIHRoYXQgaXMgbm90IGEgcmVxdWlyZW1lbnQuIE15IHJ1bGUg
+b2YgdGh1bWIgaXMgdGhhdCBvbg0KPiA+ID4gc3lzdGVtcyB3aXRoIDFHQiBvZiBSQU0gb3IgbW9y
+ZSwgb25lIHdvdWxkIHdhbnQgdG8gcnVuIGEgNjQtYml0DQo+ID4gPiBrZXJuZWwsIHdoaWxlIHN5
+c3RlbXMgd2l0aCBsZXNzIHRoYW4gdGhhdCBhcmUgYmV0dGVyIG9mZiB3aXRoIGENCj4gPiA+IDMy
+LWJpdCBvbmUsIGJ1dCB0aGF0IGlzIGNsZWFybHkgbm90IHRoZSBvbmx5IHJlYXNvbiBmb3IgcGlj
+a2luZyBvbmUgb3ZlciB0aGUNCj4gb3RoZXIuDQo+ID4gPg0KPiA+IFN1cHBvcnQgMzItYml0IEFS
+TSBhcmNoaXRlY3R1cmUgaXMgZm9yIGFwcGxpY2F0aW9uIGNvbXBhdGliaWxpdHkuDQo+IA0KPiBH
+ZW5lcmFsbHkgc3BlYWtpbmcsIGEgNjQtYml0IGtlcm5lbCBzaG91bGQgd29yayBiZXR0ZXIgb24g
+NjQtYml0IGhhcmR3YXJlDQo+IGV2ZW4gd2hlbiB5b3UgYXJlIHJ1bm5pbmcgbW9zdGx5IDMyLWJp
+dCBhcHBsaWNhdGlvbnMuIEhvd2V2ZXIsIHlvdSBtYXkgaGF2ZQ0KPiBkZXZpY2UgZHJpdmVycyB0
+aGF0IGRvIG5vdCBjb3JyZWN0bHkgc2V0IGNvbXBhdF9pb2N0bCBoYW5kbGVycy4NCj4gDQo+IEFz
+IEkgc2FpZCwgaXQncyBubyBwcm9ibGVtIHRvIGFsbG93IGJvdGgsIGp1c3QgZXhwbGFpbiB0aGlz
+IGluIHRoZSBjaGFuZ2Vsb2cgdGV4dA0KPiBmb3IgdGhlIGRyaXZlciwgYWxvbmcgd2l0aCB0aGUg
+bmVlZCBmb3IgdGhlIHRleHRvZnMgc2V0dGluZy4NCj4gDQpPSy4NCg0KPiA+ID4gSXQncyB2ZXJ5
+IHVudXN1YWwgdG8gc2VlIGN1c3RvbSBzbXAgb3BlcmF0aW9ucyBvbiBhbiBBUk12OCBzeXN0ZW0s
+DQo+ID4gPiBhcyB3ZSBub3JtYWxseSB1c2UgUFNDSSBoZXJlLiBDYW4geW91IGV4cGxhaW4gd2hh
+dCBpcyBnb2luZyBvbiBoZXJlPw0KPiA+ID4gQXJlIHlvdSBhYmxlIHRvIHVzZSBhIGJvb3Qgd3Jh
+cHBlciB0aGF0IGltcGxlbWVudHMgdGhlc2UgaW4gcHNjaSBpbnN0ZWFkPw0KPiA+ID4NCj4gPiBU
+aGUgc21wIG9wZXJhdGlvbnMgaXMgcG9ydGluZyBmb3JtIG90aGVyIFJlYWx0ZWsgcGxhdGZvcm0u
+DQo+ID4NCj4gPiBDdXJyZW50bHksIFRoZSBSVEQxNlhYIHBsYXRmb3JtIGNhbiB1c2UgdGhlIFBT
+Q0kgbWV0aG9kLg0KPiA+IEkgd2lsbCBhZGQgUFNDSSBtZXRob2QgaW4gbmV3IHZlcnNpb24gcGF0
+Y2guDQo+IA0KPiBPaywgcGVyZmVjdCENCj4gDQo+ID4gPiA+ICsgICAgICAgdGltZXJfcHJvYmUo
+KTsNCj4gPiA+ID4gKyAgICAgICB0aWNrX3NldHVwX2hydGltZXJfYnJvYWRjYXN0KCk7IH0NCj4g
+PiA+DQo+ID4gPiBXaGF0IGRvIHlvdSBuZWVkIHRpY2tfc2V0dXBfaHJ0aW1lcl9icm9hZGNhc3Qo
+KSBmb3I/IEkgZG9uJ3Qgc2VlIGFueQ0KPiA+ID4gb3RoZXIgcGxhdGZvcm0gY2FsbGluZyB0aGlz
+Lg0KPiA+ID4NCj4gPiBJIHdhbnQgdG8gaW5pdGlhbGl6ZSB0aGUgSFIgdGltZXIuDQo+IA0KPiBJ
+J20gc3RpbGwgdW5zdXJlIGFib3V0IHRoaXMgb25lLiBNeSBmZWVsaW5nIGlzIHRoYXQgaXQgc2hv
+dWxkIG5vdCBiZSBpbiB0aGUNCj4gcGxhdGZvcm0gY29kZSwgYnV0IEkgZG9uJ3QgcXVpdGUgdW5k
+ZXJzdGFuZCB3aGljaCBoYXJkd2FyZSBuZWVkcyBpdC4gSSBzZWUgdGhhdA0KPiBMb3JlbnpvIFBp
+ZXJhbGlzaSBhZGRlZCB0aGUgc2FtZSBjb2RlIHRvIGFybTY0IGluIGNvbW1pdCA5MzU4ZDc1NWJk
+NWMNCj4gKCJhcm02NDoga2VybmVsOiBpbml0aWFsaXplIGJyb2FkY2FzdCBocnRpbWVyIGJhc2Vk
+IGNsb2NrIGV2ZW50IGRldmljZSIpLCBidXQNCj4gbm90aGluZyBldmVyIGNhbGxzIGl0IG9uIDMy
+LWJpdCBhcmNoL2FybSBldmVuIHRob3VnaCB0aGUgY29kZSBkb2VzIGdldCBidWlsdCBpbg0KPiB0
+byB0aGUga2VybmVsLg0KDQpJIHdpbGwgYWRkIHRoZSAnaHJ0aW1lcicgaW5pdGlhbGl6YXRpb24g
+ZmxvdyBpbiByZWxhdGVkIGRldmljZXMgZHJpdmVycy4NCg0KPiBNeSBmZWVsaW5nIGlzIHRoYXQg
+ZWl0aGVyIHlvdSBkb24ndCByZWFsbHkgbmVlZCBpdCwgb3IgdGhpcyBpcyBzb21ldGhpbmcgdGhh
+dCBvdGhlcg0KPiBwbGF0Zm9ybXMgc2hvdWxkIHJlYWxseSBkbyBhcyB3ZWxsLCBhbmQgaXQgc2hv
+dWxkIGJlIGNhbGxlZCBmcm9tIHRoZSBnZW5lcmljDQo+IHRpbWVfaW5pdCgpIGZ1bmN0aW9uIGlu
+IGFyY2gvYXJtL2tlcm5lbC90aW1lLmMgaW5zdGVhZC4NCj4gDQpPSy4gSSB1bmRlcnN0YW5kLg0K
+DQo+IENhbiB5b3UgdHJ5IHRvIGZpbmQgb3V0IG1vcmUgb2YgdGhlIGJhY2tncm91bmQgaGVyZSwg
+YW5kIHRoZW4gbW92ZSB0aGUgY2FsbCB0bw0KPiB0aW1lX2luaXQoKSBhc3N1bWluZyBpdCBpcyBp
+bmRlZWQgdXNlZnVsPw0KDQpJIGFncmVlIHdpdGggeW91LiBJdCBpcyBub3QgbmVjZXNzYXJ5IHRv
+IGNhbGwgJ3RpbWVfaW5pdCgpJyBmdW5jdGlvbiBpbiBwbGF0Zm9ybSBjb2RlLg0KDQo+ICAgICAg
+ICBBcm5kDQo+IA0KPiAtLS0tLS1QbGVhc2UgY29uc2lkZXIgdGhlIGVudmlyb25tZW50IGJlZm9y
+ZSBwcmludGluZyB0aGlzIGUtbWFpbC4NCg==
