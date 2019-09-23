@@ -2,145 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CD41BB918
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 18:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DFB2BB92B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 18:10:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388074AbfIWQIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 12:08:23 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34513 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387969AbfIWQIV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 12:08:21 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b128so9415564pfa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 09:08:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qbgL52JbC3nZvOpwtMEyx7CsWNJZAh5SrAdnx2jzAo8=;
-        b=FSOY9rC3vU5FztGsRFEwH7V4vSC9FJwLCLLrXOgsTUDaEwnAmpuq8BbixzXG2ShMOL
-         6lLd0syInfmXdqh3Al2QF+TUN79k3rBRUqlhtoX+TSudrnCbPz/q5/W2p5ygqb5kOQhl
-         CnUXmSZFkMcg+WAj3b1AFeDWZ6VA5jzu6MW/OwI58N93JXE4xidealql1q8NAYKm6H38
-         tUwoNg8zLOr1KT09n5HsSneDQYjLwHoKbwCeHrDbG+J2ibdHNqDaDUTkFSoJWBfWD16c
-         +yZQ1VB6Y0h7yY85Pe7mLUYfXy/Q370DvImDh7J1Vb9oh0oN1B8jdJO+sngnP1GgpSbC
-         RyMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=qbgL52JbC3nZvOpwtMEyx7CsWNJZAh5SrAdnx2jzAo8=;
-        b=lk+ychHVC/KG5qXTOZ4MhbKilCBwpL/uWQiChkFjnP6sEBFATIi95hR/qbLiPwVws7
-         xbEEErFmAjxbttBDkgpzU5ZdBqbhIvOmsoyyYdAxbJjU3v4+tT/uFbM75bOynM6KwCSG
-         g/w7HcHbXT69vXLwhT2pNnpvDjqMT+6OJZvqDBpXTIxXn2Tl/HBZu/SuYnDbJZIMa+0B
-         Q/+ZCuIABAua9V66DuZb7OrXekZZpr0Ri4GEOsPh4DrUFF0pkbIOEEzTDFTAJuapZYt8
-         2NE2Bp8Zr7nO6ldFJGckP68ZlZMAOu6oBvYcATdqw0uxUd+jav5m3akyDB25AbPHEIBv
-         LBwQ==
-X-Gm-Message-State: APjAAAVMUx9RytSkptYEOIFiQWK1xBAKgfcx+Lf11Ot1RoKotLTCHJpE
-        aBtlV/4Meo+S1PdM0zCsMQWaqg==
-X-Google-Smtp-Source: APXvYqybSHGIhV3dLeByo9yn27L1VeNLtWPNru/lozTdZ/6Wmi0V0CdmHJwmlZZT4kwUekU6QL4cIw==
-X-Received: by 2002:a62:4e09:: with SMTP id c9mr373088pfb.152.1569254899217;
-        Mon, 23 Sep 2019 09:08:19 -0700 (PDT)
-Received: from localhost.localdomain ([12.206.46.62])
-        by smtp.gmail.com with ESMTPSA id r1sm9880006pgv.70.2019.09.23.09.08.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 09:08:18 -0700 (PDT)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Coresight ML <coresight@lists.linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 5/5] perf cs-etm: Correct callchain for instruction sample
-Date:   Tue, 24 Sep 2019 00:07:59 +0800
-Message-Id: <20190923160759.14866-6-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190923160759.14866-1-leo.yan@linaro.org>
-References: <20190923160759.14866-1-leo.yan@linaro.org>
+        id S2388364AbfIWQKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 12:10:20 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:55442 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387819AbfIWQKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 12:10:20 -0400
+Received: from zn.tnic (p200300EC2F060400F50F96FF27F9741F.dip0.t-ipconnect.de [IPv6:2003:ec:2f06:400:f50f:96ff:27f9:741f])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E9A9C1EC06F3;
+        Mon, 23 Sep 2019 18:10:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1569255019;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=0bYHJtGISqNLfydtAdxQkWGpoo+d0+T8UOA0chvqHlw=;
+        b=jS3wfbvgqiJdEaJhcbl1NZ9T3NsvZykOI3R0zqhcICq0S3Hm8baZ2GDBrjVuDcUATFeLYi
+        TkcUGJd1TJA11Smq0lLKO9cIuaVPOfb7GkjvFz61pbalctaGxEXGlNlF2GDo3lP5zICRiH
+        KJh2EPdWb9Cx/83PZ3mAfZM9ZJyIopw=
+Date:   Mon, 23 Sep 2019 18:10:15 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Lei Wang <leiwang_git@outlook.com>
+Cc:     "james.morse@arm.com" <james.morse@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "hangl@microsoft.com" <hangl@microsoft.com>,
+        "lewan@microsoft.com" <lewan@microsoft.com>,
+        "ruizhao@microsoft.com" <ruizhao@microsoft.com>,
+        "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
+        "yuqing.shen@broadcom.com" <yuqing.shen@broadcom.com>,
+        "ray.jui@broadcom.com" <ray.jui@broadcom.com>
+Subject: Re: [PATCH v6 1/2] dt-bindings: edac: arm-dmc520.txt
+Message-ID: <20190923161015.GI15355@zn.tnic>
+References: <BY5PR04MB6599EAA659A53B2331CB812586890@BY5PR04MB6599.namprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <BY5PR04MB6599EAA659A53B2331CB812586890@BY5PR04MB6599.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The synthesized flow use 'tidq->packet' for instruction samples,
-comparing against the thread stack and the branch samples which are uses
-the 'tidp->prev_packet', thus the instruction samples result in using an
-packet ahead than thread stack and branch samples.
+On Thu, Sep 19, 2019 at 06:37:00PM +0000, Lei Wang wrote:
+> This is the device tree bindings for new EDAC driver dmc520_edac.c.
+> 
+> Signed-off-by: Lei Wang <leiwang_git@outlook.com>
+> Reviewed-by: James Morse <james.morse@arm.com>
+> 
+> ---
+>     No change in v6.
+> ---
+>  .../devicetree/bindings/edac/arm-dmc520.txt   | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/edac/arm-dmc520.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/edac/arm-dmc520.txt b/Documentation/devicetree/bindings/edac/arm-dmc520.txt
+> new file mode 100644
+> index 000000000000..71e7aa32971a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/edac/arm-dmc520.txt
+> @@ -0,0 +1,26 @@
+> +* ARM DMC-520 EDAC node
+> +
+> +Required properties:
+> +- compatible		: "brcm,dmc-520", "arm,dmc-520".
+> +- reg			: Address range of the DMC-520 registers.
+> +- interrupts		: DMC-520 interrupt numbers. The example below specifies
+> +			  two interrupt lines for dram_ecc_errc_int and
+> +			  dram_ecc_errd_int.
+> +- interrupt-config	: This is an array of interrupt masks. For each of the
+> +			  above interrupt line, add one interrupt mask element to
+> +			  it. That is, there is a 1:1 mapping from each interrupt
+> +			  line to an interrupt mask. An interrupt mask can represent
+> +			  multiple interrupts being enabled. Refer to interrupt_control
+> +			  register in DMC-520 TRM for interrupt mapping. In the example
+> +			  below, the interrupt configuration enables dram_ecc_errc_int
+> +			  and dram_ecc_errd_int. And each interrupt is connected to
+> +			  a separate interrupt line.
+> +
+> +Example:
+> +
+> +dmc0: dmc@200000 {
+> +	compatible = "brcm,dmc-520", "arm,dmc-520";
+> +	reg = <0x200000 0x80000>;
+> +	interrupts = <0x0 0x349 0x4>, <0x0 0x34B 0x4>;
+> +	interrupt-config = <0x4>, <0x8>;
+> +};
+> -- 
 
-This leads to an instruction's callchain error as shows in below
-example:
+Still needs a DT person ACK.
 
-  main  1579        100      instructions:
-  	ffff000010214854 perf_event_update_userpage+0x4c ([kernel.kallsyms])
-  	ffff000010214850 perf_event_update_userpage+0x48 ([kernel.kallsyms])
-  	ffff000010219360 perf_swevent_add+0x88 ([kernel.kallsyms])
-  	ffff0000102135f4 event_sched_in.isra.57+0xbc ([kernel.kallsyms])
-  	ffff0000102137a0 group_sched_in+0x60 ([kernel.kallsyms])
-  	ffff000010213b84 flexible_sched_in+0xfc ([kernel.kallsyms])
-  	ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
-
-In the callchain log, for the two continuous lines the up line contains
-one child function info and the followed line contains the caller
-function info, and so forth.  But the first two lines:
-
-  perf_event_update_userpage+0x4c  => the sampled instruction
-  perf_event_update_userpage+0x48  => the parent function's calling
-
-The child function and parent function both are the same function
-perf_event_update_userpage(), but this isn't a recursive function, thus
-the sequence for perf_event_update_userpage() calling itself shouldn't
-never happen.  This callchain error is caused by the instruction sample
-using an ahead packet than the thread stack, the thread stack is deferred
-to process this packet and missed to pop stack if this is a return
-packet.
-
-To fix this issue, we can simply change to use 'tidq->prev_packet' to
-generate the instruction samples, this allows the thread stack to push
-and pop synchronously with instruction sample.  Finally, the callchain
-is displayed as below:
-
-  main  1579        100      instructions:
-	ffff000010214854 perf_event_update_userpage+0x4c ([kernel.kallsyms])
-	ffff000010219360 perf_swevent_add+0x88 ([kernel.kallsyms])
-	ffff0000102135f4 event_sched_in.isra.57+0xbc ([kernel.kallsyms])
-	ffff0000102137a0 group_sched_in+0x60 ([kernel.kallsyms])
-	ffff000010213b84 flexible_sched_in+0xfc ([kernel.kallsyms])
-	ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- tools/perf/util/cs-etm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index bd09254a7208..3f7edfd15124 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1418,7 +1418,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
- 	struct cs_etm_packet *tmp;
- 	int ret;
- 	u8 trace_chan_id = tidq->trace_chan_id;
--	u64 instrs_executed = tidq->packet->instr_count;
-+	u64 instrs_executed = tidq->prev_packet->instr_count;
- 
- 	tidq->period_instructions += instrs_executed;
- 
-@@ -1449,7 +1449,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq,
- 		 */
- 		u64 offset = (instrs_executed - instrs_over - 1);
- 		u64 addr = cs_etm__instr_addr(etmq, trace_chan_id,
--					      tidq->packet, offset);
-+					      tidq->prev_packet, offset);
- 
- 		ret = cs_etm__synth_instruction_sample(
- 			etmq, tidq, addr, etm->instructions_sample_period);
 -- 
-2.17.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
