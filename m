@@ -2,100 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B11BB6B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5800CBB6B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 16:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439894AbfIWO3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 10:29:36 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:59254 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407299AbfIWO3g (ORCPT
+        id S2439867AbfIWO2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 10:28:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42678 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437634AbfIWO2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 10:29:36 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8NEIeL0102769;
-        Mon, 23 Sep 2019 14:28:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=q5TJ75p55cKVn+qFcqXUsCLG1Wf/7eC+Ue1ViO1Q42c=;
- b=p+BtS+CqyxQjrnq4MQcvate3UyrpnBNh6AHYOGpkNCKCOucPkYDOS866v0J+SOSbrDj2
- lqcYmWf4qTUxwpeZjH4Xd9kk2ggannIyp23Ev5M4KnLEAaFvJBfpgSZKoO+km4NIMWTz
- Liau1kqyj1A64T1yXmbufVZZwTk5TFyjkrCgAdqHuTLGB9RiIFNhJjJQtp2h3b+9R4Vm
- E5UvlGrTMtzAkk8GDzzteog57xCasZNwqOOYQeT7kTtXj0T/Pva/+dZCUtk8Istc3aac
- PEheyeMAi24bkgENf3rFNjaIsbyNbaQH9EAhBIgXEHCK7uMyNtim6g07Vf4rSSQpFQjj WQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2v5cgqq74c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Sep 2019 14:28:49 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8NEJDET129046;
-        Mon, 23 Sep 2019 14:26:49 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2v5bpgfupy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Sep 2019 14:26:48 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8NEQgVu011155;
-        Mon, 23 Sep 2019 14:26:42 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 23 Sep 2019 07:26:42 -0700
-Date:   Mon, 23 Sep 2019 17:26:34 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] rcu/nocb: Fix uninitialized variable in nocb_gp_wait()
-Message-ID: <20190923142634.GC31251@mwanda>
+        Mon, 23 Sep 2019 10:28:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=pfO0w2VZ1NL504GmbRCCM2xrQ+ksHz0wYBTzCBYK0Ec=; b=fjRlOStJKkZCqSjwxVhWIXfaq
+        ncf21egJn851tlhDPNJsd2Ajs3gOhR2yRDfM3PvVxg7ti3UaFif+5b5Tfu25i1lNlpAlAU/rAc/op
+        erhysCFHFpvQLieLXnIlqrjmrLHpG8SVbg2q8TA7hDXVSfglNpBsnuNVjzmCbGCTHKR+8q8oyKmcZ
+        pXIm4R954n/XKhFQixdHsd+4hGDN+9yxqZnEdnq5CQpm4y3fm5bwT2LhrgVlvceBzG/7k4hPbPyFr
+        xrAgxtldFO5ulVHs80iZPUfDK2KWPz33AqdkdoE9SqGX0KU0Yhg40UNARyMwD18vXBN3QatmfHHJx
+        1sBbCsG5A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCPK4-0004A7-Bf; Mon, 23 Sep 2019 14:28:17 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7935E301A7A;
+        Mon, 23 Sep 2019 16:27:29 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 78B0820D80D44; Mon, 23 Sep 2019 16:28:14 +0200 (CEST)
+Date:   Mon, 23 Sep 2019 16:28:14 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        chris@chris-wilson.co.uk
+Subject: Re: linux-next: Tree for Sep 18 (objtool)
+Message-ID: <20190923142814.GB2369@hirez.programming.kicks-ass.net>
+References: <20190918221053.GV2596@sirena.co.uk>
+ <be0fb087-5fb4-a790-90dd-cc2af62419e7@infradead.org>
+ <20190923092024.GI2349@hirez.programming.kicks-ass.net>
+ <20190923124901.3ayejcis5ijrsvbx@treble>
+ <20190923133352.GI2332@hirez.programming.kicks-ass.net>
+ <20190923141657.p6kpqro3q4p4umwi@treble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20190923141657.p6kpqro3q4p4umwi@treble>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909230140
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909230140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We never set this to false.  This probably doesn't affect most people's
-runtime because GCC will automatically initialize it to false at certain
-common optimization levels.  But that behavior is related to a bug in
-GCC and obviously should not be relied on.
+On Mon, Sep 23, 2019 at 09:16:57AM -0500, Josh Poimboeuf wrote:
+> On Mon, Sep 23, 2019 at 03:33:52PM +0200, Peter Zijlstra wrote:
+> > On Mon, Sep 23, 2019 at 07:49:01AM -0500, Josh Poimboeuf wrote:
+> > > On Mon, Sep 23, 2019 at 11:20:24AM +0200, Peter Zijlstra wrote:
+> > > > On Wed, Sep 18, 2019 at 09:04:21PM -0700, Randy Dunlap wrote:
+> > > > > On 9/18/19 3:10 PM, Mark Brown wrote:
+> > > > > > Hi all,
+> > > > > > 
+> > > > > > Changes since 20190917:
+> > > > > > 
+> > > > > 
+> > > > > on x86_64:
+> > > > > 
+> > > > > drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: i915_gem_execbuffer2_ioctl()+0x2fb: call to gen8_canonical_addr() with UACCESS enabled
+> > > > 
+> > > > I'm thinking that comes from:
+> > > > 
+> > > > 				offset = gen8_canonical_addr(offset & ~UPDATE);
+> > > > 				if (unlikely(__put_user(offset, &urelocs[r-stack].presumed_offset))) {
+> > > > 
+> > > > however, per commit 6ae865615fc4 (and 2a418cf3f5f1) the compiler really
+> > > > should not be sticking gen8_canonical_addr() after __uaccess_begin().
+> > > > 
+> > > > /me puzzled...
+> > > 
+> > > I think you're looking at the wrong code.  It has user_access_begin/end
+> > > around it:
+> > > 
+> > > 		if (!user_access_begin(user_exec_list, count * sizeof(*user_exec_list)))
+> > > 			goto end;
+> > > 
+> > > 		for (i = 0; i < args->buffer_count; i++) {
+> > > 			if (!(exec2_list[i].offset & UPDATE))
+> > > 				continue;
+> > > 
+> > > 			exec2_list[i].offset =
+> > > 				gen8_canonical_addr(exec2_list[i].offset & PIN_OFFSET_MASK);
+> > > 			unsafe_put_user(exec2_list[i].offset,
+> > > 					&user_exec_list[i].offset,
+> > > 					end_user);
+> > > 		}
+> > > end_user:
+> > > 		user_access_end();
+> > > 
+> > 
+> > Oh, Duh... Yeah, so the alternative to your solution is to do 2 loops.
+> > Not sure which would be better.
+> 
+> I like your idea better, makes the fix more localized and shrinks the
+> uaccess window.  Something like so (not even compile tested):
 
-Fixes: 5d6742b37727 ("rcu/nocb: Use rcu_segcblist for no-CBs CPUs")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- kernel/rcu/tree_plugin.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+At which point we should probably also Cc Chris who caused all this
+with commit:
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 2defc7fe74c3..fa08d55f7040 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -1946,7 +1946,7 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
- 	int __maybe_unused cpu = my_rdp->cpu;
- 	unsigned long cur_gp_seq;
- 	unsigned long flags;
--	bool gotcbs;
-+	bool gotcbs = false;
- 	unsigned long j = jiffies;
- 	bool needwait_gp = false; // This prevents actual uninitialized use.
- 	bool needwake;
--- 
-2.20.1
+  2889caa92321 ("drm/i915: Eliminate lots of iterations over the execobjects array")
 
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> index b5f6937369ea..406af374f728 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
+> @@ -2847,6 +2847,11 @@ i915_gem_execbuffer2_ioctl(struct drm_device *dev, void *data,
+>  			u64_to_user_ptr(args->buffers_ptr);
+>  		unsigned int i;
+>  
+> +		for (i = 0; i < args->buffer_count; i++) {
+> +			exec2_list[i].offset =
+> +				gen8_canonical_addr(exec2_list[i].offset & PIN_OFFSET_MASK);
+> +		}
+> +
+>  		/* Copy the new buffer offsets back to the user's exec list. */
+>  		/*
+>  		 * Note: count * sizeof(*user_exec_list) does not overflow,
+> @@ -2862,8 +2867,6 @@ i915_gem_execbuffer2_ioctl(struct drm_device *dev, void *data,
+>  			if (!(exec2_list[i].offset & UPDATE))
+>  				continue;
+>  
+> -			exec2_list[i].offset =
+> -				gen8_canonical_addr(exec2_list[i].offset & PIN_OFFSET_MASK);
+>  			unsafe_put_user(exec2_list[i].offset,
+>  					&user_exec_list[i].offset,
+>  					end_user);
