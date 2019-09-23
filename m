@@ -2,370 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8ADBB873
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C6D0BB87E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 17:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732773AbfIWPuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 11:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728182AbfIWPuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 11:50:05 -0400
-Received: from localhost.localdomain (unknown [194.230.155.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38AB4205F4;
-        Mon, 23 Sep 2019 15:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569253804;
-        bh=FFzbPPyzstoUTQIh5AyphTjoKpbu5dT+XJPhAdHJBEY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WBIhvdLMxJGUloK7m32dwhWXk2Pzythdg85Y3TSxn4AHNwXEWcHxcw+rY7vVpAs+Q
-         4dhoLEiE6ZtMnGhsyFxIqOBxx6+90XwCjhNUtY1//+iHfp7u1ky5Fhe0MJZ5gEjI9k
-         6r7Wug9n5vYaVA7XEoPXnv+IcQKMLQJqAU7x4fjc=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        Jiri Kosina <trivial@kernel.org>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH trivial] usb: Fix Kconfig indentation
-Date:   Mon, 23 Sep 2019 17:49:56 +0200
-Message-Id: <20190923154956.6868-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1732803AbfIWPvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 11:51:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40272 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbfIWPvF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 11:51:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0RDd3iHkouZU1pRFRB48/lD4Y4fOddJfRH7mBxc6Vao=; b=NXlQx8HeAqeDb6yqEaTk/519B
+        dPw5dQx+43R/Xql9eX//W6l/1vbSDqJBsSKbX0+GgxGyR/lMzRBIJJLwaiBlYUPovHMUeZ4WuI2U9
+        pqR/T7IrCuH324g5O+5uhidav3oL5K11yioHiIVa88PxC9Lhl8Af25UBQiNsPQjgWAv5dhal7H8Pm
+        kjjT0b4sbkwdVtooJ5V/S1z3/O080RdL39Z8BxDGhymwdoNXrZ7KMaQqR08JJFpuEuA5JxPauwCNC
+        NwI5i96tju02O7rB8oB1RofYv2QQUL82ESd4By1d+WKKUSotGlAN05bG1WBwAaFYH+M7oRF/I/hUL
+        8rRYpfeYg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCQa9-0006CY-8C; Mon, 23 Sep 2019 15:49:02 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id CEBBA303DFD;
+        Mon, 23 Sep 2019 17:48:07 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0AF5F20D80D41; Mon, 23 Sep 2019 17:48:53 +0200 (CEST)
+Date:   Mon, 23 Sep 2019 17:48:52 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>, catalin.marinas@arm.com,
+        will@kernel.org, mingo@redhat.com, bp@alien8.de, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
+        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
+        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
+        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, len.brown@intel.com,
+        axboe@kernel.dk, dledford@redhat.com, jeffrey.t.kirsher@intel.com,
+        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
+        linux-mips@vger.kernel.org, rafael@kernel.org,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
+Message-ID: <20190923154852.GG2369@hirez.programming.kicks-ass.net>
+References: <1568724534-146242-1-git-send-email-linyunsheng@huawei.com>
+ <20190923151519.GE2369@hirez.programming.kicks-ass.net>
+ <20190923152856.GB17206@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923152856.GB17206@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adjust indentation from spaces to tab (+optional two spaces) as in
-coding style with command like:
-    $ sed -e 's/^        /\t/' -i */Kconfig
+On Mon, Sep 23, 2019 at 05:28:56PM +0200, Michal Hocko wrote:
+> On Mon 23-09-19 17:15:19, Peter Zijlstra wrote:
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/usb/dwc3/Kconfig           |  4 +-
- drivers/usb/gadget/legacy/Kconfig  | 20 ++++-----
- drivers/usb/gadget/udc/Kconfig     |  2 +-
- drivers/usb/host/Kconfig           | 68 +++++++++++++++---------------
- drivers/usb/misc/Kconfig           |  8 ++--
- drivers/usb/misc/sisusbvga/Kconfig |  2 +-
- drivers/usb/serial/Kconfig         | 44 +++++++++----------
- 7 files changed, 74 insertions(+), 74 deletions(-)
+> > > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> > > index 4123100e..9859acb 100644
+> > > --- a/arch/x86/mm/numa.c
+> > > +++ b/arch/x86/mm/numa.c
+> > > @@ -861,6 +861,9 @@ void numa_remove_cpu(int cpu)
+> > >   */
+> > >  const struct cpumask *cpumask_of_node(int node)
+> > >  {
+> > > +	if (node == NUMA_NO_NODE)
+> > > +		return cpu_online_mask;
+> > 
+> > This mandates the caller holds cpus_read_lock() or something, I'm pretty
+> > sure that if I put:
+> > 
+> > 	lockdep_assert_cpus_held();
+> 
+> Is this documented somewhere?
 
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 89abc6078703..cc431376fcd0 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -103,7 +103,7 @@ config USB_DWC3_MESON_G12A
-        default USB_DWC3
-        select USB_ROLE_SWITCH
-        help
--         Support USB2/3 functionality in Amlogic G12A platforms.
-+	 Support USB2/3 functionality in Amlogic G12A platforms.
- 	 Say 'Y' or 'M' if you have one such device.
- 
- config USB_DWC3_OF_SIMPLE
-@@ -111,7 +111,7 @@ config USB_DWC3_OF_SIMPLE
-        depends on OF && COMMON_CLK
-        default USB_DWC3
-        help
--         Support USB2/3 functionality in simple SoC integrations.
-+	 Support USB2/3 functionality in simple SoC integrations.
- 	 Currently supports Xilinx and Qualcomm DWC USB3 IP.
- 	 Say 'Y' or 'M' if you have one such device.
- 
-diff --git a/drivers/usb/gadget/legacy/Kconfig b/drivers/usb/gadget/legacy/Kconfig
-index 69ff7f8c86f5..38eaa9417b38 100644
---- a/drivers/usb/gadget/legacy/Kconfig
-+++ b/drivers/usb/gadget/legacy/Kconfig
-@@ -154,16 +154,16 @@ config USB_ETH_EEM
- 	select USB_LIBCOMPOSITE
- 	select USB_F_EEM
-        help
--         CDC EEM is a newer USB standard that is somewhat simpler than CDC ECM
--         and therefore can be supported by more hardware.  Technically ECM and
--         EEM are designed for different applications.  The ECM model extends
--         the network interface to the target (e.g. a USB cable modem), and the
--         EEM model is for mobile devices to communicate with hosts using
--         ethernet over USB.  For Linux gadgets, however, the interface with
--         the host is the same (a usbX device), so the differences are minimal.
--
--         If you say "y" here, the Ethernet gadget driver will use the EEM
--         protocol rather than ECM.  If unsure, say "n".
-+	 CDC EEM is a newer USB standard that is somewhat simpler than CDC ECM
-+	 and therefore can be supported by more hardware.  Technically ECM and
-+	 EEM are designed for different applications.  The ECM model extends
-+	 the network interface to the target (e.g. a USB cable modem), and the
-+	 EEM model is for mobile devices to communicate with hosts using
-+	 ethernet over USB.  For Linux gadgets, however, the interface with
-+	 the host is the same (a usbX device), so the differences are minimal.
-+
-+	 If you say "y" here, the Ethernet gadget driver will use the EEM
-+	 protocol rather than ECM.  If unsure, say "n".
- 
- config USB_G_NCM
- 	tristate "Network Control Model (NCM) support"
-diff --git a/drivers/usb/gadget/udc/Kconfig b/drivers/usb/gadget/udc/Kconfig
-index d7e611645533..485c92ef888a 100644
---- a/drivers/usb/gadget/udc/Kconfig
-+++ b/drivers/usb/gadget/udc/Kconfig
-@@ -123,7 +123,7 @@ config USB_GR_UDC
-        tristate "Aeroflex Gaisler GRUSBDC USB Peripheral Controller Driver"
-        depends on HAS_DMA
-        help
--          Select this to support Aeroflex Gaisler GRUSBDC cores from the GRLIB
-+	  Select this to support Aeroflex Gaisler GRUSBDC cores from the GRLIB
- 	  VHDL IP core library.
- 
- config USB_OMAP
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 79b2e79dddd0..d6164ede63d3 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -220,12 +220,12 @@ config USB_EHCI_HCD_ORION
- 	  Marvell PXA/MMP USB controller" for those.
- 
- config USB_EHCI_HCD_SPEAR
--        tristate "Support for ST SPEAr on-chip EHCI USB controller"
--        depends on USB_EHCI_HCD && PLAT_SPEAR
--        default y
--        ---help---
--          Enables support for the on-chip EHCI controller on
--          ST SPEAr chips.
-+	tristate "Support for ST SPEAr on-chip EHCI USB controller"
-+	depends on USB_EHCI_HCD && PLAT_SPEAR
-+	default y
-+	---help---
-+	  Enables support for the on-chip EHCI controller on
-+	  ST SPEAr chips.
- 
- config USB_EHCI_HCD_STI
- 	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
-@@ -237,12 +237,12 @@ config USB_EHCI_HCD_STI
- 	  STMicroelectronics consumer electronics SoC's.
- 
- config USB_EHCI_HCD_AT91
--        tristate  "Support for Atmel on-chip EHCI USB controller"
--        depends on USB_EHCI_HCD && ARCH_AT91
--        default y
--        ---help---
--          Enables support for the on-chip EHCI controller on
--          Atmel chips.
-+	tristate  "Support for Atmel on-chip EHCI USB controller"
-+	depends on USB_EHCI_HCD && ARCH_AT91
-+	default y
-+	---help---
-+	  Enables support for the on-chip EHCI controller on
-+	  Atmel chips.
- 
- config USB_EHCI_TEGRA
-        tristate "NVIDIA Tegra HCD support"
-@@ -250,8 +250,8 @@ config USB_EHCI_TEGRA
-        select USB_EHCI_ROOT_HUB_TT
-        select USB_TEGRA_PHY
-        help
--         This driver enables support for the internal USB Host Controllers
--         found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
-+	 This driver enables support for the internal USB Host Controllers
-+	 found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
- 
- config USB_EHCI_HCD_PPC_OF
- 	bool "EHCI support for PPC USB controller on OF platform bus"
-@@ -409,12 +409,12 @@ config USB_OHCI_HCD_OMAP1
- 	  Enables support for the OHCI controller on OMAP1/2 chips.
- 
- config USB_OHCI_HCD_SPEAR
--        tristate "Support for ST SPEAr on-chip OHCI USB controller"
--        depends on USB_OHCI_HCD && PLAT_SPEAR
--        default y
--        ---help---
--          Enables support for the on-chip OHCI controller on
--          ST SPEAr chips.
-+	tristate "Support for ST SPEAr on-chip OHCI USB controller"
-+	depends on USB_OHCI_HCD && PLAT_SPEAR
-+	default y
-+	---help---
-+	  Enables support for the on-chip OHCI controller on
-+	  ST SPEAr chips.
- 
- config USB_OHCI_HCD_STI
- 	tristate "Support for ST STiHxxx on-chip OHCI USB controller"
-@@ -426,12 +426,12 @@ config USB_OHCI_HCD_STI
- 	  STMicroelectronics consumer electronics SoC's.
- 
- config USB_OHCI_HCD_S3C2410
--        tristate "OHCI support for Samsung S3C24xx/S3C64xx SoC series"
--        depends on USB_OHCI_HCD && (ARCH_S3C24XX || ARCH_S3C64XX)
--        default y
--        ---help---
--          Enables support for the on-chip OHCI controller on
--          S3C24xx/S3C64xx chips.
-+	tristate "OHCI support for Samsung S3C24xx/S3C64xx SoC series"
-+	depends on USB_OHCI_HCD && (ARCH_S3C24XX || ARCH_S3C64XX)
-+	default y
-+	---help---
-+	  Enables support for the on-chip OHCI controller on
-+	  S3C24xx/S3C64xx chips.
- 
- config USB_OHCI_HCD_LPC32XX
- 	tristate "Support for LPC on-chip OHCI USB controller"
-@@ -440,8 +440,8 @@ config USB_OHCI_HCD_LPC32XX
- 	depends on USB_ISP1301
- 	default y
- 	---help---
--          Enables support for the on-chip OHCI controller on
--          NXP chips.
-+	  Enables support for the on-chip OHCI controller on
-+	  NXP chips.
- 
- config USB_OHCI_HCD_PXA27X
- 	tristate "Support for PXA27X/PXA3XX on-chip OHCI USB controller"
-@@ -456,8 +456,8 @@ config USB_OHCI_HCD_AT91
- 	depends on USB_OHCI_HCD && ARCH_AT91 && OF
- 	default y
- 	---help---
--          Enables support for the on-chip OHCI controller on
--          Atmel chips.
-+	  Enables support for the on-chip OHCI controller on
-+	  Atmel chips.
- 
- config USB_OHCI_HCD_OMAP3
- 	tristate "OHCI support for OMAP3 and later chips"
-@@ -716,11 +716,11 @@ config USB_IMX21_HCD
-        tristate "i.MX21 HCD support"
-        depends on ARM && ARCH_MXC
-        help
--         This driver enables support for the on-chip USB host in the
--         i.MX21 processor.
-+	 This driver enables support for the on-chip USB host in the
-+	 i.MX21 processor.
- 
--         To compile this driver as a module, choose M here: the
--         module will be called "imx21-hcd".
-+	 To compile this driver as a module, choose M here: the
-+	 module will be called "imx21-hcd".
- 
- config USB_HCD_BCMA
- 	tristate "BCMA usb host driver"
-diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-index bdae62b2ffe0..664d27bb6086 100644
---- a/drivers/usb/misc/Kconfig
-+++ b/drivers/usb/misc/Kconfig
-@@ -191,8 +191,8 @@ config USB_TEST
- 	  including sample test device firmware and "how to use it".
- 
- config USB_EHSET_TEST_FIXTURE
--        tristate "USB EHSET Test Fixture driver"
--        help
-+	tristate "USB EHSET Test Fixture driver"
-+	help
- 	  Say Y here if you want to support the special test fixture device
- 	  used for the USB-IF Embedded Host High-Speed Electrical Test procedure.
- 
-@@ -247,13 +247,13 @@ config USB_HSIC_USB3503
-        depends on I2C
-        select REGMAP_I2C
-        help
--         This option enables support for SMSC USB3503 HSIC to USB 2.0 Driver.
-+	 This option enables support for SMSC USB3503 HSIC to USB 2.0 Driver.
- 
- config USB_HSIC_USB4604
-        tristate "USB4604 HSIC to USB20 Driver"
-        depends on I2C
-        help
--         This option enables support for SMSC USB4604 HSIC to USB 2.0 Driver.
-+	 This option enables support for SMSC USB4604 HSIC to USB 2.0 Driver.
- 
- config USB_LINK_LAYER_TEST
- 	tristate "USB Link Layer Test driver"
-diff --git a/drivers/usb/misc/sisusbvga/Kconfig b/drivers/usb/misc/sisusbvga/Kconfig
-index 9b632ab24f03..c16121276a21 100644
---- a/drivers/usb/misc/sisusbvga/Kconfig
-+++ b/drivers/usb/misc/sisusbvga/Kconfig
-@@ -4,7 +4,7 @@ config USB_SISUSBVGA
- 	tristate "USB 2.0 SVGA dongle support (Net2280/SiS315)"
- 	depends on (USB_MUSB_HDRC || USB_EHCI_HCD)
- 	select FONT_SUPPORT if USB_SISUSBVGA_CON
--        ---help---
-+	---help---
- 	  Say Y here if you intend to attach a USB2VGA dongle based on a
- 	  Net2280 and a SiS315 chip.
- 
-diff --git a/drivers/usb/serial/Kconfig b/drivers/usb/serial/Kconfig
-index 67279c6bce33..0a8c16a8cda2 100644
---- a/drivers/usb/serial/Kconfig
-+++ b/drivers/usb/serial/Kconfig
-@@ -271,17 +271,17 @@ config USB_SERIAL_F8153X
- config USB_SERIAL_GARMIN
-        tristate "USB Garmin GPS driver"
-        help
--         Say Y here if you want to connect to your Garmin GPS.
--         Should work with most Garmin GPS devices which have a native USB port.
-+	 Say Y here if you want to connect to your Garmin GPS.
-+	 Should work with most Garmin GPS devices which have a native USB port.
- 
--         See <http://sourceforge.net/projects/garmin-gps> for the latest
--         version of the driver.
-+	 See <http://sourceforge.net/projects/garmin-gps> for the latest
-+	 version of the driver.
- 
--         To compile this driver as a module, choose M here: the
--         module will be called garmin_gps.
-+	 To compile this driver as a module, choose M here: the
-+	 module will be called garmin_gps.
- 
- config USB_SERIAL_IPW
--        tristate "USB IPWireless (3G UMTS TDD) Driver"
-+	tristate "USB IPWireless (3G UMTS TDD) Driver"
- 	select USB_SERIAL_WWAN
- 	help
- 	  Say Y here if you want to use a IPWireless USB modem such as
-@@ -341,20 +341,20 @@ config USB_SERIAL_KLSI
- 	  module will be called kl5kusb105.
- 
- config USB_SERIAL_KOBIL_SCT
--        tristate "USB KOBIL chipcard reader"
--        ---help---
--          Say Y here if you want to use one of the following KOBIL USB chipcard
--          readers:
--
--            - USB TWIN
--            - KAAN Standard Plus
--            - KAAN SIM
--            - SecOVID Reader Plus
--            - B1 Professional
--            - KAAN Professional
--
--          Note that you need a current CT-API.
--          To compile this driver as a module, choose M here: the
-+	tristate "USB KOBIL chipcard reader"
-+	---help---
-+	  Say Y here if you want to use one of the following KOBIL USB chipcard
-+	  readers:
-+
-+	    - USB TWIN
-+	    - KAAN Standard Plus
-+	    - KAAN SIM
-+	    - SecOVID Reader Plus
-+	    - B1 Professional
-+	    - KAAN Professional
-+
-+	  Note that you need a current CT-API.
-+	  To compile this driver as a module, choose M here: the
- 	  module will be called kobil_sct.
- 
- config USB_SERIAL_MCT_U232
-@@ -458,7 +458,7 @@ config USB_SERIAL_OTI6858
- 	tristate "USB Ours Technology Inc. OTi-6858 USB To RS232 Bridge Controller"
- 	help
- 	  Say Y here if you want to use the OTi-6858 single port USB to serial
--          converter device.
-+	  converter device.
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called oti6858.
--- 
-2.17.1
+No idea... common sense :-)
+
+> Also how does that differ from a normal
+> case when a proper node is used? The cpumask will always be dynamic in
+> the cpu hotplug presence, right?
+
+As per normal yes, and I'm fairly sure there's a ton of bugs. Any
+'online' state is subject to change except when you're holding
+sufficient locks to stop it.
+
+Disabling preemption also stabilizes it, because cpu unplug relies on
+stop-machine.
+
+> > here, it comes apart real quick. Without holding the cpu hotplug lock,
+> > the online mask is gibberish.
+> 
+> Can the returned cpu mask go away?
+
+No, the cpu_online_mask itself has static storage, the contents OTOH can
+change at will. Very little practical difference :-)
+
 
