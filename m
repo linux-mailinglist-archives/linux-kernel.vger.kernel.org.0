@@ -2,83 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98984BBA18
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 19:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFDD8BBA22
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 19:04:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502165AbfIWRBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 13:01:11 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44203 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388187AbfIWRBK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 13:01:10 -0400
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1iCRhw-0003at-P2; Mon, 23 Sep 2019 19:01:04 +0200
-Message-ID: <45ad0ec1bfd5af4f46efd7d24c627822ac17fdbf.camel@pengutronix.de>
-Subject: Re: [PATCH 5/5] arm64: dts: imx8mq: add DCSS node
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Fabio Estevam <festevam@gmail.com>,
-        Laurentiu Palcu <laurentiu.palcu@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Mon, 23 Sep 2019 19:00:58 +0200
-In-Reply-To: <CAOMZO5AOVfBpz2Azh65iT_W3CBZUxf9KnqA=kdow7XWd4j--Qg@mail.gmail.com>
-References: <1569248002-2485-1-git-send-email-laurentiu.palcu@nxp.com>
-         <1569248002-2485-6-git-send-email-laurentiu.palcu@nxp.com>
-         <CAOMZO5AOVfBpz2Azh65iT_W3CBZUxf9KnqA=kdow7XWd4j--Qg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S2439938AbfIWREk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 13:04:40 -0400
+Received: from foss.arm.com ([217.140.110.172]:45666 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732522AbfIWREk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 13:04:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2EBAE1000;
+        Mon, 23 Sep 2019 10:04:39 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E0523F67D;
+        Mon, 23 Sep 2019 10:04:36 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 18:04:34 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Jia He <justin.he@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Punit Agrawal <punitagrawal@gmail.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Alex Van Brunt <avanbrunt@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>, hejianet@gmail.com,
+        Kaly Xin <Kaly.Xin@arm.com>, nd@arm.com
+Subject: Re: [PATCH v8 3/3] mm: fix double page fault on arm64 if PTE_AF is
+ cleared
+Message-ID: <20190923170433.GE10192@arrakis.emea.arm.com>
+References: <20190921135054.142360-1-justin.he@arm.com>
+ <20190921135054.142360-4-justin.he@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190921135054.142360-4-justin.he@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, den 23.09.2019, 13:12 -0300 schrieb Fabio Estevam:
-> Hi Laurentiu,
-> 
-> On Mon, Sep 23, 2019 at 11:14 AM Laurentiu Palcu
-> <laurentiu.palcu@nxp.com> wrote:
-> 
-> > +
-> > +                       dcss: dcss@0x32e00000 {
-> 
-> Node names should be generic, so:
-> 
-> dcss: display-controller@32e00000
-> 
-> > +                               #address-cells = <1>;
-> > +                               #size-cells = <0>;
-> > +                               compatible = "nxp,imx8mq-dcss";
-> > +                               reg = <0x32e00000 0x2D000>,
-> > <0x32e2f000 0x1000>;
-> 
-> 0x2d000 for consistency.
-> 
-> > +                               interrupts = <6>, <8>, <9>;
-> 
-> The interrupts are passed in the <GIC_SPI xxx IRQ_TYPE_LEVEL_HIGH>
-> format.
+On Sat, Sep 21, 2019 at 09:50:54PM +0800, Jia He wrote:
+> @@ -2151,21 +2163,53 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
+>  	 * fails, we just zero-fill it. Live with it.
+>  	 */
+>  	if (unlikely(!src)) {
+> -		void *kaddr = kmap_atomic(dst);
+> -		void __user *uaddr = (void __user *)(va & PAGE_MASK);
+> +		void *kaddr;
+> +		pte_t entry;
+> +		void __user *uaddr = (void __user *)(addr & PAGE_MASK);
+>  
+> +		/* On architectures with software "accessed" bits, we would
+> +		 * take a double page fault, so mark it accessed here.
+> +		 */
 
-No, they are not. Those are imx-irqsteer IRQs, this controller has 0
-irq cells, so the description in this patch is correct.
+Nitpick: please follow the kernel coding style for multi-line comments
+(above and the for the rest of the patch):
 
-Regards,
-Lucas
+		/*
+		 * Your multi-line comment.
+		 */
 
+> +		if (arch_faults_on_old_pte() && !pte_young(vmf->orig_pte)) {
+> +			vmf->pte = pte_offset_map_lock(mm, vmf->pmd, addr,
+> +						       &vmf->ptl);
+> +			if (likely(pte_same(*vmf->pte, vmf->orig_pte))) {
+> +				entry = pte_mkyoung(vmf->orig_pte);
+> +				if (ptep_set_access_flags(vma, addr,
+> +							  vmf->pte, entry, 0))
+> +					update_mmu_cache(vma, addr, vmf->pte);
+> +			} else {
+> +				/* Other thread has already handled the fault
+> +				 * and we don't need to do anything. If it's
+> +				 * not the case, the fault will be triggered
+> +				 * again on the same address.
+> +				 */
+> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+> +				return false;
+> +			}
+> +			pte_unmap_unlock(vmf->pte, vmf->ptl);
+> +		}
+
+Another nit, you could rewrite this block slightly to avoid too much
+indentation. Something like (untested):
+
+		if (arch_faults_on_old_pte() && !pte_young(vmf->orig_pte)) {
+			vmf->pte = pte_offset_map_lock(mm, vmf->pmd, addr,
+						       &vmf->ptl);
+			if (unlikely(!pte_same(*vmf->pte, vmf->orig_pte))) {
+				/*
+				 * Other thread has already handled the fault
+				 * and we don't need to do anything. If it's
+				 * not the case, the fault will be triggered
+				 * again on the same address.
+				 */
+				pte_unmap_unlock(vmf->pte, vmf->ptl);
+				return false;
+			}
+			entry = pte_mkyoung(vmf->orig_pte);
+			if (ptep_set_access_flags(vma, addr,
+						  vmf->pte, entry, 0))
+				update_mmu_cache(vma, addr, vmf->pte);
+			pte_unmap_unlock(vmf->pte, vmf->ptl);
+		}
+
+> +
+> +		kaddr = kmap_atomic(dst);
+
+Since you moved the kmap_atomic() here, could the above
+arch_faults_on_old_pte() run in a preemptible context? I suggested to
+add a WARN_ON in patch 2 to be sure.
+
+>  		/*
+>  		 * This really shouldn't fail, because the page is there
+>  		 * in the page tables. But it might just be unreadable,
+>  		 * in which case we just give up and fill the result with
+>  		 * zeroes.
+>  		 */
+> -		if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
+> +		if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE)) {
+> +			/* Give a warn in case there can be some obscure
+> +			 * use-case
+> +			 */
+> +			WARN_ON_ONCE(1);
+
+That's more of a question for the mm guys: at this point we do the
+copying with the ptl released; is there anything else that could have
+made the pte old in the meantime? I think unuse_pte() is only called on
+anonymous vmas, so it shouldn't be the case here.
+
+>  			clear_page(kaddr);
+> +		}
+>  		kunmap_atomic(kaddr);
+>  		flush_dcache_page(dst);
+>  	} else
+> -		copy_user_highpage(dst, src, va, vma);
+> +		copy_user_highpage(dst, src, addr, vma);
+> +
+> +	return true;
+>  }
+
+-- 
+Catalin
