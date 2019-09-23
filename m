@@ -2,82 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F0BBBAF4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A832BAF58
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 10:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406837AbfIWIZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 04:25:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53086 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406076AbfIWIZM (ORCPT
+        id S2406928AbfIWI0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 04:26:38 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8051 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406738AbfIWI0i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 04:25:12 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4088660850; Mon, 23 Sep 2019 08:25:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1569227111;
-        bh=WOFRHwq7H+xLOuFoB5NSwTtl8vKLqopZli8GexNDdAg=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=jefdjzggo1SuHyUOqv5y/m6CCjHi7L9q3YXcxvsEl3p3zAp/ib+Q5Y6uwHvoBmPdE
-         sCqnlzlKavjH6mwyEvtT0J/Ne9BKDx4wIl7l3PZr15x40POFM5tbR445QkWH8+LMpA
-         cKUQHN1C3FAZL/GnM3NASSzuic5SuAny6ja1fTQU=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
-        autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8D73C60850;
-        Mon, 23 Sep 2019 08:25:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1569227110;
-        bh=WOFRHwq7H+xLOuFoB5NSwTtl8vKLqopZli8GexNDdAg=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=ZEUFMhZTZofECZ+NjFNcRCX33MNFX7u+h5sr5xTlGF7oCdrSlgjW7hssDpm0GNXbh
-         WHhbH4Hw7IfDjt0r6012c3MR9Na8Y+ChLA6bOq7sIRhp81jySN2lFaE810OWN4vJ/7
-         ndayYPXUE6zXfrCEiEF6iwKibTicvoWZDP6bum+s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D73C60850
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Mon, 23 Sep 2019 04:26:38 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d8881c20000>; Mon, 23 Sep 2019 01:26:42 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 23 Sep 2019 01:26:36 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 23 Sep 2019 01:26:36 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Sep
+ 2019 08:26:35 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 23 Sep 2019 08:26:35 +0000
+Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.65.118]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d8881b80002>; Mon, 23 Sep 2019 01:26:35 -0700
+From:   Nagarjuna Kristam <nkristam@nvidia.com>
+To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [Patch V10 0/8] Tegra XUSB gadget driver support
+Date:   Mon, 23 Sep 2019 13:55:44 +0530
+Message-ID: <1569227152-3030-1-git-send-email-nkristam@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] ath: fix various spelling mistakes
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190702123904.8786-1-colin.king@canonical.com>
-References: <20190702123904.8786-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Maya Erez <merez@codeaurora.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        wil6210@qti.qualcomm.com, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190923082511.4088660850@smtp.codeaurora.org>
-Date:   Mon, 23 Sep 2019 08:25:11 +0000 (UTC)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1569227202; bh=TQWUu3EvPEvMja19g0StMEbdSblEghIIYzuVtM1CCvs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=gioQp35VTOkU8bF//Qv3L08/FaOc5Gf/sQYVTCKUmTwQ0qNq8Kz78LYxDqTasNjx1
+         h1TY2ztYb9IWh/Y4pE4Za6kSuMn3UCDqvZkTbqZ4v5MUlVxqEQsO/OZa9OvkwQBZ7C
+         FSlyFHQURQ7y3IAM3f8wrYmpfLdFNtTwX/v3Is7yQqEm743+gd/DugHa//r5hz1qWF
+         sYa5ohz9CYNc2OuAjZJx4h2EzW5BZjs+B9g8I2QgYdk1oYc7XMMMoHXCbVzOUowRTO
+         xdVXDIzcx7LoZOzxAthyv79dhUl2k/hmzJDUuAeA19gUIWhCx7ZLSOG4OyzSEJss+Y
+         PXDPVBTHQFl8A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Patches 1-3 are phy driver changes to add support for device
+mode.
+Patches 4-7 are changes related to XUSB device mode
+controller driver.
+Patch 8 is to enable drivers for XUDC support in defconfig
 
-> There are a bunch of spelling mistakes in two ath drivers, fix
-> these.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Test Steps(USB 2.0):
+- Enable "USB Gadget precomposed configurations" in defconfig
+- Build, flash and boot Jetson TX1
+- Connect Jetson TX1 and Ubuntu device using USB A to Micro B
+  cable
+- After boot on Jetson TX1 terminal usb0 network device should be
+  enumerated
+- Assign static ip to usb0 on Jetson TX1 and corresponding net
+  device on ubuntu
+- Run ping test and transfer test(used scp) to check data transfer
+  communication
 
-Patch applied to ath-next branch of ath.git, thanks.
+SS mode is verified by enabling Type A port as peripheral
+---
+v10:
+* Patches 1,2,4,5,7,8 - No changes.
+* Patch 3 has braces added to one single line else condition.
+* Patch 6 has update on compatible string as per suggestion from Chunfeng.
+---
+v9:
+* Patches 1,2,3,4,5 - No changes.
+* Patch 6 has update on compatible string as per suggestion from Chunfeng.
+* Patch 7 has comment fixes as suggested by Chunfeng.
+* Patch 8 has CONFIG_USB_GPIO enabled as module additionally.
+---
+v8:
+* Patches 1,2,3,4,5,8 - No changes.
+* Patch 6 has update on compatible string as per change done in [1].
+* Patch 7 has issue fix, where device mode didnot got enabled after resume
+  from suspend.
+---
+v7:
+* Patches 1,2,3,4,5,6,8 - No changes.
+* Patch 7 - Comments from Balbi and Chunfun adrresed.
+  Added COMPILE_TEST in Kconfig and updated dependencies.
+---
+v6:
+* Patches 1,2,3,7,8 - No changes.
+* Patch 4,5,6 - Comments from Rob addressed, updated usb connector driver
+  compatibility string.
+---
+v5:
+* Patches 1-3 - Commit subject updated as per inputs from Thierry.
+* Patch 4 - Added reg-names used on Tegra210 in the bindings doc
+* Enabled xudc driver as module instead of part of kernel in patch 8.
+* Patched 5-8 - No changes.
+---
+v4:
+* patch 1 - no changes.
+* corrected companion device search based on inputs from Thierry in patch 2.
+* removed unneeded dev variable and corrected value read in
+  tegra210_utmi_port_reset function in patch 3.
+* dt binding doc and dtb files are corrected for alignments.
+  Replaced extcon-usb-gpio with usb role switch.
+* Added support for USB role switch instead of extcon-usb-gpio and other minor
+  comments as suggested by Chunfeng.
+* Enabled xudc driver as module instead of part of kernel in patch 8.
+---
+V3:
+* Rebased patch 1 to top of tree.
+* Fixed bug in patch 2, where xudc interrupts dont get generated if USB host
+  mode fails to probe. Moved fake port detection logic to generic xusb.c. fake
+  usb port data is updated based on soc flag need_fake_usb3_port.
+* Added extra lines whereever necessary to make code more readable in patch 3
+  and 7.
+* dt binding doc is corrected for typos and extcon references. Also added
+  details for clocks and removed xusb_ references to clock and power-domain
+  names and accordingly patch 5 is updated.
+* removed avdd-pll-utmip-supply in patch 6, as its now part of padctl driver.
+* Patch 8 has no changes.
+---
+V2:
+* Patches 1-3 are new patches in this series, which splits unified features
+  patch to speprated features and removes need of port-fake entry in DT.
+* Patch 4 is re-arragend dt-bindings patch which incorporates previous
+  patch comments to sort DT entries alphabetically, addresses name changes
+  and PM domain details added.
+* Patch 5-6 are re-arranged DT patches with major changes - sort entries
+  alphabetically, and adds clock names.
+* Patch 7 is UDC driver tegra XUSB device mode controller with major
+  changes - remove un-used module params, lockinng for device_mode flag,
+  moving un-needed info logs to debug level, making changes feature flag
+  dependent rather than SOC based macros and other error handling in probe.
+* Patch 8 has no changes.
 
-80ce8ca7a647 ath: fix various spelling mistakes
+Nagarjuna Kristam (8):
+  phy: tegra: xusb: Add XUSB dual mode support on Tegra210
+  phy: tegra: xusb: Add usb3 port fake support on Tegra210
+  phy: tegra: xusb: Add vbus override support on Tegra210
+  dt-bindings: usb: Add NVIDIA Tegra XUSB device mode controller binding
+  arm64: tegra: Add xudc node for Tegra210
+  arm64: tegra: Enable xudc on Jetson TX1
+  usb: gadget: Add UDC driver for tegra XUSB device mode controller
+  arm64: defconfig: Enable tegra XUDC support
+
+ .../devicetree/bindings/usb/nvidia,tegra-xudc.txt  |  110 +
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   31 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   19 +
+ arch/arm64/configs/defconfig                       |    2 +
+ drivers/phy/tegra/xusb-tegra210.c                  |  134 +-
+ drivers/phy/tegra/xusb.c                           |   87 +
+ drivers/phy/tegra/xusb.h                           |    4 +
+ drivers/usb/gadget/udc/Kconfig                     |   11 +
+ drivers/usb/gadget/udc/Makefile                    |    1 +
+ drivers/usb/gadget/udc/tegra-xudc.c                | 3787 ++++++++++++++++++++
+ include/linux/phy/tegra/xusb.h                     |    4 +-
+ 11 files changed, 4186 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra-xudc.txt
+ create mode 100644 drivers/usb/gadget/udc/tegra-xudc.c
 
 -- 
-https://patchwork.kernel.org/patch/11027799/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.7.4
 
