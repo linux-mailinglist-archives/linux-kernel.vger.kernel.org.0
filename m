@@ -2,88 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 022F5BB430
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:49:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4D4BB435
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501962AbfIWMtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:49:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730461AbfIWMtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:49:06 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D10683091755;
-        Mon, 23 Sep 2019 12:49:05 +0000 (UTC)
-Received: from treble (ovpn-123-153.rdu2.redhat.com [10.10.123.153])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8CED75D717;
-        Mon, 23 Sep 2019 12:49:04 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 07:49:01 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Sep 18 (objtool)
-Message-ID: <20190923124901.3ayejcis5ijrsvbx@treble>
-References: <20190918221053.GV2596@sirena.co.uk>
- <be0fb087-5fb4-a790-90dd-cc2af62419e7@infradead.org>
- <20190923092024.GI2349@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190923092024.GI2349@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 23 Sep 2019 12:49:05 +0000 (UTC)
+        id S2501988AbfIWMtf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:49:35 -0400
+Received: from regular1.263xmail.com ([211.150.70.198]:34992 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728239AbfIWMtf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 08:49:35 -0400
+Received: from hjc?rock-chips.com (unknown [192.168.167.175])
+        by regular1.263xmail.com (Postfix) with ESMTP id 78A7F1EB;
+        Mon, 23 Sep 2019 20:49:31 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P28975T139999806740224S1569242970112868_;
+        Mon, 23 Sep 2019 20:49:31 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <81cc42a836c8ab33cf18b9b9ce045c3e>
+X-RL-SENDER: hjc@rock-chips.com
+X-SENDER: hjc@rock-chips.com
+X-LOGIN-NAME: hjc@rock-chips.com
+X-FST-TO: dri-devel@lists.freedesktop.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Sandy Huang <hjc@rock-chips.com>
+To:     dri-devel@lists.freedesktop.org, Jyri Sarha <jsarha@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     hjc@rock-chips.com, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 16/36] drm/tilcdc: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:49:08 +0800
+Message-Id: <1569242968-183093-1-git-send-email-hjc@rock-chips.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 11:20:24AM +0200, Peter Zijlstra wrote:
-> On Wed, Sep 18, 2019 at 09:04:21PM -0700, Randy Dunlap wrote:
-> > On 9/18/19 3:10 PM, Mark Brown wrote:
-> > > Hi all,
-> > > 
-> > > Changes since 20190917:
-> > > 
-> > 
-> > on x86_64:
-> > 
-> > drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: i915_gem_execbuffer2_ioctl()+0x2fb: call to gen8_canonical_addr() with UACCESS enabled
-> 
-> I'm thinking that comes from:
-> 
-> 				offset = gen8_canonical_addr(offset & ~UPDATE);
-> 				if (unlikely(__put_user(offset, &urelocs[r-stack].presumed_offset))) {
-> 
-> however, per commit 6ae865615fc4 (and 2a418cf3f5f1) the compiler really
-> should not be sticking gen8_canonical_addr() after __uaccess_begin().
-> 
-> /me puzzled...
+cpp[BytePerPlane] can't describe the 10bit data format correctly,
+So we use bpp[BitPerPlane] to instead cpp.
 
-I think you're looking at the wrong code.  It has user_access_begin/end
-around it:
+Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+---
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c  | 2 +-
+ drivers/gpu/drm/tilcdc/tilcdc_plane.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-		if (!user_access_begin(user_exec_list, count * sizeof(*user_exec_list)))
-			goto end;
-
-		for (i = 0; i < args->buffer_count; i++) {
-			if (!(exec2_list[i].offset & UPDATE))
-				continue;
-
-			exec2_list[i].offset =
-				gen8_canonical_addr(exec2_list[i].offset & PIN_OFFSET_MASK);
-			unsafe_put_user(exec2_list[i].offset,
-					&user_exec_list[i].offset,
-					end_user);
-		}
-end_user:
-		user_access_end();
-
-
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+index e9dd5e5..78c587d 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_crtc.c
+@@ -71,7 +71,7 @@ static void set_scanout(struct drm_crtc *crtc, struct drm_framebuffer *fb)
+ 
+ 	start = gem->paddr + fb->offsets[0] +
+ 		crtc->y * fb->pitches[0] +
+-		crtc->x * fb->format->cpp[0];
++		crtc->x * fb->format->bpp[0] / 8;
+ 
+ 	end = start + (crtc->mode.vdisplay * fb->pitches[0]);
+ 
+diff --git a/drivers/gpu/drm/tilcdc/tilcdc_plane.c b/drivers/gpu/drm/tilcdc/tilcdc_plane.c
+index 3abb964..fca7375 100644
+--- a/drivers/gpu/drm/tilcdc/tilcdc_plane.c
++++ b/drivers/gpu/drm/tilcdc/tilcdc_plane.c
+@@ -55,7 +55,7 @@ static int tilcdc_plane_atomic_check(struct drm_plane *plane,
+ 	}
+ 
+ 	pitch = crtc_state->mode.hdisplay *
+-		state->fb->format->cpp[0];
++		state->fb->format->bpp[0] / 8;
+ 	if (state->fb->pitches[0] != pitch) {
+ 		dev_err(plane->dev->dev,
+ 			"Invalid pitch: fb and crtc widths must be the same");
 -- 
-Josh
+2.7.4
+
+
+
