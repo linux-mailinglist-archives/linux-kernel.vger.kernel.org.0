@@ -2,79 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2209FBB2C7
+	by mail.lfdr.de (Postfix) with ESMTP id 94258BB2C8
 	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 13:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393851AbfIWL0s convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 23 Sep 2019 07:26:48 -0400
-Received: from mailout.enyo.de ([116.203.30.208]:38369 "EHLO mailout.enyo.de"
+        id S2393819AbfIWL0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 07:26:48 -0400
+Received: from foss.arm.com ([217.140.110.172]:40734 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393655AbfIWL0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387657AbfIWL0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Sep 2019 07:26:47 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1iCMUF-0008D5-19; Mon, 23 Sep 2019 11:26:35 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1iCMUE-0001j8-TI; Mon, 23 Sep 2019 13:26:34 +0200
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Daniel Colascione <dancol@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: For review: pidfd_send_signal(2) manual page
-References: <f21dbd73-5ef4-fb5b-003f-ff4fec34a1de@gmail.com>
-Date:   Mon, 23 Sep 2019 13:26:34 +0200
-In-Reply-To: <f21dbd73-5ef4-fb5b-003f-ff4fec34a1de@gmail.com> (Michael
-        Kerrisk's message of "Mon, 23 Sep 2019 11:12:00 +0200")
-Message-ID: <87pnjr9rth.fsf@mid.deneb.enyo.de>
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E29C2142F;
+        Mon, 23 Sep 2019 04:26:46 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8451E3F694;
+        Mon, 23 Sep 2019 04:26:45 -0700 (PDT)
+Subject: Re: sched: make struct task_struct::state 32-bit
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <a43fe392-bd6a-71f5-8611-c6b764ba56c3@arm.com>
+ <7e3e784c-e8e6-f9ba-490f-ec3bf956d96b@web.de>
+ <0c4dcb91-4830-0013-b8c6-64b9e1ce47d4@arm.com>
+ <32d65b15-1855-e7eb-e9c4-81560fab62ea@arm.com>
+ <alpine.DEB.2.21.1909231228200.2272@hadrien>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <d529c390-546e-a8a4-f475-c3ee41f97645@arm.com>
+Date:   Mon, 23 Sep 2019 12:26:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1909231228200.2272@hadrien>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Michael Kerrisk:
+On 23/09/2019 11:34, Julia Lawall wrote:
+>> // FIXME: current not recognized as task_struct*, fixhack with regexp
+>> identifier current =~ "^current$";
+> 
+> Please don't do this.  Just use the word current.  It doesn't have to be a
+> metavariable.  You will though get a warning about it.  To eliminate the
+> warning, you can say symbol current;
+> 
 
-> SYNOPSIS
->        int pidfd_send_signal(int pidfd, int sig, siginfo_t info,
->                              unsigned int flags);
+Didn't know about that way to get rid of the warning, thanks!
 
-This probably should reference a header for siginfo_t.
+>> identifier task_state =~ "^TASK_";
+> 
+> Are there a lot of options?  You can also enumerate them in {}, ie
+> 
+> identifier task_state = {TASK_BLAH, TASK_BLAHBLAH};
+> 
 
->        ESRCH  The target process does not exist.
+Around a dozen, can be enumerated easily and is indeed probably better than
+a regexp.
 
-If the descriptor is valid, does this mean the process has been waited
-for?  Maybe this can be made more explicit.
+>> identifier state_var;
+>> position pos;
+>> @@
+>>
+>> (
+>>   p->state & state_var@pos
+>> |
+>>   current->state & state_var@pos
+>> |
+>>   p->state | state_var@pos
+>> |
+>>   current->state | state_var@pos
+>> |
+>>   p->state < state_var@pos
+>> |
+>>   current->state < state_var@pos
+>> |
+>>   p->state > state_var@pos
+>> |
+>>   current->state > state_var@pos
+>> |
+>>   state_var@pos = p->state
+>> |
+>>   state_var@pos = current->state
+>> |
+>>   p->state == state_var@pos
+>> |
+>>   current->state == state_var@pos
+>> |
+>>   p->state != state_var@pos
+>> |
+>>   current->state != state_var@pos
+>> |
+>> // FIXME: match functions that do something with state_var underneath?
+>> // How to do recursive rules?
+> 
+> You want to look at the definitions of called functions?  Coccinelle
+> doesn't really support that, but there are hackish ways to add that.  How
+> many function calls would you expect have to be unrolled?
+> 
 
->        The  pidfd_send_signal()  system call allows the avoidance of race
->        conditions that occur when using traditional interfaces  (such  as
->        kill(2)) to signal a process.  The problem is that the traditional
->        interfaces specify the target process via a process ID (PID), with
->        the  result  that the sender may accidentally send a signal to the
->        wrong process if the originally intended target process has termi‐
->        nated  and its PID has been recycled for another process.  By con‐
->        trast, a PID file descriptor is a stable reference to  a  specific
->        process;  if  that  process  terminates,  then the file descriptor
->        ceases to be  valid  and  the  caller  of  pidfd_send_signal()  is
->        informed of this fact via an ESRCH error.
+I wouldn't expect more than a handful (~5). I suppose this has to do with
+injecting some Python/Ocaml code? I have some examples bookmarked but
+haven't gotten to stare at them long enough.
 
-It would be nice to explain somewhere how you can avoid the race using
-a PID descriptor.  Is there anything else besides CLONE_PIDFD?
+>>   set_current_state(state_var@pos)
+>> |
+>>   set_special_state(state_var@pos)
+>> |
+>>   signal_pending_state(state_var@pos, p)
+>> |
+>>   signal_pending_state(state_var@pos, current)
+>> |
+>>   state_var@pos & task_state
+>> |
+>>   state_var@pos | task_state
+>> )
+>>
+>> // Fixup local variables
+>> @depends on patch && state_access@
+>> identifier state_var = state_access.state_var;
+>> @@
+>> (
+>> - long
+>> + int
+>> |
+>> - unsigned long
+>> + unsigned int
+>> )
+>> state_var;
+>>
+>> // Fixup function parameters
+>> @depends on patch && state_access@
+>> identifier fn;
+>> identifier state_var = state_access.state_var;
+>> @@
+>>
+>> fn(...,
+>> - long state_var
+>> + int state_var
+>> ,...)
+>> {
+>> 	...
+>> }
+>>
+>> // FIXME: find a way to squash that with the above?
+> 
+> I think that you can make a disjunction on a function parameter
+> 
+> fn(...,
+> (
+> - T1 x1
+> + T2 x2
+> |
+> - T3 x3
+> + T4 x4
+> )
+> , ...) { ... }
+> 
 
->        static
->        int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
->                unsigned int flags)
->        {
->            return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
->        }
+My attempt at this gives me "minus: parse error", which is why I went
+with the split.
 
-Please use a different function name.  Thanks.
+Something simple like this works:
+---
+virtual patch
+virtual report
+
+@@
+identifier fn;
+identifier p;
+@@
+
+fn(...,
+- long
++ int
+p
+,...)
+{
+	...
+}
+---
+
+but this doesn't:
+---
+virtual patch
+virtual report
+
+@@
+identifier fn;
+identifier p;
+@@
+
+fn(...,
+(
+- long p
++ int p
+|
+- unsigned long p
++ unsigned int p
+)
+,...)
+{
+	...
+}
+---
+
+> julia
+> 
