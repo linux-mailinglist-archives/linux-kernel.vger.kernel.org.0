@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCC58BB416
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB27BB425
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 14:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439566AbfIWMqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 08:46:13 -0400
-Received: from regular1.263xmail.com ([211.150.70.200]:40908 "EHLO
+        id S1732316AbfIWMsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 08:48:09 -0400
+Received: from regular1.263xmail.com ([211.150.70.199]:52626 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730038AbfIWMqN (ORCPT
+        with ESMTP id S1730243AbfIWMsI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 08:46:13 -0400
-X-Greylist: delayed 375 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Sep 2019 08:46:02 EDT
+        Mon, 23 Sep 2019 08:48:08 -0400
+X-Greylist: delayed 476 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Sep 2019 08:48:02 EDT
 Received: from hjc?rock-chips.com (unknown [192.168.167.32])
-        by regular1.263xmail.com (Postfix) with ESMTP id DC29D36A;
-        Mon, 23 Sep 2019 20:40:02 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id B3EAB3E9;
+        Mon, 23 Sep 2019 20:40:04 +0800 (CST)
 X-263anti-spam: KSV:0;BIG:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
@@ -26,9 +26,9 @@ X-SKE-CHECKED: 1
 X-ANTISPAM-LEVEL: 2
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P10893T140454720919296S1569242369031174_;
-        Mon, 23 Sep 2019 20:40:01 +0800 (CST)
+        Mon, 23 Sep 2019 20:40:03 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <0fd37b72fe62d59ebbe910ed58dc72ff>
+X-UNIQUE-TAG: <34ffe67a50f98c47a25cd474b3d01953>
 X-RL-SENDER: hjc@rock-chips.com
 X-SENDER: hjc@rock-chips.com
 X-LOGIN-NAME: hjc@rock-chips.com
@@ -37,30 +37,18 @@ X-SENDER-IP: 58.22.7.114
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+To:     dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Sandy Huang <hjc@rock-chips.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Lyude Paul <lyude@redhat.com>, Dave Airlie <airlied@redhat.com>
-Cc:     Jani Nikula <jani.nikula@intel.com>,
-        Juha-Pekka Heikkila <juhapekka.heikkila@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/36] drm/i915: use bpp instead of cpp for drm_format_info
-Date:   Mon, 23 Sep 2019 20:38:52 +0800
-Message-Id: <1569242365-182133-4-git-send-email-hjc@rock-chips.com>
+        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     hjc@rock-chips.com, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 04/36] drm: exynos: use bpp instead of cpp for drm_format_info
+Date:   Mon, 23 Sep 2019 20:38:53 +0800
+Message-Id: <1569242365-182133-5-git-send-email-hjc@rock-chips.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1569242365-182133-1-git-send-email-hjc@rock-chips.com>
 References: <1569242365-182133-1-git-send-email-hjc@rock-chips.com>
@@ -74,403 +62,249 @@ So we use bpp[BitPerPlane] to instead cpp.
 
 Signed-off-by: Sandy Huang <hjc@rock-chips.com>
 ---
- drivers/gpu/drm/i915/display/intel_atomic_plane.c |  2 +-
- drivers/gpu/drm/i915/display/intel_display.c      | 28 +++++++++++------------
- drivers/gpu/drm/i915/display/intel_fbc.c          |  8 +++----
- drivers/gpu/drm/i915/display/intel_fbdev.c        |  6 ++---
- drivers/gpu/drm/i915/display/intel_sprite.c       |  4 ++--
- drivers/gpu/drm/i915/i915_debugfs.c               |  4 ++--
- drivers/gpu/drm/i915/intel_pm.c                   | 28 +++++++++++------------
- 7 files changed, 40 insertions(+), 40 deletions(-)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c | 4 ++--
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c    | 6 +++---
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c     | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c      | 6 +++---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c       | 6 +++---
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_scaler.c    | 4 ++--
+ drivers/gpu/drm/exynos/exynos_mixer.c         | 4 ++--
+ 10 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/display/intel_atomic_plane.c b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-index 30bd4e7..2e93234 100644
---- a/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-+++ b/drivers/gpu/drm/i915/display/intel_atomic_plane.c
-@@ -123,7 +123,7 @@ unsigned int intel_plane_data_rate(const struct intel_crtc_state *crtc_state,
- 	if (!plane_state->base.visible)
- 		return 0;
- 
--	cpp = fb->format->cpp[0];
-+	cpp = fb->format->bpp[0] / 8;
- 
- 	/*
- 	 * Based on HSD#:1408715493
-diff --git a/drivers/gpu/drm/i915/display/intel_display.c b/drivers/gpu/drm/i915/display/intel_display.c
-index 21c71fd..732db3f 100644
---- a/drivers/gpu/drm/i915/display/intel_display.c
-+++ b/drivers/gpu/drm/i915/display/intel_display.c
-@@ -1912,7 +1912,7 @@ static unsigned int
- intel_tile_width_bytes(const struct drm_framebuffer *fb, int color_plane)
- {
- 	struct drm_i915_private *dev_priv = to_i915(fb->dev);
--	unsigned int cpp = fb->format->cpp[color_plane];
-+	unsigned int cpp = fb->format->bpp[color_plane] / 8;
- 
- 	switch (fb->modifier) {
- 	case DRM_FORMAT_MOD_LINEAR:
-@@ -1969,7 +1969,7 @@ static void intel_tile_dims(const struct drm_framebuffer *fb, int color_plane,
- 			    unsigned int *tile_height)
- {
- 	unsigned int tile_width_bytes = intel_tile_width_bytes(fb, color_plane);
--	unsigned int cpp = fb->format->cpp[color_plane];
-+	unsigned int cpp = fb->format->bpp[color_plane] / 8;
- 
- 	*tile_width = tile_width_bytes / cpp;
- 	*tile_height = intel_tile_size(to_i915(fb->dev)) / tile_width_bytes;
-@@ -2207,7 +2207,7 @@ u32 intel_fb_xy_to_linear(int x, int y,
- 			  int color_plane)
- {
- 	const struct drm_framebuffer *fb = state->base.fb;
--	unsigned int cpp = fb->format->cpp[color_plane];
-+	unsigned int cpp = fb->format->bpp[color_plane] / 8;
- 	unsigned int pitch = state->color_plane[color_plane].stride;
- 
- 	return y * pitch + x * cpp;
-@@ -2267,7 +2267,7 @@ static u32 intel_adjust_aligned_offset(int *x, int *y,
- 				       u32 old_offset, u32 new_offset)
- {
- 	struct drm_i915_private *dev_priv = to_i915(fb->dev);
--	unsigned int cpp = fb->format->cpp[color_plane];
-+	unsigned int cpp = fb->format->bpp[color_plane] / 8;
- 
- 	WARN_ON(new_offset > old_offset);
- 
-@@ -2335,7 +2335,7 @@ static u32 intel_compute_aligned_offset(struct drm_i915_private *dev_priv,
- 					unsigned int rotation,
- 					u32 alignment)
- {
--	unsigned int cpp = fb->format->cpp[color_plane];
-+	unsigned int cpp = fb->format->bpp[color_plane] / 8;
- 	u32 offset, offset_aligned;
- 
- 	if (alignment)
-@@ -2655,7 +2655,7 @@ intel_fill_fb_info(struct drm_i915_private *dev_priv,
- 		int x, y;
- 		int ret;
- 
--		cpp = fb->format->cpp[i];
-+		cpp = fb->format->bpp[i] / 8;
- 		width = drm_framebuffer_plane_width(fb->width, fb, i);
- 		height = drm_framebuffer_plane_height(fb->height, fb, i);
- 
-@@ -2840,7 +2840,7 @@ intel_plane_remap_gtt(struct intel_plane_state *plane_state)
- 	for (i = 0; i < num_planes; i++) {
- 		unsigned int hsub = i ? fb->format->hsub : 1;
- 		unsigned int vsub = i ? fb->format->vsub : 1;
--		unsigned int cpp = fb->format->cpp[i];
-+		unsigned int cpp = fb->format->bpp[i] / 8;
- 		unsigned int tile_width, tile_height;
- 		unsigned int width, height;
- 		unsigned int pitch_tiles;
-@@ -3286,7 +3286,7 @@ static int skl_max_plane_width(const struct drm_framebuffer *fb,
- 			       int color_plane,
- 			       unsigned int rotation)
- {
--	int cpp = fb->format->cpp[color_plane];
-+	int cpp = fb->format->bpp[color_plane] / 8;
- 
- 	switch (fb->modifier) {
- 	case DRM_FORMAT_MOD_LINEAR:
-@@ -3311,7 +3311,7 @@ static int glk_max_plane_width(const struct drm_framebuffer *fb,
- 			       int color_plane,
- 			       unsigned int rotation)
- {
--	int cpp = fb->format->cpp[color_plane];
-+	int cpp = fb->format->bpp[color_plane] / 8;
- 
- 	switch (fb->modifier) {
- 	case DRM_FORMAT_MOD_LINEAR:
-@@ -3426,7 +3426,7 @@ static int skl_check_main_surface(struct intel_plane_state *plane_state)
- 	 * TODO: linear and Y-tiled seem fine, Yf untested,
- 	 */
- 	if (fb->modifier == I915_FORMAT_MOD_X_TILED) {
--		int cpp = fb->format->cpp[0];
-+		int cpp = fb->format->bpp[0] / 8;
- 
- 		while ((x + w) * cpp > plane_state->color_plane[0].stride) {
- 			if (offset == 0) {
-@@ -8513,7 +8513,7 @@ i9xx_get_initial_plane_config(struct intel_crtc *crtc,
- 
- 	DRM_DEBUG_KMS("%s/%s with fb: size=%dx%d@%d, offset=%x, pitch %d, size 0x%x\n",
- 		      crtc->base.name, plane->base.name, fb->width, fb->height,
--		      fb->format->cpp[0] * 8, base, fb->pitches[0],
-+		      fb->format->bpp[0], base, fb->pitches[0],
- 		      plane_config->size);
- 
- 	plane_config->fb = intel_fb;
-@@ -9753,7 +9753,7 @@ skylake_get_initial_plane_config(struct intel_crtc *crtc,
- 
- 	DRM_DEBUG_KMS("%s/%s with fb: size=%dx%d@%d, offset=%x, pitch %d, size 0x%x\n",
- 		      crtc->base.name, plane->base.name, fb->width, fb->height,
--		      fb->format->cpp[0] * 8, base, fb->pitches[0],
-+		      fb->format->bpp[0], base, fb->pitches[0],
- 		      plane_config->size);
- 
- 	plane_config->fb = intel_fb;
-@@ -10350,7 +10350,7 @@ static u32 intel_cursor_base(const struct intel_plane_state *plane_state)
- 	if (HAS_GMCH(dev_priv) &&
- 	    plane_state->base.rotation & DRM_MODE_ROTATE_180)
- 		base += (plane_state->base.crtc_h *
--			 plane_state->base.crtc_w - 1) * fb->format->cpp[0];
-+			 plane_state->base.crtc_w - 1) * fb->format->bpp[0] / 8;
- 
- 	return base;
- }
-@@ -10728,7 +10728,7 @@ static int i9xx_check_cursor(struct intel_crtc_state *crtc_state,
- 	WARN_ON(plane_state->base.visible &&
- 		plane_state->color_plane[0].stride != fb->pitches[0]);
- 
--	if (fb->pitches[0] != plane_state->base.crtc_w * fb->format->cpp[0]) {
-+	if (fb->pitches[0] != plane_state->base.crtc_w * fb->format->bpp[0] / 8) {
- 		DRM_DEBUG_KMS("Invalid cursor stride (%u) (cursor width %d)\n",
- 			      fb->pitches[0], plane_state->base.crtc_w);
- 		return -EINVAL;
-diff --git a/drivers/gpu/drm/i915/display/intel_fbc.c b/drivers/gpu/drm/i915/display/intel_fbc.c
-index d36cada..7911c49 100644
---- a/drivers/gpu/drm/i915/display/intel_fbc.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbc.c
-@@ -172,7 +172,7 @@ static void g4x_fbc_activate(struct drm_i915_private *dev_priv)
- 	u32 dpfc_ctl;
- 
- 	dpfc_ctl = DPFC_CTL_PLANE(params->crtc.i9xx_plane) | DPFC_SR_EN;
--	if (params->fb.format->cpp[0] == 2)
-+	if (params->fb.format->bpp[0] == 16)
- 		dpfc_ctl |= DPFC_CTL_LIMIT_2X;
- 	else
- 		dpfc_ctl |= DPFC_CTL_LIMIT_1X;
-@@ -219,7 +219,7 @@ static void ilk_fbc_activate(struct drm_i915_private *dev_priv)
- 	int threshold = dev_priv->fbc.threshold;
- 
- 	dpfc_ctl = DPFC_CTL_PLANE(params->crtc.i9xx_plane);
--	if (params->fb.format->cpp[0] == 2)
-+	if (params->fb.format->bpp[0] == 16)
- 		threshold++;
- 
- 	switch (threshold) {
-@@ -302,7 +302,7 @@ static void gen7_fbc_activate(struct drm_i915_private *dev_priv)
- 	if (IS_IVYBRIDGE(dev_priv))
- 		dpfc_ctl |= IVB_DPFC_CTL_PLANE(params->crtc.i9xx_plane);
- 
--	if (params->fb.format->cpp[0] == 2)
-+	if (params->fb.format->bpp[0] == 16)
- 		threshold++;
- 
- 	switch (threshold) {
-@@ -498,7 +498,7 @@ static int intel_fbc_alloc_cfb(struct intel_crtc *crtc)
- 	WARN_ON(drm_mm_node_allocated(&fbc->compressed_fb));
- 
- 	size = intel_fbc_calculate_cfb_size(dev_priv, &fbc->state_cache);
--	fb_cpp = fbc->state_cache.fb.format->cpp[0];
-+	fb_cpp = fbc->state_cache.fb.format->bpp[0] / 8;
- 
- 	ret = find_compression_threshold(dev_priv, &fbc->compressed_fb,
- 					 size, fb_cpp);
-diff --git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
-index 1edd44e..ae98063 100644
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c
-@@ -373,7 +373,7 @@ static bool intel_fbdev_init_bios(struct drm_device *dev,
- 		 * rather than the current pipe's, since they differ.
- 		 */
- 		cur_size = crtc->state->adjusted_mode.crtc_hdisplay;
--		cur_size = cur_size * fb->base.format->cpp[0];
-+		cur_size = cur_size * fb->base.format->bpp[0] / 8;
- 		if (fb->base.pitches[0] < cur_size) {
- 			DRM_DEBUG_KMS("fb not wide enough for plane %c (%d vs %d)\n",
- 				      pipe_name(intel_crtc->pipe),
-@@ -389,7 +389,7 @@ static bool intel_fbdev_init_bios(struct drm_device *dev,
- 			      pipe_name(intel_crtc->pipe),
- 			      crtc->state->adjusted_mode.crtc_hdisplay,
- 			      crtc->state->adjusted_mode.crtc_vdisplay,
--			      fb->base.format->cpp[0] * 8,
-+			      fb->base.format->bpp[0],
- 			      cur_size);
- 
- 		if (cur_size > max_size) {
-@@ -410,7 +410,7 @@ static bool intel_fbdev_init_bios(struct drm_device *dev,
- 		goto out;
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 2d5cbfd..9401591 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -356,7 +356,7 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+ 		break;
  	}
  
--	ifbdev->preferred_bpp = fb->base.format->cpp[0] * 8;
-+	ifbdev->preferred_bpp = fb->base.format->bpp[0];
- 	ifbdev->fb = fb;
- 
- 	drm_framebuffer_get(&ifbdev->fb->base);
-diff --git a/drivers/gpu/drm/i915/display/intel_sprite.c b/drivers/gpu/drm/i915/display/intel_sprite.c
-index 004b520..bdcdbe4 100644
---- a/drivers/gpu/drm/i915/display/intel_sprite.c
-+++ b/drivers/gpu/drm/i915/display/intel_sprite.c
-@@ -336,7 +336,7 @@ skl_plane_max_stride(struct intel_plane *plane,
- 		     unsigned int rotation)
- {
- 	const struct drm_format_info *info = drm_format_info(pixel_format);
--	int cpp = info->cpp[0];
-+	int cpp = info->bpp[0] / 8;
+-	DRM_DEV_DEBUG_KMS(ctx->dev, "cpp = %u\n", fb->format->cpp[0]);
++	DRM_DEV_DEBUG_KMS(ctx->dev, "bpp = %u\n", fb->format->bpp[0]);
  
  	/*
- 	 * "The stride in bytes must not exceed the
-@@ -1350,7 +1350,7 @@ g4x_sprite_check_scaling(struct intel_crtc_state *crtc_state,
- 	int src_x, src_y, src_w, src_h, crtc_w, crtc_h;
- 	const struct drm_display_mode *adjusted_mode =
- 		&crtc_state->base.adjusted_mode;
+ 	 * In case of exynos, setting dma-burst to 16Word causes permanent
+@@ -403,7 +403,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 	struct decon_context *ctx = crtc->ctx;
+ 	struct drm_framebuffer *fb = state->base.fb;
+ 	unsigned int win = plane->index;
 -	unsigned int cpp = fb->format->cpp[0];
 +	unsigned int cpp = fb->format->bpp[0] / 8;
- 	unsigned int width_bytes;
- 	int min_width, min_height;
+ 	unsigned int pitch = fb->pitches[0];
+ 	dma_addr_t dma_addr = exynos_drm_fb_dma_addr(fb, 0);
+ 	u32 val;
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index f064095..d6158b7 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -310,7 +310,7 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+ 		break;
+ 	}
  
-diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
-index 62cf34d..a51ed85 100644
---- a/drivers/gpu/drm/i915/i915_debugfs.c
-+++ b/drivers/gpu/drm/i915/i915_debugfs.c
-@@ -1631,7 +1631,7 @@ static int i915_gem_framebuffer_info(struct seq_file *m, void *data)
- 			   fbdev_fb->base.width,
- 			   fbdev_fb->base.height,
- 			   fbdev_fb->base.format->depth,
--			   fbdev_fb->base.format->cpp[0] * 8,
-+			   fbdev_fb->base.format->bpp[0],
- 			   fbdev_fb->base.modifier,
- 			   drm_framebuffer_read_refcount(&fbdev_fb->base));
- 		describe_obj(m, intel_fb_obj(&fbdev_fb->base));
-@@ -1649,7 +1649,7 @@ static int i915_gem_framebuffer_info(struct seq_file *m, void *data)
- 			   fb->base.width,
- 			   fb->base.height,
- 			   fb->base.format->depth,
--			   fb->base.format->cpp[0] * 8,
-+			   fb->base.format->bpp[0],
- 			   fb->base.modifier,
- 			   drm_framebuffer_read_refcount(&fb->base));
- 		describe_obj(m, intel_fb_obj(&fb->base));
-diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
-index d9a7a13..a70b372 100644
---- a/drivers/gpu/drm/i915/intel_pm.c
-+++ b/drivers/gpu/drm/i915/intel_pm.c
-@@ -873,7 +873,7 @@ static void pineview_update_wm(struct intel_crtc *unused_crtc)
- 			&crtc->config->base.adjusted_mode;
- 		const struct drm_framebuffer *fb =
- 			crtc->base.primary->state->fb;
--		int cpp = fb->format->cpp[0];
-+		int cpp = fb->format->bpp[0] / 8;
- 		int clock = adjusted_mode->crtc_clock;
+-	DRM_DEV_DEBUG_KMS(ctx->dev, "cpp = %d\n", fb->format->cpp[0]);
++	DRM_DEV_DEBUG_KMS(ctx->dev, "bpp = %d\n", fb->format->bpp[0]);
  
- 		/* Display SR */
-@@ -1131,7 +1131,7 @@ static u16 g4x_compute_wm(const struct intel_crtc_state *crtc_state,
- 	    level != G4X_WM_LEVEL_NORMAL)
- 		cpp = 4;
- 	else
--		cpp = plane_state->base.fb->format->cpp[0];
-+		cpp = plane_state->base.fb->format->bpp[0] / 8;
+ 	/*
+ 	 * In case of exynos, setting dma-burst to 16Word causes permanent
+@@ -320,7 +320,7 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+ 	 * movement causes unstable DMA which results into iommu crash/tear.
+ 	 */
  
- 	clock = adjusted_mode->crtc_clock;
- 	htotal = adjusted_mode->crtc_htotal;
-@@ -1624,7 +1624,7 @@ static u16 vlv_compute_wm_level(const struct intel_crtc_state *crtc_state,
- 	if (!intel_wm_plane_visible(crtc_state, plane_state))
+-	padding = (fb->pitches[0] / fb->format->cpp[0]) - fb->width;
++	padding = (fb->pitches[0] / fb->format->bpp[0] / 8) - fb->width;
+ 	if (fb->width + padding < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+ 		val &= ~WINCONx_BURSTLEN_MASK;
+ 		val |= WINCONx_BURSTLEN_8WORD;
+@@ -387,7 +387,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 	unsigned int last_x;
+ 	unsigned int last_y;
+ 	unsigned int win = plane->index;
+-	unsigned int cpp = fb->format->cpp[0];
++	unsigned int cpp = fb->format->bpp[0] / 8;
+ 	unsigned int pitch = fb->pitches[0];
+ 
+ 	if (ctx->suspended)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index b0877b9..f82ac12 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -75,7 +75,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
+ {
+ 	struct fb_info *fbi;
+ 	struct drm_framebuffer *fb = helper->fb;
+-	unsigned int size = fb->width * fb->height * fb->format->cpp[0];
++	unsigned int size = fb->width * fb->height * fb->format->bpp[0] / 8;
+ 	unsigned int nr_pages;
+ 	unsigned long offset;
+ 
+@@ -100,7 +100,7 @@ static int exynos_drm_fbdev_update(struct drm_fb_helper *helper,
+ 		return -EIO;
+ 	}
+ 
+-	offset = fbi->var.xoffset * fb->format->cpp[0];
++	offset = fbi->var.xoffset * fb->format->bpp[0] / 8;
+ 	offset += fbi->var.yoffset * fb->pitches[0];
+ 
+ 	fbi->screen_base = exynos_gem->kvaddr + offset;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index a594ab7..ceb889c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -466,7 +466,7 @@ static void fimc_src_set_transf(struct fimc_context *ctx, unsigned int rotation)
+ static void fimc_set_window(struct fimc_context *ctx,
+ 			    struct exynos_drm_ipp_buffer *buf)
+ {
+-	unsigned int real_width = buf->buf.pitch[0] / buf->format->cpp[0];
++	unsigned int real_width = buf->buf.pitch[0] / buf->format->bpp[0] / 8;
+ 	u32 cfg, h1, h2, v1, v2;
+ 
+ 	/* cropped image */
+@@ -501,7 +501,7 @@ static void fimc_set_window(struct fimc_context *ctx,
+ static void fimc_src_set_size(struct fimc_context *ctx,
+ 			      struct exynos_drm_ipp_buffer *buf)
+ {
+-	unsigned int real_width = buf->buf.pitch[0] / buf->format->cpp[0];
++	unsigned int real_width = buf->buf.pitch[0] / buf->format->bpp[0] / 8;
+ 	u32 cfg;
+ 
+ 	DRM_DEV_DEBUG_KMS(ctx->dev, "hsize[%d]vsize[%d]\n", real_width,
+@@ -843,7 +843,7 @@ static void fimc_set_scaler(struct fimc_context *ctx, struct fimc_scaler *sc)
+ static void fimc_dst_set_size(struct fimc_context *ctx,
+ 			     struct exynos_drm_ipp_buffer *buf)
+ {
+-	unsigned int real_width = buf->buf.pitch[0] / buf->format->cpp[0];
++	unsigned int real_width = buf->buf.pitch[0] / buf->format->bpp[0] / 8;
+ 	u32 cfg, cfg_ext;
+ 
+ 	DRM_DEV_DEBUG_KMS(ctx->dev, "hsize[%d]vsize[%d]\n", real_width,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 8d0a929..561597b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -795,7 +795,7 @@ static void fimd_update_plane(struct exynos_drm_crtc *crtc,
+ 	unsigned long val, size, offset;
+ 	unsigned int last_x, last_y, buf_offsize, line_size;
+ 	unsigned int win = plane->index;
+-	unsigned int cpp = fb->format->cpp[0];
++	unsigned int cpp = fb->format->bpp[0] / 8;
+ 	unsigned int pitch = fb->pitches[0];
+ 
+ 	if (ctx->suspended)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index 1e4b21c..a15e2d9 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -579,7 +579,7 @@ static void gsc_src_set_size(struct gsc_context *ctx,
+ 	cfg &= ~(GSC_SRCIMG_HEIGHT_MASK |
+ 		GSC_SRCIMG_WIDTH_MASK);
+ 
+-	cfg |= (GSC_SRCIMG_WIDTH(buf->buf.pitch[0] / buf->format->cpp[0]) |
++	cfg |= (GSC_SRCIMG_WIDTH(buf->buf.pitch[0] / buf->format->bpp[0] / 8) |
+ 		GSC_SRCIMG_HEIGHT(buf->buf.height));
+ 
+ 	gsc_write(cfg, GSC_SRCIMG_SIZE);
+@@ -881,7 +881,7 @@ static void gsc_dst_set_size(struct gsc_context *ctx,
+ 	/* original size */
+ 	cfg = gsc_read(GSC_DSTIMG_SIZE);
+ 	cfg &= ~(GSC_DSTIMG_HEIGHT_MASK | GSC_DSTIMG_WIDTH_MASK);
+-	cfg |= GSC_DSTIMG_WIDTH(buf->buf.pitch[0] / buf->format->cpp[0]) |
++	cfg |= GSC_DSTIMG_WIDTH(buf->buf.pitch[0] / buf->format->bpp[0] / 8) |
+ 	       GSC_DSTIMG_HEIGHT(buf->buf.height);
+ 	gsc_write(cfg, GSC_DSTIMG_SIZE);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index d45bfab..14c728e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -475,7 +475,7 @@ static int exynos_drm_ipp_check_size_limits(struct exynos_drm_ipp_buffer *buf,
+ 	enum drm_ipp_size_id id = rotate ? IPP_LIMIT_ROTATED : IPP_LIMIT_AREA;
+ 	struct drm_ipp_limit l;
+ 	struct drm_exynos_ipp_limit_val *lh = &l.h, *lv = &l.v;
+-	int real_width = buf->buf.pitch[0] / buf->format->cpp[0];
++	int real_width = buf->buf.pitch[0] / buf->format->bpp[0] / 8;
+ 
+ 	if (!limits)
  		return 0;
+@@ -570,8 +570,8 @@ static int exynos_drm_ipp_check_format(struct exynos_drm_ipp_task *task,
+ 			     DIV_ROUND_UP(buf->buf.width, buf->format->hsub);
  
--	cpp = plane_state->base.fb->format->cpp[0];
-+	cpp = plane_state->base.fb->format->bpp[0] / 8;
- 	clock = adjusted_mode->crtc_clock;
- 	htotal = adjusted_mode->crtc_htotal;
- 	width = crtc_state->pipe_src_w;
-@@ -2216,7 +2216,7 @@ static void i965_update_wm(struct intel_crtc *unused_crtc)
- 		int clock = adjusted_mode->crtc_clock;
- 		int htotal = adjusted_mode->crtc_htotal;
- 		int hdisplay = crtc->config->pipe_src_w;
--		int cpp = fb->format->cpp[0];
-+		int cpp = fb->format->bpp[0] / 8;
- 		int entries;
+ 		if (buf->buf.pitch[i] == 0)
+-			buf->buf.pitch[i] = width * buf->format->cpp[i];
+-		if (buf->buf.pitch[i] < width * buf->format->cpp[i])
++			buf->buf.pitch[i] = width * buf->format->bpp[i] / 8;
++		if (buf->buf.pitch[i] < width * buf->format->bpp[i] / 8)
+ 			return -EINVAL;
+ 		if (!buf->buf.gem_id[i])
+ 			return -ENOENT;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index 8ebad27..8d1da0f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -139,7 +139,7 @@ static void rotator_src_set_buf(struct rot_context *rot,
  
- 		entries = intel_wm_method2(clock, htotal,
-@@ -2299,7 +2299,7 @@ static void i9xx_update_wm(struct intel_crtc *unused_crtc)
- 		if (IS_GEN(dev_priv, 2))
- 			cpp = 4;
- 		else
--			cpp = fb->format->cpp[0];
-+			cpp = fb->format->bpp[0] / 8;
+ 	/* Set buffer size configuration */
+ 	val = ROT_SET_BUF_SIZE_H(buf->buf.height) |
+-	      ROT_SET_BUF_SIZE_W(buf->buf.pitch[0] / buf->format->cpp[0]);
++	      ROT_SET_BUF_SIZE_W(buf->buf.pitch[0] / buf->format->bpp[0] / 8);
+ 	rot_write(val, ROT_SRC_BUF_SIZE);
  
- 		planea_wm = intel_calculate_wm(adjusted_mode->crtc_clock,
- 					       wm_info, fifo_size, cpp,
-@@ -2326,7 +2326,7 @@ static void i9xx_update_wm(struct intel_crtc *unused_crtc)
- 		if (IS_GEN(dev_priv, 2))
- 			cpp = 4;
- 		else
--			cpp = fb->format->cpp[0];
-+			cpp = fb->format->bpp[0] / 8;
+ 	/* Set crop image position configuration */
+@@ -187,7 +187,7 @@ static void rotator_dst_set_buf(struct rot_context *rot,
  
- 		planeb_wm = intel_calculate_wm(adjusted_mode->crtc_clock,
- 					       wm_info, fifo_size, cpp,
-@@ -2378,7 +2378,7 @@ static void i9xx_update_wm(struct intel_crtc *unused_crtc)
- 		if (IS_I915GM(dev_priv) || IS_I945GM(dev_priv))
- 			cpp = 4;
- 		else
--			cpp = fb->format->cpp[0];
-+			cpp = fb->format->bpp[0] / 8;
+ 	/* Set buffer size configuration */
+ 	val = ROT_SET_BUF_SIZE_H(buf->buf.height) |
+-	      ROT_SET_BUF_SIZE_W(buf->buf.pitch[0] / buf->format->cpp[0]);
++	      ROT_SET_BUF_SIZE_W(buf->buf.pitch[0] / buf->format->bpp[0] / 8);
+ 	rot_write(val, ROT_DST_BUF_SIZE);
  
- 		entries = intel_wm_method2(clock, htotal, hdisplay, cpp,
- 					   sr_latency_ns / 100);
-@@ -2506,7 +2506,7 @@ static u32 ilk_compute_pri_wm(const struct intel_crtc_state *cstate,
- 	if (!intel_wm_plane_visible(cstate, pstate))
- 		return 0;
+ 	/* Set crop image position configuration */
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+index 9af0964..c9ad312 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
+@@ -166,7 +166,7 @@ static inline void scaler_set_src_span(struct scaler_context *scaler,
+ 	u32 val;
  
--	cpp = pstate->base.fb->format->cpp[0];
-+	cpp = pstate->base.fb->format->bpp[0] / 8;
+ 	val = SCALER_SRC_SPAN_SET_Y_SPAN(src_buf->buf.pitch[0] /
+-		src_buf->format->cpp[0]);
++		src_buf->format->bpp[0] / 8);
  
- 	method1 = ilk_wm_method1(cstate->pixel_rate, cpp, mem_value);
+ 	if (src_buf->format->num_planes > 1)
+ 		val |= SCALER_SRC_SPAN_SET_C_SPAN(src_buf->buf.pitch[1]);
+@@ -229,7 +229,7 @@ static inline void scaler_set_dst_span(struct scaler_context *scaler,
+ 	u32 val;
  
-@@ -2538,7 +2538,7 @@ static u32 ilk_compute_spr_wm(const struct intel_crtc_state *cstate,
- 	if (!intel_wm_plane_visible(cstate, pstate))
- 		return 0;
+ 	val = SCALER_DST_SPAN_SET_Y_SPAN(dst_buf->buf.pitch[0] /
+-		dst_buf->format->cpp[0]);
++		dst_buf->format->bpp[0] / 8);
  
--	cpp = pstate->base.fb->format->cpp[0];
-+	cpp = pstate->base.fb->format->bpp[0] / 8;
+ 	if (dst_buf->format->num_planes > 1)
+ 		val |= SCALER_DST_SPAN_SET_C_SPAN(dst_buf->buf.pitch[1]);
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 7b24338f..015dbab 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -646,7 +646,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
  
- 	method1 = ilk_wm_method1(cstate->pixel_rate, cpp, mem_value);
- 	method2 = ilk_wm_method2(cstate->pixel_rate,
-@@ -2564,7 +2564,7 @@ static u32 ilk_compute_cur_wm(const struct intel_crtc_state *cstate,
- 	if (!intel_wm_plane_visible(cstate, pstate))
- 		return 0;
+ 	/* translate dma address base s.t. the source image offset is zero */
+ 	dma_addr = exynos_drm_fb_dma_addr(fb, 0)
+-		+ (state->src.x * fb->format->cpp[0])
++		+ (state->src.x * fb->format->bpp[0] / 8)
+ 		+ (state->src.y * fb->pitches[0]);
  
--	cpp = pstate->base.fb->format->cpp[0];
-+	cpp = pstate->base.fb->format->bpp[0] / 8;
+ 	spin_lock_irqsave(&ctx->reg_slock, flags);
+@@ -657,7 +657,7 @@ static void mixer_graph_buffer(struct mixer_context *ctx,
  
- 	return ilk_wm_method2(cstate->pixel_rate,
- 			      cstate->base.adjusted_mode.crtc_htotal,
-@@ -2581,7 +2581,7 @@ static u32 ilk_compute_fbc_wm(const struct intel_crtc_state *cstate,
- 	if (!intel_wm_plane_visible(cstate, pstate))
- 		return 0;
+ 	/* setup geometry */
+ 	mixer_reg_write(ctx, MXR_GRAPHIC_SPAN(win),
+-			fb->pitches[0] / fb->format->cpp[0]);
++			fb->pitches[0] / fb->format->bpp[0] / 8);
  
--	cpp = pstate->base.fb->format->cpp[0];
-+	cpp = pstate->base.fb->format->bpp[0] / 8;
- 
- 	return ilk_wm_fbc(pri_val, drm_rect_width(&pstate->base.dst), cpp);
- }
-@@ -4168,7 +4168,7 @@ int skl_check_pipe_max_pixel_rate(struct intel_crtc *intel_crtc,
- 		intel_pstate = to_intel_plane_state(pstate);
- 		plane_downscale = skl_plane_downscale_amount(cstate,
- 							     intel_pstate);
--		bpp = pstate->fb->format->cpp[0] * 8;
-+		bpp = pstate->fb->format->bpp[0];
- 		if (bpp == 64)
- 			plane_downscale = mul_fixed16(plane_downscale,
- 						      fp_9_div_8);
-@@ -4240,7 +4240,7 @@ skl_plane_relative_data_rate(const struct intel_crtc_state *cstate,
- 
- 	rate = mul_round_up_u32_fixed16(data_rate, down_scale_amount);
- 
--	rate *= fb->format->cpp[plane];
-+	rate *= fb->format->bpp[plane] / 8;
- 	return rate;
- }
- 
-@@ -4671,7 +4671,7 @@ skl_compute_wm_params(const struct intel_crtc_state *crtc_state,
- 	if (color_plane == 1 && wp->is_planar)
- 		wp->width /= 2;
- 
--	wp->cpp = format->cpp[color_plane];
-+	wp->cpp = format->bpp[color_plane] / 8;
- 	wp->plane_pixel_rate = plane_pixel_rate;
- 
- 	if (INTEL_GEN(dev_priv) >= 11 &&
+ 	val  = MXR_GRP_WH_WIDTH(state->src.w);
+ 	val |= MXR_GRP_WH_HEIGHT(state->src.h);
 -- 
 2.7.4
 
