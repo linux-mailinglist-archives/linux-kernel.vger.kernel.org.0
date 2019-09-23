@@ -2,114 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74AE6BB20F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:15:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97E6CBB20B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2019 12:15:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439400AbfIWKPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 06:15:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57822 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439241AbfIWKPf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 06:15:35 -0400
-Received: from [5.158.153.52] (helo=kurt.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <kurt@linutronix.de>)
-        id 1iCLNS-0001oR-WA; Mon, 23 Sep 2019 12:15:31 +0200
-From:   Kurt Kanzenbach <kurt@linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        devicetree@vger.kernel.org, Kurt Kanzenbach <kurt@linutronix.de>
-Subject: [PATCH v6 2/2] dt/bindings: Add bindings for Layerscape external irqs
-Date:   Mon, 23 Sep 2019 12:15:13 +0200
-Message-Id: <20190923101513.32719-3-kurt@linutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190923101513.32719-1-kurt@linutronix.de>
-References: <20190923101513.32719-1-kurt@linutronix.de>
+        id S2439367AbfIWKP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 06:15:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44530 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2407627AbfIWKP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 06:15:27 -0400
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 192CA3C919
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 10:15:27 +0000 (UTC)
+Received: by mail-wm1-f71.google.com with SMTP id s25so4777685wmh.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 03:15:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bK9h7pTx1XY/RyobhLerD+nYvs7a3zb9XOPbV/JaXjc=;
+        b=EWEk8ylOYs0+W3SbLOsEMx2fbesfaextc1XPrgjtOEH3fYA7nQer5Pl471LXS/ME5G
+         CykVJ2bqn/Qh9n0ijgTkbywV6GkYwTRiJizgZfNtBLAtD1Cm4qh3PBJqbYl2EjlqzSR0
+         D/Ac/zQ3NnAS41rQDKKD8l7MCdfTRC3I5BhAuQisQ2pTBfYxDYTebPuRxJhUVaFBqQQC
+         EOGTl7NGa+i1R9ZA8/0A2Z1i3QeJyON654iv9nWxvh4wgs+Rs25NdjM7KB8BhPgBSwKE
+         DSqVQharddc0Ig7hN1nt6+CC50nPXpI/dc2BUAf94Vl/yALsIgzTxXLts3g2GftKWIX3
+         wkBA==
+X-Gm-Message-State: APjAAAVRju7dopA1d+OWwpnZviv5L6ARX+/lyo9xax3yu/cUQ+7+3dOY
+        7dbc6BoPWlj6BPPcPM2PxV4GkyvKZAKLmcrZAmXrPopT8o0zu0RSTYrbHnSereDLNWr4JLyxGqB
+        qZcIPrQtyyvOsM9lVr2hWFfHQ
+X-Received: by 2002:a1c:7409:: with SMTP id p9mr12906730wmc.162.1569233725615;
+        Mon, 23 Sep 2019 03:15:25 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyz4lp9WKEtONZnQggsXsYyKnvfZ2mN5QVqBU+LVkeipi/oOtTdC4E2TBrDZ/yu4WyQdKl6Cg==
+X-Received: by 2002:a1c:7409:: with SMTP id p9mr12906710wmc.162.1569233725398;
+        Mon, 23 Sep 2019 03:15:25 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:9520:22e6:6416:5c36? ([2001:b07:6468:f312:9520:22e6:6416:5c36])
+        by smtp.gmail.com with ESMTPSA id 189sm22794912wma.6.2019.09.23.03.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 03:15:24 -0700 (PDT)
+Subject: Re: [PATCH 07/17] KVM: monolithic: x86: adjust the section prefixes
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190920212509.2578-1-aarcange@redhat.com>
+ <20190920212509.2578-8-aarcange@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <2171e409-487f-6408-e037-3abc0b9aa312@redhat.com>
+Date:   Mon, 23 Sep 2019 12:15:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190920212509.2578-8-aarcange@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+On 20/09/19 23:24, Andrea Arcangeli wrote:
+> Adjusts the section prefixes of some KVM common code function because
+> with the monolithic methods the section checker can now do a more
+> accurate analysis at build time and this allows to build without
+> CONFIG_SECTION_MISMATCH_WARN_ONLY=n.
+> 
+> Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
 
-This adds Device Tree binding documentation for the external interrupt
-lines with configurable polarity present on some Layerscape SOCs.
+I think it's the opposite---the checker is detecting *missing* section
+prefixes, for example vmx_exit, kvm_exit, kvm_arch_hardware_unsetup etc.
+could be marked __exit.
 
-Signed-off-by: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
----
-
-Changes since v5:
-
- - Add #address-cells and #size-cells to parent
- - Mention LS2088A and the ISC unit
-
-.../interrupt-controller/fsl,ls-extirq.txt    | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
-
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
-new file mode 100644
-index 000000000000..7b53f9cc8019
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,ls-extirq.txt
-@@ -0,0 +1,47 @@
-+* Freescale Layerscape external IRQs
-+
-+Some Layerscape SOCs (LS1021A, LS1043A, LS1046A, LS2088A) support
-+inverting the polarity of certain external interrupt lines.
-+
-+The device node must be a child of the node representing the
-+Supplemental Configuration Unit (SCFG) or the Interrupt Sampling
-+Control (ISC) Unit.
-+
-+Required properties:
-+- compatible: should be "fsl,<soc-name>-extirq", e.g. "fsl,ls1021a-extirq".
-+- interrupt-controller: Identifies the node as an interrupt controller
-+- #interrupt-cells: Must be 2. The first element is the index of the
-+  external interrupt line. The second element is the trigger type.
-+- interrupt-parent: phandle of GIC.
-+- reg: Specifies the Interrupt Polarity Control Register (INTPCR) in the SCFG.
-+- fsl,extirq-map: Specifies the mapping to interrupt numbers in the parent
-+  interrupt controller. Interrupts are mapped one-to-one to parent
-+  interrupts.
-+
-+Optional properties:
-+- fsl,bit-reverse: This boolean property should be set on the LS1021A
-+  if the SCFGREVCR register has been set to all-ones (which is usually
-+  the case), meaning that all reads and writes of SCFG registers are
-+  implicitly bit-reversed. Other compatible platforms do not have such
-+  a register.
-+
-+Example:
-+	scfg: scfg@1570000 {
-+		compatible = "fsl,ls1021a-scfg", "syscon";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		...
-+		extirq: interrupt-controller {
-+			compatible = "fsl,ls1021a-extirq";
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			interrupt-parent = <&gic>;
-+			reg = <0x1ac>;
-+			fsl,extirq-map = <163 164 165 167 168 169>;
-+			fsl,bit-reverse;
-+		};
-+	};
-+
-+
-+	interrupts-extended = <&gic GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>,
-+			      <&extirq 1 IRQ_TYPE_LEVEL_LOW>;
--- 
-2.20.1
-
+Paolo
