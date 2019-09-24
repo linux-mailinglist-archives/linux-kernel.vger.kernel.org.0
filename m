@@ -2,97 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11BBBBD00D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:03:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0547BCEA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439448AbfIXRDG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 13:03:06 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45510 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505058AbfIXQmo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:42:44 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgQdY090228;
-        Tue, 24 Sep 2019 11:42:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569343346;
-        bh=aummLSqWx0fb6f9M3SJ/rEjoc5mT/hKcpYjgZJWHWIw=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=pxGi6xdktIgnC5uS+pgebwI+DO7+AghP0ADyezDpyRc4n6dP0g6pEZYJAo/fZr0OX
-         h/Yuj6nzrrwaV3f9cncuk7NP04f+i1ypYG3EAopHG1zCOpPXILNLlOxTp8FayjTHVH
-         lQm8H4HuwzAyMmu5wLCqDWxbI245GjMWIFjI6uvU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgQn8122095;
-        Tue, 24 Sep 2019 11:42:26 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 24
- Sep 2019 11:42:19 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 24 Sep 2019 11:42:25 -0500
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgCQa073229;
-        Tue, 24 Sep 2019 11:42:25 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v3 8/8] media: i2c: ov2659: Switch to SPDX Licensing
-Date:   Tue, 24 Sep 2019 11:44:14 -0500
-Message-ID: <20190924164414.21897-9-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190924164414.21897-1-bparrot@ti.com>
-References: <20190924164414.21897-1-bparrot@ti.com>
+        id S2410069AbfIXQqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:46:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2410058AbfIXQp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:45:57 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 014CA20673;
+        Tue, 24 Sep 2019 16:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569343556;
+        bh=RG54gPf8RJBC3CZTe5FkLegpYlLjZnCyXCk/BtTrOEY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=guiLNyHjuF87NIFgqi15V5UkptY1yUqFpG2zh89NQWy4K3cKP6AsimZPrFVnlRRvq
+         XcmNUNsYMDWcIEBOMHDg3sWoYWIZ5GL/h3+AZ4hdaEuMNizt9iI//HeK7KuYu40R3G
+         RNSNz27fEhU98nF4X0hQwxXgWiWkAPzvFWVcazG0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Matt Redfearn <matt.redfearn@thinci.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 03/70] drm/bridge: adv7511: Attach to DSI host at probe time
+Date:   Tue, 24 Sep 2019 12:44:42 -0400
+Message-Id: <20190924164549.27058-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
+References: <20190924164549.27058-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to SPDX licensing and drop the redundant GPL text.
+From: Matt Redfearn <matt.redfearn@thinci.com>
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
+[ Upstream commit 83f35bc3a852f1c3892c7474998c5cec707c7ba3 ]
+
+In contrast to all of the DSI panel drivers in drivers/gpu/drm/panel
+which attach to the DSI host via mipi_dsi_attach() at probe time, the
+ADV7533 bridge device does not. Instead it defers this to the point that
+the upstream device connects to its bridge via drm_bridge_attach().
+The generic Synopsys MIPI DSI host driver does not register it's own
+drm_bridge until the MIPI DSI has attached. But it does not call
+drm_bridge_attach() on the downstream device until the upstream device
+has attached. This leads to a chicken and the egg failure and the DRM
+pipeline does not complete.
+Since all other mipi_dsi_device drivers call mipi_dsi_attach() in
+probe(), make the adv7533 mipi_dsi_device do the same. This ensures that
+the Synopsys MIPI DSI host registers it's bridge such that it is
+available for the upstream device to connect to.
+
+Signed-off-by: Matt Redfearn <matt.redfearn@thinci.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190627151740.2277-1-matt.redfearn@thinci.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov2659.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
-index 23f161fd69bb..6b5fb2cf7f71 100644
---- a/drivers/media/i2c/ov2659.c
-+++ b/drivers/media/i2c/ov2659.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0-only
- /*
-  * Omnivision OV2659 CMOS Image Sensor driver
-  *
-@@ -5,19 +6,6 @@
-  *
-  * Benoit Parrot <bparrot@ti.com>
-  * Lad, Prabhakar <prabhakar.csengg@gmail.com>
-- *
-- * This program is free software; you may redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; version 2 of the License.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-- * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-- * SOFTWARE.
-  */
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 0e3e868850d55..018f39e0e3754 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -874,9 +874,6 @@ static int adv7511_bridge_attach(struct drm_bridge *bridge)
+ 				 &adv7511_connector_helper_funcs);
+ 	drm_connector_attach_encoder(&adv->connector, bridge->encoder);
  
- #include <linux/clk.h>
+-	if (adv->type == ADV7533)
+-		ret = adv7533_attach_dsi(adv);
+-
+ 	if (adv->i2c_main->irq)
+ 		regmap_write(adv->regmap, ADV7511_REG_INT_ENABLE(0),
+ 			     ADV7511_INT0_HPD);
+@@ -1222,8 +1219,17 @@ static int adv7511_probe(struct i2c_client *i2c, const struct i2c_device_id *id)
+ 	drm_bridge_add(&adv7511->bridge);
+ 
+ 	adv7511_audio_init(dev, adv7511);
++
++	if (adv7511->type == ADV7533) {
++		ret = adv7533_attach_dsi(adv7511);
++		if (ret)
++			goto err_remove_bridge;
++	}
++
+ 	return 0;
+ 
++err_remove_bridge:
++	drm_bridge_remove(&adv7511->bridge);
+ err_unregister_cec:
+ 	i2c_unregister_device(adv7511->i2c_cec);
+ 	if (adv7511->cec_clk)
 -- 
-2.17.1
+2.20.1
 
