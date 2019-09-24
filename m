@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30AB5BCF8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D505BCEF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438074AbfIXQ62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:58:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42086 "EHLO mail.kernel.org"
+        id S2410631AbfIXQtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:49:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393238AbfIXQtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:39 -0400
+        id S2390917AbfIXQtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AF9F222CA;
-        Tue, 24 Sep 2019 16:49:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78F60222BF;
+        Tue, 24 Sep 2019 16:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343779;
-        bh=g9xRuuc7DPnjhhFl6TkKWWliyfayET4dSFv/+Q/uzdc=;
+        s=default; t=1569343786;
+        bh=dV1r5TVToozdpjKjl7WaNviSQc4NOnz8fjIm0uFFHSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZAYHvdXres/T1y1s47ADYyOv56oW81k32eW5CZ2kKoDi9n5cGf7wQpFOT/ayBe43p
-         DWEXEzS04sUSpetdKkvwla4Pzn+rc4Istn36RJTS+bDu/Tw7Oi0LLReNT2v3DPJhWQ
-         EeD92q2gunqvX1z9zkbwOs7ji/HOHh9OWf/dEvuM=
+        b=XfvgEmdxiK8Am407xqvntgqQKvdBRds1YbJn34+BoKFThRnNVmFR3A6ychh6W+ltB
+         mKRfyJPlMyHfQQdD+N1qppwtKKsWR4d9n+dJ8cSj9WzxG2zTPRQ5YkhwedGLL/nP3P
+         4BneyIJi9fNexzZBIa4zyScnF7ot9oYzDa2yK7SQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 26/50] powerpc/64s/radix: Remove redundant pfn_pte bitop, add VM_BUG_ON
-Date:   Tue, 24 Sep 2019 12:48:23 -0400
-Message-Id: <20190924164847.27780-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 29/50] powerpc/eeh: Clear stale EEH_DEV_NO_HANDLER flag
+Date:   Tue, 24 Sep 2019 12:48:26 -0400
+Message-Id: <20190924164847.27780-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -44,62 +43,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 6bb25170d7a44ef0ed9677814600f0785e7421d1 ]
+[ Upstream commit aa06e3d60e245284d1e55497eb3108828092818d ]
 
-pfn_pte is never given a pte above the addressable physical memory
-limit, so the masking is redundant. In case of a software bug, it
-is not obviously better to silently truncate the pfn than to corrupt
-the pte (either one will result in memory corruption or crashes),
-so there is no reason to add this to the fast path.
+The EEH_DEV_NO_HANDLER flag is used by the EEH system to prevent the
+use of driver callbacks in drivers that have been bound part way
+through the recovery process. This is necessary to prevent later stage
+handlers from being called when the earlier stage handlers haven't,
+which can be confusing for drivers.
 
-Add VM_BUG_ON to catch cases where the pfn is invalid. These would
-catch the create_section_mapping bug fixed by a previous commit.
+However, the flag is set for all devices that are added after boot
+time and only cleared at the end of the EEH recovery process. This
+results in hot plugged devices erroneously having the flag set during
+the first recovery after they are added (causing their driver's
+handlers to be incorrectly ignored).
 
-  [16885.256466] ------------[ cut here ]------------
-  [16885.256492] kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
-  cpu 0x0: Vector: 700 (Program Check) at [c0000000ee0a36d0]
-      pc: c000000000080738: __map_kernel_page+0x248/0x6f0
-      lr: c000000000080ac0: __map_kernel_page+0x5d0/0x6f0
-      sp: c0000000ee0a3960
-     msr: 9000000000029033
-    current = 0xc0000000ec63b400
-    paca    = 0xc0000000017f0000   irqmask: 0x03   irq_happened: 0x01
-      pid   = 85, comm = sh
-  kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
-  Linux version 5.3.0-rc1-00001-g0fe93e5f3394
-  enter ? for help
-  [c0000000ee0a3a00] c000000000d37378 create_physical_mapping+0x260/0x360
-  [c0000000ee0a3b10] c000000000d370bc create_section_mapping+0x1c/0x3c
-  [c0000000ee0a3b30] c000000000071f54 arch_add_memory+0x74/0x130
+To remedy this, clear the flag at the beginning of recovery
+processing. The flag is still cleared at the end of recovery
+processing, although it is no longer really necessary.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Also clear the flag during eeh_handle_special_event(), for the same
+reasons.
+
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190724084638.24982-5-npiggin@gmail.com
+Link: https://lore.kernel.org/r/b8ca5629d27de74c957d4f4b250177d1b6fc4bbd.1565930772.git.sbobroff@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/book3s/64/pgtable.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/eeh_driver.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 855dbae6d351d..a717640b7eda4 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -629,8 +629,10 @@ static inline bool pte_access_permitted(pte_t pte, bool write)
-  */
- static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot)
- {
--	return __pte((((pte_basic_t)(pfn) << PAGE_SHIFT) & PTE_RPN_MASK) |
--		     pgprot_val(pgprot));
-+	VM_BUG_ON(pfn >> (64 - PAGE_SHIFT));
-+	VM_BUG_ON((pfn << PAGE_SHIFT) & ~PTE_RPN_MASK);
-+
-+	return __pte(((pte_basic_t)pfn << PAGE_SHIFT) | pgprot_val(pgprot));
- }
+diff --git a/arch/powerpc/kernel/eeh_driver.c b/arch/powerpc/kernel/eeh_driver.c
+index 67619b4b3f96c..110eba400de7c 100644
+--- a/arch/powerpc/kernel/eeh_driver.c
++++ b/arch/powerpc/kernel/eeh_driver.c
+@@ -811,6 +811,10 @@ void eeh_handle_normal_event(struct eeh_pe *pe)
+ 	pr_warn("EEH: This PCI device has failed %d times in the last hour and will be permanently disabled after %d failures.\n",
+ 		pe->freeze_count, eeh_max_freezes);
  
- static inline unsigned long pte_pfn(pte_t pte)
++	eeh_for_each_pe(pe, tmp_pe)
++		eeh_pe_for_each_dev(tmp_pe, edev, tmp)
++			edev->mode &= ~EEH_DEV_NO_HANDLER;
++
+ 	/* Walk the various device drivers attached to this slot through
+ 	 * a reset sequence, giving each an opportunity to do what it needs
+ 	 * to accomplish the reset.  Each child gets a report of the
+@@ -1004,7 +1008,8 @@ void eeh_handle_normal_event(struct eeh_pe *pe)
+  */
+ void eeh_handle_special_event(void)
+ {
+-	struct eeh_pe *pe, *phb_pe;
++	struct eeh_pe *pe, *phb_pe, *tmp_pe;
++	struct eeh_dev *edev, *tmp_edev;
+ 	struct pci_bus *bus;
+ 	struct pci_controller *hose;
+ 	unsigned long flags;
+@@ -1075,6 +1080,10 @@ void eeh_handle_special_event(void)
+ 				    (phb_pe->state & EEH_PE_RECOVERING))
+ 					continue;
+ 
++				eeh_for_each_pe(pe, tmp_pe)
++					eeh_pe_for_each_dev(tmp_pe, edev, tmp_edev)
++						edev->mode &= ~EEH_DEV_NO_HANDLER;
++
+ 				/* Notify all devices to be down */
+ 				eeh_pe_state_clear(pe, EEH_PE_PRI_BUS);
+ 				eeh_set_channel_state(pe, pci_channel_io_perm_failure);
 -- 
 2.20.1
 
