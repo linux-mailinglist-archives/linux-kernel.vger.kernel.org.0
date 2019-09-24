@@ -2,149 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E943BD3EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 23:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14716BD3FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 23:03:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633462AbfIXVAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 17:00:09 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38729 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbfIXVAI (ORCPT
+        id S2633504AbfIXVDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 17:03:52 -0400
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:34670 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2633481AbfIXVDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 17:00:08 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 3so1717457wmi.3;
-        Tue, 24 Sep 2019 14:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oNewvcf++KWCtPFvvVi+ibAYpjhcVn6V1aXTpiHE3I0=;
-        b=TW9l9J5wsC6Xo4aE9YxCuHSL3SI84uUP0Ahm6cBvBEQ/L2/1zkCnHUTNNyrpivXBeS
-         v0HlerVRib3YwY9ZEBCoe9ZPcSmOHvfG4hJ1bv/khZ7IvIZFxrlUCclx7pUfqeLYM/wl
-         9dHhnln92sHgTBETNzWou/TRjqJAsK8Ix7mODZzDKUSIZigS6RUnvWtnE8djjMN40Qqx
-         g2nz7hj5rVa1DmDOZILK4vD50FVo9rlfoF0K0C1tAVocUavMEXFgNk09XjlQ6jQ1SAuu
-         GZunPUF3YVxZAGX8sK/RoHJhQ76Wdc3g1OrJx845/OomxPwy/5kinQh60LSIz+P68MSe
-         03fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oNewvcf++KWCtPFvvVi+ibAYpjhcVn6V1aXTpiHE3I0=;
-        b=B0MoQNilR0BOQPyKxR8FQGOMzmEhk3dP48LnrdsKkvtvLtJz+4s7sydkR7kmkI7ABB
-         ut9WY4QKwZsZBCIlFEo+ouga+970mkCdpC1Xwwlz2wSchdTDnfzF+XLwEbZarwChnfDq
-         Uer12S0OMtg3AYGCWdkjINqaW/SPdl8b3eWqQ6+qto0/H2fp1f1FjYChZhqPI0nGs8LT
-         bwpaaRxYlJjlOnfWjUq6LGIOScqFwfgAdZzrxBL1NaF1eCcez6IFVpFCwoFItIUWIjey
-         v52QWqm/G+LmatAZEyNJ0Pb6c3RP/SUh0rR19cnonnwwg53OZOzbulmJLomqSCYS0Q7V
-         Seew==
-X-Gm-Message-State: APjAAAUhIKA3HV7iRGV3IuX3pDLYiCTqJA+NqRP1G308bBzx7ZzCLcFI
-        dDvNyIizyxKgNpfcGqE13WXX+6wT
-X-Google-Smtp-Source: APXvYqwQ/T+RidUBMADAgvS0I04mGILCXbTh+L5jSqpYYSJGw6ALpjsu4wzXySkpvCn2V4pzeH9fng==
-X-Received: by 2002:a7b:cd99:: with SMTP id y25mr2518764wmj.152.1569358804992;
-        Tue, 24 Sep 2019 14:00:04 -0700 (PDT)
-Received: from ?IPv6:2001:a61:24d6:4e01:ef75:e978:47cd:1c50? ([2001:a61:24d6:4e01:ef75:e978:47cd:1c50])
-        by smtp.gmail.com with ESMTPSA id z13sm3169830wrq.51.2019.09.24.14.00.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2019 14:00:03 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, Florian Weimer <fw@deneb.enyo.de>,
-        Oleg Nesterov <oleg@redhat.com>, Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Daniel Colascione <dancol@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: For review: pidfd_send_signal(2) manual page
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-References: <f21dbd73-5ef4-fb5b-003f-ff4fec34a1de@gmail.com>
- <87pnjr9rth.fsf@mid.deneb.enyo.de>
- <20190923142325.jowzbnwjw7g7si7j@wittgenstein>
- <90dd38d5-34b3-b72f-8e5a-b51f944f22fb@gmail.com>
- <20190924195701.7pw2olbviieqsg5q@wittgenstein>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <b76adb4c-826b-6493-ba75-a9863066d3b1@gmail.com>
-Date:   Tue, 24 Sep 2019 23:00:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 24 Sep 2019 17:03:51 -0400
+Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8OKv7S3014201;
+        Tue, 24 Sep 2019 21:03:24 GMT
+Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2v796w0xc4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Sep 2019 21:03:24 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2353.austin.hpe.com (Postfix) with ESMTP id DA6986D;
+        Tue, 24 Sep 2019 21:03:23 +0000 (UTC)
+Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id DC6313B;
+        Tue, 24 Sep 2019 21:03:22 +0000 (UTC)
+Date:   Tue, 24 Sep 2019 16:03:22 -0500
+From:   Steve Wahl <steve.wahl@hpe.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Juergen Gross <jgross@suse.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Steve Wahl <steve.wahl@hpe.com>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Cc:     Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
+        dimitri.sivanich@hpe.com, mike.travis@hpe.com
+Subject: [PATCH v3 0/2] x86/boot/64: Avoid mapping reserved ranges in early
+ page tables.
+Message-ID: <cover.1569358538.git.steve.wahl@hpe.com>
 MIME-Version: 1.0
-In-Reply-To: <20190924195701.7pw2olbviieqsg5q@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-09-24_10:2019-09-23,2019-09-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 mlxscore=0
+ spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1909240169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Christian,
+This patch set narrows the valid space addressed by the page table
+level2_kernel_pgt to only contain ranges checked against the "usable
+RAM" list provided by the BIOS.
 
->>> If you're the parent of the process you can do this without CLONE_PIDFD:
->>> pid = fork();
->>> pidfd = pidfd_open();
->>> ret = pidfd_send_signal(pidfd, 0, NULL, 0);
->>> if (ret < 0 && errno == ESRCH)
->>> 	/* pidfd refers to another, recycled process */
->>
->> Although there is still the race between the fork() and the
->> pidfd_open(), right?
-> 
-> Actually no and my code is even too complex.
-> If you are the parent, and this is really a sequence that obeys the
-> ordering pidfd_open() before waiting:
-> 
-> pid = fork();
-> if (pid == 0)
-> 	exit(EXIT_SUCCESS);
-> pidfd = pidfd_open(pid, 0);
-> waitid(pid, ...);
-> 
-> Then you are guaranteed that pidfd will refer to pid. No recycling can
-> happen since the process has not been waited upon yet (That is,
+Prior to this, some larger than needed mappings were occasionally
+crossing over into spaces marked reserved, allowing the processor to
+access these reserved spaces, which were caught by the hardware and
+caused BIOS to halt on our platform (UV).
 
-D'oh! Yes, of course. 
+Changes since v1:
 
-> excluding special cases such as where you have a mainloop where a
-> callback reacts to a SIGCHLD event and waits on the child behind your
-> back and your next callback in the mainloop calls pidfd_open() while the
-> pid has been recycled etc.).
-> A race could only appear in sequences where waiting happens before
-> pidfd_open():
-> 
-> pid = fork();
-> if (pid == 0)
-> 	exit(EXIT_SUCCESS);
-> waitid(pid, ...);
-> pidfd = pidfd_open(pid, 0);
-> 
-> which honestly simply doesn't make any sense. So if you're the parent
-> and you combine fork() + pidfd_open() correctly things should be fine
-> without even having to verify via pidfd_send_signal() (I missed that in
-> my first mail.).
+* Cover letter added because there's now two patches.
 
-Thanks for the additional detail.
+* Patch 1: Added comment and re-worked changelog text.
 
-I added the following to the pidfd_open() page, to
-prevent people making the same thinko as me:
+* Patch 2: New change requested by Dave Hansen to handle the case that
+  the mapping of the last PMD page for the kernel image could cross a
+  reserved region boundary.
 
-       The following code sequence can be used to obtain a file  descrip‐
-       tor for the child of fork(2):
+Changes since v2:
 
-           pid = fork();
-           if (pid > 0) {     /* If parent */
-               pidfd = pidfd_open(pid, 0);
-               ...
-           }
+* Patch 1: Added further inline comments.
+* Patch 2: None.
 
-       Even  if  the  child process has already terminated by the time of
-       the pidfd_open() call, the returned file descriptor is  guaranteed
-       to refer to the child because the parent has not yet waited on the
-       child (and therefore, the child's ID has not been recycled).
+Steve Wahl (2):
+  x86/boot/64: Make level2_kernel_pgt pages invalid outside kernel area.
+  x86/boot/64: round memory hole size up to next PMD page.
 
-Thanks,
-
-Michael
+ arch/x86/boot/compressed/misc.c | 25 +++++++++++++++++++------
+ arch/x86/kernel/head64.c        | 22 ++++++++++++++++++++--
+ 2 files changed, 39 insertions(+), 8 deletions(-)
 
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+2.21.0
+
+
+-- 
+Steve Wahl, Hewlett Packard Enterprise
