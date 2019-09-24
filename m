@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68EBABCE56
+	by mail.lfdr.de (Postfix) with ESMTP id D27AFBCE57
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441532AbfIXQu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:50:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43740 "EHLO mail.kernel.org"
+        id S2405151AbfIXQu7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:50:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436877AbfIXQuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:44 -0400
+        id S2441489AbfIXQuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF712217D9;
-        Tue, 24 Sep 2019 16:50:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E423721D6C;
+        Tue, 24 Sep 2019 16:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343843;
-        bh=GJpHzJ+qn9OcaCR4TCj1pJRC+9xWdaPTJJuPR71IuUE=;
+        s=default; t=1569343845;
+        bh=rrI29aVED5YRGj5/zZGCVu7KrelVkMFejMQpJYStOqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gOgvyFgZ+N1oDyUAPv5OMhTYPHY66F54BaDZllmWq8RgC1dDi+h2tC7XSdYS7Mufa
-         fageKeqDyU96GU5fDV9oviwr20P2bC1R5ibpqKAAyP/BYkacNHBAMBaRAk7ZRXK5a0
-         6+OmvHnzkrXkujvS8HgHbkgOtdI93aWDwryZxC6Q=
+        b=z9cx33M0ZQgiiy/jpG4EhC7mGYLF+yijfJUvje6mS/f2dJlnGfmAoxOgRBdL08MSj
+         CFG+28+Rt4i7LO/z7qLE538x9BGwz5qR/tHdlOVk25pR95VJ71j5SYbXx35Dz4UZfo
+         DoAhIggX4LhlMR3OOma0bj+Jnpz4geqVxfm3O0ac=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 07/28] gpu: drm: radeon: Fix a possible null-pointer dereference in radeon_connector_set_property()
-Date:   Tue, 24 Sep 2019 12:50:10 -0400
-Message-Id: <20190924165031.28292-7-sashal@kernel.org>
+Cc:     Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Scott Wood <oss@buserror.net>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 09/28] clk: qoriq: Fix -Wunused-const-variable
+Date:   Tue, 24 Sep 2019 12:50:12 -0400
+Message-Id: <20190924165031.28292-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165031.28292-1-sashal@kernel.org>
 References: <20190924165031.28292-1-sashal@kernel.org>
@@ -44,43 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Nathan Huckleberry <nhuck@google.com>
 
-[ Upstream commit f3eb9b8f67bc28783eddc142ad805ebdc53d6339 ]
+[ Upstream commit a95fb581b144b5e73da382eaedb2e32027610597 ]
 
-In radeon_connector_set_property(), there is an if statement on line 743
-to check whether connector->encoder is NULL:
-    if (connector->encoder)
+drivers/clk/clk-qoriq.c:138:38: warning: unused variable
+'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp1
 
-When connector->encoder is NULL, it is used on line 755:
-    if (connector->encoder->crtc)
+drivers/clk/clk-qoriq.c:146:38: warning: unused variable
+'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp2
 
-Thus, a possible null-pointer dereference may occur.
+In the definition of the p5020 chip, the p2041 chip's info was used
+instead.  The p5020 and p2041 chips have different info. This is most
+likely a typo.
 
-To fix this bug, connector->encoder is checked before being used.
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/525
+Cc: clang-built-linux@googlegroups.com
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Link: https://lkml.kernel.org/r/20190627220642.78575-1-nhuck@google.com
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_connectors.c | 2 +-
+ drivers/clk/clk-qoriq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index 337d3a1c2a409..48f752cf7a920 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -764,7 +764,7 @@ static int radeon_connector_set_property(struct drm_connector *connector, struct
- 
- 		radeon_encoder->output_csc = val;
- 
--		if (connector->encoder->crtc) {
-+		if (connector->encoder && connector->encoder->crtc) {
- 			struct drm_crtc *crtc  = connector->encoder->crtc;
- 			struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
- 
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index b0ea753b8709d..1a292519d84f2 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -610,7 +610,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p5020_init_periph,
+ 		.cmux_groups = {
+-			&p2041_cmux_grp1, &p2041_cmux_grp2
++			&p5020_cmux_grp1, &p5020_cmux_grp2
+ 		},
+ 		.cmux_to_group = {
+ 			0, 1, -1
 -- 
 2.20.1
 
