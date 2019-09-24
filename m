@@ -2,211 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D80F0BCFD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6FDBBD007
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393745AbfIXRBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 13:01:38 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:34762 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730215AbfIXRBe (ORCPT
+        id S1732486AbfIXRC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 13:02:56 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38631 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732046AbfIXRCz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 13:01:34 -0400
-Received: from static-50-53-33-191.bvtn.or.frontiernet.net ([50.53.33.191] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1iCoBw-0000q2-7w; Tue, 24 Sep 2019 17:01:32 +0000
-Subject: Re: [WTF?] aafs_create_symlink() weirdness
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org
-References: <20190924020348.GD26530@ZenIV.linux.org.uk>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <c2604d70-4c65-eb90-2cff-dd96f724222c@canonical.com>
-Date:   Tue, 24 Sep 2019 10:01:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 24 Sep 2019 13:02:55 -0400
+Received: by mail-io1-f66.google.com with SMTP id u8so6221656iom.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 10:02:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2Y7JDpusl8uM4l8mJlIUSosd+8pd0KgH/eg88o1tZ+U=;
+        b=bBjik4oxylm4BFTFdST470SXp7tQAXIXXCllcfpIbvpSGjjRBij5rJlT4f9moVFwVd
+         yJyY9XiRopDZW9w6enKsHkDk6hUAVaDkV+sSltjPN+TOoA+ugIQsc4riRdaWLsEjaqWG
+         9myLovEFNhXFizb3cXpb2n7XnotNVUKjcwMtZcwQxYBvtIuYSUfCo80jjoUM+Gq5AIil
+         5NFy2LvkwmLWALy4eSt/ikTBnTPzzY5Oh2qIivwuyU72F/ymNSybxXBTpfk7Cgb3BNty
+         EmwJ211u1yoWy6TpjEOJvCnSJJUNwjBledeadjd+aZxMeTPDvF8vZxiPZzBLGkbnCFXd
+         8d9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2Y7JDpusl8uM4l8mJlIUSosd+8pd0KgH/eg88o1tZ+U=;
+        b=ffu9qV/14MrDq5grV37cRj/PPtWw0cjEcwFNUwQwag2vQ8t3fLtDXnCABWnm72Sevb
+         7E/8/pjoP328ZoKMRnaquxv99Jd76BRNq4qHKxol0Hg4W0v9PuK/ScdRqudefCmOBjm8
+         vOIcfjgjPzozahd9Ua0P2EVAvp048d+LIkysleStZIAY6nIzXqRqOe4t/XWBwFfVCM7U
+         1fBlgn/CmfXqS0HF0pFJU7rmfWL37tHJB4++TYs0WbnMaQ+8KRbxYpXM1vyjT08szsGT
+         A9UXBd9WWidWWIk7YZmS3UYwFXc30CvLxqVI4yfvFbcyKnsnxGe4VWnDntU989gF683O
+         H9BQ==
+X-Gm-Message-State: APjAAAVYsA/N3i4xRwqhHGughKGgMUmXzf3JHe65wOG54aYFPJIGBtvy
+        8EHSRUalfWFRJ+JMur+0AeXApK2KhVgKz/qtR5JH4ecc9o0=
+X-Google-Smtp-Source: APXvYqwZqEsuY5Y4M14Cr+5pAyN6PG6t2sd2N11O8P+s+hLu+UoU104Vs8aiyqs/fdO096/rYroxhs0sMoBn8tQLibs=
+X-Received: by 2002:a5e:da0a:: with SMTP id x10mr100562ioj.286.1569344573717;
+ Tue, 24 Sep 2019 10:02:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190924020348.GD26530@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190924.145257.2013712373872209531.davem@davemloft.net> <20190924140128.19394-1-Jason@zx2c4.com>
+In-Reply-To: <20190924140128.19394-1-Jason@zx2c4.com>
+From:   Wei Wang <weiwan@google.com>
+Date:   Tue, 24 Sep 2019 10:02:42 -0700
+Message-ID: <CAEA6p_CEzzpgdQMw0KnOJYN+HVEFoShwnn0tAUqaQjO2+44BcQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ipv6: do not free rt if FIB_LOOKUP_NOREF is set on
+ suppress rule
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/23/19 7:03 PM, Al Viro wrote:
+On Tue, Sep 24, 2019 at 7:01 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Commit 7d9e5f422150 removed references from certain dsts, but accounting
+> for this never translated down into the fib6 suppression code. This bug
+> was triggered by WireGuard users who use wg-quick(8), which uses the
+> "suppress-prefix" directive to ip-rule(8) for routing all of their
+> internet traffic without routing loops. The test case added here
+> causes the reference underflow by causing packets to evaluate a suppress
+> rule.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 7d9e5f422150 ("ipv6: convert major tx path to use RT6_LOOKUP_F_DST_NOREF")
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+Acked-by: Wei Wang <weiwan@google.com>
 
-WTF indeed
+Good catch. Thanks for the fix.
 
-> 
-> static struct dentry *aafs_create_symlink(const char *name,
->                                           struct dentry *parent,
->                                           const char *target,
->                                           void *private,
->                                           const struct inode_operations *iops)
-> {
->         struct dentry *dent;
->         char *link = NULL;
-> 
->         if (target) {
->                 if (!link)
->                         return ERR_PTR(-ENOMEM);
->         }
-> 
-> Er...  That's an odd way to spell
-> 	if (target)
-> 		return ERR_PTR(-ENOMEM);
-> (and an odd error value to use).  Especially since all callers are passing
-> NULL as target.
-> 
-> Why is that code even there, why does that argument still exist and
-> how many people have actually read that function?
-> 
-
-It looks like 1180b4c757aa failed to drop it as part of the patch, but it
-certainly should have. I can't say why it happened but regardless its an ugly
-mistake. Thank you very much for catching this Al.
-
-A patch to drop it is below or feel free to cons up an alternate version.
-
----
-
-commit 5dbc63d4a0aa819be8ecf21a67a352dd377b0221
-Author: John Johansen <john.johansen@canonical.com>
-Date:   Tue Sep 24 09:46:33 2019 -0700
-
-    apparmor: remove useless aafs_create_symlink
-    
-    1180b4c757aa ("apparmor: fix dangling symlinks to policy rawdata after
-    replacement") reworked how the rawdata symlink is handled but failed
-    to remove aafs_create_symlink which was reduced to a useless stub .
-    
-    Fixes: 1180b4c757aa ("apparmor: fix dangling symlinks to policy rawdata after replacement")
-    Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-    Signed-off-by: John Johansen <john.johansen@canonical.com>
-
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 9c0e593e30aa..308c99ea3cf8 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -335,38 +335,6 @@ static struct dentry *aafs_create_dir(const char *name, struct dentry *parent)
- 			   NULL);
- }
- 
--/**
-- * aafs_create_symlink - create a symlink in the apparmorfs filesystem
-- * @name: name of dentry to create
-- * @parent: parent directory for this dentry
-- * @target: if symlink, symlink target string
-- * @private: private data
-- * @iops: struct of inode_operations that should be used
-- *
-- * If @target parameter is %NULL, then the @iops parameter needs to be
-- * setup to handle .readlink and .get_link inode_operations.
-- */
--static struct dentry *aafs_create_symlink(const char *name,
--					  struct dentry *parent,
--					  const char *target,
--					  void *private,
--					  const struct inode_operations *iops)
--{
--	struct dentry *dent;
--	char *link = NULL;
--
--	if (target) {
--		if (!link)
--			return ERR_PTR(-ENOMEM);
--	}
--	dent = aafs_create(name, S_IFLNK | 0444, parent, private, link, NULL,
--			   iops);
--	if (IS_ERR(dent))
--		kfree(link);
--
--	return dent;
--}
--
- /**
-  * aafs_remove - removes a file or directory from the apparmorfs filesystem
-  *
-@@ -1757,25 +1725,25 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
- 	}
- 
- 	if (profile->rawdata) {
--		dent = aafs_create_symlink("raw_sha1", dir, NULL,
--					   profile->label.proxy,
--					   &rawdata_link_sha1_iops);
-+		dent = aafs_create("raw_sha1", S_IFLNK | 0444, dir,
-+				   profile->label.proxy, NULL, NULL,
-+				   &rawdata_link_sha1_iops);
- 		if (IS_ERR(dent))
- 			goto fail;
- 		aa_get_proxy(profile->label.proxy);
- 		profile->dents[AAFS_PROF_RAW_HASH] = dent;
- 
--		dent = aafs_create_symlink("raw_abi", dir, NULL,
--					   profile->label.proxy,
--					   &rawdata_link_abi_iops);
-+		dent = aafs_create("raw_abi", S_IFLNK | 0444, dir,
-+				   profile->label.proxy, NULL, NULL,
-+				   &rawdata_link_abi_iops);
- 		if (IS_ERR(dent))
- 			goto fail;
- 		aa_get_proxy(profile->label.proxy);
- 		profile->dents[AAFS_PROF_RAW_ABI] = dent;
- 
--		dent = aafs_create_symlink("raw_data", dir, NULL,
--					   profile->label.proxy,
--					   &rawdata_link_data_iops);
-+		dent = aafs_create("raw_data", S_IFLNK | 0444, dir,
-+				   profile->label.proxy, NULL, NULL,
-+				   &rawdata_link_data_iops);
- 		if (IS_ERR(dent))
- 			goto fail;
- 		aa_get_proxy(profile->label.proxy);
-
+>  net/ipv6/fib6_rules.c                    |  3 ++-
+>  tools/testing/selftests/net/fib_tests.sh | 17 ++++++++++++++++-
+>  2 files changed, 18 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/ipv6/fib6_rules.c b/net/ipv6/fib6_rules.c
+> index d22b6c140f23..f9e8fe3ff0c5 100644
+> --- a/net/ipv6/fib6_rules.c
+> +++ b/net/ipv6/fib6_rules.c
+> @@ -287,7 +287,8 @@ static bool fib6_rule_suppress(struct fib_rule *rule, struct fib_lookup_arg *arg
+>         return false;
+>
+>  suppress_route:
+> -       ip6_rt_put(rt);
+> +       if (!(arg->flags & FIB_LOOKUP_NOREF))
+> +               ip6_rt_put(rt);
+>         return true;
+>  }
+>
+> diff --git a/tools/testing/selftests/net/fib_tests.sh b/tools/testing/selftests/net/fib_tests.sh
+> index 4465fc2dae14..c2c5f2bf0f95 100755
+> --- a/tools/testing/selftests/net/fib_tests.sh
+> +++ b/tools/testing/selftests/net/fib_tests.sh
+> @@ -9,7 +9,7 @@ ret=0
+>  ksft_skip=4
+>
+>  # all tests in this script. Can be overridden with -t option
+> -TESTS="unregister down carrier nexthop ipv6_rt ipv4_rt ipv6_addr_metric ipv4_addr_metric ipv6_route_metrics ipv4_route_metrics ipv4_route_v6_gw rp_filter"
+> +TESTS="unregister down carrier nexthop suppress ipv6_rt ipv4_rt ipv6_addr_metric ipv4_addr_metric ipv6_route_metrics ipv4_route_metrics ipv4_route_v6_gw rp_filter"
+>
+>  VERBOSE=0
+>  PAUSE_ON_FAIL=no
+> @@ -614,6 +614,20 @@ fib_nexthop_test()
+>         cleanup
+>  }
+>
+> +fib_suppress_test()
+> +{
+> +       $IP link add dummy1 type dummy
+> +       $IP link set dummy1 up
+> +       $IP -6 route add default dev dummy1
+> +       $IP -6 rule add table main suppress_prefixlength 0
+> +       ping -f -c 1000 -W 1 1234::1 || true
+> +       $IP -6 rule del table main suppress_prefixlength 0
+> +       $IP link del dummy1
+> +
+> +       # If we got here without crashing, we're good.
+> +       return 0
+> +}
+> +
+>  ################################################################################
+>  # Tests on route add and replace
+>
+> @@ -1591,6 +1605,7 @@ do
+>         fib_carrier_test|carrier)       fib_carrier_test;;
+>         fib_rp_filter_test|rp_filter)   fib_rp_filter_test;;
+>         fib_nexthop_test|nexthop)       fib_nexthop_test;;
+> +       fib_suppress_test|suppress)     fib_suppress_test;;
+>         ipv6_route_test|ipv6_rt)        ipv6_route_test;;
+>         ipv4_route_test|ipv4_rt)        ipv4_route_test;;
+>         ipv6_addr_metric)               ipv6_addr_metric_test;;
+> --
+> 2.21.0
+>
