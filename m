@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4503BCF03
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0BEEBCF65
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410767AbfIXQua (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:50:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43000 "EHLO mail.kernel.org"
+        id S2411027AbfIXQz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:55:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410716AbfIXQuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:15 -0400
+        id S2410725AbfIXQuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BDE221D82;
-        Tue, 24 Sep 2019 16:50:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68C4B21906;
+        Tue, 24 Sep 2019 16:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343814;
-        bh=X83HWbTqofVal5zxoKrVPyIEsOibVmg3PU1ULh3YdLs=;
+        s=default; t=1569343817;
+        bh=3Yxm805HcMBC0NVzEht6kknUPgIVytbLs66C3vx93cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CR554ori/7xMiBb/O0K56qbvd+kK/9sBwok56zG9ks4DqB4PFSE0aALIFz2YceDkB
-         6xDWuFe6yiVin9ql+I019v9nBwGPDJoNMJZNj7qUB2YOz8/nXaAUrIPNpFnNTc7FZ1
-         3iqTmuCXhWTWrHgwPNP4U7REmfsVLiyDXie2AFDo=
+        b=sNrdHZ3e0zLzVjGaUZZAoYHlp/E876XQR8ikkp6OsYLaeN5eSPwPO5VfurH32314w
+         NF0Fs2JLgXFxjt9dOIcwPZXHbjbIhjA/o8GTVrgNsIp90M2X9jVC1qo8GAblT/wZSu
+         mp/x4/ZnpEmDb6Kb8JI25j1naWHfZOPIHcOm/TsU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Otto Meier <gf435@gmx.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 42/50] pinctrl: meson-gxbb: Fix wrong pinning definition for uart_c
-Date:   Tue, 24 Sep 2019 12:48:39 -0400
-Message-Id: <20190924164847.27780-42-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 43/50] arm64: fix unreachable code issue with cmpxchg
+Date:   Tue, 24 Sep 2019 12:48:40 -0400
+Message-Id: <20190924164847.27780-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -44,61 +46,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Otto Meier <gf435@gmx.net>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit cb0438e4436085d89706b5ccfce4d5da531253de ]
+[ Upstream commit 920fdab7b3ce98c14c840261e364f490f3679a62 ]
 
-Hi i tried to use the uart_C of the the odroid-c2.
+On arm64 build with clang, sometimes the __cmpxchg_mb is not inlined
+when CONFIG_OPTIMIZE_INLINING is set.
+Clang then fails a compile-time assertion, because it cannot tell at
+compile time what the size of the argument is:
 
-I enabled it in the dts file. During boot it crashed when the
-the sdcard slot is addressed.
+mm/memcontrol.o: In function `__cmpxchg_mb':
+memcontrol.c:(.text+0x1a4c): undefined reference to `__compiletime_assert_175'
+memcontrol.c:(.text+0x1a4c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__compiletime_assert_175'
 
-After long search in the net i found this:
+Mark all of the cmpxchg() style functions as __always_inline to
+ensure that the compiler can see the result.
 
-https://forum.odroid.com/viewtopic.php?f=139&t=25371&p=194370&hilit=uart_C#p177856
-
-After changing the pin definitions accordingly erverything works.
-Uart_c is functioning and sdcard ist working.
-
-Fixes: 6db0f3a8a04e46 ("pinctrl: amlogic: gxbb: add more UART pins")
-Signed-off-by: Otto Meier <gf435@gmx.net>
-Link: https://lore.kernel.org/r/1cc32a18-464d-5531-7a1c-084390e2ecb1@gmx.net
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/648
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Tested-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/include/asm/cmpxchg.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-index 4edeb4cae72aa..c4c70dc57dbee 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-gxbb.c
-@@ -198,8 +198,8 @@ static const unsigned int uart_rts_b_pins[]	= { GPIODV_27 };
+diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
+index 3b09382815419..d8b01c7c9cd3f 100644
+--- a/arch/arm64/include/asm/cmpxchg.h
++++ b/arch/arm64/include/asm/cmpxchg.h
+@@ -74,7 +74,7 @@ __XCHG_CASE( ,  ,  mb_8, dmb ish, nop,  , a, l, "memory")
+ #undef __XCHG_CASE
  
- static const unsigned int uart_tx_c_pins[]	= { GPIOY_13 };
- static const unsigned int uart_rx_c_pins[]	= { GPIOY_14 };
--static const unsigned int uart_cts_c_pins[]	= { GPIOX_11 };
--static const unsigned int uart_rts_c_pins[]	= { GPIOX_12 };
-+static const unsigned int uart_cts_c_pins[]	= { GPIOY_11 };
-+static const unsigned int uart_rts_c_pins[]	= { GPIOY_12 };
+ #define __XCHG_GEN(sfx)							\
+-static inline unsigned long __xchg##sfx(unsigned long x,		\
++static __always_inline  unsigned long __xchg##sfx(unsigned long x,	\
+ 					volatile void *ptr,		\
+ 					int size)			\
+ {									\
+@@ -116,7 +116,7 @@ __XCHG_GEN(_mb)
+ #define xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
  
- static const unsigned int i2c_sck_a_pins[]	= { GPIODV_25 };
- static const unsigned int i2c_sda_a_pins[]	= { GPIODV_24 };
-@@ -445,10 +445,10 @@ static struct meson_pmx_group meson_gxbb_periphs_groups[] = {
- 	GROUP(pwm_f_x,		3,	18),
+ #define __CMPXCHG_GEN(sfx)						\
+-static inline unsigned long __cmpxchg##sfx(volatile void *ptr,		\
++static __always_inline unsigned long __cmpxchg##sfx(volatile void *ptr,	\
+ 					   unsigned long old,		\
+ 					   unsigned long new,		\
+ 					   int size)			\
+@@ -223,7 +223,7 @@ __CMPWAIT_CASE( ,  , 8);
+ #undef __CMPWAIT_CASE
  
- 	/* Bank Y */
--	GROUP(uart_cts_c,	1,	19),
--	GROUP(uart_rts_c,	1,	18),
--	GROUP(uart_tx_c,	1,	17),
--	GROUP(uart_rx_c,	1,	16),
-+	GROUP(uart_cts_c,	1,	17),
-+	GROUP(uart_rts_c,	1,	16),
-+	GROUP(uart_tx_c,	1,	19),
-+	GROUP(uart_rx_c,	1,	18),
- 	GROUP(pwm_a_y,		1,	21),
- 	GROUP(pwm_f_y,		1,	20),
- 	GROUP(i2s_out_ch23_y,	1,	5),
+ #define __CMPWAIT_GEN(sfx)						\
+-static inline void __cmpwait##sfx(volatile void *ptr,			\
++static __always_inline void __cmpwait##sfx(volatile void *ptr,		\
+ 				  unsigned long val,			\
+ 				  int size)				\
+ {									\
 -- 
 2.20.1
 
