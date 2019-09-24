@@ -2,111 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF68BD34F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 22:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70730BD352
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 22:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410224AbfIXUIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 16:08:16 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42134 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728405AbfIXUIQ (ORCPT
+        id S2410279AbfIXUJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 16:09:32 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44550 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728405AbfIXUJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 16:08:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=LXgcIicO7dupiaW2u2O3Xige+E9f1qfvrT5g/0DqOC4=; b=g0SZYSyu2QrR
-        c4FlMWw9z7jrhgbiPkjOxd47dHN2A4jatjw7VnP84VwKeaPR8R+1Td3WKLpRbSoXLFy0e6T0dQKqC
-        H3bVPKZecxNh5WekOzpWOIm0ZEFWZTtybWSFCbrmBlyPBeW5XKyyE+WY87Dplh/y0KdiMXaABpun2
-        9qRaw=;
-Received: from [12.157.10.118] (helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1iCr6Z-0003EU-Sa; Tue, 24 Sep 2019 20:08:12 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 52B49D02FC7; Tue, 24 Sep 2019 21:08:10 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     krzk@kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "spi: Add call to spi_slave_abort() function when spidev driver is released" to the spi tree
-In-Reply-To: <20190924110547.14770-2-lukma@denx.de>
-X-Patchwork-Hint: ignore
-Message-Id: <20190924200810.52B49D02FC7@fitzroy.sirena.org.uk>
-Date:   Tue, 24 Sep 2019 21:08:10 +0100 (BST)
+        Tue, 24 Sep 2019 16:09:32 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u40so3715686qth.11
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 13:09:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
+        b=lFSPJhuGc+UErRsmXE3a2HnOmIhT7wAZXYAVEv167sLTy4+FCZmbnSlsDf/nl5qE/9
+         GAZyiW2s8LrBgdVFl26GTWfsiTnwUpT4g3qMjypQDL/aVBkC0SHfiRgvop0AkSZ+WTeO
+         0/CMpr6jXAGvdQRqNqGl6gswvFSHG+o+SLPijoGvifWcZnJKXRH7q65Vr1m+mdPO2XXf
+         ihhlByutNYBUxdnWTmBr/XFB5XryileaefmGJqAAGv8rvVynlnYymeIbAZlOQKT7UJYU
+         Iu1v5SAwuZmA9wKxn5foysOMJb6ObKSFfiN6O+IZ34zyuqKFNxGgcKhUx67aSWLIhFzi
+         v0og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
+        b=fRZ962DPsewbK83xmxuydy/bFdjxPFXhaYmNQ0RiLpXllVv0kRCiVwDOU5WdpOS6zo
+         NhaKFewt9SdyC4bxcGXwVU6vqXw+Uz5LD7/Boy4uashve/HoKpzA7ai9IOhphZo00K4X
+         M27Iu2VnwtyedS3OtCp64rlF5OMeBIzQb9fp4Ld4d92LQKpcUpF9i/wD5zLOxIjueM6Q
+         s/oYAZBoe0qCEMSyofZbwpwJo7IBEkglytbQNzdazDKmxptWF1EsBNH4sqhDgDW0rCd9
+         dJuphmktiKSLlpwDwk5fKCFGBp2VyMNTAJ/mFOQl1JWM1Flt2aBCxblACtdbLAuyDmeC
+         bYAw==
+X-Gm-Message-State: APjAAAWfgCTw46dtarNDA0XylwcN1MPgh8JZH+D4zwvzIUS6+5oIEic5
+        2orGWAa9uPOZZZN1nth999r+16fmoSvqq4iBsj0=
+X-Google-Smtp-Source: APXvYqzUMyZKmhataJF5AxwCkLhbNzS3uQUhIIyhKm+1HPxA3PxvGwZtgf5E4akGeYWqRVrVa/GjiDRb1hwaISbF0w4=
+X-Received: by 2002:ac8:5194:: with SMTP id c20mr1470123qtn.21.1569355771642;
+ Tue, 24 Sep 2019 13:09:31 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a05:6214:18c:0:0:0:0 with HTTP; Tue, 24 Sep 2019 13:09:31
+ -0700 (PDT)
+Reply-To: joeakaba00@gmail.com
+From:   joe akaba <kagnalex@gmail.com>
+Date:   Tue, 24 Sep 2019 22:09:31 +0200
+Message-ID: <CACemp=6cRJM9PVjQDmRT+Cc4ZbE_JiEcDDTiD4+xhtdLiGU15w@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hello
 
-   spi: Add call to spi_slave_abort() function when spidev driver is released
+My name is Joe Akaba I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
 
-has been applied to the spi tree at
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:joeakaba00@gmail.com
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
+Many thanks in advance,
+Mr.Joe Akaba
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Hallo
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8.5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: joeakaba00@gmail.com
 
-Thanks,
-Mark
-
-From bf390d25e03b38248a0a4f7d0002bbb495a82fe9 Mon Sep 17 00:00:00 2001
-From: Lukasz Majewski <lukma@denx.de>
-Date: Tue, 24 Sep 2019 13:05:46 +0200
-Subject: [PATCH] spi: Add call to spi_slave_abort() function when spidev
- driver is released
-
-This change is necessary for spidev devices (e.g. /dev/spidev3.0) working
-in the slave mode (like NXP's dspi driver for Vybrid SoC).
-
-When SPI HW works in this mode - the master is responsible for providing
-CS and CLK signals. However, when some fault happens - like for example
-distortion on SPI lines - the SPI Linux driver needs a chance to recover
-from this abnormal situation and prepare itself for next (correct)
-transmission.
-
-This change doesn't pose any threat on drivers working in master mode as
-spi_slave_abort() function checks if SPI slave mode is supported.
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Link: https://lore.kernel.org/r/20190924110547.14770-2-lukma@denx.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spidev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 255786f2e844..fe9ea7e55e5b 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -627,6 +627,7 @@ static int spidev_release(struct inode *inode, struct file *filp)
- 		if (dofree)
- 			kfree(spidev);
- 	}
-+	spi_slave_abort(spidev->spi);
- 	mutex_unlock(&device_list_lock);
- 
- 	return 0;
--- 
-2.20.1
-
+Vielen Dank im Voraus,
+Mr.Joe Akaba
