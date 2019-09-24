@@ -2,87 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C8BBD4B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 23:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41714BD4CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 00:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633595AbfIXV7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 17:59:31 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45924 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387723AbfIXV7b (ORCPT
+        id S2442022AbfIXWF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 18:05:56 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41811 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387542AbfIXWF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 17:59:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id B3C5D8EE175;
-        Tue, 24 Sep 2019 14:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1569362370;
-        bh=uW9yHyVMd+iv3gWkWuuWS6RrXxoBB+KwpZEHrxJLrfU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=O8XMN3kdXIPTbxUwCC+yvDgCK6kxoQ1AVgYkJ3sHY0B5I/tYLPbKdY8Zk15WXAxpf
-         nwOM1LWs7pDqIvECsh37FfhhcQF2MB6rU0bgRPJ88mgbZl+QozFGBn/85UNOQgEsRV
-         GpZpqSAngHQDlDv5BxxAWcKCvDenp3nYP/wIPshs=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id yKFYae1JZIO6; Tue, 24 Sep 2019 14:59:30 -0700 (PDT)
-Received: from [192.168.101.242] (unknown [24.246.103.29])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E1F5E8EE12C;
-        Tue, 24 Sep 2019 14:59:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1569362370;
-        bh=uW9yHyVMd+iv3gWkWuuWS6RrXxoBB+KwpZEHrxJLrfU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=O8XMN3kdXIPTbxUwCC+yvDgCK6kxoQ1AVgYkJ3sHY0B5I/tYLPbKdY8Zk15WXAxpf
-         nwOM1LWs7pDqIvECsh37FfhhcQF2MB6rU0bgRPJ88mgbZl+QozFGBn/85UNOQgEsRV
-         GpZpqSAngHQDlDv5BxxAWcKCvDenp3nYP/wIPshs=
-Message-ID: <1569362368.5364.19.camel@HansenPartnership.com>
-Subject: Re: allow larger than require DMA masks
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Sven Schnelle <svens@stackframe.org>, Helge Deller <deller@gmx.de>,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 24 Sep 2019 17:59:28 -0400
-In-Reply-To: <20190924212554.GA31357@lst.de>
-References: <20190215144559.8777-1-hch@lst.de>
-         <20190923211415.GA1875@stackframe.org>
-         <1569286782.3657.29.camel@HansenPartnership.com>
-         <20190924212554.GA31357@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 24 Sep 2019 18:05:56 -0400
+Received: by mail-io1-f66.google.com with SMTP id r26so8312583ioh.8
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 15:05:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=l11MQ+lA+OctjrXx4RVwP5DBxpG6bC0YG4oKg9f4dBc=;
+        b=OHpJEebmt1koUbYUVd8ncvkV9ubqcGE7mtrWdS/c65uTLTqMphgV1caO7X4bPYYKIS
+         f2A1vBtXhAq4sSHqbYEsgWREsC+eh4cYwwTEko1y7I7X/X9C4L8m4dCj+zCTdOxu9MOg
+         z5WkbHoGkzNQt8S2Q64sRCVabMMZma3bVBqeaF42X5606EK03hy9wD8wUWFfVDAynwHT
+         uwO8mqrqQQf35Jvi1RCtJfHzvYKK7r9TA7FXAzl0n7GcIlFhdV79K6W1FD8TJI8Eg9Qg
+         Yotfk/n/C9BcCVCmd4G154js4Mko5Fpka3nFphpRFSKO/u9a7PBsYWEjQM5TA36D+vq8
+         F5bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=l11MQ+lA+OctjrXx4RVwP5DBxpG6bC0YG4oKg9f4dBc=;
+        b=t0+Agnrs7CdPe6g2cj52sUfeW6+6zKeVdK7+uA0hBT5OCnTLltFkO05vf52IaoB4jK
+         hGfTr0gX9fM2GPSIU+l/hGjC8kgpV9g0jspYcC0KyeiSsBTSEPd2caffWJsJQ9CJjt5s
+         sHOQYerNgbssGbcGDYWpAqnxVyRrU+65tVvbF9x5jDENkjOZLVS3RIDDjd8wNTN2Jnmz
+         84sQNcqsdCpJVYYDvEMQO3+fBVHDGqhiQxJaZypB0wX44FpB2w2MDWKN6zrMl6sKKNTj
+         4hhikrSTh8q9/65Wjka9ZVVAGtu8mPWONmUehfhwbI0sBUyRtQcfX1wJ8wRRvkbOeG+o
+         cUjA==
+X-Gm-Message-State: APjAAAX5MsdeRoRMAi0MK7H8bZZHehT6LpOhJs7wZTbgE209B2k+fHIr
+        LVOk6mRo/331CTKqsOHAPzSxAA==
+X-Google-Smtp-Source: APXvYqy0q9UE81FUZmx9HjZuQrw+R0WHHAHqbnuLQUlSW8gIKlKykk3AQTIV+navbqB0cIVqup0GjQ==
+X-Received: by 2002:a02:683:: with SMTP id 125mr1373599jav.132.1569362755310;
+        Tue, 24 Sep 2019 15:05:55 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:9f3b:444a:4649:ca05])
+        by smtp.gmail.com with ESMTPSA id v3sm5236863ioh.51.2019.09.24.15.05.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 15:05:54 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 16:05:50 -0600
+From:   Yu Zhao <yuzhao@google.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Hugh Dickins <hughd@google.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Lance Roy <ldr709@gmail.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dave Airlie <airlied@redhat.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Jan Kara <jack@suse.cz>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Aaron Lu <ziqian.lzq@antfin.com>,
+        Omar Sandoval <osandov@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm: don't expose page to fast gup prematurely
+Message-ID: <20190924220550.GA123810@google.com>
+References: <20190514230751.GA70050@google.com>
+ <20190914070518.112954-1-yuzhao@google.com>
+ <20190924112316.324l7gqpdzhpiliq@box>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924112316.324l7gqpdzhpiliq@box>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-24 at 23:25 +0200, Christoph Hellwig wrote:
-> On Mon, Sep 23, 2019 at 08:59:42PM -0400, James Bottomley wrote:
-> > > 	if (mask > ~0U)
-> > > »     »       return 0;
-> > > 
-> > > Removing the if() makes the DMA mapping work. It's almost
-> > > midnight here, so i won't look into that any further today. Does
-> > > anyone have an opinion on this behaviour? Otherwise i will look a
-> > > bit more into this in the next days.
+On Tue, Sep 24, 2019 at 02:23:16PM +0300, Kirill A. Shutemov wrote:
+> On Sat, Sep 14, 2019 at 01:05:18AM -0600, Yu Zhao wrote:
+> > We don't want to expose page to fast gup running on a remote CPU
+> > before all local non-atomic ops on page flags are visible first.
 > > 
-> > The reason for the if was to kick the device into 32 bit
-> > descriptors, which are usually more efficient, especially with
-> > older dual descriptor format cards like we have on parisc systems.
+> > For anon page that isn't in swap cache, we need to make sure all
+> > prior non-atomic ops, especially __SetPageSwapBacked() in
+> > page_add_new_anon_rmap(), are order before set_pte_at() to prevent
+> > the following race:
+> > 
+> > 	CPU 1				CPU1
+> > set_pte_at()			get_user_pages_fast()
+> > page_add_new_anon_rmap()		gup_pte_range()
+> > 	__SetPageSwapBacked()			SetPageReferenced()
 > 
-> These days we use the dma_get_required_mask API to query for that.
+> Is there a particular codepath that has what you listed for CPU?
+> After quick look, I only saw that we page_add_new_anon_rmap() called
+> before set_pte_at().
 
-It looks like sym53c8xx didn't get the memo.  On the other hand, I'm
-fairly certain it should be compiled in addressing mode zero on all
-parisc systems (since all the 64 bit ones have iommus), so I think we
-can take care of this ourselves.
-
-> Svens patch looks right for how we are now using the DMA mask setting
-> API.
-
-Agreed.
-
-James
-
+I think so. One in do_swap_page() and another in unuse_pte(). Both
+are on KSM paths. Am I referencing a stale copy of the source?
