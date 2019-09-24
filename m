@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A2A1BCE76
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EB9BCE81
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441587AbfIXQwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:52:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45002 "EHLO mail.kernel.org"
+        id S2410899AbfIXQwU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:52:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2411155AbfIXQvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:51:39 -0400
+        id S2411177AbfIXQvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:51:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623BF222BF;
-        Tue, 24 Sep 2019 16:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25DDA2054F;
+        Tue, 24 Sep 2019 16:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343899;
-        bh=eIVYCmBoQuGrbToR78lQuZGyISQWFjO/9AvUGHo61Xw=;
+        s=default; t=1569343909;
+        bh=Uf2nDEV49yw4oowqLvdm31CnXpqTZwShAEMgAjBAvm8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFavR0qzCmfQoNuoZYR+q0Y45cwANtxx6Zuvpd2HZuZEjo2VS0rLfKPWvGdOC4ol0
-         WFoZoPfWYqZp5ZwV3bLz8aUGssL8/GwI/L+OjgIOv2w7/TW1vKzm6MVs6PVQ46V3Hw
-         TVbWxL+b3wmcd+GmVajQfijvUdw3qAHGX6W5ToPY=
+        b=NgboSkUK7c4DIlzON9W7zo6UG13SDp8wmzTLE7fS5MJf5jRQ22RAfuXxgpS50XHC3
+         frs305sLSDxDen5Rj9fph9I15ZyZsS7INHA4strlhKz7imyO773+hOhmE4x+Ge2b4k
+         aKWudrs9BiyCnbipeZ2FgOGlGyJMd2Key4Ey9os8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 04/19] gpu: drm: radeon: Fix a possible null-pointer dereference in radeon_connector_set_property()
-Date:   Tue, 24 Sep 2019 12:51:15 -0400
-Message-Id: <20190924165130.28625-4-sashal@kernel.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.9 10/19] powerpc/futex: Fix warning: 'oldval' may be used uninitialized in this function
+Date:   Tue, 24 Sep 2019 12:51:21 -0400
+Message-Id: <20190924165130.28625-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165130.28625-1-sashal@kernel.org>
 References: <20190924165130.28625-1-sashal@kernel.org>
@@ -44,43 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit f3eb9b8f67bc28783eddc142ad805ebdc53d6339 ]
+[ Upstream commit 38a0d0cdb46d3f91534e5b9839ec2d67be14c59d ]
 
-In radeon_connector_set_property(), there is an if statement on line 743
-to check whether connector->encoder is NULL:
-    if (connector->encoder)
+We see warnings such as:
+  kernel/futex.c: In function 'do_futex':
+  kernel/futex.c:1676:17: warning: 'oldval' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     return oldval == cmparg;
+                   ^
+  kernel/futex.c:1651:6: note: 'oldval' was declared here
+    int oldval, ret;
+        ^
 
-When connector->encoder is NULL, it is used on line 755:
-    if (connector->encoder->crtc)
+This is because arch_futex_atomic_op_inuser() only sets *oval if ret
+is 0 and GCC doesn't see that it will only use it when ret is 0.
 
-Thus, a possible null-pointer dereference may occur.
+Anyway, the non-zero ret path is an error path that won't suffer from
+setting *oval, and as *oval is a local var in futex_atomic_op_inuser()
+it will have no impact.
 
-To fix this bug, connector->encoder is checked before being used.
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+[mpe: reword change log slightly]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/86b72f0c134367b214910b27b9a6dd3321af93bb.1565774657.git.christophe.leroy@c-s.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_connectors.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/futex.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index c5e1aa5f1d8ea..efa875120071a 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -764,7 +764,7 @@ static int radeon_connector_set_property(struct drm_connector *connector, struct
+diff --git a/arch/powerpc/include/asm/futex.h b/arch/powerpc/include/asm/futex.h
+index f4c7467f74655..b73ab8a7ebc3f 100644
+--- a/arch/powerpc/include/asm/futex.h
++++ b/arch/powerpc/include/asm/futex.h
+@@ -60,8 +60,7 @@ static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
  
- 		radeon_encoder->output_csc = val;
+ 	pagefault_enable();
  
--		if (connector->encoder->crtc) {
-+		if (connector->encoder && connector->encoder->crtc) {
- 			struct drm_crtc *crtc  = connector->encoder->crtc;
- 			const struct drm_crtc_helper_funcs *crtc_funcs = crtc->helper_private;
- 			struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
+-	if (!ret)
+-		*oval = oldval;
++	*oval = oldval;
+ 
+ 	return ret;
+ }
 -- 
 2.20.1
 
