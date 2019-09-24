@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C345BBFD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 03:55:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C15CABBFD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408460AbfIXBzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 21:55:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40188 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408444AbfIXBzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 21:55:31 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2A2F3DE0F;
-        Tue, 24 Sep 2019 01:55:30 +0000 (UTC)
-Received: from mail (ovpn-120-159.rdu2.redhat.com [10.10.120.159])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F0F8601A2;
-        Tue, 24 Sep 2019 01:55:28 +0000 (UTC)
-Date:   Mon, 23 Sep 2019 21:55:27 -0400
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/17] KVM: monolithic: x86: inline more exit handlers in
- vmx.c
-Message-ID: <20190924015527.GC4658@redhat.com>
-References: <20190920212509.2578-1-aarcange@redhat.com>
- <20190920212509.2578-15-aarcange@redhat.com>
- <6a1d66a1-74c0-25b9-692f-8875e33b2fae@redhat.com>
- <20190924010056.GB4658@redhat.com>
- <a75d04e1-cfd6-fa2e-6120-1f3956e14153@redhat.com>
+        id S2408464AbfIXB74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 21:59:56 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44951 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403911AbfIXB7z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 21:59:55 -0400
+Received: by mail-ed1-f68.google.com with SMTP id r16so255217edq.11
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 18:59:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=JwvqeMMZIhcGk7w9nZ57ofbQcDy8IiZHBJx+ZCO2SFs=;
+        b=BzmutcbtaD5Bw8wSMHpTVaBt8AIM/mS8WNDV20N/snpfJGNbY3+VA/O3U7BG8iG3PQ
+         XivL/ThPeHTk3uQFB1YmNhVw0uUcxA6t7zZPSs61K6fkbRaigowZQNUagfId1sdWzRPE
+         u39+IH/j8HnU/8ryCBia9yY6OfrpZRkyaYvJpp7t7wTU8rFiEcj4GQuLpsGZL1+bnB2i
+         6I3iDSDenTwCp+nsnMY5SeRfAjFescH+cK+/HAZw9eh15TAtPa+yOQ8ZlOEftNgjhM8C
+         tR29lEMnSi2naDk7ZqizwD4aXf4fygmPyqufpndj0w13mbPu8QuNO+plJuUw9W4uH9N2
+         5Zmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=JwvqeMMZIhcGk7w9nZ57ofbQcDy8IiZHBJx+ZCO2SFs=;
+        b=Tj20RZWuZGdUAOpw6ADnGwwRCNmHKQ46C9s/KSTnIIZnzo3M7JRRrmLSvVT8L+JaO5
+         avsoPyuE/pAvxMm3SdxF0mZXWebGmm2zhu/56d3jsWnATDE/vSu2nGxk8D9GurqTk22g
+         llZJC0dO0cRDQU+w4lKFggePMiZRvct0p+mCy9uUSoWUbFMER+2OSWg5EKuenUFpLXnc
+         Bo9D+2LRkLl2OT7XPB2geaHiMBO5HXuuu2jKtv6Vn4XDXWMR6DiUqBky7YvjNAHiAK/I
+         0mDKMqigMwiFV6uV8TKhKyGVkbkkmDabIDtgWGk+iVLXdTOT27ZpJV4J85fFMJsfJQ/L
+         IXLw==
+X-Gm-Message-State: APjAAAUyM6k5pDT13jZCuhXrHzrwEZz78HzNPQ3EZk+pfvxJhzx5IuiE
+        V2gWg5HElpETlCB4rulv0qJYMEy8IA6VKC9ooCo=
+X-Google-Smtp-Source: APXvYqyPB86Ma+tcrC0Ho7LedNuzq3snymjec3hfjKz/kzNTWBqmxv9T9i4qZTYmdG3zBdOS+9neXXbydT8dAIvWMvQ=
+X-Received: by 2002:a17:906:d8a2:: with SMTP id qc2mr429714ejb.10.1569290394205;
+ Mon, 23 Sep 2019 18:59:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a75d04e1-cfd6-fa2e-6120-1f3956e14153@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 24 Sep 2019 01:55:30 +0000 (UTC)
+Received: by 2002:a17:906:3f56:0:0:0:0 with HTTP; Mon, 23 Sep 2019 18:59:53
+ -0700 (PDT)
+Reply-To: frances.connolly01@gmail.com
+From:   "Mr/Mrs Frances. Patrick" <evans52598@gmail.com>
+Date:   Mon, 23 Sep 2019 18:59:53 -0700
+Message-ID: <CAMNjJz0DqKpB+rei4VAKCr6VNfmav_VKwgUsDT5fNj7xPWiwWg@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 03:25:34AM +0200, Paolo Bonzini wrote:
-> On 24/09/19 03:00, Andrea Arcangeli wrote:
-> > Before and after this specific commit there is a difference with gcc 8.3.
-> > 
-> > full patchset applied
-> > 
-> >  753699   87971    9616  851286   cfd56 build/arch/x86/kvm/kvm-intel.ko
-> > 
-> > git revert
-> > 
-> >  753739   87971    9616  851326   cfd7e  build/arch/x86/kvm/kvm-intel.ko
-> > 
-> > git reset --hard HEAD^
-> > 
-> >  753699   87971    9616  851286   cfd56  build/arch/x86/kvm/kvm-intel.ko
-> > 
-> > git revert
-> > 
-> >  753739   87971    9616  851326   cfd7e  build/arch/x86/kvm/kvm-intel.ko
-> 
-> So it's forty bytes.  I think we can leave this out.
-
-This commit I reverted adds literally 3 inlines called by 3 functions,
-in a very fast path, how many bytes of .text difference did you expect
-by dropping some call/ret from a very fast path when you asked me to
-test it? I mean it's just a couple of insn each.
-
-I thought the question was if gcc was already inlining without the
-hint or not or if it actually grew in size in case I got it wrong and
-there were many callers and it was better off not inline, so now I
-don't get what was the point of this test if with the result that
-confirms it's needed, the patch should be dropped.
-
-It's possible that this patch may not be relevant anymore with the
-rename in place of the vmx/svm functions, but if this patch is to be
-dropped with the optimal result, then I recommend you to go ahead and
-submit a patch to drop __always_inline from the whole kernel because
-if it's not good to use it here in a extreme fast path like
-handle_external_interrupt and handle_halt, then I don't know what
-__always_inline is good for anywhere else in the kernel.
-
-Thanks,
-Andrea
+--=20
+One million two hundred thousand euros (1,200,000 =E2=82=AC) has been donat=
+ed
+to you by Frances and Patrick Connolly, we are from County Armagh in
+Northern Ireland, We won the EuroMillions lottery jackpot of 115
+million euros. Email us for more details: frances.connolly01@gmail.com
