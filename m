@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79A10BCEEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C768BCF75
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410261AbfIXQtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:49:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41176 "EHLO mail.kernel.org"
+        id S1731631AbfIXQ47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:56:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730240AbfIXQtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:05 -0400
+        id S1730678AbfIXQtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B44BB21971;
-        Tue, 24 Sep 2019 16:49:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66D7221906;
+        Tue, 24 Sep 2019 16:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343744;
-        bh=7OIGAHIn83en4J2dXz/6WX2xRncraPreUTj7vjD+EHo=;
+        s=default; t=1569343749;
+        bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ruSOdD1s5luPWLFTVxhitmUZ8tyZ/smIKHVZvPgVCiHSlDpNAObhPajVXdg5B90EO
-         qtRRbJA7UqJRy+TAXK5Nuqlw6qJu58mRvC4HPLxIa8bRCwsYBwc7gII5kplyN3WHCj
-         3HeK5etzqB8XVtAEc9G+YfM+h+puJkA2XbDE28iM=
+        b=JiG4kkP+CMBu3Z1irJUc6Zt2HgHxuCiF+9FME2jK3ysMRVgQhqJpPm4sujHLXwRbb
+         Q7EFdtByTwVnIXvCGiZj+xoTbdH3ts2ZDhlLbbsAEUEyIXSWnAkZlAZ0pTd07uSGJI
+         Fkh61Z6Oe0X74p/ypJ4MEAzc6wOCW3QJaVVsdHlw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 10/50] gpu: drm: radeon: Fix a possible null-pointer dereference in radeon_connector_set_property()
-Date:   Tue, 24 Sep 2019 12:48:07 -0400
-Message-Id: <20190924164847.27780-10-sashal@kernel.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 14/50] clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
+Date:   Tue, 24 Sep 2019 12:48:11 -0400
+Message-Id: <20190924164847.27780-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -44,43 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit f3eb9b8f67bc28783eddc142ad805ebdc53d6339 ]
+[ Upstream commit 720099603d1f62e37b789366d7e89824b009ca28 ]
 
-In radeon_connector_set_property(), there is an if statement on line 743
-to check whether connector->encoder is NULL:
-    if (connector->encoder)
+The MMC2 clock slices are currently not defined in V3s CCU driver, which
+makes MMC2 not working.
 
-When connector->encoder is NULL, it is used on line 755:
-    if (connector->encoder->crtc)
+Fix this issue.
 
-Thus, a possible null-pointer dereference may occur.
-
-To fix this bug, connector->encoder is checked before being used.
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_connectors.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index 414642e5b7a31..de656f5553839 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -751,7 +751,7 @@ static int radeon_connector_set_property(struct drm_connector *connector, struct
- 
- 		radeon_encoder->output_csc = val;
- 
--		if (connector->encoder->crtc) {
-+		if (connector->encoder && connector->encoder->crtc) {
- 			struct drm_crtc *crtc  = connector->encoder->crtc;
- 			struct radeon_crtc *radeon_crtc = to_radeon_crtc(crtc);
- 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index ac12f261f8caa..9e3f4088724b4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -499,6 +499,9 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
+ 		[CLK_MMC1]		= &mmc1_clk.common.hw,
+ 		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common.hw,
+ 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
++		[CLK_MMC2]		= &mmc2_clk.common.hw,
++		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common.hw,
++		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common.hw,
+ 		[CLK_CE]		= &ce_clk.common.hw,
+ 		[CLK_SPI0]		= &spi0_clk.common.hw,
+ 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
 -- 
 2.20.1
 
