@@ -2,33 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E8DBBC465
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 11:02:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3234BC46C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 11:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbfIXJCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 05:02:45 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:35774 "EHLO inva020.nxp.com"
+        id S1731303AbfIXJDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 05:03:52 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:51852 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726094AbfIXJCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 05:02:45 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F3151A00D4;
-        Tue, 24 Sep 2019 11:02:43 +0200 (CEST)
+        id S1729713AbfIXJDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 05:03:51 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DB80420021C;
+        Tue, 24 Sep 2019 11:03:48 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3048E1A0169;
-        Tue, 24 Sep 2019 11:02:39 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A25D020095F;
+        Tue, 24 Sep 2019 11:03:43 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BB501402ED;
-        Tue, 24 Sep 2019 17:02:33 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 48AEE4029F;
+        Tue, 24 Sep 2019 17:03:37 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
-To:     thierry.reding@gmail.com, shawnguo@kernel.org,
+To:     dmitry.torokhov@gmail.com, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        swboyd@chromium.org, mojha@codeaurora.org,
+        linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH] pwm: pwm-imx-tpm: Use 'dev' instead of dereferencing it repeatedly
-Date:   Tue, 24 Sep 2019 17:01:07 +0800
-Message-Id: <1569315667-1525-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH] input: touchscreen: imx6ul_tsc: Use 'dev' instead of dereferencing it repeatedly
+Date:   Tue, 24 Sep 2019 17:02:11 +0800
+Message-Id: <1569315731-2387-1-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
@@ -40,64 +41,131 @@ Add helper variable dev = &pdev->dev to simply the code.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/pwm/pwm-imx-tpm.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/input/touchscreen/imx6ul_tsc.c | 37 +++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c
-index e8385c1..4385801 100644
---- a/drivers/pwm/pwm-imx-tpm.c
-+++ b/drivers/pwm/pwm-imx-tpm.c
-@@ -337,11 +337,12 @@ static const struct pwm_ops imx_tpm_pwm_ops = {
+diff --git a/drivers/input/touchscreen/imx6ul_tsc.c b/drivers/input/touchscreen/imx6ul_tsc.c
+index 9ed2588..4555aa9 100644
+--- a/drivers/input/touchscreen/imx6ul_tsc.c
++++ b/drivers/input/touchscreen/imx6ul_tsc.c
+@@ -361,7 +361,8 @@ static void imx6ul_tsc_close(struct input_dev *input_dev)
  
- static int pwm_imx_tpm_probe(struct platform_device *pdev)
+ static int imx6ul_tsc_probe(struct platform_device *pdev)
  {
+-	struct device_node *np = pdev->dev.of_node;
 +	struct device *dev = &pdev->dev;
- 	struct imx_tpm_pwm_chip *tpm;
- 	int ret;
- 	u32 val;
++	struct device_node *np = dev->of_node;
+ 	struct imx6ul_tsc *tsc;
+ 	struct input_dev *input_dev;
+ 	int err;
+@@ -369,11 +370,11 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
+ 	int adc_irq;
+ 	u32 average_samples;
  
--	tpm = devm_kzalloc(&pdev->dev, sizeof(*tpm), GFP_KERNEL);
-+	tpm = devm_kzalloc(dev, sizeof(*tpm), GFP_KERNEL);
- 	if (!tpm)
+-	tsc = devm_kzalloc(&pdev->dev, sizeof(*tsc), GFP_KERNEL);
++	tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
+ 	if (!tsc)
  		return -ENOMEM;
  
-@@ -351,23 +352,23 @@ static int pwm_imx_tpm_probe(struct platform_device *pdev)
- 	if (IS_ERR(tpm->base))
- 		return PTR_ERR(tpm->base);
+-	input_dev = devm_input_allocate_device(&pdev->dev);
++	input_dev = devm_input_allocate_device(dev);
+ 	if (!input_dev)
+ 		return -ENOMEM;
  
--	tpm->clk = devm_clk_get(&pdev->dev, NULL);
-+	tpm->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(tpm->clk)) {
- 		ret = PTR_ERR(tpm->clk);
- 		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev,
-+			dev_err(dev,
- 				"failed to get PWM clock: %d\n", ret);
- 		return ret;
- 	}
+@@ -389,14 +390,14 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
  
- 	ret = clk_prepare_enable(tpm->clk);
- 	if (ret) {
+ 	input_set_drvdata(input_dev, tsc);
+ 
+-	tsc->dev = &pdev->dev;
++	tsc->dev = dev;
+ 	tsc->input = input_dev;
+ 	init_completion(&tsc->completion);
+ 
+-	tsc->xnur_gpio = devm_gpiod_get(&pdev->dev, "xnur", GPIOD_IN);
++	tsc->xnur_gpio = devm_gpiod_get(dev, "xnur", GPIOD_IN);
+ 	if (IS_ERR(tsc->xnur_gpio)) {
+ 		err = PTR_ERR(tsc->xnur_gpio);
 -		dev_err(&pdev->dev,
 +		dev_err(dev,
- 			"failed to prepare or enable clock: %d\n", ret);
- 		return ret;
+ 			"failed to request GPIO tsc_X- (xnur): %d\n", err);
+ 		return err;
+ 	}
+@@ -404,28 +405,28 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
+ 	tsc->tsc_regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(tsc->tsc_regs)) {
+ 		err = PTR_ERR(tsc->tsc_regs);
+-		dev_err(&pdev->dev, "failed to remap tsc memory: %d\n", err);
++		dev_err(dev, "failed to remap tsc memory: %d\n", err);
+ 		return err;
  	}
  
--	tpm->chip.dev = &pdev->dev;
-+	tpm->chip.dev = dev;
- 	tpm->chip.ops = &imx_tpm_pwm_ops;
- 	tpm->chip.base = -1;
- 	tpm->chip.of_xlate = of_pwm_xlate_with_flags;
-@@ -381,7 +382,7 @@ static int pwm_imx_tpm_probe(struct platform_device *pdev)
- 
- 	ret = pwmchip_add(&tpm->chip);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to add PWM chip: %d\n", ret);
-+		dev_err(dev, "failed to add PWM chip: %d\n", ret);
- 		clk_disable_unprepare(tpm->clk);
+ 	tsc->adc_regs = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(tsc->adc_regs)) {
+ 		err = PTR_ERR(tsc->adc_regs);
+-		dev_err(&pdev->dev, "failed to remap adc memory: %d\n", err);
++		dev_err(dev, "failed to remap adc memory: %d\n", err);
+ 		return err;
  	}
  
+-	tsc->tsc_clk = devm_clk_get(&pdev->dev, "tsc");
++	tsc->tsc_clk = devm_clk_get(dev, "tsc");
+ 	if (IS_ERR(tsc->tsc_clk)) {
+ 		err = PTR_ERR(tsc->tsc_clk);
+-		dev_err(&pdev->dev, "failed getting tsc clock: %d\n", err);
++		dev_err(dev, "failed getting tsc clock: %d\n", err);
+ 		return err;
+ 	}
+ 
+-	tsc->adc_clk = devm_clk_get(&pdev->dev, "adc");
++	tsc->adc_clk = devm_clk_get(dev, "adc");
+ 	if (IS_ERR(tsc->adc_clk)) {
+ 		err = PTR_ERR(tsc->adc_clk);
+-		dev_err(&pdev->dev, "failed getting adc clock: %d\n", err);
++		dev_err(dev, "failed getting adc clock: %d\n", err);
+ 		return err;
+ 	}
+ 
+@@ -439,18 +440,18 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
+ 
+ 	err = devm_request_threaded_irq(tsc->dev, tsc_irq,
+ 					NULL, tsc_irq_fn, IRQF_ONESHOT,
+-					dev_name(&pdev->dev), tsc);
++					dev_name(dev), tsc);
+ 	if (err) {
+-		dev_err(&pdev->dev,
++		dev_err(dev,
+ 			"failed requesting tsc irq %d: %d\n",
+ 			tsc_irq, err);
+ 		return err;
+ 	}
+ 
+ 	err = devm_request_irq(tsc->dev, adc_irq, adc_irq_fn, 0,
+-				dev_name(&pdev->dev), tsc);
++				dev_name(dev), tsc);
+ 	if (err) {
+-		dev_err(&pdev->dev,
++		dev_err(dev,
+ 			"failed requesting adc irq %d: %d\n",
+ 			adc_irq, err);
+ 		return err;
+@@ -484,7 +485,7 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
+ 		tsc->average_select = ilog2(average_samples) - 2;
+ 		break;
+ 	default:
+-		dev_err(&pdev->dev,
++		dev_err(dev,
+ 			"touchscreen-average-samples (%u) must be 1, 4, 8, 16 or 32\n",
+ 			average_samples);
+ 		return -EINVAL;
+@@ -492,7 +493,7 @@ static int imx6ul_tsc_probe(struct platform_device *pdev)
+ 
+ 	err = input_register_device(tsc->input);
+ 	if (err) {
+-		dev_err(&pdev->dev,
++		dev_err(dev,
+ 			"failed to register input device: %d\n", err);
+ 		return err;
+ 	}
 -- 
 2.7.4
 
