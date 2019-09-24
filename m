@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29D1DBCDE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78414BCDEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410366AbfIXQrV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:47:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38470 "EHLO mail.kernel.org"
+        id S2410385AbfIXQr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:47:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410356AbfIXQrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:47:18 -0400
+        id S2406575AbfIXQrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:47:24 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2592920673;
-        Tue, 24 Sep 2019 16:47:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BB3C20673;
+        Tue, 24 Sep 2019 16:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343637;
-        bh=ZrLi2JF1gXBIO8UjLt7eus8vyU6RSKJMJP9EwGTXIH8=;
+        s=default; t=1569343643;
+        bh=kt5nnJFZbNzDp4V7romY1V9Gxe84KLWI5aC+46wAZVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sCPnrbmemEN5ZURH77DR2omWFUNT57giK8n1HxFkt/pX666pZDcXo8mrmMxVmsLym
-         QTRlzPJZAp+RjWITIII3/qoZsG0YpchRwiqZumK8byxqGWyg3KMzNDA/sVYNsgHjah
-         0Bj6+8ygXGT6Xc7+nftcl/6QETu9cJPPOxI0fBrc=
+        b=f+Cv33n93m7/I4f82Hxcwbe6GrgLogySyvjoIXtqIyCRc9xPH3VnCL+WYTNW6bfuT
+         l/U7RkeSUsILnO96ozcsi3WHyTYVVUx4Wwv0Ck7aUHDhaWW6xqRMv625n0+oD7gsqK
+         QOkDfTuEC0vndCXBBUbNRRdJjRhpl4j0pMVZ1MSc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
         "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.2 36/70] powerpc/64s/radix: Fix memory hotplug section page table creation
-Date:   Tue, 24 Sep 2019 12:45:15 -0400
-Message-Id: <20190924164549.27058-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 38/70] powerpc/perf: fix imc allocation failure handling
+Date:   Tue, 24 Sep 2019 12:45:17 -0400
+Message-Id: <20190924164549.27058-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -46,44 +47,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 8f51e3929470942e6a8744061254fdeef646cd36 ]
+[ Upstream commit 10c4bd7cd28e77aeb8cfa65b23cb3c632ede2a49 ]
 
-create_physical_mapping expects physical addresses, but creating and
-splitting these mappings after boot is supplying virtual (effective)
-addresses. This can be irritated by booting with mem= to limit memory
-then probing an unused physical memory range:
+The alloc_pages_node return value should be tested for failure
+before being passed to page_address.
 
-  echo <addr> > /sys/devices/system/memory/probe
-
-This mostly works by accident, firstly because __va(__va(x)) == __va(x)
-so the virtual address does not get corrupted. Secondly because pfn_pte
-masks out the upper bits of the pfn beyond the physical address limit,
-so a pfn constructed with a 0xc000000000000000 virtual linear address
-will be masked back to the correct physical address in the pte.
-
-Fixes: 6cc27341b21a8 ("powerpc/mm: add radix__create_section_mapping()")
+Tested-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
 Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
 Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190724084638.24982-1-npiggin@gmail.com
+Link: https://lore.kernel.org/r/20190724084638.24982-3-npiggin@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/book3s64/radix_pgtable.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/perf/imc-pmu.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
-diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/book3s64/radix_pgtable.c
-index 8deb432c29754..2b6cc823046a3 100644
---- a/arch/powerpc/mm/book3s64/radix_pgtable.c
-+++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
-@@ -901,7 +901,7 @@ int __meminit radix__create_section_mapping(unsigned long start, unsigned long e
- 		return -1;
+diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
+index 3bdfc1e320964..2231959c56331 100644
+--- a/arch/powerpc/perf/imc-pmu.c
++++ b/arch/powerpc/perf/imc-pmu.c
+@@ -570,6 +570,7 @@ static int core_imc_mem_init(int cpu, int size)
+ {
+ 	int nid, rc = 0, core_id = (cpu / threads_per_core);
+ 	struct imc_mem_info *mem_info;
++	struct page *page;
+ 
+ 	/*
+ 	 * alloc_pages_node() will allocate memory for core in the
+@@ -580,11 +581,12 @@ static int core_imc_mem_init(int cpu, int size)
+ 	mem_info->id = core_id;
+ 
+ 	/* We need only vbase for core counters */
+-	mem_info->vbase = page_address(alloc_pages_node(nid,
+-					  GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
+-					  __GFP_NOWARN, get_order(size)));
+-	if (!mem_info->vbase)
++	page = alloc_pages_node(nid,
++				GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
++				__GFP_NOWARN, get_order(size));
++	if (!page)
+ 		return -ENOMEM;
++	mem_info->vbase = page_address(page);
+ 
+ 	/* Init the mutex */
+ 	core_imc_refc[core_id].id = core_id;
+@@ -839,15 +841,17 @@ static int thread_imc_mem_alloc(int cpu_id, int size)
+ 	int nid = cpu_to_node(cpu_id);
+ 
+ 	if (!local_mem) {
++		struct page *page;
+ 		/*
+ 		 * This case could happen only once at start, since we dont
+ 		 * free the memory in cpu offline path.
+ 		 */
+-		local_mem = page_address(alloc_pages_node(nid,
++		page = alloc_pages_node(nid,
+ 				  GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
+-				  __GFP_NOWARN, get_order(size)));
+-		if (!local_mem)
++				  __GFP_NOWARN, get_order(size));
++		if (!page)
+ 			return -ENOMEM;
++		local_mem = page_address(page);
+ 
+ 		per_cpu(thread_imc_mem, cpu_id) = local_mem;
  	}
+@@ -1085,11 +1089,14 @@ static int trace_imc_mem_alloc(int cpu_id, int size)
+ 	int core_id = (cpu_id / threads_per_core);
  
--	return create_physical_mapping(start, end, nid);
-+	return create_physical_mapping(__pa(start), __pa(end), nid);
- }
+ 	if (!local_mem) {
+-		local_mem = page_address(alloc_pages_node(phys_id,
+-					GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
+-					__GFP_NOWARN, get_order(size)));
+-		if (!local_mem)
++		struct page *page;
++
++		page = alloc_pages_node(phys_id,
++				GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
++				__GFP_NOWARN, get_order(size));
++		if (!page)
+ 			return -ENOMEM;
++		local_mem = page_address(page);
+ 		per_cpu(trace_imc_mem, cpu_id) = local_mem;
  
- int __meminit radix__remove_section_mapping(unsigned long start, unsigned long end)
+ 		/* Initialise the counters for trace mode */
 -- 
 2.20.1
 
