@@ -2,224 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8E3BBC063
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4219BC055
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408781AbfIXCtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 22:49:47 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:42008 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408131AbfIXCtr (ORCPT
+        id S2405692AbfIXCsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 22:48:31 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36437 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389572AbfIXCsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 22:49:47 -0400
-Received: by mail-ua1-f67.google.com with SMTP id r19so67287uap.9;
-        Mon, 23 Sep 2019 19:49:44 -0700 (PDT)
+        Mon, 23 Sep 2019 22:48:30 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f19so280583plr.3;
+        Mon, 23 Sep 2019 19:48:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=7PuLm4XsUDXNvaLPQfZjNtATDNXHns4lSD+JB2YvrXg=;
-        b=OCZk+gzPhiDrThBb7lyzL04h2RrNSVzZSoi5RjUro9w2YUwBQxGcIbZAVFHEe0KH3J
-         m6VpNh3hcdOOFeqVuZ39Lccxgbn5PXpUcGbG/dga+IzCFFerT/sboVV91U8fuv8v5c4w
-         Jclj5ju1Qoung282/OQ5AotzFUSNpCTijp+NhVzL3OwoZoTEa4wWkP1PwteSk7fLiIH5
-         DCx1C1KCqXh9UcSs5ITJlNkrUgvum97lk5Rbm67YanJePw8gxSP7/wdMBMI6+O4v18H+
-         KOLvi59pKaZZc9zWSbhTYKmOE6py5sgJJ1nFQF265aBTRITfAA1U8QQSvbspnJ739VtT
-         fubA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=deTOHyUuNbmlHO4aRp949wtOhcFU4gVUPh8sJQJUCQ4=;
+        b=acEtyVqI1ptDNYGn6laviDUrBylL5GoPdDcuHygbZ+r0EG6dJgy3UhfejSjbj/MxY/
+         pJo+0Pl8XVXXJsj7QoI6/Qng9qMCYChNMpBE5TfxDx8EMI29QMb1oOFKu75IjTwYNUA1
+         GW9CIg+GUJAbOsi+aTfiA/a4NGmVsdPtl95NR6j0a3zMoa091keyiT2mQyvQyjIzawaT
+         CErq+02tdfxO/i4eBlVu0q5HPQpSBDn98Ww9nDI8ztlF8C5w6fUPqtfDhvXNs2OXIO2r
+         R9toIqwVwxXpPBXywaSEZhoOfbX/JM+pF+9/3x3Nh44napQ0D/vXSRvRstOt3bOQa0xA
+         piWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7PuLm4XsUDXNvaLPQfZjNtATDNXHns4lSD+JB2YvrXg=;
-        b=jCO3tk1rN792p6YFP72qbNZKqrboq032XPYcVe7RO/knHGjHaVPnY4mth6OQF6J0jU
-         pPJjQfcq2w1VXUf8eMCgi94JB1eKD3V59g/Xp+eb/SjwtspgirBIabmhzPv6+hcYweEA
-         G609PwPh13Kl3NlRzqgREaTmfGBuXvyrVdjpKgYBPrFP7DUuODTVBEjwZNhEVjXWEKed
-         ev3mjym3dBSOu96gAO7HHbendPPvYniWVsMej3Wn8PRjuQGx3bZIARHJ1YiSaa+LfjwO
-         WwqajjYFkY369z7RgXFCKopf4OodiKVex1xCS0pmbHbhONjQOoxxW9YPjeUcXXBW2pEh
-         tkJg==
-X-Gm-Message-State: APjAAAX7B87MKefQP5f6IJTIc/6q35aTn5PUfx7BiH125lWA4vgAtotG
-        dDlA+cZS8tclyDE7BoOEUA==
-X-Google-Smtp-Source: APXvYqzTvB687KpM3S8YhwWJ+mMNNCef3AyS1H0k+QFA5Y6MhvgYei5A6x54ooZh5Ej+ibWEDJ3PaA==
-X-Received: by 2002:ab0:77cc:: with SMTP id y12mr311990uar.110.1569293384050;
-        Mon, 23 Sep 2019 19:49:44 -0700 (PDT)
-Received: from localhost.localdomain ([2601:901:202:18cc:820:670:dd1:f572])
-        by smtp.gmail.com with ESMTPSA id o16sm46547uar.2.2019.09.23.19.49.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 19:49:43 -0700 (PDT)
-From:   Ayman Bagabas <ayman.bagabas@gmail.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sinan Kaya <okaya@kernel.org>, Takashi Iwai <tiwai@suse.de>,
-        Ayman Bagabas <ayman.bagabas@gmail.com>,
-        Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Matan Ziv-Av <matan@svgalib.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peng Hao <peng.hao2@zte.com.cn>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mattias Jacobsson <2pi@mok.nu>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/6] platform/x86: huawei-wmi: Add debugfs support
-Date:   Mon, 23 Sep 2019 22:48:11 -0400
-Message-Id: <20190924024821.497-7-ayman.bagabas@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190924024821.497-1-ayman.bagabas@gmail.com>
-References: <20190924024821.497-1-ayman.bagabas@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=deTOHyUuNbmlHO4aRp949wtOhcFU4gVUPh8sJQJUCQ4=;
+        b=NR67zeu3veXNKPsM5FNYxqNnvfK+dKTL/nfIvbcxdnCuQqA790T104qesxz7I12JWT
+         pfp6nUPBeQl/QfZYNknMbIpaXgaJdldeK8CslFmnUORL2l1+uuupE0FQuUGJKf8JuJPW
+         0bvaxIKNWXw1pJJ7IMpgmy/fmvk8lX/1ChTdXybSbDYDeKN4mu603ZVaG5Cfk5f0Swxk
+         Cbkx8CnUfZqtqSXjlEPyPgMusW71ogK6phCLUZtgUVmpxZkUMkTGp38jXXjfDZ3ayyVe
+         wEa5rSmj/b7nnals57jiIn9gKKk4Bn2yyyYBYXejAr3L7MPA6UEvmTYHTwiafGQiHjpq
+         uLCQ==
+X-Gm-Message-State: APjAAAW/oD1DeR3Nfd3unNHoZBRadz8kPMKqGThmoOBcVJhLTjIKIF9c
+        WWZNWAm4UcWRaU7gv00GP3o=
+X-Google-Smtp-Source: APXvYqwod2IWhSzAzWT7j2NclyNInJfApNQQnV0sqhYQNVBP35uINV509q2WmEDB4J1pRDnwm0n1fQ==
+X-Received: by 2002:a17:902:5a44:: with SMTP id f4mr442688plm.31.1569293309631;
+        Mon, 23 Sep 2019 19:48:29 -0700 (PDT)
+Received: from [10.230.28.130] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id a17sm150278pfi.178.2019.09.23.19.48.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2019 19:48:28 -0700 (PDT)
+Subject: Re: [PATCH V8 2/2] mailbox: introduce ARM SMC based mailbox
+To:     Peng Fan <peng.fan@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "andre.przywara@arm.com" <andre.przywara@arm.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+References: <1569287538-10854-1-git-send-email-peng.fan@nxp.com>
+ <1569287538-10854-3-git-send-email-peng.fan@nxp.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <1f01ea8e-8953-82ae-933c-721385dc0c13@gmail.com>
+Date:   Mon, 23 Sep 2019 19:48:27 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1569287538-10854-3-git-send-email-peng.fan@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a debugfs interface that can be used to call the WMI management
-interface function if available.
+Hi Peng,
 
-Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
----
- drivers/platform/x86/huawei-wmi.c | 97 +++++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+On 9/23/2019 6:14 PM, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> This mailbox driver implements a mailbox which signals transmitted data
+> via an ARM smc (secure monitor call) instruction. The mailbox receiver
+> is implemented in firmware and can synchronously return data when it
+> returns execution to the non-secure world again.
+> An asynchronous receive path is not implemented.
+> This allows the usage of a mailbox to trigger firmware actions on SoCs
+> which either don't have a separate management processor or on which such
+> a core is not available. A user of this mailbox could be the SCP
+> interface.
+> 
+> Modified from Andre Przywara's v2 patch
+> https://lore.kernel.org/patchwork/patch/812999/
+> 
+> Cc: Andre Przywara <andre.przywara@arm.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index d550c63fcba7..6720f78c60c2 100644
---- a/drivers/platform/x86/huawei-wmi.c
-+++ b/drivers/platform/x86/huawei-wmi.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/acpi.h>
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/dmi.h>
- #include <linux/input.h>
-@@ -52,10 +53,16 @@ struct quirk_entry {
- 
- static struct quirk_entry *quirks;
- 
-+struct huawei_wmi_debug {
-+	struct dentry *root;
-+	u64 arg;
-+};
-+
- struct huawei_wmi {
- 	bool battery_available;
- 	bool fn_lock_available;
- 
-+	struct huawei_wmi_debug debug;
- 	struct input_dev *idev[2];
- 	struct led_classdev cdev;
- 	struct platform_device *pdev;
-@@ -592,6 +599,94 @@ static void huawei_wmi_fn_lock_exit(struct device *dev)
- 		device_remove_file(dev, &dev_attr_fn_lock_state);
- }
- 
-+/* debugfs */
-+
-+static void huawei_wmi_debugfs_call_dump(struct seq_file *m, void *data,
-+		union acpi_object *obj)
-+{
-+	struct huawei_wmi *huawei = m->private;
-+	int i;
-+
-+	switch (obj->type) {
-+	case ACPI_TYPE_INTEGER:
-+		seq_printf(m, "0x%llx", obj->integer.value);
-+		break;
-+	case ACPI_TYPE_STRING:
-+		seq_printf(m, "\"%*s\"", obj->string.length, obj->string.pointer);
-+		break;
-+	case ACPI_TYPE_BUFFER:
-+		seq_puts(m, "{");
-+		for (i = 0; i < obj->buffer.length; i++) {
-+			seq_printf(m, "0x%02x", obj->buffer.pointer[i]);
-+			if (i < obj->buffer.length - 1)
-+				seq_puts(m, ",");
-+		}
-+		seq_puts(m, "}");
-+		break;
-+	case ACPI_TYPE_PACKAGE:
-+		seq_puts(m, "[");
-+		for (i = 0; i < obj->package.count; i++) {
-+			huawei_wmi_debugfs_call_dump(m, huawei, &obj->package.elements[i]);
-+			if (i < obj->package.count - 1)
-+				seq_puts(m, ",");
-+		}
-+		seq_puts(m, "]");
-+		break;
-+	default:
-+		dev_err(&huawei->pdev->dev, "Unexpected obj type, got %d\n", obj->type);
-+		return;
-+	}
-+}
-+
-+static int huawei_wmi_debugfs_call_show(struct seq_file *m, void *data)
-+{
-+	struct huawei_wmi *huawei = m->private;
-+	struct acpi_buffer out = { ACPI_ALLOCATE_BUFFER, NULL };
-+	struct acpi_buffer in;
-+	union acpi_object *obj;
-+	int err;
-+
-+	in.length = sizeof(u64);
-+	in.pointer = &huawei->debug.arg;
-+
-+	err = huawei_wmi_call(&in, &out);
-+	if (err)
-+		return err;
-+
-+	obj = out.pointer;
-+	if (!obj) {
-+		err = -EIO;
-+		goto fail_debugfs_call;
-+	}
-+
-+	huawei_wmi_debugfs_call_dump(m, huawei, obj);
-+
-+fail_debugfs_call:
-+	kfree(out.pointer);
-+	return err;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(huawei_wmi_debugfs_call);
-+
-+static void huawei_wmi_debugfs_setup(struct device *dev)
-+{
-+	struct huawei_wmi *huawei = dev_get_drvdata(dev);
-+
-+	huawei->debug.root = debugfs_create_dir("huawei-wmi", NULL);
-+
-+	debugfs_create_x64("arg", 0644, huawei->debug.root,
-+		&huawei->debug.arg);
-+	debugfs_create_file("call", 0400,
-+		huawei->debug.root, huawei, &huawei_wmi_debugfs_call_fops);
-+}
-+
-+static void huawei_wmi_debugfs_exit(struct device *dev)
-+{
-+	struct huawei_wmi *huawei = dev_get_drvdata(dev);
-+
-+	debugfs_remove_recursive(huawei->debug.root);
-+}
-+
- /* Input */
- 
- static void huawei_wmi_process_key(struct input_dev *idev, int code)
-@@ -717,6 +812,7 @@ static int huawei_wmi_probe(struct platform_device *pdev)
- 		huawei_wmi_leds_setup(&pdev->dev);
- 		huawei_wmi_fn_lock_setup(&pdev->dev);
- 		huawei_wmi_battery_setup(&pdev->dev);
-+		huawei_wmi_debugfs_setup(&pdev->dev);
- 	}
- 
- 	return 0;
-@@ -734,6 +830,7 @@ static int huawei_wmi_remove(struct platform_device *pdev)
- 	}
- 
- 	if (wmi_has_guid(HWMI_METHOD_GUID)) {
-+		huawei_wmi_debugfs_exit(&pdev->dev);
- 		huawei_wmi_battery_exit(&pdev->dev);
- 		huawei_wmi_fn_lock_exit(&pdev->dev);
- 	}
+[snip]
+
+> +typedef unsigned long (smc_mbox_fn)(unsigned int, unsigned long,
+> +				    unsigned long, unsigned long,
+> +				    unsigned long, unsigned long,
+> +				    unsigned long);
+> +static smc_mbox_fn *invoke_smc_mbox_fn;
+
+Sorry for spotting this so late, the only thing that concerns me here
+with this singleton is if we happen to have both an arm,smc-mbox and
+arm,hvc-mbox configured in the system, this would not work. I do not
+believe this could be a functional use case, but we should probably
+guard against that or better yet, move that into the arm_smc_chan_data
+private structure?
 -- 
-2.21.0
-
+Florian
