@@ -2,434 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D83A1BCF7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 190EABCF8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407473AbfIXQ5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:57:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410132AbfIXQsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:46 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4966E21D7B;
-        Tue, 24 Sep 2019 16:48:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343725;
-        bh=1e/bd42Kt+/IBhPNaZvPHL/uh41AfV+WOZQC0Q6o0IE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lcGQDt+VxzKN+KS3pVJy/1by4QKBlSStnCN/BwZAd/m8D62p4Au2d5kutahfsU9Mv
-         sFHxgwPxeOrrQoEmCV96KmCkrcz5Cj5bmHdd0ob54Dz2brEtIvFs1bYX1zmyuaFMpo
-         7JFBAxJREGuWUv0VHlSSQUHYg8JCy8ZxQSLI8crA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "zhangyi (F)" <yi.zhang@huawei.com>,
-        syzbot+1e470567330b7ad711d5@syzkaller.appspotmail.com,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Sasha Levin <sashal@kernel.org>, linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 70/70] ext4: fix potential use after free after remounting with noblock_validity
-Date:   Tue, 24 Sep 2019 12:45:49 -0400
-Message-Id: <20190924164549.27058-70-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
-References: <20190924164549.27058-1-sashal@kernel.org>
+        id S2407372AbfIXQ6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:58:44 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38445 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410414AbfIXQrs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:47:48 -0400
+Received: by mail-pf1-f196.google.com with SMTP id h195so1710128pfe.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 09:47:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eg3k9f7VurRwzf46jcAwPnzOmV7EyviW3zf+/O2RKTw=;
+        b=vOP5zBgVX1pzcnG4/sH4K1pjbBqpnVYfSbP4/qi5UweyHcgj2vklkeP2uyHN8OsDnx
+         01xi0g12DQXBFoHEG6N04ShMB8Tb3g6zWU0DCT1aDpOKn8ckPw5jKCulw2FqTnD+K45T
+         1bhEzo2/lVTkbGTE85pEV7JL1+UyRODSsjjnIRIKk3n0Rj+r2WK+VA+R80PeZCHpwIAr
+         ++JYKYeUXHQCJa/scCSxC9La632MXbzdbvxhXToajlbTHsoV+A6dmh6e9JlCsFS9vHAV
+         rYuLmWMJFNvEWCB1M5KeFNJGOIr7YwWVvG8/Kog4ROjXe/TvPiMBayjV1/m4fTjLc/D5
+         xk6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eg3k9f7VurRwzf46jcAwPnzOmV7EyviW3zf+/O2RKTw=;
+        b=W3eaQaWHkbxc1qfwC9oGk3GDMx9mFYRe/iSDNQEU5BwJYt0RQ7y2kg2+FJ7k/YES4J
+         0q1/LIE0Av2IcqMomNgzkVQuWD9TNdU+o91iOIK66KdNWqOS20kiVN1O+Es+fi/l0Ndp
+         qL+itSS4Uhr945wxGt50Lscku90sndz6bS35JbG4ok45z3gXV7mHJZlz95o4JoUIBeEN
+         W3j/yX/t/YXDZFG6cuPZewUwpWs7ozFKsDMG9KNL4cww8LEHkS1clp1S5yqdUAqTOeWW
+         fTrO8613pFWaL7wVvH1AsHL/4CWSSht8n1O4d63nhnc/gLC5bdOAg/nXKzH+Ohp2Nngc
+         Ns0Q==
+X-Gm-Message-State: APjAAAUnmua7kiN0tuh7U6jS7CEQDg81VVQGVTMRzZjaHA/HW65KML7c
+        d7Z1hSKEnW71mENQVEMRilE0mO8+2lepKbnT8m0Yng==
+X-Google-Smtp-Source: APXvYqzHQL7f14LNZsEHgTkF79WPuoGKOhn296bYISGkx7n4picFyC3Il0HPjOJxT0GsWDx9sLojnGag0Yvg6RxPVZs=
+X-Received: by 2002:a63:d908:: with SMTP id r8mr4073008pgg.263.1569343667548;
+ Tue, 24 Sep 2019 09:47:47 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20190921064954.11196-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190921064954.11196-1-yamada.masahiro@socionext.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 24 Sep 2019 09:47:36 -0700
+Message-ID: <CAKwvOdnmYCbZiFKrvzwjJWmhzn5X+rKSs2GQZC4Dy-7VmKyntw@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: remove ar-option and KBUILD_ARFLAGS
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Mackerras <paulus@samba.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+On Tue, Sep 24, 2019 at 9:38 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Commit 40df759e2b9e ("kbuild: Fix build with binutils <= 2.19")
+> introduced ar-option and KBUILD_ARFLAGS to cope with old binutils.
+>
+> According to Documentation/process/changes.rst, the current minimal
+> supported version of binutils is 2.21 so you can assume the 'D' option
+> is always supported. Not only GNU ar but also llvm-ar supports it.
 
-[ Upstream commit 7727ae52975d4f4ef7ff69ed8e6e25f6a4168158 ]
+Yep, a nice cleanup. Thanks for the patch and I appreciate checking llvm-ar.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Remount process will release system zone which was allocated before if
-"noblock_validity" is specified. If we mount an ext4 file system to two
-mountpoints with default mount options, and then remount one of them
-with "noblock_validity", it may trigger a use after free problem when
-someone accessing the other one.
+>
+> With the 'D' option hard-coded, there is no more user of ar-option
+> or KBUILD_ARFLAGS.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  Documentation/kbuild/makefiles.rst | 5 -----
+>  Makefile                           | 4 ----
+>  arch/powerpc/boot/Makefile         | 2 +-
+>  scripts/Kbuild.include             | 5 -----
+>  scripts/Makefile.build             | 2 +-
+>  scripts/Makefile.lib               | 2 +-
+>  6 files changed, 3 insertions(+), 17 deletions(-)
+>
+> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
+> index 6ba9d5365ff3..b89c88168d6a 100644
+> --- a/Documentation/kbuild/makefiles.rst
+> +++ b/Documentation/kbuild/makefiles.rst
+> @@ -954,11 +954,6 @@ When kbuild executes, the following steps are followed (roughly):
+>
+>         From commandline LDFLAGS_MODULE shall be used (see kbuild.txt).
+>
+> -    KBUILD_ARFLAGS   Options for $(AR) when creating archives
+> -
+> -       $(KBUILD_ARFLAGS) set by the top level Makefile to "D" (deterministic
+> -       mode) if this option is supported by $(AR).
+> -
+>      KBUILD_LDS
+>
+>         The linker script with full path. Assigned by the top-level Makefile.
+> diff --git a/Makefile b/Makefile
+> index 656a8c95789d..88b180b2cb64 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -498,7 +498,6 @@ export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN
+>  export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
+>  export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
+>  export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
+> -export KBUILD_ARFLAGS
+>
+>  # Files to ignore in find ... statements
+>
+> @@ -914,9 +913,6 @@ ifdef CONFIG_RETPOLINE
+>  KBUILD_CFLAGS += $(call cc-option,-fcf-protection=none)
+>  endif
+>
+> -# use the deterministic mode of AR if available
+> -KBUILD_ARFLAGS := $(call ar-option,D)
+> -
+>  include scripts/Makefile.kasan
+>  include scripts/Makefile.extrawarn
+>  include scripts/Makefile.ubsan
+> diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
+> index 6841bd52738b..dfbd7f22eef5 100644
+> --- a/arch/powerpc/boot/Makefile
+> +++ b/arch/powerpc/boot/Makefile
+> @@ -50,7 +50,7 @@ endif
+>
+>  BOOTAFLAGS     := -D__ASSEMBLY__ $(BOOTCFLAGS) -nostdinc
+>
+> -BOOTARFLAGS    := -cr$(KBUILD_ARFLAGS)
+> +BOOTARFLAGS    := -crD
+>
+>  ifdef CONFIG_CC_IS_CLANG
+>  BOOTCFLAGS += $(CLANG_FLAGS)
+> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+> index e31fd6a8b2a3..956668239ef5 100644
+> --- a/scripts/Kbuild.include
+> +++ b/scripts/Kbuild.include
+> @@ -143,11 +143,6 @@ cc-ifversion = $(shell [ $(CONFIG_GCC_VERSION)0 $(1) $(2)000 ] && echo $(3) || e
+>  # Usage: KBUILD_LDFLAGS += $(call ld-option, -X, -Y)
+>  ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
+>
+> -# ar-option
+> -# Usage: KBUILD_ARFLAGS := $(call ar-option,D)
+> -# Important: no spaces around options
+> -ar-option = $(call try-run, $(AR) rc$(1) "$$TMP",$(1),$(2))
+> -
+>  # ld-version
+>  # Note this is mainly for HJ Lu's 3 number binutil versions
+>  ld-version = $(shell $(LD) --version | $(srctree)/scripts/ld-version.sh)
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 611bda95ac5e..f199341f04eb 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -395,7 +395,7 @@ $(sort $(subdir-obj-y)): $(subdir-ym) ;
+>  ifdef builtin-target
+>
+>  quiet_cmd_ar_builtin = AR      $@
+> -      cmd_ar_builtin = rm -f $@; $(AR) rcSTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+> +      cmd_ar_builtin = rm -f $@; $(AR) cDPrST $@ $(real-prereqs)
+>
+>  $(builtin-target): $(real-obj-y) FORCE
+>         $(call if_changed,ar_builtin)
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 23e524027740..15895fd4ef9f 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -238,7 +238,7 @@ quiet_cmd_ld = LD      $@
+>  # ---------------------------------------------------------------------------
+>
+>  quiet_cmd_ar = AR      $@
+> -      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+> +      cmd_ar = rm -f $@; $(AR) cDPrsT $@ $(real-prereqs)
+>
+>  # Objcopy
+>  # ---------------------------------------------------------------------------
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20190921064954.11196-1-yamada.masahiro%40socionext.com.
 
- # mount /dev/sda foo
- # mount /dev/sda bar
 
-User access mountpoint "foo"   |   Remount mountpoint "bar"
-                               |
-ext4_map_blocks()              |   ext4_remount()
-check_block_validity()         |   ext4_setup_system_zone()
-ext4_data_block_valid()        |   ext4_release_system_zone()
-                               |   free system_blks rb nodes
-access system_blks rb nodes    |
-trigger use after free         |
 
-This problem can also be reproduced by one mountpint, At the same time,
-add_system_zone() can get called during remount as well so there can be
-racing ext4_data_block_valid() reading the rbtree at the same time.
-
-This patch add RCU to protect system zone from releasing or building
-when doing a remount which inverse current "noblock_validity" mount
-option. It assign the rbtree after the whole tree was complete and
-do actual freeing after rcu grace period, avoid any intermediate state.
-
-Reported-by: syzbot+1e470567330b7ad711d5@syzkaller.appspotmail.com
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ext4/block_validity.c | 189 ++++++++++++++++++++++++++++-----------
- fs/ext4/ext4.h           |  10 ++-
- 2 files changed, 147 insertions(+), 52 deletions(-)
-
-diff --git a/fs/ext4/block_validity.c b/fs/ext4/block_validity.c
-index 8e83741b02e03..d4d4fdfac1a65 100644
---- a/fs/ext4/block_validity.c
-+++ b/fs/ext4/block_validity.c
-@@ -38,6 +38,7 @@ int __init ext4_init_system_zone(void)
- 
- void ext4_exit_system_zone(void)
- {
-+	rcu_barrier();
- 	kmem_cache_destroy(ext4_system_zone_cachep);
- }
- 
-@@ -49,17 +50,26 @@ static inline int can_merge(struct ext4_system_zone *entry1,
- 	return 0;
- }
- 
-+static void release_system_zone(struct ext4_system_blocks *system_blks)
-+{
-+	struct ext4_system_zone	*entry, *n;
-+
-+	rbtree_postorder_for_each_entry_safe(entry, n,
-+				&system_blks->root, node)
-+		kmem_cache_free(ext4_system_zone_cachep, entry);
-+}
-+
- /*
-  * Mark a range of blocks as belonging to the "system zone" --- that
-  * is, filesystem metadata blocks which should never be used by
-  * inodes.
-  */
--static int add_system_zone(struct ext4_sb_info *sbi,
-+static int add_system_zone(struct ext4_system_blocks *system_blks,
- 			   ext4_fsblk_t start_blk,
- 			   unsigned int count)
- {
- 	struct ext4_system_zone *new_entry = NULL, *entry;
--	struct rb_node **n = &sbi->system_blks.rb_node, *node;
-+	struct rb_node **n = &system_blks->root.rb_node, *node;
- 	struct rb_node *parent = NULL, *new_node = NULL;
- 
- 	while (*n) {
-@@ -91,7 +101,7 @@ static int add_system_zone(struct ext4_sb_info *sbi,
- 		new_node = &new_entry->node;
- 
- 		rb_link_node(new_node, parent, n);
--		rb_insert_color(new_node, &sbi->system_blks);
-+		rb_insert_color(new_node, &system_blks->root);
- 	}
- 
- 	/* Can we merge to the left? */
-@@ -101,7 +111,7 @@ static int add_system_zone(struct ext4_sb_info *sbi,
- 		if (can_merge(entry, new_entry)) {
- 			new_entry->start_blk = entry->start_blk;
- 			new_entry->count += entry->count;
--			rb_erase(node, &sbi->system_blks);
-+			rb_erase(node, &system_blks->root);
- 			kmem_cache_free(ext4_system_zone_cachep, entry);
- 		}
- 	}
-@@ -112,7 +122,7 @@ static int add_system_zone(struct ext4_sb_info *sbi,
- 		entry = rb_entry(node, struct ext4_system_zone, node);
- 		if (can_merge(new_entry, entry)) {
- 			new_entry->count += entry->count;
--			rb_erase(node, &sbi->system_blks);
-+			rb_erase(node, &system_blks->root);
- 			kmem_cache_free(ext4_system_zone_cachep, entry);
- 		}
- 	}
-@@ -126,7 +136,7 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
- 	int first = 1;
- 
- 	printk(KERN_INFO "System zones: ");
--	node = rb_first(&sbi->system_blks);
-+	node = rb_first(&sbi->system_blks->root);
- 	while (node) {
- 		entry = rb_entry(node, struct ext4_system_zone, node);
- 		printk(KERN_CONT "%s%llu-%llu", first ? "" : ", ",
-@@ -137,7 +147,47 @@ static void debug_print_tree(struct ext4_sb_info *sbi)
- 	printk(KERN_CONT "\n");
- }
- 
--static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
-+/*
-+ * Returns 1 if the passed-in block region (start_blk,
-+ * start_blk+count) is valid; 0 if some part of the block region
-+ * overlaps with filesystem metadata blocks.
-+ */
-+static int ext4_data_block_valid_rcu(struct ext4_sb_info *sbi,
-+				     struct ext4_system_blocks *system_blks,
-+				     ext4_fsblk_t start_blk,
-+				     unsigned int count)
-+{
-+	struct ext4_system_zone *entry;
-+	struct rb_node *n;
-+
-+	if ((start_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
-+	    (start_blk + count < start_blk) ||
-+	    (start_blk + count > ext4_blocks_count(sbi->s_es))) {
-+		sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
-+		return 0;
-+	}
-+
-+	if (system_blks == NULL)
-+		return 1;
-+
-+	n = system_blks->root.rb_node;
-+	while (n) {
-+		entry = rb_entry(n, struct ext4_system_zone, node);
-+		if (start_blk + count - 1 < entry->start_blk)
-+			n = n->rb_left;
-+		else if (start_blk >= (entry->start_blk + entry->count))
-+			n = n->rb_right;
-+		else {
-+			sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
-+			return 0;
-+		}
-+	}
-+	return 1;
-+}
-+
-+static int ext4_protect_reserved_inode(struct super_block *sb,
-+				       struct ext4_system_blocks *system_blks,
-+				       u32 ino)
- {
- 	struct inode *inode;
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
-@@ -163,14 +213,15 @@ static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
- 		if (n == 0) {
- 			i++;
- 		} else {
--			if (!ext4_data_block_valid(sbi, map.m_pblk, n)) {
-+			if (!ext4_data_block_valid_rcu(sbi, system_blks,
-+						map.m_pblk, n)) {
- 				ext4_error(sb, "blocks %llu-%llu from inode %u "
- 					   "overlap system zone", map.m_pblk,
- 					   map.m_pblk + map.m_len - 1, ino);
- 				err = -EFSCORRUPTED;
- 				break;
- 			}
--			err = add_system_zone(sbi, map.m_pblk, n);
-+			err = add_system_zone(system_blks, map.m_pblk, n);
- 			if (err < 0)
- 				break;
- 			i += n;
-@@ -180,94 +231,130 @@ static int ext4_protect_reserved_inode(struct super_block *sb, u32 ino)
- 	return err;
- }
- 
-+static void ext4_destroy_system_zone(struct rcu_head *rcu)
-+{
-+	struct ext4_system_blocks *system_blks;
-+
-+	system_blks = container_of(rcu, struct ext4_system_blocks, rcu);
-+	release_system_zone(system_blks);
-+	kfree(system_blks);
-+}
-+
-+/*
-+ * Build system zone rbtree which is used for block validity checking.
-+ *
-+ * The update of system_blks pointer in this function is protected by
-+ * sb->s_umount semaphore. However we have to be careful as we can be
-+ * racing with ext4_data_block_valid() calls reading system_blks rbtree
-+ * protected only by RCU. That's why we first build the rbtree and then
-+ * swap it in place.
-+ */
- int ext4_setup_system_zone(struct super_block *sb)
- {
- 	ext4_group_t ngroups = ext4_get_groups_count(sb);
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	struct ext4_system_blocks *system_blks;
- 	struct ext4_group_desc *gdp;
- 	ext4_group_t i;
- 	int flex_size = ext4_flex_bg_size(sbi);
- 	int ret;
- 
- 	if (!test_opt(sb, BLOCK_VALIDITY)) {
--		if (sbi->system_blks.rb_node)
-+		if (sbi->system_blks)
- 			ext4_release_system_zone(sb);
- 		return 0;
- 	}
--	if (sbi->system_blks.rb_node)
-+	if (sbi->system_blks)
- 		return 0;
- 
-+	system_blks = kzalloc(sizeof(*system_blks), GFP_KERNEL);
-+	if (!system_blks)
-+		return -ENOMEM;
-+
- 	for (i=0; i < ngroups; i++) {
- 		cond_resched();
- 		if (ext4_bg_has_super(sb, i) &&
- 		    ((i < 5) || ((i % flex_size) == 0)))
--			add_system_zone(sbi, ext4_group_first_block_no(sb, i),
-+			add_system_zone(system_blks,
-+					ext4_group_first_block_no(sb, i),
- 					ext4_bg_num_gdb(sb, i) + 1);
- 		gdp = ext4_get_group_desc(sb, i, NULL);
--		ret = add_system_zone(sbi, ext4_block_bitmap(sb, gdp), 1);
-+		ret = add_system_zone(system_blks,
-+				ext4_block_bitmap(sb, gdp), 1);
- 		if (ret)
--			return ret;
--		ret = add_system_zone(sbi, ext4_inode_bitmap(sb, gdp), 1);
-+			goto err;
-+		ret = add_system_zone(system_blks,
-+				ext4_inode_bitmap(sb, gdp), 1);
- 		if (ret)
--			return ret;
--		ret = add_system_zone(sbi, ext4_inode_table(sb, gdp),
-+			goto err;
-+		ret = add_system_zone(system_blks,
-+				ext4_inode_table(sb, gdp),
- 				sbi->s_itb_per_group);
- 		if (ret)
--			return ret;
-+			goto err;
- 	}
- 	if (ext4_has_feature_journal(sb) && sbi->s_es->s_journal_inum) {
--		ret = ext4_protect_reserved_inode(sb,
-+		ret = ext4_protect_reserved_inode(sb, system_blks,
- 				le32_to_cpu(sbi->s_es->s_journal_inum));
- 		if (ret)
--			return ret;
-+			goto err;
- 	}
- 
-+	/*
-+	 * System blks rbtree complete, announce it once to prevent racing
-+	 * with ext4_data_block_valid() accessing the rbtree at the same
-+	 * time.
-+	 */
-+	rcu_assign_pointer(sbi->system_blks, system_blks);
-+
- 	if (test_opt(sb, DEBUG))
- 		debug_print_tree(sbi);
- 	return 0;
-+err:
-+	release_system_zone(system_blks);
-+	kfree(system_blks);
-+	return ret;
- }
- 
--/* Called when the filesystem is unmounted */
-+/*
-+ * Called when the filesystem is unmounted or when remounting it with
-+ * noblock_validity specified.
-+ *
-+ * The update of system_blks pointer in this function is protected by
-+ * sb->s_umount semaphore. However we have to be careful as we can be
-+ * racing with ext4_data_block_valid() calls reading system_blks rbtree
-+ * protected only by RCU. So we first clear the system_blks pointer and
-+ * then free the rbtree only after RCU grace period expires.
-+ */
- void ext4_release_system_zone(struct super_block *sb)
- {
--	struct ext4_system_zone	*entry, *n;
-+	struct ext4_system_blocks *system_blks;
- 
--	rbtree_postorder_for_each_entry_safe(entry, n,
--			&EXT4_SB(sb)->system_blks, node)
--		kmem_cache_free(ext4_system_zone_cachep, entry);
-+	system_blks = rcu_dereference_protected(EXT4_SB(sb)->system_blks,
-+					lockdep_is_held(&sb->s_umount));
-+	rcu_assign_pointer(EXT4_SB(sb)->system_blks, NULL);
- 
--	EXT4_SB(sb)->system_blks = RB_ROOT;
-+	if (system_blks)
-+		call_rcu(&system_blks->rcu, ext4_destroy_system_zone);
- }
- 
--/*
-- * Returns 1 if the passed-in block region (start_blk,
-- * start_blk+count) is valid; 0 if some part of the block region
-- * overlaps with filesystem metadata blocks.
-- */
- int ext4_data_block_valid(struct ext4_sb_info *sbi, ext4_fsblk_t start_blk,
- 			  unsigned int count)
- {
--	struct ext4_system_zone *entry;
--	struct rb_node *n = sbi->system_blks.rb_node;
-+	struct ext4_system_blocks *system_blks;
-+	int ret;
- 
--	if ((start_blk <= le32_to_cpu(sbi->s_es->s_first_data_block)) ||
--	    (start_blk + count < start_blk) ||
--	    (start_blk + count > ext4_blocks_count(sbi->s_es))) {
--		sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
--		return 0;
--	}
--	while (n) {
--		entry = rb_entry(n, struct ext4_system_zone, node);
--		if (start_blk + count - 1 < entry->start_blk)
--			n = n->rb_left;
--		else if (start_blk >= (entry->start_blk + entry->count))
--			n = n->rb_right;
--		else {
--			sbi->s_es->s_last_error_block = cpu_to_le64(start_blk);
--			return 0;
--		}
--	}
--	return 1;
-+	/*
-+	 * Lock the system zone to prevent it being released concurrently
-+	 * when doing a remount which inverse current "[no]block_validity"
-+	 * mount option.
-+	 */
-+	rcu_read_lock();
-+	system_blks = rcu_dereference(sbi->system_blks);
-+	ret = ext4_data_block_valid_rcu(sbi, system_blks, start_blk,
-+					count);
-+	rcu_read_unlock();
-+	return ret;
- }
- 
- int ext4_check_blockref(const char *function, unsigned int line,
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 1cb67859e0518..0014b1c5e6be1 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -184,6 +184,14 @@ struct ext4_map_blocks {
- 	unsigned int m_flags;
- };
- 
-+/*
-+ * Block validity checking, system zone rbtree.
-+ */
-+struct ext4_system_blocks {
-+	struct rb_root root;
-+	struct rcu_head rcu;
-+};
-+
- /*
-  * Flags for ext4_io_end->flags
-  */
-@@ -1420,7 +1428,7 @@ struct ext4_sb_info {
- 	int s_jquota_fmt;			/* Format of quota to use */
- #endif
- 	unsigned int s_want_extra_isize; /* New inodes should reserve # bytes */
--	struct rb_root system_blks;
-+	struct ext4_system_blocks __rcu *system_blks;
- 
- #ifdef EXTENTS_STATS
- 	/* ext4 extents stats */
 -- 
-2.20.1
-
+Thanks,
+~Nick Desaulniers
