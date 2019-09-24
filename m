@@ -2,99 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14716BD3FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 23:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A41B3BD3FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 23:03:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633504AbfIXVDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 17:03:52 -0400
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:34670 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2633481AbfIXVDv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 17:03:51 -0400
-Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8OKv7S3014201;
-        Tue, 24 Sep 2019 21:03:24 GMT
-Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2v796w0xc4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Sep 2019 21:03:24 +0000
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2353.austin.hpe.com (Postfix) with ESMTP id DA6986D;
-        Tue, 24 Sep 2019 21:03:23 +0000 (UTC)
-Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id DC6313B;
-        Tue, 24 Sep 2019 21:03:22 +0000 (UTC)
-Date:   Tue, 24 Sep 2019 16:03:22 -0500
-From:   Steve Wahl <steve.wahl@hpe.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
+        id S2633479AbfIXVDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 17:03:38 -0400
+Received: from mga02.intel.com ([134.134.136.20]:31891 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2633461AbfIXVDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 17:03:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2019 14:03:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,545,1559545200"; 
+   d="scan'208";a="179612707"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by orsmga007.jf.intel.com with ESMTP; 24 Sep 2019 14:03:37 -0700
+Date:   Tue, 24 Sep 2019 14:03:37 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Steve Wahl <steve.wahl@hpe.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Cc:     Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
-        dimitri.sivanich@hpe.com, mike.travis@hpe.com
-Subject: [PATCH v3 0/2] x86/boot/64: Avoid mapping reserved ranges in early
- page tables.
-Message-ID: <cover.1569358538.git.steve.wahl@hpe.com>
+        x86@kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] KVM: VMX: Optimize VMX instrs error/fault handling
+Message-ID: <20190924210337.GE16218@linux.intel.com>
+References: <20190719204110.18306-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-09-24_10:2019-09-23,2019-09-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 mlxscore=0
- spamscore=0 bulkscore=0 adultscore=0 mlxlogscore=999 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1909240169
+In-Reply-To: <20190719204110.18306-1-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set narrows the valid space addressed by the page table
-level2_kernel_pgt to only contain ranges checked against the "usable
-RAM" list provided by the BIOS.
+Paolo,
 
-Prior to this, some larger than needed mappings were occasionally
-crossing over into spaces marked reserved, allowing the processor to
-access these reserved spaces, which were caught by the hardware and
-caused BIOS to halt on our platform (UV).
+Any chance this can be picked up for 5.4?  Josh's kvm_spurious_fault()
+changes went into 5.3, so this can be taken through the KVM tree, which
+probably makes the most sense since the non-KVM change is a one line
+deletion.
 
-Changes since v1:
-
-* Cover letter added because there's now two patches.
-
-* Patch 1: Added comment and re-worked changelog text.
-
-* Patch 2: New change requested by Dave Hansen to handle the case that
-  the mapping of the last PMD page for the kernel image could cross a
-  reserved region boundary.
-
-Changes since v2:
-
-* Patch 1: Added further inline comments.
-* Patch 2: None.
-
-Steve Wahl (2):
-  x86/boot/64: Make level2_kernel_pgt pages invalid outside kernel area.
-  x86/boot/64: round memory hole size up to next PMD page.
-
- arch/x86/boot/compressed/misc.c | 25 +++++++++++++++++++------
- arch/x86/kernel/head64.c        | 22 ++++++++++++++++++++--
- 2 files changed, 39 insertions(+), 8 deletions(-)
-
--- 
-2.21.0
-
-
--- 
-Steve Wahl, Hewlett Packard Enterprise
+On Fri, Jul 19, 2019 at 01:41:05PM -0700, Sean Christopherson wrote:
+> A recent commit reworked __kvm_handle_fault_on_reboot() to play nice with
+> objtool.  An unfortunate side effect is that JMP is now inserted after
+> most VMX instructions so that the reboot macro can use an actual CALL to
+> kvm_spurious_fault() instead of a funky PUSH+JMP facsimile in .fixup.
+> 
+> Rework the low level VMX instruction helpers to handle unexpected faults
+> manually instead of relying on the "fault on reboot" macro.  By using
+> asm-goto, most helpers can branch directly to an in-function call to
+> kvm_spurious_fault(), which can then be optimized by compilers to reside
+> out-of-line at the end of the function instead of inline as done by
+> "fault on reboot".
+> 
+> The net impact relative to the current code base is more or less a nop
+> when building with a compiler that supports __GCC_ASM_FLAG_OUTPUTS__.
+> A bunch of code that was previously in .fixup gets moved into the slow
+> paths of functions, but the fast paths are more basically unchanged.
+> 
+> Without __GCC_ASM_FLAG_OUTPUTS__, manually coding the Jcc is a net
+> positive as CC_SET() without compiler support almost always generates a
+> SETcc+CMP+Jcc sequence, which is now replaced with a single Jcc.
+> 
+> A small bonus is that the Jcc instrs are hinted to predict that the VMX
+> instr will be successful.
+> 
+> v2:
+>   - Rebased to x86/master, commit eceffd88ca20 ("Merge branch 'x86/urgent'")
+>   - Reworded changelogs to reference the commit instead lkml link for
+>     the recent changes to __kvm_handle_fault_on_reboot().
+>   - Added Paolo's acks for patch 1-4
+>   - Added patch 5 to do more cleanup, which was made possible by rebasing
+>     on top of the __kvm_handle_fault_on_reboot() changes.
+>   
+> Sean Christopherson (5):
+>   objtool: KVM: x86: Check kvm_rebooting in kvm_spurious_fault()
+>   KVM: VMX: Optimize VMX instruction error and fault handling
+>   KVM: VMX: Add error handling to VMREAD helper
+>   KVM: x86: Drop ____kvm_handle_fault_on_reboot()
+>   KVM: x86: Don't check kvm_rebooting in __kvm_handle_fault_on_reboot()
+> 
+>  arch/x86/include/asm/kvm_host.h | 16 ++----
+>  arch/x86/kvm/vmx/ops.h          | 93 ++++++++++++++++++++-------------
+>  arch/x86/kvm/vmx/vmx.c          | 42 +++++++++++++++
+>  arch/x86/kvm/x86.c              |  3 +-
+>  tools/objtool/check.c           |  1 -
+>  5 files changed, 104 insertions(+), 51 deletions(-)
+> 
+> -- 
+> 2.22.0
+> 
