@@ -2,66 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09763BD57B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 01:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2633BD591
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 01:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442079AbfIXXaA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 19:30:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388737AbfIXXaA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 19:30:00 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 708C02146E;
-        Tue, 24 Sep 2019 23:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569367799;
-        bh=HTCjVVJhKnM9wBAHuE/prZG572PTBWFfbQcTmzcLdjM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=16LXSSqHPBhE8nfctAWoDqBAl2s7jVm71t/a834sCoynHJd6o6rAzkPluSKIOFsyx
-         HTMHy/R69lobeUGGn2AZBvU6Z98Hyb7/KnwZyWcf+F0nPtKtCd5I52i2lkdellIUMP
-         7q8paiXlVBSBie0NQdEg1xj07TU+dL0B/0C7wPO8=
-Date:   Tue, 24 Sep 2019 16:29:59 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] uaccess: Disallow > INT_MAX copy sizes
-Message-Id: <20190924162959.25ccaac45dec9a8697e1ca27@linux-foundation.org>
-In-Reply-To: <201909231607.B6A0736@keescook>
-References: <201908251612.F9902D7A@keescook>
-        <201909231607.B6A0736@keescook>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2442113AbfIXXtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 19:49:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35652 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388576AbfIXXtN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 19:49:13 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1iCuYQ-00018W-9p; Wed, 25 Sep 2019 01:49:10 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     <zhe.he@windriver.com>
+Cc:     <linux-rt-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RT] printk: devkmsg: read: Return EPIPE when the first message user-space wants has gone
+References: <20190924072639.25986-1-zhe.he@windriver.com>
+Date:   Wed, 25 Sep 2019 01:49:08 +0200
+In-Reply-To: <20190924072639.25986-1-zhe.he@windriver.com> (zhe he's message
+        of "Tue, 24 Sep 2019 15:26:39 +0800")
+Message-ID: <8736gls1aj.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Sep 2019 16:08:54 -0700 Kees Cook <keescook@chromium.org> wrote:
+On 2019-09-24, <zhe.he@windriver.com> wrote:
+> From: He Zhe <zhe.he@windriver.com>
+>
+> When user-space wants to read the first message, that is when user->seq
+> is 0, and that message has gone, it currently automatically resets
+> user->seq to current first seq. This mis-aligns with mainline kernel.
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/dev-kmsg#n39
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/printk/printk.c#n899
+>
+> We should inform user-space that what it wants has gone by returning EPIPE
+> in such scenario.
+>
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
 
-> On Sun, Aug 25, 2019 at 04:18:56PM -0700, Kees Cook wrote:
-> > As we've done with VFS, string operations, etc, reject usercopy sizes
-> > larger than INT_MAX, which would be nice to have for catching bugs
-> > related to size calculation overflows[1].
-> > 
-> > This adds 10 bytes to x86_64 defconfig text and 1980 bytes to the data
-> > section:
-> > 
-> >    text    data     bss     dec     hex filename
-> > 19691167        5134320 1646664 26472151        193eed7 vmlinux.before
-> > 19691177        5136300 1646664 26474141        193f69d vmlinux.after
-> > 
-> > [1] https://marc.info/?l=linux-s390&m=156631939010493&w=2
-> > 
-> > Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> 
-> ping! Andrew, can you take this?
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-It's in my post 5.4-rc1 pile.
+> ---
+>  kernel/printk/printk.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index e3fa33f2e23c..58c545a528b3 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -703,14 +703,10 @@ static ssize_t devkmsg_read(struct file *file, char __user *buf,
+>  		goto out;
+>  	}
+>  
+> -	if (user->seq == 0) {
+> -		user->seq = seq;
+> -	} else {
+> -		user->seq++;
+> -		if (user->seq < seq) {
+> -			ret = -EPIPE;
+> -			goto restore_out;
+> -		}
+> +	user->seq++;
+> +	if (user->seq < seq) {
+> +		ret = -EPIPE;
+> +		goto restore_out;
+>  	}
+>  
+>  	msg = (struct printk_log *)&user->msgbuf[0];
