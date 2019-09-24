@@ -2,68 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DACABC4E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 11:31:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BE1EBC509
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 11:41:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393892AbfIXJbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 05:31:53 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2710 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390668AbfIXJbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 05:31:53 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 434FCCD2BE73B968E31A;
-        Tue, 24 Sep 2019 17:31:50 +0800 (CST)
-Received: from huawei.com (10.175.101.78) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Tue, 24 Sep 2019
- 17:31:46 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <mchehab@kernel.org>, <gregkh@linuxfoundation.org>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] media: flexcop-usb: fix NULL-ptr deref in flexcop_usb_transfer_init()
-Date:   Tue, 24 Sep 2019 17:49:04 +0800
-Message-ID: <1569318544-56235-1-git-send-email-yangyingliang@huawei.com>
-X-Mailer: git-send-email 1.8.3
+        id S2504319AbfIXJlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 05:41:08 -0400
+Received: from 8bytes.org ([81.169.241.247]:55638 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2504288AbfIXJlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 05:41:08 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id EE14C3A2; Tue, 24 Sep 2019 11:41:06 +0200 (CEST)
+Date:   Tue, 24 Sep 2019 11:41:05 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Filippo Sironi <sironi@amazon.de>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] iommu/amd: Wait for completion of IOTLB flush in
+ attach_device
+Message-ID: <20190924094105.GB11453@8bytes.org>
+References: <1568137765-20278-1-git-send-email-sironi@amazon.de>
+ <1568137765-20278-2-git-send-email-sironi@amazon.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.101.78]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568137765-20278-2-git-send-email-sironi@amazon.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If usb_set_interface() failed, iface->cur_altsetting will
-not be assigned and it will be used in flexcop_usb_transfer_init()
-It may lead a NULL pointer dereference.
+On Tue, Sep 10, 2019 at 07:49:21PM +0200, Filippo Sironi wrote:
+> Signed-off-by: Filippo Sironi <sironi@amazon.de>
+> ---
+>  drivers/iommu/amd_iommu.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Check usb_set_interface() return value in flexcop_usb_init()
-and return failed to avoid using this NULL pointer.
-
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/media/usb/b2c2/flexcop-usb.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/usb/b2c2/flexcop-usb.c b/drivers/media/usb/b2c2/flexcop-usb.c
-index 1826ff8..4bf85e9 100644
---- a/drivers/media/usb/b2c2/flexcop-usb.c
-+++ b/drivers/media/usb/b2c2/flexcop-usb.c
-@@ -504,7 +504,13 @@ static int flexcop_usb_transfer_init(struct flexcop_usb *fc_usb)
- static int flexcop_usb_init(struct flexcop_usb *fc_usb)
- {
- 	/* use the alternate setting with the larges buffer */
--	usb_set_interface(fc_usb->udev,0,1);
-+	int ret = usb_set_interface(fc_usb->udev, 0, 1);
-+
-+	if (ret) {
-+		err("set interface failed.");
-+		return ret;
-+	}
-+
- 	switch (fc_usb->udev->speed) {
- 	case USB_SPEED_LOW:
- 		err("cannot handle USB speed because it is too slow.");
--- 
-1.8.3
+Applied this one with a commit message and a fixes tag, thanks.
 
