@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7CD6BCF4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 218C8BCF22
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410953AbfIXQyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:54:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45086 "EHLO mail.kernel.org"
+        id S2441599AbfIXQwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:52:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2411167AbfIXQvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:51:41 -0400
+        id S2410868AbfIXQvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:51:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6898A21D7A;
-        Tue, 24 Sep 2019 16:51:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C0C9217D9;
+        Tue, 24 Sep 2019 16:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343901;
-        bh=yz1l+mX2kWTBNqWz5GwY4gYJsIc9SZG72FUV/512H3c=;
+        s=default; t=1569343904;
+        bh=cdpXAyC0QgX4B0pAmhmXYPJ+N0Wzzx+vtMzo2FD9JFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1MP71Yx00/nH2MjDKvqhPrxYEl4yCTJMcjEDgZEcc8dyw5cSFDsXqb6g5GDLBO5z
-         zYi4wIoCdb6UP30eFD6doefioXv42DSJycpSwPv3fBvTKnY1Be2x0LfFln242u5dGj
-         4zbRYkfwHatU/1fuWVWEHgsscN8V+fEao3oBFtSs=
+        b=Zc7PWrfUSqC6YxQra9P1R0DoTtx1gS3EgKAzawnR/ePaK9FcIsDDHW4GYJc/5NKJL
+         b3FWnIhARYtyg3vlsK9to8VWXRCHfqqmets6Pmi/A9JDjn0RJaavSZ5bOjaS0gmwfD
+         j4doMcE57KbWu77+fHcUtHT5J/Br+i9L7GGLtCVs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Scott Wood <oss@buserror.net>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 06/19] clk: qoriq: Fix -Wunused-const-variable
-Date:   Tue, 24 Sep 2019 12:51:17 -0400
-Message-Id: <20190924165130.28625-6-sashal@kernel.org>
+Cc:     Ahzo <Ahzo@tutanota.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 07/19] drm/amd/powerplay/smu7: enforce minimal VBITimeout (v2)
+Date:   Tue, 24 Sep 2019 12:51:18 -0400
+Message-Id: <20190924165130.28625-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165130.28625-1-sashal@kernel.org>
 References: <20190924165130.28625-1-sashal@kernel.org>
@@ -45,47 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Huckleberry <nhuck@google.com>
+From: Ahzo <Ahzo@tutanota.com>
 
-[ Upstream commit a95fb581b144b5e73da382eaedb2e32027610597 ]
+[ Upstream commit f659bb6dae58c113805f92822e4c16ddd3156b79 ]
 
-drivers/clk/clk-qoriq.c:138:38: warning: unused variable
-'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
-clockgen_muxinfo p5020_cmux_grp1
+This fixes screen corruption/flickering on 75 Hz displays.
 
-drivers/clk/clk-qoriq.c:146:38: warning: unused variable
-'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
-clockgen_muxinfo p5020_cmux_grp2
+v2: make print statement debug only (Alex)
 
-In the definition of the p5020 chip, the p2041 chip's info was used
-instead.  The p5020 and p2041 chips have different info. This is most
-likely a typo.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/525
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-Link: https://lkml.kernel.org/r/20190627220642.78575-1-nhuck@google.com
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=102646
+Reviewed-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Ahzo <Ahzo@tutanota.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-qoriq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 80ae2a51452d7..cdce49f6476aa 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -540,7 +540,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p5020_init_periph,
- 		.cmux_groups = {
--			&p2041_cmux_grp1, &p2041_cmux_grp2
-+			&p5020_cmux_grp1, &p5020_cmux_grp2
- 		},
- 		.cmux_to_group = {
- 			0, 1, -1
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+index 3907439417e76..c0db3b57dfe58 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+@@ -3739,6 +3739,11 @@ int smu7_program_display_gap(struct pp_hwmgr *hwmgr)
+ 
+ 	data->frame_time_x2 = frame_time_in_us * 2 / 100;
+ 
++	if (data->frame_time_x2 < 280) {
++		pr_debug("%s: enforce minimal VBITimeout: %d -> 280\n", __func__, data->frame_time_x2);
++		data->frame_time_x2 = 280;
++	}
++
+ 	display_gap2 = pre_vbi_time_in_us * (ref_clock / 100);
+ 
+ 	cgs_write_ind_register(hwmgr->device, CGS_IND_REG__SMC, ixCG_DISPLAY_GAP_CNTL2, display_gap2);
 -- 
 2.20.1
 
