@@ -2,327 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06B71BD576
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 01:25:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8ECFBD57D
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 01:30:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442080AbfIXXZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 19:25:26 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:34366 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2442059AbfIXXZZ (ORCPT
+        id S2442094AbfIXXaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 19:30:03 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37992 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2442084AbfIXXaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 19:25:25 -0400
-Received: by mail-qk1-f202.google.com with SMTP id b67so4070659qkc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 16:25:24 -0700 (PDT)
+        Tue, 24 Sep 2019 19:30:01 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x10so2116740pgi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 16:30:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=jF3LwHMy1Im/uN1Rxj0wLkf4Ra+UlXW81PKhiasIOf0=;
-        b=R1cAwf0wmLc4JnxR+VS23xXSu3nPjvOeg7wranBMJiJc0XqUFVkNV/oehzgidbrevA
-         MpduyYw37pqaEm8VweexNg876O72FXuUD+wV6nLgnoph0qgpXVrF+m7K6aZmD16COFGi
-         bTG0dV4rg7IfGTIwZwKKgMjhQJ3o7i3HG0GNaRb6BYFUpS/HLuPpHc/HX07gbS3Z0I8J
-         uNl/6SWHlcng5cWoiv9Gn2EQjg4O73ykGDFwk4Rp4Kp0e/EcQRYY+K7PU9TSN1uMWT4F
-         dPcS+9uvmiwf1IAN/fwZHGSUCt5odnp5OyjHvVPPASJ1FnHcxVch0peeNhv6xXzO2RfI
-         bK5A==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=hDUCRnovERuna7WKgcUyWC1089K6x+TQ4NYVGW2tMJg=;
+        b=ndKjN9PXPKpgZypiGtw5+V39czKqyhWbpuDdL9ymcglLiyFbxaHBpQmR5AlCm14CYN
+         Cy3k0fDcyuKcGFIewZrYKYse76pfxRahWzJQPFIxPdk8COBULfRhP0NE3EV/obeROM5C
+         lkMP+4piwFtk7ymP5XfrJwLqfsg+E2/lc//qc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=jF3LwHMy1Im/uN1Rxj0wLkf4Ra+UlXW81PKhiasIOf0=;
-        b=Pnqd9FGSM7pSi1E1binLxLWwDexXd4u/hzCpr0cokChnrLk6qW+EiK6eGTwBiL2UGl
-         QppXEhlxElXeWI+5aNvg061RuRVNRKkrytDiIpU3u8rZT89LjYNLttR8uQ55KmgSC/Ni
-         a3tFJccBVBVrurN9Cp+gy9qbQOQyVMu7m8uzJhCRLKir38vQVxdX9PveyyEoIrRllKIz
-         VdG7xMUxPon5VTTAfY8diMRLlMXnlS2l0L0og3w/k3GQiIg0rYif7jSWZ9qWgGHFqonU
-         qGfu/0jUZTgOz6MWMa2QW/P4NjtymO24gPSn97pCVxomxiiet+nD716Ep7XAI0sRI92z
-         mCUg==
-X-Gm-Message-State: APjAAAUgUVz9NlstazzuztZbo7sRNtER9ppOkmU+FJ7eR3a/GVPJ1ZCs
-        +isWLUZW7TG1uC/TSII1kUJ+VCQzlF0=
-X-Google-Smtp-Source: APXvYqzRxA7gbx3nXbEjQFUlhSXxq0dRZYKtZSkeGzz3NExksdaEKh57l926xkGw5CQFU2cJ3KBgwWaa120=
-X-Received: by 2002:a0c:9952:: with SMTP id i18mr4976580qvd.202.1569367523787;
- Tue, 24 Sep 2019 16:25:23 -0700 (PDT)
-Date:   Tue, 24 Sep 2019 17:24:59 -0600
-In-Reply-To: <20190924232459.214097-1-yuzhao@google.com>
-Message-Id: <20190924232459.214097-4-yuzhao@google.com>
-Mime-Version: 1.0
-References: <20190914070518.112954-1-yuzhao@google.com> <20190924232459.214097-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
-Subject: [PATCH v3 4/4] mm: remove unnecessary smp_wmb() in __SetPageUptodate()
-From:   Yu Zhao <yuzhao@google.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Hugh Dickins <hughd@google.com>,
-        "=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?=" <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Lance Roy <ldr709@gmail.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dave Airlie <airlied@redhat.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Mel Gorman <mgorman@suse.de>, Jan Kara <jack@suse.cz>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Aaron Lu <ziqian.lzq@antfin.com>,
-        Omar Sandoval <osandov@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        David Hildenbrand <david@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Yu Zhao <yuzhao@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=hDUCRnovERuna7WKgcUyWC1089K6x+TQ4NYVGW2tMJg=;
+        b=iSxNWgoMv+p5ICp9YWcOiLdzr8rir6mczKbBF/18Q2uxhEEYKhIUoxJDLb8pB1rrFq
+         Kxcwt8qlY/zwbY0xIPMdurLzR5mx1YAEEmepCUyUfhvez30JP8zXI6LO3Z0+s6r8BBF9
+         fvRXB/MXhI36A+uPJ8CNgyeAt0fyIUBJ5J1sBhu1fpgFGsOkvIOuytw0UnM8VoJtOsGk
+         rZGcOfIPAoDc4jsav+9XclRTW+CREo6GHWlAKlcV/sMsItGV94AgmC/d1P6P7Z/P89Qp
+         lP1fNMYxa8k6scb4dH27Qvwcfg1n0Hrnt1Y/bzulVj08HwxCYzqUaK27dnYeAJrDOFGf
+         Gi0A==
+X-Gm-Message-State: APjAAAWQiqirBzWDOrOX7qTamjr8MAyt0fzJ5HonfqPwOk93zi7raD30
+        x1Gh/jHhYC+cgxkpkLbc1ck3n9SaTMs=
+X-Google-Smtp-Source: APXvYqyZQ1DH75N1hfUmgYvspKfUCy8wk/94lyd0xXxzSq//YzXGyQDttZlx6jOwBTik27aAnB9hXA==
+X-Received: by 2002:a63:4824:: with SMTP id v36mr5730519pga.385.1569367800943;
+        Tue, 24 Sep 2019 16:30:00 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id f74sm5759500pfa.34.2019.09.24.16.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 16:29:59 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 16:29:58 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] docs: Use make invocation's -j argument for parallelism
+Message-ID: <201909241627.CEA19509@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-smp_wmb()s added in the previous patch guarantee that the user data
-appears before a page is exposed by set_pte_at(). So there is no
-need for __SetPageUptodate() to have a built-in one.
+While sphinx 1.7 and later supports "-jauto" for parallelism, this
+effectively ignores the "-j" flag used in the "make" invocation, which
+may cause confusion for build systems. Instead, extract the available
+parallelism from "make"'s job server (since it is not exposed in any
+special variables) and use that for the "sphinx-build" run. Now things
+work correctly for builds where -j is specified at the top-level:
 
-There are total 13 __SetPageUptodate() for the non-hugetlb case. 12
-of them reuse smp_wmb()s added in the previous patch.
+	make -j16 htmldocs
 
-The one in shmem_mfill_atomic_pte() doesn't need a explicit write
-barrier because of the following shmem_add_to_page_cache().
+If -j is not specified, continue to fallback to "-jauto" if available.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/page-flags.h |  6 +++++-
- kernel/events/uprobes.c    |  2 +-
- mm/huge_memory.c           | 11 +++--------
- mm/khugepaged.c            |  2 +-
- mm/memory.c                | 13 ++++---------
- mm/migrate.c               |  7 +------
- mm/swapfile.c              |  2 +-
- mm/userfaultfd.c           |  7 +------
- 8 files changed, 17 insertions(+), 33 deletions(-)
+v3: python2, specific exceptions, correct SPDX, blocking writer
+v2: retain "-jauto" default behavior with top-level -j is missing.              
+---
+ Documentation/Makefile  |  3 ++-
+ scripts/jobserver-count | 58 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 1 deletion(-)
+ create mode 100755 scripts/jobserver-count
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index f91cb8898ff0..2481f9ad5f5b 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -508,10 +508,14 @@ static inline int PageUptodate(struct page *page)
- 	return ret;
- }
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index e145e4db508b..c6e564656a5b 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -33,7 +33,7 @@ ifeq ($(HAVE_SPHINX),0)
  
-+/*
-+ * Only use this function when there is a following write barrier, e.g.,
-+ * an explicit smp_wmb() and/or the page will be added to page or swap
-+ * cache locked.
-+ */
- static __always_inline void __SetPageUptodate(struct page *page)
- {
- 	VM_BUG_ON_PAGE(PageTail(page), page);
--	smp_wmb();
- 	__set_bit(PG_uptodate, &page->flags);
- }
+ else # HAVE_SPHINX
  
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 7069785e2e52..6ceae92afcc0 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -194,7 +194,7 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
+-export SPHINXOPTS = $(shell perl -e 'open IN,"sphinx-build --version 2>&1 |"; while (<IN>) { if (m/([\d\.]+)/) { print "-jauto" if ($$1 >= "1.7") } ;} close IN')
++export SPHINX_PARALLEL = $(shell perl -e 'open IN,"sphinx-build --version 2>&1 |"; while (<IN>) { if (m/([\d\.]+)/) { print "auto" if ($$1 >= "1.7") } ;} close IN')
  
- 	flush_cache_page(vma, addr, pte_pfn(*pvmw.pte));
- 	ptep_clear_flush_notify(vma, addr, pvmw.pte);
--	/* commit non-atomic ops before exposing to fast gup */
-+	/* commit non-atomic ops and user data */
- 	smp_wmb();
- 	set_pte_at_notify(mm, addr, pvmw.pte,
- 			mk_pte(new_page, vma->vm_page_prot));
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 21d271a29d96..101e7bd61e8f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -580,11 +580,6 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
- 	}
- 
- 	clear_huge_page(page, vmf->address, HPAGE_PMD_NR);
--	/*
--	 * The memory barrier inside __SetPageUptodate makes sure that
--	 * clear_huge_page writes become visible before the set_pmd_at()
--	 * write.
--	 */
- 	__SetPageUptodate(page);
- 
- 	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-@@ -616,7 +611,7 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
- 		mem_cgroup_commit_charge(page, memcg, false, true);
- 		lru_cache_add_active_or_unevictable(page, vma);
- 		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
--		/* commit non-atomic ops before exposing to fast gup */
-+		/* commit non-atomic ops and user data */
- 		smp_wmb();
- 		set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
- 		add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
-@@ -1278,7 +1273,7 @@ static vm_fault_t do_huge_pmd_wp_page_fallback(struct vm_fault *vmf,
- 	}
- 	kfree(pages);
- 
--	/* commit non-atomic ops before exposing to fast gup */
-+	/* commit non-atomic ops and user data */
- 	smp_wmb(); /* make pte visible before pmd */
- 
- 	pmd_populate(vma->vm_mm, vmf->pmd, pgtable);
-@@ -1427,7 +1422,7 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 		page_add_new_anon_rmap(new_page, vma, haddr, true);
- 		mem_cgroup_commit_charge(new_page, memcg, false, true);
- 		lru_cache_add_active_or_unevictable(new_page, vma);
--		/* commit non-atomic ops before exposing to fast gup */
-+		/* commit non-atomic ops and user data */
- 		smp_wmb();
- 		set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
- 		update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index f2901edce6de..668918842712 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1074,7 +1074,7 @@ static void collapse_huge_page(struct mm_struct *mm,
- 	count_memcg_events(memcg, THP_COLLAPSE_ALLOC, 1);
- 	lru_cache_add_active_or_unevictable(new_page, vma);
- 	pgtable_trans_huge_deposit(mm, pmd, pgtable);
--	/* commit non-atomic ops before exposing to fast gup */
-+	/* commit non-atomic ops and user data */
- 	smp_wmb();
- 	set_pmd_at(mm, address, pmd, _pmd);
- 	update_mmu_cache_pmd(vma, address, pmd);
-diff --git a/mm/memory.c b/mm/memory.c
-index 6dabbc3cd3b7..db001d919e60 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2367,7 +2367,7 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf)
- 		 * mmu page tables (such as kvm shadow page tables), we want the
- 		 * new page to be mapped directly into the secondary page table.
- 		 */
--		/* commit non-atomic ops before exposing to fast gup */
-+		/* commit non-atomic ops and user data */
- 		smp_wmb();
- 		set_pte_at_notify(mm, vmf->address, vmf->pte, entry);
- 		update_mmu_cache(vma, vmf->address, vmf->pte);
-@@ -2887,7 +2887,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 		page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 		lru_cache_add_active_or_unevictable(page, vma);
--		/* commit non-atomic ops before exposing to fast gup */
-+		/* commit non-atomic ops and user data */
- 		smp_wmb();
- 	} else {
- 		do_page_add_anon_rmap(page, vma, vmf->address, exclusive);
-@@ -3006,11 +3006,6 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 					false))
- 		goto oom_free_page;
- 
--	/*
--	 * The memory barrier inside __SetPageUptodate makes sure that
--	 * preceeding stores to the page contents become visible before
--	 * the set_pte_at() write.
--	 */
- 	__SetPageUptodate(page);
- 
- 	entry = mk_pte(page, vma->vm_page_prot);
-@@ -3038,7 +3033,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 	page_add_new_anon_rmap(page, vma, vmf->address, false);
- 	mem_cgroup_commit_charge(page, memcg, false, false);
- 	lru_cache_add_active_or_unevictable(page, vma);
--	/* commit non-atomic ops before exposing to fast gup */
-+	/* commit non-atomic ops and user data */
- 	smp_wmb();
- setpte:
- 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, entry);
-@@ -3303,7 +3298,7 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct mem_cgroup *memcg,
- 		page_add_new_anon_rmap(page, vma, vmf->address, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 		lru_cache_add_active_or_unevictable(page, vma);
--		/* commit non-atomic ops before exposing to fast gup */
-+		/* commit non-atomic ops and user data */
- 		smp_wmb();
- 	} else {
- 		inc_mm_counter_fast(vma->vm_mm, mm_counter_file(page));
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 943d147ecc3e..dc0ab9fbe36e 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2729,11 +2729,6 @@ static void migrate_vma_insert_page(struct migrate_vma *migrate,
- 	if (mem_cgroup_try_charge(page, vma->vm_mm, GFP_KERNEL, &memcg, false))
- 		goto abort;
- 
--	/*
--	 * The memory barrier inside __SetPageUptodate makes sure that
--	 * preceding stores to the page contents become visible before
--	 * the set_pte_at() write.
--	 */
- 	__SetPageUptodate(page);
- 
- 	if (is_zone_device_page(page)) {
-@@ -2783,7 +2778,7 @@ static void migrate_vma_insert_page(struct migrate_vma *migrate,
- 		lru_cache_add_active_or_unevictable(page, vma);
- 	get_page(page);
- 
--	/* commit non-atomic ops before exposing to fast gup */
-+	/* commit non-atomic ops and user data */
- 	smp_wmb();
- 	if (flush) {
- 		flush_cache_page(vma, addr, pte_pfn(*ptep));
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 5c5547053ee0..dc9f1b1ba1a6 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1887,7 +1887,7 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
- 		page_add_new_anon_rmap(page, vma, addr, false);
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 		lru_cache_add_active_or_unevictable(page, vma);
--		/* commit non-atomic ops before exposing to fast gup */
-+		/* commit non-atomic ops and user data */
- 		smp_wmb();
- 	}
- 	set_pte_at(vma->vm_mm, addr, pte,
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 4f92913242a1..34083680869e 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -58,11 +58,6 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 		*pagep = NULL;
- 	}
- 
--	/*
--	 * The memory barrier inside __SetPageUptodate makes sure that
--	 * preceeding stores to the page contents become visible before
--	 * the set_pte_at() write.
--	 */
- 	__SetPageUptodate(page);
- 
- 	ret = -ENOMEM;
-@@ -92,7 +87,7 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 	mem_cgroup_commit_charge(page, memcg, false, false);
- 	lru_cache_add_active_or_unevictable(page, dst_vma);
- 
--	/* commit non-atomic ops before exposing to fast gup */
-+	/* commit non-atomic ops and user data */
- 	smp_wmb();
- 	set_pte_at(dst_mm, dst_addr, dst_pte, _dst_pte);
- 
+ # User-friendly check for pdflatex and latexmk
+ HAVE_PDFLATEX := $(shell if which $(PDFLATEX) >/dev/null 2>&1; then echo 1; else echo 0; fi)
+@@ -68,6 +68,7 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
+ 	PYTHONDONTWRITEBYTECODE=1 \
+ 	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(srctree)/$(src)/$5/$(SPHINX_CONF)) \
+ 	$(SPHINXBUILD) \
++	-j $(shell python $(srctree)/scripts/jobserver-count $(SPHINX_PARALLEL)) \
+ 	-b $2 \
+ 	-c $(abspath $(srctree)/$(src)) \
+ 	-d $(abspath $(BUILDDIR)/.doctrees/$3) \
+diff --git a/scripts/jobserver-count b/scripts/jobserver-count
+new file mode 100755
+index 000000000000..0b482d6884d2
+--- /dev/null
++++ b/scripts/jobserver-count
+@@ -0,0 +1,58 @@
++#!/usr/bin/env python
++# SPDX-License-Identifier: GPL-2.0+
++#
++# This determines how many parallel tasks "make" is expecting, as it is
++# not exposed via an special variables.
++# https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html#POSIX-Jobserver
++from __future__ import print_function
++import os, sys, fcntl, errno
++
++# Default parallelism is "1" unless overridden on the command-line.
++default="1"
++if len(sys.argv) > 1:
++	default=sys.argv[1]
++
++# Set non-blocking for a given file descriptor.
++def nonblock(fd):
++	flags = fcntl.fcntl(fd, fcntl.F_GETFL)
++	fcntl.fcntl(fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
++	return fd
++
++# Extract and prepare jobserver file descriptors from envirnoment.
++try:
++	# Fetch the make environment options.
++	flags = os.environ['MAKEFLAGS']
++
++	# Look for "--jobserver=R,W"
++	opts = [x for x in flags.split(" ") if x.startswith("--jobserver")]
++
++	# Parse out R,W file descriptor numbers and set them nonblocking.
++	fds = opts[0].split("=", 1)[1]
++	reader, writer = [int(x) for x in fds.split(",", 1)]
++	reader = nonblock(reader)
++except (KeyError, IndexError, ValueError, IOError):
++	# Any missing environment strings or bad fds should result in just
++	# using the default specified parallelism.
++	print(default)
++	sys.exit(0)
++
++# Read out as many jobserver slots as possible.
++jobs = b""
++while True:
++	try:
++		slot = os.read(reader, 1)
++		jobs += slot
++	except (OSError, IOError) as e:
++		if e.errno == errno.EWOULDBLOCK:
++			# Stop when reach the end of the jobserver queue.
++			break
++		raise e
++# Return all the reserved slots.
++os.write(writer, jobs)
++
++# If the jobserver was (impossibly) full or communication failed, use default.
++if len(jobs) < 1:
++	print(default)
++
++# Report available slots (with a bump for our caller's reserveration).
++print(len(jobs) + 1)
 -- 
-2.23.0.351.gc4317032e6-goog
+2.17.1
 
+
+-- 
+Kees Cook
