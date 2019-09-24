@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3FDBBCE1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6932ABCE1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410195AbfIXQtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:49:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40878 "EHLO mail.kernel.org"
+        id S2410224AbfIXQtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:49:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392951AbfIXQsy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:54 -0400
+        id S1729221AbfIXQtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:00 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76BC7222C1;
-        Tue, 24 Sep 2019 16:48:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1D6621D6C;
+        Tue, 24 Sep 2019 16:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343734;
-        bh=TivASpM3/86zANGlVZN2Uu3v/DewE3+KHlZDVvnmyWc=;
+        s=default; t=1569343739;
+        bh=qqZxm8KNU3bkkqJKEYWUqs8sTqIDkTaNn9u3huRE85Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KpFCRjdfG4wLwOYUarWR+sOoFZkWMiRqsw/Q9KMfOfovDKyBnQWyX5UIRpHvwyW78
-         2gxrEeyoKmFAFxNjuDqba15r1UC9GJgg1fTNLMQphIIfDhL+3cyfDBrCR0Tro2s85U
-         ptgNAhXfbViVjZ6/i8gOFL2vcJwCWHQD7VT3J2+w=
+        b=IzzkdU3lj5Cg/oeGtyJelqOEtBkGmZ0JErFKFyqyTvbPePWiYw2YUFJ9f34WtdS1N
+         jvXFeA5G9AYKVmA9Dk2V41rqbbKnV5VCSrzexJs6zEf7T/MTky/UGaiI9tnzI5kTNO
+         LjW9z8ru++WkJzzRcHfMB4P9hqC1G3DiZpumwVyQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 04/50] drm/panel: simple: fix AUO g185han01 horizontal blanking
-Date:   Tue, 24 Sep 2019 12:48:01 -0400
-Message-Id: <20190924164847.27780-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 07/50] drm/panel: check failure cases in the probe func
+Date:   Tue, 24 Sep 2019 12:48:04 -0400
+Message-Id: <20190924164847.27780-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -45,48 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit f8c6bfc612b56f02e1b8fae699dff12738aaf889 ]
+[ Upstream commit afd6d4f5a52c16e1483328ac074abb1cde92c29f ]
 
-The horizontal blanking periods are too short, as the values are
-specified for a single LVDS channel. Since this panel is dual LVDS
-they need to be doubled. With this change the panel reaches its
-nominal vrefresh rate of 60Fps, instead of the 64Fps with the
-current wrong blanking.
+The following function calls may fail and return NULL, so the null check
+is added.
+of_graph_get_next_endpoint
+of_graph_get_remote_port_parent
+of_graph_get_remote_port
 
-Philipp Zabel added:
-The datasheet specifies 960 active clocks + 40/128/160 clocks blanking
-on each of the two LVDS channels (min/typical/max), so doubled this is
-now correct.
+Update: Thanks to Sam Ravnborg, for suggession on the use of goto to avoid
+leaking endpoint.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/1562764060.23869.12.camel@pengutronix.de
+Link: https://patchwork.freedesktop.org/patch/msgid/20190724195534.9303-1-navid.emamdoost@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../gpu/drm/panel/panel-raspberrypi-touchscreen.c   | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 5fd94e2060297..654fea2b43124 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -689,9 +689,9 @@ static const struct panel_desc auo_g133han01 = {
- static const struct display_timing auo_g185han01_timings = {
- 	.pixelclock = { 120000000, 144000000, 175000000 },
- 	.hactive = { 1920, 1920, 1920 },
--	.hfront_porch = { 18, 60, 74 },
--	.hback_porch = { 12, 44, 54 },
--	.hsync_len = { 10, 24, 32 },
-+	.hfront_porch = { 36, 120, 148 },
-+	.hback_porch = { 24, 88, 108 },
-+	.hsync_len = { 20, 48, 64 },
- 	.vactive = { 1080, 1080, 1080 },
- 	.vfront_porch = { 6, 10, 40 },
- 	.vback_porch = { 2, 5, 20 },
+diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+index 2c9c9722734f5..9a2cb8aeab3a4 100644
+--- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
++++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+@@ -400,7 +400,13 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+ 
+ 	/* Look up the DSI host.  It needs to probe before we do. */
+ 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
++	if (!endpoint)
++		return -ENODEV;
++
+ 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
++	if (!dsi_host_node)
++		goto error;
++
+ 	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
+ 	of_node_put(dsi_host_node);
+ 	if (!host) {
+@@ -409,6 +415,9 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+ 	}
+ 
+ 	info.node = of_graph_get_remote_port(endpoint);
++	if (!info.node)
++		goto error;
++
+ 	of_node_put(endpoint);
+ 
+ 	ts->dsi = mipi_dsi_device_register_full(host, &info);
+@@ -429,6 +438,10 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+ 		return ret;
+ 
+ 	return 0;
++
++error:
++	of_node_put(endpoint);
++	return -ENODEV;
+ }
+ 
+ static int rpi_touchscreen_remove(struct i2c_client *i2c)
 -- 
 2.20.1
 
