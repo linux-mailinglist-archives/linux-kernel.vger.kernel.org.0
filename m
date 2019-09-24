@@ -2,186 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8124DBC6E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 13:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D4CBC6E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 13:32:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504718AbfIXLbh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 07:31:37 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46314 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389832AbfIXLbh (ORCPT
+        id S2504736AbfIXLc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 07:32:29 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35254 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405917AbfIXLc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 07:31:37 -0400
-Received: by mail-ed1-f67.google.com with SMTP id t3so1470590edw.13
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 04:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0s5uYaNwj5xj6xYoxNOhC3OaXLMlVBvmApGp6ZZlckg=;
-        b=l3SZNumXspIFEaMls1NecrGdIl6Ry+IRhRWMzsFzupD0fH0NHJ7VLDRB34lS0ldE7N
-         ndbhQYf1ICl9fSCpzFNgQLuVcEJ+Np1jWL1nlP/Ia5G7ZsoW+3quKW0HRD+sA4yZbfKv
-         FQi8y+0knNTKY1fme3FR8O1IgEJa0Sslu0mdfi1yESAjl0MzgIp/Y8P8x/sgeh6ZxSVx
-         AN/W5IKyG2DWvgDmkGgCW5dlVcKH6VGo9P0NCMtpCbv5wPp6XtuvHQyvyp9x4hqPPTWz
-         d74lvyP9UCmG/W3gY+KYgAUjckR945mqb2iEqP/ISWT4AxfzKR/HdN349nxlNzG71XRc
-         W67A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0s5uYaNwj5xj6xYoxNOhC3OaXLMlVBvmApGp6ZZlckg=;
-        b=Wdpgkmytx635YbcDE48pvJw13F9Xi0w3ULcSgIipMC5SsYZgkP5B/50PjznqMhHIjR
-         peEZ5B1tixirJmPLk/IEg9IGP9jhXrbjDk4yU92mgof4W306eKW2IRkUZQmZ3NSegECm
-         fpwAK40l8FP05fxRjARFwgU83+vJSh7EMz33PBwtFG1F42JPlgARA+Uktxqa5AAHiIX7
-         gVgUDrzn58jV7WnbvO2F4Q7gx++JKyM6ENR+w2BZxSVnS3tj86ee709nE8IFIvUeO2F6
-         nBnfa9NM81q4GlVJHbOyMn/faucUfzArJxxYsEeCGG/1i4DIymOiyRf8dNxrwvW6R8RC
-         INdA==
-X-Gm-Message-State: APjAAAUzBbDL8XqK1KN73JVQFKwYcqSR0xVnTUTb/yYWdL5WJZGRMS2a
-        cY5bP+DODtb40DUOwNrs50Mjr6k1Li0=
-X-Google-Smtp-Source: APXvYqxtjktaC/U2yewI61ivQK1f6jLxNDhyr3uUo3Rjj/tslZy6jVYSP1ngpvQNdCvJd9RSzlf0Cg==
-X-Received: by 2002:aa7:ce88:: with SMTP id y8mr2151323edv.145.1569324695442;
-        Tue, 24 Sep 2019 04:31:35 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id g17sm178398ejb.80.2019.09.24.04.31.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Sep 2019 04:31:34 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 014CC1022A6; Tue, 24 Sep 2019 14:31:35 +0300 (+03)
-Date:   Tue, 24 Sep 2019 14:31:35 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2 2/4] mm, page_owner: record page owner for each subpage
-Message-ID: <20190924113135.2ekb7bmil3rxge6w@box>
-References: <20190820131828.22684-1-vbabka@suse.cz>
- <20190820131828.22684-3-vbabka@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820131828.22684-3-vbabka@suse.cz>
-User-Agent: NeoMutt/20180716
+        Tue, 24 Sep 2019 07:32:28 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190924113226euoutp01f8844999554922f3f3b984566e89b36e~HXIrddlh_3016330163euoutp01L
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 11:32:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190924113226euoutp01f8844999554922f3f3b984566e89b36e~HXIrddlh_3016330163euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569324746;
+        bh=JPDQtgLHmeZoXEVwTjgfaqO3O0YNINhi8WqO+zseF40=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=NAcqmYRku0pMBvmCKpVNTG97Nj1Dzskfn71CRW/CUdXLOo6VvH+PtqCwe0YkSn8Wh
+         ydwpO9MzXJCvKNizX9rNARsMSRVEDDYxhJb8etQzmRm/2jvD4nAi3fvBFcO+yETUV6
+         Ze+txS5b8jzulFtTTlzF7jTusgPcHACsRvO6qIcM=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190924113226eucas1p2ba616fbd0d9ad41dc7394065f63087a7~HXIrBdiDr2078720787eucas1p2z;
+        Tue, 24 Sep 2019 11:32:26 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 0A.7A.04374.ACEF98D5; Tue, 24
+        Sep 2019 12:32:26 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190924113225eucas1p131429c7f7e0d520693b89bb2a7d9e211~HXIqqUcku1757117571eucas1p1P;
+        Tue, 24 Sep 2019 11:32:25 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190924113225eusmtrp119d863657d9cb73388343609c65ee94d~HXIqpXan32716827168eusmtrp1z;
+        Tue, 24 Sep 2019 11:32:25 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-ef-5d89feca3d10
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A3.E5.04117.9CEF98D5; Tue, 24
+        Sep 2019 12:32:25 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190924113225eusmtip1b1a6f986d87223bb532d624e17a7e97a~HXIqJJDrv1091910919eusmtip16;
+        Tue, 24 Sep 2019 11:32:25 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] dt-bindings: gpu: Convert Samsung 2D Graphics Accelerator
+ to dt-schema
+Date:   Tue, 24 Sep 2019 13:31:59 +0200
+Message-Id: <20190924113159.24873-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSXUhTcRz1v3t373V44zYH/jOxWGkkpJmFF7RPephEWA8+aCy76U1FN23X
+        WbOX6VLcFNMJfowyITLxm03mFCZujQZKOlMrlFDpIfxi4kcRDGvbTXs75/zO+Z/z8CcQsVYY
+        SRQoS1mVkimSYiLU+uH31LmJfb38fNs8Sr92TQnpuT0vRhuXGlB6enoQp2dHX2J06/SYgF7W
+        9WN0n+sbTr/9MiOgq+wu/JpI1tveC2Tmbj0mW6p1C2T1Q91AtmOOviPMEqXmskUFZawq4coD
+        UX6naRst8R17OlDVhWqBR2IAoQSkLsKFfi9mACJCTHUBOOIyCHmyC2Bj4wTgyY6fWLaRg0hF
+        7biAP7wD0Ktz4ocR74AdDbgwKhEaNg3BhyVUJYBzI2tBF0JtAeiwtGMBVziVCR2rFkEAo1QM
+        fLU56tcJgqQuQ70hiq87AXsGx5FAFlLrGGxdPNhxE9a0NQh5HA7X3EM4j6PgZFMdygd0AK5M
+        9eE8qQNwtrIV8K4U+N49Iwy0IdRZODCawMvX4UqFNTgCUkfg182jARnxQ6O1BeFlEtZUi3l3
+        LDS5+w9rHZ5P/6bJ4IStJThNTMmh4fk63gCiTf+7OgDoBhGsmlPksVySkn0SzzEKTq3Mi88p
+        VpiB/19M7rv3bGDM99AJKAJIw0horZGLhUwZp1E4ASQQqYQ0x1XLxWQuoylnVcXZKnURyznB
+        cQKVRpDPQpbviak8ppQtZNkSVnVwFRChkVqQYG/66fk11pylhhf2lN7GdO6ULc4S646RhJAu
+        wbyJ1Pbe+uxjduUbpuHmtNUk+4ZvpTAlqcNy1ao6vW/suWu8Iaq+lIGxOZpI+aIgufTHpGg4
+        /czWo+ym3eWT4Zo3aXr349v3dxyZybrOF99TcZuuxVFV7/mTUT5TtvAxTIpy+UxiHKLimL/w
+        wTV1EwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsVy+t/xu7on/3XGGly6pWUx/8g5VosrX9+z
+        WUy6P4HF4vz5DewWl3fNYbOYcX4fk8WD5nVsFmuP3GW3WHr9IpNF694j7A5cHmvmrWH02LSq
+        k83jfvdxJo++LasYPT5vkgtgjdKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV
+        0rezSUnNySxLLdK3S9DLWDbrE0vBH8mK9a0rWBoYL4h0MXJySAiYSDR2H2DqYuTiEBJYyijR
+        NPkeE0RCRuLktAZWCFtY4s+1LjaIok+MEjdOXAdLsAkYSnS9hUiICLQxSnx+fIUZxGEW+MIo
+        sfnvD3aQKmGBcIklJ8+CjWURUJWY+3YXUAcHB6+ArURnlwzEBnmJ1RsOME9g5FnAyLCKUSS1
+        tDg3PbfYSK84Mbe4NC9dLzk/dxMjMEi3Hfu5ZQdj17vgQ4wCHIxKPLwS2zpihVgTy4orcw8x
+        SnAwK4nwbtJqixXiTUmsrEotyo8vKs1JLT7EaAq0eyKzlGhyPjCC8kriDU0NzS0sDc2NzY3N
+        LJTEeTsEDsYICaQnlqRmp6YWpBbB9DFxcEo1MDpu3D87Pu9N74+7VYdE16lFBu1evrWt7dFb
+        8yubz37W5FzHbTpTM/SXVlar4bwle2o2Z0yXkNCrMe6/LXBsYrumibrtubWa65KFo14v7PmT
+        q2wal353e0aQBuexmf/UhL/O9J19duoc/c8nGrcc9BARy5f1SZcK3KOUsNQxZ3X+Dz5Vgbt5
+        bEosxRmJhlrMRcWJAC26ZfhoAgAA
+X-CMS-MailID: 20190924113225eucas1p131429c7f7e0d520693b89bb2a7d9e211
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190924113225eucas1p131429c7f7e0d520693b89bb2a7d9e211
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190924113225eucas1p131429c7f7e0d520693b89bb2a7d9e211
+References: <CGME20190924113225eucas1p131429c7f7e0d520693b89bb2a7d9e211@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 03:18:26PM +0200, Vlastimil Babka wrote:
-> Currently, page owner info is only recorded for the first page of a high-order
-> allocation, and copied to tail pages in the event of a split page. With the
-> plan to keep previous owner info after freeing the page, it would be benefical
-> to record page owner for each subpage upon allocation. This increases the
-> overhead for high orders, but that should be acceptable for a debugging option.
-> 
-> The order stored for each subpage is the order of the whole allocation. This
-> makes it possible to calculate the "head" pfn and to recognize "tail" pages
-> (quoted because not all high-order allocations are compound pages with true
-> head and tail pages). When reading the page_owner debugfs file, keep skipping
-> the "tail" pages so that stats gathered by existing scripts don't get inflated.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/page_owner.c | 40 ++++++++++++++++++++++++++++------------
->  1 file changed, 28 insertions(+), 12 deletions(-)
-> 
-> diff --git a/mm/page_owner.c b/mm/page_owner.c
-> index addcbb2ae4e4..813fcb70547b 100644
-> --- a/mm/page_owner.c
-> +++ b/mm/page_owner.c
-> @@ -154,18 +154,23 @@ static noinline depot_stack_handle_t save_stack(gfp_t flags)
->  	return handle;
->  }
->  
-> -static inline void __set_page_owner_handle(struct page_ext *page_ext,
-> -	depot_stack_handle_t handle, unsigned int order, gfp_t gfp_mask)
-> +static inline void __set_page_owner_handle(struct page *page,
-> +	struct page_ext *page_ext, depot_stack_handle_t handle,
-> +	unsigned int order, gfp_t gfp_mask)
->  {
->  	struct page_owner *page_owner;
-> +	int i;
->  
-> -	page_owner = get_page_owner(page_ext);
-> -	page_owner->handle = handle;
-> -	page_owner->order = order;
-> -	page_owner->gfp_mask = gfp_mask;
-> -	page_owner->last_migrate_reason = -1;
-> +	for (i = 0; i < (1 << order); i++) {
-> +		page_owner = get_page_owner(page_ext);
-> +		page_owner->handle = handle;
-> +		page_owner->order = order;
-> +		page_owner->gfp_mask = gfp_mask;
-> +		page_owner->last_migrate_reason = -1;
-> +		__set_bit(PAGE_EXT_OWNER, &page_ext->flags);
->  
-> -	__set_bit(PAGE_EXT_OWNER, &page_ext->flags);
-> +		page_ext = lookup_page_ext(page + i);
+From: Maciej Falkowski <m.falkowski@samsung.com>
 
-Isn't it off-by-one? You are calculating page_ext for the next page,
-right? And cant we just do page_ext++ here instead?
+Convert Samsung 2D Graphics Accelerator to newer dt-schema format
 
-> +	}
->  }
->  
->  noinline void __set_page_owner(struct page *page, unsigned int order,
-> @@ -178,7 +183,7 @@ noinline void __set_page_owner(struct page *page, unsigned int order,
->  		return;
->  
->  	handle = save_stack(gfp_mask);
-> -	__set_page_owner_handle(page_ext, handle, order, gfp_mask);
-> +	__set_page_owner_handle(page, page_ext, handle, order, gfp_mask);
->  }
->  
->  void __set_page_owner_migrate_reason(struct page *page, int reason)
-> @@ -204,8 +209,11 @@ void __split_page_owner(struct page *page, unsigned int order)
->  
->  	page_owner = get_page_owner(page_ext);
->  	page_owner->order = 0;
-> -	for (i = 1; i < (1 << order); i++)
-> -		__copy_page_owner(page, page + i);
-> +	for (i = 1; i < (1 << order); i++) {
-> +		page_ext = lookup_page_ext(page + i);
+Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ .../devicetree/bindings/gpu/samsung-g2d.txt   | 27 ----------
+ .../devicetree/bindings/gpu/samsung-g2d.yaml  | 53 +++++++++++++++++++
+ 2 files changed, 53 insertions(+), 27 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+ create mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
 
-Again, page_ext++?
-
-> +		page_owner = get_page_owner(page_ext);
-> +		page_owner->order = 0;
-> +	}
->  }
->  
->  void __copy_page_owner(struct page *oldpage, struct page *newpage)
-> @@ -483,6 +491,13 @@ read_page_owner(struct file *file, char __user *buf, size_t count, loff_t *ppos)
->  
->  		page_owner = get_page_owner(page_ext);
->  
-> +		/*
-> +		 * Don't print "tail" pages of high-order allocations as that
-> +		 * would inflate the stats.
-> +		 */
-> +		if (!IS_ALIGNED(pfn, 1 << page_owner->order))
-> +			continue;
-> +
->  		/*
->  		 * Access to page_ext->handle isn't synchronous so we should
->  		 * be careful to access it.
-> @@ -562,7 +577,8 @@ static void init_pages_in_zone(pg_data_t *pgdat, struct zone *zone)
->  				continue;
->  
->  			/* Found early allocated page */
-> -			__set_page_owner_handle(page_ext, early_handle, 0, 0);
-> +			__set_page_owner_handle(page, page_ext, early_handle,
-> +						0, 0);
->  			count++;
->  		}
->  		cond_resched();
-> -- 
-> 2.22.0
-> 
-> 
-
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+deleted file mode 100644
+index 1e7959332dbc..000000000000
+--- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-* Samsung 2D Graphics Accelerator
+-
+-Required properties:
+-  - compatible : value should be one among the following:
+-	(a) "samsung,s5pv210-g2d" for G2D IP present in S5PV210 & Exynos4210 SoC
+-	(b) "samsung,exynos4212-g2d" for G2D IP present in Exynos4x12 SoCs
+-	(c) "samsung,exynos5250-g2d" for G2D IP present in Exynos5250 SoC
+-
+-  - reg : Physical base address of the IP registers and length of memory
+-	  mapped region.
+-
+-  - interrupts : G2D interrupt number to the CPU.
+-  - clocks : from common clock binding: handle to G2D clocks.
+-  - clock-names : names of clocks listed in clocks property, in the same
+-		  order, depending on SoC type:
+-		  - for S5PV210 and Exynos4 based SoCs: "fimg2d" and
+-		    "sclk_fimg2d"
+-		  - for Exynos5250 SoC: "fimg2d".
+-
+-Example:
+-	g2d@12800000 {
+-		compatible = "samsung,s5pv210-g2d";
+-		reg = <0x12800000 0x1000>;
+-		interrupts = <0 89 0>;
+-		clocks = <&clock 177>, <&clock 277>;
+-		clock-names = "sclk_fimg2d", "fimg2d";
+-	};
+diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
+new file mode 100644
+index 000000000000..bb0a4bf168cc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpu/samsung-g2d.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung SoC 2D Graphics Accelerator
++
++maintainers:
++  - Inki Dae <inki.dae@samsung.com>
++
++properties:
++  compatible:
++    enum:
++      - samsung,s5pv210-g2d    # in S5PV210 & Exynos4210 SoC
++      - samsung,exynos4212-g2d # in Exynos4x12 SoCs
++      - samsung,exynos5250-g2d
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    oneOf:
++      - items: # for Exynos5250 SoC
++          - const: fimg2d
++      - items: # for S5PV210 and Exynos4 based SoCs
++          - const: sclk_fimg2d
++          - const: fimg2d
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++
++examples:
++  - |
++    g2d@12800000 {
++        compatible = "samsung,s5pv210-g2d";
++        reg = <0x12800000 0x1000>;
++        interrupts = <0 89 0>;
++        clocks = <&clock 177>, <&clock 277>;
++        clock-names = "sclk_fimg2d", "fimg2d";
++    };
++
 -- 
- Kirill A. Shutemov
+2.17.1
+
+
+
