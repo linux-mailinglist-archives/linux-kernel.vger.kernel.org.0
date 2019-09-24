@@ -2,108 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86034BC45B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 10:59:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17051BC461
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 11:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbfIXI67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 04:58:59 -0400
-Received: from foss.arm.com ([217.140.110.172]:55982 "EHLO foss.arm.com"
+        id S1729614AbfIXJCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 05:02:00 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:49584 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726311AbfIXI67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 04:58:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 73F87142F;
-        Tue, 24 Sep 2019 01:58:58 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF0E23F59C;
-        Tue, 24 Sep 2019 01:58:57 -0700 (PDT)
-Date:   Tue, 24 Sep 2019 09:58:56 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH 02/35] irqchip/gic-v3-its: Factor out wait_for_syncr
- primitive
-Message-ID: <20190924085855.GM9720@e119886-lin.cambridge.arm.com>
-References: <20190923182606.32100-1-maz@kernel.org>
- <20190923182606.32100-3-maz@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923182606.32100-3-maz@kernel.org>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+        id S1726094AbfIXJB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 05:01:59 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C0AD1200857;
+        Tue, 24 Sep 2019 11:01:56 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8EF1620077E;
+        Tue, 24 Sep 2019 11:01:52 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 22B6A4029F;
+        Tue, 24 Sep 2019 17:01:47 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     thierry.reding@gmail.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] pwm: pwm-imx27: Use 'dev' instead of dereferencing it repeatedly
+Date:   Tue, 24 Sep 2019 16:59:53 +0800
+Message-Id: <1569315593-769-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 07:25:33PM +0100, Marc Zyngier wrote:
-> Waiting for a redistributor to have performed an operation is a
-> common thing to do, and the idiom is already spread around.
-> As we're going to make even more use of this, let's have a primitive
-> that does just that.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
+Add helper variable dev = &pdev->dev to simply the code.
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/pwm/pwm-imx27.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 62e54f1a248b..58cb233cf138 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -1075,6 +1075,12 @@ static void lpi_write_config(struct irq_data *d, u8 clr, u8 set)
->  		dsb(ishst);
->  }
->  
-> +static void wait_for_syncr(void __iomem *rdbase)
-> +{
-> +	while (gic_read_lpir(rdbase + GICR_SYNCR) & 1)
-> +		cpu_relax();
-> +}
-> +
->  static void lpi_update_config(struct irq_data *d, u8 clr, u8 set)
->  {
->  	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
-> @@ -2757,8 +2763,7 @@ static void its_vpe_db_proxy_move(struct its_vpe *vpe, int from, int to)
->  
->  		rdbase = per_cpu_ptr(gic_rdists->rdist, from)->rd_base;
->  		gic_write_lpir(vpe->vpe_db_lpi, rdbase + GICR_CLRLPIR);
-> -		while (gic_read_lpir(rdbase + GICR_SYNCR) & 1)
-> -			cpu_relax();
-> +		wait_for_syncr(rdbase);
->  
->  		return;
->  	}
-> @@ -2914,8 +2919,7 @@ static void its_vpe_send_inv(struct irq_data *d)
->  
->  		rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
->  		gic_write_lpir(vpe->vpe_db_lpi, rdbase + GICR_INVLPIR);
-> -		while (gic_read_lpir(rdbase + GICR_SYNCR) & 1)
-> -			cpu_relax();
-> +		wait_for_syncr(rdbase);
->  	} else {
->  		its_vpe_send_cmd(vpe, its_send_inv);
->  	}
-> @@ -2957,8 +2961,7 @@ static int its_vpe_set_irqchip_state(struct irq_data *d,
->  			gic_write_lpir(vpe->vpe_db_lpi, rdbase + GICR_SETLPIR);
->  		} else {
->  			gic_write_lpir(vpe->vpe_db_lpi, rdbase + GICR_CLRLPIR);
-> -			while (gic_read_lpir(rdbase + GICR_SYNCR) & 1)
-> -				cpu_relax();
-> +			wait_for_syncr(rdbase);
->  		}
->  	} else {
->  		if (state)
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/pwm/pwm-imx27.c b/drivers/pwm/pwm-imx27.c
+index 434a351..3afee29 100644
+--- a/drivers/pwm/pwm-imx27.c
++++ b/drivers/pwm/pwm-imx27.c
+@@ -290,27 +290,28 @@ MODULE_DEVICE_TABLE(of, pwm_imx27_dt_ids);
+ 
+ static int pwm_imx27_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct pwm_imx27_chip *imx;
+ 
+-	imx = devm_kzalloc(&pdev->dev, sizeof(*imx), GFP_KERNEL);
++	imx = devm_kzalloc(dev, sizeof(*imx), GFP_KERNEL);
+ 	if (imx == NULL)
+ 		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, imx);
+ 
+-	imx->clk_ipg = devm_clk_get(&pdev->dev, "ipg");
++	imx->clk_ipg = devm_clk_get(dev, "ipg");
+ 	if (IS_ERR(imx->clk_ipg)) {
+-		dev_err(&pdev->dev, "getting ipg clock failed with %ld\n",
++		dev_err(dev, "getting ipg clock failed with %ld\n",
+ 				PTR_ERR(imx->clk_ipg));
+ 		return PTR_ERR(imx->clk_ipg);
+ 	}
+ 
+-	imx->clk_per = devm_clk_get(&pdev->dev, "per");
++	imx->clk_per = devm_clk_get(dev, "per");
+ 	if (IS_ERR(imx->clk_per)) {
+ 		int ret = PTR_ERR(imx->clk_per);
+ 
+ 		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev,
++			dev_err(dev,
+ 				"failed to get peripheral clock: %d\n",
+ 				ret);
+ 
+@@ -318,7 +319,7 @@ static int pwm_imx27_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	imx->chip.ops = &pwm_imx27_ops;
+-	imx->chip.dev = &pdev->dev;
++	imx->chip.dev = dev;
+ 	imx->chip.base = -1;
+ 	imx->chip.npwm = 1;
+ 
+-- 
+2.7.4
+
