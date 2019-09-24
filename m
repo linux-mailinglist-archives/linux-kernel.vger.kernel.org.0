@@ -2,112 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10EF1BD0E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE86BD0E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:47:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407285AbfIXRrO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 13:47:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:48782 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732249AbfIXRrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 13:47:14 -0400
-Received: from zn.tnic (p200300EC2F0DB700CDA5DCD899733FA6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:b700:cda5:dcd8:9973:3fa6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E42471EC0626;
-        Tue, 24 Sep 2019 19:47:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1569347233;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=adKE8SbI1kBCgg9keQtSq6HfopCJHVUTQz4k4IbvxMg=;
-        b=Pv0ekFq9y+W1xwrwKddprLzPxYLDdTsRo4HS3mQs8L7bYTctG9uOUkkQUzDtdQn9vR7pwU
-        Kxrli31pKtPx1wiBz2yCvLkjfE7ixX42dAthoMjcT3cqCpqZD70IVJVg47UXqoRRi0/n/j
-        kqOeGb2uX2fv4ADTsGyhPBOiWjMV0sM=
-Date:   Tue, 24 Sep 2019 19:47:13 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Philipp K <philipp97kl@gmail.com>
-Cc:     Lukas Bulwahn <lukas.bulwahn@gmail.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND] x86: Refactor __cmpxchg to cmpxchg in lock_cmos
-Message-ID: <20190924174713.GK19317@zn.tnic>
-References: <CAGZ+4_+TMdbmy6_x4sondGFgcOc=9XXSMTaixcyKasd3LMDMbQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAGZ+4_+TMdbmy6_x4sondGFgcOc=9XXSMTaixcyKasd3LMDMbQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2407827AbfIXRre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 13:47:34 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:43610 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407478AbfIXRrd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 13:47:33 -0400
+Received: by mail-qt1-f201.google.com with SMTP id j5so2836870qtn.10
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 10:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc:content-transfer-encoding;
+        bh=DBG/wFyung5W8UWO8gFujad4LCgDfce9k3vKq6AZOHc=;
+        b=seXQRnG46I6Ci9HSw67oM4f9WU5RkjmQX2F1eTZvaF10NZJKm/ILV0ZrtVikdF+Sl/
+         sgcA8DGRARP+NC27ixqtahqQ0TrX25UIlrcGpQs+2UU0fZx/OfPejIjIWx60N/VQw8pA
+         e6XQMVBYmrhl/IdQnJ/tnYp0/5QdvCbanCSHTfeiKlV8eqmTujwDoJyjjFzHm1blLi+t
+         msRPBmg70+21BGQqQWSLUWVo2HCcjgEJGsFkj9eqJZAFg95KvDAUA/DbgOzTiEpwFmr8
+         q378DkEh/bKx4RYUt6EgDvf68S88RRjlndPnuornArPd7L1ZTGixqCCQwb94iO4mGkve
+         hfeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc:content-transfer-encoding;
+        bh=DBG/wFyung5W8UWO8gFujad4LCgDfce9k3vKq6AZOHc=;
+        b=UUGKLzOH5huzFFppvYBcOGrujVnVI/IhZjkFns06+u3eicBGyy3GnULnDQRZBEk5u5
+         BXqOXbcZhLAcXRSsC3AnuFtj2xArqt0ozOFnjNivX0lPLIDLOkQcShYitVNaiUNF6f2l
+         Kp95OHBd6puzmoidatz6FjROHzDbDocmuxUUvdxoROpYVcZmn3M/uvo9vGApdJ39y1fB
+         de2FG0YiwOZNAX5fK8NQXxIixMuiwWRm4EA4vjkrvK/r5cseMAVKT/jovu+bKEu2qQIK
+         dg+cs0q74Cf2kKSNYYPSmO69wM9YaD/8GASRevyh6teVqsnySpqLlrOed7vWwbgXOooV
+         vIFA==
+X-Gm-Message-State: APjAAAWMirltaGvURAPYA6buiOxpSxFfSM8B9qdhIB6lcUv4OnENlIxK
+        w2LtsUtsDU90x2pB7rOashx2PDILijykRUi8kqs=
+X-Google-Smtp-Source: APXvYqxqiZGW0UgAYDRxKRJCktP8tpY/Jew2d6NDW6FIJf4VUr2P6v9BiY4203WhfvWsdVfDNVdf5kMzk37Yk2qyDcc=
+X-Received: by 2002:ae9:f404:: with SMTP id y4mr3717758qkl.225.1569347252597;
+ Tue, 24 Sep 2019 10:47:32 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 10:47:28 -0700
+In-Reply-To: <CAKwvOd=GVdHhsdHOMpuhEKkWMssW37keqX5c59+6fiEgLs+Q1g@mail.gmail.com>
+Message-Id: <20190924174728.201464-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+References: <CAKwvOd=GVdHhsdHOMpuhEKkWMssW37keqX5c59+6fiEgLs+Q1g@mail.gmail.com>
+X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
+Subject: [PATCH v2] hwmon: (applesmc) fix UB and udelay overflow
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     linux@roeck-us.net
+Cc:     clang-built-linux@googlegroups.com, jdelvare@suse.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "=?UTF-8?q?Tomasz=20Pawe=C5=82=20Gajc?=" <tpgxyz@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 04:29:13PM +0100, Philipp K wrote:
-> It is unusual to reference __cmpxchg() from other files than cmpxchg.h and
-> similar.
-> Instead, cmpxchg() is used, which expands to __cmpxchg() and derives the
-> 'size' parameter automatically with sizeof(*(ptr)).
-> 
-> So clean up the lock_cmos() function by using cmpxchg(), without changing
-> the generated code.
-> 
-> Signed-off-by: Philipp Klocke <philipp97kl@gmail.com>
-> ---
-> 
-> This patch was acked by Ingo, so I would expect it to be added to pit.
+Fixes the following 2 issues in the driver:
+1. Left shifting a signed integer is undefined behavior. Unsigned
+   integral types should be used for bitwise operations.
+2. The delay scales from 0x0010 to 0x20000 by powers of 2, but udelay
+   will result in a linkage failure when given a constant that's greater
+   than 20000 (0x4E20). Agressive loop unrolling can fully unroll the
+   loop, resulting in later iterations overflowing the call to udelay.
 
-You mean tip. :)
+2 is fixed via splitting the loop in two, iterating the first up to the
+point where udelay would overflow, then switching to mdelay, as
+suggested in Documentation/timers/timers-howto.rst.
 
->  arch/x86/include/asm/mc146818rtc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/mc146818rtc.h
-> b/arch/x86/include/asm/mc146818rtc.h
-> index 97198001e567..b72e3bbba0a2 100644
-> --- a/arch/x86/include/asm/mc146818rtc.h
-> +++ b/arch/x86/include/asm/mc146818rtc.h
-> @@ -47,7 +47,7 @@ static inline void lock_cmos(unsigned char reg)
->   cpu_relax();
->   continue;
->   }
-> - if (__cmpxchg(&cmos_lock, 0, new, sizeof(cmos_lock)) == 0)
-> + if (cmpxchg(&cmos_lock, 0, new) == 0)
->   return;
->   }
->  }
-> -- 
+Reported-by: Tomasz Pawe=C5=82 Gajc <tpgxyz@gmail.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/678
+Debugged-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+---
+Changes V1 -> V2:
+* The first loop in send_byte() needs to break out on the same condition
+  now. Technically, the loop condition could even be removed. The diff
+  looks funny because of the duplicated logic between existing and newly
+  added for loops.
 
-I don't know how you created this diff but yours breaks the indentation.
-It should look like this:
+ drivers/hwmon/applesmc.c | 35 +++++++++++++++++++++++++++++++----
+ 1 file changed, 31 insertions(+), 4 deletions(-)
 
---
-diff --git a/arch/x86/include/asm/mc146818rtc.h b/arch/x86/include/asm/mc146818rtc.h
-index 97198001e567..b72e3bbba0a2 100644
---- a/arch/x86/include/asm/mc146818rtc.h
-+++ b/arch/x86/include/asm/mc146818rtc.h
-@@ -47,7 +47,7 @@ static inline void lock_cmos(unsigned char reg)
- 			cpu_relax();
- 			continue;
- 		}
--		if (__cmpxchg(&cmos_lock, 0, new, sizeof(cmos_lock)) == 0)
-+		if (cmpxchg(&cmos_lock, 0, new) == 0)
- 			return;
+diff --git a/drivers/hwmon/applesmc.c b/drivers/hwmon/applesmc.c
+index 183ff3d25129..c76adb504dff 100644
+--- a/drivers/hwmon/applesmc.c
++++ b/drivers/hwmon/applesmc.c
+@@ -46,6 +46,7 @@
+ #define APPLESMC_MIN_WAIT	0x0010
+ #define APPLESMC_RETRY_WAIT	0x0100
+ #define APPLESMC_MAX_WAIT	0x20000
++#define APPLESMC_UDELAY_MAX	20000
+=20
+ #define APPLESMC_READ_CMD	0x10
+ #define APPLESMC_WRITE_CMD	0x11
+@@ -157,14 +158,23 @@ static struct workqueue_struct *applesmc_led_wq;
+ static int wait_read(void)
+ {
+ 	u8 status;
+-	int us;
+-	for (us =3D APPLESMC_MIN_WAIT; us < APPLESMC_MAX_WAIT; us <<=3D 1) {
++	unsigned int us;
++
++	for (us =3D APPLESMC_MIN_WAIT; us < APPLESMC_UDELAY_MAX; us <<=3D 1) {
+ 		udelay(us);
+ 		status =3D inb(APPLESMC_CMD_PORT);
+ 		/* read: wait for smc to settle */
+ 		if (status & 0x01)
+ 			return 0;
  	}
- }
---
++	/* switch to mdelay for longer sleeps */
++	for (; us < APPLESMC_MAX_WAIT; us <<=3D 1) {
++		mdelay(us);
++		status =3D inb(APPLESMC_CMD_PORT);
++		/* read: wait for smc to settle */
++		if (status & 0x01)
++			return 0;
++	}
+=20
+ 	pr_warn("wait_read() fail: 0x%02x\n", status);
+ 	return -EIO;
+@@ -177,10 +187,10 @@ static int wait_read(void)
+ static int send_byte(u8 cmd, u16 port)
+ {
+ 	u8 status;
+-	int us;
++	unsigned int us;
+=20
+ 	outb(cmd, port);
+-	for (us =3D APPLESMC_MIN_WAIT; us < APPLESMC_MAX_WAIT; us <<=3D 1) {
++	for (us =3D APPLESMC_MIN_WAIT; us < APPLESMC_UDELAY_MAX; us <<=3D 1) {
+ 		udelay(us);
+ 		status =3D inb(APPLESMC_CMD_PORT);
+ 		/* write: wait for smc to settle */
+@@ -190,6 +200,23 @@ static int send_byte(u8 cmd, u16 port)
+ 		if (status & 0x04)
+ 			return 0;
+ 		/* timeout: give up */
++		if (us << 1 =3D=3D APPLESMC_UDELAY_MAX)
++			break;
++		/* busy: long wait and resend */
++		udelay(APPLESMC_RETRY_WAIT);
++		outb(cmd, port);
++	}
++	/* switch to mdelay for longer sleeps */
++	for (; us < APPLESMC_MAX_WAIT; us <<=3D 1) {
++		mdelay(us);
++		status =3D inb(APPLESMC_CMD_PORT);
++		/* write: wait for smc to settle */
++		if (status & 0x02)
++			continue;
++		/* ready: cmd accepted, return */
++		if (status & 0x04)
++			return 0;
++		/* timeout: give up */
+ 		if (us << 1 =3D=3D APPLESMC_MAX_WAIT)
+ 			break;
+ 		/* busy: long wait and resend */
+--=20
+2.23.0.351.gc4317032e6-goog
 
-Also, you can simplify it even more by changing it to:
-
-		if (!cmpxchg(&cmos_lock, 0, new))
-			return;
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
