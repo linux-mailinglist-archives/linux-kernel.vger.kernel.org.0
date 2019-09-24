@@ -2,89 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98D71BC082
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2479ABC070
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:53:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408883AbfIXC43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 22:56:29 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:60540 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728992AbfIXC40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 22:56:26 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F86620021A;
-        Tue, 24 Sep 2019 04:56:24 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 87D2520037F;
-        Tue, 24 Sep 2019 04:56:19 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 98E9C402ED;
-        Tue, 24 Sep 2019 10:56:13 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     leoyang.li@nxp.com, shawnguo@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, ran.wang_1@nxp.com
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
-Subject: [v3,3/3] Documentation: dt: binding: fsl: Add 'fsl,ippdexpcr-alt-addr' property
-Date:   Tue, 24 Sep 2019 10:45:48 +0800
-Message-Id: <20190924024548.4356-3-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190924024548.4356-1-biwen.li@nxp.com>
-References: <20190924024548.4356-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2408803AbfIXCxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 22:53:18 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57386 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728992AbfIXCxS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 22:53:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8O2ix0B079263;
+        Tue, 24 Sep 2019 02:53:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=N1cUtOquaBkOk4FnvyuMEMN2i0kLzjsGj2zGsLObV9A=;
+ b=QRIWeM6kHZU50aaFnPMwKfOKIyaAmt7NVAuCiYxd01FSm95gpIPEH+0IjyHkLSGzacaX
+ GWtcQ55EZfDuRfjTj1QWUa0PoVjvg6Ttlgftt0Jdl6HlQkNFSZvuNzZ05P+oRZ/MWwg6
+ Iyq1nbTcy0UmjRgMc4th+UCd2/PYFhkh5zz5T1Laq5JdxHrH0AucMXbIwKwKjSTtLO1x
+ GWSBq47+quhBkPJ/xPNXKdAal6FbUGc+RVLgCiG3O8XaUOUba9gL+9dC2rM7ioYlbNIL
+ A3eeJeFNna/guyH7/0f3eAFukw/T5R2HsnoxxdQvmVhzqDuWhyuKMChshlNvUDTQbUJK 6g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2v5btpty4f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Sep 2019 02:53:12 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8O2iM4M159030;
+        Tue, 24 Sep 2019 02:53:12 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2v6yvqpc9y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Sep 2019 02:53:11 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8O2rASY010053;
+        Tue, 24 Sep 2019 02:53:10 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 23 Sep 2019 19:53:10 -0700
+To:     longli@linuxonhyperv.com
+Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-hyperv@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Long Li <longli@microsoft.com>
+Subject: Re: [Patch v4] storvsc: setup 1:1 mapping between hardware queue and CPU queue
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1567790660-48142-1-git-send-email-longli@linuxonhyperv.com>
+Date:   Mon, 23 Sep 2019 22:53:07 -0400
+In-Reply-To: <1567790660-48142-1-git-send-email-longli@linuxonhyperv.com>
+        (longli@linuxonhyperv.com's message of "Fri, 6 Sep 2019 10:24:20
+        -0700")
+Message-ID: <yq1k19y4d7w.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909240027
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909240027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'fsl,ippdexpcr-alt-addr' property is used to handle an errata A-008646
-on LS1021A
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
-Change in v3:
-	- rename property name
-	  fsl,rcpm-scfg -> fsl,ippdexpcr-alt-addr
+Long,
 
-Change in v2:
-	- update desc of the property 'fsl,rcpm-scfg'
+> storvsc doesn't use a dedicated hardware queue for a given CPU
+> queue. When issuing I/O, it selects returning CPU (hardware queue)
+> dynamically based on vmbus channel usage across all channels.
 
- Documentation/devicetree/bindings/soc/fsl/rcpm.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Applied to 5.4/scsi-fixes. Thanks!
 
-diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-index 5a33619d881d..157dcf6da17c 100644
---- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-+++ b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-@@ -34,6 +34,11 @@ Chassis Version		Example Chips
- Optional properties:
-  - little-endian : RCPM register block is Little Endian. Without it RCPM
-    will be Big Endian (default case).
-+ - fsl,ippdexpcr-alt-addr : Must add the property for SoC LS1021A,
-+   Must include n + 1 entries (n = #fsl,rcpm-wakeup-cells, such as:
-+   #fsl,rcpm-wakeup-cells equal to 2, then must include 2 + 1 entries).
-+   The first entry must be a link to the SCFG device node.
-+   The non-first entry must be offset of registers of SCFG.
- 
- Example:
- The RCPM node for T4240:
-@@ -43,6 +48,15 @@ The RCPM node for T4240:
- 		#fsl,rcpm-wakeup-cells = <2>;
- 	};
- 
-+The RCPM node for LS1021A:
-+	rcpm: rcpm@1ee2140 {
-+		compatible = "fsl,ls1021a-rcpm", "fsl,qoriq-rcpm-2.1+";
-+		reg = <0x0 0x1ee2140 0x0 0x8>;
-+		#fsl,rcpm-wakeup-cells = <2>;
-+		fsl,ippdexpcr-alt-addr = <&scfg 0x0 0x51c>; /* SCFG_SPARECR8 */
-+	};
-+
-+
- * Freescale RCPM Wakeup Source Device Tree Bindings
- -------------------------------------------
- Required fsl,rcpm-wakeup property should be added to a device node if the device
 -- 
-2.17.1
-
+Martin K. Petersen	Oracle Linux Engineering
