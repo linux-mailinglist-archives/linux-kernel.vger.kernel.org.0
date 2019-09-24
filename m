@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA129BCE4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41923BCE51
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410784AbfIXQub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:50:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43138 "EHLO mail.kernel.org"
+        id S2390703AbfIXQuh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:50:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410737AbfIXQuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:20 -0400
+        id S2410756AbfIXQu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E13021971;
-        Tue, 24 Sep 2019 16:50:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C86D6222C0;
+        Tue, 24 Sep 2019 16:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343820;
-        bh=on4MoXKLcBAAwcvGInINaSXEOabjhNW79FFPggjuvbA=;
+        s=default; t=1569343826;
+        bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tq/EDnF1JlwB2Tn44kFt278wZ0Ms0v0jwxpU0pE0bDDn4F4NlixKOkVsTteLUW1PK
-         70zTvlCgx17z2YczDI9Jdyugw7aHXnGTAbBDUjEUAXt4IhSN/ba0TzEk5Q8bSwcWpW
-         YxsWOpUJIgf5wfkw93eEeZsRw8TR2N+ZAy+kQeDg=
+        b=WdYsNjXB8cxfseintxqC7ZxjZWwQzyPd+V5ziXpYLYd/L1mQ/ztTpE6/bptggsEQw
+         Ep4M9kdr/RTGAAuoTXPrTBkiXz3ENm3/U/ux4wDVDqTbe7Iu1VA3cBiL86B34lBSJg
+         p24uMLffYH5Gqg6Q6VlVxy3NEpdAgnT606Cr53w0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 44/50] clk: at91: select parent if main oscillator or bypass is enabled
-Date:   Tue, 24 Sep 2019 12:48:41 -0400
-Message-Id: <20190924164847.27780-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 47/50] clk: sprd: add missing kfree
+Date:   Tue, 24 Sep 2019 12:48:44 -0400
+Message-Id: <20190924164847.27780-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -45,71 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-[ Upstream commit 69a6bcde7fd3fe6f3268ce26f31d9d9378384c98 ]
+[ Upstream commit 5e75ea9c67433a065b0e8595ad3c91c7c0ca0d2d ]
 
-Selecting the right parent for the main clock is done using only
-main oscillator enabled bit.
-In case we have this oscillator bypassed by an external signal (no driving
-on the XOUT line), we still use external clock, but with BYPASS bit set.
-So, in this case we must select the same parent as before.
-Create a macro that will select the right parent considering both bits from
-the MOR register.
-Use this macro when looking for the right parent.
+The number of config registers for different pll clocks probably are not
+same, so we have to use malloc, and should free the memory before return.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Link: https://lkml.kernel.org/r/1568042692-11784-2-git-send-email-eugen.hristev@microchip.com
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Link: https://lkml.kernel.org/r/20190905103009.27166-1-zhang.lyra@gmail.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/clk-main.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/clk/sprd/pll.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index c813c27f2e58c..2f97a843d6d6b 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -27,6 +27,10 @@
+diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
+index 36b4402bf09e3..640270f51aa56 100644
+--- a/drivers/clk/sprd/pll.c
++++ b/drivers/clk/sprd/pll.c
+@@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
+ 					 k2 + refin * nint * CLK_PLL_1M;
+ 	}
  
- #define MOR_KEY_MASK		(0xff << 16)
- 
-+#define clk_main_parent_select(s)	(((s) & \
-+					(AT91_PMC_MOSCEN | \
-+					AT91_PMC_OSCBYPASS)) ? 1 : 0)
-+
- struct clk_main_osc {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-@@ -119,7 +123,7 @@ static int clk_main_osc_is_prepared(struct clk_hw *hw)
- 
- 	regmap_read(regmap, AT91_PMC_SR, &status);
- 
--	return (status & AT91_PMC_MOSCS) && (tmp & AT91_PMC_MOSCEN);
-+	return (status & AT91_PMC_MOSCS) && clk_main_parent_select(tmp);
++	kfree(cfg);
+ 	return rate;
  }
  
- static const struct clk_ops main_osc_ops = {
-@@ -530,7 +534,7 @@ static u8 clk_sam9x5_main_get_parent(struct clk_hw *hw)
+@@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
+ 	if (!ret)
+ 		udelay(pll->udelay);
  
- 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
- 
--	return status & AT91_PMC_MOSCEN ? 1 : 0;
-+	return clk_main_parent_select(status);
++	kfree(cfg);
+ 	return ret;
  }
  
- static const struct clk_ops sam9x5_main_ops = {
-@@ -572,7 +576,7 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
- 	clkmain->hw.init = &init;
- 	clkmain->regmap = regmap;
- 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
--	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
-+	clkmain->parent = clk_main_parent_select(status);
- 
- 	hw = &clkmain->hw;
- 	ret = clk_hw_register(NULL, &clkmain->hw);
 -- 
 2.20.1
 
