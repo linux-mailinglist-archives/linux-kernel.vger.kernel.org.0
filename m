@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6932ABCE1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A0B7BCE25
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410224AbfIXQtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:49:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41068 "EHLO mail.kernel.org"
+        id S2410279AbfIXQtL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:49:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729221AbfIXQtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:00 -0400
+        id S2410228AbfIXQtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1D6621D6C;
-        Tue, 24 Sep 2019 16:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD59B21D6C;
+        Tue, 24 Sep 2019 16:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343739;
-        bh=qqZxm8KNU3bkkqJKEYWUqs8sTqIDkTaNn9u3huRE85Q=;
+        s=default; t=1569343745;
+        bh=hYVt0RUpuwd8TcWj9uwviXzVdy6fGVwf5peNzZMmb6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IzzkdU3lj5Cg/oeGtyJelqOEtBkGmZ0JErFKFyqyTvbPePWiYw2YUFJ9f34WtdS1N
-         jvXFeA5G9AYKVmA9Dk2V41rqbbKnV5VCSrzexJs6zEf7T/MTky/UGaiI9tnzI5kTNO
-         LjW9z8ru++WkJzzRcHfMB4P9hqC1G3DiZpumwVyQ=
+        b=ihvCSFqIIj/GPL8hMTrhxTwJ3izH1FR8eT/1oYUQaryQvQvp4kKc66CuSVedRIjE1
+         1lKfJOiXMIrSNrWp4JL0NNCE6fv3UGZw8zZpLCrTYZFj3oKVB9jPxxetd61H1QEaGx
+         tYMlklKkU3qEop3hBwPuR7ckX0qtjh1THs8y+nT0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 07/50] drm/panel: check failure cases in the probe func
-Date:   Tue, 24 Sep 2019 12:48:04 -0400
-Message-Id: <20190924164847.27780-7-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Joel Savitz <jsavitz@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 11/50] PCI: rpaphp: Avoid a sometimes-uninitialized warning
+Date:   Tue, 24 Sep 2019 12:48:08 -0400
+Message-Id: <20190924164847.27780-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -44,66 +47,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit afd6d4f5a52c16e1483328ac074abb1cde92c29f ]
+[ Upstream commit 0df3e42167caaf9f8c7b64de3da40a459979afe8 ]
 
-The following function calls may fail and return NULL, so the null check
-is added.
-of_graph_get_next_endpoint
-of_graph_get_remote_port_parent
-of_graph_get_remote_port
+When building with -Wsometimes-uninitialized, clang warns:
 
-Update: Thanks to Sam Ravnborg, for suggession on the use of goto to avoid
-leaking endpoint.
+drivers/pci/hotplug/rpaphp_core.c:243:14: warning: variable 'fndit' is
+used uninitialized whenever 'for' loop exits because its condition is
+false [-Wsometimes-uninitialized]
+        for (j = 0; j < entries; j++) {
+                    ^~~~~~~~~~~
+drivers/pci/hotplug/rpaphp_core.c:256:6: note: uninitialized use occurs
+here
+        if (fndit)
+            ^~~~~
+drivers/pci/hotplug/rpaphp_core.c:243:14: note: remove the condition if
+it is always true
+        for (j = 0; j < entries; j++) {
+                    ^~~~~~~~~~~
+drivers/pci/hotplug/rpaphp_core.c:233:14: note: initialize the variable
+'fndit' to silence this warning
+        int j, fndit;
+                    ^
+                     = 0
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190724195534.9303-1-navid.emamdoost@gmail.com
+fndit is only used to gate a sprintf call, which can be moved into the
+loop to simplify the code and eliminate the local variable, which will
+fix this warning.
+
+Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search ibm,drc-info property")
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+Acked-by: Joel Savitz <jsavitz@redhat.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://github.com/ClangBuiltLinux/linux/issues/504
+Link: https://lore.kernel.org/r/20190603221157.58502-1-natechancellor@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/panel/panel-raspberrypi-touchscreen.c   | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/pci/hotplug/rpaphp_core.c | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index 2c9c9722734f5..9a2cb8aeab3a4 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -400,7 +400,13 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
+index 857c358b727b8..cc860c5f7d26f 100644
+--- a/drivers/pci/hotplug/rpaphp_core.c
++++ b/drivers/pci/hotplug/rpaphp_core.c
+@@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+ 	struct of_drc_info drc;
+ 	const __be32 *value;
+ 	char cell_drc_name[MAX_DRC_NAME_LEN];
+-	int j, fndit;
++	int j;
  
- 	/* Look up the DSI host.  It needs to probe before we do. */
- 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-+	if (!endpoint)
-+		return -ENODEV;
-+
- 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
-+	if (!dsi_host_node)
-+		goto error;
-+
- 	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
- 	of_node_put(dsi_host_node);
- 	if (!host) {
-@@ -409,6 +415,9 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+ 	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
+ 	if (info == NULL)
+@@ -245,17 +245,13 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
+ 
+ 		/* Should now know end of current entry */
+ 
+-		if (my_index > drc.last_drc_index)
+-			continue;
+-
+-		fndit = 1;
+-		break;
++		/* Found it */
++		if (my_index <= drc.last_drc_index) {
++			sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
++				my_index);
++			break;
++		}
  	}
+-	/* Found it */
+-
+-	if (fndit)
+-		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
+-			my_index);
  
- 	info.node = of_graph_get_remote_port(endpoint);
-+	if (!info.node)
-+		goto error;
-+
- 	of_node_put(endpoint);
- 
- 	ts->dsi = mipi_dsi_device_register_full(host, &info);
-@@ -429,6 +438,10 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 		return ret;
- 
- 	return 0;
-+
-+error:
-+	of_node_put(endpoint);
-+	return -ENODEV;
- }
- 
- static int rpi_touchscreen_remove(struct i2c_client *i2c)
+ 	if (((drc_name == NULL) ||
+ 	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
 -- 
 2.20.1
 
