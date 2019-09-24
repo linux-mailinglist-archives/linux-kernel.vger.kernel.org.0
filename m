@@ -2,109 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 591F3BD389
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 22:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2F2BD399
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 22:31:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410571AbfIXU1I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 16:27:08 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:58042 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbfIXU1I (ORCPT
+        id S2410598AbfIXUbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 16:31:23 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40020 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410504AbfIXUbW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 16:27:08 -0400
-Received: from [10.200.156.146] (unknown [167.220.2.18])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0EEC620BBF87;
-        Tue, 24 Sep 2019 13:27:07 -0700 (PDT)
-Subject: Re: [RFC PATCH v1 1/1] Add support for arm64 to carry ima measurement
- log in kexec_file_load
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     mark.rutland@arm.com, jean-philippe@linaro.org, arnd@arndb.de,
-        takahiro.akashi@linaro.org, sboyd@kernel.org,
-        catalin.marinas@arm.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        yamada.masahiro@socionext.com, kristina.martsenko@arm.org,
-        duwe@lst.de, allison@lohutok.net, james.morse@arm.org,
-        linux-integrity@vger.kernel.org, tglx@linutronix.de,
-        linux-arm-kernel@lists.infradead.org
-References: <20190913225009.3406-1-prsriva@linux.microsoft.com>
- <20190913225009.3406-2-prsriva@linux.microsoft.com>
- <87zhiz1x9l.fsf@morokweng.localdomain>
-From:   prsriva <prsriva@linux.microsoft.com>
-Message-ID: <baf74901-a594-c15d-b93f-f7d0a8c584b8@linux.microsoft.com>
-Date:   Tue, 24 Sep 2019 13:27:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 24 Sep 2019 16:31:22 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k9so2879470oib.7
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 13:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gnH1hIumhjs1U65zhqlbJaNofnYNZHTIm6gh8mVIcKU=;
+        b=hGoESwSUjxVfPEzR+jVxVH90xU0VZFNySAY+QJr5Ig7OAEMxPiAhSXT0T5BVxUmAON
+         VeaFnceD+Y/2frLM2/SFPSS80AfXO3O2CqmUUKXKLeUurtYf7ndNfA3zU2UpsaJVFyPo
+         tprbtU/jvGMX+1vWgsJRahVfj6VrP51gYcXGbyCHpHI4qkIFkxHULr/BbaJ5ej1FKdAy
+         DQRIc3RPA5rzPl+p49+FX4vqtsuuw3f3qZ3u+WfAzgJlG8DVL8SfewF48oKDKpEbdUxg
+         pkoaPhcDUFMLh2oY7vayI6feQ9fDc9r+hkRU4u7hZIfnRfYypAxa5W5SR+o+S/ARfowd
+         3Rcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gnH1hIumhjs1U65zhqlbJaNofnYNZHTIm6gh8mVIcKU=;
+        b=dJYdjNT7Q2rE6PLdTZYUCFyDJF/S0/DbJRM229uuJnyHtKN2rj8gNmRurRxdR6ahHa
+         z5P1PPbiNbtm8YlYJhloDniST6gBv85jNW/yTaOg4XH0HZn8Anm3Qr4DVnkBH4Dnt5VO
+         Y/S5BDPt6wC1m6+x+bAWRjdm4QHdSOFad9uf5xvIaOnaadVBRYx0LbTP5pvibf+HAOg5
+         4mjLYk+vJAs23txeqMOTkJco0kjrTEWTK1k/DSX2dTdl5QczfK5Bk03gpF/ebdpb1LmU
+         82lUJTe3Vvyd4JDBpoGtEp7DrpkpcJUSe1rdKZhHEpHz9qF0RdFYPjvi19vfwJWVTycs
+         lTtg==
+X-Gm-Message-State: APjAAAWTs9BPw1K2WttyntrcanYFfPcZ9xOMHI/eGvapf52p3YuvKeUA
+        Axed3QOh8k2f9TYI7RQGovL/hprJxQrc08d27Ic/3SpKm7Hozg==
+X-Google-Smtp-Source: APXvYqxniVpvMNA+bj/yUEKpmVq/ao8OQjFhfGsHKuXQQKykILeLG60EsYREEBp+78hGREeG2Q58F/qZGtcpArkKizM=
+X-Received: by 2002:aca:b506:: with SMTP id e6mr1794758oif.39.1569357081429;
+ Tue, 24 Sep 2019 13:31:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87zhiz1x9l.fsf@morokweng.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1568990048.git.luto@kernel.org> <66b16acf2953fc033abc9641b9cf43d23e75a8e9.1568990048.git.luto@kernel.org>
+In-Reply-To: <66b16acf2953fc033abc9641b9cf43d23e75a8e9.1568990048.git.luto@kernel.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 24 Sep 2019 22:30:55 +0200
+Message-ID: <CAG48ez2tnJzLNCgAqCC+AOKuLGBSvBRi2_HZ97bEJ0zP1kWLHg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] random: Remove kernel.random.read_wakeup_threshold
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Theodore Tso <tytso@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Sep 20, 2019 at 4:37 PM Andy Lutomirski <luto@kernel.org> wrote:
+> It has no effect any more, so remove it.  We can revert this if
+> there is some user code that expects to be able to set this sysctl.
+>
+> Signed-off-by: Andy Lutomirski <luto@kernel.org>
+> ---
+>  drivers/char/random.c | 18 +-----------------
+>  1 file changed, 1 insertion(+), 17 deletions(-)
+>
+> diff --git a/drivers/char/random.c b/drivers/char/random.c
+[...]
+> -       {
+> -               .procname       = "read_wakeup_threshold",
 
-
-On 9/19/19 8:07 PM, Thiago Jung Bauermann wrote:
-> 
-> Hello Prakhar,
-> 
-> Prakhar Srivastava <prsriva@linux.microsoft.com> writes:
-> 
->> During kexec_file_load, carrying forward the ima measurement log allows
->> a verifying party to get the entire runtime event log since the last
->> full reboot since that is when PCRs were last reset.
-
-<snip>
-
-> In the previous patch, you took the powerpc file and made a few
-> modifications to fit your needs. This file is now somewhat different
-> than the powerpc version, but I don't understand to what purpose. It's
-> not different in any significant way.
-> 
-> Based on review comments from your previous patch, I was expecting to
-> see code from the powerpc file moved to an arch-independent part of the
-> the kernel and possibly adapted so that both arm64 and powerpc could use
-> it. Can you explain why you chose this approach instead? What is the
-> advantage of having superficially different but basically equivalent
-> code in the two architectures?
-> 
-> Actually, there's one change that is significant: instead of a single
-> linux,ima-kexec-buffer property holding the start address and size of
-> the buffer, ARM64 is now using two properties (linux,ima-kexec-buffer
-> and linux,ima-kexec-buffer-end) for the start and end addresses. In my
-> opinion, unless there's a good reason for it Linux should be consistent
-> accross architectures when possible.
-> 
-> --
-> Thiago Jung Bauermann
-> IBM Linux Technology Center
-
-I looked at the of_ drivers are it became apparent that the driver calls
-were already available for consumption. Adding ima specific code will be
-same as adding wrapper code for any other property. Which is true for
-all properties, effectively setting the property name and pass through
-for other parameters.
-
-I still like to move both implementations to a arch independent code 
-path, i could not convince my self that of_*ima is probably the place, 
-but if that's the best place?, then i will go ahead and make that change 
-as well.
-
-Regarding using two properties, it just seemed more consistent how the
-properties(start-end) are being used in the kexec, and hides the inner 
-details for the cell structures, thats all.
-
-Its just the placement of the wrapper functions, but once thats done
-both archs will call the same.
-
-Thanks,
-Prakhar Srivastava
-
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+There's a line in bin_random_table in kernel/sysctl_binary.c that
+refers to this sysctl, that should probably also be deleted?
