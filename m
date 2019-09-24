@@ -2,42 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06880BCD74
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50AD9BCD78
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410059AbfIXQp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:45:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36036 "EHLO mail.kernel.org"
+        id S2404404AbfIXQqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:46:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410045AbfIXQpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:45:53 -0400
+        id S2391417AbfIXQqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:00 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03480217F4;
-        Tue, 24 Sep 2019 16:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DF6C21783;
+        Tue, 24 Sep 2019 16:45:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343553;
-        bh=B//54cTN9ny2uyPRhgBIXUEIyTuOUXxy8EKcxT8jk1s=;
+        s=default; t=1569343559;
+        bh=I/gA4q9CIaxKXPKZAn9zp6oLBe04zM00DICPM9pXiPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kOydf/VNtLAp2hBiFWUh5E976vevCAM0AWv2OBR34YQavSlD10t5fxSKXBLfW52Q4
-         kFZg5tAHlrP3coPaul+LuzxouB86ouBWaZSfvfD9x3WohAv67rkKu/lfGupjkvIz3x
-         zKLSuts6FqlxNrfn0voVe88lxGuuwT8Ha/VR/Wm8=
+        b=IJCsbMyjR/TIUMi8TYkVsiWBzeZ0vy3utumUX0Blw0/d9EbQWSJ3Mz/sBCjGLC9dI
+         x7cUmj1Apq9IPKrcRUV233VOb2l+lxDTWQAYqkekfIeKxHE83kLYyCRSisHYmC065x
+         KST9cqAVRTvjqwEIiyjgD3mTEL8XF175HhKeTIoU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        dri-devel@lists.freedesktop.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 02/70] drm/bridge: tc358767: Increase AUX transfer length limit
-Date:   Tue, 24 Sep 2019 12:44:41 -0400
-Message-Id: <20190924164549.27058-2-sashal@kernel.org>
+Cc:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 05/70] drm/vkms: Avoid assigning 0 for possible_crtc
+Date:   Tue, 24 Sep 2019 12:44:44 -0400
+Message-Id: <20190924164549.27058-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -50,50 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 
-[ Upstream commit e0655feaec62d5139b6b13a7b1bbb1ab8f1c2d83 ]
+[ Upstream commit e9d85f731de06a35d2ae6cdcf7d0e037c98ef41a ]
 
-According to the datasheet tc358767 can transfer up to 16 bytes via
-its AUX channel, so the artificial limit of 8 appears to be too
-low. However only up to 15-bytes seem to be actually supported and
-trying to use 16-byte transfers results in transfers failing
-sporadically (with bogus status in case of I2C transfers), so limit it
-to 15.
+When vkms invoke drm_universal_plane_init(), it sets 0 for
+possible_crtcs parameter which means that planes can't be attached to
+any CRTC. It currently works due to some safeguard in the drm_crtc file;
+however, it is possible to identify the problem by trying to append a
+second connector. This patch fixes this issue by modifying
+vkms_plane_init() to accept an index parameter which makes the code a
+little bit more flexible and avoid set zero to possible_crtcs.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190619052716.16831-9-andrew.smirnov@gmail.com
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/d67849c62a8d8ace1a0af455998b588798a4c45f.1561491964.git.rodrigosiqueiramelo@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/vkms/vkms_drv.c    | 2 +-
+ drivers/gpu/drm/vkms/vkms_drv.h    | 4 ++--
+ drivers/gpu/drm/vkms/vkms_output.c | 6 +++---
+ drivers/gpu/drm/vkms/vkms_plane.c  | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index f59a51e19dab0..d515c7cebb9c4 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -293,7 +293,7 @@ static ssize_t tc_aux_transfer(struct drm_dp_aux *aux,
- 			       struct drm_dp_aux_msg *msg)
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 738dd6206d85b..92296bd8f6233 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -92,7 +92,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
+ 	dev->mode_config.max_height = YRES_MAX;
+ 	dev->mode_config.preferred_depth = 24;
+ 
+-	return vkms_output_init(vkmsdev);
++	return vkms_output_init(vkmsdev, 0);
+ }
+ 
+ static int __init vkms_init(void)
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index 3c7e06b19efd5..a0adcc86079f5 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -115,10 +115,10 @@ bool vkms_get_vblank_timestamp(struct drm_device *dev, unsigned int pipe,
+ 			       int *max_error, ktime_t *vblank_time,
+ 			       bool in_vblank_irq);
+ 
+-int vkms_output_init(struct vkms_device *vkmsdev);
++int vkms_output_init(struct vkms_device *vkmsdev, int index);
+ 
+ struct drm_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				  enum drm_plane_type type);
++				  enum drm_plane_type type, int index);
+ 
+ /* Gem stuff */
+ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+index 3b162b25312ec..1442b447c7070 100644
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -36,7 +36,7 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+ 	.get_modes    = vkms_conn_get_modes,
+ };
+ 
+-int vkms_output_init(struct vkms_device *vkmsdev)
++int vkms_output_init(struct vkms_device *vkmsdev, int index)
  {
- 	struct tc_data *tc = aux_to_tc(aux);
--	size_t size = min_t(size_t, 8, msg->size);
-+	size_t size = min_t(size_t, DP_AUX_MAX_PAYLOAD_BYTES - 1, msg->size);
- 	u8 request = msg->request & ~DP_AUX_I2C_MOT;
- 	u8 *buf = msg->buffer;
- 	u32 tmp = 0;
+ 	struct vkms_output *output = &vkmsdev->output;
+ 	struct drm_device *dev = &vkmsdev->drm;
+@@ -46,12 +46,12 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+ 	struct drm_plane *primary, *cursor = NULL;
+ 	int ret;
+ 
+-	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY);
++	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
+ 	if (IS_ERR(primary))
+ 		return PTR_ERR(primary);
+ 
+ 	if (enable_cursor) {
+-		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR);
++		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, index);
+ 		if (IS_ERR(cursor)) {
+ 			ret = PTR_ERR(cursor);
+ 			goto err_cursor;
+diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+index 0e67d2d42f0cc..20ffc52f91940 100644
+--- a/drivers/gpu/drm/vkms/vkms_plane.c
++++ b/drivers/gpu/drm/vkms/vkms_plane.c
+@@ -168,7 +168,7 @@ static const struct drm_plane_helper_funcs vkms_primary_helper_funcs = {
+ };
+ 
+ struct drm_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				  enum drm_plane_type type)
++				  enum drm_plane_type type, int index)
+ {
+ 	struct drm_device *dev = &vkmsdev->drm;
+ 	const struct drm_plane_helper_funcs *funcs;
+@@ -190,7 +190,7 @@ struct drm_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+ 		funcs = &vkms_primary_helper_funcs;
+ 	}
+ 
+-	ret = drm_universal_plane_init(dev, plane, 0,
++	ret = drm_universal_plane_init(dev, plane, 1 << index,
+ 				       &vkms_plane_funcs,
+ 				       formats, nformats,
+ 				       NULL, type, NULL);
 -- 
 2.20.1
 
