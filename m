@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 289E5BCE01
+	by mail.lfdr.de (Postfix) with ESMTP id 91C9ABCE02
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410446AbfIXQsI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:48:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39594 "EHLO mail.kernel.org"
+        id S2410455AbfIXQsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:48:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2633345AbfIXQsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:03 -0400
+        id S2410432AbfIXQsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:48:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B490921906;
-        Tue, 24 Sep 2019 16:48:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 165AD20673;
+        Tue, 24 Sep 2019 16:48:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343682;
-        bh=ufQvx7ZNex7e9L1n3iz0qxl2DPV4jX3rgvJ6+P7qKWY=;
+        s=default; t=1569343685;
+        bh=7n+wym7xP2UaLFtaocy+zLj89/hGGwRuD0CgKErsl84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CsAV6YJ0eziUwMY8ZKN0mBoYFPzHMrgQVLWSVaTrTkKdyk+Kp30f78C8BG9M6CsmK
-         5RO2yeczRz4WwZFq8L7FxDQCDejEorcJeTn6hx2EIv3X04EOo1b7o8imBwFlQnjADL
-         JnN+oVZwjAQ0nlTRcqcfmgClE3x5OVfNUepuZBMw=
+        b=KjKKPRBMDJDIQ1LgFCpBLnIKMn/1nLTeBgy5d24qgahmCYJtU3FN11RNkKIfzuaFh
+         CwD2beSGcSOF/oak9G8LwwZqwTi3DqTj6qX1cGHosBFOvBithLXKC7V7JMfzrggG2Q
+         8A66moH2UNK1Q7bbosB/NFYEfWH9cXh+1ErQtO5Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 54/70] clk: qcom: gcc-sdm845: Use floor ops for sdcc clks
-Date:   Tue, 24 Sep 2019 12:45:33 -0400
-Message-Id: <20190924164549.27058-54-sashal@kernel.org>
+Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.2 55/70] powerpc/pseries: correctly track irq state in default idle
+Date:   Tue, 24 Sep 2019 12:45:34 -0400
+Message-Id: <20190924164549.27058-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -46,53 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
-[ Upstream commit 5e4b7e82d497580bc430576c4c9bce157dd72512 ]
+[ Upstream commit 92c94dfb69e350471473fd3075c74bc68150879e ]
 
-Some MMC cards fail to enumerate properly when inserted into an MMC slot
-on sdm845 devices. This is because the clk ops for qcom clks round the
-frequency up to the nearest rate instead of down to the nearest rate.
-For example, the MMC driver requests a frequency of 52MHz from
-clk_set_rate() but the qcom implementation for these clks rounds 52MHz
-up to the next supported frequency of 100MHz. The MMC driver could be
-modified to request clk rate ranges but for now we can fix this in the
-clk driver by changing the rounding policy for this clk to be round down
-instead of round up.
+prep_irq_for_idle() is intended to be called before entering
+H_CEDE (and it is used by the pseries cpuidle driver). However the
+default pseries idle routine does not call it, leading to mismanaged
+lazy irq state when the cpuidle driver isn't in use. Manifestations of
+this include:
 
-Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
-Reported-by: Douglas Anderson <dianders@chromium.org>
-Cc: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Link: https://lkml.kernel.org/r/20190830195142.103564-1-swboyd@chromium.org
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+* Dropped IPIs in the time immediately after a cpu comes
+  online (before it has installed the cpuidle handler), making the
+  online operation block indefinitely waiting for the new cpu to
+  respond.
+
+* Hitting this WARN_ON in arch_local_irq_restore():
+	/*
+	 * We should already be hard disabled here. We had bugs
+	 * where that wasn't the case so let's dbl check it and
+	 * warn if we are wrong. Only do that when IRQ tracing
+	 * is enabled as mfmsr() can be costly.
+	 */
+	if (WARN_ON_ONCE(mfmsr() & MSR_EE))
+		__hard_irq_disable();
+
+Call prep_irq_for_idle() from pseries_lpar_idle() and honor its
+result.
+
+Fixes: 363edbe2614a ("powerpc: Default arch idle could cede processor on pseries")
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190910225244.25056-1-nathanl@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-sdm845.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/setup.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 7131dcf9b0603..95be125c3bddf 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -685,7 +685,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
- 		.name = "gcc_sdcc2_apps_clk_src",
- 		.parent_names = gcc_parent_names_10,
- 		.num_parents = 5,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
+diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
+index 8fa012a65a712..cc682759feae8 100644
+--- a/arch/powerpc/platforms/pseries/setup.c
++++ b/arch/powerpc/platforms/pseries/setup.c
+@@ -344,6 +344,9 @@ static void pseries_lpar_idle(void)
+ 	 * low power mode by ceding processor to hypervisor
+ 	 */
  
-@@ -709,7 +709,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
- 		.name = "gcc_sdcc4_apps_clk_src",
- 		.parent_names = gcc_parent_names_0,
- 		.num_parents = 4,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
++	if (!prep_irq_for_idle())
++		return;
++
+ 	/* Indicate to hypervisor that we are idle. */
+ 	get_lppaca()->idle = 1;
  
 -- 
 2.20.1
