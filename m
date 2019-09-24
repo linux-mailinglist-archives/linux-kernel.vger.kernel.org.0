@@ -2,96 +2,275 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EADE8BCB60
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC39BCB64
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731704AbfIXP2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 11:28:50 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:55546 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727040AbfIXP2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 11:28:50 -0400
-Received: from zn.tnic (p200300EC2F0DB700DCC45CFC64A01FDA.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:b700:dcc4:5cfc:64a0:1fda])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 12EB71EC03F6;
-        Tue, 24 Sep 2019 17:28:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1569338929;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=LtNkIhYtzZ/fSLb+hlvCu4hqnbeOcZTKSutkYY729Ow=;
-        b=Ah4V2Y1C6XT9qdCd+m8NCyjExYvexZndou3aLdHN7V/0brF96jTFulJDoLBLoRwWje+OJn
-        LebFupY5YsOtDeCDRT3nMt2x/T2X7SZoXWBXEqYKJOMjzQ0a+f6NbCxN/Ikr+korubwnXj
-        5pnhx05KO0HF0zkOXtSs6LvQgbLSpLk=
-Date:   Tue, 24 Sep 2019 17:28:48 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Kai Huang <kai.huang@linux.intel.com>
-Subject: Re: [PATCH v22 01/24] x86/cpufeatures: x86/msr: Add Intel SGX
- hardware bits
-Message-ID: <20190924152848.GF19317@zn.tnic>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-2-jarkko.sakkinen@linux.intel.com>
+        id S2389498AbfIXP3b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 11:29:31 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33347 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727040AbfIXP3a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 11:29:30 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q10so1601574pfl.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 08:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=wX1ufemuVcZ1/+F45a1SkQ+EbtNri2rD1aWT8xtEdFA=;
+        b=tV4SoPthoWRTYODIqZrV/aC6Sy0AUAsJmY8+miZnW8eGoJuGgrCmC2Gwxs9g7wu6n4
+         HZ1nGz2DO267ukmKLDkhgAtHlfP1NoS/zJ8Ad3Ab33inKm+oOlmqbwG/QLyiIyhwEguT
+         Tva3X+3cOLK30dewFhu0Z44DTxNbYT7IKxH/q6l1UEPga27KweT6Y3IP9sDB8qFP6Kdz
+         oGjfVPGuNPC8+0JJp3YnfHfHw/OEWuBrBW7/CEUEkX2lwARfoDqV5bTjehqV8n4KvXnp
+         AQIxSAozmjR/alnw9QBwiHhJL7FKChxKg953mKgDnzqbwQNJljZr48U4PA6ehsAlk3Es
+         k3DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=wX1ufemuVcZ1/+F45a1SkQ+EbtNri2rD1aWT8xtEdFA=;
+        b=RSi0HItdx6MJSeuVK+OyKjyVrKZyZ6g8OaS+nHOaFPEAAPeFuqDESbrNiHxQttZG9F
+         AVlnikapa8qo1R1eNWWUntkJc0a2zQJ7O6yiCIuNR/Ewf0ejf48UysOqTmI5kr4POFrT
+         acBKHjWNvUDi/+5CHt5DZxYXOz9PTtLNkW3Gs7tQELU3K8M6hxbfinWg/hLDukpsDXqK
+         UcFtq7kfHNdBGXoNJYRoOrF9mxHMxu+Di1m2Y1fZtv/FhqLuGe0I+rhsjrTp+0zRECtF
+         mvd19vpETJe8f1ZXAxjDfqQrP7d01PKKpev7kLwMn75nhARsHcnkHRZXhwp8yMCALKCQ
+         qHuA==
+X-Gm-Message-State: APjAAAUJSFPIxEODcVZHifcVOMH8iQBRluCjLpUCqUEARFUo8PzEELEI
+        Kgu1aaLRGYeoy62ar/c9eng=
+X-Google-Smtp-Source: APXvYqw6B/kU84DrWlicmm5F5ycfnicD7nHzLATMgZQ9XTa2Px4+hI7yUIysB8iSsBop1/FAD9fgHQ==
+X-Received: by 2002:a62:1658:: with SMTP id 85mr4065421pfw.195.1569338970064;
+        Tue, 24 Sep 2019 08:29:30 -0700 (PDT)
+Received: from [0.0.0.0] (104.129.187.94.16clouds.com. [104.129.187.94])
+        by smtp.gmail.com with ESMTPSA id q2sm3656607pfg.144.2019.09.24.08.29.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Sep 2019 08:29:29 -0700 (PDT)
+Subject: Re: [PATCH v8 3/3] mm: fix double page fault on arm64 if PTE_AF is
+ cleared
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        "Justin He (Arm Technology China)" <Justin.He@arm.com>
+Cc:     Will Deacon <will@kernel.org>, Mark Rutland <Mark.Rutland@arm.com>,
+        James Morse <James.Morse@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Suzuki Poulose <Suzuki.Poulose@arm.com>,
+        Punit Agrawal <punitagrawal@gmail.com>,
+        Anshuman Khandual <Anshuman.Khandual@arm.com>,
+        Alex Van Brunt <avanbrunt@nvidia.com>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        "Kaly Xin (Arm Technology China)" <Kaly.Xin@arm.com>,
+        nd <nd@arm.com>
+References: <20190921135054.142360-1-justin.he@arm.com>
+ <20190921135054.142360-4-justin.he@arm.com>
+ <20190923170433.GE10192@arrakis.emea.arm.com>
+ <DB7PR08MB3082BC38536AE16B056AEA05F7840@DB7PR08MB3082.eurprd08.prod.outlook.com>
+ <20190924103324.GB41214@arrakis.emea.arm.com>
+From:   Jia He <hejianet@gmail.com>
+Message-ID: <6267b685-5162-85ac-087f-112303bb7035@gmail.com>
+Date:   Tue, 24 Sep 2019 23:29:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190903142655.21943-2-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190924103324.GB41214@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 05:26:32PM +0300, Jarkko Sakkinen wrote:
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 998c2cc08363..c5582e766121 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -222,12 +222,22 @@
->  #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
->  #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
->  
-> -/* Virtualization flags: Linux defined, word 8 */
-> -#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-> -#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
-> -#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
-> -#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
-> -#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
-> +/*
-> + * Scattered Intel features: Linux defined, word 8.
-> + *
-> + * Note that the bit location of the SGX features is meaningful as KVM expects
-> + * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
-> + * must remain at bit 0, SGX2 at bit 1, etc...
+Hi Catalin
 
-Eww, no.
+On 2019/9/24 18:33, Catalin Marinas wrote:
+> On Tue, Sep 24, 2019 at 06:43:06AM +0000, Justin He (Arm Technology China) wrote:
+>> Catalin Marinas wrote:
+>>> On Sat, Sep 21, 2019 at 09:50:54PM +0800, Jia He wrote:
+>>>> @@ -2151,21 +2163,53 @@ static inline void cow_user_page(struct page *dst, struct page *src, unsigned lo
+>>>>   	 * fails, we just zero-fill it. Live with it.
+>>>>   	 */
+>>>>   	if (unlikely(!src)) {
+>>>> -		void *kaddr = kmap_atomic(dst);
+>>>> -		void __user *uaddr = (void __user *)(va & PAGE_MASK);
+>>>> +		void *kaddr;
+>>>> +		pte_t entry;
+>>>> +		void __user *uaddr = (void __user *)(addr & PAGE_MASK);
+>>>>
+>>>> +		/* On architectures with software "accessed" bits, we would
+>>>> +		 * take a double page fault, so mark it accessed here.
+>>>> +		 */
+> [...]
+>>>> +		if (arch_faults_on_old_pte() && !pte_young(vmf->orig_pte)) {
+>>>> +			vmf->pte = pte_offset_map_lock(mm, vmf->pmd, addr,
+>>>> +						       &vmf->ptl);
+>>>> +			if (likely(pte_same(*vmf->pte, vmf->orig_pte))) {
+>>>> +				entry = pte_mkyoung(vmf->orig_pte);
+>>>> +				if (ptep_set_access_flags(vma, addr,
+>>>> +							  vmf->pte, entry, 0))
+>>>> +					update_mmu_cache(vma, addr, vmf->pte);
+>>>> +			} else {
+>>>> +				/* Other thread has already handled the fault
+>>>> +				 * and we don't need to do anything. If it's
+>>>> +				 * not the case, the fault will be triggered
+>>>> +				 * again on the same address.
+>>>> +				 */
+>>>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>> +				return false;
+>>>> +			}
+>>>> +			pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>> +		}
+> [...]
+>>>> +
+>>>> +		kaddr = kmap_atomic(dst);
+>>> Since you moved the kmap_atomic() here, could the above
+>>> arch_faults_on_old_pte() run in a preemptible context? I suggested to
+>>> add a WARN_ON in patch 2 to be sure.
+>> Should I move kmap_atomic back to the original line? Thus, we can make sure
+>> that arch_faults_on_old_pte() is in the context of preempt_disabled?
+>> Otherwise, arch_faults_on_old_pte() may cause plenty of warning if I add
+>> a WARN_ON in arch_faults_on_old_pte.  I tested it when I enable the PREEMPT=y
+>> on a ThunderX2 qemu guest.
+> So we have two options here:
+>
+> 1. Change arch_faults_on_old_pte() scope to the whole system rather than
+>     just the current CPU. You'd have to wire up a new arm64 capability
+>     for the access flag but this way we don't care whether it's
+>     preemptible or not.
+>
+> 2. Keep the arch_faults_on_old_pte() per-CPU but make sure we are not
+>     preempted here. The kmap_atomic() move would do but you'd have to
+>     kunmap_atomic() before the return.
+>
+> I think the answer to my question below also has some implication on
+> which option to pick:
+>
+>>>>   		/*
+>>>>   		 * This really shouldn't fail, because the page is there
+>>>>   		 * in the page tables. But it might just be unreadable,
+>>>>   		 * in which case we just give up and fill the result with
+>>>>   		 * zeroes.
+>>>>   		 */
+>>>> -		if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
+>>>> +		if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE)) {
+>>>> +			/* Give a warn in case there can be some obscure
+>>>> +			 * use-case
+>>>> +			 */
+>>>> +			WARN_ON_ONCE(1);
+>>> That's more of a question for the mm guys: at this point we do the
+>>> copying with the ptl released; is there anything else that could have
+>>> made the pte old in the meantime? I think unuse_pte() is only called on
+>>> anonymous vmas, so it shouldn't be the case here.
+> If we need to hold the ptl here, you could as well have an enclosing
+> kmap/kunmap_atomic (option 2) with some goto instead of "return false".
 
-> + */
-> +#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-> +#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
-> +/* Bits [0:7] are reserved for SGX */
+I am not 100% sure that I understand your suggestion well, so I drafted the patch
 
-That leaf has "Bits 31 - 07: Reserved." So what happens if they start
-adding more bits there? We shoosh the other defines even further into
-the word?
+here:
 
-Talk to your hw guys, if the plan is to leave those bits for other
-feature flags, then let's allocate a new capability word for F12_EAX.
+Changes: optimize the indentions
 
-Thx.
+      hold the ptl longer
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+-static inline void cow_user_page(struct page *dst, struct page *src, unsigned 
+long va, struct vm_area_struct *vma)
++static inline bool cow_user_page(struct page *dst, struct page *src,
++                 struct vm_fault *vmf)
+  {
++    struct vm_area_struct *vma = vmf->vma;
++    struct mm_struct *mm = vma->vm_mm;
++    unsigned long addr = vmf->address;
++    bool ret;
++    pte_t entry;
++    void *kaddr;
++    void __user *uaddr;
++
+      debug_dma_assert_idle(src);
+
++    if (likely(src)) {
++        copy_user_highpage(dst, src, addr, vma);
++        return true;
++    }
++
+      /*
+       * If the source page was a PFN mapping, we don't have
+       * a "struct page" for it. We do a best-effort copy by
+       * just copying from the original user address. If that
+       * fails, we just zero-fill it. Live with it.
+       */
+-    if (unlikely(!src)) {
+-        void *kaddr = kmap_atomic(dst);
+-        void __user *uaddr = (void __user *)(va & PAGE_MASK);
++    kaddr = kmap_atomic(dst);
++    uaddr = (void __user *)(addr & PAGE_MASK);
++
++    /*
++     * On architectures with software "accessed" bits, we would
++     * take a double page fault, so mark it accessed here.
++     */
++    vmf->pte = pte_offset_map_lock(mm, vmf->pmd, addr, &vmf->ptl);
++    if (arch_faults_on_old_pte() && !pte_young(vmf->orig_pte)) {
++        if (!likely(pte_same(*vmf->pte, vmf->orig_pte))) {
++            /*
++             * Other thread has already handled the fault
++             * and we don't need to do anything. If it's
++             * not the case, the fault will be triggered
++             * again on the same address.
++             */
++            ret = false;
++            goto pte_unlock;
++        }
++
++        entry = pte_mkyoung(vmf->orig_pte);
++        if (ptep_set_access_flags(vma, addr, vmf->pte, entry, 0))
++            update_mmu_cache(vma, addr, vmf->pte);
++    }
+
++    /*
++     * This really shouldn't fail, because the page is there
++     * in the page tables. But it might just be unreadable,
++     * in which case we just give up and fill the result with
++     * zeroes.
++     */
++    if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE)) {
+          /*
+-         * This really shouldn't fail, because the page is there
+-         * in the page tables. But it might just be unreadable,
+-         * in which case we just give up and fill the result with
+-         * zeroes.
++         * Give a warn in case there can be some obscure
++         * use-case
+           */
+-        if (__copy_from_user_inatomic(kaddr, uaddr, PAGE_SIZE))
+-            clear_page(kaddr);
+-        kunmap_atomic(kaddr);
+-        flush_dcache_page(dst);
+-    } else
+-        copy_user_highpage(dst, src, va, vma);
++        WARN_ON_ONCE(1);
++        clear_page(kaddr);
++    }
++
++    ret = true;
++
++pte_unlock:
++    pte_unmap_unlock(vmf->pte, vmf->ptl);
++    kunmap_atomic(kaddr);
++    flush_dcache_page(dst);
++
++    return ret;
+  }
+
+
+---
+Cheers,
+Justin (Jia He)
+
