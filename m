@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54A8FBCFC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F457BCFBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438803AbfIXRBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 13:01:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33414 "EHLO mail.kernel.org"
+        id S1728516AbfIXRAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 13:00:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387913AbfIXQoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:44:21 -0400
+        id S2409894AbfIXQos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:44:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2C3B21928;
-        Tue, 24 Sep 2019 16:44:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F18E5222C1;
+        Tue, 24 Sep 2019 16:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343460;
-        bh=bSxSZR+V3L5L3KCQ7M6cYOUgKsuuT07h+lzgj35jKmE=;
+        s=default; t=1569343487;
+        bh=EwefwZg1gkRd5D8AdLXuQmAzwpk0VAcJjXwCvpznLlA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ruOitwMRPz9dJYChAbxVkm5XLCV7JQMyh49jCynn6Eq6uGw78NPeKV8/VhYv6WPyH
-         o25at64PQt6sPePvw7xDD0k+myJouXrlKJKfSWTG0PVcUyPmDEk09Xe854n9ynq4Gq
-         nzdywkCxw5zQYSYLanOQPqm2mxFSa/+6fkLo2Lzo=
+        b=fZD+ydD/7E2nc+0SXG7CgdsMDOfF2TjypMfqOhFMtjETqNIBo3coO6n8ezXtTrFHU
+         uTEijIiW5VgIYA7mtygsJ+F4Ilev0rbAJB4rG93GSsgc7D7+Hom9hwSqA9CK/qamry
+         9UWLbD0DpWswBOa2hlykB6aejC/VbaC/6kX7UrcM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 57/87] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
-Date:   Tue, 24 Sep 2019 12:41:13 -0400
-Message-Id: <20190924164144.25591-57-sashal@kernel.org>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.3 66/87] powerpc/64s/exception: machine check use correct cfar for late handler
+Date:   Tue, 24 Sep 2019 12:41:22 -0400
+Message-Id: <20190924164144.25591-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -45,43 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit a459a184c978ca9ad538aab93aafdde873953f30 ]
+[ Upstream commit 0b66370c61fcf5fcc1d6901013e110284da6e2bb ]
 
-The CPG/MSTP Clock Domain driver does not implement the
-generic_pm_domain.power_{on,off}() callbacks, as the domain itself
-cannot be powered down.  Hence the domain should be marked as always-on
-by setting the GENPD_FLAG_ALWAYS_ON flag, to prevent the core PM Domain
-code from considering it for power-off, and doing unnessary processing.
+Bare metal machine checks run an "early" handler in real mode before
+running the main handler which reports the event.
 
-This also gets rid of a boot warning when the Clock Domain contains an
-IRQ-safe device, e.g. on RZ/A1:
+The main handler runs exactly as a normal interrupt handler, after the
+"windup" which sets registers back as they were at interrupt entry.
+CFAR does not get restored by the windup code, so that will be wrong
+when the handler is run.
 
-    sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
+Restore the CFAR to the saved value before running the late handler.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190802105709.27696-8-npiggin@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/clk-mstp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/exceptions-64s.S | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 2db9093546c60..e326e6dc09fce 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -334,7 +334,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 		return;
- 
- 	pd->name = np->name;
--	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
-+	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
-+		    GENPD_FLAG_ACTIVE_WAKEUP;
- 	pd->attach_dev = cpg_mstp_attach_dev;
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
+diff --git a/arch/powerpc/kernel/exceptions-64s.S b/arch/powerpc/kernel/exceptions-64s.S
+index 6ba3cc2ef8abc..36c8a3652cf3a 100644
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@ -1211,6 +1211,10 @@ FTR_SECTION_ELSE
+ ALT_FTR_SECTION_END_IFSET(CPU_FTR_HVMODE)
+ 9:
+ 	/* Deliver the machine check to host kernel in V mode. */
++BEGIN_FTR_SECTION
++	ld	r10,ORIG_GPR3(r1)
++	mtspr	SPRN_CFAR,r10
++END_FTR_SECTION_IFSET(CPU_FTR_CFAR)
+ 	MACHINE_CHECK_HANDLER_WINDUP
+ 	EXCEPTION_PROLOG_0 PACA_EXMC
+ 	b	machine_check_pSeries_0
 -- 
 2.20.1
 
