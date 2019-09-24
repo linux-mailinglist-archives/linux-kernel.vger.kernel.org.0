@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98EACBCE0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9A67BCE0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405403AbfIXQsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:48:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36680 "EHLO mail.kernel.org"
+        id S2410479AbfIXQsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:48:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726659AbfIXQqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:46:12 -0400
+        id S2410168AbfIXQqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DB86217D9;
-        Tue, 24 Sep 2019 16:46:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B81A21841;
+        Tue, 24 Sep 2019 16:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343572;
-        bh=71Teq/z3em+Gqxx4C3IM9Ovs6Uia6I4586LFWmnZh5g=;
+        s=default; t=1569343580;
+        bh=NjzupDenoqLLyLpB0bUoEgIBSgtmb3n0NUd2iv3HQdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BtUk10vi9CZwYYELaIeSChEUTJUrzE8zN/H9CkunJkYndFZ8LAsJGR2D3qKt6cQAH
-         C8OwREUq1xiodPmNEYS1cM9tMNFUUm0JiJOWCy2F5y6UyRjKDAmcz+OqjcdaXusDhD
-         buc+eS1LJuKZS9Yhm0mkvOtSIdsm/i9T+Q4qM1Ws=
+        b=vNqLWHKwUVy5qsepykVr9XvG+AEP2spIhvKfnBOvUumtBZHVRkSLtGbR+no6QacK1
+         Z+QlhC28oCcJMYLGxy9hLJ92xrzD/VFQkljb+w3/rYel3L7iB41zG8G7ciSYnBHruB
+         chqh8Shv7a098AekGU4C3eVQD9noR6zf5wAsbx20=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 10/70] drm/stm: attach gem fence to atomic state
-Date:   Tue, 24 Sep 2019 12:44:49 -0400
-Message-Id: <20190924164549.27058-10-sashal@kernel.org>
+Cc:     Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Shirish S <shirish.s@amd.com>, Sasha Levin <sashal@kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 13/70] drm/amdgpu: Fix hard hang for S/G display BOs.
+Date:   Tue, 24 Sep 2019 12:44:52 -0400
+Message-Id: <20190924164549.27058-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -46,45 +44,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
 
-[ Upstream commit 8fabc9c3109a71b3577959a05408153ae69ccd8d ]
+[ Upstream commit e4c4073b0139d055d43a9568690fc560aab4fa5c ]
 
-To properly synchronize with other devices the fence from the GEM
-object backing the framebuffer needs to be attached to the atomic
-state, so the commit work can wait on fence signaling.
+HW requires for caching to be unset for scanout BO
+mappings when the BO placement is in GTT memory.
+Usually the flag to unset is passed from user mode
+but for FB mode this was missing.
 
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Acked-by: Philippe Cornu <philippe.cornu@st.com>
-Tested-by: Philippe Cornu <philippe.cornu@st.com>
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190712084228.8338-1-l.stach@pengutronix.de
+v2:
+Keep all BO placement logic in amdgpu_display_supported_domains
+
+Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Tested-by: Shirish S <shirish.s@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/stm/ltdc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c  | 7 +++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 3 ++-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-index 32fd6a3b37fb1..6f1fef76671c8 100644
---- a/drivers/gpu/drm/stm/ltdc.c
-+++ b/drivers/gpu/drm/stm/ltdc.c
-@@ -25,6 +25,7 @@
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_fourcc.h>
- #include <drm/drm_gem_cma_helper.h>
-+#include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_of.h>
- #include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
-@@ -875,6 +876,7 @@ static const struct drm_plane_funcs ltdc_plane_funcs = {
- };
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
+index e476092188392..bf0c61baa05c7 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fb.c
+@@ -137,14 +137,14 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
+ 	mode_cmd->pitches[0] = amdgpu_align_pitch(adev, mode_cmd->width, cpp,
+ 						  fb_tiled);
+ 	domain = amdgpu_display_supported_domains(adev);
+-
+ 	height = ALIGN(mode_cmd->height, 8);
+ 	size = mode_cmd->pitches[0] * height;
+ 	aligned_size = ALIGN(size, PAGE_SIZE);
+ 	ret = amdgpu_gem_object_create(adev, aligned_size, 0, domain,
+ 				       AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED |
+-				       AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS |
+-				       AMDGPU_GEM_CREATE_VRAM_CLEARED,
++				       AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS     |
++				       AMDGPU_GEM_CREATE_VRAM_CLEARED 	     |
++				       AMDGPU_GEM_CREATE_CPU_GTT_USWC,
+ 				       ttm_bo_type_kernel, NULL, &gobj);
+ 	if (ret) {
+ 		pr_err("failed to allocate framebuffer (%d)\n", aligned_size);
+@@ -166,7 +166,6 @@ static int amdgpufb_create_pinned_object(struct amdgpu_fbdev *rfbdev,
+ 			dev_err(adev->dev, "FB failed to set tiling flags\n");
+ 	}
  
- static const struct drm_plane_helper_funcs ltdc_plane_helper_funcs = {
-+	.prepare_fb = drm_gem_fb_prepare_fb,
- 	.atomic_check = ltdc_plane_atomic_check,
- 	.atomic_update = ltdc_plane_atomic_update,
- 	.atomic_disable = ltdc_plane_atomic_disable,
+-
+ 	ret = amdgpu_bo_pin(abo, domain);
+ 	if (ret) {
+ 		amdgpu_bo_unreserve(abo);
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+index d4fcf54754646..6fc77ac814d8e 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
+@@ -746,7 +746,8 @@ int amdgpu_mode_dumb_create(struct drm_file *file_priv,
+ 	struct amdgpu_device *adev = dev->dev_private;
+ 	struct drm_gem_object *gobj;
+ 	uint32_t handle;
+-	u64 flags = AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED;
++	u64 flags = AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED |
++		    AMDGPU_GEM_CREATE_CPU_GTT_USWC;
+ 	u32 domain;
+ 	int r;
+ 
 -- 
 2.20.1
 
