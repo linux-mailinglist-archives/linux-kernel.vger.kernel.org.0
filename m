@@ -2,39 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A817BCD85
+	by mail.lfdr.de (Postfix) with ESMTP id 842F9BCD86
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633249AbfIXQqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:46:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37170 "EHLO mail.kernel.org"
+        id S2633265AbfIXQqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:46:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406156AbfIXQqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:46:31 -0400
+        id S2390285AbfIXQqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39C4121D82;
-        Tue, 24 Sep 2019 16:46:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D24E121D7C;
+        Tue, 24 Sep 2019 16:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343590;
-        bh=11lJkN1wtJ5AhK02O4kXnVotVpGg6k+q3v4S5ecZOKU=;
+        s=default; t=1569343592;
+        bh=bvp7U6owBiuRrjazjNW9vjE9/ElqnQAHUf39IoJDf2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UZMIUdCyU+CRU+yZbSTPmGlFHjDvAUiY7/pEuFw9LTbVpNxTa/YLdkOh5YEt5e5XC
-         P9cHa9RPRHPEHWl37Zypss9Y2d1VEcFP1K2gOecC6bCcW5OWy70KLcP5Tv8KC4Ou1n
-         xz3Zb9uNN4sJCTSqqt7lIm9jn440yiSbqYtuNJhQ=
+        b=zVg2XOEZf6ttAanKUllibUZlxtEAplTBJEi9DZAgRtJ7kHI6+RUH4UF0CFZ0qqnDZ
+         kY98wIWBzy0QU17/Z3XqrUd7JkGFbkjzHWTBvk7L9kGT1u1YVzrGM+amQTIlDUAJjl
+         0pDO7J3EYciUFWviuYTfBeVW3Un76dWTTNl7hbgc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Joel Savitz <jsavitz@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-pci@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 5.2 17/70] PCI: rpaphp: Avoid a sometimes-uninitialized warning
-Date:   Tue, 24 Sep 2019 12:44:56 -0400
-Message-Id: <20190924164549.27058-17-sashal@kernel.org>
+Cc:     Corey Minyard <cminyard@mvista.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 19/70] ipmi_si: Only schedule continuously in the thread in maintenance mode
+Date:   Tue, 24 Sep 2019 12:44:58 -0400
+Message-Id: <20190924164549.27058-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -47,85 +42,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-[ Upstream commit 0df3e42167caaf9f8c7b64de3da40a459979afe8 ]
+[ Upstream commit 340ff31ab00bca5c15915e70ad9ada3030c98cf8 ]
 
-When building with -Wsometimes-uninitialized, clang warns:
+ipmi_thread() uses back-to-back schedule() to poll for command
+completion which, on some machines, can push up CPU consumption and
+heavily tax the scheduler locks leading to noticeable overall
+performance degradation.
 
-drivers/pci/hotplug/rpaphp_core.c:243:14: warning: variable 'fndit' is
-used uninitialized whenever 'for' loop exits because its condition is
-false [-Wsometimes-uninitialized]
-        for (j = 0; j < entries; j++) {
-                    ^~~~~~~~~~~
-drivers/pci/hotplug/rpaphp_core.c:256:6: note: uninitialized use occurs
-here
-        if (fndit)
-            ^~~~~
-drivers/pci/hotplug/rpaphp_core.c:243:14: note: remove the condition if
-it is always true
-        for (j = 0; j < entries; j++) {
-                    ^~~~~~~~~~~
-drivers/pci/hotplug/rpaphp_core.c:233:14: note: initialize the variable
-'fndit' to silence this warning
-        int j, fndit;
-                    ^
-                     = 0
+This was originally added so firmware updates through IPMI would
+complete in a timely manner.  But we can't kill the scheduler
+locks for that one use case.
 
-fndit is only used to gate a sprintf call, which can be moved into the
-loop to simplify the code and eliminate the local variable, which will
-fix this warning.
+Instead, only run schedule() continuously in maintenance mode,
+where firmware updates should run.
 
-Fixes: 2fcf3ae508c2 ("hotplug/drc-info: Add code to search ibm,drc-info property")
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Acked-by: Tyrel Datwyler <tyreld@linux.ibm.com>
-Acked-by: Joel Savitz <jsavitz@redhat.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://github.com/ClangBuiltLinux/linux/issues/504
-Link: https://lore.kernel.org/r/20190603221157.58502-1-natechancellor@gmail.com
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/hotplug/rpaphp_core.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ drivers/char/ipmi/ipmi_si_intf.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-index bcd5d357ca238..c3899ee1db995 100644
---- a/drivers/pci/hotplug/rpaphp_core.c
-+++ b/drivers/pci/hotplug/rpaphp_core.c
-@@ -230,7 +230,7 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
- 	struct of_drc_info drc;
- 	const __be32 *value;
- 	char cell_drc_name[MAX_DRC_NAME_LEN];
--	int j, fndit;
-+	int j;
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index f124a2d2bb9f5..92a89c8290aa4 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -221,6 +221,9 @@ struct smi_info {
+ 	 */
+ 	bool irq_enable_broken;
  
- 	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
- 	if (info == NULL)
-@@ -245,17 +245,13 @@ static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
- 
- 		/* Should now know end of current entry */
- 
--		if (my_index > drc.last_drc_index)
--			continue;
--
--		fndit = 1;
--		break;
-+		/* Found it */
-+		if (my_index <= drc.last_drc_index) {
-+			sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix,
-+				my_index);
-+			break;
++	/* Is the driver in maintenance mode? */
++	bool in_maintenance_mode;
++
+ 	/*
+ 	 * Did we get an attention that we did not handle?
+ 	 */
+@@ -1007,11 +1010,20 @@ static int ipmi_thread(void *data)
+ 		spin_unlock_irqrestore(&(smi_info->si_lock), flags);
+ 		busy_wait = ipmi_thread_busy_wait(smi_result, smi_info,
+ 						  &busy_until);
+-		if (smi_result == SI_SM_CALL_WITHOUT_DELAY)
++		if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
+ 			; /* do nothing */
+-		else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait)
+-			schedule();
+-		else if (smi_result == SI_SM_IDLE) {
++		} else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait) {
++			/*
++			 * In maintenance mode we run as fast as
++			 * possible to allow firmware updates to
++			 * complete as fast as possible, but normally
++			 * don't bang on the scheduler.
++			 */
++			if (smi_info->in_maintenance_mode)
++				schedule();
++			else
++				usleep_range(100, 200);
++		} else if (smi_result == SI_SM_IDLE) {
+ 			if (atomic_read(&smi_info->need_watch)) {
+ 				schedule_timeout_interruptible(100);
+ 			} else {
+@@ -1019,8 +1031,9 @@ static int ipmi_thread(void *data)
+ 				__set_current_state(TASK_INTERRUPTIBLE);
+ 				schedule();
+ 			}
+-		} else
++		} else {
+ 			schedule_timeout_interruptible(1);
 +		}
  	}
--	/* Found it */
--
--	if (fndit)
--		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
--			my_index);
+ 	return 0;
+ }
+@@ -1198,6 +1211,7 @@ static void set_maintenance_mode(void *send_info, bool enable)
  
- 	if (((drc_name == NULL) ||
- 	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
+ 	if (!enable)
+ 		atomic_set(&smi_info->req_events, 0);
++	smi_info->in_maintenance_mode = enable;
+ }
+ 
+ static void shutdown_smi(void *send_info);
 -- 
 2.20.1
 
