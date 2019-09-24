@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 842F9BCD86
+	by mail.lfdr.de (Postfix) with ESMTP id EE1F3BCD87
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633265AbfIXQqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:46:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37260 "EHLO mail.kernel.org"
+        id S2633279AbfIXQqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390285AbfIXQqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:46:33 -0400
+        id S2633263AbfIXQqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D24E121D7C;
-        Tue, 24 Sep 2019 16:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCE0121D82;
+        Tue, 24 Sep 2019 16:46:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343592;
-        bh=bvp7U6owBiuRrjazjNW9vjE9/ElqnQAHUf39IoJDf2M=;
+        s=default; t=1569343598;
+        bh=RXz6wrou/rLsSHwyEPfyPMYLuJ/X2bB/HTRQZPCvBoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zVg2XOEZf6ttAanKUllibUZlxtEAplTBJEi9DZAgRtJ7kHI6+RUH4UF0CFZ0qqnDZ
-         kY98wIWBzy0QU17/Z3XqrUd7JkGFbkjzHWTBvk7L9kGT1u1YVzrGM+amQTIlDUAJjl
-         0pDO7J3EYciUFWviuYTfBeVW3Un76dWTTNl7hbgc=
+        b=qZEQ+KouidK6bsaSSLrC9pbWlfkNF9+KfuVP8HjOQG0nm424Qp64+ki20neofpz8y
+         Fnuy6iAuU3FLGh4aDZBEiIk6qTDSplwUdQkFkkvWKzAbxow9lDwXnFzpkTBI3Sd8y9
+         l4u8PkBDiIuTvQaHy39swhbvjPIZYSH8jTHdKBks=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Corey Minyard <cminyard@mvista.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 19/70] ipmi_si: Only schedule continuously in the thread in maintenance mode
-Date:   Tue, 24 Sep 2019 12:44:58 -0400
-Message-Id: <20190924164549.27058-19-sashal@kernel.org>
+Cc:     Anthony Koo <Anthony.Koo@amd.com>, Aric Cyr <Aric.Cyr@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 22/70] drm/amd/display: fix issue where 252-255 values are clipped
+Date:   Tue, 24 Sep 2019 12:45:01 -0400
+Message-Id: <20190924164549.27058-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -42,86 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Anthony Koo <Anthony.Koo@amd.com>
 
-[ Upstream commit 340ff31ab00bca5c15915e70ad9ada3030c98cf8 ]
+[ Upstream commit 1cbcfc975164f397b449efb17f59d81a703090db ]
 
-ipmi_thread() uses back-to-back schedule() to poll for command
-completion which, on some machines, can push up CPU consumption and
-heavily tax the scheduler locks leading to noticeable overall
-performance degradation.
+[Why]
+When endpoint is at the boundary of a region, such as at 2^0=1
+we find that the last segment has a sharp slope and some points
+are clipped at the top.
 
-This was originally added so firmware updates through IPMI would
-complete in a timely manner.  But we can't kill the scheduler
-locks for that one use case.
+[How]
+If end point is 1, which is exactly at the 2^0 region boundary, we
+need to program an additional region beyond this point.
 
-Instead, only run schedule() continuously in maintenance mode,
-where firmware updates should run.
-
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: Anthony Koo <Anthony.Koo@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_si_intf.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index f124a2d2bb9f5..92a89c8290aa4 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -221,6 +221,9 @@ struct smi_info {
- 	 */
- 	bool irq_enable_broken;
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
+index 7469333a2c8a5..8166fdbacd732 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
+@@ -357,9 +357,10 @@ bool cm_helper_translate_curve_to_hw_format(
+ 		seg_distr[7] = 4;
+ 		seg_distr[8] = 4;
+ 		seg_distr[9] = 4;
++		seg_distr[10] = 1;
  
-+	/* Is the driver in maintenance mode? */
-+	bool in_maintenance_mode;
-+
- 	/*
- 	 * Did we get an attention that we did not handle?
- 	 */
-@@ -1007,11 +1010,20 @@ static int ipmi_thread(void *data)
- 		spin_unlock_irqrestore(&(smi_info->si_lock), flags);
- 		busy_wait = ipmi_thread_busy_wait(smi_result, smi_info,
- 						  &busy_until);
--		if (smi_result == SI_SM_CALL_WITHOUT_DELAY)
-+		if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
- 			; /* do nothing */
--		else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait)
--			schedule();
--		else if (smi_result == SI_SM_IDLE) {
-+		} else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait) {
-+			/*
-+			 * In maintenance mode we run as fast as
-+			 * possible to allow firmware updates to
-+			 * complete as fast as possible, but normally
-+			 * don't bang on the scheduler.
-+			 */
-+			if (smi_info->in_maintenance_mode)
-+				schedule();
-+			else
-+				usleep_range(100, 200);
-+		} else if (smi_result == SI_SM_IDLE) {
- 			if (atomic_read(&smi_info->need_watch)) {
- 				schedule_timeout_interruptible(100);
- 			} else {
-@@ -1019,8 +1031,9 @@ static int ipmi_thread(void *data)
- 				__set_current_state(TASK_INTERRUPTIBLE);
- 				schedule();
- 			}
--		} else
-+		} else {
- 			schedule_timeout_interruptible(1);
-+		}
+ 		region_start = -10;
+-		region_end = 0;
++		region_end = 1;
  	}
- 	return 0;
- }
-@@ -1198,6 +1211,7 @@ static void set_maintenance_mode(void *send_info, bool enable)
  
- 	if (!enable)
- 		atomic_set(&smi_info->req_events, 0);
-+	smi_info->in_maintenance_mode = enable;
- }
- 
- static void shutdown_smi(void *send_info);
+ 	for (i = region_end - region_start; i < MAX_REGIONS_NUMBER ; i++)
 -- 
 2.20.1
 
