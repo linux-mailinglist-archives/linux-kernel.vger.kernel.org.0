@@ -2,118 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6D4BC9DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38AB7BC9E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436892AbfIXOKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 10:10:30 -0400
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:42548 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409712AbfIXOKa (ORCPT
+        id S2441256AbfIXOMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 10:12:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45938 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730491AbfIXOMA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 10:10:30 -0400
-Received: by mail-wr1-f49.google.com with SMTP id n14so2120057wrw.9
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 07:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=CD8NXjWHXI1PHdT+Yt5q2iCIoHrQv0Ncx4K7iwz1VKY=;
-        b=zBxpjFaP7l2EinUCWp0CpW2Sg1KTXXAkWldWE1wejALSHl3jp0sFDuHfH9Gi2HC2Au
-         kzQ8eNjBepwuBE+WbnhNaJeaA2YgNuzXB5kwhQzzLXinKPvQCT716XwpcJ0OQwEW4Q1k
-         mYBZVNfAVOI9FS3MUBcZFqmEz8BMf5scqsMrQSYS7a0Jda+62JkKZCi45L2ODbr/7ITr
-         EoZCg4hKA2dNdppOt/WLSZcVso9BHBuKo+dAoQSrK79NYYuSijPjb9/ZAnfpmak9bhlW
-         Khimacswau6lOgHXL5Nurct25X6UOV0+d8wHpX6mo9I/A7DTGUsuFceEWn1DJa/iOWon
-         b9dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=CD8NXjWHXI1PHdT+Yt5q2iCIoHrQv0Ncx4K7iwz1VKY=;
-        b=VYTmq+obH/icdYDcAdAX3El5+vJcVR21KXVqMC6QSe4gI3LEwgz48SgfSHFlGtL5Zz
-         cFMqZv3pieL7jtnsygKzKDtfMfUJlgmKHhtTdfm57CePh5VyGr8FLLMW9/tzpEuRnNZu
-         J5o2DeA5Hf/wUBgYWm7Nab5fHtnJ7luIZduSWuB5eq1qhWO5YW3iVbFJ2L5w6TzJdpiH
-         colxxydWAFszolfLR9jw2SUmJd0jh4w4GhwZxEwRjH6M8mD4msrcEeKWlIRFmDvWOKd+
-         1FnIBBV+Jcern1ih3hgIdesHpdtvA/JZqxPUStaa3WCX9Rcu+T2i0VIJjRE0ASRn57Wo
-         yTvQ==
-X-Gm-Message-State: APjAAAVtgp5zCf1e6hVKww4gvotCCWZ1gkhOkag00Rab/OlvvI8+v05F
-        nYjAUPIAddwknX48pyk8fT5zbg==
-X-Google-Smtp-Source: APXvYqyxcFFWxlfEByHp+UI2Ozbsm+7ZlCpzeuoY03TS06zxKMIrzCq38xzQB0qK8eF54jJ/spcLAg==
-X-Received: by 2002:adf:e7ca:: with SMTP id e10mr2442564wrn.234.1569334227683;
-        Tue, 24 Sep 2019 07:10:27 -0700 (PDT)
-Received: from localhost (uluru.liltaz.com. [163.172.81.188])
-        by smtp.gmail.com with ESMTPSA id f83sm61195wmf.43.2019.09.24.07.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2019 07:10:26 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Ankur Tyagi <Ankur.Tyagi@gallagher.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tero Kristo <t-kristo@ti.com>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-amlogic\@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-arm-msm\@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-rockchip\@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-omap\@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: RE: [PATCH 2/3] clk: let init callback return an error code
-In-Reply-To: <ME2PR01MB4738B127557AE20F6315AA7FE5840@ME2PR01MB4738.ausprd01.prod.outlook.com>
-References: <20190924123954.31561-1-jbrunet@baylibre.com> <20190924123954.31561-3-jbrunet@baylibre.com> <ME2PR01MB4738B127557AE20F6315AA7FE5840@ME2PR01MB4738.ausprd01.prod.outlook.com>
-Date:   Tue, 24 Sep 2019 16:10:25 +0200
-Message-ID: <1jv9thlr8u.fsf@starbuckisacylon.baylibre.com>
+        Tue, 24 Sep 2019 10:12:00 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8OE9thY048021;
+        Tue, 24 Sep 2019 14:11:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=AkqHICb3Rv9Y4nE27Lsc42IJ4riOSFUvurUNqZZ440Y=;
+ b=XedxqpcmhIQo9c73WDaxFGaxa0Bp0wmxoyhW99yubHUWE8nNv1MStzP8D0+7Q6FPsxpH
+ noBDVZw2bRaxzHk616czB4vPFgRxOEPGMHk9rEYLlVk33f6z0Y/HOnFXSu2+8MnHel2W
+ Hx6Leu3at1OyPw7gDQb/cxOk05tonHy5u3bwPRq9fxj7qoEQlBsafzw+riz4Yj42ZVZC
+ kj8Y+n7I9JNb3OuoLBW1RFb027bUH/Gfroq9Ve6cGlht/jX620dTZCXs2TH+NXkObaNK
+ RpOAIdUg4RiXeP8en+RPu5/1jsEl8tXl5vB5ub0kRnHcpa1XedfD3ABM8k5nDDUIHXGI rw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2v5btpxcb2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Sep 2019 14:11:23 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8OEBBLq022074;
+        Tue, 24 Sep 2019 14:11:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2v6yvns3du-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Sep 2019 14:11:22 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8OEBBVj026601;
+        Tue, 24 Sep 2019 14:11:11 GMT
+Received: from [10.154.189.242] (/10.154.189.242)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 24 Sep 2019 07:11:11 -0700
+Subject: Re: [RFC] mm: Proactive compaction
+To:     Vlastimil Babka <vbabka@suse.cz>, Nitin Gupta <nigupta@nvidia.com>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+Cc:     "cai@lca.pw" <cai@lca.pw>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
+        "jannh@google.com" <jannh@google.com>, "guro@fb.com" <guro@fb.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "yuzhao@google.com" <yuzhao@google.com>,
+        "arunks@codeaurora.org" <arunks@codeaurora.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "janne.huttunen@nokia.com" <janne.huttunen@nokia.com>,
+        "khlebnikov@yandex-team.ru" <khlebnikov@yandex-team.ru>
+References: <20190816214413.15006-1-nigupta@nvidia.com>
+ <87634ddc-8bfd-8311-46c4-35f7dc32d42f@suse.cz>
+ <7bbd5322ed7a7fcb349c83952f8fc17448cd07d8.camel@nvidia.com>
+ <71d7fba0-bd6f-3ac5-1fd8-9a8ff6fc6b8b@suse.cz>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <d33fce4d-6018-0235-5391-debc8974eda5@oracle.com>
+Date:   Tue, 24 Sep 2019 08:11:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <71d7fba0-bd6f-3ac5-1fd8-9a8ff6fc6b8b@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909240140
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9389 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909240140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24 Sep 2019 at 13:38, Ankur Tyagi <Ankur.Tyagi@gallagher.com> wrote:
-
-> Hi,
->
-> I am no expert here but just looked at the patch and found few
-> discrepancy that I have mentioned inline.
->
-
-[...]
-
->
-> Aren't all functions returning 0 always?
->
-
-Yes, on purpose. This patch is an API conversion to let the init()
-callback of the clock ops return an error code or 0.
-
-The patch is not meant to change anything in the prior behavior of the
-clock drivers which is why every exit path return 0 with this change.
-
-IOW, yes there are all returning 0 for now, but it will eventually
-change.
-
-
->>   *
->>   * @debug_init:Set up type-specific debugfs entries for this clock.  This
->>   *is called once, after the debugfs directory entry for this
->> @@ -243,7 +247,7 @@ struct clk_ops {
->>    struct clk_duty *duty);
->>  int(*set_duty_cycle)(struct clk_hw *hw,
->>    struct clk_duty *duty);
->> -void(*init)(struct clk_hw *hw);
->> +int(*init)(struct clk_hw *hw);
->>  void(*debug_init)(struct clk_hw *hw, struct dentry *dentry);
->>  };
+On 9/24/19 7:39 AM, Vlastimil Babka wrote:
+> On 9/20/19 1:37 AM, Nitin Gupta wrote:
+>> On Tue, 2019-08-20 at 10:46 +0200, Vlastimil Babka wrote:
+>>>
+>>> That's a lot of control knobs - how is an admin supposed to tune them=
+ to
+>>> their
+>>> needs?
 >>
->> --
->> 2.21.0
->
-> ________________________________
->  This email is confidential and may contain information subject to legal privilege. If you are not the intended recipient please advise us of our error by return e-mail then delete this email and any attached files. You may not copy, disclose or use the contents in any way. The views expressed in this email may not be those of Gallagher Group Ltd or subsidiary companies thereof.
-> ________________________________
+>>
+>> Yes, it's difficult for an admin to get so many tunable right unless
+>> targeting a very specific workload.
+>>
+>> How about a simpler solution where we exposed just one tunable per-nod=
+e:
+>>    /sys/.../node-x/compaction_effort
+>> which accepts [0, 100]
+>>
+>> This parallels /proc/sys/vm/swappiness but for compaction. With this
+>> single number, we can estimate per-order [low, high] watermarks for ex=
+ternal
+>> fragmentation like this:
+>>  - For now, map this range to [low, medium, high] which correponds to =
+specific
+>> low, high thresholds for extfrag.
+>>  - Apply more relaxed thresholds for higher-order than for lower order=
+s.
+>>
+>> With this single tunable we remove the burden of setting per-order exp=
+licit
+>> [low, high] thresholds and it should be easier to experiment with.
+>=20
+> What about instead autotuning by the numbers of allocations hitting
+> direct compaction recently? IIRC there were attempts in the past (mysel=
+f
+> included) and recently Khalid's that was quite elaborated.
+>=20
+
+I do think the right way forward with this longstanding problem is to
+take the burden of managing free memory away from end user and let the
+kernel autotune itself to the demands of workload. We can start with a
+simpler algorithm in the kernel that adapts to workload and refine it as
+we move forward. As long as initial implementation performs at least as
+well as current free page management, we have a workable path for
+improvements. I am moving the implementation I put together in kernel to
+a userspace daemon just to test it out on larger variety of workloads.
+It is more limited in userspace with limited access to statistics the
+algorithm needs to perform trend analysis so I would rather be doing
+this in the kernel.
+
+--
+Khalid
+
