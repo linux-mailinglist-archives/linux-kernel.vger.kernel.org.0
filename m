@@ -2,276 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8221DBCB68
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ADF6BCB77
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389668AbfIXPao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 11:30:44 -0400
-Received: from mga18.intel.com ([134.134.136.126]:47824 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389524AbfIXPao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 11:30:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2019 08:30:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,544,1559545200"; 
-   d="scan'208";a="195727916"
-Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
-  by FMSMGA003.fm.intel.com with ESMTP; 24 Sep 2019 08:30:42 -0700
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, sean.j.christopherson@intel.com
-Cc:     Yang Weijiang <weijiang.yang@intel.com>
-Subject: [PATCH] KVM: CPUID: Fix IA32_XSS support in CPUID(0xd,i) enumeration
-Date:   Tue, 24 Sep 2019 23:32:50 +0800
-Message-Id: <20190924153250.20315-1-weijiang.yang@intel.com>
-X-Mailer: git-send-email 2.17.2
+        id S2389856AbfIXPdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 11:33:31 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39396 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728702AbfIXPdb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 11:33:31 -0400
+Received: by mail-pl1-f196.google.com with SMTP id s17so1148486plp.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 08:33:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=bPgGMeHX52Zgve81Fb6Zz6kKe0AroWoZpYr70OMqndQ=;
+        b=niHE/crmYUFDmG2qHk6Z6QdYguIBLD9lHVWxW4LF7yKqKYbRitFfr+0vKA63CJ0hAN
+         bJPlZqyqCPJw734HH3FogzEY6fk3Txx01LalDLW3r6iUp22jo/lt3QtI2hXsWeKXVtYx
+         ItFzcpG+DKelvqsowc7kHnH1AWK56a36oI+bO/fZm4LxdksbTUbFwOUW/VXbEXrkTHJ9
+         hoEhUu4KhYygR+6FUS11vhGcWZLQmln2c+GoeorihGal1f5B4WHE0hS+KoaZFKwMvlKf
+         42ajOM23xKdWRlihesYjluu02R0FaDnf+y7hCWVI1W219RFWjP/IQ9ysVnDYtAP8Pd0l
+         oZGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=bPgGMeHX52Zgve81Fb6Zz6kKe0AroWoZpYr70OMqndQ=;
+        b=iUxHCvHWIgRj1t+XWW/qVHTMGrhY4+Wfa2AWU8mFFTbgPb5qxWpEwhobeL8mVC6OhQ
+         gc8Yph5dnHyiiFLhioPIbvBBBznWT2MQ6pA1USfXlLBrzaEFT8hbIMsoEYZOSQ55AAbG
+         oR4BZGs7m1B42m0AdEHHyUWGjaKNAPnCBG3hR0iC4NAwtjo3nAJA7gCGBvfggKoRVyRn
+         ijKWFeplCqAdxkwS3sgaslFoA6AUblO3iGEPPBvXRmBw8gFYhQ0qZNEAi3HLkJ5YdqdL
+         ZdyZgGzYkDm7v5SAr1sq9aapY/2ANs7f+/N99lf/6j16br0BkAJinbymDrzZD5EUqMF3
+         sBGA==
+X-Gm-Message-State: APjAAAWalSClx9yPydgYQVfyZR8IRTcvmdpWSTd04YYelwyOqE9YyfLC
+        AFrYopHlqIDfge1BKRwe15U=
+X-Google-Smtp-Source: APXvYqwYd6NWFBfPfig6VqCOebE6z1UI9i+Zo+Nhn/fhKAa2mnu5o8QTRu3d8DsXmMPM+DWf9kunnA==
+X-Received: by 2002:a17:902:242:: with SMTP id 60mr3856083plc.86.1569339209842;
+        Tue, 24 Sep 2019 08:33:29 -0700 (PDT)
+Received: from linux.eic.com ([103.249.233.35])
+        by smtp.gmail.com with ESMTPSA id e192sm2621566pfh.83.2019.09.24.08.33.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 08:33:29 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 21:03:17 +0530
+From:   Chetan Kankotiya <chetankankotiya@gmail.com>
+To:     plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: sdm845: remove unnecessary goto
+Message-ID: <20190924153317.GA23893@linux.eic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The control bits in IA32_XSS MSR are being used for new features,
-but current CPUID(0xd,i) enumeration code doesn't support them, so
-fix existing code first.
+There is no specific handling in the error path of
+sdm845_tdm_snd_hw_params, remove the unnecessary goto and label.
+As there is no specific handling in error path return with error code
+directly.
 
-The supervisor states in IA32_XSS haven't been used in public
-KVM code, so set KVM_SUPPORTED_XSS to 0 now, anyone who's developing
-IA32_XSS related feature may expand the macro to add the CPUID support,
-otherwise, CPUID(0xd,i>1) always reports 0 of the subleaf to guest.
-
-Extracted old code into a new filter and keep it same flavor as others.
-
-This patch passed selftest on a few Intel platforms.
-
-Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+Signed-off-by: Chetan Kankotiya <chetankankotiya@gmail.com>
 ---
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/cpuid.c            | 94 +++++++++++++++++++++------------
- arch/x86/kvm/svm.c              |  7 +++
- arch/x86/kvm/vmx/vmx.c          |  6 +++
- arch/x86/kvm/x86.h              |  7 +++
- 5 files changed, 82 insertions(+), 33 deletions(-)
+ sound/soc/qcom/sdm845.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 74e88e5edd9c..d018df8c5f32 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1209,6 +1209,7 @@ struct kvm_x86_ops {
- 	uint16_t (*nested_get_evmcs_version)(struct kvm_vcpu *vcpu);
- 
- 	bool (*need_emulation_on_page_fault)(struct kvm_vcpu *vcpu);
-+	u64 (*supported_xss)(void);
- };
- 
- struct kvm_arch_async_pf {
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 22c2720cd948..9d282fec0a62 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -62,6 +62,11 @@ u64 kvm_supported_xcr0(void)
- 	return xcr0;
- }
- 
-+u64 kvm_supported_xss(void)
-+{
-+	return KVM_SUPPORTED_XSS & kvm_x86_ops->supported_xss();
-+}
-+
- #define F(x) bit(X86_FEATURE_##x)
- 
- int kvm_update_cpuid(struct kvm_vcpu *vcpu)
-@@ -414,6 +419,50 @@ static inline void do_cpuid_7_mask(struct kvm_cpuid_entry2 *entry, int index)
- 	}
- }
- 
-+static inline void do_cpuid_0xd_mask(struct kvm_cpuid_entry2 *entry, int index)
-+{
-+	unsigned int f_xsaves = kvm_x86_ops->xsaves_supported() ? F(XSAVES) : 0;
-+	/* cpuid 0xD.1.eax */
-+	const u32 kvm_cpuid_D_1_eax_x86_features =
-+		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | f_xsaves;
-+	u64 u_supported = kvm_supported_xcr0();
-+	u64 s_supported = kvm_supported_xss();
-+	u64 supported;
-+
-+	switch (index) {
-+	case 0:
-+		entry->eax &= u_supported;
-+		entry->ebx = xstate_required_size(u_supported, false);
-+		entry->ecx = entry->ebx;
-+		entry->edx = 0;
-+		break;
-+	case 1:
-+		supported = u_supported | s_supported;
-+		entry->eax &= kvm_cpuid_D_1_eax_x86_features;
-+		cpuid_mask(&entry->eax, CPUID_D_1_EAX);
-+		entry->ebx = 0;
-+		entry->edx = 0;
-+		entry->ecx &= s_supported;
-+		if (entry->eax & (F(XSAVES) | F(XSAVEC)))
-+			entry->ebx = xstate_required_size(supported, true);
-+
-+		break;
-+	default:
-+		supported = (entry->ecx & 1) ? s_supported : u_supported;
-+		if (!(supported & ((u64)1 << index))) {
-+			entry->eax = 0;
-+			entry->ebx = 0;
-+			entry->ecx = 0;
-+			entry->edx = 0;
-+			return;
-+		}
-+		if (entry->ecx)
-+			entry->ebx = 0;
-+		entry->edx = 0;
-+		break;
-+	}
-+}
-+
- static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
- 				  int *nent, int maxnent)
- {
-@@ -428,7 +477,6 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
- 	unsigned f_lm = 0;
- #endif
- 	unsigned f_rdtscp = kvm_x86_ops->rdtscp_supported() ? F(RDTSCP) : 0;
--	unsigned f_xsaves = kvm_x86_ops->xsaves_supported() ? F(XSAVES) : 0;
- 	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
- 
- 	/* cpuid 1.edx */
-@@ -482,10 +530,6 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
- 		F(ACE2) | F(ACE2_EN) | F(PHE) | F(PHE_EN) |
- 		F(PMM) | F(PMM_EN);
- 
--	/* cpuid 0xD.1.eax */
--	const u32 kvm_cpuid_D_1_eax_x86_features =
--		F(XSAVEOPT) | F(XSAVEC) | F(XGETBV1) | f_xsaves;
--
- 	/* all calls to cpuid_count() should be made on the same cpu */
- 	get_cpu();
- 
-@@ -622,38 +666,22 @@ static inline int __do_cpuid_func(struct kvm_cpuid_entry2 *entry, u32 function,
- 		break;
- 	}
- 	case 0xd: {
--		int idx, i;
--		u64 supported = kvm_supported_xcr0();
--
--		entry->eax &= supported;
--		entry->ebx = xstate_required_size(supported, false);
--		entry->ecx = entry->ebx;
--		entry->edx &= supported >> 32;
--		if (!supported)
--			break;
-+		int i, idx;
- 
--		for (idx = 1, i = 1; idx < 64; ++idx) {
--			u64 mask = ((u64)1 << idx);
-+		do_cpuid_0xd_mask(&entry[0], 0);
-+		for (i = 1, idx = 1; idx < 64; ++idx) {
- 			if (*nent >= maxnent)
- 				goto out;
--
- 			do_host_cpuid(&entry[i], function, idx);
--			if (idx == 1) {
--				entry[i].eax &= kvm_cpuid_D_1_eax_x86_features;
--				cpuid_mask(&entry[i].eax, CPUID_D_1_EAX);
--				entry[i].ebx = 0;
--				if (entry[i].eax & (F(XSAVES)|F(XSAVEC)))
--					entry[i].ebx =
--						xstate_required_size(supported,
--								     true);
--			} else {
--				if (entry[i].eax == 0 || !(supported & mask))
--					continue;
--				if (WARN_ON_ONCE(entry[i].ecx & 1))
--					continue;
--			}
--			entry[i].ecx = 0;
--			entry[i].edx = 0;
-+			if (entry[i].eax == 0 && entry[i].ebx == 0 &&
-+			    entry[i].ecx == 0 && entry[i].edx == 0)
-+				continue;
-+
-+			do_cpuid_0xd_mask(&entry[i], idx);
-+			if (entry[i].eax == 0 && entry[i].ebx == 0 &&
-+			    entry[i].ecx == 0 && entry[i].edx == 0)
-+				continue;
-+
- 			++*nent;
- 			++i;
+diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
+index 28f3cef696e6..e9d6588e61ee 100644
+--- a/sound/soc/qcom/sdm845.c
++++ b/sound/soc/qcom/sdm845.c
+@@ -61,7 +61,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ 		if (ret < 0) {
+ 			dev_err(rtd->dev, "%s: failed to set tdm slot, err:%d\n",
+ 					__func__, ret);
+-			goto end;
++			return ret;
  		}
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index e0368076a1ef..be967bf9a81d 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -7193,6 +7193,11 @@ static bool svm_need_emulation_on_page_fault(struct kvm_vcpu *vcpu)
- 	return false;
- }
  
-+static u64 svm_supported_xss(void)
-+{
+ 		ret = snd_soc_dai_set_channel_map(cpu_dai, 0, NULL,
+@@ -69,7 +69,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ 		if (ret < 0) {
+ 			dev_err(rtd->dev, "%s: failed to set channel map, err:%d\n",
+ 					__func__, ret);
+-			goto end;
++			return ret;
+ 		}
+ 	} else {
+ 		ret = snd_soc_dai_set_tdm_slot(cpu_dai, 0xf, 0,
+@@ -77,7 +77,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ 		if (ret < 0) {
+ 			dev_err(rtd->dev, "%s: failed to set tdm slot, err:%d\n",
+ 					__func__, ret);
+-			goto end;
++			return ret;
+ 		}
+ 
+ 		ret = snd_soc_dai_set_channel_map(cpu_dai, channels,
+@@ -85,7 +85,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ 		if (ret < 0) {
+ 			dev_err(rtd->dev, "%s: failed to set channel map, err:%d\n",
+ 					__func__, ret);
+-			goto end;
++			return ret;
+ 		}
+ 	}
+ 
+@@ -117,8 +117,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
+-end:
+-	return ret;
 +	return 0;
-+}
-+
- static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.cpu_has_kvm_support = has_svm,
- 	.disabled_by_bios = is_disabled,
-@@ -7329,6 +7334,8 @@ static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
- 	.nested_get_evmcs_version = NULL,
- 
- 	.need_emulation_on_page_fault = svm_need_emulation_on_page_fault,
-+
-+	.supported_xss = svm_supported_xss,
- };
- 
- static int __init svm_init(void)
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index c6f6b05004d9..a84198cff397 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1651,6 +1651,11 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
- 	return !(val & ~valid_bits);
  }
  
-+static inline u64 vmx_supported_xss(void)
-+{
-+	return host_xss;
-+}
-+
- static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
- {
- 	switch (msr->index) {
-@@ -7799,6 +7804,7 @@ static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
- 	.nested_enable_evmcs = NULL,
- 	.nested_get_evmcs_version = NULL,
- 	.need_emulation_on_page_fault = vmx_need_emulation_on_page_fault,
-+	.supported_xss = vmx_supported_xss,
- };
- 
- static void vmx_cleanup_l1d_flush(void)
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index 6594020c0691..fbffabad0370 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -293,6 +293,13 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, unsigned long cr2,
- 				| XFEATURE_MASK_YMM | XFEATURE_MASK_BNDREGS \
- 				| XFEATURE_MASK_BNDCSR | XFEATURE_MASK_AVX512 \
- 				| XFEATURE_MASK_PKRU)
-+
-+/*
-+ * Right now, no XSS states are used on x86 platform,
-+ * expand the macro for new features.
-+ */
-+#define KVM_SUPPORTED_XSS	(0)
-+
- extern u64 host_xcr0;
- 
- extern u64 kvm_supported_xcr0(void);
+ static int sdm845_snd_hw_params(struct snd_pcm_substream *substream,
 -- 
-2.17.2
+2.20.1
 
