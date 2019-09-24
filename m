@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAEEDBCCEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:43:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A236BCD15
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632898AbfIXQnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:43:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
+        id S2632910AbfIXQnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:43:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2632832AbfIXQmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:42:53 -0400
+        id S2632851AbfIXQm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:42:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EAB8217F4;
-        Tue, 24 Sep 2019 16:42:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F6F120872;
+        Tue, 24 Sep 2019 16:42:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343373;
-        bh=WluHTX10qG7RAA57oEeBHSjMqLz0IzntlDMWX8RpLdQ=;
+        s=default; t=1569343378;
+        bh=bNCnRboeCVn87mOl7ww26nNSv6sQjpBOKLRnr2WZNgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bOyujpE5OlSTGdyyGZIPNx9trc16i4cXk4EptUmrKwLqXpGCVwPWZhdMTa+MONZwz
-         kkQ50GLBHNkJ9SNYFTDUmECMw7BEJYbEz4v4o1jWiwkOReDPIBqSWhyInV5CvLuLIi
-         hRrBuwzvpYbhJ12vPtSTC+RyWY7JVTNqiUcrlgNs=
+        b=G+ED3QqjkdB2PsGj+POyJErZhShzEGBAcTDAPLvST1VZ0sFYYNOuJA6w6y+7Le5x+
+         anphW9picA49k7GD9SUd1ODBZ2TMlVea6ZqJ8lUlXLU1mqMidy3rcMzZVV0sEALHn3
+         yLuBOE2powQcC50Viyy8phtSlniBZpefWIYmIldY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+Cc:     Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Scott Wood <oss@buserror.net>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 23/87] clk: imx8mq: Mark AHB clock as critical
-Date:   Tue, 24 Sep 2019 12:40:39 -0400
-Message-Id: <20190924164144.25591-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 27/87] clk: qoriq: Fix -Wunused-const-variable
+Date:   Tue, 24 Sep 2019 12:40:43 -0400
+Message-Id: <20190924164144.25591-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -44,46 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abel Vesa <abel.vesa@nxp.com>
+From: Nathan Huckleberry <nhuck@google.com>
 
-[ Upstream commit 9b9c60bed562c3718ae324a86f3f30a4ff983cf8 ]
+[ Upstream commit a95fb581b144b5e73da382eaedb2e32027610597 ]
 
-Initially, the TMU_ROOT clock was marked as critical, which automatically
-made the AHB clock to stay always on. Since the TMU_ROOT clock is not
-marked as critical anymore, following commit:
+drivers/clk/clk-qoriq.c:138:38: warning: unused variable
+'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp1
 
-"clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT"
+drivers/clk/clk-qoriq.c:146:38: warning: unused variable
+'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp2
 
-all the clocks that derive from ipg_root clock (and implicitly ahb clock)
-would also have to enable, along with their own gate, the AHB clock.
+In the definition of the p5020 chip, the p2041 chip's info was used
+instead.  The p5020 and p2041 chips have different info. This is most
+likely a typo.
 
-But considering that AHB is actually a bus that has to be always on, we mark
-it as critical in the clock provider driver and then all the clocks that
-derive from it can be controlled through the dedicated per IP gate which
-follows after the ipg_root clock.
-
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/525
+Cc: clang-built-linux@googlegroups.com
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Link: https://lkml.kernel.org/r/20190627220642.78575-1-nhuck@google.com
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Scott Wood <oss@buserror.net>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx8mq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk-qoriq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index d407a07e7e6dd..e07c69afc3594 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -406,7 +406,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	clks[IMX8MQ_CLK_NOC_APB] = imx8m_clk_composite_critical("noc_apb", imx8mq_noc_apb_sels, base + 0x8d80);
- 
- 	/* AHB */
--	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite("ahb", imx8mq_ahb_sels, base + 0x9000);
-+	/* AHB clock is used by the AHB bus therefore marked as critical */
-+	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite_critical("ahb", imx8mq_ahb_sels, base + 0x9000);
- 	clks[IMX8MQ_CLK_AUDIO_AHB] = imx8m_clk_composite("audio_ahb", imx8mq_audio_ahb_sels, base + 0x9100);
- 
- 	/* IPG */
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 07f3b252f3e0c..bed140f7375f0 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -686,7 +686,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p5020_init_periph,
+ 		.cmux_groups = {
+-			&p2041_cmux_grp1, &p2041_cmux_grp2
++			&p5020_cmux_grp1, &p5020_cmux_grp2
+ 		},
+ 		.cmux_to_group = {
+ 			0, 1, -1
 -- 
 2.20.1
 
