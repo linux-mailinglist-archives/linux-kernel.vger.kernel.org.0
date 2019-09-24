@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB22BCE29
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30EE3BCE2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404808AbfIXQtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:49:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41424 "EHLO mail.kernel.org"
+        id S2406561AbfIXQtZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:49:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404651AbfIXQtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:12 -0400
+        id S2410294AbfIXQtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A91D217D9;
-        Tue, 24 Sep 2019 16:49:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F8D020673;
+        Tue, 24 Sep 2019 16:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343752;
-        bh=8+Q61p1nO2TGy2yeA+CnpmaJNs2+Q8eCuUlUoLVx6KI=;
+        s=default; t=1569343755;
+        bh=ZW7DZIoYB8ha0qMnMTt72e6WQLNti6SiK+zXWEE454I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tr+5eZWl2dgoe5V/rQ5UlhgU4C+iTmxbeOoC8dsPL0nxSLuuHBTXpW0WNLq2xB8l0
-         a5uHE9+j3elWcQ8iGrrLTba+FwyN+Q+dKfeYVrE1srVZonZZQR5HKwrgS5dbQ4otKJ
-         LJAEz+XbPD1hdnLVwMaH09Cw4K/jcg+NMKKZ71G0=
+        b=kmXs9Ity0b9XlYyrF1OPjhl8X+S4fpIjeiv4Br20BCCdEsb30SrTsB/cW8wA1bOza
+         QhiEFjh4B/iOAl9AKUdCKv5g9R3Jgx2LTD1xRNfaQFIT1NZ/1XN5LZJcMwqYIVkQ3q
+         LxvJa8NyoIcgj1VCVV0dfryYLn8mh3KAVYprZDms=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anthony Koo <Anthony.Koo@amd.com>, Aric Cyr <Aric.Cyr@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
+Cc:     Lewis Huang <Lewis.Huang@amd.com>, Jun Lei <Jun.Lei@amd.com>,
+        Eric Yang <eric.yang2@amd.com>, Leo Li <sunpeng.li@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 15/50] drm/amd/display: fix issue where 252-255 values are clipped
-Date:   Tue, 24 Sep 2019 12:48:12 -0400
-Message-Id: <20190924164847.27780-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 16/50] drm/amd/display: reprogram VM config when system resume
+Date:   Tue, 24 Sep 2019 12:48:13 -0400
+Message-Id: <20190924164847.27780-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -45,44 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anthony Koo <Anthony.Koo@amd.com>
+From: Lewis Huang <Lewis.Huang@amd.com>
 
-[ Upstream commit 1cbcfc975164f397b449efb17f59d81a703090db ]
+[ Upstream commit e5382701c3520b3ed66169a6e4aa6ce5df8c56e0 ]
 
 [Why]
-When endpoint is at the boundary of a region, such as at 2^0=1
-we find that the last segment has a sharp slope and some points
-are clipped at the top.
+The vm config will be clear to 0 when system enter S4. It will
+cause hubbub didn't know how to fetch data when system resume.
+The flip always pending because earliest_inuse_address and
+request_address are different.
 
 [How]
-If end point is 1, which is exactly at the 2^0 region boundary, we
-need to program an additional region beyond this point.
+Reprogram VM config when system resume
 
-Signed-off-by: Anthony Koo <Anthony.Koo@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Signed-off-by: Lewis Huang <Lewis.Huang@amd.com>
+Reviewed-by: Jun Lei <Jun.Lei@amd.com>
+Acked-by: Eric Yang <eric.yang2@amd.com>
 Acked-by: Leo Li <sunpeng.li@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
-index 5d95a997fd9f9..f8904f73f57b0 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_cm_common.c
-@@ -292,9 +292,10 @@ bool cm_helper_translate_curve_to_hw_format(
- 		seg_distr[7] = 4;
- 		seg_distr[8] = 4;
- 		seg_distr[9] = 4;
-+		seg_distr[10] = 1;
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index f4b89d1ea6f6f..2b2efe443c36d 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -1585,6 +1585,14 @@ void dc_set_power_state(
+ 		dc_resource_state_construct(dc, dc->current_state);
  
- 		region_start = -10;
--		region_end = 0;
-+		region_end = 1;
- 	}
+ 		dc->hwss.init_hw(dc);
++
++#ifdef CONFIG_DRM_AMD_DC_DCN2_0
++		if (dc->hwss.init_sys_ctx != NULL &&
++			dc->vm_pa_config.valid) {
++			dc->hwss.init_sys_ctx(dc->hwseq, dc, &dc->vm_pa_config);
++		}
++#endif
++
+ 		break;
+ 	default:
  
- 	for (i = region_end - region_start; i < MAX_REGIONS_NUMBER ; i++)
 -- 
 2.20.1
 
