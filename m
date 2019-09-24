@@ -2,90 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79C06BCA52
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 436CCBCA51
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441403AbfIXOgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 10:36:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57050 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2441388AbfIXOgC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2441387AbfIXOgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 24 Sep 2019 10:36:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FAF2KEuVywTXvUEC+UnNSL/cvqImCgZf29SUY3mXs9I=; b=l0zfszDIfgH2fYk+8StPK4gy9
-        i3QEb7JKY9NGYQIc2td3Abje5qJna0y8DA7sqMNbackVPyEVkUkSnaY9V+Dmt9ZW86AyFVkySTLN1
-        CvSiGGth5ZK5/YO9hBFCZY5DhPL1mep4PzqYCm6EyY9U9TsOoMVIvAYQPUbtxf9iLYAh0z1Igmlad
-        OQ9IZlIErdOEvUrqnPBZqtGJb+XEUYWOC2S9xtvgBgFt+ulLRm3FuXPI2NP4vvzFMwC+YXY9pwbO1
-        aLnjxakWeD84PJ7KFzGPqbH8+syR7Bm5cVa01HjF2nofuogQYnMCC7U47U+nI0UK2yod00tY50Ubp
-        DoGABfyVQ==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iClv4-00040z-Nc; Tue, 24 Sep 2019 14:35:58 +0000
-Subject: Re: [PATCH 1/4] dma: Add PTDMA Engine driver support
-To:     "Mehta, Sanju" <Sanju.Mehta@amd.com>,
-        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
-        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>,
-        "Kumar, Rajesh" <Rajesh1.Kumar@amd.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
-References: <1569310272-29153-1-git-send-email-Sanju.Mehta@amd.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <064f3abe-7d6c-0ab3-1362-61ba6b09840e@infradead.org>
-Date:   Tue, 24 Sep 2019 07:35:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+Received: from mx2.suse.de ([195.135.220.15]:43214 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389297AbfIXOgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 10:36:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BF31EAD35;
+        Tue, 24 Sep 2019 14:36:00 +0000 (UTC)
+Date:   Tue, 24 Sep 2019 16:36:00 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mircea CIRJALIU - MELIU <mcirjaliu@bitdefender.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cl@linux.com" <cl@linux.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] slab, memcontrol: undefined reference to
+ `memcg_kmem_get_cache'
+Message-ID: <20190924143600.GY23050@dhcp22.suse.cz>
+References: <DB7PR02MB397977A2959BFFA89AA67538BB840@DB7PR02MB3979.eurprd02.prod.outlook.com>
+ <20190924120400.GN23050@dhcp22.suse.cz>
+ <DB7PR02MB39799BF26E394AE30D710308BB840@DB7PR02MB3979.eurprd02.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <1569310272-29153-1-git-send-email-Sanju.Mehta@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB7PR02MB39799BF26E394AE30D710308BB840@DB7PR02MB3979.eurprd02.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/19 12:31 AM, Mehta, Sanju wrote:
-> From: Sanjay R Mehta <sanju.mehta@amd.com>
+On Tue 24-09-19 14:08:33, Mircea CIRJALIU - MELIU wrote:
+> > On Tue 24-09-19 08:46:48, Mircea CIRJALIU - MELIU wrote:
+> > > Having CONFIG_MEMCG turned off causes these issues:
+> > > 	mm/slub.o: In function `slab_pre_alloc_hook':
+> > > 	/home/mircea/build/mm/slab.h:425: undefined reference to
+> > `memcg_kmem_get_cache'
+> > > 	mm/slub.o: In function `slab_post_alloc_hook':
+> > > 	/home/mircea/build/mm/slab.h:444: undefined reference to
+> > `memcg_kmem_put_cache'
+> > 
+> > You should be adding your Sign-off-by to every patch you post to the kernel
+> > mailing list (see Documentation/SubmittingPatches).
+> > 
+> > It is also really important to mention which tree does this apply to and ideally
+> > also note which change has broken the code. In this particular case I have
+> > tried the current Linus tree (4c07e2ddab5b) and $ grep
+> > 'CONFIG_SLUB\|CONFIG_MEMCG' .config # CONFIG_MEMCG is not set
+> > CONFIG_SLUB_DEBUG=y CONFIG_SLUB=y CONFIG_SLUB_CPU_PARTIAL=y
+> > # CONFIG_SLUB_DEBUG_ON is not set # CONFIG_SLUB_STATS is not set
+> > 
+> > which means CONFIG_MEMCG_KMEM is not enabled as well. And the
+> > compilation succeeds. What is your config file?
 > 
-> This is the driver for the AMD passthrough DMA Engine
+> The config file is not the problem (figured it out).
+> I am lowering the optimization level on certain files for debug purposes.
+> In my case: CFLAGS_slub.o += -O1 -fno-inline
 > 
-> Signed-off-by: Sanjay R Mehta <sanju.mehta@amd.com>
-> Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> Reviewed-by: Rajesh Kumar <Rajesh1.Kumar@amd.com>
-> ---
+> The code which causes the problem looks like this:
+> static inline struct kmem_cache *slab_pre_alloc_hook(struct kmem_cache *s,
+> 						     gfp_t flags)
+> {
+> 	...
+> 
+> 	if (memcg_kmem_enabled() &&
+> 	    ((flags & __GFP_ACCOUNT) || (s->flags & SLAB_ACCOUNT)))
+> 		return memcg_kmem_get_cache(s);
+> 
+> 	...
+> }
+> 
+> Under normal circumstances memcg_kmem_enabled() returns false and the
+> statement is evaluated as unreachable and removed entirely.
+> It seems -O1 keeps the call to memcg_kmem_get_cache().
 
-> diff --git a/drivers/dma/ptdma/Kconfig b/drivers/dma/ptdma/Kconfig
-> new file mode 100644
-> index 0000000..a373431
-> --- /dev/null
-> +++ b/drivers/dma/ptdma/Kconfig
-> @@ -0,0 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config AMD_PTDMA
-> +	tristate  "AMD Passthru DMA Engine"
-> +	default m
+OK, this makes more sense now. Is it the only problem to make your
+kernel compile with O1? We do rely on dead code elimination quite
+heavily. I do not think we want add a lot of code for something that we
+are unlikely to be able to support. This particular patch is quite small
+but I am not really supper happy to add more boilerplate code...
 
-Can you justify "default m"?  Most likely it should not be here.
-
-
-> +	depends on X86_64 && PCI
-> +	help
-> +	  Provides the support for AMD Passthru DMA engine.
-
+> The change that introduced this is here: 
+> 	commit 452647784b2fccfdeeb976f6f842c6719fb2daac
+> 	Author: Vladimir Davydov <vdavydov@virtuozzo.com>
+> 	Date:   Tue Jul 26 15:24:21 2016 -0700
+> Although I had the same problem before with other header files.
+> 
 
 -- 
-~Randy
+Michal Hocko
+SUSE Labs
