@@ -2,128 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D64FABC066
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47CDBBC07F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:56:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408795AbfIXCuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 22:50:02 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43379 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408131AbfIXCuC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 22:50:02 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a2so262456pfo.10;
-        Mon, 23 Sep 2019 19:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=uaaaLuCGRZnOfdmCLyNq9t4oN/F+9BF6AGKkNBUPoi8=;
-        b=aJtQ3AAgg2ZeEGsckD3yHD0VQG/gnZcwD+Er8eIFqLqUUFtMsC/RCxbtkMJG24GjsR
-         xCmE+CyraZGtls9hscnHyFcUJjKCfpS0CctTbLFzrQfyIYRPCM+absbqzG0OQO164e2+
-         FBQNCWHtiIEksa1eiLNcaX81gTZkQiHfN3+udbI5l91BZK+Zq86Q7yA5gaxelvcJsRIF
-         xsTAjgovZYYlpO9aeJlRzsmR5+HpkizRgyhSe6kC7jdw6vdqXfl19/xvy422Pa5ozs86
-         P3yCXpGiVw3AXDuarmrSdK4W69bvKhtiyMJqxWJJ5+HnYFFjtOGQpoKeA7pS6PFxPQiz
-         DNAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=uaaaLuCGRZnOfdmCLyNq9t4oN/F+9BF6AGKkNBUPoi8=;
-        b=jqGypnFc8HeZNY0DhgEiWcbiOd+WFrnGhwU+T9HTOJyR9jHN+DOl1NyXWnU4MYviqf
-         SeVswidlhyeOrXuNZd30XfpN4IGEsKSbZq8v/TqfdwGVrMX60YAwQJzHUfgCyTsClCfy
-         d6Nm/jhdyvEG20v+ZQUJKWs1CnQwthknMwdCYTbe+DkzSwkZFg/bI6OJKkNE8lF3FaHd
-         v852E5R1XsnwxRw2nkC5yKiuuQ2CYoahxHEKxVmdV/aytHffZwe2CsUXvNDi5tHYJucU
-         BBwqIzusHOTi7H6HdRyw7eEOkuEFSwPOd4wV+iibBYUqSkbX6xxpxmXJ4UDm5k8UqM5F
-         YGbA==
-X-Gm-Message-State: APjAAAW4xGo/p1SDQeVgZLDsImrItedtV3AyaT9L/olS9dJcmWw2JMbr
-        MJ4qFjVnMFmBmD/m2XZ6aRw=
-X-Google-Smtp-Source: APXvYqy+STHovVAg2uN+u2fpKlestMnHiVz0Gd0nURyZwMPI2AUYaUSufxF8VKSILdeNFlqCJ2DKiQ==
-X-Received: by 2002:a62:be01:: with SMTP id l1mr714053pff.236.1569293401293;
-        Mon, 23 Sep 2019 19:50:01 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 31sm240901pgr.55.2019.09.23.19.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 19:50:00 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 19:49:58 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Alex Levin <levinale@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: cherryview: restore Strago DMI workaround for all
- versions
-Message-ID: <20190924024958.GA229906@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2408848AbfIXC4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 22:56:24 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60504 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728992AbfIXC4X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 22:56:23 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A7A28200386;
+        Tue, 24 Sep 2019 04:56:21 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D92320021A;
+        Tue, 24 Sep 2019 04:56:17 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7BA284029F;
+        Tue, 24 Sep 2019 10:56:11 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     leoyang.li@nxp.com, shawnguo@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, ran.wang_1@nxp.com
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
+Subject: [v3,1/3] soc: fsl: handle RCPM errata A-008646 on SoC LS1021A
+Date:   Tue, 24 Sep 2019 10:45:46 +0800
+Message-Id: <20190924024548.4356-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is essentially a revert of:
+Description:
+	- Reading configuration register RCPM_IPPDEXPCR1
+	  always return zero
 
-e3f72b749da2 pinctrl: cherryview: fix Strago DMI workaround
-86c5dd6860a6 pinctrl: cherryview: limit Strago DMI workarounds to version 1.0
+Workaround:
+	- Save register RCPM_IPPDEXPCR1's value to
+	  register SCFG_SPARECR8.(uboot's psci also
+	  need reading value from the register SCFG_SPARECR8
+	  to set register RCPM_IPPDEXPCR1)
 
-because even with 1.1 versions of BIOS there are some pins that are
-configured as interrupts but not claimed by any driver, and they
-sometimes fire up and result in interrupt storms that cause touchpad
-stop functioning and other issues.
+Impact:
+	- FlexTimer module will cannot wakeup system in
+	  deep sleep on SoC LS1021A
 
-Given that we are unlikely to qualify another firmware version for a
-while it is better to keep the workaround active on all Strago boards.
-
-Reported-by: Alex Levin <levinale@chromium.org>
-Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
 ---
- drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ----
- 1 file changed, 4 deletions(-)
+Change in v3:
+	- update commit message
+	- rename property name
+	  fsl,rcpm-scfg -> fsl,ippdexpcr-alt-addr
 
-diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
-index 03ec7a5d9d0b..bf049d1bbb87 100644
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1513,7 +1513,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1521,7 +1520,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1529,7 +1527,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{
-@@ -1537,7 +1534,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
- 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
--			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
- 		},
- 	},
- 	{}
+Change in v2:
+	- fix stype problems
+
+ drivers/soc/fsl/rcpm.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/drivers/soc/fsl/rcpm.c b/drivers/soc/fsl/rcpm.c
+index 82c0ad5e663e..7f42b17d3f29 100644
+--- a/drivers/soc/fsl/rcpm.c
++++ b/drivers/soc/fsl/rcpm.c
+@@ -13,6 +13,8 @@
+ #include <linux/slab.h>
+ #include <linux/suspend.h>
+ #include <linux/kernel.h>
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
+ 
+ #define RCPM_WAKEUP_CELL_MAX_SIZE	7
+ 
+@@ -29,6 +31,9 @@ static int rcpm_pm_prepare(struct device *dev)
+ 	struct rcpm		*rcpm;
+ 	u32 value[RCPM_WAKEUP_CELL_MAX_SIZE + 1], tmp;
+ 	int i, ret, idx;
++	struct regmap * scfg_addr_regmap = NULL;
++	u32 reg_offset[RCPM_WAKEUP_CELL_MAX_SIZE + 1];
++	u32 reg_value = 0;
+ 
+ 	rcpm = dev_get_drvdata(dev);
+ 	if (!rcpm)
+@@ -63,6 +68,22 @@ static int rcpm_pm_prepare(struct device *dev)
+ 					tmp |= value[i + 1];
+ 					iowrite32be(tmp, rcpm->ippdexpcr_base + i * 4);
+ 				}
++				/* Workaround of errata A-008646 on SoC LS1021A: There is a bug of
++				 * register ippdexpcr1. Reading configuration register RCPM_IPPDEXPCR1
++				 * always return zero. So save ippdexpcr1's value to register SCFG_SPARECR8.
++				 * And the value of ippdexpcr1 will be read from SCFG_SPARECR8.
++				 */
++				scfg_addr_regmap = syscon_regmap_lookup_by_phandle(np, "fsl,ippdexpcr-alt-addr");
++				if (scfg_addr_regmap) {
++					if (of_property_read_u32_array(dev->of_node,
++					    "fsl,ippdexpcr-alt-addr", reg_offset, rcpm->wakeup_cells + 1)) {
++						scfg_addr_regmap = NULL;
++						continue;
++					}
++					regmap_read(scfg_addr_regmap, reg_offset[i + 1], &reg_value);
++					/* Write value to register SCFG_SPARECR8 */
++					regmap_write(scfg_addr_regmap, reg_offset[i + 1], tmp | reg_value);
++				}
+ 			}
+ 		}
+ 	} while (ws = wakeup_source_get_next(ws));
 -- 
-2.23.0.351.gc4317032e6-goog
+2.17.1
 
-
--- 
-Dmitry
