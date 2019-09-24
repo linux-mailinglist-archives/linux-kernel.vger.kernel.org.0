@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C34DBCFED
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E92BBCFE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411051AbfIXRCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 13:02:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59584 "EHLO mail.kernel.org"
+        id S1730445AbfIXRCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 13:02:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2632846AbfIXQm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:42:57 -0400
+        id S2632862AbfIXQnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:43:01 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71F8F2196E;
-        Tue, 24 Sep 2019 16:42:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B206221783;
+        Tue, 24 Sep 2019 16:42:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343377;
-        bh=bL9gZIONi5x1sP8K0K9+7JkjNGb4N9JAG6j5LpCsJzM=;
+        s=default; t=1569343380;
+        bh=PnbnIcgZjtEdYqUlBBBWYErDr6FSx8IYXnn0vmGA5PY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DJla8/fBKKwkxkfeKk9ya/fDbTcTX9WFqvOWvvRO3scEUMbnMZickaLmjH0C0qb4+
-         70TK9+YJ8nqMTrG8yAMv1ArcJbTL38BfILCER6xI8YjjB71VtOxlT9roYaVBmYwzhy
-         c38beySeDsF8d3TmgZqjYi7Rf08VNx8WjyX63A74=
+        b=ribl/6x0LQ4jIgg2QXveUXUxegQrT1S2hwPNeHr8OV2M6QrtddKHldNP0UOT3fOQJ
+         rYlGwZUxlxiuiRfS75KylF5nTngrhbQAVHAFfMwKj9C1aMSfJdyT0C7az9aM91HUCL
+         TUWIlhN083ZIeL+/jLdhEw/qlkzeC0cba4JfI8I0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Corey Minyard <cminyard@mvista.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 26/87] ipmi_si: Only schedule continuously in the thread in maintenance mode
-Date:   Tue, 24 Sep 2019 12:40:42 -0400
-Message-Id: <20190924164144.25591-26-sashal@kernel.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 29/87] clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
+Date:   Tue, 24 Sep 2019 12:40:45 -0400
+Message-Id: <20190924164144.25591-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -42,86 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit 340ff31ab00bca5c15915e70ad9ada3030c98cf8 ]
+[ Upstream commit 720099603d1f62e37b789366d7e89824b009ca28 ]
 
-ipmi_thread() uses back-to-back schedule() to poll for command
-completion which, on some machines, can push up CPU consumption and
-heavily tax the scheduler locks leading to noticeable overall
-performance degradation.
+The MMC2 clock slices are currently not defined in V3s CCU driver, which
+makes MMC2 not working.
 
-This was originally added so firmware updates through IPMI would
-complete in a timely manner.  But we can't kill the scheduler
-locks for that one use case.
+Fix this issue.
 
-Instead, only run schedule() continuously in maintenance mode,
-where firmware updates should run.
-
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_si_intf.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index da5b6723329a9..28693dbcb0c38 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -221,6 +221,9 @@ struct smi_info {
- 	 */
- 	bool irq_enable_broken;
- 
-+	/* Is the driver in maintenance mode? */
-+	bool in_maintenance_mode;
-+
- 	/*
- 	 * Did we get an attention that we did not handle?
- 	 */
-@@ -1007,11 +1010,20 @@ static int ipmi_thread(void *data)
- 		spin_unlock_irqrestore(&(smi_info->si_lock), flags);
- 		busy_wait = ipmi_thread_busy_wait(smi_result, smi_info,
- 						  &busy_until);
--		if (smi_result == SI_SM_CALL_WITHOUT_DELAY)
-+		if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
- 			; /* do nothing */
--		else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait)
--			schedule();
--		else if (smi_result == SI_SM_IDLE) {
-+		} else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait) {
-+			/*
-+			 * In maintenance mode we run as fast as
-+			 * possible to allow firmware updates to
-+			 * complete as fast as possible, but normally
-+			 * don't bang on the scheduler.
-+			 */
-+			if (smi_info->in_maintenance_mode)
-+				schedule();
-+			else
-+				usleep_range(100, 200);
-+		} else if (smi_result == SI_SM_IDLE) {
- 			if (atomic_read(&smi_info->need_watch)) {
- 				schedule_timeout_interruptible(100);
- 			} else {
-@@ -1019,8 +1031,9 @@ static int ipmi_thread(void *data)
- 				__set_current_state(TASK_INTERRUPTIBLE);
- 				schedule();
- 			}
--		} else
-+		} else {
- 			schedule_timeout_interruptible(1);
-+		}
- 	}
- 	return 0;
- }
-@@ -1198,6 +1211,7 @@ static void set_maintenance_mode(void *send_info, bool enable)
- 
- 	if (!enable)
- 		atomic_set(&smi_info->req_events, 0);
-+	smi_info->in_maintenance_mode = enable;
- }
- 
- static void shutdown_smi(void *send_info);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index 9b3939fc7faa6..5ca4d34b4094f 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -502,6 +502,9 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
+ 		[CLK_MMC1]		= &mmc1_clk.common.hw,
+ 		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common.hw,
+ 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
++		[CLK_MMC2]		= &mmc2_clk.common.hw,
++		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common.hw,
++		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common.hw,
+ 		[CLK_CE]		= &ce_clk.common.hw,
+ 		[CLK_SPI0]		= &spi0_clk.common.hw,
+ 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
 -- 
 2.20.1
 
