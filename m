@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF95BCF15
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8061BCF5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441521AbfIXQuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:50:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43712 "EHLO mail.kernel.org"
+        id S2410997AbfIXQzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:55:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2441472AbfIXQun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:43 -0400
+        id S2441483AbfIXQup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B620021D82;
-        Tue, 24 Sep 2019 16:50:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1584621D82;
+        Tue, 24 Sep 2019 16:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343842;
-        bh=mhigEyX4N7wPbu9+w1npq2SXog76H2lNXrByJ6FAQyc=;
+        s=default; t=1569343844;
+        bh=/J1o5rPQg1YYMn3xya9OoaaLq4oaynFEnqT78U6lrjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HbYYd0M5Z8Va8P9oQwK4oNEFBqGz0QTPC/bahOUC61GZdqLuNg+zXA2h88XeaIJho
-         hY1S7gi1mknR3la2Db5HfY2KOrR2ajhoxKxbrKOMPryz4p0w/zyCVbN23PNyjaFvLG
-         cfnJa4sQmGiF69ioRYoFCscwGQleaHZG2X9vvMmY=
+        b=tKV7jj19yfxk3JYRB+qthy1imGuB7/5ToCcxhMhzLLk7W1BV+O1SSG7Vm+dTKI4NK
+         cirUGFjEWJe9mQYllhTwdLtrdE8dhQfivVOBN4GuQunkBliFt0Gfu0jOU8bpy5YJNo
+         l3USa1hTX5guS4Nl5YicIIu6swed7VsxrvwtUODI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 06/28] drm/radeon: Fix EEH during kexec
-Date:   Tue, 24 Sep 2019 12:50:09 -0400
-Message-Id: <20190924165031.28292-6-sashal@kernel.org>
+Cc:     Corey Minyard <cminyard@mvista.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 08/28] ipmi_si: Only schedule continuously in the thread in maintenance mode
+Date:   Tue, 24 Sep 2019 12:50:11 -0400
+Message-Id: <20190924165031.28292-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165031.28292-1-sashal@kernel.org>
 References: <20190924165031.28292-1-sashal@kernel.org>
@@ -44,45 +42,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>
+From: Corey Minyard <cminyard@mvista.com>
 
-[ Upstream commit 6f7fe9a93e6c09bf988c5059403f5f88e17e21e6 ]
+[ Upstream commit 340ff31ab00bca5c15915e70ad9ada3030c98cf8 ]
 
-During kexec some adapters hit an EEH since they are not properly
-shut down in the radeon_pci_shutdown() function. Adding
-radeon_suspend_kms() fixes this issue.
+ipmi_thread() uses back-to-back schedule() to poll for command
+completion which, on some machines, can push up CPU consumption and
+heavily tax the scheduler locks leading to noticeable overall
+performance degradation.
 
-Signed-off-by: KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This was originally added so firmware updates through IPMI would
+complete in a timely manner.  But we can't kill the scheduler
+locks for that one use case.
+
+Instead, only run schedule() continuously in maintenance mode,
+where firmware updates should run.
+
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/radeon/radeon_drv.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/char/ipmi/ipmi_si_intf.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-index f4becad0a78c0..54d97dd5780a1 100644
---- a/drivers/gpu/drm/radeon/radeon_drv.c
-+++ b/drivers/gpu/drm/radeon/radeon_drv.c
-@@ -368,11 +368,19 @@ radeon_pci_remove(struct pci_dev *pdev)
- static void
- radeon_pci_shutdown(struct pci_dev *pdev)
- {
-+	struct drm_device *ddev = pci_get_drvdata(pdev);
-+
- 	/* if we are running in a VM, make sure the device
- 	 * torn down properly on reboot/shutdown
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index a106cf7b5ee02..f6ba90b90503f 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -284,6 +284,9 @@ struct smi_info {
  	 */
- 	if (radeon_device_is_virtual())
- 		radeon_pci_remove(pdev);
+ 	bool irq_enable_broken;
+ 
++	/* Is the driver in maintenance mode? */
++	bool in_maintenance_mode;
 +
-+	/* Some adapters need to be suspended before a
-+	* shutdown occurs in order to prevent an error
-+	* during kexec.
-+	*/
-+	radeon_suspend_kms(ddev, true, true, false);
+ 	/*
+ 	 * Did we get an attention that we did not handle?
+ 	 */
+@@ -1094,11 +1097,20 @@ static int ipmi_thread(void *data)
+ 		spin_unlock_irqrestore(&(smi_info->si_lock), flags);
+ 		busy_wait = ipmi_thread_busy_wait(smi_result, smi_info,
+ 						  &busy_until);
+-		if (smi_result == SI_SM_CALL_WITHOUT_DELAY)
++		if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
+ 			; /* do nothing */
+-		else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait)
+-			schedule();
+-		else if (smi_result == SI_SM_IDLE) {
++		} else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait) {
++			/*
++			 * In maintenance mode we run as fast as
++			 * possible to allow firmware updates to
++			 * complete as fast as possible, but normally
++			 * don't bang on the scheduler.
++			 */
++			if (smi_info->in_maintenance_mode)
++				schedule();
++			else
++				usleep_range(100, 200);
++		} else if (smi_result == SI_SM_IDLE) {
+ 			if (atomic_read(&smi_info->need_watch)) {
+ 				schedule_timeout_interruptible(100);
+ 			} else {
+@@ -1106,8 +1118,9 @@ static int ipmi_thread(void *data)
+ 				__set_current_state(TASK_INTERRUPTIBLE);
+ 				schedule();
+ 			}
+-		} else
++		} else {
+ 			schedule_timeout_interruptible(1);
++		}
+ 	}
+ 	return 0;
+ }
+@@ -1286,6 +1299,7 @@ static void set_maintenance_mode(void *send_info, bool enable)
+ 
+ 	if (!enable)
+ 		atomic_set(&smi_info->req_events, 0);
++	smi_info->in_maintenance_mode = enable;
  }
  
- static int radeon_pmops_suspend(struct device *dev)
+ static const struct ipmi_smi_handlers handlers = {
 -- 
 2.20.1
 
