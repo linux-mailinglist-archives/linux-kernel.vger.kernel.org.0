@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E134BCF45
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC0FDBCF42
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406603AbfIXQyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:54:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46062 "EHLO mail.kernel.org"
+        id S2406462AbfIXQyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:54:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410894AbfIXQwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:52:19 -0400
+        id S2437937AbfIXQwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:52:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75C0221D80;
-        Tue, 24 Sep 2019 16:52:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B56A9222C9;
+        Tue, 24 Sep 2019 16:52:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343939;
-        bh=QWG0Sgk+7RWxv4CesJTL0WSeRDiYchbm4cUUMDSl1a0=;
+        s=default; t=1569343941;
+        bh=TkRXmpHdZvwNp4jqEj1dbBI2v217kXfJTlu2W7Axhqk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z8ACMnXAlINJDx64QUpZcN/xBOBNVvP08tOAMmvkHp5sKY4OFhmTVGF8jZwm+m6I8
-         WNRrVpvhhBzWL23NqlP5xI+g4Fm53gkrDMIEuCu1bEZgGkKLc/hVM7UMvFVGFq2J0y
-         /Rk9MHQhAhYqpuU+QcfHv+dVJxQ/rEypKr3WM9Uo=
+        b=KJsdbNdi79P0wBTBBLCVDfWLC+YAfi7e8WAM36oD0KvI1HT19NxypjIUHYxPfnRtL
+         NYTi/bWStnQE8M5qbBbF+we1/eRcOif4ZNq2UML+Ic5BwEMWMtvUL/DzeojNA3r8kH
+         62Z2FqXQHyyuNze/fcNhrY0jU0wPYhNwqSrcaclo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Corey Minyard <cminyard@mvista.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 03/14] ipmi_si: Only schedule continuously in the thread in maintenance mode
-Date:   Tue, 24 Sep 2019 12:52:01 -0400
-Message-Id: <20190924165214.28857-3-sashal@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Guo Zeng <Guo.Zeng@csr.com>,
+        Barry Song <Baohua.Song@csr.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 05/14] clk: sirf: Don't reference clk_init_data after registration
+Date:   Tue, 24 Sep 2019 12:52:03 -0400
+Message-Id: <20190924165214.28857-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165214.28857-1-sashal@kernel.org>
 References: <20190924165214.28857-1-sashal@kernel.org>
@@ -42,86 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit 340ff31ab00bca5c15915e70ad9ada3030c98cf8 ]
+[ Upstream commit af55dadfbce35b4f4c6247244ce3e44b2e242b84 ]
 
-ipmi_thread() uses back-to-back schedule() to poll for command
-completion which, on some machines, can push up CPU consumption and
-heavily tax the scheduler locks leading to noticeable overall
-performance degradation.
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-This was originally added so firmware updates through IPMI would
-complete in a timely manner.  But we can't kill the scheduler
-locks for that one use case.
-
-Instead, only run schedule() continuously in maintenance mode,
-where firmware updates should run.
-
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: Guo Zeng <Guo.Zeng@csr.com>
+Cc: Barry Song <Baohua.Song@csr.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190731193517.237136-6-sboyd@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_si_intf.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/clk/sirf/clk-common.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index 2f9abe0d04dcb..2f8ff63bbbe43 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -281,6 +281,9 @@ struct smi_info {
- 	 */
- 	bool irq_enable_broken;
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index 77e1e2491689b..edb7197cc4b4d 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -298,9 +298,10 @@ static u8 dmn_clk_get_parent(struct clk_hw *hw)
+ {
+ 	struct clk_dmn *clk = to_dmnclk(hw);
+ 	u32 cfg = clkc_readl(clk->regofs);
++	const char *name = clk_hw_get_name(hw);
  
-+	/* Is the driver in maintenance mode? */
-+	bool in_maintenance_mode;
-+
- 	/*
- 	 * Did we get an attention that we did not handle?
- 	 */
-@@ -1091,11 +1094,20 @@ static int ipmi_thread(void *data)
- 		spin_unlock_irqrestore(&(smi_info->si_lock), flags);
- 		busy_wait = ipmi_thread_busy_wait(smi_result, smi_info,
- 						  &busy_until);
--		if (smi_result == SI_SM_CALL_WITHOUT_DELAY)
-+		if (smi_result == SI_SM_CALL_WITHOUT_DELAY) {
- 			; /* do nothing */
--		else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait)
--			schedule();
--		else if (smi_result == SI_SM_IDLE) {
-+		} else if (smi_result == SI_SM_CALL_WITH_DELAY && busy_wait) {
-+			/*
-+			 * In maintenance mode we run as fast as
-+			 * possible to allow firmware updates to
-+			 * complete as fast as possible, but normally
-+			 * don't bang on the scheduler.
-+			 */
-+			if (smi_info->in_maintenance_mode)
-+				schedule();
-+			else
-+				usleep_range(100, 200);
-+		} else if (smi_result == SI_SM_IDLE) {
- 			if (atomic_read(&smi_info->need_watch)) {
- 				schedule_timeout_interruptible(100);
- 			} else {
-@@ -1103,8 +1115,9 @@ static int ipmi_thread(void *data)
- 				__set_current_state(TASK_INTERRUPTIBLE);
- 				schedule();
- 			}
--		} else
-+		} else {
- 			schedule_timeout_interruptible(1);
-+		}
- 	}
- 	return 0;
- }
-@@ -1283,6 +1296,7 @@ static void set_maintenance_mode(void *send_info, bool enable)
+ 	/* parent of io domain can only be pll3 */
+-	if (strcmp(hw->init->name, "io") == 0)
++	if (strcmp(name, "io") == 0)
+ 		return 4;
  
- 	if (!enable)
- 		atomic_set(&smi_info->req_events, 0);
-+	smi_info->in_maintenance_mode = enable;
- }
+ 	WARN_ON((cfg & (BIT(3) - 1)) > 4);
+@@ -312,9 +313,10 @@ static int dmn_clk_set_parent(struct clk_hw *hw, u8 parent)
+ {
+ 	struct clk_dmn *clk = to_dmnclk(hw);
+ 	u32 cfg = clkc_readl(clk->regofs);
++	const char *name = clk_hw_get_name(hw);
  
- static const struct ipmi_smi_handlers handlers = {
+ 	/* parent of io domain can only be pll3 */
+-	if (strcmp(hw->init->name, "io") == 0)
++	if (strcmp(name, "io") == 0)
+ 		return -EINVAL;
+ 
+ 	cfg &= ~(BIT(3) - 1);
+@@ -354,7 +356,8 @@ static long dmn_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	unsigned long fin;
+ 	unsigned ratio, wait, hold;
+-	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
++	const char *name = clk_hw_get_name(hw);
++	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
+ 
+ 	fin = *parent_rate;
+ 	ratio = fin / rate;
+@@ -376,7 +379,8 @@ static int dmn_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_dmn *clk = to_dmnclk(hw);
+ 	unsigned long fin;
+ 	unsigned ratio, wait, hold, reg;
+-	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
++	const char *name = clk_hw_get_name(hw);
++	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
+ 
+ 	fin = parent_rate;
+ 	ratio = fin / rate;
 -- 
 2.20.1
 
