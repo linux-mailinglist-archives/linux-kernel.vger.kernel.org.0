@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCAA2BCD7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE22BCD7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410084AbfIXQqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:46:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36266 "EHLO mail.kernel.org"
+        id S2404559AbfIXQqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:46:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410066AbfIXQqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:46:00 -0400
+        id S2404298AbfIXQqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EF9D20673;
-        Tue, 24 Sep 2019 16:45:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD7E421783;
+        Tue, 24 Sep 2019 16:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343560;
-        bh=XsLIRuRisxjNNPY6SKphj7kigAx9IKnjHsKH+Q7szps=;
+        s=default; t=1569343564;
+        bh=J1zur49gsnGltUJR6USs8KZFsOWEQRy5Y0FIf5lKH6Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KrIRDcV996LvqgWWPGy+CL5Nhookx7K+72ps1nSJrVraCG9mD/4DprG2sFKZsjk0a
-         vuA79CmJHo30lDW28d8ynlZqirUqKnJFY97Q/Wf8IkostrBAZkw3mc+qDwmS37JvzR
-         IrRPLkQATurKKKzsEq1RX72WXfjTOSYHa5BhevHY=
+        b=oU2xfg2y2cB/gUBPjb9KzLFbY5FSnfpj/20O2rdAASQr0PJ8lLJRNLaUFOD8cMWrs
+         pOoxrlPzg9MpNDvNK4KCxPrTKlOm7x4lMCw+IXYEVoPqtnusl1YOgF1INeaqO6zDw8
+         Rw8oDxb2ysVluQVocSY/PZHm9/UEwfJv7wyo0xaU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     Anthony Koo <anthony.koo@amd.com>,
+        Charlene Liu <Charlene.Liu@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 06/70] drm/panel: simple: fix AUO g185han01 horizontal blanking
-Date:   Tue, 24 Sep 2019 12:44:45 -0400
-Message-Id: <20190924164549.27058-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 07/70] drm/amd/display: add monitor patch to add T7 delay
+Date:   Tue, 24 Sep 2019 12:44:46 -0400
+Message-Id: <20190924164549.27058-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -45,48 +46,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Anthony Koo <anthony.koo@amd.com>
 
-[ Upstream commit f8c6bfc612b56f02e1b8fae699dff12738aaf889 ]
+[ Upstream commit 88eac241a1fc500ce5274a09ddc4bd5fc2b5adb6 ]
 
-The horizontal blanking periods are too short, as the values are
-specified for a single LVDS channel. Since this panel is dual LVDS
-they need to be doubled. With this change the panel reaches its
-nominal vrefresh rate of 60Fps, instead of the 64Fps with the
-current wrong blanking.
+[Why]
+Specifically to one panel,
+TCON is able to accept active video signal quickly, but
+the Source Driver requires 2-3 frames of extra time.
 
-Philipp Zabel added:
-The datasheet specifies 960 active clocks + 40/128/160 clocks blanking
-on each of the two LVDS channels (min/typical/max), so doubled this is
-now correct.
+It is a Panel issue since TCON needs to take care of
+all Sink requirements including Source Driver. But in
+this case it does not.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/1562764060.23869.12.camel@pengutronix.de
+Customer is asking to add fixed T7 delay as panel
+workaround.
+
+[How]
+Add monitor specific patch to add T7 delay
+
+Signed-off-by: Anthony Koo <anthony.koo@amd.com>
+Reviewed-by: Charlene Liu <Charlene.Liu@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c | 4 ++++
+ drivers/gpu/drm/amd/display/dc/dc_types.h          | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 397a3086eac8a..95e430f9fea43 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -723,9 +723,9 @@ static const struct panel_desc auo_g133han01 = {
- static const struct display_timing auo_g185han01_timings = {
- 	.pixelclock = { 120000000, 144000000, 175000000 },
- 	.hactive = { 1920, 1920, 1920 },
--	.hfront_porch = { 18, 60, 74 },
--	.hback_porch = { 12, 44, 54 },
--	.hsync_len = { 10, 24, 32 },
-+	.hfront_porch = { 36, 120, 148 },
-+	.hback_porch = { 24, 88, 108 },
-+	.hsync_len = { 20, 48, 64 },
- 	.vactive = { 1080, 1080, 1080 },
- 	.vfront_porch = { 6, 10, 40 },
- 	.vback_porch = { 2, 5, 20 },
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
+index b0dea759cd860..8aecf044e2ae8 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_hwss.c
+@@ -154,6 +154,10 @@ bool edp_receiver_ready_T7(struct dc_link *link)
+ 			break;
+ 		udelay(25); //MAx T7 is 50ms
+ 	} while (++tries < 300);
++
++	if (link->local_sink->edid_caps.panel_patch.extra_t7_ms > 0)
++		udelay(link->local_sink->edid_caps.panel_patch.extra_t7_ms * 1000);
++
+ 	return result;
+ }
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/dc_types.h b/drivers/gpu/drm/amd/display/dc/dc_types.h
+index 6c2a3d9a4c2e7..283082666be51 100644
+--- a/drivers/gpu/drm/amd/display/dc/dc_types.h
++++ b/drivers/gpu/drm/amd/display/dc/dc_types.h
+@@ -202,6 +202,7 @@ struct dc_panel_patch {
+ 	unsigned int dppowerup_delay;
+ 	unsigned int extra_t12_ms;
+ 	unsigned int extra_delay_backlight_off;
++	unsigned int extra_t7_ms;
+ };
+ 
+ struct dc_edid_caps {
 -- 
 2.20.1
 
