@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D11BBCDE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB065BCDE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729883AbfIXQrD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:47:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37848 "EHLO mail.kernel.org"
+        id S2410343AbfIXQrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:47:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410161AbfIXQq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:46:56 -0400
+        id S2410305AbfIXQrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:47:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CE5920673;
-        Tue, 24 Sep 2019 16:46:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D64421D7E;
+        Tue, 24 Sep 2019 16:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343615;
-        bh=xXqTTNREpLdYn6bT7Dacf3FS8rp75G+TLfM3oBVMFtk=;
+        s=default; t=1569343629;
+        bh=I8B5kB4woAS8zeIX3RW9KSgJ4z9Xq/XpjsL8Ffdl0vQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b672iV96DKkTxOPTObFUMtarmE9kwTEmKSD3CYdKwZZtsE2+QlNWiL1nwtDkKDAin
-         4eGD2xVRfAr788rT+YogaXwc2QB1kkbob9TlaWFUTkUm0TDOwW0Ki+JEQdQaggA32o
-         XAVIjlFF+4LGLdnsbCfie0jbDWEGbUktnlbD1MBQ=
+        b=yAl3VUkQ+I9/vzoB72fIg24fn4Wb/S6KVXPvPasgpxESbWBx7VZEiW5q0ex7nv/61
+         EmgS62RFX5mOHyL8HOkD9B45HpOE+bskswWIiNcR87BEZ8UwZuaKsLxDhdw3Eo3ti3
+         RHZ1ZypXYSlNeAK9nGJVIThLAi0CL0Jk2gxzZn1o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 27/70] clk: actions: Don't reference clk_init_data after registration
-Date:   Tue, 24 Sep 2019 12:45:06 -0400
-Message-Id: <20190924164549.27058-27-sashal@kernel.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.2 34/70] powerpc/futex: Fix warning: 'oldval' may be used uninitialized in this function
+Date:   Tue, 24 Sep 2019 12:45:13 -0400
+Message-Id: <20190924164549.27058-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -43,49 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit cf9ec1fc6d7cceb73e7f1efd079d2eae173fdf57 ]
+[ Upstream commit 38a0d0cdb46d3f91534e5b9839ec2d67be14c59d ]
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+We see warnings such as:
+  kernel/futex.c: In function 'do_futex':
+  kernel/futex.c:1676:17: warning: 'oldval' may be used uninitialized in this function [-Wmaybe-uninitialized]
+     return oldval == cmparg;
+                   ^
+  kernel/futex.c:1651:6: note: 'oldval' was declared here
+    int oldval, ret;
+        ^
 
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-2-sboyd@kernel.org
-[sboyd@kernel.org: Move name to after checking for error or NULL hw]
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+This is because arch_futex_atomic_op_inuser() only sets *oval if ret
+is 0 and GCC doesn't see that it will only use it when ret is 0.
+
+Anyway, the non-zero ret path is an error path that won't suffer from
+setting *oval, and as *oval is a local var in futex_atomic_op_inuser()
+it will have no impact.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+[mpe: reword change log slightly]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/86b72f0c134367b214910b27b9a6dd3321af93bb.1565774657.git.christophe.leroy@c-s.fr
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/actions/owl-common.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/powerpc/include/asm/futex.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 32dd29e0a37e1..4de97cc7cb54d 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -68,16 +68,17 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
- 	struct clk_hw *hw;
+diff --git a/arch/powerpc/include/asm/futex.h b/arch/powerpc/include/asm/futex.h
+index 3a6aa57b9d901..eea28ca679dbb 100644
+--- a/arch/powerpc/include/asm/futex.h
++++ b/arch/powerpc/include/asm/futex.h
+@@ -60,8 +60,7 @@ static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
  
- 	for (i = 0; i < hw_clks->num; i++) {
-+		const char *name;
+ 	pagefault_enable();
  
- 		hw = hw_clks->hws[i];
--
- 		if (IS_ERR_OR_NULL(hw))
- 			continue;
+-	if (!ret)
+-		*oval = oldval;
++	*oval = oldval;
  
-+		name = hw->init->name;
- 		ret = devm_clk_hw_register(dev, hw);
- 		if (ret) {
- 			dev_err(dev, "Couldn't register clock %d - %s\n",
--				i, hw->init->name);
-+				i, name);
- 			return ret;
- 		}
- 	}
+ 	prevent_write_to_user(uaddr, sizeof(*uaddr));
+ 	return ret;
 -- 
 2.20.1
 
