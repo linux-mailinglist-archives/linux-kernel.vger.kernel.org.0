@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB9ABC17F
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 07:49:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D989BC175
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 07:48:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409112AbfIXFtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 01:49:51 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:55330 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2409100AbfIXFtv (ORCPT
+        id S2409067AbfIXFsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 01:48:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40546 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405096AbfIXFsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 01:49:51 -0400
-X-Greylist: delayed 362 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Sep 2019 01:49:51 EDT
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 23 Sep 2019 22:43:46 -0700
-IronPort-SDR: HUIseNcrhZ3whjjNm5fsCwyj3eHyhjpxhoXSqvL7W81FvDJ2iN6nkqWW9MdzNqY/iXAX2iWwO2
- 5N5e+eAOvQVmDwcZT3e4Udj4erKZFgAo2/NewlIp2CDpq0M7lVO5PTzwVKtxhQSBaFlp4AI977
- Bj1OzHk+ohfsilDaJHo9nKtAexubBtJzUIxpeM5kOQel/XA4ZqcVNn/MndBw5d5opLyQUOMey2
- eYIJFWswfXEf0JpNv1qbn2R+gRLINRJj+21143HbmJBKPSQnXUNeBC+YCZs24wUyLayoWhXkaq
- vJa3hopgPbcMZHJMRw34zLzf
-Received: from gurus-linux.qualcomm.com ([10.46.162.81])
-  by ironmsg02-sd.qualcomm.com with ESMTP; 23 Sep 2019 22:43:43 -0700
-Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
-        id 460EC467E; Mon, 23 Sep 2019 22:43:43 -0700 (PDT)
-Date:   Mon, 23 Sep 2019 22:43:43 -0700
-From:   Guru Das Srinagesh <gurus@codeaurora.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-pwm@vger.kernel.org, kernel-team@android.com,
-        Mark Salyzyn <salyzyn@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
-Subject: Re: [PATCH 1/2] pwm: Add different PWM output types support
-Message-ID: <20190924054343.GA12462@codeaurora.org>
-References: <1568415464-20267-1-git-send-email-gurus@codeaurora.org>
- <20190916140146.GC7488@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916140146.GC7488@ulmo>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 24 Sep 2019 01:48:02 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AB07460A60; Tue, 24 Sep 2019 05:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569304081;
+        bh=xvymJ4GYEKWrSL7puVuOYOXGQH4K71w3rf2tjoJNIHM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SlRZNR43c1USLJn+QyViLdXTmkFllIkBE8Ymk/nRUqnsyYW+Zpbymxv1c/wNK9nhU
+         AePAlZCwLySx4RI8PFKL1KBuGdv1uvnYSgQ38G0KngROHJsRAjd6gqyl2w7UTLgCWf
+         AnR4/S7BdNcrOaofP1tYKycmfwFf0QVeZtJN+mss=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from amasule-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: amasule@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C92A460256;
+        Tue, 24 Sep 2019 05:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569304081;
+        bh=xvymJ4GYEKWrSL7puVuOYOXGQH4K71w3rf2tjoJNIHM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SlRZNR43c1USLJn+QyViLdXTmkFllIkBE8Ymk/nRUqnsyYW+Zpbymxv1c/wNK9nhU
+         AePAlZCwLySx4RI8PFKL1KBuGdv1uvnYSgQ38G0KngROHJsRAjd6gqyl2w7UTLgCWf
+         AnR4/S7BdNcrOaofP1tYKycmfwFf0QVeZtJN+mss=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C92A460256
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=amasule@codeaurora.org
+From:   Aniket Masule <amasule@codeaurora.org>
+To:     linux-media@vger.kernel.org, stanimir.varbanov@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        vgarodia@codeaurora.org, Aniket Masule <amasule@codeaurora.org>
+Subject: [RESEND v7 0/2]media: venus: Update clock scaling 
+Date:   Tue, 24 Sep 2019 11:17:47 +0530
+Message-Id: <1569304069-20713-1-git-send-email-amasule@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 04:01:46PM +0200, Thierry Reding wrote:
-> On Fri, Sep 13, 2019 at 03:57:43PM -0700, Guru Das Srinagesh wrote:
-> > From: Fenglin Wu <fenglinw@codeaurora.org>
-> > 
-> > Normally, PWM channel has fixed output until software request to change
-> > its settings. There are some PWM devices which their outputs could be
-> > changed autonomously according to a predefined pattern programmed in
-> > hardware. Add pwm_output_type enum type to identify these two different
-> > PWM types and add relevant helper functions to set and get PWM output
-> > types and pattern.
-> > 
-> > Change-Id: Ia1f914a45ab4f4dd7be037a395eeb89d0e65a80e
-> > Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
-> > Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
-> > ---
-> >  drivers/pwm/core.c  | 26 ++++++++++++++++++++
-> >  drivers/pwm/sysfs.c | 50 ++++++++++++++++++++++++++++++++++++++
-> >  include/linux/pwm.h | 70 +++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 146 insertions(+)
-> 
-> This doesn't seem right to me. Are you describing a PWM pin that's
-> actually driven in GPIO mode? We usually configure that using pinctrl.
-> 
-> Thierry
+In this patch series, clock scaling and core selection methods are
+updated. Current clock scaling is same for vpu4 and previous versions.
+Introducing load calculations using vpp cycles, which indicates the
+cycles required by video hardware to process each macroblock. Also
+adding vsp cycles, cycles require by stream processor. Clock scaling
+is now done more precisely using vpp and vsp cycles.
+Removing core selection from this series, there will be separate patch
+once issue related to power domain is fixed.
 
-Sorry, let me clarify.
+This patch depends on the following patch:
+https://patchwork.kernel.org/patch/11142557/ - Venus interconnect support for sdm845
 
-Some Qualcomm PMICs have a PWM block called the Light Pulse Generator (LPG).
-This block allows for the generation of a HW-controlled PWM "pattern", i.e. a
-sequential altering of duty cycle, in addition to the normal PWM "fixed" duty
-cycle operation, which is what the framework does currently. This pattern is
-user-configurable in the form of a look-up table in the devicetree. The LPG's
-registers have to be configured with the data in the look up table in order to
-start the generation of the pattern. An example of a pattern is the "breath"
-pattern, which simply ramps up the duty cycle and then ramps it down.
+Changes since v6:
+ - Removed core selection.
+ - Corrected frequency calculations.
+ - Removed instance lock used while iterating over buffers.
+ 
+Changes since v5:
+ - Corrected load_per_core calculations.
 
-This "pattern" mode is what has been defined as PWM_OUTPUT_MODULATED in this
-patch. I see that the use of the term "modulated" is misleading - a more
-accurate term would be PWM_OUTPUT_PATTERN perhaps.
+Changes since v4:
+ - Added call to load_scale_clocks from venus_helper_vb2_buf_queue.
+ - Modified check to match core_id in core_selection.
 
-This patch merely adds framework support to differentiate between the "fixed"
-and "pattern" modes of operation. Actions such as configuring the LPG with the
-devicetree pattern and setting it up for generating the pattern are performed
-in the driver only if the output type is read as "pattern" and not otherwise.
+Changes since v3:
+ - vsp_cycles and vpp_cyles are now unsigned long.
+ - Core number counting aligned with VIDC_CORE_ID_.
+ - Aligned hardware overload handling of scale_clocks_v4 with scale_clocks.
+ - Added bitrate based clock scaling patch in this patch series.
+ - Instance state check is now moved from scale_clocks to load_scale_clocks
+
+Aniket Masule (2):
+  media: venus: Add codec data table
+  media: venus: Update clock scaling
+
+ drivers/media/platform/qcom/venus/core.c    |  13 ++
+ drivers/media/platform/qcom/venus/core.h    |  16 +++
+ drivers/media/platform/qcom/venus/helpers.c | 187 +++++++++++++++++++++++++---
+ drivers/media/platform/qcom/venus/helpers.h |   3 +-
+ drivers/media/platform/qcom/venus/vdec.c    |   8 +-
+ drivers/media/platform/qcom/venus/venc.c    |   4 +
+ 6 files changed, 208 insertions(+), 23 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
