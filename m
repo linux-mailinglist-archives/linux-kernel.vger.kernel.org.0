@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D21FBCCEA
+	by mail.lfdr.de (Postfix) with ESMTP id EAEEDBCCEB
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632836AbfIXQmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59036 "EHLO mail.kernel.org"
+        id S2632898AbfIXQnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:43:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409817AbfIXQmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:42:35 -0400
+        id S2632832AbfIXQmx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:42:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A624217F4;
-        Tue, 24 Sep 2019 16:42:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EAB8217F4;
+        Tue, 24 Sep 2019 16:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343354;
-        bh=5VSvU6HBfPNZEb5WDAIzTm+/cX7N3Y3hY73y1TIdwtg=;
+        s=default; t=1569343373;
+        bh=WluHTX10qG7RAA57oEeBHSjMqLz0IzntlDMWX8RpLdQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NyQZK9PwXmAfrSU+ydPTncQ37B5xU4U3qnpgdZT4+u22n1JnZ/GaMTDtV7jyyJINO
-         b+yZm91WdcAhnWcBMZ2LrTjJ/WX4NofROFaO7b79FoGLLx0dLqhs/7SkTjHZoJtKcW
-         TujeKxsyMRRNJWuxxXz3a4G0H9dHtKpTT+Vuaf3g=
+        b=bOyujpE5OlSTGdyyGZIPNx9trc16i4cXk4EptUmrKwLqXpGCVwPWZhdMTa+MONZwz
+         kkQ50GLBHNkJ9SNYFTDUmECMw7BEJYbEz4v4o1jWiwkOReDPIBqSWhyInV5CvLuLIi
+         hRrBuwzvpYbhJ12vPtSTC+RyWY7JVTNqiUcrlgNs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.3 17/87] drm/panel: check failure cases in the probe func
-Date:   Tue, 24 Sep 2019 12:40:33 -0400
-Message-Id: <20190924164144.25591-17-sashal@kernel.org>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 23/87] clk: imx8mq: Mark AHB clock as critical
+Date:   Tue, 24 Sep 2019 12:40:39 -0400
+Message-Id: <20190924164144.25591-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -44,66 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Abel Vesa <abel.vesa@nxp.com>
 
-[ Upstream commit afd6d4f5a52c16e1483328ac074abb1cde92c29f ]
+[ Upstream commit 9b9c60bed562c3718ae324a86f3f30a4ff983cf8 ]
 
-The following function calls may fail and return NULL, so the null check
-is added.
-of_graph_get_next_endpoint
-of_graph_get_remote_port_parent
-of_graph_get_remote_port
+Initially, the TMU_ROOT clock was marked as critical, which automatically
+made the AHB clock to stay always on. Since the TMU_ROOT clock is not
+marked as critical anymore, following commit:
 
-Update: Thanks to Sam Ravnborg, for suggession on the use of goto to avoid
-leaking endpoint.
+"clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT"
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190724195534.9303-1-navid.emamdoost@gmail.com
+all the clocks that derive from ipg_root clock (and implicitly ahb clock)
+would also have to enable, along with their own gate, the AHB clock.
+
+But considering that AHB is actually a bus that has to be always on, we mark
+it as critical in the clock provider driver and then all the clocks that
+derive from it can be controlled through the dedicated per IP gate which
+follows after the ipg_root clock.
+
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/panel/panel-raspberrypi-touchscreen.c   | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/imx/clk-imx8mq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index 28c0620dfe0f9..b5b14aa059ea7 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -399,7 +399,13 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index d407a07e7e6dd..e07c69afc3594 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -406,7 +406,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+ 	clks[IMX8MQ_CLK_NOC_APB] = imx8m_clk_composite_critical("noc_apb", imx8mq_noc_apb_sels, base + 0x8d80);
  
- 	/* Look up the DSI host.  It needs to probe before we do. */
- 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-+	if (!endpoint)
-+		return -ENODEV;
-+
- 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
-+	if (!dsi_host_node)
-+		goto error;
-+
- 	host = of_find_mipi_dsi_host_by_node(dsi_host_node);
- 	of_node_put(dsi_host_node);
- 	if (!host) {
-@@ -408,6 +414,9 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 	}
+ 	/* AHB */
+-	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite("ahb", imx8mq_ahb_sels, base + 0x9000);
++	/* AHB clock is used by the AHB bus therefore marked as critical */
++	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite_critical("ahb", imx8mq_ahb_sels, base + 0x9000);
+ 	clks[IMX8MQ_CLK_AUDIO_AHB] = imx8m_clk_composite("audio_ahb", imx8mq_audio_ahb_sels, base + 0x9100);
  
- 	info.node = of_graph_get_remote_port(endpoint);
-+	if (!info.node)
-+		goto error;
-+
- 	of_node_put(endpoint);
- 
- 	ts->dsi = mipi_dsi_device_register_full(host, &info);
-@@ -428,6 +437,10 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 		return ret;
- 
- 	return 0;
-+
-+error:
-+	of_node_put(endpoint);
-+	return -ENODEV;
- }
- 
- static int rpi_touchscreen_remove(struct i2c_client *i2c)
+ 	/* IPG */
 -- 
 2.20.1
 
