@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89B4BCD4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E56EBCD4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403812AbfIXQov (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:44:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34048 "EHLO mail.kernel.org"
+        id S2633197AbfIXQoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:44:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409888AbfIXQoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:44:46 -0400
+        id S2409911AbfIXQox (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:44:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21DD821783;
-        Tue, 24 Sep 2019 16:44:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A224C20872;
+        Tue, 24 Sep 2019 16:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343485;
-        bh=n4EK9lFlhG+7vx2FsuKOoovwxv61xtY/g7zcyr254u0=;
+        s=default; t=1569343492;
+        bh=cHqYgbigJfROhlyBdcrTmz1tt2vh7ZpYE1w0/e5Fieg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P99RJLA7s4vN848YhkadZaZS/c19xKH9mf4MoPS3H4ze4TCMc+Co/JthdHn1WeyF2
-         PCn9wFRU62DWYUHE5NM69sPlqHbsm9LQUsmStOhXhcWawD5URkYwprxvWbXKodeORI
-         YaZw8yv9FmGhN2/B+GYzg8Ge8wEfEZeJ7bvVEPJA=
+        b=KcI9UACQ2hhWJBL123i9rdIvDH8jGy/gCFpL1QR0r+d2DPr1cwOv+h683qUwiXryn
+         UWdt934kY95+7/kCEyroE7hxD+JMMlHuujPVMl1YSVBxeF/IkQGhAIISPbpITZkolu
+         yFRirJw2bGmroPuZWJFdvuTNPEIOrVDXD0BITcjg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jean Delvare <jdelvare@suse.de>, Ken Wang <Qingqing.Wang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.3 65/87] drm/amdgpu/si: fix ASIC tests
-Date:   Tue, 24 Sep 2019 12:41:21 -0400
-Message-Id: <20190924164144.25591-65-sashal@kernel.org>
+Cc:     Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Qian Cai <cai@lca.pw>, Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 5.3 69/87] powerpc/imc: Dont create debugfs files for cpu-less nodes
+Date:   Tue, 24 Sep 2019 12:41:25 -0400
+Message-Id: <20190924164144.25591-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -47,57 +43,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean Delvare <jdelvare@suse.de>
+From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
 
-[ Upstream commit 77efe48a729588527afb4d5811b9e0acb29f5e51 ]
+[ Upstream commit 41ba17f20ea835c489e77bd54e2da73184e22060 ]
 
-Comparing adev->family with CHIP constants is not correct.
-adev->family can only be compared with AMDGPU_FAMILY constants and
-adev->asic_type is the struct member to compare with CHIP constants.
-They are separate identification spaces.
+Commit <684d984038aa> ('powerpc/powernv: Add debugfs interface for
+imc-mode and imc') added debugfs interface for the nest imc pmu
+devices to support changing of different ucode modes. Primarily adding
+this capability for debug. But when doing so, the code did not
+consider the case of cpu-less nodes. So when reading the _cmd_ or
+_mode_ file of a cpu-less node will create this crash.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Fixes: 62a37553414a ("drm/amdgpu: add si implementation v10")
-Cc: Ken Wang <Qingqing.Wang@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+  Faulting instruction address: 0xc0000000000d0d58
+  Oops: Kernel access of bad area, sig: 11 [#1]
+  ...
+  CPU: 67 PID: 5301 Comm: cat Not tainted 5.2.0-rc6-next-20190627+ #19
+  NIP:  c0000000000d0d58 LR: c00000000049aa18 CTR:c0000000000d0d50
+  REGS: c00020194548f9e0 TRAP: 0300   Not tainted  (5.2.0-rc6-next-20190627+)
+  MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR:28022822  XER: 00000000
+  CFAR: c00000000049aa14 DAR: 000000000003fc08 DSISR:40000000 IRQMASK: 0
+  ...
+  NIP imc_mem_get+0x8/0x20
+  LR  simple_attr_read+0x118/0x170
+  Call Trace:
+    simple_attr_read+0x70/0x170 (unreliable)
+    debugfs_attr_read+0x6c/0xb0
+    __vfs_read+0x3c/0x70
+     vfs_read+0xbc/0x1a0
+    ksys_read+0x7c/0x140
+    system_call+0x5c/0x70
+
+Patch fixes the issue with a more robust check for vbase to NULL.
+
+Before patch, ls output for the debugfs imc directory
+
+  # ls /sys/kernel/debug/powerpc/imc/
+  imc_cmd_0    imc_cmd_251  imc_cmd_253  imc_cmd_255  imc_mode_0    imc_mode_251  imc_mode_253  imc_mode_255
+  imc_cmd_250  imc_cmd_252  imc_cmd_254  imc_cmd_8    imc_mode_250  imc_mode_252  imc_mode_254  imc_mode_8
+
+After patch, ls output for the debugfs imc directory
+
+  # ls /sys/kernel/debug/powerpc/imc/
+  imc_cmd_0  imc_cmd_8  imc_mode_0  imc_mode_8
+
+Actual bug here is that, we have two loops with potentially different
+loop counts. That is, in imc_get_mem_addr_nest(), loop count is
+obtained from the dt entries. But in case of export_imc_mode_and_cmd(),
+loop was based on for_each_nid() count. Patch fixes the loop count in
+latter based on the struct mem_info. Ideally it would be better to
+have array size in struct imc_pmu.
+
+Fixes: 684d984038aa ('powerpc/powernv: Add debugfs interface for imc-mode and imc')
+Reported-by: Qian Cai <cai@lca.pw>
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190827101635.6942-1-maddy@linux.vnet.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/si.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/platforms/powernv/opal-imc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/si.c b/drivers/gpu/drm/amd/amdgpu/si.c
-index 4d74453f3cfbd..602397016b641 100644
---- a/drivers/gpu/drm/amd/amdgpu/si.c
-+++ b/drivers/gpu/drm/amd/amdgpu/si.c
-@@ -1881,7 +1881,7 @@ static void si_program_aspm(struct amdgpu_device *adev)
- 			if (orig != data)
- 				si_pif_phy1_wreg(adev,PB1_PIF_PWRDOWN_1, data);
+diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
+index 186109bdd41be..e04b20625cb94 100644
+--- a/arch/powerpc/platforms/powernv/opal-imc.c
++++ b/arch/powerpc/platforms/powernv/opal-imc.c
+@@ -53,9 +53,9 @@ static void export_imc_mode_and_cmd(struct device_node *node,
+ 				    struct imc_pmu *pmu_ptr)
+ {
+ 	static u64 loc, *imc_mode_addr, *imc_cmd_addr;
+-	int chip = 0, nid;
+ 	char mode[16], cmd[16];
+ 	u32 cb_offset;
++	struct imc_mem_info *ptr = pmu_ptr->mem_info;
  
--			if ((adev->family != CHIP_OLAND) && (adev->family != CHIP_HAINAN)) {
-+			if ((adev->asic_type != CHIP_OLAND) && (adev->asic_type != CHIP_HAINAN)) {
- 				orig = data = si_pif_phy0_rreg(adev,PB0_PIF_PWRDOWN_0);
- 				data &= ~PLL_RAMP_UP_TIME_0_MASK;
- 				if (orig != data)
-@@ -1930,14 +1930,14 @@ static void si_program_aspm(struct amdgpu_device *adev)
+ 	imc_debugfs_parent = debugfs_create_dir("imc", powerpc_debugfs_root);
  
- 			orig = data = si_pif_phy0_rreg(adev,PB0_PIF_CNTL);
- 			data &= ~LS2_EXIT_TIME_MASK;
--			if ((adev->family == CHIP_OLAND) || (adev->family == CHIP_HAINAN))
-+			if ((adev->asic_type == CHIP_OLAND) || (adev->asic_type == CHIP_HAINAN))
- 				data |= LS2_EXIT_TIME(5);
- 			if (orig != data)
- 				si_pif_phy0_wreg(adev,PB0_PIF_CNTL, data);
+@@ -69,20 +69,20 @@ static void export_imc_mode_and_cmd(struct device_node *node,
+ 	if (of_property_read_u32(node, "cb_offset", &cb_offset))
+ 		cb_offset = IMC_CNTL_BLK_OFFSET;
  
- 			orig = data = si_pif_phy1_rreg(adev,PB1_PIF_CNTL);
- 			data &= ~LS2_EXIT_TIME_MASK;
--			if ((adev->family == CHIP_OLAND) || (adev->family == CHIP_HAINAN))
-+			if ((adev->asic_type == CHIP_OLAND) || (adev->asic_type == CHIP_HAINAN))
- 				data |= LS2_EXIT_TIME(5);
- 			if (orig != data)
- 				si_pif_phy1_wreg(adev,PB1_PIF_CNTL, data);
+-	for_each_node(nid) {
+-		loc = (u64)(pmu_ptr->mem_info[chip].vbase) + cb_offset;
++	while (ptr->vbase != NULL) {
++		loc = (u64)(ptr->vbase) + cb_offset;
+ 		imc_mode_addr = (u64 *)(loc + IMC_CNTL_BLK_MODE_OFFSET);
+-		sprintf(mode, "imc_mode_%d", nid);
++		sprintf(mode, "imc_mode_%d", (u32)(ptr->id));
+ 		if (!imc_debugfs_create_x64(mode, 0600, imc_debugfs_parent,
+ 					    imc_mode_addr))
+ 			goto err;
+ 
+ 		imc_cmd_addr = (u64 *)(loc + IMC_CNTL_BLK_CMD_OFFSET);
+-		sprintf(cmd, "imc_cmd_%d", nid);
++		sprintf(cmd, "imc_cmd_%d", (u32)(ptr->id));
+ 		if (!imc_debugfs_create_x64(cmd, 0600, imc_debugfs_parent,
+ 					    imc_cmd_addr))
+ 			goto err;
+-		chip++;
++		ptr++;
+ 	}
+ 	return;
+ 
 -- 
 2.20.1
 
