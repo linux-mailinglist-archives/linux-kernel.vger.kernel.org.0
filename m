@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5CBBCD83
+	by mail.lfdr.de (Postfix) with ESMTP id A4D15BCD84
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405417AbfIXQq2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:46:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36774 "EHLO mail.kernel.org"
+        id S2410323AbfIXQqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:46:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388815AbfIXQqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:46:16 -0400
+        id S2410209AbfIXQqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:22 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 020DC21783;
-        Tue, 24 Sep 2019 16:46:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5C0A21848;
+        Tue, 24 Sep 2019 16:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343575;
-        bh=hzSleYMWTRtUF8dgUsifvE5JwF7V349DimY1uSYzY1A=;
+        s=default; t=1569343581;
+        bh=dXXxvyawUMeDoaswKiyAYsPJuKQ8K9wRRXyxMJV1ypw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wlq/jPn06uBLFNRHEjrytp4ER55YMtDzx9SJch2CeBBq6VX1suESchfLXN/6TPUSw
-         /tEzVQ5iMMfebF6TSIz5df522bVGlwpA3so9DXr43EEFHjG9Pdty2fUoOqAacFkoxb
-         HCQp2q7QAcucMWA9jKyaf54/SNwk8z+WeQEKO71s=
+        b=USIyDQhf2398nfYpFzovDgYAJhiqHr8DyCsUQm9Y0yVhBuh2/soJ+DWVnmOI6zfiA
+         CUGdArqlvGCaWMrfj8JVphEWDLk+CUGx38t7i8qoUZGF6rhmW//zeaP3RSQpAzs5vp
+         6I+NVffi9naFuJg4y2Z/oBuJkeQkHewAoLn75rZI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sean Paul <seanpaul@chromium.org>, Zain Wang <wzz@rock-chips.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 12/70] drm/rockchip: Check for fast link training before enabling psr
-Date:   Tue, 24 Sep 2019 12:44:51 -0400
-Message-Id: <20190924164549.27058-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 14/70] drm/radeon: Fix EEH during kexec
+Date:   Tue, 24 Sep 2019 12:44:53 -0400
+Message-Id: <20190924164549.27058-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -45,65 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Paul <seanpaul@chromium.org>
+From: KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>
 
-[ Upstream commit ad309284a52be47c8b3126c9376358bf381861bc ]
+[ Upstream commit 6f7fe9a93e6c09bf988c5059403f5f88e17e21e6 ]
 
-Once we start shutting off the link during PSR, we're going to want fast
-training to work. If the display doesn't support fast training, don't
-enable psr.
+During kexec some adapters hit an EEH since they are not properly
+shut down in the radeon_pci_shutdown() function. Adding
+radeon_suspend_kms() fixes this issue.
 
-Changes in v2:
-- None
-Changes in v3:
-- None
-Changes in v4:
-- None
-Changes in v5:
-- None
-
-Link to v1: https://patchwork.freedesktop.org/patch/msgid/20190228210939.83386-3-sean@poorly.run
-Link to v2: https://patchwork.freedesktop.org/patch/msgid/20190326204509.96515-2-sean@poorly.run
-Link to v3: https://patchwork.freedesktop.org/patch/msgid/20190502194956.218441-9-sean@poorly.run
-Link to v4: https://patchwork.freedesktop.org/patch/msgid/20190508160920.144739-8-sean@poorly.run
-
-Cc: Zain Wang <wzz@rock-chips.com>
-Cc: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190611160844.257498-8-sean@poorly.run
+Signed-off-by: KyleMahlkuch <kmahlkuc@linux.vnet.ibm.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/radeon/radeon_drv.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index 3666c308c34a6..53676b5fec684 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1036,16 +1036,17 @@ static int analogix_dp_commit(struct analogix_dp_device *dp)
- 	if (ret)
- 		return ret;
- 
-+	/* Check whether panel supports fast training */
-+	ret = analogix_dp_fast_link_train_detection(dp);
-+	if (ret)
-+		dp->psr_enable = false;
+diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+index 2e96c886392bd..60ee51edd7823 100644
+--- a/drivers/gpu/drm/radeon/radeon_drv.c
++++ b/drivers/gpu/drm/radeon/radeon_drv.c
+@@ -344,11 +344,19 @@ radeon_pci_remove(struct pci_dev *pdev)
+ static void
+ radeon_pci_shutdown(struct pci_dev *pdev)
+ {
++	struct drm_device *ddev = pci_get_drvdata(pdev);
 +
- 	if (dp->psr_enable) {
- 		ret = analogix_dp_enable_sink_psr(dp);
- 		if (ret)
- 			return ret;
- 	}
- 
--	/* Check whether panel supports fast training */
--	ret =  analogix_dp_fast_link_train_detection(dp);
--	if (ret)
--		dp->psr_enable = false;
- 
- 	return ret;
+ 	/* if we are running in a VM, make sure the device
+ 	 * torn down properly on reboot/shutdown
+ 	 */
+ 	if (radeon_device_is_virtual())
+ 		radeon_pci_remove(pdev);
++
++	/* Some adapters need to be suspended before a
++	* shutdown occurs in order to prevent an error
++	* during kexec.
++	*/
++	radeon_suspend_kms(ddev, true, true, false);
  }
+ 
+ static int radeon_pmops_suspend(struct device *dev)
 -- 
 2.20.1
 
