@@ -2,133 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAEE9BC782
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 14:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94EABBC786
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 14:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504852AbfIXMD5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 08:03:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41750 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2439102AbfIXMD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 08:03:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A421CACC3;
-        Tue, 24 Sep 2019 12:03:54 +0000 (UTC)
-Subject: Re: [PATCH v2] scsi: qedf: Add port_id getter
-To:     Daniel Wagner <dwagner@suse.de>, QLogic-Storage-Upstream@cavium.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <MN2PR18MB25273EBD439B3458D6088610D2840@MN2PR18MB2527.namprd18.prod.outlook.com>
- <20190924072906.23737-1-dwagner@suse.de>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <0a2a270e-0d33-05c8-6109-6eba81fc10b9@suse.de>
-Date:   Tue, 24 Sep 2019 14:03:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729505AbfIXMEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 08:04:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53074 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfIXMEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 08:04:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Vfv7lYGujNr5uIH96XHMW+speXHOn/ZhV2QhILuvvL4=; b=WqWNV2OPbJkX162VFcnXZoxXuJ
+        4fQboUoApvGr8FEB/i9cVsSe8aPfZ6sJUfxINZTHg9ui9Lpg9EmKmpc0XtBeX9SDdb7g7g3Lfqisc
+        t3AQHmoTNEjkctbWmy7bKvAcs1jLQwBvIAheeSnEx+CHKUbFKPCW5lwJLH7HA2Avw2C13i5squc7b
+        rsYRR2AosLwIarw2DlfouXh5cdH/QGakfBS0gQbmTZRwiGA1hr+s8c6eH3tWy8kEcwNUmgR2GSnt9
+        OwDyrIebS0SjMVv9a8Tss3UZ1lzrY1mLpRSmhS9abkeNLA9urznvgM6EsgmUTbtI7sYqS7lV1yPg9
+        kxxppJlA==;
+Received: from 177.96.206.173.dynamic.adsl.gvt.net.br ([177.96.206.173] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCjY2-0005Nf-Fs; Tue, 24 Sep 2019 12:04:03 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.2)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1iCjY0-0000z3-2d; Tue, 24 Sep 2019 09:04:00 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2] media: v4l2-fwnode: fix location of acpi/dsd documentation
+Date:   Tue, 24 Sep 2019 09:03:56 -0300
+Message-Id: <1da96f12303328833d4f4064bc127337770bc4a7.1569326471.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190924105038.GH9467@paasikivi.fi.intel.com>
+References: <20190924105038.GH9467@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190924072906.23737-1-dwagner@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/19 9:29 AM, Daniel Wagner wrote:
-> Add qedf_get_host_port_id() to the transport template.
-> 
-> The fc_transport_template initializes the port_id member to the
-> default value of -1. The new getter ensures that the sysfs entry shows
-> the current value and not the default one, e.g by using 'lsscsi -H -t'
-> 
-> Signed-off-by: Daniel Wagner <dwagner@suse.de>
-> ---
-> 
-> changes v2:
->   - place closing brace on new line, fix whitespace damage
-> 
->  drivers/scsi/qedf/qedf_main.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-> index 9c24f3834d70..8fe8c3fdde1b 100644
-> --- a/drivers/scsi/qedf/qedf_main.c
-> +++ b/drivers/scsi/qedf/qedf_main.c
-> @@ -1926,6 +1926,13 @@ static int qedf_fcoe_reset(struct Scsi_Host *shost)
->  	return 0;
->  }
->  
-> +static void qedf_get_host_port_id(struct Scsi_Host *shost)
-> +{
-> +	struct fc_lport *lport = shost_priv(shost);
-> +
-> +	fc_host_port_id(shost) = lport->port_id;
-> +}
-> +
->  static struct fc_host_statistics *qedf_fc_get_host_stats(struct Scsi_Host
->  	*shost)
->  {
-> @@ -1996,6 +2003,7 @@ static struct fc_function_template qedf_fc_transport_fn = {
->  	.show_host_active_fc4s = 1,
->  	.show_host_maxframe_size = 1,
->  
-> +	.get_host_port_id = qedf_get_host_port_id,
->  	.show_host_port_id = 1,
->  	.show_host_supported_speeds = 1,
->  	.get_host_speed = fc_get_host_speed,
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+This got moved to the firmware-guide.
 
-Cheers,
+Fixes: f2dde1ed0f28 ("Documentation: ACPI: move dsd/graph.txt to firmware-guide/acpi and convert to reST")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
 
-Hannes
+v2: 
+
+- Also replace *.txt -> *.rst. I opted to place the full file names there, as this allows
+  ./scripts/documentation-file-ref-check to check if those files gets renamed. It
+  also helps if some Sphinx would later convert those to hyperlinks (with was
+  already discussed at linux-doc ML, although not implemented yet).
+
+ drivers/media/v4l2-core/v4l2-fwnode.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 3bd1888787eb..9387dcba8b59 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -819,8 +819,10 @@ static int v4l2_fwnode_reference_parse(struct device *dev,
+  *
+  * THIS EXAMPLE EXISTS MERELY TO DOCUMENT THIS FUNCTION. DO NOT USE IT AS A
+  * REFERENCE IN HOW ACPI TABLES SHOULD BE WRITTEN!! See documentation under
+- * Documentation/acpi/dsd instead and especially graph.txt,
+- * data-node-references.txt and leds.txt .
++ * Documentation/firmware-guide/acpi/dsd instead and especially
++ * Documentation/firmware-guide/acpi/dsd/graph.rst,
++ * Documentation/firmware-guide/acpi/dsd/data-node-references.rst and
++ * Documentation/firmware-guide/acpi/dsd/leds.rst.
+  *
+  *	Scope (\_SB.PCI0.I2C2)
+  *	{
 -- 
-Dr. Hannes Reinecke		      Teamlead Storage & Networking
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 247165 (AG München), GF: Felix Imendörffer
+2.21.0
+
+
