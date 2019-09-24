@@ -2,75 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F06BC5B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 12:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74C64BC5B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 12:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409506AbfIXKgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 06:36:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48692 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409464AbfIXKgH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 06:36:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1ch6ORGkVqxEoLiMBJqGn8qo1Z9XLDxLeSPoTDpA7CU=; b=ZDGjgQSeHgureY4fbUlyZBZGJ
-        GYQeNq+8O70TqkqDpCOvmyjmTHY/ORoiSWQfS6IcSSjk2hIgE6+QJTu7gbMEzXcABsKOaUMgdMGEN
-        k85Ihv11mPgC0v8aftpcYNcfCvp/H2tUkQ9B3H9exchS/4Naxf2hpabY5zW6wEEDpDgf0+ojdy5C7
-        K4cM80srnZC7ROhdB79jLLN7I1Q3X2IX39/OGAt3EOIGAtjkKgBQVGH8T+Z3KJ51/1hKfQuJWzQX9
-        tprN6GUOCXqK4sR8PVaD1X17l3n25SQwS7+ZAukfYqFUwVmW3OGX1XRwp77UAoezEkoh/mYDL9lxB
-        hVJ4fbPkw==;
-Received: from 177.96.206.173.dynamic.adsl.gvt.net.br ([177.96.206.173] helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCiAu-0004Dg-Fo; Tue, 24 Sep 2019 10:36:04 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92.2)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1iCiAq-0008Gv-Md; Tue, 24 Sep 2019 07:36:00 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Subject: [PATCH] media: v4l2-fwnode: fix location of acpi/dsd documentation
-Date:   Tue, 24 Sep 2019 07:36:00 -0300
-Message-Id: <c7e1b210db1c656bbf1a9488aca26c936ab7577a.1569321356.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        id S2409516AbfIXKid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 06:38:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54142 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2409464AbfIXKid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 06:38:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D918AADAA;
+        Tue, 24 Sep 2019 10:38:30 +0000 (UTC)
+Date:   Tue, 24 Sep 2019 12:38:29 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Joe Perches <joe@perches.com>, devicetree@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v7 08/13] lib/vsprintf: Remove support for %pF and %pf in
+ favour of %pS and %ps
+Message-ID: <20190924103829.uk4mr3z23hwhqdpe@pathway.suse.cz>
+References: <20190918133419.7969-1-sakari.ailus@linux.intel.com>
+ <20190918133419.7969-9-sakari.ailus@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918133419.7969-9-sakari.ailus@linux.intel.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This got moved to the firmware-guide.
+On Wed 2019-09-18 16:34:14, Sakari Ailus wrote:
+> %pS and %ps are now the preferred conversion specifiers to print function
+> names. The functionality is equivalent; remove the old, deprecated %pF
+> and %pf support.
+> 
+> --- a/lib/vsprintf.c
+> +++ b/lib/vsprintf.c
+> @@ -909,7 +909,7 @@ char *symbol_string(char *buf, char *end, void *ptr,
+>  #ifdef CONFIG_KALLSYMS
+>  	if (*fmt == 'B')
+>  		sprint_backtrace(sym, value);
+> -	else if (*fmt != 'f' && *fmt != 's')
+> +	else if (*fmt != 's')
+>  		sprint_symbol(sym, value);
+>  	else
+>  		sprint_symbol_no_offset(sym, value);
+> @@ -2007,9 +2007,7 @@ static char *kobject_string(char *buf, char *end, void *ptr,
+>   *
+>   * - 'S' For symbolic direct pointers (or function descriptors) with offset
+>   * - 's' For symbolic direct pointers (or function descriptors) without offset
+> - * - 'F' Same as 'S'
+> - * - 'f' Same as 's'
+> - * - '[FfSs]R' as above with __builtin_extract_return_addr() translation
+> + * - '[Ss]R' as above with __builtin_extract_return_addr() translation
+>   * - 'B' For backtraced symbolic direct pointers with offset
+>   * - 'R' For decoded struct resource, e.g., [mem 0x0-0x1f 64bit pref]
+>   * - 'r' For raw struct resource, e.g., [mem 0x0-0x1f flags 0x201]
+> @@ -2112,8 +2110,6 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+>  	      struct printf_spec spec)
+>  {
+>  	switch (*fmt) {
+> -	case 'F':
+> -	case 'f':
+>  	case 'S':
+>  	case 's':
+>  		ptr = dereference_symbol_descriptor(ptr);
 
-Fixes: f2dde1ed0f28 ("Documentation: ACPI: move dsd/graph.txt to firmware-guide/acpi and convert to reST")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- drivers/media/v4l2-core/v4l2-fwnode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+IMHO, we should do the same also in vbin_printf().
 
-diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
-index 3bd1888787eb..0e361565f2f9 100644
---- a/drivers/media/v4l2-core/v4l2-fwnode.c
-+++ b/drivers/media/v4l2-core/v4l2-fwnode.c
-@@ -819,7 +819,7 @@ static int v4l2_fwnode_reference_parse(struct device *dev,
-  *
-  * THIS EXAMPLE EXISTS MERELY TO DOCUMENT THIS FUNCTION. DO NOT USE IT AS A
-  * REFERENCE IN HOW ACPI TABLES SHOULD BE WRITTEN!! See documentation under
-- * Documentation/acpi/dsd instead and especially graph.txt,
-+ * Documentation/firmware-guide/acpi/dsd instead and especially graph.txt,
-  * data-node-references.txt and leds.txt .
-  *
-  *	Scope (\_SB.PCI0.I2C2)
--- 
-2.21.0
+The compatibility with traceevent tools was discussed in the thread
+https://lkml.kernel.org/r/20190910084707.18380-2-sakari.ailus@linux.intel.com
 
+If I understand it correctly the tools should be able to handle stored
+'f' and 'F' modifiers because they might be produced by
+older kernels. But new kernels should not longer produce them.
+
+Otherwise the patch looks good to me. I am getting used to the fact
+that we will remove the obsolete specifiers completely.
+
+Best Regards,
+Petr
