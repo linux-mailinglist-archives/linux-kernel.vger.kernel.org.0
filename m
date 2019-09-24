@@ -2,124 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 134F8BCF68
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8986EBCF5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411028AbfIXQ4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:56:16 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:43272 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410116AbfIXQtz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5p3njTKWFRYupYw459OU2KEBGMe4KVPB8kNFlMTX+bc=; b=Pth/OiJMOveJCcFuddDEm0HpW
-        4Yh3FrHr8zb6gXGvfKJnx09Z6yIZLxFUFxvLZxhXyJ43W+XdJSPTNF49lQelgnYCVhovfM+5CBXK0
-        coDKyxLrfnGpLLi+IStI8D6XraT3hSWV43coFMrvNMKz/DtLfAg6KjVAys1X0f2AeVxU8c652KDLI
-        M3BO3+8QY7gMNgeR0nQUa8zb460X1YXJuDx0VK0gpIyXuN0cmjiGNjc59bSn26mUgksRbgJxfhYnz
-        +5AacAbswG+2yAq+zxyrjE+5ycvMAVdE2UL9aT9cR8j0aPkdTi3HWcJg0c2BgHOb+rdZfYZJ/Lgp9
-        2IBYMkVng==;
-Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:43574)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iCo0Q-0002zh-1B; Tue, 24 Sep 2019 17:49:38 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iCo0I-0001QH-GV; Tue, 24 Sep 2019 17:49:30 +0100
-Date:   Tue, 24 Sep 2019 17:49:30 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Cc:     Zhiqiang.Hou@nxp.com, bhelgaas@google.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, leoyang.li@nxp.com,
-        kishon@ti.com, lorenzo.pieralisi@arm.com, Minghuan.Lian@nxp.com,
-        andrew.murray@arm.com, mingkai.hu@nxp.com,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] PCI: mobiveil: Add workaround for unsupported
- request error
-Message-ID: <20190924164930.GZ25745@shell.armlinux.org.uk>
-References: <20190916021742.22844-1-xiaowei.bao@nxp.com>
- <20190916021742.22844-5-xiaowei.bao@nxp.com>
+        id S2411012AbfIXQzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:55:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2410799AbfIXQug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:36 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF64F21D82;
+        Tue, 24 Sep 2019 16:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569343835;
+        bh=flJuwdHDKHHk5hfxoKoJys79qfod4cIb0lAH+IcazAY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JYKaCha0327WrwiNuDwW/Xtz2u6MKwrmtnv0AKC7rAWYOJh5m4oWL3RQdU2XEA0Os
+         MmO+iJr6wNtUcDR92Uis4BUwgWXVIMokTu45HZ5LUoqFZdNJzOzJ2qE89eR4TdBkfD
+         6ICuqNFyq27WvJq3Z63drppB5y7IQ961cZ+5daEM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sean Paul <sean@poorly.run>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 02/28] drm/kms: Catch mode_object lifetime errors
+Date:   Tue, 24 Sep 2019 12:50:05 -0400
+Message-Id: <20190924165031.28292-2-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190924165031.28292-1-sashal@kernel.org>
+References: <20190924165031.28292-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190916021742.22844-5-xiaowei.bao@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 10:17:40AM +0800, Xiaowei Bao wrote:
-> Errata: unsupported request error on inbound posted write
-> transaction, PCIe controller reports advisory error instead
-> of uncorrectable error message to RC.
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> ---
->  drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c | 13 +++++++++++++
->  drivers/pci/controller/mobiveil/pcie-mobiveil.h           |  4 ++++
->  2 files changed, 17 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> index 7bfec51..5bc9ed7 100644
-> --- a/drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> +++ b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4-ep.c
-> @@ -49,6 +49,19 @@ static void ls_pcie_g4_ep_init(struct mobiveil_pcie_ep *ep)
->  	struct mobiveil_pcie *mv_pci = to_mobiveil_pcie_from_ep(ep);
->  	int win_idx;
->  	u8 bar;
-> +	u32 val;
-> +
-> +	/*
-> +	 * Errata: unsupported request error on inbound posted write
-> +	 * transaction, PCIe controller reports advisory error instead
-> +	 * of uncorrectable error message to RC.
-> +	 * workaround: set the bit20(unsupported_request_Error_severity) with
-> +	 * value 1 in uncorrectable_Error_Severity_Register, make the
-> +	 * unsupported request error generate the fatal error.
-> +	 */
-> +	val =  csr_readl(mv_pci, CFG_UNCORRECTABLE_ERROR_SEVERITY);
-> +	val |= 1 << UNSUPPORTED_REQUEST_ERROR_SHIFT;
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-	       BIT(UNSUPPORTED_REQUEST_ERROR_SHIFT) ?
+[ Upstream commit 4f5368b5541a902f6596558b05f5c21a9770dd32 ]
 
-> +	csr_writel(mv_pci, val, CFG_UNCORRECTABLE_ERROR_SEVERITY);
->  
->  	ep->bar_num = PCIE_LX2_BAR_NUM;
->  
-> diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> index 7308fa4..a40707e 100644
-> --- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> +++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-> @@ -123,6 +123,10 @@
->  #define GPEX_BAR_SIZE_UDW		0x4DC
->  #define GPEX_BAR_SELECT			0x4E0
->  
-> +#define CFG_UNCORRECTABLE_ERROR_SEVERITY	0x10c
-> +#define UNSUPPORTED_REQUEST_ERROR_SHIFT		20
-> +#define CFG_UNCORRECTABLE_ERROR_MASK		0x108
-> +
->  /* starting offset of INTX bits in status register */
->  #define PAB_INTX_START			5
->  
-> -- 
-> 2.9.5
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Only dynamic mode objects, i.e. those which are refcounted and have a free
+callback, can be added while the overall drm_device is visible to
+userspace. All others must be added before drm_dev_register and
+removed after drm_dev_unregister.
 
+Small issue around drivers still using the load/unload callbacks, we
+need to make sure we set dev->registered so that load/unload code in
+these callbacks doesn't trigger false warnings. Only a small
+adjustement in drm_dev_register was needed.
+
+Motivated by some irc discussions about object ids of dynamic objects
+like blobs become invalid, and me going on a bit an audit spree.
+
+Reviewed-by: Sean Paul <sean@poorly.run>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190614061723.1173-1-daniel.vetter@ffwll.ch
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/drm_drv.c         | 4 ++--
+ drivers/gpu/drm/drm_mode_object.c | 4 ++++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 340440febf9a5..426365181bdc1 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -804,14 +804,14 @@ int drm_dev_register(struct drm_device *dev, unsigned long flags)
+ 	if (ret)
+ 		goto err_minors;
+ 
+-	dev->registered = true;
+-
+ 	if (dev->driver->load) {
+ 		ret = dev->driver->load(dev, flags);
+ 		if (ret)
+ 			goto err_minors;
+ 	}
+ 
++	dev->registered = true;
++
+ 	if (drm_core_check_feature(dev, DRIVER_MODESET))
+ 		drm_modeset_register_all(dev);
+ 
+diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
+index 5b692ce6a45db..639f869de171b 100644
+--- a/drivers/gpu/drm/drm_mode_object.c
++++ b/drivers/gpu/drm/drm_mode_object.c
+@@ -37,6 +37,8 @@ int __drm_mode_object_add(struct drm_device *dev, struct drm_mode_object *obj,
+ {
+ 	int ret;
+ 
++	WARN_ON(dev->registered && !obj_free_cb);
++
+ 	mutex_lock(&dev->mode_config.idr_mutex);
+ 	ret = idr_alloc(&dev->mode_config.crtc_idr, register_obj ? obj : NULL, 1, 0, GFP_KERNEL);
+ 	if (ret >= 0) {
+@@ -96,6 +98,8 @@ void drm_mode_object_register(struct drm_device *dev,
+ void drm_mode_object_unregister(struct drm_device *dev,
+ 				struct drm_mode_object *object)
+ {
++	WARN_ON(dev->registered && !object->free_cb);
++
+ 	mutex_lock(&dev->mode_config.idr_mutex);
+ 	if (object->id) {
+ 		idr_remove(&dev->mode_config.crtc_idr, object->id);
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.20.1
+
