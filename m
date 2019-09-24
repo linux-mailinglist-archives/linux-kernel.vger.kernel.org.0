@@ -2,90 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C7F9BC3F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 10:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B94BC3FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 10:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394843AbfIXIRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 04:17:48 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:37660 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388712AbfIXIRs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 04:17:48 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1iCg0z-00008t-OU; Tue, 24 Sep 2019 10:17:41 +0200
-Message-ID: <c8cbee753dc0306fd7597f43a45e05d99d404b29.camel@sipsolutions.net>
-Subject: static EXPORT_SYMBOL checker causes false positives on ARCH=um
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     linux-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-        Denis Efremov <efremov@linux.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>
-Cc:     linux-kbuild@vger.kernel.org
-Date:   Tue, 24 Sep 2019 10:17:40 +0200
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S2394924AbfIXIVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 04:21:47 -0400
+Received: from mga14.intel.com ([192.55.52.115]:40717 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388712AbfIXIVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 04:21:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2019 01:21:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,543,1559545200"; 
+   d="scan'208";a="193379870"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga006.jf.intel.com with ESMTP; 24 Sep 2019 01:21:44 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iCg4t-0006p5-At; Tue, 24 Sep 2019 11:21:43 +0300
+Date:   Tue, 24 Sep 2019 11:21:43 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Alex Levin <levinale@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: cherryview: restore Strago DMI workaround for
+ all versions
+Message-ID: <20190924082143.GS2680@smile.fi.intel.com>
+References: <20190924024958.GA229906@dtor-ws>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924024958.GA229906@dtor-ws>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, Sep 23, 2019 at 07:49:58PM -0700, Dmitry Torokhov wrote:
+> This is essentially a revert of:
+> 
+> e3f72b749da2 pinctrl: cherryview: fix Strago DMI workaround
+> 86c5dd6860a6 pinctrl: cherryview: limit Strago DMI workarounds to version 1.0
+> 
+> because even with 1.1 versions of BIOS there are some pins that are
+> configured as interrupts but not claimed by any driver, and they
+> sometimes fire up and result in interrupt storms that cause touchpad
+> stop functioning and other issues.
+> 
+> Given that we are unlikely to qualify another firmware version for a
+> while it is better to keep the workaround active on all Strago boards.
 
-With the new commit 15bfc2348d54 ("modpost: check for static
-EXPORT_SYMBOL* functions") we get a lot of warnings on ARCH=um builds:
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-WARNING: "rename" [vmlinux] is a static EXPORT_SYMBOL
-WARNING: "lseek" [vmlinux] is a static EXPORT_SYMBOL
-WARNING: "ftruncate64" [vmlinux] is a static EXPORT_SYMBOL
-[...]
-see https://p.sipsolutions.net/7232995f34907b9d.txt
+> 
+> Reported-by: Alex Levin <levinale@chromium.org>
+> Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> index 03ec7a5d9d0b..bf049d1bbb87 100644
+> --- a/drivers/pinctrl/intel/pinctrl-cherryview.c
+> +++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+> @@ -1513,7 +1513,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+> -			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1521,7 +1520,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+> -			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1529,7 +1527,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+> -			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{
+> @@ -1537,7 +1534,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+>  		.matches = {
+>  			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+> -			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+>  		},
+>  	},
+>  	{}
+> -- 
+> 2.23.0.351.gc4317032e6-goog
+> 
+> 
+> -- 
+> Dmitry
 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This hack fixes *most* of them:
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 820eed87fb43..3e443563ebea 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1931,12 +1931,18 @@ static void check_sec_ref(struct module *mod, const char *modname,
- static char *remove_dot(char *s)
- {
- 	size_t n = strcspn(s, ".");
-+	char *at;
- 
- 	if (n && s[n]) {
- 		size_t m = strspn(s + n + 1, "0123456789");
- 		if (m && (s[n + m] == '.' || s[n + m] == 0))
- 			s[n] = 0;
- 	}
-+
-+	at = strchr(s, '@');
-+	if (at)
-+		*at = 0;
-+
- 	return s;
- }
- 
-
-(but obviously just serves to give you an idea of what's going on).
-
-
-With that, only two remain for me:
-
-WARNING: "__guard" [vmlinux] is a static EXPORT_SYMBOL
-WARNING: "__stack_smash_handler" [vmlinux] is a static EXPORT_SYMBOL
-
-and I think that's because they don't even exist at all, so arguably the
-code shouldn't export them, but I didn't find a way to detect at build
-time if -fstack-protector was enabled or not?
-
-Any thoughts?
-
-Thanks,
-johannes
 
