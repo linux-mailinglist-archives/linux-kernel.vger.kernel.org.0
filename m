@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D55B5BCFA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECDA4BCFA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407578AbfIXRAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 13:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36160 "EHLO mail.kernel.org"
+        id S2407514AbfIXRAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 13:00:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410045AbfIXQp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:45:58 -0400
+        id S2410315AbfIXQq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1855121841;
-        Tue, 24 Sep 2019 16:45:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 184EE21D7C;
+        Tue, 24 Sep 2019 16:46:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343557;
-        bh=uD15yigGFhyGR5IIx6WLQqFgjgO0kS+RM+hAcqBqlwU=;
+        s=default; t=1569343588;
+        bh=f4rcsN3ybGO/sVNQMSjrifM4UThQhI6TFoiqf0tlzng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wJbygNum0wrODAPypaMOm93yVbJUT0BF1C0DRaoUDPe3zDYMHNUfIDJerhVDhZZZ0
-         yn1osRBMGUNlUeFzmVosHHnhLjG1KcPk3uqLvi1/PQnqhnBw+L8V8SqzHtuBSvVPGt
-         2yhUdxA6FaVM2ypFDxS+52nOrWScEbSVs+0pp55Q=
+        b=DEloijtNQjAUF1mJFjdmr1I4PTbYPbfjKxM+SRwevc+M9UgpjAU0cuhBI6GkdnlIS
+         h8EOWADlB6+JRk0dxqs4kYOqIKm40fGQ593EU6MIu1jPltyphyOLCf1WsHgTZfpdpU
+         wbbo3iVZckUrMwEQ0PQMNfHPuuwBU4NavYlJjW6Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <sean@poorly.run>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 04/70] drm/kms: Catch mode_object lifetime errors
-Date:   Tue, 24 Sep 2019 12:44:43 -0400
-Message-Id: <20190924164549.27058-4-sashal@kernel.org>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 16/70] clk: imx8mq: Mark AHB clock as critical
+Date:   Tue, 24 Sep 2019 12:44:55 -0400
+Message-Id: <20190924164549.27058-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -45,75 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Abel Vesa <abel.vesa@nxp.com>
 
-[ Upstream commit 4f5368b5541a902f6596558b05f5c21a9770dd32 ]
+[ Upstream commit 9b9c60bed562c3718ae324a86f3f30a4ff983cf8 ]
 
-Only dynamic mode objects, i.e. those which are refcounted and have a free
-callback, can be added while the overall drm_device is visible to
-userspace. All others must be added before drm_dev_register and
-removed after drm_dev_unregister.
+Initially, the TMU_ROOT clock was marked as critical, which automatically
+made the AHB clock to stay always on. Since the TMU_ROOT clock is not
+marked as critical anymore, following commit:
 
-Small issue around drivers still using the load/unload callbacks, we
-need to make sure we set dev->registered so that load/unload code in
-these callbacks doesn't trigger false warnings. Only a small
-adjustement in drm_dev_register was needed.
+"clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT"
 
-Motivated by some irc discussions about object ids of dynamic objects
-like blobs become invalid, and me going on a bit an audit spree.
+all the clocks that derive from ipg_root clock (and implicitly ahb clock)
+would also have to enable, along with their own gate, the AHB clock.
 
-Reviewed-by: Sean Paul <sean@poorly.run>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190614061723.1173-1-daniel.vetter@ffwll.ch
+But considering that AHB is actually a bus that has to be always on, we mark
+it as critical in the clock provider driver and then all the clocks that
+derive from it can be controlled through the dedicated per IP gate which
+follows after the ipg_root clock.
+
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_drv.c         | 4 ++--
- drivers/gpu/drm/drm_mode_object.c | 4 ++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx8mq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index 862621494a93e..6a651bf540b3b 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -987,14 +987,14 @@ int drm_dev_register(struct drm_device *dev, unsigned long flags)
- 	if (ret)
- 		goto err_minors;
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index daf1841b2adb0..f29025c99c53b 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -396,7 +396,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+ 	clks[IMX8MQ_CLK_NOC_APB] = imx8m_clk_composite_critical("noc_apb", imx8mq_noc_apb_sels, base + 0x8d80);
  
--	dev->registered = true;
--
- 	if (dev->driver->load) {
- 		ret = dev->driver->load(dev, flags);
- 		if (ret)
- 			goto err_minors;
- 	}
+ 	/* AHB */
+-	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite("ahb", imx8mq_ahb_sels, base + 0x9000);
++	/* AHB clock is used by the AHB bus therefore marked as critical */
++	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite_critical("ahb", imx8mq_ahb_sels, base + 0x9000);
+ 	clks[IMX8MQ_CLK_AUDIO_AHB] = imx8m_clk_composite("audio_ahb", imx8mq_audio_ahb_sels, base + 0x9100);
  
-+	dev->registered = true;
-+
- 	if (drm_core_check_feature(dev, DRIVER_MODESET))
- 		drm_modeset_register_all(dev);
- 
-diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
-index f32507e65b794..7f291f88156fc 100644
---- a/drivers/gpu/drm/drm_mode_object.c
-+++ b/drivers/gpu/drm/drm_mode_object.c
-@@ -37,6 +37,8 @@ int __drm_mode_object_add(struct drm_device *dev, struct drm_mode_object *obj,
- {
- 	int ret;
- 
-+	WARN_ON(dev->registered && !obj_free_cb);
-+
- 	mutex_lock(&dev->mode_config.idr_mutex);
- 	ret = idr_alloc(&dev->mode_config.object_idr, register_obj ? obj : NULL,
- 			1, 0, GFP_KERNEL);
-@@ -97,6 +99,8 @@ void drm_mode_object_register(struct drm_device *dev,
- void drm_mode_object_unregister(struct drm_device *dev,
- 				struct drm_mode_object *object)
- {
-+	WARN_ON(dev->registered && !object->free_cb);
-+
- 	mutex_lock(&dev->mode_config.idr_mutex);
- 	if (object->id) {
- 		idr_remove(&dev->mode_config.object_idr, object->id);
+ 	/* IPG */
 -- 
 2.20.1
 
