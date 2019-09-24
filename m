@@ -2,169 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0E9BC0A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 05:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD1BBC0B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 05:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394780AbfIXDTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 23:19:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38772 "EHLO mx1.redhat.com"
+        id S2408802AbfIXD1P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 23:27:15 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60430 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389152AbfIXDTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 23:19:22 -0400
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8DABA2A09D8
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 03:19:22 +0000 (UTC)
-Received: by mail-pf1-f199.google.com with SMTP id i187so492913pfc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 20:19:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uePRz+zBUInRiBudQ8Q8EZdu0505xUFOoco9XYwCcgc=;
-        b=appDA7N/9lDYgJRNYLvjnUcraDMkTZw8KS+LH+9N9QSDStMe4WJMYQm+Bx9CPx6asm
-         o6+LLO4mWp2UBY8hSQyY40GisGtgqJSd5Sd62UFypN3HgyhNMdL7SB2LOwRWsj9uDRhC
-         iH7JwL6+yVc7K0J5GfDVkQ/UXevde2qbOVojnKFO7cP8BiKYJKcAZnXMIVYvqJwtDTBh
-         GGQSpxRrF4Qu/ttAKhuOKgQGjjkqtprBX8D3PVrhpO/WI474ywfSWB4DDhtgnj0Rex4X
-         LXYKRQCG5gy3wldct3KrLzetxVf8YmOiIzDoAbQ+R+ZmLMUgB/yc8Hn4z3U5BRSpvjW3
-         DbRA==
-X-Gm-Message-State: APjAAAWrhaVKt/gURjhPDUcE0wzMT0FzEgWMpw9U5bW2AKDE29R4MCki
-        nj8b/ghMVGH8nw/OzQUCKkI57fc6kq/IJZMsbrJdnohbGWhevDiVTRMKxDhp0pzADc8yJHHevlX
-        JTsCbjvJVOdk7xy9RN34TfqLQ
-X-Received: by 2002:a62:1516:: with SMTP id 22mr810669pfv.87.1569295162073;
-        Mon, 23 Sep 2019 20:19:22 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzvvwc9qmVDzQ+3G7Oq/DsoKfd5QfwPt3k9ug8jmIgqi79JZwmDUqYomKmQbUA8CTqPKchZvw==
-X-Received: by 2002:a62:1516:: with SMTP id 22mr810652pfv.87.1569295161835;
-        Mon, 23 Sep 2019 20:19:21 -0700 (PDT)
-Received: from xz-x1 ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b20sm243572pff.158.2019.09.23.20.19.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 20:19:21 -0700 (PDT)
-Date:   Tue, 24 Sep 2019 11:19:08 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Marty McFadden <mcfadden8@llnl.gov>, Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v4 05/10] mm: Return faster for non-fatal signals in user
- mode faults
-Message-ID: <20190924031908.GF28074@xz-x1>
-References: <20190923042523.10027-1-peterx@redhat.com>
- <20190923042523.10027-6-peterx@redhat.com>
- <CAHk-=wiNGtUaXtRv1wniw3hfxFnU7SO7ZuisFSVg0btvROcW6w@mail.gmail.com>
- <20190924024721.GD28074@xz-x1>
- <20190924025447.GE1855@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190924025447.GE1855@bombadil.infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S2394624AbfIXD1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Sep 2019 23:27:14 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E8D00200019;
+        Tue, 24 Sep 2019 05:27:11 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7F832000B6;
+        Tue, 24 Sep 2019 05:27:07 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EA7D4402E4;
+        Tue, 24 Sep 2019 11:27:02 +0800 (SGT)
+From:   Yuantian Tang <andy.tang@nxp.com>
+To:     edubezval@gmail.com, rui.zhang@intel.com, anson.huang@nxp.com
+Cc:     daniel.lezcano@linaro.org, leoyang.li@nxp.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH v2] thermal: qoriq: add thermal monitor unit version 2 support
+Date:   Tue, 24 Sep 2019 11:16:40 +0800
+Message-Id: <20190924031640.3159-1-andy.tang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 07:54:47PM -0700, Matthew Wilcox wrote:
-> On Tue, Sep 24, 2019 at 10:47:21AM +0800, Peter Xu wrote:
-> > On Mon, Sep 23, 2019 at 11:03:49AM -0700, Linus Torvalds wrote:
-> > > On Sun, Sep 22, 2019 at 9:26 PM Peter Xu <peterx@redhat.com> wrote:
-> > > >
-> > > > This patch is a preparation of removing that special path by allowing
-> > > > the page fault to return even faster if we were interrupted by a
-> > > > non-fatal signal during a user-mode page fault handling routine.
-> > > 
-> > > So I really wish saome other vm person would also review these things,
-> > > but looking over this series once more, this is the patch I probably
-> > > like the least.
-> > > 
-> > > And the reason I like it the least is that I have a hard time
-> > > explaining to myself what the code does and why, and why it's so full
-> > > of this pattern:
-> > > 
-> > > > -       if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-> > > > +       if ((fault & VM_FAULT_RETRY) &&
-> > > > +           fault_should_check_signal(user_mode(regs)))
-> > > >                 return;
-> > > 
-> > > which isn't all that pretty.
-> > > 
-> > > Why isn't this just
-> > > 
-> > >   static bool fault_signal_pending(unsigned int fault_flags, struct
-> > > pt_regs *regs)
-> > >   {
-> > >         return (fault_flags & VM_FAULT_RETRY) &&
-> > >                 (fatal_signal_pending(current) ||
-> > >                  (user_mode(regs) && signal_pending(current)));
-> > >   }
-> > > 
-> > > and then most of the users would be something like
-> > > 
-> > >         if (fault_signal_pending(fault, regs))
-> > >                 return;
-> > > 
-> > > and the exceptions could do their own thing.
-> > > 
-> > > Now the code is prettier and more understandable, I feel.
-> > > 
-> > > And if something doesn't follow this pattern, maybe it either _should_
-> > > follow that pattern or it should just not use the helper but explain
-> > > why it has an unusual pattern.
-> 
-> > +++ b/arch/alpha/mm/fault.c
-> > @@ -150,7 +150,7 @@ do_page_fault(unsigned long address, unsigned long mmcsr,
-> >  	   the fault.  */
-> >  	fault = handle_mm_fault(vma, address, flags);
-> >  
-> > -	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
-> > +	if (fault_signal_pending(fault, regs))
-> >  		return;
-> >  
-> >  	if (unlikely(fault & VM_FAULT_ERROR)) {
-> 
-> > +++ b/arch/arm/mm/fault.c
-> > @@ -301,6 +301,11 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
-> >  		return 0;
-> >  	}
-> >  
-> > +	/* Fast path to handle user mode signals */
-> > +	if ((fault & VM_FAULT_RETRY) && user_mode(regs) &&
-> > +	    signal_pending(current))
-> > +		return 0;
-> 
-> But _why_ are they different?  This is a good opportunity to make more
-> code the same between architectures.
+Thermal Monitor Unit v2 is introduced on new Layscape SoC.
+Compared to v1, TMUv2 has a little different register layout
+and digital output is fairly linear.
 
-(Thanks for joining the discussion)
+Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+---
+v2:
+	- refine the code: remove redundant variable, rename variable etc.
 
-I'd like to do these - my only worry is that I can't really test them
-well simply because I don't have all the hardwares.  For now the
-changes are mostly straightforward so I'm relatively confident (not to
-mention the code needs proper reviews too, and of course I would
-appreciate much if anyone wants to smoke test it).  If I change it in
-a drastic way, I won't be that confident without some tests at least
-on multiple archs (not to mention that even smoke testing across major
-archs will be a huge amount of work...).  So IMHO those might be more
-suitable as follow-up for per-arch developers if we can at least reach
-a consensus on the whole idea of this patchset.
+ drivers/thermal/qoriq_thermal.c | 121 +++++++++++++++++++++++++-------
+ 1 file changed, 97 insertions(+), 24 deletions(-)
 
-Thanks,
-
+diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
+index 7b364933bfb1..43617e53554b 100644
+--- a/drivers/thermal/qoriq_thermal.c
++++ b/drivers/thermal/qoriq_thermal.c
+@@ -12,7 +12,16 @@
+ 
+ #include "thermal_core.h"
+ 
+-#define SITES_MAX	16
++#define SITES_MAX		16
++#define TMR_DISABLE		0x0
++#define TMR_ME			0x80000000
++#define TMR_ALPF		0x0c000000
++#define TMR_ALPF_V2		0x03000000
++#define TMTMIR_DEFAULT	0x0000000f
++#define TIER_DISABLE	0x0
++#define TEUMR0_V2		0x51009c00
++#define TMU_VER1		0x1
++#define TMU_VER2		0x2
+ 
+ /*
+  * QorIQ TMU Registers
+@@ -23,17 +32,55 @@ struct qoriq_tmu_site_regs {
+ 	u8 res0[0x8];
+ };
+ 
+-struct qoriq_tmu_regs {
++struct qoriq_tmu_regs_v2 {
++	u32 tmr;		/* Mode Register */
++	u32 tsr;		/* Status Register */
++	u32 tmsr;		/* monitor site register */
++	u32 tmtmir;		/* Temperature measurement interval Register */
++	u8 res0[0x10];
++	u32 tier;		/* Interrupt Enable Register */
++	u32 tidr;		/* Interrupt Detect Register */
++	u8 res1[0x8];
++	u32 tiiscr;		/* interrupt immediate site capture register */
++	u32 tiascr;		/* interrupt average site capture register */
++	u32 ticscr;		/* Interrupt Critical Site Capture Register */
++	u32 res2;
++	u32 tmhtcr;		/* monitor high temperature capture register */
++	u32 tmltcr;		/* monitor low temperature capture register */
++	u32 tmrtrcr;	/* monitor rising temperature rate capture register */
++	u32 tmftrcr;	/* monitor falling temperature rate capture register */
++	u32 tmhtitr;	/* High Temperature Immediate Threshold */
++	u32 tmhtatr;	/* High Temperature Average Threshold */
++	u32 tmhtactr;	/* High Temperature Average Crit Threshold */
++	u32 res3;
++	u32 tmltitr;	/* monitor low temperature immediate threshold */
++	u32 tmltatr;	/* monitor low temperature average threshold register */
++	u32 tmltactr;	/* monitor low temperature average critical threshold */
++	u32 res4;
++	u32 tmrtrctr;	/* monitor rising temperature rate critical threshold */
++	u32 tmftrctr;	/* monitor falling temperature rate critical threshold*/
++	u8 res5[0x8];
++	u32 ttcfgr;	/* Temperature Configuration Register */
++	u32 tscfgr;	/* Sensor Configuration Register */
++	u8 res6[0x78];
++	struct qoriq_tmu_site_regs site[SITES_MAX];
++	u8 res7[0x9f8];
++	u32 ipbrr0;		/* IP Block Revision Register 0 */
++	u32 ipbrr1;		/* IP Block Revision Register 1 */
++	u8 res8[0x300];
++	u32 teumr0;
++	u32 teumr1;
++	u32 teumr2;
++	u32 res9;
++	u32 ttrcr[4];	/* Temperature Range Control Register */
++};
++
++struct qoriq_tmu_regs_v1 {
+ 	u32 tmr;		/* Mode Register */
+-#define TMR_DISABLE	0x0
+-#define TMR_ME		0x80000000
+-#define TMR_ALPF	0x0c000000
+ 	u32 tsr;		/* Status Register */
+ 	u32 tmtmir;		/* Temperature measurement interval Register */
+-#define TMTMIR_DEFAULT	0x0000000f
+ 	u8 res0[0x14];
+ 	u32 tier;		/* Interrupt Enable Register */
+-#define TIER_DISABLE	0x0
+ 	u32 tidr;		/* Interrupt Detect Register */
+ 	u32 tiscr;		/* Interrupt Site Capture Register */
+ 	u32 ticscr;		/* Interrupt Critical Site Capture Register */
+@@ -53,10 +100,7 @@ struct qoriq_tmu_regs {
+ 	u32 ipbrr0;		/* IP Block Revision Register 0 */
+ 	u32 ipbrr1;		/* IP Block Revision Register 1 */
+ 	u8 res6[0x310];
+-	u32 ttr0cr;		/* Temperature Range 0 Control Register */
+-	u32 ttr1cr;		/* Temperature Range 1 Control Register */
+-	u32 ttr2cr;		/* Temperature Range 2 Control Register */
+-	u32 ttr3cr;		/* Temperature Range 3 Control Register */
++	u32 ttrcr[4];		/* Temperature Range Control Register */
+ };
+ 
+ struct qoriq_tmu_data;
+@@ -71,7 +115,9 @@ struct qoriq_sensor {
+ };
+ 
+ struct qoriq_tmu_data {
+-	struct qoriq_tmu_regs __iomem *regs;
++	int ver;
++	struct qoriq_tmu_regs_v1 __iomem *regs;
++	struct qoriq_tmu_regs_v2 __iomem *regs_v2;
+ 	bool little_endian;
+ 	struct qoriq_sensor	*sensor[SITES_MAX];
+ };
+@@ -130,12 +176,23 @@ static int qoriq_tmu_register_tmu_zone(struct platform_device *pdev)
+ 				return PTR_ERR(qdata->sensor[id]->tzd);
+ 		}
+ 
+-		sites |= 0x1 << (15 - id);
++		if (qdata->ver == TMU_VER1)
++			sites |= 0x1 << (15 - id);
++		else
++			sites |= 0x1 << id;
+ 	}
+ 
+ 	/* Enable monitoring */
+-	if (sites != 0)
+-		tmu_write(qdata, sites | TMR_ME | TMR_ALPF, &qdata->regs->tmr);
++	if (sites != 0) {
++		if (qdata->ver == TMU_VER1) {
++			tmu_write(qdata, sites | TMR_ME | TMR_ALPF,
++					&qdata->regs->tmr);
++		} else {
++			tmu_write(qdata, sites, &qdata->regs_v2->tmsr);
++			tmu_write(qdata, TMR_ME | TMR_ALPF_V2,
++					&qdata->regs_v2->tmr);
++		}
++	}
+ 
+ 	return 0;
+ }
+@@ -148,16 +205,20 @@ static int qoriq_tmu_calibration(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct qoriq_tmu_data *data = platform_get_drvdata(pdev);
+ 
+-	if (of_property_read_u32_array(np, "fsl,tmu-range", range, 4)) {
+-		dev_err(&pdev->dev, "missing calibration range.\n");
+-		return -ENODEV;
++	len = of_property_count_u32_elems(np, "fsl,tmu-range");
++	if (len < 0 || len > 4) {
++		dev_err(&pdev->dev, "invalid range data.\n");
++		return len;
++	}
++
++	val = of_property_read_u32_array(np, "fsl,tmu-range", range, len);
++	if (val != 0) {
++		dev_err(&pdev->dev, "failed to read range data.\n");
++		return val;
+ 	}
+ 
+-	/* Init temperature range registers */
+-	tmu_write(data, range[0], &data->regs->ttr0cr);
+-	tmu_write(data, range[1], &data->regs->ttr1cr);
+-	tmu_write(data, range[2], &data->regs->ttr2cr);
+-	tmu_write(data, range[3], &data->regs->ttr3cr);
++	for (i = 0; i < len; i++)
++		tmu_write(data, range[i], &data->regs->ttrcr[i]);
+ 
+ 	calibration = of_get_property(np, "fsl,tmu-calibration", &len);
+ 	if (calibration == NULL || len % 8) {
+@@ -181,7 +242,12 @@ static void qoriq_tmu_init_device(struct qoriq_tmu_data *data)
+ 	tmu_write(data, TIER_DISABLE, &data->regs->tier);
+ 
+ 	/* Set update_interval */
+-	tmu_write(data, TMTMIR_DEFAULT, &data->regs->tmtmir);
++	if (data->ver == TMU_VER1) {
++		tmu_write(data, TMTMIR_DEFAULT, &data->regs->tmtmir);
++	} else {
++		tmu_write(data, TMTMIR_DEFAULT, &data->regs_v2->tmtmir);
++		tmu_write(data, TEUMR0_V2, &data->regs_v2->teumr0);
++	}
+ 
+ 	/* Disable monitoring */
+ 	tmu_write(data, TMR_DISABLE, &data->regs->tmr);
+@@ -190,6 +256,7 @@ static void qoriq_tmu_init_device(struct qoriq_tmu_data *data)
+ static int qoriq_tmu_probe(struct platform_device *pdev)
+ {
+ 	int ret;
++	u32 ver;
+ 	struct qoriq_tmu_data *data;
+ 	struct device_node *np = pdev->dev.of_node;
+ 
+@@ -209,6 +276,12 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
+ 		goto err_iomap;
+ 	}
+ 
++	/* version register offset at: 0xbf8 on both v1 and v2 */
++	ver = tmu_read(data, &data->regs->ipbrr0);
++	data->ver = (ver >> 8) & 0xff;
++	if (data->ver == TMU_VER2)
++		data->regs_v2 = (void __iomem *)data->regs;
++
+ 	qoriq_tmu_init_device(data);	/* TMU initialization */
+ 
+ 	ret = qoriq_tmu_calibration(pdev);	/* TMU calibration */
 -- 
-Peter Xu
+2.17.1
+
