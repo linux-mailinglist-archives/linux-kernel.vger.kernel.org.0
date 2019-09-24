@@ -2,91 +2,285 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3106BC2CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 09:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFF8BBC2E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 09:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502919AbfIXHjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 03:39:51 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:41414 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2438384AbfIXHjv (ORCPT
+        id S2440621AbfIXHnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 03:43:24 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:40011 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2437901AbfIXHnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 03:39:51 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A37D343D63A;
-        Tue, 24 Sep 2019 17:39:41 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iCfQC-0000C1-Fo; Tue, 24 Sep 2019 17:39:40 +1000
-Date:   Tue, 24 Sep 2019 17:39:40 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file
- writes
-Message-ID: <20190924073940.GM6636@dread.disaster.area>
-References: <156896493723.4334.13340481207144634918.stgit@buzz>
- <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
- <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
- <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
+        Tue, 24 Sep 2019 03:43:23 -0400
+X-UUID: ac37eb47c05f43259ccd347bbf51a965-20190924
+X-UUID: ac37eb47c05f43259ccd347bbf51a965-20190924
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <xia.jiang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1804269652; Tue, 24 Sep 2019 15:43:14 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 24 Sep 2019 15:43:11 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 24 Sep 2019 15:43:11 +0800
+From:   Xia Jiang <xia.jiang@mediatek.com>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rick Chang <rick.chang@mediatek.com>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH v3 0/5] Add support for mt2701 JPEG ENC support
+Date:   Tue, 24 Sep 2019 15:42:58 +0800
+Message-ID: <20190924074303.22713-1-xia.jiang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=7-415B0cAAAA:8 a=wSS0DcxVZBN270Py4OYA:9 a=CjuIK1q_8ugA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 06:06:46PM +0300, Konstantin Khlebnikov wrote:
-> On 23/09/2019 17.52, Tejun Heo wrote:
-> > Hello, Konstantin.
-> > 
-> > On Fri, Sep 20, 2019 at 10:39:33AM +0300, Konstantin Khlebnikov wrote:
-> > > With vm.dirty_write_behind 1 or 2 files are written even faster and
-> > 
-> > Is the faster speed reproducible?  I don't quite understand why this
-> > would be.
-> 
-> Writing to disk simply starts earlier.
+This patchset add support for mt2701 JPEG ENC support.
 
-Stupid question: how is this any different to simply winding down
-our dirty writeback and throttling thresholds like so:
+This is the compliance test result for jpeg dec and enc.
 
-# echo $((100 * 1000 * 1000)) > /proc/sys/vm/dirty_background_bytes
+The JPEG dec log:
+------------------------------------------------------------
+v4l2-compliance -d /dev/video0                                                    
+v4l2-compliance SHA: 847834c10d11b1cf67c95a8555115e4aa7b4f51b, 32 bits            
+                                                                                  
+Compliance test for mtk-jpeg device /dev/video0:                                  
+                                                                                  
+Driver Info:                                                                      
+        Driver name      : mtk-jpeg                                               
+        Card type        : mtk-jpeg decoder                                       
+        Bus info         : platform:15004000.jpegdec                              
+        Driver version   : 5.3.0                                                  
+        Capabilities     : 0x84204000                                             
+                Video Memory-to-Memory Multiplanar                                
+                Streaming                                                         
+                Extended Pix Format                                               
+                Device Capabilities                                               
+        Device Caps      : 0x04204000                                             
+                Video Memory-to-Memory Multiplanar                                
+                Streaming                                                         
+                Extended Pix Format                                               
+        Detected JPEG Decoder                                                     
+                                                                                  
+Required ioctls:                                                                  
+        test VIDIOC_QUERYCAP: OK                                                  
+                                                                                  
+Allow for multiple opens:                                                         
+        test second /dev/video0 open: OK                                          
+        test VIDIOC_QUERYCAP: OK                                                  
+        test VIDIOC_G/S_PRIORITY: OK                                              
+        test for unlimited opens: OK                                              
+                                                                                  
+Debug ioctls:                                                                     
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)                          
+        test VIDIOC_LOG_STATUS: OK (Not Supported)                                
+                                                                                  
+Input ioctls:                                                                     
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)                 
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)                             
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)                            
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)                                 
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)                             
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)                                 
+        Inputs: 0 Audio Inputs: 0 Tuners: 0                                       
+                                                                                  
+Output ioctls:                                                                    
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)                             
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)                             
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)                                
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)                            
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)                                
+        Outputs: 0 Audio Outputs: 0 Modulators: 0                                 
+                                                                                  
+Input/Output configuration ioctls:                                                
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)                        
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)                 
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)                            
+        test VIDIOC_G/S_EDID: OK (Not Supported)                                  
+                                                                                  
+Control ioctls:                                                                   
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK                                  
+        test VIDIOC_QUERYCTRL: OK                                                 
+        test VIDIOC_G/S_CTRL: OK                                                  
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK                                         
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)               
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)                              
+        Standard Controls: 0 Private Controls: 0                                  
+                                                                                  
+Format ioctls:                                                                    
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK                        
+        test VIDIOC_G/S_PARM: OK (Not Supported)                                  
+        test VIDIOC_G_FBUF: OK (Not Supported)                                    
+        test VIDIOC_G_FMT: OK                                                     
+        test VIDIOC_TRY_FMT: OK                                                   
+        test VIDIOC_S_FMT: OK                                                     
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)                          
+        test Cropping: OK (Not Supported)                                         
+        test Composing: OK                                                        
+        test Scaling: OK                                                          
+                                                                                  
+Codec ioctls:                                                                     
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)                         
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)                               
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)                         
+                                                                                  
+Buffer ioctls:                                                                    
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK                              
+        test VIDIOC_EXPBUF: OK                                                    
+        test Requests: OK (Not Supported)                                         
+                                                                                  
+Total for mtk-jpeg device /dev/video0: 44, Succeeded: 44, Failed: 0, Warnings: 0  
+------------------------------------------------------------
 
-to start background writeback when there's 100MB of dirty pages in
-memory, and then:
+The JPEG enc log:
 
-# echo $((200 * 1000 * 1000)) > /proc/sys/vm/dirty_bytes
+------------------------------------------------------------
+v4l2-compliance -d /dev/video1 
+v4l2-compliance SHA: 847834c10d11b1cf67c95a8555115e4aa7b4f51b, 32 bits
 
-So that writers are directly throttled at 200MB of dirty pages in
-memory?
+Compliance test for mtk-jpeg device /dev/video1:
 
-This effectively gives us global writebehind behaviour with a
-100-200MB cache write burst for initial writes.
+Driver Info:
+        Driver name      : mtk-jpeg
+        Card type        : mtk-jpeg encoder
+        Bus info         : platform:1500a000.jpegenc
+        Driver version   : 5.3.0
+        Capabilities     : 0x84204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04204000
+                Video Memory-to-Memory Multiplanar
+                Streaming
+                Extended Pix Format
+        Detected JPEG Encoder
 
-ANd, really such strict writebehind behaviour is going to cause all
-sorts of unintended problesm with filesystems because there will be
-adverse interactions with delayed allocation. We need a substantial
-amount of dirty data to be cached for writeback for fragmentation
-minimisation algorithms to be able to do their job....
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
 
-Cheers,
+Allow for multiple opens:
+        test second /dev/video1 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
 
-Dave.
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 4 Private Controls: 0
+
+Format ioctls:
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK
+        test Scaling: OK
+
+Codec ioctls:
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls:
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Total for mtk-jpeg device /dev/video1: 44, Succeeded: 44, Failed: 0, Warnings: 0
+------------------------------------------------------------
+
+Change compared to v2:
+-delete Change-Id
+-only test once handler->error after the last v4l2_ctrl_new_std()
+-add a new separate patch for adding V4L2_CID_JPEG_ENABLE_EXIF
+-change device tree node property compatible to an SoC specific compatible
+-delete changing GPLv2 license to SPDX patch which new kernel has include
+
+Xia Jiang (5):
+  media: dt-bindings: Add jpeg enc device tree node document
+  arm: dts: Add jpeg enc device tree node
+  media: platform: Rename jpeg dec file name
+  media: v4l2-ctrl: Add jpeg enc exif mode control
+  media: platform: Add jpeg dec/enc feature
+
+ .../bindings/media/mediatek-jpeg-encoder.txt  |  37 +
+ .../media/uapi/v4l/ext-ctrls-jpeg.rst         |  10 +
+ arch/arm/boot/dts/mt2701.dtsi                 |  13 +
+ drivers/media/platform/mtk-jpeg/Makefile      |   5 +-
+ .../media/platform/mtk-jpeg/mtk_jpeg_core.c   | 739 ++++++++++++++----
+ .../media/platform/mtk-jpeg/mtk_jpeg_core.h   | 114 ++-
+ .../{mtk_jpeg_hw.c => mtk_jpeg_dec_hw.c}      |   2 +-
+ .../{mtk_jpeg_hw.h => mtk_jpeg_dec_hw.h}      |   9 +-
+ ...{mtk_jpeg_parse.c => mtk_jpeg_dec_parse.c} |   2 +-
+ ...{mtk_jpeg_parse.h => mtk_jpeg_dec_parse.h} |   2 +-
+ .../{mtk_jpeg_reg.h => mtk_jpeg_dec_reg.h}    |   0
+ .../media/platform/mtk-jpeg/mtk_jpeg_enc_hw.c | 175 +++++
+ .../media/platform/mtk-jpeg/mtk_jpeg_enc_hw.h |  60 ++
+ .../platform/mtk-jpeg/mtk_jpeg_enc_reg.h      |  49 ++
+ drivers/media/v4l2-core/v4l2-ctrls.c          |   1 +
+ include/uapi/linux/v4l2-controls.h            |   2 +
+ 16 files changed, 1044 insertions(+), 176 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/mediatek-jpeg-encoder.txt
+ rename drivers/media/platform/mtk-jpeg/{mtk_jpeg_hw.c => mtk_jpeg_dec_hw.c} (99%)
+ rename drivers/media/platform/mtk-jpeg/{mtk_jpeg_hw.h => mtk_jpeg_dec_hw.h} (91%)
+ rename drivers/media/platform/mtk-jpeg/{mtk_jpeg_parse.c => mtk_jpeg_dec_parse.c} (98%)
+ rename drivers/media/platform/mtk-jpeg/{mtk_jpeg_parse.h => mtk_jpeg_dec_parse.h} (92%)
+ rename drivers/media/platform/mtk-jpeg/{mtk_jpeg_reg.h => mtk_jpeg_dec_reg.h} (100%)
+ create mode 100644 drivers/media/platform/mtk-jpeg/mtk_jpeg_enc_hw.c
+ create mode 100644 drivers/media/platform/mtk-jpeg/mtk_jpeg_enc_hw.h
+ create mode 100644 drivers/media/platform/mtk-jpeg/mtk_jpeg_enc_reg.h
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.18.0
+
+
