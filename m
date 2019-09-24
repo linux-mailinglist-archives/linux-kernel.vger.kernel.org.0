@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA7D3BCE4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A13DEBCE49
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410744AbfIXQuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:50:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42910 "EHLO mail.kernel.org"
+        id S2410731AbfIXQuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:50:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410698AbfIXQuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:11 -0400
+        id S2392032AbfIXQuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F52D21906;
-        Tue, 24 Sep 2019 16:50:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84EC421D82;
+        Tue, 24 Sep 2019 16:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343810;
-        bh=8XSBu4iP+B1nv+uWJfFddyRTbUf4PPKNBgNrWHITyPU=;
+        s=default; t=1569343811;
+        bh=SOE6ACuDJrpTLEalUwUdaGYcVNC0GWFqk/MsVyT7T58=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w9Bity/sUY/8yg0JCCPZ67jVMpGYbjAQxEfja0T2wzGAEgh1a8NhgjufMKMRXAip0
-         fXAMP6If6GPfjxIaUEtsb6m5ulocxPwEiz/+ncJu5E70Xs0EAwhERRUnBS9BkIfoMF
-         Ua/Q8aVZzlj2WYmgYJTaMBWkThAd5Qh0rKor+se8=
+        b=m2mXba77NlIUbUaDAdGJ0iGW2iKuYhD/VZqIYgffUFwfNXMyYYLwZlhqyy5JgfGdu
+         S/e1F1aji4nETjM+QcIPuRyrsyCk+wp8BMyFaveB8Lnlg81/1avezZui4PlzOoK9R8
+         UDtnADgGoHNz0ZD3gYCDG/47aOx06rGoMbI7vqX8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Qian Cai <cai@lca.pw>, Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 39/50] powerpc/imc: Dont create debugfs files for cpu-less nodes
-Date:   Tue, 24 Sep 2019 12:48:36 -0400
-Message-Id: <20190924164847.27780-39-sashal@kernel.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 40/50] clk: qcom: gcc-sdm845: Use floor ops for sdcc clks
+Date:   Tue, 24 Sep 2019 12:48:37 -0400
+Message-Id: <20190924164847.27780-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -43,107 +46,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 41ba17f20ea835c489e77bd54e2da73184e22060 ]
+[ Upstream commit 5e4b7e82d497580bc430576c4c9bce157dd72512 ]
 
-Commit <684d984038aa> ('powerpc/powernv: Add debugfs interface for
-imc-mode and imc') added debugfs interface for the nest imc pmu
-devices to support changing of different ucode modes. Primarily adding
-this capability for debug. But when doing so, the code did not
-consider the case of cpu-less nodes. So when reading the _cmd_ or
-_mode_ file of a cpu-less node will create this crash.
+Some MMC cards fail to enumerate properly when inserted into an MMC slot
+on sdm845 devices. This is because the clk ops for qcom clks round the
+frequency up to the nearest rate instead of down to the nearest rate.
+For example, the MMC driver requests a frequency of 52MHz from
+clk_set_rate() but the qcom implementation for these clks rounds 52MHz
+up to the next supported frequency of 100MHz. The MMC driver could be
+modified to request clk rate ranges but for now we can fix this in the
+clk driver by changing the rounding policy for this clk to be round down
+instead of round up.
 
-  Faulting instruction address: 0xc0000000000d0d58
-  Oops: Kernel access of bad area, sig: 11 [#1]
-  ...
-  CPU: 67 PID: 5301 Comm: cat Not tainted 5.2.0-rc6-next-20190627+ #19
-  NIP:  c0000000000d0d58 LR: c00000000049aa18 CTR:c0000000000d0d50
-  REGS: c00020194548f9e0 TRAP: 0300   Not tainted  (5.2.0-rc6-next-20190627+)
-  MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR:28022822  XER: 00000000
-  CFAR: c00000000049aa14 DAR: 000000000003fc08 DSISR:40000000 IRQMASK: 0
-  ...
-  NIP imc_mem_get+0x8/0x20
-  LR  simple_attr_read+0x118/0x170
-  Call Trace:
-    simple_attr_read+0x70/0x170 (unreliable)
-    debugfs_attr_read+0x6c/0xb0
-    __vfs_read+0x3c/0x70
-     vfs_read+0xbc/0x1a0
-    ksys_read+0x7c/0x140
-    system_call+0x5c/0x70
-
-Patch fixes the issue with a more robust check for vbase to NULL.
-
-Before patch, ls output for the debugfs imc directory
-
-  # ls /sys/kernel/debug/powerpc/imc/
-  imc_cmd_0    imc_cmd_251  imc_cmd_253  imc_cmd_255  imc_mode_0    imc_mode_251  imc_mode_253  imc_mode_255
-  imc_cmd_250  imc_cmd_252  imc_cmd_254  imc_cmd_8    imc_mode_250  imc_mode_252  imc_mode_254  imc_mode_8
-
-After patch, ls output for the debugfs imc directory
-
-  # ls /sys/kernel/debug/powerpc/imc/
-  imc_cmd_0  imc_cmd_8  imc_mode_0  imc_mode_8
-
-Actual bug here is that, we have two loops with potentially different
-loop counts. That is, in imc_get_mem_addr_nest(), loop count is
-obtained from the dt entries. But in case of export_imc_mode_and_cmd(),
-loop was based on for_each_nid() count. Patch fixes the loop count in
-latter based on the struct mem_info. Ideally it would be better to
-have array size in struct imc_pmu.
-
-Fixes: 684d984038aa ('powerpc/powernv: Add debugfs interface for imc-mode and imc')
-Reported-by: Qian Cai <cai@lca.pw>
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190827101635.6942-1-maddy@linux.vnet.ibm.com
+Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
+Reported-by: Douglas Anderson <dianders@chromium.org>
+Cc: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Link: https://lkml.kernel.org/r/20190830195142.103564-1-swboyd@chromium.org
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/powernv/opal-imc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/qcom/gcc-sdm845.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
-index 828f6656f8f74..649fb268f4461 100644
---- a/arch/powerpc/platforms/powernv/opal-imc.c
-+++ b/arch/powerpc/platforms/powernv/opal-imc.c
-@@ -57,9 +57,9 @@ static void export_imc_mode_and_cmd(struct device_node *node,
- 				    struct imc_pmu *pmu_ptr)
- {
- 	static u64 loc, *imc_mode_addr, *imc_cmd_addr;
--	int chip = 0, nid;
- 	char mode[16], cmd[16];
- 	u32 cb_offset;
-+	struct imc_mem_info *ptr = pmu_ptr->mem_info;
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 3bf11a6200942..ada3e4aeb38f9 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -647,7 +647,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.name = "gcc_sdcc2_apps_clk_src",
+ 		.parent_names = gcc_parent_names_10,
+ 		.num_parents = 5,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
- 	imc_debugfs_parent = debugfs_create_dir("imc", powerpc_debugfs_root);
- 
-@@ -73,20 +73,20 @@ static void export_imc_mode_and_cmd(struct device_node *node,
- 	if (of_property_read_u32(node, "cb_offset", &cb_offset))
- 		cb_offset = IMC_CNTL_BLK_OFFSET;
- 
--	for_each_node(nid) {
--		loc = (u64)(pmu_ptr->mem_info[chip].vbase) + cb_offset;
-+	while (ptr->vbase != NULL) {
-+		loc = (u64)(ptr->vbase) + cb_offset;
- 		imc_mode_addr = (u64 *)(loc + IMC_CNTL_BLK_MODE_OFFSET);
--		sprintf(mode, "imc_mode_%d", nid);
-+		sprintf(mode, "imc_mode_%d", (u32)(ptr->id));
- 		if (!imc_debugfs_create_x64(mode, 0600, imc_debugfs_parent,
- 					    imc_mode_addr))
- 			goto err;
- 
- 		imc_cmd_addr = (u64 *)(loc + IMC_CNTL_BLK_CMD_OFFSET);
--		sprintf(cmd, "imc_cmd_%d", nid);
-+		sprintf(cmd, "imc_cmd_%d", (u32)(ptr->id));
- 		if (!imc_debugfs_create_x64(cmd, 0600, imc_debugfs_parent,
- 					    imc_cmd_addr))
- 			goto err;
--		chip++;
-+		ptr++;
- 	}
- 	return;
+@@ -671,7 +671,7 @@ static struct clk_rcg2 gcc_sdcc4_apps_clk_src = {
+ 		.name = "gcc_sdcc4_apps_clk_src",
+ 		.parent_names = gcc_parent_names_0,
+ 		.num_parents = 4,
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
  
 -- 
 2.20.1
