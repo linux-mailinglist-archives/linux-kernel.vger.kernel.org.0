@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E3CDBCD88
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E16CCBCE10
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410124AbfIXQqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:46:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37454 "EHLO mail.kernel.org"
+        id S2410504AbfIXQs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:48:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406112AbfIXQqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:46:43 -0400
+        id S1725208AbfIXQqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DE2C21906;
-        Tue, 24 Sep 2019 16:46:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12C7C20673;
+        Tue, 24 Sep 2019 16:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343602;
-        bh=V5BW3Dan/eBvQD7BOHMpiAzvf6bQmdaJ66dFqU73JmY=;
+        s=default; t=1569343570;
+        bh=TmUVAbWSEcYcj+irDhRNLuE3zHUilfSwCYvlTjdtEr8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t0N55C38qtpTQtnDGraF6npd4kGC8Mu6ndPOP6cJBIkS6TCenZSsVcNEZX7jFJpi1
-         FGxnLIFkyni2tKoneEB5t4fIM4O+VMMy/bEVGYWzv3hBfG1Mijv7qNB0ci5TXwfjtA
-         oqLT8Ks7j0C1E4KXRGKXWoCXzmdXFK8cekq68YHo=
+        b=hJOXR3cwsEvRBCZzwH8EpDETt8ranklOhlRiBrbhe2v9f1SjUYHIwiIaI7KuGfwcp
+         288BYExkWBLMR97LPw3ktQfcn9UjEPsy91YaRzTll6N0G+/YFWGWiSBV2W8m7JYnxh
+         t1p5d0EDrAc+l7gZxaMiv/grdhzzV01nDiJkGU4s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bayan Zabihiyan <bayan.zabihiyan@amd.com>,
-        Aric Cyr <Aric.Cyr@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+Cc:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 23/70] drm/amd/display: Fix frames_to_insert math
-Date:   Tue, 24 Sep 2019 12:45:02 -0400
-Message-Id: <20190924164549.27058-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 09/70] drm/tinydrm/Kconfig: drivers: Select BACKLIGHT_CLASS_DEVICE
+Date:   Tue, 24 Sep 2019 12:44:48 -0400
+Message-Id: <20190924164549.27058-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -46,109 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bayan Zabihiyan <bayan.zabihiyan@amd.com>
+From: Noralf Trønnes <noralf@tronnes.org>
 
-[ Upstream commit a463b263032f7c98c5912207db43be1aa34a6438 ]
+[ Upstream commit 3389669ac5ea598562673c04971d7bb0fab0e9f1 ]
 
-[Why]
-The math on deciding on how many
-"frames to insert" sometimes sent us over the max refresh rate.
-Also integer overflow can occur if we have high refresh rates.
+The mipi_dbi helper is missing a dependency on DRM_KMS_HELPER and putting
+that in revealed this problem:
 
-[How]
-Instead of clipping the  frame duration such that it doesn’t go below the min,
-just remove a frame from the number of frames to insert. +
-Use unsigned long long for intermediate calculations to prevent
-integer overflow.
+drivers/video/fbdev/Kconfig:12:error: recursive dependency detected!
+drivers/video/fbdev/Kconfig:12: symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:75:     symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
+drivers/gpu/drm/Kconfig:69:     symbol DRM_KMS_HELPER is selected by TINYDRM_MIPI_DBI
+drivers/gpu/drm/tinydrm/Kconfig:11:     symbol TINYDRM_MIPI_DBI is selected by TINYDRM_HX8357D
+drivers/gpu/drm/tinydrm/Kconfig:15:     symbol TINYDRM_HX8357D depends on BACKLIGHT_CLASS_DEVICE
+drivers/video/backlight/Kconfig:144:    symbol BACKLIGHT_CLASS_DEVICE is selected by FB_BACKLIGHT
+drivers/video/fbdev/Kconfig:187:        symbol FB_BACKLIGHT depends on FB
 
-Signed-off-by: Bayan Zabihiyan <bayan.zabihiyan@amd.com>
-Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+A symbol that selects DRM_KMS_HELPER can not depend on
+BACKLIGHT_CLASS_DEVICE. The reason for this is that DRM_KMS_FB_HELPER
+selects FB instead of depending on it.
+
+The tinydrm drivers have somehow gotten away with depending on
+BACKLIGHT_CLASS_DEVICE because DRM_TINYDRM selects DRM_KMS_HELPER and the
+drivers depend on that symbol.
+
+An audit shows that all DRM drivers that select DRM_KMS_HELPER and use
+BACKLIGHT_CLASS_DEVICE, selects it:
+  DRM_TILCDC, DRM_GMA500, DRM_SHMOBILE, DRM_NOUVEAU, DRM_FSL_DCU,
+  DRM_I915, DRM_RADEON, DRM_AMDGPU, DRM_PARADE_PS8622
+
+Documentation/kbuild/kconfig-language.txt has a note regarding select:
+1. 'select should be used with care since it doesn't visit dependencies.'
+   This is not a problem since BACKLIGHT_CLASS_DEVICE doesn't have any
+   dependencies.
+2. 'In general use select only for non-visible symbols'
+   BACKLIGHT_CLASS_DEVICE is user visible.
+
+The real solution to this would be to have DRM_KMS_FB_HELPER depend on the
+user visible symbol FB. That is a can of worms I'm not willing to tackle.
+I fear that such a change will result in me handling difficult fallouts
+for the next weeks. So I'm following DRM suite here.
+
+Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+Reviewed-by: David Lechner <david@lechnology.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190722104312.16184-7-noralf@tronnes.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../amd/display/modules/freesync/freesync.c   | 27 ++++++++++++-------
- 1 file changed, 17 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/tinydrm/Kconfig | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-index 19b1eaebe4840..000a9db9dad82 100644
---- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-+++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-@@ -433,6 +433,12 @@ static void apply_below_the_range(struct core_freesync *core_freesync,
- 		/* Either we've calculated the number of frames to insert,
- 		 * or we need to insert min duration frames
- 		 */
-+		if (last_render_time_in_us / frames_to_insert <
-+				in_out_vrr->min_duration_in_us){
-+			frames_to_insert -= (frames_to_insert > 1) ?
-+					1 : 0;
-+		}
-+
- 		if (frames_to_insert > 0)
- 			inserted_frame_duration_in_us = last_render_time_in_us /
- 							frames_to_insert;
-@@ -885,8 +891,8 @@ void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
- 	struct core_freesync *core_freesync = NULL;
- 	unsigned long long nominal_field_rate_in_uhz = 0;
- 	unsigned int refresh_range = 0;
--	unsigned int min_refresh_in_uhz = 0;
--	unsigned int max_refresh_in_uhz = 0;
-+	unsigned long long min_refresh_in_uhz = 0;
-+	unsigned long long max_refresh_in_uhz = 0;
- 
- 	if (mod_freesync == NULL)
- 		return;
-@@ -913,7 +919,7 @@ void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
- 		min_refresh_in_uhz = nominal_field_rate_in_uhz;
- 
- 	if (!vrr_settings_require_update(core_freesync,
--			in_config, min_refresh_in_uhz, max_refresh_in_uhz,
-+			in_config, (unsigned int)min_refresh_in_uhz, (unsigned int)max_refresh_in_uhz,
- 			in_out_vrr))
- 		return;
- 
-@@ -929,15 +935,15 @@ void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
- 		return;
- 
- 	} else {
--		in_out_vrr->min_refresh_in_uhz = min_refresh_in_uhz;
-+		in_out_vrr->min_refresh_in_uhz = (unsigned int)min_refresh_in_uhz;
- 		in_out_vrr->max_duration_in_us =
- 				calc_duration_in_us_from_refresh_in_uhz(
--						min_refresh_in_uhz);
-+						(unsigned int)min_refresh_in_uhz);
- 
--		in_out_vrr->max_refresh_in_uhz = max_refresh_in_uhz;
-+		in_out_vrr->max_refresh_in_uhz = (unsigned int)max_refresh_in_uhz;
- 		in_out_vrr->min_duration_in_us =
- 				calc_duration_in_us_from_refresh_in_uhz(
--						max_refresh_in_uhz);
-+						(unsigned int)max_refresh_in_uhz);
- 
- 		refresh_range = in_out_vrr->max_refresh_in_uhz -
- 				in_out_vrr->min_refresh_in_uhz;
-@@ -948,17 +954,18 @@ void mod_freesync_build_vrr_params(struct mod_freesync *mod_freesync,
- 	in_out_vrr->fixed.ramping_active = in_config->ramping;
- 
- 	in_out_vrr->btr.btr_enabled = in_config->btr;
-+
- 	if (in_out_vrr->max_refresh_in_uhz <
- 			2 * in_out_vrr->min_refresh_in_uhz)
- 		in_out_vrr->btr.btr_enabled = false;
-+
- 	in_out_vrr->btr.btr_active = false;
- 	in_out_vrr->btr.inserted_duration_in_us = 0;
- 	in_out_vrr->btr.frames_to_insert = 0;
- 	in_out_vrr->btr.frame_counter = 0;
- 	in_out_vrr->btr.mid_point_in_us =
--			in_out_vrr->min_duration_in_us +
--				(in_out_vrr->max_duration_in_us -
--				in_out_vrr->min_duration_in_us) / 2;
-+				(in_out_vrr->min_duration_in_us +
-+				 in_out_vrr->max_duration_in_us) / 2;
- 
- 	if (in_out_vrr->state == VRR_STATE_UNSUPPORTED) {
- 		in_out_vrr->adjust.v_total_min = stream->timing.v_total;
+diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
+index 87819c82bcce8..f2f0739d1035d 100644
+--- a/drivers/gpu/drm/tinydrm/Kconfig
++++ b/drivers/gpu/drm/tinydrm/Kconfig
+@@ -14,8 +14,8 @@ config TINYDRM_MIPI_DBI
+ config TINYDRM_HX8357D
+ 	tristate "DRM support for HX8357D display panels"
+ 	depends on DRM_TINYDRM && SPI
+-	depends on BACKLIGHT_CLASS_DEVICE
+ 	select TINYDRM_MIPI_DBI
++	select BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  DRM driver for the following HX8357D panels:
+ 	  * YX350HV15-T 3.5" 340x350 TFT (Adafruit 3.5")
+@@ -35,8 +35,8 @@ config TINYDRM_ILI9225
+ config TINYDRM_ILI9341
+ 	tristate "DRM support for ILI9341 display panels"
+ 	depends on DRM_TINYDRM && SPI
+-	depends on BACKLIGHT_CLASS_DEVICE
+ 	select TINYDRM_MIPI_DBI
++	select BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  DRM driver for the following Ilitek ILI9341 panels:
+ 	  * YX240QV29-T 2.4" 240x320 TFT (Adafruit 2.4")
+@@ -46,8 +46,8 @@ config TINYDRM_ILI9341
+ config TINYDRM_MI0283QT
+ 	tristate "DRM support for MI0283QT"
+ 	depends on DRM_TINYDRM && SPI
+-	depends on BACKLIGHT_CLASS_DEVICE
+ 	select TINYDRM_MIPI_DBI
++	select BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  DRM driver for the Multi-Inno MI0283QT display panel
+ 	  If M is selected the module will be called mi0283qt.
+@@ -78,8 +78,8 @@ config TINYDRM_ST7586
+ config TINYDRM_ST7735R
+ 	tristate "DRM support for Sitronix ST7735R display panels"
+ 	depends on DRM_TINYDRM && SPI
+-	depends on BACKLIGHT_CLASS_DEVICE
+ 	select TINYDRM_MIPI_DBI
++	select BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  DRM driver Sitronix ST7735R with one of the following LCDs:
+ 	  * JD-T18003-T01 1.8" 128x160 TFT
 -- 
 2.20.1
 
