@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BBA0BCF97
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 437D3BCEBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407478AbfIXQ7Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:59:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38206 "EHLO mail.kernel.org"
+        id S2403912AbfIXQrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:47:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410276AbfIXQrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:47:08 -0400
+        id S2387659AbfIXQrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:47:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27B2421D6C;
-        Tue, 24 Sep 2019 16:47:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08BA821D6C;
+        Tue, 24 Sep 2019 16:47:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343626;
-        bh=W2F1cl8byPxQM64ORMb9z2fh8cWgZGPMK89p7q9qiVw=;
+        s=default; t=1569343631;
+        bh=XZeHI9WNQBBsr5LX0AFe24TjADJgl7zLNaRbvmxddCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C0xKWaK8+vBZvxNo9hKaJqyPgXZu4iV8NGJfk5a5nipfkVrmnDbKY8dm6g56aU7oO
-         5aiGFrFYUpq/aiDqfSkuM5hHBT1X42+r+6OuJEFehDhpEpIGZaLVdjNqEsr84imEFT
-         3QfQoo6hsvXOcpkPxxkbuk86RfkpNa8kWN3grr78=
+        b=sDZQdzLlYpPUfvxuswDFQ8Da1o+bldckB7/ZOeSRdZhwVUXLcS1Di5AzVDStXFxyZ
+         CSWtwhdY4obLHoQbtza2gLGQIPTfFYmmFzzgMu6hMnX7Qs8QpegaWJj3+vaYhdNqaG
+         qKoS/Cc30+s2O/G1sJ/7ewnGxZ3E9qmQcoOog/BI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
-        "Gautham R . Shenoy" <ego@linux.vnet.ibm.com>,
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.2 33/70] powerpc/rtas: use device model APIs and serialization during LPM
-Date:   Tue, 24 Sep 2019 12:45:12 -0400
-Message-Id: <20190924164549.27058-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 35/70] powerpc/64s/radix: Remove redundant pfn_pte bitop, add VM_BUG_ON
+Date:   Tue, 24 Sep 2019 12:45:14 -0400
+Message-Id: <20190924164549.27058-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -44,94 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Lynch <nathanl@linux.ibm.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit a6717c01ddc259f6f73364779df058e2c67309f8 ]
+[ Upstream commit 6bb25170d7a44ef0ed9677814600f0785e7421d1 ]
 
-The LPAR migration implementation and userspace-initiated cpu hotplug
-can interleave their executions like so:
+pfn_pte is never given a pte above the addressable physical memory
+limit, so the masking is redundant. In case of a software bug, it
+is not obviously better to silently truncate the pfn than to corrupt
+the pte (either one will result in memory corruption or crashes),
+so there is no reason to add this to the fast path.
 
-1. Set cpu 7 offline via sysfs.
+Add VM_BUG_ON to catch cases where the pfn is invalid. These would
+catch the create_section_mapping bug fixed by a previous commit.
 
-2. Begin a partition migration, whose implementation requires the OS
-   to ensure all present cpus are online; cpu 7 is onlined:
+  [16885.256466] ------------[ cut here ]------------
+  [16885.256492] kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
+  cpu 0x0: Vector: 700 (Program Check) at [c0000000ee0a36d0]
+      pc: c000000000080738: __map_kernel_page+0x248/0x6f0
+      lr: c000000000080ac0: __map_kernel_page+0x5d0/0x6f0
+      sp: c0000000ee0a3960
+     msr: 9000000000029033
+    current = 0xc0000000ec63b400
+    paca    = 0xc0000000017f0000   irqmask: 0x03   irq_happened: 0x01
+      pid   = 85, comm = sh
+  kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
+  Linux version 5.3.0-rc1-00001-g0fe93e5f3394
+  enter ? for help
+  [c0000000ee0a3a00] c000000000d37378 create_physical_mapping+0x260/0x360
+  [c0000000ee0a3b10] c000000000d370bc create_section_mapping+0x1c/0x3c
+  [c0000000ee0a3b30] c000000000071f54 arch_add_memory+0x74/0x130
 
-     rtas_ibm_suspend_me -> rtas_online_cpus_mask -> cpu_up
-
-   This sets cpu 7 online in all respects except for the cpu's
-   corresponding struct device; dev->offline remains true.
-
-3. Set cpu 7 online via sysfs. _cpu_up() determines that cpu 7 is
-   already online and returns success. The driver core (device_online)
-   sets dev->offline = false.
-
-4. The migration completes and restores cpu 7 to offline state:
-
-     rtas_ibm_suspend_me -> rtas_offline_cpus_mask -> cpu_down
-
-This leaves cpu7 in a state where the driver core considers the cpu
-device online, but in all other respects it is offline and
-unused. Attempts to online the cpu via sysfs appear to succeed but the
-driver core actually does not pass the request to the lower-level
-cpuhp support code. This makes the cpu unusable until the cpu device
-is manually set offline and then online again via sysfs.
-
-Instead of directly calling cpu_up/cpu_down, the migration code should
-use the higher-level device core APIs to maintain consistent state and
-serialize operations.
-
-Fixes: 120496ac2d2d ("powerpc: Bring all threads online prior to migration/hibernation")
-Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
-Reviewed-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190802192926.19277-2-nathanl@linux.ibm.com
+Link: https://lore.kernel.org/r/20190724084638.24982-5-npiggin@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/rtas.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/powerpc/include/asm/book3s/64/pgtable.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
-index fff2eb22427d0..65cd96c3b1d60 100644
---- a/arch/powerpc/kernel/rtas.c
-+++ b/arch/powerpc/kernel/rtas.c
-@@ -871,15 +871,17 @@ static int rtas_cpu_state_change_mask(enum rtas_cpu_state state,
- 		return 0;
- 
- 	for_each_cpu(cpu, cpus) {
-+		struct device *dev = get_cpu_device(cpu);
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index ccf00a8b98c6a..c470f6370dccb 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -602,8 +602,10 @@ static inline bool pte_access_permitted(pte_t pte, bool write)
+  */
+ static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot)
+ {
+-	return __pte((((pte_basic_t)(pfn) << PAGE_SHIFT) & PTE_RPN_MASK) |
+-		     pgprot_val(pgprot));
++	VM_BUG_ON(pfn >> (64 - PAGE_SHIFT));
++	VM_BUG_ON((pfn << PAGE_SHIFT) & ~PTE_RPN_MASK);
 +
- 		switch (state) {
- 		case DOWN:
--			cpuret = cpu_down(cpu);
-+			cpuret = device_offline(dev);
- 			break;
- 		case UP:
--			cpuret = cpu_up(cpu);
-+			cpuret = device_online(dev);
- 			break;
- 		}
--		if (cpuret) {
-+		if (cpuret < 0) {
- 			pr_debug("%s: cpu_%s for cpu#%d returned %d.\n",
- 					__func__,
- 					((state == UP) ? "up" : "down"),
-@@ -968,6 +970,8 @@ int rtas_ibm_suspend_me(u64 handle)
- 	data.token = rtas_token("ibm,suspend-me");
- 	data.complete = &done;
- 
-+	lock_device_hotplug();
-+
- 	/* All present CPUs must be online */
- 	cpumask_andnot(offline_mask, cpu_present_mask, cpu_online_mask);
- 	cpuret = rtas_online_cpus_mask(offline_mask);
-@@ -1007,6 +1011,7 @@ int rtas_ibm_suspend_me(u64 handle)
- 				__func__);
- 
- out:
-+	unlock_device_hotplug();
- 	free_cpumask_var(offline_mask);
- 	return atomic_read(&data.error);
++	return __pte(((pte_basic_t)pfn << PAGE_SHIFT) | pgprot_val(pgprot));
  }
+ 
+ static inline unsigned long pte_pfn(pte_t pte)
 -- 
 2.20.1
 
