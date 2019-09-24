@@ -2,217 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B39BCAB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:58:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5F68BCAC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:02:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632802AbfIXO64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 10:58:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37830 "EHLO mail.kernel.org"
+        id S2409841AbfIXPCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 11:02:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbfIXO64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 10:58:56 -0400
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2409761AbfIXPBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 11:01:24 -0400
+Received: from paulmck-ThinkPad-P72 (unknown [170.225.9.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D3422168B;
-        Tue, 24 Sep 2019 14:58:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F41B214DA;
+        Tue, 24 Sep 2019 15:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569337134;
-        bh=W5MeLhZS5sZtf9zaqV5bUOaPwvhvXSys/vKD9YXq2Aw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=W3DdP+rxCmtHzXrHnvsa4TWvWycRBThGjmG5edqmsozQ0EdQTU5Zq274LVPuNnSRU
-         DmFZ1uPREQO4ALK33o1blCj06tSJfdGJQ0qKkTlHgxnXrLA0+SVrk78uERKXeT4amZ
-         tKHg5Iy2x12Cbs2DDdkyOCr7OmMcjhwnaGF+p+2g=
-Received: by mail-qk1-f176.google.com with SMTP id q203so2095271qke.1;
-        Tue, 24 Sep 2019 07:58:54 -0700 (PDT)
-X-Gm-Message-State: APjAAAVDVLMlgkvMfNZc5Syi1DBPqsrwd8NmeG+Zh2o8S1IRK5WMO8sV
-        GAhRO4vSli5oG6z6nVd7tqE+RW4MFkV69UrlMQ==
-X-Google-Smtp-Source: APXvYqzrsNdKm8ga0UPpciXHC3g0dXA3eN4kckY6MLSWPLk4pOq1pfp+X/Pc6CUjYP4Cf0OZwWsApY6kKpDO3/fnRiY=
-X-Received: by 2002:a05:620a:12d5:: with SMTP id e21mr2874837qkl.152.1569337133701;
- Tue, 24 Sep 2019 07:58:53 -0700 (PDT)
+        s=default; t=1569337283;
+        bh=QMgJORPCEe45dbWla/cKE5rqnESJgYjO5D24uofcrxQ=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=cZbx/VG1ivhOQa3JjDAS56PdhUm8mCSh4IPFFvk/DLSEdObzqSzNy9Gub93N6pKHc
+         cAVeKBs7ITvTOSkgprLZy10wfl9QBV58YwCBfTDXRQwucptcTT5SqelNnkV0hSZiVl
+         HMHd2KWPO4DtKwtmuVA/eLFW/H5i1kuvu4loIVFQ=
+Date:   Tue, 24 Sep 2019 08:01:20 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        kbuild-all@01.org, linux-kernel@vger.kernel.org
+Subject: Re: [rcu:dev.2019.09.23a 61/77] htmldocs: kernel/rcu/tree.c:2706:
+ warning: Function parameter or member 'krcp' not described in
+ 'kfree_rcu_cpu_work'
+Message-ID: <20190924150120.GB2689@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <201909241021.mW1BN9Yl%lkp@intel.com>
 MIME-Version: 1.0
-References: <20190910153409.111901-1-paul.kocialkowski@bootlin.com>
- <20190910153409.111901-2-paul.kocialkowski@bootlin.com> <20190913143510.GA9504@bogus>
- <20190913155815.GA1554@aptenodytes> <CAL_Jsq+dzT1xrfBy2QQHLx9MUNukWWq5eXyOecVV8h0z5ziC8g@mail.gmail.com>
- <20190923153311.GE57525@aptenodytes>
-In-Reply-To: <20190923153311.GE57525@aptenodytes>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 24 Sep 2019 09:58:42 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJLfAb0xhmBoX+GUcv5wsuHBOs8wZ=Hkw3x03kfsPgOqg@mail.gmail.com>
-Message-ID: <CAL_JsqJLfAb0xhmBoX+GUcv5wsuHBOs8wZ=Hkw3x03kfsPgOqg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: display: Add xylon logicvc bindings documentation
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201909241021.mW1BN9Yl%lkp@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 10:33 AM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> Hi,
->
-> On Fri 13 Sep 19, 20:16, Rob Herring wrote:
-> > On Fri, Sep 13, 2019 at 4:58 PM Paul Kocialkowski
-> > <paul.kocialkowski@bootlin.com> wrote:
-> > >
-> > > Hi Rob and thanks for the review!
-> > >
-> > > On Fri 13 Sep 19, 15:35, Rob Herring wrote:
-> > > > On Tue, Sep 10, 2019 at 05:34:08PM +0200, Paul Kocialkowski wrote:
-> > > > > The Xylon LogiCVC is a display controller implemented as programmable
-> > > > > logic in Xilinx FPGAs.
-> > > > >
-> > > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > > > > ---
-> > > > >  .../bindings/display/xylon,logicvc.txt        | 188 ++++++++++++++++++
-> > > > >  1 file changed, 188 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/display/xylon,logicvc.txt
-> > > >
-> > > > Consider converting this to DT schema format. See
-> > > > Documentation/devicetree/writing-schema.rst (.md in 5.3).
-> > >
-> > > Oh right, that would certainly be much more future-proof!
-> > >
-> > > > > diff --git a/Documentation/devicetree/bindings/display/xylon,logicvc.txt b/Documentation/devicetree/bindings/display/xylon,logicvc.txt
-> > > > > new file mode 100644
-> > > > > index 000000000000..eb4b1553888a
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/display/xylon,logicvc.txt
-> > > > > @@ -0,0 +1,188 @@
-> > > > > +Xylon LogiCVC display controller
-> > > > > +
-> > > > > +The Xylon LogiCVC is a display controller that supports multiple layers.
-> > > > > +It is usually implemented as programmable logic and was optimized for use
-> > > > > +with Xilinx Zynq-7000 SoCs and Xilinx FPGAs.
-> > > > > +
-> > > > > +Because the controller is intended for use in a FPGA, most of the configuration
-> > > > > +of the controller takes place at logic configuration bitstream synthesis time.
-> > > > > +As a result, many of the device-tree bindings are meant to reflect the
-> > > > > +synthesis configuration. These do not allow configuring the controller
-> > > > > +differently than synthesis configuration.
-> > > > > +
-> > > > > +Layers are declared in the "layers" sub-node and have dedicated configuration.
-> > > > > +In version 3 of the controller, each layer has fixed memory offset and address
-> > > > > +starting from the video memory base address for its framebuffer. With version 4,
-> > > > > +framebuffers are configured with a direct memory address instead.
-> > > > > +
-> > > > > +Matching synthesis parameters are provided when applicable.
-> > > > > +
-> > > > > +Required properties:
-> > > > > +- compatible: Should be one of:
-> > > > > +  "xylon,logicvc-3.02.a-display"
-> > > > > +  "xylon,logicvc-4.01.a-display"
-> > > > > +- reg: Physical base address and size for the controller registers.
-> > > > > +- clocks: List of phandle and clock-specifier pairs, one for each entry
-> > > > > +  in 'clock-names'
-> > > > > +- clock-names: List of clock names that should at least contain:
-> > > > > +  - "vclk": The VCLK video clock input.
-> > > > > +- interrupts: The interrupt to use for VBLANK signaling.
-> > > > > +- xylon,display-interface: Display interface in use, should be one of:
-> > > > > +  - "lvds-4bits": 4-bit LVDS interface (C_DISPLAY_INTERFACE == 4).
-> > > > > +- xylon,display-colorspace: Display output colorspace in use, should be one of:
-> > > > > +  - "rgb": RGB colorspace (C_DISPLAY_COLOR_SPACE == 0).
-> > > > > +- xylon,display-depth: Display output depth in use (C_PIXEL_DATA_WIDTH).
-> > > > > +- xylon,row-stride: Fixed number of pixels in a framebuffer row (C_ROW_STRIDE).
-> > > > > +- xylon,layers-count: The number of available layers (C_NUM_OF_LAYERS).
-> > > >
-> > > > Presumably some of this is determined by the display attached. Isn't it
-> > > > safe to assume the IP was configured correctly for the intended display
-> > > > and you can just get this from the panel?
-> > >
-> > > Layers are what corresponds to DRM planes, which are not actually indicated
-> > > by the panel but are a charasteristic of the display controller. In our case,
-> > > this is directly selected at bitstream synthesis time for the controller.
-> > >
-> > > So I'm afraid there is no way we can auto-detect this from the driver.
-> >
-> > Sorry, I referring to the set of properties above. In particular,
-> > xylon,display-interface and xylon,display-colorspace, though I don't
-> > know if the latter is talking in memory format or on the wire format.
->
-> Both of these are about the wire format, which is also "hardcoded" at synthesis
-> time with no way to be detected afterwards, as far as I know. Memory format is
-> described in the layer sub-nodes.
+On Tue, Sep 24, 2019 at 10:24:24AM +0800, kbuild test robot wrote:
+> tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2019.09.23a
+> head:   97de53b94582c208ee239178b208b8e8b9472585
+> commit: 3cc794ad18bfc6e46d58411b53f2784388d5bb85 [61/77] rcu: Add multiple in-flight batches of kfree_rcu() work
+> reproduce: make htmldocs
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    Warning: The Sphinx 'sphinx_rtd_theme' HTML theme was not found. Make sure you have the theme installed to produce pretty HTML output. Falling back to the default theme.
+>    WARNING: dot(1) not found, for better output quality install graphviz from http://www.graphviz.org
+>    WARNING: convert(1) not found, for SVG to PDF conversion install ImageMagick (https://www.imagemagick.org)
+>    include/linux/spi/spi.h:190: warning: Function parameter or member 'driver_override' not described in 'spi_device'
+>    include/linux/i2c.h:337: warning: Function parameter or member 'init_irq' not described in 'i2c_client'
+>    include/linux/regulator/machine.h:196: warning: Function parameter or member 'max_uV_step' not described in 'regulation_constraints'
+>    include/linux/regulator/driver.h:223: warning: Function parameter or member 'resume' not described in 'regulator_ops'
+>    fs/direct-io.c:258: warning: Excess function parameter 'offset' description in 'dio_complete'
+>    fs/libfs.c:496: warning: Excess function parameter 'available' description in 'simple_write_end'
+>    fs/posix_acl.c:647: warning: Function parameter or member 'inode' not described in 'posix_acl_update_mode'
+>    fs/posix_acl.c:647: warning: Function parameter or member 'mode_p' not described in 'posix_acl_update_mode'
+>    fs/posix_acl.c:647: warning: Function parameter or member 'acl' not described in 'posix_acl_update_mode'
+>    mm/util.c:1: warning: 'get_user_pages_fast' not found
+>    mm/slab.c:4215: warning: Function parameter or member 'objp' not described in '__ksize'
+>    drivers/usb/typec/bus.c:1: warning: 'typec_altmode_register_driver' not found
+>    drivers/usb/typec/bus.c:1: warning: 'typec_altmode_unregister_driver' not found
+>    drivers/usb/typec/class.c:1: warning: 'typec_altmode_unregister_notifier' not found
+>    drivers/usb/typec/class.c:1: warning: 'typec_altmode_register_notifier' not found
+>    include/linux/w1.h:272: warning: Function parameter or member 'of_match_table' not described in 'w1_family'
+>    include/linux/input/sparse-keymap.h:43: warning: Function parameter or member 'sw' not described in 'key_entry'
+>    include/linux/mod_devicetable.h:822: warning: Function parameter or member 'context' not described in 'wmi_device_id'
+>    drivers/gpu/drm/mcde/mcde_drv.c:1: warning: 'ST-Ericsson MCDE DRM Driver' not found
+>    lib/genalloc.c:1: warning: 'gen_pool_add_virt' not found
+>    lib/genalloc.c:1: warning: 'gen_pool_alloc' not found
+>    lib/genalloc.c:1: warning: 'gen_pool_free' not found
+>    lib/genalloc.c:1: warning: 'gen_pool_alloc_algo' not found
+>    include/linux/clk.h:381: warning: Function parameter or member 'num_clks' not described in 'devm_clk_bulk_get_optional'
+> >> kernel/rcu/tree.c:2706: warning: Function parameter or member 'krcp' not described in 'kfree_rcu_cpu_work'
 
-You have to attach the controller to something at the other end of the
-wire. A panel is only going to support 1 or a few wire formats, so you
-do likely know because the panel knows. In the case that a panel
-supports multiple wire formats, we do have some standard properties
-there. See the LVDS panel binding.
+Good catch, fix set up to squash into original.
 
->
-> > Actually for xylon,layers-count, You should just count the child nodes
-> > of 'layers'.
->
-> Oh that's a good point, thanks!
->
-> > > > > +Optional properties:
-> > > > > +- memory-region: phandle to a node describing memory, as specified in:
-> > > > > +  Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-> > > > > +- clock-names: List of clock names that can optionally contain:
-> > > > > +  - "vclk2": The VCLK2 doubled-rate video clock input.
-> > > > > +  - "lvdsclk": The LVDS clock.
-> > > > > +  - "lvdsclkn": The LVDS clock inverted.
-> > > >
-> > > > How are these really optional?
-> > >
-> > > Well, the controller currently only supports LVDS, but more interfaces may be
-> > > added later, so the lvdsclk clock will be optional when another interface
-> > > is used instead. Maybe I'm mistaken about how to categorize them though.
-> > >
-> > > My understanding is that the need for vclk2 and lvdsclkn depend on the target
-> > > FPGA family. I've developped the driver without the need for them, but the
-> > > datasheet states that they may be needed (but doesn't provide significant
-> > > details about their role though).
-> >
-> > Not sure what to tell you then. You'll see it becomes a bit messy to
-> > describe in schema. Ideally we define the exact number, order, and
-> > values possible (or sets of those).
->
-> I'll try to do my best.
->
-> > > > > +- xylon,syscon: Syscon phandle representing the logicvc instance.
-> > > > > +- xylon,dithering: Dithering module is enabled (C_XCOLOR).
-> > > > > +- xylon,background-layer: The last layer is used to display a black background
-> > > > > +  (C_USE_BACKGROUND). It must still be registered.
-> > > > > +- xylon,layers-configurable: Configuration of layers' size, position and offset
-> > > > > +  is enabled (C_USE_SIZE_POSITION).
-> > > >
-> > > > I would think this will effectively have to be enabled to make this
-> > > > usable with DRM. I'm not sure if a "standard" userspace would use any of
-> > > > the layers if all this is fixed.
-> > >
-> > > I was going with the same assumption, but drm_atomic_helper_check_plane_state
-> > > has a can_position parameter, which will check that the plane covers the
-> > > whole CRTC if set to false. So I guess it is somewhat expected that this can
-> > > be the case and some drivers (e.g. arm/hdlcd_crtc.c) also set this to false.
-> >
-> > Certainly atomic can fail on anything not supported. My question is
-> > more whether userspace has some minimum requirements. A cursor
-> > couldn't deal with can_position=false for example.
->
-> Right, so I suppose that using an overlay plane as cursor wouldn't work
-> in this situation. Well, I haven't found any formal definition of what minimal
-> requirements are expected from overlay planes. I would expect userspace that
-> tries to use an overlay plane as a cursor to have a software fallback as soon
-> as something goes wrong. My feeling is that overlay planes are provided on a
-> "best-effort" basis, though contradiction is welcome here.
+							Thanx, Paul
 
-For sure, there's always a software fallback. While we shouldn't let a
-specific OS's requirements dictate DT bindings, I just wonder if some
-of the configuration ends up always having to be set a certain way.
-Clearly, you could be writing the whole software stack and do a fixed
-configuration, but would you still be using DT at that point?
+>    include/linux/rculist.h:374: warning: Excess function parameter 'cond' description in 'list_for_each_entry_rcu'
+>    include/linux/rculist.h:651: warning: Excess function parameter 'cond' description in 'hlist_for_each_entry_rcu'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:142: warning: Function parameter or member 'blockable' not described in 'amdgpu_mn_read_lock'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:347: warning: cannot understand function prototype: 'struct amdgpu_vm_pt_cursor '
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:348: warning: cannot understand function prototype: 'struct amdgpu_vm_pt_cursor '
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:494: warning: Function parameter or member 'start' not described in 'amdgpu_vm_pt_first_dfs'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:546: warning: Function parameter or member 'adev' not described in 'for_each_amdgpu_vm_pt_dfs_safe'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:546: warning: Function parameter or member 'vm' not described in 'for_each_amdgpu_vm_pt_dfs_safe'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:546: warning: Function parameter or member 'start' not described in 'for_each_amdgpu_vm_pt_dfs_safe'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:546: warning: Function parameter or member 'cursor' not described in 'for_each_amdgpu_vm_pt_dfs_safe'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:546: warning: Function parameter or member 'entry' not described in 'for_each_amdgpu_vm_pt_dfs_safe'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:823: warning: Function parameter or member 'level' not described in 'amdgpu_vm_bo_param'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'params' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'bo' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'level' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'pe' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'addr' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'count' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'incr' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:1285: warning: Function parameter or member 'flags' not described in 'amdgpu_vm_update_flags'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c:2822: warning: Function parameter or member 'pasid' not described in 'amdgpu_vm_make_compute'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c:378: warning: Excess function parameter 'entry' description in 'amdgpu_irq_dispatch'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c:379: warning: Function parameter or member 'ih' not described in 'amdgpu_irq_dispatch'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c:379: warning: Excess function parameter 'entry' description in 'amdgpu_irq_dispatch'
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_xgmi.c:1: warning: no structured comments found
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c:1: warning: no structured comments found
+>    drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c:1: warning: 'pp_dpm_sclk pp_dpm_mclk pp_dpm_pcie' not found
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:131: warning: Incorrect use of kernel-doc format:          * @atomic_obj
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:237: warning: Incorrect use of kernel-doc format:          * gpu_info FW provided soc bounding box struct or 0 if not
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:242: warning: Function parameter or member 'atomic_obj' not described in 'amdgpu_display_manager'
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:242: warning: Function parameter or member 'backlight_link' not described in 'amdgpu_display_manager'
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:242: warning: Function parameter or member 'backlight_caps' not described in 'amdgpu_display_manager'
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:242: warning: Function parameter or member 'freesync_module' not described in 'amdgpu_display_manager'
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:242: warning: Function parameter or member 'fw_dmcu' not described in 'amdgpu_display_manager'
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:242: warning: Function parameter or member 'dmcu_fw_version' not described in 'amdgpu_display_manager'
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h:242: warning: Function parameter or member 'soc_bounding_box' not described in 'amdgpu_display_manager'
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:1: warning: 'register_hpd_handlers' not found
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:1: warning: 'dm_crtc_high_irq' not found
+>    drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c:1: warning: 'dm_pflip_high_irq' not found
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_pin' not described in 'drm_driver'
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_unpin' not described in 'drm_driver'
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_res_obj' not described in 'drm_driver'
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_get_sg_table' not described in 'drm_driver'
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_import_sg_table' not described in 'drm_driver'
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_vmap' not described in 'drm_driver'
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_vunmap' not described in 'drm_driver'
+>    include/drm/drm_drv.h:722: warning: Function parameter or member 'gem_prime_mmap' not described in 'drm_driver'
+>    include/drm/drm_modeset_helper_vtables.h:1053: warning: Function parameter or member 'prepare_writeback_job' not described in 'drm_connector_helper_funcs'
+>    include/drm/drm_modeset_helper_vtables.h:1053: warning: Function parameter or member 'cleanup_writeback_job' not described in 'drm_connector_helper_funcs'
+>    include/drm/drm_atomic_state_helper.h:1: warning: no structured comments found
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'dev_scratch' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'list' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'ip_defrag_offset' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'skb_mstamp_ns' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member '__cloned_offset' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'head_frag' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member '__pkt_type_offset' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'encapsulation' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'encap_hdr_csum' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'csum_valid' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member '__pkt_vlan_present_offset' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'vlan_present' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'csum_complete_sw' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'csum_level' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'inner_protocol_type' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'remcsum_offload' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'sender_cpu' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'reserved_tailroom' not described in 'sk_buff'
+>    include/linux/skbuff.h:893: warning: Function parameter or member 'inner_ipproto' not described in 'sk_buff'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_addrpair' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_portpair' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_ipv6only' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_net_refcnt' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_v6_daddr' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_v6_rcv_saddr' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_cookie' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_listener' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_tw_dr' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_rcv_wnd' not described in 'sock_common'
+>    include/net/sock.h:233: warning: Function parameter or member 'skc_tw_rcv_nxt' not described in 'sock_common'
+>    include/net/sock.h:515: warning: Function parameter or member 'sk_rx_skb_cache' not described in 'sock'
+>    include/net/sock.h:515: warning: Function parameter or member 'sk_wq_raw' not described in 'sock'
+>    include/net/sock.h:515: warning: Function parameter or member 'tcp_rtx_queue' not described in 'sock'
+>    include/net/sock.h:515: warning: Function parameter or member 'sk_tx_skb_cache' not described in 'sock'
+>    include/net/sock.h:515: warning: Function parameter or member 'sk_route_forced_caps' not described in 'sock'
+>    include/net/sock.h:515: warning: Function parameter or member 'sk_txtime_report_errors' not described in 'sock'
+>    include/net/sock.h:515: warning: Function parameter or member 'sk_validate_xmit_skb' not described in 'sock'
+>    include/net/sock.h:515: warning: Function parameter or member 'sk_bpf_storage' not described in 'sock'
+>    include/net/sock.h:2439: warning: Function parameter or member 'tcp_rx_skb_cache_key' not described in 'DECLARE_STATIC_KEY_FALSE'
+>    include/net/sock.h:2439: warning: Excess function parameter 'sk' description in 'DECLARE_STATIC_KEY_FALSE'
+>    include/net/sock.h:2439: warning: Excess function parameter 'skb' description in 'DECLARE_STATIC_KEY_FALSE'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'gso_partial_features' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'l3mdev_ops' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'xfrmdev_ops' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'tlsdev_ops' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'name_assign_type' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'ieee802154_ptr' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'mpls_ptr' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'xdp_prog' not described in 'net_device'
+>    include/linux/netdevice.h:2040: warning: Function parameter or member 'gro_flush_timeout' not described in 'net_device'
+> 
+> vim +2706 kernel/rcu/tree.c
+> 
+>   2694	
+>   2695	/**
+>   2696	 * struct kfree_rcu_cpu_work - single batch of kfree_rcu() requests
+>   2697	 * @rcu_work: Let queue_rcu_work() invoke workqueue handler after grace period
+>   2698	 * @head_free: List of kfree_rcu() objects waiting for a grace period
+>   2699	 * @kcrp: Pointer to @kfree_rcu_cpu structure
+>   2700	 */
+>   2701	
+>   2702	struct kfree_rcu_cpu_work {
+>   2703		struct rcu_work rcu_work;
+>   2704		struct rcu_head *head_free;
+>   2705		struct kfree_rcu_cpu *krcp;
+> > 2706	};
+>   2707	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 
-Rob
+
