@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA862BD532
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 01:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB8BBD536
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 01:03:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411086AbfIXXCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 19:02:15 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42653 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2410730AbfIXXCP (ORCPT
+        id S2411110AbfIXXDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 19:03:08 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38936 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2411090AbfIXXDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 19:02:15 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z12so2075287pgp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 16:02:14 -0700 (PDT)
+        Tue, 24 Sep 2019 19:03:07 -0400
+Received: by mail-pl1-f194.google.com with SMTP id s17so1576033plp.6
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 16:02:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=875aexvD7cUCg4vLDozHani2eFwWcaXl/i/C7NyBK9s=;
-        b=hKzkVvwRGb4znyJN+vH3wu91+Ba0HRbUn/79qk0j4/Qc5P+f830chLC7pKfsie/kG/
-         jGE6cuPi8mSCPtwYQuw6v1H1tHOfaaSx0YshnHQxAIL5Ohr7LPxY0xY/hmhQqICg6hBo
-         pN2BU7ZrUdtJFDOfdOS3nkWJvNB1awluzkuYE=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=z78DOvz8kzmGfG9Z2xiQ3oJZKxQKLVG8/acy4oN8Dcw=;
+        b=UVGLhPIlLPwA2fzJ+wVaUhS6pEHgDSU5sIJC63sH0BLpe69DNRtNuiIJyYrzelDeaf
+         MgKwl9/FlXbtX52BrZDiA+IeCY/vKSzDzLpECw+WDUR8vBprkRjxxGJizDk3GJ1ZGKKl
+         fXYopgvY3t4DldwNzk/tA27LccP149dyOs3YQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=875aexvD7cUCg4vLDozHani2eFwWcaXl/i/C7NyBK9s=;
-        b=Vd/eKFVmCzc+DkCT5CTxk6ovT5bfUuJXqPZR7X402dfnTx+IxkAlNKSquFiKG5zDj3
-         66aKOLNJK+p66WSKyWz8R+/e67tb6KEILJvz1nrPY5BFCZoFwVvwaFEz6+pnuMQF2BJ6
-         sYKSglXlaQlrtccPNaAQVMSdRYrBVzqi6JPZ7EdnnBHKDjb6tNrXWZ0W2ocQcY9eZ19r
-         i2fbM6R7gd+14LgpGaMEdUp2lMl2lXDkNmhpWAvpndPRsH80bo65QShjVZO6rQYz0626
-         zX6K6vr7GKYbrutRXefcJvGDJBwXRoJODx+tUvYeUEk1ExMjE6Rz9i334HMpm4W6G8Sd
-         jTVw==
-X-Gm-Message-State: APjAAAVwLm9jVl+0qc0PQ3PGSWfW/ryTcPESi4cQY/M2IGxEw3+b+ssD
-        vCh8cOt2AnbcUne72jEuU4WIww==
-X-Google-Smtp-Source: APXvYqy77rLagnu3Wdk8EcVrrG/YEwpXEWLr/l86uQs5tIglvvkz7LtqXowdfJ8AIHNk3Or6OKo/HA==
-X-Received: by 2002:a63:4566:: with SMTP id u38mr5426355pgk.448.1569366132160;
-        Tue, 24 Sep 2019 16:02:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=z78DOvz8kzmGfG9Z2xiQ3oJZKxQKLVG8/acy4oN8Dcw=;
+        b=iFGuA7z7fxTxCnJmMjs8nmOHCjHgqGU0MivDYZpTXWJKsIwKdz17giV6ibdCwbi70g
+         6w1OkhX85dal42G0/N9i9RVUsPP+LlBKtcm7a4ZyVVWjVEcEDusY+ruaY7lq7SzlJz6D
+         PJ/ZW5yJ9UIbxVBqolKI1ThKknRIhv1teKXaUrxdZgazTQNqzG/sclNHPHj7lLkC/18L
+         UJXjCZ6pTLhDB1EB+XOxHSJx1e7JpoJ38MpN8T3gwGm0TNIyLIftK98ilpkZVISsgROr
+         JiOYTDTzULV5fVGiTyoUX4758SPJUoIFBOBccOtViSv0v1+BJqTWE7ZUyaTkqVGAm39C
+         ngZg==
+X-Gm-Message-State: APjAAAUZH0AuREauv5TnOJPSmZXt8SRD9WrA732IGneiCLbIeXFHhKba
+        ZW1A18Q57Z2hnAdyj/urDXZLbA==
+X-Google-Smtp-Source: APXvYqysxzEuZoZvT3DDEQl8xU4WetYZVs/nuAbLjO6TaN9J4WjH9sF+m69lffaPTukZqV9jJJHfuQ==
+X-Received: by 2002:a17:902:b482:: with SMTP id y2mr5454384plr.334.1569366131597;
+        Tue, 24 Sep 2019 16:02:11 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q3sm3234073pgj.54.2019.09.24.16.02.10
+        by smtp.gmail.com with ESMTPSA id n9sm843745pjq.30.2019.09.24.16.02.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 24 Sep 2019 16:02:10 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -46,64 +47,55 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Jani Nikula <jani.nikula@linux.intel.com>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] docs: Programmatically render MAINTAINERS into ReST
-Date:   Tue, 24 Sep 2019 16:02:06 -0700
-Message-Id: <20190924230208.12414-1-keescook@chromium.org>
+Subject: [PATCH 1/2] doc-rst: Reduce CSS padding around Field
+Date:   Tue, 24 Sep 2019 16:02:07 -0700
+Message-Id: <20190924230208.12414-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190924230208.12414-1-keescook@chromium.org>
+References: <20190924230208.12414-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit log from Patch 2 repeated here for cover letter:
+Right now any ":Field Name: Field Contents" lines end up with significant
+padding due to CSS from the "table" CSS which rightly needs padding to
+make tables readable. However, field lists don't need this as they tend
+to be stacked together. The future heavy use of fields in the parsed
+MAINTAINERS file needs this cleaned up, and existing users look better
+too. Note the needless white space (and misalignment of name/contents)
+between "Date" and "Author":
 
-In order to have the MAINTAINERS file visible in the rendered ReST
-output, this makes some small changes to the existing MAINTAINERS file
-to allow for better machine processing, and adds a new Sphinx directive
-"maintainers-include" to perform the rendering.
+https://www.kernel.org/doc/html/latest/accounting/psi.html
 
-Features include:
-- Per-subsystem reference links: subsystem maintainer entries can be
-  trivially linked to both internally and external. For example:
-  https://www.kernel.org/doc/html/latest/process/maintainers.html#secure-computing
+This patch fixes this by lowering the padding with a more specific CSS.
 
-- Internally referenced .rst files are linked so they can be followed
-  when browsing the resulting rendering. This allows, for example, the
-  future addition of maintainer profiles to be automatically linked.
-
-- Field name expansion: instead of the short fields (e.g. "M", "F",
-  "K"), use the indicated inline "full names" for the fields (which are
-  marked with "*"s in MAINTAINERS) so that a rendered subsystem entry
-  is more human readable. Email lists are additionally comma-separated.
-  For example:
-
-    SECURE COMPUTING
-        Mail:     Kees Cook <keescook@chromium.org>
-        Reviewer: Andy Lutomirski <luto@amacapital.net>,
-                  Will Drewry <wad@chromium.org>
-        SCM:      git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git seccomp
-        Status:   Supported
-        Files:    kernel/seccomp.c include/uapi/linux/seccomp.h
-                  include/linux/seccomp.h tools/testing/selftests/seccomp/*
-                  tools/testing/selftests/kselftest_harness.h
-                  userspace-api/seccomp_filter
-        Content regex:  \bsecure_computing \bTIF_SECCOMP\b
-
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
-Kees Cook (2):
-  doc-rst: Reduce CSS padding around Field
-  doc-rst: Programmatically render MAINTAINERS into ReST
+ Documentation/sphinx-static/theme_overrides.css | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- Documentation/conf.py                         |   3 +-
- Documentation/process/index.rst               |   1 +
- Documentation/process/maintainers.rst         |   1 +
- .../sphinx-static/theme_overrides.css         |  10 +
- Documentation/sphinx/maintainers_include.py   | 194 ++++++++++++++++++
- MAINTAINERS                                   |  62 +++---
- 6 files changed, 240 insertions(+), 31 deletions(-)
- create mode 100644 Documentation/process/maintainers.rst
- create mode 100755 Documentation/sphinx/maintainers_include.py
-
+diff --git a/Documentation/sphinx-static/theme_overrides.css b/Documentation/sphinx-static/theme_overrides.css
+index e21e36cd6761..459ec5b29d68 100644
+--- a/Documentation/sphinx-static/theme_overrides.css
++++ b/Documentation/sphinx-static/theme_overrides.css
+@@ -53,6 +53,16 @@ div[class^="highlight"] pre {
+     line-height: normal;
+ }
+ 
++/* Keep fields from being strangely far apart due to inheirited table CSS. */
++.rst-content table.field-list th.field-name {
++    padding-top: 1px;
++    padding-bottom: 1px;
++}
++.rst-content table.field-list td.field-body {
++    padding-top: 1px;
++    padding-bottom: 1px;
++}
++
+ @media screen {
+ 
+     /* content column
 -- 
 2.17.1
 
