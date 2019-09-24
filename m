@@ -2,131 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE59BC7AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 14:10:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 265D6BC7A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 14:10:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504888AbfIXMKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 08:10:50 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:38797 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504877AbfIXMKt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 08:10:49 -0400
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x8OCAX3X024786;
-        Tue, 24 Sep 2019 21:10:33 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x8OCAX3X024786
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569327033;
-        bh=rffgi7Bwl5qrpCk6eSIVxCw+MSyC05bj12lcb0fj3wo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KpBi1sRllQGt2TQBK2EYL3FS5VGMG/DiVCyBDqLdVRqhAe2IaFYnsb0nix1O7PlnA
-         jLVcilaS9Z6Z+Tk6yw6DEapVnZ/lsghCjGV4zTHpKGQxNOdJhHqqxg6e6aEbXsTUlk
-         Zr8TVepdVYpfz+9LpROTvFU7L7/YeE6TEb6TWWc5jCEjepAiLxE9obKCXEl/aaz82+
-         1CxXGa7M+7ou9lutfDVL2KulT7uIE5wfbBE71zWxeyfGVK9EkOfpaWP0JaRKR1+Apa
-         IYB0pz03QGtpvjHmpVEQAkM4A3NxApeN0kAmtJiUcBr6hhEGypFRWkisyS4kzR3Yhy
-         7vR8UjHAl4zSQ==
-X-Nifty-SrcIP: [209.85.222.42]
-Received: by mail-ua1-f42.google.com with SMTP id j5so456185uak.12;
-        Tue, 24 Sep 2019 05:10:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAXJUHtQFfLphThrXDxolXLKdLzethOHI/VN746NU+keV2LRPiEk
-        2Q+BUTah2qxfwxUgvmaK8EypjMirayR94H1dpNc=
-X-Google-Smtp-Source: APXvYqwgke60eyPgLk4MA/iZti/hXxqsb489w2oWagoqfwSTYwHUP/vUABgrIbkliIdWqMyxykTxwu+iTxAVncatUPE=
-X-Received: by 2002:ab0:261a:: with SMTP id c26mr1266596uao.121.1569327032303;
- Tue, 24 Sep 2019 05:10:32 -0700 (PDT)
+        id S2504839AbfIXMKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 08:10:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:58516 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2440945AbfIXMKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 08:10:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19593142F;
+        Tue, 24 Sep 2019 05:10:14 -0700 (PDT)
+Received: from [192.168.1.25] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 111B93F67D;
+        Tue, 24 Sep 2019 05:10:10 -0700 (PDT)
+Subject: Re: Problems with arm64 compat vdso
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
+ <7f05a25a-36c7-929c-484d-bc964587917c@arm.com>
+ <CAKv+Gu9EvwM22HaFJvX55HQhptcNUoQZCxq3nxyzquUjcq6DUg@mail.gmail.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <991e5bf9-6e15-1ca1-d593-8abe553ebe7c@arm.com>
+Date:   Tue, 24 Sep 2019 13:11:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <c8cbee753dc0306fd7597f43a45e05d99d404b29.camel@sipsolutions.net>
-In-Reply-To: <c8cbee753dc0306fd7597f43a45e05d99d404b29.camel@sipsolutions.net>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 24 Sep 2019 21:09:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATkejPwwsfJoR4veX+pvCnoK4Seg-ZOcDrZgeTaJTfp0w@mail.gmail.com>
-Message-ID: <CAK7LNATkejPwwsfJoR4veX+pvCnoK4Seg-ZOcDrZgeTaJTfp0w@mail.gmail.com>
-Subject: Re: static EXPORT_SYMBOL checker causes false positives on ARCH=um
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-um@lists.infradead.org, Denis Efremov <efremov@linux.com>,
-        Emil Velikov <emil.l.velikov@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAKv+Gu9EvwM22HaFJvX55HQhptcNUoQZCxq3nxyzquUjcq6DUg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johannes,
+Hi Ard,
 
-On Tue, Sep 24, 2019 at 5:17 PM Johannes Berg <johannes@sipsolutions.net> wrote:
->
-> Hi,
->
-> With the new commit 15bfc2348d54 ("modpost: check for static
-> EXPORT_SYMBOL* functions") we get a lot of warnings on ARCH=um builds:
->
-> WARNING: "rename" [vmlinux] is a static EXPORT_SYMBOL
-> WARNING: "lseek" [vmlinux] is a static EXPORT_SYMBOL
-> WARNING: "ftruncate64" [vmlinux] is a static EXPORT_SYMBOL
-> [...]
-> see https://p.sipsolutions.net/7232995f34907b9d.txt
+On 9/23/19 5:41 PM, Ard Biesheuvel wrote:
+> On Fri, 20 Sep 2019 at 18:33, Vincenzo Frascino
+> <vincenzo.frascino@arm.com> wrote:
+>>
+>> Hi Will,
+>>
+>> thank you for reporting this.
+>>
+>> On 20/09/2019 15:27, Will Deacon wrote:
+>>> Hi Vincenzo,
+>>>
+>>> I've been running into a few issues with the COMPAT vDSO. Please could
+>>> you have a look?
+>>>
+>>
+>> I will be at Linux Recipes next week. I will look at this with priority when I
+>> come back.
+>>
+> 
+> Hi all,
+> 
+> I noticed another issue: I build out of tree, and the VDSO gets
+> rebuilt every time I build the kernel, even if I haven't made any
+> changes to the source tree at all.
+> 
+> Could you please look into that as well? (once you get around to it)
+> 
 
-Thanks for the report.
+I am happy to have a look at this once back from Kernel Recipes next week.
+In the meantime may I ask for some more details?
 
-I think this should work:
-https://lore.kernel.org/patchwork/patch/1131017/
+Could be useful to have a set of commands and a log that shows the problem, in
+this way I will be sure to be looking at the same issue.
 
-It fixes "__guard" and "__stack_smash_handler" too.
-
-
-Thanks.
-
-
-
->
->
-> This hack fixes *most* of them:
->
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 820eed87fb43..3e443563ebea 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1931,12 +1931,18 @@ static void check_sec_ref(struct module *mod, const char *modname,
->  static char *remove_dot(char *s)
->  {
->         size_t n = strcspn(s, ".");
-> +       char *at;
->
->         if (n && s[n]) {
->                 size_t m = strspn(s + n + 1, "0123456789");
->                 if (m && (s[n + m] == '.' || s[n + m] == 0))
->                         s[n] = 0;
->         }
-> +
-> +       at = strchr(s, '@');
-> +       if (at)
-> +               *at = 0;
-> +
->         return s;
->  }
->
->
-> (but obviously just serves to give you an idea of what's going on).
->
->
-> With that, only two remain for me:
->
-> WARNING: "__guard" [vmlinux] is a static EXPORT_SYMBOL
-> WARNING: "__stack_smash_handler" [vmlinux] is a static EXPORT_SYMBOL
->
-> and I think that's because they don't even exist at all, so arguably the
-> code shouldn't export them, but I didn't find a way to detect at build
-> time if -fstack-protector was enabled or not?
->
-> Any thoughts?
->
 > Thanks,
-> johannes
->
-
+> Ard.
+> 
+> 
+>>> If I do the following:
+>>>
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+>>> [...]
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+>>> [set CONFIG_CROSS_COMPILE_COMPAT_VDSO="arm-linux-gnueabihf-"]
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+>>>
+>>> Then I see the following warning:
+>>>
+>>> arch/arm64/Makefile:62: CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built
+>>>
+>>> even though the compat vDSO *has* been built:
+>>>
+>>> $ file arch/arm64/kernel/vdso32/vdso.so
+>>> arch/arm64/kernel/vdso32/vdso.so: ELF 32-bit LSB pie executable, ARM, EABI5 version 1 (SYSV), dynamically linked, BuildID[sha1]=c67f6c786f2d2d6f86c71f708595594aa25247f6, stripped
+>>>
+>>> However, I also get some warnings because arm64 headers are being included
+>>> in the compat vDSO build:
+>>>
+>>> In file included from ./arch/arm64/include/asm/thread_info.h:17:0,
+>>>                  from ./include/linux/thread_info.h:38,
+>>>                  from ./arch/arm64/include/asm/preempt.h:5,
+>>>                  from ./include/linux/preempt.h:78,
+>>>                  from ./include/linux/spinlock.h:51,
+>>>                  from ./include/linux/seqlock.h:36,
+>>>                  from ./include/linux/time.h:6,
+>>>                  from /usr/local/google/home/willdeacon/work/linux/lib/vdso/gettimeofday.c:7,
+>>>                  from <command-line>:0:
+>>> ./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
+>>> ./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+>>>   u64 __addr = (u64)addr & ~__tag_shifted(0xff);
+>>>                ^
+>>> In file included from ./arch/arm64/include/asm/pgtable-hwdef.h:8:0,
+>>>                  from ./arch/arm64/include/asm/processor.h:34,
+>>>                  from ./arch/arm64/include/asm/elf.h:118,
+>>>                  from ./include/linux/elf.h:5,
+>>>                  from ./include/linux/elfnote.h:62,
+>>>                  from arch/arm64/kernel/vdso32/note.c:11:
+>>> ./arch/arm64/include/asm/memory.h: In function ‘__tag_set’:
+>>> ./arch/arm64/include/asm/memory.h:233:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+>>>   u64 __addr = (u64)addr & ~__tag_shifted(0xff);
+>>>                ^
+>>> Worse, if your compat binutils isn't up-to-date, you'll actually run into
+>>> a build failure:
+>>>
+>>> /tmp/ccFCrjUg.s:80: Error: invalid barrier type -- `dmb ishld'
+>>> /tmp/ccFCrjUg.s:124: Error: invalid barrier type -- `dmb ishld'
+>>>
+>>> There also appears to be a problem getting the toolchain prefix from Kconfig.
+>>> If, for example, I do:
+>>>
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+>>> [...]
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+>>> [set CONFIG_CROSS_COMPILE_COMPAT_VDSO="vincenzo"]
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+>>> arch/arm64/Makefile:64: *** vincenzogcc not found, check CROSS_COMPILE_COMPAT.  Stop.
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- menuconfig
+>>> [set CONFIG_CROSS_COMPILE_COMPAT_VDSO="arm-linux-gnueabihf-"]
+>>> $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
+>>> arch/arm64/Makefile:64: *** vincenzogcc not found, check CROSS_COMPILE_COMPAT.  Stop.
+>>> $ grep CONFIG_CROSS_COMPILE_COMPAT_VDSO .config
+>>> CONFIG_CROSS_COMPILE_COMPAT_VDSO="arm-linux-gnueabihf-"
+>>>
+>>> which is irritating, because it seems to force a 'mrproper' if you don't
+>>> get the prefix right first time.
+>>>
+>>> Cheers,
+>>>
+>>> Will
+>>>
+>>
+>> --
+>> Regards,
+>> Vincenzo
 
 -- 
-Best Regards
-Masahiro Yamada
+Regards,
+Vincenzo
