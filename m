@@ -2,122 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A14BCFF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E130BD02E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:08:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633017AbfIXQnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:43:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42318 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2633002AbfIXQnb (ORCPT
+        id S2392073AbfIXRDl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 13:03:41 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:58740 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403997AbfIXQmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:43:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pg+isT0abxRK8PsThFH4dFGWxytvoXKthoZB4FWIcCY=; b=pSSFz/TidsIPuUf4BwKRrs2QZ
-        LXloOqHMGQqnDGcNyEaGbfzDPUl09vSRc2K6UpTyUxW0ZDkBAcsqByWEWQphORjwtjvqyki6mUUHa
-        P/q+UwuyF470ELG8FkSSg8A4pBsKeaMxN5fY0+cRMFVucEwAf8H4OUBWuiAALthkV9yktC7BzDmbq
-        p+8QkW4SXBcHudVMOXg6K8chfeho/zWf++weyvl/Xbl3hV5PDwA5vZa0AqWHTHr4E7JjU8947fQsM
-        +IECp1HMQ/ksN4+s11S4124sp0H58LNN+2J270VtXorKzdN5qLldDhjlGUBwNw0byU11Rw4sixoME
-        tIuWmqfZw==;
-Received: from 177.96.206.173.dynamic.adsl.gvt.net.br ([177.96.206.173] helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iCnuT-0004nu-RX; Tue, 24 Sep 2019 16:43:30 +0000
-Date:   Tue, 24 Sep 2019 13:43:25 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs: Use make invocation's -j argument for
- parallelism
-Message-ID: <20190924134325.4788fc30@coco.lan>
-In-Reply-To: <201909231537.0FC0474C@keescook>
-References: <201909191438.C00E6DB@keescook>
-        <20190922140331.3ffe8604@lwn.net>
-        <201909231537.0FC0474C@keescook>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 24 Sep 2019 12:42:17 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgFLK054408;
+        Tue, 24 Sep 2019 11:42:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569343335;
+        bh=iTVrMjr1jpW2jGLDHpDluWhwBeMusQS6Cqz8cCy6Yzo=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=NYPkL4TFtfvQV/nq+u2xYW7vD8wU2Az7LWpDw1hvnIk/f61qnLDYlraLvOwsm8OQS
+         tsNlA6bwHQT5g2OfKtpMy7I85/H0v2EYiO9bjP/m+rdtJqFUkQVI1b3V43BjpltJBW
+         l3AvgtA2oUYT/RULR5hwMD4aZ2Frx5RSDHGOSa3g=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8OGgFLk079041
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Sep 2019 11:42:15 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 24
+ Sep 2019 11:42:08 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 24 Sep 2019 11:42:14 -0500
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgCQT073229;
+        Tue, 24 Sep 2019 11:42:14 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>,
+        Jyri Sarha <jsarha@ti.com>
+Subject: [Patch v3 1/8] media: i2c: ov2659: Fix for image wrap-around in lower resolution
+Date:   Tue, 24 Sep 2019 11:44:07 -0500
+Message-ID: <20190924164414.21897-2-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190924164414.21897-1-bparrot@ti.com>
+References: <20190924164414.21897-1-bparrot@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 23 Sep 2019 15:40:41 -0700
-Kees Cook <keescook@chromium.org> escreveu:
+Based on recently found sensor configuration examples, it was
+discovered that when scaling and binning are used for the lower
+resolutions (i.e. 640x480, 320x240) the read offset has to be
+increased otherwise the image appears to be wrapped around.
 
-> On Sun, Sep 22, 2019 at 02:03:31PM -0600, Jonathan Corbet wrote:
-> > On Thu, 19 Sep 2019 14:44:37 -0700
-> > Kees Cook <keescook@chromium.org> wrote:
-> >   
-> > > While sphinx 1.7 and later supports "-jauto" for parallelism, this
-> > > effectively ignores the "-j" flag used in the "make" invocation, which
-> > > may cause confusion for build systems. Instead, extract the available  
-> > 
-> > What sort of confusion might we expect?  Or, to channel akpm, "what are the
-> > user-visible effects of this bug"?  
-> 
-> When I run "make htmldocs -j16" with a pre-1.7 sphinx, it is not
-> parallelized.
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Signed-off-by: Jyri Sarha <jsarha@ti.com>
+---
+ drivers/media/i2c/ov2659.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sphinx supports parallel builds for a while. With pre-1.7, you could do
-something like:
+diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
+index f4ded0669ff9..17573257097d 100644
+--- a/drivers/media/i2c/ov2659.c
++++ b/drivers/media/i2c/ov2659.c
+@@ -661,7 +661,7 @@ static struct sensor_register ov2659_vga[] = {
+ 	{ REG_TIMING_HORIZ_FORMAT, 0x01 },
+ 	{ 0x370a, 0x52 },
+ 	{ REG_VFIFO_READ_START_H, 0x00 },
+-	{ REG_VFIFO_READ_START_L, 0x80 },
++	{ REG_VFIFO_READ_START_L, 0xa0 },
+ 	{ REG_ISP_CTRL02, 0x10 },
+ 	{ REG_NULL, 0x00 },
+ };
+@@ -709,7 +709,7 @@ static  struct sensor_register ov2659_qvga[] = {
+ 	{ REG_TIMING_HORIZ_FORMAT, 0x01 },
+ 	{ 0x370a, 0x52 },
+ 	{ REG_VFIFO_READ_START_H, 0x00 },
+-	{ REG_VFIFO_READ_START_L, 0x80 },
++	{ REG_VFIFO_READ_START_L, 0xa0 },
+ 	{ REG_ISP_CTRL02, 0x10 },
+ 	{ REG_NULL, 0x00 },
+ };
+-- 
+2.17.1
 
-	make SPHINXOPTS="-j16" htmldocs
-
-Yet, on my experiences on big machines (tested here with Xeon with 40 and 64
-CPU threads), parallel build doesn't actually benefit with values higher than
--j5 to -j8, with pre-1.7.
-
-Sphinx 1.7 and higher seem to have improved a lot with "-jauto"
-(although I didn't time it comparing with -j5 or -j8 on a big server).
-
-> When I run "make htmldocs -j8" with 1.7+ sphinx, it uses
-> all my CPUs instead of 8. :)
-
-This should do the trick:
-
-	make SPHINXOPTS="-j8" htmldocs
-
-But yeah, IMHO, the best is if it could honor the Makefile flag:
-
-	make -j8 htmldocs
-
-If SPHINXOPTS doesn't contain "-j".
-
-> > > +	-j $(shell python3 $(srctree)/scripts/jobserver-count $(SPHINX_PARALLEL)) \  
-> > 
-> > This (and the shebang line in the script itself) will cause the docs build
-> > to fail on systems lacking Python 3.  While we have talked about requiring
-> > Python 3 for the docs build, we have not actually taken that step yet.  We
-> > probably shouldn't sneak it in here.  I don't see anything in the script
-> > that should require a specific Python version, so I think it should be
-> > tweaked to be version-independent and just invoke "python".  
-> 
-> Ah, no problem. I can fix this. In a quick scan it looked like sphinx
-> was python3, but I see now that's just my install. :)
-
-On Fedora 30, both python2 and python3 versions are available:
-
-	python2-sphinx.noarch : Python documentation generator
-	python3-sphinx.noarch : Python documentation generator
-
-However, if one tries to install it without specifying "2" or "3", it
-defaults to python2 version:
-
-	$ sudo dnf install python-sphinx
-	...
-	Installing:
-	 python2-sphinx                  noarch 1:1.8.4-1.fc30            fedora  1.8 M
-
-AFAIKT, this also applies when distro upgrades takes place: upgrading
-a python2 sphinx from Fedora 30 to Rawhide will very likely keep
-the python2 version.
-
-Thanks,
-Mauro
