@@ -2,117 +2,311 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB830BCE19
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ABDBBCDE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbfIXQss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:48:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40560 "EHLO mail.kernel.org"
+        id S2410348AbfIXQrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:47:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:33846 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410556AbfIXQso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:44 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D7F5217D9;
-        Tue, 24 Sep 2019 16:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343723;
-        bh=IGfnI1Dz+xQEv9yvrsskBlt8PEIQaCUQmgO4pJ6/vH4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qwYqKnmR6gao9y/wKOx/aHYyjTA7CiGF0QTzAqk4dn4+ZTjGm4lsczjHSZvep9puk
-         ZuA8emMSvpHbvV/uQB/6q1Snum8MEChFr4eFoHpAA7xeE6yQZbIxtAnAsRMqJjCb00
-         xD+FARNY8WkvTavQ/bukshNfQs+HR0CnG6AERev0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.2 69/70] f2fs: fix to drop meta/node pages during umount
-Date:   Tue, 24 Sep 2019 12:45:48 -0400
-Message-Id: <20190924164549.27058-69-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
-References: <20190924164549.27058-1-sashal@kernel.org>
+        id S2410306AbfIXQrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:47:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D508142F;
+        Tue, 24 Sep 2019 09:47:09 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C387A3F694;
+        Tue, 24 Sep 2019 09:47:07 -0700 (PDT)
+Subject: Re: [PATCH 2/4] irqchip: Add Aspeed SCU interrupt controller
+To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        andrew@aj.id.au, joel@jms.id.au, mark.rutland@arm.com,
+        robh+dt@kernel.org, jason@lakedaemon.net, tglx@linutronix.de
+References: <1569341672-27632-1-git-send-email-eajames@linux.ibm.com>
+ <1569341672-27632-3-git-send-email-eajames@linux.ibm.com>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <3e866ea1-ee45-8067-09db-422d6c843fca@kernel.org>
+Date:   Tue, 24 Sep 2019 17:47:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1569341672-27632-3-git-send-email-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+Eddie,
 
-[ Upstream commit a8933b6b68f775b5774e7b075447fae13f4d01fe ]
+On 24/09/2019 17:14, Eddie James wrote:
+> The Aspeed SOCs provide some interrupts through the System Control
+> Unit registers. Add an interrupt controller that provides these
+> interrupts to the system.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
+>  MAINTAINERS                         |   1 +
+>  drivers/irqchip/Makefile            |   2 +-
+>  drivers/irqchip/irq-aspeed-scu-ic.c | 199 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 201 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/irqchip/irq-aspeed-scu-ic.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4a1687b..f3f6c3d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2655,6 +2655,7 @@ M:	Eddie James <eajames@linux.ibm.com>
+>  L:	linux-aspeed@lists.ozlabs.org (moderated for non-subscribers)
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2xxx-scu-ic.txt
+> +F:	drivers/irqchip/irq-aspeed-scu-ic.c
+>  F:	include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
+>  
+>  ASPEED VIDEO ENGINE DRIVER
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index cc7c439..fce6b1d 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -86,7 +86,7 @@ obj-$(CONFIG_MVEBU_PIC)			+= irq-mvebu-pic.o
+>  obj-$(CONFIG_MVEBU_SEI)			+= irq-mvebu-sei.o
+>  obj-$(CONFIG_LS_SCFG_MSI)		+= irq-ls-scfg-msi.o
+>  obj-$(CONFIG_EZNPS_GIC)			+= irq-eznps.o
+> -obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o irq-aspeed-i2c-ic.o
+> +obj-$(CONFIG_ARCH_ASPEED)		+= irq-aspeed-vic.o irq-aspeed-i2c-ic.o irq-aspeed-scu-ic.o
+>  obj-$(CONFIG_STM32_EXTI) 		+= irq-stm32-exti.o
+>  obj-$(CONFIG_QCOM_IRQ_COMBINER)		+= qcom-irq-combiner.o
+>  obj-$(CONFIG_IRQ_UNIPHIER_AIDET)	+= irq-uniphier-aidet.o
+> diff --git a/drivers/irqchip/irq-aspeed-scu-ic.c b/drivers/irqchip/irq-aspeed-scu-ic.c
+> new file mode 100644
+> index 0000000..a23802d
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-aspeed-scu-ic.c
+> @@ -0,0 +1,199 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Aspeed AST24XX, AST25XX, and AST26XX SCU Interrupt Controller
+> + * Copyright 2019 IBM Corporation
+> + *
+> + * Eddie James <eajames@linux.ibm.com>
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/io.h>
+> +
+> +#define ASPEED_SCU_IC_SHIFT		0
+> +#define ASPEED_SCU_IC_ENABLE		GENMASK(6, ASPEED_SCU_IC_SHIFT)
+> +#define ASPEED_SCU_IC_NUM_IRQS		7
+> +#define ASPEED_SCU_IC_STATUS_SHIFT	16
+> +
+> +#define ASPEED_AST2600_SCU_IC0_SHIFT	0
+> +#define ASPEED_AST2600_SCU_IC0_ENABLE	\
+> +	GENMASK(5, ASPEED_AST2600_SCU_IC0_SHIFT)
+> +#define ASPEED_AST2600_SCU_IC0_NUM_IRQS	6
+> +
+> +#define ASPEED_AST2600_SCU_IC1_SHIFT	4
+> +#define ASPEED_AST2600_SCU_IC1_ENABLE	\
+> +	GENMASK(5, ASPEED_AST2600_SCU_IC1_SHIFT)
+> +#define ASPEED_AST2600_SCU_IC1_NUM_IRQS	2
+> +
+> +struct aspeed_scu_ic {
+> +	unsigned long irq_enable;
+> +	unsigned long irq_shift;
+> +	unsigned int num_irqs;
+> +	void __iomem *regs;
+> +	struct irq_domain *irq_domain;
+> +};
+> +
+> +static void aspeed_scu_ic_irq_handler(struct irq_desc *desc)
+> +{
+> +	unsigned int irq;
+> +	unsigned long bit;
+> +	unsigned long enabled;
+> +	unsigned long max;
+> +	unsigned long status;
+> +	struct aspeed_scu_ic *scu_ic = irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	status = readl(scu_ic->regs);
 
-As reported in bugzilla:
+You may want to be easy on the interconnect and turn these readl/writel
+into their relaxed version. This will remove a number of unnecessary
+barriers.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=204193
+> +	enabled = status & scu_ic->irq_enable;
+> +	status = (status >> ASPEED_SCU_IC_STATUS_SHIFT) & enabled;
 
-A null pointer dereference bug is triggered in f2fs under kernel-5.1.3.
+This masking looks weird. Does it mean that the status register is split
+in half, with the two half serving different purposes? This requires
+some documentation...
 
- kasan_report.cold+0x5/0x32
- f2fs_write_end_io+0x215/0x650
- bio_endio+0x26e/0x320
- blk_update_request+0x209/0x5d0
- blk_mq_end_request+0x2e/0x230
- lo_complete_rq+0x12c/0x190
- blk_done_softirq+0x14a/0x1a0
- __do_softirq+0x119/0x3e5
- irq_exit+0x94/0xe0
- call_function_single_interrupt+0xf/0x20
+> +
+> +	bit = scu_ic->irq_shift;
+> +	max = scu_ic->num_irqs + bit;
+> +
+> +	for_each_set_bit_from(bit, &status, max) {
+> +		irq = irq_find_mapping(scu_ic->irq_domain,
+> +				       bit - scu_ic->irq_shift);
+> +		generic_handle_irq(irq);
+> +
+> +		writel(enabled | BIT(bit + ASPEED_SCU_IC_STATUS_SHIFT),
+> +		       scu_ic->regs);
+> +	}
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+> +static void aspeed_scu_ic_irq_mask(struct irq_data *data)
+> +{
+> +	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
+> +	unsigned long bit = BIT(data->hwirq + scu_ic->irq_shift);
+> +	unsigned long reg = readl(scu_ic->regs);
+> +
+> +	writel((reg & ~bit) & scu_ic->irq_enable, scu_ic->regs);
 
-During umount, we will access NULL sbi->node_inode pointer in
-f2fs_write_end_io():
+What if you have another CPU masking or unmasking another interrupt at
+the same time? These RMW operations need to be protected.
 
-	f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
-				page->index != nid_of_node(page));
+> +}
+> +
+> +static void aspeed_scu_ic_irq_unmask(struct irq_data *data)
+> +{
+> +	struct aspeed_scu_ic *scu_ic = irq_data_get_irq_chip_data(data);
+> +	unsigned long bit = BIT(data->hwirq + scu_ic->irq_shift);
+> +	unsigned long reg = readl(scu_ic->regs);
+> +
+> +	writel((reg | bit) & scu_ic->irq_enable, scu_ic->regs);
+> +}
+> +
+> +struct irq_chip aspeed_scu_ic_chip = {
+> +	.name		= "aspeed-scu-ic",
+> +	.irq_mask	= aspeed_scu_ic_irq_mask,
+> +	.irq_unmask	= aspeed_scu_ic_irq_unmask,
 
-The reason is if disable_checkpoint mount option is on, meta dirty
-pages can remain during umount, and then be flushed by iput() of
-meta_inode, however node_inode has been iput()ed before
-meta_inode's iput().
+In an SMP system, you may want to provide an affinity callback returning
+-EINVAL.
 
-Since checkpoint is disabled, all meta/node datas are useless and
-should be dropped in next mount, so in umount, let's adjust
-drop_inode() to give a hint to iput_final() to drop all those dirty
-datas correctly.
+> +};
+> +
+> +static int aspeed_scu_ic_map(struct irq_domain *domain, unsigned int irq,
+> +			     irq_hw_number_t hwirq)
+> +{
+> +	irq_set_chip_and_handler(irq, &aspeed_scu_ic_chip, handle_simple_irq);
+> +	irq_set_chip_data(irq, domain->host_data);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops aspeed_scu_ic_domain_ops = {
+> +	.map = aspeed_scu_ic_map,
+> +};
+> +
+> +static int aspeed_scu_ic_of_init_common(struct aspeed_scu_ic *scu_ic,
+> +					struct device_node *node)
+> +{
+> +	int irq;
+> +	int rc = 0;
+> +
+> +	scu_ic->regs = of_iomap(node, 0);
+> +	if (!scu_ic->regs) {
+> +		rc = -ENOMEM;
+> +		goto err_free;
+> +	}
+> +
+> +	irq = irq_of_parse_and_map(node, 0);
+> +	if (irq < 0) {
+> +		rc = irq;
+> +		goto err_iounmap;
+> +	}
+> +
+> +	scu_ic->irq_domain = irq_domain_add_linear(node, scu_ic->num_irqs,
+> +						   &aspeed_scu_ic_domain_ops,
+> +						   scu_ic);
+> +	if (!scu_ic->irq_domain) {
+> +		rc = -ENOMEM;
+> +		goto err_iounmap;
+> +	}
+> +
+> +	irq_set_chained_handler_and_data(irq, aspeed_scu_ic_irq_handler,
+> +					 scu_ic);
+> +
+> +	return 0;
+> +
+> +err_iounmap:
+> +	iounmap(scu_ic->regs);
+> +
+> +err_free:
+> +	kfree(scu_ic);
+> +
+> +	return rc;
+> +}
+> +
+> +static int __init aspeed_scu_ic_of_init(struct device_node *node,
+> +					struct device_node *parent)
+> +{
+> +	struct aspeed_scu_ic *scu_ic = kzalloc(sizeof(*scu_ic), GFP_KERNEL);
+> +
+> +	if (!scu_ic)
+> +		return -ENOMEM;
+> +
+> +	scu_ic->irq_enable = ASPEED_SCU_IC_ENABLE;
+> +	scu_ic->irq_shift = ASPEED_SCU_IC_SHIFT;
+> +	scu_ic->num_irqs = ASPEED_SCU_IC_NUM_IRQS;
+> +
+> +	return aspeed_scu_ic_of_init_common(scu_ic, node);
+> +}
+> +
+> +static int __init aspeed_ast2600_scu_ic0_of_init(struct device_node *node,
+> +						 struct device_node *parent)
+> +{
+> +	struct aspeed_scu_ic *scu_ic = kzalloc(sizeof(*scu_ic), GFP_KERNEL);
+> +
+> +	if (!scu_ic)
+> +		return -ENOMEM;
+> +
+> +	scu_ic->irq_enable = ASPEED_AST2600_SCU_IC0_ENABLE;
+> +	scu_ic->irq_shift = ASPEED_AST2600_SCU_IC0_SHIFT;
+> +	scu_ic->num_irqs = ASPEED_AST2600_SCU_IC0_NUM_IRQS;
+> +
+> +	return aspeed_scu_ic_of_init_common(scu_ic, node);
+> +}
+> +
+> +static int __init aspeed_ast2600_scu_ic1_of_init(struct device_node *node,
+> +						 struct device_node *parent)
+> +{
+> +	struct aspeed_scu_ic *scu_ic = kzalloc(sizeof(*scu_ic), GFP_KERNEL);
+> +
+> +	if (!scu_ic)
+> +		return -ENOMEM;
+> +
+> +	scu_ic->irq_enable = ASPEED_AST2600_SCU_IC1_ENABLE;
+> +	scu_ic->irq_shift = ASPEED_AST2600_SCU_IC1_SHIFT;
+> +	scu_ic->num_irqs = ASPEED_AST2600_SCU_IC1_NUM_IRQS;
+> +
+> +	return aspeed_scu_ic_of_init_common(scu_ic, node);
+> +}
+> +
+> +IRQCHIP_DECLARE(ast2400_scu_ic, "aspeed,ast2400-scu-ic", aspeed_scu_ic_of_init);
+> +IRQCHIP_DECLARE(ast2500_scu_ic, "aspeed,ast2500-scu-ic", aspeed_scu_ic_of_init);
+> +IRQCHIP_DECLARE(ast2600_scu_ic0, "aspeed,ast2600-scu-ic0",
+> +		aspeed_ast2600_scu_ic0_of_init);
+> +IRQCHIP_DECLARE(ast2600_scu_ic1, "aspeed,ast2600-scu-ic1",
+> +		aspeed_ast2600_scu_ic1_of_init);
+> 
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/f2fs/super.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+This otherwise looks nice and clean.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4b47ac994daf5..afca410fa7094 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -894,7 +894,21 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 
- static int f2fs_drop_inode(struct inode *inode)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int ret;
-+
-+	/*
-+	 * during filesystem shutdown, if checkpoint is disabled,
-+	 * drop useless meta/node dirty pages.
-+	 */
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		if (inode->i_ino == F2FS_NODE_INO(sbi) ||
-+			inode->i_ino == F2FS_META_INO(sbi)) {
-+			trace_f2fs_drop_inode(inode, 1);
-+			return 1;
-+		}
-+	}
-+
- 	/*
- 	 * This is to avoid a deadlock condition like below.
- 	 * writeback_single_inode(inode)
+	M.
 -- 
-2.20.1
-
+Jazz is not dead, it just smells funny...
