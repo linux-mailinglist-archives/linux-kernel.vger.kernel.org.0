@@ -2,95 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D68BC8B7
+	by mail.lfdr.de (Postfix) with ESMTP id C750ABC8B8
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 15:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504934AbfIXNT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2505016AbfIXNTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 09:19:30 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45635 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728325AbfIXNT2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Sep 2019 09:19:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48864 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729908AbfIXNT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 09:19:28 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 13EB23B708;
-        Tue, 24 Sep 2019 13:19:28 +0000 (UTC)
-Received: from x2.localnet (ovpn-117-6.phx2.redhat.com [10.3.117.6])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AB04D1001B30;
-        Tue, 24 Sep 2019 13:19:23 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     linux-audit@redhat.com
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Dave Jones <davej@codemonkey.org.uk>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: ntp audit spew.
-Date:   Tue, 24 Sep 2019 09:19:23 -0400
-Message-ID: <2130348.JY4ctgmguH@x2>
-Organization: Red Hat
-In-Reply-To: <CAHC9VhTyz7fd+iQaymVXUGFe3ZA5Z_WkJeY_snDYiZ9GP6gCOA@mail.gmail.com>
-References: <20190923155041.GA14807@codemonkey.org.uk> <CAHC9VhTyz7fd+iQaymVXUGFe3ZA5Z_WkJeY_snDYiZ9GP6gCOA@mail.gmail.com>
+Received: by mail-lf1-f65.google.com with SMTP id r134so1376864lff.12
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 06:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=7PtcFgM8AEza+CaObumIIcn33MSM9DiXUeWGXdjLf4w=;
+        b=RwVu9iiiAynDfh68qbTxWkkJ/TNYb+bkwrzHTQQKCJdXzN5C8Rak4q0hYdd4SscTfU
+         KBSxFGQl4BaIrs64i6oQ7IZcL3xwGvQn0JKRcNDHmm/od1nvM2AJWd52aGMXXf61Tvxe
+         czSpr8KZ9KZQSGv0u2WmAi/lxBP4/rtnubcqM5K5pnkZvMjG02bbq+tuhY+CoS96H/V+
+         6HCjjBbcGcVtYDG63Gcn/4lw0NH5BldsBHXHWOBfyLYDxa0JeGZVTXJBMh4FAwJe9O7h
+         p9DZl43RAAjF6UE8A6Zf6GDfRk6KB0dsy5B2kHWeAjMJKFqftgoXni9JNcPaRFlSXrGH
+         nsTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=7PtcFgM8AEza+CaObumIIcn33MSM9DiXUeWGXdjLf4w=;
+        b=dPB9gYUJBLJGfJD67cDdSHcnPk8ah6zFUhDbsmdDx1cjciJ0GDsYh2RWTK/1j3QSf3
+         FhazGH2l49vlZmcQn7VNMfEmUhVhXHLC9xQ03+BSW9FrwbrtY/CBok/xpOM79kDBpzLf
+         abWejqhgyfcMFZhtr/QpzjpFoMFbWk94Umj0N7fo25DSuOGYwLDQA07o/yLVn5/xfO0T
+         86+ku3WAWHhP7X3Jwtr0jCFxuaBDwX15MKFBR9V+YTd2Z6ruJbPE8pSPkJPMv6iU+9IG
+         OySlB+5l13/wnX3ilv85TMC+LKkjrihYN35NO6damkN6/ZKoDEof9Ek4PK8b5tBSuKpw
+         zYMA==
+X-Gm-Message-State: APjAAAWZ1lu4t6ue7sxVMuJbyANx+8FPMgIYRnWwOX13FW7vmB8Lj4vB
+        KWdOZLZaR7lNN/EB+Bg13BBq4xjMZ9Q6ozF/nJY=
+X-Google-Smtp-Source: APXvYqwLJfMhswJQH8AnGM/DvvysckOpLDRCR2ooTk5T2Rf5jVRf7J9zGFAMiGicJssiLM4En1f53iG3GM/7pmyCXao=
+X-Received: by 2002:ac2:5504:: with SMTP id j4mr1963855lfk.186.1569331167061;
+ Tue, 24 Sep 2019 06:19:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 24 Sep 2019 13:19:28 +0000 (UTC)
+Reply-To: kabiruwahid1117@gmail.com
+Received: by 2002:ab3:1686:0:0:0:0:0 with HTTP; Tue, 24 Sep 2019 06:19:26
+ -0700 (PDT)
+From:   "Mr. Kabiru Wahid" <kabiruwahid1117@gmail.com>
+Date:   Tue, 24 Sep 2019 09:19:26 -0400
+X-Google-Sender-Auth: 8gjuD7UxiqQySMK9SX2VDdWjtjU
+Message-ID: <CAK9LmwLYYPuJBZzQscnBxz8AOSiA3Uzpo7V4WG6a6N8BkOBPfg@mail.gmail.com>
+Subject: Urgent
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, September 23, 2019 12:14:14 PM EDT Paul Moore wrote:
-> On Mon, Sep 23, 2019 at 11:50 AM Dave Jones <davej@codemonkey.org.uk> 
-wrote:
-> > I have some hosts that are constantly spewing audit messages like so:
-> > 
-> > [46897.591182] audit: type=1333 audit(1569250288.663:220): op=offset
-> > old=2543677901372 new=2980866217213 [46897.591184] audit: type=1333
-> > audit(1569250288.663:221): op=freq old=-2443166611284 new=-2436281764244
-> > [48850.604005] audit: type=1333 audit(1569252241.675:222): op=offset
-> > old=1850302393317 new=3190241577926 [48850.604008] audit: type=1333
-> > audit(1569252241.675:223): op=freq old=-2436281764244 new=-2413071187316
-> > [49926.567270] audit: type=1333 audit(1569253317.638:224): op=offset
-> > old=2453141035832 new=2372389610455 [49926.567273] audit: type=1333
-> > audit(1569253317.638:225): op=freq old=-2413071187316 new=-2403561671476
-> > 
-> > This gets emitted every time ntp makes an adjustment, which is apparently
-> > very frequent on some hosts.
-> > 
-> > 
-> > Audit isn't even enabled on these machines.
-> > 
-> > # auditctl -l
-> > No rules
-> 
-> [NOTE: added linux-audit to the CC line]
-> 
-> There is an audit mailing list, please CC it when you have audit
-> concerns/questions/etc.
-> 
-> What happens when you run 'auditctl -a never,task'? 
+Dear Friend!
 
-Actually, "-e 0" should turn it off. There is a general problem where systemd 
-turns on auditing just because it can. The above rule just makes audit 
-processes inauditable, but does not affect the kernel originating events.
-
--Steve
-
-> That *should*
-> silence those messages as the audit_ntp_log() function has the
-> requisite audit_dummy_context() check.  FWIW, this is the distro
-> default for many (most? all?) distros; for example, check
-> /etc/audit/audit.rules on a stock Fedora system.  A more selective
-> configuration could simply exclude the TIME_ADJNTPVAL record (type
-> 1333) from the records that the kernel emits.
-> 
-> We could also add a audit_enabled check at the top of
-> audit_ntp_log()/__audit_ntp_log(), but I imagine some of that depends
-> on the various security requirements (they can be bizzare and I can't
-> say I'm up to date on all those - Steve Grubb should be able to
-> comment on that).
+I Know That This Mail Will Come To You As A Surprise As We Never Met
+Before. I Need Your Urgent Assistance in Transferring the Sum Of
+($15.5m) Into Your Bank Account, After Hearing from You I Will Give
+You More Details about the Transaction. Your full data's will be
+required.(kwprivoffice206892@gmx.com)
 
 
-
-
+Mr Kabiru Wahid.
