@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 048CABCCA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12403BCCCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:43:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391534AbfIXQl7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:41:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57970 "EHLO mail.kernel.org"
+        id S2392217AbfIXQmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:42:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391350AbfIXQly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:41:54 -0400
+        id S2391438AbfIXQlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:41:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D166021783;
-        Tue, 24 Sep 2019 16:41:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AF9D21655;
+        Tue, 24 Sep 2019 16:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343313;
-        bh=KYbWE63g/VHZHZTTkgaSsk6DWKM+oronJAj0DJlgtuU=;
+        s=default; t=1569343314;
+        bh=Ob27+E4eC9e4EOmHsNkIjTO/u2afna2463aw4+0ENzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KeQ0Sq3V5Fdxkr5Ys9NMev+1+oCe0hOlP18PZ2IPmYgJ9xZestVj/dK7iKDRvnjxr
-         1OmsP4SSS/CRkuBJBVM6Z+0JzCZuLtAWosk9WwjnGVKn6EYp4ZR/XD2SpY6Hxt5DTk
-         aOtBtKyJE7WBBLkT95UnW9pVBhBuuN5RoZtyELEg=
+        b=NlMEfzZLXhP9uHXNfIQ1aiVM38pAVpNKz/J+FbEWdWKoQP/u5FfEsVUVbQz857arE
+         IksptxVg2JU9CCbQaz1L2zTqc/qBYpIAmU7e74PVa/3waRlTCUzWwl0v/m+FnQYsa2
+         jEu9LKzppOdNAMiTknDaOt7oUskhuhI6+OAsmeuA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sean Paul <sean@poorly.run>,
-        Daniel Vetter <daniel.vetter@intel.com>,
+Cc:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.3 05/87] drm/kms: Catch mode_object lifetime errors
-Date:   Tue, 24 Sep 2019 12:40:21 -0400
-Message-Id: <20190924164144.25591-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 06/87] drm/vkms: Avoid assigning 0 for possible_crtc
+Date:   Tue, 24 Sep 2019 12:40:22 -0400
+Message-Id: <20190924164144.25591-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -45,75 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 
-[ Upstream commit 4f5368b5541a902f6596558b05f5c21a9770dd32 ]
+[ Upstream commit e9d85f731de06a35d2ae6cdcf7d0e037c98ef41a ]
 
-Only dynamic mode objects, i.e. those which are refcounted and have a free
-callback, can be added while the overall drm_device is visible to
-userspace. All others must be added before drm_dev_register and
-removed after drm_dev_unregister.
+When vkms invoke drm_universal_plane_init(), it sets 0 for
+possible_crtcs parameter which means that planes can't be attached to
+any CRTC. It currently works due to some safeguard in the drm_crtc file;
+however, it is possible to identify the problem by trying to append a
+second connector. This patch fixes this issue by modifying
+vkms_plane_init() to accept an index parameter which makes the code a
+little bit more flexible and avoid set zero to possible_crtcs.
 
-Small issue around drivers still using the load/unload callbacks, we
-need to make sure we set dev->registered so that load/unload code in
-these callbacks doesn't trigger false warnings. Only a small
-adjustement in drm_dev_register was needed.
-
-Motivated by some irc discussions about object ids of dynamic objects
-like blobs become invalid, and me going on a bit an audit spree.
-
-Reviewed-by: Sean Paul <sean@poorly.run>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190614061723.1173-1-daniel.vetter@ffwll.ch
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/d67849c62a8d8ace1a0af455998b588798a4c45f.1561491964.git.rodrigosiqueiramelo@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_drv.c         | 4 ++--
- drivers/gpu/drm/drm_mode_object.c | 4 ++++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/vkms/vkms_drv.c    | 2 +-
+ drivers/gpu/drm/vkms/vkms_drv.h    | 4 ++--
+ drivers/gpu/drm/vkms/vkms_output.c | 6 +++---
+ drivers/gpu/drm/vkms/vkms_plane.c  | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index 9d00947ca447f..e652305d8f98a 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -978,14 +978,14 @@ int drm_dev_register(struct drm_device *dev, unsigned long flags)
- 	if (ret)
- 		goto err_minors;
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 738dd6206d85b..92296bd8f6233 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -92,7 +92,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
+ 	dev->mode_config.max_height = YRES_MAX;
+ 	dev->mode_config.preferred_depth = 24;
  
--	dev->registered = true;
--
- 	if (dev->driver->load) {
- 		ret = dev->driver->load(dev, flags);
- 		if (ret)
- 			goto err_minors;
- 	}
+-	return vkms_output_init(vkmsdev);
++	return vkms_output_init(vkmsdev, 0);
+ }
  
-+	dev->registered = true;
-+
- 	if (drm_core_check_feature(dev, DRIVER_MODESET))
- 		drm_modeset_register_all(dev);
+ static int __init vkms_init(void)
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index 2b37eb1062d34..2fee10a00051e 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -107,10 +107,10 @@ bool vkms_get_vblank_timestamp(struct drm_device *dev, unsigned int pipe,
+ 			       int *max_error, ktime_t *vblank_time,
+ 			       bool in_vblank_irq);
  
-diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
-index 1c6e511359624..c355ba8e6d5dd 100644
---- a/drivers/gpu/drm/drm_mode_object.c
-+++ b/drivers/gpu/drm/drm_mode_object.c
-@@ -42,6 +42,8 @@ int __drm_mode_object_add(struct drm_device *dev, struct drm_mode_object *obj,
+-int vkms_output_init(struct vkms_device *vkmsdev);
++int vkms_output_init(struct vkms_device *vkmsdev, int index);
+ 
+ struct drm_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				  enum drm_plane_type type);
++				  enum drm_plane_type type, int index);
+ 
+ /* Gem stuff */
+ struct drm_gem_object *vkms_gem_create(struct drm_device *dev,
+diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+index 56fb5c2a2315c..fb1941a6522cf 100644
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -35,7 +35,7 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+ 	.get_modes    = vkms_conn_get_modes,
+ };
+ 
+-int vkms_output_init(struct vkms_device *vkmsdev)
++int vkms_output_init(struct vkms_device *vkmsdev, int index)
  {
+ 	struct vkms_output *output = &vkmsdev->output;
+ 	struct drm_device *dev = &vkmsdev->drm;
+@@ -45,12 +45,12 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+ 	struct drm_plane *primary, *cursor = NULL;
  	int ret;
  
-+	WARN_ON(dev->registered && !obj_free_cb);
-+
- 	mutex_lock(&dev->mode_config.idr_mutex);
- 	ret = idr_alloc(&dev->mode_config.object_idr, register_obj ? obj : NULL,
- 			1, 0, GFP_KERNEL);
-@@ -102,6 +104,8 @@ void drm_mode_object_register(struct drm_device *dev,
- void drm_mode_object_unregister(struct drm_device *dev,
- 				struct drm_mode_object *object)
+-	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY);
++	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
+ 	if (IS_ERR(primary))
+ 		return PTR_ERR(primary);
+ 
+ 	if (enable_cursor) {
+-		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR);
++		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, index);
+ 		if (IS_ERR(cursor)) {
+ 			ret = PTR_ERR(cursor);
+ 			goto err_cursor;
+diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+index 0fceb62584225..18c630cfc485a 100644
+--- a/drivers/gpu/drm/vkms/vkms_plane.c
++++ b/drivers/gpu/drm/vkms/vkms_plane.c
+@@ -176,7 +176,7 @@ static const struct drm_plane_helper_funcs vkms_primary_helper_funcs = {
+ };
+ 
+ struct drm_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				  enum drm_plane_type type)
++				  enum drm_plane_type type, int index)
  {
-+	WARN_ON(dev->registered && !object->free_cb);
-+
- 	mutex_lock(&dev->mode_config.idr_mutex);
- 	if (object->id) {
- 		idr_remove(&dev->mode_config.object_idr, object->id);
+ 	struct drm_device *dev = &vkmsdev->drm;
+ 	const struct drm_plane_helper_funcs *funcs;
+@@ -198,7 +198,7 @@ struct drm_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+ 		funcs = &vkms_primary_helper_funcs;
+ 	}
+ 
+-	ret = drm_universal_plane_init(dev, plane, 0,
++	ret = drm_universal_plane_init(dev, plane, 1 << index,
+ 				       &vkms_plane_funcs,
+ 				       formats, nformats,
+ 				       NULL, type, NULL);
 -- 
 2.20.1
 
