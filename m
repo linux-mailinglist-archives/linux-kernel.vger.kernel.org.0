@@ -2,134 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E954BCC0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:03:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DA2BCC0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:05:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438074AbfIXQDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:03:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391013AbfIXQDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:03:52 -0400
-Received: from paulmck-ThinkPad-P72 (unknown [170.225.9.146])
+        id S2438217AbfIXQE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:04:59 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49860 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391013AbfIXQE6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:04:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DrA7bFKwIOoag2aduILYVU+ngioLiFeCj1i91CCn1bw=; b=vs2bZZByr1rQHI73Tn81WvTKd
+        WJ9Xz2zdf9enGGoCAKuytnpjE/I34yrDv89TQO47IwSobZ3AKx7uFC4SbD1wmFIHineftJxvNx3GH
+        V4uUKAXH76Aw0gFP4l8bYqJoMyl/gtSZ8JYmgfe9X8joaklsPbU/4CHkenHHHmK/L/MI4+mZzN/gB
+        UaeLq6xIJ7G06579YB/um+lk3Zxt5KYia0A46PeQuVgmlFZSP5yDu4RxsAWXwraPkKoZzbgvoiy0Z
+        4PBjQBakOZRgtlSKzDeFlzhzvHWQ+5s8xgd0W3Wb5bWWPvn4acS8lPONw3s1lhgOS0XWVg4A/qDyL
+        JX1/hfiUg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCnIe-0003af-OH; Tue, 24 Sep 2019 16:04:29 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC34A214DA;
-        Tue, 24 Sep 2019 16:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569341031;
-        bh=WoXmQkQtjofuTNXBQTpYOdHbEC75k3E21PyCVIN1q38=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=OZIVQjjU2b3/+JzjUfyjcAzZyDHaoWVrIpISe+YKpkIv6lRwZFSD+Pl/Bai4izCeM
-         HQLxz9UvuHbRjbbF+IIXjOTbZxb7Emx7DQaQ1OQCLJMCB953/1EPCKH9lX6IHGUnTa
-         GpCU7uEV2pNOiGmXtjR8Q95gTe4ZG1fgNhoeclv4=
-Date:   Tue, 24 Sep 2019 09:03:48 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>, kbuild@01.org,
-        kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [rcu:dev.2019.09.23a 62/77] kernel/rcu/tree.c:2882
- kfree_call_rcu() warn: inconsistent returns 'irqsave:flags'.
-Message-ID: <20190924160348.GF2689@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20190924080510.GL20699@kadam>
- <CAEXW_YQYDom3AwWR1AUSCw5VvFzc6KrBH0KbuTvhkJ3OoxBfCg@mail.gmail.com>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7A8C83053E9;
+        Tue, 24 Sep 2019 18:03:37 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 26C8329E510E1; Tue, 24 Sep 2019 18:04:23 +0200 (CEST)
+Date:   Tue, 24 Sep 2019 18:04:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Giovanni Gherdovich <ggherdovich@suse.cz>
+Cc:     srinivas.pandruvada@linux.intel.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@suse.de, lenb@kernel.org, rjw@rjwysocki.net,
+        x86@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mgorman@techsingularity.net,
+        matt@codeblueprint.co.uk, viresh.kumar@linaro.org,
+        juri.lelli@redhat.com, pjt@google.com, vincent.guittot@linaro.org,
+        qperret@qperret.net, dietmar.eggemann@arm.com
+Subject: Re: [PATCH 1/2] x86,sched: Add support for frequency invariance
+Message-ID: <20190924160423.GN2369@hirez.programming.kicks-ass.net>
+References: <20190909024216.5942-1-ggherdovich@suse.cz>
+ <20190909024216.5942-2-ggherdovich@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEXW_YQYDom3AwWR1AUSCw5VvFzc6KrBH0KbuTvhkJ3OoxBfCg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190909024216.5942-2-ggherdovich@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 08:15:12AM -0400, Joel Fernandes wrote:
-> On Tue, Sep 24, 2019 at 4:05 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2019.09.23a
-> > head:   97de53b94582c208ee239178b208b8e8b9472585
-> > commit: 39676bb72323718a9e7bab1ba9c4a68319a96f62 [62/77] rcu: Add support for debug_objects debugging for kfree_rcu()
-> >
-> > If you fix the issue, kindly add following tag
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> >
-> > smatch warnings:
-> > kernel/rcu/tree.c:2882 kfree_call_rcu() warn: inconsistent returns 'irqsave:flags'.
-> >   Locked on:   line 2867
-> >   Unlocked on: line 2882
-> >
-> > git remote add rcu https://kernel.googlesource.com/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
-> > git remote update rcu
-> > git checkout 39676bb72323718a9e7bab1ba9c4a68319a96f62
-> > vim +2882 kernel/rcu/tree.c
-> >
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2850) void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2851) {
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2852)        unsigned long flags;
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2853)        struct kfree_rcu_cpu *krcp;
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2854)
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2855)        head->func = func;
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2856)
-> > 87970ccf5a9125 Paul E. McKenney        2019-09-19  2857         local_irq_save(flags);  // For safely calling this_cpu_ptr().
-> >                                                                 ^^^^^^^^^^^^^^^^^^^^^
-> > IRQs disabled.
-> >
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2858)        krcp = this_cpu_ptr(&krc);
-> > ff8db005e371cb Paul E. McKenney        2019-09-19  2859         if (krcp->initialized)
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2860)                spin_lock(&krcp->lock);
-> > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2861)
-> > 87970ccf5a9125 Paul E. McKenney        2019-09-19  2862         // Queue the object but don't yet schedule the batch.
-> > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2863)        if (debug_rcu_head_queue(head)) {
-> > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2864)                // Probable double kfree_rcu(), just leak.
-> > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2865)                WARN_ONCE(1, "%s(): Double-freed call. rcu_head %p\n",
-> > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2866)                          __func__, head);
-> > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2867)                return;
-> >
-> > Need to re-enable before returning.
-> 
-> Right. At this point the system has a bug anyway since it is a
-> double-free. But yes, no reason to introduce more bugs. Will fix.
-> Thank you, Dan!
+On Mon, Sep 09, 2019 at 04:42:15AM +0200, Giovanni Gherdovich wrote:
 
-What Joel said!
+> +static void intel_set_cpu_max_freq(void)
+> +{
+> +	/*
+> +	 * TODO: add support for:
+> +	 *
+> +	 * - Xeon Phi (KNM, KNL)
+> +	 * - Xeon Gold/Platinum, Atom Goldmont/Goldmont Plus
+> +	 * - Atom Silvermont
 
-As long as I am doing several other reports anyway...
+ISTR I had code for Atom.. what happened with that?
 
-How does the to-be-squashed patch below look?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 39af4c08038a8a6a7b1c9804fdd2c1921d583222
-Author: Paul E. McKenney <paulmck@kernel.org>
-Date:   Tue Sep 24 09:02:00 2019 -0700
-
-    squash! rcu: Add support for debug_objects debugging for kfree_rcu()
-    
-    [ paulmck: Fix IRQ per kbuild test robot <lkp@intel.com> feedback. ]
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 921daa7..edb7539 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2870,7 +2870,7 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
- 		// Probable double kfree_rcu(), just leak.
- 		WARN_ONCE(1, "%s(): Double-freed call. rcu_head %p\n",
- 			  __func__, head);
--		return;
-+		goto unlock_return;
- 	}
- 	head->func = func;
- 	head->next = krcp->head;
-@@ -2883,6 +2883,7 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
- 		schedule_delayed_work(&krcp->monitor_work, KFREE_DRAIN_JIFFIES);
- 	}
- 
-+unlock_return:
- 	if (krcp->initialized)
- 		spin_unlock(&krcp->lock);
- 	local_irq_restore(flags);
+> +	 *
+> +	 * which all now get by default arch_max_freq = SCHED_CAPACITY_SCALE
+> +	 */
+> +	core_set_cpu_max_freq();
+> +}
