@@ -2,116 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9D37BCFD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D80F0BCFD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394053AbfIXRBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 13:01:43 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38714 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730215AbfIXRBk (ORCPT
+        id S2393745AbfIXRBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 13:01:38 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34762 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730215AbfIXRBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 13:01:40 -0400
-Received: by mail-lf1-f65.google.com with SMTP id u28so1977146lfc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 10:01:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3EOVspAXPFO/zP7zLE0+rol5UDYlko14RFhVFd10Q2Y=;
-        b=ksxAq+zBjdwwrnH3JeNQN5NwYIoqkKJ/d3Bn9KLZgMkl+xH/Wm4Mm5cMg8qJgsyPbW
-         u6ZxwQqSyJR4HbbXChiRgn9x1DEySEOmOO22P5jviHDghj4KHLKXg7YnjvYHWJ8WMCFg
-         U+e34zrOhmCAcKeJ1Xrev6mNPqfboH+hGUcfH9qKyKlgQdr9Kga2ppE+DuwjujOhE0/F
-         TiXRc6+/GtD2Xo0IWbH7Arqgbs/kx4APenttK+QHwOfzypNcikS9fNvWSKAyCNTSdLf5
-         P82I40rA+irHnaP/YtEFRkI3RrfDhKf/8bjn+mKFWCmmfnRYDAZEInIDwErjLuufs8Hj
-         biDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3EOVspAXPFO/zP7zLE0+rol5UDYlko14RFhVFd10Q2Y=;
-        b=ss2I7+QleSdLBRyDz4AyJpLQqV1DRZ+8fATj9oYoK2DG0sKoh6L+1wm5SFz8GZT+2V
-         sYWFHNMDpJLbot/XRvShsTOaahuyAsv1+uvTD3NcuEZrOsIGiE5709+MPQNk/u81n6Z0
-         FtKtzdjcYKdJULMB0KBKhXVoQ4oo0RClnTv/K1dDXwcEaM0L6nw6q/8Fok97OZP6mUE+
-         oVQwI4+GboACpg6J1nDB6qKLGn4cK0acGFHXxIJN5Vq3mGHSdxT8wUQM8AH+2qtvgEs2
-         mB9fE6QyYjNhQZWlVJH+wEjDhVAdFtGH0sMGUT6Wt2NXNnaaILA9V1FdMhfB35zSGGUd
-         XO5g==
-X-Gm-Message-State: APjAAAXMj6wv2LvN4tq4G7GutwGDrnEvHyF0AoOo2jpvoLHTrCmMRtBS
-        iHF8ruyTgmGck/jjUvr4mZ8/6GTpsRH6hOT3/Bay
-X-Google-Smtp-Source: APXvYqy/OZ/D54rGYNX1/ukfNHPhBFFMJ+yOSTZaOKPuXsMrieUkTSeTREvrtjq1r8xs3uTGM6icZeNhXfgyNLh3cbs=
-X-Received: by 2002:a19:cc15:: with SMTP id c21mr2529427lfg.64.1569344497225;
- Tue, 24 Sep 2019 10:01:37 -0700 (PDT)
+        Tue, 24 Sep 2019 13:01:34 -0400
+Received: from static-50-53-33-191.bvtn.or.frontiernet.net ([50.53.33.191] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1iCoBw-0000q2-7w; Tue, 24 Sep 2019 17:01:32 +0000
+Subject: Re: [WTF?] aafs_create_symlink() weirdness
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org
+References: <20190924020348.GD26530@ZenIV.linux.org.uk>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <c2604d70-4c65-eb90-2cff-dd96f724222c@canonical.com>
+Date:   Tue, 24 Sep 2019 10:01:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190923155041.GA14807@codemonkey.org.uk> <CAHC9VhTyz7fd+iQaymVXUGFe3ZA5Z_WkJeY_snDYiZ9GP6gCOA@mail.gmail.com>
- <2130348.JY4ctgmguH@x2>
-In-Reply-To: <2130348.JY4ctgmguH@x2>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 24 Sep 2019 13:01:26 -0400
-Message-ID: <CAHC9VhQBeb6V-RLad+Y92P_a=a_pcZi2b+_VAGzxpbqwBvURUg@mail.gmail.com>
-Subject: Re: ntp audit spew.
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     linux-audit@redhat.com, Dave Jones <davej@codemonkey.org.uk>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190924020348.GD26530@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 9:19 AM Steve Grubb <sgrubb@redhat.com> wrote:
-> On Monday, September 23, 2019 12:14:14 PM EDT Paul Moore wrote:
-> > On Mon, Sep 23, 2019 at 11:50 AM Dave Jones <davej@codemonkey.org.uk>
-> wrote:
-> > > I have some hosts that are constantly spewing audit messages like so:
-> > >
-> > > [46897.591182] audit: type=1333 audit(1569250288.663:220): op=offset
-> > > old=2543677901372 new=2980866217213 [46897.591184] audit: type=1333
-> > > audit(1569250288.663:221): op=freq old=-2443166611284 new=-2436281764244
-> > > [48850.604005] audit: type=1333 audit(1569252241.675:222): op=offset
-> > > old=1850302393317 new=3190241577926 [48850.604008] audit: type=1333
-> > > audit(1569252241.675:223): op=freq old=-2436281764244 new=-2413071187316
-> > > [49926.567270] audit: type=1333 audit(1569253317.638:224): op=offset
-> > > old=2453141035832 new=2372389610455 [49926.567273] audit: type=1333
-> > > audit(1569253317.638:225): op=freq old=-2413071187316 new=-2403561671476
-> > >
-> > > This gets emitted every time ntp makes an adjustment, which is apparently
-> > > very frequent on some hosts.
-> > >
-> > >
-> > > Audit isn't even enabled on these machines.
-> > >
-> > > # auditctl -l
-> > > No rules
-> >
-> > [NOTE: added linux-audit to the CC line]
-> >
-> > There is an audit mailing list, please CC it when you have audit
-> > concerns/questions/etc.
-> >
-> > What happens when you run 'auditctl -a never,task'?
->
-> Actually, "-e 0" should turn it off. There is a general problem where systemd
-> turns on auditing just because it can. The above rule just makes audit
-> processes inauditable, but does not affect the kernel originating events.
+On 9/23/19 7:03 PM, Al Viro wrote:
 
-The 'auditctl -s' output was lost when I trimmed/replied to DaveJ's
-original email (sorry), but it appears that audit_enabled is already
-'0':
+WTF indeed
 
-> # auditctl -s
-> enabled 0
-> failure 1
-> pid 0
-> rate_limit 0
-> backlog_limit 64
-> lost 0
-> backlog 0
-> loginuid_immutable 0 unlocked
+> 
+> static struct dentry *aafs_create_symlink(const char *name,
+>                                           struct dentry *parent,
+>                                           const char *target,
+>                                           void *private,
+>                                           const struct inode_operations *iops)
+> {
+>         struct dentry *dent;
+>         char *link = NULL;
+> 
+>         if (target) {
+>                 if (!link)
+>                         return ERR_PTR(-ENOMEM);
+>         }
+> 
+> Er...  That's an odd way to spell
+> 	if (target)
+> 		return ERR_PTR(-ENOMEM);
+> (and an odd error value to use).  Especially since all callers are passing
+> NULL as target.
+> 
+> Why is that code even there, why does that argument still exist and
+> how many people have actually read that function?
+> 
 
-Original post from DaveJ:
+It looks like 1180b4c757aa failed to drop it as part of the patch, but it
+certainly should have. I can't say why it happened but regardless its an ugly
+mistake. Thank you very much for catching this Al.
 
-* https://lore.kernel.org/lkml/20190923155041.GA14807@codemonkey.org.uk
+A patch to drop it is below or feel free to cons up an alternate version.
 
--- 
-paul moore
-www.paul-moore.com
+---
+
+commit 5dbc63d4a0aa819be8ecf21a67a352dd377b0221
+Author: John Johansen <john.johansen@canonical.com>
+Date:   Tue Sep 24 09:46:33 2019 -0700
+
+    apparmor: remove useless aafs_create_symlink
+    
+    1180b4c757aa ("apparmor: fix dangling symlinks to policy rawdata after
+    replacement") reworked how the rawdata symlink is handled but failed
+    to remove aafs_create_symlink which was reduced to a useless stub .
+    
+    Fixes: 1180b4c757aa ("apparmor: fix dangling symlinks to policy rawdata after replacement")
+    Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+    Signed-off-by: John Johansen <john.johansen@canonical.com>
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 9c0e593e30aa..308c99ea3cf8 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -335,38 +335,6 @@ static struct dentry *aafs_create_dir(const char *name, struct dentry *parent)
+ 			   NULL);
+ }
+ 
+-/**
+- * aafs_create_symlink - create a symlink in the apparmorfs filesystem
+- * @name: name of dentry to create
+- * @parent: parent directory for this dentry
+- * @target: if symlink, symlink target string
+- * @private: private data
+- * @iops: struct of inode_operations that should be used
+- *
+- * If @target parameter is %NULL, then the @iops parameter needs to be
+- * setup to handle .readlink and .get_link inode_operations.
+- */
+-static struct dentry *aafs_create_symlink(const char *name,
+-					  struct dentry *parent,
+-					  const char *target,
+-					  void *private,
+-					  const struct inode_operations *iops)
+-{
+-	struct dentry *dent;
+-	char *link = NULL;
+-
+-	if (target) {
+-		if (!link)
+-			return ERR_PTR(-ENOMEM);
+-	}
+-	dent = aafs_create(name, S_IFLNK | 0444, parent, private, link, NULL,
+-			   iops);
+-	if (IS_ERR(dent))
+-		kfree(link);
+-
+-	return dent;
+-}
+-
+ /**
+  * aafs_remove - removes a file or directory from the apparmorfs filesystem
+  *
+@@ -1757,25 +1725,25 @@ int __aafs_profile_mkdir(struct aa_profile *profile, struct dentry *parent)
+ 	}
+ 
+ 	if (profile->rawdata) {
+-		dent = aafs_create_symlink("raw_sha1", dir, NULL,
+-					   profile->label.proxy,
+-					   &rawdata_link_sha1_iops);
++		dent = aafs_create("raw_sha1", S_IFLNK | 0444, dir,
++				   profile->label.proxy, NULL, NULL,
++				   &rawdata_link_sha1_iops);
+ 		if (IS_ERR(dent))
+ 			goto fail;
+ 		aa_get_proxy(profile->label.proxy);
+ 		profile->dents[AAFS_PROF_RAW_HASH] = dent;
+ 
+-		dent = aafs_create_symlink("raw_abi", dir, NULL,
+-					   profile->label.proxy,
+-					   &rawdata_link_abi_iops);
++		dent = aafs_create("raw_abi", S_IFLNK | 0444, dir,
++				   profile->label.proxy, NULL, NULL,
++				   &rawdata_link_abi_iops);
+ 		if (IS_ERR(dent))
+ 			goto fail;
+ 		aa_get_proxy(profile->label.proxy);
+ 		profile->dents[AAFS_PROF_RAW_ABI] = dent;
+ 
+-		dent = aafs_create_symlink("raw_data", dir, NULL,
+-					   profile->label.proxy,
+-					   &rawdata_link_data_iops);
++		dent = aafs_create("raw_data", S_IFLNK | 0444, dir,
++				   profile->label.proxy, NULL, NULL,
++				   &rawdata_link_data_iops);
+ 		if (IS_ERR(dent))
+ 			goto fail;
+ 		aa_get_proxy(profile->label.proxy);
+
