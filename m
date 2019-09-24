@@ -2,125 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80C1ABCBE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE680BCBF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437587AbfIXPwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 11:52:32 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:58816 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390621AbfIXPwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 11:52:32 -0400
-Received: from zn.tnic (p200300EC2F0DB700DCC45CFC64A01FDA.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:b700:dcc4:5cfc:64a0:1fda])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 23C671EC03F6;
-        Tue, 24 Sep 2019 17:52:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1569340351;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=l3jFh3vc0yWIg+y9vM+gn/zUH4p7Zpw4IM2PNranPm4=;
-        b=XgWGhZQQV+Iw40yB7ykRGEOcn5mBvdNHEHu1yGH6Z1ofug0Xpe+I5u1CCnTkehCHOUpiuM
-        WeaAILMu94hybPkqnrkI0njXNca6PZqpk6hyprFWUTG+GAPhSf0frPvOOCcpIJcx3PAhPY
-        Ptye33yvUKfABQoDAYgTULUlIo8jSp8=
-Date:   Tue, 24 Sep 2019 17:52:32 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Haim Cohen <haim.cohen@intel.com>
-Subject: Re: [PATCH v22 02/24] x86/cpufeatures: x86/msr: Intel SGX Launch
- Control hardware bits
-Message-ID: <20190924155232.GG19317@zn.tnic>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-3-jarkko.sakkinen@linux.intel.com>
+        id S2390792AbfIXP60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 11:58:26 -0400
+Received: from mail-eopbgr20078.outbound.protection.outlook.com ([40.107.2.78]:63300
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388572AbfIXP6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 11:58:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZJ4JfewuqTvIgu7w4gwdqg3ib/k7aUOGA4YEMvxjUgx/3sVPYggK2hardhKuHoHGXJ6QGgYxsvQSYWTutGoVgObPLRegwrhRnW891wrDqerK9FrbImvYEw+QjBROanRH3jrnL3em2xafsIkLtkM386DkWAYx7CxX63Y9j+zLGcsUZVoSwizX9iF/ENhmY+5bX+BAWvjPaCFaT35Xn+aHK6n8EVn49/WtRoVend19Z1HVRxgtQn1oU1HzlKuNfYGdERezEGzoodjNZtDnxGFMmQx1FdKqNYX0gcOjPLM6ngD1+f8WNTuzKTUCwCV5KSHYNoV/OJdgmW5gpVWGecydAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qdNR+dOuvKKacJRvcxKNBK1AoGIZGuXr0h8aSamrKzo=;
+ b=Md1Vbzi3xPv/3qlfCftiOmjLVsCMopicbTkB82/AYr8XIrMcOHqvB5otuHCzh/TZAa5mF7W05bcUNlLMZuBqeVPV7rQUHaNtUk8Ts4uPw8CxpGjEnbYPvHlPlwWjHlF3mHx4WA8nlRnMCPxmOkPZUBV5ax595xzAmNVl2xlB/Uh9M7OdK8hp4V4eonlt68CQg8kd6QENNis9e9QgSkrJhqc8bkSJlV6NkuR0ac0qezprBUf5KBsVAKhoDMel/lr6NHkTwtAwRO8KVl4vwpPMTYiEe1OgZvkfCaTdNAlDg9z+xMAU+P/qp3xZnkiEsyIIwJZrk6hZ5E8Ce7PcO7TF2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qdNR+dOuvKKacJRvcxKNBK1AoGIZGuXr0h8aSamrKzo=;
+ b=JtBkjlTDoN4TiK157SDU0ouhGSM/h65fa0nyQlkVqhfaZqunRZXTrDvvziK2d3E/H8m6HamQZPN/i+33rqYA22ZTem2WTv6wcj7336MVFw8Ma70VkvKu5XOXmT/TtTMciBQtCSNkNdryGssznQQK8+Tvz+FfwIA2yuKfO149WQE=
+Received: from AM0PR04MB6676.eurprd04.prod.outlook.com (20.179.255.161) by
+ AM0PR04MB5602.eurprd04.prod.outlook.com (20.178.118.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.25; Tue, 24 Sep 2019 15:58:21 +0000
+Received: from AM0PR04MB6676.eurprd04.prod.outlook.com
+ ([fe80::5c26:3c5f:17e0:8038]) by AM0PR04MB6676.eurprd04.prod.outlook.com
+ ([fe80::5c26:3c5f:17e0:8038%7]) with mapi id 15.20.2284.023; Tue, 24 Sep 2019
+ 15:58:21 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     Biwen Li <biwen.li@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Ran Wang <ran.wang_1@nxp.com>
+CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Biwen Li <biwen.li@nxp.com>
+Subject: RE: [v3,3/3] Documentation: dt: binding: fsl: Add
+ 'fsl,ippdexpcr-alt-addr' property
+Thread-Topic: [v3,3/3] Documentation: dt: binding: fsl: Add
+ 'fsl,ippdexpcr-alt-addr' property
+Thread-Index: AQHVcoOnKERg3NBKWEeinvrVMNtD66c6+UIw
+Date:   Tue, 24 Sep 2019 15:58:21 +0000
+Message-ID: <AM0PR04MB667690EE76D327D0FC09F7818F840@AM0PR04MB6676.eurprd04.prod.outlook.com>
+References: <20190924024548.4356-1-biwen.li@nxp.com>
+ <20190924024548.4356-3-biwen.li@nxp.com>
+In-Reply-To: <20190924024548.4356-3-biwen.li@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7783c7de-e7a0-43d2-16c1-08d74108065b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB5602;
+x-ms-traffictypediagnostic: AM0PR04MB5602:|AM0PR04MB5602:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5602934205EE1BCD76BA43838F840@AM0PR04MB5602.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0170DAF08C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(396003)(136003)(346002)(376002)(199004)(189003)(13464003)(8676002)(2906002)(52536014)(2501003)(3846002)(99286004)(81166006)(71200400001)(71190400001)(7696005)(14454004)(66066001)(74316002)(33656002)(4326008)(229853002)(6246003)(55016002)(6636002)(478600001)(5660300002)(6116002)(54906003)(6506007)(53546011)(66446008)(102836004)(66556008)(66476007)(186003)(81156014)(76116006)(76176011)(66946007)(64756008)(9686003)(6436002)(26005)(86362001)(25786009)(14444005)(305945005)(7736002)(256004)(446003)(11346002)(8936002)(476003)(110136005)(486006)(316002)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5602;H:AM0PR04MB6676.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0dczoCsZ62W8zLCdTd3LMlHpB7mTXoKjujRzuXcb7Al7+G/sJluDH6Sln8T0Dw+QWgoNbQPOgoEBKed5AP6yTgSVTeXmXiFJQwSI5g1xshgI6FSYUvIcJXWmAW7gUwC+ih7o7FhjyK53EyDWMevBwcSAZjRkHi0h1fSBKM7rWxF27n1OXg6bv01tFCQ+67MWQiKm/hMa77NYmUTgQ9sZVTZuEXkljZvhov5B2FhJ0B33By8mAwyA3LCC+V2O76Z7Y5CnWq+vhmOLrf99m8w1eabCoWM0u+y7l7lZ0zjZ8Fvqw6T4/2DUgJ244VF7vpVulWJCDZ1AYJC9DMW38bASy/veOZ48S3MGPlZZG1yUEhu+pkNU/lpoySmP7jxcgocoVsGzKqwLO3VbUxe67cb2GPgmwOTp0LHUYiatmCG1EZg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190903142655.21943-3-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7783c7de-e7a0-43d2-16c1-08d74108065b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2019 15:58:21.7621
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VwlBb0n5LXv/Eu24Va0FshGFl3ssvrRmM+sUAJIdhUFKPWCi2CFG8UIOyflug7muzzNkouhYArBkIh2i9PwPhw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5602
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 05:26:33PM +0300, Jarkko Sakkinen wrote:
-> From: Kai Huang <kai.huang@linux.intel.com>
-> 
-> Add X86_FEATURE_SGX_LC, which informs whether or not the CPU supports SGX
-> Launch Control.
-> 
-> Add MSR_IA32_SGXLEPUBKEYHASH{0, 1, 2, 3}, which when combined contain a
-> SHA256 hash of a 3072-bit RSA public key. SGX backed software packages, so
-> called enclaves, are always signed. All enclaves signed with the public key
-> are unconditionally allowed to initialize. [1]
-> 
-> Add FEATURE_CONTROL_SGX_LE_WR bit of the feature control MSR, which informs
-> whether the formentioned MSRs are writable or not. If the bit is off, the
-> public key MSRs are read-only for the OS.
-> 
-> If the MSRs are read-only, the platform must provide a launch enclave (LE).
-> LE can create cryptographic tokens for other enclaves that they can pass
-> together with their signature to the ENCLS(EINIT) opcode, which is used
-> to initialize enclaves.
-> 
-> Linux is unlikely to support the locked configuration because it takes away
-> the control of the launch decisions from the kernel.
 
-Right, who has control over FEATURE_CONTROL_SGX_LE_WR? Can the
-kernel set it and put another hash in there or there will be locked
-configurations where setting that bit will trap?
 
-I don't want to leave anything in the hands of the BIOS controlling
-whether the platform can set its own key because BIOS is known to f*ck
-it up almost every time. And so I'd like for us to be able to fix up
-things without depending on the mood of some OEM vendor's BIOS fixing
-desire.
-
-> [1] Intel SDM: 38.1.4 Intel SGX Launch Control Configuration
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Haim Cohen <haim.cohen@intel.com>
-> Signed-off-by: Haim Cohen <haim.cohen@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-This time checkpatch is right:
-
-WARNING: Missing Signed-off-by: line by nominal patch author 'Kai Huang <kai.huang@linux.intel.com>'
-
-And looking at the SOB chain, sounds like people need to make up their
-mind about authorship...
-
+> -----Original Message-----
+> From: Biwen Li <biwen.li@nxp.com>
+> Sent: Monday, September 23, 2019 9:46 PM
+> To: Leo Li <leoyang.li@nxp.com>; shawnguo@kernel.org;
+> robh+dt@kernel.org; mark.rutland@arm.com; Ran Wang
+> <ran.wang_1@nxp.com>
+> Cc: linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
+> linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; Biwen Li
+> <biwen.li@nxp.com>
+> Subject: [v3,3/3] Documentation: dt: binding: fsl: Add 'fsl,ippdexpcr-alt=
+-addr'
+> property
+>=20
+> The 'fsl,ippdexpcr-alt-addr' property is used to handle an errata A-00864=
+6 on
+> LS1021A
+>=20
+> Signed-off-by: Biwen Li <biwen.li@nxp.com>
 > ---
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  arch/x86/include/asm/msr-index.h   | 7 +++++++
->  2 files changed, 8 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index c5582e766121..ca82226e25ec 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -355,6 +355,7 @@
->  #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
->  #define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
->  #define X86_FEATURE_MOVDIR64B		(16*32+28) /* MOVDIR64B instruction */
-> +#define X86_FEATURE_SGX_LC		(16*32+30) /* Software Guard Extensions Launch Control */
+> Change in v3:
+> 	- rename property name
+> 	  fsl,rcpm-scfg -> fsl,ippdexpcr-alt-addr
+>=20
+> Change in v2:
+> 	- update desc of the property 'fsl,rcpm-scfg'
+>=20
+>  Documentation/devicetree/bindings/soc/fsl/rcpm.txt | 14
+> ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> index 5a33619d881d..157dcf6da17c 100644
+> --- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> +++ b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> @@ -34,6 +34,11 @@ Chassis Version		Example Chips
+>  Optional properties:
+>   - little-endian : RCPM register block is Little Endian. Without it RCPM
+>     will be Big Endian (default case).
+> + - fsl,ippdexpcr-alt-addr : Must add the property for SoC LS1021A,
 
-Amazing. SGX feature bits are spread around at least three CPUID leafs:
+You probably should mention this is related to a hardware issue on LS1021a =
+and only needed on LS1021a.
 
-7_EBX, 7_ECX, 12_EAX. Maybe there's a 4th somewhere because hey... :-\
+> +   Must include n + 1 entries (n =3D #fsl,rcpm-wakeup-cells, such as:
+> +   #fsl,rcpm-wakeup-cells equal to 2, then must include 2 + 1 entries).
 
--- 
-Regards/Gruss,
-    Boris.
+#fsl,rcpm-wakeup-cells is the number of IPPDEXPCR registers on an SoC.  How=
+ever you are defining an offset to scfg registers here.  Why these two are =
+related?  The length here should actually be related to the #address-cells =
+of the soc/.  But since this is only needed for LS1021, you can just make i=
+t 3.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> +   The first entry must be a link to the SCFG device node.
+> +   The non-first entry must be offset of registers of SCFG.
+>=20
+>  Example:
+>  The RCPM node for T4240:
+> @@ -43,6 +48,15 @@ The RCPM node for T4240:
+>  		#fsl,rcpm-wakeup-cells =3D <2>;
+>  	};
+>=20
+> +The RCPM node for LS1021A:
+> +	rcpm: rcpm@1ee2140 {
+> +		compatible =3D "fsl,ls1021a-rcpm", "fsl,qoriq-rcpm-2.1+";
+> +		reg =3D <0x0 0x1ee2140 0x0 0x8>;
+> +		#fsl,rcpm-wakeup-cells =3D <2>;
+> +		fsl,ippdexpcr-alt-addr =3D <&scfg 0x0 0x51c>; /*
+> SCFG_SPARECR8 */
+> +	};
+> +
+> +
+>  * Freescale RCPM Wakeup Source Device Tree Bindings
+>  -------------------------------------------
+>  Required fsl,rcpm-wakeup property should be added to a device node if th=
+e
+> device
+> --
+> 2.17.1
+
