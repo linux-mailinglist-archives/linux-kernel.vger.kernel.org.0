@@ -2,98 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C274BC633
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 13:06:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF43EBC63A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 13:07:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2504604AbfIXLGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 07:06:07 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:49980 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440787AbfIXLGG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 07:06:06 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 46cyzc5kdSz1rfPb;
-        Tue, 24 Sep 2019 13:06:04 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 46cyzc5Ccnz1qqkG;
-        Tue, 24 Sep 2019 13:06:04 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id KSEhBv7eP1Lw; Tue, 24 Sep 2019 13:06:03 +0200 (CEST)
-X-Auth-Info: eyM5Q0Dr3N3YNpW8ob4ovzSqRloWo3F6apmpXF6YFyQ=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 24 Sep 2019 13:06:03 +0200 (CEST)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        krzk@kernel.org, Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH 2/2] spi: Introduce dspi_slave_abort() function for NXP's dspi SPI driver
-Date:   Tue, 24 Sep 2019 13:05:47 +0200
-Message-Id: <20190924110547.14770-3-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190924110547.14770-1-lukma@denx.de>
-References: <20190924110547.14770-1-lukma@denx.de>
+        id S2438723AbfIXLHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 07:07:44 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:35638 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2394981AbfIXLHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 07:07:43 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id D77FEB6C3883268478B0;
+        Tue, 24 Sep 2019 19:07:40 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Tue, 24 Sep 2019
+ 19:07:37 +0800
+Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Michal Hocko <mhocko@kernel.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <mingo@redhat.com>, <bp@alien8.de>,
+        <rth@twiddle.net>, <ink@jurassic.park.msu.ru>,
+        <mattst88@gmail.com>, <benh@kernel.crashing.org>,
+        <paulus@samba.org>, <mpe@ellerman.id.au>,
+        <heiko.carstens@de.ibm.com>, <gor@linux.ibm.com>,
+        <borntraeger@de.ibm.com>, <ysato@users.sourceforge.jp>,
+        <dalias@libc.org>, <davem@davemloft.net>, <ralf@linux-mips.org>,
+        <paul.burton@mips.com>, <jhogan@kernel.org>,
+        <jiaxun.yang@flygoat.com>, <chenhc@lemote.com>,
+        <akpm@linux-foundation.org>, <rppt@linux.ibm.com>,
+        <anshuman.khandual@arm.com>, <tglx@linutronix.de>, <cai@lca.pw>,
+        <robin.murphy@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <hpa@zytor.com>, <x86@kernel.org>,
+        <dave.hansen@linux.intel.com>, <luto@kernel.org>,
+        <len.brown@intel.com>, <axboe@kernel.dk>, <dledford@redhat.com>,
+        <jeffrey.t.kirsher@intel.com>, <linux-alpha@vger.kernel.org>,
+        <naveen.n.rao@linux.vnet.ibm.com>, <mwb@linux.vnet.ibm.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-s390@vger.kernel.org>,
+        <linux-sh@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+        <tbogendoerfer@suse.de>, <linux-mips@vger.kernel.org>,
+        <rafael@kernel.org>, <gregkh@linuxfoundation.org>
+References: <1568724534-146242-1-git-send-email-linyunsheng@huawei.com>
+ <20190923151519.GE2369@hirez.programming.kicks-ass.net>
+ <20190923152856.GB17206@dhcp22.suse.cz>
+ <20190923154852.GG2369@hirez.programming.kicks-ass.net>
+ <20190923165235.GD17206@dhcp22.suse.cz>
+ <20190923203410.GI2369@hirez.programming.kicks-ass.net>
+ <f1362dbb-ad31-51a8-2b06-16c9d928b876@huawei.com>
+ <20190924092551.GK2369@hirez.programming.kicks-ass.net>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <c816abbe-155b-504b-cef1-6413f7cdd20c@huawei.com>
+Date:   Tue, 24 Sep 2019 19:07:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20190924092551.GK2369@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change provides the dspi_slave_abort() function, which is a callback
-for slave_abort() method of SPI controller generic driver.
+On 2019/9/24 17:25, Peter Zijlstra wrote:
+> On Tue, Sep 24, 2019 at 09:29:50AM +0800, Yunsheng Lin wrote:
+>> On 2019/9/24 4:34, Peter Zijlstra wrote:
+> 
+>>> I'm saying the ACPI standard is wrong. Explain to me how it is
+>>> physically possible to have a device without NUMA affinity in a NUMA
+>>> system?
+>>>
+>>>  1) The fundamental interconnect is not uniform.
+>>>  2) The device needs to actually be somewhere.
+>>>
+>>
+>> From what I can see, NUMA_NO_NODE may make sense in the below case:
+>>
+>> 1) Theoretically, there would be a device that can access all the memory
+>> uniformly and can be accessed by all cpus uniformly even in a NUMA system.
+>> Suppose we have two nodes, and the device just sit in the middle of the
+>> interconnect between the two nodes.
+>>
+>> Even we define a third node solely for the device, we may need to look at
+>> the node distance to decide the device can be accessed uniformly.
+>>
+>> Or we can decide that the device can be accessed uniformly by setting
+>> it's node to NUMA_NO_NODE.
+> 
+> This is indeed a theoretical case; it doesn't scale. The moment you're
+> adding multiple sockets or even board interconnects this all goes out
+> the window.
+> 
+> And in this case, forcing the device to either node is fine.
 
-As in the SPI slave mode the transmission is driven by master, any
-distortion may cause the slave to enter undefined internal state.
-To avoid this problem the dspi_slave_abort() terminates all pending and
-ongoing DMA transactions (with sync) and clears internal FIFOs.
+Not really.
+For packet sending and receiving, the buffer memory may be allocated
+dynamically. Node of tx buffer memory is mainly based on the cpu
+that is sending sending, node of rx buffer memory is mainly based on
+the cpu the interrupt handler of the device is running on, and the
+device' interrupt affinity is mainly based on node id of the device.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- drivers/spi/spi-fsl-dspi.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+We can bind the processes that are using the device to both nodes
+in order to utilize memory on both nodes for packet sending.
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index bec758e978fb..2c0f211eed87 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -1006,6 +1006,25 @@ static void dspi_init(struct fsl_dspi *dspi)
- 			     SPI_CTARE_FMSZE(0) | SPI_CTARE_DTCP(1));
- }
- 
-+static int dspi_slave_abort(struct spi_master *master)
-+{
-+	struct fsl_dspi *dspi = spi_master_get_devdata(master);
-+
-+	/*
-+	 * Terminate all pending DMA transactions for the SPI working
-+	 * in SLAVE mode.
-+	 */
-+	dmaengine_terminate_sync(dspi->dma->chan_rx);
-+	dmaengine_terminate_sync(dspi->dma->chan_tx);
-+
-+	/* Clear the internal DSPI RX and TX FIFO buffers */
-+	regmap_update_bits(dspi->regmap, SPI_MCR,
-+			   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF,
-+			   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF);
-+
-+	return 0;
-+}
-+
- static int dspi_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -1030,6 +1049,7 @@ static int dspi_probe(struct platform_device *pdev)
- 	ctlr->dev.of_node = pdev->dev.of_node;
- 
- 	ctlr->cleanup = dspi_cleanup;
-+	ctlr->slave_abort = dspi_slave_abort;
- 	ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
- 
- 	pdata = dev_get_platdata(&pdev->dev);
--- 
-2.20.1
+But for packet receiving, the node1 may not be used becuase the node
+id of device is forced to node 0, which is the default way to bind
+the interrupt to the cpu of the same node.
+
+If node_to_cpumask_map() returns all usable cpus when the device's node
+id is NUMA_NO_NODE, then interrupt can be binded to the cpus on both nodes.
+
+> 
+>> 2) For many virtual deivces, such as tun or loopback netdevice, they
+>> are also accessed uniformly by all cpus.
+> 
+> Not true; the virtual device will sit in memory local to some node.
+> 
+> And as with physical devices, you probably want at least one (virtual)
+> queue per node.
+
+There may be similar handling as above for virtual device too.
+
+> 
+> 
+> .
+> 
 
