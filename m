@@ -2,98 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 436CCBCA51
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C690CBCA56
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 16:36:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441387AbfIXOgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 10:36:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43214 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389297AbfIXOgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 10:36:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BF31EAD35;
-        Tue, 24 Sep 2019 14:36:00 +0000 (UTC)
-Date:   Tue, 24 Sep 2019 16:36:00 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mircea CIRJALIU - MELIU <mcirjaliu@bitdefender.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cl@linux.com" <cl@linux.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] slab, memcontrol: undefined reference to
- `memcg_kmem_get_cache'
-Message-ID: <20190924143600.GY23050@dhcp22.suse.cz>
-References: <DB7PR02MB397977A2959BFFA89AA67538BB840@DB7PR02MB3979.eurprd02.prod.outlook.com>
- <20190924120400.GN23050@dhcp22.suse.cz>
- <DB7PR02MB39799BF26E394AE30D710308BB840@DB7PR02MB3979.eurprd02.prod.outlook.com>
+        id S2441388AbfIXOgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 10:36:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54356 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388630AbfIXOgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 10:36:21 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 91D81309BF1A;
+        Tue, 24 Sep 2019 14:36:20 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-116-245.ams2.redhat.com [10.36.116.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B2181001B08;
+        Tue, 24 Sep 2019 14:36:15 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v1] mm/memory_hotplug: Don't take the cpu_hotplug_lock
+Date:   Tue, 24 Sep 2019 16:36:15 +0200
+Message-Id: <20190924143615.19628-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB7PR02MB39799BF26E394AE30D710308BB840@DB7PR02MB3979.eurprd02.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 24 Sep 2019 14:36:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-09-19 14:08:33, Mircea CIRJALIU - MELIU wrote:
-> > On Tue 24-09-19 08:46:48, Mircea CIRJALIU - MELIU wrote:
-> > > Having CONFIG_MEMCG turned off causes these issues:
-> > > 	mm/slub.o: In function `slab_pre_alloc_hook':
-> > > 	/home/mircea/build/mm/slab.h:425: undefined reference to
-> > `memcg_kmem_get_cache'
-> > > 	mm/slub.o: In function `slab_post_alloc_hook':
-> > > 	/home/mircea/build/mm/slab.h:444: undefined reference to
-> > `memcg_kmem_put_cache'
-> > 
-> > You should be adding your Sign-off-by to every patch you post to the kernel
-> > mailing list (see Documentation/SubmittingPatches).
-> > 
-> > It is also really important to mention which tree does this apply to and ideally
-> > also note which change has broken the code. In this particular case I have
-> > tried the current Linus tree (4c07e2ddab5b) and $ grep
-> > 'CONFIG_SLUB\|CONFIG_MEMCG' .config # CONFIG_MEMCG is not set
-> > CONFIG_SLUB_DEBUG=y CONFIG_SLUB=y CONFIG_SLUB_CPU_PARTIAL=y
-> > # CONFIG_SLUB_DEBUG_ON is not set # CONFIG_SLUB_STATS is not set
-> > 
-> > which means CONFIG_MEMCG_KMEM is not enabled as well. And the
-> > compilation succeeds. What is your config file?
-> 
-> The config file is not the problem (figured it out).
-> I am lowering the optimization level on certain files for debug purposes.
-> In my case: CFLAGS_slub.o += -O1 -fno-inline
-> 
-> The code which causes the problem looks like this:
-> static inline struct kmem_cache *slab_pre_alloc_hook(struct kmem_cache *s,
-> 						     gfp_t flags)
-> {
-> 	...
-> 
-> 	if (memcg_kmem_enabled() &&
-> 	    ((flags & __GFP_ACCOUNT) || (s->flags & SLAB_ACCOUNT)))
-> 		return memcg_kmem_get_cache(s);
-> 
-> 	...
-> }
-> 
-> Under normal circumstances memcg_kmem_enabled() returns false and the
-> statement is evaluated as unreachable and removed entirely.
-> It seems -O1 keeps the call to memcg_kmem_get_cache().
+Since commit 3f906ba23689 ("mm/memory-hotplug: switch locking to a percpu
+rwsem") we do a cpus_read_lock() in mem_hotplug_begin(). This was
+introduced to fix a potential deadlock between get_online_mems() and
+get_online_cpus() - the memory and cpu hotplug lock. The root issue was
+that build_all_zonelists() -> stop_machine() required the cpu hotplug lock:
+    The reason is that memory hotplug takes the memory hotplug lock and
+    then calls stop_machine() which calls get_online_cpus().  That's the
+    reverse lock order to get_online_cpus(); get_online_mems(); in
+    mm/slub_common.c
 
-OK, this makes more sense now. Is it the only problem to make your
-kernel compile with O1? We do rely on dead code elimination quite
-heavily. I do not think we want add a lot of code for something that we
-are unlikely to be able to support. This particular patch is quite small
-but I am not really supper happy to add more boilerplate code...
+So memory hotplug never really required any cpu lock itself, only
+stop_machine() and lru_add_drain_all() required it. Back then,
+stop_machine_cpuslocked() and lru_add_drain_all_cpuslocked() were used
+as the cpu hotplug lock was now obtained in the caller.
 
-> The change that introduced this is here: 
-> 	commit 452647784b2fccfdeeb976f6f842c6719fb2daac
-> 	Author: Vladimir Davydov <vdavydov@virtuozzo.com>
-> 	Date:   Tue Jul 26 15:24:21 2016 -0700
-> Although I had the same problem before with other header files.
-> 
+Since commit 11cd8638c37f ("mm, page_alloc: remove stop_machine from build
+all_zonelists"), the stop_machine_cpuslocked() call is gone.
+build_all_zonelists() does no longer require the cpu lock and does no
+longer make use of stop_machine().
 
+Since commit 9852a7212324 ("mm: drop hotplug lock from
+lru_add_drain_all()"), lru_add_drain_all() "Doesn't need any cpu hotplug
+locking because we do rely on per-cpu kworkers being shut down before our
+page_alloc_cpu_dead callback is executed on the offlined cpu.". The
+lru_add_drain_all_cpuslocked() variant was removed.
+
+So there is nothing left that requires the cpu hotplug lock. The memory
+hotplug lock and the device hotplug lock are sufficient.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+
+RFC -> v1:
+- Reword and add more details why the cpu hotplug lock was needed here
+  in the first place, and why we no longer require it.
+
+---
+ mm/memory_hotplug.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index c3e9aed6023f..5fa30f3010e1 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -88,14 +88,12 @@ __setup("memhp_default_state=", setup_memhp_default_state);
+ 
+ void mem_hotplug_begin(void)
+ {
+-	cpus_read_lock();
+ 	percpu_down_write(&mem_hotplug_lock);
+ }
+ 
+ void mem_hotplug_done(void)
+ {
+ 	percpu_up_write(&mem_hotplug_lock);
+-	cpus_read_unlock();
+ }
+ 
+ u64 max_mem_size = U64_MAX;
 -- 
-Michal Hocko
-SUSE Labs
+2.21.0
+
