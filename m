@@ -2,117 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B05CABCD70
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB46CBCCD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410034AbfIXQpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:45:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410020AbfIXQpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:45:43 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8215321906;
-        Tue, 24 Sep 2019 16:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343543;
-        bh=es2vIaM7f5xW4Dh/JCsV+tGaGa4oEA9m7N0liZ52Yc4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=osj07c0IXhuLTG04IobP44rH9U4B/NQgdNQ2utQT1GyBYX76NbjTUgUfMmcq2ReZl
-         1lJY96dOpJ4aO88uzAVp6k9GgG6D0yk+C8//NzO5quf0enAzewJQQDa8Cx9TTRgumN
-         r4eHEAsX25ElzUrrQyCkf5T9IkEQ/TuOtTSkxmD8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 5.3 86/87] f2fs: fix to drop meta/node pages during umount
-Date:   Tue, 24 Sep 2019 12:41:42 -0400
-Message-Id: <20190924164144.25591-86-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
-References: <20190924164144.25591-1-sashal@kernel.org>
+        id S2404185AbfIXQmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:42:19 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:58732 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403972AbfIXQmQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:42:16 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgCrN054386;
+        Tue, 24 Sep 2019 11:42:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569343332;
+        bh=QyocoQI2IJmSXTEBOua9cDMHDOEeT61Hn7qFcGU0ZtQ=;
+        h=From:To:CC:Subject:Date;
+        b=MRVeoOBRss0BOnkQZS1cb2NZHYNmuAunRiPFzu1h8d/xka6Yl91aGVX/CYST2ihRl
+         YtVHyENOFUkOSGRwgvRWxVMHqdIycu2cBVx8RoDBlzRpShP7Ox+MSLVb3b+GTcWJ+W
+         Eo6Haz+N2nGPanFvK0gQ4ixmiptkSGpLmPjXt30s=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8OGgC0X048727
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Sep 2019 11:42:12 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 24
+ Sep 2019 11:42:05 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 24 Sep 2019 11:42:12 -0500
+Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgCQS073229;
+        Tue, 24 Sep 2019 11:42:12 -0500
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
+Subject: [Patch v3 0/8] media: i2c: ov2659: maintenance series
+Date:   Tue, 24 Sep 2019 11:44:06 -0500
+Message-ID: <20190924164414.21897-1-bparrot@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+This patch series is a collection of patches we have been carrying for a
+while.
 
-[ Upstream commit a8933b6b68f775b5774e7b075447fae13f4d01fe ]
+It includes a few sensor register fixes which would cause visual
+artifacts at lower resolution and also at 720p.
 
-As reported in bugzilla:
+Also on some board the 'powerdown' and /or 'reset' pins are not tied so
+we need to add support for optional gpios to handle these.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=204193
+Since these camera are removable on some board we also need the driver
+to actually fail when there is no hardware present so the driver is
+actually removed.
 
-A null pointer dereference bug is triggered in f2fs under kernel-5.1.3.
+Also added a patch to check and propagate errors on s_stream invocation.
 
- kasan_report.cold+0x5/0x32
- f2fs_write_end_io+0x215/0x650
- bio_endio+0x26e/0x320
- blk_update_request+0x209/0x5d0
- blk_mq_end_request+0x2e/0x230
- lo_complete_rq+0x12c/0x190
- blk_done_softirq+0x14a/0x1a0
- __do_softirq+0x119/0x3e5
- irq_exit+0x94/0xe0
- call_function_single_interrupt+0xf/0x20
+Finally, we update the licensing statement to use SPDX licensing.
 
-During umount, we will access NULL sbi->node_inode pointer in
-f2fs_write_end_io():
+Changes since v2:
+- Addressed review comment from Sakari
+- Reworked the "media: i2c: ov2659: Add powerdown/reset gpio handling"
+  to use pm_runtime if it is available but not to make it depend on it.
+- Cleaned up the gpio related calls to remove the unnecessary NULL check
 
-	f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
-				page->index != nid_of_node(page));
+Changes since v1:
+- Addressed review comment from Prabhakar
+- Added support for reset-gpios
+- Rework the power setting to use pm_runtime instead of s_power
+  as based on discussion with Sakari it would be the prefered method
+- Added a patch to reduce the number explicit include files to the
+  minimum necessary instead of the previous kitchen sink approach
 
-The reason is if disable_checkpoint mount option is on, meta dirty
-pages can remain during umount, and then be flushed by iput() of
-meta_inode, however node_inode has been iput()ed before
-meta_inode's iput().
+Benoit Parrot (8):
+  media: i2c: ov2659: Fix for image wrap-around in lower resolution
+  media: i2c: ov2659: Fix sensor detection to actually fail when device
+    is not present
+  media: i2c: ov2659: Cleanup include file list
+  media: i2c: ov2659: fix s_stream return value
+  media: dt-bindings: ov2659: add powerdown/reset-gpios optional
+    property
+  media: i2c: ov2659: Add powerdown/reset gpio handling
+  media: i2c: ov2659: Fix missing 720p register config
+  media: i2c: ov2659: Switch to SPDX Licensing
 
-Since checkpoint is disabled, all meta/node datas are useless and
-should be dropped in next mount, so in umount, let's adjust
-drop_inode() to give a hint to iput_final() to drop all those dirty
-datas correctly.
+ .../devicetree/bindings/media/i2c/ov2659.txt  |   9 ++
+ drivers/media/i2c/Kconfig                     |   2 +-
+ drivers/media/i2c/ov2659.c                    | 135 +++++++++++++-----
+ 3 files changed, 109 insertions(+), 37 deletions(-)
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/f2fs/super.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 78a1b873e48ad..aa3178f1b145d 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -873,7 +873,21 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 
- static int f2fs_drop_inode(struct inode *inode)
- {
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int ret;
-+
-+	/*
-+	 * during filesystem shutdown, if checkpoint is disabled,
-+	 * drop useless meta/node dirty pages.
-+	 */
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		if (inode->i_ino == F2FS_NODE_INO(sbi) ||
-+			inode->i_ino == F2FS_META_INO(sbi)) {
-+			trace_f2fs_drop_inode(inode, 1);
-+			return 1;
-+		}
-+	}
-+
- 	/*
- 	 * This is to avoid a deadlock condition like below.
- 	 * writeback_single_inode(inode)
 -- 
-2.20.1
+2.17.1
 
