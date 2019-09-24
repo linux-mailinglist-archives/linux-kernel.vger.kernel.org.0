@@ -2,93 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59ECCBCCE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E13BCD73
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441466AbfIXQmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:42:39 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:50540 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405867AbfIXQm1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:42:27 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgOff069325;
-        Tue, 24 Sep 2019 11:42:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569343344;
-        bh=K7lDNtUuO5vpQIbYTqcQ/9ho+gI4TbiTgMLfOPWETG0=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=dW+YhmmPJnAkKdSdm2981TRlBsaVccrclDydSXt44NghdY12Si32jKyNwpD1eQY+5
-         hGLkl39o2IxPdODAtXhsVaZU78NGc36W4P73GB7gJHXmbQ2FxX6oT7L7x+eScvWjjP
-         87ddwsfgmb7fZJZczPQWutJTitMfQQSSEoXh6cpU=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgOfC122076;
-        Tue, 24 Sep 2019 11:42:24 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 24
- Sep 2019 11:42:18 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 24 Sep 2019 11:42:24 -0500
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8OGgCQZ073229;
-        Tue, 24 Sep 2019 11:42:24 -0500
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-CC:     Prabhakar Lad <prabhakar.csengg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v3 7/8] media: i2c: ov2659: Fix missing 720p register config
-Date:   Tue, 24 Sep 2019 11:44:13 -0500
-Message-ID: <20190924164414.21897-8-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190924164414.21897-1-bparrot@ti.com>
-References: <20190924164414.21897-1-bparrot@ti.com>
+        id S2410053AbfIXQpy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:45:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2410018AbfIXQpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:45:52 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87C83217D9;
+        Tue, 24 Sep 2019 16:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569343551;
+        bh=rIKf7LtdZcL+QQJa9NkH9hjNvOfePb4mc/FQ3u++flo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=vQzK7NxO6DNdqsX2ZBWTqw+IaRr/h7sHhDI6wfYb5CANoNhr9C8P9LnnXkrjIMzye
+         uVYVKYwREFbB4mK/Ah0lLcqCigAyJgDxZ/5yQpL18ReSBwpWxEL63tLKsp6DD0sMj1
+         pJPeCkngs4V0UfUhA7QXjdTQTyq1h/cAhHsZtem0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Shayenne Moura <shayenneluzmoura@gmail.com>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 01/70] drm/vkms: Fix crc worker races
+Date:   Tue, 24 Sep 2019 12:44:40 -0400
+Message-Id: <20190924164549.27058-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The initial registers sequence is only loaded at probe
-time. Afterward only the resolution and format specific
-register are modified. Care must be taken to make sure
-registers modified by one resolution setting are reverted
-back when another resolution is programmed.
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-This was not done properly for the 720p case.
+[ Upstream commit 18d0952a838ba559655b0cd9cf85097ad63d9bca ]
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
+The issue we have is that the crc worker might fall behind. We've
+tried to handle this by tracking both the earliest frame for which it
+still needs to compute a crc, and the last one. Plus when the
+crtc_state changes, we have a new work item, which are all run in
+order due to the ordered workqueue we allocate for each vkms crtc.
+
+Trouble is there's been a few small issues in the current code:
+- we need to capture frame_end in the vblank hrtimer, not in the
+  worker. The worker might run much later, and then we generate a lot
+  of crc for which there's already a different worker queued up.
+- frame number might be 0, so create a new crc_pending boolean to
+  track this without confusion.
+- we need to atomically grab frame_start/end and clear it, so do that
+  all in one go. This is not going to create a new race, because if we
+  race with the hrtimer then our work will be re-run.
+- only race that can happen is the following:
+  1. worker starts
+  2. hrtimer runs and updates frame_end
+  3. worker grabs frame_start/end, already reading the new frame_end,
+  and clears crc_pending
+  4. hrtimer calls queue_work()
+  5. worker completes
+  6. worker gets  re-run, crc_pending is false
+  Explain this case a bit better by rewording the comment.
+
+v2: Demote warning level output to debug when we fail to requeue, this
+is expected under high load when the crc worker can't quite keep up.
+
+Cc: Shayenne Moura <shayenneluzmoura@gmail.com>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Haneen Mohammed <hamohammed.sa@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Reviewed-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Tested-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Signed-off-by: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190606222751.32567-2-daniel.vetter@ffwll.ch
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov2659.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/vkms/vkms_crc.c  | 27 +++++++++++++--------------
+ drivers/gpu/drm/vkms/vkms_crtc.c |  9 +++++++--
+ drivers/gpu/drm/vkms/vkms_drv.h  |  2 ++
+ 3 files changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
-index 0e026b810de5..23f161fd69bb 100644
---- a/drivers/media/i2c/ov2659.c
-+++ b/drivers/media/i2c/ov2659.c
-@@ -412,10 +412,14 @@ static struct sensor_register ov2659_720p[] = {
- 	{ REG_TIMING_YINC, 0x11 },
- 	{ REG_TIMING_VERT_FORMAT, 0x80 },
- 	{ REG_TIMING_HORIZ_FORMAT, 0x00 },
-+	{ 0x370a, 0x12 },
- 	{ 0x3a03, 0xe8 },
- 	{ 0x3a09, 0x6f },
- 	{ 0x3a0b, 0x5d },
- 	{ 0x3a15, 0x9a },
-+	{ REG_VFIFO_READ_START_H, 0x00 },
-+	{ REG_VFIFO_READ_START_L, 0x80 },
-+	{ REG_ISP_CTRL02, 0x00 },
- 	{ REG_NULL, 0x00 },
- };
+diff --git a/drivers/gpu/drm/vkms/vkms_crc.c b/drivers/gpu/drm/vkms/vkms_crc.c
+index d7b409a3c0f8c..66603da634fe3 100644
+--- a/drivers/gpu/drm/vkms/vkms_crc.c
++++ b/drivers/gpu/drm/vkms/vkms_crc.c
+@@ -166,16 +166,24 @@ void vkms_crc_work_handle(struct work_struct *work)
+ 	struct drm_plane *plane;
+ 	u32 crc32 = 0;
+ 	u64 frame_start, frame_end;
++	bool crc_pending;
+ 	unsigned long flags;
  
+ 	spin_lock_irqsave(&out->state_lock, flags);
+ 	frame_start = crtc_state->frame_start;
+ 	frame_end = crtc_state->frame_end;
++	crc_pending = crtc_state->crc_pending;
++	crtc_state->frame_start = 0;
++	crtc_state->frame_end = 0;
++	crtc_state->crc_pending = false;
+ 	spin_unlock_irqrestore(&out->state_lock, flags);
+ 
+-	/* _vblank_handle() hasn't updated frame_start yet */
+-	if (!frame_start || frame_start == frame_end)
+-		goto out;
++	/*
++	 * We raced with the vblank hrtimer and previous work already computed
++	 * the crc, nothing to do.
++	 */
++	if (!crc_pending)
++		return;
+ 
+ 	drm_for_each_plane(plane, &vdev->drm) {
+ 		struct vkms_plane_state *vplane_state;
+@@ -196,20 +204,11 @@ void vkms_crc_work_handle(struct work_struct *work)
+ 	if (primary_crc)
+ 		crc32 = _vkms_get_crc(primary_crc, cursor_crc);
+ 
+-	frame_end = drm_crtc_accurate_vblank_count(crtc);
+-
+-	/* queue_work can fail to schedule crc_work; add crc for
+-	 * missing frames
++	/*
++	 * The worker can fall behind the vblank hrtimer, make sure we catch up.
+ 	 */
+ 	while (frame_start <= frame_end)
+ 		drm_crtc_add_crc_entry(crtc, true, frame_start++, &crc32);
+-
+-out:
+-	/* to avoid using the same value for frame number again */
+-	spin_lock_irqsave(&out->state_lock, flags);
+-	crtc_state->frame_end = frame_end;
+-	crtc_state->frame_start = 0;
+-	spin_unlock_irqrestore(&out->state_lock, flags);
+ }
+ 
+ static int vkms_crc_parse_source(const char *src_name, bool *enabled)
+diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
+index e447b7588d06e..77a1f5fa5d5c8 100644
+--- a/drivers/gpu/drm/vkms/vkms_crtc.c
++++ b/drivers/gpu/drm/vkms/vkms_crtc.c
+@@ -30,13 +30,18 @@ static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+ 		 * has read the data
+ 		 */
+ 		spin_lock(&output->state_lock);
+-		if (!state->frame_start)
++		if (!state->crc_pending)
+ 			state->frame_start = frame;
++		else
++			DRM_DEBUG_DRIVER("crc worker falling behind, frame_start: %llu, frame_end: %llu\n",
++					 state->frame_start, frame);
++		state->frame_end = frame;
++		state->crc_pending = true;
+ 		spin_unlock(&output->state_lock);
+ 
+ 		ret = queue_work(output->crc_workq, &state->crc_work);
+ 		if (!ret)
+-			DRM_WARN("failed to queue vkms_crc_work_handle");
++			DRM_DEBUG_DRIVER("vkms_crc_work_handle already queued\n");
+ 	}
+ 
+ 	spin_unlock(&output->lock);
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index 81f1cfbeb9362..3c7e06b19efd5 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -56,6 +56,8 @@ struct vkms_plane_state {
+ struct vkms_crtc_state {
+ 	struct drm_crtc_state base;
+ 	struct work_struct crc_work;
++
++	bool crc_pending;
+ 	u64 frame_start;
+ 	u64 frame_end;
+ };
 -- 
-2.17.1
+2.20.1
 
