@@ -2,308 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00C15BC97A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 15:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5AE1BC970
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 15:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390714AbfIXN4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 09:56:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47200 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726252AbfIXN4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 09:56:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 79F45AC4A;
-        Tue, 24 Sep 2019 13:56:09 +0000 (UTC)
-Date:   Tue, 24 Sep 2019 15:56:08 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     mm-commits@vger.kernel.org, vdavydov.dev@gmail.com,
-        shakeelb@google.com, rientjes@google.com, ktkhai@virtuozzo.com,
-        kirill.shutemov@linux.intel.com, hughd@google.com,
-        hannes@cmpxchg.org, cai@lca.pw, yang.shi@linux.alibaba.com
-Subject: Re: + mm-thp-extract-split_queue_-into-a-struct.patch added to -mm
- tree
-Message-ID: <20190924135608.GW23050@dhcp22.suse.cz>
-References: <20190923220902.-_eJc%akpm@linux-foundation.org>
+        id S1730297AbfIXNz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 09:55:59 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56312 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfIXNz6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 09:55:58 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8ODtsne021248;
+        Tue, 24 Sep 2019 08:55:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569333354;
+        bh=btPV7Sjr/rnEMgxUyHIr3zvLMVUcIGMOqQpe2lo8C08=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=sqMOR+nEhYtaIHN8ZfAV27zmxddiIyaiO0QpWO6GjUVM0wBZSfWsRC2fTa82Vf+Vr
+         vS95zY2N8mqIZx38raNe+Paijr6lj3LnbIOd+dNgTf0Y7JZoRZAwDSFwjDua1SO3Ot
+         feBPb/3xi09jUCp19BYAa1ablBcjoeb/HTXMuZnM=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8ODtsP8124713
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 24 Sep 2019 08:55:54 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 24
+ Sep 2019 08:55:47 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 24 Sep 2019 08:55:46 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8ODtp6I124895;
+        Tue, 24 Sep 2019 08:55:52 -0500
+Subject: Re: [PATCH 1/3] dt-bindings: dma: Add documentation for DMA domains
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dan.j.williams@intel.com>,
+        <devicetree@vger.kernel.org>
+References: <20190910115037.23539-1-peter.ujfalusi@ti.com>
+ <20190910115037.23539-2-peter.ujfalusi@ti.com>
+ <5d7ba96c.1c69fb81.ee467.32b9@mx.google.com>
+ <82254a3e-12fe-14d8-d49a-6627dd1d3559@ti.com>
+Message-ID: <ed0de4d9-961a-3dcc-5865-d54b298ac309@ti.com>
+Date:   Tue, 24 Sep 2019 16:56:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190923220902.-_eJc%akpm@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <82254a3e-12fe-14d8-d49a-6627dd1d3559@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do we really need this if deferred list is going to be shrunk more
-pro-actively as discussed already - I am sorry I do not have a link handy
-but in short the deferred list would be drained from a kworker context
-more pro-actively rather than wait for the memory pressure to happen.
 
-On Mon 23-09-19 15:09:02, Andrew Morton wrote:
-> ------------------------------------------------------
-> From: Yang Shi <yang.shi@linux.alibaba.com>
-> Subject: mm: thp: extract split_queue_* into a struct
-> 
-> Patch series "Make deferred split shrinker memcg aware", v6.
-> 
-> Currently THP deferred split shrinker is not memcg aware, this may cause
-> premature OOM with some configuration.  For example the below test would
-> run into premature OOM easily:
-> 
-> $ cgcreate -g memory:thp
-> $ echo 4G > /sys/fs/cgroup/memory/thp/memory/limit_in_bytes
-> $ cgexec -g memory:thp transhuge-stress 4000
-> 
-> transhuge-stress comes from kernel selftest.
-> 
-> It is easy to hit OOM, but there are still a lot THP on the deferred split
-> queue, memcg direct reclaim can't touch them since the deferred split
-> shrinker is not memcg aware.
-> 
-> Convert deferred split shrinker memcg aware by introducing per memcg
-> deferred split queue.  The THP should be on either per node or per memcg
-> deferred split queue if it belongs to a memcg.  When the page is
-> immigrated to the other memcg, it will be immigrated to the target memcg's
-> deferred split queue too.
-> 
-> Reuse the second tail page's deferred_list for per memcg list since the
-> same THP can't be on multiple deferred split queues.
-> 
-> Make deferred split shrinker not depend on memcg kmem since it is not
-> slab.  It doesn't make sense to not shrink THP even though memcg kmem is
-> disabled.
-> 
-> With the above change the test demonstrated above doesn't trigger OOM even
-> though with cgroup.memory=nokmem.
-> 
-> 
-> This patch (of 4):
-> 
-> Put split_queue, split_queue_lock and split_queue_len into a struct in
-> order to reduce code duplication when we convert deferred_split to memcg
-> aware in the later patches.
-> 
-> Link: http://lkml.kernel.org/r/1565144277-36240-2-git-send-email-yang.shi@linux.alibaba.com
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> Suggested-by: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Hugh Dickins <hughd@google.com>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Qian Cai <cai@lca.pw>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
-> 
->  include/linux/mmzone.h |   12 +++++++---
->  mm/huge_memory.c       |   45 +++++++++++++++++++++------------------
->  mm/page_alloc.c        |    8 ++++--
->  3 files changed, 39 insertions(+), 26 deletions(-)
-> 
-> --- a/include/linux/mmzone.h~mm-thp-extract-split_queue_-into-a-struct
-> +++ a/include/linux/mmzone.h
-> @@ -679,6 +679,14 @@ struct zonelist {
->  extern struct page *mem_map;
->  #endif
->  
-> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +struct deferred_split {
-> +	spinlock_t split_queue_lock;
-> +	struct list_head split_queue;
-> +	unsigned long split_queue_len;
-> +};
-> +#endif
-> +
->  /*
->   * On NUMA machines, each NUMA node would have a pg_data_t to describe
->   * it's memory layout. On UMA machines there is a single pglist_data which
-> @@ -758,9 +766,7 @@ typedef struct pglist_data {
->  #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
->  
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -	spinlock_t split_queue_lock;
-> -	struct list_head split_queue;
-> -	unsigned long split_queue_len;
-> +	struct deferred_split deferred_split_queue;
->  #endif
->  
->  	/* Fields commonly accessed by the page reclaim scanner */
-> --- a/mm/huge_memory.c~mm-thp-extract-split_queue_-into-a-struct
-> +++ a/mm/huge_memory.c
-> @@ -2691,6 +2691,7 @@ int split_huge_page_to_list(struct page
->  {
->  	struct page *head = compound_head(page);
->  	struct pglist_data *pgdata = NODE_DATA(page_to_nid(head));
-> +	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
->  	struct anon_vma *anon_vma = NULL;
->  	struct address_space *mapping = NULL;
->  	int count, mapcount, extra_pins, ret;
-> @@ -2777,17 +2778,17 @@ int split_huge_page_to_list(struct page
->  	}
->  
->  	/* Prevent deferred_split_scan() touching ->_refcount */
-> -	spin_lock(&pgdata->split_queue_lock);
-> +	spin_lock(&ds_queue->split_queue_lock);
->  	count = page_count(head);
->  	mapcount = total_mapcount(head);
->  	if (!mapcount && page_ref_freeze(head, 1 + extra_pins)) {
->  		if (!list_empty(page_deferred_list(head))) {
-> -			pgdata->split_queue_len--;
-> +			ds_queue->split_queue_len--;
->  			list_del(page_deferred_list(head));
->  		}
->  		if (mapping)
->  			__dec_node_page_state(page, NR_SHMEM_THPS);
-> -		spin_unlock(&pgdata->split_queue_lock);
-> +		spin_unlock(&ds_queue->split_queue_lock);
->  		__split_huge_page(page, list, end, flags);
->  		if (PageSwapCache(head)) {
->  			swp_entry_t entry = { .val = page_private(head) };
-> @@ -2804,7 +2805,7 @@ int split_huge_page_to_list(struct page
->  			dump_page(page, "total_mapcount(head) > 0");
->  			BUG();
->  		}
-> -		spin_unlock(&pgdata->split_queue_lock);
-> +		spin_unlock(&ds_queue->split_queue_lock);
->  fail:		if (mapping)
->  			xa_unlock(&mapping->i_pages);
->  		spin_unlock_irqrestore(&pgdata->lru_lock, flags);
-> @@ -2827,52 +2828,56 @@ out:
->  void free_transhuge_page(struct page *page)
->  {
->  	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
-> +	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
->  	unsigned long flags;
->  
-> -	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
-> +	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->  	if (!list_empty(page_deferred_list(page))) {
-> -		pgdata->split_queue_len--;
-> +		ds_queue->split_queue_len--;
->  		list_del(page_deferred_list(page));
->  	}
-> -	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-> +	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  	free_compound_page(page);
->  }
->  
->  void deferred_split_huge_page(struct page *page)
->  {
->  	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
-> +	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
->  	unsigned long flags;
->  
->  	VM_BUG_ON_PAGE(!PageTransHuge(page), page);
->  
-> -	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
-> +	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->  	if (list_empty(page_deferred_list(page))) {
->  		count_vm_event(THP_DEFERRED_SPLIT_PAGE);
-> -		list_add_tail(page_deferred_list(page), &pgdata->split_queue);
-> -		pgdata->split_queue_len++;
-> +		list_add_tail(page_deferred_list(page), &ds_queue->split_queue);
-> +		ds_queue->split_queue_len++;
->  	}
-> -	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-> +	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  }
->  
->  static unsigned long deferred_split_count(struct shrinker *shrink,
->  		struct shrink_control *sc)
->  {
->  	struct pglist_data *pgdata = NODE_DATA(sc->nid);
-> -	return READ_ONCE(pgdata->split_queue_len);
-> +	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-> +	return READ_ONCE(ds_queue->split_queue_len);
->  }
->  
->  static unsigned long deferred_split_scan(struct shrinker *shrink,
->  		struct shrink_control *sc)
->  {
->  	struct pglist_data *pgdata = NODE_DATA(sc->nid);
-> +	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
->  	unsigned long flags;
->  	LIST_HEAD(list), *pos, *next;
->  	struct page *page;
->  	int split = 0;
->  
-> -	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
-> +	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
->  	/* Take pin on all head pages to avoid freeing them under us */
-> -	list_for_each_safe(pos, next, &pgdata->split_queue) {
-> +	list_for_each_safe(pos, next, &ds_queue->split_queue) {
->  		page = list_entry((void *)pos, struct page, mapping);
->  		page = compound_head(page);
->  		if (get_page_unless_zero(page)) {
-> @@ -2880,12 +2885,12 @@ static unsigned long deferred_split_scan
->  		} else {
->  			/* We lost race with put_compound_page() */
->  			list_del_init(page_deferred_list(page));
-> -			pgdata->split_queue_len--;
-> +			ds_queue->split_queue_len--;
->  		}
->  		if (!--sc->nr_to_scan)
->  			break;
->  	}
-> -	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-> +	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  
->  	list_for_each_safe(pos, next, &list) {
->  		page = list_entry((void *)pos, struct page, mapping);
-> @@ -2899,15 +2904,15 @@ next:
->  		put_page(page);
->  	}
->  
-> -	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
-> -	list_splice_tail(&list, &pgdata->split_queue);
-> -	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-> +	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-> +	list_splice_tail(&list, &ds_queue->split_queue);
-> +	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
->  
->  	/*
->  	 * Stop shrinker if we didn't split any page, but the queue is empty.
->  	 * This can happen if pages were freed under us.
->  	 */
-> -	if (!split && list_empty(&pgdata->split_queue))
-> +	if (!split && list_empty(&ds_queue->split_queue))
->  		return SHRINK_STOP;
->  	return split;
->  }
-> --- a/mm/page_alloc.c~mm-thp-extract-split_queue_-into-a-struct
-> +++ a/mm/page_alloc.c
-> @@ -6646,9 +6646,11 @@ static unsigned long __init calc_memmap_
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  static void pgdat_init_split_queue(struct pglist_data *pgdat)
->  {
-> -	spin_lock_init(&pgdat->split_queue_lock);
-> -	INIT_LIST_HEAD(&pgdat->split_queue);
-> -	pgdat->split_queue_len = 0;
-> +	struct deferred_split *ds_queue = &pgdat->deferred_split_queue;
-> +
-> +	spin_lock_init(&ds_queue->split_queue_lock);
-> +	INIT_LIST_HEAD(&ds_queue->split_queue);
-> +	ds_queue->split_queue_len = 0;
->  }
->  #else
->  static void pgdat_init_split_queue(struct pglist_data *pgdat) {}
-> _
-> 
-> Patches currently in -mm which might be from yang.shi@linux.alibaba.com are
-> 
-> mmthp-add-read-only-thp-support-for-non-shmem-fs.patch
-> mm-thp-extract-split_queue_-into-a-struct.patch
-> mm-move-mem_cgroup_uncharge-out-of-__page_cache_release.patch
-> mm-shrinker-make-shrinker-not-depend-on-memcg-kmem.patch
-> mm-shrinker-make-shrinker-not-depend-on-memcg-kmem-v6.patch
-> mm-thp-make-deferred-split-shrinker-memcg-aware.patch
-> mm-thp-make-deferred-split-shrinker-memcg-aware-v6.patch
 
--- 
-Michal Hocko
-SUSE Labs
+On 16/09/2019 14.21, Peter Ujfalusi wrote:
+> 
+> 
+> On 13/09/2019 17.36, Rob Herring wrote:
+>> On Tue, Sep 10, 2019 at 02:50:35PM +0300, Peter Ujfalusi wrote:
+>>> On systems where multiple DMA controllers available, non Slave (for example
+>>> memcpy operation) users can not be described in DT as there is no device
+>>> involved from the DMA controller's point of view, DMA binding is not usable.
+>>> However in these systems still a peripheral might need to be serviced by or
+>>> it is better to serviced by specific DMA controller.
+>>> When a memcpy is used to/from a memory mapped region for example a DMA in the
+>>> same domain can perform better.
+>>> For generic software modules doing mem 2 mem operations it also matter that
+>>> they will get a channel from a controller which is faster in DDR to DDR mode
+>>> rather then from the first controller happen to be loaded.
+>>>
+>>> This property is inherited, so it may be specified in a device node or in any
+>>> of its parent nodes.
+>>
+>> If a device needs mem2mem dma, I think we should just use the existing 
+>> dma binding. The provider will need a way to define cell values which 
+>> mean mem2mem.
+> 
+> But isn't it going to be an abuse of the binding? Each DMA controller
+> would hack this in different ways, probably using out of range DMA
+> request/trigger number or if they have direction in the binding or some
+> other parameter would be set to something invalid...
+> 
+>> For generic s/w, it should be able to query the dma speed or get a 
+>> preferred one IMO. It's not a DT problem.
+>>
+>> We measure memcpy speeds at boot time to select the fastest 
+>> implementation for a chip, why not do that for mem2mem DMA?
+> 
+> It would make an impact on boot time since the tests would need to be
+> done with a large enough copy to be able to see clearly which one is faster.
+> 
+> Also we should be able to handle different probing orders:
+> client1 should have mem2mem channel from dma2.
+> 
+> - dma1 probes
+> - client1 probes and asks for a mem2mem channel
+> - dma2 probes
+> 
+> Here client1 should deffer until dma2 is probed.
+> 
+> Probably the property should be dma-mem2mem-domain to be more precise on
+> it's purpose and avoid confusion?
+
+Is it OK if I go with dma-mem2mem-domain or dma-mem2mem-controller for
+v2, but keeping the logic and approach intact?
+
+Regards,
+- Péter
+
+> 
+>>
+>>>
+>>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>> ---
+>>>  .../devicetree/bindings/dma/dma-domain.yaml   | 88 +++++++++++++++++++
+>>>  1 file changed, 88 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/dma/dma-domain.yaml
+>>
+>> Note that you have several errors in your schema. Run 'make dt_bindings_check'.
+> 
+> That does not do anything on my system, but git dt-doc-validate running
+> via https://github.com/robherring/yaml-bindings.git.
+> 
+> - Péter
+> 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
