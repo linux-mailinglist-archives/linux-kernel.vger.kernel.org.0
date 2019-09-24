@@ -2,164 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D64ADBCAE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5881BCAE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbfIXPLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 11:11:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46326 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727382AbfIXPLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 11:11:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 69AFDAFF2;
-        Tue, 24 Sep 2019 15:11:00 +0000 (UTC)
-Subject: Re: [PATCH v2 2/4] mm, page_owner: record page owner for each subpage
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20190820131828.22684-1-vbabka@suse.cz>
- <20190820131828.22684-3-vbabka@suse.cz> <20190924113135.2ekb7bmil3rxge6w@box>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ee93f01a-9f34-d237-9a34-33314f4298bc@suse.cz>
-Date:   Tue, 24 Sep 2019 17:10:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S2388734AbfIXPLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 11:11:52 -0400
+Received: from mga05.intel.com ([192.55.52.43]:10456 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388243AbfIXPLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 11:11:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2019 08:11:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,544,1559545200"; 
+   d="scan'208";a="213717849"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga004.fm.intel.com with ESMTP; 24 Sep 2019 08:11:47 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1iCmTi-0004kt-8w; Tue, 24 Sep 2019 18:11:46 +0300
+Date:   Tue, 24 Sep 2019 18:11:46 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Cc:     "Schmauss, Erik" <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Moore, Robert" <robert.moore@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-acpi@vger.kernel.org, devel@acpica.org,
+        linux-kernel@vger.kernel.org, nv@vosn.de
+Subject: Re: [PATCH] ACPICA: Introduce acpi_load_table_with_index()
+Message-ID: <20190924151146.GW2680@smile.fi.intel.com>
+References: <6851700.HULMXZj6Ep@kreacher>
+ <20190923094701.24950-1-nikolaus.voss@loewensteinmedical.de>
 MIME-Version: 1.0
-In-Reply-To: <20190924113135.2ekb7bmil3rxge6w@box>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923094701.24950-1-nikolaus.voss@loewensteinmedical.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/19 1:31 PM, Kirill A. Shutemov wrote:
-> On Tue, Aug 20, 2019 at 03:18:26PM +0200, Vlastimil Babka wrote:
->> Currently, page owner info is only recorded for the first page of a high-order
->> allocation, and copied to tail pages in the event of a split page. With the
->> plan to keep previous owner info after freeing the page, it would be benefical
->> to record page owner for each subpage upon allocation. This increases the
->> overhead for high orders, but that should be acceptable for a debugging option.
->>
->> The order stored for each subpage is the order of the whole allocation. This
->> makes it possible to calculate the "head" pfn and to recognize "tail" pages
->> (quoted because not all high-order allocations are compound pages with true
->> head and tail pages). When reading the page_owner debugfs file, keep skipping
->> the "tail" pages so that stats gathered by existing scripts don't get inflated.
->>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
->>  mm/page_owner.c | 40 ++++++++++++++++++++++++++++------------
->>  1 file changed, 28 insertions(+), 12 deletions(-)
->>
->> diff --git a/mm/page_owner.c b/mm/page_owner.c
->> index addcbb2ae4e4..813fcb70547b 100644
->> --- a/mm/page_owner.c
->> +++ b/mm/page_owner.c
->> @@ -154,18 +154,23 @@ static noinline depot_stack_handle_t save_stack(gfp_t flags)
->>  	return handle;
->>  }
->>  
->> -static inline void __set_page_owner_handle(struct page_ext *page_ext,
->> -	depot_stack_handle_t handle, unsigned int order, gfp_t gfp_mask)
->> +static inline void __set_page_owner_handle(struct page *page,
->> +	struct page_ext *page_ext, depot_stack_handle_t handle,
->> +	unsigned int order, gfp_t gfp_mask)
->>  {
->>  	struct page_owner *page_owner;
->> +	int i;
->>  
->> -	page_owner = get_page_owner(page_ext);
->> -	page_owner->handle = handle;
->> -	page_owner->order = order;
->> -	page_owner->gfp_mask = gfp_mask;
->> -	page_owner->last_migrate_reason = -1;
->> +	for (i = 0; i < (1 << order); i++) {
->> +		page_owner = get_page_owner(page_ext);
->> +		page_owner->handle = handle;
->> +		page_owner->order = order;
->> +		page_owner->gfp_mask = gfp_mask;
->> +		page_owner->last_migrate_reason = -1;
->> +		__set_bit(PAGE_EXT_OWNER, &page_ext->flags);
->>  
->> -	__set_bit(PAGE_EXT_OWNER, &page_ext->flags);
->> +		page_ext = lookup_page_ext(page + i);
+On Mon, Sep 23, 2019 at 11:47:01AM +0200, Nikolaus Voss wrote:
+> For unloading an ACPI table, it is necessary to provide the
+> index of the table. The method intended for dynamically
+> loading or hotplug addition of tables, acpi_load_table(),
+> does not provide this information, so a new function
+> acpi_load_table_with_index() with the same functionality,
+> but an optional pointer to the loaded table index is introduced.
 > 
-> Isn't it off-by-one? You are calculating page_ext for the next page,
-> right?
+> The new function is used in the acpi_configfs driver to save the
+> index of the newly loaded table in order to unload it later.
+> 
 
-You're right, thanks!
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> And cant we just do page_ext++ here instead?
+But consider addressing my comments in one of previous mails.
 
-Unfortunately no, as that implies sizeof(page_ext), which only declares
-unsigned long flags; and the rest is runtime-determined.
-Perhaps I could add a wrapper named e.g. page_ext_next() that would use
-get_entry_size() internally and hide the necessary casts to void * and back?
+> Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Fixes: d06c47e3dd07f ("ACPI: configfs: Resolve objects on host-directed table loads")
+> Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+> ---
+>  drivers/acpi/acpi_configfs.c   |  2 +-
+>  drivers/acpi/acpica/tbxfload.c | 43 ++++++++++++++++++++++++++++++++++
+>  include/acpi/acpixf.h          |  6 +++++
+>  3 files changed, 50 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/acpi_configfs.c b/drivers/acpi/acpi_configfs.c
+> index 57d9d574d4dd..9e77d5a266c0 100644
+> --- a/drivers/acpi/acpi_configfs.c
+> +++ b/drivers/acpi/acpi_configfs.c
+> @@ -53,7 +53,7 @@ static ssize_t acpi_table_aml_write(struct config_item *cfg,
+>  	if (!table->header)
+>  		return -ENOMEM;
+>  
+> -	ret = acpi_load_table(table->header);
+> +	ret = acpi_load_table_with_index(table->header, &table->index);
+>  	if (ret) {
+>  		kfree(table->header);
+>  		table->header = NULL;
+> diff --git a/drivers/acpi/acpica/tbxfload.c b/drivers/acpi/acpica/tbxfload.c
+> index 86f1693f6d29..7ea4fc879cb6 100644
+> --- a/drivers/acpi/acpica/tbxfload.c
+> +++ b/drivers/acpi/acpica/tbxfload.c
+> @@ -309,6 +309,49 @@ acpi_status acpi_load_table(struct acpi_table_header *table)
+>  
+>  ACPI_EXPORT_SYMBOL(acpi_load_table)
+>  
+> +/*******************************************************************************
+> + *
+> + * FUNCTION:    acpi_load_table_with_index
+> + *
+> + * PARAMETERS:  table               - Pointer to a buffer containing the ACPI
+> + *                                    table to be loaded.
+> + *              table_idx           - Pointer to a u32 for storing the table
+> + *                                    index, might be NULL
+> + * RETURN:      Status
+> + *
+> + * DESCRIPTION: see acpi_load_table() above. Additionally returns the index
+> + *              of the newly created table in table_idx.
+> + *
+> + ******************************************************************************/
+> +acpi_status acpi_load_table_with_index(struct acpi_table_header *table,
+> +				       u32 *table_idx)
+> +{
+> +	acpi_status status;
+> +	u32 table_index;
+> +
+> +	ACPI_FUNCTION_TRACE(acpi_load_table_with_index);
+> +
+> +	/* Parameter validation */
+> +	if (!table)
+> +		return_ACPI_STATUS(AE_BAD_PARAMETER);
+> +
+> +	/* Install the table and load it into the namespace */
+> +	ACPI_INFO(("Host-directed Dynamic ACPI Table Load:"));
+> +	status = acpi_tb_install_and_load_table(
+> +		ACPI_PTR_TO_PHYSADDR(table), ACPI_TABLE_ORIGIN_EXTERNAL_VIRTUAL,
+> +		FALSE, &table_index);
+> +	if (table_idx)
+> +		*table_idx = table_index;
+> +
+> +	if (ACPI_SUCCESS(status)) {
+> +		/* Complete the initialization/resolution of new objects */
+> +		acpi_ns_initialize_objects();
+> +	}
+> +
+> +	return_ACPI_STATUS(status);
+> +}
+> +ACPI_EXPORT_SYMBOL(acpi_load_table_with_index)
+> +
+>  /*******************************************************************************
+>   *
+>   * FUNCTION:    acpi_unload_parent_table
+> diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h
+> index e5e041413581..af375ab318de 100644
+> --- a/include/acpi/acpixf.h
+> +++ b/include/acpi/acpixf.h
+> @@ -460,6 +460,12 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+>  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>  			    acpi_load_table(struct acpi_table_header *table))
+>  
+> +
+> +ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+> +			    acpi_load_table_with_index(
+> +				    struct acpi_table_header *table,
+> +				    u32 *table_idx))
+> +
+>  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>  			    acpi_unload_parent_table(acpi_handle object))
+>  
+> -- 
+> 2.17.1
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
