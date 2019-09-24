@@ -2,90 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35967BC168
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 07:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FB9ABC17F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 07:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438307AbfIXFaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 01:30:19 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35898 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405894AbfIXFaS (ORCPT
+        id S2409112AbfIXFtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 01:49:51 -0400
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:55330 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2409100AbfIXFtv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 01:30:18 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t14so176825pgs.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2019 22:30:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=9t/1QDaYljftG+Qxh7nUXOM60s5W73+fkUjjZddw3MY=;
-        b=TC4NE/xBTpEN72miM5ncL6IYLZwOasiX7ocNgWHNSeCc5SHPA9f4v6vB3F+vc2n9BF
-         KfC4COLk+akFLamP90srv7MkoVhQ+ZGwxYB6aixbZvFs9OVh5v01eO9jUymUN4swAsuI
-         YVjf5JeAwf5WBBKBcNTYVuyGr2N/JRsBFr3PXFT+qKFhzVBSL7KcJMSDX4oPnsdm9cyp
-         6X04TW8Rb5Z08QsduiHfvFHPHVgX8iymZl3pDEDhkSqj/HkUEgS19/5rwCtl1YDr3bbY
-         /R1GiOLIA8h3hrV6x5xjEuFfH1S5SeV2oYJffwh10zr6IAHx8XXiOKWf1jGyNvwna0VK
-         7V9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=9t/1QDaYljftG+Qxh7nUXOM60s5W73+fkUjjZddw3MY=;
-        b=uLvtqzcC2wjy0fVMoxP3GoPSHtuNMF3gPs339NeJhSRcu9vwspXeoQkHLXJ6LfDw/u
-         Epy5KYragGd4qLlJ7JQyaVg3lUlHglNrOSPVMgYCRCSPB46gM/dSS83cctDgO/z4eq1s
-         lM1IUpMrL4RrhmNVCPebz2UfDfabhc3f9LD20uilVuUwjcLAtbSIffch7hFitmaYv2gT
-         X1dBqTrVrRK65RxnflLNVWrLuYHBwMdujRaDZ399wxJcajCKcOr3qPM6O3f3HYKTgyLX
-         LkQM+Ym5p+ntxI7KxtTnpN6DT19sGWsL4lh6RnTqovVNUt/ZIQ5cPZTZeIUpVRHCSp0J
-         GisA==
-X-Gm-Message-State: APjAAAVpidCECu0Q9uPh9N7xFdrgRzz/WRTTbfiuQEKFOwqCiAzMFoKt
-        hgLxTzpZMSY8FYfpc9nNaD1zb5H6ypQ=
-X-Google-Smtp-Source: APXvYqwOpcm5jMfhweXrdD1KjNVMi++Iy9pP5o4HxyoE6UGE4VDHpHfXYoSSL5qz6847et8n7TA3Sg==
-X-Received: by 2002:a65:628f:: with SMTP id f15mr1356618pgv.215.1569303017505;
-        Mon, 23 Sep 2019 22:30:17 -0700 (PDT)
-Received: from Gentoo ([103.231.90.170])
-        by smtp.gmail.com with ESMTPSA id h2sm1102061pfq.108.2019.09.23.22.30.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Sep 2019 22:30:16 -0700 (PDT)
-Date:   Tue, 24 Sep 2019 11:00:06 +0530
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     LinuxKernel <linux-kernel@vger.kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Subject: Ben sent 132 patches and Sasa sent 203 patches..woohooo!
-Message-ID: <20190924053003.GA29856@Gentoo>
+        Tue, 24 Sep 2019 01:49:51 -0400
+X-Greylist: delayed 362 seconds by postgrey-1.27 at vger.kernel.org; Tue, 24 Sep 2019 01:49:51 EDT
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 23 Sep 2019 22:43:46 -0700
+IronPort-SDR: HUIseNcrhZ3whjjNm5fsCwyj3eHyhjpxhoXSqvL7W81FvDJ2iN6nkqWW9MdzNqY/iXAX2iWwO2
+ 5N5e+eAOvQVmDwcZT3e4Udj4erKZFgAo2/NewlIp2CDpq0M7lVO5PTzwVKtxhQSBaFlp4AI977
+ Bj1OzHk+ohfsilDaJHo9nKtAexubBtJzUIxpeM5kOQel/XA4ZqcVNn/MndBw5d5opLyQUOMey2
+ eYIJFWswfXEf0JpNv1qbn2R+gRLINRJj+21143HbmJBKPSQnXUNeBC+YCZs24wUyLayoWhXkaq
+ vJa3hopgPbcMZHJMRw34zLzf
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg02-sd.qualcomm.com with ESMTP; 23 Sep 2019 22:43:43 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id 460EC467E; Mon, 23 Sep 2019 22:43:43 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 22:43:43 -0700
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     linux-pwm@vger.kernel.org, kernel-team@android.com,
+        Mark Salyzyn <salyzyn@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Fenglin Wu <fenglinw@codeaurora.org>
+Subject: Re: [PATCH 1/2] pwm: Add different PWM output types support
+Message-ID: <20190924054343.GA12462@codeaurora.org>
+References: <1568415464-20267-1-git-send-email-gurus@codeaurora.org>
+ <20190916140146.GC7488@ulmo>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190916140146.GC7488@ulmo>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 16, 2019 at 04:01:46PM +0200, Thierry Reding wrote:
+> On Fri, Sep 13, 2019 at 03:57:43PM -0700, Guru Das Srinagesh wrote:
+> > From: Fenglin Wu <fenglinw@codeaurora.org>
+> > 
+> > Normally, PWM channel has fixed output until software request to change
+> > its settings. There are some PWM devices which their outputs could be
+> > changed autonomously according to a predefined pattern programmed in
+> > hardware. Add pwm_output_type enum type to identify these two different
+> > PWM types and add relevant helper functions to set and get PWM output
+> > types and pattern.
+> > 
+> > Change-Id: Ia1f914a45ab4f4dd7be037a395eeb89d0e65a80e
+> > Signed-off-by: Fenglin Wu <fenglinw@codeaurora.org>
+> > Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
+> > ---
+> >  drivers/pwm/core.c  | 26 ++++++++++++++++++++
+> >  drivers/pwm/sysfs.c | 50 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/pwm.h | 70 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 146 insertions(+)
+> 
+> This doesn't seem right to me. Are you describing a PWM pin that's
+> actually driven in GPIO mode? We usually configure that using pinctrl.
+> 
+> Thierry
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
+Sorry, let me clarify.
 
- Is this kind of heaving patching done before?? I can't recollect.
+Some Qualcomm PMICs have a PWM block called the Light Pulse Generator (LPG).
+This block allows for the generation of a HW-controlled PWM "pattern", i.e. a
+sequential altering of duty cycle, in addition to the normal PWM "fixed" duty
+cycle operation, which is what the framework does currently. This pattern is
+user-configurable in the form of a look-up table in the devicetree. The LPG's
+registers have to be configured with the data in the look up table in order to
+start the generation of the pattern. An example of a pattern is the "breath"
+pattern, which simply ramps up the duty cycle and then ramps it down.
 
- Thanks,
- Bhaskar
+This "pattern" mode is what has been defined as PWM_OUTPUT_MODULATED in this
+patch. I see that the use of the term "modulated" is misleading - a more
+accurate term would be PWM_OUTPUT_PATTERN perhaps.
 
---0OAP2g/MAC+5xKAE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl2JqdYACgkQsjqdtxFL
-KRU9TggAy7ubsBlB4yVxxH/FrZ/n/o6vmEPltKRlBmDMHEmpsFX/qkSciGbd+C+5
-FdEx5kHURLTam1/MFt+xsQrskncOhY9xR2X+2MOpgcXs5dSk58/LbqYB/Zy+NCZk
-IN7GKSUL7WxbDC0osU/QYcvNMRcnrtjUMebmpNvo6gzAzFPoGxLfdBOJMqs5o4gx
-lpBG1oVnQzfaiu0tHUiUV22a7J+RQeaVyYkPeij5qsbMpzKRIBGb01buF9qje+cM
-+R4rS+tDJypnm4/ooZa81lJZEvScaBTBJ8WyGHC2eg2xADaW/eu7dBmIv3h/1mk3
-mZUbfQdbj31l630xH6kqBf269dgZ3Q==
-=zyzE
------END PGP SIGNATURE-----
-
---0OAP2g/MAC+5xKAE--
+This patch merely adds framework support to differentiate between the "fixed"
+and "pattern" modes of operation. Actions such as configuring the LPG with the
+devicetree pattern and setting it up for generating the pattern are performed
+in the driver only if the output type is read as "pattern" and not otherwise.
