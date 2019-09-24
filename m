@@ -2,87 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66509BD3B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 22:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC4D1BD3BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 22:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442008AbfIXUk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 16:40:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:36806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2441998AbfIXUk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 16:40:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2DDA337;
-        Tue, 24 Sep 2019 13:40:25 -0700 (PDT)
-Received: from [172.23.27.158] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1BA53F67D;
-        Tue, 24 Sep 2019 13:40:20 -0700 (PDT)
-Subject: Re: Problems with arm64 compat vdso
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     ard.biesheuvel@linaro.org, catalin.marinas@arm.com,
-        linux-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux@armlinux.org.uk, tglx@linutronix.de, will@kernel.org,
-        natechancellor@gmail.com
-References: <991e5bf9-6e15-1ca1-d593-8abe553ebe7c@arm.com>
- <20190924180634.206177-1-ndesaulniers@google.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <c164b359-75a0-5244-1e9b-7a4db1f52bd3@arm.com>
-Date:   Tue, 24 Sep 2019 21:42:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731285AbfIXUnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 16:43:39 -0400
+Received: from mail-io1-f49.google.com ([209.85.166.49]:32851 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfIXUni (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 16:43:38 -0400
+Received: by mail-io1-f49.google.com with SMTP id z19so7904153ior.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 13:43:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KVXKu9VmIFP0uRpEeQz97mr1n9TTAsfi4WYGPPOq3/4=;
+        b=FfRbnqSqGmaCDq0DjGh5pfroEaEM49w5wIrOLXpIgc7LuSuYFoV5u1KuWNs56elbWf
+         lL7nKEhJHyz1HQkQ2npxg+CZdouKSMIcBUAuhCHKr1iA7Thdl0nffusjXyg+iJMbBjFg
+         is85uyrw+7ZZfhIeTCrN+jdWpBDEi5faBdgPs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KVXKu9VmIFP0uRpEeQz97mr1n9TTAsfi4WYGPPOq3/4=;
+        b=nUfUu0FkXqFNz1uZAkiT3w1inNIfKaxqkQTSOGea8/BAZpCCQtPEQWFSDeYVUwUXLR
+         c5X8wThTLxQ4igXO1+l5udu99Qdep1T9y8ir/1/jOA5ZRBur5mXVfCx8ufPUYsSj9NqS
+         LHxywPGYdo8bi028WEmd58NBvyxKoBGMdmDCpwqTz4CV6cFcQeQSQX/6OmxwqtZb8G+k
+         h7tA/Kcc7w4kdviHZ0OmFxH5DNIHrLp1uI1SKQBcJtrajiIFvhoXkoA6B99fN7cIBMpe
+         OqJpEwgdGPEkyiWDXuBnjTtKFuAe07G63tkRDDNSqN5t18XAx0atdT/DNlGpAe6LhWte
+         +bLQ==
+X-Gm-Message-State: APjAAAU3fdKXFjuSgk5GFuAe9CpR9uacA01mTmMjBOv0BGEm2ZWQlUkv
+        j6Eenz/5M2n2YDJo0iUP4/QmFA==
+X-Google-Smtp-Source: APXvYqxE41kRqXjyst7trLv1R9E7r2s4yxk0vdBm3c1JbHt0nNYd+LKECg6XH0INxVoV9oonvez2KQ==
+X-Received: by 2002:a02:683:: with SMTP id 125mr920060jav.132.1569357817689;
+        Tue, 24 Sep 2019 13:43:37 -0700 (PDT)
+Received: from chromium.org ([2620:15c:183:200:798c:e494:921c:d544])
+        by smtp.gmail.com with ESMTPSA id q3sm3006268ioi.68.2019.09.24.13.43.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 13:43:37 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 14:43:35 -0600
+From:   Daniel Campello <campello@chromium.org>
+To:     Benson Leung <bleung@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Benson Leung <bleung@chromium.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Duncan Laurie <dlaurie@google.com>,
+        Nick Crews <ncrews@chromium.org>
+Subject: Re: [PATCH v4] platform/chrome: wilco_ec: Add debugfs test_event file
+Message-ID: <20190924204335.GA212632@chromium.org>
+References: <20190918204316.237342-1-campello@chromium.org>
+ <20190924001116.GA73943@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190924180634.206177-1-ndesaulniers@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924001116.GA73943@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick,
-
-thanks for reporting this.
-
-On 9/24/19 7:06 PM, Nick Desaulniers wrote:
-> Hi Vincenzo,
-> We also are having issues building the cross vDSO with Clang:
-> https://github.com/ClangBuiltLinux/linux/issues/595
-> 
-
-The initial implementation of vdso32 does not have support for Clang. I was
-planning to add it with a second patch set but it seems requiring more work.
-
-> It seems that `LINUXINCLUDE` in arch/arm64/kernel/vdso32/Makefile is including
-> arm64 headers in the arm part of the vdso32 build, which causes Clang to error
-> on the arm64 inline asm constraints being used in arm64.
-> 
-> I think if the issue Will described is fixed, it will be simpler for us to fix
-> the rest to get it to build w/ Clang.
-> 
-> https://github.com/ClangBuiltLinux/linux/issues/595#issuecomment-509874891
-> is the basis of such a patch.
-> 
-
-I agree with you this issue needs to be solved once and for all, but I feel that
-the solution is not straight forward. Next week I will post a fix to the problem
-Will raised and then will start investigating a more long term solution.
-
-> Clang ships with all backends on by default, and uses a `-target <triple>` to
-> cross compile; so the idea of passing two cross compiler binaries for a compat
-> vDSO build doesn't really apply to Clang.
-> 
-
-My idea was to derivate the triple for clang from the compat cross compiler name
-removing the final dash.
-
-I have in my Makefile something on the lines:
-
-CLANG_TRIPLE ?= $(CONFIG_CROSS_COMPILE_COMPAT_VDSO:"%-"=%)
-...
-COMPATCC := $(CC) --target=$(notdir $CLANG_TRIPLE)
-
-
--- 
-Regards,
-Vincenzo
+Thanks. I sent v5 with the corrections
