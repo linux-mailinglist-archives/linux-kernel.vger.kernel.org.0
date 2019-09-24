@@ -2,114 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4219BC055
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D64FABC066
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 04:50:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405692AbfIXCsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Sep 2019 22:48:31 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36437 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389572AbfIXCsa (ORCPT
+        id S2408795AbfIXCuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Sep 2019 22:50:02 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43379 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408131AbfIXCuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Sep 2019 22:48:30 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f19so280583plr.3;
-        Mon, 23 Sep 2019 19:48:30 -0700 (PDT)
+        Mon, 23 Sep 2019 22:50:02 -0400
+Received: by mail-pf1-f193.google.com with SMTP id a2so262456pfo.10;
+        Mon, 23 Sep 2019 19:50:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=deTOHyUuNbmlHO4aRp949wtOhcFU4gVUPh8sJQJUCQ4=;
-        b=acEtyVqI1ptDNYGn6laviDUrBylL5GoPdDcuHygbZ+r0EG6dJgy3UhfejSjbj/MxY/
-         pJo+0Pl8XVXXJsj7QoI6/Qng9qMCYChNMpBE5TfxDx8EMI29QMb1oOFKu75IjTwYNUA1
-         GW9CIg+GUJAbOsi+aTfiA/a4NGmVsdPtl95NR6j0a3zMoa091keyiT2mQyvQyjIzawaT
-         CErq+02tdfxO/i4eBlVu0q5HPQpSBDn98Ww9nDI8ztlF8C5w6fUPqtfDhvXNs2OXIO2r
-         R9toIqwVwxXpPBXywaSEZhoOfbX/JM+pF+9/3x3Nh44napQ0D/vXSRvRstOt3bOQa0xA
-         piWw==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=uaaaLuCGRZnOfdmCLyNq9t4oN/F+9BF6AGKkNBUPoi8=;
+        b=aJtQ3AAgg2ZeEGsckD3yHD0VQG/gnZcwD+Er8eIFqLqUUFtMsC/RCxbtkMJG24GjsR
+         xCmE+CyraZGtls9hscnHyFcUJjKCfpS0CctTbLFzrQfyIYRPCM+absbqzG0OQO164e2+
+         FBQNCWHtiIEksa1eiLNcaX81gTZkQiHfN3+udbI5l91BZK+Zq86Q7yA5gaxelvcJsRIF
+         xsTAjgovZYYlpO9aeJlRzsmR5+HpkizRgyhSe6kC7jdw6vdqXfl19/xvy422Pa5ozs86
+         P3yCXpGiVw3AXDuarmrSdK4W69bvKhtiyMJqxWJJ5+HnYFFjtOGQpoKeA7pS6PFxPQiz
+         DNAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=deTOHyUuNbmlHO4aRp949wtOhcFU4gVUPh8sJQJUCQ4=;
-        b=NR67zeu3veXNKPsM5FNYxqNnvfK+dKTL/nfIvbcxdnCuQqA790T104qesxz7I12JWT
-         pfp6nUPBeQl/QfZYNknMbIpaXgaJdldeK8CslFmnUORL2l1+uuupE0FQuUGJKf8JuJPW
-         0bvaxIKNWXw1pJJ7IMpgmy/fmvk8lX/1ChTdXybSbDYDeKN4mu603ZVaG5Cfk5f0Swxk
-         Cbkx8CnUfZqtqSXjlEPyPgMusW71ogK6phCLUZtgUVmpxZkUMkTGp38jXXjfDZ3ayyVe
-         wEa5rSmj/b7nnals57jiIn9gKKk4Bn2yyyYBYXejAr3L7MPA6UEvmTYHTwiafGQiHjpq
-         uLCQ==
-X-Gm-Message-State: APjAAAW/oD1DeR3Nfd3unNHoZBRadz8kPMKqGThmoOBcVJhLTjIKIF9c
-        WWZNWAm4UcWRaU7gv00GP3o=
-X-Google-Smtp-Source: APXvYqwod2IWhSzAzWT7j2NclyNInJfApNQQnV0sqhYQNVBP35uINV509q2WmEDB4J1pRDnwm0n1fQ==
-X-Received: by 2002:a17:902:5a44:: with SMTP id f4mr442688plm.31.1569293309631;
-        Mon, 23 Sep 2019 19:48:29 -0700 (PDT)
-Received: from [10.230.28.130] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id a17sm150278pfi.178.2019.09.23.19.48.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2019 19:48:28 -0700 (PDT)
-Subject: Re: [PATCH V8 2/2] mailbox: introduce ARM SMC based mailbox
-To:     Peng Fan <peng.fan@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "andre.przywara@arm.com" <andre.przywara@arm.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-References: <1569287538-10854-1-git-send-email-peng.fan@nxp.com>
- <1569287538-10854-3-git-send-email-peng.fan@nxp.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <1f01ea8e-8953-82ae-933c-721385dc0c13@gmail.com>
-Date:   Mon, 23 Sep 2019 19:48:27 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=uaaaLuCGRZnOfdmCLyNq9t4oN/F+9BF6AGKkNBUPoi8=;
+        b=jqGypnFc8HeZNY0DhgEiWcbiOd+WFrnGhwU+T9HTOJyR9jHN+DOl1NyXWnU4MYviqf
+         SeVswidlhyeOrXuNZd30XfpN4IGEsKSbZq8v/TqfdwGVrMX60YAwQJzHUfgCyTsClCfy
+         d6Nm/jhdyvEG20v+ZQUJKWs1CnQwthknMwdCYTbe+DkzSwkZFg/bI6OJKkNE8lF3FaHd
+         v852E5R1XsnwxRw2nkC5yKiuuQ2CYoahxHEKxVmdV/aytHffZwe2CsUXvNDi5tHYJucU
+         BBwqIzusHOTi7H6HdRyw7eEOkuEFSwPOd4wV+iibBYUqSkbX6xxpxmXJ4UDm5k8UqM5F
+         YGbA==
+X-Gm-Message-State: APjAAAW4xGo/p1SDQeVgZLDsImrItedtV3AyaT9L/olS9dJcmWw2JMbr
+        MJ4qFjVnMFmBmD/m2XZ6aRw=
+X-Google-Smtp-Source: APXvYqy+STHovVAg2uN+u2fpKlestMnHiVz0Gd0nURyZwMPI2AUYaUSufxF8VKSILdeNFlqCJ2DKiQ==
+X-Received: by 2002:a62:be01:: with SMTP id l1mr714053pff.236.1569293401293;
+        Mon, 23 Sep 2019 19:50:01 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id 31sm240901pgr.55.2019.09.23.19.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2019 19:50:00 -0700 (PDT)
+Date:   Mon, 23 Sep 2019 19:49:58 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Alex Levin <levinale@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: cherryview: restore Strago DMI workaround for all
+ versions
+Message-ID: <20190924024958.GA229906@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <1569287538-10854-3-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peng,
+This is essentially a revert of:
 
-On 9/23/2019 6:14 PM, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> This mailbox driver implements a mailbox which signals transmitted data
-> via an ARM smc (secure monitor call) instruction. The mailbox receiver
-> is implemented in firmware and can synchronously return data when it
-> returns execution to the non-secure world again.
-> An asynchronous receive path is not implemented.
-> This allows the usage of a mailbox to trigger firmware actions on SoCs
-> which either don't have a separate management processor or on which such
-> a core is not available. A user of this mailbox could be the SCP
-> interface.
-> 
-> Modified from Andre Przywara's v2 patch
-> https://lore.kernel.org/patchwork/patch/812999/
-> 
-> Cc: Andre Przywara <andre.przywara@arm.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+e3f72b749da2 pinctrl: cherryview: fix Strago DMI workaround
+86c5dd6860a6 pinctrl: cherryview: limit Strago DMI workarounds to version 1.0
 
-[snip]
+because even with 1.1 versions of BIOS there are some pins that are
+configured as interrupts but not claimed by any driver, and they
+sometimes fire up and result in interrupt storms that cause touchpad
+stop functioning and other issues.
 
-> +typedef unsigned long (smc_mbox_fn)(unsigned int, unsigned long,
-> +				    unsigned long, unsigned long,
-> +				    unsigned long, unsigned long,
-> +				    unsigned long);
-> +static smc_mbox_fn *invoke_smc_mbox_fn;
+Given that we are unlikely to qualify another firmware version for a
+while it is better to keep the workaround active on all Strago boards.
 
-Sorry for spotting this so late, the only thing that concerns me here
-with this singleton is if we happen to have both an arm,smc-mbox and
-arm,hvc-mbox configured in the system, this would not work. I do not
-believe this could be a functional use case, but we should probably
-guard against that or better yet, move that into the arm_smc_chan_data
-private structure?
+Reported-by: Alex Levin <levinale@chromium.org>
+Fixes: 86c5dd6860a6 ("pinctrl: cherryview: limit Strago DMI workarounds to version 1.0")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/pinctrl/intel/pinctrl-cherryview.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/pinctrl/intel/pinctrl-cherryview.c b/drivers/pinctrl/intel/pinctrl-cherryview.c
+index 03ec7a5d9d0b..bf049d1bbb87 100644
+--- a/drivers/pinctrl/intel/pinctrl-cherryview.c
++++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
+@@ -1513,7 +1513,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_FAMILY, "Intel_Strago"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1521,7 +1520,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "HP"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Setzer"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1529,7 +1527,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Cyan"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{
+@@ -1537,7 +1534,6 @@ static const struct dmi_system_id chv_no_valid_mask[] = {
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "Celes"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "1.0"),
+ 		},
+ 	},
+ 	{}
 -- 
-Florian
+2.23.0.351.gc4317032e6-goog
+
+
+-- 
+Dmitry
