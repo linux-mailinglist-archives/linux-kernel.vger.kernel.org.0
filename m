@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79357BCF55
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB49EBCF31
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405484AbfIXQzL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:55:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43890 "EHLO mail.kernel.org"
+        id S2441741AbfIXQwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:52:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2441504AbfIXQuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:50 -0400
+        id S2410902AbfIXQvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:51:24 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B6FD222BD;
-        Tue, 24 Sep 2019 16:50:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C53121D6C;
+        Tue, 24 Sep 2019 16:51:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343850;
-        bh=PqaDUTFMjQNqk7CmNI64SIfAI3JLDCto4G4ERhjXbu0=;
+        s=default; t=1569343883;
+        bh=9SHFMyTZ1b8A1lNB7zidcHr+FW0PPNHHLbMg322wdgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kv0dEt3A+3py/jicoWyK9Xt07L13a4YuJHvCLb5mCOh5T+O8ysSVkQXMEi1oGAZGW
-         wEeLKaa45rkWTWS9KIIxk5ly4d+K7vWQ54UjOgqL6em/+1XzNA/ICqyB8DYXykqy9E
-         f320kdAamQeMcpDMEZh6LQ4sOfMqYYYRGbUPh2hg=
+        b=n3v7pfrD5a48NmC4st/5laIo+dPH7ktktjQaP51l0N34yufjut64u25qV/icSAs8a
+         1IJLIrDfMhRw8j+OrHfbAzWu3LgPq22BxzWVZn+k67G9M2L8+07g+DpTd6hdJDTf3N
+         WIABtuBCqWPketzi+VsUkoV3I5o+04caSfRIA2Go=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ahzo <Ahzo@tutanota.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 11/28] drm/amd/powerplay/smu7: enforce minimal VBITimeout (v2)
-Date:   Tue, 24 Sep 2019 12:50:14 -0400
-Message-Id: <20190924165031.28292-11-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Will Deacon <will@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.14 25/28] arm64: fix unreachable code issue with cmpxchg
+Date:   Tue, 24 Sep 2019 12:50:28 -0400
+Message-Id: <20190924165031.28292-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165031.28292-1-sashal@kernel.org>
 References: <20190924165031.28292-1-sashal@kernel.org>
@@ -44,39 +46,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ahzo <Ahzo@tutanota.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit f659bb6dae58c113805f92822e4c16ddd3156b79 ]
+[ Upstream commit 920fdab7b3ce98c14c840261e364f490f3679a62 ]
 
-This fixes screen corruption/flickering on 75 Hz displays.
+On arm64 build with clang, sometimes the __cmpxchg_mb is not inlined
+when CONFIG_OPTIMIZE_INLINING is set.
+Clang then fails a compile-time assertion, because it cannot tell at
+compile time what the size of the argument is:
 
-v2: make print statement debug only (Alex)
+mm/memcontrol.o: In function `__cmpxchg_mb':
+memcontrol.c:(.text+0x1a4c): undefined reference to `__compiletime_assert_175'
+memcontrol.c:(.text+0x1a4c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__compiletime_assert_175'
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=102646
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Signed-off-by: Ahzo <Ahzo@tutanota.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Mark all of the cmpxchg() style functions as __always_inline to
+ensure that the compiler can see the result.
+
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/648
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Tested-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/include/asm/cmpxchg.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-index 336fdd8c7db08..61141bc3edfe9 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-@@ -3972,6 +3972,11 @@ static int smu7_program_display_gap(struct pp_hwmgr *hwmgr)
+diff --git a/arch/arm64/include/asm/cmpxchg.h b/arch/arm64/include/asm/cmpxchg.h
+index 0f2e1ab5e1666..9b2e2e2e728ae 100644
+--- a/arch/arm64/include/asm/cmpxchg.h
++++ b/arch/arm64/include/asm/cmpxchg.h
+@@ -73,7 +73,7 @@ __XCHG_CASE( ,  ,  mb_8, dmb ish, nop,  , a, l, "memory")
+ #undef __XCHG_CASE
  
- 	data->frame_time_x2 = frame_time_in_us * 2 / 100;
+ #define __XCHG_GEN(sfx)							\
+-static inline unsigned long __xchg##sfx(unsigned long x,		\
++static __always_inline  unsigned long __xchg##sfx(unsigned long x,	\
+ 					volatile void *ptr,		\
+ 					int size)			\
+ {									\
+@@ -115,7 +115,7 @@ __XCHG_GEN(_mb)
+ #define xchg(...)		__xchg_wrapper( _mb, __VA_ARGS__)
  
-+	if (data->frame_time_x2 < 280) {
-+		pr_debug("%s: enforce minimal VBITimeout: %d -> 280\n", __func__, data->frame_time_x2);
-+		data->frame_time_x2 = 280;
-+	}
-+
- 	display_gap2 = pre_vbi_time_in_us * (ref_clock / 100);
+ #define __CMPXCHG_GEN(sfx)						\
+-static inline unsigned long __cmpxchg##sfx(volatile void *ptr,		\
++static __always_inline unsigned long __cmpxchg##sfx(volatile void *ptr,	\
+ 					   unsigned long old,		\
+ 					   unsigned long new,		\
+ 					   int size)			\
+@@ -248,7 +248,7 @@ __CMPWAIT_CASE( ,  , 8);
+ #undef __CMPWAIT_CASE
  
- 	cgs_write_ind_register(hwmgr->device, CGS_IND_REG__SMC, ixCG_DISPLAY_GAP_CNTL2, display_gap2);
+ #define __CMPWAIT_GEN(sfx)						\
+-static inline void __cmpwait##sfx(volatile void *ptr,			\
++static __always_inline void __cmpwait##sfx(volatile void *ptr,		\
+ 				  unsigned long val,			\
+ 				  int size)				\
+ {									\
 -- 
 2.20.1
 
