@@ -2,75 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BDACBCAE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:11:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1BCBCAEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 17:14:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388223AbfIXPLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 11:11:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47534 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727741AbfIXPLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 11:11:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7DB58B048;
-        Tue, 24 Sep 2019 15:11:48 +0000 (UTC)
-Date:   Tue, 24 Sep 2019 17:11:47 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v1] mm/memory_hotplug: Don't take the cpu_hotplug_lock
-Message-ID: <20190924151147.GB23050@dhcp22.suse.cz>
-References: <20190924143615.19628-1-david@redhat.com>
- <1569337401.5576.217.camel@lca.pw>
+        id S1731441AbfIXPOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 11:14:00 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33281 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbfIXPN7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 11:13:59 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b9so2405012wrs.0;
+        Tue, 24 Sep 2019 08:13:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=coBOjUYllsgCSM3XkBr7tQiqGi8Er2n8uVoWjDntFHI=;
+        b=RqMg7RjT7HKjb9msaYlh2zU7H/kbSpoUJdZtM/m8yFAhBJtHAdboUihcm4LYnD7Gto
+         9exf6FL8drdxu8cyC2mdZ+ZqJ+O9stQAveKrdRPbHGKvAKES+yZ0pM3BDYz0NMaX8LXa
+         wcCER6KW9aEe44CCrhhVlX/khGRqbq5QKUViY5p81VF8bHoVUMgmRfndNOMAfaylFchc
+         r82kfCKyxDZbpAy0GymBKIvqMolwQLPADTh05aTjJBUon/pSCieg9ZkVzuOwX43NHl6V
+         8R79kolE94PxA4UdxCwvK1HNjnrNNAwhSqv/NfUJ+pUYlrEdzqWjCUxR0ojmToINWdp/
+         QOeQ==
+X-Gm-Message-State: APjAAAWgQPW+AvwgcdZg6Vyy7klw4PJBSbT8qfZsa8S1dl/gxGJ65Fk8
+        US3IuW1kgbuJbJpgvndvnb8=
+X-Google-Smtp-Source: APXvYqwYAhT1KP4wwPFsQJ6D3DukTCnqvH+HD/vm3yBh0jAByvQCpK8OR6geDKG8e7OCSpW73nEaAA==
+X-Received: by 2002:adf:f303:: with SMTP id i3mr2742770wro.242.1569338036499;
+        Tue, 24 Sep 2019 08:13:56 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id x2sm3070208wrn.81.2019.09.24.08.13.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 08:13:55 -0700 (PDT)
+Date:   Tue, 24 Sep 2019 17:13:51 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Maciej Falkowski <m.falkowski@samsung.com>
+Subject: Re: [PATCH v2] dt-bindings: gpu: Convert Samsung 2D Graphics
+ Accelerator to dt-schema
+Message-ID: <20190924151351.GC9218@pi3>
+References: <CGME20190924134628eucas1p1586ca3285dac6b5d5cd1026ea78c436e@eucas1p1.samsung.com>
+ <20190924134614.13371-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1569337401.5576.217.camel@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190924134614.13371-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-09-19 11:03:21, Qian Cai wrote:
-[...]
-> While at it, it might be a good time to rethink the whole locking over there, as
-> it right now read files under /sys/kernel/slab/ could trigger a possible
-> deadlock anyway.
+On Tue, Sep 24, 2019 at 03:46:14PM +0200, Marek Szyprowski wrote:
+> From: Maciej Falkowski <m.falkowski@samsung.com>
 > 
-[...]
-> [  442.452090][ T5224] -> #0 (mem_hotplug_lock.rw_sem){++++}:
-> [  442.459748][ T5224]        validate_chain+0xd10/0x2bcc
-> [  442.464883][ T5224]        __lock_acquire+0x7f4/0xb8c
-> [  442.469930][ T5224]        lock_acquire+0x31c/0x360
-> [  442.474803][ T5224]        get_online_mems+0x54/0x150
-> [  442.479850][ T5224]        show_slab_objects+0x94/0x3a8
-> [  442.485072][ T5224]        total_objects_show+0x28/0x34
-> [  442.490292][ T5224]        slab_attr_show+0x38/0x54
-> [  442.495166][ T5224]        sysfs_kf_seq_show+0x198/0x2d4
-> [  442.500473][ T5224]        kernfs_seq_show+0xa4/0xcc
-> [  442.505433][ T5224]        seq_read+0x30c/0x8a8
-> [  442.509958][ T5224]        kernfs_fop_read+0xa8/0x314
-> [  442.515007][ T5224]        __vfs_read+0x88/0x20c
-> [  442.519620][ T5224]        vfs_read+0xd8/0x10c
-> [  442.524060][ T5224]        ksys_read+0xb0/0x120
-> [  442.528586][ T5224]        __arm64_sys_read+0x54/0x88
-> [  442.533634][ T5224]        el0_svc_handler+0x170/0x240
-> [  442.538768][ T5224]        el0_svc+0x8/0xc
+> Convert Samsung 2D Graphics Accelerator to newer dt-schema format
+> 
+> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> v2:
+> - Added if-then statements for 'clocks' and 'clock-names'
+> properties.
+> 
+> Best regards,
+> Maciej Falkowski
+> ---
+>  .../devicetree/bindings/gpu/samsung-g2d.txt   | 27 -------
+>  .../devicetree/bindings/gpu/samsung-g2d.yaml  | 76 +++++++++++++++++++
+>  2 files changed, 76 insertions(+), 27 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+>  create mode 100644 Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> deleted file mode 100644
+> index 1e7959332dbc..000000000000
+> --- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> +++ /dev/null
+> @@ -1,27 +0,0 @@
+> -* Samsung 2D Graphics Accelerator
+> -
+> -Required properties:
+> -  - compatible : value should be one among the following:
+> -	(a) "samsung,s5pv210-g2d" for G2D IP present in S5PV210 & Exynos4210 SoC
+> -	(b) "samsung,exynos4212-g2d" for G2D IP present in Exynos4x12 SoCs
+> -	(c) "samsung,exynos5250-g2d" for G2D IP present in Exynos5250 SoC
+> -
+> -  - reg : Physical base address of the IP registers and length of memory
+> -	  mapped region.
+> -
+> -  - interrupts : G2D interrupt number to the CPU.
+> -  - clocks : from common clock binding: handle to G2D clocks.
+> -  - clock-names : names of clocks listed in clocks property, in the same
+> -		  order, depending on SoC type:
+> -		  - for S5PV210 and Exynos4 based SoCs: "fimg2d" and
+> -		    "sclk_fimg2d"
+> -		  - for Exynos5250 SoC: "fimg2d".
+> -
+> -Example:
+> -	g2d@12800000 {
+> -		compatible = "samsung,s5pv210-g2d";
+> -		reg = <0x12800000 0x1000>;
+> -		interrupts = <0 89 0>;
+> -		clocks = <&clock 177>, <&clock 277>;
+> -		clock-names = "sclk_fimg2d", "fimg2d";
+> -	};
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
+> new file mode 100644
+> index 000000000000..5e05e8ccc83f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpu/samsung-g2d.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC 2D Graphics Accelerator
+> +
+> +maintainers:
+> +  - Inki Dae <inki.dae@samsung.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,s5pv210-g2d    # in S5PV210 & Exynos4210 SoC
+> +      - samsung,exynos4212-g2d # in Exynos4x12 SoCs
+> +      - samsung,exynos5250-g2d
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
 
-I believe the lock is not really needed here. We do not deallocated
-pgdat of a hotremoved node nor destroy the slab state because an
-existing slabs would prevent hotremove to continue in the first place.
+I think it is worth to leave the clocks and clock-names here (could be
+empty or with min/max values for number of items). This makes it easy to
+find the properties by humans.
 
-There are likely details to be checked of course but the lock just seems
-bogus.
--- 
-Michal Hocko
-SUSE Labs
+Midgard bindings could be used as example.
+
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynos5250-g2d
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: fimg2d clock
+> +        clock-names:
+> +          items:
+> +            - const: fimg2d
+> +
+> +  - if:
+
+else:
+
+Best regards,
+Krzysztof
+
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - samsung,s5pv210-g2d
+> +              - samsung,exynos4212-g2d
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: sclk_fimg2d clock
+> +            - description: fimg2d clock
+> +        clock-names:
+> +          items:
+> +            - const: sclk_fimg2d
+> +            - const: fimg2d
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +
+> +examples:
+> +  - |
+> +    g2d@12800000 {
+> +        compatible = "samsung,s5pv210-g2d";
+> +        reg = <0x12800000 0x1000>;
+> +        interrupts = <0 89 0>;
+> +        clocks = <&clock 177>, <&clock 277>;
+> +        clock-names = "sclk_fimg2d", "fimg2d";
+> +    };
+> +
+> -- 
+> 2.17.1
+> 
+> 
+> 
