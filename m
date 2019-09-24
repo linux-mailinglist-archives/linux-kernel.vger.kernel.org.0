@@ -2,156 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6B14BD2F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 21:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 090A0BD2FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 21:47:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437371AbfIXTox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 15:44:53 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53126 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726646AbfIXTox (ORCPT
+        id S1731037AbfIXTrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 15:47:09 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36087 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfIXTrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 15:44:53 -0400
-Received: by mail-wm1-f67.google.com with SMTP id r19so53991wmh.2;
-        Tue, 24 Sep 2019 12:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Oche4Re2VFhM7eErBbJFcs7cnxJPKS0lIlpwuHdIbk8=;
-        b=k58uhT/W2G0zHblbxUD4kY5mrQft0TJUBAgLY6xAy343d3H3WLg50eQd4hZ+K8PwKU
-         wNnmVA6RF5OIFtj1neyU4fe9z/gUYuNmgel/CjA7lqb4msN0OhZ44rdxEQO6hvr4Gcih
-         NmjBDACOFxweBVpyH53MA4kEexEFckn0jFKkEnh5+iFKfg0S6kAeVStamlMeFQ+cO8pA
-         ThouNivtVc52vuFps6eH3bQUHwB1xDasgvNmxYfDmuCI5bc/Gauz9euydeISK7npILZZ
-         e4FkdtMbbFwEOjBdnm6vSinyc6F6wZgAIgQJbZoLpiLuDZIFjrMjaJAn6+xfQph6Ezi2
-         Ql1w==
+        Tue, 24 Sep 2019 15:47:08 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 67so2612064oto.3;
+        Tue, 24 Sep 2019 12:47:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Oche4Re2VFhM7eErBbJFcs7cnxJPKS0lIlpwuHdIbk8=;
-        b=udN7lWBH1JWlpLTNYTNZQcTQeRgkveff3p8rg0EFid/oEcyeMoPaBiiT0Va5+eqanJ
-         tMvk+ETFvlfdFfSEKIwSnf/6rXJjGIEyMKWQzBxDJ67r7n5uVD05idB+lW3S6jZHHiiO
-         wnhXTJcDZ2cACCm9+UBj2G71iwzxuVzKH/1DRSGNY5gGrh9x/gDY4icT9xNtxBNEDfxA
-         ya1AAyr519FaizxQlLQEaEx2YCpkRWd7wloQBpwOF46Vh42/LINAyFNOfLeL+wdsgXGE
-         5oVn1itHdbH/imJOBmTkDjZdi3TT0lFS/SUyuYFTNiMYIH97lJJ87eV3/eOFTp+J+YpZ
-         xsKQ==
-X-Gm-Message-State: APjAAAWOH3j4LA7C6UN4huDvHrsU8+snnduK0JJ6kb+SP4Pb48ICmKuP
-        XZr79pYnhlqYoWUUzW5mDMnNbCXO
-X-Google-Smtp-Source: APXvYqya/OiFxLoCvmfvaO9+xHxdB8gKdEriLNQJOVpJjEWqfPMhiRLvi2bZOetuv3pkVD0HoN/qOg==
-X-Received: by 2002:a1c:d188:: with SMTP id i130mr2099922wmg.101.1569354290536;
-        Tue, 24 Sep 2019 12:44:50 -0700 (PDT)
-Received: from ?IPv6:2001:a61:24d6:4e01:ef75:e978:47cd:1c50? ([2001:a61:24d6:4e01:ef75:e978:47cd:1c50])
-        by smtp.gmail.com with ESMTPSA id q192sm1864605wme.23.2019.09.24.12.44.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2019 12:44:49 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com, Oleg Nesterov <oleg@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Daniel Colascione <dancol@google.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: For review: pidfd_send_signal(2) manual page
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Florian Weimer <fw@deneb.enyo.de>
-References: <f21dbd73-5ef4-fb5b-003f-ff4fec34a1de@gmail.com>
- <87pnjr9rth.fsf@mid.deneb.enyo.de>
- <20190923142325.jowzbnwjw7g7si7j@wittgenstein>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <90dd38d5-34b3-b72f-8e5a-b51f944f22fb@gmail.com>
-Date:   Tue, 24 Sep 2019 21:44:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        bh=ZHPQMpVO9op7Vu0vGkUhBj5SViO1WuLEbRF6XVcQOi4=;
+        b=XMCjfiHw9rCPPMVdqspV9asYROMEz+icTyxy8n4ElaKWz/n2RJFsGVewttWItYJF24
+         WtIbmNR+hGjziFoJspGcp+IocxW6MrH65ebwL3vxhgJnDvJ1jCILD0dzZjI96j5sFl9s
+         L3c469l9FK8e7JKm68lA0ZD9wGKIoizT4/PakDKQKRd60fPBSoC0LU/7a+1ZLoo3ISs2
+         hw85pijJnypNqR3hhiqlUP3sQ4yYhOCjV09X4ccHWIfoTNbC2Cx/YfwWjvQBORSVky/R
+         trBVwVk7hcPBdGqse6FM3QzGS36+mJdL4FguRbkaR/qJ7qcsJZmNqJVSt1QcEV1Ezp0G
+         8sAw==
+X-Gm-Message-State: APjAAAUQe8y2Nd9eZHioBdgmjsjliuG7rB+dS7roBdmIBixjENox+NGk
+        SvSFy9Mp6ychIXlwut3rHMHNQ+o=
+X-Google-Smtp-Source: APXvYqzq/V8n0w/j43BKO8sETLatIuXKrfBSN9UzNEGxdt2zAohbFjRF2fosDLt5LIb+wo7rpBbC2w==
+X-Received: by 2002:a9d:6405:: with SMTP id h5mr839756otl.115.1569354427442;
+        Tue, 24 Sep 2019 12:47:07 -0700 (PDT)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id e18sm868660oib.57.2019.09.24.12.47.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 12:47:06 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org
+Subject: [PATCH] dt-bindings: riscv: Fix CPU schema errors
+Date:   Tue, 24 Sep 2019 14:47:05 -0500
+Message-Id: <20190924194705.32240-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190923142325.jowzbnwjw7g7si7j@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Christian,
+Fix the errors in the RiscV CPU DT schema:
 
-On 9/23/19 4:23 PM, Christian Brauner wrote:
-> On Mon, Sep 23, 2019 at 01:26:34PM +0200, Florian Weimer wrote:
->> * Michael Kerrisk:
->>
->>> SYNOPSIS
->>>        int pidfd_send_signal(int pidfd, int sig, siginfo_t info,
->>>                              unsigned int flags);
->>
->> This probably should reference a header for siginfo_t.
-> 
-> Agreed.
-> 
->>
->>>        ESRCH  The target process does not exist.
->>
->> If the descriptor is valid, does this mean the process has been waited
->> for?  Maybe this can be made more explicit.
-> 
-> If by valid you mean "refers to a process/thread-group leader" aka is a
-> pidfd then yes: Getting ESRCH means that the process has exited and has
-> already been waited upon.
-> If it had only exited but not waited upon aka is a zombie, then sending
-> a signal will just work because that's currently how sending signals to
-> zombies works, i.e. if you only send a signal and don't do any
-> additional checks you won't notice a difference between a process being
-> alive and a process being a zombie. The userspace visible behavior in
-> terms of signaling them is identical.
+Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml: cpu@0: 'timebase-frequency' is a required property
+Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml: cpu@1: 'timebase-frequency' is a required property
+Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml: cpu@0: compatible:0: 'riscv' is not one of ['sifive,rocket0', 'sifive,e5', 'sifive,e51', 'sifive,u54-mc', 'sifive,u54', 'sifive,u5']
+Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml: cpu@0: compatible: ['riscv'] is too short
+Documentation/devicetree/bindings/riscv/cpus.example.dt.yaml: cpu@0: 'timebase-frequency' is a required property
 
-(Thanks for the clarification. I added the text "(i.e., it has 
-terminated and been waited on)" to the ESRCH error.)
+Fixes: 4fd669a8c487 ("dt-bindings: riscv: convert cpu binding to json-schema")
+Cc: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/riscv/cpus.yaml       | 25 ++++++++++---------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
->>>        The  pidfd_send_signal()  system call allows the avoidance of race
->>>        conditions that occur when using traditional interfaces  (such  as
->>>        kill(2)) to signal a process.  The problem is that the traditional
->>>        interfaces specify the target process via a process ID (PID), with
->>>        the  result  that the sender may accidentally send a signal to the
->>>        wrong process if the originally intended target process has termi‐
->>>        nated  and its PID has been recycled for another process.  By con‐
->>>        trast, a PID file descriptor is a stable reference to  a  specific
->>>        process;  if  that  process  terminates,  then the file descriptor
->>>        ceases to be  valid  and  the  caller  of  pidfd_send_signal()  is
->>>        informed of this fact via an ESRCH error.
->>
->> It would be nice to explain somewhere how you can avoid the race using
->> a PID descriptor.  Is there anything else besides CLONE_PIDFD?
-> 
-> If you're the parent of the process you can do this without CLONE_PIDFD:
-> pid = fork();
-> pidfd = pidfd_open();
-> ret = pidfd_send_signal(pidfd, 0, NULL, 0);
-> if (ret < 0 && errno == ESRCH)
-> 	/* pidfd refers to another, recycled process */
-
-Although there is still the race between the fork() and the
-pidfd_open(), right?
-
->>>        static
->>>        int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
->>>                unsigned int flags)
->>>        {
->>>            return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
->>>        }
->>
->> Please use a different function name.  Thanks.
-
-Covered in another thread. I await some further feedback from Florian.
-
-Thanks,
-
-Michael
-
-
-
+diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
+index c899111aa5e3..e7321688f7b9 100644
+--- a/Documentation/devicetree/bindings/riscv/cpus.yaml
++++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
+@@ -12,15 +12,17 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - sifive,rocket0
+-          - sifive,e5
+-          - sifive,e51
+-          - sifive,u54-mc
+-          - sifive,u54
+-          - sifive,u5
+-      - const: riscv
++    oneOf:
++      - items:
++          - enum:
++              - sifive,rocket0
++              - sifive,e5
++              - sifive,e51
++              - sifive,u54-mc
++              - sifive,u54
++              - sifive,u5
++          - const: riscv
++      - const: riscv    # Simulator only
+     description:
+       Identifies that the hart uses the RISC-V instruction set
+       and identifies the type of the hart.
+@@ -51,8 +53,6 @@ properties:
+       https://riscv.org/specifications/
+ 
+   timebase-frequency:
+-    type: integer
+-    minimum: 1
+     description:
+       Specifies the clock frequency of the system timer in Hz.
+       This value is common to all harts on a single system image.
+@@ -86,9 +86,9 @@ examples:
+     cpus {
+         #address-cells = <1>;
+         #size-cells = <0>;
+-        timebase-frequency = <1000000>;
+         cpu@0 {
+                 clock-frequency = <0>;
++                timebase-frequency = <1000000>;
+                 compatible = "sifive,rocket0", "riscv";
+                 device_type = "cpu";
+                 i-cache-block-size = <64>;
+@@ -104,6 +104,7 @@ examples:
+         };
+         cpu@1 {
+                 clock-frequency = <0>;
++                timebase-frequency = <1000000>;
+                 compatible = "sifive,rocket0", "riscv";
+                 d-cache-block-size = <64>;
+                 d-cache-sets = <64>;
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+2.20.1
+
