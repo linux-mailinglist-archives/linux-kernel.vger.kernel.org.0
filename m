@@ -2,133 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 195C3BCC27
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:13:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59A5EBCC35
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409776AbfIXQM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:12:58 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33926 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388230AbfIXQM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:12:57 -0400
-Received: from zn.tnic (p200300EC2F0DB700CDA5DCD899733FA6.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:b700:cda5:dcd8:9973:3fa6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6437E1EC03F6;
-        Tue, 24 Sep 2019 18:12:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1569341576;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=W577OKhXs7McAt+1hRM93NGDWmaU/qKgednaLVKc6wY=;
-        b=AnhHD+VHe0wWGjWlq8g9iL8/9jTsEwZW/rZOKxnFH+1DJd9iuWJSY0suk+bPu7AEFOD53A
-        4VdXtrnEvH3QVVupbwQgWvEfnNTIzHll8WOr5Y9vysGTPnDxyfvp+7k0VFTjpTHEd5ftEY
-        njcE1E8sd5M4rAFOx8DH1K4D1vh6/Qw=
-Date:   Tue, 24 Sep 2019 18:13:01 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com
-Subject: Re: [PATCH v22 04/24] x86/cpu/intel: Detect SGX supprt
-Message-ID: <20190924161301.GI19317@zn.tnic>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-5-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190903142655.21943-5-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2439254AbfIXQPJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:15:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38756 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2439192AbfIXQPH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:15:07 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8OG8qvr151012;
+        Tue, 24 Sep 2019 12:14:40 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v7p2ah9h5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Sep 2019 12:14:40 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8OGAX20009034;
+        Tue, 24 Sep 2019 16:14:41 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma01wdc.us.ibm.com with ESMTP id 2v5bg6x0s8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Sep 2019 16:14:41 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8OGEdpO61211020
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Sep 2019 16:14:39 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3537FBE054;
+        Tue, 24 Sep 2019 16:14:39 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8267BBE053;
+        Tue, 24 Sep 2019 16:14:38 +0000 (GMT)
+Received: from talon7.ibm.com (unknown [9.41.179.222])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 24 Sep 2019 16:14:38 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        andrew@aj.id.au, joel@jms.id.au, mark.rutland@arm.com,
+        robh+dt@kernel.org, maz@kernel.org, jason@lakedaemon.net,
+        tglx@linutronix.de, Eddie James <eajames@linux.ibm.com>
+Subject: [PATCH 0/4] irqchip: Add Aspeed SCU Interrupt Controller
+Date:   Tue, 24 Sep 2019 11:14:28 -0500
+Message-Id: <1569341672-27632-1-git-send-email-eajames@linux.ibm.com>
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-24_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=548 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909240147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 05:26:35PM +0300, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> When the CPU supports SGX, check that the BIOS has enabled SGX and SGX1
-> opcodes are available. Otherwise, all the SGX related capabilities.
-> 
-> In addition, clear X86_FEATURE_SGX_LC also in the case when the launch
-> enclave are read-only. This way the feature bit reflects the level that
-> Linux supports the launch control.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/intel.c | 39 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index 8d6d92ebeb54..777ea63b4f85 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -623,6 +623,42 @@ static void detect_tme(struct cpuinfo_x86 *c)
->  	c->x86_phys_bits -= keyid_bits;
->  }
->  
-> +static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
-> +{
-> +	unsigned long long fc;
-> +
-> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
-> +		pr_err_once("sgx: The feature control MSR is not locked\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
-> +		pr_err_once("sgx: SGX is not enabled in IA32_FEATURE_CONTROL MSR\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
-> +		pr_err_once("sgx: SGX1 instruction set is not supported\n");
-> +		goto err_unsupported;
-> +	}
-> +
-> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
-> +		pr_info_once("sgx: The launch control MSRs are not writable\n");
-> +		goto err_msrs_rdonly;
-> +	}
-> +
-> +	return;
-> +
-> +err_unsupported:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
-> +
-> +err_msrs_rdonly:
-> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-> +}
-> +
->  static void init_cpuid_fault(struct cpuinfo_x86 *c)
->  {
->  	u64 msr;
-> @@ -760,6 +796,9 @@ static void init_intel(struct cpuinfo_x86 *c)
->  	if (cpu_has(c, X86_FEATURE_TME))
->  		detect_tme(c);
->  
-> +	if (IS_ENABLED(CONFIG_INTEL_SGX) && cpu_has(c, X86_FEATURE_SGX))
-> +		detect_sgx(c);
+The Aspeed SOCs provide some interrupts through the System Control
+Unit registers. Add an interrupt controller that provides these
+interrupts to the system. Add the interrupt controller to the AST25XX
+and AST26XX devicetrees.
 
-Looks to me like this should run only once on the BSP instead of on
-every CPU. The pr_*_once things above are a good sign for that, I'd say.
+Eddie James (4):
+  dt-bindings: interrupt-controller: Add Aspeed SCU interrupt controller
+  irqchip: Add Aspeed SCU interrupt controller
+  ARM: dts: aspeed: ast2500: Add SCU interrupt controller
+  ARM: dts: aspeed: ast2600: Add SCU interrupt controllers
 
-If so, define your own ->c_bsp_init function and run that from there
-instead.
+ .../interrupt-controller/aspeed,ast2xxx-scu-ic.txt |  26 +++
+ MAINTAINERS                                        |   8 +
+ arch/arm/boot/dts/aspeed-g5.dtsi                   |  11 +-
+ arch/arm/boot/dts/aspeed-g6.dtsi                   |  18 ++
+ drivers/irqchip/Makefile                           |   2 +-
+ drivers/irqchip/irq-aspeed-scu-ic.c                | 199 +++++++++++++++++++++
+ .../interrupt-controller/aspeed-scu-ic.h           |  23 +++
+ 7 files changed, 285 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2xxx-scu-ic.txt
+ create mode 100644 drivers/irqchip/irq-aspeed-scu-ic.c
+ create mode 100644 include/dt-bindings/interrupt-controller/aspeed-scu-ic.h
 
 -- 
-Regards/Gruss,
-    Boris.
+1.8.3.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
