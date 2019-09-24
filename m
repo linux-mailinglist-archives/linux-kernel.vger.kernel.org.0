@@ -2,67 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C750ABC8B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 15:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F05D0BC8BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 15:19:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505016AbfIXNTa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 09:19:30 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45635 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728325AbfIXNT2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 09:19:28 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r134so1376864lff.12
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 06:19:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=7PtcFgM8AEza+CaObumIIcn33MSM9DiXUeWGXdjLf4w=;
-        b=RwVu9iiiAynDfh68qbTxWkkJ/TNYb+bkwrzHTQQKCJdXzN5C8Rak4q0hYdd4SscTfU
-         KBSxFGQl4BaIrs64i6oQ7IZcL3xwGvQn0JKRcNDHmm/od1nvM2AJWd52aGMXXf61Tvxe
-         czSpr8KZ9KZQSGv0u2WmAi/lxBP4/rtnubcqM5K5pnkZvMjG02bbq+tuhY+CoS96H/V+
-         6HCjjBbcGcVtYDG63Gcn/4lw0NH5BldsBHXHWOBfyLYDxa0JeGZVTXJBMh4FAwJe9O7h
-         p9DZl43RAAjF6UE8A6Zf6GDfRk6KB0dsy5B2kHWeAjMJKFqftgoXni9JNcPaRFlSXrGH
-         nsTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=7PtcFgM8AEza+CaObumIIcn33MSM9DiXUeWGXdjLf4w=;
-        b=dPB9gYUJBLJGfJD67cDdSHcnPk8ah6zFUhDbsmdDx1cjciJ0GDsYh2RWTK/1j3QSf3
-         FhazGH2l49vlZmcQn7VNMfEmUhVhXHLC9xQ03+BSW9FrwbrtY/CBok/xpOM79kDBpzLf
-         abWejqhgyfcMFZhtr/QpzjpFoMFbWk94Umj0N7fo25DSuOGYwLDQA07o/yLVn5/xfO0T
-         86+ku3WAWHhP7X3Jwtr0jCFxuaBDwX15MKFBR9V+YTd2Z6ruJbPE8pSPkJPMv6iU+9IG
-         OySlB+5l13/wnX3ilv85TMC+LKkjrihYN35NO6damkN6/ZKoDEof9Ek4PK8b5tBSuKpw
-         zYMA==
-X-Gm-Message-State: APjAAAWZ1lu4t6ue7sxVMuJbyANx+8FPMgIYRnWwOX13FW7vmB8Lj4vB
-        KWdOZLZaR7lNN/EB+Bg13BBq4xjMZ9Q6ozF/nJY=
-X-Google-Smtp-Source: APXvYqwLJfMhswJQH8AnGM/DvvysckOpLDRCR2ooTk5T2Rf5jVRf7J9zGFAMiGicJssiLM4En1f53iG3GM/7pmyCXao=
-X-Received: by 2002:ac2:5504:: with SMTP id j4mr1963855lfk.186.1569331167061;
- Tue, 24 Sep 2019 06:19:27 -0700 (PDT)
+        id S2505033AbfIXNTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 09:19:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50486 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2505018AbfIXNTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 09:19:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8F48AE34;
+        Tue, 24 Sep 2019 13:19:40 +0000 (UTC)
+Date:   Tue, 24 Sep 2019 15:19:39 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>, catalin.marinas@arm.com,
+        will@kernel.org, mingo@redhat.com, bp@alien8.de, rth@twiddle.net,
+        ink@jurassic.park.msu.ru, mattst88@gmail.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
+        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
+        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
+        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, len.brown@intel.com,
+        axboe@kernel.dk, dledford@redhat.com, jeffrey.t.kirsher@intel.com,
+        linux-alpha@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
+        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
+        linux-mips@vger.kernel.org, rafael@kernel.org,
+        gregkh@linuxfoundation.org
+Subject: Re: [PATCH v6] numa: make node_to_cpumask_map() NUMA_NO_NODE aware
+Message-ID: <20190924131939.GS23050@dhcp22.suse.cz>
+References: <20190923203410.GI2369@hirez.programming.kicks-ass.net>
+ <20190924074751.GB23050@dhcp22.suse.cz>
+ <20190924091714.GJ2369@hirez.programming.kicks-ass.net>
+ <20190924105622.GH23050@dhcp22.suse.cz>
+ <20190924112349.GJ2332@hirez.programming.kicks-ass.net>
+ <20190924115401.GM23050@dhcp22.suse.cz>
+ <20190924120943.GP2349@hirez.programming.kicks-ass.net>
+ <20190924122500.GP23050@dhcp22.suse.cz>
+ <20190924124325.GQ2349@hirez.programming.kicks-ass.net>
+ <20190924125936.GR2349@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Reply-To: kabiruwahid1117@gmail.com
-Received: by 2002:ab3:1686:0:0:0:0:0 with HTTP; Tue, 24 Sep 2019 06:19:26
- -0700 (PDT)
-From:   "Mr. Kabiru Wahid" <kabiruwahid1117@gmail.com>
-Date:   Tue, 24 Sep 2019 09:19:26 -0400
-X-Google-Sender-Auth: 8gjuD7UxiqQySMK9SX2VDdWjtjU
-Message-ID: <CAK9LmwLYYPuJBZzQscnBxz8AOSiA3Uzpo7V4WG6a6N8BkOBPfg@mail.gmail.com>
-Subject: Urgent
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924125936.GR2349@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend!
+On Tue 24-09-19 14:59:36, Peter Zijlstra wrote:
+> On Tue, Sep 24, 2019 at 02:43:25PM +0200, Peter Zijlstra wrote:
+> > On Tue, Sep 24, 2019 at 02:25:00PM +0200, Michal Hocko wrote:
+> > > On Tue 24-09-19 14:09:43, Peter Zijlstra wrote:
+> > 
+> > > > We can push back and say we don't respect the specification because it
+> > > > is batshit insane ;-)
+> > > 
+> > > Here is my fingers crossed.
+> > > 
+> > > [...]
+> > > 
+> > > > Now granted; there's a number of virtual devices that really don't have
+> > > > a node affinity, but then, those are not hurt by forcing them onto a
+> > > > random node, they really don't do anything. Like:
+> > > 
+> > > Do you really consider a random node a better fix than simply living
+> > > with a more robust NUMA_NO_NODE which tells the actual state? Page
+> > > allocator would effectivelly use the local node in that case. Any code
+> > > using the cpumask will know that any of the online cpus are usable.
+> > 
+> > For the pmu devices? Yes, those 'devices' aren't actually used for
+> > anything other than sysfs entries.
+> > 
+> > Nothing else uses the struct device.
+> 
+> The below would get rid of the PMU and workqueue warnings with no
+> side-effects (the device isn't used for anything except sysfs).
 
-I Know That This Mail Will Come To You As A Surprise As We Never Met
-Before. I Need Your Urgent Assistance in Transferring the Sum Of
-($15.5m) Into Your Bank Account, After Hearing from You I Will Give
-You More Details about the Transaction. Your full data's will be
-required.(kwprivoffice206892@gmx.com)
-
-
-Mr Kabiru Wahid.
+Hardcoding to 0 is simply wrong, if the node0 is cpuless for example...
+-- 
+Michal Hocko
+SUSE Labs
