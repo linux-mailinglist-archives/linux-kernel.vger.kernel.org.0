@@ -2,42 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A15A8BCE14
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62064BCE18
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 18:52:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410547AbfIXQsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:48:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40336 "EHLO mail.kernel.org"
+        id S2410100AbfIXQsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:48:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410533AbfIXQsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:37 -0400
+        id S2410550AbfIXQsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:48:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A84521906;
-        Tue, 24 Sep 2019 16:48:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A909A21D6C;
+        Tue, 24 Sep 2019 16:48:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343716;
-        bh=ENY7C6ndhTKXioNw1tKj1SAOP8oceyqR21UUp1PZOIA=;
+        s=default; t=1569343721;
+        bh=9JDnUe+bzR1K2h89N2eGq+vFz+UQRtG1DOZSfGbpTE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N1KNZrJbe3yI6n7ZLCk5owTsVNkA5m+gpxo+dtR5EnSeOhRh83OapA4XjOAmohWB3
-         hI8TJv3tcaDPfBFox0Ngg6h06B0mxDUoeGkZf9t8tBEToPo9/k2+OZ7ztxwbejotsD
-         xVR+ktxWLUZFdi2tDr/g96VAEUYwT99/uWl9K0us=
+        b=S9RX5HbVNbZhd3Uv61E1JJO8iZsaa/6BATO/aNdju7aicLSzw1oBf6FfH/joA96rR
+         082kAJOipTLQQ5EH+bg93Woo8NATmu1Zb+rFFBpshE9Dzqwum/LsMeFNM9rHv836Ts
+         PUb26lj3Hdm96ziCNNIPBUL4D/NhlkVI6+m2MsV4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 64/70] mbox: qcom: add APCS child device for QCS404
-Date:   Tue, 24 Sep 2019 12:45:43 -0400
-Message-Id: <20190924164549.27058-64-sashal@kernel.org>
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 67/70] dma-buf/sw_sync: Synchronize signal vs syncpt free
+Date:   Tue, 24 Sep 2019 12:45:46 -0400
+Message-Id: <20190924164549.27058-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,57 +48,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-[ Upstream commit 78c86458a440ff356073c21b568cb58ddb67b82b ]
+[ Upstream commit d3c6dd1fb30d3853c2012549affe75c930f4a2f9 ]
 
-There is clock controller functionality in the APCS hardware block of
-qcs404 devices similar to msm8916.
+During release of the syncpt, we remove it from the list of syncpt and
+the tree, but only if it is not already been removed. However, during
+signaling, we first remove the syncpt from the list. So, if we
+concurrently free and signal the syncpt, the free may decide that it is
+not part of the tree and immediately free itself -- meanwhile the
+signaler goes on to use the now freed datastructure.
 
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+In particular, we get struck by commit 0e2f733addbf ("dma-buf: make
+dma_fence structure a bit smaller v2") as the cb_list is immediately
+clobbered by the kfree_rcu.
+
+v2: Avoid calling into timeline_fence_release() from under the spinlock
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=111381
+Fixes: d3862e44daa7 ("dma-buf/sw-sync: Fix locking around sync_timeline lists")
+References: 0e2f733addbf ("dma-buf: make dma_fence structure a bit smaller v2")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: Sean Paul <seanpaul@chromium.org>
+Cc: Gustavo Padovan <gustavo@padovan.org>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: <stable@vger.kernel.org> # v4.14+
+Acked-by: Christian König <christian.koenig@amd.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190812154247.20508-1-chris@chris-wilson.co.uk
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/dma-buf/sw_sync.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index 705e17a5479cc..d3676fd3cf945 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -47,7 +47,6 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
- 
- static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+diff --git a/drivers/dma-buf/sw_sync.c b/drivers/dma-buf/sw_sync.c
+index 051f6c2873c7a..6713cfb1995c6 100644
+--- a/drivers/dma-buf/sw_sync.c
++++ b/drivers/dma-buf/sw_sync.c
+@@ -132,17 +132,14 @@ static void timeline_fence_release(struct dma_fence *fence)
  {
--	struct device_node *np = pdev->dev.of_node;
- 	struct qcom_apcs_ipc *apcs;
- 	struct regmap *regmap;
- 	struct resource *res;
-@@ -55,6 +54,11 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	unsigned long i;
- 	int ret;
-+	const struct of_device_id apcs_clk_match_table[] = {
-+		{ .compatible = "qcom,msm8916-apcs-kpss-global", },
-+		{ .compatible = "qcom,qcs404-apcs-apps-global", },
-+		{}
-+	};
+ 	struct sync_pt *pt = dma_fence_to_sync_pt(fence);
+ 	struct sync_timeline *parent = dma_fence_parent(fence);
++	unsigned long flags;
  
- 	apcs = devm_kzalloc(&pdev->dev, sizeof(*apcs), GFP_KERNEL);
- 	if (!apcs)
-@@ -89,7 +93,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 		return ret;
++	spin_lock_irqsave(fence->lock, flags);
+ 	if (!list_empty(&pt->link)) {
+-		unsigned long flags;
+-
+-		spin_lock_irqsave(fence->lock, flags);
+-		if (!list_empty(&pt->link)) {
+-			list_del(&pt->link);
+-			rb_erase(&pt->node, &parent->pt_tree);
+-		}
+-		spin_unlock_irqrestore(fence->lock, flags);
++		list_del(&pt->link);
++		rb_erase(&pt->node, &parent->pt_tree);
  	}
++	spin_unlock_irqrestore(fence->lock, flags);
  
--	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
-+	if (of_match_device(apcs_clk_match_table, &pdev->dev)) {
- 		apcs->clk = platform_device_register_data(&pdev->dev,
- 							  "qcom-apcs-msm8916-clk",
- 							  -1, NULL, 0);
+ 	sync_timeline_put(parent);
+ 	dma_fence_free(fence);
+@@ -265,7 +262,8 @@ static struct sync_pt *sync_pt_create(struct sync_timeline *obj,
+ 				p = &parent->rb_left;
+ 			} else {
+ 				if (dma_fence_get_rcu(&other->base)) {
+-					dma_fence_put(&pt->base);
++					sync_timeline_put(obj);
++					kfree(pt);
+ 					pt = other;
+ 					goto unlock;
+ 				}
 -- 
 2.20.1
 
