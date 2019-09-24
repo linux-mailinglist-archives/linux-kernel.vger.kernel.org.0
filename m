@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 437D3BCEBB
+	by mail.lfdr.de (Postfix) with ESMTP id B253DBCEBC
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2019 19:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403912AbfIXQrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 12:47:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38336 "EHLO mail.kernel.org"
+        id S2410374AbfIXQrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 12:47:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387659AbfIXQrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:47:12 -0400
+        id S2406477AbfIXQrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:47:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08BA821D6C;
-        Tue, 24 Sep 2019 16:47:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C955221D6C;
+        Tue, 24 Sep 2019 16:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343631;
-        bh=XZeHI9WNQBBsr5LX0AFe24TjADJgl7zLNaRbvmxddCg=;
+        s=default; t=1569343640;
+        bh=jjrzKsPr4QB3Win3ST87QOgsLpfVIDjcJppIFbo8cC8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sDZQdzLlYpPUfvxuswDFQ8Da1o+bldckB7/ZOeSRdZhwVUXLcS1Di5AzVDStXFxyZ
-         CSWtwhdY4obLHoQbtza2gLGQIPTfFYmmFzzgMu6hMnX7Qs8QpegaWJj3+vaYhdNqaG
-         qKoS/Cc30+s2O/G1sJ/7ewnGxZ3E9qmQcoOog/BI=
+        b=mhzxFC74RbCsBjMzSA+oxr7qfdgy6lFdd+XOTPmJi7Hs2Me97e960XkQNHn3ABRJH
+         91O8dKxoWlgKfClfKi8Y2RclfV/j/oz8sixaFkG81FrdMG4X/dkVbPk8MX6XzirND+
+         fU4kjZA5HaQzZkQODgMgTah0ubxosqNZgOojAo4M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+Cc:     Nathan Lynch <nathanl@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 5.2 35/70] powerpc/64s/radix: Remove redundant pfn_pte bitop, add VM_BUG_ON
-Date:   Tue, 24 Sep 2019 12:45:14 -0400
-Message-Id: <20190924164549.27058-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 37/70] powerpc/pseries/mobility: use cond_resched when updating device tree
+Date:   Tue, 24 Sep 2019 12:45:16 -0400
+Message-Id: <20190924164549.27058-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -44,62 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Nathan Lynch <nathanl@linux.ibm.com>
 
-[ Upstream commit 6bb25170d7a44ef0ed9677814600f0785e7421d1 ]
+[ Upstream commit ccfb5bd71d3d1228090a8633800ae7cdf42a94ac ]
 
-pfn_pte is never given a pte above the addressable physical memory
-limit, so the masking is redundant. In case of a software bug, it
-is not obviously better to silently truncate the pfn than to corrupt
-the pte (either one will result in memory corruption or crashes),
-so there is no reason to add this to the fast path.
+After a partition migration, pseries_devicetree_update() processes
+changes to the device tree communicated from the platform to
+Linux. This is a relatively heavyweight operation, with multiple
+device tree searches, memory allocations, and conversations with
+partition firmware.
 
-Add VM_BUG_ON to catch cases where the pfn is invalid. These would
-catch the create_section_mapping bug fixed by a previous commit.
+There's a few levels of nested loops which are bounded only by
+decisions made by the platform, outside of Linux's control, and indeed
+we have seen RCU stalls on large systems while executing this call
+graph. Use cond_resched() in these loops so that the cpu is yielded
+when needed.
 
-  [16885.256466] ------------[ cut here ]------------
-  [16885.256492] kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
-  cpu 0x0: Vector: 700 (Program Check) at [c0000000ee0a36d0]
-      pc: c000000000080738: __map_kernel_page+0x248/0x6f0
-      lr: c000000000080ac0: __map_kernel_page+0x5d0/0x6f0
-      sp: c0000000ee0a3960
-     msr: 9000000000029033
-    current = 0xc0000000ec63b400
-    paca    = 0xc0000000017f0000   irqmask: 0x03   irq_happened: 0x01
-      pid   = 85, comm = sh
-  kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
-  Linux version 5.3.0-rc1-00001-g0fe93e5f3394
-  enter ? for help
-  [c0000000ee0a3a00] c000000000d37378 create_physical_mapping+0x260/0x360
-  [c0000000ee0a3b10] c000000000d370bc create_section_mapping+0x1c/0x3c
-  [c0000000ee0a3b30] c000000000071f54 arch_add_memory+0x74/0x130
-
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Signed-off-by: Nathan Lynch <nathanl@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190724084638.24982-5-npiggin@gmail.com
+Link: https://lore.kernel.org/r/20190802192926.19277-4-nathanl@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/book3s/64/pgtable.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/mobility.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index ccf00a8b98c6a..c470f6370dccb 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -602,8 +602,10 @@ static inline bool pte_access_permitted(pte_t pte, bool write)
-  */
- static inline pte_t pfn_pte(unsigned long pfn, pgprot_t pgprot)
- {
--	return __pte((((pte_basic_t)(pfn) << PAGE_SHIFT) & PTE_RPN_MASK) |
--		     pgprot_val(pgprot));
-+	VM_BUG_ON(pfn >> (64 - PAGE_SHIFT));
-+	VM_BUG_ON((pfn << PAGE_SHIFT) & ~PTE_RPN_MASK);
-+
-+	return __pte(((pte_basic_t)pfn << PAGE_SHIFT) | pgprot_val(pgprot));
- }
+diff --git a/arch/powerpc/platforms/pseries/mobility.c b/arch/powerpc/platforms/pseries/mobility.c
+index 50e7aee3c7f37..accb732dcfac7 100644
+--- a/arch/powerpc/platforms/pseries/mobility.c
++++ b/arch/powerpc/platforms/pseries/mobility.c
+@@ -9,6 +9,7 @@
+ #include <linux/cpu.h>
+ #include <linux/kernel.h>
+ #include <linux/kobject.h>
++#include <linux/sched.h>
+ #include <linux/smp.h>
+ #include <linux/stat.h>
+ #include <linux/completion.h>
+@@ -206,7 +207,11 @@ static int update_dt_node(__be32 phandle, s32 scope)
  
- static inline unsigned long pte_pfn(pte_t pte)
+ 				prop_data += vd;
+ 			}
++
++			cond_resched();
+ 		}
++
++		cond_resched();
+ 	} while (rtas_rc == 1);
+ 
+ 	of_node_put(dn);
+@@ -309,8 +314,12 @@ int pseries_devicetree_update(s32 scope)
+ 					add_dt_node(phandle, drc_index);
+ 					break;
+ 				}
++
++				cond_resched();
+ 			}
+ 		}
++
++		cond_resched();
+ 	} while (rc == 1);
+ 
+ 	kfree(rtas_buf);
 -- 
 2.20.1
 
