@@ -2,119 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87478BE39D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2767BBE3B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:48:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408372AbfIYRmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 13:42:07 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:50752 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437639AbfIYRlV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 13:41:21 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8PHfI39029475;
-        Wed, 25 Sep 2019 12:41:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569433278;
-        bh=qZXobCQEdxdBf8db4ptHqKRRbgiuP+MZ7ubiK/z5XQY=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ZaN1oH2bQ2F4YwUSmH6sYGXLP/CBdmiwbyucge/XV0QFyUIrcyGOm/2NN7xQpxumz
-         /eiC2cNnBNavJDyB9U4U1ZybT2891kKEFeXBrMuKyCwonEYRHETMeyG6nhaRbQxgyD
-         Vo3em8WkXqFnAB6hguz2kuyDgNBQsCDyi368KDsE=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8PHfIGR000378
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 25 Sep 2019 12:41:18 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 25
- Sep 2019 12:41:11 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 25 Sep 2019 12:41:10 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8PHfHr3045690;
-        Wed, 25 Sep 2019 12:41:17 -0500
-From:   Dan Murphy <dmurphy@ti.com>
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v9 15/15] leds: lp5523: Fix checkpatch issues in the code
-Date:   Wed, 25 Sep 2019 12:46:16 -0500
-Message-ID: <20190925174616.3714-16-dmurphy@ti.com>
-X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
-In-Reply-To: <20190925174616.3714-1-dmurphy@ti.com>
-References: <20190925174616.3714-1-dmurphy@ti.com>
+        id S1727893AbfIYRsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 13:48:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42548 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727028AbfIYRsO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 13:48:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7002FAB89;
+        Wed, 25 Sep 2019 17:48:11 +0000 (UTC)
+Date:   Wed, 25 Sep 2019 19:48:09 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v1] mm/memory_hotplug: Don't take the cpu_hotplug_lock
+Message-ID: <20190925174809.GM23050@dhcp22.suse.cz>
+References: <20190924143615.19628-1-david@redhat.com>
+ <1569337401.5576.217.camel@lca.pw>
+ <20190924151147.GB23050@dhcp22.suse.cz>
+ <1569351244.5576.219.camel@lca.pw>
+ <2f8c8099-8de0-eccc-2056-a79d2f97fbf7@redhat.com>
+ <1569427262.5576.225.camel@lca.pw>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1569427262.5576.225.camel@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch errors and warnings for the LP5523.c device
-driver.
+On Wed 25-09-19 12:01:02, Qian Cai wrote:
+> On Wed, 2019-09-25 at 09:02 +0200, David Hildenbrand wrote:
+> > On 24.09.19 20:54, Qian Cai wrote:
+> > > On Tue, 2019-09-24 at 17:11 +0200, Michal Hocko wrote:
+> > > > On Tue 24-09-19 11:03:21, Qian Cai wrote:
+> > > > [...]
+> > > > > While at it, it might be a good time to rethink the whole locking over there, as
+> > > > > it right now read files under /sys/kernel/slab/ could trigger a possible
+> > > > > deadlock anyway.
+> > > > > 
+> > > > 
+> > > > [...]
+> > > > > [  442.452090][ T5224] -> #0 (mem_hotplug_lock.rw_sem){++++}:
+> > > > > [  442.459748][ T5224]        validate_chain+0xd10/0x2bcc
+> > > > > [  442.464883][ T5224]        __lock_acquire+0x7f4/0xb8c
+> > > > > [  442.469930][ T5224]        lock_acquire+0x31c/0x360
+> > > > > [  442.474803][ T5224]        get_online_mems+0x54/0x150
+> > > > > [  442.479850][ T5224]        show_slab_objects+0x94/0x3a8
+> > > > > [  442.485072][ T5224]        total_objects_show+0x28/0x34
+> > > > > [  442.490292][ T5224]        slab_attr_show+0x38/0x54
+> > > > > [  442.495166][ T5224]        sysfs_kf_seq_show+0x198/0x2d4
+> > > > > [  442.500473][ T5224]        kernfs_seq_show+0xa4/0xcc
+> > > > > [  442.505433][ T5224]        seq_read+0x30c/0x8a8
+> > > > > [  442.509958][ T5224]        kernfs_fop_read+0xa8/0x314
+> > > > > [  442.515007][ T5224]        __vfs_read+0x88/0x20c
+> > > > > [  442.519620][ T5224]        vfs_read+0xd8/0x10c
+> > > > > [  442.524060][ T5224]        ksys_read+0xb0/0x120
+> > > > > [  442.528586][ T5224]        __arm64_sys_read+0x54/0x88
+> > > > > [  442.533634][ T5224]        el0_svc_handler+0x170/0x240
+> > > > > [  442.538768][ T5224]        el0_svc+0x8/0xc
+> > > > 
+> > > > I believe the lock is not really needed here. We do not deallocated
+> > > > pgdat of a hotremoved node nor destroy the slab state because an
+> > > > existing slabs would prevent hotremove to continue in the first place.
+> > > > 
+> > > > There are likely details to be checked of course but the lock just seems
+> > > > bogus.
+> > > 
+> > > Check 03afc0e25f7f ("slab: get_online_mems for
+> > > kmem_cache_{create,destroy,shrink}"). It actually talk about the races during
+> > > memory as well cpu hotplug, so it might even that cpu_hotplug_lock removal is
+> > > problematic?
+> > > 
+> > 
+> > Which removal are you referring to? get_online_mems() does not mess with
+> > the cpu hotplug lock (and therefore this patch).
+> 
+> The one in your patch. I suspect there might be races among the whole NUMA node
+> hotplug, kmem_cache_create, and show_slab_objects(). See bfc8c90139eb ("mem-
+> hotplug: implement get/put_online_mems")
+> 
+> "kmem_cache_{create,destroy,shrink} need to get a stable value of cpu/node
+> online mask, because they init/destroy/access per-cpu/node kmem_cache parts,
+> which can be allocated or destroyed on cpu/mem hotplug."
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/leds/leds-lp5523.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+I still have to grasp that code but if the slub allocator really needs
+a stable cpu mask then it should be using the explicit cpu hotplug
+locking rather than rely on side effect of memory hotplug locking.
 
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 8b2cdb98fed6..c4a94903f8c4 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -23,13 +23,13 @@
- 
- #define LP5523_PROGRAM_LENGTH		32	/* bytes */
- /* Memory is used like this:
--   0x00 engine 1 program
--   0x10 engine 2 program
--   0x20 engine 3 program
--   0x30 engine 1 muxing info
--   0x40 engine 2 muxing info
--   0x50 engine 3 muxing info
--*/
-+ * 0x00 engine 1 program
-+ * 0x10 engine 2 program
-+ * 0x20 engine 3 program
-+ * 0x30 engine 1 muxing info
-+ * 0x40 engine 2 muxing info
-+ * 0x50 engine 3 muxing info
-+ */
- #define LP5523_MAX_LEDS			9
- 
- /* Registers */
-@@ -326,7 +326,7 @@ static int lp5523_update_program_memory(struct lp55xx_chip *chip,
- 					const u8 *data, size_t size)
- {
- 	u8 pattern[LP5523_PROGRAM_LENGTH] = {0};
--	unsigned cmd;
-+	unsigned int cmd;
- 	char c[3];
- 	int nrchars;
- 	int ret;
-@@ -468,6 +468,7 @@ static int lp5523_mux_parse(const char *buf, u16 *mux, size_t len)
- static void lp5523_mux_to_array(u16 led_mux, char *array)
- {
- 	int i, pos = 0;
-+
- 	for (i = 0; i < LP5523_MAX_LEDS; i++)
- 		pos += sprintf(array + pos, "%x", LED_ACTIVE(led_mux, i));
- 
-@@ -506,7 +507,7 @@ static int lp5523_load_mux(struct lp55xx_chip *chip, u16 mux, int nr)
- 	if (ret)
- 		return ret;
- 
--	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM , (u8)(mux >> 8));
-+	ret = lp55xx_write(chip, LP5523_REG_PROG_MEM, (u8)(mux >> 8));
- 	if (ret)
- 		return ret;
- 
+> Both online_pages() and show_slab_objects() need to get a stable value of
+> cpu/node online mask.
+
+Could tou be more specific why online_pages need a stable cpu online
+mask? I do not think that show_slab_objects is a real problem because a
+potential race shouldn't be critical.
+
 -- 
-2.22.0.214.g8dca754b1e
-
+Michal Hocko
+SUSE Labs
