@@ -2,136 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9F2BD986
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9089BBD993
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:09:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437450AbfIYIHT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 04:07:19 -0400
-Received: from regular1.263xmail.com ([211.150.70.203]:44356 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405820AbfIYIHS (ORCPT
+        id S2634015AbfIYIJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 04:09:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54234 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438038AbfIYIJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:07:18 -0400
-Received: from hjc?rock-chips.com (unknown [192.168.167.42])
-        by regular1.263xmail.com (Postfix) with ESMTP id 832DC43D;
-        Wed, 25 Sep 2019 16:07:12 +0800 (CST)
-X-263anti-spam: KSV:0;BIG:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ADDR-CHECKED4: 1
-X-ABS-CHECKED: 1
-X-SKE-CHECKED: 1
-X-ANTISPAM-LEVEL: 2
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P2645T139744972404480S1569398812082049_;
-        Wed, 25 Sep 2019 16:07:12 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <5d8ea79ab9f3f7b7a98cad262bf6bc0b>
-X-RL-SENDER: hjc@rock-chips.com
-X-SENDER: hjc@rock-chips.com
-X-LOGIN-NAME: hjc@rock-chips.com
-X-FST-TO: dri-devel@lists.freedesktop.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From:   Sandy Huang <hjc@rock-chips.com>
-To:     dri-devel@lists.freedesktop.org, Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Ayan.Halder@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/rockchip: Add support 10bit yuv format
-Date:   Wed, 25 Sep 2019 16:06:40 +0800
-Message-Id: <1569398801-92201-4-git-send-email-hjc@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1569398801-92201-1-git-send-email-hjc@rock-chips.com>
-References: <1569398801-92201-1-git-send-email-hjc@rock-chips.com>
+        Wed, 25 Sep 2019 04:09:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZTp1Ng9H3hL5ZJ1CdTCjTLI6S/AduCHTkq4VvYkPq2Q=; b=dsXQZLPBCIPHbyIxLSnsGgoc6
+        Joh4RgfQN18BdjbeCImvKbgyNcpzQCEdvDg7MPkXymomvoLi6xZjFWWPfuvbph+fzzPPODVeLwYai
+        OUwL8vLN4UvQ1IbcfsiQmYDwokIbQdLBOmAk7cBAOsom7ij4W66XoEmf9kGvONNEqomumfsCASLP3
+        ok9aoHF+pRe1PqiN51GYk6A2RMDWLcwZFHFGiRmFk8jUFl7U99uBBHbP8BQ5Fhsj+BPtinWWz68HX
+        r4xeU6nb/vFBPoooUA4Jp12Q1b7PzNSXhJKKASNYnoocSTIvs8BXZOAxfDvwxbXVc/sf5tf5emZDK
+        8VMizj33g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iD2Kl-0001WT-PM; Wed, 25 Sep 2019 08:07:36 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 25DF2305E44;
+        Wed, 25 Sep 2019 10:06:47 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 032C5202C9D4B; Wed, 25 Sep 2019 10:07:32 +0200 (CEST)
+Date:   Wed, 25 Sep 2019 10:07:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     paulmck <paulmck@linux.ibm.com>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH for 5.4 0/7] Membarrier fixes and cleanups
+Message-ID: <20190925080732.GC4536@hirez.programming.kicks-ass.net>
+References: <20190919173705.2181-1-mathieu.desnoyers@efficios.com>
+ <20190923090636.GH2349@hirez.programming.kicks-ass.net>
+ <485879119.4072.1569250532294.JavaMail.zimbra@efficios.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <485879119.4072.1569250532294.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support 10bit yuv format display for rockchip some socs,
-include:
-    RK3288/RK3228/RK3328/RK3368/RK3399
+On Mon, Sep 23, 2019 at 10:55:32AM -0400, Mathieu Desnoyers wrote:
+> ----- On Sep 23, 2019, at 5:06 AM, Peter Zijlstra peterz@infradead.org wrote:
+> 
+> > On Thu, Sep 19, 2019 at 01:36:58PM -0400, Mathieu Desnoyers wrote:
+> >> Hi,
+> >> 
+> >> Those series of fixes and cleanups are initially motivated by the report
+> >> of race in membarrier, which can load p->mm->membarrier_state after mm
+> >> has been freed (use-after-free).
+> >> 
+> > 
+> > The lot looks good to me; what do you want done with them (them being
+> > RFC and all) ?
+> 
+> I can either re-send them without the RFC tag, or you can pick them directly
+> through the scheduler tree.
 
-Signed-off-by: Sandy Huang <hjc@rock-chips.com>
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 16 ++++++++++++++++
- drivers/gpu/drm/rockchip/rockchip_drm_vop.h |  1 +
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c |  2 ++
- 3 files changed, 19 insertions(+)
+I've picked them up (and fixed them up, they didn't apply to tip) and
+merge them with Eric's task_rcu_dereference() patches.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index ce5b45d..9cb9fff 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -249,6 +249,21 @@ static bool has_rb_swapped(uint32_t format)
- 	}
- }
- 
-+static bool is_yuv_10bit(uint32_t format)
-+{
-+	switch (format) {
-+	case DRM_FORMAT_NV12_10:
-+	case DRM_FORMAT_NV21_10:
-+	case DRM_FORMAT_NV16_10:
-+	case DRM_FORMAT_NV61_10:
-+	case DRM_FORMAT_NV24_10:
-+	case DRM_FORMAT_NV42_10:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static int vop_format_get_bpp(u32 format, u8 plane)
- {
- 	const struct drm_format_info *info;
-@@ -890,6 +905,7 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 		dma_addr = rk_uv_obj->dma_addr + offset + fb->offsets[1];
- 		VOP_WIN_SET(vop, win, uv_vir, DIV_ROUND_UP(fb->pitches[1], 4));
- 		VOP_WIN_SET(vop, win, uv_mst, dma_addr);
-+		VOP_WIN_SET(vop, win, fmt_10, is_yuv_10bit(fb->format->format));
- 
- 		for (i = 0; i < NUM_YUV2YUV_COEFFICIENTS; i++) {
- 			VOP_WIN_YUV2YUV_COEFFICIENT_SET(vop,
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-index 2149a889..adc2b0b5 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.h
-@@ -133,6 +133,7 @@ struct vop_win_phy {
- 	struct vop_reg gate;
- 	struct vop_reg format;
- 	struct vop_reg rb_swap;
-+	struct vop_reg fmt_10;
- 	struct vop_reg act_info;
- 	struct vop_reg dsp_info;
- 	struct vop_reg dsp_st;
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index d1494be..732e535 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -544,6 +544,7 @@ static const struct vop_win_phy rk3288_win01_data = {
- 	.nformats = ARRAY_SIZE(formats_win_full),
- 	.enable = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 0),
- 	.format = VOP_REG(RK3288_WIN0_CTRL0, 0x7, 1),
-+	.fmt_10 = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 4),
- 	.rb_swap = VOP_REG(RK3288_WIN0_CTRL0, 0x1, 12),
- 	.act_info = VOP_REG(RK3288_WIN0_ACT_INFO, 0x1fff1fff, 0),
- 	.dsp_info = VOP_REG(RK3288_WIN0_DSP_INFO, 0x0fff0fff, 0),
-@@ -674,6 +675,7 @@ static const struct vop_win_phy rk3368_win01_data = {
- 	.nformats = ARRAY_SIZE(formats_win_full),
- 	.enable = VOP_REG(RK3368_WIN0_CTRL0, 0x1, 0),
- 	.format = VOP_REG(RK3368_WIN0_CTRL0, 0x7, 1),
-+	.fmt_10 = VOP_REG(RK3368_WIN0_CTRL0, 0x1, 4),
- 	.rb_swap = VOP_REG(RK3368_WIN0_CTRL0, 0x1, 12),
- 	.x_mir_en = VOP_REG(RK3368_WIN0_CTRL0, 0x1, 21),
- 	.y_mir_en = VOP_REG(RK3368_WIN0_CTRL0, 0x1, 22),
--- 
-2.7.4
-
-
-
+I'll push it out in a bit.
