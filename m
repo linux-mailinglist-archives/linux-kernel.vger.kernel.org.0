@@ -2,183 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF876BE2BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 18:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5712CBE2C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 18:47:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391991AbfIYQpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 12:45:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44732 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390600AbfIYQpn (ORCPT
+        id S2392098AbfIYQrX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 12:47:23 -0400
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:40410 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392039AbfIYQrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 12:45:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=6zJPlAYn8c0O7MARtGXgdQGRjAiE59wQIYqRXLNRrrQ=; b=hoPkJgMrJsNNzMte6q6cCv61ok
-        s9DN3Gz4KN6NLLdcb8X8STVzN+Pz5LZuPw1Neg3c01Doqy3V4lgB+XB7QULc7MafsKOPEnEKWzsFe
-        Uk5kJ0tNXlU95hTBhFB5y1JvS3htodRK92nE4C+Fc+sAsm8rzvz0apkhWH98QeEnWK+G3fUlKf6GJ
-        tqN2NjhkY9lVVvSWWaI97XI0aDtpFMSeBEWH4TzuLxDZ4GICMcXqSPq4uwQLUnWdTcgaSqHSLz/WD
-        tmbvQ4Q41Gd3oVbeJG03jkIfgzmJP/F2jbTVMbIp4TJ8tlmYnYHALgGjrN+Hm2MNU6UV+n+9bcMeY
-        g+V7IdHg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iDAPy-00036k-00; Wed, 25 Sep 2019 16:45:30 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9EE31302A71;
-        Wed, 25 Sep 2019 18:44:41 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9EDD920249302; Wed, 25 Sep 2019 18:45:27 +0200 (CEST)
-Date:   Wed, 25 Sep 2019 18:45:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, bigeasy@linutronix.de,
-        tglx@linutronix.de, thgarnie@google.com, tytso@mit.edu,
-        cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        mingo@redhat.com, will@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org
-Subject: Re: [PATCH] mm/slub: fix a deadlock in shuffle_freelist()
-Message-ID: <20190925164527.GG4553@hirez.programming.kicks-ass.net>
-References: <1568392064-3052-1-git-send-email-cai@lca.pw>
- <20190925093153.GC4553@hirez.programming.kicks-ass.net>
- <1569424727.5576.221.camel@lca.pw>
+        Wed, 25 Sep 2019 12:47:21 -0400
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8PGg6iU014672;
+        Wed, 25 Sep 2019 09:46:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=proofpoint;
+ bh=W7iPXpQQFbCPlTfgTRN0ObN0+UO/awUO/AEHp8O+RqQ=;
+ b=IgvJAIW/A8IuXHVToOFTs6dnucoy3kIhhmcK8gS40nCqsqAZhl9RWGsSlxzGwh3pMe30
+ 4KWClPnOb3a4rojDat5PN1i8mRF4PcTnPMF754OqrWyADUxPHS0kdh94ivM0LnoK4Wnd
+ 1sUUL4umSVJbxqD/7ASVKYifpdxU0BnHE0hYJyvE75+ZmrPDvbHamU+UV2Z2t07sM13u
+ YdiE71JbJA5WwXn1WJSdmNn0ItRw6sHPGSNe4FUTHfsT5SawFLKxCCectRuzaaxHGTzA
+ YU3bOSoAuVIskXC/oRUU2KcOgdy4BF6OpuNQdYd9+Ibt+EDdrQLIciSS9ruydaOKKmnZ UA== 
+Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp2058.outbound.protection.outlook.com [104.47.33.58])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2v5ge0gk47-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 25 Sep 2019 09:46:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ct6GGnoeT3PsjcY4+X9unYzjT7f+1gIvqdSbvtPbQFlNKjCQCsAhqKbbsphFerrh/e+juuMBbVK1dwmaqA5J40X3J7pAfN3wJ6FEePXwCuQUaxkhjdTYS9LBnBfEtlI5fGSCGX0vkAC6m4dS8X+K6ekHFyfmGcIaBEiq+pIaWVLDwZ+i8uqATrBFa/zsupQqBf2XaMMn6P/rx6kbuPsBB+i6Fsh7094kWMjWs/PwFCpT39btOWaONwMqa2Oy/jjY2dDhdSvnGZH7+Zib+THz2dX71a3f0GlNTRIFtpL9+0Sj++VjlUCdksCab7DjxRChD9a+mEMxt/uf3VpU1JuNpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W7iPXpQQFbCPlTfgTRN0ObN0+UO/awUO/AEHp8O+RqQ=;
+ b=kaYowqihZlpbWr+TK/gTRf9eGa2J5pF9w+oyz6EzYhfsyi9Mq0wBV7dhmF6gYm5DgPsuf8gdoMsOgb4279ynKZNtKs/5HYYOwPe8J/C8TJW6Wzopqj5Y2gm7lvxXFuEeIXxtzjEa1gxC6U1+OzpeTzBk/oQvT0pNWwEFPDOjz+j3F9WqiUb5RHwFQmPnvmBqA9t2/4WInGNYeTElJAF2b1eV7/OcGwM+6Sq7xJtHncALDs+hpM1Sgn0bwzcpOvplObxhTpMSVjdWDCU/cqOOXR3tRpTXlgMIcdW6RFCrkoH8Nz+sQzQVTsQqoGWnngN5vqRm6jf6h2KO0UBX2GbWyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 158.140.1.28) smtp.rcpttodomain=ti.com smtp.mailfrom=cadence.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=cadence.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W7iPXpQQFbCPlTfgTRN0ObN0+UO/awUO/AEHp8O+RqQ=;
+ b=sSh68e04XrbNbMoCjC6B4GU2ou09bpViVECWZgd6bW5EVtJxkEBBADwdSoNKK4CSdkJbsA9Jgn5nv6XbAN23LsokFbFQYzTuqK4/kkTls8cSVeWTDJGR8xjT5MYHMBWrzvL/BAZQkyTy3Kd/UpBZa2Hb8bss9LFlrsqzlgty0dw=
+Received: from BYAPR07CA0062.namprd07.prod.outlook.com (2603:10b6:a03:60::39)
+ by SN6SPR01MB0039.namprd07.prod.outlook.com (2603:10b6:805:dc::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.25; Wed, 25 Sep
+ 2019 16:46:38 +0000
+Received: from BY2NAM05FT052.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::209) by BYAPR07CA0062.outlook.office365.com
+ (2603:10b6:a03:60::39) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2220.18 via Frontend
+ Transport; Wed, 25 Sep 2019 16:46:37 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 158.140.1.28 as permitted sender)
+Received: from sjmaillnx2.cadence.com (158.140.1.28) by
+ BY2NAM05FT052.mail.protection.outlook.com (10.152.100.189) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.12 via Frontend Transport; Wed, 25 Sep 2019 16:46:37 +0000
+Received: from mailsj6.global.cadence.com (mailsj6.cadence.com [158.140.32.112])
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id x8PGkXIj005644
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Wed, 25 Sep 2019 09:46:33 -0700
+X-CrossPremisesHeadersFilteredBySendConnector: mailsj6.global.cadence.com
+Received: from global.cadence.com (158.140.32.37) by
+ mailsj6.global.cadence.com (158.140.32.112) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Wed, 25 Sep 2019 09:46:29 -0700
+Date:   Wed, 25 Sep 2019 17:46:18 +0100
+From:   Piotr Sroka <piotrs@cadence.com>
+To:     Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
+Subject: Re: [v8 0/2] mtd: rawnand: Add Cadence NAND controller driver
+Message-ID: <20190925164616.GA14994@global.cadence.com>
+References: <20190925155325.7035-1-piotrs@cadence.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1569424727.5576.221.camel@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190925155325.7035-1-piotrs@cadence.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Originating-IP: [158.140.32.37]
+X-ClientProxiedBy: mailsj7.global.cadence.com (158.140.32.114) To
+ mailsj6.global.cadence.com (158.140.32.112)
+X-OrganizationHeadersPreserved: mailsj6.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(136003)(396003)(39860400002)(36092001)(189003)(199004)(186003)(55016002)(76176011)(2201001)(16586007)(7696005)(58126008)(16526019)(2486003)(23676004)(26005)(110136005)(3846002)(6116002)(7636002)(7416002)(2906002)(246002)(1076003)(33656002)(50466002)(4744005)(316002)(386003)(7736002)(6666004)(478600001)(305945005)(5660300002)(86362001)(956004)(66066001)(476003)(6286002)(70206006)(486006)(8936002)(229853002)(356004)(53416004)(11346002)(336012)(76130400001)(8676002)(126002)(446003)(47776003)(70586007)(26826003)(6246003)(426003)(921003)(1121003)(2101003)(83996005);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6SPR01MB0039;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7fd4e6e0-7015-4f93-c5d0-08d741d7eedd
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:SN6SPR01MB0039;
+X-MS-TrafficTypeDiagnostic: SN6SPR01MB0039:
+X-Microsoft-Antispam-PRVS: <SN6SPR01MB003919E66A0E648421287D65DD870@SN6SPR01MB0039.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-Forefront-PRVS: 01713B2841
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: zsvQtH9gsnSymr/lC1ypk4rDtyb72YakPgHNihfNEIxJ07pGD1kFBON00nLEgr9jQNJlhamPfuLsakqUVlnzSKp8AMAREc/TKjHHoTIG9GnkgCgtok3G94bpCmNvPFwyOUanTG5Ml14roLt92HQTzzdbIykmuXK4wDb9QiWgnYbwO0MN5APQwNQjy8XB5rTedng6pvcTQjP2scXkAjv8be3nPy+qU+eFcdWr43+CwtTBp4ovGJTqB9zzyyeJKRVCkRPmspUvnur9hTCsuzHUOcYBoWXCNQVDlGF89PYeVbWDG35qT+HQsgQ1yWHcOmcYvmBuCB46/4Fvz0wOluxlRi1KUYc7pwXUxao0sjvLzdHA40S72BlcN0G2k8W3BzUSyzPN6DzSVCaZWwS+zeMuBvnSmMds8F+SNinAs8YPK4c=
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2019 16:46:37.6969
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fd4e6e0-7015-4f93-c5d0-08d741d7eedd
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6SPR01MB0039
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-09-25_07:2019-09-25,2019-09-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 malwarescore=0
+ impostorscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=581
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 adultscore=0
+ suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1908290000 definitions=main-1909250151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 11:18:47AM -0400, Qian Cai wrote:
-> On Wed, 2019-09-25 at 11:31 +0200, Peter Zijlstra wrote:
-> > On Fri, Sep 13, 2019 at 12:27:44PM -0400, Qian Cai wrote:
+The 09/25/2019 16:52, Piotr Sroka wrote:
+>Driver for Cadence HPNFC NAND flash controller.
+>
+>HW DMA interface
+>Page write and page read operations are executed in Command DMA mode.
+>Commands are defined by DMA descriptors.
+>In CDMA mode controller own DMA engine is used (Master DMA mode).
+>Other operations defined by nand_op_instr are executed in "Generic" mode.
+>In that mode data can be transferred only in by Slave DMA interface.
+>Slave DMA interface can be connected directly to AXI or to an external
+>DMA engine.
 
-> > > -> #3 (batched_entropy_u32.lock){-.-.}:
-> > >        lock_acquire+0x31c/0x360
-> > >        _raw_spin_lock_irqsave+0x7c/0x9c
-> > >        get_random_u32+0x6c/0x1dc
-> > >        new_slab+0x234/0x6c0
-> > >        ___slab_alloc+0x3c8/0x650
-> > >        kmem_cache_alloc+0x4b0/0x590
-> > >        __debug_object_init+0x778/0x8b4
-> > >        debug_object_init+0x40/0x50
-> > >        debug_init+0x30/0x29c
-> > >        hrtimer_init+0x30/0x50
-> > >        init_dl_task_timer+0x24/0x44
-> > >        __sched_fork+0xc0/0x168
-> > >        init_idle+0x78/0x26c
-> > >        fork_idle+0x12c/0x178
-> > >        idle_threads_init+0x108/0x178
-> > >        smp_init+0x20/0x1bc
-> > >        kernel_init_freeable+0x198/0x26c
-> > >        kernel_init+0x18/0x334
-> > >        ret_from_fork+0x10/0x18
-> > > 
-> > > -> #2 (&rq->lock){-.-.}:
-> > 
-> > This relation is silly..
-> > 
-> > I suspect the below 'works'...
-> 
-> Unfortunately, the relation is still there,
-> 
-> copy_process()->rt_mutex_init_task()->"&p->pi_lock"
-> 
-> [24438.676716][    T2] -> #2 (&rq->lock){-.-.}:
-> [24438.676727][    T2]        __lock_acquire+0x5b4/0xbf0
-> [24438.676736][    T2]        lock_acquire+0x130/0x360
-> [24438.676754][    T2]        _raw_spin_lock+0x54/0x80
-> [24438.676771][    T2]        task_fork_fair+0x60/0x190
-> [24438.676788][    T2]        sched_fork+0x128/0x270
-> [24438.676806][    T2]        copy_process+0x7a4/0x1bf0
-> [24438.676823][    T2]        _do_fork+0xac/0xac0
-> [24438.676841][    T2]        kernel_thread+0x70/0xa0
-> [24438.676858][    T2]        rest_init+0x4c/0x42c
-> [24438.676884][    T2]        start_kernel+0x778/0x7c0
-> [24438.676902][    T2]        start_here_common+0x1c/0x334
+Please ignore that email. 
 
-That's the 'where we took #2 while holding #1' stacktrace and not
-relevant to our discussion.
-
-> [24438.675836][    T2] -> #4 (batched_entropy_u64.lock){-...}:
-> [24438.675860][    T2]        __lock_acquire+0x5b4/0xbf0
-> [24438.675878][    T2]        lock_acquire+0x130/0x360
-> [24438.675906][    T2]        _raw_spin_lock_irqsave+0x70/0xa0
-> [24438.675923][    T2]        get_random_u64+0x60/0x100
-> [24438.675944][    T2]        add_to_free_area_random+0x164/0x1b0
-> [24438.675962][    T2]        free_one_page+0xb24/0xcf0
-> [24438.675980][    T2]        __free_pages_ok+0x448/0xbf0
-> [24438.675999][    T2]        deferred_init_maxorder+0x404/0x4a4
-> [24438.676018][    T2]        deferred_grow_zone+0x158/0x1f0
-> [24438.676035][    T2]        get_page_from_freelist+0x1dc8/0x1e10
-> [24438.676063][    T2]        __alloc_pages_nodemask+0x1d8/0x1940
-> [24438.676083][    T2]        allocate_slab+0x130/0x2740
-> [24438.676091][    T2]        new_slab+0xa8/0xe0
-> [24438.676101][    T2]        kmem_cache_open+0x254/0x660
-> [24438.676119][    T2]        __kmem_cache_create+0x44/0x2a0
-> [24438.676136][    T2]        create_boot_cache+0xcc/0x110
-> [24438.676154][    T2]        kmem_cache_init+0x90/0x1f0
-> [24438.676173][    T2]        start_kernel+0x3b8/0x7c0
-> [24438.676191][    T2]        start_here_common+0x1c/0x334
-> [24438.676208][    T2] 
-> [24438.676208][    T2] -> #3 (&(&zone->lock)->rlock){-.-.}:
-> [24438.676221][    T2]        __lock_acquire+0x5b4/0xbf0
-> [24438.676247][    T2]        lock_acquire+0x130/0x360
-> [24438.676264][    T2]        _raw_spin_lock+0x54/0x80
-> [24438.676282][    T2]        rmqueue_bulk.constprop.23+0x64/0xf20
-> [24438.676300][    T2]        get_page_from_freelist+0x718/0x1e10
-> [24438.676319][    T2]        __alloc_pages_nodemask+0x1d8/0x1940
-> [24438.676339][    T2]        alloc_page_interleave+0x34/0x170
-> [24438.676356][    T2]        allocate_slab+0xd1c/0x2740
-> [24438.676374][    T2]        new_slab+0xa8/0xe0
-> [24438.676391][    T2]        ___slab_alloc+0x580/0xef0
-> [24438.676408][    T2]        __slab_alloc+0x64/0xd0
-> [24438.676426][    T2]        kmem_cache_alloc+0x5c4/0x6c0
-> [24438.676444][    T2]        fill_pool+0x280/0x540
-> [24438.676461][    T2]        __debug_object_init+0x60/0x6b0
-> [24438.676479][    T2]        hrtimer_init+0x5c/0x310
-> [24438.676497][    T2]        init_dl_task_timer+0x34/0x60
-> [24438.676516][    T2]        __sched_fork+0x8c/0x110
-> [24438.676535][    T2]        init_idle+0xb4/0x3c0
-> [24438.676553][    T2]        idle_thread_get+0x78/0x120
-> [24438.676572][    T2]        bringup_cpu+0x30/0x230
-> [24438.676590][    T2]        cpuhp_invoke_callback+0x190/0x1580
-> [24438.676618][    T2]        do_cpu_up+0x248/0x460
-> [24438.676636][    T2]        smp_init+0x118/0x1c0
-> [24438.676662][    T2]        kernel_init_freeable+0x3f8/0x8dc
-> [24438.676681][    T2]        kernel_init+0x2c/0x154
-> [24438.676699][    T2]        ret_from_kernel_thread+0x5c/0x74
-> [24438.676716][    T2] 
-> [24438.676716][    T2] -> #2 (&rq->lock){-.-.}:
-
-This then shows we now have:
-
-	rq->lock
-	  zone->lock.rlock
-	    batched_entropy_u64.lock
-
-Which, to me, appears to be distinctly different from the last time,
-which was:
-
-	rq->lock
-	  batched_entropy_u32.lock
-
-Notable: "u32" != "u64".
-
-But #3 has:
-
-> [24438.676516][    T2]        __sched_fork+0x8c/0x110
-> [24438.676535][    T2]        init_idle+0xb4/0x3c0
-
-Which seems to suggest you didn't actually apply the patch; or rather,
-if you did, i'm not immediately seeing where #2 is acquired.
-
+Thanks
+Piotr
