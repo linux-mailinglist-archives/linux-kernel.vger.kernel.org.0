@@ -2,238 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A319BD9DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42D19BD9ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634117AbfIYI3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 04:29:06 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:58917 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2634104AbfIYI3G (ORCPT
+        id S2634163AbfIYIdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 04:33:09 -0400
+Received: from regular1.263xmail.com ([211.150.70.204]:55368 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2634140AbfIYIdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:29:06 -0400
-X-Originating-IP: 79.19.63.71
-Received: from uno.localdomain (host71-63-dynamic.19-79-r.retail.telecomitalia.it [79.19.63.71])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 5FBCB240002;
-        Wed, 25 Sep 2019 08:29:02 +0000 (UTC)
-Date:   Wed, 25 Sep 2019 10:30:43 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/7] media: add V4L2_CTRL_TYPE_AREA control type
-Message-ID: <20190925083043.7dt6f7hahmoap3vt@uno.localdomain>
-References: <20190920135137.10052-1-ricardo@ribalda.com>
- <20190920135137.10052-4-ricardo@ribalda.com>
+        Wed, 25 Sep 2019 04:33:09 -0400
+Received: from localhost (unknown [192.168.167.223])
+        by regular1.263xmail.com (Postfix) with ESMTP id E900E25A;
+        Wed, 25 Sep 2019 16:33:02 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.10.69] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P8268T140247138543360S1569400380603435_;
+        Wed, 25 Sep 2019 16:33:01 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <567e49f44f60ab6af7dc24948813d994>
+X-RL-SENDER: hjc@rock-chips.com
+X-SENDER: hjc@rock-chips.com
+X-LOGIN-NAME: hjc@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH 1/3] drm: Add some new format DRM_FORMAT_NVXX_10
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        dri-devel@lists.freedesktop.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     heiko@sntech.de, Ayan.Halder@arm.com, linux-kernel@vger.kernel.org
+References: <1569398801-92201-1-git-send-email-hjc@rock-chips.com>
+ <1569398801-92201-2-git-send-email-hjc@rock-chips.com>
+ <8cd915d3-9f61-abdc-7fd1-a9241777f29a@linux.intel.com>
+From:   "sandy.huang" <hjc@rock-chips.com>
+Message-ID: <e0c272ff-5ef9-f5db-4dad-477ecae2e6ca@rock-chips.com>
+Date:   Wed, 25 Sep 2019 16:32:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jnyrvndesrd5u7p5"
-Content-Disposition: inline
-In-Reply-To: <20190920135137.10052-4-ricardo@ribalda.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <8cd915d3-9f61-abdc-7fd1-a9241777f29a@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---jnyrvndesrd5u7p5
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+在 2019/9/25 下午4:17, Maarten Lankhorst 写道:
+> Op 25-09-2019 om 10:06 schreef Sandy Huang:
+>> These new format is supported by some rockchip socs:
+>>
+>> DRM_FORMAT_NV12_10/DRM_FORMAT_NV21_10
+>> DRM_FORMAT_NV16_10/DRM_FORMAT_NV61_10
+>> DRM_FORMAT_NV24_10/DRM_FORMAT_NV42_10
+>>
+>> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+>> ---
+>>   drivers/gpu/drm/drm_fourcc.c  | 18 ++++++++++++++++++
+>>   include/uapi/drm/drm_fourcc.h | 14 ++++++++++++++
+>>   2 files changed, 32 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+>> index c630064..f25fa81 100644
+>> --- a/drivers/gpu/drm/drm_fourcc.c
+>> +++ b/drivers/gpu/drm/drm_fourcc.c
+>> @@ -274,6 +274,24 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>>   		{ .format = DRM_FORMAT_YUV420_10BIT,    .depth = 0,
+>>   		  .num_planes = 1, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 2,
+>>   		  .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_NV12_10,		.depth = 0,
+>> +		  .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 2,
+>> +		  .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_NV21_10,		.depth = 0,
+>> +		  .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 2,
+>> +		  .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_NV16_10,		.depth = 0,
+>> +		  .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 1,
+>> +		  .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_NV61_10,		.depth = 0,
+>> +		  .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 1,
+>> +		  .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_NV24_10,		.depth = 0,
+>> +		  .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 1, .vsub = 1,
+>> +		  .is_yuv = true },
+>> +		{ .format = DRM_FORMAT_NV42_10,		.depth = 0,
+>> +		  .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 1, .vsub = 1,
+>> +		  .is_yuv = true },
+>>   	};
+>>   
+>>   	unsigned int i;
+>> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+>> index 3feeaa3..0479f47 100644
+>> --- a/include/uapi/drm/drm_fourcc.h
+>> +++ b/include/uapi/drm/drm_fourcc.h
+>> @@ -238,6 +238,20 @@ extern "C" {
+>>   #define DRM_FORMAT_NV42		fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
+>>   
+>>   /*
+>> + * 2 plane YCbCr 10bit
+>> + * index 0 = Y plane, [9:0] Y
+>> + * index 1 = Cr:Cb plane, [19:0]
+>> + * or
+>> + * index 1 = Cb:Cr plane, [19:0]
+>> + */
+>> +#define DRM_FORMAT_NV12_10	fourcc_code('N', 'A', '1', '2') /* 2x2 subsampled Cr:Cb plane */
+>> +#define DRM_FORMAT_NV21_10	fourcc_code('N', 'A', '2', '1') /* 2x2 subsampled Cb:Cr plane */
+>> +#define DRM_FORMAT_NV16_10	fourcc_code('N', 'A', '1', '6') /* 2x1 subsampled Cr:Cb plane */
+>> +#define DRM_FORMAT_NV61_10	fourcc_code('N', 'A', '6', '1') /* 2x1 subsampled Cb:Cr plane */
+>> +#define DRM_FORMAT_NV24_10	fourcc_code('N', 'A', '2', '4') /* non-subsampled Cr:Cb plane */
+>> +#define DRM_FORMAT_NV42_10	fourcc_code('N', 'A', '4', '2') /* non-subsampled Cb:Cr plane */
+>> +
+>> +/*
+>>    * 2 plane YCbCr MSB aligned
+>>    * index 0 = Y plane, [15:0] Y:x [10:6] little endian
+>>    * index 1 = Cr:Cb plane, [31:0] Cr:x:Cb:x [10:6:10:6] little endian
+> What are the other bits, they are not mentioned?
 
-Hi Ricardo,
+It's compact layout
 
-On Fri, Sep 20, 2019 at 03:51:33PM +0200, Ricardo Ribalda Delgado wrote:
-> This type contains the width and the height of a rectangular area.
->
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 21 ++++++++++++++
->  include/media/v4l2-ctrls.h           | 41 ++++++++++++++++++++++++++++
->  include/uapi/linux/videodev2.h       |  6 ++++
->  3 files changed, 68 insertions(+)
->
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index 219d8aeefa20..b9a46f536406 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -1678,6 +1678,7 @@ static int std_validate_compound(const struct v4l2_ctrl *ctrl, u32 idx,
->  	struct v4l2_ctrl_mpeg2_slice_params *p_mpeg2_slice_params;
->  	struct v4l2_ctrl_vp8_frame_header *p_vp8_frame_header;
->  	void *p = ptr.p + idx * ctrl->elem_size;
-> +	struct v4l2_area *area;
->
->  	switch ((u32)ctrl->type) {
->  	case V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS:
-> @@ -1753,6 +1754,11 @@ static int std_validate_compound(const struct v4l2_ctrl *ctrl, u32 idx,
->  		zero_padding(p_vp8_frame_header->entropy_header);
->  		zero_padding(p_vp8_frame_header->coder_state);
->  		break;
-> +	case V4L2_CTRL_TYPE_AREA:
-> +		area = p;
-> +		if (!area->width || !area->height)
-> +			return -EINVAL;
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -2427,6 +2433,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
->  	case V4L2_CTRL_TYPE_VP8_FRAME_HEADER:
->  		elem_size = sizeof(struct v4l2_ctrl_vp8_frame_header);
->  		break;
-> +	case V4L2_CTRL_TYPE_AREA:
-> +		elem_size = sizeof(struct v4l2_area);
-> +		break;
->  	default:
->  		if (type < V4L2_CTRL_COMPOUND_TYPES)
->  			elem_size = sizeof(s32);
-> @@ -4116,6 +4125,18 @@ int __v4l2_ctrl_s_ctrl_string(struct v4l2_ctrl *ctrl, const char *s)
->  }
->  EXPORT_SYMBOL(__v4l2_ctrl_s_ctrl_string);
->
-> +int __v4l2_ctrl_s_ctrl_area(struct v4l2_ctrl *ctrl,
-> +			    const struct v4l2_area *area)
-> +{
-> +	lockdep_assert_held(ctrl->handler->lock);
-> +
-> +	/* It's a driver bug if this happens. */
-> +	WARN_ON(ctrl->type != V4L2_CTRL_TYPE_AREA);
-> +	memcpy(ctrl->p_new.p_area, area, sizeof(*area));
-> +	return set_ctrl(NULL, ctrl, 0);
-> +}
-> +EXPORT_SYMBOL(__v4l2_ctrl_s_ctrl_area);
-> +
->  void v4l2_ctrl_request_complete(struct media_request *req,
->  				struct v4l2_ctrl_handler *main_hdl)
->  {
-> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-> index 4b356df850a1..746969559ef3 100644
-> --- a/include/media/v4l2-ctrls.h
-> +++ b/include/media/v4l2-ctrls.h
-> @@ -50,6 +50,7 @@ struct poll_table_struct;
->   * @p_h264_slice_params:	Pointer to a struct v4l2_ctrl_h264_slice_params.
->   * @p_h264_decode_params:	Pointer to a struct v4l2_ctrl_h264_decode_params.
->   * @p_vp8_frame_header:		Pointer to a VP8 frame header structure.
-> + * @p_area:			Pointer to an area.
->   * @p:				Pointer to a compound value.
->   */
->  union v4l2_ctrl_ptr {
-> @@ -68,6 +69,7 @@ union v4l2_ctrl_ptr {
->  	struct v4l2_ctrl_h264_slice_params *p_h264_slice_params;
->  	struct v4l2_ctrl_h264_decode_params *p_h264_decode_params;
->  	struct v4l2_ctrl_vp8_frame_header *p_vp8_frame_header;
-> +	struct v4l2_area *p_area;
->  	void *p;
->  };
->
-> @@ -1085,6 +1087,45 @@ static inline int v4l2_ctrl_s_ctrl_string(struct v4l2_ctrl *ctrl, const char *s)
->  	return rval;
->  }
->
-> +/**
-> + * __v4l2_ctrl_s_ctrl_area() - Unlocked variant of v4l2_ctrl_s_ctrl_area().
-> + *
-> + * @ctrl:	The control.
-> + * @area:	The new area.
-> + *
-> + * This sets the control's new area safely by going through the control
-> + * framework. This function assumes the control's handler is already locked,
-> + * allowing it to be used from within the &v4l2_ctrl_ops functions.
-> + *
-> + * This function is for area type controls only.
-> + */
-> +int __v4l2_ctrl_s_ctrl_area(struct v4l2_ctrl *ctrl,
-> +			    const struct v4l2_area *area);
-> +
-> +/**
-> + * v4l2_ctrl_s_ctrl_area() - Helper function to set a control's area value
-> + *	 from within a driver.
-> + *
-> + * @ctrl:	The control.
-> + * @s:		The new area.
-> + *
-> + * This sets the control's new area safely by going through the control
-> + * framework. This function will lock the control's handler, so it cannot be
-> + * used from within the &v4l2_ctrl_ops functions.
-> + *
-> + * This function is for area type controls only.
-> + */
-> +static inline int v4l2_ctrl_s_ctrl_area(struct v4l2_ctrl *ctrl,
-> +					const struct v4l2_area *area)
-> +{
-> +	int rval;
-> +
-> +	v4l2_ctrl_lock(ctrl);
-> +	rval = __v4l2_ctrl_s_ctrl_area(ctrl, area);
-> +	v4l2_ctrl_unlock(ctrl);
-> +
-> +	return rval;
-> +}
+Yplane:
 
-Newline maybe?
+     Y0[9:0]Y1[9:0]Y2[9:0]Y3[9:0]...
 
->  /* Internal helper functions that deal with control events. */
->  extern const struct v4l2_subscribed_event_ops v4l2_ctrl_sub_ev_ops;
->
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 530638dffd93..b3c0961b62a0 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -422,6 +422,11 @@ struct v4l2_fract {
->  	__u32   denominator;
->  };
->
-> +struct v4l2_area {
-> +	__u32   width;
-> +	__u32   height;
-> +};
-> +
->  /**
->    * struct v4l2_capability - Describes V4L2 device caps returned by VIDIOC_QUERYCAP
->    *
-> @@ -1720,6 +1725,7 @@ enum v4l2_ctrl_type {
->  	V4L2_CTRL_TYPE_U8	     = 0x0100,
->  	V4L2_CTRL_TYPE_U16	     = 0x0101,
->  	V4L2_CTRL_TYPE_U32	     = 0x0102,
-> +	V4L2_CTRL_TYPE_AREA          = 0x0106,
+UVplane:
 
-I'll let Hans comment on these two bits as I don't know if that's
-adding a new control type is right or not.
-
-Have my R-b for the rest though:
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-   j
+     U0[9:0]V0[9:0]U1[9:0]V1[9:0]...
 
 
->  };
+
 >
->  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
-> --
-> 2.23.0
+>
+>
 >
 
---jnyrvndesrd5u7p5
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl2LJbIACgkQcjQGjxah
-VjxKgg//YkjUPQFoVLRgpwIkRCKS3WyvGnGUT0Jl30rhHMCesM9MQAIZJV9W9Tx7
-jOGbXZxefjvbljeqFVmwABuEgH9RcIT3fM2Dm5GMYhl8ycLlJrODscg4A1rCyMNW
-c9t+mjU+bd4R0bUstcTvbU93xgQjhzDv7D8+ACiNJsDyUEEn21w1tgTM/0eVI/ln
-jwdr+EjiFgL6J9om5W1eagTNgx7oBjVGdV90ehlB7ZYPOy2fiC/08J3eRCuhpM+h
-84M3TztKOCxtPjo7wZC/GFSp19OTCtEnAOc4hTG/8kCLTn5S8CKgJiE4D+AxPPlG
-TtSZNle8G32o+2uEVhGJi4t30OowZbZiGp1wYVM/PHr1eEIIgxdOyqAa7srKMtbA
-zRDToS2ajS5qm9j66s5XDC3++tbhiXxwTdP+fWyxhf8diCBWvQIZX+vuAIbZp3NI
-MfKQyBJHHAS013SL+9C0BwnHS6fAGSvOJEXleMF/DoUTJDlJGS76en9vS/GDyIOZ
-7lE8pYa8eu3uS1ZOyACQRsyOKjDhfWQQIqvbWC5E62FAV8gr8qo22FaEAMC+4JWw
-hWVPmqe9Yv+7q5p7+XqVZKisnIaDU59XhK1HZRd6t2XI4LHuL8OJz7bGPbaizAjo
-JxdEf/GpH4qOLmazO4IyBYZ7svTJIDEUkKIJ97Ywiwpub/6Yk2U=
-=5xeq
------END PGP SIGNATURE-----
-
---jnyrvndesrd5u7p5--
