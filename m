@@ -2,52 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9293BD5AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 02:05:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 681F9BD5AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 02:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389511AbfIYAFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 20:05:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39434 "EHLO mail.kernel.org"
+        id S2392861AbfIYAFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 20:05:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726118AbfIYAFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 20:05:23 -0400
-Subject: Re: [GIT PULL] sound fixes for 5.4-rc1
+        id S1726118AbfIYAFY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Sep 2019 20:05:24 -0400
+Subject: Re: [PULL REQUEST] i2c for 5.4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569369923;
-        bh=qRxEzXlEBtalKZuXKuvnGDLBT+hKNkBkjvfjq4nsnRo=;
+        s=default; t=1569369924;
+        bh=qMNqctDBThkqsBsd+QFxirflNL7gPoUksZcagCWzkKA=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=EbMKXNPZA+CjDJmT8Dj/egNa+iYVdGKUkjQheFWHC6DadqL40Zx07FwzoRBpxdyiH
-         rTxmDrehXv3ebU8unAAime9IgxWH8iVUD3ei321fKmAsxpjNQUDtM/kxKvsvBEYPyW
-         Po0VwjUY4GpVg7savctZFO0mGaz7/1Rni5PkmKMU=
+        b=odaPwqncVlb60wTcNg3hpmtUK4V8qw7tKPjrzoqQGhp35AJ+jVSWdZNGa5ZPmN9RX
+         k7tRRwIaO6gDiiaNP5bp+OV/f3VRMBvB6mYfe7VDs9FHXcYRle2IEemnpm9J3tvw5v
+         vNJjHG6+RuWnFMOawUQZDFZ4fvMw7M7eApZJj0eI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <s5hblv9kid0.wl-tiwai@suse.de>
-References: <s5hblv9kid0.wl-tiwai@suse.de>
+In-Reply-To: <20190924193054.GA2215@kunai>
+References: <20190924193054.GA2215@kunai>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <s5hblv9kid0.wl-tiwai@suse.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
- tags/sound-fix-5.4-rc1
-X-PR-Tracked-Commit-Id: f41f900568d9ffd896cc941db7021eb14bd55910
+X-PR-Tracked-Message-Id: <20190924193054.GA2215@kunai>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-5.4
+X-PR-Tracked-Commit-Id: 8ebf15e9c869e764b3aab4928938ee68c0e2bd6d
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3cf7487c5de713b706ca2e1f66ec5f9b27fe265a
-Message-Id: <156936992314.955.13581615350699122660.pr-tracker-bot@kernel.org>
-Date:   Wed, 25 Sep 2019 00:05:23 +0000
-To:     Takashi Iwai <tiwai@suse.de>
+X-PR-Merge-Commit-Id: 351c8a09b00b5c51c8f58b016fffe51f87e2d820
+Message-Id: <156936992423.955.6087749704237172959.pr-tracker-bot@kernel.org>
+Date:   Wed, 25 Sep 2019 00:05:24 +0000
+To:     Wolfram Sang <wsa@the-dreams.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 24 Sep 2019 14:07:39 +0200:
+The pull request you sent on Tue, 24 Sep 2019 21:31:03 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-fix-5.4-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-5.4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3cf7487c5de713b706ca2e1f66ec5f9b27fe265a
+https://git.kernel.org/torvalds/c/351c8a09b00b5c51c8f58b016fffe51f87e2d820
 
 Thank you!
 
