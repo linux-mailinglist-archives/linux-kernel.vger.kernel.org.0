@@ -2,99 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59B6BE5EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 21:56:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FEB8BE5F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 21:58:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387836AbfIYT4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 15:56:20 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34299 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731229AbfIYT4U (ORCPT
+        id S2392506AbfIYT5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 15:57:51 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:40855 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732757AbfIYT5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 15:56:20 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a11so116175wrx.1;
-        Wed, 25 Sep 2019 12:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=uwE3NiK8u+bxgHZ+HUFoTn6YzX3YfI6lWA87gOzdcWY=;
-        b=Xt6NIi0WjoL2BbXIfO4Qdd2wVTiqsKYtqYFdYd48zmhuGPqisIsviqcJG+G43NSsDO
-         k0URO6ROFk3tYd5J2CgP1dF7O/c45PTOb5oW4WksihDC1/RaFJwbDMQljl1z9//jMb4H
-         blWJm1QibltgkD0SMMH3AA+zAjJoPuR0p+PYdgyiss7wwpOQMucE3g7Un39N8i4huPFt
-         3iMsHsxXTjsD8xYS0WPzGJEW4O+hkt9rijBD2uygsrUZb/kt9FLM6a2Hi8qmQXdaGMgY
-         kSmTUwp+IeRh4NWCaz7zlt0Nhna6eSstMFwdHKGjYWvcmi9jRo9jpzaHlr9lCS19CWye
-         yIZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uwE3NiK8u+bxgHZ+HUFoTn6YzX3YfI6lWA87gOzdcWY=;
-        b=gYK0SZyLoAY2d93qN+bBdMo0y2NjFYLtzcgc2rTMj6/xIaKhtIoXq8ah6eqPguYbdH
-         KkGDmBoH+Oi4UmOrGgvsMw2z4pfVJHDGm9ldWo5qz1OWqDasI54so6ulfW9h8ZFbNdiE
-         KSahOA5YOrlXSuHuSVWYgrxri5GnrqvWQIAd7DScVDanWXJTP3LYqxvxwyOXg9E1SSiZ
-         IwaiyfaFm9KzUkPifY+cT8jogEv0b6AQf6IBJOs+kypmlbCwtazWhXD+1Qm5q/ZvLIkz
-         xuVWQ0z71iOky9loQqvH4qffgYGK4JQRFnYaRVdkKBKacnDRTCahCcN5Dwtb2DP2xZic
-         2FvA==
-X-Gm-Message-State: APjAAAWX24ytRotlEWSKiB4hny5kYMTlfTNsurTtN275j9KBIW2ExOCA
-        JMjw250CRLjh2ppKP0F4Vs8=
-X-Google-Smtp-Source: APXvYqxBrzAB7FElDzuLgGE02iUemO9rVd6fi3TPPuuELGMtG+mycy1PCK8XGE5zVqtwQD0yZ/w4fg==
-X-Received: by 2002:adf:ef49:: with SMTP id c9mr67324wrp.122.1569441378315;
-        Wed, 25 Sep 2019 12:56:18 -0700 (PDT)
-Received: from localhost.localdomain (101.26.95.79.rev.sfr.net. [79.95.26.101])
-        by smtp.gmail.com with ESMTPSA id b7sm48899wrj.28.2019.09.25.12.56.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 12:56:17 -0700 (PDT)
-Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
-        by localhost.localdomain with esmtp (Exim 4.92.1)
-        (envelope-from <jekhor@gmail.com>)
-        id 1iDDOb-0002f2-6g; Wed, 25 Sep 2019 22:56:17 +0300
-Date:   Wed, 25 Sep 2019 22:56:17 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy@infradead.org>
-Subject: Re: [PATCH v5 1/1] platform/x86/intel_cht_int33fe: Split code to USB
- Micro-B and Type-C variants
-Message-ID: <20190925195617.GA8666@jeknote.loshitsa1.net>
-References: <20190920223356.6622-1-jekhor@gmail.com>
- <20190920223356.6622-2-jekhor@gmail.com>
- <1cca117d-1951-0335-1aef-ac994c3c757b@redhat.com>
- <CAHp75VcoS2OFr8kwM7vq0iCqf6BpyJ4SO7peAUHKxAXdgA7CMA@mail.gmail.com>
- <20190925162712.GA3653@jeknote.loshitsa1.net>
- <CAHp75VfL0RUgMhZk=gesxBcBfRkfV8kC1zsN9TNg53qpUNVU0w@mail.gmail.com>
+        Wed, 25 Sep 2019 15:57:51 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 46dpkh5lbNz1rVv9;
+        Wed, 25 Sep 2019 21:57:48 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 46dpkh57sXz1qqkC;
+        Wed, 25 Sep 2019 21:57:48 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id cr9k4nVtNq2p; Wed, 25 Sep 2019 21:57:47 +0200 (CEST)
+X-Auth-Info: Yu5piwI6ei8JIHvmH/iv2EXB26CPdpNzMAt4N9ZIxqk=
+Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed, 25 Sep 2019 21:57:47 +0200 (CEST)
+Date:   Wed, 25 Sep 2019 21:57:39 +0200
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzk@kernel.org
+Subject: Re: [PATCH v2 1/2] spi: Add call to spi_slave_abort() function when
+ spidev driver is released
+Message-ID: <20190925215739.6692ee89@jawa>
+In-Reply-To: <20190925164517.GI2036@sirena.org.uk>
+References: <20190924110547.14770-1-lukma@denx.de>
+        <20190925091143.15468-1-lukma@denx.de>
+        <20190925091143.15468-2-lukma@denx.de>
+        <20190925164517.GI2036@sirena.org.uk>
+Organization: denx.de
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfL0RUgMhZk=gesxBcBfRkfV8kC1zsN9TNg53qpUNVU0w@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/CKOQSV_mYnHZAmlMvZlX5hf"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 08:42:03PM +0300, Andy Shevchenko wrote:
-> On Wed, Sep 25, 2019 at 7:27 PM Yauhen Kharuzhy <jekhor@gmail.com> wrote:
-> > On Wed, Sep 25, 2019 at 06:02:22PM +0300, Andy Shevchenko wrote:
-> > > On Sat, Sep 21, 2019 at 9:31 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> 
-> > > By some reason it doesn't apply.
-> >
-> > I have checked, and have no issues when applying this patch to the current
-> > torvalds/master and linux-next/master branches (351c8a09b00b and 9e88347dedd8
-> > commit IDs).
-> 
-> It doesn't apply to the subsystem tree (for-next or my review branch)
+--Sig_/CKOQSV_mYnHZAmlMvZlX5hf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, it doesn't apply because this subsystem tree doesn't contain commit
+Hi Mark,
 
-"78cd4bf53635 platform/x86: intel_cht_int33fe: Use new API to gain access to the role switch"
+> On Wed, Sep 25, 2019 at 11:11:42AM +0200, Lukasz Majewski wrote:
+> > This change is necessary for spidev devices (e.g. /dev/spidev3.0)
+> > working in the slave mode (like NXP's dspi driver for Vybrid SoC). =20
+>=20
+> Please do not submit new versions of already applied patches, please
+> submit incremental updates to the existing code.  Modifying existing
+> commits creates problems for other users building on top of those
+> commits so it's best practice to only change pubished git commits if
+> absolutely essential.
+>=20
+> That said I'll handle this this one time.
 
-which was accepted to torvalds/master tree already.
+Thanks for help (and patience).
 
 
+Best regards,
 
--- 
-Yauhen Kharuzhy
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/CKOQSV_mYnHZAmlMvZlX5hf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAl2LxrMACgkQAR8vZIA0
+zr38owf+NfpYq4idAYaz+acP1zbwiI6XJ+N6XPIdsxu6mT8UYz0fEfStkeuiCr+J
+YTYcu5Krtr7nWv12Dgh+kDTCDqp3Pn9I+mRwOxEz2O6Rr9GqcE17LX8sFeBWToRW
+3MT0phpVUKPwO3jqke9uoSItQ66we4UjGArhgiq5c14GYWSJl0TTwRyDwpkXKB0X
+TlkAE/8H5Hld5ioXglA056fnYcXXz7sPYXUMmw8cm0jGwjzLTAjWs/WzI8S89TQF
+Y3S+QVnskhA+r+XoMFZo6wpelqZQD3RULU6K/4ryoUYyiN8Buo1XGrVZBOJvUpIY
+db8l3hi11iraVVU2bFilUdc59nofBw==
+=M3+b
+-----END PGP SIGNATURE-----
+
+--Sig_/CKOQSV_mYnHZAmlMvZlX5hf--
