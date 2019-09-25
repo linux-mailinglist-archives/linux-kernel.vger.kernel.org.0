@@ -2,260 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E9CBD953
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:49:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0860FBD965
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406903AbfIYHtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:49:41 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44962 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405047AbfIYHtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:49:41 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 34EF5937F50B6811377B;
-        Wed, 25 Sep 2019 15:49:39 +0800 (CST)
-Received: from [127.0.0.1] (10.177.251.225) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 25 Sep 2019
- 15:49:35 +0800
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        <akpm@linux-foundation.org>, <osalvador@suse.de>, <mhocko@suse.co>,
-        <dan.j.williams@intel.com>, <david@redhat.com>, <cai@lca.pw>
-CC:     <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   Yunfeng Ye <yeyunfeng@huawei.com>
-Subject: [PATCH V4] mm: Support memblock alloc on the exact node for
- sparse_buffer_init()
-Message-ID: <66755ea7-ab10-8882-36fd-3e02b03775d5@huawei.com>
-Date:   Wed, 25 Sep 2019 15:49:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        id S2634001AbfIYHxT convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Sep 2019 03:53:19 -0400
+Received: from m4a0040g.houston.softwaregrp.com ([15.124.2.86]:40609 "EHLO
+        m4a0040g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2633991AbfIYHxT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:53:19 -0400
+Received: FROM m4a0040g.houston.softwaregrp.com (15.120.17.147) BY m4a0040g.houston.softwaregrp.com WITH ESMTP;
+ Wed, 25 Sep 2019 07:52:18 +0000
+Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
+ M4W0335.microfocus.com (2002:f78:1193::f78:1193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 25 Sep 2019 07:50:42 +0000
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (15.124.72.10) by
+ M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Wed, 25 Sep 2019 07:50:42 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xvk0b0SdVGAOJNUZVkr/+DilJ3kUvWCZP35fNFpfBqH8kK7tKfVmwFhr5FVdf/Vj08C25fCGRWgFgA/3A95+XG8dczyZP1wxYLsTY11lP3/sXlQwkjr8hJnrp9M+QlFIx5vIqCQ9dYvLNokckEgvkMQ6tco39l2rfJE7oqYU1i5Q+tOnQD2XhOCZn2OeVW6U3JSfqQKaR0u11qXqEoUmOdPc8WmLm8GsJjyvcvA9EpeanjA1Jh82vNw6RQgKRQTZYYNYLDvo3WzNytqg8mki1Q3dQzEpbRDvlTd7gY5Kr8HzuUlUXlwgyQi3/bHwpR+esFFE1yZroF7TejlT2aTRAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eois5P32oIZv0K9DssAPNxTCkJ2DGjSmxNLh9Qo2MPM=;
+ b=WReTtKzqshS4lzDBeuN40K3QZ4IWoOOJWh9yI/Bvxgay1sXGUAg9TiUUBX8XYpM+kBvqnGzTm7zfr+fJ9wIQeUJksy41DEsI49rFYQpGPTlP5X9K4d57NCv/vayqEn3CBk4KkNXIzCwjupaVojo2PnhI0Cpo9I5fYCi37Tbel6PWxYORT5BIMEJXk85lEEs6Yc4uAx78UJCx/acwZvOFSURUlGgQ0fnt/SWgZ36DFMP3u02ey1YTzshpn8AjvDm49GJXwsddX+Zdy7cE+G5om8gjBOILoH9C34SAQ6JVR2KM28k9w8caCS5QP+YuloX6NPjZ303fa3eSJgdMIBrKbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from MN2PR18MB2736.namprd18.prod.outlook.com (20.179.23.30) by
+ MN2PR18MB2685.namprd18.prod.outlook.com (20.179.82.223) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.20; Wed, 25 Sep 2019 07:50:36 +0000
+Received: from MN2PR18MB2736.namprd18.prod.outlook.com
+ ([fe80::a4a5:349f:5e99:fbaf]) by MN2PR18MB2736.namprd18.prod.outlook.com
+ ([fe80::a4a5:349f:5e99:fbaf%5]) with mapi id 15.20.2284.023; Wed, 25 Sep 2019
+ 07:50:36 +0000
+From:   Joey Lee <JLee@suse.com>
+To:     Gabriel C <nix.or.die@gmail.com>
+CC:     "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: acer_wmi: Unknown function(s) on Acer Nitro 5 (AN515-43-R8BF)
+Thread-Topic: acer_wmi: Unknown function(s) on Acer Nitro 5 (AN515-43-R8BF)
+Thread-Index: AQHVckeCx20Ww7D6Ok6go3mJWdsWyac8BzoA
+Date:   Wed, 25 Sep 2019 07:50:36 +0000
+Message-ID: <20190925075026.GY3878@linux-l9pv.suse>
+References: <CAEJqkgjSes-4bSKbyfbNhXfcQwdEMzp8X4f72_SS=NpBoBtWmQ@mail.gmail.com>
+In-Reply-To: <CAEJqkgjSes-4bSKbyfbNhXfcQwdEMzp8X4f72_SS=NpBoBtWmQ@mail.gmail.com>
+Accept-Language: zh-TW, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.251.225]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0101.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:c::17) To MN2PR18MB2736.namprd18.prod.outlook.com
+ (2603:10b6:208:a4::30)
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=JLee@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [60.251.47.116]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 33bcc37f-1b61-4fbc-2f08-08d7418d0d5b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MN2PR18MB2685;
+x-ms-traffictypediagnostic: MN2PR18MB2685:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <MN2PR18MB2685402CEF901AEB10C120D6A3870@MN2PR18MB2685.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:758;
+x-forefront-prvs: 01713B2841
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39860400002)(396003)(346002)(136003)(366004)(199004)(189003)(1076003)(5660300002)(81156014)(99286004)(55236004)(52116002)(76176011)(26005)(6506007)(102836004)(386003)(186003)(446003)(11346002)(476003)(486006)(66446008)(64756008)(66556008)(66476007)(66946007)(7736002)(54906003)(14454004)(80792005)(966005)(25786009)(81166006)(8676002)(478600001)(36756003)(316002)(71200400001)(71190400001)(256004)(14444005)(6916009)(305945005)(33656002)(86362001)(8936002)(4326008)(6246003)(66066001)(6306002)(6436002)(6512007)(9686003)(6486002)(3846002)(6116002)(229853002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR18MB2685;H:MN2PR18MB2736.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: si4p/fZ27J0LtuHl2icJ/ykSnoACjXlE01n2FJDmKO4LQS8BhYuBIw5+bDjanl/EGN0JhaU2xpHFSb9LBEGdDYORCQWsoukOoaL75l1H4eCQe4mdVG+zkmX5imYaheBjgi3pmxQxGYruwtD3FdfedUAsL9wvB0niXTzLpRRfS1CCuMaJc2f79/8gIh1i++u5LvFinz0ZGNHMbOQGfbEw0dM+WmQ/swwlVHeBTfI8d1gPOIB3MttJZz81Kallp/Omyh+PfOoxJZrRmWjTWYi7B8JKBMF+7FrR6dSPOMdk4AGKV/r7Du1KDnZwRGQD89Gg8rppD2PM4Rn5/Oz/vpSKKkoN8jrltNYpBvPNeZ1QD1U+HP6AHTvHVgQwNgeDIKYYYXZg4sWqQ/+zB/jVqfSOcRCiOltDba568bnH76SL1upVccCCJ+iX+Jh2kLvFflJ2r1Er2gp+sBmvN7+MQCIGQQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E5B6AC137F0D9645BF47A0B0835B6F54@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33bcc37f-1b61-4fbc-2f08-08d7418d0d5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2019 07:50:36.8976
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rH8PXpCIwAw91vpopNh255ipBIQUfejMGJ7t83nolpPuSeHK31gklVGNT2mXzDA2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2685
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sparse_buffer_init() use memblock_alloc_try_nid_raw() to allocate memory
-for page management structure, if memory allocation fails from specified
-node, it will fall back to allocate from other nodes.
+Hi Gabriel,
 
-Normally, the page management structure will not exceed 2% of the total
-memory, but a large continuous block of allocation is needed. In most
-cases, memory allocation from the specified node will success always,
-but a node memory become highly fragmented will fail. we expect to
-allocate memory base section rather than by allocating a large block of
-memory from other NUMA nodes
+On Mon, Sep 23, 2019 at 09:45:05PM +0200, Gabriel C wrote:
+> Hi guys,
+> 
+> I noticed some warning in dmesg on this Laptop.
+> 
+> Fn+right, Fn+left is BrightnessDown/Up and produce the following warning:
+> 
+> acer_wmi: Unknown function number - 4 - 0
+> 
+> The brightness has some other issue on this Laptop but not sure
+> who to blame on this. Probably amdgpu.?
+> 
+> /sys/class/backlight/amdgpu_bl1/brightness <-> actual_brightness
+> seems to mismatch.  EG: when brightness is 0 actual_brightness is still 5140.
+>
 
-Add memblock_alloc_exact_nid_raw() for this situation, which allocate
-boot memory block on the exact node. If a large contiguous block memory
-allocate fail in sparse_buffer_init(), it will fall back to allocate
-small block memory base section.
+Base on _BCM and _BQC in your DSDT. The backlight control is handled by EC.
+But, in some Acer machines that the _BCM is broken. You can try to modify
+brighess by echo to sys/class/backlight/acpi_video0/brightness
+ 
+> Unplugging the AC gives the following warning:
+> 
+> acer_wmi: Unknown function number - 8 - 0
+> 
+> When plugging the AC back I see;
+> 
+> acer_wmi: Unknown function number - 8 - 1.
+> 
+> I uploaded a dump of the acpi tables and dmidecode of the box.
+> 
+> https://www.frugalware.org/~crazy/nitro5/ACPI
+> https://www.frugalware.org/~crazy/nitro5/DMI
+> 
+> Please let me know if you need any other informations.
+>
 
-Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
----
-v3 -> v4:
- - add Reviewed-by
- - modify the comment "@exact_nid is false" instead of "@exact_nid is zero"
+Thanks for your report the behavior for the function 4 and function 8.
+Maybe we can use the platform event to do something. e.g. expose key code
+to userland. Unfortunately my working list is too long that I do not have
+time for it currently.
 
-v2 -> v3:
- - use "bool exact_nid" instead of "int need_exact_nid"
- - remove the comment "without panicking"
-
-v1 -> v2:
- - use memblock_alloc_exact_nid_raw() rather than using a flag
-
- include/linux/memblock.h |  3 +++
- mm/memblock.c            | 65 ++++++++++++++++++++++++++++++++++++++++--------
- mm/sparse.c              |  2 +-
- 3 files changed, 58 insertions(+), 12 deletions(-)
-
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index f491690..b38bbef 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -358,6 +358,9 @@ static inline phys_addr_t memblock_phys_alloc(phys_addr_t size,
- 					 MEMBLOCK_ALLOC_ACCESSIBLE);
- }
-
-+void *memblock_alloc_exact_nid_raw(phys_addr_t size, phys_addr_t align,
-+				 phys_addr_t min_addr, phys_addr_t max_addr,
-+				 int nid);
- void *memblock_alloc_try_nid_raw(phys_addr_t size, phys_addr_t align,
- 				 phys_addr_t min_addr, phys_addr_t max_addr,
- 				 int nid);
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 7d4f61a..0de9d83 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -1323,12 +1323,13 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
-  * @start: the lower bound of the memory region to allocate (phys address)
-  * @end: the upper bound of the memory region to allocate (phys address)
-  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
-+ * @exact_nid: control the allocation fall back to other nodes
-  *
-  * The allocation is performed from memory region limited by
-  * memblock.current_limit if @max_addr == %MEMBLOCK_ALLOC_ACCESSIBLE.
-  *
-- * If the specified node can not hold the requested memory the
-- * allocation falls back to any node in the system
-+ * If the specified node can not hold the requested memory and @exact_nid
-+ * is false, the allocation falls back to any node in the system
-  *
-  * For systems with memory mirroring, the allocation is attempted first
-  * from the regions with mirroring enabled and then retried from any
-@@ -1342,7 +1343,8 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
-  */
- static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
- 					phys_addr_t align, phys_addr_t start,
--					phys_addr_t end, int nid)
-+					phys_addr_t end, int nid,
-+					bool exact_nid)
- {
- 	enum memblock_flags flags = choose_memblock_flags();
- 	phys_addr_t found;
-@@ -1365,7 +1367,7 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
- 	if (found && !memblock_reserve(found, size))
- 		goto done;
-
--	if (nid != NUMA_NO_NODE) {
-+	if (nid != NUMA_NO_NODE && !exact_nid) {
- 		found = memblock_find_in_range_node(size, align, start,
- 						    end, NUMA_NO_NODE,
- 						    flags);
-@@ -1413,7 +1415,8 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
- 					     phys_addr_t start,
- 					     phys_addr_t end)
- {
--	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE);
-+	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE,
-+					false);
- }
-
- /**
-@@ -1432,7 +1435,7 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
- phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
- {
- 	return memblock_alloc_range_nid(size, align, 0,
--					MEMBLOCK_ALLOC_ACCESSIBLE, nid);
-+					MEMBLOCK_ALLOC_ACCESSIBLE, nid, false);
- }
-
- /**
-@@ -1442,6 +1445,7 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
-  * @min_addr: the lower bound of the memory region to allocate (phys address)
-  * @max_addr: the upper bound of the memory region to allocate (phys address)
-  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
-+ * @exact_nid: control the allocation fall back to other nodes
-  *
-  * Allocates memory block using memblock_alloc_range_nid() and
-  * converts the returned physical address to virtual.
-@@ -1457,7 +1461,7 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
- static void * __init memblock_alloc_internal(
- 				phys_addr_t size, phys_addr_t align,
- 				phys_addr_t min_addr, phys_addr_t max_addr,
--				int nid)
-+				int nid, bool exact_nid)
- {
- 	phys_addr_t alloc;
-
-@@ -1469,11 +1473,13 @@ static void * __init memblock_alloc_internal(
- 	if (WARN_ON_ONCE(slab_is_available()))
- 		return kzalloc_node(size, GFP_NOWAIT, nid);
-
--	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid);
-+	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid,
-+					exact_nid);
-
- 	/* retry allocation without lower limit */
- 	if (!alloc && min_addr)
--		alloc = memblock_alloc_range_nid(size, align, 0, max_addr, nid);
-+		alloc = memblock_alloc_range_nid(size, align, 0, max_addr, nid,
-+						exact_nid);
-
- 	if (!alloc)
- 		return NULL;
-@@ -1482,6 +1488,43 @@ static void * __init memblock_alloc_internal(
- }
-
- /**
-+ * memblock_alloc_exact_nid_raw - allocate boot memory block on the exact node
-+ * without zeroing memory
-+ * @size: size of memory block to be allocated in bytes
-+ * @align: alignment of the region and block's size
-+ * @min_addr: the lower bound of the memory region from where the allocation
-+ *	  is preferred (phys address)
-+ * @max_addr: the upper bound of the memory region from where the allocation
-+ *	      is preferred (phys address), or %MEMBLOCK_ALLOC_ACCESSIBLE to
-+ *	      allocate only from memory limited by memblock.current_limit value
-+ * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
-+ *
-+ * Public function, provides additional debug information (including caller
-+ * info), if enabled. Does not zero allocated memory.
-+ *
-+ * Return:
-+ * Virtual address of allocated memory block on success, NULL on failure.
-+ */
-+void * __init memblock_alloc_exact_nid_raw(
-+			phys_addr_t size, phys_addr_t align,
-+			phys_addr_t min_addr, phys_addr_t max_addr,
-+			int nid)
-+{
-+	void *ptr;
-+
-+	memblock_dbg("%s: %llu bytes align=0x%llx nid=%d from=%pa max_addr=%pa %pS\n",
-+		     __func__, (u64)size, (u64)align, nid, &min_addr,
-+		     &max_addr, (void *)_RET_IP_);
-+
-+	ptr = memblock_alloc_internal(size, align,
-+					   min_addr, max_addr, nid, true);
-+	if (ptr && size > 0)
-+		page_init_poison(ptr, size);
-+
-+	return ptr;
-+}
-+
-+/**
-  * memblock_alloc_try_nid_raw - allocate boot memory block without zeroing
-  * memory and without panicking
-  * @size: size of memory block to be allocated in bytes
-@@ -1512,7 +1555,7 @@ void * __init memblock_alloc_try_nid_raw(
- 		     &max_addr, (void *)_RET_IP_);
-
- 	ptr = memblock_alloc_internal(size, align,
--					   min_addr, max_addr, nid);
-+					   min_addr, max_addr, nid, false);
- 	if (ptr && size > 0)
- 		page_init_poison(ptr, size);
-
-@@ -1547,7 +1590,7 @@ void * __init memblock_alloc_try_nid(
- 		     __func__, (u64)size, (u64)align, nid, &min_addr,
- 		     &max_addr, (void *)_RET_IP_);
- 	ptr = memblock_alloc_internal(size, align,
--					   min_addr, max_addr, nid);
-+					   min_addr, max_addr, nid, false);
- 	if (ptr)
- 		memset(ptr, 0, size);
-
-diff --git a/mm/sparse.c b/mm/sparse.c
-index 72f010d..1a06471 100644
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@ -475,7 +475,7 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
- 	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
- 	WARN_ON(sparsemap_buf);	/* forgot to call sparse_buffer_fini()? */
- 	sparsemap_buf =
--		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
-+		memblock_alloc_exact_nid_raw(size, PAGE_SIZE,
- 						addr,
- 						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
- 	sparsemap_buf_end = sparsemap_buf + size;
--- 
-2.7.4
-
+Thanks a lot!
+Joey Lee 
