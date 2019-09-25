@@ -2,144 +2,400 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64F53BE8C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:05:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD184BE8CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731172AbfIYXFM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 19:05:12 -0400
-Received: from mail-io1-f41.google.com ([209.85.166.41]:42321 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731106AbfIYXFJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 19:05:09 -0400
-Received: by mail-io1-f41.google.com with SMTP id n197so1296989iod.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 16:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1YMz9ksrdQ7cPPABsA09urm67yr9R6IZjmvoUPzxwJQ=;
-        b=iXN5gYJ5HULpGN4jiBNeGuKrRsjjPCDh0f9k1OxW4Nd2WYGpXycEP3lfZM7IOa5V7u
-         zt9TqVjh2B9U+yS6H3EZEzn/YQrfGuLWwf5fAhfYC+MY1xW744IuTr1tyfLVi9r881CN
-         Mv+6lnH86+wahkV4TiXZQFpSCgltvSkdS2irA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1YMz9ksrdQ7cPPABsA09urm67yr9R6IZjmvoUPzxwJQ=;
-        b=oIvbDpWADzpegpGSQA6QXJs/7aT4OmpWr21kFDqfvJpmdRURXKgLkT3eZ81ekycuCL
-         Q5MbkNK48+PqfT5o3vyjOdaQDMGV4ps4XTs2vua+FSVMdoVQcvFZRhmhgt34UqlSCLNo
-         0EVKd5eog6nNJN1D00pjjfY4+90zfnqJ0ujBGPo2kYYiHTbcbq2CwVzSmSDhU375PGwN
-         lVUdiGtO8wrZ3jRlzzOIoVCOEi1o6nGMwsvN7/ohANHDS1Q6ZWi7LX5UTGZ8gIRD0lxX
-         9u9WsuSdJo9yU0NiQGY18eHMWDhJHcJZ6/ud26SdBJWC2VI0fJNtD4vNUhQyLfufF3BQ
-         0/yg==
-X-Gm-Message-State: APjAAAUeK2Z/cfhX2J1axaBPWuaUs+jZap0kqpf30/jsMfkHJUgseDR8
-        scRGIFYa8G3RN9OxjWiTken8M5gk3HI=
-X-Google-Smtp-Source: APXvYqxI6iUzKkSoQdTbZKd/TguAGEr6qe3KDzCOI+oNx8oHTnXanpvdTBRS99Rbw71WZEkv3zpnmg==
-X-Received: by 2002:a5d:9a16:: with SMTP id s22mr521750iol.79.1569452709196;
-        Wed, 25 Sep 2019 16:05:09 -0700 (PDT)
-Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id f23sm70767ioc.36.2019.09.25.16.05.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 16:05:08 -0700 (PDT)
-From:   Shuah Khan <skhan@linuxfoundation.org>
-To:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        shuah@kernel.org
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        linux-kbuild@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        id S1727415AbfIYXHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 19:07:54 -0400
+Received: from mx2.mailbox.org ([80.241.60.215]:37700 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726307AbfIYXHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 19:07:54 -0400
+Received: from smtp2.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 352AAA01BD;
+        Thu, 26 Sep 2019 01:07:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.240])
+        by spamfilter01.heinlein-hosting.de (spamfilter01.heinlein-hosting.de [80.241.56.115]) (amavisd-new, port 10030)
+        with ESMTP id k6CNMmxAREPJ; Thu, 26 Sep 2019 01:07:47 +0200 (CEST)
+Date:   Thu, 26 Sep 2019 01:07:26 +0200
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Christian Brauner <christian@brauner.io>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] selftests: Add kselftest_install target to main Makefile
-Date:   Wed, 25 Sep 2019 17:04:35 -0600
-Message-Id: <b3c50f4c726df521039f57295b53349227f629d9.1569452305.git.skhan@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1569452305.git.skhan@linuxfoundation.org>
-References: <cover.1569452305.git.skhan@linuxfoundation.org>
+Subject: Re: [PATCH v2 1/4] lib: introduce copy_struct_from_user() helper
+Message-ID: <20190925230726.psnejhuhf2hnr7bg@yavin>
+References: <20190925230332.18690-1-cyphar@cyphar.com>
+ <20190925230332.18690-2-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jvalwglzgyhvrmbg"
+Content-Disposition: inline
+In-Reply-To: <20190925230332.18690-2-cyphar@cyphar.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add kselftest_install target to install tests from the top level
-Makefile. This is to simplify kselftest use-cases for CI and
-distributions where build and test systems are different.
 
-This change addresses requests from developers and testers to add
-support for installing kselftest from the main Makefile.
+--jvalwglzgyhvrmbg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In addition, make the install directory the same when install is
-run using "make kselftest_install" or by running kselftest_install.sh.
-Also fix the INSTALL_PATH variable conflict between main Makefile.
+(Damn, I forgot to add Kees to Cc.)
 
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
----
- Makefile                                     | 4 ++++
- tools/testing/selftests/Makefile             | 8 ++++++--
- tools/testing/selftests/kselftest_install.sh | 4 ++--
- 3 files changed, 12 insertions(+), 4 deletions(-)
+On 2019-09-26, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> A common pattern for syscall extensions is increasing the size of a
+> struct passed from userspace, such that the zero-value of the new fields
+> result in the old kernel behaviour (allowing for a mix of userspace and
+> kernel vintages to operate on one another in most cases).
+>=20
+> While this interface exists for communication in both directions, only
+> one interface is straightforward to have reasonable semantics for
+> (userspace passing a struct to the kernel). For kernel returns to
+> userspace, what the correct semantics are (whether there should be an
+> error if userspace is unaware of a new extension) is very
+> syscall-dependent and thus probably cannot be unified between syscalls
+> (a good example of this problem is [1]).
+>=20
+> Previously there was no common lib/ function that implemented
+> the necessary extension-checking semantics (and different syscalls
+> implemented them slightly differently or incompletely[2]). Future
+> patches replace common uses of this pattern to make use of
+> copy_struct_from_user().
+>=20
+> Some in-kernel selftests that insure that the handling of alignment and
+> various byte patterns are all handled identically to memchr_inv() usage.
+>=20
+> [1]: commit 1251201c0d34 ("sched/core: Fix uclamp ABI bug, clean up and
+>      robustify sched_read_attr() ABI logic and code")
+>=20
+> [2]: For instance {sched_setattr,perf_event_open,clone3}(2) all do do
+>      similar checks to copy_struct_from_user() while rt_sigprocmask(2)
+>      always rejects differently-sized struct arguments.
+>=20
+> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  include/linux/bitops.h  |   7 +++
+>  include/linux/uaccess.h |   4 ++
+>  lib/strnlen_user.c      |   8 +--
+>  lib/test_user_copy.c    |  59 ++++++++++++++++++---
+>  lib/usercopy.c          | 115 ++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 180 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index cf074bce3eb3..a23f4c054768 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -4,6 +4,13 @@
+>  #include <asm/types.h>
+>  #include <linux/bits.h>
+> =20
+> +/* Set bits in the first 'n' bytes when loaded from memory */
+> +#ifdef __LITTLE_ENDIAN
+> +#  define aligned_byte_mask(n) ((1ul << 8*(n))-1)
+> +#else
+> +#  define aligned_byte_mask(n) (~0xfful << (BITS_PER_LONG - 8 - 8*(n)))
+> +#endif
+> +
+>  #define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
+>  #define BITS_TO_LONGS(nr)	DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
+> =20
+> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+> index 34a038563d97..824569e309e4 100644
+> --- a/include/linux/uaccess.h
+> +++ b/include/linux/uaccess.h
+> @@ -230,6 +230,10 @@ static inline unsigned long __copy_from_user_inatomi=
+c_nocache(void *to,
+> =20
+>  #endif		/* ARCH_HAS_NOCACHE_UACCESS */
+> =20
+> +extern int is_zeroed_user(const void __user *from, size_t count);
+> +extern int copy_struct_from_user(void *dst, size_t ksize,
+> +				 const void __user *src, size_t usize);
+> +
+>  /*
+>   * probe_kernel_read(): safely attempt to read from a location
+>   * @dst: pointer to the buffer that shall take the data
+> diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+> index 7f2db3fe311f..39d588aaa8cd 100644
+> --- a/lib/strnlen_user.c
+> +++ b/lib/strnlen_user.c
+> @@ -2,16 +2,10 @@
+>  #include <linux/kernel.h>
+>  #include <linux/export.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/bitops.h>
+> =20
+>  #include <asm/word-at-a-time.h>
+> =20
+> -/* Set bits in the first 'n' bytes when loaded from memory */
+> -#ifdef __LITTLE_ENDIAN
+> -#  define aligned_byte_mask(n) ((1ul << 8*(n))-1)
+> -#else
+> -#  define aligned_byte_mask(n) (~0xfful << (BITS_PER_LONG - 8 - 8*(n)))
+> -#endif
+> -
+>  /*
+>   * Do a strnlen, return length of string *with* final '\0'.
+>   * 'count' is the user-supplied count, while 'max' is the
+> diff --git a/lib/test_user_copy.c b/lib/test_user_copy.c
+> index 67bcd5dfd847..f7cde3845ccc 100644
+> --- a/lib/test_user_copy.c
+> +++ b/lib/test_user_copy.c
+> @@ -31,14 +31,58 @@
+>  # define TEST_U64
+>  #endif
+> =20
+> -#define test(condition, msg)		\
+> -({					\
+> -	int cond =3D (condition);		\
+> -	if (cond)			\
+> -		pr_warn("%s\n", msg);	\
+> -	cond;				\
+> +#define test(condition, msg, ...)					\
+> +({									\
+> +	int cond =3D (condition);						\
+> +	if (cond)							\
+> +		pr_warn("[%d] " msg "\n", __LINE__, ##__VA_ARGS__);	\
+> +	cond;								\
+>  })
+> =20
+> +static int test_is_zeroed_user(char *kmem, char __user *umem, size_t siz=
+e)
+> +{
+> +	int ret =3D 0;
+> +	size_t start, end, i;
+> +	size_t zero_start =3D size / 4;
+> +	size_t zero_end =3D size - zero_start;
+> +
+> +	/*
+> +	 * We conduct a series of is_zeroed_user() tests on a block of memory
+> +	 * with the following byte-pattern (trying every possible [start,end]
+> +	 * pair):
+> +	 *
+> +	 *   [ 00 ff 00 ff ... 00 00 00 00 ... ff 00 ff 00 ]
+> +	 *
+> +	 * And we verify that is_zeroed_user() acts identically to memchr_inv().
+> +	 */
+> +
+> +	for (i =3D 0; i < zero_start; i +=3D 2)
+> +		kmem[i] =3D 0x00;
+> +	for (i =3D 1; i < zero_start; i +=3D 2)
+> +		kmem[i] =3D 0xff;
+> +
+> +	for (i =3D zero_end; i < size; i +=3D 2)
+> +		kmem[i] =3D 0xff;
+> +	for (i =3D zero_end + 1; i < size; i +=3D 2)
+> +		kmem[i] =3D 0x00;
+> +
+> +	ret |=3D test(copy_to_user(umem, kmem, size),
+> +		    "legitimate copy_to_user failed");
+> +
+> +	for (start =3D 0; start <=3D size; start++) {
+> +		for (end =3D start; end <=3D size; end++) {
+> +			int retval =3D is_zeroed_user(umem + start, end - start);
+> +			int expected =3D memchr_inv(kmem + start, 0, end - start) =3D=3D NULL;
+> +
+> +			ret |=3D test(retval !=3D expected,
+> +				    "is_zeroed_user(=3D%d) !=3D memchr_inv(=3D%d) mismatch (start=3D=
+%lu, end=3D%lu)",
+> +				    retval, expected, start, end);
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int __init test_user_copy_init(void)
+>  {
+>  	int ret =3D 0;
+> @@ -106,6 +150,9 @@ static int __init test_user_copy_init(void)
+>  #endif
+>  #undef test_legit
+> =20
+> +	/* Test usage of is_zeroed_user(). */
+> +	ret |=3D test_is_zeroed_user(kmem, usermem, PAGE_SIZE);
+> +
+>  	/*
+>  	 * Invalid usage: none of these copies should succeed.
+>  	 */
+> diff --git a/lib/usercopy.c b/lib/usercopy.c
+> index c2bfbcaeb3dc..f795cf0946ad 100644
+> --- a/lib/usercopy.c
+> +++ b/lib/usercopy.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include <linux/uaccess.h>
+> +#include <linux/bitops.h>
+> =20
+>  /* out-of-line parts */
+> =20
+> @@ -31,3 +32,117 @@ unsigned long _copy_to_user(void __user *to, const vo=
+id *from, unsigned long n)
+>  }
+>  EXPORT_SYMBOL(_copy_to_user);
+>  #endif
+> +
+> +/**
+> + * is_zeroed_user: check if a userspace buffer is full of zeros
+> + * @from:  Source address, in userspace.
+> + * @size: Size of buffer.
+> + *
+> + * This is effectively shorthand for "memchr_inv(from, 0, size) =3D=3D N=
+ULL" for
+> + * userspace addresses. If there are non-zero bytes present then false is
+> + * returned, otherwise true is returned.
+> + *
+> + * Returns:
+> + *  * -EFAULT: access to userspace failed.
+> + */
+> +int is_zeroed_user(const void __user *from, size_t size)
+> +{
+> +	unsigned long val;
+> +	uintptr_t align =3D (uintptr_t) from % sizeof(unsigned long);
+> +
+> +	if (unlikely(!size))
+> +		return true;
+> +
+> +	from -=3D align;
+> +	size +=3D align;
+> +
+> +	if (!user_access_begin(from, size))
+> +		return -EFAULT;
+> +
+> +	unsafe_get_user(val, (unsigned long __user *) from, err_fault);
+> +	if (align)
+> +		val &=3D ~aligned_byte_mask(align);
+> +
+> +	while (size > sizeof(unsigned long)) {
+> +		if (unlikely(val))
+> +			goto done;
+> +
+> +		from +=3D sizeof(unsigned long);
+> +		size -=3D sizeof(unsigned long);
+> +
+> +		unsafe_get_user(val, (unsigned long __user *) from, err_fault);
+> +	}
+> +
+> +	if (size < sizeof(unsigned long))
+> +		val &=3D aligned_byte_mask(size);
+> +
+> +done:
+> +	user_access_end();
+> +	return (val =3D=3D 0);
+> +err_fault:
+> +	user_access_end();
+> +	return -EFAULT;
+> +}
+> +EXPORT_SYMBOL(is_zeroed_user);
+> +
+> +/**
+> + * copy_struct_from_user: copy a struct from userspace
+> + * @dst:   Destination address, in kernel space. This buffer must be @ks=
+ize
+> + *         bytes long.
+> + * @ksize: Size of @dst struct.
+> + * @src:   Source address, in userspace.
+> + * @usize: (Alleged) size of @src struct.
+> + *
+> + * Copies a struct from userspace to kernel space, in a way that guarant=
+ees
+> + * backwards-compatibility for struct syscall arguments (as long as futu=
+re
+> + * struct extensions are made such that all new fields are *appended* to=
+ the
+> + * old struct, and zeroed-out new fields have the same meaning as the old
+> + * struct).
+> + *
+> + * @ksize is just sizeof(*dst), and @usize should've been passed by user=
+space.
+> + * The recommended usage is something like the following:
+> + *
+> + *   SYSCALL_DEFINE2(foobar, const struct foo __user *, uarg, size_t, us=
+ize)
+> + *   {
+> + *      int err;
+> + *      struct foo karg =3D {};
+> + *
+> + *      err =3D copy_struct_from_user(&karg, sizeof(karg), uarg, size);
+> + *      if (err)
+> + *        return err;
+> + *
+> + *      // ...
+> + *   }
+> + *
+> + * There are three cases to consider:
+> + *  * If @usize =3D=3D @ksize, then it's copied verbatim.
+> + *  * If @usize < @ksize, then the userspace has passed an old struct to=
+ a
+> + *    newer kernel. The rest of the trailing bytes in @dst (@ksize - @us=
+ize)
+> + *    are to be zero-filled.
+> + *  * If @usize > @ksize, then the userspace has passed a new struct to =
+an
+> + *    older kernel. The trailing bytes unknown to the kernel (@usize - @=
+ksize)
+> + *    are checked to ensure they are zeroed, otherwise -E2BIG is returne=
+d.
+> + *
+> + * Returns (in all cases, some data may have been copied):
+> + *  * -E2BIG:  (@usize > @ksize) and there are non-zero trailing bytes i=
+n @src.
+> + *  * -EFAULT: access to userspace failed.
+> + */
+> +int copy_struct_from_user(void *dst, size_t ksize,
+> +			  const void __user *src, size_t usize)
+> +{
+> +	size_t size =3D min(ksize, usize);
+> +	size_t rest =3D max(ksize, usize) - size;
+> +
+> +	/* Deal with trailing bytes. */
+> +	if (usize < ksize) {
+> +		memset(dst + size, 0, rest);
+> +	} else if (usize > ksize) {
+> +		int ret =3D is_zeroed_user(src + size, rest);
+> +		if (ret <=3D 0)
+> +			return ret ?: -E2BIG;
+> +	}
+> +	/* Copy the interoperable parts of the struct. */
+> +	if (copy_from_user(dst, src, size))
+> +		return -EFAULT;
+> +	return 0;
+> +}
+> --=20
+> 2.23.0
+>=20
 
-diff --git a/Makefile b/Makefile
-index ac4af6fc4b50..65c62af6b6fa 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1241,6 +1241,10 @@ PHONY += kselftest
- kselftest:
- 	$(Q)$(MAKE) -C $(srctree)/tools/testing/selftests run_tests
- 
-+PHONY += kselftest_install
-+kselftest_install:
-+	$(Q)$(MAKE) -C $(srctree)/tools/testing/selftests install
-+
- PHONY += kselftest-clean
- kselftest-clean:
- 	$(Q)$(MAKE) -C $(srctree)/tools/testing/selftests clean
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index c3feccb99ff5..bad18145ed1a 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -171,9 +171,12 @@ run_pstore_crash:
- # 1. output_dir=kernel_src
- # 2. a separate output directory is specified using O= KBUILD_OUTPUT
- # 3. a separate output directory is specified using KBUILD_OUTPUT
-+# Avoid conflict with INSTALL_PATH set by the main Makefile
- #
--INSTALL_PATH ?= $(BUILD)/install
--INSTALL_PATH := $(abspath $(INSTALL_PATH))
-+KSFT_INSTALL_PATH ?= $(BUILD)/kselftest_install
-+KSFT_INSTALL_PATH := $(abspath $(KSFT_INSTALL_PATH))
-+# Avoid changing the rest of the logic here and lib.mk.
-+INSTALL_PATH := $(KSFT_INSTALL_PATH)
- ALL_SCRIPT := $(INSTALL_PATH)/run_kselftest.sh
- 
- install: all
-@@ -203,6 +206,7 @@ ifdef INSTALL_PATH
- 		echo "[ -w /dev/kmsg ] && echo \"kselftest: Running tests in $$TARGET\" >> /dev/kmsg" >> $(ALL_SCRIPT); \
- 		echo "cd $$TARGET" >> $(ALL_SCRIPT); \
- 		echo -n "run_many" >> $(ALL_SCRIPT); \
-+		echo -n "Emit Tests for $$TARGET\n"; \
- 		$(MAKE) -s --no-print-directory OUTPUT=$$BUILD_TARGET -C $$TARGET emit_tests >> $(ALL_SCRIPT); \
- 		echo "" >> $(ALL_SCRIPT);	    \
- 		echo "cd \$$ROOT" >> $(ALL_SCRIPT); \
-diff --git a/tools/testing/selftests/kselftest_install.sh b/tools/testing/selftests/kselftest_install.sh
-index ec304463883c..e2e1911d62d5 100755
---- a/tools/testing/selftests/kselftest_install.sh
-+++ b/tools/testing/selftests/kselftest_install.sh
-@@ -24,12 +24,12 @@ main()
- 		echo "$0: Installing in specified location - $install_loc ..."
- 	fi
- 
--	install_dir=$install_loc/kselftest
-+	install_dir=$install_loc/kselftest_install
- 
- # Create install directory
- 	mkdir -p $install_dir
- # Build tests
--	INSTALL_PATH=$install_dir make install
-+	KSFT_INSTALL_PATH=$install_dir make install
- }
- 
- main "$@"
--- 
-2.20.1
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--jvalwglzgyhvrmbg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXYvzKQAKCRCdlLljIbnQ
+EjidAQCyz4DMHzuSD4bL2DB3qMF3mvj2iz8nkzz3nmHQ7osMHwD+IoAOMUK1UkFn
+G8BnQSf1zIqMw/WtX3ySkGnLS5iEswY=
+=S0Tk
+-----END PGP SIGNATURE-----
+
+--jvalwglzgyhvrmbg--
