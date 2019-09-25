@@ -2,107 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B0F0BDE87
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 15:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41325BDE90
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 15:09:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406057AbfIYNHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 09:07:35 -0400
-Received: from mga09.intel.com ([134.134.136.24]:43240 "EHLO mga09.intel.com"
+        id S2391484AbfIYNJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 09:09:33 -0400
+Received: from foss.arm.com ([217.140.110.172]:49008 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405791AbfIYNHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 09:07:35 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 06:07:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,548,1559545200"; 
-   d="scan'208";a="390203184"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 25 Sep 2019 06:07:32 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1iD711-0004jE-Em; Wed, 25 Sep 2019 16:07:31 +0300
-Date:   Wed, 25 Sep 2019 16:07:31 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        tglx@linutronix.de, Enrico Weigelt <info@metux.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] mm, vmpressure: Fix a signedness bug in
- vmpressure_register_event()
-Message-ID: <20190925130731.GL5933@smile.fi.intel.com>
-References: <20190925110449.GO3264@mwanda>
+        id S2388199AbfIYNJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 09:09:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42D981570;
+        Wed, 25 Sep 2019 06:09:32 -0700 (PDT)
+Received: from arrakis.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 23B543F59C;
+        Wed, 25 Sep 2019 06:09:31 -0700 (PDT)
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+        ndesaulniers@google.com, Will Deacon <will@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] arm64: Allow disabling of the compat vDSO
+Date:   Wed, 25 Sep 2019 14:09:26 +0100
+Message-Id: <20190925130926.50674-1-catalin.marinas@arm.com>
+X-Mailer: git-send-email 2.23.0.rc0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925110449.GO3264@mwanda>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 02:04:49PM +0300, Dan Carpenter wrote:
-> The "mode" and "level" variables are enums and in this context GCC will
-> treat them as unsigned ints so the error handling is never triggered.
-> 
-> I also removed the bogus initializer because it isn't required any more
-> and it's sort of confusing.
-> 
+The compat vDSO building requires a cross-compiler than produces AArch32
+binaries, defined via CONFIG_CROSS_COMPILE_COMPAT_VDSO or the
+CROSS_COMPILE_COMPAT environment variable. If none of these is defined,
+building the kernel always prints a warning as there is no way to
+deselect the compat vDSO.
 
-Indeed, assembly code is different.
-Thank you for catching this!
+Add an arm64 Kconfig entry to allow the deselection of the compat vDSO.
+In addition, make it an EXPERT option, default n, until other issues
+with the compat vDSO are solved (64-bit only kernel headers included in
+user-space vDSO code, CC_IS_CLANG irrelevant to CROSS_COMPILE_COMPAT).
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: bfe801ebe84f ("arm64: vdso: Enable vDSO compat support")
+Cc: Will Deacon <will@kernel.org>
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+---
 
-> Fixes: 3cadfa2b9497 ("mm/vmpressure.c: convert to use match_string() helper")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  mm/vmpressure.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/vmpressure.c b/mm/vmpressure.c
-> index f3b50811497a..fe077500cf20 100644
-> --- a/mm/vmpressure.c
-> +++ b/mm/vmpressure.c
-> @@ -362,7 +362,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
->  	struct vmpressure *vmpr = memcg_to_vmpressure(memcg);
->  	struct vmpressure_event *ev;
->  	enum vmpressure_modes mode = VMPRESSURE_NO_PASSTHROUGH;
-> -	enum vmpressure_levels level = -1;
-> +	enum vmpressure_levels level;
->  	char *spec, *spec_orig;
->  	char *token;
->  	int ret = 0;
-> @@ -376,7 +376,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
->  	/* Find required level */
->  	token = strsep(&spec, ",");
->  	level = match_string(vmpressure_str_levels, VMPRESSURE_NUM_LEVELS, token);
-> -	if (level < 0) {
-> +	if ((int)level < 0) {
->  		ret = level;
->  		goto out;
->  	}
-> @@ -385,7 +385,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
->  	token = strsep(&spec, ",");
->  	if (token) {
->  		mode = match_string(vmpressure_str_modes, VMPRESSURE_NUM_MODES, token);
-> -		if (mode < 0) {
-> +		if ((int)mode < 0) {
->  			ret = mode;
->  			goto out;
->  		}
-> -- 
-> 2.20.1
-> 
+It looks like you can't really win with the current compat vDSO logic.
+You either don't have a compat cross-compiler and you get a Makefile
+warning or you have one and a get a compiler warning (or failure)
+because of the 64-bit kernel headers included in 32-bit user-space code.
 
--- 
-With Best Regards,
-Andy Shevchenko
+"depends on BROKEN" for ARM64_COMPAT_VDSO also work for me instead of
+EXPERT. I'll leave it up to Will to decide but I'd like at least this
+patch in -rc2 (even better if everything else is fixed before the final
+5.4).
 
+Suggestions for future improvements of the compat vDSO handling:
 
+- replace the CROSS_COMPILE_COMPAT prefix with a full COMPATCC; maybe
+  check that it indeed produces 32-bit code
+
+- check whether COMPATCC is clang or not rather than CC_IS_CLANG, which
+  only checks the native compiler
+
+- clean up the headers includes; vDSO should not include kernel-only
+  headers that may even contain code patched at run-time
+
+ arch/arm64/Kconfig | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 866e05882799..83a9a78085c6 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -110,7 +110,6 @@ config ARM64
+ 	select GENERIC_STRNLEN_USER
+ 	select GENERIC_TIME_VSYSCALL
+ 	select GENERIC_GETTIMEOFDAY
+-	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
+ 	select HANDLE_DOMAIN_IRQ
+ 	select HARDIRQS_SW_RESEND
+ 	select HAVE_PCI
+@@ -1185,6 +1184,15 @@ config KUSER_HELPERS
+ 	  Say N here only if you are absolutely certain that you do not
+ 	  need these helpers; otherwise, the safe option is to say Y.
+ 
++config ARM64_COMPAT_VDSO
++	bool "Enable the 32-bit vDSO" if EXPERT
++	depends on !CPU_BIG_ENDIAN
++	select GENERIC_COMPAT_VDSO
++	help
++	  Enable the vDSO support for 32-bit applications. You would
++	  need to set the 32-bit cross-compiler prefix in
++	  CONFIG_CROSS_COMPILE_COMPAT_VDSO or the CROSS_COMPILE_COMPAT
++	  environment variable.
+ 
+ menuconfig ARMV8_DEPRECATED
+ 	bool "Emulate deprecated/obsolete ARMv8 instructions"
