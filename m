@@ -2,202 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92C24BE5DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 21:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CDCEBE5E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 21:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392462AbfIYTs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 15:48:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731991AbfIYTs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 15:48:57 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AD55B2D7E1;
-        Wed, 25 Sep 2019 19:48:56 +0000 (UTC)
-Received: from [10.36.116.51] (ovpn-116-51.ams2.redhat.com [10.36.116.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 902A01001B12;
-        Wed, 25 Sep 2019 19:48:54 +0000 (UTC)
-Subject: Re: [PATCH v1] mm/memory_hotplug: Don't take the cpu_hotplug_lock
-To:     Qian Cai <cai@lca.pw>, Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20190924143615.19628-1-david@redhat.com>
- <1569337401.5576.217.camel@lca.pw> <20190924151147.GB23050@dhcp22.suse.cz>
- <1569351244.5576.219.camel@lca.pw>
- <2f8c8099-8de0-eccc-2056-a79d2f97fbf7@redhat.com>
- <1569427262.5576.225.camel@lca.pw> <20190925174809.GM23050@dhcp22.suse.cz>
- <1569435659.5576.227.camel@lca.pw>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
- BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
- 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
- xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
- jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
- s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
- m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
- MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
- z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
- dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
- UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
- 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
- uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
- 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
- 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
- xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
- 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
- hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
- u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
- gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
- rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
- BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
- KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
- NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
- YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
- lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
- qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
- C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
- W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
- TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
- +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <92bce3d4-0a3e-e157-529d-35aafbc30f3b@redhat.com>
-Date:   Wed, 25 Sep 2019 21:48:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <1569435659.5576.227.camel@lca.pw>
-Content-Type: text/plain; charset=utf-8
+        id S1732181AbfIYTtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 15:49:47 -0400
+Received: from mail-eopbgr1300113.outbound.protection.outlook.com ([40.107.130.113]:59860
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728074AbfIYTtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 15:49:46 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TA181yZylugyOlj6EuHfv6g8K4QfIWTJMHGcumaI5WP4aFmTmq+hePnarymDSFU912iGE68N41f8IpegZVVQVlnQqrE1c0c2QlRiiZqbeTQjQHu+Wd5sTx4Mr0CNp/f1QKvXkqRgdEJU6jyL7mpTUwI7N1jCMChDpqTs6qtAwBCa/wWpDAyP7AD+kla2ag8bibqOr0tEp6yG47qq2idZx6xaCLkq7W6BkWmsT+jiskz3QGAcFwDmaOOnWYXbGGT3kzyo/3BaSiNSf/jOlZPrQidR2V32pM63ra0J2YufU7M7lPdhVV51hR8s3PDntnGVCaiIzR3/l4NRM/J6AhbFqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5bfskzjJLR15mRWsaz/k8Oftg6hIZR+y3dvCVwvkIYA=;
+ b=iBUNIp1J22Hy0kT/iigjvBtbgGowVWWUCDXQwsXwfcc6oRPhR2S1U3gsCPY9/r5AHGoDGrG0b+g/LU8r0GR/Ofdh+UTMMG5WYDE3oa5J8GErRcye0CpNx04tv3BFjuEJUNXMp8McLCZ6WiQIEGXI8z3JSt5lWK+ICr03JrjpQ/1mzWuJoqh0zjHD3lDZrIFD1zKBkwpkBvSYwlIDQhg3CmLGEoqDcxex9wrzLFYxTRAAIpUf0Vwiu/9yFovISxe54iXkdr1lSwyEdowPbKGpjIB5Om+WhnFdQasqN25GSl+Yu6HG9d8BVSnneEwi32Ht7Ts+NHPiGM3nFiP6ud6vEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5bfskzjJLR15mRWsaz/k8Oftg6hIZR+y3dvCVwvkIYA=;
+ b=HqgulWK3EazpKWY2lFl36pNYKcrEBmrGizgfp8FUtqrGFYVWtd4Xs3+P8sX9PyYAXSCEHoMOPt2XOCGrZNMtcdXkgt52lAP4l8V1bvjoZHoehHmw1L7d2YfRK5yN72rnML+gFKJtxJx9+OWiCOfDFflOxREiVGwgTjagfmN4uz4=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0171.APCP153.PROD.OUTLOOK.COM (10.170.189.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2327.6; Wed, 25 Sep 2019 19:49:40 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::fc44:a784:73e6:c1c2]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::fc44:a784:73e6:c1c2%7]) with mapi id 15.20.2327.004; Wed, 25 Sep 2019
+ 19:49:41 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Dexuan Cui <decui@microsoft.com>,
+        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>
+Subject: RE: [PATCH] Input: hyperv-keyboard: Add the support of hibernation
+Thread-Topic: [PATCH] Input: hyperv-keyboard: Add the support of hibernation
+Thread-Index: AQHVbwXQRPtGDntMcU+sv4R8q5dPMac1q4VggAcpuMA=
+Date:   Wed, 25 Sep 2019 19:49:40 +0000
+Message-ID: <PU1P153MB01698478F34A45271B11D1CCBF870@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <1568244975-66795-1-git-send-email-decui@microsoft.com>
+ <20190919161752.GS237523@dtor-ws>
+ <PU1P153MB016914A7C827CA35D7FEB66ABF8B0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+In-Reply-To: <PU1P153MB016914A7C827CA35D7FEB66ABF8B0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 25 Sep 2019 19:48:56 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-21T06:56:02.6456740Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0b53eb3e-4c5d-47b9-a0ce-d9a5b854d83d;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:2:35f9:636:b84a:df21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 57c78eac-a195-433e-41f6-08d741f1816a
+x-ms-office365-filtering-ht: Tenant
+x-ms-traffictypediagnostic: PU1P153MB0171:|PU1P153MB0171:
+x-ms-exchange-transport-forked: True
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <PU1P153MB0171FB5DBA6047615A3A651BBF870@PU1P153MB0171.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:2150;
+x-forefront-prvs: 01713B2841
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(376002)(366004)(136003)(346002)(39860400002)(199004)(189003)(54534003)(6116002)(102836004)(14454004)(966005)(478600001)(54906003)(110136005)(10290500003)(486006)(10090500001)(52536014)(476003)(316002)(86362001)(8990500004)(446003)(66476007)(66446008)(11346002)(81166006)(81156014)(1511001)(8676002)(22452003)(66946007)(76116006)(8936002)(66556008)(64756008)(71200400001)(2906002)(107886003)(99286004)(9686003)(2501003)(14444005)(6506007)(7696005)(53546011)(76176011)(256004)(6246003)(7736002)(46003)(55016002)(25786009)(6436002)(5660300002)(4326008)(305945005)(71190400001)(6306002)(186003)(74316002)(229853002)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0171;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: oRmrNcDkEPjgc/K2Fu/AKaPQbLg2pVYE8yMohZr+Z7WCa1MpuDlsOI4PWQeTS5OIfbfnoV0PWzIp5mdaZbjuvUoqgj4980pvqbgWj44JzqwMWT1n8OdjnZd64EfqtrU/Z04xCU29nWVrGowXl0D26U0OuxS4yKS2T0JgrhIoeK/lH5ZImTXf0We2ewy58+aepNDxStg/TFqnOpB6XMPNHAum05f43DeRz9ewGIKfDQ/eN2idF4cKJvfPSFDl+uanlG+aywE1JiYOE93VY9Hz9x5/3mCmLnQ3m1XyogFE5QR44apTgS58NGehRzg+SAixCfwZ+mMC8qcCtn5GyaXGYsMMbf6uLolpY0/ho0C2xv2MPSLomh5qg7NT27U5STbNFwpI3ldBD1LYh/Vzi7HHB6TNlmqXbY7JNzCNnefy10hcry4fK1wr2xl3XhPxM7zSGYRSDzoYvuqSpUpW/R3zRw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57c78eac-a195-433e-41f6-08d741f1816a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2019 19:49:40.5555
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hNdj5679NIsIrreTuJneaQYQ6u30KRTy5JuqqD7t0H/3nL57NLG4ZClwjWl4KozfVxuTbigXsoGMf5G3zLYaLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.09.19 20:20, Qian Cai wrote:
-> On Wed, 2019-09-25 at 19:48 +0200, Michal Hocko wrote:
->> On Wed 25-09-19 12:01:02, Qian Cai wrote:
->>> On Wed, 2019-09-25 at 09:02 +0200, David Hildenbrand wrote:
->>>> On 24.09.19 20:54, Qian Cai wrote:
->>>>> On Tue, 2019-09-24 at 17:11 +0200, Michal Hocko wrote:
->>>>>> On Tue 24-09-19 11:03:21, Qian Cai wrote:
->>>>>> [...]
->>>>>>> While at it, it might be a good time to rethink the whole locking over there, as
->>>>>>> it right now read files under /sys/kernel/slab/ could trigger a possible
->>>>>>> deadlock anyway.
->>>>>>>
->>>>>>
->>>>>> [...]
->>>>>>> [  442.452090][ T5224] -> #0 (mem_hotplug_lock.rw_sem){++++}:
->>>>>>> [  442.459748][ T5224]        validate_chain+0xd10/0x2bcc
->>>>>>> [  442.464883][ T5224]        __lock_acquire+0x7f4/0xb8c
->>>>>>> [  442.469930][ T5224]        lock_acquire+0x31c/0x360
->>>>>>> [  442.474803][ T5224]        get_online_mems+0x54/0x150
->>>>>>> [  442.479850][ T5224]        show_slab_objects+0x94/0x3a8
->>>>>>> [  442.485072][ T5224]        total_objects_show+0x28/0x34
->>>>>>> [  442.490292][ T5224]        slab_attr_show+0x38/0x54
->>>>>>> [  442.495166][ T5224]        sysfs_kf_seq_show+0x198/0x2d4
->>>>>>> [  442.500473][ T5224]        kernfs_seq_show+0xa4/0xcc
->>>>>>> [  442.505433][ T5224]        seq_read+0x30c/0x8a8
->>>>>>> [  442.509958][ T5224]        kernfs_fop_read+0xa8/0x314
->>>>>>> [  442.515007][ T5224]        __vfs_read+0x88/0x20c
->>>>>>> [  442.519620][ T5224]        vfs_read+0xd8/0x10c
->>>>>>> [  442.524060][ T5224]        ksys_read+0xb0/0x120
->>>>>>> [  442.528586][ T5224]        __arm64_sys_read+0x54/0x88
->>>>>>> [  442.533634][ T5224]        el0_svc_handler+0x170/0x240
->>>>>>> [  442.538768][ T5224]        el0_svc+0x8/0xc
->>>>>>
->>>>>> I believe the lock is not really needed here. We do not deallocated
->>>>>> pgdat of a hotremoved node nor destroy the slab state because an
->>>>>> existing slabs would prevent hotremove to continue in the first place.
->>>>>>
->>>>>> There are likely details to be checked of course but the lock just seems
->>>>>> bogus.
->>>>>
->>>>> Check 03afc0e25f7f ("slab: get_online_mems for
->>>>> kmem_cache_{create,destroy,shrink}"). It actually talk about the races during
->>>>> memory as well cpu hotplug, so it might even that cpu_hotplug_lock removal is
->>>>> problematic?
->>>>>
->>>>
->>>> Which removal are you referring to? get_online_mems() does not mess with
->>>> the cpu hotplug lock (and therefore this patch).
->>>
->>> The one in your patch. I suspect there might be races among the whole NUMA node
->>> hotplug, kmem_cache_create, and show_slab_objects(). See bfc8c90139eb ("mem-
->>> hotplug: implement get/put_online_mems")
->>>
->>> "kmem_cache_{create,destroy,shrink} need to get a stable value of cpu/node
->>> online mask, because they init/destroy/access per-cpu/node kmem_cache parts,
->>> which can be allocated or destroyed on cpu/mem hotplug."
->>
->> I still have to grasp that code but if the slub allocator really needs
->> a stable cpu mask then it should be using the explicit cpu hotplug
->> locking rather than rely on side effect of memory hotplug locking.
->>
->>> Both online_pages() and show_slab_objects() need to get a stable value of
->>> cpu/node online mask.
->>
->> Could tou be more specific why online_pages need a stable cpu online
->> mask? I do not think that show_slab_objects is a real problem because a
->> potential race shouldn't be critical.
-> 
-> build_all_zonelists()
->   __build_all_zonelists()
->     for_each_online_cpu(cpu)
-> 
+> From: linux-hyperv-owner@vger.kernel.org
+> <linux-hyperv-owner@vger.kernel.org> On Behalf Of Dexuan Cui
+> Sent: Friday, September 20, 2019 11:56 PM
+> To: dmitry.torokhov@gmail.com
+> Cc: KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
+> <haiyangz@microsoft.com>; Stephen Hemminger
+> <sthemmin@microsoft.com>; sashal@kernel.org;
+> linux-hyperv@vger.kernel.org; linux-input@vger.kernel.org;
+> linux-kernel@vger.kernel.org; Michael Kelley <mikelley@microsoft.com>
+> Subject: RE: [PATCH] Input: hyperv-keyboard: Add the support of hibernati=
+on
+>=20
+> > From: dmitry.torokhov@gmail.com <dmitry.torokhov@gmail.com>
+> > Sent: Thursday, September 19, 2019 9:18 AM
+> >
+> > Hi Dexuan,
+> >
+> > On Wed, Sep 11, 2019 at 11:36:20PM +0000, Dexuan Cui wrote:
+> > > We need hv_kbd_pm_notify() to make sure the pm_wakeup_hard_event()
+> > call
+> > > does not prevent the system from entering hibernation: the hibernatio=
+n
+> > > is a relatively long process, which can be aborted by the call
+> > > pm_wakeup_hard_event(), which is invoked upon keyboard events.
+> > >
+> > > diff --git a/drivers/input/serio/hyperv-keyboard.c
+> > b/drivers/input/serio/hyperv-keyboard.c
+> > > index 88ae7c2..277dc4c 100644
+> > > --- a/drivers/input/serio/hyperv-keyboard.c
+> > > +++ b/drivers/input/serio/hyperv-keyboard.c
+> > > @@ -10,6 +10,7 @@
+> > >  #include <linux/hyperv.h>
+> > >  #include <linux/serio.h>
+> > >  #include <linux/slab.h>
+> > > +#include <linux/suspend.h>
+> > >
+> > >  /*
+> > >   * Current version 1.0
+> > > @@ -95,6 +96,9 @@ struct hv_kbd_dev {
+> > >  	struct completion wait_event;
+> > >  	spinlock_t lock; /* protects 'started' field */
+> > >  	bool started;
+> > > +
+> > > +	struct notifier_block pm_nb;
+> > > +	bool hibernation_in_progress;
+> >
+> > Why do you use notifier block instead of exposing proper PM methods if
+> > you want to support hibernation?
+> >
+> > Dmitry
+>=20
+> Hi,
+> In the patch I do implement hv_kbd_suspend() and hv_kbd_resume(), and
+> add them into the hv_kbd_drv struct:
+>=20
+> @@ -416,6 +472,8 @@ static struct  hv_driver hv_kbd_drv =3D {
+>         .id_table =3D id_table,
+>         .probe =3D hv_kbd_probe,
+>         .remove =3D hv_kbd_remove,
+> +       .suspend =3D hv_kbd_suspend,
+> +       .resume =3D hv_kbd_resume,
+>=20
+> The .suspend and .resume callbacks are inroduced by another patch (which
+> uses the dev_pm_ops struct):
+> 271b2224d42f ("Drivers: hv: vmbus: Implement suspend/resume for VSC
+> drivers for hibernation")
+> (which is on the Hyper-V tree's hyperv-next branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git/commit/?=
+h=3Dhyperv-next&id=3D271b2224d42f88870e6b060924ee374871c131fc
+> )
+>=20
+> The only purpose of the notifier is to set the variable
+> kbd_dev->hibernation_in_progress to true during the hibernation process.
+>=20
+> As I explained in the changelog, the hibernation is a long process (which
+> can take 10+ seconds), during which the user may unintentionally touch
+> the keyboard, causing key up/down events, which are still handled by
+> hv_kbd_on_receive(), which calls pm_wakeup_hard_event(), which
+> calls some other functions which increase the global counter
+> "pm_abort_suspend", and hence pm_wakeup_pending() becomes true.
+>=20
+> pm_wakeup_pending() is tested in a lot of places in the suspend
+> process and eventually an unintentional keystroke (or mouse movement,
+> when it comes to the Hyper-V mouse driver drivers/hid/hid-hyperv.c)
+> causes the whole hibernation process to be aborted. Usually this
+> behavior is not expected by the user, I think.
+>=20
+> So, I use the notifier to set the flag variable and with it the driver ca=
+n
+> know when it should not call pm_wakeup_hard_event().
+>=20
+> -- Dexuan
 
-Two things:
-
-a) We currently always hold the device hotplug lock when onlining memory
-and when onlining cpus (for CPUs at least via user space - we would have
-to double check other call paths). So theoretically, that should guard
-us from something like that already.
-
-b)
-
-commit 11cd8638c37f6c400cc472cc52b6eccb505aba6e
-Author: Michal Hocko <mhocko@suse.com>
-Date:   Wed Sep 6 16:20:34 2017 -0700
-
-    mm, page_alloc: remove stop_machine from build_all_zonelists
-
-Tells me:
-
-"Updates of the zonelists happen very seldom, basically only when a zone
- becomes populated during memory online or when it loses all the memory
- during offline.  A racing iteration over zonelists could either miss a
- zone or try to work on one zone twice.  Both of these are something we
- can live with occasionally because there will always be at least one
- zone visible so we are not likely to fail allocation too easily for
- example."
-
-Sounds like if there would be a race, we could live with it if I am not
-getting that totally wrong.
-
--- 
+Hi Dmitry,
+Does my answer make sense? If yes, can I have an Acked-by from you?
 
 Thanks,
-
-David / dhildenb
+-- Dexuan
