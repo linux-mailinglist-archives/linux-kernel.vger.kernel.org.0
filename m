@@ -2,83 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1789ABE142
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 17:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F7B6BE14E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 17:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbfIYP1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 11:27:54 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46755 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbfIYP1x (ORCPT
+        id S2439746AbfIYP3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 11:29:23 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44259 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728113AbfIYP3W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 11:27:53 -0400
-Received: by mail-io1-f65.google.com with SMTP id c6so14843315ioo.13
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 08:27:51 -0700 (PDT)
+        Wed, 25 Sep 2019 11:29:22 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i18so7433283wru.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 08:29:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2+zHjBJOK/Ikhp7L/0qx76YfF7Qn9O6VldPJapiJGlI=;
-        b=FGVJ2tpPz/6hyiob5/CLxDUtNIS1KBhHsg6QTIgJ9RdZMdsF7QtzqIj2dUsEmzw8Xp
-         IXB1WrZXpLkCp6jffgW+LDiOymFzysyoTGw2XuDsibzHOCWeFS4yPhcwqhWMqH6eHuEB
-         p799Kbz/UvkUS8MMgYgd3ac6+cXMSSWCmnhpCgFTS8aoH7YihDLoxFc8ZlLz9ISByN68
-         pT+m6U7GChTAranD/5OAOhmtM8Ycq5wfQT5Kf7MZ0tyKugnkC/VmZD4YNvMfDs8bxrnX
-         TOjcLrG2OgNQpS83nZgTI6xG+PmdBe8KJhupOKlV4Ko83qLnEOiCvJRE72+y/x/73hAi
-         BP5A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LbH1JRsE5gNzk5r+HOai2FAWFvIqOQyEdzFA3kJ7aIM=;
+        b=oHS3VjAECmGmMqMZ3iEEidrVarDdrXO6OQ9B7/lbkNCoLhAtpnb1Yk/NTBHjx+kTPJ
+         P32IgqhLdOTctj8lS60GThdHB4sZlozMGmTKJMFC37QVH2QOMP7QYMqIxa4vucJO6Dio
+         8iascMWvSwkXYVF2LYTiIPq6zSOUMljmzKaZyylnlc8fbWRGODlHQgYQa0PaSQwtKtN1
+         QM0/HSEeH8R3YJO4jNj/QOfrtMTrzjwlALTFY3FyOiCvE+eeYLkylRKW+G804eKFFXTY
+         M1Deq29dgXgl05zKwgTGMJ5rvZzb/KUtf+WACyL4JRVq8T5iHvl+TqtPI0rA0nNZpsrR
+         cmfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2+zHjBJOK/Ikhp7L/0qx76YfF7Qn9O6VldPJapiJGlI=;
-        b=NJNS86fNscGZmht92p1SUGO8IE4G8kPyTjGE9V3dzwIbavtSKUL32A6AN3meYtfaeL
-         6dxHGTzG+lnpu5YkpTszIEcDi/4bvAMwCHA7zKj9D7TwoJHk1lyeEwFu55vkBCtUKutj
-         qIRLhjWJ4VjM7Zy6EjnK1gBHtPKTS9btdM6jDTxsFOEsHlchLQBuSoFzDkPF4kKOXch8
-         7ISQDWRAi5VZTEqjii5lbhyC/9wXD2tBQ1tbmudbvdJY+LnbhJS1zE3RGgwd0QydeLJq
-         gOKdxq1rRD4r8yFePOtMgp+mqd/79rsPrhN9tz96sNmlwfcFjJHfu1IFonIVle7k8lH8
-         tHrw==
-X-Gm-Message-State: APjAAAXNNNNgx0zKvqf45PsGjLjNCxlNLggmWExmu6NpWEHicDa+ePMq
-        xWIfsiAF4UyyUBez+OKIFeM=
-X-Google-Smtp-Source: APXvYqzp3ccougPfL2l0BTcmUQrF3WVO+YxQ1XS6EjNndJp1/fLSWNtvaA9dSrXYvvcWcOYQShRiRQ==
-X-Received: by 2002:a92:3dd0:: with SMTP id k77mr897317ilf.154.1569425271293;
-        Wed, 25 Sep 2019 08:27:51 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id f5sm4881239ioh.87.2019.09.25.08.27.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 08:27:50 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] misc: fastrpc: prevent memory leak in fastrpc_dma_buf_attach
-Date:   Wed, 25 Sep 2019 10:27:41 -0500
-Message-Id: <20190925152742.16258-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LbH1JRsE5gNzk5r+HOai2FAWFvIqOQyEdzFA3kJ7aIM=;
+        b=h0NIgq2NTyygq/LoZbbKcH3mGcIYLjeiSRD9/fc5P0oFdr+7PipZSzTct9ulRFvgUh
+         rMFg+HygvRF+H8GOXTCGdTSoxXHHp0ZaCY5omtKZCH1GMd+H66Xb3b6MtjGXDF5HIY+E
+         ao2q70ri+hlFUnyalT5wW/7dqaiQ/DQpYn1rAdgcq5NV0ThEY7zkl4wB7+Qu2x+hI3eI
+         vyYSdYWZnozL27Q/UBRriuwDMYpFRkvbqm0DPdcXe9coKLNhtbc4T/o+T30FsUAS+8B4
+         eVGI3vAfJ2MJ2kB3j5rV2D7IJxlln32U5X9VD05u0j2/UjtyCPEaaT+Zna0eUYTm9qQc
+         uM6A==
+X-Gm-Message-State: APjAAAVhN09zaRMsaBrDgy7YLAwHJohR7NQ7tlO4hLsKnRUK0cH8OaK6
+        LFGo9mr2uoTc+WgdB34HjoU8wspesC83Crmbk8/ZPQ==
+X-Google-Smtp-Source: APXvYqyYWffK09yJ7cnY0gJYYdcBl2WjFnmEgGos4uhahh/oCQSf21nPqCg5cjdbAff0Y+/eZcRAh8goLL+TeDOlrbY=
+X-Received: by 2002:adf:fe88:: with SMTP id l8mr9484640wrr.32.1569425359779;
+ Wed, 25 Sep 2019 08:29:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <775bcf46-0f4e-a1a9-5a40-05f833cd7a1a@huawei.com>
+In-Reply-To: <775bcf46-0f4e-a1a9-5a40-05f833cd7a1a@huawei.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 25 Sep 2019 17:29:08 +0200
+Message-ID: <CAKv+Gu-dd5=TJ62GtCvZ5iPTRjqjSpPwx-oNQJ2dv9ZBHB0c8Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] efi: Add efi_memmap_free() to free EFI memory map
+To:     Yunfeng Ye <yeyunfeng@huawei.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In fastrpc_dma_buf_attach if dma_get_sgtable fails the allocated memory
-for a should be released.
+On Wed, 25 Sep 2019 at 11:17, Yunfeng Ye <yeyunfeng@huawei.com> wrote:
+>
+> In efi_fake_memmap(), the commit 20b1e22d01a4 ("x86/efi: Don't allocate
+> memmap through memblock after mm_init()") replace memblock_alloc() with
+> efi_memmap_alloc(), but there is no matching modification of
+> memblock_free() when early_memremap() fail.
+>
+> Fix this by adding efi_memmap_free() to instead of memblock_free().
+>
+> Fixes: 20b1e22d01a4 ("x86/efi: Don't allocate memmap through memblock after mm_init()")
+> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/misc/fastrpc.c | 1 +
- 1 file changed, 1 insertion(+)
+What happens if you try to call efi_memmap_free() /after/ slab has
+become available on an allocation that was created before?
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 47ae84afac2e..1b1a794d639d 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -527,6 +527,7 @@ static int fastrpc_dma_buf_attach(struct dma_buf *dmabuf,
- 			      FASTRPC_PHYS(buffer->phys), buffer->size);
- 	if (ret < 0) {
- 		dev_err(buffer->dev, "failed to get scatterlist from DMA API\n");
-+		kfree(a);
- 		return -EINVAL;
- 	}
- 
--- 
-2.17.1
-
+> ---
+>  drivers/firmware/efi/fake_mem.c |  2 +-
+>  drivers/firmware/efi/memmap.c   | 34 ++++++++++++++++++++++++++++++++++
+>  include/linux/efi.h             |  1 +
+>  3 files changed, 36 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/fake_mem.c b/drivers/firmware/efi/fake_mem.c
+> index 9501edc..c2f69f6 100644
+> --- a/drivers/firmware/efi/fake_mem.c
+> +++ b/drivers/firmware/efi/fake_mem.c
+> @@ -65,7 +65,7 @@ void __init efi_fake_memmap(void)
+>         new_memmap = early_memremap(new_memmap_phy,
+>                                     efi.memmap.desc_size * new_nr_map);
+>         if (!new_memmap) {
+> -               memblock_free(new_memmap_phy, efi.memmap.desc_size * new_nr_map);
+> +               efi_memmap_free(new_memmap_phy, new_nr_map);
+>                 return;
+>         }
+>
+> diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+> index 38b686c..35dc189 100644
+> --- a/drivers/firmware/efi/memmap.c
+> +++ b/drivers/firmware/efi/memmap.c
+> @@ -18,6 +18,11 @@ static phys_addr_t __init __efi_memmap_alloc_early(unsigned long size)
+>         return memblock_phys_alloc(size, SMP_CACHE_BYTES);
+>  }
+>
+> +static void __init __efi_memmap_free_early(phys_addr_t addr, unsigned long size)
+> +{
+> +       memblock_free(addr, size);
+> +}
+> +
+>  static phys_addr_t __init __efi_memmap_alloc_late(unsigned long size)
+>  {
+>         unsigned int order = get_order(size);
+> @@ -29,6 +34,15 @@ static phys_addr_t __init __efi_memmap_alloc_late(unsigned long size)
+>         return PFN_PHYS(page_to_pfn(p));
+>  }
+>
+> +static void __init __efi_memmap_free_late(phys_addr_t addr, unsigned long size)
+> +{
+> +       unsigned int order = get_order(size);
+> +       struct page *p = pfn_to_page(PHYS_PFN(addr));
+> +
+> +       if (p)
+> +               __free_pages(p, order);
+> +}
+> +
+>  /**
+>   * efi_memmap_alloc - Allocate memory for the EFI memory map
+>   * @num_entries: Number of entries in the allocated map.
+> @@ -50,6 +64,26 @@ phys_addr_t __init efi_memmap_alloc(unsigned int num_entries)
+>  }
+>
+>  /**
+> + * efi_memmap_free - Free memory for the EFI memory map
+> + * @addr: Physical address of the EFI memory map to be freed.
+> + * @num_entries: Number of the EFI memory map entries.
+> + *
+> + * Depending on whether mm_init() has already been invoked or not,
+> + * either memblock or "normal" page free is used.
+> + */
+> +void __init efi_memmap_free(phys_addr_t addr, unsigned int num_entries)
+> +{
+> +       unsigned long size = num_entries * efi.memmap.desc_size;
+> +
+> +       if (slab_is_available()) {
+> +               __efi_memmap_free_late(addr, size);
+> +
+> +               return;
+> +       }
+> +       __efi_memmap_free_early(addr, size);
+> +}
+> +
+> +/**
+>   * __efi_memmap_init - Common code for mapping the EFI memory map
+>   * @data: EFI memory map data
+>   * @late: Use early or late mapping function?
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index bd38370..8bb741a 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -1057,6 +1057,7 @@ static inline efi_status_t efi_query_variable_store(u32 attributes,
+>  extern void __iomem *efi_lookup_mapped_addr(u64 phys_addr);
+>
+>  extern phys_addr_t __init efi_memmap_alloc(unsigned int num_entries);
+> +extern void __init efi_memmap_free(phys_addr_t addr, unsigned int num_entries);
+>  extern int __init efi_memmap_init_early(struct efi_memory_map_data *data);
+>  extern int __init efi_memmap_init_late(phys_addr_t addr, unsigned long size);
+>  extern void __init efi_memmap_unmap(void);
+> --
+> 1.8.3.1
+>
