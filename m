@@ -2,63 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DD4BBDE16
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 14:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1FCBDE29
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 14:37:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405690AbfIYMc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 08:32:58 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38000 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405486AbfIYMc5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 08:32:57 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iD6TV-0000Dx-Hb; Wed, 25 Sep 2019 12:32:53 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: gyro: clean up indentation issue
-Date:   Wed, 25 Sep 2019 13:32:53 +0100
-Message-Id: <20190925123253.11944-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1732259AbfIYMhk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 08:37:40 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57258 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726369AbfIYMhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 08:37:40 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 79294FA05F0609B81877;
+        Wed, 25 Sep 2019 20:37:38 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 25 Sep 2019
+ 20:37:37 +0800
+To:     <apw@canonical.com>, <mingo@kernel.org>, <joe@perches.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Subject: [PATCH] toplevel: Move ipc/ to kernel/ipc/: don't check the ipc dir
+Message-ID: <04acff22-430b-9ed7-f700-b644c0632cdd@huawei.com>
+Date:   Wed, 25 Sep 2019 20:37:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+After the commit 76128326f97c ("toplevel: Move ipc/ to kernel/ipc/: move
+the files"), we met some error messages:
 
-There is a return statement that is indented incorrectly, add in
-the missing tab.
+  ./scripts/checkpatch.pl:
+  "Must be run from the top-level dir. of a kernel tree"
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  ./scripts/get_maintainer.pl:
+  "The current directory does not appear to be a linux kernel source tree.
+
+Don't check the ipc dir in checkpatch.pl and get_maintainer.pl.
+
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
 ---
- drivers/iio/gyro/itg3200_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/checkpatch.pl     | 2 +-
+ scripts/get_maintainer.pl | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/iio/gyro/itg3200_core.c b/drivers/iio/gyro/itg3200_core.c
-index 998fb8d66fe3..981ae2291505 100644
---- a/drivers/iio/gyro/itg3200_core.c
-+++ b/drivers/iio/gyro/itg3200_core.c
-@@ -154,7 +154,7 @@ static int itg3200_write_raw(struct iio_dev *indio_dev,
- 					  t);
- 
- 		mutex_unlock(&indio_dev->mlock);
--	return ret;
-+		return ret;
- 
- 	default:
- 		return -EINVAL;
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 93a7edf..6117d0e 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -1097,7 +1097,7 @@ sub top_of_kernel_tree {
+ 	my @tree_check = (
+ 		"COPYING", "CREDITS", "Kbuild", "MAINTAINERS", "Makefile",
+ 		"README", "Documentation", "arch", "include", "drivers",
+-		"fs", "init", "ipc", "kernel", "lib", "scripts",
++		"fs", "init", "kernel", "lib", "scripts",
+ 	);
+
+ 	foreach my $check (@tree_check) {
+diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
+index 5ef5921..2e42aeb 100755
+--- a/scripts/get_maintainer.pl
++++ b/scripts/get_maintainer.pl
+@@ -1109,7 +1109,6 @@ sub top_of_kernel_tree {
+ 	&& (-d "${lk_path}drivers")
+ 	&& (-d "${lk_path}fs")
+ 	&& (-d "${lk_path}init")
+-	&& (-d "${lk_path}ipc")
+ 	&& (-d "${lk_path}kernel")
+ 	&& (-d "${lk_path}lib")
+ 	&& (-d "${lk_path}scripts")) {
 -- 
-2.20.1
+2.7.4
 
