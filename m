@@ -2,137 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22A2BBE14B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 17:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D59BBBE0F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 17:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439665AbfIYP3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 11:29:05 -0400
-Received: from mga03.intel.com ([134.134.136.65]:20433 "EHLO mga03.intel.com"
+        id S2438739AbfIYPNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 11:13:22 -0400
+Received: from fieldses.org ([173.255.197.46]:60570 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2439623AbfIYP3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 11:29:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 08:28:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,548,1559545200"; 
-   d="scan'208";a="196032288"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by FMSMGA003.fm.intel.com with ESMTP; 25 Sep 2019 08:28:58 -0700
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [PATCH 6/6] x86/fpu/xstate: Rename validate_xstate_header() to validate_xstate_header_from_user()
-Date:   Wed, 25 Sep 2019 08:10:22 -0700
-Message-Id: <20190925151022.21688-7-yu-cheng.yu@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190925151022.21688-1-yu-cheng.yu@intel.com>
-References: <20190925151022.21688-1-yu-cheng.yu@intel.com>
+        id S1726287AbfIYPNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 11:13:22 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 1D0981511; Wed, 25 Sep 2019 11:13:22 -0400 (EDT)
+Date:   Wed, 25 Sep 2019 11:13:22 -0400
+From:   "J . Bruce Fields" <bfields@fieldses.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sunrpc: clean up indentation issue
+Message-ID: <20190925151322.GA8581@fieldses.org>
+References: <20190925130930.13076-1-colin.king@canonical.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925130930.13076-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fenghua Yu <fenghua.yu@intel.com>
+Applied, thanks.--b.
 
-The function validate_xstate_header() validates an xstate header coming
-from userspace (PTRACE or sigreturn).  To make it clear, rename it to
-validate_xstate_header_from_user().
-
-Suggested-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/asm/fpu/xstate.h | 2 +-
- arch/x86/kernel/fpu/regset.c      | 2 +-
- arch/x86/kernel/fpu/signal.c      | 2 +-
- arch/x86/kernel/fpu/xstate.c      | 6 +++---
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
-index 5954bd97da16..45df38043600 100644
---- a/arch/x86/include/asm/fpu/xstate.h
-+++ b/arch/x86/include/asm/fpu/xstate.h
-@@ -72,6 +72,6 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf);
- int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf);
- 
- /* Validate an xstate header supplied by userspace (ptrace or sigreturn) */
--extern int validate_xstate_header(const struct xstate_header *hdr);
-+int validate_xstate_header_from_user(const struct xstate_header *hdr);
- 
- #endif
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index d652b939ccfb..9789f95cfb66 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -139,7 +139,7 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
- 	} else {
- 		ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, xsave, 0, -1);
- 		if (!ret)
--			ret = validate_xstate_header(&xsave->header);
-+			ret = validate_xstate_header_from_user(&xsave->header);
- 	}
- 
- 	/*
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 25e7dddbc6fd..728b43c34536 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -368,7 +368,7 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 			ret = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
- 
- 			if (!ret && state_size > offsetof(struct xregs_state, header))
--				ret = validate_xstate_header(&fpu->state.xsave.header);
-+				ret = validate_xstate_header_from_user(&fpu->state.xsave.header);
- 		}
- 		if (ret)
- 			goto err_out;
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index a183c319d808..3df2e55e860d 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -480,7 +480,7 @@ int using_compacted_format(void)
- }
- 
- /* Validate an xstate header supplied by userspace (ptrace or sigreturn) */
--int validate_xstate_header(const struct xstate_header *hdr)
-+int validate_xstate_header_from_user(const struct xstate_header *hdr)
- {
- 	/* No unknown or supervisor features may be set */
- 	if (hdr->xfeatures & ~xfeatures_mask_user())
-@@ -1165,7 +1165,7 @@ int copy_kernel_to_xstate(struct xregs_state *xsave, const void *kbuf)
- 
- 	memcpy(&hdr, kbuf + offset, size);
- 
--	if (validate_xstate_header(&hdr))
-+	if (validate_xstate_header_from_user(&hdr))
- 		return -EINVAL;
- 
- 	for (i = 0; i < XFEATURE_MAX; i++) {
-@@ -1219,7 +1219,7 @@ int copy_user_to_xstate(struct xregs_state *xsave, const void __user *ubuf)
- 	if (__copy_from_user(&hdr, ubuf + offset, size))
- 		return -EFAULT;
- 
--	if (validate_xstate_header(&hdr))
-+	if (validate_xstate_header_from_user(&hdr))
- 		return -EINVAL;
- 
- 	for (i = 0; i < XFEATURE_MAX; i++) {
--- 
-2.17.1
-
+On Wed, Sep 25, 2019 at 02:09:30PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are statements that are indented incorrectly, remove the
+> extraneous spacing.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  net/sunrpc/svc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
+> index 220b79988000..d11b70552c33 100644
+> --- a/net/sunrpc/svc.c
+> +++ b/net/sunrpc/svc.c
+> @@ -1233,8 +1233,8 @@ svc_generic_init_request(struct svc_rqst *rqstp,
+>  
+>  	if (rqstp->rq_vers >= progp->pg_nvers )
+>  		goto err_bad_vers;
+> -	  versp = progp->pg_vers[rqstp->rq_vers];
+> -	  if (!versp)
+> +	versp = progp->pg_vers[rqstp->rq_vers];
+> +	if (!versp)
+>  		goto err_bad_vers;
+>  
+>  	/*
+> -- 
+> 2.20.1
