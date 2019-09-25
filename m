@@ -2,80 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E951BD9EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B585BD9F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:36:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442765AbfIYIfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 04:35:24 -0400
-Received: from mga17.intel.com ([192.55.52.151]:57339 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405299AbfIYIfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:35:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 01:35:23 -0700
-X-IronPort-AV: E=Sophos;i="5.64,547,1559545200"; 
-   d="scan'208";a="183186690"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 01:35:20 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] docs: Use make invocation's -j argument for parallelism
-In-Reply-To: <201909240910.D6E5C767D1@keescook>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <201909191438.C00E6DB@keescook> <20190922140331.3ffe8604@lwn.net> <201909231537.0FC0474C@keescook> <87pnjqtbft.fsf@intel.com> <201909240910.D6E5C767D1@keescook>
-Date:   Wed, 25 Sep 2019 11:35:17 +0300
-Message-ID: <87blv8u62i.fsf@intel.com>
+        id S2442802AbfIYIgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 04:36:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47878 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437903AbfIYIgH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 04:36:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qY25nh7ft7xVLg9CJpkhKTMkEGk7+Lk26TG1nt2SkhY=; b=VoBkfX9U18C/zs886+AEon/jz
+        P8rwaJyJUSaktSTe86iBPd0eBgthTknvrTbwTpUBOuWHhmEZqmAITl1A0E7pa7U5ttEI5mrWcs9o4
+        p4+fDC/V3M2a7wy9dKkPgP+TnuzpeTYzt/qzNSUXjyw6yW/81muGQ5GjgXgcZhJl5NxibaKkmzPui
+        Gzbv1UPwm2+G48V6a/5upaH/pv1sR3cER+i16a7znZ9Xqj2BQPIf7FboFrBLfcaS1vBBQvX0pQf7E
+        jXk2p5sUusUWVcfBJ91JEh92ht0Wz8O9LH/eQ6ciz2xzpX9IXOUs7BnDAB5+pXhClmFrsi0CMhyhv
+        QqT4AlKXw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iD2mF-0006SO-Rx; Wed, 25 Sep 2019 08:36:00 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 18B5D305E1F;
+        Wed, 25 Sep 2019 10:35:11 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D7818203E4FB5; Wed, 25 Sep 2019 10:35:57 +0200 (CEST)
+Date:   Wed, 25 Sep 2019 10:35:57 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH 0/5] hugetlbfs: Disable PMD sharing for large systems
+Message-ID: <20190925083557.GA4553@hirez.programming.kicks-ass.net>
+References: <20190911150537.19527-1-longman@redhat.com>
+ <20190913015043.GF27547@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190913015043.GF27547@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Sep 2019, Kees Cook <keescook@chromium.org> wrote:
-> On Tue, Sep 24, 2019 at 10:12:22AM +0300, Jani Nikula wrote:
->> On Mon, 23 Sep 2019, Kees Cook <keescook@chromium.org> wrote:
->> > On Sun, Sep 22, 2019 at 02:03:31PM -0600, Jonathan Corbet wrote:
->> >> On Thu, 19 Sep 2019 14:44:37 -0700
->> >> Kees Cook <keescook@chromium.org> wrote:
->> >> 
->> >> > While sphinx 1.7 and later supports "-jauto" for parallelism, this
->> >> > effectively ignores the "-j" flag used in the "make" invocation, which
->> >> > may cause confusion for build systems. Instead, extract the available
->> >> 
->> >> What sort of confusion might we expect?  Or, to channel akpm, "what are the
->> >> user-visible effects of this bug"?
->> >
->> > When I run "make htmldocs -j16" with a pre-1.7 sphinx, it is not
->> > parallelized. When I run "make htmldocs -j8" with 1.7+ sphinx, it uses
->> > all my CPUs instead of 8. :)
->> 
->> To be honest, part of the solution should be to require Sphinx 1.8 or
->> later. Even Debian stable has it. If your distro doesn't have it
->> (really?), using the latest Sphinx in a virtual environment should be a
->> matter of:
->> 
->> $ python3 -m venv .venv
->> $ . .venv/bin/activate
->> (.venv) $ pip install sphinx sphinx_rtd_theme
->> (.venv) $ make htmldocs
->
-> I don't mind having sphinx 1.8 (I did, in fact, already update it), but
-> that still doesn't solve the whole problem: my -j argument is being
-> ignored...
+On Fri, Sep 13, 2019 at 11:50:43AM +1000, Dave Chinner wrote:
+> On Wed, Sep 11, 2019 at 04:05:32PM +0100, Waiman Long wrote:
+> > A customer with large SMP systems (up to 16 sockets) with application
+> > that uses large amount of static hugepages (~500-1500GB) are experiencing
+> > random multisecond delays. These delays was caused by the long time it
+> > took to scan the VMA interval tree with mmap_sem held.
+> > 
+> > To fix this problem while perserving existing behavior as much as
+> > possible, we need to allow timeout in down_write() and disabling PMD
+> > sharing when it is taking too long to do so. Since a transaction can
+> > involving touching multiple huge pages, timing out for each of the huge
+> > page interactions does not completely solve the problem. So a threshold
+> > is set to completely disable PMD sharing if too many timeouts happen.
+> > 
+> > The first 4 patches of this 5-patch series adds a new
+> > down_write_timedlock() API which accepts a timeout argument and return
+> > true is locking is successful or false otherwise. It works more or less
+> > than a down_write_trylock() but the calling thread may sleep.
+> 
+> Just on general principle, this is a non-starter. If a lock is being
+> held too long, then whatever the lock is protecting needs fixing.
+> Adding timeouts to locks and sysctls to tune them is not a viable
+> solution to address latencies caused by algorithm scalability
+> issues.
 
-I meant, *part* of the solution should be to not have to deal with
-ancient Sphinx.
-
-BR,
-Jani.
-
-
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+I'm very much agreeing here. Lock functions with timeouts are a sign of
+horrific design.
