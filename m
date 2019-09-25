@@ -2,108 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D19A1BD8AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:03:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2109DBD8C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442446AbfIYHDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:03:33 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41782 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2442434AbfIYHDc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:03:32 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q7so2811179pfh.8
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 00:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=QtDjGuT6GYExoPUWAryXx0/SjRXtIy1CTdSczN1NQCM=;
-        b=RmY/xOXe2eKL26y3uj55F1Fit+H+0WrrZaOHcLMNCDSNoi2kMXrhnE0ucEForuiEA+
-         JyRluTVi28yl+sTJGSRelaPvSKuza6Hk+Q9GRAPSRoAwq1VWLfr4h3eTKtsojFr+xrG8
-         zaY9vImby+VTXEwcWMmtB7mGhtQcEn/Gbn+gOrIIVg6zcpp/o2JX2j313Dln/oC0dVVe
-         dwrSa+J5kDasv/Awru0qA99xL8YL5AZEQYzOpVkazBCDdADqsEzMLVdWX8iGhVjqi5wq
-         IYNJJ7jeetpPukK/+WzB7j4TGb2RgEWr7x1WdwwyLnhmEJcVT6h0hfP3bpj7kkLXXnLb
-         GK1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QtDjGuT6GYExoPUWAryXx0/SjRXtIy1CTdSczN1NQCM=;
-        b=eAiQ+0cFoheFBKZryd9rCINGs4GqnFRokB3kd2c8/oFl1jGpfZZI1DKHJgk2SLGS8N
-         /fM94UcNNBl0+4rYUBmBfn5NfFnXOlLWDvVCECr0QOD5v9Gd7xDwoJ8JgU1qAjU2mwCT
-         7NGKqxMosZKWD14d1wekgxph8iS1cFwCfC5vZg5cMvQ1zWpHKfx4SrKrEkAdqtQ9nmfz
-         Mz/O35Wg/v2boAoqhKzCQoYlnCGka+nqnRXZD+nUc3YhcGbZwCMqitXXkhph+c+OwRFg
-         6OS5wUT86jV0wtY/FOkQugD4RI/B+VktsQqAUxuPVmfdJeywEbqrZ8U2HmrRQ89yo5RK
-         OyBw==
-X-Gm-Message-State: APjAAAUc9irMvdIpur5cvCgjcQoEaZb+PKjP3R1FqjwkIcpmvjv7WEYY
-        273bvTGHZfN1utEaqbfvta/vC15Ujt8=
-X-Google-Smtp-Source: APXvYqwK0vMFcB0zMbrgYeYbjpMtEMvsl5ew0HFiuRMmFs5VRtF6LUvKhv2I9PfhGnJ3lD3U/s/nHg==
-X-Received: by 2002:a17:90a:fa02:: with SMTP id cm2mr4735395pjb.133.1569395011749;
-        Wed, 25 Sep 2019 00:03:31 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t3sm1541054pje.7.2019.09.25.00.03.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Sep 2019 00:03:31 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] arm64: dts: qcom: c630: Enable adsp, cdsp and mpss
-Date:   Wed, 25 Sep 2019 00:03:28 -0700
-Message-Id: <20190925070328.13554-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        id S2442493AbfIYHJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 03:09:17 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:47984 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2442483AbfIYHJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:09:17 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x8P76nZc015908
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Wed, 25 Sep 2019 00:07:10 -0700
+Received: from pek-jsun4-d1.corp.ad.wrs.com (128.224.155.112) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.50) with Microsoft SMTP Server id
+ 14.3.468.0; Wed, 25 Sep 2019 00:06:40 -0700
+From:   Jiwei Sun <jiwei.sun@windriver.com>
+To:     <acme@redhat.com>, <jolsa@redhat.com>, <arnaldo.melo@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <alexander.shishkin@linux.intel.com>, <mpetlan@redhat.com>,
+        <namhyung@kernel.org>, <a.p.zijlstra@chello.nl>,
+        <adrian.hunter@intel.com>, <Richard.Danter@windriver.com>,
+        <jiwei.sun@windriver.com>
+Subject: [PATCH v4] perf record: Add support for limit perf output file size
+Date:   Wed, 25 Sep 2019 15:06:37 +0800
+Message-ID: <20190925070637.13164-1-jiwei.sun@windriver.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify the firmware-name for the adsp, cdsp and mpss and enable the
-nodes.
+The patch adds a new option to limit the output file size, then based
+on it, we can create a wrapper of the perf command that uses the option
+to avoid exhausting the disk space by the unconscious user.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+In order to make the perf.data parsable, we just limit the sample data
+size, since the perf.data consists of many headers and sample data and
+other data, the actual size of the recorded file will bigger than the
+setting value.
+
+Testing it:
+
+ # ./perf record -a -g --max-size=10M
+Couldn't synthesize bpf events.
+WARNING: The perf data has already reached the limit, stop recording!
+[ perf record: Woken up 30 times to write data ]
+[ perf record: Captured and wrote 10.233 MB perf.data (175650 samples) ]
+Terminated
+
+ # ls -lh perf.data
+-rw------- 1 root root 11M Jul 17 14:01 perf.data
+
+ # ./perf record -a -g --max-size=10K
+WARNING: The perf data has already reached the limit, stop recording!
+Couldn't synthesize bpf events.
+[ perf record: Woken up 0 times to write data ]
+[ perf record: Captured and wrote 1.824 MB perf.data (67 samples) ]
+Terminated
+
+ # ls -lh perf.data
+-rw------- 1 root root 1.9M Jul 17 14:05 perf.data
+
+Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
 ---
- .../boot/dts/qcom/sdm850-lenovo-yoga-c630.dts      | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+v4 changes:
+  - Just show one WARNING message after reached the limit.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-index ded120d3aef5..d3c841628d66 100644
---- a/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts
-@@ -20,6 +20,11 @@
- 	};
+v3 changes:
+  - add a test result
+  - add the new option to tools/perf/Documentation/perf-record.txt
+
+v2 changes:
+  - make patch based on latest Arnaldo's perf/core,
+  - display warning message when reached the limit.
+---
+ tools/perf/Documentation/perf-record.txt |  4 +++
+ tools/perf/builtin-record.c              | 42 ++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+
+diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+index c6f9f31b6039..f1c6113fbc82 100644
+--- a/tools/perf/Documentation/perf-record.txt
++++ b/tools/perf/Documentation/perf-record.txt
+@@ -571,6 +571,10 @@ config terms. For example: 'cycles/overwrite/' and 'instructions/no-overwrite/'.
+ 
+ Implies --tail-synthesize.
+ 
++--max-size=<size>::
++Limit the sample data max size, <size> is expected to be a number with
++appended unit character - B/K/M/G
++
+ SEE ALSO
+ --------
+ linkperf:perf-stat[1], linkperf:perf-list[1]
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 48600c90cc7e..30904d2a3407 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -91,6 +91,7 @@ struct record {
+ 	struct switch_output	switch_output;
+ 	unsigned long long	samples;
+ 	cpu_set_t		affinity_mask;
++	unsigned long		output_max_size;	/* = 0: unlimited */
  };
  
-+&adsp_pas {
-+	firmware-name = "qcom/c630/qcadsp850.mbn";
-+	status = "okay";
-+};
+ static volatile int auxtrace_record__snapshot_started;
+@@ -120,6 +121,12 @@ static bool switch_output_time(struct record *rec)
+ 	       trigger_is_ready(&switch_output_trigger);
+ }
+ 
++static bool record__output_max_size_exceeded(struct record *rec)
++{
++	return rec->output_max_size &&
++	       (rec->bytes_written >= rec->output_max_size);
++}
 +
- &apps_rsc {
- 	pm8998-rpmh-regulators {
- 		compatible = "qcom,pm8998-rpmh-regulators";
-@@ -229,6 +234,11 @@
- 	status = "disabled";
+ static int record__write(struct record *rec, struct mmap *map __maybe_unused,
+ 			 void *bf, size_t size)
+ {
+@@ -132,6 +139,12 @@ static int record__write(struct record *rec, struct mmap *map __maybe_unused,
+ 
+ 	rec->bytes_written += size;
+ 
++	if (record__output_max_size_exceeded(rec)) {
++		WARN_ONCE(1, "WARNING: The perf data has already reached "
++			     "the limit, stop recording!\n");
++		raise(SIGTERM);
++	}
++
+ 	if (switch_output_size(rec))
+ 		trigger_hit(&switch_output_trigger);
+ 
+@@ -1936,6 +1949,33 @@ static int record__parse_affinity(const struct option *opt, const char *str, int
+ 	return 0;
+ }
+ 
++static int parse_output_max_size(const struct option *opt,
++				 const char *str, int unset)
++{
++	unsigned long *s = (unsigned long *)opt->value;
++	static struct parse_tag tags_size[] = {
++		{ .tag  = 'B', .mult = 1       },
++		{ .tag  = 'K', .mult = 1 << 10 },
++		{ .tag  = 'M', .mult = 1 << 20 },
++		{ .tag  = 'G', .mult = 1 << 30 },
++		{ .tag  = 0 },
++	};
++	unsigned long val;
++
++	if (unset) {
++		*s = 0;
++		return 0;
++	}
++
++	val = parse_tag_value(str, tags_size);
++	if (val != (unsigned long) -1) {
++		*s = val;
++		return 0;
++	}
++
++	return -1;
++}
++
+ static int record__parse_mmap_pages(const struct option *opt,
+ 				    const char *str,
+ 				    int unset __maybe_unused)
+@@ -2262,6 +2302,8 @@ static struct option __record_options[] = {
+ 			    "n", "Compressed records using specified level (default: 1 - fastest compression, 22 - greatest compression)",
+ 			    record__parse_comp_level),
+ #endif
++	OPT_CALLBACK(0, "max-size", &record.output_max_size,
++		     "size", "Limit the maximum size of the output file", parse_output_max_size),
+ 	OPT_END()
  };
  
-+&cdsp_pas {
-+	firmware-name = "qcom/c630/qccdsp850.mbn";
-+	status = "okay";
-+};
-+
- &gcc {
- 	protected-clocks = <GCC_QSPI_CORE_CLK>,
- 			   <GCC_QSPI_CORE_CLK_SRC>,
-@@ -296,6 +306,10 @@
- 	};
- };
- 
-+&mss_pil {
-+	firmware-name = "qcom/c630/qcdsp1v2850.mbn", "qcom/c630/qcdsp2850.mbn";
-+};
-+
- &qup_i2c12_default {
- 	drive-strength = <2>;
- 	bias-disable;
 -- 
-2.18.0
+2.20.1
 
