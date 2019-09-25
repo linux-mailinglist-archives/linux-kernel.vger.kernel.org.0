@@ -2,64 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAEA1BE4D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 20:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0B31BE4E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 20:44:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443269AbfIYSnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 14:43:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42001 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439865AbfIYSnV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 14:43:21 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z12so364382pgp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 11:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3A4s4RAXbpx36Yd7dMGiPVWfF4wDLnMwffQrqpB84M0=;
-        b=MI/R7xaYsceleFAz49M00sHxNJtNP9akqwlvZAmxoudAzKmmz7M/h984nTRYIZLyIV
-         wCrF5z9qpwpvcsI5fmQKA2msao8HOViN0LSmtdHnn7e1e8iRzS3r2b8RnmEuBtR5dxeH
-         B90dhU3GBvA301hKZajAs5Q3jo8xBeHkw0wLU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3A4s4RAXbpx36Yd7dMGiPVWfF4wDLnMwffQrqpB84M0=;
-        b=PPl0cSzEAZNN3Bxud00OYD5317Oga/A9pUVpDOcYZ0iF6V+3TcFNLOS11jIrYoPabu
-         KwX9IBxZ7hHhiUndt5pvhIythoNlS6SLyowMlfb5aExK3xqOoXGtcZeYQphTVwf8w6FC
-         Rf/uZFz7w9gfKGQXrGrU6dQqvFgobg8w9iwBXOysObB6fQDi6Ewa45IRqYK5Pf0yxP4U
-         F+Um6LEFIDa+ZOujrwLUtfk17Q1dAQqjuBKUTpLAiK1dGD6gGuu1Qai7J6P4u5zGk8Jm
-         JhXEAGowAvMjNplgdMFhccENSuohF3VT8YxBSEa9AokwxAM63mSRbdUZLFss8ZzTo8bU
-         MCtw==
-X-Gm-Message-State: APjAAAWgwSmsU3Hvvn55rHZoYeK8ZZOIYI501kDCUIfacnFZox/VJksj
-        XamIN1g1KN/G2bj8BNkQ5tPLEw==
-X-Google-Smtp-Source: APXvYqwW5vuL8lovJSQXdUV5+1pDcGdZZ1mTw1Iakz6inPcxVjmOF4tVz0FIAXiNfJXeeaRvnVZuKQ==
-X-Received: by 2002:aa7:9d8d:: with SMTP id f13mr11549654pfq.196.1569437000973;
-        Wed, 25 Sep 2019 11:43:20 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id y28sm6869466pfq.48.2019.09.25.11.43.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2019 11:43:20 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 2/2] devfreq: Rename df->previous_freq to df->cur_freq
-Date:   Wed, 25 Sep 2019 11:43:14 -0700
-Message-Id: <20190925184314.30251-2-mka@chromium.org>
-X-Mailer: git-send-email 2.23.0.444.g18eeb5a265-goog
-In-Reply-To: <20190925184314.30251-1-mka@chromium.org>
-References: <20190925184314.30251-1-mka@chromium.org>
+        id S2443292AbfIYSoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 14:44:07 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:40260 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2443246AbfIYSoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 14:44:04 -0400
+Received: from muedsl-82-207-238-254.citykom.de ([82.207.238.254] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iDCGZ-0005Fa-At; Wed, 25 Sep 2019 20:43:55 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     joro@8bytes.org
+Cc:     iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH] iommu/rockchip: don't use platform_get_irq to implicitly count irqs
+Date:   Wed, 25 Sep 2019 20:43:46 +0200
+Message-Id: <20190925184346.14121-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,236 +33,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vast majority of code uses df->previous_freq to get the current
-frequency of the devfreq device, not the previous one. Rename the
-struct field to reflect this.
+Till now the Rockchip iommu driver walked through the irq list via
+platform_get_irq() until it encountered an ENXIO error. With the
+recent change to add a central error message, this always results
+in such an error for each iommu on probe and shutdown.
 
-Add a comment to devfreq_update_stats() to make clear that df->cur_freq
-must only be updated after calling this function in the context of a
-frequency transition.
+To not confuse people, switch to platform_count_irqs() to get the
+actual number of interrupts before walking through them.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Fixes: 7723f4c5ecdb ("driver core: platform: Add an error message to platform_get_irq*()")
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/devfreq/devfreq.c            | 28 ++++++++++++++++------------
- drivers/devfreq/governor_passive.c   |  6 +++---
- drivers/devfreq/governor_userspace.c |  2 +-
- drivers/devfreq/tegra20-devfreq.c    |  2 +-
- drivers/devfreq/tegra30-devfreq.c    |  2 +-
- include/linux/devfreq.h              |  4 ++--
- include/trace/events/devfreq.h       |  2 +-
- 7 files changed, 25 insertions(+), 21 deletions(-)
+ drivers/iommu/rockchip-iommu.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index fb4318d59aa9..bf42130bb4ec 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -154,6 +154,10 @@ static int set_freq_table(struct devfreq *devfreq)
-  * devfreq_update_stats() - Update statistics of devfreq behavior
-  * @devfreq:	the devfreq instance
-  * @freq:	the update target frequency
-+ *
-+ * If the function is called in the context of a frequency transition
-+ * it expects df->cur_freq to contain the value *before* the transition.
-+ * The field must only be updated after calling devfreq_update_stats().
-  */
- int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq)
+diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
+index 26290f310f90..4dcbf68dfda4 100644
+--- a/drivers/iommu/rockchip-iommu.c
++++ b/drivers/iommu/rockchip-iommu.c
+@@ -100,6 +100,7 @@ struct rk_iommu {
+ 	struct device *dev;
+ 	void __iomem **bases;
+ 	int num_mmu;
++	int num_irq;
+ 	struct clk_bulk_data *clocks;
+ 	int num_clocks;
+ 	bool reset_disabled;
+@@ -1136,7 +1137,7 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 	struct rk_iommu *iommu;
+ 	struct resource *res;
+ 	int num_res = pdev->num_resources;
+-	int err, i, irq;
++	int err, i;
+ 
+ 	iommu = devm_kzalloc(dev, sizeof(*iommu), GFP_KERNEL);
+ 	if (!iommu)
+@@ -1163,6 +1164,10 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 	if (iommu->num_mmu == 0)
+ 		return PTR_ERR(iommu->bases[0]);
+ 
++	iommu->num_irq = platform_irq_count(pdev);
++	if (iommu->num_irq < 0)
++		return iommu->num_irq;
++
+ 	iommu->reset_disabled = device_property_read_bool(dev,
+ 					"rockchip,disable-mmu-reset");
+ 
+@@ -1219,8 +1224,9 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(dev);
+ 
+-	i = 0;
+-	while ((irq = platform_get_irq(pdev, i++)) != -ENXIO) {
++	for (i = 0; i < iommu->num_irq; i++) {
++		int irq = platform_get_irq(pdev, i);
++
+ 		if (irq < 0)
+ 			return irq;
+ 
+@@ -1245,10 +1251,13 @@ static int rk_iommu_probe(struct platform_device *pdev)
+ static void rk_iommu_shutdown(struct platform_device *pdev)
  {
-@@ -162,11 +166,11 @@ int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq)
+ 	struct rk_iommu *iommu = platform_get_drvdata(pdev);
+-	int i = 0, irq;
++	int i;
++
++	for (i = 0; i < iommu->num_irq; i++) {
++		int irq = platform_get_irq(pdev, i);
  
- 	cur_time = jiffies;
+-	while ((irq = platform_get_irq(pdev, i++)) != -ENXIO)
+ 		devm_free_irq(iommu->dev, irq, iommu);
++	}
  
--	/* Immediately exit if previous_freq is not initialized yet. */
--	if (!devfreq->previous_freq)
-+	/* Immediately exit if cur_freq is not initialized yet. */
-+	if (!devfreq->cur_freq)
- 		goto out;
- 
--	prev_lev = devfreq_get_freq_level(devfreq, devfreq->previous_freq);
-+	prev_lev = devfreq_get_freq_level(devfreq, devfreq->cur_freq);
- 	if (prev_lev < 0) {
- 		ret = prev_lev;
- 		goto out;
-@@ -295,7 +299,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
- 	if (devfreq->profile->get_cur_freq)
- 		devfreq->profile->get_cur_freq(devfreq->dev.parent, &cur_freq);
- 	else
--		cur_freq = devfreq->previous_freq;
-+		cur_freq = devfreq->cur_freq;
- 
- 	freqs.old = cur_freq;
- 	freqs.new = new_freq;
-@@ -315,7 +319,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
- 		dev_err(&devfreq->dev,
- 			"Couldn't update frequency transition information.\n");
- 
--	devfreq->previous_freq = new_freq;
-+	devfreq->cur_freq = new_freq;
- 
- 	if (devfreq->suspend_freq)
- 		devfreq->resume_freq = cur_freq;
-@@ -450,7 +454,7 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
- 		return;
- 	}
- 
--	devfreq_update_stats(devfreq, devfreq->previous_freq);
-+	devfreq_update_stats(devfreq, devfreq->cur_freq);
- 	devfreq->stop_polling = true;
- 	mutex_unlock(&devfreq->lock);
- 	cancel_delayed_work_sync(&devfreq->work);
-@@ -483,7 +487,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
- 
- 	if (devfreq->profile->get_cur_freq &&
- 		!devfreq->profile->get_cur_freq(devfreq->dev.parent, &freq))
--		devfreq->previous_freq = freq;
-+		devfreq->cur_freq = freq;
- 
- out:
- 	mutex_unlock(&devfreq->lock);
-@@ -644,7 +648,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
- 	devfreq->dev.release = devfreq_dev_release;
- 	devfreq->profile = profile;
- 	strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
--	devfreq->previous_freq = profile->initial_freq;
-+	devfreq->cur_freq = profile->initial_freq;
- 	devfreq->last_status.current_frequency = profile->initial_freq;
- 	devfreq->data = data;
- 	devfreq->nb.notifier_call = devfreq_notifier_call;
-@@ -1235,14 +1239,14 @@ static ssize_t cur_freq_show(struct device *dev, struct device_attribute *attr,
- 		!devfreq->profile->get_cur_freq(devfreq->dev.parent, &freq))
- 		return sprintf(buf, "%lu\n", freq);
- 
--	return sprintf(buf, "%lu\n", devfreq->previous_freq);
-+	return sprintf(buf, "%lu\n", devfreq->cur_freq);
+ 	pm_runtime_force_suspend(&pdev->dev);
  }
- static DEVICE_ATTR_RO(cur_freq);
- 
- static ssize_t target_freq_show(struct device *dev,
- 				struct device_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%lu\n", to_devfreq(dev)->previous_freq);
-+	return sprintf(buf, "%lu\n", to_devfreq(dev)->cur_freq);
- }
- static DEVICE_ATTR_RO(target_freq);
- 
-@@ -1398,7 +1402,7 @@ static ssize_t trans_stat_show(struct device *dev,
- 	unsigned int max_state = devfreq->profile->max_state;
- 
- 	if (!devfreq->stop_polling &&
--			devfreq_update_stats(devfreq, devfreq->previous_freq))
-+			devfreq_update_stats(devfreq, devfreq->cur_freq))
- 		return 0;
- 	if (max_state == 0)
- 		return sprintf(buf, "Not Supported.\n");
-@@ -1413,7 +1417,7 @@ static ssize_t trans_stat_show(struct device *dev,
- 
- 	for (i = 0; i < max_state; i++) {
- 		if (devfreq->profile->freq_table[i]
--					== devfreq->previous_freq) {
-+					== devfreq->cur_freq) {
- 			len += sprintf(buf + len, "*");
- 		} else {
- 			len += sprintf(buf + len, " ");
-diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-index 1c746b96d3db..2d818eaceb39 100644
---- a/drivers/devfreq/governor_passive.c
-+++ b/drivers/devfreq/governor_passive.c
-@@ -114,7 +114,7 @@ static int update_devfreq_passive(struct devfreq *devfreq, unsigned long freq)
- 		dev_err(&devfreq->dev,
- 			"Couldn't update frequency transition information.\n");
- 
--	devfreq->previous_freq = freq;
-+	devfreq->cur_freq = freq;
- 
- out:
- 	mutex_unlock(&devfreq->lock);
-@@ -134,11 +134,11 @@ static int devfreq_passive_notifier_call(struct notifier_block *nb,
- 
- 	switch (event) {
- 	case DEVFREQ_PRECHANGE:
--		if (parent->previous_freq > freq)
-+		if (parent->cur_freq > freq)
- 			update_devfreq_passive(devfreq, freq);
- 		break;
- 	case DEVFREQ_POSTCHANGE:
--		if (parent->previous_freq < freq)
-+		if (parent->cur_freq < freq)
- 			update_devfreq_passive(devfreq, freq);
- 		break;
- 	}
-diff --git a/drivers/devfreq/governor_userspace.c b/drivers/devfreq/governor_userspace.c
-index af94942fcf95..566b8d1f0c17 100644
---- a/drivers/devfreq/governor_userspace.c
-+++ b/drivers/devfreq/governor_userspace.c
-@@ -26,7 +26,7 @@ static int devfreq_userspace_func(struct devfreq *df, unsigned long *freq)
- 	if (data->valid)
- 		*freq = data->user_frequency;
- 	else
--		*freq = df->previous_freq; /* No user freq specified yet */
-+		*freq = df->cur_freq; /* No user freq specified yet */
- 
- 	return 0;
- }
-diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
-index ff82bac9ee4e..f99bd6557df5 100644
---- a/drivers/devfreq/tegra20-devfreq.c
-+++ b/drivers/devfreq/tegra20-devfreq.c
-@@ -61,7 +61,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
- 	return 0;
- 
- restore_min_rate:
--	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
-+	clk_set_min_rate(tegra->emc_clock, devfreq->cur_freq);
- 
- 	return err;
- }
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 536273a811fe..7b3bf7a0b15f 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -474,7 +474,7 @@ static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
- 	return 0;
- 
- restore_min_rate:
--	clk_set_min_rate(tegra->emc_clock, devfreq->previous_freq);
-+	clk_set_min_rate(tegra->emc_clock, devfreq->cur_freq);
- 
- 	return err;
- }
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index 2bae9ed3c783..21d0108df4c5 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -120,7 +120,7 @@ struct devfreq_dev_profile {
-  *		reevaluate operable frequencies. Devfreq users may use
-  *		devfreq.nb to the corresponding register notifier call chain.
-  * @work:	delayed work for load monitoring.
-- * @previous_freq:	previously configured frequency value.
-+ * @cur_freq:	the current frequency.
-  * @data:	Private data of the governor. The devfreq framework does not
-  *		touch this.
-  * @min_freq:	Limit minimum frequency requested by user (0: none)
-@@ -156,7 +156,7 @@ struct devfreq {
- 	struct notifier_block nb;
- 	struct delayed_work work;
- 
--	unsigned long previous_freq;
-+	unsigned long cur_freq;
- 	struct devfreq_dev_status last_status;
- 
- 	void *data; /* private data for governors */
-diff --git a/include/trace/events/devfreq.h b/include/trace/events/devfreq.h
-index cf5b8772175d..916cfaed5489 100644
---- a/include/trace/events/devfreq.h
-+++ b/include/trace/events/devfreq.h
-@@ -22,7 +22,7 @@ TRACE_EVENT(devfreq_monitor,
- 	),
- 
- 	TP_fast_assign(
--		__entry->freq = devfreq->previous_freq;
-+		__entry->freq = devfreq->cur_freq;
- 		__entry->busy_time = devfreq->last_status.busy_time;
- 		__entry->total_time = devfreq->last_status.total_time;
- 		__entry->polling_ms = devfreq->profile->polling_ms;
 -- 
-2.23.0.444.g18eeb5a265-goog
+2.23.0
 
