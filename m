@@ -2,149 +2,276 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F94BD934
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938C2BD93C
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437303AbfIYHhK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:37:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59836 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391671AbfIYHhJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:37:09 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5B088307D96F;
-        Wed, 25 Sep 2019 07:37:08 +0000 (UTC)
-Received: from [10.36.117.14] (ovpn-117-14.ams2.redhat.com [10.36.117.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BFA3C5F9D2;
-        Wed, 25 Sep 2019 07:37:04 +0000 (UTC)
-Subject: Re: [PATCH v1] powerpc/pseries: CMM: Drop page array
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arun KS <arunks@codeaurora.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-References: <20190910163932.13160-1-david@redhat.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <a2c2f516-c37c-71f5-8f35-c357e8754b17@redhat.com>
-Date:   Wed, 25 Sep 2019 09:37:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2393607AbfIYHj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 03:39:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60314 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390395AbfIYHj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:39:28 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6E828121AB5A8C424FF1;
+        Wed, 25 Sep 2019 15:39:26 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Wed, 25 Sep 2019
+ 15:39:21 +0800
+Subject: Re: [PATCH V3] mm: Support memblock alloc on the exact node for
+ sparse_buffer_init()
+To:     Mike Rapoport <rppt@linux.ibm.com>
+CC:     Wei Yang <richardw.yang@linux.intel.com>,
+        <akpm@linux-foundation.org>, <osalvador@suse.de>, <mhocko@suse.co>,
+        <dan.j.williams@intel.com>, <david@redhat.com>, <cai@lca.pw>,
+        <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <e836da55-19f7-e505-7f2a-5f790d61b912@huawei.com>
+ <20190925073239.GD1857@linux.ibm.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Message-ID: <2899afd4-1501-d3e7-72fd-de94fa84cd80@huawei.com>
+Date:   Wed, 25 Sep 2019 15:39:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190910163932.13160-1-david@redhat.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190925073239.GD1857@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 25 Sep 2019 07:37:09 +0000 (UTC)
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.09.19 18:39, David Hildenbrand wrote:
-> We can simply store the pages in a list (page->lru), no need for a
-> separate data structure (+ complicated handling). This is how most
-> other balloon drivers store allocated pages without additional tracking
-> data.
-> 
-> For the notifiers, use page_to_pfn() to check if a page is in the
-> applicable range. plpar_page_set_loaned()/plpar_page_set_active() were
-> called with __pa(page_address()) for now, I assume we can simply switch
-> to page_to_phys() here. The pfn_to_kaddr() handling is now mostly gone.
-> 
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Arun KS <arunks@codeaurora.org>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
-> 
-> Only compile-tested. I hope the page_to_phys() thingy is correct and I
-> didn't mess up something else / ignoring something important why the array
-> is needed.
-> 
-> I stumbled over this while looking at how the memory isolation notifier is
-> used - and wondered why the additional array is necessary. Also, I think
-> by switching to the generic balloon compaction mechanism, we could get
-> rid of the memory hotplug notifier and the memory isolation notifier in
-> this code, as the migration capability of the inflated pages is the real
-> requirement:
-> 	commit 14b8a76b9d53346f2871bf419da2aaf219940c50
-> 	Author: Robert Jennings <rcj@linux.vnet.ibm.com>
-> 	Date:   Thu Dec 17 14:44:52 2009 +0000
-> 	
-> 	    powerpc: Make the CMM memory hotplug aware
-> 	
-> 	    The Collaborative Memory Manager (CMM) module allocates individual pages
-> 	    over time that are not migratable.  On a long running system this can
-> 	    severely impact the ability to find enough pages to support a hotplug
-> 	    memory remove operation.
-> 	[...]
-> 
-> Thoughts?
 
-Ping, is still feature still used at all?
 
-If nobody can test, any advise on which HW I need and how to trigger it?
+On 2019/9/25 15:32, Mike Rapoport wrote:
+> On Wed, Sep 25, 2019 at 03:18:43PM +0800, Yunfeng Ye wrote:
+>> sparse_buffer_init() use memblock_alloc_try_nid_raw() to allocate memory
+>> for page management structure, if memory allocation fails from specified
+>> node, it will fall back to allocate from other nodes.
+>>
+>> Normally, the page management structure will not exceed 2% of the total
+>> memory, but a large continuous block of allocation is needed. In most
+>> cases, memory allocation from the specified node will success always,
+>> but a node memory become highly fragmented will fail. we expect to
+>> allocate memory base section rather than by allocating a large block of
+>> memory from other NUMA nodes
+>>
+>> Add memblock_alloc_exact_nid_raw() for this situation, which allocate
+>> boot memory block on the exact node. If a large contiguous block memory
+>> allocate fail in sparse_buffer_init(), it will fall back to allocate
+>> small block memory base section.
+>>
+>> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> 
+> One nit below, otherwise
+> 
+> Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
+> 
+ok.
 
--- 
+>> ---
+>> v2 -> v3:
+>>  - use "bool exact_nid" instead of "int need_exact_nid"
+>>  - remove the comment "without panicking"
+>>
+>> v1 -> v2:
+>>  - use memblock_alloc_exact_nid_raw() rather than using a flag
+>>
+>>  include/linux/memblock.h |  3 +++
+>>  mm/memblock.c            | 65 ++++++++++++++++++++++++++++++++++++++++--------
+>>  mm/sparse.c              |  2 +-
+>>  3 files changed, 58 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+>> index f491690..b38bbef 100644
+>> --- a/include/linux/memblock.h
+>> +++ b/include/linux/memblock.h
+>> @@ -358,6 +358,9 @@ static inline phys_addr_t memblock_phys_alloc(phys_addr_t size,
+>>  					 MEMBLOCK_ALLOC_ACCESSIBLE);
+>>  }
+>>
+>> +void *memblock_alloc_exact_nid_raw(phys_addr_t size, phys_addr_t align,
+>> +				 phys_addr_t min_addr, phys_addr_t max_addr,
+>> +				 int nid);
+>>  void *memblock_alloc_try_nid_raw(phys_addr_t size, phys_addr_t align,
+>>  				 phys_addr_t min_addr, phys_addr_t max_addr,
+>>  				 int nid);
+>> diff --git a/mm/memblock.c b/mm/memblock.c
+>> index 7d4f61a..0de9d83 100644
+>> --- a/mm/memblock.c
+>> +++ b/mm/memblock.c
+>> @@ -1323,12 +1323,13 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+>>   * @start: the lower bound of the memory region to allocate (phys address)
+>>   * @end: the upper bound of the memory region to allocate (phys address)
+>>   * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
+>> + * @exact_nid: control the allocation fall back to other nodes
+>>   *
+>>   * The allocation is performed from memory region limited by
+>>   * memblock.current_limit if @max_addr == %MEMBLOCK_ALLOC_ACCESSIBLE.
+>>   *
+>> - * If the specified node can not hold the requested memory the
+>> - * allocation falls back to any node in the system
+>> + * If the specified node can not hold the requested memory and @exact_nid
+>> + * is zero, the allocation falls back to any node in the system
+> 
+>      ^ is false  ;-)
+> 
+sorry my negligence, thanks.
 
-Thanks,
+>>   *
+>>   * For systems with memory mirroring, the allocation is attempted first
+>>   * from the regions with mirroring enabled and then retried from any
+>> @@ -1342,7 +1343,8 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+>>   */
+>>  static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+>>  					phys_addr_t align, phys_addr_t start,
+>> -					phys_addr_t end, int nid)
+>> +					phys_addr_t end, int nid,
+>> +					bool exact_nid)
+>>  {
+>>  	enum memblock_flags flags = choose_memblock_flags();
+>>  	phys_addr_t found;
+>> @@ -1365,7 +1367,7 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+>>  	if (found && !memblock_reserve(found, size))
+>>  		goto done;
+>>
+>> -	if (nid != NUMA_NO_NODE) {
+>> +	if (nid != NUMA_NO_NODE && !exact_nid) {
+>>  		found = memblock_find_in_range_node(size, align, start,
+>>  						    end, NUMA_NO_NODE,
+>>  						    flags);
+>> @@ -1413,7 +1415,8 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+>>  					     phys_addr_t start,
+>>  					     phys_addr_t end)
+>>  {
+>> -	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE);
+>> +	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE,
+>> +					false);
+>>  }
+>>
+>>  /**
+>> @@ -1432,7 +1435,7 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+>>  phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
+>>  {
+>>  	return memblock_alloc_range_nid(size, align, 0,
+>> -					MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+>> +					MEMBLOCK_ALLOC_ACCESSIBLE, nid, false);
+>>  }
+>>
+>>  /**
+>> @@ -1442,6 +1445,7 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
+>>   * @min_addr: the lower bound of the memory region to allocate (phys address)
+>>   * @max_addr: the upper bound of the memory region to allocate (phys address)
+>>   * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
+>> + * @exact_nid: control the allocation fall back to other nodes
+>>   *
+>>   * Allocates memory block using memblock_alloc_range_nid() and
+>>   * converts the returned physical address to virtual.
+>> @@ -1457,7 +1461,7 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
+>>  static void * __init memblock_alloc_internal(
+>>  				phys_addr_t size, phys_addr_t align,
+>>  				phys_addr_t min_addr, phys_addr_t max_addr,
+>> -				int nid)
+>> +				int nid, bool exact_nid)
+>>  {
+>>  	phys_addr_t alloc;
+>>
+>> @@ -1469,11 +1473,13 @@ static void * __init memblock_alloc_internal(
+>>  	if (WARN_ON_ONCE(slab_is_available()))
+>>  		return kzalloc_node(size, GFP_NOWAIT, nid);
+>>
+>> -	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid);
+>> +	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid,
+>> +					exact_nid);
+>>
+>>  	/* retry allocation without lower limit */
+>>  	if (!alloc && min_addr)
+>> -		alloc = memblock_alloc_range_nid(size, align, 0, max_addr, nid);
+>> +		alloc = memblock_alloc_range_nid(size, align, 0, max_addr, nid,
+>> +						exact_nid);
+>>
+>>  	if (!alloc)
+>>  		return NULL;
+>> @@ -1482,6 +1488,43 @@ static void * __init memblock_alloc_internal(
+>>  }
+>>
+>>  /**
+>> + * memblock_alloc_exact_nid_raw - allocate boot memory block on the exact node
+>> + * without zeroing memory
+>> + * @size: size of memory block to be allocated in bytes
+>> + * @align: alignment of the region and block's size
+>> + * @min_addr: the lower bound of the memory region from where the allocation
+>> + *	  is preferred (phys address)
+>> + * @max_addr: the upper bound of the memory region from where the allocation
+>> + *	      is preferred (phys address), or %MEMBLOCK_ALLOC_ACCESSIBLE to
+>> + *	      allocate only from memory limited by memblock.current_limit value
+>> + * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
+>> + *
+>> + * Public function, provides additional debug information (including caller
+>> + * info), if enabled. Does not zero allocated memory.
+>> + *
+>> + * Return:
+>> + * Virtual address of allocated memory block on success, NULL on failure.
+>> + */
+>> +void * __init memblock_alloc_exact_nid_raw(
+>> +			phys_addr_t size, phys_addr_t align,
+>> +			phys_addr_t min_addr, phys_addr_t max_addr,
+>> +			int nid)
+>> +{
+>> +	void *ptr;
+>> +
+>> +	memblock_dbg("%s: %llu bytes align=0x%llx nid=%d from=%pa max_addr=%pa %pS\n",
+>> +		     __func__, (u64)size, (u64)align, nid, &min_addr,
+>> +		     &max_addr, (void *)_RET_IP_);
+>> +
+>> +	ptr = memblock_alloc_internal(size, align,
+>> +					   min_addr, max_addr, nid, true);
+>> +	if (ptr && size > 0)
+>> +		page_init_poison(ptr, size);
+>> +
+>> +	return ptr;
+>> +}
+>> +
+>> +/**
+>>   * memblock_alloc_try_nid_raw - allocate boot memory block without zeroing
+>>   * memory and without panicking
+>>   * @size: size of memory block to be allocated in bytes
+>> @@ -1512,7 +1555,7 @@ void * __init memblock_alloc_try_nid_raw(
+>>  		     &max_addr, (void *)_RET_IP_);
+>>
+>>  	ptr = memblock_alloc_internal(size, align,
+>> -					   min_addr, max_addr, nid);
+>> +					   min_addr, max_addr, nid, false);
+>>  	if (ptr && size > 0)
+>>  		page_init_poison(ptr, size);
+>>
+>> @@ -1547,7 +1590,7 @@ void * __init memblock_alloc_try_nid(
+>>  		     __func__, (u64)size, (u64)align, nid, &min_addr,
+>>  		     &max_addr, (void *)_RET_IP_);
+>>  	ptr = memblock_alloc_internal(size, align,
+>> -					   min_addr, max_addr, nid);
+>> +					   min_addr, max_addr, nid, false);
+>>  	if (ptr)
+>>  		memset(ptr, 0, size);
+>>
+>> diff --git a/mm/sparse.c b/mm/sparse.c
+>> index 72f010d..1a06471 100644
+>> --- a/mm/sparse.c
+>> +++ b/mm/sparse.c
+>> @@ -475,7 +475,7 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+>>  	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
+>>  	WARN_ON(sparsemap_buf);	/* forgot to call sparse_buffer_fini()? */
+>>  	sparsemap_buf =
+>> -		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
+>> +		memblock_alloc_exact_nid_raw(size, PAGE_SIZE,
+>>  						addr,
+>>  						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+>>  	sparsemap_buf_end = sparsemap_buf + size;
+>> -- 
+>> 2.7.4
+>>
+> 
 
-David / dhildenb
