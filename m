@@ -2,211 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA5DBD9CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28748BD9CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634079AbfIYI01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 04:26:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390395AbfIYI01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:26:27 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 544931DCD;
-        Wed, 25 Sep 2019 08:26:26 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-117-14.ams2.redhat.com [10.36.117.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9AF61167A3;
-        Wed, 25 Sep 2019 08:26:22 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        id S2442735AbfIYI1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 04:27:30 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:56642 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390395AbfIYI1a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 04:27:30 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8P8NhEW152269;
+        Wed, 25 Sep 2019 08:27:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=g/QnWL633DATk/D0Ttai9VtCMe1kqYKn1pLuJll4508=;
+ b=dXIBxHEGBDzji4oALJi0bO8A0iVZhCmtnvhVfuFS1EDWgqwfzbr1SuZoZPLpF0u3lFJ2
+ hql7W2xIVmZhjoITH0Tnu6YT7xCMSpPeYpHJtpYsj8E4wjZa4ncqEOzHFbMHd14kvjsA
+ CLbHGtPlVsogTcl5D6i9nc6C/a9fOfl5abn5ar4GnfkbF0jDw42Oaoz7+2Y1MD0Q8DJK
+ pgJGtkS/vHMFnhRNFKPmnJZ19BiHN7yD5+Oh81hJV1yriYaqHH6HkUqwQW7qXpANR8vW
+ TZQIFmfWJLqtmKHbCktGmaJXwYpbUfPG26gvH6+ElYIBGB1WJWrcSMDzVHRMZD/7A/m9 Tg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2v5cgr306j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Sep 2019 08:27:25 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8P8OTAT029532;
+        Wed, 25 Sep 2019 08:27:24 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2v82q90510-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Sep 2019 08:27:24 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8P8RNE0007540;
+        Wed, 25 Sep 2019 08:27:23 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 25 Sep 2019 01:27:22 -0700
+Date:   Wed, 25 Sep 2019 11:27:16 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jerry Lin <wahahab11@gmail.com>
+Cc:     Jens Frederich <jfrederich@gmail.com>,
+        Daniel Drake <dsd@laptop.org>,
+        Jon Nettleton <jon.nettleton@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v1] drivers/base/memory.c: Drop the mem_sysfs_mutex
-Date:   Wed, 25 Sep 2019 10:26:21 +0200
-Message-Id: <20190925082621.4927-1-david@redhat.com>
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: olpc_dcon: fix wrong dependencies in Kconfig
+ file
+Message-ID: <20190925082715.GC27389@kadam>
+References: <20190925074243.GA24947@compute1>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Wed, 25 Sep 2019 08:26:26 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925074243.GA24947@compute1>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9390 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=965
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909250086
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9390 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909250086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mem_sysfs_mutex isn't really helpful. Also, it's not really clear what
-the mutex protects at all.
+Thanks!
 
-The device lists of the memory subsystem are protected separately. We don't
-need that mutex when looking up. creating, or removing independent
-devices. find_memory_block_by_id() will perform locking on its own and
-grab a reference of the returned device.
-
-At the time memory_dev_init() is called, we cannot have concurrent
-hot(un)plug operations yet - we're still fairly early during boot. We
-don't need any locking.
-
-The creation/removal of memory block devices should be protected
-on a higher level - especially using the device hotplug lock to avoid
-documented issues (see Documentation/core-api/memory-hotplug.rst) - or
-if that is reworked, using similar locking.
-
-Protecting in the context of these functions only doesn't really make
-sense. Especially, if we would have a situation where the same memory
-blocks are created/deleted at the same time, there is something horribly
-going wrong (imagining adding/removing a DIMM at the same time from two
-call paths) - after the functions succeeded something else in the
-callers would blow up (e.g., create_memory_block_devices() succeeded but
-there are no memory block devices anymore).
-
-All relevant call paths (except when adding memory early during boot
-via ACPI, which is now documented) hold the device hotplug lock when
-adding memory, and when removing memory. Let's document that instead.
-
-Add a simple safety net to create_memory_block_devices() in case we
-would actually remove memory blocks while adding them, so we'll never
-dereference a NULL pointer. Simplify memory_dev_init() now that the
-lock is gone.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-
-Tested using my usual x86-64 DIMM based hot(un)plug setup.
-
----
- drivers/base/memory.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/base/memory.c b/drivers/base/memory.c
-index 6bea4f3f8040..634aab8e1e19 100644
---- a/drivers/base/memory.c
-+++ b/drivers/base/memory.c
-@@ -19,15 +19,12 @@
- #include <linux/memory.h>
- #include <linux/memory_hotplug.h>
- #include <linux/mm.h>
--#include <linux/mutex.h>
- #include <linux/stat.h>
- #include <linux/slab.h>
- 
- #include <linux/atomic.h>
- #include <linux/uaccess.h>
- 
--static DEFINE_MUTEX(mem_sysfs_mutex);
--
- #define MEMORY_CLASS_NAME	"memory"
- 
- #define to_memory_block(dev) container_of(dev, struct memory_block, dev)
-@@ -702,6 +699,8 @@ static void unregister_memory(struct memory_block *memory)
-  * Create memory block devices for the given memory area. Start and size
-  * have to be aligned to memory block granularity. Memory block devices
-  * will be initialized as offline.
-+ *
-+ * Called under device_hotplug_lock.
-  */
- int create_memory_block_devices(unsigned long start, unsigned long size)
- {
-@@ -715,7 +714,6 @@ int create_memory_block_devices(unsigned long start, unsigned long size)
- 			 !IS_ALIGNED(size, memory_block_size_bytes())))
- 		return -EINVAL;
- 
--	mutex_lock(&mem_sysfs_mutex);
- 	for (block_id = start_block_id; block_id != end_block_id; block_id++) {
- 		ret = init_memory_block(&mem, block_id, MEM_OFFLINE);
- 		if (ret)
-@@ -727,11 +725,12 @@ int create_memory_block_devices(unsigned long start, unsigned long size)
- 		for (block_id = start_block_id; block_id != end_block_id;
- 		     block_id++) {
- 			mem = find_memory_block_by_id(block_id);
-+			if (WARN_ON_ONCE(!mem))
-+				continue;
- 			mem->section_count = 0;
- 			unregister_memory(mem);
- 		}
- 	}
--	mutex_unlock(&mem_sysfs_mutex);
- 	return ret;
- }
- 
-@@ -739,6 +738,8 @@ int create_memory_block_devices(unsigned long start, unsigned long size)
-  * Remove memory block devices for the given memory area. Start and size
-  * have to be aligned to memory block granularity. Memory block devices
-  * have to be offline.
-+ *
-+ * Called under device_hotplug_lock.
-  */
- void remove_memory_block_devices(unsigned long start, unsigned long size)
- {
-@@ -751,7 +752,6 @@ void remove_memory_block_devices(unsigned long start, unsigned long size)
- 			 !IS_ALIGNED(size, memory_block_size_bytes())))
- 		return;
- 
--	mutex_lock(&mem_sysfs_mutex);
- 	for (block_id = start_block_id; block_id != end_block_id; block_id++) {
- 		mem = find_memory_block_by_id(block_id);
- 		if (WARN_ON_ONCE(!mem))
-@@ -760,7 +760,6 @@ void remove_memory_block_devices(unsigned long start, unsigned long size)
- 		unregister_memory_block_under_nodes(mem);
- 		unregister_memory(mem);
- 	}
--	mutex_unlock(&mem_sysfs_mutex);
- }
- 
- /* return true if the memory block is offlined, otherwise, return false */
-@@ -794,12 +793,13 @@ static const struct attribute_group *memory_root_attr_groups[] = {
- };
- 
- /*
-- * Initialize the sysfs support for memory devices...
-+ * Initialize the sysfs support for memory devices. At the time this function
-+ * is called, we cannot have concurrent creation/deletion of memory block
-+ * devices, the device_hotplug_lock is not needed.
-  */
- void __init memory_dev_init(void)
- {
- 	int ret;
--	int err;
- 	unsigned long block_sz, nr;
- 
- 	/* Validate the configured memory block size */
-@@ -810,24 +810,19 @@ void __init memory_dev_init(void)
- 
- 	ret = subsys_system_register(&memory_subsys, memory_root_attr_groups);
- 	if (ret)
--		goto out;
-+		panic("%s() failed to register subsystem: %d\n", __func__, ret);
- 
- 	/*
- 	 * Create entries for memory sections that were found
- 	 * during boot and have been initialized
- 	 */
--	mutex_lock(&mem_sysfs_mutex);
- 	for (nr = 0; nr <= __highest_present_section_nr;
- 	     nr += sections_per_block) {
--		err = add_memory_block(nr);
--		if (!ret)
--			ret = err;
-+		ret = add_memory_block(nr);
-+		if (ret)
-+			panic("%s() failed to add memory block: %d\n", __func__,
-+			      ret);
- 	}
--	mutex_unlock(&mem_sysfs_mutex);
--
--out:
--	if (ret)
--		panic("%s() failed: %d\n", __func__, ret);
- }
- 
- /**
--- 
-2.21.0
+regards,
+dan carpenter
 
