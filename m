@@ -2,99 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32939BD92F
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A30BD936
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437081AbfIYHf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:35:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:53122 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390567AbfIYHf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:35:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 00:35:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,547,1559545200"; 
-   d="scan'208";a="188706169"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Sep 2019 00:35:26 -0700
-Received: from fmsmsx125.amr.corp.intel.com (10.18.125.40) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 25 Sep 2019 00:35:25 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- FMSMSX125.amr.corp.intel.com (10.18.125.40) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 25 Sep 2019 00:35:25 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.32]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.132]) with mapi id 14.03.0439.000;
- Wed, 25 Sep 2019 15:35:23 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Peter Xu <peterx@redhat.com>, Lu Baolu <baolu.lu@linux.intel.com>
-CC:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Yi Sun <yi.y.sun@linux.intel.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>
-Subject: RE: [RFC PATCH 4/4] iommu/vt-d: Identify domains using first level
- page table
-Thread-Topic: [RFC PATCH 4/4] iommu/vt-d: Identify domains using first level
- page table
-Thread-Index: AQHVcgpG/pXRrE8O1EK3Luw5SA+K6qc7cLwAgACSPnA=
-Date:   Wed, 25 Sep 2019 07:35:23 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D58F50F@SHSMSX104.ccr.corp.intel.com>
-References: <20190923122454.9888-1-baolu.lu@linux.intel.com>
- <20190923122454.9888-5-baolu.lu@linux.intel.com>
- <20190925065006.GN28074@xz-x1>
-In-Reply-To: <20190925065006.GN28074@xz-x1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWNjOWZjYmUtYzc2MS00MjE2LWJkYmYtYzU2YTdhNGI0OWMyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSnozQ1pmXC9STHptMktYYkRDZzRUWjJ6MUk0bzJ2NWgzcXIxXC9pK05WeW1VRkg5K2FVUWJyVG9jcUQyenU4cmdWIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2393473AbfIYHhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 03:37:22 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38720 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392973AbfIYHhW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:37:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=de5nn/eSh/M6SfFOgTwUQaAn196rLscasGKtD5AUuUs=; b=nF3zC9zOKMeYOwaM5E9MTgulD
+        fRQB/uFnc0EG2pJZT4t4cBrswF5dlPePWEXSJGj4I0AkeuCU1jlCs0BklqrxF5dsJqx/825QDldMT
+        3HrJtOxS3kUQ6xuCegEDWM1ZszdRP4yGpmAZZatq7p0KZs8LfT4FWOY1vxbGPczM03BSTbGk8jXuj
+        DxWSHmMXinYQDTKoPK8ZNPgfX4i5MeGpntXTy8u4v27rX2ETeKQKqTxN54jEwzPk8SUrnaMyVGzeY
+        /NTC3qi7RSPVjpxirIQOxBJdwD3+0PgOzpeic1Rm9OUkPq/45Z/TFbnLe/Myejll2yLbrCQs2kTb3
+        zNrZ8KVgw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iD1qy-0003zh-FA; Wed, 25 Sep 2019 07:36:48 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8BCDD3012CF;
+        Wed, 25 Sep 2019 09:35:57 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7027A200D2661; Wed, 25 Sep 2019 09:36:43 +0200 (CEST)
+Date:   Wed, 25 Sep 2019 09:36:43 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>, mpe@ellerman.id.au
+Subject: Re: [PATCH 2/3] task: RCU protect tasks on the runqueue
+Message-ID: <20190925073643.GA4536@hirez.programming.kicks-ass.net>
+References: <20190903074718.GT2386@hirez.programming.kicks-ass.net>
+ <87k1apqqgk.fsf@x220.int.ebiederm.org>
+ <CAHk-=wjVGLr8wArT9P4MXxA-XpkG=9ZXdjM3vpemSF25vYiLoA@mail.gmail.com>
+ <874l1tp7st.fsf@x220.int.ebiederm.org>
+ <CAHk-=wjvyRJEdativFqqGGxzSgWnc-m7b+B04iQBMcZV4uM=hA@mail.gmail.com>
+ <20190903200603.GW2349@hirez.programming.kicks-ass.net>
+ <20190903213218.GG4125@linux.ibm.com>
+ <87r24umryu.fsf@x220.int.ebiederm.org>
+ <20190906070736.GR2349@hirez.programming.kicks-ass.net>
+ <87woehek20.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87woehek20.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBQZXRlciBYdSBbbWFpbHRvOnBldGVyeEByZWRoYXQuY29tXQ0KPiBTZW50OiBXZWRu
-ZXNkYXksIFNlcHRlbWJlciAyNSwgMjAxOSAyOjUwIFBNDQo+IA0KPiBPbiBNb24sIFNlcCAyMywg
-MjAxOSBhdCAwODoyNDo1NFBNICswODAwLCBMdSBCYW9sdSB3cm90ZToNCj4gPiArLyoNCj4gPiAr
-ICogQ2hlY2sgYW5kIHJldHVybiB3aGV0aGVyIGZpcnN0IGxldmVsIGlzIHVzZWQgYnkgZGVmYXVs
-dCBmb3INCj4gPiArICogRE1BIHRyYW5zbGF0aW9uLg0KPiA+ICsgKi8NCj4gPiArc3RhdGljIGJv
-b2wgZmlyc3RfbGV2ZWxfYnlfZGVmYXVsdCh2b2lkKQ0KPiA+ICt7DQo+ID4gKwlzdHJ1Y3QgZG1h
-cl9kcmhkX3VuaXQgKmRyaGQ7DQo+ID4gKwlzdHJ1Y3QgaW50ZWxfaW9tbXUgKmlvbW11Ow0KPiA+
-ICsNCj4gPiArCXJjdV9yZWFkX2xvY2soKTsNCj4gPiArCWZvcl9lYWNoX2FjdGl2ZV9pb21tdShp
-b21tdSwgZHJoZCkNCj4gPiArCQlpZiAoIXNtX3N1cHBvcnRlZChpb21tdSkgfHwNCj4gPiArCQkg
-ICAgIWVjYXBfZmx0cyhpb21tdS0+ZWNhcCkgfHwNCj4gPiArCQkgICAgIWNhcF9jYWNoaW5nX21v
-ZGUoaW9tbXUtPmNhcCkpDQo+ID4gKwkJCXJldHVybiBmYWxzZTsNCj4gPiArCXJjdV9yZWFkX3Vu
-bG9jaygpOw0KPiA+ICsNCj4gPiArCXJldHVybiB0cnVlOw0KPiA+ICt9DQo+IA0KPiAiSWYgbm8g
-Y2FjaGluZyBtb2RlLCB0aGVuIHdlIHdpbGwgbm90IHVzZSAxc3QgbGV2ZWwuIg0KPiANCj4gSG1t
-LCBkb2VzIHRoZSB2SU9NTVUgbmVlZHMgdG8gc3VwcG9ydCBjYWNoaW5nLW1vZGUgaWYgd2l0aCB0
-aGUNCj4gc29sdXRpb24geW91IHByb3Bvc2VkIGhlcmU/ICBDYWNoaW5nIG1vZGUgaXMgb25seSBu
-ZWNlc3NhcnkgZm9yDQo+IHNoYWRvd2luZyBBRkFJQ1QsIGFuZCBhZnRlciBhbGwgeW91J3JlIGdv
-aW5nIHRvIHVzZSBmdWxsLW5lc3RlZCwNCj4gdGhlbi4uLiB0aGVuIEkgd291bGQgdGhpbmsgaXQn
-cyBub3QgbmVlZGVkLiAgQW5kIGlmIHNvLCB3aXRoIHRoaXMNCj4gcGF0Y2ggMXN0IGxldmVsIHdp
-bGwgYmUgZGlzYWJsZWQuIFNvdW5kcyBsaWtlIGEgcGFyYWRveC4uLg0KPiANCj4gSSdtIHRoaW5r
-aW5nIHdoYXQgd291bGQgYmUgdGhlIGJpZyBwaWN0dXJlIGZvciB0aGlzIHRvIHdvcmsgbm93OiBG
-b3INCj4gdGhlIHZJT01NVSwgaW5zdGVhZCBvZiBleHBvc2luZyB0aGUgY2FjaGluZy1tb2RlLCBJ
-J20gdGhpbmtpbmcgbWF5YmUNCj4gd2Ugc2hvdWxkIGV4cG9zZSBpdCB3aXRoIGVjYXAuRkxUUz0x
-IHdoaWxlIHdlIGNhbiBrZWVwIGVjYXAuU0xUUz0wDQo+IHRoZW4gaXQncyBuYXR1cmFsIHRoYXQg
-d2UgY2FuIG9ubHkgdXNlIDFzdCBsZXZlbCB0cmFuc2xhdGlvbiBpbiB0aGUNCj4gZ3Vlc3QgZm9y
-IGFsbCB0aGUgZG9tYWlucyAoYW5kIEkgYXNzdW1lIHN1Y2ggYW4gZWNhcCB2YWx1ZSBzaG91bGQN
-Cj4gbmV2ZXIgaGFwcGVuIG9uIHJlYWwgaGFyZHdhcmUsIGFtIEkgcmlnaHQ/KS4NCj4gDQoNCnll
-cywgdGhhdCdzIGFsc28gdGhlIHBpY3R1cmUgaW4gbXkgbWluZC4gOi0pDQoNClRoYW5rcw0KS2V2
-aW4NCg==
+On Mon, Sep 09, 2019 at 07:22:15AM -0500, Eric W. Biederman wrote:
+
+> Let me see if I can explain my confusion in terms of task_numa_compare.
+> 
+> The function task_numa_comare now does:
+> 
+> 	rcu_read_lock();
+> 	cur = rcu_dereference(dst_rq->curr);
+> 
+> Then it proceeds to examine a few fields of cur.
+> 
+> 	cur->flags;
+>         cur->cpus_ptr;
+>         cur->numa_group;
+>         cur->numa_faults[];
+>         cur->total_numa_faults;
+>         cur->se.cfs_rq;
+> 
+> My concern here is the ordering between setting rq->curr and and setting
+> those other fields.  If we read values of those fields that were not
+> current when we set cur than I think task_numa_compare would give an
+> incorrect answer.
+
+That code is explicitly without serialization. One memory barrier isn't
+going to make any difference what so ever.
+
+Specifically, those numbers will change _after_ we make it current, not
+before.
+
+> From what I can see pick_next_task_fair does not mess with any of
+> the fields that task_numa_compare uses.  So the existing memory barrier
+> should be more than sufficient for that case.
+
+There should not be, but even if there is, load-balancing in general
+(very much including the NUMA balancing) is completely unserialized and
+prone to reading stale data at all times.
+
+This is on purpose; it minimizes the interference of load-balancing, and
+if we make a 'wrong' choice, the next pass can fix it up.
+
+> So I think I just need to write up a patch 4/3 that replaces the my
+> "rcu_assign_pointer(rq->curr, next)" with "RCU_INIT_POINTER(rq->curr,
+> next)".  And includes a great big comment to that effect.
+> 
+> 
+> 
+> Now maybe I am wrong.  Maybe we can afford to see data that was changed
+> before the task became rq->curr in task_numa_compare.  But I don't think
+> so.  I really think it is that full memory barrier just a bit earlier
+> in __schedule that is keeping us safe.
+> 
+> Am I wrong?
+
+Not in so far that we now both seem to agree on using
+RCU_INIT_POINTER(); but we're still disagreeing on why.
+
+My argument is that since we can already obtain any task_struct pointer
+through find_task_by_vpid() and friends, any access to its individual
+members must already have serialzation rules (or explicitly none, as for
+load-balancing).
+
+I'm viewing this as just another variant of find_task_by_vpid(), except
+we index by CPU instead of PID. There can be changes to task_struct
+between to invocations of find_task_by_vpid(), any user will have to
+somehow deal with that. This is no different.
+
+Take for instance p->cpus_ptr, it has very specific serialzation rules
+(which that NUMA balancer thing blatantly ignores), as do a lot of other
+task_struct fields.
+
+The memory barrier in question isn't going to help with any of that.
+
+Specifically, if we care about the consistency of the numbers changed by
+pick_next_task(), we must acquire rq->lock (of course, once we do that,
+we can immediately use rq->curr without further RCU use).
