@@ -2,126 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34FB8BDB08
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:32:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1CB0BDB14
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:34:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732624AbfIYJcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 05:32:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34204 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbfIYJcF (ORCPT
+        id S1731740AbfIYJec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 05:34:32 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:57543 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732789AbfIYJdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 05:32:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+1xpzzC7e+If0Dblidua6mpK2AngQpcowyagtZlcJrI=; b=Eb7HQSum/uvhU9ytIsU78GhNY
-        ayCNsL1Z0BY4hYn23Q0O50hMcoR7v6nQkhMsyeVaghoxqy+UM/1tYr/tXwJyjY0FfG9XL7vgeuedE
-        NiajSjto9JiKjIvMBrNWgtonTmUDtRTyoFbi3vmVdPQfIlf46XyuuBJK+LrtZUM4kDVuX9YW2PObj
-        /2iLMyzRRKPY0cic3bI+f59p1iwxP1VHax4tpdk7fhHEOleGtp6oGzUdADDEtr1YH7NP7czZujtw7
-        elUwCB2bOaj2YGfS+T0Wno1Kan6wxAqATz6sXCPdmYP1dEr58G05lJiYmWcwbIJ9swhMVMTX3Vo5Y
-        IRWxeaqNQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iD3eO-0000RR-Ae; Wed, 25 Sep 2019 09:31:56 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5B3C9302A71;
-        Wed, 25 Sep 2019 11:31:07 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 20736203E50D5; Wed, 25 Sep 2019 11:31:53 +0200 (CEST)
-Date:   Wed, 25 Sep 2019 11:31:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, bigeasy@linutronix.de,
-        tglx@linutronix.de, thgarnie@google.com, tytso@mit.edu,
-        cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        mingo@redhat.com, will@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, keescook@chromium.org
-Subject: Re: [PATCH] mm/slub: fix a deadlock in shuffle_freelist()
-Message-ID: <20190925093153.GC4553@hirez.programming.kicks-ass.net>
-References: <1568392064-3052-1-git-send-email-cai@lca.pw>
+        Wed, 25 Sep 2019 05:33:55 -0400
+X-Originating-IP: 86.250.200.211
+Received: from windsurf (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: thomas.petazzoni@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 30D7820005;
+        Wed, 25 Sep 2019 09:33:52 +0000 (UTC)
+Date:   Wed, 25 Sep 2019 11:33:51 +0200
+From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To:     Remi Pommarel <repk@triplefau.lt>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: aardvark: Don't rely on jiffies while holding
+ spinlock
+Message-ID: <20190925113351.0b53d2e9@windsurf>
+In-Reply-To: <20190901142303.27815-1-repk@triplefau.lt>
+References: <20190901142303.27815-1-repk@triplefau.lt>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1568392064-3052-1-git-send-email-cai@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 13, 2019 at 12:27:44PM -0400, Qian Cai wrote:
-> The commit b7d5dc21072c ("random: add a spinlock_t to struct
-> batched_entropy") insists on acquiring "batched_entropy_u32.lock" in
-> get_random_u32() which introduced the lock chain,
-> 
-> "&rq->lock --> batched_entropy_u32.lock"
-> 
-> even after crng init. As the result, it could result in deadlock below.
-> Fix it by using get_random_bytes() in shuffle_freelist() which does not
-> need to take on the batched_entropy locks.
-> 
-> WARNING: possible circular locking dependency detected
-> 5.3.0-rc7-mm1+ #3 Tainted: G             L
-> ------------------------------------------------------
-> make/7937 is trying to acquire lock:
-> ffff900012f225f8 (random_write_wait.lock){....}, at:
-> __wake_up_common_lock+0xa8/0x11c
-> 
-> but task is already holding lock:
-> ffff0096b9429c00 (batched_entropy_u32.lock){-.-.}, at:
-> get_random_u32+0x6c/0x1dc
-> 
-> which lock already depends on the new lock.
-> 
-> the existing dependency chain (in reverse order) is:
-> 
-> -> #3 (batched_entropy_u32.lock){-.-.}:
->        lock_acquire+0x31c/0x360
->        _raw_spin_lock_irqsave+0x7c/0x9c
->        get_random_u32+0x6c/0x1dc
->        new_slab+0x234/0x6c0
->        ___slab_alloc+0x3c8/0x650
->        kmem_cache_alloc+0x4b0/0x590
->        __debug_object_init+0x778/0x8b4
->        debug_object_init+0x40/0x50
->        debug_init+0x30/0x29c
->        hrtimer_init+0x30/0x50
->        init_dl_task_timer+0x24/0x44
->        __sched_fork+0xc0/0x168
->        init_idle+0x78/0x26c
->        fork_idle+0x12c/0x178
->        idle_threads_init+0x108/0x178
->        smp_init+0x20/0x1bc
->        kernel_init_freeable+0x198/0x26c
->        kernel_init+0x18/0x334
->        ret_from_fork+0x10/0x18
-> 
-> -> #2 (&rq->lock){-.-.}:
+Hello Remi,
 
-This relation is silly..
+Thanks for the patch, I have a few comments/questions below.
 
-I suspect the below 'works'...
+On Sun,  1 Sep 2019 16:23:03 +0200
+Remi Pommarel <repk@triplefau.lt> wrote:
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 63900ca029e0..ec1d72f18b34 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6027,10 +6027,11 @@ void init_idle(struct task_struct *idle, int cpu)
- 	struct rq *rq = cpu_rq(cpu);
- 	unsigned long flags;
- 
-+	__sched_fork(0, idle);
-+
- 	raw_spin_lock_irqsave(&idle->pi_lock, flags);
- 	raw_spin_lock(&rq->lock);
- 
--	__sched_fork(0, idle);
- 	idle->state = TASK_RUNNING;
- 	idle->se.exec_start = sched_clock();
- 	idle->flags |= PF_IDLE;
+> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+> index fc0fe4d4de49..1fa6d04ad7aa 100644
+> --- a/drivers/pci/controller/pci-aardvark.c
+> +++ b/drivers/pci/controller/pci-aardvark.c
+> @@ -175,7 +175,8 @@
+>  	(PCIE_CONF_BUS(bus) | PCIE_CONF_DEV(PCI_SLOT(devfn))	| \
+>  	 PCIE_CONF_FUNC(PCI_FUNC(devfn)) | PCIE_CONF_REG(where))
+>  
+> -#define PIO_TIMEOUT_MS			1
+> +#define PIO_RETRY_CNT			10
+> +#define PIO_RETRY_DELAY			100 /* 100 us*/
+>  
+>  #define LINK_WAIT_MAX_RETRIES		10
+>  #define LINK_WAIT_USLEEP_MIN		90000
+> @@ -383,17 +384,16 @@ static void advk_pcie_check_pio_status(struct advk_pcie *pcie)
+>  static int advk_pcie_wait_pio(struct advk_pcie *pcie)
+>  {
+>  	struct device *dev = &pcie->pdev->dev;
+> -	unsigned long timeout;
+> +	size_t i;
+
+Is it common to use a size_t for a loop counter ?
+
+>  
+> -	timeout = jiffies + msecs_to_jiffies(PIO_TIMEOUT_MS);
+> -
+> -	while (time_before(jiffies, timeout)) {
+> +	for (i = 0; i < PIO_RETRY_CNT; ++i) {
+
+I find it more common to use post-increment for loop counters rather
+than pre-increment, but that's a really nitpick and I don't care much.
+
+>  		u32 start, isr;
+>  
+>  		start = advk_readl(pcie, PIO_START);
+>  		isr = advk_readl(pcie, PIO_ISR);
+>  		if (!start && isr)
+>  			return 0;
+> +		udelay(PIO_RETRY_DELAY);
+
+But the bigger issue is that this change causes a 100us delay at
+*every* single PIO read or write operation.
+
+Indeed, at the first iteration of the loop, the PIO operation has not
+completed, so you will always hit the udelay(100) a first time, and
+it's only at the second iteration of the loop that the PIO operation
+has completed (for successful PIO operations of course, which don't hit
+the timeout).
+
+I took a measurement around wait_pio() with sched_clock before and
+after the patch. Before the patch, I have measurements like this (in
+nanoseconds):
+
+[    1.562801] time = 6000
+[    1.565310] time = 6000
+[    1.567809] time = 6080
+[    1.570327] time = 6080
+[    1.572836] time = 6080
+[    1.575339] time = 6080
+[    1.577858] time = 2720
+[    1.580366] time = 2720
+[    1.582862] time = 6000
+[    1.585377] time = 2720
+[    1.587890] time = 2720
+[    1.590393] time = 2720
+
+So it takes a few microseconds for each PIO operation.
+
+With your patch applied:
+
+[    2.267291] time = 101680
+[    2.270002] time = 100880
+[    2.272852] time = 100800
+[    2.275573] time = 100880
+[    2.278285] time = 100800
+[    2.281005] time = 100880
+[    2.283722] time = 100800
+[    2.286444] time = 100880
+[    2.289264] time = 100880
+[    2.291981] time = 100800
+[    2.294690] time = 100800
+[    2.297405] time = 100800
+
+We're jumping to 100us for every PIO read/write operation. To be
+honest, I don't know if this is very important, there are not that many
+PIO operations, and they are not used in any performance hot path. But
+I thought it was worth pointing out the additional delay caused by this
+implementation change.
+
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
