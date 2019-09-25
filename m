@@ -2,94 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12CBEBDBCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 12:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50978BDBDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 12:09:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387930AbfIYKDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 06:03:52 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44589 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfIYKDv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 06:03:51 -0400
-Received: by mail-pg1-f196.google.com with SMTP id g3so2908631pgs.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 03:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=D2+Lw+Pa01X7BomivX93hO8QHJLkQUok4YlT1BdSE8Q=;
-        b=E5T74E7aiLNp58UWXnpZyalzu/mEv9i0J0gVytsV9dTDjmkgfai15/LekVtp2q1QcL
-         gaUVymGSBo5rrEU8HwK0LQX+zl+RCTe3huCu6qasixs/qsPmjPe0FjMPf+1/ysEXI4gr
-         QY0M7E5Xm3nU70nK+lwHwWAw3Cz7idV3KUWPfpiqvoXtfPDSilQp97dXeagEI3L2wun7
-         CHBsMtM3phTNDbBI0YHMjhb6eSItTo2M8qOB910EXVdoDmfkiqKoeggt1ynccRLa9e4o
-         VRAYo4oTP1CPOM3JmlA6MHB5owQWFCmvxN45t3Ys8AAd9TFxvLW5ATyKJk3K9NvvFbhH
-         DBTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=D2+Lw+Pa01X7BomivX93hO8QHJLkQUok4YlT1BdSE8Q=;
-        b=gSqWkQz+K2/730hcLoJl/+VTZCyjDoW27KLHOmOnYzCIEsKdvkjxOYl0q8ly21HS5S
-         Up9fz4YPTdAOIxGCYyUuC5F42k6dR5QO6taVznkjXMuncB6yVugtzLH2/d6R3Fj4xd3w
-         xj9vM0+Plstf+XFrDj96thPuot8LhTvUN+gpWvABc2NFm4lHvPR8hVM2PAAj3J8CPRV+
-         YTuSBoqu2SFxlqjKlYMo6JCrZThrEdOCpR0728IJit7Q/3otjfyMhRSCFvCE9uNvCJ5p
-         Wn53fM6VASosIna+eAa6Cpu+aEevuWLvn+c/ab2XYy8sgt0FmdOS9DCd/kwuSfBROj3v
-         e4PA==
-X-Gm-Message-State: APjAAAUezXMXUyPAiPdrAXJ59/Rq5Mv1Op+lbt7qLqHSwTjJLq2sMpc1
-        Tg1W9krGnvEqcs28+g2eqvnW3w==
-X-Google-Smtp-Source: APXvYqyK1/XMgIGTBB477BhqN6s74xUQ051y3HOsz4kjV9sUQYEjuuOo+dD5rVKeMURqOO2+apKG7Q==
-X-Received: by 2002:a17:90a:bf0e:: with SMTP id c14mr5285165pjs.69.1569405831188;
-        Wed, 25 Sep 2019 03:03:51 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id j25sm4753752pfi.113.2019.09.25.03.03.47
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 25 Sep 2019 03:03:50 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     stable@vger.kernel.org, sre@kernel.org
-Cc:     david@lechnology.com, linux-pm@vger.kernel.org, arnd@arndb.de,
-        baolin.wang@linaro.org, orsonzhai@gmail.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: [BACKPORT 4.14.y v3 3/3] power: supply: sysfs: ratelimit property read error message
-Date:   Wed, 25 Sep 2019 18:03:35 +0800
-Message-Id: <c136c30f8b113ba9b0359f57d2a109766c1d7a70.1569405445.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1569405445.git.baolin.wang@linaro.org>
-References: <cover.1569405445.git.baolin.wang@linaro.org>
+        id S1728882AbfIYKJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 06:09:30 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39274 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbfIYKJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 06:09:30 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CCC431A0824;
+        Wed, 25 Sep 2019 12:09:27 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B6C71A00DD;
+        Wed, 25 Sep 2019 12:09:23 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2FE40402ED;
+        Wed, 25 Sep 2019 18:09:18 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com, leonard.crestez@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] firmware: imx: Skip return value check for some special SCU firmware APIs
+Date:   Wed, 25 Sep 2019 18:07:46 +0800
+Message-Id: <1569406066-16626-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Lechner <david@lechnology.com>
+The SCU firmware does NOT always have return value stored in message
+header's function element even the API has response data, those special
+APIs are defined as void function in SCU firmware, so they should be
+treated as return success always.
 
-[Upstream commit 87a2b65fc855e6be50f791c2ebbb492541896827]
-
-This adds rate limiting to the message that is printed when reading a
-power supply property via sysfs returns an error. This will prevent
-userspace applications from unintentionally dDOSing the system by
-continuously reading a property that returns an error.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/power/supply/power_supply_sysfs.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+	- This patch is based on the patch of https://patchwork.kernel.org/patch/11129553/
+---
+ drivers/firmware/imx/imx-scu.c | 34 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
-index eb5dc74..2ccaf4f 100644
---- a/drivers/power/supply/power_supply_sysfs.c
-+++ b/drivers/power/supply/power_supply_sysfs.c
-@@ -91,7 +91,8 @@ static ssize_t power_supply_show_property(struct device *dev,
- 				dev_dbg(dev, "driver has no data for `%s' property\n",
- 					attr->attr.name);
- 			else if (ret != -ENODEV && ret != -EAGAIN)
--				dev_err(dev, "driver failed to report `%s' property: %zd\n",
-+				dev_err_ratelimited(dev,
-+					"driver failed to report `%s' property: %zd\n",
- 					attr->attr.name, ret);
- 			return ret;
- 		}
+diff --git a/drivers/firmware/imx/imx-scu.c b/drivers/firmware/imx/imx-scu.c
+index 869be7a..ced5b12 100644
+--- a/drivers/firmware/imx/imx-scu.c
++++ b/drivers/firmware/imx/imx-scu.c
+@@ -78,6 +78,11 @@ static int imx_sc_linux_errmap[IMX_SC_ERR_LAST] = {
+ 	-EIO,	 /* IMX_SC_ERR_FAIL */
+ };
+ 
++static const struct imx_sc_rpc_msg whitelist[] = {
++	{ .svc = IMX_SC_RPC_SVC_MISC, .func = IMX_SC_MISC_FUNC_UNIQUE_ID },
++	{ .svc = IMX_SC_RPC_SVC_MISC, .func = IMX_SC_MISC_FUNC_GET_BUTTON_STATUS },
++};
++
+ static struct imx_sc_ipc *imx_sc_ipc_handle;
+ 
+ static inline int imx_sc_to_linux_errno(int errno)
+@@ -157,11 +162,24 @@ static int imx_scu_ipc_write(struct imx_sc_ipc *sc_ipc, void *msg)
+ 	return 0;
+ }
+ 
++static bool imx_scu_call_skip_return_value_check(uint8_t svc, uint8_t func)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(whitelist); i++)
++		if (svc == whitelist[i].svc &&
++			func == whitelist[i].func)
++			return true;
++
++	return false;
++}
++
+ /*
+  * RPC command/response
+  */
+ int imx_scu_call_rpc(struct imx_sc_ipc *sc_ipc, void *msg, bool have_resp)
+ {
++	uint8_t saved_svc, saved_func;
+ 	struct imx_sc_rpc_msg *hdr;
+ 	int ret;
+ 
+@@ -171,8 +189,11 @@ int imx_scu_call_rpc(struct imx_sc_ipc *sc_ipc, void *msg, bool have_resp)
+ 	mutex_lock(&sc_ipc->lock);
+ 	reinit_completion(&sc_ipc->done);
+ 
+-	if (have_resp)
++	if (have_resp) {
+ 		sc_ipc->msg = msg;
++		saved_svc = ((struct imx_sc_rpc_msg *)msg)->svc;
++		saved_func = ((struct imx_sc_rpc_msg *)msg)->func;
++	}
+ 	sc_ipc->count = 0;
+ 	ret = imx_scu_ipc_write(sc_ipc, msg);
+ 	if (ret < 0) {
+@@ -190,7 +211,16 @@ int imx_scu_call_rpc(struct imx_sc_ipc *sc_ipc, void *msg, bool have_resp)
+ 
+ 		/* response status is stored in hdr->func field */
+ 		hdr = msg;
+-		ret = hdr->func;
++		/*
++		 * Some special SCU firmware APIs do NOT have return value
++		 * in hdr->func, but they do have response data, those special
++		 * APIs are defined as void function in SCU firmware, so they
++		 * should be treated as return success always.
++		 */
++		if (!imx_scu_call_skip_return_value_check(saved_svc, saved_func))
++			ret = hdr->func;
++		else
++			ret = 0;
+ 	}
+ 
+ out:
 -- 
-1.7.9.5
+2.7.4
 
