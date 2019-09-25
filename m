@@ -2,160 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD08ABE2C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 18:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AAFDBE2C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 18:47:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392072AbfIYQrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 12:47:19 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43828 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392039AbfIYQrR (ORCPT
+        id S2392037AbfIYQrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 12:47:15 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:37833 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732903AbfIYQrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 12:47:17 -0400
-Received: by mail-io1-f67.google.com with SMTP id v2so430427iob.10
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 09:47:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=98pgIm93kXtpiVnPdQGl6qYx3mDeiyiIIkaZo8B0nYw=;
-        b=WvgZ/tV+qz4PYThIjrZ62TklAy0Nk05OkM+Vs8mBky+mCDHKn5Q/ZucHDd4zO+3dIZ
-         eBUQoXg37LJOhxhC4UjoxsVO6yQffKbKEyk3BnEILbf13f/ogVpcNTTw7f6pNGRSMlEy
-         1wEaLrRPMEjkGgblfRCKEzlpYD0Y/yCcrb8au+B1hdjjcX6Ze7Bi0kbkXI7nbwEYyqYc
-         K63QGHh+/ko2XSFNZl8hmUxgaHkPdh0zAkGs5u2xO+r6JoceDJFy4zLPu5yStHVZcByj
-         ISD23aAxzowf3CpOvB2pXbDJ4ZrJD6zsVkrI7V4yjuwpzgTv5LeveW2S9XGiX85/iw8u
-         OutQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=98pgIm93kXtpiVnPdQGl6qYx3mDeiyiIIkaZo8B0nYw=;
-        b=Ef6dY2qvTtAA4FUrLlSHPMhh7z4Ier0Di9hszJN7u/VBudg327s+rPuXMVE2kiCh7i
-         yIHYgznCI5iVFV1T7Pd3Fyl08S43JiIRFvs8GwJw2aVMUE9giNzVGYQsrmkdvSloREup
-         ieeot+xZGCtEb+Z43tnYQJtFC/XcDGEICLNRa9hTUyBdd7bCDyyP9lY1WYU96tTW1F9A
-         lkFJCXNeBRwVbSG0kkjHpm/wga9PE94GkKaQnjbgB/wSzvyMbAQYNRLIpLJi3aqCklr9
-         T/vc1R2UVj+pOnxJfVrktRuJR6XURmy2IaboVkQMIhIN1IUppx1uL1e8W3LWSItXH2aA
-         O8eg==
-X-Gm-Message-State: APjAAAXKuYQbjPscUwfZskqrUoooql1dKcOhv4pXG+h4TYOoULTytPYa
-        WSMjoFVi9XRFZ9NCQSosqW6W4KgMg7yga5vQ/MBqdHZhcf957w==
-X-Google-Smtp-Source: APXvYqzgqoO4yNpM6KKRUPIwFWPS2tgkT3U1hiQzPm9HsQ1SWUWqLYv+twNVVs76Tlmo5v+6nFST3fkvTU0jUl+S5XQ=
-X-Received: by 2002:a6b:6a01:: with SMTP id x1mr273843iog.119.1569430036059;
- Wed, 25 Sep 2019 09:47:16 -0700 (PDT)
+        Wed, 25 Sep 2019 12:47:15 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iDARc-0007C7-6I; Wed, 25 Sep 2019 18:47:12 +0200
+Date:   Wed, 25 Sep 2019 18:47:12 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Clark Williams <clark.williams@gmail.com>
+Cc:     bigeasy@linutronix.com, tglx@linutronix.com,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PREEMPT_RT PATCH 1/3] i915: do not call
+ lockdep_assert_irqs_disabled() on PREEMPT_RT
+Message-ID: <20190925164712.msyraninmjiomqr5@linutronix.de>
+References: <20190820003319.24135-1-clark.williams@gmail.com>
+ <20190820003319.24135-2-clark.williams@gmail.com>
 MIME-Version: 1.0
-References: <1569429286-35157-1-git-send-email-pbonzini@redhat.com>
-In-Reply-To: <1569429286-35157-1-git-send-email-pbonzini@redhat.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Wed, 25 Sep 2019 09:47:05 -0700
-Message-ID: <CALMp9eTBPTnsRDipdGDgmugWgfFEjQ2wd_9-JY0ZeM9YG2fBjg@mail.gmail.com>
-Subject: Re: [PATCH] KVM: nVMX: cleanup and fix host 64-bit mode checks
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190820003319.24135-2-clark.williams@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 9:34 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> KVM was incorrectly checking vmcs12->host_ia32_efer even if the "load
-> IA32_EFER" exit control was reset.  Also, some checks were not using
-> the new CC macro for tracing.
->
-> Cleanup everything so that the vCPU's 64-bit mode is determined
-> directly from EFER_LMA and the VMCS checks are based on that, which
-> matches section 26.2.4 of the SDM.
->
-> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-> Cc: Jim Mattson <jmattson@google.com>
-> Cc: Krish Sadhukhan <krish.sadhukhan@oracle.com>
-> Fixes: 5845038c111db27902bc220a4f70070fe945871c
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+On 2019-08-19 19:33:17 [-0500], Clark Williams wrote:
+> From: Clark Williams <williams@redhat.com>
+> 
+> The 'breadcrumb' code in the i915 driver calls lockdep_assert_irqs_disabled()
+> when starting some operations. This is valid on a stock kernel
+> but on a PREEMPT_RT kernel the spin_lock_irq*() calls to not disable
+> interrupts and likewise the spin_unlock_irq*() calls to not enable interrupts.
+> 
+> Conditionalize these calls based on whether PREEMPT_RT_FULL is enabled.
+> 
+> Signed-off-by: Clark Williams <williams@redhat.com>
 > ---
->  arch/x86/kvm/vmx/nested.c | 53 ++++++++++++++++++++---------------------------
->  1 file changed, 22 insertions(+), 31 deletions(-)
->
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 70d59d9304f2..e108847f6cf8 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -2664,8 +2664,26 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
->             CC(!kvm_pat_valid(vmcs12->host_ia32_pat)))
->                 return -EINVAL;
->
-> -       ia32e = (vmcs12->vm_exit_controls &
-> -                VM_EXIT_HOST_ADDR_SPACE_SIZE) != 0;
-> +#ifdef CONFIG_X86_64
-> +       ia32e = !!(vcpu->arch.efer & EFER_LMA);
-> +#else
-> +       if (CC(vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE))
-> +               return -EINVAL;
+>  drivers/gpu/drm/i915/intel_breadcrumbs.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_breadcrumbs.c b/drivers/gpu/drm/i915/intel_breadcrumbs.c
+> index 832cb6b1e9bd..3eef6010ebf6 100644
+> --- a/drivers/gpu/drm/i915/intel_breadcrumbs.c
+> +++ b/drivers/gpu/drm/i915/intel_breadcrumbs.c
+> @@ -101,7 +101,8 @@ __dma_fence_signal__notify(struct dma_fence *fence)
+>  	struct dma_fence_cb *cur, *tmp;
+>  
+>  	lockdep_assert_held(fence->lock);
+> -	lockdep_assert_irqs_disabled();
+> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT_FULL))
+> +		lockdep_assert_irqs_disabled();
+>  
 
-This check is redundant, since it is checked in the else block below.
+Both asserts went in commit c36beba6b296b ("drm/i915: Seal races between
+async GPU cancellation, retirement and signaling"). It looks like its
+purpose is to ensure that ->lock is acquired and that interrupts are
+also disabled because that lock is always acquired with disabled
+interrupts. This isn't required, lockdep is clever enough to yell at you
+if you manage to use it wrong.
+Let me drop that lockdep_assert_irqs_disabled().
 
-> +
-> +       ia32e = false;
-> +#endif
-> +
-> +       if (ia32e) {
-> +               if (CC(!(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)) ||
-> +                   CC(!(vmcs12->host_cr4 & X86_CR4_PAE)))
-> +                       return -EINVAL;
-> +       } else {
-> +               if (CC(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) ||
-> +                   CC(vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
-> +                   CC(vmcs12->host_cr4 & X86_CR4_PCIDE) ||
-> +                   CC(((vmcs12->host_rip) >> 32) & 0xffffffff))
-
-The mask shouldn't be necessary.
-
-> +                       return -EINVAL;
-> +       }
->
->         if (CC(vmcs12->host_cs_selector & (SEGMENT_RPL_MASK | SEGMENT_TI_MASK)) ||
->             CC(vmcs12->host_ss_selector & (SEGMENT_RPL_MASK | SEGMENT_TI_MASK)) ||
-> @@ -2684,35 +2702,8 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
->             CC(is_noncanonical_address(vmcs12->host_gs_base, vcpu)) ||
->             CC(is_noncanonical_address(vmcs12->host_gdtr_base, vcpu)) ||
->             CC(is_noncanonical_address(vmcs12->host_idtr_base, vcpu)) ||
-> -           CC(is_noncanonical_address(vmcs12->host_tr_base, vcpu)))
-> -               return -EINVAL;
-> -
-> -       if (!(vmcs12->host_ia32_efer & EFER_LMA) &&
-> -           ((vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
-> -           (vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE))) {
-> -               return -EINVAL;
-> -       }
-> -
-> -       if ((vmcs12->host_ia32_efer & EFER_LMA) &&
-> -           !(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)) {
-> -               return -EINVAL;
-> -       }
-> -
-> -       if (!(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) &&
-> -           ((vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
-> -           (vmcs12->host_cr4 & X86_CR4_PCIDE) ||
-> -           (((vmcs12->host_rip) >> 32) & 0xffffffff))) {
-> -               return -EINVAL;
-> -       }
-> -
-> -       if ((vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) &&
-> -           ((!(vmcs12->host_cr4 & X86_CR4_PAE)) ||
-> -           (is_noncanonical_address(vmcs12->host_rip, vcpu)))) {
-> -               return -EINVAL;
-> -       }
-> -#else
-> -       if (vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE ||
-> -           vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)
-> +           CC(is_noncanonical_address(vmcs12->host_tr_base, vcpu)) ||
-> +           CC(is_noncanonical_address(vmcs12->host_rip, vcpu)))
->                 return -EINVAL;
->  #endif
->
-> --
-> 1.8.3.1
->
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Sebastian
