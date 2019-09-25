@@ -2,119 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48788BDCA4
+	by mail.lfdr.de (Postfix) with ESMTP id B21C3BDCA5
 	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 13:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404059AbfIYLFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2404106AbfIYLFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 07:05:19 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:36737 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390979AbfIYLFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 25 Sep 2019 07:05:18 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54724 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390976AbfIYLFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 07:05:17 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PB4NGc047373;
-        Wed, 25 Sep 2019 11:05:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=MBMgZ0BS4GRCuOFPNrcE79XIjxoS+eByZyMuxfQnsGk=;
- b=VK0mZPInewqOcxbZggvFObtAINDPeWqISMGMsIHkIMgsDH/dTmYyFXICUIxnNxq4Njsa
- jMeAvn21tvh+uvbuz9qnxXsGCuMl5DErzM0Anqp8OFXRtO/906OFdfIEik/0bo1bTLp6
- 3tOtCPmKH2V0OXhT2NB5ACQ6K6cMC7wNWdevlv/kuchbGe1p6jf0O1Bbelj/TQtoslsU
- RgFln2ZoPgwTiX8Vpt8rXNfiI+hX2OKlCnHUrFb7kPwzS2wVWFcdQhxZRntRuoQo9fH+
- Ka+kTS94+zAb7fzsrtRuiJzDwes02r89g7qbBKE9KxJlwp5IdfQC9iCzljpoHN+TYQgY GQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2v5btq3wvr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 11:05:00 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PB439H145908;
-        Wed, 25 Sep 2019 11:04:59 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2v82tjpmwc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 11:04:59 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x8PB4ujr010709;
-        Wed, 25 Sep 2019 11:04:56 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Sep 2019 04:04:56 -0700
-Date:   Wed, 25 Sep 2019 14:04:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     tglx@linutronix.de, Enrico Weigelt <info@metux.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] mm, vmpressure: Fix a signedness bug in
- vmpressure_register_event()
-Message-ID: <20190925110449.GO3264@mwanda>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9390 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909250113
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9390 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909250113
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 46dZwF0gtJz9sPJ; Wed, 25 Sep 2019 21:05:17 +1000 (AEST)
+X-powerpc-patch-notification: thanks
+X-powerpc-patch-commit: 4c0f5d1eb4072871c34530358df45f05ab80edd6
+In-Reply-To: <9f33f44b9cd741c4a02b3dce7b8ef9438fe2cd2a.1566382750.git.christophe.leroy@c-s.fr>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+From:   Michael Ellerman <patch-notifications@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] powerpc/mm: Add a helper to select PAGE_KERNEL_RO or PAGE_READONLY
+Message-Id: <46dZwF0gtJz9sPJ@ozlabs.org>
+Date:   Wed, 25 Sep 2019 21:05:17 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "mode" and "level" variables are enums and in this context GCC will
-treat them as unsigned ints so the error handling is never triggered.
+On Wed, 2019-08-21 at 10:20:00 UTC, Christophe Leroy wrote:
+> In a couple of places there is a need to select whether read-only
+> protection of shadow pages is performed with PAGE_KERNEL_RO or with
+> PAGE_READONLY.
+> 
+> Add a helper to avoid duplicating the choice.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Cc: stable@vger.kernel.org
 
-I also removed the bogus initializer because it isn't required any more
-and it's sort of confusing.
+Series applied to powerpc fixes, thanks.
 
-Fixes: 3cadfa2b9497 ("mm/vmpressure.c: convert to use match_string() helper")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- mm/vmpressure.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+https://git.kernel.org/powerpc/c/4c0f5d1eb4072871c34530358df45f05ab80edd6
 
-diff --git a/mm/vmpressure.c b/mm/vmpressure.c
-index f3b50811497a..fe077500cf20 100644
---- a/mm/vmpressure.c
-+++ b/mm/vmpressure.c
-@@ -362,7 +362,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
- 	struct vmpressure *vmpr = memcg_to_vmpressure(memcg);
- 	struct vmpressure_event *ev;
- 	enum vmpressure_modes mode = VMPRESSURE_NO_PASSTHROUGH;
--	enum vmpressure_levels level = -1;
-+	enum vmpressure_levels level;
- 	char *spec, *spec_orig;
- 	char *token;
- 	int ret = 0;
-@@ -376,7 +376,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
- 	/* Find required level */
- 	token = strsep(&spec, ",");
- 	level = match_string(vmpressure_str_levels, VMPRESSURE_NUM_LEVELS, token);
--	if (level < 0) {
-+	if ((int)level < 0) {
- 		ret = level;
- 		goto out;
- 	}
-@@ -385,7 +385,7 @@ int vmpressure_register_event(struct mem_cgroup *memcg,
- 	token = strsep(&spec, ",");
- 	if (token) {
- 		mode = match_string(vmpressure_str_modes, VMPRESSURE_NUM_MODES, token);
--		if (mode < 0) {
-+		if ((int)mode < 0) {
- 			ret = mode;
- 			goto out;
- 		}
--- 
-2.20.1
-
+cheers
