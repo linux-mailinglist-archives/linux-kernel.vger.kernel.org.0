@@ -2,96 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C4CABDC9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 13:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 035BEBDC95
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 13:02:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390960AbfIYLDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 07:03:50 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52906 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728040AbfIYLDt (ORCPT
+        id S2403980AbfIYLB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 07:01:59 -0400
+Received: from regular1.263xmail.com ([211.150.70.199]:43720 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728230AbfIYLB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 07:03:49 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PAsTQT039691;
-        Wed, 25 Sep 2019 11:03:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=IYWpZAQIHKMc6HkvVn4XgPwE5pwLThlzNnT3qmCRbPo=;
- b=IX0zGerXgD1H5vfYuZXU7fvQQ8aDHhF3hnfDwVea5a5ZtZJlZwAyuX/L6892Wj1ryqjH
- ETjTJymm0/2XQ+9mxsOLThtKrd+z89RaQdk91vSbDIheoUhxjEwKw33/ALPA+5Z/CWHu
- P9Yt3mqiQG11dSIHOQpwOFXO6y0jMnBNRaetX5vfEV4NU8J/srdLy5nmi8nrJVe7vMIY
- KXZD/gvdjWNBWOvkAj30lyEMOX95XgJeg9a6kMEWnyOMuNuUSvk+sFfXFURK9LOv3Nmi
- Liy9OlYsXZL3IBItFmiDDKGH1BzaQpr9qMqKAwjOoaXlJL2H1lypbDONk3V0eHJ9R+K6 WQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2v5btq3wnd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 11:03:44 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PAwlNG034178;
-        Wed, 25 Sep 2019 11:01:43 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2v7vnxsdxs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 11:01:43 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8PB1gAC029816;
-        Wed, 25 Sep 2019 11:01:43 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Sep 2019 04:01:41 -0700
-Date:   Wed, 25 Sep 2019 14:01:28 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Rhyland Klein <rklein@nvidia.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] power: supply: sbs-battery: Fix a signedness bug in
- sbs_get_battery_capacity()
-Message-ID: <20190925110128.GM3264@mwanda>
+        Wed, 25 Sep 2019 07:01:58 -0400
+Received: from hjc?rock-chips.com (unknown [192.168.167.206])
+        by regular1.263xmail.com (Postfix) with ESMTP id 724E839F;
+        Wed, 25 Sep 2019 19:01:46 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.10.69] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P28189T140160207415040S1569409303280888_;
+        Wed, 25 Sep 2019 19:01:46 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <f6fb2099e410f931f416b4a03bb97f8e>
+X-RL-SENDER: hjc@rock-chips.com
+X-SENDER: hjc@rock-chips.com
+X-LOGIN-NAME: hjc@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH 1/3] drm: Add some new format DRM_FORMAT_NVXX_10
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        dri-devel@lists.freedesktop.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     heiko@sntech.de, Ayan.Halder@arm.com, linux-kernel@vger.kernel.org
+References: <1569398801-92201-1-git-send-email-hjc@rock-chips.com>
+ <1569398801-92201-2-git-send-email-hjc@rock-chips.com>
+ <8cd915d3-9f61-abdc-7fd1-a9241777f29a@linux.intel.com>
+ <e0c272ff-5ef9-f5db-4dad-477ecae2e6ca@rock-chips.com>
+ <434dc7ec-5029-4609-f6f3-0766091315ec@linux.intel.com>
+From:   "sandy.huang" <hjc@rock-chips.com>
+Message-ID: <406cb41b-1840-df9d-a893-8ab9da8d6f4f@rock-chips.com>
+Date:   Wed, 25 Sep 2019 19:01:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9390 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909250112
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9390 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909250112
+In-Reply-To: <434dc7ec-5029-4609-f6f3-0766091315ec@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "mode" variable is an enum and in this context GCC treats it as an
-unsigned int so the error handling is never triggered.
 
-Fixes: 51d075660457 ("bq20z75: Add support for charge properties")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/power/supply/sbs-battery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+在 2019/9/25 下午5:23, Maarten Lankhorst 写道:
+> Op 25-09-2019 om 10:32 schreef sandy.huang:
+>> 在 2019/9/25 下午4:17, Maarten Lankhorst 写道:
+>>> Op 25-09-2019 om 10:06 schreef Sandy Huang:
+>>>> These new format is supported by some rockchip socs:
+>>>>
+>>>> DRM_FORMAT_NV12_10/DRM_FORMAT_NV21_10
+>>>> DRM_FORMAT_NV16_10/DRM_FORMAT_NV61_10
+>>>> DRM_FORMAT_NV24_10/DRM_FORMAT_NV42_10
+>>>>
+>>>> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+>>>> ---
+>>>>    drivers/gpu/drm/drm_fourcc.c  | 18 ++++++++++++++++++
+>>>>    include/uapi/drm/drm_fourcc.h | 14 ++++++++++++++
+>>>>    2 files changed, 32 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+>>>> index c630064..f25fa81 100644
+>>>> --- a/drivers/gpu/drm/drm_fourcc.c
+>>>> +++ b/drivers/gpu/drm/drm_fourcc.c
+>>>> @@ -274,6 +274,24 @@ const struct drm_format_info *__drm_format_info(u32 format)
+>>>>            { .format = DRM_FORMAT_YUV420_10BIT,    .depth = 0,
+>>>>              .num_planes = 1, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 2,
+>>>>              .is_yuv = true },
+>>>> +        { .format = DRM_FORMAT_NV12_10,        .depth = 0,
+>>>> +          .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 2,
+>>>> +          .is_yuv = true },
+>>>> +        { .format = DRM_FORMAT_NV21_10,        .depth = 0,
+>>>> +          .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 2,
+>>>> +          .is_yuv = true },
+>>>> +        { .format = DRM_FORMAT_NV16_10,        .depth = 0,
+>>>> +          .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 1,
+>>>> +          .is_yuv = true },
+>>>> +        { .format = DRM_FORMAT_NV61_10,        .depth = 0,
+>>>> +          .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 2, .vsub = 1,
+>>>> +          .is_yuv = true },
+>>>> +        { .format = DRM_FORMAT_NV24_10,        .depth = 0,
+>>>> +          .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 1, .vsub = 1,
+>>>> +          .is_yuv = true },
+>>>> +        { .format = DRM_FORMAT_NV42_10,        .depth = 0,
+>>>> +          .num_planes = 2, .cpp = { 0, 0, 0 }, .hsub = 1, .vsub = 1,
+>>>> +          .is_yuv = true },
+>>>>        };
+>>>>          unsigned int i;
+>>>> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+>>>> index 3feeaa3..0479f47 100644
+>>>> --- a/include/uapi/drm/drm_fourcc.h
+>>>> +++ b/include/uapi/drm/drm_fourcc.h
+>>>> @@ -238,6 +238,20 @@ extern "C" {
+>>>>    #define DRM_FORMAT_NV42        fourcc_code('N', 'V', '4', '2') /* non-subsampled Cb:Cr plane */
+>>>>      /*
+>>>> + * 2 plane YCbCr 10bit
+>>>> + * index 0 = Y plane, [9:0] Y
+>>>> + * index 1 = Cr:Cb plane, [19:0]
+>>>> + * or
+>>>> + * index 1 = Cb:Cr plane, [19:0]
+>>>> + */
+>>>> +#define DRM_FORMAT_NV12_10    fourcc_code('N', 'A', '1', '2') /* 2x2 subsampled Cr:Cb plane */
+>>>> +#define DRM_FORMAT_NV21_10    fourcc_code('N', 'A', '2', '1') /* 2x2 subsampled Cb:Cr plane */
+>>>> +#define DRM_FORMAT_NV16_10    fourcc_code('N', 'A', '1', '6') /* 2x1 subsampled Cr:Cb plane */
+>>>> +#define DRM_FORMAT_NV61_10    fourcc_code('N', 'A', '6', '1') /* 2x1 subsampled Cb:Cr plane */
+>>>> +#define DRM_FORMAT_NV24_10    fourcc_code('N', 'A', '2', '4') /* non-subsampled Cr:Cb plane */
+>>>> +#define DRM_FORMAT_NV42_10    fourcc_code('N', 'A', '4', '2') /* non-subsampled Cb:Cr plane */
+>>>> +
+>>>> +/*
+>>>>     * 2 plane YCbCr MSB aligned
+>>>>     * index 0 = Y plane, [15:0] Y:x [10:6] little endian
+>>>>     * index 1 = Cr:Cb plane, [31:0] Cr:x:Cb:x [10:6:10:6] little endian
+>>> What are the other bits, they are not mentioned?
+>> It's compact layout
+>>
+>> Yplane:
+>>
+>>      Y0[9:0]Y1[9:0]Y2[9:0]Y3[9:0]...
+>>
+>> UVplane:
+>>
+>>      U0[9:0]V0[9:0]U1[9:0]V1[9:0]...
+> This should be put in the comment then, for clarity. :) Probably needs 4 pixels to describe how it fits in 5 (or 10 for cbcr) bytes.
+>
+> Cheers,
+>
+> Maarten
+OK, I will add this describe at next version.
+>
+>
+>
 
-diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
-index f8d74e9f7931..62110af1abcf 100644
---- a/drivers/power/supply/sbs-battery.c
-+++ b/drivers/power/supply/sbs-battery.c
-@@ -555,7 +555,7 @@ static int sbs_get_battery_capacity(struct i2c_client *client,
- 		mode = BATTERY_MODE_AMPS;
- 
- 	mode = sbs_set_battery_mode(client, mode);
--	if (mode < 0)
-+	if ((int)mode < 0)
- 		return mode;
- 
- 	ret = sbs_read_word_data(client, sbs_data[reg_offset].addr);
--- 
-2.20.1
 
