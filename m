@@ -2,226 +2,408 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55581BD6ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 06:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B210FBD6F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 06:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfIYEGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 00:06:31 -0400
-Received: from mail-eopbgr10083.outbound.protection.outlook.com ([40.107.1.83]:32590
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726936AbfIYEGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 00:06:30 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bb6n6VjEO0dQsoWmkn1cMq1EbVsz3RN4DoUDm+/8cqVSxH+5yk7Rp12Aj5K75Ij0ZMOmjN5aR3jVNYtEbMDgPDP3O+r07fFZj/ntpOm5GSsK4na4W4y3KbagO4TFY6TrJshEKTZ1A5FB7Wrtbk70/yk6A6abiD6BgoMWMcs/TxVyPdQk4aUnZvYAmg8km5MsHiwQltuQnmRuBzasco22Ty4skxSyqUyLOec+gxN/h1m1PBXYpb14eYmE2D+ic42YBMJe+1+C7E+QZXbD7qFHZ6YMxB7xeAbmhsxsZpxmZAY/B6gXfJdjuUh6iLbIQgMuKkUFK6oHQ4sXWXZBoLX8/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W+aAt7nhmdt3SQSQbrOzsvtQHc0P7IyumRfaud9hKMw=;
- b=gfERAgAhYrsuEDnca/FBuBk4TMaH95YBo3juyFFt5bIjbTdeS03b5fjxblhuzhAmvqyxmHvw52mF6v3JcxsZyaOvdWxsmfpdAqfo54Q2nmcl12uEI1oQkobZ5XaFHfW0PkOAtB9ABBXSAfWY6BGCg9BULsKhR/7jRyKjcOacp6uY+WKBAKTfBJmNMy/l84Uu2G/+yeF2eJFKz7snXqRH+B3BBCire1YREi4wVeXAOMHymXKts8Ju9omCjRu37xCZV/OynctJpRedLpXOX10j9yUj6RkROisuueWoBlO+Q536IC3L2mUBemYiJABTh7TjIa5zMtzbJhWnlNchhyEymA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W+aAt7nhmdt3SQSQbrOzsvtQHc0P7IyumRfaud9hKMw=;
- b=amxXwc0ebnWGMi/MDlm0mnQP3zz72lA2DHTROBj4SQge8rOT1mXdIuqDAnEA1gcmAuB6TnLkP3jtoteWBjGKovFZJeCJZsgjYd1Vu71xJmzxEn2Zl/2I782q8/r+n1PV3p/WuzOUlX14LxAQtuFbg224vFPW1T1jmcGLsZKlU7M=
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
- DB7PR04MB4411.eurprd04.prod.outlook.com (52.135.136.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.19; Wed, 25 Sep 2019 04:06:25 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::4427:96f2:f651:6dfa]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::4427:96f2:f651:6dfa%5]) with mapi id 15.20.2284.023; Wed, 25 Sep 2019
- 04:06:25 +0000
-From:   Biwen Li <biwen.li@nxp.com>
-To:     Leo Li <leoyang.li@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Ran Wang <ran.wang_1@nxp.com>
-CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [v3,3/3] Documentation: dt: binding: fsl: Add
- 'fsl,ippdexpcr-alt-addr' property
-Thread-Topic: [v3,3/3] Documentation: dt: binding: fsl: Add
- 'fsl,ippdexpcr-alt-addr' property
-Thread-Index: AQHVcoOnab7d5ysBNkWsXmY0PrfSuKc6/L+AgAC3JZCAAAkFAIAAANMggAABmICAAAIKMIAAAb8AgAACHkA=
-Date:   Wed, 25 Sep 2019 04:06:25 +0000
-Message-ID: <DB7PR04MB44902BADDDFD090BAF4178C68F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
-References: <20190924024548.4356-1-biwen.li@nxp.com>
- <20190924024548.4356-3-biwen.li@nxp.com>
- <AM0PR04MB667690EE76D327D0FC09F7818F840@AM0PR04MB6676.eurprd04.prod.outlook.com>
- <DB7PR04MB449034C4BBAA89685A2130F78F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
- <AM0PR04MB66762594DDFC6E5B00BD103C8F870@AM0PR04MB6676.eurprd04.prod.outlook.com>
- <DB7PR04MB4490FECDC76507AADC35948E8F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
- <AM0PR04MB6676BD24B814C3D1D67CF9F88F870@AM0PR04MB6676.eurprd04.prod.outlook.com>
- <DB7PR04MB4490EAE9591B5AE7112C9D188F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
- <AM0PR04MB6676B8A6F7C7C3BC822B45B28F870@AM0PR04MB6676.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB6676B8A6F7C7C3BC822B45B28F870@AM0PR04MB6676.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=biwen.li@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 99222846-b610-4d78-b9db-08d7416dbbd3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4411;
-x-ms-traffictypediagnostic: DB7PR04MB4411:|DB7PR04MB4411:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB44112F6DDB8FDEBDDE9FD0318F870@DB7PR04MB4411.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 01713B2841
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(366004)(396003)(39860400002)(136003)(199004)(189003)(66446008)(256004)(76116006)(6636002)(14444005)(64756008)(66946007)(66476007)(66556008)(6436002)(86362001)(3846002)(4326008)(52536014)(74316002)(7736002)(5660300002)(305945005)(54906003)(316002)(110136005)(6116002)(6246003)(33656002)(186003)(2501003)(26005)(25786009)(6506007)(102836004)(44832011)(486006)(476003)(81156014)(446003)(11346002)(8936002)(81166006)(9686003)(55016002)(8676002)(229853002)(99286004)(66066001)(7696005)(478600001)(76176011)(2906002)(14454004)(71200400001)(71190400001)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4411;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Aqe/6a9nd7nRCVQJLPvOehWS2Iy+uuC7bs0r/a0SULM4QpVYsawVXsuem+N4kM6WB9z7Qx8PzeKiEB2EuMTdzgS7brp/gveGnW9OxMLho9+R0GkRyQ5yPQQRRtbBFYfVOKLSnX7T/XdryU4QJ2uo588CALTlV8sULfU1n++SOQHA+W5DI/YCP3fbbNVuyK5P7D7/ndeZdrLemCfFpaA9a52W72EGJschbD9YdIiH60e2mm6pfq+k6DZtWC8lzv51ipp+SXiA4k60XNziXIHjayp18rzOEtnNHWlCfBYDjbksjLh7RuiaKI+meAvgKUr2PbA0P6QVlsR0r3XqGn+wxnud+CTXwj/rjijRaWm0PmmJAkilgxhFST1REd5Ssf7cR+YzdQa4QGlHr+7zNYBkZt5uMJcL0QW6RySdOyaNM2A=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1730866AbfIYEGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 00:06:45 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31518 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726936AbfIYEGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 00:06:44 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8P41se1102160
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 00:06:40 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v809f14va-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 00:06:40 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 25 Sep 2019 05:06:38 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 25 Sep 2019 05:06:36 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8P468Ie33358084
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Sep 2019 04:06:08 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A303EA4053;
+        Wed, 25 Sep 2019 04:06:35 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E06CAA4059;
+        Wed, 25 Sep 2019 04:06:33 +0000 (GMT)
+Received: from bangoria.in.ibm.com (unknown [9.124.31.69])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 25 Sep 2019 04:06:33 +0000 (GMT)
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To:     mpe@ellerman.id.au, mikey@neuling.org, christophe.leroy@c-s.fr
+Cc:     npiggin@gmail.com, benh@kernel.crashing.org, paulus@samba.org,
+        naveen.n.rao@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH v4 1/5] Powerpc/Watchpoint: Fix length calculation for unaligned target
+Date:   Wed, 25 Sep 2019 09:36:26 +0530
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190925040630.6948-1-ravi.bangoria@linux.ibm.com>
+References: <20190925040630.6948-1-ravi.bangoria@linux.ibm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99222846-b610-4d78-b9db-08d7416dbbd3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2019 04:06:25.3221
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ugp7UjWqW6LtKiFltKiYak4qN5VSdsZQDMN1ikFN8jqHVeijQEFnoWA7Y8elRAVIGcnMqoxvCMgNYFM4EK89WQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4411
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19092504-0020-0000-0000-000003713D52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19092504-0021-0000-0000-000021C700EA
+Message-Id: <20190925040630.6948-2-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-25_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909250039
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >
-> > > > > > > >
-> > > > > > > > The 'fsl,ippdexpcr-alt-addr' property is used to handle an
-> > > > > > > > errata
-> > > > > > > > A-008646 on LS1021A
-> > > > > > > >
-> > > > > > > > Signed-off-by: Biwen Li <biwen.li@nxp.com>
-> > > > > > > > ---
-> > > > > > > > Change in v3:
-> > > > > > > > 	- rename property name
-> > > > > > > > 	  fsl,rcpm-scfg -> fsl,ippdexpcr-alt-addr
-> > > > > > > >
-> > > > > > > > Change in v2:
-> > > > > > > > 	- update desc of the property 'fsl,rcpm-scfg'
-> > > > > > > >
-> > > > > > > >  Documentation/devicetree/bindings/soc/fsl/rcpm.txt | 14
-> > > > > > > > ++++++++++++++
-> > > > > > > >  1 file changed, 14 insertions(+)
-> > > > > > > >
-> > > > > > > > diff --git
-> > > > > > > > a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> > > > > > > > b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> > > > > > > > index 5a33619d881d..157dcf6da17c 100644
-> > > > > > > > --- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> > > > > > > > +++ b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-> > > > > > > > @@ -34,6 +34,11 @@ Chassis Version		Example
-> > Chips
-> > > > > > > >  Optional properties:
-> > > > > > > >   - little-endian : RCPM register block is Little Endian.
-> > > > > > > > Without it
-> > > RCPM
-> > > > > > > >     will be Big Endian (default case).
-> > > > > > > > + - fsl,ippdexpcr-alt-addr : Must add the property for SoC
-> > > > > > > > + LS1021A,
-> > > > > > >
-> > > > > > > You probably should mention this is related to a hardware
-> > > > > > > issue on LS1021a and only needed on LS1021a.
-> > > > > > Okay, got it, thanks, I will add this in v4.
-> > > > > > >
-> > > > > > > > +   Must include n + 1 entries (n =3D #fsl,rcpm-wakeup-cell=
-s, such
-> as:
-> > > > > > > > +   #fsl,rcpm-wakeup-cells equal to 2, then must include 2
-> > > > > > > > + +
-> > > > > > > > + 1
-> > > entries).
-> > > > > > >
-> > > > > > > #fsl,rcpm-wakeup-cells is the number of IPPDEXPCR registers
-> > > > > > > on an
-> > > SoC.
-> > > > > > > However you are defining an offset to scfg registers here.
-> > > > > > > Why these two are related?  The length here should actually
-> > > > > > > be related to the #address-cells of the soc/.  But since
-> > > > > > > this is only needed for LS1021, you can
-> > > > > > just make it 3.
-> > > > > > I need set the value of IPPDEXPCR resgiters from ftm_alarm0
-> > > > > > device node(fsl,rcpm-wakeup =3D <&rcpm 0x0 0x20000000>;
-> > > > > > 0x0 is a value for IPPDEXPCR0, 0x20000000 is a value for
-> > > IPPDEXPCR1).
-> > > > > > But because of the hardware issue on LS1021A, I need store the
-> > > > > > value of IPPDEXPCR registers to an alt address. So I defining
-> > > > > > an offset to scfg registers, then RCPM driver get an abosolute
-> > > > > > address from offset, RCPM driver write the value of IPPDEXPCR
-> > > > > > registers to these abosolute addresses(backup the value of
-> > > > > > IPPDEXPCR
-> > > registers).
-> > > > >
-> > > > > I understand what you are trying to do.  The problem is that the
-> > > > > new fsl,ippdexpcr-alt-addr property contains a phandle and an off=
-set.
-> > > > > The size of it shouldn't be related to #fsl,rcpm-wakeup-cells.
-> > > > You maybe like this: fsl,ippdexpcr-alt-addr =3D <&scfg 0x51c>;/*
-> > > > SCFG_SPARECR8 */
-> > >
-> > > No.  The #address-cell for the soc/ is 2, so the offset to scfg
-> > > should be 0x0 0x51c.  The total size should be 3, but it shouldn't
-> > > be coming from #fsl,rcpm-wakeup-cells like you mentioned in the bindi=
-ng.
-> > Oh, I got it. You want that fsl,ippdexpcr-alt-add is relative with
-> > #address-cells instead of #fsl,rcpm-wakeup-cells.
->=20
-> Yes.
-I got an example from drivers/pci/controller/dwc/pci-layerscape.c
-and arch/arm/boot/dts/ls1021a.dtsi as follows:
-fsl,pcie-scfg =3D <&scfg 0>, 0 is an index
+Watchpoint match range is always doubleword(8 bytes) aligned on
+powerpc. If the given range is crossing doubleword boundary, we
+need to increase the length such that next doubleword also get
+covered. Ex,
 
-In my fsl,ippdexpcr-alt-addr =3D <&scfg 0x0 0x51c>,
-It means that 0x0 is an alt offset address for IPPDEXPCR0, 0x51c is an alt =
-offset address
-For IPPDEXPCR1 instead of 0x0 and 0x51c compose to an alt address of SCFG_S=
-PARECR8.
->=20
-> Regards,
-> Leo
-> > >
-> > > > >
-> > > > > > >
-> > > > > > > > +   The first entry must be a link to the SCFG device node.
-> > > > > > > > +   The non-first entry must be offset of registers of SCFG=
-.
-> > > > > > > >
-> > > > > > > >  Example:
-> > > > > > > >  The RCPM node for T4240:
-> > > > > > > > @@ -43,6 +48,15 @@ The RCPM node for T4240:
-> > > > > > > >  		#fsl,rcpm-wakeup-cells =3D <2>;
-> > > > > > > >  	};
-> > > > > > > >
-> > > > > > > > +The RCPM node for LS1021A:
-> > > > > > > > +	rcpm: rcpm@1ee2140 {
-> > > > > > > > +		compatible =3D "fsl,ls1021a-rcpm", "fsl,qoriq-rcpm-
-> > > > 2.1+";
-> > > > > > > > +		reg =3D <0x0 0x1ee2140 0x0 0x8>;
-> > > > > > > > +		#fsl,rcpm-wakeup-cells =3D <2>;
-> > > > > > > > +		fsl,ippdexpcr-alt-addr =3D <&scfg 0x0 0x51c>; /*
-> > > > > > > > SCFG_SPARECR8 */
-> > > > > > > > +	};
-> > > > > > > > +
-> > > > > > > > +
-> > > > > > > >  * Freescale RCPM Wakeup Source Device Tree Bindings
-> > > > > > > >  -------------------------------------------
-> > > > > > > >  Required fsl,rcpm-wakeup property should be added to a
-> > > > > > > > device node if the device
-> > > > > > > > --
-> > > > > > > > 2.17.1
+          address   len = 6 bytes
+                |=========.
+   |------------v--|------v--------|
+   | | | | | | | | | | | | | | | | |
+   |---------------|---------------|
+    <---8 bytes--->
+
+In such case, current code configures hw as:
+  start_addr = address & ~HW_BREAKPOINT_ALIGN
+  len = 8 bytes
+
+And thus read/write in last 4 bytes of the given range is ignored.
+Fix this by including next doubleword in the length. Plus, fix
+ptrace code which is messing up address/len.
+
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+---
+ arch/powerpc/include/asm/debug.h         |  1 +
+ arch/powerpc/include/asm/hw_breakpoint.h |  9 +++--
+ arch/powerpc/kernel/dawr.c               |  6 ++--
+ arch/powerpc/kernel/hw_breakpoint.c      | 24 +++----------
+ arch/powerpc/kernel/process.c            | 46 ++++++++++++++++++++++++
+ arch/powerpc/kernel/ptrace.c             | 37 ++++++++++---------
+ arch/powerpc/xmon/xmon.c                 |  3 +-
+ 7 files changed, 83 insertions(+), 43 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/debug.h b/arch/powerpc/include/asm/debug.h
+index 7756026b95ca..9c1b4aaa374b 100644
+--- a/arch/powerpc/include/asm/debug.h
++++ b/arch/powerpc/include/asm/debug.h
+@@ -45,6 +45,7 @@ static inline int debugger_break_match(struct pt_regs *regs) { return 0; }
+ static inline int debugger_fault_handler(struct pt_regs *regs) { return 0; }
+ #endif
+ 
++int hw_breakpoint_validate_len(struct arch_hw_breakpoint *hw);
+ void __set_breakpoint(struct arch_hw_breakpoint *brk);
+ bool ppc_breakpoint_available(void);
+ #ifdef CONFIG_PPC_ADV_DEBUG_REGS
+diff --git a/arch/powerpc/include/asm/hw_breakpoint.h b/arch/powerpc/include/asm/hw_breakpoint.h
+index 67e2da195eae..27ac6f5d2891 100644
+--- a/arch/powerpc/include/asm/hw_breakpoint.h
++++ b/arch/powerpc/include/asm/hw_breakpoint.h
+@@ -14,6 +14,7 @@ struct arch_hw_breakpoint {
+ 	unsigned long	address;
+ 	u16		type;
+ 	u16		len; /* length of the target data symbol */
++	u16		hw_len; /* length programmed in hw */
+ };
+ 
+ /* Note: Don't change the the first 6 bits below as they are in the same order
+@@ -33,6 +34,11 @@ struct arch_hw_breakpoint {
+ #define HW_BRK_TYPE_PRIV_ALL	(HW_BRK_TYPE_USER | HW_BRK_TYPE_KERNEL | \
+ 				 HW_BRK_TYPE_HYP)
+ 
++#define HW_BREAKPOINT_ALIGN 0x7
++
++#define DABR_MAX_LEN	8
++#define DAWR_MAX_LEN	512
++
+ #ifdef CONFIG_HAVE_HW_BREAKPOINT
+ #include <linux/kdebug.h>
+ #include <asm/reg.h>
+@@ -44,8 +50,6 @@ struct pmu;
+ struct perf_sample_data;
+ struct task_struct;
+ 
+-#define HW_BREAKPOINT_ALIGN 0x7
+-
+ extern int hw_breakpoint_slots(int type);
+ extern int arch_bp_generic_fields(int type, int *gen_bp_type);
+ extern int arch_check_bp_in_kernelspace(struct arch_hw_breakpoint *hw);
+@@ -70,6 +74,7 @@ static inline void hw_breakpoint_disable(void)
+ 	brk.address = 0;
+ 	brk.type = 0;
+ 	brk.len = 0;
++	brk.hw_len = 0;
+ 	if (ppc_breakpoint_available())
+ 		__set_breakpoint(&brk);
+ }
+diff --git a/arch/powerpc/kernel/dawr.c b/arch/powerpc/kernel/dawr.c
+index 5f66b95b6858..8531623aa9b2 100644
+--- a/arch/powerpc/kernel/dawr.c
++++ b/arch/powerpc/kernel/dawr.c
+@@ -30,10 +30,10 @@ int set_dawr(struct arch_hw_breakpoint *brk)
+ 	 * DAWR length is stored in field MDR bits 48:53.  Matches range in
+ 	 * doublewords (64 bits) baised by -1 eg. 0b000000=1DW and
+ 	 * 0b111111=64DW.
+-	 * brk->len is in bytes.
++	 * brk->hw_len is in bytes.
+ 	 * This aligns up to double word size, shifts and does the bias.
+ 	 */
+-	mrd = ((brk->len + 7) >> 3) - 1;
++	mrd = ((brk->hw_len + 7) >> 3) - 1;
+ 	dawrx |= (mrd & 0x3f) << (63 - 53);
+ 
+ 	if (ppc_md.set_dawr)
+@@ -54,7 +54,7 @@ static ssize_t dawr_write_file_bool(struct file *file,
+ 				    const char __user *user_buf,
+ 				    size_t count, loff_t *ppos)
+ {
+-	struct arch_hw_breakpoint null_brk = {0, 0, 0};
++	struct arch_hw_breakpoint null_brk = {0, 0, 0, 0};
+ 	size_t rc;
+ 
+ 	/* Send error to user if they hypervisor won't allow us to write DAWR */
+diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
+index 1007ec36b4cb..5a2d8c306c40 100644
+--- a/arch/powerpc/kernel/hw_breakpoint.c
++++ b/arch/powerpc/kernel/hw_breakpoint.c
+@@ -133,9 +133,9 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 			     const struct perf_event_attr *attr,
+ 			     struct arch_hw_breakpoint *hw)
+ {
+-	int ret = -EINVAL, length_max;
++	int ret = -EINVAL;
+ 
+-	if (!bp)
++	if (!bp || !attr->bp_len)
+ 		return ret;
+ 
+ 	hw->type = HW_BRK_TYPE_TRANSLATE;
+@@ -155,26 +155,10 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 	hw->address = attr->bp_addr;
+ 	hw->len = attr->bp_len;
+ 
+-	/*
+-	 * Since breakpoint length can be a maximum of HW_BREAKPOINT_LEN(8)
+-	 * and breakpoint addresses are aligned to nearest double-word
+-	 * HW_BREAKPOINT_ALIGN by rounding off to the lower address, the
+-	 * 'symbolsize' should satisfy the check below.
+-	 */
+ 	if (!ppc_breakpoint_available())
+ 		return -ENODEV;
+-	length_max = 8; /* DABR */
+-	if (dawr_enabled()) {
+-		length_max = 512 ; /* 64 doublewords */
+-		/* DAWR region can't cross 512 boundary */
+-		if ((attr->bp_addr >> 9) !=
+-		    ((attr->bp_addr + attr->bp_len - 1) >> 9))
+-			return -EINVAL;
+-	}
+-	if (hw->len >
+-	    (length_max - (hw->address & HW_BREAKPOINT_ALIGN)))
+-		return -EINVAL;
+-	return 0;
++
++	return hw_breakpoint_validate_len(hw);
+ }
+ 
+ /*
+diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+index 639ceae7da9d..c4fcb7d7a72d 100644
+--- a/arch/powerpc/kernel/process.c
++++ b/arch/powerpc/kernel/process.c
+@@ -715,6 +715,8 @@ static void set_debug_reg_defaults(struct thread_struct *thread)
+ {
+ 	thread->hw_brk.address = 0;
+ 	thread->hw_brk.type = 0;
++	thread->hw_brk.len = 0;
++	thread->hw_brk.hw_len = 0;
+ 	if (ppc_breakpoint_available())
+ 		set_breakpoint(&thread->hw_brk);
+ }
+@@ -780,6 +782,49 @@ static inline int set_dabr(struct arch_hw_breakpoint *brk)
+ 	return __set_dabr(dabr, dabrx);
+ }
+ 
++/*
++ * Watchpoint match range is always doubleword(8 bytes) aligned on
++ * powerpc. If the given range is crossing doubleword boundary, we
++ * need to increase the length such that next doubleword also get
++ * covered. Ex,
++ *
++ *          address   len = 6 bytes
++ *                |=========.
++ *   |------------v--|------v--------|
++ *   | | | | | | | | | | | | | | | | |
++ *   |---------------|---------------|
++ *    <---8 bytes--->
++ *
++ * In this case, we should configure hw as:
++ *   start_addr = address & ~HW_BREAKPOINT_ALIGN
++ *   len = 16 bytes
++ *
++ * @start_addr and @end_addr are inclusive.
++ */
++int hw_breakpoint_validate_len(struct arch_hw_breakpoint *hw)
++{
++	u16 max_len = DABR_MAX_LEN;
++	u16 hw_len;
++	unsigned long start_addr, end_addr;
++
++	start_addr = hw->address & ~HW_BREAKPOINT_ALIGN;
++	end_addr = (hw->address + hw->len - 1) | HW_BREAKPOINT_ALIGN;
++	hw_len = end_addr - start_addr + 1;
++
++	if (dawr_enabled()) {
++		max_len = DAWR_MAX_LEN;
++		/* DAWR region can't cross 512 bytes boundary */
++		if ((start_addr >> 9) != (end_addr >> 9))
++			return -EINVAL;
++	}
++
++	if (hw_len > max_len)
++		return -EINVAL;
++
++	hw->hw_len = hw_len;
++	return 0;
++}
++
+ void __set_breakpoint(struct arch_hw_breakpoint *brk)
+ {
+ 	memcpy(this_cpu_ptr(&current_brk), brk, sizeof(*brk));
+@@ -816,6 +861,7 @@ static inline bool hw_brk_match(struct arch_hw_breakpoint *a,
+ 		return false;
+ 	if (a->len != b->len)
+ 		return false;
++	/* no need to check hw_len. it's calculated from address and len */
+ 	return true;
+ }
+ 
+diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+index 8c92febf5f44..22a68f21cdf9 100644
+--- a/arch/powerpc/kernel/ptrace.c
++++ b/arch/powerpc/kernel/ptrace.c
+@@ -2425,7 +2425,8 @@ static int ptrace_set_debugreg(struct task_struct *task, unsigned long addr,
+ 		return -EIO;
+ 	hw_brk.address = data & (~HW_BRK_TYPE_DABR);
+ 	hw_brk.type = (data & HW_BRK_TYPE_DABR) | HW_BRK_TYPE_PRIV_ALL;
+-	hw_brk.len = 8;
++	hw_brk.len = DABR_MAX_LEN;
++	hw_brk.hw_len = DABR_MAX_LEN;
+ 	set_bp = (data) && (hw_brk.type & HW_BRK_TYPE_RDWR);
+ #ifdef CONFIG_HAVE_HW_BREAKPOINT
+ 	bp = thread->ptrace_bps[0];
+@@ -2439,6 +2440,7 @@ static int ptrace_set_debugreg(struct task_struct *task, unsigned long addr,
+ 	if (bp) {
+ 		attr = bp->attr;
+ 		attr.bp_addr = hw_brk.address;
++		attr.bp_len = DABR_MAX_LEN;
+ 		arch_bp_generic_fields(hw_brk.type, &attr.bp_type);
+ 
+ 		/* Enable breakpoint */
+@@ -2456,7 +2458,7 @@ static int ptrace_set_debugreg(struct task_struct *task, unsigned long addr,
+ 	/* Create a new breakpoint request if one doesn't exist already */
+ 	hw_breakpoint_init(&attr);
+ 	attr.bp_addr = hw_brk.address;
+-	attr.bp_len = 8;
++	attr.bp_len = DABR_MAX_LEN;
+ 	arch_bp_generic_fields(hw_brk.type,
+ 			       &attr.bp_type);
+ 
+@@ -2826,13 +2828,13 @@ static long ppc_set_hwdebug(struct task_struct *child,
+ 		     struct ppc_hw_breakpoint *bp_info)
+ {
+ #ifdef CONFIG_HAVE_HW_BREAKPOINT
+-	int len = 0;
+ 	struct thread_struct *thread = &(child->thread);
+ 	struct perf_event *bp;
+ 	struct perf_event_attr attr;
+ #endif /* CONFIG_HAVE_HW_BREAKPOINT */
+ #ifndef CONFIG_PPC_ADV_DEBUG_REGS
+ 	struct arch_hw_breakpoint brk;
++	int ret = 0;
+ #endif
+ 
+ 	if (bp_info->version != 1)
+@@ -2880,32 +2882,33 @@ static long ppc_set_hwdebug(struct task_struct *child,
+ 	if ((unsigned long)bp_info->addr >= TASK_SIZE)
+ 		return -EIO;
+ 
+-	brk.address = bp_info->addr & ~7UL;
++	brk.address = bp_info->addr;
+ 	brk.type = HW_BRK_TYPE_TRANSLATE;
+-	brk.len = 8;
++
++	if (bp_info->addr_mode == PPC_BREAKPOINT_MODE_RANGE_INCLUSIVE)
++		brk.len = bp_info->addr2 - bp_info->addr;
++	else if (bp_info->addr_mode == PPC_BREAKPOINT_MODE_EXACT)
++		brk.len = 1;
++	else
++		return -EINVAL;
++
++	ret = hw_breakpoint_validate_len(&brk);
++	if (ret)
++		return ret;
++
+ 	if (bp_info->trigger_type & PPC_BREAKPOINT_TRIGGER_READ)
+ 		brk.type |= HW_BRK_TYPE_READ;
+ 	if (bp_info->trigger_type & PPC_BREAKPOINT_TRIGGER_WRITE)
+ 		brk.type |= HW_BRK_TYPE_WRITE;
+ #ifdef CONFIG_HAVE_HW_BREAKPOINT
+-	/*
+-	 * Check if the request is for 'range' breakpoints. We can
+-	 * support it if range < 8 bytes.
+-	 */
+-	if (bp_info->addr_mode == PPC_BREAKPOINT_MODE_RANGE_INCLUSIVE)
+-		len = bp_info->addr2 - bp_info->addr;
+-	else if (bp_info->addr_mode == PPC_BREAKPOINT_MODE_EXACT)
+-		len = 1;
+-	else
+-		return -EINVAL;
+ 	bp = thread->ptrace_bps[0];
+ 	if (bp)
+ 		return -ENOSPC;
+ 
+ 	/* Create a new breakpoint request if one doesn't exist already */
+ 	hw_breakpoint_init(&attr);
+-	attr.bp_addr = (unsigned long)bp_info->addr & ~HW_BREAKPOINT_ALIGN;
+-	attr.bp_len = len;
++	attr.bp_addr = (unsigned long)bp_info->addr;
++	attr.bp_len = brk.len;
+ 	arch_bp_generic_fields(brk.type, &attr.bp_type);
+ 
+ 	thread->ptrace_bps[0] = bp = register_user_hw_breakpoint(&attr,
+diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+index d83364ebc5c5..e8a18d725c5e 100644
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -884,7 +884,8 @@ static void insert_cpu_bpts(void)
+ 	if (dabr.enabled) {
+ 		brk.address = dabr.address;
+ 		brk.type = (dabr.enabled & HW_BRK_TYPE_DABR) | HW_BRK_TYPE_PRIV_ALL;
+-		brk.len = 8;
++		brk.len = DABR_MAX_LEN;
++		brk.hw_len = DABR_MAX_LEN;
+ 		__set_breakpoint(&brk);
+ 	}
+ 
+-- 
+2.21.0
 
