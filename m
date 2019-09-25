@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D50EBE889
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 00:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFAA7BE88D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 00:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbfIYWzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 18:55:08 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43044 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729638AbfIYWzH (ORCPT
+        id S1730075AbfIYW5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 18:57:11 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45872 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729638AbfIYW5K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 18:55:07 -0400
-Received: by mail-pf1-f195.google.com with SMTP id a2so412868pfo.10
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 15:55:07 -0700 (PDT)
+        Wed, 25 Sep 2019 18:57:10 -0400
+Received: by mail-pl1-f195.google.com with SMTP id u12so62900pls.12
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 15:57:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=9WC9auWepUy78cUJN0aqVvX0lDk3WeTONEi6+SRxepQ=;
-        b=eoqlvEqQxVKWBUggvKjRbdxmqgttREvbLfuo9DiOOEnl2OUh0wUEp4SrUi0xIDRbOq
-         V5BovfMxNoOTiYrIiSiauLlB8IUPau86O8w5VEXiD89gUa97Tl/hmc9Ekwgnhc3cmDDX
-         RCVE98WWlxe5UCCRhwuKjewoproUEVcDDZn2Z7ovjumQvyzfAfFDXT0nM1ZkInMVe72B
-         VkR1u6V510QP34t6MdbbFP0KMeIrp3VIPtM8KvFxMpohWWNV9dUR5mYxWZojPXbGw88e
-         zSx8oPFkeq8P3EH3hQMKVB8CgNQS3nCZvaVsFjl/GjssU+6pbt/DNxOPMyLicl236ns9
-         g9kw==
+        bh=Su3YbMX4TjBXJn8xWP4LnB3UVGIbfhWnsfvHaIxOPLo=;
+        b=T5EiCgkE9qhORn45R+LPqlJ9tdLHwlTiKN2kkaOpBKnmOA7A8BHRSboW0hfi0Oa9DY
+         7sUvBQe0rag9+C27pnWS63Qceqnfy+I1KB3UJ8kVKTkhIkfJe3Staa+sXT0BlomB2iU1
+         JqBCyR7vYMygJJCwqni2pGCatNSwwjfkRAIAJ1T4S+rxFGbL+EgFJK3lWzgRUx1gPvrg
+         V3H0XTkWimm420fik8fxvwU6FdCc6xJnu6RcdKW+yftO+s3BPhrwfgF80zZlsZOIAx96
+         Ul/cdvrNKTWrZY07RFtbvMzt7UhwEtSOf8af2RKj0g+B7d/kR+/Psa+qPQBmeo7ysV5k
+         DN0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=9WC9auWepUy78cUJN0aqVvX0lDk3WeTONEi6+SRxepQ=;
-        b=Op/v3FyaEMKF5jAe7dG0VF9aYVsY8l+RqKt9tsVmsCxYtuVsPrx/2QVrJ/7W1YU4kD
-         LJHUq6f5jTosO/EupceaOM1IJCIU5KmuVwwsopbhpZylrWDhJjU7J7PxSHobCgYMefKV
-         ZBitamh8jczdn8otKxP4U8nAJBUrTMEoOe7jNROIpz19PQaaGjrgFdzSq7H3oqXu3P3p
-         N1EkhiWcpJ5aRk1zA0LN6nlf0Y0rG8ld7v1ySxZQIT61x91NHKG0Oa2BC6BjYdvtiZAW
-         Z98tANkBKQkU3huhc+Lq0qgLu5/3KvmYDwrM14ZAb652Xg8fBEOCCKL8eSHd1TDymKXE
-         WGng==
-X-Gm-Message-State: APjAAAXQx7fgzQA85kwUS14LNs5tGLkW95AMq29UVFgTy/Z5SVA05Ouv
-        rxGIvBjnvIogpgc5tdZen6TySQ==
-X-Google-Smtp-Source: APXvYqyHy++T2AILkhhlqZKUmq7GMsbUVh3oS83mlr5NVQ7OOev5eiPms6EaAI0vnUK3PPzAG6b4fg==
-X-Received: by 2002:a17:90a:244f:: with SMTP id h73mr59911pje.137.1569452106814;
-        Wed, 25 Sep 2019 15:55:06 -0700 (PDT)
+        bh=Su3YbMX4TjBXJn8xWP4LnB3UVGIbfhWnsfvHaIxOPLo=;
+        b=kPP+Wm8j/Laz4iG0u2tJabr/XlMRHqTFcu5/mvhJPzygEtKn9vtpuRO+ub8TLzgdP0
+         ZgjriYROmuXhdVcLGyFXQFEovOGjIR3Tc2hA1XDg3OH9aoLTJw9Pjq8mcL0GPd+RP7ZS
+         cG1N2LwamDWI/SId3/L2G1fiOW8XQuVAM5ewCZsN237DCnom7RV8i3riUU8JT7wg2eiA
+         Ip3lKoHzfW8snfvfz8iZzvbkKK24Rxakc46rN5OzUgMMWI3JHRSXGnrnTw63IvRxQDb6
+         NoXt0jIoWsELkrj4mi2shL0Td50IGjKUe+qVW2ZgaAiRkvM1MvW15bbYdrWnjhvnZZk+
+         Nigg==
+X-Gm-Message-State: APjAAAVJPsJv7V8rvByN3oxrflMcGVf99LuOD/HMiXbdHAGw19FXyLKJ
+        KzVM+dTJL2cuGnP0FnZtJsvxMg==
+X-Google-Smtp-Source: APXvYqzGVbr0CkFH3ciLzynsBdMN/FIPGIUhMEZhO9+EU+yLvS3NZ9X1vfefUaaj702D8WZl+2UOzA==
+X-Received: by 2002:a17:902:748a:: with SMTP id h10mr511672pll.257.1569452228436;
+        Wed, 25 Sep 2019 15:57:08 -0700 (PDT)
 Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id y15sm62024pfp.111.2019.09.25.15.55.05
+        by smtp.gmail.com with ESMTPSA id d5sm118177pjw.31.2019.09.25.15.57.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Sep 2019 15:55:05 -0700 (PDT)
+        Wed, 25 Sep 2019 15:57:07 -0700 (PDT)
 From:   Kevin Hilman <khilman@baylibre.com>
 To:     Xingyu Chen <xingyu.chen@amlogic.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -55,13 +55,12 @@ Cc:     Xingyu Chen <xingyu.chen@amlogic.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Hanjie Lin <hanjie.lin@amlogic.com>,
         linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: reset: add bindings for the Meson-A1 SoC Reset Controller
-In-Reply-To: <1569227661-4261-3-git-send-email-xingyu.chen@amlogic.com>
-References: <1569227661-4261-1-git-send-email-xingyu.chen@amlogic.com> <1569227661-4261-3-git-send-email-xingyu.chen@amlogic.com>
-Date:   Wed, 25 Sep 2019 15:55:05 -0700
-Message-ID: <7htv90rnp2.fsf@baylibre.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] reset: add support for the Meson-A1 SoC Reset Controller
+In-Reply-To: <1569227661-4261-4-git-send-email-xingyu.chen@amlogic.com>
+References: <1569227661-4261-1-git-send-email-xingyu.chen@amlogic.com> <1569227661-4261-4-git-send-email-xingyu.chen@amlogic.com>
+Date:   Wed, 25 Sep 2019 15:57:07 -0700
+Message-ID: <7hlfucrnlo.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,57 +68,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Xingyu,
+
 Xingyu Chen <xingyu.chen@amlogic.com> writes:
 
-> Add DT bindings for the Meson-A1 SoC Reset Controller include file,
-> and also slightly update documentation.
+> The number of RESET registers and offset of RESET_LEVEL register for
+> Meson-A1 are different from previous SoCs, In order to describe these
+> differences, we introduce the struct meson_reset_param.
 >
 > Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
 > Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-The order here doesn't look right.  As the sender, your sign-off should
-be last.  Is Jianxin the author or are you?  If Jianxin, there should be
-a "From:" line at the beginning of the changelog to indicate authorship
-that's different from the sender.
+Again, order here isn't quite right.  Add the reviewed-by tags first,
+and the sender should be the last sign-off.
 
-> ---
->  .../bindings/reset/amlogic,meson-reset.yaml        |  1 +
->  include/dt-bindings/reset/amlogic,meson-a1-reset.h | 59 ++++++++++++++++++++++
->  2 files changed, 60 insertions(+)
->  create mode 100644 include/dt-bindings/reset/amlogic,meson-a1-reset.h
->
-> diff --git a/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> index 00917d8..b3f57d8 100644
-> --- a/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> +++ b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> @@ -16,6 +16,7 @@ properties:
->        - amlogic,meson8b-reset # Reset Controller on Meson8b and compatible SoCs
->        - amlogic,meson-gxbb-reset # Reset Controller on GXBB and compatible SoCs
->        - amlogic,meson-axg-reset # Reset Controller on AXG and compatible SoCs
-> +      - amlogic,meson-a1-reset # Reset Controller on A1 and compatible SoCs
->  
->    reg:
->      maxItems: 1
-> diff --git a/include/dt-bindings/reset/amlogic,meson-a1-reset.h b/include/dt-bindings/reset/amlogic,meson-a1-reset.h
-> new file mode 100644
-> index 00000000..8d76a47
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/amlogic,meson-a1-reset.h
-> @@ -0,0 +1,59 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> + *
-> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-> + * Author: Xingyu Chen <xingyu.chen@amlogic.com>
-> + *
-> + */
-> +
-> +#ifndef _DT_BINDINGS_AMLOGIC_MESON_A1_RESET_H
-> +#define _DT_BINDINGS_AMLOGIC_MESON_A1_RESET_H
-> +
-> +/* RESET0 */
-> +#define RESET_AM2AXI_VAD		1
+Other than that, driver looks good.
 
-minor nit: can you use comments/whitespace here to indicate holes?
-Please see the other amlogic files in this dir for examples.
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
 
 Kevin
