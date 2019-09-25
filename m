@@ -2,146 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF4B3BD6E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 06:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4381FBD6EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 06:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfIYEAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 00:00:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42374 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725784AbfIYEAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 00:00:04 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 02DB23DFD7;
-        Wed, 25 Sep 2019 04:00:04 +0000 (UTC)
-Received: from [10.72.12.148] (ovpn-12-148.pek2.redhat.com [10.72.12.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 83E855C21F;
-        Wed, 25 Sep 2019 03:59:58 +0000 (UTC)
-Subject: Re: [PATCH] vhost: It's better to use size_t for the 3rd parameter of
- vhost_exceeds_weight()
-To:     "wangxu (AE)" <wangxu72@huawei.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1569224801-101248-1-git-send-email-wangxu72@huawei.com>
- <20190923040518-mutt-send-email-mst@kernel.org>
- <FCFCADD62FC0CA4FAEA05F13220975B01717A091@dggeml525-mbx.china.huawei.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <fc06afd5-0e2d-c3ae-c118-3292e16db186@redhat.com>
-Date:   Wed, 25 Sep 2019 11:59:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730242AbfIYEGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 00:06:42 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37876 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726936AbfIYEGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 00:06:41 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8P41te5113925
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 00:06:40 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v7xdevdcy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 00:06:40 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 25 Sep 2019 05:06:38 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 25 Sep 2019 05:06:34 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8P46Xkf50266234
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Sep 2019 04:06:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A01A4A4059;
+        Wed, 25 Sep 2019 04:06:33 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E42B1A4055;
+        Wed, 25 Sep 2019 04:06:31 +0000 (GMT)
+Received: from bangoria.in.ibm.com (unknown [9.124.31.69])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 25 Sep 2019 04:06:31 +0000 (GMT)
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+To:     mpe@ellerman.id.au, mikey@neuling.org, christophe.leroy@c-s.fr
+Cc:     npiggin@gmail.com, benh@kernel.crashing.org, paulus@samba.org,
+        naveen.n.rao@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: [PATCH v4 0/5] Powerpc/Watchpoint: Few important fixes
+Date:   Wed, 25 Sep 2019 09:36:25 +0530
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <FCFCADD62FC0CA4FAEA05F13220975B01717A091@dggeml525-mbx.china.huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 25 Sep 2019 04:00:04 +0000 (UTC)
+X-TM-AS-GCONF: 00
+x-cbid: 19092504-0012-0000-0000-000003503F5F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19092504-0013-0000-0000-0000218AD173
+Message-Id: <20190925040630.6948-1-ravi.bangoria@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-25_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909250039
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+v3: https://lists.ozlabs.org/pipermail/linuxppc-dev/2019-July/193339.html
 
-On 2019/9/23 下午5:12, wangxu (AE) wrote:
-> Hi Michael
->
-> 	Thanks for your fast reply.
->
-> 	As the following code, the 2nd branch of iov_iter_advance() does not check if i->count < size, when this happens, i->count -= size may cause len exceed INT_MAX, and then total_len exceed INT_MAX.
->
-> 	handle_tx_copy() ->
-> 		get_tx_bufs(..., &len, ...) ->
-> 			init_iov_iter() ->
-> 				iov_iter_advance(iter, ...) 	// has 3 branches:
-> 					pipe_advance() 	 	// has checked the size: if (unlikely(i->count < size)) size = i->count;
-> 					iov_iter_is_discard() ... 	// no check.
+v3->v4:
+ - Instead of considering exception as extraneous when dar is outside of
+   user specified range, analyse the instruction and check for overlap
+   between user specified range and actual load/store range.
+ - Add selftest for the same in perf-hwbreak.c
+ - Make ptrace-hwbreak.c selftest more strict by checking address in
+   check_success.
+ - Support for 8xx in ptrace-hwbreak.c selftest (Build tested only)
+ - Rebase to powerpc/next
 
+@Christope, Can you please check Patch 5. I've just build-tested it
+with ep88xc_defconfig.
 
-Yes, but I don't think we use ITER_DISCARD.
+Ravi Bangoria (5):
+  Powerpc/Watchpoint: Fix length calculation for unaligned target
+  Powerpc/Watchpoint: Don't ignore extraneous exceptions blindly
+  Powerpc/Watchpoint: Rewrite ptrace-hwbreak.c selftest
+  Powerpc/Watchpoint: Add dar outside test in perf-hwbreak.c selftest
+  Powerpc/Watchpoint: Support for 8xx in ptrace-hwbreak.c selftest
 
-Thanks
+ arch/powerpc/include/asm/debug.h              |   1 +
+ arch/powerpc/include/asm/hw_breakpoint.h      |   9 +-
+ arch/powerpc/kernel/dawr.c                    |   6 +-
+ arch/powerpc/kernel/hw_breakpoint.c           |  76 ++-
+ arch/powerpc/kernel/process.c                 |  46 ++
+ arch/powerpc/kernel/ptrace.c                  |  37 +-
+ arch/powerpc/xmon/xmon.c                      |   3 +-
+ .../selftests/powerpc/ptrace/perf-hwbreak.c   | 111 +++-
+ .../selftests/powerpc/ptrace/ptrace-hwbreak.c | 579 +++++++++++-------
+ 9 files changed, 595 insertions(+), 273 deletions(-)
 
+-- 
+2.21.0
 
-> 					iterate_and_advance() 	//has checked: if (unlikely(i->count < n)) n = i->count;
-> 				return iov_iter_count(iter);
->
-> -----Original Message-----
-> From: Michael S. Tsirkin [mailto:mst@redhat.com]
-> Sent: Monday, September 23, 2019 4:07 PM
-> To: wangxu (AE) <wangxu72@huawei.com>
-> Cc: jasowang@redhat.com; kvm@vger.kernel.org; virtualization@lists.linux-foundation.org; netdev@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] vhost: It's better to use size_t for the 3rd parameter of vhost_exceeds_weight()
->
-> On Mon, Sep 23, 2019 at 03:46:41PM +0800, wangxu wrote:
->> From: Wang Xu <wangxu72@huawei.com>
->>
->> Caller of vhost_exceeds_weight(..., total_len) in drivers/vhost/net.c
->> usually pass size_t total_len, which may be affected by rx/tx package.
->>
->> Signed-off-by: Wang Xu <wangxu72@huawei.com>
->
-> Puts a bit more pressure on the register file ...
-> why do we care? Is there some way that it can exceed INT_MAX?
->
->> ---
->>   drivers/vhost/vhost.c | 4 ++--
->>   drivers/vhost/vhost.h | 7 ++++---
->>   2 files changed, 6 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c index
->> 36ca2cf..159223a 100644
->> --- a/drivers/vhost/vhost.c
->> +++ b/drivers/vhost/vhost.c
->> @@ -412,7 +412,7 @@ static void vhost_dev_free_iovecs(struct vhost_dev
->> *dev)  }
->>   
->>   bool vhost_exceeds_weight(struct vhost_virtqueue *vq,
->> -			  int pkts, int total_len)
->> +			  int pkts, size_t total_len)
->>   {
->>   	struct vhost_dev *dev = vq->dev;
->>   
->> @@ -454,7 +454,7 @@ static size_t vhost_get_desc_size(struct
->> vhost_virtqueue *vq,
->>   
->>   void vhost_dev_init(struct vhost_dev *dev,
->>   		    struct vhost_virtqueue **vqs, int nvqs,
->> -		    int iov_limit, int weight, int byte_weight)
->> +		    int iov_limit, int weight, size_t byte_weight)
->>   {
->>   	struct vhost_virtqueue *vq;
->>   	int i;
->> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h index
->> e9ed272..8d80389d 100644
->> --- a/drivers/vhost/vhost.h
->> +++ b/drivers/vhost/vhost.h
->> @@ -172,12 +172,13 @@ struct vhost_dev {
->>   	wait_queue_head_t wait;
->>   	int iov_limit;
->>   	int weight;
->> -	int byte_weight;
->> +	size_t byte_weight;
->>   };
->>   
->
-> This just costs extra memory, and value is never large, so I don't think this matters.
->
->> -bool vhost_exceeds_weight(struct vhost_virtqueue *vq, int pkts, int
->> total_len);
->> +bool vhost_exceeds_weight(struct vhost_virtqueue *vq, int pkts,
->> +			  size_t total_len);
->>   void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs,
->> -		    int nvqs, int iov_limit, int weight, int byte_weight);
->> +		    int nvqs, int iov_limit, int weight, size_t byte_weight);
->>   long vhost_dev_set_owner(struct vhost_dev *dev);  bool
->> vhost_dev_has_owner(struct vhost_dev *dev);  long
->> vhost_dev_check_owner(struct vhost_dev *);
->> --
->> 1.8.5.6
