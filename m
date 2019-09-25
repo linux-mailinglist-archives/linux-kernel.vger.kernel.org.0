@@ -2,150 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD3BBE3B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B900BE385
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:41:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfIYRps (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 13:45:48 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33085 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfIYRpr (ORCPT
+        id S2443136AbfIYRld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 13:41:33 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:50780 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2443107AbfIYRl3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 13:45:47 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i30so273963pgl.0
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 10:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ZAuGgXVozBxAOyU104EisOA4FjYX9B/ph1VDDQrfSC8=;
-        b=Xn43tYA4vLlz8TCF32HKJSEtg2SCWQgDnM4HWr5KCnJiZ95YwMY/MLHvKYTRH1E1aT
-         PdWtlOrtLmQsFpX6/Nz8oSHu843qAcoL2fmA8n9/w8CcwI/aKHa6pKTlbt2oTljKtHoT
-         5Bpjf0YklXGfTJ+fj8CFCKXk3oYuaYYqf0yGY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ZAuGgXVozBxAOyU104EisOA4FjYX9B/ph1VDDQrfSC8=;
-        b=rNNZB8k7BMwkbzZ89liseomk7Zg4vDen+1WmFnQwaVy/6phzLUazesFenVvMUFTvFQ
-         nw+caIXoBZYyr9rBLWGRvQU1Lsy9mK7sba/J+fZv82hWzdUSaVo6N2LWqWX8INtIPNRn
-         iasnmfGpuVtdAWhyhPId+5VFprfBHU2R9PNwNP8L4KGQ9DYgW1+qTv9+ZCS8BBVQ0TFz
-         xWdDQKQUp+joAnrf0rbBZlVvPa6I9wei4t7inKMRGUQpIeWSgS9lnAnA+cZ6Fy09JjIb
-         OAcJbKnjtWCe4pVWa0Fm+6Dvb3Uzgy2GsHIWUJmOaxuexDYft7RyR4kCTvywaqKqTrrK
-         RKqg==
-X-Gm-Message-State: APjAAAWns6fCh8fPQe0oFRqvcZVmWEW3eOr7J9XesmVs4beMgoRcicyS
-        I8X4GVliUC6gfdrq8KQ3T7hLSg==
-X-Google-Smtp-Source: APXvYqxiD1rpTlqHrtU9YEtYSpp4KVbVAbHt0Mb8WqRxgoUa9sqTYMuk4PHPkRwJMeseB+Imz6hTDA==
-X-Received: by 2002:a17:90a:2744:: with SMTP id o62mr7612146pje.139.1569433545789;
-        Wed, 25 Sep 2019 10:45:45 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id b3sm3467917pjp.13.2019.09.25.10.45.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2019 10:45:45 -0700 (PDT)
-Date:   Wed, 25 Sep 2019 10:45:43 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2] devfreq: Add tracepoint for frequency changes
-Message-ID: <20190925174543.GN133864@google.com>
-References: <CGME20190919174436epcas4p17bf0528950813d3326237fcc56fd9b21@epcas4p1.samsung.com>
- <20190919174423.105030-1-mka@chromium.org>
- <62b2228b-e198-2558-2afc-e5687935742b@samsung.com>
- <20190924193721.GK133864@google.com>
- <418ddd67-ca8a-3d0e-066c-38d05a7082a8@samsung.com>
+        Wed, 25 Sep 2019 13:41:29 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8PHfEiP029452;
+        Wed, 25 Sep 2019 12:41:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569433274;
+        bh=saG1qiWu8GrejbxOinZJfusKmJXkN8e5NleZ7JLxNDw=;
+        h=From:To:CC:Subject:Date;
+        b=pcv6NTvJCxhCNkmIK8236OuNdQ5d7gQNMj0Jct6/aE/DWuJTv2G2+OYYfBJI8ZkXN
+         h9v33q3aMdBrh/7QPv7XfRtws1ArCzHn7ij9mSrfOhjKEDaK+sM6Y/viOqWBwShuY1
+         l9aQ4I88Q4plOTfNd6dnGF1Px5f4DC9xq170/t2w=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8PHfEVV018179;
+        Wed, 25 Sep 2019 12:41:14 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 25
+ Sep 2019 12:41:07 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 25 Sep 2019 12:41:14 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8PHfE4h073729;
+        Wed, 25 Sep 2019 12:41:14 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>, <linus.walleij@linaro.org>,
+        <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>
+Subject: [PATCH v9 00/15] Multicolor Framework
+Date:   Wed, 25 Sep 2019 12:46:01 -0500
+Message-ID: <20190925174616.3714-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <418ddd67-ca8a-3d0e-066c-38d05a7082a8@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 10:56:15AM +0900, Chanwoo Choi wrote:
-> On 19. 9. 25. 오전 4:37, Matthias Kaehlcke wrote:
-> > On Fri, Sep 20, 2019 at 10:15:57AM +0900, Chanwoo Choi wrote:
-> >> Hi,
-> > 
-> > sorry for the delayed response, you message got buried in my
-> > mailbox.
-> > 
-> >> On 19. 9. 20. 오전 2:44, Matthias Kaehlcke wrote:
-> >>> Add a tracepoint for frequency changes of devfreq devices and
-> >>> use it.
-> >>>
-> >>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> >>> ---
-> >>> (sending v2 without much delay wrt v1, since the change in devfreq
-> >>>  probably isn't controversial, and I'll be offline a few days)
-> >>>
-> >>> Changes in v2:
-> >>> - included trace_devfreq_frequency_enabled() in the condition
-> >>>   to avoid unnecessary evaluation when the trace point is
-> >>>   disabled
-> >>> ---
-> >>>  drivers/devfreq/devfreq.c      |  3 +++
-> >>>  include/trace/events/devfreq.h | 18 ++++++++++++++++++
-> >>>  2 files changed, 21 insertions(+)
-> >>>
-> >>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> >>> index ab22bf8a12d6..e9f04dcafb01 100644
-> >>> --- a/drivers/devfreq/devfreq.c
-> >>> +++ b/drivers/devfreq/devfreq.c
-> >>> @@ -317,6 +317,9 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
-> >>>  
-> >>>  	devfreq->previous_freq = new_freq;
-> >>>  
-> >>> +	if (trace_devfreq_frequency_enabled() && new_freq != cur_freq)
-> >>> +		trace_devfreq_frequency(devfreq, new_freq);
-> >>
-> >> You can change as following without 'new_freq' variable
-> >> because devfreq->previous_freq is the new frequency.	
-> >> 	trace_devfreq_frequency(devfreq);
-> > 
-> > In general that sounds good.
-> > 
-> > devfreq essentially uses df->previous_freq as df->cur_freq, I think
-> > most code using it would be clearer if we renamed it accordingly.
-> > I'll send a separate patch for this.
-> 
-> Actually, according to reference time of the 'df->previous_freq',
-> 'previous_freq' is proper or 'cur_freq is proper.
-> But, In the comment of 'struct devfreq',
-> it means the configured time as following: 
-> 	* @previous_freq:      previously configured frequency value.
+Hello
 
-sure, I wouldn't expect the comment of a variable/field called 'previous_freq'
-say that it's the current frequency.
+For those I have added to this patchset this is a new LED framework that will
+group monochrome LEDs into a directory under the parent LED class device. I have
+CC'd you on this because you maintain a device tree file that contains one of
+the devices affected by this change.  Most notably the change is to add the
+reg property to each LED child node to denote the output channel that the node
+is to use.  This not only is required for the Multicolor framework but also gives
+flexibilty in DT design to be able to not be bound to sequential channel
+numbering.
 
-> I think that it it not big problem to keep the name.
+There are many changes from v8 to this patchset from Jacek's comments.
+v8 series
+https://lore.kernel.org/patchwork/project/lkml/list/?series=411331
 
-It's indeed not a big problem, because the code works either way, something
-like 'cur_freq' would just be less confusing.
+Most notably
+Removal of get/set_brightness ops
+Dereferencing the monochrome LED intensity from the multicolor structure as
+opposed to the ops.
+Update for LP55xx DT properties to include the reg property to identify the
+output channel for multicolor and non-multicolor use cases.  This also allows
+HW designers to skip output channels if they desire.
+Updated the corresponding affect device tree files to add the reg property
+Checkpatch error fixes for the lp55xx common
 
-These are the functions that use 'previous_freq' and how they use it:
+These changes were tested using the LP50xx evms and LP5523 EVM connected to a
+BeagleBone black device.
 
-devfreq_set_target
-devfreq_monitor_suspend
-cur_freq_show
-target_freq_show
-trans_stat_show
-devfreq_passive_notifier_call
-devfreq_userspace_func
-  cur freq
+Dan
 
-devfreq_update_status
-  prev freq
+Dan Murphy (15):
+  leds: multicolor: Add sysfs interface definition
+  dt: bindings: Add multicolor class dt bindings documention
+  dt-bindings: leds: Add multicolor ID to the color ID list
+  leds: Add multicolor ID to the color ID list
+  leds: multicolor: Introduce a multicolor class definition
+  dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+  leds: lp50xx: Add the LP50XX family of the RGB LED driver
+  dt: bindings: lp55xx: Be consistent in the document with LED
+  dt: bindings: lp55xx: Update binding for Multicolor Framework
+  ARM: dts: n900: Add reg property to the LP5523 channel node
+  ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+  ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+  leds: lp55xx: Update the lp55xx to use the multi color framework
+  leds: lp55xx: Fix checkpatch file permissions issues
+  leds: lp5523: Fix checkpatch issues in the code
 
-More than 85% use the variable as current frequency, which seems like a
-good argument to give it the proper name, instead of having folks wonder
-why the previous frequency is used.
+ .../ABI/testing/sysfs-class-led-multicolor    |  35 +
+ .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+ .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
+ .../devicetree/bindings/leds/leds-lp55xx.txt  | 105 ++-
+ Documentation/leds/index.rst                  |   1 +
+ Documentation/leds/leds-class-multicolor.rst  |  96 +++
+ arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |   6 +
+ arch/arm/boot/dts/omap3-n900.dts              |  11 +
+ arch/arm/boot/dts/ste-href.dtsi               |  10 +
+ drivers/leds/Kconfig                          |  22 +
+ drivers/leds/Makefile                         |   2 +
+ drivers/leds/led-class-multicolor.c           | 220 +++++
+ drivers/leds/led-core.c                       |   1 +
+ drivers/leds/leds-lp50xx.c                    | 767 ++++++++++++++++++
+ drivers/leds/leds-lp5523.c                    |  32 +-
+ drivers/leds/leds-lp55xx-common.c             | 172 +++-
+ drivers/leds/leds-lp55xx-common.h             |  11 +
+ include/dt-bindings/leds/common.h             |   3 +-
+ include/linux/led-class-multicolor.h          |  74 ++
+ include/linux/platform_data/leds-lp55xx.h     |   6 +
+ 20 files changed, 1771 insertions(+), 49 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+ create mode 100644 Documentation/leds/leds-class-multicolor.rst
+ create mode 100644 drivers/leds/led-class-multicolor.c
+ create mode 100644 drivers/leds/leds-lp50xx.c
+ create mode 100644 include/linux/led-class-multicolor.h
+
+-- 
+2.22.0.214.g8dca754b1e
+
