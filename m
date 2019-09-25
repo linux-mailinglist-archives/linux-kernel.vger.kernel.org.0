@@ -2,103 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E70BBE8B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 722A1BE8C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730789AbfIYXEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 19:04:25 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44554 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbfIYXEZ (ORCPT
+        id S1731003AbfIYXFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 19:05:07 -0400
+Received: from mail-io1-f53.google.com ([209.85.166.53]:33477 "EHLO
+        mail-io1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730975AbfIYXFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 19:04:25 -0400
-Received: by mail-io1-f67.google.com with SMTP id j4so1256661iog.11;
-        Wed, 25 Sep 2019 16:04:24 -0700 (PDT)
+        Wed, 25 Sep 2019 19:05:07 -0400
+Received: by mail-io1-f53.google.com with SMTP id z19so1448178ior.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 16:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HPeGGcQkwDZoIbx5ihbpL7zXBF5pHk94wt6ftwYDWM0=;
-        b=rGI5rPEVpuUosM8L21N6Vw1ruIQDuRWtlpYz8o8Di4LEwQhHLwaBeMRY13l84KqOw7
-         8of4c7Xs8Kpndx7zZZvU1SU1aXkzjYI0IS3sK5X7hpAVr+bv2VUNwDQW7+qYFotggjGO
-         UjMMk55FloQxab5Ua8sOB6/t30Pnxgksbp90hLPlNX1D03ZAwQ0pDdQLNjBNNj7ujGvx
-         /T/J/70lLY2nQG/cbrkfGbwuzFzGcMMkZV+BUTVT+xCdX//RYQTsv26WlV2+mvuIXvEr
-         EV08UFYht8DIymg8cq/n3eZjBrAee+46H/6Yo663b/2iPye/gWRPvC3zaDa8l4NjcvUc
-         GdXw==
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=579Tnc2tHWRxfBzI2AYOcygJW1YrE5JUA2yogVfQLuk=;
+        b=ApdS52HZvPG4UPM6xBSrQ2S/UNXlmI8kFOmZudEilOG4y80P5HJRHlUnXKPfNJ+WKH
+         au6AjE0kdrTM+IBnFeBGhuDDtnofOCiBS7i2bfyRqXibn7ujiFixczgXhQZkG/9SPJLP
+         nWtV3tk8SZJqPR2uvC9inxGGtNfRDe6urfDEQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HPeGGcQkwDZoIbx5ihbpL7zXBF5pHk94wt6ftwYDWM0=;
-        b=Nrfj7Q5TWqN+JXRRet2NQknYTVvV8dLvORXuyVBZyidLOpjDxP3sz8ta7MmRza5S7t
-         nvlK8j6OuYGT0DustAYwS62+FOW9RL12ONILGpAlKkIHhJeIc0OQtTL4yzk5GCNUWOVb
-         Q2rmObfvQatGImSN+QXA7Cq9YuwJ07MNaRqHEWTdgHJX+YbnsW3jJJLGHBa2ZT4+/TgG
-         39fNsPJiskF7LG6xEqXBmc4mqS311jybkGNj0qmXKVbHf15d2CBVHt0GDO529MsKNFuo
-         leMbhm9dbwZFhc6WD7LzsfgT8maaK+CSakgcjRyAeFkE3IwDuFqYjUB4ytWw5Q+MOb0v
-         PQmg==
-X-Gm-Message-State: APjAAAWybpbupDTSHzirUJJbBLTKYHHZLqvhOVl6GKZlCTQUXaIAehQi
-        18NCH0M5WFzLj4nzxKanXB8=
-X-Google-Smtp-Source: APXvYqyFN2qSCFDaAmyrOpJE2dX1zjYW9wVObb8wgz2k/1xxJSPjf9JL1Edo0wCVYEJk+/wfMwWB7A==
-X-Received: by 2002:a05:6638:294:: with SMTP id c20mr811214jaq.77.1569452664394;
-        Wed, 25 Sep 2019 16:04:24 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id t9sm63420iop.86.2019.09.25.16.04.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=579Tnc2tHWRxfBzI2AYOcygJW1YrE5JUA2yogVfQLuk=;
+        b=UH5UTOkwghnl3DU/s+OUjL5i3/dusIJgKSJ+riWoQb2sRHKLwJgLkndVgnzSrDbN4V
+         PsY8EY27QUoDMP8BpbkVbllmdOo3McWePW2xguCDMdsLQAp9SEWDJJV0/T1oH0rt7t+e
+         6ru+mEfCnSREpYNrZ9jlrZi0VnVYaZZh/wbbRlMhDYMT40wb12a5gOHlM4Lw6mqGFgc3
+         YRWdqb3cr5LBdMugGxGQK84HAWKpjuceLhcOP8IzCUx1PFmkUzIETtzctJdCwbOl2GF1
+         0/ytol/Drxbm9KZXUUYF9SI6yPc+qPBjCCWnU4T6MBqe5zDQxUtEAF4+B+EQbVx+RJVb
+         TMqw==
+X-Gm-Message-State: APjAAAW5NGxfFbfZWs8wFxBc/x//4NX8dQNPgssjhvn8d3Q6KenmRCSn
+        IYMmULlMNgiEaKh+d3ZrP1kIUQ==
+X-Google-Smtp-Source: APXvYqw3G8DNm3m995j68ySkBp40wb8S0xhIePya4oAlregS01zaifCXpCYtrJLA2UrcL7HqzDB3rg==
+X-Received: by 2002:a02:a792:: with SMTP id e18mr803374jaj.125.1569452705565;
+        Wed, 25 Sep 2019 16:05:05 -0700 (PDT)
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id f23sm70767ioc.36.2019.09.25.16.05.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 16:04:23 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Wed, 25 Sep 2019 16:05:04 -0700 (PDT)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        shuah@kernel.org
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kbuild@vger.kernel.org, linux-kselftest@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] net: qrtr: fix memory leak in qrtr_tun_read_iter
-Date:   Wed, 25 Sep 2019 18:04:13 -0500
-Message-Id: <20190925230416.20126-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+Subject: [PATCH 0/2] Simplify kselftest build and install use-cases
+Date:   Wed, 25 Sep 2019 17:04:33 -0600
+Message-Id: <cover.1569452305.git.skhan@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In qrtr_tun_read_iter we need an error handling path to appropriately
-release skb in cases of error.
+This patch series simplifies kselftest use-cases and addresses requests
+from developers and testers to add support for building and installing
+from the main Makefile.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- net/qrtr/tun.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Shuah Khan (2):
+  Makefile: Add kselftest_build target to build tests
+  selftests: Add kselftest_install target to main Makefile
 
-diff --git a/net/qrtr/tun.c b/net/qrtr/tun.c
-index e35869e81766..0f6e6d1d2901 100644
---- a/net/qrtr/tun.c
-+++ b/net/qrtr/tun.c
-@@ -54,19 +54,24 @@ static ssize_t qrtr_tun_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	int count;
- 
- 	while (!(skb = skb_dequeue(&tun->queue))) {
--		if (filp->f_flags & O_NONBLOCK)
--			return -EAGAIN;
-+		if (filp->f_flags & O_NONBLOCK) {
-+			count = -EAGAIN;
-+			goto out;
-+		}
- 
- 		/* Wait until we get data or the endpoint goes away */
- 		if (wait_event_interruptible(tun->readq,
--					     !skb_queue_empty(&tun->queue)))
--			return -ERESTARTSYS;
-+					     !skb_queue_empty(&tun->queue))) {
-+			count = -ERESTARTSYS;
-+			goto out;
-+		}
- 	}
- 
- 	count = min_t(size_t, iov_iter_count(to), skb->len);
- 	if (copy_to_iter(skb->data, count, to) != count)
- 		count = -EFAULT;
- 
-+out:
- 	kfree_skb(skb);
- 
- 	return count;
+ Makefile                                     | 8 ++++++++
+ tools/testing/selftests/Makefile             | 8 ++++++--
+ tools/testing/selftests/kselftest_install.sh | 4 ++--
+ 3 files changed, 16 insertions(+), 4 deletions(-)
+
 -- 
-2.17.1
+2.20.1
 
