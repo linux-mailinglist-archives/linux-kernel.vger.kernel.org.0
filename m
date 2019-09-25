@@ -2,205 +2,389 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE7DBE91D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61400BE92A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733034AbfIYXnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 19:43:24 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:53413 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732992AbfIYXnW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 19:43:22 -0400
-Received: by mail-pl1-f202.google.com with SMTP id g13so258153plq.20
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 16:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=FpMTONf9jSbZVp/Ti1EaLgmO9nC11TmbgGftl+3PnOg=;
-        b=Xd94kAYYME5hfFpdpbnsQg5ljRv8Qr/2aDSVVIWujRZV8DcbjVdowRQrZkwyXE7ZAf
-         PsUJW8UIj7R9IYyn/klgxHUEWDrFWKvHHbFmE7pqzRQsuSnEEAbhqLQo9HsuC4V/gOCZ
-         VhWvuEfVfkkW0HqEP7JU06o4gYLeN20Jc2S/3+Zl6januyJ4AQltm51bgOu8ctSNQ+Nw
-         RHBZg8PBnkujl5T3oG7r5+Pjf7efoWSqeu4fsrvSIoii+8LyRmBdkrQyp02ua0RA9XUm
-         IG/7KIKM/KIj0UN902pRhd05emQdifzS7xOp6rGKmi4aAei5loASuBV44XXyVdmJVeQo
-         C31Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=FpMTONf9jSbZVp/Ti1EaLgmO9nC11TmbgGftl+3PnOg=;
-        b=muV5qnjsgQ4jRQMebxv7o+ppRtY1pX0e/hWrbnYb4ZZmY/FKWUguzSF1Dg8gjCNE2E
-         595GQ3m/5BDMYk7NaM0JjMKz0iJXKQ59PUdm1JHgnL2PHxa1oyVeIZIx0L7eWQtl5cnW
-         Cck4sq30A90PbeLWZsPKD9gpmjmn+dhB3dJ48/qChN1K2VTv6yERi/MZz9dlxYMKeM0V
-         ND/Rfz6vzBEje5jWyEITOaEfbw366dK6tL0sgGgP9dQ60K0vkD7npEQo7oFYvJNOZvO4
-         rMTGMfclCkBDYYSxThAyx+bnYlNDzSzbqm+riXrUHRxBR+X//+nzdtqKhu+8fY53UJXv
-         tSxg==
-X-Gm-Message-State: APjAAAWxrSu8W0jKoQaTu7lbxJLvZwkI93tCnId4pzXzlMd/b85d2Voj
-        q1Z5VhZGjmHomBTGURgGFfFpHTu9sHaDcOSg
-X-Google-Smtp-Source: APXvYqzge8vN4NVhKPBt/B36x1Xuk/WmMjWR8uBN2di5VXdnfgKMfW2UV0huV5Z4RBc9/qeU1rU+4xYJDrzhhzqm
-X-Received: by 2002:a63:e745:: with SMTP id j5mr417957pgk.302.1569455001448;
- Wed, 25 Sep 2019 16:43:21 -0700 (PDT)
-Date:   Wed, 25 Sep 2019 16:43:12 -0700
-In-Reply-To: <20190925234312.94063-1-allanzhang@google.com>
-Message-Id: <20190925234312.94063-2-allanzhang@google.com>
-Mime-Version: 1.0
-References: <20190925234312.94063-1-allanzhang@google.com>
-X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
-Subject: [PATCH 1/1] bpf: Fix bpf_event_output re-entry issue
-From:   Allan Zhang <allanzhang@google.com>
-To:     daniel@iogearbox.net, songliubraving@fb.com,
-        netdev@vger.kernel.org, bpf@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Allan Zhang <allanzhang@google.com>,
-        Stanislav Fomichev <sdf@google.com>,
-        Eric Dumazet <edumazet@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1733086AbfIYXqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 19:46:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:37051 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729068AbfIYXqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 19:46:05 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 16:46:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,549,1559545200"; 
+   d="scan'208";a="364492080"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga005.jf.intel.com with ESMTP; 25 Sep 2019 16:46:03 -0700
+Date:   Wed, 25 Sep 2019 16:46:03 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-mm@kvack.org, Jeff Layton <jlayton@kernel.org>,
+        Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: Lease semantic proposal
+Message-ID: <20190925234602.GB12748@iweiny-DESK2.sc.intel.com>
+References: <20190923190853.GA3781@iweiny-DESK2.sc.intel.com>
+ <20190923222620.GC16973@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190923222620.GC16973@dread.disaster.area>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-BPF_PROG_TYPE_SOCK_OPS program can reenter bpf_event_output because it can
-be called from atomic and non-atomic contexts since we don't have
-bpf_prog_active to prevent it happen.
+On Tue, Sep 24, 2019 at 08:26:20AM +1000, Dave Chinner wrote:
+> On Mon, Sep 23, 2019 at 12:08:53PM -0700, Ira Weiny wrote:
+> > 
+> > Since the last RFC patch set[1] much of the discussion of supporting RDMA with
+> > FS DAX has been around the semantics of the lease mechanism.[2]  Within that
+> > thread it was suggested I try and write some documentation and/or tests for the
+> > new mechanism being proposed.  I have created a foundation to test lease
+> > functionality within xfstests.[3] This should be close to being accepted.
+> > Before writing additional lease tests, or changing lots of kernel code, this
+> > email presents documentation for the new proposed "layout lease" semantic.
+> > 
+> > At Linux Plumbers[4] just over a week ago, I presented the current state of the
+> > patch set and the outstanding issues.  Based on the discussion there, well as
+> > follow up emails, I propose the following addition to the fcntl() man page.
+> > 
+> > Thank you,
+> > Ira
+> > 
+> > [1] https://lkml.org/lkml/2019/8/9/1043
+> > [2] https://lkml.org/lkml/2019/8/9/1062
+> > [3] https://www.spinics.net/lists/fstests/msg12620.html
+> > [4] https://linuxplumbersconf.org/event/4/contributions/368/
+> > 
+> > 
+> > <fcntl man page addition>
+> > Layout Leases
+> > -------------
+> > 
+> > Layout (F_LAYOUT) leases are special leases which can be used to control and/or
+> > be informed about the manipulation of the underlying layout of a file.
+> > 
+> > A layout is defined as the logical file block -> physical file block mapping
+> > including the file size and sharing of physical blocks among files.  Note that
+> > the unwritten state of a block is not considered part of file layout.
+> 
+> Why even mention "unwritten" state if it's not considered something
+> that the layout lease treats differently?
+> 
+> i.e. Unwritten extents are a filesystem implementation detail that
+> is not exposed to userspace by anything other than FIEMAP. If they
+> have no impact on layout lease behaviour, then why raise it as
+> something the user needs to know about?
 
-This patch enables 3 level of nesting to support normal, irq and nmi
-context.
+This paragraph was intended to define a layout.  So I guess one could say our
+internal discussion on what defines a "layout" has leaked into the external
+documentation.  Do you think we should just remove the second sentence or the
+whole paragraph?
 
-We can easily reproduce the issue by running neper crr mode with 100 flows
-and 10 threads from neper client side.
+> 
+> > **Read layout lease F_RDLCK | F_LAYOUT**
+> > 
+> > Read layout leases can be used to be informed of layout changes by the
+> > system or other users.  This lease is similar to the standard read (F_RDLCK)
+> > lease in that any attempt to change the _layout_ of the file will be reported to
+> > the process through the lease break process. 
+> 
+> Similar in what way? The standard F_RDLCK lease triggers on open or
+> truncate - a layout lease does nothing of the sort.
 
-Here is the whole stack dump:
+Similar in that attempts to "write" the layout will result in breaking the
+lease just like attempts to write the file would break the standard F_RDLCK
+lease.  I'm not stuck on the verbiage though; similar may be the wrong word.
 
-[  515.228898] WARNING: CPU: 20 PID: 14686 at kernel/trace/bpf_trace.c:549 bpf_event_output+0x1f9/0x220
-[  515.228903] CPU: 20 PID: 14686 Comm: tcp_crr Tainted: G        W        4.15.0-smp-fixpanic #44
-[  515.228904] Hardware name: Intel TBG,ICH10/Ikaria_QC_1b, BIOS 1.22.0 06/04/2018
-[  515.228905] RIP: 0010:bpf_event_output+0x1f9/0x220
-[  515.228906] RSP: 0018:ffff9a57ffc03938 EFLAGS: 00010246
-[  515.228907] RAX: 0000000000000012 RBX: 0000000000000001 RCX: 0000000000000000
-[  515.228907] RDX: 0000000000000000 RSI: 0000000000000096 RDI: ffffffff836b0f80
-[  515.228908] RBP: ffff9a57ffc039c8 R08: 0000000000000004 R09: 0000000000000012
-[  515.228908] R10: ffff9a57ffc1de40 R11: 0000000000000000 R12: 0000000000000002
-[  515.228909] R13: ffff9a57e13bae00 R14: 00000000ffffffff R15: ffff9a57ffc1e2c0
-[  515.228910] FS:  00007f5a3e6ec700(0000) GS:ffff9a57ffc00000(0000) knlGS:0000000000000000
-[  515.228910] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  515.228911] CR2: 0000537082664fff CR3: 000000061fed6002 CR4: 00000000000226f0
-[  515.228911] Call Trace:
-[  515.228913]  <IRQ>
-[  515.228919]  [<ffffffff82c6c6cb>] bpf_sockopt_event_output+0x3b/0x50
-[  515.228923]  [<ffffffff8265daee>] ? bpf_ktime_get_ns+0xe/0x10
-[  515.228927]  [<ffffffff8266fda5>] ? __cgroup_bpf_run_filter_sock_ops+0x85/0x100
-[  515.228930]  [<ffffffff82cf90a5>] ? tcp_init_transfer+0x125/0x150
-[  515.228933]  [<ffffffff82cf9159>] ? tcp_finish_connect+0x89/0x110
-[  515.228936]  [<ffffffff82cf98e4>] ? tcp_rcv_state_process+0x704/0x1010
-[  515.228939]  [<ffffffff82c6e263>] ? sk_filter_trim_cap+0x53/0x2a0
-[  515.228942]  [<ffffffff82d90d1f>] ? tcp_v6_inbound_md5_hash+0x6f/0x1d0
-[  515.228945]  [<ffffffff82d92160>] ? tcp_v6_do_rcv+0x1c0/0x460
-[  515.228947]  [<ffffffff82d93558>] ? tcp_v6_rcv+0x9f8/0xb30
-[  515.228951]  [<ffffffff82d737c0>] ? ip6_route_input+0x190/0x220
-[  515.228955]  [<ffffffff82d5f7ad>] ? ip6_protocol_deliver_rcu+0x6d/0x450
-[  515.228958]  [<ffffffff82d60246>] ? ip6_rcv_finish+0xb6/0x170
-[  515.228961]  [<ffffffff82d5fb90>] ? ip6_protocol_deliver_rcu+0x450/0x450
-[  515.228963]  [<ffffffff82d60361>] ? ipv6_rcv+0x61/0xe0
-[  515.228966]  [<ffffffff82d60190>] ? ipv6_list_rcv+0x330/0x330
-[  515.228969]  [<ffffffff82c4976b>] ? __netif_receive_skb_one_core+0x5b/0xa0
-[  515.228972]  [<ffffffff82c497d1>] ? __netif_receive_skb+0x21/0x70
-[  515.228975]  [<ffffffff82c4a8d2>] ? process_backlog+0xb2/0x150
-[  515.228978]  [<ffffffff82c4aadf>] ? net_rx_action+0x16f/0x410
-[  515.228982]  [<ffffffff830000dd>] ? __do_softirq+0xdd/0x305
-[  515.228986]  [<ffffffff8252cfdc>] ? irq_exit+0x9c/0xb0
-[  515.228989]  [<ffffffff82e02de5>] ? smp_call_function_single_interrupt+0x65/0x120
-[  515.228991]  [<ffffffff82e020e1>] ? call_function_single_interrupt+0x81/0x90
-[  515.228992]  </IRQ>
-[  515.228996]  [<ffffffff82a11ff0>] ? io_serial_in+0x20/0x20
-[  515.229000]  [<ffffffff8259c040>] ? console_unlock+0x230/0x490
-[  515.229003]  [<ffffffff8259cbaa>] ? vprintk_emit+0x26a/0x2a0
-[  515.229006]  [<ffffffff8259cbff>] ? vprintk_default+0x1f/0x30
-[  515.229008]  [<ffffffff8259d9f5>] ? vprintk_func+0x35/0x70
-[  515.229011]  [<ffffffff8259d4bb>] ? printk+0x50/0x66
-[  515.229013]  [<ffffffff82637637>] ? bpf_event_output+0xb7/0x220
-[  515.229016]  [<ffffffff82c6c6cb>] ? bpf_sockopt_event_output+0x3b/0x50
-[  515.229019]  [<ffffffff8265daee>] ? bpf_ktime_get_ns+0xe/0x10
-[  515.229023]  [<ffffffff82c29e87>] ? release_sock+0x97/0xb0
-[  515.229026]  [<ffffffff82ce9d6a>] ? tcp_recvmsg+0x31a/0xda0
-[  515.229029]  [<ffffffff8266fda5>] ? __cgroup_bpf_run_filter_sock_ops+0x85/0x100
-[  515.229032]  [<ffffffff82ce77c1>] ? tcp_set_state+0x191/0x1b0
-[  515.229035]  [<ffffffff82ced10e>] ? tcp_disconnect+0x2e/0x600
-[  515.229038]  [<ffffffff82cecbbb>] ? tcp_close+0x3eb/0x460
-[  515.229040]  [<ffffffff82d21082>] ? inet_release+0x42/0x70
-[  515.229043]  [<ffffffff82d58809>] ? inet6_release+0x39/0x50
-[  515.229046]  [<ffffffff82c1f32d>] ? __sock_release+0x4d/0xd0
-[  515.229049]  [<ffffffff82c1f3e5>] ? sock_close+0x15/0x20
-[  515.229052]  [<ffffffff8273b517>] ? __fput+0xe7/0x1f0
-[  515.229055]  [<ffffffff8273b66e>] ? ____fput+0xe/0x10
-[  515.229058]  [<ffffffff82547bf2>] ? task_work_run+0x82/0xb0
-[  515.229061]  [<ffffffff824086df>] ? exit_to_usermode_loop+0x7e/0x11f
-[  515.229064]  [<ffffffff82408171>] ? do_syscall_64+0x111/0x130
-[  515.229067]  [<ffffffff82e0007c>] ? entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> 
+> > But this lease is different
+> > because the file can be opened for write and data can be read and/or written to
+> > the file as long as the underlying layout of the file does not change.
+> 
+> So a F_RDLCK|F_LAYOUT can be taken on a O_WRONLY fd, unlike a
+> F_RDLCK which can only be taken on O_RDONLY fd.
 
-Fixes: a5a3a828cd00 ("bpf: add perf event notificaton support for sock_ops")
+That was the idea, yes.
 
-Effort: BPF
-Signed-off-by: Allan Zhang <allanzhang@google.com>
-Reviewed-by: Stanislav Fomichev <sdf@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
----
- kernel/trace/bpf_trace.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+> 
+> I think these semantics are sufficiently different to F_RDLCK they
+> need to be explicitly documented, because I see problems here.
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index ca1255d14576..3e38a010003c 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -500,14 +500,17 @@ static const struct bpf_func_proto bpf_perf_event_output_proto = {
- 	.arg5_type	= ARG_CONST_SIZE_OR_ZERO,
- };
- 
--static DEFINE_PER_CPU(struct pt_regs, bpf_pt_regs);
--static DEFINE_PER_CPU(struct perf_sample_data, bpf_misc_sd);
-+static DEFINE_PER_CPU(int, bpf_event_output_nest_level);
-+struct bpf_nested_pt_regs {
-+	struct pt_regs regs[3];
-+};
-+static DEFINE_PER_CPU(struct bpf_nested_pt_regs, bpf_pt_regs);
-+static DEFINE_PER_CPU(struct bpf_trace_sample_data, bpf_misc_sds);
- 
- u64 bpf_event_output(struct bpf_map *map, u64 flags, void *meta, u64 meta_size,
- 		     void *ctx, u64 ctx_size, bpf_ctx_copy_t ctx_copy)
- {
--	struct perf_sample_data *sd = this_cpu_ptr(&bpf_misc_sd);
--	struct pt_regs *regs = this_cpu_ptr(&bpf_pt_regs);
-+	int nest_level = this_cpu_inc_return(bpf_event_output_nest_level);
- 	struct perf_raw_frag frag = {
- 		.copy		= ctx_copy,
- 		.size		= ctx_size,
-@@ -522,12 +525,25 @@ u64 bpf_event_output(struct bpf_map *map, u64 flags, void *meta, u64 meta_size,
- 			.data	= meta,
- 		},
- 	};
-+	struct perf_sample_data *sd;
-+	struct pt_regs *regs;
-+	u64 ret;
-+
-+	if (WARN_ON_ONCE(nest_level > ARRAY_SIZE(bpf_misc_sds.sds))) {
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+	sd = this_cpu_ptr(&bpf_misc_sds.sds[nest_level - 1]);
-+	regs = this_cpu_ptr(&bpf_pt_regs.regs[nest_level - 1]);
- 
- 	perf_fetch_caller_regs(regs);
- 	perf_sample_data_init(sd, 0, 0);
- 	sd->raw = &raw;
- 
--	return __bpf_perf_event_output(regs, map, flags, sd);
-+	ret = __bpf_perf_event_output(regs, map, flags, sd);
-+out:
-+	this_cpu_dec(bpf_event_output_nest_level);
-+	return ret;
- }
- 
- BPF_CALL_0(bpf_get_current_task)
--- 
-2.23.0.351.gc4317032e6-goog
+I agree, and I intended this document to indicate how they are different.
+
+Anther option may be to define F_RDLAYOUT and not have F_LAYOUT such that it is
+clear that this lease is not associated with F_RDLCK at all.  It is different.
+
+> 
+> > Therefore, the lease is not broken if the file is simply open for write, but
+> > _may_ be broken if an operation such as, truncate(), fallocate() or write()
+> > results in changing the underlying layout.
+> 
+> As will mmap(), any number of XFS and ext4 ioctls, etc. 
+> 
+> So this really needs to say "_will_ be broken if *any* modification to
+> the file _might_ need to change the underlying physical layout".
+
+Agreed.  I used the word "may" because a simple write() does not necessarily
+change the layout of the file.  But I like your verbiage better.  I did wonder
+if listing operations was a bad idea.  So I'm ok simply leaving that detail
+out.
+
+> 
+> Now, the big question: what happens to a process with a
+> F_RDLCK|F_LAYOUT lease held does a write that triggers a layout
+> change? What happens then?
+
+Because F_UNBREAK is not specified, the write() operation is held for lease
+break time and then the lease is broken if not voluntarily released.  This
+would be the same pattern as a process holding a F_RDLCK and opening the file
+O_RDWR.
+
+> 
+> Also, have you noticed that XFS will unconditionally break layouts on
+> write() because it /might/ need to change the layout? i.e. the
+> BREAK_WRITE case in xfs_file_aio_write_checks()? This is needed for
+> correctly supporting pNFS layout coherency against local IO. i.e.
+> local write() breaks layouts held by NFS server to get the
+> delegation recalled.
+> 
+> So by the above definition of F_RDLCK|F_LAYOUT behaviour, a holder
+> of such a lease doing a write() to that file would trigger a lease
+> break of their own lease as the filesystem has notified the lease
+> layer that there is a layout change about to happen. What's expected
+> to happen here?
+
+That is not ideal but the proposed semantics say a write() may fail in this
+situation.  So depending on the implementation requirements of the underlying
+FS the semantics still hold for our current use case.  It would be nice to be
+able to enhance the implementation in the future such that a write() could work
+but maybe they can't.  For RDMA the application is probably going to have the
+region mmap'ed anyway and will not need, nor in fact want to use a write()
+call.
+
+Also, I think I missed a need to specify that a F_RDLCK|F_LAYOUT needs to have
+write permission on (or be the owner of) the file for the user to be able to
+specify F_UNBREAK on it.
+
+> 
+> Hence, AFIACT, the above definition of a F_RDLCK|F_LAYOUT lease
+> doesn't appear to be compatible with the semantics required by
+> existing users of layout leases.
+
+I disagree.  Other than the addition of F_UNBREAK, I think this is consistent
+with what is currently implemented.  Also, by exporting all this to user space
+we can now write tests for it independent of the RDMA pinning.
+
+> 
+> > **Write layout lease (F_WRLCK | F_LAYOUT)**
+> > 
+> > Write Layout leases can be used to break read layout leases to indicate that
+> > the process intends to change the underlying layout lease of the file.
+> 
+> Any write() can change the layout of the file, and userspace cannot
+> tell in advance whether that will occur (neither can the
+> filesystem), so it seems to me that any application that needs to
+> write data is going to have to use F_WRLCK|F_LAYOUT.
+
+Sure, but the use case of F_WRLCK|F_LAYOUT is that the user is creating the
+layout.  So using write() to create the file would be ok.
+
+On the surface it seems like using a standard F_WRLCK lease could be used
+instead of F_WRLCK|F_LAYOUT.  But it actually can't because that does not
+protect against the internals of the file system changing the lease.  This is
+where the semantics are exactly exported to user space.
+
+> 
+> > A process which has taken a write layout lease has exclusive ownership of the
+> > file layout and can modify that layout as long as the lease is held.
+> 
+> Which further implies single writer semantics and leases are
+> associated with a single open fd. Single writers are something we
+> are always trying to avoid in XFS.
+
+The discussion at LPC revealed that we need a way for the user to ensure the
+file layout is realized prior to any unbreakable lease being taken.  So yes, for
+some period we will need a single writer.
+
+> 
+> > Operations which change the layout are allowed by that process.  But operations
+> > from other file descriptors which attempt to change the layout will break the
+> > lease through the standard lease break process.
+> 
+> If the F_WRLCK|F_LAYOUT lease is exclusive, who is actually able to
+> modify the layout?  Are you talking about processes that don't
+> actually hold leases modifying the layout?
+
+That was the idea, yes.
+
+> i.e. what are the
+> constraints on "exclusive access" here - is F_WRLCK|F_LAYOUT is
+> only exclusive when every modification is co-operating and taking
+> the appropriate layout lease for every access to the file that is
+> made?
+
+I'm not following but IIUC...  no...  The idea is that if you hold the
+F_WRLCK|F_LAYOUT lease then any attempt by _other_ processes to change the
+layout (intentional or otherwise) would result in you getting a SIGIO signal
+which indicates someone _else_ changed the file.
+
+Then you can atomically downgrade the lock to F_RDLCK|F_LAYOUT|F_UNBREAK or
+atomically upgrade to F_WRLCK|F_LAYOUT|F_UNBREAK.  Either way you know you have
+the layout you want and can rely on the pin working.
+
+> 
+> If that's the case, what happens when someone fails to get a read
+> lock and decides "I can break write locks just by using ftruncate()
+> to the same size without a layout lease". Or fallocate() to
+> preallocate space that is already allocated. Or many other things I
+> can think of.
+
+The intended use case for F_WRLCK|F_LAYOUT is that a single process is
+attempting to set the layout prior to setting F_UNBREAK.  While
+F_WRLCK|F_LAYOUT can be broken, breaking the lease will not happen without that
+process knowing about it.
+
+I don't see this being different from the current lease semantics which
+requires some external coordination amongst process/file users to resolve any
+races or coordination.
+
+> 
+> IOWs, this seems to me like a very fragile sort of construct that is
+> open to abuse and that will lead to everyone using F_UNBREAK, which
+> is highly unfriendly to everyone else...
+
+FWIW, my use case does require F_UNBREAK.  All of the semantics presented have
+a real use case except for F_RDLCK|F_LAYOUT.  However, I think F_RDLCK|F_LAYOUT
+does have a use case in testing.
+
+Also, I do think that we need to have some check on file ownership for
+F_UNBREAK.  That needs to be added.
+
+> 
+> > The F_LAYOUT flag is used to
+> > indicate a difference between a regular F_WRLCK and F_WRLCK with F_LAYOUT.  In
+> > the F_LAYOUT case opens for write do not break the lease.  But some operations,
+> > if they change the underlying layout, may.
+> > 
+> > The distinction between read layout leases and write layout leases is that
+> > write layout leases can change the layout without breaking the lease within the
+> > owning process.  This is useful to guarantee a layout prior to specifying the
+> > unbreakable flag described below.
+> 
+> Ok, so now you really are saying that F_RDLCK leases can only be
+> used on O_RDONLY file descriptors because any modification under a
+> F_RDLCK|LAYOUT will trigger a layout break.
+
+I don't necessarily agree.  We also have the mmap() case.  What I was really
+trying to do is define a relaxed lease semantic which allows some shared
+reading/writing of the file as long as the underlying layout does not change.
+I am _not_ a file system expert but it seems like that should be possible.
+
+Perhaps we need something more fine grained between BREAK_UNMAP and
+BREAK_WRITE?
+
+> 
+> > **Unbreakable Layout Leases (F_UNBREAK)**
+> > 
+> > In order to support pinning of file pages by direct user space users an
+> > unbreakable flag (F_UNBREAK) can be used to modify the read and write layout
+> > lease.  When specified, F_UNBREAK indicates that any user attempting to break
+> > the lease will fail with ETXTBUSY rather than follow the normal breaking
+> > procedure.
+> > 
+> > Both read and write layout leases can have the unbreakable flag (F_UNBREAK)
+> > specified.  The difference between an unbreakable read layout lease and an
+> > unbreakable write layout lease are that an unbreakable read layout lease is
+> > _not_ exclusive. 
+> 
+> Oh, this doesn't work at all. Now we get write()s to F_RDLCK leases
+> that can't break the leases and so all writes, even to processes
+> that own RDLCK|UNBREAK, will fail with ETXTBSY.
+
+Yes I agree writes()'s to F_RDLCK|F_LAYOUT|F_UNBREAK _may_ fail.  I don't see
+how this is broken if the file owner is opting into it.  RDMA's can still occur
+to that file.  mmap'ed areas of the file can still be used (especially in the
+no-page cache case of FS DAX).
+
+> 
+> > This means that once a layout is established on a file,
+> > multiple unbreakable read layout leases can be taken by multiple processes and
+> > used to pin the underlying pages of that file.
+> 
+> Ok, so what happens when someone now takes a
+> F_WRLOCK|F_LAYOUT|F_UNBREAK? Is that supposed to break
+> F_RDLCK|F_LAYOUT|F_UNBREAK, as the wording about F_WRLCK behaviour
+> implies it should?
+
+Ah no.  F_RDLCK|F_LAYOUT|F_UNBREAK could not be broken.  I'll have to update
+the text for this.  The idea here is that no one can be changing the layout but
+multiple readers could be using that layout.  So I'll update the text that a
+F_WRLCK|F_LAYOUT|F_UNBREAK would fail in this case.
+
+> 
+> > Care must therefore be taken to ensure that the layout of the file is as the
+> > user wants prior to using the unbreakable read layout lease.  A safe mechanism
+> > to do this would be to take a write layout lease and use fallocate() to set the
+> > layout of the file.  The layout lease can then be "downgraded" to unbreakable
+> > read layout as long as no other user broke the write layout lease.
+> 
+> What are the semantics of this "downgrade" behaviour you speak of? :)
+
+As I said above it may be a downgrade or an upgrade but the idea is to
+atomically convert the lease to F_UNBREAK.
+
+> 
+> My thoughts are:
+> 	- RDLCK can only be used for O_RDONLY because write()
+> 	  requires breaking of leases
+
+Does the file system require write() break the layout lease?  Or is that just
+the way the file system is currently implemented?  What about mmap()?  I need
+to have the file open WR to mmap() the file for RDMA.
+
+To be clear I'm intending F_RDLCK|F_LAYOUT to be something new.  As I said
+above we could use something like F_RDLAYOUT instead?
+
+> 	- WRLCK is open to abuse simply by not using a layout lease
+> 	  to do a "no change" layout modification
+
+I'm sorry, I don't understand this comment.
+
+> 	- RDLCK|F_UNBREAK is entirely unusable
+
+Well even if write() fails with ETXTBSY this should give us the ability to do
+RDMA and XDP to these areas from multiple processes.  Furthermore, for FS DAX
+which bypasses the page cache mmap'ed areas can be written without write() with
+CPU stores.  Which is how many RDMA applications are likely to write this data.
+
+> 	- WRLCK|F_UNBREAK will be what every application uses
+> 	  because everything else either doesn't work or is too easy
+> 	  to abuse.
+
+Maybe.  IMO that is still a step in the right direction as at least 1 process
+can use this now.  And these semantics allow for a shared unbreakable lease
+(F_RDLCK|F_LAYOUT|F_UNBREAK) which can be used with some configurations (FS DAX
+in particular).
+
+Also, I do think we will need something to ensure file ownership for F_UNBREAK.
+
+It sounds like the difficulty here is in potential implementation of allowing
+write() to not break layouts.  And dealing with writes to mmap'ed page cache
+pages.  The file system is free to do better later.
+
+Thanks for the review,
+Ira
 
