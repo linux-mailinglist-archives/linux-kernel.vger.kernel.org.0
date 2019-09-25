@@ -2,73 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7E3CBDBD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 12:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12CBEBDBCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 12:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388130AbfIYKEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 06:04:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58797 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387812AbfIYKEJ (ORCPT
+        id S2387930AbfIYKDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 06:03:52 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44589 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfIYKDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 06:04:09 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iD48x-0004cJ-9O; Wed, 25 Sep 2019 10:03:31 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: rt5663: clean up indentation issues
-Date:   Wed, 25 Sep 2019 11:03:30 +0100
-Message-Id: <20190925100330.20695-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 25 Sep 2019 06:03:51 -0400
+Received: by mail-pg1-f196.google.com with SMTP id g3so2908631pgs.11
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 03:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=D2+Lw+Pa01X7BomivX93hO8QHJLkQUok4YlT1BdSE8Q=;
+        b=E5T74E7aiLNp58UWXnpZyalzu/mEv9i0J0gVytsV9dTDjmkgfai15/LekVtp2q1QcL
+         gaUVymGSBo5rrEU8HwK0LQX+zl+RCTe3huCu6qasixs/qsPmjPe0FjMPf+1/ysEXI4gr
+         QY0M7E5Xm3nU70nK+lwHwWAw3Cz7idV3KUWPfpiqvoXtfPDSilQp97dXeagEI3L2wun7
+         CHBsMtM3phTNDbBI0YHMjhb6eSItTo2M8qOB910EXVdoDmfkiqKoeggt1ynccRLa9e4o
+         VRAYo4oTP1CPOM3JmlA6MHB5owQWFCmvxN45t3Ys8AAd9TFxvLW5ATyKJk3K9NvvFbhH
+         DBTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=D2+Lw+Pa01X7BomivX93hO8QHJLkQUok4YlT1BdSE8Q=;
+        b=gSqWkQz+K2/730hcLoJl/+VTZCyjDoW27KLHOmOnYzCIEsKdvkjxOYl0q8ly21HS5S
+         Up9fz4YPTdAOIxGCYyUuC5F42k6dR5QO6taVznkjXMuncB6yVugtzLH2/d6R3Fj4xd3w
+         xj9vM0+Plstf+XFrDj96thPuot8LhTvUN+gpWvABc2NFm4lHvPR8hVM2PAAj3J8CPRV+
+         YTuSBoqu2SFxlqjKlYMo6JCrZThrEdOCpR0728IJit7Q/3otjfyMhRSCFvCE9uNvCJ5p
+         Wn53fM6VASosIna+eAa6Cpu+aEevuWLvn+c/ab2XYy8sgt0FmdOS9DCd/kwuSfBROj3v
+         e4PA==
+X-Gm-Message-State: APjAAAUezXMXUyPAiPdrAXJ59/Rq5Mv1Op+lbt7qLqHSwTjJLq2sMpc1
+        Tg1W9krGnvEqcs28+g2eqvnW3w==
+X-Google-Smtp-Source: APXvYqyK1/XMgIGTBB477BhqN6s74xUQ051y3HOsz4kjV9sUQYEjuuOo+dD5rVKeMURqOO2+apKG7Q==
+X-Received: by 2002:a17:90a:bf0e:: with SMTP id c14mr5285165pjs.69.1569405831188;
+        Wed, 25 Sep 2019 03:03:51 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id j25sm4753752pfi.113.2019.09.25.03.03.47
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 25 Sep 2019 03:03:50 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     stable@vger.kernel.org, sre@kernel.org
+Cc:     david@lechnology.com, linux-pm@vger.kernel.org, arnd@arndb.de,
+        baolin.wang@linaro.org, orsonzhai@gmail.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+Subject: [BACKPORT 4.14.y v3 3/3] power: supply: sysfs: ratelimit property read error message
+Date:   Wed, 25 Sep 2019 18:03:35 +0800
+Message-Id: <c136c30f8b113ba9b0359f57d2a109766c1d7a70.1569405445.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1569405445.git.baolin.wang@linaro.org>
+References: <cover.1569405445.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: David Lechner <david@lechnology.com>
 
-There are two break statements that are indented one level too deeply,
-remove the extraneous tabs.
+[Upstream commit 87a2b65fc855e6be50f791c2ebbb492541896827]
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+This adds rate limiting to the message that is printed when reading a
+power supply property via sysfs returns an error. This will prevent
+userspace applications from unintentionally dDOSing the system by
+continuously reading a property that returns an error.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- sound/soc/codecs/rt5663.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/power/supply/power_supply_sysfs.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
-index 2943692f66ed..e6c1ec6c426e 100644
---- a/sound/soc/codecs/rt5663.c
-+++ b/sound/soc/codecs/rt5663.c
-@@ -3644,7 +3644,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
- 		regmap_update_bits(rt5663->regmap, RT5663_PWR_ANLG_1,
- 			RT5663_LDO1_DVO_MASK | RT5663_AMP_HP_MASK,
- 			RT5663_LDO1_DVO_0_9V | RT5663_AMP_HP_3X);
--			break;
-+		break;
- 	case CODEC_VER_0:
- 		regmap_update_bits(rt5663->regmap, RT5663_DIG_MISC,
- 			RT5663_DIG_GATE_CTRL_MASK, RT5663_DIG_GATE_CTRL_EN);
-@@ -3663,7 +3663,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
- 		regmap_update_bits(rt5663->regmap, RT5663_TDM_2,
- 			RT5663_DATA_SWAP_ADCDAT1_MASK,
- 			RT5663_DATA_SWAP_ADCDAT1_LL);
--			break;
-+		break;
- 	default:
- 		dev_err(&i2c->dev, "%s:Unknown codec type\n", __func__);
- 	}
+diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+index eb5dc74..2ccaf4f 100644
+--- a/drivers/power/supply/power_supply_sysfs.c
++++ b/drivers/power/supply/power_supply_sysfs.c
+@@ -91,7 +91,8 @@ static ssize_t power_supply_show_property(struct device *dev,
+ 				dev_dbg(dev, "driver has no data for `%s' property\n",
+ 					attr->attr.name);
+ 			else if (ret != -ENODEV && ret != -EAGAIN)
+-				dev_err(dev, "driver failed to report `%s' property: %zd\n",
++				dev_err_ratelimited(dev,
++					"driver failed to report `%s' property: %zd\n",
+ 					attr->attr.name, ret);
+ 			return ret;
+ 		}
 -- 
-2.20.1
+1.7.9.5
 
