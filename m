@@ -2,110 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B08D5BD8BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA14BD8C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:10:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442462AbfIYHIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:08:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52198 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405152AbfIYHIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:08:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EF702AF5A;
-        Wed, 25 Sep 2019 07:08:19 +0000 (UTC)
-Date:   Wed, 25 Sep 2019 09:08:17 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [patch for-5.3 0/4] revert immediate fallback to remote hugepages
-Message-ID: <20190925070817.GH23050@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1909041252230.94813@chino.kir.corp.google.com>
- <20190904205522.GA9871@redhat.com>
- <alpine.DEB.2.21.1909051400380.217933@chino.kir.corp.google.com>
- <20190909193020.GD2063@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190909193020.GD2063@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S2442500AbfIYHKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 03:10:39 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:22257 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2442476AbfIYHKj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:10:39 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id x8P7AXL0030367;
+        Wed, 25 Sep 2019 16:10:34 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x8P7AXL0030367
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1569395434;
+        bh=fXVBWyTKQl3lqIN66q63sn6BMovSvuXeoZWP7FmMqyw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Nb1HlcefId7UOTdAB1YIbZaKMdsjOoL2O795mTtJjYOz2i5H3BF54W4Wwjb4Zpy/b
+         AvaZIO8hfbM3GAyFiRUAxJZWYZ5wFdCgkXBVMIJpDwcXanV69kqRcPH8Xor+oTf67y
+         HaDl5Y306ESHBqqRgSg+mErgNY29AQSXfLe7UK1Y9Cisx/fepAp3ilH2VTDn79w8JJ
+         hGlxGNoMAIPPuQZTsTSeOBMo5KrbttyFJGtxE4VNU9+HdZuAB0ExUpaHMOXkmnjzzb
+         Van67J+C09X+lYvrpE9AmNAeU2+3edR9/ag1ZQd40SLdVfeq23xEJ/l3vFIYrii7q1
+         h31BYfbyuD6JQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 1/3] kbuild: update compile-test header list for v5.4-rc1
+Date:   Wed, 25 Sep 2019 16:10:30 +0900
+Message-Id: <20190925071032.18354-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let me revive this thread as there was no follow up.
+Some build errors were fixed. Add more headers into the test coverage.
 
-On Mon 09-09-19 21:30:20, Michal Hocko wrote:
-[...]
-> I believe it would be the best to start by explaining why we do not see
-> the same problem with order-0 requests. We do not enter the slow path
-> and thus the memory reclaim if there is any other node to pass through
-> watermakr as well right? So essentially we are relying on kswapd to keep
-> nodes balanced so that allocation request can be satisfied from a local
-> node. We do have kcompactd to do background compaction. Why do we want
-> to rely on the direct compaction instead? What is the fundamental
-> difference?
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-I am especially interested about this part. The more I think about this
-the more I am convinced that the underlying problem really is in the pre
-mature fallback in the fast path. Does the almost-patch below helps your
-workload? It effectively reduces the fast path for higher order
-allocations to the local/requested node. The justification is that
-watermark check might be too strict for those requests as it is primary
-order-0 oriented. Low watermark target simply has no meaning for the
-higher order requests AFAIU. The min-low gap is giving kswapd a chance
-to balance and be more local node friendly while we do not have anything
-like that in compaction.
+ usr/include/Makefile | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index ff5484fdbdf9..09036cf55fca 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4685,7 +4685,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- {
- 	struct page *page;
- 	unsigned int alloc_flags = ALLOC_WMARK_LOW;
--	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
-+	gfp_t fastpath_mask, alloc_mask; /* The gfp_t that was actually used for allocation */
- 	struct alloc_context ac = { };
- 
- 	/*
-@@ -4698,7 +4698,7 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- 	}
- 
- 	gfp_mask &= gfp_allowed_mask;
--	alloc_mask = gfp_mask;
-+	fastpath_mask = alloc_mask = gfp_mask;
- 	if (!prepare_alloc_pages(gfp_mask, order, preferred_nid, nodemask, &ac, &alloc_mask, &alloc_flags))
- 		return NULL;
- 
-@@ -4710,8 +4710,17 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- 	 */
- 	alloc_flags |= alloc_flags_nofragment(ac.preferred_zoneref->zone, gfp_mask);
- 
--	/* First allocation attempt */
--	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
-+	/*
-+	 * First allocation attempt. If we have a high order allocation then do not fall
-+	 * back to a remote node just based on the watermark check on the requested node
-+	 * because compaction might easily free up a requested order and then it would be
-+	 * better to simply go to the slow path.
-+	 * TODO: kcompactd should help here but nobody has woken it up unless we hit the
-+	 * slow path so we might need some tuning there as well.
-+	 */
-+	if (order && (gfp_mask & __GFP_DIRECT_RECLAIM))
-+		fastpath_mask |= __GFP_THISNODE;
-+	page = get_page_from_freelist(fastpath_mask, order, alloc_flags, &ac);
- 	if (likely(page))
- 		goto out;
- 
+diff --git a/usr/include/Makefile b/usr/include/Makefile
+index 05c71ef42f51..4ef9946775ee 100644
+--- a/usr/include/Makefile
++++ b/usr/include/Makefile
+@@ -35,7 +35,6 @@ header-test- += linux/errqueue.h
+ header-test- += linux/fsmap.h
+ header-test- += linux/hdlc/ioctl.h
+ header-test- += linux/ivtv.h
+-header-test- += linux/jffs2.h
+ header-test- += linux/kexec.h
+ header-test- += linux/matroxfb.h
+ header-test- += linux/netfilter_bridge/ebtables.h
+@@ -56,20 +55,12 @@ header-test- += linux/v4l2-mediabus.h
+ header-test- += linux/v4l2-subdev.h
+ header-test- += linux/videodev2.h
+ header-test- += linux/vm_sockets.h
+-header-test- += scsi/scsi_bsg_fc.h
+-header-test- += scsi/scsi_netlink.h
+-header-test- += scsi/scsi_netlink_fc.h
+ header-test- += sound/asequencer.h
+ header-test- += sound/asoc.h
+ header-test- += sound/asound.h
+ header-test- += sound/compress_offload.h
+ header-test- += sound/emu10k1.h
+ header-test- += sound/sfnt_info.h
+-header-test- += sound/sof/eq.h
+-header-test- += sound/sof/fw.h
+-header-test- += sound/sof/header.h
+-header-test- += sound/sof/manifest.h
+-header-test- += sound/sof/trace.h
+ header-test- += xen/evtchn.h
+ header-test- += xen/gntdev.h
+ header-test- += xen/privcmd.h
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
