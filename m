@@ -2,124 +2,267 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7EBBE32C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0D17BE338
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502234AbfIYRO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 13:14:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53976 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfIYRO6 (ORCPT
+        id S2442924AbfIYRS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 13:18:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50885 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730327AbfIYRS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 13:14:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aLQzNm39tdIMTQRnIptN+pzSYiE/srlJQZjWMcvGrPc=; b=vIRk7UL9EyuwGru+KShQfdlrX
-        1SilWNO9Nh+evGCOaUaZNXyXXVz8E9diVHiYEX4kTwWkhyazb3ycaLvYxx6fWgy4hIV4EFbgrxnb9
-        p7x0RK3wnE5UftcSnfEDz+HhqT7F39Ftd5z7NCCf2nwYCU3G/Dvs/sVqrDa9AAK7LF1TE=;
-Received: from [12.157.10.118] (helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1iDAsQ-000812-IP; Wed, 25 Sep 2019 17:14:54 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 03BCAD01D66; Wed, 25 Sep 2019 18:14:53 +0100 (BST)
-Date:   Wed, 25 Sep 2019 10:14:52 -0700
-From:   Mark Brown <broonie@kernel.org>
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the risc-v-fixes tree with Linus' tree
-Message-ID: <20190925171452.GK2036@sirena.org.uk>
+        Wed, 25 Sep 2019 13:18:26 -0400
+Received: from [185.81.138.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1iDAvd-0007Tv-1p; Wed, 25 Sep 2019 17:18:13 +0000
+Date:   Wed, 25 Sep 2019 19:18:11 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] lib: introduce copy_struct_from_user() helper
+Message-ID: <20190925171810.ajfx4zlmj5scct4m@wittgenstein>
+References: <20190925165915.8135-1-cyphar@cyphar.com>
+ <20190925165915.8135-2-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mEgWsss+US7fWyVR"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Cookie: Be careful!  UGLY strikes 9 out of 10!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190925165915.8135-2-cyphar@cyphar.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 25, 2019 at 06:59:12PM +0200, Aleksa Sarai wrote:
+> A common pattern for syscall extensions is increasing the size of a
+> struct passed from userspace, such that the zero-value of the new fields
+> result in the old kernel behaviour (allowing for a mix of userspace and
+> kernel vintages to operate on one another in most cases).
+> 
+> While this interface exists for communication in both directions, only
+> one interface is straightforward to have reasonable semantics for
+> (userspace passing a struct to the kernel). For kernel returns to
+> userspace, what the correct semantics are (whether there should be an
+> error if userspace is unaware of a new extension) is very
+> syscall-dependent and thus probably cannot be unified between syscalls
+> (a good example of this problem is [1]).
+> 
+> Previously there was no common lib/ function that implemented
+> the necessary extension-checking semantics (and different syscalls
+> implemented them slightly differently or incompletely[2]). Future
+> patches replace common uses of this pattern to make use of
+> copy_struct_from_user().
+> 
+> [1]: commit 1251201c0d34 ("sched/core: Fix uclamp ABI bug, clean up and
+>      robustify sched_read_attr() ABI logic and code")
+> 
+> [2]: For instance {sched_setattr,perf_event_open,clone3}(2) all do do
+>      similar checks to copy_struct_from_user() while rt_sigprocmask(2)
+>      always rejects differently-sized struct arguments.
+> 
+> Suggested-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  include/linux/uaccess.h |  4 +++
+>  lib/Makefile            |  2 +-
+>  lib/strnlen_user.c      | 52 +++++++++++++++++++++++++++++
+>  lib/struct_user.c       | 73 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 130 insertions(+), 1 deletion(-)
+>  create mode 100644 lib/struct_user.c
 
---mEgWsss+US7fWyVR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hm, why the new file?
+Couldn't this just live in usercopy.c?
 
-Hi all,
+> 
+> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+> index 34a038563d97..824569e309e4 100644
+> --- a/include/linux/uaccess.h
+> +++ b/include/linux/uaccess.h
+> @@ -230,6 +230,10 @@ static inline unsigned long __copy_from_user_inatomic_nocache(void *to,
+>  
+>  #endif		/* ARCH_HAS_NOCACHE_UACCESS */
+>  
+> +extern int is_zeroed_user(const void __user *from, size_t count);
+> +extern int copy_struct_from_user(void *dst, size_t ksize,
+> +				 const void __user *src, size_t usize);
+> +
+>  /*
+>   * probe_kernel_read(): safely attempt to read from a location
+>   * @dst: pointer to the buffer that shall take the data
+> diff --git a/lib/Makefile b/lib/Makefile
+> index 29c02a924973..d86c71feaf0a 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -28,7 +28,7 @@ endif
+>  CFLAGS_string.o := $(call cc-option, -fno-stack-protector)
+>  endif
+>  
+> -lib-y := ctype.o string.o vsprintf.o cmdline.o \
+> +lib-y := ctype.o string.o struct_user.o vsprintf.o cmdline.o \
+>  	 rbtree.o radix-tree.o timerqueue.o xarray.o \
+>  	 idr.o extable.o \
+>  	 sha1.o chacha.o irq_regs.o argv_split.o \
+> diff --git a/lib/strnlen_user.c b/lib/strnlen_user.c
+> index 7f2db3fe311f..7eb665732954 100644
+> --- a/lib/strnlen_user.c
+> +++ b/lib/strnlen_user.c
+> @@ -123,3 +123,55 @@ long strnlen_user(const char __user *str, long count)
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(strnlen_user);
+> +
+> +/**
+> + * is_zeroed_user: check if a userspace buffer is full of zeros
+> + * @from:  Source address, in userspace.
+> + * @size: Size of buffer.
+> + *
+> + * This is effectively shorthand for "memchr_inv(from, 0, size) == NULL" for
+> + * userspace addresses. If there are non-zero bytes present then false is
+> + * returned, otherwise true is returned.
+> + *
+> + * Returns:
+> + *  * -EFAULT: access to userspace failed.
+> + */
+> +int is_zeroed_user(const void __user *from, size_t size)
 
-Today's linux-next merge of the risc-v-fixes tree got a conflict in:
+*sigh*, I'm probably going to get yelled at because of this but: does
+this really provide any _performance_ benefits over the dumb get_user()
+loop that we currently have that we care about right now? My point
+being, that the loop - imho - is much easier to understand than what is
+going on here with all the masking, and aligning etc. that we have here.
+But I'm not going to fight it.
 
-  arch/riscv/include/asm/pgtable.h
+> +{
+> +	u64 val;
+> +	uintptr_t align = (uintptr_t) from % 8;
+> +
+> +	if (unlikely(!size))
+> +		return true;
 
-between commit:
+Nit: I'd prefer int variables be checked with if (size != 0) :)
 
-  782de70c42930ba ("mm: consolidate pgtable_cache_init() and pgd_cache_init=
-()")
-
-=66rom Linus' tree and commit:
-
-  b6f2b2e600a27b7 ("RISC-V: Fix building error when CONFIG_SPARSEMEM_MANUAL=
-=3Dy")
-
-=66rom the risc-v-fixes tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/riscv/include/asm/pgtable.h
-index c60123f018f50,4f4162d90586d..0000000000000
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@@ -424,18 -436,11 +436,6 @@@ extern void *dtb_early_va
-  extern void setup_bootmem(void);
-  extern void paging_init(void);
- =20
-- #define VMALLOC_SIZE     (KERN_VIRT_SIZE >> 1)
-- #define VMALLOC_END      (PAGE_OFFSET - 1)
-- #define VMALLOC_START    (PAGE_OFFSET - VMALLOC_SIZE)
--=20
-- #define FIXADDR_TOP      VMALLOC_START
-- #ifdef CONFIG_64BIT
-- #define FIXADDR_SIZE     PMD_SIZE
-- #else
-- #define FIXADDR_SIZE     PGDIR_SIZE
-- #endif
-- #define FIXADDR_START    (FIXADDR_TOP - FIXADDR_SIZE)
- -static inline void pgtable_cache_init(void)
- -{
- -	/* No page table caches to initialize */
- -}
---
-  /*
-   * Task size is 0x4000000000 for RV64 or 0x9fc00000 for RV32.
-   * Note that PGDIR_SIZE must evenly divide TASK_SIZE.
-
---mEgWsss+US7fWyVR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2LoIwACgkQJNaLcl1U
-h9Ap6Qf8DT2faMTcscCRsAs0NR57fTzrUkbKVVZkwGSjhZAgaZ3cFeHpVYqlloZg
-X9KOdOG2JhrlvrYmEoyX9aKh4/c3GLs25PC3FidQG6RULOasgJvJYaO8/UDct6iz
-MEilerQKUPLlye3fyOAz45hhmDe80CLCpVFKlXHZGOilpBTrl4jfBeMEWEU24LPh
-wkLXsv4keO2e40Krgex05d7GztnQQIWLpZXlUfZmVv+2Bx6N2hLtsUfiDOLGz0hJ
-fk3CodIheoNwtIB1JARf4wvn0KsYp6krXLM+Wsd0x55jvC120BVRsxl8YknDW4LM
-ux/jkLDUkjij8WhzclqD9uvEuzlBjg==
-=EJ+I
------END PGP SIGNATURE-----
-
---mEgWsss+US7fWyVR--
+> +
+> +	from -= align;
+> +	size += align;
+> +
+> +	if (!user_access_begin(from, size))
+> +		return -EFAULT;
+> +
+> +	while (size >= 8) {
+> +		unsafe_get_user(val, (u64 __user *) from, err_fault);
+> +		if (align) {
+> +			/* @from is unaligned. */
+> +			val &= ~aligned_byte_mask(align);
+> +			align = 0;
+> +		}
+> +		if (val)
+> +			goto done;
+> +		from += 8;
+> +		size -= 8;
+> +	}
+> +	if (size) {
+> +		/* (@from + @size) is unaligned. */
+> +		unsafe_get_user(val, (u64 __user *) from, err_fault);
+> +		val &= aligned_byte_mask(size);
+> +	}
+> +
+> +done:
+> +	user_access_end();
+> +	return (val == 0);
+> +err_fault:
+> +	user_access_end();
+> +	return -EFAULT;
+> +}
+> diff --git a/lib/struct_user.c b/lib/struct_user.c
+> new file mode 100644
+> index 000000000000..57d79eb53bfa
+> --- /dev/null
+> +++ b/lib/struct_user.c
+> @@ -0,0 +1,73 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2019 SUSE LLC
+> + * Copyright (C) 2019 Aleksa Sarai <cyphar@cyphar.com>
+> + */
+> +
+> +#include <linux/types.h>
+> +#include <linux/export.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/kernel.h>
+> +#include <linux/string.h>
+> +
+> +/**
+> + * copy_struct_from_user: copy a struct from userspace
+> + * @dst:   Destination address, in kernel space. This buffer must be @ksize
+> + *         bytes long.
+> + * @ksize: Size of @dst struct.
+> + * @src:   Source address, in userspace.
+> + * @usize: (Alleged) size of @src struct.
+> + *
+> + * Copies a struct from userspace to kernel space, in a way that guarantees
+> + * backwards-compatibility for struct syscall arguments (as long as future
+> + * struct extensions are made such that all new fields are *appended* to the
+> + * old struct, and zeroed-out new fields have the same meaning as the old
+> + * struct).
+> + *
+> + * @ksize is just sizeof(*dst), and @usize should've been passed by userspace.
+> + * The recommended usage is something like the following:
+> + *
+> + *   SYSCALL_DEFINE2(foobar, const struct foo __user *, uarg, size_t, usize)
+> + *   {
+> + *      int err;
+> + *      struct foo karg = {};
+> + *
+> + *      err = copy_struct_from_user(&karg, sizeof(karg), uarg, size);
+> + *      if (err)
+> + *        return err;
+> + *
+> + *      // ...
+> + *   }
+> + *
+> + * There are three cases to consider:
+> + *  * If @usize == @ksize, then it's copied verbatim.
+> + *  * If @usize < @ksize, then the userspace has passed an old struct to a
+> + *    newer kernel. The rest of the trailing bytes in @dst (@ksize - @usize)
+> + *    are to be zero-filled.
+> + *  * If @usize > @ksize, then the userspace has passed a new struct to an
+> + *    older kernel. The trailing bytes unknown to the kernel (@usize - @ksize)
+> + *    are checked to ensure they are zeroed, otherwise -E2BIG is returned.
+> + *
+> + * Returns (in all cases, some data may have been copied):
+> + *  * -E2BIG:  (@usize > @ksize) and there are non-zero trailing bytes in @src.
+> + *  * -EFAULT: access to userspace failed.
+> + */
+> +int copy_struct_from_user(void *dst, size_t ksize,
+> +			  const void __user *src, size_t usize)
+> +{
+> +	size_t size = min(ksize, usize);
+> +	size_t rest = max(ksize, usize) - size;
+> +
+> +	/* Deal with trailing bytes. */
+> +	if (usize < ksize) {
+> +		memset(dst + size, 0, rest);
+> +	} else if (usize > ksize) {
+> +		int ret = is_zeroed_user(src + size, rest);
+> +		if (ret <= 0)
+> +			return ret ?: -E2BIG;
+> +	}
+> +	/* Copy the interoperable parts of the struct. */
+> +	if (copy_from_user(dst, src, size))
+> +		return -EFAULT;
+> +	return 0;
+> +}
+> -- 
+> 2.23.0
+> 
