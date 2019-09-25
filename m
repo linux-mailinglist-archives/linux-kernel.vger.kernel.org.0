@@ -2,97 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C7FBE8AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:03:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E70BBE8B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730681AbfIYXDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 19:03:38 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39666 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726206AbfIYXDi (ORCPT
+        id S1730789AbfIYXEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 19:04:25 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44554 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbfIYXEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 19:03:38 -0400
-Received: by mail-qt1-f195.google.com with SMTP id n7so535466qtb.6;
-        Wed, 25 Sep 2019 16:03:38 -0700 (PDT)
+        Wed, 25 Sep 2019 19:04:25 -0400
+Received: by mail-io1-f67.google.com with SMTP id j4so1256661iog.11;
+        Wed, 25 Sep 2019 16:04:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WfbXh+sodiUMPQSO5yCeqiJJDmHL2yMhTTI21O9c//4=;
-        b=UrO+9FhI4EIs4jI4yXfKf1L+DbuNMlCxcVZ3jN5cwJ77HfdAjqNgQ6FQPxLj6MbdI5
-         EQ/qM8/S1CQq7aJbPc4BEHeXaKa0t8kWWT5CI/Ss8KJpfdfe8ErjJVNEUNWUDkWlTdu7
-         CHchGLYEiaLnnldmMtFmLQKgaZqfp6lWYUGq4/CRCyN96qPXjBLljijuJ4/6rOpNNE/B
-         P/9roPgUV+Yc+bU/97dcTbYlgJnckw5Lls8VQSeJnLllwEXdKFmD+ONt+yzarNqHB0kZ
-         WhlCKuVX9JQyMt2nUCrCRDD5K/0JcLluu+G+Yq3HIEN3rNKrvMOGWYzCiyxaKhpZuEsy
-         Of9w==
+        h=from:to:cc:subject:date:message-id;
+        bh=HPeGGcQkwDZoIbx5ihbpL7zXBF5pHk94wt6ftwYDWM0=;
+        b=rGI5rPEVpuUosM8L21N6Vw1ruIQDuRWtlpYz8o8Di4LEwQhHLwaBeMRY13l84KqOw7
+         8of4c7Xs8Kpndx7zZZvU1SU1aXkzjYI0IS3sK5X7hpAVr+bv2VUNwDQW7+qYFotggjGO
+         UjMMk55FloQxab5Ua8sOB6/t30Pnxgksbp90hLPlNX1D03ZAwQ0pDdQLNjBNNj7ujGvx
+         /T/J/70lLY2nQG/cbrkfGbwuzFzGcMMkZV+BUTVT+xCdX//RYQTsv26WlV2+mvuIXvEr
+         EV08UFYht8DIymg8cq/n3eZjBrAee+46H/6Yo663b/2iPye/gWRPvC3zaDa8l4NjcvUc
+         GdXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WfbXh+sodiUMPQSO5yCeqiJJDmHL2yMhTTI21O9c//4=;
-        b=ekAeYulb6w4JboYVzWkX/GBojQ73c5G1/mDiGRmwFxIdmx4zZ+s9vktB59bfSQPSfK
-         ue/0atMEHabcS8kUt0dlRJBB6V2ZMjNMiln0vxCqv8wxE2foJmMhFjTsHojV6EhKwLeU
-         IFvzLS0BX9S1HvKxSjy29yKODkZhuaN6lUx7Gv8riU8lbEeQCn8RjPXAlxm7MhCTth0K
-         CiUZRY8iEsmi8rZmWgJ/1KjX93uhW+k8uj0EWgLDuAuTtBa/mQOHtCZoVQcXyXOhI7rW
-         QVitvmqzbdIoPnraESfM/H7v5uq3M7tRVrKrGAvsnDtKb0KrU+/WrSNRyzCiPCrenMnt
-         nZqw==
-X-Gm-Message-State: APjAAAWg4QhdiWFSaEkCwx5xefZdpcDDdEBaEaSg7+BfTjmoO94Ndi6C
-        0HT8K9LqdV+AAJWmCMh2vnw=
-X-Google-Smtp-Source: APXvYqyC1FyjGChJ2Qd1VW5+w/5vvUgYmAgGVElejt3WCWCezoA05O48V25SM3ipL5VdElk9+zyedw==
-X-Received: by 2002:ac8:100b:: with SMTP id z11mr953244qti.377.1569452617529;
-        Wed, 25 Sep 2019 16:03:37 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:a001])
-        by smtp.gmail.com with ESMTPSA id u43sm265769qte.19.2019.09.25.16.03.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Sep 2019 16:03:37 -0700 (PDT)
-Date:   Wed, 25 Sep 2019 16:03:35 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, cgroups@vger.kernel.org
-Subject: [PATCH 3/3 for-5.4/block] iocost: bump up default latency targets
- for hard disks
-Message-ID: <20190925230335.GK2233839@devbig004.ftw2.facebook.com>
-References: <20190925230207.GI2233839@devbig004.ftw2.facebook.com>
- <20190925230309.GJ2233839@devbig004.ftw2.facebook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925230309.GJ2233839@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HPeGGcQkwDZoIbx5ihbpL7zXBF5pHk94wt6ftwYDWM0=;
+        b=Nrfj7Q5TWqN+JXRRet2NQknYTVvV8dLvORXuyVBZyidLOpjDxP3sz8ta7MmRza5S7t
+         nvlK8j6OuYGT0DustAYwS62+FOW9RL12ONILGpAlKkIHhJeIc0OQtTL4yzk5GCNUWOVb
+         Q2rmObfvQatGImSN+QXA7Cq9YuwJ07MNaRqHEWTdgHJX+YbnsW3jJJLGHBa2ZT4+/TgG
+         39fNsPJiskF7LG6xEqXBmc4mqS311jybkGNj0qmXKVbHf15d2CBVHt0GDO529MsKNFuo
+         leMbhm9dbwZFhc6WD7LzsfgT8maaK+CSakgcjRyAeFkE3IwDuFqYjUB4ytWw5Q+MOb0v
+         PQmg==
+X-Gm-Message-State: APjAAAWybpbupDTSHzirUJJbBLTKYHHZLqvhOVl6GKZlCTQUXaIAehQi
+        18NCH0M5WFzLj4nzxKanXB8=
+X-Google-Smtp-Source: APXvYqyFN2qSCFDaAmyrOpJE2dX1zjYW9wVObb8wgz2k/1xxJSPjf9JL1Edo0wCVYEJk+/wfMwWB7A==
+X-Received: by 2002:a05:6638:294:: with SMTP id c20mr811214jaq.77.1569452664394;
+        Wed, 25 Sep 2019 16:04:24 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id t9sm63420iop.86.2019.09.25.16.04.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 16:04:23 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] net: qrtr: fix memory leak in qrtr_tun_read_iter
+Date:   Wed, 25 Sep 2019 18:04:13 -0500
+Message-Id: <20190925230416.20126-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default hard disk param sets latency targets at 50ms.  As the
-default target percentiles are zero, these don't directly regulate
-vrate; however, they're still used to calculate the period length -
-100ms in this case.
+In qrtr_tun_read_iter we need an error handling path to appropriately
+release skb in cases of error.
 
-This is excessively low.  A SATA drive with QD32 saturated with random
-IOs can easily reach avg completion latency of several hundred msecs.
-A period duration which is substantially lower than avg completion
-latency can lead to wildly fluctuating vrate.
-
-Let's bump up the default latency targets to 250ms so that the period
-duration is sufficiently long.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 ---
- block/blk-iocost.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/qrtr/tun.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/block/blk-iocost.c
-+++ b/block/blk-iocost.c
-@@ -529,8 +529,8 @@ struct iocg_wake_ctx {
- static const struct ioc_params autop[] = {
- 	[AUTOP_HDD] = {
- 		.qos				= {
--			[QOS_RLAT]		=         50000, /* 50ms */
--			[QOS_WLAT]		=         50000,
-+			[QOS_RLAT]		=        250000, /* 250ms */
-+			[QOS_WLAT]		=        250000,
- 			[QOS_MIN]		= VRATE_MIN_PPM,
- 			[QOS_MAX]		= VRATE_MAX_PPM,
- 		},
+diff --git a/net/qrtr/tun.c b/net/qrtr/tun.c
+index e35869e81766..0f6e6d1d2901 100644
+--- a/net/qrtr/tun.c
++++ b/net/qrtr/tun.c
+@@ -54,19 +54,24 @@ static ssize_t qrtr_tun_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	int count;
+ 
+ 	while (!(skb = skb_dequeue(&tun->queue))) {
+-		if (filp->f_flags & O_NONBLOCK)
+-			return -EAGAIN;
++		if (filp->f_flags & O_NONBLOCK) {
++			count = -EAGAIN;
++			goto out;
++		}
+ 
+ 		/* Wait until we get data or the endpoint goes away */
+ 		if (wait_event_interruptible(tun->readq,
+-					     !skb_queue_empty(&tun->queue)))
+-			return -ERESTARTSYS;
++					     !skb_queue_empty(&tun->queue))) {
++			count = -ERESTARTSYS;
++			goto out;
++		}
+ 	}
+ 
+ 	count = min_t(size_t, iov_iter_count(to), skb->len);
+ 	if (copy_to_iter(skb->data, count, to) != count)
+ 		count = -EFAULT;
+ 
++out:
+ 	kfree_skb(skb);
+ 
+ 	return count;
+-- 
+2.17.1
+
