@@ -2,98 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E87CBDFB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 16:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C667BDFC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 16:15:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407496AbfIYOMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 10:12:46 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8539 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406676AbfIYOMp (ORCPT
+        id S2436520AbfIYOPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 10:15:24 -0400
+Received: from mail-lj1-f170.google.com ([209.85.208.170]:46288 "EHLO
+        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407319AbfIYOPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 10:12:45 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d8b75e30000>; Wed, 25 Sep 2019 07:12:51 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 25 Sep 2019 07:12:45 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 25 Sep 2019 07:12:45 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Sep
- 2019 14:12:44 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 25 Sep
- 2019 14:12:44 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 25 Sep 2019 14:12:44 +0000
-Received: from moonraker.nvidia.com (Not Verified[10.21.133.50]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d8b75db0002>; Wed, 25 Sep 2019 07:12:44 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <vidyas@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 2/2] arm64: tegra: Fix 'active-low' warning for Jetson TX1 regulator
-Date:   Wed, 25 Sep 2019 15:12:29 +0100
-Message-ID: <20190925141229.10992-2-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190925141229.10992-1-jonathanh@nvidia.com>
-References: <20190925141229.10992-1-jonathanh@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 25 Sep 2019 10:15:23 -0400
+Received: by mail-lj1-f170.google.com with SMTP id e17so5817741ljf.13
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 07:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7XtbzG/PDHB0nH5tZZmEfWG24IcMxbyIbMNZVj9/BKQ=;
+        b=dkyOATx9lmLDnncl4zJtlo91Zp1bUtwDHjOBbv+9Jc7LYTOR8Hkjbqp50+n1wBonB5
+         ClhTg+OdoJIJx9VdXt/7VqNmmlYCx6QtqyfdTNik7dNQWKUG6FSLcpMO4yKBK590HxjA
+         reoI/EKWfyj90vAwRPeHcQXpLWf8PbwrCiY2Ba5l0TFx755VvOTVm77s1nT3pPxaBntj
+         jVieeyMvQajnZc1yOum7bJWAoChkF4UKjkXKF+Ag9A1gze2n6fD5JMFAU9w5DZLXPkHB
+         7suYRia+8rXVe9n5ovdTt8ikQh2Qlz9UW0ak8CJyLlCeMqFIg+KseoisDnkO4Yy2qRPx
+         yPGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7XtbzG/PDHB0nH5tZZmEfWG24IcMxbyIbMNZVj9/BKQ=;
+        b=MzCUTZbVpQUfo7VlpSGf1sYqUGDHpaeX0syh3rUZIAgqKzKKghoD9fkIeNX+Fi4X2W
+         Vcg8loX8FhmXuWSBC+ysb/f6F+yu6zQmm3D7keVO/gvZm99jTkm2jt0ZO65YpG2U/0lj
+         iCQZm+U/ZtjCpkd7BuxJFDxSuhqXq73PhlOtJeHipAGfdIXcVKYKXqGlmWywk68ohx9f
+         xlEDtoN2sVrra0Sy2bjK0lrSsWn1kUXBCQusKcn5iB0fZGNqD9I7REDxH7Lj1Ayr1IVe
+         MlVzTFfxSdTrpethHx/NhxLVbBTPvHX/EscfhB9BVUcuVE3dFvzwSrjIGswg/WEN9Emu
+         z8Mg==
+X-Gm-Message-State: APjAAAVHlzHYSkZ9OD8FKs3ZxRbWkzGrmJ5tpXwfGuTR+XErjI5s26Xg
+        fyj1OxEVwcMGiEcKd8wbcWRoQmE5QACdvcUS3FhV2w==
+X-Google-Smtp-Source: APXvYqxqBaZ48HccCc5sICcI0U65KHSoI3B+0Ywyekxx11YaVBb03nxxrNJEQk9thhAS/288MMxOqKisdSKl5/WQMvg=
+X-Received: by 2002:a2e:9ccb:: with SMTP id g11mr6533141ljj.62.1569420921560;
+ Wed, 25 Sep 2019 07:15:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1569420771; bh=fCpaidv8Z/3kpPkF4HBKqOHhpz8nEb22nP5yCCe2v/I=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=osiDjRWIRuIRyv4u0/TihZVsyNyUvy8ysg8DuZOFfCukaLCTkp0szrlKgQ5jJYZ9a
-         0BM6ANiOIfhLRTyfyggWWsQmgSTSPaI/lZqyinIFuuJjVnWh1BuX7Vn8paPlR5P8HL
-         JqA+BSW5TRS0sXMzFLQ2F7HH0ZopCNnUFvbu0UfYWPbEXN2W1jRzT+8THjksMAIh58
-         4GvZEYgsXcCnJut6ybg9iHGQHV5UECepzktVSm0I1R6jI24871S3nf0eySPsq1Uwmv
-         GSGRVHR360E931e9NnVrWJs/3hi4PyhI0ABWzWP5jzrlq6RviSBhuJLdvq75RdjFaD
-         +C0fIczix8cFw==
+References: <1569351740-6285-1-git-send-email-hongweiz@ami.com>
+In-Reply-To: <1569351740-6285-1-git-send-email-hongweiz@ami.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 25 Sep 2019 16:15:10 +0200
+Message-ID: <CACRpkdbhRo62inQS96OfFO4iWkLn2+P+w1+6g+Y=HFvVyVnXAA@mail.gmail.com>
+Subject: Re: [v1, 0/1] gpio: dts: aspeed: Add SGPIO driver
+To:     Hongwei Zhang <hongweiz@ami.com>
+Cc:     Andrew Jeffery <andrew@aj.id.au>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Joel Stanley <joel@jms.id.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Doug Anderson <armlinux@m.disordat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 34993594181d ("arm64: tegra: Enable HDMI on Jetson TX1")
-added a regulator for HDMI on the Jetson TX1 platform. This regulator
-has an active high enable, but the GPIO specifier for enabling the
-regulator incorrectly defines it as active-low. This causes the
-following warning to occur on boot ...
+On Tue, Sep 24, 2019 at 9:02 PM Hongwei Zhang <hongweiz@ami.com> wrote:
 
- WARNING KERN regulator@10 GPIO handle specifies active low - ignored
+> The related SGPIO driver has been accepted and merged into v5.4:
+> _http://patchwork.ozlabs.org/patch/1150357/
 
-The fixed-regulator binding does not use the active-low flag from the
-gpio specifier and purely relies of the presence of the
-'enable-active-high' property to determine if it is active high or low
-(if this property is omitted). Fix this warning by setting the GPIO
-to active-high in the GPIO specifier which aligns with the presense of
-the 'enable-active-high' property.
+Oh what a mess, it didn't add the necessary code into Kconfig
+and Makefile, also names it sgpio-gpio.c when everything
+else is named gpio-sgpio.c.
 
-Fixes: 34993594181d ("arm64: tegra: Enable HDMI on Jetson TX1")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I guess I have to fix it up. My fault for missing.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index a7dc319214a4..b0095072bc28 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1612,7 +1612,7 @@
- 			regulator-name = "VDD_HDMI_5V0";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
--			gpio = <&exp1 12 GPIO_ACTIVE_LOW>;
-+			gpio = <&exp1 12 GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
--- 
-2.17.1
-
+Linus Walleij
