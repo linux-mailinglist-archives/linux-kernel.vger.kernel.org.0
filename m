@@ -2,187 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87BC6BDAE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:25:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9854BBDAEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:27:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfIYJZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 05:25:06 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:45359 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728377AbfIYJYP (ORCPT
+        id S1727884AbfIYJ1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 05:27:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39150 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729785AbfIYJ0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 05:24:15 -0400
-X-Originating-IP: 79.19.63.71
-Received: from uno.localdomain (host71-63-dynamic.19-79-r.retail.telecomitalia.it [79.19.63.71])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 0BC9BFF81B;
-        Wed, 25 Sep 2019 09:24:11 +0000 (UTC)
-Date:   Wed, 25 Sep 2019 11:25:52 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: Re: [PATCH v6 7/7] media: imx214: Add new control with
- V4L2_CID_UNIT_CELL_SIZE
-Message-ID: <20190925092552.okhiq5nweujjuk7q@uno.localdomain>
-References: <20190920135137.10052-1-ricardo@ribalda.com>
- <20190920135137.10052-8-ricardo@ribalda.com>
+        Wed, 25 Sep 2019 05:26:49 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r3so5800954wrj.6
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 02:26:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=DSd1v0HUw/UkMj7k6RRXoGkCzVR4BXBAWnDfAwYmXTo=;
+        b=BQn/6cK6ycjR1V9lYtL8otDKbL5qaW0Y9AhJ4HBz/L/YEzooTUo/n7ETXJ8Y3pQojL
+         KHyRKp9/6iFOAJsWJ0NC/9hoTBqcuSxBnjTofRCf7zQx/h/oRo8h98ushpqf4A+VK0qu
+         1UcTHC9XXBXQam0x/RY5FSRET2U0eE1mZZ5+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=DSd1v0HUw/UkMj7k6RRXoGkCzVR4BXBAWnDfAwYmXTo=;
+        b=qBkM4Aj9oX+/ErpythjZfo8B6WSXbX9AnaZAJrtlNQSVXMaQF8MbCaRcfvNnEWvOLO
+         QogxF5udqWzW3F8AWXIRgurdJf1aWRXs7ducH1LrjjRkSX6IxmX33+Szye3IblBZOAUn
+         gUASyLSxMuP4bFcSZ1/ow9qi0eJceMnHDwOl8jYNsjViiO8RLSwGX+/MMwfVSPmjN2v5
+         oVZsaUyFYkwlLsG/9R8Huw4BcCHcpnYOUY15zWQ/W/cv/e8yOXD1OBwm002emlOBgUcf
+         uhah5Ti+OsQ3X+iIaG4g7RgMFx/+rwIDwL6MzaXe+yqDE40LMYDm0XwUWH0g1CzPl1BX
+         gndg==
+X-Gm-Message-State: APjAAAV/rOtWecoYi9vFJNuTaRXxMwjBpdbixUiiSHcGDhzPUfTIo7OH
+        8WBK2uRBbxSrTIbQFIEWVMInwg==
+X-Google-Smtp-Source: APXvYqzJkKHFS0F5JWCrfcZ655cyXDynPdpniWimRDtHR8R6YIcvoP24OOgWxQPBEkqn/bcZ7qHKJw==
+X-Received: by 2002:adf:f78a:: with SMTP id q10mr8648154wrp.276.1569403607010;
+        Wed, 25 Sep 2019 02:26:47 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (84-236-74-228.pool.digikabel.hu. [84.236.74.228])
+        by smtp.gmail.com with ESMTPSA id r20sm7436015wrg.61.2019.09.25.02.26.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 02:26:46 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 11:26:39 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse update for 5.4
+Message-ID: <20190925092639.GA1904@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="47sbnzcg7mpaau2w"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190920135137.10052-8-ricardo@ribalda.com>
-User-Agent: NeoMutt/20180716
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---47sbnzcg7mpaau2w
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Please pull from:
 
-Hi Ricardo,
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-update-5.4
 
-On Fri, Sep 20, 2019 at 03:51:37PM +0200, Ricardo Ribalda Delgado wrote:
-> From: Ricardo Ribalda Delgado <ribalda@kernel.org>
->
-> According to the product brief, the unit cell size is 1120 nanometers^2.
->
-> https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
->
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  drivers/media/i2c/imx214.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 159a3a604f0e..57562e20c4ca 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -47,6 +47,7 @@ struct imx214 {
->  	struct v4l2_ctrl *pixel_rate;
->  	struct v4l2_ctrl *link_freq;
->  	struct v4l2_ctrl *exposure;
-> +	struct v4l2_ctrl *unit_size;
->
->  	struct regulator_bulk_data	supplies[IMX214_NUM_SUPPLIES];
->
-> @@ -948,6 +949,13 @@ static int imx214_probe(struct i2c_client *client)
->  	static const s64 link_freq[] = {
->  		IMX214_DEFAULT_LINK_FREQ,
->  	};
-> +	struct v4l2_area unit_size = {
-> +		.width = 1120,
-> +		.height = 1120,
-> +	};
-> +	union v4l2_ctrl_ptr p_def = {
-> +		.p_area = &unit_size,
-> +	};
->  	int ret;
->
->  	ret = imx214_parse_fwnode(dev);
-> @@ -1029,6 +1037,10 @@ static int imx214_probe(struct i2c_client *client)
->  					     V4L2_CID_EXPOSURE,
->  					     0, 3184, 1, 0x0c70);
->
-> +	imx214->unit_size = v4l2_ctrl_new_std_compound(&imx214->ctrls,
-> +						       NULL,
-> +						       V4L2_CID_UNIT_CELL_SIZE,
-> +						       p_def);
->  	ret = imx214->ctrls.error;
->  	if (ret) {
->  		dev_err(&client->dev, "%s control init failed (%d)\n",
+ - Continue separating the transport (user/kernel communication) and the
+   filesystem layers of fuse.  Getting rid of most layering violations will
+   allow for easier cleanup and optimization later on.
 
-Would something like this scale? I'm a bit bothered by the need of
-declaring v4l2_ctrl_ptr structure just to set a field there in
-drivers.
+ - Prepare for the addition of the virtio-fs filesystem.  The actual
+   filesystem will be introduced by a separate pull request.
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 57562e20c4ca..a00d8fa481c2 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -953,9 +953,6 @@ static int imx214_probe(struct i2c_client *client)
-                .width = 1120,
-                .height = 1120,
-        };
--       union v4l2_ctrl_ptr p_def = {
--               .p_area = &unit_size,
--       };
-        int ret;
+ - Convert to new mount API.
 
-        ret = imx214_parse_fwnode(dev);
-@@ -1040,7 +1037,7 @@ static int imx214_probe(struct i2c_client *client)
-        imx214->unit_size = v4l2_ctrl_new_std_compound(&imx214->ctrls,
-                                                       NULL,
-                                                       V4L2_CID_UNIT_CELL_SIZE,
--                                                      p_def);
-+                                                      &unit_size);
-        ret = imx214->ctrls.error;
-        if (ret) {
-                dev_err(&client->dev, "%s control init failed (%d)\n",
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index f626f9983408..4a2648bee6f5 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -2681,18 +2681,26 @@ EXPORT_SYMBOL(v4l2_ctrl_new_std_menu_items);
- /* Helper function for standard compound controls */
- struct v4l2_ctrl *v4l2_ctrl_new_std_compound(struct v4l2_ctrl_handler *hdl,
-                                const struct v4l2_ctrl_ops *ops, u32 id,
--                               const union v4l2_ctrl_ptr p_def)
-+                               void *defval)
- {
-        const char *name;
-        enum v4l2_ctrl_type type;
-        u32 flags;
-        s64 min, max, step, def;
-+       union v4l2_ctrl_ptr p_def;
+ - Various fixes, optimizations and cleanups.
 
-        v4l2_ctrl_fill(id, &name, &type, &min, &max, &step, &def, &flags);
-        if (type < V4L2_CTRL_COMPOUND_TYPES) {
-                handler_set_err(hdl, -EINVAL);
-                return NULL;
-        }
-+
-+       switch ((u32)type) {
-+       case V4L2_CTRL_TYPE_AREA:
-+               p_def.p_area = defval;
-+               break;
-+       }
-+
-        return v4l2_ctrl_new(hdl, ops, NULL, id, name, type,
-                             min, max, step, def, NULL, 0,
-                             flags, NULL, NULL, p_def, NULL);
+Thanks,
+Miklos
 
-However, due to my limitied understanding of the control framework, I
-cannot tell how many cases the newly introduced switch should
-handle...
+---
+Arnd Bergmann (1):
+      fuse: unexport fuse_put_request
 
-> --
-> 2.23.0
->
+David Howells (2):
+      fuse: convert to use the new mount API
+      vfs: subtype handling moved to fuse
 
---47sbnzcg7mpaau2w
-Content-Type: application/pgp-signature; name="signature.asc"
+Eric Biggers (1):
+      fuse: fix deadlock with aio poll and fuse_iqueue::waitq.lock
 
------BEGIN PGP SIGNATURE-----
+Khazhismel Kumykov (2):
+      fuse: on 64-bit store time in d_fsdata directly
+      fuse: kmemcg account fs data
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl2LMqAACgkQcjQGjxah
-Vjx1eA//eV727htb6qRYEJ1UK7FSHTrkrc9H7e1hgOXWKsZtEYOArc9GknPeLZoW
-CqDyhB9X2cPwuOWacfc7n7zC0xdBr7TcGl3WdCcbbL/FZ0cLOQryQWz//O7kj02Z
-xY3mwJar6NR70zF6fzEe43PeTHjNLGAo35xwnggl3Hp8Ejh57ymUD0iYw6fvZTi+
-x2T6t7e2KPDDQ8TBayfhnqK90yq/vAC9p5QvOaodDrurPvp9Wt6mltmTLt8IMJX3
-XrnA6+D3NW3du5C6biaBn06D9gKnV0G32LeZEnwCykRA0zqROZReTYWJ7Qo4IkBH
-p0d2YA214GClV5ztVmn17AfzylOMZ4uTuu3x3B7spzIzSu9nYdmHWkwveCEpcxcx
-8vKZk5N3XA3Wq2J6zeVjdylhRPmGulSeKVKLFldat/VC38uolmSfnn79jtRiaFYA
-nnZMtXf/24OoAIZItvJTF9Nj95kagezcScKpNVR0bbjN05UyDPKaFyU9tDnhmZOE
-cdCfIbrNYMm1Vu5fsQyHm+AnK53HQbf/GmHkRa9CoYVbMfcItXrsidgf0LXz5nmu
-RA9EFQl3aTRFxeGLhY0rECU1W6E8jN7CzrLrYXgLIeIiLPXmlx6YaCR4EkXWI6C4
-VSiRs9owFE1/AhU2B59ZqLzmxTuEFABwkBoYB0RcVXEkd25u4IM=
-=ULmD
------END PGP SIGNATURE-----
+Kirill Smelkov (1):
+      fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
 
---47sbnzcg7mpaau2w--
+Maxim Patlasov (1):
+      fuse: cleanup fuse_wait_on_page_writeback
+
+Michael S. Tsirkin (1):
+      fuse: reserve byteswapped init opcodes
+
+Miklos Szeredi (33):
+      cuse: fix broken release
+      fuse: flatten 'struct fuse_args'
+      fuse: rearrange and resize fuse_args fields
+      fuse: simplify 'nofail' request
+      fuse: convert flush to simple api
+      fuse: add noreply to fuse_args
+      fuse: convert fuse_force_forget() to simple api
+      fuse: add nocreds to fuse_args
+      fuse: convert destroy to simple api
+      fuse: add pages to fuse_args
+      fuse: convert readlink to simple api
+      fuse: move page alloc
+      fuse: convert ioctl to simple api
+      fuse: fuse_short_read(): don't take fuse_req as argument
+      fuse: covert readpage to simple api
+      fuse: convert sync write to simple api
+      fuse: add simple background helper
+      fuse: convert direct_io to simple api
+      fuse: convert readpages to simple api
+      fuse: convert readdir to simple api
+      fuse: convert writepages to simple api
+      fuse: convert init to simple api
+      cuse: convert init to simple api
+      fuse: convert release to simple api
+      fuse: convert retrieve to simple api
+      fuse: unexport request ops
+      fuse: simplify request allocation
+      fuse: clean up fuse_req
+      fuse: stop copying args to fuse_req
+      fuse: stop copying pages to fuse_req
+      fuse: fix request limit
+      fuse: delete dentry if timeout is zero
+      fuse: dissociate DESTROY from fuseblk
+
+Stefan Hajnoczi (5):
+      fuse: export fuse_end_request()
+      fuse: export fuse_len_args()
+      fuse: export fuse_get_unique()
+      fuse: extract fuse_fill_super_common()
+      fuse: add fuse_iqueue_ops callbacks
+
+Tejun Heo (1):
+      fuse: fix beyond-end-of-page access in fuse_parse_cache()
+
+Vasily Averin (1):
+      fuse: fix missing unlock_page in fuse_writepage()
+
+Vivek Goyal (4):
+      fuse: export fuse_send_init_request()
+      fuse: export fuse_dequeue_forget() function
+      fuse: separate fuse device allocation and installation in fuse_conn
+      fuse: allow skipping control interface and forced unmount
+
+YueHaibing (1):
+      fuse: Make fuse_args_to_req static
+
+zhengbin (1):
+      fuse: fix memleak in cuse_channel_open
+
+---
+ fs/fs_context.c            |   14 -
+ fs/fuse/cuse.c             |  101 ++--
+ fs/fuse/dev.c              |  654 ++++++++++-------------
+ fs/fuse/dir.c              |  283 +++++-----
+ fs/fuse/file.c             | 1227 ++++++++++++++++++++++++--------------------
+ fs/fuse/fuse_i.h           |  350 ++++++-------
+ fs/fuse/inode.c            |  553 +++++++++++---------
+ fs/fuse/readdir.c          |   72 ++-
+ fs/fuse/xattr.c            |   76 +--
+ fs/namespace.c             |    2 -
+ fs/proc_namespace.c        |    2 +-
+ fs/super.c                 |    5 -
+ include/linux/fs_context.h |    1 -
+ include/uapi/linux/fuse.h  |    4 +
+ 14 files changed, 1730 insertions(+), 1614 deletions(-)
