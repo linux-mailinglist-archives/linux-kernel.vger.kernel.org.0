@@ -2,56 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 412B3BDC90
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 13:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C4CABDC9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 13:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403863AbfIYLBc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 07:01:32 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37462 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390478AbfIYLBb (ORCPT
+        id S2390960AbfIYLDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 07:03:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52906 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728040AbfIYLDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 07:01:31 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PAsJ3J087136;
-        Wed, 25 Sep 2019 11:01:18 GMT
+        Wed, 25 Sep 2019 07:03:49 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PAsTQT039691;
+        Wed, 25 Sep 2019 11:03:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
  : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=w6XAuF/qcTj8cDqYC4cfHG6Vdy4EsYsV65lu58h90F0=;
- b=AebTbWJCGZNNDdraBA50pdnHEUsukU3Qbh4gXU+N4wbWDwXAqP4V6i52AETufF34/VlI
- gpuJFXeR2YQqQBttefqut93lY0Z4MM/FXYSADqRtCRqUY8RJtYNVvu8dRTtmFZgdhCxJ
- toDh0VvUTS+5X6NTxa98cAAelEGETWRZJLdFiPR8Nnt5LLT50KQj2lsDS+9GkZH0q7eu
- uA4aMT3yw5sSjyHeEeuG8Maakf++oMEC3cpGCcD+f3EBTBGB6LWqGYc273OmoDwYBx4v
- IQv9DvwdSZf5ek2RCKrL6RlmDnOd78P3pg3HFhO6T9in6UkuV3QE4oMPgRF3WqfH3U+u EA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2v5b9tuvmk-1
+ bh=IYWpZAQIHKMc6HkvVn4XgPwE5pwLThlzNnT3qmCRbPo=;
+ b=IX0zGerXgD1H5vfYuZXU7fvQQ8aDHhF3hnfDwVea5a5ZtZJlZwAyuX/L6892Wj1ryqjH
+ ETjTJymm0/2XQ+9mxsOLThtKrd+z89RaQdk91vSbDIheoUhxjEwKw33/ALPA+5Z/CWHu
+ P9Yt3mqiQG11dSIHOQpwOFXO6y0jMnBNRaetX5vfEV4NU8J/srdLy5nmi8nrJVe7vMIY
+ KXZD/gvdjWNBWOvkAj30lyEMOX95XgJeg9a6kMEWnyOMuNuUSvk+sFfXFURK9LOv3Nmi
+ Liy9OlYsXZL3IBItFmiDDKGH1BzaQpr9qMqKAwjOoaXlJL2H1lypbDONk3V0eHJ9R+K6 WQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2v5btq3wnd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 11:01:18 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PAx40S131861;
-        Wed, 25 Sep 2019 11:01:17 GMT
+        Wed, 25 Sep 2019 11:03:44 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PAwlNG034178;
+        Wed, 25 Sep 2019 11:01:43 GMT
 Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2v82tjpg5h-1
+        by aserp3020.oracle.com with ESMTP id 2v7vnxsdxs-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 11:01:17 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8PB18pt029392;
-        Wed, 25 Sep 2019 11:01:10 GMT
+        Wed, 25 Sep 2019 11:01:43 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8PB1gAC029816;
+        Wed, 25 Sep 2019 11:01:43 GMT
 Received: from mwanda (/41.57.98.10)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Sep 2019 04:01:08 -0700
-Date:   Wed, 25 Sep 2019 14:01:00 +0300
+        with ESMTP ; Wed, 25 Sep 2019 04:01:41 -0700
+Date:   Wed, 25 Sep 2019 14:01:28 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Andrew Lunn <andrew@lunn.ch>, Dongpo Li <lidongpo@hisilicon.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Sebastian Reichel <sre@kernel.org>,
+        Rhyland Klein <rklein@nvidia.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH net] of: mdio: Fix a signedness bug in
- of_phy_get_and_connect()
-Message-ID: <20190925110100.GL3264@mwanda>
+Subject: [PATCH] power: supply: sbs-battery: Fix a signedness bug in
+ sbs_get_battery_capacity()
+Message-ID: <20190925110128.GM3264@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -73,28 +70,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "iface" variable is an enum and in this context GCC treats it as
-an unsigned int so the error handling is never triggered.
+The "mode" variable is an enum and in this context GCC treats it as an
+unsigned int so the error handling is never triggered.
 
-Fixes: b78624125304 ("of_mdio: Abstract a general interface for phy connect")
+Fixes: 51d075660457 ("bq20z75: Add support for charge properties")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- drivers/of/of_mdio.c | 2 +-
+ drivers/power/supply/sbs-battery.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/of/of_mdio.c b/drivers/of/of_mdio.c
-index 000b95787df1..bd6129db6417 100644
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -362,7 +362,7 @@ struct phy_device *of_phy_get_and_connect(struct net_device *dev,
- 	int ret;
+diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
+index f8d74e9f7931..62110af1abcf 100644
+--- a/drivers/power/supply/sbs-battery.c
++++ b/drivers/power/supply/sbs-battery.c
+@@ -555,7 +555,7 @@ static int sbs_get_battery_capacity(struct i2c_client *client,
+ 		mode = BATTERY_MODE_AMPS;
  
- 	iface = of_get_phy_mode(np);
--	if (iface < 0)
-+	if ((int)iface < 0)
- 		return NULL;
- 	if (of_phy_is_fixed_link(np)) {
- 		ret = of_phy_register_fixed_link(np);
+ 	mode = sbs_set_battery_mode(client, mode);
+-	if (mode < 0)
++	if ((int)mode < 0)
+ 		return mode;
+ 
+ 	ret = sbs_read_word_data(client, sbs_data[reg_offset].addr);
 -- 
 2.20.1
 
