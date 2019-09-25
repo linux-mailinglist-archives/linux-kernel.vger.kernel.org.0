@@ -2,126 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E75DBE8C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69C7FBE8AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:03:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731262AbfIYXFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 19:05:15 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:29336 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731109AbfIYXFL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 19:05:11 -0400
-Received: from smtp2.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id E23FEA19C5;
-        Thu, 26 Sep 2019 01:05:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.240])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id 0ZnZUjAHwPw6; Thu, 26 Sep 2019 01:05:05 +0200 (CEST)
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Christian Brauner <christian@brauner.io>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] perf_event_open: switch to copy_struct_from_user()
-Date:   Thu, 26 Sep 2019 01:03:32 +0200
-Message-Id: <20190925230332.18690-5-cyphar@cyphar.com>
-In-Reply-To: <20190925230332.18690-1-cyphar@cyphar.com>
-References: <20190925230332.18690-1-cyphar@cyphar.com>
+        id S1730681AbfIYXDi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 19:03:38 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:39666 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbfIYXDi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 19:03:38 -0400
+Received: by mail-qt1-f195.google.com with SMTP id n7so535466qtb.6;
+        Wed, 25 Sep 2019 16:03:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WfbXh+sodiUMPQSO5yCeqiJJDmHL2yMhTTI21O9c//4=;
+        b=UrO+9FhI4EIs4jI4yXfKf1L+DbuNMlCxcVZ3jN5cwJ77HfdAjqNgQ6FQPxLj6MbdI5
+         EQ/qM8/S1CQq7aJbPc4BEHeXaKa0t8kWWT5CI/Ss8KJpfdfe8ErjJVNEUNWUDkWlTdu7
+         CHchGLYEiaLnnldmMtFmLQKgaZqfp6lWYUGq4/CRCyN96qPXjBLljijuJ4/6rOpNNE/B
+         P/9roPgUV+Yc+bU/97dcTbYlgJnckw5Lls8VQSeJnLllwEXdKFmD+ONt+yzarNqHB0kZ
+         WhlCKuVX9JQyMt2nUCrCRDD5K/0JcLluu+G+Yq3HIEN3rNKrvMOGWYzCiyxaKhpZuEsy
+         Of9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WfbXh+sodiUMPQSO5yCeqiJJDmHL2yMhTTI21O9c//4=;
+        b=ekAeYulb6w4JboYVzWkX/GBojQ73c5G1/mDiGRmwFxIdmx4zZ+s9vktB59bfSQPSfK
+         ue/0atMEHabcS8kUt0dlRJBB6V2ZMjNMiln0vxCqv8wxE2foJmMhFjTsHojV6EhKwLeU
+         IFvzLS0BX9S1HvKxSjy29yKODkZhuaN6lUx7Gv8riU8lbEeQCn8RjPXAlxm7MhCTth0K
+         CiUZRY8iEsmi8rZmWgJ/1KjX93uhW+k8uj0EWgLDuAuTtBa/mQOHtCZoVQcXyXOhI7rW
+         QVitvmqzbdIoPnraESfM/H7v5uq3M7tRVrKrGAvsnDtKb0KrU+/WrSNRyzCiPCrenMnt
+         nZqw==
+X-Gm-Message-State: APjAAAWg4QhdiWFSaEkCwx5xefZdpcDDdEBaEaSg7+BfTjmoO94Ndi6C
+        0HT8K9LqdV+AAJWmCMh2vnw=
+X-Google-Smtp-Source: APXvYqyC1FyjGChJ2Qd1VW5+w/5vvUgYmAgGVElejt3WCWCezoA05O48V25SM3ipL5VdElk9+zyedw==
+X-Received: by 2002:ac8:100b:: with SMTP id z11mr953244qti.377.1569452617529;
+        Wed, 25 Sep 2019 16:03:37 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::3:a001])
+        by smtp.gmail.com with ESMTPSA id u43sm265769qte.19.2019.09.25.16.03.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 25 Sep 2019 16:03:37 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 16:03:35 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, cgroups@vger.kernel.org
+Subject: [PATCH 3/3 for-5.4/block] iocost: bump up default latency targets
+ for hard disks
+Message-ID: <20190925230335.GK2233839@devbig004.ftw2.facebook.com>
+References: <20190925230207.GI2233839@devbig004.ftw2.facebook.com>
+ <20190925230309.GJ2233839@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925230309.GJ2233839@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The change is very straightforward, and helps unify the syscall
-interface for struct-from-userspace syscalls.
+The default hard disk param sets latency targets at 50ms.  As the
+default target percentiles are zero, these don't directly regulate
+vrate; however, they're still used to calculate the period length -
+100ms in this case.
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+This is excessively low.  A SATA drive with QD32 saturated with random
+IOs can easily reach avg completion latency of several hundred msecs.
+A period duration which is substantially lower than avg completion
+latency can lead to wildly fluctuating vrate.
+
+Let's bump up the default latency targets to 250ms so that the period
+duration is sufficiently long.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- kernel/events/core.c | 47 +++++++++-----------------------------------
- 1 file changed, 9 insertions(+), 38 deletions(-)
+ block/blk-iocost.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 0463c1151bae..038ed126bc1b 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -10498,55 +10498,26 @@ static int perf_copy_attr(struct perf_event_attr __user *uattr,
- 	u32 size;
- 	int ret;
- 
--	if (!access_ok(uattr, PERF_ATTR_SIZE_VER0))
--		return -EFAULT;
--
--	/*
--	 * zero the full structure, so that a short copy will be nice.
--	 */
-+	/* Zero the full structure, so that a short copy will be nice. */
- 	memset(attr, 0, sizeof(*attr));
- 
- 	ret = get_user(size, &uattr->size);
- 	if (ret)
- 		return ret;
- 
--	if (size > PAGE_SIZE)	/* silly large */
--		goto err_size;
--
--	if (!size)		/* abi compat */
-+	/* ABI compatibility quirk: */
-+	if (!size)
- 		size = PERF_ATTR_SIZE_VER0;
--
--	if (size < PERF_ATTR_SIZE_VER0)
-+	if (size < PERF_ATTR_SIZE_VER0 || size > PAGE_SIZE)
- 		goto err_size;
- 
--	/*
--	 * If we're handed a bigger struct than we know of,
--	 * ensure all the unknown bits are 0 - i.e. new
--	 * user-space does not rely on any kernel feature
--	 * extensions we dont know about yet.
--	 */
--	if (size > sizeof(*attr)) {
--		unsigned char __user *addr;
--		unsigned char __user *end;
--		unsigned char val;
--
--		addr = (void __user *)uattr + sizeof(*attr);
--		end  = (void __user *)uattr + size;
--
--		for (; addr < end; addr++) {
--			ret = get_user(val, addr);
--			if (ret)
--				return ret;
--			if (val)
--				goto err_size;
--		}
--		size = sizeof(*attr);
-+	ret = copy_struct_from_user(attr, sizeof(*attr), uattr, size);
-+	if (ret) {
-+		if (ret == -E2BIG)
-+			goto err_size;
-+		return ret;
- 	}
- 
--	ret = copy_from_user(attr, uattr, size);
--	if (ret)
--		return -EFAULT;
--
- 	attr->size = size;
- 
- 	if (attr->__reserved_1)
--- 
-2.23.0
-
+--- a/block/blk-iocost.c
++++ b/block/blk-iocost.c
+@@ -529,8 +529,8 @@ struct iocg_wake_ctx {
+ static const struct ioc_params autop[] = {
+ 	[AUTOP_HDD] = {
+ 		.qos				= {
+-			[QOS_RLAT]		=         50000, /* 50ms */
+-			[QOS_WLAT]		=         50000,
++			[QOS_RLAT]		=        250000, /* 250ms */
++			[QOS_WLAT]		=        250000,
+ 			[QOS_MIN]		= VRATE_MIN_PPM,
+ 			[QOS_MAX]		= VRATE_MAX_PPM,
+ 		},
