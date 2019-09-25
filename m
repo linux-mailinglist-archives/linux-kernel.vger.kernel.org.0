@@ -2,125 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A51CBE397
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:42:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEB0CBE3A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443154AbfIYRls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 13:41:48 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36314 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438383AbfIYRlr (ORCPT
+        id S2443165AbfIYRmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 13:42:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40846 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728196AbfIYRmP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 13:41:47 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f19so2820678plr.3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 10:41:46 -0700 (PDT)
+        Wed, 25 Sep 2019 13:42:15 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so239082pgj.7;
+        Wed, 25 Sep 2019 10:42:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=1CTVsYgoIpsmY3rHqOtuzts6AZf4hXcs595qDdhE4QU=;
-        b=Xrv8KSG+XJWafUl0OABPFBnzhF/qk0KChfGXSGYtDPnw1QYyxTl/a9xxUe5ewacdYC
-         ni6tZsQkRLtdNy8uAXMuuuj9LVQuB2jhsNEK2HN08uxGqvbkzXRGP//sORNnDjt/5q1T
-         pf0FNXgaioatTGreyHFD3hkKsLYtaKFViSTm1ij5FluAQoAHtF/UHt3XhL46CsDnhz89
-         nWBltqxC3moigBKN0u+3e8Uw47btM0R7vMaU+Q1lr1fwLLf34GS+ZM1Cjf/ZMUjfGiXt
-         NhmKWmXJs7zP7QIoy7hta1FWVhWL9PQP7VXL7+I8EbYTTA6UtloN93+Yty3uiNyFeXZr
-         2ghQ==
+        bh=ep7MUnwSTs1NOnosNHftd5kt9y4voslofafMsmgNvp4=;
+        b=bbW9tn+OnqiBwGpi5ggOj70MxJU0HhU0829foG8gFQSO0rs0Uq7oG3D6ZSaAfGF6wH
+         xU3EPipe46ILw+PoQRsfHiGXTXTV02ugZzAiyftJu6dZHvjViAKxSnbqosQq4tJg4Oku
+         mhFqQaqBeimZ1FcPY+kKcnv74IeOfKhSwSW6jGGqIiAtDoSCdTJyAOph6OWjUlrY205N
+         VsE1xzI7L/44l1uOlB1sMLDnAK7m6h49Uyf9yUkxXfGvINQSG0z4X1YnAGTladLcklvo
+         PmkjihR0GvnL6swRODVk0anKRlDOVzpjhG2sdl5+Dw7rh1ec/CIZOyFHG7xX2wdaHc+0
+         QduQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1CTVsYgoIpsmY3rHqOtuzts6AZf4hXcs595qDdhE4QU=;
-        b=Zei+JyeUZsaKAVSzjNZQ+Heb4P1bHXbg4n86f2dQ2RHnyzHsw/yhPWuOlmXIrtGDFh
-         XvGTqScb1haKcP93yMqw7nlS7YRvSzs/xgAUqSuqXHDtysNxbKD3ThC1VsQc51Ms2IZd
-         i6CrxlXmn06UIRu2ge4WSuvkYZ3+ZCQdITp4SD2Kas9nW1N4NWlDoHqEYAUkKEuEi6EU
-         0cUS3Y0YAMNvMyeHQ05nBZ6Z6L+BzCF+5m5DpJ0q48il/OYKhY5JFX2RH4D0C4NcF7Ro
-         wH8rfNVHKxADMtuXTV/KBTB+35L5w+Gc47W6V7LKmLH2AltvmB9p7kWIgpaOD3O7YjDK
-         4fuw==
-X-Gm-Message-State: APjAAAWB/VOwPb3ywtOm4KVJzeTyhn0mJxFlGXBHvldAThmYMktvBUJ1
-        ZDu2ZU/W9P1EKl/IJrljSUDN0tX5d234ztrsH1//eQ==
-X-Google-Smtp-Source: APXvYqxImmFMWJWqkuKULVqb6WVgwAfYtxnwSuz7sgDW3wgTX6cYhfeNmOgdhJByzJEsPjO1A6QYPKyhFAD+etM0RLU=
-X-Received: by 2002:a17:902:8484:: with SMTP id c4mr10189391plo.223.1569433305873;
- Wed, 25 Sep 2019 10:41:45 -0700 (PDT)
+        bh=ep7MUnwSTs1NOnosNHftd5kt9y4voslofafMsmgNvp4=;
+        b=Rik3kUAckcAsqvcqWo3mi2vijjG+lO+0I9dRAMxOo2JaY9HukC7o5XJ7LZGHcBQXtc
+         tEc08/NxGCuveDagRpsrTVv1PGDvd7XBpj7lNhwbaqioYWNKeYBfEup7sqzLWESfSrJ7
+         48JuOc+gdjygIty4d83Ki99IPAZYaDTDVL2Fmjf9VULmp5KEBNumqgwe9/n6WefIJIHY
+         jAqrNbLTzrJnVFZyL3DsV12MFPPf7SqOk4zyi++byH1R2g2bfqIzynVQGFr4yQFTIj9G
+         /HyqAup/QxYbC+IhO7TbpB/1xR6EEh6qIHE0ooiCbyq16l1iIiaPAkVRBd/kNvszbUN7
+         u9eA==
+X-Gm-Message-State: APjAAAWanbVETKVnejH0YdQbjvh8A/P4I1dmCBoEcQlb0TvNiceC10tK
+        pPrIgdw09Y/tEiqCjELiv4vjjFSZaG8DhxeCSSgj86l/cSA=
+X-Google-Smtp-Source: APXvYqwglDjYNJyV/BoRm1ThUdRpIn1sTx5vUTfTTnMfBOInk51P8lm/kYDxjLKc3vX28TD1S9MlOddzABELHN8MleA=
+X-Received: by 2002:a63:6988:: with SMTP id e130mr497818pgc.203.1569433334476;
+ Wed, 25 Sep 2019 10:42:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190925172915.576755-1-natechancellor@gmail.com>
-In-Reply-To: <20190925172915.576755-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 25 Sep 2019 10:41:34 -0700
-Message-ID: <CAKwvOdmO255nWf2PrfJ54X95ShNbYPf0FK2x=f57LmzOrCmJug@mail.gmail.com>
-Subject: Re: [PATCH] tracing: Fix clang -Wint-in-bool-context warnings in
- IF_ASSIGN macro
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        David Bolvansky <david.bolvansky@gmail.com>
+References: <20190920223356.6622-1-jekhor@gmail.com> <20190920223356.6622-2-jekhor@gmail.com>
+ <1cca117d-1951-0335-1aef-ac994c3c757b@redhat.com> <CAHp75VcoS2OFr8kwM7vq0iCqf6BpyJ4SO7peAUHKxAXdgA7CMA@mail.gmail.com>
+ <20190925162712.GA3653@jeknote.loshitsa1.net>
+In-Reply-To: <20190925162712.GA3653@jeknote.loshitsa1.net>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 25 Sep 2019 20:42:03 +0300
+Message-ID: <CAHp75VfL0RUgMhZk=gesxBcBfRkfV8kC1zsN9TNg53qpUNVU0w@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] platform/x86/intel_cht_int33fe: Split code to USB
+ Micro-B and Type-C variants
+To:     Yauhen Kharuzhy <jekhor@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Shevchenko <andy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 10:29 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> After r372664 in clang, the IF_ASSIGN macro causes a couple hundred
-> warnings along the lines of:
->
-> kernel/trace/trace_output.c:1331:2: warning: converting the enum
-> constant to a boolean [-Wint-in-bool-context]
-> kernel/trace/trace.h:409:3: note: expanded from macro
-> 'trace_assign_type'
->                 IF_ASSIGN(var, ent, struct ftrace_graph_ret_entry,
->                 ^
-> kernel/trace/trace.h:371:14: note: expanded from macro 'IF_ASSIGN'
->                 WARN_ON(id && (entry)->type != id);     \
->                            ^
-> 264 warnings generated.
->
-> Add the implicit '!= 0' to the WARN_ON statement to fix the warnings.
->
-> Link: https://github.com/llvm/llvm-project/commit/28b38c277a2941e9e891b2db30652cfd962f070b
-> Link: https://github.com/ClangBuiltLinux/linux/issues/686
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On Wed, Sep 25, 2019 at 7:27 PM Yauhen Kharuzhy <jekhor@gmail.com> wrote:
+> On Wed, Sep 25, 2019 at 06:02:22PM +0300, Andy Shevchenko wrote:
+> > On Sat, Sep 21, 2019 at 9:31 PM Hans de Goede <hdegoede@redhat.com> wrote:
 
-I can't think of a case that this warning is a bug (maybe David can
-explain more), but seems like a small fix that can stop a big spew of
-warnings, and IIUC this is the lone instance we see in the kernel.  In
-that case, I prefer a tiny change to outright disabling the warning in
-case it does find interesting cases later.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> > By some reason it doesn't apply.
+>
+> I have checked, and have no issues when applying this patch to the current
+> torvalds/master and linux-next/master branches (351c8a09b00b and 9e88347dedd8
+> commit IDs).
 
-> ---
->  kernel/trace/trace.h | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-> index 26b0a08f3c7d..f801d154ff6a 100644
-> --- a/kernel/trace/trace.h
-> +++ b/kernel/trace/trace.h
-> @@ -365,11 +365,11 @@ static inline struct trace_array *top_trace_array(void)
->         __builtin_types_compatible_p(typeof(var), type *)
->
->  #undef IF_ASSIGN
-> -#define IF_ASSIGN(var, entry, etype, id)               \
-> -       if (FTRACE_CMP_TYPE(var, etype)) {              \
-> -               var = (typeof(var))(entry);             \
-> -               WARN_ON(id && (entry)->type != id);     \
-> -               break;                                  \
-> +#define IF_ASSIGN(var, entry, etype, id)                       \
-> +       if (FTRACE_CMP_TYPE(var, etype)) {                      \
-> +               var = (typeof(var))(entry);                     \
-> +               WARN_ON(id != 0 && (entry)->type != id);        \
-> +               break;                                          \
->         }
->
->  /* Will cause compile errors if type is not found. */
-> --
-> 2.23.0
->
-
+It doesn't apply to the subsystem tree (for-next or my review branch)
 
 -- 
-Thanks,
-~Nick Desaulniers
+With Best Regards,
+Andy Shevchenko
