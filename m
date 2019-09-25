@@ -2,223 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45B8FBE7FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 00:02:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3312BE808
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 00:04:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfIYWBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 18:01:49 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43822 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728816AbfIYWAT (ORCPT
+        id S1727605AbfIYWEG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 18:04:06 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43767 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727197AbfIYWEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 18:00:19 -0400
-Received: by mail-wr1-f68.google.com with SMTP id q17so84827wrx.10;
-        Wed, 25 Sep 2019 15:00:18 -0700 (PDT)
+        Wed, 25 Sep 2019 18:04:05 -0400
+Received: by mail-io1-f67.google.com with SMTP id v2so931111iob.10
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 15:04:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=y58n22AehKpICGg7pp3UrxHJ2uXYXc6EGOkvrwA6HO8=;
-        b=Lw8M/6OPBaRs7BUKWe84Lhr+tS78mYzMADTYKDSwFWmJlt9z1m6QVlWpx0AVr4g6Wn
-         QNB5l6hp3VVfKmmTimqAdwdIHkqEGWTJcdsxnWbsGZcDI8i+VzOALEoXZzPxV6QH4uss
-         T6Zisk6GOL9jItOND5rodsvjHjPNx/CWSMvETUEvp2TvF85oxjQKzAcymRplx7hprgME
-         PmOM4r72tepI7IysJp5hEQ0op7WUThrsgoAZuCw4V3QLeMbfpSOvJksSIzAkM4fdowpc
-         uSKicTcKuCTYI23e52v8PH+JTH70R6EolnH4OT87zkiwpCsi4pD66DsltD0h+f/u4oJP
-         VPEg==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rhSXr0xwJou4CoHBVDkYpqEBKlvURobJgoh1V6NDSjs=;
+        b=jblpeYxKQoyJmfsZMCmiDcmuM+FHKLJTEP5QO8aqTtsPSA162GLOOMY3I1QvTVagmR
+         La3h7pZ71pbLo35PzU6woYBU3jvuLcYdgR1/NDzFhZYf/WRwZje7zyIuYHgi28z1703K
+         8nEZ9pnX5ZyvreXvrTK07tJ4OBeo0Dq/fPdMrXnydLlEde3EGaYx+0jhEq2wn7tjgYWM
+         Q+dAosbXaZGoVrsNFmjknJ/M8YTn8mMKQmLadL54FxuQYRXZPyPv4mY5eXhLieCXbtJD
+         s2C7LEcUR65NjG7xXUCtfyBtZOVFAjrza2HtAgB1GaVK/K4bk/U11pAdiSAAi5ZFpm6g
+         k8Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=y58n22AehKpICGg7pp3UrxHJ2uXYXc6EGOkvrwA6HO8=;
-        b=FSaSQcnxlbumnHvyeHw0HPfppLIgsz8wk76OzOHWeYzNTFb6ZEMlk8SOPMfsB7axcr
-         PnosQ3w6JOqQ38LI2dlBb++DP+KI1Crg8avESgzQM9hKxQ5bvKO90Ld4gkDBiV3YOLIh
-         iP/H5UmW3xbnolGTj/oC1StPLnB/mVrol7GnaKmnd4sZngMHDU2SNpRvcGe2ov/YGcjX
-         eN04Np+g6a5G+ggUb/al5/ZbUCkaJB6wNGxKDArTQTwH9X9FkwkessfWF1Np+mr9gQ7q
-         y1q/0hdGFQmD6zq6vOpGYE2vdLZ+Oyf23zPWkqAqCrL4ShQozV2uu2aEV1sgFFig5GwB
-         tqQQ==
-X-Gm-Message-State: APjAAAUhYHNu8c+WkE31tJmQoQg4ImYTXrxShs+ZCnTMFN08gIv7saLv
-        VLqWRGbfYt4RyPNS5qns9OWJTwse
-X-Google-Smtp-Source: APXvYqzjbFzUDF/Vb7xtEn+hZQ6NLT5vQFIl+2w2PRqRUMyLc/pRQiF1L5l7qj6XnMl98jHDrikISQ==
-X-Received: by 2002:adf:fe4a:: with SMTP id m10mr319209wrs.209.1569448817090;
-        Wed, 25 Sep 2019 15:00:17 -0700 (PDT)
-Received: from [192.168.1.19] (bfw9.neoplus.adsl.tpnet.pl. [83.28.60.9])
-        by smtp.gmail.com with ESMTPSA id t203sm236626wmf.42.2019.09.25.15.00.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Sep 2019 15:00:16 -0700 (PDT)
-Subject: Re: [PATCH v9 13/15] leds: lp55xx: Update the lp55xx to use the multi
- color framework
-To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190925174616.3714-1-dmurphy@ti.com>
- <20190925174616.3714-14-dmurphy@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <59e58ccf-84fb-5db7-5008-20afc7436d35@gmail.com>
-Date:   Thu, 26 Sep 2019 00:00:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rhSXr0xwJou4CoHBVDkYpqEBKlvURobJgoh1V6NDSjs=;
+        b=epgmO6PIBkHmbSpjkNiu/cKh5zYxMc+1+HwlHddUmc9M2LhX+vFk/8yjNfivTsRBee
+         rxF9F1G4LbFaR0/7tFEx7ZS/uve75yt5/ckvGjCnpfmY9MDc/gJrw63M+OTNZml+wcMv
+         PSWWkDc3wTuK8suQguV8Djz/XBOicgLu0rPWOucY67zMJ8TMGvemtuaYNDmNb1lXnPhH
+         UDJbOzTB2zQLMIh9xoYOyw6UKBl4vQlUF8XvSRHuhADt/5t9vEv9J50iCucyFVpSj85H
+         RrOPh/xNWTwpW7tnnEqNVc0gw6ooJtFJKmvGXROvG6cwNBkJIbpcre9IqT34Uur193K9
+         xRLw==
+X-Gm-Message-State: APjAAAVaEyZXqGh1sz3OtCXXaD17E/vhjGj7fQuknTmiFmhrYHrkL9eZ
+        +kN6wy4HE284netkUOJ9z97ekw==
+X-Google-Smtp-Source: APXvYqy0FhjpHx52fw8cVLnKaT3mISXokIpYLz5tzwz8cwp42mILIHWjKtVz8t1TqzCc2JV+cmz07g==
+X-Received: by 2002:a5e:d817:: with SMTP id l23mr232373iok.142.1569449043502;
+        Wed, 25 Sep 2019 15:04:03 -0700 (PDT)
+Received: from google.com ([2620:15c:183:0:9f3b:444a:4649:ca05])
+        by smtp.gmail.com with ESMTPSA id t8sm58874ild.7.2019.09.25.15.04.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 15:04:02 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 16:03:57 -0600
+From:   Yu Zhao <yuzhao@google.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Hugh Dickins <hughd@google.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Lance Roy <ldr709@gmail.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dave Airlie <airlied@redhat.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Mel Gorman <mgorman@suse.de>, Jan Kara <jack@suse.cz>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Aaron Lu <ziqian.lzq@antfin.com>,
+        Omar Sandoval <osandov@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        David Hildenbrand <david@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 4/4] mm: remove unnecessary smp_wmb() in
+ __SetPageUptodate()
+Message-ID: <20190925220357.GA162930@google.com>
+References: <20190914070518.112954-1-yuzhao@google.com>
+ <20190924232459.214097-1-yuzhao@google.com>
+ <20190924232459.214097-4-yuzhao@google.com>
+ <20190924235036.GA24516@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190925174616.3714-14-dmurphy@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190924235036.GA24516@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan,
-
-On 9/25/19 7:46 PM, Dan Murphy wrote:
-> Update the lp5523 to allow the use of the multi color framework.
+On Tue, Sep 24, 2019 at 04:50:36PM -0700, Matthew Wilcox wrote:
+> On Tue, Sep 24, 2019 at 05:24:59PM -0600, Yu Zhao wrote:
+> > +/*
+> > + * Only use this function when there is a following write barrier, e.g.,
+> > + * an explicit smp_wmb() and/or the page will be added to page or swap
+> > + * cache locked.
+> > + */
+> >  static __always_inline void __SetPageUptodate(struct page *page)
+> >  {
+> >  	VM_BUG_ON_PAGE(PageTail(page), page);
+> > -	smp_wmb();
+> >  	__set_bit(PG_uptodate, &page->flags);
+> >  }
 > 
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> ---
->  drivers/leds/Kconfig                      |   1 +
->  drivers/leds/leds-lp5523.c                |  13 ++
->  drivers/leds/leds-lp55xx-common.c         | 150 ++++++++++++++++++----
->  drivers/leds/leds-lp55xx-common.h         |  11 ++
->  include/linux/platform_data/leds-lp55xx.h |   6 +
->  5 files changed, 157 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-> index 84f60e35c5ee..dc3d9f2194cd 100644
-> --- a/drivers/leds/Kconfig
-> +++ b/drivers/leds/Kconfig
-> @@ -377,6 +377,7 @@ config LEDS_LP50XX
->  config LEDS_LP55XX_COMMON
->  	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
->  	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
-> +	depends on LEDS_CLASS_MULTI_COLOR && OF
->  	select FW_LOADER
->  	select FW_LOADER_USER_HELPER
->  	help
-> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-> index d0b931a136b9..8b2cdb98fed6 100644
-> --- a/drivers/leds/leds-lp5523.c
-> +++ b/drivers/leds/leds-lp5523.c
-> @@ -791,6 +791,18 @@ static ssize_t store_master_fader_leds(struct device *dev,
->  	return ret;
->  }
->  
-> +static int lp5523_led_intensity(struct lp55xx_led *led, int chan_num)
+> Isn't this now the same as __SETPAGEFLAG(uptodate, Uptodate, PF_NO_TAIL)?
 
-Why do we need this function? brightness op will not suffice?
-
-> +{
-> +	struct lp55xx_chip *chip = led->chip;
-> +	int ret;
-> +
-> +	mutex_lock(&chip->lock);
-> +	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + chan_num,
-> +		     led->brightness);
-> +	mutex_unlock(&chip->lock);
-> +	return ret;
-> +}
-> +
->  static int lp5523_led_brightness(struct lp55xx_led *led)
->  {
->  	struct lp55xx_chip *chip = led->chip;
-> @@ -857,6 +869,7 @@ static struct lp55xx_device_config lp5523_cfg = {
->  	.max_channel  = LP5523_MAX_LEDS,
->  	.post_init_device   = lp5523_post_init_device,
->  	.brightness_fn      = lp5523_led_brightness,
-> +	.color_intensity_fn = lp5523_led_intensity,
->  	.set_led_current    = lp5523_set_led_current,
->  	.firmware_cb        = lp5523_firmware_loaded,
->  	.run_engine         = lp5523_run_engine,
-> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-> index 44ced02b49f9..0e4b3a9d3047 100644
-> --- a/drivers/leds/leds-lp55xx-common.c
-> +++ b/drivers/leds/leds-lp55xx-common.c
-> @@ -136,9 +136,26 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
->  {
->  	struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
->  	struct lp55xx_device_config *cfg = led->chip->cfg;
-> +	int brightness_val[LP55XX_MAX_GROUPED_CHAN];
-> +	int ret;
-> +	int i;
-> +
-> +	if (led->mc_cdev.num_leds > 1) {
-> +		led_mc_calc_brightness(&led->mc_cdev,
-> +				       brightness, brightness_val);
-> +		for (i = 0; i < led->mc_cdev.num_leds; i++) {
-> +			led->brightness = brightness_val[i];
-> +			ret = cfg->color_intensity_fn(led,
-> +						      led->grouped_channels[i]);
-
-Now we will have three separate calls for each color component
-(and possibly sleeping on mutex on contention).
-
-Probably LED mc class use case will need a bit different design.
-
-Also, instead of grouped_channels we could possibly have
-
-led_mc_get_color_id(&led->mc_dev, i)
-
-which would map entry position index to color_id.
-
-I will stop reviewing here and will continue after taking
-deeper look at this lp55xx design.
-
--- 
-Best regards,
-Jacek Anaszewski
+Indeed. I'll use the macro in the next version.
