@@ -2,196 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE88ABE62D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 22:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68306BE634
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 22:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392880AbfIYULM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 16:11:12 -0400
-Received: from mail-eopbgr800097.outbound.protection.outlook.com ([40.107.80.97]:12768
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731229AbfIYULM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 16:11:12 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YNeKu2ctkqmAVAubEJ2G+JNH+o3mnF9fRiy/exkKXLjoBd6FCAMaVfr/KBOBHWUItbbKcwxGXYxBsGy58NZyhPxDrpzRZmHjbludIenjFWGqleLwGDoF4GzMtR2vdcqRU1nhRoSbz+eGwk0RFU4MKMXe0ZIMobCoJnIhw85qDvgP4JKdOyNxe05YO4JEMU1Pniqs+9Kq05S/7nnS1pnRvSAbeiUHG0WMh29aCQIlEt5ucrkGnBFIsjYCvp0/jYep91PeKGKmvsEOmA+P/QVxX9Yyi27lTENbFx/4q16kSJp/7Hb+FSfePgvIH9Pw/2mdd6+XkdX9mSrUok6Bm/OMVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EsJJYknjTnXGyRqEgKnV6qvmK0ALFhZXB2GGvm+ar3g=;
- b=knp9AM2xfWIilPqlMf5bAvxTkuc+ZcexCH+EH48tJaCzk7eqcYdHcvG4Nq+RNWOnua8QVBjpri5PJLQw76C7ZITsNsUsBpBR7VAOjPDVHcEtehL77AWGQK2H8Pd87ZNARIX+EOL08oAl1He5lX4q9w5Z73cbKys63yKVEHfCqHO+M0KQBG6WjGhDDEP6+x+OZj0Yk2MzzPE0ROHpgP3LJl6w6DwGPdGppDHDnNBYQmaTvlnWisxahpX48bvjtu5ZtlgvLvq6jP9Dv6MsWQncQLsBG9AjqPPj0I8xR2Iu5PBOyjpfHOeocyYbg+cKbH9x4yG6EjntepKa83x3tUsfQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EsJJYknjTnXGyRqEgKnV6qvmK0ALFhZXB2GGvm+ar3g=;
- b=CFRfStqXd8FVXgEuy+u+AhSxMPlg6NH/L8qmMnuvS2wR7r63lWr/N0qobDrXpznvLewKbdGqt7d4JjfUiDK6J5qoCdGjw1WCHL0WXHpPrp6LfsjNrcU/gT8+6QRHlR1Gapo9vmIaJRjrmzrSNsEJBw8uSoD6RcZGQtwGarf98fY=
-Received: from SN6PR2101MB0942.namprd21.prod.outlook.com (52.132.114.19) by
- SN6PR2101MB0910.namprd21.prod.outlook.com (52.132.117.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.13; Wed, 25 Sep 2019 20:11:09 +0000
-Received: from SN6PR2101MB0942.namprd21.prod.outlook.com
- ([fe80::7d1a:ddb:3473:b383]) by SN6PR2101MB0942.namprd21.prod.outlook.com
- ([fe80::7d1a:ddb:3473:b383%9]) with mapi id 15.20.2327.004; Wed, 25 Sep 2019
- 20:11:09 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-CC:     Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH v2] scsi: storvsc: Add the support of hibernation
-Thread-Topic: [PATCH v2] scsi: storvsc: Add the support of hibernation
-Thread-Index: AQHVc91eXIfIc+ZZsUmqXD4Fs9njvQ==
-Date:   Wed, 25 Sep 2019 20:11:08 +0000
-Message-ID: <1569442244-16726-1-git-send-email-decui@microsoft.com>
-Reply-To: Dexuan Cui <decui@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR13CA0015.namprd13.prod.outlook.com
- (2603:10b6:300:16::25) To SN6PR2101MB0942.namprd21.prod.outlook.com
- (2603:10b6:805:4::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.8.3.1
-x-originating-ip: [13.77.154.182]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a84682fc-557b-412a-cd74-08d741f48076
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR2101MB0910;
-x-ms-traffictypediagnostic: SN6PR2101MB0910:|SN6PR2101MB0910:
-x-ms-exchange-transport-forked: True
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <SN6PR2101MB0910DF2E71D86B49F71000B7BF870@SN6PR2101MB0910.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:883;
-x-forefront-prvs: 01713B2841
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(366004)(376002)(136003)(396003)(346002)(199004)(189003)(102836004)(256004)(36756003)(4326008)(966005)(316002)(7736002)(6636002)(6512007)(71190400001)(43066004)(6306002)(2501003)(107886003)(26005)(99286004)(110136005)(2616005)(66066001)(10090500001)(186003)(8676002)(22452003)(81166006)(4720700003)(71200400001)(81156014)(8936002)(50226002)(66446008)(64756008)(66556008)(66946007)(14444005)(1511001)(478600001)(2906002)(2201001)(66476007)(6436002)(14454004)(25786009)(305945005)(3450700001)(476003)(86362001)(486006)(6116002)(3846002)(6486002)(52116002)(5660300002)(10290500003)(6506007)(386003)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB0910;H:SN6PR2101MB0942.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PlDfNWFhIWht7OH7ToLEDRxUb7vstjNuIXMVEaEsomQHe2g28fC/rpMBN2hv/DrZvCf9S5H9uScq/DwBkFvXqfxtE1WXkDIHa3lPiqsBm3ZxUwgt61qJVUNoj2OSakdplWj6pgxgUJ1J2D5vmWwzu4HP1HsqiNCP17ZrL09RYvRSGUbyXmdaL1ZJJUPwElqxcqCMLzPdxvfJiGL9WkjiI63CVq6FxfZ2rbzoT8i0py8gg0wk8u2JBqF5c0Z24NjxFaRyRjmybCm8U4O6nKXtDcGLlbDRjT5txtVXCdQsnDe4X2PWt+16lD2ns2NSvgMtgVfBETaLJSNMxIgVbGRoJEESzRxCtAkrVBMR+Sb96fTli3zzFns0exJpvZcZQsyiG4B2jLFYK8YkUV1wIqSkiPOUQLjrpeqzPltAnDdm95unObbjlrWFCqnCgWem/qqV31KBjQ5qRNNekX/n1UquCw==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S2392953AbfIYUMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 16:12:40 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41159 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731062AbfIYUMk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 16:12:40 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q7so60626pfh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 13:12:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Jna560TLuCXx87ceJCymiwtgkmh7HkrMG2IFgw1kI4c=;
+        b=VuU2Pa0nBBkxwAP9ay+E9uFWWwIVwYqseAK+ma9eJZFXhVQN0qi+UjD6soxXNTeZqf
+         GrarSQAhhPI3J1vEGx/BK9yp/fT8XW7v6L5dyzHQRVN6n+yriwbjsGmhDeb3kP+IElVG
+         twwLQiDdTpGuKXcUmsqMHE/DrcsjfZAgIx3H4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Jna560TLuCXx87ceJCymiwtgkmh7HkrMG2IFgw1kI4c=;
+        b=Ht4DCU+zeSEicAI6Eav0MlElJtg/enPqSq7R8JSccev2BJFMJizWl9IsqxoP9HKikN
+         kVhys3dUDVPhbpiworxSZn8UfM6gAu4tmAXqVFClvy+qllUkAkMVEZMrQdcA9DWmMsMo
+         wrvNyLZJuR9n3RRzjKsdzDmElFEcuTKnAWUwHT34dlMfVs3KJoG9QVfPlC0I7tyfVOwb
+         4GEIinK3sW0sCk0zUTZ98Uvep4eFgnHeV43CHy4tm9Iv6VfkKYRhUY4PIDecitFragaV
+         kdDnSSO1sTgekD7kMCeE+0P3FcdZPZwS6Z8V18suLmZHXGROvIOmdL5kWHGbjhU6qvpD
+         RLRQ==
+X-Gm-Message-State: APjAAAVAltzPZoYXZvMBtwkUdWhgw4X6GvyPTvh7ygf4neh+ARuAN0Y+
+        oBmO+SoinjX/zXFtrXnywLv5MA==
+X-Google-Smtp-Source: APXvYqxDgsn2vYK72wwqUc6AnpeWlXdjSD2e1YwZ+LWSbLufCkg3PlfC7SJqBS+r43Bc7NNyT/WRQg==
+X-Received: by 2002:a62:583:: with SMTP id 125mr28598pff.69.1569442359691;
+        Wed, 25 Sep 2019 13:12:39 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q30sm35535pja.18.2019.09.25.13.12.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 13:12:38 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 13:12:37 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?J=E9r=E9mie?= Galarneau 
+        <jeremie.galarneau@efficios.com>
+Cc:     s.mesoraca16@gmail.com, viro@zeniv.linux.org.uk,
+        dan.carpenter@oracle.com, akpm@linux-foundation.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        torvalds@linux-foundation.org, solar@openwall.com
+Subject: Re: Unmerged patches adding audit when protected_regular/fifos
+ sysctl causes EACCES
+Message-ID: <201909251307.B970AF1E7@keescook>
+References: <CA+jJMxvkqjXHy3DnV5MVhFTL2RUhg0WQ-XVFW3ngDQOdkFq0PA@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a84682fc-557b-412a-cd74-08d741f48076
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2019 20:11:08.6725
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MErrASbf8C30NssXuDSJD9UmCspXEjQyISbu6bCHn3VgFK34x0rTBvqsUFzaqKdKkyVqiQgC6JzZTp5C1Ecncw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB0910
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+jJMxvkqjXHy3DnV5MVhFTL2RUhg0WQ-XVFW3ngDQOdkFq0PA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we're in storvsc_suspend(), we're sure the SCSI layer has quiesced the
-scsi device by scsi_bus_suspend() -> ... -> scsi_device_quiesce(), so the
-low level SCSI adapter driver only needs to suspend/resume its own state.
+On Wed, Sep 25, 2019 at 02:58:28PM -0400, Jérémie Galarneau wrote:
+> Hi Kees,
+> 
+> I have noticed that the two top-most patches of your protected-creat
+> branch were never merged upstream [1]. Those patches add audit logs
+> whenever the protected_regular or protected_fifo sysctl prevent the
+> creation of a file/fifo.
+> 
+> They were mentioned in the v4 thread [2] of the "main" patch and
+> seemed acceptable, but they were no longer mentioned in v5 [3], which
+> was merged.
+> 
+> Now that systemd enables those sysctls by default (v241+), I got
+> bitten pretty hard by this check and it took me a while to figure out
+> what was happening [4]. I ended up catching it by adding a bunch of
+> printk(), including where you proposed to add an audit log statement.
+> 
+> I just found your two patches while implementing what you proposed almost 1:1.
+> 
+> Was there a reason why those were abandoned? Otherwise, would you mind
+> resubmitting them?
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Hi!
 
----
+There was concern about getting buy-in from the audit folks delaying
+things even more. Instead of waiting for that, as it had already taken
+a long time to get consensus even on the functionality, they were
+dropped.
 
-This patch is basically a pure Hyper-V specific change and it has a
-build dependency on the commit 271b2224d42f ("Drivers: hv: vmbus: Implement
-suspend/resume for VSC drivers for hibernation"), which is on Sasha Levin's
-Hyper-V tree's hyperv-next branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git/log/?h=3Dh=
-yperv-next
+I'll rebase them and send them out again; thanks for the ping!
 
-I request this patch should go through Sasha's tree rather than the
-SCSI tree.
+-Kees
 
-In v2:
-	Added Acked-by from Martin.
+> 
+> Thanks!
+> Jérémie
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/userspace/protected-creat
+> [2] https://lkml.org/lkml/2018/4/10/840
+> [3] https://lore.kernel.org/lkml/20180416175918.GA13494@beast/
+> [4] https://github.com/lttng/lttng-tools/commit/cf86ff2c4ababd01fea7ab2c9c289cb7c0a1bcd5
+> 
+> -- 
+> Jérémie Galarneau
+> EfficiOS Inc.
+> http://www.efficios.com
 
-	@Sasha: I think the patch can go through the hyper-v tree, since
-                we have the Ack from Martin. :-)
-
-	No other change.
-
-
- drivers/scsi/storvsc_drv.c | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index ed8b9ac..9fbf604 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1727,6 +1727,13 @@ enum {
-=20
- MODULE_DEVICE_TABLE(vmbus, id_table);
-=20
-+static const struct { guid_t guid; } fc_guid =3D { HV_SYNTHFC_GUID };
-+
-+static bool hv_dev_is_fc(struct hv_device *hv_dev)
-+{
-+	return guid_equal(&fc_guid.guid, &hv_dev->dev_type);
-+}
-+
- static int storvsc_probe(struct hv_device *device,
- 			const struct hv_vmbus_device_id *dev_id)
- {
-@@ -1935,11 +1942,45 @@ static int storvsc_remove(struct hv_device *dev)
- 	return 0;
- }
-=20
-+static int storvsc_suspend(struct hv_device *hv_dev)
-+{
-+	struct storvsc_device *stor_device =3D hv_get_drvdata(hv_dev);
-+	struct Scsi_Host *host =3D stor_device->host;
-+	struct hv_host_device *host_dev =3D shost_priv(host);
-+
-+	storvsc_wait_to_drain(stor_device);
-+
-+	drain_workqueue(host_dev->handle_error_wq);
-+
-+	vmbus_close(hv_dev->channel);
-+
-+	memset(stor_device->stor_chns, 0,
-+	       num_possible_cpus() * sizeof(void *));
-+
-+	kfree(stor_device->stor_chns);
-+	stor_device->stor_chns =3D NULL;
-+
-+	cpumask_clear(&stor_device->alloced_cpus);
-+
-+	return 0;
-+}
-+
-+static int storvsc_resume(struct hv_device *hv_dev)
-+{
-+	int ret;
-+
-+	ret =3D storvsc_connect_to_vsp(hv_dev, storvsc_ringbuffer_size,
-+				     hv_dev_is_fc(hv_dev));
-+	return ret;
-+}
-+
- static struct hv_driver storvsc_drv =3D {
- 	.name =3D KBUILD_MODNAME,
- 	.id_table =3D id_table,
- 	.probe =3D storvsc_probe,
- 	.remove =3D storvsc_remove,
-+	.suspend =3D storvsc_suspend,
-+	.resume =3D storvsc_resume,
- 	.driver =3D {
- 		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
- 	},
---=20
-1.8.3.1
-
+-- 
+Kees Cook
