@@ -2,69 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 110DBBE7E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 23:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2761DBE800
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 00:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbfIYVuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 17:50:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52220 "EHLO mail.kernel.org"
+        id S1726173AbfIYWBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 18:01:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57466 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbfIYVuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 17:50:13 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727735AbfIYVxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 17:53:01 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 493A72146E;
-        Wed, 25 Sep 2019 21:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569448212;
-        bh=0hElOx3BzQbrRg4qLp+t1hnvhiKVtH9mNvFATszNKeU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=K7O5+35b6Ac+m64iTBbK2S6SB+lhgxNCKhjM7IcdVSDsv1wm7VwMvx8Y6X/oB6XEk
-         4u5uDYsizKBl250xDMeM150DYHz5cAUc3Ysh6oykM1xh2Oz8ds2ZhW5teJoNQwajnj
-         9nIEmyflO26x5euUTVsqw+gs4DY2MTPCjo/SjYYI=
-Date:   Wed, 25 Sep 2019 14:50:11 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Stephen Kitt <steve@sk2.org>,
-        Kees Cook <keescook@chromium.org>,
-        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
-        kernel-hardening@lists.openwall.com,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: Re: [PATCH V2 1/2] string: Add stracpy and stracpy_pad mechanisms
-Message-Id: <20190925145011.c80c89b56fcee3060cf87773@linux-foundation.org>
-In-Reply-To: <ed4611a4a96057bf8076856560bfbf9b5e95d390.1563889130.git.joe@perches.com>
-References: <cover.1563889130.git.joe@perches.com>
-        <ed4611a4a96057bf8076856560bfbf9b5e95d390.1563889130.git.joe@perches.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id 8C89E3082141;
+        Wed, 25 Sep 2019 21:53:00 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-34.bss.redhat.com [10.20.1.34])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 975CC608C2;
+        Wed, 25 Sep 2019 21:52:54 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Juston Li <juston.li@intel.com>, Imre Deak <imre.deak@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Francis <David.Francis@amd.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] drm/amdgpu/dm: Resume short HPD IRQs before resuming MST topology
+Date:   Wed, 25 Sep 2019 17:52:48 -0400
+Message-Id: <20190925215251.10030-1-lyude@redhat.com>
+In-Reply-To: <20190903204645.25487-25-lyude@redhat.com>
+References: <20190903204645.25487-25-lyude@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 25 Sep 2019 21:53:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Jul 2019 06:51:36 -0700 Joe Perches <joe@perches.com> wrote:
+Since we're going to be reprobing the entire topology state on resume
+now using sideband transactions, we need to ensure that we actually have
+short HPD irqs enabled before calling drm_dp_mst_topology_mgr_resume().
+So, do that.
 
-> Several uses of strlcpy and strscpy have had defects because the
-> last argument of each function is misused or typoed.
-> 
-> Add macro mechanisms to avoid this defect.
-> 
-> stracpy (copy a string to a string array) must have a string
-> array as the first argument (dest) and uses sizeof(dest) as the
-> count of bytes to copy.
-> 
-> These mechanisms verify that the dest argument is an array of
-> char or other compatible types like u8 or s8 or equivalent.
-> 
-> A BUILD_BUG is emitted when the type of dest is not compatible.
-> 
+Changes since v4:
+* Fix typo in comments
 
-I'm still reluctant to merge this because we don't have code in -next
-which *uses* it.  You did have a patch for that against v1, I believe? 
-Please dust it off and send it along?
+Cc: Juston Li <juston.li@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Harry Wentland <hwentlan@amd.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 18927758a010..bce9a298bc45 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -1186,15 +1186,15 @@ static int dm_resume(void *handle)
+ 	/* program HPD filter */
+ 	dc_resume(dm->dc);
+ 
+-	/* On resume we need to  rewrite the MSTM control bits to enamble MST*/
+-	s3_handle_mst(ddev, false);
+-
+ 	/*
+ 	 * early enable HPD Rx IRQ, should be done before set mode as short
+ 	 * pulse interrupts are used for MST
+ 	 */
+ 	amdgpu_dm_irq_resume_early(adev);
+ 
++	/* On resume we need to rewrite the MSTM control bits to enable MST*/
++	s3_handle_mst(ddev, false);
++
+ 	/* Do detection*/
+ 	drm_connector_list_iter_begin(ddev, &iter);
+ 	drm_for_each_connector_iter(connector, &iter) {
+-- 
+2.21.0
 
