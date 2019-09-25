@@ -2,229 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BE56BD801
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 07:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05A0CBD812
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 08:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411827AbfIYF7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 01:59:39 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37671 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2411815AbfIYF7i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 01:59:38 -0400
-Received: by mail-pl1-f195.google.com with SMTP id u20so1949678plq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 22:59:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sixuJfcEsKxEyNW6NClPoa+el3r6rMOWUSS7IBto0XY=;
-        b=fugNAyjuuul94jLQlDha8DZAOXx0OEgTyKPvUnQEcK8AvLJ/FyP+4aF+fDv1xZ+7dB
-         cL1ixpnjA7X8pyjxCmMGwBC10bTNlgxg3Y6YgN24yvXDsn5taqBjkvHUU2R0hlz6+jWJ
-         Qh+re2BLHDPC6cusIbTsDAmCEwyOyH9NA7l9rdqVN+z2aqTDmjG0RqzSwt3Bp2iihG0s
-         7TmqF7wLopmIRMtPvUotA8ZmVgeVHCSjuQpQYP/cHRgHZcBw4/ULNN+xo5qfpY05sqZx
-         X68hklDqSibAix2Ol0HeEDkXK53MhPn+YRpYL8ll+hxM9XQlBc0f0oDmzl4ZdZSZP8ko
-         pHJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sixuJfcEsKxEyNW6NClPoa+el3r6rMOWUSS7IBto0XY=;
-        b=CSu8J8+SGS+A2J69UsjRgrWJCPanXlNbeI3sY+qrpDWZKKibe6bzpuMCd6ez/frsCM
-         iwrSYZDSZETmN9zmn7p1c8pLTZYyxgf2ALFUC0lY9AqVPL0ar+9+QCbK6Lhd/xbONCpZ
-         2M3MeMW/LESo/vwBK2Sm6FvU5e0fjGSlWegGylhofymvkSL+X47Io9IHrl3xN42qbRJE
-         lzt81muU+aGwXwmmlixJmeIC6J8U1+y2svWQM5tIRLVbpG3BUWjcxyzJEuVP6KHE7Bxn
-         ZP4k/Qem36XieM0EYkzEv/aCvm6pGpmBCapBHwMzE2IZS2Cs81jxsY/xgJyij1vxg8VJ
-         WtYg==
-X-Gm-Message-State: APjAAAVuUatWN+AIEhsYNQ8a9pFwbFoR9L2KyuV+bs8QbGAWZtX9BJ+w
-        oe+wDfkAyd+lnfxLFGMJgAY79Q==
-X-Google-Smtp-Source: APXvYqx7ulhyhAYLr9kjOcD6g1JpEuN670axDok3c12zNjsU6NkNSJN3yZGCTMd13XVgsr/OZTbVGQ==
-X-Received: by 2002:a17:902:850b:: with SMTP id bj11mr7394125plb.39.1569391177288;
-        Tue, 24 Sep 2019 22:59:37 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m2sm3836534pgc.19.2019.09.24.22.59.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2019 22:59:36 -0700 (PDT)
-Date:   Tue, 24 Sep 2019 22:59:33 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <mripard@kernel.org>, linux-pm@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>,
-        David Dai <daidavid1@codeaurora.org>
-Subject: Re: [RFC PATCH] interconnect: Replace of_icc_get() with icc_get()
- and reduce DT binding
-Message-ID: <20190925055933.GA2810@tuxbook-pro>
-References: <20190925054133.206992-1-swboyd@chromium.org>
+        id S2633947AbfIYGE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 02:04:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37338 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404392AbfIYGE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 02:04:56 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 482378980F9;
+        Wed, 25 Sep 2019 06:04:56 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-181.pek2.redhat.com [10.72.12.181])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5E0A7608C0;
+        Wed, 25 Sep 2019 06:04:49 +0000 (UTC)
+Date:   Wed, 25 Sep 2019 14:04:45 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     jmorris@namei.org, sashal@kernel.org, ebiederm@xmission.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        james.morse@arm.com, vladimir.murzin@arm.com,
+        matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCH v5 01/17] kexec: quiet down kexec reboot
+Message-ID: <20190925060445.GA30921@dhcp-128-65.nay.redhat.com>
+References: <20190923203427.294286-1-pasha.tatashin@soleen.com>
+ <20190923203427.294286-2-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190925054133.206992-1-swboyd@chromium.org>
+In-Reply-To: <20190923203427.294286-2-pasha.tatashin@soleen.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 25 Sep 2019 06:04:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24 Sep 22:41 PDT 2019, Stephen Boyd wrote:
-
-> I don't see any users of icc_get() in the kernel today, and adding them
-> doesn't make sense. That's because adding calls to that function in a
-> driver will make the driver SoC specific given that the arguments are
-> some sort of source and destination numbers that would typically be
-> listed in DT or come from platform data so they can match a global
-> numberspace of interconnect numbers. It would be better to follow the
-> approach of other kernel frameworks where the API is the same no matter
-> how the platform is described (i.e. platform data, DT, ACPI, etc.) and
-> swizzle the result in the framework to match whatever the device is by
-> checking for a DT node pointer or a fwnode pointer, etc. Therefore,
-> install icc_get() as the defacto API and make drivers use that instead
-> of of_icc_get() which implies the driver is DT specific when it doesn't
-> need to be.
+On 09/23/19 at 04:34pm, Pavel Tatashin wrote:
+> Here is a regular kexec command sequence and output:
+> =====
+> $ kexec --reuse-cmdline -i --load Image
+> $ kexec -e
+> [  161.342002] kexec_core: Starting new kernel
 > 
-
-+1 on this part!
-
-> The DT binding could also be simplified somewhat. Currently a path needs
-> to be specified in DT for each and every use case that is possible for a
-> device to want. Typically the path is to memory, which looks to be
-> reserved for in the binding with the "dma-mem" named path, but sometimes
-> the path is from a device to the CPU or more generically from a device
-> to another device which could be a CPU, cache, DMA master, or another
-> device if some sort of DMA to DMA scenario is happening. Let's remove
-> the pair part of the binding so that we just list out a device's
-> possible endpoints on the bus or busses that it's connected to.
+> Welcome to Buildroot
+> buildroot login:
+> =====
 > 
-> If the kernel wants to figure out what the path is to memory or the CPU
-> or a cache or something else it should be able to do that by finding the
-> node for the "destination" endpoint, extracting that node's
-> "interconnects" property, and deriving the path in software. For
-> example, we shouldn't need to write out each use case path by path in DT
-> for each endpoint node that wants to set a bandwidth to memory. We
-> should just be able to indicate what endpoint(s) a device sits on based
-> on the interconnect provider in the system and then walk the various
-> interconnects to find the path from that source endpoint to the
-> destination endpoint.
+> Even when "quiet" kernel parameter is specified, "kexec_core: Starting
+> new kernel" is printed.
 > 
-
-But doesn't this implies that the other end of the path is always some
-specific node, e.g. DDR? With a single node how would you describe
-CPU->LLCC or GPU->OCIMEM?
-
-> Obviously this patch doesn't compile but I'm sending it out to start
-> this discussion so we don't get stuck on the binding or the kernel APIs
-> for a long time. It looks like we should be OK in terms of backwards
-> compatibility because we can just ignore the second element in an old
-> binding, but maybe we'll want to describe paths in different directions
-> (e.g. the path from the CPU to the SD controller may be different than
-> the path the SD controller takes to the CPU) and that may require
-> extending interconnect-names to indicate what direction/sort of path it
-> is. I'm basically thinking about master vs. slave ports in AXI land.
+> This message has  KERN_EMERG level, but there is no emergency, it is a
+> normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
 > 
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: <linux-pm@vger.kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: <devicetree@vger.kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Evan Green <evgreen@chromium.org>
-> Cc: David Dai <daidavid1@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> Machines that have slow console baud rate benefit from less output.
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Reviewed-by: Simon Horman <horms@verge.net.au>
 > ---
->  .../bindings/interconnect/interconnect.txt    | 19 ++++---------------
->  include/linux/interconnect.h                  | 13 ++-----------
->  2 files changed, 6 insertions(+), 26 deletions(-)
+>  kernel/kexec_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-> index 6f5d23a605b7..f8979186b8a7 100644
-> --- a/Documentation/devicetree/bindings/interconnect/interconnect.txt
-> +++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-> @@ -11,7 +11,7 @@ The interconnect provider binding is intended to represent the interconnect
->  controllers in the system. Each provider registers a set of interconnect
->  nodes, which expose the interconnect related capabilities of the interconnect
->  to consumer drivers. These capabilities can be throughput, latency, priority
-> -etc. The consumer drivers set constraints on interconnect path (or endpoints)
-> +etc. The consumer drivers set constraints on interconnect paths (or endpoints)
->  depending on the use case. Interconnect providers can also be interconnect
->  consumers, such as in the case where two network-on-chip fabrics interface
->  directly.
-> @@ -42,23 +42,12 @@ multiple paths from different providers depending on use case and the
->  components it has to interact with.
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index d5870723b8ad..2c5b72863b7b 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -1169,7 +1169,7 @@ int kernel_kexec(void)
+>  		 * CPU hotplug again; so re-enable it here.
+>  		 */
+>  		cpu_hotplug_enable();
+> -		pr_emerg("Starting new kernel\n");
+> +		pr_notice("Starting new kernel\n");
+>  		machine_shutdown();
+>  	}
 >  
->  Required properties:
-> -interconnects : Pairs of phandles and interconnect provider specifier to denote
-> -	        the edge source and destination ports of the interconnect path.
-> -
-> -Optional properties:
-> -interconnect-names : List of interconnect path name strings sorted in the same
-> -		     order as the interconnects property. Consumers drivers will use
-> -		     interconnect-names to match interconnect paths with interconnect
-> -		     specifier pairs.
-> -
-> -                     Reserved interconnect names:
-> -			 * dma-mem: Path from the device to the main memory of
-> -			            the system
-> +interconnects : phandle and interconnect provider specifier to denote
-> +	        the edge source for this node.
->  
->  Example:
->  
->  	sdhci@7864000 {
->  		...
-> -		interconnects = <&pnoc MASTER_SDCC_1 &bimc SLAVE_EBI_CH0>;
-> -		interconnect-names = "sdhc-mem";
-> +		interconnects = <&pnoc MASTER_SDCC_1>;
 
-This example seems incomplete, as it doesn't describe the path between
-CPU and the config space, with this in place I think you need the
-interconnect-names.
+Acked-by: Dave Young <dyoung@redhat.com>
 
-
-But with a single interconnect, the interconnect-names should be
-omitted, as done in other frameworks.
-
->  	};
-> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
-> index d70a914cba11..e1ae704f5ab1 100644
-> --- a/include/linux/interconnect.h
-> +++ b/include/linux/interconnect.h
-> @@ -25,23 +25,14 @@ struct device;
->  
->  #if IS_ENABLED(CONFIG_INTERCONNECT)
->  
-> -struct icc_path *icc_get(struct device *dev, const int src_id,
-> -			 const int dst_id);
-> -struct icc_path *of_icc_get(struct device *dev, const char *name);
-> +struct icc_path *icc_get(struct device *dev, const char *name);
->  void icc_put(struct icc_path *path);
->  int icc_set_bw(struct icc_path *path, u32 avg_bw, u32 peak_bw);
->  void icc_set_tag(struct icc_path *path, u32 tag);
->  
->  #else
->  
-> -static inline struct icc_path *icc_get(struct device *dev, const int src_id,
-> -				       const int dst_id)
-> -{
-> -	return NULL;
-> -}
-> -
-> -static inline struct icc_path *of_icc_get(struct device *dev,
-> -					  const char *name)
-> +static inline struct icc_path *icc_get(struct device *dev, const char *name)
-
-I like this part, if mimics what's done in other frameworks and removes
-the ties to OF from the API.
-
-Regards,
-Bjorn
-
->  {
->  	return NULL;
->  }
-> 
-> base-commit: b5b3bd898ba99fb0fb6aed3b23ec6353a1724d6f
-> -- 
-> Sent by a computer through tubes
-> 
+Thanks
+Dave
