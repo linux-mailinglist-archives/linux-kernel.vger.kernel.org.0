@@ -2,132 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3066BD9FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A0BBDA2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:48:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442816AbfIYIhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 04:37:21 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2716 "EHLO huawei.com"
+        id S1727921AbfIYIsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 04:48:43 -0400
+Received: from mail.synology.com ([211.23.38.101]:49999 "EHLO synology.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405350AbfIYIhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:37:20 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D8E29B19EFCEC1C85424;
-        Wed, 25 Sep 2019 16:37:18 +0800 (CST)
-Received: from [127.0.0.1] (10.57.88.168) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 25 Sep 2019
- 16:37:12 +0800
-Subject: Re: [PATCH] tty:vt: Add check the return value of kzalloc to avoid
- oops
-To:     Nicolas Pitre <nico@fluxnic.net>
-CC:     Greg KH <gregkh@linuxfoundation.org>, <penberg@cs.helsinki.fi>,
-        <jslaby@suse.com>, <textshell@uchuujin.de>, <sam@ravnborg.org>,
-        <daniel.vetter@ffwll.ch>, <mpatocka@redhat.com>,
-        <ghalat@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <yangyingliang@huawei.com>, <yuehaibing@huawei.com>,
-        <zengweilin@huawei.com>
-References: <1568884695-56789-1-git-send-email-nixiaoming@huawei.com>
- <20190919092933.GA2684163@kroah.com>
- <nycvar.YSQ.7.76.1909192251210.24536@knanqh.ubzr>
- <20190920060426.GA473496@kroah.com>
- <bee63793-e9f4-ecc4-7966-765207009c75@huawei.com>
- <nycvar.YSQ.7.76.1909222347410.24536@knanqh.ubzr>
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-Message-ID: <0a21cb45-d67b-ac3f-7fcb-de29ca28fbeb@huawei.com>
-Date:   Wed, 25 Sep 2019 16:37:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <nycvar.YSQ.7.76.1909222347410.24536@knanqh.ubzr>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.88.168]
-X-CFilter-Loop: Reflected
+        id S1726030AbfIYIsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 04:48:42 -0400
+X-Greylist: delayed 595 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Sep 2019 04:48:41 EDT
+Received: from localhost.localdomain (unknown [10.17.32.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by synology.com (Postfix) with ESMTPSA id AF93B92B0345;
+        Wed, 25 Sep 2019 16:38:44 +0800 (CST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
+        t=1569400724; bh=qoQWCxWCJPyKO21TpgsOgMJlEEgWmStypzH+J3eiBUw=;
+        h=From:To:Cc:Subject:Date;
+        b=XgGl+7z+8JyOlb60HISxEuT/Y4gp2JCJZ0xdJ9+Ifq7JNszjy8tM32qHWa2vF7X4W
+         wcAsFcfRLC1ez9Kx45SdkU+6GVcM1X/zlVD3+XdqPVSKiG2MHJui9Fu7RXe+1xI5b/
+         0TFf03izZUhOFUk4bIIiL6ik/vA0SpvrcOFrZpHg=
+From:   jiayeli <jiayeli@synology.com>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Jia-Ye Li <jiayeli@synology.com>
+Subject: [PATCH] staging: exfat: Use kvzalloc() instead of kzalloc() for exfat_sb_info
+Date:   Wed, 25 Sep 2019 16:37:29 +0800
+Message-Id: <20190925083729.4653-1-jiayeli@synology.com>
+X-Mailer: git-send-email 2.17.1
+X-Synology-MCP-Status: no
+X-Synology-Spam-Flag: no
+X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
+X-Synology-Virus-Status: no
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Jia-Ye Li <jiayeli@synology.com>
 
+Fix mount failed "Cannot allocate memory".
 
-On 2019/9/23 11:50, Nicolas Pitre wrote:
-> On Sat, 21 Sep 2019, Xiaoming Ni wrote:
-> 
->> @ Nicolas Pitre
->> Can I make a v2 patch based on your advice ?
->> Or you will submit a patch for "GFP_WONTFAIL" yourself ?
-> 
-> Here's a patch implementing what I had in mind. This is compile tested 
-> only.
-> 
-> ----- >8
-> 
-> Subject: [PATCH] mm: add __GFP_WONTFAIL and GFP_ONBOOT
-> 
-> Some memory allocations are very unlikely to fail during system boot.
-> Because of that, the code often doesn't bother to check for allocation
-> failure, but this gets reported anyway.
-> 
-> As an alternative to adding code to check for NULL that has almost no
-> chance of ever being exercised, let's use a GFP flag to identify those
-> cases and panic the kernel if allocation failure ever occurs.
-> 
-> Conversion of one such instance is also included.
-> 
-> Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
-> 
-.....
-....
+When the memory gets fragmented, kzalloc() might fail to allocate
+physically contiguous pages for the struct exfat_sb_info (its size is
+about 34KiB) even the total free memory is enough.
+Use kvzalloc() to solve this problem.
 
->  /**
-> @@ -285,6 +293,9 @@ struct vm_area_struct;
->   * available and will not wake kswapd/kcompactd on failure. The _LIGHT
->   * version does not attempt reclaim/compaction at all and is by default used
->   * in page fault path, while the non-light is used by khugepaged.
-> + *
-> + * %GFP_ONBOOT is for relatively small allocations that are not expected
-> + * to fail while the system is booting.
->   */
->  #define GFP_ATOMIC	(__GFP_HIGH|__GFP_ATOMIC|__GFP_KSWAPD_RECLAIM)
->  #define GFP_KERNEL	(__GFP_RECLAIM | __GFP_IO | __GFP_FS)
-> @@ -300,6 +311,7 @@ struct vm_area_struct;
->  #define GFP_TRANSHUGE_LIGHT	((GFP_HIGHUSER_MOVABLE | __GFP_COMP | \
->  			 __GFP_NOMEMALLOC | __GFP_NOWARN) & ~__GFP_RECLAIM)
->  #define GFP_TRANSHUGE	(GFP_TRANSHUGE_LIGHT | __GFP_DIRECT_RECLAIM)
-> +#define GFP_ONBOOT	(GFP_NOWAIT | __GFP_WONTFAIL)
->  
+Reviewed-by: Ethan Wu <ethanwu@synology.com>
+Signed-off-by: Jia-Ye Li <jiayeli@synology.com>
+---
+ drivers/staging/exfat/exfat_super.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Isn't it better to bind GFP_ONBOOT and GFP_NOWAIT?
-Can be not GFP_NOWAIT when applying for memory at boot time
-
->  /* Convert GFP flags to their corresponding migrate type */
->  #define GFP_MOVABLE_MASK (__GFP_RECLAIMABLE|__GFP_MOVABLE)
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index ff5484fdbd..36dee09f7f 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4625,6 +4625,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->  fail:
->  	warn_alloc(gfp_mask, ac->nodemask,
->  			"page allocation failure: order:%u", order);
-> +	if (gfp_mask & __GFP_WONTFAIL) {
-
-Is it more intuitive to use __GFP_DIE_IF_FAIL as the flag name?
-
-> +		/*
-> +		 * The assumption was wrong. This is never supposed to happen.
-> +		 * Caller most likely won't check for a returned NULL either.
-> +		 * So the only reasonable thing to do is to pannic.
-> +		 */
-> +		panic("Failed to allocate memory despite GFP_WONTFAIL\n");
-> +	}
->  got_pg:
->  	return page;
->  }
-> 
-> .
-> 
-
-thanks
-Niaoming Ni
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 5f6caee819a6..bfad2a6bbcb3 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -7,6 +7,7 @@
+ #include <linux/init.h>
+ #include <linux/time.h>
+ #include <linux/slab.h>
++#include <linux/mm.h>
+ #include <linux/seq_file.h>
+ #include <linux/pagemap.h>
+ #include <linux/mpage.h>
+@@ -3450,7 +3451,7 @@ static void exfat_free_super(struct exfat_sb_info *sbi)
+ 		kfree(sbi->options.iocharset);
+ 	/* mutex_init is in exfat_fill_super function. only for 3.7+ */
+ 	mutex_destroy(&sbi->s_lock);
+-	kfree(sbi);
++	kvfree(sbi);
+ }
+ 
+ static void exfat_put_super(struct super_block *sb)
+@@ -3845,7 +3846,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
+ 	 * the filesystem, since we're only just about to mount
+ 	 * it and have no inodes etc active!
+ 	 */
+-	sbi = kzalloc(sizeof(struct exfat_sb_info), GFP_KERNEL);
++	sbi = kvzalloc(sizeof(*sbi), GFP_KERNEL);
+ 	if (!sbi)
+ 		return -ENOMEM;
+ 	mutex_init(&sbi->s_lock);
+-- 
+2.17.1
 
