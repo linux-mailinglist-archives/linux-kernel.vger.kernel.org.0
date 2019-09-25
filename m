@@ -2,31 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37C6CBD89D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 08:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 911ABBD8AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442423AbfIYG5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 02:57:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37058 "EHLO mx1.redhat.com"
+        id S2442431AbfIYHCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 03:02:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38406 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405037AbfIYG5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 02:57:38 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S2405259AbfIYHCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:02:47 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 628D389AC6;
-        Wed, 25 Sep 2019 06:57:37 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6FDB218C4290;
+        Wed, 25 Sep 2019 07:02:46 +0000 (UTC)
 Received: from [10.36.117.14] (ovpn-117-14.ams2.redhat.com [10.36.117.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BF3A608C0;
-        Wed, 25 Sep 2019 06:57:35 +0000 (UTC)
-Subject: Re: [PATCH V2] mm/hotplug: Reorder memblock_[free|remove]() calls in
- try_remove_memory()
-To:     Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Cc:     Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@suse.com>,
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF22361559;
+        Wed, 25 Sep 2019 07:02:43 +0000 (UTC)
+Subject: Re: [PATCH v1] mm/memory_hotplug: Don't take the cpu_hotplug_lock
+To:     Qian Cai <cai@lca.pw>, Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
         Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <1569380273-7708-1-git-send-email-anshuman.khandual@arm.com>
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20190924143615.19628-1-david@redhat.com>
+ <1569337401.5576.217.camel@lca.pw> <20190924151147.GB23050@dhcp22.suse.cz>
+ <1569351244.5576.219.camel@lca.pw>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -73,117 +76,66 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <733fc7d1-54ae-d3f2-c006-671a2ed1c70f@redhat.com>
-Date:   Wed, 25 Sep 2019 08:57:34 +0200
+Message-ID: <2f8c8099-8de0-eccc-2056-a79d2f97fbf7@redhat.com>
+Date:   Wed, 25 Sep 2019 09:02:43 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1569380273-7708-1-git-send-email-anshuman.khandual@arm.com>
+In-Reply-To: <1569351244.5576.219.camel@lca.pw>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 25 Sep 2019 06:57:37 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Wed, 25 Sep 2019 07:02:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.09.19 04:57, Anshuman Khandual wrote:
-> Currently during memory hot add procedure, memory gets into memblock before
-> calling arch_add_memory() which creates it's linear mapping.
+On 24.09.19 20:54, Qian Cai wrote:
+> On Tue, 2019-09-24 at 17:11 +0200, Michal Hocko wrote:
+>> On Tue 24-09-19 11:03:21, Qian Cai wrote:
+>> [...]
+>>> While at it, it might be a good time to rethink the whole locking over there, as
+>>> it right now read files under /sys/kernel/slab/ could trigger a possible
+>>> deadlock anyway.
+>>>
+>>
+>> [...]
+>>> [  442.452090][ T5224] -> #0 (mem_hotplug_lock.rw_sem){++++}:
+>>> [  442.459748][ T5224]        validate_chain+0xd10/0x2bcc
+>>> [  442.464883][ T5224]        __lock_acquire+0x7f4/0xb8c
+>>> [  442.469930][ T5224]        lock_acquire+0x31c/0x360
+>>> [  442.474803][ T5224]        get_online_mems+0x54/0x150
+>>> [  442.479850][ T5224]        show_slab_objects+0x94/0x3a8
+>>> [  442.485072][ T5224]        total_objects_show+0x28/0x34
+>>> [  442.490292][ T5224]        slab_attr_show+0x38/0x54
+>>> [  442.495166][ T5224]        sysfs_kf_seq_show+0x198/0x2d4
+>>> [  442.500473][ T5224]        kernfs_seq_show+0xa4/0xcc
+>>> [  442.505433][ T5224]        seq_read+0x30c/0x8a8
+>>> [  442.509958][ T5224]        kernfs_fop_read+0xa8/0x314
+>>> [  442.515007][ T5224]        __vfs_read+0x88/0x20c
+>>> [  442.519620][ T5224]        vfs_read+0xd8/0x10c
+>>> [  442.524060][ T5224]        ksys_read+0xb0/0x120
+>>> [  442.528586][ T5224]        __arm64_sys_read+0x54/0x88
+>>> [  442.533634][ T5224]        el0_svc_handler+0x170/0x240
+>>> [  442.538768][ T5224]        el0_svc+0x8/0xc
+>>
+>> I believe the lock is not really needed here. We do not deallocated
+>> pgdat of a hotremoved node nor destroy the slab state because an
+>> existing slabs would prevent hotremove to continue in the first place.
+>>
+>> There are likely details to be checked of course but the lock just seems
+>> bogus.
 > 
-> add_memory_resource() {
-> 	..................
-> 	memblock_add_node()
-> 	..................
-> 	arch_add_memory()
-> 	..................
-> }
-> 
-> But during memory hot remove procedure, removal from memblock happens first
-> before it's linear mapping gets teared down with arch_remove_memory() which
-> is not consistent. Resource removal should happen in reverse order as they
-> were added. However this does not pose any problem for now, unless there is
-> an assumption regarding linear mapping. One example was a subtle failure on
-> arm64 platform [1]. Though this has now found a different solution.
-> 
-> try_remove_memory() {
-> 	..................
-> 	memblock_free()
-> 	memblock_remove()
-> 	..................
-> 	arch_remove_memory()
-> 	..................
-> }
-> 
-> This changes the sequence of resource removal including memblock and linear
-> mapping tear down during memory hot remove which will now be the reverse
-> order in which they were added during memory hot add. The changed removal
-> order looks like the following.
-> 
-> try_remove_memory() {
-> 	..................
-> 	arch_remove_memory()
-> 	..................
-> 	memblock_free()
-> 	memblock_remove()
-> 	..................
-> }
-> 
-> [1] https://patchwork.kernel.org/patch/11127623/
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> Changes in V2:
-> 
-> - Changed the commit message as per Michal and David 
-> 
-> Changed in V1: https://patchwork.kernel.org/patch/11146361/
-> 
-> Original patch https://lkml.org/lkml/2019/9/3/327
-> 
-> Memory hot remove now works on arm64 without this because a recent commit
-> 60bb462fc7ad ("drivers/base/node.c: simplify unregister_memory_block_under_nodes()").
-> 
-> David mentioned that re-ordering should still make sense for consistency
-> purpose (removing stuff in the reverse order they were added). This patch
-> is now detached from arm64 hot-remove series.
-> 
-> https://lkml.org/lkml/2019/9/3/326
-> 
->  mm/memory_hotplug.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 49f7bf91c25a..4f7d426a84d0 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1763,13 +1763,13 @@ static int __ref try_remove_memory(int nid, u64 start, u64 size)
->  
->  	/* remove memmap entry */
->  	firmware_map_remove(start, start + size, "System RAM");
-> -	memblock_free(start, size);
-> -	memblock_remove(start, size);
->  
->  	/* remove memory block devices before removing memory */
->  	remove_memory_block_devices(start, size);
->  
->  	arch_remove_memory(nid, start, size, NULL);
-> +	memblock_free(start, size);
-> +	memblock_remove(start, size);
->  	__release_memory_resource(start, size);
->  
->  	try_offline_node(nid);
+> Check 03afc0e25f7f ("slab: get_online_mems for
+> kmem_cache_{create,destroy,shrink}"). It actually talk about the races during
+> memory as well cpu hotplug, so it might even that cpu_hotplug_lock removal is
+> problematic?
 > 
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Which removal are you referring to? get_online_mems() does not mess with
+the cpu hotplug lock (and therefore this patch).
 
 -- 
 
