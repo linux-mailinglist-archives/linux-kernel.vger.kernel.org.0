@@ -2,149 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A11BE28D
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 18:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C659ABE292
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 18:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbfIYQev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 12:34:51 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33219 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbfIYQeu (ORCPT
+        id S2390419AbfIYQfi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 12:35:38 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40143 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388566AbfIYQfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 12:34:50 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b9so7725985wrs.0;
-        Wed, 25 Sep 2019 09:34:49 -0700 (PDT)
+        Wed, 25 Sep 2019 12:35:37 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10so87712pgj.7
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 09:35:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=s+6/bt73F0nPkh+ms30j0ei78DCt1MwVFFVQl9AGl+A=;
-        b=smygSNg9FtLOVqPacXXLuBqzZgNquwgf502lQnDrZZV5nuuo1H5s/ex7lbhjMHm7or
-         W5f9sP6CfAj+zLQVBgnlN1BNRQ/Yiu10T/wrAw9PtG28Eo1CRYdl+oeO4TROcZzQS2WE
-         gwrlNPb6xbDF/I7/AqayB1DVxtgWwm6oW+212q5UpYOTFsHGtpRbSfxhya14GvH7272F
-         xF2+lsaLwAtHatm8iRhPM6GjMO0HOy/Lav8cY4AoZlp9nsHLgUnJQE6d3hAwA4UFEoXP
-         kHb+O9tMEzdTX6lw0EXzCGtD23AqF+/TwTcoyhi/gSKJqU3FW7uNrqAnrBsso92RRSjy
-         L0DQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mPt8nETl12RMHNEm39NI8Pt00xmglqOV/flAb9Vcyeo=;
+        b=ReGJW3sdE/VTfIUENvL+niL/4F1/GnzTwqVvSJTIO9/XpMAw1uvQ0IdZLov1RRgOXn
+         b6yj6L8xV2Ka0z7DEzUrEL5mxxU1bWlZSWQHuSyFea2co2/olTtzS2j+ntIvdsfp5aO9
+         Pi3ZCjJLoKPMenwwR6aGQYnWzObYvoCCgSMogxhPQMhjN6cezjNO/BbCDyzGYb9KEL/u
+         F6WFWvTmCfExHWO56mqQNWggFN1DupqYpQdxg/LXcA+58jUn9RoOmdm2nyw+21DF3o0R
+         ghaJ/B8EOaVLRg132Bm9Q6UyWPNAGhuKGXlokYHeZKZ06OJXAGGUP2FK1v9T8SFAGHB6
+         iPQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=s+6/bt73F0nPkh+ms30j0ei78DCt1MwVFFVQl9AGl+A=;
-        b=uZmx7b4QFSz0DPhpOGXmau4ueunQ4fmBukYnyHH5Wx0aemMq7K8b147ZLNuGZCGuu1
-         PsE7xfmOBrZwtQ7zV2agv6PS39wJ/POvEP2Ouafi3tDFedFe404OY4M4MyXSeQ7mjJkk
-         YzflGrgcJzNqYSQjQLKJQnpaRDufAqkCHe7nwQzxcBP3a++T/XBUSmxi4BU3ZdWTZuy7
-         8rujjY9fEBkOuRxOdpmOiG5nw4WFUkA8uJ/Sy5M9NehHUyhXRspIgKoPsMN21ko+kJaM
-         oAbWMQrKhMJs5wzViUhTA1MNKCA0tLexJg45x26wMBVss/iynnOecTfUFwcR5xqAOv3U
-         gA4g==
-X-Gm-Message-State: APjAAAVIQ6Ek0N7+KapieCSoO+7xpyCkIQGYKG6jTlr4sdhng1+qFSEN
-        mNO4yyNrQvRW7VeOr413qewreHdI
-X-Google-Smtp-Source: APXvYqzG9uZ++lfYDbCS8zeD0orJK6Hij8TVimAq9rhTUfa9PhmpSpHL6h6GyA04sZa+N/qoS5hQMw==
-X-Received: by 2002:a5d:4f86:: with SMTP id d6mr10247057wru.384.1569429288225;
-        Wed, 25 Sep 2019 09:34:48 -0700 (PDT)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id b16sm9170000wrh.5.2019.09.25.09.34.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 25 Sep 2019 09:34:47 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jim Mattson <jmattson@google.com>,
-        Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Subject: [PATCH] KVM: nVMX: cleanup and fix host 64-bit mode checks
-Date:   Wed, 25 Sep 2019 18:34:46 +0200
-Message-Id: <1569429286-35157-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mPt8nETl12RMHNEm39NI8Pt00xmglqOV/flAb9Vcyeo=;
+        b=tzFHffbvlwchzP4lZzUHFNwHyIM/thHgP1fXw5NBOOrtM+08xagjdS3HOL60uzPMB2
+         8Y892gZyXiv7Lxmk6+5QddPPfMV7TgizksVP9Kw9rdgAoaKs3vol1/Vvx+1BGpuGG0y+
+         tuPnv+MMOf8sAy9uYFULsQDO0G+Ju41Wx5Xz785gWy78n2OaUzmtFHuLYLIIvENPS4oH
+         ertH4kOXML84O9rZYitqircaN9kXRRvePHJl5W7ZfAHxS07iZzuyfxvkhhk0i6lAWrPi
+         RXJgVay1O4k8NPEyS43NdXSzsvKTElevtKB7QqKaXF99CDN5QQkwdYxZre4yJXWoVWZ2
+         ueuQ==
+X-Gm-Message-State: APjAAAVSrcNSnO+piCr3AWe+xV/7XTz28HsLNKHu1NhAtkFEJ7oZjDkc
+        eENC17yG99DV4cfIg5SdZI9eq2WDC8x6ia/zn/wt5g==
+X-Google-Smtp-Source: APXvYqwYq8+L73SVhEe3D3YBp4dgCxMIF9vqvVXmHNM6vME53NmqKSx1P/bKg4aMw46AEow+92+ZehYtVSVTbeFTj48=
+X-Received: by 2002:a63:d908:: with SMTP id r8mr191790pgg.263.1569429336296;
+ Wed, 25 Sep 2019 09:35:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAKwvOdmFqPSyeKn-0th_ca9B3QU63G__kEJ=X0tfjhE+1_p=FQ@mail.gmail.com>
+ <20190924193310.132104-1-ndesaulniers@google.com> <20190925102041.GB3891@zn.tnic>
+In-Reply-To: <20190925102041.GB3891@zn.tnic>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 25 Sep 2019 09:35:24 -0700
+Message-ID: <CAKwvOdneE7kMupFzxZC-6c=ps_98FP+Nz88fCXQ74z90hmaaXQ@mail.gmail.com>
+Subject: Re: [PATCH v2] x86, realmode: explicitly set entry via command line
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        Tri Vo <trong@android.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Rob Herring <robh@kernel.org>,
+        George Rimar <grimar@accesssoftek.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Fangrui Song <maskray@google.com>,
+        Peter Smith <Peter.Smith@arm.com>, Rui Ueyama <ruiu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM was incorrectly checking vmcs12->host_ia32_efer even if the "load
-IA32_EFER" exit control was reset.  Also, some checks were not using
-the new CC macro for tracing.
++ Fangrui, Peter, Rui, George (LLD)
 
-Cleanup everything so that the vCPU's 64-bit mode is determined
-directly from EFER_LMA and the VMCS checks are based on that, which
-matches section 26.2.4 of the SDM.
+On Wed, Sep 25, 2019 at 3:20 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> + some more people who did the unified realmode thing.
+>
+> On Tue, Sep 24, 2019 at 12:33:08PM -0700, Nick Desaulniers wrote:
+> > Linking with ld.lld via $ make LD=ld.lld produces the warning:
+> > ld.lld: warning: cannot find entry symbol _start; defaulting to 0x1000
+> >
+> > Linking with ld.bfd shows the default entry is 0x1000:
+> > $ readelf -h arch/x86/realmode/rm/realmode.elf | grep Entry
+> >   Entry point address:               0x1000
+> >
+> > While ld.lld is being pedantic, just set the entry point explicitly,
+> > instead of depending on the implicit default.
+> >
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/216
+> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > ---
+> > Changes V1 -> V2:
+> > * Use command line flag, rather than linker script, as ld.bfd produces a
+> >   syntax error for `ENTRY(0x1000)` but is happy with `-e 0x1000`
+> >
+> >  arch/x86/realmode/rm/Makefile | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
+> > index f60501a384f9..338a00c5257f 100644
+> > --- a/arch/x86/realmode/rm/Makefile
+> > +++ b/arch/x86/realmode/rm/Makefile
+> > @@ -46,7 +46,7 @@ $(obj)/pasyms.h: $(REALMODE_OBJS) FORCE
+> >  targets += realmode.lds
+> >  $(obj)/realmode.lds: $(obj)/pasyms.h
+> >
+> > -LDFLAGS_realmode.elf := -m elf_i386 --emit-relocs -T
+> > +LDFLAGS_realmode.elf := -m elf_i386 --emit-relocs -e 0x1000 -T
+>
+> So looking at arch/x86/realmode/rm/realmode.lds.S: what's stopping
+> people from adding more sections before the first
+>
+> . = ALIGN(PAGE_SIZE);
+>
+> which, with enough bytes to go above the first 4K, would cause that
+> alignment to go to 0x2000 and then your hardcoded address would be
+> wrong, all of a sudden.
 
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Cc: Jim Mattson <jmattson@google.com>
-Cc: Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Fixes: 5845038c111db27902bc220a4f70070fe945871c
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx/nested.c | 53 ++++++++++++++++++++---------------------------
- 1 file changed, 22 insertions(+), 31 deletions(-)
+Thanks for the consideration Boris.  So IIUC if the preceding sections
+are larger than 0x1000 altogether, setting the entry there will be
+wrong?
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 70d59d9304f2..e108847f6cf8 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -2664,8 +2664,26 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
- 	    CC(!kvm_pat_valid(vmcs12->host_ia32_pat)))
- 		return -EINVAL;
- 
--	ia32e = (vmcs12->vm_exit_controls &
--		 VM_EXIT_HOST_ADDR_SPACE_SIZE) != 0;
-+#ifdef CONFIG_X86_64
-+	ia32e = !!(vcpu->arch.efer & EFER_LMA);
-+#else
-+	if (CC(vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE))
-+		return -EINVAL;
-+
-+	ia32e = false;
-+#endif
-+
-+	if (ia32e) {
-+		if (CC(!(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)) ||
-+		    CC(!(vmcs12->host_cr4 & X86_CR4_PAE)))
-+			return -EINVAL;
-+	} else {
-+		if (CC(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) ||
-+		    CC(vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
-+		    CC(vmcs12->host_cr4 & X86_CR4_PCIDE) ||
-+		    CC(((vmcs12->host_rip) >> 32) & 0xffffffff))
-+			return -EINVAL;
-+	}
- 
- 	if (CC(vmcs12->host_cs_selector & (SEGMENT_RPL_MASK | SEGMENT_TI_MASK)) ||
- 	    CC(vmcs12->host_ss_selector & (SEGMENT_RPL_MASK | SEGMENT_TI_MASK)) ||
-@@ -2684,35 +2702,8 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
- 	    CC(is_noncanonical_address(vmcs12->host_gs_base, vcpu)) ||
- 	    CC(is_noncanonical_address(vmcs12->host_gdtr_base, vcpu)) ||
- 	    CC(is_noncanonical_address(vmcs12->host_idtr_base, vcpu)) ||
--	    CC(is_noncanonical_address(vmcs12->host_tr_base, vcpu)))
--		return -EINVAL;
--
--	if (!(vmcs12->host_ia32_efer & EFER_LMA) &&
--	    ((vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
--	    (vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE))) {
--		return -EINVAL;
--	}
--
--	if ((vmcs12->host_ia32_efer & EFER_LMA) &&
--	    !(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)) {
--		return -EINVAL;
--	}
--
--	if (!(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) &&
--	    ((vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
--	    (vmcs12->host_cr4 & X86_CR4_PCIDE) ||
--	    (((vmcs12->host_rip) >> 32) & 0xffffffff))) {
--		return -EINVAL;
--	}
--
--	if ((vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) &&
--	    ((!(vmcs12->host_cr4 & X86_CR4_PAE)) ||
--	    (is_noncanonical_address(vmcs12->host_rip, vcpu)))) {
--		return -EINVAL;
--	}
--#else
--	if (vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE ||
--	    vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)
-+	    CC(is_noncanonical_address(vmcs12->host_tr_base, vcpu)) ||
-+	    CC(is_noncanonical_address(vmcs12->host_rip, vcpu)))
- 		return -EINVAL;
- #endif
- 
+Currently, .text looks like it's currently at 0x1000 for a defconfig,
+and I assume that could move in the case I stated above?
+$ readelf -S arch/x86/realmode/rm/realmode.elf | grep text
+  [ 3] .text             PROGBITS        00001000 201000 000f51 00  AX
+ 0   0 4096
+...
+
+In that case, it seems that maybe I should set the ENTRY in the linker
+script as:
+diff --git a/arch/x86/realmode/rm/realmode.lds.S
+b/arch/x86/realmode/rm/realmode.lds.S
+index 3bb980800c58..64d135d1ee63 100644
+--- a/arch/x86/realmode/rm/realmode.lds.S
++++ b/arch/x86/realmode/rm/realmode.lds.S
+@@ -11,6 +11,7 @@
+
+ OUTPUT_FORMAT("elf32-i386")
+ OUTPUT_ARCH(i386)
++ENTRY(pa_text_start)
+
+ SECTIONS
+ {
+
 -- 
-1.8.3.1
-
+Thanks,
+~Nick Desaulniers
