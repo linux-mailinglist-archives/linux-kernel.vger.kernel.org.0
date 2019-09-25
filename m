@@ -2,41 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817F6BE306
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84122BE307
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408004AbfIYRFU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 13:05:20 -0400
-Received: from verein.lst.de ([213.95.11.211]:59367 "EHLO verein.lst.de"
+        id S2438065AbfIYRF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 13:05:27 -0400
+Received: from mga14.intel.com ([192.55.52.115]:61047 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407542AbfIYRFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 13:05:20 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D96AB68B02; Wed, 25 Sep 2019 19:05:16 +0200 (CEST)
-Date:   Wed, 25 Sep 2019 19:05:16 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     arnd@arndb.de, nsekhar@ti.com, olof@lixom.net, t-kristo@ti.com,
-        catalin.marinas@arm.com, will@kernel.org, tony@atomide.com,
-        s-anna@ti.com, hch@lst.de, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 linux-next 0/4] arm/arm64: configs: Convert all
- CONFIG_REMOTEPROC instances to y
-Message-ID: <20190925170516.GA16678@lst.de>
-References: <20190920075946.13282-1-j-keerthy@ti.com>
+        id S2407542AbfIYRF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 13:05:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 10:05:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,548,1559545200"; 
+   d="scan'208";a="203645824"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Sep 2019 10:05:25 -0700
+Received: from aabousam-mobl1.amr.corp.intel.com (unknown [10.251.27.167])
+        by linux.intel.com (Postfix) with ESMTP id 74B99580406;
+        Wed, 25 Sep 2019 10:05:24 -0700 (PDT)
+Subject: Re: [PATCH v2] ASoC: Intel: Skylake: prevent memory leak in
+ snd_skl_parse_uuids
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20190925161922.22479-1-navid.emamdoost@gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <13f4bd40-dbaa-e24e-edca-4b4acff9d9c5@linux.intel.com>
+Date:   Wed, 25 Sep 2019 12:05:28 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190920075946.13282-1-j-keerthy@ti.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190925161922.22479-1-navid.emamdoost@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Keerthy,
+On 9/25/19 11:19 AM, Navid Emamdoost wrote:
+> In snd_skl_parse_uuids if allocation for module->instance_id fails, the
+> allocated memory for module shoulde be released. I changes the
+> allocation for module to use devm_kzalloc to be resource_managed
+> allocation and avoid the release in error path.
 
-the patches look good to me:
+if you use devm_, don't you need to fix the error path as well then, I 
+see a kfree(uuid) in skl_freeup_uuid_list().
 
-Acked-by: Christoph Hellwig <hch@lst.de>
+I am not very familiar with this code but the error seems to be that the 
+list_add_tail() is called after the module->instance_id is allocated, so 
+there is a risk that the module allocated earlier is not freed (since 
+it's not yet added to the list). Freeing the module as done in patch 1 
+works, using devm_ without fixing the error path does not seem correct 
+to me.
+
+> 
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> ---
+> Changes in v2:
+> 	- Changed the allocation for module from kzalloc to devm_kzalloc
+> ---
+>   sound/soc/intel/skylake/skl-sst-utils.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/intel/skylake/skl-sst-utils.c b/sound/soc/intel/skylake/skl-sst-utils.c
+> index d43cbf4a71ef..ac37f04b0eea 100644
+> --- a/sound/soc/intel/skylake/skl-sst-utils.c
+> +++ b/sound/soc/intel/skylake/skl-sst-utils.c
+> @@ -284,7 +284,7 @@ int snd_skl_parse_uuids(struct sst_dsp *ctx, const struct firmware *fw,
+>   	 */
+>   
+>   	for (i = 0; i < num_entry; i++, mod_entry++) {
+> -		module = kzalloc(sizeof(*module), GFP_KERNEL);
+> +		module = devm_kzalloc(ctx->dev, sizeof(*module), GFP_KERNEL);
+>   		if (!module) {
+>   			ret = -ENOMEM;
+>   			goto free_uuid_list;
+> 
+
