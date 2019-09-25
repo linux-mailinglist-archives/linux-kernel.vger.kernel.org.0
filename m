@@ -2,145 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABDA1BE4D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 20:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC0FBE4ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 20:48:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443281AbfIYSoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 14:44:01 -0400
-Received: from mail-eopbgr770138.outbound.protection.outlook.com ([40.107.77.138]:22295
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2443246AbfIYSoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 14:44:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AenTYgbSHYYjwRxEPphsfditXs285K2dyZO1iUBY0keOf6UxgOkLXHxllpb05bNVw9mJzTiktCSUfgL7ufkidpaFgMFYbr1uuetE3MMvMo6tL01TrsPCyeUidAay2Mm05mTvbhoMag/wogSesMY/+izdc/nujfM8edC5wg/s3GevF/VSMd9IBTWqmwfPw0iaLswY5m7eALVDlf9yFxZ8so+9EnMKOkLHgQFpW5wIbsMGXy3P5SgTqtPC8WLJoxMSfnutg7ykyOQLmHPZJw+wChUmXSObb/6U8UWBrMV71CT3dyIfsQpPQMnc3vLJ+bzvjSlCj1A2c1F4iJJTHHTHgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W9i0IDR4i3vLZBG9VEbs3HpnUjGGE+4+pQ9p42kKAFc=;
- b=BjGUw8vfkyzRSHimvS3iuiXDziBwyUoxGMCb0x/obqWPhD3+/Gwhqe1PxIq1lS+HKMpoUhBcA8e52zq3MUhQ2B7AYRhKoVb0SmzXpHNJPTnNPuLZgJvuxNT0qHkMrfECVuqhxRhFREQ7YJoVKkPCyej1CGhPDT+F1RKu/NbRlmDHAtzRDVoiZUu7cEZqStUjSZBdz1dlbevVD2/QVawjNMaIzkRfGeyfTcO9fz8MQFYDbsYV3d1GZxXgCYWZw0J9/LpGDfKRDhfbhAx68VpQ20OXuG0A/RL5CZNslALK3Z1SO4kRKYrA2cSQDKHaftokq3iVJqtTzXayOdjkjtcrWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W9i0IDR4i3vLZBG9VEbs3HpnUjGGE+4+pQ9p42kKAFc=;
- b=K2adgvYyvbbCoccZb7RULPanIMdDPgtjU676QzLOlvZHE2YYkRDvFLCLmhJZg/IXpJkymNkGnFbEL38GMl2+x9IkWDS44CO9pyD5S/Dsc7c59fz3kL9rOQ1T4UPZbODeXFEroZt2NOwytKVvD8XFZ0w8IiAYidCpkQVhRhGfj2s=
-Received: from SN6PR2101MB0942.namprd21.prod.outlook.com (52.132.114.19) by
- SN6PR2101MB0895.namprd21.prod.outlook.com (52.132.116.160) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.3; Wed, 25 Sep 2019 18:43:58 +0000
-Received: from SN6PR2101MB0942.namprd21.prod.outlook.com
- ([fe80::7d1a:ddb:3473:b383]) by SN6PR2101MB0942.namprd21.prod.outlook.com
- ([fe80::7d1a:ddb:3473:b383%9]) with mapi id 15.20.2327.004; Wed, 25 Sep 2019
- 18:43:58 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "arnd@arndb.de" <arnd@arndb.de>
-CC:     Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH v3] Drivers: hv: vmbus: Fix harmless building warnings without
- CONFIG_PM_SLEEP
-Thread-Topic: [PATCH v3] Drivers: hv: vmbus: Fix harmless building warnings
- without CONFIG_PM_SLEEP
-Thread-Index: AQHVc9Ew6ma/FG7fcEi3EqlsYUS2JA==
-Date:   Wed, 25 Sep 2019 18:43:57 +0000
-Message-ID: <1569436998-130708-1-git-send-email-decui@microsoft.com>
-Reply-To: Dexuan Cui <decui@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR06CA0073.namprd06.prod.outlook.com
- (2603:10b6:104:3::31) To SN6PR2101MB0942.namprd21.prod.outlook.com
- (2603:10b6:805:4::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.8.3.1
-x-originating-ip: [13.77.154.182]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 18e0c7b3-70f9-4624-dbd7-08d741e852ec
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: SN6PR2101MB0895:|SN6PR2101MB0895:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR2101MB0895D2990559F312B82FA016BF870@SN6PR2101MB0895.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:173;
-x-forefront-prvs: 01713B2841
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(376002)(366004)(396003)(346002)(39860400002)(199004)(189003)(476003)(26005)(25786009)(7736002)(102836004)(107886003)(6506007)(66476007)(478600001)(4326008)(386003)(14454004)(64756008)(316002)(256004)(22452003)(36756003)(14444005)(43066004)(6116002)(66946007)(66556008)(6436002)(2906002)(110136005)(66446008)(10090500001)(1511001)(86362001)(6486002)(8936002)(81156014)(2616005)(10290500003)(5660300002)(2501003)(71190400001)(6512007)(66066001)(186003)(99286004)(305945005)(3846002)(52116002)(2201001)(8676002)(81166006)(486006)(71200400001)(4720700003)(3450700001)(50226002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB0895;H:SN6PR2101MB0942.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 4s82ulJIoYpCJmCglzAlkfNkQjix9zO/5ZGY8WsxRXxHLz15BGAEqpM1zR0Pj3UNh8Uk/1KY1xq5DH2WidVMUJuwjUkluH0l/PiSqqJvNwo7DwI4uaWcE48HnEaAQYuFS+CGbUv1tlqSex5Ga2KquookdprRkOc1GUxaHANE+IF4UciR+CEID3+yF2+mD/J52pZ7S7gymuFFs9ySipew29ZXGnA6Jd+hJVC5bFjmWxp/JGrs4KTs4x6wIZRakRw5Rz6JddDZcRBA/Uj9FZuV/PaP30ADvG/tp0Kyc+h9VrE2qskXnP4rKGI8VtY62PU/rRbwyzJDjilWHne140/fQiOOJg0D9Nc/dak6fxxskjaWz4K6OiGr+lxTDoZduPNquRpsBn8amEZBRcsiVpBp20xTRCVWK/1XCjIR2v76Lho=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A836407DFAEA8946A92A7BBB5166D6BA@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2438261AbfIYSsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 14:48:31 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35337 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbfIYSsa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 14:48:30 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m7so6799362lji.2;
+        Wed, 25 Sep 2019 11:48:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:references:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=nKfUpHLkz9svGgGA7KdFTvOeu1Y3C/BE10QM4lr5FTY=;
+        b=b1MDU6ya7eeJRozE9ILR0irVHcH0mex21bfq44VBM5u9rcp8I84A/0PVp7T0TXmMEB
+         BkUvfiFkJXFWZYa6wjc+5PeQ6H05zfHAlqBMEox5dfquVzOjAERHiGD67+Kk+/ETl78Z
+         6Thhc6JnQDLm7PGt2e/N9MjCmZmvwYmJWbzeZeYT/MOkPFE2DX6Wdxxxy6647dl4a5qF
+         m6qpwpjFljK55k9wCV6yofyr9fuFOcwJArqvbIO/hczAVF6K7cAQ8DXt0/DbxveAu2Cb
+         dT8JJJ1cyTUPOhl8dIdTeJRl5RzxgyPkcYkPGE//pjaC9CvMpvsJvULJmyc7qRc03GH9
+         NqCg==
+X-Gm-Message-State: APjAAAVnLttsTFIp6BNw5l4nRhnH1nK1nKnAXvE5goYqds7RSYn4HXDn
+        VblR3nBxzKQsQ1IijjbQPY/ZCHLD
+X-Google-Smtp-Source: APXvYqyvFUccd2zukRTEczoEsNvih3K7exRnAVR2xKzz32jUJhqlUsjPLF/Iv/mHAY8PcnWo1KdnbQ==
+X-Received: by 2002:a2e:5d17:: with SMTP id r23mr7551323ljb.229.1569437307705;
+        Wed, 25 Sep 2019 11:48:27 -0700 (PDT)
+Received: from [10.10.124.58] (99-48-196-88.sta.estpak.ee. [88.196.48.99])
+        by smtp.gmail.com with ESMTPSA id m21sm1323092lfh.39.2019.09.25.11.48.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2019 11:48:27 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+References: <20190924120740.12425-1-yamada.masahiro@socionext.com>
+Autocrypt: addr=efremov@linux.com; keydata=
+ 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
+Subject: Re: [PATCH] modpost: fix static EXPORT_SYMBOL warnings for UML build
+Message-ID: <e533db1a-7d68-4119-082c-75b9307f1f2a@linux.com>
+Date:   Wed, 25 Sep 2019 21:48:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18e0c7b3-70f9-4624-dbd7-08d741e852ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2019 18:43:58.1533
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kIwOZKgqGc6IjJPjt8skr5qmdeWqTulRGlyFMCAC5lZspGtdcvtur0k3b8PcPKSVv14Py3TbLgcExTGafijrBw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB0895
+In-Reply-To: <20190924120740.12425-1-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SWYgQ09ORklHX1BNX1NMRUVQIGlzIG5vdCBzZXQsIHdlIGNhbiBjb21tZW50IG91dCB0aGVzZSBm
-dW5jdGlvbnMgdG8gYXZvaWQNCnRoZSBiZWxvdyB3YXJuaW5nczoNCg0KZHJpdmVycy9odi92bWJ1
-c19kcnYuYzoyMjA4OjEyOiB3YXJuaW5nOiDigJh2bWJ1c19idXNfcmVzdW1l4oCZIGRlZmluZWQg
-YnV0IG5vdCB1c2VkIFstV3VudXNlZC1mdW5jdGlvbl0NCmRyaXZlcnMvaHYvdm1idXNfZHJ2LmM6
-MjEyODoxMjogd2FybmluZzog4oCYdm1idXNfYnVzX3N1c3BlbmTigJkgZGVmaW5lZCBidXQgbm90
-IHVzZWQgWy1XdW51c2VkLWZ1bmN0aW9uXQ0KZHJpdmVycy9odi92bWJ1c19kcnYuYzo5Mzc6MTI6
-IHdhcm5pbmc6IOKAmHZtYnVzX3Jlc3VtZeKAmSBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVd1bnVz
-ZWQtZnVuY3Rpb25dDQpkcml2ZXJzL2h2L3ZtYnVzX2Rydi5jOjkxODoxMjogd2FybmluZzog4oCY
-dm1idXNfc3VzcGVuZOKAmSBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVd1bnVzZWQtZnVuY3Rpb25d
-DQoNCkZpeGVzOiAyNzFiMjIyNGQ0MmYgKCJEcml2ZXJzOiBodjogdm1idXM6IEltcGxlbWVudCBz
-dXNwZW5kL3Jlc3VtZSBmb3IgVlNDIGRyaXZlcnMgZm9yIGhpYmVybmF0aW9uIikNCkZpeGVzOiBm
-NTMzMzVlMzI4OWYgKCJEcml2ZXJzOiBodjogdm1idXM6IFN1c3BlbmQvcmVzdW1lIHRoZSB2bWJ1
-cyBpdHNlbGYgZm9yIGhpYmVybmF0aW9uIikNClJlcG9ydGVkLWJ5OiBBcm5kIEJlcmdtYW5uIDxh
-cm5kQGFybmRiLmRlPg0KUmV2aWV3ZWQtYnk6IE1pY2hhZWwgS2VsbGV5IDxtaWtlbGxleUBtaWNy
-b3NvZnQuY29tPg0KU2lnbmVkLW9mZi1ieTogRGV4dWFuIEN1aSA8ZGVjdWlAbWljcm9zb2Z0LmNv
-bT4NCi0tLQ0KDQpJbiB2MjoNCgl0ZXN0IENPTkZJR19QTV9TTEVFUCByYXRoZXIgdGhhbiBDT05G
-SUdfUE0uIFRoYW5rcywgQXJuZCENCg0KSW4gdjM6DQoJQWRkIE1pY2hhZWwncyBSZXZpZXdlZC1i
-eS4NCglObyBvdGhlciBjaGFuZ2UuDQoNCiBkcml2ZXJzL2h2L3ZtYnVzX2Rydi5jIHwgNiArKysr
-KysNCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspDQoNCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2h2L3ZtYnVzX2Rydi5jIGIvZHJpdmVycy9odi92bWJ1c19kcnYuYw0KaW5kZXggMzkxZjBi
-MjI1YzlhLi41M2E2MGM4MWUyMjAgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2h2L3ZtYnVzX2Rydi5j
-DQorKysgYi9kcml2ZXJzL2h2L3ZtYnVzX2Rydi5jDQpAQCAtOTEyLDYgKzkxMiw3IEBAIHN0YXRp
-YyB2b2lkIHZtYnVzX3NodXRkb3duKHN0cnVjdCBkZXZpY2UgKmNoaWxkX2RldmljZSkNCiAJCWRy
-di0+c2h1dGRvd24oZGV2KTsNCiB9DQogDQorI2lmZGVmIENPTkZJR19QTV9TTEVFUA0KIC8qDQog
-ICogdm1idXNfc3VzcGVuZCAtIFN1c3BlbmQgYSB2bWJ1cyBkZXZpY2UNCiAgKi8NCkBAIC05NDks
-NiArOTUwLDcgQEAgc3RhdGljIGludCB2bWJ1c19yZXN1bWUoc3RydWN0IGRldmljZSAqY2hpbGRf
-ZGV2aWNlKQ0KIA0KIAlyZXR1cm4gZHJ2LT5yZXN1bWUoZGV2KTsNCiB9DQorI2VuZGlmIC8qIENP
-TkZJR19QTV9TTEVFUCAqLw0KIA0KIC8qDQogICogdm1idXNfZGV2aWNlX3JlbGVhc2UgLSBGaW5h
-bCBjYWxsYmFjayByZWxlYXNlIG9mIHRoZSB2bWJ1cyBjaGlsZCBkZXZpY2UNCkBAIC0xMDcwLDYg
-KzEwNzIsNyBAQCB2b2lkIHZtYnVzX29uX21zZ19kcGModW5zaWduZWQgbG9uZyBkYXRhKQ0KIAl2
-bWJ1c19zaWduYWxfZW9tKG1zZywgbWVzc2FnZV90eXBlKTsNCiB9DQogDQorI2lmZGVmIENPTkZJ
-R19QTV9TTEVFUA0KIC8qDQogICogRmFrZSBSRVNDSU5EX0NIQU5ORUwgbWVzc2FnZXMgdG8gY2xl
-YW4gdXAgaHZfc29jayBjaGFubmVscyBieSBmb3JjZSBmb3INCiAgKiBoaWJlcm5hdGlvbiwgYmVj
-YXVzZSBodl9zb2NrIGNvbm5lY3Rpb25zIGNhbiBub3QgcGVyc2lzdCBhY3Jvc3MgaGliZXJuYXRp
-b24uDQpAQCAtMTEwNSw2ICsxMTA4LDcgQEAgc3RhdGljIHZvaWQgdm1idXNfZm9yY2VfY2hhbm5l
-bF9yZXNjaW5kZWQoc3RydWN0IHZtYnVzX2NoYW5uZWwgKmNoYW5uZWwpDQogCQkgICAgICB2bWJ1
-c19jb25uZWN0aW9uLndvcmtfcXVldWUsDQogCQkgICAgICAmY3R4LT53b3JrKTsNCiB9DQorI2Vu
-ZGlmIC8qIENPTkZJR19QTV9TTEVFUCAqLw0KIA0KIC8qDQogICogRGlyZWN0IGNhbGxiYWNrIGZv
-ciBjaGFubmVscyB1c2luZyBvdGhlciBkZWZlcnJlZCBwcm9jZXNzaW5nDQpAQCAtMjEyNSw2ICsy
-MTI5LDcgQEAgc3RhdGljIGludCB2bWJ1c19hY3BpX2FkZChzdHJ1Y3QgYWNwaV9kZXZpY2UgKmRl
-dmljZSkNCiAJcmV0dXJuIHJldF92YWw7DQogfQ0KIA0KKyNpZmRlZiBDT05GSUdfUE1fU0xFRVAN
-CiBzdGF0aWMgaW50IHZtYnVzX2J1c19zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCiB7DQog
-CXN0cnVjdCB2bWJ1c19jaGFubmVsICpjaGFubmVsLCAqc2M7DQpAQCAtMjI0Nyw2ICsyMjUyLDcg
-QEAgc3RhdGljIGludCB2bWJ1c19idXNfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikNCiANCiAJ
-cmV0dXJuIDA7DQogfQ0KKyNlbmRpZiAvKiBDT05GSUdfUE1fU0xFRVAgKi8NCiANCiBzdGF0aWMg
-Y29uc3Qgc3RydWN0IGFjcGlfZGV2aWNlX2lkIHZtYnVzX2FjcGlfZGV2aWNlX2lkc1tdID0gew0K
-IAl7IlZNQlVTIiwgMH0sDQotLSANCjIuMTkuMQ0KDQo=
+Hi,
+
+On 24.09.2019 15:07, Masahiro Yamada wrote:
+> Johannes Berg reports lots of modpost warnings on ARCH=um builds:
+> 
+> WARNING: "rename" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "lseek" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "ftruncate64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "getuid" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "lseek64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "unlink" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "pwrite64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "close" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "opendir" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "pread64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "syscall" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "readdir" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "readdir64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "futimes" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__lxstat" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "write" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "closedir" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__xstat" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "fsync" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__lxstat64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__fxstat64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "telldir" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "printf" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "readlink" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__sprintf_chk" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "link" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "rmdir" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "fdatasync" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "truncate" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "statfs" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__errno_location" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__xmknod" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "open64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "truncate64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "open" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "read" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "chown" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "chmod" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "utime" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "fchmod" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "seekdir" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "ioctl" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "dup2" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "statfs64" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "utimes" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "mkdir" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "fchown" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__guard" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "symlink" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "access" [vmlinux] is a static EXPORT_SYMBOL
+> WARNING: "__stack_smash_handler" [vmlinux] is a static EXPORT_SYMBOL
+> 
+> When you run "make", the modpost is run twice; before linking vmlinux,
+> and before building modules. All the warnings above are from the second
+> modpost.
+> 
+> The offending symbols are defined not in vmlinux, but in the C library.
+> The first modpost is run against the relocatable vmlinux.o, and those
+> warnings are nicely suppressed because the SH_UNDEF entries from the
+> symbol table clear the ->is_static flag.
+> 
+> The second modpost is run against the executable vmlinux (+ modules),
+> where those symbols have been resolved, but the definitions do not
+> exist.
+> 
+> This commit fixes it in a straight forward way. Suppress the static
+> EXPORT_SYMBOL warnings from "vmlinux".
+> 
+> We see the same warnings twice anyway. For example, ARCH=arm64 defconfig
+> shows the following warning twice:
+> 
+> WARNING: "HYPERVISOR_platform_op" [vmlinux] is a static EXPORT_SYMBOL_GPL
+> 
+> So, it is reasonable to suppress the second one.
+
+Thanks, for fixing it. You can add my if you need
+Tested-by: Denis Efremov <efremov@linux.com>
+
+Tested on x86_64 and um arches. I've reverted the commit b08918fb3f2
+"lz4: do not export static symbol" and checked for the warning. On um arch I've
+tested that this fixes the false-positives.
+
+> 
+> Fixes: 15bfc2348d54 ("modpost: check for static EXPORT_SYMBOL* functions")
+> Reported-by: Johannes Berg <johannes@sipsolutions.net>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  scripts/mod/modpost.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 3961941e8e7a..442d5e2ad688 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -2652,15 +2652,20 @@ int main(int argc, char **argv)
+>  		fatal("modpost: Section mismatches detected.\n"
+>  		      "Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.\n");
+>  	for (n = 0; n < SYMBOL_HASH_SIZE; n++) {
+> -		struct symbol *s = symbolhash[n];
+> +		struct symbol *s;
+> +
+> +		for (s = symbolhash[n]; s; s = s->next) {
+> +			/*
+> +			 * Do not check "vmlinux". This avoids the same warnings
+> +			 * shown twice, and false-positives for ARCH=um.
+> +			 */
+> +			if (is_vmlinux(s->module->name) && !s->module->is_dot_o)
+> +				continue;
+>  
+> -		while (s) {
+>  			if (s->is_static)
+>  				warn("\"%s\" [%s] is a static %s\n",
+>  				     s->name, s->module->name,
+>  				     export_str(s->export));
+> -
+> -			s = s->next;
+>  		}
+>  	}
+>  
+> 
