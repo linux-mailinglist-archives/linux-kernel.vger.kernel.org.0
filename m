@@ -2,94 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C75ADBDBCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 12:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E3CBDBD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 12:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387794AbfIYKDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 06:03:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32838 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726480AbfIYKDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 06:03:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 52C46B114;
-        Wed, 25 Sep 2019 10:03:18 +0000 (UTC)
-Date:   Wed, 25 Sep 2019 12:03:16 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v1] mm/memory_hotplug: Don't take the cpu_hotplug_lock
-Message-ID: <20190925100316.GI23050@dhcp22.suse.cz>
-References: <20190924143615.19628-1-david@redhat.com>
- <1569337401.5576.217.camel@lca.pw>
- <20190924151147.GB23050@dhcp22.suse.cz>
- <1569351244.5576.219.camel@lca.pw>
+        id S2388130AbfIYKEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 06:04:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:58797 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387812AbfIYKEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 06:04:09 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iD48x-0004cJ-9O; Wed, 25 Sep 2019 10:03:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Bard Liao <bardliao@realtek.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: rt5663: clean up indentation issues
+Date:   Wed, 25 Sep 2019 11:03:30 +0100
+Message-Id: <20190925100330.20695-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1569351244.5576.219.camel@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-09-19 14:54:04, Qian Cai wrote:
-> On Tue, 2019-09-24 at 17:11 +0200, Michal Hocko wrote:
-> > On Tue 24-09-19 11:03:21, Qian Cai wrote:
-> > [...]
-> > > While at it, it might be a good time to rethink the whole locking over there, as
-> > > it right now read files under /sys/kernel/slab/ could trigger a possible
-> > > deadlock anyway.
-> > > 
-> > 
-> > [...]
-> > > [  442.452090][ T5224] -> #0 (mem_hotplug_lock.rw_sem){++++}:
-> > > [  442.459748][ T5224]        validate_chain+0xd10/0x2bcc
-> > > [  442.464883][ T5224]        __lock_acquire+0x7f4/0xb8c
-> > > [  442.469930][ T5224]        lock_acquire+0x31c/0x360
-> > > [  442.474803][ T5224]        get_online_mems+0x54/0x150
-> > > [  442.479850][ T5224]        show_slab_objects+0x94/0x3a8
-> > > [  442.485072][ T5224]        total_objects_show+0x28/0x34
-> > > [  442.490292][ T5224]        slab_attr_show+0x38/0x54
-> > > [  442.495166][ T5224]        sysfs_kf_seq_show+0x198/0x2d4
-> > > [  442.500473][ T5224]        kernfs_seq_show+0xa4/0xcc
-> > > [  442.505433][ T5224]        seq_read+0x30c/0x8a8
-> > > [  442.509958][ T5224]        kernfs_fop_read+0xa8/0x314
-> > > [  442.515007][ T5224]        __vfs_read+0x88/0x20c
-> > > [  442.519620][ T5224]        vfs_read+0xd8/0x10c
-> > > [  442.524060][ T5224]        ksys_read+0xb0/0x120
-> > > [  442.528586][ T5224]        __arm64_sys_read+0x54/0x88
-> > > [  442.533634][ T5224]        el0_svc_handler+0x170/0x240
-> > > [  442.538768][ T5224]        el0_svc+0x8/0xc
-> > 
-> > I believe the lock is not really needed here. We do not deallocated
-> > pgdat of a hotremoved node nor destroy the slab state because an
-> > existing slabs would prevent hotremove to continue in the first place.
-> > 
-> > There are likely details to be checked of course but the lock just seems
-> > bogus.
-> 
-> Check 03afc0e25f7f ("slab: get_online_mems for
-> kmem_cache_{create,destroy,shrink}"). It actually talk about the races during
-> memory as well cpu hotplug, so it might even that cpu_hotplug_lock removal is
-> problematic?
+From: Colin Ian King <colin.king@canonical.com>
 
-I have to refresh my memory there but the changlog claims:
-"To avoid issues like that we should hold get/put_online_mems() during
-the whole kmem cache creation/destruction/shrink paths" and
-show_slab_objects doesn't fall into any of those categories.
+There are two break statements that are indented one level too deeply,
+remove the extraneous tabs.
 
-Anyway this seems unrelated to the original thread so I would recommend
-discussing in its own thread for clarity.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/rt5663.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/sound/soc/codecs/rt5663.c b/sound/soc/codecs/rt5663.c
+index 2943692f66ed..e6c1ec6c426e 100644
+--- a/sound/soc/codecs/rt5663.c
++++ b/sound/soc/codecs/rt5663.c
+@@ -3644,7 +3644,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
+ 		regmap_update_bits(rt5663->regmap, RT5663_PWR_ANLG_1,
+ 			RT5663_LDO1_DVO_MASK | RT5663_AMP_HP_MASK,
+ 			RT5663_LDO1_DVO_0_9V | RT5663_AMP_HP_3X);
+-			break;
++		break;
+ 	case CODEC_VER_0:
+ 		regmap_update_bits(rt5663->regmap, RT5663_DIG_MISC,
+ 			RT5663_DIG_GATE_CTRL_MASK, RT5663_DIG_GATE_CTRL_EN);
+@@ -3663,7 +3663,7 @@ static int rt5663_i2c_probe(struct i2c_client *i2c,
+ 		regmap_update_bits(rt5663->regmap, RT5663_TDM_2,
+ 			RT5663_DATA_SWAP_ADCDAT1_MASK,
+ 			RT5663_DATA_SWAP_ADCDAT1_LL);
+-			break;
++		break;
+ 	default:
+ 		dev_err(&i2c->dev, "%s:Unknown codec type\n", __func__);
+ 	}
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
