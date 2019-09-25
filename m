@@ -2,93 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50057BD845
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 08:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B21FCBD850
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 08:30:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2411890AbfIYGZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 02:25:38 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:47358 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404570AbfIYGZi (ORCPT
+        id S2392846AbfIYGaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 02:30:18 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60371 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2411892AbfIYGaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 02:25:38 -0400
-Received: from localhost.localdomain (p200300E9D742D21B26FCBF88D1F65952.dip0.t-ipconnect.de [IPv6:2003:e9:d742:d21b:26fc:bf88:d1f6:5952])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id 4C630C1B1A;
-        Wed, 25 Sep 2019 08:25:35 +0200 (CEST)
-Subject: Re: [PATCH] ieee802154: mcr20a: simplify a bit
- 'mcr20a_handle_rx_read_buf_complete()'
-To:     Xue Liu <liuxuenetmail@gmail.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "alex. aring" <alex.aring@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <20190920194533.5886-1-christophe.jaillet@wanadoo.fr>
- <388f335a-a9ae-7230-1713-a1ecb682fecf@datenfreihafen.org>
- <CAJuUDwtWJgo7PHJR4kBpQ9mGamTMEaPZBNOZcL3mWFwwZ-zOmw@mail.gmail.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <7d131e76-d487-ead3-1780-6a9a7d7877a4@datenfreihafen.org>
-Date:   Wed, 25 Sep 2019 08:25:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Wed, 25 Sep 2019 02:30:17 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iD0oQ-0000V4-7q; Wed, 25 Sep 2019 08:30:06 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iD0oN-0004YK-QR; Wed, 25 Sep 2019 08:30:03 +0200
+Date:   Wed, 25 Sep 2019 08:30:03 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v9 03/11] pwm: mediatek: remove a property "has-clks"
+Message-ID: <20190925063003.aht4platmfalcqru@pengutronix.de>
+References: <1568933351-8584-1-git-send-email-sam.shih@mediatek.com>
+ <1568933351-8584-4-git-send-email-sam.shih@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJuUDwtWJgo7PHJR4kBpQ9mGamTMEaPZBNOZcL3mWFwwZ-zOmw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1568933351-8584-4-git-send-email-sam.shih@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello.
-
-On 24.09.19 23:40, Xue Liu wrote:
-> On Sat, 21 Sep 2019 at 13:52, Stefan Schmidt <stefan@datenfreihafen.org> wrote:
->>
->> Hello Xue.
->>
->> On 20.09.19 21:45, Christophe JAILLET wrote:
->>> Use a 'skb_put_data()' variant instead of rewritting it.
->>> The __skb_put_data variant is safe here. It is obvious that the skb can
->>> not overflow. It has just been allocated a few lines above with the same
->>> 'len'.
->>>
->>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->>> ---
->>>   drivers/net/ieee802154/mcr20a.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/ieee802154/mcr20a.c b/drivers/net/ieee802154/mcr20a.c
->>> index 17f2300e63ee..8dc04e2590b1 100644
->>> --- a/drivers/net/ieee802154/mcr20a.c
->>> +++ b/drivers/net/ieee802154/mcr20a.c
->>> @@ -800,7 +800,7 @@ mcr20a_handle_rx_read_buf_complete(void *context)
->>>        if (!skb)
->>>                return;
->>>
->>> -     memcpy(skb_put(skb, len), lp->rx_buf, len);
->>> +     __skb_put_data(skb, lp->rx_buf, len);
->>>        ieee802154_rx_irqsafe(lp->hw, skb, lp->rx_lqi[0]);
->>>
->>>        print_hex_dump_debug("mcr20a rx: ", DUMP_PREFIX_OFFSET, 16, 1,
->>>
->>
->> Could you please review and ACK this? If you are happy I will take it
->> through my tree.
->>
->> regards
->> Stefan Schmidt
+On Fri, Sep 20, 2019 at 06:49:03AM +0800, Sam Shih wrote:
+> We can use fixed-clock to repair mt7628 pwm during configure from
+> userspace. The SoC is legacy MIPS and has no complex clock tree.
+> Due to we can get clock frequency for period calculation from DT
+> fixed-clock, so we can remove has-clock property, and directly
+> use devm_clk_get and clk_get_rate.
 > 
-> Acked-by: Xue Liu <liuxuenetmail@gmail.com>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Acked-by: Uwe Kleine-Kö <u.kleine-koenig@pengutronix.de>
+> ---
+> Changes since v9:
+> Added an Acked-by tag
 
+Argh, my name was croped and ended up in this state in
+5c50982af47ffe36df3e31bc9e11be5a067ddd18. Thierry, any chance to repair
+that? Something
+like
 
-This patch has been applied to the wpan tree and will be
-part of the next pull request to net. Thanks!
+	git filter-branch --msg-filter 'sed "s/Kleine-Kö /Kleine-König /"' linus/master..
 
-regards
-Stefan Schmidt
+Thanks
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
