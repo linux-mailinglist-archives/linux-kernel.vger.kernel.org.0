@@ -2,129 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86B80BD8EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ED4ABD90F
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:22:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442551AbfIYHTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:19:06 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:53052 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2437009AbfIYHTF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:19:05 -0400
-Received: from dread.disaster.area (pa49-181-226-196.pa.nsw.optusnet.com.au [49.181.226.196])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id EB1DA361E27;
-        Wed, 25 Sep 2019 17:18:56 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.2)
-        (envelope-from <david@fromorbit.com>)
-        id 1iD1Ze-0000dv-UZ; Wed, 25 Sep 2019 17:18:54 +1000
-Date:   Wed, 25 Sep 2019 17:18:54 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2] mm: implement write-behind policy for sequential file
- writes
-Message-ID: <20190925071854.GC804@dread.disaster.area>
-References: <156896493723.4334.13340481207144634918.stgit@buzz>
- <875f3b55-4fe1-e2c3-5bee-ca79e4668e72@yandex-team.ru>
- <20190923145242.GF2233839@devbig004.ftw2.facebook.com>
- <ed5d930c-88c6-c8e4-4a6c-529701caa993@yandex-team.ru>
- <20190924073940.GM6636@dread.disaster.area>
- <edafed8a-5269-1e54-fe31-7ba87393eb34@yandex-team.ru>
+        id S2442571AbfIYHVz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 03:21:55 -0400
+Received: from mga11.intel.com ([192.55.52.93]:27957 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2442413AbfIYHVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:21:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 00:21:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,547,1559545200"; 
+   d="scan'208";a="183169136"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga008.jf.intel.com with ESMTP; 25 Sep 2019 00:21:54 -0700
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 25 Sep 2019 00:21:53 -0700
+Received: from shsmsx153.ccr.corp.intel.com (10.239.6.53) by
+ fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 25 Sep 2019 00:21:53 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.32]) by
+ SHSMSX153.ccr.corp.intel.com ([169.254.12.235]) with mapi id 14.03.0439.000;
+ Wed, 25 Sep 2019 15:21:51 +0800
+From:   "Tian, Kevin" <kevin.tian@intel.com>
+To:     Peter Xu <peterx@redhat.com>, Lu Baolu <baolu.lu@linux.intel.com>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: RE: [RFC PATCH 0/4] Use 1st-level for DMA remapping in guest
+Thread-Topic: [RFC PATCH 0/4] Use 1st-level for DMA remapping in guest
+Thread-Index: AQHVcgo/pYehEUSjBUSa7tc1tTv1E6c5H56AgAAQYQCAATS/kIAAyIAAgABFVACAAIvPkA==
+Date:   Wed, 25 Sep 2019 07:21:51 +0000
+Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19D58F4A3@SHSMSX104.ccr.corp.intel.com>
+References: <20190923122454.9888-1-baolu.lu@linux.intel.com>
+ <20190923122715.53de79d0@jacob-builder>
+ <20190923202552.GA21816@araj-mobl1.jf.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D58D1F1@SHSMSX104.ccr.corp.intel.com>
+ <dfd9b7a2-5553-328a-08eb-16c8a3a2644e@linux.intel.com>
+ <20190925065640.GO28074@xz-x1>
+In-Reply-To: <20190925065640.GO28074@xz-x1>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWZmNjcyZDAtZDI5YS00ODVhLWI4ZWItMDVlMDgyZDQwNzRlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMkNVbEFZR3BSQ0ZsNUZ0bW8xYTI0RXllYllTZVZRQ3VRZ29SeHh5YkpVTytKdkd5ODZISW9TeFpDMlFsVllWRiJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <edafed8a-5269-1e54-fe31-7ba87393eb34@yandex-team.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
-        a=dRuLqZ1tmBNts2YiI0zFQg==:117 a=dRuLqZ1tmBNts2YiI0zFQg==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=J70Eh1EUuV4A:10
-        a=7-415B0cAAAA:8 a=6F92pvpVPx2gsWRY0UYA:9 a=wAJ2GCMRiFgksX7F:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 12:00:17PM +0300, Konstantin Khlebnikov wrote:
-> On 24/09/2019 10.39, Dave Chinner wrote:
-> > On Mon, Sep 23, 2019 at 06:06:46PM +0300, Konstantin Khlebnikov wrote:
-> > > On 23/09/2019 17.52, Tejun Heo wrote:
-> > > > Hello, Konstantin.
-> > > > 
-> > > > On Fri, Sep 20, 2019 at 10:39:33AM +0300, Konstantin Khlebnikov wrote:
-> > > > > With vm.dirty_write_behind 1 or 2 files are written even faster and
-> > > > 
-> > > > Is the faster speed reproducible?  I don't quite understand why this
-> > > > would be.
-> > > 
-> > > Writing to disk simply starts earlier.
-> > 
-> > Stupid question: how is this any different to simply winding down
-> > our dirty writeback and throttling thresholds like so:
-> > 
-> > # echo $((100 * 1000 * 1000)) > /proc/sys/vm/dirty_background_bytes
-> > 
-> > to start background writeback when there's 100MB of dirty pages in
-> > memory, and then:
-> > 
-> > # echo $((200 * 1000 * 1000)) > /proc/sys/vm/dirty_bytes
-> > 
-> > So that writers are directly throttled at 200MB of dirty pages in
-> > memory?
-> > 
-> > This effectively gives us global writebehind behaviour with a
-> > 100-200MB cache write burst for initial writes.
-> 
-> Global limits affect all dirty pages including memory-mapped and
-> randomly touched. Write-behind aims only into sequential streams.
-
-There are  apps that do sequential writes via mmap()d files.
-They should do writebehind too, yes?
-
-> > ANd, really such strict writebehind behaviour is going to cause all
-> > sorts of unintended problesm with filesystems because there will be
-> > adverse interactions with delayed allocation. We need a substantial
-> > amount of dirty data to be cached for writeback for fragmentation
-> > minimisation algorithms to be able to do their job....
-> 
-> I think most sequentially written files never change after close.
-
-There are lots of apps that write zeros to initialise and allocate
-space, then go write real data to them. Database WAL files are
-commonly initialised like this...
-
-> Except of knowing final size of huge files (>16Mb in my patch)
-> there should be no difference for delayed allocation.
-
-There is, because you throttle the writes down such that there is
-only 16MB of dirty data in memory. Hence filesystems will only
-typically allocate in 16MB chunks as that's all the delalloc range
-spans.
-
-I'm not so concerned for XFS here, because our speculative
-preallocation will handle this just fine, but for ext4 and btrfs
-it's going to interleave the allocate of concurrent streaming writes
-and fragment the crap out of the files.
-
-In general, the smaller you make the individual file writeback
-window, the worse the fragmentation problems gets....
-
-> Probably write behind could provide hint about streaming pattern:
-> pass something like "MSG_MORE" into writeback call.
-
-How does that help when we've only got dirty data and block
-reservations up to EOF which is no more than 16MB away?
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+PiBGcm9tOiBQZXRlciBYdSBbbWFpbHRvOnBldGVyeEByZWRoYXQuY29tXQ0KPiBTZW50OiBXZWRu
+ZXNkYXksIFNlcHRlbWJlciAyNSwgMjAxOSAyOjU3IFBNDQo+IA0KPiBPbiBXZWQsIFNlcCAyNSwg
+MjAxOSBhdCAxMDo0ODozMkFNICswODAwLCBMdSBCYW9sdSB3cm90ZToNCj4gPiBIaSBLZXZpbiwN
+Cj4gPg0KPiA+IE9uIDkvMjQvMTkgMzowMCBQTSwgVGlhbiwgS2V2aW4gd3JvdGU6DQo+ID4gPiA+
+ID4gPiAgICAgICAnLS0tLS0tLS0tLS0nDQo+ID4gPiA+ID4gPiAgICAgICAnLS0tLS0tLS0tLS0n
+DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhpcyBwYXRjaCBzZXJpZXMgb25seSBhaW1zIHRv
+IGFjaGlldmUgdGhlIGZpcnN0IGdvYWwsIGEuay5hIHVzaW5nDQo+ID4gPiBmaXJzdCBnb2FsPyB0
+aGVuIHdoYXQgYXJlIG90aGVyIGdvYWxzPyBJIGRpZG4ndCBzcG90IHN1Y2ggaW5mb3JtYXRpb24u
+DQo+ID4gPg0KPiA+DQo+ID4gVGhlIG92ZXJhbGwgZ29hbCBpcyB0byB1c2UgSU9NTVUgbmVzdGVk
+IG1vZGUgdG8gYXZvaWQgc2hhZG93IHBhZ2UNCj4gdGFibGUNCj4gPiBhbmQgVk1FWElUIHdoZW4g
+bWFwIGFuIGdJT1ZBLiBUaGlzIGluY2x1ZGVzIGJlbG93IDQgc3RlcHMgKG1heWJlIG5vdA0KPiA+
+IGFjY3VyYXRlLCBidXQgeW91IGNvdWxkIGdldCB0aGUgcG9pbnQuKQ0KPiA+DQo+ID4gMSkgR0lP
+VkEgbWFwcGluZ3Mgb3ZlciAxc3QtbGV2ZWwgcGFnZSB0YWJsZTsNCj4gPiAyKSBiaW5kaW5nIHZJ
+T01NVSAxc3QgbGV2ZWwgcGFnZSB0YWJsZSB0byB0aGUgcElPTU1VOw0KPiA+IDMpIHVzaW5nIHBJ
+T01NVSBzZWNvbmQgbGV2ZWwgZm9yIEdQQS0+SFBBIHRyYW5zbGF0aW9uOw0KPiA+IDQpIGVuYWJs
+ZSBuZXN0ZWQgKGEuay5hLiBkdWFsIHN0YWdlKSB0cmFuc2xhdGlvbiBpbiBob3N0Lg0KPiA+DQo+
+ID4gVGhpcyBwYXRjaCBzZXQgYWltcyB0byBhY2hpZXZlIDEpLg0KPiANCj4gV291bGQgaXQgbWFr
+ZSBzZW5zZSB0byB1c2UgMXN0IGxldmVsIGV2ZW4gZm9yIGJhcmUtbWV0YWwgdG8gcmVwbGFjZQ0K
+PiB0aGUgMm5kIGxldmVsPw0KPiANCj4gV2hhdCBJJ20gdGhpbmtpbmcgaXMgdGhlIERQREsgYXBw
+cyAtIHRoZXkgaGF2ZSBNTVUgcGFnZSB0YWJsZSBhbHJlYWR5DQo+IHRoZXJlIGZvciB0aGUgaHVn
+ZSBwYWdlcywgdGhlbiBpZiB0aGV5IGNhbiB1c2UgMXN0IGxldmVsIGFzIHRoZQ0KPiBkZWZhdWx0
+IGRldmljZSBwYWdlIHRhYmxlIHRoZW4gaXQgZXZlbiBkb2VzIG5vdCBuZWVkIHRvIG1hcCwgYmVj
+YXVzZQ0KPiBpdCBjYW4gc2ltcGx5IGJpbmQgdGhlIHByb2Nlc3Mgcm9vdCBwYWdlIHRhYmxlIHBv
+aW50ZXIgdG8gdGhlIDFzdA0KPiBsZXZlbCBwYWdlIHJvb3QgcG9pbnRlciBvZiB0aGUgZGV2aWNl
+IGNvbnRleHRzIHRoYXQgaXQgdXNlcy4NCj4gDQoNClRoZW4geW91IG5lZWQgYmVhciB3aXRoIHBv
+c3NpYmxlIHBhZ2UgZmF1bHRzIGZyb20gdXNpbmcgQ1BVIHBhZ2UNCnRhYmxlLCB3aGlsZSBtb3N0
+IGRldmljZXMgZG9uJ3Qgc3VwcG9ydCBpdCB0b2RheS4gDQoNClRoYW5rcw0KS2V2aW4NCg==
