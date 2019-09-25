@@ -2,108 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B997BD5B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 02:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B7B7BD5E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 02:54:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729449AbfIYAQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Sep 2019 20:16:43 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37694 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729147AbfIYAQm (ORCPT
+        id S2633637AbfIYAx1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Sep 2019 20:53:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56960 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2411311AbfIYAwf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Sep 2019 20:16:42 -0400
-Received: by mail-pg1-f193.google.com with SMTP id c17so2174344pgg.4
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 17:16:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:date:message-id:mime-version
-         :content-transfer-encoding:cc:from:to;
-        bh=GUy92otsO7OGtR8tORwxTtrbT2fTJHl/EHieICSRiM4=;
-        b=huDyHwbD0ZYUou4byMiMzemgMgNWiyXj5kNXrKZzm703+iHDTZVuTDJUMGPrR8rdSo
-         kTcIqRpH2o+E441XL2OZxBx3/BsbtCEhl8NmI5cPn377iwbBK+rWAdzp1jnvxsuio/CT
-         YDxLARoYQUV6gThkzODo878ESSbbXgfYggSwkV6LaspG+0STZ4XxmZLWlpBAn0MSjiiT
-         MtbcZsj1xrtB9YIj+0Hh/YWGHk6lyQXLI5ct71jyXkCi3oVE909d5M/FKcN3RIKX+KTU
-         fV2ayJOTeBcY/eSx/GR2vWM5JwSwXFP+6bA0pOciBFPf80WbtrM0rHGknr3Ynv5A6b2E
-         IZXA==
-X-Gm-Message-State: APjAAAUQBQ5dJ+s5p24Xcei0EN0K/i51iUXDS3XmCticUZXAJ8OMgAGM
-        dZJIT8OAjksqY/EBCa0oz+e+xjk4J2I=
-X-Google-Smtp-Source: APXvYqwXGPVj8lR5SB6ESQqPEewNM1bRVXwCbupxnsqlnpTm8UhKAltemb3fquXUV/G/YaODLvhEpQ==
-X-Received: by 2002:aa7:86c1:: with SMTP id h1mr6564484pfo.128.1569370600147;
-        Tue, 24 Sep 2019 17:16:40 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id z3sm1104571pjd.25.2019.09.24.17.16.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2019 17:16:39 -0700 (PDT)
-Subject: [PATCH] RISC-V: Clear load reservations while restoring hart contexts
-Date:   Tue, 24 Sep 2019 17:15:56 -0700
-Message-Id: <20190925001556.12827-1-palmer@sifive.com>
+        Tue, 24 Sep 2019 20:52:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Iij4AiVZizN/3WavyeQe30O/Qctp+EpEPG2/rssTGhE=; b=d2NWBPO+cJQTO7cy/KuThc+Et
+        Jrr0ZF/vteZHveQ2m5qltMFPmGXQdEUTl5DW4vcnTTsNVAqpIpAPCvzd9l2iYORY2XpfiFS03D2ZX
+        MPHFvKHe+WhY69n8zUsQUWNd2s1NbL1ao/+XWh25w+dMquJkQPNssjRALCKe+05KBwB0nsmobvGa2
+        83ati+Zq8wyQ4P5jOlF19o+QkZ77oeHsVWZaj0JWK3GXsefzGqlacBETV4B9OOj3LSTmKKs4eR9uy
+        i5huzFvcFI64wpPWoVxO4t4MdWol9Q4lFpImLpM/e4fXb8R3Lud7P4ZFhXcGNxcn3PGaQz50bWSZd
+        ZyP7JjiVw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iCvXV-00076D-4c; Wed, 25 Sep 2019 00:52:17 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [RFC 00/15] Large pages in the page-cache
+Date:   Tue, 24 Sep 2019 17:51:59 -0700
+Message-Id: <20190925005214.27240-1-willy@infradead.org>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        marco@decred.org, me@carlosedp.com, joel@sing.id.au,
-        Palmer Dabbelt <palmer@sifive.com>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:      linux-riscv@lists.infradead.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is almost entirely a comment.  The bug is unlikely to manifest on
-existing hardware because there is a timeout on load reservations, but
-manifests on QEMU because there is no timeout.
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
----
- arch/riscv/include/asm/asm.h |  1 +
- arch/riscv/kernel/entry.S    | 21 ++++++++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+Here's what I'm currently playing with.  I'm having trouble _testing_
+it, but since akpm's patches were just merged into Linus' tree, I
+thought this would be a good point to send out my current work tree.
+Thanks to kbuild bot for finding a bunch of build problems ;-)
 
-diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
-index 5a02b7d50940..9c992a88d858 100644
---- a/arch/riscv/include/asm/asm.h
-+++ b/arch/riscv/include/asm/asm.h
-@@ -22,6 +22,7 @@
- 
- #define REG_L		__REG_SEL(ld, lw)
- #define REG_S		__REG_SEL(sd, sw)
-+#define REG_SC		__REG_SEL(sc.d, sc.w)
- #define SZREG		__REG_SEL(8, 4)
- #define LGREG		__REG_SEL(3, 2)
- 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 74ccfd464071..9fbb256da55d 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -98,7 +98,26 @@ _save_context:
-  */
- 	.macro RESTORE_ALL
- 	REG_L a0, PT_SSTATUS(sp)
--	REG_L a2, PT_SEPC(sp)
-+	/*
-+	 * The current load reservation is effectively part of the processor's
-+	 * state, in the sense that load reservations cannot be shared between
-+	 * different hart contexts.  We can't actually save and restore a load
-+	 * reservation, so instead here we clear any existing reservation --
-+	 * it's always legal for implementations to clear load reservations at
-+	 * any point (as long as the forward progress guarantee is kept, but
-+	 * we'll ignore that here).
-+	 *
-+	 * Dangling load reservations can be the result of taking a trap in the
-+	 * middle of an LR/SC sequence, but can also be the result of a taken
-+	 * forward branch around an SC -- which is how we implement CAS.  As a
-+	 * result we need to clear reservations between the last CAS and the
-+	 * jump back to the new context.  While it is unlikely the store
-+	 * completes, implementations are allowed to expand reservations to be
-+	 * arbitrarily large.
-+	 */
-+	REG_L  a2, PT_SEPC(sp)
-+	REG_SC x0, a2, PT_SEPC(sp)
-+
- 	csrw CSR_SSTATUS, a0
- 	csrw CSR_SEPC, a2
- 
+Matthew Wilcox (Oracle) (12):
+  mm: Use vm_fault error code directly
+  fs: Introduce i_blocks_per_page
+  mm: Add file_offset_of_ helpers
+  iomap: Support large pages
+  xfs: Support large pages
+  xfs: Pass a page to xfs_finish_page_writeback
+  mm: Make prep_transhuge_page tail-callable
+  mm: Add __page_cache_alloc_order
+  mm: Allow large pages to be added to the page cache
+  mm: Allow find_get_page to be used for large pages
+  mm: Remove hpage_nr_pages
+  xfs: Use filemap_huge_fault
+
+William Kucharski (3):
+  mm: Support removing arbitrary sized pages from mapping
+  mm: Add a huge page fault handler for files
+  mm: Align THP mappings for non-DAX
+
+ drivers/net/ethernet/ibm/ibmveth.c |   2 -
+ drivers/nvdimm/btt.c               |   4 +-
+ drivers/nvdimm/pmem.c              |   3 +-
+ fs/iomap/buffered-io.c             | 121 +++++++----
+ fs/jfs/jfs_metapage.c              |   2 +-
+ fs/xfs/xfs_aops.c                  |  37 ++--
+ fs/xfs/xfs_file.c                  |   5 +-
+ include/linux/huge_mm.h            |  15 +-
+ include/linux/iomap.h              |   2 +-
+ include/linux/mm.h                 |  12 ++
+ include/linux/mm_inline.h          |   6 +-
+ include/linux/pagemap.h            |  73 ++++++-
+ mm/filemap.c                       | 311 ++++++++++++++++++++++++++---
+ mm/gup.c                           |   2 +-
+ mm/huge_memory.c                   |  11 +-
+ mm/internal.h                      |   4 +-
+ mm/memcontrol.c                    |  14 +-
+ mm/memory_hotplug.c                |   4 +-
+ mm/mempolicy.c                     |   2 +-
+ mm/migrate.c                       |  19 +-
+ mm/mlock.c                         |   9 +-
+ mm/page_io.c                       |   4 +-
+ mm/page_vma_mapped.c               |   6 +-
+ mm/rmap.c                          |   8 +-
+ mm/swap.c                          |   4 +-
+ mm/swap_state.c                    |   4 +-
+ mm/swapfile.c                      |   2 +-
+ mm/vmscan.c                        |   9 +-
+ 28 files changed, 519 insertions(+), 176 deletions(-)
+
 -- 
-2.21.0
+2.23.0
 
