@@ -2,145 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F06BBD8EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 020BFBD8ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442526AbfIYHSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:18:52 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:45633 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437009AbfIYHSw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:18:52 -0400
-Received: by mail-yw1-f67.google.com with SMTP id x65so407036ywf.12;
-        Wed, 25 Sep 2019 00:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UZ3VnberXXl+Q/9IPbdaDqe16sWDnoZalHAnBGlNPH8=;
-        b=TcJfabqyz1SZlZ3H3wCoCgPLUSGbyvhaiHjoo6CpV54jCbZO/idllgPrhKdSRbkNZQ
-         nCyaJFb+xU1mJUgHhp34wLJ2zTlFgpCORbEyWSZf+MHBdzMzJxHhfp2rf6lUehSjEfTN
-         CPCgcq2zi+o0n6/e7UZctT4P5jWh1+WVuzpUbqeXwLuBeci35/QU66exY+JBfHKQbnO2
-         Do/UEvudqzHgvecE23eglKK1rf17uS1HUVBR/yUfpAHEfuLsquuUKfzhb67iu+3KFgDu
-         JfCv+xg+oa9dwI6ZF44nGv/SY8TXJY7sJILedZxWBZDpqcP5kXpaIKxxme87+h1gikqq
-         TYxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UZ3VnberXXl+Q/9IPbdaDqe16sWDnoZalHAnBGlNPH8=;
-        b=qQvZrJrDEgvJ5/616VQ7lmJksXeg/uAd3ozu5dPRgESUS6HJKAckh3H4TbDQpDPeLL
-         HfzJg3u8teW8EjDa1YqXmz7HRXN4ktGOgi1XzU4krnEROvANE3uMHfpngIMbFmxLI2YV
-         J5sSpnb2fJq9ZLAG9rjOuNgyvvaKCgwe1t7+rrJCIBNL8RsZc1CRr9jhiGSzR+CIgPkV
-         7FuWFab0hFXiuwsSK5cOjmWnmH4BIccdujAFGD4HdDq/+kmG/zhQn+UwkYevg7VtZ2/L
-         pE5RapkcCVtV1yBTVvjRdqhxI0ysNACPRLOC4xKXP+etsbJX1DgQ6rTSk07vDUKrHhlj
-         pZqg==
-X-Gm-Message-State: APjAAAVqmTIMJt32XS+O53LHxY9MWmy0b7Q3lVQi0Giu98/9yTP9yc0S
-        rm7MG150ylR0+WYLYinIaViyDHHjmW9HtYaFBjE=
-X-Google-Smtp-Source: APXvYqxvh6SEBI8yGwwivJ3ovHtuG2rDkCstKV7h4t24bTekVPgiGCtdpI6mDgtvpDSPaI3/QV4WttEj14ANH0Ux+dc=
-X-Received: by 2002:a81:54:: with SMTP id 81mr4470004ywa.25.1569395930960;
- Wed, 25 Sep 2019 00:18:50 -0700 (PDT)
+        id S2442561AbfIYHTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 03:19:07 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2715 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2442539AbfIYHTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:19:06 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E191FDD61EC67B132DCD;
+        Wed, 25 Sep 2019 15:19:02 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 25 Sep 2019
+ 15:18:58 +0800
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        <akpm@linux-foundation.org>, <osalvador@suse.de>, <mhocko@suse.co>,
+        <dan.j.williams@intel.com>, <david@redhat.com>, <cai@lca.pw>
+CC:     <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Subject: [PATCH V3] mm: Support memblock alloc on the exact node for
+ sparse_buffer_init()
+Message-ID: <e836da55-19f7-e505-7f2a-5f790d61b912@huawei.com>
+Date:   Wed, 25 Sep 2019 15:18:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1569393333-128141-1-git-send-email-chengzhihao1@huawei.com>
-In-Reply-To: <1569393333-128141-1-git-send-email-chengzhihao1@huawei.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 25 Sep 2019 10:18:39 +0300
-Message-ID: <CAOQ4uxjfko0+G_BUOt=fL1iTXdnWA=-=Kn-bgszF08g7yj4zqQ@mail.gmail.com>
-Subject: Re: [PATCH xfstests v3] overlay: Enable character device to be the
- base fs partition
-To:     Zhihao Cheng <chengzhihao1@huawei.com>
-Cc:     Eryu Guan <guaneryu@gmail.com>,
-        David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
-        Eric Biggers <ebiggers@google.com>,
-        "zhangyi (F)" <yi.zhang@huawei.com>,
-        fstests <fstests@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 9:29 AM Zhihao Cheng <chengzhihao1@huawei.com> wrote:
->
-> When running overlay tests using character devices as base fs partitions,
-> all overlay usecase results become 'notrun'. Function
-> '_overay_config_override' (common/config) detects that the current base
-> fs partition is not a block device and will set FSTYP to base fs. The
-> overlay usecase will check the current FSTYP, and if it is not 'overlay'
-> or 'generic', it will skip the execution.
->
-> For example, using UBIFS as base fs skips all overlay usecases:
->
->   FSTYP         -- ubifs       # FSTYP should be overridden as 'overlay'
->   MKFS_OPTIONS  -- /dev/ubi0_1 # Character device
->   MOUNT_OPTIONS -- -t ubifs /dev/ubi0_1 /tmp/scratch
->
->   overlay/001   [not run] not suitable for this filesystem type: ubifs
->   overlay/002   [not run] not suitable for this filesystem type: ubifs
->   overlay/003   [not run] not suitable for this filesystem type: ubifs
->
-> When checking that the base fs partition is a block/character device,
-> FSTYP is overwritten as 'overlay'. This patch allows the base fs
-> partition to be a character device that can also execute overlay
-> usecases (such as ubifs).
->
-> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+sparse_buffer_init() use memblock_alloc_try_nid_raw() to allocate memory
+for page management structure, if memory allocation fails from specified
+node, it will fall back to allocate from other nodes.
 
-Looks fine.
-Eryu, you may change this to Reviewed-by
+Normally, the page management structure will not exceed 2% of the total
+memory, but a large continuous block of allocation is needed. In most
+cases, memory allocation from the specified node will success always,
+but a node memory become highly fragmented will fail. we expect to
+allocate memory base section rather than by allocating a large block of
+memory from other NUMA nodes
 
-> ---
->  common/config | 6 +++---
->  common/rc     | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/common/config b/common/config
-> index 4c86a49..4eda36c 100644
-> --- a/common/config
-> +++ b/common/config
-> @@ -532,7 +532,7 @@ _canonicalize_mountpoint()
->  # When SCRATCH/TEST_* vars are defined in evironment and not
->  # in config file, this function is called after vars have already
->  # been overriden in the previous test.
-> -# In that case, TEST_DEV is a directory and not a blockdev and
-> +# In that case, TEST_DEV is a directory and not a blockdev/chardev and
->  # the function will return without overriding the SCRATCH/TEST_* vars.
->  _overlay_config_override()
->  {
-> @@ -550,7 +550,7 @@ _overlay_config_override()
->         #    the new OVL_BASE_SCRATCH/TEST_DEV/MNT vars are set to the values
->         #    of the configured base fs and SCRATCH/TEST_DEV vars are set to the
->         #    overlayfs base and mount dirs inside base fs mount.
-> -       [ -b "$TEST_DEV" ] || return 0
-> +       [ -b "$TEST_DEV" ] || [ -c "$TEST_DEV" ] || return 0
->
->         # Config file may specify base fs type, but we obay -overlay flag
->         [ "$FSTYP" == overlay ] || export OVL_BASE_FSTYP="$FSTYP"
-> @@ -570,7 +570,7 @@ _overlay_config_override()
->         export TEST_DIR="$OVL_BASE_TEST_DIR/$OVL_MNT"
->         export MOUNT_OPTIONS="$OVERLAY_MOUNT_OPTIONS"
->
-> -       [ -b "$SCRATCH_DEV" ] || return 0
-> +       [ -b "$SCRATCH_DEV" ] || [ -c "$SCRATCH_DEV" ] || return 0
->
->         # Store original base fs vars
->         export OVL_BASE_SCRATCH_DEV="$SCRATCH_DEV"
-> diff --git a/common/rc b/common/rc
-> index 66c7fd4..8d57c37 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -3100,7 +3100,7 @@ _require_scratch_shutdown()
->                         # SCRATCH_DEV, in this case OVL_BASE_SCRATCH_DEV
->                         # will be null, so check OVL_BASE_SCRATCH_DEV before
->                         # running shutdown to avoid shutting down base fs accidently.
-> -                       _notrun "$SCRATCH_DEV is not a block device"
-> +                       _notrun "This test requires a valid $OVL_BASE_SCRATCH_DEV as ovl base fs"
->                 else
->                         src/godown -f $OVL_BASE_SCRATCH_MNT 2>&1 \
->                         || _notrun "Underlying filesystem does not support shutdown"
-> --
-> 2.7.4
->
+Add memblock_alloc_exact_nid_raw() for this situation, which allocate
+boot memory block on the exact node. If a large contiguous block memory
+allocate fail in sparse_buffer_init(), it will fall back to allocate
+small block memory base section.
+
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+---
+v2 -> v3:
+ - use "bool exact_nid" instead of "int need_exact_nid"
+ - remove the comment "without panicking"
+
+v1 -> v2:
+ - use memblock_alloc_exact_nid_raw() rather than using a flag
+
+ include/linux/memblock.h |  3 +++
+ mm/memblock.c            | 65 ++++++++++++++++++++++++++++++++++++++++--------
+ mm/sparse.c              |  2 +-
+ 3 files changed, 58 insertions(+), 12 deletions(-)
+
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index f491690..b38bbef 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -358,6 +358,9 @@ static inline phys_addr_t memblock_phys_alloc(phys_addr_t size,
+ 					 MEMBLOCK_ALLOC_ACCESSIBLE);
+ }
+
++void *memblock_alloc_exact_nid_raw(phys_addr_t size, phys_addr_t align,
++				 phys_addr_t min_addr, phys_addr_t max_addr,
++				 int nid);
+ void *memblock_alloc_try_nid_raw(phys_addr_t size, phys_addr_t align,
+ 				 phys_addr_t min_addr, phys_addr_t max_addr,
+ 				 int nid);
+diff --git a/mm/memblock.c b/mm/memblock.c
+index 7d4f61a..0de9d83 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1323,12 +1323,13 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+  * @start: the lower bound of the memory region to allocate (phys address)
+  * @end: the upper bound of the memory region to allocate (phys address)
+  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
++ * @exact_nid: control the allocation fall back to other nodes
+  *
+  * The allocation is performed from memory region limited by
+  * memblock.current_limit if @max_addr == %MEMBLOCK_ALLOC_ACCESSIBLE.
+  *
+- * If the specified node can not hold the requested memory the
+- * allocation falls back to any node in the system
++ * If the specified node can not hold the requested memory and @exact_nid
++ * is zero, the allocation falls back to any node in the system
+  *
+  * For systems with memory mirroring, the allocation is attempted first
+  * from the regions with mirroring enabled and then retried from any
+@@ -1342,7 +1343,8 @@ __next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+  */
+ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 					phys_addr_t align, phys_addr_t start,
+-					phys_addr_t end, int nid)
++					phys_addr_t end, int nid,
++					bool exact_nid)
+ {
+ 	enum memblock_flags flags = choose_memblock_flags();
+ 	phys_addr_t found;
+@@ -1365,7 +1367,7 @@ static phys_addr_t __init memblock_alloc_range_nid(phys_addr_t size,
+ 	if (found && !memblock_reserve(found, size))
+ 		goto done;
+
+-	if (nid != NUMA_NO_NODE) {
++	if (nid != NUMA_NO_NODE && !exact_nid) {
+ 		found = memblock_find_in_range_node(size, align, start,
+ 						    end, NUMA_NO_NODE,
+ 						    flags);
+@@ -1413,7 +1415,8 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+ 					     phys_addr_t start,
+ 					     phys_addr_t end)
+ {
+-	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE);
++	return memblock_alloc_range_nid(size, align, start, end, NUMA_NO_NODE,
++					false);
+ }
+
+ /**
+@@ -1432,7 +1435,7 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
+ {
+ 	return memblock_alloc_range_nid(size, align, 0,
+-					MEMBLOCK_ALLOC_ACCESSIBLE, nid);
++					MEMBLOCK_ALLOC_ACCESSIBLE, nid, false);
+ }
+
+ /**
+@@ -1442,6 +1445,7 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
+  * @min_addr: the lower bound of the memory region to allocate (phys address)
+  * @max_addr: the upper bound of the memory region to allocate (phys address)
+  * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
++ * @exact_nid: control the allocation fall back to other nodes
+  *
+  * Allocates memory block using memblock_alloc_range_nid() and
+  * converts the returned physical address to virtual.
+@@ -1457,7 +1461,7 @@ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t ali
+ static void * __init memblock_alloc_internal(
+ 				phys_addr_t size, phys_addr_t align,
+ 				phys_addr_t min_addr, phys_addr_t max_addr,
+-				int nid)
++				int nid, bool exact_nid)
+ {
+ 	phys_addr_t alloc;
+
+@@ -1469,11 +1473,13 @@ static void * __init memblock_alloc_internal(
+ 	if (WARN_ON_ONCE(slab_is_available()))
+ 		return kzalloc_node(size, GFP_NOWAIT, nid);
+
+-	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid);
++	alloc = memblock_alloc_range_nid(size, align, min_addr, max_addr, nid,
++					exact_nid);
+
+ 	/* retry allocation without lower limit */
+ 	if (!alloc && min_addr)
+-		alloc = memblock_alloc_range_nid(size, align, 0, max_addr, nid);
++		alloc = memblock_alloc_range_nid(size, align, 0, max_addr, nid,
++						exact_nid);
+
+ 	if (!alloc)
+ 		return NULL;
+@@ -1482,6 +1488,43 @@ static void * __init memblock_alloc_internal(
+ }
+
+ /**
++ * memblock_alloc_exact_nid_raw - allocate boot memory block on the exact node
++ * without zeroing memory
++ * @size: size of memory block to be allocated in bytes
++ * @align: alignment of the region and block's size
++ * @min_addr: the lower bound of the memory region from where the allocation
++ *	  is preferred (phys address)
++ * @max_addr: the upper bound of the memory region from where the allocation
++ *	      is preferred (phys address), or %MEMBLOCK_ALLOC_ACCESSIBLE to
++ *	      allocate only from memory limited by memblock.current_limit value
++ * @nid: nid of the free area to find, %NUMA_NO_NODE for any node
++ *
++ * Public function, provides additional debug information (including caller
++ * info), if enabled. Does not zero allocated memory.
++ *
++ * Return:
++ * Virtual address of allocated memory block on success, NULL on failure.
++ */
++void * __init memblock_alloc_exact_nid_raw(
++			phys_addr_t size, phys_addr_t align,
++			phys_addr_t min_addr, phys_addr_t max_addr,
++			int nid)
++{
++	void *ptr;
++
++	memblock_dbg("%s: %llu bytes align=0x%llx nid=%d from=%pa max_addr=%pa %pS\n",
++		     __func__, (u64)size, (u64)align, nid, &min_addr,
++		     &max_addr, (void *)_RET_IP_);
++
++	ptr = memblock_alloc_internal(size, align,
++					   min_addr, max_addr, nid, true);
++	if (ptr && size > 0)
++		page_init_poison(ptr, size);
++
++	return ptr;
++}
++
++/**
+  * memblock_alloc_try_nid_raw - allocate boot memory block without zeroing
+  * memory and without panicking
+  * @size: size of memory block to be allocated in bytes
+@@ -1512,7 +1555,7 @@ void * __init memblock_alloc_try_nid_raw(
+ 		     &max_addr, (void *)_RET_IP_);
+
+ 	ptr = memblock_alloc_internal(size, align,
+-					   min_addr, max_addr, nid);
++					   min_addr, max_addr, nid, false);
+ 	if (ptr && size > 0)
+ 		page_init_poison(ptr, size);
+
+@@ -1547,7 +1590,7 @@ void * __init memblock_alloc_try_nid(
+ 		     __func__, (u64)size, (u64)align, nid, &min_addr,
+ 		     &max_addr, (void *)_RET_IP_);
+ 	ptr = memblock_alloc_internal(size, align,
+-					   min_addr, max_addr, nid);
++					   min_addr, max_addr, nid, false);
+ 	if (ptr)
+ 		memset(ptr, 0, size);
+
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 72f010d..1a06471 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -475,7 +475,7 @@ static void __init sparse_buffer_init(unsigned long size, int nid)
+ 	phys_addr_t addr = __pa(MAX_DMA_ADDRESS);
+ 	WARN_ON(sparsemap_buf);	/* forgot to call sparse_buffer_fini()? */
+ 	sparsemap_buf =
+-		memblock_alloc_try_nid_raw(size, PAGE_SIZE,
++		memblock_alloc_exact_nid_raw(size, PAGE_SIZE,
+ 						addr,
+ 						MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+ 	sparsemap_buf_end = sparsemap_buf + size;
+-- 
+2.7.4
+
