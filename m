@@ -2,91 +2,454 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2E33BD98B
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:07:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D76FEBD998
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:09:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442718AbfIYIHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 04:07:47 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45322 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405820AbfIYIHr (ORCPT
+        id S2634038AbfIYIJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 04:09:51 -0400
+Received: from regular1.263xmail.com ([211.150.70.203]:46378 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438038AbfIYIJv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:07:47 -0400
-Received: by mail-pl1-f193.google.com with SMTP id u12so2061964pls.12;
-        Wed, 25 Sep 2019 01:07:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=I9xTtNwt/ddRBRmVEa6PjbkYWK8+44/EROKOCF09I4E=;
-        b=FnMdEFq2NIVbnFZRgogBOoKNlAk7UQ1uFwN1UmbbAIbbHtmevrwcSS0FtIP097bW2j
-         RYfYUTpgLp8usBIXdLx4eLQJO2eb4n/l1K20qUWO8nOx3gkAzpda7nnDJ8egOtxTFN7/
-         b1Vqj13V3YToUF6IuV/5LeZu0x1Cmp2eDCKaJqso62vTNBMnnxH2dVG0jD5lM0nKQJ4n
-         QMTe/1tTqut5KQkkrwVnlaDbXVL6cTJbzDQjXESEQh7Z8aRIwUHCW+4Ppu/+XZhAu8a3
-         FW9yAILeemJE8gNCtEL34PzBu0Wbuncg5dSBuL6jImDZ86FI64yOGZWBUMvM9c8JkcJ6
-         fv5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=I9xTtNwt/ddRBRmVEa6PjbkYWK8+44/EROKOCF09I4E=;
-        b=U8ioSo4bWiEaS1qFv4ri6WEapwVMpuW5NWj2F6YKE3XKHvxKhsbd2cqObrmGN1IjFs
-         bxePCZyRnfLwn9ycLg48SdTHCLWS2TOOYhW1AsEz7XhHzJ9wXL4r8Ii4QAOXDhA4pOgU
-         M1ReW1lMW/4kPtp5I5tjwcaO6YfWeTQFsBRbSM9qoaDMKnkBbkLdFFBMCgbxWwA7OT4Z
-         5DyEyzlxQwzkDP1ocWqPdTPETudQ+h+iSvM2gGQ506JIbtkm2ToenSIQGY3/7rUD841k
-         nagN2HWrMJCBDdphvat/cIYkWvCn/wu/wkcYxr5rKDsUHm+Z0gygDFWye44z3C9bsIur
-         ymaA==
-X-Gm-Message-State: APjAAAV+I2pokk3ZZ/Xc8U7MlfiQDK9vW4eMXB70E4AcYE5rAEuzBuMY
-        Tlnkp28WHWb76TjcdNlpFkuti8pUnszXYYglyzk=
-X-Google-Smtp-Source: APXvYqx/NhfLui6xTKQiaj/7wEEQlMArZPw8hSSqB/XWTSjN+xlNNkkowlHUbqD+QVq2l7DiHZ/v08C83T1aPYeaXWw=
-X-Received: by 2002:a17:902:b110:: with SMTP id q16mr7591414plr.262.1569398866679;
- Wed, 25 Sep 2019 01:07:46 -0700 (PDT)
+        Wed, 25 Sep 2019 04:09:51 -0400
+Received: from localhost (unknown [192.168.167.225])
+        by regular1.263xmail.com (Postfix) with ESMTP id 3017F312;
+        Wed, 25 Sep 2019 16:09:32 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.10.69] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P29841T139690540410624S1569398969757311_;
+        Wed, 25 Sep 2019 16:09:30 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <898fa24b8026e21dbfbf7df3ad90bec3>
+X-RL-SENDER: hjc@rock-chips.com
+X-SENDER: hjc@rock-chips.com
+X-LOGIN-NAME: hjc@rock-chips.com
+X-FST-TO: nd@arm.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH 01/36] drm/fourcc: Add 2 plane YCbCr 10bit format support
+To:     Ayan Halder <Ayan.Halder@arm.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
+        nd <nd@arm.com>
+References: <1569242365-182133-1-git-send-email-hjc@rock-chips.com>
+ <1569242365-182133-2-git-send-email-hjc@rock-chips.com>
+ <CAKMK7uFSSoahOesvxL2jQVPXUhG=TuWE4GMfXEAkdTRNbAsp+w@mail.gmail.com>
+ <63db669e-b463-a024-6b8b-73cafd236229@rock-chips.com>
+ <20190924101200.GA8715@arm.com>
+From:   "sandy.huang" <hjc@rock-chips.com>
+Message-ID: <061f6615-3573-690f-edd9-f3197ddffd9c@rock-chips.com>
+Date:   Wed, 25 Sep 2019 16:09:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <156824368856.28378.14511879419677114177@WARFSTATION>
- <20190912073358.n5bxqosowhky5uhb@pali> <156882055514.9370.16951540573597044820@WARFSTATION>
- <20190922134323.mowwoyeuqoalpwsg@pali> <baba1f72c68f4699955d2b7a52df65e1@AUSX13MPC105.AMER.DELL.COM>
-In-Reply-To: <baba1f72c68f4699955d2b7a52df65e1@AUSX13MPC105.AMER.DELL.COM>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 25 Sep 2019 11:07:35 +0300
-Message-ID: <CAHp75VfjhuFzTRg7X_ici6ACj54sQKH0mR8x9M-XAYk5cbTQ7g@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: dell-laptop: fix phantom kbd backlight on
- Inspiron 10xx
-To:     Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Pacien TRAN-GIRARD <pacien.trangirard@pacien.net>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190924101200.GA8715@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 23, 2019 at 4:24 PM <Mario.Limonciello@dell.com> wrote:
-> > From: Pali Roh=C3=A1r <pali.rohar@gmail.com>
-> > Sent: Sunday, September 22, 2019 8:43 AM
-> > To: Pacien TRAN-GIRARD
-> > Cc: Matthew Garrett; Darren Hart; Andy Shevchenko; platform-driver-
-> > x86@vger.kernel.org; linux-kernel@vger.kernel.org; Limonciello, Mario
-> > Subject: Re: [PATCH] platform/x86: dell-laptop: fix phantom kbd backlig=
-ht on
-> > Inspiron 10xx
 
-> > We need to wait what Mario wrote about this particular problem.
-> >
+在 2019/9/24 下午6:12, Ayan Halder 写道:
+> On Tue, Sep 24, 2019 at 02:46:09PM +0800, sandy.huang wrote:
 >
-> I agree an Inspiron is unlikely to be updated 9 years later.  I think the=
- right thing
-> to do in this instance is to blacklist this particular platform in kernel=
- driver.
+> Hi Sandy,
+>> 在 2019/9/23 下午9:06, Daniel Vetter 写道:
+>>> On Mon, Sep 23, 2019 at 2:40 PM Sandy Huang <hjc@rock-chips.com> wrote:
+>>>> The drm_format_info.cpp[3] unit is BytePerPlane, when we add define
+>>>> 10bit YUV format, here have some problem.
+>>>> So we change cpp to bpp, use unit BitPerPlane to describe the data
+>>>> format.
+>>>>
+>>>> Signed-off-by: Sandy Huang <hjc@rock-chips.com>
+>>> Whatever the layout you have for these (it's not really defined in
+>>> your patch here down to the level of detail we want) I think this
+>>> should be described with the block_h/w and char_per_block
+>>> functionality. Not by extending the legacy and depcrecated cpp
+>>> somehow.
+>>> -Daniel
+>> Hi Daniel,
+>>
+>> It seems the char_per_block and block_h/w can't describing the following
+>> data format:
+>>
+>> /*
+>>   * 2x2 subsampled Cr:Cb plane 10 bits per channel
+>>   * index 0 = Y plane, [9:0]
+>>   * index 1 = Cr:Cb plane, [19:0] Cr:x:Cb:x [19:0]
+>>   */
+> In that case, you can follow the same route which we took for
+> describing formats like DRM_FORMAT_VUY101010, DRM_FORMAT_YUV420_8BIT,
+> DRM_FORMAT_YUV420_10BIT ie define cpp as {0, 0, 0} and in your
+> vendor driver have a function similar to malidp_format_get_bpp().
+>
+> It does not look nice to me to change all the formats described
+> in cpp to bpp for just one vendor specific format.
+>
+> Thanks,
+> Ayan
 
-Does it mean you are okay with the proposed patch? Can you give your tag th=
-en?
+Hi Ayan and Daniel.
 
---=20
-With Best Regards,
-Andy Shevchenko
+     thanks for your suggestion, i have send new pathes for rockchip 
+10bit yuv format support.
+
+>
+>>>> ---
+>>>>   drivers/gpu/drm/drm_client.c        |   4 +-
+>>>>   drivers/gpu/drm/drm_fb_helper.c     |   8 +-
+>>>>   drivers/gpu/drm/drm_format_helper.c |   4 +-
+>>>>   drivers/gpu/drm/drm_fourcc.c        | 172 +++++++++++++++++++-----------------
+>>>>   drivers/gpu/drm/drm_framebuffer.c   |   2 +-
+>>>>   include/drm/drm_fourcc.h            |   4 +-
+>>>>   include/uapi/drm/drm_fourcc.h       |  15 ++++
+>>>>   7 files changed, 115 insertions(+), 94 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+>>>> index d9a2e36..a36ffbe 100644
+>>>> --- a/drivers/gpu/drm/drm_client.c
+>>>> +++ b/drivers/gpu/drm/drm_client.c
+>>>> @@ -263,7 +263,7 @@ drm_client_buffer_create(struct drm_client_dev *client, u32 width, u32 height, u
+>>>>
+>>>>          dumb_args.width = width;
+>>>>          dumb_args.height = height;
+>>>> -       dumb_args.bpp = info->cpp[0] * 8;
+>>>> +       dumb_args.bpp = info->bpp[0];
+>>>>          ret = drm_mode_create_dumb(dev, &dumb_args, client->file);
+>>>>          if (ret)
+>>>>                  goto err_delete;
+>>>> @@ -366,7 +366,7 @@ static int drm_client_buffer_addfb(struct drm_client_buffer *buffer,
+>>>>          int ret;
+>>>>
+>>>>          info = drm_format_info(format);
+>>>> -       fb_req.bpp = info->cpp[0] * 8;
+>>>> +       fb_req.bpp = info->bpp[0];
+>>>>          fb_req.depth = info->depth;
+>>>>          fb_req.width = width;
+>>>>          fb_req.height = height;
+>>>> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+>>>> index a7ba5b4..b30e782 100644
+>>>> --- a/drivers/gpu/drm/drm_fb_helper.c
+>>>> +++ b/drivers/gpu/drm/drm_fb_helper.c
+>>>> @@ -382,7 +382,7 @@ static void drm_fb_helper_dirty_blit_real(struct drm_fb_helper *fb_helper,
+>>>>                                            struct drm_clip_rect *clip)
+>>>>   {
+>>>>          struct drm_framebuffer *fb = fb_helper->fb;
+>>>> -       unsigned int cpp = fb->format->cpp[0];
+>>>> +       unsigned int cpp = fb->format->bpp[0] / 8;
+>>>>          size_t offset = clip->y1 * fb->pitches[0] + clip->x1 * cpp;
+>>>>          void *src = fb_helper->fbdev->screen_buffer + offset;
+>>>>          void *dst = fb_helper->buffer->vaddr + offset;
+>>>> @@ -1320,14 +1320,14 @@ int drm_fb_helper_check_var(struct fb_var_screeninfo *var,
+>>>>           * Changes struct fb_var_screeninfo are currently not pushed back
+>>>>           * to KMS, hence fail if different settings are requested.
+>>>>           */
+>>>> -       if (var->bits_per_pixel != fb->format->cpp[0] * 8 ||
+>>>> +       if (var->bits_per_pixel != fb->format->bpp[0] ||
+>>>>              var->xres > fb->width || var->yres > fb->height ||
+>>>>              var->xres_virtual > fb->width || var->yres_virtual > fb->height) {
+>>>>                  DRM_DEBUG("fb requested width/height/bpp can't fit in current fb "
+>>>>                            "request %dx%d-%d (virtual %dx%d) > %dx%d-%d\n",
+>>>>                            var->xres, var->yres, var->bits_per_pixel,
+>>>>                            var->xres_virtual, var->yres_virtual,
+>>>> -                         fb->width, fb->height, fb->format->cpp[0] * 8);
+>>>> +                         fb->width, fb->height, fb->format->bpp[0]);
+>>>>                  return -EINVAL;
+>>>>          }
+>>>>
+>>>> @@ -1678,7 +1678,7 @@ static void drm_fb_helper_fill_var(struct fb_info *info,
+>>>>          info->pseudo_palette = fb_helper->pseudo_palette;
+>>>>          info->var.xres_virtual = fb->width;
+>>>>          info->var.yres_virtual = fb->height;
+>>>> -       info->var.bits_per_pixel = fb->format->cpp[0] * 8;
+>>>> +       info->var.bits_per_pixel = fb->format->bpp[0];
+>>>>          info->var.accel_flags = FB_ACCELF_TEXT;
+>>>>          info->var.xoffset = 0;
+>>>>          info->var.yoffset = 0;
+>>>> diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
+>>>> index 0897cb9..eea3afb 100644
+>>>> --- a/drivers/gpu/drm/drm_format_helper.c
+>>>> +++ b/drivers/gpu/drm/drm_format_helper.c
+>>>> @@ -36,7 +36,7 @@ static unsigned int clip_offset(struct drm_rect *clip,
+>>>>   void drm_fb_memcpy(void *dst, void *vaddr, struct drm_framebuffer *fb,
+>>>>                     struct drm_rect *clip)
+>>>>   {
+>>>> -       unsigned int cpp = fb->format->cpp[0];
+>>>> +       unsigned int cpp = fb->format->bpp[0] / 8;
+>>>>          size_t len = (clip->x2 - clip->x1) * cpp;
+>>>>          unsigned int y, lines = clip->y2 - clip->y1;
+>>>>
+>>>> @@ -63,7 +63,7 @@ void drm_fb_memcpy_dstclip(void __iomem *dst, void *vaddr,
+>>>>                             struct drm_framebuffer *fb,
+>>>>                             struct drm_rect *clip)
+>>>>   {
+>>>> -       unsigned int cpp = fb->format->cpp[0];
+>>>> +       unsigned int cpp = fb->format->bpp[0] / 8;
+>>>>          unsigned int offset = clip_offset(clip, fb->pitches[0], cpp);
+>>>>          size_t len = (clip->x2 - clip->x1) * cpp;
+>>>>          unsigned int y, lines = clip->y2 - clip->y1;
+>>>> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
+>>>> index c630064..071dc07 100644
+>>>> --- a/drivers/gpu/drm/drm_fourcc.c
+>>>> +++ b/drivers/gpu/drm/drm_fourcc.c
+>>>> @@ -157,89 +157,95 @@ EXPORT_SYMBOL(drm_get_format_name);
+>>>>   const struct drm_format_info *__drm_format_info(u32 format)
+>>>>   {
+>>>>          static const struct drm_format_info formats[] = {
+>>>> -               { .format = DRM_FORMAT_C8,              .depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_RGB332,          .depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_BGR233,          .depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_XRGB4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_XBGR4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_RGBX4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_BGRX4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_ARGB4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_ABGR4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_RGBA4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_BGRA4444,        .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_XRGB1555,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_XBGR1555,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_RGBX5551,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_BGRX5551,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_ARGB1555,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_ABGR1555,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_RGBA5551,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_BGRA5551,        .depth = 15, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_RGB565,          .depth = 16, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_BGR565,          .depth = 16, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_RGB888,          .depth = 24, .num_planes = 1, .cpp = { 3, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_BGR888,          .depth = 24, .num_planes = 1, .cpp = { 3, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_XRGB8888,        .depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_XBGR8888,        .depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_RGBX8888,        .depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_BGRX8888,        .depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_RGB565_A8,       .depth = 24, .num_planes = 2, .cpp = { 2, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_BGR565_A8,       .depth = 24, .num_planes = 2, .cpp = { 2, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_XRGB2101010,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_XBGR2101010,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_RGBX1010102,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_BGRX1010102,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_ARGB2101010,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_ABGR2101010,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_RGBA1010102,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_BGRA1010102,     .depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_ARGB8888,        .depth = 32, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_ABGR8888,        .depth = 32, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_RGBA8888,        .depth = 32, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_BGRA8888,        .depth = 32, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_XRGB16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_XBGR16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> -               { .format = DRM_FORMAT_ARGB16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_ABGR16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_RGB888_A8,       .depth = 32, .num_planes = 2, .cpp = { 3, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_BGR888_A8,       .depth = 32, .num_planes = 2, .cpp = { 3, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_XRGB8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 4, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_XBGR8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 4, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_RGBX8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 4, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_BGRX8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 4, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> -               { .format = DRM_FORMAT_YUV410,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 4, .vsub = 4, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YVU410,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 4, .vsub = 4, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YUV411,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 4, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YVU411,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 4, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YUV420,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YVU420,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YUV422,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YVU422,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YUV444,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YVU444,          .depth = 0,  .num_planes = 3, .cpp = { 1, 1, 1 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_NV12,            .depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_NV21,            .depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_NV16,            .depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_NV61,            .depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_NV24,            .depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_NV42,            .depth = 0,  .num_planes = 2, .cpp = { 1, 2, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YUYV,            .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_YVYU,            .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_UYVY,            .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_VYUY,            .depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_XYUV8888,        .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_VUY888,          .depth = 0,  .num_planes = 1, .cpp = { 3, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_AYUV,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_Y210,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_Y212,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_Y216,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_Y410,            .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_Y412,            .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_Y416,            .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_XVYU2101010,     .depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_XVYU12_16161616, .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> -               { .format = DRM_FORMAT_XVYU16161616,    .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_C8,              .depth = 8,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_RGB332,          .depth = 8,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_BGR233,          .depth = 8,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_XRGB4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_XBGR4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_RGBX4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_BGRX4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_ARGB4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_ABGR4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_RGBA4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_BGRA4444,        .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_XRGB1555,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_XBGR1555,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_RGBX5551,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_BGRX5551,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_ARGB1555,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_ABGR1555,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_RGBA5551,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_BGRA5551,        .depth = 15, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_RGB565,          .depth = 16, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_BGR565,          .depth = 16, .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_RGB888,          .depth = 24, .num_planes = 1, .cpp = { 24, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_BGR888,          .depth = 24, .num_planes = 1, .cpp = { 24, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_XRGB8888,        .depth = 24, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_XBGR8888,        .depth = 24, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_RGBX8888,        .depth = 24, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_BGRX8888,        .depth = 24, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_RGB565_A8,       .depth = 24, .num_planes = 2, .cpp = { 16, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_BGR565_A8,       .depth = 24, .num_planes = 2, .cpp = { 16, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_XRGB2101010,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_XBGR2101010,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_RGBX1010102,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_BGRX1010102,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_ARGB2101010,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_ABGR2101010,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_RGBA1010102,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_BGRA1010102,     .depth = 30, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_ARGB8888,        .depth = 32, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_ABGR8888,        .depth = 32, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_RGBA8888,        .depth = 32, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_BGRA8888,        .depth = 32, .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_XRGB16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_XBGR16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1 },
+>>>> +               { .format = DRM_FORMAT_ARGB16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_ABGR16161616F,   .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_RGB888_A8,       .depth = 32, .num_planes = 2, .cpp = { 24, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_BGR888_A8,       .depth = 32, .num_planes = 2, .cpp = { 24, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_XRGB8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 32, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_XBGR8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 32, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_RGBX8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 32, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_BGRX8888_A8,     .depth = 32, .num_planes = 2, .cpp = { 32, 8, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
+>>>> +               { .format = DRM_FORMAT_YUV410,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 4, .vsub = 4, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YVU410,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 4, .vsub = 4, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YUV411,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 4, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YVU411,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 4, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YUV420,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YVU420,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YUV422,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YVU422,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YUV444,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YVU444,          .depth = 0,  .num_planes = 3, .cpp = { 8, 8, 8 },  .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV12,            .depth = 0,  .num_planes = 2, .cpp = { 8, 16, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV21,            .depth = 0,  .num_planes = 2, .cpp = { 8, 16, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV16,            .depth = 0,  .num_planes = 2, .cpp = { 8, 16, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV61,            .depth = 0,  .num_planes = 2, .cpp = { 8, 16, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV24,            .depth = 0,  .num_planes = 2, .cpp = { 8, 16, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV42,            .depth = 0,  .num_planes = 2, .cpp = { 8, 16, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV12_10,         .depth = 0,  .num_planes = 2, .cpp = { 10, 20, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV21_10,         .depth = 0,  .num_planes = 2, .cpp = { 10, 20, 0 }, .hsub = 2, .vsub = 2, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV16_10,         .depth = 0,  .num_planes = 2, .cpp = { 10, 20, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV61_10,         .depth = 0,  .num_planes = 2, .cpp = { 10, 20, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV24_10,         .depth = 0,  .num_planes = 2, .cpp = { 10, 20, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_NV42_10,         .depth = 0,  .num_planes = 2, .cpp = { 10, 20, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YUYV,            .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_YVYU,            .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_UYVY,            .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_VYUY,            .depth = 0,  .num_planes = 1, .cpp = { 16, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_XYUV8888,        .depth = 0,  .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_VUY888,          .depth = 0,  .num_planes = 1, .cpp = { 24, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_AYUV,            .depth = 0,  .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_Y210,            .depth = 0,  .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_Y212,            .depth = 0,  .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_Y216,            .depth = 0,  .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 2, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_Y410,            .depth = 0,  .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_Y412,            .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_Y416,            .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1, .has_alpha = true, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_XVYU2101010,     .depth = 0,  .num_planes = 1, .cpp = { 32, 0, 0 }, .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_XVYU12_16161616, .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>> +               { .format = DRM_FORMAT_XVYU16161616,    .depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 },  .hsub = 1, .vsub = 1, .is_yuv = true },
+>>>>                  { .format = DRM_FORMAT_Y0L0,            .depth = 0,  .num_planes = 1,
+>>>>                    .char_per_block = { 8, 0, 0 }, .block_w = { 2, 0, 0 }, .block_h = { 2, 0, 0 },
+>>>>                    .hsub = 2, .vsub = 2, .has_alpha = true, .is_yuv = true },
+>>>> diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
+>>>> index 0b72468..7b29e97 100644
+>>>> --- a/drivers/gpu/drm/drm_framebuffer.c
+>>>> +++ b/drivers/gpu/drm/drm_framebuffer.c
+>>>> @@ -530,7 +530,7 @@ int drm_mode_getfb(struct drm_device *dev,
+>>>>          r->height = fb->height;
+>>>>          r->width = fb->width;
+>>>>          r->depth = fb->format->depth;
+>>>> -       r->bpp = fb->format->cpp[0] * 8;
+>>>> +       r->bpp = fb->format->bpp[0];
+>>>>          r->pitch = fb->pitches[0];
+>>>>
+>>>>          /* GET_FB() is an unprivileged ioctl so we must not return a
+>>>> diff --git a/include/drm/drm_fourcc.h b/include/drm/drm_fourcc.h
+>>>> index 306d1ef..021358d 100644
+>>>> --- a/include/drm/drm_fourcc.h
+>>>> +++ b/include/drm/drm_fourcc.h
+>>>> @@ -73,12 +73,12 @@ struct drm_format_info {
+>>>>                  /**
+>>>>                   * @cpp:
+>>>>                   *
+>>>> -                * Number of bytes per pixel (per plane), this is aliased with
+>>>> +                * Number of bits per pixel (per plane), this is aliased with
+>>>>                   * @char_per_block. It is deprecated in favour of using the
+>>>>                   * triplet @char_per_block, @block_w, @block_h for better
+>>>>                   * describing the pixel format.
+>>>>                   */
+>>>> -               u8 cpp[3];
+>>>> +               u8 bpp[3];
+>>>>
+>>>>                  /**
+>>>>                   * @char_per_block:
+>>>> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+>>>> index 3feeaa3..5fe89e9 100644
+>>>> --- a/include/uapi/drm/drm_fourcc.h
+>>>> +++ b/include/uapi/drm/drm_fourcc.h
+>>>> @@ -266,6 +266,21 @@ extern "C" {
+>>>>   #define DRM_FORMAT_P016                fourcc_code('P', '0', '1', '6') /* 2x2 subsampled Cr:Cb plane 16 bits per channel */
+>>>>
+>>>>   /*
+>>>> + * 2 plane YCbCr 10bit
+>>>> + * index 0 = Y plane, [9:0] Y
+>>>> + * index 1 = Cr:Cb plane, [19:0] Cr:Cb little endian
+>>>> + * or
+>>>> + * index 1 = Cb:Cr plane, [19:0] Cb:Cr little endian
+>>>> + */
+>>>> +
+>>>> +#define DRM_FORMAT_NV12_10     fourcc_code('N', 'A', '1', '2') /* 2x2 subsampled Cr:Cb plane */
+>>>> +#define DRM_FORMAT_NV21_10     fourcc_code('N', 'A', '2', '1') /* 2x2 subsampled Cb:Cr plane */
+>>>> +#define DRM_FORMAT_NV16_10     fourcc_code('N', 'A', '1', '6') /* 2x1 subsampled Cr:Cb plane */
+>>>> +#define DRM_FORMAT_NV61_10     fourcc_code('N', 'A', '6', '1') /* 2x1 subsampled Cb:Cr plane */
+>>>> +#define DRM_FORMAT_NV24_10     fourcc_code('N', 'A', '2', '4') /* non-subsampled Cr:Cb plane */
+>>>> +#define DRM_FORMAT_NV42_10     fourcc_code('N', 'A', '4', '2') /* non-subsampled Cb:Cr plane */
+>>>> +
+>>>> +/*
+>>>>    * 3 plane YCbCr
+>>>>    * index 0: Y plane, [7:0] Y
+>>>>    * index 1: Cb plane, [7:0] Cb
+>>>> --
+>>>> 2.7.4
+>>>>
+>>>>
+>>>>
+>>
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+
