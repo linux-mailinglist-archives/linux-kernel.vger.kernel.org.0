@@ -2,109 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93DCDBE558
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 21:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FA6BE574
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 21:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732764AbfIYTI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 15:08:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:42952 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbfIYTI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 15:08:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 12:08:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,549,1559545200"; 
-   d="scan'208";a="364420786"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga005.jf.intel.com with ESMTP; 25 Sep 2019 12:08:26 -0700
-Date:   Wed, 25 Sep 2019 12:08:26 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
-        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
-        haitao.huang@intel.com, andriy.shevchenko@linux.intel.com,
-        tglx@linutronix.de, kai.svahn@intel.com, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com, Kai Huang <kai.huang@linux.intel.com>,
-        Haim Cohen <haim.cohen@intel.com>
-Subject: Re: [PATCH v22 02/24] x86/cpufeatures: x86/msr: Intel SGX Launch
- Control hardware bits
-Message-ID: <20190925190825.GK31852@linux.intel.com>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
- <20190903142655.21943-3-jarkko.sakkinen@linux.intel.com>
- <20190924155232.GG19317@zn.tnic>
- <20190924202210.GC16218@linux.intel.com>
- <20190925085156.GA3891@zn.tnic>
- <20190925171824.GF31852@linux.intel.com>
- <20190925183136.GH3891@zn.tnic>
+        id S2408551AbfIYTON (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 15:14:13 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:41494 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbfIYTON (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 15:14:13 -0400
+Received: by mail-yw1-f66.google.com with SMTP id 129so2471017ywb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 12:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Xm8JaZt34JpJZouJEYtJCJAMSPrJXNrwaxHnJcFeAUc=;
+        b=GROI0zk6+t9b0o8qqBzvwit83Yf8otVuWk37zltV/UUXle6QghuPqbyoYrG0Z6J2ZP
+         Tfu0DGGAJcJ8fbrjPU8Ne6kAbUDXfn/X4DYEn1qFFGelOHHo3vcqhqOoFxQlC1stM/dK
+         b/EKY9GHQzBA26NFrGrttU0aDqsU+51fOzSSz0S59o1DmJy5rJWXwZ9zLPmoIKq3t5Li
+         9W2I/1loIpreSw6/DT3B6oL0jZ9as60r05gCvYhuyUgeY08azGHvBVH9GIjgtRVfvJtz
+         DW3Py2+6uEtPlxMDLj3FrVzLn7bQFQo1QGFlRDgmp0GyO6PujgUgaaiOodrLF8sF6xTq
+         h8cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Xm8JaZt34JpJZouJEYtJCJAMSPrJXNrwaxHnJcFeAUc=;
+        b=GdaKwlCaEmjtAhKQFruzXRn2PiiFcOtTOjehSbd+6qthM0zcdhx8w89QHvrMftb8Hp
+         I/kO51v0gMYi+kw8QdMBVx1em6WjUu1VREhi5v4fqc2UBkrh19k1j8414U76qZ1XXnSl
+         qKyOWA6mWL81XLGHmTI89zPh1n9/zODDfTOcUmcEltHzluHvrmXnneBs/wTdqd9PH80D
+         cB/t9LJTECdNQNP/5GfCK6eC7Rj78WOwGpCmmkePbS8T1ZBpcUZJNlaEMr4qMKPizbWQ
+         gx0JEUN4laE/WutxL0Uak64RqUKwEBZQkOPRksvGvKmG9RoGHBb9i4q+xnvbL25/6XIW
+         wRzg==
+X-Gm-Message-State: APjAAAUcJwu5p4up+p1TLFJ9gLUlqgiVVSpa/54H7PWgKA7uXp+/Pj3I
+        b4ObgRmXqFr1oqX+lezb6NjsWQ==
+X-Google-Smtp-Source: APXvYqyIniadt2/l2iR2+nEZXL2S6q2dL8klnXAOrvRz5y0Y/SVWPmRj/L7iOyPVvm4W56ba6+Sdcw==
+X-Received: by 2002:a81:9917:: with SMTP id q23mr7379227ywg.404.1569438850932;
+        Wed, 25 Sep 2019 12:14:10 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id s187sm1484200ywd.27.2019.09.25.12.14.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 12:14:08 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 15:14:08 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 14/27] drm/dp_mst: Destroy topology_mgr mutexes
+Message-ID: <20190925191408.GG218215@art_vandelay>
+References: <20190903204645.25487-1-lyude@redhat.com>
+ <20190903204645.25487-15-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190925183136.GH3891@zn.tnic>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190903204645.25487-15-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 08:31:36PM +0200, Borislav Petkov wrote:
-> On Wed, Sep 25, 2019 at 10:18:24AM -0700, Sean Christopherson wrote:
-> > Realistically, there will likely be a non-trivial number of systems with
-> > SGX_LE_WR=0 but SGX enabled.
+On Tue, Sep 03, 2019 at 04:45:52PM -0400, Lyude Paul wrote:
+> Turns out we've been forgetting for a while now to actually destroy any
+> of the mutexes that we create in drm_dp_mst_topology_mgr. So, let's do
+> that.
 > 
-> Well no. We won't support those. I remember very vividly at Tech Days a
-> couple of years ago where we said we won't support locked down systems.
+> Cc: Juston Li <juston.li@intel.com>
+> Cc: Imre Deak <imre.deak@intel.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: Harry Wentland <hwentlan@amd.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-Yep, that's our intent as well.
+Cleanup is overrated :)
 
-> > It's inevitable that some systems will lock down the LE hash MSRs, either
-> > intentionally or due to lack of support for SGX_LE_WR.  The latter is
-> > probably going to be more common than OEMs intentionally locking the MSRs,
-> > because some Intel reference BIOSes simply don't support SGX_LE_WR, e.g. I
-> > have a Coffee Lake SDP that has hardware support for SGX_LC, but the BIOS
-> > doesn't provide any way to set SGX_LE_WR or leave FEATURE_CONTROL unlocked.
+Reviewed-by: Sean Paul <sean@poorly.run>
+
+
+> ---
+>  drivers/gpu/drm/drm_dp_mst_topology.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> We won't support those too. Nothing changes since a couple of years ago.
-> We won't support locked down systems and unfinished BIOS systems.
-
-Yep.
-
-> ... reading your other mail about KVM...
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index 74161f442584..2f88cc173500 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -4339,6 +4339,11 @@ void drm_dp_mst_topology_mgr_destroy(struct drm_dp_mst_topology_mgr *mgr)
+>  	mgr->aux = NULL;
+>  	drm_atomic_private_obj_fini(&mgr->base);
+>  	mgr->funcs = NULL;
+> +
+> +	mutex_destroy(&mgr->delayed_destroy_lock);
+> +	mutex_destroy(&mgr->payload_lock);
+> +	mutex_destroy(&mgr->qlock);
+> +	mutex_destroy(&mgr->lock);
+>  }
+>  EXPORT_SYMBOL(drm_dp_mst_topology_mgr_destroy);
+>  
+> -- 
+> 2.21.0
 > 
-> I guess KVM could be an exception here if people wanna run different
-> OSes in the guest. IMHO.
->
-> For that, though, we should still clear all SGX feature bits in the
-> host, I'd say, and let the kvm module rediscover everything itself
-> through CPUID directly and not using *cpu_has*
-> 
-> Why, you ask? Because otherwise users will start asking why do they have
-> "sgx" in /proc/cpuinfo but they can't run their own enclaves.
 
-That makes sense.  I was thinking it'd be helpful to leave the bits set,
-e.g. for users to differentiate between "I don't have SGX" and "I can't
-use SGX because SGX_LC is disabled".  But I'm probably being slightly
-optomistic...
-
-> But maybe someone has a better idea.
-> 
-> In any case, I think it would be bad idea to show only a subset of
-> features in /proc/cpuinfo of a locked-down system and have to explain it
-> to users why they can't do own enclaves.
-> 
-> But again, someone might have a better idea.
-
-I'm 99% certain this won't even require a change to the proposed KVM
-patches, as KVM mostly pulls SGX support directly from CPUID.  The only
-thing it checks via cpu_has() is SGX_LC to query whether or not the MSRs
-are fully writable.
-
-Keeping the SGX feature bits set was more about reflecting hardware
-capabilities than it was a functional requirement.
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
