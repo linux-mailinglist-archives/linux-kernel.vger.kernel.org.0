@@ -2,91 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6A33BE80D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 00:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F5DBBE813
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 00:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfIYWEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 18:04:16 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46445 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727197AbfIYWEP (ORCPT
+        id S1728244AbfIYWHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 18:07:55 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34096 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbfIYWHz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 18:04:15 -0400
-Received: by mail-pf1-f193.google.com with SMTP id q5so302986pfg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 15:04:15 -0700 (PDT)
+        Wed, 25 Sep 2019 18:07:55 -0400
+Received: by mail-lf1-f67.google.com with SMTP id r22so154385lfm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 15:07:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=YeAl8mUR5ysBqtVRjeF0K3lTpX9dLqo1DLUgKRVNBCs=;
-        b=kAVODz2SbNFA24N12lzrYsnEjoiYTW3A/X9GWMAh7zTc/1Ob81Oe4TIe5eKAasPbUh
-         Gcj8UMKYeOZvrglDEs7YXZaghdGe5VaUL/57m7dcHuvxDDQn+T+RrA7OjJwFVWNKMWkx
-         Of9C1jOw2N+/hiP/r2wCEA/4oker4WI2s5mabRiTe7+2jhNSZl7rcLAjHE52L8GidDll
-         puzBzXPLuLLtvTV+K4oo4UBV/wiOmwrGJglJendCO5lcfCZUoqB/8ZnIrdDN6C5Ac6M6
-         gertYQ5e0Qh2hZr4n+3kJDBVd8dsGcxbQpNEWuh4R2A/UqiES232s2FufTAuq24CN+lv
-         xEZQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1iYIPSzzIfXlRvnuiGOUUTDkEf43dGwEwse/Vb9bEnE=;
+        b=bNmt9DOt5JGyHTmbNuyV+3+vaKOB/qnAuhWlp/ogagheP6TNEym2rVTA1feCUZZa/X
+         8VpNWfRYn9wit6UwLwWcT8gtFiUxl3rx4s8Xd7H93ebVNBJ7JsEPlsqeBCdtm5U3vbMR
+         FMWqBOlFOQQZ84IibgteeiCibYPpIUtPcGZFxNbLMnyZR5GvROP7FDMbC4xqOghCD48T
+         K98sDCi5LkhmTuLccVPh7PQWS7TRZpWaxClvDMSdPC6Baet1yshzg0SFu6woVC0r8tVK
+         S8daqjkDXi6tUfR6CoP149MQnZ10wTuZSlS3FghtViSM+sgsRoWjHIp4bCee/4UxIr/I
+         k21g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=YeAl8mUR5ysBqtVRjeF0K3lTpX9dLqo1DLUgKRVNBCs=;
-        b=dnrnkKLygWZrFrVjJyH8x1PeQY5sufRi1W8sf72r934Q7cdZS+Syiaqr42OAYFo714
-         lCIsGQT5o6pj7R2TJZW5CuTfDZAPtt+lUVR4PsLCHN7WOFMKC5fqtDBK78JJiNTtxzvO
-         TG3hn4KpTJc9MEzRjVPXBxGuZ+XOi0pPZ813AYmIq2V2idhHGFk0COODJqejlVWqLt4d
-         hWRjqEn+OrA//pziy+hg9OMbWAhYgZoICoQ7KL4Q1apxOz4KKcgOuiy3N/OBi1tDQScn
-         PtJDiP09GhXNo5BvRvURRMvobw8T/g5my6dGWRJttyeoJu+vAkEANy/DcNSpZS+jE119
-         BTqQ==
-X-Gm-Message-State: APjAAAUFDx96UBF4dU2A21/LS/1A7aZNLJgHNFbu+AY61BKfqx9eaQLA
-        e1mdk8n5ux/z00CrEGGj2Qt75Q==
-X-Google-Smtp-Source: APXvYqxUwa/wf6Ah6xwPK6rJPAIvd99PeWHWaExNxLuo5zzuQAq8iypBAr7+D2+VjDRrb42Q/pp6Hw==
-X-Received: by 2002:a17:90a:f0d7:: with SMTP id fa23mr8733337pjb.120.1569449054656;
-        Wed, 25 Sep 2019 15:04:14 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id y80sm18688pfc.30.2019.09.25.15.04.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Sep 2019 15:04:14 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Anand Moon <linux.amoon@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv4-next 0/3] Odroid c2 usb fixs rebase on linux-next
-In-Reply-To: <20190902054935.4899-1-linux.amoon@gmail.com>
-References: <20190902054935.4899-1-linux.amoon@gmail.com>
-Date:   Wed, 25 Sep 2019 15:04:13 -0700
-Message-ID: <7ha7asuj6q.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1iYIPSzzIfXlRvnuiGOUUTDkEf43dGwEwse/Vb9bEnE=;
+        b=esLf6rZLsDW9PmvaEVgU8wZTytVRlgbV72Jah3CktxxEcs3gsw8ylSsy0qcRFFl+9o
+         WzUmjLHycYltZHdhlATAc9ygtSOrt6aMsaVLCiZbxaKstEvyJJTLMoziw2OY9FTlFy9w
+         bcGZV/XXirlFJqRkH/34iJPKIYBXOV6blIzveWMRS61rUngIwaRlrRpQVPSi/B4LHwDW
+         sxp1BwaX+q8I2yrCyv+1mMhyQGMDdbbY9zF/Mxen8vU5SPjtiXNwPiw12FDn/i0EtLTq
+         KVPrPmoq7SI3NqgwPN8D75b7E6yEfmUz25iXS0JkLm7V9CQKNisPfammKyRUjyqcaa3M
+         t/VQ==
+X-Gm-Message-State: APjAAAXVMJZnnSOMRGVvI94SaHAcbLppRkfwvYFG7EaWKLESlEqcNg6J
+        rgDUGh5nqiKiLahoGUzI6Zd9Os4naFQDTxg6heo=
+X-Google-Smtp-Source: APXvYqzQ9urJ1osGJ/GM8h+P3fUAwl88wO4YuHWVsid4KQT52oBLZ2uUS8ywSIqld0awN/kDwgIHGZgoRKowBXd7sv4=
+X-Received: by 2002:ac2:4c8f:: with SMTP id d15mr161866lfl.74.1569449273985;
+ Wed, 25 Sep 2019 15:07:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190612163345.GB26997@sinkpad> <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
+ <20190613032246.GA17752@sinkpad> <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
+ <20190619183302.GA6775@sinkpad> <20190718100714.GA469@aaronlu>
+ <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
+ <20190725143003.GA992@aaronlu> <20190726152101.GA27884@sinkpad>
+ <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com> <20190802153715.GA18075@sinkpad>
+ <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com> <69cd9bca-da28-1d35-3913-1efefe0c1c22@linux.intel.com>
+ <fab8eabb-1cfa-9bf6-02af-3afdff3f955d@linux.intel.com> <CAERHkrurxjDvktGD+Xfjx7Bo5JtTCuqdYToQaDJTNbbRufFWMw@mail.gmail.com>
+ <54fbb676-61f9-e76c-7be3-fe2c2bb473da@linux.intel.com>
+In-Reply-To: <54fbb676-61f9-e76c-7be3-fe2c2bb473da@linux.intel.com>
+From:   Aubrey Li <aubrey.intel@gmail.com>
+Date:   Thu, 26 Sep 2019 06:07:42 +0800
+Message-ID: <CAERHkrs4=pgG-+Bd=YLzZ2RWEPTDX0x70Zb4haTwSZODyC2NLw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Dario Faggioli <dfaggioli@suse.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aaron Lu <aaron.lu@linux.alibaba.com>,
+        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul Turner <pjt@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Anand Moon <linux.amoon@gmail.com> writes:
+On Thu, Sep 26, 2019 at 1:24 AM Tim Chen <tim.c.chen@linux.intel.com> wrote:
+>
+> On 9/24/19 7:40 PM, Aubrey Li wrote:
+> > On Sat, Sep 7, 2019 at 2:30 AM Tim Chen <tim.c.chen@linux.intel.com> wrote:
+> >> +static inline s64 core_sched_imbalance_delta(int src_cpu, int dst_cpu,
+> >> +                       int src_sibling, int dst_sibling,
+> >> +                       struct task_group *tg, u64 task_load)
+> >> +{
+> >> +       struct sched_entity *se, *se_sibling, *dst_se, *dst_se_sibling;
+> >> +       s64 excess, deficit, old_mismatch, new_mismatch;
+> >> +
+> >> +       if (src_cpu == dst_cpu)
+> >> +               return -1;
+> >> +
+> >> +       /* XXX SMT4 will require additional logic */
+> >> +
+> >> +       se = tg->se[src_cpu];
+> >> +       se_sibling = tg->se[src_sibling];
+> >> +
+> >> +       excess = se->avg.load_avg - se_sibling->avg.load_avg;
+> >> +       if (src_sibling == dst_cpu) {
+> >> +               old_mismatch = abs(excess);
+> >> +               new_mismatch = abs(excess - 2*task_load);
+> >> +               return old_mismatch - new_mismatch;
+> >> +       }
+> >> +
+> >> +       dst_se = tg->se[dst_cpu];
+> >> +       dst_se_sibling = tg->se[dst_sibling];
+> >> +       deficit = dst_se->avg.load_avg - dst_se_sibling->avg.load_avg;
+> >> +
+> >> +       old_mismatch = abs(excess) + abs(deficit);
+> >> +       new_mismatch = abs(excess - (s64) task_load) +
+> >> +                      abs(deficit + (s64) task_load);
+> >
+> > If I understood correctly, these formulas made an assumption that the task
+> > being moved to the destination is matched the destination's core cookie.
+>
+> That's not the case.  We do not need to match the destination's core cookie,
 
-> Some time ago I had tired to enable usb bus 1 for Odroid C2/C1
-> but it's look like some more work is needed to u-boot and
-> usb_phy driver to initialize this port.
->
-> Below patches tries to address the issue regarding usb bus 2 (4 port)
-> while disable the usb bus 1 on this board.
->
-> Previous patch
-> [0] https://lkml.org/lkml/2019/1/29/325
->
-> Re send below series based re based on linux-next-20190830.
-> For review and testing.
->
-> [1] https://patchwork.kernel.org/cover/11113091/
->
-> Small changes from previous series.
-> Fix the commit message for patch 1
+I actually meant destination core's core cookie.
 
-Queued for v5.5.
+> as that may change after context switches. It needs to reduce the load mismatch
+> with the destination CPU's sibling for that cgroup.
 
-I fixed up the typo in patch 2/3 when applying as suggested by Martin.
+So the new_mismatch is not always true, especially when there are more
+cgroups and
+more core cookies on the system.
 
-Kevin
+Thanks,
+-Aubrey
