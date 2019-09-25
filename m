@@ -2,130 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B7B5BDB61
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A13DBD784
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 07:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbfIYJsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 05:48:22 -0400
-Received: from drt.pacien.net ([5.2.64.213]:60442 "EHLO drt.pacien.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728683AbfIYJsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 05:48:22 -0400
-Received: from lsn.pacien.net (mail.kea [10.0.3.108])
-        by drt.pacien.net (OpenSMTPD) with ESMTP id dd0b71fb;
-        Wed, 25 Sep 2019 09:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pacien.net;
-         s=lsn.pacien.net; h=Date:Message-ID:Cc:In-Reply-To:Subject:From:
-        Content-Transfer-Encoding:MIME-Version:Content-Type:Reply-To:To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=k5vM3iqTrJFHvMei5yw/jf63ySBSFhk36kIUWh5YeVw=; b=pERwqMKNUuPozpM/4UHdX/s4uj
-        qrvjxZnWPq1G0JyOl+92dL9ONg9Hn4xbwNfHHSiZAZTSepY0tbfJEHA//Awd2piv1to55Jmr1wunq
-        uJamQYi3hF45Zq5fgRls19Ka3VwG2s2oaM/XdXCCq/fmetvmMmwAlr6ugjM+AKxT90/lr6YxntCtF
-        ZEHNRafB71gZG1b7zJO0vMOPFKi4peEQX4pMvtv/TGgJA/dKl5oOQP4vMO7U1q2EL/CXveVvlrQh3
-        eOnILMmx3f527FGR5X/AYOvBWNiP3leE7J+TZVx3uQypvq8j2A8kuTwMuPcbTddJoCZP5QYXHXe/o
-        BOb2SClg==;
-Received: from warfstation.kea ([10.1.1.1] helo=localhost)
-        by lsn.pacien.net with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-        (Exim 4.92.2)
-        (envelope-from <pacien.trangirard@pacien.net>)
-        id 1iD3uE-0008Lc-8n; Wed, 25 Sep 2019 09:48:18 +0000
-Content-Type: text/plain; charset="utf-8"
+        id S2406354AbfIYFAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 01:00:16 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35332 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392987AbfIYFAQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 01:00:16 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y21so2809076wmi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Sep 2019 22:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qCjUe0hDGDhMjnECf1F2ZQdV6LWs8J93Rkhj1cQXHGo=;
+        b=E8oKqEdyG0bLy1YbJxVkgMWG5q1T851YJJLeEfwLZBcBzm/Z/rJFURALxIbiMzCeC6
+         q4vrrUEPF7pfaObZleGRa4FaCj45G3Ud97aVzTOTTvst/+YIL/jQAVb+Ufw72IsVoVrO
+         SDfYjZS5eKmEAeURuNg31P2jNvK3iguYv/xX2yw9wlsqE/Q9AAEaXDq3XkJw7typ0Sil
+         KghJ4psNwURfLM98alBol1KgNc2xz7kwEbDt9qoJ1b+MjSh/y4Z+nGfiuKHZWX5Hw+Ru
+         Sx/fwESJyNav3DjbOeDTzBG/ItKImxkNKo3AcmrAl6rDzni/9Yf2SaQlB7nJc3jwflHT
+         BkMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qCjUe0hDGDhMjnECf1F2ZQdV6LWs8J93Rkhj1cQXHGo=;
+        b=IH4uKbLRECCBKCBv5oSb+Jc0OzGhLnmV7hUGwrd4NojOmAq+AeTy/AwntyAECEh0VC
+         IRh93o9WHNIIhkpqo4A0P1kRg+qTyiOwoPk2YPDGMA8JcMQDa+/Y2n5DAKKpYCo05JnK
+         l6zYLY2ZoSzGKzbcDuQkNw25otJRpgKfGeyWg1NOrSYQsVPggSWMKxcsgYBuwnImSBI/
+         r+JfFyAHjYyq+Karr3OB/fz4ZVfjMDU7vR4SbV/DUAS2ihNLS0FiXzARfqn36PZl81HW
+         +lJHYKBhyPrGW/ZOPagB5HI+0niC0akW976fOGaKVyrR/k0ICfHHxLvwvfBw2SoOsdAD
+         to4g==
+X-Gm-Message-State: APjAAAV6Z85WV713RZFsZKsoJccW6T/u8WQCZ2m+JjGn90hhmdwr+UCo
+        fxbqpK8LUgtY78ITvRBMbDd8FeJDLtg7S5EAyo4q7w==
+X-Google-Smtp-Source: APXvYqy1vkOuGEDqTNg8aNO4jpgMMXEuZMX6RWQpVXhNioHmNHB+PBavw+PntxSsQx8Rbkok2+C/qrGdOpdJ96+qhew=
+X-Received: by 2002:a1c:5451:: with SMTP id p17mr4901443wmi.103.1569387612159;
+ Tue, 24 Sep 2019 22:00:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-From:   Pacien TRAN-GIRARD <pacien.trangirard@pacien.net>
-Date:   Thu, 12 Sep 2019 00:07:45 +0200
-Subject: [PATCH v2] platform/x86: dell-laptop: fix broken kbd backlight on Inspiron 10xx
-In-Reply-To: <20190925082149.yjhmmb64i4h6sddi@pali>
-Cc:     Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <156940489220.8635.14349142383780268583@WARFSTATION>
-Date:   Wed, 25 Sep 2019 11:48:12 +0200
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190925042912.119553-1-anup.patel@wdc.com> <20190925042912.119553-2-anup.patel@wdc.com>
+ <20190925044308.GA1245729@kroah.com>
+In-Reply-To: <20190925044308.GA1245729@kroah.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Wed, 25 Sep 2019 10:30:00 +0530
+Message-ID: <CAAhSdy1Z09tpNtfS10gL5BXJ=1wydLy4nmtFyKQenAPDSyTLTQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] platform: goldfish: Allow goldfish virtual platform
+ drivers for RISCV
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Roman Kiryanov <rkir@google.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a quirk disabling keyboard backlight support for the
-Dell Inspiron 1012 and 1018.
+On Wed, Sep 25, 2019 at 10:13 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Sep 25, 2019 at 04:30:03AM +0000, Anup Patel wrote:
+> > We will be using some of the Goldfish virtual platform devices (such
+> > as RTC) on QEMU RISC-V virt machine so this patch enables goldfish
+> > kconfig option for RISC-V architecture.
+> >
+> > Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> > ---
+> >  drivers/platform/goldfish/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/platform/goldfish/Kconfig b/drivers/platform/goldfish/Kconfig
+> > index 77b35df3a801..0ba825030ffe 100644
+> > --- a/drivers/platform/goldfish/Kconfig
+> > +++ b/drivers/platform/goldfish/Kconfig
+> > @@ -1,7 +1,7 @@
+> >  # SPDX-License-Identifier: GPL-2.0-only
+> >  menuconfig GOLDFISH
+> >       bool "Platform support for Goldfish virtual devices"
+> > -     depends on X86_32 || X86_64 || ARM || ARM64 || MIPS
+> > +     depends on X86_32 || X86_64 || ARM || ARM64 || MIPS || RISCV
+>
+> Why does this depend on any of these?  Can't we just have:
 
-Those models wrongly report supporting keyboard backlight control
-features (through SMBIOS tokens) even though they're not equipped with
-a backlit keyboard. This led to broken controls being exposed
-through sysfs by this driver which froze the system when used.
+May be Goldfish drivers were compile tested/tried on these architectures only.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=3D107651
-Signed-off-by: Pacien TRAN-GIRARD <pacien.trangirard@pacien.net>
----
- drivers/platform/x86/dell-laptop.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+>
+> >       depends on HAS_IOMEM
+>
+> And that's it?
 
-diff --git a/drivers/platform/x86/dell-laptop.c b/drivers/platform/x86/dell=
--laptop.c
-index d27be2836bc2..ffe5abbdadda 100644
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@ -33,6 +33,7 @@
-=20
- struct quirk_entry {
- 	bool touchpad_led;
-+	bool kbd_broken_backlight;
- 	bool kbd_led_levels_off_1;
- 	bool kbd_missing_ac_tag;
-=20
-@@ -73,6 +74,10 @@ static struct quirk_entry quirk_dell_latitude_e6410 =3D {
- 	.kbd_led_levels_off_1 =3D true,
- };
-=20
-+static struct quirk_entry quirk_dell_inspiron_1012 =3D {
-+	.kbd_broken_backlight =3D true,
-+};
-+
- static struct platform_driver platform_driver =3D {
- 	.driver =3D {
- 		.name =3D "dell-laptop",
-@@ -310,6 +315,24 @@ static const struct dmi_system_id dell_quirks[] __init=
-const =3D {
- 		},
- 		.driver_data =3D &quirk_dell_latitude_e6410,
- 	},
-+	{
-+		.callback =3D dmi_matched,
-+		.ident =3D "Dell Inspiron 1012",
-+		.matches =3D {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 1012"),
-+		},
-+		.driver_data =3D &quirk_dell_inspiron_1012,
-+	},
-+	{
-+		.callback =3D dmi_matched,
-+		.ident =3D "Dell Inspiron 1018",
-+		.matches =3D {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 1018"),
-+		},
-+		.driver_data =3D &quirk_dell_inspiron_1012,
-+	},
- 	{ }
- };
-=20
-@@ -2040,6 +2063,9 @@ static int __init kbd_led_init(struct device *dev)
- {
- 	int ret;
-=20
-+	if (quirks && quirks->kbd_broken_backlight)
-+		return -ENODEV;
-+
- 	kbd_init();
- 	if (!kbd_led_present)
- 		return -ENODEV;
---=20
-2.19.2
+I think it should be just "depends on HAS_IOMEM && HAS_DMA" just like
+VirtIO MMIO. Agree ??
+
+Regards,
+Anup
