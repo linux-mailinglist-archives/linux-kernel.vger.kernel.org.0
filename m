@@ -2,103 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1536ABDAAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3418CBDAB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 11:14:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388511AbfIYJMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 05:12:10 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:47167 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387927AbfIYJMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 05:12:07 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 46dXPf4fyyz1rSBb;
-        Wed, 25 Sep 2019 11:12:06 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 46dXPf4DQfz1qqkL;
-        Wed, 25 Sep 2019 11:12:06 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id FXGkXWStI10e; Wed, 25 Sep 2019 11:12:04 +0200 (CEST)
-X-Auth-Info: o4u4qXuuFLlQh1zBWTsqWbrOIzRBQ+Y0XzcSt5tgRFY=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed, 25 Sep 2019 11:12:04 +0200 (CEST)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        krzk@kernel.org, Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v2 2/2] spi: Introduce dspi_slave_abort() function for NXP's dspi SPI driver
-Date:   Wed, 25 Sep 2019 11:11:43 +0200
-Message-Id: <20190925091143.15468-3-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190925091143.15468-1-lukma@denx.de>
-References: <20190924110547.14770-1-lukma@denx.de>
- <20190925091143.15468-1-lukma@denx.de>
+        id S2388893AbfIYJOm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Sep 2019 05:14:42 -0400
+Received: from mga11.intel.com ([192.55.52.93]:36054 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388718AbfIYJOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 05:14:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 02:14:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,547,1559545200"; 
+   d="scan'208";a="191282057"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga003.jf.intel.com with ESMTP; 25 Sep 2019 02:13:59 -0700
+Received: from FMSMSX110.amr.corp.intel.com (10.18.116.10) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 25 Sep 2019 02:13:59 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ fmsmsx110.amr.corp.intel.com (10.18.116.10) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 25 Sep 2019 02:13:59 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.32]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.140]) with mapi id 14.03.0439.000;
+ Wed, 25 Sep 2019 17:13:57 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>
+CC:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+        "He, Shaopeng" <shaopeng.he@intel.com>,
+        "Xia, Chenbo" <chenbo.xia@intel.com>,
+        "Tian, Jun J" <jun.j.tian@intel.com>
+Subject: RE: [PATCH v2 00/13] vfio_pci: wrap pci device as a mediated device
+Thread-Topic: [PATCH v2 00/13] vfio_pci: wrap pci device as a mediated device
+Thread-Index: AQHVZIuKvRVFa0XUZUmQ/OLFqyeI/6c8OZog
+Date:   Wed, 25 Sep 2019 09:13:57 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C25743A0A42E9@SHSMSX104.ccr.corp.intel.com>
+References: <1567670370-4484-1-git-send-email-yi.l.liu@intel.com>
+In-Reply-To: <1567670370-4484-1-git-send-email-yi.l.liu@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYmQ5ZmFiZjItODBkMi00ZDA3LWJmOGYtOGIwNGZiZjNhYTc3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVVhJNXlcL3NtcDZoZzRobUpBWXdEcGdBTnFCMjVNTE00MGxaT0tWUkhyT2lSRGRFaXJ4RmxUUHJoXC9ZMlJ3eGJlIn0=
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This change provides the dspi_slave_abort() function, which is a callback
-for slave_abort() method of SPI controller generic driver.
+Hi Alex,
 
-As in the SPI slave mode the transmission is driven by master, any
-distortion may cause the slave to enter undefined internal state.
-To avoid this problem the dspi_slave_abort() terminates all pending and
-ongoing DMA transactions (with sync) and clears internal FIFOs.
+Any comments on it? :-) With this version, the vfio-mdev-pci driver
+could work with non-singleton groups, also it works with vfio-pci
+as well.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Regards,
+Yi Liu
 
----
-Changes for v2:
-- None
----
- drivers/spi/spi-fsl-dspi.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index bec758e978fb..2c0f211eed87 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -1006,6 +1006,25 @@ static void dspi_init(struct fsl_dspi *dspi)
- 			     SPI_CTARE_FMSZE(0) | SPI_CTARE_DTCP(1));
- }
- 
-+static int dspi_slave_abort(struct spi_master *master)
-+{
-+	struct fsl_dspi *dspi = spi_master_get_devdata(master);
-+
-+	/*
-+	 * Terminate all pending DMA transactions for the SPI working
-+	 * in SLAVE mode.
-+	 */
-+	dmaengine_terminate_sync(dspi->dma->chan_rx);
-+	dmaengine_terminate_sync(dspi->dma->chan_tx);
-+
-+	/* Clear the internal DSPI RX and TX FIFO buffers */
-+	regmap_update_bits(dspi->regmap, SPI_MCR,
-+			   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF,
-+			   SPI_MCR_CLR_TXF | SPI_MCR_CLR_RXF);
-+
-+	return 0;
-+}
-+
- static int dspi_probe(struct platform_device *pdev)
- {
- 	struct device_node *np = pdev->dev.of_node;
-@@ -1030,6 +1049,7 @@ static int dspi_probe(struct platform_device *pdev)
- 	ctlr->dev.of_node = pdev->dev.of_node;
- 
- 	ctlr->cleanup = dspi_cleanup;
-+	ctlr->slave_abort = dspi_slave_abort;
- 	ctlr->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LSB_FIRST;
- 
- 	pdata = dev_get_platdata(&pdev->dev);
--- 
-2.20.1
+> From: Liu, Yi L
+> Sent: Thursday, September 5, 2019 3:59 PM
+> To: alex.williamson@redhat.com; kwankhede@nvidia.com
+> Subject: [PATCH v2 00/13] vfio_pci: wrap pci device as a mediated device
+> 
+> This patchset aims to add a vfio-pci-like meta driver as a demo
+> user of the vfio changes introduced in "vfio/mdev: IOMMU aware
+> mediated device" patchset from Baolu Lu. Besides the test purpose,
+> per Alex's comments, it could also be a good base driver for
+> experimenting with device specific mdev migration.
+> 
+> Specific interface tested in this proposal:
+>  *) int mdev_set_iommu_device(struct device *dev,
+>  				struct device *iommu_device)
+>     introduced in the patch as below:
+>     "[PATCH v5 6/8] vfio/mdev: Add iommu related member in mdev_device"
+> 
+> Patch Overview:
+>  *) patch 1 ~ 7: code refactor for existing vfio-pci module
+>                  move the common codes from vfio_pci.c to
+>                  vfio_pci_common.c
+>  *) patch 8: add protection to perm_bits alloc/free
+>  *) patch 9: add vfio-mdev-pci sample driver
+>  *) patch 10: refine the sample driver
+>  *) patch 11 - 13: make the sample driver work for non-singleton groups
+>                    also work for vfio-pci and vfio-mdev-pci mixed usage
+>                    includes vfio-mdev-pci driver change and vfio_iommu_type1
+>                    changes.
+> 
+> Links:
+>  *) Link of "vfio/mdev: IOMMU aware mediated device"
+>          https://lwn.net/Articles/780522/
+>  *) Previous versions:
+>          RFC v1: https://lkml.org/lkml/2019/3/4/529
+>          RFC v2: https://lkml.org/lkml/2019/3/13/113
+>          RFC v3: https://lkml.org/lkml/2019/4/24/495
+>          Patch v1: https://www.spinics.net/lists/kvm/msg188952.html
+>  *) may try it with the codes in below repo
+>     current version is branch "v5.3-rc7-pci-mdev":
+>          https://github.com/luxis1999/vfio-mdev-pci-sample-driver.git
+> 
+> Test done on two NICs which share an iommu group.
+> 
+> -------------------------------------------------------------------
+>          |  NIC0           |  NIC1      | vIOMMU  | VMs  | Passtrhu
+> -------------------------------------------------------------------
+>   Test#0 |  vfio-pci       |  vfio-pci  | no      |  1   | pass
+> -------------------------------------------------------------------
+>   Test#1 |  vfio-pci       |  vfio-pci  | no      |  2   | fail[1]
+> -------------------------------------------------------------------
+>   Test#2 |  vfio-pci       |  vfio-pci  | yes     |  1   | fail[2]
+> -------------------------------------------------------------------
+>   Test#3 |  vfio-pci-mdev  |  vfio-pci  | no      |  1   | pass
+> -------------------------------------------------------------------
+>   Test#4 |  vfio-pci-mdev  |  vfio-pci  | no      |  2   | fail[3]
+> -------------------------------------------------------------------
+>   Test#5 |  vfio-pci-mdev  |  vfio-pci  | yes     |  1   | fail[4]
+> -------------------------------------------------------------------
+> Tips:
+> [1] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6:
+>      vfio 0000:01:00.1: failed to open /dev/vfio/1: Device or resource busy
+> [2] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6:
+>      vfio 0000:01:00.1: group 1 used in multiple address spaces
+> [3] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6:
+>      vfio 0000:01:00.1: failed to setup container for group 1: Failed to set
+>      iommu for container: Device or resource busy
+> [4] qemu-system-x86_64: -device vfio-pci,host=01:00.1,id=hostdev0,addr=0x6:
+>      vfio 0000:01:00.1: failed to setup container for group 1: Failed to set
+>      iommu for container: Device or resource busy
+>     Or
+>     qemu-system-x86_64: -device vfio-pci,sysfsdev=/sys/bus/mdev/devices/
+>      83b8f4f2-509f-382f-3c1e-e6bfe0fa1003: vfio 83b8f4f2-509f-382f-3c1e-
+>      e6bfe0fa1003: failed to setup container for group 11: Failed to set iommu
+>      for container: Device or resource busy
+> Some other tests are not listed. Like bind NIC0 to vfio-pci-mdev and try to
+> passthru it with "vfio-pci,host=01:00.0", kernel will throw a warn log and
+> fail the operation.
+> 
+> Please feel free give your comments.
+> 
+> Thanks,
+> Yi Liu
+> 
+> Change log:
+>   patch v1 -> patch v2:
+>   - the sample driver implementation refined
+>   - the sample driver can work on non-singleton iommu groups
+>   - the sample driver can work with vfio-pci, devices from a non-singleton
+>     group can either be bound to vfio-mdev-pci or vfio-pci, and the
+>     assignment of this group still follows current vfio assignment rule.
+> 
+>   RFC v3 -> patch v1:
+>   - split the patchset from 3 patches to 9 patches to better demonstrate
+>     the changes step by step
+> 
+>   v2->v3:
+>   - use vfio-mdev-pci instead of vfio-pci-mdev
+>   - place the new driver under drivers/vfio/pci while define
+>     Kconfig in samples/Kconfig to clarify it is a sample driver
+> 
+>   v1->v2:
+>   - instead of adding kernel option to existing vfio-pci
+>     module in v1, v2 follows Alex's suggestion to add a
+>     separate vfio-pci-mdev module.
+>   - new patchset subject: "vfio/pci: wrap pci device as a mediated device"
+> 
+> Alex Williamson (1):
+>   samples: refine vfio-mdev-pci driver
+> 
+> Liu Yi L (12):
+>   vfio_pci: move vfio_pci_is_vga/vfio_vga_disabled to header
+>   vfio_pci: refine user config reference in vfio-pci module
+>   vfio_pci: refine vfio_pci_driver reference in vfio_pci.c
+>   vfio_pci: make common functions be extern
+>   vfio_pci: duplicate vfio_pci.c
+>   vfio_pci: shrink vfio_pci_common.c
+>   vfio_pci: shrink vfio_pci.c
+>   vfio/pci: protect cap/ecap_perm bits alloc/free with atomic op
+>   samples: add vfio-mdev-pci driver
+>   samples/vfio-mdev-pci: call vfio_add_group_dev()
+>   vfio/type1: use iommu_attach_group() for wrapping PF/VF as mdev
+>   vfio/type1: track iommu backed group attach
+> 
+>  drivers/vfio/pci/Makefile           |    9 +-
+>  drivers/vfio/pci/vfio_mdev_pci.c    |  497 ++++++++++++
+>  drivers/vfio/pci/vfio_pci.c         | 1449 +---------------------------------
+>  drivers/vfio/pci/vfio_pci_common.c  | 1455
+> +++++++++++++++++++++++++++++++++++
+>  drivers/vfio/pci/vfio_pci_config.c  |    9 +
+>  drivers/vfio/pci/vfio_pci_private.h |   36 +
+>  drivers/vfio/vfio_iommu_type1.c     |  185 ++++-
+>  samples/Kconfig                     |   11 +
+>  8 files changed, 2194 insertions(+), 1457 deletions(-)
+>  create mode 100644 drivers/vfio/pci/vfio_mdev_pci.c
+>  create mode 100644 drivers/vfio/pci/vfio_pci_common.c
+> 
+> --
+> 2.7.4
 
