@@ -2,88 +2,498 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5456CBD963
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4825BD967
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 09:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442651AbfIYHw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 03:52:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58480 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2437273AbfIYHw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 03:52:57 -0400
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7DF462A09B3
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 07:52:57 +0000 (UTC)
-Received: by mail-wm1-f69.google.com with SMTP id k184so1610059wmk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 00:52:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vJ6wyP0bI3pA2TwxdshaPg0vZhCLWNJFj4q55kWGgHE=;
-        b=T8fJNPn7HraiDvLNvnhcee9Ct08QrQtRkA3ImIN5Q5AFKPIYKSQ/N7UJXYDvceSYSr
-         W17y3fmWRMuYUeMzUHuD3ZgvMLLlcqcKvo/h3htQjPZNRBX17Hz4ttU8WgHwLBJyNivD
-         /JvSPZpL5LQ1wouSDBqH64kYK1CxgziSg5FSVnVfsXuungqhjx+cI2d1XCvWNTY6iLbu
-         IxQsRb8arRlHP6zpWKXl1PsXU5C5AuzBY6ThKa367RE5SN6GgwyhH5UYYnyWkuB0gADm
-         N0zyI6pCAuiNUI6odmjPjLGhuZYzXvTrvn1Wx1bracjMadBChc4k3EO3bfvgFQGfBBJ+
-         39fg==
-X-Gm-Message-State: APjAAAWXd2LyAnYjLT4Lom9D+EHx+7xoUoPOl7mvduPFcULwEqpqMggL
-        P0tEQKSh+4+6pXVFFPCghQMh9JtBMw1cMOJfEOyM4DGmbdlTrElJP32xoxCFIpSHYVmlGpOFnqZ
-        RjX1cdQgAF0qm4M/SBvJlHPp+
-X-Received: by 2002:a5d:6302:: with SMTP id i2mr8197503wru.249.1569397974545;
-        Wed, 25 Sep 2019 00:52:54 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzfc4fQeO64LjuPyyOE4zcmr6EaHOEpbv8tYk/ZlLRcmQbwHMYuPntDJ92EzbDHh7HONJehDA==
-X-Received: by 2002:a5d:6302:: with SMTP id i2mr8197404wru.249.1569397973453;
-        Wed, 25 Sep 2019 00:52:53 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:9520:22e6:6416:5c36? ([2001:b07:6468:f312:9520:22e6:6416:5c36])
-        by smtp.gmail.com with ESMTPSA id m18sm7610094wrg.97.2019.09.25.00.52.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Sep 2019 00:52:52 -0700 (PDT)
-Subject: Re: [PATCH 14/17] KVM: monolithic: x86: inline more exit handlers in
- vmx.c
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Xu <peterx@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190920212509.2578-1-aarcange@redhat.com>
- <20190920212509.2578-15-aarcange@redhat.com>
- <6a1d66a1-74c0-25b9-692f-8875e33b2fae@redhat.com>
- <20190924010056.GB4658@redhat.com>
- <a75d04e1-cfd6-fa2e-6120-1f3956e14153@redhat.com>
- <20190924015527.GC4658@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <3ec06895-d05d-aacd-17cc-08eedb21ccba@redhat.com>
-Date:   Wed, 25 Sep 2019 09:52:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2442658AbfIYHyE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 25 Sep 2019 03:54:04 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:53089 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438033AbfIYHyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 03:54:04 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x8P7rcYj024491, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV02.realtek.com.tw[172.21.6.19])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x8P7rcYj024491
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 25 Sep 2019 15:53:38 +0800
+Received: from RTITMBSVM04.realtek.com.tw ([fe80::e404:880:2ef1:1aa1]) by
+ RTITCASV02.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Wed, 25 Sep
+ 2019 15:53:38 +0800
+From:   James Tai <james.tai@realtek.com>
+To:     "'Arnd Bergmann'" <arnd@arndb.de>
+CC:     "'Linux ARM'" <linux-arm-kernel@lists.infradead.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'Russell King'" <linux@armlinux.org.uk>,
+        pro_dhc_kernel <pro_dhc_kernel@realtek.com>
+Subject: [PATCH v1] ARM: config: Add Realtek defconfig
+Thread-Topic: [PATCH v1] ARM: config: Add Realtek defconfig
+Thread-Index: AdVzdepXa6KnsffKRqK+GYhRS4tW0w==
+Date:   Wed, 25 Sep 2019 07:53:37 +0000
+Message-ID: <43B123F21A8CFE44A9641C099E4196FFCF8EA3B6@RTITMBSVM04.realtek.com.tw>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.6.95]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20190924015527.GC4658@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/09/19 03:55, Andrea Arcangeli wrote:
->> So it's forty bytes.  I think we can leave this out.
-> This commit I reverted adds literally 3 inlines called by 3 functions,
-> in a very fast path, how many bytes of .text difference did you expect
-> by dropping some call/ret from a very fast path when you asked me to
-> test it? I mean it's just a couple of insn each.
+From: "james.tai" <james.tai@realtek.com>
 
-Actually I was either expecting the difference to be zero, meaning GCC
-was already inlining them.
+Add a defconfig for Realtek RTD16XX and RTD13XX platform.
 
-I think it is not inlining the functions because they are still
-referenced by vmx_exit_handlers.  After patch 15 you could drop them
-from the array, and then GCC should inline them.
+Signed-off-by: james.tai <james.tai@realtek.com>
+---
+Changes since last version:
+	- disable CONFIG_EMBEDDED.
+	- disable CONFIG_ARM_THUMBEE.
+	- disable CONFIG_SCHED_SMT.
+	- disable CONFIG_OABI_COMPAT.
+	- disable CONFIG_EFI.
+	- disable CONFIG_QORIQ_CPUFREQ.
+	- disable CONFIG_NET_DSA.
+	- disable CONFIG_CAN.
+	- disable CONFIG_CAN_FLEXCAN.
+	- disable CONFIG_CAN_RCAR.
+	- disable CONFIG_BT.
+	- disable CONFIG_BT_HCIUART.
+	- disable CONFIG_BT_HCIUART_BCM.
+	- disable CONFIG_BT_MRVL.
+	- disable CONFIG_BT_MRVL_SDIO.
+	- disable CONFIG_MTD.
+	- disable CONFIG_MTD_CMDLINE_PARTS.
+	- disable CONFIG_MTD_BLOCK.
+	- disable CONFIG_MTD_CFI.
+	- disable CONFIG_MTD_PHYSMAP.
+	- disable CONFIG_MTD_PHYSMAP_OF.
+	- disable CONFIG_MTD_RAW_NAND.
+	- disable CONFIG_MTD_NAND_DENALI_DT.
+	- disable CONFIG_MTD_NAND_BRCMNAND.
+	- disable CONFIG_BLK_DEV_RAM_SIZE.
+	- disable CONFIG_USB_PEGASUS.
+	- disable CONFIG_USB_RTL8152.
+	- disable CONFIG_USB_LAN78XX.
+	- disable CONFIG_USB_USBNET.
+	- disable CONFIG_USB_NET_SMSC75XX.
+	- disable CONFIG_USB_NET_SMSC95XX.
+	- disable CONFIG_BRCMFMAC.
+	- disable CONFIG_MWIFIEX.
+	- disable CONFIG_MWIFIEX_SDIO.
+	- disable CONFIG_RT2X00.
+	- disable CONFIG_RT2800USB.
+	- enable CONFIG_NET_VENDOR_3COM.
+	- enable CONFIG_NET_VENDOR_ADAPTEC.
+	- enable CONFIG_NET_VENDOR_AGERE.
+	- enable CONFIG_NET_VENDOR_ALACRITECH.
+	- enable CONFIG_NET_VENDOR_ALTEON.
+---
+ arch/arm/configs/realtek_defconfig | 390 +++++++++++++++++++++++++++++
+ 1 file changed, 390 insertions(+)
+ create mode 100644 arch/arm/configs/realtek_defconfig
 
-Paolo
+diff --git a/arch/arm/configs/realtek_defconfig b/arch/arm/configs/realtek_defconfig
+new file mode 100644
+index 000000000000..5effebf14c02
+--- /dev/null
++++ b/arch/arm/configs/realtek_defconfig
+@@ -0,0 +1,390 @@
++CONFIG_SYSVIPC=y
++CONFIG_NO_HZ=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_CGROUPS=y
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_PERF_EVENTS=y
++CONFIG_ARCH_REALTEK=y
++CONFIG_ARCH_RTD13XX=y
++CONFIG_ARCH_RTD16XX=y
++# CONFIG_CACHE_L2X0 is not set
++# CONFIG_ARM_ERRATA_643719 is not set
++CONFIG_ARM_ERRATA_814220=y
++CONFIG_SMP=y
++CONFIG_SCHED_MC=y
++CONFIG_HAVE_ARM_ARCH_TIMER=y
++CONFIG_MCPM=y
++CONFIG_NR_CPUS=6
++CONFIG_HZ_250=y
++CONFIG_HIGHMEM=y
++CONFIG_FORCE_MAX_ZONEORDER=12
++CONFIG_SECCOMP=y
++CONFIG_ARM_APPENDED_DTB=y
++CONFIG_ARM_ATAG_DTB_COMPAT=y
++CONFIG_KEXEC=y
++CONFIG_CPU_FREQ=y
++CONFIG_CPU_FREQ_STAT=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_POWERSAVE=m
++CONFIG_CPU_FREQ_GOV_USERSPACE=m
++CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
++CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
++CONFIG_CPUFREQ_DT=y
++CONFIG_CPU_IDLE=y
++CONFIG_ARM_CPUIDLE=y
++CONFIG_VFP=y
++CONFIG_NEON=y
++CONFIG_KERNEL_MODE_NEON=y
++CONFIG_TRUSTED_FOUNDATIONS=y
++CONFIG_EFI_VARS=m
++CONFIG_EFI_CAPSULE_LOADER=m
++CONFIG_ARM_CRYPTO=y
++CONFIG_CRYPTO_SHA1_ARM_NEON=m
++CONFIG_CRYPTO_SHA1_ARM_CE=m
++CONFIG_CRYPTO_SHA2_ARM_CE=m
++CONFIG_CRYPTO_SHA512_ARM=m
++CONFIG_CRYPTO_AES_ARM=m
++CONFIG_CRYPTO_AES_ARM_BS=m
++CONFIG_CRYPTO_AES_ARM_CE=m
++CONFIG_CRYPTO_GHASH_ARM_CE=m
++CONFIG_CRYPTO_CRC32_ARM_CE=m
++CONFIG_CRYPTO_CHACHA20_NEON=m
++CONFIG_JUMP_LABEL=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_PARTITION_ADVANCED=y
++CONFIG_CMDLINE_PARTITION=y
++CONFIG_CMA=y
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_IP_PNP=y
++CONFIG_IP_PNP_DHCP=y
++CONFIG_IP_PNP_BOOTP=y
++CONFIG_IP_PNP_RARP=y
++CONFIG_IPV6_ROUTER_PREF=y
++CONFIG_IPV6_OPTIMISTIC_DAD=y
++CONFIG_INET6_AH=m
++CONFIG_INET6_ESP=m
++CONFIG_INET6_IPCOMP=m
++CONFIG_IPV6_MIP6=m
++CONFIG_IPV6_TUNNEL=m
++CONFIG_IPV6_MULTIPLE_TABLES=y
++CONFIG_CFG80211=m
++CONFIG_MAC80211=m
++CONFIG_RFKILL=y
++CONFIG_RFKILL_INPUT=y
++CONFIG_RFKILL_GPIO=y
++CONFIG_PCI=y
++CONFIG_PCIEPORTBUS=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_MTD_SPI_NOR=y
++CONFIG_MTD_UBI=y
++CONFIG_OF_OVERLAY=y
++CONFIG_VIRTIO_BLK=y
++CONFIG_AD525X_DPOT=y
++CONFIG_AD525X_DPOT_I2C=y
++CONFIG_SRAM=y
++CONFIG_BLK_DEV_SD=y
++CONFIG_BLK_DEV_SR=y
++CONFIG_ATA=y
++CONFIG_SATA_AHCI=y
++CONFIG_SATA_AHCI_PLATFORM=y
++# CONFIG_ATA_SFF is not set
++CONFIG_NETDEVICES=y
++CONFIG_VIRTIO_NET=y
++CONFIG_B53_MDIO_DRIVER=m
++CONFIG_B53_MMAP_DRIVER=m
++CONFIG_B53_SRAB_DRIVER=m
++CONFIG_B53_SERDES=m
++CONFIG_NET_DSA_BCM_SF2=m
++CONFIG_NET_VENDOR_3COM=y
++CONFIG_NET_VENDOR_ADAPTEC=y
++CONFIG_NET_VENDOR_AGERE=y
++CONFIG_NET_VENDOR_ALACRITECH=y
++CONFIG_NET_VENDOR_ALTEON=y
++# CONFIG_NET_VENDOR_AMAZON is not set
++# CONFIG_NET_VENDOR_AMD is not set
++# CONFIG_NET_VENDOR_AQUANTIA is not set
++# CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_ATHEROS is not set
++# CONFIG_NET_VENDOR_AURORA is not set
++# CONFIG_NET_VENDOR_BROADCOM is not set
++# CONFIG_NET_VENDOR_BROCADE is not set
++# CONFIG_NET_VENDOR_CADENCE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
++# CONFIG_NET_VENDOR_CHELSIO is not set
++# CONFIG_NET_VENDOR_CIRRUS is not set
++# CONFIG_NET_VENDOR_CISCO is not set
++# CONFIG_NET_VENDOR_CORTINA is not set
++# CONFIG_NET_VENDOR_DEC is not set
++# CONFIG_NET_VENDOR_DLINK is not set
++# CONFIG_NET_VENDOR_EMULEX is not set
++# CONFIG_NET_VENDOR_EZCHIP is not set
++# CONFIG_NET_VENDOR_FARADAY is not set
++# CONFIG_NET_VENDOR_GOOGLE is not set
++# CONFIG_NET_VENDOR_HISILICON is not set
++# CONFIG_NET_VENDOR_HP is not set
++# CONFIG_NET_VENDOR_HUAWEI is not set
++# CONFIG_NET_VENDOR_INTEL is not set
++# CONFIG_NET_VENDOR_MARVELL is not set
++# CONFIG_NET_VENDOR_MELLANOX is not set
++# CONFIG_NET_VENDOR_MICREL is not set
++# CONFIG_NET_VENDOR_MICROCHIP is not set
++# CONFIG_NET_VENDOR_MICROSEMI is not set
++# CONFIG_NET_VENDOR_MYRI is not set
++# CONFIG_NET_VENDOR_NATSEMI is not set
++# CONFIG_NET_VENDOR_NETERION is not set
++# CONFIG_NET_VENDOR_NETRONOME is not set
++# CONFIG_NET_VENDOR_NI is not set
++# CONFIG_NET_VENDOR_NVIDIA is not set
++# CONFIG_NET_VENDOR_OKI is not set
++# CONFIG_NET_VENDOR_PACKET_ENGINES is not set
++# CONFIG_NET_VENDOR_QLOGIC is not set
++# CONFIG_NET_VENDOR_QUALCOMM is not set
++# CONFIG_NET_VENDOR_RDC is not set
++# CONFIG_NET_VENDOR_REALTEK is not set
++# CONFIG_NET_VENDOR_RENESAS is not set
++# CONFIG_NET_VENDOR_ROCKER is not set
++# CONFIG_NET_VENDOR_SAMSUNG is not set
++# CONFIG_NET_VENDOR_SEEQ is not set
++# CONFIG_NET_VENDOR_SOLARFLARE is not set
++# CONFIG_NET_VENDOR_SILAN is not set
++# CONFIG_NET_VENDOR_SIS is not set
++# CONFIG_NET_VENDOR_SMSC is not set
++# CONFIG_NET_VENDOR_SOCIONEXT is not set
++# CONFIG_NET_VENDOR_STMICRO is not set
++# CONFIG_NET_VENDOR_SUN is not set
++# CONFIG_NET_VENDOR_SYNOPSYS is not set
++# CONFIG_NET_VENDOR_TEHUTI is not set
++# CONFIG_NET_VENDOR_TI is not set
++# CONFIG_NET_VENDOR_VIA is not set
++# CONFIG_NET_VENDOR_WIZNET is not set
++# CONFIG_NET_VENDOR_XILINX is not set
++CONFIG_INPUT_JOYDEV=y
++CONFIG_INPUT_EVDEV=y
++CONFIG_KEYBOARD_QT1070=m
++CONFIG_KEYBOARD_GPIO=y
++CONFIG_KEYBOARD_SAMSUNG=m
++CONFIG_KEYBOARD_CROS_EC=m
++CONFIG_KEYBOARD_BCM=y
++CONFIG_MOUSE_PS2_ELANTECH=y
++CONFIG_MOUSE_CYAPA=m
++CONFIG_MOUSE_ELAN_I2C=y
++CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_TOUCHSCREEN_ADC=m
++CONFIG_TOUCHSCREEN_ATMEL_MXT=m
++CONFIG_TOUCHSCREEN_ELAN=m
++CONFIG_TOUCHSCREEN_MMS114=m
++CONFIG_TOUCHSCREEN_ST1232=m
++CONFIG_TOUCHSCREEN_STMPE=y
++CONFIG_INPUT_MISC=y
++CONFIG_INPUT_MAX77693_HAPTIC=m
++CONFIG_INPUT_MAX8997_HAPTIC=m
++CONFIG_INPUT_AXP20X_PEK=m
++CONFIG_INPUT_ADXL34X=m
++CONFIG_INPUT_STPMIC1_ONKEY=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_EXTENDED=y
++CONFIG_SERIAL_8250_SHARE_IRQ=y
++CONFIG_SERIAL_8250_DW=y
++CONFIG_SERIAL_OF_PLATFORM=y
++CONFIG_SERIAL_DEV_BUS=y
++CONFIG_VIRTIO_CONSOLE=y
++CONFIG_HW_RANDOM=y
++CONFIG_TCG_TPM=m
++CONFIG_TCG_TIS_I2C_INFINEON=m
++CONFIG_I2C_CHARDEV=y
++CONFIG_I2C_MUX=y
++CONFIG_I2C_SLAVE=y
++CONFIG_I2C_SLAVE_EEPROM=y
++CONFIG_PINCTRL_SINGLE=y
++CONFIG_GPIOLIB=y
++CONFIG_GPIO_GENERIC_PLATFORM=y
++CONFIG_POWER_SUPPLY=y
++CONFIG_SENSORS_IIO_HWMON=y
++CONFIG_SENSORS_PWM_FAN=m
++CONFIG_THERMAL=y
++CONFIG_CPU_THERMAL=y
++CONFIG_WATCHDOG=y
++CONFIG_WATCHDOG_CORE=y
++CONFIG_MFD_ACT8945A=y
++CONFIG_MFD_AS3711=y
++CONFIG_MFD_AS3722=y
++CONFIG_MFD_ATMEL_FLEXCOM=y
++CONFIG_MFD_ATMEL_HLCDC=m
++CONFIG_MFD_BCM590XX=y
++CONFIG_MFD_AXP20X_I2C=y
++CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_CHARDEV=m
++CONFIG_MFD_DA9063=m
++CONFIG_MFD_MAX14577=y
++CONFIG_MFD_MAX77686=y
++CONFIG_MFD_MAX77693=m
++CONFIG_MFD_MAX8907=y
++CONFIG_MFD_MAX8997=y
++CONFIG_MFD_MAX8998=y
++CONFIG_MFD_PM8XXX=y
++CONFIG_MFD_RK808=y
++CONFIG_MFD_RN5T618=y
++CONFIG_MFD_SEC_CORE=y
++CONFIG_ABX500_CORE=y
++CONFIG_MFD_STMPE=y
++CONFIG_MFD_SYSCON=y
++CONFIG_MFD_PALMAS=y
++CONFIG_MFD_TPS65090=y
++CONFIG_MFD_TPS65217=y
++CONFIG_MFD_TPS65218=y
++CONFIG_MFD_TPS6586X=y
++CONFIG_MFD_TPS65910=y
++CONFIG_TWL4030_CORE=y
++CONFIG_TWL4030_POWER=y
++CONFIG_MFD_WM8994=m
++CONFIG_MFD_STPMIC1=y
++CONFIG_MFD_STMFX=y
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_FIXED_VOLTAGE=y
++CONFIG_REGULATOR_PWM=y
++CONFIG_MEDIA_SUPPORT=m
++CONFIG_MEDIA_CAMERA_SUPPORT=y
++CONFIG_MEDIA_CEC_SUPPORT=y
++CONFIG_MEDIA_CONTROLLER=y
++CONFIG_VIDEO_V4L2_SUBDEV_API=y
++CONFIG_MEDIA_USB_SUPPORT=y
++CONFIG_USB_VIDEO_CLASS=m
++CONFIG_V4L_PLATFORM_DRIVERS=y
++CONFIG_V4L_MEM2MEM_DRIVERS=y
++CONFIG_V4L_TEST_DRIVERS=y
++CONFIG_VIDEO_VIVID=m
++CONFIG_CEC_PLATFORM_DRIVERS=y
++# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
++CONFIG_DRM=y
++CONFIG_DRM_PANEL_SIMPLE=y
++CONFIG_DRM_PANEL_ORISETECH_OTM8009A=m
++CONFIG_DRM_PANEL_RAYDIUM_RM68200=m
++CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03=m
++CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
++CONFIG_DRM_DUMB_VGA_DAC=m
++CONFIG_DRM_NXP_PTN3460=m
++CONFIG_DRM_PARADE_PS8622=m
++CONFIG_DRM_SII902X=m
++CONFIG_DRM_SII9234=m
++CONFIG_DRM_TOSHIBA_TC358764=m
++CONFIG_DRM_I2C_ADV7511=m
++CONFIG_DRM_I2C_ADV7511_AUDIO=y
++CONFIG_DRM_PANFROST=m
++CONFIG_DRM_LEGACY=y
++CONFIG_FB_MODE_HELPERS=y
++CONFIG_FB_EFI=y
++CONFIG_FB_SIMPLE=y
++CONFIG_LCD_PLATFORM=m
++CONFIG_BACKLIGHT_CLASS_DEVICE=y
++CONFIG_BACKLIGHT_PWM=y
++CONFIG_BACKLIGHT_GPIO=y
++CONFIG_FRAMEBUFFER_CONSOLE=y
++CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
++CONFIG_SOUND=m
++CONFIG_SND=m
++CONFIG_SND_DYNAMIC_MINORS=y
++CONFIG_SND_USB_AUDIO=m
++CONFIG_SND_SOC=m
++CONFIG_SND_SOC_FSL_SAI=m
++CONFIG_SND_SIMPLE_CARD=m
++CONFIG_USB=y
++CONFIG_USB_OTG=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_STORAGE=y
++CONFIG_USB_UAS=y
++CONFIG_USB_DWC3=y
++# CONFIG_USB_DWC3_HAPS is not set
++# CONFIG_USB_DWC3_OF_SIMPLE is not set
++CONFIG_NOP_USB_XCEIV=y
++CONFIG_USB_GPIO_VBUS=y
++CONFIG_USB_ULPI=y
++CONFIG_USB_GADGET=y
++CONFIG_USB_SNP_UDC_PLAT=y
++CONFIG_USB_BDC_UDC=y
++CONFIG_USB_CONFIGFS=m
++CONFIG_USB_CONFIGFS_SERIAL=y
++CONFIG_USB_CONFIGFS_ACM=y
++CONFIG_USB_CONFIGFS_OBEX=y
++CONFIG_USB_CONFIGFS_NCM=y
++CONFIG_USB_CONFIGFS_ECM=y
++CONFIG_USB_CONFIGFS_ECM_SUBSET=y
++CONFIG_USB_CONFIGFS_RNDIS=y
++CONFIG_USB_CONFIGFS_EEM=y
++CONFIG_USB_CONFIGFS_MASS_STORAGE=y
++CONFIG_USB_CONFIGFS_F_LB_SS=y
++CONFIG_USB_CONFIGFS_F_FS=y
++CONFIG_USB_CONFIGFS_F_UAC1=y
++CONFIG_USB_CONFIGFS_F_UAC1_LEGACY=y
++CONFIG_USB_CONFIGFS_F_UAC2=y
++CONFIG_USB_CONFIGFS_F_MIDI=y
++CONFIG_USB_CONFIGFS_F_HID=y
++CONFIG_USB_CONFIGFS_F_UVC=y
++CONFIG_USB_CONFIGFS_F_PRINTER=y
++CONFIG_USB_ETH=m
++CONFIG_USB_ROLE_SWITCH=y
++CONFIG_USB_ULPI_BUS=y
++CONFIG_MMC=y
++CONFIG_MMC_BLOCK_MINORS=16
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PLTFM=y
++CONFIG_MMC_CQHCI=y
++CONFIG_EDAC=y
++CONFIG_RTC_CLASS=y
++CONFIG_DMADEVICES=y
++CONFIG_SW_SYNC=y
++CONFIG_UDMABUF=y
++CONFIG_VIRTIO_PCI=y
++CONFIG_VIRTIO_MMIO=y
++CONFIG_STAGING=y
++CONFIG_CROS_EC_I2C=m
++CONFIG_REMOTEPROC=m
++CONFIG_RPMSG_VIRTIO=m
++CONFIG_MEMORY=y
++CONFIG_IIO=y
++CONFIG_IIO_BUFFER_HW_CONSUMER=m
++CONFIG_IIO_KFIFO_BUF=y
++CONFIG_IIO_SW_TRIGGER=y
++CONFIG_IIO_CROS_EC_SENSORS_CORE=m
++CONFIG_IIO_CROS_EC_SENSORS=m
++CONFIG_IIO_HRTIMER_TRIGGER=y
++CONFIG_PWM=y
++CONFIG_RESET_CONTROLLER=y
++CONFIG_GENERIC_PHY=y
++CONFIG_EXT4_FS=y
++CONFIG_AUTOFS4_FS=y
++CONFIG_MSDOS_FS=y
++CONFIG_VFAT_FS=y
++CONFIG_NTFS_FS=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_UBIFS_FS=y
++CONFIG_SQUASHFS=y
++CONFIG_SQUASHFS_LZO=y
++CONFIG_SQUASHFS_XZ=y
++CONFIG_PSTORE=y
++CONFIG_PSTORE_CONSOLE=y
++CONFIG_PSTORE_PMSG=y
++CONFIG_PSTORE_RAM=y
++CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
++CONFIG_NFS_V4=y
++CONFIG_ROOT_NFS=y
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_NLS_ISO8859_1=y
++CONFIG_NLS_UTF8=y
++CONFIG_CRYPTO_USER=m
++CONFIG_CRYPTO_SHA512=m
++CONFIG_CRYPTO_USER_API_HASH=m
++CONFIG_CRYPTO_USER_API_SKCIPHER=m
++CONFIG_CRYPTO_USER_API_RNG=m
++CONFIG_CRYPTO_USER_API_AEAD=m
++CONFIG_DMA_CMA=y
++CONFIG_CMA_SIZE_MBYTES=64
++CONFIG_PRINTK_TIME=y
++CONFIG_MAGIC_SYSRQ=y
+-- 
+2.17.1
+
