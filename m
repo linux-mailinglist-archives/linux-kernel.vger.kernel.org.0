@@ -2,88 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C667BDFC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 16:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B55BDFD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 16:16:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436520AbfIYOPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 10:15:24 -0400
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:46288 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407319AbfIYOPX (ORCPT
+        id S2436731AbfIYOQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 10:16:10 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:50702 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407539AbfIYOQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 10:15:23 -0400
-Received: by mail-lj1-f170.google.com with SMTP id e17so5817741ljf.13
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 07:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7XtbzG/PDHB0nH5tZZmEfWG24IcMxbyIbMNZVj9/BKQ=;
-        b=dkyOATx9lmLDnncl4zJtlo91Zp1bUtwDHjOBbv+9Jc7LYTOR8Hkjbqp50+n1wBonB5
-         ClhTg+OdoJIJx9VdXt/7VqNmmlYCx6QtqyfdTNik7dNQWKUG6FSLcpMO4yKBK590HxjA
-         reoI/EKWfyj90vAwRPeHcQXpLWf8PbwrCiY2Ba5l0TFx755VvOTVm77s1nT3pPxaBntj
-         jVieeyMvQajnZc1yOum7bJWAoChkF4UKjkXKF+Ag9A1gze2n6fD5JMFAU9w5DZLXPkHB
-         7suYRia+8rXVe9n5ovdTt8ikQh2Qlz9UW0ak8CJyLlCeMqFIg+KseoisDnkO4Yy2qRPx
-         yPGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7XtbzG/PDHB0nH5tZZmEfWG24IcMxbyIbMNZVj9/BKQ=;
-        b=MzCUTZbVpQUfo7VlpSGf1sYqUGDHpaeX0syh3rUZIAgqKzKKghoD9fkIeNX+Fi4X2W
-         Vcg8loX8FhmXuWSBC+ysb/f6F+yu6zQmm3D7keVO/gvZm99jTkm2jt0ZO65YpG2U/0lj
-         iCQZm+U/ZtjCpkd7BuxJFDxSuhqXq73PhlOtJeHipAGfdIXcVKYKXqGlmWywk68ohx9f
-         xlEDtoN2sVrra0Sy2bjK0lrSsWn1kUXBCQusKcn5iB0fZGNqD9I7REDxH7Lj1Ayr1IVe
-         MlVzTFfxSdTrpethHx/NhxLVbBTPvHX/EscfhB9BVUcuVE3dFvzwSrjIGswg/WEN9Emu
-         z8Mg==
-X-Gm-Message-State: APjAAAVHlzHYSkZ9OD8FKs3ZxRbWkzGrmJ5tpXwfGuTR+XErjI5s26Xg
-        fyj1OxEVwcMGiEcKd8wbcWRoQmE5QACdvcUS3FhV2w==
-X-Google-Smtp-Source: APXvYqxqBaZ48HccCc5sICcI0U65KHSoI3B+0Ywyekxx11YaVBb03nxxrNJEQk9thhAS/288MMxOqKisdSKl5/WQMvg=
-X-Received: by 2002:a2e:9ccb:: with SMTP id g11mr6533141ljj.62.1569420921560;
- Wed, 25 Sep 2019 07:15:21 -0700 (PDT)
+        Wed, 25 Sep 2019 10:16:10 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iD85O-0000DA-Sg; Wed, 25 Sep 2019 15:16:06 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iD85O-00065b-74; Wed, 25 Sep 2019 15:16:06 +0100
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH 1/4] arm: make unexported items static
+Date:   Wed, 25 Sep 2019 15:16:01 +0100
+Message-Id: <20190925141604.23364-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <1569351740-6285-1-git-send-email-hongweiz@ami.com>
-In-Reply-To: <1569351740-6285-1-git-send-email-hongweiz@ami.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 25 Sep 2019 16:15:10 +0200
-Message-ID: <CACRpkdbhRo62inQS96OfFO4iWkLn2+P+w1+6g+Y=HFvVyVnXAA@mail.gmail.com>
-Subject: Re: [v1, 0/1] gpio: dts: aspeed: Add SGPIO driver
-To:     Hongwei Zhang <hongweiz@ami.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Doug Anderson <armlinux@m.disordat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 9:02 PM Hongwei Zhang <hongweiz@ami.com> wrote:
+Fixup the following sparse warnings by making the functions and structures
+static.
 
-> The related SGPIO driver has been accepted and merged into v5.4:
-> _http://patchwork.ozlabs.org/patch/1150357/
+arch/arm/mm/dma-mapping.c:1562:6: warning: symbol '__arm_iommu_free_attrs' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1586:6: warning: symbol 'arm_iommu_free_attrs' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1592:6: warning: symbol 'arm_coherent_iommu_free_attrs' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1716:5: warning: symbol 'arm_coherent_iommu_map_sg' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1734:5: warning: symbol 'arm_iommu_map_sg' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1767:6: warning: symbol 'arm_coherent_iommu_unmap_sg' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1784:6: warning: symbol 'arm_iommu_unmap_sg' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1798:6: warning: symbol 'arm_iommu_sync_sg_for_cpu' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:1816:6: warning: symbol 'arm_iommu_sync_sg_for_device' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:2018:26: warning: symbol 'iommu_ops' was not declared. Should it be static?
+arch/arm/mm/dma-mapping.c:2040:26: warning: symbol 'iommu_coherent_ops' was not declared. Should it be static?
 
-Oh what a mess, it didn't add the necessary code into Kconfig
-and Makefile, also names it sgpio-gpio.c when everything
-else is named gpio-sgpio.c.
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+ arch/arm/mm/dma-mapping.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
-I guess I have to fix it up. My fault for missing.
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index 7d042d5c43e3..54d2dd55363a 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1559,7 +1559,7 @@ static int arm_coherent_iommu_mmap_attrs(struct device *dev,
+  * free a page as defined by the above mapping.
+  * Must not be called with IRQs disabled.
+  */
+-void __arm_iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
++static void __arm_iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+ 	dma_addr_t handle, unsigned long attrs, int coherent_flag)
+ {
+ 	struct page **pages;
+@@ -1583,13 +1583,14 @@ void __arm_iommu_free_attrs(struct device *dev, size_t size, void *cpu_addr,
+ 	__iommu_free_buffer(dev, pages, size, attrs);
+ }
+ 
+-void arm_iommu_free_attrs(struct device *dev, size_t size,
+-		    void *cpu_addr, dma_addr_t handle, unsigned long attrs)
++static void arm_iommu_free_attrs(struct device *dev, size_t size,
++				 void *cpu_addr, dma_addr_t handle,
++				 unsigned long attrs)
+ {
+ 	__arm_iommu_free_attrs(dev, size, cpu_addr, handle, attrs, NORMAL);
+ }
+ 
+-void arm_coherent_iommu_free_attrs(struct device *dev, size_t size,
++static void arm_coherent_iommu_free_attrs(struct device *dev, size_t size,
+ 		    void *cpu_addr, dma_addr_t handle, unsigned long attrs)
+ {
+ 	__arm_iommu_free_attrs(dev, size, cpu_addr, handle, attrs, COHERENT);
+@@ -1713,7 +1714,7 @@ static int __iommu_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+  * possible) and tagged with the appropriate dma address and length. They are
+  * obtained via sg_dma_{address,length}.
+  */
+-int arm_coherent_iommu_map_sg(struct device *dev, struct scatterlist *sg,
++static int arm_coherent_iommu_map_sg(struct device *dev, struct scatterlist *sg,
+ 		int nents, enum dma_data_direction dir, unsigned long attrs)
+ {
+ 	return __iommu_map_sg(dev, sg, nents, dir, attrs, true);
+@@ -1731,7 +1732,7 @@ int arm_coherent_iommu_map_sg(struct device *dev, struct scatterlist *sg,
+  * tagged with the appropriate dma address and length. They are obtained via
+  * sg_dma_{address,length}.
+  */
+-int arm_iommu_map_sg(struct device *dev, struct scatterlist *sg,
++static int arm_iommu_map_sg(struct device *dev, struct scatterlist *sg,
+ 		int nents, enum dma_data_direction dir, unsigned long attrs)
+ {
+ 	return __iommu_map_sg(dev, sg, nents, dir, attrs, false);
+@@ -1764,8 +1765,8 @@ static void __iommu_unmap_sg(struct device *dev, struct scatterlist *sg,
+  * Unmap a set of streaming mode DMA translations.  Again, CPU access
+  * rules concerning calls here are the same as for dma_unmap_single().
+  */
+-void arm_coherent_iommu_unmap_sg(struct device *dev, struct scatterlist *sg,
+-		int nents, enum dma_data_direction dir,
++static void arm_coherent_iommu_unmap_sg(struct device *dev,
++		struct scatterlist *sg, int nents, enum dma_data_direction dir,
+ 		unsigned long attrs)
+ {
+ 	__iommu_unmap_sg(dev, sg, nents, dir, attrs, true);
+@@ -1781,9 +1782,10 @@ void arm_coherent_iommu_unmap_sg(struct device *dev, struct scatterlist *sg,
+  * Unmap a set of streaming mode DMA translations.  Again, CPU access
+  * rules concerning calls here are the same as for dma_unmap_single().
+  */
+-void arm_iommu_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+-			enum dma_data_direction dir,
+-			unsigned long attrs)
++static void arm_iommu_unmap_sg(struct device *dev,
++			       struct scatterlist *sg, int nents,
++			       enum dma_data_direction dir,
++			       unsigned long attrs)
+ {
+ 	__iommu_unmap_sg(dev, sg, nents, dir, attrs, false);
+ }
+@@ -1795,7 +1797,8 @@ void arm_iommu_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+  * @nents: number of buffers to map (returned from dma_map_sg)
+  * @dir: DMA transfer direction (same as was passed to dma_map_sg)
+  */
+-void arm_iommu_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
++static void arm_iommu_sync_sg_for_cpu(struct device *dev,
++			struct scatterlist *sg,
+ 			int nents, enum dma_data_direction dir)
+ {
+ 	struct scatterlist *s;
+@@ -1813,7 +1816,8 @@ void arm_iommu_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+  * @nents: number of buffers to map (returned from dma_map_sg)
+  * @dir: DMA transfer direction (same as was passed to dma_map_sg)
+  */
+-void arm_iommu_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
++static void arm_iommu_sync_sg_for_device(struct device *dev,
++			struct scatterlist *sg,
+ 			int nents, enum dma_data_direction dir)
+ {
+ 	struct scatterlist *s;
+@@ -2015,7 +2019,7 @@ static void arm_iommu_sync_single_for_device(struct device *dev,
+ 	__dma_page_cpu_to_dev(page, offset, size, dir);
+ }
+ 
+-const struct dma_map_ops iommu_ops = {
++static const struct dma_map_ops iommu_ops = {
+ 	.alloc		= arm_iommu_alloc_attrs,
+ 	.free		= arm_iommu_free_attrs,
+ 	.mmap		= arm_iommu_mmap_attrs,
+@@ -2037,7 +2041,7 @@ const struct dma_map_ops iommu_ops = {
+ 	.dma_supported		= arm_dma_supported,
+ };
+ 
+-const struct dma_map_ops iommu_coherent_ops = {
++static const struct dma_map_ops iommu_coherent_ops = {
+ 	.alloc		= arm_coherent_iommu_alloc_attrs,
+ 	.free		= arm_coherent_iommu_free_attrs,
+ 	.mmap		= arm_coherent_iommu_mmap_attrs,
+-- 
+2.23.0
 
-Linus Walleij
