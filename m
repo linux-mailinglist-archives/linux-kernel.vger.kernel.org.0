@@ -2,79 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEB0CBE3A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:42:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79B9EBE3AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 19:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443165AbfIYRmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 13:42:17 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40846 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728196AbfIYRmP (ORCPT
+        id S1727102AbfIYRpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 13:45:02 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39059 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbfIYRpC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 13:42:15 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so239082pgj.7;
-        Wed, 25 Sep 2019 10:42:15 -0700 (PDT)
+        Wed, 25 Sep 2019 13:45:02 -0400
+Received: by mail-yw1-f67.google.com with SMTP id n11so2367852ywn.6
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 10:45:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ep7MUnwSTs1NOnosNHftd5kt9y4voslofafMsmgNvp4=;
-        b=bbW9tn+OnqiBwGpi5ggOj70MxJU0HhU0829foG8gFQSO0rs0Uq7oG3D6ZSaAfGF6wH
-         xU3EPipe46ILw+PoQRsfHiGXTXTV02ugZzAiyftJu6dZHvjViAKxSnbqosQq4tJg4Oku
-         mhFqQaqBeimZ1FcPY+kKcnv74IeOfKhSwSW6jGGqIiAtDoSCdTJyAOph6OWjUlrY205N
-         VsE1xzI7L/44l1uOlB1sMLDnAK7m6h49Uyf9yUkxXfGvINQSG0z4X1YnAGTladLcklvo
-         PmkjihR0GvnL6swRODVk0anKRlDOVzpjhG2sdl5+Dw7rh1ec/CIZOyFHG7xX2wdaHc+0
-         QduQ==
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=OwXWZPnQzf3XInXWmq5k6gcPq0axL7VeZ/2pUkeIAO0=;
+        b=RuBZqIvukahNvS2RWkJSSIoSGRWT90uYjmjps6VQ1ybNW3AYnanSdd4620DHDwc/yF
+         N2132Z2o6rc0ScIkepSll+PIIr1lBpgU29MoUPbGETeSuqTivFQslAQAH3+AqGym/YQv
+         n226t8zfFzSifU9oPn5hVQKYfolEPuSacs9PkqBS5iZD08BM2dPV1TC94ONamhSa5CGx
+         mlRTN2p8fN432g8cr9uFNmhwLjYFWInOrA6u5wZ30Cv4BbNR1jZuP7+ShVrWs4RDvU6l
+         Pji0dM4YDZn9YVYfraDmMuLmKvlrLRDMGMSb6X4tfcFD8bEEsPdl0MYISqAv1F0Lzjo3
+         Q/IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ep7MUnwSTs1NOnosNHftd5kt9y4voslofafMsmgNvp4=;
-        b=Rik3kUAckcAsqvcqWo3mi2vijjG+lO+0I9dRAMxOo2JaY9HukC7o5XJ7LZGHcBQXtc
-         tEc08/NxGCuveDagRpsrTVv1PGDvd7XBpj7lNhwbaqioYWNKeYBfEup7sqzLWESfSrJ7
-         48JuOc+gdjygIty4d83Ki99IPAZYaDTDVL2Fmjf9VULmp5KEBNumqgwe9/n6WefIJIHY
-         jAqrNbLTzrJnVFZyL3DsV12MFPPf7SqOk4zyi++byH1R2g2bfqIzynVQGFr4yQFTIj9G
-         /HyqAup/QxYbC+IhO7TbpB/1xR6EEh6qIHE0ooiCbyq16l1iIiaPAkVRBd/kNvszbUN7
-         u9eA==
-X-Gm-Message-State: APjAAAWanbVETKVnejH0YdQbjvh8A/P4I1dmCBoEcQlb0TvNiceC10tK
-        pPrIgdw09Y/tEiqCjELiv4vjjFSZaG8DhxeCSSgj86l/cSA=
-X-Google-Smtp-Source: APXvYqwglDjYNJyV/BoRm1ThUdRpIn1sTx5vUTfTTnMfBOInk51P8lm/kYDxjLKc3vX28TD1S9MlOddzABELHN8MleA=
-X-Received: by 2002:a63:6988:: with SMTP id e130mr497818pgc.203.1569433334476;
- Wed, 25 Sep 2019 10:42:14 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=OwXWZPnQzf3XInXWmq5k6gcPq0axL7VeZ/2pUkeIAO0=;
+        b=CYHOZNeen0mQVPGXXYz5CLtkivuxc+8W9ZliNtiei8C4SfXEMzXlrnBxRBb26JJyoH
+         uEVs3JudySeA8g7LQ5SFWGmWfUnwIml9QfIwkvlSju4jsc2LrVvZDJfjna15YIAUaZcq
+         WJN0yWJvQPZOiaOR06wPjj+yRqovr0r9S0cv/JTtpFXoeIK4U8eY6UE1TD1/jz/lQNen
+         HdEagrcuhXDBvmn4+ywxh7FcY7OY9T0OCrbuJ5+hxQm2SOvvEeRJQmv6WH4X5PbLqsLB
+         nmb/vpKVf8Y5UXbYTsalAnM2P/Bya9kgns14/2du8+R2oYBFg/hpRwgCzy2UKzteGpOm
+         A+VA==
+X-Gm-Message-State: APjAAAWg2Sh2vBorpaGk3tVEjlYtQMOg35kqZYHUyCs9i7H4l1mxqiTS
+        51nxKD9PmKd4MCA9T49h/AmXUg==
+X-Google-Smtp-Source: APXvYqxiTwnx/w47MoIffPeZy27M224makbmCx5nzSH8a736vVNBtE4G47Q7IhV/AMkoZsqLvj+jkQ==
+X-Received: by 2002:a81:6589:: with SMTP id z131mr6316271ywb.262.1569433501520;
+        Wed, 25 Sep 2019 10:45:01 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id 189sm1371215ywa.47.2019.09.25.10.45.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 10:45:00 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 13:45:00 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/27] drm/dp_mst: Move link address dumping into a
+ function
+Message-ID: <20190925174500.GB218215@art_vandelay>
+References: <20190903204645.25487-1-lyude@redhat.com>
+ <20190903204645.25487-2-lyude@redhat.com>
 MIME-Version: 1.0
-References: <20190920223356.6622-1-jekhor@gmail.com> <20190920223356.6622-2-jekhor@gmail.com>
- <1cca117d-1951-0335-1aef-ac994c3c757b@redhat.com> <CAHp75VcoS2OFr8kwM7vq0iCqf6BpyJ4SO7peAUHKxAXdgA7CMA@mail.gmail.com>
- <20190925162712.GA3653@jeknote.loshitsa1.net>
-In-Reply-To: <20190925162712.GA3653@jeknote.loshitsa1.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 25 Sep 2019 20:42:03 +0300
-Message-ID: <CAHp75VfL0RUgMhZk=gesxBcBfRkfV8kC1zsN9TNg53qpUNVU0w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] platform/x86/intel_cht_int33fe: Split code to USB
- Micro-B and Type-C variants
-To:     Yauhen Kharuzhy <jekhor@gmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190903204645.25487-2-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 7:27 PM Yauhen Kharuzhy <jekhor@gmail.com> wrote:
-> On Wed, Sep 25, 2019 at 06:02:22PM +0300, Andy Shevchenko wrote:
-> > On Sat, Sep 21, 2019 at 9:31 PM Hans de Goede <hdegoede@redhat.com> wrote:
+On Tue, Sep 03, 2019 at 04:45:39PM -0400, Lyude Paul wrote:
+> Makes things easier to read.
+> 
+> Cc: Juston Li <juston.li@intel.com>
+> Cc: Imre Deak <imre.deak@intel.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: Harry Wentland <hwentlan@amd.com>
+> Reviewed-by: Daniel Vetter <daniel@ffwll.ch>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-> > By some reason it doesn't apply.
->
-> I have checked, and have no issues when applying this patch to the current
-> torvalds/master and linux-next/master branches (351c8a09b00b and 9e88347dedd8
-> commit IDs).
+Reviewed-by: Sean Paul <sean@poorly.run>
 
-It doesn't apply to the subsystem tree (for-next or my review branch)
+> ---
+>  drivers/gpu/drm/drm_dp_mst_topology.c | 35 ++++++++++++++++++---------
+>  1 file changed, 23 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index 82add736e17d..36db66a0ddb1 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -2103,6 +2103,28 @@ static void drm_dp_queue_down_tx(struct drm_dp_mst_topology_mgr *mgr,
+>  	mutex_unlock(&mgr->qlock);
+>  }
+>  
+> +static void
+> +drm_dp_dump_link_address(struct drm_dp_link_address_ack_reply *reply)
+> +{
+> +	struct drm_dp_link_addr_reply_port *port_reply;
+> +	int i;
+> +
+> +	for (i = 0; i < reply->nports; i++) {
+> +		port_reply = &reply->ports[i];
+> +		DRM_DEBUG_KMS("port %d: input %d, pdt: %d, pn: %d, dpcd_rev: %02x, mcs: %d, ddps: %d, ldps %d, sdp %d/%d\n",
+> +			      i,
+> +			      port_reply->input_port,
+> +			      port_reply->peer_device_type,
+> +			      port_reply->port_number,
+> +			      port_reply->dpcd_revision,
+> +			      port_reply->mcs,
+> +			      port_reply->ddps,
+> +			      port_reply->legacy_device_plug_status,
+> +			      port_reply->num_sdp_streams,
+> +			      port_reply->num_sdp_stream_sinks);
+> +	}
+> +}
+> +
+>  static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+>  				     struct drm_dp_mst_branch *mstb)
+>  {
+> @@ -2128,18 +2150,7 @@ static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+>  			DRM_DEBUG_KMS("link address nak received\n");
+>  		} else {
+>  			DRM_DEBUG_KMS("link address reply: %d\n", txmsg->reply.u.link_addr.nports);
+> -			for (i = 0; i < txmsg->reply.u.link_addr.nports; i++) {
+> -				DRM_DEBUG_KMS("port %d: input %d, pdt: %d, pn: %d, dpcd_rev: %02x, mcs: %d, ddps: %d, ldps %d, sdp %d/%d\n", i,
+> -				       txmsg->reply.u.link_addr.ports[i].input_port,
+> -				       txmsg->reply.u.link_addr.ports[i].peer_device_type,
+> -				       txmsg->reply.u.link_addr.ports[i].port_number,
+> -				       txmsg->reply.u.link_addr.ports[i].dpcd_revision,
+> -				       txmsg->reply.u.link_addr.ports[i].mcs,
+> -				       txmsg->reply.u.link_addr.ports[i].ddps,
+> -				       txmsg->reply.u.link_addr.ports[i].legacy_device_plug_status,
+> -				       txmsg->reply.u.link_addr.ports[i].num_sdp_streams,
+> -				       txmsg->reply.u.link_addr.ports[i].num_sdp_stream_sinks);
+> -			}
+> +			drm_dp_dump_link_address(&txmsg->reply.u.link_addr);
+>  
+>  			drm_dp_check_mstb_guid(mstb, txmsg->reply.u.link_addr.guid);
+>  
+> -- 
+> 2.21.0
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Sean Paul, Software Engineer, Google / Chromium OS
