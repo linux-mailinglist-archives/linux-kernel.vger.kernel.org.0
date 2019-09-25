@@ -2,114 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB2CBE914
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05070BE91E
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732967AbfIYXmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 19:42:44 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35172 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732927AbfIYXml (ORCPT
+        id S1733011AbfIYXnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 19:43:24 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:56606 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732977AbfIYXnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 19:42:41 -0400
-Received: by mail-pg1-f195.google.com with SMTP id a24so314236pgj.2
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 16:42:41 -0700 (PDT)
+        Wed, 25 Sep 2019 19:43:21 -0400
+Received: by mail-pf1-f202.google.com with SMTP id m25so353582pfa.23
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 16:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1oH7lj03wYz79i/zPzaUWTT6QxHftIiKZMYorEdLMBo=;
-        b=SwSWOlZdAHc54NN1P9/DI2Ev3uZ/2WR8GFuUWdKYhLAOmYqLprdUfFmMCJEqLxlumz
-         3gOwyocfMNPC5M7hckWXzk3Rb4ZOTIPwsJgqDLfh/tJuTauP3QP7ouMIgG2co4Dxsh2N
-         ONNf//SkblbTzF6TOSU4VjZUHtJE/eqTSl+FUEtAm/JAnmTR7oFsPZnkStJMlK3EmNyU
-         x+D9tbHrBIS6nv+BjgNvZ2Pnzwkar4rUHApgf6W2gTINQOWudc0WUMvfGmCPFC4pDIcP
-         ztFQcEf7Wwl1j8gw1Vtii9E6qVYU6UfUWSHm+di9rXUEWL1caDGAOutBXIaEGkH8m8tx
-         Jstw==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=letqQmLXhJ26rePJwfyNH6mOlQABi2YzpNRsxYXK53E=;
+        b=gmrYnfSyTw1f26hABnX/14Tb9gHphBFSw9ysWsgslFndsIS/thnap2A+ID8uNwvGyr
+         F7l1E+w5g3Hr1Imb/26usjnR+JYI70d9JOEXVJz4ZMI/wCTVSWWtM7AXAD0TpMP+Z6XM
+         ASQTuWmoxQxoN/2VnRYGrfqpewkdqCwkbBsmhFCWZnCbYu4jWNlMSCV+iLV8uW0Q0Lif
+         Ik3IeqlI2VjdwTtVN60S+lOApHVsy6ljioP7tLO7E+d94Pe8dMcMQ7iCbSfTOXez8EYh
+         ugWmWP4uscscHN/HxOLgxnwxQQKqIVsRMCdzmFiETn6bUHWpv3JptiifMAgF+TJqPenD
+         tb4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=1oH7lj03wYz79i/zPzaUWTT6QxHftIiKZMYorEdLMBo=;
-        b=ialmJMw6aw1Rq8EeO7RH0dVp1syUB9bs9DcqfZbxIDOvudGtRXj25WSnCmSheyKEvL
-         6QUY80wmaqC/bakDGSpaMnG99UfTIgyUc+R11mTPT2NwQbpADrzcdT91UWVdPlJ+GIsN
-         CaAr/GoYUc3o0BXgPC/TAiZZGg/SVbE0TE5qpJMLAv51g7gZGHcPPIobwFgKakqxvcYX
-         SSD44nU8sYmuuqlRAqYdpzDXqCtK1IJ+6X3z44hiKaSx7FQisf0zAumnVlXLWIgTlWDB
-         YEyNY3q0e9DpJVElVqqrFtxxr6QXkvPvBluw/BzuS9wpRGwuHVLmyMsE6w5V4Rpqg5we
-         XUfQ==
-X-Gm-Message-State: APjAAAU2M0akniwdFfYnaLUqo+9yfP+7HeynIbVZjFt76rVL5DenVCht
-        M+//7QcQ8281t8PdmXf2c9q6oWRdTSY=
-X-Google-Smtp-Source: APXvYqxBu00R/fhIXx8pELMq6NqJTAGfty4xq7C26/kBFDvAHrojlE9S5uCP8hyRBRU/G8IJBrwdGw==
-X-Received: by 2002:a63:221f:: with SMTP id i31mr441694pgi.251.1569454960022;
-        Wed, 25 Sep 2019 16:42:40 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id d1sm131127pfc.98.2019.09.25.16.42.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 16:42:39 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Yu Chen <chenyu56@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH 5/5] usb: dwc3: dwc3-of-simple: Add support for dwc3 of Hisilicon Soc Platform
-Date:   Wed, 25 Sep 2019 23:42:24 +0000
-Message-Id: <20190925234224.95216-6-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190925234224.95216-1-john.stultz@linaro.org>
-References: <20190925234224.95216-1-john.stultz@linaro.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=letqQmLXhJ26rePJwfyNH6mOlQABi2YzpNRsxYXK53E=;
+        b=kwf/cHyZ9uC3+iiEcFtwqcdW4OYQe+H9Bt5lo7jPwJuZerkzDr9wjSPRFxnKEAfNsD
+         sdDUqyq1T1XHxqgFt9kDrQ7t/1gsBnt3ezI1U/YEQsW2ExlmTslYEH7aZJYncveir5c8
+         PqEe/abv4QerCYDtwJHRMgWRMbmDFxukyFlwTDlsxzzYHAUGbwV2gBDQieYHLZy2iK58
+         TvMfO1W3iTQsOILeQ5R3YNbn2Cm+/4OJR2lLF0OYPgHRbF16YdkAEGycvi9jA18fOReD
+         94o4kRoQABdl9hPc2slKJqrkogAfx7szOXNBQM8/gbDRNDMpm26OdwIilMJvdzJieqML
+         VC6g==
+X-Gm-Message-State: APjAAAVegs2tEcIVOUMZ8qH+5L0XYPQbOuWaABq5sONKqQhk/TvFiyb4
+        lh9efTWc0IQQi97WVB4i1rE5GLaCKhY51BIC
+X-Google-Smtp-Source: APXvYqxQVs372ouu+aLaaayQVqtcE03MHqaadSJn7DSgd+z9iXf12wBvc9lGG+0dcKkpCNi+16J0Keb/KJRGd+Aa
+X-Received: by 2002:a63:2104:: with SMTP id h4mr428099pgh.295.1569454998771;
+ Wed, 25 Sep 2019 16:43:18 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 16:43:11 -0700
+Message-Id: <20190925234312.94063-1-allanzhang@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.351.gc4317032e6-goog
+Subject: [PATCH 0/1] bpf: Fix bpf_event_output re-entry issue
+From:   Allan Zhang <allanzhang@google.com>
+To:     daniel@iogearbox.net, songliubraving@fb.com,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Allan Zhang <allanzhang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Chen <chenyu56@huawei.com>
+BPF_PROG_TYPE_SOCK_OPS program can reenter bpf_event_output because it can
+be called from atomic and non-atomic contexts since we don't have
+bpf_prog_active to prevent it happen.
 
-This patch adds support for the poweron and shutdown of dwc3 core
-on Hisilicon Soc Platform.
+This patch enables 3 level of nesting to support normal, irq and nmi
+context.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Yu Chen <chenyu56@huawei.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: linux-usb@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Yu Chen <chenyu56@huawei.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- drivers/usb/dwc3/dwc3-of-simple.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+We can easily reproduce the issue by running neper crr mode with 100 flows
+and 10 threads from neper client side.
 
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index bdac3e7d7b18..78617500edee 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -51,7 +51,8 @@ static int dwc3_of_simple_probe(struct platform_device *pdev)
- 	 * Some controllers need to toggle the usb3-otg reset before trying to
- 	 * initialize the PHY, otherwise the PHY times out.
- 	 */
--	if (of_device_is_compatible(np, "rockchip,rk3399-dwc3"))
-+	if (of_device_is_compatible(np, "rockchip,rk3399-dwc3") ||
-+	    of_device_is_compatible(np, "hisilicon,hi3660-dwc3"))
- 		simple->need_reset = true;
- 
- 	if (of_device_is_compatible(np, "amlogic,meson-axg-dwc3") ||
-@@ -183,6 +184,7 @@ static const struct of_device_id of_dwc3_simple_match[] = {
- 	{ .compatible = "amlogic,meson-axg-dwc3" },
- 	{ .compatible = "amlogic,meson-gxl-dwc3" },
- 	{ .compatible = "allwinner,sun50i-h6-dwc3" },
-+	{ .compatible = "hisilicon,hi3660-dwc3" },
- 	{ /* Sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, of_dwc3_simple_match);
+Allan Zhang (1):
+  bpf: Fix bpf_event_output re-entry issue
+
+ kernel/trace/bpf_trace.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
+
 -- 
-2.17.1
+2.23.0.351.gc4317032e6-goog
 
