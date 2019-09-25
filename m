@@ -2,464 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67104BE6CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 23:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1A05BE6D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 23:02:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390506AbfIYVBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 17:01:38 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:35517 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726375AbfIYVBi (ORCPT
+        id S2393519AbfIYVCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 17:02:37 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37718 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfIYVCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 17:01:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1569445295;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=M9RxYj5teBPpN/KUxlPhe/HE5yk/eAzeYmA1gJdETtY=;
-        b=JraT+YvPvU6JsJMvYeLISCAwSkvi67nQmFxBNGmNuRnYQpT8VsFiD/vxDuRY6HNKjQXQeL
-        0C0VPWzy0YeDPXwXjW4KCYtuPcWFI4Yq5IKkO4Z9U0dn14u4S+Ilk91vDSrjmwOkzF5anD
-        +7BWcO7Cww0GAPfmHD3338G+x0KBH7Q=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-328-c4cie_0CMya_sbTKAtmbvQ-1; Wed, 25 Sep 2019 17:01:34 -0400
-Received: by mail-qk1-f198.google.com with SMTP id x77so152541qka.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 14:01:34 -0700 (PDT)
+        Wed, 25 Sep 2019 17:02:37 -0400
+Received: by mail-pf1-f194.google.com with SMTP id y5so196734pfo.4
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 14:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=7xhrP95QBYJiSF2YxdsM/vyNYpW4G7L9q0PwFgts0Eg=;
+        b=PhYrdbXFW7DxjoTBihqkbscUj3ihaM+7AY9Uko1qzd/uFoRL8eCcWcrRFhuukFI+Oz
+         tHzDS4E8nYIttCuj/nMIfyN+ttt8eZInD6Ld0sgEK6AuJlEQGAUO5CV2x0pMB6curxMS
+         NQeJZM+/oKiZHqo7s+oNvkBKelSGTUnca6lg8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=ScM/Ac5MkUH2MY1W8OIWpCK2OOSYqls1/6d6mwr56ho=;
-        b=iyQwxK9EMPDWcS0GEMeS4OAIW+n44DD0NS3mClk0MEQJSQDWvuHe3ZDPA8MxDDiGsF
-         lFUaW6NxLLtYh8dQ4xh7Pg+fXGvEI8h3Z1wP7UsRUri8MeZXdqg+IdNRvJYNWrrTDxbW
-         7ih5TOpbS9YbhYtnSgSXiBuTQsV+XBwRJRngYidRMPGaF8H9k1GtIvQf6xumV8An4bcb
-         u9Dfp1lcj7rH1+PXOXerqbAdL39OIxstQrqc6sh7jA+gNPNAaHcj260vQ9fv589l9g2w
-         5Uvc7bjewWM8WiEwQFJ3N7BDjRwvUMZHHelXLuS2TGpS3m+ou55ii3HOBc+Yx1wQFwA9
-         Khbw==
-X-Gm-Message-State: APjAAAV3VioKdkuIwngSNkXHxTV26iGekPzqW0NB895QCGOGaR76j88E
-        s+cMKzDrjqb789aOisIzQGK2lzsaFxwLLkJ7qgOo4SBWNvi7B0fKradtIlrrUOrTafKngoLrl7J
-        Aopk+hRtruzVfPsdLH0A61l5B
-X-Received: by 2002:ac8:33c3:: with SMTP id d3mr430416qtb.41.1569445293639;
-        Wed, 25 Sep 2019 14:01:33 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzJWpsoaokz/sb+P6S9S6IEQ4mDsjjRc6FBnqXoOAz30B/2lC8tj+A6OW07efkc/FKN5dGP2w==
-X-Received: by 2002:ac8:33c3:: with SMTP id d3mr430385qtb.41.1569445293357;
-        Wed, 25 Sep 2019 14:01:33 -0700 (PDT)
-Received: from dhcp-10-20-1-34.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id b50sm29597qte.48.2019.09.25.14.01.32
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=7xhrP95QBYJiSF2YxdsM/vyNYpW4G7L9q0PwFgts0Eg=;
+        b=N1i4VHaGlNOZykAcJxm9a+BYfJLA4s8C6ODqUlmUuQyGuW+ld7kXS9xN0FRrRi9tyx
+         472akzd9mXx9744tyQpYjFVCYCnIfnFVpx5mslkwYqlN0ZniZ6KNj8RVCvNZnapd4UZV
+         5jIWR2KLPTTo3k4Pw8KCTUZu3n7NBJXtfBFNUBG5FwiGI7K+Gn/bxiTJoujDI6p26pOi
+         d3MPJDQWLzrDiPPzPQSJ/x15YnDqW+z3foqs0ixs3iYZS707gTCOxSpdh6eQYKEhYCt8
+         sEr8RXIbpUExLenPvIRJwAz5mFhF95Abh3toxEVAO/hoo0hLBGczXw6ryiyDPo1PDasr
+         h5Kw==
+X-Gm-Message-State: APjAAAWDtljf1yw4Pj6LzYLvKjfhjZ4pD+2odSccLeAJrILtVHPxE4NY
+        PXt7kBcdtDMw52qPcjUKj6jVyQ==
+X-Google-Smtp-Source: APXvYqy8enN66HCBAXgdyj2WiN3UN+3QBv7218MOZV3xhCqI5u1BW3NXe4CmUibg81qEWdaXeJbpZA==
+X-Received: by 2002:a17:90a:8c14:: with SMTP id a20mr8916240pjo.45.1569445355367;
+        Wed, 25 Sep 2019 14:02:35 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p66sm13856502pfg.127.2019.09.25.14.02.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2019 14:01:32 -0700 (PDT)
-Message-ID: <4134513c8cae44270f3ae76e82c579dfe32993ec.camel@redhat.com>
-Subject: Re: [PATCH v2 20/27] drm/dp_mst: Protect drm_dp_mst_port members
- with connection_mutex
-From:   Lyude Paul <lyude@redhat.com>
-To:     Sean Paul <sean@poorly.run>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Date:   Wed, 25 Sep 2019 17:01:31 -0400
-In-Reply-To: <20190925200020.GL218215@art_vandelay>
-References: <20190903204645.25487-1-lyude@redhat.com>
-         <20190903204645.25487-21-lyude@redhat.com>
-         <20190925200020.GL218215@art_vandelay>
-Organization: Red Hat
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30)
+        Wed, 25 Sep 2019 14:02:34 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 14:02:33 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-kernel@vger.kernel.org,
+        =?iso-8859-1?Q?J=E9r=E9mie?= Galarneau 
+        <jeremie.galarneau@efficios.com>, s.mesoraca16@gmail.com,
+        viro@zeniv.linux.org.uk, dan.carpenter@oracle.com,
+        akpm@linux-foundation.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        kernel-hardening@lists.openwall.com, linux-audit@redhat.com,
+        torvalds@linux-foundation.org
+Subject: [PATCH] audit: Report suspicious O_CREAT usage
+Message-ID: <201909251348.A1542A52@keescook>
 MIME-Version: 1.0
-X-MC-Unique: c4cie_0CMya_sbTKAtmbvQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-09-25 at 16:00 -0400, Sean Paul wrote:
-> On Tue, Sep 03, 2019 at 04:45:58PM -0400, Lyude Paul wrote:
-> > Yes-you read that right. Currently there is literally no locking in
-> > place for any of the drm_dp_mst_port struct members that can be modifie=
-d
-> > in response to a link address response, or a connection status response=
-.
-> > Which literally means if we're unlucky enough to have any sort of
-> > hotplugging event happen before we're finished with reprobing link
-> > addresses, we'll race and the contents of said struct members becomes
-> > undefined. Fun!
-> >=20
-> > So, finally add some simple locking protections to our MST helpers by
-> > protecting any drm_dp_mst_port members which can be changed by link
-> > address responses or connection status notifications under
-> > drm_device->mode_config.connection_mutex.
-> >=20
-> > Cc: Juston Li <juston.li@intel.com>
-> > Cc: Imre Deak <imre.deak@intel.com>
-> > Cc: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
-> > Cc: Harry Wentland <hwentlan@amd.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > ---
-> >  drivers/gpu/drm/drm_dp_mst_topology.c | 144 +++++++++++++++++++-------
-> >  include/drm/drm_dp_mst_helper.h       |  39 +++++--
-> >  2 files changed, 133 insertions(+), 50 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > index 5101eeab4485..259634c5d6dc 100644
-> > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > @@ -1354,6 +1354,7 @@ static void drm_dp_free_mst_port(struct kref *kre=
-f)
-> >  =09=09container_of(kref, struct drm_dp_mst_port, malloc_kref);
-> > =20
-> >  =09drm_dp_mst_put_mstb_malloc(port->parent);
-> > +=09mutex_destroy(&port->lock);
-> >  =09kfree(port);
-> >  }
-> > =20
-> > @@ -1906,6 +1907,36 @@ void drm_dp_mst_connector_early_unregister(struc=
-t
-> > drm_connector *connector,
-> >  }
-> >  EXPORT_SYMBOL(drm_dp_mst_connector_early_unregister);
-> > =20
-> > +static void
-> > +drm_dp_mst_port_add_connector(struct drm_dp_mst_branch *mstb,
-> > +=09=09=09      struct drm_dp_mst_port *port)
-> > +{
-> > +=09struct drm_dp_mst_topology_mgr *mgr =3D port->mgr;
-> > +=09char proppath[255];
-> > +=09int ret;
-> > +
-> > +=09build_mst_prop_path(mstb, port->port_num, proppath, sizeof(proppath=
-));
-> > +=09port->connector =3D mgr->cbs->add_connector(mgr, port, proppath);
-> > +=09if (!port->connector) {
-> > +=09=09ret =3D -ENOMEM;
-> > +=09=09goto error;
-> > +=09}
-> > +
-> > +=09if ((port->pdt =3D=3D DP_PEER_DEVICE_DP_LEGACY_CONV ||
-> > +=09     port->pdt =3D=3D DP_PEER_DEVICE_SST_SINK) &&
-> > +=09    port->port_num >=3D DP_MST_LOGICAL_PORT_0) {
-> > +=09=09port->cached_edid =3D drm_get_edid(port->connector,
-> > +=09=09=09=09=09=09 &port->aux.ddc);
-> > +=09=09drm_connector_set_tile_property(port->connector);
-> > +=09}
-> > +
-> > +=09mgr->cbs->register_connector(port->connector);
-> > +=09return;
-> > +
-> > +error:
-> > +=09DRM_ERROR("Failed to create connector for port %p: %d\n", port, ret=
-);
-> > +}
-> > +
-> >  static void
-> >  drm_dp_mst_handle_link_address_port(struct drm_dp_mst_branch *mstb,
-> >  =09=09=09=09    struct drm_device *dev,
-> > @@ -1913,8 +1944,12 @@ drm_dp_mst_handle_link_address_port(struct
-> > drm_dp_mst_branch *mstb,
-> >  {
-> >  =09struct drm_dp_mst_topology_mgr *mgr =3D mstb->mgr;
-> >  =09struct drm_dp_mst_port *port;
-> > -=09bool created =3D false;
-> > -=09int old_ddps =3D 0;
-> > +=09struct drm_dp_mst_branch *child_mstb =3D NULL;
-> > +=09struct drm_connector *connector_to_destroy =3D NULL;
-> > +=09int old_ddps =3D 0, ret;
-> > +=09u8 new_pdt =3D DP_PEER_DEVICE_NONE;
-> > +=09bool created =3D false, send_link_addr =3D false,
-> > +=09     create_connector =3D false;
-> > =20
-> >  =09port =3D drm_dp_get_port(mstb, port_msg->port_number);
-> >  =09if (!port) {
-> > @@ -1923,6 +1958,7 @@ drm_dp_mst_handle_link_address_port(struct
-> > drm_dp_mst_branch *mstb,
-> >  =09=09=09return;
-> >  =09=09kref_init(&port->topology_kref);
-> >  =09=09kref_init(&port->malloc_kref);
-> > +=09=09mutex_init(&port->lock);
-> >  =09=09port->parent =3D mstb;
-> >  =09=09port->port_num =3D port_msg->port_number;
-> >  =09=09port->mgr =3D mgr;
-> > @@ -1937,11 +1973,17 @@ drm_dp_mst_handle_link_address_port(struct
-> > drm_dp_mst_branch *mstb,
-> >  =09=09drm_dp_mst_get_mstb_malloc(mstb);
-> > =20
-> >  =09=09created =3D true;
-> > -=09} else {
-> > -=09=09old_ddps =3D port->ddps;
-> >  =09}
-> > =20
-> > +=09mutex_lock(&port->lock);
-> > +=09drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
-> > +
-> > +=09if (!created)
-> > +=09=09old_ddps =3D port->ddps;
-> > +
-> >  =09port->input =3D port_msg->input_port;
-> > +=09if (!port->input)
-> > +=09=09new_pdt =3D port_msg->peer_device_type;
-> >  =09port->mcs =3D port_msg->mcs;
-> >  =09port->ddps =3D port_msg->ddps;
-> >  =09port->ldps =3D port_msg->legacy_device_plug_status;
-> > @@ -1969,44 +2011,58 @@ drm_dp_mst_handle_link_address_port(struct
-> > drm_dp_mst_branch *mstb,
-> >  =09=09}
-> >  =09}
-> > =20
-> > -=09if (!port->input) {
-> > -=09=09int ret =3D drm_dp_port_set_pdt(port,
-> > -=09=09=09=09=09      port_msg->peer_device_type);
-> > -=09=09if (ret =3D=3D 1) {
-> > -=09=09=09drm_dp_send_link_address(mgr, port->mstb);
-> > -=09=09} else if (ret < 0) {
-> > -=09=09=09DRM_ERROR("Failed to change PDT on port %p: %d\n",
-> > -=09=09=09=09  port, ret);
-> > -=09=09=09goto fail;
-> > +=09ret =3D drm_dp_port_set_pdt(port, new_pdt);
-> > +=09if (ret =3D=3D 1) {
-> > +=09=09send_link_addr =3D true;
-> > +=09} else if (ret < 0) {
-> > +=09=09DRM_ERROR("Failed to change PDT on port %p: %d\n",
-> > +=09=09=09  port, ret);
-> > +=09=09goto fail_unlock;
-> > +=09}
-> > +
-> > +=09if (send_link_addr) {
-> > +=09=09mutex_lock(&mgr->lock);
-> > +=09=09if (port->mstb) {
-> > +=09=09=09child_mstb =3D port->mstb;
-> > +=09=09=09drm_dp_mst_get_mstb_malloc(child_mstb);
-> >  =09=09}
-> > +=09=09mutex_unlock(&mgr->lock);
-> >  =09}
-> > =20
-> > -=09if (created && !port->input) {
-> > -=09=09char proppath[255];
-> > +=09/*
-> > +=09 * We unset port->connector before dropping connection_mutex so tha=
-t
-> > +=09 * there's no chance any of the atomic MST helpers can accidentally
-> > +=09 * associate a to-be-destroyed connector with a port.
-> > +=09 */
-> > +=09if (port->connector && port->input) {
-> > +=09=09connector_to_destroy =3D port->connector;
-> > +=09=09port->connector =3D NULL;
-> > +=09} else if (!port->connector && !port->input) {
-> > +=09=09create_connector =3D true;
-> > +=09}
-> > =20
-> > -=09=09build_mst_prop_path(mstb, port->port_num, proppath,
-> > -=09=09=09=09    sizeof(proppath));
-> > -=09=09port->connector =3D (*mgr->cbs->add_connector)(mgr, port,
-> > -=09=09=09=09=09=09=09     proppath);
-> > -=09=09if (!port->connector)
-> > -=09=09=09goto fail;
-> > +=09drm_modeset_unlock(&dev->mode_config.connection_mutex);
->=20
-> Do you drop this early b/c it deadlocks with something upstack? If so, I
-> wonder if you could plumb an acquire context through the appropriate
-> functions to avoid needing the port->lock at all?
+This renames the very specific audit_log_link_denied() to
+audit_log_path_denied() and adds the AUDIT_* type as an argument. This
+allows for the creation of the new AUDIT_ANOM_CREAT that can be used to
+report the fifo/regular file creation restrictions that were introduced
+in commit 30aba6656f61 ("namei: allow restricted O_CREAT of FIFOs and
+regular files"). Without this change, discovering that the restriction
+is enabled can be very challenging:
+https://lore.kernel.org/lkml/CA+jJMxvkqjXHy3DnV5MVhFTL2RUhg0WQ-XVFW3ngDQOdkFq0PA@mail.gmail.com
 
-I'll give this a shot, as it would definitely be nicer then having port->lo=
-ck
->=20
-> Sean
->=20
-> > =20
-> > -=09=09if ((port->pdt =3D=3D DP_PEER_DEVICE_DP_LEGACY_CONV ||
-> > -=09=09     port->pdt =3D=3D DP_PEER_DEVICE_SST_SINK) &&
-> > -=09=09    port->port_num >=3D DP_MST_LOGICAL_PORT_0) {
-> > -=09=09=09port->cached_edid =3D drm_get_edid(port->connector,
-> > -=09=09=09=09=09=09=09 &port->aux.ddc);
-> > -=09=09=09drm_connector_set_tile_property(port->connector);
-> > -=09=09}
-> > +=09if (connector_to_destroy)
-> > +=09=09mgr->cbs->destroy_connector(mgr, connector_to_destroy);
-> > +=09else if (create_connector)
-> > +=09=09drm_dp_mst_port_add_connector(mstb, port);
-> > +
-> > +=09mutex_unlock(&port->lock);
-> > =20
-> > -=09=09(*mgr->cbs->register_connector)(port->connector);
-> > +=09if (send_link_addr && child_mstb) {
-> > +=09=09drm_dp_send_link_address(mgr, child_mstb);
-> > +=09=09drm_dp_mst_put_mstb_malloc(child_mstb);
-> >  =09}
-> > =20
-> >  =09/* put reference to this port */
-> >  =09drm_dp_mst_topology_put_port(port);
-> >  =09return;
-> > =20
-> > -fail:
-> > +fail_unlock:
-> > +=09drm_modeset_unlock(&dev->mode_config.connection_mutex);
-> > +=09mutex_unlock(&port->lock);
-> > +
-> >  =09/* Remove it from the port list */
-> >  =09mutex_lock(&mgr->lock);
-> >  =09list_del(&port->next);
-> > @@ -2022,6 +2078,7 @@ static void
-> >  drm_dp_mst_handle_conn_stat(struct drm_dp_mst_branch *mstb,
-> >  =09=09=09    struct drm_dp_connection_status_notify *conn_stat)
-> >  {
-> > +=09struct drm_device *dev =3D mstb->mgr->dev;
-> >  =09struct drm_dp_mst_port *port;
-> >  =09int old_ddps;
-> >  =09bool dowork =3D false;
-> > @@ -2030,6 +2087,8 @@ drm_dp_mst_handle_conn_stat(struct drm_dp_mst_bra=
-nch
-> > *mstb,
-> >  =09if (!port)
-> >  =09=09return;
-> > =20
-> > +=09drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
-> > +
-> >  =09old_ddps =3D port->ddps;
-> >  =09port->mcs =3D conn_stat->message_capability_status;
-> >  =09port->ldps =3D conn_stat->legacy_device_plug_status;
-> > @@ -2055,6 +2114,7 @@ drm_dp_mst_handle_conn_stat(struct drm_dp_mst_bra=
-nch
-> > *mstb,
-> >  =09=09}
-> >  =09}
-> > =20
-> > +=09drm_modeset_unlock(&dev->mode_config.connection_mutex);
-> >  =09drm_dp_mst_topology_put_port(port);
-> >  =09if (dowork)
-> >  =09=09queue_work(system_long_wq, &mstb->mgr->work);
-> > @@ -2147,28 +2207,34 @@ drm_dp_get_mst_branch_device_by_guid(struct
-> > drm_dp_mst_topology_mgr *mgr,
-> >  static void drm_dp_check_and_send_link_address(struct
-> > drm_dp_mst_topology_mgr *mgr,
-> >  =09=09=09=09=09       struct drm_dp_mst_branch *mstb)
-> >  {
-> > +=09struct drm_device *dev =3D mgr->dev;
-> >  =09struct drm_dp_mst_port *port;
-> > -=09struct drm_dp_mst_branch *mstb_child;
-> > +
-> >  =09if (!mstb->link_address_sent)
-> >  =09=09drm_dp_send_link_address(mgr, mstb);
-> > =20
-> >  =09list_for_each_entry(port, &mstb->ports, next) {
-> > -=09=09if (port->input)
-> > -=09=09=09continue;
-> > +=09=09struct drm_dp_mst_branch *mstb_child =3D NULL;
-> > +
-> > +=09=09drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
-> > =20
-> > -=09=09if (!port->ddps)
-> > +=09=09if (port->input || !port->ddps) {
-> > +=09=09=09drm_modeset_unlock(&dev-
-> > >mode_config.connection_mutex);
-> >  =09=09=09continue;
-> > +=09=09}
-> > =20
-> >  =09=09if (!port->available_pbn)
-> >  =09=09=09drm_dp_send_enum_path_resources(mgr, mstb, port);
-> > =20
-> > -=09=09if (port->mstb) {
-> > +=09=09if (port->mstb)
-> >  =09=09=09mstb_child =3D drm_dp_mst_topology_get_mstb_validated(
-> >  =09=09=09    mgr, port->mstb);
-> > -=09=09=09if (mstb_child) {
-> > -=09=09=09=09drm_dp_check_and_send_link_address(mgr,
-> > mstb_child);
-> > -=09=09=09=09drm_dp_mst_topology_put_mstb(mstb_child);
-> > -=09=09=09}
-> > +
-> > +=09=09drm_modeset_unlock(&dev->mode_config.connection_mutex);
-> > +
-> > +=09=09if (mstb_child) {
-> > +=09=09=09drm_dp_check_and_send_link_address(mgr, mstb_child);
-> > +=09=09=09drm_dp_mst_topology_put_mstb(mstb_child);
-> >  =09=09}
-> >  =09}
-> >  }
-> > diff --git a/include/drm/drm_dp_mst_helper.h
-> > b/include/drm/drm_dp_mst_helper.h
-> > index 7d80c38ee00e..1efbb086f7ac 100644
-> > --- a/include/drm/drm_dp_mst_helper.h
-> > +++ b/include/drm/drm_dp_mst_helper.h
-> > @@ -45,23 +45,34 @@ struct drm_dp_vcpi {
-> >  /**
-> >   * struct drm_dp_mst_port - MST port
-> >   * @port_num: port number
-> > - * @input: if this port is an input port.
-> > - * @mcs: message capability status - DP 1.2 spec.
-> > - * @ddps: DisplayPort Device Plug Status - DP 1.2
-> > - * @pdt: Peer Device Type
-> > - * @ldps: Legacy Device Plug Status
-> > - * @dpcd_rev: DPCD revision of device on this port
-> > - * @num_sdp_streams: Number of simultaneous streams
-> > - * @num_sdp_stream_sinks: Number of stream sinks
-> > - * @available_pbn: Available bandwidth for this port.
-> > + * @input: if this port is an input port. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @mcs: message capability status - DP 1.2 spec. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @ddps: DisplayPort Device Plug Status - DP 1.2. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @pdt: Peer Device Type. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @ldps: Legacy Device Plug Status. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @dpcd_rev: DPCD revision of device on this port. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @num_sdp_streams: Number of simultaneous streams. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @num_sdp_stream_sinks: Number of stream sinks. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> > + * @available_pbn: Available bandwidth for this port. Protected by
-> > + * &drm_device.mode_config.connection_mutex.
-> >   * @next: link to next port on this branch device
-> >   * @mstb: branch device on this port, protected by
-> >   * &drm_dp_mst_topology_mgr.lock
-> >   * @aux: i2c aux transport to talk to device connected to this port,
-> > protected
-> > - * by &drm_dp_mst_topology_mgr.lock
-> > + * by &drm_device.mode_config.connection_mutex.
-> >   * @parent: branch device parent of this port
-> >   * @vcpi: Virtual Channel Payload info for this port.
-> > - * @connector: DRM connector this port is connected to.
-> > + * @connector: DRM connector this port is connected to. Protected by
-> > @lock.
-> > + * When there is already a connector registered for this port, this is
-> > also
-> > + * protected by &drm_device.mode_config.connection_mutex.
-> >   * @mgr: topology manager this port lives under.
-> >   *
-> >   * This structure represents an MST port endpoint on a device somewher=
-e
-> > @@ -100,6 +111,12 @@ struct drm_dp_mst_port {
-> >  =09struct drm_connector *connector;
-> >  =09struct drm_dp_mst_topology_mgr *mgr;
-> > =20
-> > +=09/**
-> > +=09 * @lock: Protects @connector. If needed, this lock should be grabb=
-ed
-> > +=09 * before &drm_device.mode_config.connection_mutex.
-> > +=09 */
-> > +=09struct mutex lock;
-> > +
-> >  =09/**
-> >  =09 * @cached_edid: for DP logical ports - make tiling work by ensurin=
-g
-> >  =09 * that the EDID for all connectors is read immediately.
-> > --=20
-> > 2.21.0
-> >=20
---=20
-Cheers,
-=09Lyude Paul
+Reported-by: Jérémie Galarneau <jeremie.galarneau@efficios.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+This is not a complete fix because reporting was broken in commit
+15564ff0a16e ("audit: make ANOM_LINK obey audit_enabled and
+audit_dummy_context")
+which specifically goes against the intention of these records: they
+should _always_ be reported. If auditing isn't enabled, they should be
+ratelimited.
 
+Instead of using audit, should this just go back to using
+pr_ratelimited()?
+---
+ fs/namei.c                 |  7 +++++--
+ include/linux/audit.h      |  5 +++--
+ include/uapi/linux/audit.h |  1 +
+ kernel/audit.c             | 11 ++++++-----
+ 4 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 671c3c1a3425..0e60f81e1d5a 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -925,7 +925,7 @@ static inline int may_follow_link(struct nameidata *nd)
+ 		return -ECHILD;
+ 
+ 	audit_inode(nd->name, nd->stack[0].link.dentry, 0);
+-	audit_log_link_denied("follow_link");
++	audit_log_path_denied(AUDIT_ANOM_LINK, "follow_link");
+ 	return -EACCES;
+ }
+ 
+@@ -993,7 +993,7 @@ static int may_linkat(struct path *link)
+ 	if (safe_hardlink_source(inode) || inode_owner_or_capable(inode))
+ 		return 0;
+ 
+-	audit_log_link_denied("linkat");
++	audit_log_path_denied(AUDIT_ANOM_LINK, "linkat");
+ 	return -EPERM;
+ }
+ 
+@@ -1031,6 +1031,9 @@ static int may_create_in_sticky(struct dentry * const dir,
+ 	    (dir->d_inode->i_mode & 0020 &&
+ 	     ((sysctl_protected_fifos >= 2 && S_ISFIFO(inode->i_mode)) ||
+ 	      (sysctl_protected_regular >= 2 && S_ISREG(inode->i_mode))))) {
++		audit_log_path_denied(AUDIT_ANOM_CREAT,
++				      S_ISFIFO(inode->i_mode) ? "fifo"
++							      : "regular");
+ 		return -EACCES;
+ 	}
+ 	return 0;
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index aee3dc9eb378..b3715e2ee1c5 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -156,7 +156,8 @@ extern void		    audit_log_d_path(struct audit_buffer *ab,
+ 					     const struct path *path);
+ extern void		    audit_log_key(struct audit_buffer *ab,
+ 					  char *key);
+-extern void		    audit_log_link_denied(const char *operation);
++extern void		    audit_log_path_denied(int type,
++						  const char *operation);
+ extern void		    audit_log_lost(const char *message);
+ 
+ extern int audit_log_task_context(struct audit_buffer *ab);
+@@ -217,7 +218,7 @@ static inline void audit_log_d_path(struct audit_buffer *ab,
+ { }
+ static inline void audit_log_key(struct audit_buffer *ab, char *key)
+ { }
+-static inline void audit_log_link_denied(const char *string)
++static inline void audit_log_path_denied(int type, const char *string);
+ { }
+ static inline int audit_log_task_context(struct audit_buffer *ab)
+ {
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index c89c6495983d..3ad935527177 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -143,6 +143,7 @@
+ #define AUDIT_ANOM_PROMISCUOUS      1700 /* Device changed promiscuous mode */
+ #define AUDIT_ANOM_ABEND            1701 /* Process ended abnormally */
+ #define AUDIT_ANOM_LINK		    1702 /* Suspicious use of file links */
++#define AUDIT_ANOM_CREAT	    1703 /* Suspicious file creation */
+ #define AUDIT_INTEGRITY_DATA	    1800 /* Data integrity verification */
+ #define AUDIT_INTEGRITY_METADATA    1801 /* Metadata integrity verification */
+ #define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
+diff --git a/kernel/audit.c b/kernel/audit.c
+index da8dc0db5bd3..ed7402ac81b6 100644
+--- a/kernel/audit.c
++++ b/kernel/audit.c
+@@ -2155,18 +2155,19 @@ void audit_log_task_info(struct audit_buffer *ab)
+ EXPORT_SYMBOL(audit_log_task_info);
+ 
+ /**
+- * audit_log_link_denied - report a link restriction denial
+- * @operation: specific link operation
++ * audit_log_path_denied - report a path restriction denial
++ * @type: audit message type (AUDIT_ANOM_LINK, AUDIT_ANOM_CREAT, etc)
++ * @operation: specific operation name
+  */
+-void audit_log_link_denied(const char *operation)
++void audit_log_path_denied(int type, const char *operation)
+ {
+ 	struct audit_buffer *ab;
+ 
+ 	if (!audit_enabled || audit_dummy_context())
+ 		return;
+ 
+-	/* Generate AUDIT_ANOM_LINK with subject, operation, outcome. */
+-	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_ANOM_LINK);
++	/* Generate log with subject, operation, outcome. */
++	ab = audit_log_start(audit_context(), GFP_KERNEL, type);
+ 	if (!ab)
+ 		return;
+ 	audit_log_format(ab, "op=%s", operation);
+-- 
+2.17.1
+
+
+-- 
+Kees Cook
