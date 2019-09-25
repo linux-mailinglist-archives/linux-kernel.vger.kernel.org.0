@@ -2,110 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F38FBD9EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E8EBD9F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 10:35:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634152AbfIYIco (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 04:32:44 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39277 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2634140AbfIYIcn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 04:32:43 -0400
-X-Originating-IP: 79.19.63.71
-Received: from uno.localdomain (host71-63-dynamic.19-79-r.retail.telecomitalia.it [79.19.63.71])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 2ABE6E0007;
-        Wed, 25 Sep 2019 08:32:39 +0000 (UTC)
-Date:   Wed, 25 Sep 2019 10:34:21 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: Re: [PATCH v6 4/7] Documentation: media: Document V4L2_CTRL_TYPE_AREA
-Message-ID: <20190925083421.ronwsvmqeu5quxpx@uno.localdomain>
-References: <20190920135137.10052-1-ricardo@ribalda.com>
- <20190920135137.10052-5-ricardo@ribalda.com>
+        id S2442784AbfIYIfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 04:35:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34386 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2442770AbfIYIfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 04:35:30 -0400
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A48E311A24
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 08:35:29 +0000 (UTC)
+Received: by mail-pf1-f199.google.com with SMTP id v6so3472933pfm.1
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 01:35:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CBc45OeQcvvswm6VllW/DcLsxnRal5m6t5OBDsogK1c=;
+        b=OKaIEdDu1pOw/RICa7BWKEgRP2A9TCrSGuMHGcMAoBo3I0d+iQd2++OifI/SLoirge
+         DxFYvX8YhQ860+VZz+9u/PmwbHj9fyK716KgZY3yxoda0eh/20L7NKHkPewQ/fdlVuvQ
+         /dG197l0E/NztYk3AssiW9EkbxdgFp6CxOv5MzwY/+ZemQaLCo5fUh7n9f/ImQDytl02
+         As9cBs51trvrHxDPqSu/27w4XPun1dS/xOyNOJMsVm5/hlL6jX+JOOEViSAUvI5/OnOO
+         CEHCuF3AzyX9bWDNWaASmn5T0BF3JB2fJkrdtsbWVaBoCvLMwsz7ABTVy1JUsEfgVfQs
+         ZysA==
+X-Gm-Message-State: APjAAAXfeayiRbjkKlTs5iFMRQoxxtS+B4wXjPe1gZuK57EDO44jxow6
+        50PDumuGLvj7dzbvL78PX2zXecmeCNXV4jtqOX/bzGqKNCPXNoZlDYI/J1uHV5851ClAQkZ3wCr
+        DXAbnzo4Fz2VkDtuOa1PqFt8B
+X-Received: by 2002:a17:90a:a613:: with SMTP id c19mr5107209pjq.11.1569400529148;
+        Wed, 25 Sep 2019 01:35:29 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwTwI2GBx3mYJA7q4j7DwyuCNyNYODVb5K7FYMon6YtcWvF63UgXcbRm5MG2PYtVak+7eQfkA==
+X-Received: by 2002:a17:90a:a613:: with SMTP id c19mr5107183pjq.11.1569400528844;
+        Wed, 25 Sep 2019 01:35:28 -0700 (PDT)
+Received: from xz-x1 ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id x6sm9264648pfd.53.2019.09.25.01.35.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 01:35:27 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 16:35:16 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     "Tian, Kevin" <kevin.tian@intel.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        Yi Sun <yi.y.sun@linux.intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [RFC PATCH 2/4] iommu/vt-d: Add first level page table interfaces
+Message-ID: <20190925083516.GQ28074@xz-x1>
+References: <20190923122454.9888-1-baolu.lu@linux.intel.com>
+ <20190923122454.9888-3-baolu.lu@linux.intel.com>
+ <20190923203102.GB21816@araj-mobl1.jf.intel.com>
+ <9cfe6042-f0fb-ea5e-e134-f6f5bb9eb7b0@linux.intel.com>
+ <20190925043050.GK28074@xz-x1>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D58F018@SHSMSX104.ccr.corp.intel.com>
+ <20190925052402.GM28074@xz-x1>
+ <1713f03c-4d47-34ad-f36d-882645c36389@linux.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D58F4EA@SHSMSX104.ccr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jvmepk34h776iu7a"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190920135137.10052-5-ricardo@ribalda.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <AADFC41AFE54684AB9EE6CBC0274A5D19D58F4EA@SHSMSX104.ccr.corp.intel.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Sep 25, 2019 at 07:32:48AM +0000, Tian, Kevin wrote:
+> > From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
+> > Sent: Wednesday, September 25, 2019 2:52 PM
+> > 
+> > Hi Peter and Kevin,
+> > 
+> > On 9/25/19 1:24 PM, Peter Xu wrote:
+> > > On Wed, Sep 25, 2019 at 04:38:31AM +0000, Tian, Kevin wrote:
+> > >>> From: Peter Xu [mailto:peterx@redhat.com]
+> > >>> Sent: Wednesday, September 25, 2019 12:31 PM
+> > >>>
+> > >>> On Tue, Sep 24, 2019 at 09:38:53AM +0800, Lu Baolu wrote:
+> > >>>>>> intel_mmmap_range(domain, addr, end, phys_addr, prot)
+> > >>>>>
+> > >>>>> Maybe think of a different name..? mmmap seems a bit weird :-)
+> > >>>>
+> > >>>> Yes. I don't like it either. I've thought about it and haven't
+> > >>>> figured out a satisfied one. Do you have any suggestions?
+> > >>>
+> > >>> How about at least split the word using "_"?  Like "mm_map", then
+> > >>> apply it to all the "mmm*" prefixes.  Otherwise it'll be easily
+> > >>> misread as mmap() which is totally irrelevant to this...
+> > >>>
+> > >>
+> > >> what is the point of keeping 'mm' here? replace it with 'iommu'?
+> > >
+> > > I'm not sure of what Baolu thought, but to me "mm" makes sense itself
+> > > to identify this from real IOMMU page tables (because IIUC these will
+> > > be MMU page tables).  We can come up with better names, but IMHO
+> > > "iommu" can be a bit misleading to let people refer to the 2nd level
+> > > page table.
+> > 
+> > "mm" represents a CPU (first level) page table;
+> > 
+> > vs.
+> > 
+> > "io" represents an IOMMU (second level) page table.
+> > 
+> 
+> IOMMU first level is not equivalent to CPU page table, though you can
+> use the latter as the first level (e.g. in SVA). Especially here you are
+> making IOVA->GPA as the first level, which is not CPU page table.
+> 
+> btw both levels are for "io" i.e. DMA purposes from VT-d p.o.v. They
+> are just hierarchical structures implemented by VT-d, with slightly
+> different format.
 
---jvmepk34h776iu7a
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Regarding to the "slightly different format", do you mean the
+extended-accessed bit?
 
-Hi Ricardo,
+Even if there are differences, they do look very similar.  If you see
+the same chap 9.7 table, the elements are exactly called PTE, PDE,
+PDPE, and so on - they're named exactly the same as MMU page tables.
+With that, IMHO it still sounds reasonable if we want to relate this
+"1st level iommu page table" with the existing MMU page table using
+the "mm" prefix...
 
-On Fri, Sep 20, 2019 at 03:51:34PM +0200, Ricardo Ribalda Delgado wrote:
-> From: Ricardo Ribalda Delgado <ribalda@kernel.org>
->
-> A struct v4l2_area containing the width and the height of a rectangular
-> area.
->
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  Documentation/media/uapi/v4l/vidioc-queryctrl.rst | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Documentation/media/uapi/v4l/vidioc-queryctrl.rst b/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
-> index a3d56ffbf4cc..33aff21b7d11 100644
-> --- a/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
-> +++ b/Documentation/media/uapi/v4l/vidioc-queryctrl.rst
-> @@ -443,6 +443,12 @@ See also the examples in :ref:`control`.
->        - n/a
->        - A struct :c:type:`v4l2_ctrl_mpeg2_quantization`, containing MPEG-2
->  	quantization matrices for stateless video decoders.
-> +    * - ``V4L2_CTRL_TYPE_AREA``
-> +      - n/a
-> +      - n/a
-> +      - n/a
-> +      - A struct :c:type:`v4l2_area`, containing the width and the height
-> +        of a rectangular area. Units depend on the use case.
+Regards,
 
-I recall Hans too was in favour of having min, max and step defined
-(and applied to both width and height).
-
-Really a minor issue from my side, feel free to keep it the way it is
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-   j
->      * - ``V4L2_CTRL_TYPE_H264_SPS``
->        - n/a
->        - n/a
-> --
-> 2.23.0
->
-
---jvmepk34h776iu7a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl2LJowACgkQcjQGjxah
-Vjxe7RAAs5u7tbvDOZmmKv/xCoPoxID0YGDFn+9bzAQu2F/cUHGbIrJjLMx2oBFo
-xRskqRp6wdztDyngFlVtDTaaEqvGtfhRagAJ7xe0gXvZAoKgMchCv027lWAz4KyL
-wIHOFqrAFvvy3dqc4V/pzfifgzqUCC6NtMXEkyNSPopbVZG+PVOHdADfL3cDzqxT
-TObImqKYGfXkEZJJCX6hYWulJr53JRf8Ks2UHrO8z5SGo5xU/hzMWZY/2GH8lo9b
-vN29/q3urnCExZjwGSJyGQ7KE3HRXRywo1AO+QNvT4bnr4+zJ++HO2QmWcfemcn2
-sqjkfYN3EKaCe/I0ZhO/Rb9C+kvWypGIguvLCuQuZO+mJky3Hh7sxdCW5AUUey2j
-BJe+LrweRz5QIorCxWSxMg5IaU/DvS3vPiXacX+aEDncSyT2LEVrVEl1E2UJKnHr
-K4F4TKNr00U73kw7wm7YNS8v4g4ZMzzrppoR6Hlrugl5FlwCsZauBDeaGDoM1joI
-5EsaDPDkTUBn/4W7LbPZfipUccue1xFp+257wT6tDRhQ/S0gqax9JoRWOxMqpo7f
-JtNpCpbA9zdYmT+ZuELoMnTKRc3jMRFf0SX7S8mph7p/y991gtweFPbN0iEVbZ2k
-/2EinpLCT6zWw1rBQM38Wngs7tx6MUG0HJk01i3x9bJImhi0was=
-=aOcf
------END PGP SIGNATURE-----
-
---jvmepk34h776iu7a--
+-- 
+Peter Xu
