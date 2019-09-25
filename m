@@ -2,114 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02EEBBE609
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 22:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17242BE60E
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Sep 2019 22:04:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392728AbfIYUDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 16:03:08 -0400
-Received: from mail-eopbgr1310110.outbound.protection.outlook.com ([40.107.131.110]:39456
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729118AbfIYUDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 16:03:08 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ku/ukuqZVNaV7/XV4e+XtgNhpTSIEQU58qZihSEp4bNS0omop2t+9LCykYdFK1a52t6+tgRqErOUvWxi0L7i+AUBzpygsp3JJnn1qImitexP9ThR9+AehbsQc5oaP1Gi5HuYahi9Gg3jXU8UqcKD9Yp9z0idSC7RZk+nrqNGYojW9fx/OV5zHnzZT1cZVg/XF6pW4TQ3GqGcSVfzXpjPY+UMcZ5rhxttoSYm3PpJYd2gXukhFgjIaOgwVbU1sTedHf+US+K2kClvKFO8QJPcP1ZiZDILWxGxfUwqHy182lPD5TYGpNQfke6g6kOStXiiu/Kp1uh1vkY84o7Xmalk1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7pERnnq11T2DEfVyDb5Xo3s7tcIAhZRt3YAUJu2xSv8=;
- b=BLLNqwsx6SycZ1m4kjmfHdS3FG9GG0x8B8hE9DjvuAZmHoNHGg+9ZKpKV2BUVKoqZII85NbQ1qrB2ZeQrjQyJeVuGD9Jh3VCh2GWmbf2jrtgJTmvlNgw70H/V29ss/SIFsHDg46dagohdXAhQmxA5vj6PlqQkyIcuaiGPk/NaP7tLB1W1wLbD/Ye1CYyFsFVqyLzjMIPCb9L4XyrC/NdiKthvloKdW5G7o0a+cBywh65+V3EblMywHut02yA+yzRXst2uAffN/QyGJsHQNEY8tjc0CSrMbZzvOpnIyerVXeMh8BkojD4PzhOn+qvTq4hVRtR0T8+8z7qp4SEeUP+PQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7pERnnq11T2DEfVyDb5Xo3s7tcIAhZRt3YAUJu2xSv8=;
- b=J2cnVIpqfILl97crz+PjdK9xzwsxANXR0fzpWDSmyB8pqpfpHKM8dpxSJSLobWlKFGuLVtURrTL1Q2726/Yv0kKslmQIaREyyn8uMxosGDObdjrD458CR9ok564xr7lkuKhJ2iAgtGJGqTT9JLtKC4PoHbr0BNaj422TurR/jI0=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0202.APCP153.PROD.OUTLOOK.COM (52.133.192.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.3; Wed, 25 Sep 2019 20:03:03 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::fc44:a784:73e6:c1c2]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::fc44:a784:73e6:c1c2%7]) with mapi id 15.20.2327.004; Wed, 25 Sep 2019
- 20:03:03 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Dexuan Cui <decui@microsoft.com>,
-        David Hildenbrand <david@redhat.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: RE: [PATCH] hv_balloon: Add the support of hibernation
-Thread-Topic: [PATCH] hv_balloon: Add the support of hibernation
-Thread-Index: AQHVaVISraz6+BtHYEamhMlzHx+g16coS8YAgADwLwCAAMMQUIAAJyMAgAAQlQCAEq5eQA==
-Date:   Wed, 25 Sep 2019 20:03:02 +0000
-Message-ID: <PU1P153MB0169B05143A68A56740669AFBF870@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <1568245010-66879-1-git-send-email-decui@microsoft.com>
- <42de5835-8faa-2047-0f77-db51dd57b036@redhat.com>
- <PU1P153MB0169E922DF7A5A43C7026D82BFB00@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <7d218fd5-76d9-f5fa-548a-76fe5dfab230@redhat.com>
- <PU1P153MB01691EC455AAF37BC6AF26DDBFB30@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <ef6f8554-8324-a4d8-4549-759495e482b7@redhat.com>
- <PU1P153MB01699AB87526B16F7AB94045BFB20@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <PU1P153MB01699AB87526B16F7AB94045BFB20@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-14T00:26:00.3261188Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=cc25ee78-8be9-4480-8628-176a5590891e;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:2:35f9:636:b84a:df21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d4755c50-d20c-460c-252b-08d741f35f8d
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: PU1P153MB0202:|PU1P153MB0202:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <PU1P153MB0202AACD9A341C0ED4DAE4E1BF870@PU1P153MB0202.APCP153.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 01713B2841
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(136003)(366004)(376002)(39860400002)(346002)(189003)(199004)(14454004)(76116006)(55016002)(25786009)(478600001)(6116002)(9686003)(6246003)(64756008)(66476007)(7696005)(6436002)(33656002)(5660300002)(10290500003)(66556008)(66946007)(2906002)(6636002)(86362001)(52536014)(229853002)(4744005)(2201001)(110136005)(11346002)(316002)(99286004)(22452003)(486006)(8990500004)(476003)(446003)(6506007)(71200400001)(71190400001)(66446008)(10090500001)(256004)(8936002)(76176011)(74316002)(305945005)(186003)(8676002)(81156014)(102836004)(2501003)(81166006)(46003)(1511001)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0202;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: m8wbtNvcoPeZfSo+uSIn8aO+D8RSwIOml20FuQQH9POdfYYlAzBEusYwsVRHyKkMAs0yjTvgRjDouJWq/L5l5y22uCZij1qSiLWBmq0ssS/Ht1AgyoewfgWLeq6Y6kZ9WNE92Su/ZQ8maSHR2kezyX8gftoYf7sUgs4dSzTwavUAuYXVFZzpVUJEVwXcpx+fLgOPPP+re0k5if7dNGKqTYBG1punZexkzniwA2Y1xSIFmAm3XLgxfb+C1pWODwmZWnSYvPnmbyOKj8hwZdWBnl5+HZ/UIKzy43SahDnJg9L74VtwH+1aUt0Jn79k/0m5RBVxS0GNKPX2DoeOC7SgKUPjy0p08e41e4HUKYoDVaBMWbQgOhEdUrdrDJWUfaymUvu6X1akvUp+p6l5wOcALpTQU5rUlB03OZLROsnP4R0=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2392758AbfIYUDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 16:03:30 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33515 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732748AbfIYUDa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 16:03:30 -0400
+Received: by mail-yw1-f68.google.com with SMTP id i188so2543069ywf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 13:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=gNDpa6gJwz6+/gmM6XlycDMJYVpDkuYsHcCA8nLLghc=;
+        b=CV/RkG/QeEmc3lrACMXzreW1kQ6ZJRF4DFyXRg3rVVgLM+z4am0pntR1KHPZ5jzydb
+         aAiGL8cGzFhH1Yl8/VDOsKZlTfa6ftGn4Jfe02REa+Sn9OItqCN+cysicscRDFYMFoMt
+         OuIaEn2YB8oZ+QpecF7z6IqWNkBAZVkXS7cxjIvOT9ouygI+qsePFqWHH0ijo0WGB7tU
+         GWnH+JBY0YN2/3CZ//Qwd9jmN/OC+GQ8hrE2SfaVxmmcHn3VtcT9z90m+Ux2g1obw1RZ
+         I4sPuhpasfsf49XVoIFEZ8Bty6CBvfTasQvEoqSwpZ+w+wTvPFmjLVEINe/y/eF/A5ip
+         GPSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=gNDpa6gJwz6+/gmM6XlycDMJYVpDkuYsHcCA8nLLghc=;
+        b=Y3KUr08qIYpiOMWPDBPqQtWkBviidw2MHrg4n1klNbEKNhtRJvrJGR4qcl58042Fvy
+         WWjognp8igur+gZXxTjmnDYJdyUhkv15r3eWuBjY74j6v7P/o7SE2hX6/zIco15QceOw
+         4e8mRSeDpTnoIrhCYLmvbQVKg+J3w3IZ/KsCYFZPDmDHjuuMi6ft88SjFf4I6uHku0p6
+         NyWB1Ms/CHCAfzxiRELiGsejO9sNq6/qW4+xCyCFqF3CkR5d9UmEKIqO/FU851kxuaKQ
+         RnheqG9e261v4Nks4F8QpTPLAX812XtAK4zDodrzgWIb2/iHn+LcI2pq5eulOtE7BCaj
+         t+Pg==
+X-Gm-Message-State: APjAAAX/HSnxU7jwBuycXY8VDlyR4BcS3nlwDf5Iaji3TmDiatKZmorf
+        bxuBPAtClcydcGxs9Tmr7/gtMw==
+X-Google-Smtp-Source: APXvYqybjE98I3XzxOFxhiamePgEVdQzYmAtObwGqV9JghEh9eyMk6WahEMb49DGzRgcWOd/SB1yfQ==
+X-Received: by 2002:a0d:f7c3:: with SMTP id h186mr7205518ywf.274.1569441808731;
+        Wed, 25 Sep 2019 13:03:28 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
+        by smtp.gmail.com with ESMTPSA id w123sm1525538yww.22.2019.09.25.13.03.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 13:03:28 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 16:03:27 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 21/27] drm/dp_mst: Don't forget to update port->input
+ in drm_dp_mst_handle_conn_stat()
+Message-ID: <20190925200327.GM218215@art_vandelay>
+References: <20190903204645.25487-1-lyude@redhat.com>
+ <20190903204645.25487-22-lyude@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4755c50-d20c-460c-252b-08d741f35f8d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2019 20:03:02.8310
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qOPfF4m5XhdZfroVL0GsXQQfAMJlxrpHr8zGJIGBJCwVDv+C2YNuGojk3pOPK5xugJZeMahoSBR0J901XmtcVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0202
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190903204645.25487-22-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBsaW51eC1oeXBlcnYtb3duZXJAdmdlci5rZXJuZWwub3JnDQo+ICBbLi4uIHNuaXBw
-ZWQgLi4uXQ0KPiA+IEFueWhvdywganVzdCBzb21lIGNvbW1lbnRzIGZyb20gbXkgc2lkZSA6KSBJ
-IGNhbiBzZWUgaG93IFdpbmRvd3MgU2VydmVyDQo+ID4gd29ya2VkIGFyb3VuZCB0aGF0IGlzc3Vl
-IHJpZ2h0IG5vdyBieSBqdXN0IFhPUidpbmcgYm90aCBmZWF0dXJlcy4NCj4gPg0KPiA+IERhdmlk
-IC8gZGhpbGRlbmINCj4gDQo+IFRoYW5rcyBmb3Igc2hhcmluZyB5b3VyIHRob3VnaHRzIQ0KPiAN
-Cj4gLS0gRGV4dWFuDQoNCkhpIERhdmlkLA0KSWYgbXkgZXhwbGFuYXRpb24gc291bmRzIGdvb2Qg
-dG8geW91LCBjYW4gSSBoYXZlIGFuIEFja2VkLWJ5IGZyb20geW91PyANCg0KVGhhbmtzLA0KLS0g
-RGV4dWFuDQo=
+On Tue, Sep 03, 2019 at 04:45:59PM -0400, Lyude Paul wrote:
+> This probably hasn't caused any problems up until now since it's
+> probably nearly impossible to encounter this in the wild, however if we
+> were to receive a connection status notification from the MST hub after
+> resume while we're in the middle of reprobing the link addresses for a
+> topology then there's a much larger chance that a port could have
+> changed from being an output port to input port (or vice versa). If we
+> forget to update this bit of information, we'll potentially ignore a
+> valid PDT change on a downstream port because we think it's an input
+> port.
+> 
+> So, make sure we read the input_port field in connection status
+> notifications in drm_dp_mst_handle_conn_stat() to prevent this from
+> happening once we've implemented suspend/resume reprobing.
+> 
+> Cc: Juston Li <juston.li@intel.com>
+> Cc: Imre Deak <imre.deak@intel.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> Cc: Harry Wentland <hwentlan@amd.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+
+Nice catch! Same comment here re: port->mutex, but we can sort that out on the
+other thread
+
+Reviewed-by: Sean Paul <sean@poorly.run>
+
+
+> ---
+>  drivers/gpu/drm/drm_dp_mst_topology.c | 51 +++++++++++++++++++--------
+>  1 file changed, 37 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index 259634c5d6dc..e407aba1fbd2 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -2078,18 +2078,23 @@ static void
+>  drm_dp_mst_handle_conn_stat(struct drm_dp_mst_branch *mstb,
+>  			    struct drm_dp_connection_status_notify *conn_stat)
+>  {
+> -	struct drm_device *dev = mstb->mgr->dev;
+> +	struct drm_dp_mst_topology_mgr *mgr = mstb->mgr;
+> +	struct drm_device *dev = mgr->dev;
+>  	struct drm_dp_mst_port *port;
+> -	int old_ddps;
+> -	bool dowork = false;
+> +	struct drm_connector *connector_to_destroy = NULL;
+> +	int old_ddps, ret;
+> +	u8 new_pdt;
+> +	bool dowork = false, create_connector = false;
+>  
+>  	port = drm_dp_get_port(mstb, conn_stat->port_number);
+>  	if (!port)
+>  		return;
+>  
+> +	mutex_lock(&port->lock);
+>  	drm_modeset_lock(&dev->mode_config.connection_mutex, NULL);
+>  
+>  	old_ddps = port->ddps;
+> +	port->input = conn_stat->input_port;
+>  	port->mcs = conn_stat->message_capability_status;
+>  	port->ldps = conn_stat->legacy_device_plug_status;
+>  	port->ddps = conn_stat->displayport_device_plug_status;
+> @@ -2102,23 +2107,41 @@ drm_dp_mst_handle_conn_stat(struct drm_dp_mst_branch *mstb,
+>  		}
+>  	}
+>  
+> -	if (!port->input) {
+> -		int ret = drm_dp_port_set_pdt(port,
+> -					      conn_stat->peer_device_type);
+> -		if (ret == 1) {
+> -			dowork = true;
+> -		} else if (ret < 0) {
+> -			DRM_ERROR("Failed to change PDT for port %p: %d\n",
+> -				  port, ret);
+> -			dowork = false;
+> -		}
+> +	new_pdt = port->input ? DP_PEER_DEVICE_NONE : conn_stat->peer_device_type;
+> +
+> +	ret = drm_dp_port_set_pdt(port, new_pdt);
+> +	if (ret == 1) {
+> +		dowork = true;
+> +	} else if (ret < 0) {
+> +		DRM_ERROR("Failed to change PDT for port %p: %d\n",
+> +			  port, ret);
+> +		dowork = false;
+> +	}
+> +
+> +	/*
+> +	 * We unset port->connector before dropping connection_mutex so that
+> +	 * there's no chance any of the atomic MST helpers can accidentally
+> +	 * associate a to-be-destroyed connector with a port.
+> +	 */
+> +	if (port->connector && port->input) {
+> +		connector_to_destroy = port->connector;
+> +		port->connector = NULL;
+> +	} else if (!port->connector && !port->input) {
+> +		create_connector = true;
+>  	}
+>  
+>  	drm_modeset_unlock(&dev->mode_config.connection_mutex);
+> +
+> +	if (connector_to_destroy)
+> +		mgr->cbs->destroy_connector(mgr, connector_to_destroy);
+> +	else if (create_connector)
+> +		drm_dp_mst_port_add_connector(mstb, port);
+> +
+> +	mutex_unlock(&port->lock);
+> +
+>  	drm_dp_mst_topology_put_port(port);
+>  	if (dowork)
+>  		queue_work(system_long_wq, &mstb->mgr->work);
+> -
+>  }
+>  
+>  static struct drm_dp_mst_branch *drm_dp_get_mst_branch_device(struct drm_dp_mst_topology_mgr *mgr,
+> -- 
+> 2.21.0
+> 
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
