@@ -2,72 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AAFCBF345
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:46:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE719BF34C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfIZMp4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:45:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56334 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbfIZMp4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:45:56 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iDT9d-0002xK-Eq; Thu, 26 Sep 2019 12:45:53 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        YueHaibing <yuehaibing@huawei.com>, linux-usb@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: ftdi-elan: move a couple of statements to next line
-Date:   Thu, 26 Sep 2019 13:45:53 +0100
-Message-Id: <20190926124553.15177-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726709AbfIZMqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:46:39 -0400
+Received: from mga18.intel.com ([134.134.136.126]:38920 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726209AbfIZMqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 08:46:38 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 05:46:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,551,1559545200"; 
+   d="scan'208";a="189112715"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.168])
+  by fmsmga008.fm.intel.com with ESMTP; 26 Sep 2019 05:46:34 -0700
+Date:   Thu, 26 Sep 2019 15:46:35 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Detach page allocation from tpm_buf
+Message-ID: <20190926124635.GA6040@linux.intel.com>
+References: <20190925134842.19305-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925134842.19305-1-jarkko.sakkinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Sep 25, 2019 at 04:48:41PM +0300, Jarkko Sakkinen wrote:
+> -		tpm_buf_reset(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_RANDOM);
+> +		tpm_buf_reset(&buf, data_ptr, PAGE_SIZE,
+> +			      TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_EXTEND);
 
-There are a couple of statements that follow the end brace
-of while loops that should be moved to the next line to clean
-up the coding style. Cleans up style warnings from smatch.
+Oops.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/usb/misc/ftdi-elan.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/usb/misc/ftdi-elan.c b/drivers/usb/misc/ftdi-elan.c
-index cdee3af33ad7..8a3d9c0c8d8b 100644
---- a/drivers/usb/misc/ftdi-elan.c
-+++ b/drivers/usb/misc/ftdi-elan.c
-@@ -333,7 +333,8 @@ static void ftdi_elan_abandon_completions(struct usb_ftdi *ftdi)
- 		*respond->result = -ESHUTDOWN;
- 		*respond->value = 0;
- 		complete(&respond->wait_completion);
--	} mutex_unlock(&ftdi->u132_lock);
-+	}
-+	mutex_unlock(&ftdi->u132_lock);
- }
- 
- static void ftdi_elan_abandon_targets(struct usb_ftdi *ftdi)
-@@ -763,7 +764,8 @@ static int ftdi_elan_total_command_size(struct usb_ftdi *ftdi, int command_size)
- 		struct u132_command *command = &ftdi->command[COMMAND_MASK &
- 							      i++];
- 		total_size += 5 + command->follows;
--	} return total_size;
-+	}
-+	return total_size;
- }
- 
- static int ftdi_elan_command_engine(struct usb_ftdi *ftdi)
--- 
-2.20.1
-
+/Jarkko
