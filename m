@@ -2,281 +2,259 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DBF5BF543
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 16:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECB2DBF55F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 16:59:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbfIZOrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 10:47:06 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43412 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfIZOrG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 10:47:06 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190926144703euoutp021e5a96ce89a118a45abaec505e045871~IBFLP-Gsl0611706117euoutp02Q
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 14:47:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190926144703euoutp021e5a96ce89a118a45abaec505e045871~IBFLP-Gsl0611706117euoutp02Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569509223;
-        bh=qILYkFcTsI422TRRt+JANEiHje4s3EJKrzcFzHpIfyk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=eRH2SwUXVXmKpDf7QiqVVccn8v6D0UPyyYccptSxtw7oOcgEnA9hx0piWzNk1e1vN
-         3xgXjN03YN7IChMtZ1zMQu7uI0Ae5RM4ueAX4MNhPKLrmA0YC3q6MFKV4co6ep8EJC
-         Q9M4rnJoRSLue/ZxsyBI/8c5oYRYJToabdieG7oY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190926144703eucas1p2a442b25747da2d2eb1598bbdea927432~IBFKzgvwe1020710207eucas1p2E;
-        Thu, 26 Sep 2019 14:47:03 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 7A.3C.04469.76FCC8D5; Thu, 26
-        Sep 2019 15:47:03 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190926144702eucas1p26e2cd223b736e5189acfa44eb5eea7b5~IBFKGlXW71952519525eucas1p2S;
-        Thu, 26 Sep 2019 14:47:02 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190926144702eusmtrp267113900a2a5077ea07680ec8dff9744~IBFKF7pN-1915919159eusmtrp2y;
-        Thu, 26 Sep 2019 14:47:02 +0000 (GMT)
-X-AuditID: cbfec7f2-54fff70000001175-0b-5d8ccf67eaed
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id AE.77.04166.66FCC8D5; Thu, 26
-        Sep 2019 15:47:02 +0100 (BST)
-Received: from [106.120.51.95] (unknown [106.120.51.95]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190926144702eusmtip13ca9025dd33721788f408fdf6119c5e0~IBFJpxFwx2822828228eusmtip1W;
-        Thu, 26 Sep 2019 14:47:02 +0000 (GMT)
-Subject: Re: [PATCH v2] dt-bindings: gpu: Convert Samsung Image Scaler to
- dt-schema
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Inki Dae <inki.dae@samsung.com>
-From:   Maciej Falkowski <m.falkowski@samsung.com>
-Message-ID: <0d3831ae-e33d-774d-02f7-fba45a95d25c@samsung.com>
-Date:   Thu, 26 Sep 2019 16:47:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+        id S1727230AbfIZO7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 10:59:48 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45146 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725917AbfIZO7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 10:59:48 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3F525EDEDF2B5DFC0E8C;
+        Thu, 26 Sep 2019 22:59:45 +0800 (CST)
+Received: from [127.0.0.1] (10.184.12.158) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 26 Sep 2019
+ 22:59:34 +0800
+Subject: Re: [PATCH 03/35] irqchip/gic-v3-its: Allow LPI invalidation via the
+ DirectLPI interface
+To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
+        <linux-kernel@vger.kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20190923182606.32100-1-maz@kernel.org>
+ <20190923182606.32100-4-maz@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <92ff82ca-ebcb-8f5f-5063-313f65bbc5e3@huawei.com>
+Date:   Thu, 26 Sep 2019 22:57:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-In-Reply-To: <20190926140315.GA16002@pi3>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190923182606.32100-4-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMKsWRmVeSWpSXmKPExsWy7djPc7rp53tiDf4sFLaYf+Qcq8WVr+/Z
-        LCbdn8Bicf78BnaLy7vmsFnMOL+PyWLtkbvsFkuvX2SyaN17hN2B02PNvDWMHptWdbJ53O8+
-        zuTRt2UVo8fnTXIBrFFcNimpOZllqUX6dglcGU/+7GAvaNGpWNZ3mLGB8ZZSFyMnh4SAicS+
-        VxuZuhi5OIQEVjBKLDm1lhXC+cIo0bWliR3C+cwo8fzUW2aYlqnz/jBDJJYzSqxvPwnV8pZR
-        YsG/aawgVcICoRI7N08GquLgEBGIkNi+EmwSs8A7RomX05awg9SwCRhI9L/ZywJi8wrYSbw4
-        vo8RxGYRUJW4POs+WFwUqPfTg8OsEDWCEidnPgGLcwpoSnSsPg8WZxaQl9j+dg4zhC0ucevJ
-        fLCHJAQOsUvMWNDBCHG2i8TyLzdYIWxhiVfHt7BD2DIS/3eCNHAA2dUS177JQvS2MEpcn/aW
-        DaLGWuLPqolsIDXMQIvX79KHCDtKrH70nRWilU/ixltBiBP4JCZtm84MEeaV6GgTgjBVJd5M
-        iIVolJZoXbOfcQKj0iwkf81C8sssJL/MQli7gJFlFaN4amlxbnpqsWFearlecWJucWleul5y
-        fu4mRmBSOv3v+KcdjF8vJR1iFOBgVOLhnbGqJ1aINbGsuDL3EKMEB7OSCK9vJFCINyWxsiq1
-        KD++qDQntfgQozQHi5I4bzXDg2ghgfTEktTs1NSC1CKYLBMHp1QDo7PcRammSHenrxn+Sz6k
-        y7Owfiq99XqhwfWJFjO4OaQNNO4c2rb7+TZbsfwrDKemLfkS63F7ifr5i+xzInyl2hfY3RRa
-        0qW4rCEzYe9Ujm7j2ZI1XEsubTsT2MLz00Dlxq9lio4a6czMGSas+9VlmnWXfxFTdHWrP99i
-        HrWyyPtmthxv2k59JZbijERDLeai4kQArLx9HEYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsVy+t/xu7pp53tiDTbdUbaYf+Qcq8WVr+/Z
-        LCbdn8Bicf78BnaLy7vmsFnMOL+PyWLtkbvsFkuvX2SyaN17hN2B02PNvDWMHptWdbJ53O8+
-        zuTRt2UVo8fnTXIBrFF6NkX5pSWpChn5xSW2StGGFkZ6hpYWekYmlnqGxuaxVkamSvp2Nimp
-        OZllqUX6dgl6GU/+7GAvaNGpWNZ3mLGB8ZZSFyMnh4SAicTUeX+Yuxi5OIQEljJK3D59gxki
-        IS2x/9pHdghbWOLPtS42iKLXjBJf3m4DSwgLhErs3DwZrEFEIELi9Z17LCBFzALvGCU2TH4P
-        ViQksIFR4tMNBRCbTcBAov/NXhYQm1fATuLF8X2MIDaLgKrE5Vn3weKiQIMO75jFCFEjKHFy
-        5hOwOKeApkTH6vOsIDazgJnEvM0PmSFseYntb+dA2eISt57MZ5rAKDQLSfssJC2zkLTMQtKy
-        gJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmAsbjv2c/MOxksbgw8xCnAwKvHwfljTEyvE
-        mlhWXJl7iFGCg1lJhNc3EijEm5JYWZValB9fVJqTWnyI0RTouYnMUqLJ+cA0kVcSb2hqaG5h
-        aWhubG5sZqEkztshcDBGSCA9sSQ1OzW1ILUIpo+Jg1OqgbG044MYc6qKxDWm9v7nyvs+73qj
-        keS9t++bgod19qLySbkbv2lNXTn5L+vxn28tfiU8Sb0dXBDeYPr74iX9BQuDFri6MKkq+2y4
-        9ZK37ry9Zfjnswq91WVfUhe3ulybn8u/V5xj9ZSrhl//bsyKVc53E/rN2SKk9nLjLofJ92dM
-        6Toc/3Tb0q9KLMUZiYZazEXFiQA66RiY2wIAAA==
-X-CMS-MailID: 20190926144702eucas1p26e2cd223b736e5189acfa44eb5eea7b5
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-References: <CGME20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be@eucas1p2.samsung.com>
-        <20190926125614.10408-1-m.szyprowski@samsung.com>
-        <20190926140315.GA16002@pi3>
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Marc,
 
-On 9/26/19 4:03 PM, Krzysztof Kozlowski wrote:
-> On Thu, Sep 26, 2019 at 02:56:14PM +0200, Marek Szyprowski wrote:
->> From: Maciej Falkowski <m.falkowski@samsung.com>
->>
->> Convert Samsung Image Scaler to newer dt-schema format.
->>
->> Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->> v2:
->> - Removed quotation marks from string in 'compatible' property
->> - Added if-then statement for 'clocks' and 'clock-names' property
->> - Added include directive to example
->> - Added GIC_SPI macro to example
->>
->> Best regards,
->> Maciej Falkowski
->> ---
->>   .../bindings/gpu/samsung-scaler.txt           | 27 -------
->>   .../bindings/gpu/samsung-scaler.yaml          | 71 +++++++++++++++++++
->>   2 files changed, 71 insertions(+), 27 deletions(-)
->>   delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
->>   create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
->> deleted file mode 100644
->> index 9c3d98105dfd..000000000000
->> --- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
->> +++ /dev/null
->> @@ -1,27 +0,0 @@
->> -* Samsung Exynos Image Scaler
->> -
->> -Required properties:
->> -  - compatible : value should be one of the following:
->> -	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
->> -	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
->> -
->> -  - reg : Physical base address of the IP registers and length of memory
->> -	  mapped region.
->> -
->> -  - interrupts : Interrupt specifier for scaler interrupt, according to format
->> -		 specific to interrupt parent.
->> -
->> -  - clocks : Clock specifier for scaler clock, according to generic clock
->> -	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
->> -
->> -  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
->> -		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
->> -
->> -Example:
->> -	scaler@12800000 {
->> -		compatible = "samsung,exynos5420-scaler";
->> -		reg = <0x12800000 0x1294>;
->> -		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
->> -		clocks = <&clock CLK_MSCL0>;
->> -		clock-names = "mscl";
->> -	};
->> diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
->> new file mode 100644
->> index 000000000000..af19930d052e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
->> @@ -0,0 +1,71 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +%YAML 1.2
->> +---
->> +$id: https://protect2.fireeye.com/url?k=1ffa720fd467d028.1ffbf940-9a5a550397b4da2b&u=http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Samsung Exynos SoC Image Scaler
->> +
->> +maintainers:
->> +  - Inki Dae <inki.dae@samsung.com>
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - samsung,exynos5420-scaler
->> +      - samsung,exynos5433-scaler
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
+I get one kernel panic with this patch on D05.
 
-Hi Krzysztof,
+(I don't have the GICv4.1 board at the moment. I have to wait for the
+  appropriate HW to do more tests.)
 
-By "Midgard" I assume that you referred to 
-'Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml'.
+On 2019/9/24 2:25, Marc Zyngier wrote:
+> We currently don't make much use of the DirectLPI feature, and it would
+> be beneficial to do this more, if only because it becomes a mandatory
+> feature for GICv4.1.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>   drivers/irqchip/irq-gic-v3-its.c | 51 +++++++++++++++++++++++---------
+>   1 file changed, 37 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 58cb233cf138..c94eb287393b 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -175,6 +175,12 @@ static DEFINE_IDA(its_vpeid_ida);
+>   #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+>   #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+>   
+> +static inline u32 its_get_event_id(struct irq_data *d)
+> +{
+> +	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+> +	return d->hwirq - its_dev->event_map.lpi_base;
+> +}
+> +
+>   static struct its_collection *dev_event_to_col(struct its_device *its_dev,
+>   					       u32 event)
+>   {
+> @@ -183,6 +189,13 @@ static struct its_collection *dev_event_to_col(struct its_device *its_dev,
+>   	return its->collections + its_dev->event_map.col_map[event];
+>   }
+>   
+> +static struct its_collection *irq_to_col(struct irq_data *d)
+> +{
+> +	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+> +
+> +	return dev_event_to_col(its_dev, its_get_event_id(d));
+> +}
+> +
 
-I think that 'clocks' and 'clock-names' properties before if statement 
-serve different purpose in this schema.
-It totally has about 10 different compatibles grouped in five pairs.
-Then schema declares for 'clocks' minItems as one and maxItems as two and
-later it overrides this boundaries with if statement for particular 
-compatibles.
-Well, then clearly, the purpose is to declare boundaries for all of 
-pairs and
-not to provide easy-to-find definition for this properties.
+irq_to_col uses device's event_map and col_map to get the target
+collection, yes it works well with device's LPI.
+But direct_lpi_inv also pass doorbells to it...
 
-In my schema I directly set boundaries per compatible with single 
-if-else statement.
-I didn't know what to put before then as if statement is already 
-self-explanatory.
+We don't allocate doorbells for any devices, instead for each vPE.
 
-Best regards,
-Maciej Falkowski
+And see below,
 
-> I am repeating myself... leave the clocks and clock-names.
->
-> "I think it is worth to leave the clocks and clock-names here (could be
-> empty or with min/max values for number of items). This makes it easy to
-> find the properties by humans.
->
-> Midgard bindings could be used as example."
->
->> +if:
->> +  properties:
->> +    compatible:
->> +      contains:
->> +        const: samsung,exynos5420-scaler
->> +then:
->> +  properties:
->> +    clocks:
->> +      items:
->> +        - description: mscl clock
->> +
->> +    clock-names:
->> +      items:
->> +        - const: mscl
->> +else:
->> +  properties:
->> +    clocks:
->> +      items:
->> +        - description: mscl clock
->> +        - description: aclk clock
->> +        - description: aclk_xiu clock
->> +
->> +    clock-names:
->> +      items:
->> +        - const: pclk
->> +        - const: aclk
->> +        - const: aclk_xiu
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - clock-names
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/exynos5420.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    scaler@12800000 {
->> +        compatible = "samsung,exynos5420-scaler";
->> +        reg = <0x12800000 0x1294>;
->> +        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
->> +        clocks = <&clock CLK_MSCL0>;
->> +        clock-names = "mscl";
->> +    };
->> +
-> Unneeded trailing line.
->
-> Best regards,
-> Krzysztof
->
->
->
+>   static struct its_collection *valid_col(struct its_collection *col)
+>   {
+>   	if (WARN_ON_ONCE(col->target_address & GENMASK_ULL(15, 0)))
+> @@ -1031,12 +1044,6 @@ static void its_send_vinvall(struct its_node *its, struct its_vpe *vpe)
+>    * irqchip functions - assumes MSI, mostly.
+>    */
+>   
+> -static inline u32 its_get_event_id(struct irq_data *d)
+> -{
+> -	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+> -	return d->hwirq - its_dev->event_map.lpi_base;
+> -}
+> -
+>   static void lpi_write_config(struct irq_data *d, u8 clr, u8 set)
+>   {
+>   	irq_hw_number_t hwirq;
+> @@ -1081,12 +1088,28 @@ static void wait_for_syncr(void __iomem *rdbase)
+>   		cpu_relax();
+>   }
+>   
+> +static void direct_lpi_inv(struct irq_data *d)
+> +{
+> +	struct its_collection *col;
+> +	void __iomem *rdbase;
+> +
+> +	/* Target the redistributor this LPI is currently routed to */
+> +	col = irq_to_col(d);
+> +	rdbase = per_cpu_ptr(gic_rdists->rdist, col->col_id)->rd_base;
+> +	gic_write_lpir(d->hwirq, rdbase + GICR_INVLPIR);
+> +
+> +	wait_for_syncr(rdbase);
+> +}
+> +
+>   static void lpi_update_config(struct irq_data *d, u8 clr, u8 set)
+>   {
+>   	struct its_device *its_dev = irq_data_get_irq_chip_data(d);
+>   
+>   	lpi_write_config(d, clr, set);
+> -	its_send_inv(its_dev, its_get_event_id(d));
+> +	if (gic_rdists->has_direct_lpi && !irqd_is_forwarded_to_vcpu(d))
+> +		direct_lpi_inv(d);
+> +	else
+> +		its_send_inv(its_dev, its_get_event_id(d));
+>   }
+>   
+>   static void its_vlpi_set_doorbell(struct irq_data *d, bool enable)
+> @@ -2912,15 +2935,15 @@ static void its_vpe_send_cmd(struct its_vpe *vpe,
+>   
+>   static void its_vpe_send_inv(struct irq_data *d)
+>   {
+> -	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+> -
+>   	if (gic_rdists->has_direct_lpi) {
+> -		void __iomem *rdbase;
+> -
+> -		rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+> -		gic_write_lpir(vpe->vpe_db_lpi, rdbase + GICR_INVLPIR);
+> -		wait_for_syncr(rdbase);
+> +		/*
+> +		 * Don't mess about. Generating the invalidation is easily
+> +		 * done by using the parent irq_data, just like below.
+> +		 */
+> +		direct_lpi_inv(d->parent_data);
+
+"GICv4-vpe"'s parent is "GICv3", not "ITS".  What do we expect with
+irq_data_get_irq_chip_data(parent's irq_data)?
+
+I noticed it when running this series on D05 (with GICv4.0 and DirectLPI
+support), panic call trace attached below.
+I think we really need a fix here.
+
+
+Thanks,
+zenghui
+
+>   	} else {
+> +		struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+> +
+>   		its_vpe_send_cmd(vpe, its_send_inv);
+>   	}
+>   }
+> 
+
+---8<
+
+[ 2046.193227] Unable to handle kernel paging request at virtual address 
+0000002045fa4d92
+[ 2046.201350] Mem abort info:
+[ 2046.204132]   ESR = 0x96000005
+[ 2046.207174]   Exception class = DABT (current EL), IL = 32 bits
+[ 2046.213081]   SET = 0, FnV = 0
+[ 2046.216123]   EA = 0, S1PTW = 0
+[ 2046.219251] Data abort info:
+[ 2046.222119]   ISV = 0, ISS = 0x00000005
+[ 2046.225942]   CM = 0, WnR = 0
+[ 2046.228898] user pgtable: 4k pages, 48-bit VAs, pgdp=0000001fa85d7000
+[ 2046.235326] [0000002045fa4d92] pgd=0000001fb185d003, pud=0000000000000000
+[ 2046.242103] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+[ 2046.247664] Modules linked in: openvswitch nsh nf_conncount nf_nat 
+nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ebtable_filter ebtables 
+ip6table_filter ip6_tables iptable_filter sunrpc vfat fat aes_ce_blk 
+crypto_simd cryptd aesel vhost_net tun vhost tap ip_tables ext4 mbcache 
+jbd2 sd_mod marvell hisi_sas_v2_hw hisi_sas_main ipmi_si libsas 
+scsi_transport_sas hns_mdio hnae br_netfilter bridge dm_mod stp llc nvme 
+nvme_core xt_sctp sctp libcrc32c nbd
+[ 2046.307974] CPU: 3 PID: 15094 Comm: CPU 0/KVM Kdump: loaded Not 
+tainted 5.3.0gic-v4.1-devel+ #2
+[ 2046.316658] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.58 
+10/29/2018
+[ 2046.323867] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[ 2046.328646] pc : direct_lpi_inv+0x7c/0xe0
+[ 2046.332643] lr : its_vpe_send_inv.isra.24+0x50/0x60
+[ 2046.337508] sp : ffff000034cab780
+[ 2046.340810] x29: ffff000034cab780 x28: ffff000010e7c000
+[ 2046.346110] x27: 0000000000000002 x26: ffff0000113718c0
+[ 2046.351410] x25: ffff00001136f000 x24: ffff80af8a3f7420
+[ 2046.356710] x23: 0000000000000001 x22: 0000000000000001
+[ 2046.362010] x21: ffff80af95d96518 x20: ffff802fb78bf380
+[ 2046.367309] x19: ffff80af95d96548 x18: 0000000000000000
+[ 2046.372609] x17: 0000000000000000 x16: 0000000000000000
+[ 2046.377908] x15: 0000000000000000 x14: 0000000000000000
+[ 2046.383207] x13: 0000000000000000 x12: 0000000000000088
+[ 2046.388506] x11: 0000000000000002 x10: ffff00001156a000
+[ 2046.393805] x9 : 0000000000000000 x8 : ffff00001136f848
+[ 2046.399105] x7 : ffff00001018c6a8 x6 : 0000001fba060000
+[ 2046.404405] x5 : ffff000012c40000 x4 : 0000000045fa26c9
+[ 2046.409704] x3 : ffff801fbb429800 x2 : 00000000000026c9
+[ 2046.415004] x1 : ffff00001136f8a8 x0 : ffff000012163000
+[ 2046.420303] Call trace:
+[ 2046.422739]  direct_lpi_inv+0x7c/0xe0
+[ 2046.426388]  its_vpe_send_inv.isra.24+0x50/0x60
+[ 2046.430906]  its_vpe_unmask_irq+0x34/0x40
+[ 2046.434904]  unmask_irq.part.5+0x30/0x50
+[ 2046.438814]  irq_enable+0x78/0x98
+[ 2046.442116]  __irq_startup+0x88/0x90
+[ 2046.445680]  irq_startup+0x7c/0x140
+[ 2046.449156]  __enable_irq+0x80/0x90
+[ 2046.452632]  enable_irq+0x58/0xb0
+[ 2046.455934]  its_make_vpe_non_resident+0xf0/0x108
+[ 2046.460626]  vgic_v4_put+0x64/0x70
+[ 2046.464015]  kvm_arch_vcpu_blocking+0x34/0x68
+[ 2046.468360]  kvm_vcpu_block+0x50/0x598
+[ 2046.472097]  kvm_handle_wfx+0x118/0x3d8
+[ 2046.475920]  handle_exit+0x14c/0x1c8
+[ 2046.479484]  kvm_arch_vcpu_ioctl_run+0x338/0xab8
+[ 2046.484088]  kvm_vcpu_ioctl+0x3c8/0xa60
+[ 2046.487912]  do_vfs_ioctl+0xc4/0x7f0
+[ 2046.491475]  ksys_ioctl+0x8c/0xa0
+[ 2046.494778]  __arm64_sys_ioctl+0x28/0x38
+[ 2046.498689]  el0_svc_common.constprop.0+0x80/0x1b8
+[ 2046.503467]  el0_svc_handler+0x34/0x90
+[ 2046.507204]  el0_svc+0x8/0xc
+[ 2046.510076] Code: d0006f41 f940d865 9122a021 d000dee0 (786478c3)
+[ 2046.516158] ---[ end trace f6392171e61487dc ]---
+[ 2046.520763] Kernel panic - not syncing: Fatal exception
+[ 2046.525976] SMP: stopping secondary CPUs
+[ 2046.529913] Kernel Offset: disabled
+[ 2046.533391] CPU features: 0x0002,20006008
+[ 2046.537387] Memory Limit: none
+
+
