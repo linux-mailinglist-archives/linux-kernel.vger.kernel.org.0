@@ -2,133 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03488BF69F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 18:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F41A9BF696
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 18:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbfIZQY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 12:24:57 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36720 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbfIZQY4 (ORCPT
+        id S1727421AbfIZQXo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 12:23:44 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44169 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfIZQXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 12:24:56 -0400
-Received: by mail-wm1-f68.google.com with SMTP id m18so3264766wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 09:24:55 -0700 (PDT)
+        Thu, 26 Sep 2019 12:23:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i14so1810967pgt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 09:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2nru33jX5uOHTAnOwLDnlw05X11ddri3AYOGkrr2Jgw=;
-        b=V1V+3mtP4Mr4m1w6tfMRbEe9Ot6If7Ve01XI2YG4LZeIr9POGflhogI5MiaFDd+OTC
-         gb8KPbGdy7b/A35QAk4fvXuCzB/GnS3FL9lkD0hlAe6PEzNZx4SpDwynLfg7+NPHmlMt
-         ZN7IRg8XP3Ln2EO9I4oLGYs6OjlH2hDIxZEZZD8f3COYXFxmpjYDstW5vNK3G8sJA2X9
-         ARQ5J8yGrbqaxrI8A5HmRdJDuZqX3dAfsuPBC0V+ws5m5a2ph9pO41VUHFAAv9H/gY3a
-         qVbYreAXZVhNLlQUp2UGxcrvyxqemO0mWdozn0/WEv/124DO4O2TNRv+Rcpr5cYfPZVU
-         EWlg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=5KJXkwykZKMxFzMHYA7DO1LT2mHdYgxlgFlqTK43aSg=;
+        b=AN9tMr/xQI6ixjCkoOmGxFdfQQtzy7Olh9LVYyYm42aA6ePb3swjBmTLHJbDhDG9c0
+         m5sPVQYWjy4J96xClewSCc6+peXtW96QKUk3yBLYrK31fpIxgabsfI9rRa5cZzLh4cNr
+         aVBYR8He61kDNtVrQWRiVcdpVmJMik1lgj+t6QFUnD2C7MbYsC3LJpfhOKW0vF7+AWDr
+         ULvseh5sJ3UZ15ccyuqK1N3Vbyz/NxUVWqq8BGpNiRhLS4Ph7LFD26WxlZp2MLcyPk5w
+         n5tdImLhl1Jqs1CiX409ZOVDPm2M7503awCd/tQopa4Bs5821cSrOpImfVJoT6cbGuqI
+         nKHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2nru33jX5uOHTAnOwLDnlw05X11ddri3AYOGkrr2Jgw=;
-        b=R5mNG5ufPERp+/QHXjNbbQjaZeBDITYLdObuRPO22HTyuLpBeRkUxOsUcD8p9ws/IO
-         fkhhEUPCc4HBaxmGnSo2uOOkY6lpbzYKumlBv6OSLc5zCQCK41h1AYFL3f1+s7wadw9p
-         /SNWiG+0JyUUhQg5eHQKMvfg5ezgXAYiFwQMnVddt0352+cE23eCXXKCmFWuD6h9dC+6
-         oRT4f6WsE93IJ1Yjb9crzFn3d2JafviSwf1iQ4S+XmDzaBFyI7pae4txTFxgXtdEite+
-         Pc6Fj6Nw9COPqggm+YXni7q4McGwak93dgn+pc2rVWsuMGJ8p8G4FbT1YPKu2lPs3q2a
-         wbRA==
-X-Gm-Message-State: APjAAAVMWbfU5uOZQ+6KtXVo0uhQQVc8j3sZvpO2Rm9FwmkQyrJ1SBK9
-        f+YEeF8M43KRGNsqhtthCNg=
-X-Google-Smtp-Source: APXvYqwaeWWyc+5+I6rQCqh8o9AxGdr9DXIEJ1q4zyd710j8awNFMljewcJbtzhvMqUo+yVe/31u8Q==
-X-Received: by 2002:a1c:a404:: with SMTP id n4mr3688226wme.41.1569515094418;
-        Thu, 26 Sep 2019 09:24:54 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id t6sm5820701wmf.8.2019.09.26.09.24.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 09:24:53 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        David Bolvansky <david.bolvansky@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH v2] tracing: Fix clang -Wint-in-bool-context warnings in IF_ASSIGN macro
-Date:   Thu, 26 Sep 2019 09:22:59 -0700
-Message-Id: <20190926162258.466321-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190925172915.576755-1-natechancellor@gmail.com>
-References: <20190925172915.576755-1-natechancellor@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=5KJXkwykZKMxFzMHYA7DO1LT2mHdYgxlgFlqTK43aSg=;
+        b=nLaaG30px53lx/tbt/tIAtCJm53BXUgv2ulxI/ZXx++Rhk/tG4VzoIKZ/GX/Yeg8vL
+         jjoIU1aHPzxriH0WJdgRqQVQLlxIFJ2MJivmo03lR6lTgwaDVcAoYwwPalvp9A9r2XvJ
+         Ij29ODWD6Oy2pofNcG9isIJeqORoCf1oQs60e1Lu3wTC4iOfiOlVccKqFOGj7K+sEOzE
+         QvUfWrsxpAT3gzmsdVAiWFWGsD1lV3HZXI7UyPMv0SwdR/OPbOyIDpBBNV9s58rbE0o6
+         ToGztmYyNhkor4TqM9W5RLIN/g3wfnAklYBNZaWQBvfKInaF1f31WqPN46Kl8aeR4DfK
+         MJmQ==
+X-Gm-Message-State: APjAAAVpfPWURjMP7y5uPSVt19WUIltKwsTG0vRq5/Yxm5F4JZlUSxbJ
+        U9oy7IDLli/oWYbl4gxTjBnuxw==
+X-Google-Smtp-Source: APXvYqyXRYUH9jhldr03tJ4HTnP6NcLAFrGaRJdGlX81M87HTImuFCaOBIrqy502qWA3AiMe4YNO+g==
+X-Received: by 2002:a17:90a:8c15:: with SMTP id a21mr4308094pjo.99.1569515023652;
+        Thu, 26 Sep 2019 09:23:43 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id y144sm3041925pfb.188.2019.09.26.09.23.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Sep 2019 09:23:42 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     Zhiqiang Liang <zhiqiang.liang@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Jian Hu <jian.hu@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>
+Subject: Re: [PATCH 2/3] soc: amlogic: Add support for Secure power domains controller
+In-Reply-To: <3859c748-01f0-4dbd-05d6-20fff31edf11@amlogic.com>
+References: <1568895064-4116-1-git-send-email-jianxin.pan@amlogic.com> <1568895064-4116-3-git-send-email-jianxin.pan@amlogic.com> <7hh850t2wy.fsf@baylibre.com> <3859c748-01f0-4dbd-05d6-20fff31edf11@amlogic.com>
+Date:   Thu, 26 Sep 2019 09:23:42 -0700
+Message-ID: <7ha7arrppt.fsf@baylibre.com>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After r372664 in clang, the IF_ASSIGN macro causes a couple hundred
-warnings along the lines of:
+Jianxin Pan <jianxin.pan@amlogic.com> writes:
 
-kernel/trace/trace_output.c:1331:2: warning: converting the enum
-constant to a boolean [-Wint-in-bool-context]
-kernel/trace/trace.h:409:3: note: expanded from macro
-'trace_assign_type'
-                IF_ASSIGN(var, ent, struct ftrace_graph_ret_entry,
-                ^
-kernel/trace/trace.h:371:14: note: expanded from macro 'IF_ASSIGN'
-                WARN_ON(id && (entry)->type != id);     \
-                           ^
-264 warnings generated.
+> Hi Kevin,
+>
+> Thanks for your review. Please see my comments below.
+>
+>
+> On 2019/9/26 6:41, Kevin Hilman wrote:
+>> Hi Jianxin,
+>> 
+>> Jianxin Pan <jianxin.pan@amlogic.com> writes:
+>> 
+>>> Add support for the Amlogic Secure Power controller. In A1/C1 series, power
+>>> control registers are in secure domain, and should be accessed by smc.
+>>>
+>>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>>> Signed-off-by: Zhiqiang Liang <zhiqiang.liang@amlogic.com>
+>> 
+>> Thanks for the new power domain driver.
+>> 
+>>> ---
+>>>  drivers/soc/amlogic/Kconfig             |  13 +++
+>>>  drivers/soc/amlogic/Makefile            |   1 +
+>>>  drivers/soc/amlogic/meson-secure-pwrc.c | 182 ++++++++++++++++++++++++++++++++
+>>>  3 files changed, 196 insertions(+)
+>>>  create mode 100644 drivers/soc/amlogic/meson-secure-pwrc.c
+>>>
+>>> diff --git a/drivers/soc/amlogic/Kconfig b/drivers/soc/amlogic/Kconfig
+>>> index bc2c912..6cb06e7 100644
+>>> --- a/drivers/soc/amlogic/Kconfig
+>>> +++ b/drivers/soc/amlogic/Kconfig
+>>> @@ -48,6 +48,19 @@ config MESON_EE_PM_DOMAINS
+>>>  	  Say yes to expose Amlogic Meson Everything-Else Power Domains as
+>>>  	  Generic Power Domains.
+>>>  
+>>> +config MESON_SECURE_PM_DOMAINS
+>>> +	bool "Amlogic Meson Secure Power Domains driver"
+>>> +	depends on ARCH_MESON || COMPILE_TEST
+>>> +	depends on PM && OF
+>>> +	depends on HAVE_ARM_SMCCC
+>>> +	default ARCH_MESON
+>>> +	select PM_GENERIC_DOMAINS
+>>> +	select PM_GENERIC_DOMAINS_OF
+>>> +	help
+>>> +	  Support for the power controller on Amlogic A1/C1 series.
+>>> +	  Say yes to expose Amlogic Meson Secure Power Domains as Generic
+>>> +	  Power Domains.
+>>> +
+>>>  config MESON_MX_SOCINFO
+>>>  	bool "Amlogic Meson MX SoC Information driver"
+>>>  	depends on ARCH_MESON || COMPILE_TEST
+>>> diff --git a/drivers/soc/amlogic/Makefile b/drivers/soc/amlogic/Makefile
+>>> index de79d044..7b8c5d3 100644
+>>> --- a/drivers/soc/amlogic/Makefile
+>>> +++ b/drivers/soc/amlogic/Makefile
+>>> @@ -5,3 +5,4 @@ obj-$(CONFIG_MESON_GX_SOCINFO) += meson-gx-socinfo.o
+>>>  obj-$(CONFIG_MESON_GX_PM_DOMAINS) += meson-gx-pwrc-vpu.o
+>>>  obj-$(CONFIG_MESON_MX_SOCINFO) += meson-mx-socinfo.o
+>>>  obj-$(CONFIG_MESON_EE_PM_DOMAINS) += meson-ee-pwrc.o
+>>> +obj-$(CONFIG_MESON_SECURE_PM_DOMAINS) += meson-secure-pwrc.o
+>>> diff --git a/drivers/soc/amlogic/meson-secure-pwrc.c b/drivers/soc/amlogic/meson-secure-pwrc.c
+>>> new file mode 100644
+>>> index 00000000..00c7232
+>>> --- /dev/null
+>>> +++ b/drivers/soc/amlogic/meson-secure-pwrc.c
+>>> @@ -0,0 +1,182 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> [...]
+>>> +
+>>> +static bool pwrc_secure_get_power(struct meson_secure_pwrc_domain *pwrc_domain)
+>>> +{
+>>> +	struct arm_smccc_res res;
+>>> +
+>>> +	arm_smccc_smc(SMC_PWRC_GET, pwrc_domain->index, 0,
+>>> +		      0, 0, 0, 0, 0, &res);
+>>> +
+>>> +	return res.a0 & 0x1;
+>> 
+>> Please use a #define with a readable name for this mask.
+>> The return type of this smc is bool. I will remove 0x1 mask in next version. 
+>
+> Another question about smc:
+> In this driver, no share memory is needed, and I use arm_smccc_smc() directly.
+> Should I add secure-monitor = <&sm> in dtb and use meson_sm_call() from sm driver instead? 
 
-This warning can catch issues with constructs like:
+Yes, that would be preferred.
 
-    if (state == A || B)
+>>> +}
+>> 
+>> What does the return value for this function mean?  Does true mean
+>> "powered off" or "powered on">
+> The return vaule for SMC_PWRC_GET :
+> 0 -> power on
+> 1 -> power off> See the rename I just did on the ee-pwrc driver:
+>> https://lore.kernel.org/linux-amlogic/20190925213528.21515-2-khilman@kernel.org/
+>> I will follow and rename to _is_off() in the next verson.
+>>> +static int meson_secure_pwrc_off(struct generic_pm_domain *domain)
+>>> +{
+>>> +	struct arm_smccc_res res;
+>>> +	struct meson_secure_pwrc_domain *pwrc_domain =
+> [...]
+>>> +
+>>> +#define SEC_PD(__name, __flag)			\
+>>> +{						\
+>>> +	.name = #__name,			\
+>>> +	.index = PWRC_##__name##_ID,		\
+>>> +	.get_power = pwrc_secure_get_power,	\
+>>> +	.flags = __flag,			\
+>>> +}
+>>> +
+>>> +static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>>> +	SEC_PD(DSPA,	0),
+>>> +	SEC_PD(DSPB,	0),
+>>> +	SEC_PD(UART,	GENPD_FLAG_ALWAYS_ON),
+>> 
+>> This flag should only be used for domains where there are no linux
+>> drivers.
+>> 
+>> Rather than using this flag, you need to add a 'power-domain' property
+>> to the uart driver in DT, and then update the meson_uart driver to use
+>> the runtime PM API so that the domain is enabled whenever the UART is in
+>> use.
+>
+> PM_UART Power domain is shared by uart, msr, jtag and cec.
+> Uart should keep working in BL31, after kernel suspend and before kernel resume.
 
-where the developer really meant:
+OK.
 
-    if (state == A || state == B)
+>> 
+>>> +	SEC_PD(DMC,	GENPD_FLAG_ALWAYS_ON),
+>> 
+>> Please explain the need for ALWAYS_ON.
+>> 
+> PM_DMC is used for DDR PHY ana/dig and DMC. 
+> There is no linux drver for them, and it should be always on. 
+>
+> I will add comments for all these always on domains.
 
-This is currently the only occurrence of the warning in the kernel
-tree across defconfig, allyesconfig, allmodconfig for arm32, arm64,
-and x86_64. Add the implicit '!= 0' to the WARN_ON statement to fix
-the warnings and find potential issues in the future.
+OK, thank you.
 
-Link: https://github.com/llvm/llvm-project/commit/28b38c277a2941e9e891b2db30652cfd962f070b
-Link: https://github.com/ClangBuiltLinux/linux/issues/686
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
 
-v1 -> v2:
-
-* Update commit message to give context behind the warning and explain
-  this is currently the only occurrence of this warning in the tree.
-* Add Nick's Reviewed-by tag.
-
- kernel/trace/trace.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 26b0a08f3c7d..f801d154ff6a 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -365,11 +365,11 @@ static inline struct trace_array *top_trace_array(void)
- 	__builtin_types_compatible_p(typeof(var), type *)
- 
- #undef IF_ASSIGN
--#define IF_ASSIGN(var, entry, etype, id)		\
--	if (FTRACE_CMP_TYPE(var, etype)) {		\
--		var = (typeof(var))(entry);		\
--		WARN_ON(id && (entry)->type != id);	\
--		break;					\
-+#define IF_ASSIGN(var, entry, etype, id)			\
-+	if (FTRACE_CMP_TYPE(var, etype)) {			\
-+		var = (typeof(var))(entry);			\
-+		WARN_ON(id != 0 && (entry)->type != id);	\
-+		break;						\
- 	}
- 
- /* Will cause compile errors if type is not found. */
--- 
-2.23.0
-
+Kevin
