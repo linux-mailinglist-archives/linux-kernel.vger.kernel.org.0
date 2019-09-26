@@ -2,93 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04850BFB85
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 00:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF28DBFB93
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 00:56:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfIZWwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 18:52:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:38810 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728564AbfIZWwH (ORCPT
+        id S1728625AbfIZW4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 18:56:18 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39096 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725943AbfIZW4R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 18:52:07 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QMmqAE108680;
-        Thu, 26 Sep 2019 22:51:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=D2CwgQsbiGCjO4mkdfUAM40E41fLHHYcnso3Cx++n8Q=;
- b=kvLY2wYNe0sibiKZEwHz9J3YqUTBY9dzOmvqeRC8wsZFyc04Pi5I+OohcKUhZeq7pbYe
- G4QQeWAjDiSWizTbyyca02Wwtajuq7FrSBbCukzNjHJisSJqffOhKxsZkaT75TceoL1i
- aCsIP3GjRSH7+deh2MbgBJN0eKV0YZbLnCEL9MLFx+fPDQcviZvix/focMz5WFCvfH+f
- YzcT81NWRz9PwiS2XvSnfGdr6eD15GY/OAoAuVrfq9rofFw87GPbsmp/TZtkDs/zIbgQ
- 61gIKj/Ulv/orSjZDky3XkdrLlVeVD17iKvyXFJm+tWK53yfuQalUv2bThLRWjeNTAuU Pg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2v5cgrenn8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Sep 2019 22:51:57 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QMm9hK142397;
-        Thu, 26 Sep 2019 22:51:57 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2v8yjxpqnw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Sep 2019 22:51:56 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8QMpsWI030809;
-        Thu, 26 Sep 2019 22:51:54 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 26 Sep 2019 15:51:53 -0700
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Denis Efremov <efremov@linux.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Andrew Murray <andrew.murray@arm.com>,
-        linux-scsi@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: Re: [PATCH v3 18/26] scsi: pm80xx: Use PCI_STD_NUM_BARS
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190916204158.6889-1-efremov@linux.com>
-        <20190916204158.6889-19-efremov@linux.com>
-        <yq1wody4eml.fsf@oracle.com> <20190926022933.GB238374@google.com>
-Date:   Thu, 26 Sep 2019 18:51:51 -0400
-In-Reply-To: <20190926022933.GB238374@google.com> (Bjorn Helgaas's message of
-        "Wed, 25 Sep 2019 21:29:33 -0500")
-Message-ID: <yq1lfua1xiw.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+        Thu, 26 Sep 2019 18:56:17 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v17so4177714wml.4;
+        Thu, 26 Sep 2019 15:56:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q3J4HBnNW4Hl+Gjxw0HAbYQSV7ljaMhCOnbd8J0BKfw=;
+        b=OGcVLqNDzgAxc2ptvHjEJc0ZnwDU+dw0zjb3h1aCQBF9EI5cq/LjPDZNYcm8rVYcB3
+         yWUVna7KCPCAomjPQVODfwf2sBswGjY3TYOxR6o2BZ06XNQHTCLYinXTfDrDXwvsVJBW
+         NKQBR/jf7Itslea+zewbR842C8+FDa/rPHIT9dqYDJCjR71WO53XPlZMNUfTyJwkKpVr
+         NzgSobk/sbtPj6Lpwsjp8xAx6AkaVAtHx5B3lLFULed6HdOfoRwCQ6eEKo8Jbn7SUC81
+         xoCTp2AubiWE+YmzLRFgXGxALTme01kpIocxZ2x80dkidGoFp6X5kUjdemN0pTPT67Xt
+         iTzw==
+X-Gm-Message-State: APjAAAV6zLbTVlt/pc6MvSipCKYaXTaoYxJPMTZxthHBBq3mNP+5J12p
+        C0M6K4tFSA7eyjqroyjOzfo=
+X-Google-Smtp-Source: APXvYqxrKsKE3nBWyY+NBDRt5sgGhpX8jpg+uUmLH1ydlfeiF9neM0okf0pfLaVTq7mi5G3PAWSx4w==
+X-Received: by 2002:a1c:a516:: with SMTP id o22mr5117224wme.116.1569538575651;
+        Thu, 26 Sep 2019 15:56:15 -0700 (PDT)
+Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
+        by smtp.googlemail.com with ESMTPSA id f17sm668350wru.29.2019.09.26.15.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 15:56:14 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+Cc:     Denis Efremov <efremov@linux.com>, ath9k-devel@qca.qualcomm.com,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajkumar Manoharan <rmanohar@qca.qualcomm.com>,
+        "John W . Linville" <linville@tuxdriver.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>, stable@vger.kernel.org
+Subject: [PATCH] ath9k_hw: fix uninitialized variable data
+Date:   Fri, 27 Sep 2019 01:56:04 +0300
+Message-Id: <20190926225604.9342-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=574
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909260180
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=656 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909260180
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently, data variable in ar9003_hw_thermo_cal_apply() could be
+uninitialized if ar9300_otp_read_word() will fail to read the value.
+Initialize data variable with 0 to prevent an undefined behavior. This
+will be enough to handle error case when ar9300_otp_read_word() fails.
 
-Bjorn,
+Fixes: 80fe43f2bbd5 ("ath9k_hw: Read and configure thermocal for AR9462")
+Cc: Rajkumar Manoharan <rmanohar@qca.qualcomm.com>
+Cc: John W. Linville <linville@tuxdriver.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ drivers/net/wireless/ath/ath9k/ar9003_eeprom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I think this depends on a previous patch that actually adds the
-> PCI_STD_NUM_BARS definition.  It will probably be easier if I apply
-> the whole series via the PCI tree.
-
-Looks like my mail about this getting dropped due to the missing
-definition got lost in transit. In any case, feel free to take this
-through the PCI tree.
-
-Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
-
+diff --git a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+index 2b29bf4730f6..b4885a700296 100644
+--- a/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
++++ b/drivers/net/wireless/ath/ath9k/ar9003_eeprom.c
+@@ -4183,7 +4183,7 @@ static void ar9003_hw_thermometer_apply(struct ath_hw *ah)
+ 
+ static void ar9003_hw_thermo_cal_apply(struct ath_hw *ah)
+ {
+-	u32 data, ko, kg;
++	u32 data = 0, ko, kg;
+ 
+ 	if (!AR_SREV_9462_20_OR_LATER(ah))
+ 		return;
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+2.21.0
+
