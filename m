@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD3EBFBF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 01:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6407BFBEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 01:28:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbfIZX2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 19:28:38 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46917 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728441AbfIZX23 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728936AbfIZX23 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 26 Sep 2019 19:28:29 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46921 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728849AbfIZX22 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 19:28:28 -0400
 Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C27EA891A9;
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id F201E891AA;
         Fri, 27 Sep 2019 11:28:26 +1200 (NZST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
         s=mail181024; t=1569540506;
-        bh=rAUvLPAfWgWX2H5eqfh6QWkokkEOuv0sRFKi68bW+K8=;
+        bh=4ZTWevuQnd7Huoj4HJWGkNONefcT65iGcIwvwGxT6J0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=JB36U0KSnpnlx8YF1jJPhEhP5AhZnmpoIwR40mzFa78b871sZeSFwlmSCNCuql6LC
-         w1A2JyKaE6YRCHux7qC4IB8h/oVFu300iBiXhLPke1KMzHW2PtnomqzGlsvDcKpcrw
-         R7y8hed96I1Kv0qEKM73z2AHAaA85Rb5vcIz5/7++CO53G3R7592ZMr+mH9AFNAaIT
-         58Ug022CDVphFs2fKo6RZSSQf43phwM3FQa242V1y6nQaTTUd7h4dZwhZ0pMXwlD+1
-         3BuRXmXwm7IpY4ZUz3KCZKhwQ8Rp79OlWfF9aHgT6ueOAO4ZkzJSWH6RTyTiBG8IF6
-         4cpsE+DAAvW7Q==
+        b=2xf5JX+KItvUrgLEZanjB/QkhF3PI97gop1qwmbDEMCacg4VdFbzzk87lJwvzfP6l
+         ZLiZx1lp6PFuQc0omHj9pFcemICnpEY5D53/CAfkijBtIrQ999PDnw+aAZOKnAGKKb
+         z7RemHNABn/2pGq+0biHVYA2gPYQQSznz2tMcQH+0pL066nHlT6+QWKX3OnNWXwcpc
+         CMr9ougKK1KbbDo5Z2iTmf5MqUJo+Yw7+je4KPZg5xCoV9A3eWKCXgDx/wKOgsceei
+         3oqR3WpnQ0XCGd8myw91A6YyvyJ55WSJFe8D1sLUlBJlBw8ursqrAeqm3LQIgUV30H
+         xs/HxdSUzYccA==
 Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d8d49980002>; Fri, 27 Sep 2019 11:28:26 +1200
+        id <B5d8d49980003>; Fri, 27 Sep 2019 11:28:26 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id 4D56B13EF59;
+        by smtp (Postfix) with ESMTP id 777DC13EF9B;
         Fri, 27 Sep 2019 11:28:28 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 9641428003E; Fri, 27 Sep 2019 11:28:24 +1200 (NZST)
+        id C03DA28003E; Fri, 27 Sep 2019 11:28:24 +1200 (NZST)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
         sebastian.hesselbarth@gmail.com, robh+dt@kernel.org,
@@ -41,9 +41,9 @@ To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 2/3] ARM: dts: mvebu: add sdram controller node to Armada-38x
-Date:   Fri, 27 Sep 2019 11:28:19 +1200
-Message-Id: <20190926232820.27676-3-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 3/3] ARM: dts: armada-xp: add label to sdram-controller node
+Date:   Fri, 27 Sep 2019 11:28:20 +1200
+Message-Id: <20190926232820.27676-4-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190926232820.27676-1-chris.packham@alliedtelesis.co.nz>
 References: <20190926232820.27676-1-chris.packham@alliedtelesis.co.nz>
@@ -55,33 +55,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Armada-38x uses an SDRAM controller that is compatible with the
-Armada-XP. The key difference is the width of the bus (XP is 64/32, 38x
-is 32/16). The SDRAM controller registers are the same between the two
-SoCs.
+Add the label "sdramc" to the sdram-controller nodes for the Armada-XP
+and 98dx3236 SoCs.
 
 Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- arch/arm/boot/dts/armada-38x.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/armada-xp-98dx3236.dtsi | 2 +-
+ arch/arm/boot/dts/armada-xp.dtsi          | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/armada-38x.dtsi b/arch/arm/boot/dts/armada=
--38x.dtsi
-index 3f4bb44d85f0..e038abc0c6b4 100644
---- a/arch/arm/boot/dts/armada-38x.dtsi
-+++ b/arch/arm/boot/dts/armada-38x.dtsi
-@@ -103,6 +103,11 @@
- 			#size-cells =3D <1>;
- 			ranges =3D <0 MBUS_ID(0xf0, 0x01) 0 0x100000>;
+diff --git a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi b/arch/arm/boot/dt=
+s/armada-xp-98dx3236.dtsi
+index 267d0c178e55..654648b05c7c 100644
+--- a/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
++++ b/arch/arm/boot/dts/armada-xp-98dx3236.dtsi
+@@ -90,7 +90,7 @@
+ 		};
 =20
+ 		internal-regs {
+-			sdramc@1400 {
 +			sdramc: sdramc@1400 {
-+				compatible =3D "marvell,armada-xp-sdram-controller";
-+				reg =3D <0x1400 0x500>;
-+			};
-+
- 			L2: cache-controller@8000 {
- 				compatible =3D "arm,pl310-cache";
- 				reg =3D <0x8000 0x1000>;
+ 				compatible =3D "marvell,armada-xp-sdram-controller";
+ 				reg =3D <0x1400 0x500>;
+ 			};
+diff --git a/arch/arm/boot/dts/armada-xp.dtsi b/arch/arm/boot/dts/armada-=
+xp.dtsi
+index ee15c77d3689..6c19984d668e 100644
+--- a/arch/arm/boot/dts/armada-xp.dtsi
++++ b/arch/arm/boot/dts/armada-xp.dtsi
+@@ -36,7 +36,7 @@
+ 		};
+=20
+ 		internal-regs {
+-			sdramc@1400 {
++			sdramc: sdramc@1400 {
+ 				compatible =3D "marvell,armada-xp-sdram-controller";
+ 				reg =3D <0x1400 0x500>;
+ 			};
 --=20
 2.23.0
 
