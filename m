@@ -2,147 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9335BEE19
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28230BEE1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbfIZJKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 05:10:37 -0400
-Received: from krieglstein.org ([188.68.35.71]:34120 "EHLO krieglstein.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfIZJKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 05:10:36 -0400
-Received: from dabox.localnet (gateway.hbm.com [213.157.30.2])
-        by krieglstein.org (Postfix) with ESMTPSA id B297D401B1;
-        Thu, 26 Sep 2019 11:10:34 +0200 (CEST)
-From:   Tim Sander <tim@krieglstein.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: mtd raw nand denali.c broken for Intel/Altera Cyclone V
-Date:   Thu, 26 Sep 2019 11:10:34 +0200
-Message-ID: <23083624.r2bJSIadJk@dabox>
-Organization: Sander and Lightning
-In-Reply-To: <CAK7LNARCPwqY+YmUzsHkABpshzzS3tC=fDgp4vZjVgBwS+LKJw@mail.gmail.com>
-References: <5143724.5TqzkYX0oI@dabox> <9bb2fb0e-a9e7-c389-f9b7-42367485ff83@kernel.org> <CAK7LNARCPwqY+YmUzsHkABpshzzS3tC=fDgp4vZjVgBwS+LKJw@mail.gmail.com>
+        id S1730176AbfIZJLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 05:11:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725890AbfIZJLY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 05:11:24 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8Q8uq2U037945;
+        Thu, 26 Sep 2019 05:11:01 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v8rxxme0p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Sep 2019 05:11:00 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8Q8wFLN042048;
+        Thu, 26 Sep 2019 05:11:00 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2v8rxxmdyt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Sep 2019 05:11:00 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8Q9AvjO023233;
+        Thu, 26 Sep 2019 09:10:59 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01dal.us.ibm.com with ESMTP id 2v5bg7s4up-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Sep 2019 09:10:59 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8Q9Awub53477884
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 09:10:58 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B1770AE05C;
+        Thu, 26 Sep 2019 09:10:58 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A731AE062;
+        Thu, 26 Sep 2019 09:10:56 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.34.158])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Sep 2019 09:10:55 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v4 4/8] mm/memory_hotplug: Poison memmap in remove_pfn_range_from_zone()
+In-Reply-To: <20190830091428.18399-5-david@redhat.com>
+References: <20190830091428.18399-1-david@redhat.com> <20190830091428.18399-5-david@redhat.com>
+Date:   Thu, 26 Sep 2019 14:40:54 +0530
+Message-ID: <87zhiro21t.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-26_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=880 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909260088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi 
+David Hildenbrand <david@redhat.com> writes:
+ @@ -134,11 +134,12 @@ void memunmap_pages(struct dev_pagemap *pgmap)
+  
+>  	mem_hotplug_begin();
+> +	remove_pfn_range_from_zone(page_zone(pfn_to_page(pfn)), pfn,
+> +				   PHYS_PFN(resource_size(res)));
 
-Am Mittwoch, 11. September 2019, 04:37:46 CEST schrieb Masahiro Yamada:
-> Hi Dinh,
-> 
-> On Wed, Sep 11, 2019 at 12:22 AM Dinh Nguyen <dinguyen@kernel.org> wrote:
-> > On 9/10/19 8:48 AM, Tim Sander wrote:
-> > > Hi
-> > > 
-> > > I have noticed that my SPF records where not in place after moving the
-> > > server, so it seems the mail didn't go to the mailing list. Hopefully
-> > > that's fixed now.> > 
-> > > Am Dienstag, 10. September 2019, 09:16:37 CEST schrieb Masahiro Yamada:
-> > >> On Fri, Sep 6, 2019 at 9:39 PM Tim Sander <tim@krieglstein.org> wrote:
-> > >>> Hi
-> > >>> 
-> > >>> I have noticed that there multiple breakages piling up for the denali
-> > >>> nand
-> > >>> driver on the Intel/Altera Cyclone V. Unfortunately i had no time to
-> > >>> track
-> > >>> the mainline kernel closely. So the breakage seems to pile up. I am a
-> > >>> little disapointed that Intel is not on the lookout that the kernel
-> > >>> works
-> > >>> on the chips they are selling. I was really happy about the state of
-> > >>> the
-> > >>> platform before concerning mainline support.
-> > >>> 
-> > >>> The failure starts with kernel 4.19 or stable kernel release 4.18.19.
-> > >>> The
-> > >>> commit is ba4a1b62a2d742df9e9c607ac53b3bf33496508f.
-> > >> 
-> > >> Just for clarification, this corresponds to
-> > >> 0d55c668b218a1db68b5044bce4de74e1bd0f0c8 upstream.
-> > >> 
-> > >>> The problem here is that
-> > >>> our platform works with a zero in the SPARE_AREA_SKIP_BYTES register.
-> > >> 
-> > >> Please clarify the scope of "our platform".
-> > >> (Only you, or your company, or every individual using this chip?)
-> > > 
-> > > The company i work for uses this chip as a base for multiple products.
-> > > 
-> > >> First, SPARE_AREA_SKIP_BYTES is not the property of the hardware.
-> > >> Rather, it is about the OOB layout, in other words, this parameter
-> > >> is defined by software.
-> > >> 
-> > >> For example, U-Boot supports the Denali NAND driver.
-> > >> The SPARE_AREA_SKIP_BYTES is a user-configurable parameter:
-> > >> https://github.com/u-boot/u-boot/blob/v2019.10-rc3/drivers/mtd/nand/raw
-> > >> /Kcon fig#L112
-I am using barebox for booting. I looked at the code and found a comment in 
-denali_hw_init: 
-         * tell driver how many bit controller will skip before
-         * writing ECC code in OOB, this register may be already
-         * set by firmware. So we read this value out.
-         * if this value is 0, just let it be.
+That should be part of PATCH 3?
 
-I have checked the barebox code and the denali register SPARE_AREA_SKIP_BYTES 
-(offset 0x230) is read only once on booting. I have not found any occurrence of 
-the register being set by barebox. So i would concur as the value is zero in 
-my case that the boot ROM seems not to set the value. The code in barebox is 
-mostly imported from linux in 2015 which is before the reorganization which 
-happened on the linux side later on.
+>  	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
+> -		pfn = PHYS_PFN(res->start);
+>  		__remove_pages(pfn, PHYS_PFN(resource_size(res)), NULL);
+>  	} else {
+>  		arch_remove_memory(nid, res->start, resource_size(res),
+> -- 
+> 2.21.0
 
-> > >> 
-> > >> 
-> > >> Your platform works with a zero in the SPARE_AREA_SKIP_BYTES register
-> > >> because the NAND chip on the board was initialized with a zero
-> > >> set to the SPARE_AREA_SKIP_BYTES register.
-> > >> 
-> > >> If the NAND chip had been initialized with 8
-> > >> set to the SPARE_AREA_SKIP_BYTES register, it would have
-> > >> been working with 8 to the SPARE_AREA_SKIP_BYTES.
-> > >> 
-> > >> The Boot ROM is the only (semi-)software that is unconfigurable by
-> > >> users,
-> > >> so the value of SPARE_AREA_SKIP_BYTES should be aligned with
-> > >> the boot ROM.
-> > >> I recommend you to check the spec of the boot ROM.
-> > > 
-> > > We boot from NOR flash. That's why i didn't see a problem booting
-> > > probably.
-> > > 
-> > >> (The maintainer of the platform, Dihn is CC'ed,
-> > >> so I hope he will jump in)
-> > > 
-> > > Yes i hope so too.
-> > 
-> > I don't have access to a NAND device at the moment. I'll try to find one
-> > and debug.
-I have hardware available to me, so i would be happy to test any ideas/
-guesses.
-
-> Dinh,
-> Do you have answers for the following questions?
-> 
-> 
-> - Does the SOCFPGA boot ROM support the NAND boot mode?
-> 
-> - If so, which value does it use for SPARE_AREA_SKIP_BYTES?
-
-Best regards
-Tim
-
-
-
-
+-aneesh
