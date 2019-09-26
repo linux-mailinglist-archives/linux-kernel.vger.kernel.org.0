@@ -2,215 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A7FBEF20
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:58:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A2CBEF4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:09:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfIZJ6O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 05:58:14 -0400
-Received: from mail-eopbgr140040.outbound.protection.outlook.com ([40.107.14.40]:53670
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        id S1726372AbfIZKJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 06:09:06 -0400
+Received: from mail12.gandi.net ([217.70.182.73]:54803 "EHLO gandi.net"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726970AbfIZJ6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 05:58:14 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QAwviciHbdrz2B/nWgsQPUcK6xcK/v/YEqEsvIb4HuRo4SdgKNYb5k88e9WLyMbPMZfJuPU/UyFuSrWtg+5ca6NjHQBEhZYjfws4R0RRUxx2s5vtxitTNSXERGJtiOL7Bhj7GZOcScRXVI6CoiPBnG6m/ROjQ/JjItejUu9utxzwN78rLQd2fIWF+v7GDQAEt/bJzxdSOHwLXIC4dRGkTTveUaicmVq7KEcrC4J1XZjzFb9aKHXwJBFa1SQyei5AZ6Ykf+oTh6il5poJTHhRU1+X5PnapXUgSoaS2wRDDCorl98HNQcrsJUwP90XI+86ei67v587h7SdkcAvigqdWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ABe97go+nZCRTI2LKCBRF/WxA3lWz/ryjkHGSZWQAfQ=;
- b=lx9DlK0MSnLx8rDfxZmtoGEJl+MSnl79pKUL7wnGBT8xj8wqJuAQo4ssKkCov6AC0+F1/yMqa2sKVplG/voes1w1HONW2LWZ9A8+YB9moCNUUiViCqWc0PdM+mKT1Knf7q3Nd2Wt4OQG3Nq2SaseHKzZ224EHNgAHDZPPjqmrNZ3T8ESt+IclyjreiwFyMEjHpkNom5oJ8lf9By0ObWq13BjoKLROEmOtTKolL8lidl0T5Y64Pavf2AQ8h4SWZ8T7nS5HWqjPGy661FeFl5Dqu9s2M56oCeikA5Rq/XPCTrQSgpQSHDeSNU8P6U1A4oHr5lbEIgrLY1HCuy9FHBGoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ABe97go+nZCRTI2LKCBRF/WxA3lWz/ryjkHGSZWQAfQ=;
- b=BPly+uU99jIVJeKeykRe0uOHnw+jLK348PRn716v9DMfewcudP81A0dmt+IasFYsJ0jy2SmTJXCwhBzl1elzXxvL9Wk7T3ZUDMZKRWatc4uOLetsfk6Nm/DAglB8BsPQP+RcOgOsdzs4DyPOX9UbxiQ19zvV+wo3IvXnHNkil9E=
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
- DB7PR04MB5404.eurprd04.prod.outlook.com (20.178.107.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2305.15; Thu, 26 Sep 2019 09:58:09 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::4427:96f2:f651:6dfa]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::4427:96f2:f651:6dfa%5]) with mapi id 15.20.2284.023; Thu, 26 Sep 2019
- 09:58:09 +0000
-From:   Biwen Li <biwen.li@nxp.com>
-To:     Biwen Li <biwen.li@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Ran Wang <ran.wang_1@nxp.com>
-CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [v4,1/3] soc: fsl: handle RCPM errata A-008646 on SoC LS1021A
-Thread-Topic: [v4,1/3] soc: fsl: handle RCPM errata A-008646 on SoC LS1021A
-Thread-Index: AQHVdBVe5geLyFI8uEOyK3tYbajH66c9uVxw
-Date:   Thu, 26 Sep 2019 09:58:09 +0000
-Message-ID: <DB7PR04MB4490A0282C3D6173D900B7D98F860@DB7PR04MB4490.eurprd04.prod.outlook.com>
-References: <20190926024118.15931-1-biwen.li@nxp.com>
-In-Reply-To: <20190926024118.15931-1-biwen.li@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=biwen.li@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 305c31e6-d44d-44ba-91cb-08d74268097e
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: DB7PR04MB5404:|DB7PR04MB5404:
-x-ms-exchange-purlcount: 8
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB5404BD0757F44A0E42D5737D8F860@DB7PR04MB5404.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:800;
-x-forefront-prvs: 0172F0EF77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(136003)(366004)(346002)(376002)(53754006)(199004)(189003)(99286004)(8936002)(14454004)(3846002)(66946007)(6116002)(6636002)(256004)(86362001)(55016002)(9686003)(6306002)(6436002)(33656002)(229853002)(25786009)(52536014)(14444005)(66446008)(4326008)(74316002)(2906002)(76116006)(76176011)(305945005)(7736002)(2501003)(66476007)(66556008)(64756008)(110136005)(54906003)(316002)(7696005)(6246003)(5660300002)(66066001)(81156014)(26005)(186003)(476003)(44832011)(6506007)(11346002)(446003)(102836004)(486006)(966005)(8676002)(71200400001)(71190400001)(81166006)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5404;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: CB9KgWpshHa9BiKeyjCZHGSsrD3ZrNArNPWjN+NW0DEaJoVmo9mjIQASptDAp4Z5mh7IrBMmULk9V6chnxg5OJ43vtAVMFDf75ATVPAvuj/A2tT5/eQFfbJQGK3LQQTk1Y/SLmq9JZ8IjN+BYE/LYjcRngqnHSzmtnM0ZmfjPgcrPBh30DJuoApE95Y/YF0HMaZsNUjLEgW2kEdJ15LLYYhi6xEsIMXAKjmcU41N3WzjtvIX3w0hjhi0xLP9TGdg0VstUMm0xRgZvGzRWJNR5fpR1LvwZqYzkMCD0dOh54dIihMR0pOMU503OxY5ppTVS165xfPp3rG8rU4pSxidRaZ9xFhwf/p6WB3GnfZ+rT0jxo7wc8Fer+3rZI75nDkkhfUBYrMzcyzY9uQ99I7ap0s8dsVlshgQq0O7iMdGIFs/kuF/u3oq6UzVnsMAtLmSQcZ5Ukgooy1A/ucD4Ne2SQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1725951AbfIZKJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 06:09:05 -0400
+X-Greylist: delayed 612 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 06:09:04 EDT
+Received: from khany.gandi.net (unknown [IPv6:2001:4b98:beef:a:1c24:7b6c:715d:6eec])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by gandi.net (Postfix) with ESMTPSA id DC3821603CC;
+        Thu, 26 Sep 2019 09:58:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gandi.net; s=20190808;
+        t=1569491931;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dTGHc4DsskK8sSXcRmGy4kEft1Z/kZC4Ol5LmTKdjlM=;
+        b=XavZhSVyA2aNFWlLLsW2aWtp3Qi+ZvEIB3edDUw3bsdqdZWigjRgICinTIgwqVTCKUBlVF
+        78MI7N6BAiIemMxMr77iHacnqczvPl3aQq7A9EWrAroVHAYWB/qPPCF+1fgQoBlDOSqIVk
+        3dESRW7FZZO9EhEequSHY/MUX5gyPztI+ySXGxoanMB1dOqLHtXWCk62QxmUNdcugXhvVq
+        BrJh/TgzUDazmcAM3pT0KtdNz3oskWtb1MV4yMvnFhXCn3Yp8zYpADT01HRsdmE1KAq7eH
+        CziudHweoD+vCZRRyEM03drsF1I5JhIQ5m8yqd1/Do4Og9QyoFwznX6ttKbhBw==
+Received: by khany.gandi.net (Postfix, from userid 1000)
+        id 59355DC0480; Thu, 26 Sep 2019 09:58:25 +0000 (GMT)
+Date:   Thu, 26 Sep 2019 09:58:25 +0000
+From:   Arthur Gautier <baloo@gandi.net>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
+Message-ID: <20190926095825.zkdpya55yjusvv4g@khany>
+References: <20190215235901.23541-1-baloo@gandi.net>
+ <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com>
+ <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de>
+ <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net>
+ <20190216234702.GP2217@ZenIV.linux.org.uk>
+ <20190217034121.bs3q3sgevexmdt3d@khany>
+ <20190217042201.GU2217@ZenIV.linux.org.uk>
+ <alpine.DEB.2.21.1902181347500.1549@nanos.tec.linutronix.de>
+ <CALCETrXyard2OXmOafiLks3YuyO=ObbjDXB6NJo_08rL4M6azw@mail.gmail.com>
+ <20190218215150.xklqbfckwmbtdm3t@khany>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 305c31e6-d44d-44ba-91cb-08d74268097e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2019 09:58:09.7767
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZwBfh/a11Ylh4CqA7KaijNTAp8NlBjrZKfqrnlXbMvVjGzZjY0Zr0U4hUsKlN4ggbcWEAPNRF4Vyb89/EeY5JQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5404
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218215150.xklqbfckwmbtdm3t@khany>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
-the linux patch depended by RCPM driver,FlexTimer driver and FlexTimer dts,=
- need apply these patches as follows:
+On Mon, Feb 18, 2019 at 09:51:50PM +0000, Arthur Gautier wrote:
+> On Mon, Feb 18, 2019 at 11:15:44AM -0800, Andy Lutomirski wrote:
+> > This seems like it's just papering over the underlying problem: with
+> > Jann's new checks in place, strncpy_from_user() is simply buggy.  Does
+> > the patch below look decent?  It's only compile-tested, but it's
+> > conceptually straightforward.  I was hoping I could get rid of the
+> > check-maximum-address stuff, but it's needed for architectures where
+> > the user range is adjacent to the kernel range (i.e. not x86_64).
+> 
+> I'm unable to trigger the BUG I had with my initramfs with this patch
+> applied. Thanks!
+> 
 
-1. RCPM driver:
+Hello All,
 
-https://patchwork.kernel.org/series/162731/mbox/ (https://patchwork.kernel.=
-org/patch/11105279/)
+Just a followup on this issue, I'm still able to reproduce the original
+issue with:
+    truncate -s 8388313 a
+    SECONDFILENAME=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    truncate -s 10 $SECONDFILENAME
+    echo "a\n$SECONDFILENAME" | cpio -o --format=newc | lz4 -l > initrd.img.lz4
 
-2. FlexTimer dts:
+I think Andy submitted a patch Feb 25 2019, but I was not copied on it
+(I believe it was sent to x86@kernel.org) and I don't know which fate it
+had.
 
-https://lore.kernel.org/patchwork/series/405653/mbox/ (https://lore.kernel.=
-org/patchwork/patch/1112493/)
+Any chance we could have a look again?
 
-3. FlexTimer driver:
+Thanks a lot!
 
-https://patchwork.ozlabs.org/series/124718/mbox/ (https://patchwork.ozlabs.=
-org/patch/1145999/)
-
-https://patchwork.ozlabs.org/series/126942/mbox/ (https://patchwork.ozlabs.=
-org/patch/1152085/)
-
-4. Adjust drivers/soc/fsl/Makefile:
-
-   remove the line 'obj-y +=3D ftm_alarm.o' in drivers/soc/fsl/Makefile to =
-resolve a compilation error
-
-> Description:
-> 	- Reading configuration register RCPM_IPPDEXPCR1
-> 	  always return zero
->=20
-> Workaround:
-> 	- Save register RCPM_IPPDEXPCR1's value to
-> 	  register SCFG_SPARECR8.(uboot's psci also
-> 	  need reading value from the register SCFG_SPARECR8
-> 	  to set register RCPM_IPPDEXPCR1)
->=20
-> Impact:
-> 	- FlexTimer module will cannot wakeup system in
-> 	  deep sleep on SoC LS1021A
->=20
-> Signed-off-by: Biwen Li <biwen.li@nxp.com>
-> ---
-> Change in v4:
-> 	- rename property name
-> 	  fsl,ippdexpcr-alt-addr -> fsl,ippdexpcr1-alt-addr
->=20
-> Change in v3:
-> 	- update commit message
-> 	- rename property name
-> 	  fsl,rcpm-scfg -> fsl,ippdexpcr-alt-addr
->=20
-> Change in v2:
-> 	- fix stype problems
->=20
->  drivers/soc/fsl/rcpm.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
->=20
-> diff --git a/drivers/soc/fsl/rcpm.c b/drivers/soc/fsl/rcpm.c index
-> 82c0ad5e663e..9a29c482fc2e 100644
-> --- a/drivers/soc/fsl/rcpm.c
-> +++ b/drivers/soc/fsl/rcpm.c
-> @@ -13,6 +13,8 @@
->  #include <linux/slab.h>
->  #include <linux/suspend.h>
->  #include <linux/kernel.h>
-> +#include <linux/regmap.h>
-> +#include <linux/mfd/syscon.h>
->=20
->  #define RCPM_WAKEUP_CELL_MAX_SIZE	7
->=20
-> @@ -29,6 +31,9 @@ static int rcpm_pm_prepare(struct device *dev)
->  	struct rcpm		*rcpm;
->  	u32 value[RCPM_WAKEUP_CELL_MAX_SIZE + 1], tmp;
->  	int i, ret, idx;
-> +	struct regmap *scfg_addr_regmap =3D NULL;
-> +	u32 reg_offset[RCPM_WAKEUP_CELL_MAX_SIZE + 1];
-> +	u32 reg_value =3D 0;
->=20
->  	rcpm =3D dev_get_drvdata(dev);
->  	if (!rcpm)
-> @@ -63,6 +68,34 @@ static int rcpm_pm_prepare(struct device *dev)
->  					tmp |=3D value[i + 1];
->  					iowrite32be(tmp, rcpm->ippdexpcr_base + i * 4);
->  				}
-> +				/* Workaround of errata A-008646 on SoC LS1021A:
-> +				 * There is a bug of register ippdexpcr1.
-> +				 * Reading configuration register RCPM_IPPDEXPCR1
-> +				 * always return zero. So save ippdexpcr1's value
-> +				 * to register SCFG_SPARECR8.And the value of
-> +				 * ippdexpcr1 will be read from SCFG_SPARECR8.
-> +				 */
-> +				scfg_addr_regmap =3D
-> syscon_regmap_lookup_by_phandle(np,
-> +
-> "fsl,ippdexpcr1-alt-addr");
-> +				if (scfg_addr_regmap && (1 =3D=3D i)) {
-> +					if (of_property_read_u32_array(dev->of_node,
-> +					    "fsl,ippdexpcr1-alt-addr",
-> +					    reg_offset,
-> +					    1 + sizeof(u64)/sizeof(u32))) {
-> +						scfg_addr_regmap =3D NULL;
-> +						continue;
-> +					}
-> +					/* Read value from register SCFG_SPARECR8 */
-> +					regmap_read(scfg_addr_regmap,
-> +						    (u32)(((u64)(reg_offset[1] << (sizeof(u32) *
-> 8) |
-> +						    reg_offset[2])) & 0xffffffff),
-> +						    &reg_value);
-> +					/* Write value to register SCFG_SPARECR8 */
-> +					regmap_write(scfg_addr_regmap,
-> +						     (u32)(((u64)(reg_offset[1] << (sizeof(u32) *
-> 8) |
-> +						     reg_offset[2])) & 0xffffffff),
-> +						     tmp | reg_value);
-> +				}
->  			}
->  		}
->  	} while (ws =3D wakeup_source_get_next(ws));
-> --
-> 2.17.1
-
+-- 
+\o/ Arthur
+ G  Gandi.net
