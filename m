@@ -2,136 +2,261 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66F15BEA32
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80260BEA1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391201AbfIZBea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 21:34:30 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:45848 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388759AbfIZBe3 (ORCPT
+        id S2389781AbfIZBbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 21:31:33 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:32106 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389536AbfIZBbd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 21:34:29 -0400
-X-UUID: 02390ec3819943f59fad01eaed510d65-20190926
-X-UUID: 02390ec3819943f59fad01eaed510d65-20190926
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1057313941; Thu, 26 Sep 2019 09:34:20 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 26 Sep
- 2019 09:34:19 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 26 Sep 2019 09:34:17 +0800
-Message-ID: <1569461658.32135.12.camel@mhfsdcap03>
-Subject: Re: [PATCH 4/5] dt-bindings: usb: dwc3: of-simple: add compatible
- for HiSi
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     John Stultz <john.stultz@linaro.org>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        "Andy Shevchenko" <andy.shevchenko@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yu Chen <chenyu56@huawei.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>
-Date:   Thu, 26 Sep 2019 09:34:18 +0800
-In-Reply-To: <20190925234224.95216-5-john.stultz@linaro.org>
-References: <20190925234224.95216-1-john.stultz@linaro.org>
-         <20190925234224.95216-5-john.stultz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 25 Sep 2019 21:31:33 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190926013130epoutp03bbe354815bcc4212e992d3651643f98c~H2Oka9Qfj2977029770epoutp037
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 01:31:30 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190926013130epoutp03bbe354815bcc4212e992d3651643f98c~H2Oka9Qfj2977029770epoutp037
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569461490;
+        bh=H7dIy4NLJ0Vtiyy8JGjYV3SoJNF1jlpXFN42Cx87qDc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=RYxrHJEfxavRVL74TZhStzp1M3v/kexRPRSkVkrwVdcc3Rli0TRLydxnMlzWTggMu
+         APil17qJ3Sj+XDeku/SiEyIC8X8jyTEhLWhkqsZDHG56cyHIncbauk6cGbdL0e87Yb
+         MuuVq8blmNZkztmkX5h0/3q9dBSwwvvy3gpwOVH0=
+Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190926013130epcas1p434480b7b054308c3daa91f68e59e0203~H2Oj9hRqA1545815458epcas1p4j;
+        Thu, 26 Sep 2019 01:31:30 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp5.localdomain (Postfix) with ESMTP id 46dy7g5MxVzMqYkc; Thu, 26 Sep
+        2019 01:31:27 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B2.05.04068.AE41C8D5; Thu, 26 Sep 2019 10:31:22 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190926013122epcas1p1dcdbefd63f655e8082d138064c09e9dd~H2OcdAG4O2486724867epcas1p1B;
+        Thu, 26 Sep 2019 01:31:22 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190926013122epsmtrp1664d228cded2bcb996429c2f343c14fe~H2OccJ9l43098130981epsmtrp18;
+        Thu, 26 Sep 2019 01:31:22 +0000 (GMT)
+X-AuditID: b6c32a39-f5fff70000000fe4-35-5d8c14ea9a2b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        02.41.04081.AE41C8D5; Thu, 26 Sep 2019 10:31:22 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190926013122epsmtip1910ffa9271d525d0209975049806c252~H2OcPcUkN2250222502epsmtip1B;
+        Thu, 26 Sep 2019 01:31:22 +0000 (GMT)
+Subject: Re: [PATCH 1/2] devfreq: Rename devfreq_update_status() to
+ devfreq_update_stats() and viceversa
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <3fb18474-b31e-bc7e-8b6a-660904a19443@samsung.com>
+Date:   Thu, 26 Sep 2019 10:36:04 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: F93ADA76283739A391119E64EF2F43EF159D1815EA94474BA56A6CF3A64D18CB2000:8
-X-MTK:  N
+In-Reply-To: <20190925184314.30251-1-mka@chromium.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMJsWRmVeSWpSXmKPExsWy7bCmge4rkZ5Yg9uL1CzOLjvIZtEyaxGL
+        xdmmN+wWl3fNYbP43HuE0aLzyyw2i0sHFjBZfN7wmNHiduMKNot9HQ+YLH7umsfiwO0xu+Ei
+        i8fOWXfZPVr23WL36G1+x+bxft9VNo++LasYPT5vkgtgj8q2yUhNTEktUkjNS85PycxLt1Xy
+        Do53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6UkmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCR
+        X1xiq5RakJJTYFmgV5yYW1yal66XnJ9rZWhgYGQKVJiQnfH7zGzmggV6Fc9bzjA1MB5X62Lk
+        4JAQMJGY98S6i5GLQ0hgB6NEx/+PTF2MnEDOJ0aJe689IRLfGCUWzZ3CDpIAaWjb+pUZIrGX
+        UeLuktnsEM57RombE5sYQaqEBbIkWrZOAUuICMxlkui5NxXMYRZoZpS4tHou2BI2AS2J/S9u
+        sIHY/AKKEld/PGYEOYpXwE6i4ZUASJhFQFXiUv9EsNWiAhESnx4cZgWxeQUEJU7OfMICYnMK
+        mEl83XsUbAyzgLjErSfzmSBseYnmrbPBTpUQWMYucb5tOdQPLhK/pi1kgrCFJV4d3wIVl5J4
+        2d8GZVdLrDx5hA2iuYNRYsv+C6wQCWOJ/UsnM4EcyiygKbF+lz5EWFFi5++5jBCL+STefe1h
+        hQQwr0RHmxBEibLE5Qd3odZKSixu72SbwKg0C8k7s5C8MAvJC7MQli1gZFnFKJZaUJybnlps
+        WGCKHNubGMEJWMtyB+Oxcz6HGAU4GJV4eCUiu2OFWBPLiitzDzFKcDArifDOkumKFeJNSays
+        Si3Kjy8qzUktPsRoCgzticxSosn5wOyQVxJvaGpkbGxsYWJoZmpoqCTO65HeECskkJ5Ykpqd
+        mlqQWgTTx8TBKdXAuMX4eaDcgnmVG/Lkn6nw+QU9fio0+/HJtQp/fseuyZ3CzuZxL8e9W9nu
+        euCVkNz+3YrT1pfpnZm8/rj+9B8zODgEt622++cS+FQySFzpwUOji9Ip3pue3L6sprWjfQLz
+        vFonvqL3Ub6aVxrPrxVwjbdfb2L50ddR93TEM7GWinc8XydK//s2TYmlOCPRUIu5qDgRAI8D
+        kX7WAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsWy7bCSnO4rkZ5Yg/69PBZnlx1ks2iZtYjF
+        4mzTG3aLy7vmsFl87j3CaNH5ZRabxaUDC5gsPm94zGhxu3EFm8W+jgdMFj93zWNx4PaY3XCR
+        xWPnrLvsHi37brF79Da/Y/N4v+8qm0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBl/D4zm7lg
+        gV7F85YzTA2Mx9W6GDk5JARMJNq2fmXuYuTiEBLYzSjRMr+ZFSIhKTHt4lGgBAeQLSxx+HAx
+        RM1bRomljw4wg9QIC2RJtGydwg6SEBGYzyRxad0jVhCHWaCZUWJJ338WiJZORomHy/+CtbAJ
+        aEnsf3GDDcTmF1CUuPrjMSPICl4BO4mGVwIgYRYBVYlL/RPZQWxRgQiJwztmMYLYvAKCEidn
+        PmEBsTkFzCS+7j0KNoZZQF3iz7xLzBC2uMStJ/OZIGx5ieats5knMArPQtI+C0nLLCQts5C0
+        LGBkWcUomVpQnJueW2xYYJiXWq5XnJhbXJqXrpecn7uJERyNWpo7GC8viT/EKMDBqMTDeyCs
+        O1aINbGsuDL3EKMEB7OSCO8sma5YId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxP845FCgmkJ5ak
+        ZqemFqQWwWSZODilGhgX2ihvOSba8TUy0feUIUfqbFGOoxHeS0689l2mmfJI6qvDxUVfHZlD
+        Wa0D0k95lP1avVRFWy1O8IWX9u5L13dcNCsROVP1pnIPd+CfIiXxJ69yJ21J01mt81vsxeOL
+        V3ffY7lZus75xueHJxV4Xx+uXu+gqz7vxU7bkPfVs4sDb2g8mxGsN6dXiaU4I9FQi7moOBEA
+        z35ZUMICAAA=
+X-CMS-MailID: 20190926013122epcas1p1dcdbefd63f655e8082d138064c09e9dd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190925184505epcas2p3f8f4395f37df4b1fe33309393e8af4df
+References: <CGME20190925184505epcas2p3f8f4395f37df4b1fe33309393e8af4df@epcas2p3.samsung.com>
+        <20190925184314.30251-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-09-25 at 23:42 +0000, John Stultz wrote:
-> Add necessary compatible flag for HiSi's DWC3 so
-> dwc3-of-simple will probe.
+Hi,
+
+I'm not sure that it is necessary. I think that it depends on
+personal opinions. There are no correct answer perfectly.
+Also, after this changes, there are no any beneficial.
+It touch the history rather than behavior improvement.
+
+On 19. 9. 26. 오전 3:43, Matthias Kaehlcke wrote:
+> devfreq has two functions with very similar names, devfreq_update_status()
+> and devfreq_update_stats(). _update_status() currently updates
+> frequency transitions statistics, while _update_stats() retrieves the
+> device 'status'. The function names are inversed with respect to what
+> the functions are actually doing, rename devfreq_update_status() to
+> devfreq_update_stats() and viceversa.
 > 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Felipe Balbi <balbi@kernel.org>
-> Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Yu Chen <chenyu56@huawei.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> Cc: linux-usb@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  .../devicetree/bindings/usb/hisi,dwc3.txt     | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/hisi,dwc3.txt
+> We could also rename the current devfreq_update_stats() to
+> devfreq_refresh_status() to make it easier to distinguish it from
+> devfreq_update_stats().
+> ---
+>  drivers/devfreq/devfreq.c                 | 12 ++++++------
+>  drivers/devfreq/governor.h                |  4 ++--
+>  drivers/devfreq/governor_passive.c        |  2 +-
+>  drivers/devfreq/governor_simpleondemand.c |  2 +-
+>  drivers/devfreq/tegra30-devfreq.c         |  2 +-
+>  5 files changed, 11 insertions(+), 11 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/hisi,dwc3.txt b/Documentation/devicetree/bindings/usb/hisi,dwc3.txt
-> new file mode 100644
-> index 000000000000..dc31b8a3c006
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/hisi,dwc3.txt
-> @@ -0,0 +1,52 @@
-> +HiSi SuperSpeed DWC3 USB SoC controller
-> +
-> +Required properties:
-> +- compatible:		should contain "hisilicon,hi3660-dwc3" for HiSi SoC
-> +- clocks:		A list of phandle + clock-specifier pairs for the
-> +			clocks listed in clock-names
-> +- clock-names:		Should contain the following:
-> +  "clk_usb3phy_ref"	Phy reference clk
-It's not good idea to apply phy's clock in dwc3's node
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 446490c9d635..fb4318d59aa9 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -151,11 +151,11 @@ static int set_freq_table(struct devfreq *devfreq)
+>  }
+>  
+>  /**
+> - * devfreq_update_status() - Update statistics of devfreq behavior
+> + * devfreq_update_stats() - Update statistics of devfreq behavior
+>   * @devfreq:	the devfreq instance
+>   * @freq:	the update target frequency
+>   */
+> -int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+> +int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq)
+>  {
+>  	int lev, prev_lev, ret = 0;
+>  	unsigned long cur_time;
+> @@ -191,7 +191,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
+>  	devfreq->last_stat_updated = cur_time;
+>  	return ret;
+>  }
+> -EXPORT_SYMBOL(devfreq_update_status);
+> +EXPORT_SYMBOL(devfreq_update_stats);
+>  
+>  /**
+>   * find_devfreq_governor() - find devfreq governor from name
+> @@ -311,7 +311,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
+>  	freqs.new = new_freq;
+>  	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
+>  
+> -	if (devfreq_update_status(devfreq, new_freq))
+> +	if (devfreq_update_stats(devfreq, new_freq))
+>  		dev_err(&devfreq->dev,
+>  			"Couldn't update frequency transition information.\n");
+>  
+> @@ -450,7 +450,7 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
+>  		return;
+>  	}
+>  
+> -	devfreq_update_status(devfreq, devfreq->previous_freq);
+> +	devfreq_update_stats(devfreq, devfreq->previous_freq);
+>  	devfreq->stop_polling = true;
+>  	mutex_unlock(&devfreq->lock);
+>  	cancel_delayed_work_sync(&devfreq->work);
+> @@ -1398,7 +1398,7 @@ static ssize_t trans_stat_show(struct device *dev,
+>  	unsigned int max_state = devfreq->profile->max_state;
+>  
+>  	if (!devfreq->stop_polling &&
+> -			devfreq_update_status(devfreq, devfreq->previous_freq))
+> +			devfreq_update_stats(devfreq, devfreq->previous_freq))
+>  		return 0;
+>  	if (max_state == 0)
+>  		return sprintf(buf, "Not Supported.\n");
+> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
+> index bbe5ff9fcecf..e11f447be2b5 100644
+> --- a/drivers/devfreq/governor.h
+> +++ b/drivers/devfreq/governor.h
+> @@ -64,9 +64,9 @@ extern void devfreq_interval_update(struct devfreq *devfreq,
+>  extern int devfreq_add_governor(struct devfreq_governor *governor);
+>  extern int devfreq_remove_governor(struct devfreq_governor *governor);
+>  
+> -extern int devfreq_update_status(struct devfreq *devfreq, unsigned long freq);
+> +extern int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq);
+>  
+> -static inline int devfreq_update_stats(struct devfreq *df)
+> +static inline int devfreq_update_status(struct devfreq *df)
+>  {
+>  	return df->profile->get_dev_status(df->dev.parent, &df->last_status);
+>  }
+> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
+> index be6eeab9c814..1c746b96d3db 100644
+> --- a/drivers/devfreq/governor_passive.c
+> +++ b/drivers/devfreq/governor_passive.c
+> @@ -110,7 +110,7 @@ static int update_devfreq_passive(struct devfreq *devfreq, unsigned long freq)
+>  		goto out;
+>  
+>  	if (devfreq->profile->freq_table
+> -		&& (devfreq_update_status(devfreq, freq)))
+> +		&& (devfreq_update_stats(devfreq, freq)))
+>  		dev_err(&devfreq->dev,
+>  			"Couldn't update frequency transition information.\n");
+>  
+> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
+> index 3d809f228619..2cbf26bdcfd6 100644
+> --- a/drivers/devfreq/governor_simpleondemand.c
+> +++ b/drivers/devfreq/governor_simpleondemand.c
+> @@ -25,7 +25,7 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
+>  	unsigned int dfso_downdifferential = DFSO_DOWNDIFFERENCTIAL;
+>  	struct devfreq_simple_ondemand_data *data = df->data;
+>  
+> -	err = devfreq_update_stats(df);
+> +	err = devfreq_update_status(df);
+>  	if (err)
+>  		return err;
+>  
+> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+> index a6ba75f4106d..536273a811fe 100644
+> --- a/drivers/devfreq/tegra30-devfreq.c
+> +++ b/drivers/devfreq/tegra30-devfreq.c
+> @@ -526,7 +526,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
+>  	unsigned int i;
+>  	int err;
+>  
+> -	err = devfreq_update_stats(devfreq);
+> +	err = devfreq_update_status(devfreq);
+>  	if (err)
+>  		return err;
+>  
+> 
 
-> +  "aclk_usb3otg"	USB3 OTG aclk
-> +
-> +- assigned-clocks:	Should be:
-> +				HI3660_ACLK_GATE_USB3OTG
-> +- assigned-clock-rates: Should be:
-> +				229Mhz (229000000) for HI3660_ACLK_GATE_USB3OTG
-> +
-> +Optional properties:
-> +- resets:		Phandle to reset control that resets core and wrapper.
-> +
-> +Required child node:
-> +A child node must exist to represent the core DWC3 IP block. The name of
-> +the node is not important. The content of the node is defined in dwc3.txt.
-> +
-> +Example device nodes:
-> +
-> +	usb3: hisi_dwc3 {
-> +		compatible = "hisilicon,hi3660-dwc3";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		clocks = <&crg_ctrl HI3660_CLK_ABB_USB>,
-> +			 <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
-> +		clock-names = "clk_usb3phy_ref", "aclk_usb3otg";
-> +
-> +		assigned-clocks = <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
-> +		assigned-clock-rates = <229 000 000>;
-> +		resets = <&crg_rst 0x90 8>,
-> +			 <&crg_rst 0x90 7>,
-> +			 <&crg_rst 0x90 6>,
-> +			 <&crg_rst 0x90 5>;
-> +
-> +		dwc3: dwc3@ff100000 {
-> +			compatible = "snps,dwc3";
-> +			reg = <0x0 0xff100000 0x0 0x100000>;
-> +			interrupts = <0 159 4>, <0 161 4>;
-> +			phys = <&usb_phy>;
-> +			phy-names = "usb3-phy";
-> +			dr_mode = "otg";
-> +
-> +			...
-> +		};
-> +	};
 
-
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
