@@ -2,237 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B2CFBF38B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F7D7BF390
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbfIZM4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:56:22 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58623 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbfIZM4W (ORCPT
+        id S1726873AbfIZM5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:57:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42540 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbfIZM5i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:56:22 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190926125620euoutp02773475247c17d99a958b2d5c3d79148a~H-kgK874g0588705887euoutp02S
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 12:56:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190926125620euoutp02773475247c17d99a958b2d5c3d79148a~H-kgK874g0588705887euoutp02S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569502580;
-        bh=2qQDxqYPHhCVF57kJMr4/wROezjZFSeNjBWmnGfCzE4=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Ysn18o/NKgSQWz5nZnHoey2tB3+H37fdZ9XMu6Hu8GkkgBOTAICpi0bPt8bkKzaIE
-         ZkVwyTpkr/W56FWtYOCS5VHh5cAMHH0ZREwSGr1tbqLT6KHlKwBpSSMqgQ0B+YtY5v
-         JXg5hoQvz/NPAcvzuABZMmxbCvHW83+vwJyyI+84=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190926125620eucas1p29b39ec3cfd0a15952e064f6643dba2d3~H-kf3K8vG1380113801eucas1p28;
-        Thu, 26 Sep 2019 12:56:20 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 03.0A.04374.475BC8D5; Thu, 26
-        Sep 2019 13:56:20 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be~H-kfkPKTa2227022270eucas1p2X;
-        Thu, 26 Sep 2019 12:56:19 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190926125619eusmtrp108d0625b63966590fcef45b2fd324cf6~H-kfkFhCI0264802648eusmtrp1s;
-        Thu, 26 Sep 2019 12:56:19 +0000 (GMT)
-X-AuditID: cbfec7f5-4ddff70000001116-6b-5d8cb574fb0d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 53.A8.04166.375BC8D5; Thu, 26
-        Sep 2019 13:56:19 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190926125619eusmtip2a47b589aeba0c6fa54c368a75966592a~H-kfAr7cm1774917749eusmtip2L;
-        Thu, 26 Sep 2019 12:56:19 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] dt-bindings: gpu: Convert Samsung Image Scaler to
- dt-schema
-Date:   Thu, 26 Sep 2019 14:56:14 +0200
-Message-Id: <20190926125614.10408-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSe0hTURzu7D52HV25TsGDidKgICHNCrqQRmbEMgSDoFwsW/OmopuyO18J
-        YYqla9lQTJlmBmYyHw2z5QYOnaMRhku3yqChhVOxTMFXRmpu1+y/73k++HEIRLiJhhFZSjWj
-        UspyRLgANb1Zdx5Wv9JKj7wd49NP7CMY7V5ZwOmaCR1KO51GPu2yNOF0g9PKoyfLu3G6y+7h
-        088+jfLoin47/7RA3NncCcQ9hipcPHHfwRNX9xqAeKknIgWTCOLSmZysAkYVc+q6IHPiRyuW
-        VxdRNDhLl4LpUA0gCEgdh0MfzmiAgBBS7QA+cpTzObIMYH+dCXBkCcA7LgdPAwL8jTb3Ux5n
-        PAewtckCdivfW7y4L4VTsVAzr8F9RghVBqDbPOd/GKEWARx82exPBVMX4bMWL+bDKHUA6qaH
-        /Jik4mGtx7qzFwk7jAOIrwypGRwuPXTinHEWvm5sxjgcDOccvXwOh8PhWi3KFcoB/DrSxeeI
-        FkBXWQPgUifhkGMU8x0BoQ7BF5YYTk6AHd/WMO42gXB8PsgnI9uwxlSPcDIJK+8KufRBqHd0
-        784Ovh/biYhhneWSTxZSUmgqW8F1IEL/f6oFAAMIZfJZRQbDHlMyhdGsTMHmKzOi5bmKHrD9
-        K4Y3HSt9wPrnhg1QBBDtJRsMWqkQkxWwxQobgAQiCiGTU7clMl1WfItR5aap8nMY1gb2Eago
-        lCzZM3lVSGXI1Ew2w+Qxqn8ujwgIKwVof1yJsHfq9upqUHx7o46nffyz81fV4sLWRmMbNtaa
-        NBItP3pt3Jq9fCI5od5sVxvbJbMVennxRuTHVC8wi7fSo7xxnpTEL+ue8O5Cidu2PPU7/EFl
-        2jm9O6nImnsz0XjlvPnCmisgNXBGu19OklLJgP6e3Pn5suVdvKa6T4SymbLYKETFyv4CCpMY
-        FhEDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsVy+t/xe7rFW3tiDc4fNrSYf+Qcq8WVr+/Z
-        LCbdn8Bicf78BnaLy7vmsFnMOL+PyeJB8zo2i7VH7rJbLL1+kcmide8RdgcujzXz1jB6bFrV
-        yeZxv/s4k0ffllWMHp83yQWwRunZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq
-        6dvZpKTmZJalFunbJehl3H+zhLVgqlzFwRcWDYzPxLsYOTkkBEwkll1ZyNTFyMUhJLCUUWL5
-        jH2sEAkZiZPTGqBsYYk/17rYIIo+MUpMe3+aBSTBJmAo0fUWIiEi0MYo8fnxFWYQh1ngC6PE
-        5r8/2EGqhAX8JZpX3wMbxSKgKjHh2WEwm1fAVmLy3X1MECvkJVZvOMA8gZFnASPDKkaR1NLi
-        3PTcYkO94sTc4tK8dL3k/NxNjMAg3Xbs5+YdjJc2Bh9iFOBgVOLh/bCmJ1aINbGsuDL3EKME
-        B7OSCK9vJFCINyWxsiq1KD++qDQntfgQoynQ8onMUqLJ+cAIyiuJNzQ1NLewNDQ3Njc2s1AS
-        5+0QOBgjJJCeWJKanZpakFoE08fEwSnVwBgjuuLWFHO32WIiHRrO5gqdfus+3yxoChO6/eJb
-        uu+eXy/2LVyowrBvcpogs1XLTUuNfPmDBn1T9l115LPRPV5cIFFm6Gf5K/nAytj9/q/PHXJ9
-        n1Yx6VmiMs8r5gV3U5Pip9bPnyNbuvBfYV1ZocbWvWUzRRPYVoRcuhQRLvu4iiXs9kq72Uos
-        xRmJhlrMRcWJAOCT+6JoAgAA
-X-CMS-MailID: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be
-References: <CGME20190926125619eucas1p249ac149ef1e1a3eb975dae94b08cd7be@eucas1p2.samsung.com>
+        Thu, 26 Sep 2019 08:57:38 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2FB196013C; Thu, 26 Sep 2019 12:57:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569502657;
+        bh=XWJZ29qmhxdNsiEDSm4SmSSi0jFoSNnwAiHHPXLLh2Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=mLB6ESXn5HOGoQJpWnkUNKljeiPsPpPl3NccJNM/AzT+s3HiWv6rLKb6SW7bOkS/y
+         7phhZGnQTWOBIDMnfZuEch3ctdHzjkquzSpvpdujKdKjt/CuXYEIMSlJgftGWOaDa7
+         UUiH3QeRFAppqn+8sfcWE8ua3k+aWHv7XFpSYwEA=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8BCEA6016D;
+        Thu, 26 Sep 2019 12:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569502656;
+        bh=XWJZ29qmhxdNsiEDSm4SmSSi0jFoSNnwAiHHPXLLh2Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=D9NbvxsSKCAUttzEPFtiHP/pDAp13i96vTF4YoqbpiefOXmOlUVy5B2N8GFsnbtG3
+         8QxL3fDQ99lzgCCNEcVdZCFHVen9+bWeslAV53BKLcD44oz6bNSdtxq24yP9JmdEEM
+         wC7YiqglQ+nktugLTWVmPWcerDsEqTnAW3sWj0LA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8BCEA6016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers 2019-09-26
+Date:   Thu, 26 Sep 2019 15:57:33 +0300
+Message-ID: <8736gj5i6a.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maciej Falkowski <m.falkowski@samsung.com>
+Hi Dave,
 
-Convert Samsung Image Scaler to newer dt-schema format.
+here's a pull request to net tree for v5.4. Please let me know if there
+are any problems.
 
-Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- Removed quotation marks from string in 'compatible' property
-- Added if-then statement for 'clocks' and 'clock-names' property
-- Added include directive to example
-- Added GIC_SPI macro to example
-
-Best regards,
-Maciej Falkowski
----
- .../bindings/gpu/samsung-scaler.txt           | 27 -------
- .../bindings/gpu/samsung-scaler.yaml          | 71 +++++++++++++++++++
- 2 files changed, 71 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt b/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-deleted file mode 100644
-index 9c3d98105dfd..000000000000
---- a/Documentation/devicetree/bindings/gpu/samsung-scaler.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--* Samsung Exynos Image Scaler
--
--Required properties:
--  - compatible : value should be one of the following:
--	(a) "samsung,exynos5420-scaler" for Scaler IP in Exynos5420
--	(b) "samsung,exynos5433-scaler" for Scaler IP in Exynos5433
--
--  - reg : Physical base address of the IP registers and length of memory
--	  mapped region.
--
--  - interrupts : Interrupt specifier for scaler interrupt, according to format
--		 specific to interrupt parent.
--
--  - clocks : Clock specifier for scaler clock, according to generic clock
--	     bindings. (See Documentation/devicetree/bindings/clock/exynos*.txt)
--
--  - clock-names : Names of clocks. For exynos scaler, it should be "mscl"
--		  on 5420 and "pclk", "aclk" and "aclk_xiu" on 5433.
--
--Example:
--	scaler@12800000 {
--		compatible = "samsung,exynos5420-scaler";
--		reg = <0x12800000 0x1294>;
--		interrupts = <0 220 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&clock CLK_MSCL0>;
--		clock-names = "mscl";
--	};
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-new file mode 100644
-index 000000000000..af19930d052e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/samsung-scaler.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpu/samsung-scaler.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC Image Scaler
-+
-+maintainers:
-+  - Inki Dae <inki.dae@samsung.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos5420-scaler
-+      - samsung,exynos5433-scaler
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: samsung,exynos5420-scaler
-+then:
-+  properties:
-+    clocks:
-+      items:
-+        - description: mscl clock
-+
-+    clock-names:
-+      items:
-+        - const: mscl
-+else:
-+  properties:
-+    clocks:
-+      items:
-+        - description: mscl clock
-+        - description: aclk clock
-+        - description: aclk_xiu clock
-+
-+    clock-names:
-+      items:
-+        - const: pclk
-+        - const: aclk
-+        - const: aclk_xiu
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/exynos5420.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    scaler@12800000 {
-+        compatible = "samsung,exynos5420-scaler";
-+        reg = <0x12800000 0x1294>;
-+        interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&clock CLK_MSCL0>;
-+        clock-names = "mscl";
-+    };
-+
--- 
-2.17.1
+Kalle
 
 
+The following changes since commit 280ceaed79f18db930c0cc8bb21f6493490bf29c:
 
+  usbnet: sanity checking of packet sizes and device mtu (2019-09-19 13:27:11 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2019-09-26
+
+for you to fetch changes up to 2b481835cf4e7384b80d7762074b32a45b792d99:
+
+  wil6210: use after free in wil_netif_rx_any() (2019-09-25 09:12:20 +0300)
+
+----------------------------------------------------------------
+wireless-drivers fixes for 5.4
+
+First set of fixes for 5.4 sent during the merge window. Most are
+regressions fixes but the mt7615 problem has been since it was merged.
+
+iwlwifi
+
+* fix a build regression related CONFIG_THERMAL
+
+* avoid using GEO_TX_POWER_LIMIT command on certain firmware versions
+
+rtw88
+
+* fixes for skb leaks
+
+zd1211rw
+
+* fix a compiler warning on 32 bit
+
+mt76
+
+* fix the firmware paths for mt7615 to match with linux-firmware
+
+wil6210
+
+* fix use of skb after free
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      wil6210: use after free in wil_netif_rx_any()
+
+Geert Uytterhoeven (1):
+      zd1211rw: zd_usb: Use "%zu" to format size_t
+
+Johannes Berg (1):
+      iwlwifi: mvm: fix build w/o CONFIG_THERMAL
+
+Lorenzo Bianconi (1):
+      mt76: mt7615: fix mt7615 firmware path definitions
+
+Luca Coelho (1):
+      iwlwifi: fw: don't send GEO_TX_POWER_LIMIT command to FW version 36
+
+Yan-Hsuan Chuang (3):
+      rtw88: pci: extract skbs free routine for trx rings
+      rtw88: pci: release tx skbs DMAed when stop
+      rtw88: configure firmware after HCI started
+
+ drivers/net/wireless/ath/wil6210/txrx.c            |  2 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c        |  8 ++--
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c        |  9 +++-
+ drivers/net/wireless/mediatek/mt76/mt7615/mcu.c    | 11 ++---
+ drivers/net/wireless/mediatek/mt76/mt7615/mt7615.h |  6 +--
+ drivers/net/wireless/realtek/rtw88/mac.c           |  3 --
+ drivers/net/wireless/realtek/rtw88/main.c          |  4 ++
+ drivers/net/wireless/realtek/rtw88/pci.c           | 48 +++++++++++++++++-----
+ drivers/net/wireless/zydas/zd1211rw/zd_usb.c       |  2 +-
+ 9 files changed, 63 insertions(+), 30 deletions(-)
