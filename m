@@ -2,71 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF72BF4B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 16:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5367DBF4E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 16:19:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfIZOJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 10:09:37 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:34750 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbfIZOJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 10:09:37 -0400
-Received: from zn.tnic (p200300EC2F0C9800AD9F87A1CF14B2BF.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:9800:ad9f:87a1:cf14:b2bf])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BDBF81EC064F;
-        Thu, 26 Sep 2019 16:09:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1569506976;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=0x1L+mtUKfNF+MbQXnQ84f4FJRp3i2cGFR/A3i416MY=;
-        b=o3sRL7PfeyiYU1eWE9AgnPjR5KQl9uGF1WjQlvvkv7l49ga89XVNvMPy7A/2l+1WX6i1kH
-        5TtrldV7UNoF+2yD+Py3z7IwM37MrD3kFblRAq98vimkA9Btf5rZbI9aM48eNYXgcfVhro
-        sWdrd0Zbz0BqQCBVNJXnxsveMO9z+LM=
-Date:   Thu, 26 Sep 2019 16:09:39 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Arthur Gautier <baloo@gandi.net>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
+        id S1727102AbfIZOT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 10:19:58 -0400
+Received: from esa6.hc3370-68.iphmx.com ([216.71.155.175]:15098 "EHLO
+        esa6.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726500AbfIZOT5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 10:19:57 -0400
+X-Greylist: delayed 427 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 10:19:57 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=citrix.com; s=securemail; t=1569507596;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mQvPFse3w+s0uK80XprrGzqDEhnYGYER/mAVNdleSwU=;
+  b=NP0w8y1RwnBWpHQHdNYQgJkXoSTNc/tomzbWtZIi03hsMgGmGCwnPQ9r
+   R0hvEiWyjFJ1vyq/b/lWVMATaWJjpmR3mVxqWCvXm/XcZlmNePUQyUO9l
+   HBPfReIKvH4EfYMXv0/Z3vqcJcBFyH/1KZEYs2XjolamkBvQagjyxhQtr
+   M=;
+Authentication-Results: esa6.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=ross.lagerwall@citrix.com; spf=Pass smtp.mailfrom=ross.lagerwall@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  ross.lagerwall@citrix.com) identity=pra;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="ross.lagerwall@citrix.com";
+  x-sender="ross.lagerwall@citrix.com";
+  x-conformance=sidf_compatible
+Received-SPF: Pass (esa6.hc3370-68.iphmx.com: domain of
+  ross.lagerwall@citrix.com designates 162.221.158.21 as
+  permitted sender) identity=mailfrom;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="ross.lagerwall@citrix.com";
+  x-sender="ross.lagerwall@citrix.com";
+  x-conformance=sidf_compatible; x-record-type="v=spf1";
+  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
+  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
+  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
+  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83 ~all"
+Received-SPF: None (esa6.hc3370-68.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@mail.citrix.com) identity=helo;
+  client-ip=162.221.158.21; receiver=esa6.hc3370-68.iphmx.com;
+  envelope-from="ross.lagerwall@citrix.com";
+  x-sender="postmaster@mail.citrix.com";
+  x-conformance=sidf_compatible
+IronPort-SDR: BOnG5Zh9TXKxTyxuCF9+N0ix41AG3MFkVpivV34zKTew6GEZ2P35uyjvI6SCbFrPM0qBOL/qOU
+ 1BoA0yFYh11nK/aWWRECc8giHOnn1OgAX/89CeXiO307uSkVaf8vwZVY2J366IpTRnwiuCF/pj
+ rowQsT2G4d2+Lbyjchk4v5ajpI8Ytl4/aSFyrQCp3B7WVe8H3FEc0Ki8Ku22yMyQJgxut5iTkm
+ 9QMmdtoKyjOzs+WsrtfqisqLBKwRbAuWvCPqw7w9AhGv+VT562xloKGvpE2/s9g7Nu9WnbwxFq
+ HbA=
+X-SBRS: 2.7
+X-MesageID: 6396973
+X-Ironport-Server: esa6.hc3370-68.iphmx.com
+X-Remote-IP: 162.221.158.21
+X-Policy: $RELAYED
+X-IronPort-AV: E=Sophos;i="5.64,552,1559534400"; 
+   d="scan'208";a="6396973"
+From:   Ross Lagerwall <ross.lagerwall@citrix.com>
+To:     <linux-efi@vger.kernel.org>
+CC:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
-Message-ID: <20190926140939.GD18383@zn.tnic>
-References: <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com>
- <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de>
- <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net>
- <20190216234702.GP2217@ZenIV.linux.org.uk>
- <20190217034121.bs3q3sgevexmdt3d@khany>
- <20190217042201.GU2217@ZenIV.linux.org.uk>
- <alpine.DEB.2.21.1902181347500.1549@nanos.tec.linutronix.de>
- <CALCETrXyard2OXmOafiLks3YuyO=ObbjDXB6NJo_08rL4M6azw@mail.gmail.com>
- <20190218215150.xklqbfckwmbtdm3t@khany>
- <20190926095825.zkdpya55yjusvv4g@khany>
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, <x86@kernel.org>,
+        <platform-driver-x86@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Sai Praneeth" <sai.praneeth.prakhya@intel.com>,
+        Ross Lagerwall <ross.lagerwall@citrix.com>
+Subject: [PATCH] x86/efi: Don't require non-blocking EFI callbacks
+Date:   Thu, 26 Sep 2019 15:12:34 +0100
+Message-ID: <20190926141234.8271-1-ross.lagerwall@citrix.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190926095825.zkdpya55yjusvv4g@khany>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 09:58:25AM +0000, Arthur Gautier wrote:
-> I think Andy submitted a patch Feb 25 2019, but I was not copied on it
-> (I believe it was sent to x86@kernel.org) and I don't know which fate it
-> had.
+If a backend does not implement non-blocking EFI operations, it implies
+that the normal operations are non-blocking. Instead of crashing
+dereferencing a NULL pointer, fallback to the normal operations since it
+is safe to do so.
 
-I guess we're still waiting for Andy to do v2 with feedback incorporated
-and proper commit message. :)
+Fixes: 5a58bc1b1edc ("efi/x86: Use non-blocking SetVariable() for efi_delete_dummy_variable()")
+Fixes: ca0e30dcaa53 ("efi: Add nonblocking option to efi_query_variable_store()")
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+---
+ arch/x86/platform/efi/quirks.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
+diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+index 3b9fd679cea9..4167f5e8f3e8 100644
+--- a/arch/x86/platform/efi/quirks.c
++++ b/arch/x86/platform/efi/quirks.c
+@@ -106,11 +106,13 @@ early_param("efi_no_storage_paranoia", setup_storage_paranoia);
+ */
+ void efi_delete_dummy_variable(void)
+ {
+-	efi.set_variable_nonblocking((efi_char16_t *)efi_dummy_name,
+-				     &EFI_DUMMY_GUID,
+-				     EFI_VARIABLE_NON_VOLATILE |
+-				     EFI_VARIABLE_BOOTSERVICE_ACCESS |
+-				     EFI_VARIABLE_RUNTIME_ACCESS, 0, NULL);
++	efi_set_variable_t *set_variable = efi.set_variable_nonblocking ?:
++					   efi.set_variable;
++
++	set_variable((efi_char16_t *)efi_dummy_name, &EFI_DUMMY_GUID,
++		     EFI_VARIABLE_NON_VOLATILE |
++		     EFI_VARIABLE_BOOTSERVICE_ACCESS |
++		     EFI_VARIABLE_RUNTIME_ACCESS, 0, NULL);
+ }
+ 
+ /*
+@@ -127,10 +129,12 @@ query_variable_store_nonblocking(u32 attributes, unsigned long size)
+ {
+ 	efi_status_t status;
+ 	u64 storage_size, remaining_size, max_size;
++	efi_query_variable_info_t *query_variable_info =
++		efi.query_variable_info_nonblocking ?:
++		efi.query_variable_info;
+ 
+-	status = efi.query_variable_info_nonblocking(attributes, &storage_size,
+-						     &remaining_size,
+-						     &max_size);
++	status = query_variable_info(attributes, &storage_size,
++				     &remaining_size, &max_size);
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.21.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
