@@ -2,137 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1710FBF250
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C54BF22A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726106AbfIZL7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:59:16 -0400
-Received: from 13.mo3.mail-out.ovh.net ([188.165.33.202]:58927 "EHLO
-        13.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfIZL7Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:59:16 -0400
-X-Greylist: delayed 414 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 07:59:13 EDT
-Received: from player688.ha.ovh.net (unknown [10.109.159.90])
-        by mo3.mail-out.ovh.net (Postfix) with ESMTP id B37C922918D
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 13:52:17 +0200 (CEST)
-Received: from milecki.pl (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
-        (Authenticated sender: rafal@milecki.pl)
-        by player688.ha.ovh.net (Postfix) with ESMTPSA id 1EFA2A2EC583;
-        Thu, 26 Sep 2019 11:52:07 +0000 (UTC)
-Subject: Re: [PATCH RFC] cfg80211: add new command for reporting wiphy crashes
-To:     Jouni Malinen <j@w1.fi>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hostap@lists.infradead.org,
-        openwrt-devel@lists.openwrt.org
-References: <20190920133708.15313-1-zajec5@gmail.com>
- <20190920140143.GA30514@w1.fi>
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
-Message-ID: <4f6f37e5-802c-4504-3dcb-c4a640d138bd@milecki.pl>
-Date:   Thu, 26 Sep 2019 13:52:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.2
+        id S1726335AbfIZLxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 07:53:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51300 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725877AbfIZLxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 07:53:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 06525AEAC;
+        Thu, 26 Sep 2019 11:52:58 +0000 (UTC)
+Date:   Thu, 26 Sep 2019 13:52:58 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v1] mm/memory_hotplug: Don't take the cpu_hotplug_lock
+Message-ID: <20190926115258.GH20255@dhcp22.suse.cz>
+References: <20190926072645.GA20255@dhcp22.suse.cz>
+ <C8DA5249-2DEB-47D5-937E-5A774B1CB08B@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <20190920140143.GA30514@w1.fi>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 11993367286735539761
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrfeeggdeghecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C8DA5249-2DEB-47D5-937E-5A774B1CB08B@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.09.2019 16:01, Jouni Malinen wrote:
-> On Fri, Sep 20, 2019 at 03:37:08PM +0200, Rafał Miłecki wrote:
->> Hardware or firmware instability may result in unusable wiphy. In such
->> cases usually a hardware reset is needed. To allow a full recovery
->> kernel has to indicate problem to the user space.
+On Thu 26-09-19 07:19:27, Qian Cai wrote:
 > 
-> Why? Shouldn't the driver be able to handle this on its own since all
-> the previous configuration was done through the driver anyway. As far as
-> I know, there are drivers that do indeed try to do this and handle it
-> successfully at least for station mode. AP mode may be more complex, but
-> for that one, I guess it would be fine to drop all associations (and
-> provide indication of that to user space) and just restart the BSS.
-
-Indeed my main concert is AP mode. I'm afraid that cfg80211 doesn't
-cache all settings, consider e.g. nl80211_start_ap(). It builds
-struct cfg80211_ap_settings using info from nl80211 message and
-passes it to the driver (rdev_start_ap()). Once it's done it
-caches only a small subset of all setup data.
-
-In other words driver doesn't have enough info to recover interfaces
-setup.
-
-
->> This new nl80211 command lets user space known wiphy has crashed and has
->> been just recovered. When applicable it should result in supplicant or
->> authenticator reconfiguring all interfaces.
 > 
-> For me, that is not really "recovered" if some additional
-> reconfiguration steps are needed.. I'd like to get a more detailed view
-> on what exactly might need to be reconfigured and how would user space
-> know what exactly to do. Or would the plan here be that the driver would
-> not even indicate this crash if it is actually able to internally
-> recover fully from the firmware restart?
-
-I meant that hardware has been recovered & is operational again (driver
-can talk to it). I expected user space to reconfigure all interfaces
-using the same settings that were used on previous run.
-
-If driver were able to recover interfaces setup on its own (with a help
-of cfg80211) then user space wouldn't need to be involved.
-
-
->> I'd like to use this new cfg80211_crash_report() in brcmfmac after a
->> successful recovery from a FullMAC firmware crash.
->>
->> Later on I'd like to modify hostapd to reconfigure wiphy using a
->> previously used setup.
+> > On Sep 26, 2019, at 3:26 AM, Michal Hocko <mhocko@kernel.org> wrote:
+> > 
+> > OK, this is using for_each_online_cpu but why is this a problem? Have
+> > you checked what the code actually does? Let's say that online_pages is
+> > racing with cpu hotplug. A new CPU appears/disappears from the online
+> > mask while we are iterating it, right? Let's start with cpu offlining
+> > case. We have two choices, either the cpu is still visible and we update
+> > its local node configuration even though it will disappear shortly which
+> > is ok because we are not touching any data that disappears (it's all
+> > per-cpu). Case when the cpu is no longer there is not really
+> > interesting. For the online case we might miss a cpu but that should be
+> > tolerateable because that is not any different from triggering the
+> > online independently of the memory hotplug. So there has to be a hook
+> > from that code path as well. If there is none then this is buggy
+> > irrespective of the locking.
+> > 
+> > Makes sense?
 > 
-> So this implies that at least something would need to happen in AP mode.
-> Do you have a list of items that the driver cannot do on its own and why
-> it would be better to do them from user space?
+> This sounds to me requires lots of audits and testing. Also, someone who is more
+> familiar with CPU hotplug should review this patch.
 
-First of all I was wondering how to handle interfaces creation. After a
-firmware crash we have:
-1) Interfaces created in Linux
-2) No corresponsing interfaces in firmware
+Thomas is on the CC list.
 
-Syncing that (re-creating in-firmware firmwares) may be a bit tricky
-depending on a driver and hardware. For some cases it could be easier to
-delete all interfaces and ask user space to setup wiphy (create required
-interfaces) again. I'm not sure if that's acceptable though?
+> Personally, I am no fun of
+> operating on an incorrect CPU mask to begin with, things could go wrong really
+> quickly...
 
-If we agree interfaces should stay and driver simply should configure
-firmware properly, then we need all data as explained earlier. struct
-cfg80211_ap_settings is not available during runtime. How should we
-handle that problem?
+Do you have any specific arguments? Just think of cpu and memory
+hotplugs being independent operations. There is nothing really
+inherently binding them together. If the cpu_online_mask really needs a
+special treatment here then I would like to hear about that. Handwaving 
+doesn't really helps us.
 
-
->> I'm OpenWrt developer & user and I got annoyed by my devices not auto
->> recovering after various failures. There are things I cannot fix (hw
->> failures or closed fw crashes) but I still expect my devices to get
->> back to operational state as soon as possible on their own.
-> 
-> I fully agree with the auto recovery being important thing to cover for
-> this, but I'm not yet convinced that this needs user space action. Or if
-> it does, there would need to be more detailed way of indicating what
-> exactly is needed for user space to do. The proposed change here is just
-> saying "hey, I crashed and did something to get the hardware/firmware
-> responding again" which does not really tell much to user space other
-> than potentially requiring full disable + re-enable for the related
-> interfaces. And that is something that should not actually be done in
-> all cases of firmware crashes since there are drivers that handle
-> recovery in a manner that is in practice completely transparent to user
-> space.
-
-I was aiming for a brutal force solution: just make user space
-interfaces need a full setup just at they were just created.
+-- 
+Michal Hocko
+SUSE Labs
