@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1729BE9B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:36:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E811ABE9BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390789AbfIZAgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 20:36:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39410 "EHLO mail.kernel.org"
+        id S2390748AbfIZAgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 20:36:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390684AbfIZAgh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 20:36:37 -0400
+        id S1729174AbfIZAgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 20:36:41 -0400
 Received: from quaco.localdomain (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F40BC21D6C;
-        Thu, 26 Sep 2019 00:36:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86288217F4;
+        Thu, 26 Sep 2019 00:36:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569458196;
-        bh=dSYTLI9a2bg9fy8mLt8SIa/dAisD6gBb7UAeoj5auPI=;
+        s=default; t=1569458200;
+        bh=kDq+CyTfUApKOLb0gxOUA8fFRRXh7zXuBDKTRLJvlu8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sor2F1JMGR8dnIzoilo6Rcr7gQgUykdHE5TtgeFoLLea9J0SfoGy1mr3nZJkGNdpS
-         nLUpvgqUpMvqMP8k20FgTfSB5iYDZvsS5vHupCHATwRNCutyMRQPVufR2pOxA8U/Jr
-         DpqVgfXgdno2aQ9wTmdngEvNqDWwn0/ReRNdiLWo=
+        b=BaY8a/mFoljdrEiLIMx1+7aEd+cdWUO3nNz0DvUYyEcSvjpLdecyu9RLzFYU40tT2
+         KpqNi+2Cnfc0fRSKcsmmPjwwQtFAAAMYmTQ3MRjnud0XUdvDHF2jm/Y5Xg0Abh+7sz
+         45BXsVc6Ibw9MRUfZxJbi9nCUsn8AFNGlPj4xiOc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,9 +31,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Andi Kleen <ak@linux.intel.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 61/66] perf stat: Fix free memory access / memory leaks in metrics
-Date:   Wed, 25 Sep 2019 21:32:39 -0300
-Message-Id: <20190926003244.13962-62-acme@kernel.org>
+Subject: [PATCH 62/66] perf evlist: Fix access of freed id arrays
+Date:   Wed, 25 Sep 2019 21:32:40 -0300
+Message-Id: <20190926003244.13962-63-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190926003244.13962-1-acme@kernel.org>
 References: <20190926003244.13962-1-acme@kernel.org>
@@ -46,110 +46,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Make sure to not free the name passed in by the caller, but free all the
-allocated ids when parsing expressions.
+I'm not fully sure if this is the correct fix, but without this I get
+crashes on more complex perf stat metric usages. The problem is that
+part of the state gets freed when a weak group fails, but then is later
+still used. Just don't free the ids, we're going to reuse them anyways
+on the weak group retry.
 
-The loop at the end knows that the first entry shouldn't be freed, so
-make sure the caller name is the first entry.
-
-Fixes
+For example:
 
   % perf stat -M IpB,IpCall,IpTB,IPC,Retiring_SMT,Frontend_Bound_SMT,Kernel_Utilization,CPU_Utilization --metric-only -a -I 1000 sleep 2
 
-  valgrind:
-       1.009943231 ==21527== Invalid read of size 1
-  ==21527==    at 0x483CB74: strcmp (vg_replace_strmem.c:849)
-  ==21527==    by 0x582CF8: collect_all_aliases (stat-display.c:554)
-  ==21527==    by 0x582EB3: collect_data (stat-display.c:577)
-  ==21527==    by 0x583A32: print_counter_aggr (stat-display.c:806)
-  ==21527==    by 0x584FAD: perf_evlist__print_counters (stat-display.c:1200)
-  ==21527==    by 0x45133A: print_counters (builtin-stat.c:655)
-  ==21527==    by 0x450629: process_interval (builtin-stat.c:353)
-  ==21527==    by 0x450FBD: __run_perf_stat (builtin-stat.c:564)
+  crashes and gives in valgrind:
+
+  =21527== Invalid write of size 8
+  ==21527==    at 0x4EE582: hlist_add_head (list.h:644)
+  ==21527==    by 0x4EFD3C: perf_evlist__id_hash (evlist.c:477)
+  ==21527==    by 0x4EFD99: perf_evlist__id_add (evlist.c:483)
+  ==21527==    by 0x4EFF15: perf_evlist__id_add_fd (evlist.c:524)
+  ==21527==    by 0x4FC693: store_evsel_ids (evsel.c:2969)
+  ==21527==    by 0x4FC76C: perf_evsel__store_ids (evsel.c:2986)
+  ==21527==    by 0x450DA7: __run_perf_stat (builtin-stat.c:519)
   ==21527==    by 0x451285: run_perf_stat (builtin-stat.c:636)
   ==21527==    by 0x454619: cmd_stat (builtin-stat.c:1966)
   ==21527==    by 0x4D557D: run_builtin (perf.c:310)
   ==21527==    by 0x4D57EA: handle_internal_command (perf.c:362)
-  ==21527==  Address 0x12826cd0 is 0 bytes inside a block of size 25 free'd
+  ==21527==    by 0x4D5931: run_argv (perf.c:406)
+  ==21527==  Address 0x12e3f008 is 104 bytes inside a block of size 2,056 free'd
   ==21527==    at 0x4839A0C: free (vg_replace_malloc.c:540)
-  ==21527==    by 0x627041: __zfree (zalloc.c:13)
-  ==21527==    by 0x57F66A: generic_metric (stat-shadow.c:814)
-  ==21527==    by 0x580B21: perf_stat__print_shadow_stats (stat-shadow.c:1057)
-  ==21527==    by 0x58418E: print_metric_headers (stat-display.c:943)
-  ==21527==    by 0x5844BC: print_interval (stat-display.c:1004)
-  ==21527==    by 0x584DEB: perf_evlist__print_counters (stat-display.c:1172)
-  ==21527==    by 0x45133A: print_counters (builtin-stat.c:655)
-  ==21527==    by 0x450629: process_interval (builtin-stat.c:353)
-  ==21527==    by 0x450FBD: __run_perf_stat (builtin-stat.c:564)
+  ==21527==    by 0x627139: xyarray__delete (xyarray.c:32)
+  ==21527==    by 0x4F6BE4: perf_evsel__free_id (evsel.c:1253)
+  ==21527==    by 0x4FA11F: evsel__close (evsel.c:1994)
+  ==21527==    by 0x4F30A3: perf_evlist__reset_weak_group (evlist.c:1783)
+  ==21527==    by 0x450B47: __run_perf_stat (builtin-stat.c:466)
   ==21527==    by 0x451285: run_perf_stat (builtin-stat.c:636)
   ==21527==    by 0x454619: cmd_stat (builtin-stat.c:1966)
-  ==21527==  Block was alloc'd at
-  ==21527==    at 0x483880B: malloc (vg_replace_malloc.c:309)
-  ==21527==    by 0x51677DE: strdup (in /usr/lib64/libc-2.29.so)
-  ==21527==    by 0x506457: parse_events_name (parse-events.c:1754)
-  ==21527==    by 0x5550BB: parse_events_parse (parse-events.y:214)
-  ==21527==    by 0x50694D: parse_events__scanner (parse-events.c:1887)
-  ==21527==    by 0x506AEF: parse_events (parse-events.c:1927)
-  ==21527==    by 0x521D8B: metricgroup__parse_groups (metricgroup.c:527)
-  ==21527==    by 0x45156F: parse_metric_groups (builtin-stat.c:721)
-  ==21527==    by 0x6228A9: get_value (parse-options.c:243)
-  ==21527==    by 0x62363F: parse_short_opt (parse-options.c:348)
-  ==21527==    by 0x62363F: parse_options_step (parse-options.c:536)
-  ==21527==    by 0x62363F: parse_options_subcommand (parse-options.c:651)
-  ==21527==    by 0x453C1D: cmd_stat (builtin-stat.c:1718)
   ==21527==    by 0x4D557D: run_builtin (perf.c:310)
-
-and also a leak report.
-
-Committer testing:
-
-Before:
-
-  # perf stat -M IpB,IpCall,IpTB,IPC,Retiring_SMT,Frontend_Bound_SMT,Kernel_Utilization,CPU_Utilization --metric-only -a -I 1000 sleep 2
-  #           time      CPU_Utilization
-       1.000470810                      free(): double free detected in tcache 2
-  Aborted (core dumped)
-  #
-
-After:
-
-  # perf stat -M IpB,IpCall,IpTB,IPC,Retiring_SMT,Frontend_Bound_SMT,Kernel_Utilization,CPU_Utilization --metric-only -a -I 1000 sleep 2
-  #           time      CPU_Utilization
-       1.000494752                  0.1
-       2.001105112                  0.1
-  #
+  ==21527==    by 0x4D57EA: handle_internal_command (perf.c:362)
+  ==21527==    by 0x4D5931: run_argv (perf.c:406)
+  ==21527==    by 0x4D5CAE: main (perf.c:531)
+  ==21527==  Block was alloc'd at
+  ==21527==    at 0x483AB1A: calloc (vg_replace_malloc.c:762)
+  ==21527==    by 0x627024: zalloc (zalloc.c:8)
+  ==21527==    by 0x627088: xyarray__new (xyarray.c:10)
+  ==21527==    by 0x4F6B20: perf_evsel__alloc_id (evsel.c:1237)
+  ==21527==    by 0x4FC74E: perf_evsel__store_ids (evsel.c:2983)
+  ==21527==    by 0x450DA7: __run_perf_stat (builtin-stat.c:519)
+  ==21527==    by 0x451285: run_perf_stat (builtin-stat.c:636)
+  ==21527==    by 0x454619: cmd_stat (builtin-stat.c:1966)
+  ==21527==    by 0x4D557D: run_builtin (perf.c:310)
+  ==21527==    by 0x4D57EA: handle_internal_command (perf.c:362)
+  ==21527==    by 0x4D5931: run_argv (perf.c:406)
+  ==21527==    by 0x4D5CAE: main (perf.c:531)
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: http://lore.kernel.org/lkml/20190923233339.25326-3-andi@firstfloor.org
+Link: http://lore.kernel.org/lkml/20190923233339.25326-1-andi@firstfloor.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat-shadow.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/evlist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 70c87fdb2a43..2c41d47f6f83 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -738,6 +738,8 @@ static void generic_metric(struct perf_stat_config *config,
- 	char *n, *pn;
- 
- 	expr__ctx_init(&pctx);
-+	/* Must be first id entry */
-+	expr__add_id(&pctx, name, avg);
- 	for (i = 0; metric_events[i]; i++) {
- 		struct saved_value *v;
- 		struct stats *stats;
-@@ -776,8 +778,6 @@ static void generic_metric(struct perf_stat_config *config,
- 			expr__add_id(&pctx, n, avg_stats(stats)*scale);
- 	}
- 
--	expr__add_id(&pctx, name, avg);
--
- 	if (!metric_events[i]) {
- 		const char *p = metric_expr;
- 
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 84c42790dab3..d277a98e62df 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1659,7 +1659,7 @@ struct evsel *perf_evlist__reset_weak_group(struct evlist *evsel_list,
+ 			is_open = false;
+ 		if (c2->leader == leader) {
+ 			if (is_open)
+-				evsel__close(c2);
++				perf_evsel__close(&evsel->core);
+ 			c2->leader = c2;
+ 			c2->core.nr_members = 0;
+ 		}
 -- 
 2.21.0
 
