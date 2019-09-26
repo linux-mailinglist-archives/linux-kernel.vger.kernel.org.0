@@ -2,124 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D16DEBF82F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2B26BF867
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:57:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbfIZR4v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 13:56:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41743 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728189AbfIZR4e (ORCPT
+        id S1727807AbfIZR5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 13:57:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40905 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727881AbfIZR5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 13:56:34 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q7so2246613pfh.8
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 10:56:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yn5wfwJoFu2XxkEapi5oUode7Z6ofSq2WooR/oMOeig=;
-        b=GIG4pntI4mSLZBUOLoFMk4guSw8F6GtVAwhEFiBddEsAgwrkRwPjIGbLRlxFjf3FFl
-         AAkc2fNz+FhNHp9iA1Gn1CLcywcbJ+TQMeOOKdi3rLClFQao449j+D61pfii2Lo6mCp9
-         gdFOurgujqWI728AB8TNIMWAJHUqnNxeyVafk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yn5wfwJoFu2XxkEapi5oUode7Z6ofSq2WooR/oMOeig=;
-        b=ndrVWlkV7sp3nkCx95HsPTqmoodaPkR4ilTU6dO/FgZ2RH23a1dEPvIV33bUur02XP
-         b6Qzn7MBYcvRiIm1edNKnwRVcMOJHnRgJUESr2F+WDMbzfubvjXlSMmdI+1jQy7zlKyv
-         LsCYoYB+9iurrQP6D1HGQ2pvc2VEmkNjTzxJbZAYoJU2qT006ajXC3bTRRjjgCLUKcN9
-         P/xOrSNGUFEmkKPMj6iWv9iiljZngpBAMLLc+zBx1yHhwGNEeO9VlP0/5l58omRDvrzi
-         KFZ/P0Jfzc39jZl5FgAksWrt71LsGwSlsK2K81e0cgqz4tkGruXmCvoY6dbUpdT0l/Iz
-         KZIw==
-X-Gm-Message-State: APjAAAXjAqnohU2JMwikt0c/PfTG6PrvxTCfAyqQ3rv6nDbRsW1oPISZ
-        n34hGrPjtvZ5QE4NLYeE/H7xYA==
-X-Google-Smtp-Source: APXvYqztKKvfKjgB5MJEkhZ1uiyu1Mkac35wqulYkyxXb+7C2TAggJBadFx7VmxAR9W2f3IICOin9w==
-X-Received: by 2002:aa7:920d:: with SMTP id 13mr5075737pfo.17.1569520593466;
-        Thu, 26 Sep 2019 10:56:33 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x6sm7506434pfd.53.2019.09.26.10.56.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 10:56:30 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-c6x-dev@linux-c6x.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 29/29] x86: Use INT3 instead of NOP for linker fill bytes
-Date:   Thu, 26 Sep 2019 10:56:02 -0700
-Message-Id: <20190926175602.33098-30-keescook@chromium.org>
+        Thu, 26 Sep 2019 13:57:34 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1iDY1D-00073N-OF; Thu, 26 Sep 2019 17:57:32 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     mathias.nyman@intel.com, gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH] xhci: Increase STS_SAVE timeout in xhci_suspend()
+Date:   Fri, 27 Sep 2019 01:57:22 +0800
+Message-Id: <20190926175722.2507-1-kai.heng.feng@canonical.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190926175602.33098-1-keescook@chromium.org>
-References: <20190926175602.33098-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using 0x90 (NOP) to fill bytes between functions, which makes
-it easier to sloppily target functions in function pointer overwrite
-attacks, fill with 0xCC (INT3) to force a trap. Also drops the space
-between "=" and the value to better match the binutils documentation
-https://sourceware.org/binutils/docs/ld/Output-Section-Fill.html#Output-Section-Fill
+After commit f7fac17ca925 ("xhci: Convert xhci_handshake() to use
+readl_poll_timeout_atomic()"), ASMedia xHCI may fail to suspend.
 
-Example "objdump -d" before:
+Although the algorithms are essentially the same, the old max timeout is
+(usec + usec * time of doing readl()), and the new max timeout is just
+usec, which is much less than the old one.
 
-...
-ffffffff810001e0 <start_cpu0>:
-ffffffff810001e0:       48 8b 25 e1 b1 51 01    mov 0x151b1e1(%rip),%rsp        # ffffffff8251b3c8 <initial_stack>
-ffffffff810001e7:       e9 d5 fe ff ff          jmpq   ffffffff810000c1 <secondary_startup_64+0x91>
-ffffffff810001ec:       90                      nop
-ffffffff810001ed:       90                      nop
-ffffffff810001ee:       90                      nop
-ffffffff810001ef:       90                      nop
+Increase the timeout to make ASMedia xHCI able to suspend again.
 
-ffffffff810001f0 <__startup_64>:
-...
-
-After:
-
-...
-ffffffff810001e0 <start_cpu0>:
-ffffffff810001e0:       48 8b 25 41 79 53 01    mov 0x1537941(%rip),%rsp        # ffffffff82537b28 <initial_stack>
-ffffffff810001e7:       e9 d5 fe ff ff          jmpq   ffffffff810000c1 <secondary_startup_64+0x91>
-ffffffff810001ec:       cc                      int3
-ffffffff810001ed:       cc                      int3
-ffffffff810001ee:       cc                      int3
-ffffffff810001ef:       cc                      int3
-
-ffffffff810001f0 <__startup_64>:
-...
-
-Signed-off-by: Kees Cook <keescook@chromium.org>
+BugLink: https://bugs.launchpad.net/bugs/1844021
+Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- arch/x86/kernel/vmlinux.lds.S | 2 +-
+ drivers/usb/host/xhci.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index a5c8571e4967..a37817fafb22 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -144,7 +144,7 @@ SECTIONS
- 		*(.text.__x86.indirect_thunk)
- 		__indirect_thunk_end = .;
- #endif
--	} :text = 0x9090
-+	} :text =0xcccc
- 
- 	/* End of text section, which should occupy whole number of pages */
- 	_etext = .;
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 559b639337fb..100493eb9691 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -1032,7 +1032,7 @@ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
+ 	writel(command, &xhci->op_regs->command);
+ 	xhci->broken_suspend = 0;
+ 	if (xhci_handshake(&xhci->op_regs->status,
+-				STS_SAVE, 0, 10 * 1000)) {
++				STS_SAVE, 0, 20 * 1000)) {
+ 	/*
+ 	 * AMD SNPS xHC 3.0 occasionally does not clear the
+ 	 * SSS bit of USBSTS and when driver tries to poll
 -- 
 2.17.1
 
