@@ -2,142 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF549BEDE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A245ABEDED
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbfIZIyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 04:54:23 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39579 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfIZIyW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 04:54:22 -0400
-Received: by mail-ot1-f65.google.com with SMTP id s22so1312480otr.6;
-        Thu, 26 Sep 2019 01:54:21 -0700 (PDT)
+        id S1729911AbfIZI67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 04:58:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55076 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729060AbfIZI66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 04:58:58 -0400
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9ED665859E
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 08:58:58 +0000 (UTC)
+Received: by mail-pf1-f198.google.com with SMTP id z13so1281298pfr.15
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 01:58:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cjlxpgT/LN99sVEVUZhsfhg857PlKuAAdnRfujapLi0=;
-        b=Os5tD0tSYU+EaIgV6ulBm+zqivtd2LjMgxvqziRTT5gO1fHncoKZvrV0Cua//jjux/
-         q9EtfoqrUrxxM9i1JpqobE47EYK1i5RHwqR+5FBaa0ju2A28OYaXsvU4KiWybMe7xnj4
-         8mNePAiSTb3iUpXf6qDkvBl3zm97s4QjtZlB6oEN7Wsf5CI9J+CR3zp9a7ilINjQgMyc
-         ng0/7AAj5j+H7cE940dyUjYzrx5I2Ybmk5cXmILYbNzluCOb9Vu1Q2AmmzGdrdMJ4rja
-         l0QhDYLh+FrSSpCTrcUpZrI3GPG0MvqqkxputBxAKQiSUt5bbhPagqSQHeEVW725xR3R
-         810g==
-X-Gm-Message-State: APjAAAUtGk1rR8ufz3TnjegE9NSQjWaKWm6h2ppmaT27Qro5LK5+uGhw
-        C/XPaxY1ZBQlPjI9muNjeFdvYmc/0wyBNqzHvwY=
-X-Google-Smtp-Source: APXvYqzn4vcS7CrDY9TzBNZJFD1bzukT9QFSwGtPTrf+5CWcXy6Lye1hKI8tkf0IG/x3AmgA9GHQHmKAZXJG9NYJAg0=
-X-Received: by 2002:a9d:730d:: with SMTP id e13mr1738076otk.145.1569488061265;
- Thu, 26 Sep 2019 01:54:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190830034304.24259-1-yamada.masahiro@socionext.com>
-In-Reply-To: <20190830034304.24259-1-yamada.masahiro@socionext.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 26 Sep 2019 10:54:10 +0200
-Message-ID: <CAMuHMdXHqQ4O-guETbi85XiJGQ+4EkPdPZf=o540N4rGJkoK4w@mail.gmail.com>
-Subject: Re: [PATCH] compiler: enable CONFIG_OPTIMIZE_INLINING forcibly
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L9VfLVOKM8R9jc1z9s5TsnK21zyB5Qwdz7pgoArH7ZU=;
+        b=FRw1iMBhwxI9rXPjyC0mckE0jlJIUdjPrjhKe8yBg1kXYTEUwfibaHMUmjgVFYIxiW
+         5iiXnHUg7imxbaL0RIDXjs8js5Dg8LRtWdCB6MSyViz18Iqh6t9bEqY2FofSlov3QeKi
+         67YyjWsLb5sZ+ChfZ62WVYaDcIuf11n8HxByHk9xf1y27Wr5k5nGi0t8/XR8U2G5rfmY
+         2fjJzi+NMitaDUPtz2TGNtqz9uJikODpToBmMNH3UDy+BSefukIFsB3I32qKQ6Ibi4u2
+         g4AOduUHWe1mZKmsts3GLfWD4BOErhPJ6XuDxVJyq/xBgFtzGsaDWDt6o/IG4B4C+9GG
+         4Jaw==
+X-Gm-Message-State: APjAAAU3iK/T/7IcKA5eSUB5ZPW+GwL+3FwSNLfEI8ImCT06ehIijEAB
+        5a7EGQxHm4bWgXZIijGQSKA913zCIzgZdNt7a46V2xcPKQ/SEXUtAOoDLcLEfm/IWCkY3VfvZGm
+        MoG3avvgfAqrV8nvmYi7tu5hj
+X-Received: by 2002:a17:90a:1090:: with SMTP id c16mr2409837pja.132.1569488338077;
+        Thu, 26 Sep 2019 01:58:58 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzhaZZThluUL2F/LQPkfZtnZIdTa4Wg7MLC8P+1p0q6ib/uQgwy0h20Y+B1DooAZuLsy2ZgwA==
+X-Received: by 2002:a17:90a:1090:: with SMTP id c16mr2409814pja.132.1569488337664;
+        Thu, 26 Sep 2019 01:58:57 -0700 (PDT)
+Received: from xz-x1 ([114.250.102.230])
+        by smtp.gmail.com with ESMTPSA id b24sm1341257pgs.15.2019.09.26.01.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 01:58:56 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 16:58:49 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        noreply@ellerman.id.au
-Content-Type: text/plain; charset="UTF-8"
+        David Hildenbrand <david@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>,
+        Marty McFadden <mcfadden8@llnl.gov>, Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH v4 05/10] mm: Return faster for non-fatal signals in user
+ mode faults
+Message-ID: <20190926085849.GA3077@xz-x1>
+References: <20190923042523.10027-1-peterx@redhat.com>
+ <20190923042523.10027-6-peterx@redhat.com>
+ <CAHk-=wiNGtUaXtRv1wniw3hfxFnU7SO7ZuisFSVg0btvROcW6w@mail.gmail.com>
+ <20190924024721.GD28074@xz-x1>
+ <20190924025447.GE1855@bombadil.infradead.org>
+ <20190924031908.GF28074@xz-x1>
+ <20190924154518.GG1855@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190924154518.GG1855@bombadil.infradead.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
+On Tue, Sep 24, 2019 at 08:45:18AM -0700, Matthew Wilcox wrote:
 
-On Fri, Aug 30, 2019 at 5:44 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Commit 9012d011660e ("compiler: allow all arches to enable
-> CONFIG_OPTIMIZE_INLINING") allowed all architectures to enable
-> this option. A couple of build errors were reported by randconfig,
-> but all of them have been ironed out.
->
-> Towards the goal of removing CONFIG_OPTIMIZE_INLINING entirely
-> (and it will simplify the 'inline' macro in compiler_types.h),
-> this commit changes it to always-on option. Going forward, the
-> compiler will always be allowed to not inline functions marked
-> 'inline'.
->
-> This is not a problem for x86 since it has been long used by
-> arch/x86/configs/{x86_64,i386}_defconfig.
->
-> I am keeping the config option just in case any problem crops up for
-> other architectures.
->
-> The code clean-up will be done after confirming this is solid.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+[...]
 
-This breaks compiling drivers/video/fbdev/c2p*, as the functions in
-drivers/video/fbdev/c2p_core.h are no longer inlined, leading to calls
-to the non-existent function c2p_unsupported(), as reported by KISSKB:
+> Oh, and while you're looking at the callers of handle_mm_fault(), a
+> lot of them don't check conditions in the right order.  x86, at least,
+> handles FAULT_RETRY before handling FAULT_ERROR, which is clearly wrong.
+> 
+> Kirill and I recently discussed it here:
+> https://lore.kernel.org/linux-mm/20190911152338.gqqgxrmqycodfocb@box/T/
 
-On Thu, Sep 26, 2019 at 5:02 AM <noreply@ellerman.id.au> wrote:
-> FAILED linux-next/m68k-defconfig/m68k Thu Sep 26, 12:58
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/13973194/
->
-> Commit:   Add linux-next specific files for 20190925
->           d47175169c28eedd2cc2ab8c01f38764cb0269cc
-> Compiler: m68k-linux-gcc (GCC) 4.6.3 / GNU ld (GNU Binutils) 2.22
->
-> Possible errors
-> ---------------
->
-> c2p_planar.c:(.text+0xd6): undefined reference to `c2p_unsupported'
-> c2p_planar.c:(.text+0x1dc): undefined reference to `c2p_unsupported'
-> c2p_iplan2.c:(.text+0xc4): undefined reference to `c2p_unsupported'
-> c2p_iplan2.c:(.text+0x150): undefined reference to `c2p_unsupported'
-> make[1]: *** [Makefile:1074: vmlinux] Error 1
-> make: *** [Makefile:179: sub-make] Error 2
+Is there any existing path in master that we can get VM_FAULT_RETRY
+returned with any existing VM_FAULT_ERROR bit?  It seems to me that
+above link is the first one that is going to introduce such case?
 
-I managed to reproduce this with gcc version 8.3.0 (Ubuntu
-8.3.0-6ubuntu1~18.04.1) , and bisected the failure to commit
-025f072e5823947c ("compiler: enable CONFIG_OPTIMIZE_INLINING forcibly") .
+If so, I'm uncertain now on whether I should have one patch to handle
+the ERROR case first as you suggested with this series, because
+otherwise that patch won't explain itself without a real benefit...
 
-Marking the functions __always_inline instead of inline fixes that.
-Shall I send a patch to do that?
+Thanks,
 
-Thanks!
-
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -327,7 +327,7 @@ config HEADERS_CHECK
->           relevant for userspace, say 'Y'.
->
->  config OPTIMIZE_INLINING
-> -       bool "Allow compiler to uninline functions marked 'inline'"
-> +       def_bool y
->         help
->           This option determines if the kernel forces gcc to inline the functions
->           developers have marked 'inline'. Doing so takes away freedom from gcc to
-> @@ -338,8 +338,6 @@ config OPTIMIZE_INLINING
->           decision will become the default in the future. Until then this option
->           is there to test gcc for this.
->
-> -         If unsure, say N.
-> -
->  config DEBUG_SECTION_MISMATCH
->         bool "Enable full Section mismatch analysis"
->         help
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+Peter Xu
