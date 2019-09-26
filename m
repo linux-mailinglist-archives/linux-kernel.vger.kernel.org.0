@@ -2,102 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04856BF229
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1710FBF250
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbfIZLwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:52:53 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:31598 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfIZLww (ORCPT
+        id S1726106AbfIZL7Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 07:59:16 -0400
+Received: from 13.mo3.mail-out.ovh.net ([188.165.33.202]:58927 "EHLO
+        13.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfIZL7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:52:52 -0400
-X-Greylist: delayed 5224 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 07:52:51 EDT
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x8QBqf8K015871;
-        Thu, 26 Sep 2019 20:52:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x8QBqf8K015871
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569498762;
-        bh=+62D9236cTgE1YamYRIBdf579l4q6GlpGs0F5mD3z3A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=J2oDXDPoVVEXXHrxAHeI7IBq2Hmp24rzZqdMjsQspLnCh+NrDl4ezyl16DbDpadhd
-         P/0P8LU/JkBmjYP/Xmy8uLgtc9mJRXJmUy/KXG2FjSK1voNaP1kRtv88tSXLdqbrH8
-         YqgztBTupmXBCTjUZdJJr8OJKv/XX7Yzx9q8e48HDndhybVmTrStx1GD7N0DYWx7uH
-         MiEFZoiPCeSXAHHiopInxiROzc+L0tzeEETRzsxJPFVDdMBI8q4lilgVp3cXEbYEVp
-         ZJ+Uqq7VsqMRbq8+JpJmyX0xyey+3m/t157xs0BtmFCZOWnzr82KKjSJ4zZDcwldYq
-         8UYSmFaJSyzig==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id d204so1360590vsc.12;
-        Thu, 26 Sep 2019 04:52:41 -0700 (PDT)
-X-Gm-Message-State: APjAAAWoVXjgaNY7lxkY/3cQs7Fbsd6YlcJKxWk/HyQ0KlSvxgiRgS7i
-        KhVUeDrs5iHKV9jO8TCVoXqfvVTYqWSUfwczNhs=
-X-Google-Smtp-Source: APXvYqzl4Bl4cH3IQmKL+GgyuH5KFHMny1Q8PPwuMn/uW2v5G/87/SwlwldHycNcU6DS/BrJ+KjFTt6W/O79v4O1284=
-X-Received: by 2002:a67:ec09:: with SMTP id d9mr1431105vso.215.1569498760483;
- Thu, 26 Sep 2019 04:52:40 -0700 (PDT)
+        Thu, 26 Sep 2019 07:59:16 -0400
+X-Greylist: delayed 414 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 07:59:13 EDT
+Received: from player688.ha.ovh.net (unknown [10.109.159.90])
+        by mo3.mail-out.ovh.net (Postfix) with ESMTP id B37C922918D
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 13:52:17 +0200 (CEST)
+Received: from milecki.pl (ip-194-187-74-233.konfederacka.maverick.com.pl [194.187.74.233])
+        (Authenticated sender: rafal@milecki.pl)
+        by player688.ha.ovh.net (Postfix) with ESMTPSA id 1EFA2A2EC583;
+        Thu, 26 Sep 2019 11:52:07 +0000 (UTC)
+Subject: Re: [PATCH RFC] cfg80211: add new command for reporting wiphy crashes
+To:     Jouni Malinen <j@w1.fi>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hostap@lists.infradead.org,
+        openwrt-devel@lists.openwrt.org
+References: <20190920133708.15313-1-zajec5@gmail.com>
+ <20190920140143.GA30514@w1.fi>
+From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Message-ID: <4f6f37e5-802c-4504-3dcb-c4a640d138bd@milecki.pl>
+Date:   Thu, 26 Sep 2019 13:52:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.2
 MIME-Version: 1.0
-References: <20190926101312.32218-1-geert@linux-m68k.org> <CAK7LNATN5QyC+-_VRZm_ZysYd8Z8aWU0Ys0cTpU2GUdEdrXvPg@mail.gmail.com>
- <CAMuHMdU3T83z1iZ7O2-5eRkawdGm50Auw5o0K9+J5Q7+oev62g@mail.gmail.com>
-In-Reply-To: <CAMuHMdU3T83z1iZ7O2-5eRkawdGm50Auw5o0K9+J5Q7+oev62g@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 26 Sep 2019 20:52:04 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAShZJw4K4kDURPyJ1_NGQt50cBA-aB2HZCzK7LOdNSaKA@mail.gmail.com>
-Message-ID: <CAK7LNAShZJw4K4kDURPyJ1_NGQt50cBA-aB2HZCzK7LOdNSaKA@mail.gmail.com>
-Subject: Re: [PATCH -next] fbdev: c2p: Fix link failure on non-inlining
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190920140143.GA30514@w1.fi>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 11993367286735539761
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrfeeggdeghecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On 20.09.2019 16:01, Jouni Malinen wrote:
+> On Fri, Sep 20, 2019 at 03:37:08PM +0200, Rafał Miłecki wrote:
+>> Hardware or firmware instability may result in unusable wiphy. In such
+>> cases usually a hardware reset is needed. To allow a full recovery
+>> kernel has to indicate problem to the user space.
+> 
+> Why? Shouldn't the driver be able to handle this on its own since all
+> the previous configuration was done through the driver anyway. As far as
+> I know, there are drivers that do indeed try to do this and handle it
+> successfully at least for station mode. AP mode may be more complex, but
+> for that one, I guess it would be fine to drop all associations (and
+> provide indication of that to user space) and just restart the BSS.
 
-On Thu, Sep 26, 2019 at 8:43 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Indeed my main concert is AP mode. I'm afraid that cfg80211 doesn't
+cache all settings, consider e.g. nl80211_start_ap(). It builds
+struct cfg80211_ap_settings using info from nl80211 message and
+passes it to the driver (rdev_start_ap()). Once it's done it
+caches only a small subset of all setup data.
 
->
-> BTW, does randconfig randomize choices these days?
-> I remember it didn't use to do that.
-
-randconfig does randomize choices.
-
-
-masahiro@pug:~/ref/linux$ make -s randconfig ; grep OPTIMIZE_FOR .config
-KCONFIG_SEED=0x75F1F6C8
-CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
-# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
-masahiro@pug:~/ref/linux$ make -s randconfig ; grep OPTIMIZE_FOR .config
-KCONFIG_SEED=0x8FDFC7FC
-# CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
-CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-
-
-all{yes,mod}config always takes the default in the choice.
-So, you cannot enable CONFIG_CC_OPTIMIZE_FOR_SIZE by all{yes,mod}config.
+In other words driver doesn't have enough info to recover interfaces
+setup.
 
 
+>> This new nl80211 command lets user space known wiphy has crashed and has
+>> been just recovered. When applicable it should result in supplicant or
+>> authenticator reconfiguring all interfaces.
+> 
+> For me, that is not really "recovered" if some additional
+> reconfiguration steps are needed.. I'd like to get a more detailed view
+> on what exactly might need to be reconfigured and how would user space
+> know what exactly to do. Or would the plan here be that the driver would
+> not even indicate this crash if it is actually able to internally
+> recover fully from the firmware restart?
+
+I meant that hardware has been recovered & is operational again (driver
+can talk to it). I expected user space to reconfigure all interfaces
+using the same settings that were used on previous run.
+
+If driver were able to recover interfaces setup on its own (with a help
+of cfg80211) then user space wouldn't need to be involved.
 
 
+>> I'd like to use this new cfg80211_crash_report() in brcmfmac after a
+>> successful recovery from a FullMAC firmware crash.
+>>
+>> Later on I'd like to modify hostapd to reconfigure wiphy using a
+>> previously used setup.
+> 
+> So this implies that at least something would need to happen in AP mode.
+> Do you have a list of items that the driver cannot do on its own and why
+> it would be better to do them from user space?
 
-> The Amiga and Atari frame buffer drivers need <asm/{amiga,atari}hw.h>,
-> and the Atari driver contains inline asm.
->
-> The C2P code could be put behind its own Kconfig symbol, I guess.
+First of all I was wondering how to handle interfaces creation. After a
+firmware crash we have:
+1) Interfaces created in Linux
+2) No corresponsing interfaces in firmware
 
-OK, then.
+Syncing that (re-creating in-firmware firmwares) may be a bit tricky
+depending on a driver and hardware. For some cases it could be easier to
+delete all interfaces and ask user space to setup wiphy (create required
+interfaces) again. I'm not sure if that's acceptable though?
+
+If we agree interfaces should stay and driver simply should configure
+firmware properly, then we need all data as explained earlier. struct
+cfg80211_ap_settings is not available during runtime. How should we
+handle that problem?
 
 
-Thanks.
+>> I'm OpenWrt developer & user and I got annoyed by my devices not auto
+>> recovering after various failures. There are things I cannot fix (hw
+>> failures or closed fw crashes) but I still expect my devices to get
+>> back to operational state as soon as possible on their own.
+> 
+> I fully agree with the auto recovery being important thing to cover for
+> this, but I'm not yet convinced that this needs user space action. Or if
+> it does, there would need to be more detailed way of indicating what
+> exactly is needed for user space to do. The proposed change here is just
+> saying "hey, I crashed and did something to get the hardware/firmware
+> responding again" which does not really tell much to user space other
+> than potentially requiring full disable + re-enable for the related
+> interfaces. And that is something that should not actually be done in
+> all cases of firmware crashes since there are drivers that handle
+> recovery in a manner that is in practice completely transparent to user
+> space.
 
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+I was aiming for a brutal force solution: just make user space
+interfaces need a full setup just at they were just created.
