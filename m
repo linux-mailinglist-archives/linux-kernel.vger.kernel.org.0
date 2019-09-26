@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45EF4BE9AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:36:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61E8EBE9BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390452AbfIZAgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 20:36:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38990 "EHLO mail.kernel.org"
+        id S2391086AbfIZAhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 20:37:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388238AbfIZAgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 20:36:15 -0400
+        id S2390340AbfIZAgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 20:36:18 -0400
 Received: from quaco.localdomain (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2108222C6;
-        Thu, 26 Sep 2019 00:36:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9533E21D7B;
+        Thu, 26 Sep 2019 00:36:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569458174;
-        bh=FLt7+jRO2XlMVn/lLN8ub2H7uqwbQTtlqalPi/j5DPg=;
+        s=default; t=1569458177;
+        bh=9u2zOZAZXSR6MbZbH+eT1eRdvxgZbEQLoTvDrp8Rtl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aqa8MJjk6WtMX33RQth7zAxyLxtI9DAJUzNm+ASCRH+zz4JwdjDeGW6peusAvFl4b
-         in+Pb/h+4PW4L65+8ZGGUsLEv/hwqsRGkL0TEVaDW5IIhGAe2TvrAIH603nyTa3vMT
-         gEh7Fy8TA/X6S+zIvfrPywiXV2MJW2UFVsiUkk1w=
+        b=iRuAVf1sPyRrC6OddkwHbOhVxJIwoyXImnGBqMcZwqN3k+cQp9TU0XJ6zdegZs1to
+         284S/nO/z/r22EzJ3MQV64fbXAJOmBASNbX3GMg4Ba0HSJvhWS3EUI4ASalBeLZKSA
+         h6jvL4b+z54s9PWstvneHclvdwZC3z516Swb9h+c=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 54/66] libperf: Add perf_evlist__poll() function
-Date:   Wed, 25 Sep 2019 21:32:32 -0300
-Message-Id: <20190926003244.13962-55-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: [PATCH 55/66] perf copyfile: Move copyfile routines to separate files
+Date:   Wed, 25 Sep 2019 21:32:33 -0300
+Message-Id: <20190926003244.13962-56-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190926003244.13962-1-acme@kernel.org>
 References: <20190926003244.13962-1-acme@kernel.org>
@@ -46,209 +44,420 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Move perf_evlist__poll() from tools/perf to libperf, it will be used in
-the following patches.
+Further reducing the util.c hodgepodge files.
 
-And rename the existing perf's function to evlist__poll().
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Link: http://lore.kernel.org/lkml/20190913132355.21634-39-jolsa@kernel.org
+Link: https://lkml.kernel.org/n/tip-0i62zh7ok25znibyebgq0qs4@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c                 | 2 +-
- tools/perf/builtin-top.c                    | 4 ++--
- tools/perf/builtin-trace.c                  | 2 +-
- tools/perf/lib/evlist.c                     | 5 +++++
- tools/perf/lib/include/perf/evlist.h        | 1 +
- tools/perf/lib/libperf.map                  | 1 +
- tools/perf/tests/openat-syscall-tp-fields.c | 2 +-
- tools/perf/tests/perf-record.c              | 2 +-
- tools/perf/tests/task-exit.c                | 2 +-
- tools/perf/util/evlist.c                    | 6 +++---
- tools/perf/util/evlist.h                    | 2 +-
- tools/perf/util/python.c                    | 2 +-
- 12 files changed, 19 insertions(+), 12 deletions(-)
+ tools/perf/util/Build        |   1 +
+ tools/perf/util/build-id.c   |   3 +-
+ tools/perf/util/copyfile.c   | 144 +++++++++++++++++++++++++++++++++++
+ tools/perf/util/copyfile.h   |  16 ++++
+ tools/perf/util/symbol-elf.c |   2 +-
+ tools/perf/util/util.c       | 135 --------------------------------
+ tools/perf/util/util.h       |   5 --
+ 7 files changed, 164 insertions(+), 142 deletions(-)
+ create mode 100644 tools/perf/util/copyfile.c
+ create mode 100644 tools/perf/util/copyfile.h
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index d6daaad348b5..23332861de6e 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1615,7 +1615,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		if (hits == rec->samples) {
- 			if (done || draining)
- 				break;
--			err = perf_evlist__poll(rec->evlist, -1);
-+			err = evlist__poll(rec->evlist, -1);
- 			/*
- 			 * Propagate error, only if there's any. Ignore positive
- 			 * number of returned events and interrupt error.
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 73bf79053ae3..30d8eb614377 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1307,7 +1307,7 @@ static int __cmd_top(struct perf_top *top)
- 	}
- 
- 	/* Wait for a minimal set of events before starting the snapshot */
--	perf_evlist__poll(top->evlist, 100);
-+	evlist__poll(top->evlist, 100);
- 
- 	perf_top__mmap_read(top);
- 
-@@ -1317,7 +1317,7 @@ static int __cmd_top(struct perf_top *top)
- 		perf_top__mmap_read(top);
- 
- 		if (opts->overwrite || (hits == top->samples))
--			ret = perf_evlist__poll(top->evlist, 100);
-+			ret = evlist__poll(top->evlist, 100);
- 
- 		if (resize) {
- 			perf_top__resize(top);
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 8d9784b5d028..c52c3120a811 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3474,7 +3474,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
- 	if (trace->nr_events == before) {
- 		int timeout = done ? 100 : -1;
- 
--		if (!draining && perf_evlist__poll(evlist, timeout) > 0) {
-+		if (!draining && evlist__poll(evlist, timeout) > 0) {
- 			if (evlist__filter_pollfd(evlist, POLLERR | POLLHUP | POLLNVAL) == 0)
- 				draining = true;
- 
-diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index e4d8b3b7b8fc..d1496fee810c 100644
---- a/tools/perf/lib/evlist.c
-+++ b/tools/perf/lib/evlist.c
-@@ -276,3 +276,8 @@ int perf_evlist__add_pollfd(struct perf_evlist *evlist, int fd,
- 
- 	return pos;
- }
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index fd89d6a8cd65..4d1894e38a81 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -3,6 +3,7 @@ perf-y += block-range.o
+ perf-y += build-id.o
+ perf-y += cacheline.o
+ perf-y += config.o
++perf-y += copyfile.o
+ perf-y += ctype.o
+ perf-y += db-export.o
+ perf-y += env.o
+diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+index 7928c398a063..c076fc7fe025 100644
+--- a/tools/perf/util/build-id.c
++++ b/tools/perf/util/build-id.c
+@@ -7,12 +7,13 @@
+  * Copyright (C) 2009, 2010 Red Hat Inc.
+  * Copyright (C) 2009, 2010 Arnaldo Carvalho de Melo <acme@redhat.com>
+  */
+-#include "util.h" // copyfile_ns(), lsdir(), mkdir_p(), rm_rf()
++#include "util.h" // lsdir(), mkdir_p(), rm_rf()
+ #include <dirent.h>
+ #include <errno.h>
+ #include <stdio.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
++#include "util/copyfile.h"
+ #include "dso.h"
+ #include "build-id.h"
+ #include "event.h"
+diff --git a/tools/perf/util/copyfile.c b/tools/perf/util/copyfile.c
+new file mode 100644
+index 000000000000..3fa0db136667
+--- /dev/null
++++ b/tools/perf/util/copyfile.c
+@@ -0,0 +1,144 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "util/copyfile.h"
++#include "util/namespaces.h"
++#include <internal/lib.h>
++#include <sys/mman.h>
++#include <sys/stat.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
 +
-+int perf_evlist__poll(struct perf_evlist *evlist, int timeout)
++static int slow_copyfile(const char *from, const char *to, struct nsinfo *nsi)
 +{
-+	return fdarray__poll(&evlist->pollfd, timeout);
++	int err = -1;
++	char *line = NULL;
++	size_t n;
++	FILE *from_fp, *to_fp;
++	struct nscookie nsc;
++
++	nsinfo__mountns_enter(nsi, &nsc);
++	from_fp = fopen(from, "r");
++	nsinfo__mountns_exit(&nsc);
++	if (from_fp == NULL)
++		goto out;
++
++	to_fp = fopen(to, "w");
++	if (to_fp == NULL)
++		goto out_fclose_from;
++
++	while (getline(&line, &n, from_fp) > 0)
++		if (fputs(line, to_fp) == EOF)
++			goto out_fclose_to;
++	err = 0;
++out_fclose_to:
++	fclose(to_fp);
++	free(line);
++out_fclose_from:
++	fclose(from_fp);
++out:
++	return err;
 +}
-diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
-index 38365f8f3fba..8a2ce0757ab2 100644
---- a/tools/perf/lib/include/perf/evlist.h
-+++ b/tools/perf/lib/include/perf/evlist.h
-@@ -31,5 +31,6 @@ LIBPERF_API void perf_evlist__disable(struct perf_evlist *evlist);
- LIBPERF_API void perf_evlist__set_maps(struct perf_evlist *evlist,
- 				       struct perf_cpu_map *cpus,
- 				       struct perf_thread_map *threads);
-+LIBPERF_API int perf_evlist__poll(struct perf_evlist *evlist, int timeout);
- 
- #endif /* __LIBPERF_EVLIST_H */
-diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index 5eb0150ccdc6..ab8dbde1136c 100644
---- a/tools/perf/lib/libperf.map
-+++ b/tools/perf/lib/libperf.map
-@@ -39,6 +39,7 @@ LIBPERF_0.0.1 {
- 		perf_evlist__remove;
- 		perf_evlist__next;
- 		perf_evlist__set_maps;
-+		perf_evlist__poll;
- 	local:
- 		*;
- };
-diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
-index 4629fa33c8ad..2b5c46813053 100644
---- a/tools/perf/tests/openat-syscall-tp-fields.c
-+++ b/tools/perf/tests/openat-syscall-tp-fields.c
-@@ -127,7 +127,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
- 		}
- 
- 		if (nr_events == before)
--			perf_evlist__poll(evlist, 10);
-+			evlist__poll(evlist, 10);
- 
- 		if (++nr_polls > 5) {
- 			pr_debug("%s: no events!\n", __func__);
-diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
-index 401e8d11427b..437426be29e9 100644
---- a/tools/perf/tests/perf-record.c
-+++ b/tools/perf/tests/perf-record.c
-@@ -287,7 +287,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 		 * perf_event_attr.wakeup_events, just PERF_EVENT_SAMPLE does.
- 		 */
- 		if (total_events == before && false)
--			perf_evlist__poll(evlist, -1);
-+			evlist__poll(evlist, -1);
- 
- 		sleep(1);
- 		if (++wakeups > 5) {
-diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index 24565f83e07d..bce3a4cb4c89 100644
---- a/tools/perf/tests/task-exit.c
-+++ b/tools/perf/tests/task-exit.c
-@@ -130,7 +130,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
- 
- out_init:
- 	if (!exited || !nr_exit) {
--		perf_evlist__poll(evlist, -1);
-+		evlist__poll(evlist, -1);
- 		goto retry;
- 	}
- 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 051be9a31db9..d4c7fd125ce9 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -418,9 +418,9 @@ int evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask)
- 			       perf_evlist__munmap_filtered, NULL);
++
++int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
++{
++	void *ptr;
++	loff_t pgoff;
++
++	pgoff = off_in & ~(page_size - 1);
++	off_in -= pgoff;
++
++	ptr = mmap(NULL, off_in + size, PROT_READ, MAP_PRIVATE, ifd, pgoff);
++	if (ptr == MAP_FAILED)
++		return -1;
++
++	while (size) {
++		ssize_t ret = pwrite(ofd, ptr + off_in, size, off_out);
++		if (ret < 0 && errno == EINTR)
++			continue;
++		if (ret <= 0)
++			break;
++
++		size -= ret;
++		off_in += ret;
++		off_out += ret;
++	}
++	munmap(ptr, off_in + size);
++
++	return size ? -1 : 0;
++}
++
++static int copyfile_mode_ns(const char *from, const char *to, mode_t mode,
++			    struct nsinfo *nsi)
++{
++	int fromfd, tofd;
++	struct stat st;
++	int err;
++	char *tmp = NULL, *ptr = NULL;
++	struct nscookie nsc;
++
++	nsinfo__mountns_enter(nsi, &nsc);
++	err = stat(from, &st);
++	nsinfo__mountns_exit(&nsc);
++	if (err)
++		goto out;
++	err = -1;
++
++	/* extra 'x' at the end is to reserve space for '.' */
++	if (asprintf(&tmp, "%s.XXXXXXx", to) < 0) {
++		tmp = NULL;
++		goto out;
++	}
++	ptr = strrchr(tmp, '/');
++	if (!ptr)
++		goto out;
++	ptr = memmove(ptr + 1, ptr, strlen(ptr) - 1);
++	*ptr = '.';
++
++	tofd = mkstemp(tmp);
++	if (tofd < 0)
++		goto out;
++
++	if (fchmod(tofd, mode))
++		goto out_close_to;
++
++	if (st.st_size == 0) { /* /proc? do it slowly... */
++		err = slow_copyfile(from, tmp, nsi);
++		goto out_close_to;
++	}
++
++	nsinfo__mountns_enter(nsi, &nsc);
++	fromfd = open(from, O_RDONLY);
++	nsinfo__mountns_exit(&nsc);
++	if (fromfd < 0)
++		goto out_close_to;
++
++	err = copyfile_offset(fromfd, 0, tofd, 0, st.st_size);
++
++	close(fromfd);
++out_close_to:
++	close(tofd);
++	if (!err)
++		err = link(tmp, to);
++	unlink(tmp);
++out:
++	free(tmp);
++	return err;
++}
++
++int copyfile_ns(const char *from, const char *to, struct nsinfo *nsi)
++{
++	return copyfile_mode_ns(from, to, 0755, nsi);
++}
++
++int copyfile_mode(const char *from, const char *to, mode_t mode)
++{
++	return copyfile_mode_ns(from, to, mode, NULL);
++}
++
++int copyfile(const char *from, const char *to)
++{
++	return copyfile_mode(from, to, 0755);
++}
+diff --git a/tools/perf/util/copyfile.h b/tools/perf/util/copyfile.h
+new file mode 100644
+index 000000000000..e85d2f22f3cc
+--- /dev/null
++++ b/tools/perf/util/copyfile.h
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef PERF_COPYFILE_H_
++#define PERF_COPYFILE_H_
++
++#include <linux/types.h>
++#include <sys/types.h>
++#include <fcntl.h>
++
++struct nsinfo;
++
++int copyfile(const char *from, const char *to);
++int copyfile_mode(const char *from, const char *to, mode_t mode);
++int copyfile_ns(const char *from, const char *to, struct nsinfo *nsi);
++int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size);
++
++#endif // PERF_COPYFILE_H_
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 6fbfdf8bf61f..66f4be1df573 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -17,7 +17,7 @@
+ #include "machine.h"
+ #include "vdso.h"
+ #include "debug.h"
+-#include "util.h"
++#include "util/copyfile.h"
+ #include <linux/ctype.h>
+ #include <linux/kernel.h>
+ #include <linux/zalloc.h>
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index cb6fa4c98470..5eda6e19c947 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -2,10 +2,7 @@
+ #include "util.h"
+ #include "debug.h"
+ #include "event.h"
+-#include "namespaces.h"
+-#include <internal/lib.h>
+ #include <api/fs/fs.h>
+-#include <sys/mman.h>
+ #include <sys/stat.h>
+ #include <sys/utsname.h>
+ #include <dirent.h>
+@@ -233,138 +230,6 @@ struct strlist *lsdir(const char *name,
+ 	return list;
  }
  
--int perf_evlist__poll(struct evlist *evlist, int timeout)
-+int evlist__poll(struct evlist *evlist, int timeout)
+-static int slow_copyfile(const char *from, const char *to, struct nsinfo *nsi)
+-{
+-	int err = -1;
+-	char *line = NULL;
+-	size_t n;
+-	FILE *from_fp, *to_fp;
+-	struct nscookie nsc;
+-
+-	nsinfo__mountns_enter(nsi, &nsc);
+-	from_fp = fopen(from, "r");
+-	nsinfo__mountns_exit(&nsc);
+-	if (from_fp == NULL)
+-		goto out;
+-
+-	to_fp = fopen(to, "w");
+-	if (to_fp == NULL)
+-		goto out_fclose_from;
+-
+-	while (getline(&line, &n, from_fp) > 0)
+-		if (fputs(line, to_fp) == EOF)
+-			goto out_fclose_to;
+-	err = 0;
+-out_fclose_to:
+-	fclose(to_fp);
+-	free(line);
+-out_fclose_from:
+-	fclose(from_fp);
+-out:
+-	return err;
+-}
+-
+-int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size)
+-{
+-	void *ptr;
+-	loff_t pgoff;
+-
+-	pgoff = off_in & ~(page_size - 1);
+-	off_in -= pgoff;
+-
+-	ptr = mmap(NULL, off_in + size, PROT_READ, MAP_PRIVATE, ifd, pgoff);
+-	if (ptr == MAP_FAILED)
+-		return -1;
+-
+-	while (size) {
+-		ssize_t ret = pwrite(ofd, ptr + off_in, size, off_out);
+-		if (ret < 0 && errno == EINTR)
+-			continue;
+-		if (ret <= 0)
+-			break;
+-
+-		size -= ret;
+-		off_in += ret;
+-		off_out += ret;
+-	}
+-	munmap(ptr, off_in + size);
+-
+-	return size ? -1 : 0;
+-}
+-
+-static int copyfile_mode_ns(const char *from, const char *to, mode_t mode,
+-			    struct nsinfo *nsi)
+-{
+-	int fromfd, tofd;
+-	struct stat st;
+-	int err;
+-	char *tmp = NULL, *ptr = NULL;
+-	struct nscookie nsc;
+-
+-	nsinfo__mountns_enter(nsi, &nsc);
+-	err = stat(from, &st);
+-	nsinfo__mountns_exit(&nsc);
+-	if (err)
+-		goto out;
+-	err = -1;
+-
+-	/* extra 'x' at the end is to reserve space for '.' */
+-	if (asprintf(&tmp, "%s.XXXXXXx", to) < 0) {
+-		tmp = NULL;
+-		goto out;
+-	}
+-	ptr = strrchr(tmp, '/');
+-	if (!ptr)
+-		goto out;
+-	ptr = memmove(ptr + 1, ptr, strlen(ptr) - 1);
+-	*ptr = '.';
+-
+-	tofd = mkstemp(tmp);
+-	if (tofd < 0)
+-		goto out;
+-
+-	if (fchmod(tofd, mode))
+-		goto out_close_to;
+-
+-	if (st.st_size == 0) { /* /proc? do it slowly... */
+-		err = slow_copyfile(from, tmp, nsi);
+-		goto out_close_to;
+-	}
+-
+-	nsinfo__mountns_enter(nsi, &nsc);
+-	fromfd = open(from, O_RDONLY);
+-	nsinfo__mountns_exit(&nsc);
+-	if (fromfd < 0)
+-		goto out_close_to;
+-
+-	err = copyfile_offset(fromfd, 0, tofd, 0, st.st_size);
+-
+-	close(fromfd);
+-out_close_to:
+-	close(tofd);
+-	if (!err)
+-		err = link(tmp, to);
+-	unlink(tmp);
+-out:
+-	free(tmp);
+-	return err;
+-}
+-
+-int copyfile_ns(const char *from, const char *to, struct nsinfo *nsi)
+-{
+-	return copyfile_mode_ns(from, to, 0755, nsi);
+-}
+-
+-int copyfile_mode(const char *from, const char *to, mode_t mode)
+-{
+-	return copyfile_mode_ns(from, to, mode, NULL);
+-}
+-
+-int copyfile(const char *from, const char *to)
+-{
+-	return copyfile_mode(from, to, 0755);
+-}
+-
+ size_t hex_width(u64 v)
  {
--	return fdarray__poll(&evlist->core.pollfd, timeout);
-+	return perf_evlist__poll(&evlist->core, timeout);
- }
+ 	size_t n = 1;
+diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+index b78b73e5bb32..9969b8b46f7c 100644
+--- a/tools/perf/util/util.h
++++ b/tools/perf/util/util.h
+@@ -17,7 +17,6 @@ void usage(const char *err) __noreturn;
+ void die(const char *err, ...) __noreturn __printf(1, 2);
  
- static void perf_evlist__set_sid_idx(struct evlist *evlist,
-@@ -1736,7 +1736,7 @@ static void *perf_evlist__poll_thread(void *arg)
- 			draining = true;
+ struct dirent;
+-struct nsinfo;
+ struct strlist;
  
- 		if (!draining)
--			perf_evlist__poll(evlist, 1000);
-+			evlist__poll(evlist, 1000);
+ int mkdir_p(char *path, mode_t mode);
+@@ -25,10 +24,6 @@ int rm_rf(const char *path);
+ int rm_rf_perf_data(const char *path);
+ struct strlist *lsdir(const char *name, bool (*filter)(const char *, struct dirent *));
+ bool lsdir_no_dot_filter(const char *name, struct dirent *d);
+-int copyfile(const char *from, const char *to);
+-int copyfile_mode(const char *from, const char *to, mode_t mode);
+-int copyfile_ns(const char *from, const char *to, struct nsinfo *nsi);
+-int copyfile_offset(int ifd, loff_t off_in, int ofd, loff_t off_out, u64 size);
  
- 		for (i = 0; i < evlist->core.nr_mmaps; i++) {
- 			struct mmap *map = &evlist->mmap[i];
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 2eac8aab24a3..130d44d691b8 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -144,7 +144,7 @@ perf_evlist__find_tracepoint_by_name(struct evlist *evlist,
- int evlist__add_pollfd(struct evlist *evlist, int fd);
- int evlist__filter_pollfd(struct evlist *evlist, short revents_and_mask);
+ size_t hex_width(u64 v);
  
--int perf_evlist__poll(struct evlist *evlist, int timeout);
-+int evlist__poll(struct evlist *evlist, int timeout);
- 
- struct evsel *perf_evlist__id2evsel(struct evlist *evlist, u64 id);
- struct evsel *perf_evlist__id2evsel_strict(struct evlist *evlist,
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 6c46d7dbd263..53f31053a27a 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -918,7 +918,7 @@ static PyObject *pyrf_evlist__poll(struct pyrf_evlist *pevlist,
- 	if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|i", kwlist, &timeout))
- 		return NULL;
- 
--	n = perf_evlist__poll(evlist, timeout);
-+	n = evlist__poll(evlist, timeout);
- 	if (n < 0) {
- 		PyErr_SetFromErrno(PyExc_OSError);
- 		return NULL;
 -- 
 2.21.0
 
