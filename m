@@ -2,677 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D51BF2BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27516BF2CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfIZMQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:16:15 -0400
-Received: from mail-eopbgr750041.outbound.protection.outlook.com ([40.107.75.41]:5955
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726049AbfIZMQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:16:15 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fIIFdUI4k9Kq5hdvljEkyzezdDYmswBueNoEGeMfhSrc4XHBsQ87hlYVz8U5ULnkQ4lG308BOMHE8jVsp2BPxzlQ5L0h1jRU1OyAAAqVjOMaeZZT5LWpxXzIjIgu/3aW+OLOgn6QoQTk9C1HICRHLTNBBkDbH1LmM9xlJJhgGYlYDHJ54yQKMeOpwsMNYTvOImx2sC6SaForBxLZJkqCyUACH41GxuMW1b1R3K2OeTdlG1VRuPP6s1Em97fj6GnYvtHr8EKc9sgoHu4AYjfWoeuTDWA7meaHxjzPHWKeB2waH9CE0YZ6ElqcRDuRaZ/a79bnDgN1KS/TZBARrGVZxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sxqpuYxJpslz7wUayeIVDBfIMwZaXtTQa6w8sTyRUCQ=;
- b=j/3i/jIk6mqIGPC2Gsg34dyZd9a5qFfzk/FXxzi5JvOFDCPjDQYQ3jq3bwnKuHgwaOQYC60OZpxwR44zJvLWUcOKq4NDEN5hxz9NzTlvHIvyL8DbOrDrINGJJpN4EW9vXlQAzIYsU9s7/bTqpTRzO+ki0S7kjq/rHgnwt6PKEeybvdaesZCbcwSOgYk29haPxFvLe3MMG9dBTrAo4kIIxQz8fNxBzzKfq1UYcDFEewRRC5v2q89zwx7vUy3QN90GgKBQ9RX/HtvxJKa6Mv8VSewuWQ682F+u70BC7duIHXIGiJWgHUfu+g9GkkiMJKfPNnITzp7vs3xeyK51+sZ0lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com;
- dmarc=permerror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sxqpuYxJpslz7wUayeIVDBfIMwZaXtTQa6w8sTyRUCQ=;
- b=lYgCGLC4EvxaazlnG8m/hLp9oMhB4anJip1zreKRIL1S6NiLzndfXil4opnaCZNLOgMG5IZWQJ2COWYtbl+y7MMw6RwwXBzs8xVqcNv9G/e85KTxxW7fj9TVewPEiOUX54Qyv9uXuODK+8c/XfXmBK063Da5GKrvI1HkkDrhKes=
-Received: from DM5PR12CA0066.namprd12.prod.outlook.com (2603:10b6:3:103::28)
- by BY5PR12MB4033.namprd12.prod.outlook.com (2603:10b6:a03:213::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.19; Thu, 26 Sep
- 2019 12:16:08 +0000
-Received: from CO1NAM03FT015.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::207) by DM5PR12CA0066.outlook.office365.com
- (2603:10b6:3:103::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2305.15 via Frontend
- Transport; Thu, 26 Sep 2019 12:16:08 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; oracle.com; dkim=none (message not signed)
- header.d=none;oracle.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
- CO1NAM03FT015.mail.protection.outlook.com (10.152.80.167) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2305.15 via Frontend Transport; Thu, 26 Sep 2019 12:16:07 +0000
-Received: from vishnu-All-Series.amd.com (10.180.168.240) by
- SATLEXCHOV01.amd.com (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1;
- Thu, 26 Sep 2019 07:16:06 -0500
-From:   Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     <Alexander.Deucher@amd.com>,
-        Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Vijendar Mukunda <vijendar.mukunda@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        "Maruthi Bayyavarapu" <maruthi.bayyavarapu@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Alex Deucher" <alexander.deucher@amd.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/5] ASoC: amd: ACP powergating should be done by controller
-Date:   Fri, 27 Sep 2019 04:37:39 +0530
-Message-ID: <1569539290-756-5-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1569539290-756-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-References: <1569539290-756-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        id S1726165AbfIZMUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:20:16 -0400
+Received: from foss.arm.com ([217.140.110.172]:48064 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725768AbfIZMUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 08:20:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 240B6142F;
+        Thu, 26 Sep 2019 05:20:15 -0700 (PDT)
+Received: from [10.37.12.151] (unknown [10.37.12.151])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BFDC43F67D;
+        Thu, 26 Sep 2019 05:20:13 -0700 (PDT)
+Subject: Re: [PATCH 1/4] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     ard.biesheuvel@linaro.org, ndesaulniers@google.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
+ <20190926060353.54894-1-vincenzo.frascino@arm.com>
+ <20190926060353.54894-2-vincenzo.frascino@arm.com>
+ <20190926080616.GB26802@iMac.local>
+ <0ff3d5f4-11c9-4207-c6ab-2f8e9ee7de5e@arm.com>
+Message-ID: <ad90f9bb-aa39-615c-3ae5-bea394bd787c@arm.com>
+Date:   Thu, 26 Sep 2019 13:22:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(1496009)(136003)(39860400002)(396003)(376002)(346002)(428003)(199004)(189003)(26005)(53416004)(5660300002)(86362001)(36756003)(2906002)(47776003)(81156014)(81166006)(50226002)(8936002)(6666004)(30864003)(356004)(54906003)(478600001)(50466002)(14444005)(109986005)(8676002)(316002)(16586007)(70206006)(51416003)(476003)(1671002)(7696005)(126002)(11346002)(4326008)(2616005)(305945005)(446003)(336012)(70586007)(186003)(486006)(426003)(76176011)(48376002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR12MB4033;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c7070950-e926-4e73-7809-08d7427b4f80
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328);SRVR:BY5PR12MB4033;
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4033:|BY5PR12MB4033:
-X-Microsoft-Antispam-PRVS: <BY5PR12MB403349301736414F6C3E4771E7860@BY5PR12MB4033.namprd12.prod.outlook.com>
-X-MS-Exchange-Transport-Forked: True
-X-MS-Oob-TLC-OOBClassifiers: OLM:9;
-X-Forefront-PRVS: 0172F0EF77
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: +9HL+FafTaHLQdvVcsBAof1t79Kv7MwG3F7Q48kEBQUwqz7L/wDpP6MSXCXMCbrh/g1XDvAYYLikA4ZntLppU4ZsNhAMGoS8U19ArtrRSeKj+yuNEXdd2sj9ckEf1eRVShEFCRVUKbmc+ss4D0w2Ll0YQzPKWILGO75H2RX2WvrvAcUbm8BXj2/AapDE/PkF+BwkXZNx7vGwF+qqFM504SHJl9M8wy67BQfIbMFCco9Kh/eaF6qmFxIXCCpoPnPNMq+Oacr2lFzf6x+5ajAiEKZ9WyV56+k1S/FdnyGteeLl7PasExidQrEoBKj9GZa4QIQsDIiRjAm+3qOhvvPgV/2xaW61Dd0RZ5ohhMiphGIv3mGXcKt37iwvQD369IWsF/TtEFQus+di6CWRO7Z9fecqdes8sMLdu/PAm4JR9ec=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2019 12:16:07.5782
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7070950-e926-4e73-7809-08d7427b4f80
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4033
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <0ff3d5f4-11c9-4207-c6ab-2f8e9ee7de5e@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACP power gating should be handled by ACP-PCI driver.
-This patch moves the power gating logic into ACP-PCI driver.
-This Power gating helps ACP to enter into D3 when there
-is no activity on I2S.
+On 9/26/19 11:56 AM, Vincenzo Frascino wrote:
+> On 9/26/19 9:06 AM, Catalin Marinas wrote:
+>> On Thu, Sep 26, 2019 at 07:03:50AM +0100, Vincenzo Frascino wrote:
+>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>> index 37c610963eee..afe8c948b493 100644
+>>> --- a/arch/arm64/Kconfig
+>>> +++ b/arch/arm64/Kconfig
+>>> @@ -110,7 +110,7 @@ config ARM64
+>>>  	select GENERIC_STRNLEN_USER
+>>>  	select GENERIC_TIME_VSYSCALL
+>>>  	select GENERIC_GETTIMEOFDAY
+>>> -	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
+>>> +	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT && COMPAT_CC_IS_GCC)
+>>>  	select HANDLE_DOMAIN_IRQ
+>>>  	select HARDIRQS_SW_RESEND
+>>>  	select HAVE_PCI
+>>> @@ -313,6 +313,9 @@ config KASAN_SHADOW_OFFSET
+>>>  	default 0xeffffff900000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
+>>>  	default 0xffffffffffffffff
+>>>  
+>>> +config COMPAT_CC_IS_GCC
+>>> +	def_bool $(success,$(CROSS_COMPILE_COMPAT)gcc --version | head -n 1 | grep -q arm)
+>>
+>> Nitpick: I prefer COMPATCC instead of COMPAT_CC for consistency with
+>> HOSTCC.
+>>
+> 
+> Ok, will change this in v2.
+> 
+>> Now, could we not generate a COMPATCC in the Makefile and use
+>> $(COMPATCC) here instead of $(CROSS_COMPILE_COMPAT)gcc? It really
+>> doesn't make sense to check that gcc is gcc.
+>>
+> 
+> All right, COMPATCC is already in the makefile, I will use it in here.
+>
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-Signed-off-by: Vijendar Mukunda <vijendar.mukunda@amd.com>
----
- sound/soc/amd/raven/acp3x-pcm-dma.c | 141 +---------------------
- sound/soc/amd/raven/acp3x.h         |   8 ++
- sound/soc/amd/raven/pci-acp3x.c     | 227 ++++++++++++++++++++++++++++++------
- 3 files changed, 200 insertions(+), 176 deletions(-)
+What you are proposing seems not possible because Kconfig runs first and then
+the arch Makefile, hence compatcc does not take effect on the Kconfig. I will
+post v2 with what I proposed, please feel free to comment if you have a better idea.
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index bc90fa0..0995d92 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -58,106 +58,6 @@ static const struct snd_pcm_hardware acp3x_pcm_hardware_capture = {
- 	.periods_max = CAPTURE_MAX_NUM_PERIODS,
- };
- 
--static int acp3x_power_on(void __iomem *acp3x_base, bool on)
--{
--	u16 val, mask;
--	u32 timeout;
--
--	if (on == true) {
--		val = 1;
--		mask = ACP3x_POWER_ON;
--	} else {
--		val = 0;
--		mask = ACP3x_POWER_OFF;
--	}
--
--	rv_writel(val, acp3x_base + mmACP_PGFSM_CONTROL);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
--		if ((val & ACP3x_POWER_OFF_IN_PROGRESS) == mask)
--			break;
--		if (timeout > 100) {
--			pr_err("ACP3x power state change failure\n");
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--	return 0;
--}
--
--static int acp3x_reset(void __iomem *acp3x_base)
--{
--	u32 val, timeout;
--
--	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
--		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
--				timeout > 100) {
--			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
--				break;
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--
--	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
--		if (!val || timeout > 100) {
--			if (!val)
--				break;
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--	return 0;
--}
--
--static int acp3x_init(void __iomem *acp3x_base)
--{
--	int ret;
--
--	/* power on */
--	ret = acp3x_power_on(acp3x_base, true);
--	if (ret) {
--		pr_err("ACP3x power on failed\n");
--		return ret;
--	}
--	/* Reset */
--	ret = acp3x_reset(acp3x_base);
--	if (ret) {
--		pr_err("ACP3x reset failed\n");
--		return ret;
--	}
--	return 0;
--}
--
--static int acp3x_deinit(void __iomem *acp3x_base)
--{
--	int ret;
--
--	/* Reset */
--	ret = acp3x_reset(acp3x_base);
--	if (ret) {
--		pr_err("ACP3x reset failed\n");
--		return ret;
--	}
--	/* power off */
--	ret = acp3x_power_on(acp3x_base, false);
--	if (ret) {
--		pr_err("ACP3x power off failed\n");
--		return ret;
--	}
--	return 0;
--}
--
- static irqreturn_t i2s_irq_handler(int irq, void *dev_id)
- {
- 	u16 play_flag, cap_flag;
-@@ -560,63 +460,37 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	adata->i2ssp_capture_stream = NULL;
- 
- 	dev_set_drvdata(&pdev->dev, adata);
--	/* Initialize ACP */
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
- 	status = devm_snd_soc_register_component(&pdev->dev,
- 			&acp3x_i2s_component,
- 			NULL, 0);
- 	if (status) {
- 		dev_err(&pdev->dev, "Fail to register acp i2s component\n");
--		goto dev_err;
-+		return -ENODEV;
- 	}
- 	status = devm_request_irq(&pdev->dev, adata->i2s_irq, i2s_irq_handler,
- 			irqflags, "ACP3x_I2S_IRQ", adata);
- 	if (status) {
- 		dev_err(&pdev->dev, "ACP3x I2S IRQ request failed\n");
--		goto dev_err;
-+		return -ENODEV;
- 	}
- 
- 	pm_runtime_set_autosuspend_delay(&pdev->dev, 10000);
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 	return 0;
--dev_err:
--	status = acp3x_deinit(adata->acp3x_base);
--	if (status)
--		dev_err(&pdev->dev, "ACP de-init failed\n");
--	else
--		dev_info(&pdev->dev, "ACP de-initialized\n");
--	/*ignore device status and return driver probe error*/
--	return -ENODEV;
- }
- 
- static int acp3x_audio_remove(struct platform_device *pdev)
- {
--	int ret;
--	struct i2s_dev_data *adata = dev_get_drvdata(&pdev->dev);
--
--	ret = acp3x_deinit(adata->acp3x_base);
--	if (ret)
--		dev_err(&pdev->dev, "ACP de-init failed\n");
--	else
--		dev_info(&pdev->dev, "ACP de-initialized\n");
--
- 	pm_runtime_disable(&pdev->dev);
- 	return 0;
- }
- 
- static int acp3x_resume(struct device *dev)
- {
--	int status;
- 	u32 val;
- 	struct i2s_dev_data *adata = dev_get_drvdata(dev);
- 
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
--
- 	if (adata->play_stream && adata->play_stream->runtime) {
- 		struct i2s_stream_instance *rtd =
- 			adata->play_stream->runtime->private_data;
-@@ -661,15 +535,8 @@ static int acp3x_resume(struct device *dev)
- 
- static int acp3x_pcm_runtime_suspend(struct device *dev)
- {
--	int status;
- 	struct i2s_dev_data *adata = dev_get_drvdata(dev);
- 
--	status = acp3x_deinit(adata->acp3x_base);
--	if (status)
--		dev_err(dev, "ACP de-init failed\n");
--	else
--		dev_info(dev, "ACP de-initialized\n");
--
- 	rv_writel(0, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
- 
- 	return 0;
-@@ -677,12 +544,8 @@ static int acp3x_pcm_runtime_suspend(struct device *dev)
- 
- static int acp3x_pcm_runtime_resume(struct device *dev)
- {
--	int status;
- 	struct i2s_dev_data *adata = dev_get_drvdata(dev);
- 
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
- 	rv_writel(1, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
- 	return 0;
- }
-diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
-index d381b5c..1862172 100644
---- a/sound/soc/amd/raven/acp3x.h
-+++ b/sound/soc/amd/raven/acp3x.h
-@@ -73,6 +73,14 @@
- #define SLOT_WIDTH_24	0x18
- #define SLOT_WIDTH_32	0x20
- 
-+#define ACP_PGFSM_CNTL_POWER_ON_MASK	0x01
-+#define ACP_PGFSM_CNTL_POWER_OFF_MASK	0x00
-+#define ACP_PGFSM_STATUS_MASK		0x03
-+#define ACP_POWERED_ON			0x00
-+#define ACP_POWER_ON_IN_PROGRESS	0x01
-+#define ACP_POWERED_OFF			0x02
-+#define ACP_POWER_OFF_IN_PROGRESS	0x03
-+
- struct acp3x_platform_info {
- 	u16 play_i2s_instance;
- 	u16 cap_i2s_instance;
-diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
-index 6fbb720..627798a 100644
---- a/sound/soc/amd/raven/pci-acp3x.c
-+++ b/sound/soc/amd/raven/pci-acp3x.c
-@@ -11,10 +11,12 @@
- #include <linux/interrupt.h>
- #include <linux/mfd/core.h>
- #include <linux/pm_runtime.h>
-+#include <linux/delay.h>
- #include <sound/pcm.h>
- 
- #include "acp3x.h"
- 
-+
- struct i2s_platform_data {
- 	unsigned int cap;
- 	int channel;
-@@ -29,6 +31,134 @@ struct acp3x_dev_data {
- 	struct platform_device *pdev;
- };
- 
-+static int acp3x_power_on(void __iomem *acp3x_base)
-+{
-+	u32 val;
-+	u32 timeout = 0;
-+	int ret = 0;
-+
-+	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+	if (val) {
-+		if (!((val & ACP_PGFSM_STATUS_MASK) ==
-+				ACP_POWER_ON_IN_PROGRESS))
-+			rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
-+				acp3x_base + mmACP_PGFSM_CONTROL);
-+		while (true) {
-+			val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+			if (!val)
-+				break;
-+			udelay(1);
-+			if (timeout > 500) {
-+				pr_err("ACP is Not Powered ON\n");
-+				ret = -ETIMEDOUT;
-+				break;
-+			}
-+			timeout++;
-+		}
-+		if (ret) {
-+			pr_err("ACP is not powered on status:%d\n", ret);
-+			return ret;
-+		}
-+	}
-+	return ret;
-+}
-+
-+static int acp3x_power_off(void __iomem *acp3x_base)
-+{
-+	u32 val;
-+	u32 timeout = 0;
-+	int ret = 0;
-+
-+	val = rv_readl(acp3x_base + mmACP_PGFSM_CONTROL);
-+	rv_writel(ACP_PGFSM_CNTL_POWER_OFF_MASK,
-+			acp3x_base + mmACP_PGFSM_CONTROL);
-+	while (true) {
-+		val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+		if ((val & ACP_PGFSM_STATUS_MASK) == ACP_POWERED_OFF)
-+			break;
-+		udelay(1);
-+		if (timeout > 500) {
-+			pr_err("ACP is Not Powered OFF\n");
-+			ret = -ETIMEDOUT;
-+			break;
-+		}
-+		timeout++;
-+	}
-+	if (ret)
-+		pr_err("ACP is not powered off status:%d\n", ret);
-+	return ret;
-+}
-+
-+
-+static int acp3x_reset(void __iomem *acp3x_base)
-+{
-+	u32 val, timeout;
-+
-+	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (true) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
-+							timeout > 100) {
-+			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
-+				break;
-+			return -ENODEV;
-+		}
-+		timeout++;
-+		cpu_relax();
-+	}
-+	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (true) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if (!val || timeout > 100) {
-+			if (!val)
-+				break;
-+			return -ENODEV;
-+		}
-+		timeout++;
-+		cpu_relax();
-+	}
-+	return 0;
-+}
-+
-+static int acp3x_init(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* power on */
-+	ret = acp3x_power_on(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x power on failed\n");
-+		return ret;
-+	}
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int acp3x_deinit(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	/* power off */
-+	ret = acp3x_power_off(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x power off failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
- 
- static struct device *get_mfd_cell_dev(const char *device_name, int r)
- {
-@@ -36,9 +166,9 @@ static struct device *get_mfd_cell_dev(const char *device_name, int r)
- 	struct device *dev;
- 
- 	snprintf(auto_dev_name, sizeof(auto_dev_name),
--		 "%s.%d.auto", device_name, r);
-+			"%s.%d.auto", device_name, r);
- 	dev = bus_find_device_by_name(&platform_bus_type,
--					NULL, auto_dev_name);
-+			NULL, auto_dev_name);
- 	dev_info(dev, "device %s added\n", auto_dev_name);
- 	return dev;
- }
-@@ -47,8 +177,8 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 			   const struct pci_device_id *pci_id)
- {
- 	int ret;
--	uint64_t addr;
--	int val, i, r;
-+	resource_size_t addr;
-+	int val, i, r, status;
- 	struct acp3x_dev_data *adata;
- 	struct device *dev;
- 	struct i2s_platform_data *i2s_pdata;
-@@ -58,38 +188,30 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 		dev_err(&pci->dev, "pci_enable_device failed\n");
- 		return -ENODEV;
- 	}
-+	pci_set_master(pci);
- 
-+	adata = devm_kzalloc(&pci->dev, sizeof(struct acp3x_dev_data),
-+							GFP_KERNEL);
-+	if (!adata)
-+		return -ENOMEM;
-+	pci_set_drvdata(pci, adata);
-+	adata->parent = &pci->dev;
- 	ret = pci_request_regions(pci, "AMD ACP3x audio");
- 	if (ret < 0) {
- 		dev_err(&pci->dev, "pci_request_regions failed\n");
--		goto disable_pci;
--	}
--
--	adata = devm_kzalloc(&pci->dev, sizeof(struct acp3x_dev_data),
--			     GFP_KERNEL);
--	if (!adata) {
--		ret = -ENOMEM;
- 		goto release_regions;
- 	}
- 
--	/* check for msi interrupt support */
--	ret = pci_enable_msi(pci);
--	if (ret)
--		/* msi is not enabled */
--		irqflags = IRQF_SHARED;
--	else
--		/* msi is enabled */
--		irqflags = 0;
--
- 	addr = pci_resource_start(pci, 0);
- 	adata->acp3x_base = ioremap(addr, pci_resource_len(pci, 0));
- 	if (!adata->acp3x_base) {
- 		ret = -ENOMEM;
- 		goto release_regions;
- 	}
--	pci_set_master(pci);
--	pci_set_drvdata(pci, adata);
--	adata->parent = &pci->dev;
-+	status = acp3x_init(adata->acp3x_base);
-+	if (status)
-+		return -ENODEV;
-+
- 	val = rv_readl(adata->acp3x_base + mmACP_I2S_PIN_CONFIG);
- 	switch (val) {
- 	case I2S_MODE:
-@@ -165,10 +287,6 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 			dev = get_mfd_cell_dev(adata->cell[i].name, i);
- 		break;
- 
--	default:
--		dev_err(&pci->dev, "Invalid ACP audio mode : %d\n", val);
--		ret = -ENODEV;
--		goto unmap_mmio;
- 	}
- 	pm_runtime_set_autosuspend_delay(&pci->dev, 10000);
- 	pm_runtime_use_autosuspend(&pci->dev);
-@@ -177,30 +295,59 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 	pm_runtime_enable(&pci->dev);
- 	return 0;
- 
-+release_regions:
-+	pci_release_regions(pci);
-+	pci_disable_device(pci);
-+	status = acp3x_deinit(adata->acp3x_base);
-+	if (status)
-+		dev_err(&pci->dev, "ACP de-init failed\n");
-+	else
-+		dev_info(&pci->dev, "ACP de-initialized\n");
-+
-+	/*ignore device status and return driver probe error*/
-+	return -ENODEV;
- unmap_mmio:
-+	status = acp3x_deinit(adata->acp3x_base);
-+	if (status)
-+		dev_err(&pci->dev, "ACP de-init failed\n");
-+	else
-+		dev_info(&pci->dev, "ACP de-initialized\n");
-+
- 	mfd_remove_devices(adata->parent);
- 	kfree(adata->res);
- 	kfree(adata->cell);
- 	iounmap(adata->acp3x_base);
- 	/*ignore device status and return driver probe error*/
- 	return -ENODEV;
--release_regions:
--	pci_release_regions(pci);
--	/*ignore device status and return driver probe error*/
--	return -ENODEV;
--disable_pci:
--	pci_disable_device(pci);
--	/*ignore device status and return driver probe error*/
--	return -ENODEV;
-+
-+	return ret;
- }
- 
- static int  snd_acp3x_suspend(struct device *dev)
- {
-+
-+	int status;
-+	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-+
-+	status = acp3x_deinit(adata->acp3x_base);
-+	if (status)
-+		dev_err(dev, "ACP de-init failed\n");
-+	else
-+		dev_info(dev, "ACP de-initialized\n");
-+
- 	return 0;
- }
- 
- static int  snd_acp3x_resume(struct device *dev)
- {
-+
-+	int status;
-+	struct acp3x_dev_data *adata = dev_get_drvdata(dev);
-+
-+	status = acp3x_init(adata->acp3x_base);
-+	if (status)
-+		return -ENODEV;
-+
- 	return 0;
- }
- 
-@@ -213,8 +360,14 @@ static const struct dev_pm_ops acp3x_pm = {
- 
- static void snd_acp3x_remove(struct pci_dev *pci)
- {
-+	int i;
- 	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
- 	mfd_remove_devices(adata->parent);
-+	i = acp3x_deinit(adata->acp3x_base);
-+	if (i)
-+		dev_err(&pci->dev, "ACP de-init failed\n");
-+	else
-+		dev_info(&pci->dev, "ACP de-initialized\n");
- 	kfree(adata->res);
- 	kfree(adata->cell);
- 	iounmap(adata->acp3x_base);
-@@ -227,8 +380,8 @@ static void snd_acp3x_remove(struct pci_dev *pci)
- 
- static const struct pci_device_id snd_acp3x_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, 0x15e2),
--	.class = PCI_CLASS_MULTIMEDIA_OTHER << 8,
--	.class_mask = 0xffffff },
-+		.class = PCI_CLASS_MULTIMEDIA_OTHER << 8,
-+		.class_mask = 0xffffff },
- 	{ 0, },
- };
- MODULE_DEVICE_TABLE(pci, snd_acp3x_ids);
+arch/arm64/configs/defconfig:726:warning: symbol value 'm' invalid for
+REMOTEPROC
+#
+
+# configuration written to .config
+
+#
+
+make[1]: Leaving directory '/data1/Projects/LinuxKernel/linux-out'
+
+make[1]: Entering directory '/data1/Projects/LinuxKernel/linux-out'
+
+$COMPATCC is [arm-linux-gnueabihf-gcc]
+
+  GEN     Makefile
+
+>> A next step would be to check that COMPATCC can actually generate 32-bit
+>> objects. But it's not essential at this stage.
+>>
+> 
+> We are already checking this making sure that arm is present in the triple (grep
+> -q arm).
+> 
+>>> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+>>> index 84a3d502c5a5..34f53eb11878 100644
+>>> --- a/arch/arm64/Makefile
+>>> +++ b/arch/arm64/Makefile
+>>> @@ -54,19 +54,8 @@ $(warning Detected assembler with broken .inst; disassembly will be unreliable)
+>>>  endif
+>>>  
+>>>  ifeq ($(CONFIG_GENERIC_COMPAT_VDSO), y)
+>>> -  CROSS_COMPILE_COMPAT ?= $(CONFIG_CROSS_COMPILE_COMPAT_VDSO:"%"=%)
+>>> -
+>>> -  ifeq ($(CONFIG_CC_IS_CLANG), y)
+>>> -    $(warning CROSS_COMPILE_COMPAT is clang, the compat vDSO will not be built)
+>>> -  else ifeq ($(strip $(CROSS_COMPILE_COMPAT)),)
+>>> -    $(warning CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built)
+>>> -  else ifeq ($(shell which $(CROSS_COMPILE_COMPAT)gcc 2> /dev/null),)
+>>> -    $(error $(CROSS_COMPILE_COMPAT)gcc not found, check CROSS_COMPILE_COMPAT)
+>>> -  else
+>>> -    export CROSS_COMPILE_COMPAT
+>>> -    export CONFIG_COMPAT_VDSO := y
+>>> -    compat_vdso := -DCONFIG_COMPAT_VDSO=1
+>>> -  endif
+>>> +  export CONFIG_COMPAT_VDSO := y
+>>> +  compat_vdso := -DCONFIG_COMPAT_VDSO=1
+>>>  endif
+>>
+>> Has CONFIG_CROSS_COMPILE_COMPAT_VDSO actually been removed from
+>> lib/vdso/Kconfig? (I haven't checked the subsequent patches).
+>>
+> 
+
 -- 
-2.7.4
-
+Regards,
+Vincenzo
