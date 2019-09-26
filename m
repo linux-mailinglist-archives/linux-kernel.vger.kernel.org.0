@@ -2,89 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E102CBF876
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:58:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2170BF8BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbfIZR5m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 13:57:42 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38554 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727881AbfIZR5k (ORCPT
+        id S1728244AbfIZSFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 14:05:31 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44824 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728091AbfIZSFZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 13:57:40 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w10so1620431plq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 10:57:40 -0700 (PDT)
+        Thu, 26 Sep 2019 14:05:25 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q21so2245871pfn.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 11:05:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:to:from:subject:user-agent:date;
-        bh=ra0dRLmfBUCQGsQcf5szx3nA8oNPLH7wPDml/wV7DqY=;
-        b=ITWCWJ6tqqC/ZM6OD9WMIZrbkglthcrix2GG/LvDieJySeSgiWaMpmSOK0xrK0xm06
-         ec/m3uHU3SiUEhT7eLUdfGbI+DN0LGfNi7tQZLu57ErbujONFpP5E7CgaHBIpk9LHwI2
-         kE3YEzpDK7fVmwCp2OioRnV1nH8yPX5cDgrl0=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=kVlu3UytET+u7KQ09fcnqnLvPl+cN9h82jlVZJfZjTo=;
+        b=gU8LOxxBAqu4ZMjhqcg6B9uvdO+JQKFvVezAsT+/Z7xLV5dDBIvhPco78+OYSHATWV
+         5vKgvlD1/TWtGQnwfCk7wZ0RsQP6sq6fpYz7/tPJNPScWJo/6tHPyc/NVqe/1uVViJiu
+         QG4qyMvzq9mF+nTaLfsPuABbMBGU0f1v5ZdH4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:date;
-        bh=ra0dRLmfBUCQGsQcf5szx3nA8oNPLH7wPDml/wV7DqY=;
-        b=n/6g6Si+KiTwtkDpBfOZBdft1EBdmqGdhFkkde1PBEldfpkRXxvijD9InuHM9ul+qT
-         JphHPjrFxEmKjAxw3HbeUpnvYB2GcsivA8CPd/66q4bsq+XysJSxHS/nKNLrubabge79
-         p37MLM0nYb9jkVm4ev9iYGLvbv8s2i45uVdp8ujUz8T1/o4HiMBMFsbCk6huQ0CWpWhg
-         8I/AULYiEr4ha/b1if3hbN3oVp4fCdfpG384iM9wyFlG958hS7dXr8oDx3WR1PbhwK+s
-         vTHOwa/bDwDP421NawHq11MCB8zeVVpwWaMBRIpX5tcTmqoidwJM7T8WDMEhIkkPSSv+
-         dzzA==
-X-Gm-Message-State: APjAAAWW9f2Bw2GnkSEHx9eArFStPUFz9QQ7xF+VXzkxtbxISUpDYvCC
-        B73thTiluKqJOycgu9rQlQWDgQ==
-X-Google-Smtp-Source: APXvYqyTHTzIf5yWzfKy0xKUYeZGydmLqbbwvrZWLYFx88GbwFOpdeI3cVq+oqoSkggF2QPJ0+vifA==
-X-Received: by 2002:a17:902:7605:: with SMTP id k5mr5346435pll.304.1569520659918;
-        Thu, 26 Sep 2019 10:57:39 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id n66sm5128141pfn.90.2019.09.26.10.57.39
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=kVlu3UytET+u7KQ09fcnqnLvPl+cN9h82jlVZJfZjTo=;
+        b=lCWJdbMm5MwNCYYn6ZeFKWHYWzxDywIE6NOHOXpjrZ45EqYfIiKffQyXyENM9IawHi
+         23FRgyLiacHIVVIvdjkZBy4UelmDlqbQTqNF5gcavzNn2wBQRBfxvodVvx/+QaxYFURA
+         9OcIHo+N5zAPs2bcpSRLhv17WxNymTmqseJqd9r80vmdO7777iBSYFOFc4jFPkH41V6Z
+         MmqvIJF6FxQx9wENYVhUxl4Kv2ucV9d38kcBlgkQmph/yi+/02dptVjEDXQGXBotfpNf
+         mLyYVlYpTuu9M29df5dlcbYrF0NjW+4zylvklXRL5qkMv5fV02RjDmvgLV82zwaeBU0T
+         aoNg==
+X-Gm-Message-State: APjAAAV4SsXqH0XzPZRQ4IEHFVkdUg47YeQoOSq5UPy5Mhbs9bz51J48
+        FgWJS9Khl9W+FPwrIIDl6FIUQQ==
+X-Google-Smtp-Source: APXvYqzhP1wlAEJn46lkdHp/9E6c8bJo+91ZhySivB8e8kdz5lOe0JajZRG4VPh/2MGrflPoMMhIIQ==
+X-Received: by 2002:a17:90a:3483:: with SMTP id p3mr4996354pjb.108.1569521123591;
+        Thu, 26 Sep 2019 11:05:23 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 193sm3956718pfc.59.2019.09.26.11.05.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 10:57:39 -0700 (PDT)
-Message-ID: <5d8cfc13.1c69fb81.73236.ab28@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAOCk7NoNX7+fxCYNOCMVCv1_-X3ZbaHwFjzWjMp6VKL6ZoroLA@mail.gmail.com>
-References: <20190912091019.5334-1-srinivas.kandagatla@linaro.org> <5d7fe5d1.1c69fb81.eca3b.1121@mx.google.com> <CAOCk7NoNX7+fxCYNOCMVCv1_-X3ZbaHwFjzWjMp6VKL6ZoroLA@mail.gmail.com>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH] soc: qcom: socinfo: add missing soc_id sysfs entry
-User-Agent: alot/0.8.1
-Date:   Thu, 26 Sep 2019 10:57:38 -0700
+        Thu, 26 Sep 2019 11:05:20 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-ia64@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michal Simek <monstr@monstr.eu>, linux-parisc@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 11/29] vmlinux.lds.h: Replace RODATA with RO_DATA
+Date:   Thu, 26 Sep 2019 10:55:44 -0700
+Message-Id: <20190926175602.33098-12-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190926175602.33098-1-keescook@chromium.org>
+References: <20190926175602.33098-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-09-24 20:54:41)
-> On Mon, Sep 16, 2019 at 3:44 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Quoting Srinivas Kandagatla (2019-09-12 02:10:19)
-> > > looks like SoC ID is not exported to sysfs for some reason.
-> > > This patch adds it!
-> > >
-> > > This is mostly used by userspace libraries like SNPE.
-> >
-> > What is SNPE?
->=20
-> Snapdragon Neural Processing Engine.  Pronounced "snap-e".  Its
-> basically the framework someone goes through to run a neural network
-> on a Qualcomm mobile SoC.  SNPE can utilize various hardware resources
-> such as the applications CPU, GPU, and dedicated compute resources
-> such as a NSP, if available.  Its been around for over a year, and
-> much more information can be found by just doing a simple search since
-> SNPE is pretty much a unique search term currently.
+There's no reason to keep the RODATA macro: just replace the callers
+with the expected RO_DATA macro.
 
-I wouldn't mind if it was still spelled out instead of just as an
-acronym. Who knows, a few years from now it may not be a unique acronym
-and then taking the extra few seconds to write it out once would have
-saved future effort.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ arch/alpha/kernel/vmlinux.lds.S      | 2 +-
+ arch/ia64/kernel/vmlinux.lds.S       | 2 +-
+ arch/microblaze/kernel/vmlinux.lds.S | 2 +-
+ arch/mips/kernel/vmlinux.lds.S       | 2 +-
+ arch/um/include/asm/common.lds.S     | 2 +-
+ arch/xtensa/kernel/vmlinux.lds.S     | 2 +-
+ include/asm-generic/vmlinux.lds.h    | 4 +---
+ 7 files changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/arch/alpha/kernel/vmlinux.lds.S b/arch/alpha/kernel/vmlinux.lds.S
+index bf28043485f6..af411817dd7d 100644
+--- a/arch/alpha/kernel/vmlinux.lds.S
++++ b/arch/alpha/kernel/vmlinux.lds.S
+@@ -34,7 +34,7 @@ SECTIONS
+ 	swapper_pg_dir = SWAPPER_PGD;
+ 	_etext = .;	/* End of text section */
+ 
+-	RODATA
++	RO_DATA(4096)
+ 	EXCEPTION_TABLE(16)
+ 
+ 	/* Will be freed after init */
+diff --git a/arch/ia64/kernel/vmlinux.lds.S b/arch/ia64/kernel/vmlinux.lds.S
+index ad3578924589..0d86fc8e88d5 100644
+--- a/arch/ia64/kernel/vmlinux.lds.S
++++ b/arch/ia64/kernel/vmlinux.lds.S
+@@ -104,7 +104,7 @@ SECTIONS {
+ 	code_continues2 : {
+ 	} :text
+ 
+-	RODATA
++	RO_DATA(4096)
+ 
+ 	.opd : AT(ADDR(.opd) - LOAD_OFFSET) {
+ 		__start_opd = .;
+diff --git a/arch/microblaze/kernel/vmlinux.lds.S b/arch/microblaze/kernel/vmlinux.lds.S
+index d008e50bb212..2299694748ea 100644
+--- a/arch/microblaze/kernel/vmlinux.lds.S
++++ b/arch/microblaze/kernel/vmlinux.lds.S
+@@ -51,7 +51,7 @@ SECTIONS {
+ 	}
+ 
+ 	. = ALIGN(16);
+-	RODATA
++	RO_DATA(4096)
+ 	EXCEPTION_TABLE(16)
+ 
+ 	/*
+diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.lds.S
+index 91e566defc16..a5f00ec73ea6 100644
+--- a/arch/mips/kernel/vmlinux.lds.S
++++ b/arch/mips/kernel/vmlinux.lds.S
+@@ -82,7 +82,7 @@ SECTIONS
+ 	}
+ 
+ 	_sdata = .;			/* Start of data section */
+-	RODATA
++	RO_DATA(4096)
+ 
+ 	/* writeable */
+ 	.data : {	/* Data */
+diff --git a/arch/um/include/asm/common.lds.S b/arch/um/include/asm/common.lds.S
+index a24b284f5135..eca6c452a41b 100644
+--- a/arch/um/include/asm/common.lds.S
++++ b/arch/um/include/asm/common.lds.S
+@@ -9,7 +9,7 @@
+   _sdata = .;
+   PROVIDE (sdata = .);
+ 
+-  RODATA
++  RO_DATA(4096)
+ 
+   .unprotected : { *(.unprotected) }
+   . = ALIGN(4096);
+diff --git a/arch/xtensa/kernel/vmlinux.lds.S b/arch/xtensa/kernel/vmlinux.lds.S
+index a0a843745695..b97e5798b9cf 100644
+--- a/arch/xtensa/kernel/vmlinux.lds.S
++++ b/arch/xtensa/kernel/vmlinux.lds.S
+@@ -124,7 +124,7 @@ SECTIONS
+ 
+   . = ALIGN(16);
+ 
+-  RODATA
++  RO_DATA(4096)
+ 
+   /*  Relocation table */
+ 
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 3a4c1cb971da..9520dede6c7a 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -513,9 +513,7 @@
+ 	. = ALIGN((align));						\
+ 	__end_rodata = .;
+ 
+-/* RODATA & RO_DATA provided for backward compatibility.
+- * All archs are supposed to use RO_DATA() */
+-#define RODATA          RO_DATA_SECTION(4096)
++/* All archs are supposed to use RO_DATA() */
+ #define RO_DATA(align)  RO_DATA_SECTION(align)
+ 
+ /*
+-- 
+2.17.1
 
