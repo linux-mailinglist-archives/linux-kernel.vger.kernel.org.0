@@ -2,159 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C878CBEB65
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 06:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21983BEB6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 06:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbfIZEm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 00:42:58 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42892 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfIZEm5 (ORCPT
+        id S2391636AbfIZExU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 00:53:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35741 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728905AbfIZExU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 00:42:57 -0400
-Received: by mail-io1-f68.google.com with SMTP id n197so2950059iod.9
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 21:42:57 -0700 (PDT)
+        Thu, 26 Sep 2019 00:53:20 -0400
+Received: by mail-pf1-f194.google.com with SMTP id 205so1058160pfw.2
+        for <linux-kernel@vger.kernel.org>; Wed, 25 Sep 2019 21:53:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OFA5Uz5BCNq/MfwnbLzI5wj5RSqOhUTcf5ZFKST8Ysc=;
-        b=G8y3gKmwchxeBHsPxLv2M7F8LxqYDpNRcEbzbe7SRU/i9dDi/U+0VW6ODvf8b4f2yq
-         JrShp8aBM55VlFtxiBc+tBHa+GLdnJwcrHMic49pdkJya0U3WKfDfHf/egSde+9D+U6P
-         BMSzyayB+kChdm2pL4hf/yFw4Iq2f1BYRprUpdDltmcqfRMVCEIQ42dlfG2W9HTEUXDV
-         oKtuuqC7WrKvU2XRxI+ThTahHE21Rb7TwsVCBRbae6pf3AwygmYUvo4Nsq/miX9Iaalc
-         mSLtaSVp/4wRCCBrIESWH9aS5TaKHBiOvJJbGF7Wjzej59+TDFAbmsp/k30/RPc72XFb
-         vGNg==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=AvvT6+5x9aQmxunKipMFtPcZ23KRsANwO+K/Uacrnq0=;
+        b=R4GUGaMRIj8MyOeHz41O/SibI8vBjS8+jMvH0FKIqubgiyuS2YgSh55EnhJYBhJlAI
+         3zzJrML+SB2ILjFGyDhL0dmrn+BwWSkCc5UtKVCjzD7ti7QIe1jfNzSQTdBTa1iB/DH/
+         K6Lpy3E5itPFVuFDx/xGNinAex4jYjobSEdjDz6fQIK/mUxOTq8wY3+7yQtWujhmzTGi
+         zn3cNhoRClSTQIbRrkKYs4FR4gBNdRsTrGNNYrdAkwFgiQQxrhbgh7c1USkKTimi8AAi
+         LdwpLDIr6BTq2VpleuIiQwCbE0ZgRg67rP3wVEU/pbBnnXLWqfbRAPyo76WaWv2YU8u5
+         ySOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OFA5Uz5BCNq/MfwnbLzI5wj5RSqOhUTcf5ZFKST8Ysc=;
-        b=TZb8m0kxf74a0UsR34LplIqWB51SzN2TMqlTM9WADF85mxJ6jgqIWOwcfWb0F+JTMe
-         79SEQ7MzeY9V0BD8dpmefrHmsGXaG5ZO0cjrPR2u9N3MKT7IdCM86dZEhTqHRdhPwaBH
-         doL8e34QcmnuRolrPx9vPXHaiF00VTsBaKAtLF3XgWLqqvFp8I+2ctPfqUDs/kUYHq9R
-         j7p5n11NKcRsm3EIcPgK+8DxGi6NGMmmbmYhSda53hWV4i3X5qdHhcL1S6+7L4eCSQ5x
-         n5FEXxQ4nYUSAyAad5wZgAGU9dGO3AVRVZ/VdCM8qKcpG2gOA4wXfIl6eLzsZDwkR+TC
-         oGzQ==
-X-Gm-Message-State: APjAAAU4rCB/ZeMRDgi/oL3666WxohoBO25dERcmgQhn1AqFuNzziAnT
-        C51ncaO2tyyFZz3xCFE/gDr9BZ+lvEQsk3zDSB4=
-X-Google-Smtp-Source: APXvYqyACWFEunMEyJ8CWeVZ1hfAko7oIMA7AR5qY8h393gn0f166rL2znmZpDm2RUirSuslv5CxJQppcWg8eRAzOVk=
-X-Received: by 2002:a02:7009:: with SMTP id f9mr1897459jac.81.1569472976794;
- Wed, 25 Sep 2019 21:42:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=AvvT6+5x9aQmxunKipMFtPcZ23KRsANwO+K/Uacrnq0=;
+        b=exDxTXar53EcPiEKxQ8cFmq1kemO3LJWJuUSll0xBa7DVgWRem2D09e6JL7lRtZAFO
+         UYv1GfmnWoLAfVmLYJoZbOKOtM98Y/TmVSjUdBsXIeHSAt7bp5XLSYQH3+sYlEEHixMw
+         rbmJg6t1v3rHRLKUWU6d6AGWCRKkr3EBHNQDbnTeQkX6GmMmLHVJUsV16DtfA5D2qyg+
+         e1kBVGw15QtUw97g/LkwIVKN0EyZYTyo5kv4zdD3yKY1tpbA00mFNoRF4L/MTNzqO7T2
+         uURo+KDkSjCPapBEvv51qgdvjJ/445A9lSemHLKlqVvP0jmlr7FgKuJeE9YA/78/k7ko
+         qJGQ==
+X-Gm-Message-State: APjAAAWCgDZx2qwjIQGcj4oWvs/lchvjj7WtNVCamoiOz1RVYbOWr5pR
+        jlu1hE8c+1rhLW5r2QnW30QSZQ==
+X-Google-Smtp-Source: APXvYqyHtXpA7TOjdAcCykvqAmfvyMsfymVvHG2bTz2l4CZubCgE29mxR2M7yEBP7gKFs8JcjyeOsQ==
+X-Received: by 2002:a62:53c7:: with SMTP id h190mr1515668pfb.208.1569473599130;
+        Wed, 25 Sep 2019 21:53:19 -0700 (PDT)
+Received: from cakuba.netronome.com (c-73-202-202-92.hsd1.ca.comcast.net. [73.202.202.92])
+        by smtp.gmail.com with ESMTPSA id n21sm697029pjo.21.2019.09.25.21.53.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 21:53:18 -0700 (PDT)
+Date:   Wed, 25 Sep 2019 21:53:14 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
+        "David S. Miller" <davem@davemloft.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        John Hurley <john.hurley@netronome.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        oss-drivers@netronome.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: flow_offload: fix memory leak in
+ nfp_abm_u32_knode_replace
+Message-ID: <20190925215314.10cf291d@cakuba.netronome.com>
+In-Reply-To: <20190926022240.3789-1-navid.emamdoost@gmail.com>
+References: <20190925182846.69a261e8@cakuba.netronome.com>
+        <20190926022240.3789-1-navid.emamdoost@gmail.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-References: <1568817522-8754-1-git-send-email-laoar.shao@gmail.com>
- <1568817522-8754-2-git-send-email-laoar.shao@gmail.com> <456c8216-a9f4-6821-e688-744e93df826f@suse.de>
-In-Reply-To: <456c8216-a9f4-6821-e688-744e93df826f@suse.de>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Thu, 26 Sep 2019 12:42:20 +0800
-Message-ID: <CALOAHbCho+SjpfaWrKFAoK-2CKMaqc4dyevk5kC-qenHgnHS5A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf script python: integrate page reclaim analyze script
-To:     Tony Jones <tonyj@suse.de>,
-        Mel Gorman <mgorman@techsingularity.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>, acme@kernel.org,
-        namhyung@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-        jolsa@redhat.com, mingo@redhat.com, Linux MM <linux-mm@kvack.org>,
-        Florian Schmidt <florian.schmidt@nutanix.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 9:56 AM Tony Jones <tonyj@suse.de> wrote:
->
-> On 9/18/19 7:38 AM, Yafang Shao wrote:
-> > A new perf script page-reclaim is introduced in this patch. This new sc=
-ript
-> > is used to report the page reclaim details. The possible usage of this
-> > script is as bellow,
-> > - identify latency spike caused by direct reclaim
-> > - whehter the latency spike is relevant with pageout
-> > - why is page reclaim requested, i.e. whether it is because of memory
-> >   fragmentation
-> > - page reclaim efficiency
-> > etc
-> > In the future we may also enhance it to analyze the memcg reclaim.
-> >
-> > Bellow is how to use this script,
-> >     # Record, one of the following
-> >     $ perf record -e 'vmscan:mm_vmscan_*' ./workload
-> >     $ perf script record page-reclaim
-> >
-> >     # Report
-> >     $ perf script report page-reclaim
-> >
-> >     # Report per process latency
-> >     $ perf script report page-reclaim -- -p
->
->
-> I tested it with global-dhp__pagereclaim-performance from mmtests and got=
- what appears to be reasonable results and the output looks correct and use=
-ful.  However I'm not a vm expert so I can't comment further.  Hopefully so=
-meone on linux-mm can give more specific feedback.
->
+On Wed, 25 Sep 2019 21:22:35 -0500, Navid Emamdoost wrote:
+> In nfp_abm_u32_knode_replace if the allocation for match fails it should
+> go to the error handling instead of returning.
+> 
+> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+> ---
+> Changes in v2:
+> 	- Reused err variable for erorr value returning.
 
-+ Mel
+Thanks, there's another goto up top. And I think subject prefix could
+be "nfp: abm:", perhaps?
 
-Hi Mel,
+>  drivers/net/ethernet/netronome/nfp/abm/cls.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/netronome/nfp/abm/cls.c b/drivers/net/ethernet/netronome/nfp/abm/cls.c
+> index 23ebddfb9532..b0cb9d201f7d 100644
+> --- a/drivers/net/ethernet/netronome/nfp/abm/cls.c
+> +++ b/drivers/net/ethernet/netronome/nfp/abm/cls.c
+> @@ -198,14 +198,18 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+>  		if ((iter->val & cmask) == (val & cmask) &&
+>  		    iter->band != knode->res->classid) {
+>  			NL_SET_ERR_MSG_MOD(extack, "conflict with already offloaded filter");
+> +			err = -EOPNOTSUPP;
+>  			goto err_delete;
+>  		}
+>  	}
+>  
+>  	if (!match) {
+>  		match = kzalloc(sizeof(*match), GFP_KERNEL);
+> -		if (!match)
+> -			return -ENOMEM;
+> +		if (!match) {
+> +			err = -ENOMEM;
+> +			goto err_delete;
+> +		}
+> +
+>  		list_add(&match->list, &alink->dscp_map);
+>  	}
+>  	match->handle = knode->handle;
+> @@ -221,7 +225,7 @@ nfp_abm_u32_knode_replace(struct nfp_abm_link *alink,
+>  
+>  err_delete:
+>  	nfp_abm_u32_knode_delete(alink, knode);
+> -	return -EOPNOTSUPP;
+> +	return err;
+>  }
+>  
+>  static int nfp_abm_setup_tc_block_cb(enum tc_setup_type type,
 
-This is motivated by
-Documentation/trace/postprocess/trace-vmscan-postprocess.pl created by
-you.
-Could you pls. help take a look ?
-
-Thanks
-Yafang
-
-> There is one issue with Python3,  see below.  I didn't test with Python2.
->
-> >
-> > +     @classmethod
-> > +     def shrink_inactive(cls, pid, scanned, reclaimed, flags):
-> > +             event =3D cls.events.get(pid)
-> > +             if event and event.tracing():
-> > +                     # RECLAIM_WB_ANON 0x1
-> > +                     # RECLAIM_WB_FILE 0x2
-> > +                     _type =3D (flags & 0x2) >> 1
-> > +                     event.process_lru(lru[_type], scanned, reclaimed)
-> > +
-> > +     @classmethod
-> > +     def writepage(cls, pid, flags):
-> > +             event =3D cls.events.get(pid)
-> > +             if event and event.tracing():
-> > +                     # RECLAIM_WB_ANON 0x1
-> > +                     # RECLAIM_WB_FILE 0x2
-> > +                     # RECLAIM_WB_SYNC 0x4
-> > +                     # RECLAIM_WB_ASYNC 0x8
-> > +                     _type =3D (flags & 0x2) >> 1
-> > +                     _io =3D (flags & 0x4) >> 2
-> > +
-> > +                     event.process_writepage(lru[_type], sync_io[_io])
-> > +
-> > +        @classmethod
->
-> Space indentation on line above.  For python3 this results in:
->
->   File "tools/perf/scripts/python/page-reclaim.py", line 217
->     @classmethod
->                ^
-> TabError: inconsistent use of tabs and spaces in indentation
->
-> > +     def iterate_proc(cls):
-> > +             if show_opt !=3D Show.DEFAULT:
-> > +                     print("\nPer process latency (ms):")
-> > +                     print_proc_latency(latency_metric, 'pid', '[comm]=
-')
-> > +
-> > +                     if show_opt =3D=3D Show.VERBOSE:
-> > +                             print("%20s  %s" % ('timestamp','latency(=
-ns)'))
->
->
-> Thanks
->
-> Tony
->
