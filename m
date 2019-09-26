@@ -2,125 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 211B9BF2D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BD97BF2EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbfIZMWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:22:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55872 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725768AbfIZMWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:22:14 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DA408B11E;
-        Thu, 26 Sep 2019 12:22:10 +0000 (UTC)
-Date:   Thu, 26 Sep 2019 14:22:08 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     virtio-dev@lists.oasis-open.org, kvm list <kvm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-mm <linux-mm@kvack.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-arm-kernel@lists.infradead.org,
-        Oscar Salvador <osalvador@suse.de>,
-        Yang Zhang <yang.zhang.wz@gmail.com>,
-        Pankaj Gupta <pagupta@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        Rik van Riel <riel@surriel.com>, lcapitulino@redhat.com,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Subject: Re: [PATCH v10 0/6] mm / virtio: Provide support for unused page
- reporting
-Message-ID: <20190926122208.GI20255@dhcp22.suse.cz>
-References: <20190918175109.23474.67039.stgit@localhost.localdomain>
- <20190924142342.GX23050@dhcp22.suse.cz>
- <CAKgT0UcYdA+LysVVO+8Beabsd-YBH+tNUKnQgaFmrZBW1xkFxA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0UcYdA+LysVVO+8Beabsd-YBH+tNUKnQgaFmrZBW1xkFxA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726179AbfIZM0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:26:35 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:38354 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725787AbfIZM0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 08:26:34 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6A1F020057A;
+        Thu, 26 Sep 2019 14:26:32 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5BA9C200565;
+        Thu, 26 Sep 2019 14:26:32 +0200 (CEST)
+Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 06B77205E3;
+        Thu, 26 Sep 2019 14:26:31 +0200 (CEST)
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>
+Subject: [PATCH v2] crypto: caam - use mapped_{src,dst}_nents for descriptor
+Date:   Thu, 26 Sep 2019 15:26:29 +0300
+Message-Id: <1569500789-7443-1-git-send-email-iuliana.prodan@nxp.com>
+X-Mailer: git-send-email 2.1.0
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 24-09-19 08:20:22, Alexander Duyck wrote:
-> On Tue, Sep 24, 2019 at 7:23 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Wed 18-09-19 10:52:25, Alexander Duyck wrote:
-> > [...]
-> > > In order to try and keep the time needed to find a non-reported page to
-> > > a minimum we maintain a "reported_boundary" pointer. This pointer is used
-> > > by the get_unreported_pages iterator to determine at what point it should
-> > > resume searching for non-reported pages. In order to guarantee pages do
-> > > not get past the scan I have modified add_to_free_list_tail so that it
-> > > will not insert pages behind the reported_boundary.
-> > >
-> > > If another process needs to perform a massive manipulation of the free
-> > > list, such as compaction, it can either reset a given individual boundary
-> > > which will push the boundary back to the list_head, or it can clear the
-> > > bit indicating the zone is actively processing which will result in the
-> > > reporting process resetting all of the boundaries for a given zone.
-> >
-> > Is this any different from the previous version? The last review
-> > feedback (both from me and Mel) was that we are not happy to have an
-> > externally imposed constrains on how the page allocator is supposed to
-> > maintain its free lists.
-> 
-> The main change for v10 versus v9 is that I allow the page reporting
-> boundary to be overridden. Specifically there are two approaches that
-> can be taken.
-> 
-> The first is to simply reset the iterator for whatever list is
-> updated. What this will do is reset the iterator back to list_head and
-> then you can do whatever you want with that specific list.
+The mapped_{src,dst}_nents _returned_ from the dma_map_sg
+call (which could be less than src/dst_nents) have to be
+used to generate the job descriptors.
 
-OK, this is slightly better than pushing the allocator to the corner.
-The allocator really has to be under control of its data structures.
-I would still be happier if the allocator wouldn't really have to bother
-about somebody snooping its internal state to do its own thing. So
-please make sure to describe why and how much this really matters.
+Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+---
+Changes since v1:
+- updated, with mapped_{src,dst}_nents, the set_rsa_pub_pdb, set_rsa_priv_f{1,2,3}_pdb functions.
+---
+ drivers/crypto/caam/caampkc.c | 72 +++++++++++++++++++++++--------------------
+ drivers/crypto/caam/caampkc.h |  8 +++--
+ 2 files changed, 45 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/crypto/caam/caampkc.c b/drivers/crypto/caam/caampkc.c
+index 83f96d4..6619c51 100644
+--- a/drivers/crypto/caam/caampkc.c
++++ b/drivers/crypto/caam/caampkc.c
+@@ -252,9 +252,9 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 	gfp_t flags = (req->base.flags & CRYPTO_TFM_REQ_MAY_SLEEP) ?
+ 		       GFP_KERNEL : GFP_ATOMIC;
+ 	int sg_flags = (flags == GFP_ATOMIC) ? SG_MITER_ATOMIC : 0;
+-	int sgc;
+ 	int sec4_sg_index, sec4_sg_len = 0, sec4_sg_bytes;
+ 	int src_nents, dst_nents;
++	int mapped_src_nents, mapped_dst_nents;
+ 	unsigned int diff_size = 0;
+ 	int lzeros;
  
-> The other option is to simply clear the ZONE_PAGE_REPORTING_ACTIVE
-> bit. That will essentially notify the page reporting code that any/all
-> hints that were recorded have been discarded and that it needs to
-> start over.
-> 
-> All I am trying to do with this approach is reduce the work. Without
-> doing this the code has to walk the entire free page list for the
-> higher orders every iteration and that will not be cheap.
-
-How expensive this will be?
-
-> Admittedly
-> it is a bit more invasive than the cut/splice logic used in compaction
-> which is taking the pages it has already processed and moving them to
-> the other end of the list. However, I have reduced things so that we
-> only really are limiting where add_to_free_list_tail can place pages,
-> and we are having to check/push back the boundaries if a reported page
-> is removed from a free_list.
-> 
-> > If this is really the only way to go forward then I would like to hear
-> > very convincing arguments about other approaches not being feasible.
-> > There are none in this cover letter unfortunately. This will be really a
-> > hard sell without them.
-> 
-> So I had considered several different approaches.
-
-Thanks this is certainly useful and it would have been even more so if
-you gave some rough numbers to quantify how much overhead for different
-solutions we are talking about here.
+@@ -285,13 +285,27 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 				     req_ctx->fixup_src_len);
+ 	dst_nents = sg_nents_for_len(req->dst, req->dst_len);
+ 
+-	if (!diff_size && src_nents == 1)
++	mapped_src_nents = dma_map_sg(dev, req_ctx->fixup_src, src_nents,
++				      DMA_TO_DEVICE);
++	if (unlikely(!mapped_src_nents)) {
++		dev_err(dev, "unable to map source\n");
++		return ERR_PTR(-ENOMEM);
++	}
++	mapped_dst_nents = dma_map_sg(dev, req->dst, dst_nents,
++				      DMA_FROM_DEVICE);
++	if (unlikely(!mapped_dst_nents)) {
++		dev_err(dev, "unable to map destination\n");
++		goto src_fail;
++	}
++
++	if (!diff_size && mapped_src_nents == 1)
+ 		sec4_sg_len = 0; /* no need for an input hw s/g table */
+ 	else
+-		sec4_sg_len = src_nents + !!diff_size;
++		sec4_sg_len = mapped_src_nents + !!diff_size;
+ 	sec4_sg_index = sec4_sg_len;
+-	if (dst_nents > 1)
+-		sec4_sg_len += pad_sg_nents(dst_nents);
++
++	if (mapped_dst_nents > 1)
++		sec4_sg_len += pad_sg_nents(mapped_dst_nents);
+ 	else
+ 		sec4_sg_len = pad_sg_nents(sec4_sg_len);
+ 
+@@ -301,19 +315,7 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 	edesc = kzalloc(sizeof(*edesc) + desclen + sec4_sg_bytes,
+ 			GFP_DMA | flags);
+ 	if (!edesc)
+-		return ERR_PTR(-ENOMEM);
+-
+-	sgc = dma_map_sg(dev, req_ctx->fixup_src, src_nents, DMA_TO_DEVICE);
+-	if (unlikely(!sgc)) {
+-		dev_err(dev, "unable to map source\n");
+-		goto src_fail;
+-	}
+-
+-	sgc = dma_map_sg(dev, req->dst, dst_nents, DMA_FROM_DEVICE);
+-	if (unlikely(!sgc)) {
+-		dev_err(dev, "unable to map destination\n");
+ 		goto dst_fail;
+-	}
+ 
+ 	edesc->sec4_sg = (void *)edesc + sizeof(*edesc) + desclen;
+ 	if (diff_size)
+@@ -324,7 +326,7 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 		sg_to_sec4_sg_last(req_ctx->fixup_src, req_ctx->fixup_src_len,
+ 				   edesc->sec4_sg + !!diff_size, 0);
+ 
+-	if (dst_nents > 1)
++	if (mapped_dst_nents > 1)
+ 		sg_to_sec4_sg_last(req->dst, req->dst_len,
+ 				   edesc->sec4_sg + sec4_sg_index, 0);
+ 
+@@ -335,6 +337,9 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 	if (!sec4_sg_bytes)
+ 		return edesc;
+ 
++	edesc->mapped_src_nents = mapped_src_nents;
++	edesc->mapped_dst_nents = mapped_dst_nents;
++
+ 	edesc->sec4_sg_dma = dma_map_single(dev, edesc->sec4_sg,
+ 					    sec4_sg_bytes, DMA_TO_DEVICE);
+ 	if (dma_mapping_error(dev, edesc->sec4_sg_dma)) {
+@@ -351,11 +356,11 @@ static struct rsa_edesc *rsa_edesc_alloc(struct akcipher_request *req,
+ 	return edesc;
+ 
+ sec4_sg_fail:
+-	dma_unmap_sg(dev, req->dst, dst_nents, DMA_FROM_DEVICE);
++	kfree(edesc);
+ dst_fail:
+-	dma_unmap_sg(dev, req_ctx->fixup_src, src_nents, DMA_TO_DEVICE);
++	dma_unmap_sg(dev, req->dst, dst_nents, DMA_FROM_DEVICE);
+ src_fail:
+-	kfree(edesc);
++	dma_unmap_sg(dev, req_ctx->fixup_src, src_nents, DMA_TO_DEVICE);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ 
+@@ -383,15 +388,15 @@ static int set_rsa_pub_pdb(struct akcipher_request *req,
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (edesc->src_nents > 1) {
++	if (edesc->mapped_src_nents > 1) {
+ 		pdb->sgf |= RSA_PDB_SGF_F;
+ 		pdb->f_dma = edesc->sec4_sg_dma;
+-		sec4_sg_index += edesc->src_nents;
++		sec4_sg_index += edesc->mapped_src_nents;
+ 	} else {
+ 		pdb->f_dma = sg_dma_address(req_ctx->fixup_src);
+ 	}
+ 
+-	if (edesc->dst_nents > 1) {
++	if (edesc->mapped_dst_nents > 1) {
+ 		pdb->sgf |= RSA_PDB_SGF_G;
+ 		pdb->g_dma = edesc->sec4_sg_dma +
+ 			     sec4_sg_index * sizeof(struct sec4_sg_entry);
+@@ -428,17 +433,18 @@ static int set_rsa_priv_f1_pdb(struct akcipher_request *req,
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (edesc->src_nents > 1) {
++	if (edesc->mapped_src_nents > 1) {
+ 		pdb->sgf |= RSA_PRIV_PDB_SGF_G;
+ 		pdb->g_dma = edesc->sec4_sg_dma;
+-		sec4_sg_index += edesc->src_nents;
++		sec4_sg_index += edesc->mapped_src_nents;
++
+ 	} else {
+ 		struct caam_rsa_req_ctx *req_ctx = akcipher_request_ctx(req);
+ 
+ 		pdb->g_dma = sg_dma_address(req_ctx->fixup_src);
+ 	}
+ 
+-	if (edesc->dst_nents > 1) {
++	if (edesc->mapped_dst_nents > 1) {
+ 		pdb->sgf |= RSA_PRIV_PDB_SGF_F;
+ 		pdb->f_dma = edesc->sec4_sg_dma +
+ 			     sec4_sg_index * sizeof(struct sec4_sg_entry);
+@@ -493,17 +499,17 @@ static int set_rsa_priv_f2_pdb(struct akcipher_request *req,
+ 		goto unmap_tmp1;
+ 	}
+ 
+-	if (edesc->src_nents > 1) {
++	if (edesc->mapped_src_nents > 1) {
+ 		pdb->sgf |= RSA_PRIV_PDB_SGF_G;
+ 		pdb->g_dma = edesc->sec4_sg_dma;
+-		sec4_sg_index += edesc->src_nents;
++		sec4_sg_index += edesc->mapped_src_nents;
+ 	} else {
+ 		struct caam_rsa_req_ctx *req_ctx = akcipher_request_ctx(req);
+ 
+ 		pdb->g_dma = sg_dma_address(req_ctx->fixup_src);
+ 	}
+ 
+-	if (edesc->dst_nents > 1) {
++	if (edesc->mapped_dst_nents > 1) {
+ 		pdb->sgf |= RSA_PRIV_PDB_SGF_F;
+ 		pdb->f_dma = edesc->sec4_sg_dma +
+ 			     sec4_sg_index * sizeof(struct sec4_sg_entry);
+@@ -582,17 +588,17 @@ static int set_rsa_priv_f3_pdb(struct akcipher_request *req,
+ 		goto unmap_tmp1;
+ 	}
+ 
+-	if (edesc->src_nents > 1) {
++	if (edesc->mapped_src_nents > 1) {
+ 		pdb->sgf |= RSA_PRIV_PDB_SGF_G;
+ 		pdb->g_dma = edesc->sec4_sg_dma;
+-		sec4_sg_index += edesc->src_nents;
++		sec4_sg_index += edesc->mapped_src_nents;
+ 	} else {
+ 		struct caam_rsa_req_ctx *req_ctx = akcipher_request_ctx(req);
+ 
+ 		pdb->g_dma = sg_dma_address(req_ctx->fixup_src);
+ 	}
+ 
+-	if (edesc->dst_nents > 1) {
++	if (edesc->mapped_dst_nents > 1) {
+ 		pdb->sgf |= RSA_PRIV_PDB_SGF_F;
+ 		pdb->f_dma = edesc->sec4_sg_dma +
+ 			     sec4_sg_index * sizeof(struct sec4_sg_entry);
+diff --git a/drivers/crypto/caam/caampkc.h b/drivers/crypto/caam/caampkc.h
+index 2c488c9..c68fb4c 100644
+--- a/drivers/crypto/caam/caampkc.h
++++ b/drivers/crypto/caam/caampkc.h
+@@ -112,8 +112,10 @@ struct caam_rsa_req_ctx {
+ 
+ /**
+  * rsa_edesc - s/w-extended rsa descriptor
+- * @src_nents     : number of segments in input scatterlist
+- * @dst_nents     : number of segments in output scatterlist
++ * @src_nents     : number of segments in input s/w scatterlist
++ * @dst_nents     : number of segments in output s/w scatterlist
++ * @mapped_src_nents: number of segments in input h/w link table
++ * @mapped_dst_nents: number of segments in output h/w link table
+  * @sec4_sg_bytes : length of h/w link table
+  * @sec4_sg_dma   : dma address of h/w link table
+  * @sec4_sg       : pointer to h/w link table
+@@ -123,6 +125,8 @@ struct caam_rsa_req_ctx {
+ struct rsa_edesc {
+ 	int src_nents;
+ 	int dst_nents;
++	int mapped_src_nents;
++	int mapped_dst_nents;
+ 	int sec4_sg_bytes;
+ 	dma_addr_t sec4_sg_dma;
+ 	struct sec4_sg_entry *sec4_sg;
 -- 
-Michal Hocko
-SUSE Labs
+2.1.0
+
