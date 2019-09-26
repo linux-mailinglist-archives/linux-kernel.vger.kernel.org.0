@@ -2,195 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE12FBF381
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1AB3BF38F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:57:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfIZMz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:55:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:44570 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726888AbfIZMzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:55:18 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5A1BA30BC58E;
-        Thu, 26 Sep 2019 12:55:18 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D2063608C2;
-        Thu, 26 Sep 2019 12:55:17 +0000 (UTC)
-From:   Prarit Bhargava <prarit@redhat.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 7/7] intel-speed-select: Implement base-freq commands on CascadeLake-N
-Date:   Thu, 26 Sep 2019 08:55:01 -0400
-Message-Id: <20190926125501.1616-8-prarit@redhat.com>
-In-Reply-To: <20190926125501.1616-1-prarit@redhat.com>
-References: <20190926125501.1616-1-prarit@redhat.com>
+        id S1726294AbfIZM5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:57:10 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57890 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfIZM5K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 08:57:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QChmox126209;
+        Thu, 26 Sep 2019 12:55:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=wgbB1gckrWIlucivgg+XWAxQa+UFNwnWecELwTVQsJU=;
+ b=N6BslChfal8kgvrGAJzkingykcTMlYd1NcnZtth2N9VL1pVIsYFPTg8RxUNyS8GkypHp
+ RIyEmIxN54gm6CDxe5GH2oXeEGs/kpwq+JTy+0F/D6RG98QJIdO1avYWfgJ1XHhmeE4O
+ wHt8UUyepcfChmtz7nDidi/6x3pnMZXLRNhakCJNxGZ3SSn6FsBjsaTjruKs0A1z4EE2
+ izAq6Qs34SNH9yreZ4uVraPfEHO+dnR3VfsJr+k5XwnMTYDUvmMtbNsZkc/0F14eyEUg
+ To6gmai5KsPD07idBfG1x3xnzwJiNv7Q0GWMhqnOuToXaRbTCrwazCGEsuhrUJ7DDQpn Vg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2v5btqbhjc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 12:55:57 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QChr1D098396;
+        Thu, 26 Sep 2019 12:55:56 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2v8w5ka3gj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 12:55:56 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8QCtooO015468;
+        Thu, 26 Sep 2019 12:55:51 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Sep 2019 05:55:50 -0700
+Date:   Thu, 26 Sep 2019 15:55:38 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com,
+        Vijendar Mukunda <vijendar.mukunda@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/5] ASoC: amd: ACP powergating should be done by
+ controller
+Message-ID: <20190926125538.GF29696@kadam>
+References: <1569539290-756-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1569539290-756-5-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 26 Sep 2019 12:55:18 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1569539290-756-5-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909260121
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909260121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add functionality for base-freq info|enable|disable info on CascadeLake-N.
+On Fri, Sep 27, 2019 at 04:37:39AM +0530, Ravulapati Vishnu vardhan rao wrote:
+> +static int acp3x_power_on(void __iomem *acp3x_base)
+> +{
+> +	u32 val;
+> +	u32 timeout = 0;
+> +	int ret = 0;
+> +
+> +	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+> +	if (val) {
 
-The enable command always returns success, and the disable command always
-returns failed because SST-BF cannot be enabled or disabled from the OS on
-CascadeLake-N.
+Flip this around.
 
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../x86/intel-speed-select/isst-config.c      | 56 ++++++++++++++-----
- .../x86/intel-speed-select/isst-display.c     |  6 +-
- tools/power/x86/intel-speed-select/isst.h     |  3 +-
- 3 files changed, 49 insertions(+), 16 deletions(-)
+	if (!val)
+		return 0;
 
-diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 0c66012fc5a1..24e6084a36b4 100644
---- a/tools/power/x86/intel-speed-select/isst-config.c
-+++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -940,6 +940,18 @@ static void set_tdp_level(int arg)
- 	isst_ctdp_display_information_end(outf);
- }
- 
-+static void cn_dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2,
-+				       void *arg3, void *arg4)
-+{
-+	struct isst_pbf_info *pbf_info;
-+	struct isst_pkg_ctdp_level_info *ctdp_level;
-+
-+	ctdp_level = &cn_pkg_dev.ctdp_level[0];
-+	pbf_info = &ctdp_level->pbf_info;
-+
-+	isst_pbf_display_information(cpu, outf, tdp_level, pbf_info, cpu_model);
-+}
-+
- static void dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 				    void *arg4)
- {
-@@ -950,13 +962,16 @@ static void dump_pbf_config_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 	if (ret) {
- 		perror("isst_get_pbf_info");
- 	} else {
--		isst_pbf_display_information(cpu, outf, tdp_level, &pbf_info);
-+		isst_pbf_display_information(cpu, outf, tdp_level, &pbf_info,
-+					     cpu_model);
- 		isst_get_pbf_info_complete(&pbf_info);
- 	}
- }
- 
- static void dump_pbf_config(int arg)
- {
-+	void *fn;
-+
- 	if (cmd_help) {
- 		fprintf(stderr,
- 			"Print Intel(R) Speed Select Technology base frequency configuration for a TDP level\n");
-@@ -970,13 +985,18 @@ static void dump_pbf_config(int arg)
- 		exit(1);
- 	}
- 
-+	if (cpu_model != 0x55)
-+		fn = dump_pbf_config_for_cpu;
-+	else
-+		fn = cn_dump_pbf_config_for_cpu;
-+
- 	isst_ctdp_display_information_start(outf);
-+
- 	if (max_target_cpus)
--		for_each_online_target_cpu_in_set(dump_pbf_config_for_cpu, NULL,
--						  NULL, NULL, NULL);
-+		for_each_online_target_cpu_in_set(fn, NULL, NULL, NULL, NULL);
- 	else
--		for_each_online_package_in_set(dump_pbf_config_for_cpu, NULL,
--					       NULL, NULL, NULL);
-+		for_each_online_package_in_set(fn, NULL, NULL, NULL, NULL);
-+
- 	isst_ctdp_display_information_end(outf);
- }
- 
-@@ -986,17 +1006,24 @@ static void set_pbf_for_cpu(int cpu, void *arg1, void *arg2, void *arg3,
- 	int ret;
- 	int status = *(int *)arg4;
- 
--	ret = isst_set_pbf_fact_status(cpu, 1, status);
--	if (ret) {
--		perror("isst_set_pbf");
-+	if (cpu_model != 0x55) {
-+		ret = isst_set_pbf_fact_status(cpu, 1, status);
-+		if (ret) {
-+			perror("isst_set_pbf");
-+			return;
-+		}
-+
- 	} else {
--		if (status)
--			isst_display_result(cpu, outf, "base-freq", "enable",
--					    ret);
-+		if (status == 0)
-+			ret = -1;
- 		else
--			isst_display_result(cpu, outf, "base-freq", "disable",
--					    ret);
-+			ret = 0;
- 	}
-+
-+	if (status)
-+		isst_display_result(cpu, outf, "base-freq", "enable", ret);
-+	else
-+		isst_display_result(cpu, outf, "base-freq", "disable", ret);
- }
- 
- static void set_pbf_enable(int arg)
-@@ -1388,6 +1415,9 @@ static void get_clos_assoc(int arg)
- 
- static struct process_cmd_struct cn_cmds[] = {
- 	{ "perf-profile", "info", dump_isst_config, 0 },
-+	{ "base-freq", "info", dump_pbf_config, 0 },
-+	{ "base-freq", "enable", set_pbf_enable, 1 },
-+	{ "base-freq", "disable", set_pbf_enable, 0 },
- 	{ NULL, NULL, NULL, 0 }
- };
- 
-diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
-index 7d91a5de1b85..8cc8d963a55e 100644
---- a/tools/power/x86/intel-speed-select/isst-display.c
-+++ b/tools/power/x86/intel-speed-select/isst-display.c
-@@ -474,10 +474,12 @@ void isst_ctdp_display_information_end(FILE *outf)
- }
- 
- void isst_pbf_display_information(int cpu, FILE *outf, int level,
--				  struct isst_pbf_info *pbf_info)
-+				  struct isst_pbf_info *pbf_info,
-+				  int cpu_model)
- {
- 	print_package_info(cpu, outf);
--	_isst_pbf_display_information(cpu, outf, level, pbf_info, 4, 0);
-+	_isst_pbf_display_information(cpu, outf, level, pbf_info, 4,
-+				      cpu_model);
- 	format_and_print(outf, 1, NULL, NULL);
- }
- 
-diff --git a/tools/power/x86/intel-speed-select/isst.h b/tools/power/x86/intel-speed-select/isst.h
-index 35b0fec44d35..d94b46272ce2 100644
---- a/tools/power/x86/intel-speed-select/isst.h
-+++ b/tools/power/x86/intel-speed-select/isst.h
-@@ -203,7 +203,8 @@ extern void isst_ctdp_display_core_info(int cpu, FILE *outf, char *prefix,
- extern void isst_ctdp_display_information_start(FILE *outf);
- extern void isst_ctdp_display_information_end(FILE *outf);
- extern void isst_pbf_display_information(int cpu, FILE *outf, int level,
--					 struct isst_pbf_info *info);
-+					 struct isst_pbf_info *info,
-+					 int cpu_model);
- extern int isst_set_tdp_level(int cpu, int tdp_level);
- extern int isst_set_tdp_level_msr(int cpu, int tdp_level);
- extern int isst_set_pbf_fact_status(int cpu, int pbf, int enable);
--- 
-2.21.0
+> +		if (!((val & ACP_PGFSM_STATUS_MASK) ==
+> +				ACP_POWER_ON_IN_PROGRESS))
 
+Use != insead of !(foo == bar).
+
+	if ((val & ACP_PGFSM_STATUS_MASK) != ACP_POWER_ON_IN_PROGRESS)
+
+> +			rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
+> +				acp3x_base + mmACP_PGFSM_CONTROL);
+> +		while (true) {
+> +			val  = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
+> +			if (!val)
+> +				break;
+
+return 0;
+
+
+
+> +			udelay(1);
+> +			if (timeout > 500) {
+
+if (timeout++ > 500) {
+
+
+> +				pr_err("ACP is Not Powered ON\n");
+
+We print two error messages.  :/
+
+
+> +				ret = -ETIMEDOUT;
+
+return -ETIMOUT;
+
+> +				break;
+> +			}
+> +			timeout++;
+> +		}
+> +		if (ret) {
+> +			pr_err("ACP is not powered on status:%d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +	return ret;
+> +}
+
+regards,
+dan carpenter
