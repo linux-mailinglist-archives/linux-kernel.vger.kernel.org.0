@@ -2,111 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457C8BF76F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8C1BF77B
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:19:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbfIZRRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 13:17:34 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:39160 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfIZRRd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 13:17:33 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w144so2779019oia.6;
-        Thu, 26 Sep 2019 10:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6iIyaUzF9v02p9F3h71C8x4tDacLmA6BNo4c1Ew2pJs=;
-        b=dZKovGgbdsd2S4YW1nmKU9AKCVrY3PrOkZC0M14UJMIpQ+qRDzwZPmVIIFqq0Xk+eR
-         4A95WaKJNw7EkpSPAYO/chkQFTbxnnTdC/9OHpPyt6nLSLZizpfd3UUROSkisuLJh6ij
-         hrJIkannXvZfTi9lJ2zi+c1d0WRsgEKhxPMxV7gcTOf/ZVatEEO1rPohku5TLrJWADSy
-         WZPR2APPq6hmVliPnTZ2jpXV/sR/u3+4Aw9uH0yzz44tvF5vCdCszeaP22atjbBH20tz
-         lSQQsQIDzDR592IF0apV8xXcxtRp6DmoBq0YXt0BmRzR5n5QI+f3DMQ9C5XLmGqVyHKc
-         17mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6iIyaUzF9v02p9F3h71C8x4tDacLmA6BNo4c1Ew2pJs=;
-        b=MJvuC0CkFKYxh7nTOzAiibo0AV1UdNgPkpv2xoWaNH09QCK6NKU+aPeDbIODsLVNr6
-         ZjgcARPd34zhArOKyL3G0UZWNDGbnEI16hRQd7kdGBkeyLLTLLrWWVV2gkwDhy6Afo/y
-         32I0BiLaH1moQIRrOPtojzb0nWVYPOhyIfEieOvTwfLUOeun/Etqrkd+W6FMMbFEeI9r
-         +ka9ZOALQYsVbLyoaZgUqMRHJG8V4aBC+ikKQOBMQtqCZdEanps5mQelmRnYNHD4XcrA
-         sBk6AIKPLzsgo2ewFn/B6Xqd2FM3BXuIHqi65AGs7BBRSiJqNAjM8MR9BbZtklFR6DhG
-         81VQ==
-X-Gm-Message-State: APjAAAXFLNPFcbVuejwililDx/HWbQEYqWtSzfATpQ5uUYlKoCsNPx5t
-        zTZ93YNwcu9aydjB7SBuyfOynDLM
-X-Google-Smtp-Source: APXvYqyMW3KcJHL1VGgFwmaSAlmnyTk+9Zx0q0T+8icx9Z83JVR+fdqIHjILb+MW+p+dEDxgp9V2WQ==
-X-Received: by 2002:aca:b256:: with SMTP id b83mr3379404oif.120.1569518252353;
-        Thu, 26 Sep 2019 10:17:32 -0700 (PDT)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id l19sm788637oie.22.2019.09.26.10.17.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2019 10:17:31 -0700 (PDT)
-Subject: Re: [PATCH] staging: rtl8188eu: fix HighestRate check in
- odm_ARFBRefresh_8188E()
-To:     Denis Efremov <efremov@linux.com>, devel@driverdev.osuosl.org
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Straube <straube.linux@gmail.com>,
-        stable@vger.kernel.org
-References: <20190926073138.12109-1-efremov@linux.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <24dbe004-2afe-97e6-b281-3b7109034dd9@lwfinger.net>
-Date:   Thu, 26 Sep 2019 12:17:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        id S1727791AbfIZRTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 13:19:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727662AbfIZRTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 13:19:03 -0400
+Received: from localhost (unknown [12.206.46.59])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73638222C7;
+        Thu, 26 Sep 2019 17:19:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569518342;
+        bh=Iemf5tRfr5wOSFqa/aWWGJKPJS18KwjXC9W3m7Fd1pc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G0UMPdSphtNsXSVixlIKQElNjAwFdXB0CIEWwEfcwGvIGlmRhn8/AJd2FEnSVlfDu
+         Vlt3oaxizv34tN5YIvB165H2FC50Nbc2i9mR6dBdao0kNZfi0ySeeYa8esbWVtbwu7
+         A0DJRLq/6PDEGmFTemYnmPBKXbKIxbR3ECuVWwcs=
+Date:   Thu, 26 Sep 2019 10:18:01 -0700
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Radhey Shyam Pandey <radheys@xilinx.com>
+Cc:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Michal Simek <michals@xilinx.com>,
+        "nick.graumann@gmail.com" <nick.graumann@gmail.com>,
+        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next 3/8] dmaengine: xilinx_dma: Introduce
+ xilinx_dma_get_residue
+Message-ID: <20190926171801.GM3824@vkoul-mobl>
+References: <1567701424-25658-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <1567701424-25658-4-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <20190925210123.GL3824@vkoul-mobl>
+ <CH2PR02MB70008CE8600D98753BE1CC97C7860@CH2PR02MB7000.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20190926073138.12109-1-efremov@linux.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CH2PR02MB70008CE8600D98753BE1CC97C7860@CH2PR02MB7000.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/19 2:31 AM, Denis Efremov wrote:
-> It's incorrect to compare HighestRate with 0x0b twice in the following
-> manner "if (HighestRate > 0x0b) ... else if (HighestRate > 0x0b) ...". The
-> "else if" branch is constantly false. The second comparision should be
-> with 0x03 according to the max_rate_idx in ODM_RAInfo_Init().
-> 
-> Cc: Larry Finger <Larry.Finger@lwfinger.net>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Michael Straube <straube.linux@gmail.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-> ---
->   drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-> index 9ddd51685063..5792f491b59a 100644
-> --- a/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-> +++ b/drivers/staging/rtl8188eu/hal/hal8188e_rate_adaptive.c
-> @@ -409,7 +409,7 @@ static int odm_ARFBRefresh_8188E(struct odm_dm_struct *dm_odm, struct odm_ra_inf
->   		pRaInfo->PTModeSS = 3;
->   	else if (pRaInfo->HighestRate > 0x0b)
->   		pRaInfo->PTModeSS = 2;
-> -	else if (pRaInfo->HighestRate > 0x0b)
-> +	else if (pRaInfo->HighestRate > 0x03)
->   		pRaInfo->PTModeSS = 1;
->   	else
->   		pRaInfo->PTModeSS = 0;
-> 
+On 26-09-19, 05:52, Radhey Shyam Pandey wrote:
 
-I agree that the original code is wrong; however, I prefer that changes that 
-alter the execution should be tested. I see no evidence that such testing has 
-been done. It probably does not matter because a highest rate between 3 and 0xb 
-means 802.11g is in use, and that may no longer be a real-world situation.
+> > > +	 * VDMA and simple mode do not support residue reporting, so the
+> > > +	 * residue field will always be 0.
+> > > +	 */
+> > > +	if (chan->xdev->dma_config->dmatype == XDMA_TYPE_VDMA ||
+> > !chan->has_sg)
+> > > +		return residue;
+> > 
+> > why not check this in status callback?
+> Assuming we mean to move vdma and non-sg check to xilinx_dma_tx_status.
+> Just a thought- Keeping this check in xilinx_dma_get_residue provides
+> an abstraction and caller can simply call this func with knowing about
+> IP config specific residue calculation. Considering this point does it
+> looks ok ? 
 
-With any future patches, you need to indicate if testing has been done.
+well you are checking either way, so calling the lower level function
+only when you need it makes more sense!
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-
-Larry
-
+-- 
+~Vinod
