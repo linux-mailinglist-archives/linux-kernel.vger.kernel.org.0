@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63F7EBE9B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54FC0BE9BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:37:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390622AbfIZAga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 20:36:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39220 "EHLO mail.kernel.org"
+        id S2390657AbfIZAgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 20:36:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390543AbfIZAg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 20:36:28 -0400
+        id S2390625AbfIZAgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 20:36:31 -0400
 Received: from quaco.localdomain (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0817F222C7;
-        Thu, 26 Sep 2019 00:36:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BBE5222C2;
+        Thu, 26 Sep 2019 00:36:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569458186;
-        bh=xy0feKi1pEzjdSav6Ilw6hSvjbgR28tFtk4mt0k/fN4=;
+        s=default; t=1569458190;
+        bh=s2Xw4Ax7OLJRMuFenM5p8B3w+EpuLCS6x/Pgqht+HPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V+qfZTlDugNBTZPJz+J6XZvhTPkkKmpLHgH8L0KnUPwL+XUQFxv5rbb7CmWDywjlr
-         dTBN2hW1wHcTdbJ+tGpFOtVdP8Qv7FpfOZ0FuAnGT3kOtk2vXupwRTXa8H6AMvGcgt
-         azQqG6OjMQZX9z8c7VnZ3q6dw1pq2qR7bgTokL1Q=
+        b=p3eeeqQqrAqbxcPzp4cvxb2eNHd8Om0qHvVjoMktmgIZU2PDWDcZfXGeTHU+zFErY
+         64GC5zIF5Oe/kNfPvu7ktJ5pBABcrGFGWBr3drryKD//vKIkInWani3MnrnpZhEKWW
+         YYJa0U465X/k0VdiZJQzX37RBGah24eQymhRgk9s=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,9 +31,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 58/66] perf evlist: Remove unused perf_evlist__fprintf() method
-Date:   Wed, 25 Sep 2019 21:32:36 -0300
-Message-Id: <20190926003244.13962-59-acme@kernel.org>
+Subject: [PATCH 59/66] perf evsel: Move config terms to a separate header
+Date:   Wed, 25 Sep 2019 21:32:37 -0300
+Message-Id: <20190926003244.13962-60-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190926003244.13962-1-acme@kernel.org>
 References: <20190926003244.13962-1-acme@kernel.org>
@@ -46,81 +46,181 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Ditch it, noone is using it, one more stdio.h include in a hot header.
-
-Fix the fallout in parse-events.y, where we end up using a FILE pointer,
-I think due to YYDEBUG being set and in some places, like Amazon Linux 1
-we don't get stdio.h included by luck, like in most other places, add a
-explicit stdio.h include directive.
+Further reducing the size of util/evsel.h.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-37k5q0lhdbo2hvvfbnnzn7og@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-20zr7di9eynm0272mtjfdhfc@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c       | 13 -------------
- tools/perf/util/evlist.h       |  3 ---
- tools/perf/util/parse-events.y |  1 +
- 3 files changed, 1 insertion(+), 16 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c |  1 +
+ tools/perf/builtin-top.c          |  1 +
+ tools/perf/util/evsel.c           |  1 +
+ tools/perf/util/evsel.h           | 43 --------------------------
+ tools/perf/util/evsel_config.h    | 50 +++++++++++++++++++++++++++++++
+ tools/perf/util/parse-events.c    |  1 +
+ 6 files changed, 54 insertions(+), 43 deletions(-)
+ create mode 100644 tools/perf/util/evsel_config.h
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index d4c7fd125ce9..84c42790dab3 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1421,19 +1421,6 @@ int perf_evlist__parse_sample_timestamp(struct evlist *evlist,
- 	return perf_evsel__parse_sample_timestamp(evsel, event, timestamp);
- }
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 2e4de211d881..ede040cf82ad 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -23,6 +23,7 @@
+ #include "../../util/event.h"
+ #include "../../util/evlist.h"
+ #include "../../util/evsel.h"
++#include "../../util/evsel_config.h"
+ #include "../../util/pmu.h"
+ #include "../../util/cs-etm.h"
+ #include <internal/lib.h> // page_size
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 30d8eb614377..1f60124eb19b 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -27,6 +27,7 @@
+ #include "util/dso.h"
+ #include "util/evlist.h"
+ #include "util/evsel.h"
++#include "util/evsel_config.h"
+ #include "util/event.h"
+ #include "util/machine.h"
+ #include "util/map.h"
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 6323b0c60f6c..5591af81a070 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -30,6 +30,7 @@
+ #include "counts.h"
+ #include "event.h"
+ #include "evsel.h"
++#include "util/evsel_config.h"
+ #include "util/evsel_fprintf.h"
+ #include "evlist.h"
+ #include <perf/cpumap.h>
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 48183b5f5f83..ddc5ee6f6592 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -12,49 +12,6 @@
+ #include "symbol_conf.h"
+ #include <internal/cpumap.h>
  
--size_t perf_evlist__fprintf(struct evlist *evlist, FILE *fp)
--{
--	struct evsel *evsel;
--	size_t printed = 0;
+-/*
+- * The 'struct perf_evsel_config_term' is used to pass event
+- * specific configuration data to perf_evsel__config routine.
+- * It is allocated within event parsing and attached to
+- * perf_evsel::config_terms list head.
+-*/
+-enum term_type {
+-	PERF_EVSEL__CONFIG_TERM_PERIOD,
+-	PERF_EVSEL__CONFIG_TERM_FREQ,
+-	PERF_EVSEL__CONFIG_TERM_TIME,
+-	PERF_EVSEL__CONFIG_TERM_CALLGRAPH,
+-	PERF_EVSEL__CONFIG_TERM_STACK_USER,
+-	PERF_EVSEL__CONFIG_TERM_INHERIT,
+-	PERF_EVSEL__CONFIG_TERM_MAX_STACK,
+-	PERF_EVSEL__CONFIG_TERM_MAX_EVENTS,
+-	PERF_EVSEL__CONFIG_TERM_OVERWRITE,
+-	PERF_EVSEL__CONFIG_TERM_DRV_CFG,
+-	PERF_EVSEL__CONFIG_TERM_BRANCH,
+-	PERF_EVSEL__CONFIG_TERM_PERCORE,
+-	PERF_EVSEL__CONFIG_TERM_AUX_OUTPUT,
+-};
 -
--	evlist__for_each_entry(evlist, evsel) {
--		printed += fprintf(fp, "%s%s", evsel->idx ? ", " : "",
--				   perf_evsel__name(evsel));
--	}
+-struct perf_evsel_config_term {
+-	struct list_head	list;
+-	enum term_type	type;
+-	union {
+-		u64	period;
+-		u64	freq;
+-		bool	time;
+-		char	*callgraph;
+-		char	*drv_cfg;
+-		u64	stack_user;
+-		int	max_stack;
+-		bool	inherit;
+-		bool	overwrite;
+-		char	*branch;
+-		unsigned long max_events;
+-		bool	percore;
+-		bool	aux_output;
+-	} val;
+-	bool weak;
+-};
 -
--	return printed + fprintf(fp, "\n");
--}
--
- int perf_evlist__strerror_open(struct evlist *evlist,
- 			       int err, char *buf, size_t size)
- {
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 130d44d691b8..7cfe75522ba5 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -7,7 +7,6 @@
- #include <linux/refcount.h>
- #include <linux/list.h>
- #include <api/fd/array.h>
--#include <stdio.h>
- #include <internal/evlist.h>
- #include <internal/evsel.h>
- #include "events_stats.h"
-@@ -249,8 +248,6 @@ static inline struct evsel *evlist__last(struct evlist *evlist)
- 	return container_of(evsel, struct evsel, core);
- }
+ struct bpf_object;
+ struct cgroup;
+ struct perf_counts;
+diff --git a/tools/perf/util/evsel_config.h b/tools/perf/util/evsel_config.h
+new file mode 100644
+index 000000000000..8a7648037c18
+--- /dev/null
++++ b/tools/perf/util/evsel_config.h
+@@ -0,0 +1,50 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef __PERF_EVSEL_CONFIG_H
++#define __PERF_EVSEL_CONFIG_H 1
++
++#include <linux/types.h>
++#include <stdbool.h>
++
++/*
++ * The 'struct perf_evsel_config_term' is used to pass event
++ * specific configuration data to perf_evsel__config routine.
++ * It is allocated within event parsing and attached to
++ * perf_evsel::config_terms list head.
++*/
++enum evsel_term_type {
++	PERF_EVSEL__CONFIG_TERM_PERIOD,
++	PERF_EVSEL__CONFIG_TERM_FREQ,
++	PERF_EVSEL__CONFIG_TERM_TIME,
++	PERF_EVSEL__CONFIG_TERM_CALLGRAPH,
++	PERF_EVSEL__CONFIG_TERM_STACK_USER,
++	PERF_EVSEL__CONFIG_TERM_INHERIT,
++	PERF_EVSEL__CONFIG_TERM_MAX_STACK,
++	PERF_EVSEL__CONFIG_TERM_MAX_EVENTS,
++	PERF_EVSEL__CONFIG_TERM_OVERWRITE,
++	PERF_EVSEL__CONFIG_TERM_DRV_CFG,
++	PERF_EVSEL__CONFIG_TERM_BRANCH,
++	PERF_EVSEL__CONFIG_TERM_PERCORE,
++	PERF_EVSEL__CONFIG_TERM_AUX_OUTPUT,
++};
++
++struct perf_evsel_config_term {
++	struct list_head      list;
++	enum evsel_term_type  type;
++	union {
++		u64	      period;
++		u64	      freq;
++		bool	      time;
++		char	      *callgraph;
++		char	      *drv_cfg;
++		u64	      stack_user;
++		int	      max_stack;
++		bool	      inherit;
++		bool	      overwrite;
++		char	      *branch;
++		unsigned long max_events;
++		bool	      percore;
++		bool	      aux_output;
++	} val;
++	bool weak;
++};
++#endif // __PERF_EVSEL_CONFIG_H
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index d69ff746cda5..50737046fa63 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -34,6 +34,7 @@
+ #include "asm/bug.h"
+ #include "util/parse-branch-options.h"
+ #include "metricgroup.h"
++#include "util/evsel_config.h"
+ #include "util/mmap.h"
  
--size_t perf_evlist__fprintf(struct evlist *evlist, FILE *fp);
--
- int perf_evlist__strerror_open(struct evlist *evlist, int err, char *buf, size_t size);
- int perf_evlist__strerror_mmap(struct evlist *evlist, int err, char *buf, size_t size);
- 
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index f1c36ed1cf36..65809ad67808 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -9,6 +9,7 @@
- #define YYDEBUG 1
- 
- #include <fnmatch.h>
-+#include <stdio.h>
- #include <linux/compiler.h>
- #include <linux/list.h>
- #include <linux/types.h>
+ #define MAX_NAME_LEN 100
 -- 
 2.21.0
 
