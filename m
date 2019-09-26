@@ -2,281 +2,315 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D610BF21E
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E6C6BF221
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbfIZLuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:50:54 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:23408 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725768AbfIZLuy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:50:54 -0400
-Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8QBgwt9006665;
-        Thu, 26 Sep 2019 07:50:22 -0400
-Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2056.outbound.protection.outlook.com [104.47.41.56])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2v6hkcq7u7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 26 Sep 2019 07:50:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hcmcna2FAMU00eayxhhn/5Pmn4Yl/6IqThBXkqJ2biamXXsKnWOVrjRZEsQJaBWHf91294Xq4qRN1z+b6WOvKsTQNdrXE9MurspqlnqPoMaEPpbH91OwdxXFgLn2gltdBSAmtL10YQgSD25RMFXzmtHpLFXF5PYby+IuqOzr8QVd6q7iqJDaUF+btc9uwePWSehvTE4UGoktFg21Pm7Uyn0mBzGWdw/m7tLW/lq2F1vtn55Orej4sK+qcwep03jifAYwrnBOzyLLFRtWzper/u8RlEIC82D8M4uFv/lVS9WShMH3+6ZIiQkxpTOB4SwI/g5glDHaNNlxJseNxVNgcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rkbl8teCMQ8vSxltg0l1JMy8QEuHaJb9gCj//VWn0Qk=;
- b=QjGJJE0rnp+LS4IqCZcKh8Jguz0Zwkn55QFzk2C42Rt80bm8NmPVp4gBHvc+X2A1+1WKpR56X+EgQyZGLmFr8oGxjnEIUGQS1OHxHtnB5YA11m7+jVMwBh0bKDe7nLaK14yxOQJ8eE7CocFOV9f3lWuidnANIJYIHOIeQeKoLMldIYU68HqheHgUiXIowvCPDGC6of5mucvGlZvL8sAATEAICO1YsCrl54sBKc4i8giD3NhIRB2oXWnrfyw3mqQXsFS+P4dKomdEHAAgd4Ic2fSZ6aKPH/zGJRHoBi/ZwUXggf4LylZyMg5ysLEKlbzkOQmxfV3tNEF6+rGfKjXWlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.55) smtp.rcpttodomain=suse.com smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rkbl8teCMQ8vSxltg0l1JMy8QEuHaJb9gCj//VWn0Qk=;
- b=MCdZ+WpPR0xeYH+s6dml2pvlEi1y4lbeW8R2AkkswheE6v8Nk/I5GHWDknUG9hFQztt5u3kVQZ5Zcgogobuzrxo1Uz3hw6743lihtuQrqciQboqPZzWUxGTAPsr8gWeuEvKFs72NT7lERAwIeT8kIpISptiK5Zwalw1YVMhBukk=
-Received: from CY4PR03CA0004.namprd03.prod.outlook.com (2603:10b6:903:33::14)
- by CO2PR03MB2216.namprd03.prod.outlook.com (2603:10b6:102:9::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.26; Thu, 26 Sep
- 2019 11:50:20 +0000
-Received: from CY1NAM02FT029.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::202) by CY4PR03CA0004.outlook.office365.com
- (2603:10b6:903:33::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2305.16 via Frontend
- Transport; Thu, 26 Sep 2019 11:50:19 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- CY1NAM02FT029.mail.protection.outlook.com (10.152.75.143) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2284.20
- via Frontend Transport; Thu, 26 Sep 2019 11:50:19 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x8QBoDLK010413
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 26 Sep 2019 04:50:13 -0700
-Received: from saturn.ad.analog.com (10.48.65.123) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 26 Sep 2019 07:50:18 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-CC:     <tiwai@suse.com>, <perex@perex.cz>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <lars@metafoo.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH 2/2][RESEND] ASoC: adau1761: Add ALC controls
-Date:   Thu, 26 Sep 2019 14:50:12 +0300
-Message-ID: <20190926115012.24049-2-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190926115012.24049-1-alexandru.ardelean@analog.com>
-References: <20190709082111.27221-1-alexandru.ardelean@analog.com>
- <20190926115012.24049-1-alexandru.ardelean@analog.com>
+        id S1726250AbfIZLvX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 07:51:23 -0400
+Received: from foss.arm.com ([217.140.110.172]:47394 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725768AbfIZLvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 07:51:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 682CA142F;
+        Thu, 26 Sep 2019 04:51:22 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C2383F67D;
+        Thu, 26 Sep 2019 04:51:22 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id D42EB682570; Thu, 26 Sep 2019 12:51:20 +0100 (BST)
+Date:   Thu, 26 Sep 2019 12:51:20 +0100
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+Cc:     "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "seanpaul@chromium.org" <seanpaul@chromium.org>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Mihail Atanassov <Mihail.Atanassov@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        nd <nd@arm.com>
+Subject: Re: [PATCH v2 1/2] drm/komeda: Add line size support
+Message-ID: <20190926115120.utnhcf5hw4sebixd@e110455-lin.cambridge.arm.com>
+References: <20190924080022.19250-1-lowry.li@arm.com>
+ <20190924080022.19250-2-lowry.li@arm.com>
+ <20190925102456.njecolasjwsfrvel@e110455-lin.cambridge.arm.com>
+ <20190926100016.GA32449@lowli01-ThinkStation-P300>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(39860400002)(189003)(199004)(48376002)(305945005)(246002)(50226002)(51416003)(2870700001)(2906002)(7696005)(76176011)(186003)(26005)(4326008)(7636002)(107886003)(1076003)(47776003)(14444005)(8676002)(8936002)(356004)(6666004)(446003)(336012)(54906003)(126002)(476003)(2616005)(486006)(11346002)(44832011)(316002)(426003)(106002)(110136005)(70586007)(70206006)(478600001)(50466002)(5660300002)(86362001)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR03MB2216;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0631c9d8-cc71-464c-2afa-08d74277b4bb
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(4709080)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:CO2PR03MB2216;
-X-MS-TrafficTypeDiagnostic: CO2PR03MB2216:
-X-Microsoft-Antispam-PRVS: <CO2PR03MB2216FF30C60A4F54C4A3804DF9860@CO2PR03MB2216.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:486;
-X-Forefront-PRVS: 0172F0EF77
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: c7gxQAO8Dc1SHuspJArr/qX0TKpbxWtkUn+T0acHfSN+1I3KLVrA8CVqSYVZR0C2r9GvM8bj85hFcb/5IKEBWNWLyikcPlpsZo9TDj8pf11nQihTptAHYb9+JQgxx2SHzZPEfP/B/Lf5Ozsgft7OYNKSS9xsHQBKMO44T6Y4s+prYFsyeu3y5mpMaJ9Wbz1EBiLAoiyMu0h/ISS4cYOgQ433vCrnL5mpCJT+8JbJmPWyR8sQNp4k/emYKFb3HWo7i0TcOwD1VIStgiOSKGMwO63ZnzdgAoLYLQqPSoL5/GTplSgqifSn168Dempu7VD+DzEVxv6RRauydJSzTMDS5iWgTpTKjigBsOG5ab/3jZhrJ+OZYPXYivdZSHoyYccX43unNKqebWJTxG6pJlYrOeLICUeHBf23X+QEBlDmarI=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2019 11:50:19.5549
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0631c9d8-cc71-464c-2afa-08d74277b4bb
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR03MB2216
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-09-26_05:2019-09-25,2019-09-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 adultscore=0 spamscore=0 malwarescore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1908290000 definitions=main-1909260113
+In-Reply-To: <20190926100016.GA32449@lowli01-ThinkStation-P300>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+On Thu, Sep 26, 2019 at 10:00:22AM +0000, Lowry Li (Arm Technology China) wrote:
+> Hi Lowry,
+> On Wed, Sep 25, 2019 at 10:24:58AM +0000, Liviu Dudau wrote:
+> > Hi Lowry,
+> > 
+> > On Tue, Sep 24, 2019 at 08:00:44AM +0000, Lowry Li (Arm Technology China) wrote:
+> > > From: "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>
+> > > 
+> > > On D71, we are using the global line size. From D32, every
+> > > component have a line size register to indicate the fifo size.
+> > > 
+> > > So this patch is to set line size support and do the line size
+> > > check.
+> > > 
+> > > Signed-off-by: Lowry Li (Arm Technology China) <lowry.li@arm.com>
+> > > ---
+> > >  .../arm/display/komeda/d71/d71_component.c    | 57 ++++++++++++++++---
+> > >  .../gpu/drm/arm/display/komeda/d71/d71_regs.h |  9 +--
+> > >  .../drm/arm/display/komeda/komeda_pipeline.h  |  2 +
+> > >  .../display/komeda/komeda_pipeline_state.c    | 17 ++++++
+> > >  4 files changed, 70 insertions(+), 15 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> > > index 7b374a3b911e..357837b9d6ed 100644
+> > > --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> > > +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_component.c
+> > > @@ -106,6 +106,23 @@ static void dump_block_header(struct seq_file *sf, void __iomem *reg)
+> > >  			   i, hdr.output_ids[i]);
+> > >  }
+> > >  
+> > > +/* On D71, we are using the global line size. From D32, every component have
+> > > + * a line size register to indicate the fifo size.
+> > > + */
+> > > +static u32 __get_blk_line_size(struct d71_dev *d71, u32 __iomem *reg,
+> > > +			       u32 max_default)
+> > > +{
+> > > +	if (!d71->periph_addr)
+> > > +		max_default = malidp_read32(reg, BLK_MAX_LINE_SIZE);
+> > > +
+> > > +	return max_default;
+> > > +}
+> > > +
+> > > +static u32 get_blk_line_size(struct d71_dev *d71, u32 __iomem *reg)
+> > > +{
+> > > +	return __get_blk_line_size(d71, reg, d71->max_line_size);
+> > > +}
+> > 
+> > I know you're trying to save typing the extra parameter, but looking at the rest of
+> > the diff I think it would look better if you get rid of get_blk_line_size() function
+> > and use the name for the function with 3 parameters.
+> > 
+> > Otherwise, patch looks good to me.
+> > 
+> > Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> > 
+> > Best regards,
+> > Liviu
+> Thanks for the comments.
+> But considering from D32 every component have a line size register
+> and no need default value, so we have get_blk_line_size() without
+> default argument and also can save some typing and lines. That's
+> why we want to keep __get_blk_line_size().
 
-The adau1761 has a automatic level control block that can adjust the gain
-for the differential input PGA. This patch adds ALSA controls for enabling
-and changing the parameter settings for the ALC.
+I was suggesting to remove get_blk_line_size and only use __get_blk_line_size() with
+explicit use of d71->max_line_size where it makes sense.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- sound/soc/codecs/adau1761.c | 109 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
+Best regards,
+Liviu
 
-diff --git a/sound/soc/codecs/adau1761.c b/sound/soc/codecs/adau1761.c
-index a9ef735f8b4e..5ca9b744b7d8 100644
---- a/sound/soc/codecs/adau1761.c
-+++ b/sound/soc/codecs/adau1761.c
-@@ -29,6 +29,9 @@
- #define ADAU1761_LEFT_DIFF_INPUT_VOL	0x400e
- #define ADAU1761_RIGHT_DIFF_INPUT_VOL	0x400f
- #define ADAU1761_ALC_CTRL0		0x4011
-+#define ADAU1761_ALC_CTRL1		0x4012
-+#define ADAU1761_ALC_CTRL2		0x4013
-+#define ADAU1761_ALC_CTRL3		0x4014
- #define ADAU1761_PLAY_LR_MIXER_LEFT	0x4020
- #define ADAU1761_PLAY_MIXER_LEFT0	0x401c
- #define ADAU1761_PLAY_MIXER_LEFT1	0x401d
-@@ -73,6 +76,9 @@ static const struct reg_default adau1761_reg_defaults[] = {
- 	{ ADAU1761_REC_MIXER_RIGHT1,		0x00 },
- 	{ ADAU1761_LEFT_DIFF_INPUT_VOL,		0x00 },
- 	{ ADAU1761_ALC_CTRL0,			0x00 },
-+	{ ADAU1761_ALC_CTRL1,			0x00 },
-+	{ ADAU1761_ALC_CTRL2,			0x00 },
-+	{ ADAU1761_ALC_CTRL3,			0x00 },
- 	{ ADAU1761_RIGHT_DIFF_INPUT_VOL,	0x00 },
- 	{ ADAU1761_PLAY_LR_MIXER_LEFT,		0x00 },
- 	{ ADAU1761_PLAY_MIXER_LEFT0,		0x00 },
-@@ -123,6 +129,10 @@ static const DECLARE_TLV_DB_SCALE(adau1761_sidetone_tlv, -1800, 300, 1);
- static const DECLARE_TLV_DB_SCALE(adau1761_boost_tlv, -600, 600, 1);
- static const DECLARE_TLV_DB_SCALE(adau1761_pga_boost_tlv, -2000, 2000, 1);
- 
-+static const DECLARE_TLV_DB_SCALE(adau1761_alc_max_gain_tlv, -1200, 600, 0);
-+static const DECLARE_TLV_DB_SCALE(adau1761_alc_target_tlv, -2850, 150, 0);
-+static const DECLARE_TLV_DB_SCALE(adau1761_alc_ng_threshold_tlv, -7650, 150, 0);
-+
- static const unsigned int adau1761_bias_select_values[] = {
- 	0, 2, 3,
- };
-@@ -160,9 +170,91 @@ static const char * const adau1761_pga_slew_time_text[] = {
- 	"96 ms",
- };
- 
-+static const char * const adau1761_alc_function_text[] = {
-+	"Off",
-+	"Right",
-+	"Left",
-+	"Stereo",
-+	"DSP control",
-+};
-+
-+static const char * const adau1761_alc_hold_time_text[] = {
-+	"2.67 ms",
-+	"5.34 ms",
-+	"10.68 ms",
-+	"21.36 ms",
-+	"42.72 ms",
-+	"85.44 ms",
-+	"170.88 ms",
-+	"341.76 ms",
-+	"683.52 ms",
-+	"1367 ms",
-+	"2734.1 ms",
-+	"5468.2 ms",
-+	"10936 ms",
-+	"21873 ms",
-+	"43745 ms",
-+	"87491 ms",
-+};
-+
-+static const char * const adau1761_alc_attack_time_text[] = {
-+	"6 ms",
-+	"12 ms",
-+	"24 ms",
-+	"48 ms",
-+	"96 ms",
-+	"192 ms",
-+	"384 ms",
-+	"768 ms",
-+	"1540 ms",
-+	"3070 ms",
-+	"6140 ms",
-+	"12290 ms",
-+	"24580 ms",
-+	"49150 ms",
-+	"98300 ms",
-+	"196610 ms",
-+};
-+
-+static const char * const adau1761_alc_decay_time_text[] = {
-+	"24 ms",
-+	"48 ms",
-+	"96 ms",
-+	"192 ms",
-+	"384 ms",
-+	"768 ms",
-+	"15400 ms",
-+	"30700 ms",
-+	"61400 ms",
-+	"12290 ms",
-+	"24580 ms",
-+	"49150 ms",
-+	"98300 ms",
-+	"196610 ms",
-+	"393220 ms",
-+	"786430 ms",
-+};
-+
-+static const char * const adau1761_alc_ng_type_text[] = {
-+	"Hold",
-+	"Mute",
-+	"Fade",
-+	"Fade + Mute",
-+};
-+
- static SOC_VALUE_ENUM_SINGLE_DECL(adau1761_pga_slew_time_enum,
- 		ADAU1761_ALC_CTRL0, 6, 0x3, adau1761_pga_slew_time_text,
- 		adau1761_pga_slew_time_values);
-+static SOC_ENUM_SINGLE_DECL(adau1761_alc_function_enum,
-+		ADAU1761_ALC_CTRL0, 0, adau1761_alc_function_text);
-+static SOC_ENUM_SINGLE_DECL(adau1761_alc_hold_time_enum,
-+		ADAU1761_ALC_CTRL1, 4, adau1761_alc_hold_time_text);
-+static SOC_ENUM_SINGLE_DECL(adau1761_alc_attack_time_enum,
-+		ADAU1761_ALC_CTRL2, 4, adau1761_alc_attack_time_text);
-+static SOC_ENUM_SINGLE_DECL(adau1761_alc_decay_time_enum,
-+		ADAU1761_ALC_CTRL2, 0, adau1761_alc_decay_time_text);
-+static SOC_ENUM_SINGLE_DECL(adau1761_alc_ng_type_enum,
-+		ADAU1761_ALC_CTRL3, 6, adau1761_alc_ng_type_text);
- 
- static const struct snd_kcontrol_new adau1761_jack_detect_controls[] = {
- 	SOC_SINGLE("Speaker Auto-mute Switch", ADAU1761_DIGMIC_JACKDETECT,
-@@ -180,6 +272,20 @@ static const struct snd_kcontrol_new adau1761_differential_mode_controls[] = {
- 		ADAU1761_REC_MIXER_RIGHT1, 3, 2, 0, adau1761_pga_boost_tlv),
- 
- 	SOC_ENUM("PGA Capture Slew Time", adau1761_pga_slew_time_enum),
-+
-+	SOC_SINGLE_TLV("ALC Capture Max Gain Volume", ADAU1761_ALC_CTRL0,
-+		3, 7, 0, adau1761_alc_max_gain_tlv),
-+	SOC_ENUM("ALC Capture Function", adau1761_alc_function_enum),
-+	SOC_ENUM("ALC Capture Hold Time", adau1761_alc_hold_time_enum),
-+	SOC_SINGLE_TLV("ALC Capture Target Volume", ADAU1761_ALC_CTRL1,
-+		0, 15, 0, adau1761_alc_target_tlv),
-+	SOC_ENUM("ALC Capture Attack Time", adau1761_alc_decay_time_enum),
-+	SOC_ENUM("ALC Capture Decay Time", adau1761_alc_attack_time_enum),
-+	SOC_ENUM("ALC Capture Noise Gate Type", adau1761_alc_ng_type_enum),
-+	SOC_SINGLE("ALC Capture Noise Gate Switch",
-+		ADAU1761_ALC_CTRL3, 5, 1, 0),
-+	SOC_SINGLE_TLV("ALC Capture Noise Gate Threshold Volume",
-+		ADAU1761_ALC_CTRL3, 0, 31, 0, adau1761_alc_ng_threshold_tlv),
- };
- 
- static const struct snd_kcontrol_new adau1761_single_mode_controls[] = {
-@@ -652,6 +758,9 @@ static bool adau1761_readable_register(struct device *dev, unsigned int reg)
- 	case ADAU1761_CLK_ENABLE0:
- 	case ADAU1761_CLK_ENABLE1:
- 	case ADAU1761_ALC_CTRL0:
-+	case ADAU1761_ALC_CTRL1:
-+	case ADAU1761_ALC_CTRL2:
-+	case ADAU1761_ALC_CTRL3:
- 		return true;
- 	default:
- 		break;
+> 
+> > > +
+> > >  static u32 to_rot_ctrl(u32 rot)
+> > >  {
+> > >  	u32 lr_ctrl = 0;
+> > > @@ -365,7 +382,28 @@ static int d71_layer_init(struct d71_dev *d71,
+> > >  	else
+> > >  		layer->layer_type = KOMEDA_FMT_SIMPLE_LAYER;
+> > >  
+> > > -	set_range(&layer->hsize_in, 4, d71->max_line_size);
+> > > +	if (!d71->periph_addr) {
+> > > +		/* D32 or newer product */
+> > > +		layer->line_sz = malidp_read32(reg, BLK_MAX_LINE_SIZE);
+> > > +		layer->yuv_line_sz = L_INFO_YUV_MAX_LINESZ(layer_info);
+> > > +	} else if (d71->max_line_size > 2048) {
+> > > +		/* D71 4K */
+> > > +		layer->line_sz = d71->max_line_size;
+> > > +		layer->yuv_line_sz = layer->line_sz / 2;
+> > > +	} else	{
+> > > +		/* D71 2K */
+> > > +		if (layer->layer_type == KOMEDA_FMT_RICH_LAYER) {
+> > > +			/* rich layer is 4K configuration */
+> > > +			layer->line_sz = d71->max_line_size * 2;
+> > > +			layer->yuv_line_sz = layer->line_sz / 2;
+> > > +		} else {
+> > > +			layer->line_sz = d71->max_line_size;
+> > > +			layer->yuv_line_sz = 0;
+> > > +		}
+> > > +	}
+> > > +
+> > > +	set_range(&layer->hsize_in, 4, layer->line_sz);
+> > > +
+> > >  	set_range(&layer->vsize_in, 4, d71->max_vsize);
+> > >  
+> > >  	malidp_write32(reg, LAYER_PALPHA, D71_PALPHA_DEF_MAP);
+> > > @@ -456,9 +494,11 @@ static int d71_wb_layer_init(struct d71_dev *d71,
+> > >  
+> > >  	wb_layer = to_layer(c);
+> > >  	wb_layer->layer_type = KOMEDA_FMT_WB_LAYER;
+> > > +	wb_layer->line_sz = get_blk_line_size(d71, reg);
+> > > +	wb_layer->yuv_line_sz = wb_layer->line_sz;
+> > >  
+> > > -	set_range(&wb_layer->hsize_in, D71_MIN_LINE_SIZE, d71->max_line_size);
+> > > -	set_range(&wb_layer->vsize_in, D71_MIN_VERTICAL_SIZE, d71->max_vsize);
+> > > +	set_range(&wb_layer->hsize_in, 64, wb_layer->line_sz);
+> > > +	set_range(&wb_layer->vsize_in, 64, d71->max_vsize);
+> > >  
+> > >  	return 0;
+> > >  }
+> > > @@ -595,8 +635,8 @@ static int d71_compiz_init(struct d71_dev *d71,
+> > >  
+> > >  	compiz = to_compiz(c);
+> > >  
+> > > -	set_range(&compiz->hsize, D71_MIN_LINE_SIZE, d71->max_line_size);
+> > > -	set_range(&compiz->vsize, D71_MIN_VERTICAL_SIZE, d71->max_vsize);
+> > > +	set_range(&compiz->hsize, 64, get_blk_line_size(d71, reg));
+> > > +	set_range(&compiz->vsize, 64, d71->max_vsize);
+> > >  
+> > >  	return 0;
+> > >  }
+> > > @@ -753,7 +793,7 @@ static int d71_scaler_init(struct d71_dev *d71,
+> > >  	}
+> > >  
+> > >  	scaler = to_scaler(c);
+> > > -	set_range(&scaler->hsize, 4, 2048);
+> > > +	set_range(&scaler->hsize, 4, __get_blk_line_size(d71, reg, 2048));
+> > >  	set_range(&scaler->vsize, 4, 4096);
+> > >  	scaler->max_downscaling = 6;
+> > >  	scaler->max_upscaling = 64;
+> > > @@ -862,7 +902,7 @@ static int d71_splitter_init(struct d71_dev *d71,
+> > >  
+> > >  	splitter = to_splitter(c);
+> > >  
+> > > -	set_range(&splitter->hsize, 4, d71->max_line_size);
+> > > +	set_range(&splitter->hsize, 4, get_blk_line_size(d71, reg));
+> > >  	set_range(&splitter->vsize, 4, d71->max_vsize);
+> > >  
+> > >  	return 0;
+> > > @@ -933,7 +973,8 @@ static int d71_merger_init(struct d71_dev *d71,
+> > >  
+> > >  	merger = to_merger(c);
+> > >  
+> > > -	set_range(&merger->hsize_merged, 4, 4032);
+> > > +	set_range(&merger->hsize_merged, 4,
+> > > +		  __get_blk_line_size(d71, reg, 4032));
+> > >  	set_range(&merger->vsize_merged, 4, 4096);
+> > >  
+> > >  	return 0;
+> > > diff --git a/drivers/gpu/drm/arm/display/komeda/d71/d71_regs.h b/drivers/gpu/drm/arm/display/komeda/d71/d71_regs.h
+> > > index 2d5e6d00b42c..1727dc993909 100644
+> > > --- a/drivers/gpu/drm/arm/display/komeda/d71/d71_regs.h
+> > > +++ b/drivers/gpu/drm/arm/display/komeda/d71/d71_regs.h
+> > > @@ -10,6 +10,7 @@
+> > >  /* Common block registers offset */
+> > >  #define BLK_BLOCK_INFO		0x000
+> > >  #define BLK_PIPELINE_INFO	0x004
+> > > +#define BLK_MAX_LINE_SIZE	0x008
+> > >  #define BLK_VALID_INPUT_ID0	0x020
+> > >  #define BLK_OUTPUT_ID0		0x060
+> > >  #define BLK_INPUT_ID0		0x080
+> > > @@ -321,6 +322,7 @@
+> > >  #define L_INFO_RF		BIT(0)
+> > >  #define L_INFO_CM		BIT(1)
+> > >  #define L_INFO_ABUF_SIZE(x)	(((x) >> 4) & 0x7)
+> > > +#define L_INFO_YUV_MAX_LINESZ(x)	(((x) >> 16) & 0xFFFF)
+> > >  
+> > >  /* Scaler registers */
+> > >  #define SC_COEFFTAB		0x0DC
+> > > @@ -494,13 +496,6 @@ enum d71_blk_type {
+> > >  #define D71_DEFAULT_PREPRETCH_LINE	5
+> > >  #define D71_BUS_WIDTH_16_BYTES		16
+> > >  
+> > > -#define D71_MIN_LINE_SIZE		64
+> > > -#define D71_MIN_VERTICAL_SIZE		64
+> > > -#define D71_SC_MIN_LIN_SIZE		4
+> > > -#define D71_SC_MIN_VERTICAL_SIZE	4
+> > > -#define D71_SC_MAX_LIN_SIZE		2048
+> > > -#define D71_SC_MAX_VERTICAL_SIZE	4096
+> > > -
+> > >  #define D71_SC_MAX_UPSCALING		64
+> > >  #define D71_SC_MAX_DOWNSCALING		6
+> > >  #define D71_SC_SPLIT_OVERLAP		8
+> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
+> > > index 910d279ae48d..92aba58ce2a5 100644
+> > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
+> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline.h
+> > > @@ -227,6 +227,8 @@ struct komeda_layer {
+> > >  	/* accepted h/v input range before rotation */
+> > >  	struct malidp_range hsize_in, vsize_in;
+> > >  	u32 layer_type; /* RICH, SIMPLE or WB */
+> > > +	u32 line_sz;
+> > > +	u32 yuv_line_sz; /* maximum line size for YUV422 and YUV420 */
+> > >  	u32 supported_rots;
+> > >  	/* komeda supports layer split which splits a whole image to two parts
+> > >  	 * left and right and handle them by two individual layer processors
+> > > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+> > > index 5526731f5a33..6df442666cfe 100644
+> > > --- a/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+> > > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_pipeline_state.c
+> > > @@ -285,6 +285,7 @@ komeda_layer_check_cfg(struct komeda_layer *layer,
+> > >  		       struct komeda_data_flow_cfg *dflow)
+> > >  {
+> > >  	u32 src_x, src_y, src_w, src_h;
+> > > +	u32 line_sz, max_line_sz;
+> > >  
+> > >  	if (!komeda_fb_is_layer_supported(kfb, layer->layer_type, dflow->rot))
+> > >  		return -EINVAL;
+> > > @@ -314,6 +315,22 @@ komeda_layer_check_cfg(struct komeda_layer *layer,
+> > >  		return -EINVAL;
+> > >  	}
+> > >  
+> > > +	if (drm_rotation_90_or_270(dflow->rot))
+> > > +		line_sz = dflow->in_h;
+> > > +	else
+> > > +		line_sz = dflow->in_w;
+> > > +
+> > > +	if (kfb->base.format->hsub > 1)
+> > > +		max_line_sz = layer->yuv_line_sz;
+> > > +	else
+> > > +		max_line_sz = layer->line_sz;
+> > > +
+> > > +	if (line_sz > max_line_sz) {
+> > > +		DRM_DEBUG_ATOMIC("Required line_sz: %d exceeds the max size %d\n",
+> > > +				 line_sz, max_line_sz);
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > >  	return 0;
+> > >  }
+> > >  
+> > > -- 
+> > > 2.17.1
+> > > 
+> > 
+> > -- 
+> > ====================
+> > | I would like to |
+> > | fix the world,  |
+> > | but they're not |
+> > | giving me the   |
+> >  \ source code!  /
+> >   ---------------
+> >     ¯\_(ツ)_/¯
+
 -- 
-2.20.1
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
