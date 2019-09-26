@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 362F9BEF7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:23:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00681BEF89
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbfIZKXi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 06:23:38 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42345 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbfIZKXi (ORCPT
+        id S1726943AbfIZKZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 06:25:49 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:53881 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbfIZKZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 06:23:38 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y91so1457228ede.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 03:23:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9nVK/nJtOcV+sZhmR12a3Q1eiclcyZVkWGk+yvC3nOQ=;
-        b=u/3he9EefTJa3RjrVyPZ2G2QCe6PmWaeWyzhIveVMIZtZtAO5bBrHnDfG2cBvW0ZrX
-         9ss9GzL1jj9vFbjiYEIsUPhnoKQ7MA/ZqAgsHgwgrl9Ahz1OTd65OJUPGBOb3CdI/tpT
-         DjjtFnGk+MliapAVoTVrwWZZq5kVjrTAf+9IyVPpXuCFhsIK8d9qlWAGRdrOGMI2VBk1
-         mJh7IzSatm3XKDxGxrpVEf/tj1uJDEvFtO5OndhbLCxcNFfXCRcGWNe48WwZjHgmMi6I
-         tHBFtY8lV+tDJhmCFSwIP15z5L04WersVH4ML/DcTZu7848qnMSxJ54WhBaOTt24Dywv
-         n0HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9nVK/nJtOcV+sZhmR12a3Q1eiclcyZVkWGk+yvC3nOQ=;
-        b=Pmu7t9gOrc4iKyBS6gmZLG4f5jph6gy3e7vjvTjWT81ypTX5NEHBIsbUQYfzd4Yeq0
-         xzv2+/2HWpMpKKsd925c8U/67KY58JQWonb0jW+EXK7cw95cyOyUD5bsaKCu6day9Z36
-         U9i8OxckvGPKc/jt/c2Qm/AmJlib2z+z6cd4NTf9xzMmWmkX2lTlSvvM41M9G8HbCP+D
-         vKgOeStPu2TUhXSRpJjbWheltqy6UXF8hCsDWeMr/LzoMKA0ma2JUu7CYw49px14O8Wt
-         KJ9ymkNvC02um9VOMG2GlbrWuaflB7eoLPm9j7WVAzkMAd/MLrXeKgkTFRWBlVpoqfKm
-         Xlaw==
-X-Gm-Message-State: APjAAAUJ4q9qili4BjMZN25LLbJMIRRcQMLgj90lBc6mpuR/Khp/v46p
-        WMMSIBtpa2OoZ6cuS/zqGOhpyg==
-X-Google-Smtp-Source: APXvYqxqSbxOcExsIqaMDT4Qk3/4chkCM7iICimZba8auPxPatB84xL4JNs81Aqc0zPrAs6Gw8a4dw==
-X-Received: by 2002:a17:906:6848:: with SMTP id a8mr2413780ejs.104.1569493416937;
-        Thu, 26 Sep 2019 03:23:36 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id e44sm384559ede.34.2019.09.26.03.23.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Sep 2019 03:23:36 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 2CFF31004E0; Thu, 26 Sep 2019 13:23:39 +0300 (+03)
-Date:   Thu, 26 Sep 2019 13:23:39 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Steve Wahl <steve.wahl@hpe.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Juergen Gross <jgross@suse.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Feng Tang <feng.tang@intel.com>, linux-kernel@vger.kernel.org,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Baoquan He <bhe@redhat.com>, russ.anderson@hpe.com,
-        dimitri.sivanich@hpe.com, mike.travis@hpe.com
-Subject: Re: [PATCH v3 2/2] x86/boot/64: round memory hole size up to next
- PMD page.
-Message-ID: <20190926102339.owzlugs6sro6rodn@box>
-References: <cover.1569358538.git.steve.wahl@hpe.com>
- <df4f49f05c0c27f108234eb93db5c613d09ea62e.1569358539.git.steve.wahl@hpe.com>
+        Thu, 26 Sep 2019 06:25:48 -0400
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x8QAPiZX026387;
+        Thu, 26 Sep 2019 19:25:44 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x8QAPiZX026387
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1569493544;
+        bh=4gNfylHHZtdgndSad6PjJXSwxIOR9alrhtPtj8B7110=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VinczihnWCDBrgvoLP2kh5fTytrGSEoNtQk40bdmi4GDG5IIpShIqMdnNlzt2kiFt
+         2N65b4GeXMV6VQPXgYcU1CIGc8tXfRCQdgtgd2aOkFQa+01xE/x2GQUIUKR/SHNNre
+         NCTiw3vbhHgYaFneTON8+Erl4Q78APXKXU+wGXaM3C6Ja31BIp+qqtkEn4FCTAhNVt
+         hQQZSwgqopq9slaI9tSyg4TSxVwU5jACP3ZwJDUlaeeT357sqWaLKvsLq1c64N4RJ7
+         Mv2TSeZsU6DA2+zpeWPIOuUIDAXJsoetGen8N6y7CzkhW1MCRhr8kQyc6ob7SW1fp5
+         3SdgKiScRbF1g==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id d3so1251842vsr.1;
+        Thu, 26 Sep 2019 03:25:44 -0700 (PDT)
+X-Gm-Message-State: APjAAAVaqQdyOaS/0nwjUNRk77rUoqQ7K1iu+MOtVnQwX9nQmJLJfAOK
+        I9b+qzAXn69XMhHV8VqfR6tJWs5yKQx9Z9fS22M=
+X-Google-Smtp-Source: APXvYqyeIspKm3xk+JKqX7PSS7gDWlcm9BZdyqAWf+X9fC0of2bjx1GwXyPr283EhOahiarlzOo3vv0bAZkcr7AOlSE=
+X-Received: by 2002:a67:1a41:: with SMTP id a62mr1750823vsa.54.1569493543459;
+ Thu, 26 Sep 2019 03:25:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df4f49f05c0c27f108234eb93db5c613d09ea62e.1569358539.git.steve.wahl@hpe.com>
-User-Agent: NeoMutt/20180716
+References: <20190926101312.32218-1-geert@linux-m68k.org>
+In-Reply-To: <20190926101312.32218-1-geert@linux-m68k.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 26 Sep 2019 19:25:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARTk5yE1=WsxdYpEw6EYXMmq8cW5QBEse2WWhTJ0y=iMA@mail.gmail.com>
+Message-ID: <CAK7LNARTk5yE1=WsxdYpEw6EYXMmq8cW5QBEse2WWhTJ0y=iMA@mail.gmail.com>
+Subject: Re: [PATCH -next] fbdev: c2p: Fix link failure on non-inlining
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 24, 2019 at 04:04:31PM -0500, Steve Wahl wrote:
-> The kernel image map is created using PMD pages, which can include
-> some extra space beyond what's actually needed.  Round the size of the
-> memory hole we search for up to the next PMD boundary, to be certain
-> all of the space to be mapped is usable RAM and includes no reserved
-> areas.
-> 
-> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-> Cc: stable@vger.kernel.org
+On Thu, Sep 26, 2019 at 7:13 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> When the compiler decides not to inline the Chunky-to-Planar core
+> functions, the build fails with:
+>
+>     c2p_planar.c:(.text+0xd6): undefined reference to `c2p_unsupported'
+>     c2p_planar.c:(.text+0x1dc): undefined reference to `c2p_unsupported'
+>     c2p_iplan2.c:(.text+0xc4): undefined reference to `c2p_unsupported'
+>     c2p_iplan2.c:(.text+0x150): undefined reference to `c2p_unsupported'
+>
+> Fix this by marking the functions __always_inline.
+>
+> Reported-by: noreply@ellerman.id.au
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+
 
 -- 
- Kirill A. Shutemov
+Best Regards
+Masahiro Yamada
