@@ -2,58 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F22A8BEDC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64BA0BEDC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbfIZItC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 04:49:02 -0400
-Received: from smtprelay0174.hostedemail.com ([216.40.44.174]:36840 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726962AbfIZItB (ORCPT
+        id S1729840AbfIZIss (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 04:48:48 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35186 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfIZIss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 04:49:01 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 9BFBB9079;
-        Thu, 26 Sep 2019 08:49:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1566:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:4321:4362:5007:10004:10400:10848:11232:11658:11914:12048:12296:12297:12555:12740:12760:12895:12986:13069:13311:13357:13439:14181:14659:14721:21063:21080:21433:21627:30054:30070:30091,0,RBL:172.58.27.131:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: shop50_6b6c133c79719
-X-Filterd-Recvd-Size: 1340
-Received: from XPS-9350 (unknown [172.58.27.131])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 26 Sep 2019 08:48:57 +0000 (UTC)
-Message-ID: <698e9c5310003fb71dcc7e5b096c8a415c86cc8c.camel@perches.com>
-Subject: Re: [PATCH v2] scripts: Move ipc/ to kernel/ipc/: don't check the
- ipc dir
-From:   Joe Perches <joe@perches.com>
-To:     Yunfeng Ye <yeyunfeng@huawei.com>, apw@canonical.com,
-        mingo@kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 26 Sep 2019 01:48:27 -0700
-In-Reply-To: <bd70558e-5126-6460-81d7-edf72cbbce7a@huawei.com>
-References: <bd70558e-5126-6460-81d7-edf72cbbce7a@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
-MIME-Version: 1.0
+        Thu, 26 Sep 2019 04:48:48 -0400
+Received: by mail-lf1-f66.google.com with SMTP id w6so1088370lfl.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 01:48:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VXH3Ua8oN6gJFR5T3GpYv9HdGvkWILtcOQDXfdZ+hho=;
+        b=AWYQiVhmU49sBPZnlWVKUJLtD5J5kkDajluEr8cbxdB7n8QKDQV1snnf9VCQNxWf++
+         8/71iNzmhwEf8m8tEVAIQ6p+8GOqd2m5n8xkYNrrlM+AiNDOI0LSIZiCDx2aTMAe359h
+         Gt7gmb/K/B+/EcOTJDPWh5//R9rBQulHY2hpe2ppcUjaP8NfKEHQKyTZQ397ACmfOJh3
+         4dFhTA0hqxLVIhWCcqrYlv5XiN9ZkWQxN4GuWciVIVg9UIkSBZ9KHd7S/iPapzVSwk/b
+         1WJAf2wsB73RosaSF5VPUc8hDm7Y+jaed1XCEDpl1KPTi0g++DzFCvV3nEBvvBIOkBbU
+         NNmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VXH3Ua8oN6gJFR5T3GpYv9HdGvkWILtcOQDXfdZ+hho=;
+        b=MtmKwBn6ZXbxbXqJ0DhzotSuGTf+MEg/G83EVF/21SPGSvGzkimfKTTstiopnT5hQf
+         1LRDHCHUw0I1gnyJcCgdMbpG+dvHe/zQD1HQFQxqQR6T73Po4uZihBjuW8t6sr9o7Uh+
+         YRPij48XKaU8/UioBC33thG2yqYYxaERUfwd6JH+5aNfbfFmMtV5m1I7ierjfixjwgIS
+         oeQVuyVYRXhgF0O1lm73nY4y6cD4QImG87JIqMsSXucKRIjVALrQs985GX6W07d1tTjv
+         r3TxYtcuCW/fWvWU1o403fydOCSIz5bfTjvSQ26lPBY7vjVt3/1ZXEet6bsxnwQLykoh
+         R17Q==
+X-Gm-Message-State: APjAAAV8VPYVObLAEKIhaGTRn472CgMQQaNM+yUV+OyoSYY1TgG70oiV
+        6hJLHEIHkN8ivzkqRH0pu69UHKYDg58=
+X-Google-Smtp-Source: APXvYqz5ZssKzszNAZn1K3Xua7hwoz9w1G7LyD7AicTX0rheTwnzMtbinDXbqBwmudxqjb2WUvH/9w==
+X-Received: by 2002:a19:f817:: with SMTP id a23mr1430709lff.18.1569487726227;
+        Thu, 26 Sep 2019 01:48:46 -0700 (PDT)
+Received: from seldlx21914.corpusers.net ([37.139.156.40])
+        by smtp.gmail.com with ESMTPSA id g21sm362202lje.67.2019.09.26.01.48.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Sep 2019 01:48:45 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 10:48:44 +0200
+From:   Vitaly Wool <vitalywool@gmail.com>
+To:     Linux-MM <linux-mm@kvack.org>, linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Markus Linnala <markus.linnala@gmail.com>, stable@kernel.org,
+        Dan Streetman <ddstreet@ieee.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH] z3fold: claim page in the beginning of free
+Message-Id: <20190926104844.4f0c6efa1366b8f5741eaba9@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.30; x86_64-unknown-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-26 at 09:26 +0800, Yunfeng Ye wrote:
-> After the commit 76128326f97c ("toplevel: Move ipc/ to kernel/ipc/: move
-> the files"), we met some error messages:
-> 
->   ./scripts/checkpatch.pl:
->   "Must be run from the top-level dir. of a kernel tree"
-> 
->   ./scripts/get_maintainer.pl:
->   "The current directory does not appear to be a linux kernel source tree.
-> 
-> Don't check the ipc dir in checkpatch.pl and get_maintainer.pl.
+There's a really hard to reproduce race in z3fold between
+z3fold_free() and z3fold_reclaim_page(). z3fold_reclaim_page()
+can claim the page after z3fold_free() has checked if the page
+was claimed and z3fold_free() will then schedule this page for
+compaction which may in turn lead to random page faults (since
+that page would have been reclaimed by then). Fix that by
+claiming page in the beginning of z3fold_free().
 
-Thanks.
+Reported-by: Markus Linnala <markus.linnala@gmail.com>
+Signed-off-by: Vitaly Wool <vitalywool@gmail.com>
+---
+ mm/z3fold.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index 05bdf90646e7..01b87c78b984 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -998,9 +998,11 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ 	struct z3fold_header *zhdr;
+ 	struct page *page;
+ 	enum buddy bud;
++	bool page_claimed;
+ 
+ 	zhdr = handle_to_z3fold_header(handle);
+ 	page = virt_to_page(zhdr);
++	page_claimed = test_and_set_bit(PAGE_CLAIMED, &page->private);
+ 
+ 	if (test_bit(PAGE_HEADLESS, &page->private)) {
+ 		/* if a headless page is under reclaim, just leave.
+@@ -1008,7 +1010,7 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ 		 * has not been set before, we release this page
+ 		 * immediately so we don't care about its value any more.
+ 		 */
+-		if (!test_and_set_bit(PAGE_CLAIMED, &page->private)) {
++		if (!page_claimed) {
+ 			spin_lock(&pool->lock);
+ 			list_del(&page->lru);
+ 			spin_unlock(&pool->lock);
+@@ -1044,7 +1046,7 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ 		atomic64_dec(&pool->pages_nr);
+ 		return;
+ 	}
+-	if (test_bit(PAGE_CLAIMED, &page->private)) {
++	if (page_claimed) {
+ 		z3fold_page_unlock(zhdr);
+ 		return;
+ 	}
+-- 
+2.17.1
