@@ -2,114 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90948BF7E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3A7BF7F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:53:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbfIZRr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 13:47:57 -0400
-Received: from mga09.intel.com ([134.134.136.24]:54146 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727794AbfIZRr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 13:47:57 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 10:47:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,552,1559545200"; 
-   d="scan'208";a="203907123"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001.fm.intel.com with ESMTP; 26 Sep 2019 10:47:51 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1iDXrp-00027m-Na; Thu, 26 Sep 2019 20:47:49 +0300
-Date:   Thu, 26 Sep 2019 20:47:49 +0300
-From:   "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
-To:     "Schmauss, Erik" <erik.schmauss@intel.com>
-Cc:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Moore, Robert" <robert.moore@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "nv@vosn.de" <nv@vosn.de>
-Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
-Message-ID: <20190926174749.GI32742@smile.fi.intel.com>
-References: <20190906174605.GY2680@smile.fi.intel.com>
- <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
- <CF6A88132359CE47947DB4C6E1709ED53C6481B1@ORSMSX122.amr.corp.intel.com>
- <20190926163528.GH32742@smile.fi.intel.com>
- <CF6A88132359CE47947DB4C6E1709ED53C6481F2@ORSMSX122.amr.corp.intel.com>
+        id S1727913AbfIZRxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 13:53:16 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40872 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727502AbfIZRxP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 13:53:15 -0400
+Received: by mail-ot1-f68.google.com with SMTP id y39so2780548ota.7;
+        Thu, 26 Sep 2019 10:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=l4hVPvXuA1yUfCTMAa2qM1WXIm4IGNEgGvOx69kn5iQ=;
+        b=R+pwT6b5a5j4MI1LUBnBz+75gDMAVK7FAbaw4LQgbnbk3qbI8f7fNZYdiX8kaiXozr
+         APqQI9wPwrOWmh5TBuBPtQiyZQSh8/w8k00TrD/+uEhJIhyZxrsWB1BkTN42hrKMEQqS
+         V07EM/H827soR7Evyna+E7IwEg6lc80tPOe7ds0CLNk9PTaBR34vzkHGNgRAWoWIGopN
+         oFVyZoyByZL2y3yGqMUTcKkc+iozoEQl1ynqgKJwQhZ1isuHVT3MvlzjCNtV40VPFfo2
+         n52tH3k47fv8tR7u5grfe1yrgoIgtRe5VW7Y4wxpc/KEOmyyhdk16wIZTaR8vBxgRNHl
+         j4Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=l4hVPvXuA1yUfCTMAa2qM1WXIm4IGNEgGvOx69kn5iQ=;
+        b=Vyv/L7CsQIDOCaYKNXR/dfXdvG9qojog2218JMeSWGmE45cwOGv/1vGDlaQZwQVL+J
+         GnLfdc3tZT20zc3seHac8M61rNTr+i4/p9C/PahJCT8P3Diny+5MywBLfoMklZdaY95N
+         AF7elvxz9fQgR6JAeFWEBozzVVjRR9t+s9fCItoF13aO54y/j+wdgKBMaKnRioP+nDm3
+         osFHcYDe0qC6eidv06IeHPzmJAcizBp8/o/omdeVAAoSv6nsHricrrVaSImTFAMIqt/y
+         PFY4qmD+RyFkLQ6PICIZ2aC5unxxWPfNvy36bInz+iUaA/okivf1HV+8xc9O2vnHGVMT
+         qUkQ==
+X-Gm-Message-State: APjAAAVFWhOqg+wVxYKEoL1q74cieKfOsaDkVa9aOIA8aFofi1l46UdH
+        //nCdTdDogwXw1gfpA2V2B0oLS8G
+X-Google-Smtp-Source: APXvYqyGGz+8L/6FHfyVFOKmPZvgQvzYKIeL1mfG62VHuz4RAlTKBD+Sm4duhnF/eEGxdihGtHTNUQ==
+X-Received: by 2002:a05:6830:1c5:: with SMTP id r5mr3603353ota.325.1569520394453;
+        Thu, 26 Sep 2019 10:53:14 -0700 (PDT)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id x6sm891889ote.69.2019.09.26.10.53.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2019 10:53:14 -0700 (PDT)
+Subject: Re: [PATCH v2] staging: rtl8188eu: remove dead code/vestigial
+ do..while loop
+To:     Connor Kuehl <connor.kuehl@canonical.com>,
+        gregkh@linuxfoundation.org, straube.linux@gmail.com,
+        devel@driverdev.osuosl.org, dan.carpenter@oracle.com
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20190924142819.5243-1-connor.kuehl@canonical.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <2f275661-5945-9e27-95a4-a82584756f2e@lwfinger.net>
+Date:   Thu, 26 Sep 2019 12:53:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CF6A88132359CE47947DB4C6E1709ED53C6481F2@ORSMSX122.amr.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190924142819.5243-1-connor.kuehl@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 07:51:00PM +0300, Schmauss, Erik wrote:
-> > -----Original Message-----
-> > From: linux-acpi-owner@vger.kernel.org <linux-acpi-owner@vger.kernel.org>
-> > On Behalf Of Shevchenko, Andriy
-> > Sent: Thursday, September 26, 2019 9:35 AM
-> > To: Schmauss, Erik <erik.schmauss@intel.com>
-> > Cc: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>; Rafael J. Wysocki
-> > <rjw@rjwysocki.net>; Moore, Robert <robert.moore@intel.com>; Len Brown
-> > <lenb@kernel.org>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel
-> > Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; linux-
-> > acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org;
-> > nv@vosn.de
-> > Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
-> > 
-> > On Thu, Sep 26, 2019 at 07:09:05PM +0300, Schmauss, Erik wrote:
-> > > > -----Original Message-----
-> > > > From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-> > > > Sent: Thursday, September 12, 2019 1:08 AM
-> > > > To: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, Erik
-> > > > <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>;
-> > > > Moore, Robert <robert.moore@intel.com>
-> > > > Cc: Len Brown <lenb@kernel.org>; Jacek Anaszewski
-> > > > <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan
-> > > > Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org;
-> > > > devel@acpica.org; linux- kernel@vger.kernel.org; nv@vosn.de;
-> > > > Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
-> > > > Subject: [PATCH] ACPICA: make acpi_load_table() return table index
-> > > >
-> > > Hi Nikolaus,
-> > >
-> > > > For unloading an ACPI table, it is necessary to provide the index of the table.
-> > > > The method intended for dynamically loading or hotplug addition of
-> > > > tables, acpi_load_table(), should provide this information via an
-> > > > optional pointer to the loaded table index.
-> > >
-> > > We'll take this patch for ACPICA upstream
-> > 
-> > Erik,
-> > 
-> Hi Andy,
+On 9/24/19 9:28 AM, Connor Kuehl wrote:
+> The local variable 'bcmd_down' is always set to true almost immediately
+> before the do-while's condition is checked. As a result, !bcmd_down
+> evaluates to false which short circuits the logical AND operator meaning
+> that the second operand is never reached and is therefore dead code.
 > 
-> > how about to have also counterpart to acpi_load_table() which will do what it's
-> > done now in acpi_configfs.c via acpi_tb_*() API?
+> Furthermore, the do..while loop may be removed since it will always only
+> execute once because 'bcmd_down' is always set to true, so the
+> !bcmd_down evaluates to false and the loop exits immediately after the
+> first pass.
 > 
-> I should have given more details. We decided to add this extra parameter in AcpiLoadTable and
-> we're going to create an AcpiUnloadTable function that will take table index to unload the table (basically the acpi_tb_unload..).
-> Once we do this, you can use table indices with AcpiUnloadTable and AcpiLoadTable.
+> Fix this by removing the loop and its condition variables 'bcmd_down'
+> and 'retry_cnts'
+> 
+> While we're in there, also fix some checkpatch.pl suggestions regarding
+> spaces around arithmetic operators like '+'
+> 
+> Addresses-Coverity: ("Logically dead code")
+> 
+> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+> ---
+> v1 -> v2:
+>   - remove the loop and its condition variable bcmd_down
+>   - address some non-invasive checkpatch.pl suggestions as a result of
+>     deleting the loop
+> 
+>   drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 55 +++++++++-----------
+>   1 file changed, 24 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+> index 47352f210c0b..7646167a0b36 100644
+> --- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+> +++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
+> @@ -47,8 +47,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
+>   ******************************************/
+>   static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
+>   {
+> -	u8 bcmd_down = false;
+> -	s32 retry_cnts = 100;
+>   	u8 h2c_box_num;
+>   	u32 msgbox_addr;
+>   	u32 msgbox_ex_addr;
+> @@ -71,39 +69,34 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
+>   		goto exit;
+>   
+>   	/* pay attention to if  race condition happened in  H2C cmd setting. */
+> -	do {
+> -		h2c_box_num = adapt->HalData->LastHMEBoxNum;
+> -
+> -		if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
+> -			DBG_88E(" fw read cmd failed...\n");
+> -			goto exit;
+> -		}
+> -
+> -		*(u8 *)(&h2c_cmd) = ElementID;
+> -
+> -		if (CmdLen <= 3) {
+> -			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, CmdLen);
+> -		} else {
+> -			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, 3);
+> -			ext_cmd_len = CmdLen-3;
+> -			memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer+3, ext_cmd_len);
+> +	h2c_box_num = adapt->HalData->LastHMEBoxNum;
+>   
+> -			/* Write Ext command */
+> -			msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
+> -			for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
+> -				usb_write8(adapt, msgbox_ex_addr+cmd_idx, *((u8 *)(&h2c_cmd_ex)+cmd_idx));
+> -		}
+> -		/*  Write command */
+> -		msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
+> -		for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
+> -			usb_write8(adapt, msgbox_addr+cmd_idx, *((u8 *)(&h2c_cmd)+cmd_idx));
+> +	if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
+> +		DBG_88E(" fw read cmd failed...\n");
+> +		goto exit;
+> +	}
+>   
+> -		bcmd_down = true;
+> +	*(u8 *)(&h2c_cmd) = ElementID;
+>   
+> -		adapt->HalData->LastHMEBoxNum =
+> -			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
+> +	if (CmdLen <= 3) {
+> +		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, CmdLen);
+> +	} else {
+> +		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, 3);
+> +		ext_cmd_len = CmdLen - 3;
+> +		memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer + 3, ext_cmd_len);
+> +
+> +		/* Write Ext command */
+> +		msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
+> +		for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
+> +			usb_write8(adapt, msgbox_ex_addr + cmd_idx, *((u8 *)(&h2c_cmd_ex) + cmd_idx));
+> +	}
+> +	/*  Write command */
+> +	msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
+> +	for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
+> +		usb_write8(adapt, msgbox_addr + cmd_idx, *((u8 *)(&h2c_cmd) + cmd_idx));
+>   
+> -	} while ((!bcmd_down) && (retry_cnts--));
+> +	adapt->HalData->LastHMEBoxNum =
+> +		(h2c_box_num + 1) % RTL88E_MAX_H2C_BOX_NUMS;
+>   
+>   	ret = _SUCCESS;
 
-Sounds like what we discussed with Nikolaus earlier [1].
-Thanks!
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-[1]: https://lore.kernel.org/linux-acpi/20190924120734.GT2680@smile.fi.intel.com/
+Thanks,
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Larry
 
