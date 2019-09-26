@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C935BFBF4
+	by mail.lfdr.de (Postfix) with ESMTP id EFD3EBFBF5
 	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 01:28:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729019AbfIZX2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 19:28:31 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46910 "EHLO
+        id S1729039AbfIZX2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 19:28:38 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46917 "EHLO
         gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728893AbfIZX23 (ORCPT
+        with ESMTP id S1728441AbfIZX23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Sep 2019 19:28:29 -0400
 Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 9FD898365B;
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C27EA891A9;
         Fri, 27 Sep 2019 11:28:26 +1200 (NZST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
         s=mail181024; t=1569540506;
-        bh=l6bAe+xtedR+bltocjAHq5456NfUIQhNENNdw3LBmWI=;
+        bh=rAUvLPAfWgWX2H5eqfh6QWkokkEOuv0sRFKi68bW+K8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Onq1sluNBuPq6cASMObOcHpSgaHREZ06kCSE+4G6DHCUBwZE8JWDj/kL7dsgr2Jzd
-         Z+CLfKZ1Kc2J+ZwrK1vrQl9T47Uh9nrjVWaEtPcJI/ZvFmgzY454BqtqDMhEOBv0wt
-         v3nKtEfHX4Ze78Tl05NTkPDO4MeGSxfrjoC2AVIgJb1DppCRlCGngqc3UmDqAZAPIb
-         51LruL8F4o/D8IMeTMDLRZ1Cy+Q7DYdgWy+TMqn0VroEp0QdIrKwnl6D1mGtiEY2Xn
-         zi4dwzBCtNYqQ9z0tn/vAJh1hH5vN+I65utbpFTonKq95vzwq9FgekqHDSJk7mguk+
-         WVPvn8Hn8jo8w==
+        b=JB36U0KSnpnlx8YF1jJPhEhP5AhZnmpoIwR40mzFa78b871sZeSFwlmSCNCuql6LC
+         w1A2JyKaE6YRCHux7qC4IB8h/oVFu300iBiXhLPke1KMzHW2PtnomqzGlsvDcKpcrw
+         R7y8hed96I1Kv0qEKM73z2AHAaA85Rb5vcIz5/7++CO53G3R7592ZMr+mH9AFNAaIT
+         58Ug022CDVphFs2fKo6RZSSQf43phwM3FQa242V1y6nQaTTUd7h4dZwhZ0pMXwlD+1
+         3BuRXmXwm7IpY4ZUz3KCZKhwQ8Rp79OlWfF9aHgT6ueOAO4ZkzJSWH6RTyTiBG8IF6
+         4cpsE+DAAvW7Q==
 Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d8d49980001>; Fri, 27 Sep 2019 11:28:26 +1200
+        id <B5d8d49980002>; Fri, 27 Sep 2019 11:28:26 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.20])
-        by smtp (Postfix) with ESMTP id 3006713EEFB;
+        by smtp (Postfix) with ESMTP id 4D56B13EF59;
         Fri, 27 Sep 2019 11:28:28 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 7638B28003E; Fri, 27 Sep 2019 11:28:24 +1200 (NZST)
+        id 9641428003E; Fri, 27 Sep 2019 11:28:24 +1200 (NZST)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
         sebastian.hesselbarth@gmail.com, robh+dt@kernel.org,
@@ -41,9 +41,9 @@ To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 1/3] ARM: dts: armada-xp: enable L2 cache parity and ecc on db-xc3-24g4xg
-Date:   Fri, 27 Sep 2019 11:28:18 +1200
-Message-Id: <20190926232820.27676-2-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 2/3] ARM: dts: mvebu: add sdram controller node to Armada-38x
+Date:   Fri, 27 Sep 2019 11:28:19 +1200
+Message-Id: <20190926232820.27676-3-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190926232820.27676-1-chris.packham@alliedtelesis.co.nz>
 References: <20190926232820.27676-1-chris.packham@alliedtelesis.co.nz>
@@ -55,32 +55,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable L2 cache parity and ECC on the db-xc3-24g4xg board so that cache
-operations are protected and errors can be flagged to the EDAC
-subsystem.
+The Armada-38x uses an SDRAM controller that is compatible with the
+Armada-XP. The key difference is the width of the bus (XP is 64/32, 38x
+is 32/16). The SDRAM controller registers are the same between the two
+SoCs.
 
 Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts | 5 +++++
+ arch/arm/boot/dts/armada-38x.dtsi | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts b/arch/arm/boo=
-t/dts/armada-xp-db-xc3-24g4xg.dts
-index df048050615f..4ec0ae01b61d 100644
---- a/arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts
-+++ b/arch/arm/boot/dts/armada-xp-db-xc3-24g4xg.dts
-@@ -33,6 +33,11 @@
- 	};
- };
+diff --git a/arch/arm/boot/dts/armada-38x.dtsi b/arch/arm/boot/dts/armada=
+-38x.dtsi
+index 3f4bb44d85f0..e038abc0c6b4 100644
+--- a/arch/arm/boot/dts/armada-38x.dtsi
++++ b/arch/arm/boot/dts/armada-38x.dtsi
+@@ -103,6 +103,11 @@
+ 			#size-cells =3D <1>;
+ 			ranges =3D <0 MBUS_ID(0xf0, 0x01) 0 0x100000>;
 =20
-+&L2 {
-+	arm,parity-enable;
-+	marvell,ecc-enable;
-+};
++			sdramc: sdramc@1400 {
++				compatible =3D "marvell,armada-xp-sdram-controller";
++				reg =3D <0x1400 0x500>;
++			};
 +
- &devbus_bootcs {
- 	status =3D "okay";
-=20
+ 			L2: cache-controller@8000 {
+ 				compatible =3D "arm,pl310-cache";
+ 				reg =3D <0x8000 0x1000>;
 --=20
 2.23.0
 
