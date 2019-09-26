@@ -2,193 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAA0BEEA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 459FBBEEA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:43:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbfIZJli (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 05:41:38 -0400
-Received: from foss.arm.com ([217.140.110.172]:43662 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728278AbfIZJle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 05:41:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B89F1000;
-        Thu, 26 Sep 2019 02:41:33 -0700 (PDT)
-Received: from [10.1.196.133] (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 416943F67D;
-        Thu, 26 Sep 2019 02:41:32 -0700 (PDT)
-Subject: Re: [PATCH] drm: Don't free jobs in wait_event_interruptible()
-To:     "Grodzovsky, Andrey" <Andrey.Grodzovsky@amd.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
-Cc:     "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Nayan Deshmukh <nayan26deshmukh@gmail.com>,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <20190925151404.23222-1-steven.price@arm.com>
- <cc0b260c-059d-7f55-288e-c48f30eb84e3@amd.com>
- <078332cf-ef58-5f76-5c49-8034435f7bea@arm.com>
- <da04cf92-f4c7-e896-5070-4d2a9be273aa@amd.com>
- <e160d9ec-5ae3-9003-b38c-3027bce736f4@amd.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <14479a04-d4a2-9c55-7cbf-010d3111fa0b@arm.com>
-Date:   Thu, 26 Sep 2019 10:41:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728714AbfIZJnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 05:43:33 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37918 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbfIZJnd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 05:43:33 -0400
+Received: by mail-lf1-f68.google.com with SMTP id u28so1191742lfc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 02:43:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8yAXbi1kQL65EW9pnlFXhlULd5JRhvbLrJCWrVe1hoo=;
+        b=gbJ2K+Ne2p+hO4PyjXqNtD3JczKjoTHX8OneizOzA9MyAK5gP40dLfLd4u/zg1vx20
+         WIcSZ12sv/1+w0FWITvV6fe+N2kmDeI3v93ZW/qep1BFXcCIpMoKXgGj58XzPg9NW9HS
+         rN4Vk+yMRB/ZUj9heBIn51Xjk3Hzd0Z8pe7FJsccPYA6BYMtjJF+AG7QmhZfmfBGLToL
+         kIxCHEDJFtCjx8Epj1qwhW2squVrc6Zlx/rnYgZfrRt1R7eF6aJeGAUz7sr0Qxpu9n8K
+         VCuUiOpiKrA17/qGffqEGcrcobZMmM7+WNRFYAIIg0NRZwTiQ0Afis2UTYCjFOjmTYGP
+         a9wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8yAXbi1kQL65EW9pnlFXhlULd5JRhvbLrJCWrVe1hoo=;
+        b=kHM2Ue1XhTy2mcofCF5lialeCNohA1C5WDFPobrED2YSHWOUSB0TBNFcDyxbLZ151B
+         8UzaDJYoMIBN5TfRrw2riI/QHV+z8qfmTkVKGUwseiK/xwge7CnHikoWagCsW+qPNtLv
+         7GTcam1R1Xs9X814A7CK4LC5xoZfNPLoa2uxOpUa51N8M26OW8HtsWMlqosGVUtbq9sm
+         9DsEctT1Q2wi3CqwMcKrU7fCLq9Y2RzW1gHLJir7jKbihOBBUhZrzj3PQts7PM7oE+X1
+         USZxSRJPNm7TQ+oiioAy3jyornZS2xHKqryUUrm9B37I8qAqCXxyE3WaHxv1qAly6fWA
+         2yUQ==
+X-Gm-Message-State: APjAAAVYI6lymXnW29TbwRf9jDqK2fdmMxb6Sz2VPPrICMdjqwqDErID
+        pUU4W1996TOGP01p8524wymDTNcBvyIToy71H5r5KQ==
+X-Google-Smtp-Source: APXvYqwINsxTd+wz0PkojUGo4Tn1d8LEgRIu3BnKISBmJx8BD/HqiPolw3uGVNUJY9tKqt9rMwcBCB1YJhLlr2fFQv4=
+X-Received: by 2002:ac2:5983:: with SMTP id w3mr1543168lfn.121.1569491009569;
+ Thu, 26 Sep 2019 02:43:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e160d9ec-5ae3-9003-b38c-3027bce736f4@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+References: <cover.1568864712.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1568864712.git.baolin.wang@linaro.org>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 26 Sep 2019 17:43:17 +0800
+Message-ID: <CAMz4kuKFYCcY_Wh4mntwoSNgk5=QQvkV7zC-RpAWgdJpM2-4HA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Add MMC software queue support
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, asutoshd@codeaurora.org
+Cc:     Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/09/2019 21:09, Grodzovsky, Andrey wrote:
-> 
-> On 9/25/19 12:07 PM, Andrey Grodzovsky wrote:
->> On 9/25/19 12:00 PM, Steven Price wrote:
->>
->>> On 25/09/2019 16:56, Grodzovsky, Andrey wrote:
->>>> On 9/25/19 11:14 AM, Steven Price wrote:
->>>>
->>>>> drm_sched_cleanup_jobs() attempts to free finished jobs, however 
->>>>> because
->>>>> it is called as the condition of wait_event_interruptible() it must 
->>>>> not
->>>>> sleep. Unfortunately some free callbacks (notably for Panfrost) do 
->>>>> sleep.
->>>>>
->>>>> Instead let's rename drm_sched_cleanup_jobs() to
->>>>> drm_sched_get_cleanup_job() and simply return a job for processing if
->>>>> there is one. The caller can then call the free_job() callback outside
->>>>> the wait_event_interruptible() where sleeping is possible before
->>>>> re-checking and returning to sleep if necessary.
->>>>>
->>>>> Signed-off-by: Steven Price <steven.price@arm.com>
->>>>> ---
->>>>>    drivers/gpu/drm/scheduler/sched_main.c | 44 
->>>>> ++++++++++++++------------
->>>>>    1 file changed, 24 insertions(+), 20 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/scheduler/sched_main.c 
->>>>> b/drivers/gpu/drm/scheduler/sched_main.c
->>>>> index 9a0ee74d82dc..0ed4aaa4e6d1 100644
->>>>> --- a/drivers/gpu/drm/scheduler/sched_main.c
->>>>> +++ b/drivers/gpu/drm/scheduler/sched_main.c
->>>>> @@ -622,43 +622,41 @@ static void drm_sched_process_job(struct 
->>>>> dma_fence *f, struct dma_fence_cb *cb)
->>>>>    }
->>>>>       /**
->>>>> - * drm_sched_cleanup_jobs - destroy finished jobs
->>>>> + * drm_sched_get_cleanup_job - fetch the next finished job to be 
->>>>> destroyed
->>>>>     *
->>>>>     * @sched: scheduler instance
->>>>>     *
->>>>> - * Remove all finished jobs from the mirror list and destroy them.
->>>>> + * Returns the next finished job from the mirror list (if there is 
->>>>> one)
->>>>> + * ready for it to be destroyed.
->>>>>     */
->>>>> -static void drm_sched_cleanup_jobs(struct drm_gpu_scheduler *sched)
->>>>> +static struct drm_sched_job *
->>>>> +drm_sched_get_cleanup_job(struct drm_gpu_scheduler *sched)
->>>>>    {
->>>>> +    struct drm_sched_job *job = NULL;
->>>>>        unsigned long flags;
->>>>>           /* Don't destroy jobs while the timeout worker is running */
->>>>>        if (sched->timeout != MAX_SCHEDULE_TIMEOUT &&
->>>>>            !cancel_delayed_work(&sched->work_tdr))
->>>>> -        return;
->>>>> -
->>>>> -
->>>>> -    while (!list_empty(&sched->ring_mirror_list)) {
->>>>> -        struct drm_sched_job *job;
->>>>> +        return NULL;
->>>>>    -        job = list_first_entry(&sched->ring_mirror_list,
->>>>> +    job = list_first_entry_or_null(&sched->ring_mirror_list,
->>>>>                           struct drm_sched_job, node);
->>>>> -        if (!dma_fence_is_signaled(&job->s_fence->finished))
->>>>> -            break;
->>>>>    -        spin_lock_irqsave(&sched->job_list_lock, flags);
->>>>> +    spin_lock_irqsave(&sched->job_list_lock, flags);
->>>>> +
->>>>> +    if (job && dma_fence_is_signaled(&job->s_fence->finished)) {
->>>>>            /* remove job from ring_mirror_list */
->>>>>            list_del_init(&job->node);
->>>>> - spin_unlock_irqrestore(&sched->job_list_lock, flags);
->>>>> -
->>>>> -        sched->ops->free_job(job);
->>>>> +    } else {
->>>>> +        job = NULL;
->>>>> +        /* queue timeout for next job */
->>>>> +        drm_sched_start_timeout(sched);
->>>>>        }
->>>>>    -    /* queue timeout for next job */
->>>>> -    spin_lock_irqsave(&sched->job_list_lock, flags);
->>>>> -    drm_sched_start_timeout(sched);
->>>>>        spin_unlock_irqrestore(&sched->job_list_lock, flags);
->>>>>    +    return job;
->>>>>    }
->>>>>       /**
->>>>> @@ -698,12 +696,18 @@ static int drm_sched_main(void *param)
->>>>>            struct drm_sched_fence *s_fence;
->>>>>            struct drm_sched_job *sched_job;
->>>>>            struct dma_fence *fence;
->>>>> +        struct drm_sched_job *cleanup_job = NULL;
->>>>> wait_event_interruptible(sched->wake_up_worker,
->>>>> -                     (drm_sched_cleanup_jobs(sched),
->>>>> +                     (cleanup_job = 
->>>>> drm_sched_get_cleanup_job(sched)) ||
->>>>>                         (!drm_sched_blocked(sched) &&
->>>>>                          (entity = drm_sched_select_entity(sched))) ||
->>>>> -                     kthread_should_stop()));
->>>>> +                     kthread_should_stop());
->>>>
->>>> Can't we just call drm_sched_cleanup_jobs right here, remove all the
->>>> conditions in wait_event_interruptible (make it always true) and after
->>>> drm_sched_cleanup_jobs is called test for all those conditions and
->>>> return to sleep if they evaluate to false ? drm_sched_cleanup_jobs is
->>>> called unconditionally inside wait_event_interruptible anyway... 
->>>> This is
->>>> more of a question to Christian.
->>> Christian may know better than me, but I think those conditions need to
->>> be in wait_event_interruptible() to avoid race conditions. If we simply
->>> replace all the conditions with a literal "true" then
->>> wait_event_interruptible() will never actually sleep.
->>>
->>> Steve
->>
->> Yes you right, it won't work as I missed that condition is evaluated 
->> as first step in wait_event_interruptible before it sleeps.
->>
->> Andrey
-> 
-> Another idea  - what about still just relocating drm_sched_cleanup_jobs 
-> to after wait_event_interruptible and also call it in drm_sched_fini so  
-> for the case when it will not be called from drm_sched_main due to 
-> conditions not evaluating to true  it eventually be called last time 
-> from drm_sched_fini. I mean - the refactor looks ok to me but the code 
-> becomes  somewhat confusing this way to grasp.
-> 
-> Andrey
+Hi Adrian and Ulf,
 
-That sounds similar to my first stab at this[1]. However Christian
-pointed out that it is necessary to also free jobs even if there isn't a
-new one to be scheduled. Otherwise it ends up with the jobs lying around
-until something kicks it.
+On Thu, 19 Sep 2019 at 13:59, Baolin Wang <baolin.wang@linaro.org> wrote:
+>
+> Hi All,
+>
+> Now the MMC read/write stack will always wait for previous request is
+> completed by mmc_blk_rw_wait(), before sending a new request to hardware,
+> or queue a work to complete request, that will bring context switching
+> overhead, especially for high I/O per second rates, to affect the IO
+> performance.
+>
+> Thus this patch set will introduce the MMC software command queue support
+> based on command queue engine's interfaces, and set the queue depth as 2,
+> that means we do not need wait for previous request is completed and can
+> queue 2 requests in flight. It is enough to let the irq handler always
+> trigger the next request without a context switch and then ask the blk_mq
+> layer for the next one to get queued, as well as avoiding a long latency.
+>
+> Moreover we can expand the MMC software queue interface to support
+> MMC packed request or packed command instead of adding new interfaces,
+> according to previosus discussion.
+>
+> Below are some comparison data with fio tool. The fio command I used
+> is like below with changing the '--rw' parameter and enabling the direct
+> IO flag to measure the actual hardware transfer speed in 4K block size.
+>
+> ./fio --filename=/dev/mmcblk0p30 --direct=1 --iodepth=20 --rw=read --bs=4K --size=512M --group_reporting --numjobs=20 --name=test_read
+>
+> My eMMC card working at HS400 Enhanced strobe mode:
+> [    2.229856] mmc0: new HS400 Enhanced strobe MMC card at address 0001
+> [    2.237566] mmcblk0: mmc0:0001 HBG4a2 29.1 GiB
+> [    2.242621] mmcblk0boot0: mmc0:0001 HBG4a2 partition 1 4.00 MiB
+> [    2.249110] mmcblk0boot1: mmc0:0001 HBG4a2 partition 2 4.00 MiB
+> [    2.255307] mmcblk0rpmb: mmc0:0001 HBG4a2 partition 3 4.00 MiB, chardev (248:0)
+>
+> 1. Without MMC software queue
+> I tested 3 times for each case and output a average speed.
+>
+> 1) Sequential read:
+> Speed: 28.9MiB/s, 26.4MiB/s, 30.9MiB/s
+> Average speed: 28.7MiB/s
+>
+> 2) Random read:
+> Speed: 18.2MiB/s, 8.9MiB/s, 15.8MiB/s
+> Average speed: 14.3MiB/s
+>
+> 3) Sequential write:
+> Speed: 21.1MiB/s, 27.9MiB/s, 25MiB/s
+> Average speed: 24.7MiB/s
+>
+> 4) Random write:
+> Speed: 21.5MiB/s, 18.1MiB/s, 18.1MiB/s
+> Average speed: 19.2MiB/s
+>
+> 2. With MMC software queue
+> I tested 3 times for each case and output a average speed.
+>
+> 1) Sequential read:
+> Speed: 44.1MiB/s, 42.3MiB/s, 44.4MiB/s
+> Average speed: 43.6MiB/s
+>
+> 2) Random read:
+> Speed: 30.6MiB/s, 30.9MiB/s, 30.5MiB/s
+> Average speed: 30.6MiB/s
+>
+> 3) Sequential write:
+> Speed: 44.1MiB/s, 45.9MiB/s, 44.2MiB/s
+> Average speed: 44.7MiB/s
+>
+> 4) Random write:
+> Speed: 45.1MiB/s, 43.3MiB/s, 42.4MiB/s
+> Average speed: 43.6MiB/s
+>
+> Form above data, we can see the MMC software queue can help to improve the
+> performance obviously.
+>
+> Any comments are welcome. Thanks a lot.
+>
+> Changes from v2:
+>  - Remove reference to 'struct cqhci_host' and 'struct cqhci_slot',
+>  instead adding 'struct sqhci_host', which is only used by software queue.
+>
+> Changes from v1:
+>  - Add request_done ops for sdhci_ops.
+>  - Replace virtual command queue with software queue for functions and
+>  variables.
+>  - Rename the software queue file and add sqhci.h header file.
 
-There is also the aspect of queueing the timeout for the next job - this
-is the part that I don't actually understand, but removing it from the
-wait_event_interruptible() invariable seems to cause problems. Hence
-this approach which avoids changing this behaviour. But I welcome input
-from anyone who understands this timeout mechanism!
+Do you have any comments for this patch set except the random config
+building issue that will be fixed in the next version? Thanks.
 
-Steve
+>
+> Baolin Wang (3):
+>   mmc: Add MMC software queue support
+>   mmc: host: sdhci: Add request_done ops for struct sdhci_ops
+>   mmc: host: sdhci-sprd: Add software queue support
+>
+>  drivers/mmc/core/block.c      |   61 ++++++++
+>  drivers/mmc/core/mmc.c        |   13 +-
+>  drivers/mmc/core/queue.c      |   25 ++-
+>  drivers/mmc/host/Kconfig      |    9 ++
+>  drivers/mmc/host/Makefile     |    1 +
+>  drivers/mmc/host/sdhci-sprd.c |   26 ++++
+>  drivers/mmc/host/sdhci.c      |   12 +-
+>  drivers/mmc/host/sdhci.h      |    2 +
+>  drivers/mmc/host/sqhci.c      |  344 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sqhci.h      |   53 +++++++
+>  include/linux/mmc/host.h      |    3 +
+>  11 files changed, 537 insertions(+), 12 deletions(-)
+>  create mode 100644 drivers/mmc/host/sqhci.c
+>  create mode 100644 drivers/mmc/host/sqhci.h
+>
+> --
+> 1.7.9.5
+>
 
-[1]
-https://lists.freedesktop.org/archives/dri-devel/2019-September/235346.html
+
+-- 
+Baolin Wang
+Best Regards
