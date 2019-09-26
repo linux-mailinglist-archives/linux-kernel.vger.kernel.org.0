@@ -2,119 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7C0CBFA6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EB57BFA72
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:10:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfIZUJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 16:09:24 -0400
-Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:56792 "EHLO
-        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbfIZUJX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 16:09:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 5175C3F486;
-        Thu, 26 Sep 2019 22:09:21 +0200 (CEST)
-Authentication-Results: pio-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="gcmPxCth";
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qHKroFvcWLXm; Thu, 26 Sep 2019 22:09:20 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 460793F31C;
-        Thu, 26 Sep 2019 22:09:14 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 7413A3601AA;
-        Thu, 26 Sep 2019 22:09:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1569528554; bh=3l8scdJAPzeKA98DGCU5rWJe1BLj1pdf1s3/XvaFYIM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gcmPxCth95u3iGJfWJgByzgw5oVdwb+RepRSGLIODhe5//VGMSDj32YlGikCTRRhj
-         lVpHXYknWBI43AymxkHDLUi1mox2Nt6EnuRk9fUVfg55a8znxCBTiiMHdAkL9XbI6z
-         ftWhUKod23N7nvDRnZ/2dpoh8BqzWhIE2uw3siGA=
-Subject: Re: Ack to merge through DRM? WAS Re: [PATCH v2 1/5] mm: Add
- write-protect and clean utilities for address space ranges
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20190926115548.44000-1-thomas_os@shipmail.org>
- <20190926115548.44000-2-thomas_os@shipmail.org>
- <85e31bcf-d3c8-2fcf-e659-2c9f82ebedc7@shipmail.org>
- <CAHk-=wifjLeeMEtMPytiMAKiWkqPorjf1P4PbB3dj17Y3Jcqag@mail.gmail.com>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <a48a93d2-03e9-40d3-3b4c-a301632d3121@shipmail.org>
-Date:   Thu, 26 Sep 2019 22:09:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wifjLeeMEtMPytiMAKiWkqPorjf1P4PbB3dj17Y3Jcqag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1728747AbfIZUKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 16:10:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727826AbfIZUKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 16:10:04 -0400
+Subject: Re: [GIT PULL] Please pull NFS Client updates for Linux 5.4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569528603;
+        bh=wMNBPFcaE4vWI6ONdeFcr/WV5DkaZXPipdTW5NX3iG4=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=ZoacfFtc47qQt4LSO/wHSldDE+u+/JN/7+UfboNvn4zYYD4X+g0Yt8NHTNJG8h4eH
+         mrrhw62MBLLqOhLxfseUQeioJTUsZP3w9imxDNTWvxEa801dZD56whlpxFua4ohMmg
+         5vN/D2u4z63GGtyJn+c3235njzR6yIb26hR3TL9s=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <8448ef6bd5fa881b3114ca30d2e71730ef357e4f.camel@netapp.com>
+References: <8448ef6bd5fa881b3114ca30d2e71730ef357e4f.camel@netapp.com>
+X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <8448ef6bd5fa881b3114ca30d2e71730ef357e4f.camel@netapp.com>
+X-PR-Tracked-Remote: git://git.linux-nfs.org/projects/anna/linux-nfs.git
+ tags/nfs-for-5.4-1
+X-PR-Tracked-Commit-Id: a8fd0feeca35cb8f9ddd950191f4aeb777f52f89
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 972a2bf7dfe39ebf49dd47f68d27c416392e53b1
+Message-Id: <156952860345.24871.1430075400174501894.pr-tracker-bot@kernel.org>
+Date:   Thu, 26 Sep 2019 20:10:03 +0000
+To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The pull request you sent on Thu, 26 Sep 2019 19:13:30 +0000:
 
-On 9/26/19 9:19 PM, Linus Torvalds wrote:
-> On Thu, Sep 26, 2019 at 5:03 AM Thomas Hellström (VMware)
-> <thomas_os@shipmail.org> wrote:
->> I wonder if I can get an ack from an mm maintainer to merge this through
->> DRM along with the vmwgfx patches? Andrew? Matthew?
-> It would have helped to actually point to the patch itself, instead of
-> just quoting the commit message.
->
-> Looks like this:
->
->       https://lore.kernel.org/lkml/20190926115548.44000-2-thomas_os@shipmail.org/
->
-> but why is the code in question not just using the regular page
-> walkers. The commit log shows no explanation of what's so special
-> about this?
->
-> Is the only reason the locking magic? Because if that's the reason,
-> then afaik we already have a function for that: it's
-> __walk_page_range().
->
-> Yes, it's static right now, but that's imho not a reason to duplicate
-> all the walking (badly).
->
-> Is there some other magic reason that isn't documented?
->
->                Linus
+> git://git.linux-nfs.org/projects/anna/linux-nfs.git tags/nfs-for-5.4-1
 
-There is a discussion around this subject in
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/972a2bf7dfe39ebf49dd47f68d27c416392e53b1
 
-https://lore.kernel.org/lkml/20190926115548.44000-1-thomas_os@shipmail.org/
+Thank you!
 
-The main point is that there is an assert in pud_trans_huge_lock() that 
-the mmap_sem is held, and we don't have it. Presumably we should be able 
-to get away with the i_mmap_lock, but in addition I would have had to 
-include the walk_as_pte_range() as the walk::pmd_entry anyway, so the 
-amount of duplicated page walk code isn't that big.
-
-That said, if people are OK with me modifying the assert in 
-pud_trans_huge_lock() and make __walk_page_range non-static, it should 
-probably be possible to make it work, yes.
-
-Thanks,
-Thomas
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
