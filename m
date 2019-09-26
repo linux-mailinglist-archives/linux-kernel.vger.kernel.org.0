@@ -2,74 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBF4DBEDEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49711BEE00
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:05:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbfIZI7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 04:59:42 -0400
-Received: from mail-vk1-f172.google.com ([209.85.221.172]:45449 "EHLO
-        mail-vk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728513AbfIZI7l (ORCPT
+        id S1729911AbfIZJFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 05:05:17 -0400
+Received: from 3.mo179.mail-out.ovh.net ([178.33.251.175]:34904 "EHLO
+        3.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbfIZJFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 04:59:41 -0400
-Received: by mail-vk1-f172.google.com with SMTP id u192so268515vkb.12;
-        Thu, 26 Sep 2019 01:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=McEd+9On6Ntx8uhur1Wb/vqGSrpb24pxGWS+he4c3dc=;
-        b=PBXgeThnxaBmraGe6V0ZwMr8fTL5d8VmALJ0Y0a32M6SrQHkkb3eXPFSh35COWIMbd
-         FVariCpAX7oDGFB0Z+Op9rNWXSsBhc0xn5hTuabGh+qysToiGXP29dmk93Pj0AT23cd+
-         ZidnfBs+uhTridtSGVP6zzS6eXL0tN71sCEPf7GiRnr8mJqHPohR0umLeCJ8KDzipbIz
-         8h/U/RXgumD91lULVFAT1IvH+zZvNDBydu5K3oc6VAfDRT7dvUuS2eFZr/AO0bMDKcOO
-         PzvZ+gOoEx0rILjKAC7KnPtikmaKfdtsvGtI6rkBGSYiDbZKq0nWKzY1IA8bqFTQqdW2
-         uq9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=McEd+9On6Ntx8uhur1Wb/vqGSrpb24pxGWS+he4c3dc=;
-        b=Y3G6mQuQLFKlGIg3V/PxFTj6k0PN6gb4A22o0dNEWHM4XwosCcpUxoKBQdrLRxdbSH
-         NB6gyx2KZMDtqCNKux2iMPkMdFwYBi5wXs84lNrAyAHO3orxISc17tHja6TXTl8DQAXz
-         riToh6FMRdhJBIci8r/OC86MudWpw/zzx5sxWUqbDelN1srdfJtkHeuAU/vI3gOEOiT4
-         CNvnHmoEA7xaK73qg59zdyNDnrS+PDnegseivgM+rks8AhpOF9Ax1y+NLpHYJ/6QY9k1
-         nNYPNI+L9BmJNx4QLBzzbBpn+LT+oW6BvbHdpD1suGxDNdZbpTGdafLXIQVkYnQbWOQG
-         7Tvw==
-X-Gm-Message-State: APjAAAWboYQaxOBuo6+2sgave+oi6zc5xah4nl1ES32Vv2l+QUh1aitx
-        7EleB16rtLfNVnJBgCZbUbhV1PNSoXYQMSBfew==
-X-Google-Smtp-Source: APXvYqwK5OosKBQKb50Qxpn3riVd+PUNGSJtSyR6hJPTzTSDWVl84TiaMN7gzS7u6vdCaw+QFN4BzNaYBBOvUfoKa6k=
-X-Received: by 2002:a1f:dc41:: with SMTP id t62mr1079220vkg.5.1569488380538;
- Thu, 26 Sep 2019 01:59:40 -0700 (PDT)
+        Thu, 26 Sep 2019 05:05:17 -0400
+X-Greylist: delayed 1206 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 05:05:16 EDT
+Received: from player159.ha.ovh.net (unknown [10.108.54.13])
+        by mo179.mail-out.ovh.net (Postfix) with ESMTP id BB95E142883
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 10:25:51 +0200 (CEST)
+Received: from RCM-web5.webmail.mail.ovh.net (unknown [65.39.69.237])
+        (Authenticated sender: steve@sk2.org)
+        by player159.ha.ovh.net (Postfix) with ESMTPSA id 48D55A27EC6A;
+        Thu, 26 Sep 2019 08:25:37 +0000 (UTC)
 MIME-Version: 1.0
-References: <20190909184446.9049-1-rsalvaterra@gmail.com> <C9B9ED17-F82B-4F25-996E-C1880AC49E1B@holtmann.org>
-In-Reply-To: <C9B9ED17-F82B-4F25-996E-C1880AC49E1B@holtmann.org>
-From:   Rui Salvaterra <rsalvaterra@gmail.com>
-Date:   Thu, 26 Sep 2019 09:59:29 +0100
-Message-ID: <CALjTZvZPDTdKGQExSwo9QL3KL9+t99NLdDnZjEOrnWMUBEpwSg@mail.gmail.com>
-Subject: Re: [PATCHv2] Bluetooth: trivial: tidy up printk message output from btrtl.
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Thu, 26 Sep 2019 10:25:37 +0200
+From:   Stephen Kitt <steve@sk2.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Nitin Gote <nitin.r.gote@intel.com>, jannh@google.com,
+        kernel-hardening@lists.openwall.com, Takashi Iwai <tiwai@suse.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH V2 1/2] string: Add stracpy and stracpy_pad mechanisms
+In-Reply-To: <8039728c-b41d-123c-e1ed-b35daac68fd3@rasmusvillemoes.dk>
+References: <cover.1563889130.git.joe@perches.com>
+ <ed4611a4a96057bf8076856560bfbf9b5e95d390.1563889130.git.joe@perches.com>
+ <20190925145011.c80c89b56fcee3060cf87773@linux-foundation.org>
+ <c0c2b8f6ac9f257b102b5a1a4b4dc949@sk2.org>
+ <8039728c-b41d-123c-e1ed-b35daac68fd3@rasmusvillemoes.dk>
+Message-ID: <24bb53c57767c1c2a8f266c305a670f7@sk2.org>
+X-Sender: steve@sk2.org
+User-Agent: Roundcube Webmail/1.3.10
+X-Originating-IP: 65.39.69.237
+X-Webmail-UserID: steve@sk2.org
+X-Ovh-Tracer-Id: 8507018221395332536
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrfeeggddtgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Marcel,
+Le 26/09/2019 09:29, Rasmus Villemoes a écrit :
+> On 26/09/2019 02.01, Stephen Kitt wrote:
+>> Le 25/09/2019 23:50, Andrew Morton a écrit :
+>>> On Tue, 23 Jul 2019 06:51:36 -0700 Joe Perches <joe@perches.com> 
+>>> wrote:
+>>> 
+>>>> Several uses of strlcpy and strscpy have had defects because the
+>>>> last argument of each function is misused or typoed.
+>>>> 
+>>>> Add macro mechanisms to avoid this defect.
+>>>> 
+>>>> stracpy (copy a string to a string array) must have a string
+>>>> array as the first argument (dest) and uses sizeof(dest) as the
+>>>> count of bytes to copy.
+>>>> 
+>>>> These mechanisms verify that the dest argument is an array of
+>>>> char or other compatible types like u8 or s8 or equivalent.
+>>>> 
+>>>> A BUILD_BUG is emitted when the type of dest is not compatible.
+>>>> 
+>>> 
+>>> I'm still reluctant to merge this because we don't have code in -next
+>>> which *uses* it.  You did have a patch for that against v1, I 
+>>> believe?
+>>> Please dust it off and send it along?
+>> 
+>> Joe had a Coccinelle script to mass-convert strlcpy and strscpy.
+>> Here's a different patch which converts some of ALSA's strcpy calls to
+>> stracpy:
+> 
+> Please don't. At least not for the cases where the source is a string
+> literal - that just gives worse code generation (because gcc doesn't
+> know anything about strscpy or strlcpy), and while a run-time (silent)
+> truncation is better than a run-time buffer overflow, wouldn't it be
+> even better with a build time error?
 
-On Thu, 26 Sep 2019 at 07:34, Marcel Holtmann <marcel@holtmann.org> wrote:
->
-> Hi Rui,
+Yes, that was the plan once Joe's patch gets merged (if it does), and my
+patch was only an example of using stracpy, as a step on the road. I was
+intending to follow up with a patch converting stracpy to something like
+https://www.openwall.com/lists/kernel-hardening/2019/07/06/14
 
-[patch snipped]
+__FORTIFY_INLINE ssize_t strscpy(char *dest, const char *src, size_t 
+count)
+{
+	size_t dest_size = __builtin_object_size(dest, 0);
+	size_t src_size = __builtin_object_size(src, 0);
+	if (__builtin_constant_p(count) &&
+	    __builtin_constant_p(src_size) &&
+	    __builtin_constant_p(dest_size) &&
+	    src_size <= count &&
+	    src_size <= dest_size &&
+	    src[src_size - 1] == '\0') {
+		strcpy(dest, src);
+		return src_size - 1;
+	} else {
+		return __strscpy(dest, src, count);
+	}
+}
 
-> I have some similar patch in my tree. Can you check what is still missing and send a new version. Thanks.
+which, as a macro, would become
 
-Yeah, from a cursory look at your tree, it seems about the same as
-mine. I'll take a deeper look later on (can't access the laptops to
-test, ATM) and send a patch with any missing stuff, if needed.
+#define stracpy(dest, src)						\
+({									\
+	size_t count = ARRAY_SIZE(dest);				\
+	size_t dest_size = __builtin_object_size(dest, 0);		\
+	size_t src_size = __builtin_object_size(src, 0);		\
+	BUILD_BUG_ON(!(__same_type(dest, char[]) ||			\
+		       __same_type(dest, unsigned char[]) ||		\
+		       __same_type(dest, signed char[])));		\
+									\
+	(__builtin_constant_p(count) &&					\
+	 __builtin_constant_p(src_size) &&				\
+	 __builtin_constant_p(dest_size) &&				\
+	 src_size <= count &&						\
+	 src_size <= dest_size &&					\
+	 src[src_size - 1] == '\0') ?					\
+		(((size_t) strcpy(dest, src)) & 0) + src_size - 1	\
+	:								\
+		strscpy(dest, src, count);				\
+})
 
-Thanks,
-Rui
+and both of these get optimised to movs when copying a constant string
+which fits in the target.
+
+I was going at this from the angle of improving the existing APIs and
+their resulting code. But I like your approach of failing at compile
+time.
+
+Perhaps we could do both ;-).
+
+Regards,
+
+Stephen
