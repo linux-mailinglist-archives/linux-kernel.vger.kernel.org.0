@@ -2,204 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61282BEB93
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 07:17:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EF4ABEBA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 07:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392077AbfIZFQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 01:16:52 -0400
-Received: from mail-eopbgr690048.outbound.protection.outlook.com ([40.107.69.48]:31136
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        id S2392238AbfIZFZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 01:25:42 -0400
+Received: from mail-eopbgr740081.outbound.protection.outlook.com ([40.107.74.81]:54448
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388115AbfIZFQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 01:16:51 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WlvwydisLIke1SpTOfGOjDMjX+HalkqUKhQ4SppQT7dakAHVvITV0xgZcluTSbN5GxnMnXhhqpQe0+Mk97VQoTkWygRiKwLgYOJCUZbqNZqWCrBTBnFeuxb88Ld6XD5LwtIPWdQ1LrUCwtd9L0DBtbG5VPfZPSGFXGvEjzQFKUBV+fyz5GBMpCrD80yB4mh4NX6PZHIhXCfundkU0AM+EJia3OYdvRTmQwrfJSdzmGh8lnhTKf1tztSGsx4QDCwRNhWVWtKEoLPEZozytpCRBdCjY0kSU5DzRKE6JiIJcOKy91EH6iwPZreEQO3nNXDLm6qec/Gb21SNrSfOb/I3pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5aSYEt1mAC4PIt4SUNOLCtPwY+MQPx8Nq+WMCoM88+A=;
- b=V6WRVIL01tPEzuoqjAU7dLunzitqbJ8+0P/V3fwUI3YEutthlbDeWV00c5Gflrm7yRkNlAoyUe2odBSVusQJmVmtciwSiW1sPzqjhQ+gFNKagXfNroWz25MhEb6oSypXTY/qHjEJ4b3MnG612BeCSEbXq56A9e3XfyVrZhLUar47Mj9j70v/tTnhDr/CnxkLu0DKMDPe+fQzVCRQrpzvcYLTpjlJl09tdhp4RoaiUcxNprFp3oGcgKIez/95DcKyop6jzj4SksoaKbQpxn4J5xHsH9ifKfWcD866iHiyoTQFZder8/0h9xST9tQ/eXzzpPH3rb4adeIkQMpBq/7QMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=xilinx.com; dmarc=bestguesspass action=none
- header.from=xilinx.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5aSYEt1mAC4PIt4SUNOLCtPwY+MQPx8Nq+WMCoM88+A=;
- b=Cz5aqzBKGmDNKeAVPaHZqgxmF6ggWPXYqB+r6szm29PkPzPG8TSCUUHxLtQ1MkwMWqpBQzyRRZuCm/TnlCxdNwFjazYi4cR+IsJGpFiww/v24jG5RdbiaCJo658iS/R9/hNIL7/ggL2/JufnVFVfAzfQj3dIT/Yq0LdpKtLVnfU=
-Received: from BL0PR02CA0133.namprd02.prod.outlook.com (2603:10b6:208:35::38)
- by DM6PR02MB5258.namprd02.prod.outlook.com (2603:10b6:5:48::19) with
+        id S2392201AbfIZFZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 01:25:41 -0400
+Received: from BN6PR02CA0036.namprd02.prod.outlook.com (2603:10b6:404:5f::22)
+ by DM6PR02MB6426.namprd02.prod.outlook.com (2603:10b6:5:1d6::28) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.25; Thu, 26 Sep
- 2019 05:16:49 +0000
-Received: from SN1NAM02FT046.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::203) by BL0PR02CA0133.outlook.office365.com
- (2603:10b6:208:35::38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.26 via Frontend
- Transport; Thu, 26 Sep 2019 05:16:48 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; linuxfoundation.org; dkim=none (message not signed)
- header.d=none;linuxfoundation.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.20; Thu, 26 Sep
+ 2019 05:25:39 +0000
+Received: from SN1NAM02FT024.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::209) by BN6PR02CA0036.outlook.office365.com
+ (2603:10b6:404:5f::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2284.20 via Frontend
+ Transport; Thu, 26 Sep 2019 05:25:39 +0000
+Authentication-Results: spf=softfail (sender IP is 149.199.60.83)
+ smtp.mailfrom=gmail.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=fail action=none header.from=gmail.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ gmail.com discourages use of 149.199.60.83 as permitted sender)
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT046.mail.protection.outlook.com (10.152.72.191) with Microsoft SMTP
+ SN1NAM02FT024.mail.protection.outlook.com (10.152.72.127) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2284.25
- via Frontend Transport; Thu, 26 Sep 2019 05:16:48 +0000
+ via Frontend Transport; Thu, 26 Sep 2019 05:25:38 +0000
 Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1iDM91-00062q-LX; Wed, 25 Sep 2019 22:16:47 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1iDM8w-0007lO-IB; Wed, 25 Sep 2019 22:16:42 -0700
-Received: from xsj-pvapsmtp01 (mail.xilinx.com [149.199.38.66] (may be forged))
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x8Q5GaPA005925;
-        Wed, 25 Sep 2019 22:16:36 -0700
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1iDMFL-00067x-3j; Wed, 25 Sep 2019 22:23:19 -0700
+Received: from [127.0.0.1] (helo=xsj-smtp-dlp2.xlnx.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1iDMFF-00018V-Vj; Wed, 25 Sep 2019 22:23:14 -0700
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x8Q5ND41008768;
+        Wed, 25 Sep 2019 22:23:13 -0700
 Received: from [10.140.6.59] (helo=xhdshubhraj40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1iDM8p-0007hs-R5; Wed, 25 Sep 2019 22:16:36 -0700
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+        (envelope-from <shubhrajyoti.datta@gmail.com>)
+        id 1iDMFE-00018B-Hr; Wed, 25 Sep 2019 22:23:12 -0700
+From:   shubhrajyoti.datta@gmail.com
 To:     linux-kernel@vger.kernel.org
 Cc:     devicetree@vger.kernel.org, robh+dt@kernel.org, arnd@arndb.de,
         gregkh@linuxfoundation.org, michal.simek@xilinx.com,
         Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [RFC PATCHv2 3/3] Documentation: short descriptions for Flexnoc Performance Monitor driver
-Date:   Thu, 26 Sep 2019 10:46:26 +0530
-Message-Id: <81f9de9559d248be498cac1ee0e3ab15c7a2696c.1569474867.git.shubhrajyoti.datta@xilinx.com>
+Subject: [RFC PATCHv3 1/3] dt-bindings: misc: Add dt bindings for flex noc Performance Monitor
+Date:   Thu, 26 Sep 2019 10:53:07 +0530
+Message-Id: <2de75a74ef4086090c532d3b80b7d6dcd115e45e.1569474867.git.shubhrajyoti.datta@xilinx.com>
 X-Mailer: git-send-email 2.1.1
-In-Reply-To: <2de75a74ef4086090c532d3b80b7d6dcd115e45e.1569474867.git.shubhrajyoti.datta@xilinx.com>
-References: <2de75a74ef4086090c532d3b80b7d6dcd115e45e.1569474867.git.shubhrajyoti.datta@xilinx.com>
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
+X-TM-AS-Result: No--4.954-7.0-31-1
+X-imss-scan-details: No--4.954-7.0-31-1;No--4.954-5.0-31-1
+X-TM-AS-User-Approved-Sender: No;No
+X-TM-AS-Result-Xfilter: Match text exemption rules:No
 X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(136003)(376002)(346002)(189003)(199004)(2351001)(47776003)(2361001)(5024004)(14444005)(70586007)(9786002)(70206006)(50226002)(316002)(81156014)(8936002)(8746002)(36386004)(81166006)(118296001)(478600001)(106002)(8676002)(6916009)(2906002)(50466002)(36756003)(76176011)(2616005)(11346002)(186003)(486006)(446003)(48376002)(126002)(476003)(6666004)(356004)(107886003)(336012)(4326008)(5660300002)(305945005)(7696005)(51416003)(426003)(26005)(44832011)(42866002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5258;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Matching-Connectors: 132139491389450880;(f9e945fa-a09a-4caa-7158-08d2eb1d8c44);()
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(376002)(346002)(189003)(199004)(81166006)(8936002)(107886003)(8676002)(81156014)(2351001)(73392003)(486006)(4326008)(76482006)(450100002)(126002)(7696005)(118296001)(51416003)(476003)(47776003)(316002)(26005)(16586007)(336012)(6916009)(9686003)(9786002)(86362001)(2361001)(50226002)(305945005)(5660300002)(356004)(6666004)(36756003)(50466002)(2906002)(498600001)(82202003)(48376002)(70206006)(70586007)(426003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB6426;H:xsj-pvapsmtpgw01;FPR:;SPF:SoftFail;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 223f1358-6b21-439d-1c61-08d74240bb4f
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(4709080)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:DM6PR02MB5258;
-X-MS-TrafficTypeDiagnostic: DM6PR02MB5258:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB52585B24790246939EBCCB58AA860@DM6PR02MB5258.namprd02.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:569;
+X-MS-Office365-Filtering-Correlation-Id: 415f2439-e005-482c-4951-08d74241f773
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(5600167)(711020)(4605104)(1401327)(2017052603328);SRVR:DM6PR02MB6426;
+X-MS-TrafficTypeDiagnostic: DM6PR02MB6426:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB6426FF4CFC2876FFCE120B7F87860@DM6PR02MB6426.namprd02.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
 X-Forefront-PRVS: 0172F0EF77
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: OmRlhoLUT/eKf8VyErZyFWVF7JM1PIfQHdMmFpMuhLGD8OooKQrnA0p6jJq1dlxb6ZMrf/gOrZBsQS2WBGZbjgaOtMD8C7wh5DaUV/G22GQ464biGJdN5u9uXrYKgkJGg38peuZ+Db4pUP4hwlj9cN5EGoWXiIEv/VABdyK1uQQqcvlWpivoWFnHH3EpeKi7m1Pepzx1rMaL83vWrzlDtr2rgarmm4Yn8xTtrZWXfwCTG/TBimRO86tJLRq6QZqBjViFCCSPTB5LVNn/qfYJ7NA59Ui+4Pco1DxNG8khjT3l7BOiwcGnV9S/Wc9TjNRrOMY7kX//hZ3eqASbinQl+iJG98ytYr4G1UaehoII3GbkRqm5549mvmS6uwWGTa4eRR6kdpwTloEZRCHYnvnFB4tjlfy0Vc5phWaKovwoBiE=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2019 05:16:48.1967
+X-Microsoft-Antispam-Message-Info: tPFq0WVoLnWFcplSRKIIsXo5JSmRUK+AIf9HllAcvDfgEzZXJCqkM2SxfxzfWZCpLIV+JCMPD1BnVAqUv1fLrtQ50/mj9w1KhnXHI3CuBkDFHqXdkq08rTnIAHFiVN1V99SnJzAFHwlU5iFljKJbBKI0+PB0qqkJymo88/dNbTtg4R8WLFPLARUNqTfOkM+0knYPlvCXq1sHNOeHdVq4p6grtE9mVqAoz71lqXlQMDH2GMjMvObf6SMVl4tF4GpqP52KjWrHt6MokuFKcVawfYkXOE3ioWNXW9CQ3XHr+Wo130Rt3T34xkRu1i2bI0zbnV0lVPr6vMHYUVOntOY/FV0kZ6+ZRoC1ksd+b1tOYdHhimZ7pstyXNhsn47CJBaOk2nW6hOjjeDsUySnl2f6aYrNxCH3AnDdYAsfqkE/+k0=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2019 05:25:38.6938
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 223f1358-6b21-439d-1c61-08d74240bb4f
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 415f2439-e005-482c-4951-08d74241f773
+X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5258
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB6426
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add short documentation for FlexNoc Performance Monitor driver.
+From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+
+Add dt bindings for flexnoc Performance Monitor.
+The flexnoc counters for read and write response and requests are
+supported.
 
 Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 ---
-v2:
-patch added
+ .../devicetree/bindings/misc/xlnx,flexnoc.txt      | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt
 
- Documentation/misc-devices/xilinx_flex.txt | 66 ++++++++++++++++++++++++++=
-++++
- 1 file changed, 66 insertions(+)
- create mode 100644 Documentation/misc-devices/xilinx_flex.txt
-
-diff --git a/Documentation/misc-devices/xilinx_flex.txt b/Documentation/mis=
-c-devices/xilinx_flex.txt
+diff --git a/Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt b/Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt
 new file mode 100644
-index 0000000..c075934
+index 0000000..6b533bc
 --- /dev/null
-+++ b/Documentation/misc-devices/xilinx_flex.txt
-@@ -0,0 +1,66 @@
-+Kernel driver xilinx_flex
-+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
++++ b/Documentation/devicetree/bindings/misc/xlnx,flexnoc.txt
+@@ -0,0 +1,24 @@
++* Xilinx Flexnoc Performance Monitor driver
 +
-+Supported chips:
-+Versal SOC
++The FlexNoc Performance Monitor has counters for monitoring
++the read and the write transaction counter.
 +
-+Author:
-+       Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
++Required properties:
++- compatible: "xlnx,flexnoc-pm-2.7"
++- reg : Address and length of register sets for each device in
++	"reg-names"
++- reg-names : The names of the register addresses corresponding to the
++		registers filled in "reg"
++		- funnel: base address of the funnel registers
++		- baselpd: base address of the LPD PM registers
++		- basefpd: base address FPD PM registers
 +
-+Description
-+-----------
-+
-+Versal uses the Arteris FlexNoC interconnect instead of the ARM NIC. FlexN=
-oC
-+provides the capability to integrate performance counters in the interconn=
-ect.
-+It has configurable probe points to monitor the packet and forwards it to
-+observer for logging. It supports read and write transaction counts for
-+request and response.
-+
-+Features:
-+---> Run-time programmable selection of packet probe points.
-+---> Recording of traffic and link statistics.
-+---> Separate read and write response and request count.
-+
-+SYSFS:
-+
-+counteridfpd
-+       RW - shows the counter number selected for the FPD Flexnoc.
-+
-+counterfpd_rdreq
-+       RO - shows the read request count for the FPD counters.
-+
-+counterfpdsrc
-+       WO - sets the source of the FPD counter.
-+
-+counterfpd_wrrsp
-+       RO - shows the write response count for the FPD counters.
-+
-+counterfpd_rdrsp
-+       RO - shows the read response count for the FPD counters.
-+
-+counterfpd_wrreq
-+       RO - shows the write request count for the FPD counters.
-+
-+counterfpdport
-+       WO - sets the port number selected for the FPD Flexnoc.
-+
-+counteridlpd
-+       RW - shows the counter number selected for the LPD Flexnoc.
-+
-+counterlpdport
-+       WO - sets the port number selected for the LPD Flexnoc.
-+
-+counterlpd_rdreq
-+       RO - shows the read request count for the LPD counters.
-+
-+counterlpd_wrreq
-+       RO - shows the write request count for the LPD counters.
-+
-+counterlpd_wrrsp
-+       RO - shows the write response count for the LPD counters.
-+
-+counterlpdsrc
-+       WO - sets the source of the LPD counter.
-+
-+counterlpd_rdrsp
-+       RO - shows the read response count for the LPD counters.
---
++Example:
++++++++++
++performance-monitor@f0920000 {
++		compatible = "xlnx,flexnoc-pm-2.7";
++		reg-names = "funnel", "baselpd", "basefpd";
++		reg = <0x0 0xf0920000 0x0 0x1000>,
++			<0x0 0xf0980000 0x0 0x9000>,
++			<0x0 0xf0b80000 0x0 0x9000>;
++};
+-- 
 2.1.1
 
-This email and any attachments are intended for the sole use of the named r=
-ecipient(s) and contain(s) confidential information that may be proprietary=
-, privileged or copyrighted under applicable law. If you are not the intend=
-ed recipient, do not read, copy, or forward this email message or any attac=
-hments. Delete this email message and any attachments immediately.
