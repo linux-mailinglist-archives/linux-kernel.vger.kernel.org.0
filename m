@@ -2,115 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 537B6BECCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 09:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 356B6BECCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 09:47:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731494AbfIZHr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 03:47:26 -0400
-Received: from foss.arm.com ([217.140.110.172]:41236 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbfIZHr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 03:47:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C81B1000;
-        Thu, 26 Sep 2019 00:47:25 -0700 (PDT)
-Received: from iMac.local (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80B8F3F836;
-        Thu, 26 Sep 2019 00:47:24 -0700 (PDT)
-Date:   Thu, 26 Sep 2019 08:47:18 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] arm64: Allow disabling of the compat vDSO
-Message-ID: <20190926074717.GA26802@iMac.local>
-References: <20190925130926.50674-1-catalin.marinas@arm.com>
- <CAKwvOdn2Sf7aAt0zqUUqGY6nXg-C3be7An9amy4tfiNr_8ERJw@mail.gmail.com>
- <20190925170838.GK7042@arrakis.emea.arm.com>
- <a7e06b86-facd-21de-c47c-246d0da8d80d@arm.com>
+        id S1731394AbfIZHrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 03:47:20 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40082 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726148AbfIZHrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 03:47:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3F94AE0C;
+        Thu, 26 Sep 2019 07:47:18 +0000 (UTC)
+Date:   Thu, 26 Sep 2019 09:47:18 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Oscar Salvador <osalvador@suse.de>
+Cc:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] memory_hotplug: Add a bounds check to __add_pages
+Message-ID: <20190926074718.GF20255@dhcp22.suse.cz>
+References: <20190926013406.16133-1-alastair@au1.ibm.com>
+ <20190926013406.16133-2-alastair@au1.ibm.com>
+ <20190926073951.GA17200@linux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a7e06b86-facd-21de-c47c-246d0da8d80d@arm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190926073951.GA17200@linux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 01:06:50AM +0100, Vincenzo Frascino wrote:
-> On 9/25/19 6:08 PM, Catalin Marinas wrote:
-> > On Wed, Sep 25, 2019 at 09:53:16AM -0700, Nick Desaulniers wrote:
-> >> On Wed, Sep 25, 2019 at 6:09 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> >>> Suggestions for future improvements of the compat vDSO handling:
-> >>>
-> >>> - replace the CROSS_COMPILE_COMPAT prefix with a full COMPATCC; maybe
-> >>>   check that it indeed produces 32-bit code
+On Thu 26-09-19 09:40:05, Oscar Salvador wrote:
+> On Thu, Sep 26, 2019 at 11:34:05AM +1000, Alastair D'Silva wrote:
+> > From: Alastair D'Silva <alastair@d-silva.org>
+> > @@ -291,6 +307,10 @@ int __ref __add_pages(int nid, unsigned long pfn, unsigned long nr_pages,
+> >  	unsigned long nr, start_sec, end_sec;
+> >  	struct vmem_altmap *altmap = restrictions->altmap;
+> >  
+> > +	err = check_hotplug_memory_addressable(pfn, nr_pages);
+> > +	if (err)
+> > +		return err;
+> > +
 > 
-> CROSS_COMPILE_COMPAT is called like this for symmetry with CROSS_COMPILE.
-
-Actually, what gets in the way is the CONFIG_CROSS_COMPILE_COMPAT_VDSO.
-We can keep CROSS_COMPILE_COMPAT together with COMPATCC initialised to
-$(CROSS_COMPILE_COMPAT)gcc. When we will be able to build the compat
-vDSO with clang, we just pass COMPATCC=clang on the make line and the
-kernel Makefile will figure out the --target option from
-CROSS_COMPILE_COMPAT (see how CLANG_FLAGS is handled).
-
-If we stick only to env variables or make cmd line (without Kconfig) for
-the compiler name, we can add a COMPATCC_IS_CLANG in the Kconfig
-directly and simply not allow the enabling the COMPAT_VDSO if we don't
-have the right compiler. This saves us warnings during build.
-
-> >>> - check whether COMPATCC is clang or not rather than CC_IS_CLANG, which
-> >>>   only checks the native compiler
-> >>
-> >> When cross compiling, IIUC CC_IS_CLANG is referring to CC which is the
-> >> cross compiler, which is different than HOSTCC which is the host
-> >> compiler.  HOSTCC is used mostly for things in scripts/ while CC is
-> >> used to compile a majority of the kernel in a cross compile.
-> > 
-> > We need the third compiler here for the compat vDSO (at least with gcc),
-> > COMPATCC. I'm tempted to just drop the CONFIG_CROSS_COMPILE_COMPAT_VDSO
-> > altogether and only rely on a COMPATCC. This way we can add
-> > COMPATCC_IS_CLANG etc. in the Kconfig checks directly.
-> > 
-> > If clang can build both 32 and 64-bit with the same binary (just
-> > different options), we could maybe have COMPATCC default to CC and add a
-> > check on whether COMPATCC generates 32-bit binaries.
+> I am probably off here because 1) I am jumping blind in a middle of a discussion and
+> 2) I got back from holydays yesterday, so bear with me.
 > 
-> clang requires the --target option for specifying the 32bit triple.
-> Basically $(TRIPLE)-gcc is equivalent to gcc --target $(TRIPLE).
-> We need a configuration option to encode this.
+> Would not be better to just place the check in add_memory_resource instead?
 
-Since we don't have a CONFIG_* option for the cross-compiler prefix, we
-shouldn't have one for the compat compiler either. If you want to build
-the compat vDSO with clang, just pass COMPATCC=clang together with
-CROSS_COMPILE_COMPAT. We can add Kconfig checks to actually verify that
-COMPATCC generates 32-bit binaries (e.g. COMPATCC_CAN_LINK32).
-
-> >>> - clean up the headers includes; vDSO should not include kernel-only
-> >>>   headers that may even contain code patched at run-time
-> >>
-> >> This is a big one; Clang validates the inline asm constraints for
-> >> extended inline assembly, GCC does not for dead code.  So Clang chokes
-> >> on the inclusion of arm64 headers using extended inline assembly when
-> >> being compiled for arm-linux-gnueabi.
-> > 
-> > Whether clang or gcc, I'd like this fixed anyway. At some point we may
-> > inadvertently rely on some code which is patched at boot time for the
-> > kernel code but not for the vDSO.
-> 
-> Do we have any code of this kind in header files?
-> 
-> The vDSO library uses only a subset of the headers (mainly Macros) hence all the
-> unused symbols should be compiled out. Is your concern only theoretical or do
-> you have an example on where this could be happening?
-
-At the moment it's rather theoretical.
-
+This was the previous version of the patch. The argument is that we do
+not want each add_pages user to think of this special handling.
 -- 
-Catalin
+Michal Hocko
+SUSE Labs
