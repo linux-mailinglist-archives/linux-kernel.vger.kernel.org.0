@@ -2,118 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0C90BEE1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8048BEE2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 11:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbfIZJLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 05:11:16 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50283 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfIZJLQ (ORCPT
+        id S1730224AbfIZJNL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 05:13:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729001AbfIZJNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 05:11:16 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 5so1818545wmg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 02:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NvlClry7u7XrfGIVsfJ+TjM0+OzUnx/9VnLu9RuXPxE=;
-        b=HDnWCsyWuMRI0mLG/7gMEhhik8MvA1Tz46EzqLquUWfr7VTeW5joimm4bIwU9cZf7x
-         L2VDgW4g/sueve9OFN9PyHt3W64X5i3q1Nq5T49n5uCkqcdM4Ra20F5v7YHJvmmqlwCZ
-         op5sXml/au4o6Wb0aNR6PrBohasuofJRqa6a0Y1cIAVQx330TxKpDkc9N2c7b0+WdvGf
-         bOZRD4jxBlUNm0NZB5J14U04KQDbJ7BF78dXLJuUsDitR8Z6Nvatkse9ar8ufN031aB6
-         4YfePqfcxlCQIptELuPS0j/J85XKiszJWJDbBKdiMpMi6SceOS2hjcj5Ym2D/3wE7aIW
-         jpWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NvlClry7u7XrfGIVsfJ+TjM0+OzUnx/9VnLu9RuXPxE=;
-        b=NCwT5+VBsm87G0JbJp4Gr05dy0IGudnLwzpGcvuVJOaIjAsvCW9bxuK21V7jxduagb
-         fBTo4xSPqRJbV4ihRKPHJTovkfh0dP1lWQdyL1cdgoWfRhOcRC9fHjseKgf8o5sPB/X9
-         SAAnzgMmjykxGRuvY4zN+1q/xwlqjFBEasUBZXU7wpPgoqEXMhvnDXeXiyLHjsbgWaKf
-         ucZeyfF+insSNfvUpZuMK91u4TC1g+JuGGpGibGjnO+lv5ouQ3y6G3R4YKk/1OefLcd7
-         ZIkOm/9AVERvBlvKMH+ulW84/KyCMoequHrPAcgcJeeQVojv1XZixfjIGZZajux69XwX
-         p6Kw==
-X-Gm-Message-State: APjAAAWVl3YyO4ikhSC3psj3jRZcyDSlfXjk/739ElOP0Wr8MpjNQpIf
-        eplTsaFacrAqX7TV8hEUNdF/6PAsBFc=
-X-Google-Smtp-Source: APXvYqzt9vQs2kwjHGDHTQIwhxjlF5ljsO+4VEFVjJaJ4vavi9pJr7B9bYNgMlw5HFGexb3OXZKeKA==
-X-Received: by 2002:a1c:4d0d:: with SMTP id o13mr2144290wmh.19.1569489073735;
-        Thu, 26 Sep 2019 02:11:13 -0700 (PDT)
-Received: from flashheart.burtonini.com (35.106.2.81.in-addr.arpa. [81.2.106.35])
-        by smtp.gmail.com with ESMTPSA id a10sm1886935wrm.52.2019.09.26.02.11.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 02:11:12 -0700 (PDT)
-From:   Ross Burton <ross.burton@intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        bruce.ashfield@gmail.com
-Subject: [PATCH] arch/x86/boot: use prefix map to avoid embedded paths
-Date:   Thu, 26 Sep 2019 10:11:04 +0100
-Message-Id: <20190926091104.3762-1-ross.burton@intel.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 26 Sep 2019 05:13:10 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8Q9CalT038643;
+        Thu, 26 Sep 2019 05:13:00 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v8t7n8x0a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Sep 2019 05:12:59 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x8Q9Cbl2038696;
+        Thu, 26 Sep 2019 05:12:57 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2v8t7n8wx0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Sep 2019 05:12:57 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x8Q9Af87023062;
+        Thu, 26 Sep 2019 09:12:55 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma01dal.us.ibm.com with ESMTP id 2v5bg7s5ay-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Sep 2019 09:12:55 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8Q9CsLZ53871090
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 09:12:54 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4788A124054;
+        Thu, 26 Sep 2019 09:12:54 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5FE2124052;
+        Thu, 26 Sep 2019 09:12:51 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.34.158])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Sep 2019 09:12:51 +0000 (GMT)
+X-Mailer: emacs 26.2 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v4 2/8] mm/memory_hotplug: Don't access uninitialized memmaps in shrink_zone_span()
+In-Reply-To: <20190830091428.18399-3-david@redhat.com>
+References: <20190830091428.18399-1-david@redhat.com> <20190830091428.18399-3-david@redhat.com>
+Date:   Thu, 26 Sep 2019 14:42:50 +0530
+Message-ID: <87wodvo1yl.fsf@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-26_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1909260089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bruce Ashfield <bruce.ashfield@gmail.com>
+David Hildenbrand <david@redhat.com> writes:
 
-It was observed that the kernel embeds the path in the x86 boot
-artifacts.
+> Let's limit shrinking to !ZONE_DEVICE so we can fix the current code. We
+> should never try to touch the memmap of offline sections where we could
+> have uninitialized memmaps and could trigger BUGs when calling
+> page_to_nid() on poisoned pages.
+>
+> Stopping to shrink the ZONE_DEVICE is fine as set_zone_contiguous() cannot
+> deal with ZONE_DEVICE either way. The zones will always be !contiguous
+> already and zone shrinking is therefore of limited use.
 
-From https://bugzilla.yoctoproject.org/show_bug.cgi?id=13458:
+Can you add more details w.r.t ZONE_DEVICE?
 
-[
-   If you turn on the buildpaths QA test, or try a reproducible build, you
-   discover that the kernel image contains build paths.
+>
+> Before commit d0dc12e86b31 ("mm/memory_hotplug: optimize memory
+> hotplug"), the memmap was initialized with 0 and the node with the
+> right value. So the zone might be wrong but not garbage. After that
+> commit, both the zone and the node will be garbage when touching
+> uninitialized memmaps.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Oscar Salvador <osalvador@suse.de>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Fixes: d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
+> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  mm/memory_hotplug.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index ddba8d786e4a..e0d1f6a9dfeb 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -331,7 +331,7 @@ static unsigned long find_smallest_section_pfn(int nid, struct zone *zone,
+>  				     unsigned long end_pfn)
+>  {
+>  	for (; start_pfn < end_pfn; start_pfn += PAGES_PER_SUBSECTION) {
+> -		if (unlikely(!pfn_valid(start_pfn)))
+> +		if (unlikely(!pfn_to_online_page(start_pfn)))
+>  			continue;
+>  
+>  		if (unlikely(pfn_to_nid(start_pfn) != nid))
+> @@ -356,7 +356,7 @@ static unsigned long find_biggest_section_pfn(int nid, struct zone *zone,
+>  	/* pfn is the end pfn of a memory section. */
+>  	pfn = end_pfn - 1;
+>  	for (; pfn >= start_pfn; pfn -= PAGES_PER_SUBSECTION) {
+> -		if (unlikely(!pfn_valid(pfn)))
+> +		if (unlikely(!pfn_to_online_page(pfn)))
+>  			continue;
+>  
+>  		if (unlikely(pfn_to_nid(pfn) != nid))
+> @@ -415,7 +415,7 @@ static void shrink_zone_span(struct zone *zone, unsigned long start_pfn,
+>  	 */
+>  	pfn = zone_start_pfn;
+>  	for (; pfn < zone_end_pfn; pfn += PAGES_PER_SUBSECTION) {
+> -		if (unlikely(!pfn_valid(pfn)))
+> +		if (unlikely(!pfn_to_online_page(pfn)))
+>  			continue;
+>  
+>  		if (page_zone(pfn_to_page(pfn)) != zone)
+> @@ -463,6 +463,14 @@ static void __remove_zone(struct zone *zone, unsigned long start_pfn,
+>  	struct pglist_data *pgdat = zone->zone_pgdat;
+>  	unsigned long flags;
+>  
+> +	/*
+> +	 * Zone shrinking code cannot properly deal with ZONE_DEVICE. So
+> +	 * we will not try to shrink the zones - which is okay as
+> +	 * set_zone_contiguous() cannot deal with ZONE_DEVICE either way.
+> +	 */
+> +	if (zone_idx(zone) == ZONE_DEVICE)
+> +		return;
 
-   $ strings bzImage-5.0.19-yocto-standard |grep tmp/
-   out of pgt_buf in
-   /data/poky-tmp/reproducible/tmp/work-shared/qemux86-64/kernel-source/arch/x86/boot/compressed/kaslr_64.c!?
+Can you describe here what is special about ZONE_DEVICE?
 
-   But what's this in the top-level Makefile:
 
-   $ git grep prefix-map
-   Makefile:KBUILD_CFLAGS  += $(call
-   cc-option,-fmacro-prefix-map=$(srctree)/=)
-
-   So the __FILE__ shouldn't be using the full path.  However
-   arch/x86/boot/compressed/Makefile has this:
-
-   KBUILD_CFLAGS := -m$(BITS) -O2
-
-   So that clears KBUILD_FLAGS, removing the -fmacro-prefix-map option.
-]
-
-Other architectures do not clear the flags, but instead prune before
-adding boot or specific options. There's no obvious reason why x86 isn't
-doing the same thing (pruning vs clearing) and no build or boot issues
-have been observed.
-
-So we make x86 can do the same thing, and we no longer have embedded paths.
-
-Signed-off-by: Bruce Ashfield <bruce.ashfield@gmail.com>
-Signed-off-by: Ross Burton <ross.burton@intel.com>
----
- arch/x86/boot/compressed/Makefile | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 6b84afdd7538..b246f18c5857 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -38,6 +38,7 @@ KBUILD_CFLAGS += $(call cc-option,-fno-stack-protector)
- KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
- KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
- KBUILD_CFLAGS += -Wno-pointer-sign
-+KBUILD_CFLAGS += $(call cc-option,-fmacro-prefix-map=$(srctree)/=)
- 
- KBUILD_AFLAGS  := $(KBUILD_CFLAGS) -D__ASSEMBLY__
- GCOV_PROFILE := n
--- 
-2.20.1
-
+>  	pgdat_resize_lock(zone->zone_pgdat, &flags);
+>  	shrink_zone_span(zone, start_pfn, start_pfn + nr_pages);
+>  	update_pgdat_span(pgdat);
+> -- 
+> 2.21.0
