@@ -2,80 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00681BEF89
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:25:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81431BEF83
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfIZKZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 06:25:49 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:53881 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfIZKZs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 06:25:48 -0400
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x8QAPiZX026387;
-        Thu, 26 Sep 2019 19:25:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x8QAPiZX026387
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569493544;
-        bh=4gNfylHHZtdgndSad6PjJXSwxIOR9alrhtPtj8B7110=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=VinczihnWCDBrgvoLP2kh5fTytrGSEoNtQk40bdmi4GDG5IIpShIqMdnNlzt2kiFt
-         2N65b4GeXMV6VQPXgYcU1CIGc8tXfRCQdgtgd2aOkFQa+01xE/x2GQUIUKR/SHNNre
-         NCTiw3vbhHgYaFneTON8+Erl4Q78APXKXU+wGXaM3C6Ja31BIp+qqtkEn4FCTAhNVt
-         hQQZSwgqopq9slaI9tSyg4TSxVwU5jACP3ZwJDUlaeeT357sqWaLKvsLq1c64N4RJ7
-         Mv2TSeZsU6DA2+zpeWPIOuUIDAXJsoetGen8N6y7CzkhW1MCRhr8kQyc6ob7SW1fp5
-         3SdgKiScRbF1g==
-X-Nifty-SrcIP: [209.85.217.46]
-Received: by mail-vs1-f46.google.com with SMTP id d3so1251842vsr.1;
-        Thu, 26 Sep 2019 03:25:44 -0700 (PDT)
-X-Gm-Message-State: APjAAAVaqQdyOaS/0nwjUNRk77rUoqQ7K1iu+MOtVnQwX9nQmJLJfAOK
-        I9b+qzAXn69XMhHV8VqfR6tJWs5yKQx9Z9fS22M=
-X-Google-Smtp-Source: APXvYqyeIspKm3xk+JKqX7PSS7gDWlcm9BZdyqAWf+X9fC0of2bjx1GwXyPr283EhOahiarlzOo3vv0bAZkcr7AOlSE=
-X-Received: by 2002:a67:1a41:: with SMTP id a62mr1750823vsa.54.1569493543459;
- Thu, 26 Sep 2019 03:25:43 -0700 (PDT)
+        id S1726664AbfIZKZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 06:25:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:55022 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725990AbfIZKZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 06:25:24 -0400
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 703B081F0D
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 10:25:24 +0000 (UTC)
+Received: by mail-wm1-f69.google.com with SMTP id o8so953787wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 03:25:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Wg1F6fhHfjGl1CmkFUDQZE8b2uXlEUi5cZIaWD+93Ng=;
+        b=YSlxCMLVRGPrDOwlFbwdp836zQyzh0jZMIREthXIDQFk8Saf7qeOGBg/whFkfLcJ9i
+         UpyBAQrFnK4i8AYCTo15a/xpS36xRkO0qBfOKbX3kP/Fwn42rM7MlZkJAs/Ll7S/4KWi
+         H2fBI8B4YdJg8GvXCQLImZpk7eYEbsRztLQhMR3UvGqq01oIyBta8pjfJ8x46qBXVNZ8
+         Y62TsNEMXuO+5mIrm+n5bZC38a//kmefR/fIVrI+nd3u+ESHwlbhxlOiIPYvZxnJqjz5
+         D3DA7IqS/nNXnwzP12vKY9wTT7yvAM0+zezkkBY+TRL4viJe0cUfOktKztLP1FPONkww
+         9Q8g==
+X-Gm-Message-State: APjAAAV1D6DU2P0wLGJrl2vurfoSuf4KyhSF3IpHJG3k0ehMXKtepVMx
+        Sra8ifwHCcOMItkGqfr8FH5DO6BPDN1QZc0aMrVxR9nFjn7RNaOJyRCRgefEveEJsynqHidRJEz
+        4vN07uvaAjvd1fILULABxbTZ9
+X-Received: by 2002:a7b:c00e:: with SMTP id c14mr2286927wmb.158.1569493523028;
+        Thu, 26 Sep 2019 03:25:23 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqw8yGv+a6tmqUttSQfZ1O++o0RvOjj04j7ifv0aGAkM22LS/PTzhHvNMrwLsv4fuUKFDDqmMQ==
+X-Received: by 2002:a7b:c00e:: with SMTP id c14mr2286906wmb.158.1569493522778;
+        Thu, 26 Sep 2019 03:25:22 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:9520:22e6:6416:5c36? ([2001:b07:6468:f312:9520:22e6:6416:5c36])
+        by smtp.gmail.com with ESMTPSA id o9sm3012505wrh.46.2019.09.26.03.25.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2019 03:25:22 -0700 (PDT)
+Subject: Re: [PATCH v2] KVM: LAPIC: Loose fluctuation filter for auto tune
+ lapic_timer_advance_ns
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <1569459243-21950-1-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <ea06c6bb-c6ff-ef34-55ca-c58cb77ed39e@redhat.com>
+Date:   Thu, 26 Sep 2019 12:25:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190926101312.32218-1-geert@linux-m68k.org>
-In-Reply-To: <20190926101312.32218-1-geert@linux-m68k.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 26 Sep 2019 19:25:07 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARTk5yE1=WsxdYpEw6EYXMmq8cW5QBEse2WWhTJ0y=iMA@mail.gmail.com>
-Message-ID: <CAK7LNARTk5yE1=WsxdYpEw6EYXMmq8cW5QBEse2WWhTJ0y=iMA@mail.gmail.com>
-Subject: Re: [PATCH -next] fbdev: c2p: Fix link failure on non-inlining
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-fbdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1569459243-21950-1-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 7:13 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> When the compiler decides not to inline the Chunky-to-Planar core
-> functions, the build fails with:
->
->     c2p_planar.c:(.text+0xd6): undefined reference to `c2p_unsupported'
->     c2p_planar.c:(.text+0x1dc): undefined reference to `c2p_unsupported'
->     c2p_iplan2.c:(.text+0xc4): undefined reference to `c2p_unsupported'
->     c2p_iplan2.c:(.text+0x150): undefined reference to `c2p_unsupported'
->
-> Fix this by marking the functions __always_inline.
->
-> Reported-by: noreply@ellerman.id.au
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+On 26/09/19 02:54, Wanpeng Li wrote:
+> -#define LAPIC_TIMER_ADVANCE_ADJUST_MIN 100
+> -#define LAPIC_TIMER_ADVANCE_ADJUST_MAX 5000
+> -#define LAPIC_TIMER_ADVANCE_ADJUST_INIT 1000
+> +#define LAPIC_TIMER_ADVANCE_EXPIRE_MIN	100
+> +#define LAPIC_TIMER_ADVANCE_EXPIRE_MAX	10000
+> +#define LAPIC_TIMER_ADVANCE_NS_INIT	1000
+> +#define LAPIC_TIMER_ADVANCE_NS_MAX     5000
 
+I think the old #define value is good.  What about:
 
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+-#define LAPIC_TIMER_ADVANCE_ADJUST_MIN 100
+-#define LAPIC_TIMER_ADVANCE_ADJUST_MAX 5000
+-#define LAPIC_TIMER_ADVANCE_ADJUST_INIT 1000
++#define LAPIC_TIMER_ADVANCE_ADJUST_MIN 100	/* clock cycles */
++#define LAPIC_TIMER_ADVANCE_ADJUST_MAX 10000	/* clock cycles */
++#define LAPIC_TIMER_ADVANCE_NS_INIT	1000
++#define LAPIC_TIMER_ADVANCE_NS_MAX     5000
 
+?
 
+Thanks,
 
-
--- 
-Best Regards
-Masahiro Yamada
+Paolo
