@@ -2,84 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3D8BF8F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 169A8BF902
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:16:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfIZSMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 14:12:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49888 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbfIZSMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 14:12:03 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 05E9510C0954;
-        Thu, 26 Sep 2019 18:12:03 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C72271001B05;
-        Thu, 26 Sep 2019 18:12:01 +0000 (UTC)
-Subject: Re: [PATCH] ipc/sem: Fix race between to-be-woken task and waker
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        id S1728220AbfIZSQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 14:16:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36764 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727824AbfIZSQB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 14:16:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mn8IPYK5fTq/nd7bMLIu9R0D58yWiLZOfaLo4U/dC2k=; b=LCzUDgZIId8seDiOSjLAOjdUO
+        Zka4JJZRaFdcdEA1XhJjFpSJeg8i8XRjmTYew9A5h5wsEuxK2l+se/3fuiu9lOigRx0Y2ktXUWP2G
+        QBABWxwcoAsnDyxaJ+lOwPrdkC+Zu2snNnSUHkiXIpcKr/0W7wKWTk3SY802MioAB3Grw=;
+Received: from [12.157.10.118] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iDYIm-0004PZ-4W; Thu, 26 Sep 2019 18:15:40 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 86B0BD02DD8; Thu, 26 Sep 2019 19:15:38 +0100 (BST)
+Date:   Thu, 26 Sep 2019 11:15:38 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <vijendar.mukunda@amd.com>,
+        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
+        YueHaibing <yuehaibing@huawei.com>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Davidlohr Bueso <dave@stgolabs.net>, manfred@colorfullife.com
-References: <20190920155402.28996-1-longman@redhat.com>
- <20190926093410.GJ4553@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <d16e4d82-8c5a-0663-8c00-32f4750f8a21@redhat.com>
-Date:   Thu, 26 Sep 2019 14:12:01 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/5] ASoC: amd: Enabling two I2S instances
+Message-ID: <20190926181538.GC2036@sirena.org.uk>
+References: <1569539290-756-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+ <1569539290-756-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <20190926093410.GJ4553@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Thu, 26 Sep 2019 18:12:03 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8H5+QmNTcR9iGQhm"
+Content-Disposition: inline
+In-Reply-To: <1569539290-756-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/19 5:34 AM, Peter Zijlstra wrote:
-> On Fri, Sep 20, 2019 at 11:54:02AM -0400, Waiman Long wrote:
->> While looking at a customr bug report about potential missed wakeup in
->> the system V semaphore code, I spot a potential problem.  The fact that
->> semaphore waiter stays in TASK_RUNNING state while checking queue status
->> may lead to missed wakeup if a spurious wakeup happens in the right
->> moment as try_to_wake_up() will do nothing if the task state isn't right.
->>
->> To eliminate this possibility, the task state is now reset to
->> TASK_INTERRUPTIBLE immediately after wakeup before checking the queue
->> status. This should eliminate the race condition on the interaction
->> between the queue status and the task state and fix the potential missed
->> wakeup problem.
-> Bah, this code always makes my head hurt.
->
-> Yes, AFAICT the pattern it uses has been broken since 0a2b9d4c7967,
-> since that removed doing the actual wakeup from under the sem_lock(),
-> which is what it relies on.
 
-After having a second look at the code again, I probably misread the
-code the first time around. In the sleeping path, there is a check of
-queue.status and setting of task state both under the sem lock in the
-sleeping path. So as long as setting of queue status is under lock, they
-should synchronize properly.
+--8H5+QmNTcR9iGQhm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It looks like queue status setting is under lock, but I can't use
-lockdep to confirm that as the locking can be done by either the array
-lock or in one of the spinlocks in the array. Are you aware of a way of
-doing that?
+On Fri, Sep 27, 2019 at 04:37:37AM +0530, Ravulapati Vishnu vardhan rao wro=
+te:
+> RAVEN has multiple I2S instances:BT and SP.But only BT is enabled.
+> Now I2S SP instance also gets enabled with this patch.
 
-Anyway, I do think we need to add some comment to clarify the situation
-to avoid future confusion.
+This is extremely difficult to review as is, the patch is very
+large and the description very brief so it's hard to tell exactly
+what issues there are that must be fixed to enable multiple I2S
+interfaces.  My suggestion would be that this should be split
+into a number of smaller patches, each making one logical change
+with a clear description of what that specific change is.
 
-Cheers,
-Longman
+A few specific comments below but really I didn't get very far
+into the code due to the difficulty figuring out what's going on:
 
+> @@ -46,10 +28,10 @@ static int acp3x_i2s_set_fmt(struct snd_soc_dai *cpu_=
+dai, unsigned int fmt)
+> =20
+>  	case SND_SOC_DAIFMT_I2S:
+>  		adata->tdm_mode =3D false;
+> -		break;
+> +	break;
+>  	case SND_SOC_DAIFMT_DSP_A:
+> -			adata->tdm_mode =3D true;
+> -			break;
+> +		adata->tdm_mode =3D true;
+> +	break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+
+For example this is a pure formatting change (one that moves
+things away from the normal Linux coding style) and clearly not
+related to the changelog.
+
+> @@ -87,9 +69,16 @@ static int acp3x_i2s_set_tdm_slot(struct snd_soc_dai *=
+cpu_dai, u32 tx_mask,
+>  	val =3D rv_readl(adata->acp3x_base + mmACP_BTTDM_IRER);
+>  	rv_writel((val | 0x2), adata->acp3x_base + mmACP_BTTDM_IRER);
+> =20
+> +	val =3D rv_readl(adata->acp3x_base + mmACP_I2STDM_ITER);
+> +	rv_writel((val | 0x2), adata->acp3x_base + mmACP_I2STDM_ITER);
+> +	val =3D rv_readl(adata->acp3x_base + mmACP_I2STDM_IRER);
+> +	rv_writel((val | 0x2), adata->acp3x_base + mmACP_I2STDM_IRER);
+> +
+>  	val =3D (FRM_LEN | (slots << 15) | (slot_len << 18));
+>  	rv_writel(val, adata->acp3x_base + mmACP_BTTDM_TXFRMT);
+>  	rv_writel(val, adata->acp3x_base + mmACP_BTTDM_RXFRMT);
+> +	rv_writel(val, adata->acp3x_base + mmACP_I2STDM_TXFRMT);
+> +	rv_writel(val, adata->acp3x_base + mmACP_I2STDM_RXFRMT);
+> =20
+>  	adata->tdm_fmt =3D val;
+>  	return 0;
+
+Won't this configure all the interfaces identically?
+
+--8H5+QmNTcR9iGQhm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2NAEkACgkQJNaLcl1U
+h9A/nQf/aCxpiLEUD1Kxl47cIVbozOcJU4QYNdUFGgPrUnoYCKI013RSszByaTzt
+50c9wKCPY+rsQwVa0Vn9v7LiCDiq50OuEcmknCIFhKqtersy52YJLJB7pu9XNkTD
+rfTJiMEIEgaFaa90HAtACaBEvtw9y8K9jqdiOvffmNJUWeMassdjR8GHEJ63U6aJ
+OHjcOF3U2jQ49F04lt7EEioY7UNso5Ru4WbYlF4WPvDnZjzzReW9zWiXL0dhitHy
+Iw478TOWlDmWbbOcLkzJi8EIqhfshzKxBOmU3JX649T+XghFqhI0s+9ZwWgzSIMF
+bw5dMN3uhrrF0ExH7SRRoZPg2T3arg==
+=Y62R
+-----END PGP SIGNATURE-----
+
+--8H5+QmNTcR9iGQhm--
