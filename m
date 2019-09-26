@@ -2,252 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38935BF5D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 17:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AC57BF5C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 17:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfIZPZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 11:25:00 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2789 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726845AbfIZPY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 11:24:59 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 45931EFB426518DAA836;
-        Thu, 26 Sep 2019 23:24:57 +0800 (CST)
-Received: from [127.0.0.1] (10.184.12.158) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 26 Sep 2019
- 23:24:48 +0800
-Subject: Re: [PATCH 10/35] irqchip/gic-v4.1: VPE table (aka GICR_VPROPBASER)
- allocation
-To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-kernel@vger.kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20190923182606.32100-1-maz@kernel.org>
- <20190923182606.32100-11-maz@kernel.org>
- <155660c2-7f30-e188-ca8d-c37fabea6d97@huawei.com>
- <6f4ccdfd-4b63-04cb-e7c0-f069e620127f@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <14111988-74c9-12c3-1322-1580ff6ba11f@huawei.com>
-Date:   Thu, 26 Sep 2019 23:19:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
+        id S1727311AbfIZPUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 11:20:44 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52854 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726029AbfIZPUo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 11:20:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CkcTAd4S96JpD35jbvDi6z+phIXmR7MSa7e/rGtaKb4=; b=kx7Cbp6SHnYTy5/8mkX9LsA03
+        zoLd51jZwr4WSGElOynTrJjN7UAfjOJb3xbJMGIADPIs0hzoOzgssneeHyqelOdmdoaEtGmrPIvYq
+        ylLR4W40pJuq0fW3zMz/i3G5SijHk9mWGGUAZD4FaiyO3147Mk3+wf1Ir569uYWdbEtMM=;
+Received: from [12.157.10.118] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1iDVYn-0003uG-8U; Thu, 26 Sep 2019 15:20:01 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id A5E6DD02CFF; Thu, 26 Sep 2019 16:19:59 +0100 (BST)
+Date:   Thu, 26 Sep 2019 08:19:59 -0700
+From:   Mark Brown <broonie@kernel.org>
+To:     Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+Cc:     Alexander.Deucher@amd.com, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: amd: Missing Initialization of IRQFLAGS
+Message-ID: <20190926151959.GV2036@sirena.org.uk>
+References: <1569542689-25512-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <6f4ccdfd-4b63-04cb-e7c0-f069e620127f@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.12.158]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="L0pirLHWQnJmYWnZ"
+Content-Disposition: inline
+In-Reply-To: <1569542689-25512-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
 
-Two more questions below.
+--L0pirLHWQnJmYWnZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2019/9/25 22:41, Marc Zyngier wrote:
-> On 25/09/2019 14:04, Zenghui Yu wrote:
->> Hi Marc,
->>
->> Some questions about this patch, mostly to confirm that I would
->> understand things here correctly.
->>
->> On 2019/9/24 2:25, Marc Zyngier wrote:
->>> GICv4.1 defines a new VPE table that is potentially shared between
->>> both the ITSs and the redistributors, following complicated affinity
->>> rules.
->>>
->>> To make things more confusing, the programming of this table at
->>> the redistributor level is reusing the GICv4.0 GICR_VPROPBASER register
->>> for something completely different.
->>>
->>> The code flow is somewhat complexified by the need to respect the
->>> affinities required by the HW, meaning that tables can either be
->>> inherited from a previously discovered ITS or redistributor.
->>>
->>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>> ---
->>
->> [...]
->>
->>> @@ -1962,6 +1965,65 @@ static bool its_parse_indirect_baser(struct its_node *its,
->>>    	return indirect;
->>>    }
->>>    
->>> +static u32 compute_common_aff(u64 val)
->>> +{
->>> +	u32 aff, clpiaff;
->>> +
->>> +	aff = FIELD_GET(GICR_TYPER_AFFINITY, val);
->>> +	clpiaff = FIELD_GET(GICR_TYPER_COMMON_LPI_AFF, val);
->>> +
->>> +	return aff & ~(GENMASK(31, 0) >> (clpiaff * 8));
->>> +}
->>> +
->>> +static u32 compute_its_aff(struct its_node *its)
->>> +{
->>> +	u64 val;
->>> +	u32 svpet;
->>> +
->>> +	/*
->>> +	 * Reencode the ITS SVPET and MPIDR as a GICR_TYPER, and compute
->>> +	 * the resulting affinity. We then use that to see if this match
->>> +	 * our own affinity.
->>> +	 */
->>> +	svpet = FIELD_GET(GITS_TYPER_SVPET, its->typer);
+On Fri, Sep 27, 2019 at 05:34:47AM +0530, Ravulapati Vishnu vardhan rao wro=
+te:
+> Fix for missing initialization of IRQFLAGS in
+> ACP-PCI driver and Missing Macro of ACP3x_DEVS.
+>=20
+> Follow up to IDb33df346
 
-The spec says, ITS does not share vPE table with Redistributors when
-SVPET==0.  It seems that we miss this rule and simply regard SVPET as
-GICR_TYPER_COMMON_LPI_AFF here.  Am I wrong?
+What is "IDb33df346"?
 
->>> +	val  = FIELD_PREP(GICR_TYPER_COMMON_LPI_AFF, svpet);
->>> +	val |= FIELD_PREP(GICR_TYPER_AFFINITY, its->mpidr);
->>> +	return compute_common_aff(val);
->>> +}
->>> +
->>> +static struct its_node *find_sibbling_its(struct its_node *cur_its)
->>> +{
->>> +	struct its_node *its;
->>> +	u32 aff;
->>> +
->>> +	if (!FIELD_GET(GITS_TYPER_SVPET, cur_its->typer))
->>> +		return NULL;
->>> +
->>> +	aff = compute_its_aff(cur_its);
->>> +
->>> +	list_for_each_entry(its, &its_nodes, entry) {
->>> +		u64 baser;
->>> +
->>> +		if (!is_v4_1(its) || its == cur_its)
->>> +			continue;
->>> +
->>> +		if (!FIELD_GET(GITS_TYPER_SVPET, its->typer))
->>> +			continue;
->>> +
->>> +		if (aff != compute_its_aff(its))
->>> +			continue;
->>> +
->>> +		/* GICv4.1 guarantees that the vPE table is GITS_BASER2 */
->>> +		baser = its->tables[2].val;
->>> +		if (!(baser & GITS_BASER_VALID))
->>> +			continue;
->>> +
->>> +		return its;
->>> +	}
->>> +
->>> +	return NULL;
->>> +}
->>> +
->>>    static void its_free_tables(struct its_node *its)
->>>    {
->>>    	int i;
->>> @@ -2004,6 +2066,15 @@ static int its_alloc_tables(struct its_node *its)
->>>    			break;
->>>    
->>>    		case GITS_BASER_TYPE_VCPU:
->>> +			if (is_v4_1(its)) {
->>> +				struct its_node *sibbling;
->>> +
->>> +				if ((sibbling = find_sibbling_its(its))) {
->>> +					its->tables[2] = sibbling->tables[2];
->>
->> This means thst the vPE table is shared between ITSs which are under the
->> same affinity group?
-> 
-> That's indeed what this is trying to do...
-> 
->> Don't we need to set GITS_BASER (by its_setup_baser()) here to tell this
->> ITS where the vPE table lacates?
-> 
-> Absolutely. This is a bug. I didn't spot it as my model only has a
-> single ITS.
-> 
->>
->>> +					continue;
->>> +				}
->>> +			}
->>> +
->>>    			indirect = its_parse_indirect_baser(its, baser,
->>>    							    psz, &order,
->>>    							    ITS_MAX_VPEID_BITS);
->>> @@ -2025,6 +2096,212 @@ static int its_alloc_tables(struct its_node *its)
->>>    	return 0;
->>>    }
->>>    
->>> +static u64 inherit_vpe_l1_table_from_its(void)
->>> +{
->>> +	struct its_node *its;
->>> +	u64 val;
->>> +	u32 aff;
->>> +
->>> +	val = gic_read_typer(gic_data_rdist_rd_base() + GICR_TYPER);
->>> +	aff = compute_common_aff(val);
->>> +
->>> +	list_for_each_entry(its, &its_nodes, entry) {
->>> +		u64 baser;
->>> +
->>> +		if (!is_v4_1(its))
->>> +			continue;
->>> +
->>> +		if (!FIELD_GET(GITS_TYPER_SVPET, its->typer))
->>> +			continue;
->>> +
->>> +		if (aff != compute_its_aff(its))
->>> +			continue;
->>> +
->>> +		/* GICv4.1 guarantees that the vPE table is GITS_BASER2 */
->>> +		baser = its->tables[2].val;
->>> +		if (!(baser & GITS_BASER_VALID))
->>> +			continue;
->>> +
->>> +		/* We have a winner! */
->>> +		val  = GICR_VPROPBASER_4_1_VALID;
->>> +		if (baser & GITS_BASER_INDIRECT)
->>> +			val |= GICR_VPROPBASER_4_1_INDIRECT;
->>> +		val |= FIELD_PREP(GICR_VPROPBASER_4_1_PAGE_SIZE,
->>> +				  FIELD_GET(GITS_BASER_PAGE_SIZE_MASK, baser));
->>> +		val |= FIELD_PREP(GICR_VPROPBASER_4_1_ADDR,
->>> +				  GITS_BASER_ADDR_48_to_52(baser) >> 12);
->>
->> I remember the spec says,
->> GITS_BASER2 "points to" the ITS *vPE table*, which provides mappings
->> from the vPEID to target Redistributor and associated vpt address.
->> In GICv4.1 GICR_VPROPBASER "points to" the *vPE Configuration table*,
->> which stores the locations of each vPE's LPI configuration and pending
->> table.
->>
->> And the code here says, if we can find an ITS (which is under the same
->> CommonLPIAff group with this Redistributor) has already been probed and
->> allocated an vPE table, then use this vPE table as this Redist's vPE
->> Configuration table.
->> So I infer that in GICv4.1, *vPE table* and *vPE Configuration table*
->> are actually the same concept?  And this table is shared between ITSs
->> and Redists which are under the same affinity group?
->> Please fix me if I have any misunderstanding.
-> 
-> Indeed. The whole idea is that ITSs and RDs can share a vPE table if
-> they are in the same affinity group (such as a socket, for example).
-> This is what is missing from v4.0 where the ITS knows about vPEs, but
-> doesn't know about residency. With that in place, the HW is able to do a
-> lot more for us.
+--L0pirLHWQnJmYWnZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks for your education!
+-----BEGIN PGP SIGNATURE-----
 
-I really want to know *how* does GICv4.1 ITS know about the vPE
-residency (in hardware level)?
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl2M1x4ACgkQJNaLcl1U
+h9CzMQf8CW7bKL6E1DaPRcJ+5j/bmPxewThu9xmDy3QUSp98vzdVj2nsqQTwrE/n
+2khiq4zkCK1f8ocT0C92+DNHMQN+1jUoMHSPDP4ZSiIBAIIGIbGJOilcvIx5TGEp
+ZiHGBfXILiDBqeqnxX0wJ40RCgidP7gbGUUoliWt69KKIBYhuzlm7Rg0rWr/Zy0o
+nPRZVY978qNnIDmIgKl6vMaRCPpwibYJl3XGls+Xg8ek4gUbfDYNY0fnK2J3wLTW
+Hg1525ARow6o7PbjaGkqxlf7jilKlPYvClqWPU/qC5tdVG55HMxKsX191vV0iKTe
+/TP/nMEQm1qvryDg0TKCyUKMVD6YGA==
+=G7K2
+-----END PGP SIGNATURE-----
 
-I can understand that Redistributor can easily achieve it by
-VPENDBASER's Valid and vPEID field.  And it's necessary for ITS to
-know the residency so that it can determine whether it's appropriate
-to trigger default doorbell for vPE.  But I have no knowledge about
-how can it be achieved in hardware details.
-
-Thanks in advance for your pointer. :)
-
-
-Zenghui
-
+--L0pirLHWQnJmYWnZ--
