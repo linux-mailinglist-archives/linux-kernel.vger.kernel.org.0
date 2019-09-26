@@ -2,165 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 730A1BF24B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F3A0BF253
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbfIZL5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:57:43 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:59402 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfIZL5n (ORCPT
+        id S1726248AbfIZMAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:00:44 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36317 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbfIZMAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:57:43 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8QBvdid032063;
-        Thu, 26 Sep 2019 06:57:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569499059;
-        bh=sRGn7FIP91uDNrt0JHnswIa+OTsTaGPjkG5FkSwvSA8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=gTk0g6MpxUk2kGVmQS5uZO+5KrF4wQwRrmtxI6tFLxxS7TZebOHkSX+jp/cDGdFoq
-         UZ3/KB5yLPJwIJpTM5TrLo6jD/PD616rwztcJa5o9A6t+vpVJBhVnQHMaHOWEGdUQo
-         9ewhlvPZtyLp2jdbA+WUf0KQYFBDlwBhRQK9g6pQ=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8QBvdpg042640;
-        Thu, 26 Sep 2019 06:57:39 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 26
- Sep 2019 06:57:31 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 26 Sep 2019 06:57:31 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8QBvdOx005221;
-        Thu, 26 Sep 2019 06:57:39 -0500
-Subject: Re: [PATCH v9 13/15] leds: lp55xx: Update the lp55xx to use the multi
- color framework
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190925174616.3714-1-dmurphy@ti.com>
- <20190925174616.3714-14-dmurphy@ti.com>
- <59e58ccf-84fb-5db7-5008-20afc7436d35@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <64d00aab-501c-d709-94af-4747a27df098@ti.com>
-Date:   Thu, 26 Sep 2019 07:02:59 -0500
+        Thu, 26 Sep 2019 08:00:43 -0400
+Received: by mail-lf1-f68.google.com with SMTP id x80so1495880lff.3;
+        Thu, 26 Sep 2019 05:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7XWikGZouALuaXU8QmpV5uGjR79Qy2+P6Xqtc8grImI=;
+        b=sFUC245uUPv8Jm5DxG0weHF5VxJhXxBTLmRx3nXHvoxzSuhNd29acmLw6qDZAyxufI
+         SSKZ8dbk/lqXeqsCsUY4LUnUV77oL7v/d0VSQr8atsQ2ikUOq0O+NnnMdSNzirB0eaip
+         5xgv/+2DjGZF9XxDIVQd8GOsn7/Ic/G4PQ6uSmqAW7HFXFOP1/dX3H3tqTFy+x7OVvHq
+         8KlDu/O+pKmVIYh1K15y5Ifbi83Y1l/vT+UiwKUMMZ8j12sOJj+H4d7z576rUZbuPW5l
+         YQzZvoXuxxus7Mh7/mVq7uKBeQtW3eeMOR/NL2PxViqOSHkR9SgWwrBO/1WVoIR7FuEk
+         Bg+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7XWikGZouALuaXU8QmpV5uGjR79Qy2+P6Xqtc8grImI=;
+        b=MddKTboGiGNU1cYx4YqBF2JLexif9XvTzUG+oWNVkvqfyaqzM7paV7iNVdWcxz+Pxu
+         ooHGnSqReZwMJKsh0Rl5Y6L5jcCse8XRMOe/JiE69nI6tfmJsqFeS7D/FCR5B9li5slX
+         YZP3CrWnON4RMLLj47Rf1ioTKTWSkGJ5s9OTguUPsoiAp9IKYBC6rFCUdJkvvu+Lu+mc
+         wxqeOt3zsF/hDpKyC1y/MR28CPZ280kfAZ/F+LuLf5DnOOxGW4cUHoXPbg/H79uPvvnv
+         vpPLRpypWQI0uk2uDfnbByg7pktO+sOh4p3zQyFxNInPGi7Ue+70YaH8OUrnlY7+RIy5
+         adlg==
+X-Gm-Message-State: APjAAAU5X9MKxUgE3qt9DHzyRTFOlQJsG7KqubrJn+Ddq7tTq/QsFnsh
+        eqgparPEj66CoFQB1tIHKjk=
+X-Google-Smtp-Source: APXvYqydhbk75lEKQ+0ee3AlhEdA+ZAXZR7K2+v7lAdPiWV4nE2zXFJ8N+zIgKY7bBCLDWVGIZybdg==
+X-Received: by 2002:a19:2c1:: with SMTP id 184mr1989422lfc.100.1569499241445;
+        Thu, 26 Sep 2019 05:00:41 -0700 (PDT)
+Received: from elitebook.lan (ip-194-187-74-233.konfederacka.maverick.com.pl. [194.187.74.233])
+        by smtp.googlemail.com with ESMTPSA id f5sm486379lfh.52.2019.09.26.05.00.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Sep 2019 05:00:40 -0700 (PDT)
+Subject: Re: [PATCH RFC] cfg80211: add new command for reporting wiphy crashes
+To:     Johannes Berg <johannes@sipsolutions.net>, Jouni Malinen <j@w1.fi>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hostap@lists.infradead.org,
+        openwrt-devel@lists.openwrt.org
+References: <20190920133708.15313-1-zajec5@gmail.com>
+ <20190920140143.GA30514@w1.fi>
+ <4f6f37e5-802c-4504-3dcb-c4a640d138bd@milecki.pl>
+ <9ece533700be8237699881312a99cc91c6a71d36.camel@sipsolutions.net>
+From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Message-ID: <09503390-91f0-3789-496a-6e9891156c5e@gmail.com>
+Date:   Thu, 26 Sep 2019 14:00:39 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.5.2
 MIME-Version: 1.0
-In-Reply-To: <59e58ccf-84fb-5db7-5008-20afc7436d35@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ece533700be8237699881312a99cc91c6a71d36.camel@sipsolutions.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
-
-On 9/25/19 5:00 PM, Jacek Anaszewski wrote:
-> Dan,
->
-> On 9/25/19 7:46 PM, Dan Murphy wrote:
->> Update the lp5523 to allow the use of the multi color framework.
+On 26.09.2019 13:55, Johannes Berg wrote:
+> On Thu, 2019-09-26 at 13:52 +0200, Rafał Miłecki wrote:
 >>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>   drivers/leds/Kconfig                      |   1 +
->>   drivers/leds/leds-lp5523.c                |  13 ++
->>   drivers/leds/leds-lp55xx-common.c         | 150 ++++++++++++++++++----
->>   drivers/leds/leds-lp55xx-common.h         |  11 ++
->>   include/linux/platform_data/leds-lp55xx.h |   6 +
->>   5 files changed, 157 insertions(+), 24 deletions(-)
+>> Indeed my main concert is AP mode. I'm afraid that cfg80211 doesn't
+>> cache all settings, consider e.g. nl80211_start_ap(). It builds
+>> struct cfg80211_ap_settings using info from nl80211 message and
+>> passes it to the driver (rdev_start_ap()). Once it's done it
+>> caches only a small subset of all setup data.
 >>
->> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->> index 84f60e35c5ee..dc3d9f2194cd 100644
->> --- a/drivers/leds/Kconfig
->> +++ b/drivers/leds/Kconfig
->> @@ -377,6 +377,7 @@ config LEDS_LP50XX
->>   config LEDS_LP55XX_COMMON
->>   	tristate "Common Driver for TI/National LP5521/5523/55231/5562/8501"
->>   	depends on LEDS_LP5521 || LEDS_LP5523 || LEDS_LP5562 || LEDS_LP8501
->> +	depends on LEDS_CLASS_MULTI_COLOR && OF
->>   	select FW_LOADER
->>   	select FW_LOADER_USER_HELPER
->>   	help
->> diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
->> index d0b931a136b9..8b2cdb98fed6 100644
->> --- a/drivers/leds/leds-lp5523.c
->> +++ b/drivers/leds/leds-lp5523.c
->> @@ -791,6 +791,18 @@ static ssize_t store_master_fader_leds(struct device *dev,
->>   	return ret;
->>   }
->>   
->> +static int lp5523_led_intensity(struct lp55xx_led *led, int chan_num)
-> Why do we need this function? brightness op will not suffice?
+>> In other words driver doesn't have enough info to recover interfaces
+>> setup.
+> 
+> So the driver can cache it, just like mac80211.
+> 
+> You can't seriously be suggesting that the driver doesn't *have* enough
+> information - everything passed through it :)
 
-I looked at this before sending it in.  This API adds the chan_num to 
-write to.
+Precisely: it doesn't store (cache) enough info.
 
-The brightness_fn does not it takes it from the led structure.
 
->
->> +{
->> +	struct lp55xx_chip *chip = led->chip;
->> +	int ret;
->> +
->> +	mutex_lock(&chip->lock);
->> +	ret = lp55xx_write(chip, LP5523_REG_LED_PWM_BASE + chan_num,
->> +		     led->brightness);
->> +	mutex_unlock(&chip->lock);
->> +	return ret;
->> +}
->> +
->>   static int lp5523_led_brightness(struct lp55xx_led *led)
->>   {
->>   	struct lp55xx_chip *chip = led->chip;
->> @@ -857,6 +869,7 @@ static struct lp55xx_device_config lp5523_cfg = {
->>   	.max_channel  = LP5523_MAX_LEDS,
->>   	.post_init_device   = lp5523_post_init_device,
->>   	.brightness_fn      = lp5523_led_brightness,
->> +	.color_intensity_fn = lp5523_led_intensity,
->>   	.set_led_current    = lp5523_set_led_current,
->>   	.firmware_cb        = lp5523_firmware_loaded,
->>   	.run_engine         = lp5523_run_engine,
->> diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
->> index 44ced02b49f9..0e4b3a9d3047 100644
->> --- a/drivers/leds/leds-lp55xx-common.c
->> +++ b/drivers/leds/leds-lp55xx-common.c
->> @@ -136,9 +136,26 @@ static int lp55xx_set_brightness(struct led_classdev *cdev,
->>   {
->>   	struct lp55xx_led *led = cdev_to_lp55xx_led(cdev);
->>   	struct lp55xx_device_config *cfg = led->chip->cfg;
->> +	int brightness_val[LP55XX_MAX_GROUPED_CHAN];
->> +	int ret;
->> +	int i;
->> +
->> +	if (led->mc_cdev.num_leds > 1) {
->> +		led_mc_calc_brightness(&led->mc_cdev,
->> +				       brightness, brightness_val);
->> +		for (i = 0; i < led->mc_cdev.num_leds; i++) {
->> +			led->brightness = brightness_val[i];
->> +			ret = cfg->color_intensity_fn(led,
->> +						      led->grouped_channels[i]);
-> Now we will have three separate calls for each color component
-> (and possibly sleeping on mutex on contention).
->
-> Probably LED mc class use case will need a bit different design.
->
-> Also, instead of grouped_channels we could possibly have
->
-> led_mc_get_color_id(&led->mc_dev, i)
-color_id and grouped_channels are not a 1:1 mapping
->
-> which would map entry position index to color_id.
->
-> I will stop reviewing here and will continue after taking
-> deeper look at this lp55xx design.
->
+>> I meant that hardware has been recovered & is operational again (driver
+>> can talk to it). I expected user space to reconfigure all interfaces
+>> using the same settings that were used on previous run.
+>>
+>> If driver were able to recover interfaces setup on its own (with a help
+>> of cfg80211) then user space wouldn't need to be involved.
+> 
+> The driver can do it, mac80211 does. It's just a matter of what the
+> driver will do or not.
+> 
+>> First of all I was wondering how to handle interfaces creation. After a
+>> firmware crash we have:
+>> 1) Interfaces created in Linux
+>> 2) No corresponsing interfaces in firmware
+> 
+>> Syncing that (re-creating in-firmware firmwares) may be a bit tricky
+>> depending on a driver and hardware.
+> 
+> We do that in mac80211, it works fine. Why would it be tricky?
 
-Dan
+In brcmfmac on .add_virtual_intf() we:
+1) Send request to the FullMAC firmware
+2) Wait for a reply
+3) On success we create interface
+4) We wake up .add_virtual_intf() handler
 
+I'll need to find a way to skip step 3 in recovery path since interface
+on host side already exists.
+
+
+> If something fails, I think we force that interface to go down.
+> 
+>> For some cases it could be easier to
+>> delete all interfaces and ask user space to setup wiphy (create required
+>> interfaces) again. I'm not sure if that's acceptable though?
+>>
+>> If we agree interfaces should stay and driver simply should configure
+>> firmware properly, then we need all data as explained earlier. struct
+>> cfg80211_ap_settings is not available during runtime. How should we
+>> handle that problem?
+> 
+> You can cache it in the driver in whatever format makes sense.
+> 
+>> I was aiming for a brutal force solution: just make user space
+>> interfaces need a full setup just at they were just created.
+> 
+> You can still do that btw, just unregister and re-register the wiphy.
+
+OK, so basically I need to work on caching setup data. Should I try
+doing that at my selected driver level (brcmfmac)? Or should I focus on
+generic solution (cfg80211) and consider offloading mac80211 if
+possible?
