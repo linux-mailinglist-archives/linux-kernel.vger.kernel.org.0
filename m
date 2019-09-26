@@ -2,121 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16CD7BF5C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 17:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65731BF5C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 17:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfIZPUh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 11:20:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54296 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfIZPUh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 11:20:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yLzCCbA1xxgfSSaN55ak3+kri+HafX9octEvTxgZHQ4=; b=QPr6feejBrc5AYDFCfltGGA9g
-        MOBKVaJNT8g359mo5ovvj7SADpWggwaleaynmHTmIYrP0Dvoza9azT1TCvicyZuy9cv5sANCwT5W3
-        FF2mFDgv3fPhc3hN6hocoT+L4rJuD25u1PZbE61MAfmTXHNk8R0mjCVermC1hgulxsQNBhNEldsMD
-        gh4TwP/rzW80LblNU6jyYPgNR+2MnxFo+EM6EDSKKJdOEXsKzFiYZ3MsDbGNPX2nYvsefFcRJhyB3
-        ZBi7dDMANOsy7GNmE1geqRK3jmUBJTtd4fcii6HYFMX87s2QXBhODXtm8z67ADOVa6PpQGLnU6pDf
-        OrGBGwJzA==;
-Received: from [2601:1c0:6280:3f0::9a1f]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iDVZF-00039v-NT; Thu, 26 Sep 2019 15:20:29 +0000
-Subject: Re: [RFC PATCH] x86/doc/boot_protocol: Correct the description of
- "reloc"
-To:     hpa@zytor.com, Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, corbet@lwn.net
-References: <20190926042116.17929-1-caoj.fnst@cn.fujitsu.com>
- <20190926060139.GA100481@gmail.com>
- <faabfe47-ba3e-5a92-af65-dc26e8e2ecb9@cn.fujitsu.com>
- <3073CD01-65C5-4BEC-B2FC-F76DD0E70D73@zytor.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f7a1d739-94ae-f6d3-efdb-9748e5e03f82@infradead.org>
-Date:   Thu, 26 Sep 2019 08:20:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727277AbfIZPWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 11:22:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:52750 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727170AbfIZPWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 11:22:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1DB215A2;
+        Thu, 26 Sep 2019 08:22:14 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EF4FA3F534;
+        Thu, 26 Sep 2019 08:22:13 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 16:22:11 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, ndesaulniers@google.com,
+        will@kernel.org, tglx@linutronix.de
+Subject: Re: [PATCH v2 3/4] arm64: vdso32: Fix compilation warning
+Message-ID: <20190926152210.GI9689@arrakis.emea.arm.com>
+References: <20190926133805.52348-1-vincenzo.frascino@arm.com>
+ <20190926133805.52348-4-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <3073CD01-65C5-4BEC-B2FC-F76DD0E70D73@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190926133805.52348-4-vincenzo.frascino@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/19 12:58 AM, hpa@zytor.com wrote:
-> On September 26, 2019 12:55:51 AM PDT, Cao jin <caoj.fnst@cn.fujitsu.com> wrote:
->> On 9/26/19 2:01 PM, Ingo Molnar wrote:
->>> * Cao jin <caoj.fnst@cn.fujitsu.com> wrote:
->>>
->>>> The fields marked with (reloc) actually are not dedicated for
->> writing,
->>>> but communicating info for relocatable kernel with boot loaders. For
->>>> example:
->>>>
->>>>     ============    ============
->>>>     Field name:     pref_address
->>>>     Type:           read (reloc)
->>>>     Offset/size:    0x258/8
->>>>     Protocol:       2.10+
->>>>     ============    ============
->>>>
->>>>     ============    ========================
->>>>     Field name:     code32_start
->>>>     Type:           modify (optional, reloc)
->>>>     Offset/size:    0x214/4
->>>>     Protocol:       2.00+
->>>>     ============    ========================
->>>>
->>>> Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
->>>> ---
->>>> Unless I have incorrect non-native understanding for "fill in", I
->> think
->>>> this is inaccurate.
->>>>
->>>>  Documentation/x86/boot.rst | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/x86/boot.rst b/Documentation/x86/boot.rst
->>>> index 08a2f100c0e6..a611bf04492d 100644
->>>> --- a/Documentation/x86/boot.rst
->>>> +++ b/Documentation/x86/boot.rst
->>>> @@ -243,7 +243,7 @@ bootloader ("modify").
->>>>  
->>>>  All general purpose boot loaders should write the fields marked
->>>>  (obligatory).  Boot loaders who want to load the kernel at a
->>>> -nonstandard address should fill in the fields marked (reloc); other
->>>> +nonstandard address should consult with the fields marked (reloc);
->> other
->>>>  boot loaders can ignore those fields.
->>>>  
->>>>  The byte order of all fields is littleendian (this is x86, after
->> all.)
->>>
->>> Well, this documentation is written from the point of view of a 
->>> *bootloader*, not the kernel. So the 'fill in' says that the
->> bootloader 
->>> should write those fields - which is correct, right?
->>>
->>
->> Take pref_address or relocatable_kernel for example, they have type:
->> read (reloc), does boot loader need to write them? I don't see grub
->> does
->> this at least.
-> 
-> Read means the boot later reads them.
+On Thu, Sep 26, 2019 at 02:38:04PM +0100, Vincenzo Frascino wrote:
+> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> index b61b50bf68b1..cfa9cd87af14 100644
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -228,11 +228,16 @@ static inline unsigned long kaslr_offset(void)
+>  #define __tag_get(addr)		0
+>  #endif /* CONFIG_KASAN_SW_TAGS */
+>  
+> +#ifdef __aarch64__
+>  static inline const void *__tag_set(const void *addr, u8 tag)
+>  {
+>  	u64 __addr = (u64)addr & ~__tag_shifted(0xff);
+>  	return (const void *)(__addr | __tag_shifted(tag));
+>  }
+> +#else
+> +/* Unused in compat vdso */
+> +#define __tag_set(addr, tag) 0
+> +#endif
 
-is that          boot loader ??
-
+Do we actually need an #else block here? I think the #ifdef is
+sufficient, with a comment along the lines of "Do not attempt to compile
+when included in the compat vdso" (or pick some better wording).
 
 -- 
-~Randy
+Catalin
