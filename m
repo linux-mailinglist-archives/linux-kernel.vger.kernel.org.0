@@ -2,139 +2,252 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9229BFA36
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 21:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36778BFA41
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 21:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbfIZTlk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 15:41:40 -0400
-Received: from mga12.intel.com ([192.55.52.136]:6984 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728487AbfIZTlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 15:41:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 12:41:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,553,1559545200"; 
-   d="scan'208";a="273576520"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by orsmga001.jf.intel.com with ESMTP; 26 Sep 2019 12:41:37 -0700
-Received: from orsmsx111.amr.corp.intel.com (10.22.240.12) by
- ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 26 Sep 2019 12:41:37 -0700
-Received: from orsmsx122.amr.corp.intel.com ([169.254.11.236]) by
- ORSMSX111.amr.corp.intel.com ([169.254.12.70]) with mapi id 14.03.0439.000;
- Thu, 26 Sep 2019 12:41:37 -0700
-From:   "Schmauss, Erik" <erik.schmauss@intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>, Nikolaus Voss <nv@vosn.de>
-CC:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Moore, Robert" <robert.moore@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        "Pavel Machek" <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
-Thread-Topic: [PATCH] ACPICA: make acpi_load_table() return table index
-Thread-Index: AQHVaUE6PwWyj3qAlUyiJ16YhgOwE6c+NeMQgAB9wgD//42XEIAAlnqAgAALqgD//41KEA==
-Date:   Thu, 26 Sep 2019 19:41:36 +0000
-Message-ID: <CF6A88132359CE47947DB4C6E1709ED53C6492CB@ORSMSX122.amr.corp.intel.com>
-References: <20190906174605.GY2680@smile.fi.intel.com>
- <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
- <CF6A88132359CE47947DB4C6E1709ED53C6481B1@ORSMSX122.amr.corp.intel.com>
- <20190926163528.GH32742@smile.fi.intel.com>
- <CF6A88132359CE47947DB4C6E1709ED53C6481F2@ORSMSX122.amr.corp.intel.com>
- <alpine.DEB.2.20.1909262043380.13592@fox.voss.local>
- <CAJZ5v0g=onKCidHMLNWuYFCuhcQGmtDDp5QSGiHu1jhoDRuhWQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0g=onKCidHMLNWuYFCuhcQGmtDDp5QSGiHu1jhoDRuhWQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOGM4MzNjMGMtOTQ1Ny00NGJiLWE2M2QtNzYwZWRmMzVhNmQ0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieitrM0hWejN6XC9MNWF4OGkwUjFFTWFkcHMyUTQ3dzFzUXEwRnpoS1J0MXhTVXlHUXczUk82S0lnTjcrN2FmNmEifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1728728AbfIZToX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 15:44:23 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41200 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728454AbfIZToX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 15:44:23 -0400
+Received: by mail-io1-f68.google.com with SMTP id r26so9679958ioh.8;
+        Thu, 26 Sep 2019 12:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7YaOJjbeJ4vHzFNCKN4Rfl7SNbQO++40kW4opqhFvjE=;
+        b=ptL+t++PhjIDsGKfuLy0BchccV5YdocaOsRsXZ/4JqKqUKoQzhFSC1NY4npM9rE3Yl
+         C7Zl9VNtkmAwuniXVUGj4fMyTDLJ9ep+95WejAowbtGq6FHtnA2xpNZVLKkTBrGnzor0
+         0V+gRFuTh35NxWLvtKPNWwtsROhtajgumBlMHA4ZM5svWHQtB83GqJQoIMPvnDLX0Mog
+         7cFhKRgDTuCirRwxX668mKmMZkEuY9LObevYVy1kBjI8F/Gm4TsEt4zLDYd6uSq7cZCt
+         gi9GXWN/AxMMuWydGrQclQzQp/+PcBWPKz+vNmn/hh8LJXIC7WXRfqGKq1Ck+jfEHf1j
+         qu3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7YaOJjbeJ4vHzFNCKN4Rfl7SNbQO++40kW4opqhFvjE=;
+        b=UevvZPYC0oERjnJCZc2pso/1jVu71iwvggUtlT5hqDw9Pz/IyPp9uj1lUdemN5TeQx
+         y3M3EVrGpm7wYXX9sqSzqoZGlBbCfwfSfXwnUv2204z7Whm0RspeKr6mM6EKpVAMqxRp
+         3aOaHdRmnFCnV8luqDV7GV2qnfANPC1RKZ6750iKw8GrC8DBgefZuIj/P7cMt51WaZYM
+         wEG9oDSIwzrcsTO+P3XWxmoOOqMjaGEemfgro9BCoaR4mNfvxXkFyd3aG5SKOhgO+75W
+         GxItr5WbNDroD+0WRPQMDo1DBS1J7zxWPV73pJkzfaJWMI7E/e5WqaReE1SPtxj99Cp3
+         scUw==
+X-Gm-Message-State: APjAAAX+4J9zmiZmpI0kINxseiE+rvneaUiCnTl1wgpRRXGbwOqAbhFl
+        Zw5GKmZjCQSx2r8KpTrGAHM/C+hRNZXlCo8yrvI=
+X-Google-Smtp-Source: APXvYqws94RCz1OEKmJWcCJfFYz8odw3snwroxEbJRlT5VqNIjb8opn290GiegEG8UnQeVF3x/P4koKd12cnxdqwU+Y=
+X-Received: by 2002:a92:3f0a:: with SMTP id m10mr357121ila.158.1569527062022;
+ Thu, 26 Sep 2019 12:44:22 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190919145114.13006-1-philipp.puschmann@emlix.com>
+ <VI1PR0402MB3600CA068AEBAC63D3CE6A4CFF880@VI1PR0402MB3600.eurprd04.prod.outlook.com>
+ <ac67f010-1b2c-6996-f542-ab955ca86489@emlix.com> <CAHCN7xL0BKmt8xrhuB4rrvOqkCM5AUJ6YAzbcU8eNDXbzj4fZg@mail.gmail.com>
+ <15be848facd5e80222e5db30c61fe72f82a85713.camel@analog.com>
+In-Reply-To: <15be848facd5e80222e5db30c61fe72f82a85713.camel@analog.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Thu, 26 Sep 2019 14:44:10 -0500
+Message-ID: <CAHCN7xK=kxEFiuUEX=q4R3XEyeaAp+HGFCUpYkYUESMhqwMA6A@mail.gmail.com>
+Subject: Re: [EXT] [PATCH v3] serial: imx: adapt rx buffer and dma periods
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "philipp.puschmann@emlix.com" <philipp.puschmann@emlix.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "yibin.gong@nxp.com" <yibin.gong@nxp.com>,
+        "fugang.duan@nxp.com" <fugang.duan@nxp.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "jslaby@suse.com" <jslaby@suse.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUmFmYWVsIEouIFd5c29j
-a2kgPHJhZmFlbEBrZXJuZWwub3JnPg0KPiBTZW50OiBUaHVyc2RheSwgU2VwdGVtYmVyIDI2LCAy
-MDE5IDEyOjI2IFBNDQo+IFRvOiBOaWtvbGF1cyBWb3NzIDxudkB2b3NuLmRlPg0KPiBDYzogU2No
-bWF1c3MsIEVyaWsgPGVyaWsuc2NobWF1c3NAaW50ZWwuY29tPjsgU2hldmNoZW5rbywgQW5kcml5
-DQo+IDxhbmRyaXkuc2hldmNoZW5rb0BpbnRlbC5jb20+OyBSYWZhZWwgSi4gV3lzb2NraSA8cmp3
-QHJqd3lzb2NraS5uZXQ+Ow0KPiBNb29yZSwgUm9iZXJ0IDxyb2JlcnQubW9vcmVAaW50ZWwuY29t
-PjsgTGVuIEJyb3duIDxsZW5iQGtlcm5lbC5vcmc+Ow0KPiBKYWNlayBBbmFzemV3c2tpIDxqYWNl
-ay5hbmFzemV3c2tpQGdtYWlsLmNvbT47IFBhdmVsIE1hY2hlaw0KPiA8cGF2ZWxAdWN3LmN6Pjsg
-RGFuIE11cnBoeSA8ZG11cnBoeUB0aS5jb20+OyBsaW51eC1hY3BpQHZnZXIua2VybmVsLm9yZzsN
-Cj4gZGV2ZWxAYWNwaWNhLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJq
-ZWN0OiBSZTogW1BBVENIXSBBQ1BJQ0E6IG1ha2UgYWNwaV9sb2FkX3RhYmxlKCkgcmV0dXJuIHRh
-YmxlIGluZGV4DQo+IA0KPiBPbiBUaHUsIFNlcCAyNiwgMjAxOSBhdCA4OjQ0IFBNIE5pa29sYXVz
-IFZvc3MgPG52QHZvc24uZGU+IHdyb3RlOg0KPiA+DQo+ID4gT24gVGh1LCAyNiBTZXAgMjAxOSwg
-U2NobWF1c3MsIEVyaWsgd3JvdGU6DQo+ID4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
-Cj4gPiA+PiBGcm9tOiBsaW51eC1hY3BpLW93bmVyQHZnZXIua2VybmVsLm9yZw0KPiA+ID4+IDxs
-aW51eC1hY3BpLW93bmVyQHZnZXIua2VybmVsLm9yZz4NCj4gPiA+PiBPbiBCZWhhbGYgT2YgU2hl
-dmNoZW5rbywgQW5kcml5DQo+ID4gPj4gU2VudDogVGh1cnNkYXksIFNlcHRlbWJlciAyNiwgMjAx
-OSA5OjM1IEFNDQo+ID4gPj4gVG86IFNjaG1hdXNzLCBFcmlrIDxlcmlrLnNjaG1hdXNzQGludGVs
-LmNvbT4NCj4gPiA+PiBDYzogTmlrb2xhdXMgVm9zcyA8bmlrb2xhdXMudm9zc0Bsb2V3ZW5zdGVp
-bm1lZGljYWwuZGU+OyBSYWZhZWwgSi4NCj4gPiA+PiBXeXNvY2tpIDxyandAcmp3eXNvY2tpLm5l
-dD47IE1vb3JlLCBSb2JlcnQNCj4gPiA+PiA8cm9iZXJ0Lm1vb3JlQGludGVsLmNvbT47IExlbiBC
-cm93biA8bGVuYkBrZXJuZWwub3JnPjsgSmFjZWsNCj4gPiA+PiBBbmFzemV3c2tpIDxqYWNlay5h
-bmFzemV3c2tpQGdtYWlsLmNvbT47IFBhdmVsIE1hY2hlaw0KPiA+ID4+IDxwYXZlbEB1Y3cuY3o+
-OyBEYW4gTXVycGh5IDxkbXVycGh5QHRpLmNvbT47IGxpbnV4LQ0KPiA+ID4+IGFjcGlAdmdlci5r
-ZXJuZWwub3JnOyBkZXZlbEBhY3BpY2Eub3JnOw0KPiA+ID4+IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc7IG52QHZvc24uZGUNCj4gPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIXSBBQ1BJQ0E6
-IG1ha2UgYWNwaV9sb2FkX3RhYmxlKCkgcmV0dXJuIHRhYmxlDQo+ID4gPj4gaW5kZXgNCj4gPiA+
-Pg0KPiA+ID4+IE9uIFRodSwgU2VwIDI2LCAyMDE5IGF0IDA3OjA5OjA1UE0gKzAzMDAsIFNjaG1h
-dXNzLCBFcmlrIHdyb3RlOg0KPiA+ID4+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4g
-PiA+Pj4+IEZyb206IE5pa29sYXVzIFZvc3MgPG5pa29sYXVzLnZvc3NAbG9ld2Vuc3RlaW5tZWRp
-Y2FsLmRlPg0KPiA+ID4+Pj4gU2VudDogVGh1cnNkYXksIFNlcHRlbWJlciAxMiwgMjAxOSAxOjA4
-IEFNDQo+ID4gPj4+PiBUbzogU2hldmNoZW5rbywgQW5kcml5IDxhbmRyaXkuc2hldmNoZW5rb0Bp
-bnRlbC5jb20+OyBTY2htYXVzcywNCj4gPiA+Pj4+IEVyaWsgPGVyaWsuc2NobWF1c3NAaW50ZWwu
-Y29tPjsgUmFmYWVsIEouIFd5c29ja2kNCj4gPiA+Pj4+IDxyandAcmp3eXNvY2tpLm5ldD47IE1v
-b3JlLCBSb2JlcnQgPHJvYmVydC5tb29yZUBpbnRlbC5jb20+DQo+ID4gPj4+PiBDYzogTGVuIEJy
-b3duIDxsZW5iQGtlcm5lbC5vcmc+OyBKYWNlayBBbmFzemV3c2tpDQo+ID4gPj4+PiA8amFjZWsu
-YW5hc3pld3NraUBnbWFpbC5jb20+OyBQYXZlbCBNYWNoZWsgPHBhdmVsQHVjdy5jej47IERhbg0K
-PiA+ID4+Pj4gTXVycGh5IDxkbXVycGh5QHRpLmNvbT47IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwu
-b3JnOw0KPiA+ID4+Pj4gZGV2ZWxAYWNwaWNhLm9yZzsgbGludXgtIGtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmc7IG52QHZvc24uZGU7DQo+ID4gPj4+PiBOaWtvbGF1cyBWb3NzIDxuaWtvbGF1cy52b3Nz
-QGxvZXdlbnN0ZWlubWVkaWNhbC5kZT4NCj4gPiA+Pj4+IFN1YmplY3Q6IFtQQVRDSF0gQUNQSUNB
-OiBtYWtlIGFjcGlfbG9hZF90YWJsZSgpIHJldHVybiB0YWJsZQ0KPiA+ID4+Pj4gaW5kZXgNCj4g
-PiA+Pj4+DQo+ID4gPj4+IEhpIE5pa29sYXVzLA0KPiA+ID4+Pg0KPiA+ID4+Pj4gRm9yIHVubG9h
-ZGluZyBhbiBBQ1BJIHRhYmxlLCBpdCBpcyBuZWNlc3NhcnkgdG8gcHJvdmlkZSB0aGUgaW5kZXgg
-b2YgdGhlDQo+IHRhYmxlLg0KPiA+ID4+Pj4gVGhlIG1ldGhvZCBpbnRlbmRlZCBmb3IgZHluYW1p
-Y2FsbHkgbG9hZGluZyBvciBob3RwbHVnIGFkZGl0aW9uDQo+ID4gPj4+PiBvZiB0YWJsZXMsIGFj
-cGlfbG9hZF90YWJsZSgpLCBzaG91bGQgcHJvdmlkZSB0aGlzIGluZm9ybWF0aW9uIHZpYQ0KPiA+
-ID4+Pj4gYW4gb3B0aW9uYWwgcG9pbnRlciB0byB0aGUgbG9hZGVkIHRhYmxlIGluZGV4Lg0KPiA+
-ID4+Pg0KPiA+ID4+PiBXZSdsbCB0YWtlIHRoaXMgcGF0Y2ggZm9yIEFDUElDQSB1cHN0cmVhbQ0K
-PiA+ID4+DQo+ID4gPj4gRXJpaywNCj4gPiA+Pg0KPiA+ID4gSGkgQW5keSwNCj4gPiA+DQo+ID4g
-Pj4gaG93IGFib3V0IHRvIGhhdmUgYWxzbyBjb3VudGVycGFydCB0byBhY3BpX2xvYWRfdGFibGUo
-KSB3aGljaCB3aWxsDQo+ID4gPj4gZG8gd2hhdCBpdCdzIGRvbmUgbm93IGluIGFjcGlfY29uZmln
-ZnMuYyB2aWEgYWNwaV90Yl8qKCkgQVBJPw0KPiA+ID4NCj4gPiA+IEkgc2hvdWxkIGhhdmUgZ2l2
-ZW4gbW9yZSBkZXRhaWxzLiBXZSBkZWNpZGVkIHRvIGFkZCB0aGlzIGV4dHJhDQo+ID4gPiBwYXJh
-bWV0ZXIgaW4gQWNwaUxvYWRUYWJsZSBhbmQgd2UncmUgZ29pbmcgdG8gY3JlYXRlIGFuDQo+ID4g
-PiBBY3BpVW5sb2FkVGFibGUgZnVuY3Rpb24gdGhhdCB3aWxsIHRha2UgdGFibGUgaW5kZXggdG8g
-dW5sb2FkIHRoZQ0KPiA+ID4gdGFibGUgKGJhc2ljYWxseSB0aGUgYWNwaV90Yl91bmxvYWQuLiku
-IE9uY2Ugd2UgZG8gdGhpcywgeW91IGNhbiB1c2UNCj4gPiA+IHRhYmxlIGluZGljZXMgd2l0aCBB
-Y3BpVW5sb2FkVGFibGUgYW5kIEFjcGlMb2FkVGFibGUuDQo+ID4NCj4gPiB0aGF0J3MgZXZlbiBi
-ZXR0ZXIgbmV3cy4NCj4gPg0KPiA+IFJhZmFlbCwgc2hhbGwgSSBwcmVwYXJlIGFueXRoaW5nPw0K
-SGkgZXZlcnlvbmUsDQoNCj4gSSBkb24ndCB0aGluayBzby4gIEknbSBleHBlY3RpbmcgdG8gZ2V0
-IGEgcHJvcGVyIGZpeCBmcm9tIHRoZSB1cHN0cmVhbSB0aHJvdWdoDQo+IHRoZSBub3JtYWwgcHJv
-Y2Vzcy4NCkp1c3Qgc28gdGhhdCB3ZSBhcmUgb24gdGhlIHNhbWUgcGFnZToNCg0KSSd2ZSBiYWNr
-cG9ydGVkIE5pa29sYXVzJ3MgcGF0Y2ggZm9yIHVwc3RyZWFtIGhlcmUgaHR0cHM6Ly9naXRodWIu
-Y29tL2FjcGljYS9hY3BpY2EvcHVsbC81MDYNCmFuZCBCb2IgaGFzIGltcGxlbWVudGVkIHRoZSBu
-ZXcgQVBJIGhlcmU6IGh0dHBzOi8vZ2l0aHViLmNvbS9hY3BpY2EvYWNwaWNhL2NvbW1pdC9jNjkz
-NjljZDljZjAxMzRlMWFhYzUxNmU5N2Q2MTI5NDdkYWE4ZGMyDQoNCk9uY2Ugd2UgZG8gYSByZWxl
-YXNlLCBJIHdpbGwgc2VuZCBCb2IncyBjaGFuZ2UgdG8gdGhlIGxpbnV4IEFDUEkgbWFpbGluZyBs
-aXN0Lg0KRmVlbCBmcmVlIHRvIHVzZSB0aGlzIG5ldyBBUEkgd2hlcmUgeW91IHNlZSBmaXQuDQoN
-ClRoYW5rcywNCkVyaWsNCg0KPiANCj4gVGhhbmtzLA0KPiBSYWZhZWwNCg==
+On Thu, Sep 26, 2019 at 1:37 AM Ardelean, Alexandru
+<alexandru.Ardelean@analog.com> wrote:
+>
+> On Wed, 2019-09-25 at 10:14 -0500, Adam Ford wrote:
+> > [External]
+> >
+> > On Fri, Sep 20, 2019 at 2:06 AM Philipp Puschmann
+> > <philipp.puschmann@emlix.com> wrote:
+> > > Hi Andy,
+> > >
+> > > Am 20.09.19 um 05:42 schrieb Andy Duan:
+> > > > From: Philipp Puschmann <philipp.puschmann@emlix.com> Sent: Thursday,
+> > > > September 19, 2019 10:51 PM
+> > > > > Using only 4 DMA periods for UART RX is very few if we have a high
+> > > > > frequency
+> > > > > of small transfers - like in our case using Bluetooth with many
+> > > > > small packets
+> > > > > via UART - causing many dma transfers but in each only filling a
+> > > > > fraction of a
+> > > > > single buffer. Such a case may lead to the situation that DMA RX
+> > > > > transfer is
+> > > > > triggered but no free buffer is available. When this happens dma
+> > > > > channel ist
+> > > > > stopped - with the patch
+> > > > > "dmaengine: imx-sdma: fix dma freezes" temporarily only - with the
+> > > > > possible
+> > > > > consequences that:
+> >
+> > I have an i.MX6Q with Wl1837MOD on UART 2 with flow control, and I am
+> > getting Bluetooth transfer timeouts.
+> > (see imx6-logicpd-som.dtsi)
+> >
+> > On top of 5.3.1, I have installed:
+> >
+> > dmaengine: imx-sdma: fix buffer ownership
+> > dmaengine: imx-sdma: fix dma freezes
+> > dmaengine: imx-sdma: drop redundant variable
+> > dmaengine: imx-sdma: fix kernel hangs with SLUB slab allocator
+> > serial: imx: adapt rx buffer and dma periods
+> >
+> > and I still get timeouts:
+> >
+> > [   66.632006] Bluetooth: hci0: command 0xff36 tx timeout
+> > [   76.790499] Bluetooth: hci0: command 0x1001 tx timeout
+> > [   87.110488] Bluetooth: hci0: command 0xff36 tx timeout
+> > [   97.270507] Bluetooth: hci0: command 0x1001 tx timeout
+> > [  107.590457] Bluetooth: hci0: command 0xff36 tx timeout
+> > [  117.750477] Bluetooth: hci0: command 0x1001 tx timeout
+> > [  226.390499] Bluetooth: hci0: command 0xfe38 tx timeout
+> > [  231.590735] Bluetooth: hci0: command tx timeout
+> >
+> > I did a bisect and found the start of my problems came from
+> >
+> > 361deb7243d2 ("dmaengine: dmatest: wrap src & dst data into a struct")
+>
+> That commit only touches `drivers/dma/dmatest.c`
+> Are you using that module?
+>
+> It's a "unit-test" module for testing DMAengine drivers.
+> The only way that can break anything [from what I can tell], is if it is
+> being run. It will probably put the DMA into a weird state (it is a test-
+> module after-all), and it may require some DMAs to be reset.
+> I admit it would be nice that the test-module would put the DMA back into a
+> normal-working state, but that effort could be big for some cases.
+
+I will bisect it again.  I removed the CONFIG_DMATEST from the
+omx_v6_v7_defconfig, and I still got the failure using Kernel 5.3.1,
+so I'll work on this tomorrow and try to narrow it down better with
+and without the test module installed.
+
+adam
+>
+>
+> >
+> > This happened sometime between v5.0 and v5.1
+> >
+> > Is there a patch I missed somewhere?  Do I need to change my device
+> > tree configuration somehow to allocate the proper DMA memory?
+> >
+> >
+> >
+> > > > > with disabled hw flow control:
+> > > > >   If enough data is incoming on UART port the RX FIFO runs over and
+> > > > >   characters will be lost. What then happens depends on upper
+> > > > > layer.
+> > > > >
+> > > > > with enabled hw flow control:
+> > > > >   If enough data is incoming on UART port the RX FIFO reaches a
+> > > > > level
+> > > > >   where CTS is deasserted and remote device sending the data stops.
+> > > > >   If it fails to stop timely the i.MX' RX FIFO may run over and
+> > > > > data
+> > > > >   get lost. Otherwise it's internal TX buffer may getting filled to
+> > > > >   a point where it runs over and data is again lost. It depends on
+> > > > >   the remote device how this case is handled and if it is
+> > > > > recoverable.
+> > > > >
+> > > > > Obviously we want to avoid having no free buffers available. So we
+> > > > > decrease
+> > > > > the size of the buffers and increase their number and the total
+> > > > > buffer size.
+> > > > >
+> > > > > Signed-off-by: Philipp Puschmann <philipp.puschmann@emlix.com>
+> > > > > Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> > > > > ---
+> > > > >
+> > > > > Changelog v3:
+> > > > >  - enhance description
+> > > > >
+> > > > > Changelog v2:
+> > > > >  - split this patch from series "Fix UART DMA freezes for iMX6"
+> > > > >  - add Reviewed-by tag
+> > > > >
+> > > > >  drivers/tty/serial/imx.c | 5 ++---
+> > > > >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> > > > > index
+> > > > > 87c58f9f6390..51dc19833eab 100644
+> > > > > --- a/drivers/tty/serial/imx.c
+> > > > > +++ b/drivers/tty/serial/imx.c
+> > > > > @@ -1034,8 +1034,6 @@ static void imx_uart_timeout(struct
+> > > > > timer_list *t)
+> > > > >         }
+> > > > >  }
+> > > > >
+> > > > > -#define RX_BUF_SIZE    (PAGE_SIZE)
+> > > > > -
+> > > > >  /*
+> > > > >   * There are two kinds of RX DMA interrupts(such as in the MX6Q):
+> > > > >   *   [1] the RX DMA buffer is full.
+> > > > > @@ -1118,7 +1116,8 @@ static void imx_uart_dma_rx_callback(void
+> > > > > *data)  }
+> > > > >
+> > > > >  /* RX DMA buffer periods */
+> > > > > -#define RX_DMA_PERIODS 4
+> > > > > +#define RX_DMA_PERIODS 16
+> > > > > +#define RX_BUF_SIZE    (PAGE_SIZE / 4)
+> > > > >
+> > > > Why to decrease the DMA RX buffer size here ?
+> > > >
+> > > > The current DMA implementation support DMA cyclic mode, one SDMA BD
+> > > > receive one Bluetooth frame can
+> > > > bring better performance.
+> > > > As you know, for L2CAP, a maximum transmission unit (MTU) associated
+> > > > with the largest Baseband payload
+> > > > is 341 bytes for DH5 packets.
+> > > >
+> > > > So I suggest to increase RX_BUF_SIZE along with RX_DMA_PERIODS to
+> > > > feasible value.
+> > >
+> > > I debugged and developed this patches on a system with a 4.15 kernel.
+> > > When prepared for upstream i have adapted
+> > > some details and missed a important thing here. It should say:
+> > >
+> > > +#define RX_BUF_SIZE    (RX_DMA_PERIODS * PAGE_SIZE / 4)
+> > >
+> > > Yes, i wanted to increase the total buffer size too, even wrote it in
+> > > the description.
+> > > I will prepare a version 4, thanks for the hint.
+> > >
+> > > Just for info: A single RX DMA period aka buffer can be filled with
+> > > mutliple packets in regard of the upper layer, here BT.
+> > >
+> > >
+> > > Regards,
+> > > Philipp
+> > > > Andy
+> > > >
+> > > > >  static int imx_uart_start_rx_dma(struct imx_port *sport)  {
+> > > > > --
+> > > > > 2.23.0
+> > >
+> > > _______________________________________________
+> > > linux-arm-kernel mailing list
+> > > linux-arm-kernel@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
