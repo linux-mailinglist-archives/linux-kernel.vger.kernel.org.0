@@ -2,40 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1EB7BE952
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:05:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C160BE959
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:07:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbfIZAFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 20:05:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:34980 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387449AbfIZAFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 20:05:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A53E1000;
-        Wed, 25 Sep 2019 17:05:07 -0700 (PDT)
-Received: from [172.23.27.158] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F2893F67D;
-        Wed, 25 Sep 2019 17:05:05 -0700 (PDT)
-Subject: Re: [PATCH] arm64: Allow disabling of the compat vDSO
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20190925130926.50674-1-catalin.marinas@arm.com>
- <CAKwvOdn2Sf7aAt0zqUUqGY6nXg-C3be7An9amy4tfiNr_8ERJw@mail.gmail.com>
- <20190925170838.GK7042@arrakis.emea.arm.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <a7e06b86-facd-21de-c47c-246d0da8d80d@arm.com>
-Date:   Thu, 26 Sep 2019 01:06:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2387706AbfIZAHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 20:07:00 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43381 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387632AbfIZAHA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 20:07:00 -0400
+Received: by mail-oi1-f196.google.com with SMTP id t84so506914oih.10;
+        Wed, 25 Sep 2019 17:06:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=z4X9jDl/gogPQ/X6hgep747Xt9DUFKrCuAetppUGPN4=;
+        b=Sa4noR+qX70kJICtZoLObZ4fIzvQCb6HEw6UMjkZSPdTmrcTGqB9h1m97ultMmGkmO
+         toqdNZTI7IEuIStvMY8e9ztuiflfhejBO8q9MYHDFbD8Aa9FV9AiNc6vs6KNqBR6CUZW
+         /5N6whQdgYkAHsAJXTYly5WvnUFGKI+HgVQTi01vLhy3E6E8ekc0cRXT3+jT7dra8hsk
+         o0aGHUnii605Vt8Z4zaHZs47nKMiB5RFkpw/nM6FpT42KL70EViWjZw8S1qYYi0xaxCf
+         oUPwS3+Jkf/sd3zrb8yMu2N3GFjbDgVdJPlojxGEl72/aHeSi2G+fWoCoOQzeWEM9YgZ
+         ezYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=z4X9jDl/gogPQ/X6hgep747Xt9DUFKrCuAetppUGPN4=;
+        b=dlOyjx/1ez++kIgUMArwM08iYSBz1KeN9IZvjsEHJG3jXG80sNvy3OC2EUpy/nqdmq
+         hfeJS6H1yc6k044NijCqVuRdtUSYNw01hMjsqOI4kQRg6Qc6Xw5sF09LdWGzMEtduomW
+         VhtA7qJYnZkAq4GjpwRPdj69QQPtRBVPN3hW8dCgmaYrS6wU9JiI8xkq5BmwYt/PmhBr
+         ZTI6mkDVyI4yfijHoZmnwkzEtjhzcKWMogtm5GhKbVIEqAdLAGB1vAP+YPopfVWSIfi3
+         xnEoS1jaQeCz/ab/khHgXnfR9jcl0dn8YWdGbPrRkyTZ+JiRDzY3lMvqcAiIoxy749xh
+         7Rag==
+X-Gm-Message-State: APjAAAUUJZIIGUk0LMaWa/tWsAsGwaIsa5aryTl2+fxWedMXVnJyc5CP
+        nVSvmzAYMpnORhYypgHfMYDAu4j4
+X-Google-Smtp-Source: APXvYqwGZsQ2HLY28D+3a3L5fHSQpp6Yt59KkPvnFaLe/DHbgYXzecmnpExSVTmeRIymcv1UaJwAJA==
+X-Received: by 2002:aca:af11:: with SMTP id y17mr545931oie.76.1569456419205;
+        Wed, 25 Sep 2019 17:06:59 -0700 (PDT)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id e61sm117171ote.24.2019.09.25.17.06.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2019 17:06:58 -0700 (PDT)
+Subject: Re: [PATCH] rtlwifi: Remove excessive check in _rtl_ps_inactive_ps()
+To:     Denis Efremov <efremov@linux.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190925205858.30216-1-efremov@linux.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <bf0e64a5-5072-9706-98d2-cc226ad70380@lwfinger.net>
+Date:   Wed, 25 Sep 2019 19:06:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <20190925170838.GK7042@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190925205858.30216-1-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,98 +69,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/25/19 6:08 PM, Catalin Marinas wrote:
-> On Wed, Sep 25, 2019 at 09:53:16AM -0700, Nick Desaulniers wrote:
->> On Wed, Sep 25, 2019 at 6:09 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
->>>
->>> The compat vDSO building requires a cross-compiler than produces AArch32
->>> binaries, defined via CONFIG_CROSS_COMPILE_COMPAT_VDSO or the
->>> CROSS_COMPILE_COMPAT environment variable. If none of these is defined,
->>> building the kernel always prints a warning as there is no way to
->>> deselect the compat vDSO.
->>>
->>> Add an arm64 Kconfig entry to allow the deselection of the compat vDSO.
->>> In addition, make it an EXPERT option, default n, until other issues
->>> with the compat vDSO are solved (64-bit only kernel headers included in
->>> user-space vDSO code, CC_IS_CLANG irrelevant to CROSS_COMPILE_COMPAT).
->>
->> CC_IS_CLANG might be because then CC can be reused with different
->> flags, rather than providing a different cross compiler binary via
->> config option.
->>
->>>
->>> Fixes: bfe801ebe84f ("arm64: vdso: Enable vDSO compat support")
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
->>
->> Thanks for the patch.
->> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
->> Link: https://github.com/ClangBuiltLinux/linux/issues/595
+On 9/25/19 3:58 PM, Denis Efremov wrote:
+> There is no need to check "rtlhal->interface == INTF_PCI" twice in
+> _rtl_ps_inactive_ps(). The nested check is always true. Thus, the
+> expression can be simplified.
 > 
-> This is just a temporary hiding of the issue, not a complete fix.
-> Vincenzo will do the fix later on.
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>   drivers/net/wireless/realtek/rtlwifi/ps.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
 > 
->> Overall, this work is important to Android; the ARMv8-A series of
->> mobile SoCs we see today have to support 32b and 64b (A32+A64?) for at
->> least a few more years; we would like gettimeofday() and friends to be
->> fast for 32b and 64b applications.
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/ps.c b/drivers/net/wireless/realtek/rtlwifi/ps.c
+> index 70f04c2f5b17..6a8127539ea7 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/ps.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/ps.c
+> @@ -161,8 +161,7 @@ static void _rtl_ps_inactive_ps(struct ieee80211_hw *hw)
+>   	if (ppsc->inactive_pwrstate == ERFON &&
+>   	    rtlhal->interface == INTF_PCI) {
+>   		if ((ppsc->reg_rfps_level & RT_RF_OFF_LEVL_ASPM) &&
+> -		    RT_IN_PS_LEVEL(ppsc, RT_PS_LEVEL_ASPM) &&
+> -		    rtlhal->interface == INTF_PCI) {
+> +		    RT_IN_PS_LEVEL(ppsc, RT_PS_LEVEL_ASPM)) {
+>   			rtlpriv->intf_ops->disable_aspm(hw);
+>   			RT_CLEAR_PS_LEVEL(ppsc, RT_PS_LEVEL_ASPM);
+>   		}
 > 
-> I agree, it just needs some tweaking and hopefully we get most of it
-> fixed in 5.4.
-> 
->>> Suggestions for future improvements of the compat vDSO handling:
->>>
->>> - replace the CROSS_COMPILE_COMPAT prefix with a full COMPATCC; maybe
->>>   check that it indeed produces 32-bit code
->>>
+Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
 
-CROSS_COMPILE_COMPAT is called like this for symmetry with CROSS_COMPILE.
+Thanks,
 
->>> - check whether COMPATCC is clang or not rather than CC_IS_CLANG, which
->>>   only checks the native compiler
->>
->> When cross compiling, IIUC CC_IS_CLANG is referring to CC which is the
->> cross compiler, which is different than HOSTCC which is the host
->> compiler.  HOSTCC is used mostly for things in scripts/ while CC is
->> used to compile a majority of the kernel in a cross compile.
-> 
-> We need the third compiler here for the compat vDSO (at least with gcc),
-> COMPATCC. I'm tempted to just drop the CONFIG_CROSS_COMPILE_COMPAT_VDSO
-> altogether and only rely on a COMPATCC. This way we can add
-> COMPATCC_IS_CLANG etc. in the Kconfig checks directly.
-> 
-> If clang can build both 32 and 64-bit with the same binary (just
-> different options), we could maybe have COMPATCC default to CC and add a
-> check on whether COMPATCC generates 32-bit binaries.
-> 
-clang requires the --target option for specifying the 32bit triple.
-Basically $(TRIPLE)-gcc is equivalent to gcc --target $(TRIPLE).
-We need a configuration option to encode this.
+Larry
 
->>> - clean up the headers includes; vDSO should not include kernel-only
->>>   headers that may even contain code patched at run-time
->>
->> This is a big one; Clang validates the inline asm constraints for
->> extended inline assembly, GCC does not for dead code.  So Clang chokes
->> on the inclusion of arm64 headers using extended inline assembly when
->> being compiled for arm-linux-gnueabi.
-> 
-> Whether clang or gcc, I'd like this fixed anyway. At some point we may
-> inadvertently rely on some code which is patched at boot time for the
-> kernel code but not for the vDSO.
-> 
-
-Do we have any code of this kind in header files?
-
-The vDSO library uses only a subset of the headers (mainly Macros) hence all the
-unused symbols should be compiled out. Is your concern only theoretical or do
-you have an example on where this could be happening?
-
-> Thanks.
-> 
-
--- 
-Regards,
-Vincenzo
