@@ -2,181 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00CB7BFA07
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 21:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FBB3BFA0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 21:28:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbfIZT01 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 15:26:27 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40923 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728513AbfIZT01 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 15:26:27 -0400
-Received: by mail-qt1-f195.google.com with SMTP id f7so4288543qtq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 12:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Msv6XfuwBx4WufXP9Gu7nL4Uw+Bc55I+jZmvBv8DgwI=;
-        b=vFLrjiwP1/YgDwOskF5vGCdkIdEhFtu2/+m8djybY9HH8qS/iuo8sy20deBUPmoax1
-         DP14k6UIqTZ8rJKwg0GtV2IfsgzvlukI90gcA6ylPUo/zKQhOQrSRPzbqskbbEDW8Eyk
-         MXfYga8VkdExElQaC9IK/BWQE+J+Jxg6EnZYBr5m2DJmUYO2N54ZHgundA/WyVAzyk0t
-         AL1nUz/yeOY/yqEU5ZLeXW88lppaC+TVaeeHc8IIccMwfW/3NhLPT2yPjyq3MZtVmnWX
-         iXqMn+dfaS/RpGjWHxIGHbhRo6jQ9S4/Ow28o8kb9vxE94SnqkJUUOZyoFV4rqeZ+POz
-         8tVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Msv6XfuwBx4WufXP9Gu7nL4Uw+Bc55I+jZmvBv8DgwI=;
-        b=pnbj8ymdIKuiArKi4QFg3vBlmQt7fl1QU0+FFK83Eb8hd3DeiP41ACz+ufSE9RyzS+
-         5KmNXmTfJoN2ieueKQAZKMhyqXJpCQQ4ngPjwuLoRNUboDK1zzlr6UCUUl5kqSNGuQmK
-         2/RnCpZOAd4s1I1UbsS7mzVLpXrXipA2K5317Q90nrZ93kwmEcuq9FdkyRratdzyp+B2
-         XejUsjdjqOWPyK6Td5jJGrQ6EeAgZ0H1aHrmTa9P1Q0s/GsPL0vxRCEG25A5yKoeuOen
-         BRiEl9MJjfx4uAshhWocTXp7FbzstX8ugqgmGX5uGDlwDiu94tA1h296Z4TLwEoD3nNb
-         mFog==
-X-Gm-Message-State: APjAAAUYCbUDlpZF3wW0JIJ+yQ+gg60fvJDFRGAR9N9o0bdORaArDg7C
-        0LnowS0RDp/KudMdtrSrVW6yjQ==
-X-Google-Smtp-Source: APXvYqyg5Y9Yj88JGhbeGGKXyfc8SNuDTKBl3OgtSTGVPc0WUzYpWFOFHclneJlxpNXr3oG4kbcOVw==
-X-Received: by 2002:aed:2786:: with SMTP id a6mr5779343qtd.28.1569525985953;
-        Thu, 26 Sep 2019 12:26:25 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::3:cdc2])
-        by smtp.gmail.com with ESMTPSA id t19sm1421087qto.55.2019.09.26.12.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 12:26:25 -0700 (PDT)
-Date:   Thu, 26 Sep 2019 15:26:24 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: drop mmap_sem before calling balance_dirty_pages()
- in write fault
-Message-ID: <20190926192624.GA12439@cmpxchg.org>
-References: <20190924171518.26682-1-hannes@cmpxchg.org>
- <20190924174809.GH1855@bombadil.infradead.org>
- <20190924194238.GA29030@cmpxchg.org>
- <20190924204608.GI1855@bombadil.infradead.org>
- <20190924214337.GA17405@cmpxchg.org>
- <20190926134923.wqlkymjdfxd4iymh@box>
+        id S1728568AbfIZT2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 15:28:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727707AbfIZT2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 15:28:09 -0400
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62D8E2245C
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 19:28:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569526088;
+        bh=Q3HgT1S8hRne5x66P6TKM4ZffmG6vbM0NvPQTtsTBi8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rIfKSl2BwfyIcUbpqBQgqxtP17/hvL3KUUO+cw6Z+SP/zd1Mihq6rV/CWdBoJtJIA
+         mgKNRikoTV8ejS6zgX/5QL06BPuRRGdP0a/Z9hh0XByKU/Q02D+NUVnMm9IeTA8nuE
+         yIF5a9HyQwO6X9+IZEymJpCtjCobxHnIXCFbjIiY=
+Received: by mail-qt1-f176.google.com with SMTP id f7so4294971qtq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 12:28:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAV3F5CphwNMCJzZ+FqLEt4IP73/MFzUdhui1CiCj7ius3bmSI0W
+        VWZiZErUOIkTIdzar5WF0hXkx8jAhxFp5kEXHA==
+X-Google-Smtp-Source: APXvYqz1Trwf6INqRqIjdxgP2sU3qQFOjF7D+XJ82dz5/HGpBEy1TyXgmXd7PISmFfl2z4F+lPm3NwAot2+vuKrkR98=
+X-Received: by 2002:a0c:8a6d:: with SMTP id 42mr4369110qvu.138.1569526087509;
+ Thu, 26 Sep 2019 12:28:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190926134923.wqlkymjdfxd4iymh@box>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+References: <20190925215006.12056-1-robh@kernel.org> <e898c025-32a7-1d2c-3501-c99556f7cdd4@arm.com>
+ <1ae7f42e-bf93-b335-b543-653fae5cf49f@epam.com> <28440326-ed76-b014-c1b8-02125c3214b9@arm.com>
+ <f63f55eb-969e-6364-5781-a227d0c04e4c@epam.com>
+In-Reply-To: <f63f55eb-969e-6364-5781-a227d0c04e4c@epam.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 26 Sep 2019 14:27:56 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKJP3itMOueZD7fGH2b6VNFrTuozW5tWyKN3uBg4gYMzA@mail.gmail.com>
+Message-ID: <CAL_JsqKJP3itMOueZD7fGH2b6VNFrTuozW5tWyKN3uBg4gYMzA@mail.gmail.com>
+Subject: Re: [RFC PATCH] xen/gntdev: Stop abusing DT of_dma_configure API
+To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        Oleksandr Andrushchenko <andr2000@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 04:49:23PM +0300, Kirill A. Shutemov wrote:
-> On Tue, Sep 24, 2019 at 05:43:37PM -0400, Johannes Weiner wrote:
-> > On Tue, Sep 24, 2019 at 01:46:08PM -0700, Matthew Wilcox wrote:
-> > > On Tue, Sep 24, 2019 at 03:42:38PM -0400, Johannes Weiner wrote:
-> > > > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> > > 
-> > > Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+On Thu, Sep 26, 2019 at 6:16 AM Oleksandr Andrushchenko
+<Oleksandr_Andrushchenko@epam.com> wrote:
+>
+> On 9/26/19 1:46 PM, Robin Murphy wrote:
+> > On 2019-09-26 11:17 am, Oleksandr Andrushchenko wrote:
+> >>
+> >> On 9/26/19 12:49 PM, Julien Grall wrote:
+> >>> Hi Rob,
+> >>>
+> >>>
+> >>> On 9/25/19 10:50 PM, Rob Herring wrote:
+> >>>> As the comment says, this isn't a DT based device. of_dma_configure()
+> >>>> is going to stop allowing a NULL DT node, so this needs to be fixed.
+> >>>
+> >>> And this can't work on arch not selecting CONFIG_OF and can select
+> >>> CONFIG_XEN_GRANT_DMA_ALLOC.
+> >>>
+> >>> We are lucky enough on x86 because, AFAICT, arch_setup_dma_ops is just
+> >>> a nop.
+> >>>
+> >> No luck is needed as [1] does nothing for those platforms not using
+> >> CONFIG_OF
+> >>>>
+> >>>> Not sure exactly what setup besides arch_setup_dma_ops is needed...
+> >>>
+> >>> We probably want to update dma_mask, coherent_dma_mask and
+> >>> dma_pfn_offset.
+> >>>
+> >>> Also, while look at of_configure_dma, I noticed that we consider the
+> >>> DMA will not be coherent for the grant-table. Oleksandr, do you know
+> >>> why they can't be coherent?
+> >> The main and the only reason to use of_configure_dma is that if we don't
+> >> then we
+> >> are about to stay with dma_dummy_ops [2]. It effectively means that
+> >> operations on dma-bufs
+> >> will end up returning errors, like [3], [4], thus not making it possible
+> >> for Xen PV DRM and DMA
+> >> part of gntdev driver to do what we need (dma-bufs in our use-cases
+> >> allow zero-copying
+> >> while using graphics buffers and many more).
+> >>
+> >> I didn't find any better way of achieving that, but of_configure_dma...
+> >> If there is any better solution which will not break the existing
+> >> functionality then
+> >> I will definitely change the drivers so we do not abuse DT )
+> >> Before that, please keep in mind that merging this RFC will break Xen PV
+> >> DRM +
+> >> DMA buf support in gntdev...
+> >> Hope we can work out some acceptable solution, so everyone is happy
+> >
+> > As I mentioned elsewhere, the recent dma-direct rework means that
+> > dma_dummy_ops are now only explicitly installed for the ACPI error
+> > case, so - much as I may dislike it - you should get regular
+> > (direct/SWIOTLB) ops by default again.
+> Ah, my bad, I missed that change. So, if no dummy dma ops are to be used
+> then
+> I believe we can apply both changes, e.g. remove of_dma_configure from
+> both of the drivers.
 
-Thanks!
+What about the dma masks? I think there's a default setup, but it is
+considered a driver bug to not set its mask. xen_drm_front sets the
+coherent_dma_mask (why only 32-bits though?), but not the dma_mask.
+gntdev is doing neither. I could copy out what of_dma_configure does
+but better for the Xen folks to decide what is needed or not and test
+the change. I'm not setup to test any of this.
 
-> From bdf96fe9e3c1a319e9fd131efbe0118ea41a41b1 Mon Sep 17 00:00:00 2001
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Date: Thu, 26 Sep 2019 16:34:26 +0300
-> Subject: [PATCH] shmem: Pin the file in shmem_fault() if mmap_sem is dropped
-> 
-> syzbot found the following crash:
-> 
->  BUG: KASAN: use-after-free in perf_trace_lock_acquire+0x401/0x530
->  include/trace/events/lock.h:13
->  Read of size 8 at addr ffff8880a5cf2c50 by task syz-executor.0/26173
-> 
->  CPU: 0 PID: 26173 Comm: syz-executor.0 Not tainted 5.3.0-rc6 #146
->  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
->  Google 01/01/2011
->  Call Trace:
->    __dump_stack lib/dump_stack.c:77 [inline]
->    dump_stack+0x172/0x1f0 lib/dump_stack.c:113
->    print_address_description.cold+0xd4/0x306 mm/kasan/report.c:351
->    __kasan_report.cold+0x1b/0x36 mm/kasan/report.c:482
->    kasan_report+0x12/0x17 mm/kasan/common.c:618
->    __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
->    perf_trace_lock_acquire+0x401/0x530 include/trace/events/lock.h:13
->    trace_lock_acquire include/trace/events/lock.h:13 [inline]
->    lock_acquire+0x2de/0x410 kernel/locking/lockdep.c:4411
->    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
->    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
->    spin_lock include/linux/spinlock.h:338 [inline]
->    shmem_fault+0x5ec/0x7b0 mm/shmem.c:2034
->    __do_fault+0x111/0x540 mm/memory.c:3083
->    do_shared_fault mm/memory.c:3535 [inline]
->    do_fault mm/memory.c:3613 [inline]
->    handle_pte_fault mm/memory.c:3840 [inline]
->    __handle_mm_fault+0x2adf/0x3f20 mm/memory.c:3964
->    handle_mm_fault+0x1b5/0x6b0 mm/memory.c:4001
->    do_user_addr_fault arch/x86/mm/fault.c:1441 [inline]
->    __do_page_fault+0x536/0xdd0 arch/x86/mm/fault.c:1506
->    do_page_fault+0x38/0x590 arch/x86/mm/fault.c:1530
->    page_fault+0x39/0x40 arch/x86/entry/entry_64.S:1202
-> 
-> It happens if the VMA got unmapped under us while we dropped mmap_sem
-> and inode got freed.
-> 
-> Pinning the file if we drop mmap_sem fixes the issue.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: syzbot+03ee87124ee05af991bd@syzkaller.appspotmail.com
-> Cc: Hillf Danton <hdanton@sina.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Hugh Dickins <hughd@google.com>
-
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-
-I have just one nitpick:
-
-> @@ -2022,16 +2022,14 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
->  		    shmem_falloc->waitq &&
->  		    vmf->pgoff >= shmem_falloc->start &&
->  		    vmf->pgoff < shmem_falloc->next) {
-> +			struct file *fpin = NULL;
-
-That initialization seems unnecessary, as the fpin assignment below is
-unconditional in the variable's scope.
-
-The second argument to maybe_unlock_mmap_for_io() for tracking state
-when the function is called multiple times in the filemap fault goto
-maze, we shouldn't need that here for a simple invocation.
-
->  			wait_queue_head_t *shmem_falloc_waitq;
->  			DEFINE_WAIT_FUNC(shmem_fault_wait, synchronous_wake_function);
->  
->  			ret = VM_FAULT_NOPAGE;
-> -			if ((vmf->flags & FAULT_FLAG_ALLOW_RETRY) &&
-> -			   !(vmf->flags & FAULT_FLAG_RETRY_NOWAIT)) {
-> -				/* It's polite to up mmap_sem if we can */
-> -				up_read(&vma->vm_mm->mmap_sem);
-> +			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-
-I.e. this:
-
-			fpin = maybe_unlock_mmap_for_io(vmf, NULL);
-
-> +			if (fpin)
->  				ret = VM_FAULT_RETRY;
-> -			}
->  
->  			shmem_falloc_waitq = shmem_falloc->waitq;
->  			prepare_to_wait(shmem_falloc_waitq, &shmem_fault_wait,
-> @@ -2049,6 +2047,9 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
->  			spin_lock(&inode->i_lock);
->  			finish_wait(shmem_falloc_waitq, &shmem_fault_wait);
->  			spin_unlock(&inode->i_lock);
-> +
-> +			if (fpin)
-> +				fput(fpin);
->  			return ret;
->  		}
->  		spin_unlock(&inode->i_lock);
+Rob
