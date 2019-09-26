@@ -2,179 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C18D4BF69B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 18:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABCEFBF6AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 18:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfIZQYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 12:24:04 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45900 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727430AbfIZQYD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 12:24:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id q7so1807466pgi.12
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 09:24:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=o1tbaMq7T/ukWk3mtjnMcOjC8Q34znuuWkXOuJc+ANU=;
-        b=AWRrGdXHoLy0Riqb0073AS7eedCai2Vnf+L0NuZ5iUtSvW8Ll3ne2bpW8y1u4ICN+X
-         s3VLuNyuv9ndPU4+1ae57GO1aBwlS3nn7m9Jbm3ya9iIhG9cNmSIHrzg0nJlFr1ag9wS
-         uJkGkEdyJqhM045BLt4HcFR8hsI4s2aiZMFJGFgvMa09Yb+2VKIPl1F3lCJjmtvWlMsr
-         vN9VlYiGjx4O8QnB7QbzdIWHyqmry0R4eO2Ucyt+VWxVs1/8blxniD9L9blmDUttJNe4
-         2gtKDqHFrmuH61sDeKi34kA0nIIfxe623LuGsOyH/TuQb9GPQljJNHVR7p5pN3d0Z2QZ
-         rLBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o1tbaMq7T/ukWk3mtjnMcOjC8Q34znuuWkXOuJc+ANU=;
-        b=H4YMsDmajgqoJ8kLZ1RdFZgU7hPv93oQymMFIf+DjiW7j6xdcxAOMX88hzvavl5y+I
-         LrVX4kKcJVd/xiKBSGgDFmWXGot7fCLNYxA3TLGP4hrpubZ81p5R59IoVlNm0BgcFWSb
-         WAIeB4dASmroXOQd1HyYlGbN78WE2zII52CwCERXKlfdnRrcTVyt7Ojl4nM/wBl4MQbp
-         jjY2kdnrhXYziRNB4fpRwwWaqzxny9GCLBJalfsZxIMeghFEAmz6vht262qb/f7iNDE6
-         opTKOvdCANQhpU3a7cLsXPQdmGbhRkbdIyXPUAjx4W0C1i4HpM2ZI23HxJcYO2DJCDUd
-         u9mA==
-X-Gm-Message-State: APjAAAUPeV5yql681rBAuAD09bdGQdZPoQMCcANJXG/tTyHjjfql37UT
-        5QTpkWVG9SP1STMdG9k8omHTk0WZ73TlA/ilgJNF/g==
-X-Google-Smtp-Source: APXvYqyBhJTcbx4Xt1FhYrPpeBs0GWYkzqvVM6fIDAS309M5Y+7Qirq8NKvhlgW2LRzB9wDxw7sc9ZgsUvCOO8QhaXg=
-X-Received: by 2002:a63:d909:: with SMTP id r9mr4150357pgg.381.1569515042255;
- Thu, 26 Sep 2019 09:24:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
- <20190926133805.52348-1-vincenzo.frascino@arm.com> <20190926133805.52348-3-vincenzo.frascino@arm.com>
-In-Reply-To: <20190926133805.52348-3-vincenzo.frascino@arm.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 26 Sep 2019 09:23:51 -0700
-Message-ID: <CAKwvOdmbbwrAvh1f7ctkg-GoqsfXLWFd2VehLVX39N2qM9LJJg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] arm64: vdso32: Detect binutils support for dmb ishld
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        id S1727455AbfIZQ1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 12:27:24 -0400
+Received: from foss.arm.com ([217.140.110.172]:54312 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbfIZQ1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 12:27:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DAF628;
+        Thu, 26 Sep 2019 09:27:23 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D09E3F534;
+        Thu, 26 Sep 2019 09:27:21 -0700 (PDT)
+Subject: Re: [PATCH 10/35] irqchip/gic-v4.1: VPE table (aka GICR_VPROPBASER)
+ allocation
+From:   Marc Zyngier <maz@kernel.org>
+To:     Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.cs.columbia.edu,
+        linux-kernel@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
         Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+References: <20190923182606.32100-1-maz@kernel.org>
+ <20190923182606.32100-11-maz@kernel.org>
+ <155660c2-7f30-e188-ca8d-c37fabea6d97@huawei.com>
+ <6f4ccdfd-4b63-04cb-e7c0-f069e620127f@kernel.org>
+ <14111988-74c9-12c3-1322-1580ff6ba11f@huawei.com>
+ <c4d63ccd-b5b2-007f-6174-1a9d20f3669d@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=maz@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+ 2Y3aFlL+gnr1zUMjlFzD
+Organization: Approximate
+Message-ID: <5d915f55-785b-72f5-498b-8c17148dd3a9@kernel.org>
+Date:   Thu, 26 Sep 2019 17:27:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <c4d63ccd-b5b2-007f-6174-1a9d20f3669d@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 6:38 AM Vincenzo Frascino
-<vincenzo.frascino@arm.com> wrote:
->
-> As reported by Will Deacon, older versions of binutils that do not
-> support certain types of memory barriers can cause build failure of the
-> vdso32 library.
+On 26/09/2019 16:57, Marc Zyngier wrote:
+> On 26/09/2019 16:19, Zenghui Yu wrote:
+>> Hi Marc,
+>>
+>> Two more questions below.
+>>
+>> On 2019/9/25 22:41, Marc Zyngier wrote:
+>>> On 25/09/2019 14:04, Zenghui Yu wrote:
+>>>> Hi Marc,
+>>>>
+>>>> Some questions about this patch, mostly to confirm that I would
+>>>> understand things here correctly.
+>>>>
+>>>> On 2019/9/24 2:25, Marc Zyngier wrote:
+>>>>> GICv4.1 defines a new VPE table that is potentially shared between
+>>>>> both the ITSs and the redistributors, following complicated affinity
+>>>>> rules.
+>>>>>
+>>>>> To make things more confusing, the programming of this table at
+>>>>> the redistributor level is reusing the GICv4.0 GICR_VPROPBASER register
+>>>>> for something completely different.
+>>>>>
+>>>>> The code flow is somewhat complexified by the need to respect the
+>>>>> affinities required by the HW, meaning that tables can either be
+>>>>> inherited from a previously discovered ITS or redistributor.
+>>>>>
+>>>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>>>>> ---
+>>>>
+>>>> [...]
+>>>>
+>>>>> @@ -1962,6 +1965,65 @@ static bool its_parse_indirect_baser(struct its_node *its,
+>>>>>    	return indirect;
+>>>>>    }
+>>>>>    
+>>>>> +static u32 compute_common_aff(u64 val)
+>>>>> +{
+>>>>> +	u32 aff, clpiaff;
+>>>>> +
+>>>>> +	aff = FIELD_GET(GICR_TYPER_AFFINITY, val);
+>>>>> +	clpiaff = FIELD_GET(GICR_TYPER_COMMON_LPI_AFF, val);
+>>>>> +
+>>>>> +	return aff & ~(GENMASK(31, 0) >> (clpiaff * 8));
+>>>>> +}
+>>>>> +
+>>>>> +static u32 compute_its_aff(struct its_node *its)
+>>>>> +{
+>>>>> +	u64 val;
+>>>>> +	u32 svpet;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * Reencode the ITS SVPET and MPIDR as a GICR_TYPER, and compute
+>>>>> +	 * the resulting affinity. We then use that to see if this match
+>>>>> +	 * our own affinity.
+>>>>> +	 */
+>>>>> +	svpet = FIELD_GET(GITS_TYPER_SVPET, its->typer);
+>>
+>> The spec says, ITS does not share vPE table with Redistributors when
+>> SVPET==0.  It seems that we miss this rule and simply regard SVPET as
+>> GICR_TYPER_COMMON_LPI_AFF here.  Am I wrong?
+> 
+> Correct. I missed the case where the ITS doesn't share anything. That's
+> pretty unlikely though (you loose all the benefit of v4.1, and I don't
+> really see how you'd make it work reliably).
 
-Do we know which specific version of binutils has this problem?
-Documentation/process/changes.rst lists 2.21+ as the supported
-versions.  If it's older than that, it's unsupported.
+Actually, this is already handled...
 
-I triple checked android's 2.27 seems ok.
+> 
+>>
+>>>>> +	val  = FIELD_PREP(GICR_TYPER_COMMON_LPI_AFF, svpet);
+>>>>> +	val |= FIELD_PREP(GICR_TYPER_AFFINITY, its->mpidr);
+>>>>> +	return compute_common_aff(val);
+>>>>> +}
+>>>>> +
+>>>>> +static struct its_node *find_sibbling_its(struct its_node *cur_its)
+>>>>> +{
+>>>>> +	struct its_node *its;
+>>>>> +	u32 aff;
+>>>>> +
+>>>>> +	if (!FIELD_GET(GITS_TYPER_SVPET, cur_its->typer))
+>>>>> +		return NULL;
 
-$ cat bar.s
-.text
-.globl foo
-  dmb ish
-  dmb ishld
-  dmb ishst
-$ aarch64-linux-gnu-as bar.s
-$ echo $?
-0
-$ llvm-objdump -d a.out
+... here. If SVPET is 0, there is no sibling, and we'll allocate a VPE
+table as usual.
 
-a.out: file format ELF64-aarch64-little
-
-
-Disassembly of section .text:
-
-0000000000000000 $x:
-       0: bf 3b 03 d5                  dmb ish
-       4: bf 39 03 d5                  dmb ishld
-       8: bf 3a 03 d5                  dmb ishst
-
->
-> Add a compilation time mechanism that detects if binutils supports those
-> instructions and configure the kernel accordingly.
->
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  arch/arm64/Kbuild                            | 6 ++++++
->  arch/arm64/include/asm/vdso/compat_barrier.h | 2 +-
->  arch/arm64/kernel/vdso32/Makefile            | 9 +++++++++
->  3 files changed, 16 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/Kbuild b/arch/arm64/Kbuild
-> index d6465823b281..75cf8c796d0e 100644
-> --- a/arch/arm64/Kbuild
-> +++ b/arch/arm64/Kbuild
-> @@ -4,3 +4,9 @@ obj-$(CONFIG_NET)       += net/
->  obj-$(CONFIG_KVM)      += kvm/
->  obj-$(CONFIG_XEN)      += xen/
->  obj-$(CONFIG_CRYPTO)   += crypto/
-> +
-> +# as-instr-compat
-> +# Usage: cflags-y += $(call as-instr-compat,instr,option1,option2)
-> +
-> +as-instr-compat = $(call try-run,\
-> +       printf "%b\n" "$(1)" | $(COMPATCC) $(KBUILD_AFLAGS) -c -x assembler -o "$$TMP" -,$(2),$(3))
-> diff --git a/arch/arm64/include/asm/vdso/compat_barrier.h b/arch/arm64/include/asm/vdso/compat_barrier.h
-> index fb60a88b5ed4..3fd8fd6d8fc2 100644
-> --- a/arch/arm64/include/asm/vdso/compat_barrier.h
-> +++ b/arch/arm64/include/asm/vdso/compat_barrier.h
-> @@ -20,7 +20,7 @@
->
->  #define dmb(option) __asm__ __volatile__ ("dmb " #option : : : "memory")
->
-> -#if __LINUX_ARM_ARCH__ >= 8
-> +#if __LINUX_ARM_ARCH__ >= 8 && defined(CONFIG_AS_DMB_ISHLD)
->  #define aarch32_smp_mb()       dmb(ish)
->  #define aarch32_smp_rmb()      dmb(ishld)
->  #define aarch32_smp_wmb()      dmb(ishst)
-> diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
-> index 1fba0776ed40..22f0d31ea528 100644
-> --- a/arch/arm64/kernel/vdso32/Makefile
-> +++ b/arch/arm64/kernel/vdso32/Makefile
-> @@ -17,6 +17,8 @@ cc32-disable-warning = $(call try-run,\
->         $(COMPATCC) -W$(strip $(1)) -c -x c /dev/null -o "$$TMP",-Wno-$(strip $(1)))
->  cc32-ldoption = $(call try-run,\
->          $(COMPATCC) $(1) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
-> +cc32-as-instr = $(call try-run,\
-> +       printf "%b\n" "$(1)" | $(COMPATCC) $(VDSO_AFLAGS) -c -x assembler -o "$$TMP" -,$(2),$(3))
->
->  # We cannot use the global flags to compile the vDSO files, the main reason
->  # being that the 32-bit compiler may be older than the main (64-bit) compiler
-> @@ -55,6 +57,7 @@ endif
->  VDSO_CAFLAGS += -fPIC -fno-builtin -fno-stack-protector
->  VDSO_CAFLAGS += -DDISABLE_BRANCH_PROFILING
->
-> +
->  # Try to compile for ARMv8. If the compiler is too old and doesn't support it,
->  # fall back to v7. There is no easy way to check for what architecture the code
->  # is being compiled, so define a macro specifying that (see arch/arm/Makefile).
-> @@ -91,6 +94,12 @@ VDSO_CFLAGS += -Wno-int-to-pointer-cast
->  VDSO_AFLAGS := $(VDSO_CAFLAGS)
->  VDSO_AFLAGS += -D__ASSEMBLY__
->
-> +# Check for binutils support for dmb ishld
-> +dmbinstr := $(call cc32-as-instr,dmb ishld,-DCONFIG_AS_DMB_ISHLD=1)
-> +
-> +VDSO_CFLAGS += $(dmbinstr)
-> +VDSO_AFLAGS += $(dmbinstr)
-> +
->  VDSO_LDFLAGS := $(VDSO_CPPFLAGS)
->  # From arm vDSO Makefile
->  VDSO_LDFLAGS += -Wl,-Bsymbolic -Wl,--no-undefined -Wl,-soname=linux-vdso.so.1
-> --
-> 2.23.0
->
-
-
--- 
 Thanks,
-~Nick Desaulniers
+
+	M.
+-- 
+Jazz is not dead, it just smells funny...
