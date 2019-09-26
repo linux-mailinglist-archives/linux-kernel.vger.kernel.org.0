@@ -2,146 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EEBBF0C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4EBBF0B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:01:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbfIZLCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:02:30 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35856 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfIZLC3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:02:29 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190926110227euoutp01e5528ddabd8ba5ebcc36b2fb0c8b31cc~H_BEE8W1E0923409234euoutp01x
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 11:02:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190926110227euoutp01e5528ddabd8ba5ebcc36b2fb0c8b31cc~H_BEE8W1E0923409234euoutp01x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569495747;
-        bh=T1vG9yJ0SrvHDQJfyMirTT552HaxAD38CrVYzRGiMrA=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=vV+vsVcpVWomhaEqJilNT2Zsq8sW11jXNZViSCGly36ahapYZoqN+3/yVt0ZrSj3r
-         hUK8FJ/KY/amTMFidA1ZdLksfG/I74zS80TZMoJlZCNjNGhzS6UqZtMGTrvVsG7/v9
-         e4wN0UE8Q4yvOM8H7HGt/MV7Yr4zOLKBrSrt7i0o=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190926110226eucas1p2a5a0fb04e6ecd1ce99ed81599a1e85d4~H_BDry20e0586305863eucas1p20;
-        Thu, 26 Sep 2019 11:02:26 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 45.D8.04374.2CA9C8D5; Thu, 26
-        Sep 2019 12:02:26 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba~H_BDSjD0z0586305863eucas1p2z;
-        Thu, 26 Sep 2019 11:02:26 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190926110226eusmtrp25ba1e9e4c5004f2f562a43e1a591292b~H_BDK4MpT2039620396eusmtrp2B;
-        Thu, 26 Sep 2019 11:02:26 +0000 (GMT)
-X-AuditID: cbfec7f5-4ddff70000001116-5b-5d8c9ac2c1e3
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 51.E9.04166.2CA9C8D5; Thu, 26
-        Sep 2019 12:02:26 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190926110225eusmtip162bc8419c3a731febe25b42acf6782c0~H_BCiMLpZ2692226922eusmtip1R;
-        Thu, 26 Sep 2019 11:02:25 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ASoC: samsung: i2s: Document clocks macros
-Date:   Thu, 26 Sep 2019 13:02:19 +0200
-Message-Id: <20190926110219.6144-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphleLIzCtJLcpLzFFi42LZduznOd1Ds3piDdrea1pcuXiIyWLqwyds
-        FvOPnGO1OH9+A7vFtysdTBaXd81hs5hxfh+TxYPmdWwWa4/cZbdYev0ik0Xr3iPsFofftLM6
-        8Hhs+NzE5rFm3hpGj52z7rJ7bFrVyebRt2UVo8fnTXIBbFFcNimpOZllqUX6dglcGT+X32Ev
-        2MhVsan3PHsD4yWOLkYODgkBE4k9nxm7GLk4hARWMEqce32MBcL5wihxeN0S9i5GTiDnM6PE
-        ztmiMA2zp0LVLGeUmHviByNcw53mGWANbAKGEl1vu9hAbBGBOomzZ46AFTELHGGSaL7/mwkk
-        ISxgJ3F8bQ8LiM0ioCrx8vQSsAZeARuJKRtugNVICMhLrN5wgBmkWUKgmV3i39mTzBAJF4mv
-        /3oYIWxhiVfHt7BD2DIS/3fOZ4JqYJR4eG4tO4TTwyhxuWkGVIe1xOHjF1lBHmIW0JRYv0sf
-        IuwoceXNVhaIP/kkbrwVBAkzA5mTtk1nhgjzSnS0CUFUq0nMOr4Obu3BC5egTvOQ+LP6Hisk
-        5GIlDvYuYZnAKDcLYdcCRsZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgWnk9L/jX3cw
-        7vuTdIhRgINRiYf3QFh3rBBrYllxZe4hRgkOZiURXt/Inlgh3pTEyqrUovz4otKc1OJDjNIc
-        LErivNUMD6KFBNITS1KzU1MLUotgskwcnFINjLFybCdDTugHlQkdv5Yd0flwwp+Mn+EmoVEC
-        D3hehYlcDtVP3vft3voDh8qeqR7ZdqdZWOi8ZQBzjK8b555DB6fEJwYcPNOdse66yJ9122p1
-        50juMHh2iCMq/8C1UtVVtq9i/nf2d3iyWNQVps3KksvfF3Qx7x+L1wcN380z3jhVRxX1Tirv
-        VWIpzkg01GIuKk4EAFo3rPUfAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsVy+t/xu7qHZvXEGnTOZLW4cvEQk8XUh0/Y
-        LOYfOcdqcf78BnaLb1c6mCwu75rDZjHj/D4miwfN69gs1h65y26x9PpFJovWvUfYLQ6/aWd1
-        4PHY8LmJzWPNvDWMHjtn3WX32LSqk82jb8sqRo/Pm+QC2KL0bIryS0tSFTLyi0tslaINLYz0
-        DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0Mn4uv8NesJGrYlPvefYGxkscXYwcHBIC
-        JhKzp7J0MXJxCAksZZTo6G4FcjiB4jISJ6c1sELYwhJ/rnWxQRR9YpT4+2whE0iCTcBQoust
-        REJEoIlR4tjmmWCjmAVOMUncuDqFEaRKWMBO4vjaHrCxLAKqEi9PL2EDsXkFbCSmbLjBBLFC
-        XmL1hgPMExh5FjAyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAgM4W3Hfm7ewXhpY/AhRgEO
-        RiUe3gNh3bFCrIllxZW5hxglOJiVRHh9I3tihXhTEiurUovy44tKc1KLDzGaAi2fyCwlmpwP
-        jK+8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TBycUg2ManbsrZOVu5bp
-        8lzX+s25PsXg2fQrJyb/apkSyOkqOSnjOsfKvY89WFSeajr3vK7af3FToU6p0M7uWIfzlez8
-        G2TvumeyPT+8pE8qWu4h47WVCltaw2q59220EGY5m+Xy+8M00z0u96coifP8Upj7fGXUIfVk
-        JfUtxsdv/JvzWDt59coHSZxblViKMxINtZiLihMBXlom33cCAAA=
-X-CMS-MailID: 20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba
-References: <CGME20190926110226eucas1p24dbb1b39ffa3f607aa28c0c4d9ff6aba@eucas1p2.samsung.com>
+        id S1725842AbfIZLA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 07:00:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:46056 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725554AbfIZLA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 07:00:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4AEB1000;
+        Thu, 26 Sep 2019 04:00:55 -0700 (PDT)
+Received: from [192.168.1.158] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 143B33F67D;
+        Thu, 26 Sep 2019 04:00:53 -0700 (PDT)
+Subject: Re: [PATCH 1/4] arm64: vdso32: Introduce COMPAT_CC_IS_GCC
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     ard.biesheuvel@linaro.org, ndesaulniers@google.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
+ <20190926060353.54894-1-vincenzo.frascino@arm.com>
+ <20190926060353.54894-2-vincenzo.frascino@arm.com>
+ <20190926080616.GB26802@iMac.local>
+ <0ff3d5f4-11c9-4207-c6ab-2f8e9ee7de5e@arm.com>
+Message-ID: <0c5816ba-4393-07f7-23ec-38ebde0e447f@arm.com>
+Date:   Thu, 26 Sep 2019 12:02:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <0ff3d5f4-11c9-4207-c6ab-2f8e9ee7de5e@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maciej Falkowski <m.falkowski@samsung.com>
 
-Document clocks macros with their description
-from 'Documentation/devicetree/bindings/sound/samsung-i2s.txt'
+On 9/26/19 11:56 AM, Vincenzo Frascino wrote:
+> On 9/26/19 9:06 AM, Catalin Marinas wrote:
+>> On Thu, Sep 26, 2019 at 07:03:50AM +0100, Vincenzo Frascino wrote:
+>>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>>> index 37c610963eee..afe8c948b493 100644
+>>> --- a/arch/arm64/Kconfig
+>>> +++ b/arch/arm64/Kconfig
+>>> @@ -110,7 +110,7 @@ config ARM64
+>>>  	select GENERIC_STRNLEN_USER
+>>>  	select GENERIC_TIME_VSYSCALL
+>>>  	select GENERIC_GETTIMEOFDAY
+>>> -	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT)
+>>> +	select GENERIC_COMPAT_VDSO if (!CPU_BIG_ENDIAN && COMPAT && COMPAT_CC_IS_GCC)
+>>>  	select HANDLE_DOMAIN_IRQ
+>>>  	select HARDIRQS_SW_RESEND
+>>>  	select HAVE_PCI
+>>> @@ -313,6 +313,9 @@ config KASAN_SHADOW_OFFSET
+>>>  	default 0xeffffff900000000 if ARM64_VA_BITS_36 && KASAN_SW_TAGS
+>>>  	default 0xffffffffffffffff
+>>>  
+>>> +config COMPAT_CC_IS_GCC
+>>> +	def_bool $(success,$(CROSS_COMPILE_COMPAT)gcc --version | head -n 1 | grep -q arm)
+>>
+>> Nitpick: I prefer COMPATCC instead of COMPAT_CC for consistency with
+>> HOSTCC.
+>>
+> 
+> Ok, will change this in v2.
+> 
+>> Now, could we not generate a COMPATCC in the Makefile and use
+>> $(COMPATCC) here instead of $(CROSS_COMPILE_COMPAT)gcc? It really
+>> doesn't make sense to check that gcc is gcc.
+>>
+> 
+> All right, COMPATCC is already in the makefile, I will use it in here.
+> 
+>> A next step would be to check that COMPATCC can actually generate 32-bit
+>> objects. But it's not essential at this stage.
+>>
+> 
+> We are already checking this making sure that arm is present in the triple (grep
+> -q arm).
+> 
+>>> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+>>> index 84a3d502c5a5..34f53eb11878 100644
+>>> --- a/arch/arm64/Makefile
+>>> +++ b/arch/arm64/Makefile
+>>> @@ -54,19 +54,8 @@ $(warning Detected assembler with broken .inst; disassembly will be unreliable)
+>>>  endif
+>>>  
+>>>  ifeq ($(CONFIG_GENERIC_COMPAT_VDSO), y)
+>>> -  CROSS_COMPILE_COMPAT ?= $(CONFIG_CROSS_COMPILE_COMPAT_VDSO:"%"=%)
+>>> -
+>>> -  ifeq ($(CONFIG_CC_IS_CLANG), y)
+>>> -    $(warning CROSS_COMPILE_COMPAT is clang, the compat vDSO will not be built)
+>>> -  else ifeq ($(strip $(CROSS_COMPILE_COMPAT)),)
+>>> -    $(warning CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built)
+>>> -  else ifeq ($(shell which $(CROSS_COMPILE_COMPAT)gcc 2> /dev/null),)
+>>> -    $(error $(CROSS_COMPILE_COMPAT)gcc not found, check CROSS_COMPILE_COMPAT)
+>>> -  else
+>>> -    export CROSS_COMPILE_COMPAT
+>>> -    export CONFIG_COMPAT_VDSO := y
+>>> -    compat_vdso := -DCONFIG_COMPAT_VDSO=1
+>>> -  endif
+>>> +  export CONFIG_COMPAT_VDSO := y
+>>> +  compat_vdso := -DCONFIG_COMPAT_VDSO=1
+>>>  endif
+>>
+>> Has CONFIG_CROSS_COMPILE_COMPAT_VDSO actually been removed from
+>> lib/vdso/Kconfig? (I haven't checked the subsequent patches).
+>>
+> 
 
-Signed-off-by: Maciej Falkowski <m.falkowski@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-v2:
-- Added proper commit message and description
-- Moved comments to the right side
+Missed this, I have the patch ready for that. When this series will be merged,
+no more architectures will use the macro hence I will send a separate patch to
+remove it from the common code.
 
-Best regards,
-Maciej Falkowski
----
- include/dt-bindings/sound/samsung-i2s.h | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/include/dt-bindings/sound/samsung-i2s.h b/include/dt-bindings/sound/samsung-i2s.h
-index 77545f14c379..250de0d6c734 100644
---- a/include/dt-bindings/sound/samsung-i2s.h
-+++ b/include/dt-bindings/sound/samsung-i2s.h
-@@ -2,8 +2,14 @@
- #ifndef _DT_BINDINGS_SAMSUNG_I2S_H
- #define _DT_BINDINGS_SAMSUNG_I2S_H
- 
--#define CLK_I2S_CDCLK		0
--#define CLK_I2S_RCLK_SRC	1
--#define CLK_I2S_RCLK_PSR	2
-+#define CLK_I2S_CDCLK		0 /* the CDCLK (CODECLKO) gate clock */
-+
-+#define CLK_I2S_RCLK_SRC	1 /* the RCLKSRC mux clock (corresponding to
-+				   * RCLKSRC bit in IISMOD register)
-+				   */
-+
-+#define CLK_I2S_RCLK_PSR	2 /* the RCLK prescaler divider clock
-+				   * (corresponding to the IISPSR register)
-+				   */
- 
- #endif /* _DT_BINDINGS_SAMSUNG_I2S_H */
 -- 
-2.17.1
-
-
-
+Regards,
+Vincenzo
