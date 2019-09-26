@@ -2,125 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372CBBFB8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 00:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04850BFB85
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 00:52:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfIZWwW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 18:52:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50692 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728564AbfIZWwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 18:52:20 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BC6FF796ED;
-        Thu, 26 Sep 2019 22:52:19 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-34.bss.redhat.com [10.20.1.34])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C54DA600C1;
-        Thu, 26 Sep 2019 22:52:18 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     amd-gfx@lists.freedesktop.org
-Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] drm/encoder: WARN() when adding/removing encoders after device registration
-Date:   Thu, 26 Sep 2019 18:51:08 -0400
-Message-Id: <20190926225122.31455-7-lyude@redhat.com>
-In-Reply-To: <20190926225122.31455-1-lyude@redhat.com>
-References: <20190926225122.31455-1-lyude@redhat.com>
+        id S1728860AbfIZWwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 18:52:10 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38810 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728564AbfIZWwH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 18:52:07 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QMmqAE108680;
+        Thu, 26 Sep 2019 22:51:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=D2CwgQsbiGCjO4mkdfUAM40E41fLHHYcnso3Cx++n8Q=;
+ b=kvLY2wYNe0sibiKZEwHz9J3YqUTBY9dzOmvqeRC8wsZFyc04Pi5I+OohcKUhZeq7pbYe
+ G4QQeWAjDiSWizTbyyca02Wwtajuq7FrSBbCukzNjHJisSJqffOhKxsZkaT75TceoL1i
+ aCsIP3GjRSH7+deh2MbgBJN0eKV0YZbLnCEL9MLFx+fPDQcviZvix/focMz5WFCvfH+f
+ YzcT81NWRz9PwiS2XvSnfGdr6eD15GY/OAoAuVrfq9rofFw87GPbsmp/TZtkDs/zIbgQ
+ 61gIKj/Ulv/orSjZDky3XkdrLlVeVD17iKvyXFJm+tWK53yfuQalUv2bThLRWjeNTAuU Pg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2v5cgrenn8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 22:51:57 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QMm9hK142397;
+        Thu, 26 Sep 2019 22:51:57 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2v8yjxpqnw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 22:51:56 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8QMpsWI030809;
+        Thu, 26 Sep 2019 22:51:54 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Sep 2019 15:51:53 -0700
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Denis Efremov <efremov@linux.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Andrew Murray <andrew.murray@arm.com>,
+        linux-scsi@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: Re: [PATCH v3 18/26] scsi: pm80xx: Use PCI_STD_NUM_BARS
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190916204158.6889-1-efremov@linux.com>
+        <20190916204158.6889-19-efremov@linux.com>
+        <yq1wody4eml.fsf@oracle.com> <20190926022933.GB238374@google.com>
+Date:   Thu, 26 Sep 2019 18:51:51 -0400
+In-Reply-To: <20190926022933.GB238374@google.com> (Bjorn Helgaas's message of
+        "Wed, 25 Sep 2019 21:29:33 -0500")
+Message-ID: <yq1lfua1xiw.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 26 Sep 2019 22:52:19 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=574
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909260180
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=656 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909260180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turns out that we don't actually check this anywhere, and additionally
-actually forget to even mention this in our documentation.
 
-Since we've had one driver making this mistake already, let's clarify
-this by mentioning this limitation in the kernel docs. Additionally, for
-drivers not using the legacy ->load/->unload() hooks (which make it
-impossible to create all encoders before registration): print a big
-warning when drm_encoder_init() is called after device registration, or
-when drm_encoder_cleanup() is called before device unregistration.
+Bjorn,
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
----
- drivers/gpu/drm/drm_encoder.c | 31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+> I think this depends on a previous patch that actually adds the
+> PCI_STD_NUM_BARS definition.  It will probably be easier if I apply
+> the whole series via the PCI tree.
 
-diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
-index 80d88a55302e..5c5e40aafa4e 100644
---- a/drivers/gpu/drm/drm_encoder.c
-+++ b/drivers/gpu/drm/drm_encoder.c
-@@ -99,9 +99,12 @@ void drm_encoder_unregister_all(struct drm_device *dev)
-  * @encoder_type: user visible type of the encoder
-  * @name: printf style format string for the encoder name, or NULL for default name
-  *
-- * Initialises a preallocated encoder. Encoder should be subclassed as part of
-- * driver encoder objects. At driver unload time drm_encoder_cleanup() should be
-- * called from the driver's &drm_encoder_funcs.destroy hook.
-+ * Initialises a preallocated encoder. The encoder should be subclassed as
-+ * part of driver encoder objects. This function may not be called after the
-+ * device is registered with drm_dev_register().
-+ *
-+ * At driver unload time drm_encoder_cleanup() must be called from the
-+ * driver's &drm_encoder_funcs.destroy hook.
-  *
-  * Returns:
-  * Zero on success, error code on failure.
-@@ -117,6 +120,14 @@ int drm_encoder_init(struct drm_device *dev,
- 	if (WARN_ON(dev->mode_config.num_encoder >= 32))
- 		return -EINVAL;
- 
-+	/*
-+	 * Encoders should never be added after device registration, with the
-+	 * exception of drivers using the legacy load/unload callbacks where
-+	 * it's impossible to create encoders beforehand. Such drivers should
-+	 * convert to using drm_dev_register() and friends.
-+	 */
-+	WARN_ON(dev->registered && !dev->driver->load);
-+
- 	ret = drm_mode_object_add(dev, &encoder->base, DRM_MODE_OBJECT_ENCODER);
- 	if (ret)
- 		return ret;
-@@ -155,16 +166,22 @@ EXPORT_SYMBOL(drm_encoder_init);
-  * drm_encoder_cleanup - cleans up an initialised encoder
-  * @encoder: encoder to cleanup
-  *
-- * Cleans up the encoder but doesn't free the object.
-+ * Cleans up the encoder but doesn't free the object. This function may not be
-+ * called until the respective &struct drm_device has been unregistered from
-+ * userspace using drm_dev_unregister().
-  */
- void drm_encoder_cleanup(struct drm_encoder *encoder)
- {
- 	struct drm_device *dev = encoder->dev;
- 
--	/* Note that the encoder_list is considered to be static; should we
--	 * remove the drm_encoder at runtime we would have to decrement all
--	 * the indices on the drm_encoder after us in the encoder_list.
-+	/*
-+	 * Encoders should never be removed after device registration, with
-+	 * the exception of drivers using the legacy load/unload callbacks
-+	 * where it's impossible to remove encoders until after
-+	 * deregistration. Such drivers should convert to using
-+	 * drm_dev_register() and friends.
- 	 */
-+	WARN_ON(dev->registered && !dev->driver->unload);
- 
- 	if (encoder->bridge) {
- 		struct drm_bridge *bridge = encoder->bridge;
+Looks like my mail about this getting dropped due to the missing
+definition got lost in transit. In any case, feel free to take this
+through the PCI tree.
+
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+
 -- 
-2.21.0
-
+Martin K. Petersen	Oracle Linux Engineering
