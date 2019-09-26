@@ -2,66 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA263BF2AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:15:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12983BF2B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:15:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfIZMPN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Sep 2019 08:15:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50504 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbfIZMPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:15:13 -0400
-Received: from oasis.local.home (unknown [65.39.69.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E91A8206E0;
-        Thu, 26 Sep 2019 12:15:10 +0000 (UTC)
-Date:   Thu, 26 Sep 2019 08:15:06 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     =?UTF-8?B?RMOhdmlkIEJvbHZhbnNrw70=?= <david.bolvansky@gmail.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] tracing: Fix clang -Wint-in-bool-context warnings in
- IF_ASSIGN macro
-Message-ID: <20190926081506.63c6a0c6@oasis.local.home>
-In-Reply-To: <CAOrgDVMqOqKtY-9FNV5iHWmz6GFqsH=ugwYp77Zwfr3Niw0ebg@mail.gmail.com>
-References: <20190925172915.576755-1-natechancellor@gmail.com>
-        <CAKwvOdmO255nWf2PrfJ54X95ShNbYPf0FK2x=f57LmzOrCmJug@mail.gmail.com>
-        <CAOrgDVMqOqKtY-9FNV5iHWmz6GFqsH=ugwYp77Zwfr3Niw0ebg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726523AbfIZMPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:15:38 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:17171 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfIZMPi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 08:15:38 -0400
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 0TiS9fIcdcyV9inCyL6awYTBqCeAB47Y4vUBe6VSskTJHwuRiBvGgrPOuq17nKJvQ3vV9G5tpm
+ eG7TTnxDdGBrMkjbXYsYishcE8/yKsvGEN9t3SfBQ+bQ83i/24RlIAIzWvjSjjBgUA/U7INWtY
+ 2Gv4gI/KUxz82u4HzHk9w3shhs4XnkllpU3lA0s6MwhDxgHrxfdblzPZaZqu9DZlg9tshkX3WJ
+ JpWkpEYn+BqjExgzHmh28uVSMIKtHEHIg3IS+zfjfhaY2BIKZDhqPsw7Xkk0PY82uh0ztlXXpO
+ 2Uk=
+X-IronPort-AV: E=Sophos;i="5.64,551,1559545200"; 
+   d="scan'208";a="50424041"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Sep 2019 05:15:37 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 26 Sep 2019 05:15:36 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 26 Sep 2019 05:15:34 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
+        <nicolas.ferre@microchip.com>, <ludovic.desroches@microchip.com>
+CC:     <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH] rtc: at91rm9200: use of_device_get_match_data()
+Date:   Thu, 26 Sep 2019 15:15:32 +0300
+Message-ID: <1569500132-21164-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 26 Sep 2019 01:37:29 +0200
-Dávid Bolvanský <david.bolvansky@gmail.com> wrote:
+Use of_device_get_match_data() since all platforms should now use DT
+bindings. AVR32 architecture has been removed in
+commit 26202873bb51 ("avr32: remove support for AVR32 architecture").
 
-> GCC C frontend does not warn, GCC C++ FE does. https://godbolt.org/z/_sczyM
-> 
-> So I (we?) think there is something weird in gcc frontends.
-> 
-> >> I can't think of a case that this warning is a bug (maybe David can  
-> explain more),
-> 
-> In this case or generally? General bug example:
-> 
-> if (state == A || B)
-> 
-> (should be if (state == A || state == B))
-> 
-> Since this is just one occurrence and I recommend to just land this small
-> fix.
-> 
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/rtc/Kconfig          |  1 +
+ drivers/rtc/rtc-at91rm9200.c | 19 +------------------
+ 2 files changed, 2 insertions(+), 18 deletions(-)
 
-Can we add the above comment to the commit log. I was stuck on
-wondering what was wrong with the original code, and was ignoring the
-patch because I couldn't see what was wrong.
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index e72f65b61176..d0b08b1ebcdf 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -1433,6 +1433,7 @@ config RTC_DRV_PL031
+ config RTC_DRV_AT91RM9200
+ 	tristate "AT91RM9200 or some AT91SAM9 RTC"
+ 	depends on ARCH_AT91 || COMPILE_TEST
++	depends on OF
+ 	help
+ 	  Driver for the internal RTC (Realtime Clock) module found on
+ 	  Atmel AT91RM9200's and some  AT91SAM9 chips. On AT91SAM9 chips
+diff --git a/drivers/rtc/rtc-at91rm9200.c b/drivers/rtc/rtc-at91rm9200.c
+index 82a54e93ff04..4dc413d07138 100644
+--- a/drivers/rtc/rtc-at91rm9200.c
++++ b/drivers/rtc/rtc-at91rm9200.c
+@@ -319,7 +319,6 @@ static const struct at91_rtc_config at91sam9x5_config = {
+ 	.use_shadow_imr	= true,
+ };
+ 
+-#ifdef CONFIG_OF
+ static const struct of_device_id at91_rtc_dt_ids[] = {
+ 	{
+ 		.compatible = "atmel,at91rm9200-rtc",
+@@ -332,22 +331,6 @@ static const struct of_device_id at91_rtc_dt_ids[] = {
+ 	}
+ };
+ MODULE_DEVICE_TABLE(of, at91_rtc_dt_ids);
+-#endif
+-
+-static const struct at91_rtc_config *
+-at91_rtc_get_config(struct platform_device *pdev)
+-{
+-	const struct of_device_id *match;
+-
+-	if (pdev->dev.of_node) {
+-		match = of_match_node(at91_rtc_dt_ids, pdev->dev.of_node);
+-		if (!match)
+-			return NULL;
+-		return (const struct at91_rtc_config *)match->data;
+-	}
+-
+-	return &at91rm9200_config;
+-}
+ 
+ static const struct rtc_class_ops at91_rtc_ops = {
+ 	.read_time	= at91_rtc_readtime,
+@@ -367,7 +350,7 @@ static int __init at91_rtc_probe(struct platform_device *pdev)
+ 	struct resource *regs;
+ 	int ret = 0;
+ 
+-	at91_rtc_config = at91_rtc_get_config(pdev);
++	at91_rtc_config = of_device_get_match_data(&pdev->dev);
+ 	if (!at91_rtc_config)
+ 		return -ENODEV;
+ 
+-- 
+2.7.4
 
--- Steve
