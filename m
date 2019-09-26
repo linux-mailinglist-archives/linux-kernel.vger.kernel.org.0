@@ -2,88 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAA5DBED2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A79E2BED2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:14:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbfIZIOT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 04:14:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33936 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbfIZIOT (ORCPT
+        id S1729662AbfIZIOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 04:14:39 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37126 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfIZIOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 04:14:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qNXe1DLOYq+LbjBhS7qEU55tuee2E34vS3LvdrTMFfk=; b=URbFQq7Q6H62SX2gi4xc3zxRT
-        DvGAdonmQPJkhuQJkcPKu8Tq9ElDbFv5oKaF7BJFHZR9Bf7xvbPicryV+XuarU9l4DB8H9Ty6CY2A
-        JDWFR3FvLGCvVUtO6YHwBcx44A36QDbuNNsg3ieot1EXUZps0Z62BVR6PTuaWS4C1jUhZMfj+c2Uw
-        MLAM/ZUPwqSjoicTtvqCeps5mhIRAfX4lqJxpiJ6gMlrY7silK63xescQ9lkGwy+z26WkZWkRoh5w
-        GVUqzTazYaf+Kk4MIl9T3J/1av+yI4ncyMVCLc/dO4D2KiR8tdMJnXSv1b01XqrVe5WlzjdbFZr+L
-        zhbDFdREg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.2 #3 (Red Hat Linux))
-        id 1iDOua-0003l8-N8; Thu, 26 Sep 2019 08:14:04 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 93D7B302A71;
-        Thu, 26 Sep 2019 10:13:14 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BF10520138CCF; Thu, 26 Sep 2019 10:14:00 +0200 (CEST)
-Date:   Thu, 26 Sep 2019 10:14:00 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH] sched/vtime: Fix guest/system mis-accounting on task
- switch
-Message-ID: <20190926081400.GH4553@hirez.programming.kicks-ass.net>
-References: <20190925214242.21873-1-frederic@kernel.org>
+        Thu, 26 Sep 2019 04:14:38 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8Q8EMNj095953;
+        Thu, 26 Sep 2019 08:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=YDRRpVAtUWoOxNUyo4YRN1dH81wF4V8OciFyOM/bsSc=;
+ b=KKTeV+/j14MDSdEkpTJ/hZYSgcx0pcAf0UfV7cef+vW8nQfVg2di0XL69sZfOoRPtse5
+ Kh5DErxoBhAXXWUnwZZIWnLhaeGqg7WevuDWzOMTJsL0gy6YWIgGvgoX7GvJSU2d3wJE
+ 2GQNzCGcy5B+DX4e/sdHW8QFOmshI27/7wqJ5j+4ZHXmQPubXV9AOkPH7GeVDyOtXJ7C
+ Mquxjf2fp4sNUF9XUL5wNCpjWWkJT3V+U8P26Q2yBAh87SiCGQU05jkWHV0kNq5Nbcg7
+ SJmglC8HVYdsLMIkBHCrEqwMQ9pqU9zi5grHgLSutLhVfNMVdzgUhEAe2mORwLkS4T9Z og== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2v5btqa041-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 08:14:35 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8Q88fFR130879;
+        Thu, 26 Sep 2019 08:14:35 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2v82tmp2ck-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Sep 2019 08:14:34 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8Q8EY9u022413;
+        Thu, 26 Sep 2019 08:14:34 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Sep 2019 01:14:33 -0700
+Date:   Thu, 26 Sep 2019 11:14:26 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Ray Jui <rjui@broadcom.com>,
+        Yendapally Reddy Dhananjaya Reddy 
+        <yendapally.reddy@broadcom.com>
+Cc:     Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] ns2: Fix off by one bugs in ns2_pinmux_enable()
+Message-ID: <20190926081426.GB2332@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190925214242.21873-1-frederic@kernel.org>
+X-Mailer: git-send-email haha only kidding
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=955
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909260080
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909260081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 11:42:42PM +0200, Frederic Weisbecker wrote:
-> vtime_account_system() assumes that the target task to account cputime
-> to is always the current task. This is most often true indeed except on
-> task switch where we call:
-> 
-> 	vtime_common_task_switch(prev)
-> 		vtime_account_system(prev)
-> 
-> Here prev is the scheduling-out task where we account the cputime to. It
-> doesn't match current that is already the scheduling-in task at this
-> stage of the context switch.
-> 
-> So we end up checking the wrong task flags to determine if we are
-> accounting guest or system time to the previous task.
-> 
-> As a result the wrong task is used to check if the target is running in
-> guest mode. We may then spuriously account or leak either system or
-> guest time on task switch.
-> 
-> Fix this assumption and also turn vtime_guest_enter/exit() to use the
-> task passed in parameter as well to avoid future similar issues.
-> 
-> Fixes: 2a42eb9594a1 ("sched/cputime: Accumulate vtime on top of nsec clocksource")
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Wanpeng Li <wanpengli@tencent.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
+The pinctrl->functions[] array has pinctrl->num_functions elements and
+the pinctrl->groups[] array is the same way.  These are set in
+ns2_pinmux_probe().  So the > comparisons should be >= so that we don't
+read one element beyond the end of the array.
 
-Thanks!
+Fixes: b5aa1006e4a9 ("pinctrl: ns2: add pinmux driver support for Broadcom NS2 SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/pinctrl/bcm/pinctrl-ns2-mux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+index 2bf6af7df7d9..9fabc451550e 100644
+--- a/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
++++ b/drivers/pinctrl/bcm/pinctrl-ns2-mux.c
+@@ -640,8 +640,8 @@ static int ns2_pinmux_enable(struct pinctrl_dev *pctrl_dev,
+ 	const struct ns2_pin_function *func;
+ 	const struct ns2_pin_group *grp;
+ 
+-	if (grp_select > pinctrl->num_groups ||
+-		func_select > pinctrl->num_functions)
++	if (grp_select >= pinctrl->num_groups ||
++		func_select >= pinctrl->num_functions)
+ 		return -EINVAL;
+ 
+ 	func = &pinctrl->functions[func_select];
+-- 
+2.20.1
+
