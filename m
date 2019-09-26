@@ -2,95 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A2CBEF4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:09:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49CEABEF27
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfIZKJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 06:09:06 -0400
-Received: from mail12.gandi.net ([217.70.182.73]:54803 "EHLO gandi.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725951AbfIZKJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 06:09:05 -0400
-X-Greylist: delayed 612 seconds by postgrey-1.27 at vger.kernel.org; Thu, 26 Sep 2019 06:09:04 EDT
-Received: from khany.gandi.net (unknown [IPv6:2001:4b98:beef:a:1c24:7b6c:715d:6eec])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by gandi.net (Postfix) with ESMTPSA id DC3821603CC;
-        Thu, 26 Sep 2019 09:58:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gandi.net; s=20190808;
-        t=1569491931;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dTGHc4DsskK8sSXcRmGy4kEft1Z/kZC4Ol5LmTKdjlM=;
-        b=XavZhSVyA2aNFWlLLsW2aWtp3Qi+ZvEIB3edDUw3bsdqdZWigjRgICinTIgwqVTCKUBlVF
-        78MI7N6BAiIemMxMr77iHacnqczvPl3aQq7A9EWrAroVHAYWB/qPPCF+1fgQoBlDOSqIVk
-        3dESRW7FZZO9EhEequSHY/MUX5gyPztI+ySXGxoanMB1dOqLHtXWCk62QxmUNdcugXhvVq
-        BrJh/TgzUDazmcAM3pT0KtdNz3oskWtb1MV4yMvnFhXCn3Yp8zYpADT01HRsdmE1KAq7eH
-        CziudHweoD+vCZRRyEM03drsF1I5JhIQ5m8yqd1/Do4Og9QyoFwznX6ttKbhBw==
-Received: by khany.gandi.net (Postfix, from userid 1000)
-        id 59355DC0480; Thu, 26 Sep 2019 09:58:25 +0000 (GMT)
-Date:   Thu, 26 Sep 2019 09:58:25 +0000
-From:   Arthur Gautier <baloo@gandi.net>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
-Message-ID: <20190926095825.zkdpya55yjusvv4g@khany>
-References: <20190215235901.23541-1-baloo@gandi.net>
- <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com>
- <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de>
- <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net>
- <20190216234702.GP2217@ZenIV.linux.org.uk>
- <20190217034121.bs3q3sgevexmdt3d@khany>
- <20190217042201.GU2217@ZenIV.linux.org.uk>
- <alpine.DEB.2.21.1902181347500.1549@nanos.tec.linutronix.de>
- <CALCETrXyard2OXmOafiLks3YuyO=ObbjDXB6NJo_08rL4M6azw@mail.gmail.com>
- <20190218215150.xklqbfckwmbtdm3t@khany>
+        id S1725980AbfIZKAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 06:00:22 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49840 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725802AbfIZKAV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 06:00:21 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iDQZP-0005ym-MF; Thu, 26 Sep 2019 10:00:19 +0000
+To:     Lukasz Majewski <lukma@denx.de>, Mark Brown <broonie@kernel.org>,
+        linux-spi@vger.kernel.org
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: re: spi: Add call to spi_slave_abort() function when spidev driver is
+ released
+Message-ID: <f4db4595-7673-f2ae-4222-cbb9c2d771f9@canonical.com>
+Date:   Thu, 26 Sep 2019 11:00:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218215150.xklqbfckwmbtdm3t@khany>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 09:51:50PM +0000, Arthur Gautier wrote:
-> On Mon, Feb 18, 2019 at 11:15:44AM -0800, Andy Lutomirski wrote:
-> > This seems like it's just papering over the underlying problem: with
-> > Jann's new checks in place, strncpy_from_user() is simply buggy.  Does
-> > the patch below look decent?  It's only compile-tested, but it's
-> > conceptually straightforward.  I was hoping I could get rid of the
-> > check-maximum-address stuff, but it's needed for architectures where
-> > the user range is adjacent to the kernel range (i.e. not x86_64).
-> 
-> I'm unable to trigger the BUG I had with my initramfs with this patch
-> applied. Thanks!
-> 
+Hi,
 
-Hello All,
+Static analysis with Coverity has detected an potential dereference of a
+free'd object with commit:
 
-Just a followup on this issue, I'm still able to reproduce the original
-issue with:
-    truncate -s 8388313 a
-    SECONDFILENAME=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-    truncate -s 10 $SECONDFILENAME
-    echo "a\n$SECONDFILENAME" | cpio -o --format=newc | lz4 -l > initrd.img.lz4
+commit 9f918a728cf86b2757b6a7025e1f46824bfe3155
+Author: Lukasz Majewski <lukma@denx.de>
+Date:   Wed Sep 25 11:11:42 2019 +0200
 
-I think Andy submitted a patch Feb 25 2019, but I was not copied on it
-(I believe it was sent to x86@kernel.org) and I don't know which fate it
-had.
+    spi: Add call to spi_slave_abort() function when spidev driver is
+released
 
-Any chance we could have a look again?
+In spidev_release() in drivers/spi/spidev.c the analysis is as follows:
 
-Thanks a lot!
+600static int spidev_release(struct inode *inode, struct file *filp)
+601{
+602        struct spidev_data      *spidev;
+603
+604        mutex_lock(&device_list_lock);
 
--- 
-\o/ Arthur
- G  Gandi.net
+   1. alias: Assigning: spidev = filp->private_data. Now both point to
+the same storage.
+
+605        spidev = filp->private_data;
+606        filp->private_data = NULL;
+607
+608        /* last close? */
+609        spidev->users--;
+
+   2. Condition !spidev->users, taking true branch.
+
+610        if (!spidev->users) {
+611                int             dofree;
+612
+613                kfree(spidev->tx_buffer);
+614                spidev->tx_buffer = NULL;
+615
+616                kfree(spidev->rx_buffer);
+617                spidev->rx_buffer = NULL;
+618
+619                spin_lock_irq(&spidev->spi_lock);
+
+   3. Condition spidev->spi, taking false branch.
+
+620                if (spidev->spi)
+621                        spidev->speed_hz = spidev->spi->max_speed_hz;
+622
+623                /* ... after we unbound from the underlying device? */
+
+   4. Condition spidev->spi == NULL, taking true branch.
+
+624                dofree = (spidev->spi == NULL);
+625                spin_unlock_irq(&spidev->spi_lock);
+626
+
+   5. Condition dofree, taking true branch.
+
+627                if (dofree)
+
+   6. freed_arg: kfree frees spidev.
+
+628                        kfree(spidev);
+629        }
+630#ifdef CONFIG_SPI_SLAVE
+
+   CID 89726 (#1 of 1): Read from pointer after free (USE_AFTER_FREE)
+7. deref_after_free: Dereferencing freed pointer spidev.
+
+631        spi_slave_abort(spidev->spi);
+632#endif
+633        mutex_unlock(&device_list_lock);
+634
+635        return 0;
+636}
+
+The call to spi_slave_abort() on spidev is reading an earlier kfree'd
+spidev.
+
+Colin
+
