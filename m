@@ -2,49 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5888FBFA76
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CABF1BFA79
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbfIZUKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 16:10:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55934 "EHLO mail.kernel.org"
+        id S1728809AbfIZUK1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 16:10:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbfIZUKG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 16:10:06 -0400
-Subject: Re: [git pull] jffs2 regression fix
+        id S1728793AbfIZUK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 16:10:26 -0400
+Subject: Re: [GIT PULL] Kselftest update for Linux 5.4-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569528605;
-        bh=Ibueww09vtUfKrDaUVLSn5WCKqxf81hvkoezdAcn68s=;
+        s=default; t=1569528626;
+        bh=iSojXQKpnvd/5Lcou9mG4PGqSh4IsNSxoQH2spGYr1s=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=vD4u37yEU6741/h+54qh+YdHe40hhKwRoG5WCaTPM8NxPQaOh9SzxHY1pk31NCtOQ
-         0PsJkhMlX8m6MXRhIJ7C/jHLOHRQNt/WVkX9yj7Vi1Cwkja7RX31P9tygWF0ychFNM
-         x7muaG1DLWCvj11y6rVebPSGVQ6pbBw3HC+tDvbE=
+        b=qdfg7sDmH9wzKhWvklGVBWGjF2SdgRWfHT5crmXm3V9uL4d7UNVO1EjSWeRxzn91N
+         9eau7kDfzUA1e+YGbCRQF+jjDx4diFHFfUa54wVGP135ms5fNqkGL9fm+51gGcUMja
+         Z+oHc6NiLr6i7hDh/qSVwkMXq4H1vOALx5YRJVsw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190926143004.GV26530@ZenIV.linux.org.uk>
-References: <20190926143004.GV26530@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190926143004.GV26530@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount3
-X-PR-Tracked-Commit-Id: a3bc18a48e2e678efe62f1f9989902f9cd19e0ff
+In-Reply-To: <47009c0c-9b64-5824-0c1c-8cdc1a2265de@linuxfoundation.org>
+References: <47009c0c-9b64-5824-0c1c-8cdc1a2265de@linuxfoundation.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <47009c0c-9b64-5824-0c1c-8cdc1a2265de@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
+ tags/linux-kselftest-5.4-rc1.1
+X-PR-Tracked-Commit-Id: 721cb3c8bc8890e824b7be53bf951960ff7811f9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dadedd85630af28b21c826265f7a651f040f6f13
-Message-Id: <156952860574.24871.17988219399293198456.pr-tracker-bot@kernel.org>
-Date:   Thu, 26 Sep 2019 20:10:05 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
+X-PR-Merge-Commit-Id: 797a3242755da1b7c1ada6fb153cb2700ef30a80
+Message-Id: <156952862613.24871.2602067850286581209.pr-tracker-bot@kernel.org>
+Date:   Thu, 26 Sep 2019 20:10:26 +0000
+To:     Shuah Khan <skhan@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        Mark Brown <broonie@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 26 Sep 2019 15:30:04 +0100:
+The pull request you sent on Mon, 23 Sep 2019 16:40:15 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.mount3
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-5.4-rc1.1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dadedd85630af28b21c826265f7a651f040f6f13
+https://git.kernel.org/torvalds/c/797a3242755da1b7c1ada6fb153cb2700ef30a80
 
 Thank you!
 
