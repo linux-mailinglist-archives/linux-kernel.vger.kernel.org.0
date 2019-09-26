@@ -2,103 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 778E8BF379
+	by mail.lfdr.de (Postfix) with ESMTP id 044BFBF378
 	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfIZMzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:55:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34386 "EHLO mx1.redhat.com"
+        id S1726859AbfIZMzR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:55:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44550 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbfIZMzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726152AbfIZMzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 26 Sep 2019 08:55:15 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16DBA18C8906;
+        by mx1.redhat.com (Postfix) with ESMTPS id B71CA30BC58E;
         Thu, 26 Sep 2019 12:55:15 +0000 (UTC)
 Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 570B160A97;
-        Thu, 26 Sep 2019 12:55:12 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A3D7608C2;
+        Thu, 26 Sep 2019 12:55:15 +0000 (UTC)
 From:   Prarit Bhargava <prarit@redhat.com>
 To:     platform-driver-x86@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 2/7] intel-speed-select: Make process_command generic
-Date:   Thu, 26 Sep 2019 08:54:56 -0400
-Message-Id: <20190926125501.1616-3-prarit@redhat.com>
+Subject: [PATCH 3/7] intel-speed-select: Add check for CascadeLake-N models
+Date:   Thu, 26 Sep 2019 08:54:57 -0400
+Message-Id: <20190926125501.1616-4-prarit@redhat.com>
 In-Reply-To: <20190926125501.1616-1-prarit@redhat.com>
 References: <20190926125501.1616-1-prarit@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Thu, 26 Sep 2019 12:55:15 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 26 Sep 2019 12:55:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the process_command take any help command and command list.  This
-will make it easier to help commands and a command list for CascadeLake-N.
+Three CascadeLake-N models (6252N, 6230N, and 5218N) have SST-PBF support.
+
+Return an error if the CascadeLake processor is not one of these specific
+models.
 
 Signed-off-by: Prarit Bhargava <prarit@redhat.com>
 Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../x86/intel-speed-select/isst-config.c      | 20 ++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ .../x86/intel-speed-select/isst-config.c      | 32 +++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-config.c b/tools/power/x86/intel-speed-select/isst-config.c
-index 9f2798caead9..bb6f8f5986c9 100644
+index bb6f8f5986c9..ae8e3b5153ad 100644
 --- a/tools/power/x86/intel-speed-select/isst-config.c
 +++ b/tools/power/x86/intel-speed-select/isst-config.c
-@@ -1498,7 +1498,9 @@ static struct process_cmd_help_struct isst_help_cmds[] = {
- 	{ NULL, NULL }
- };
+@@ -71,7 +71,7 @@ void debug_printf(const char *format, ...)
+ 	va_end(args);
+ }
  
--void process_command(int argc, char **argv)
-+void process_command(int argc, char **argv,
-+		     struct process_cmd_help_struct *help_cmds,
-+		     struct process_cmd_struct *cmds)
+-static void update_cpu_model(void)
++static int update_cpu_model(void)
  {
- 	int i = 0, matched = 0;
- 	char *feature = argv[optind];
-@@ -1509,9 +1511,9 @@ void process_command(int argc, char **argv)
+ 	unsigned int ebx, ecx, edx;
+ 	unsigned int fms, family;
+@@ -81,6 +81,32 @@ static void update_cpu_model(void)
+ 	cpu_model = (fms >> 4) & 0xf;
+ 	if (family == 6 || family == 0xf)
+ 		cpu_model += ((fms >> 16) & 0xf) << 4;
++
++	/* only three CascadeLake-N models are supported */
++	if (cpu_model == 0x55) {
++		FILE *fp;
++		size_t n;
++		char *line;
++		int ret = 1;
++
++		fp = fopen("/proc/cpuinfo", "r");
++		if (!fp)
++			err(-1, "cannot open /proc/cpuinfo\n");
++
++		while (getline(&line, &n, fp) > 0) {
++			if (strstr(line, "model name")) {
++				if (strstr(line, "6252N") ||
++				    strstr(line, "6230N") ||
++				    strstr(line, "5218N"))
++					ret = 0;
++				break;
++			}
++		}
++		free(line);
++		fclose(fp);
++		return ret;
++	}
++	return 0;
+ }
  
- 	debug_printf("feature name [%s] command [%s]\n", feature, cmd);
- 	if (!strcmp(cmd, "-h") || !strcmp(cmd, "--help")) {
--		while (isst_help_cmds[i].feature) {
--			if (!strcmp(isst_help_cmds[i].feature, feature)) {
--				isst_help_cmds[i].process_fn();
-+		while (help_cmds[i].feature) {
-+			if (!strcmp(help_cmds[i].feature, feature)) {
-+				help_cmds[i].process_fn();
- 				exit(0);
- 			}
- 			++i;
-@@ -1521,11 +1523,11 @@ void process_command(int argc, char **argv)
- 	create_cpu_map();
- 
- 	i = 0;
--	while (isst_cmds[i].feature) {
--		if (!strcmp(isst_cmds[i].feature, feature) &&
--		    !strcmp(isst_cmds[i].command, cmd)) {
-+	while (cmds[i].feature) {
-+		if (!strcmp(cmds[i].feature, feature) &&
-+		    !strcmp(cmds[i].command, cmd)) {
- 			parse_cmd_args(argc, optind + 1, argv);
--			isst_cmds[i].process_fn(isst_cmds[i].arg);
-+			cmds[i].process_fn(cmds[i].arg);
- 			matched = 1;
- 			break;
- 		}
-@@ -1646,7 +1648,7 @@ static void cmdline(int argc, char **argv)
- 	if (ret)
- 		goto out;
- 
--	process_command(argc, argv);
-+	process_command(argc, argv, isst_help_cmds, isst_cmds);
- out:
- 	free_cpu_set(present_cpumask);
- 	free_cpu_set(target_cpumask);
+ /* Open a file, and exit on failure */
+@@ -1638,7 +1664,9 @@ static void cmdline(int argc, char **argv)
+ 		fprintf(stderr, "Feature name and|or command not specified\n");
+ 		exit(0);
+ 	}
+-	update_cpu_model();
++	ret = update_cpu_model();
++	if (ret)
++		err(-1, "Invalid CPU model (%d)\n", cpu_model);
+ 	printf("Intel(R) Speed Select Technology\n");
+ 	printf("Executing on CPU model:%d[0x%x]\n", cpu_model, cpu_model);
+ 	set_max_cpu_num();
 -- 
 2.21.0
 
