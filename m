@@ -2,181 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3A7BF7F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75AC1BF7FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 19:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbfIZRxQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 13:53:16 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40872 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbfIZRxP (ORCPT
+        id S1727980AbfIZRxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 13:53:35 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34581 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727502AbfIZRxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 13:53:15 -0400
-Received: by mail-ot1-f68.google.com with SMTP id y39so2780548ota.7;
-        Thu, 26 Sep 2019 10:53:14 -0700 (PDT)
+        Thu, 26 Sep 2019 13:53:35 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a11so3799204wrx.1
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 10:53:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=l4hVPvXuA1yUfCTMAa2qM1WXIm4IGNEgGvOx69kn5iQ=;
-        b=R+pwT6b5a5j4MI1LUBnBz+75gDMAVK7FAbaw4LQgbnbk3qbI8f7fNZYdiX8kaiXozr
-         APqQI9wPwrOWmh5TBuBPtQiyZQSh8/w8k00TrD/+uEhJIhyZxrsWB1BkTN42hrKMEQqS
-         V07EM/H827soR7Evyna+E7IwEg6lc80tPOe7ds0CLNk9PTaBR34vzkHGNgRAWoWIGopN
-         oFVyZoyByZL2y3yGqMUTcKkc+iozoEQl1ynqgKJwQhZ1isuHVT3MvlzjCNtV40VPFfo2
-         n52tH3k47fv8tR7u5grfe1yrgoIgtRe5VW7Y4wxpc/KEOmyyhdk16wIZTaR8vBxgRNHl
-         j4Rg==
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=O/7Cls5+3fO2IIxRnoaCvkOP+9M/lD0rStFpSymMfhg=;
+        b=CtAeWzABR4zh3Gx7a/r92IghNrsV04map1Ri/6wAISoOwHJVO2/NUvO4FPYCWonYtm
+         GWkJBiG0OKaE1TN7HngBJ0QW/rNJGaGab07W/h4OqeZjghVPGHQq59EWWpP6eLJDqW28
+         U4olL1mje/khQCvdpWdiAh/gTIjkgSrA1Z6y2tb+GeQc0x31GI72CKwATbgBafoheSGw
+         7qYJloMsdu6NeFz2+2YiTIny37yauD5jj3wKAomvhntFNtm5JWIZ0+7JUxiocErrvLcd
+         h3rvhnkxltQgBbjIpUVFwjoa541gD4pih1qC2dJC9+31K9k2gvh9N6xari2kuFIm9Z3J
+         9/Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l4hVPvXuA1yUfCTMAa2qM1WXIm4IGNEgGvOx69kn5iQ=;
-        b=Vyv/L7CsQIDOCaYKNXR/dfXdvG9qojog2218JMeSWGmE45cwOGv/1vGDlaQZwQVL+J
-         GnLfdc3tZT20zc3seHac8M61rNTr+i4/p9C/PahJCT8P3Diny+5MywBLfoMklZdaY95N
-         AF7elvxz9fQgR6JAeFWEBozzVVjRR9t+s9fCItoF13aO54y/j+wdgKBMaKnRioP+nDm3
-         osFHcYDe0qC6eidv06IeHPzmJAcizBp8/o/omdeVAAoSv6nsHricrrVaSImTFAMIqt/y
-         PFY4qmD+RyFkLQ6PICIZ2aC5unxxWPfNvy36bInz+iUaA/okivf1HV+8xc9O2vnHGVMT
-         qUkQ==
-X-Gm-Message-State: APjAAAVFWhOqg+wVxYKEoL1q74cieKfOsaDkVa9aOIA8aFofi1l46UdH
-        //nCdTdDogwXw1gfpA2V2B0oLS8G
-X-Google-Smtp-Source: APXvYqyGGz+8L/6FHfyVFOKmPZvgQvzYKIeL1mfG62VHuz4RAlTKBD+Sm4duhnF/eEGxdihGtHTNUQ==
-X-Received: by 2002:a05:6830:1c5:: with SMTP id r5mr3603353ota.325.1569520394453;
-        Thu, 26 Sep 2019 10:53:14 -0700 (PDT)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id x6sm891889ote.69.2019.09.26.10.53.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2019 10:53:14 -0700 (PDT)
-Subject: Re: [PATCH v2] staging: rtl8188eu: remove dead code/vestigial
- do..while loop
-To:     Connor Kuehl <connor.kuehl@canonical.com>,
-        gregkh@linuxfoundation.org, straube.linux@gmail.com,
-        devel@driverdev.osuosl.org, dan.carpenter@oracle.com
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20190924142819.5243-1-connor.kuehl@canonical.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <2f275661-5945-9e27-95a4-a82584756f2e@lwfinger.net>
-Date:   Thu, 26 Sep 2019 12:53:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=O/7Cls5+3fO2IIxRnoaCvkOP+9M/lD0rStFpSymMfhg=;
+        b=WZupQ4GGrPzAjlHgUvor2f4DEWtS7dfXFFaRKTF4WwTugw72VgyYsVGMPaJKOjl3jo
+         KjodULVcqUJIVvMjGFNKxoCtnIbLS3b3WkB3jFUr9r1a1kaM3QbXvEsef/vWj4n1/F3I
+         bRKcWQcD2tGQpAPfW/9zpT071B6Y4BGvYt2fmduDDdWRK5B3GNozNgGUFFLu9B9YRD80
+         UKqHaJvR3wElFveqp2z0usoNL4aTUJ3QVJaB7WYAEw1oE0NNiV5+BQjgQMykDQuvwzDt
+         NCfSi0mz7aC7dCvAKA8LlBWayFfPqxeHTZGVML6OXC3VMMLRidxfDihgv7ViN4qLUfeT
+         /zHA==
+X-Gm-Message-State: APjAAAUUSkEH0OPwd6lBtyJzKDO5gsbjxo7R0aencS829RVfwbdXZ8fE
+        f6TKRMBpFA31XWEU8WcZlbocNtaSRCNauOnFNIA=
+X-Google-Smtp-Source: APXvYqzs/gTy8JMO46ZJNjWy9p0SQodxPTxR5HIhGODYE+J8Ujg78YM+Y5hGijwG5O1r7Ps5I4s/CuHptojnRCr5qPc=
+X-Received: by 2002:a5d:500f:: with SMTP id e15mr278837wrt.300.1569520413323;
+ Thu, 26 Sep 2019 10:53:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190924142819.5243-1-connor.kuehl@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: drharunab771@gmail.com
+Received: by 2002:adf:a2c3:0:0:0:0:0 with HTTP; Thu, 26 Sep 2019 10:53:32
+ -0700 (PDT)
+From:   DR HARUNA BELLO <drharunab771@gmail.com>
+Date:   Thu, 26 Sep 2019 10:53:32 -0700
+X-Google-Sender-Auth: RASsltSh8sxAtM0Dho1m6oz9tiI
+Message-ID: <CAFYS58dXMmN1n22m-5W9X1vZGcMvbzLNp-yonsce+VyLi6JEGg@mail.gmail.com>
+Subject: I am Dr Haruna Bello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/24/19 9:28 AM, Connor Kuehl wrote:
-> The local variable 'bcmd_down' is always set to true almost immediately
-> before the do-while's condition is checked. As a result, !bcmd_down
-> evaluates to false which short circuits the logical AND operator meaning
-> that the second operand is never reached and is therefore dead code.
-> 
-> Furthermore, the do..while loop may be removed since it will always only
-> execute once because 'bcmd_down' is always set to true, so the
-> !bcmd_down evaluates to false and the loop exits immediately after the
-> first pass.
-> 
-> Fix this by removing the loop and its condition variables 'bcmd_down'
-> and 'retry_cnts'
-> 
-> While we're in there, also fix some checkpatch.pl suggestions regarding
-> spaces around arithmetic operators like '+'
-> 
-> Addresses-Coverity: ("Logically dead code")
-> 
-> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
-> ---
-> v1 -> v2:
->   - remove the loop and its condition variable bcmd_down
->   - address some non-invasive checkpatch.pl suggestions as a result of
->     deleting the loop
-> 
->   drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c | 55 +++++++++-----------
->   1 file changed, 24 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> index 47352f210c0b..7646167a0b36 100644
-> --- a/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> +++ b/drivers/staging/rtl8188eu/hal/rtl8188e_cmd.c
-> @@ -47,8 +47,6 @@ static u8 _is_fw_read_cmd_down(struct adapter *adapt, u8 msgbox_num)
->   ******************************************/
->   static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *pCmdBuffer)
->   {
-> -	u8 bcmd_down = false;
-> -	s32 retry_cnts = 100;
->   	u8 h2c_box_num;
->   	u32 msgbox_addr;
->   	u32 msgbox_ex_addr;
-> @@ -71,39 +69,34 @@ static s32 FillH2CCmd_88E(struct adapter *adapt, u8 ElementID, u32 CmdLen, u8 *p
->   		goto exit;
->   
->   	/* pay attention to if  race condition happened in  H2C cmd setting. */
-> -	do {
-> -		h2c_box_num = adapt->HalData->LastHMEBoxNum;
-> -
-> -		if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
-> -			DBG_88E(" fw read cmd failed...\n");
-> -			goto exit;
-> -		}
-> -
-> -		*(u8 *)(&h2c_cmd) = ElementID;
-> -
-> -		if (CmdLen <= 3) {
-> -			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, CmdLen);
-> -		} else {
-> -			memcpy((u8 *)(&h2c_cmd)+1, pCmdBuffer, 3);
-> -			ext_cmd_len = CmdLen-3;
-> -			memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer+3, ext_cmd_len);
-> +	h2c_box_num = adapt->HalData->LastHMEBoxNum;
->   
-> -			/* Write Ext command */
-> -			msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
-> -			for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
-> -				usb_write8(adapt, msgbox_ex_addr+cmd_idx, *((u8 *)(&h2c_cmd_ex)+cmd_idx));
-> -		}
-> -		/*  Write command */
-> -		msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
-> -		for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
-> -			usb_write8(adapt, msgbox_addr+cmd_idx, *((u8 *)(&h2c_cmd)+cmd_idx));
-> +	if (!_is_fw_read_cmd_down(adapt, h2c_box_num)) {
-> +		DBG_88E(" fw read cmd failed...\n");
-> +		goto exit;
-> +	}
->   
-> -		bcmd_down = true;
-> +	*(u8 *)(&h2c_cmd) = ElementID;
->   
-> -		adapt->HalData->LastHMEBoxNum =
-> -			(h2c_box_num+1) % RTL88E_MAX_H2C_BOX_NUMS;
-> +	if (CmdLen <= 3) {
-> +		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, CmdLen);
-> +	} else {
-> +		memcpy((u8 *)(&h2c_cmd) + 1, pCmdBuffer, 3);
-> +		ext_cmd_len = CmdLen - 3;
-> +		memcpy((u8 *)(&h2c_cmd_ex), pCmdBuffer + 3, ext_cmd_len);
-> +
-> +		/* Write Ext command */
-> +		msgbox_ex_addr = REG_HMEBOX_EXT_0 + (h2c_box_num * RTL88E_EX_MESSAGE_BOX_SIZE);
-> +		for (cmd_idx = 0; cmd_idx < ext_cmd_len; cmd_idx++)
-> +			usb_write8(adapt, msgbox_ex_addr + cmd_idx, *((u8 *)(&h2c_cmd_ex) + cmd_idx));
-> +	}
-> +	/*  Write command */
-> +	msgbox_addr = REG_HMEBOX_0 + (h2c_box_num * RTL88E_MESSAGE_BOX_SIZE);
-> +	for (cmd_idx = 0; cmd_idx < RTL88E_MESSAGE_BOX_SIZE; cmd_idx++)
-> +		usb_write8(adapt, msgbox_addr + cmd_idx, *((u8 *)(&h2c_cmd) + cmd_idx));
->   
-> -	} while ((!bcmd_down) && (retry_cnts--));
-> +	adapt->HalData->LastHMEBoxNum =
-> +		(h2c_box_num + 1) % RTL88E_MAX_H2C_BOX_NUMS;
->   
->   	ret = _SUCCESS;
+-- 
+I am Dr Haruna Bello
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
+I have a Geniue business transaction of 18.5 Million Us Dollars to do with
+You
+Hence You Co-operate with me I am assured you that within (7) seven
+banking working days, this said amount will enter your given Bank
+account with immediate alacrity. If you agree to my business proposal,
+further details of the transfer will be forwarded to you as soon as I
+receive your wiliness to join hand with me.
+Am awaiting your urgent response with this informations
+Name:...................
+Sex:...............
+Age:...................
+Occupation:........
+Address:...............
+Tel/ Fax:...............
+State:.............
+Country Of origin:..........
 
-Thanks,
-
-Larry
-
+Have a nice day!!
