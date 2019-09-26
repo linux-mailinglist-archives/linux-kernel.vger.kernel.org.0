@@ -2,489 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D6DABF20C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1913DBF222
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726100AbfIZLrA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:47:00 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:54164 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfIZLrA (ORCPT
+        id S1726404AbfIZLvY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 07:51:24 -0400
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:43950 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725973AbfIZLvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:47:00 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8QBktDJ019202;
-        Thu, 26 Sep 2019 06:46:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569498415;
-        bh=YTm21gUfdR5Lb9TFj8+JVfJGVQEtERNPDJM+z6T+kdg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=EorMSEvEC+mFYwMKDEe9FqBJRyp5VXorxWFVg/DVEIj+YZ+D4LDC0MR3FgcuMEN8i
-         XBEy3pMA8PFoWkc3l4b6EVF4cgZW8y2kGycOUxWECI3xdlE39eVLDn4KDHpNVDaqrf
-         pjUaFMD3Ii5j+RFfLnnoASSg+qBRl3/iikGLy7nQ=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8QBktZ1031582;
-        Thu, 26 Sep 2019 06:46:55 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 26
- Sep 2019 06:46:47 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 26 Sep 2019 06:46:47 -0500
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8QBks00093371;
-        Thu, 26 Sep 2019 06:46:54 -0500
-Subject: Re: [PATCH v9 05/15] leds: multicolor: Introduce a multicolor class
- definition
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190925174616.3714-1-dmurphy@ti.com>
- <20190925174616.3714-6-dmurphy@ti.com>
- <918ff939-8b6c-af35-ef08-0f13937d2fed@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <4f23cd99-23a5-5185-dd42-d6d29c48f566@ti.com>
-Date:   Thu, 26 Sep 2019 06:52:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 26 Sep 2019 07:51:23 -0400
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8QBgw7H032134;
+        Thu, 26 Sep 2019 07:50:19 -0400
+Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2058.outbound.protection.outlook.com [104.47.41.58])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2v6hku7g5b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Sep 2019 07:50:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MtHDye95xjt486tdVTkv9U+JQPT05eejWFOTfCWh6I/dYR0CYilfeKIZdekDprSf4ZopdhrkEPf7piDF6RChYUd125SLyV9I2znKHXlusYIjFRokEbcmT0rUvz9rlV33e9UIVa/mVmSpFOTAh3hYRhXTYA6gABuRF/JcbXWaTRJ4moYNBVVFmenoBq4SvWW5hV2tNDBU/MNT+kYHBtWnA8bhXaEF/AqLhNTlWXC1HsfhQ6PZK1+AGMtHfEpdVrbvtT0QCifF5i5I6Xg+x6Vn04QSbOfvD9/avJtEn7USgjZTmI1UZyIPW9OJr4bKONVs+fz6GpcB+mYHr43w5jqILQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2+XSYvyDW/6LNC684dwO5kP/7Og1UsXSrr6729zlUJk=;
+ b=nlaAUWLmtcwkhPflIOA7LhAL6ZHEYInBgutlA7XtReUcYfnGP9xC/k1Mf6KQCZ7ZOumNXGvWc6mXT6eK1VMVSqwv53qmgvAd6kEwYPGg7IExvTQEaM/9QNcu0vqT4Dz/BN3IIYsISAsTMRWSGEpEN+623EP8AB1B3OVYHYi6xouL47SdVlhFjkbhIPRFwLi5E7jGmDFDnOa+Ny6eijMwrHnyQ9O0oqB1L6Rl7opLJF1a08sywNermVS8+j/QUj0Gf1zpVNAIkaVCD9BIWJ5U/d5wChp+ziAT5TBQ6PqeZWliAQpMcYivv9rjFdOgswEyLsncRdIeNzWhoXRkjmBUiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.55) smtp.rcpttodomain=suse.com smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2+XSYvyDW/6LNC684dwO5kP/7Og1UsXSrr6729zlUJk=;
+ b=dUnMZfXP2HQ8pbn6G/YoHoQSBH0x87/7mBbbH/NOSni6Bd2Gr7+U/TZvgxiUeSoKI6tCnOM/0cMdr3sBJfKVxADDsHrUYkin0kOhn7VLZMZ4Jjv1HSBpoARIk1iV797QmeNo9TCXpyFon8LWLaemwwz6erhK0gO9MI7W08dOO1g=
+Received: from CY1PR03CA0001.namprd03.prod.outlook.com (2603:10b6:600::11) by
+ DM5PR03MB3402.namprd03.prod.outlook.com (2603:10b6:4:3d::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2263.17; Thu, 26 Sep 2019 11:50:18 +0000
+Received: from CY1NAM02FT007.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::206) by CY1PR03CA0001.outlook.office365.com
+ (2603:10b6:600::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.20 via Frontend
+ Transport; Thu, 26 Sep 2019 11:50:17 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ CY1NAM02FT007.mail.protection.outlook.com (10.152.75.5) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2284.25
+ via Frontend Transport; Thu, 26 Sep 2019 11:50:17 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x8QBoAiS010404
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Thu, 26 Sep 2019 04:50:10 -0700
+Received: from saturn.ad.analog.com (10.48.65.123) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 26 Sep 2019 07:50:15 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+CC:     <tiwai@suse.com>, <perex@perex.cz>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <lars@metafoo.de>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 1/2][RESEND] ASoC: adau1761: Add PGA Slew time control
+Date:   Thu, 26 Sep 2019 14:50:11 +0300
+Message-ID: <20190926115012.24049-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190709082111.27221-1-alexandru.ardelean@analog.com>
+References: <20190709082111.27221-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-In-Reply-To: <918ff939-8b6c-af35-ef08-0f13937d2fed@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39860400002)(346002)(189003)(199004)(110136005)(356004)(6666004)(2906002)(486006)(126002)(5660300002)(4326008)(476003)(8676002)(47776003)(70586007)(86362001)(44832011)(1076003)(426003)(50226002)(36756003)(50466002)(186003)(51416003)(76176011)(478600001)(7696005)(107886003)(26005)(2870700001)(2616005)(11346002)(48376002)(106002)(70206006)(246002)(336012)(446003)(14444005)(305945005)(54906003)(7636002)(8936002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3402;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8f333806-c913-424d-8e43-08d74277b395
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(4709080)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:DM5PR03MB3402;
+X-MS-TrafficTypeDiagnostic: DM5PR03MB3402:
+X-Microsoft-Antispam-PRVS: <DM5PR03MB3402AB7DE7742323BBCD0336F9860@DM5PR03MB3402.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:243;
+X-Forefront-PRVS: 0172F0EF77
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: YNxv9FN+rB5y41rNoyiTQv0jjWVKaaagjVLvBksqNb6QMiUY99Q1M+j/0d1yM5Q2ZDWPCi3QPGk5uPCcjwM3Q9XXJKxHZLOT6kGe1yf+kqsuKnoopj0qleMIaPsls+zTVvoSt+iQq3mtnR+HEFJ3ajokLnIpSakR4PrPF0PQ3SvsRdQedgEDfFAE/r+wgeuJ4LcT0C6c7Lsnk1kN0/QNdi05kr3R/StC+MtC7YcArwZmC8IgikTVONWT6ZNyzyJf/CeJY3N9UQ+ozTnLRYBq4emRnmgOy2ScoLvrhXgW29sXXk8+Ogn1S8zS67ny5YjLXvLKgnO5jMNZho0jrb2gtq2Bu6O6Ee+j/tjED7IVwgWWwspR2t7GdkTyx7L2Sew2V5jDPzmi7rxxFHRnSdDNEmRmjzdeXnJfFYBnDe/xZl8=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2019 11:50:17.6397
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f333806-c913-424d-8e43-08d74277b395
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3402
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
+ definitions=2019-09-26_05:2019-09-25,2019-09-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 clxscore=1011
+ adultscore=0 spamscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1909260113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-On 9/25/19 4:12 PM, Jacek Anaszewski wrote:
-> Dan,
->
-> On 9/25/19 7:46 PM, Dan Murphy wrote:
->> Introduce a multicolor class that groups colored LEDs
->> within a LED node.
->>
->> The multi color class groups monochrome LEDs and allows controlling two
->> aspects of the final combined color: hue and lightness. The former is
->> controlled via <color>_intensity files and the latter is controlled
->> via brightness file.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>   drivers/leds/Kconfig                 |  10 ++
->>   drivers/leds/Makefile                |   1 +
->>   drivers/leds/led-class-multicolor.c  | 220 +++++++++++++++++++++++++++
->>   include/linux/led-class-multicolor.h |  74 +++++++++
->>   4 files changed, 305 insertions(+)
->>   create mode 100644 drivers/leds/led-class-multicolor.c
->>   create mode 100644 include/linux/led-class-multicolor.h
->>
->> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
->> index 6e7703fd03d0..cfb1ebb6517f 100644
->> --- a/drivers/leds/Kconfig
->> +++ b/drivers/leds/Kconfig
->> @@ -30,6 +30,16 @@ config LEDS_CLASS_FLASH
->>   	  for the flash related features of a LED device. It can be built
->>   	  as a module.
->>   
->> +config LEDS_CLASS_MULTI_COLOR
->> +	tristate "LED Mulit Color LED Class Support"
->> +	depends on LEDS_CLASS
->> +	help
->> +	  This option enables the multicolor LED sysfs class in /sys/class/leds.
->> +	  It wraps LED class and adds multicolor LED specific sysfs attributes
->> +	  and kernel internal API to it. You'll need this to provide support
->> +	  for multicolor LEDs that are grouped together. This class is not
->> +	  intended for single color LEDs. It can be built as a module.
->> +
->>   config LEDS_BRIGHTNESS_HW_CHANGED
->>   	bool "LED Class brightness_hw_changed attribute support"
->>   	depends on LEDS_CLASS
->> diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
->> index 2da39e896ce8..841038cfe35b 100644
->> --- a/drivers/leds/Makefile
->> +++ b/drivers/leds/Makefile
->> @@ -4,6 +4,7 @@
->>   obj-$(CONFIG_NEW_LEDS)			+= led-core.o
->>   obj-$(CONFIG_LEDS_CLASS)		+= led-class.o
->>   obj-$(CONFIG_LEDS_CLASS_FLASH)		+= led-class-flash.o
->> +obj-$(CONFIG_LEDS_CLASS_MULTI_COLOR)	+= led-class-multicolor.o
->>   obj-$(CONFIG_LEDS_TRIGGERS)		+= led-triggers.o
->>   
->>   # LED Platform Drivers
->> diff --git a/drivers/leds/led-class-multicolor.c b/drivers/leds/led-class-multicolor.c
->> new file mode 100644
->> index 000000000000..25371bd9a860
->> --- /dev/null
->> +++ b/drivers/leds/led-class-multicolor.c
->> @@ -0,0 +1,220 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// LED Multi Color class interface
->> +// Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->> +
->> +#include <linux/device.h>
->> +#include <linux/init.h>
->> +#include <linux/led-class-multicolor.h>
->> +#include <linux/module.h>
->> +#include <linux/slab.h>
->> +#include <linux/uaccess.h>
->> +
->> +#include "leds.h"
->> +
->> +#define INTENSITY_NAME		"_intensity"
->> +#define MAX_INTENSITY_NAME	"_max_intensity"
->> +
->> +void led_mc_calc_brightness(struct led_classdev_mc *mcled_cdev,
->> +			    enum led_brightness brightness,
->> +			    int brightness_val[])
->> +{
->> +	struct led_mc_color_entry *priv;
->> +	int i = 0;
->> +
->> +	list_for_each_entry(priv, &mcled_cdev->color_list, list) {
-> I think we should have some way to let the caller know exact mapping
-> of brightness_val to color_id. Possibly LED mc core should provide
-> a helper to get color_id by color entry index.
+The PGA Slew Time control allows to configure the rate with which the PGA
+gain control ramps up/down to the target setting.
 
-Why would we need that?
+The PGA slew control is done via the ALC Control 0 register. There are 2
+bits on that reg, that control PGA slew time, while the other bits control
+parts of the ALC (automatic level control) block.
 
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ sound/soc/codecs/adau1761.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
->
-> But this remark is actually more relevant to the place of calling.
-> I'll try to propose something there.
->
-> And regarding brightness_val name - how about:
->
-> s/brightness_val/brightness_component/ ?
+diff --git a/sound/soc/codecs/adau1761.c b/sound/soc/codecs/adau1761.c
+index 977f5a63be3f..a9ef735f8b4e 100644
+--- a/sound/soc/codecs/adau1761.c
++++ b/sound/soc/codecs/adau1761.c
+@@ -28,6 +28,7 @@
+ #define ADAU1761_REC_MIXER_RIGHT1	0x400d
+ #define ADAU1761_LEFT_DIFF_INPUT_VOL	0x400e
+ #define ADAU1761_RIGHT_DIFF_INPUT_VOL	0x400f
++#define ADAU1761_ALC_CTRL0		0x4011
+ #define ADAU1761_PLAY_LR_MIXER_LEFT	0x4020
+ #define ADAU1761_PLAY_MIXER_LEFT0	0x401c
+ #define ADAU1761_PLAY_MIXER_LEFT1	0x401d
+@@ -71,6 +72,7 @@ static const struct reg_default adau1761_reg_defaults[] = {
+ 	{ ADAU1761_REC_MIXER_RIGHT0,		0x00 },
+ 	{ ADAU1761_REC_MIXER_RIGHT1,		0x00 },
+ 	{ ADAU1761_LEFT_DIFF_INPUT_VOL,		0x00 },
++	{ ADAU1761_ALC_CTRL0,			0x00 },
+ 	{ ADAU1761_RIGHT_DIFF_INPUT_VOL,	0x00 },
+ 	{ ADAU1761_PLAY_LR_MIXER_LEFT,		0x00 },
+ 	{ ADAU1761_PLAY_MIXER_LEFT0,		0x00 },
+@@ -147,6 +149,21 @@ static SOC_VALUE_ENUM_SINGLE_DECL(adau1761_capture_bias_enum,
+ 		ADAU17X1_REC_POWER_MGMT, 1, 0x3, adau1761_bias_select_text,
+ 		adau1761_bias_select_values);
+ 
++static const unsigned int adau1761_pga_slew_time_values[] = {
++	3, 0, 1, 2,
++};
++
++static const char * const adau1761_pga_slew_time_text[] = {
++	"Off",
++	"24 ms",
++	"48 ms",
++	"96 ms",
++};
++
++static SOC_VALUE_ENUM_SINGLE_DECL(adau1761_pga_slew_time_enum,
++		ADAU1761_ALC_CTRL0, 6, 0x3, adau1761_pga_slew_time_text,
++		adau1761_pga_slew_time_values);
++
+ static const struct snd_kcontrol_new adau1761_jack_detect_controls[] = {
+ 	SOC_SINGLE("Speaker Auto-mute Switch", ADAU1761_DIGMIC_JACKDETECT,
+ 		4, 1, 0),
+@@ -161,6 +178,8 @@ static const struct snd_kcontrol_new adau1761_differential_mode_controls[] = {
+ 
+ 	SOC_DOUBLE_R_TLV("PGA Boost Capture Volume", ADAU1761_REC_MIXER_LEFT1,
+ 		ADAU1761_REC_MIXER_RIGHT1, 3, 2, 0, adau1761_pga_boost_tlv),
++
++	SOC_ENUM("PGA Capture Slew Time", adau1761_pga_slew_time_enum),
+ };
+ 
+ static const struct snd_kcontrol_new adau1761_single_mode_controls[] = {
+@@ -632,6 +651,7 @@ static bool adau1761_readable_register(struct device *dev, unsigned int reg)
+ 	case ADAU1761_DEJITTER:
+ 	case ADAU1761_CLK_ENABLE0:
+ 	case ADAU1761_CLK_ENABLE1:
++	case ADAU1761_ALC_CTRL0:
+ 		return true;
+ 	default:
+ 		break;
+-- 
+2.20.1
 
-component does not make sense to me in this context.  Actually 
-brightness_val
-
-does not make sense either since it is an adjusted intensity and 
-brightness is passed in in the second arg
-
-I think intensity_values make more sense.
-
-
->
->
->> +		brightness_val[i] = brightness *
->> +				    priv->intensity / priv->max_intensity;
->> +		i++;
->> +	}
->> +}
->> +EXPORT_SYMBOL_GPL(led_mc_calc_brightness);
->> +
->> +static ssize_t intensity_store(struct device *dev,
->> +				struct device_attribute *intensity_attr,
->> +				const char *buf, size_t size)
->> +{
->> +	struct led_mc_color_entry *priv = container_of(intensity_attr,
->> +						    struct led_mc_color_entry,
->> +						      intensity_attr);
->> +	struct led_classdev *led_cdev = priv->mcled_cdev->led_cdev;
->> +	unsigned long value;
->> +	ssize_t ret;
->> +
->> +	mutex_lock(&led_cdev->led_access);
->> +
->> +	ret = kstrtoul(buf, 10, &value);
->> +	if (ret)
->> +		goto unlock;
->> +
->> +	if (value > priv->max_intensity) {
->> +		ret = -EINVAL;
->> +		goto unlock;
->> +	}
->> +
->> +	priv->intensity = value;
->> +	ret = size;
->> +
->> +unlock:
->> +	mutex_unlock(&led_cdev->led_access);
->> +	return ret;
->> +}
->> +
->> +static ssize_t intensity_show(struct device *dev,
->> +			      struct device_attribute *intensity_attr,
->> +			      char *buf)
->> +{
->> +	struct led_mc_color_entry *priv = container_of(intensity_attr,
->> +						    struct led_mc_color_entry,
->> +						      intensity_attr);
->> +
->> +	return sprintf(buf, "%d\n", priv->intensity);
->> +}
->> +
->> +static ssize_t max_intensity_show(struct device *dev,
->> +				   struct device_attribute *max_intensity_attr,
->> +				   char *buf)
->> +{
->> +	struct led_mc_color_entry *priv = container_of(max_intensity_attr,
->> +						    struct led_mc_color_entry,
->> +						      max_intensity_attr);
->> +
->> +	return sprintf(buf, "%d\n", priv->max_intensity);
->> +}
->> +
->> +static struct attribute *led_color_attrs[] = {
->> +	NULL,
->> +};
->> +
->> +static struct attribute_group led_color_group = {
->> +	.name = "colors",
->> +	.attrs = led_color_attrs,
->> +};
->> +
->> +static int led_multicolor_init_color(struct led_classdev_mc *mcled_cdev,
->> +				     int color_id, int color_index)
->> +{
->> +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
->> +	struct led_mc_color_entry *mc_priv;
->> +	char *intensity_file_name;
->> +	char *max_intensity_file_name;
->> +	size_t len;
->> +	int ret;
->> +
->> +	mc_priv = devm_kzalloc(led_cdev->dev, sizeof(*mc_priv), GFP_KERNEL);
->> +	if (!mc_priv)
->> +		return -ENOMEM;
->> +
->> +	mc_priv->led_color_id = color_id;
->> +	mc_priv->mcled_cdev = mcled_cdev;
->> +
->> +	sysfs_attr_init(&mc_priv->intensity_attr.attr);
->> +	len = strlen(led_colors[color_id]) + strlen(INTENSITY_NAME) + 1;
->> +	intensity_file_name = kzalloc(len, GFP_KERNEL);
->> +	if (!intensity_file_name)
->> +		return -ENOMEM;
->> +
->> +	snprintf(intensity_file_name, len, "%s%s",
->> +		 led_colors[color_id], INTENSITY_NAME);
->> +	mc_priv->intensity_attr.attr.name = intensity_file_name;
->> +	mc_priv->intensity_attr.attr.mode = 644;
-> Proper octal value should begin with 0.
-> But please use combinations of dedicated S_I* definitions
-> from include/uapi/linux/stat.h.
-
-Using the S_I* causes checkpatch warnings
-
-WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider 
-using octal permissions '0444'.
-#139: FILE: drivers/leds/led-class-multicolor.c:139:
-+    mc_priv->max_intensity_attr.attr.mode = S_IRUGO;
-
->
->> +	mc_priv->intensity_attr.store = intensity_store;
->> +	mc_priv->intensity_attr.show = intensity_show;
->> +	ret = sysfs_add_file_to_group(&led_cdev->dev->kobj,
->> +				      &mc_priv->intensity_attr.attr,
->> +				      led_color_group.name);
->> +	if (ret)
->> +		goto intensity_err_out;
->> +
->> +	sysfs_attr_init(&mc_priv->max_intensity_attr.attr);
->> +	len = strlen(led_colors[color_id]) + strlen(MAX_INTENSITY_NAME) + 1;
->> +	max_intensity_file_name = kzalloc(len, GFP_KERNEL);
->> +	if (!max_intensity_file_name) {
->> +		ret = -ENOMEM;
->> +		goto intensity_err_out;
->> +	}
->> +
->> +	snprintf(max_intensity_file_name, len, "%s%s",
->> +		 led_colors[color_id], MAX_INTENSITY_NAME);
->> +	mc_priv->max_intensity_attr.attr.name = max_intensity_file_name;
->> +	mc_priv->max_intensity_attr.attr.mode = 444;
->> +	mc_priv->max_intensity_attr.show = max_intensity_show;
->> +	ret = sysfs_add_file_to_group(&led_cdev->dev->kobj,
->> +				      &mc_priv->max_intensity_attr.attr,
->> +				      led_color_group.name);
->> +	if (ret)
->> +		goto max_intensity_err_out;
->> +
->> +	mc_priv->max_intensity = LED_FULL;
->> +	list_add_tail(&mc_priv->list, &mcled_cdev->color_list);
->> +
->> +max_intensity_err_out:
->> +	kfree(max_intensity_file_name);
->> +intensity_err_out:
->> +	kfree(intensity_file_name);
->> +	return ret;
->> +}
->> +
->> +static int led_multicolor_init_color_dir(struct led_classdev_mc *mcled_cdev)
->> +{
->> +	struct led_classdev *led_cdev = mcled_cdev->led_cdev;
->> +	int ret;
->> +	int i, color_index = 0;
->> +
->> +	ret = sysfs_create_group(&led_cdev->dev->kobj, &led_color_group);
->> +	if (ret)
->> +		return ret;
->> +
->> +	for (i = 0; i < LED_COLOR_ID_MAX; i++) {
->> +		if (test_bit(i, &mcled_cdev->available_colors)) {
->> +			ret = led_multicolor_init_color(mcled_cdev, i,
->> +							color_index);
-> color_index is now unused AFAICS.
-
-Ack
-
->
->> +			if (ret)
->> +				break;
->> +
->> +			color_index++;
->> +		}
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +int led_classdev_multicolor_register_ext(struct device *parent,
->> +				     struct led_classdev_mc *mcled_cdev,
->> +				     struct led_init_data *init_data)
->> +{
->> +	struct led_classdev *led_cdev;
->> +	int ret;
->> +
->> +	if (!mcled_cdev)
->> +		return -EINVAL;
->> +
->> +	led_cdev = mcled_cdev->led_cdev;
->> +	INIT_LIST_HEAD(&mcled_cdev->color_list);
->> +
->> +	/* Register led class device */
->> +	ret = led_classdev_register_ext(parent, led_cdev, init_data);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return led_multicolor_init_color_dir(mcled_cdev);
->> +}
->> +EXPORT_SYMBOL_GPL(led_classdev_multicolor_register_ext);
-> Why devm_* versions are missing now?
-
-I was using the led-class-flash.c as an example and that class does not 
-have the devm_* versions either.
-
-Tried to make the 2 child classes look the same.
-
-If they are missing from the led-class-flash code then that needs to be 
-fixed as well.
-
->
->> +
->> +void led_classdev_multicolor_unregister(struct led_classdev_mc *mcled_cdev)
->> +{
->> +	struct led_mc_color_entry *priv, *next;
->> +
->> +	if (!mcled_cdev)
->> +		return;
->> +
->> +	list_for_each_entry_safe(priv, next, &mcled_cdev->color_list, list)
->> +		list_del(&priv->list);
->> +
->> +	sysfs_remove_group(&mcled_cdev->led_cdev->dev->kobj, &led_color_group);
->> +	led_classdev_unregister(mcled_cdev->led_cdev);
->> +}
->> +EXPORT_SYMBOL_GPL(led_classdev_multicolor_unregister);
->> +
->> +MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com>");
->> +MODULE_DESCRIPTION("Multi Color LED class interface");
->> +MODULE_LICENSE("GPL v2");
->> diff --git a/include/linux/led-class-multicolor.h b/include/linux/led-class-multicolor.h
->> new file mode 100644
->> index 000000000000..280ba5a614b4
->> --- /dev/null
->> +++ b/include/linux/led-class-multicolor.h
->> @@ -0,0 +1,74 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/* LED Multicolor class interface
->> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->> + */
->> +
->> +#ifndef __LINUX_MULTICOLOR_LEDS_H_INCLUDED
->> +#define __LINUX_MULTICOLOR_LEDS_H_INCLUDED
->> +
->> +#include <linux/leds.h>
->> +#include <dt-bindings/leds/common.h>
->> +
->> +struct led_classdev_mc;
->> +
->> +struct led_mc_color_entry {
->> +	struct led_classdev_mc *mcled_cdev;
->> +
->> +	struct device_attribute max_intensity_attr;
->> +	struct device_attribute intensity_attr;
->> +
->> +	enum led_brightness max_intensity;
->> +	enum led_brightness intensity;
->> +
->> +	struct list_head list;
->> +
->> +	int led_color_id;
->> +};
->> +
->> +struct led_classdev_mc {
->> +	/* led class device */
->> +	struct led_classdev *led_cdev;
->> +	struct list_head color_list;
->> +
->> +	unsigned long available_colors;
->> +	int num_leds;
->> +};
->> +
->> +static inline struct led_classdev_mc *lcdev_to_mccdev(
->> +						struct led_classdev *lcdev)
->> +{
->> +	return container_of(lcdev, struct led_classdev_mc, led_cdev);
->> +}
->> +
->> +/**
->> + * led_classdev_multicolor_register_ext - register a new object of led_classdev
->> + *				      class with support for multicolor LEDs
->> + * @parent: the multicolor LED to register
->> + * @mcled_cdev: the led_classdev_mc structure for this device
->> + * @init_data: the LED class Multi color device initialization data
->> + *
->> + * Returns: 0 on success or negative error value on failure
->> + */
->> +int led_classdev_multicolor_register_ext(struct device *parent,
->> +					    struct led_classdev_mc *mcled_cdev,
->> +					    struct led_init_data *init_data);
->> +
->> +#define led_classdev_multicolor_register(parent, mcled_cdev)		\
->> +	led_classdev_multicolor_register_ext(parent, mcled_cdev, NULL)
-> Please turn it into inline.
-
-Again same statement as above on the led-class-flash.  This is how this 
-is defined there.
-
-If that is not correct in the flash class then that needs to be fixed as 
-well.
-
-Dan
-
->
->> +
->> +/**
->> + * led_classdev_multicolor_unregister - unregisters an object of led_classdev
->> + *					class with support for multicolor LEDs
->> + * @mcled_cdev: the multicolor LED to unregister
->> + *
->> + * Unregister a previously registered via led_classdev_multicolor_register
->> + * object
->> + */
->> +void led_classdev_multicolor_unregister(struct led_classdev_mc *mcled_cdev);
->> +
->> +/* Calculate brightness for the monochrome LED cluster */
->> +void led_mc_calc_brightness(struct led_classdev_mc *mcled_cdev,
->> +			    enum led_brightness brightness,
->> +			    int brightness_val[]);
->> +
->> +#endif	/* __LINUX_MULTICOLOR_LEDS_H_INCLUDED */
->>
