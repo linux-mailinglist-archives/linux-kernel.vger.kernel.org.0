@@ -2,261 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80260BEA1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:31:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72ACABEA41
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389781AbfIZBbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 21:31:33 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:32106 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389536AbfIZBbd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 21:31:33 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190926013130epoutp03bbe354815bcc4212e992d3651643f98c~H2Oka9Qfj2977029770epoutp037
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 01:31:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190926013130epoutp03bbe354815bcc4212e992d3651643f98c~H2Oka9Qfj2977029770epoutp037
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569461490;
-        bh=H7dIy4NLJ0Vtiyy8JGjYV3SoJNF1jlpXFN42Cx87qDc=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=RYxrHJEfxavRVL74TZhStzp1M3v/kexRPRSkVkrwVdcc3Rli0TRLydxnMlzWTggMu
-         APil17qJ3Sj+XDeku/SiEyIC8X8jyTEhLWhkqsZDHG56cyHIncbauk6cGbdL0e87Yb
-         MuuVq8blmNZkztmkX5h0/3q9dBSwwvvy3gpwOVH0=
-Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190926013130epcas1p434480b7b054308c3daa91f68e59e0203~H2Oj9hRqA1545815458epcas1p4j;
-        Thu, 26 Sep 2019 01:31:30 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp5.localdomain (Postfix) with ESMTP id 46dy7g5MxVzMqYkc; Thu, 26 Sep
-        2019 01:31:27 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B2.05.04068.AE41C8D5; Thu, 26 Sep 2019 10:31:22 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190926013122epcas1p1dcdbefd63f655e8082d138064c09e9dd~H2OcdAG4O2486724867epcas1p1B;
-        Thu, 26 Sep 2019 01:31:22 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190926013122epsmtrp1664d228cded2bcb996429c2f343c14fe~H2OccJ9l43098130981epsmtrp18;
-        Thu, 26 Sep 2019 01:31:22 +0000 (GMT)
-X-AuditID: b6c32a39-f5fff70000000fe4-35-5d8c14ea9a2b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        02.41.04081.AE41C8D5; Thu, 26 Sep 2019 10:31:22 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190926013122epsmtip1910ffa9271d525d0209975049806c252~H2OcPcUkN2250222502epsmtip1B;
-        Thu, 26 Sep 2019 01:31:22 +0000 (GMT)
-Subject: Re: [PATCH 1/2] devfreq: Rename devfreq_update_status() to
- devfreq_update_stats() and viceversa
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <3fb18474-b31e-bc7e-8b6a-660904a19443@samsung.com>
-Date:   Thu, 26 Sep 2019 10:36:04 +0900
+        id S2391377AbfIZBjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 21:39:07 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5786 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391342AbfIZBjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 21:39:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 18:39:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,549,1559545200"; 
+   d="scan'208";a="201449048"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 25 Sep 2019 18:39:03 -0700
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [RFC PATCH 0/4] Use 1st-level for DMA remapping in guest
+To:     Peter Xu <peterx@redhat.com>, "Tian, Kevin" <kevin.tian@intel.com>
+References: <20190923122454.9888-1-baolu.lu@linux.intel.com>
+ <20190923122715.53de79d0@jacob-builder>
+ <20190923202552.GA21816@araj-mobl1.jf.intel.com>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D58D1F1@SHSMSX104.ccr.corp.intel.com>
+ <dfd9b7a2-5553-328a-08eb-16c8a3a2644e@linux.intel.com>
+ <20190925065640.GO28074@xz-x1>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D58F4A3@SHSMSX104.ccr.corp.intel.com>
+ <20190925074507.GP28074@xz-x1>
+ <AADFC41AFE54684AB9EE6CBC0274A5D19D58F5F5@SHSMSX104.ccr.corp.intel.com>
+ <20190925085204.GR28074@xz-x1>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <b14a39f3-6aba-8fd2-757a-c244dcbe7b6b@linux.intel.com>
+Date:   Thu, 26 Sep 2019 09:37:05 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190925184314.30251-1-mka@chromium.org>
+In-Reply-To: <20190925085204.GR28074@xz-x1>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMJsWRmVeSWpSXmKPExsWy7bCmge4rkZ5Yg9uL1CzOLjvIZtEyaxGL
-        xdmmN+wWl3fNYbP43HuE0aLzyyw2i0sHFjBZfN7wmNHiduMKNot9HQ+YLH7umsfiwO0xu+Ei
-        i8fOWXfZPVr23WL36G1+x+bxft9VNo++LasYPT5vkgtgj8q2yUhNTEktUkjNS85PycxLt1Xy
-        Do53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6UkmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCR
-        X1xiq5RakJJTYFmgV5yYW1yal66XnJ9rZWhgYGQKVJiQnfH7zGzmggV6Fc9bzjA1MB5X62Lk
-        4JAQMJGY98S6i5GLQ0hgB6NEx/+PTF2MnEDOJ0aJe689IRLfGCUWzZ3CDpIAaWjb+pUZIrGX
-        UeLuktnsEM57RombE5sYQaqEBbIkWrZOAUuICMxlkui5NxXMYRZoZpS4tHou2BI2AS2J/S9u
-        sIHY/AKKEld/PGYEOYpXwE6i4ZUASJhFQFXiUv9EsNWiAhESnx4cZgWxeQUEJU7OfMICYnMK
-        mEl83XsUbAyzgLjErSfzmSBseYnmrbPBTpUQWMYucb5tOdQPLhK/pi1kgrCFJV4d3wIVl5J4
-        2d8GZVdLrDx5hA2iuYNRYsv+C6wQCWOJ/UsnM4EcyiygKbF+lz5EWFFi5++5jBCL+STefe1h
-        hQQwr0RHmxBEibLE5Qd3odZKSixu72SbwKg0C8k7s5C8MAvJC7MQli1gZFnFKJZaUJybnlps
-        WGCKHNubGMEJWMtyB+Oxcz6HGAU4GJV4eCUiu2OFWBPLiitzDzFKcDArifDOkumKFeJNSays
-        Si3Kjy8qzUktPsRoCgzticxSosn5wOyQVxJvaGpkbGxsYWJoZmpoqCTO65HeECskkJ5Ykpqd
-        mlqQWgTTx8TBKdXAuMX4eaDcgnmVG/Lkn6nw+QU9fio0+/HJtQp/fseuyZ3CzuZxL8e9W9nu
-        euCVkNz+3YrT1pfpnZm8/rj+9B8zODgEt622++cS+FQySFzpwUOji9Ip3pue3L6sprWjfQLz
-        vFonvqL3Ub6aVxrPrxVwjbdfb2L50ddR93TEM7GWinc8XydK//s2TYmlOCPRUIu5qDgRAI8D
-        kX7WAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPIsWRmVeSWpSXmKPExsWy7bCSnO4rkZ5Yg/69PBZnlx1ks2iZtYjF
-        4mzTG3aLy7vmsFl87j3CaNH5ZRabxaUDC5gsPm94zGhxu3EFm8W+jgdMFj93zWNx4PaY3XCR
-        xWPnrLvsHi37brF79Da/Y/N4v+8qm0ffllWMHp83yQWwR3HZpKTmZJalFunbJXBl/D4zm7lg
-        gV7F85YzTA2Mx9W6GDk5JARMJNq2fmXuYuTiEBLYzSjRMr+ZFSIhKTHt4lGgBAeQLSxx+HAx
-        RM1bRomljw4wg9QIC2RJtGydwg6SEBGYzyRxad0jVhCHWaCZUWJJ338WiJZORomHy/+CtbAJ
-        aEnsf3GDDcTmF1CUuPrjMSPICl4BO4mGVwIgYRYBVYlL/RPZQWxRgQiJwztmMYLYvAKCEidn
-        PmEBsTkFzCS+7j0KNoZZQF3iz7xLzBC2uMStJ/OZIGx5ieats5knMArPQtI+C0nLLCQts5C0
-        LGBkWcUomVpQnJueW2xYYJiXWq5XnJhbXJqXrpecn7uJERyNWpo7GC8viT/EKMDBqMTDeyCs
-        O1aINbGsuDL3EKMEB7OSCO8sma5YId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxP845FCgmkJ5ak
-        ZqemFqQWwWSZODilGhgX2ihvOSba8TUy0feUIUfqbFGOoxHeS0689l2mmfJI6qvDxUVfHZlD
-        Wa0D0k95lP1avVRFWy1O8IWX9u5L13dcNCsROVP1pnIPd+CfIiXxJ69yJ21J01mt81vsxeOL
-        V3ffY7lZus75xueHJxV4Xx+uXu+gqz7vxU7bkPfVs4sDb2g8mxGsN6dXiaU4I9FQi7moOBEA
-        z35ZUMICAAA=
-X-CMS-MailID: 20190926013122epcas1p1dcdbefd63f655e8082d138064c09e9dd
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190925184505epcas2p3f8f4395f37df4b1fe33309393e8af4df
-References: <CGME20190925184505epcas2p3f8f4395f37df4b1fe33309393e8af4df@epcas2p3.samsung.com>
-        <20190925184314.30251-1-mka@chromium.org>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Peter,
 
-I'm not sure that it is necessary. I think that it depends on
-personal opinions. There are no correct answer perfectly.
-Also, after this changes, there are no any beneficial.
-It touch the history rather than behavior improvement.
+On 9/25/19 4:52 PM, Peter Xu wrote:
+> On Wed, Sep 25, 2019 at 08:02:23AM +0000, Tian, Kevin wrote:
+>>> From: Peter Xu [mailto:peterx@redhat.com]
+>>> Sent: Wednesday, September 25, 2019 3:45 PM
+>>>
+>>> On Wed, Sep 25, 2019 at 07:21:51AM +0000, Tian, Kevin wrote:
+>>>>> From: Peter Xu [mailto:peterx@redhat.com]
+>>>>> Sent: Wednesday, September 25, 2019 2:57 PM
+>>>>>
+>>>>> On Wed, Sep 25, 2019 at 10:48:32AM +0800, Lu Baolu wrote:
+>>>>>> Hi Kevin,
+>>>>>>
+>>>>>> On 9/24/19 3:00 PM, Tian, Kevin wrote:
+>>>>>>>>>>        '-----------'
+>>>>>>>>>>        '-----------'
+>>>>>>>>>>
+>>>>>>>>>> This patch series only aims to achieve the first goal, a.k.a using
+>>>>>>> first goal? then what are other goals? I didn't spot such information.
+>>>>>>>
+>>>>>>
+>>>>>> The overall goal is to use IOMMU nested mode to avoid shadow page
+>>>>> table
+>>>>>> and VMEXIT when map an gIOVA. This includes below 4 steps (maybe
+>>> not
+>>>>>> accurate, but you could get the point.)
+>>>>>>
+>>>>>> 1) GIOVA mappings over 1st-level page table;
+>>>>>> 2) binding vIOMMU 1st level page table to the pIOMMU;
+>>>>>> 3) using pIOMMU second level for GPA->HPA translation;
+>>>>>> 4) enable nested (a.k.a. dual stage) translation in host.
+>>>>>>
+>>>>>> This patch set aims to achieve 1).
+>>>>>
+>>>>> Would it make sense to use 1st level even for bare-metal to replace
+>>>>> the 2nd level?
+>>>>>
+>>>>> What I'm thinking is the DPDK apps - they have MMU page table already
+>>>>> there for the huge pages, then if they can use 1st level as the
+>>>>> default device page table then it even does not need to map, because
+>>>>> it can simply bind the process root page table pointer to the 1st
+>>>>> level page root pointer of the device contexts that it uses.
+>>>>>
+>>>>
+>>>> Then you need bear with possible page faults from using CPU page
+>>>> table, while most devices don't support it today.
+>>>
+>>> Right, I was just thinking aloud.  After all neither do we have IOMMU
+>>> hardware to support 1st level (or am I wrong?)...  It's just that when
+>>
+>> You are right. Current VT-d supports only 2nd level.
+>>
+>>> the 1st level is ready it should sound doable because IIUC PRI should
+>>> be always with the 1st level support no matter on IOMMU side or the
+>>> device side?
+>>
+>> No. PRI is not tied to 1st or 2nd level. Actually from device p.o.v, it's
+>> just a protocol to trigger page fault, but the device doesn't care whether
+>> the page fault is on 1st or 2nd level in the IOMMU side. The only
+>> relevant part is that a PRI request can have PASID tagged or cleared.
+>> When it's tagged with PASID, the IOMMU will locate the translation
+>> table under the given PASID (either 1st or 2nd level is fine, according
+>> to PASID entry setting). When no PASID is included, the IOMMU locates
+>> the translation from default entry (e.g. PASID#0 or any PASID contained
+>> in RID2PASID in VT-d).
+>>
+>> Your knowledge happened to be correct in deprecated ECS mode. At
+>> that time, there is only one 2nd level per context entry which doesn't
+>> support page fault, and there is only one 1st level per PASID entry which
+>> supports page fault. Then PRI could be indirectly connected to 1st level,
+>> but this just changed with new scalable mode.
+>>
+>> Another note is that the PRI capability only indicates that a device is
+>> capable of handling page faults, but not that a device can tolerate
+>> page fault for any of its DMA access. If the latter is fasle, using CPU
+>> page table for DPDK usage is still risky (and specific to device behavior)
+>>
+>>>
+>>> I'm actually not sure about whether my understanding here is
+>>> correct... I thought the pasid binding previously was only for some
+>>> vendor kernel drivers but not a general thing to userspace.  I feel
+>>> like that should be doable in the future once we've got some new
+>>> syscall interface ready to deliver 1st level page table (e.g., via
+>>> vfio?) then applications like DPDK seems to be able to use that too
+>>> even directly via bare metal.
+>>>
+>>
+>> using 1st level for userspace is different from supporting DMA page
+>> fault in userspace. The former is purely about which structure to
+>> keep the mapping. I think we may do the same thing for both bare
+>> metal and guest (using 2nd level only for GPA when nested is enabled
+>> on the IOMMU). But reusing CPU page table for userspace is more
+>> tricky. :-)
+> 
+> Yes I should have mixed up the 1st level page table and PRI a bit, and
+> after all my initial question should be irrelevant to this series as
+> well so it's already a bit out of topic (sorry for that).
 
-On 19. 9. 26. 오전 3:43, Matthias Kaehlcke wrote:
-> devfreq has two functions with very similar names, devfreq_update_status()
-> and devfreq_update_stats(). _update_status() currently updates
-> frequency transitions statistics, while _update_stats() retrieves the
-> device 'status'. The function names are inversed with respect to what
-> the functions are actually doing, rename devfreq_update_status() to
-> devfreq_update_stats() and viceversa.
+Never mind. Good discussion. :-)
+
+Actually I have plan to use 1st level on bare metal as well. Just
+looking forward to more motivation and use cases.
+
 > 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> We could also rename the current devfreq_update_stats() to
-> devfreq_refresh_status() to make it easier to distinguish it from
-> devfreq_update_stats().
-> ---
->  drivers/devfreq/devfreq.c                 | 12 ++++++------
->  drivers/devfreq/governor.h                |  4 ++--
->  drivers/devfreq/governor_passive.c        |  2 +-
->  drivers/devfreq/governor_simpleondemand.c |  2 +-
->  drivers/devfreq/tegra30-devfreq.c         |  2 +-
->  5 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 446490c9d635..fb4318d59aa9 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -151,11 +151,11 @@ static int set_freq_table(struct devfreq *devfreq)
->  }
->  
->  /**
-> - * devfreq_update_status() - Update statistics of devfreq behavior
-> + * devfreq_update_stats() - Update statistics of devfreq behavior
->   * @devfreq:	the devfreq instance
->   * @freq:	the update target frequency
->   */
-> -int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
-> +int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq)
->  {
->  	int lev, prev_lev, ret = 0;
->  	unsigned long cur_time;
-> @@ -191,7 +191,7 @@ int devfreq_update_status(struct devfreq *devfreq, unsigned long freq)
->  	devfreq->last_stat_updated = cur_time;
->  	return ret;
->  }
-> -EXPORT_SYMBOL(devfreq_update_status);
-> +EXPORT_SYMBOL(devfreq_update_stats);
->  
->  /**
->   * find_devfreq_governor() - find devfreq governor from name
-> @@ -311,7 +311,7 @@ static int devfreq_set_target(struct devfreq *devfreq, unsigned long new_freq,
->  	freqs.new = new_freq;
->  	devfreq_notify_transition(devfreq, &freqs, DEVFREQ_POSTCHANGE);
->  
-> -	if (devfreq_update_status(devfreq, new_freq))
-> +	if (devfreq_update_stats(devfreq, new_freq))
->  		dev_err(&devfreq->dev,
->  			"Couldn't update frequency transition information.\n");
->  
-> @@ -450,7 +450,7 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
->  		return;
->  	}
->  
-> -	devfreq_update_status(devfreq, devfreq->previous_freq);
-> +	devfreq_update_stats(devfreq, devfreq->previous_freq);
->  	devfreq->stop_polling = true;
->  	mutex_unlock(&devfreq->lock);
->  	cancel_delayed_work_sync(&devfreq->work);
-> @@ -1398,7 +1398,7 @@ static ssize_t trans_stat_show(struct device *dev,
->  	unsigned int max_state = devfreq->profile->max_state;
->  
->  	if (!devfreq->stop_polling &&
-> -			devfreq_update_status(devfreq, devfreq->previous_freq))
-> +			devfreq_update_stats(devfreq, devfreq->previous_freq))
->  		return 0;
->  	if (max_state == 0)
->  		return sprintf(buf, "Not Supported.\n");
-> diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-> index bbe5ff9fcecf..e11f447be2b5 100644
-> --- a/drivers/devfreq/governor.h
-> +++ b/drivers/devfreq/governor.h
-> @@ -64,9 +64,9 @@ extern void devfreq_interval_update(struct devfreq *devfreq,
->  extern int devfreq_add_governor(struct devfreq_governor *governor);
->  extern int devfreq_remove_governor(struct devfreq_governor *governor);
->  
-> -extern int devfreq_update_status(struct devfreq *devfreq, unsigned long freq);
-> +extern int devfreq_update_stats(struct devfreq *devfreq, unsigned long freq);
->  
-> -static inline int devfreq_update_stats(struct devfreq *df)
-> +static inline int devfreq_update_status(struct devfreq *df)
->  {
->  	return df->profile->get_dev_status(df->dev.parent, &df->last_status);
->  }
-> diff --git a/drivers/devfreq/governor_passive.c b/drivers/devfreq/governor_passive.c
-> index be6eeab9c814..1c746b96d3db 100644
-> --- a/drivers/devfreq/governor_passive.c
-> +++ b/drivers/devfreq/governor_passive.c
-> @@ -110,7 +110,7 @@ static int update_devfreq_passive(struct devfreq *devfreq, unsigned long freq)
->  		goto out;
->  
->  	if (devfreq->profile->freq_table
-> -		&& (devfreq_update_status(devfreq, freq)))
-> +		&& (devfreq_update_stats(devfreq, freq)))
->  		dev_err(&devfreq->dev,
->  			"Couldn't update frequency transition information.\n");
->  
-> diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-> index 3d809f228619..2cbf26bdcfd6 100644
-> --- a/drivers/devfreq/governor_simpleondemand.c
-> +++ b/drivers/devfreq/governor_simpleondemand.c
-> @@ -25,7 +25,7 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
->  	unsigned int dfso_downdifferential = DFSO_DOWNDIFFERENCTIAL;
->  	struct devfreq_simple_ondemand_data *data = df->data;
->  
-> -	err = devfreq_update_stats(df);
-> +	err = devfreq_update_status(df);
->  	if (err)
->  		return err;
->  
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index a6ba75f4106d..536273a811fe 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -526,7 +526,7 @@ static int tegra_governor_get_target(struct devfreq *devfreq,
->  	unsigned int i;
->  	int err;
->  
-> -	err = devfreq_update_stats(devfreq);
-> +	err = devfreq_update_status(devfreq);
->  	if (err)
->  		return err;
->  
+> And, thanks for explaining these. :)
 > 
 
+Thanks for Kevin's explanation. :-)
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Best regards,
+Baolu
