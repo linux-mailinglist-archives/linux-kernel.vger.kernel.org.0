@@ -2,162 +2,316 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C292CBF068
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:54:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 827B5BF042
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:53:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfIZKxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 06:53:13 -0400
-Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:5568 "EHLO
-        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726762AbfIZKxJ (ORCPT
+        id S1726466AbfIZKwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 06:52:35 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37487 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbfIZKwc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 06:53:09 -0400
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x8QAqdX9002555;
-        Thu, 26 Sep 2019 06:53:03 -0400
-Received: from nam01-sn1-obe.outbound.protection.outlook.com (mail-sn1nam01lp2053.outbound.protection.outlook.com [104.47.32.53])
-        by mx0a-00128a01.pphosted.com with ESMTP id 2v6hjwy81m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 26 Sep 2019 06:53:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EKSl4n0YPLkUt72zZb/+mZBRoeCwuRso5EiibWhRe/7s31ePgVUkRyOW+zgwQlV+YorvCHRGHX49xxSUoxs88qDCWeD6lqOid1Ec8MYLMOgWQJ1VLz/z9GR563MFA2feKdY89v8eFpWl1+L91D0vqP6zisyx8EkM7Joo2uwpw/pEp+vejrDDM2sXSluO8r6pUMc8Mj50SQkWZtS+qtpsGdU6HP2KNLkm54UnknMOv1mKxyEHJQLl9DdaX7iv7w6UfhT2bV/n6SUllqzir+rmWIdEbOBuiDZwvAv9LFPwP1XHlMmmnMxmqx0HAbIO8nwuXGWsPRhXBQ7MZdGba/LLLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=up797fUmJmr8mxk7XBoVCZkF3leVVxVqShL+Y1oR7d8=;
- b=cO/z6CcF22BFEo9LPQ+DXrN9oAidACnEDnUPwf+rRQPZhVf/W95b8Hel04NndNDMj/bwqA1Q45TZBMkr4GwUMUgjMTryplhuSF5YSoSu5bfVTLEj+i6D7l5vZsm1k4Dw+h96/6NZBj7SgkjF60ucVz3vzc/JrjXVkuKZMBJvVTCWV3jofok/Lf8y0mlGPJT67QxQzhpzav3kfmNPYW0x4YMsaZUT8ub6ixBEnoI2UoybgeH53jUy4I7zTUtHS0umeuzTc+ITHmwQ6rvQOR4b0c9LnaHEq9sSNbe61ufNl+A29/y/dnhEfU2KmNwdBNsGrbYTQ3Uy4B6y9lBObHgwpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.57) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
+        Thu, 26 Sep 2019 06:52:32 -0400
+Received: by mail-io1-f68.google.com with SMTP id b19so5325915iob.4
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 03:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=up797fUmJmr8mxk7XBoVCZkF3leVVxVqShL+Y1oR7d8=;
- b=RmPEwbWS37F5ODyf4zyKloCU6nSnJra7vsFe+6b2N8qXOV9Zk3C92z5r7S5aEthPv6xDAUYFdmj0GvvPmsn4MTJZYBpWJKTmFmpTLgqAdVdckdwq3QqX5D+EGE6W4OUBbw4g0Qa3kLjzX5BT/8pN96lBkY/KPrbUBXZ6xcYcoqU=
-Received: from BN6PR03CA0099.namprd03.prod.outlook.com (2603:10b6:404:10::13)
- by BN8PR03MB5041.namprd03.prod.outlook.com (2603:10b6:408:d8::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.20; Thu, 26 Sep
- 2019 10:53:01 +0000
-Received: from SN1NAM02FT041.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::209) by BN6PR03CA0099.outlook.office365.com
- (2603:10b6:404:10::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2305.16 via Frontend
- Transport; Thu, 26 Sep 2019 10:53:01 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
-Received: from nwd2mta2.analog.com (137.71.25.57) by
- SN1NAM02FT041.mail.protection.outlook.com (10.152.72.217) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2284.25
- via Frontend Transport; Thu, 26 Sep 2019 10:53:00 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x8QAr0iF015043
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 26 Sep 2019 03:53:00 -0700
-Received: from saturn.ad.analog.com (10.48.65.123) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 26 Sep 2019 06:53:00 -0400
-From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
-To:     <bcm-kernel-feedback-list@broadcom.com>,
-        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>
-CC:     <jic23@kernel.org>, <broonie@kernel.org>, <f.fainelli@gmail.com>,
-        <linus.walleij@linaro.org>, <orsonzhai@gmail.com>,
-        <baolin.wang@linaro.org>, <zhang.lyra@gmail.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
-Subject: [PATCH v4 19/19] spi: spi-axi: extend support for the `delay` field
-Date:   Thu, 26 Sep 2019 13:51:47 +0300
-Message-ID: <20190926105147.7839-20-alexandru.ardelean@analog.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190926105147.7839-1-alexandru.ardelean@analog.com>
-References: <20190926105147.7839-1-alexandru.ardelean@analog.com>
+        d=ieee.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0fxhdsNNMNOySMdgwpp/hTz3bcuxtYKqOwOCCS5liLI=;
+        b=A08rDIsgFqp0S4tLVysMgwV8jHdgA7/onwiOVofbKYlSiN1Q4purLsp49Se1xorQDo
+         9/FWXERfQ7l4o2RNz8cmWgzm3ZFo9yoA8HeiOUnjeddOsljrwaZCCelo69VP8iKZBC78
+         vCBQWj/kxEIo21Qz58NBDRbCMylIxFdzwwExc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0fxhdsNNMNOySMdgwpp/hTz3bcuxtYKqOwOCCS5liLI=;
+        b=uTg1OBVmxDHj5+F+GrKoy/8DbrGXu7S9bRbULbHFio1xCkyT+sww3m3TVnJHX6POjX
+         Ygijd4adTEYuhHELeYMDhG1DOpXZ8RXFpL/CsLVuAC62sRyw4suGVw+zQ8bun5WuRkFI
+         c/UeS/+/ZzLHHhlZoo4MJn0havptM9cVk3+VKJ9KV3Y3w20YrqVdlqKEpKf/+gsUVm5A
+         wbH8cFiGR+106QygC2/UajQF5WJOhjZD4/lOo3oSd2ZpQmZxVmqpCs9JGaHB3WibyWO6
+         +HKAOFM6Y95RAIbCaURBH/5EVqSuSYTwd5Zq5keIvPQv0pCe1SIFL/Ok9q27tKX3D+YR
+         gUew==
+X-Gm-Message-State: APjAAAVSuiSzkaPrSsx1RAnTxpVqIlmT751ZrPBHSClRdDRVHr56cvGw
+        lHEwePCoFFlFQsE3mUdTz2QNl0z0Aa2srxvtQwA=
+X-Google-Smtp-Source: APXvYqytawKyzDtt7dv/0ueiehcZ+we3nLEOkFzRVbSt9HvgF/DxnmH6z9zjmeZuWvo8KvzjoeAm6lrjYzc2dIdft70=
+X-Received: by 2002:a6b:8f15:: with SMTP id r21mr2812731iod.259.1569495151337;
+ Thu, 26 Sep 2019 03:52:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(39860400002)(376002)(189003)(199004)(47776003)(36756003)(1076003)(5660300002)(356004)(6666004)(70586007)(70206006)(2201001)(86362001)(50466002)(107886003)(4326008)(426003)(76176011)(246002)(8936002)(305945005)(51416003)(7696005)(7636002)(8676002)(478600001)(106002)(476003)(11346002)(446003)(336012)(486006)(126002)(2616005)(186003)(2870700001)(26005)(2906002)(54906003)(110136005)(316002)(48376002)(7416002)(50226002)(44832011)(81973001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR03MB5041;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f4ac0901-315a-4c45-fa61-08d7426fb322
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(4709080)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:BN8PR03MB5041;
-X-MS-TrafficTypeDiagnostic: BN8PR03MB5041:
-X-Microsoft-Antispam-PRVS: <BN8PR03MB50419E9860DC759C09D25264F9860@BN8PR03MB5041.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
-X-Forefront-PRVS: 0172F0EF77
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: dNDNWcgcjGpxgeOh6yaA00CMdmbPs2AFT0h4cVxEmSpLDWmSH7JeCX3/aGbe1pZrXD7R8La2OlAamdi9LLXnm+oMGd+fisVlKFftHrhmJn1uBdgGyJHm4ZGMY60wc/WbgGjXxjUJD4IErAuiaL3u+1wUR2wllApBoeFctz40C9kbC3oKuCPDFfpov++c7q/7DDMs+PcVJKjgbHfcZjcTMmE16okXQbVkU4sG59jq5kdwivwhf4krAUQN6a4+k9VjBmdvXzuhahzz4t7XL5MNDig7GvJNywHcC8ySzAusqHljo+9yO0/v6qX9e4NeZTDv3j18AIBJ90LlvGrmpqDsv4ahCecru+6QWypwXWFiUReNN7XZ22k5w1AQvp1WexrPTKkAo2EZhXhWvlesJnoyif+IvyGjnPUxkxxbanvX68E=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2019 10:53:00.9130
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4ac0901-315a-4c45-fa61-08d7426fb322
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR03MB5041
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,1.0.8
- definitions=2019-09-26_05:2019-09-25,2019-09-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0 spamscore=0
- malwarescore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-1908290000 definitions=main-1909260103
+References: <1569209505-15801-1-git-send-email-teawaterz@linux.alibaba.com> <CALZtOND21Lo7_a7a0LKMZzdo1_=+42GgbhAAn0LOJHbFe8yjFA@mail.gmail.com>
+In-Reply-To: <CALZtOND21Lo7_a7a0LKMZzdo1_=+42GgbhAAn0LOJHbFe8yjFA@mail.gmail.com>
+From:   Dan Streetman <ddstreet@ieee.org>
+Date:   Thu, 26 Sep 2019 06:51:55 -0400
+Message-ID: <CALZtOND_44Y=AJ24gtVv8kFK6j54tqhXp=A7+QVMno=YGDHrRA@mail.gmail.com>
+Subject: Re: [RFC v3] zswap: Add CONFIG_ZSWAP_IO_SWITCH to handle swap IO issue
+To:     Hui Zhu <teawaterz@linux.alibaba.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Seth Jennings <sjenning@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>, chris@chris-wilson.co.uk,
+        Johannes Weiner <hannes@cmpxchg.org>, ziqian.lzq@antfin.com,
+        osandov@fb.com, Huang Ying <ying.huang@intel.com>,
+        aryabinin@virtuozzo.com, vovoy@chromium.org,
+        richard.weiyang@gmail.com, jgg@ziepe.ca, dan.j.williams@intel.com,
+        rppt@linux.ibm.com, jglisse@redhat.com, b.zolnierkie@samsung.com,
+        axboe@kernel.dk, dennis@kernel.org,
+        Josef Bacik <josef@toxicpanda.com>, tj@kernel.org,
+        oleg@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AXI SPI engine driver uses the `delay_usecs` field from `spi_transfer`
-to configure delays, which the controller will execute.
-This change extends the logic to also include the `delay` value, in case it
-is used (instead if `delay_usecs`).
+On Mon, Sep 23, 2019 at 4:14 PM Dan Streetman <ddstreet@ieee.org> wrote:
+>
+> On Sun, Sep 22, 2019 at 11:32 PM Hui Zhu <teawaterz@linux.alibaba.com> wrote:
+> >
+> > This is the third version of this patch.  The first and second version
+> > is in [1] and [2].
+> > This verion is updated according to the comments from Randy Dunlap
+> > in [3].
+> >
+> > Currently, I use a VM that has 2 CPUs, 4G memory and 4G swap file.
+> > I found that swap will affect the IO performance when it is running.
+> > So I open zswap to handle it because it just use CPU cycles but not
+> > disk IO.
+> >
+> > It work OK but I found that zswap is slower than normal swap in this
+> > VM.  zswap is about 300M/s and normal swap is about 500M/s. (The reason
+> > is disk inside VM has fscache in host machine.)
+>
+> I must be missing something here - if zswap in the guest is *slower*
+> than real swap, why are you using zswap?
+>
+> Also, I don't see why zswap is slower than normal swap, unless you
+> mean that your zswap is full, since once zswap fills up any additional
+> swap will absolutely be slower than not having zswap at all.
+>
+> > So open zswap is make memory shrinker slower but good for IO performance
+> > in this VM.
+> > So I just want zswap work when the disk of the swap file is under high
+> > IO load.
+> >
+> > This commit is designed for this idea.
+> > It add two parameters read_in_flight_limit and write_in_flight_limit to
+> > zswap.
+> > In zswap_frontswap_store, pages will be stored to zswap only when
+> > the IO in flight number of swap device is bigger than
+> > zswap_read_in_flight_limit or zswap_write_in_flight_limit
+> > when zswap is enabled.
+> > Then the zswap just work when the IO in flight number of swap device
+> > is low.
+>
+> Ok, so maybe I understand what you mean, your disk I/O is normally
+> very fast, but once your host-side cache is full it starts actually
+> writing to your host physical disk, and your guest swap I/O drops way
+> down (since caching pages in host memory is much faster than writing
+> to a host physical disk).  Is that what's going on?  That was not
+> clear at all to me from the commit description...
+>
+> In general I think the description of this commit, as well as the docs
+> and even user interface of how to use it, is very confusing.  I can
+> see how it would be beneficial in this specific situation, but I'm not
+> a fan of the implementation, and I'm very concerned that nobody will
+> be able to understand how to use it properly - when should they enable
+> it?  What limit values should they use?  Why are there separate read
+> and write limits?  None of that is clear to me, and I'm fairly
+> certainly it would not be clear to other normal users.
+>
+> Is there a better way this can be done?
+>
+> >
+> > [1] https://lkml.org/lkml/2019/9/11/935
+> > [2] https://lkml.org/lkml/2019/9/20/90
+> > [3] https://lkml.org/lkml/2019/9/20/1076
+> >
+> > Signed-off-by: Hui Zhu <teawaterz@linux.alibaba.com>
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
----
- drivers/spi/spi-axi-spi-engine.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+Nacked-by: Dan Streetman <ddstreet@ieee.org>
 
-diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-index 3b1833e6c7ad..111d3b83285f 100644
---- a/drivers/spi/spi-axi-spi-engine.c
-+++ b/drivers/spi/spi-axi-spi-engine.c
-@@ -163,10 +163,21 @@ static void spi_engine_gen_xfer(struct spi_engine_program *p, bool dry,
- }
- 
- static void spi_engine_gen_sleep(struct spi_engine_program *p, bool dry,
--	struct spi_engine *spi_engine, unsigned int clk_div, unsigned int delay)
-+	struct spi_engine *spi_engine, unsigned int clk_div,
-+	struct spi_transfer *xfer)
- {
- 	unsigned int spi_clk = clk_get_rate(spi_engine->ref_clk);
- 	unsigned int t;
-+	int delay;
-+
-+	if (xfer->delay_usecs) {
-+		delay = xfer->delay_usecs;
-+	} else {
-+		delay = spi_delay_to_ns(&xfer->delay, xfer);
-+		if (delay < 0)
-+			return;
-+		delay /= 1000;
-+	}
- 
- 	if (delay == 0)
- 		return;
-@@ -218,8 +229,7 @@ static int spi_engine_compile_message(struct spi_engine *spi_engine,
- 			spi_engine_gen_cs(p, dry, spi, true);
- 
- 		spi_engine_gen_xfer(p, dry, xfer);
--		spi_engine_gen_sleep(p, dry, spi_engine, clk_div,
--			xfer->delay_usecs);
-+		spi_engine_gen_sleep(p, dry, spi_engine, clk_div, xfer);
- 
- 		cs_change = xfer->cs_change;
- 		if (list_is_last(&xfer->transfer_list, &msg->transfers))
--- 
-2.20.1
+due to my concerns that I emailed before
 
+
+> > ---
+> >  include/linux/swap.h |  3 +++
+> >  mm/Kconfig           | 18 ++++++++++++++++
+> >  mm/page_io.c         | 16 +++++++++++++++
+> >  mm/zswap.c           | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 95 insertions(+)
+> >
+> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+> > index de2c67a..82b621f 100644
+> > --- a/include/linux/swap.h
+> > +++ b/include/linux/swap.h
+> > @@ -389,6 +389,9 @@ extern void end_swap_bio_write(struct bio *bio);
+> >  extern int __swap_writepage(struct page *page, struct writeback_control *wbc,
+> >         bio_end_io_t end_write_func);
+> >  extern int swap_set_page_dirty(struct page *page);
+> > +#ifdef CONFIG_ZSWAP_IO_SWITCH
+> > +extern void swap_io_in_flight(struct page *page, unsigned int inflight[2]);
+> > +#endif
+> >
+> >  int add_swap_extent(struct swap_info_struct *sis, unsigned long start_page,
+> >                 unsigned long nr_pages, sector_t start_block);
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index 56cec63..387c3b5 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -546,6 +546,24 @@ config ZSWAP
+> >           they have not be fully explored on the large set of potential
+> >           configurations and workloads that exist.
+> >
+> > +config ZSWAP_IO_SWITCH
+> > +       bool "Compressed cache for swap pages according to the IO status"
+> > +       depends on ZSWAP
+> > +       help
+> > +         This function helps the system that normal swap speed is higher
+> > +         than zswap speed to handle the swap IO issue.
+> > +         For example, a VM where the disk device is not set cache config or
+> > +         set cache=writeback.
+> > +
+> > +         This function makes zswap just work when the disk of the swap file
+> > +         is under high IO load.
+> > +         It add two parameters (read_in_flight_limit and
+> > +         write_in_flight_limit) to zswap.  When zswap is enabled, pages will
+> > +         be stored to zswap only when the IO in flight number of swap device
+> > +         is bigger than zswap_read_in_flight_limit or
+> > +         zswap_write_in_flight_limit.
+> > +         If unsure, say "n".
+> > +
+> >  config ZPOOL
+> >         tristate "Common API for compressed memory storage"
+> >         help
+> > diff --git a/mm/page_io.c b/mm/page_io.c
+> > index 24ee600..e66b050 100644
+> > --- a/mm/page_io.c
+> > +++ b/mm/page_io.c
+> > @@ -434,3 +434,19 @@ int swap_set_page_dirty(struct page *page)
+> >                 return __set_page_dirty_no_writeback(page);
+> >         }
+> >  }
+> > +
+> > +#ifdef CONFIG_ZSWAP_IO_SWITCH
+> > +void swap_io_in_flight(struct page *page, unsigned int inflight[2])
+> > +{
+> > +       struct swap_info_struct *sis = page_swap_info(page);
+> > +
+> > +       if (!sis->bdev) {
+> > +               inflight[0] = 0;
+> > +               inflight[1] = 0;
+> > +               return;
+> > +       }
+> > +
+> > +       part_in_flight_rw(bdev_get_queue(sis->bdev), sis->bdev->bd_part,
+> > +                                         inflight);
+>
+> this potentially will read inflight stats info from all possible cpus,
+> that's not something I'm a big fan of adding to every single page swap
+> call...it's not awful, but there might be scaling issues for systems
+> with lots of cpus.
+>
+> > +}
+> > +#endif
+> > diff --git a/mm/zswap.c b/mm/zswap.c
+> > index 0e22744..0190b2d 100644
+> > --- a/mm/zswap.c
+> > +++ b/mm/zswap.c
+> > @@ -62,6 +62,14 @@ static u64 zswap_reject_compress_poor;
+> >  static u64 zswap_reject_alloc_fail;
+> >  /* Store failed because the entry metadata could not be allocated (rare) */
+> >  static u64 zswap_reject_kmemcache_fail;
+> > +#ifdef CONFIG_ZSWAP_IO_SWITCH
+> > +/*
+> > + * Store failed because zswap_read_in_flight_limit or
+> > + * zswap_write_in_flight_limit is bigger than IO in flight number of
+> > + * swap device
+> > + */
+> > +static u64 zswap_reject_io;
+> > +#endif
+> >  /* Duplicate store was encountered (rare) */
+> >  static u64 zswap_duplicate_entry;
+> >
+> > @@ -114,6 +122,24 @@ static bool zswap_same_filled_pages_enabled = true;
+> >  module_param_named(same_filled_pages_enabled, zswap_same_filled_pages_enabled,
+> >                    bool, 0644);
+> >
+> > +#ifdef CONFIG_ZSWAP_IO_SWITCH
+> > +/*
+> > + * zswap will not try to store the page if zswap_read_in_flight_limit is
+> > + * bigger than IO read in flight number of swap device
+> > + */
+> > +static unsigned int zswap_read_in_flight_limit;
+> > +module_param_named(read_in_flight_limit, zswap_read_in_flight_limit,
+> > +                  uint, 0644);
+> > +
+> > +/*
+> > + * zswap will not try to store the page if zswap_write_in_flight_limit is
+> > + * bigger than IO write in flight number of swap device
+> > + */
+> > +static unsigned int zswap_write_in_flight_limit;
+> > +module_param_named(write_in_flight_limit, zswap_write_in_flight_limit,
+> > +                  uint, 0644);
+> > +#endif
+> > +
+> >  /*********************************
+> >  * data structures
+> >  **********************************/
+> > @@ -1009,6 +1035,34 @@ static int zswap_frontswap_store(unsigned type, pgoff_t offset,
+> >                 goto reject;
+> >         }
+> >
+> > +#ifdef CONFIG_ZSWAP_IO_SWITCH
+> > +       if (zswap_read_in_flight_limit || zswap_write_in_flight_limit) {
+> > +               unsigned int inflight[2];
+> > +               bool should_swap = false;
+> > +
+> > +               swap_io_in_flight(page, inflight);
+> > +
+> > +               if (zswap_write_in_flight_limit &&
+> > +                       inflight[1] < zswap_write_in_flight_limit)
+> > +                       should_swap = true;
+> > +
+> > +               if (zswap_read_in_flight_limit &&
+> > +                       (should_swap ||
+> > +                        (!should_swap && !zswap_write_in_flight_limit))) {
+> > +                       if (inflight[0] < zswap_read_in_flight_limit)
+> > +                               should_swap = true;
+> > +                       else
+> > +                               should_swap = false;
+> > +               }
+> > +
+> > +               if (should_swap) {
+> > +                       zswap_reject_io++;
+> > +                       ret = -EIO;
+> > +                       goto reject;
+> > +               }
+> > +       }
+> > +#endif
+> > +
+> >         /* reclaim space if needed */
+> >         if (zswap_is_full()) {
+> >                 zswap_pool_limit_hit++;
+> > @@ -1264,6 +1318,10 @@ static int __init zswap_debugfs_init(void)
+> >                            zswap_debugfs_root, &zswap_reject_kmemcache_fail);
+> >         debugfs_create_u64("reject_compress_poor", 0444,
+> >                            zswap_debugfs_root, &zswap_reject_compress_poor);
+> > +#ifdef CONFIG_ZSWAP_IO_SWITCH
+> > +       debugfs_create_u64("reject_io", 0444,
+>
+> "reject_io" is not very clear about why it was rejected; I think most
+> people will assume this means pages were rejected because of I/O
+> errors, not because the I/O inflight page count was lower than the set
+> limit.
+>
+> > +                          zswap_debugfs_root, &zswap_reject_io);
+> > +#endif
+> >         debugfs_create_u64("written_back_pages", 0444,
+> >                            zswap_debugfs_root, &zswap_written_back_pages);
+> >         debugfs_create_u64("duplicate_entry", 0444,
+> > --
+> > 2.7.4
+> >
