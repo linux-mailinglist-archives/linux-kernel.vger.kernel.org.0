@@ -2,180 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37F04BE942
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 01:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3833ABE955
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 02:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387498AbfIYXze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 19:55:34 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:33464 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728647AbfIYXze (ORCPT
+        id S2387621AbfIZAFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 20:05:43 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39224 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387449AbfIZAFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 19:55:34 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PNsGsb154963;
-        Wed, 25 Sep 2019 23:55:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=g4/xuxSmWl76M0e2JgrpaUXPD+Ns9UygHRa/6EFUfgQ=;
- b=e4OsdQH0vRejMjXJgbgajX8o7UJcErvjofKPUCO5ViQcTpTaaWisjcli8oWDiRyQbo+o
- ctz+97WWWFJesUrBOYtNTTNK/J5kxIZKNL7jl9YHRI5VRMSWP4Lo1XPixWqwBhItUaK8
- i8SA1SzNgClRS++bW1Myf41x8AcdlR+OtpNQz98TIfeXch+n0VX57IGL7iI5eQ5Pm9R0
- 0CqytJhMH9scVr6IKMsFHRewyni2J2bMMhtdrXmUBElPvdwH72rJFNVSkfTLiUJJAZ15
- 7Y0nayMn20a0QqAM2jT30naZOJtNYrDo00lG0e54OhP+5edrthg01V2qi3cn5LbR9Gf0 Rw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2v5b9tyxsk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 23:55:19 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8PNsAvJ015460;
-        Wed, 25 Sep 2019 23:55:19 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2v82qaumma-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Sep 2019 23:55:18 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8PNtHdB027924;
-        Wed, 25 Sep 2019 23:55:17 GMT
-Received: from dhcp-10-132-91-76.usdhcp.oraclecorp.com (/10.132.91.76)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 25 Sep 2019 16:55:17 -0700
-Subject: Re: [PATCH] KVM: nVMX: cleanup and fix host 64-bit mode checks
-To:     Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-References: <1569429286-35157-1-git-send-email-pbonzini@redhat.com>
- <CALMp9eTBPTnsRDipdGDgmugWgfFEjQ2wd_9-JY0ZeM9YG2fBjg@mail.gmail.com>
-From:   Krish Sadhukhan <krish.sadhukhan@oracle.com>
-Message-ID: <3460bd57-6fdd-f73c-9ce0-c97d4cc85f63@oracle.com>
-Date:   Wed, 25 Sep 2019 16:55:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Wed, 25 Sep 2019 20:05:43 -0400
+Received: by mail-ot1-f65.google.com with SMTP id s22so409792otr.6;
+        Wed, 25 Sep 2019 17:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cLDBlYUmNrPQrO4eVaMtvr6RX8X34auEyuZMhH4LAik=;
+        b=UmBs2pc/Zvu6RyHaZ3E3Zph8I97+mpbFMmp0wAhC4XuCt4lrQ4CMSlnMa6oz/VbC0w
+         808hdIHq6Qsn3oszdBYWWUIfr8yRYW35NT3/jAFdJKdtx2SDDuB2SGwltamMntDJaqgT
+         lUkScSAQYQ+UsLYh8jaFzomkjdgDsKSWWYwlumew6E6ewzbOY1hnBAkKLEBVz/zPMNwI
+         anizYEtGwTNmWvPPi8bPqhrtY8Xqup607P5kgu3SeWpl3G/blyzHnQAAbrBhk0+dYqGt
+         oAI09pf7ovdOf2mjr6Uevr3SuEY2sVfi1dyefPoERqKTkxBJGTmAKLAWxk821fz7MQdl
+         FsXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cLDBlYUmNrPQrO4eVaMtvr6RX8X34auEyuZMhH4LAik=;
+        b=gdmwII3o28y+4mDuVrtJh6BY6C2/b4u7b3AjdttE7mP0eun8E+9tJMitKeg/r5YEPf
+         AP20AQBFzR7tmwfV/cBPfDXS70Wpo/c+xk0Aue7/pCha+N3XuBQnuDD99n6675jG74aW
+         pQNAL79WjKeHogZX9nvY8BWTtZW/N9cJvTzfnq+aZkE7/sQcOJk4k9ol5Dd47y4riImF
+         c5iM8xhIlrRE+MGqUE9TQAtVWldak8DrkjbPJ2FS3E+cd3qHN1gmzgweuJMGjpQo59ls
+         7M8SB/n4IsZgeGudQAz7JM9sd1TLBF0/5ocmf9pBEy0f4uJgS27RBSsZZhNMFP0wADR4
+         pdnQ==
+X-Gm-Message-State: APjAAAWyD4BQY6JVslOMC1U8Msn+AUcpIu4ZXGj1NRyPp9bGjX+cgxJF
+        OmdJvr6Yp+E7W2Mxob/s3x68sI1X
+X-Google-Smtp-Source: APXvYqzKvmb5CmGQHuVV4hwjbageKrnNRU1k6G4PjsXBsHySHIWs6PSbzG/elNsMEYgii2B8aTgxQg==
+X-Received: by 2002:a05:6830:4a5:: with SMTP id l5mr553245otd.150.1569456342282;
+        Wed, 25 Sep 2019 17:05:42 -0700 (PDT)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id k34sm108144otk.51.2019.09.25.17.05.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 Sep 2019 17:05:41 -0700 (PDT)
+Subject: Re: [PATCH] staging: rtl8188eu: fix possible null dereference
+To:     Connor Kuehl <connor.kuehl@canonical.com>,
+        gregkh@linuxfoundation.org, straube.linux@gmail.com,
+        devel@driverdev.osuosl.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20190925213215.25082-1-connor.kuehl@canonical.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <b725820f-525c-519b-4474-476abf004985@lwfinger.net>
+Date:   Wed, 25 Sep 2019 19:05:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.0
 MIME-Version: 1.0
-In-Reply-To: <CALMp9eTBPTnsRDipdGDgmugWgfFEjQ2wd_9-JY0ZeM9YG2fBjg@mail.gmail.com>
+In-Reply-To: <20190925213215.25082-1-connor.kuehl@canonical.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909250196
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909250196
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9/25/19 4:32 PM, Connor Kuehl wrote:
+> Inside a nested 'else' block at the beginning of this function is a
+> call that assigns 'psta' to the return value of 'rtw_get_stainfo()'.
+> If 'rtw_get_stainfo()' returns NULL and the flow of control reaches
+> the 'else if' where 'psta' is dereferenced, then we will dereference
+> a NULL pointer.
+> 
+> Fix this by checking if 'psta' is not NULL before reading its
+> 'psta->qos_option' data member.
+> 
+> Addresses-Coverity: ("Dereference null return value")
+> 
+> Signed-off-by: Connor Kuehl <connor.kuehl@canonical.com>
+> ---
+>   drivers/staging/rtl8188eu/core/rtw_xmit.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+> index 952f2ab51347..bf8877cbe9b6 100644
+> --- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
+> +++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
+> @@ -784,7 +784,7 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
+>   			memcpy(pwlanhdr->addr2, pattrib->src, ETH_ALEN);
+>   			memcpy(pwlanhdr->addr3, get_bssid(pmlmepriv), ETH_ALEN);
+>   
+> -			if (psta->qos_option)
+> +			if (psta && psta->qos_option)
+>   				qos_option = true;
+>   		} else {
+>   			RT_TRACE(_module_rtl871x_xmit_c_, _drv_err_, ("fw_state:%x is not allowed to xmit frame\n", get_fwstate(pmlmepriv)));
+> 
 
+This change is a good one, but why not get the same fix at line 779?
 
-On 09/25/2019 09:47 AM, Jim Mattson wrote:
-> On Wed, Sep 25, 2019 at 9:34 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->> KVM was incorrectly checking vmcs12->host_ia32_efer even if the "load
->> IA32_EFER" exit control was reset.  Also, some checks were not using
->> the new CC macro for tracing.
->>
->> Cleanup everything so that the vCPU's 64-bit mode is determined
->> directly from EFER_LMA and the VMCS checks are based on that, which
->> matches section 26.2.4 of the SDM.
->>
->> Cc: Sean Christopherson <sean.j.christopherson@intel.com>
->> Cc: Jim Mattson <jmattson@google.com>
->> Cc: Krish Sadhukhan <krish.sadhukhan@oracle.com>
->> Fixes: 5845038c111db27902bc220a4f70070fe945871c
->> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->> ---
->>   arch/x86/kvm/vmx/nested.c | 53 ++++++++++++++++++++---------------------------
->>   1 file changed, 22 insertions(+), 31 deletions(-)
->>
->> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
->> index 70d59d9304f2..e108847f6cf8 100644
->> --- a/arch/x86/kvm/vmx/nested.c
->> +++ b/arch/x86/kvm/vmx/nested.c
->> @@ -2664,8 +2664,26 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
->>              CC(!kvm_pat_valid(vmcs12->host_ia32_pat)))
->>                  return -EINVAL;
->>
->> -       ia32e = (vmcs12->vm_exit_controls &
->> -                VM_EXIT_HOST_ADDR_SPACE_SIZE) != 0;
->> +#ifdef CONFIG_X86_64
->> +       ia32e = !!(vcpu->arch.efer & EFER_LMA);
->> +#else
->> +       if (CC(vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE))
->> +               return -EINVAL;
-> This check is redundant, since it is checked in the else block below.
-
-Should we be re-using is_long_mode() instead of duplicating the code ?
-
->
->> +
->> +       ia32e = false;
->> +#endif
->> +
->> +       if (ia32e) {
->> +               if (CC(!(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)) ||
->> +                   CC(!(vmcs12->host_cr4 & X86_CR4_PAE)))
->> +                       return -EINVAL;
->> +       } else {
->> +               if (CC(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) ||
->> +                   CC(vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
->> +                   CC(vmcs12->host_cr4 & X86_CR4_PCIDE) ||
->> +                   CC(((vmcs12->host_rip) >> 32) & 0xffffffff))
-> The mask shouldn't be necessary.
->
->> +                       return -EINVAL;
->> +       }
->>
->>          if (CC(vmcs12->host_cs_selector & (SEGMENT_RPL_MASK | SEGMENT_TI_MASK)) ||
->>              CC(vmcs12->host_ss_selector & (SEGMENT_RPL_MASK | SEGMENT_TI_MASK)) ||
->> @@ -2684,35 +2702,8 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
->>              CC(is_noncanonical_address(vmcs12->host_gs_base, vcpu)) ||
->>              CC(is_noncanonical_address(vmcs12->host_gdtr_base, vcpu)) ||
->>              CC(is_noncanonical_address(vmcs12->host_idtr_base, vcpu)) ||
->> -           CC(is_noncanonical_address(vmcs12->host_tr_base, vcpu)))
->> -               return -EINVAL;
->> -
->> -       if (!(vmcs12->host_ia32_efer & EFER_LMA) &&
->> -           ((vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
->> -           (vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE))) {
->> -               return -EINVAL;
->> -       }
->> -
->> -       if ((vmcs12->host_ia32_efer & EFER_LMA) &&
->> -           !(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)) {
->> -               return -EINVAL;
->> -       }
->> -
->> -       if (!(vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) &&
->> -           ((vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE) ||
->> -           (vmcs12->host_cr4 & X86_CR4_PCIDE) ||
->> -           (((vmcs12->host_rip) >> 32) & 0xffffffff))) {
->> -               return -EINVAL;
->> -       }
->> -
->> -       if ((vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE) &&
->> -           ((!(vmcs12->host_cr4 & X86_CR4_PAE)) ||
->> -           (is_noncanonical_address(vmcs12->host_rip, vcpu)))) {
->> -               return -EINVAL;
->> -       }
->> -#else
->> -       if (vmcs12->vm_entry_controls & VM_ENTRY_IA32E_MODE ||
->> -           vmcs12->vm_exit_controls & VM_EXIT_HOST_ADDR_SPACE_SIZE)
->> +           CC(is_noncanonical_address(vmcs12->host_tr_base, vcpu)) ||
->> +           CC(is_noncanonical_address(vmcs12->host_rip, vcpu)))
->>                  return -EINVAL;
->>   #endif
->>
->> --
->> 1.8.3.1
->>
-> Reviewed-by: Jim Mattson <jmattson@google.com>
+Larry
 
