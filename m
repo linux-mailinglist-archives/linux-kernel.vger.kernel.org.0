@@ -2,196 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2451BBEA2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:32:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCE3ABEA1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:31:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391136AbfIZBbw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 21:31:52 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:40106 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390789AbfIZBbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 21:31:48 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DA98620022B;
-        Thu, 26 Sep 2019 03:31:46 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 28D072004D8;
-        Thu, 26 Sep 2019 03:31:40 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 44E9A4030F;
-        Thu, 26 Sep 2019 09:31:32 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, lars@metafoo.de
-Subject: [PATCH V5 4/4] ASoC: fsl_asrc: Fix error with S24_3LE format bitstream in i.MX8
-Date:   Thu, 26 Sep 2019 09:29:51 +0800
-Message-Id: <7c05d8396fd8c4f9d41c13a85e7486f3664bc73f.1569387932.git.shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1569387932.git.shengjiu.wang@nxp.com>
-References: <cover.1569387932.git.shengjiu.wang@nxp.com>
-In-Reply-To: <cover.1569387932.git.shengjiu.wang@nxp.com>
-References: <cover.1569387932.git.shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S2389486AbfIZBbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 21:31:05 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2783 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726770AbfIZBbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 21:31:05 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C6A933775E447C566545;
+        Thu, 26 Sep 2019 09:31:00 +0800 (CST)
+Received: from [127.0.0.1] (10.133.217.137) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Thu, 26 Sep 2019
+ 09:30:58 +0800
+Subject: Re: [PATCH 07/32] x86: Use pr_warn instead of pr_warning
+To:     Joe Perches <joe@perches.com>, Robert Richter <rric@kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+References: <20190920062544.180997-1-wangkefeng.wang@huawei.com>
+ <20190920062544.180997-8-wangkefeng.wang@huawei.com>
+ <20190920092850.26usohzmatmqrlor@rric.localdomain>
+ <7a517b43-7e86-79ba-5954-dd746c309c87@huawei.com>
+ <0f291158f7d788c001212bcbb13843fbff571eeb.camel@perches.com>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <fb21e729-822c-dca6-f867-267c41c94635@huawei.com>
+Date:   Thu, 26 Sep 2019 09:30:56 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <0f291158f7d788c001212bcbb13843fbff571eeb.camel@perches.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.133.217.137]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is error "aplay: pcm_write:2023: write error: Input/output error"
-on i.MX8QM/i.MX8QXP platform for S24_3LE format.
 
-In i.MX8QM/i.MX8QXP, the DMA is EDMA, which don't support 24bit
-sample, but we didn't add any constraint, that cause issues.
+On 2019/9/20 23:28, Joe Perches wrote:
+> On Fri, 2019-09-20 at 19:57 +0800, Kefeng Wang wrote:
+>> On 2019/9/20 17:28, Robert Richter wrote:
+>>> On 20.09.19 14:25:19, Kefeng Wang wrote:
+>>>> As said in commit f2c2cbcc35d4 ("powerpc: Use pr_warn instead of
+>>>> pr_warning"), removing pr_warning so all logging messages use a
+>>>> consistent <prefix>_warn style. Let's do it.
+> []
+>>>> diff --git a/arch/x86/kernel/amd_gart_64.c b/arch/x86/kernel/amd_gart_64.c
+> []
+>>>> @@ -665,7 +664,7 @@ static __init int init_amd_gatt(struct agp_kern_info *info)
+>>>>  
+>>>>   nommu:
+>>>>  	/* Should not happen anymore */
+>>>> -	pr_warning("PCI-DMA: More than 4GB of RAM and no IOMMU\n"
+>>>> +	pr_warn("PCI-DMA: More than 4GB of RAM and no IOMMU\n"
+>>>>  	       "falling back to iommu=soft.\n");
+>>> This indentation should be fixed too, while at it.
+>> Will update later, thanks.
+> trivia:
+>
+> likely better as a single line output:
+>
+> 	pr_warn("PCI-DMA: More than 4GB of RAM and no IOMMU - falling back to iommu=soft\n");
 
-So we need to query the caps of dma, then update the hw parameters
-according to the caps.
+ok, will resend all patches after rc1 with this change and other comment fixes, thanks.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_asrc.c     |  4 +--
- sound/soc/fsl/fsl_asrc.h     |  3 ++
- sound/soc/fsl/fsl_asrc_dma.c | 66 +++++++++++++++++++++++++++++++-----
- 3 files changed, 63 insertions(+), 10 deletions(-)
-
-diff --git a/sound/soc/fsl/fsl_asrc.c b/sound/soc/fsl/fsl_asrc.c
-index 584badf956d2..0bf91a6f54b9 100644
---- a/sound/soc/fsl/fsl_asrc.c
-+++ b/sound/soc/fsl/fsl_asrc.c
-@@ -115,7 +115,7 @@ static void fsl_asrc_sel_proc(int inrate, int outrate,
-  * within range [ANCA, ANCA+ANCB-1], depends on the channels of pair A
-  * while pair A and pair C are comparatively independent.
-  */
--static int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
-+int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
- {
- 	enum asrc_pair_index index = ASRC_INVALID_PAIR;
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
-@@ -158,7 +158,7 @@ static int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair)
-  *
-  * It clears the resource from asrc_priv and releases the occupied channels.
-  */
--static void fsl_asrc_release_pair(struct fsl_asrc_pair *pair)
-+void fsl_asrc_release_pair(struct fsl_asrc_pair *pair)
- {
- 	struct fsl_asrc *asrc_priv = pair->asrc_priv;
- 	enum asrc_pair_index index = pair->index;
-diff --git a/sound/soc/fsl/fsl_asrc.h b/sound/soc/fsl/fsl_asrc.h
-index 38af485bdd22..2b57e8c53728 100644
---- a/sound/soc/fsl/fsl_asrc.h
-+++ b/sound/soc/fsl/fsl_asrc.h
-@@ -462,4 +462,7 @@ struct fsl_asrc {
- #define DRV_NAME "fsl-asrc-dai"
- extern struct snd_soc_component_driver fsl_asrc_component;
- struct dma_chan *fsl_asrc_get_dma_channel(struct fsl_asrc_pair *pair, bool dir);
-+int fsl_asrc_request_pair(int channels, struct fsl_asrc_pair *pair);
-+void fsl_asrc_release_pair(struct fsl_asrc_pair *pair);
-+
- #endif /* _FSL_ASRC_H */
-diff --git a/sound/soc/fsl/fsl_asrc_dma.c b/sound/soc/fsl/fsl_asrc_dma.c
-index 01052a0808b0..7712970aeb28 100644
---- a/sound/soc/fsl/fsl_asrc_dma.c
-+++ b/sound/soc/fsl/fsl_asrc_dma.c
-@@ -16,13 +16,11 @@
- 
- #define FSL_ASRC_DMABUF_SIZE	(256 * 1024)
- 
--static const struct snd_pcm_hardware snd_imx_hardware = {
-+static struct snd_pcm_hardware snd_imx_hardware = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
- 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 		SNDRV_PCM_INFO_MMAP |
--		SNDRV_PCM_INFO_MMAP_VALID |
--		SNDRV_PCM_INFO_PAUSE |
--		SNDRV_PCM_INFO_RESUME,
-+		SNDRV_PCM_INFO_MMAP_VALID,
- 	.buffer_bytes_max = FSL_ASRC_DMABUF_SIZE,
- 	.period_bytes_min = 128,
- 	.period_bytes_max = 65535, /* Limited by SDMA engine */
-@@ -270,12 +268,25 @@ static int fsl_asrc_dma_hw_free(struct snd_pcm_substream *substream)
- 
- static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
- {
-+	bool tx = substream->stream == SNDRV_PCM_STREAM_PLAYBACK;
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd, DRV_NAME);
-+	struct snd_dmaengine_dai_dma_data *dma_data;
- 	struct device *dev = component->dev;
- 	struct fsl_asrc *asrc_priv = dev_get_drvdata(dev);
- 	struct fsl_asrc_pair *pair;
-+	struct dma_chan *tmp_chan = NULL;
-+	u8 dir = tx ? OUT : IN;
-+	bool release_pair = true;
-+	int ret = 0;
-+
-+	ret = snd_pcm_hw_constraint_integer(substream->runtime,
-+					    SNDRV_PCM_HW_PARAM_PERIODS);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to set pcm hw params periods\n");
-+		return ret;
-+	}
- 
- 	pair = kzalloc(sizeof(struct fsl_asrc_pair), GFP_KERNEL);
- 	if (!pair)
-@@ -285,11 +296,50 @@ static int fsl_asrc_dma_startup(struct snd_pcm_substream *substream)
- 
- 	runtime->private_data = pair;
- 
--	snd_pcm_hw_constraint_integer(substream->runtime,
--				      SNDRV_PCM_HW_PARAM_PERIODS);
--	snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
-+	/* Request a dummy pair, which will be released later.
-+	 * Request pair function needs channel num as input, for this
-+	 * dummy pair, we just request "1" channel temporarily.
-+	 */
-+	ret = fsl_asrc_request_pair(1, pair);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to request asrc pair\n");
-+		goto req_pair_err;
-+	}
- 
--	return 0;
-+	/* Request a dummy dma channel, which will be released later. */
-+	tmp_chan = fsl_asrc_get_dma_channel(pair, dir);
-+	if (!tmp_chan) {
-+		dev_err(dev, "failed to get dma channel\n");
-+		ret = -EINVAL;
-+		goto dma_chan_err;
-+	}
-+
-+	dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
-+
-+	/* Refine the snd_imx_hardware according to caps of DMA. */
-+	ret = snd_dmaengine_pcm_refine_runtime_hwparams(substream,
-+							dma_data,
-+							&snd_imx_hardware,
-+							tmp_chan);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to refine runtime hwparams\n");
-+		goto out;
-+	}
-+
-+	release_pair = false;
-+	ret = snd_soc_set_runtime_hwparams(substream, &snd_imx_hardware);
-+
-+out:
-+	dma_release_channel(tmp_chan);
-+
-+dma_chan_err:
-+	fsl_asrc_release_pair(pair);
-+
-+req_pair_err:
-+	if (release_pair)
-+		kfree(pair);
-+
-+	return ret;
- }
- 
- static int fsl_asrc_dma_shutdown(struct snd_pcm_substream *substream)
--- 
-2.21.0
+>
+>
+>
+> .
+>
 
