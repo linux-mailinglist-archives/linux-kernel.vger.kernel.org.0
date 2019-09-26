@@ -2,98 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04E4BF232
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8C85BF241
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbfIZLzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:55:15 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:51542 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfIZLzO (ORCPT
+        id S1726557AbfIZL4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 07:56:06 -0400
+Received: from pio-pvt-msa1.bahnhof.se ([79.136.2.40]:50062 "EHLO
+        pio-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725877AbfIZL4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:55:14 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1iDSMU-0000Wn-4M; Thu, 26 Sep 2019 13:55:06 +0200
-Message-ID: <9ece533700be8237699881312a99cc91c6a71d36.camel@sipsolutions.net>
-Subject: Re: [PATCH RFC] cfg80211: add new command for reporting wiphy
- crashes
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Jouni Malinen <j@w1.fi>,
-        =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hostap@lists.infradead.org,
-        openwrt-devel@lists.openwrt.org
-Date:   Thu, 26 Sep 2019 13:55:04 +0200
-In-Reply-To: <4f6f37e5-802c-4504-3dcb-c4a640d138bd@milecki.pl>
-References: <20190920133708.15313-1-zajec5@gmail.com>
-         <20190920140143.GA30514@w1.fi>
-         <4f6f37e5-802c-4504-3dcb-c4a640d138bd@milecki.pl>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Thu, 26 Sep 2019 07:56:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTP id A8D263F715;
+        Thu, 26 Sep 2019 13:56:02 +0200 (CEST)
+Authentication-Results: pio-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b="I3LkGRaL";
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WDsAyHNrQ3C6; Thu, 26 Sep 2019 13:56:01 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by pio-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id B2F303F6F6;
+        Thu, 26 Sep 2019 13:55:56 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id DD602360311;
+        Thu, 26 Sep 2019 13:55:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1569498956; bh=sSyG1uzep6Io+55nV8hhwYEwrrW+pXAnmhIE4329T4s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=I3LkGRaLhcuaKFJs3wQ/Ifyy+mgUG1d6eQUd1f+JgFOlmoZowj1oHWzReXYhiT/yJ
+         XrUHyb8jp+8t+/vNHwz95vUyUN6OHFyVLz3Pt8O8idMK6yK7NAngaupy2kxaTPvSUe
+         Xw0vxEj9DkrNdum02gtR69pWj4ig+4RiOv9eAO04=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-mm@kvack.org
+Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
+        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thellstrom@vmware.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v2 0/5] Emulated coherent graphics memory take 2
+Date:   Thu, 26 Sep 2019 13:55:43 +0200
+Message-Id: <20190926115548.44000-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-09-26 at 13:52 +0200, Rafał Miłecki wrote:
-> 
-> Indeed my main concert is AP mode. I'm afraid that cfg80211 doesn't
-> cache all settings, consider e.g. nl80211_start_ap(). It builds
-> struct cfg80211_ap_settings using info from nl80211 message and
-> passes it to the driver (rdev_start_ap()). Once it's done it
-> caches only a small subset of all setup data.
-> 
-> In other words driver doesn't have enough info to recover interfaces
-> setup.
+From: Thomas Hellström <thellstrom@vmware.com>
 
-So the driver can cache it, just like mac80211.
+Graphics APIs like OpenGL 4.4 and Vulkan require the graphics driver
+to provide coherent graphics memory, meaning that the GPU sees any
+content written to the coherent memory on the next GPU operation that
+touches that memory, and the CPU sees any content written by the GPU
+to that memory immediately after any fence object trailing the GPU
+operation has signaled.
 
-You can't seriously be suggesting that the driver doesn't *have* enough
-information - everything passed through it :)
+Paravirtual drivers that otherwise require explicit synchronization
+needs to do this by hooking up dirty tracking to pagefault handlers
+and buffer object validation.
 
-> I meant that hardware has been recovered & is operational again (driver
-> can talk to it). I expected user space to reconfigure all interfaces
-> using the same settings that were used on previous run.
-> 
-> If driver were able to recover interfaces setup on its own (with a help
-> of cfg80211) then user space wouldn't need to be involved.
+The mm patch page walk interface has been reworked to be similar to the
+reworked page-walk code (mm/pagewalk.c). There have been two other solutions
+to consider:
+1) Using the page-walk code. That is currently not possible since it requires
+the mmap-sem to be held for the struct vm_area_struct vm_flags and for huge
+page splitting. The pagewalk code in this patchset can't hold the mmap sems
+since it will lead to locking inversion. We have an established locking order
+mmap_sem -> dma_reservation -> i_mmap_lock, whereas holding the mmap_sem in
+this case would require dma_reservation -> i_mmap_lock -> mmap_sem.
+Instead it uses an operation mode similar to unmap_mapping_range() where the
+i_mmap_lock is held.
+2) Using apply_to_page_range(). The primary use of this code is to fill
+page tables. The operation modes are IMO sufficiently different to motivate
+re-implementing the page-walk.
 
-The driver can do it, mac80211 does. It's just a matter of what the
-driver will do or not.
+The code has been tested and exercised by a tailored version of mesa
+where we disable all explicit synchronization and assume graphics memory
+is coherent. The performance loss varies of course; a typical number is
+around 5%.
 
-> First of all I was wondering how to handle interfaces creation. After a
-> firmware crash we have:
-> 1) Interfaces created in Linux
-> 2) No corresponsing interfaces in firmware
+I would like to merge this code through the DRM tree, so an ack to include
+the new mm helpers in that merge would be greatly appreciated.
 
-> Syncing that (re-creating in-firmware firmwares) may be a bit tricky
-> depending on a driver and hardware.
+Changes since RFC:
+- Merge conflict changes moved to the correct patch. Fixes intra-patchset
+  compile errors.
+- Be more aggressive when turning ttm vm code into helpers. This makes sure
+  we can use a const qualifier on the vmwgfx vm_ops.
+- Reinstate a lost comment an fix an error path that was broken when turning
+  the ttm vm code into helpers.
+- Remove explicit type-casts of struct vm_area_struct::vm_private_data
+- Clarify the locking inversion that makes us not being able to use the mm
+  pagewalk code.
 
-We do that in mac80211, it works fine. Why would it be tricky?
+Changes since v1:
+- Removed the vmwgfx maintainer entry for as_dirty_helpers.c, updated
+  commit message accordingly
+- Removed the TTM patches from the series as they are merged separately
+  through DRM.
 
-If something fails, I think we force that interface to go down.
-
-> For some cases it could be easier to
-> delete all interfaces and ask user space to setup wiphy (create required
-> interfaces) again. I'm not sure if that's acceptable though?
-> 
-> If we agree interfaces should stay and driver simply should configure
-> firmware properly, then we need all data as explained earlier. struct
-> cfg80211_ap_settings is not available during runtime. How should we
-> handle that problem?
-
-You can cache it in the driver in whatever format makes sense.
-
-> I was aiming for a brutal force solution: just make user space
-> interfaces need a full setup just at they were just created.
-
-You can still do that btw, just unregister and re-register the wiphy.
-
-johannes
-
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Souptick Joarder <jrdr.linux@gmail.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Christoph Hellwig <hch@infradead.org>
