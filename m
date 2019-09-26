@@ -2,110 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E5ECBF73C
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 18:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3165BF722
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 18:51:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfIZQ65 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 12:58:57 -0400
-Received: from cmccmta2.chinamobile.com ([221.176.66.80]:4845 "EHLO
-        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727512AbfIZQ64 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 12:58:56 -0400
-Received: from spf.mail.chinamobile.com (unknown[172.16.121.15]) by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee65d8cec1ff87-2eb90; Fri, 27 Sep 2019 00:49:37 +0800 (CST)
-X-RM-TRANSID: 2ee65d8cec1ff87-2eb90
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG: 00000000
-Received: from localhost (unknown[223.105.0.241])
-        by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee85d8cec20ac9-71c3b;
-        Fri, 27 Sep 2019 00:49:37 +0800 (CST)
-X-RM-TRANSID: 2ee85d8cec20ac9-71c3b
-From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-To:     Shuah Khan <shuah@kernel.org>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Julian Anastasov <ja@ssi.bg>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Subject: [PATCH 3/3] selftests: netfilter: add ipvs tunnel test case
-Date:   Fri, 27 Sep 2019 00:48:52 +0800
-Message-Id: <1569516532-708-4-git-send-email-yanhaishuang@cmss.chinamobile.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1569516532-708-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-References: <1569516532-708-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+        id S1727551AbfIZQvD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 26 Sep 2019 12:51:03 -0400
+Received: from mga09.intel.com ([134.134.136.24]:46443 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbfIZQvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 12:51:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 09:51:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,552,1559545200"; 
+   d="scan'208";a="219466843"
+Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Sep 2019 09:51:01 -0700
+Received: from orsmsx154.amr.corp.intel.com (10.22.226.12) by
+ ORSMSX109.amr.corp.intel.com (10.22.240.7) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 26 Sep 2019 09:51:00 -0700
+Received: from orsmsx122.amr.corp.intel.com ([169.254.11.236]) by
+ ORSMSX154.amr.corp.intel.com ([169.254.11.180]) with mapi id 14.03.0439.000;
+ Thu, 26 Sep 2019 09:51:00 -0700
+From:   "Schmauss, Erik" <erik.schmauss@intel.com>
+To:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+CC:     Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Moore, Robert" <robert.moore@intel.com>,
+        Len Brown <lenb@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        "Pavel Machek" <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "devel@acpica.org" <devel@acpica.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nv@vosn.de" <nv@vosn.de>
+Subject: RE: [PATCH] ACPICA: make acpi_load_table() return table index
+Thread-Topic: [PATCH] ACPICA: make acpi_load_table() return table index
+Thread-Index: AQHVaUE6PwWyj3qAlUyiJ16YhgOwE6c+NeMQgAB9wgD//42XEA==
+Date:   Thu, 26 Sep 2019 16:51:00 +0000
+Message-ID: <CF6A88132359CE47947DB4C6E1709ED53C6481F2@ORSMSX122.amr.corp.intel.com>
+References: <20190906174605.GY2680@smile.fi.intel.com>
+ <20190912080742.24642-1-nikolaus.voss@loewensteinmedical.de>
+ <CF6A88132359CE47947DB4C6E1709ED53C6481B1@ORSMSX122.amr.corp.intel.com>
+ <20190926163528.GH32742@smile.fi.intel.com>
+In-Reply-To: <20190926163528.GH32742@smile.fi.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTczMTQ5Y2QtNTJkOC00MjdkLTg3OWYtOWRmZjQzNDlmN2M1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVzNISmZaM3VHTmFkQ1l0b01LMzNHQVhkNVVXZFJYN3hTcFN2OE1lNnRtTXZCOFwvQWlITXhGOVhuREJyZ0g0WlYifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Test virtual server via ipip tunnel.
-
-Tested:
-# selftests: netfilter: ipvs.sh
-# Testing DR mode...
-# Testing NAT mode...
-# Testing Tunnel mode...
-# ipvs.sh: PASS
-ok 6 selftests: netfilter: ipvs.sh
-
-Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
----
- tools/testing/selftests/netfilter/ipvs.sh | 33 +++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/tools/testing/selftests/netfilter/ipvs.sh b/tools/testing/selftests/netfilter/ipvs.sh
-index 40058f9..2012cec 100755
---- a/tools/testing/selftests/netfilter/ipvs.sh
-+++ b/tools/testing/selftests/netfilter/ipvs.sh
-@@ -167,6 +167,33 @@ test_nat() {
-     test_service
- }
- 
-+test_tun() {
-+    ip netns exec ns0 ip route add ${vip_v4} via ${gip_v4} dev br0
-+
-+    ip netns exec ns1 modprobe ipip
-+    ip netns exec ns1 ip link set tunl0 up
-+    ip netns exec ns1 sysctl -qw net.ipv4.ip_forward=0
-+    ip netns exec ns1 sysctl -qw net.ipv4.conf.all.send_redirects=0
-+    ip netns exec ns1 sysctl -qw net.ipv4.conf.default.send_redirects=0
-+    ip netns exec ns1 ipvsadm -A -t ${vip_v4}:${port} -s rr
-+    ip netns exec ns1 ipvsadm -a -i -t ${vip_v4}:${port} -r ${rip_v4}:${port}
-+    ip netns exec ns1 ip addr add ${vip_v4}/32 dev lo:1
-+
-+    ip netns exec ns2 modprobe ipip
-+    ip netns exec ns2 ip link set tunl0 up
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.all.arp_ignore=1
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.all.arp_announce=2
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.all.rp_filter=0
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.lo.arp_ignore=1
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.lo.arp_announce=2
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.lo.rp_filter=0
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.tunl0.rp_filter=0
-+    ip netns exec ns2 sysctl -qw net.ipv4.conf.veth21.rp_filter=0
-+    ip netns exec ns2 ip addr add ${vip_v4}/32 dev lo:1
-+
-+    test_service
-+}
-+
- run_tests() {
- 	local errors=
- 
-@@ -182,6 +209,12 @@ run_tests() {
- 	test_nat
- 	errors=$(( $errors + $? ))
- 
-+	echo "Testing Tunnel mode..."
-+	cleanup
-+	setup
-+	test_tun
-+	errors=$(( $errors + $? ))
-+
- 	return $errors
- }
- 
--- 
-1.8.3.1
 
 
+> -----Original Message-----
+> From: linux-acpi-owner@vger.kernel.org <linux-acpi-owner@vger.kernel.org>
+> On Behalf Of Shevchenko, Andriy
+> Sent: Thursday, September 26, 2019 9:35 AM
+> To: Schmauss, Erik <erik.schmauss@intel.com>
+> Cc: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>; Rafael J. Wysocki
+> <rjw@rjwysocki.net>; Moore, Robert <robert.moore@intel.com>; Len Brown
+> <lenb@kernel.org>; Jacek Anaszewski <jacek.anaszewski@gmail.com>; Pavel
+> Machek <pavel@ucw.cz>; Dan Murphy <dmurphy@ti.com>; linux-
+> acpi@vger.kernel.org; devel@acpica.org; linux-kernel@vger.kernel.org;
+> nv@vosn.de
+> Subject: Re: [PATCH] ACPICA: make acpi_load_table() return table index
+> 
+> On Thu, Sep 26, 2019 at 07:09:05PM +0300, Schmauss, Erik wrote:
+> > > -----Original Message-----
+> > > From: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+> > > Sent: Thursday, September 12, 2019 1:08 AM
+> > > To: Shevchenko, Andriy <andriy.shevchenko@intel.com>; Schmauss, Erik
+> > > <erik.schmauss@intel.com>; Rafael J. Wysocki <rjw@rjwysocki.net>;
+> > > Moore, Robert <robert.moore@intel.com>
+> > > Cc: Len Brown <lenb@kernel.org>; Jacek Anaszewski
+> > > <jacek.anaszewski@gmail.com>; Pavel Machek <pavel@ucw.cz>; Dan
+> > > Murphy <dmurphy@ti.com>; linux-acpi@vger.kernel.org;
+> > > devel@acpica.org; linux- kernel@vger.kernel.org; nv@vosn.de;
+> > > Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+> > > Subject: [PATCH] ACPICA: make acpi_load_table() return table index
+> > >
+> > Hi Nikolaus,
+> >
+> > > For unloading an ACPI table, it is necessary to provide the index of the table.
+> > > The method intended for dynamically loading or hotplug addition of
+> > > tables, acpi_load_table(), should provide this information via an
+> > > optional pointer to the loaded table index.
+> >
+> > We'll take this patch for ACPICA upstream
+> 
+> Erik,
+> 
+Hi Andy,
+
+> how about to have also counterpart to acpi_load_table() which will do what it's
+> done now in acpi_configfs.c via acpi_tb_*() API?
+
+I should have given more details. We decided to add this extra parameter in AcpiLoadTable and
+we're going to create an AcpiUnloadTable function that will take table index to unload the table (basically the acpi_tb_unload..).
+Once we do this, you can use table indices with AcpiUnloadTable and AcpiLoadTable.
+
+Erik
+> 
+> Because it's kinda strange to call acpi_load_table*() and acpi_tb_*() in the
+> same module.
+> 
+> --
+> With Best Regards,
+> Andy Shevchenko
+> 
 
