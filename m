@@ -2,132 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EEA7BE9E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DF79BE9F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:11:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbfIZBK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 21:10:29 -0400
-Received: from mail-eopbgr1320108.outbound.protection.outlook.com ([40.107.132.108]:59647
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727374AbfIZBK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 21:10:28 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dSsGMUUqASrRchi/4o8Xi1rvaDUyEEA0pdmDg48UQ7+vO1jEAJEPGTzH7NrODvNt2C7pPkkeL6vPDCRtXWAUDYCaud4b4sOJz7O+Z/QHtGKZNeABoLmjxd6hTijS8GcEqDDXgUhAO+57WTom8SajWDM3L1E+Ya7qlK6VjQEEspRx3wxq/bcSWFx0JlnO9GRzDqkVWzADu8rLP6RMhzTfTRW7DZ0NcoYup2NfnTuJsX9m8ni0FuOvZOTSf0HMTwC6UIgsGdN5NIx89Sj52bQdeOM6bd5bt8qTMLG4PBvisdgmvR9ptCI0rIDueF5MHnz8Kb7B+8LaBQrFnriK77oJXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EPmrxQS77Bk6Hv/QxI2OMe8+2TjIWDnUp0hy+hiYYpw=;
- b=FgG6v6f4GrCmUsqpImYc8C7LoRAyL4Pn59pGKz3bgepsDOfoGtWaxQXR8AgvwSrHaiKMSOEX5YUdUsu8W1Ai38frIFcResi3Sj5vY16FVgCw8VAq/p0xwxmv4fr6YGJBJ1ul1gT8toXweYOOe0nENOF1fYXQ+65c/eWoxn7EcF8XKZDePFBqOy6XY4mZA3nqhK8LWZba+J9Q7MQ+RxNL9PewG8nobpupR4k/djTh/TbXn7iKQfs8CvlJ1GjAWVtsm89qdnUUnGtVDpxljWQ0QXaUKNKmmVfH1KM7zrmUDn234okwQ4hIeqa4xNDyeCcQvAxReotqW83pV1Z7CSXP8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EPmrxQS77Bk6Hv/QxI2OMe8+2TjIWDnUp0hy+hiYYpw=;
- b=b0gqixKFCjFCVAF15Dq7XydBA3qSQqv2dFk1NpJEK6QytsBWtcEySzFMPihKNy2fsjH3+SSESSbjRP7af3ac9xyKgMDmuPKezwfGlNMKXWCEErR5ftX270wqSKCjeZsxQGN15+koN5zF7O6Dp8KM9iFy8vwMV7YKwidYDAa9O5A=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0187.APCP153.PROD.OUTLOOK.COM (10.170.188.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2327.3; Thu, 26 Sep 2019 01:10:20 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::fc44:a784:73e6:c1c2]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::fc44:a784:73e6:c1c2%7]) with mapi id 15.20.2327.009; Thu, 26 Sep 2019
- 01:10:20 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-CC:     "jhansen@vmware.com" <jhansen@vmware.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "stefanha@redhat.com" <stefanha@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] vsock: Fix a lockdep warning in __vsock_release()
-Thread-Topic: [PATCH] vsock: Fix a lockdep warning in __vsock_release()
-Thread-Index: AQHVWNPr10tg0nhDo0mDd0baql6kLac9W8QA
-Date:   Thu, 26 Sep 2019 01:10:19 +0000
-Message-ID: <PU1P153MB0169DCA9F95858D42F685259BF860@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <1566270830-28981-1-git-send-email-decui@microsoft.com>
- <20190822102529.q5ozdvh6kbymi6ni@steredhat>
-In-Reply-To: <20190822102529.q5ozdvh6kbymi6ni@steredhat>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-09-26T01:10:18.0100107Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=8de3862e-3d2d-4c7a-8456-a1219b357018;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:9:35f2:636:b84a:df21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bf9ca0f2-5391-4915-43ed-08d7421e4cf3
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: PU1P153MB0187:|PU1P153MB0187:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <PU1P153MB0187F53DD2AC98D31098B0ACBF860@PU1P153MB0187.APCP153.PROD.OUTLOOK.COM>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 0172F0EF77
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(396003)(136003)(366004)(346002)(376002)(189003)(199004)(6116002)(86362001)(476003)(99286004)(102836004)(256004)(14454004)(14444005)(229853002)(52536014)(8936002)(446003)(5660300002)(11346002)(316002)(6436002)(486006)(186003)(22452003)(55016002)(8990500004)(4326008)(54906003)(66446008)(66556008)(64756008)(33656002)(76116006)(66946007)(6916009)(9686003)(74316002)(10090500001)(10290500003)(2906002)(66476007)(6506007)(76176011)(81166006)(6246003)(8676002)(71200400001)(7696005)(7736002)(25786009)(46003)(305945005)(81156014)(478600001)(71190400001)(4744005);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0187;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: HH745Rziwl1BknB72wovgMXUa2b3QOOCJJarhnbWxgK3JUmYg/BWSD4V5jioC/Y+VJN7ecJcufKbEqHuj+cJvd+RHv7SzwKUrUhbhenUxAVuTNqoc9mCUze7txnfbULxg40cJB7aojEkflfZ9XPhnurocfzlkmYe0rMYKWlhnDgOg1UL23qzP5bTDn4qPkm6MvreMWvnDyEj0emUSe6UruQefE9fuxwKGcOvzHwKp7mh87pL8S41tZI0I4RFUWjweyaqonA5+8FGzlJqw8QTK47rOtnTM0RJkrqq/Uig6/9VA4qaHo+BIRb9HEbFsMEffO515LTkXna9nVNFW/hqtx+W4piuQ931idmBkn6xaE4jciduIiO43vdAmXCz2f5w63Hx4WpkoGG0EZYgJ0Whmg6fjvK8rIUEVt1EmNzrOFE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729717AbfIZBLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 21:11:47 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:36311 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729619AbfIZBLq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 21:11:46 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iDIJr-000084-Uk; Wed, 25 Sep 2019 19:11:44 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1iDIJq-0002Ck-0j; Wed, 25 Sep 2019 19:11:43 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@kernel.org>
+References: <87muf7f4bf.fsf_-_@x220.int.ebiederm.org>
+        <CAHk-=whej3MMKJBHKWp66djfEP5=kyncX7FoqJacYtmBXB6v9w@mail.gmail.com>
+        <8736gu962r.fsf@x220.int.ebiederm.org>
+        <20190925075155.GB4536@hirez.programming.kicks-ass.net>
+Date:   Wed, 25 Sep 2019 20:11:11 -0500
+In-Reply-To: <20190925075155.GB4536@hirez.programming.kicks-ass.net> (Peter
+        Zijlstra's message of "Wed, 25 Sep 2019 09:51:55 +0200")
+Message-ID: <87lfub2768.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf9ca0f2-5391-4915-43ed-08d7421e4cf3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2019 01:10:19.9550
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: P1Yc43NQ7bByPnZWpmQwWi0zybf3d7bjeDIuO0VEV6Ll2Fe7Qq/N1sVI+EHTYT6XP/fZIWI9/1l8pLkPPSVWnw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0187
+Content-Type: text/plain
+X-XM-SPF: eid=1iDIJq-0002Ck-0j;;;mid=<87lfub2768.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/z7OLr3881IulGtujio+kS/TgqS6uSLzI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Peter Zijlstra <peterz@infradead.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1318 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 2.8 (0.2%), b_tie_ro: 1.92 (0.1%), parse: 0.83
+        (0.1%), extract_message_metadata: 14 (1.1%), get_uri_detail_list: 1.00
+        (0.1%), tests_pri_-1000: 23 (1.7%), tests_pri_-950: 1.30 (0.1%),
+        tests_pri_-900: 1.11 (0.1%), tests_pri_-90: 22 (1.7%), check_bayes: 21
+        (1.6%), b_tokenize: 6 (0.5%), b_tok_get_all: 7 (0.5%), b_comp_prob:
+        2.4 (0.2%), b_tok_touch_all: 3.1 (0.2%), b_finish: 0.66 (0.0%),
+        tests_pri_0: 1240 (94.1%), check_dkim_signature: 0.53 (0.0%),
+        check_dkim_adsp: 2.8 (0.2%), poll_dns_idle: 0.03 (0.0%), tests_pri_10:
+        2.3 (0.2%), tests_pri_500: 7 (0.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 0/4] task: Making tasks on the runqueue rcu protected
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Stefano Garzarella <sgarzare@redhat.com>
-> Sent: Thursday, August 22, 2019 3:25 AM
-> > [...snipped...]
-> > --- a/net/vmw_vsock/hyperv_transport.c
-> > +++ b/net/vmw_vsock/hyperv_transport.c
-> > @@ -559,7 +559,7 @@ static void hvs_release(struct vsock_sock *vsk)
-> >  	struct sock *sk =3D sk_vsock(vsk);
-> >  	bool remove_sock;
-> >
-> > -	lock_sock(sk);
-> > +	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
->=20
-> Should we update also other transports?
->=20
-> Stefano
+Peter Zijlstra <peterz@infradead.org> writes:
 
-Hi Stefano,
-Sorry for the late reply! I'll post a v2 shortly.
+> On Tue, Sep 17, 2019 at 12:38:04PM -0500, Eric W. Biederman wrote:
+>> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>
+>> > Can anybody see anything wrong with the series? Because I'd love to
+>> > have it for 5.4,
+>> 
+>> Peter,
+>> 
+>> I am more than happy for these to come through your tree.  However
+>> if this is one thing to many I will be happy to send Linus a pull
+>> request myself early next week.
+>
+> Yeah, sorry for being late, I fell ill after LPC and am only now
+> getting back to things.
+>
+> I see nothing wrong with these patches; if they've not been picked up
+> (and I'm not seeing them in Linus' tree yet) I'll pick them up now and
+> munge them together with Mathieu's membarrier patches and get them to
+> Linus in a few days.
 
-As I checked, hyperv socket and virtio socket need to be fixed.
+Sounds good.  I had some distractions so I wasn't able to get this yet.
+So I am more than happy for you to pick these up.  This is better coming
+through your tree in any event.
 
-The vmci socket code doesn't acquire the sock lock in the release
-callback, so it doesn't need any fix.
+Eric
 
-Thanks,
--- Dexuan
