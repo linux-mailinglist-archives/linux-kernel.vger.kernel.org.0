@@ -2,73 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C554BEAB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 04:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E688FBEAAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 04:37:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391638AbfIZCh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 22:37:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:43690 "EHLO mga07.intel.com"
+        id S2391584AbfIZChS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 22:37:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56202 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391561AbfIZCh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 22:37:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Sep 2019 19:37:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,550,1559545200"; 
-   d="scan'208";a="193985960"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga006.jf.intel.com with ESMTP; 25 Sep 2019 19:37:25 -0700
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     akpm@linux-foundation.org, willy@infradead.org, jglisse@redhat.com,
-        rcampbell@nvidia.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [PATCH] mm: fix typo in the comment when calling function __SetPageUptodate()
-Date:   Thu, 26 Sep 2019 10:37:05 +0800
-Message-Id: <20190926023705.7226-1-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S2391553AbfIZChR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 22:37:17 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BFE9D3082A49;
+        Thu, 26 Sep 2019 02:37:17 +0000 (UTC)
+Received: from x1.home (ovpn-118-102.phx2.redhat.com [10.3.118.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0347419D7A;
+        Thu, 26 Sep 2019 02:37:16 +0000 (UTC)
+Date:   Wed, 25 Sep 2019 20:37:16 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Liu Yi L <yi.l.liu@intel.com>
+Cc:     kwankhede@nvidia.com, kevin.tian@intel.com,
+        baolu.lu@linux.intel.com, yi.y.sun@intel.com, joro@8bytes.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        yan.y.zhao@intel.com, shaopeng.he@intel.com, chenbo.xia@intel.com,
+        jun.j.tian@intel.com
+Subject: Re: [PATCH v2 12/13] vfio/type1: use iommu_attach_group() for
+ wrapping PF/VF as mdev
+Message-ID: <20190925203716.3f4630a2@x1.home>
+In-Reply-To: <1567670370-4484-13-git-send-email-yi.l.liu@intel.com>
+References: <1567670370-4484-1-git-send-email-yi.l.liu@intel.com>
+        <1567670370-4484-13-git-send-email-yi.l.liu@intel.com>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 26 Sep 2019 02:37:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several places emphasise the effect of __SetPageUptodate(),
-while the comment seems to have a typo in two places.
+On Thu,  5 Sep 2019 15:59:29 +0800
+Liu Yi L <yi.l.liu@intel.com> wrote:
 
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
----
- mm/memory.c      | 2 +-
- mm/userfaultfd.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> This patch uses iommu_attach_group() to do group attach when it is
+> for the case of wrapping a PF/VF as a mdev. iommu_attach_device()
+> doesn't support non-singleton iommu group attach. With this change,
+> wrapping PF/VF as mdev can work on non-singleton iommu groups.
+> 
+> Cc: Kevin Tian <kevin.tian@intel.com>
+> Cc: Lu Baolu <baolu.lu@linux.intel.com>
+> Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+> Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
+> ---
+>  drivers/vfio/vfio_iommu_type1.c | 22 ++++++++++++++++++----
+>  1 file changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> index 054391f..317430d 100644
+> --- a/drivers/vfio/vfio_iommu_type1.c
+> +++ b/drivers/vfio/vfio_iommu_type1.c
+> @@ -1312,13 +1312,20 @@ static int vfio_mdev_attach_domain(struct device *dev, void *data)
+>  {
+>  	struct iommu_domain *domain = data;
+>  	struct device *iommu_device;
+> +	struct iommu_group *group;
+>  
+>  	iommu_device = vfio_mdev_get_iommu_device(dev);
+>  	if (iommu_device) {
+>  		if (iommu_dev_feature_enabled(iommu_device, IOMMU_DEV_FEAT_AUX))
+>  			return iommu_aux_attach_device(domain, iommu_device);
+> -		else
+> -			return iommu_attach_device(domain, iommu_device);
+> +		else {
+> +			group = iommu_group_get(iommu_device);
+> +			if (!group) {
+> +				WARN_ON(1);
 
-diff --git a/mm/memory.c b/mm/memory.c
-index b1ca51a079f2..3ac2803d49b8 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3009,7 +3009,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 
- 	/*
- 	 * The memory barrier inside __SetPageUptodate makes sure that
--	 * preceeding stores to the page contents become visible before
-+	 * preceding stores to the page contents become visible before
- 	 * the set_pte_at() write.
- 	 */
- 	__SetPageUptodate(page);
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 80834c644692..c153344774c7 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -90,7 +90,7 @@ static int mcopy_atomic_pte(struct mm_struct *dst_mm,
- 
- 	/*
- 	 * The memory barrier inside __SetPageUptodate makes sure that
--	 * preceeding stores to the page contents become visible before
-+	 * preceding stores to the page contents become visible before
- 	 * the set_pte_at() write.
- 	 */
- 	__SetPageUptodate(page);
--- 
-2.17.1
+What's the value of the WARN_ON here and below?
+
+iommu_group_get() increments the kobject reference, looks like it's
+leaked.  Thanks,
+
+Alex
+
+> +				return -EINVAL;
+> +			}
+> +			return iommu_attach_group(domain, group);
+> +		}
+>  	}
+>  
+>  	return -EINVAL;
+> @@ -1328,13 +1335,20 @@ static int vfio_mdev_detach_domain(struct device *dev, void *data)
+>  {
+>  	struct iommu_domain *domain = data;
+>  	struct device *iommu_device;
+> +	struct iommu_group *group;
+>  
+>  	iommu_device = vfio_mdev_get_iommu_device(dev);
+>  	if (iommu_device) {
+>  		if (iommu_dev_feature_enabled(iommu_device, IOMMU_DEV_FEAT_AUX))
+>  			iommu_aux_detach_device(domain, iommu_device);
+> -		else
+> -			iommu_detach_device(domain, iommu_device);
+> +		else {
+> +			group = iommu_group_get(iommu_device);
+> +			if (!group) {
+> +				WARN_ON(1);
+> +				return -EINVAL;
+> +			}
+> +			iommu_detach_group(domain, group);
+> +		}
+>  	}
+>  
+>  	return 0;
 
