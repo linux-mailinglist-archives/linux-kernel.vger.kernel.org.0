@@ -2,143 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 624ADBF285
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:07:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A577BF268
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:03:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726146AbfIZMHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:07:46 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46214 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfIZMHq (ORCPT
+        id S1726368AbfIZMDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:03:31 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53406 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbfIZMDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:07:46 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k25so1805807oiw.13;
-        Thu, 26 Sep 2019 05:07:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7v7Wljn2xMnyQGsTELGQoCNcNICUj7FbDoKU1E80zjc=;
-        b=NcPwO+GNWKm3cZqNM3f/Y91+15db6+bfxMMCYNJjiMZFk5l91+IovYoIPj4PSVE4ls
-         c+ImhP+JgG8w//F4Ql6KkCZgYv/oKuqDLUwOsTmwKv9B1HC49wZnKdxnwQy55fFbyXZr
-         TCuSE1icnogLSqTQ+Dx7XrGVfAKK/SLQFcyERsP8VJ7N1WVwNdNy8RctpDwr+7w1S/Es
-         Pol+Ck9cEzGxvTBtyiphjxt8AsBfUyUeCRjGQWASJVUuih0egTjIwod48ytzHmGhrGdX
-         IOr/Hm8WP5G2w3iGX8/e3StKq6q3OvCr7Pj74o0ZnO25V8jpb31d7MNybVwrVc6SxE6C
-         TqiA==
-X-Gm-Message-State: APjAAAUtT6Erc7sScg9wwrbYBHt9AmtPTUhNbdpUAmMNdKF0q0xNrouV
-        30Q+mJ2RT5qNs/6qwqZ2DFyafjIl9MtZLngvJJwB7A==
-X-Google-Smtp-Source: APXvYqzxWm7yld4+CIiWQaVVxXLhle4gpN2IYol4E2QghYYb7ip7tcvNkGCPJqkhAo99sV1tdE6htsJ3dmOD5OeJX7o=
-X-Received: by 2002:aca:f305:: with SMTP id r5mr2208276oih.131.1569499664682;
- Thu, 26 Sep 2019 05:07:44 -0700 (PDT)
+        Thu, 26 Sep 2019 08:03:31 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8QC3H3v033447;
+        Thu, 26 Sep 2019 07:03:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1569499397;
+        bh=2CPazhH8rWKmhbyLUwHo9If8lNYXMNPeJh6UIDfWy94=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=aT9/PTX8kU0VWFi3jjgddPnnyvXN6d/flO8aJplJZDATQvfp8R2DP6RX9ZtANXsk6
+         9bIvU91cT9MIScq+bJA5Qev1lbzpIYP3PyAIUVvPyBf6BIYs/ZFM7Ah6SbIE1ESb0U
+         MLzEqgCUbJRi6ZrUNKF3uYryHUu50NuajHYZ4t1s=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8QC3Hkh049921;
+        Thu, 26 Sep 2019 07:03:17 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 26
+ Sep 2019 07:03:08 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 26 Sep 2019 07:03:08 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8QC3Fl2074434;
+        Thu, 26 Sep 2019 07:03:15 -0500
+Subject: Re: [PATCH v9 01/15] leds: multicolor: Add sysfs interface definition
+To:     Pavel Machek <pavel@ucw.cz>
+CC:     <jacek.anaszewski@gmail.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linus.walleij@linaro.org>,
+        <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Tony Lindgren <tony@atomide.com>,
+        =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>
+References: <20190925174616.3714-1-dmurphy@ti.com>
+ <20190925174616.3714-2-dmurphy@ti.com> <20190926111043.GA9310@amd>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <92ae6985-d4fb-7570-3ac6-ebabcf3ab5ed@ti.com>
+Date:   Thu, 26 Sep 2019 07:08:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190925210354.8845-1-navid.emamdoost@gmail.com> <20190926082302.smaruxtgamgwoxad@verge.net.au>
-In-Reply-To: <20190926082302.smaruxtgamgwoxad@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 26 Sep 2019 14:07:33 +0200
-Message-ID: <CAMuHMdV8Q6PnOO8RiNo39WSFrkSxnVjQ+bDvNLFjWzhrJX7F4Q@mail.gmail.com>
-Subject: Re: [PATCH] soc: renesas: rcar-sysc: fix memory leak in rcar_sysc_pd_init
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>, emamd001@umn.edu,
-        smccaman@umn.edu, Kangjie Lu <kjlu@umn.edu>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190926111043.GA9310@amd>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 10:23 AM Simon Horman <horms@verge.net.au> wrote:
-> On Wed, Sep 25, 2019 at 04:03:53PM -0500, Navid Emamdoost wrote:
-> > In rcar_sysc_pd_init when looping over info->areas errors may happen but
-> > the error handling path does not clean up the intermediate allocated
-> > memories.
-> >
-> > This patch changes the error handling path in major and a little the loop
-> >  itself. Inside the loop if an error happens the current pd will be
-> > released and then it goes to error handling path where it releases any
-> >  previously allocated domains.
-> >
-> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Pavel
 
-> > @@ -382,6 +382,7 @@ static int __init rcar_sysc_pd_init(void)
-> >               pd = kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
-> >               if (!pd) {
-> >                       error = -ENOMEM;
-> > +                     num_areas = i;
-> >                       goto out_put;
-> >               }
-> >
-> > @@ -393,8 +394,11 @@ static int __init rcar_sysc_pd_init(void)
-> >               pd->flags = area->flags;
-> >
-> >               error = rcar_sysc_pd_setup(pd);
-> > -             if (error)
-> > +             if (error) {
-> > +                     kfree(pd);
-> > +                     num_areas = i;
-> >                       goto out_put;
-> > +             }
-> >
-> >               domains->domains[area->isr_bit] = &pd->genpd;
-> >
-> > @@ -406,13 +410,30 @@ static int __init rcar_sysc_pd_init(void)
-> >               if (error) {
-> >                       pr_warn("Failed to add PM subdomain %s to parent %u\n",
-> >                               area->name, area->parent);
-> > +                     kfree(pd);
-> > +                     num_areas = i;
-> >                       goto out_put;
-> >               }
-> >       }
-> >
-> >       error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
-> > +     of_node_put(np);
-> > +
-> > +     return error;
-> >
-> >  out_put:
-> > +     if (domains) {
-> > +             for (i = 0; i < num_areas; i++) {
-> > +                     const struct rcar_sysc_area *area = &info->areas[i];
-> > +
-> > +                     if (!area->name) {
-> > +                             /* Skip NULLified area */
-> > +                             continue;
-> > +                     }
-> > +                     kfree(domains->domains[area->isr_bit]);
+On 9/26/19 6:10 AM, Pavel Machek wrote:
+> Hi!
 >
-> This cleanup doesn't feel correct to me.
+>> diff --git a/Documentation/leds/leds-class-multicolor.rst b/Documentation/leds/leds-class-multicolor.rst
+>> new file mode 100644
+>> index 000000000000..87a1588d7619
+>> --- /dev/null
+>> +++ b/Documentation/leds/leds-class-multicolor.rst
+>> @@ -0,0 +1,96 @@
+>> +====================================
+>> +Multi Color LED handling under Linux
+>> +====================================
+>> +
+>> +Description
+>> +===========
+>> +The multi color class groups monochrome LEDs and allows controlling two
+>> +aspects of the final combined color: hue and lightness. The former is
+>> +controlled via <color>_intensity files and the latter is controlled
+>> +via brightness file.
+>> +
+>> +For more details on hue and lightness notions please refer to
+>> +https://en.wikipedia.org/wiki/CIECAM02.
+>> +
+>> +Note that intensity files only cache the written value and the actual
+>> +change of hardware state occurs upon writing brightness file. This
+>> +allows for changing many factors of the perceived color in a virtually
+>> +unnoticeable way for the human observer.
+> So unlike previous versions, userspace will need to write 4 files
+> instead of one in the common case.
+
+Request was made here in v5 of the patchset
+
+https://lore.kernel.org/patchwork/patch/1126685/
+
+
 >
-> For one I think the allocated memory is at
-> to_rcar_pd(domains->domains[area->isr_bit]);
+>> +Directory Layout Example
+>> +========================
+>> +root:/sys/class/leds/rgb:grouped_leds# ls -lR colors/
+>> +-rw-rwxr-- 1 root root 4096 Jul 7 03:10 red_max_intensity
+>> +--w--wx-w- 1 root root 4096 Jul 7 03:10 red_intensity
+>> +-rw-rwxr-- 1 root root 4096 Jul 7 03:10 green_max_intensity
+>> +--w--wx-w- 1 root root 4096 Jul 7 03:10 green_intensity
+>> +-rw-rwxr-- 1 root root 4096 Jul 7 03:10 blue_max_intensity
+>> +--w--wx-w- 1 root root 4096 Jul 7 03:10 blue_intensity
+> Permissions are way off here.
+Yes Jacek made a comment in the code about octals.
 >
-> And for antoher I wonder if it is also necessary to unwind initialisation done
-> by rcar_sysc_pd_setup() and pm_genpd_add_subdomain();
+>> +A user first writes the color LED brightness file with the brightness level that
+>> +is necessary to achieve a blueish violet output from the RGB LED group.
+>> +
+>> +echo 138 > /sys/class/leds/rgb:grouped_leds/red_intensity
+>> +echo 43 > /sys/class/leds/rgb:grouped_leds/green_intensity
+>> +echo 226 > /sys/class/leds/rgb:grouped_leds/blue_intensity
+> No, you can't tell what kind of color this will result in.
 
-Indeed.
+I tested this combination on two devices (LP5523 and LP50xx) and it was 
+a blueish violet.
 
-> I think this leads us to the heart of why such unwinding is not present
-> and that is, I suspect, that its reasonably complex and in the event of
-> failure the system is very likely unusable. So leaking a bit of memory,
-> while unpleasent, doesn't effect the user experience.
+> Will you be on ELCE/OSS in Lyon?
 
-Exactly. These can fail only on Out-Of-Memory, or when the programmer
-did something stupid and the power area topology in the SoC-specific
-driver part is wrong.
+Unfortunately no.
 
-Hence it's futile to try to clean up, as the system won't work anyway.
-So the current code just aborts, and hopes for the best.
+Dan
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> Best regards,
+> 									Pavel
+>
