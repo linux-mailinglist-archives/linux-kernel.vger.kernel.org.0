@@ -2,110 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A8B8BFA05
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 21:25:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE630BFA00
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 21:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728634AbfIZTZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 15:25:42 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39277 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728513AbfIZTZl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 15:25:41 -0400
-Received: by mail-lf1-f65.google.com with SMTP id 72so59229lfh.6;
-        Thu, 26 Sep 2019 12:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0kXG5yDieCzAILD8cRkpsMGSlnoUT5rFe6gbk7OKPRU=;
-        b=P3LIBBZ/lW82t3QCarXGEBEV+PWZOP+3Qlu4QflVZqswGdCfLW+G+CUlubMOZlYQ4c
-         nTRLLgS2WB0kJbnoCtEKOBZWXKluuBoTkeLFDD51ZLF/93LXuTknTD+6d1f1AxQSFGr3
-         nWTx49C/zOxVl2I3/YA+N8wjxsb65q9QLBugc8jYRiOXw1Gz3e3CU69ASnWFUj02rEWt
-         4Co3z4FVhkzQISA8bzfhz44OMK0YN5LchNpO2deoU/90IYgt8z6wUUfVv+NYds3XdGR/
-         CdjbFFuuisDs7Zwj1jpDbhJlbb0nRzaKnVAUsLq072Hn5/tckhY/FloulQHcPnlC6Qlt
-         6zBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0kXG5yDieCzAILD8cRkpsMGSlnoUT5rFe6gbk7OKPRU=;
-        b=SYZfksQlgPFFEpH5Spcpc3LxA15rbqFw0oRd8gEA9OqFVhUVq3H6Tpgldg4aH1nhf2
-         00ysJUXVyMZRyVh4wu6lGjEW4GasZIpbtjMNIy+AvCf08EaK5aavwX+RBgPPLBkuVmsC
-         vuo2Y+6048h08syCR2pr+Jg931ilpBqLfDLpjpTZu/69/M9fPAaNESejyLt85wUfRHN/
-         xFNzf2yVHZqj1wgJZIJuwrrtZuM2PwV9+p/CFidYb3zsbr3p+sJWUXMlcwIHgsdRs8E5
-         FKR32GfWZ4pqJJg6BITWINTLXB/fKqyUjxzndQqIqA2dQkEI9y9yWTeu1FVLcVgYstLK
-         OlVA==
-X-Gm-Message-State: APjAAAUJAy5Uxj9hanvh1nKNly5xv3LsR053o8BVJc2bfMqr/8o0GAlZ
-        leYev0ZsnaSukvSDliqUT98=
-X-Google-Smtp-Source: APXvYqzYbJ+v6GyybIl3sa2JHnlUOsgcwZtvaKA7TQLwkTgfEF/yFZ/lvrJ/VqdKf57e/98s32V1mw==
-X-Received: by 2002:a05:6512:4dd:: with SMTP id w29mr131874lfq.2.1569525938947;
-        Thu, 26 Sep 2019 12:25:38 -0700 (PDT)
-Received: from localhost.localdomain (ppp94-29-32-67.pppoe.spdop.ru. [94.29.32.67])
-        by smtp.gmail.com with ESMTPSA id 202sm13888ljf.75.2019.09.26.12.25.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 12:25:38 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] soc/tegra: pmc: Remove unnecessary memory barrier
-Date:   Thu, 26 Sep 2019 22:17:55 +0300
-Message-Id: <20190926191755.27131-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190926191755.27131-1-digetx@gmail.com>
-References: <20190926191755.27131-1-digetx@gmail.com>
+        id S1728510AbfIZTYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 15:24:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59244 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727707AbfIZTYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 15:24:39 -0400
+Received: from paulmck-ThinkPad-P72 (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 300EA222C3;
+        Thu, 26 Sep 2019 19:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569525878;
+        bh=E1YCeUmb5/tx7z9tTtAC0Pzgfr8tPf871wRcfn36aro=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=yAoIIeyPxXOS4OcMTTIFaYHqTTjvIggB/VQVWZ9FN5+LiFGDFd2V57uuTsDGiXb4u
+         hZQ71txuoRPIjZI52bckkA1vXSf71dCslCUhcqLLjYznQgldSgx7DrEfMKfaT1zRZQ
+         1eMvF84MraKI67E1XDwh2pm6eUr67s4zPUbZmO2M=
+Date:   Thu, 26 Sep 2019 12:24:36 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>, kbuild@01.org,
+        kbuild-all@01.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [rcu:dev.2019.09.23a 62/77] kernel/rcu/tree.c:2882
+ kfree_call_rcu() warn: inconsistent returns 'irqsave:flags'.
+Message-ID: <20190926192436.GN2689@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20190924080510.GL20699@kadam>
+ <CAEXW_YQYDom3AwWR1AUSCw5VvFzc6KrBH0KbuTvhkJ3OoxBfCg@mail.gmail.com>
+ <20190924160348.GF2689@paulmck-ThinkPad-P72>
+ <20190926181954.GC99154@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190926181954.GC99154@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The removed barrier isn't needed because writes/reads are strictly ordered
-and even if PMC had separate ports for writes, it wouldn't matter since
-the hardware logic takes into effect after triggering CPU's power-gating
-and at that point all CPU accesses are guaranteed to be completed. That
-barrier was copied from the old arch/ code during transition to the soc/
-PMC driver and even that the code structure was different back then, the
-barrier didn't have a real useful purpose from the start. Lastly, the
-tegra_pmc_writel() naturally inserts wmb() because it uses writel(),
-and thus this change doesn't actually make any difference in terms of
-interacting with hardware. Hence let's remove the barrier to clean up
-code a tad.
+On Thu, Sep 26, 2019 at 02:19:54PM -0400, Joel Fernandes wrote:
+> On Tue, Sep 24, 2019 at 09:03:48AM -0700, Paul E. McKenney wrote:
+> > On Tue, Sep 24, 2019 at 08:15:12AM -0400, Joel Fernandes wrote:
+> > > On Tue, Sep 24, 2019 at 4:05 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> > > >
+> > > > tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev.2019.09.23a
+> > > > head:   97de53b94582c208ee239178b208b8e8b9472585
+> > > > commit: 39676bb72323718a9e7bab1ba9c4a68319a96f62 [62/77] rcu: Add support for debug_objects debugging for kfree_rcu()
+> > > >
+> > > > If you fix the issue, kindly add following tag
+> > > > Reported-by: kbuild test robot <lkp@intel.com>
+> > > > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > >
+> > > > smatch warnings:
+> > > > kernel/rcu/tree.c:2882 kfree_call_rcu() warn: inconsistent returns 'irqsave:flags'.
+> > > >   Locked on:   line 2867
+> > > >   Unlocked on: line 2882
+> > > >
+> > > > git remote add rcu https://kernel.googlesource.com/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+> > > > git remote update rcu
+> > > > git checkout 39676bb72323718a9e7bab1ba9c4a68319a96f62
+> > > > vim +2882 kernel/rcu/tree.c
+> > > >
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2850) void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2851) {
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2852)        unsigned long flags;
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2853)        struct kfree_rcu_cpu *krcp;
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2854)
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2855)        head->func = func;
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2856)
+> > > > 87970ccf5a9125 Paul E. McKenney        2019-09-19  2857         local_irq_save(flags);  // For safely calling this_cpu_ptr().
+> > > >                                                                 ^^^^^^^^^^^^^^^^^^^^^
+> > > > IRQs disabled.
+> > > >
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2858)        krcp = this_cpu_ptr(&krc);
+> > > > ff8db005e371cb Paul E. McKenney        2019-09-19  2859         if (krcp->initialized)
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2860)                spin_lock(&krcp->lock);
+> > > > 5f5046cc15d514 Joel Fernandes (Google  2019-08-05  2861)
+> > > > 87970ccf5a9125 Paul E. McKenney        2019-09-19  2862         // Queue the object but don't yet schedule the batch.
+> > > > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2863)        if (debug_rcu_head_queue(head)) {
+> > > > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2864)                // Probable double kfree_rcu(), just leak.
+> > > > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2865)                WARN_ONCE(1, "%s(): Double-freed call. rcu_head %p\n",
+> > > > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2866)                          __func__, head);
+> > > > 39676bb7232371 Joel Fernandes (Google  2019-09-22  2867)                return;
+> > > >
+> > > > Need to re-enable before returning.
+> > > 
+> > > Right. At this point the system has a bug anyway since it is a
+> > > double-free. But yes, no reason to introduce more bugs. Will fix.
+> > > Thank you, Dan!
+> > 
+> > What Joel said!
+> > 
+> > As long as I am doing several other reports anyway...
+> > 
+> > How does the to-be-squashed patch below look?
+> 
+> Hi Paul,
+> 
+> Sorry for the late reply due to the conference..
+> 
+> This patch looks Ok, the code in your tree though is slightly different mine
+> I think because you reworked the kfree_rcu() code for working during early
+> boot.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+Yes, I did pull some of the changes earlier.
 
-Changelog:
+> After my talk tomorrow, I will go through your rcu/dev tree in detail to
+> review the reworks you did in detail.
 
-v5: Extended the commit's message.
+Sounds good, and best of everything with the talk!
 
-v4: No changes.
+> Let me know if you have the kfree_rcu() changes in a separate topic branch,
+> as well. So it will make reviewing easier.
 
-v3: No changes.
+They will be, shortly after -rc1 comes out.
 
-v2: New patch that was added after Jon's Hunter pointing that it's better
-    not to change the barrier's placement in the code. In fact the barrier
-    is not needed at all.
+							Thanx, Paul
 
- drivers/soc/tegra/pmc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index ee39ded6bc7b..f75708a935ac 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1463,8 +1463,6 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
- 	do_div(ticks, USEC_PER_SEC);
- 	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
- 
--	wmb();
--
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
- 	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
- 	value |= PMC_CNTRL_CPU_PWRREQ_OE;
--- 
-2.23.0
-
+> thanks,
+> 
+>  - Joel
+> 
+> 
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > commit 39af4c08038a8a6a7b1c9804fdd2c1921d583222
+> > Author: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Tue Sep 24 09:02:00 2019 -0700
+> > 
+> >     squash! rcu: Add support for debug_objects debugging for kfree_rcu()
+> >     
+> >     [ paulmck: Fix IRQ per kbuild test robot <lkp@intel.com> feedback. ]
+> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > 
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index 921daa7..edb7539 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -2870,7 +2870,7 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+> >  		// Probable double kfree_rcu(), just leak.
+> >  		WARN_ONCE(1, "%s(): Double-freed call. rcu_head %p\n",
+> >  			  __func__, head);
+> > -		return;
+> > +		goto unlock_return;
+> >  	}
+> >  	head->func = func;
+> >  	head->next = krcp->head;
+> > @@ -2883,6 +2883,7 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+> >  		schedule_delayed_work(&krcp->monitor_work, KFREE_DRAIN_JIFFIES);
+> >  	}
+> >  
+> > +unlock_return:
+> >  	if (krcp->initialized)
+> >  		spin_unlock(&krcp->lock);
+> >  	local_irq_restore(flags);
