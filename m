@@ -2,112 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E20FBF943
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E86BF948
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfIZSg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 14:36:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728020AbfIZSg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 14:36:58 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37046206E0;
-        Thu, 26 Sep 2019 18:36:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569523017;
-        bh=xjjJ++Pq6pOD0Z6Bdeb/NVVwlH+p3eI+ZRk1UkqiyYo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=ZcG3VjJrl3BAKIBfQjtCDBTWUYTWLaJXI7+Y00RIpzUCYRYonx4XTADUBDABzUZZ7
-         gjTsHFXMiRyxUrIWm0oqpbpbQM1PPwiQSp21NUcXQdRFDrwMIIPaIhASUlwMCZmoVT
-         KkVeQ62odeM+2uCiQIPN5atEcU1CJPJy1HRJHwBs=
-Date:   Thu, 26 Sep 2019 13:36:54 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     tiwai@suse.com, linux-pci@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] PCI: Add pci_pr3_present() helper to check Power
- Resource for D3hot
-Message-ID: <20190926183654.GA171415@google.com>
+        id S1728493AbfIZShI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 14:37:08 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41936 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728413AbfIZShG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 14:37:06 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s1so2007370pgv.8
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 11:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=FaViWsVDn17cy4A6WVHtk7aRB0sfMsNdvmfUCneILOk=;
+        b=Tjam6gLCggyyq8CDEVt/g1sC4ML4r6onWz5htyldUVNmDMFc+2UWm666m1mKYKpam7
+         810jYtSN3n7AyZPl0r9CEFTv77IXyHlK1XDFAxP4jy/i8sIVAuGwAiVAR1GZ+J7Piv1f
+         hq58F7FkF8w0YI0JQaofME6CShFvfn9h9MaNE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=FaViWsVDn17cy4A6WVHtk7aRB0sfMsNdvmfUCneILOk=;
+        b=PtD39003reL7QFpiDJL0hMBN5XDa4prcxIRZzJpELiHqzm3S3uixyVj7KZdHTjdC2a
+         d5TS7uooi4W33DaHjoAqBXFL4Q+XCHNBwbWCUD2rDBeMvVsLYimKHKQkPt8nitBQPK0W
+         F4V+bxNrmHu5zSBM3bOrmK7GHvQ7qFPn4OsQ1qqnui49lp3+LS1fYPZcxDSrpKWNyZDm
+         UvdSKBtwGzVfrqiqIPaqlbZR0LU/BKZYZVgE4RoLh1vzIpSwgc1K25Mplj9aqd6qjt5f
+         sLkdBRC8DPUwy7XFY7dtVSaSb1Hzuf4FBcKkLSrFYMvHbzlqrxPQeVrr4Trcf+wNN2I3
+         ZoSA==
+X-Gm-Message-State: APjAAAWGE6SkHGg542LSv05OPXN3mTOGKyP/03J7ERGt8trjcS5doD3M
+        cGq3mT88pDcEcOz91KLU9QCmRA==
+X-Google-Smtp-Source: APXvYqyFfzzrXVDShat3RhCC93XbNdkB/5XMvPbHVkA5ryBueLbkpznRm3xLzwxlsjoLPCO1ICwWkQ==
+X-Received: by 2002:a63:c052:: with SMTP id z18mr4988073pgi.315.1569523025536;
+        Thu, 26 Sep 2019 11:37:05 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i7sm2653766pjs.1.2019.09.26.11.37.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2019 11:37:04 -0700 (PDT)
+Date:   Thu, 26 Sep 2019 11:37:03 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Richard Kojedzinszky <richard@kojedz.in>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Ali Saidi <alisaidi@amazon.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] binfmt_elf: Do not move brk for INTERP-less ET_EXEC
+Message-ID: <201909261136.780526BB@keescook>
+References: <201909261012.96DE554A@keescook>
+ <cfdb3b68100025288177da8a963bc909@kojedz.in>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190925114353.25600-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cfdb3b68100025288177da8a963bc909@kojedz.in>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 07:43:53PM +0800, Kai-Heng Feng wrote:
-> Add pci_pr3_present() to check whether the platform supplies _PR3 to
-> tell us which power resources the device depends on when in D3hot. This
-> information is useful to let drivers choose different runtime suspend
-> behavior. A user will be add in next patch.
+On Thu, Sep 26, 2019 at 08:26:12PM +0200, Richard Kojedzinszky wrote:
+> Thanks for the quick patch. It seems my binaries start up well, and work as
+> expected, as before.
 > 
-> This is mostly the same as nouveau_pr3_present().
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Thanks again for the quick response.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Awesome; thanks for the testing (and sorry for the breakage)! :)
 
-I assume Takashi will merge this along with the ALSA patch.
+-Kees
 
-> ---
-> v5:
-> - Add wording suggestion from Bjorn.
-> v4:
-> - Let caller to find its upstream port device.
 > 
->  drivers/pci/pci.c   | 16 ++++++++++++++++
->  include/linux/pci.h |  2 ++
->  2 files changed, 18 insertions(+)
+> Regards,
+> Richard Kojedzinszky
 > 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index e7982af9a5d8..d03f624d8928 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5856,6 +5856,22 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
->  	return 0;
->  }
->  
-> +bool pci_pr3_present(struct pci_dev *pdev)
-> +{
-> +	struct acpi_device *adev;
-> +
-> +	if (acpi_disabled)
-> +		return false;
-> +
-> +	adev = ACPI_COMPANION(&pdev->dev);
-> +	if (!adev)
-> +		return false;
-> +
-> +	return adev->power.flags.power_resources &&
-> +		acpi_has_method(adev->handle, "_PR3");
-> +}
-> +EXPORT_SYMBOL_GPL(pci_pr3_present);
-> +
->  /**
->   * pci_add_dma_alias - Add a DMA devfn alias for a device
->   * @dev: the PCI device for which alias is added
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index f9088c89a534..1d15c5d49cdd 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -2310,9 +2310,11 @@ struct irq_domain *pci_host_bridge_acpi_msi_domain(struct pci_bus *bus);
->  
->  void
->  pci_msi_register_fwnode_provider(struct fwnode_handle *(*fn)(struct device *));
-> +bool pci_pr3_present(struct pci_dev *pdev);
->  #else
->  static inline struct irq_domain *
->  pci_host_bridge_acpi_msi_domain(struct pci_bus *bus) { return NULL; }
-> +static bool pci_pr3_present(struct pci_dev *pdev) { return false; }
->  #endif
->  
->  #ifdef CONFIG_EEH
-> -- 
-> 2.17.1
-> 
+> 2019-09-26 19:15 időpontban Kees Cook ezt írta:
+> > When brk was moved for binaries without an interpreter, it should have
+> > been limited to ET_DYN only. In other words, the special case was an
+> > ET_DYN that lacks an INTERP, not just an executable that lacks INTERP.
+> > The bug manifested for giant static executables, where the brk would end
+> > up in the middle of the text area on 32-bit architectures.
+> > 
+> > Reported-by: Richard Kojedzinszky <richard@kojedz.in>
+> > Fixes: bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing
+> > direct loader exec")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> > Richard, are you able to test this? I'm able to run the gitea binary
+> > with this change, and my INTERP-less ET_DYN tests (from the original
+> > bug) continue to pass as well.
+> > ---
+> >  fs/binfmt_elf.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index cec3b4146440..ad4c6b1d5074 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -1121,7 +1121,8 @@ static int load_elf_binary(struct linux_binprm
+> > *bprm)
+> >  		 * (since it grows up, and may collide early with the stack
+> >  		 * growing down), and into the unused ELF_ET_DYN_BASE region.
+> >  		 */
+> > -		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) && !interpreter)
+> > +		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+> > +		    loc->elf_ex.e_type == ET_DYN && !interpreter)
+> >  			current->mm->brk = current->mm->start_brk =
+> >  				ELF_ET_DYN_BASE;
+> > 
+> > --
+> > 2.17.1
+
+-- 
+Kees Cook
