@@ -2,179 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 644FFBEA4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A1DABEA54
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 03:54:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391272AbfIZBtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Sep 2019 21:49:51 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:38064 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388759AbfIZBtv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Sep 2019 21:49:51 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iDIui-0000jf-AQ; Wed, 25 Sep 2019 19:49:48 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1iDIuh-0005km-Di; Wed, 25 Sep 2019 19:49:48 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
-        <20190830160957.GC2634@redhat.com>
-        <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
-        <87o906wimo.fsf@x220.int.ebiederm.org>
-        <20190902134003.GA14770@redhat.com>
-        <87tv9uiq9r.fsf@x220.int.ebiederm.org>
-        <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
-        <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
-        <87muf7f4bf.fsf_-_@x220.int.ebiederm.org>
-        <87ftkzdpjd.fsf_-_@x220.int.ebiederm.org>
-        <20190920230247.GA6449@lenoir>
-Date:   Wed, 25 Sep 2019 20:49:17 -0500
-In-Reply-To: <20190920230247.GA6449@lenoir> (Frederic Weisbecker's message of
-        "Sat, 21 Sep 2019 01:02:49 +0200")
-Message-ID: <87k19vyggy.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S2391437AbfIZByj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Sep 2019 21:54:39 -0400
+Received: from mail-eopbgr30048.outbound.protection.outlook.com ([40.107.3.48]:35246
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388421AbfIZByi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Sep 2019 21:54:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K3p5jiSyd5Pkv8QcS6eCkBh//1InwvYK9A+eo4ithkYeqHMLy1zLXRPiuvFvWyoln882qFCuui3zhkKSuDLsLUXymtVCxAmRUqCaLU2pd6MAue19HCPTEU2JVGGeUYQBqbxeuGMLhtKQbNl9y9k7TcF5OdhzweCn4xDVBBWo2pn4r+ISttRPuu1zX2CMGhj7okge0znPraLgC5josp0AOlajQju22YyYOQ+Wb4ECsQwT7NVgpBWbGmkaKsxSIvI+YlQZ5Sgd1NO9hMSn8hp6v72kJYAXFdUZO4WKP0bxkjMSq2oeKqvE6ni0ETqIUDKFHyAIHZB/gG2x0MprPHrsew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A1jITZmPWC1jiXrKEf7aNWvcxqrS9c2X+vMmhoPrxDQ=;
+ b=Ll3cbQ4NIIeQKJWdnYS0N/zY8MjmLBoU+tdQJE+NYxJjlNRHYS4oKixF8Q9yv1OP8Gi0jLwcIebCoQ380pAnTaUoVRHOERXefLeqrt7oxumVJ0TfNfhpckS5yGYdwdtL1AxIBuiYgpwM5y7BXest7see+/Db7Li5SlJS3dgWYO0N7ccg+q4G2zBLLtNANl1LyUk8K15V/A2jfEMAtfO0Y+nsmNxtzVUbN3egr7K5dFaHDdR3v4x1yoWdItQJ+Bo1iXkqHwEvYOYqwr/PfkBfuB/UrOqHOf4A0QJ5IwXyAlqcrvZULgHakxsp0KbT7wHZ3Tu88iE4Jx8WwfKwxL4gSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A1jITZmPWC1jiXrKEf7aNWvcxqrS9c2X+vMmhoPrxDQ=;
+ b=evtrozh8eLFPOcLyCEUIqhIGH+0+epFGR/TBKU5kBAjuMUvUPq6kZej/iF4OfR/7kd/8Exeyqs6nCkm/fJUsmzZ7w+XoM0j/tIU8xqCQdeQAKua31vygCm//RxKC/wozDzjW4rYA6UAfufa/bfcaoSHA4da1crNNqcIhgv1W1nI=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4810.eurprd04.prod.outlook.com (20.176.233.211) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.20; Thu, 26 Sep 2019 01:54:34 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::4427:96f2:f651:6dfa]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::4427:96f2:f651:6dfa%5]) with mapi id 15.20.2284.023; Thu, 26 Sep 2019
+ 01:54:34 +0000
+From:   Biwen Li <biwen.li@nxp.com>
+To:     Leo Li <leoyang.li@nxp.com>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Ran Wang <ran.wang_1@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [v3,3/3] Documentation: dt: binding: fsl: Add
+ 'fsl,ippdexpcr-alt-addr' property
+Thread-Topic: [EXT] Re: [v3,3/3] Documentation: dt: binding: fsl: Add
+ 'fsl,ippdexpcr-alt-addr' property
+Thread-Index: AQHVcoOnab7d5ysBNkWsXmY0PrfSuKc6/L+AgAC3JZCAAAkFAIAAANMggAABmICAAAIKMIAAAb8AgAACHkCAAAZAMIAApIsAgADFeCA=
+Date:   Thu, 26 Sep 2019 01:54:34 +0000
+Message-ID: <DB7PR04MB4490A20636B2243785D8602D8F860@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20190924024548.4356-1-biwen.li@nxp.com>
+ <20190924024548.4356-3-biwen.li@nxp.com>
+ <AM0PR04MB667690EE76D327D0FC09F7818F840@AM0PR04MB6676.eurprd04.prod.outlook.com>
+ <DB7PR04MB449034C4BBAA89685A2130F78F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
+ <AM0PR04MB66762594DDFC6E5B00BD103C8F870@AM0PR04MB6676.eurprd04.prod.outlook.com>
+ <DB7PR04MB4490FECDC76507AADC35948E8F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
+ <AM0PR04MB6676BD24B814C3D1D67CF9F88F870@AM0PR04MB6676.eurprd04.prod.outlook.com>
+ <DB7PR04MB4490EAE9591B5AE7112C9D188F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
+ <AM0PR04MB6676B8A6F7C7C3BC822B45B28F870@AM0PR04MB6676.eurprd04.prod.outlook.com>
+ <DB7PR04MB44902BADDDFD090BAF4178C68F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
+ <DB7PR04MB4490684FE0E95695E89173948F870@DB7PR04MB4490.eurprd04.prod.outlook.com>
+ <CADRPPNQ+=au2qRL2K-tzhH8HK1+sO+ut9YBhYw4UhWSv5FF88A@mail.gmail.com>
+In-Reply-To: <CADRPPNQ+=au2qRL2K-tzhH8HK1+sO+ut9YBhYw4UhWSv5FF88A@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biwen.li@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 68f00465-acee-4715-7e2d-08d742247aee
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DB7PR04MB4810;
+x-ms-traffictypediagnostic: DB7PR04MB4810:|DB7PR04MB4810:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB481035E34DA20F652F7663C88F860@DB7PR04MB4810.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0172F0EF77
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(39860400002)(376002)(136003)(366004)(189003)(199004)(66476007)(25786009)(64756008)(76176011)(66556008)(66446008)(186003)(3846002)(478600001)(71190400001)(71200400001)(6116002)(316002)(305945005)(4326008)(229853002)(7736002)(14454004)(6436002)(44832011)(74316002)(9686003)(2906002)(55016002)(102836004)(476003)(256004)(6862004)(486006)(81166006)(66066001)(86362001)(8676002)(99286004)(53546011)(6506007)(52536014)(446003)(26005)(11346002)(81156014)(33656002)(6246003)(76116006)(66946007)(14444005)(6636002)(8936002)(7696005)(5660300002)(54906003)(142933001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4810;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /mJgdcqABuU0Snfpc7p8C4x8L4qt2cvFh6AKMVH/HS/bXfjCrQy+6I7LjXDHrjFHYPbqlA2OxwpgwYbbHV7CBwbOHv6Ov6kgWEdOQQ1vILQJuH5NRSM6NH3kca0TPYSGzRuXw8ckfSU6Gi9EkaibYcjpnnOPd4zFnPOaK8UI9j7sqBPppMFmw1+siJqhIRCKa0Jr3eN5cfDgpwOgGUD18zvsjw9mmAC8yVr+iooxRYtQN6E5BwD9EBA91MmYXJBZSSsN0BnHkpjteskp26lchGFc2cxNx8aoBj+uKvqp2wpGiQl+BKw4i6V4ooCZ2F2Vksv6Njz1hvRrwjZ5bG5FSHqvTMzg7NbBJWTRPENnAle8snru7l/nV6LVcjaW+fd+M4p+uEiKTsaMn8BSv6LOm3nKoW9pdwIf9BKDIRvhlbk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1iDIuh-0005km-Di;;;mid=<87k19vyggy.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/vXS4c/TBUpfjl6nT0dzrJH0S5jUSRrMo=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02 autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Frederic Weisbecker <frederic@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 527 ms - load_scoreonly_sql: 0.08 (0.0%),
-        signal_user_changed: 3.7 (0.7%), b_tie_ro: 2.5 (0.5%), parse: 1.29
-        (0.2%), extract_message_metadata: 6 (1.1%), get_uri_detail_list: 3.2
-        (0.6%), tests_pri_-1000: 4.8 (0.9%), tests_pri_-950: 1.39 (0.3%),
-        tests_pri_-900: 1.16 (0.2%), tests_pri_-90: 32 (6.0%), check_bayes: 30
-        (5.7%), b_tokenize: 10 (1.8%), b_tok_get_all: 10 (1.9%), b_comp_prob:
-        3.9 (0.7%), b_tok_touch_all: 3.7 (0.7%), b_finish: 0.72 (0.1%),
-        tests_pri_0: 447 (84.8%), check_dkim_signature: 0.63 (0.1%),
-        check_dkim_adsp: 2.4 (0.5%), poll_dns_idle: 0.77 (0.1%), tests_pri_10:
-        2.3 (0.4%), tests_pri_500: 19 (3.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 4/4] task: RCUify the assignment of rq->curr
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68f00465-acee-4715-7e2d-08d742247aee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Sep 2019 01:54:34.3331
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VRZVAGA0u1/fe6umgkizW0S6PtnTwjfdB4JywWVs5TnfG2MMlDJwoq8QtP/R4wasKTcX3YSYPFpU+NNn/3n/Vw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4810
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frederic Weisbecker <frederic@kernel.org> writes:
-
-> On Sat, Sep 14, 2019 at 07:35:02AM -0500, Eric W. Biederman wrote:
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 69015b7c28da..668262806942 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -3857,7 +3857,11 @@ static void __sched notrace __schedule(bool preempt)
->>  
->>  	if (likely(prev != next)) {
->>  		rq->nr_switches++;
->> -		rq->curr = next;
->> +		/*
->> +		 * RCU users of rcu_dereference(rq->curr) may not see
->> +		 * changes to task_struct made by pick_next_task().
->> +		 */
->> +		RCU_INIT_POINTER(rq->curr, next);
->
-> It would be nice to have more explanations in the comments as to why we
-> don't use rcu_assign_pointer() here (the very fast-path issue) and why
-> it is expected to be fine (the rq_lock() + post spinlock barrier) under
-> which condition. Some short summary of the changelog. Because that line
-> implies way too many subtleties.
-
-Crucially that line documents the standard rules don't apply,
-and it documents which guarantees a new user of the code can probably
-count on.  I say probably because the comment may go stale before I new
-user of rcu appears.  I have my hopes things are simple enough at that
-location that if the comment needs to be changed it can be.
-
-If it is not obvious from reading the code that calls
-"task_rcu_dereference(rq->curr)" now "rcu_dereference(rq->curr)" why we
-don't need the guarantees from rcu_assign_pointet() my sense is that
-it should be those locations that document what guarantees they need.
-
-Of the several different locations that use this my sense is that they
-all have different requirements.
-
-- The rcuwait code just needs the lifetime change as it never dereferences
-  rq->curr.
-
-- The membarrier code just looks at rq->curr->mm for a moment so it
-  hardly needs anything.  I suspect we might be able to make the rcu
-  critical section smaller in that code.
-
-- I don't know the code in task_numa_compare() well enough even to make an
-  educated guess.  Peter asserts (if I read his reply correctly) it is
-  all just a heuristic so stale values should not matter.
-
-  My reading of the code strongly suggests that we have the ordinary
-  rcu_assign_pointer() guarantees there.  The few fields that are not
-  covered by the ordinary guarantees do not appear to be read.  So even
-  if Peter is wrong RCU_INIT_POINTER appears safe to me.
-
-  I also don't think we will have confusion with people reading the
-  code and expecting ordinary rcu_dereference semantics().
-
-I can't possibly see putting the above several lines in a meaningful
-comment where RCU_INIT_POINTER is called.  Especially in a comment
-that will survive changes to any of those functions.  My experience
-is comments that try that are almost always overlooked when someone
-updates the code.
-
-I barely found all of the comments that depended upon the details of
-task_rcu_dereference and updated them in my patchset, when I removed
-the need for task_rcu_dereference.
-
-I don't think it would be wise to put a comment that is a wall of words
-in the middle of __schedule().  I think it will become inaccurate with
-time and because it is a lot of words I think it will be ignored.
-
-
-As for the __schedule: It is the heart of the scheduler.  It is
-performance code.  It is clever code.  It is likely to stay that way
-because it is the scheduler.  There are good technical reasons for the
-code is the way it is, and anyone changing the scheduler in a
-responsible manner that includes benchmarking should find those
-technical reasons quickly enough.
-
-
-So I think a quick word to the wise is enough.  Comments are certainly
-not enough to prevent people being careless and making foolish mistakes.
-
-Eric
-
+PiBDYXV0aW9uOiBFWFQgRW1haWwNCj4gDQo+IE9uIFR1ZSwgU2VwIDI0LCAyMDE5IGF0IDExOjI3
+IFBNIEJpd2VuIExpIDxiaXdlbi5saUBueHAuY29tPiB3cm90ZToNCj4gPg0KPiA+ID4gPiA+DQo+
+ID4gPiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiBUaGUgJ2ZzbCxpcHBk
+ZXhwY3ItYWx0LWFkZHInIHByb3BlcnR5IGlzIHVzZWQgdG8NCj4gPiA+ID4gPiA+ID4gPiA+ID4g
+PiBoYW5kbGUgYW4gZXJyYXRhDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gQS0wMDg2NDYgb24gTFMx
+MDIxQQ0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gU2lnbmVk
+LW9mZi1ieTogQml3ZW4gTGkgPGJpd2VuLmxpQG54cC5jb20+DQo+ID4gPiA+ID4gPiA+ID4gPiA+
+ID4gLS0tDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gQ2hhbmdlIGluIHYzOg0KPiA+ID4gPiA+ID4g
+PiA+ID4gPiA+ICAgICAgIC0gcmVuYW1lIHByb3BlcnR5IG5hbWUNCj4gPiA+ID4gPiA+ID4gPiA+
+ID4gPiAgICAgICAgIGZzbCxyY3BtLXNjZmcgLT4gZnNsLGlwcGRleHBjci1hbHQtYWRkcg0KPiA+
+ID4gPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gQ2hhbmdlIGluIHYyOg0K
+PiA+ID4gPiA+ID4gPiA+ID4gPiA+ICAgICAgIC0gdXBkYXRlIGRlc2Mgb2YgdGhlIHByb3BlcnR5
+ICdmc2wscmNwbS1zY2ZnJw0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4g
+PiA+ID4gIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb2MvZnNsL3JjcG0udHh0
+DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gfCAxNA0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICsrKysr
+KysrKysrKysrDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNl
+cnRpb25zKCspDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiBk
+aWZmIC0tZ2l0DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3Mvc29jL2ZzbC9yY3BtLnR4dA0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+IGIvRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvYy9mc2wvcmNwbS50eHQNCj4gPiA+ID4g
+PiA+ID4gPiA+ID4gPiBpbmRleCA1YTMzNjE5ZDg4MWQuLjE1N2RjZjZkYTE3YyAxMDA2NDQNCj4g
+PiA+ID4gPiA+ID4gPiA+ID4gPiAtLS0NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiBhL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9zb2MvZnNsL3JjcG0udHh0DQo+ID4gPiA+ID4gPiA+
+ID4gPiA+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NvYy9mc2wv
+cmNwbQ0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICsrKyAudHh0DQo+ID4gPiA+ID4gPiA+ID4gPiA+
+ID4gQEAgLTM0LDYgKzM0LDExIEBAIENoYXNzaXMgVmVyc2lvbiAgICAgICAgICAgIEV4YW1wbGUN
+Cj4gPiA+ID4gPiBDaGlwcw0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICBPcHRpb25hbCBwcm9wZXJ0
+aWVzOg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICAgLSBsaXR0bGUtZW5kaWFuIDogUkNQTSByZWdp
+c3RlciBibG9jayBpcyBMaXR0bGUgRW5kaWFuLg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+IFdpdGhv
+dXQgaXQNCj4gPiA+ID4gPiA+IFJDUE0NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiAgICAgd2lsbCBi
+ZSBCaWcgRW5kaWFuIChkZWZhdWx0IGNhc2UpLg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICsgLSBm
+c2wsaXBwZGV4cGNyLWFsdC1hZGRyIDogTXVzdCBhZGQgdGhlIHByb3BlcnR5DQo+ID4gPiA+ID4g
+PiA+ID4gPiA+ID4gKyBmb3IgU29DIExTMTAyMUEsDQo+ID4gPiA+ID4gPiA+ID4gPiA+DQo+ID4g
+PiA+ID4gPiA+ID4gPiA+IFlvdSBwcm9iYWJseSBzaG91bGQgbWVudGlvbiB0aGlzIGlzIHJlbGF0
+ZWQgdG8gYQ0KPiA+ID4gPiA+ID4gPiA+ID4gPiBoYXJkd2FyZSBpc3N1ZSBvbiBMUzEwMjFhIGFu
+ZCBvbmx5IG5lZWRlZCBvbiBMUzEwMjFhLg0KPiA+ID4gPiA+ID4gPiA+ID4gT2theSwgZ290IGl0
+LCB0aGFua3MsIEkgd2lsbCBhZGQgdGhpcyBpbiB2NC4NCj4gPiA+ID4gPiA+ID4gPiA+ID4NCj4g
+PiA+ID4gPiA+ID4gPiA+ID4gPiArICAgTXVzdCBpbmNsdWRlIG4gKyAxIGVudHJpZXMgKG4gPQ0K
+PiA+ID4gPiA+ID4gPiA+ID4gPiA+ICsgI2ZzbCxyY3BtLXdha2V1cC1jZWxscywgc3VjaA0KPiA+
+ID4gPiBhczoNCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiArICAgI2ZzbCxyY3BtLXdha2V1cC1jZWxs
+cyBlcXVhbCB0byAyLCB0aGVuIG11c3QNCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiArIGluY2x1ZGUN
+Cj4gPiA+ID4gPiA+ID4gPiA+ID4gPiArIDINCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiArICsNCj4g
+PiA+ID4gPiA+ID4gPiA+ID4gPiArIDENCj4gPiA+ID4gPiA+IGVudHJpZXMpLg0KPiA+ID4gPiA+
+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4gPiAjZnNsLHJjcG0td2FrZXVwLWNlbGxzIGlz
+IHRoZSBudW1iZXIgb2YgSVBQREVYUENSDQo+ID4gPiA+ID4gPiA+ID4gPiA+IHJlZ2lzdGVycyBv
+biBhbg0KPiA+ID4gPiA+ID4gU29DLg0KPiA+ID4gPiA+ID4gPiA+ID4gPiBIb3dldmVyIHlvdSBh
+cmUgZGVmaW5pbmcgYW4gb2Zmc2V0IHRvIHNjZmcgcmVnaXN0ZXJzIGhlcmUuDQo+ID4gPiA+ID4g
+PiA+ID4gPiA+IFdoeSB0aGVzZSB0d28gYXJlIHJlbGF0ZWQ/ICBUaGUgbGVuZ3RoIGhlcmUgc2hv
+dWxkDQo+ID4gPiA+ID4gPiA+ID4gPiA+IGFjdHVhbGx5IGJlIHJlbGF0ZWQgdG8gdGhlICNhZGRy
+ZXNzLWNlbGxzIG9mIHRoZSBzb2MvLg0KPiA+ID4gPiA+ID4gPiA+ID4gPiBCdXQgc2luY2UgdGhp
+cyBpcyBvbmx5IG5lZWRlZCBmb3IgTFMxMDIxLCB5b3UgY2FuDQo+ID4gPiA+ID4gPiA+ID4gPiBq
+dXN0IG1ha2UgaXQgMy4NCj4gPiA+ID4gPiA+ID4gPiA+IEkgbmVlZCBzZXQgdGhlIHZhbHVlIG9m
+IElQUERFWFBDUiByZXNnaXRlcnMgZnJvbQ0KPiA+ID4gPiA+ID4gPiA+ID4gZnRtX2FsYXJtMCBk
+ZXZpY2Ugbm9kZShmc2wscmNwbS13YWtldXAgPSA8JnJjcG0gMHgwDQo+ID4gPiA+ID4gPiA+ID4g
+PiAweDIwMDAwMDAwPjsNCj4gPiA+ID4gPiA+ID4gPiA+IDB4MCBpcyBhIHZhbHVlIGZvciBJUFBE
+RVhQQ1IwLCAweDIwMDAwMDAwIGlzIGEgdmFsdWUgZm9yDQo+ID4gPiA+ID4gPiBJUFBERVhQQ1Ix
+KS4NCj4gPiA+ID4gPiA+ID4gPiA+IEJ1dCBiZWNhdXNlIG9mIHRoZSBoYXJkd2FyZSBpc3N1ZSBv
+biBMUzEwMjFBLCBJIG5lZWQNCj4gPiA+ID4gPiA+ID4gPiA+IHN0b3JlIHRoZSB2YWx1ZSBvZiBJ
+UFBERVhQQ1IgcmVnaXN0ZXJzIHRvIGFuIGFsdA0KPiA+ID4gPiA+ID4gPiA+ID4gYWRkcmVzcy4g
+U28gSSBkZWZpbmluZyBhbiBvZmZzZXQgdG8gc2NmZyByZWdpc3RlcnMsIHRoZW4NCj4gPiA+ID4g
+PiA+ID4gPiA+IFJDUE0gZHJpdmVyIGdldCBhbiBhYm9zb2x1dGUgYWRkcmVzcyBmcm9tIG9mZnNl
+dCwgUkNQTQ0KPiA+ID4gPiA+ID4gPiA+ID4gZHJpdmVyIHdyaXRlIHRoZSB2YWx1ZSBvZiBJUFBE
+RVhQQ1IgcmVnaXN0ZXJzIHRvIHRoZXNlDQo+ID4gPiA+ID4gPiA+ID4gPiBhYm9zb2x1dGUgYWRk
+cmVzc2VzKGJhY2t1cCB0aGUgdmFsdWUgb2YgSVBQREVYUENSDQo+ID4gPiA+ID4gPiByZWdpc3Rl
+cnMpLg0KPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gSSB1bmRlcnN0YW5kIHdoYXQg
+eW91IGFyZSB0cnlpbmcgdG8gZG8uICBUaGUgcHJvYmxlbSBpcw0KPiA+ID4gPiA+ID4gPiA+IHRo
+YXQgdGhlIG5ldyBmc2wsaXBwZGV4cGNyLWFsdC1hZGRyIHByb3BlcnR5IGNvbnRhaW5zIGENCj4g
+PiA+ID4gPiA+ID4gPiBwaGFuZGxlIGFuZCBhbg0KPiA+ID4gb2Zmc2V0Lg0KPiA+ID4gPiA+ID4g
+PiA+IFRoZSBzaXplIG9mIGl0IHNob3VsZG4ndCBiZSByZWxhdGVkIHRvICNmc2wscmNwbS13YWtl
+dXAtY2VsbHMuDQo+ID4gPiA+ID4gPiA+IFlvdSBtYXliZSBsaWtlIHRoaXM6IGZzbCxpcHBkZXhw
+Y3ItYWx0LWFkZHIgPSA8JnNjZmcNCj4gPiA+ID4gPiA+ID4gMHg1MWM+Oy8qDQo+ID4gPiA+ID4g
+PiA+IFNDRkdfU1BBUkVDUjggKi8NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBOby4gIFRoZSAj
+YWRkcmVzcy1jZWxsIGZvciB0aGUgc29jLyBpcyAyLCBzbyB0aGUgb2Zmc2V0IHRvDQo+ID4gPiA+
+ID4gPiBzY2ZnIHNob3VsZCBiZSAweDAgMHg1MWMuICBUaGUgdG90YWwgc2l6ZSBzaG91bGQgYmUg
+MywgYnV0IGl0DQo+ID4gPiA+ID4gPiBzaG91bGRuJ3QgYmUgY29taW5nIGZyb20gI2ZzbCxyY3Bt
+LXdha2V1cC1jZWxscyBsaWtlIHlvdQ0KPiA+ID4gPiA+ID4gbWVudGlvbmVkIGluIHRoZQ0KPiA+
+ID4gYmluZGluZy4NCj4gPiA+ID4gPiBPaCwgSSBnb3QgaXQuIFlvdSB3YW50IHRoYXQgZnNsLGlw
+cGRleHBjci1hbHQtYWRkIGlzIHJlbGF0aXZlDQo+ID4gPiA+ID4gd2l0aCAjYWRkcmVzcy1jZWxs
+cyBpbnN0ZWFkIG9mICNmc2wscmNwbS13YWtldXAtY2VsbHMuDQo+ID4gPiA+DQo+ID4gPiA+IFll
+cy4NCj4gPiA+IEkgZ290IGFuIGV4YW1wbGUgZnJvbSBkcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3
+Yy9wY2ktbGF5ZXJzY2FwZS5jDQo+ID4gPiBhbmQgYXJjaC9hcm0vYm9vdC9kdHMvbHMxMDIxYS5k
+dHNpIGFzIGZvbGxvd3M6DQo+ID4gPiBmc2wscGNpZS1zY2ZnID0gPCZzY2ZnIDA+LCAwIGlzIGFu
+IGluZGV4DQo+ID4gPg0KPiA+ID4gSW4gbXkgZnNsLGlwcGRleHBjci1hbHQtYWRkciA9IDwmc2Nm
+ZyAweDAgMHg1MWM+LCBJdCBtZWFucyB0aGF0IDB4MA0KPiA+ID4gaXMgYW4gYWx0IG9mZnNldCBh
+ZGRyZXNzIGZvciBJUFBERVhQQ1IwLCAweDUxYyBpcyBhbiBhbHQgb2Zmc2V0DQo+ID4gPiBhZGRy
+ZXNzIEZvcg0KPiA+ID4gSVBQREVYUENSMSBpbnN0ZWFkIG9mIDB4MCBhbmQgMHg1MWMgY29tcG9z
+ZSB0byBhbiBhbHQgYWRkcmVzcyBvZg0KPiA+ID4gU0NGR19TUEFSRUNSOC4NCj4gPiBNYXliZSBJ
+IG5lZWQgd3JpdGUgaXQgYXM6DQo+ID4gZnNsLGlwcGRleHBjci1hbHQtYWRkciA9IDwmc2NmZyAw
+eDAgMHgwIDB4MCAweDUxYz47IGZpcnN0IHR3byAweDANCj4gPiBjb21wb3NlIGFuIGFsdCBvZmZz
+ZXQgYWRkcmVzcyBmb3IgSVBQREVYUENSMCwgbGFzdCAweDAgYW5kIDB4NTFjDQo+ID4gY29tcG9z
+ZSBhbiBhbHQgYWRkcmVzcyBmb3IgSVBQREVYUENSMSwNCj4gDQo+IEkgcmVtZW1iZXIgdGhlIGhh
+cmR3YXJlIGlzc3VlIGlzIG9ubHkgaXMgb25seSByZWxhdGVkIHRvIElQUERFWFBDUjEgcmVnaXN0
+ZXIsIG5vDQo+IGlkZWEgd2h5IHlvdSBuZWVkIHRvIGRlZmluZSBJUFBERVhQQ1IwIGluIHRoZSBi
+aW5kaW5nLg0KT2theSwgZ290IGl0LCB0aGFua3MuDQpCZXN0IFJlZ2FyZHMsDQpCaXdlbiBMaQ0K
+PiANCj4gPg0KPiA+IEJlc3QgUmVnYXJkcywNCj4gPiBCaXdlbiBMaQ0KPiA+ID4gPg0KPiA+ID4g
+PiBSZWdhcmRzLA0KPiA+ID4gPiBMZW8NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4NCj4g
+PiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiArICAgVGhlIGZpcnN0IGVu
+dHJ5IG11c3QgYmUgYSBsaW5rIHRvIHRoZSBTQ0ZHIGRldmljZSBub2RlLg0KPiA+ID4gPiA+ID4g
+PiA+ID4gPiA+ICsgICBUaGUgbm9uLWZpcnN0IGVudHJ5IG11c3QgYmUgb2Zmc2V0IG9mIHJlZ2lz
+dGVycyBvZiBTQ0ZHLg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gPiA+
+ID4gIEV4YW1wbGU6DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gIFRoZSBSQ1BNIG5vZGUgZm9yIFQ0
+MjQwOg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+IEBAIC00Myw2ICs0OCwxNSBAQCBUaGUgUkNQTSBu
+b2RlIGZvciBUNDI0MDoNCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiAgICAgICAgICAgICAgICNmc2ws
+cmNwbS13YWtldXAtY2VsbHMgPSA8Mj47DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gICAgICAgfTsN
+Cj4gPiA+ID4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICtUaGUgUkNQTSBu
+b2RlIGZvciBMUzEwMjFBOg0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICsgICAgIHJjcG06IHJjcG1A
+MWVlMjE0MCB7DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAgICAgICBjb21wYXRpYmxl
+ID0gImZzbCxsczEwMjFhLXJjcG0iLA0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICsiZnNsLHFvcmlx
+LXJjcG0tDQo+ID4gPiA+ID4gPiA+IDIuMSsiOw0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICsgICAg
+ICAgICAgICAgcmVnID0gPDB4MCAweDFlZTIxNDAgMHgwIDB4OD47DQo+ID4gPiA+ID4gPiA+ID4g
+PiA+ID4gKyAgICAgICAgICAgICAjZnNsLHJjcG0td2FrZXVwLWNlbGxzID0gPDI+Ow0KPiA+ID4g
+PiA+ID4gPiA+ID4gPiA+ICsgICAgICAgICAgICAgZnNsLGlwcGRleHBjci1hbHQtYWRkciA9IDwm
+c2NmZyAweDANCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiArIDB4NTFjPjsgLyoNCj4gPiA+ID4gPiA+
+ID4gPiA+ID4gPiBTQ0ZHX1NQQVJFQ1I4ICovDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gKyAgICAg
+fTsNCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gKw0KPiA+
+ID4gPiA+ID4gPiA+ID4gPiA+ICAqIEZyZWVzY2FsZSBSQ1BNIFdha2V1cCBTb3VyY2UgRGV2aWNl
+IFRyZWUgQmluZGluZ3MNCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiAgLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ICBSZXF1aXJl
+ZCBmc2wscmNwbS13YWtldXAgcHJvcGVydHkgc2hvdWxkIGJlIGFkZGVkDQo+ID4gPiA+ID4gPiA+
+ID4gPiA+ID4gdG8gYSBkZXZpY2Ugbm9kZSBpZiB0aGUgZGV2aWNlDQo+ID4gPiA+ID4gPiA+ID4g
+PiA+ID4gLS0NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiAyLjE3LjENCj4gPg0K
