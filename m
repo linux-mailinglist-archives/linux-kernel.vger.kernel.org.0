@@ -2,99 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5589ABED22
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E71BED14
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 10:11:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729540AbfIZIM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 04:12:56 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56624 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729394AbfIZIMy (ORCPT
+        id S1729071AbfIZILh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 04:11:37 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35225 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727500AbfIZILg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 04:12:54 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8Q8938N143494;
-        Thu, 26 Sep 2019 08:12:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=nHvD6qHssEaWW5ffwT7IOeDd0XSJWsWGV8kA52kIHrk=;
- b=X+6L0T5yKArXU+XgMIh6S/Ef5GWy0+GxT9A+BIZF0CWZgR9PVFxu4ahv1rSVai5ikMRt
- pC5WYg6XkvW3+LnayJUdDtlVt6nfmKmSNoUypBMT8G0eeGkGMWFBSnIkYzM0Q8JeedKd
- FyCv2+GQ4zM6TLAVzORNllrpSiErDoOwp4e5tev0pcCd3jj9YNH0GQoMfH5B1dBzYEOt
- DzQr7bjHr7S/svIjg+wBJGg+FIl8FT05FEFw6Z/BREF78worz1oO7COlwZJWhOo1xKaR
- CANjezhPQqAVhBhxImZOYQnd2N0M2biUIFZWlv1XKVys8KcLOLTWpIKbezYYTUybmMBD Gg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2v5b9u20m6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Sep 2019 08:12:33 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8Q88pAd052677;
-        Thu, 26 Sep 2019 08:10:33 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2v7vp0rcaf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Sep 2019 08:10:33 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8Q8AQhI020500;
-        Thu, 26 Sep 2019 08:10:26 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 26 Sep 2019 01:10:25 -0700
-Date:   Thu, 26 Sep 2019 11:10:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>
-Cc:     Michael Hennerich <Michael.Hennerich@analog.com>,
-        Stefan Popa <stefan.popa@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: imu: adis16480: clean up a condition
-Message-ID: <20190926081016.GA2332@mwanda>
+        Thu, 26 Sep 2019 04:11:36 -0400
+Received: by mail-io1-f67.google.com with SMTP id q10so4254005iop.2
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 01:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=VmP4t6Nkr9v/B1z1zla8wNSvSBHiglNNEGF3yF1dQs4=;
+        b=byfK8OgcJNpfuQt91Ul74BdOy6sD37gjhJd6nsucQx3RgZJuknL2glCL7GeMSCWss+
+         1lL+dvjEx1Fy0+F5ip0mjIDkYoPfXIpXXpORGVwTs8mBWlKDXI5a9uPxd9icpwXe4gNY
+         iUjUfjcwSvFutXZdffCBxPRjzYSz/p0Rv0P8a1CQhpF0kagHtarAZ69tjBg/7+UYybDE
+         32QO87QMd4rCb3Lc5CThExeiDMfPuzWRLdFS0N6ur54Bw7GJ6XmXF+PQoJpN09FDDLmE
+         NpsjttQ6euQuW+n+tveswNzCkQSlA4Oy/0XsnC27M20xviSVnBELL6Syut9p2L4UsLv0
+         SUAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=VmP4t6Nkr9v/B1z1zla8wNSvSBHiglNNEGF3yF1dQs4=;
+        b=hLfnRqVyewXB+IPZMcjRYtlndXIIWOsXq4DewXyNJKdTo/4Zy3BQsZeL+mb1tQwFc8
+         T71ICwi5Q4GKqB1Jyip1nzNRLHIjN7mdSoP2ppQmK8NAaKmxSwM1u3r6ap0LnUNuYZ5k
+         bx8LgXjjqYXImoIt9UaKmmHYznwDfsoIR3Agn8RoZFNHaVqy4+BeA/QqXWfuRFs4Q65I
+         B2pxNAdF62zEI258rVXdV+SIaRsyUjOih+CsfhxahwPGKfGKmNJd8nRO0dCNyKOMrv0f
+         g45kvkTfaXDoxR8sW8y4Q1ilCDoqMLNQFNHv02DXw+U0Hvvr6ldWMKQw8RpZ8H1bgs8U
+         HSWw==
+X-Gm-Message-State: APjAAAUthAJRVWdc0m5E8OtUyMfPj+EL/Tflc87M+urUpqkRXPskfEaa
+        cfUGe+QqlMCkk6vw4EjysBZKNmdDjkQd1dTtuyUt2Q==
+X-Google-Smtp-Source: APXvYqxjRsZFF7u+Klc+P/c+qMK3fKqEqtk6x9BoiC6CuY60SkZvAkSB3xQuCJRTXTYQaeWSwp/vLDVu7A9gAzlbFUY=
+X-Received: by 2002:a92:d847:: with SMTP id h7mr1089976ilq.85.1569485495658;
+ Thu, 26 Sep 2019 01:11:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909260080
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9391 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909260080
+Received: by 2002:a02:95ae:0:0:0:0:0 with HTTP; Thu, 26 Sep 2019 01:11:35
+ -0700 (PDT)
+Reply-To: edithbrown0257@gmail.com
+From:   Edith Brown <tinaevan2621@gmail.com>
+Date:   Thu, 26 Sep 2019 09:11:35 +0100
+Message-ID: <CAEMErm1Cyv_PtxhY_=+t-t+1jNHoShGyc6SBgufYy9KxH-=icw@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "t" variable is unsigned so it can't be less than zero.  We really
-are just trying to prevent divide by zero bugs so just checking against
-zero is sufficient.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/iio/imu/adis16480.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/imu/adis16480.c b/drivers/iio/imu/adis16480.c
-index b99d73887c9f..e144e567675d 100644
---- a/drivers/iio/imu/adis16480.c
-+++ b/drivers/iio/imu/adis16480.c
-@@ -318,7 +318,7 @@ static int adis16480_set_freq(struct iio_dev *indio_dev, int val, int val2)
- 	unsigned int t, reg;
- 
- 	t =  val * 1000 + val2 / 1000;
--	if (t <= 0)
-+	if (t == 0)
- 		return -EINVAL;
- 
- 	/*
 -- 
-2.20.1
-
+Hello dear
+how are you?
+my name is Edith Brown
+i am a U.S military woman
+is my pleasure meeting you here
+best regards
