@@ -2,152 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC652BEFA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 264E7BEFB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 12:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbfIZKc5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 06:32:57 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42249 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbfIZKc5 (ORCPT
+        id S1725917AbfIZKek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 06:34:40 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:34888 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfIZKej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 06:32:57 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c10so1521406otd.9;
-        Thu, 26 Sep 2019 03:32:57 -0700 (PDT)
+        Thu, 26 Sep 2019 06:34:39 -0400
+Received: by mail-oi1-f195.google.com with SMTP id x3so1654100oig.2;
+        Thu, 26 Sep 2019 03:34:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VXeaVOM54zatWXZ5qzke97zx1OY9L8LMNKUJXVt61MY=;
+        b=iJN0hGEaZGRHJ14GvmbCNXnDrCoeeLx4fe97E/cpDmg6w2uGQYVipwWQqDd53JIdM+
+         vs9jAiYVoa75JSlvm8LX50eorTh3fuKVoZQK9146Km+UNiu1sP1TYrwX/adpvXOoRzeC
+         uV6qbVwBxWTTzt2DCMgXDc+m2Ct4L2+UkEOXjM2Gi06p3iU4lLDv0mQFwnDWcKttohpI
+         0zvZa+xcT0Wj9KCR65w8hezyt5Zk3VH4oeDSe0/cIxM+T1NlG6+1etqtmijjV4BIGZfy
+         jQy+Qa7Sy4KIOXDPrGWq+f9eSxOc6uvLgl5k37XtJop+H/Ir53uQGHN9ILVFmCQZm5FE
+         WccA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Duz8utOpoc6VMlyYaWVHB4Tg3adc/eRlD/32GNIC7s0=;
-        b=OFNo/O2bthgg0+b0Dtv8you9xaVad2Vut1q62ZQMpDmngRWZnGZ8LbWmaVguP+Cgat
-         z58ePQC8y9qVXQN9VPd6qoLLOF8HMPJtQOI619UZ514u1B/1KPTHj6rdUq9SX1RQQACx
-         MMaOT2M5KiBsrn4VAgNCwcWnwMHInNTavpV+uial7xEIG6suX6XhegnY9G6HnZEc3jPN
-         +zNrpMcEJaC+0GXpJ1Dkn/FeYiVynyBtAuEIxQYOeKnIkg8L8zy+MvrRMi36C2P5WhC3
-         XNOsQC9BAL9lpgjUNfBKSztgG7MyxJ8cQ+5T7s+9dMJWtqJX1m4QRnepSbzKBaIifaSk
-         rGcQ==
-X-Gm-Message-State: APjAAAUX45YOykrfEoMQ8W8s7NWySGMEEbbNLRlVvT/2ypPlF6DYtLI8
-        DUDJJvr5m3FtxtIgaT5qcUbsrGXC49dSae7o9ub5E+0e
-X-Google-Smtp-Source: APXvYqy3txWFOW1H11XB3TMykWXT5VFCVtbTgG3+kKHhRTyVLKOzIpcvggmlKjhEFtHbKq7dTs+8lhQbaC+m2BXszCY=
-X-Received: by 2002:a9d:404d:: with SMTP id o13mr2070947oti.39.1569493976623;
- Thu, 26 Sep 2019 03:32:56 -0700 (PDT)
+        bh=VXeaVOM54zatWXZ5qzke97zx1OY9L8LMNKUJXVt61MY=;
+        b=dqgWtOaUEaYmCDrUusk20S3VYFHIElT3iJvz2MmFzeVQ/jvbqmz8d1C+sYbQ40ZSFi
+         R5XKaZSne5EjtFH+5X7cP1NGtzWvHZphzJX/lVrFBl+eTvn1qjFVbeZ2Tku0+v5Zeg1X
+         7fqFstUYBBOuhJDUdCmj0CBO1YLxYPgWoPHEW+XJmBJ+QEDO4yFosad+GVKazYbFkR5J
+         YzzM5a1/SlM4EnkZAgwVsdCz28bqev5FUmB04tXhBilKTMs7yTjCT9Evij+o3/WYrW3V
+         VusQGfOyht+Efbb11079yOkMgsse8ePjNn9wSEIRRghWOrJ9LATYd5rlZb+CbBPVq1+g
+         bU7A==
+X-Gm-Message-State: APjAAAXNZl9d7gdjkmL4lEaxs4ve4abNwlQ9UPTwboJ6jIx7MkuLYfrI
+        3VMVnJkPqjximAj3paNe9n8Dp3LEL+WtwEwc+Ag=
+X-Google-Smtp-Source: APXvYqycDnwsock1UK2R5fmGlztj1V/5cvdqMfIleUEMrrjwaZhtHzAXaI7ImgqJE70hAfx6Lg8pEcoOlHvbMKtQJ8E=
+X-Received: by 2002:a05:6808:8da:: with SMTP id k26mr2063957oij.5.1569494079433;
+ Thu, 26 Sep 2019 03:34:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <f4db4595-7673-f2ae-4222-cbb9c2d771f9@canonical.com> <20190926121438.655f1f10@jawa>
-In-Reply-To: <20190926121438.655f1f10@jawa>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 26 Sep 2019 12:32:45 +0200
-Message-ID: <CAMuHMdVBrKnA3TJnOEG0G0FVKf7VwQUvLzkmJc7DAX4kvHYWYQ@mail.gmail.com>
-Subject: Re: spi: Add call to spi_slave_abort() function when spidev driver is released
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1569459243-21950-1-git-send-email-wanpengli@tencent.com> <ea06c6bb-c6ff-ef34-55ca-c58cb77ed39e@redhat.com>
+In-Reply-To: <ea06c6bb-c6ff-ef34-55ca-c58cb77ed39e@redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Thu, 26 Sep 2019 18:34:26 +0800
+Message-ID: <CANRm+CySCXpn=CUnfUYf+r4aAFOOVscryLQqDnYhTstb4Hv=Hw@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: LAPIC: Loose fluctuation filter for auto tune lapic_timer_advance_ns
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukasz,
-
-On Thu, Sep 26, 2019 at 12:14 PM Lukasz Majewski <lukma@denx.de> wrote:
-> > Static analysis with Coverity has detected an potential dereference
-> > of a free'd object with commit:
-> >
-> > commit 9f918a728cf86b2757b6a7025e1f46824bfe3155
-> > Author: Lukasz Majewski <lukma@denx.de>
-> > Date:   Wed Sep 25 11:11:42 2019 +0200
-> >
-> >     spi: Add call to spi_slave_abort() function when spidev driver is
-> > released
-> >
-> > In spidev_release() in drivers/spi/spidev.c the analysis is as
-> > follows:
-> >
-> > 600static int spidev_release(struct inode *inode, struct file *filp)
-> > 601{
-> > 602        struct spidev_data      *spidev;
-> > 603
-> > 604        mutex_lock(&device_list_lock);
-> >
-> >    1. alias: Assigning: spidev = filp->private_data. Now both point to
-> > the same storage.
-> >
-> > 605        spidev = filp->private_data;
-> > 606        filp->private_data = NULL;
-> > 607
-> > 608        /* last close? */
-> > 609        spidev->users--;
-> >
-> >    2. Condition !spidev->users, taking true branch.
-> >
-> > 610        if (!spidev->users) {
-> > 611                int             dofree;
-> > 612
-> > 613                kfree(spidev->tx_buffer);
-> > 614                spidev->tx_buffer = NULL;
-> > 615
-> > 616                kfree(spidev->rx_buffer);
-> > 617                spidev->rx_buffer = NULL;
-> > 618
-> > 619                spin_lock_irq(&spidev->spi_lock);
-> >
-> >    3. Condition spidev->spi, taking false branch.
-> >
-> > 620                if (spidev->spi)
-> > 621                        spidev->speed_hz =
-> > spidev->spi->max_speed_hz; 622
-> > 623                /* ... after we unbound from the underlying
-> > device? */
-> >
-> >    4. Condition spidev->spi == NULL, taking true branch.
-> >
-> > 624                dofree = (spidev->spi == NULL);
-> > 625                spin_unlock_irq(&spidev->spi_lock);
-> > 626
-> >
-> >    5. Condition dofree, taking true branch.
-> >
-> > 627                if (dofree)
-> >
-> >    6. freed_arg: kfree frees spidev.
-> >
-> > 628                        kfree(spidev);
-> > 629        }
-> > 630#ifdef CONFIG_SPI_SLAVE
-> >
-> >    CID 89726 (#1 of 1): Read from pointer after free (USE_AFTER_FREE)
-> > 7. deref_after_free: Dereferencing freed pointer spidev.
-> >
-> > 631        spi_slave_abort(spidev->spi);
-> > 632#endif
-> > 633        mutex_unlock(&device_list_lock);
-> > 634
-> > 635        return 0;
-> > 636}
-> >
-> > The call to spi_slave_abort() on spidev is reading an earlier kfree'd
-> > spidev.
+On Thu, 26 Sep 2019 at 18:25, Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> Thanks for spotting this issue - indeed there is a possibility to use
-> spidev after being kfree'd.
+> On 26/09/19 02:54, Wanpeng Li wrote:
+> > -#define LAPIC_TIMER_ADVANCE_ADJUST_MIN 100
+> > -#define LAPIC_TIMER_ADVANCE_ADJUST_MAX 5000
+> > -#define LAPIC_TIMER_ADVANCE_ADJUST_INIT 1000
+> > +#define LAPIC_TIMER_ADVANCE_EXPIRE_MIN       100
+> > +#define LAPIC_TIMER_ADVANCE_EXPIRE_MAX       10000
+> > +#define LAPIC_TIMER_ADVANCE_NS_INIT  1000
+> > +#define LAPIC_TIMER_ADVANCE_NS_MAX     5000
+>
+> I think the old #define value is good.  What about:
+>
+> -#define LAPIC_TIMER_ADVANCE_ADJUST_MIN 100
+> -#define LAPIC_TIMER_ADVANCE_ADJUST_MAX 5000
+> -#define LAPIC_TIMER_ADVANCE_ADJUST_INIT 1000
+> +#define LAPIC_TIMER_ADVANCE_ADJUST_MIN 100     /* clock cycles */
+> +#define LAPIC_TIMER_ADVANCE_ADJUST_MAX 10000   /* clock cycles */
+> +#define LAPIC_TIMER_ADVANCE_NS_INIT    1000
+> +#define LAPIC_TIMER_ADVANCE_NS_MAX     5000
 
-Worse, this makes me realize spidev->spi may be a NULL pointer, which
-will be dereferenced by spi_slave_abort(), so caching it before the
-call to kfree() won't work.
+Looks good, I guess you can update the patch during apply. :)
 
-> However, Geert (CC'ed) had some questions about placement of this
-> function call, so I will wait with providing fix until he replies.
-
-Seems like this needs more thought...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+    Wanpeng
