@@ -2,112 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F5BBF971
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:43:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF7FABF997
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728541AbfIZSnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 14:43:04 -0400
-Received: from mga05.intel.com ([192.55.52.43]:57431 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728492AbfIZSmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 14:42:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 11:42:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,552,1559545200"; 
-   d="scan'208";a="214574545"
-Received: from gayuk-dev-mach.sc.intel.com ([10.3.79.161])
-  by fmsmga004.fm.intel.com with ESMTP; 26 Sep 2019 11:42:54 -0700
-From:   Gayatri Kammela <gayatri.kammela@intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     vishwanath.somayaji@intel.com, dvhart@infradead.org,
-        linux-kernel@vger.kernel.org, charles.d.prestopine@intel.com,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Srinivas Pandruvada <srinivas.pandruvada@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        "David E . Box" <david.e.box@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v1 5/5] platform/x86: Add Atom based Elkhart Lake(EHL) platform support to intel_pmc_core driver
-Date:   Thu, 26 Sep 2019 12:26:03 -0700
-Message-Id: <20190926192603.18647-6-gayatri.kammela@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190926192603.18647-1-gayatri.kammela@intel.com>
-References: <20190926192603.18647-1-gayatri.kammela@intel.com>
+        id S1728501AbfIZSuX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 14:50:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40162 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728377AbfIZSuX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 14:50:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nIyHvTAGG0PPPrIhutULDQfPFwJtw5CYsA3zaxkj3L8=; b=S/xebOxpZka6SndPedzCpkcQA
+        0NRBrkthjEKisbOCOwOYzzgOGCimxUOivqG0DqCdghGTyAZGcN/94sgodc9nKolMxvAovO10iFD8f
+        79ATXYTEbb9HzzSaBP0OGDM4N8eGjqwB5L027rM/vrfiP411u+GzjpeMkLy6mYraN51PxlNKsRQ/E
+        Bgtseu8P/hYASY9aQhhvkxODL9dtYaX/KhGuZEbhYd+p7Jk5nP6qYwfLdc68NR7dZcaJYolF0NMIO
+        TqTRt7esK/uWlvyXxyPArwTtW5ld9POZrYh6O3HzwwsNIuSTMlRmoOrTReimeWXdnI7SPrvGnKzF2
+        /JgWZKscA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.2 #3 (Red Hat Linux))
+        id 1iDYqK-0006mv-0s; Thu, 26 Sep 2019 18:50:20 +0000
+Date:   Thu, 26 Sep 2019 11:50:19 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josef Bacik <josef@toxicpanda.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: drop mmap_sem before calling balance_dirty_pages()
+ in write fault
+Message-ID: <20190926185019.GA2147@bombadil.infradead.org>
+References: <20190924171518.26682-1-hannes@cmpxchg.org>
+ <20190924174809.GH1855@bombadil.infradead.org>
+ <20190924194238.GA29030@cmpxchg.org>
+ <20190924204608.GI1855@bombadil.infradead.org>
+ <20190924214337.GA17405@cmpxchg.org>
+ <20190926134923.wqlkymjdfxd4iymh@box>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190926134923.wqlkymjdfxd4iymh@box>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Elkhart Lake to the list of the platforms that intel_pmc_core
-driver supports for pmc_core device.
+On Thu, Sep 26, 2019 at 04:49:23PM +0300, Kirill A. Shutemov wrote:
+> It happens if the VMA got unmapped under us while we dropped mmap_sem
+> and inode got freed.
+> 
+> Pinning the file if we drop mmap_sem fixes the issue.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: syzbot+03ee87124ee05af991bd@syzkaller.appspotmail.com
+> Cc: Hillf Danton <hdanton@sina.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Hugh Dickins <hughd@google.com>
 
-Just like ICL and TGL, EHL can also reuse all the CNL PCH IPs. Also, it
-uses the same PCH IPs of TGL, no additional effort is needed to enable
-but to simply reuse them.
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Kan Liang <kan.liang@intel.com>
-Cc: David E. Box <david.e.box@intel.com>
-Cc: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
----
- drivers/platform/x86/intel_pmc_core.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index aef8f6d8bddb..2047b54fad54 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -190,7 +190,10 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
- 	{"SDX",                 BIT(4)},
- 	{"SPE",                 BIT(5)},
- 	{"Fuse",                BIT(6)},
--	/* Reserved for Cannonlake but valid for Icelake and Tigerlake */
-+	/*
-+	 * Reserved for Cannonlake but valid for Icelake,
-+	 * Tigerlake and Elkhart lake.
-+	 */
- 	{"SBR8",		BIT(7)},
- 
- 	{"CSME_FSC",            BIT(0)},
-@@ -234,7 +237,10 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
- 	{"HDA_PGD4",            BIT(2)},
- 	{"HDA_PGD5",            BIT(3)},
- 	{"HDA_PGD6",            BIT(4)},
--	/* Reserved for Cannonlake but valid for Icelake and Tigerlake */
-+	/*
-+	 * Reserved for Cannonlake but valid for Icelake,
-+	 * Tigerlake and Elkhart lake.
-+	 */
- 	{"PSF6",		BIT(5)},
- 	{"PSF7",		BIT(6)},
- 	{"PSF8",		BIT(7)},
-@@ -266,7 +272,7 @@ static const struct pmc_bit_map *ext_icl_pfear_map[] = {
- };
- 
- static const struct pmc_bit_map tgl_pfear_map[] = {
--	/* Tigerlake generation onwards only */
-+	/* Tigerlake and Elkhart lake generation onwards only */
- 	{"PSF9",		BIT(0)},
- 	{"RES_66",		BIT(1)},
- 	{"RES_67",		BIT(2)},
-@@ -872,6 +878,7 @@ static const struct x86_cpu_id intel_pmc_core_ids[] = {
- 	INTEL_CPU_FAM6(ICELAKE_NNPI, icl_reg_map),
- 	INTEL_CPU_FAM6(TIGERLAKE_L, tgl_reg_map),
- 	INTEL_CPU_FAM6(TIGERLAKE, tgl_reg_map),
-+	INTEL_CPU_FAM6(ATOM_TREMONT, tgl_reg_map),
- 	{}
- };
- 
--- 
-2.17.1
-
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
