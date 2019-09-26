@@ -2,94 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 097FEBF1EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 222B8BF1E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 13:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfIZLm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 07:42:29 -0400
-Received: from foss.arm.com ([217.140.110.172]:47060 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726376AbfIZLm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 07:42:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FBDD1570;
-        Thu, 26 Sep 2019 04:42:28 -0700 (PDT)
-Received: from entos-d05.shanghai.arm.com (entos-d05.shanghai.arm.com [10.169.40.35])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 06BB93F67D;
-        Thu, 26 Sep 2019 04:42:23 -0700 (PDT)
-From:   Jianyong Wu <jianyong.wu@arm.com>
-To:     netdev@vger.kernel.org, yangbo.lu@nxp.com, john.stultz@linaro.org,
-        tglx@linutronix.de, pbonzini@redhat.com,
-        sean.j.christopherson@intel.com, maz@kernel.org,
-        richardcochran@gmail.com, Mark.Rutland@arm.com,
-        Will.Deacon@arm.com, suzuki.poulose@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        Steve.Capper@arm.com, Kaly.Xin@arm.com, justin.he@arm.com,
-        jianyong.wu@arm.com, nd@arm.com
-Subject: [RFC PATCH v4 1/5] psci: Export psci_ops.conduit symbol as modules will use it.
-Date:   Thu, 26 Sep 2019 19:42:08 +0800
-Message-Id: <20190926114212.5322-2-jianyong.wu@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190926114212.5322-1-jianyong.wu@arm.com>
-References: <20190926114212.5322-1-jianyong.wu@arm.com>
+        id S1726206AbfIZLmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 07:42:12 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53569 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725917AbfIZLmL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 07:42:11 -0400
+Received: by mail-wm1-f66.google.com with SMTP id i16so2369974wmd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 04:42:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xonFLYW+K9R2/V+E4nxIJtaZUYsUbdcdHfLF2kKtcoo=;
+        b=Ps5n17nT4qWciZsC9oJ6IGnJHFHbWG4ZlXnBU/vo5CoFtTTcFz1daOUpKD/ipU4JTw
+         ihs76iwMZ80RxUQMFVHFi5rvs5M1rcujs9NFUDyQiF6XVkF7SXmgG5B5WQ8wviB0n/0h
+         viAE+GuDsrSXXAsyoxOa/u6wTXedWKEzGWG5iTpCje/HyXMDQP1QKsdJjeT8SaTNVvM9
+         i5p1PVAP4pUIcDVmmC2qPUG+ZcG/GbmHpma7NTM9SxfdP5B5FUU7xlF/mHrARsTiCPop
+         zVz4CSRj4Q1mP/877rHOBVyN5jMUa4ylMJrwXwyxxRAIiR9nZ+CFHeifrJsIveeE+ygL
+         45Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xonFLYW+K9R2/V+E4nxIJtaZUYsUbdcdHfLF2kKtcoo=;
+        b=KUcaiqKCbb39nKe4LGwf45b/4Y4sX2HPLG2Nf8lmEji8v1sFtGTI7PYAf+VquQk4hT
+         8c3g/OiDS0ArQgmIOABIjBHaaE+pQsdFaRpE/9vhsn8yJrIOg1eoOoo9t6Eis1POmGO6
+         R2x33VYkmsaDruSA5I1RP8q8h4leaRCC+yIWJM1y4X+BiQxxaDtkFfHAhoBik6JqJD6P
+         hZ9K7c91rnXKYEr2UZLYLGv7IfM3urMQhZ9anzvp3PvWR3I2lHegittqxZwnm94kDpnr
+         qISDG76tyaJsXiwkX31oa4ljn9eczqGyGvtLEYKdZulFflilBHx5R0025vRUtHEaRToC
+         P0jQ==
+X-Gm-Message-State: APjAAAVkrUCHB/Wv1JIRhtxHew+A9IGVsTb4uozyMBWYt9a5kN7A9iDI
+        OOGMG52MEYhci+jZFfVZ1aWNVnPbeN8WaRkG
+X-Google-Smtp-Source: APXvYqxnyNJu0dpuhkbD8V2MUn3DG+U46V6RIU4ma0y5/B8D4fyvBCvbpFOmizCk0WSq3Se6YEHEdw==
+X-Received: by 2002:a1c:1981:: with SMTP id 123mr2593496wmz.88.1569498129864;
+        Thu, 26 Sep 2019 04:42:09 -0700 (PDT)
+Received: from [192.168.1.145] ([65.39.69.237])
+        by smtp.gmail.com with ESMTPSA id s12sm5719744wra.82.2019.09.26.04.42.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Sep 2019 04:42:09 -0700 (PDT)
+Subject: Re: [PATCH][next] io_uring: ensure variable ret is initialized to
+ zero
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190926095012.31826-1-colin.king@canonical.com>
+ <3aa821ea-3041-fb56-2458-ec643963c511@kernel.dk>
+ <20190926113329.GE27389@kadam>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <04262621-68fd-a4bb-ab0c-83954c03fbb0@kernel.dk>
+Date:   Thu, 26 Sep 2019 13:42:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190926113329.GE27389@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If arm_smccc_1_1_invoke used in modules, psci_ops.conduit should
-be export.
+On 9/26/19 1:33 PM, Dan Carpenter wrote:
+> On Thu, Sep 26, 2019 at 11:56:30AM +0200, Jens Axboe wrote:
+>> On 9/26/19 11:50 AM, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> In the case where sig is NULL the error variable ret is not initialized
+>>> and may contain a garbage value on the final checks to see if ret is
+>>> -ERESTARTSYS.  Best to initialize ret to zero before the do loop to
+>>> ensure the ret does not accidentially contain -ERESTARTSYS before the
+>>> loop.
+>>
+>> Oops, weird it didn't complain. I've folded in this fix, as that commit
+>> isn't upstream yet. Thanks!
+> 
+> There is a bug in GCC where at certain optimization levels, instead of
+> complaining, it initializes it to zero.
 
-Signed-off-by: Jianyong Wu <jianyong.wu@arm.com>
----
- drivers/firmware/psci/psci.c | 6 ++++++
- include/linux/arm-smccc.h    | 2 +-
- include/linux/psci.h         | 1 +
- 3 files changed, 8 insertions(+), 1 deletion(-)
+That's awfully nice of it ;-)
 
-diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-index f82ccd39a913..35c4eaab1451 100644
---- a/drivers/firmware/psci/psci.c
-+++ b/drivers/firmware/psci/psci.c
-@@ -212,6 +212,12 @@ static unsigned long psci_migrate_info_up_cpu(void)
- 			      0, 0, 0);
- }
- 
-+enum psci_conduit psci_get_conduit(void)
-+{
-+	return psci_ops.conduit;
-+}
-+EXPORT_SYMBOL(psci_get_conduit);
-+
- static void set_conduit(enum psci_conduit conduit)
- {
- 	switch (conduit) {
-diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
-index 552cbd49abe8..a6e4d3e3d10a 100644
---- a/include/linux/arm-smccc.h
-+++ b/include/linux/arm-smccc.h
-@@ -357,7 +357,7 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
-  * The return value also provides the conduit that was used.
-  */
- #define arm_smccc_1_1_invoke(...) ({					\
--		int method = psci_ops.conduit;				\
-+		int method = psci_get_conduit();			\
- 		switch (method) {					\
- 		case PSCI_CONDUIT_HVC:					\
- 			arm_smccc_1_1_hvc(__VA_ARGS__);			\
-diff --git a/include/linux/psci.h b/include/linux/psci.h
-index a8a15613c157..e5cedc986049 100644
---- a/include/linux/psci.h
-+++ b/include/linux/psci.h
-@@ -42,6 +42,7 @@ struct psci_operations {
- 	enum smccc_version smccc_version;
- };
- 
-+extern enum psci_conduit psci_get_conduit(void);
- extern struct psci_operations psci_ops;
- 
- #if defined(CONFIG_ARM_PSCI_FW)
+Tried with -O0 and still didn't complain for me.
+
+$ gcc --version
+gcc (Ubuntu 9.1.0-2ubuntu2~18.04) 9.1.0
+
+Tried gcc 5/6/7/8 as well. Might have to go look at what code it's
+generating.
+
 -- 
-2.17.1
+Jens Axboe
 
