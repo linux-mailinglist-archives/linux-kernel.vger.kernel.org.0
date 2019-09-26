@@ -2,69 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E49E5BFA86
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1B66BFA8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbfIZURv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 16:17:51 -0400
-Received: from foss.arm.com ([217.140.110.172]:59030 "EHLO foss.arm.com"
+        id S1728817AbfIZUUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 16:20:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727857AbfIZURu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 16:17:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 405EF142F;
-        Thu, 26 Sep 2019 13:17:50 -0700 (PDT)
-Received: from [172.23.27.158] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E485D3F67D;
-        Thu, 26 Sep 2019 13:17:45 -0700 (PDT)
-Subject: Re: [PATCH v2 2/4] arm64: vdso32: Detect binutils support for dmb
- ishld
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     ard.biesheuvel@linaro.org, ndesaulniers@google.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190926133805.52348-1-vincenzo.frascino@arm.com>
- <20190926133805.52348-3-vincenzo.frascino@arm.com>
- <20190926142642.GF9689@arrakis.emea.arm.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <88d1b318-5c20-b3f4-6c24-60917c673f91@arm.com>
-Date:   Thu, 26 Sep 2019 21:19:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190926142642.GF9689@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727940AbfIZUUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 16:20:22 -0400
+Subject: Re: [GIT PULL] tracing/probe: Fix same probe event argument matching
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569529221;
+        bh=zIkD/kSfg5XhFw8L2SbxqBNbUVnLHxQoBhC4+Xnm4rU=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=zjJvudbvKI8eofvF3HwPDd1sMfEkc3vPPfArB8U2LZ9Ji6JD/0KMmCcuhR2HsY/hA
+         ozjhqlfMxRmIco8dugfC3OIKZl75y5o+PVSgizPT2wpZz8o1Oe4Tn9dQBns3h9MR3Q
+         Gp6RihIdriNSh2NyYVpanyPxgkl8AOsl9o10Nr9Y=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190926050926.03f37f77@oasis.local.home>
+References: <20190926050926.03f37f77@oasis.local.home>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190926050926.03f37f77@oasis.local.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+ trace-v5.4-2
+X-PR-Tracked-Commit-Id: f8d7ab2bded897607bff6324d5c6ea6b4aecca0c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7897c04ad09f815aea1f2dbb05825887d4494a74
+Message-Id: <156952922151.31361.4056457356988560697.pr-tracker-bot@kernel.org>
+Date:   Thu, 26 Sep 2019 20:20:21 +0000
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/19 3:26 PM, Catalin Marinas wrote:
-> On Thu, Sep 26, 2019 at 02:38:03PM +0100, Vincenzo Frascino wrote:
->> diff --git a/arch/arm64/Kbuild b/arch/arm64/Kbuild
->> index d6465823b281..75cf8c796d0e 100644
->> --- a/arch/arm64/Kbuild
->> +++ b/arch/arm64/Kbuild
->> @@ -4,3 +4,9 @@ obj-$(CONFIG_NET)	+= net/
->>  obj-$(CONFIG_KVM)	+= kvm/
->>  obj-$(CONFIG_XEN)	+= xen/
->>  obj-$(CONFIG_CRYPTO)	+= crypto/
->> +
->> +# as-instr-compat
->> +# Usage: cflags-y += $(call as-instr-compat,instr,option1,option2)
->> +
->> +as-instr-compat = $(call try-run,\
->> +	printf "%b\n" "$(1)" | $(COMPATCC) $(KBUILD_AFLAGS) -c -x assembler -o "$$TMP" -,$(2),$(3))
-> 
-> This doesn't seem to be used anywhere. Was it meant to be replaced by
-> cc32-as-instr?
-> 
+The pull request you sent on Thu, 26 Sep 2019 05:09:26 -0400:
 
-Forgot to squash a stash here. Will fix in v3. This is not used anymore was just
-an experiment.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.4-2
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7897c04ad09f815aea1f2dbb05825887d4494a74
+
+Thank you!
 
 -- 
-Regards,
-Vincenzo
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
