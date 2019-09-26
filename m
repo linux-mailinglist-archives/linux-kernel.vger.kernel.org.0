@@ -2,51 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB57BFA72
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC6A8BFA74
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 22:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbfIZUKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 16:10:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55860 "EHLO mail.kernel.org"
+        id S1728790AbfIZUKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 16:10:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbfIZUKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 16:10:04 -0400
-Subject: Re: [GIT PULL] Please pull NFS Client updates for Linux 5.4
+        id S1728765AbfIZUKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 16:10:07 -0400
+Subject: Re: [GIT PULL] xfs: fixes for 5.4-rc1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569528603;
-        bh=wMNBPFcaE4vWI6ONdeFcr/WV5DkaZXPipdTW5NX3iG4=;
+        s=default; t=1569528606;
+        bh=+x3DUTHt3YlyUZuJCVAKU35Ueg50pzR2e0NcxH6OBDo=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ZoacfFtc47qQt4LSO/wHSldDE+u+/JN/7+UfboNvn4zYYD4X+g0Yt8NHTNJG8h4eH
-         mrrhw62MBLLqOhLxfseUQeioJTUsZP3w9imxDNTWvxEa801dZD56whlpxFua4ohMmg
-         5vN/D2u4z63GGtyJn+c3235njzR6yIb26hR3TL9s=
+        b=PT1ux7Fn0ha1+EnehjELJKiI5aGADaGSAbBGFpkWEygQdp5i6qVjcrVSnS+XVKVDF
+         BR0oqSlldz+H4K1153T3ofIWIEKTV6H/zgrdA6CDICbHUS8TDAbbjs43RnLdxhxDgB
+         PnJVZqGoj3VS6d0MksJinxXCFAMJ7eHZ2LvK3+qM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <8448ef6bd5fa881b3114ca30d2e71730ef357e4f.camel@netapp.com>
-References: <8448ef6bd5fa881b3114ca30d2e71730ef357e4f.camel@netapp.com>
-X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <8448ef6bd5fa881b3114ca30d2e71730ef357e4f.camel@netapp.com>
-X-PR-Tracked-Remote: git://git.linux-nfs.org/projects/anna/linux-nfs.git
- tags/nfs-for-5.4-1
-X-PR-Tracked-Commit-Id: a8fd0feeca35cb8f9ddd950191f4aeb777f52f89
+In-Reply-To: <20190926160206.GB9916@magnolia>
+References: <20190926160206.GB9916@magnolia>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190926160206.GB9916@magnolia>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+ tags/xfs-5.4-merge-8
+X-PR-Tracked-Commit-Id: 88d32d3983e72f2a7de72a49b701e2529c48e9c1
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 972a2bf7dfe39ebf49dd47f68d27c416392e53b1
-Message-Id: <156952860345.24871.1430075400174501894.pr-tracker-bot@kernel.org>
-Date:   Thu, 26 Sep 2019 20:10:03 +0000
-To:     "Schumaker, Anna" <Anna.Schumaker@netapp.com>
-Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: 2268419e4c9559ec1e80ee7ae7bd54f8976234cb
+Message-Id: <156952860689.24871.16492371830116475907.pr-tracker-bot@kernel.org>
+Date:   Thu, 26 Sep 2019 20:10:06 +0000
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 26 Sep 2019 19:13:30 +0000:
+The pull request you sent on Thu, 26 Sep 2019 09:02:07 -0700:
 
-> git://git.linux-nfs.org/projects/anna/linux-nfs.git tags/nfs-for-5.4-1
+> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.4-merge-8
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/972a2bf7dfe39ebf49dd47f68d27c416392e53b1
+https://git.kernel.org/torvalds/c/2268419e4c9559ec1e80ee7ae7bd54f8976234cb
 
 Thank you!
 
