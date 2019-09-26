@@ -2,111 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD8DBF266
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8704BF26C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 14:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbfIZMD0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 08:03:26 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:42318 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbfIZMDZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 08:03:25 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 7CA553F5D5;
-        Thu, 26 Sep 2019 14:03:23 +0200 (CEST)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=FPTUu1yg;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Ki1CKtPzyZxv; Thu, 26 Sep 2019 14:03:20 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 06B6E3F234;
-        Thu, 26 Sep 2019 14:03:19 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id BD293360311;
-        Thu, 26 Sep 2019 14:03:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1569499399; bh=DBvNfkxnIXmlXQ6kopNE8+KbXVhg4FkNygEe8p6ktTI=;
-        h=Subject:From:To:References:Cc:Date:In-Reply-To:From;
-        b=FPTUu1ygkAdtznT+rTStt02Vx5rZ4tXicv+4o1vN/kqhsRcZFdwmjZKWWCOG/7dBP
-         VmbWEkLDh6EA8v6nrUzR7e7sXiUcgYjowzQXLT0wJUe9g0uI2v4Ie682IF1HDvGu1N
-         3I3x4TVh79sEl0EOse91dMG5/aZkvEqj9hjq04+M=
-Subject: Ack to merge through DRM? WAS Re: [PATCH v2 1/5] mm: Add
- write-protect and clean utilities for address space ranges
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20190926115548.44000-1-thomas_os@shipmail.org>
- <20190926115548.44000-2-thomas_os@shipmail.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>
-Organization: VMware Inc.
-Message-ID: <85e31bcf-d3c8-2fcf-e659-2c9f82ebedc7@shipmail.org>
-Date:   Thu, 26 Sep 2019 14:03:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726231AbfIZMEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 08:04:47 -0400
+Received: from mga01.intel.com ([192.55.52.88]:26362 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725815AbfIZMEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 08:04:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 05:04:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,551,1559545200"; 
+   d="scan'208";a="389584982"
+Received: from um.fi.intel.com (HELO localhost) ([10.237.72.57])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Sep 2019 05:04:43 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH v1 4/6] perf: Allow using AUX data in perf samples
+In-Reply-To: <87lfw234ew.fsf@ashishki-desk.ger.corp.intel.com>
+References: <20180612075117.65420-1-alexander.shishkin@linux.intel.com> <20180612075117.65420-5-alexander.shishkin@linux.intel.com> <20180614202022.GC12217@hirez.programming.kicks-ass.net> <20180619104725.bqvs7uwzhb4ihyxy@um.fi.intel.com> <20180621201632.GE27616@hirez.programming.kicks-ass.net> <87lfw234ew.fsf@ashishki-desk.ger.corp.intel.com>
+Date:   Thu, 26 Sep 2019 15:04:43 +0300
+Message-ID: <87blv75kmc.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190926115548.44000-2-thomas_os@shipmail.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/26/19 1:55 PM, Thomas Hellström (VMware) wrote:
-> From: Thomas Hellstrom <thellstrom@vmware.com>
+Alexander Shishkin <alexander.shishkin@linux.intel.com> writes:
+
+> Peter Zijlstra <peterz@infradead.org> writes:
 >
-> Add two utilities to a) write-protect and b) clean all ptes pointing into
-> a range of an address space.
-> The utilities are intended to aid in tracking dirty pages (either
-> driver-allocated system memory or pci device memory).
-> The write-protect utility should be used in conjunction with
-> page_mkwrite() and pfn_mkwrite() to trigger write page-faults on page
-> accesses. Typically one would want to use this on sparse accesses into
-> large memory regions. The clean utility should be used to utilize
-> hardware dirtying functionality and avoid the overhead of page-faults,
-> typically on large accesses into small memory regions.
+>> On Tue, Jun 19, 2018 at 01:47:25PM +0300, Alexander Shishkin wrote:
+>>> Right, the SW stuff may then race with event_function_call() stuff. Hmm.
+>>> For the HW stuff, I'm hoping that some kind of a sleight of hand may
+>>> suffice. Let me think some more.
+>>
+>> I currently don't see how the SW driven snapshot can ever work, see my
+>> comment on the last patch.
 >
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Souptick Joarder <jrdr.linux@gmail.com>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
->
-> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-> Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
-> ---
+> Yes, this should be solved by grouping, similarly PEBS->PT.
 
-Hi!
+Peter, do you have any thoughts/suggestions as to this RFC? Thanks!
 
-I wonder if I can get an ack from an mm maintainer to merge this through 
-DRM along with the vmwgfx patches? Andrew? Matthew?
-
-Thanks,
-Thomas
-
-
-
+Regards,
+--
+Alex
