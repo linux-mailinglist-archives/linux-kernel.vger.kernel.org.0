@@ -2,162 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D37BCBF5D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 17:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E6E1BF5DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 17:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfIZPYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 11:24:25 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45966 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfIZPYY (ORCPT
+        id S1727254AbfIZP07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 11:26:59 -0400
+Received: from mail-lf1-f53.google.com ([209.85.167.53]:36765 "EHLO
+        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbfIZP07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 11:24:24 -0400
-Received: by mail-qt1-f194.google.com with SMTP id c21so3286268qtj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 08:24:24 -0700 (PDT)
+        Thu, 26 Sep 2019 11:26:59 -0400
+Received: by mail-lf1-f53.google.com with SMTP id x80so2035447lff.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 08:26:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uRMtahzZaS317ydZu6zP9hU9Uft5Q7Gg/uXverRsTDI=;
-        b=L6jds7wjJ6rGQVFP/NMPnfMT6Qx8UympuyaEL0on40XNkxBuQZdycNp/n6yAZFqGbb
-         Fdx95IQ5Gd/xNnut4GryuuX16Sc46t46Ccdzz3Kf6I1hdJsgJvSsQ9FgnKJ731uc4P8p
-         0SidU4qVada1RM/mdwIVbMzdRhpLB2ZByTscHaPlasqtDwyXgXxTj8U/Oy/McRkANPyB
-         sneS3MPRRLzSTsfHQJAehmjNNTLYJIi/bzrZWm8yPYcC1TE/o8v4QCOYpsUmE5nBQs00
-         8KxW1dOTMTXSCio9/uSOosLewn5y/rBExrsSlYYHEM6igvFalpcsdUJi8LmaFQJDRigt
-         g9hg==
+        h=mime-version:from:date:message-id:subject:to;
+        bh=s+9lOd9twZ++9lVM8x7eTHgsEZRoyEnG24gVWpP/yDQ=;
+        b=GBNIEO0enx4yByEHHUOb+9DyJwd6a9M3U98jKwV3yi5VNB5AEDlweL9FpWSpxdttyC
+         WpjbPackduphy2sbqMMb3dHi3C0rSJgLTVB002Ru3iElSAUECtck9zrpLji+lJjLFE88
+         qdpM3mEAYDFjiWP7Kg213RCF1drx+jgUtk6RYQohgEx9Sn4IyjkWpsUmN7BA2lP60Yep
+         fTRnYd18NEjcyNFNvJ944CUT5mjnXMOMp3J8EBFn66rDmFS2+vY3oiPpOkd2jUf4zvIU
+         Lix95o0wVTC6IlbjcCeHv00zpUmZEIJVMwWHrvd7Lmgmt+u49m0qnuwzSE28vQhKnmoN
+         F4Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uRMtahzZaS317ydZu6zP9hU9Uft5Q7Gg/uXverRsTDI=;
-        b=gjnp/mSA4bhUbS7bOJD5ds2sxEi4WI8JjZeKPAywnFbWCBpdXfoKnlLQ4mKcoNL3bh
-         ChvMtnBmpKKgFrK8I62LagNHMbqL/S6i83o1kBJkvggpr0sXI1HMGAxJLb3LzJW8URN5
-         FtLr+yigiMmzTmWFihCPwElMZhx/r1mse+TWdeaRmP04IhoI+HQ9XMCpd1JeK7d0xXJV
-         KAmrpZUGVxzy2r6eVJ+5sr/MpoqdQ5H0K4kqxHXs0c0FSjRS3bd1b+SII5fn884Dpy0P
-         Cca6DBbGtumZxdsfb3ngBGTODugA75dh4UPWq16xui/cd//tuMrm9GCgcRJS7Tj9iAly
-         pFkw==
-X-Gm-Message-State: APjAAAXl2SWrHd5oA+q5HABeCEpKcz+2Om8UUCXZ+fl/eJYReJU+Ly1p
-        oHtxQpBQYJki6t8rw8SagLk=
-X-Google-Smtp-Source: APXvYqx7RyptnqymzB0HhHx3k0IoSqRWOdLV4TYDxrMHlQjw+ncN46PfKKuOhdCyKMXK38DL5V8gJg==
-X-Received: by 2002:a0c:9638:: with SMTP id 53mr3202541qvx.13.1569511463902;
-        Thu, 26 Sep 2019 08:24:23 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id i25sm1081901qkk.30.2019.09.26.08.24.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 08:24:22 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id DE60240396; Thu, 26 Sep 2019 12:24:19 -0300 (-03)
-Date:   Thu, 26 Sep 2019 12:24:19 -0300
-To:     Ian Rogers <irogers@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-        Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH 2/2] Avoid raising segv using an obvious null dereference
-Message-ID: <20190926152419.GD10129@kernel.org>
-References: <20190925195924.152834-1-irogers@google.com>
- <20190925195924.152834-2-irogers@google.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=s+9lOd9twZ++9lVM8x7eTHgsEZRoyEnG24gVWpP/yDQ=;
+        b=sthaoXODEMI+1cjlC8pRV2I+Zj1UqznuKBKg73W021+SPFQbBG4frF/J2IH7dr6zS5
+         k87AeGApjtRFdfBDQGTw/4Sxfjmzk9t3qJT3c39d4nIFS9NO2l6cfF2zCJt4Rurdpo3S
+         WlBHbqTmA8PQcMfKNyYyodSYekJ0O7VtJyg3b+f16DBIZhehivC94aG4mYs/BiU43v9I
+         lg1OvITNZ3BtfDWqE6Pp44AstK0io1MIHYYQKuCNERWv7Z6zWkaDiyHkwNhD7701z0GF
+         7xwQi2MrMC2timVLUQ0n8IC91qa7DHOiIQ0otVT2scv2WPH1t9Xs1y4iEA17iCxzlMD1
+         edpg==
+X-Gm-Message-State: APjAAAWPdPeBN/ZBktYhN5ymv8dFp9YAvmCGKkVEdTj9GS7WPHVpOubJ
+        x9JiKT4WFkn115cEiUzr9qxjcHlT1fiyKa/nYsYaYZpf
+X-Google-Smtp-Source: APXvYqx9KOsCzeRm5K8Du9emxpnNYYsYFechCA8Ys0Wwu4kB+Yf+FNghunoPHy7acNAKBAcTcZx/FSgEjx5+Xa7uTy4=
+X-Received: by 2002:ac2:4c8f:: with SMTP id d15mr2797292lfl.74.1569511616809;
+ Thu, 26 Sep 2019 08:26:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190925195924.152834-2-irogers@google.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Received: by 2002:ac2:46ca:0:0:0:0:0 with HTTP; Thu, 26 Sep 2019 08:26:55
+ -0700 (PDT)
+From:   "\\0xDynamite" <dreamingforward@gmail.com>
+Date:   Thu, 26 Sep 2019 10:26:55 -0500
+Message-ID: <CAMjeLr-RBsJaU7366wLLkO-pP8h_4E1yOVx0KtjmuxdJ8m-w4w@mail.gmail.com>
+Subject: [OFFTOPIC] New OS
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Sep 25, 2019 at 12:59:24PM -0700, Ian Rogers escreveu:
-> An optimized build such as:
-> make -C tools/perf CLANG=1 CC=clang EXTRA_CFLAGS="-O3
-> will turn the dereference operation into a ud2 instruction, raising a SIGILL
-> rather than a SIGSEGV. Use raise(..) for correctness and clarity.
-> 
-> Similar issues were addressed in Numfor Mbiziwo-Tiapo's patch:
-> https://lkml.org/lkml/2019/7/8/1234
+After the bloatware that all modern OSs have become. I've been
+developing new computer science to make a new OS.  This OS may be
+provably optimal.  How?
 
-Added:
+* New CS reveals that architected code reduces code size to 100 log2
+non-architected_LOC.  What is architected code?  Architecture is the
+complementary opposite of software engineering, the focus of most OSs.
+Like properly-architected buildings, a well-engineered building isn't
+necessarily efficient AT ALL for its overall usage.  This puts the
+capstone on the field of software development and creates a new eon of
+computer and data science.
+* Language expressivity is measurable.  Termed Kolmogorov Quotient,
+there is now an equation to measure the utility of languages -- an end
+to the language wars.
+* There is now a unified object architecture (called the GOOP: gospel
+of object-oriented programming), so that OOP can realize it`s goals.
+Along with proper architecture, this allows giants like Office
+applications to be built in 20K instead of 20M.  All objects are apps
+and all apps are objects.  All objects have the same API, creating a
+data ecosystem of reuseable objects throughout the whole OS.
+* Since the internet is now the norm, P2P is built into its design.
+Objects are shared across the network, and each object hold metadata
+that includes their paypal account, allowing them to be paid each time
+the object is instantiated.  Now F/OSS programmers can get paid!
+*  There is no need for a compiler; to be explained later.  The OS
+does it for you using an optimized language design.
 
-Cc: Numfor Mbiziwo-Tiapo <nums@google.com>
+The millions of lines of driver code shows that architecture is faulty
+or lacking, probably in hardware.  Processor geometries should be
+figured out, such that tetrahedral GPU cores, for example, can handle
+3d modeling properly.
 
-And:
+Full disclaimer, I don't have one line of code yet.  I'm waiting for
+assembly to and my development platform to stabilize.  But once a
+basic prompt is available, objects can be created easily and a whole
+system can emerge with very little effort, much like UNIX did back in
+the day.
 
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: a074865e60ed ("perf tools: Introduce perf hooks")
+Sorry for the post, but I know there's someone out there who can use it.
 
-And:
-
-Committer testing:
-
-Before:
-
-  [root@quaco ~]# perf test hooks
-  55: perf hooks                                            : Ok
-  [root@quaco ~]# perf test -v hooks
-  55: perf hooks                                            :
-  --- start ---
-  test child forked, pid 17092
-  SIGSEGV is observed as expected, try to recover.
-  Fatal error (SEGFAULT) in perf hook 'test'
-  test child finished with 0
-  ---- end ----
-  perf hooks: Ok
-  [root@quaco ~]# 
-
-After:
-
-  [root@quaco ~]# perf test hooks
-  55: perf hooks                                            : Ok
-  [root@quaco ~]# perf test -v hooks
-  55: perf hooks                                            :
-  --- start ---
-  test child forked, pid 17909
-  SIGSEGV is observed as expected, try to recover.
-  Fatal error (SEGFAULT) in perf hook 'test'
-  test child finished with 0
-  ---- end ----
-  perf hooks: Ok
-  [root@quaco ~]#
-
-
- ----------------------------------------------------------------------------
-
-Thanks, applied.
-
-- Arnaldo
- 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/tests/perf-hooks.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/tests/perf-hooks.c b/tools/perf/tests/perf-hooks.c
-> index dbc27199c65e..dd865e0bea12 100644
-> --- a/tools/perf/tests/perf-hooks.c
-> +++ b/tools/perf/tests/perf-hooks.c
-> @@ -19,12 +19,11 @@ static void sigsegv_handler(int sig __maybe_unused)
->  static void the_hook(void *_hook_flags)
->  {
->  	int *hook_flags = _hook_flags;
-> -	int *p = NULL;
->  
->  	*hook_flags = 1234;
->  
->  	/* Generate a segfault, test perf_hooks__recover */
-> -	*p = 0;
-> +	raise(SIGSEGV);
->  }
->  
->  int test__perf_hooks(struct test *test __maybe_unused, int subtest __maybe_unused)
-> -- 
-> 2.23.0.351.gc4317032e6-goog
-
--- 
-
-- Arnaldo
+Marxos
