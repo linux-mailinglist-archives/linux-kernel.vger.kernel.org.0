@@ -2,66 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3101BFB10
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 23:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 357D6BFB13
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 23:44:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfIZVoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 17:44:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:60804 "EHLO foss.arm.com"
+        id S1727933AbfIZVoX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 17:44:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726953AbfIZVoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 17:44:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A53D815AB;
-        Thu, 26 Sep 2019 14:44:01 -0700 (PDT)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 879353F739;
-        Thu, 26 Sep 2019 14:44:00 -0700 (PDT)
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     vincenzo.frascino@arm.com, ard.biesheuvel@linaro.org,
-        ndesaulniers@google.com, catalin.marinas@arm.com, will@kernel.org,
-        tglx@linutronix.de
-Subject: [PATCH v3 5/5] arm64: vdso32: Remove jump label config option in Makefile
-Date:   Thu, 26 Sep 2019 22:43:42 +0100
-Message-Id: <20190926214342.34608-6-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190926214342.34608-1-vincenzo.frascino@arm.com>
-References: <20190920142738.qlsjwguc6bpnez63@willie-the-truck>
- <20190926214342.34608-1-vincenzo.frascino@arm.com>
+        id S1725909AbfIZVoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 17:44:23 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47C51222C2;
+        Thu, 26 Sep 2019 21:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569534262;
+        bh=95lnWYTghHkknIGrqA3CpYvmc6veRK2JhKnP5lh+Vbw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=asCa1xXlo1wJ09Dg1cbDBdJWb9moKWdDUS8lyLWf4a0ruoSefX/7KzIvR3yVHno3S
+         2UJxv5UhRRNoxkA3JBoud8shJ4WyCTQVsOEzzxANGT0vlUX8veUMBY7cm3O1fNoq8i
+         YYoQlSFapDgdexfIGlEcbrKaO3vNhSPYlkyPF79g=
+Date:   Thu, 26 Sep 2019 16:44:12 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Megha Dey <megha.dey@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-pci@vger.kernel.org, maz@kernel.org, rafael@kernel.org,
+        gregkh@linuxfoundation.org, tglx@linutronix.de, hpa@zytor.com,
+        alex.williamson@redhat.com, jgg@mellanox.com, ashok.raj@intel.com,
+        megha.dey@intel.com, jacob.jun.pan@intel.com,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sanjay Kumar <sanjay.k.kumar@intel.com>
+Subject: Re: [RFC V1 6/7] ims-msi: Add APIs to allocate/free IMS interrupts
+Message-ID: <20190926214412.GA197619@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1568338328-22458-7-git-send-email-megha.dey@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The jump labels are not used in vdso32 since it is not possible to run
-runtime patching on them.
+On Thu, Sep 12, 2019 at 06:32:07PM -0700, Megha Dey wrote:
+> This patch introduces APIs to allocate and free IMS interrupts.
 
-Remove the configuration option from the Makefile.
+> +int __dev_ims_alloc_irqs(struct device *dev, int nvec,
+> +			 struct dev_ims_ops *ops,
+> +			 struct irq_affinity *affd)
 
-Cc: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- arch/arm64/kernel/vdso32/Makefile | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/arch/arm64/kernel/vdso32/Makefile b/arch/arm64/kernel/vdso32/Makefile
-index 77aa61340374..038357a1e835 100644
---- a/arch/arm64/kernel/vdso32/Makefile
-+++ b/arch/arm64/kernel/vdso32/Makefile
-@@ -38,9 +38,6 @@ VDSO_CAFLAGS += $(call cc32-option,-fno-PIE)
- ifdef CONFIG_DEBUG_INFO
- VDSO_CAFLAGS += -g
- endif
--ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(COMPATCC)), y)
--VDSO_CAFLAGS += -DCC_HAVE_ASM_GOTO
--endif
- 
- # From arm Makefile
- VDSO_CAFLAGS += $(call cc32-option,-fno-dwarf2-cfi-asm)
--- 
-2.23.0
-
+Should be static?  The only reference is in this file.
