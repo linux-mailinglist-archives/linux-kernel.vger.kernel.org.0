@@ -2,55 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6641BF4E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 16:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1229DBF4ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 16:21:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfIZORq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 10:17:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41498 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726500AbfIZORq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 10:17:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3C499AED5;
-        Thu, 26 Sep 2019 14:17:45 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        boris.ostrovsky@oracle.com
-Subject: [GIT PULL] xen: features for 5.4-rc1
-Date:   Thu, 26 Sep 2019 16:17:43 +0200
-Message-Id: <20190926141743.25426-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        id S1727142AbfIZOVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 10:21:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44312 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726500AbfIZOVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 10:21:21 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 63B3410CC207;
+        Thu, 26 Sep 2019 14:21:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-125-72.rdu2.redhat.com [10.10.125.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D1A1360C44;
+        Thu, 26 Sep 2019 14:21:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] jffs2: Fix mounting under new mount API
+From:   David Howells <dhowells@redhat.com>
+To:     dwmw2@infradead.org, richard@nod.at
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-mtd@lists.infradead.org,
+        dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 26 Sep 2019 15:21:18 +0100
+Message-ID: <156950767876.30879.17024491763471689960.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Thu, 26 Sep 2019 14:21:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+The mounting of jffs2 is broken due to the changes from the new mount API
+because it specifies a "source" operation, but then doesn't actually
+process it.  But because it specified it, it doesn't return -ENOPARAM and
+the caller doesn't process it either and the source gets lost.
 
-Please git pull the following tag:
+Fix this by simply removing the source parameter from jffs2 and letting the
+VFS deal with it in the default manner.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git for-linus-5.4-rc1-tag
+To test it, enable CONFIG_MTD_MTDRAM and allow the default size and erase
+block size parameters, then try and mount the /dev/mtdblock<N> file that
+that creates as jffs2.  No need to initialise it.
 
-xen: features for 5.4-rc1
+Fixes: ec10a24f10c8 ("vfs: Convert jffs2 to use the new mount API")
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: David Woodhouse <dwmw2@infradead.org>
+cc: Richard Weinberger <richard@nod.at>
+cc: linux-mtd@lists.infradead.org
+---
 
-It contains only two small patches this time:
+ fs/jffs2/super.c |    2 --
+ 1 file changed, 2 deletions(-)
 
-- a small cleanup for swiotlb-xen
-- a fix for PCI initialization for some platforms
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index cbe70637c117..0e6406c4f362 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -163,13 +163,11 @@ static const struct export_operations jffs2_export_ops = {
+  * Opt_rp_size: size of reserved pool in KiB
+  */
+ enum {
+-	Opt_source,
+ 	Opt_override_compr,
+ 	Opt_rp_size,
+ };
+ 
+ static const struct fs_parameter_spec jffs2_param_specs[] = {
+-	fsparam_string	("source",	Opt_source),
+ 	fsparam_enum	("compr",	Opt_override_compr),
+ 	fsparam_u32	("rp_size",	Opt_rp_size),
+ 	{}
 
-Thanks.
-
-Juergen
-
- drivers/xen/pci.c         | 21 +++++++++++++++------
- drivers/xen/swiotlb-xen.c |  5 ++---
- 2 files changed, 17 insertions(+), 9 deletions(-)
-
-Igor Druzhinin (1):
-      xen/pci: reserve MCFG areas earlier
-
-Souptick Joarder (1):
-      swiotlb-xen: Convert to use macro
