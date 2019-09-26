@@ -2,93 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFADBF93F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:35:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 651B4BF945
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 20:37:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbfIZSfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 14:35:46 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33640 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfIZSfq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 14:35:46 -0400
-Received: by mail-pl1-f194.google.com with SMTP id d22so19318pls.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 11:35:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=xqyqmD5GX/EEp8qGv/ybZ9xAmuKvDeLoKv9DsbBuMDQ=;
-        b=FbHWJ5e5GIn3c1An34lHOdYR7yZRnSFsMnQi3h80AoihggomZpR25cz7mxjCx42Or8
-         eUF6sWFjzNuuViK2yG6aT8RozYVsPq1XwCWIp+OadGljJ2mxZ849LYucfERKahMPSki2
-         UyMlL1FTSiWHcwxXKqnGN61u/ED5ahvd6lRZg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=xqyqmD5GX/EEp8qGv/ybZ9xAmuKvDeLoKv9DsbBuMDQ=;
-        b=YHphZ9B0kTvQ7kThaE50LTT95hm+h9mtLt7LcEClo+kWSePEziLS7faFeokWiPmpmk
-         sCul7xr8rY2SFoWzxW8XELd4RMBfO94ZR7nUS60rGprBBkc3zQm8fGdOxLeCdug3RTzy
-         XXPgpRgZQPc/OYjwWAlKooZkLtSb8vRMvhj3hfUk/dQQaDNVvDJK25z8XCTV90Xlr2yJ
-         ErlivHwzZOJ6K+qIc1fM34WH2oWV4/j0RyEyYvxS1NG6qy+H4c6PyRzUvOyJwlb5gg0Q
-         OXochwI3AgI7XNbsTtF4OPj9L8zXyd9jFE1xYIssI3UJhSq1cJyPhZpikjnHAW6Yf261
-         kjoQ==
-X-Gm-Message-State: APjAAAUBLrV8dUQzrzB5qK85BsxJtdP5TXWOhmXn+VLvXhm25FEiYdl0
-        hL5267XE4hqVvQvluB58ekKCTw==
-X-Google-Smtp-Source: APXvYqwg6m3BLvFxJRQOjKOmPMDmY2I9UbM16EXi1rUxDfNO7km1QdaPhu01Vn6BiwuFEch+qNb2GQ==
-X-Received: by 2002:a17:902:6b05:: with SMTP id o5mr5394481plk.33.1569522943629;
-        Thu, 26 Sep 2019 11:35:43 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q13sm3180814pjq.0.2019.09.26.11.35.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Sep 2019 11:35:42 -0700 (PDT)
-Date:   Thu, 26 Sep 2019 11:35:41 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [GIT PULL] usercopy fix for v5.4-rc1
-Message-ID: <201909261131.65DA27B@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        id S1728474AbfIZShF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 14:37:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728413AbfIZShE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 14:37:04 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38AD820872;
+        Thu, 26 Sep 2019 18:37:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569523023;
+        bh=mp0cAdKqEqH/s9D+3ht8kbYbJ5u3i3m3qD9oNpDN+K4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=h9Edz85612LyGIUz2DxRyySgApO6Tt3gb7FCJN5UBhbsJSfrIe/yWvrl1nlYoGuEs
+         IZ4hJF6ntWeoZ3YD0fSUKRjxj2BWLCLtv2q6qip3DdKlZkwfl//fsqL7Q84QkCePh6
+         9/5293kg2lwsw7idmxCfCLhQb6oG30V/G0lRtxHY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] dt-bindings: timer: Use defines instead of numbers in Exynos MCT examples
+Date:   Thu, 26 Sep 2019 20:36:43 +0200
+Message-Id: <20190926183643.7118-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Make the examples in Exynos Multi Core Timer bindings more readable and
+bring them closer to real DTS by using defines for interrupt flags.
 
-Please pull this usercopy fix for v5.4-rc1. Randy found a corner case
-(HIGHMEM, DEBUG_VIRTUAL, >512MB RAM) with hardened usercopy that went
-unnoticed since v4.8. This adds HIGHMEM awareness to hardened usercopy,
-and has been living in -next for a bit more than a week now.
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Thanks!
+---
 
--Kees
+Rebased on top of:
+https://patchwork.kernel.org/project/linux-samsung-soc/list/?series=177667&state=*
+---
+ .../timer/samsung,exynos4210-mct.yaml         | 37 ++++++++++++++-----
+ 1 file changed, 27 insertions(+), 10 deletions(-)
 
-The following changes since commit 4d856f72c10ecb060868ed10ff1b1453943fc6c8:
-
-  Linux 5.3 (2019-09-15 14:19:32 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/usercopy-v5.4-rc1
-
-for you to fetch changes up to 314eed30ede02fa925990f535652254b5bad6b65:
-
-  usercopy: Avoid HIGHMEM pfn warning (2019-09-17 15:20:17 -0700)
-
-----------------------------------------------------------------
-Fix hardened usercopy under CONFIG_DEBUG_VIRTUAL
-
-----------------------------------------------------------------
-Kees Cook (1):
-      usercopy: Avoid HIGHMEM pfn warning
-
- mm/usercopy.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+index bff3f54a398f..c4d152009f76 100644
+--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
+@@ -75,51 +75,68 @@ examples:
+     // In this example, the IP contains two local timers, using separate
+     // interrupts, so two local timer interrupts have been specified,
+     // in addition to four global timer interrupts.
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+     timer@10050000 {
+         compatible = "samsung,exynos4210-mct";
+         reg = <0x10050000 0x800>;
+-        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+-                     <0 42 0>, <0 48 0>;
++        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+     };
+ 
+   - |
+     // In this example, the timer interrupts are connected to two separate
+     // interrupt controllers. Hence, an interrupts-extended is needed.
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+     timer@101c0000 {
+         compatible = "samsung,exynos4210-mct";
+         reg = <0x101C0000 0x800>;
+-        interrupts-extended = <&gic 0 57 0>,
+-                              <&gic 0 69 0>,
++        interrupts-extended = <&gic GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++                              <&gic GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
+                               <&combiner 12 6>,
+                               <&combiner 12 7>,
+-                              <&gic 0 42 0>,
+-                              <&gic 0 48 0>;
++                              <&gic GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++                              <&gic GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+     };
+ 
+   - |
+     // In this example, the IP contains four local timers, but using
+     // a per-processor interrupt to handle them. Only one first local
+     // interrupt is specified.
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+     timer@10050000 {
+         compatible = "samsung,exynos4412-mct";
+         reg = <0x10050000 0x800>;
+ 
+-        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+-                     <0 42 0>;
++        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+     };
+ 
+   - |
+     // In this example, the IP contains four local timers, but using
+     // a per-processor interrupt to handle them. All the local timer
+     // interrupts are specified.
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+     timer@10050000 {
+         compatible = "samsung,exynos4412-mct";
+         reg = <0x10050000 0x800>;
+ 
+-        interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+-                     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
++        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+     };
 -- 
-Kees Cook
+2.17.1
+
