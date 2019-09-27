@@ -2,97 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E7C2BFFEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 09:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD86BFFCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 09:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbfI0HT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 03:19:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3226 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725804AbfI0HT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 03:19:57 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5CA93AB8D235F5ACECF8;
-        Fri, 27 Sep 2019 15:04:02 +0800 (CST)
-Received: from [127.0.0.1] (10.184.12.158) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 27 Sep 2019
- 15:03:53 +0800
-Subject: Re: [PATCH 03/35] irqchip/gic-v3-its: Allow LPI invalidation via the
- DirectLPI interface
-To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-kernel@vger.kernel.org>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20190923182606.32100-1-maz@kernel.org>
- <20190923182606.32100-4-maz@kernel.org>
- <92ff82ca-ebcb-8f5f-5063-313f65bbc5e3@huawei.com>
- <22202880-9a99-f0d9-4737-6112d60b30a6@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <9399fbe3-5293-d34f-712e-3bf62680fda4@huawei.com>
-Date:   Fri, 27 Sep 2019 14:59:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
-MIME-Version: 1.0
-In-Reply-To: <22202880-9a99-f0d9-4737-6112d60b30a6@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.12.158]
-X-CFilter-Loop: Reflected
+        id S1726359AbfI0HLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 03:11:12 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34857 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbfI0HLL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 03:11:11 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y10so713627plp.2
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 00:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=QRNTfvVyCK5bbHeSG6WJ7G90ba0BRcjEhnvGaZUR3O4=;
+        b=Z+7ixFdyDjZdCoa7+16p/WiWMn+KKodd3MLzu1wCZ5xIkH+B+R5rIK0VHDHcL1v+M3
+         k55HUqLAHv/FhmSTVDCgI6DJACQn9AoS4wmhcXWd9/QSjQ3x/BSWT9jnKrzlDLez0DAp
+         JjM3S4w4Y1upRO5PoxuJ/P68VME6HX4wj7VUz6HlxKrOPMCEf5oLmpAhCqIBL/JZGn3r
+         mPQ+aOS202oWHpwI0hGouy7a8PSU90PsmeylYBRwoNKBmkA8x3gOR6eneeo64Qi2hnYE
+         S0tgjl96eQgvBK4B0WCQg8NgQHxp/LUvYd6T/cJULd3nZe8bo39xMsmsv6hMyg519gS4
+         RA/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QRNTfvVyCK5bbHeSG6WJ7G90ba0BRcjEhnvGaZUR3O4=;
+        b=JQ4M7sHfoHKm9Xkxoa67KnvtYZrBHijDa9dHyZccDnt/0BuwCFOoYtkIA003pAYy7u
+         t8P100f6DvAoS0sZ5x+FwdDSGG3W6slkbOffArPrnGnkPBLs+cF/WCuqfgPfAeGcMMWn
+         1Yjj9WvDixYYejwmitrUyMwRHLBGuhUHMHoN3eYpWrnwatCsolKe/bsbXlAKQCm+gxrJ
+         PvrVr0ZXz1CBn4Oil2h/OXTxU54CeG/veaJdkF92DAqE6fhd2U5kB+KdwSWNNw8ceW1J
+         uC/z+ptl9ocugduytDokwexqXwtkxW0OMdUlie8/x4a1yJN/Rktwsb5o2kyuMX+iuRI1
+         mopQ==
+X-Gm-Message-State: APjAAAU+HJeCQp+Qew57v7ebVvwmdHaiOPxaFJ/E9Lf3Y68+4bMgKbUz
+        0BXeHibujJ3oLugjRgpXrImihw==
+X-Google-Smtp-Source: APXvYqyqfHUXWwRMV3DOgX6ALCpaD1faiee6ZVSazk+b4FUfUrv2vIQUnJsVq/3monizvbWaexoD5Q==
+X-Received: by 2002:a17:902:a613:: with SMTP id u19mr2998244plq.122.1569568271110;
+        Fri, 27 Sep 2019 00:11:11 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id f74sm1733288pfa.34.2019.09.27.00.11.08
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 27 Sep 2019 00:11:10 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Some optimization for Spreadtrum hwlock controller
+Date:   Fri, 27 Sep 2019 15:10:43 +0800
+Message-Id: <cover.1569567749.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/9/27 0:17, Marc Zyngier wrote:
-> On 26/09/2019 15:57, Zenghui Yu wrote:
->> Hi Marc,
->>
->> I get one kernel panic with this patch on D05.
-> 
-> Can you please try this (completely untested for now) on top of the
-> whole series? I'll otherwise give it a go next week.
+This patch set did some optimization for Spreadtrum hwlock controller,
+including using some devm_xxx APIs to simplify code and validating the
+return value when enabling clock.
 
-Yes, it helps. At least I don't see panic any more. Without this change,
-the host would get crashed as long as the VM is started.
+Baolin Wang (4):
+  hwspinlock: sprd: Change to use devm_platform_ioremap_resource()
+  hwspinlock: sprd: Check the return value of clk_prepare_enable()
+  hwspinlock: sprd: Use devm_add_action_or_reset() for calls to
+    clk_disable_unprepare()
+  hwspinlock: sprd: Use devm_hwspin_lock_register() to register hwlock
+    controller
 
+ drivers/hwspinlock/sprd_hwspinlock.c |   33 ++++++++++++++++++++++-----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-Thanks,
-zenghui
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index bc55327406b7..9d24236d1257 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -3461,15 +3461,16 @@ static void its_vpe_send_cmd(struct its_vpe *vpe,
->   
->   static void its_vpe_send_inv(struct irq_data *d)
->   {
-> +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-> +
->   	if (gic_rdists->has_direct_lpi) {
-> -		/*
-> -		 * Don't mess about. Generating the invalidation is easily
-> -		 * done by using the parent irq_data, just like below.
-> -		 */
-> -		direct_lpi_inv(d->parent_data);
-> -	} else {
-> -		struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-> +		void __iomem *rdbase;
->   
-> +		/* Target the redistributor this VPE is currently known on */
-> +		rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
-> +		gic_write_lpir(d->parent_data->hwirq, rdbase + GICR_INVLPIR);
-> +		wait_for_syncr(rdbase);
-> +	} else {
->   		its_vpe_send_cmd(vpe, its_send_inv);
->   	}
->   }
-> 
+-- 
+1.7.9.5
 
