@@ -2,78 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84900C06D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:59:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F0BC06CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:58:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbfI0N7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 09:59:09 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:60994 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727416AbfI0N7J (ORCPT
+        id S1727602AbfI0N6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 09:58:24 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39990 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbfI0N6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 09:59:09 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8RDwn29021767;
-        Fri, 27 Sep 2019 13:59:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=OISkejdCnUQ7n1u+9AO5cwXNSfG1nz9xfUQ6TViyWls=;
- b=rajcAFOyckY2py9OvWKGBHE0XENcGcHHZWI7QydjlrZz9LrWBYBJPTca08zYkuOcedvD
- tin+eBGjDIDdCFMFged5W7wZUxe99ySnap81P1wdbdmQOS60Zz+uib0d91nknSbeHmuu
- TEZ/gzNnDc/h1ih5xP5SStWU4VhoIYjsPIgC5uZETBBRl4GBchKhwkPG4ItNmnLKzAAw
- SVED0dJHfl0lJcrfx5Z7FRcVP4zb5yZiHjJacCXjXijQxAI1Y9nMQLACqO3G6bH9n9Af
- m9MZMKo8+9Exsop2Fatt1GZEB9v0Pa4MnSBEkfctcYQkULY/r/Bo8dPBRB6MR8JFoTxu 3A== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2v5cgrjdry-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 13:59:00 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8RDwaeP014695;
-        Fri, 27 Sep 2019 13:58:59 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2v8yk03hxy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 13:58:52 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8RDwS9f032464;
-        Fri, 27 Sep 2019 13:58:28 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 27 Sep 2019 06:58:27 -0700
-Date:   Fri, 27 Sep 2019 16:58:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Connor Kuehl <connor.kuehl@canonical.com>
-Cc:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
-        straube.linux@gmail.com, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: rtl8188eu: remove dead code/vestigial
- do..while loop
-Message-ID: <20190927102349.GG27389@kadam>
-References: <20190924142819.5243-1-connor.kuehl@canonical.com>
+        Fri, 27 Sep 2019 09:58:24 -0400
+Received: by mail-io1-f66.google.com with SMTP id h144so16522519iof.7
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 06:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
+        b=Tm150+dWJLLuNY2hzsPQPsJFHeTeZkEOJoRFHH3Ay7trb87Aqz83aC2FqlCwa+p622
+         7jEvM3iHp3uPd+7sF9pr5q2w/A9eNQQI5qS9WzC8R5IUiO75k9q+HzbUZrABDPDX1hmE
+         SCuasL5jhoC2s5tqTdwB5uvvbxJqVJTqA7j0sPwBoBudHVrHdIPay5/TOBe35el39TVR
+         Jn6Un3TYJuOzR9cOlEj6GMFOAaOoeZRVDVYbhvStmnx3iH0B4RD+T9DWAGTwGD9HHvBX
+         DsUL/Rvnof6H5WwEXg4LrPpS0vB3swudfIVAlPKPTiJbTfpwDMicPgUb9hpxMGj32eD0
+         Hqnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
+        b=dV+ZbiGZw5yf3zwgUyzmxJD4VxszevuvKBGhrhfHKqD8DmxvzPsK+kvSxKuWz2aSoa
+         jSCrwlRZTsoKftiWw/qMBOd/EPclcgAKE5eivgzINgU617oL6R60WRmDhGvtSb+ioIxM
+         UqmpTD1ED7oWrdKcQuNTzwP4N+AV9gjpvJ9ue7IdhaPsCH3lzkkrUED9EqlbSwgQoml/
+         bYJwf7lSmVanQb+brsK1xHwZ3xFxdOaW4hpUIzG4zDUX8N+Mt+JMXp8QAm9FBmQxkAeY
+         hTSvuVnO5aHVPIbMNAviaZVqWVfbkWnz8baGD1b4qVoN8t9ZDL7Z70ZV51JoyPbp+050
+         hOlQ==
+X-Gm-Message-State: APjAAAUIx358rf6zVizUy9iQTkTBi+GRGLNjSKapfozqeoiuW7tRTGFQ
+        W0NZFc7+6xgTbOUDOGkXOrHy56Dy5/1jdbdT19Q=
+X-Google-Smtp-Source: APXvYqxapJ1gSXYShdu+JHl/3u21FbsijyACZ/GX2FBoOC4YKrEpdX+IddjdztV1+Z1hQfg242PFHWE4ECv/C11btZo=
+X-Received: by 2002:a5d:81cc:: with SMTP id t12mr8571649iol.207.1569592703489;
+ Fri, 27 Sep 2019 06:58:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190924142819.5243-1-connor.kuehl@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=843
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1908290000 definitions=main-1909270132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=924 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
- definitions=main-1909270132
+Received: by 2002:a4f:2886:0:0:0:0:0 with HTTP; Fri, 27 Sep 2019 06:58:23
+ -0700 (PDT)
+Reply-To: joeakaba00@gmail.com
+From:   joe akaba <kouevigathk@gmail.com>
+Date:   Fri, 27 Sep 2019 15:58:23 +0200
+Message-ID: <CAMpCND3xPgRi_H4KQo+RZa2rVDf4X6nXRNq_h=7F3WTkqBHERQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good.  Thanks!
+Hello
 
-regards,
-dan carpenter
+My name is Joe Akaba I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
 
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:joeakaba00@gmail.com
+
+Many thanks in advance,
+Mr.Joe Akaba
+
+
+Hallo
+
+Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8.5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: joeakaba00@gmail.com
+
+Vielen Dank im Voraus,
+Mr.Joe Akaba
