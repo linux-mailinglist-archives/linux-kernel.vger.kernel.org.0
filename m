@@ -2,27 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8AAC00E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 912ADC00EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfI0IOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:14:45 -0400
-Received: from mout.web.de ([212.227.15.4]:38231 "EHLO mout.web.de"
+        id S1726873AbfI0IRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:17:13 -0400
+Received: from mout.web.de ([212.227.15.14]:51017 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbfI0IOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:14:44 -0400
+        id S1726054AbfI0IRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 04:17:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1569572075;
-        bh=QAkNnVWeJt5SekPKj+WvdKsNgsfW0v/u3gpvyRC/tG0=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=Enca4z2G7q+QMUvMD4lEojaOK6vlPwkXUWHzAPbcUVeVPbjZt+Fpv7ByPGAqlCv/4
-         siZWjo5fdQQCxXngAe+UXWcXzURDDbvlFbkWSZhHp+E4Z8gC73RWQEQr5r2dPS2ZY9
-         70JKBpd9TFp4aLogLrBuHHkBeVzRzIzZDIKvyaQs=
+        s=dbaedf251592; t=1569572221;
+        bh=Zmvcu8/nZOzuXMOWbFAj2qJfy89TLpGL3Fx6l2pLhJQ=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=OGyqacmGrxkdkRzfMA5O1KUvAjj9LKYlrmc5aZTeRshzBBSawGqBqgM3gq9j4+/3o
+         NJx3LsxazBOpVcbogUFUhHYRVcy+5deVNvUERS31vtsXvVS3nzZRQ28tj9MHw43fi6
+         RTMTdQ2NGFC4Kqx9ITAeFTj/3dS9d3SDf2l0Poxo=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.191.8]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MC1ho-1iMb5G3wLw-008nfo; Fri, 27
- Sep 2019 10:14:35 +0200
-Subject: [PATCH v2 0/2] net: phy: mscc-miim: Adjustments for mscc_miim_probe()
+Received: from [192.168.1.2] ([93.133.191.8]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0M3PN2-1hvxXB0Fpg-00r0Gn; Fri, 27
+ Sep 2019 10:17:01 +0200
+Subject: [PATCH v2 1/2] net: phy: mscc-miim: Use
+ devm_platform_ioremap_resource() in mscc_miim_probe()
+From:   Markus Elfring <Markus.Elfring@web.de>
 To:     netdev@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Andrew Lunn <andrew@lunn.ch>,
@@ -37,7 +39,7 @@ References: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
  <20190926161825.GB6825@piout.net>
  <0a1f4dbf-4cc6-8530-a38e-31c3369e6db6@web.de>
  <20190926193239.GC6825@piout.net>
-From:   Markus Elfring <Markus.Elfring@web.de>
+ <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
  +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
@@ -81,57 +83,93 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
-Date:   Fri, 27 Sep 2019 10:14:26 +0200
+Message-ID: <90c7a71f-d39a-2615-eedb-cc2d1150f3b3@web.de>
+Date:   Fri, 27 Sep 2019 10:16:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20190926193239.GC6825@piout.net>
+In-Reply-To: <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:klzDtDJPyHsodHKVe00zX2aghptZrnS25Kp49RNIJegMl/4B6YF
- G3uTX78gzMrT1NQV7F+y0Z06p2zxEIlRwQwAlTTz2ANNvBTWm/POsGrPGHiBwPy4ICRiVtB
- XODGkOjaJgAkRsZ2+jms2V8hxVTNonXGE2yd6DckMlSppDBzdAAIQy3lbTZSDMRByacc9m6
- w170jIP9dhBoWKxHRsu4w==
+X-Provags-ID: V03:K1:AaX0sq9+HUsSDnV09bMPNY6kK7JV3C1Pw/3vcyFGiClRO7HQCY1
+ Ull0v5PTUlkBXkK7CB2tRwtx6Ih61No22LmP4AkF7CgeYOwEl5HUbBbYfRM86dXKODsz8ZT
+ VWyY0zHRzOsudJ+JkK8f/cgC24UAXFBEmTapE4x9cRbfacLI6wGgnGS4cOcQ+jfhe0fWhZH
+ 35K0m7GjXtjudkLj5rhJw==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1Zrzp7MwNm8=:oCZ+ScnRN+8mk+p6I1L3aU
- rJdOZJsGG4saATYxwTSkVu/TZ5QhxzRJhF3eRb/kBte0xhu9C5BVc8CLTdY29Qt7eEJoLWA0E
- 2l0qoIXUzpnNlzcJydKx9fV0FO6ygkopl2tgWp4VTSvy1YyjaJ5zxu+b2VCvg3W2epqo3UFUR
- fuAKGqzZOY6BZHbHcgsJGGmG7hkUgryV8z/D6I0G/f9lonlle3FsB/OtgABgV2vf3+HLGwYlA
- 3QxWWlIG0vfW805l0QSPSgs6SRaW60d+j6JJaVEw4KaRygZ+P7zNZN9T41jWL5JYmEz4KtFMm
- vX7blHQKEXT5RT4gXmSgay+jL9QH9Tkb9tLlW0WSaPIEIHVZtFXrPeD/S+TxTdviAsoHlTBQW
- Cu3tSgkrpoTNSNL/fXIks77fB259+WI9tGLPHlyU8B2ygwBM03LPD4GrK5TCUEavccdp3CFEn
- tWUzn2s8Ndz3lMj49UxPVYoMUQJMgP0TThx3vN5XWqEYZcay+PwJm+l22xRnaGk1Vos9Dup9N
- zazNQfNFqQ40kSsQO0AuKj4wHG+m4gYCc7PoGCYvIKF12mHO4f3Jbw2VWLze2pGa617vs0x61
- 7Wp5f5iVYt9ro0s75nYvCHLbritquyB4cjEpRoWS6QaYDLP4tYZ7PVnxzHZKRqXQI76CIwFHK
- tRvPf3BsBtB6G1iHdoXB4jY5+gZtZ+9v/pgfkZTBZGMoCgRXrrepXJjtfkBsorI5562i7xJ7q
- j41mpbIJxrFpx9bpuZ4wx6iPAglUybgPFIZlLG8xxAawyBaf8YnwoUvZUlbFXorfBg6g6aAje
- RWi/LEFqbfhJC6r+vPNygXy7/E7sPDvF/9TnMzqL/ODINLfb7R2ug1ficYZQUCb6Bjn4n6fvk
- oGm2gD7KZpQzw4SPRzuPHMk0ifz0R4GbPytNBRjUohT4MBQT6ECCDoIDWx/kTtMVtpa46UdqR
- rpXKpgNl2EdddqzZRgPj9Cza02XBdtrrMYvn2gKDfYxygMjMQATzaDwid3ap2HyjwoFTO/XBo
- E0TfJu24HbCJ2KNaA/E16Tz4YJtvsaZnQxHQlOmhMIEos4VMMOyjjmfSXa9zkw5Jm8NX7RtYR
- djItdmi6gGRwnYP0g35vaaZqL23z9FD9maodw22fgVuQPix2zlQWJ7LHebEf78AY+eKiPTkkZ
- yvVkKUorNLvm15v25s+Hl1gQ5u0f3WR7kE2eZzm9qC92nlt1xnSn+pDQUHTjcemMaPMkEHlcP
- OYd/O7fv8dr5oDrbNXO7L3p3HSu3m9Okpru7hcpcsi3riXaZGCQqAKSsACH0=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:4viL5OhCNTs=:lP/MxgEccLUgGs97ZGL2+K
+ XPCn6n0nmyGkIFG1cWdLfrV9Sginaj2JaAqH6xx/4dhbBqTidV3zUxWM5kaBy+jNPJcuehdOp
+ mOJTWjqeghBO4JA9RGT0sULkWfUcTXnOPEYUl+Hz1ZWofNif6MNbmUb1xp2fIdd6bb70RDq2X
+ G/zQ5mB8J/bsVihBGkUgbRSTeikNQq4Kq4Ai3a1NSKlulX8yKJI5oFqcPo+ycxo/FEGoUc2eJ
+ /uX9Rf71oCWX1fbbl4HuejgdB7b9koc47fnx/040oD7Pr5U5cxL6Ptqwk+3PskbuYqa2XWeVj
+ iNWoh2shC55QO9mNrf+WJbnilY6TTJc66dA+GA/qwchlHkU9jYmuSSIoJ4Z1IdS9Hoc1IdCMR
+ DxDL4GHA7MP05knAcoYQDRweHfftaLgh8k+8yXCge5XsGesi5jWOr///0F0oK93Gf2AJEkFwk
+ tsZnX+bEuTfqoytzq4WoGlnT9FIhQywFNSX7h8mEE4Ldc69hASTKB0tc2+mmKMEf/AZ14+k9J
+ 0Ypi6993AWPzFOyVPyJKuk0Tk09PXd/S/iFCv4m5bthKpVQ+CbKWaQ+hWzjhkSRxQ776hfmzN
+ WWJMGCL+NUBjd+eYPdJM8Gxa7M25l6psyfr6MfduUDL4Cw2q/rAS8EkIvKZBhP/YWvZ4rw/Js
+ JygH+AvSGgNHNv+SRoG+5cAgKDXStn6JET/HEwuJpmuwvzZLQJsKF38imwm6GTmYFjSHygmi+
+ L9WpavEKkm8OvkpXGH1WYWzeijXagIioYNT80QnY6kUXN/IFeoTiIi3ocuutbY/PpbkfIU7zq
+ DZPhO5MusrVc6FjoK6svPpsrqMCWFMLzgjGAqg7wGoyzFY1m/Lt+SAa/7HGUMwYFLfLiPdkEO
+ sdG1lEj0Yqd7IZsqbeKh3EWCxW6vJotcv1ZK7ui3pSeW3IVY3AJYy4EsDXUjbT3bNXkPir6/h
+ T17PICuBZo2Axoh+FVphwds6HKXVBeO6yg4d+7ztzdL2oCVahgqwJ7cryGWrgVrncbZ/ZnWW4
+ x7KQ2rYNnj3J8IFmJwIw7KKreCG5c/siv2ymn7nWDn8fe8p40Gkm/fnrKkXQZsotjfZ9kjpuK
+ NfhzXvWxmUO35eigGWza6p+kkxo+a4BTLfwtcItyDOD+bPdDifXESStEUPf6uhnC8N5hynPKL
+ rotYAF2iUhtTdgMIHNInDQz56nM1uesgOv07+mhYTWcsUOqP/UzybQy3pIOEt5p+nMj/VCzEV
+ HXvAydR0sJwFjodIuVFnoZ3lxrgW1Y9WJKjXM8vxzo5de+H+HiBInT83cpbY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 27 Sep 2019 09:48:09 +0200
+Date: Fri, 27 Sep 2019 09:24:03 +0200
 
-Two update suggestions were taken into account
-from static source code analysis.
+Simplify this function implementation a bit by using
+a known wrapper function.
 
-Markus Elfring (2):
-  Use devm_platform_ioremap_resource()
-  Move the setting of mii_bus structure members
+This issue was detected by using the Coccinelle software.
 
- drivers/net/phy/mdio-mscc-miim.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
 
+v2:
+Alexandre Belloni pointed the need for adjustments out.
+https://lore.kernel.org/r/20190926193239.GC6825@piout.net/
+
+* The mapping of internal phy registers should be treated as optional.
+* An other prefix would be preferred in the commit subject.
+
+
+ drivers/net/phy/mdio-mscc-miim.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/net/phy/mdio-mscc-miim.c b/drivers/net/phy/mdio-mscc-=
+miim.c
+index badbc99bedd3..aabb13982251 100644
+=2D-- a/drivers/net/phy/mdio-mscc-miim.c
++++ b/drivers/net/phy/mdio-mscc-miim.c
+@@ -120,10 +120,6 @@ static int mscc_miim_probe(struct platform_device *pd=
+ev)
+ 	struct mscc_miim_dev *dev;
+ 	int ret;
+
+-	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!res)
+-		return -ENODEV;
+-
+ 	bus =3D devm_mdiobus_alloc_size(&pdev->dev, sizeof(*dev));
+ 	if (!bus)
+ 		return -ENOMEM;
+@@ -136,7 +132,7 @@ static int mscc_miim_probe(struct platform_device *pde=
+v)
+ 	bus->parent =3D &pdev->dev;
+
+ 	dev =3D bus->priv;
+-	dev->regs =3D devm_ioremap_resource(&pdev->dev, res);
++	dev->regs =3D devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dev->regs)) {
+ 		dev_err(&pdev->dev, "Unable to map MIIM registers\n");
+ 		return PTR_ERR(dev->regs);
 =2D-
 2.23.0
 
