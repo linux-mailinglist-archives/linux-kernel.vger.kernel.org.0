@@ -2,156 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13A55C06C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84900C06D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:59:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbfI0N5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 09:57:33 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46276 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfI0N5d (ORCPT
+        id S1727703AbfI0N7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 09:59:09 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60994 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727416AbfI0N7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 09:57:33 -0400
-Received: by mail-io1-f66.google.com with SMTP id c6so16404215ioo.13;
-        Fri, 27 Sep 2019 06:57:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=boZXw4SCirqsRIbJ+By9WPXJ92CkT49uSIzr686TYUY=;
-        b=S8Fj6UkFcdsLkCEyrpQPS3iJ8WGWrM+qKfeVBrIhZsUSCPJM1LRzD2jxENfvoj2Vv/
-         MwfNdaP8Xu0UwyZOHetLuvAxCD4IZBEfeq1CAYixwrTW/WJ45GRz8pNFV/xSIZDO/cRS
-         9WkeCJrcuAeGMUkW2L2AQ9jfFozLZPVhWWnLNMENvtb14cfWN7T+bcFAsEPaJgVb0rAN
-         7ry0Wts/mlQ9iYVBaRU+09WIfJsihRt6Fk/bsf5sxVfp3pHxWzkge0S0KgxxqCdosUTJ
-         bEhdErU5a5BeICLhZH1i0pai+orCELVEsgtpGUC6an3jWgI2vBdJxPuQo6NInrgLxLux
-         eOZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=boZXw4SCirqsRIbJ+By9WPXJ92CkT49uSIzr686TYUY=;
-        b=Vk0bZ1oO54W1vFj9Sti+aef3UXUtfJoJJFI4NOcytxl/w5p3tvkPbtHFrnPaR8Xx5K
-         Q607hYnV0n1iLOOPE8xWMQG7JIfkqpqBe/1wGki+ALyIvXJ4OPB4epMtGYr+1ILMPt5F
-         Sj4qCAQoexZj1lC3Vj607kDdPh9Y/4vdudSfRtO7frdpBBixSt2RAA5rjbDSHO9jxakc
-         wonZSTS3VUhoDGUdSyieHD3YtDhUrl5aMVeFy50LVuU5bNoSh3jAgxD/29aXLjd445l8
-         ulNHTLVKWPRUN0smwy3759V6R/O01yVnM9U/pXFdp1euXkZ31WDW90rK7Orq5S46B1qf
-         hP/w==
-X-Gm-Message-State: APjAAAWYu3grQWls7p72V2FOTQ8HLi6akkNjWxkqtwfOd9VY5p1CoUua
-        RtcmLe4+f9bXsyai67Uf34kC4eAMdJU=
-X-Google-Smtp-Source: APXvYqw+uVnKir54+fie0lakYdLAjfXFd/WwDbFLVOLXyMmg2a5liUojGMH+R+YgpA3ZfNzqBh8H9Q==
-X-Received: by 2002:a92:8f19:: with SMTP id j25mr4890285ild.302.1569592652193;
-        Fri, 27 Sep 2019 06:57:32 -0700 (PDT)
-Received: from lnx-nickg ([96.78.92.5])
-        by smtp.gmail.com with ESMTPSA id i14sm1095488ilq.38.2019.09.27.06.57.30
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Fri, 27 Sep 2019 06:57:31 -0700 (PDT)
-Date:   Fri, 27 Sep 2019 08:57:20 -0500
-From:   Nicholas Graumann <nick.graumann@gmail.com>
-To:     Radhey Shyam Pandey <radheys@xilinx.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH -next 7/8] dmaengine: xilinx_dma: Check for both idle and
- halted state in axidma stop_transfer
-Message-ID: <20190927135720.GA16057@lnx-nickg>
-References: <1567701424-25658-1-git-send-email-radhey.shyam.pandey@xilinx.com>
- <1567701424-25658-8-git-send-email-radhey.shyam.pandey@xilinx.com>
- <20190926172107.GN3824@vkoul-mobl>
- <CH2PR02MB7000EACD029FC7E47679393CC7810@CH2PR02MB7000.namprd02.prod.outlook.com>
+        Fri, 27 Sep 2019 09:59:09 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8RDwn29021767;
+        Fri, 27 Sep 2019 13:59:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=OISkejdCnUQ7n1u+9AO5cwXNSfG1nz9xfUQ6TViyWls=;
+ b=rajcAFOyckY2py9OvWKGBHE0XENcGcHHZWI7QydjlrZz9LrWBYBJPTca08zYkuOcedvD
+ tin+eBGjDIDdCFMFged5W7wZUxe99ySnap81P1wdbdmQOS60Zz+uib0d91nknSbeHmuu
+ TEZ/gzNnDc/h1ih5xP5SStWU4VhoIYjsPIgC5uZETBBRl4GBchKhwkPG4ItNmnLKzAAw
+ SVED0dJHfl0lJcrfx5Z7FRcVP4zb5yZiHjJacCXjXijQxAI1Y9nMQLACqO3G6bH9n9Af
+ m9MZMKo8+9Exsop2Fatt1GZEB9v0Pa4MnSBEkfctcYQkULY/r/Bo8dPBRB6MR8JFoTxu 3A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2v5cgrjdry-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Sep 2019 13:59:00 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8RDwaeP014695;
+        Fri, 27 Sep 2019 13:58:59 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2v8yk03hxy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Sep 2019 13:58:52 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8RDwS9f032464;
+        Fri, 27 Sep 2019 13:58:28 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 27 Sep 2019 06:58:27 -0700
+Date:   Fri, 27 Sep 2019 16:58:18 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Connor Kuehl <connor.kuehl@canonical.com>
+Cc:     Larry.Finger@lwfinger.net, gregkh@linuxfoundation.org,
+        straube.linux@gmail.com, devel@driverdev.osuosl.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] staging: rtl8188eu: remove dead code/vestigial
+ do..while loop
+Message-ID: <20190927102349.GG27389@kadam>
+References: <20190924142819.5243-1-connor.kuehl@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CH2PR02MB7000EACD029FC7E47679393CC7810@CH2PR02MB7000.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190924142819.5243-1-connor.kuehl@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=843
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909270132
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=924 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909270132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 06:48:29AM +0000, Radhey Shyam Pandey wrote:
-> > -----Original Message-----
-> > From: Vinod Koul <vkoul@kernel.org>
-> > Sent: Thursday, September 26, 2019 10:51 PM
-> > To: Radhey Shyam Pandey <radheys@xilinx.com>
-> > Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>;
-> > nick.graumann@gmail.com; andrea.merello@gmail.com; Appana Durga
-> > Kedareswara Rao <appanad@xilinx.com>; mcgrof@kernel.org;
-> > dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH -next 7/8] dmaengine: xilinx_dma: Check for both idle
-> > and halted state in axidma stop_transfer
-> > 
-> > On 05-09-19, 22:07, Radhey Shyam Pandey wrote:
-> > > From: Nicholas Graumann <nick.graumann@gmail.com>
-> > >
-> > > When polling for a stopped transfer in AXI DMA mode, in some cases the
-> > > status of the channel may indicate IDLE instead of HALTED if the
-> > > channel was reset due to an error.
-> > >
-> > > Signed-off-by: Nicholas Graumann <nick.graumann@gmail.com>
-> > > Signed-off-by: Radhey Shyam Pandey
-> > <radhey.shyam.pandey@xilinx.com>
-> > > ---
-> > >  drivers/dma/xilinx/xilinx_dma.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/dma/xilinx/xilinx_dma.c
-> > b/drivers/dma/xilinx/xilinx_dma.c
-> > > index b5dd62a..0896e07 100644
-> > > --- a/drivers/dma/xilinx/xilinx_dma.c
-> > > +++ b/drivers/dma/xilinx/xilinx_dma.c
-> > > @@ -1092,8 +1092,9 @@ static int xilinx_dma_stop_transfer(struct
-> > xilinx_dma_chan *chan)
-> > >
-> > >  	/* Wait for the hardware to halt */
-> > >  	return xilinx_dma_poll_timeout(chan, XILINX_DMA_REG_DMASR,
-> > val,
-> > > -				       val & XILINX_DMA_DMASR_HALTED, 0,
-> > > -				       XILINX_DMA_LOOP_COUNT);
-> > > +				       val | (XILINX_DMA_DMASR_IDLE |
-> > > +					      XILINX_DMA_DMASR_HALTED),
-> > 
-> > The condition was bitwise AND and now is OR.. ??
-> 
-> Ah, it should be same as before . Only _IDLE mask should be in OR.
-> 
-> Also on second thought to this patch- we need to describe which error
-> scenario "in some cases the status of the channel may indicate IDLE
-> instead of HALTED" as mentioned in commit description.
-> 
-> @Nick: Can you comment?
-> 
-In regard to the mask question, yes, this looks like a bug.
-We should be AND'ing with the mask like before.
+Looks good.  Thanks!
 
-As far as the state, usually when we saw the IDLE state when invoking 
-dmaengine_terminate_all on a channel that had errors. I have not
-proved this, but I believe what happened was the following:
+regards,
+dan carpenter
 
-New transactions were queued when chan->err was set, causing
-xilinx_dma_chan_reset to be invoked which ultimately results in the
-hardware being in an IDLE state by the time xilinx_dma_terminate_all
-gets around to invoking stop_transfer. At that point, stop_transfer is
-going to time out waiting for the hardware to indicate it has HALTED and
-ultimately will time out.
-
-
-In any case, xilinx_dma_stop_transfer should be fine with the hardware
-being in an IDLE state to indicate that the active transfer is stopped.
-Case in point: The CDMA core also covered by this driver only has an
-IDLE bit and no HALTED bit in its DMASR, and it checks for just the IDLE
-bit in xilinx_cdma_stop_transfer().
-> > 
-> > > +				       0, XILINX_DMA_LOOP_COUNT);
-> > >  }
-> > >
-> > >  /**
-> > > --
-> > > 2.7.4
-> > 
-> > --
-> > ~Vinod
