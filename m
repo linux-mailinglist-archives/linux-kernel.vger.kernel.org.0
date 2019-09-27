@@ -2,86 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 394C8C04F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 14:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86DC7C04FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 14:18:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbfI0MP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 08:15:57 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40003 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfI0MP4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 08:15:56 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so3395724pgj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 05:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=M41dMSj8YsUC09fTHA1984IazgNH9432TVv2qcwf7GY=;
-        b=aoZr4wlZ/vB6NcUL28PpX4kyb84Dr46XYL5B8uLKuOD0lADCkKL1gI1R9FDcvQy0sr
-         efTDA76X/+eROw2VMl8YQ4gfEgIG38YrWzzk2qPyDh+V/k5L+yyKfVorTAb3NtEYiwZZ
-         KHg+0sUSdbSN3b8lCN1GhKclh5KV6cua4nLenxUwaRxEOwtVKiGOgthSjGa+qw8bUDRa
-         YVZqH4uaiTPZNY0sBBkeSxH8gZu0RxX+6VqCuxsWduSYmIB/03yonpmLtW1tEbRh4vVx
-         QVpoMlQ094XNyj9nu035cX8wSJHLsP9L0rvclOp5FikjgK2Z6yFFHCYyHyIxO978uifl
-         A+RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=M41dMSj8YsUC09fTHA1984IazgNH9432TVv2qcwf7GY=;
-        b=F3+bB4aJqkWcGeAAFGh4jaVAqgrbE9BBE4j/+beJl6lDH7S+7EKtUt62cZqwRyg7oq
-         ck0V7es7p3OhvADGW3/lmo95oxmaZyRsDkpsvuY7KbkhktdvsCR7zfi1bn9MPGhWteKc
-         GLh9i8j3RNo8Z/aDhN9V/ubGfj/6yZIg6K+u5pL1+oq41eLwXCgIpICqo4qWtB/OIBwH
-         XZ3f12XnNtBeTAVP9KYYSq3MkNzazHZBQ1S9ZRsNxO4TAEd59D6wVblipz9ZPJLZaBE7
-         fWd5e5iWfuBRZKHh8Q3Dsxan6HzUdX+w21nyD6qz8xqhrUxGG4g4WIKcuZ7K47RAKbe3
-         U8gw==
-X-Gm-Message-State: APjAAAXm/JWhC94NXyexFKviH94OSIM1OcC4UAyKJOo5JUfgHLL44VU4
-        Tg6y9D2LR5ONdxULN78bZFw=
-X-Google-Smtp-Source: APXvYqynQHZ+LtAagji3jSZGDp8/ZQFb5ShdqPhqc44KILqSgW95hb4i1P2+5ZSSRM1qcaY9R8SN0A==
-X-Received: by 2002:a63:d055:: with SMTP id s21mr9061931pgi.219.1569586556011;
-        Fri, 27 Sep 2019 05:15:56 -0700 (PDT)
-Received: from hfq-skylake.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
-        by smtp.googlemail.com with ESMTPSA id d76sm6204634pga.80.2019.09.27.05.15.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Sep 2019 05:15:55 -0700 (PDT)
-From:   Fuqian Huang <huangfq.daxian@gmail.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Fuqian Huang <huangfq.daxian@gmail.com>
-Subject: [PATCH] m68k: q40: Fix info-leak in rtc_ioctl
-Date:   Fri, 27 Sep 2019 20:15:44 +0800
-Message-Id: <20190927121544.7650-1-huangfq.daxian@gmail.com>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+        id S1727558AbfI0MSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 08:18:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbfI0MSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 08:18:01 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CC55C10DCC9D;
+        Fri, 27 Sep 2019 12:18:00 +0000 (UTC)
+Received: from [10.72.12.24] (ovpn-12-24.pek2.redhat.com [10.72.12.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E731E5D9C9;
+        Fri, 27 Sep 2019 12:17:49 +0000 (UTC)
+Subject: Re: [PATCH] vhost: introduce mdev based hardware backend
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Tiwei Bie <tiwei.bie@intel.com>, alex.williamson@redhat.com,
+        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        lingshan.zhu@intel.com
+References: <20190926045427.4973-1-tiwei.bie@intel.com>
+ <20190926042156-mutt-send-email-mst@kernel.org> <20190926131439.GA11652@___>
+ <8ab5a8d9-284d-bba5-803d-08523c0814e1@redhat.com>
+ <20190927053935-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <a959fe1e-3095-e0f0-0c9b-57f6eaa9c8b7@redhat.com>
+Date:   Fri, 27 Sep 2019 20:17:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190927053935-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Fri, 27 Sep 2019 12:18:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the option is RTC_PLL_GET, pll will be copied to userland
-via copy_to_user. pll is initialized using mach_get_rtc_pll indirect
-call and mach_get_rtc_pll is only assigned with function
-q40_get_rtc_pll in arch/m68k/q40/config.c.
-In function q40_get_rtc_pll, the field pll_ctrl is not initialized.
-This will leak uninitialized stack content to userland.
-Fix this by zeroing the uninitialized field.
 
-Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
----
- arch/m68k/q40/config.c | 1 +
- 1 file changed, 1 insertion(+)
+On 2019/9/27 下午5:41, Michael S. Tsirkin wrote:
+> On Fri, Sep 27, 2019 at 11:27:12AM +0800, Jason Wang wrote:
+>> On 2019/9/26 下午9:14, Tiwei Bie wrote:
+>>> On Thu, Sep 26, 2019 at 04:35:18AM -0400, Michael S. Tsirkin wrote:
+>>>> On Thu, Sep 26, 2019 at 12:54:27PM +0800, Tiwei Bie wrote:
+>>> [...]
+>>>>> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+>>>>> index 40d028eed645..5afbc2f08fa3 100644
+>>>>> --- a/include/uapi/linux/vhost.h
+>>>>> +++ b/include/uapi/linux/vhost.h
+>>>>> @@ -116,4 +116,12 @@
+>>>>>    #define VHOST_VSOCK_SET_GUEST_CID	_IOW(VHOST_VIRTIO, 0x60, __u64)
+>>>>>    #define VHOST_VSOCK_SET_RUNNING		_IOW(VHOST_VIRTIO, 0x61, int)
+>>>>> +/* VHOST_MDEV specific defines */
+>>>>> +
+>>>>> +#define VHOST_MDEV_SET_STATE	_IOW(VHOST_VIRTIO, 0x70, __u64)
+>>>>> +
+>>>>> +#define VHOST_MDEV_S_STOPPED	0
+>>>>> +#define VHOST_MDEV_S_RUNNING	1
+>>>>> +#define VHOST_MDEV_S_MAX	2
+>>>>> +
+>>>>>    #endif
+>>>> So assuming we have an underlying device that behaves like virtio:
+>>> I think they are really good questions/suggestions. Thanks!
+>>>
+>>>> 1. Should we use SET_STATUS maybe?
+>>> I like this idea. I will give it a try.
+>>>
+>>>> 2. Do we want a reset ioctl?
+>>> I think it is helpful. If we use SET_STATUS, maybe we
+>>> can use it to support the reset.
+>>>
+>>>> 3. Do we want ability to enable rings individually?
+>>> I will make it possible at least in the vhost layer.
+>>
+>> Note the API support e.g set_vq_ready().
+> virtio spec calls this "enabled" so let's stick to that.
 
-diff --git a/arch/m68k/q40/config.c b/arch/m68k/q40/config.c
-index e63eb5f06999..f31890078197 100644
---- a/arch/m68k/q40/config.c
-+++ b/arch/m68k/q40/config.c
-@@ -264,6 +264,7 @@ static int q40_get_rtc_pll(struct rtc_pll_info *pll)
- {
- 	int tmp = Q40_RTC_CTRL;
- 
-+	pll->pll_ctrl = 0;
- 	pll->pll_value = tmp & Q40_RTC_PLL_MASK;
- 	if (tmp & Q40_RTC_PLL_SIGN)
- 		pll->pll_value = -pll->pll_value;
--- 
-2.11.0
 
+Ok.
+
+
+>
+>>>> 4. Does device need to limit max ring size?
+>>>> 5. Does device need to limit max number of queues?
+>>> I think so. It's helpful to have ioctls to report the max
+>>> ring size and max number of queues.
+>>
+>> An issue is the max number of queues is done through a device specific way,
+>> usually device configuration space. This is supported by the transport API,
+>> but how to expose it to userspace may need more thought.
+>>
+>> Thanks
+> an ioctl for device config?  But for v1 I'd be quite happy to just have
+> a minimal working device with 2 queues.
+
+
+I'm fully agree, and it will work as long as VIRTIO_NET_F_MQ and 
+VIRTIO_NET_F_CTRL_VQ is not advertised by the mdev device.
+
+Thanks
+
+
+>
+>>> Thanks!
