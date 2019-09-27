@@ -2,42 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C30BBC00B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6A46C00CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfI0IKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:10:52 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45160 "EHLO
+        id S1727107AbfI0ILV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:11:21 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:45317 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfI0IKv (ORCPT
+        with ESMTP id S1727079AbfI0ILT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:10:51 -0400
+        Fri, 27 Sep 2019 04:11:19 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1iDlKs-0005aX-2A; Fri, 27 Sep 2019 10:10:42 +0200
+        id 1iDlKs-0005ae-VE; Fri, 27 Sep 2019 10:10:43 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 863DE1C0740;
-        Fri, 27 Sep 2019 10:10:41 +0200 (CEST)
-Date:   Fri, 27 Sep 2019 08:10:41 -0000
-From:   "tip-bot2 for Valentin Schneider" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 798FD1C0740;
+        Fri, 27 Sep 2019 10:10:42 +0200 (CEST)
+Date:   Fri, 27 Sep 2019 08:10:42 -0000
+From:   "tip-bot2 for Mathieu Desnoyers" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched/core: Fix preempt_schedule() interrupt
- return comment
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+Subject: [tip: sched/urgent] sched/membarrier: Return -ENOMEM to userspace on
+ memory allocation failure
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kirill Tkhai <tkhai@yandex.ru>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-m68k@lists.linux-m68k.org, linux-riscv@lists.infradead.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
+        Mike Galbraith <efault@gmx.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        "Russell King - ARM Linux admin" <linux@armlinux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190923143620.29334-2-valentin.schneider@arm.com>
-References: <20190923143620.29334-2-valentin.schneider@arm.com>
+In-Reply-To: <20190919173705.2181-8-mathieu.desnoyers@efficios.com>
+References: <20190919173705.2181-8-mathieu.desnoyers@efficios.com>
 MIME-Version: 1.0
-Message-ID: <156957184150.9866.17072165851925129764.tip-bot2@tip-bot2>
+Message-ID: <156957184244.9866.6327974056677601202.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,54 +59,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/urgent branch of tip:
 
-Commit-ID:     a49b4f4012ef233143c5f7ce44f97851e54d5ef9
-Gitweb:        https://git.kernel.org/tip/a49b4f4012ef233143c5f7ce44f97851e54d5ef9
-Author:        Valentin Schneider <valentin.schneider@arm.com>
-AuthorDate:    Mon, 23 Sep 2019 15:36:12 +01:00
+Commit-ID:     c172e0a3e8e65a4c6fffec5bc4d6de08d6f894f7
+Gitweb:        https://git.kernel.org/tip/c172e0a3e8e65a4c6fffec5bc4d6de08d6f894f7
+Author:        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+AuthorDate:    Thu, 19 Sep 2019 13:37:05 -04:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 25 Sep 2019 17:42:32 +02:00
+CommitterDate: Wed, 25 Sep 2019 17:42:31 +02:00
 
-sched/core: Fix preempt_schedule() interrupt return comment
+sched/membarrier: Return -ENOMEM to userspace on memory allocation failure
 
-preempt_schedule_irq() is the one that should be called on return from
-interrupt, clean up the comment to avoid any ambiguity.
+Remove the IPI fallback code from membarrier to deal with very
+infrequent cpumask memory allocation failure. Use GFP_KERNEL rather
+than GFP_NOWAIT, and relax the blocking guarantees for the expedited
+membarrier system call commands, allowing it to block if waiting for
+memory to be made available.
 
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+In addition, now -ENOMEM can be returned to user-space if the cpumask
+memory allocation fails.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Chris Metcalf <cmetcalf@ezchip.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Kirill Tkhai <tkhai@yandex.ru>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Paul E. McKenney <paulmck@linux.ibm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-m68k@lists.linux-m68k.org
-Cc: linux-riscv@lists.infradead.org
-Cc: uclinux-h8-devel@lists.sourceforge.jp
-Link: https://lkml.kernel.org/r/20190923143620.29334-2-valentin.schneider@arm.com
+Cc: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190919173705.2181-8-mathieu.desnoyers@efficios.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ kernel/sched/membarrier.c | 63 ++++++++++++--------------------------
+ 1 file changed, 20 insertions(+), 43 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 83ea23e..00ef44c 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4218,9 +4218,8 @@ static void __sched notrace preempt_schedule_common(void)
- 
- #ifdef CONFIG_PREEMPTION
- /*
-- * this is the entry point to schedule() from in-kernel preemption
-- * off of preempt_enable. Kernel preemptions off return from interrupt
-- * occur there and call schedule directly.
-+ * This is the entry point to schedule() from in-kernel preemption
-+ * off of preempt_enable.
-  */
- asmlinkage __visible void __sched notrace preempt_schedule(void)
+diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
+index fced54a..a39bed2 100644
+--- a/kernel/sched/membarrier.c
++++ b/kernel/sched/membarrier.c
+@@ -66,7 +66,6 @@ void membarrier_exec_mmap(struct mm_struct *mm)
+ static int membarrier_global_expedited(void)
  {
-@@ -4291,7 +4290,7 @@ EXPORT_SYMBOL_GPL(preempt_schedule_notrace);
- #endif /* CONFIG_PREEMPTION */
+ 	int cpu;
+-	bool fallback = false;
+ 	cpumask_var_t tmpmask;
  
- /*
-- * this is the entry point to schedule() from kernel preemption
-+ * This is the entry point to schedule() from kernel preemption
-  * off of irq context.
-  * Note, that this is called and return with irqs disabled. This will
-  * protect us against recursive calling from irq.
+ 	if (num_online_cpus() == 1)
+@@ -78,15 +77,8 @@ static int membarrier_global_expedited(void)
+ 	 */
+ 	smp_mb();	/* system call entry is not a mb. */
+ 
+-	/*
+-	 * Expedited membarrier commands guarantee that they won't
+-	 * block, hence the GFP_NOWAIT allocation flag and fallback
+-	 * implementation.
+-	 */
+-	if (!zalloc_cpumask_var(&tmpmask, GFP_NOWAIT)) {
+-		/* Fallback for OOM. */
+-		fallback = true;
+-	}
++	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
++		return -ENOMEM;
+ 
+ 	cpus_read_lock();
+ 	rcu_read_lock();
+@@ -117,18 +109,15 @@ static int membarrier_global_expedited(void)
+ 		if (p->flags & PF_KTHREAD)
+ 			continue;
+ 
+-		if (!fallback)
+-			__cpumask_set_cpu(cpu, tmpmask);
+-		else
+-			smp_call_function_single(cpu, ipi_mb, NULL, 1);
++		__cpumask_set_cpu(cpu, tmpmask);
+ 	}
+ 	rcu_read_unlock();
+-	if (!fallback) {
+-		preempt_disable();
+-		smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+-		preempt_enable();
+-		free_cpumask_var(tmpmask);
+-	}
++
++	preempt_disable();
++	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
++	preempt_enable();
++
++	free_cpumask_var(tmpmask);
+ 	cpus_read_unlock();
+ 
+ 	/*
+@@ -143,7 +132,6 @@ static int membarrier_global_expedited(void)
+ static int membarrier_private_expedited(int flags)
+ {
+ 	int cpu;
+-	bool fallback = false;
+ 	cpumask_var_t tmpmask;
+ 	struct mm_struct *mm = current->mm;
+ 
+@@ -168,15 +156,8 @@ static int membarrier_private_expedited(int flags)
+ 	 */
+ 	smp_mb();	/* system call entry is not a mb. */
+ 
+-	/*
+-	 * Expedited membarrier commands guarantee that they won't
+-	 * block, hence the GFP_NOWAIT allocation flag and fallback
+-	 * implementation.
+-	 */
+-	if (!zalloc_cpumask_var(&tmpmask, GFP_NOWAIT)) {
+-		/* Fallback for OOM. */
+-		fallback = true;
+-	}
++	if (!zalloc_cpumask_var(&tmpmask, GFP_KERNEL))
++		return -ENOMEM;
+ 
+ 	cpus_read_lock();
+ 	rcu_read_lock();
+@@ -195,20 +176,16 @@ static int membarrier_private_expedited(int flags)
+ 			continue;
+ 		rcu_read_lock();
+ 		p = rcu_dereference(cpu_rq(cpu)->curr);
+-		if (p && p->mm == mm) {
+-			if (!fallback)
+-				__cpumask_set_cpu(cpu, tmpmask);
+-			else
+-				smp_call_function_single(cpu, ipi_mb, NULL, 1);
+-		}
++		if (p && p->mm == mm)
++			__cpumask_set_cpu(cpu, tmpmask);
+ 	}
+ 	rcu_read_unlock();
+-	if (!fallback) {
+-		preempt_disable();
+-		smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+-		preempt_enable();
+-		free_cpumask_var(tmpmask);
+-	}
++
++	preempt_disable();
++	smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
++	preempt_enable();
++
++	free_cpumask_var(tmpmask);
+ 	cpus_read_unlock();
+ 
+ 	/*
+@@ -264,7 +241,7 @@ static int sync_runqueues_membarrier_state(struct mm_struct *mm)
+ 		struct rq *rq = cpu_rq(cpu);
+ 		struct task_struct *p;
+ 
+-		p = rcu_dereference(&rq->curr);
++		p = rcu_dereference(rq->curr);
+ 		if (p && p->mm == mm)
+ 			__cpumask_set_cpu(cpu, tmpmask);
+ 	}
