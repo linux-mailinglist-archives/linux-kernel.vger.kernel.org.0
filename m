@@ -2,85 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A6CCBFF78
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 018CBBFF7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:58:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbfI0G5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 02:57:05 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42449 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfI0G5F (ORCPT
+        id S1726255AbfI0G6k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 02:58:40 -0400
+Received: from cmccmta3.chinamobile.com ([221.176.66.81]:2978 "EHLO
+        cmccmta3.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfI0G6j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 02:57:05 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n14so1365276wrw.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 23:57:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=u2P8AbN7Weo/sHgPPISeZwn+7KOvEl8QMm31QIQuXF8=;
-        b=ofTo4FcsEy51qA0Sl11NYFJXHXvI71yAmWnKYefWox3Bmloa6xkhV3dttDo7xMOSKS
-         7KpZ/7Jj+93HLqaFXUJEqjfVczDN5/JOMcg76+KEIFjpKg2iVAPH2Y2bTW1FYtuYzGAB
-         m8aAbBSw2IdOsoqL8uHcOiqmHTQSfdvf87yCTSiQbUIsDAR+1Gld1Ro6CN48jQ32GTow
-         bIqcmZQqz7lbCZ3R8FgCWvw4BeWIHE65RetlmE769+rs+IOxWvjaN3PcYJhBrzTM+xpX
-         2cdn7pCVgXWf3tjdSmTCwJRuepHfJ+xS60KFNbW7pjqQeSR+N8aSVjVOGr5ucLz3Bg92
-         3lvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u2P8AbN7Weo/sHgPPISeZwn+7KOvEl8QMm31QIQuXF8=;
-        b=M7LlDa1SXPLVZ1q0lFiZ585wLRISxI9EBH6w/1z5UQenZVcN4Jo8s7S3It3cm6ktJH
-         eqlVPIsBIcYVCNTSw8crRnhkc71PYXmtGof4Uw868fOL/8gMVmaVayv+nYmUYPQyK72a
-         SFPYkGFlAgH1qVdqMrRNLqt6gLiPSv88rDO3Us2Rjd3E8pbhcKYqsOACRzw/4BkM39Z7
-         35kQQUR5gXgJho9aNf2QMnKb7EuQ/hJRabyeGgKFyu3XjFc45xX5KPxcSaj5UhXTsSIt
-         faX0qxb12ejkW88hweX8XdS+PqI+QBXrOyNsF++vy0L+6LFD+ItY+/s5lydwvozUF8NB
-         ra3g==
-X-Gm-Message-State: APjAAAWBe3x68Vu6k9J3//sruRbxSTLSJuKinmq5BbcnoRIrPQlLgNSf
-        QeD1fmCstK6tXLGwu21Lsg==
-X-Google-Smtp-Source: APXvYqwSKfzPAVpPpD1887r09lrL9k621UTDLWQfyMKnW+uf2J8eQfr8IH1PA/rNfcCix9Gfq8r10A==
-X-Received: by 2002:adf:ea10:: with SMTP id q16mr1727843wrm.356.1569567423533;
-        Thu, 26 Sep 2019 23:57:03 -0700 (PDT)
-Received: from avx2 ([46.53.252.76])
-        by smtp.gmail.com with ESMTPSA id y3sm17525896wmg.2.2019.09.26.23.57.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Sep 2019 23:57:02 -0700 (PDT)
-Date:   Fri, 27 Sep 2019 09:57:00 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pankaj Bharadiya <pankaj.laxminarayan.bharadiya@intel.com>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [GIT PULL] treewide conversion to sizeof_member() for v5.4-rc1
-Message-ID: <20190927065700.GA2215@avx2>
-References: <201909261026.6E3381876C@keescook>
- <CAHk-=wg8+eNK+SK1Ekqm0qNQHVM6e6YOdZx3yhsX6Ajo3gEupg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg8+eNK+SK1Ekqm0qNQHVM6e6YOdZx3yhsX6Ajo3gEupg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 27 Sep 2019 02:58:39 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.1]) by rmmx-syy-dmz-app09-12009 (RichMail) with SMTP id 2ee95d8db31394c-3d6ea; Fri, 27 Sep 2019 14:58:27 +0800 (CST)
+X-RM-TRANSID: 2ee95d8db31394c-3d6ea
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost (unknown[223.105.0.241])
+        by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee15d8db3129b4-a04e8;
+        Fri, 27 Sep 2019 14:58:27 +0800 (CST)
+X-RM-TRANSID: 2ee15d8db3129b4-a04e8
+From:   Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     William Tu <u9012063@gmail.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+Subject: [PATCH] erspan: remove the incorrect mtu limit for erspan
+Date:   Fri, 27 Sep 2019 14:58:20 +0800
+Message-Id: <1569567500-20113-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 26, 2019 at 01:06:01PM -0700, Linus Torvalds wrote:
-> On Thu, Sep 26, 2019 at 10:33 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > Please pull this mostly mechanical treewide conversion to the single and
-> > more accurately named sizeof_member() macro for the end of v5.4-rc1. This
-> > replaces 3 macros of the same behavior (FIELD_SIZEOF(), SIZEOF_FIELD(),
-> > and sizeof_field()). The last patch in the series has a script in the
-> > commit log to do the conversion, if you want to compare the results
-> > (they remained identical today when I checked).
-> 
-> Honestly, I'm not sure why "sizeof_field()" wasn't just picked when we
-> already had it. Making a new macro for the exact same thing seems
-> somewhat questionable.
-> 
-> Yes, yes, the C standard calls them "members". Except when it doesn't,
-> and they are members of a bit type, and it calls them bit-fields.
+erspan driver calls ether_setup(), after commit 61e84623ace3
+("net: centralize net_device min/max MTU checking"), the range
+of mtu is [min_mtu, max_mtu], which is [68, 1500] by default.
 
-It does, but neither typeof nor sizeof work on bitfields.
+It causes the dev mtu of the erspan device to not be greater
+than 1500, this limit value is not correct for ipgre tap device.
+
+Tested:
+Before patch:
+# ip link set erspan0 mtu 1600
+Error: mtu greater than device maximum.
+After patch:
+# ip link set erspan0 mtu 1600
+# ip -d link show erspan0
+21: erspan0@NONE: <BROADCAST,MULTICAST> mtu 1600 qdisc noop state DOWN
+mode DEFAULT group default qlen 1000
+    link/ether 00:00:00:00:00:00 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 0
+
+Fixes: 61e84623ace3 ("net: centralize net_device min/max MTU checking")
+Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+---
+ net/ipv4/ip_gre.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
+index a53a543..52690bb 100644
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -1446,6 +1446,7 @@ static void erspan_setup(struct net_device *dev)
+ 	struct ip_tunnel *t = netdev_priv(dev);
+ 
+ 	ether_setup(dev);
++	dev->max_mtu = 0;
+ 	dev->netdev_ops = &erspan_netdev_ops;
+ 	dev->priv_flags &= ~IFF_TX_SKB_SHARING;
+ 	dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
+-- 
+1.8.3.1
+
+
+
