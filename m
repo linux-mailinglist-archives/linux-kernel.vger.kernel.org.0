@@ -2,92 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40592C0167
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45177C0179
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:50:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfI0Iqs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:46:48 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:51479 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbfI0Iqr (ORCPT
+        id S1726234AbfI0Iue (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:50:34 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60111 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbfI0Iue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:46:47 -0400
-X-Originating-IP: 65.39.69.237
-Received: from localhost (unknown [65.39.69.237])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 0C35C1C000B;
-        Fri, 27 Sep 2019 08:46:44 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v3] PCI: aardvark: Don't rely on jiffies while holding spinlock
-Date:   Fri, 27 Sep 2019 10:55:02 +0200
-Message-Id: <20190927085502.1758-1-repk@triplefau.lt>
+        Fri, 27 Sep 2019 04:50:34 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iDlxP-0004Dx-T9; Fri, 27 Sep 2019 08:50:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: gadget: udc: clean up an indentation issue
+Date:   Fri, 27 Sep 2019 09:50:31 +0100
+Message-Id: <20190927085031.14739-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-advk_pcie_wait_pio() can be called while holding a spinlock (from
-pci_bus_read_config_dword()), then depends on jiffies in order to
-timeout while polling on PIO state registers. In the case the PIO
-transaction failed, the timeout will never happen and will also cause
-the cpu to stall.
+From: Colin Ian King <colin.king@canonical.com>
 
-This decrements a variable and wait instead of using jiffies.
+There is a statement that is indented too deeply, remove
+the extraneous tabs.
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
-Changes since v1:
-  - Reduce polling delay
-  - Change size_t into int for loop counter
-Changes since v2:
-  - Keep timeout to 1ms by increasing retry counter
----
- drivers/pci/controller/pci-aardvark.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/usb/gadget/udc/bdc/bdc_udc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-index fc0fe4d4de49..7b5c9d6c8706 100644
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -175,7 +175,8 @@
- 	(PCIE_CONF_BUS(bus) | PCIE_CONF_DEV(PCI_SLOT(devfn))	| \
- 	 PCIE_CONF_FUNC(PCI_FUNC(devfn)) | PCIE_CONF_REG(where))
- 
--#define PIO_TIMEOUT_MS			1
-+#define PIO_RETRY_CNT			500
-+#define PIO_RETRY_DELAY			2 /* 2 us*/
- 
- #define LINK_WAIT_MAX_RETRIES		10
- #define LINK_WAIT_USLEEP_MIN		90000
-@@ -383,17 +384,16 @@ static void advk_pcie_check_pio_status(struct advk_pcie *pcie)
- static int advk_pcie_wait_pio(struct advk_pcie *pcie)
- {
- 	struct device *dev = &pcie->pdev->dev;
--	unsigned long timeout;
-+	int i;
- 
--	timeout = jiffies + msecs_to_jiffies(PIO_TIMEOUT_MS);
--
--	while (time_before(jiffies, timeout)) {
-+	for (i = 0; i < PIO_RETRY_CNT; i++) {
- 		u32 start, isr;
- 
- 		start = advk_readl(pcie, PIO_START);
- 		isr = advk_readl(pcie, PIO_ISR);
- 		if (!start && isr)
- 			return 0;
-+		udelay(PIO_RETRY_DELAY);
- 	}
- 
- 	dev_err(dev, "config read/write timed out\n");
+diff --git a/drivers/usb/gadget/udc/bdc/bdc_udc.c b/drivers/usb/gadget/udc/bdc/bdc_udc.c
+index 7bfd58c846f7..248426a3e88a 100644
+--- a/drivers/usb/gadget/udc/bdc/bdc_udc.c
++++ b/drivers/usb/gadget/udc/bdc/bdc_udc.c
+@@ -195,7 +195,7 @@ static void handle_link_state_change(struct bdc *bdc, u32 uspc)
+ 		break;
+ 	case BDC_LINK_STATE_U0:
+ 		if (bdc->devstatus & REMOTE_WAKEUP_ISSUED) {
+-					bdc->devstatus &= ~REMOTE_WAKEUP_ISSUED;
++			bdc->devstatus &= ~REMOTE_WAKEUP_ISSUED;
+ 			if (bdc->gadget.speed == USB_SPEED_SUPER) {
+ 				bdc_function_wake_fh(bdc, 0);
+ 				bdc->devstatus |= FUNC_WAKE_ISSUED;
 -- 
 2.20.1
 
