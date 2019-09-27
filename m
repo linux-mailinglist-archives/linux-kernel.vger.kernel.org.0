@@ -2,91 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31F0BC06CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D296FC06D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 15:58:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbfI0N6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 09:58:24 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39990 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbfI0N6Y (ORCPT
+        id S1727649AbfI0N6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 09:58:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40321 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727079AbfI0N6l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 09:58:24 -0400
-Received: by mail-io1-f66.google.com with SMTP id h144so16522519iof.7
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 06:58:23 -0700 (PDT)
+        Fri, 27 Sep 2019 09:58:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id l3so2855586wru.7
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 06:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=Tm150+dWJLLuNY2hzsPQPsJFHeTeZkEOJoRFHH3Ay7trb87Aqz83aC2FqlCwa+p622
-         7jEvM3iHp3uPd+7sF9pr5q2w/A9eNQQI5qS9WzC8R5IUiO75k9q+HzbUZrABDPDX1hmE
-         SCuasL5jhoC2s5tqTdwB5uvvbxJqVJTqA7j0sPwBoBudHVrHdIPay5/TOBe35el39TVR
-         Jn6Un3TYJuOzR9cOlEj6GMFOAaOoeZRVDVYbhvStmnx3iH0B4RD+T9DWAGTwGD9HHvBX
-         DsUL/Rvnof6H5WwEXg4LrPpS0vB3swudfIVAlPKPTiJbTfpwDMicPgUb9hpxMGj32eD0
-         Hqnw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=gII68bP4dZ9iYMhUx7xHDSWnoKBKHppjR8OxdRxuXBw=;
+        b=jib1Vio9p2uFXLtUzi6lfZKzVGWkziSLDW2+TRSJFGk6PgvdnLiOEh2A4ORdDfaL/6
+         3uLg4fyINURnKSKJATlRUCzv07Rs/SJISz5rR4j4akSghw4SPPBtkiWOwIJpajnSVcOe
+         WHWuUrGtYlk3nahK60v2BFXzYfA+3KFiaIkruKQVCQcTIZImNru0PuBFCBa4DJyDiGKa
+         j3C1qJdA3ZniSFVahofA1sTCU65ji40vYu/fNYmhnq/b6VbO3ChdzOBrzGJcgLwz01MP
+         /+bgNfXwtE+4D6EGE8iVLI9zTgAaSoW/bkxNCuYB2Djz3f+WpwX+Ury8d+/SsQQ7Zw0S
+         2swQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=MJv6I57WxylS6CeVH2HZp8R81qnloFhtV0boAtJeagg=;
-        b=dV+ZbiGZw5yf3zwgUyzmxJD4VxszevuvKBGhrhfHKqD8DmxvzPsK+kvSxKuWz2aSoa
-         jSCrwlRZTsoKftiWw/qMBOd/EPclcgAKE5eivgzINgU617oL6R60WRmDhGvtSb+ioIxM
-         UqmpTD1ED7oWrdKcQuNTzwP4N+AV9gjpvJ9ue7IdhaPsCH3lzkkrUED9EqlbSwgQoml/
-         bYJwf7lSmVanQb+brsK1xHwZ3xFxdOaW4hpUIzG4zDUX8N+Mt+JMXp8QAm9FBmQxkAeY
-         hTSvuVnO5aHVPIbMNAviaZVqWVfbkWnz8baGD1b4qVoN8t9ZDL7Z70ZV51JoyPbp+050
-         hOlQ==
-X-Gm-Message-State: APjAAAUIx358rf6zVizUy9iQTkTBi+GRGLNjSKapfozqeoiuW7tRTGFQ
-        W0NZFc7+6xgTbOUDOGkXOrHy56Dy5/1jdbdT19Q=
-X-Google-Smtp-Source: APXvYqxapJ1gSXYShdu+JHl/3u21FbsijyACZ/GX2FBoOC4YKrEpdX+IddjdztV1+Z1hQfg242PFHWE4ECv/C11btZo=
-X-Received: by 2002:a5d:81cc:: with SMTP id t12mr8571649iol.207.1569592703489;
- Fri, 27 Sep 2019 06:58:23 -0700 (PDT)
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=gII68bP4dZ9iYMhUx7xHDSWnoKBKHppjR8OxdRxuXBw=;
+        b=XAfhBc80s4dpWzVzy3PpcgcVwrjkxCJscnqpB5ClOSNFgsT0LW/2nPqKe2CcsfGfbw
+         DYez9g7SzpfHPMTHENVvAT+3mpRJXq46S5dUdcxGGd852m6JIzh8WIzTafUXDM0Y+4Ky
+         mv8YTUnRfRt/H8ATgY+WKwPncck81zP3cP//3xEaxoqmEBihWJzez82+hp53V+fO5EM/
+         +yZSLDrWskCfo9uu65i1lPZp6J1PmyVChfkiz6dURZEhHGFi4eHLw+hZ/NuzhIHkLZUB
+         lWzEjp1954I3Q4AFx8j4IHHOEKzz4dYKgga4VUBGQWuuHYWEHMVe1JE4u4Kz6145OdiF
+         EFzg==
+X-Gm-Message-State: APjAAAWNuvJpkpjEAOfpqcquje9CUnlrEgQaDlhxovcdzlDZWG6xqDoS
+        4fguAceUc1a3KJbfr3t80voLhYFToJM=
+X-Google-Smtp-Source: APXvYqwuSdVoFqaJkOuDyzzg3VoL6LNVdgNCAOB7KF6CRtWFJZG1jZiUaDvFOdDugpzHJK1GuGAddg==
+X-Received: by 2002:adf:dc01:: with SMTP id t1mr3093951wri.222.1569592719413;
+        Fri, 27 Sep 2019 06:58:39 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b7sm2920872wrj.28.2019.09.27.06.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2019 06:58:38 -0700 (PDT)
+References: <20190924153356.24103-1-jbrunet@baylibre.com> <20190924153356.24103-7-jbrunet@baylibre.com> <b328b0c7-9449-172d-a1ed-7449023ff516@baylibre.com> <1cd21d60-5ded-2f70-3c99-02b70f996870@baylibre.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] clk: meson: axg-audio: provide clk top signal name
+In-reply-to: <1cd21d60-5ded-2f70-3c99-02b70f996870@baylibre.com>
+Date:   Fri, 27 Sep 2019 15:58:37 +0200
+Message-ID: <1jh84x2642.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:2886:0:0:0:0:0 with HTTP; Fri, 27 Sep 2019 06:58:23
- -0700 (PDT)
-Reply-To: joeakaba00@gmail.com
-From:   joe akaba <kouevigathk@gmail.com>
-Date:   Fri, 27 Sep 2019 15:58:23 +0200
-Message-ID: <CAMpCND3xPgRi_H4KQo+RZa2rVDf4X6nXRNq_h=7F3WTkqBHERQ@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
 
-My name is Joe Akaba I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
+On Fri 27 Sep 2019 at 11:37, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:joeakaba00@gmail.com
+> On 27/09/2019 11:14, Neil Armstrong wrote:
+>> On 24/09/2019 17:33, Jerome Brunet wrote:
+>>
 
-Many thanks in advance,
-Mr.Joe Akaba
+[...]
 
+>> AUD_CLKID_TOP seems to be missing here
+>
+> Oh, yes it was exposed, do you need to it to be exposed since it's
+> dummy for G12A ?
 
-Hallo
+It is a bypass clock on g12a and axg yes, but on the sm1.
+It is the leaf of a block on sm1, for all I know it could be used
+outside the clock controller.
 
-Mein Name ist Joe Akaba . Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8.5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+Of course, I could wait this until there is an actual need for it if that is
+what you mean ?
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: joeakaba00@gmail.com
+>
+> Neil
+>
+>> 
+>> 
+>>>  /* include the CLKIDs which are part of the DT bindings */
+>>>  #include <dt-bindings/clock/axg-audio-clkc.h>
+>>>  
+>>> -#define NR_CLKS	163
+>>> +#define NR_CLKS	164
+>>>  
+>>>  #endif /*__AXG_AUDIO_CLKC_H */
+>>>
+>> 
 
-Vielen Dank im Voraus,
-Mr.Joe Akaba
