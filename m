@@ -2,68 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB91C0B68
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 20:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34432C0B6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 20:40:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbfI0SkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 14:40:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43428 "EHLO mail.kernel.org"
+        id S1728415AbfI0SkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 14:40:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728305AbfI0SkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 14:40:05 -0400
-Subject: Re: [GIT PULL REQUEST] watchdog - v5.4 Merge window
+        id S1727447AbfI0SkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 14:40:23 -0400
+Subject: Re: [GIT PULL] NTB changes for v5.4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569609604;
-        bh=9OyxnTjQpqScF7V8SKV8Z2cLmG6H6O4h7uV6BJp5KGo=;
+        s=default; t=1569609623;
+        bh=A/Y1zfR4jdpsMGSHUOe95iEWb2V4PbAMwawWX1yjIpY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YiLMLKzuSI48fx+Ejaw5a0opYY24rvGeOy/rZptuskg8ElYIEeYPjC2LzfbDaeNiN
-         PqbaiyA5U6ZUPaKPTkGnftfwmu6sbn32lOX9Ya/JHXD3UXiyX4yogLeN4FU0T2VCpo
-         3K+51QhUVa13aktAJjljA9ovxmaZahZHV3Ik7HDc=
+        b=iEObLx7T4yKHOYiQ1DIrgoBwelCiW5/kNYv8rzVFJ4xB51pE/8MfNN3OV6GG4UpRB
+         p+GQTF+bHoVDGUpX/VQ3ebt0/7d06MlIVa+8+/6WkvCs2S6HO0vBhFLi22U/sIomAT
+         lxyvm+ctZjb6yPFGKjOeOFcp+O8yhnvkF+NtH9rA=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190927071527.GA14507@www.linux-watchdog.org>
-References: <20190927071527.GA14507@www.linux-watchdog.org>
-X-PR-Tracked-List-Id: <linux-watchdog.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190927071527.GA14507@www.linux-watchdog.org>
-X-PR-Tracked-Remote: git://www.linux-watchdog.org/linux-watchdog.git
- tags/linux-watchdog-5.4-rc1
-X-PR-Tracked-Commit-Id: ca2fc5efffde5a3827adfb0ab6a51b6f1c64d5ff
+In-Reply-To: <20190926173522.GA15861@graymalkin>
+References: <20190926173522.GA15861@graymalkin>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190926173522.GA15861@graymalkin>
+X-PR-Tracked-Remote: git://github.com/jonmason/ntb tags/ntb-5.4
+X-PR-Tracked-Commit-Id: 4720101fab62d0453babb0287b58a9c5bf78fb80
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7bccb9f10c8f36ee791769b531ed4d28f6379aae
-Message-Id: <156960960460.11345.6537445889071016679.pr-tracker-bot@kernel.org>
-Date:   Fri, 27 Sep 2019 18:40:04 +0000
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jaret Cantu <jaret.cantu@timesys.com>,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Oliver Graute <oliver.graute@kococonnector.com>,
-        Ivan Mikhaylov <i.mikhaylov@yadro.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+X-PR-Merge-Commit-Id: 0cd81d77d0569f1dc1e39abeea93c6184e9b5b54
+Message-Id: <156960962332.11345.15498745655077922358.pr-tracker-bot@kernel.org>
+Date:   Fri, 27 Sep 2019 18:40:23 +0000
+To:     Jon Mason <jdmason@kudzu.us>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-ntb@googlegroups.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 27 Sep 2019 09:15:27 +0200:
+The pull request you sent on Thu, 26 Sep 2019 13:35:22 -0400:
 
-> git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-5.4-rc1
+> git://github.com/jonmason/ntb tags/ntb-5.4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7bccb9f10c8f36ee791769b531ed4d28f6379aae
+https://git.kernel.org/torvalds/c/0cd81d77d0569f1dc1e39abeea93c6184e9b5b54
 
 Thank you!
 
