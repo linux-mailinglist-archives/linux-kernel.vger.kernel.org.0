@@ -2,193 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC760BFC26
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 02:09:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43311BFC30
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 02:14:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbfI0AJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 20:09:28 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:38047 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfI0AJ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 20:09:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1569542988; x=1601078988;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bDArMe9M2L91Z/CR0UnsmHQJUCaE4qjpImR1YxVjjj4=;
-  b=RxfmoXcVp5X59seu8/+gzlhry+yCeTh9tLfLTUpuZvZgUgWk6oATZttU
-   dtW/YvDj/GNYrlxWfBvchSOdOhORtsBeMfBtqJoxoZY3hNK9yFPwwcLLu
-   cVFthIYQql1QzCJwJFGho7CcITlFAIY+j2XBzdiH+tyDTYEiYeNAyoUSU
-   4U4N+LWdYS7wA3YTq+kh96+CEh7D1eSBunU9QGIwo/kf3SvsDQo6LfWEl
-   HC2LcoLYoYowJbywwouMxhfEYP8u09v3QY1se+KeURKPjrvdo9UQJIpjw
-   ri7XSmMEA7YkMEBTZIZzcYCxsy996UL0dgCKEL43PalXI6Hl5tMWFFHA8
-   w==;
-IronPort-SDR: oZdufVvqyR0WHwkTjv/vKcEmZMMnS1vhH14ThAuG3oPHcY1yTfIDwvkFiU9UnTwLu6RKYJk1+5
- E2AfXxDVrDkx95u0npMSPXFMsSKXNKpZkrkPMcrByW1Lia4DZ3If8WxcMB8Wxye94WO55d9vGR
- zIfEUA4OiQsREuqbF71FsWyuqIRXkuGfo20XX1vxSYVfx20gGJQcpLvPzttrh3hvffNRwivH5+
- 5cSN6IQG4KbFz8sSviQZcPtzxA9jJXGlkbpZ2558hYLUI2dKHuJNQGtJ14RyKP8YazbWc5OGMZ
- SQo=
-X-IronPort-AV: E=Sophos;i="5.64,553,1559491200"; 
-   d="scan'208";a="220096745"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Sep 2019 08:09:46 +0800
-IronPort-SDR: f+n4acBEkBoHo1LCgHYsXt9sbBCMmGwpQcCz0cBJOR4F6JPSzmvFfuBvKgYf9kko1H3jnxJocJ
- OkzAZ7IWKI+3GTc6KZr6DfvsSrxxYL9fAFtyu3T0w4Os3W4QTFOA8sUcc53Iv3v0YFd9Oy6Rtj
- YVoklQrHPzkURiIyS7OxHNlsay4LlpHfGbVjJSaRvtE44+upRFHru9G1LNiLWhou8ptF2B7fta
- iusbn0EklYg/5BBb9Pu0HQGujG8D1bXpbBvTOSFlann2tYkgSGDzlRql9Sfb4J43CNJbSOHhNp
- dpjcKNuuPe+MX2CXDBBUhSp/
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 17:05:45 -0700
-IronPort-SDR: 5iiWTZJZcFIZLgZ/ptOBpHjaDkMGM/HJC4HUB7QiJCVOBj24JiCl63mi+A1hxuRHQRcx+bMRQQ
- p14dA785reRfFMxu8TZcc+xegP3+vhPgoECX0jWMVV0WJPpbwu5PdGQ6dGl0Z1EE0DbCKGr3L6
- tkBOE6j73OupEAxlVGMmtiwTOq7QMEWjue+yy2K2CQmXW10u4xtolQAZHZVceak+vb0xQ4nOdT
- wxISFKSoh9JSA+91eQGSybK3Ktqblh1HKv/WqpLSMmOm2IdYZ+AWmLeDYGwdEscdoQ25TcR6qx
- wSo=
-WDCIronportException: Internal
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip01.wdc.com with ESMTP; 26 Sep 2019 17:09:25 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Alan Kao <alankao@andestech.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup@brainfault.org>, Gary Guo <gary@garyguo.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-riscv@lists.infradead.org,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 3/3] RISC-V: Move SBI related macros under uapi.
-Date:   Thu, 26 Sep 2019 17:09:15 -0700
-Message-Id: <20190927000915.31781-4-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190927000915.31781-1-atish.patra@wdc.com>
-References: <20190927000915.31781-1-atish.patra@wdc.com>
+        id S1727393AbfI0AO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 20:14:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726411AbfI0AO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 20:14:26 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFDC7207FF;
+        Fri, 27 Sep 2019 00:14:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569543266;
+        bh=ouc/ZGlpophw+opTwcJn7DhMFr0Pb1HOOZEWpUUYSk0=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=DRdMZW5AJXatJs4G1JlQTfOfltYGKHwfQVF23ynDzZJFds1pYvAYEyx/JxesVC+dt
+         gxTeolLgLZudoqnLbTi5VsZObkLPTtiZuRqz6glzq0r8YrmSg+SB3xzeUcyj+Io4oN
+         pqH6gowGJ0wJFBxhDSeWYNE4X7xhF2Ev/zt3+X18=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190919102518.25126-2-narmstrong@baylibre.com>
+References: <20190919102518.25126-1-narmstrong@baylibre.com> <20190919102518.25126-2-narmstrong@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
+        mturquette@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH RFC 1/2] clk: introduce clk_invalidate_rate()
+User-Agent: alot/0.8.1
+Date:   Thu, 26 Sep 2019 17:14:25 -0700
+Message-Id: <20190927001425.DFDC7207FF@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All SBI related macros can be reused by KVM RISC-V and userspace tools
-such as kvmtool, qemu-kvm. SBI calls can also be emulated by userspace
-if required. Any future vendor extensions can leverage this to emulate
-the specific extension in userspace instead of kernel.
+Quoting Neil Armstrong (2019-09-19 03:25:17)
+> This introduces the clk_invalidate_rate() call used to recalculate the
+> rate and parent tree of a particular clock if it's known that the
+> underlying registers set has been altered by the firmware, like from
+> a suspend/resume handler running in trusted cpu mode.
+>=20
+> The call refreshes the actual parent and when changed, instructs CCF
+> the parent has changed. Finally the call will recalculate the rate of
+> each part of the tree to make sure the CCF cached tree is in sync with
+> the hardware.
+>=20
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/include/asm/sbi.h      | 37 +-----------------------
- arch/riscv/include/uapi/asm/sbi.h | 48 +++++++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+), 36 deletions(-)
- create mode 100644 arch/riscv/include/uapi/asm/sbi.h
-
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 279b7f10b3c2..902b83041111 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -7,42 +7,7 @@
- #define _ASM_RISCV_SBI_H
- 
- #include <linux/types.h>
--
--enum sbi_ext_id {
--	SBI_EXT_0_1_SET_TIMER = 0x0,
--	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
--	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
--	SBI_EXT_0_1_CLEAR_IPI = 0x3,
--	SBI_EXT_0_1_SEND_IPI = 0x4,
--	SBI_EXT_0_1_REMOTE_FENCE_I = 0x5,
--	SBI_EXT_0_1_REMOTE_SFENCE_VMA = 0x6,
--	SBI_EXT_0_1_REMOTE_SFENCE_VMA_ASID = 0x7,
--	SBI_EXT_0_1_SHUTDOWN = 0x8,
--	SBI_EXT_BASE = 0x10,
--};
--
--enum sbi_ext_base_fid {
--	SBI_BASE_GET_SPEC_VERSION = 0,
--	SBI_BASE_GET_IMP_ID,
--	SBI_BASE_GET_IMP_VERSION,
--	SBI_BASE_PROBE_EXT,
--	SBI_BASE_GET_MVENDORID,
--	SBI_BASE_GET_MARCHID,
--	SBI_BASE_GET_MIMPID,
--};
--
--#define SBI_SPEC_VERSION_DEFAULT	0x1
--#define SBI_SPEC_VERSION_MAJOR_OFFSET	24
--#define SBI_SPEC_VERSION_MAJOR_MASK	0x7f
--#define SBI_SPEC_VERSION_MINOR_MASK	0xffffff
--
--/* SBI return error codes */
--#define SBI_SUCCESS		0
--#define SBI_ERR_FAILURE		-1
--#define SBI_ERR_NOT_SUPPORTED	-2
--#define SBI_ERR_INVALID_PARAM   -3
--#define SBI_ERR_DENIED		-4
--#define SBI_ERR_INVALID_ADDRESS -5
-+#include <uapi/asm/sbi.h>
- 
- extern unsigned long sbi_spec_version;
- struct sbiret {
-diff --git a/arch/riscv/include/uapi/asm/sbi.h b/arch/riscv/include/uapi/asm/sbi.h
-new file mode 100644
-index 000000000000..2e09ee52c346
---- /dev/null
-+++ b/arch/riscv/include/uapi/asm/sbi.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Common SBI related defines and macros to be used by RISC-V kernel,
-+ * RISC-V KVM and userspace.
-+ *
-+ * Copyright (c) 2019 Western Digital Corporation or its affiliates.
-+ */
-+
-+#ifndef _UAPI_ASM_RISCV_SBI_H
-+#define _UAPI_ASM_RISCV_SBI_H
-+
-+enum sbi_ext_id {
-+	SBI_EXT_0_1_SET_TIMER = 0x0,
-+	SBI_EXT_0_1_CONSOLE_PUTCHAR = 0x1,
-+	SBI_EXT_0_1_CONSOLE_GETCHAR = 0x2,
-+	SBI_EXT_0_1_CLEAR_IPI = 0x3,
-+	SBI_EXT_0_1_SEND_IPI = 0x4,
-+	SBI_EXT_0_1_REMOTE_FENCE_I = 0x5,
-+	SBI_EXT_0_1_REMOTE_SFENCE_VMA = 0x6,
-+	SBI_EXT_0_1_REMOTE_SFENCE_VMA_ASID = 0x7,
-+	SBI_EXT_0_1_SHUTDOWN = 0x8,
-+	SBI_EXT_BASE = 0x10,
-+};
-+
-+enum sbi_ext_base_fid {
-+	SBI_BASE_GET_SPEC_VERSION = 0,
-+	SBI_BASE_GET_IMP_ID,
-+	SBI_BASE_GET_IMP_VERSION,
-+	SBI_BASE_PROBE_EXT,
-+	SBI_BASE_GET_MVENDORID,
-+	SBI_BASE_GET_MARCHID,
-+	SBI_BASE_GET_MIMPID,
-+};
-+
-+#define SBI_SPEC_VERSION_DEFAULT	0x1
-+#define SBI_SPEC_VERSION_MAJOR_OFFSET	24
-+#define SBI_SPEC_VERSION_MAJOR_MASK	0x7f
-+#define SBI_SPEC_VERSION_MINOR_MASK	0xffffff
-+
-+/* SBI return error codes */
-+#define SBI_SUCCESS		0
-+#define SBI_ERR_FAILURE		-1
-+#define SBI_ERR_NOT_SUPPORTED	-2
-+#define SBI_ERR_INVALID_PARAM   -3
-+#define SBI_ERR_DENIED		-4
-+#define SBI_ERR_INVALID_ADDRESS -5
-+
-+#endif
--- 
-2.21.0
+The knee-jerk reaction to these patches is that it shouldn't be a
+consumer API (i.e. taking a struct clk) but a provider API (i.e. taking
+a struct clk_hw). I haven't looked in any more detail but just know that
+it's a non-starter to be a consumer based API because we don't want
+random consumers out there to be telling the CCF or provider drivers
+that some clk has lost state and needs to be "refreshed".
 
