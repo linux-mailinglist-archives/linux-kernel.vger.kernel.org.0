@@ -2,72 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3ED8C017C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 440DDC0189
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfI0Iu4 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 27 Sep 2019 04:50:56 -0400
-Received: from mga06.intel.com ([134.134.136.31]:65095 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfI0Iu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:50:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 01:50:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,554,1559545200"; 
-   d="scan'208";a="193153323"
-Received: from unknown (HELO ubuntu) ([10.226.248.117])
-  by orsmga003.jf.intel.com with SMTP; 27 Sep 2019 01:50:54 -0700
-Received: by ubuntu (sSMTP sendmail emulation); Fri, 27 Sep 2019 16:50:52 +0800
-Message-ID: <1569574252.9826.4.camel@intel.com>
-Subject: [GIT PULL] arch/nios2 update for v5.4
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "lftan.linux@gmail.com" <lftan.linux@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
-Date:   Fri, 27 Sep 2019 16:50:52 +0800
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
+        id S1726203AbfI0IyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:54:16 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39745 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfI0IyP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 04:54:15 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so1774019wrj.6;
+        Fri, 27 Sep 2019 01:54:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YW69Gs/nZumApetQocA64F9f6OkcL5o8Z3LcVdigjvc=;
+        b=rCJ9PS1DXGNWZMIOYIPNeGsw2OIqoxdHgSWa3nN1Y4lHXBpaPz7aljO3XtKFfklxXs
+         UZTjfzAuW/jOqBoHZy0PlPHbemU3Zmaj2nprs0Wi80JMsxC/9PREHW50naRMJq3lWj99
+         mdsjwKaFXgFhPD/9OjjzMTQHmqKsvUPWahRmbgHSui3jS0YW0pYqg+E+hLLTuMpetxNZ
+         MIy7liK2yISmzbNtVkaXZzPIqP8b4qPA3p92h11FZmY/iHzR7wlX4H7ZeQypsrGN0MjV
+         DmPudK47p+cD448LfyxzALCLkrGvbl9sZfZaIpQDRnSmqdL45sHVzZnAg/cKB1gEcQdz
+         o3IA==
+X-Gm-Message-State: APjAAAU+d2F1lTU3wYIpA7FHsjpmo7tjX8JOeDWlSVPWuK0cgvh0Abjc
+        /0GhZ4JuH8TdKDNCulOH3sQ=
+X-Google-Smtp-Source: APXvYqw32zeeQTuvXuVsep+HUirogNC0QVZEqwyQa06udnJ+HOwPMSz7jgPC+e9bId+phk4DAB4dwg==
+X-Received: by 2002:adf:f2cd:: with SMTP id d13mr2169788wrp.143.1569574452936;
+        Fri, 27 Sep 2019 01:54:12 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id l6sm4346315wmg.2.2019.09.27.01.54.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2019 01:54:12 -0700 (PDT)
+Date:   Fri, 27 Sep 2019 10:53:59 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com,
+        kgene@kernel.org, mark.rutland@arm.com, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        robh+dt@kernel.org, willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH 1/3] ARM: dts: exynos: Add interrupt to DMC controller in
+ Exynos5422
+Message-ID: <20190927085359.GA19131@pi3>
+References: <20190925161813.21117-1-l.luba@partner.samsung.com>
+ <CGME20190925161842eucas1p271a9cf4f62b3d7af02c0a5d0d1eb9c4f@eucas1p2.samsung.com>
+ <20190925161813.21117-2-l.luba@partner.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190925161813.21117-2-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus
+On Wed, Sep 25, 2019 at 06:18:11PM +0200, Lukasz Luba wrote:
+> Add interrupt to Dynamic Memory Controller in Exynos5422 and Odroid
+> XU3-family boards. It will be used instead of devfreq polling mode
+> governor. The interrupt is connected to performance counters private
+> for DMC, which might track utilisation of the memory channels.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index ac49373baae7..72738e620d11 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -240,6 +240,8 @@
+>  		dmc: memory-controller@10c20000 {
+>  			compatible = "samsung,exynos5422-dmc";
+>  			reg = <0x10c20000 0x100>, <0x10c30000 0x100>;
+> +			interrupt-parent = <&combiner>;
+> +			interrupts = <16 0>;
 
-Please pull the arch/nios2 update below.
+You register DMC for DREX0 and DREX1 but take only DREX0 interrupt. Why
+skipping second?
 
-Thanks.
-
-Regards
-Ley Foon
+Best regards,
+Krzysztof
 
 
-The following changes since commit 4d856f72c10ecb060868ed10ff1b1453943fc6c8:
-
-  Linux 5.3 (2019-09-15 14:19:32 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lftan/nios2.git tags/nios2-v5.4-rc1
-
-for you to fetch changes up to 91d99a724e9c60e14332c26ab2284bf696b94c8e:
-
-  nios2: force the string buffer NULL-terminated (2019-09-20 14:55:57 +0800)
-
-----------------------------------------------------------------
-nios2 update for v5.4-rc1
-
-nios2: force the string buffer NULL-terminated
-
-----------------------------------------------------------------
-Wang Xiayang (1):
-      nios2: force the string buffer NULL-terminated
-
- arch/nios2/kernel/setup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>  			clocks = <&clock CLK_FOUT_SPLL>,
+>  				 <&clock CLK_MOUT_SCLK_SPLL>,
+>  				 <&clock CLK_FF_DOUT_SPLL2>,
+> -- 
+> 2.17.1
+> 
