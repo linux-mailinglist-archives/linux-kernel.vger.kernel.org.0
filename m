@@ -2,153 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5141CBFC0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 01:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 386D5BFC27
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 02:09:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfIZXyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 19:54:11 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46977 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728946AbfIZXyL (ORCPT
+        id S1727563AbfI0AJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 20:09:40 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59630 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfI0AJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 19:54:11 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 1AA9E886BF
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 11:54:08 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1569542048;
-        bh=adqayW/GotDamDLFcn4zqEqVhVtqWXa5Bmps2f+e1iY=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=Cth/P0MQZUmST4NB5xwYaF93gt8YAbUKhufSZam8r2HuNdMfXG3yQn+Km2M1YSJj5
-         7h0zPzjnd2ME/wD6ZBuhG4OPn1jGVfVMJ5mNsckumAhGhi+W+Nn7DkzbWMU2FXtDRm
-         S4zWotQqT3AwUzOt+taxFn3rFtTVdvl6wAPM/HFTbXZySygwQlenkn1KC8tluFxb8J
-         PrklhxisUeFb42hI6j4UrJ6AZR3j+pD2Ku/3mlVChC69WQh9AAXnRkpY2nJq+zj8WA
-         Y09Ul3mhol4Ubt2Y1edUqpyMAoPYJ5irqLaa4fuCN+zzcC4KCTijXxc3xQ9kim4bCM
-         L6xVE8pRn9Vbw==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d8d4fa00001>; Fri, 27 Sep 2019 11:54:08 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1156.6; Fri, 27 Sep 2019 11:54:07 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Fri, 27 Sep 2019 11:54:07 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "malat@debian.org" <malat@debian.org>
-CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] powerpc: Support CMDLINE_EXTEND
-Thread-Topic: [PATCH v3] powerpc: Support CMDLINE_EXTEND
-Thread-Index: AQHVSLt5SSIu+9gAGkizQ6ZspvV50qbmfk4AgFeyboA=
-Date:   Thu, 26 Sep 2019 23:54:07 +0000
-Message-ID: <337d48b4ecfa116b0ec04ccfb4d936f41757692e.camel@alliedtelesis.co.nz>
-References: <20190801225006.21952-1-chris.packham@alliedtelesis.co.nz>
-         <9262a291-161f-e172-9d13-88a717da9de4@c-s.fr>
-In-Reply-To: <9262a291-161f-e172-9d13-88a717da9de4@c-s.fr>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [2001:df5:b000:22:34ed:f955:f4f7:adde]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5AFE55F8ECD39C4689C628C31801848E@atlnz.lc>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Thu, 26 Sep 2019 20:09:40 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8R04N8W109662;
+        Fri, 27 Sep 2019 00:08:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=lETXaTrfnoYe7AySdKj47hrTKIRb4jx9j0xKM7xYN5g=;
+ b=TPKht4s0rPNMFskB+itbn4zMS2mWeI5URRQSxx+D5vAF8LpYG2MsGd1DeGiughY5FWGV
+ 33NNVkSxk6AW84wJZbYXoam5nC+8YtaRvvlbixp/Sl0KjPkCIbZp9eqmPfxvOesDSN4S
+ HeX72EXISsbULNDUdfuOBxBT50/kguqHia5GQPpEPLO8TdTXEU8fD/f555Bq3FYhVsi4
+ oc/CFpEQj+REf7YD08VY9SC4tF2qWriSFeUmcJO/2GbIyXxeZMoyR0g5YIJzS61xet6i
+ QzJZraV1W1FvXKXB7o32xRWx9LXHw86SnVKVRUeJeWgxmsKhlfDKmLnDzDgagBGHGKOX Hw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2v5btqew25-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Sep 2019 00:08:10 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x8QNx06X167582;
+        Fri, 27 Sep 2019 00:06:09 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2v8yjxgw1v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Sep 2019 00:06:09 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x8R066cN017670;
+        Fri, 27 Sep 2019 00:06:06 GMT
+Received: from [192.168.14.112] (/79.179.213.143)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 26 Sep 2019 17:06:06 -0700
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH 1/2] KVM: nVMX: Always write vmcs02.GUEST_CR3 during
+ nested VM-Enter
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20190926214302.21990-2-sean.j.christopherson@intel.com>
+Date:   Fri, 27 Sep 2019 03:06:02 +0300
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Reto Buerki <reet@codelabs.ch>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <68340081-0094-4A74-9B33-3431F39659AA@oracle.com>
+References: <20190926214302.21990-1-sean.j.christopherson@intel.com>
+ <20190926214302.21990-2-sean.j.christopherson@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1908290000 definitions=main-1909260191
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9392 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1908290000
+ definitions=main-1909260192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQWxsLA0KDQpPbiBGcmksIDIwMTktMDgtMDIgYXQgMDY6NDAgKzAyMDAsIENocmlzdG9waGUg
-TGVyb3kgd3JvdGU6DQo+IA0KPiBMZSAwMi8wOC8yMDE5IMOgIDAwOjUwLCBDaHJpcyBQYWNraGFt
-IGEgw6ljcml0IDoNCj4gPiBCcmluZyBwb3dlcnBjIGluIGxpbmUgd2l0aCBvdGhlciBhcmNoaXRl
-Y3R1cmVzIHRoYXQgc3VwcG9ydCBleHRlbmRpbmcgb3INCj4gPiBvdmVycmlkaW5nIHRoZSBib290
-bG9hZGVyIHByb3ZpZGVkIGNvbW1hbmQgbGluZS4NCj4gPiANCj4gPiBUaGUgY3VycmVudCBiZWhh
-dmlvdXIgaXMgbW9zdCBsaWtlIENNRExJTkVfRlJPTV9CT09UTE9BREVSIHdoZXJlIHRoZQ0KPiA+
-IGJvb3Rsb2FkZXIgY29tbWFuZCBsaW5lIGlzIHByZWZlcnJlZCBidXQgdGhlIGtlcm5lbCBjb25m
-aWcgY2FuIHByb3ZpZGUgYQ0KPiA+IGZhbGxiYWNrIHNvIENNRExJTkVfRlJPTV9CT09UTE9BREVS
-IGlzIHRoZSBkZWZhdWx0LiBDTURMSU5FX0VYVEVORCBjYW4NCj4gPiBiZSB1c2VkIHRvIGFwcGVu
-ZCB0aGUgQ01ETElORSBmcm9tIHRoZSBrZXJuZWwgY29uZmlnIHRvIHRoZSBvbmUgcHJvdmlkZWQN
-Cj4gPiBieSB0aGUgYm9vdGxvYWRlci4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQ
-YWNraGFtIDxjaHJpcy5wYWNraGFtQGFsbGllZHRlbGVzaXMuY28ubno+DQo+IA0KPiBSZXZpZXdl
-ZC1ieTogQ2hyaXN0b3BoZSBMZXJveSA8Y2hyaXN0b3BoZS5sZXJveUBjLXMuZnI+DQoNCkkgc2Vl
-IHRoaXMgaGFzbid0IGhpdCBMaW51cydzIHRyZWUgaXMgaXQgd2FpdGluZyBmb3IgbWUgdG8gZG8g
-c29tZXRoaW5nDQpvciBqdXN0IGZhbGxlbiBvZmYgdGhlIHJhZGFyPw0KDQo+IA0KPiA+IC0tLQ0K
-PiA+IENoYW5nZXMgaW4gdjM6DQo+ID4gLSBkb24ndCB1c2UgQlVHX09OIGluIHByb21fc3RybGNh
-dA0KPiA+IC0gcmVhcnJhbmdlIHRoaW5ncyB0byBlbGltaW5hdGUgcHJvbV9zdHJsY3B5DQo+ID4g
-DQo+ID4gQ2hhbmdlcyBpbiB2MjoNCj4gPiAtIGluY29ycG9yYXRlIGlkZWFzIGZyb20gQ2hyaXN0
-b3BlJ3MgcGF0Y2ggaHR0cHM6Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wYXRjaC8xMDc0MTI2Lw0K
-PiA+IC0gc3VwcG9ydCBDTURMSU5FX0ZPUkNFDQo+ID4gDQo+ID4gICBhcmNoL3Bvd2VycGMvS2Nv
-bmZpZyAgICAgICAgICAgIHwgMjAgKysrKysrKysrKysrKysrKystDQo+ID4gICBhcmNoL3Bvd2Vy
-cGMva2VybmVsL3Byb21faW5pdC5jIHwgMzYgKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0t
-LS0tDQo+ID4gICAyIGZpbGVzIGNoYW5nZWQsIDQzIGluc2VydGlvbnMoKyksIDEzIGRlbGV0aW9u
-cygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3Bvd2VycGMvS2NvbmZpZyBiL2FyY2gv
-cG93ZXJwYy9LY29uZmlnDQo+ID4gaW5kZXggNzdmNmViZjk3MTEzLi5kNDEzZmUxYjQwNTggMTAw
-NjQ0DQo+ID4gLS0tIGEvYXJjaC9wb3dlcnBjL0tjb25maWcNCj4gPiArKysgYi9hcmNoL3Bvd2Vy
-cGMvS2NvbmZpZw0KPiA+IEBAIC04NTIsMTUgKzg1MiwzMyBAQCBjb25maWcgQ01ETElORQ0KPiA+
-ICAgCSAgc29tZSBjb21tYW5kLWxpbmUgb3B0aW9ucyBhdCBidWlsZCB0aW1lIGJ5IGVudGVyaW5n
-IHRoZW0gaGVyZS4gIEluDQo+ID4gICAJICBtb3N0IGNhc2VzIHlvdSB3aWxsIG5lZWQgdG8gc3Bl
-Y2lmeSB0aGUgcm9vdCBkZXZpY2UgaGVyZS4NCj4gPiAgIA0KPiA+ICtjaG9pY2UNCj4gPiArCXBy
-b21wdCAiS2VybmVsIGNvbW1hbmQgbGluZSB0eXBlIiBpZiBDTURMSU5FICE9ICIiDQo+ID4gKwlk
-ZWZhdWx0IENNRExJTkVfRlJPTV9CT09UTE9BREVSDQo+ID4gKw0KPiA+ICtjb25maWcgQ01ETElO
-RV9GUk9NX0JPT1RMT0FERVINCj4gPiArCWJvb2wgIlVzZSBib290bG9hZGVyIGtlcm5lbCBhcmd1
-bWVudHMgaWYgYXZhaWxhYmxlIg0KPiA+ICsJaGVscA0KPiA+ICsJICBVc2VzIHRoZSBjb21tYW5k
-LWxpbmUgb3B0aW9ucyBwYXNzZWQgYnkgdGhlIGJvb3QgbG9hZGVyLiBJZg0KPiA+ICsJICB0aGUg
-Ym9vdCBsb2FkZXIgZG9lc24ndCBwcm92aWRlIGFueSwgdGhlIGRlZmF1bHQga2VybmVsIGNvbW1h
-bmQNCj4gPiArCSAgc3RyaW5nIHByb3ZpZGVkIGluIENNRExJTkUgd2lsbCBiZSB1c2VkLg0KPiA+
-ICsNCj4gPiArY29uZmlnIENNRExJTkVfRVhURU5EDQo+ID4gKwlib29sICJFeHRlbmQgYm9vdGxv
-YWRlciBrZXJuZWwgYXJndW1lbnRzIg0KPiA+ICsJaGVscA0KPiA+ICsJICBUaGUgY29tbWFuZC1s
-aW5lIGFyZ3VtZW50cyBwcm92aWRlZCBieSB0aGUgYm9vdCBsb2FkZXIgd2lsbCBiZQ0KPiA+ICsJ
-ICBhcHBlbmRlZCB0byB0aGUgZGVmYXVsdCBrZXJuZWwgY29tbWFuZCBzdHJpbmcuDQo+ID4gKw0K
-PiA+ICAgY29uZmlnIENNRExJTkVfRk9SQ0UNCj4gPiAgIAlib29sICJBbHdheXMgdXNlIHRoZSBk
-ZWZhdWx0IGtlcm5lbCBjb21tYW5kIHN0cmluZyINCj4gPiAtCWRlcGVuZHMgb24gQ01ETElORV9C
-T09MDQo+ID4gICAJaGVscA0KPiA+ICAgCSAgQWx3YXlzIHVzZSB0aGUgZGVmYXVsdCBrZXJuZWwg
-Y29tbWFuZCBzdHJpbmcsIGV2ZW4gaWYgdGhlIGJvb3QNCj4gPiAgIAkgIGxvYWRlciBwYXNzZXMg
-b3RoZXIgYXJndW1lbnRzIHRvIHRoZSBrZXJuZWwuDQo+ID4gICAJICBUaGlzIGlzIHVzZWZ1bCBp
-ZiB5b3UgY2Fubm90IG9yIGRvbid0IHdhbnQgdG8gY2hhbmdlIHRoZQ0KPiA+ICAgCSAgY29tbWFu
-ZC1saW5lIG9wdGlvbnMgeW91ciBib290IGxvYWRlciBwYXNzZXMgdG8gdGhlIGtlcm5lbC4NCj4g
-PiAgIA0KPiA+ICtlbmRjaG9pY2UNCj4gPiArDQo+ID4gICBjb25maWcgRVhUUkFfVEFSR0VUUw0K
-PiA+ICAgCXN0cmluZyAiQWRkaXRpb25hbCBkZWZhdWx0IGltYWdlIHR5cGVzIg0KPiA+ICAgCWhl
-bHANCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL2tlcm5lbC9wcm9tX2luaXQuYyBiL2Fy
-Y2gvcG93ZXJwYy9rZXJuZWwvcHJvbV9pbml0LmMNCj4gPiBpbmRleCA1MTQ3MDdlZjY3NzkuLjFj
-NzAxMGNjNmVjOSAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3Bvd2VycGMva2VybmVsL3Byb21faW5p
-dC5jDQo+ID4gKysrIGIvYXJjaC9wb3dlcnBjL2tlcm5lbC9wcm9tX2luaXQuYw0KPiA+IEBAIC0y
-OTgsMTYgKzI5OCwyNCBAQCBzdGF0aWMgY2hhciBfX2luaXQgKnByb21fc3Ryc3RyKGNvbnN0IGNo
-YXIgKnMxLCBjb25zdCBjaGFyICpzMikNCj4gPiAgIAlyZXR1cm4gTlVMTDsNCj4gPiAgIH0NCj4g
-PiAgIA0KPiA+IC1zdGF0aWMgc2l6ZV90IF9faW5pdCBwcm9tX3N0cmxjcHkoY2hhciAqZGVzdCwg
-Y29uc3QgY2hhciAqc3JjLCBzaXplX3Qgc2l6ZSkNCj4gPiAtew0KPiA+IC0Jc2l6ZV90IHJldCA9
-IHByb21fc3RybGVuKHNyYyk7DQo+ID4gK3N0YXRpYyBzaXplX3QgX19pbml0IHByb21fc3RybGNh
-dChjaGFyICpkZXN0LCBjb25zdCBjaGFyICpzcmMsIHNpemVfdCBjb3VudCkNCj4gPiArew0KPiA+
-ICsJc2l6ZV90IGRzaXplID0gcHJvbV9zdHJsZW4oZGVzdCk7DQo+ID4gKwlzaXplX3QgbGVuID0g
-cHJvbV9zdHJsZW4oc3JjKTsNCj4gPiArCXNpemVfdCByZXMgPSBkc2l6ZSArIGxlbjsNCj4gPiAr
-DQo+ID4gKwkvKiBUaGlzIHdvdWxkIGJlIGEgYnVnICovDQo+ID4gKwlpZiAoZHNpemUgPj0gY291
-bnQpDQo+ID4gKwkJcmV0dXJuIGNvdW50Ow0KPiA+ICsNCj4gPiArCWRlc3QgKz0gZHNpemU7DQo+
-ID4gKwljb3VudCAtPSBkc2l6ZTsNCj4gPiArCWlmIChsZW4gPj0gY291bnQpDQo+ID4gKwkJbGVu
-ID0gY291bnQtMTsNCj4gPiArCW1lbWNweShkZXN0LCBzcmMsIGxlbik7DQo+ID4gKwlkZXN0W2xl
-bl0gPSAwOw0KPiA+ICsJcmV0dXJuIHJlczsNCj4gPiAgIA0KPiA+IC0JaWYgKHNpemUpIHsNCj4g
-PiAtCQlzaXplX3QgbGVuID0gKHJldCA+PSBzaXplKSA/IHNpemUgLSAxIDogcmV0Ow0KPiA+IC0J
-CW1lbWNweShkZXN0LCBzcmMsIGxlbik7DQo+ID4gLQkJZGVzdFtsZW5dID0gJ1wwJzsNCj4gPiAt
-CX0NCj4gPiAtCXJldHVybiByZXQ7DQo+ID4gICB9DQo+ID4gICANCj4gPiAgICNpZmRlZiBDT05G
-SUdfUFBDX1BTRVJJRVMNCj4gPiBAQCAtNzU5LDEwICs3NjcsMTQgQEAgc3RhdGljIHZvaWQgX19p
-bml0IGVhcmx5X2NtZGxpbmVfcGFyc2Uodm9pZCkNCj4gPiAgIA0KPiA+ICAgCXByb21fY21kX2xp
-bmVbMF0gPSAwOw0KPiA+ICAgCXAgPSBwcm9tX2NtZF9saW5lOw0KPiA+IC0JaWYgKChsb25nKXBy
-b20uY2hvc2VuID4gMCkNCj4gPiArDQo+ID4gKwlpZiAoIUlTX0VOQUJMRUQoQ09ORklHX0NNRExJ
-TkVfRk9SQ0UpICYmIChsb25nKXByb20uY2hvc2VuID4gMCkNCj4gPiAgIAkJbCA9IHByb21fZ2V0
-cHJvcChwcm9tLmNob3NlbiwgImJvb3RhcmdzIiwgcCwgQ09NTUFORF9MSU5FX1NJWkUtMSk7DQo+
-ID4gLQlpZiAoSVNfRU5BQkxFRChDT05GSUdfQ01ETElORV9CT09MKSAmJiAobCA8PSAwIHx8IHBb
-MF0gPT0gJ1wwJykpIC8qIGRibCBjaGVjayAqLw0KPiA+IC0JCXByb21fc3RybGNweShwcm9tX2Nt
-ZF9saW5lLCBDT05GSUdfQ01ETElORSwgc2l6ZW9mKHByb21fY21kX2xpbmUpKTsNCj4gPiArDQo+
-ID4gKwlpZiAoSVNfRU5BQkxFRChDT05GSUdfQ01ETElORV9FWFRFTkQpIHx8IGwgPD0gMCB8fCBw
-WzBdID09ICdcMCcpDQo+ID4gKwkJcHJvbV9zdHJsY2F0KHByb21fY21kX2xpbmUsICIgIiBDT05G
-SUdfQ01ETElORSwNCj4gPiArCQkJICAgICBzaXplb2YocHJvbV9jbWRfbGluZSkpOw0KPiA+ICsN
-Cj4gPiAgIAlwcm9tX3ByaW50ZigiY29tbWFuZCBsaW5lOiAlc1xuIiwgcHJvbV9jbWRfbGluZSk7
-DQo+ID4gICANCj4gPiAgICNpZmRlZiBDT05GSUdfUFBDNjQNCj4gPiANCg==
+
+
+> On 27 Sep 2019, at 0:43, Sean Christopherson =
+<sean.j.christopherson@intel.com> wrote:
+>=20
+> Write the desired L2 CR3 into vmcs02.GUEST_CR3 during nested VM-Enter
+> isntead of deferring the VMWRITE until vmx_set_cr3().  If the VMWRITE
+> is deferred, then KVM can consume a stale vmcs02.GUEST_CR3 when it
+> refreshes vmcs12->guest_cr3 during nested_vmx_vmexit() if the emulated
+> VM-Exit occurs without actually entering L2, e.g. if the nested run
+> is squashed because L2 is being put into HLT.
+
+I would rephrase to =E2=80=9CIf an emulated VMEntry is squashed because =
+L1 sets vmcs12->guest_activity_state to HLT=E2=80=9D.
+I think it=E2=80=99s a bit more explicit.
+
+>=20
+> In an ideal world where EPT *requires* unrestricted guest (and vice
+> versa), VMX could handle CR3 similar to how it handles RSP and RIP,
+> e.g. mark CR3 dirty and conditionally load it at vmx_vcpu_run().  But
+> the unrestricted guest silliness complicates the dirty tracking logic
+> to the point that explicitly handling vmcs02.GUEST_CR3 during nested
+> VM-Enter is a simpler overall implementation.
+>=20
+> Cc: stable@vger.kernel.org
+> Reported-by: Reto Buerki <reet@codelabs.ch>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+> arch/x86/kvm/vmx/nested.c | 8 ++++++++
+> arch/x86/kvm/vmx/vmx.c    | 9 ++++++---
+> 2 files changed, 14 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 41abc62c9a8a..971a24134081 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -2418,6 +2418,14 @@ static int prepare_vmcs02(struct kvm_vcpu =
+*vcpu, struct vmcs12 *vmcs12,
+> 				entry_failure_code))
+> 		return -EINVAL;
+>=20
+> +	/*
+> +	 * Immediately write vmcs02.GUEST_CR3.  It will be propagated to =
+vmcs12
+> +	 * on nested VM-Exit, which can occur without actually running =
+L2, e.g.
+> +	 * if L2 is entering HLT state, and thus without hitting =
+vmx_set_cr3().
+> +	 */
+
+If I understand correctly, it=E2=80=99s not exactly if L2 is entering =
+HLT state in general.
+(E.g. issue doesn=E2=80=99t occur if L2 runs HLT directly which is not =
+configured to be intercepted by vmcs12).
+It=E2=80=99s specifically when L1 enters L2 with a HLT =
+guest-activity-state. I suggest rephrasing comment.
+
+> +	if (enable_ept)
+> +		vmcs_writel(GUEST_CR3, vmcs12->guest_cr3);
+> +
+> 	/* Late preparation of GUEST_PDPTRs now that EFER and CRs are =
+set. */
+> 	if (load_guest_pdptrs_vmcs12 && nested_cpu_has_ept(vmcs12) &&
+> 	    is_pae_paging(vcpu)) {
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index d4575ffb3cec..b530950a9c2b 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -2985,6 +2985,7 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, unsigned =
+long cr3)
+> {
+> 	struct kvm *kvm =3D vcpu->kvm;
+> 	unsigned long guest_cr3;
+> +	bool skip_cr3 =3D false;
+> 	u64 eptp;
+>=20
+> 	guest_cr3 =3D cr3;
+> @@ -3000,15 +3001,17 @@ void vmx_set_cr3(struct kvm_vcpu *vcpu, =
+unsigned long cr3)
+> 			spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> 		}
+>=20
+> -		if (enable_unrestricted_guest || is_paging(vcpu) ||
+> -		    is_guest_mode(vcpu))
+> +		if (is_guest_mode(vcpu))
+> +			skip_cr3 =3D true;
+> +		else if (enable_unrestricted_guest || is_paging(vcpu))
+> 			guest_cr3 =3D kvm_read_cr3(vcpu);
+> 		else
+> 			guest_cr3 =3D =
+to_kvm_vmx(kvm)->ept_identity_map_addr;
+> 		ept_load_pdptrs(vcpu);
+> 	}
+>=20
+> -	vmcs_writel(GUEST_CR3, guest_cr3);
+> +	if (!skip_cr3)
+
+Nit: It=E2=80=99s a matter of taste, but I prefer positive conditions. =
+i.e. =E2=80=9Cbool write_guest_cr3=E2=80=9D.
+
+Anyway, code seems valid to me. Nice catch.
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+
+-Liran
+
+> +		vmcs_writel(GUEST_CR3, guest_cr3);
+> }
+>=20
+> int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+> --=20
+> 2.22.0
+>=20
+
