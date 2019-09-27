@@ -2,59 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78948BFF20
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:28:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F0ABFF3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725973AbfI0G2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 02:28:25 -0400
-Received: from mga12.intel.com ([192.55.52.136]:52431 "EHLO mga12.intel.com"
+        id S1726237AbfI0GjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 02:39:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfI0G2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 02:28:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Sep 2019 23:28:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,554,1559545200"; 
-   d="scan'208";a="193110324"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga003.jf.intel.com with ESMTP; 26 Sep 2019 23:28:23 -0700
-Subject: Re: [PATCH] xhci: Increase STS_SAVE timeout in xhci_suspend()
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        mathias.nyman@intel.com, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190926175722.2507-1-kai.heng.feng@canonical.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <ea4f345f-994b-7913-d445-3c64b8d3cd6f@linux.intel.com>
-Date:   Fri, 27 Sep 2019 09:30:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1725804AbfI0GjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 02:39:22 -0400
+Received: from localhost (unknown [62.119.166.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1065206B7;
+        Fri, 27 Sep 2019 06:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569566362;
+        bh=Mhvb/y6R698xgZGIjNVfK3IRa23BD0DXn2mb6szDw+I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kKJdL5KWsnRBktC7HuWrlX8BYz0WTA9rbocMXzDL/hnNZ4T7YLwPkIwb5lfGzmcGk
+         +dDuSzLcHBxCxAh5/HCJP6xOFMA2ZhVWgT1pT4cCn3cfEQojJavDm7hBszIrQvgw/c
+         HkXqUPv60/boJjIGL16WR67xYFp64TamMTHtXLOs=
+Date:   Fri, 27 Sep 2019 08:27:36 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH v2 1/1] leds: remove PAGE_SIZE limit of
+ /sys/class/leds/<led>/trigger
+Message-ID: <20190927062736.GD1786098@kroah.com>
+References: <1568387004-3802-1-git-send-email-akinobu.mita@gmail.com>
+ <1568387004-3802-2-git-send-email-akinobu.mita@gmail.com>
+ <54d4debc-470a-86f6-e43c-f51f1c7913e0@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190926175722.2507-1-kai.heng.feng@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54d4debc-470a-86f6-e43c-f51f1c7913e0@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.9.2019 20.57, Kai-Heng Feng wrote:
-> After commit f7fac17ca925 ("xhci: Convert xhci_handshake() to use
-> readl_poll_timeout_atomic()"), ASMedia xHCI may fail to suspend.
+On Tue, Sep 24, 2019 at 11:30:08PM +0200, Jacek Anaszewski wrote:
+> Hi Greg,
 > 
-> Although the algorithms are essentially the same, the old max timeout is
-> (usec + usec * time of doing readl()), and the new max timeout is just
-> usec, which is much less than the old one.
-> 
-> Increase the timeout to make ASMedia xHCI able to suspend again.
-> 
-> BugLink: https://bugs.launchpad.net/bugs/1844021
-> Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
+> Akinobu seems to have addressed all issues that have been
+> raised regarding this patch. I'd be happy to have your ack before
+> applying it.
 
-Thanks, adding to queue with stable tag for v5.2+ kernels
+You have to wait until after -rc1 is out before doing anything, so
+there's no rush :)
 
--Mathias
+I'll go review it now...
+
+greg k-h
