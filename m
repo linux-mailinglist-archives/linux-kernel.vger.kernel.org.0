@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1854EC0272
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 11:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0523CC027D
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 11:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfI0JhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 05:37:02 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:33054 "EHLO
+        id S1727133AbfI0JhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 05:37:19 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:33055 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbfI0JhB (ORCPT
+        with ESMTP id S1726423AbfI0JhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 05:37:01 -0400
+        Fri, 27 Sep 2019 05:37:02 -0400
 Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x8R9a5ug001372;
-        Fri, 27 Sep 2019 18:36:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x8R9a5ug001372
+        by conuserg-07.nifty.com with ESMTP id x8R9a5uh001372;
+        Fri, 27 Sep 2019 18:36:13 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x8R9a5uh001372
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569576972;
-        bh=UQ6bH4/qZBZ6u3bYLv57zfd3f4RxEgvS4K1+jdI01bE=;
+        s=dec2015msa; t=1569576973;
+        bh=8Z1yZcx7lt82yK82hKDWaRuslS2lyBCS5/OQGziEcvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=frbgdxeGGQj1AAOjEhqLFlCDcjeLt7cStOzPH2l82NztyjA71sxo14Zi/bXCzvh4P
-         9kwGdlzThgqbZ5CzsQdWDHGtrdB9yVtVpy5U1E7UswRYGVcjPc0tI+RKVhIb6drVlP
-         ytCFvoZbIb64pCdDTruU+ag/LDUV+50pjhDetlTWyp8DFje/JNuoquAbcFNwlWw2GC
-         wiGq7O8KYRo0/d/OJBomxqPpMxuswzr450Tbaau6QB7nrV6HzL4rkxGg0xrB/NddBz
-         +gXUFIRw3MPzkk2lypyO98bt6neq0ofHuGCZqKUpFvH9K9bOSqQF+kDIgy6RdYXUfy
-         ELHedr+p7EVNQ==
+        b=uoWzyLR7WPO97Yw+7t2zQ6Bn+mWJ4wLoAivcRWkOp71OIQ4a7nclOHfnfEZcMfLq2
+         gsfADMWqfz6bC+Epby+QMFO9UMLLAPmaOoQiOYb4pN843ldf5QrkWkPYAZ6B4KFLrT
+         EHjvPttNsdP+0/CAKOdTvY3Xf4STusL1CBVtA2fcq1OK8Cg9yfWAdPAWeW/HbjcZ5n
+         OtN0uNov4PROdyIluCGO1s+S4YLwJN+stI+hpC18A8xDmwkxfwzvczxj5ajXXyzHRu
+         AYi7QmobHJr+rFXav0f1osZ59d0aD+l8SF0fF46Q3Cp3f7aXef+eMDSH6iHp7z5uGT
+         ekA/bWw/6OMew==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Jessica Yu <jeyu@kernel.org>
@@ -36,9 +36,9 @@ Cc:     Matthias Maennich <maennich@google.com>,
         Will Deacon <will.deacon@arm.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] nsdeps: fix hashbang of scripts/nsdeps
-Date:   Fri, 27 Sep 2019 18:36:02 +0900
-Message-Id: <20190927093603.9140-7-yamada.masahiro@socionext.com>
+Subject: [PATCH 7/7] nsdeps: make generated patches independent of locale
+Date:   Fri, 27 Sep 2019 18:36:03 +0900
+Message-Id: <20190927093603.9140-8-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190927093603.9140-1-yamada.masahiro@socionext.com>
 References: <20190927093603.9140-1-yamada.masahiro@socionext.com>
@@ -47,10 +47,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This script does not use bash-extension. I am guessing this hashbang
-was copied from scripts/coccicheck, which really uses bash-extension.
+scripts/nsdeps automatically generates a patch to add MODULE_IMPORT_NS
+tags, and what is nicer, it sorts the lines alphabetically with the
+"sort" command. However, the output from the "sort" command depends
+on locale.
 
-/bin/sh is enough for this script.
+Especially when namespaces contain underscores, the result is
+different depending on the locale.
+
+For example, I got this:
+
+$ { echo usbcommon; echo usb_common; } | LANG=en_US.UTF-8 sort
+usbcommon
+usb_common
+$ { echo usbcommon; echo usb_common; } | LANG=C sort
+usb_common
+usbcommon
+
+So, this means people might potentially send different patches.
+
+This kind of issue was reported in the past, for example,
+commit f55f2328bb28 ("kbuild: make sorting initramfs contents
+independent of locale").
+
+Adding "LANG=C" is a conventional way of fixing when a deterministic
+result is desirable.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
@@ -59,15 +80,18 @@ Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/scripts/nsdeps b/scripts/nsdeps
-index ac2b6031dd13..964b7fb8c546 100644
+index 964b7fb8c546..3754dac13b31 100644
 --- a/scripts/nsdeps
 +++ b/scripts/nsdeps
-@@ -1,4 +1,4 @@
--#!/bin/bash
-+#!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- # Linux kernel symbol namespace import generator
- #
+@@ -41,7 +41,7 @@ generate_deps() {
+ 		for source_file in $mod_source_files; do
+ 			sed '/MODULE_IMPORT_NS/Q' $source_file > ${source_file}.tmp
+ 			offset=$(wc -l ${source_file}.tmp | awk '{print $1;}')
+-			cat $source_file | grep MODULE_IMPORT_NS | sort -u >> ${source_file}.tmp
++			cat $source_file | grep MODULE_IMPORT_NS | LANG=C sort -u >> ${source_file}.tmp
+ 			tail -n +$((offset +1)) ${source_file} | grep -v MODULE_IMPORT_NS >> ${source_file}.tmp
+ 			if ! diff -q ${source_file} ${source_file}.tmp; then
+ 				mv ${source_file}.tmp ${source_file}
 -- 
 2.17.1
 
