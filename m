@@ -2,109 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 894C7C0AEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 20:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17018C0AEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 20:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbfI0STQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 14:19:16 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39039 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfI0STP (ORCPT
+        id S1728140AbfI0SUB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 14:20:01 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43571 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbfI0SUA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 14:19:15 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v17so6507437wml.4
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 11:19:14 -0700 (PDT)
+        Fri, 27 Sep 2019 14:20:00 -0400
+Received: by mail-lf1-f67.google.com with SMTP id u3so2595644lfl.10
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 11:19:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fA3AyFMETBkkXBMPLk4PEoT5pvbGmGcoWcfzer8Dpbc=;
-        b=ZCgeDszDVj753elaOe+KWDWkEmrdRe7T8yV8JfyXUydLncuDesAt0ZOJQARb/Uvhp4
-         FLU0sSyG3DwUIub9WjxnbNNXWxHBGV+ikhlPKosoZHz2TIHLHBwcXbF5sJxkYcjb/VGb
-         qttKU1daTr9IxM/8FoMSHnmeI4zd+/1alWg/HJ6CwNZbUri52v/CPb7kKY7EEhnPbdDV
-         78qtDAdHtdiBdPOexbUK2itMu7u0K52AfLYTo5kf0y6kVxTo9QyB4tPHntKSsGk+Rpwa
-         s7mKDQ1IIFGH9NoE47TnbfXL2V9qV2qQx9WxoFM/yolTXt7cas/wuBArvtYpf6NoSyTh
-         qfKg==
+        bh=tehHftnlIZpuK7bFKqc+5WjFB+mT//aLNi+OsMfiEtY=;
+        b=QLf7L0LguMNURN7cmZ8SzPczLJx0nHvbuzjXD2HCo2gMYHnYf7c+bP+/Hfh9MKZIic
+         cB/dy3RBKY3e+GPCukLmg90dkAaOu76XTBJeSZC3tKQbBgHO55QHDU9+bS+EsZOYVWnB
+         n70YIM6HULzAXopOzej3WTpMpZSPeE4pcO9CA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fA3AyFMETBkkXBMPLk4PEoT5pvbGmGcoWcfzer8Dpbc=;
-        b=kQ23EgOv4uy/1P+dqO2M+xd4YTYtvlM54DuYEKNISoPcFsMUG+ROfdJs4C/JMxak7b
-         Vueou0MoOJL4H6dZbgPTQ9UF9V7s/bVihqbFMWgy++s2Ji0hhtPIRxLWzPxT9yKdK01y
-         U8WR1+EfBP1HxnpAfMeRihWon2FyyY0c8VYsv5PnaWVurcRGmKr2S71Mt9D9/fjvLmjQ
-         X9ZZtCOb57RK+b7RUOF02NDtXJOiPHUvDm83AC85LsyRfv8SgGEUWjeqNylEEPFljcJZ
-         ghHJNcuWkDrOmdWKZ1ke/Dh6GTVvYMm8NgiURPA+NU0QPQB71Uv0wG504XNf+1LnFFla
-         xr0w==
-X-Gm-Message-State: APjAAAVgCLDZniCaFdrvUpbrGig7L5IYv3bRm3jQazYHTLK3JY87JE2r
-        F5pW5WnpvKthnyYaZ/DovciiX0xY6CqJA02Xw70+qv1d
-X-Google-Smtp-Source: APXvYqzvIontBSJjr5BL4fVM0hJ1HtGC2SPpdNGFAWfGbTHRgFyZ9bG6l1I9NU1H98PJUTSkVkJLbuHhtCfMH0o7Tnc=
-X-Received: by 2002:a05:600c:2308:: with SMTP id 8mr8649051wmo.67.1569608353487;
- Fri, 27 Sep 2019 11:19:13 -0700 (PDT)
+        bh=tehHftnlIZpuK7bFKqc+5WjFB+mT//aLNi+OsMfiEtY=;
+        b=dv0SK37iAW5j5aJ1jACOEapU2A0GFp5y6W68cRV8fEPZN4hym70+YJ2WnDtDaRQbx8
+         SV54ggTGpHwYpRPWUqiYnBsLYXech+NG4R/QjpasvJV8kAkHRFoEPxP1B2MLAt1b7EIi
+         Rxqwi9iEIN6Jxm5n+SSHjBgVvoQuZcWTnu7EaZG3JW88BSqC2XVIzQcY4g0i2dugyD/b
+         BWzI1wOGkXvM0DM2y+qTARr7lXxP8wpbqLaUatYPkOzvMaYsju1KmSFyjhX41fQt/14s
+         RddT4oZGi+7Q3JQFOOogVqVRnwmIiuO59yPvL0EXkHRhIYylZM6YGnShgCQprgoJHo9n
+         yBow==
+X-Gm-Message-State: APjAAAWvP4LBLHFDWREtYnYE4hrF/Fkk3MkDGK3bU419HYADofMwyixv
+        veU+u7YHaI+sYNXuqZbksbDpLSVkTtY=
+X-Google-Smtp-Source: APXvYqzGyziJjY7exw+TNxSGHS4tqNnwYr2gpL/BWIRzLZScE+wJ11Ahdrvuo6WgEOcEorSE39bh5g==
+X-Received: by 2002:a05:6512:14c:: with SMTP id m12mr3598580lfo.27.1569608398411;
+        Fri, 27 Sep 2019 11:19:58 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id t8sm601920lfc.80.2019.09.27.11.19.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Sep 2019 11:19:57 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id j19so3432880lja.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 11:19:57 -0700 (PDT)
+X-Received: by 2002:a2e:8789:: with SMTP id n9mr3912648lji.52.1569608396991;
+ Fri, 27 Sep 2019 11:19:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190926225122.31455-1-lyude@redhat.com> <20190926225122.31455-2-lyude@redhat.com>
- <2a1d5221-b801-44f9-c966-1163b8d67b3f@amd.com>
-In-Reply-To: <2a1d5221-b801-44f9-c966-1163b8d67b3f@amd.com>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 27 Sep 2019 14:18:59 -0400
-Message-ID: <CADnq5_PF_aAcCADP1g3+4UFmWM7TVPmSsnaw1GaFqVzBodVE3A@mail.gmail.com>
-Subject: Re: [PATCH 1/6] drm/amdgpu/dm/mst: Don't create MST topology managers
- for eDP ports
-To:     Harry Wentland <hwentlan@amd.com>
-Cc:     Lyude Paul <lyude@redhat.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        Thomas Lim <Thomas.Lim@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Francis, David" <David.Francis@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        "Zuo, Jerry" <Jerry.Zuo@amd.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>
+References: <alpine.LRH.2.21.1909101402230.20291@namei.org> <nycvar.YEU.7.76.1909251652360.15418@gjva.wvxbf.pm>
+In-Reply-To: <nycvar.YEU.7.76.1909251652360.15418@gjva.wvxbf.pm>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 27 Sep 2019 11:19:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjYz8UQkzBX_1h3cqzDHKEWwyXjnbCoHYWnjn=9RPVOeg@mail.gmail.com>
+Message-ID: <CAHk-=wjYz8UQkzBX_1h3cqzDHKEWwyXjnbCoHYWnjn=9RPVOeg@mail.gmail.com>
+Subject: Re: [GIT PULL][SECURITY] Kernel lockdown patches for v5.4
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 1:48 PM Harry Wentland <hwentlan@amd.com> wrote:
+On Wed, Sep 25, 2019 at 7:54 AM Jiri Kosina <jikos@kernel.org> wrote:
 >
-> On 2019-09-26 6:51 p.m., Lyude Paul wrote:
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
->
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
->
+> Seems like this didn't happen (yet) ... are there any plans to either drop
+> it for good, or merge it?
 
-Applied.  Thanks!
+This is one of the pull requests that I have to go through commit by
+commit because of the history of this thing.
 
-Alex
+And I've yet to empty my queue of all the _regular_ things that came
+in this merge window, so I haven't had time.
 
-> Harry
->
-> > ---
-> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> > index 5ec14efd4d8c..185bf0e2bda2 100644
-> > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-> > @@ -417,6 +417,10 @@ void amdgpu_dm_initialize_dp_connector(struct amdgpu_display_manager *dm,
-> >       drm_dp_aux_register(&aconnector->dm_dp_aux.aux);
-> >       drm_dp_cec_register_connector(&aconnector->dm_dp_aux.aux,
-> >                                     &aconnector->base);
-> > +
-> > +     if (aconnector->base.connector_type == DRM_MODE_CONNECTOR_eDP)
-> > +             return;
-> > +
-> >       aconnector->mst_mgr.cbs = &dm_mst_cbs;
-> >       drm_dp_mst_topology_mgr_init(
-> >               &aconnector->mst_mgr,
-> >
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+                   Linus
