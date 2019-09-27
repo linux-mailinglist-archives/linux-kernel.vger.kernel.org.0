@@ -2,85 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E666C0BDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 21:01:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E0FC0BE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 21:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbfI0TBR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 27 Sep 2019 15:01:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:37953 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725980AbfI0TBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 15:01:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 12:01:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,556,1559545200"; 
-   d="scan'208";a="273908415"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga001.jf.intel.com with ESMTP; 27 Sep 2019 12:01:16 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Fri, 27 Sep 2019 12:01:16 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 27 Sep 2019 12:01:15 -0700
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81]) by
- fmsmsx601.amr.corp.intel.com ([10.18.126.81]) with mapi id 15.01.1713.004;
- Fri, 27 Sep 2019 12:01:15 -0700
-From:   "Bowers, AndrewX" <andrewx.bowers@intel.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-Subject: RE: [Intel-wired-lan] [PATCH] i40e: prevent memory leak in
- i40e_setup_macvlans
-Thread-Topic: [Intel-wired-lan] [PATCH] i40e: prevent memory leak in
- i40e_setup_macvlans
-Thread-Index: AQHVc7jPmEh7Ea81lkWN7Xt2d7dypac/5EeQ
-Date:   Fri, 27 Sep 2019 19:01:15 +0000
-Message-ID: <97cc947a0a08406096349699b6a8dc47@intel.com>
-References: <20190925154831.19044-1-navid.emamdoost@gmail.com>
-In-Reply-To: <20190925154831.19044-1-navid.emamdoost@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDM2NWU2NzMtYzA1Yi00YzBkLWJjZDQtZDYwMTNjODNjYTEzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMkdpZzNzeGdXMFZrMkdBSWIzaldraVF0aGdpd0NHOGJzdW9mcnlHdFwvREo3enRjQ0NlSmgzYWN1ZFRoUWN3QlUifQ==
-dlp-reaction: no-action
-dlp-version: 11.0.400.15
-x-originating-ip: [10.22.254.132]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726824AbfI0TCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 15:02:49 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41387 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725980AbfI0TCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 15:02:49 -0400
+Received: by mail-io1-f68.google.com with SMTP id r26so19006021ioh.8;
+        Fri, 27 Sep 2019 12:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LO3JdAOU095h41fjVsuAsU+4Z0wmwAMdPedC2Thw3pg=;
+        b=dr01MoRs+YBUsJR2Yajv5Gvk1Uuzl8J/B0xZ7BtPxjvHMRUFzNHi1gn2IjV0wXHCzq
+         capi/qDYXysLutGkSjtANV/oT80eN4t3epMkMyFfb1YeeWmHa9B56XasKfDrBaj/UgsO
+         MRPgpvasw/M/Lmb03EZJA/kFsbdBVMfYO7psdw+1yHdvq6WIeA5iEWS1/Q21rJENUPAU
+         i8sw3SqRACaGNwbNZyxa3PEoYHDcCnP3XqMnzL7dbQwY6dcqx6TULVQxAbxzP5//qpyH
+         xtlvQ6qOQVSLV5vls0hohFudnvizuTxuk2TL5CkaybbkRGoPMAZj8BeQzWgp1aJOcIUM
+         OX6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LO3JdAOU095h41fjVsuAsU+4Z0wmwAMdPedC2Thw3pg=;
+        b=aVcn1pNPXx0wfzpuSZsYc2XbBP7Hx/ghHhuZHe0ia1XOAhOEtNPqgajsLO6Dvu5LfE
+         XPxGfOGXPULB/R9Hz6TuYvI8eRX3zvE1GsbZHt8WOPjzWOLecalb3Dnrb7hzHPgetRfA
+         K127GcwJR9xsR/P3YlVDTamIcn5p+mXESCmM4CuXfxoPPKUwZ3phLbMwIxfJg8U7cu5r
+         XA/gwtzXq+78LD+q2jOprecBvqEwNzQVKQ1aOYZHvQNI1s0iACteFUyatZcRL/cBl/h7
+         OCzEJPd8vohlU+e9sTMmZ+T2yYFJlNLx2vmzRDV4fh9aTDuWVtqH+TbX0f4EJysuEtvr
+         zXNw==
+X-Gm-Message-State: APjAAAVOqfqqT3sdRaPXHV9IMKEFynL91Coz7wkPQS1CNdlp3OcSPmqT
+        LxdLKNivVLlBYNpNkjxj39XIagKoGJPT039rlIk=
+X-Google-Smtp-Source: APXvYqwS6ado5j8H/MS9UQpgoe/UkE+sD6PlTwv5ZTRS/6e5bGEdAPsZ4ex2TIbFU5IYmkfVt2tiTgtyAQ59xYbnLxI=
+X-Received: by 2002:a02:7810:: with SMTP id p16mr9500549jac.55.1569610967624;
+ Fri, 27 Sep 2019 12:02:47 -0700 (PDT)
 MIME-Version: 1.0
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190925184239.22330-1-aford173@gmail.com> <20190925184239.22330-2-aford173@gmail.com>
+ <20190927185153.GA982@bogus>
+In-Reply-To: <20190927185153.GA982@bogus>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Fri, 27 Sep 2019 14:02:35 -0500
+Message-ID: <CAHCN7x+V_-PZjhC_1K1kU+fnQYwWM4br1PTPEBd4Kks=sR5K7g@mail.gmail.com>
+Subject: Re: [PATCH V3 2/3] dt-bindings: Add Logic PD Type 28 display panel
+To:     Rob Herring <robh@kernel.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Adam Ford <adam.ford@logicpd.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Navid Emamdoost
-> Sent: Wednesday, September 25, 2019 8:49 AM
-> Cc: netdev@vger.kernel.org; kjlu@umn.edu; linux-kernel@vger.kernel.org;
-> emamd001@umn.edu; intel-wired-lan@lists.osuosl.org;
-> smccaman@umn.edu; David S. Miller <davem@davemloft.net>; Navid
-> Emamdoost <navid.emamdoost@gmail.com>
-> Subject: [Intel-wired-lan] [PATCH] i40e: prevent memory leak in
-> i40e_setup_macvlans
-> 
-> In i40e_setup_macvlans if i40e_setup_channel fails the allocated memory for
-> ch should be released.
-> 
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> ---
->  drivers/net/ethernet/intel/i40e/i40e_main.c | 1 +
->  1 file changed, 1 insertion(+)
+On Fri, Sep 27, 2019 at 1:51 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Sep 25, 2019 at 01:42:37PM -0500, Adam Ford wrote:
+> > This patch adds documentation of device tree bindings for the WVGA panel
+> > Logic PD Type 28 display.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > ---
+> > V3:  Correct build errors from 'make dt_binding_check'
+> > V2:  Use YAML instead of TXT for binding
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/panel/logicpd,type28.yaml b/Documentation/devicetree/bindings/display/panel/logicpd,type28.yaml
+> > new file mode 100644
+> > index 000000000000..74ba650ea7a0
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/panel/logicpd,type28.yaml
+> > @@ -0,0 +1,31 @@
+> > +# SPDX-License-Identifier: (GPL-2.0+ OR X11)
+>
+> (GPL-2.0-only OR BSD-2-Clause) please.
+>
+> X11 is pretty much never right unless this is copyright X Consortium.
+>
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+I copied the example from
+Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
+
+Is there a better example I can use?  If what I did is wrong, then it
+seems like that board is wrong too.
+
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/panel/logicpd,type28.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Logic PD Type 28 4.3" WQVGA TFT LCD panel
+> > +
+> > +maintainers:
+> > +  - Adam Ford <aford173@gmail.com>
+> > +
+>
+> You need:
+>
+> allOf:
+>   - $ref: panel-common.yaml#
+>
+> > +properties:
+> > +  compatible:
+> > +    const: logicpd,type28
+> > +
+>
+> > +  power-supply:
+> > +    description: Regulator to provide the supply voltage
+> > +    maxItems: 1
+> > +
+> > +  enable-gpios:
+> > +    description: GPIO pin to enable or disable the panel
+> > +    maxItems: 1
+> > +
+> > +  backlight:
+> > +    description: Backlight used by the panel
+> > +    $ref: "/schemas/types.yaml#/definitions/phandle"
+>
+> These 3 are all defined in the common schema, so you just need 'true'
+> for the value to indicate they apply to this panel and to make
+> 'additionalProperties: false' happy.
+
+Sorry for my ignorance, but I am not familiar with the syntax here,
+nor do I understand what is required.  Since there aren't many display
+panels with yaml docs, I don't know what is expected and clearly the
+one I used as a template didn't do it right either.
+
+Is there a branch  where this stuff is located? I am just using the
+latest linux-stable branch.
+
+>
+> > +
+> > +required:
+> > +  - compatible
+>
+> Are the rest really optional?
+
+From what I can tell, they are optional.  I am just adding some timing
+info to an already existing driver.  It's not my driver.
 
 
+>
+> > +
+> > +additionalProperties: false
+> > --
+> > 2.17.1
+> >
