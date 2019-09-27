@@ -2,118 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1904CBFD5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 04:55:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE01EBFD7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 05:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728795AbfI0Czb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 22:55:31 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43009 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727631AbfI0Czb (ORCPT
+        id S1728943AbfI0DIE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 23:08:04 -0400
+Received: from lucky1.263xmail.com ([211.157.147.135]:45942 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbfI0DID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 22:55:31 -0400
-Received: by mail-io1-f67.google.com with SMTP id v2so12296161iob.10
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 19:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KDUa1q53dfu0Ixw6H7h9jXl5AfHjmWORWSwEBG7Wig4=;
-        b=BGpvoGmMbXh5mNJl+6NSpIX3PN4KHCFkYCtPSDMoRSW150t5DfU1QdLbA4JO6l3EBn
-         zt3w9t8/qSd/EJ5h7Waj1mz+0mI3RpdzUxiIG7EQcWqKHNb8s2gLm+T9sTNKK43kAiVE
-         yjhjEGdTt3Ix1M25RejCBCO6oIVLZWn+emES6bbD49ZxM8Y83mGHvWm664vkC7vEiNt/
-         9CMtAgUXZ0vFo4tI86bRO2mlo4ESDYBby8A4IwdqHImSCFpSdzVNBBXSxr+5PVal4aLT
-         ACtcflxaHkE2juHtMKY8j7ZiBsWJzLytFnMktvt38J58vCHdkCF4qqzmt8tT53D1OIlj
-         AT0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KDUa1q53dfu0Ixw6H7h9jXl5AfHjmWORWSwEBG7Wig4=;
-        b=f5iuGf3rlItcgxt1eoWoAcIsB0US5Qu1vrqTPygr7PvVJ6YOQAg6CjV8AZ/KC0G5NE
-         hhBU0YXuiWadMCsN3PqBXBnsk9dGD3WL38B4HOoe00rYOiJkzxi6/fXd0xuxmDLLI+he
-         E0zgLuupDupsiIRMhcnQKaQwPUXqd8Vi3UI6bOuLGEio4MNZN7+/PEl4HWnsTyeN+uGd
-         kvq4j2Ix/o6fnNEbyRQ0/D3oAhYYKsXq7cl2ktnPEMCnrWJyidJm2npG7KpNZwaQP0jv
-         IxJKwDzGEbR9swpycmsVGVn2DHqwwsNV17m8RpVSlX9Ni5BPQYKDKrHsaQ+xPnptUtHl
-         pVDQ==
-X-Gm-Message-State: APjAAAXVRppP/mhiuXZOzTaiq+tVgatqAVAQp1ZLfKPxmr7WiVUt2YZV
-        plsx1YaettDtjm7TdT5M+cE=
-X-Google-Smtp-Source: APXvYqwIgoACEUJ19xm2YJrWljbq6VeDHjFjnasmTGKn4vvEUFmkNgHypAuZA/FpqdAOy31uOHt7gg==
-X-Received: by 2002:a92:a1d6:: with SMTP id b83mr2465039ill.76.1569552930032;
-        Thu, 26 Sep 2019 19:55:30 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.gmail.com with ESMTPSA id t9sm1895080iop.86.2019.09.26.19.55.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Sep 2019 19:55:29 -0700 (PDT)
-Date:   Thu, 26 Sep 2019 21:55:26 -0500
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     emamd001@umn.edu, smccaman@umn.edu, kjlu@umn.edu,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: Intel: Skylake: prevent memory leak in
- snd_skl_parse_uuids
-Message-ID: <20190927025526.GD22969@cs-dulles.cs.umn.edu>
-References: <20190925161922.22479-1-navid.emamdoost@gmail.com>
- <13f4bd40-dbaa-e24e-edca-4b4acff9d9c5@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13f4bd40-dbaa-e24e-edca-4b4acff9d9c5@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 26 Sep 2019 23:08:03 -0400
+Received: from localhost (unknown [192.168.167.158])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 822C143EDB;
+        Fri, 27 Sep 2019 11:00:37 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P5565T139972115928832S1569553235679252_;
+        Fri, 27 Sep 2019 11:00:37 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <d2c50f30286dfff9eea87f826a4255ce>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Elaine Zhang <zhangqing@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 0/5] clk: rockchip: Support for some new features
+Date:   Fri, 27 Sep 2019 11:00:39 +0800
+Message-Id: <1569553244-3165-1-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 12:05:28PM -0500, Pierre-Louis Bossart wrote:
-> On 9/25/19 11:19 AM, Navid Emamdoost wrote:
-> > In snd_skl_parse_uuids if allocation for module->instance_id fails, the
-> > allocated memory for module shoulde be released. I changes the
-> > allocation for module to use devm_kzalloc to be resource_managed
-> > allocation and avoid the release in error path.
-> 
-> if you use devm_, don't you need to fix the error path as well then, I see a
-> kfree(uuid) in skl_freeup_uuid_list().
-> 
-> I am not very familiar with this code but the error seems to be that the
-> list_add_tail() is called after the module->instance_id is allocated, so
-> there is a risk that the module allocated earlier is not freed (since it's
-> not yet added to the list). Freeing the module as done in patch 1 works,
-> using devm_ without fixing the error path does not seem correct to me.
-> 
-Thanks for the feedback, then it's your call if you can accept patch 1 as
-fix.
+1. Support for some new features
+2. fix up some error
 
-Navid.
-> > 
-> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> > ---
-> > Changes in v2:
-> > 	- Changed the allocation for module from kzalloc to devm_kzalloc
-> > ---
-> >   sound/soc/intel/skylake/skl-sst-utils.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/sound/soc/intel/skylake/skl-sst-utils.c b/sound/soc/intel/skylake/skl-sst-utils.c
-> > index d43cbf4a71ef..ac37f04b0eea 100644
-> > --- a/sound/soc/intel/skylake/skl-sst-utils.c
-> > +++ b/sound/soc/intel/skylake/skl-sst-utils.c
-> > @@ -284,7 +284,7 @@ int snd_skl_parse_uuids(struct sst_dsp *ctx, const struct firmware *fw,
-> >   	 */
-> >   	for (i = 0; i < num_entry; i++, mod_entry++) {
-> > -		module = kzalloc(sizeof(*module), GFP_KERNEL);
-> > +		module = devm_kzalloc(ctx->dev, sizeof(*module), GFP_KERNEL);
-> >   		if (!module) {
-> >   			ret = -ENOMEM;
-> >   			goto free_uuid_list;
-> > 
-> 
+Chang in V3:
+[PATCH v2 3/6] : It's been merged
+So rebased and resubmit.
+
+Chang in V2:
+[PATCH v2 5/6] : fix up the Register error, and add delay.
+
+Elaine Zhang (4):
+  clk: rockchip: fix up the frac clk get rate error
+  clk: rockchip: add a clock-type for muxes based in the pmugrf
+  clk: rockchip: add pll up and down when change pll freq
+  clk: rockchip: support pll setting by auto
+
+Finley Xiao (1):
+  clk: rockchip: Add supprot to limit input rate for fractional divider
+
+ drivers/clk/rockchip/clk-pll.c    | 236 +++++++++++++++++++++++++++++++++++---
+ drivers/clk/rockchip/clk-px30.c   |  29 ++---
+ drivers/clk/rockchip/clk-rk3036.c |  13 ++-
+ drivers/clk/rockchip/clk-rk3128.c |  15 ++-
+ drivers/clk/rockchip/clk-rk3188.c |  24 ++--
+ drivers/clk/rockchip/clk-rk3228.c |  18 +--
+ drivers/clk/rockchip/clk-rk3288.c |  19 +--
+ drivers/clk/rockchip/clk-rk3308.c |  46 ++++----
+ drivers/clk/rockchip/clk-rk3328.c |  17 +--
+ drivers/clk/rockchip/clk-rk3368.c |  17 +--
+ drivers/clk/rockchip/clk-rk3399.c |  32 +++---
+ drivers/clk/rockchip/clk-rv1108.c |  14 ++-
+ drivers/clk/rockchip/clk.c        |  39 ++++++-
+ drivers/clk/rockchip/clk.h        |  27 ++++-
+ include/linux/clk-provider.h      |   2 +
+ 15 files changed, 422 insertions(+), 126 deletions(-)
+
+-- 
+1.9.1
+
+
+
