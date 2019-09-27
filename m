@@ -2,89 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 825DBC010D
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC0EC012F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:31:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfI0IXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:23:45 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:55603 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfI0IXo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:23:44 -0400
-Received: from localhost (unknown [65.39.69.237])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 1228910000E;
-        Fri, 27 Sep 2019 08:23:41 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v2] PCI: aardvark: Don't rely on jiffies while holding spinlock
-Date:   Fri, 27 Sep 2019 10:31:42 +0200
-Message-Id: <20190927083142.8571-1-repk@triplefau.lt>
-X-Mailer: git-send-email 2.20.1
+        id S1726163AbfI0Ibp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:31:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56188 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbfI0Ibo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 04:31:44 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 770658535D;
+        Fri, 27 Sep 2019 08:31:44 +0000 (UTC)
+Received: from [10.72.12.30] (ovpn-12-30.pek2.redhat.com [10.72.12.30])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F9095C3FA;
+        Fri, 27 Sep 2019 08:31:33 +0000 (UTC)
+Subject: Re: [PATCH] vhost: introduce mdev based hardware backend
+To:     Tiwei Bie <tiwei.bie@intel.com>
+Cc:     mst@redhat.com, alex.williamson@redhat.com,
+        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        lingshan.zhu@intel.com
+References: <20190926045427.4973-1-tiwei.bie@intel.com>
+ <1b4b8891-8c14-1c85-1d6a-2eed1c90bcde@redhat.com>
+ <20190927045438.GA17152@___>
+ <49bb0777-3761-3737-8e5b-568957f9a935@redhat.com>
+ <20190927080410.GA22568@___>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <cc288a52-dc5e-1a59-6219-8835c898ea73@redhat.com>
+Date:   Fri, 27 Sep 2019 16:31:31 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190927080410.GA22568@___>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 27 Sep 2019 08:31:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-advk_pcie_wait_pio() can be called while holding a spinlock (from
-pci_bus_read_config_dword()), then depends on jiffies in order to
-timeout while polling on PIO state registers. In the case the PIO
-transaction failed, the timeout will never happen and will also cause
-the cpu to stall.
 
-This decrements a variable and wait instead of using jiffies.
+On 2019/9/27 下午4:04, Tiwei Bie wrote:
+> On Fri, Sep 27, 2019 at 03:14:42PM +0800, Jason Wang wrote:
+>> On 2019/9/27 下午12:54, Tiwei Bie wrote:
+>>>>> +
+>>>>> +		/*
+>>>>> +		 * In vhost-mdev, userspace should pass ring addresses
+>>>>> +		 * in guest physical addresses when IOMMU is disabled or
+>>>>> +		 * IOVAs when IOMMU is enabled.
+>>>>> +		 */
+>>>> A question here, consider we're using noiommu mode. If guest physical
+>>>> address is passed here, how can a device use that?
+>>>>
+>>>> I believe you meant "host physical address" here? And it also have the
+>>>> implication that the HPA should be continuous (e.g using hugetlbfs).
+>>> The comment is talking about the virtual IOMMU (i.e. iotlb in vhost).
+>>> It should be rephrased to cover the noiommu case as well. Thanks for
+>>> spotting this.
+>>
+>> So the question still, if GPA is passed how can it be used by the
+>> virtio-mdev device?
+> Sorry if I didn't make it clear..
+> Of course, GPA can't be passed in noiommu mode.
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
-Changes since v1:
-  - Reduce polling delay
-  - Change size_t into int for loop counter
----
- drivers/pci/controller/pci-aardvark.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-index fc0fe4d4de49..ee05ccb2b686 100644
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -175,7 +175,8 @@
- 	(PCIE_CONF_BUS(bus) | PCIE_CONF_DEV(PCI_SLOT(devfn))	| \
- 	 PCIE_CONF_FUNC(PCI_FUNC(devfn)) | PCIE_CONF_REG(where))
- 
--#define PIO_TIMEOUT_MS			1
-+#define PIO_RETRY_CNT			10
-+#define PIO_RETRY_DELAY			2 /* 2 us*/
- 
- #define LINK_WAIT_MAX_RETRIES		10
- #define LINK_WAIT_USLEEP_MIN		90000
-@@ -383,17 +384,16 @@ static void advk_pcie_check_pio_status(struct advk_pcie *pcie)
- static int advk_pcie_wait_pio(struct advk_pcie *pcie)
- {
- 	struct device *dev = &pcie->pdev->dev;
--	unsigned long timeout;
-+	int i;
- 
--	timeout = jiffies + msecs_to_jiffies(PIO_TIMEOUT_MS);
--
--	while (time_before(jiffies, timeout)) {
-+	for (i = 0; i < PIO_RETRY_CNT; i++) {
- 		u32 start, isr;
- 
- 		start = advk_readl(pcie, PIO_START);
- 		isr = advk_readl(pcie, PIO_ISR);
- 		if (!start && isr)
- 			return 0;
-+		udelay(PIO_RETRY_DELAY);
- 	}
- 
- 	dev_err(dev, "config read/write timed out\n");
--- 
-2.20.1
+I see.
 
+Thanks for the confirmation.
+
+
+>
+>
+>> Thanks
+>>
