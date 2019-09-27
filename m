@@ -2,255 +2,360 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ADE5C0424
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 13:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB85C0439
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 13:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727273AbfI0L1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 07:27:30 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36751 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfI0L11 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 07:27:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y19so2327786wrd.3
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 04:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=XlVr+lve1SBST0lOrkCriIWrcdT4ZLW8E+N/y3bnBeE=;
-        b=O+PsjirZIgpQH2EoeeniHV7WZ7McM6m7qVezg5k4n8Q88oZz5oCFFU/N6eFVTI47N9
-         uGArKzPSnoPX5J6KbxOID8ZMgKrMMbv9E4VbaJwYM6zQc0Y9xZ0GOM8YtrgrLW9jdT8R
-         BBL/UW3iTn5MKFG7HnosKdGzU3dnER91EtnN2fqL1m6uTZ5Yu8GHFzlObnYgiLy+wJeE
-         0WjRLujeQ7dmkO8JpAe5545M/70/ICuRMhtYfKM2soblx74f37yhQYrg5mbi36P+gJBd
-         zG2kLGAufnQo1LBmHdcsFz1uauGOJCDUm2+iBCDh79WW57KUB6C16i5TUjzV1W3CtW9z
-         Hmfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=XlVr+lve1SBST0lOrkCriIWrcdT4ZLW8E+N/y3bnBeE=;
-        b=mZEAT8giCOmp4CDOyWtqw87kYuJoStzZ7e/qX4C6mYeQnJDFf9bUTYjGbpNJB9CL7m
-         7Pk2Ae4vaUh1bYfjrxzTt8hSsOR9ISdkhyWzSTjlfXeYR15tmvCHoBQMtVtkEkQJBx3E
-         itkJXOdLIX+ngKq8+/8wgdTsCGiG/Nr05EW4Gv3gdLlbCe1K20d9hlYulbfLiUAe0Qr1
-         1CDyHtWurGd/0CWtNx3U9rrHaS/VT7U5Q5s2zDAObyC0cQJfdy15VKrEZSOjBerrVZuP
-         R/BQNM41+J+tCUgiPvdVYssIjgp3p1H7NBLLUnaLtuAIg/9xr5EgFD00r3q/MRWzj4UY
-         f5kw==
-X-Gm-Message-State: APjAAAWJLUuvU72Snk7Aa7oz2cnuZHUuZTe4dwznToIuzmQJzLQKhh0D
-        Gs/9/4dYggQ5Ii7Bfsh+ZdGk5w==
-X-Google-Smtp-Source: APXvYqz4HTdHf5JAej2whebloESdZBpfudPwKBoeRCKU5gc/7cKpx1VCp9ZiNqBtwLJax/uqmKvd6A==
-X-Received: by 2002:a5d:4290:: with SMTP id k16mr2807860wrq.265.1569583644760;
-        Fri, 27 Sep 2019 04:27:24 -0700 (PDT)
-Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id t123sm8633063wma.40.2019.09.27.04.27.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Sep 2019 04:27:24 -0700 (PDT)
-Subject: Re: drm_sched with panfrost crash on T820
-To:     Steven Price <steven.price@arm.com>, daniel@ffwll.ch,
-        airlied@linux.ie,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Cc:     Tomeu Vizoso <tomeu.vizoso@collabora.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Erico Nunes <nunes.erico@gmail.com>,
-        Rob Herring <robh@kernel.org>
-References: <e450fbe6-dec7-2704-59c2-db7e869d67f5@baylibre.com>
- <3fb178d8-f069-0ae2-1ed3-4ded84a71951@arm.com>
- <26ae2a4d-8df1-e8db-3060-41638ed63e2a@arm.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAG0KE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT6JATsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIW5AQ0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAYkBHwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8guQINBFYnf6QBEADQ+wBYa+X2n/xIQz/RUoGHf84Jm+yTqRT43t7sO48/cBW9vAn9
- GNwnJ3HRJWKATW0ZXrCr40ES/JqM1fUTfiFDB3VMdWpEfwOAT1zXS+0rX8yljgsWR1UvqyEP
- 3xN0M/40Zk+rdmZKaZS8VQaXbveaiWMEmY7sBV3QvgOzB7UF2It1HwoCon5Y+PvyE3CguhBd
- 9iq5iEampkMIkbA3FFCpQFI5Ai3BywkLzbA3ZtnMXR8Qt9gFZtyXvFQrB+/6hDzEPnBGZOOx
- zkd/iIX59SxBuS38LMlhPPycbFNmtauOC0DNpXCv9ACgC9tFw3exER/xQgSpDVc4vrL2Cacr
- wmQp1k9E0W+9pk/l8S1jcHx03hgCxPtQLOIyEu9iIJb27TjcXNjiInd7Uea195NldIrndD+x
- 58/yU3X70qVY+eWbqzpdlwF1KRm6uV0ZOQhEhbi0FfKKgsYFgBIBchGqSOBsCbL35f9hK/JC
- 6LnGDtSHeJs+jd9/qJj4WqF3x8i0sncQ/gszSajdhnWrxraG3b7/9ldMLpKo/OoihfLaCxtv
- xYmtw8TGhlMaiOxjDrohmY1z7f3rf6njskoIXUO0nabun1nPAiV1dpjleg60s3OmVQeEpr3a
- K7gR1ljkemJzM9NUoRROPaT7nMlNYQL+IwuthJd6XQqwzp1jRTGG26J97wARAQABiQM+BBgB
- AgAJBQJWJ3+kAhsCAikJEBaat7Gkz/iuwV0gBBkBAgAGBQJWJ3+kAAoJEHfc29rIyEnRk6MQ
- AJDo0nxsadLpYB26FALZsWlN74rnFXth5dQVQ7SkipmyFWZhFL8fQ9OiIoxWhM6rSg9+C1w+
- n45eByMg2b8H3mmQmyWztdI95OxSREKwbaXVapCcZnv52JRjlc3DoiiHqTZML5x1Z7lQ1T3F
- 8o9sKrbFO1WQw1+Nc91+MU0MGN0jtfZ0Tvn/ouEZrSXCE4K3oDGtj3AdC764yZVq6CPigCgs
- 6Ex80k6QlzCdVP3RKsnPO2xQXXPgyJPJlpD8bHHHW7OLfoR9DaBNympfcbQJeekQrTvyoASw
- EOTPKE6CVWrcQIztUp0WFTdRGgMK0cZB3Xfe6sOp24PQTHAKGtjTHNP/THomkH24Fum9K3iM
- /4Wh4V2eqGEgpdeSp5K+LdaNyNgaqzMOtt4HYk86LYLSHfFXywdlbGrY9+TqiJ+ZVW4trmui
- NIJCOku8SYansq34QzYM0x3UFRwff+45zNBEVzctSnremg1mVgrzOfXU8rt+4N1b2MxorPF8
- 619aCwVP7U16qNSBaqiAJr4e5SNEnoAq18+1Gp8QsFG0ARY8xp+qaKBByWES7lRi3QbqAKZf
- yOHS6gmYo9gBmuAhc65/VtHMJtxwjpUeN4Bcs9HUpDMDVHdfeRa73wM+wY5potfQ5zkSp0Jp
- bxnv/cRBH6+c43stTffprd//4Hgz+nJcCgZKtCYIAPkUxABC85ID2CidzbraErVACmRoizhT
- KR2OiqSLW2x4xdmSiFNcIWkWJB6Qdri0Fzs2dHe8etD1HYaht1ZhZ810s7QOL7JwypO8dscN
- KTEkyoTGn6cWj0CX+PeP4xp8AR8ot4d0BhtUY34UPzjE1/xyrQFAdnLd0PP4wXxdIUuRs0+n
- WLY9Aou/vC1LAdlaGsoTVzJ2gX4fkKQIWhX0WVk41BSFeDKQ3RQ2pnuzwedLO94Bf6X0G48O
- VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <1eec2f1b-0467-cd4d-aa22-23c70388ac0f@baylibre.com>
-Date:   Fri, 27 Sep 2019 13:27:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727454AbfI0L1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 07:27:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727419AbfI0L1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 07:27:47 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C8C903067233;
+        Fri, 27 Sep 2019 11:27:46 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-249.ams2.redhat.com [10.36.117.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B1D745D9C3;
+        Fri, 27 Sep 2019 11:27:39 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     linux-hyperv@vger.kernel.org,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        Jorgen Hansen <jhansen@vmware.com>
+Subject: [RFC PATCH 04/13] vsock: add 'transport' member in the struct vsock_sock
+Date:   Fri, 27 Sep 2019 13:26:54 +0200
+Message-Id: <20190927112703.17745-5-sgarzare@redhat.com>
+In-Reply-To: <20190927112703.17745-1-sgarzare@redhat.com>
+References: <20190927112703.17745-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <26ae2a4d-8df1-e8db-3060-41638ed63e2a@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 27 Sep 2019 11:27:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
+As a preparation to support multiple transports, this patch adds
+the 'transport' member at the 'struct vsock_sock'.
+This new field is initialized during the creation in the
+__vsock_create() function.
 
-Thanks for your prompt reaction !
+This patch also renames the global 'transport' pointer to
+'transport_single', since for now we're only supporting a single
+transport registered at run-time.
 
-On 27/09/2019 12:48, Steven Price wrote:
-> On 27/09/2019 10:55, Steven Price wrote:
-> [...]
->> One obvious issue with the DRM scheduler is that there is a call to
->> cancel_delayed_work() in drm_sched_stop() which to me looks like it
->> should be cancel_delayed_work_sync() to ensure that the timeout handling
->> has completed.
->>
->> However in the above scenario a _sync() variety would then cause a
->> deadlock (one thread has pfdev->reset_lock and is waiting for the other
->> thread which is trying to take the lock).
->>
->> So we need to update Panfrost so that it can coordinate the reset
->> between schedulers. Can you try something like the following (untested):
-> 
-> And actually testing it I of course discover it doesn't quite work. We
-> do need the cancel_delayed_work_sync() in the DRM scheduler (when
-> stopping a different scheduler) and we need to avoid holding the
-> reset_lock during the drm_sched_stop() call to prevent deadlocking with
-> another thread handling a timeout.
+Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+---
+ include/net/af_vsock.h   |  1 +
+ net/vmw_vsock/af_vsock.c | 56 +++++++++++++++++++++++++++-------------
+ 2 files changed, 39 insertions(+), 18 deletions(-)
 
-Yep the first patch wasn't fixing the issue all the time.
-
-> 
-> Can you give the following patch a spin? I don't have a great
-> reproduction case, so it would be good to get some confidence it fixes
-> the problem.
-
-Running it right now.
-
-Thanks,
-Neil
-
-> 
-> ----8<----
-> From 521a286789260197ae94f698932ebf369efc45ad Mon Sep 17 00:00:00 2001
-> From: Steven Price <steven.price@arm.com>
-> Date: Fri, 27 Sep 2019 11:42:40 +0100
-> Subject: [PATCH] drm/panfrost: Handle resetting on timeout better
-> 
-> Panfrost uses multiple schedulers (one for each slot, so 2 in reality),
-> and on a timeout has to stop all the schedulers to safely perform a
-> reset. However more than one scheduler can trigger a timeout at the same
-> time. This race condition results in jobs being freed while they are
-> still in use.
-> 
-> Modify drm_sched_stop() to call cancel_delayed_work_sync() when stopping
-> a different scheduler to the one belonging to the passed in job.
-> panfrost_job_timedout() is also modified to only allow one thread at a
-> time to handle the reset. Any subsequent threads simply return assuming
-> that the first thread will handle the situation.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_device.h |  2 ++
->  drivers/gpu/drm/panfrost/panfrost_job.c    | 11 ++++++++++-
->  drivers/gpu/drm/scheduler/sched_main.c     |  5 ++++-
->  3 files changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
-> index f503c566e99f..6441c7fba6c4 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
-> @@ -99,6 +99,8 @@ struct panfrost_device {
->  		unsigned long cur_volt;
->  		struct panfrost_devfreq_slot slot[NUM_JOB_SLOTS];
->  	} devfreq;
-> +
-> +	bool is_resetting;
->  };
->  
->  struct panfrost_mmu {
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> index 05c85f45a0de..1b2019e08b43 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -388,13 +388,21 @@ static void panfrost_job_timedout(struct drm_sched_job *sched_job)
->  
->  	mutex_lock(&pfdev->reset_lock);
->  
-> +	if (pfdev->is_resetting) {
-> +		mutex_unlock(&pfdev->reset_lock);
-> +		return;
-> +	}
-> +	pfdev->is_resetting = true;
-> +
-> +	mutex_unlock(&pfdev->reset_lock);
-> +
->  	for (i = 0; i < NUM_JOB_SLOTS; i++)
->  		drm_sched_stop(&pfdev->js->queue[i].sched, sched_job);
->  
->  	if (sched_job)
->  		drm_sched_increase_karma(sched_job);
->  
-> -	/* panfrost_core_dump(pfdev); */
-> +	mutex_lock(&pfdev->reset_lock);
->  
->  	panfrost_devfreq_record_transition(pfdev, js);
->  	panfrost_device_reset(pfdev);
-> @@ -406,6 +414,7 @@ static void panfrost_job_timedout(struct drm_sched_job *sched_job)
->  	for (i = 0; i < NUM_JOB_SLOTS; i++)
->  		drm_sched_start(&pfdev->js->queue[i].sched, true);
->  
-> +	pfdev->is_resetting = false;
->  	mutex_unlock(&pfdev->reset_lock);
->  }
->  
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 148468447ba9..bc6d1862ec8a 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -415,7 +415,10 @@ void drm_sched_stop(struct drm_gpu_scheduler *sched, struct drm_sched_job *bad)
->  	 * this TDR finished and before the newly restarted jobs had a
->  	 * chance to complete.
->  	 */
-> -	cancel_delayed_work(&sched->work_tdr);
-> +	if (bad->sched != sched)
-> +		cancel_delayed_work_sync(&sched->work_tdr);
-> +	else
-> +		cancel_delayed_work(&sched->work_tdr);
->  }
->  
->  EXPORT_SYMBOL(drm_sched_stop);
-> 
+diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
+index c660402b10f2..a5e1e134261d 100644
+--- a/include/net/af_vsock.h
++++ b/include/net/af_vsock.h
+@@ -27,6 +27,7 @@ extern spinlock_t vsock_table_lock;
+ struct vsock_sock {
+ 	/* sk must be the first member. */
+ 	struct sock sk;
++	const struct vsock_transport *transport;
+ 	struct sockaddr_vm local_addr;
+ 	struct sockaddr_vm remote_addr;
+ 	/* Links for the global tables of bound and connected sockets. */
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index f609434b2794..81ee2561c76f 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -126,7 +126,7 @@ static struct proto vsock_proto = {
+  */
+ #define VSOCK_DEFAULT_CONNECT_TIMEOUT (2 * HZ)
+ 
+-static const struct vsock_transport *transport;
++static const struct vsock_transport *transport_single;
+ static DEFINE_MUTEX(vsock_register_mutex);
+ 
+ /**** UTILS ****/
+@@ -408,7 +408,9 @@ static bool vsock_is_pending(struct sock *sk)
+ 
+ static int vsock_send_shutdown(struct sock *sk, int mode)
+ {
+-	return transport->shutdown(vsock_sk(sk), mode);
++	struct vsock_sock *vsk = vsock_sk(sk);
++
++	return vsk->transport->shutdown(vsk, mode);
+ }
+ 
+ static void vsock_pending_work(struct work_struct *work)
+@@ -518,7 +520,7 @@ static int __vsock_bind_stream(struct vsock_sock *vsk,
+ static int __vsock_bind_dgram(struct vsock_sock *vsk,
+ 			      struct sockaddr_vm *addr)
+ {
+-	return transport->dgram_bind(vsk, addr);
++	return vsk->transport->dgram_bind(vsk, addr);
+ }
+ 
+ static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr)
+@@ -536,7 +538,7 @@ static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr)
+ 	 * like AF_INET prevents binding to a non-local IP address (in most
+ 	 * cases), we only allow binding to the local CID.
+ 	 */
+-	cid = transport->get_local_cid();
++	cid = vsk->transport->get_local_cid();
+ 	if (addr->svm_cid != cid && addr->svm_cid != VMADDR_CID_ANY)
+ 		return -EADDRNOTAVAIL;
+ 
+@@ -586,6 +588,7 @@ struct sock *__vsock_create(struct net *net,
+ 		sk->sk_type = type;
+ 
+ 	vsk = vsock_sk(sk);
++	vsk->transport = transport_single;
+ 	vsock_addr_init(&vsk->local_addr, VMADDR_CID_ANY, VMADDR_PORT_ANY);
+ 	vsock_addr_init(&vsk->remote_addr, VMADDR_CID_ANY, VMADDR_PORT_ANY);
+ 
+@@ -616,7 +619,7 @@ struct sock *__vsock_create(struct net *net,
+ 		vsk->connect_timeout = VSOCK_DEFAULT_CONNECT_TIMEOUT;
+ 	}
+ 
+-	if (transport->init(vsk, psk) < 0) {
++	if (vsk->transport->init(vsk, psk) < 0) {
+ 		sk_free(sk);
+ 		return NULL;
+ 	}
+@@ -638,7 +641,7 @@ static void __vsock_release(struct sock *sk)
+ 		vsk = vsock_sk(sk);
+ 		pending = NULL;	/* Compiler warning. */
+ 
+-		transport->release(vsk);
++		vsk->transport->release(vsk);
+ 
+ 		lock_sock(sk);
+ 		sock_orphan(sk);
+@@ -662,7 +665,7 @@ static void vsock_sk_destruct(struct sock *sk)
+ {
+ 	struct vsock_sock *vsk = vsock_sk(sk);
+ 
+-	transport->destruct(vsk);
++	vsk->transport->destruct(vsk);
+ 
+ 	/* When clearing these addresses, there's no need to set the family and
+ 	 * possibly register the address family with the kernel.
+@@ -686,13 +689,13 @@ static int vsock_queue_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ 
+ s64 vsock_stream_has_data(struct vsock_sock *vsk)
+ {
+-	return transport->stream_has_data(vsk);
++	return vsk->transport->stream_has_data(vsk);
+ }
+ EXPORT_SYMBOL_GPL(vsock_stream_has_data);
+ 
+ s64 vsock_stream_has_space(struct vsock_sock *vsk)
+ {
+-	return transport->stream_has_space(vsk);
++	return vsk->transport->stream_has_space(vsk);
+ }
+ EXPORT_SYMBOL_GPL(vsock_stream_has_space);
+ 
+@@ -861,6 +864,7 @@ static __poll_t vsock_poll(struct file *file, struct socket *sock,
+ 			mask |= EPOLLOUT | EPOLLWRNORM | EPOLLWRBAND;
+ 
+ 	} else if (sock->type == SOCK_STREAM) {
++		const struct vsock_transport *transport = vsk->transport;
+ 		lock_sock(sk);
+ 
+ 		/* Listening sockets that have connections in their accept
+@@ -936,6 +940,7 @@ static int vsock_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	struct sock *sk;
+ 	struct vsock_sock *vsk;
+ 	struct sockaddr_vm *remote_addr;
++	const struct vsock_transport *transport;
+ 
+ 	if (msg->msg_flags & MSG_OOB)
+ 		return -EOPNOTSUPP;
+@@ -944,6 +949,7 @@ static int vsock_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	err = 0;
+ 	sk = sock->sk;
+ 	vsk = vsock_sk(sk);
++	transport = vsk->transport;
+ 
+ 	lock_sock(sk);
+ 
+@@ -1028,8 +1034,8 @@ static int vsock_dgram_connect(struct socket *sock,
+ 	if (err)
+ 		goto out;
+ 
+-	if (!transport->dgram_allow(remote_addr->svm_cid,
+-				    remote_addr->svm_port)) {
++	if (!vsk->transport->dgram_allow(remote_addr->svm_cid,
++					 remote_addr->svm_port)) {
+ 		err = -EINVAL;
+ 		goto out;
+ 	}
+@@ -1045,7 +1051,9 @@ static int vsock_dgram_connect(struct socket *sock,
+ static int vsock_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
+ 			       size_t len, int flags)
+ {
+-	return transport->dgram_dequeue(vsock_sk(sock->sk), msg, len, flags);
++	struct vsock_sock *vsk = vsock_sk(sock->sk);
++
++	return vsk->transport->dgram_dequeue(vsk, msg, len, flags);
+ }
+ 
+ static const struct proto_ops vsock_dgram_ops = {
+@@ -1071,6 +1079,8 @@ static const struct proto_ops vsock_dgram_ops = {
+ 
+ static int vsock_transport_cancel_pkt(struct vsock_sock *vsk)
+ {
++	const struct vsock_transport *transport = vsk->transport;
++
+ 	if (!transport->cancel_pkt)
+ 		return -EOPNOTSUPP;
+ 
+@@ -1107,6 +1117,7 @@ static int vsock_stream_connect(struct socket *sock, struct sockaddr *addr,
+ 	int err;
+ 	struct sock *sk;
+ 	struct vsock_sock *vsk;
++	const struct vsock_transport *transport;
+ 	struct sockaddr_vm *remote_addr;
+ 	long timeout;
+ 	DEFINE_WAIT(wait);
+@@ -1114,6 +1125,7 @@ static int vsock_stream_connect(struct socket *sock, struct sockaddr *addr,
+ 	err = 0;
+ 	sk = sock->sk;
+ 	vsk = vsock_sk(sk);
++	transport = vsk->transport;
+ 
+ 	lock_sock(sk);
+ 
+@@ -1357,6 +1369,7 @@ static int vsock_stream_setsockopt(struct socket *sock,
+ 	int err;
+ 	struct sock *sk;
+ 	struct vsock_sock *vsk;
++	const struct vsock_transport *transport;
+ 	u64 val;
+ 
+ 	if (level != AF_VSOCK)
+@@ -1377,6 +1390,7 @@ static int vsock_stream_setsockopt(struct socket *sock,
+ 	err = 0;
+ 	sk = sock->sk;
+ 	vsk = vsock_sk(sk);
++	transport = vsk->transport;
+ 
+ 	lock_sock(sk);
+ 
+@@ -1434,6 +1448,7 @@ static int vsock_stream_getsockopt(struct socket *sock,
+ 	int len;
+ 	struct sock *sk;
+ 	struct vsock_sock *vsk;
++	const struct vsock_transport *transport;
+ 	u64 val;
+ 
+ 	if (level != AF_VSOCK)
+@@ -1457,6 +1472,7 @@ static int vsock_stream_getsockopt(struct socket *sock,
+ 	err = 0;
+ 	sk = sock->sk;
+ 	vsk = vsock_sk(sk);
++	transport = vsk->transport;
+ 
+ 	switch (optname) {
+ 	case SO_VM_SOCKETS_BUFFER_SIZE:
+@@ -1501,6 +1517,7 @@ static int vsock_stream_sendmsg(struct socket *sock, struct msghdr *msg,
+ {
+ 	struct sock *sk;
+ 	struct vsock_sock *vsk;
++	const struct vsock_transport *transport;
+ 	ssize_t total_written;
+ 	long timeout;
+ 	int err;
+@@ -1509,6 +1526,7 @@ static int vsock_stream_sendmsg(struct socket *sock, struct msghdr *msg,
+ 
+ 	sk = sock->sk;
+ 	vsk = vsock_sk(sk);
++	transport = vsk->transport;
+ 	total_written = 0;
+ 	err = 0;
+ 
+@@ -1640,6 +1658,7 @@ vsock_stream_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ {
+ 	struct sock *sk;
+ 	struct vsock_sock *vsk;
++	const struct vsock_transport *transport;
+ 	int err;
+ 	size_t target;
+ 	ssize_t copied;
+@@ -1650,6 +1669,7 @@ vsock_stream_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 
+ 	sk = sock->sk;
+ 	vsk = vsock_sk(sk);
++	transport = vsk->transport;
+ 	err = 0;
+ 
+ 	lock_sock(sk);
+@@ -1864,7 +1884,7 @@ static long vsock_dev_do_ioctl(struct file *filp,
+ 
+ 	switch (cmd) {
+ 	case IOCTL_VM_SOCKETS_GET_LOCAL_CID:
+-		if (put_user(transport->get_local_cid(), p) != 0)
++		if (put_user(transport_single->get_local_cid(), p) != 0)
+ 			retval = -EFAULT;
+ 		break;
+ 
+@@ -1911,7 +1931,7 @@ int __vsock_core_init(const struct vsock_transport *t, struct module *owner)
+ 	if (err)
+ 		return err;
+ 
+-	if (transport) {
++	if (transport_single) {
+ 		err = -EBUSY;
+ 		goto err_busy;
+ 	}
+@@ -1920,7 +1940,7 @@ int __vsock_core_init(const struct vsock_transport *t, struct module *owner)
+ 	 * unload while there are open sockets.
+ 	 */
+ 	vsock_proto.owner = owner;
+-	transport = t;
++	transport_single = t;
+ 
+ 	vsock_device.minor = MISC_DYNAMIC_MINOR;
+ 	err = misc_register(&vsock_device);
+@@ -1950,7 +1970,7 @@ int __vsock_core_init(const struct vsock_transport *t, struct module *owner)
+ err_deregister_misc:
+ 	misc_deregister(&vsock_device);
+ err_reset_transport:
+-	transport = NULL;
++	transport_single = NULL;
+ err_busy:
+ 	mutex_unlock(&vsock_register_mutex);
+ 	return err;
+@@ -1967,7 +1987,7 @@ void vsock_core_exit(void)
+ 
+ 	/* We do not want the assignment below re-ordered. */
+ 	mb();
+-	transport = NULL;
++	transport_single = NULL;
+ 
+ 	mutex_unlock(&vsock_register_mutex);
+ }
+@@ -1978,7 +1998,7 @@ const struct vsock_transport *vsock_core_get_transport(void)
+ 	/* vsock_register_mutex not taken since only the transport uses this
+ 	 * function and only while registered.
+ 	 */
+-	return transport;
++	return transport_single;
+ }
+ EXPORT_SYMBOL_GPL(vsock_core_get_transport);
+ 
+-- 
+2.21.0
 
