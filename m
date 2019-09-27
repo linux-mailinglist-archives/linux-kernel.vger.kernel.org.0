@@ -2,180 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 858CFC00F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B6CEC00EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:16:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfI0ISm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:18:42 -0400
-Received: from mout.web.de ([212.227.15.14]:35087 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbfI0ISl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:18:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1569572311;
-        bh=ZlJTddYajDzxZUvw2i60xJMbFlpFF4H6Ye3p0QwUyMo=;
-        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
-        b=BVBcpPNGFR5LcOh3zXb/Mrm6AEN1L7LdlOFugoKoiLU+ZqQEZU2BL5QlmkXV43tnp
-         GoywS5GSWtVrqqSi4LtX6Gx0HQeZxvB/kDUVSy+xGlZnXWAIURR9gu3UopuSns2SRP
-         RmrWq/GSIi23zbhEGMJZfkWpnwftEgLXWB1Qgies=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.191.8]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MQf77-1iaYZu1bvJ-00U5Od; Fri, 27
- Sep 2019 10:18:31 +0200
-Subject: [PATCH v2 2/2] net: phy: mscc-miim: Move the setting of mii_bus
- structure members in mscc_miim_probe()
-From:   Markus Elfring <Markus.Elfring@web.de>
-To:     netdev@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <189ccfc3-d5a6-79fd-29b8-1f7140e9639a@web.de>
- <506889a6-4148-89f9-302e-4be069595bb4@web.de> <20190920190908.GH3530@lunn.ch>
- <121e75c5-4d45-9df2-a471-6997a1fb3218@web.de>
- <20190926161825.GB6825@piout.net>
- <0a1f4dbf-4cc6-8530-a38e-31c3369e6db6@web.de>
- <20190926193239.GC6825@piout.net>
- <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <70ec73ad-19aa-76aa-168b-b9a2a6911938@web.de>
-Date:   Fri, 27 Sep 2019 10:18:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1726769AbfI0IQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:16:49 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:36737 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbfI0IQs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 04:16:48 -0400
+X-Originating-IP: 65.39.69.237
+Received: from localhost (unknown [65.39.69.237])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 629F0240003;
+        Fri, 27 Sep 2019 08:16:45 +0000 (UTC)
+Date:   Fri, 27 Sep 2019 10:25:09 +0200
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: aardvark: Don't rely on jiffies while holding
+ spinlock
+Message-ID: <20190927082508.GB1208@voidbox.localdomain>
+References: <20190901142303.27815-1-repk@triplefau.lt>
+ <20190925113351.0b53d2e9@windsurf>
 MIME-Version: 1.0
-In-Reply-To: <8fbfa9ad-182a-e2ce-e91f-7350523e33c7@web.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gPCXHdjuqZ85wND61koKlX9qwAqruudBe3+N42vkNHBPsWSClIb
- FbJ5QdZbKb9ZwLBnYem6VrXWllSQd90tG4JkwnJeNG1OVwGqnOWCB2HdBGgcP1i+C5NOAUQ
- QqQ9F3Co7FH0R9+TWZLS/MxbVbQmmy1Y7PqhPzAus8g3/itmYoDIXWHQpso7A+rctC/Mp1A
- m/nSbAS0NjY7yAmJZyPWw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:MOvpmzHJPg8=:hK60pnbaJxC6i9n5RVJn0c
- SZi7HrwZaLApLO4XhUohpk+GmeuzqQ9w5EFgP3SwOp9czwvpLIbVH+mBJRuFemDSiBmqiknGI
- JGsSKXKkn189kM2OWy6IOlzydJohV4XEU6ZSDvrlDN5Twjr4aHs32Gm+nmZa6AAN9cxtS5e43
- q6jK/R41ofWo5eJzoKVBR3+WS2ITmLz3PVZocUEmG4UXdOTh+sMQimg76kC7kODBrtio+dEW/
- Dgckd/tw0iJ7H9zpKd8cdoPb/XC9be6y8MvKktIbbZOH7eAT6q3auLNz2VKJU5eCk/PYHmLQi
- RaA2EA844Ru2i5+l/qAtlTU4A4gjPUzGtcJZUBmjEvG9BFpRJEdtNyo66msw0qQkd5k8EgrcW
- r5Q3Ut325DaQGHzQXLNjTn/Zw5oEjGaO0DXJU7ZGE/T6lBJwyYLoTe+Oon0aEX1oznRtFnbSd
- 2tB7HBBcWnPgIz2Qn/u3ZQMY/mQ2/vC/zmR1v2aVizaNsi69kU9bayGguvDjYMU25sqH4lV9r
- SpiGJsl0iMBN1U21YAsxPm4jzlvTGsY3yhtuRiRNlcOKpUjeVuEmDGPgrTVK5E61xsaUhJASz
- 75uoxE9iGD4jaqiX9VjjZMgosTFXA0RbsnPy5xSmFmb+njThUFCMpmUllnw8dNKXC+9qXE/Es
- kGiWE0glIromXbwJPuz2C7MiGycMzPy3R2yHiNS1KSwlpQUf5YwLtz7mQQbudi0RBE7wEaoJL
- vTp/Vi2K34aKz36HcTTjv/xWC8NM5Gh/a3ZD+dXXxJjHUf1/ASBLZFeKxoHbGWFtSbTmr0BnI
- ZWceFcV+07NyBpi0u8G5U4umjM0ClOUToAIRflGrhIWl25yKd/HurGOo7dzZYYh/dLhkiN1Td
- /m+/XXT9obkc5jVFEIIw+/tYi9IjAdURwdRqdou5XKCGptBVn2MTVlqNRKSx5ldy/gsX8tjIm
- 4s7qiasobkOzR8xzhnrs8xpy9JIHwIRAxxLbT4RFkCqgeGTNNjUlw+wxSzbUhISzGqPZJ/AHF
- J0LmzVI6t8va7hQRUmryl8TstH1mt8z69/Lj+2J95zxiKoz7rJtcnQnR97sp2AMgZEwhPphyW
- cG1XLYjlvWioQRnL9RQkzRtM2QVdNoncPSkp3QlCCRMag+RSotFlPKfFqhXPpJBGapC81SXs/
- 4c9PH6k6zPdgTe/g64ygwoXLK+5clPZOzhEEquTuwzGMH5PiqcNLOqXdRQTvp+h0TSk3h6vhm
- t2EdoA95jwv4dVYdZ+gYvNByGR5N4U0KKlhjyqhlBXicJ3w/R+AtCk87IyyE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190925113351.0b53d2e9@windsurf>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 27 Sep 2019 09:30:14 +0200
+Hi Thomas,
 
-Move the modification of some members in the data structure =E2=80=9Cmii_b=
-us=E2=80=9D
-for the local variable =E2=80=9Cbus=E2=80=9D directly before the call of
-the function =E2=80=9Cof_mdiobus_register=E2=80=9D so that this change wil=
-l be performed
-only after previous resource allocations succeeded.
+Thanks for the review.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
+On Wed, Sep 25, 2019 at 11:33:51AM +0200, Thomas Petazzoni wrote:
+> Hello Remi,
+> 
+> Thanks for the patch, I have a few comments/questions below.
+> 
+> On Sun,  1 Sep 2019 16:23:03 +0200
+> Remi Pommarel <repk@triplefau.lt> wrote:
+> 
+> > diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
+> > index fc0fe4d4de49..1fa6d04ad7aa 100644
+> > --- a/drivers/pci/controller/pci-aardvark.c
+> > +++ b/drivers/pci/controller/pci-aardvark.c
+> > @@ -175,7 +175,8 @@
+> >  	(PCIE_CONF_BUS(bus) | PCIE_CONF_DEV(PCI_SLOT(devfn))	| \
+> >  	 PCIE_CONF_FUNC(PCI_FUNC(devfn)) | PCIE_CONF_REG(where))
+> >  
+> > -#define PIO_TIMEOUT_MS			1
+> > +#define PIO_RETRY_CNT			10
+> > +#define PIO_RETRY_DELAY			100 /* 100 us*/
+> >  
+> >  #define LINK_WAIT_MAX_RETRIES		10
+> >  #define LINK_WAIT_USLEEP_MIN		90000
+> > @@ -383,17 +384,16 @@ static void advk_pcie_check_pio_status(struct advk_pcie *pcie)
+> >  static int advk_pcie_wait_pio(struct advk_pcie *pcie)
+> >  {
+> >  	struct device *dev = &pcie->pdev->dev;
+> > -	unsigned long timeout;
+> > +	size_t i;
+> 
+> Is it common to use a size_t for a loop counter ?
 
-v2:
-This suggestion was repeated based on the change for the previous update s=
-tep.
+It was for me but seem not to be used that much. I can change that to an
+int.
 
+> >  
+> > -	timeout = jiffies + msecs_to_jiffies(PIO_TIMEOUT_MS);
+> > -
+> > -	while (time_before(jiffies, timeout)) {
+> > +	for (i = 0; i < PIO_RETRY_CNT; ++i) {
+> 
+> I find it more common to use post-increment for loop counters rather
+> than pre-increment, but that's a really nitpick and I don't care much.
+> 
 
- drivers/net/phy/mdio-mscc-miim.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Will change that to post-increment.
 
-diff --git a/drivers/net/phy/mdio-mscc-miim.c b/drivers/net/phy/mdio-mscc-=
-miim.c
-index aabb13982251..a270f83bb207 100644
-=2D-- a/drivers/net/phy/mdio-mscc-miim.c
-+++ b/drivers/net/phy/mdio-mscc-miim.c
-@@ -124,13 +124,6 @@ static int mscc_miim_probe(struct platform_device *pd=
-ev)
- 	if (!bus)
- 		return -ENOMEM;
+> >  		u32 start, isr;
+> >  
+> >  		start = advk_readl(pcie, PIO_START);
+> >  		isr = advk_readl(pcie, PIO_ISR);
+> >  		if (!start && isr)
+> >  			return 0;
+> > +		udelay(PIO_RETRY_DELAY);
+> 
+> But the bigger issue is that this change causes a 100us delay at
+> *every* single PIO read or write operation.
+> 
+> Indeed, at the first iteration of the loop, the PIO operation has not
+> completed, so you will always hit the udelay(100) a first time, and
+> it's only at the second iteration of the loop that the PIO operation
+> has completed (for successful PIO operations of course, which don't hit
+> the timeout).
+> 
+> I took a measurement around wait_pio() with sched_clock before and
+> after the patch. Before the patch, I have measurements like this (in
+> nanoseconds):
+> 
+> [    1.562801] time = 6000
+> [    1.565310] time = 6000
+> [    1.567809] time = 6080
+> [    1.570327] time = 6080
+> [    1.572836] time = 6080
+> [    1.575339] time = 6080
+> [    1.577858] time = 2720
+> [    1.580366] time = 2720
+> [    1.582862] time = 6000
+> [    1.585377] time = 2720
+> [    1.587890] time = 2720
+> [    1.590393] time = 2720
+> 
+> So it takes a few microseconds for each PIO operation.
+> 
+> With your patch applied:
+> 
+> [    2.267291] time = 101680
+> [    2.270002] time = 100880
+> [    2.272852] time = 100800
+> [    2.275573] time = 100880
+> [    2.278285] time = 100800
+> [    2.281005] time = 100880
+> [    2.283722] time = 100800
+> [    2.286444] time = 100880
+> [    2.289264] time = 100880
+> [    2.291981] time = 100800
+> [    2.294690] time = 100800
+> [    2.297405] time = 100800
+> 
+> We're jumping to 100us for every PIO read/write operation. To be
+> honest, I don't know if this is very important, there are not that many
+> PIO operations, and they are not used in any performance hot path. But
+> I thought it was worth pointing out the additional delay caused by this
+> implementation change.
 
--	bus->name =3D "mscc_miim";
--	bus->read =3D mscc_miim_read;
--	bus->write =3D mscc_miim_write;
--	bus->reset =3D mscc_miim_reset;
--	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-mii", dev_name(&pdev->dev));
--	bus->parent =3D &pdev->dev;
--
- 	dev =3D bus->priv;
- 	dev->regs =3D devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(dev->regs)) {
-@@ -147,6 +140,12 @@ static int mscc_miim_probe(struct platform_device *pd=
-ev)
- 		}
- 	}
+Good catch thanks for the measurements, will move to a 2us delay.
 
-+	bus->name =3D "mscc_miim";
-+	bus->read =3D mscc_miim_read;
-+	bus->write =3D mscc_miim_write;
-+	bus->reset =3D mscc_miim_reset;
-+	snprintf(bus->id, MII_BUS_ID_SIZE, "%s-mii", dev_name(&pdev->dev));
-+	bus->parent =3D &pdev->dev;
- 	ret =3D of_mdiobus_register(bus, pdev->dev.of_node);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "Cannot register MDIO bus (%d)\n", ret);
-=2D-
-2.23.0
-
+-- 
+Remi
