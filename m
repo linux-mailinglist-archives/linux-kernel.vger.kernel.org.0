@@ -2,111 +2,379 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FE81C0100
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CD62C0128
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:29:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfI0IUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:20:32 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58440 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfI0IUb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:20:31 -0400
-Received: from [65.39.69.237] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iDlU9-0001TO-Vj; Fri, 27 Sep 2019 08:20:18 +0000
-Date:   Fri, 27 Sep 2019 10:20:17 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] lib: introduce copy_struct_from_user() helper
-Message-ID: <20190927082016.jsis76s26uverj5r@wittgenstein>
-References: <20190925230332.18690-1-cyphar@cyphar.com>
- <20190925230332.18690-2-cyphar@cyphar.com>
- <20190925232139.45sbhj34fj7yvxer@wittgenstein>
- <20190927010736.gy3vvvkjhwlybosj@yavin.dot.cyphar.com>
+        id S1727180AbfI0I3Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:29:16 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:50412 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbfI0I3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 04:29:15 -0400
+Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x8R8RCgN030907
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 27 Sep 2019 01:27:46 -0700
+Received: from pek-lpggp6.wrs.com (128.224.153.40) by ALA-HCB.corp.ad.wrs.com
+ (147.11.189.41) with Microsoft SMTP Server id 14.3.468.0; Fri, 27 Sep 2019
+ 01:27:26 -0700
+From:   Yongxin Liu <yongxin.liu@windriver.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>
+CC:     <bigeasy@linutronix.de>, <tglx@linutronix.de>,
+        <rostedt@goodmis.org>, <haitao.liu@windriver.com>,
+        <zhe.he@windriver.com>
+Subject: [PATCH RT] kmemleak: Change the lock of kmemleak_object to raw_spinlock_t
+Date:   Fri, 27 Sep 2019 16:22:30 +0800
+Message-ID: <20190927082230.34152-1-yongxin.liu@windriver.com>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190927010736.gy3vvvkjhwlybosj@yavin.dot.cyphar.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 11:07:36AM +1000, Aleksa Sarai wrote:
-> On 2019-09-26, Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> > On Thu, Sep 26, 2019 at 01:03:29AM +0200, Aleksa Sarai wrote:
-> > > +int is_zeroed_user(const void __user *from, size_t size)
-> > > +{
-> > > +	unsigned long val;
-> > > +	uintptr_t align = (uintptr_t) from % sizeof(unsigned long);
-> > > +
-> > > +	if (unlikely(!size))
-> > > +		return true;
-> > 
-> > You're returning "true" and another implicit boolean with (val == 0)
-> > down below but -EFAULT in other places. But that function is int
-> > is_zeroed_user() Would probably be good if you either switch to bool
-> > is_zeroed_user() as the name suggests or rename the function and have
-> > it return an int everywhere.
-> 
-> I just checked, and in C11 (and presumably in older specs) it is
-> guaranteed that "true" and "false" from <stdbool.h> have the values 1
-> and 0 (respectively) [§7.18]. So this is perfectly well-defined.
-> 
-If you declare a function as returning an int, return ints and don't mix
-returning ints and "proper" C boolean types. This:
+From: Liu Haitao <haitao.liu@windriver.com>
 
-static int foo()
-{
-	if (bla)
-		return true;
-	return -1;
-}
+The following call trace would be triggered as kmemleak is running.
 
-is just messy.
+  BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:968
+  in_atomic(): 1, irqs_disabled(): 1, pid: 902, name: kmemleak
+  4 locks held by kmemleak/902:
+   #0:
+   000000001f69be68
+    (
+  scan_mutex
+  ){+.+.}
+  , at: kmemleak_scan_thread+0x7c/0xc3
+   #1:
+  00000000a795ae4c
+   (
+  mem_hotplug_lock.rw_sem
+  ){++++}
+   , at: kmemleak_scan+0x1ba/0x7a0
+   #2:
+  0000000079c12e8b
+   (
+  kmemleak_lock
+  ){....}
+  , at: scan_block+0x31/0x120
+   #3:
+  00000000191afe4b
+   (
+  &object->lock
+  /1
+  ){....}
+  , at: scan_block+0x8b/0x120
+  irq event stamp: 16791384
+  hardirqs last  enabled at (16791383): [<ffffffff8326d682>] _raw_spin_unlock_irqrestore+0x82/0x90
+  hardirqs last disabled at (16791384): [<ffffffff8326d3da>] _raw_spin_lock_irqsave+0x1a/0x80
+  softirqs last  enabled at (0): [<ffffffff824f1f70>] copy_process.part.5+0x760/0x2000
+  softirqs last disabled at (0): [<0000000000000000>] 0x0
+  Preemption disabled at:
+  [<ffffffff82743381>] scan_block+0x31/0x120
 
-> 
-> Personally, I think it's more readable to have:
-> 
->   if (unlikely(size == 0))
->     return true;
->   /* ... */
->   return (val == 0);
-> 
-> compared to:
-> 
->   if (unlikely(size == 0))
->     return 1;
->   /* ... */
->   return val ? 0 : 1;
+  CPU: 63 PID: 902 Comm: kmemleak Tainted: G        W         5.2.14-rt7-preempt-rt+ #2
+  Hardware name: Intel Corporation S2600WFS/S2600WFS, BIOS SE5C620.86B.01.00.0694.120620170818 12/06/2017
+  Call Trace:
+   dump_stack+0x70/0xa5
+   ___might_sleep+0x140/0x1e0
+   rt_spin_lock_nested+0x59/0x70
+   ? scan_block+0x8b/0x120
+   scan_block+0x8b/0x120
+   kmemleak_scan+0x285/0x7a0
+   kmemleak_scan_thread+0x81/0xc3
+   kthread+0x12f/0x150
+   ? kmemleak_write+0x460/0x460
+   ? kthread_park+0xb0/0xb0
+   ret_from_fork+0x3a/0x50
 
-Just do:
+The commit 3520604cc08dd63c057296c34756da1b6a655f71 changed the kmemleak_lock
+to raw spinlock. However the kmemleak_object->lock is held after the
+kmemleak_lock is held in scan_block().
 
-if (unlikely(size == 0))
-	return 1;
-/* ... */
-return (val == 0);
+scan_block()
+    |
+    raw_spin_lock_irqsave(&kmemleak_lock, flags)
+       |
+       spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
 
-You don't need to change the last return.
+In this case, the object->lock is implemented by mutex in RT. It could casue a sleeping problem.
 
-Also, as I said in a previous mail: Please wait for rc1 (that's just two
-days) to be out so you can base your patchset on that as there are
-changes in mainline that cause a merge conflict with your changes.
+Fixes: 3520604cc08d ("kmemleak: Turn kmemleak_lock to raw spinlock on RT")
 
-Thanks!
-Christian
+Signed-off-by: Liu Haitao <haitao.liu@windriver.com>
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ mm/kmemleak.c | 72 +++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index aaee59c0306a..355dd95d0611 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -135,7 +135,7 @@ struct kmemleak_scan_area {
+  * (use_count) and freed using the RCU mechanism.
+  */
+ struct kmemleak_object {
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	unsigned int flags;		/* object status flags */
+ 	struct list_head object_list;
+ 	struct list_head gray_list;
+@@ -560,7 +560,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	INIT_LIST_HEAD(&object->object_list);
+ 	INIT_LIST_HEAD(&object->gray_list);
+ 	INIT_HLIST_HEAD(&object->area_list);
+-	spin_lock_init(&object->lock);
++	raw_spin_lock_init(&object->lock);
+ 	atomic_set(&object->use_count, 1);
+ 	object->flags = OBJECT_ALLOCATED;
+ 	object->pointer = ptr;
+@@ -642,9 +642,9 @@ static void __delete_object(struct kmemleak_object *object)
+ 	 * Locking here also ensures that the corresponding memory block
+ 	 * cannot be freed when it is being scanned.
+ 	 */
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->flags &= ~OBJECT_ALLOCATED;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	put_object(object);
+ }
+ 
+@@ -716,9 +716,9 @@ static void paint_it(struct kmemleak_object *object, int color)
+ {
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	__paint_it(object, color);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ }
+ 
+ static void paint_ptr(unsigned long ptr, int color)
+@@ -778,7 +778,7 @@ static void add_scan_area(unsigned long ptr, size_t size, gfp_t gfp)
+ 		goto out;
+ 	}
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	if (size == SIZE_MAX) {
+ 		size = object->pointer + object->size - ptr;
+ 	} else if (ptr + size > object->pointer + object->size) {
+@@ -794,7 +794,7 @@ static void add_scan_area(unsigned long ptr, size_t size, gfp_t gfp)
+ 
+ 	hlist_add_head(&area->node, &object->area_list);
+ out_unlock:
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ out:
+ 	put_object(object);
+ }
+@@ -817,9 +817,9 @@ static void object_set_excess_ref(unsigned long ptr, unsigned long excess_ref)
+ 		return;
+ 	}
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->excess_ref = excess_ref;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	put_object(object);
+ }
+ 
+@@ -839,9 +839,9 @@ static void object_no_scan(unsigned long ptr)
+ 		return;
+ 	}
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->flags |= OBJECT_NO_SCAN;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	put_object(object);
+ }
+ 
+@@ -902,11 +902,11 @@ static void early_alloc(struct early_log *log)
+ 			       log->min_count, GFP_ATOMIC);
+ 	if (!object)
+ 		goto out;
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	for (i = 0; i < log->trace_len; i++)
+ 		object->trace[i] = log->trace[i];
+ 	object->trace_len = log->trace_len;
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ out:
+ 	rcu_read_unlock();
+ }
+@@ -1096,9 +1096,9 @@ void __ref kmemleak_update_trace(const void *ptr)
+ 		return;
+ 	}
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	object->trace_len = __save_stack_trace(object->trace);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 
+ 	put_object(object);
+ }
+@@ -1346,7 +1346,7 @@ static void scan_block(void *_start, void *_end,
+ 		 * previously acquired in scan_object(). These locks are
+ 		 * enclosed by scan_mutex.
+ 		 */
+-		spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
++		raw_spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
+ 		/* only pass surplus references (object already gray) */
+ 		if (color_gray(object)) {
+ 			excess_ref = object->excess_ref;
+@@ -1355,7 +1355,7 @@ static void scan_block(void *_start, void *_end,
+ 			excess_ref = 0;
+ 			update_refs(object);
+ 		}
+-		spin_unlock(&object->lock);
++		raw_spin_unlock(&object->lock);
+ 
+ 		if (excess_ref) {
+ 			object = lookup_object(excess_ref, 0);
+@@ -1364,9 +1364,9 @@ static void scan_block(void *_start, void *_end,
+ 			if (object == scanned)
+ 				/* circular reference, ignore */
+ 				continue;
+-			spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
++			raw_spin_lock_nested(&object->lock, SINGLE_DEPTH_NESTING);
+ 			update_refs(object);
+-			spin_unlock(&object->lock);
++			raw_spin_unlock(&object->lock);
+ 		}
+ 	}
+ 	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+@@ -1402,7 +1402,7 @@ static void scan_object(struct kmemleak_object *object)
+ 	 * Once the object->lock is acquired, the corresponding memory block
+ 	 * cannot be freed (the same lock is acquired in delete_object).
+ 	 */
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	if (object->flags & OBJECT_NO_SCAN)
+ 		goto out;
+ 	if (!(object->flags & OBJECT_ALLOCATED))
+@@ -1421,9 +1421,9 @@ static void scan_object(struct kmemleak_object *object)
+ 			if (start >= end)
+ 				break;
+ 
+-			spin_unlock_irqrestore(&object->lock, flags);
++			raw_spin_unlock_irqrestore(&object->lock, flags);
+ 			cond_resched();
+-			spin_lock_irqsave(&object->lock, flags);
++			raw_spin_lock_irqsave(&object->lock, flags);
+ 		} while (object->flags & OBJECT_ALLOCATED);
+ 	} else
+ 		hlist_for_each_entry(area, &object->area_list, node)
+@@ -1431,7 +1431,7 @@ static void scan_object(struct kmemleak_object *object)
+ 				   (void *)(area->start + area->size),
+ 				   object);
+ out:
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ }
+ 
+ /*
+@@ -1484,7 +1484,7 @@ static void kmemleak_scan(void)
+ 	/* prepare the kmemleak_object's */
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ #ifdef DEBUG
+ 		/*
+ 		 * With a few exceptions there should be a maximum of
+@@ -1501,7 +1501,7 @@ static void kmemleak_scan(void)
+ 		if (color_gray(object) && get_object(object))
+ 			list_add_tail(&object->gray_list, &gray_list);
+ 
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
+ 
+@@ -1569,14 +1569,14 @@ static void kmemleak_scan(void)
+ 	 */
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ 		if (color_white(object) && (object->flags & OBJECT_ALLOCATED)
+ 		    && update_checksum(object) && get_object(object)) {
+ 			/* color it gray temporarily */
+ 			object->count = object->min_count;
+ 			list_add_tail(&object->gray_list, &gray_list);
+ 		}
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
+ 
+@@ -1596,7 +1596,7 @@ static void kmemleak_scan(void)
+ 	 */
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ 		if (unreferenced_object(object) &&
+ 		    !(object->flags & OBJECT_REPORTED)) {
+ 			object->flags |= OBJECT_REPORTED;
+@@ -1606,7 +1606,7 @@ static void kmemleak_scan(void)
+ 
+ 			new_leaks++;
+ 		}
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
+ 
+@@ -1758,10 +1758,10 @@ static int kmemleak_seq_show(struct seq_file *seq, void *v)
+ 	struct kmemleak_object *object = v;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	if ((object->flags & OBJECT_REPORTED) && unreferenced_object(object))
+ 		print_unreferenced(seq, object);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	return 0;
+ }
+ 
+@@ -1791,9 +1791,9 @@ static int dump_str_object_info(const char *str)
+ 		return -EINVAL;
+ 	}
+ 
+-	spin_lock_irqsave(&object->lock, flags);
++	raw_spin_lock_irqsave(&object->lock, flags);
+ 	dump_object_info(object);
+-	spin_unlock_irqrestore(&object->lock, flags);
++	raw_spin_unlock_irqrestore(&object->lock, flags);
+ 
+ 	put_object(object);
+ 	return 0;
+@@ -1812,11 +1812,11 @@ static void kmemleak_clear(void)
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(object, &object_list, object_list) {
+-		spin_lock_irqsave(&object->lock, flags);
++		raw_spin_lock_irqsave(&object->lock, flags);
+ 		if ((object->flags & OBJECT_REPORTED) &&
+ 		    unreferenced_object(object))
+ 			__paint_it(object, KMEMLEAK_GREY);
+-		spin_unlock_irqrestore(&object->lock, flags);
++		raw_spin_unlock_irqrestore(&object->lock, flags);
+ 	}
+ 	rcu_read_unlock();
+ 
+-- 
+2.14.4
+
