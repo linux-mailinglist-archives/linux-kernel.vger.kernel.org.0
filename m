@@ -2,188 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78144BF3E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 15:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D8FCBF3C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Sep 2019 15:11:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbfIZNQs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Sep 2019 09:16:48 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42434 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbfIZNQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Sep 2019 09:16:48 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q12so1821469pff.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 06:16:47 -0700 (PDT)
+        id S1726700AbfIZNLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Sep 2019 09:11:45 -0400
+Received: from mail-eopbgr750087.outbound.protection.outlook.com ([40.107.75.87]:43906
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725836AbfIZNLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Sep 2019 09:11:44 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jpr6xvFXFO1aV+ILyMcwaZL4w6dP7pWGA741KILg9XhuXXWKmZ4OR00wMco3kkF8XwWP8SAHgfkp89VCkpmJj5rbETsuQYzyWjvlyNtzq3qyRCWzZh3Ni5SnxJ55PZt8TcXg/kmqjzIlqcKb2EfY0OfSZU2PxM750Pa4zu9gMslzJG0I/5VOO+02AUwGwROjIs1rWLDNzj14pKInDNNphCHdlKlfk5Me80JTy7/r6t66BtCaJbXboMG6a6LNlaSui9er1J9d76GJX5kr6Xxw5CedOx/yXeDcS0rHZ+KS0o/Mj40eoebUcpMJlUWzDZhBj6zkcCquOiLnIyRog2OGFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Pavt5LsdTFAkBN7Y81A+07Fyi+wAmHWIGN74pCm9dM=;
+ b=fMqlseDfgBdgQIIToCNp6dm7Jn/prnXQYL4LpbByPPKAxI/hyzLIIEscDQMqZK3H11uePxH0sVFXunM71CRD9FPVwDcpaK8BcPFYZO3d7WnOgCeb+CDk0P9p1mBqwmndCQlFrN8LOtfjkA9x19/4g1SetIeGRILfP4/Cq5cVwKzeI/38sWzB7fhz/aUmTFGek+EATL9Ks5HWhT1QMfAnFya5d9G5977ADMP9cKkxxS1uC7L+iSPT9m7jgHYadwgZPc/numIYS7FD6l6BYdkhalz9VV9BDEu8EIxfj+Fn0jNzH5FelfyOleIQPaYi2wU/MrPpGL7R/adsRt6nLYY0lQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=oracle.com smtp.mailfrom=amd.com;
+ dmarc=permerror action=none header.from=amd.com; dkim=none (message not
+ signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=J8TUVyxyjXna45wzhu4swIPRgedanL4sOKJE+axne0Q=;
-        b=yfuanrnVjaSlhxhXRKUrYtTGC5KfMgOyDp4Mvc9lF5UkOHOJpsV1P+c8PDnFPXaenN
-         jOZ/NY+zg3s+4E5zfsJXXP08ZoMRYiEc1kp4+WJq8QBImcp6jDzkB0Y+Dddv8lddmnha
-         CRGwGIS1KVc19/ONks1TZwAEHveJ4qjI84iwXGXe3s8+GPEq23xsKdFb2FnJXDZ7wPMt
-         7fWZsHp5SOUJQLTcpqy9wzorAIo7mpyMS8cHpVBpSatWYEsUhea843/uXYt9xXa7AsFS
-         9gLlgly0sKD9DLJN7EGZ8uU4w9Jg1jaXuGz667AbYPtiAnMKJGwM1jYnCkSXbmKK2Pyx
-         U3Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=J8TUVyxyjXna45wzhu4swIPRgedanL4sOKJE+axne0Q=;
-        b=Pux+naZym7RG0oKIpeudLvcgTfg26XmQJ4eHEAjns5geJwTNajXvjhyhtf86fGqiJ+
-         tR8AEQS1Ec7Q9zsScBu6sUlIpvZeXyk4NKriSkvzfS3JkJ29uTw4IxiewTOLeORexUjZ
-         nO02x4Tq7I2+OtbUzfA/KFpoBtsbLXN2rVNLpF0LCc4jCVzXtzqckH/fi8qTMSapM5vX
-         2mi/KDFbu7wjjaZ8Md02obilEsY4HDJwPa4eaIv/KF4j+apyII3UOyXxHM78+ibLuFgp
-         x3F6808AMZME9MIZqXtKWIn2FLg5XVovmCnrm+6yZ4nmEmv8s8Cy/r7QOH1lIXgTyqoa
-         LZIQ==
-X-Gm-Message-State: APjAAAVwu09NCubWrmS2+u4N3hQHvDYQSQpfHwrazYbJCBlaydx0E/+X
-        xWpSeWdCYF9pgpFObMCnUueW7A==
-X-Google-Smtp-Source: APXvYqyfsR+Zw+4tzV1JtAswxwLXBXsRf3L9ka/MN6yLJepXjiRmTjKaXqNFnt+HfRETXH37UYA+NA==
-X-Received: by 2002:a62:b606:: with SMTP id j6mr3789986pff.254.1569503806288;
-        Thu, 26 Sep 2019 06:16:46 -0700 (PDT)
-Received: from [172.20.32.102] ([12.157.10.118])
-        by smtp.googlemail.com with ESMTPSA id u194sm4525115pgc.27.2019.09.26.06.16.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Sep 2019 06:16:45 -0700 (PDT)
-Subject: Re: [PATCH v5 3/3] clocksource/drivers: Suspend/resume Hyper-V
- clocksource for hibernation
-To:     Dexuan Cui <decui@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, KY Srinivasan <kys@microsoft.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>
-Cc:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <1567723581-29088-1-git-send-email-decui@microsoft.com>
- <1567723581-29088-4-git-send-email-decui@microsoft.com>
- <8ba5e2fd-6a9f-b61b-685e-23a69cabe3a2@linaro.org>
- <PU1P153MB0169A28B05A7CDE04A57AA58BF870@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <17e5a535-8597-4780-7cd0-e8c4d2aa8f0f@linaro.org>
-Date:   Thu, 26 Sep 2019 15:16:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Pavt5LsdTFAkBN7Y81A+07Fyi+wAmHWIGN74pCm9dM=;
+ b=bW4IARLL2UdOiKtpvd+yV0+HiCLJ9G7l5wCF/Tfipu62p/uGTnwIuFIGEPcffWS2lP9ylYrCRTcgxPIDMUAdX7PmwQ8KdxUmk1AkLOdm16wmWA9U8imzJzj8aaXZvL/nN476egi5p8Kw0hg76NXcSfatkAJaGfQktjOfx1pIRzI=
+Received: from SN1PR12CA0078.namprd12.prod.outlook.com (2603:10b6:802:20::49)
+ by MWHPR1201MB0014.namprd12.prod.outlook.com (2603:10b6:300:e7::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2284.25; Thu, 26 Sep
+ 2019 13:11:41 +0000
+Received: from BY2NAM03FT026.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e4a::208) by SN1PR12CA0078.outlook.office365.com
+ (2603:10b6:802:20::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2178.16 via Frontend
+ Transport; Thu, 26 Sep 2019 13:11:41 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; oracle.com; dkim=none (message not signed)
+ header.d=none;oracle.com; dmarc=permerror action=none header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
+ BY2NAM03FT026.mail.protection.outlook.com (10.152.84.210) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2305.15 via Frontend Transport; Thu, 26 Sep 2019 13:11:40 +0000
+Received: from vishnu-All-Series.amd.com (10.180.168.240) by
+ SATLEXCHOV01.amd.com (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1;
+ Thu, 26 Sep 2019 08:11:39 -0500
+From:   Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>
+CC:     <Alexander.Deucher@amd.com>,
+        Ravulapati Vishnu vardhan rao 
+        <Vishnuvardhanrao.Ravulapati@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "Takashi Iwai" <tiwai@suse.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        "Maruthi Srinivas Bayyavarapu" <Maruthi.Bayyavarapu@amd.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: amd: Missing Initialization of IRQFLAGS
+Date:   Fri, 27 Sep 2019 05:34:47 +0530
+Message-ID: <1569542689-25512-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <Fix for missing initialization of IRQFLAGS.>
+References: <Fix for missing initialization of IRQFLAGS.>
 MIME-Version: 1.0
-In-Reply-To: <PU1P153MB0169A28B05A7CDE04A57AA58BF870@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(39860400002)(136003)(428003)(199004)(189003)(86362001)(186003)(5660300002)(36756003)(50466002)(356004)(6666004)(316002)(81156014)(54906003)(109986005)(305945005)(8676002)(2906002)(16586007)(81166006)(53416004)(4326008)(486006)(2616005)(11346002)(50226002)(48376002)(8936002)(76176011)(7696005)(1671002)(51416003)(126002)(11926002)(476003)(70206006)(336012)(70586007)(426003)(446003)(47776003)(26005)(478600001)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR1201MB0014;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ed66ccfd-dab3-4e17-7d34-08d742831210
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328);SRVR:MWHPR1201MB0014;
+X-MS-TrafficTypeDiagnostic: MWHPR1201MB0014:
+X-Microsoft-Antispam-PRVS: <MWHPR1201MB0014BFBA1F46FCE9ABE804DAE7860@MWHPR1201MB0014.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1247;
+X-Forefront-PRVS: 0172F0EF77
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: t1Ayqpw61EwaD3Rs8547A5SMQZSO93ki3Q0KiyIgfXZg/HQOUhc8OR9YzDufLMaKKyLOg5lo2eU7ttsZXe5DNl+wJMWyjn7HpxwQ/DYlIzODcJvBWcrCS8hNHr2RCIYhS4OUomLc7PSmzPmx7bGGJ8QKF7rNwWNoraTkurldrdBNaIkv3clzEdlgMgeCH6ZnUPP8ImtuVX+QKsOW/8R6yszYOTRipPuR71mw+Yr1uSV3MzQvA/BFoUdLKRlwn7uUhDkSpOp4ceh2n5AZFJozSxrcWkn4QPY3F05Z2wqY0YRWH/CoQwR9UwwbGDNVEFcXb52xnvJ27t2BotXCZWO4vK62/YavpUFNeWDer2hVh/im1H8xSXiBgnhxvEKokNZKNzG8KA0vKZKKIuitELPqm1wB6/nscFmdkT2JGRZZ5uo=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2019 13:11:40.5842
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed66ccfd-dab3-4e17-7d34-08d742831210
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR1201MB0014
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/09/2019 01:35, Dexuan Cui wrote:
->> From: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Sent: Wednesday, September 25, 2019 4:21 PM
->> To: Dexuan Cui <decui@microsoft.com>; arnd@arndb.de; bp@alien8.de;
->> Haiyang Zhang <haiyangz@microsoft.com>; hpa@zytor.com; KY Srinivasan
->> <kys@microsoft.com>; linux-hyperv@vger.kernel.org;
->> linux-kernel@vger.kernel.org; mingo@redhat.com; sashal@kernel.org; Stephen
->> Hemminger <sthemmin@microsoft.com>; tglx@linutronix.de; x86@kernel.org;
->> Michael Kelley <mikelley@microsoft.com>; Sasha Levin
->> <Alexander.Levin@microsoft.com>
->> Cc: linux-arch@vger.kernel.org
->> Subject: Re: [PATCH v5 3/3] clocksource/drivers: Suspend/resume Hyper-V
->> clocksource for hibernation
->>
->> On 06/09/2019 00:47, Dexuan Cui wrote:
->>> This is needed for hibernation, e.g. when we resume the old kernel, we need
->>> to disable the "current" kernel's TSC page and then resume the old kernel's.
->>>
->>> Signed-off-by: Dexuan Cui <decui@microsoft.com>
->>> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
->>
->> I can take this patch if needed.
-> 
-> Thanks, Daniel! Usually tglx takes care of the patches, but it looks recently he
-> may be too busy to handle the 3 patches. 
-> 
-> I guess you can take the patch, if tglx has no objection. :-)
-> If you take the patch, please take all the 3 patches.
+Fix for missing initialization of IRQFLAGS in
+ACP-PCI driver and Missing Macro of ACP3x_DEVS.
 
-I maintain drivers/clocksource for the tip/timers/core branch. I don't
-want to proxy another tip branch as it is out of my jurisdiction.
+Follow up to IDb33df346
 
-So I can take patch 3/3 but will let the other 2 patches to be picked by
-the right person. It is your call.
+Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
+---
+ sound/soc/amd/raven/pci-acp3x.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-
-
+diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
+index 627798a..3887ea0 100644
+--- a/sound/soc/amd/raven/pci-acp3x.c
++++ b/sound/soc/amd/raven/pci-acp3x.c
+@@ -219,7 +219,7 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 				sizeof(struct resource) * 4,
+ 						GFP_KERNEL);
+ 		adata->cell = devm_kzalloc(&pci->dev,
+-				sizeof(struct mfd_cell) * 3,
++				sizeof(struct mfd_cell) * ACP3x_DEVS,
+ 						GFP_KERNEL);
+ 		if (!adata->cell) {
+ 			ret = -ENOMEM;
+@@ -260,6 +260,7 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		adata->res[3].flags	= IORESOURCE_IRQ;
+ 		adata->res[3].start	= pci->irq;
+ 		adata->res[3].end	= adata->res[3].start;
++		irqflags		= 0;
+ 
+ 		adata->acp3x_audio_mode	= ACP3x_I2S_MODE;
+ 
+@@ -282,8 +283,9 @@ static int snd_acp3x_probe(struct pci_dev *pci,
+ 		adata->cell[2].platform_data	= &i2s_pdata[1];
+ 		adata->cell[2].pdata_size	=
+ 				sizeof(struct i2s_platform_data);
+-		r = mfd_add_hotplug_devices(adata->parent, adata->cell,	3);
+-		for (i = 0; i < 3 ; i++)
++		r = mfd_add_hotplug_devices(adata->parent, adata->cell,
++								ACP3x_DEVS);
++		for (i = 0; i < ACP3x_DEVS ; i++)
+ 			dev = get_mfd_cell_dev(adata->cell[i].name, i);
+ 		break;
+ 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.7.4
 
