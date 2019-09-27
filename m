@@ -2,64 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D649BC0880
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 17:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA2C1C0889
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 17:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbfI0PZX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 11:25:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56358 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbfI0PZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 11:25:22 -0400
-Received: from oasis.local.home (unknown [65.39.69.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00F6B217D7;
-        Fri, 27 Sep 2019 15:25:19 +0000 (UTC)
-Date:   Fri, 27 Sep 2019 11:25:14 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Naveen Rao <naveen.n.rao@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: [PATCH] selftests/ftrace: Fix same probe error test
-Message-ID: <20190927112514.00cc6e92@oasis.local.home>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727837AbfI0P0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 11:26:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38580 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727319AbfI0P0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 11:26:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3D241AB7D;
+        Fri, 27 Sep 2019 15:26:42 +0000 (UTC)
+Message-ID: <471732f03049a1528df1d144013d723041f0a419.camel@suse.de>
+Subject: Re: [PATCH] scsi: core: Log SCSI command age with errors
+From:   Martin Wilck <mwilck@suse.de>
+To:     "Milan P. Gandhi" <mgandhi@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc:     jejb@linux.ibm.com, martin.petersen@oracle.com
+Date:   Fri, 27 Sep 2019 17:26:46 +0200
+In-Reply-To: <20190923060122.GA9603@machine1>
+References: <20190923060122.GA9603@machine1>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2019-09-23 at 11:31 +0530,  Milan P. Gandhi wrote:
+> Couple of users had requested to print the SCSI command age along 
+> with command failure errors. This is a small change, but allows 
+> users to get more important information about the command that was 
+> failed, it would help the users in debugging the command failures:
+> 
+> Signed-off-by: Milan P. Gandhi <mgandhi@redhat.com>
+> ---
+> diff --git a/drivers/scsi/scsi_logging.c
+> b/drivers/scsi/scsi_logging.c
+> index ecc5918e372a..ca2182bc53c6 100644
+> --- a/drivers/scsi/scsi_logging.c
+> +++ b/drivers/scsi/scsi_logging.c
+> @@ -437,6 +437,7 @@ void scsi_print_result(const struct scsi_cmnd
+> *cmd, const char *msg,
+>  	const char *mlret_string = scsi_mlreturn_string(disposition);
+>  	const char *hb_string = scsi_hostbyte_string(cmd->result);
+>  	const char *db_string = scsi_driverbyte_string(cmd->result);
+> +	unsigned long cmd_age = (jiffies - cmd->jiffies_at_alloc) / HZ;
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+This comes down to pretty coarse time resolution, does it not? More
+often than not, the time difference shown will be 0. I'd recommend at
+least millisecond resolution.
 
-The "same probe" selftest that tests that adding the same probe fails
-doesn't add the same probe and passes, which fails the test.
+>  
+>  	logbuf = scsi_log_reserve_buffer(&logbuf_len);
+>  	if (!logbuf)
+> @@ -478,10 +479,15 @@ void scsi_print_result(const struct scsi_cmnd
+> *cmd, const char *msg,
+>  
+>  	if (db_string)
+>  		off += scnprintf(logbuf + off, logbuf_len - off,
+> -				 "driverbyte=%s", db_string);
+> +				 "driverbyte=%s ", db_string);
+>  	else
+>  		off += scnprintf(logbuf + off, logbuf_len - off,
+> -				 "driverbyte=0x%02x", driver_byte(cmd-
+> >result));
+> +				 "driverbyte=0x%02x ",
+> +				 driver_byte(cmd->result));
+> +
+> +	off += scnprintf(logbuf + off, logbuf_len - off,
+> +			 "cmd-age=%lus", cmd_age);
 
-Fixes: b78b94b82122 ("selftests/ftrace: Update kprobe event error testcase")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- .../selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc      | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is certainly helpful in some situations. Yet I am unsure if it
+should *always* be printed. I wouldn't say it's as important as the 
+other stuff scsi_print_result() provides. After all, by activating
+MLQUEUE+MLCOMPLETE, the time on-wire can be extracted with better
+accuracy from currently available logs. 
 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-index 8a4025e912cb..ef1e9bafb098 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_syntax_errors.tc
-@@ -95,7 +95,7 @@ echo 'p:kprobes/testevent _do_fork abcd=\1' > kprobe_events
- check_error 'p:kprobes/testevent _do_fork ^bcd=\1'	# DIFF_ARG_TYPE
- check_error 'p:kprobes/testevent _do_fork ^abcd=\1:u8'	# DIFF_ARG_TYPE
- check_error 'p:kprobes/testevent _do_fork ^abcd=\"foo"'	# DIFF_ARG_TYPE
--check_error '^p:kprobes/testevent _do_fork'	# SAME_PROBE
-+check_error '^p:kprobes/testevent _do_fork abcd=\1'	# SAME_PROBE
- fi
- 
- exit 0
--- 
-2.20.1
+So perhaps make this depend on a module parameter?
+
+Also, we should carefully ponder if we want to put this on the same
+line as the driver byte, as users may have created scripts for parsing
+this output.
+
+Regards,
+Martin
+
 
