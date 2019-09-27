@@ -2,132 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D05FC0924
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 18:05:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24DEAC0910
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 18:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbfI0QFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 12:05:53 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34222 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfI0QFw (ORCPT
+        id S1727585AbfI0QCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 12:02:07 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:42375 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbfI0QCH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 12:05:52 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j19so3058625lja.1
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 09:05:51 -0700 (PDT)
+        Fri, 27 Sep 2019 12:02:07 -0400
+Received: by mail-io1-f65.google.com with SMTP id n197so17577600iod.9
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 09:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WUAOKj8TZSrA0yEWe2HFVFAP8tkdAoUvA0qRc/X2cQw=;
-        b=gmZVemT3kiPxJ+8cpxAZPOWUM+OCNclOcXI3vW7HbQXKL0sh5OTlcNAkP0CWnCKa5a
-         zT+iiF8vVo3r2RkNGaqPNZVYv2LYMJwzYsEqIEB9TZQQ94W4xVcmnk0DtC8URs/ZpX/O
-         1DnVrVlH+y95Mqvpe3nzWUmYoU64c/+Qyc6lA=
+        bh=lgAkk/YaVOjIm+eYoirnfpTGVi4GTRsy5eJmu7zQ35M=;
+        b=BqBbqn1v6BmDj80XgHueQfDT2g8OiaP8+NPPh+sl4i4CnrYqtnxxdv+h6I7Q2C/l2T
+         Saadv4tE19a3iwbCVOyoYMs8noKK7KGUyPU41lJJUD6xE1/gs636wHaX+QqvZP4j8YrA
+         YEQOvkEvhfvstBudhmys/ZpKCjB06Czqb+fy4qAUadsv5jUvHi13iiuYFjpb699KLAi5
+         8dA31ACK1Ua/zfUNHwskFeILW39Db9V1gqf4MD7bWzc0V2lrrC/fKeZjq+1Qke1k4Ezn
+         HhopI3/wC618fZErDUxFx7lghzYwYXSNM/v0E5UpzuBY4rOyXDmIs2Sgui8mPeo4uRZB
+         XQHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WUAOKj8TZSrA0yEWe2HFVFAP8tkdAoUvA0qRc/X2cQw=;
-        b=nwoecjHyW+QfHFC6ubIx66JB9p2+pj4+EAhlZh6N5aAXSSiSlEBnqVxl+Ca8HkTczj
-         TMSWqmSwFSyKivhTRsYHzPYNotHsM5T7Ax+C/+cvfbp6eCB/GXyde2eTRuX5ON5rbBwf
-         I6RGvIvGl6M0KeK7yzJdvzOJuu8lhM1FXhytezvKy48vocx5UnA1utIcTxsrmzPL+9/p
-         xy5evGsgwBvJcMa4NrPFzYeXEydwIN7bYJNWWMb8wFTNaOTWZL9nSVWpDbICl1FWHJrL
-         iH9OlvUjdbI5JpgrHNR/dsiuicdMsMKtJt6KaO49l2QK1z5KmNWwa6bnbfbUNnwLrDcs
-         SwXw==
-X-Gm-Message-State: APjAAAWMaDue0DLd4pAmQhi/fZgV5WZsuE3COdDfnCzJ8bnvCJPxh7b0
-        ddvbF1sYbevJls87oUvSdX+kKFIVyx0=
-X-Google-Smtp-Source: APXvYqxdVVy8n5Ww23XCbbnFmJECxQwZlF+kh7UU+/VH2WeosV3y/4sXJK2e3YNjFFXf/xDbFxmlEA==
-X-Received: by 2002:a2e:9f52:: with SMTP id v18mr3596044ljk.166.1569600350287;
-        Fri, 27 Sep 2019 09:05:50 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id m10sm557337lfo.69.2019.09.27.09.05.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Sep 2019 09:05:50 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id d1so2995515ljl.13
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 09:05:49 -0700 (PDT)
-X-Received: by 2002:a2e:3e07:: with SMTP id l7mr3440165lja.180.1569599952421;
- Fri, 27 Sep 2019 08:59:12 -0700 (PDT)
+        bh=lgAkk/YaVOjIm+eYoirnfpTGVi4GTRsy5eJmu7zQ35M=;
+        b=msp33btZlgEzI8ZQJg2XWqFaNJFvggPJNswWxHU30hECzGbb7mOguhX4XT/iVy9Jzq
+         aqHJZTCJd4fP7Stj6TZBwfHwO7CycxDCmVR5fJsL/ha2yk0x90zl5iNTPWkbVFGLgurd
+         bjSqfoUuz4kYMLa29w4XA1FiSwwbHohK3iYy+OpofdP6k/OJLONuu2zXxBWM49HtJE7j
+         La1m6iKqYQ3T/OmJ3G71ZQDhdbqxbhKmK57u6vXQ3fpl5JZ1j+cmPdsvjnOruDh1ZPcq
+         bHBCbOiucQfoDnuXMhtaHpiB/mf3KVdD0WRlc9hKZ4qySvgRVMtnW8IkzFG5/Kypeqxn
+         T2dg==
+X-Gm-Message-State: APjAAAXmw6oCdzB6sOoFU1sB0TeMbI+5CfP+mNu3QzOi5KNychveSSZd
+        lcBm5SPa9259pcY75gigcFIDlc4HJ1150dOcHaNcbg==
+X-Google-Smtp-Source: APXvYqwKBik3py7QHelQi1j9yqNr6X9seM8w1k1A2J3dgKRVd3txN4UH++9q5EB7yTpsxrY2YTVnE7EV+rNZJ4Of4ZI=
+X-Received: by 2002:a92:4a0d:: with SMTP id m13mr5429319ilf.119.1569600126204;
+ Fri, 27 Sep 2019 09:02:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190917052438.GA26923@1wt.eu> <2508489.jOnZlRuxVn@merkaba>
- <20190917121156.GC6762@mit.edu> <20190917123015.sirlkvy335crozmj@debian-stretch-darwi.lab.linutronix.de>
- <20190917160844.GC31567@gardel-login> <CAHk-=wgsWTCZ=LPHi7BXzFCoWbyp3Ey-zZbaKzWixO91Ryr9=A@mail.gmail.com>
- <20190917174219.GD31798@gardel-login> <87zhj15qgf.fsf@x220.int.ebiederm.org>
- <84824f79-2d12-0fd5-5b32-b0360eb075ac@gmail.com> <CAHk-=whYhC-qXHdEypy6iC7SzPA+KvWphLXSGF+mvGCGHGjNZw@mail.gmail.com>
- <20190927135708.GD11791@gardel-login>
-In-Reply-To: <20190927135708.GD11791@gardel-login>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 27 Sep 2019 08:58:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=widBVsz+JZYnkV8xvCt+XMzkO6Gz3KZQ_gULXpMpUZfMA@mail.gmail.com>
-Message-ID: <CAHk-=widBVsz+JZYnkV8xvCt+XMzkO6Gz3KZQ_gULXpMpUZfMA@mail.gmail.com>
-Subject: Re: Linux 5.3-rc8
-To:     Lennart Poettering <mzxreary@0pointer.de>
-Cc:     "Alexander E. Patrakov" <patrakov@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vito Caputo <vcaputo@pengaru.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, Ray Strode <rstrode@redhat.com>,
-        William Jon McCann <mccann@jhu.edu>,
-        zhangjs <zachary@baishancloud.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+References: <20190927155413.31648-1-vkuznets@redhat.com>
+In-Reply-To: <20190927155413.31648-1-vkuznets@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Fri, 27 Sep 2019 09:01:55 -0700
+Message-ID: <CALMp9eRRavuTr44XnL-ySWy7B5=Dir1Vt+oMp1+EiFbpNy6Mig@mail.gmail.com>
+Subject: Re: [PATCH] KVM: selftests: x86: clarify what is reported on
+ KVM_GET_MSRS failure
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 6:57 AM Lennart Poettering <mzxreary@0pointer.de> wrote:
+On Fri, Sep 27, 2019 at 8:54 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
 >
-> Doing the random seed in the boot loader is nice for two reasons:
+> When KVM_GET_MSRS fail the report looks like
 >
-> 1. It runs very very early, so that the OS can come up with fully
->    initialized entropy right from the beginning.
-
-Oh, that part I love.
-
-But I don't believe in your second case:
-
-> 2. The boot loader generally has found some disk to read the kernel from,
->    i.e. has a place where stuff can be stored and which can be updated
->    (most modern boot loaders can write to disk these days, and so can
->    EFI). Thus, it can derive a new random seed from a stored seed on disk
->    and pass it to the OS *AND* update it right away on disk ensuring that
->    it is never reused again.
-
-No. This is absolutely no different at all from user space doing it
-early with a file.
-
-All the same "golden image" issues exist, and in general the less the
-boot loader writes to disk, the better.
-
-Plus it doesn't actually work anyway in the one situation where people
-_really_ want it - embedded devices, where the kernel image is quite
-possibly in read-only flash that needs major setup for updates.
-
-PLUS.
-
-Your "it can update it right away on disk" is just crazy talk. With
-WHAT? It has no randomness to play with, and it doesn't have time to
-do jitter entropy stuff.
-
-So all it can do is a really bad job at taking the previous random
-seed, doing some transformation on it, and add a little bit of
-whatever system randomness it can find. None of which is any better
-than what the kernel can do.
-
-End result: you'd need to have the kernel update whatever bootloader
-data later on, and I'm not seeing that happening. Afaik the current
-bootloader interface has no way to specify how to update it when you
-actually have better randomness.
-
-> NVRAM backing EFI vars sucks. Nothing you want to update on every
-> cycle. It's OK to update during OS installation, but during every
-> single boot? I'd rather not.
-
-I do agree that EFI nvram isn't wonderful, but hopefully nonvolatile
-storage is improving, and it's conceptually the right thing.
-
-                  Linus
+> ==== Test Assertion Failure ====
+>   lib/x86_64/processor.c:1089: r == nmsrs
+>   pid=28775 tid=28775 - Argument list too long
+>      1  0x000000000040a55f: vcpu_save_state at processor.c:1088 (discriminator 3)
+>      2  0x00000000004010e3: main at state_test.c:171 (discriminator 4)
+>      3  0x00007fb8e69223d4: ?? ??:0
+>      4  0x0000000000401287: _start at ??:?
+>   Unexpected result from KVM_GET_MSRS, r: 36 (failed at 194)
+>
+> and it's not obvious that '194' here is the failed MSR index and that
+> it's printed in hex. Change that.
+>
+> Suggested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
