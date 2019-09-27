@@ -2,45 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0357BFFC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 09:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E7C2BFFEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 09:20:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbfI0HI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 03:08:57 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:56706 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfI0HI4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 03:08:56 -0400
-Received: from localhost (unknown [65.39.69.237])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 23C9D14CDFE0B;
-        Fri, 27 Sep 2019 00:08:53 -0700 (PDT)
-Date:   Fri, 27 Sep 2019 09:08:18 +0200 (CEST)
-Message-Id: <20190927.090818.895436971537381028.davem@davemloft.net>
-To:     kvalo@codeaurora.org
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: pull-request: wireless-drivers 2019-09-26
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <8736gj5i6a.fsf@kamboji.qca.qualcomm.com>
-References: <8736gj5i6a.fsf@kamboji.qca.qualcomm.com>
-X-Mailer: Mew version 6.8 on Emacs 26.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1726321AbfI0HT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 03:19:57 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3226 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725804AbfI0HT5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 03:19:57 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5CA93AB8D235F5ACECF8;
+        Fri, 27 Sep 2019 15:04:02 +0800 (CST)
+Received: from [127.0.0.1] (10.184.12.158) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 27 Sep 2019
+ 15:03:53 +0800
+Subject: Re: [PATCH 03/35] irqchip/gic-v3-its: Allow LPI invalidation via the
+ DirectLPI interface
+To:     Marc Zyngier <maz@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
+        <linux-kernel@vger.kernel.org>
+CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20190923182606.32100-1-maz@kernel.org>
+ <20190923182606.32100-4-maz@kernel.org>
+ <92ff82ca-ebcb-8f5f-5063-313f65bbc5e3@huawei.com>
+ <22202880-9a99-f0d9-4737-6112d60b30a6@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <9399fbe3-5293-d34f-712e-3bf62680fda4@huawei.com>
+Date:   Fri, 27 Sep 2019 14:59:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
+MIME-Version: 1.0
+In-Reply-To: <22202880-9a99-f0d9-4737-6112d60b30a6@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 27 Sep 2019 00:08:55 -0700 (PDT)
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kalle Valo <kvalo@codeaurora.org>
-Date: Thu, 26 Sep 2019 15:57:33 +0300
+On 2019/9/27 0:17, Marc Zyngier wrote:
+> On 26/09/2019 15:57, Zenghui Yu wrote:
+>> Hi Marc,
+>>
+>> I get one kernel panic with this patch on D05.
+> 
+> Can you please try this (completely untested for now) on top of the
+> whole series? I'll otherwise give it a go next week.
 
-> here's a pull request to net tree for v5.4. Please let me know if there
-> are any problems.
+Yes, it helps. At least I don't see panic any more. Without this change,
+the host would get crashed as long as the VM is started.
 
-Pulled, thanks Kalle.
+
+Thanks,
+zenghui
+
+> 
+> Thanks,
+> 
+> 	M.
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index bc55327406b7..9d24236d1257 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -3461,15 +3461,16 @@ static void its_vpe_send_cmd(struct its_vpe *vpe,
+>   
+>   static void its_vpe_send_inv(struct irq_data *d)
+>   {
+> +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+> +
+>   	if (gic_rdists->has_direct_lpi) {
+> -		/*
+> -		 * Don't mess about. Generating the invalidation is easily
+> -		 * done by using the parent irq_data, just like below.
+> -		 */
+> -		direct_lpi_inv(d->parent_data);
+> -	} else {
+> -		struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+> +		void __iomem *rdbase;
+>   
+> +		/* Target the redistributor this VPE is currently known on */
+> +		rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+> +		gic_write_lpir(d->parent_data->hwirq, rdbase + GICR_INVLPIR);
+> +		wait_for_syncr(rdbase);
+> +	} else {
+>   		its_vpe_send_cmd(vpe, its_send_inv);
+>   	}
+>   }
+> 
+
