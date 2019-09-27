@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD0A1C0278
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 11:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1854EC0272
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 11:37:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbfI0JhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 05:37:03 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:33065 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbfI0JhC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726695AbfI0JhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 27 Sep 2019 05:37:02 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:33054 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbfI0JhB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 05:37:01 -0400
 Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x8R9a5uf001372;
-        Fri, 27 Sep 2019 18:36:10 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x8R9a5uf001372
+        by conuserg-07.nifty.com with ESMTP id x8R9a5ug001372;
+        Fri, 27 Sep 2019 18:36:12 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x8R9a5ug001372
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1569576971;
-        bh=PdteufK64PUrtistqDZxQfPkOhODuQM4/dZUBLfPgTA=;
+        s=dec2015msa; t=1569576972;
+        bh=UQ6bH4/qZBZ6u3bYLv57zfd3f4RxEgvS4K1+jdI01bE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EM8WpQlHl/RRg5lRspAhRnXuVP7NMRwN3vND8I4as8aaLPekCtI2sURqIXOQUzDqJ
-         TJHa0dr1aSxHTVohjmVKh7oax8Y6aHX6vl0frGNzHY2Kajqt1EupmVDFm5uVTT36nI
-         WTqmMnV47W4d6qBAKQZwm29A4ypO1YqbCZQRbrrvANW8PLu1Z4gsMkTGzAkFJ/v6aw
-         HY/TlIH66PvW6R/IEv69y/UWP17UXOHEpE7VWJKN4aqBCdnNEQwkFNCXzd0B4zz7VG
-         d5miMuXHwDAUjJBe6WWgZaWnkP07YEIXzgMDUvwQxkliu+OIVfQBRM26Bg370XpJOe
-         0pyYPUk423uwg==
+        b=frbgdxeGGQj1AAOjEhqLFlCDcjeLt7cStOzPH2l82NztyjA71sxo14Zi/bXCzvh4P
+         9kwGdlzThgqbZ5CzsQdWDHGtrdB9yVtVpy5U1E7UswRYGVcjPc0tI+RKVhIb6drVlP
+         ytCFvoZbIb64pCdDTruU+ag/LDUV+50pjhDetlTWyp8DFje/JNuoquAbcFNwlWw2GC
+         wiGq7O8KYRo0/d/OJBomxqPpMxuswzr450Tbaau6QB7nrV6HzL4rkxGg0xrB/NddBz
+         +gXUFIRw3MPzkk2lypyO98bt6neq0ofHuGCZqKUpFvH9K9bOSqQF+kDIgy6RdYXUfy
+         ELHedr+p7EVNQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Jessica Yu <jeyu@kernel.org>
@@ -35,11 +35,10 @@ Cc:     Matthias Maennich <maennich@google.com>,
         Martijn Coenen <maco@android.com>,
         Will Deacon <will.deacon@arm.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] kbuild: fix build error of 'make nsdeps' in clean tree
-Date:   Fri, 27 Sep 2019 18:36:01 +0900
-Message-Id: <20190927093603.9140-6-yamada.masahiro@socionext.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 6/7] nsdeps: fix hashbang of scripts/nsdeps
+Date:   Fri, 27 Sep 2019 18:36:02 +0900
+Message-Id: <20190927093603.9140-7-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190927093603.9140-1-yamada.masahiro@socionext.com>
 References: <20190927093603.9140-1-yamada.masahiro@socionext.com>
@@ -48,37 +47,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running 'make nsdeps' in a clean source tree fails as follows:
+This script does not use bash-extension. I am guessing this hashbang
+was copied from scripts/coccicheck, which really uses bash-extension.
 
-$ make -s clean; make -s defconfig; make nsdeps
-   [ snip ]
-awk: fatal: cannot open file `init/modules.order' for reading (No such file or directory)
-make: *** [Makefile;1307: modules.order] Error 2
-make: *** Deleting file 'modules.order'
-make: *** Waiting for unfinished jobs....
-
-The cause of the error is 'make nsdeps' does not build modules at all.
-Set KBUILD_MODULES to fix it.
+/bin/sh is enough for this script.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- Makefile | 2 +-
+ scripts/nsdeps | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Makefile b/Makefile
-index d456746da347..80ba8efd56bb 100644
---- a/Makefile
-+++ b/Makefile
-@@ -616,7 +616,7 @@ endif
- # in addition to whatever we do anyway.
- # Just "make" or "make all" shall build modules as well
- 
--ifneq ($(filter all _all modules,$(MAKECMDGOALS)),)
-+ifneq ($(filter all _all modules nsdeps,$(MAKECMDGOALS)),)
-   KBUILD_MODULES := 1
- endif
- 
+diff --git a/scripts/nsdeps b/scripts/nsdeps
+index ac2b6031dd13..964b7fb8c546 100644
+--- a/scripts/nsdeps
++++ b/scripts/nsdeps
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0
+ # Linux kernel symbol namespace import generator
+ #
 -- 
 2.17.1
 
