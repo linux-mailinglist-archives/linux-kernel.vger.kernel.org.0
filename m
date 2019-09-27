@@ -2,110 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D191C0A42
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 19:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F54EC0A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 19:20:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbfI0RYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 13:24:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58738 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbfI0RYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 13:24:12 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 432CE898112;
-        Fri, 27 Sep 2019 17:24:12 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-2.gru2.redhat.com [10.97.112.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4693D1001938;
-        Fri, 27 Sep 2019 17:24:09 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 1AA6710515E;
-        Fri, 27 Sep 2019 12:50:06 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x8RFo2cC012646;
-        Fri, 27 Sep 2019 12:50:02 -0300
-Date:   Fri, 27 Sep 2019 12:50:02 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] KVM: Don't shrink/grow vCPU halt_poll_ns if host side
- polling is disabled
-Message-ID: <20190927154958.GB11810@amt.cnet>
-References: <1569572822-28942-1-git-send-email-wanpengli@tencent.com>
+        id S1728077AbfI0RUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 13:20:18 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40985 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbfI0RUQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 13:20:16 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f5so3240802ljg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 10:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O/eekwhhc/lEaErl1cWQvuZyKqEyMda5rbusW6YMK7I=;
+        b=LkvK4hE626X9t4s92tPCDu4GVP+JW+rdiOHfvNh9N4jF4NJ9fWlvc7td1nIDU+CA3n
+         PEztECpiktmStFqQ0huvXxeFoYFnurGmt4lmEj4thS8is9bkVhtTwcYhaFJXZOE0CtAy
+         FW3A90ZFOAblRyxevEgwyKNwOoEO9RZOQsrxo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O/eekwhhc/lEaErl1cWQvuZyKqEyMda5rbusW6YMK7I=;
+        b=awrjseIMJnG7j7NofpADBXLAFEh+3DVFPWEkvp2AQRjUwWiZrvCSq4tpZDBFH+5ZlJ
+         U5lcu/C/ev2yIaMTA058VmNciILRo8NwGCACh8FOXrJEbww03eQNRtCJtBK4ccsAGxB3
+         RpwGj3xlIgia02KmIapaY5ESHl9URpw7VigaCX7YICaQKCeoT+zf6jGyzeal8JT6SNst
+         EaB92tX5QpReyvX5/Nj2DxZQexhLUTNXVUmtuTHWbIHj9jA+e2AnARBAdHgxzmSKlnqW
+         1wwtq6BkiXkw9VN0toVkg+kPrhnAPfOHEqQP4ALZzhzMJzOnPIZ8vqoHcCwFyqQgBGn8
+         SEDQ==
+X-Gm-Message-State: APjAAAUOUqkRQWZ4VYf0U/tl66hVeQS+hDbJzVmIDlX/ifGbSPkVlgRF
+        SL2w4p+xThugSJ0LpbXGQdpfxTbx42y9/T9YoK0cUQ==
+X-Google-Smtp-Source: APXvYqwQ0sJhbgkRNydnIi4RrSi/dFi7mwr/zU4s+w0Ydcubj32ElrELRy3PvgOlQ56qXz+SBC5iH82TlZ2DYY/65VY=
+X-Received: by 2002:a2e:5d17:: with SMTP id r23mr3716224ljb.229.1569604813845;
+ Fri, 27 Sep 2019 10:20:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1569572822-28942-1-git-send-email-wanpengli@tencent.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Fri, 27 Sep 2019 17:24:12 +0000 (UTC)
+References: <20190822205533.4877-1-david.abdurachmanov@sifive.com>
+ <alpine.DEB.2.21.9999.1908231717550.25649@viisi.sifive.com>
+ <20190826145756.GB4664@cisco> <CAEn-LTrtn01=fp6taBBG_QkfBtgiJyt6oUjZJOi6VN8OeXp6=g@mail.gmail.com>
+ <201908261043.08510F5E66@keescook> <alpine.DEB.2.21.9999.1908281825240.13811@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1908281825240.13811@viisi.sifive.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 27 Sep 2019 10:20:02 -0700
+Message-ID: <CAJr-aD=UnCN9E_mdVJ2H5nt=6juRSWikZnA5HxDLQxXLbsRz-w@mail.gmail.com>
+Subject: Re: [PATCH v2] riscv: add support for SECCOMP and SECCOMP_FILTER
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        David Abdurachmanov <david.abdurachmanov@gmail.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        David Abdurachmanov <david.abdurachmanov@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        Vincent Chen <vincentc@andestech.com>,
+        Alan Kao <alankao@andestech.com>,
+        linux-riscv@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, me@carlosedp.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 04:27:02PM +0800, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
-> 
-> Don't waste cycles to shrink/grow vCPU halt_poll_ns if host 
-> side polling is disabled.
-> 
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> ---
->  virt/kvm/kvm_main.c | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index e6de315..b368be4 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -2359,20 +2359,22 @@ void kvm_vcpu_block(struct kvm_vcpu *vcpu)
->  	kvm_arch_vcpu_unblocking(vcpu);
->  	block_ns = ktime_to_ns(cur) - ktime_to_ns(start);
->  
-> -	if (!vcpu_valid_wakeup(vcpu))
-> -		shrink_halt_poll_ns(vcpu);
-> -	else if (halt_poll_ns) {
-> -		if (block_ns <= vcpu->halt_poll_ns)
-> -			;
-> -		/* we had a long block, shrink polling */
-> -		else if (vcpu->halt_poll_ns && block_ns > halt_poll_ns)
-> +	if (!kvm_arch_no_poll(vcpu)) {
-> +		if (!vcpu_valid_wakeup(vcpu))
->  			shrink_halt_poll_ns(vcpu);
-> -		/* we had a short halt and our poll time is too small */
-> -		else if (vcpu->halt_poll_ns < halt_poll_ns &&
-> -			block_ns < halt_poll_ns)
-> -			grow_halt_poll_ns(vcpu);
-> -	} else
-> -		vcpu->halt_poll_ns = 0;
-> +		else if (halt_poll_ns) {
-> +			if (block_ns <= vcpu->halt_poll_ns)
-> +				;
-> +			/* we had a long block, shrink polling */
-> +			else if (vcpu->halt_poll_ns && block_ns > halt_poll_ns)
-> +				shrink_halt_poll_ns(vcpu);
-> +			/* we had a short halt and our poll time is too small */
-> +			else if (vcpu->halt_poll_ns < halt_poll_ns &&
-> +				block_ns < halt_poll_ns)
-> +				grow_halt_poll_ns(vcpu);
-> +		} else
-> +			vcpu->halt_poll_ns = 0;
-> +	}
->  
->  	trace_kvm_vcpu_wakeup(block_ns, waited, vcpu_valid_wakeup(vcpu));
->  	kvm_arch_vcpu_block_finish(vcpu);
-> -- 
-> 2.7.4
+On Wed, Aug 28, 2019 at 6:30 PM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+> On Mon, 26 Aug 2019, Kees Cook wrote:
+>
+> > On Mon, Aug 26, 2019 at 09:39:50AM -0700, David Abdurachmanov wrote:
+> > > I don't have the a build with SECCOMP for the board right now, so it
+> > > will have to wait. I just finished a new kernel (almost rc6) for Fedora,
+> >
+> > FWIW, I don't think this should block landing the code: all the tests
+> > fail without seccomp support. ;) So this patch is an improvement!
+>
+> Am sympathetic to this -- we did it with the hugetlb patches for RISC-V --
+> but it would be good to understand a little bit more about why the test
+> fails before we merge it.
 
-Looks good.
+The test is almost certainly failing due to the environmental
+requirements (i.e. namespaces, user ids, etc). There are some corner
+cases in there that we've had to fix in the past. If the other tests
+are passing, then I would expect all the seccomp internals are fine --
+it's just the case being weird. It's just a matter of figuring out
+what state the test environment is in so we can cover that corner case
+too.
 
+> Once we merge the patch, it will probably reduce the motivation for others
+> to either understand and fix the underlying problem with the RISC-V code
+> -- or, if it truly is a flaky test, to drop (or fix) the test in the
+> seccomp_bpf kselftests.
+
+Sure, I get that point -- but I don't want to block seccomp landing
+for riscv for that. I suggested to David offlist that the test could
+just be marked with a FIXME XFAIL on riscv and once someone's in a
+better position to reproduce it we can fix it. (I think the test bug
+is almost certainly not riscv specific, but just some missing
+requirement that we aren't handling correctly.)
+
+How does that sound?
+
+-Kees
