@@ -2,152 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 604DBC0BD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 20:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52C2BC0BDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 21:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbfI0S7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 14:59:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728171AbfI0S7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 14:59:54 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA403207FF;
-        Fri, 27 Sep 2019 18:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569610793;
-        bh=E73g80IzW6M1EitSeL0eIccYNXP+iG5cDrk7F+CAOI4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lbk0CZYN7l4OBvnl8OAlF/JVsFiAJJq3vwVUD0lLmU/yX6kt3w+k1OWLrXJHWINsf
-         2geCKyLrIXXlCvJYibE1NgOXKyQ5AAk37lHdNwsXf6eEQJwTKA+9FYoPHekUNzxJZL
-         RJDe79uBC2uqbPQqBCrp+bjjQAy16oa1v2OhntUA=
-Subject: Re: [PATCH 1/2] Modify cpupower to schedule itself on cores it is
- reading MSRs from
-To:     "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     Thomas Renninger <trenn@suse.com>, Pu Wen <puwen@hygon.com>,
-        Borislav Petkov <bp@suse.de>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>, shuah <shuah@kernel.org>
-References: <20190918163445.129103-1-Janakarajan.Natarajan@amd.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <b90697df-e898-31d2-5149-c223cb11ba5c@kernel.org>
-Date:   Fri, 27 Sep 2019 12:59:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728250AbfI0TBU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 15:01:20 -0400
+Received: from sonic301-22.consmr.mail.gq1.yahoo.com ([98.137.64.148]:41366
+        "EHLO sonic301-22.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725980AbfI0TBS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 15:01:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1569610877; bh=8boG8ajnLNdx3Q6HR+50f0OISCdkUqomEEROs7B0REM=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=E43mdeAEx8XIZE7dRNOmsNYstcUNfkuxB8V1FQ/PIwekMTUghEnkMPovA2mDaP41xYa1CbKoL0nOlZl7e2Kd1JwNHlhRpa7f8W3zLHNpNdFqCiihvp0YwCQGRqC9jwf0kZ2fJvjfwEi9cLnQqjkfGI3Z6XSzTikmwLaGmphzyg//KM7513OS23V/OCOAeFFylet4tZ21SGMsYvexbgIn4VWfgN61YHfWAMj1lElQHKXHnkLvpq3xjSlZu0NZl6fKcBN+VAnoPmHIeQla+++IdHZA59D5LY9uGIUxOFlHxnXbGLN3oDTaKuMCvde1nynso2JxYLo6LW645wlOUdFcQw==
+X-YMail-OSG: pCHr9iEVM1k9TM9TPDlnLRCducPSmmLZBpQP9qeUg82P59k1NfAqLn34kyVSgrL
+ y9VznNFoFpFn71aXdRBp_40WB.CiCBEIYPdDUU4flDq6eZrVkbhQjxH9RpsoXbNF4oW8uNgTk8K6
+ KPUj297axzgIIn5hoGRz9e5u4Iazl0eV.itFbhTUX0V1MFYbeuWVfPo4br9lqNsdfCuTAxcFPYDy
+ WyCstAMyLUGMVAmVQDW66kQEJHMSo1AVC7CMbPkxWpfXHH1r4pefu0AyfjThb3Yw8nEAzjVBLpBh
+ bMYY9AcQWuZTMeHqAkKPWSt0TL4.UZIqIQxoc5svVA55AhNHuFcU14wJ5zxiBwppH_X9DBFP2Rkn
+ QKElhCWvmQ0_D097JIpdKIxXqpKa43.aWAUTIWVmij4ZxR9ZJhy8hbOoPFaJpqaVAbyWvpbDwFVm
+ 62Vpm9aTZipxDFwNnEovTfyP09ZaulGTvcrgV9Yodrlm9Jp80MwYrs7i.OwV2WVbbLNWsS0.EcY7
+ t65KmSSmdz0SGL0W5lUsuMjckRejcChAB.OFH1LlfpFAR1WldmZVl5nl0xUNPrQyjsh.VsHIJ4FB
+ z62mjmNnbeQKVw_bdxMUvGeAKG7UIbcqRnSDqyJztYs6y.xU3JXwqVV1RcE3kdStKuO6n2_JhBmZ
+ NrYqokMH6DHhQQmWRmEngjngzW1qUBQma.n5O6fQ5KTGZqoF7mjs8fT7ut0FhyCOA7q_Qy4V_dcE
+ tOquODj96YyvHxgEKFN7.yghXNgpePYl5sPfmBtsZhPwv_4q.7.79DAwNG3xvQQD6J08Z6ksrf6b
+ 5Bpw5yhYC6x5o4QNtBqDjED4g4dV5UDyUFOA.85u3ohyVsdWWB8XbPRtp_n9YjFPv5333lJ1A602
+ MGGlRXrgRG9x9N7ec4KE_Xiq67lxg0xM47adrMMHxq8rZP_iIHj9CvBJk.fEj.pZBEHpjtvKLFr0
+ 24hx7UBT0jvES4wFIBEpoYnsFGSTqexwbQhzzvV.UP3Dlr1fdoxc_JcTt58el3Y0HYRm4DtD.bGi
+ xevgj4XkAuFt9Kh3tmys.ERqE.4IikUYVMrVLJruVNmpAIVD0kGigPgMtoxXAvXKnhVpY8yqiSAo
+ _WREP_t0sRa9aWjF1R1t3Bc_97nndNkLAf8VMRFwYcjjyFkNSyYEAUDwjGzwYoVtAQSt.XI8c_Wg
+ vfBquSiJtV2uScilya0toff9qisQEU2loe.L6lMv0XgnZiH1uzQGNUAev7Y7ZJV5I4dC8t5JWHBG
+ 3Hmecs27pGGvLrVemAJQhn3eTaKpodm3_2jmXFq60dju4hwbnyjHXdsXb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Fri, 27 Sep 2019 19:01:17 +0000
+Received: by smtp413.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 41ea480fdb5c16ffe76a1010a62f6533;
+          Fri, 27 Sep 2019 19:01:14 +0000 (UTC)
+Date:   Sat, 28 Sep 2019 03:01:10 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH] f2fs: fix comment of f2fs_evict_inode
+Message-ID: <20190927190106.GA27964@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190925093050.118921-1-yuchao0@huawei.com>
+ <20190927183150.GA54001@jaegeuk-macbookpro.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20190918163445.129103-1-Janakarajan.Natarajan@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190927183150.GA54001@jaegeuk-macbookpro.roam.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/18/19 10:34 AM, Natarajan, Janakarajan wrote:
-> Modify cpupower to schedule itself on each of the cpus in the system and
-> then get the APERF/MPERF register values.
+Hi Jaegeuk,
+
+On Fri, Sep 27, 2019 at 11:31:50AM -0700, Jaegeuk Kim wrote:
+> Hi Chao,
 > 
-> This is advantageous because an IPI is not generated when a read_msr() is
-> executed on the local logical CPU thereby reducing the chance of having
-> APERF and MPERF being out of sync.
+> On 09/25, Chao Yu wrote:
+> > evict() should be called once i_count is zero, rather than i_nlinke
+> > is zero.
+> > 
+> > Reported-by: Gao Xiang <gaoxiang25@huawei.com>
+> > Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> > ---
+> >  fs/f2fs/inode.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > index db4fec30c30d..8262f4a483d3 100644
+> > --- a/fs/f2fs/inode.c
+> > +++ b/fs/f2fs/inode.c
+> > @@ -632,7 +632,7 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+> >  }
+> >  
+> >  /*
+> > - * Called at the last iput() if i_nlink is zero
+> 
+> I don't think this comment is wrong. You may be able to add on top of this.
 
-Somehow this doesn't read right. Is this that you are trying to avoid
-APERF and MPERF being out of sync with this change?
+Actually I don't really care what this line means, but someone really
+told me that .evict_inode() is called on inode is finally removed
+because he saw this line.
 
-This description is rather confusing.
+In practice, I have no idea what the above line (especially the word i_nlink
+== 0) mainly emphasizes, just from some documentation (not even refer some code):
+
+Documentation/filesystems/porting.rst
+326 **mandatory**
+327 
+328 ->clear_inode() and ->delete_inode() are gone; ->evict_inode() should
+329 be used instead.  It gets called whenever the inode is evicted, whether it has
+330 remaining links or not. 
+
+And it seems it's the same comment exists in ext2/ext4. But yes, it's up
+to you. However, it misleaded someone and I had to explain more about this.
+
+Thanks,
+Gao Xiang
 
 > 
-> Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-> ---
->   .../utils/idle_monitor/mperf_monitor.c        | 38 ++++++++++++++-----
->   1 file changed, 28 insertions(+), 10 deletions(-)
-> 
-> diff --git a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-> index 44806a6dae11..8b072e39c897 100644
-> --- a/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-> +++ b/tools/power/cpupower/utils/idle_monitor/mperf_monitor.c
-> @@ -10,6 +10,7 @@
->   #include <stdlib.h>
->   #include <string.h>
->   #include <limits.h>
-> +#include <sched.h>
->   
->   #include <cpufreq.h>
->   
-> @@ -86,15 +87,33 @@ static int mperf_get_tsc(unsigned long long *tsc)
->   	return ret;
->   }
->   
-> +static int get_aperf_mperf(int cpu, unsigned long long *aval,
-> +			   unsigned long long *mval)
-> +{
-> +	cpu_set_t set;
-> +	int ret;
-> +
-> +	CPU_ZERO(&set);
-> +	CPU_SET(cpu, &set);
-> +	if (sched_setaffinity(getpid(), sizeof(set), &set) == -1) {
-> +		dprint("Could not migrate to cpu: %d\n", cpu);
-> +		return 1;
-> +	}
-> +
-> +	ret = read_msr(cpu, MSR_APERF, aval);
-> +	ret |= read_msr(cpu, MSR_MPERF, mval);
-> +
-> +	return ret;
-> +}
-> +
->   static int mperf_init_stats(unsigned int cpu)
->   {
-> -	unsigned long long val;
-> +	unsigned long long aval, mval;
->   	int ret;
->   
-> -	ret = read_msr(cpu, MSR_APERF, &val);
-> -	aperf_previous_count[cpu] = val;
-> -	ret |= read_msr(cpu, MSR_MPERF, &val);
-> -	mperf_previous_count[cpu] = val;
-> +	ret = get_aperf_mperf(cpu, &aval, &mval);
-
-get_aperf_mperf() could return error right? It returns 1 when
-sched_setaffinity() fails. Shouldn't the return value checked,
-instead of using aval and mval?
-
-> +	aperf_previous_count[cpu] = aval;
-> +	mperf_previous_count[cpu] = mval;
->   	is_valid[cpu] = !ret;
->   
->   	return 0;
-> @@ -102,13 +121,12 @@ static int mperf_init_stats(unsigned int cpu)
->   
->   static int mperf_measure_stats(unsigned int cpu)
->   {
-> -	unsigned long long val;
-> +	unsigned long long aval, mval;
->   	int ret;
->   
-> -	ret = read_msr(cpu, MSR_APERF, &val);
-> -	aperf_current_count[cpu] = val;
-> -	ret |= read_msr(cpu, MSR_MPERF, &val);
-> -	mperf_current_count[cpu] = val;
-> +	ret = get_aperf_mperf(cpu, &aval, &mval);
-
-Same comments as above here.
-
-> +	aperf_current_count[cpu] = aval;
-> +	mperf_current_count[cpu] = mval;
->   	is_valid[cpu] = !ret;
->   
->   	return 0;
-> 
-
-thanks,
--- Shuah
+> > + * Called at the last iput() if i_count is zero
+> >   */
+> >  void f2fs_evict_inode(struct inode *inode)
+> >  {
+> > -- 
+> > 2.18.0.rc1
