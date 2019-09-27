@@ -2,120 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20230C00D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE178C00DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 10:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbfI0IMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 04:12:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57158 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726178AbfI0IMF (ORCPT
+        id S1727307AbfI0IMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 04:12:54 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44386 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfI0IMy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 04:12:05 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8R8BwKQ134188
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 04:12:04 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2v9cwc3kj0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 04:12:03 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
-        Fri, 27 Sep 2019 09:12:01 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 27 Sep 2019 09:11:59 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8R8BvxP46006636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Sep 2019 08:11:57 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 76DAC11C04C;
-        Fri, 27 Sep 2019 08:11:57 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D5DB11C04A;
-        Fri, 27 Sep 2019 08:11:57 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 27 Sep 2019 08:11:57 +0000 (GMT)
-From:   Thomas Richter <tmricht@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Cc:     gor@linux.ibm.com, heiko.carstens@de.ibm.com,
-        Thomas Richter <tmricht@linux.ibm.com>
-Subject: [PATCH 2/2] perf/pmu_events: Use s390 machine name instead of type 8561
-Date:   Fri, 27 Sep 2019 10:11:47 +0200
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190927081147.18345-1-tmricht@linux.ibm.com>
-References: <20190927081147.18345-1-tmricht@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19092708-0020-0000-0000-0000037238EC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19092708-0021-0000-0000-000021C8084C
-Message-Id: <20190927081147.18345-2-tmricht@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-27_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1909270078
+        Fri, 27 Sep 2019 04:12:54 -0400
+Received: by mail-wr1-f66.google.com with SMTP id i18so1601959wru.11
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 01:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:openpgp:autocrypt:organization:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=Ex6o6iK/9RL21+NQO5EVoATLXo1UjsfmNRyP+eLI70g=;
+        b=h7VHDbvvREToP7ByBL1x5fbolZ8BvB7x9eBzOwNPTSQZ68h2S3GqtGdrXBi1JiCt4w
+         v6HVEKUpipFwHfPcEjpb5bMP5+bPvn/up1nHaRQL91pCnqFLnC0VtiCw/eSDNNLJ6TeW
+         wwEdnSNORyQq5frCe7cTuyRWzrYnRhwnljkfqCkz2hKmlj0R6wCJ+FP4pXnL9w+9wPUl
+         M1aw9aTYg99VvbZTkNj6JSe9WmHaxfIBax3LjXRX+H0MFXbJImRi/cTyPx+FER4eJuPK
+         zWVF3B+fb4cD1GxOjW3xe+xbyx6jd2Na2QkVO3GsawEsZDeJH/vQh4+v600EhIqVc/g8
+         21hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=Ex6o6iK/9RL21+NQO5EVoATLXo1UjsfmNRyP+eLI70g=;
+        b=rVfvRIJjZ+DgwABeEkTDxgQElxN1KUDLLe/W8AGEsFLUEbPDIRBSktn0419l8FPIVX
+         IB57+URttvQ6enWjXkz1cXC3AN2EGG+mXM2CpchftFfwGgK1vGP5r26xyha1szsUFPc2
+         axrkkBqkRqXbYUbTbp3IGktWIyTCdxm2p9bgHZgZcXpzI5iXE00lprKd6aO+W2bNJUna
+         fkDARGZSL2tfWo0IwF7lTHQNLT+Cbu0bIm7E9MSm3VxMvo1uwPYhMCvHKVycr3RTukd0
+         DaJ6HpPmcd2fNau4kqYioPFp2LrE78nayoyU0dcm9GLwg3f7OskpLcpqxNey/nudgeo/
+         Th4w==
+X-Gm-Message-State: APjAAAWsIL+DQT2R8Oz7XV3cmIuuxCmokyHKeklb8p/sjELZLdGmvgjJ
+        C+XVyzFHT8Qs62oETpGSneC5cg==
+X-Google-Smtp-Source: APXvYqyAyvZhOb57JVeAQ8LJZD2qosO2xWuw0z0vKqeXIgjLjarLMBeIOOehk8wg4zXr3Xy5DXIQDQ==
+X-Received: by 2002:adf:e951:: with SMTP id m17mr1870220wrn.154.1569571970828;
+        Fri, 27 Sep 2019 01:12:50 -0700 (PDT)
+Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id b22sm6191462wmj.36.2019.09.27.01.12.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Sep 2019 01:12:50 -0700 (PDT)
+To:     daniel@ffwll.ch, airlied@linux.ie,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+Cc:     Erico Nunes <nunes.erico@gmail.com>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        linux-kernel@vger.kernel.org, steven.price@arm.com,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Subject: drm_sched with panfrost crash on T820
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <e450fbe6-dec7-2704-59c2-db7e869d67f5@baylibre.com>
+Date:   Fri, 27 Sep 2019 10:12:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the pmu-events directory for JSON file definitions use the
-official machine name IBM z15 instead of machine type number
-8561. This is consistent with previous machines.
+Hi Christian,
 
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
----
- tools/perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/basic.json | 0
- .../perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/crypto.json  | 0
- .../perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/crypto6.json | 0
- .../pmu-events/arch/s390/{cf_m8561 => cf_z15}/extended.json     | 0
- .../pmu-events/arch/s390/{cf_m8561 => cf_z15}/transaction.json  | 0
- tools/perf/pmu-events/arch/s390/mapfile.csv                     | 2 +-
- 6 files changed, 1 insertion(+), 1 deletion(-)
- rename tools/perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/basic.json (100%)
- rename tools/perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/crypto.json (100%)
- rename tools/perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/crypto6.json (100%)
- rename tools/perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/extended.json (100%)
- rename tools/perf/pmu-events/arch/s390/{cf_m8561 => cf_z15}/transaction.json (100%)
+In v5.3, running dEQP triggers the following kernel crash :
 
-diff --git a/tools/perf/pmu-events/arch/s390/cf_m8561/basic.json b/tools/perf/pmu-events/arch/s390/cf_z15/basic.json
-similarity index 100%
-rename from tools/perf/pmu-events/arch/s390/cf_m8561/basic.json
-rename to tools/perf/pmu-events/arch/s390/cf_z15/basic.json
-diff --git a/tools/perf/pmu-events/arch/s390/cf_m8561/crypto.json b/tools/perf/pmu-events/arch/s390/cf_z15/crypto.json
-similarity index 100%
-rename from tools/perf/pmu-events/arch/s390/cf_m8561/crypto.json
-rename to tools/perf/pmu-events/arch/s390/cf_z15/crypto.json
-diff --git a/tools/perf/pmu-events/arch/s390/cf_m8561/crypto6.json b/tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
-similarity index 100%
-rename from tools/perf/pmu-events/arch/s390/cf_m8561/crypto6.json
-rename to tools/perf/pmu-events/arch/s390/cf_z15/crypto6.json
-diff --git a/tools/perf/pmu-events/arch/s390/cf_m8561/extended.json b/tools/perf/pmu-events/arch/s390/cf_z15/extended.json
-similarity index 100%
-rename from tools/perf/pmu-events/arch/s390/cf_m8561/extended.json
-rename to tools/perf/pmu-events/arch/s390/cf_z15/extended.json
-diff --git a/tools/perf/pmu-events/arch/s390/cf_m8561/transaction.json b/tools/perf/pmu-events/arch/s390/cf_z15/transaction.json
-similarity index 100%
-rename from tools/perf/pmu-events/arch/s390/cf_m8561/transaction.json
-rename to tools/perf/pmu-events/arch/s390/cf_z15/transaction.json
-diff --git a/tools/perf/pmu-events/arch/s390/mapfile.csv b/tools/perf/pmu-events/arch/s390/mapfile.csv
-index bd3fc577139c..61641a3480e0 100644
---- a/tools/perf/pmu-events/arch/s390/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/s390/mapfile.csv
-@@ -4,4 +4,4 @@ Family-model,Version,Filename,EventType
- ^IBM.282[78].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_zec12,core
- ^IBM.296[45].*[13]\.[1-5].[[:xdigit:]]+$,1,cf_z13,core
- ^IBM.390[67].*[13]\.[1-5].[[:xdigit:]]+$,3,cf_z14,core
--^IBM.856[12].*3\.6.[[:xdigit:]]+$,3,cf_m8561,core
-+^IBM.856[12].*3\.6.[[:xdigit:]]+$,3,cf_z15,core
--- 
-2.19.1
+[   20.224982] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
+[...]
+[   20.291064] Hardware name: Khadas VIM2 (DT)
+[   20.295217] Workqueue: events drm_sched_job_timedout
+[...]
+[   20.304867] pc : drm_sched_increase_karma+0x5c/0xf0
+[   20.309696] lr : drm_sched_increase_karma+0x44/0xf0
+[...]
+[   20.396720] Call trace:
+[   20.399138]  drm_sched_increase_karma+0x5c/0xf0
+[   20.403623]  panfrost_job_timedout+0x12c/0x1e0
+[   20.408021]  drm_sched_job_timedout+0x48/0xa0
+[   20.412336]  process_one_work+0x1e0/0x320
+[   20.416300]  worker_thread+0x40/0x450
+[   20.419924]  kthread+0x124/0x128
+[   20.423116]  ret_from_fork+0x10/0x18
+[   20.426653] Code: f9400001 540001c0 f9400a83 f9402402 (f9401c64)
+[   20.432690] ---[ end trace bd02f890139096a7 ]---
 
+Which never happens, at all, on v5.2.
+
+I did a (very) long (7 days, ~100runs) bisect run using our LAVA lab (thanks tomeu !), but
+bisecting was not easy since the bad commit landed on drm-misc-next after v5.1-rc6, and
+then v5.2-rc1 was backmerged into drm-misc-next at:
+[1] 374ed5429346 Merge drm/drm-next into drm-misc-next
+
+Thus bisecting between [1] ang v5.2-rc1 leads to commit based on v5.2-rc1... where panfrost was
+not enabled in the Khadas VIM2 DT.
+
+Anyway, I managed to identify 3 possibly breaking commits :
+[2] 290764af7e36 drm/sched: Keep s_fence->parent pointer
+[3] 5918045c4ed4 drm/scheduler: rework job destruction
+[4] a5343b8a2ca5 drm/scheduler: Add flag to hint the release of guilty job.
+
+But [1] and [2] doesn't crash the same way :
+[   16.257912] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000060
+[...]
+[   16.308307] CPU: 4 PID: 80 Comm: kworker/4:1 Not tainted 5.1.0-rc2-01185-g290764af7e36-dirty #378
+[   16.317099] Hardware name: Khadas VIM2 (DT)
+[...])
+[   16.330907] pc : refcount_sub_and_test_checked+0x4/0xb0
+[   16.336078] lr : refcount_dec_and_test_checked+0x14/0x20
+[...]
+[   16.423533] Process kworker/4:1 (pid: 80, stack limit = 0x(____ptrval____))
+[   16.430431] Call trace:
+[   16.432851]  refcount_sub_and_test_checked+0x4/0xb0
+[   16.437681]  drm_sched_job_cleanup+0x24/0x58
+[   16.441908]  panfrost_job_free+0x14/0x28
+[   16.445787]  drm_sched_job_timedout+0x6c/0xa0
+[   16.450102]  process_one_work+0x1e0/0x320
+[   16.454067]  worker_thread+0x40/0x450
+[   16.457690]  kthread+0x124/0x128
+[   16.460882]  ret_from_fork+0x10/0x18
+[   16.464421] Code: 52800000 d65f03c0 d503201f aa0103e3 (b9400021)
+[   16.470456] ---[ end trace 39a67412ee1b64b5 ]---
+
+and [3] fails like on v5.3 (in drm_sched_increase_karma):
+[   33.830080] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
+[...]
+[   33.871946] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[   33.877450] Modules linked in:
+[   33.880474] CPU: 6 PID: 81 Comm: kworker/6:1 Not tainted 5.1.0-rc2-01186-ga5343b8a2ca5-dirty #380
+[   33.889265] Hardware name: Khadas VIM2 (DT)
+[   33.893419] Workqueue: events drm_sched_job_timedout
+[...]
+[   33.903069] pc : drm_sched_increase_karma+0x5c/0xf0
+[   33.907898] lr : drm_sched_increase_karma+0x44/0xf0
+[...]
+[   33.994924] Process kworker/6:1 (pid: 81, stack limit = 0x(____ptrval____))
+[   34.001822] Call trace:
+[   34.004242]  drm_sched_increase_karma+0x5c/0xf0
+[   34.008726]  panfrost_job_timedout+0x12c/0x1e0
+[   34.013122]  drm_sched_job_timedout+0x48/0xa0
+[   34.017438]  process_one_work+0x1e0/0x320
+[   34.021402]  worker_thread+0x40/0x450
+[   34.025026]  kthread+0x124/0x128
+[   34.028218]  ret_from_fork+0x10/0x18
+[   34.031755] Code: f9400001 540001c0 f9400a83 f9402402 (f9401c64)
+[   34.037792] ---[ end trace be3fd6f77f4df267 ]---
+
+
+When I revert [3] on [1], i get the same crash as [2], meaning
+the commit [3] masks the failure [2] introduced.
+
+Do you know how to solve this ?
+
+Thanks,
+Neil
