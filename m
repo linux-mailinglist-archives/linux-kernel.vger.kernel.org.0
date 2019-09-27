@@ -2,93 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C225FC0B78
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 20:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40962C0B7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 20:44:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbfI0SoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 14:44:08 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50703 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728157AbfI0SoG (ORCPT
+        id S1728455AbfI0SoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 14:44:18 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:45577 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728321AbfI0SoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 14:44:06 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 5so7061124wmg.0
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2019 11:44:04 -0700 (PDT)
+        Fri, 27 Sep 2019 14:44:17 -0400
+Received: by mail-qt1-f196.google.com with SMTP id c21so8469646qtj.12;
+        Fri, 27 Sep 2019 11:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HzQhDkqVyohi8147rI3+BgZwRO47r6m1rOvI8gEcCVQ=;
-        b=yCIRZafej34veAsB/dI9AI4AW98eG0+WviNpnhZzTwYErlctHeC4PdUDkvkDbOpjcS
-         WY0FhlZfG0FijsdvbAFU7ML9GXDyMOYkrXSt4GBu2IO3bIwCw3V4ZXnZLYoJHFWlTtzY
-         Xk5dQrZm+LA4pKZr+XNyfimVY9IVlbAEOw+T+oa8XwEBtFuvBKUvB6cjOEpQ7v57l8Kn
-         lQjKqeuWo4sfcLlN824NR249X2A+YmcYnfKRXEjMIz4x/5SP11aCddGd9LKB0axSwqiJ
-         oaTAGJ0MUxuIyfBrELTkVTQtMys/AZYWzlrh5jhamcx7k1y0Ujq3PMboLb2ZIOdPZZEm
-         RrrA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2og6D8JNGUcFzo2+ZOKB4t8tH7Nwv5RRVJlFtszjd+8=;
+        b=unbvXDxnpNpcf8CoeSiwRYEbaguyEnVe7BU2tnKz0HxgW0iup/mqrk+c66d6zG0Jr8
+         II95/A/X4I8kXM+g/a8ggxkX7nJMkYT9ij5nqrQEk33ll61o9WeX7MnPz4Kh9FAP1U6w
+         d4cy5S1hMCu9Oml+aTdAivYdpB0tnqVlqkjntzfd5AuoRtB/T5J74fjIz8gQHNVw+Y8P
+         /h0qSEubAKZtbVGcTy0Eqh0ya8m/WJdKRJYNzfxH2Ya6/iXwevjmn+4XqWXBkUF+El7u
+         0WnN6VOXJPuucvvX89TO9VbkZ/oaDGUVgBsmfQb2RLpW9tJEaaM0htpGrjmhR0I6pkZF
+         0rWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HzQhDkqVyohi8147rI3+BgZwRO47r6m1rOvI8gEcCVQ=;
-        b=sWnkEl+S+qN/+CifdNpH79xNivLhKFy5U5hMDndlO3ld3kPHKM14oXITJEzCnxBOXA
-         Oeg1BoBlMJDu45xWIZQotYrMHHCtJxd4uMwMlOaPnClAUaHGD0dGVnoldQ5DHGet0hO8
-         BIAZEpQLDpWSDu93433aunSJZYBrYLYp9uBCmKAEqBrFPDBnr3q2SglDOCXOMAz3/S+Q
-         SQf33FXI97iSJ7sPbVf2K4wyWkAGxkNwtSRVX+sUd8VL1qhyIE1c4fLXMQK+CQE5xxS0
-         w7V0GOA9DRTF6iG5LgfEwcmz2X/q88hlwDOYICpZe1oaD/5xbhhyA6Mj+N/YbNcB82+/
-         RXWw==
-X-Gm-Message-State: APjAAAVeHXje/F7J4zYMHv7TJFKT3e9cSlV/qB9ygcygcfSV4kg/wcXy
-        kMpm5qEW0K2viRlu0nY89UZNdw==
-X-Google-Smtp-Source: APXvYqxSi62wIlpGsvXmkF2vMjWdJJWKf6euaYF+PUGFCzIsIJHaJ4eRMDJRAoy+1xk8Rbwsy3vwnQ==
-X-Received: by 2002:a1c:d183:: with SMTP id i125mr8708860wmg.1.1569609843906;
-        Fri, 27 Sep 2019 11:44:03 -0700 (PDT)
-Received: from glaroque-ThinkPad-T480.home ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
-        by smtp.gmail.com with ESMTPSA id r13sm6246272wrn.0.2019.09.27.11.44.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2019 11:44:03 -0700 (PDT)
-From:   Guillaume La Roque <glaroque@baylibre.com>
-To:     amit.kucheria@linaro.org, rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH v6 7/7] MAINTAINERS: add entry for Amlogic Thermal driver
-Date:   Fri, 27 Sep 2019 20:43:52 +0200
-Message-Id: <20190927184352.28759-8-glaroque@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190927184352.28759-1-glaroque@baylibre.com>
-References: <20190927184352.28759-1-glaroque@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2og6D8JNGUcFzo2+ZOKB4t8tH7Nwv5RRVJlFtszjd+8=;
+        b=VEi091ae405kHpUMK1amldLAYLRKLUpcTufMQQhAIp4+k+lGFDtWYRsLhIw2XkYLOy
+         PD9x5Ga/P3wWuqMdkUNQVB+wU74NjuIuI5wkk4AXyf6nYpBg3bQ/FnmKYAdwEe7Sp8Bj
+         y8QtaRTT0bQmpdoYZ0ztkoqoutHA78uffhfxolvq05z6/yDbcd8WLO4qLBneDxHaQ9PT
+         ALaiZh6YuPmNeyDBsV1shp0xPPwUPTEZL460/22HvsKgipQ3NC1lheqLu79z1tDM0t1d
+         Iwqbd091LVDRowhVjvU6VTwIw/hghA8SglbDGceDdD+0SoHDq8oalfsNXAgVQkg4nFKP
+         jS7A==
+X-Gm-Message-State: APjAAAV4V5nwtDlrh6vRuwKuRkGZ0XES0b0shoKxzNRfKfKB9QVJefBj
+        CipZuqVThavSIr6VoCZG0GglD/VJdp5EJINQ/y8=
+X-Google-Smtp-Source: APXvYqwAlwnd4veOBCqFHae+zgONBZFe8cp9ApiFkNKCb8JCy0Kv1XtjK2VEE2CERXOf4DuvZw71LzlZsjVhDobvMHg=
+X-Received: by 2002:ac8:1099:: with SMTP id a25mr11275982qtj.308.1569609855302;
+ Fri, 27 Sep 2019 11:44:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190927011344.4695-1-skhan@linuxfoundation.org>
+In-Reply-To: <20190927011344.4695-1-skhan@linuxfoundation.org>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Fri, 27 Sep 2019 11:44:04 -0700
+Message-ID: <CAPhsuW5EncjNRGjt7F_BN2bNhRkf=uXVeDe6NCbJe=K2J+hdyA@mail.gmail.com>
+Subject: Re: [PATCH] tools: bpf: Use !building_out_of_srctree to determine srctree
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself as maintainer for Amlogic Thermal driver.
+On Thu, Sep 26, 2019 at 6:14 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> make TARGETS=bpf kselftest fails with:
+>
+> Makefile:127: tools/build/Makefile.include: No such file or directory
+>
+> When the bpf tool make is invoked from tools Makefile, srctree is
+> cleared and the current logic check for srctree equals to empty
+> string to determine srctree location from CURDIR.
+>
+> When the build in invoked from selftests/bpf Makefile, the srctree
+> is set to "." and the same logic used for srctree equals to empty is
+> needed to determine srctree.
+>
+> Check building_out_of_srctree undefined as the condition for both
+> cases to fix "make TARGETS=bpf kselftest" build failure.
+>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+The fix looks reasonable. Thanks!
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 390c3194ee93..bdc30d740342 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15932,6 +15932,15 @@ F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
- F:	drivers/thermal/cpu_cooling.c
- F:	include/linux/cpu_cooling.h
- 
-+THERMAL DRIVER FOR AMLOGIC SOCS
-+M:	Guillaume La Roque <glaroque@baylibre.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-amlogic@lists.infradead.org
-+W:	http://linux-meson.com/
-+S:	Supported
-+F:	drivers/thermal/amlogic_thermal.c
-+F:	Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-+
- THINKPAD ACPI EXTRAS DRIVER
- M:	Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
- L:	ibm-acpi-devel@lists.sourceforge.net
--- 
-2.17.1
+However, I am still seeing some failure:
 
+make TARGETS=bpf kselftest
+[...]
+test_verifier.c
+/data/users/songliubraving/kernel/linux-git/tools/testing/selftests/bpf/test_stub.o
+/data/users/songliubraving/kernel/linux-git/tools/testing/selftests/bpf/libbpf.a
+-lcap -lelf -lrt -lpthread -o
+/data/users/songliubraving/kernel/linux-git/tools/testing/selftests/bpf/test_verifier
+make[3]: test_verifier.c: Command not found
+
+Is this just a problem with my setup?
+
+Thanks,
+Song
