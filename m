@@ -2,362 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45140BFEEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28EFABFEFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 08:17:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbfI0GOw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 02:14:52 -0400
-Received: from mail.andi.de1.cc ([85.214.55.253]:59230 "EHLO mail.andi.de1.cc"
+        id S1726203AbfI0GQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 02:16:57 -0400
+Received: from pi.kojedz.in ([109.61.102.5]:27889 "EHLO pi.kojedz.in"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbfI0GOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 02:14:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=bOETcl+jDMuCP5sYFKyqTwmFbyyAeJ6Z0LldGzNZC2k=; b=ih+IOl5F0qFi08jak2x1DUu+vc
-        UNeG5H6rErC/QMWbgAomCuaRYz2d0P1UN/Jb8SfJw8CjAa59RcovPc+Wbp2x2dL/HqLKH5cGFeoiV
-        3xIJJoa/oiZt6ZXHv4qcbe1Tk5Md6S9ffhcLoF44Zka8wa9EUB/6FqcZIL9DrKGV3WF4=;
-Received: from p200300ccff0e5f001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:ff0e:5f00:1a3d:a2ff:febf:d33a] helo=aktux)
-        by mail.andi.de1.cc with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iDjWc-0001kt-Fy; Fri, 27 Sep 2019 08:14:42 +0200
-Received: from andi by aktux with local (Exim 4.92)
-        (envelope-from <andreas@kemnade.info>)
-        id 1iDjWc-0004Vc-5w; Fri, 27 Sep 2019 08:14:42 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, manivannan.sadhasivam@linaro.org,
-        andrew.smirnov@gmail.com, marex@denx.de, angus@akkea.ca,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, j.neuschaefer@gmx.net,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 3/3] ARM: dts: imx: add devicetree for Kobo Clara HD
-Date:   Fri, 27 Sep 2019 08:14:23 +0200
-Message-Id: <20190927061423.17278-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190927061423.17278-1-andreas@kemnade.info>
-References: <20190927061423.17278-1-andreas@kemnade.info>
+        id S1725804AbfI0GQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 02:16:57 -0400
+Received: from webmail.srv.kojedz.in (unknown [IPv6:2a01:be00:10:201:0:80:0:1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: richard@kojedz.in)
+        by pi.kojedz.in (Postfix) with ESMTPSA id 11A8812DCB;
+        Fri, 27 Sep 2019 08:16:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kojedz.in; s=mail;
+        t=1569565014; bh=1fai7zVrEIPp6m7DYpaViVG7jo5MqBydWDeWQpzA65U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=c2IodFNRFUKAu7vlA5EmdzsZo0hRpaiwGbzv/MGEMUQ56CaAyOdhYI3+5fhgHTGb5
+         mzCOH3GwwhQzrwqSpF3fqzZHb3JPxGO5e41oze+yiIofxwRoDihruyWGck8S1zMm98
+         jqgDoa0a6eQstM+qG7QY3JvUlqXpXX6Yl0SMSWgjFdMrD4pBi9RCj8VyB7IeT/FmLg
+         MW6u4ykn8fGA9aqE2HVg66wUUqf2j+xZFSwIVItJhhMyhoJb4TpFosgTPWl+y2AkCh
+         cSli7eHiMfwwDSIa1m5JfXJOtdl+KG4sRMtVbyq47h2kYN0GTfYiLX2l+Sk8JhqUvE
+         h6eB8bAyH71tHValSYv19stqvg6x8zB+B7obGNbaZFKfO1IscBGpAu1ZcNYLZzHx/Y
+         mARS8/TJPE2q+GXiFHpDNO1FZrid3iz8CljUCSP3wrQx9wnjSkd8rx3q3To01/pXq2
+         EGj1GfyRb8OZkq7MoyXBlpDcqQCnwnP7JBBCuYysDu9L+0Jq4bGE2AnDg4AZ0BUyPM
+         ir8F0t0X8qH9lQ+AJQR2uC4bWfvK53Ovaj8ztJk0FdeE82igBZTpvPeoaRtyN5Uyo9
+         BNXUQaxIMwGrjU2tnBNobw6W1LnfeImB/1DNWo4ZI8Kukl8qepjKaerzhvEi0WC9rI
+         FtejzXk+8kuIAOTosv8vVrpg=
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -1.0 (-)
+Date:   Fri, 27 Sep 2019 08:16:53 +0200
+From:   Richard Kojedzinszky <richard@kojedz.in>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Ali Saidi <alisaidi@amazon.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] binfmt_elf: Do not move brk for INTERP-less ET_EXEC
+In-Reply-To: <201909261136.780526BB@keescook>
+References: <201909261012.96DE554A@keescook>
+ <cfdb3b68100025288177da8a963bc909@kojedz.in>
+ <201909261136.780526BB@keescook>
+Message-ID: <321faad3c5e1f8eaf9d81fd78f3b22d6@kojedz.in>
+X-Sender: richard@kojedz.in
+User-Agent: Roundcube Webmail/1.3.8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a devicetree for the Kobo Clara HD Ebook reader. It
-is on based on boards called "e60k02". It is equipped with an
-imx6sll SoC.
+Hi,
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/boot/dts/Makefile                 |   3 +-
- arch/arm/boot/dts/imx6sll-kobo-clarahd.dts | 275 +++++++++++++++++++++
- 2 files changed, 277 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/imx6sll-kobo-clarahd.dts
+Thanks for the fix, again. I am not familiar with the code here, I 
+suspect the intent was to fix or improve something. That happens 
+sometimes, that things get broken. I am happy that I could report it, 
+and it got fixed quickly.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 9159fa2cea90..a8a235c74c37 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -551,7 +551,8 @@ dtb-$(CONFIG_SOC_IMX6SL) += \
- 	imx6sl-evk.dtb \
- 	imx6sl-warp.dtb
- dtb-$(CONFIG_SOC_IMX6SLL) += \
--	imx6sll-evk.dtb
-+	imx6sll-evk.dtb \
-+	imx6sll-kobo-clarahd.dtb
- dtb-$(CONFIG_SOC_IMX6SX) += \
- 	imx6sx-nitrogen6sx.dtb \
- 	imx6sx-sabreauto.dtb \
-diff --git a/arch/arm/boot/dts/imx6sll-kobo-clarahd.dts b/arch/arm/boot/dts/imx6sll-kobo-clarahd.dts
-new file mode 100644
-index 000000000000..f5ca44171d7c
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6sll-kobo-clarahd.dts
-@@ -0,0 +1,275 @@
-+// SPDX-License-Identifier: (GPL-2.0)
-+/*
-+ * Device tree for the Kobo Clara HD ebook reader
-+ *
-+ * Name on mainboard is: 37NB-E60K00+4A4
-+ * Serials start with: E60K02 (a number also seen in
-+ * vendor kernel sources)
-+ *
-+ * This mainboard seems to be equipped with different SoCs.
-+ * In the Kobo Clara HD ebook reader it is an i.MX6SLL
-+ *
-+ * Copyright 2019 Andreas Kemnade
-+ * based on works
-+ * Copyright 2016 Freescale Semiconductor, Inc.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "imx6sll.dtsi"
-+#include "e60k02.dtsi"
-+
-+/ {
-+	model = "Kobo Clara HD";
-+	compatible = "kobo,clarahd", "fsl,imx6sll";
-+};
-+
-+&clks {
-+	assigned-clocks = <&clks IMX6SLL_CLK_PLL4_AUDIO_DIV>;
-+	assigned-clock-rates = <393216000>;
-+};
-+
-+&cpu0 {
-+	arm-supply = <&ricoh619_dcdc3_reg>;
-+	soc-supply = <&ricoh619_dcdc1_reg>;
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	imx6sll-lpddr3-arm2 {
-+		pinctrl_hog: hoggrp {
-+			fsl,pins = <
-+				MX6SLL_PAD_LCD_DATA00__GPIO2_IO20	0x79
-+				MX6SLL_PAD_LCD_DATA01__GPIO2_IO21	0x79
-+				MX6SLL_PAD_LCD_DATA02__GPIO2_IO22	0x79
-+				MX6SLL_PAD_LCD_DATA03__GPIO2_IO23	0x79
-+				MX6SLL_PAD_LCD_DATA04__GPIO2_IO24	0x79
-+				MX6SLL_PAD_LCD_DATA05__GPIO2_IO25	0x79
-+				MX6SLL_PAD_LCD_DATA06__GPIO2_IO26	0x79
-+				MX6SLL_PAD_LCD_DATA07__GPIO2_IO27	0x79
-+				MX6SLL_PAD_LCD_DATA08__GPIO2_IO28	0x79
-+				MX6SLL_PAD_LCD_DATA09__GPIO2_IO29	0x79
-+				MX6SLL_PAD_LCD_DATA10__GPIO2_IO30	0x79
-+				MX6SLL_PAD_LCD_DATA11__GPIO2_IO31	0x79
-+				MX6SLL_PAD_LCD_DATA12__GPIO3_IO00	0x79
-+				MX6SLL_PAD_LCD_DATA13__GPIO3_IO01	0x79
-+				MX6SLL_PAD_LCD_DATA14__GPIO3_IO02	0x79
-+				MX6SLL_PAD_LCD_DATA15__GPIO3_IO03	0x79
-+				MX6SLL_PAD_LCD_DATA16__GPIO3_IO04	0x79
-+				MX6SLL_PAD_LCD_DATA17__GPIO3_IO05	0x79
-+				MX6SLL_PAD_LCD_DATA18__GPIO3_IO06	0x79
-+				MX6SLL_PAD_LCD_DATA19__GPIO3_IO07	0x79
-+				MX6SLL_PAD_LCD_DATA20__GPIO3_IO08	0x79
-+				MX6SLL_PAD_LCD_DATA21__GPIO3_IO09	0x79
-+				MX6SLL_PAD_LCD_DATA22__GPIO3_IO10	0x79
-+				MX6SLL_PAD_LCD_DATA23__GPIO3_IO11	0x79
-+				MX6SLL_PAD_LCD_CLK__GPIO2_IO15		0x79
-+				MX6SLL_PAD_LCD_ENABLE__GPIO2_IO16	0x79
-+				MX6SLL_PAD_LCD_HSYNC__GPIO2_IO17	0x79
-+				MX6SLL_PAD_LCD_VSYNC__GPIO2_IO18	0x79
-+				MX6SLL_PAD_LCD_RESET__GPIO2_IO19	0x79
-+				MX6SLL_PAD_KEY_COL3__GPIO3_IO30		0x79
-+				MX6SLL_PAD_KEY_ROW7__GPIO4_IO07		0x79
-+				MX6SLL_PAD_ECSPI2_MOSI__GPIO4_IO13	0x79
-+				MX6SLL_PAD_KEY_COL5__GPIO4_IO02		0x79
-+				MX6SLL_PAD_KEY_ROW6__GPIO4_IO05		0x79
-+			>;
-+		};
-+
-+		pinctrl_usdhc3_pwr: usdhc3_pwr_grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD2_DATA7__GPIO5_IO00	0x10059		/* WIFI_RST */
-+				MX6SLL_PAD_SD2_DATA5__GPIO4_IO31	0x10059		/* WIFI_INT */
-+				MX6SLL_PAD_SD2_DATA6__GPIO4_IO29	0x10059		/* WIFI_3V3_ON */
-+			>;
-+		};
-+
-+		pinctrl_audmux3: audmux3grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_AUD_TXC__AUD3_TXC		0x4130b0
-+				MX6SLL_PAD_AUD_TXFS__AUD3_TXFS		0x4130b0
-+				MX6SLL_PAD_AUD_TXD__AUD3_TXD		0x4110b0
-+				MX6SLL_PAD_AUD_RXD__AUD3_RXD		0x4130b0
-+				MX6SLL_PAD_AUD_MCLK__AUDIO_CLK_OUT	0x4130b0
-+			>;
-+		};
-+
-+		pinctrl_led: ledgrp {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD1_DATA6__GPIO5_IO07 0x17059
-+			>;
-+		};
-+
-+		pinctrl_uart1: uart1grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_UART1_TXD__UART1_DCE_TX 0x1b0b1
-+				MX6SLL_PAD_UART1_RXD__UART1_DCE_RX 0x1b0b1
-+			>;
-+		};
-+
-+		pinctrl_usdhc2: usdhc2grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD2_CMD__SD2_CMD		0x17059
-+				MX6SLL_PAD_SD2_CLK__SD2_CLK		0x13059
-+				MX6SLL_PAD_SD2_DATA0__SD2_DATA0		0x17059
-+				MX6SLL_PAD_SD2_DATA1__SD2_DATA1		0x17059
-+				MX6SLL_PAD_SD2_DATA2__SD2_DATA2		0x17059
-+				MX6SLL_PAD_SD2_DATA3__SD2_DATA3		0x17059
-+			>;
-+		};
-+
-+		pinctrl_usdhc2_100mhz: usdhc2grp_100mhz {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD2_CMD__SD2_CMD		0x170b9
-+				MX6SLL_PAD_SD2_CLK__SD2_CLK		0x130b9
-+				MX6SLL_PAD_SD2_DATA0__SD2_DATA0		0x170b9
-+				MX6SLL_PAD_SD2_DATA1__SD2_DATA1		0x170b9
-+				MX6SLL_PAD_SD2_DATA2__SD2_DATA2		0x170b9
-+				MX6SLL_PAD_SD2_DATA3__SD2_DATA3		0x170b9
-+			>;
-+		};
-+
-+		pinctrl_usdhc2_200mhz: usdhc2grp_200mhz {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD2_CMD__SD2_CMD		0x170f9
-+				MX6SLL_PAD_SD2_CLK__SD2_CLK		0x130f9
-+				MX6SLL_PAD_SD2_DATA0__SD2_DATA0		0x170f9
-+				MX6SLL_PAD_SD2_DATA1__SD2_DATA1		0x170f9
-+				MX6SLL_PAD_SD2_DATA2__SD2_DATA2		0x170f9
-+				MX6SLL_PAD_SD2_DATA3__SD2_DATA3		0x170f9
-+			>;
-+		};
-+
-+		pinctrl_usdhc2_sleep: usdhc2grp_sleep {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD2_CMD__GPIO5_IO04		0x100f9
-+				MX6SLL_PAD_SD2_CLK__GPIO5_IO05		0x100f9
-+				MX6SLL_PAD_SD2_DATA0__GPIO5_IO01	0x100f9
-+				MX6SLL_PAD_SD2_DATA1__GPIO4_IO30	0x100f9
-+				MX6SLL_PAD_SD2_DATA2__GPIO5_IO03	0x100f9
-+				MX6SLL_PAD_SD2_DATA3__GPIO4_IO28	0x100f9
-+			>;
-+		};
-+
-+		pinctrl_usdhc3: usdhc3grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD3_CMD__SD3_CMD	0x11059
-+				MX6SLL_PAD_SD3_CLK__SD3_CLK	0x11059
-+				MX6SLL_PAD_SD3_DATA0__SD3_DATA0	0x11059
-+				MX6SLL_PAD_SD3_DATA1__SD3_DATA1	0x11059
-+				MX6SLL_PAD_SD3_DATA2__SD3_DATA2	0x11059
-+				MX6SLL_PAD_SD3_DATA3__SD3_DATA3	0x11059
-+			>;
-+		};
-+
-+		pinctrl_usdhc3_100mhz: usdhc3grp_100mhz {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD3_CMD__SD3_CMD	0x170b9
-+				MX6SLL_PAD_SD3_CLK__SD3_CLK	0x170b9
-+				MX6SLL_PAD_SD3_DATA0__SD3_DATA0	0x170b9
-+				MX6SLL_PAD_SD3_DATA1__SD3_DATA1	0x170b9
-+				MX6SLL_PAD_SD3_DATA2__SD3_DATA2	0x170b9
-+				MX6SLL_PAD_SD3_DATA3__SD3_DATA3	0x170b9
-+			>;
-+		};
-+
-+		pinctrl_usdhc3_200mhz: usdhc3grp_200mhz {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD3_CMD__SD3_CMD	0x170f9
-+				MX6SLL_PAD_SD3_CLK__SD3_CLK	0x170f9
-+				MX6SLL_PAD_SD3_DATA0__SD3_DATA0	0x170f9
-+				MX6SLL_PAD_SD3_DATA1__SD3_DATA1	0x170f9
-+				MX6SLL_PAD_SD3_DATA2__SD3_DATA2	0x170f9
-+				MX6SLL_PAD_SD3_DATA3__SD3_DATA3	0x170f9
-+			>;
-+		};
-+
-+		pinctrl_usdhc3_sleep: usdhc3grp_sleep {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD3_CMD__GPIO5_IO21	0x100c1
-+				MX6SLL_PAD_SD3_CLK__GPIO5_IO18	0x100c1
-+				MX6SLL_PAD_SD3_DATA0__GPIO5_IO19	0x100c1
-+				MX6SLL_PAD_SD3_DATA1__GPIO5_IO20	0x100c1
-+				MX6SLL_PAD_SD3_DATA2__GPIO5_IO16	0x100c1
-+				MX6SLL_PAD_SD3_DATA3__GPIO5_IO17	0x100c1
-+			>;
-+		};
-+
-+		pinctrl_usbotg1: usbotg1grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_EPDC_PWR_COM__USB_OTG1_ID 0x17059
-+			>;
-+		};
-+
-+		pinctrl_i2c1: i2c1grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_I2C1_SCL__I2C1_SCL	 0x4001f8b1
-+				MX6SLL_PAD_I2C1_SDA__I2C1_SDA	 0x4001f8b1
-+			>;
-+		};
-+
-+		pinctrl_i2c1_sleep: i2c1grp_sleep {
-+			fsl,pins = <
-+				MX6SLL_PAD_I2C1_SCL__I2C1_SCL	 0x400108b1
-+				MX6SLL_PAD_I2C1_SDA__I2C1_SDA	 0x400108b1
-+			>;
-+		};
-+
-+		pinctrl_i2c2: i2c2grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_I2C2_SCL__I2C2_SCL	 0x4001f8b1
-+				MX6SLL_PAD_I2C2_SDA__I2C2_SDA	 0x4001f8b1
-+			>;
-+		};
-+
-+		pinctrl_i2c2_sleep: i2c2grp_sleep {
-+			fsl,pins = <
-+				MX6SLL_PAD_I2C2_SCL__I2C2_SCL	 0x400108b1
-+				MX6SLL_PAD_I2C2_SDA__I2C2_SDA	 0x400108b1
-+			>;
-+		};
-+
-+		pinctrl_i2c3: i2c3grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_REF_CLK_24M__I2C3_SCL  0x4001f8b1
-+				MX6SLL_PAD_REF_CLK_32K__I2C3_SDA  0x4001f8b1
-+			>;
-+		};
-+
-+		pinctrl_ecspi1: ecspi1grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_ECSPI1_MISO__ECSPI1_MISO	 0x100b1
-+				MX6SLL_PAD_ECSPI1_MOSI__ECSPI1_MOSI	 0x100b1
-+				MX6SLL_PAD_ECSPI1_SCLK__ECSPI1_SCLK	 0x100b1
-+				MX6SLL_PAD_ECSPI1_SS0__GPIO4_IO11	 0x100b1
-+			>;
-+		};
-+
-+		pinctrl_lm3630a_bl_gpio: lm3630a_bl_gpio_grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_EPDC_PWR_CTRL3__GPIO2_IO10	0x10059 /* HWEN */
-+			>;
-+		};
-+
-+		pinctrl_ricoh_gpio: ricoh_gpio_grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD1_CLK__GPIO5_IO15	0x1b8b1 /* ricoh619 chg */
-+				MX6SLL_PAD_SD1_DATA0__GPIO5_IO11 0x1b8b1 /* ricoh619 irq */
-+				MX6SLL_PAD_KEY_COL2__GPIO3_IO28	0x1b8b1 /* ricoh619 bat_low_int */
-+			>;
-+		};
-+
-+		pinctrl_gpio_keys: gpio_keys_grp {
-+			fsl,pins = <
-+				MX6SLL_PAD_SD1_DATA1__GPIO5_IO08	0x17059	/* PWR_SW */
-+				MX6SLL_PAD_SD1_DATA4__GPIO5_IO12	0x17059	/* HALL_EN */
-+			>;
-+		};
-+
-+	};
-+};
-+
--- 
-2.20.1
+Thanks again,
+Richard
 
+
+2019-09-26 20:37 időpontban Kees Cook ezt írta:
+> On Thu, Sep 26, 2019 at 08:26:12PM +0200, Richard Kojedzinszky wrote:
+>> Thanks for the quick patch. It seems my binaries start up well, and 
+>> work as
+>> expected, as before.
+>> 
+>> Thanks again for the quick response.
+> 
+> Awesome; thanks for the testing (and sorry for the breakage)! :)
+> 
+> -Kees
+> 
+>> 
+>> Regards,
+>> Richard Kojedzinszky
+>> 
+>> 2019-09-26 19:15 időpontban Kees Cook ezt írta:
+>> > When brk was moved for binaries without an interpreter, it should have
+>> > been limited to ET_DYN only. In other words, the special case was an
+>> > ET_DYN that lacks an INTERP, not just an executable that lacks INTERP.
+>> > The bug manifested for giant static executables, where the brk would end
+>> > up in the middle of the text area on 32-bit architectures.
+>> >
+>> > Reported-by: Richard Kojedzinszky <richard@kojedz.in>
+>> > Fixes: bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing
+>> > direct loader exec")
+>> > Cc: stable@vger.kernel.org
+>> > Signed-off-by: Kees Cook <keescook@chromium.org>
+>> > ---
+>> > Richard, are you able to test this? I'm able to run the gitea binary
+>> > with this change, and my INTERP-less ET_DYN tests (from the original
+>> > bug) continue to pass as well.
+>> > ---
+>> >  fs/binfmt_elf.c | 3 ++-
+>> >  1 file changed, 2 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+>> > index cec3b4146440..ad4c6b1d5074 100644
+>> > --- a/fs/binfmt_elf.c
+>> > +++ b/fs/binfmt_elf.c
+>> > @@ -1121,7 +1121,8 @@ static int load_elf_binary(struct linux_binprm
+>> > *bprm)
+>> >  		 * (since it grows up, and may collide early with the stack
+>> >  		 * growing down), and into the unused ELF_ET_DYN_BASE region.
+>> >  		 */
+>> > -		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) && !interpreter)
+>> > +		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+>> > +		    loc->elf_ex.e_type == ET_DYN && !interpreter)
+>> >  			current->mm->brk = current->mm->start_brk =
+>> >  				ELF_ET_DYN_BASE;
+>> >
+>> > --
+>> > 2.17.1
