@@ -2,159 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E69C0BFE57
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 06:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37450BFE5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 07:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbfI0E7H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 00:59:07 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42228 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbfI0E7H (ORCPT
+        id S1729060AbfI0FCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 01:02:25 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:2061 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726652AbfI0FCX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 00:59:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n14so1099996wrw.9
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Sep 2019 21:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=7o+HFvKSNQ5oJ5tFqhVjK+U9JWFrtSKKUcXzUhEqHhs=;
-        b=oymOPry8JuBH0d6tp74kJY5KqOT/efHAxxVgcOqznNkj3/sPSqUY9uc7Rm/JnFbV3T
-         yVXt8Wgn16t6CDD8H/af+HvG2QgLesNxmFlKCvOWLURgDvkVdihi7E9hcXBMV2nLtG8i
-         vobXqaMSVzP0J9t1Xq0qhRhNHg9HWitmTp/7xa16nmuQbNfjV089vVgrzEOW4C2YhfUN
-         SJd8oMPTXCQhaCiYOoFR5Gv9MXLYy+bQIwqHNfM2UWVnzLPUfl9Yr+KD/f2UBw6na42Z
-         dkIbPfrVcBKv0ZqiDeKgteYeLL/uqyCNzxgfE16qbszVDHQ8Fy5v02T1whzWGjH3+1OX
-         2cKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=7o+HFvKSNQ5oJ5tFqhVjK+U9JWFrtSKKUcXzUhEqHhs=;
-        b=ZmZeacvs6aDJcZmdKyXsDJA+144lPujxkXX/+XhGqKhAnvoyCLZSRKHu48VXZnaTeW
-         FiBAvyGFTdzYrX6ajP1glzHlBS7ES8Jz9Q+1KdgI0TWP2YuZUOSStCu8QABdJ5BOFHPE
-         lsRZHJ5oMTJ8D2FZgVo9xce16bRTquzue7VK1yWHJvTF9zkzIDwcCyW9dcREdsEZuopH
-         SQr4cxnOPUDd+Z6O/QeyfZeV6C+hyzq51j4xN3ZjXUwDzoKz+j/D5xFwCa3E63tqc94N
-         3O9hTbuBODkSgC39NgExtZGK9ocedCjdl7kJW92PuujRMgaZvZjiL0b0gxol+xz+qSSA
-         NowA==
-X-Gm-Message-State: APjAAAUnUE5MOOc89QDcB5FHJKSN1Gn9UlOsHF/N3oEc52+a3UbL05Yh
-        lLddmaaIYioS+mf910Nh2EuRxw==
-X-Google-Smtp-Source: APXvYqz0GikICQtmXCafvpDv4lL4zE8uWbmys0sWmzqfeMz1L3Oux8DwhOPXBdK5sFbuxmg8SGAJGA==
-X-Received: by 2002:adf:ef05:: with SMTP id e5mr1227882wro.127.1569560344968;
-        Thu, 26 Sep 2019 21:59:04 -0700 (PDT)
-Received: from linux.fritz.box (p200300D99708FF00061B60AEAF03373A.dip0.t-ipconnect.de. [2003:d9:9708:ff00:61b:60ae:af03:373a])
-        by smtp.googlemail.com with ESMTPSA id r20sm1479204wrg.61.2019.09.26.21.59.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2019 21:59:04 -0700 (PDT)
-Subject: Re: [PATCH] ipc/sem: Fix race between to-be-woken task and waker
-To:     Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Davidlohr Bueso <dave@stgolabs.net>
-References: <20190920155402.28996-1-longman@redhat.com>
- <20190926093410.GJ4553@hirez.programming.kicks-ass.net>
- <d16e4d82-8c5a-0663-8c00-32f4750f8a21@redhat.com>
-From:   Manfred Spraul <manfred@colorfullife.com>
-Message-ID: <6a65bfcc-661a-5ca5-86d6-0b4614f6aeea@colorfullife.com>
-Date:   Fri, 27 Sep 2019 06:59:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Fri, 27 Sep 2019 01:02:23 -0400
+X-UUID: 8e51c2678379440dad87ca1592c97a82-20190927
+X-UUID: 8e51c2678379440dad87ca1592c97a82-20190927
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 2128760538; Fri, 27 Sep 2019 13:02:16 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 27 Sep 2019 13:02:12 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 27 Sep 2019 13:02:12 +0800
+From:   Light Hsieh <light.hsieh@mediatek.com>
+To:     <linus.walleij@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
+        <kuohong.wang@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v6 1/5] pinctrl: mediatek: Check gpio pin number and use binary  search in mtk_hw_pin_field_lookup()
+Date:   Fri, 27 Sep 2019 13:02:08 +0800
+Message-ID: <1569560532-1886-1-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-In-Reply-To: <d16e4d82-8c5a-0663-8c00-32f4750f8a21@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-TM-SNTS-SMTP: A641655084EA030569545477A81070877D191F3B3510BE6B63D6E9BD7BF4007C2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 9/26/19 8:12 PM, Waiman Long wrote:
-> On 9/26/19 5:34 AM, Peter Zijlstra wrote:
->> On Fri, Sep 20, 2019 at 11:54:02AM -0400, Waiman Long wrote:
->>> While looking at a customr bug report about potential missed wakeup in
->>> the system V semaphore code, I spot a potential problem.  The fact that
->>> semaphore waiter stays in TASK_RUNNING state while checking queue status
->>> may lead to missed wakeup if a spurious wakeup happens in the right
->>> moment as try_to_wake_up() will do nothing if the task state isn't right.
->>>
->>> To eliminate this possibility, the task state is now reset to
->>> TASK_INTERRUPTIBLE immediately after wakeup before checking the queue
->>> status. This should eliminate the race condition on the interaction
->>> between the queue status and the task state and fix the potential missed
->>> wakeup problem.
-You are obviously right, there is a huge race condition.
->> Bah, this code always makes my head hurt.
->>
->> Yes, AFAICT the pattern it uses has been broken since 0a2b9d4c7967,
->> since that removed doing the actual wakeup from under the sem_lock(),
->> which is what it relies on.
+1. Check if gpio pin number is in valid range to prevent from get invalid
+   pointer 'desc' in the following code:
+	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
 
-Correct - I've overlooked that.
+2. Use binary search in mtk_hw_pin_field_lookup()
+   Modify mtk_hw_pin_field_lookup() to use binary search for accelerating
+   search.
 
-First, theory:
+---
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 25 +++++++++++++++++++-----
+ drivers/pinctrl/mediatek/pinctrl-paris.c         | 25 ++++++++++++++++++++++++
+ 2 files changed, 45 insertions(+), 5 deletions(-)
 
-setting queue->status, reading queue->status, setting 
-current->state=TASK_INTERRUPTIBLE are all under the correct spinlock.
-
-(there is an opportunistic read of queue->status without locks, but it 
-is retried when the lock got acquired)
-
-setting current->state=RUNNING is outside of any lock.
-
-So as far as current->state is concerned, the lock doesn't exist. And if 
-the lock doesn't exist, we must follow the rules applicable for 
-set_current_state().
-
-I'll try to check the code this week.
-
-And we should check the remaining wake-queue users, the logic is 
-everywhere identical.
-
-> After having a second look at the code again, I probably misread the
-> code the first time around. In the sleeping path, there is a check of
-> queue.status and setting of task state both under the sem lock in the
-> sleeping path. So as long as setting of queue status is under lock, they
-> should synchronize properly.
->
-> It looks like queue status setting is under lock, but I can't use
-> lockdep to confirm that as the locking can be done by either the array
-> lock or in one of the spinlocks in the array. Are you aware of a way of
-> doing that?
-
-For testing? Have you considered just always using the global lock?
-
-(untested):
-
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -370,7 +370,7 @@ static inline int sem_lock(struct sem_array *sma, 
-struct sembuf *sops,
-         struct sem *sem;
-         int idx;
-
--       if (nsops != 1) {
-+       if (nsops != 1 || 1) {
-                 /* Complex operation - acquire a full lock */
-                 ipc_lock_object(&sma->sem_perm);
-
-
-> Anyway, I do think we need to add some comment to clarify the situation
-> to avoid future confusion.
-
-Around line 190 is the comment that explains locking & memory ordering.
-
-I have only documented the content of sem_undo and sem_array, but 
-neither queue nor current->state :-(
-
-
---
-
-     Manfred
-
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 20e1c89..8077855 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -68,7 +68,8 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw,
+ {
+ 	const struct mtk_pin_field_calc *c, *e;
+ 	const struct mtk_pin_reg_calc *rc;
+-	u32 bits;
++	u32 bits, found = 0;
++	int start = 0, end, check;
+ 
+ 	if (hw->soc->reg_cal && hw->soc->reg_cal[field].range) {
+ 		rc = &hw->soc->reg_cal[field];
+@@ -79,21 +80,32 @@ static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw,
+ 		return -ENOTSUPP;
+ 	}
+ 
++	end = rc->nranges - 1;
+ 	c = rc->range;
+ 	e = c + rc->nranges;
+ 
+-	while (c < e) {
+-		if (desc->number >= c->s_pin && desc->number <= c->e_pin)
++	while (start <= end) {
++		check = (start + end) >> 1;
++		if (desc->number >= rc->range[check].s_pin
++		 && desc->number <= rc->range[check].e_pin) {
++			found = 1;
+ 			break;
+-		c++;
++		} else if (start == end)
++			break;
++		else if (desc->number < rc->range[check].s_pin)
++			end = check - 1;
++		else
++			start = check + 1;
+ 	}
+ 
+-	if (c >= e) {
++	if (!found) {
+ 		dev_dbg(hw->dev, "Not support field %d for pin = %d (%s)\n",
+ 			field, desc->number, desc->name);
+ 		return -ENOTSUPP;
+ 	}
+ 
++	c = rc->range + check;
++
+ 	if (c->i_base > hw->nbase - 1) {
+ 		dev_err(hw->dev,
+ 			"Invalid base for field %d for pin = %d (%s)\n",
+@@ -182,6 +194,9 @@ int mtk_hw_set_value(struct mtk_pinctrl *hw, const struct mtk_pin_desc *desc,
+ 	if (err)
+ 		return err;
+ 
++	if (value < 0 || value > pf.mask)
++		return -EINVAL;
++
+ 	if (!pf.next)
+ 		mtk_rmw(hw, pf.index, pf.offset, pf.mask << pf.bitpos,
+ 			(value & pf.mask) << pf.bitpos);
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 923264d..3e13ae7 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -81,6 +81,8 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
+ 	int val, val2, err, reg, ret = 1;
+ 	const struct mtk_pin_desc *desc;
+ 
++	if (pin >= hw->soc->npins)
++		return -EINVAL;
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
+ 
+ 	switch (param) {
+@@ -206,6 +208,10 @@ static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	int err = 0;
+ 	u32 reg;
+ 
++	if (pin >= hw->soc->npins) {
++		err = -EINVAL;
++		goto err;
++	}
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[pin];
+ 
+ 	switch ((u32)param) {
+@@ -693,6 +699,9 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
+ 	const struct mtk_pin_desc *desc;
+ 	int value, err;
+ 
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
+ 
+ 	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DIR, &value);
+@@ -708,6 +717,9 @@ static int mtk_gpio_get(struct gpio_chip *chip, unsigned int gpio)
+ 	const struct mtk_pin_desc *desc;
+ 	int value, err;
+ 
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
+ 
+ 	err = mtk_hw_get_value(hw, desc, PINCTRL_PIN_REG_DI, &value);
+@@ -722,6 +734,9 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
+ 	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
+ 	const struct mtk_pin_desc *desc;
+ 
++	if (gpio > hw->soc->npins)
++		return;
++
+ 	desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio];
+ 
+ 	mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_DO, !!value);
+@@ -729,12 +744,22 @@ static void mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
+ 
+ static int mtk_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
+ {
++	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
++
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	return pinctrl_gpio_direction_input(chip->base + gpio);
+ }
+ 
+ static int mtk_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
+ 				     int value)
+ {
++	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
++
++	if (gpio > hw->soc->npins)
++		return -EINVAL;
++
+ 	mtk_gpio_set(chip, gpio, value);
+ 
+ 	return pinctrl_gpio_direction_output(chip->base + gpio);
+-- 
+1.8.1.1.dirty
 
