@@ -2,107 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABBE7C0536
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 14:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16AD2C0548
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Sep 2019 14:38:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfI0MeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Sep 2019 08:34:03 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35407 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbfI0MeD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Sep 2019 08:34:03 -0400
-Received: by mail-io1-f66.google.com with SMTP id q10so15924941iop.2;
-        Fri, 27 Sep 2019 05:34:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k7d51AEqyE848wkPOLeJprFG9jyWEBZYHtKze/WYS4w=;
-        b=OkcngvAZiKPfuIboTpBONfv7BLGF5R/Iq4MnzDRe5U13ORHYdP24mC9azh4Zc/Cd5Q
-         zjc/eFi7DxQTt2gfFVEGlz4Zxs03GBIbzFDE/3rK5RvUDj+A1zGCnRrN8YdAGLoBwyRD
-         1SvsdCK0DQMAlsxjPDLcx8NpJ9PfZHFCDWlVx7XQv3ibTNAxJPUr7lXN4J+IqpwsMP11
-         p5RjNdSw0K+Uj7oL3izhL7pOv+40rEefZwUOMJ8fmBPf5BGQi2sSODcTOMGyjm7Sz/eq
-         5EylEn4Z6pYPsCxYY6hFmT/ZqrXxPPjxDhE/2yuR1xYG5IQEnERXL9KfdKmKsrdBRBc9
-         YitA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k7d51AEqyE848wkPOLeJprFG9jyWEBZYHtKze/WYS4w=;
-        b=q+ZebEUd7m48RhuhAGXkCklAdkzML6YldMLvtl9qZW+eq/apG7DLqqTWTfdXW2uLgE
-         l7n/sQqTij8ZPnHjfmIkTYbrR5RiLsniskLDUxyvbEANzi1ILr1nF7Rf0TT9v0SfTz87
-         4jgigatlCNARCvhlZoGTiTG5s+XDr9kb76gdg20m1nzPO459wHVKgeY3B53HRu6F7+9m
-         /hiOPBpBKOetq6OJFaVv7ji2Chysrqt7V/cADFBzMDneKCGI7gkFTwMqjRBSVrhhRXHu
-         tP2CTgoPIHM4waG6CtkwNJPEXdpI0riCAPNiX3gmP6D8MqV0LYBCxv9oP1Pbd+ucDrIQ
-         v+MQ==
-X-Gm-Message-State: APjAAAWg27+b2cN94s9bjTVZSWXF1jciqJR2ul4M/qULRoKeLXURu6UV
-        G4haxGb3i9Mhqk/yDKBVQKVxpIMs5Vp0D439g6Y=
-X-Google-Smtp-Source: APXvYqyUHMQeWPmJ5lzBV5BB3t5fjqgkf5iuXKrGK12pwMzKhwgqK7OWh4iVg4iwmB77u1+QNcYJGNuPXVDMXoOrZuo=
-X-Received: by 2002:a6b:b213:: with SMTP id b19mr7682327iof.58.1569587642060;
- Fri, 27 Sep 2019 05:34:02 -0700 (PDT)
+        id S1727427AbfI0MiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Sep 2019 08:38:10 -0400
+Received: from mga11.intel.com ([192.55.52.93]:63036 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbfI0MiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Sep 2019 08:38:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Sep 2019 05:38:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,555,1559545200"; 
+   d="scan'208";a="391148068"
+Received: from kmsmsx155.gar.corp.intel.com ([172.21.73.106])
+  by fmsmga006.fm.intel.com with ESMTP; 27 Sep 2019 05:38:06 -0700
+Received: from pgsmsx108.gar.corp.intel.com ([169.254.8.138]) by
+ KMSMSX155.gar.corp.intel.com ([169.254.15.100]) with mapi id 14.03.0439.000;
+ Fri, 27 Sep 2019 20:34:33 +0800
+From:   "Lu, Brent" <brent.lu@intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+CC:     "Rojewski, Cezary" <cezary.rojewski@intel.com>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "yang.jie@linux.intel.com" <yang.jie@linux.intel.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "liam.r.girdwood@linux.intel.com" <liam.r.girdwood@linux.intel.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Subject: RE: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
+ support
+Thread-Topic: [alsa-devel] [PATCH] ASoC: bdw-rt5677: channel constraint
+ support
+Thread-Index: AQHVZFJP8PyrEMjcjUeZpcb0xW/mNqceLbmAgASxdDCAAEEEgIABJDyggAAwUICAAuppgIAAJ+iAgBgJ7jA=
+Date:   Fri, 27 Sep 2019 12:34:32 +0000
+Message-ID: <CF33C36214C39B4496568E5578BE70C7402EABB2@PGSMSX108.gar.corp.intel.com>
+References: <1567733058-9561-1-git-send-email-brent.lu@intel.com>
+ <391e8f6c-7e35-deb4-4f4d-c39396b778ba@linux.intel.com>
+ <CF33C36214C39B4496568E5578BE70C7402C9EA2@PGSMSX108.gar.corp.intel.com>
+ <29b9fd4e-3d78-b4a3-e61a-c066bf24995a@linux.intel.com>
+ <CF33C36214C39B4496568E5578BE70C7402CB9AC@PGSMSX108.gar.corp.intel.com>
+ <99769525-779a-59aa-96da-da96f8f09a8a@linux.intel.com>
+ <CF33C36214C39B4496568E5578BE70C7402DBB9B@PGSMSX108.gar.corp.intel.com>
+ <34604b9a-f479-3f92-7917-84f295a82fd8@linux.intel.com>
+In-Reply-To: <34604b9a-f479-3f92-7917-84f295a82fd8@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2I2MGNkZDAtNGE0ZC00MTkwLTlkMGMtNjEwNmUyZTA2NjEwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidzBOK0ZiUmJcL3A3QWtVOHptV2ZMbGdRcnViU0pvSXVsdEdWR0ltS1diaDhlUU9uZWVoN2ZGWm9QU2d3RHBhZjEifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190510194229.20628-1-aford173@gmail.com> <af325707-3e42-493d-e858-77878ef06138@ti.com>
- <CAHCN7xLzoCNW6q5yDCsqMHeNvdNegkGhd0N+q9+Gd8JUGbG=_g@mail.gmail.com>
- <7ada0752-6f65-2906-cb29-a47c9490fd57@ti.com> <CAHCN7xJexJvh71vyb31ETgo=n_y_CupHH-AZwVK9mZe3GzJfEQ@mail.gmail.com>
- <845055e2-8182-de74-2077-629fdf50ac6c@ti.com> <CAHCN7xJFrTLOnbqrnH2W_T2whR8Xji0EMNR_cy8GYkDV-JDodQ@mail.gmail.com>
- <854f6130-c8a8-81cb-aa76-4830f218ae54@ti.com>
-In-Reply-To: <854f6130-c8a8-81cb-aa76-4830f218ae54@ti.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Fri, 27 Sep 2019 07:33:50 -0500
-Message-ID: <CAHCN7xKocdiWOdmoWQV3POr84qte6WNt0QbQRAwxKSvU8COB_w@mail.gmail.com>
-Subject: Re: [PATCH] drm/omap: Migrate minimum FCK/PCK ratio from Kconfig to dts
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Adam Ford <adam.ford@logicpd.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2019 at 2:55 AM Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
->
-> (dropping folks who're probably not interested...)
->
-> On 26/09/2019 17:12, Adam Ford wrote:
-> > On Thu, Sep 26, 2019 at 1:55 AM Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> >>
-> >> On 25/09/2019 23:51, Adam Ford wrote:
-> >>
-> >>>> Has anyone debugged why the hang is happening?
-> >>> I started to debug this, but I got distracted when I noticed the LCD
-> >>> did't work at all on modern kernels.  I have that fixed now, so I can
-> >>> go back to investigating this.
->
-> I dont' have the same board, but I was testing with omap3 beagle xm. I
-> can reproduce rather similar issue, although I don't get a hang but
-> instead sync lost and underflow flood (which makes the device unusable).
->
-> It looks like a bug in omap clock handling.
->
-> DSS uses dss1_alwon_fck_3430es2 as fclk. dss1_alwon_fck_3430es2 comes
-> from dpll4_ck, and there's a divider after the PLL, dpll4_m4_ck.
->
-> When the DSS driver sets dss1_alwon_fck_3430es2 rate to 27000000 or
-> 27870967, which can be created with m4 dividers 32 and 31, it looks like
-> the divider goes to bypass, or to a very small value. DSS gets a very
-> high clock rate and breaks down.
-
-Is there anything I can do to help troubleshoot this?  I could insert
-a hack that checks if we're omap3 and if so make the divider equal to
-4, but that seems like just a hack.
-I can run more tests or insert code somewhere if you want.
-
-adam
->
->   Tomi
->
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+PiA+DQo+ID4gSXQncyBub3Qgb25seSB0aGUgbWlzbWF0Y2ggYnV0IGFsc28gdGhlIGRlc2lnbiBs
+aW1pdGF0aW9uLiBBY2NvcmRpbmcNCj4gPiB0byB0aGUgaW5mb3JtYXRpb24gZnJvbSBnb29nbGUs
+IHRoZSBib2FyZCAoc2FtdXMpIG9ubHkgdXNlcyB0d28NCj4gPiBtaWNyb3Bob25lIHNvDQo+ID4g
+MyBvciA0IGNoYW5uZWwgcmVjb3JkaW5nIGFyZSBub3Qgc3VwcG9ydGVkLiBUaGF0J3MgdGhlIHJl
+YXNvbiB3ZQ0KPiA+IGxldmVyYWdlIHRoZSBjb25zdHJhaW50IGZyb20gb3RoZXIgbWFjaGluZSBk
+cml2ZXIgKGxpa2UNCj4gPiBrYmxfZGE3MjE5X21heDk4MzU3YS5jKSB0byByZW1vdmUgdGhlIDMg
+YW5kIDQgY2hhbm5lbCByZWNvcmRpbmcgb3B0aW9uLg0KPiANCj4gVGhlIGRlc2lnbiBsaW1pdGF0
+aW9uIGlzIGFscmVhZHkgaGFuZGxlZCBieSB0aGUgZmFjdCB0aGF0IHRoZSBTU1Agb3BlcmF0ZXMg
+aW4NCj4gMmNoIG1vZGUsIHNvIGl0J3MgYSBkaWZmZXJlbnQgY2FzZSBmcm9tIEtCTCB3aGVyZSBp
+bmRlZWQgdGhlIERNSUMtYmFzZWQNCj4gYmFjay1lbmQgY2FuIHN1cHBvcnQgNCBjaGFubmVscy4N
+Cj4gDQo+ID4NCj4gPiBUaGUgZGlmZmVyZW5jZSBhZnRlciB0aGUgY29uc3RyYWludCBpcyBpbXBs
+ZW1lbnRlZCBpcyB0aGF0IHRoZQ0KPiA+IHNuZF9wY21faHdfcGFyYW1zX3NldF9jaGFubmVscygp
+IGZ1bmN0aW9uIHdpbGwgcmV0dXJuIGVycm9yIChJbnZhbGlkDQo+ID4gYXJndW1lbnQpIHdoZW4g
+Y2hhbm5lbCBudW1iZXIgaXMgMyBvciA0IHNvIHRoZSBhcHBsaWNhdGlvbiBrbm93cyB0aGUNCj4g
+PiBjb25maWd1cmF0aW9uIGlzIG5vdCBzdXBwb3J0ZWQuDQo+IA0KPiBJIGdldCB0aGUgZXJyb3Is
+IEkgYW0ganVzdCB3b25kZXJpbmcgaWYgdGhlIGZpeCBpcyBhdCB0aGUgcmlnaHQgbG9jYXRpb24u
+IEknbGwgbG9vaw0KPiBpbnRvIGl0LCBnaXZlIG1lIHVudGlsIHRvbW9ycm93Lg0KDQpJIHRoaW5r
+IEkgZ290IHlvdXIgcG9pbnQuIEkgY2hlcnJ5LXBpY2sgdGhlc2UgY29tbWl0cyBiYWNrIHRvIHYz
+LjE0IGJyYW5jaCB0byBmaXgNCnRoZSBGRS9CRSBtaXNtYXRjaCB3aXRob3V0IGFkZGluZyBjb25z
+dHJhaW50IGluIG1hY2hpbmUgZHJpdmVyLiBUaGFua3MuDQoNCmIwNzNlZDRlIEFTb0M6IHNvYy1w
+Y206IERQQ00gY2FyZXMgQkUgZm9ybWF0DQpmNGMyNzdiOCBBU29DOiBzb2MtcGNtOiBEUENNIGNh
+cmVzIEJFIGNoYW5uZWwgY29uc3RyYWludA0KNGYyYmQxOGIgQVNvQzogZHBjbTogZXh0ZW5kIGNo
+YW5uZWwgbWVyZ2luZyB0byB0aGUgYmFja2VuZCBjcHUgZGFpDQo0MzVmZmI3NiBBU29DOiBkcGNt
+OiByZXdvcmsgcnVudGltZSBzdHJlYW0gbWVyZ2UNCmJhYWNkOGQxIEFTb0M6IGRwY206IGFkZCBy
+YXRlIG1lcmdlIHRvIHRoZSBCRSBzdHJlYW0gbWVyZ2UNCg0K
